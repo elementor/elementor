@@ -414,6 +414,16 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @param int $template_id
+	 * @param string $error
+	 * @return string|\WP_Error
+	 * @throws \Exception
+	 */
+	public function mark_preview_as_failed( int $template_id, string $error ) {
+		return new \WP_Error( 'template_error', 'Cannot mark preview as failed for this source' );
+	}
+
+	/**
 	 * @param int[] $template_ids
 	 * @return bool|\WP_Error
 	 */
@@ -441,6 +451,14 @@ abstract class Source_Base {
 	 */
 	public function import_template( $name, $path ) {
 		return new \WP_Error( 'template_error', 'This source does not support import' );
+	}
+
+	public function supports_quota(): bool {
+		return false;
+	}
+
+	public function validate_quota( array $items ) {
+		return new \WP_Error( 'quota_error', 'This source does not support quota validation' );
 	}
 
 	public function prepare_import_template_data( $file_path ) {
