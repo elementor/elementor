@@ -18,7 +18,7 @@ class Cssid_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'value' => String_Prop_Type::make(),
+			'id' => String_Prop_Type::make(),
 		];
 	}
 }

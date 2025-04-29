@@ -15,6 +15,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,7 +41,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -52,49 +54,59 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
-			'cssid' => Cssid_Prop_Type::make(),
 		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( \Elementor\Modules\AtomicWidgets\Module::CSSID_EXPERIMENT_NAME ) ) {
+			$props['cssid'] = Cssid_Prop_Type::make();
+		}
+
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
+		$items = [
+			Textarea_Control::bind_to( 'title' )
+				->set_label( __( 'Title', 'elementor' ) )
+				->set_placeholder( __( 'Type your title here', 'elementor' ) ),
+			Select_Control::bind_to( 'tag' )
+				->set_label( esc_html__( 'Tag', 'elementor' ) )
+				->set_options( [
+					[
+						'value' => 'h1',
+						'label' => 'H1',
+					],
+					[
+						'value' => 'h2',
+						'label' => 'H2',
+					],
+					[
+						'value' => 'h3',
+						'label' => 'H3',
+					],
+					[
+						'value' => 'h4',
+						'label' => 'H4',
+					],
+					[
+						'value' => 'h5',
+						'label' => 'H5',
+					],
+					[
+						'value' => 'h6',
+						'label' => 'H6',
+					],
+				]),
+			Link_Control::bind_to( 'link' ),
+		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( \Elementor\Modules\AtomicWidgets\Module::CSSID_EXPERIMENT_NAME ) ) {
+			$items[] = Cssid_Control::bind_to( 'cssid' );
+		}
+
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [
-					Textarea_Control::bind_to( 'title' )
-						->set_label( __( 'Title', 'elementor' ) )
-						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-					Select_Control::bind_to( 'tag' )
-						->set_label( esc_html__( 'Tag', 'elementor' ) )
-						->set_options( [
-							[
-								'value' => 'h1',
-								'label' => 'H1',
-							],
-							[
-								'value' => 'h2',
-								'label' => 'H2',
-							],
-							[
-								'value' => 'h3',
-								'label' => 'H3',
-							],
-							[
-								'value' => 'h4',
-								'label' => 'H4',
-							],
-							[
-								'value' => 'h5',
-								'label' => 'H5',
-							],
-							[
-								'value' => 'h6',
-								'label' => 'H6',
-							],
-						]),
-					Link_Control::bind_to( 'link' ),
-					Cssid_Control::bind_to('cssid'),
-				] ),
+				->set_items( $items ),
 		];
 	}
 
