@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class CSS {
+class CSS_Renderer {
 	private function global_variables(): array {
 		return ( new Variables() )->get_all();
 	}
