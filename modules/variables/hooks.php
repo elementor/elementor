@@ -16,10 +16,6 @@ class Hooks {
 
 	public function register_packages() {
 		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
-			if ( ! current_user_can( 'manage_options' ) ) {
-				return $packages;
-			}
-
 			return array_merge( $packages, self::PACKAGES );
 		} );
 
