@@ -108,6 +108,18 @@ class Style_Parser {
 		return $result;
 	}
 
+	private function sanitize_meta( $meta ) {
+		if ( ! is_array( $meta ) ) {
+			return [];
+		}
+
+		if ( isset( $meta['breakpoint'] ) ) {
+			$meta['breakpoint'] = sanitize_key( $meta['breakpoint'] );
+		}
+
+		return $meta;
+	}
+
 	/**
 	 * @param array $style
 	 * the style object to sanitize
@@ -120,12 +132,13 @@ class Style_Parser {
 		}
 
 		if ( isset( $style['id'] ) ) {
-			$style['id'] = sanitize_text_field( $style['id'] );
+			$style['id'] = sanitize_key( $style['id'] );
 		}
 
 		if ( ! empty( $style['variants'] ) ) {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
 				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
+				$style['variants'][ $variant_index ]['meta'] = $this->sanitize_meta( $variant['meta'] );
 			}
 		}
 
