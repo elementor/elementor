@@ -2,6 +2,7 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Controls_Stack;
+use Elementor\Core\Settings\Page\Model;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -413,6 +414,16 @@ abstract class Source_Base {
 	}
 
 	/**
+	 * @param int $template_id
+	 * @param string $error
+	 * @return string|\WP_Error
+	 * @throws \Exception
+	 */
+	public function mark_preview_as_failed( int $template_id, string $error ) {
+		return new \WP_Error( 'template_error', 'Cannot mark preview as failed for this source' );
+	}
+
+	/**
 	 * @param int[] $template_ids
 	 * @return bool|\WP_Error
 	 */
@@ -433,6 +444,64 @@ abstract class Source_Base {
 	 */
 	public function get_quota() {
 		return new \WP_Error( 'template_error', 'This source does not support quotas' );
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function import_template( $name, $path ) {
+		return new \WP_Error( 'template_error', 'This source does not support import' );
+	}
+
+	public function supports_quota(): bool {
+		return false;
+	}
+
+	public function validate_quota( array $items ) {
+		return new \WP_Error( 'quota_error', 'This source does not support quota validation' );
+	}
+
+	public function prepare_import_template_data( $file_path ) {
+		$data = json_decode( Utils::file_get_contents( $file_path ), true );
+
+		if ( empty( $data ) ) {
+			return new \WP_Error( 'file_error', 'Invalid File' );
+		}
+
+		$content = $data['content'];
+
+		if ( ! is_array( $content ) ) {
+			return new \WP_Error( 'file_error', 'Invalid Content In File' );
+		}
+
+		$content = $this->process_export_import_content( $content, 'on_import' );
+
+		$content = apply_filters(
+			"elementor/template_library/sources/{$this->get_id()}/import/elements",
+			$content
+		);
+
+		$page_settings = [];
+
+		if ( ! empty( $data['page_settings'] ) ) {
+			$page = new Model( [
+				'id' => 0,
+				'settings' => $data['page_settings'],
+			] );
+
+			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
+
+			if ( ! empty( $page_settings_data['settings'] ) ) {
+				$page_settings = $page_settings_data['settings'];
+			}
+		}
+
+		return [
+			'content' => $content,
+			'page_settings' => $page_settings,
+			'title' => $data['title'],
+			'type' => $data['type'],
+		];
 	}
 
 	/**

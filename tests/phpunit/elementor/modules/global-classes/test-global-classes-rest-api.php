@@ -395,6 +395,30 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
 	}
 
+	public function test_put_fails_when_max_items_limit_reached() {
+		// Arrange.
+		$this->act_as_admin();
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+
+		$items = [];
+		for ( $i = 0; $i < 51; $i++ ) {
+			$items[ "g-$i" ] = $this->create_global_class( "g-$i" );
+		}
+
+		$request->set_body_params( [
+			'items' => $items,
+			'order' => array_keys( $items ),
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'global_classes_limit_exceeded', $response->get_data()['code'] );
+	}
+
 	public function test_put__fails_when_order_is_missing_ids() {
 		// Arrange.
 		$this->act_as_admin();
@@ -511,10 +535,58 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( $initial, $classes );
 	}
 
-	private function create_global_class( string $id, ?string $color = null ) {
+	public function test_put__sanitizes_class_name() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$class_1 = $this->create_global_class( 'g-1' );
+
+		$initial = [
+			'items' => [
+				'g-1' => $class_1,
+
+			'order' => [ 'g-1' ],
+			],
+		];
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+
+		$class_3 = $this->create_global_class( 'g-3', '<b>should-be-sanitized</b>',  '<b>should-be-sanitized</b>' );
+
+		$updated = [
+			'items' => [
+				'g-1' => $class_1,
+				'g-3' => $class_3,
+			],
+			'order' => [ 'g-3', 'g-1' ],
+		];
+
+		$request->set_body_params( $updated );
+
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertNull( $response->get_data() );
+
+		$this->assertSame( [
+			'items' => [
+				'g-1' => $class_1,
+				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized', 'should-be-sanitized' ),
+			],
+			'order' => [ 'g-3', 'g-1' ],
+		], $classes );
+	}
+
+	private function create_global_class( string $id, ?string $color = null, ?string $label = null ) {
 		return [
 			'id' => $id,
-			'label' => "label-$id",
+			'label' => $label ?? $id,
 			'type' => 'class',
 			'variants' => [
 				[
