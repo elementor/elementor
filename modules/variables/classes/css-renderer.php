@@ -25,7 +25,7 @@ class CSS_Renderer {
 	}
 
 	private function raw_css(): string {
-		$css_string = ":root {";
+		$css_string = ':root {';
 
 		foreach ( $this->global_variables() as $idx => $variable ) {
 			$css_string .= '--' . $idx . ':' . $variable['value'] . '; ';
