@@ -162,8 +162,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
 					<span class="selected-count"></span>
 					<# if ( elementor.templates.hasCloudLibraryQuota() ) { #>
-					<span class="bulk-copy"><i class="eicon-library-copy" aria-hidden="true" title="<?php esc_attr_e( 'Copy', 'elementor' ); ?>"></i></span>
-					<span class="bulk-move"><i class="eicon-library-move"  aria-hidden="true" title="<?php esc_attr_e( 'Move', 'elementor' ); ?>"></i></span>
+						<span class="bulk-copy"><i class="eicon-library-copy" aria-hidden="true" title="<?php esc_attr_e( 'Copy', 'elementor' ); ?>"></i></span>
+						<span class="bulk-move"><i class="eicon-library-move"  aria-hidden="true" title="<?php esc_attr_e( 'Move', 'elementor' ); ?>"></i></span>
 					<# } #>
 					<span class="bulk-delete"><i class="eicon-library-delete" aria-hidden="true" title="<?php esc_attr_e( 'Delete', 'elementor' ); ?>"></i></span>
 				</div>
