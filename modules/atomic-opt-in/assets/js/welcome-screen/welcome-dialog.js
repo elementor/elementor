@@ -5,15 +5,15 @@ import {
 	Stack,
 	List,
 	ListItem,
-	Popover, Box, Link, Divider,
+	Box, Link, Divider, Dialog,
 } from '@elementor/ui';
 import { useEffect, useRef, useState } from 'react';
 
 const i18n = {
 	heading: __( 'Say hello to a new experience!', 'elementor' ),
-	introduction: __( 'You\'re now using Editor V4, a new generation of the web creation.', 'elementor' ),
+	introduction: __( 'You\'re now using Editor V4, a new generation of web creation.', 'elementor' ),
 	listItems: [
-		__( 'Try out the new Editor V4 elements such as Div, SVG and Paragraph.', 'elementor' ),
+		__( 'Try out Editor V4 elements such as Div, SVG and Paragraph.', 'elementor' ),
 		__( 'Set up a new Class and apply it site-wide for perfect consistency.', 'elementor' ),
 		__( 'Customize any style element per screen size by switching between responsive views.', 'elementor' ),
 	],
@@ -26,7 +26,7 @@ const contentLinks = {
 	helpCenter: 'https://go.elementor.com/wp-dash-opt-in-v4-help-center/',
 };
 
-export const WelcomePopover = ( { doClose } ) => {
+export const WelcomeDialog = ( { doClose } ) => {
 	const anchorElRef = useRef( null );
 	const [ isMounted, setIsMounted ] = useState( false );
 
@@ -40,16 +40,10 @@ export const WelcomePopover = ( { doClose } ) => {
 	}
 
 	return (
-		<Popover
+		<Dialog
 			open={ Boolean( anchorElRef.current ) }
 			onClose={ doClose }
-			anchorEl={ anchorElRef.current }
-			anchorOrigin={ { vertical: 'center', horizontal: 'center' } }
-			transformOrigin={ { vertical: 'center', horizontal: 'center' } }
-			slotProps={ {
-				paper: {
-					sx: { width: 600 },
-				} } }
+			maxWidth="sm"
 		>
 			<Box sx={ {
 				aspectRatio: '2',
@@ -80,14 +74,15 @@ export const WelcomePopover = ( { doClose } ) => {
 			<Stack py={ 2 } px={ 3 }>
 				<Button
 					variant="contained"
+					color="accent"
 					onClick={ doClose }
 					sx={ { ml: 'auto' } }
 				>{ i18n.closeButton }</Button>
 			</Stack>
-		</Popover>
+		</Dialog>
 	);
 };
 
-WelcomePopover.propTypes = {
+WelcomeDialog.propTypes = {
 	doClose: PropTypes.func,
 };

@@ -283,7 +283,7 @@ module.exports = {
 
 		const enqueueOptions = {};
 
-		let	fontUrl;
+		let fontUrl;
 
 		switch ( fontType ) {
 			case 'googlefonts':
@@ -581,7 +581,7 @@ module.exports = {
 
 		setTimeout( function() {
 			// Sometimes element removed during the timeout.
-			if ( ! $element[ 0 ].isConnected ) {
+			if ( ! $element[ 0 ]?.isConnected ) {
 				return;
 			}
 
@@ -756,5 +756,25 @@ module.exports = {
 	 */
 	findParentWithAnchor( element ) {
 		return element?.closest( 'a' ) || null;
+	},
+
+	getAtomicElementTypes() {
+		const { elements } = elementor.config;
+
+		return Object.keys( elements )
+			.filter( ( elementKey ) => Object.keys( elements[ elementKey ] )
+				.some( ( key ) => key.includes( 'atom' ) ) );
+	},
+
+	isElementAtomic( elementId ) {
+		const { type: elType = null } = elementor.getContainer( elementId ) || {};
+
+		return this.getAtomicElementTypes().includes( elType );
+	},
+
+	isAtomicWidget( model ) {
+		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
+
+		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
 	},
 };

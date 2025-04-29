@@ -79,6 +79,7 @@ BaseElementView = BaseContainer.extend( {
 	events() {
 		return {
 			mousedown: 'onMouseDown',
+			click: 'handleAnchorClick',
 			'click @ui.editButton': 'onEditButtonClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
@@ -322,7 +323,11 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, 'aria-label': tool.title } );
+			const $item = jQuery( '<li>', {
+				class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`,
+				title: tool.title,
+				'aria-label': tool.title,
+			} );
 			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
 			$item.append( $icon );
@@ -348,13 +353,42 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibility() {
-		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+		this.model.toggleVisibility();
 
 		this.toggleVisibilityClass();
 	},
 
 	toggleVisibilityClass() {
-		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
+		const isVisible = this.model.getVisibility();
+
+		if ( ! elementor.helpers.isAtomicWidget( this.model ) ) {
+			this.$el.toggleClass( 'elementor-edit-hidden', isVisible );
+
+			return;
+		}
+
+		/**
+		 * We cannot know for sure the nature of this.$el in atomic widgets in terms of its css display value.
+		 * Though most atomic widgets are wrapped with a { display: contents !important } inline styled div, not all are, i.e. div-block and flexbox - both have display: flex.
+		 *
+		 * The simplest solution might be to switch the inline display value to 'none',
+		 * but that would require us to also store the original display value to revert to upon showing back the widget.
+		 *
+		 * This leaves us with a slightly less elegant workaround - to wrap/unwrap it with a {display: none} inline styled div
+		 */
+		const isWrappedWithHiddenElement = this.$el.parent().is( 'div[data-type="hide-atomic-widget"]' );
+
+		if ( isVisible ) {
+			if ( ! isWrappedWithHiddenElement ) {
+				this.$el.wrap( '<div data-type="hide-atomic-widget" style="display: none" />' );
+			}
+
+			return;
+		}
+
+		if ( isWrappedWithHiddenElement ) {
+			this.$el.unwrap();
+		}
 	},
 
 	addElementFromPanel( options ) {
@@ -658,7 +692,7 @@ BaseElementView = BaseContainer.extend( {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
 			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
-			this.isCssIdControl( changedControl, bindingDynamicCssId ) );
+				this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -809,7 +843,7 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
-	async *bindingChangesGenerator( settings, bindingSettings, config ) {
+	async * bindingChangesGenerator( settings, bindingSettings, config ) {
 		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
 			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
 				continue;
@@ -1014,8 +1048,15 @@ BaseElementView = BaseContainer.extend( {
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
+		this.handleAnchorClick( event );
 
 		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+	},
+
+	handleAnchorClick( event ) {
+		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
+			event.preventDefault();
+		}
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`

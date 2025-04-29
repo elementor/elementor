@@ -22,12 +22,18 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Editor v4 (Opt In Page)', 'elementor' ),
 			'description' => esc_html__( 'Enable the settings Opt In page', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		];
 	}
 
+	public function get_opt_in_css_assets_url( string $path ) {
+		return $this->get_css_assets_url( $path );
+	}
+
 	public function __construct() {
+		( new PanelChip() )->init();
+
 		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			return;
 		}

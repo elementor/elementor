@@ -40,7 +40,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 				'settings' => [
 					'image' => [
 						'id' => 123,
-						'url' => 'https://example.com/image.jpg',
+						'src' => 'https://example.com/image.jpg',
 					],
 				],
 				'widgetType' => Atomic_Image::get_element_type(),
@@ -53,7 +53,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'settings' => [
 						'image' => [
 							'id' => 123,
-							'url' => 'https://example.com/image.jpg',
+							'src' => 'https://example.com/image.jpg',
 						],
 						'link' => [
 							'href' => 'https://example.com',

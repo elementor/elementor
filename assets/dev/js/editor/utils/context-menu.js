@@ -203,6 +203,8 @@ module.exports = elementorModules.Module.extend( {
 		} );
 
 		modal.show();
+
+		elementor.templates.eventManager.sendContextMenuExposureEvent();
 	},
 
 	destroy() {

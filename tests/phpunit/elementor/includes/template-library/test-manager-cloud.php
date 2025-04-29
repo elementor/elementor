@@ -20,6 +20,10 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	private $documents;
 
+	private $uploads_manager_mock;
+
+	private $uploads_manager;
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->documents = Plugin::$instance->documents;
@@ -59,6 +63,8 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				'serve_zip',
 				'replace_elements_ids',
 				'bulk_delete_items',
+				'prepare_import_template_data',
+				'validate_quota',
 			] )
 			->disableOriginalConstructor()
 			->getMock();
@@ -71,6 +77,14 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 			->method( 'get_source' )
 			->willReturn( $this->cloud_source_mock );
 
+		$this->uploads_manager_mock = $this->getMockBuilder('Elementor\Core\Files\Uploads_Manager')
+			->onlyMethods( [ 'extract_and_validate_zip' ] )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$this->uploads_manager = Plugin::$instance->uploads_manager;
+		Plugin::$instance->uploads_manager = $this->uploads_manager_mock;
+
 		$reflection = new \ReflectionClass($this->cloud_source_mock);
 		$save_document_method = $reflection->getMethod('save_document_for_preview');
 		$save_document_method->setAccessible(true);
@@ -78,6 +92,7 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		Plugin::$instance->documents = $this->documents;
+		Plugin::$instance->uploads_manager = $this->uploads_manager;
 		parent::tearDown();
 	}
 
@@ -903,6 +918,10 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 				]
 			] );
 
+		$this->cloud_source_mock
+			->method( 'validate_quota' )
+			->willReturn( true );
+
 		// Assert
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
@@ -1031,25 +1050,238 @@ class Elementor_Test_Manager_Cloud extends Elementor_Test_Base {
 		$this->assertEquals( 'The required argument(s) "from_template_id" not specified.', $result->get_error_message() );
 	}
 
-	public function test_get_quota() {
+	public function test_get_templates_quota() {
 		// Assert
 		$this->cloud_library_app_mock
 			->expects( $this->once() )
 			->method( 'get_quota' );
 
 		// Act
-		$this->manager->get_quota( [
+		$this->manager->get_templates_quota( [
 			'source' => 'cloud',
 		] );
 	}
 
-	public function test_get_quota_fails_without_source() {
+	public function test_get_templates_quota_fails_without_source() {
 		// Act
-		$result = $this->manager->get_quota( [] );
+		$result = $this->manager->get_templates_quota( [] );
 
 		// Assert
 		$this->assertWPError( $result );
 
 		$this->assertEquals( 'The required argument(s) "source" not specified.', $result->get_error_message() );
+	}
+
+	public function test_import_template_with_empty_path() {
+		// Act
+		$result = $this->cloud_source_mock->import_template('test.json', '');
+
+		// Assert
+		$this->assertWPError($result);
+		$this->assertEquals('file_error', $result->get_error_code());
+		$this->assertEquals('Please upload a file to import', $result->get_error_message());
+	}
+
+	public function test_import_template_with_quota_exceeded() {
+		// Arrange
+		$template_data = [
+			'content' => [ 'test_content' ],
+			'page_settings' => [ 'test_settings' ],
+			'title' => 'Test Template',
+			'type' => 'container'
+		];
+
+		$this->cloud_library_app_mock
+			->method( 'get_quota' )
+			->willReturn( [
+				'currentUsage' => 100,
+				'threshold' => 100
+			] );
+
+		$this->cloud_source_mock
+			->method( 'prepare_import_template_data' )
+			->willReturn($template_data);
+
+		// Act
+		$result = $this->cloud_source_mock->import_template( 'test.json', 'path/to/file' );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( 'quota_error', $result->get_error_code() );
+		$this->assertEquals( 'The upload failed because you’ve saved the maximum templates already.', $result->get_error_message() );
+	}
+
+	public function test_import_template_single_file_success() {
+		// Arrange
+		$template_data = [
+			'content' => [ 'test_content' ],
+			'page_settings' => [ 'test_settings' ],
+			'title' => 'Test Template',
+			'type' => 'container'
+		];
+
+		$mock_file_path = 'path/to/template.json';
+
+		$this->cloud_library_app_mock
+			->method( 'get_quota' )
+			->willReturn( [
+				'currentUsage' => 0,
+				'threshold' => 100
+			] );
+
+		$this->cloud_source_mock
+			->method( 'validate_quota' )
+			->willReturn( true );
+
+		$this->cloud_source_mock
+			->method( 'prepare_import_template_data' )
+			->with( $mock_file_path )
+			->willReturn( $template_data );
+
+		$this->cloud_library_app_mock
+			->method( 'post_resource' )
+			->willReturn( [ 'id' => 1 ] );
+
+		// Act
+		$result = $this->cloud_source_mock->import_template( 'template.json', $mock_file_path );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertCount( 1, $result );
+		$this->assertEquals( 1, $result[0]['id'] );
+	}
+
+	public function test_import_template_zip_file_success() {
+		// Arrange
+		$template_data1 = [
+			'content' => [ 'test_content1' ],
+			'page_settings' => [ 'test_settings1' ],
+			'title' => 'Test Template 1',
+			'type' => 'container'
+		];
+
+		$template_data2 = [
+			'content' => [ 'test_content2' ],
+			'page_settings' => [ 'test_settings2' ],
+			'title' => 'Test Template 2',
+			'type' => 'container'
+		];
+
+		$mock_zip_path = 'path/to/templates.zip';
+
+		$mock_extracted_files = [
+			'extraction_directory' => 'path/to/extracted',
+			'files' => [
+				'path/to/template1.json',
+				'path/to/template2.json'
+			]
+		];
+
+		$this->cloud_library_app_mock
+			->method( 'get_quota' )
+			->willReturn( [
+				'currentUsage' => 0,
+				'threshold' => 100
+			] );
+
+		$this->cloud_source_mock
+			->method( 'validate_quota' )
+			->willReturn( true );
+
+		$this->cloud_source_mock
+			->method( 'prepare_import_template_data' )
+			->willReturnCallback( function( $path ) use ( $template_data1, $template_data2 ) {
+				if ( 'path/to/template1.json' === $path ) {
+					return $template_data1;
+				}
+				return $template_data2;
+			});
+
+		$this->cloud_library_app_mock
+			->method( 'post_bulk_resources' )
+			->willReturn( [
+				[ 'id' => 1 ],
+				[ 'id' => 2 ]
+			] );
+
+		$this->uploads_manager_mock
+			->method( 'extract_and_validate_zip' )
+			->with( $mock_zip_path, [ 'json' ] )
+			->willReturn( $mock_extracted_files );
+
+		// Act
+		$result = $this->cloud_source_mock->import_template( 'templates.zip', $mock_zip_path );
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertCount( 2, $result );
+		$this->assertEquals( 1, $result[0]['id'] );
+		$this->assertEquals( 2, $result[1]['id'] );
+	}
+
+	public function test_import_template_zip_file_with_quota_exceeded() {
+		// Arrange
+		$mock_zip_path = 'path/to/templates.zip';
+		$mock_extracted_files = [
+			'extraction_directory' => 'path/to/extracted',
+			'files' => [
+				'path/to/template1.json',
+				'path/to/template2.json'
+			]
+		];
+
+		$this->uploads_manager_mock
+			->method( 'extract_and_validate_zip' )
+			->with( $mock_zip_path, [ 'json' ] )
+			->willReturn( $mock_extracted_files );
+
+		$this->cloud_library_app_mock
+			->method( 'get_quota' )
+			->willReturn( [
+				'currentUsage' => 99,
+				'threshold' => 100
+			] );
+
+		$this->cloud_source_mock
+			->method( 'prepare_import_template_data' )
+			->willReturn( [
+				'content' => [ 'test_content' ],
+				'page_settings' => [ 'test_settings' ],
+				'title' => 'Test Template',
+				'type' => 'container'
+			] );
+
+		// Act
+		$result = $this->cloud_source_mock->import_template( 'templates.zip', $mock_zip_path );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( 'quota_error', $result->get_error_code() );
+		$this->assertEquals( 'The upload failed because it will pass the maximum templates you can save.', $result->get_error_message() );
+	}
+
+	public function test_import_template_with_invalid_file() {
+		// Arrange
+		$mock_file_path = 'path/to/invalid.json';
+
+		$this->cloud_library_app_mock
+			->method( 'get_quota' )
+			->willReturn( [
+				'currentUsage' => 0,
+				'threshold' => 100
+			] );
+
+		$this->cloud_source_mock
+			->method( 'prepare_import_template_data' )
+			->with( $mock_file_path )
+			->willReturn( new \WP_Error( 'invalid_file', 'Invalid template file' ) );
+
+		// Act
+		$result = $this->cloud_source_mock->import_template( 'invalid.json', $mock_file_path );
+
+		// Assert
+		$this->assertWPError( $result );
+		$this->assertEquals( 'invalid_file', $result->get_error_code() );
+		$this->assertEquals( 'Invalid template file', $result->get_error_message() );
 	}
 }

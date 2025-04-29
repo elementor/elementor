@@ -133,6 +133,7 @@ trait Has_Atomic_Base {
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		return $data;
 	}
@@ -141,6 +142,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
 	}
@@ -157,6 +159,16 @@ trait Has_Atomic_Base {
 		$props = $this->get_settings();
 
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	private function parse_editor_settings( array $data ): array {
+		$editor_data = [];
+
+		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
+			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		return $editor_data;
 	}
 
 	public static function get_props_schema(): array {

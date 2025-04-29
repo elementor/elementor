@@ -20,6 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Style_Schema {
 	public static function get() {
+		return apply_filters( 'elementor/atomic-widgets/styles/schema', static::get_style_schema() );
+	}
+
+	public static function get_style_schema(): array {
 		return array_merge(
 			self::get_size_props(),
 			self::get_position_props(),
@@ -129,6 +133,13 @@ class Style_Schema {
 				'rtl',
 			]),
 			'stroke' => Stroke_Prop_Type::make(),
+			'all' => String_Prop_Type::make()->enum([
+				'initial',
+				'inherit',
+				'unset',
+				'revert',
+				'revert-layer',
+			]),
 		];
 	}
 
@@ -231,6 +242,14 @@ class Style_Schema {
 				'space-around',
 				'space-evenly',
 				'stretch',
+			]),
+			'align-content' => String_Prop_Type::make()->enum([
+				'center',
+				'start',
+				'end',
+				'space-between',
+				'space-around',
+				'space-evenly',
 			]),
 			'align-items' => String_Prop_Type::make()->enum([
 				'normal',
