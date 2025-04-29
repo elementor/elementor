@@ -14,6 +14,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	events: {
 		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'click @ui.button': 'onButtonClick',
 	},
 
 	modesStrings() {
@@ -30,7 +31,13 @@ module.exports = Marionette.ItemView.extend( {
 				title: __( 'It’s time to level up', 'elementor' ),
 				message: __( 'Elementor Pro plans come with Cloud Templates.', 'elementor' ) + '<br>' + __( 'Upgrade now to re-use your templates on all the websites you’re working on.', 'elementor' ),
 				icon: `<i class="eicon-library-subscription-upgrade" aria-hidden="true" title="${ __( 'Upgrade now', 'elememntor' ) }"></i>`,
-				button: `<a class="elementor-button e-accent" href="" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
+				button: `<a class="elementor-button e-accent" href="https://go.elementor.com/go-pro-cloud-templates-cloud-tab" target="_blank">${ __( 'Upgrade now', 'elementor' ) }</a>`,
+			},
+			deactivated: {
+				title: __( 'Your library has been deactivated', 'elementor' ),
+				message: __( 'This is because you don’t have an active subscription.', 'elementor' ) + '<br>' + __( 'Your templates are saved for 90 days from the day your subscription expires,', 'elementor' ) + '<br>' + __( 'then they’ll be gone forever.', 'elementor' ),
+				icon: `<i class="eicon-library-subscription-upgrade" aria-hidden="true" title="${ __( 'Renew my subscription', 'elememntor' ) }"></i>`,
+				button: `<a class="elementor-button e-accent" href="https://go.elementor.com/renew-license-cloud-templates-cloud-tab" target="_blank">${ __( 'Renew my subscription', 'elementor' ) }</a>`,
 			},
 		};
 	},
@@ -44,7 +51,30 @@ module.exports = Marionette.ItemView.extend( {
 			return 'notConnected';
 		}
 
+		if ( this.isDeactivated() ) {
+			return 'deactivated';
+		}
+
 		return 'connectedNoQuota';
+	},
+
+	isDeactivated() {
+		const quota = elementorAppConfig[ 'cloud-library' ]?.quota;
+
+		if ( ! quota ) {
+			return false;
+		}
+
+		const {
+			currentUsage = 0,
+			threshold = 0,
+			subscriptionId = '',
+		} = quota;
+
+		const isOverThreshold = currentUsage > threshold;
+		const hasNoSubscription = '' === subscriptionId;
+
+		return isOverThreshold && hasNoSubscription;
 	},
 
 	onRender() {
@@ -52,7 +82,11 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.handleElementorConnect();
 
-		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'elementor-hidden' );
+		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'e-hidden-disabled' );
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabUpgrade,
+		} );
 	},
 
 	updateTemplateMarkup() {
@@ -87,7 +121,14 @@ module.exports = Marionette.ItemView.extend( {
 		elementor.templates.onSelectSourceFilterChange( event );
 	},
 
+	onButtonClick() {
+		elementor.templates.eventManager.sendUpgradeClickedEvent( {
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
+			upgradePosition: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
+		} );
+	},
+
 	onDestroy() {
-		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.remove( 'elementor-hidden' );
+		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.remove( 'e-hidden-disabled' );
 	},
 } );
