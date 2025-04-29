@@ -3,7 +3,6 @@ namespace Elementor\Core\Admin;
 
 use Elementor\Api;
 use Elementor\Beta_Testers;
-use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
@@ -719,7 +718,7 @@ class Admin extends App {
 			wp_die( $document ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 
-		wp_redirect( $document->get_edit_url() );
+		wp_safe_redirect( $document->get_edit_url() );
 
 		die;
 	}
@@ -768,7 +767,7 @@ class Admin extends App {
 	}
 
 	public function enqueue_new_floating_elements_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
 			'elementor-floating-elements-modal',
@@ -785,7 +784,7 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function enqueue_new_template_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
 			'elementor-new-template',
@@ -810,7 +809,7 @@ class Admin extends App {
 	 * @access public
 	 */
 	public function enqueue_beta_tester_scripts() {
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
 			'elementor-beta-tester',
@@ -1037,7 +1036,7 @@ class Admin extends App {
 				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
 				'button_event' => $dismissible,
 				'button_data' => base64_encode(
-					json_encode( [
+					wp_json_encode( [
 						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
 					] ),
 				),

@@ -288,7 +288,9 @@ class Module extends BaseModule {
 		$document->end_injection();
 	}
 
-	// The $options variable is an array of $control_options to overwrite the default
+	/**
+	 * The $options variable is an array of $control_options to overwrite the default.
+	 */
 	public function add_template_controls( Document $document, $control_id, $control_options ) {
 		// Default Control Options
 		$default_control_options = [

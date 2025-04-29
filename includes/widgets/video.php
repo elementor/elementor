@@ -411,19 +411,6 @@ class Widget_Video extends Widget_Base {
 		);
 
 		$this->add_control(
-			'modestbranding',
-			[
-				'label' => esc_html__( 'Modest Branding', 'elementor' ),
-				'type' => Controls_Manager::SWITCHER,
-				'condition' => [
-					'video_type' => [ 'youtube' ],
-					'controls' => 'yes',
-				],
-				'frontend_available' => true,
-			]
-		);
-
-		$this->add_control(
 			'cc_load_policy',
 			[
 				'label' => esc_html__( 'Captions', 'elementor' ),
@@ -1195,7 +1182,6 @@ class Widget_Video extends Widget_Base {
 				'controls',
 				'mute',
 				'rel',
-				'modestbranding',
 				'cc_load_policy',
 			];
 

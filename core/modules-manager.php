@@ -85,6 +85,7 @@ class Modules_Manager {
 			'page-templates',
 			'gutenberg',
 			'wp-cli',
+			'wp-rest',
 			'safe-mode',
 			'ai',
 			'notifications',
@@ -124,8 +125,11 @@ class Modules_Manager {
 			'editor-events',
 			'atomic-widgets',
 			'global-classes',
+			'variables',
 			'wc-product-editor',
 			'checklist',
+			'cloud-library',
+			'atomic-opt-in',
 		];
 	}
 

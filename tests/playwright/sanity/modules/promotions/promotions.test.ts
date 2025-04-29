@@ -137,7 +137,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer.png` );
 	} );
 
 	test( 'Promotions - Free to Pro - Navigator - Dark Mode', async ( { page, apiRequests }, testInfo ) => {
@@ -153,13 +153,13 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
+		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
 	} );
 
-	test( 'Elements / Widgets Panel Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			wrapperContainer = '#elementor-panel-inner',
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const wrapperContainer = '#elementor-panel-inner',
 			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
 		// Act.
@@ -169,7 +169,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect( parentContainer ).toHaveScreenshot( `elements-panel-promotion.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
 	} );
 
 	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {
@@ -185,9 +185,10 @@ test.describe( 'Promotion tests @promotions', () => {
 
 		await navigatorPanel.locator( '.elementor-navigator__element-container' ).nth( 0 ).click();
 		await navigatorPanel.evaluate( ( element ) => element.style.width = '150px' );
+		await page.waitForLoadState( 'domcontentloaded' );
 
 		// Assert.
-		await expect( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
+		await expect.soft( navigatorPanel ).toHaveScreenshot( 'resized-navigator-panel.png' );
 	} );
 } );
 

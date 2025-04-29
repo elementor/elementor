@@ -24,7 +24,7 @@ class Icons_Manager {
 
 	const LOAD_FA4_SHIM_OPTION_KEY = 'elementor_load_fa4_shim';
 
-	const ELEMENTOR_ICONS_VERSION = '5.35.0';
+	const ELEMENTOR_ICONS_VERSION = '5.40.0';
 
 	/**
 	 * Tabs.
@@ -231,7 +231,7 @@ class Icons_Manager {
 	private static function get_fa_asset_url( $filename, $ext_type = 'css', $add_suffix = true ) {
 		static $is_test_mode = null;
 		if ( null === $is_test_mode ) {
-			$is_test_mode = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS );
+			$is_test_mode = Utils::is_script_debug() || Utils::is_elementor_tests();
 		}
 		$url = ELEMENTOR_ASSETS_URL . 'lib/font-awesome/' . $ext_type . '/' . $filename;
 		if ( ! $is_test_mode && $add_suffix ) {

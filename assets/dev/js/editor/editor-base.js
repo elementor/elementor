@@ -32,6 +32,7 @@ import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/modul
 import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
 import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
 import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
+import CloudLibraryModule from 'elementor/modules/cloud-library/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
 import ElementBase from './elements/types/base/element-base';
@@ -184,6 +185,7 @@ export default class EditorBase extends Marionette.Application {
 			Box_shadow: require( 'elementor-controls/box-shadow' ),
 			Button: require( 'elementor-controls/button' ),
 			Choose: require( 'elementor-controls/choose' ),
+			Visual_choice: require( 'elementor-controls/visual-choice' ),
 			Code: require( 'elementor-controls/code' ),
 			Color: ColorControl,
 			Date_time: DateTimeControl,
@@ -237,7 +239,7 @@ export default class EditorBase extends Marionette.Application {
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
 			components: {
-				AddSectionView: require( 'elementor-views/add-section/inline' ),
+				AddSectionView: require( 'elementor-views/add-section/inline' ).default,
 			},
 		},
 		layouts: {
@@ -477,6 +479,10 @@ export default class EditorBase extends Marionette.Application {
 
 		this.modules.promotionModule = new PromotionModule();
 
+		if ( elementorCommon.config.experimentalFeatures[ 'cloud-library' ] ) {
+			this.modules.cloudLibraryModule = new CloudLibraryModule();
+		}
+
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
 
@@ -572,7 +578,7 @@ export default class EditorBase extends Marionette.Application {
 	initPreviewView( document ) {
 		elementor.trigger( 'document:before:preview', document );
 
-		this.previewView = this.createPreviewView( document.$element[ 0 ],	elementor.elementsModel );
+		this.previewView = this.createPreviewView( document.$element[ 0 ], elementor.elementsModel );
 
 		this.renderPreview( this.previewView );
 	}
@@ -782,7 +788,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getBreakpointResizeOptions( currentBreakpoint ) {
-		const previewHeight = elementor.$previewWrapper.height() - 80, // 80 = responsive bar height + ui-resizable-handle
+		const previewHeight = elementor.$previewWrapper.height(),
 			specialBreakpointsHeights = {
 				mobile: {
 					minHeight: 480,

@@ -1,0 +1,1 @@
+.test-background-overlay{background:linear-gradient(blue, blue);}

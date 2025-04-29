@@ -20,7 +20,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
-	{ pluginName: 'envato-elements', installSource: 'api' },
+	{ pluginName: 'envato-elements', installSource: 'cli' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
@@ -29,7 +29,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
 	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
-	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api' },
+	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
 	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
@@ -46,7 +46,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'happy-elementor-addons', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
-	{ pluginName: 'wordpress-seo', installSource: 'api' },
+	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
@@ -71,25 +71,25 @@ export const generatePluginTests = ( testType: string ) => {
 				const adminBar = 'wpadminbar';
 
 				await page.goto( '/law-firm-about/' );
-				await page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+				await page.locator( `#${ adminBar }` ).waitFor();
 				await page.evaluate( ( selector ) => {
 					const admin = document.getElementById( selector );
 					admin.remove();
 				}, adminBar );
 				await editor.removeClasses( 'elementor-motion-effects-element' );
+				await page.locator( '[data-widget_type="progress.default"]' ).first().scrollIntoViewIfNeeded();
+				await page.waitForTimeout( 500 );
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 				if ( plugin.hasInstallationPage ) {
-					await page.goto( '/wp-admin/index.php' );
+					try {
+						await page.goto( '/wp-admin/index.php' );
+					} catch ( error ) {
+						throw Error( `Error during navigation: ${ error.message }` );
+					}
 				}
 
-				await page.goto( '/law-firm-about/?elementor', {
-					waitUntil: 'load',
-					timeout: 15000,
-				} );
-
-				await page.locator( '[id="elementor-preview-iframe"]' ).waitFor( { state: 'visible', timeout: 15000 } );
-
+				await page.goto( '/law-firm-about/?elementor' );
 				await wpAdmin.closeAnnouncementsIfVisible();
 
 				if ( 'the-plus-addons-for-elementor-page-builder' === plugin.pluginName ) {

@@ -14,8 +14,9 @@ import ImagesDisplay from '../../components/images-display';
 import ProductImage from './components/product-image';
 import ImageActions from '../../components/image-actions';
 import useImageActions from '../../hooks/use-image-actions';
+import PropTypes from 'prop-types';
 
-const ProductImageUnification = () => {
+const ProductImageUnification = ( { onClose } ) => {
 	const { setGenerate } = useRequestIds();
 	const { editImage: products } = useEditImage();
 	const { settings, updateSettings } = usePromptSettings( );
@@ -29,8 +30,9 @@ const ProductImageUnification = () => {
 	const errorlessProducts = Object.values( productsData ).filter( ( { productId } ) => ! errorMap[ productId ]?.errorGenerating );
 	const use = useCallback( async () => {
 		setIsSavingImages( true );
-		const imagesToSave = errorlessProducts
-			.filter( ( { data, wasGenerated } ) => wasGenerated && data?.isChecked && data?.productId !== undefined )
+		const generatedImages = errorlessProducts
+			.filter( ( { data, wasGenerated } ) => wasGenerated && data?.isChecked && data?.productId !== undefined );
+		const imagesToSave = generatedImages
 			.map( ( { data } ) => ( {
 				...data,
 				editor_post_id: data.productId,
@@ -38,10 +40,14 @@ const ProductImageUnification = () => {
 			} ) );
 		// eslint-disable-next-line react-hooks/rules-of-hooks
 		await useMultipleImages( imagesToSave );
-	}, [ errorlessProducts, useMultipleImages ] );
+		generatedImages.forEach( ( { sendUsageData } ) => {
+			sendUsageData();
+		} );
+		onClose();
+	}, [ onClose, errorlessProducts, useMultipleImages ] );
 	const generatedAspectRatio = useMemo( () => settings[ IMAGE_RATIO ], [ settings ] );
 	const generatedBgColor = useMemo( () => settings[ IMAGE_BACKGROUND_COLOR ], [ settings ] );
-	const onProductUpdate = useCallback( ( res, isLoadingResult, errorGenerating, req, productId, ratio, bgColor, image ) => {
+	const onProductUpdate = useCallback( ( res, isLoadingResult, errorGenerating, req, productId, ratio, bgColor, image, sendUsageData ) => {
 		setLoadingMap( ( prevState ) => ( { ...prevState, [ productId ]: !! isLoadingResult } ) );
 		setErrorMap( ( prevState ) => ( { ...prevState, [ productId ]: { errorGenerating } } ) );
 
@@ -57,6 +63,7 @@ const ProductImageUnification = () => {
 				},
 				image,
 			} ) ),
+			sendUsageData,
 			wasGenerated: res?.result?.[ 0 ] !== undefined,
 			data: {
 				productId,
@@ -264,6 +271,10 @@ const ProductImageUnification = () => {
 					onUpdate={ onProductUpdate } /> ) }
 		</View>
 	);
+};
+
+ProductImageUnification.propTypes = {
+	onClose: PropTypes.func,
 };
 
 export default ProductImageUnification;

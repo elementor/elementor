@@ -10,9 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const PACKAGES = [
 		'editor-app-bar',
-		'editor-documents',
-		'editor-panels',
-		'editor-site-navigation',
 	];
 
 	const STYLES = [
@@ -26,12 +23,12 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-		add_filter( 'elementor/editor/v2/styles', fn( $styles ) => $this->add_styles( $styles ) );
-		add_filter( 'elementor/editor/templates', fn( $templates ) => $this->remove_templates( $templates ) );
+    add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+    add_filter( 'elementor/editor/v2/styles', fn( $styles ) => $this->add_styles( $styles ) );
+    add_filter( 'elementor/editor/templates', fn( $templates ) => $this->remove_templates( $templates ) );
 
-		add_action( 'elementor/editor/v2/scripts/enqueue', fn() => $this->dequeue_scripts() );
-		add_action( 'elementor/editor/v2/styles/enqueue', fn() => $this->dequeue_styles() );
+    add_action( 'elementor/editor/v2/scripts/enqueue', fn() => $this->dequeue_scripts() );
+    add_action( 'elementor/editor/v2/styles/enqueue', fn() => $this->dequeue_styles() );
 	}
 
 	private function add_packages( $packages ) {

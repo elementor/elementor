@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\App\Modules\ImportExport;
 
 use Elementor\Core\Utils\Collection;
@@ -98,7 +97,7 @@ class Wp_Cli extends \WP_CLI_Command {
 	 * @param array $assoc_args
 	 */
 	public function import( array $args, array $assoc_args ) {
-		if ( ! current_user_can( 'administrator' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			\WP_CLI::error( 'You must run this command as an admin user' );
 		}
 

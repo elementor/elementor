@@ -1,7 +1,10 @@
 name: Check CSS Size Limit
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '3.*'
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths-ignore:
       - '**.md'
@@ -17,7 +20,7 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   check-size-limit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build-plugin
 
     steps:

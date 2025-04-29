@@ -272,7 +272,7 @@ abstract class PageBase extends Document {
 	 *
 	 * @param array $data
 	 *
-	 * @throws \Exception
+	 * @throws \Exception Exception If the post ID is not set.
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {

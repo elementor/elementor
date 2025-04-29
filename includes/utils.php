@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -105,7 +106,10 @@ class Utils {
 	const IMAGE_CAROUSEL = 'image_carousel';
 
 	/**
-	 * Is WP CLI.
+	 * Whether WordPress CLI mode is enabled or not.
+	 *
+	 * @access public
+	 * @static
 	 *
 	 * @return bool
 	 */
@@ -114,26 +118,35 @@ class Utils {
 	}
 
 	/**
-	 * Is script debug.
-	 *
 	 * Whether script debug is enabled or not.
 	 *
 	 * @since 1.0.0
 	 * @access public
 	 * @static
 	 *
-	 * @return bool True if it's a script debug is active, false otherwise.
+	 * @return bool
 	 */
 	public static function is_script_debug() {
 		return defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG;
 	}
 
+	/**
+	 * Whether Elementor debug is enabled or not.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @return bool
+	 */
 	public static function is_elementor_debug() {
 		return defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG;
 	}
 
 	/**
-	 * Whether elementor test mode is enabled or not.
+	 * Whether Elementor test mode is enabled or not.
+	 *
+	 * @access public
+	 * @static
 	 *
 	 * @return bool
 	 */
@@ -234,6 +247,7 @@ class Utils {
 		$rows_affected += (int) apply_filters( 'elementor/tools/replace-urls', 0, $from, $to );
 
 		Plugin::$instance->files_manager->clear_cache();
+		Google_Font::clear_cache();
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
@@ -839,7 +853,7 @@ class Utils {
 			return null;
 		}
 
-		if ( $_FILES === $super_global ) {
+		if ( $_FILES === $super_global ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			return isset( $super_global[ $key ]['name'] ) ?
 				self::sanitize_file_name( $super_global[ $key ] ) :
 				self::sanitize_multi_upload( $super_global[ $key ] );
@@ -906,7 +920,7 @@ class Utils {
 			return;
 		}
 
-		throw new \Exception( $message );
+		throw new \Exception( esc_html( $message ) );
 	}
 
 	public static function has_invalid_post_permissions( $post ): bool {

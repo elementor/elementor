@@ -2,7 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-  pull_request:
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -20,6 +19,13 @@ on:
     branches:
       - 'main'
       - '3.*'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
 
 jobs:
   build-plugin:

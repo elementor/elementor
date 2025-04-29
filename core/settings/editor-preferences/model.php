@@ -91,7 +91,7 @@ class Model extends BaseModel {
 				'type' => Controls_Manager::SLIDER,
 				'range' => [
 					'px' => [
-						'min' => 200,
+						'min' => 250,
 						'max' => 680,
 					],
 				],

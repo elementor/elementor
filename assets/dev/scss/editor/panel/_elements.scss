@@ -94,6 +94,13 @@
 			}
 		}
 
+		.eicon-atomic {
+			position: absolute;
+			top: 5px;
+			@include end(5px);
+			color: var(--e-a-color-txt);
+		}
+
 		&:hover,
 		&:focus {
 			background-color: var(--e-a-bg-hover);
