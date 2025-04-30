@@ -140,6 +140,18 @@ class Style_Schema {
 				'revert',
 				'revert-layer',
 			]),
+			'cursor' => String_Prop_Type::make()->enum([
+				'auto',
+				'default',
+				'none',
+				'help',
+				'pointer',
+				'progress',
+				'wait',
+				'cell',
+				'crosshair',
+				'text',
+			]),
 		];
 	}
 
