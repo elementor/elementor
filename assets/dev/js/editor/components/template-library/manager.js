@@ -196,7 +196,7 @@ const TemplateLibraryManager = function() {
 		if ( event.target === document.body ) {
 			return true; // When the rename dialog is closed it sets the target to the body.
 		}
-		
+
 		const libraryElement = document.getElementById( 'elementor-template-library-modal' );
 
 		return libraryElement && event.target === libraryElement;
