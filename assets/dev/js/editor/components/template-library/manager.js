@@ -109,7 +109,7 @@ const TemplateLibraryManager = function() {
 		} );
 
 		this.handleKeydown = ( event ) => {
-			if ( this.isSelectAllShortcut( event ) && this.isCloudGridView() ) {
+			if ( this.isSelectAllShortcut( event ) && this.isCloudGridView() && this.isClickedInLibrary( event ) ) {
 				event.preventDefault();
 				this.selectAllTemplates();
 			}
@@ -190,6 +190,16 @@ const TemplateLibraryManager = function() {
 
 	this.isCloudGridView = function() {
 		return 'cloud' === this.getFilter( 'source' ) && 'grid' === this.getViewSelection();
+	};
+
+	this.isClickedInLibrary = function( event ) {
+		if ( event.target === document.body ) {
+			return true; // When the rename dialog is closed it sets the target to the body.
+		}
+
+		const libraryElement = document.getElementById( 'elementor-template-library-modal' );
+
+		return libraryElement && event.target === libraryElement;
 	};
 
 	this.clearLastRemovedItems = function() {
@@ -318,6 +328,7 @@ const TemplateLibraryManager = function() {
 						title: templateModel.get( 'title' ),
 					},
 					success: ( response ) => {
+						templateModel.trigger( 'change:title' );
 						this.eventManager.sendTemplateRenameEvent( { source } );
 						resolve( response );
 					},
@@ -373,7 +384,7 @@ const TemplateLibraryManager = function() {
 			event.preventDefault();
 			const title = event.target.value.trim();
 
-			templateModel.set( 'title', title );
+			templateModel.set( 'title', title, { silent: true } );
 
 			dialog.getElements( 'ok' ).prop( 'disabled', ! self.isTemplateTitleValid( title ) );
 		} );
