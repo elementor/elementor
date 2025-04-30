@@ -329,7 +329,6 @@ const TemplateLibraryManager = function() {
 						title: updatedTitle,
 					},
 					success: ( response ) => {
-						templateModel.set( 'title', updatedTitle );
 						templateModel.trigger( 'change:title' );
 						this.eventManager.sendTemplateRenameEvent( { source } );
 						resolve( response );
