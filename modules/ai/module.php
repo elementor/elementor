@@ -1551,7 +1551,6 @@ class Module extends BaseModule {
 	}
 
 	private function should_display_ai_creator() {
-		
 		// 3. Check if site has more than 10 pages with Elementor
 		$elementor_pages = new \WP_Query( [
 			'post_type' => 'page',
@@ -1565,18 +1564,18 @@ class Module extends BaseModule {
 		if ( $elementor_pages->post_count > self::MIN_PAGES_FOR_AI_CREATOR ) {
 			return false;
 		}
-		
+
 		// Check if a custom kit is applied (not the default one)
 		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
 		if ( $previous_kit_id ) {
 			return false;
 		}
-		
+
 		return true;
 	}
 
 	public function add_ai_creator_to_homescreen( $home_screen_data ) {
-		if ( $this->should_display_ai_creator() ) {			
+		if ( $this->should_display_ai_creator() ) {
 			$home_screen_data['ai_creator'] = [
 				'title' => 'Create and launch your site faster with AI',
 				'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',
@@ -1591,7 +1590,7 @@ class Module extends BaseModule {
 		} else {
 			$home_screen_data['ai_creator'] = null;
 		}
-		
+
 		return $home_screen_data;
 	}
 }
