@@ -320,13 +320,12 @@ const TemplateLibraryManager = function() {
 				}
 
 				const source = templateModel.get( 'source' );
-				const updatedTitle = templateModel.get( 'title' );
 
 				elementorCommon.ajax.addRequest( 'rename_template', {
 					data: {
 						source,
 						id: templateModel.get( 'template_id' ),
-						title: updatedTitle,
+						title: templateModel.get( 'title' ),
 					},
 					success: ( response ) => {
 						templateModel.trigger( 'change:title' );
