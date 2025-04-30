@@ -54,11 +54,11 @@ class Module extends BaseModule {
 	}
 
 	public function localize_settings( $settings ) {
-		if ( ! isset( $settings['i18n'] ) ) {
-			return $settings;
+		if ( isset( $settings['i18n'] ) ) {
+			$settings['i18n']['folder'] = esc_html__( 'Folder', 'elementor' );
 		}
 
-		$settings['i18n']['folder'] = 'Folder';
+		$settings['library']['doc_types'] = $this->get_document_types();
 
 		return $settings;
 	}
@@ -67,7 +67,7 @@ class Module extends BaseModule {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
 			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
-			'description' => esc_html__( 'Enable Cloud Templates.', 'elementor' ),
+			'description' => esc_html__( 'Cloud Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
 		] );
@@ -120,10 +120,24 @@ class Module extends BaseModule {
 				'utm_content' => 'cloud-library',
 				'source' => 'cloud-library',
 			] ) ),
-			'library_connect_title' => esc_html__( 'Connect', 'elementor' ),
-			'library_connect_sub_title' => esc_html__( 'Sub Title', 'elementor' ),
+			'library_connect_title' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
+			'library_connect_sub_title' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
 			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
 		] );
+	}
+
+	private function get_document_types() {
+		$document_types = Plugin::$instance->documents->get_document_types( [
+			'show_in_library' => true,
+		] );
+
+		$data = [];
+
+		foreach ( $document_types as $name => $document_type ) {
+			$data[ $name ] = $document_type::get_title();
+		}
+
+		return $data;
 	}
 
 	public function print_content() {

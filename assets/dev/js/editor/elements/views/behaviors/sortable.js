@@ -216,7 +216,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		const child = elementor.channels.data.request( 'dragging:view' ).getContainer();
-		this.moveChild( child, newIndex );
+		const result = this.moveChild( child, newIndex );
+
+		if ( ! result ) {
+			jQuery( ui.sender ).sortable( 'cancel' );
+		}
 	},
 
 	// On receiving element from another container
@@ -245,8 +249,11 @@ SortableBehavior = Marionette.Behavior.extend( {
 		}
 
 		const child = elementor.channels.data.request( 'dragging:view' ).getContainer();
+		const result = this.moveChild( child, newIndex );
 
-		this.moveChild( child, newIndex );
+		if ( ! result ) {
+			jQuery( ui.sender ).sortable( 'cancel' );
+		}
 	},
 
 	onSortStart( event, ui ) {
@@ -317,10 +324,10 @@ SortableBehavior = Marionette.Behavior.extend( {
 	 * @param {Container}     child - The child container to move.
 	 * @param {number|string} index - New index.
 	 *
-	 * @return {void}
+	 * @return {Container|boolean}
 	 */
 	moveChild( child, index ) {
-		$e.run( 'document/elements/move', {
+		return $e.run( 'document/elements/move', {
 			container: child,
 			target: this.view.getContainer(),
 			options: {
