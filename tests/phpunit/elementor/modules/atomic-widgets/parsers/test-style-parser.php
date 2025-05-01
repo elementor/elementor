@@ -115,6 +115,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
 			'variants' => [
 				[
 					'props' => [],
+					'meta' => null,
 				],
 			],
 		];
@@ -177,7 +178,7 @@ class Test_Style_Parser extends Elementor_Test_Base {
 	public function test_parse__sanitizes_label_and_id() {
 		// Arrange.
         $style = [
-			'id' => 'test<script>alert( 1 )</script>-style',
+			'id' => '($test -> Style)',
 			'type' => 'class',
 			'label' => 'Test <strong>Style</strong>',
 			'variants' => [],
