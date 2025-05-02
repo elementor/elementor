@@ -693,12 +693,12 @@ const TemplateLibraryManager = function() {
 
 	this.sendOnSavedTemplateSuccessEvent = ( formData ) => {
 		if ( SAVE_CONTEXTS.SAVE === formData.save_context ) {
-			this.eventManager.sendNewSaveTemplateClickedEvent( {
+			self.eventManager.sendTemplateSavedEvent( {
 				library_type: formData.source,
 				template_type: formData.type,
 			} );
 		} else if ( [ SAVE_CONTEXTS.COPY, SAVE_CONTEXTS.MOVE ].includes( formData.save_context ) ) {
-			this.eventManager.sendTemplateTransferEvent( {
+			self.eventManager.sendTemplateTransferEvent( {
 				transfer_method: formData.save_context,
 				template_type: formData.type,
 				template_origin: formData.from_source,
