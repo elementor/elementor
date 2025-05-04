@@ -22,7 +22,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 				onOutsideClick: allowClosingModal,
 				onBackgroundClick: allowClosingModal,
 				onEscKeyPress: allowClosingModal,
-				ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete, .dialog-buttons-template_after_save, #elementor-library--infotip__dialog',
+				ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete, .dialog-buttons-template_after_save, #elementor-library--infotip__dialog, #elementor-template-library-rename-dialog, #elementor-template-library-delete-dialog',
 			},
 		};
 	},
@@ -117,7 +117,13 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
-		this.getHeaderView().menuArea.reset();
+		const headerView = this.getHeaderView();
+
+		headerView.menuArea.reset();
+
+		if ( SAVE_CONTEXTS.SAVE !== context ) {
+			headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
+		}
 
 		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel, context } ) );
 	},
@@ -161,6 +167,18 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		return iframe;
 	},
 
+	handleBulkActionBarUi() {
+		if ( 0 === this.modalContent.currentView.$( '.bulk-selection-item-checkbox:checked' ).length ) {
+			this.modalContent.currentView.$el.addClass( 'no-bulk-selections' );
+			this.modalContent.currentView.$el.removeClass( 'has-bulk-selections' );
+		} else {
+			this.modalContent.currentView.$el.addClass( 'has-bulk-selections' );
+			this.modalContent.currentView.$el.removeClass( 'no-bulk-selections' );
+		}
+
+		this.handleBulkActionBar();
+	},
+
 	handleBulkActionBar() {
 		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
 		const display = 0 === selectedCount ? 'none' : 'flex';
@@ -187,5 +205,11 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 	isListView() {
 		return 'list' === elementor.templates.getViewSelection();
+	},
+
+	resetSortingUI() {
+		Array.from( this.modalContent.currentView.ui?.orderInputs || [] ).forEach( function( input ) {
+			input.checked = false;
+		} );
 	},
 } );

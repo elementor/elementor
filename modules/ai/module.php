@@ -1433,6 +1433,7 @@ class Module extends BaseModule {
 		$result = $app->get_unify_product_images( [
 			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
+			'featureIdentifier' => $data['payload']['featureIdentifier'] ?? '',
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );

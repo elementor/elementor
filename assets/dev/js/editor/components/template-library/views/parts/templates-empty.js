@@ -43,14 +43,14 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 				button: '',
 			},
 			cloudEmpty: {
-				title: __( 'Haven’t saved templates to cloud library yet?', 'elementor' ),
-				message: __( 'This is where your templates should be. Design it. Save it. Reuse it.', 'elementor' ),
+				title: __( 'No templates saved just yet', 'elementor' ),
+				message: __( 'Once you save a template, it’ll show up here, ready for reuse across all of your Elementor sites—no extra work needed.', 'elementor' ),
 				icon: this.getCloudIcon(),
-				button: '<a class="elementor-button e-primary" href="" target="_blank">call to action</a>',
+				button: `<a class="e-back-to-editor">${ __( 'Back to editor', 'elementor' ) }</a>`,
 			},
 			cloudFolderEmpty: {
-				title: __( 'Nothing to see here… yet', 'elementor' ),
-				message: __( 'Once you add or move templates into this folder, you’ll have quick access to all', 'elementor' ) + '<br>' + __( 'them—right where you need them.', 'elementor' ),
+				title: __( 'No templates to show here, yet', 'elementor' ),
+				message: __( 'Once you save some templates to this folder, you can use them on any website you’re working on.', 'elementor' ),
 				icon: this.getEmptyFolderIcon(),
 				button: `<a class="e-back-to-editor">${ __( 'Back to editor', 'elementor' ) }</a>`,
 			},
@@ -62,16 +62,11 @@ const TemplateLibraryTemplatesEmptyView = Marionette.ItemView.extend( {
 	},
 
 	getCloudIcon() {
-		return `<svg width="104" height="104" viewBox="0 0 104 104" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path fill-rule="evenodd" clip-rule="evenodd" d="M58.713 14.6924C52.7388 13.6062 46.5396 14.7043 41.4877 17.7227C36.4394 20.739 32.9765 25.406 31.7967 30.6618C31.643 31.3466 31.035 31.8333 30.3331 31.8333C25.3032 31.8333 20.4919 33.7451 16.9546 37.1286C13.4196 40.51 11.4468 45.0814 11.4468 49.8333C11.4468 54.5851 13.4196 59.1566 16.9546 62.5379C20.4919 65.9214 25.3032 67.8333 30.3331 67.8333H82.3331C85.9578 67.8333 89.4339 66.3934 91.9969 63.8304C94.5599 61.2674 95.9998 57.7912 95.9998 54.1666C95.9998 50.542 94.5599 47.0658 91.9969 44.5028C89.4339 41.9398 85.9578 40.4999 82.3331 40.4999H77.9998C77.5443 40.4999 77.1134 40.2929 76.8288 39.9373C76.5441 39.5816 76.4365 39.1159 76.5362 38.6714C77.7147 33.4214 76.5342 27.9513 73.2166 23.4537C69.8936 18.9486 64.6864 15.7785 58.713 14.6924ZM39.949 15.1473C45.6423 11.7458 52.5818 10.5284 59.2496 11.7408C65.9181 12.9532 71.8207 16.5073 75.6309 21.6729C79.0682 26.3328 80.5389 31.9518 79.7913 37.4999H82.3331C86.7534 37.4999 90.9927 39.2559 94.1183 42.3815C97.2439 45.5071 98.9998 49.7463 98.9998 54.1666C98.9998 58.5869 97.2439 62.8261 94.1183 65.9517C90.9927 69.0773 86.7534 70.8333 82.3331 70.8333H30.3331C24.5495 70.8333 18.9901 68.6362 14.881 64.7058C10.7696 60.7732 8.44678 55.4249 8.44678 49.8333C8.44678 44.2417 10.7696 38.8933 14.881 34.9607C18.7111 31.2971 23.8013 29.1396 29.1587 28.8635C30.7527 23.2221 34.6092 18.3378 39.949 15.1473ZM20.1667 86.6667C20.1667 85.8383 20.8382 85.1667 21.6667 85.1667H82.3333C83.1618 85.1667 83.8333 85.8383 83.8333 86.6667C83.8333 87.4951 83.1618 88.1667 82.3333 88.1667H21.6667C20.8382 88.1667 20.1667 87.4951 20.1667 86.6667Z" fill="var(--e-a-color-txt)"/>
-		</svg>`;
+		return `<i class="eicon-library-cloud-empty" aria-hidden="true" title="Empty Cloud Library"></i>`;
 	},
 
 	getEmptyFolderIcon() {
-		return `<svg width="105" height="105" viewBox="0 0 105 105" fill="none" xmlns="http://www.w3.org/2000/svg">
-			<path d="M60.8252 13.5791V30.9124C60.8252 32.0617 61.2817 33.1639 62.0944 33.9766C62.9071 34.7892 64.0093 35.2458 65.1585 35.2458H82.4919M60.8252 13.5791H30.4919C28.1933 13.5791 25.9889 14.4922 24.3636 16.1175C22.7383 17.7428 21.8252 19.9472 21.8252 22.2458V82.9124C21.8252 85.211 22.7383 87.4154 24.3636 89.0407C25.9889 90.666 28.1933 91.5791 30.4919 91.5791H73.8252C76.1237 91.5791 78.3281 90.666 79.9535 89.0407C81.5788 87.4154 82.4919 85.211 82.4919 82.9124V35.2458M60.8252 13.5791L82.4919 35.2458" stroke="#525962" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-			<path d="M52.1581 48.3633V68.039M42.3203 58.2011H61.996" stroke="#525962" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-		</svg>`;
+		return `<i class="eicon-library-folder-empty" aria-hidden="true" title="Empty folder"></i>`;
 	},
 
 	getCurrentMode() {
