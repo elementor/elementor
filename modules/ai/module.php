@@ -1551,7 +1551,7 @@ class Module extends BaseModule {
 	}
 
 	private function should_display_ai_creator() {
-		// 3. Check if site has more than 10 pages with Elementor
+		// Check if the site has more than 10 pages with Elementor
 		$elementor_pages = new \WP_Query( [
 			'post_type' => 'page',
 			'post_status' => 'publish',
