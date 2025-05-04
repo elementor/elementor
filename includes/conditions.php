@@ -86,7 +86,7 @@ class Conditions {
 
 				$value = $comparison[ $parsed_name[1] ];
 
-				if ( ! empty( $parsed_name[2] ) ) {
+				if ( ! empty( $parsed_name[2] ) && is_array( $value ) ) {
 					$value = $value[ $parsed_name[2] ];
 				}
 
