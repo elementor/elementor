@@ -1576,7 +1576,7 @@ class Module extends BaseModule {
 
 	public function add_ai_creator_to_homescreen( $home_screen_data ) {
 		if ( $this->should_display_ai_creator() ) {
-			$home_screen_data['ai_creator'] = [
+			$home_screen_data['create_with_ai'] = [
 				'title' => 'Create and launch your site faster with AI',
 				'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',
 				'input_placeholder' => 'Start describing the site you want to create...',
@@ -1588,7 +1588,7 @@ class Module extends BaseModule {
 				'utm_campaign' => 'generate-with-ai',
 			];
 		} else {
-			$home_screen_data['ai_creator'] = null;
+			$home_screen_data['create_with_ai'] = null;
 		}
 
 		return $home_screen_data;

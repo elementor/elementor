@@ -3,10 +3,11 @@ import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import { useState } from 'react';
 
-const AiSiteCreator = ( { aiCreatorData } ) => {
+const AiSiteCreator = ( { ...props } ) => {
+	const { aiCreateWithAIData } = props;
 	const [ inputValue, setInputValue ] = useState( '' );
 
-	if ( ! aiCreatorData ) {
+	if ( ! aiCreateWithAIData ) {
 		return null;
 	}
 
@@ -20,7 +21,7 @@ const AiSiteCreator = ( { aiCreatorData } ) => {
 		utm_source: utmSource,
 		utm_medium: utmMedium,
 		utm_campaign: utmCampaign,
-	} = aiCreatorData;
+	} = aiCreateWithAIData;
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -86,7 +87,7 @@ const AiSiteCreator = ( { aiCreatorData } ) => {
 };
 
 AiSiteCreator.propTypes = {
-	aiCreatorData: PropTypes.object,
+	aiCreateWithAIData: PropTypes.object,
 };
 
 export default AiSiteCreator;
