@@ -2,14 +2,13 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Cssid_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Cssid_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -57,7 +56,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( \Elementor\Modules\AtomicWidgets\Module::CSSID_EXPERIMENT_NAME ) ) {
-			$props['cssid'] = Cssid_Prop_Type::make();
+			$props['cssid'] = String_Prop_Type::make();
 		}
 
 		return $props;
@@ -100,7 +99,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( \Elementor\Modules\AtomicWidgets\Module::CSSID_EXPERIMENT_NAME ) ) {
-			$items[] = Cssid_Control::bind_to( 'cssid' );
+			$items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
+				'layout' => 'two-columns',
+			] );
 		}
 
 		return [

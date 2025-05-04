@@ -12,6 +12,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 	private string $bind;
 	private $label = null;
 	private $description = null;
+	private $meta = null;
 
 	abstract public function get_type(): string;
 
@@ -29,7 +30,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 		return $this->bind;
 	}
 
-	public function set_label( string $label ): self {
+	public function set_label( string $label, bool $is_stack = true ): self {
 		$this->label = $label;
 
 		return $this;
@@ -37,6 +38,12 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 
 	public function set_description( string $description ): self {
 		$this->description = $description;
+
+		return $this;
+	}
+
+	public function set_meta( $meta ): self {
+		$this->meta = $meta;
 
 		return $this;
 	}
@@ -50,6 +57,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 				'label' => $this->label,
 				'description' => $this->description,
 				'props' => $this->get_props(),
+				'meta' => $this->meta,
 			],
 		];
 	}
