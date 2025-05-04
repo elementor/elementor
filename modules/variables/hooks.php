@@ -11,6 +11,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Hooks {
+	const PACKAGES = [
+		'editor-variables',
+	];
+
+	public function register_packages() {
+		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
+			return array_merge( $packages, self::PACKAGES );
+		} );
+
+		return $this;
+	}
+
 	public function register_styles_transformers() {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			( new Style_Transformers() )->append_to( $registry );

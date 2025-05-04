@@ -43,6 +43,7 @@ class Module extends BaseModule {
 
 		$this->hooks()
 			->register_styles_transformers()
+			->register_packages()
 			->filter_for_style_schema()
 			->register_css_renderer();
 	}
