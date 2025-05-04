@@ -55,7 +55,7 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 					"youtube_embed_id" => "QdkDGrS8ZZs?si=s_VjZCQR6Fh1jgB5",
 				],
 			],
-			"ai_creator" => [
+			"create_with_ai" => [
 				"title" => "Create and launch your site faster with AI",
 				"description" => "Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:",
 				"input_placeholder" => "Start describing the site you want to create...",

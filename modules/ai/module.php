@@ -29,7 +29,7 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_IMAGE,
 		self::HISTORY_TYPE_BLOCK,
 	];
-	const MIN_PAGES_FOR_AI_CREATOR = 10;
+	const MIN_PAGES_FOR_CREATE_WITH_AI_BANNER = 10;
 
 	public function get_name() {
 		return 'ai';
@@ -49,7 +49,7 @@ class Module extends BaseModule {
 			return;
 		}
 
-		add_filter( 'elementor/core/admin/homescreen', [ $this, 'add_ai_creator_to_homescreen' ] );
+		add_filter( 'elementor/core/admin/homescreen', [ $this, 'add_create_with_ai_banner_to_homescreen' ] );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -1550,7 +1550,8 @@ class Module extends BaseModule {
 		$product->save();
 	}
 
-	private function should_display_ai_creator() {
+	private function should_display_create_with_ai_banner() {
+		return true;
 		// Check if the site has more than 10 pages with Elementor
 		$elementor_pages = new \WP_Query( [
 			'post_type' => 'page',
@@ -1558,10 +1559,10 @@ class Module extends BaseModule {
 			'fields' => 'ids',
 			'meta_key' => '_elementor_edit_mode',
 			'meta_value' => 'builder',
-			'posts_per_page' => self::MIN_PAGES_FOR_AI_CREATOR + 1,
+			'posts_per_page' => self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER + 1,
 		] );
 
-		if ( $elementor_pages->post_count > self::MIN_PAGES_FOR_AI_CREATOR ) {
+		if ( $elementor_pages->post_count > self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER ) {
 			return false;
 		}
 
@@ -1574,8 +1575,8 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	public function add_ai_creator_to_homescreen( $home_screen_data ) {
-		if ( $this->should_display_ai_creator() ) {
+	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
+		if ( $this->should_display_create_with_ai_banner() ) {
 			$home_screen_data['create_with_ai'] = [
 				'title' => 'Create and launch your site faster with AI',
 				'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',

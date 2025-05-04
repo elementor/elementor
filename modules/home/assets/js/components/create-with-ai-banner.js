@@ -3,11 +3,11 @@ import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import { useState } from 'react';
 
-const AiSiteCreator = ( { ...props } ) => {
-	const { aiCreateWithAIData } = props;
+const CreateWithAIBanner = ( { ...props } ) => {
+	const { createWithAIData } = props;
 	const [ inputValue, setInputValue ] = useState( '' );
 
-	if ( ! aiCreateWithAIData ) {
+	if ( ! createWithAIData ) {
 		return null;
 	}
 
@@ -21,7 +21,7 @@ const AiSiteCreator = ( { ...props } ) => {
 		utm_source: utmSource,
 		utm_medium: utmMedium,
 		utm_campaign: utmCampaign,
-	} = aiCreateWithAIData;
+	} = createWithAIData;
 
 	const handleInputChange = ( event ) => {
 		setInputValue( event.target.value );
@@ -48,12 +48,13 @@ const AiSiteCreator = ( { ...props } ) => {
 				py: 3,
 				px: 4,
 				gap: 2,
-				border: '1px solid #E5E5E5',
+				border: '1px solid var(--e-a-border-color)',
 				borderRadius: 1,
 				boxShadow: 'none',
 				backgroundImage: `url(${ backgroundImage })`,
-				backgroundSize: 'auto',
-				backgroundPosition: 'center',
+				backgroundSize: 'contain',
+				backgroundPosition: 'right center',
+				backgroundRepeat: 'no-repeat',
 			} }
 		>
 			<Stack gap={ 1 } justifyContent="center">
@@ -86,8 +87,8 @@ const AiSiteCreator = ( { ...props } ) => {
 	);
 };
 
-AiSiteCreator.propTypes = {
-	aiCreateWithAIData: PropTypes.object,
+CreateWithAIBanner.propTypes = {
+	createWithAIData: PropTypes.object,
 };
 
-export default AiSiteCreator;
+export default CreateWithAIBanner;
