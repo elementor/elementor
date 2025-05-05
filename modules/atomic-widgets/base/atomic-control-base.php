@@ -13,6 +13,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 	private $label = null;
 	private $description = null;
 	private $meta = null;
+	private $top_divider = false;
 
 	abstract public function get_type(): string;
 
@@ -48,6 +49,12 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 		return $this;
 	}
 
+	public function add_top_divider(): self {
+		$this->top_divider = true;
+
+		return $this;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'type' => 'control',
@@ -58,6 +65,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 				'description' => $this->description,
 				'props' => $this->get_props(),
 				'meta' => $this->meta,
+				'topDivider' => $this->top_divider,
 			],
 		];
 	}

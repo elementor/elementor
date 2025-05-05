@@ -97,13 +97,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'label' => 'H6',
 					],
 				]),
-			Link_Control::bind_to( 'link' ),
+			Link_Control::bind_to( 'link' )->add_top_divider(),
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( \Elementor\Modules\AtomicWidgets\Module::CSSID_EXPERIMENT_NAME ) ) {
 			$items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
 				'layout' => 'two-columns',
-			] );
+			] )->add_top_divider();
 		}
 
 		return [
