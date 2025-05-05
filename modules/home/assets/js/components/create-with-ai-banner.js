@@ -67,7 +67,7 @@ const CreateWithAIBanner = ( { ...props } ) => {
 				boxShadow: 'none',
 				backgroundImage: `url(${ backgroundImage })`,
 				backgroundSize: 'cover',
-				backgroundPosition: '1px',
+				backgroundPosition: 'right center',
 				backgroundRepeat: 'no-repeat',
 			} }
 		>
