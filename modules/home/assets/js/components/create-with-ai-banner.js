@@ -63,16 +63,8 @@ const CreateWithAIBanner = ( { ...props } ) => {
 				py: 3,
 				px: 4,
 				gap: 2,
-<<<<<<< HEAD
 				backgroundImage: `url(${ backgroundImage })`,
 				backgroundSize: 'cover',
-=======
-				border: '1px solid var(--e-a-border-color)',
-				borderRadius: 1,
-				boxShadow: 'none',
-				backgroundImage: `url(${ backgroundImage })`,
-				backgroundSize: 'contain',
->>>>>>> f6f6bbbe2a (Tweak: Add Site Planner to Elementor Home screen (#31040))
 				backgroundPosition: 'right center',
 				backgroundRepeat: 'no-repeat',
 			} }
