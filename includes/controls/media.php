@@ -60,7 +60,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $settings Control settings
+	 * @param array $settings Control settings.
 	 *
 	 * @return array Control settings.
 	 */
@@ -89,7 +89,7 @@ class Control_Media extends Control_Base_Multiple {
 	 * @since 3.4.6
 	 * @deprecated 3.5.0
 	 *
-	 * @param $mimes
+	 * @param mixed $mimes
 	 * @return mixed
 	 */
 	public function support_svg_and_json_import( $mimes ) {
@@ -110,7 +110,7 @@ class Control_Media extends Control_Base_Multiple {
 	public function enqueue() {
 		global $wp_version;
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 		wp_enqueue_media();
 
 		wp_enqueue_style(
@@ -248,7 +248,9 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 
-					<?php /* ?>
+					<?php
+					/*
+					?>
 					<div class="elementor-control-media__warnings" role="alert" style="display: none;">
 						<?php
 						Hints::get_notice_template( [
@@ -258,26 +260,9 @@ class Control_Media extends Control_Base_Multiple {
 						] );
 						?>
 					</div>
-					<?php */ ?>
-
-					<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
-					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
-						<?php
-						Hints::get_notice_template( [
-							'display' => ! Hints::is_dismissed( 'image-optimization' ),
-							'type' => 'info',
-							'content' => __( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
-							'icon' => true,
-							'dismissible' => 'image_optimizer_hint',
-							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
-							'button_event' => 'image_optimizer_hint',
-							'button_data' => [
-								'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-							],
-						] ); ?>
-					</div>
-					<?php endif; ?>
-
+					<?php
+					*/ ?>
+					<?php $this->maybe_display_io_hints(); ?>
 				</div>
 			<# } /* endif isViewable() */ else { #>
 				<div class="elementor-control-media__file elementor-control-preview-area">
@@ -318,6 +303,8 @@ class Control_Media extends Control_Base_Multiple {
 						</select>
 					</div>
 				</div>
+
+				<div class="elementor-control-field-description"><?php echo esc_html__( 'Image size settings don’t apply to Dynamic Images.', 'elementor' ); ?></div>
 			</div>
 			<# } #>
 
@@ -326,7 +313,39 @@ class Control_Media extends Control_Base_Multiple {
 		<?php
 	}
 
-	private function get_image_sizes() : array {
+	private function maybe_display_io_hints() {
+		if ( Hints::should_display_hint( 'image-optimization' ) ) {
+			$content_text = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$button_text = Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Plugin', 'elementor' ) : esc_html__( 'Install Plugin', 'elementor' );
+			$action_url = Hints::get_plugin_action_url( 'image-optimization' );
+		} elseif ( Hints::should_display_hint( 'image-optimization-connect' ) ) {
+			$content_text = esc_html__( "This image isn't optimized. You need to connect your Image Optimizer account first.", 'elementor' );
+			$button_text = esc_html__( 'Connect Now', 'elementor' );
+			$action_url = admin_url( 'admin.php?page=image-optimization-settings' );
+		} else {
+			return;
+		}
+
+		?>
+		<div class="elementor-control-media__promotions" role="alert" style="display: none;">
+			<?php
+			Hints::get_notice_template( [
+				'display' => ! Hints::is_dismissed( 'image-optimization' ),
+				'type' => 'info',
+				'content' => $content_text,
+				'icon' => true,
+				'dismissible' => 'image_optimizer_hint',
+				'button_text' => $button_text,
+				'button_event' => 'image_optimizer_hint',
+				'button_data' => [
+					'action_url' => $action_url,
+				],
+			] ); ?>
+		</div>
+		<?php
+	}
+
+	private function get_image_sizes(): array {
 		$wp_image_sizes = Group_Control_Image_Size::get_all_image_sizes();
 
 		$image_sizes = [];

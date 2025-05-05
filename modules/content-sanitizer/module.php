@@ -23,7 +23,7 @@ class Module extends BaseModule {
 		return 'content-sanitizer';
 	}
 
-	public function sanitize_content( $data, $document ) : array {
+	public function sanitize_content( $data, $document ): array {
 		if ( current_user_can( 'manage_options' ) || empty( $data['elements'] ) ) {
 			return $data;
 		}

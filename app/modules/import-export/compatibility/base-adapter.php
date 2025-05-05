@@ -6,7 +6,7 @@ use Elementor\App\Modules\ImportExport\Import;
 use Elementor\Core\Base\Base_Object;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base_Adapter {

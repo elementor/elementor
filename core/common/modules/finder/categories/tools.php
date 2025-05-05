@@ -6,7 +6,7 @@ use Elementor\Core\Common\Modules\Finder\Base_Category;
 use Elementor\Tools as ElementorTools;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

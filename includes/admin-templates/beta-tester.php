@@ -2,7 +2,7 @@
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 $user = wp_get_current_user();
 
@@ -39,7 +39,7 @@ $beta_tester_email = $user->user_email;
 		</div>
 		<div id="elementor-beta-tester-form__terms">
 			<?php
-			echo sprintf(
+			printf(
 				/* translators: 1. "Terms of service" link, 2. "Privacy policy" link */
 				esc_html__( 'By clicking Sign Up, you agree to Elementor\'s %1$s and %2$s', 'elementor' ),
 				sprintf(

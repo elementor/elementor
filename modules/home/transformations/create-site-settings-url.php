@@ -4,7 +4,7 @@ namespace Elementor\Modules\Home\Transformations;
 use Elementor\Core\DocumentTypes\Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Create_Site_Settings_Url extends Base\Transformations_Abstract {

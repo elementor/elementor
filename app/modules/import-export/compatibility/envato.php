@@ -6,7 +6,7 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Envato extends Base_Adapter {

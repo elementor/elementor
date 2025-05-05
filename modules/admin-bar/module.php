@@ -66,11 +66,12 @@ class Module extends BaseApp {
 		);
 
 		// This is a core script of WordPress, it is not required to pass the 'ver' argument.
-		wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
+		// We should add dependencies to make sure that 'elementor-admin-bar' is loaded before 'admin-bar'.
+		wp_enqueue_script(
 			'admin-bar',
 			null,
 			[ 'elementor-admin-bar' ],
-			false,
+			false, // phpcs:ignore WordPress.WP.EnqueuedResourceParameters
 			true
 		);
 
@@ -133,11 +134,33 @@ class Module extends BaseApp {
 		];
 	}
 
+	public function add_clear_cache_in_admin_bar( $admin_bar_config ): array {
+		if ( current_user_can( 'manage_options' ) ) {
+			$clear_cache_url = add_query_arg(
+				[
+					'_wpnonce' => wp_create_nonce( 'elementor_site_clear_cache' ),
+				],
+				admin_url( 'admin-post.php?action=elementor_site_clear_cache' ),
+			);
+
+			$admin_bar_config['elementor_edit_page']['children'][] = [
+				'id' => 'elementor_site_clear_cache',
+				'title' => esc_html__( 'Clear Files & Data', 'elementor' ),
+				'sub_title' => esc_html__( 'Site', 'elementor' ),
+				'href' => $clear_cache_url,
+			];
+		}
+
+		return $admin_bar_config;
+	}
+
 	/**
 	 * Module constructor.
 	 */
 	public function __construct() {
 		add_action( 'elementor/frontend/before_get_builder_content', [ $this, 'add_document_to_admin_bar' ], 10, 2 );
 		add_action( 'wp_footer', [ $this, 'enqueue_scripts' ], 11 /* after third party scripts */ );
+
+		add_filter( 'elementor/frontend/admin_bar/settings', [ $this, 'add_clear_cache_in_admin_bar' ], 500 );
 	}
 }

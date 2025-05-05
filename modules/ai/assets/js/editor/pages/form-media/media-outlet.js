@@ -21,8 +21,9 @@ import {
 import PropTypes from 'prop-types';
 import useTextToImage from './views/generate/hooks/use-text-to-image';
 import ProductImageUnification from './views/product-image-unification';
+import IsolateObject from './views/isolate-objects';
 
-const MediaOutlet = ( { additionalOptions = null } ) => {
+const MediaOutlet = ( { additionalOptions = null, onClose = null } ) => {
 	const { editImage } = useEditImage();
 
 	const { current, navigate } = useLocation( { current: additionalOptions?.location || LOCATIONS.GENERATE } );
@@ -75,7 +76,8 @@ const MediaOutlet = ( { additionalOptions = null } ) => {
 			{ current === LOCATIONS.REPLACE_BACKGROUND && <ReplaceBackground /> }
 			{ current === LOCATIONS.REMOVE_BACKGROUND && <RemoveBackground /> }
 			{ current === LOCATIONS.CLEANUP && <Cleanup /> }
-			{ current === LOCATIONS.PRODUCT_IMAGE_UNIFICATION && <ProductImageUnification /> }
+			{ current === LOCATIONS.PRODUCT_IMAGE_UNIFICATION && <ProductImageUnification onClose={ onClose } /> }
+			{ current === LOCATIONS.ISOLATE_OBJECT && <IsolateObject /> }
 		</>
 	);
 };
@@ -84,5 +86,6 @@ export default MediaOutlet;
 
 MediaOutlet.propTypes = {
 	additionalOptions: PropTypes.object,
+	onClose: PropTypes.func,
 };
 

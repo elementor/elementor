@@ -25,6 +25,7 @@ class Maintenance {
 	 *
 	 * Fired by `register_activation_hook` when the plugin is activated.
 	 *
+	 * @param bool $network_wide
 	 * @since 1.0.0
 	 * @access public
 	 * @static
@@ -65,6 +66,10 @@ class Maintenance {
 		}
 	}
 
+	public static function deactivation() {
+		Api::get_deactivation_data();
+	}
+
 	/**
 	 * Uninstall Elementor.
 	 *
@@ -78,6 +83,8 @@ class Maintenance {
 	 */
 	public static function uninstall() {
 		wp_clear_scheduled_hook( 'elementor/tracker/send_event' );
+
+		Api::get_uninstalled_data();
 	}
 
 	/**
@@ -91,6 +98,7 @@ class Maintenance {
 	 */
 	public static function init() {
 		register_activation_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'activation' ] );
+		register_deactivation_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'deactivation' ] );
 		register_uninstall_hook( ELEMENTOR_PLUGIN_BASE, [ __CLASS__, 'uninstall' ] );
 
 		add_action( 'wpmu_new_blog', function ( $site_id ) {
@@ -113,7 +121,7 @@ class Maintenance {
 				Manager::create_default_kit();
 
 				restore_current_blog();
-			};
+			}
 
 			return;
 		}

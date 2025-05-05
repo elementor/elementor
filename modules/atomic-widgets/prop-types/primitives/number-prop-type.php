@@ -9,8 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Number_Prop_Type extends Plain_Prop_Type {
-	use Supports_Shorthanded_Value;
-
 	public static function get_key(): string {
 		return 'number';
 	}

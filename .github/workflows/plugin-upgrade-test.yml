@@ -1,7 +1,10 @@
 name: Upgrade Elementor test
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'main'
+      - '3.*'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -16,17 +19,12 @@ on:
         required: false
         default: ''
 
-# This allows a subsequently queued workflow run to interrupt previous runs
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.head_ref || github.ref }}'
-  cancel-in-progress: true
-
 jobs:
   build-plugin:
     uses: ./.github/workflows/build.yml
   run-upgrade-test:
     name: Playwright plugin upgrade test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-plugin]
     if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
     steps:

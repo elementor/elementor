@@ -29,7 +29,7 @@ class Tracker {
 	 *
 	 * @var string API URL.
 	 */
-	private static $_api_url = 'https://my.elementor.com/api/v1/tracker/';
+	private static $api_url = 'https://my.elementor.com/api/v1/tracker/';
 
 	private static $notice_shown = false;
 
@@ -128,11 +128,8 @@ class Tracker {
 			if ( $last_send && $last_send > $last_send_interval ) {
 				return;
 			}
-		} else {
-			// Make sure there is at least a 1 hour delay between override sends, we dont want duplicate calls due to double clicking links.
-			if ( $last_send && $last_send > strtotime( '-1 hours' ) ) {
-				return;
-			}
+		} elseif ( $last_send && $last_send > strtotime( '-1 hours' ) ) {
+			return;
 		}
 
 		// Update time first before sending to ensure it is set.
@@ -141,17 +138,16 @@ class Tracker {
 		$params = self::get_tracking_data( empty( $last_send ) );
 
 		// Tracking data is used for System Info reports, and events should not be included in System Info reports,
-		// so it is added here
+		// so it is added here.
 		$params['analytics_events'] = self::get_events();
 
 		add_filter( 'https_ssl_verify', '__return_false' );
 
 		wp_safe_remote_post(
-			self::$_api_url,
+			self::$api_url,
 			[
 				'timeout' => 25,
 				'blocking' => false,
-				// 'sslverify' => false,
 				'body' => [
 					'data' => wp_json_encode( $params ),
 				],
@@ -203,7 +199,7 @@ class Tracker {
 			self::set_opt_in( false );
 		}
 
-		wp_redirect( remove_query_arg( 'elementor_tracker' ) );
+		wp_safe_redirect( remove_query_arg( 'elementor_tracker' ) );
 		exit;
 	}
 
@@ -298,6 +294,7 @@ class Tracker {
 
 		$usage = [];
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
 			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits`
 				FROM {$wpdb->posts} `p`
@@ -332,6 +329,7 @@ class Tracker {
 
 		$usage = [];
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
 			"SELECT `post_type`, `post_status`, COUNT(`ID`) `hits`
 				FROM {$wpdb->posts} `p`
@@ -367,6 +365,7 @@ class Tracker {
 
 		$usage = [];
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
 			"SELECT `meta_value`, COUNT(`ID`) `hits`
 				FROM {$wpdb->posts} `p`
@@ -383,7 +382,6 @@ class Tracker {
 		}
 
 		return $usage;
-
 	}
 
 	/**
@@ -479,6 +477,7 @@ class Tracker {
 
 		$usage = [];
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results(
 			"SELECT `meta_value`, COUNT(`ID`) `hits`, `post_status`
 				FROM {$wpdb->posts} `p`
@@ -509,7 +508,7 @@ class Tracker {
 		global $wpdb;
 		$table_name = $wpdb->prefix . Events_DB_Manager::TABLE_NAME;
 
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$results = $wpdb->get_results( "SELECT event_data FROM {$table_name}" );
 
 		$events_data = [];
@@ -573,7 +572,6 @@ class Tracker {
 		 * @param array $params Variable to encode as JSON.
 		 *
 		 * @since 1.0.0
-		 *
 		 */
 		$params = apply_filters( 'elementor/tracker/send_tracking_data_params', $params );
 

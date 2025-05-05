@@ -33,16 +33,14 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Get Experimental Data
+	 * Register Experimental Feature
 	 *
 	 * Implementation of this method makes the module an experiment.
 	 *
-	 * @since 3.1.0
-	 *
-	 * @return array
+	 * @since 3.28.0
 	 */
-	public static function get_experimental_data() {
-		return [
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature( [
 			'name' => 'landing-pages',
 			'title' => esc_html__( 'Landing Pages', 'elementor' ),
 			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
@@ -53,7 +51,21 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '3.22.0',
 			],
 			'deprecated' => true,
-		];
+		] );
+	}
+
+	private function should_activate_landing_pages() {
+		if ( '1' === get_option( 'elementor_landing_pages_activation' ) ) {
+			return true;
+		}
+
+		if ( $this->has_landing_pages() ) {
+			update_option( 'elementor_landing_pages_activation', '1' );
+			return true;
+		}
+
+		update_option( 'elementor_landing_pages_activation', '0' );
+		return false;
 	}
 
 	/**
@@ -112,7 +124,7 @@ class Module extends BaseModule {
 	 * @since 3.1.0
 	 * @access public
 	 *
-	 * @param \WP_Post $post Post Object
+	 * @param \WP_Post $post Post Object.
 	 *
 	 * @return bool Whether the post was built with Elementor.
 	 */
@@ -209,7 +221,7 @@ class Module extends BaseModule {
 				<?php
 					printf(
 						/* translators: %1$s Link open tag, %2$s: Link close tag. */
-						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
+						esc_html__( 'Or view %1$sTrashed Items%2$s', 'elementor' ),
 						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT ) ) . '">',
 						'</a>'
 					);
@@ -428,6 +440,16 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		if ( ! $this->should_activate_landing_pages() ) {
+			return;
+		}
+
+		$this->register_experiment();
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
+			return;
+		}
+
 		$this->permalink_structure = get_option( 'permalink_structure' );
 
 		$this->register_landing_page_cpt();

@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	const KIND = 'object';
 
-	use Concerns\Has_Default,
-		Concerns\Has_Generate,
-		Concerns\Has_Meta,
-		Concerns\Has_Required_Setting,
-		Concerns\Has_Settings,
-		Concerns\Has_Transformable_Validation;
+	use Concerns\Has_Default;
+	use Concerns\Has_Generate;
+	use Concerns\Has_Meta;
+	use Concerns\Has_Required_Setting;
+	use Concerns\Has_Settings;
+	use Concerns\Has_Transformable_Validation;
 
 	/**
 	 * @var array<Prop_Type>
@@ -28,6 +28,22 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	public function __construct() {
 		$this->shape = $this->define_shape();
+	}
+
+	public function get_default() {
+		if ( null !== $this->default ) {
+			return $this->default;
+		}
+
+		foreach ( $this->get_shape() as $item ) {
+			// If the object has at least one property with default, return an empty object so
+			// it'll be iterable for processes like validation / transformation.
+			if ( $item->get_default() !== null ) {
+				return static::generate( [] );
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -77,7 +93,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 				Utils::safe_throw( "Object prop type must have a prop type for key: $key" );
 			}
 
-			if ( ! $prop_type->validate( $value[ $key ] ?? null ) ) {
+			if ( ! $prop_type->validate( $value[ $key ] ?? $prop_type->get_default() ) ) {
 				return false;
 			}
 		}
@@ -106,13 +122,15 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function jsonSerialize(): array {
+		$default = $this->get_default();
+
 		return [
 			'kind' => static::KIND,
 			'key' => static::get_key(),
-			'default' => $this->get_default(),
-			'meta' => $this->get_meta(),
-			'settings' => $this->get_settings(),
-			'shape' => $this->get_shape(),
+			'default' => is_array( $default ) ? (object) $default : $default,
+			'meta' => (object) $this->get_meta(),
+			'settings' => (object) $this->get_settings(),
+			'shape' => (object) $this->get_shape(),
 		];
 	}
 

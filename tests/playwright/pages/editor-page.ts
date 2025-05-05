@@ -6,9 +6,11 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, ContainerType, ContainerPreset } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
+import { timeouts } from '../config/timeouts';
+
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
@@ -16,7 +18,7 @@ let window: WindowType;
 
 export default class EditorPage extends BasePage {
 	readonly previewFrame: Frame;
-	postId: number | null;
+	postId: number;
 
 	/**
 	 * Create an Elementor editor page.
@@ -24,8 +26,6 @@ export default class EditorPage extends BasePage {
 	 * @param {Page}     page        - Playwright page instance.
 	 * @param {TestInfo} testInfo    - Test information.
 	 * @param {number}   cleanPostId - Optional. Post ID.
-	 *
-	 * @return {void}
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
@@ -62,7 +62,10 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Upload SVG in the Media Library. Expects media library to be open.
+	 * Upload SVG in the Media Library. Can be used on both Media Control and Icons Control.
+	 *
+	 * Please note that this method expects media library to be open as different controls
+	 * have different ways to open the media library.
 	 *
 	 * @param {string} svgFileName - Optional. SVG file name, without extension.
 	 *
@@ -167,7 +170,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<string>} The widget ID.
 	 */
-	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
+	async addWidget( widgetType: string, container: string = null, isContainerASection: boolean = false ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
 		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
 
@@ -231,6 +234,17 @@ export default class EditorPage extends BasePage {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
+	async waitForPreviewFrame(): Promise<Frame> {
+		await this.page.waitForSelector( '[id="elementor-preview-iframe"]', { timeout: timeouts.longAction } );
+
+		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		if ( ! frame ) {
+			throw new Error( 'Iframe is null even after it appeared in the DOM.' );
+		}
+
+		return frame;
+	}
+
 	/**
 	 * Get the frame of the Elementor editor preview.
 	 *
@@ -256,6 +270,21 @@ export default class EditorPage extends BasePage {
 
 		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
 		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
+	}
+
+	/**
+	 * Add new container preset.
+	 *
+	 * @param {ContainerType}   element - Element type. Available values: 'flex', 'grid'.
+	 * @param {ContainerPreset} preset  - Container preset.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async addNewContainerPreset( element: ContainerType, preset: ContainerPreset ): Promise<void> {
+		const frame = this.getPreviewFrame();
+		await frame.locator( '.elementor-add-section-button' ).click();
+		await frame.locator( `.${ element }-preset-button` ).click();
+		await frame.locator( `[data-preset=${ preset }]` ).click();
 	}
 
 	/**
@@ -557,6 +586,30 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set gap control value.
+	 *
+	 * @param {string}     controlId - The control to set the value to.
+	 * @param {GapControl} value     - The value to set. Either a string or an object with column, row and unit values.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setGapControlValue( controlId: string, value: GapControl ): Promise<void> {
+		const control = this.page.locator( `.elementor-control-${ controlId }` );
+
+		if ( 'string' === typeof value ) {
+			await control.locator( '.elementor-control-gap >> nth=0' ).locator( 'input' ).fill( value );
+		} else if ( 'object' === typeof value ) {
+			await control.locator( '.elementor-link-gaps' ).click();
+			await control.locator( '.elementor-control-gap input[data-setting="column"]' ).fill( value.column );
+			await control.locator( '.elementor-control-gap input[data-setting="row"]' ).fill( value.row );
+			if ( value.unit ) {
+				await control.locator( '.e-units-switcher' ).click();
+				await control.locator( `[data-choose="${ value.unit }"]` ).click();
+			}
+		}
+	}
+
+	/**
 	 * Set an image on a media control.
 	 *
 	 * @param {string}  controlId  - The control to set the value to.
@@ -587,42 +640,19 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( controlSelector ).click();
 	}
 
-	/**
-	 * Set shadow control value.
-	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Shadow type. Available options are 'text' or 'box.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setShadowControlValue( controlId: string, type: string ): Promise<void> {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type label` ).first().click();
+	async setShadowControlValue( controlId: string, shadowType: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ shadowType }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ shadowType }_shadow_type label` ).first().click();
 	}
 
-	/**
-	 * Set text stroke control value.
-	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Stroke type. Available options are 'text' or 'box.
-	 * @param {number} value     - Stroke value.
-	 * @param {string} color     - Stroke color.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setTextStrokeControlValue( controlId: string, type: string, value: number, color: string ): Promise<void> {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+	async setTextStrokeControlValue( controlId: string, strokeType: string, value: number, color: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke input[type="number"]` ).first().fill( value.toString() );
 		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
 		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type label` ).first().click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke_type label` ).first().click();
 	}
 
-	/**
-	 * Set a widget mask.
-	 *
-	 * @return {Promise<void>}
-	 */
 	async setWidgetMask(): Promise<void> {
 		await this.openSection( '_section_masking' );
 		await this.setSwitcherControlValue( '_mask_switch', true );
@@ -803,7 +833,7 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-settings-${ innerPanel }` ).click();
+			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
 		}
 	}
 
@@ -832,6 +862,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen(): Promise<void> {
+		await this.waitForPreviewFrame();
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( ! isOpen ) {
@@ -849,8 +880,8 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageTemplate( template: 'default' | 'canvas' | 'full-width' ): Promise<void> {
-		let templateValue;
-		let templateClass;
+		let templateValue: string;
+		let templateClass: string;
 
 		switch ( template ) {
 			case 'default':
@@ -939,7 +970,7 @@ export default class EditorPage extends BasePage {
 		if ( hasTopBar ) {
 			await this.clickTopBarItem( TopBarSelectors.publish );
 			await this.page.waitForLoadState();
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
+			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
 		} else {
 			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
 			await this.page.waitForLoadState();
@@ -1186,8 +1217,10 @@ export default class EditorPage extends BasePage {
 	async isUiStable( locator: Locator, retries: number = 3, timeout: number = 500 ): Promise<void> {
 		const comparator = getComparator( 'image/png' );
 		let retry = 0,
-			beforeImage,
-			afterImage;
+			beforeImage: Buffer,
+			afterImage: Buffer;
+
+		await locator.waitFor();
 
 		do {
 			if ( retry === retries ) {
@@ -1271,7 +1304,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async removeWpAdminBar(): Promise<void> {
 		const adminBar = 'wpadminbar';
-		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: timeouts.longAction } );
 		await this.page.evaluate( ( selector ) => {
 			const admin = document.getElementById( selector );
 			admin.remove();

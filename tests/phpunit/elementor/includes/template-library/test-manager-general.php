@@ -1,10 +1,8 @@
 <?php
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
-use Elementor\Api;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
-use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\TemplateLibrary\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\TemplateLibrary\Source_Local;
@@ -14,10 +12,55 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	 * @var Manager
 	 */
 	protected static $manager;
+
+	protected $sourceCloudMock;
+
 	private $fake_post_id = '123';
 
 	public static function setUpBeforeClass(): void {
 		self::$manager = self::elementor()->templates_manager;
+	}
+
+	public function setUp(): void
+	{
+		parent::setUp();
+		$this->mock_cloud_library();
+
+		$this->mock_manager_cloud_source($this->sourceCloudMock);
+	}
+
+	private function mock_manager_cloud_source($sourceCloudMock)
+	{
+		$reflection = new \ReflectionClass(self::$manager);
+		$sourcesProperty = $reflection->getProperty('_registered_sources');
+		$sourcesProperty->setAccessible(true);
+
+		$sources = $sourcesProperty->getValue(self::$manager);
+
+		$sources['cloud'] = $sourceCloudMock;
+
+		$sourcesProperty->setValue(self::$manager, $sources);
+	}
+
+	protected function mock_cloud_library() {
+		$cloud_library_app_mock = $this->getMockBuilder( '\Elementor\Modules\CloudLibrary\Connect\Cloud_Library' )
+			->onlyMethods( [ 'get_resources' ] )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$cloud_library_app_mock
+			->method( 'get_resources' )
+			->willReturn( [] );
+
+		$sourceCloudMock = $this->getMockBuilder( 'Elementor\TemplateLibrary\Source_Cloud' )
+			->onlyMethods( [ 'get_app', 'get_items', 'get_id', 'bulk_delete_items' ] )
+			->disableOriginalConstructor()
+			->getMock();
+
+		$sourceCloudMock->method( 'get_app' )->willReturn( $cloud_library_app_mock );
+		$sourceCloudMock->method( 'get_id' )->willReturn( 'cloud' );
+
+		$this->sourceCloudMock = $sourceCloudMock;
 	}
 
 	public function test_should_return_import_images_instance() {
@@ -56,7 +99,6 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 			'template_error'
 		);
 	}
-
 
 	public function test_should_return_wp_error_arguments_not_specified_from_update_template() {
 		$this->assertWPError(
@@ -178,6 +220,8 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 		$document_ids = $this->create_mock_templates( $admin, 'container_flexbox' );
 
+		$this->sourceCloudMock->method( 'get_items' )->willReturn( [] );
+
 		// Act
 		$templates = self::$manager->get_templates();
 
@@ -247,6 +291,19 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 
 		// Act
 		$templates = self::$manager->get_templates( [ 'remote' ], true );
+
+		// Assert
+		$this->assertCount( 2, $templates );
+	}
+
+	public function test_get_templates__only_cloud() {
+		// Arrange
+		$admin = $this->act_as_admin();
+
+		$this->create_cloud_mock_templates();
+
+		// Act
+		$templates = self::$manager->get_templates( [ 'cloud' ] );
 
 		// Assert
 		$this->assertCount( 2, $templates );
@@ -355,5 +412,107 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				'body' => wp_json_encode( $templates ),
 			];
 		}, 10, 3 );
+	}
+
+	private function create_cloud_mock_templates() {
+		$templates = [
+			[
+				"id" => 1,
+				"createdAt" => "2025-01-21T10:45:32.541Z",
+				"updatedAt" => "2025-01-21T10:45:32.541Z",
+				"parentId" => null,
+				"authorId" => "123",
+				"authorEmail" => "mock@email.com",
+				"title" => "AFolder",
+				"type" => "FOLDER",
+				"templateType" => "",
+			],
+			[
+				"id" => 2,
+				"createdAt" => "2025-01-21T10:45:32.541Z",
+				"updatedAt" => "2025-01-21T10:45:32.541Z",
+				"parentId" => null,
+				"authorId" => "123",
+				"authorEmail" => "mock@email.com",
+				"title" => "ATemplate",
+				"type" => "TEMPLATE",
+				"templateType" => "",
+			],
+		];
+
+		$response = [
+			"total" => 2,
+			"data" => $templates,
+		];
+
+		$this->sourceCloudMock->method( 'get_items' )->willReturn( $response );
+		$this->sourceCloudMock->method( 'get_id' )->willReturn( 'cloud' );
+	}
+
+	public function test_should_return_wp_error_arguments_not_specified_from_bulk_delete_templates() {
+		$this->assertWPError( self::$manager->bulk_delete_templates( [] ), 'arguments_not_specified' );
+	}
+
+	public function test_should_return_wp_error_template_error_from_bulk_delete_templates() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'invalid source',
+					'template_ids' => [ 1, 2, 3 ],
+				]
+			), 'template_error'
+		);
+	}
+
+	public function test_should_return_true_from_bulk_delete_templates() {
+		// Arrange
+		$template_ids = [ 1, 2, 3 ];
+
+		$this->sourceCloudMock
+			->method( 'bulk_delete_items' )
+			->with( $template_ids )
+			->willReturn( true );
+
+		// Act
+		$result = self::$manager->bulk_delete_templates( [
+			'source' => 'cloud',
+			'template_ids' => $template_ids,
+		] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_should_return_wp_error_when_template_ids_is_empty() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'cloud',
+					'template_ids' => [],
+				]
+			), 'arguments_not_specified'
+		);
+	}
+
+	public function test_should_return_wp_error_when_source_is_incorrect() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'test',
+					'template_ids' => [ 1 ],
+				]
+			), 'template_error'
+		);
+	}
+
+	public function test_should_return_wp_error_when_template_ids_is_not_array() {
+		$this->assertWPError(
+			self::$manager->bulk_delete_templates(
+				[
+					'source' => 'cloud',
+					'template_ids' => 'not_an_array',
+				]
+			), 'arguments_not_specified'
+		);
 	}
 }

@@ -1,7 +1,6 @@
 import EditorSelectors from '../../selectors/editor-selectors';
-import { expect, Locator, type Page, type TestInfo } from '@playwright/test';
+import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
-import path from 'path';
 import { LinkOptions } from '../../types/types';
 
 export default class Content {
@@ -26,12 +25,12 @@ export default class Content {
 	 */
 	async setLink( link: string, options : LinkOptions = { targetBlank: false, noFollow: false, linkTo: false } ): Promise<void> {
 		if ( options.linkTo ) {
-			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'Custom URL' );
+			await this.editor.setSelectControlValue( EditorSelectors.image.linkSelect, 'custom' );
 		}
 
 		const urlInput = this.page.locator( options.linkInpSelector ).first();
 		await urlInput.clear();
-		await urlInput.type( link );
+		await urlInput.fill( link );
 
 		const wheel = this.page.locator( EditorSelectors.button.linkOptions ).first();
 		if ( await wheel.isVisible() ) {
@@ -49,7 +48,7 @@ export default class Content {
 			await this.page
 				.locator( EditorSelectors.button.customAttributesInp )
 				.first()
-				.type( `${ options?.customAttributes.key }|${ options.customAttributes.value }` );
+				.fill( `${ options?.customAttributes.key }|${ options.customAttributes.value }` );
 		}
 		await this.editor.getPreviewFrame().locator( EditorSelectors.siteTitle ).click();
 	}
@@ -87,9 +86,11 @@ export default class Content {
 	 * @return {Promise<void>}
 	 */
 	async selectImageSize( args: { widget: string, select: string, imageSize: string } ): Promise<void> {
-		await this.editor.getPreviewFrame().locator( args.widget ).click();
-		await this.page.locator( args.select ).selectOption( args.imageSize );
-		await this.editor.getPreviewFrame().locator( EditorSelectors.pageTitle ).click();
+		await this.editor.waitForPreviewFrame();
+		const frame: Frame = this.editor.getPreviewFrame();
+		await frame.locator( args.widget ).click();
+		await this.editor.setSelectControlValue( args.select, args.imageSize );
+		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
 
 	/**
@@ -99,18 +100,15 @@ export default class Content {
 	 * @param {string}  args.selector    - Image selector.
 	 * @param {string}  args.imageTitle  - Image title.
 	 * @param {boolean} args.isPublished - If true, the image is published.
-	 * @param {boolean} args.isVideo     - If true, the widget is a video, otherwise an image.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean, isVideo: boolean } ) {
+	async verifyImageSrc( args: { selector: string, imageTitle: string, isPublished: boolean } ): Promise<void> {
 		const image = args.isPublished
 			? this.page.locator( args.selector )
 			: await this.editor.getPreviewFrame().waitForSelector( args.selector );
-		const attribute = args.isVideo ? 'style' : 'src';
-		const src = await image.getAttribute( attribute );
-		const regex = new RegExp( args.imageTitle );
-		expect( regex.test( src ) ).toEqual( true );
+		const src = await image.getAttribute( 'src' );
+		expect( src.includes( args.imageTitle ) ).toEqual( true );
 	}
 
 	/**
@@ -127,41 +125,13 @@ export default class Content {
 	 */
 	async setCustomImageSize( args: { selector: string, select: string, imageTitle: string, width: string, height: string } ): Promise<void> {
 		await this.editor.getPreviewFrame().locator( args.selector ).click();
-		await this.page.locator( args.select ).selectOption( 'custom' );
-		await this.page.locator( EditorSelectors.image.widthInp ).type( args.width );
-		await this.page.locator( EditorSelectors.image.heightInp ).type( args.height );
+		await this.editor.setSelectControlValue( args.select, 'custom' );
+		await this.page.locator( EditorSelectors.image.widthInp ).fill( args.width );
+		await this.page.locator( EditorSelectors.image.heightInp ).fill( args.height );
 		const regex = new RegExp( `http://(.*)/wp-content/uploads/elementor/thumbs/${ args.imageTitle }(.*)` );
 		const response = this.page.waitForResponse( regex );
 		await this.page.getByRole( 'button', { name: 'Apply' } ).click();
 		await response;
-	}
-
-	/**
-	 * Upload SVG icon.
-	 *
-	 * @param {Object} options        - SVG options.
-	 * @param {string} options.icon   - SVG icon.
-	 * @param {string} options.widget - The widget to which to upload the SVG.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async uploadSVG( options? : { icon?: string, widget?: string} ): Promise<void> {
-		const _icon = options?.icon === undefined ? 'test-svg-wide' : options.icon;
-		if ( 'text-path' === options?.widget ) {
-			await this.page.locator( EditorSelectors.plusIcon ).click();
-		} else {
-			await this.editor.openPanelTab( 'content' );
-			const mediaUploadControl = this.page.locator( EditorSelectors.media.preview ).first();
-			await mediaUploadControl.hover();
-			await mediaUploadControl.waitFor();
-			await this.page.getByText( 'Upload SVG' ).first().click();
-		}
-		const regex = new RegExp( _icon );
-		const response = this.page.waitForResponse( regex );
-		await this.page.setInputFiles( EditorSelectors.media.imageInp, path.resolve( __dirname, `../../resources/${ _icon }.svg` ) );
-		await response;
-		await this.page.getByRole( 'button', { name: 'Insert Media' } )
-			.or( this.page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	}
 
 	/**
@@ -173,12 +143,11 @@ export default class Content {
 	 * @return {Record<string, string | number>} options: parsed query params with key|value
 	 */
 	parseSrc( src: string ): Record<string, string | number> {
-		const options = src.split( '?' )[ 1 ].split( '&' ).reduce( ( acc, cur ) => {
+		return src.split( '?' )[ 1 ].split( '&' ).reduce( ( acc, cur ) => {
 			const [ key, value ] = cur.split( '=' );
 			acc[ key ] = value;
 			return acc;
 		}, {} );
-		return options;
 	}
 
 	/**

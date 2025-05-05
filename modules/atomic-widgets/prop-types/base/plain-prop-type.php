@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	const KIND = 'plain';
 
-	use Concerns\Has_Default,
-		Concerns\Has_Generate,
-		Concerns\Has_Meta,
-		Concerns\Has_Required_Setting,
-		Concerns\Has_Settings,
-		Concerns\Has_Transformable_Validation;
+	use Concerns\Has_Default;
+	use Concerns\Has_Generate;
+	use Concerns\Has_Meta;
+	use Concerns\Has_Required_Setting;
+	use Concerns\Has_Settings;
+	use Concerns\Has_Transformable_Validation;
 
 	/**
 	 * @return static
@@ -48,8 +48,8 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			'kind' => static::KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
-			'meta' => $this->get_meta(),
-			'settings' => $this->get_settings(),
+			'meta' => (object) $this->get_meta(),
+			'settings' => (object) $this->get_settings(),
 		];
 	}
 

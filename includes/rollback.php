@@ -154,7 +154,7 @@ class Rollback {
 	 * @access protected
 	 */
 	protected function upgrade() {
-		require_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
+		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 
 		$logo_url = ELEMENTOR_ASSETS_URL . 'images/logo-panel.svg';
 
