@@ -12,6 +12,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			renameButton: '.elementor-template-library-template-rename',
 			moveButton: '.elementor-template-library-template-move',
 			copyButton: '.elementor-template-library-template-copy',
+			exportButton: '.elementor-template-library-template-export',
 			morePopup: '.elementor-template-library-template-more',
 			toggleMore: '.elementor-template-library-template-more-toggle',
 			toggleMoreIcon: '.elementor-template-library-template-more-toggle i',
@@ -29,6 +30,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			'click @ui.renameButton': 'onRenameClick',
 			'click @ui.moveButton': 'onMoveClick',
 			'click @ui.copyButton': 'onCopyClick',
+			'click @ui.exportButton': 'onExportClick',
 		} );
 	},
 
@@ -99,6 +101,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		event.stopPropagation();
 
 		this.ui.morePopup.show();
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.morePopup,
+		} );
 	},
 
 	onPreviewButtonClick( event ) {
@@ -133,6 +139,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		} );
 	},
 
+	onExportClick( e ) {
+		e.stopPropagation();
+	},
+
 	showToggleMoreLoader() {
 		this.ui.toggleMoreIcon.removeClass( 'eicon-ellipsis-h' ).addClass( 'eicon-loading eicon-animation-spin' );
 	},
@@ -146,8 +156,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 		if ( event?.target?.checked ) {
 			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
+			this.$el.addClass( 'bulk-selected-item' );
 		} else {
 			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
+			this.$el.removeClass( 'bulk-selected-item' );
 		}
 
 		elementor.templates.layout.handleBulkActionBarUi();

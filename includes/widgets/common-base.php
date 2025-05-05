@@ -136,6 +136,66 @@ class Widget_Common_Base extends Widget_Base {
 				'title' => esc_html__( 'Circle', 'elementor' ),
 				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/circle.svg',
 			],
+			'oval-vertical' => [
+				'title' => esc_html__( 'Oval vertical', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/oval-vertical.svg',
+			],
+			'oval-horizontal' => [
+				'title' => esc_html__( 'Oval horizontal', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/oval-horizontal.svg',
+			],
+			'pill-vertical' => [
+				'title' => esc_html__( 'Pill vertical', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/pill-vertical.svg',
+			],
+			'pill-horizontal' => [
+				'title' => esc_html__( 'Pill horizontal', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/pill-horizontal.svg',
+			],
+			'triangle' => [
+				'title' => esc_html__( 'Triangle', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/triangle.svg',
+			],
+			'diamond' => [
+				'title' => esc_html__( 'Diamond', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/diamond.svg',
+			],
+			'pentagon' => [
+				'title' => esc_html__( 'Pentagon', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/pentagon.svg',
+			],
+			'hexagon-vertical' => [
+				'title' => esc_html__( 'Hexagon vertical', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon-vertical.svg',
+			],
+			'hexagon-horizontal' => [
+				'title' => esc_html__( 'Hexagon horizontal', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon-horizontal.svg',
+			],
+			'heptagon' => [
+				'title' => esc_html__( 'Heptagon', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/heptagon.svg',
+			],
+			'octagon' => [
+				'title' => esc_html__( 'Octagon', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/octagon.svg',
+			],
+			'parallelogram-right' => [
+				'title' => esc_html__( 'Parallelogram right', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/parallelogram-right.svg',
+			],
+			'parallelogram-left' => [
+				'title' => esc_html__( 'Parallelogram left', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/parallelogram-left.svg',
+			],
+			'trapezoid-up' => [
+				'title' => esc_html__( 'Trapezoid Up', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/trapezoid-up.svg',
+			],
+			'trapezoid-down' => [
+				'title' => esc_html__( 'Trapezoid Down', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/trapezoid-down.svg',
+			],
 			'flower' => [
 				'title' => esc_html__( 'Flower', 'elementor' ),
 				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/flower.svg',
@@ -144,17 +204,13 @@ class Widget_Common_Base extends Widget_Base {
 				'title' => esc_html__( 'Sketch', 'elementor' ),
 				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/sketch.svg',
 			],
-			'triangle' => [
-				'title' => esc_html__( 'Triangle', 'elementor' ),
-				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/triangle.svg',
+			'hexagon' => [
+				'title' => esc_html__( 'Hexagon Donut', 'elementor' ),
+				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon.svg',
 			],
 			'blob' => [
 				'title' => esc_html__( 'Blob', 'elementor' ),
 				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/blob.svg',
-			],
-			'hexagon' => [
-				'title' => esc_html__( 'Hexagon', 'elementor' ),
-				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/hexagon.svg',
 			],
 		];
 
@@ -1014,7 +1070,7 @@ class Widget_Common_Base extends Widget_Base {
 				'columns' => 3,
 				'options' => $this->get_shapes(),
 				'default' => 'circle',
-				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . '/mask-shapes/{{VALUE}}.svg );' ),
+				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . 'mask-shapes/{{VALUE}}.svg );' ),
 				'condition' => [
 					'_mask_switch!' => '',
 				],

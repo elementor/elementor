@@ -85,7 +85,16 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 		event.stopPropagation();
 
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
+		}
+
+		if ( 'TEMPLATE' === this.model.get( 'subType' ) ) {
+			this.handleGridViewItemSingleClick();
 		}
 	},
 
@@ -123,7 +132,12 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 
 	handleItemDoubleClick() {
 		if ( 'FOLDER' === this.model.get( 'subType' ) ) {
-			$e.route( 'library/view-folder', { model: this.model } );
+			$e.route( 'library/view-folder', {
+				model: this.model,
+				onAfter: () => {
+					elementor.templates.resetBulkActionBar();
+				},
+			} );
 		}
 	},
 
