@@ -382,6 +382,15 @@ class Manager extends Base_Object {
 			'generator_tag' => true,
 			'default' => self::STATE_ACTIVE,
 		] );
+		
+		$this->add_feature( [
+			'name' => 'e_display_none',
+			'title' => esc_html__( 'V4 Display None', 'elementor' ),
+			'description' => esc_html__( "The None display setting enables you to hide an element completely.", 'elementor' ),
+			static::TYPE_HIDDEN => true,
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_INACTIVE,
+		] );
 	}
 
 	/**
