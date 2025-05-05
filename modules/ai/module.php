@@ -1564,7 +1564,6 @@ class Module extends BaseModule {
 			return false;
 		}
 
-		// Check if a custom kit is applied (not the default one)
 		if ( Utils::is_custom_kit_applied() ) {
 			return false;
 		}
