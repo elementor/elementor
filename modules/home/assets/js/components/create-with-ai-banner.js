@@ -39,6 +39,21 @@ const CreateWithAIBanner = ( { ...props } ) => {
 		return url.toString();
 	};
 
+	const handleNavigation = () => {
+		if ( ! inputValue ) {
+			return;
+		}
+		window.open( getButtonHref(), '_blank' );
+		setInputValue( '' );
+	};
+
+	const handleKeyDown = ( event ) => {
+		if ( 'Enter' === event.key ) {
+			event.preventDefault();
+			handleNavigation();
+		}
+	};
+
 	return (
 		<Paper
 			elevation={ 0 }
@@ -71,14 +86,14 @@ const CreateWithAIBanner = ( { ...props } ) => {
 					sx={ { flex: 1 } }
 					value={ inputValue }
 					onChange={ handleInputChange }
+					onKeyDown={ handleKeyDown }
 				/>
 				<Button
 					variant="outlined"
 					size="small"
 					color="secondary"
 					startIcon={ <span className="eicon-ai"></span> }
-					href={ getButtonHref() }
-					target="_blank"
+					onClick={ handleNavigation }
 				>
 					{ buttonTitle }
 				</Button>
