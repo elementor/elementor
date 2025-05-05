@@ -63,12 +63,11 @@ const CreateWithAIBanner = ( { ...props } ) => {
 				py: 3,
 				px: 4,
 				gap: 2,
-				border: '1px solid var(--e-a-border-color)',
-				borderRadius: 1,
+				borderRadius: '8px',
 				boxShadow: 'none',
 				backgroundImage: `url(${ backgroundImage })`,
-				backgroundSize: 'contain',
-				backgroundPosition: 'right center',
+				backgroundSize: 'cover',
+				backgroundPosition: '1px',
 				backgroundRepeat: 'no-repeat',
 			} }
 		>
