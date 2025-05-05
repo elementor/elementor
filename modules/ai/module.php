@@ -1551,8 +1551,6 @@ class Module extends BaseModule {
 	}
 
 	private function should_display_create_with_ai_banner() {
-		return true;
-		// Check if the site has more than 10 pages with Elementor
 		$elementor_pages = new \WP_Query( [
 			'post_type' => 'page',
 			'post_status' => 'publish',
@@ -1567,27 +1565,30 @@ class Module extends BaseModule {
 		}
 
 		// Check if a custom kit is applied (not the default one)
-		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
-		if ( $previous_kit_id ) {
+		if ( Utils::is_custom_kit_applied() ) {
 			return false;
 		}
 
 		return true;
 	}
 
+	private function get_create_with_ai_banner_data() {
+		return [
+			'title' => 'Create and launch your site faster with AI',
+			'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',
+			'input_placeholder' => 'Start describing the site you want to create...',
+			'button_title' => 'Create with AI',
+			'button_cta_url' => 'http://planner.elementor.com/chat.html',
+			'background_image' => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
+			'utm_source' => 'editor-home',
+			'utm_medium' => 'wp-dash',
+			'utm_campaign' => 'generate-with-ai',
+		];
+	}
+
 	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
 		if ( $this->should_display_create_with_ai_banner() ) {
-			$home_screen_data['create_with_ai'] = [
-				'title' => 'Create and launch your site faster with AI',
-				'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',
-				'input_placeholder' => 'Start describing the site you want to create...',
-				'button_title' => 'Create with AI',
-				'button_cta_url' => 'http://planner.elementor.com/chat.html',
-				'background_image' => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
-				'utm_source' => 'editor-home',
-				'utm_medium' => 'wp-dash',
-				'utm_campaign' => 'generate-with-ai',
-			];
+			$home_screen_data['create_with_ai'] = $this->get_create_with_ai_banner_data();
 		} else {
 			$home_screen_data['create_with_ai'] = null;
 		}
