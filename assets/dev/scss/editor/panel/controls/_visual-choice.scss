@@ -5,15 +5,16 @@
 }
 
 .elementor-visual-choice-choices {
-		display: grid;
-		column-gap: 4px;
-		row-gap: 4px;
-		grid-template-columns: repeat(var(--elementor-visual-choice-columns), 1fr);
-		height: fit-content;
-		text-align: center;
-		border-spacing: 1px;
-		border-radius: var(--e-a-border-radius);
-		overflow: hidden;
+	display: grid;
+	column-gap: 4px;
+	row-gap: 4px;
+	grid-template-columns: repeat(var(--elementor-visual-choice-columns), 1fr);
+	height: var(--elementor-visual-choice-height);
+	text-align: center;
+	border-spacing: 1px;
+	border-radius: var(--e-a-border-radius);
+	overflow: hidden;
+	overflow-y: auto;
 }
 
 .elementor-visual-choice {
