@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
+use Elementor\Modules\Variables\Classes\Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -41,7 +42,7 @@ class Hooks {
 
 	public function register_css_renderer() {
 		add_action( 'elementor/css-file/post/parse', function ( $post ) {
-			( new Variables_CSS_Renderer() )->append_to( $post );
+			( new Variables_CSS_Renderer( new Variables() ) )->append_to( $post );
 		} );
 
 		return $this;

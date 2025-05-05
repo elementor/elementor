@@ -7,26 +7,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Variables {
-	private $global_variables = [
-		'e-gc-001' => [
-			'value' => '#ffffff',
-			'label' => 'Main: white',
-		],
-		'e-gc-002' => [
-			'value' => '#000000',
-			'label' => 'Main: black',
-		],
-		'e-gc-003' => [
-			'value' => '#404040',
-			'label' => 'Main: text',
-		],
-		'e-gc-004' => [
-			'value' => '#00000033',
-			'label' => 'Main: overlay',
-		],
-	];
-
 	public function get_all() {
-		return $this->global_variables;
+		return [
+			'e-gc-001' => [
+				'value' => '#ffffff',
+				'label' => 'Main: white',
+			],
+			'e-gc-002' => [
+				'value' => '#000000',
+				'label' => 'Main: black',
+			],
+			'e-gc-003' => [
+				'value' => '#404040',
+				'label' => 'Main: text',
+			],
+			'e-gc-004' => [
+				'value' => '#00000033',
+				'label' => 'Main: overlay',
+			],
+		];
 	}
 }

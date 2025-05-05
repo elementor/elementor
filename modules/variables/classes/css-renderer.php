@@ -10,8 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class CSS_Renderer {
+	private Variables $variables;
+
+	public function __construct( Variables $variables ) {
+		$this->variables = $variables;
+	}
+
 	private function global_variables(): array {
-		return ( new Variables() )->get_all();
+		return $this->variables->get_all();
 	}
 
 	public function append_to( Post $post ) {
