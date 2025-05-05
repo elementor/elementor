@@ -1555,8 +1555,6 @@ class Module extends BaseModule {
 			'post_type' => 'page',
 			'post_status' => 'publish',
 			'fields' => 'ids',
-			'meta_key' => '_elementor_edit_mode',
-			'meta_value' => 'builder',
 			'posts_per_page' => self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER + 1,
 		] );
 
