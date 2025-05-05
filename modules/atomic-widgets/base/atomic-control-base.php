@@ -31,7 +31,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 		return $this->bind;
 	}
 
-	public function set_label( string $label, bool $is_stack = true ): self {
+	public function set_label( string $label ): self {
 		$this->label = $label;
 
 		return $this;
