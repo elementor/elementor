@@ -61,7 +61,9 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 						->set_label( __( 'Paragraph', 'elementor' ) )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
 
-					Link_Control::bind_to( 'link' )->add_top_divider(),
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				] ),
 		];
 	}

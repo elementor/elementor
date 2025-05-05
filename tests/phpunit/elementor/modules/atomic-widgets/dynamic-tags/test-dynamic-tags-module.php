@@ -130,7 +130,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 											'placeholder' => null,
 										],
 										'meta' => null,
-										'topDivider' => false,
 									],
 								],
 								[
@@ -153,7 +152,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 											],
 										],
 										'meta' => null,
-										'topDivider' => false,
 									],
 								],
 							],
