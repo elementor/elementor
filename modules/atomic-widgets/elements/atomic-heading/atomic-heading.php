@@ -8,13 +8,13 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -57,7 +57,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( \Elementor\Modules\AtomicWidgets\Module::CSSID_EXPERIMENT_NAME ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( Module::CSSID_EXPERIMENT_NAME ) ) {
 			$props['cssid'] = String_Prop_Type::make();
 		}
 
@@ -100,7 +100,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Link_Control::bind_to( 'link' )->add_top_divider(),
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( \Elementor\Modules\AtomicWidgets\Module::CSSID_EXPERIMENT_NAME ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( Module::CSSID_EXPERIMENT_NAME ) ) {
 			$items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
 				'layout' => 'two-columns',
 			] )->add_top_divider();
