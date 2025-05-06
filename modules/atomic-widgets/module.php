@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
@@ -146,6 +147,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
+		$widgets_manager->register( new Atomic_Youtube() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -263,8 +265,8 @@ class Module extends BaseModule {
 		);
 
 		wp_register_script(
-			'elementor-js-handler-example',
-			$this->get_js_assets_url( 'js-handler-example' ),
+			'elementor-youtube-handler',
+			$this->get_js_assets_url( 'youtube-handler' ),
 			[ 'elementor-v2-frontend-handlers' ],
 			ELEMENTOR_VERSION,
 			true

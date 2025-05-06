@@ -113,10 +113,6 @@ class Atomic_Button extends Atomic_Widget_Base {
 		];
 	}
 
-	public function get_script_depends() {
-		return [ 'elementor-js-handler-example' ];
-	}
-
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-button' => __DIR__ . '/atomic-button.html.twig',
