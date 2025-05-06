@@ -388,7 +388,7 @@ class Manager extends Base_Object {
 		  'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
 		  'description' => esc_html__( "Enable V4 Indication Popovers", 'elementor' ),
 		  'default' => self::STATE_INACTIVE,
-      static::TYPE_HIDDEN => true,
+		  static::TYPE_HIDDEN => true,
 	  ] );
 	}
 
