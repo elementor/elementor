@@ -140,6 +140,9 @@ class Style_Schema {
 				'revert',
 				'revert-layer',
 			]),
+			'cursor' => String_Prop_Type::make()->enum([
+				'pointer',
+			]),
 		];
 	}
 
