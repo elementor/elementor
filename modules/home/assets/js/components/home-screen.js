@@ -5,6 +5,7 @@ import SideBarPromotion from './sidebar-promotion';
 import Addons from './addons-section';
 import ExternalLinksSection from './external-links-section';
 import GetStarted from './get-started-section';
+import CreateWithAIBanner from './create-with-ai-banner';
 
 const HomeScreen = ( props ) => {
 	const hasSidebarPromotion = props.homeScreenData.hasOwnProperty( 'sidebar_promotion_variants' );
@@ -16,6 +17,7 @@ const HomeScreen = ( props ) => {
 				{ props.homeScreenData.top_with_licences && <TopSection topData={ props.homeScreenData.top_with_licences } buttonCtaUrl={ props.homeScreenData.button_cta_url } /> }
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 3 } }>
 					<Stack sx={ { flex: 1, gap: 3 } }>
+						{ props.homeScreenData.create_with_ai && <CreateWithAIBanner createWithAIData={ props.homeScreenData.create_with_ai } /> }
 						<GetStarted
 							getStartedData={ props.homeScreenData.get_started }
 							adminUrl={ props.adminUrl }
