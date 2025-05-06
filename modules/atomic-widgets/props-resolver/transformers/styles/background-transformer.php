@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Multi_Props;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
@@ -14,6 +15,8 @@ class Background_Transformer extends Transformer_Base {
 		$overlay = $value['background-overlay'] ?? '';
 		$color = $value['color'] ?? '';
 
-		return trim( "$overlay $color" );
+		return Multi_Props::generate( array_merge( $overlay, [
+			"background-color" => $color,
+		] ) );
 	}
 }
