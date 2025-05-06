@@ -123,13 +123,13 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		]);
 
-	  Plugin::$instance->experiments->add_feature([
-		  'name' => 'e_indications_popover',
-		  'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-		  'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-		  'default' => Experiments_Manager::STATE_INACTIVE,
-      'hidden' => true,
-	  ]);
+		Plugin::$instance->experiments->add_feature([
+			'name' => 'e_indications_popover',
+			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		]);
 	}
 
 	private function add_packages( $packages ) {
