@@ -383,13 +383,13 @@ class Manager extends Base_Object {
 			'default' => self::STATE_ACTIVE,
 		] );
 
-	  $this->add_feature( [
-		  'name' => 'e_indications_popover',
-		  'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-		  'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-		  'default' => self::STATE_INACTIVE,
-		  static::TYPE_HIDDEN => true,
-	  ] );
+		$this->add_feature( [
+			'name' => 'e_indications_popover',
+			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'default' => self::STATE_INACTIVE,
+			static::TYPE_HIDDEN => true,
+		] );
 	}
 
 	/**
