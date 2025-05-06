@@ -83,6 +83,7 @@ class Style_Schema {
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'z-index' => Number_Prop_Type::make(),
+			'scroll-margin-top' => Size_Prop_Type::make(),
 		];
 	}
 
