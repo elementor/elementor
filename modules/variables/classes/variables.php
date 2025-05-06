@@ -7,8 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Variables {
+	const FILTER = 'elementor/atomic-variables/variables';
+
 	public function get_all() {
-		return [
+		return apply_filters( self::FILTER, [
 			'e-gc-001' => [
 				'value' => '#ffffff',
 				'label' => 'Main: white',
@@ -25,6 +27,6 @@ class Variables {
 				'value' => '#00000033',
 				'label' => 'Main: overlay',
 			],
-		];
+		] );
 	}
 }
