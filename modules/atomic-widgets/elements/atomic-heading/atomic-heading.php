@@ -113,6 +113,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 		];
 	}

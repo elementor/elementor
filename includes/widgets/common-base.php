@@ -133,11 +133,25 @@ class Widget_Common_Base extends Widget_Base {
 	private function get_shapes( $add_custom = true ) {
 		$shapes = [
 			'circle' => esc_html__( 'Circle', 'elementor' ),
+			'oval-vertical' => esc_html__( 'Oval vertical', 'elementor' ),
+			'oval-horizontal' => esc_html__( 'Oval horizontal', 'elementor' ),
+			'pill-vertical' => esc_html__( 'Pill vertical', 'elementor' ),
+			'pill-horizontal' => esc_html__( 'Pill horizontal', 'elementor' ),
+			'triangle' => esc_html__( 'Triangle', 'elementor' ),
+			'diamond' => esc_html__( 'Diamond', 'elementor' ),
+			'pentagon' => esc_html__( 'Pentagon', 'elementor' ),
+			'hexagon-vertical' => esc_html__( 'Hexagon vertical', 'elementor' ),
+			'hexagon-horizontal' => esc_html__( 'Hexagon horizontal', 'elementor' ),
+			'heptagon' => esc_html__( 'Heptagon', 'elementor' ),
+			'octagon' => esc_html__( 'Octagon', 'elementor' ),
+			'parallelogram-right' => esc_html__( 'Parallelogram right', 'elementor' ),
+			'parallelogram-left' => esc_html__( 'Parallelogram left', 'elementor' ),
+			'trapezoid-up' => esc_html__( 'Trapezoid Up', 'elementor' ),
+			'trapezoid-down' => esc_html__( 'Trapezoid Down', 'elementor' ),
 			'flower' => esc_html__( 'Flower', 'elementor' ),
 			'sketch' => esc_html__( 'Sketch', 'elementor' ),
-			'triangle' => esc_html__( 'Triangle', 'elementor' ),
+			'hexagon' => esc_html__( 'Hexagon Donut', 'elementor' ),
 			'blob' => esc_html__( 'Blob', 'elementor' ),
-			'hexagon' => esc_html__( 'Hexagon', 'elementor' ),
 		];
 
 		if ( $add_custom ) {
