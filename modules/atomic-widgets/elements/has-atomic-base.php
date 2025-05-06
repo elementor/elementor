@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
@@ -99,6 +100,14 @@ trait Has_Atomic_Base {
 	private function parse_atomic_settings( array $settings ): array {
 		$schema = static::get_props_schema();
 		$props_parser = Props_Parser::make( $schema );
+
+		if (
+			isset( $settings['link']['value']['label'] ) &&
+			'' === $settings['link']['value']['label'] &&
+			$schema['link'] instanceof Link_Prop_Type
+		) {
+			$settings['link']['value']['label'] = null;
+		}
 
 		$result = $props_parser->parse( $settings );
 
