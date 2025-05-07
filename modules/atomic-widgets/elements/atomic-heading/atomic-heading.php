@@ -64,10 +64,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
-				] ),
-			Section::make()
-				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( [
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'Tag', 'elementor' ) )
 						->set_options( [
