@@ -585,7 +585,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => 'cover',
 													'position' => 'bottom right',
-													'repeat' => 'no-repeat',
+													'repeat' => 'repeat',
 													'attachment' => 'fixed',
 												]
 											],
@@ -750,7 +750,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 														],
 													],
-													'attachment' => 'scroll',
 													'repeat' => 'repeat-x',
 												]
 											],
