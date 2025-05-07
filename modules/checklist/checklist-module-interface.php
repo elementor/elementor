@@ -12,8 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 interface Checklist_Module_Interface {
 	public function get_name(): string;
 
-	public function is_experiment_active(): bool;
-
 	public function get_user_progress_from_db(): array;
 
 	public function get_step_progress( $step_id ): ?array;
