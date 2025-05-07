@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
-use Elementor\Modules\AtomicWidgets\PropsResolver\Multi_Props;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
@@ -25,11 +24,11 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		$image_url = $value['image']['src'];
 
 		return [
-			'url' => "url(\" $image_url \")",
-			'repeat' => $value['repeat'] ?? self::$default_repeat,
-			'attachment' => $value['attachment'] ?? self::$default_attachment,
-			'size' => $value['size'] ?? self::$default_size,
-			'position' => $value['position'] ?? self::$default_position,
+			'src' => "url(\" $image_url \")",
+			'repeat' => $value['repeat'] ?? null,
+			'attachment' => $value['attachment'] ?? null,
+			'size' => $value['size'] ?? null,
+			'position' => $value['position'] ?? null,
 		];
 	}
 }

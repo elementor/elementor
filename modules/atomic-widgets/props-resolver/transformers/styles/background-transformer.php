@@ -15,7 +15,7 @@ class Background_Transformer extends Transformer_Base {
 		$overlay = $value['background-overlay'] ?? [];
 		$color = $value['color'] ?? null;
 
-		return Multi_Props::generate( array_merge( $overlay ?? [], [
+		return Multi_Props::generate( array_merge( $overlay, [
 			'background-color' => $color,
 		] ) );
 	}

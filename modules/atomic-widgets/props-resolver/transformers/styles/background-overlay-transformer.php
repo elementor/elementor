@@ -12,40 +12,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Background_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		return [
-			'background-image' => $this->get_images( $value, Background_Image_Overlay_Transformer::$default_image ),
-			'background-repeat' => $this->get_values_by_prop( $value, 'repeat', Background_Image_Overlay_Transformer::$default_repeat ),
-			'background-attachment' => $this->get_values_by_prop( $value, 'attachment', Background_Image_Overlay_Transformer::$default_attachment ),
-			'background-size' => $this->get_values_by_prop( $value, 'size', Background_Image_Overlay_Transformer::$default_size ),
-			'background-position' => $this->get_values_by_prop( $value, 'position', Background_Image_Overlay_Transformer::$default_position ),
-		];
+		$normalized_values = $this->normalize_overlay_values( $value );
+
+		return array_filter( [
+			'background-image' => $this->get_values_string( $normalized_values, 'src', Background_Image_Overlay_Transformer::$default_image ),
+			'background-repeat' => $this->get_values_string( $normalized_values, 'repeat', Background_Image_Overlay_Transformer::$default_repeat ),
+			'background-attachment' => $this->get_values_string( $normalized_values, 'attachment', Background_Image_Overlay_Transformer::$default_attachment ),
+			'background-size' => $this->get_values_string( $normalized_values, 'size', Background_Image_Overlay_Transformer::$default_size ),
+			'background-position' => $this->get_values_string( $normalized_values, 'position', Background_Image_Overlay_Transformer::$default_position ),
+		] );
 	}
 
-	private function get_images( $value, $default ): string {
-		return implode( ',', array_map( function ( $item ) use ( $default ) {
+	private function normalize_overlay_values( $overlays ): array {
+		return array_map( function( $value ) {
+			if ( is_string( $value ) ) {
+				return [
+					'src' => $value,
+					'repeat' => null,
+					'attachment' => null,
+					'size' => null,
+					'position' => null,
+				];
+			}
+
+			return $value;
+		}, $overlays );
+	}
+
+	private function get_values_string( $value, string $prop, string $default_value ) {
+		$is_empty = empty( array_filter( $value, function ( array $item ) use ( $prop ) {
+			return isset( $item[ $prop ] ) && ! is_null( $item[ $prop ] );
+		} ) );
+
+		if ( $is_empty ) {
+			return null;
+		}
+
+		return implode( ',', array_map( function ( $item ) use ( $prop, $default_value ) {
 			if ( is_string( $item ) ) {
-				return $item;
+				return $default_value;
 			}
 
 			if ( ! is_array( $item ) ) {
-				return $default;
+				return $default_value;
 			}
 
-			return $item['url'] ?? $default;
-		}, $value ) );
-	}
-
-	private function get_values_by_prop( $value, string $prop, string $default ): string {
-		return implode( ',', array_map( function ( $item ) use ( $prop, $default ) {
-			if ( is_string( $item ) ) {
-				return $default;
-			}
-
-			if ( ! is_array( $item ) ) {
-				return $default;
-			}
-
-			return $item[ $prop ] ?? $default;
+			return $item[ $prop ] ?? $default_value;
 		}, $value ) );
 	}
 }
