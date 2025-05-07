@@ -23,6 +23,24 @@ class Hooks {
 			return array_merge( $packages, self::PACKAGES );
 		} );
 
+		// TODO: Remove this, when there are API-endpoints available to access the list of variables
+		add_action( 'elementor/editor/before_enqueue_scripts', function () {
+			// We must enqueue a random script, so that localize will be triggered as well...
+			wp_enqueue_script(
+				'e-variables',
+				ELEMENTOR_ASSETS_URL . '/variables-' . md5( microtime() ) . '.js',
+				[],
+				ELEMENTOR_VERSION,
+				true
+			);
+
+			wp_localize_script(
+				'e-variables',
+				'ElementorV4Variables',
+				( new Variables() )->get_all()
+			);
+		} );
+
 		return $this;
 	}
 
