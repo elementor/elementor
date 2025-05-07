@@ -20,7 +20,7 @@ $remote-templates-items-space: 30px;
 	}
 
 	&:has(#elementor-template-library-save-template) {
- 		
+
 		.dialog-message {
 			overflow-y: hidden;
 		}
@@ -528,12 +528,24 @@ $remote-templates-items-space: 30px;
 	#elementor-template-library-navigation-container {
 		display: flex;
 		flex: 1;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 
 		.elementor-template-library-navigation-container {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			gap: 15px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+
+			> span {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
 
 			.elementor-template-library-navigation-back-button {
 				padding-inline-start: 8px;
@@ -1305,6 +1317,7 @@ label.elementor-template-library-order-label {
 			padding: 15px;
 			height: auto;
 			gap: 10px;
+			position: relative;
 
 			input[type=checkbox]:checked {
 				background: $gray;
@@ -1316,6 +1329,14 @@ label.elementor-template-library-order-label {
 		.source-selections-input {
 			position: relative;
   			display: inline-block;
+
+			&.cloud,
+			&.local {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				line-height: 27px;
+			}
 
 			#cloud,
 			#local {
@@ -1364,12 +1385,20 @@ label.elementor-template-library-order-label {
 		.cloud-folder-selection-dropdown {
 			display: none;
 			position: absolute;
+			top: 40px;
 			background-color: var(--e-a-bg-default);
 			min-width: 187px;
 			overflow: auto;
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 			z-index: 1;
 			border-radius: 2px;
+			max-width: 450px;
+
+			li {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
 
 			.eicon-loading {
 				margin: 15px;

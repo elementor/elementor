@@ -109,7 +109,7 @@ const TemplateLibraryManager = function() {
 		} );
 
 		this.handleKeydown = ( event ) => {
-			if ( this.isSelectAllShortcut( event ) && this.isCloudGridView() ) {
+			if ( this.isSelectAllShortcut( event ) && this.isCloudGridView() && this.isClickedInLibrary( event ) ) {
 				event.preventDefault();
 				this.selectAllTemplates();
 			}
@@ -161,11 +161,11 @@ const TemplateLibraryManager = function() {
 	this.getDefaultTemplateTypeSafeData = function( title ) {
 		return {
 			saveDialog: {
-				description: sprintf(
+				description: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? sprintf(
 					/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
 					__( 'You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor' ),
 					'<b>', '</b>', '<br>', '<b>', '</b>',
-				),
+				) : __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 			},
@@ -190,6 +190,16 @@ const TemplateLibraryManager = function() {
 
 	this.isCloudGridView = function() {
 		return 'cloud' === this.getFilter( 'source' ) && 'grid' === this.getViewSelection();
+	};
+
+	this.isClickedInLibrary = function( event ) {
+		if ( event.target === document.body ) {
+			return true; // When the rename dialog is closed it sets the target to the body.
+		}
+
+		const libraryElement = document.getElementById( 'elementor-template-library-modal' );
+
+		return libraryElement && event.target === libraryElement;
 	};
 
 	this.clearLastRemovedItems = function() {
@@ -318,6 +328,7 @@ const TemplateLibraryManager = function() {
 						title: templateModel.get( 'title' ),
 					},
 					success: ( response ) => {
+						templateModel.trigger( 'change:title' );
 						this.eventManager.sendTemplateRenameEvent( { source } );
 						resolve( response );
 					},
@@ -346,13 +357,9 @@ const TemplateLibraryManager = function() {
 			type: 'text',
 			value: templateModel.get( 'title' ),
 		} )
-			.attr( 'autocomplete', 'off' )
-			.on( 'change', ( event ) => {
-				event.preventDefault();
-				templateModel.set( 'title', event.target.value );
-			} );
+			.attr( 'autocomplete', 'off' );
 
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-rename-dialog',
 			headerMessage,
 			message: $inputArea,
@@ -372,6 +379,21 @@ const TemplateLibraryManager = function() {
 				$inputArea.trigger( 'focus' );
 			},
 		} );
+
+		$inputArea.on( 'input', ( event ) => {
+			event.preventDefault();
+			const title = event.target.value.trim();
+
+			templateModel.set( 'title', title, { silent: true } );
+
+			dialog.getElements( 'ok' ).prop( 'disabled', ! self.isTemplateTitleValid( title ) );
+		} );
+
+		return dialog;
+	};
+
+	this.isTemplateTitleValid = ( title ) => {
+		return title.trim().length > 0 && title.trim().length <= 75;
 	};
 
 	this.getFolderTemplates = ( parentElement ) => {
@@ -467,17 +489,11 @@ const TemplateLibraryManager = function() {
 		inputArea.placeholder = __( 'Folder name', 'elementor' );
 		inputArea.autocomplete = 'off';
 
-		inputArea.addEventListener( 'change', ( event ) => {
-			event.preventDefault();
-
-			folderData.title = event.target.value;
-		} );
-
 		const fragment = document.createDocumentFragment();
 		fragment.appendChild( paragraph );
 		fragment.appendChild( inputArea );
 
-		return elementorCommon.dialogsManager.createWidget( 'confirm', {
+		const dialog = elementorCommon.dialogsManager.createWidget( 'confirm', {
 			id: 'elementor-template-library-create-new-folder-dialog',
 			headerMessage: __( 'Create a new folder', 'elementor' ),
 			message: fragment,
@@ -495,6 +511,22 @@ const TemplateLibraryManager = function() {
 				} );
 			},
 		} );
+
+		dialog.getElements( 'ok' ).prop( 'disabled', true );
+
+		inputArea.addEventListener( 'input', ( event ) => {
+			event.preventDefault();
+
+			const title = event.target.value.trim();
+
+			folderData.title = title;
+
+			const isTitleValid = self.isTemplateTitleValid( title );
+
+			dialog.getElements( 'ok' ).prop( 'disabled', ! isTitleValid );
+		} );
+
+		return dialog;
 	};
 
 	this.deleteFolder = function( templateModel, options ) {
@@ -661,12 +693,12 @@ const TemplateLibraryManager = function() {
 
 	this.sendOnSavedTemplateSuccessEvent = ( formData ) => {
 		if ( SAVE_CONTEXTS.SAVE === formData.save_context ) {
-			this.eventManager.sendNewSaveTemplateClickedEvent( {
+			self.eventManager.sendTemplateSavedEvent( {
 				library_type: formData.source,
 				template_type: formData.type,
 			} );
 		} else if ( [ SAVE_CONTEXTS.COPY, SAVE_CONTEXTS.MOVE ].includes( formData.save_context ) ) {
-			this.eventManager.sendTemplateTransferEvent( {
+			self.eventManager.sendTemplateTransferEvent( {
 				transfer_method: formData.save_context,
 				template_type: formData.type,
 				template_origin: formData.from_source,
