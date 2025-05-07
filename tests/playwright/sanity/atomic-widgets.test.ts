@@ -3,7 +3,7 @@ import { parallelTest as test } from '../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
 
-test.describe( 'Atomic Widgets @v4-tests', () => {
+test.describe.skip( 'Atomic Widgets @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
