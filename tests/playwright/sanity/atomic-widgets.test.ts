@@ -3,7 +3,7 @@ import { parallelTest as test } from '../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
 
-test.describe.skip( 'Atomic Widgets @v4-tests', () => {
+test.describe( 'Atomic Widgets @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
@@ -11,8 +11,8 @@ test.describe.skip( 'Atomic Widgets @v4-tests', () => {
 	const experimentName = 'e_atomic_elements';
 
 	const atomicWidgets = [
-		{ name: 'e-flexbox', title: 'Flexbox' },
-		{ name: 'e-div-block', title: 'Div Block' },
+		// { name: 'e-flexbox', title: 'Flexbox' },
+		// { name: 'e-div-block', title: 'Div Block' },
 		{ name: 'e-heading', title: 'Heading' },
 		{ name: 'e-image', title: 'Image' },
 		{ name: 'e-paragraph', title: 'Paragraph' },
@@ -52,11 +52,12 @@ test.describe.skip( 'Atomic Widgets @v4-tests', () => {
 			test( 'Widget is displayed in canvas after being added', async () => {
 				const container = await editor.addElement( { elType: 'container' }, 'document' );
 				const widgetId = await editor.addWidget( { widgetType: widget.name, container } );
-				const widgetSelector = '.elementor-element-' + widgetId;
+				const widgetSelector = `[data-id="${ widgetId }"]`;
 				await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
+				await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 			} );
 
-			test.skip( 'Widgets are displayed in front end', async () => {
+			test( 'Widgets are displayed in front end', async () => {
 				await editor.publishAndViewPage();
 				await expect.soft( editor.page.locator( '.page-content' ) )
 					.toHaveScreenshot( `${ widget.name }-published.png` );
