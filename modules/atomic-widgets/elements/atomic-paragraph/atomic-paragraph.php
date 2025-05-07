@@ -60,10 +60,18 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'paragraph' )
 						->set_label( __( 'Paragraph', 'elementor' ) )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
+<<<<<<< HEAD
 
 					Link_Control::bind_to( 'link' )->set_meta( [
 						'topDivider' => true,
 					] ),
+=======
+				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_items( [
+					Link_Control::bind_to( 'link' ),
+>>>>>>> 6439f31761e1e616e6d432868b5a211c9ea2b6fa
 				] ),
 		];
 	}
@@ -84,6 +92,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 		];
 	}

@@ -66,10 +66,15 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$items = [
-			Textarea_Control::bind_to( 'title' )
-				->set_label( __( 'Title', 'elementor' ) )
-				->set_placeholder( __( 'Type your title here', 'elementor' ) ),
+		$content_section = Section::make()
+			->set_label( __( 'Content', 'elementor' ) )
+			->set_items( [
+				Textarea_Control::bind_to( 'title' )
+					->set_label( __( 'Title', 'elementor' ) )
+					->set_placeholder( __( 'Type your title here', 'elementor' ) ),
+			] );
+
+		$settings_section_items = [
 			Select_Control::bind_to( 'tag' )
 				->set_label( esc_html__( 'Tag', 'elementor' ) )
 				->set_options( [
@@ -101,20 +106,24 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
 			] ),
-
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::CSSID_EXPERIMENT_NAME ) ) {
-			$items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
+			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
 				'layout' => 'two-columns',
 				'topDivider' => true,
 			] );
 		}
 
+		$settings_section = Section::make()
+			->set_label( __( 'Settings', 'elementor' ) )
+			->set_items( $settings_section_items );
+
+
+
 		return [
-			Section::make()
-				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( $items ),
+			$content_section,
+			$settings_section,
 		];
 	}
 
@@ -134,6 +143,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 		];
 	}
