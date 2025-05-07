@@ -2,7 +2,6 @@
 namespace Elementor\Core\Database;
 
 use Elementor\Core\Utils\Collection;
-use phpDocumentor\Reflection\PseudoTypes\Numeric_;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

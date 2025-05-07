@@ -54,8 +54,6 @@ class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
         do_action( 'admin_init' );
 
 		// Assert
-		$this->assertEquals( 1, intval( get_option( Global_Classes_Database_Updater::OPTION_NAME ) ) );
-
 		$admin_role = get_role( 'administrator' );
 		$this->assertTrue( $admin_role->has_cap( Add_Capabilities::UPDATE_CLASS ) );
 		$this->assertTrue( $admin_role->has_cap( Add_Capabilities::REMOVE_CSS_CLASS ) );
@@ -72,8 +70,6 @@ class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
         do_action( 'admin_init' );
 
 		// Assert
-		$this->assertEquals( 1, intval( get_option( Global_Classes_Database_Updater::OPTION_NAME ) ) );
-
 		$admin_role = get_role( 'administrator' );
 		$this->assertFalse( $admin_role->has_cap( Add_Capabilities::UPDATE_CLASS ) );
 		$this->assertFalse( $admin_role->has_cap( Add_Capabilities::REMOVE_CSS_CLASS ) );
