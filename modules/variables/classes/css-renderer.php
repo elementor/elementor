@@ -41,6 +41,6 @@ class CSS_Renderer {
 			return '';
 		}
 
-		return ':root { ' . implode(' ', $css_entries) . ' }';
+		return ':root { ' . implode( ' ', $css_entries ) . ' }';
 	}
 }
