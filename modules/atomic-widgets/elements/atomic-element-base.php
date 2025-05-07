@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,15 +16,21 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	protected $version = '0.0';
 	protected $styles = [];
+	protected $editor_settings = [];
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->version = $data['version'] ?? '0.0';
 		$this->styles = $data['styles'] ?? [];
+		$this->editor_settings = $data['editor_settings'] ?? [];
 	}
 
 	abstract protected function define_atomic_controls(): array;
+
+	public function get_global_scripts() {
+		return [];
+	}
 
 	final public function get_initial_config() {
 		$config = parent::get_initial_config();
@@ -36,6 +43,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['categories'] = [ 'v4-elements' ];
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
+		$config['keywords'] = $this->get_keywords();
 
 		return $config;
 	}
@@ -44,4 +52,18 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 * @return array<string, Prop_Type>
 	 */
 	abstract protected static function define_props_schema(): array;
+
+	/**
+	 * Get Element keywords.
+	 *
+	 * Retrieve the element keywords.
+	 *
+	 * @since 3.29
+	 * @access public
+	 *
+	 * @return array Element keywords.
+	 */
+	public function get_keywords() {
+		return [];
+	}
 }

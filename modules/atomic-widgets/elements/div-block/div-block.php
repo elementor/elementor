@@ -7,8 +7,13 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -17,16 +22,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Div_Block extends Atomic_Element_Base {
+	const BASE_STYLE_KEY = 'base';
+
 	public static function get_type() {
-		return 'div-block';
+		return 'e-div-block';
 	}
 
 	public static function get_element_type(): string {
-		return 'div-block';
+		return 'e-div-block';
 	}
 
 	public function get_title() {
 		return esc_html__( 'Div Block', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
@@ -85,19 +96,17 @@ class Div_Block extends Atomic_Element_Base {
 							Link_Control::get_path_to_value()
 						),
 
-					Link_Control::bind_to( 'link' )
-						->set_placeholder( __( 'Paste URL or type', 'elementor' ) ),
+					Link_Control::bind_to( 'link' ),
+
 				]),
 		];
 	}
 
-	public function get_style_depends() {
-		return [ 'div-block' ];
-	}
-
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'div-block' === $element_data['elType'] ) {
-			return Plugin::$instance->elements_manager->get_element_types( 'div-block' );
+		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+
+		if ( in_array( $element_data['elType'], $el_types, true ) ) {
+			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -111,11 +120,12 @@ class Div_Block extends Atomic_Element_Base {
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 
 		$attributes = [
 			'class' => [
 				'e-con',
-				'e-div-block',
+				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
 		];
@@ -153,5 +163,33 @@ class Div_Block extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 
 		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
+	}
+
+	protected function define_base_styles(): array {
+		$display = String_Prop_Type::generate( 'block' );
+
+		return [
+			static::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'display', $display )
+						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'min-width', $this->get_base_min_width() )
+				),
+		];
+	}
+
+	protected function get_base_padding(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+	}
+
+	protected function get_base_min_width(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 30,
+			'unit' => 'px',
+		] );
 	}
 }

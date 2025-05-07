@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
@@ -84,13 +84,13 @@ trait Has_Atomic_Base {
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
-			[ $is_valid, $sanitized_style, $errors ] = $style_parser->parse( $style );
+			$result = $style_parser->parse( $style );
 
-			if ( ! $is_valid ) {
-				throw new \Exception( esc_html( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
+			if ( ! $result->is_valid() ) {
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
 			}
 
-			$styles[ $style_id ] = $sanitized_style;
+			$styles[ $style_id ] = $result->unwrap();
 		}
 
 		return $styles;
@@ -100,13 +100,13 @@ trait Has_Atomic_Base {
 		$schema = static::get_props_schema();
 		$props_parser = Props_Parser::make( $schema );
 
-		[ $is_valid, $parsed, $errors ] = $props_parser->parse( $settings );
+		$result = $props_parser->parse( $settings );
 
-		if ( ! $is_valid ) {
-			throw new \Exception( esc_html( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
 		}
 
-		return $parsed;
+		return $result->unwrap();
 	}
 
 	public function get_atomic_controls() {
@@ -133,6 +133,7 @@ trait Has_Atomic_Base {
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		return $data;
 	}
@@ -141,6 +142,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
 	}
@@ -156,7 +158,17 @@ trait Has_Atomic_Base {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
-		return Props_Resolver::for_settings()->resolve( $schema, $props );
+		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	private function parse_editor_settings( array $data ): array {
+		$editor_data = [];
+
+		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
+			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		return $editor_data;
 	}
 
 	public static function get_props_schema(): array {

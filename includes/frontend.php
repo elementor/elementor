@@ -431,7 +431,7 @@ class Frontend extends App {
 			[
 				'jquery-ui-position',
 			],
-			'4.9.3',
+			'4.9.4',
 			true
 		);
 
@@ -617,8 +617,6 @@ class Frontend extends App {
 		 * @since 1.0.0
 		 */
 		do_action( 'elementor/frontend/before_enqueue_scripts' );
-
-		wp_enqueue_script( 'elementor-frontend' );
 
 		$this->print_config();
 

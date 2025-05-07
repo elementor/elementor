@@ -15,10 +15,10 @@ class Border_Width_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'top' => Size_Prop_Type::make(),
-			'right' => Size_Prop_Type::make(),
-			'bottom' => Size_Prop_Type::make(),
-			'left' => Size_Prop_Type::make(),
+			'block-start' => Size_Prop_Type::make()->required(),
+			'block-end' => Size_Prop_Type::make()->required(),
+			'inline-start' => Size_Prop_Type::make()->required(),
+			'inline-end' => Size_Prop_Type::make()->required(),
 		];
 	}
 }

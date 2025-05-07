@@ -6,7 +6,7 @@ import widgets from '../../../enums/widgets';
 import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
 
-test.describe( 'Container tests @container', () => {
+test.describe( 'Container tests #2 @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -231,7 +231,7 @@ async function captureJustifySnapShot(
 
 	const justifyControlsClass = `.elementor-group-control-justify_content.elementor-control-responsive-${ breakpoints[ i ] }`;
 	const justifyControlsContent = await page.$( `${ justifyControlsClass } .elementor-control-content ` );
-	await page.waitForLoadState( 'networkidle' ); // Let the icons rotate
+	await page.waitForLoadState( 'domcontentloaded', { timeout: 5000 } ); // Let the icons rotate
 	expect.soft( await justifyControlsContent.screenshot( {
 		type: 'jpeg',
 		quality: 90,

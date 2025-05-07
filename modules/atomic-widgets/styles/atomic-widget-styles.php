@@ -2,20 +2,18 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
 	public function register_hooks() {
-		add_action( 'elementor/element/parse_css', fn( Post $post, Element_Base $element ) => $this->parse_element_style( $post, $element ), 10, 2 );
+		add_action( 'elementor/element/parse_css', fn( Post_CSS $post, Element_Base $element ) => $this->parse_element_style( $post, $element ), 10, 2 );
 	}
 
-	private function parse_element_style( Post $post, Element_Base $element ) {
-		if ( ! ( $element instanceof Atomic_Widget_Base || $element instanceof Atomic_Element_Base )
-			|| Post::class !== get_class( $post ) ) {
+	private function parse_element_style( Post_CSS $post, Element_Base $element ) {
+		if ( ! Utils::is_atomic( $element ) ) {
 			return;
 		}
 

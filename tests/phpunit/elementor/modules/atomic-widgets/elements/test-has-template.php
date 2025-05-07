@@ -2,6 +2,9 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Elements;
 
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -37,10 +40,10 @@ class Test_Has_Template extends Elementor_Test_Base {
 				'settings' => [
 					'image' => [
 						'id' => 123,
-						'url' => 'https://example.com/image.jpg',
+						'src' => 'https://example.com/image.jpg',
 					],
 				],
-				'widgetType' => 'a-image',
+				'widgetType' => Atomic_Image::get_element_type(),
 			],
 		],
 			'Atomic Image linked' => [
@@ -50,14 +53,14 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'settings' => [
 						'image' => [
 							'id' => 123,
-							'url' => 'https://example.com/image.jpg',
+							'src' => 'https://example.com/image.jpg',
 						],
 						'link' => [
 							'href' => 'https://example.com',
 							'target' => '_blank',
 						],
 					],
-					'widgetType' => 'a-image',
+					'widgetType' => Atomic_Image::get_element_type(),
 				],
 			],
 			'Atomic Paragraph default' => [
@@ -65,7 +68,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'id' => 'e8e55a1',
 					'elType' => 'widget',
 					'settings' => [],
-					'widgetType' => 'a-paragraph',
+					'widgetType' => Atomic_Paragraph::get_element_type(),
 				],
 			],
 			'Atomic Paragraph linked' => [
@@ -78,7 +81,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 							'target' => '_blank',
 						],
 					],
-					'widgetType' => 'a-paragraph',
+					'widgetType' => Atomic_Paragraph::get_element_type(),
 				],
 			],
 			'Atomic SVG default' => [
@@ -86,7 +89,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 					'id' => 'abcd123',
 					'elType' => 'widget',
 					'settings' => [],
-					'widgetType' => 'a-svg',
+					'widgetType' => Atomic_Svg::get_element_type(),
 				]
 			],
 		];

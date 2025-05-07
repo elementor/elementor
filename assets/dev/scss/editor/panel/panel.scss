@@ -16,7 +16,15 @@
 
 .elementor-panel {
 
-	@import "reset";
+	// We limit the reset only to the v3 panel to avoid unexpected overrides.
+	:where(
+		#elementor-panel-state-loading,
+		#elementor-panel-header-wrapper,
+		#elementor-panel-content-wrapper,
+		#elementor-panel-footer
+	) {
+		@import "reset";
+	}
 
 	// Global
 	@import "global";

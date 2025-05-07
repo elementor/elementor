@@ -1296,6 +1296,32 @@
 						"type": "string"
 					},
 					"additionalProperties": false
+				},
+				"global_classes": {
+					"$id": "#/usages/global_classes",
+					"title": "Elementor Global Classes usage",
+					"type": "object",
+					"properties": {
+						"total_count": {
+							"$id": "#/usages/global_classes/count",
+							"title": "Global Classes count",
+							"type": "integer"
+						},
+						"applied_classes_per_element_type": {
+							"$id": "#/usages/global_classes/applied_classes_per_element_type",
+							"title": "Applied Global Classes per Element Type",
+							"type": "object",
+							"patternProperties": {
+								"([^\\s]+)": {
+									"$id": "#/usages/global_classes/applied_classes_per_element_types/$element_type",
+									"title": "Applied Global Classes per Element Type",
+									"type": "integer"
+								}
+							},
+							"additionalProperties": false
+						}
+					},
+					"additionalProperties": false
 				}
 			},
 			"additionalProperties": false

@@ -9,6 +9,8 @@ module.exports = Backbone.Model.extend( {
 		thumbnail: '',
 		url: '',
 		export_link: '',
+		preview_url: null,
+		generate_preview_url: null,
 		tags: [],
 	},
 } );

@@ -14,7 +14,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\WpRest\Classes\WP_Post;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -23,12 +22,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
 
+	const LINK_BASE_STYLE_KEY = 'link-base';
+
 	public static function get_element_type(): string {
-		return 'a-heading';
+		return 'e-heading';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Heading', 'elementor' );
+		return esc_html__( 'Heading', 'elementor' );
+	}
+
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic' ];
 	}
 
 	public function get_icon() {
@@ -45,7 +50,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
-				->default( __( 'Your Title Here', 'elementor' ) ),
+				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
 		];
@@ -59,6 +64,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'title' )
 						->set_label( __( 'Title', 'elementor' ) )
 						->set_placeholder( __( 'Type your title here', 'elementor' ) ),
+				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_items( [
 					Select_Control::bind_to( 'tag' )
 						->set_label( esc_html__( 'Tag', 'elementor' ) )
 						->set_options( [
@@ -93,24 +102,22 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$color_value = Color_Prop_Type::generate( 'black' );
-		$font_family_value = String_Prop_Type::generate( 'Inter' );
-		$font_size_value = Size_Prop_Type::generate( [
-			'size' => 3,
-			'unit' => 'rem',
+		$margin_value = Size_Prop_Type::generate( [
+			'unit' => 'px',
+			'size' => 0 ,
 		] );
-		$line_height_value = String_Prop_Type::generate( '1.1' );
-		$font_weight_value = String_Prop_Type::generate( '600' );
 
 		return [
 			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'color', $color_value )
-						->add_prop( 'font-family', $font_family_value )
-						->add_prop( 'font-size', $font_size_value )
-						->add_prop( 'line-height', $line_height_value )
-						->add_prop( 'font-weight', $font_weight_value )
+						->add_prop( 'margin', $margin_value )
+				),
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 		];
 	}
