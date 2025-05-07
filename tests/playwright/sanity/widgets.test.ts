@@ -12,7 +12,7 @@ test.describe( 'Widget tests', () => {
 		// Arrange.
 		const editor = await wpAdmin.openNewPage(),
 			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			widgetId = await editor.addWidget( 'heading', containerId ),
+			widgetId = await editor.addWidget( { widgetType: 'heading', container: containerId } ),
 			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
 
 		// Act.

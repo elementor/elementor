@@ -37,7 +37,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.openSection( 'section_background' );
 		await editor.setChooseControlValue( 'background_background', 'eicon-slideshow' );
 		await editor.addImagesToGalleryControl();
-		await editor.addWidget( 'heading', containerId );
+		await editor.addWidget( { widgetType: widgets.heading, container: containerId } );
 
 		// Assert.
 		await test.step( 'Verify background slideshow', async () => {
@@ -60,9 +60,9 @@ test.describe( 'Container tests @container', () => {
 		// Act.
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-		const button = await editor.addWidget( widgets.button, containerId );
-		const heading = await editor.addWidget( widgets.heading, containerId );
-		const image = await editor.addWidget( widgets.image, containerId );
+		const button = await editor.addWidget( { widgetType: widgets.button, container: containerId } );
+		const heading = await editor.addWidget( { widgetType: widgets.heading, container: containerId } );
+		const image = await editor.addWidget( { widgetType: widgets.image, container: containerId } );
 
 		// Act - Move the button to be last.
 		await editor.previewFrame.dragAndDrop(
@@ -90,16 +90,16 @@ test.describe( 'Container tests @container', () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
-		await editor.addWidget( widgets.accordion, containerId );
-		await editor.addWidget( widgets.divider, containerId );
-		await editor.addWidget( widgets.spacer, containerId );
+		await editor.addWidget( { widgetType: widgets.accordion, container: containerId } );
+		await editor.addWidget( { widgetType: widgets.divider, container: containerId } );
+		await editor.addWidget( { widgetType: widgets.spacer, container: containerId } );
 		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( '_section_background' );
 		await editor.setChooseControlValue( '_background_background', 'eicon-paint-brush' );
 		await editor.setColorControlValue( '_background_color', '#A81830' );
 
-		await editor.addWidget( widgets.toggle, containerId );
-		await editor.addWidget( widgets.video, containerId );
+		await editor.addWidget( { widgetType: widgets.toggle, container: containerId } );
+		await editor.addWidget( { widgetType: widgets.video, container: containerId } );
 		const container = editor.getPreviewFrame().locator( '.elementor-element-' + containerId );
 		await editor.hideVideoControls();
 		await editor.togglePreviewMode();
@@ -156,7 +156,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setSliderControlValue( '_offset_x', '50' );
 		await editor.setSliderControlValue( '_offset_y', '50' );
 
-		await editor.addWidget( widgets.heading, containerId );
+		await editor.addWidget( { widgetType: widgets.heading, container: containerId } );
 
 		await editor.togglePreviewMode();
 
@@ -195,7 +195,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setSliderControlValue( '_offset_x', '50' );
 		await editor.setSliderControlValue( '_offset_y', '50' );
 
-		await editor.addWidget( 'heading', containerId );
+		await editor.addWidget( { widgetType: 'heading', container: containerId } );
 		await editor.togglePreviewMode();
 
 		// Assert.
@@ -225,7 +225,7 @@ test.describe( 'Container tests @container', () => {
 		await editor.setSliderControlValue( '_offset_x', '50' );
 		await editor.setSliderControlValue( '_offset_y', '50' );
 
-		await editor.addWidget( 'heading', containerId );
+		await editor.addWidget( { widgetType: 'heading', container: containerId } );
 		await editor.togglePreviewMode();
 
 		// Assert.

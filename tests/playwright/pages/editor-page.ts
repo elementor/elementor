@@ -164,9 +164,9 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {Object} props                 - Widget properties
-	 * @param {string} props.widgetType      - Widget type
-	 * @param {string} [props.container]     - Optional. Container to create the element in
+	 * @param {Object}  props                       - Widget properties
+	 * @param {string}  props.widgetType            - Widget type
+	 * @param {string}  [props.container]           - Optional. Container to create the element in
 	 * @param {boolean} [props.isContainerASection] - Optional. Whether the container is a section
 	 *
 	 * @return {Promise<string>} The widget ID
