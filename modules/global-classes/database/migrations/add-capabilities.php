@@ -5,10 +5,10 @@ namespace Elementor\Modules\GlobalClasses\Database\Migrations;
 use Elementor\Core\Database\Base_Migration;
 
 class Add_Capabilities extends Base_Migration {
-	const ACCESS_CLASS_MANAGER = 'elementor_access_class_manager';
-	const UPDATE_CLASS = 'elementor_update_css_class';
-	const REMOVE_CSS_CLASS = 'elementor_remove_css_class';
-	const APPLY_CSS_CLASS = 'elementor_apply_css_class';
+	const ACCESS_CLASS_MANAGER = 'elementor_global_classes_access_class_manager';
+	const UPDATE_CLASS = 'elementor_global_classes_update_css_class';
+	const REMOVE_CSS_CLASS = 'elementor_global_classes_remove_css_class';
+	const APPLY_CSS_CLASS = 'elementor_global_classes_apply_css_class';
 
 	public function up() {
 		$capabilities = [
@@ -22,7 +22,7 @@ class Add_Capabilities extends Base_Migration {
 			foreach ( $roles as $role_name ) {
 				$role = get_role( $role_name );
 
-				if ( $role instanceof \WP_Role ) {
+				if ( $role ) {
 					$role->add_cap( $capability );
 				}
 			}

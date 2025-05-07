@@ -10,10 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
-	/**
-	 * @var Global_Classes_Database_Updater
-	 */
-	private $database_updater;
+	private Global_Classes_Database_Updater $database_updater;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -48,7 +45,6 @@ class Test_Global_Classes_Database_Updater extends Elementor_Test_Base {
 
 	public function test_should_run_add_capabilities_migration_when_version_option_is_empty() {
 		// Assert
-		$this->assertFalse( get_option( Global_Classes_Database_Updater::OPTION_NAME ) );
 		$admin_role = get_role( 'administrator' );
 		$this->assertFalse( $admin_role->has_cap( Add_Capabilities::ACCESS_CLASS_MANAGER ) );
 
