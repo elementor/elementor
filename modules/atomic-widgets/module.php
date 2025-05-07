@@ -132,7 +132,7 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
-		
+
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'e_indications_popover',
 			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
