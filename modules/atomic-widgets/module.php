@@ -104,6 +104,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+			add_filter( 'elementor/editor/v2/scripts/env', fn ( $config ) => $this->add_env_var( $config ) );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
@@ -204,6 +205,14 @@ class Module extends BaseModule {
 			Dimensions_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
+	}
+
+	private function add_env_var( $config ) {
+		$config[ 'editor_editing_panel' ] = [
+			'should_enforce_capabilities' => true,
+		];
+
+		return $config;
 	}
 
 	public function register_import_transformers( Transformers_Registry $transformers ) {

@@ -35,6 +35,8 @@ class Module extends BaseModule {
 		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+			add_filter( 'elementor/editor/v2/scripts/env', fn ( $config ) => $this->add_env_var( $config ) );
+
 
 			( new Global_Classes_Usage() )->register_hooks();
 			( new Global_Classes_REST_API() )->register_hooks();
@@ -62,5 +64,13 @@ class Module extends BaseModule {
 		}
 
 		return array_merge( $packages, self::PACKAGES );
+	}
+
+	private function add_env_var( $config ) {
+		$config[ 'global_classes' ] = [
+			'should_enforce_capabilities' => false,
+		];
+
+		return $config;
 	}
 }
