@@ -585,7 +585,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => 'cover',
 													'position' => 'bottom right',
-													'repeat' => 'repeat',
+													'repeat' => 'no-repeat',
 													'attachment' => 'fixed',
 												]
 											],
