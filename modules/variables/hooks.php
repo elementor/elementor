@@ -28,7 +28,7 @@ class Hooks {
 			// We must enqueue a random script, so that localize will be triggered as well...
 			wp_enqueue_script(
 				'e-variables',
-				ELEMENTOR_ASSETS_URL . '/variables-' . md5(microtime()) . '.js',
+				ELEMENTOR_ASSETS_URL . '/variables-' . md5( microtime() ) . '.js',
 				[],
 				ELEMENTOR_VERSION,
 				true
