@@ -17,18 +17,28 @@ class Test_CSS_Renderer extends TestCase {
 		parent::setUp();
 	}
 
+	private function css_renderer() {
+		return new CSS_Renderer(
+			new Variables()
+		);
+	}
+
 	public function test_empty_list_of_variables__generates_empty_css_entry() {
-		add_filter( Variables::FILTER, function ( $variables ) {
+		// Arrange.
+		add_filter( Variables::FILTER, function () {
 			return [];
 		} );
 
-		$css_renderer = new CSS_Renderer( new Variables() );
+		// Act.
+		$raw_css = $this->css_renderer()->raw_css();
 
-		$this->assertEquals('', $css_renderer->raw_css() );
+		// Assert.
+		$this->assertEquals('', $raw_css );
 	}
 
 	public function test_list_of_variables__generates_entries_for_root_pseudo_element() {
-		add_filter( Variables::FILTER, function ( $variables ) {
+		// Arrange.
+		add_filter( Variables::FILTER, function () {
 			return [
 				'a-01' => [
 					'label' => 'Black',
@@ -42,8 +52,33 @@ class Test_CSS_Renderer extends TestCase {
 			];
 		} );
 
-		$css_renderer = new CSS_Renderer( new Variables() );
+		// Act.
+		$raw_css = $this->css_renderer()->raw_css();
 
-		$this->assertEquals(':root { --a-01:#000; --a-02:6px; }', $css_renderer->raw_css() );
+		// Assert.
+		$this->assertEquals(':root { --a-01:#000; --a-02:6px; }', $raw_css );
+	}
+
+	public function test_list_of_variables__will_sanitize_the_input() {
+		// Arrange,
+		add_filter( Variables::FILTER, function () {
+			return [
+				'a-01' => [
+					'label' => 'a-width',
+					'value' => '<script type="text/javascript">alert("here");</script>',
+				],
+
+				'<script>alert("there")</script>' => [
+					'label' => 'a-height',
+					'value' => '2rem',
+				],
+			];
+		} );
+
+		// Act.
+		$raw_css = $this->css_renderer()->raw_css();
+
+		// Assert.
+		$this->assertEquals('', $raw_css );
 	}
 }

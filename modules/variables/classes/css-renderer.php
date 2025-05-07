@@ -24,14 +24,23 @@ class CSS_Renderer {
 			return '';
 		}
 
-		$css_string = ':root { ';
+		$css_entries = [];
 
 		foreach ( $list_of_variables as $idx => $variable ) {
-			$css_string .= '--' . $idx . ':' . $variable['value'] . '; ';
+			$variable_name = sanitize_text_field( $idx );
+			$value = sanitize_text_field( $variable['value'] );
+
+			if ( empty( $value ) || empty( $variable_name ) ) {
+				continue;
+			}
+
+			$css_entries[] = '--' . $variable_name . ':' . $value . ';';
 		}
 
-		$css_string .= '}';
+		if ( empty( $css_entries ) ) {
+			return '';
+		}
 
-		return $css_string;
+		return ':root { ' . implode(' ', $css_entries) . ' }';
 	}
 }
