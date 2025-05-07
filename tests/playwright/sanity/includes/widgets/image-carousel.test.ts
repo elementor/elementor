@@ -56,7 +56,7 @@ test.describe( 'Image carousel tests', () => {
 			await editor.setSelectControlValue( 'arrows_position', 'outside' );
 
 			// Assert
-			expect( await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel' ).screenshot( {
+			expect( await editor.getPreviewFrame().locator( '.elementor-widget-image-carousel div.elementor-widget-container' ).screenshot( {
 				type: 'jpeg',
 				quality: 100,
 			} ) ).toMatchSnapshot( 'carousel-arrows-position.jpeg' );
