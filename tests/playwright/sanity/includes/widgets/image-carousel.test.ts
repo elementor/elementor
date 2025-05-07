@@ -25,7 +25,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.setPageTemplate( 'canvas' );
 		await editor.closeNavigatorIfOpen();
 
-		const widgetId = await editor.addWidget( 'image-carousel' );
+		const widgetId = await editor.addWidget( { widgetType: 'image-carousel' } );
 		await editor.setSelectControlValue( 'navigation', 'none' );
 		await editor.openPanelTab( 'content' );
 		await editor.addImagesToGalleryControl();
@@ -87,7 +87,7 @@ test.describe( 'Image carousel tests', () => {
 		await breakpoints.addAllBreakpoints( editor );
 
 		// Add and configure widget
-		await editor.addWidget( 'image-carousel' );
+		await editor.addWidget( { widgetType: 'image-carousel' } );
 		await editor.openPanelTab( 'content' );
 		await editor.addImagesToGalleryControl();
 		await editor.openSection( 'section_additional_options' );
@@ -127,8 +127,8 @@ test.describe( 'Image carousel tests', () => {
 		await wpAdmin.openNewPage();
 		await editor.setPageTemplate( 'default' );
 		await editor.closeNavigatorIfOpen();
-		await editor.addWidget( 'heading' );
-		await editor.addWidget( 'image-carousel' );
+		await editor.addWidget( { widgetType: 'heading' } );
+		await editor.addWidget( { widgetType: 'image-carousel' } );
 		await editor.openPanelTab( 'content' );
 		await editor.addImagesToGalleryControl();
 		await editor.openSection( 'section_additional_options' );
@@ -164,7 +164,7 @@ test.describe( 'Image carousel tests', () => {
 		await editor.setPageTemplate( 'canvas' );
 		await editor.closeNavigatorIfOpen();
 
-		await editor.addWidget( 'image-carousel' );
+		await editor.addWidget( { widgetType: 'image-carousel' } );
 		await editor.openSection( 'section_additional_options' );
 		await editor.setSwitcherControlValue( 'autoplay', false );
 		await editor.openSection( 'section_image_carousel' );
