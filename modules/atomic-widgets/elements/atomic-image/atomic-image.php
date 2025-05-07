@@ -56,12 +56,19 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$content_section = Section::make()
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
-				Image_Control::bind_to( 'image' ),
-				Link_Control::bind_to( 'link' ),
+				Image_Control::bind_to( 'image' )
+					->set_show_mode( 'media' ),
 			] );
 
 		return [
 			$content_section,
+			Section::make()
+				->set_label( esc_html__( 'Settings', 'elementor' ) )
+				->set_items( [
+					Image_Control::bind_to( 'image' )
+						->set_show_mode( 'sizes' ),
+					Link_Control::bind_to( 'link' ),
+				] ),
 		];
 	}
 

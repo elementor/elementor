@@ -60,7 +60,10 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'paragraph' )
 						->set_label( __( 'Paragraph', 'elementor' ) )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
-
+				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_items( [
 					Link_Control::bind_to( 'link' ),
 				] ),
 		];
