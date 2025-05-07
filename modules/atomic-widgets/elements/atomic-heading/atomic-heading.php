@@ -43,7 +43,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -118,8 +117,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$settings_section = Section::make()
 			->set_label( __( 'Settings', 'elementor' ) )
 			->set_items( $settings_section_items );
-
-
 
 		return [
 			$content_section,
