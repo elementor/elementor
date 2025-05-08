@@ -1,6 +1,6 @@
 <?php
 
-namespace ElementorPro\Modules\Variables\PropTypes;
+namespace Elementor\Modules\Variables\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
