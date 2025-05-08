@@ -47,6 +47,8 @@ class CSS_Renderer {
 		$entries = [];
 
 		foreach ( $group as $name => $variable ) {
+			var_dump( $variable );
+
 			$entry = $this->build_css_variable_entry( $name, $variable );
 
 			if ( $entry ) {
