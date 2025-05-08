@@ -60,8 +60,13 @@ class Atomic_Button extends Atomic_Widget_Base {
 					Text_Control::bind_to( 'text' )
 						->set_label( __( 'Button text', 'elementor' ) )
 						->set_placeholder( __( 'Type your button text here', 'elementor' ) ),
-
-					Link_Control::bind_to( 'link' ),
+				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_items( [
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				] ),
 		];
 	}
