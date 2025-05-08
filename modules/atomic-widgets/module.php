@@ -68,6 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const CSSID_EXPERIMENT_NAME = 'e_css_id';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -143,6 +144,15 @@ class Module extends BaseModule {
 				'default' => Experiments_Manager::STATE_INACTIVE,
 			] );
 		}
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::CSSID_EXPERIMENT_NAME,
+			'title' => esc_html__( 'V4 - CSS ID', 'elementor' ),
+			'description' => esc_html__( 'Enable CSS ID control for V4.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+		] );
 	}
 
 	private function add_packages( $packages ) {
