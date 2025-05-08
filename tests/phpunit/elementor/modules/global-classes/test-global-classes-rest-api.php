@@ -217,9 +217,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$unchanged = $this->create_global_class( 'unchanged' );
 		$removed = $this->create_global_class( 'removed' );
 		$modified = $this->create_global_class( 'modified', 'blue' );
-		$new = $this->create_global_class( 'new' );
-		$not_in_payload = $this->create_global_class( 'not_in_payload' );
-		$removed_before = $this->create_global_class( 'removed_before' );
+		$not_in_payload = $this->create_global_class( 'not-in-payload' );
 
 		$initial = [
 			'items' => [
@@ -236,14 +234,17 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Act.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
+		$new = $this->create_global_class( 'new' );
+		$unchanged_removed_in_server = $this->create_global_class( 'unchanged-removed-in-server' );
+
 		$payload = [
 			'items' => [
 				'unchanged' => $unchanged,
 				'modified' => $this->create_global_class( 'modified', 'yellow' ),
 				'new' => $new,
-				'removed_before' => $removed_before,
+				'unchanged-removed-in-server' => $unchanged_removed_in_server,
 			],
-			'order' => [ 'modified', 'unchanged', 'new', 'removed_before' ],
+			'order' => [ 'unchanged-removed-in-server', 'modified', 'unchanged', 'new' ],
 			'changes' => [
 				'added' => [ 'new' ],
 				'deleted' => [ 'removed' ],
