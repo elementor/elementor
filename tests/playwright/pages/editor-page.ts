@@ -142,7 +142,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<string>} Element ID
 	 */
-	async addElement( model: unknown, container: null | string = null, isContainerASection = false ): Promise<string> {
+	async addElement( model: unknown, container: null | string = null, isContainerASection: boolean = false ): Promise<string> {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
@@ -162,6 +162,16 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Generates a CSS selector string for a widget element based on its ID.
+	 *
+	 * @param {string} widgetId - The unique identifier of the widget.
+	 * @return {string} The CSS selector string for targeting the widget.
+	 */
+	getWidgetSelector( widgetId: string ): string {
+		return `[data-id="${ widgetId }"]`;
+	}
+
+	/**
 	 * Add a widget by `widgetType`.
 	 *
 	 * @param {Object}  props                       - Widget properties
@@ -173,13 +183,13 @@ export default class EditorPage extends BasePage {
 	 */
 	async addWidget( props: { widgetType: string, container?: string | null, isContainerASection?: boolean } ): Promise<string> {
 		const widgetId = await this.addElement( { widgetType: props.widgetType, elType: 'widget' }, props.container, props.isContainerASection );
-		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
+		await this.getPreviewFrame().waitForSelector( this.getWidgetSelector( widgetId ) );
 
 		return widgetId;
 	}
 
 	async getWidget( widgetId: string ): Promise<Locator> {
-		return this.getPreviewFrame().locator( `[data-id='${ widgetId }']` );
+		return this.getPreviewFrame().locator( this.getWidgetSelector( widgetId ) );
 	}
 
 	/**
@@ -337,7 +347,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ) {
+	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
 		const selectorMap: Record< 'style' | 'general', string > = {
 			style: 'style',
 			general: 'settings',
@@ -411,7 +421,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ) {
+	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ): Promise<void> {
 		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
 		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
 		const isContentVisible = await this.page.evaluate( ( selector ) => {

@@ -2,6 +2,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { parallelTest as test } from '../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../pages/editor-page';
+import editorSelectors from '../selectors/editor-selectors';
 
 test.describe( 'Atomic Widgets @v4-tests', () => {
 	let editor: EditorPage;
@@ -11,8 +12,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	const experimentName = 'e_atomic_elements';
 
 	const atomicWidgets = [
-		// { name: 'e-flexbox', title: 'Flexbox' },
-		// { name: 'e-div-block', title: 'Div Block' },
 		{ name: 'e-heading', title: 'Heading' },
 		{ name: 'e-image', title: 'Image' },
 		{ name: 'e-paragraph', title: 'Paragraph' },
@@ -22,44 +21,48 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
-
 		page = await context.newPage();
-
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		await wpAdmin.setExperiments( {
 			[ experimentName ]: 'active',
 		} );
 	} );
 
 	test.afterAll( async () => {
-		await wpAdmin.resetExperiments();
-
-		await context.close();
+		if ( wpAdmin ) {
+			await wpAdmin.resetExperiments();
+		}
+		if ( context ) {
+			await context.close();
+		}
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {
 		test.describe( widget.name, () => {
+			let containerId: string;
+
 			test( 'Widget is displayed in panel', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
-				const layout = editor.page.locator( '#elementor-panel-category-v4-elements' );
-				await layout.isVisible();
+				const layout = editor.page.locator( editorSelectors.panels.elements.v4elements );
+				await expect( layout ).toBeVisible();
 				const container = layout.locator( '.title', { hasText: widget.title } );
 				await expect( container ).toBeVisible();
 			} );
 
 			test( 'Widget is displayed in canvas after being added', async () => {
-				const container = await editor.addElement( { elType: 'container' }, 'document' );
-				const widgetId = await editor.addWidget( { widgetType: widget.name, container } );
-				const widgetSelector = `[data-id="${ widgetId }"]`;
+				containerId = await editor.addElement( { elType: 'container' }, 'document' );
+				const widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
+				const widgetSelector = editor.getWidgetSelector( widgetId );
+
 				await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 				await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 			} );
 
-			test.skip( 'Widgets are displayed in front end', async () => {
+			test( 'Widgets are displayed in front end', async () => {
 				await editor.publishAndViewPage();
-				await expect.soft( editor.page.locator( '.page-content' ) )
+				const widgetSelector = `[data-id="${ containerId }"]`;
+				await expect.soft( editor.page.locator( widgetSelector ) )
 					.toHaveScreenshot( `${ widget.name }-published.png` );
 			} );
 		} );
