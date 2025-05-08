@@ -30,7 +30,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiments();
+		$this->register_features();
 
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( self::NAME );
 		$is_atomic_widgets_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
@@ -48,7 +48,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_experiments() {
+	private function register_features() {
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::NAME,
 			'title' => esc_html__( 'Global Classes', 'elementor' ),

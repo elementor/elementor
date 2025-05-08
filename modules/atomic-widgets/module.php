@@ -89,7 +89,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_feature();
+		$this->register_features();
 
 		( new Opt_In() )->init();
 
@@ -105,7 +105,6 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
-			add_filter( 'elementor/editor/v2/scripts/env', fn ( $config ) => $this->add_package_env_vars( $config ) );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
@@ -117,7 +116,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_feature() {
+	private function register_features() {
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
