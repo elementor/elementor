@@ -50,5 +50,5 @@ abstract class Base_Database_Updater {
 
 	abstract protected function get_db_version_option_name(): string;
 
-	abstract protected function get_migrations();
+	abstract protected function get_migrations(): array;
 }
