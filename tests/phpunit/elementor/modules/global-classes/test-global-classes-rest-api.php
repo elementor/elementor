@@ -236,7 +236,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Act.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
-		$updated = [
+		$payload = [
 			'items' => [
 				'unchanged' => $unchanged,
 				'modified' => $this->create_global_class( 'modified', 'yellow' ),
@@ -251,7 +251,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			]
 		];
 
-		$request->set_body_params( $updated );
+		$request->set_body_params( $payload );
 
 		$response = rest_do_request( $request );
 
