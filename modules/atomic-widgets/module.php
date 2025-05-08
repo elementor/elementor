@@ -91,7 +91,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_features();
+		$this->register_experimental_features();
 
 		( new Opt_In() )->init();
 
@@ -103,12 +103,12 @@ class Module extends BaseModule {
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
 
-			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
-			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
-			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -118,15 +118,36 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_features() {
-		Plugin::$instance->experiments->add_feature([
+	public static function get_experimental_data() {
+		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		]);
+		];
+	}
+
+	private function register_experimental_features() {
+		if ( self::is_active() ) {
+			Plugin::$instance->experiments->add_feature( [
+				'name' => 'e_display_none',
+				'title' => esc_html__( 'V4 Display None', 'elementor' ),
+				'description' => esc_html__( 'The None display setting enables you to hide an element completely.', 'elementor' ),
+				'hidden' => true,
+				'default' => Experiments_Manager::STATE_INACTIVE,
+				'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+			] );
+
+			Plugin::$instance->experiments->add_feature( [
+				'name' => 'e_indications_popover',
+				'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+				'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+				'hidden' => true,
+				'default' => Experiments_Manager::STATE_INACTIVE,
+			] );
+		}
 
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::CSSID_EXPERIMENT_NAME,
@@ -136,14 +157,6 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_indications_popover',
-			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		]);
 
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
@@ -211,19 +224,19 @@ class Module extends BaseModule {
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn( $_, $key ) => "border-{$key}-radius" )
+			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
 		);
 		$transformers->register(
 			Border_Width_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $_, $key ) => "border-{$key}-width" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $_, $key ) => "border-{$key}-width" )
 		);
 		$transformers->register(
 			Layout_Direction_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
+			new Multi_Props_Transformer( [ 'column', 'row' ], fn ( $prop_key, $key ) => "{$key}-{$prop_key}" )
 		);
 		$transformers->register(
 			Dimensions_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
 	}
 
@@ -239,6 +252,10 @@ class Module extends BaseModule {
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
 	}
 
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
+
 	private function get_element_usage_name( $title, $type ) {
 		$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
 		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
@@ -249,6 +266,7 @@ class Module extends BaseModule {
 
 		return $title;
 	}
+
 	/**
 	 * Enqueue the module scripts.
 	 *
@@ -266,7 +284,7 @@ class Module extends BaseModule {
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
-			<span class="elementor-panel-heading-category-chip">
+		<span class="elementor-panel-heading-category-chip">
 				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
