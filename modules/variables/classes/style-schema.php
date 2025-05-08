@@ -1,22 +1,29 @@
 <?php
 
-namespace Elementor\Modules\Variables\StyleSchemas;
+namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\Variables\Base\Style_Schema;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type as Color_Variable_Prop_Type;
+use ElementorPro\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Color_Style_Schema extends Style_Schema {
+class Style_Schema {
 	public function augment( array $schema ): array {
-		return array_map( function ( $prop_type ) { return $this->update( $prop_type ); }, $schema );
-	}    
+		$result = array_map( fn ( $prop_type ) => $this->update( $prop_type ), $schema );
+
+		if ( isset( $result[ 'font-family' ] ) ) {
+			$result[ 'font-family' ] = Union_Prop_Type::create_from( $schema[ 'font-family' ] )
+				->add_prop_type( Font_Variable_Prop_Type::make() );
+		}
+
+		return $result;
+	}
 
 	private function update( $prop_type ) {
 		if ( $prop_type instanceof Color_Prop_Type ) {

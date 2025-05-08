@@ -2,9 +2,8 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\StyleSchemas\Color_Style_Schema;
-use Elementor\Modules\Variables\StyleSchemas\Font_Style_Schema;
-use Elementor\Modules\Variables\Classes\Schema_Augmentation;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
@@ -56,11 +55,7 @@ class Hooks {
 
 	public function filter_for_style_schema() {
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
-			$schema_augmentation = ( new Schema_Augmentation() )
-				->add_augmenter( new Font_Style_Schema() )
-				->add_augmenter( new Color_Style_Schema() );
-
-			return $schema_augmentation->apply_augmentations( $schema );
+			return ( new Style_Schema() )->augment( $schema );
 		} );
 
 		return $this;

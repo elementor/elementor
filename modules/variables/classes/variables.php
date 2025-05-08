@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use ElementorPro\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -11,8 +14,8 @@ class Variables {
 
 	public function get_all() {
 		return apply_filters( self::FILTER, [
-			'colors' => $this->get_color_variables(),
-			'fonts' => $this->get_font_variables(),
+			Color_Variable_Prop_Type::get_key() => $this->get_color_variables(),
+			Font_Variable_Prop_Type::get_key() => $this->get_font_variables(),
 		] );
 	}
 
