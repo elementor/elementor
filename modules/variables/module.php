@@ -43,7 +43,9 @@ class Module extends BaseModule {
 
 		$this->hooks()
 			->register_styles_transformers()
-			->filter_for_style_schema();
+			->register_packages()
+			->filter_for_style_schema()
+			->register_css_renderer();
 	}
 
 	private function is_experiment_active(): bool {

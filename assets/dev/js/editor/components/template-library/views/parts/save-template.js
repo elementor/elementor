@@ -75,7 +75,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		const context = this.getOption( 'context' );
 
-		if ( SAVE_CONTEXTS.SAVE === context && elementor.templates.hasCloudLibraryQuota() ) {
+		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.handleSaveAction();
 		}
 
@@ -159,6 +159,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		this.$( '.source-selections-input #cloud' ).prop( 'checked', false );
+		this.$( '.source-selections-input #cloud' ).prop( 'disabled', true );
 
 		this.ui.cloudFormInputs.addClass( stateClass );
 
