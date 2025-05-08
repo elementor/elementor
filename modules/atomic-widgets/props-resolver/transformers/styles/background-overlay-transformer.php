@@ -15,7 +15,7 @@ class Background_Overlay_Transformer extends Transformer_Base {
 		$normalized_values = $this->normalize_overlay_values( $value );
 
 		return array_filter( [
-			'background-image' => $this->get_values_string( $normalized_values, 'src', Background_Image_Overlay_Transformer::$default_image ),
+			'background-image' => $this->get_values_string( $normalized_values, 'src', Background_Image_Overlay_Transformer::$default_image, true ),
 			'background-repeat' => $this->get_values_string( $normalized_values, 'repeat', Background_Image_Overlay_Transformer::$default_repeat ),
 			'background-attachment' => $this->get_values_string( $normalized_values, 'attachment', Background_Image_Overlay_Transformer::$default_attachment ),
 			'background-size' => $this->get_values_string( $normalized_values, 'size', Background_Image_Overlay_Transformer::$default_size ),
@@ -39,7 +39,7 @@ class Background_Overlay_Transformer extends Transformer_Base {
 		}, $overlays );
 	}
 
-	private function get_values_string( $value, string $prop, string $default_value ) {
+	private function get_values_string( $value, string $prop, string $default_value, bool $prevent_unification = false ) {
 		$is_empty = empty( array_filter( $value, function ( array $item ) use ( $prop ) {
 			return isset( $item[ $prop ] ) && ! is_null( $item[ $prop ] );
 		} ) );
@@ -48,7 +48,7 @@ class Background_Overlay_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		return implode( ',', array_map( function ( $item ) use ( $prop, $default_value ) {
+		$formatted_values = array_map( function ( $item ) use ( $prop, $default_value ) {
 			if ( is_string( $item ) ) {
 				return $default_value;
 			}
@@ -58,6 +58,16 @@ class Background_Overlay_Transformer extends Transformer_Base {
 			}
 
 			return $item[ $prop ] ?? $default_value;
-		}, $value ) );
+		}, $value );
+
+		if ( ! $prevent_unification ) {
+			$all_same = count( array_unique( $formatted_values ) ) === 1;
+
+			if ( $all_same ) {
+				return $formatted_values[0];
+			}
+		}
+
+		return implode( ',', $formatted_values );
 	}
 }
