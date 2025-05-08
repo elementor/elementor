@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Color_Style_Schema extends Style_Schema {
 	public function augment( array $schema ): array {
 		return array_map( function ( $prop_type ) { return $this->update( $prop_type ); }, $schema );
-	}
+	}    
 
 	private function update( $prop_type ) {
 		if ( $prop_type instanceof Color_Prop_Type ) {
