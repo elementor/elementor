@@ -24,7 +24,7 @@ class Background_Image_Overlay_Transformer extends Transformer_Base {
 		$image_url = $value['image']['src'];
 
 		return [
-			'src' => "url(\" $image_url \")",
+			'src' => "url(\"$image_url\")",
 			'repeat' => $value['repeat'] ?? null,
 			'attachment' => $value['attachment'] ?? null,
 			'size' => $value['size'] ?? null,
