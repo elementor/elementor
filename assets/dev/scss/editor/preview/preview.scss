@@ -428,6 +428,14 @@ html.elementor-html {
 .elementor-widget-placeholder {
 	height: $widget-placeholder-size;
 	animation-name: placeholder-widget;
+
+	&.is-logical {
+		margin-top: var(--e-placeholder-margin-top);
+		margin-bottom: var(--e-placeholder-margin-bottom);
+		margin-inline-start: var(--e-placeholder-margin-inline-start);
+		width: var(--e-placeholder-width);
+		min-width: 200px;
+	}
 }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,

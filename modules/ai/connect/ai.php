@@ -471,6 +471,7 @@ class Ai extends Library {
 			[
 				'aspectRatio' => $image_data['promptSettings'][ self::ASPECT_RATIO ],
 				'backgroundColor' => $image_data['promptSettings'][ self::IMAGE_BACKGROUND_COLOR ],
+				'featureIdentifier' => $image_data['featureIdentifier'],
 				'context' => wp_json_encode( $context ),
 				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,

@@ -6,7 +6,7 @@ import widgets from '../../../enums/widgets';
 import Breakpoints from '../../../assets/breakpoints';
 import EditorPage from '../../../pages/editor-page';
 
-test.describe( 'Container tests @container', () => {
+test.describe( 'Container tests #2 @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

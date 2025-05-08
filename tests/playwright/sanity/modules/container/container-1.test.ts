@@ -4,7 +4,7 @@ import { getElementSelector } from '../../../assets/elements-utils';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 
-test.describe( 'Container tests @container', () => {
+test.describe( 'Container tests #1 @container', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -65,6 +65,11 @@ test.describe( 'Container tests @container', () => {
 		const image = await editor.addWidget( { widgetType: widgets.image, container: containerId } );
 
 		// Act - Move the button to be last.
+		// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996]
+		await editor.previewFrame.dragAndDrop(
+			getElementSelector( button ),
+			getElementSelector( image ),
+		);
 		await editor.previewFrame.dragAndDrop(
 			getElementSelector( button ),
 			getElementSelector( image ),

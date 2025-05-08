@@ -9,6 +9,7 @@ use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -54,18 +55,21 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
 					Svg_Control::bind_to( 'svg' ),
-					Link_Control::bind_to( 'link' ),
+				] ),
+			Section::make()
+				->set_label( esc_html__( 'Settings', 'elementor' ) )
+				->set_items( [
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				] ),
 		];
 	}
 
 	protected function define_base_styles(): array {
-		$width = Size_Prop_Type::generate( [
-			'size' => 65,
-			'unit' => 'px',
-		] );
+		$display_value = String_Prop_Type::generate( 'inline-block' );
 
-		$height = Size_Prop_Type::generate( [
+		$size = Size_Prop_Type::generate( [
 			'size' => 65,
 			'unit' => 'px',
 		] );
@@ -74,9 +78,9 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			self::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'width', $width )
-						->add_prop( 'height', $height )
-						->add_prop( 'overflow', 'unset' )
+						->add_prop( 'display', $display_value )
+						->add_prop( 'width', $size )
+						->add_prop( 'height', $size )
 				),
 		];
 	}
@@ -97,18 +101,27 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
-
-		$classes = array_filter( array_merge(
-			[ $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
-			$settings['classes']
-		) );
-
-		$svg->add_class( implode( ' ', $classes ) );
+		$this->add_svg_style( $svg, 'width: 100%; height: 100%; overflow: unset;' );
 
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
 
+		$classes = array_filter( array_merge(
+			[ self::BASE_STYLE_KEY => $this->get_base_styles_dictionary()[ self::BASE_STYLE_KEY ] ],
+			$settings['classes']
+		) );
+
+		$classes_string = implode( ' ', $classes );
+
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
-			$svg_html = sprintf( '<a href="%s" target="%s"> %s </a>', esc_url( $settings['link']['href'] ), esc_attr( $settings['link']['target'] ), $svg_html );
+			$svg_html = sprintf(
+				'<a href="%s" target="%s" class="%s">%s</a>',
+				esc_url( $settings['link']['href'] ),
+				esc_attr( $settings['link']['target'] ),
+				esc_attr( $classes_string ),
+				$svg_html
+			);
+		} else {
+			$svg_html = sprintf( '<div class="%s">%s</div>', esc_attr( $classes_string ), $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -144,5 +157,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		);
 
 		return $content ? $content : null;
+	}
+
+	private function add_svg_style( &$svg, $new_style ) {
+		$svg_style = $svg->get_attribute( 'style' );
+		$svg_style = trim( (string) $svg_style );
+
+		if ( empty( $svg_style ) ) {
+			$svg_style = $new_style;
+		} else {
+			$svg_style = rtrim( $svg_style, ';' ) . '; ' . $new_style;
+		}
+
+		$svg->set_attribute( 'style', $svg_style );
 	}
 }

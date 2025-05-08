@@ -581,7 +581,7 @@ module.exports = {
 
 		setTimeout( function() {
 			// Sometimes element removed during the timeout.
-			if ( ! $element[ 0 ].isConnected ) {
+			if ( ! $element[ 0 ]?.isConnected ) {
 				return;
 			}
 
@@ -770,5 +770,27 @@ module.exports = {
 		const { type: elType = null } = elementor.getContainer( elementId ) || {};
 
 		return this.getAtomicElementTypes().includes( elType );
+	},
+
+	getWidgetCache( model ) {
+		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
+
+		return elementor.widgetsCache[ elementType ];
+	},
+
+	isAtomicWidget( model ) {
+		const widgetCache = this.getWidgetCache( model );
+
+		return !! widgetCache?.atomic_props_schema;
+	},
+
+	getAtomicWidgetBaseStyles( model ) {
+		if ( ! this.isAtomicWidget( model ) ) {
+			return;
+		}
+
+		const widgetCache = this.getWidgetCache( model );
+
+		return widgetCache.base_styles;
 	},
 };

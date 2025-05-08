@@ -20,6 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Style_Schema {
 	public static function get() {
+		return apply_filters( 'elementor/atomic-widgets/styles/schema', static::get_style_schema() );
+	}
+
+	public static function get_style_schema(): array {
 		return array_merge(
 			self::get_size_props(),
 			self::get_position_props(),
@@ -79,6 +83,7 @@ class Style_Schema {
 				->add_prop_type( Size_Prop_Type::make() )
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'z-index' => Number_Prop_Type::make(),
+			'scroll-margin-top' => Size_Prop_Type::make(),
 		];
 	}
 
@@ -129,6 +134,16 @@ class Style_Schema {
 				'rtl',
 			]),
 			'stroke' => Stroke_Prop_Type::make(),
+			'all' => String_Prop_Type::make()->enum([
+				'initial',
+				'inherit',
+				'unset',
+				'revert',
+				'revert-layer',
+			]),
+			'cursor' => String_Prop_Type::make()->enum([
+				'pointer',
+			]),
 		];
 	}
 

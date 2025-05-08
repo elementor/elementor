@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
 
+	const LINK_BASE_STYLE_KEY = 'link-base';
+
 	public static function get_element_type(): string {
 		return 'e-paragraph';
 	}
@@ -58,20 +60,18 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'paragraph' )
 						->set_label( __( 'Paragraph', 'elementor' ) )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
-
-					Link_Control::bind_to( 'link' ),
+				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_items( [
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				] ),
 		];
 	}
 
 	protected function define_base_styles(): array {
-		$color_value = Color_Prop_Type::generate( 'black' );
-		$font_family_value = String_Prop_Type::generate( 'Poppins' );
-		$font_size_value = Size_Prop_Type::generate( [
-			'size' => 1.2,
-			'unit' => 'rem',
-		] );
-		$line_height_value = String_Prop_Type::generate( '1.5' );
 		$margin_value = Size_Prop_Type::generate( [
 			'unit' => 'px',
 			'size' => 0 ,
@@ -81,11 +81,13 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'color', $color_value )
-						->add_prop( 'font-family', $font_family_value )
-						->add_prop( 'font-size', $font_size_value )
-						->add_prop( 'line-height', $line_height_value )
 						->add_prop( 'margin', $margin_value )
+				),
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 		];
 	}

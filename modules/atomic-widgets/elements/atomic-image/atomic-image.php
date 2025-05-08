@@ -10,6 +10,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,6 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
+
+	const LINK_BASE_STYLE_KEY = 'link-base';
+	const BASE_STYLE_KEY = 'base';
 
 	public static function get_element_type(): string {
 		return 'e-image';
@@ -51,12 +56,37 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$content_section = Section::make()
 			->set_label( esc_html__( 'Content', 'elementor' ) )
 			->set_items( [
-				Image_Control::bind_to( 'image' ),
-				Link_Control::bind_to( 'link' ),
+				Image_Control::bind_to( 'image' )
+					->set_show_mode( 'media' ),
 			] );
 
 		return [
 			$content_section,
+			Section::make()
+				->set_label( esc_html__( 'Settings', 'elementor' ) )
+				->set_items( [
+					Image_Control::bind_to( 'image' )
+						->set_show_mode( 'sizes' ),
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
+				] ),
+		];
+	}
+
+	protected function define_base_styles(): array {
+		return [
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'display', 'inherit' )
+						->add_prop( 'width', 'fit-content' )
+				),
+			self::BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'display', 'block' )
+				),
 		];
 	}
 

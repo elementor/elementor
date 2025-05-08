@@ -87,18 +87,6 @@
 		}
 	}
 
-	&.e-div-block-base, &.e-flexbox-base {
-		&:has( >.elementor-empty-view ) {
-			display: flex;
-		}
-
-		.elementor-empty-view {
-			flex: 1 1 auto;
-			height: auto;
-			min-height: unset;
-		}
-	}
-
 	&.e-grid {
 
 		.elementor-empty-view {
@@ -290,9 +278,15 @@
 	}
 }
 
-.e-div-block-base:has( .elementor-empty-view ),
-.e-flexbox-base:has( .elementor-empty-view ) {
-	height: 100px;
+.e-div-block-base:has( > .elementor-empty-view ),
+.e-flexbox-base:has( > .elementor-empty-view ) {
+	display: grid !important;
+	grid-template-rows: minmax(100%, 100px);
+
+	& > .elementor-empty-view {
+		height: auto;
+		grid-row: 1 / -1;
+	}
 }
 
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.

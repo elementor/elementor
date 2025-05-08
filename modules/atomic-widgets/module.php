@@ -68,6 +68,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const CSSID_EXPERIMENT_NAME = 'e_css_id';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -75,7 +76,6 @@ class Module extends BaseModule {
 		'editor-controls', // TODO: Need to be registered and not enqueued.
 		'editor-editing-panel',
 		'editor-elements', // TODO: Need to be registered and not enqueued.
-		'editor-panels',
 		'editor-props', // TODO: Need to be registered and not enqueued.
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
@@ -123,6 +123,23 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		]);
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::CSSID_EXPERIMENT_NAME,
+			'title' => esc_html__( 'V4 - CSS ID', 'elementor' ),
+			'description' => esc_html__( 'Enable CSS ID control for V4.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+		] );
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_indications_popover',
+			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 	}
 
 	private function add_packages( $packages ) {
