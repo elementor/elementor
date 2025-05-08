@@ -60,6 +60,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -70,6 +71,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const CSSID_EXPERIMENT_NAME = 'e_css_id';
+	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -89,7 +91,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_feature();
+		$this->register_features();
 
 		( new Opt_In() )->init();
 
@@ -99,6 +101,7 @@ class Module extends BaseModule {
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
 			( new Atomic_Import_Export() )->register_hooks();
+			( new Atomic_Widgets_Database_Updater() )->register();
 
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
@@ -115,7 +118,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_feature() {
+	private function register_features() {
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
@@ -140,7 +143,16 @@ class Module extends BaseModule {
 			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
-		] );
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
+			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
+			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
 	}
 
 	private function add_packages( $packages ) {
