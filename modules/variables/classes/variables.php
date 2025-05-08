@@ -11,6 +11,13 @@ class Variables {
 
 	public function get_all() {
 		return apply_filters( self::FILTER, [
+			'colors' => $this->get_color_variables(),
+			'fonts' => $this->get_font_variables(),
+		] );
+	}
+
+	private function get_color_variables(): array {
+		return [
 			'e-gc-001' => [
 				'value' => '#ffffff',
 				'label' => 'Main: white',
@@ -91,6 +98,55 @@ class Variables {
 				'value' => '#EEEEEE',
 				'label' => 'Violet: background',
 			],
-		] );
+		];
+	}
+
+	private function get_font_variables(): array {
+		return [
+			'e-gf-001' => [
+				'value' => 'Almendra SC',
+				'label' => 'Almendra',
+			],
+			'e-gf-002' => [
+				'value' => 'Montserrat',
+				'label' => 'Montserrat',
+			],
+			'e-gf-003' => [
+				'value' => 'Raleway',
+				'label' => 'Raleway',
+			],
+			'e-gf-004' => [
+				'value' => 'ADLaM Display',
+				'label' => 'ADLaM',
+			],
+			'e-gf-005' => [
+				'value' => 'Aclonica',
+				'label' => 'Aclonica',
+			],
+			'e-gf-006' => [
+				'value' => 'Aguafina Script',
+				'label' => 'Aguafina',
+			],
+			'e-gf-007' => [
+				'value' => 'Alfa Slab One',
+				'label' => 'Alfa Slab',
+			],
+			'e-gf-008' => [
+				'value' => 'Bruno Ace SC',
+				'label' => 'Bruno Ace',
+			],
+			'e-gf-009' => [
+				'value' => 'Bungee Shade',
+				'label' => 'Bungee',
+			],
+			'e-gf-010' => [
+				'value' => 'Uncial Antiqua',
+				'label' => 'Uncial',
+			],
+			'e-gf-011' => [
+				'value' => 'Vast Shadow',
+				'label' => 'Vast',
+			],
+		];
 	}
 }
