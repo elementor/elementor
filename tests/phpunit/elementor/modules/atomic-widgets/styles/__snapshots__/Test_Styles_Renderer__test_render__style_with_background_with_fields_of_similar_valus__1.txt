@@ -1,0 +1,1 @@
+.test-background-overlay{background-image:url("https://example.com/image-1024x682.jpg"),url("https://example.com/image-1024x682.jpg"),url("https://example.com/image-1024x682.jpg");background-attachment:scroll;background-size:140px auto,140px auto,150px auto;background-position:center left;}
