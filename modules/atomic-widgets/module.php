@@ -69,6 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -132,6 +133,15 @@ class Module extends BaseModule {
 			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
+			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
+			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 	}
 
@@ -205,14 +215,6 @@ class Module extends BaseModule {
 			Dimensions_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
-	}
-
-	private function add_package_env_vars( $config ) {
-		$config['@elementor/editor-editing-panel'] = [
-			'should_enforce_capabilities' => true,
-		];
-
-		return $config;
 	}
 
 	public function register_import_transformers( Transformers_Registry $transformers ) {

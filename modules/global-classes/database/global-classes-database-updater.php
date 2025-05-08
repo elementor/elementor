@@ -9,7 +9,7 @@ class Global_Classes_Database_Updater extends Base_Database_Updater {
 	const DB_VERSION = 1;
 	const OPTION_NAME = 'elementor_global_classes_db_version';
 
-	protected function get_migrations() {
+	protected function get_migrations(): array {
 		return [
 			1 => new Add_Capabilities(),
 		];

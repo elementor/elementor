@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const NAME = 'e_classes';
+	const ENFORCE_CAPABILITIES_EXPERIMENT = 'should_enforce_capabilities';
 
 	// TODO: Add global classes package
 	const PACKAGES = [
@@ -29,13 +30,14 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		$this->register_experiments();
+
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( self::NAME );
 		$is_atomic_widgets_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME );
 
 		// TODO: When the `e_atomic_elements` feature is not hidden, add it as a dependency
 		if ( $is_feature_active && $is_atomic_widgets_active ) {
 			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-			add_filter( 'elementor/editor/v2/scripts/env', fn ( $config ) => $this->add_package_env_vars( $config ) );
 
 			( new Global_Classes_Usage() )->register_hooks();
 			( new Global_Classes_REST_API() )->register_hooks();
@@ -46,15 +48,24 @@ class Module extends BaseModule {
 		}
 	}
 
-	public static function get_experimental_data(): array {
-		return [
+	private function register_experiments() {
+		Plugin::$instance->experiments->add_feature([
 			'name' => self::NAME,
 			'title' => esc_html__( 'Global Classes', 'elementor' ),
 			'description' => esc_html__( 'Enable global CSS classes.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		];
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
+			'title' => esc_html__( 'Enforce global classes capabilities', 'elementor' ),
+			'description' => esc_html__( 'Enforce global classes capabilities.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
 	}
 
 	private function add_packages( $packages ) {
@@ -63,13 +74,5 @@ class Module extends BaseModule {
 		}
 
 		return array_merge( $packages, self::PACKAGES );
-	}
-
-	private function add_package_env_vars( $config ) {
-		$config['@elementor/editor-global_classes'] = [
-			'should_enforce_capabilities' => false,
-		];
-
-		return $config;
 	}
 }
