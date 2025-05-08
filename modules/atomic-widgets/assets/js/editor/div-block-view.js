@@ -80,6 +80,16 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
+		if ( changed.cssid ) {
+			if ( changed.cssid.value ) {
+				this.$el.attr( 'id', changed.cssid.value );
+			} else {
+				this.$el.removeAttr( 'id' );
+			}
+
+			return;
+		}
+
 		this.$el.addClass( this.getClasses() );
 
 		if ( this.isTagChanged( changed ) ) {
@@ -100,11 +110,20 @@ const DivBlockView = BaseElementView.extend( {
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
 		this.handleLink();
+		this.handleCssID();
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
 		} );
+	},
+
+	handleCssID() {
+		const cssId = this.model.getSetting( 'cssid' );
+
+		if ( cssId ) {
+			this.$el.attr( 'id', cssId.value );
+		}
 	},
 
 	handleLink() {
