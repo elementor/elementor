@@ -1,14 +1,14 @@
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
-import { BrowserContext, expect } from '@playwright/test';
+import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import editorSelectors from '../../../selectors/editor-selectors';
 
-test.describe( 'Atomic Widgets @v4-tests', () => {
+test.describe( 'Atomic Widgets Sanity @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
-	let page;
+	let page: Page;
 	const experimentName = 'e_atomic_elements';
 
 	const atomicWidgets = [
@@ -40,6 +40,8 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	atomicWidgets.forEach( ( widget ) => {
 		test.describe( widget.name, () => {
 			let containerId: string;
+			let widgetId: string;
+			let widgetSelector: string;
 
 			test( 'Widget is displayed in panel', async () => {
 				editor = await wpAdmin.openNewPage();
@@ -52,16 +54,15 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 
 			test( 'Widget is displayed in canvas after being added', async () => {
 				containerId = await editor.addElement( { elType: 'container' }, 'document' );
-				const widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
-				const widgetSelector = editor.getWidgetSelector( widgetId );
+				widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
+				widgetSelector = editor.getWidgetSelector( widgetId );
 
 				await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 				await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 			} );
 
-			test( 'Widgets are displayed in front end', async () => {
+			test( 'Widgets are displayed in frontend', async () => {
 				await editor.publishAndViewPage();
-				const widgetSelector = `[data-id="${ containerId }"]`;
 				await expect.soft( editor.page.locator( widgetSelector ) )
 					.toHaveScreenshot( `${ widget.name }-published.png` );
 			} );
