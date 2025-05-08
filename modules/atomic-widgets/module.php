@@ -152,7 +152,6 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
-		] );
 	}
 
 	private function add_packages( $packages ) {

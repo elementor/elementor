@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const NAME = 'e_classes';
-	const ENFORCE_CAPABILITIES_EXPERIMENT = 'should_enforce_capabilities';
+	const ENFORCE_CAPABILITIES_EXPERIMENT = 'global_classes_should_enforce_capabilities';
 
 	// TODO: Add global classes package
 	const PACKAGES = [
