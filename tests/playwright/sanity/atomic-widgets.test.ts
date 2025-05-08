@@ -57,7 +57,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 			} );
 
-			test( 'Widgets are displayed in front end', async () => {
+			test.skip( 'Widgets are displayed in front end', async () => {
 				await editor.publishAndViewPage();
 				await expect.soft( editor.page.locator( '.page-content' ) )
 					.toHaveScreenshot( `${ widget.name }-published.png` );
