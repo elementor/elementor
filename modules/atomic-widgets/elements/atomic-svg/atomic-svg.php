@@ -55,7 +55,13 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
 					Svg_Control::bind_to( 'svg' ),
-					Link_Control::bind_to( 'link' ),
+				] ),
+			Section::make()
+				->set_label( esc_html__( 'Settings', 'elementor' ) )
+				->set_items( [
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				] ),
 		];
 	}
