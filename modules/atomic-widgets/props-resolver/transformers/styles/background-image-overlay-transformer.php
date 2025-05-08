@@ -10,11 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Background_Image_Overlay_Transformer extends Transformer_Base {
-	public static $default_image = 'none';
-	public static $default_repeat = 'repeat';
-	public static $default_attachment = 'scroll';
-	public static $default_size = 'auto auto';
-	public static $default_position = '0% 0%';
+	const DEFAULT_IMAGE = 'none';
+	const DEFAULT_REPEAT = 'repeat';
+	const DEFAULT_ATTACHMENT = 'scroll';
+	const DEFAULT_SIZE = 'auto auto';
+	const DEFAULT_POSITION = '0% 0%';
 
 	public function transform( $value, Props_Resolver_Context $context ) {
 		if ( ! isset( $value['image'] ) ) {
