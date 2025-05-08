@@ -1,8 +1,8 @@
-import WpAdminPage from '../pages/wp-admin-page';
-import { parallelTest as test } from '../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
-import EditorPage from '../pages/editor-page';
-import editorSelectors from '../selectors/editor-selectors';
+import EditorPage from '../../../pages/editor-page';
+import editorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Atomic Widgets @v4-tests', () => {
 	let editor: EditorPage;
