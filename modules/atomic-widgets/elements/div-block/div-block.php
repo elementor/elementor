@@ -90,8 +90,9 @@ class Div_Block extends Atomic_Element_Base {
 							],
 						]),
 
-					Link_Control::bind_to( 'link' ),
-
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				]),
 		];
 	}

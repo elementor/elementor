@@ -64,7 +64,9 @@ class Atomic_Button extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_items( [
-					Link_Control::bind_to( 'link' ),
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				] ),
 		];
 	}
