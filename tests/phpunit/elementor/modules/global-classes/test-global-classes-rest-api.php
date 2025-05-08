@@ -184,6 +184,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-3' => $class_3,
 			],
 			'order' => [ 'g-3', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-3' ],
+				'deleted' => [ 'g-2' ],
+				'modified' => [],
+			]
 		];
 
 		$request->set_body_params( $updated );
@@ -202,6 +207,68 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-3' => $this->create_global_class( 'g-3', 'should-be-sanitized' ),
 			],
 			'order' => [ 'g-3', 'g-1' ],
+		], $classes );
+	}
+
+	public function test_put__updates_based_on_changes() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$unchanged = $this->create_global_class( 'unchanged' );
+		$removed = $this->create_global_class( 'removed' );
+		$modified = $this->create_global_class( 'modified', 'blue' );
+		$new = $this->create_global_class( 'new' );
+		$not_in_payload = $this->create_global_class( 'not_in_payload' );
+		$removed_before = $this->create_global_class( 'removed_before' );
+
+		$initial = [
+			'items' => [
+				'unchanged' => $unchanged,
+				'removed' => $removed,
+				'modified' => $modified,
+				'not-in-payload' => $not_in_payload,
+			],
+			'order' => [ 'unchanged', 'removed', 'modified', 'not-in-payload' ],
+		];
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+
+		$updated = [
+			'items' => [
+				'unchanged' => $unchanged,
+				'modified' => $this->create_global_class( 'modified', 'yellow' ),
+				'new' => $new,
+				'removed_before' => $removed_before,
+			],
+			'order' => [ 'modified', 'unchanged', 'new', 'removed_before' ],
+			'changes' => [
+				'added' => [ 'new' ],
+				'deleted' => [ 'removed' ],
+				'modified' => [ 'modified' ],
+			]
+		];
+
+		$request->set_body_params( $updated );
+
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+
+		$this->assertSame( 204, $response->get_status() );
+		$this->assertNull( $response->get_data() );
+
+		$this->assertSame( [
+			'items' => [
+				'unchanged' => $unchanged,
+				'modified' => $this->create_global_class( 'modified', 'yellow' ),
+				'not-in-payload' => $not_in_payload,
+				'new' => $new,
+			],
+			'order' => [ 'not-in-payload', 'modified', 'unchanged', 'new' ],
 		], $classes );
 	}
 
@@ -233,6 +300,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-3' => $class_3,
 			],
 			'order' => [ 'g-3', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-3' ],
+				'deleted' => [ 'g-2' ],
+				'modified' => [],
+			],
 			'context' => Global_Classes_Repository::CONTEXT_PREVIEW,
 		];
 
@@ -265,6 +337,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'items' => [],
 			'order' => [],
+			'changes' => [
+				'added' => [],
+				'deleted' => [],
+				'modified' => [],
+			]
 		] );
 
 		$response = rest_do_request( $request );
@@ -282,6 +359,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'items' => [],
 			'order' => [],
+			'changes' => [
+				'added' => [],
+				'deleted' => [],
+				'modified' => [],
+			],
 			'context' => 'invalid-context',
 		] );
 
@@ -307,7 +389,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 'rest_missing_callback_param', $response->get_data()['code'] );
-		$this->assertSame( [ 'items', 'order' ], $response->get_data()['data']['params'] );
+		$this->assertSame( [ 'changes', 'items', 'order' ], $response->get_data()['data']['params'] );
 	}
 
 	public function test_put__fails_when_params_have_invalid_type() {
@@ -320,6 +402,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'items' => 'not-an-object',
 			'order' => fn () => null,
+			'changes' => [
+				'added' => [],
+				'deleted' => [],
+				'modified' => [],
+			]
 		] );
 
 		$response = rest_do_request( $request );
@@ -330,7 +417,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( [ 'items', 'order' ], array_keys( $response->get_data()['data']['params'] ) );
 	}
 
-	public function test_put__fails_when_order_contains_non_strings() {
+	public function test_put__fails_when_order_or_changes_contains_non_strings() {
 		// Arrange.
 		$this->act_as_admin();
 
@@ -340,14 +427,20 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'items' => [],
 			'order' => [ 'g-1', 123 ],
+			'changes' => [
+				'added' => [ 'g-1', 123 ],
+				'deleted' => [ 'g-2' ],
+				'modified' => [ 'g-3' ],
+			]
 		] );
 
 		$response = rest_do_request( $request );
 
+
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 'rest_invalid_param', $response->get_data()['code'] );
-		$this->assertSame( [ 'order' ], array_keys( $response->get_data()['data']['params'] ) );
+		$this->assertSame( [ 'order', 'changes' ], array_keys( $response->get_data()['data']['params'] ) );
 	}
 
 	public function test_put__fails_when_items_contains_non_objects() {
@@ -361,7 +454,12 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$request->set_body_params( [
 			'items' => [ $class, 'not-a-class' ],
-			'order' => [ 'g-1'],
+			'order' => [ 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-1', 'not-a-class' ],
+				'deleted' => [],
+				'modified' => [],
+			]
 		] );
 
 		$response = rest_do_request( $request );
@@ -386,6 +484,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-1' => $class,
 			],
 			'order' => [ 'g-1', 'g-2' ],
+			'changes' => [
+				'added' => [ 'g-1', 'g-2' ],
+				'deleted' => [],
+				'modified' => [],
+			]
 		] );
 
 		$response = rest_do_request( $request );
@@ -410,6 +513,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$request->set_body_params( [
 			'items' => $items,
 			'order' => array_keys( $items ),
+			'changes' => [
+				'added' => array_keys( $items ),
+				'deleted' => [],
+				'modified' => [],
+			]
 		] );
 
 		$response = rest_do_request( $request );
@@ -435,6 +543,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-2' => $class_2,
 			],
 			'order' => [ 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-1', 'g-2' ],
+				'deleted' => [],
+				'modified' => [],
+			]
 		] );
 
 		$response = rest_do_request( $request );
@@ -458,6 +571,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-1' => $class,
 			],
 			'order' => [ 'g-1', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-1' ],
+				'deleted' => [],
+				'modified' => [],
+			]
 		] );
 
 		$response = rest_do_request( $request );
@@ -492,6 +610,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-222' => $class_2,
 			],
 			'order' => [ 'g-1', 'g-222' ],
+			'changes' => [
+				'added' => [ 'g-1', 'g-222' ],
+				'deleted' => [],
+				'modified' => [],
+			],
 		] );
 
 		$response = rest_do_request( $request );
@@ -516,6 +639,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-2' => $class_2,
 			],
 			'order' => [ 'g-1', 'g-2' ],
+			'changes' => [
+				'added' => [ 'g-1', 'g-2' ],
+				'deleted' => [],
+				'modified' => [],
+			],
 		];
 
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
@@ -544,9 +672,8 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$initial = [
 			'items' => [
 				'g-1' => $class_1,
-
-			'order' => [ 'g-1' ],
 			],
+			'order' => [ 'g-1' ],
 		];
 
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
@@ -562,6 +689,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 				'g-3' => $class_3,
 			],
 			'order' => [ 'g-3', 'g-1' ],
+			'changes' => [
+				'added' => [ 'g-3', 'g-1' ],
+				'deleted' => [],
+				'modified' => [],
+			],
 		];
 
 		$request->set_body_params( $updated );

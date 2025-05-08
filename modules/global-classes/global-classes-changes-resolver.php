@@ -42,14 +42,21 @@ class Global_Classes_Changes_Resolver {
 	}
 
 	public function resolve_order( array $payload ) {
-		$missing_in_payload = $this->repository
-			->all()
-			->get_order()
+		$payload = Collection::make( $payload );
+
+		$current_order = $this->repository->all()->get_order();
+
+		$missing_in_payload = $current_order
 			->filter( fn( $item ) => ! $this->deleted->contains( $item ) )
 			->diff( $payload );
 
+		$missing_in_current_order = $payload
+			->filter( fn( $item ) => ! $this->added->contains( $item ) )
+			->diff( $current_order );
+
 		return $missing_in_payload
 			->merge( $payload )
+			->filter( fn( $item ) => ! $missing_in_current_order->contains( $item ) )
 			->all();
 	}
 }

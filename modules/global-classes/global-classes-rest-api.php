@@ -89,24 +89,26 @@ class Global_Classes_REST_API {
 					'items' => [
 						'required' => true,
 						'type' => 'object',
-						'additionalProperties' => false,
-						'properties' => [
-							'id' => [
-								'type' => 'string',
-								'required' => true,
-							],
-							'variants' => [
-								'type' => 'array',
-								'required' => true,
-							],
-							'type' => [
-								'type' => 'string',
-								'enum' => [ 'class' ],
-								'required' => true,
-							],
-							'label' => [
-								'type' => 'string',
-								'required' => true,
+						'additionalProperties' => [
+							'type' => 'object',
+							'properties' => [
+								'id' => [
+									'type' => 'string',
+									'required' => true,
+								],
+								'variants' => [
+									'type' => 'array',
+									'required' => true,
+								],
+								'type' => [
+									'type' => 'string',
+									'enum' => [ 'class' ],
+									'required' => true,
+								],
+								'label' => [
+									'type' => 'string',
+									'required' => true,
+								],
 							],
 						],
 					],
