@@ -52,19 +52,20 @@ test.describe( 'Atomic Widgets Sanity @v4-tests', () => {
 				await expect( container ).toBeVisible();
 			} );
 
-			test( 'Widget is displayed in canvas after being added', async () => {
-				containerId = await editor.addElement( { elType: 'container' }, 'document' );
-				widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
-				widgetSelector = editor.getWidgetSelector( widgetId );
+			test( 'Widget can be added', async () => {
+				await test.step( 'Widget is displayed in Editor', async () => {
+					containerId = await editor.addElement( { elType: 'container' }, 'document' );
+					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
+					widgetSelector = editor.getWidgetSelector( widgetId );
 
-				await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
-				await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
-			} );
-
-			test( 'Widgets are displayed in frontend', async () => {
-				await editor.publishAndViewPage();
-				await expect.soft( editor.page.locator( widgetSelector ) )
-					.toHaveScreenshot( `${ widget.name }-published.png` );
+					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
+					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+				} );
+				await test.step( 'Widgets is displayed on Frontend', async () => {
+					await editor.publishAndViewPage();
+					await expect.soft( editor.page.locator( widgetSelector ) )
+						.toHaveScreenshot( `${ widget.name }-published.png` );
+				} );
 			} );
 		} );
 	} );

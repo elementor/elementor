@@ -10,6 +10,7 @@ import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, Co
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
+import v4Panel from './editor/v4-elements-panel';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -17,6 +18,7 @@ let Backbone: BackboneType;
 let window: WindowType;
 
 export default class EditorPage extends BasePage {
+	readonly v4Panel: v4Panel;
 	readonly previewFrame: Frame;
 	postId: number;
 
@@ -29,6 +31,7 @@ export default class EditorPage extends BasePage {
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
+		this.v4Panel = new v4Panel();
 		this.previewFrame = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
