@@ -44,12 +44,13 @@ test.describe( 'V4 atomic button widget tests @promotions', () => {
 		await editor.v4Panel.fillField( 0, newText );
 		const button = await editor.getWidget( buttonId );
 
-		expect( await button.innerText() ).toBe( newText );
+		await expect( button ).toHaveText( newText, { timeout: 1000 } );
 	} );
 
 	test( 'Button link can be set', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container } );
 		const linkUrl = 'https://example.com';
@@ -58,8 +59,9 @@ test.describe( 'V4 atomic button widget tests @promotions', () => {
 		await page.locator( '[aria-label="Toggle link"]' ).click();
 		await editor.v4Panel.fillField( 1, linkUrl );
 		const button = await editor.getWidget( buttonId );
+		const anchor = button.locator( 'a' );
 
-		expect( await button.getAttribute( 'href' ) ).toBe( linkUrl );
+		await expect( anchor ).toHaveAttribute( 'href', linkUrl );
 	} );
 
 	test.skip( 'Button size can be changed', async ( { page, apiRequests }, testInfo ) => {
@@ -70,8 +72,8 @@ test.describe( 'V4 atomic button widget tests @promotions', () => {
 
 		await editor.openV2PanelTab( 'style' );
 		await editor.openV2Section( 'size' );
-		await page.locator( '.elementor-control-width input' ).fill( '200' );
-		await page.locator( '.elementor-control-height input' ).fill( '60' );
+		await editor.v4Panel.setWidth( 200 );
+		await editor.v4Panel.setHeight( 60 );
 
 		const button = await editor.getWidget( buttonId );
 		const buttonBox = await button.boundingBox();
