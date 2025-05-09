@@ -5,9 +5,9 @@ namespace Elementor\Modules\Variables;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
-use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
+use Elementor\Modules\Variables\Classes\Style_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

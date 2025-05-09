@@ -40,15 +40,16 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange.
 		add_filter( Variables::FILTER, function () {
 			return [
-				'a-01' => [
-					'label' => 'Black',
-					'value' => '#000',
-				],
-
-				'a-02' => [
-					'label' => 'Border Width',
-					'value' => '6px',
-				],
+				'Variables' => [
+					'a-01' => [
+						'label' => 'Black',
+						'value' => '#000',
+					],
+					'a-02' => [
+						'label' => 'Border Width',
+						'value' => '6px',
+					],
+				]
 			];
 		} );
 
@@ -63,15 +64,17 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange,
 		add_filter( Variables::FILTER, function () {
 			return [
-				'a-01' => [
-					'label' => 'a-width',
-					'value' => '<script type="text/javascript">alert("here");</script>',
-				],
+				'test' => [
+					'a-01' => [
+						'label' => 'a-width',
+						'value' => '<script type="text/javascript">alert("here");</script>',
+					],
 
-				'<script>alert("there")</script>' => [
-					'label' => 'a-height',
-					'value' => '2rem',
-				],
+					'<script>alert("there")</script>' => [
+						'label' => 'a-height',
+						'value' => '2rem',
+					],
+				]
 			];
 		} );
 
