@@ -18,7 +18,7 @@ test.describe( 'V4 atomic button widget tests @promotions', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		//await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
@@ -64,7 +64,7 @@ test.describe( 'V4 atomic button widget tests @promotions', () => {
 		await expect( anchor ).toHaveAttribute( 'href', linkUrl );
 	} );
 
-	test.skip( 'Button size can be changed', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Button size can be changed', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
@@ -72,8 +72,11 @@ test.describe( 'V4 atomic button widget tests @promotions', () => {
 
 		await editor.openV2PanelTab( 'style' );
 		await editor.openV2Section( 'size' );
-		await editor.v4Panel.setWidth( 200 );
-		await editor.v4Panel.setHeight( 60 );
+		await page.pause();
+		await editor.v4Panel.setSize( {
+			width: 200,
+			height: 60,
+		} );
 
 		const button = await editor.getWidget( buttonId );
 		const buttonBox = await button.boundingBox();

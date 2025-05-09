@@ -4,7 +4,7 @@ import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import editorSelectors from '../../../selectors/editor-selectors';
 
-test.describe( 'Atomic Widgets Sanity @v4-tests', () => {
+test.describe( 'Atomic Widgets @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
@@ -30,7 +30,7 @@ test.describe( 'Atomic Widgets Sanity @v4-tests', () => {
 
 	test.afterAll( async () => {
 		if ( wpAdmin ) {
-			await wpAdmin.resetExperiments();
+			//await wpAdmin.resetExperiments();
 		}
 		if ( context ) {
 			await context.close();
@@ -52,8 +52,10 @@ test.describe( 'Atomic Widgets Sanity @v4-tests', () => {
 				await expect( container ).toBeVisible();
 			} );
 
-			test( 'Widget can be added', async () => {
-				await test.step( 'Widget is displayed in Editor', async () => {
+			test( 'Widget is displayed in canvas and frontend', async () => {
+				editor = await wpAdmin.openNewPage();
+				await editor.openElementsPanel();
+				await test.step( 'Add widget and check editor canvas', async () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
@@ -61,9 +63,11 @@ test.describe( 'Atomic Widgets Sanity @v4-tests', () => {
 					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 				} );
-				await test.step( 'Widgets is displayed on Frontend', async () => {
+
+				await test.step( 'Check frontend display', async () => {
+					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
-					await expect.soft( editor.page.locator( widgetSelector ) )
+					await expect.soft( editor.page.locator( containerSelector ) )
 						.toHaveScreenshot( `${ widget.name }-published.png` );
 				} );
 			} );

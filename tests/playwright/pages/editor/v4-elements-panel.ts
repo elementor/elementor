@@ -1,6 +1,16 @@
 import BasePage from '../base-page';
 import type { Page, TestInfo } from '@playwright/test';
 
+interface SizeOptions {
+	width?: number;
+	height?: number;
+	minWidth?: number;
+	minHeight?: number;
+	maxWidth?: number;
+	maxHeight?: number;
+	overflow?: 'visible' | 'hidden' | 'auto';
+}
+
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
 
@@ -14,58 +24,47 @@ export default class v4Panel extends BasePage {
 	}
 
 	/**
-	 * Set width value for an element
-	 * @param value - Width value in pixels
+	 * Set size parameters for an element
+	 * @param {SizeOptions} options - Object containing size parameters
+	 * @param {number} [options.width] - Width value in pixels
+	 * @param {number} [options.height] - Height value in pixels
+	 * @param {number} [options.minWidth] - Min width value in pixels
+	 * @param {number} [options.minHeight] - Min height value in pixels
+	 * @param {number} [options.maxWidth] - Max width value in pixels
+	 * @param {number} [options.maxHeight] - Max height value in pixels
+	 * @param {('visible'|'hidden'|'auto')} [options.overflow] - Overflow value
 	 */
-	async setWidth( value: number ): Promise<void> {
-		await this.page.locator( 'label:has-text("Width")' ).locator( 'xpath=..' ).locator( 'input[type="number"]' ).fill( value.toString() );
-	}
+	async setSize( options: SizeOptions ): Promise<void> {
+		const sizeControls = {
+			width: { label: 'Width', dataSetting: 'width' },
+			height: { label: 'Height', dataSetting: 'height' },
+			minWidth: { label: 'Min width', dataSetting: 'min_width' },
+			minHeight: { label: 'Min height', dataSetting: 'min_height' },
+			maxWidth: { label: 'Max width', dataSetting: 'max_width' },
+			maxHeight: { label: 'Max height', dataSetting: 'max_height' },
+		};
 
-	/**
-	 * Set height value for an element
-	 * @param value - Height value in pixels
-	 */
-	async setHeight( value: number ): Promise<void> {
-		await this.page.locator( 'label:has-text("Height")' ).locator( 'xpath=..' ).locator( 'input[type="number"]' ).fill( value.toString() );
-	}
+		// Set numeric values
+		for ( const [ key, control ] of Object.entries( sizeControls ) ) {
+			if ( options[ key ] !== undefined ) {
+				// Wait for the section to be visible
+				await this.page.waitForSelector( '.elementor-control-size' );
 
-	/**
-	 * Set min width value for an element
-	 * @param value - Min width value in pixels
-	 */
-	async setMinWidth( value: number ): Promise<void> {
-		await this.page.locator( 'label:has-text("Min width")' ).locator( 'xpath=..' ).locator( 'input[type="number"]' ).fill( value.toString() );
-	}
+				// Find the input within the size section
+				const input = this.page.locator( '.elementor-control-size' )
+					.locator( `input[data-setting="${ control.dataSetting }"]` );
 
-	/**
-	 * Set min height value for an element
-	 * @param value - Min height value in pixels
-	 */
-	async setMinHeight( value: number ): Promise<void> {
-		await this.page.locator( 'label:has-text("Min height")' ).locator( 'xpath=..' ).locator( 'input[type="number"]' ).fill( value.toString() );
-	}
+				// Wait for the input to be visible
+				await input.waitFor( { state: 'visible' } );
 
-	/**
-	 * Set max width value for an element
-	 * @param value - Max width value in pixels
-	 */
-	async setMaxWidth( value: number ): Promise<void> {
-		await this.page.locator( 'label:has-text("Max width")' ).locator( 'xpath=..' ).locator( 'input[type="number"]' ).fill( value.toString() );
-	}
+				// Fill the input
+				await input.fill( options[ key ].toString() );
+			}
+		}
 
-	/**
-	 * Set max height value for an element
-	 * @param value - Max height value in pixels
-	 */
-	async setMaxHeight( value: number ): Promise<void> {
-		await this.page.locator( 'label:has-text("Max height")' ).locator( 'xpath=..' ).locator( 'input[type="number"]' ).fill( value.toString() );
-	}
-
-	/**
-	 * Set overflow value for an element
-	 * @param value - Overflow value ('visible', 'hidden', or 'auto')
-	 */
-	async setOverflow( value: 'visible' | 'hidden' | 'auto' ): Promise<void> {
-		await this.page.locator( `button[value="${ value }"]` ).click();
+		// Set overflow if provided
+		if ( options.overflow ) {
+			await this.page.locator( `button[value="${ options.overflow }"]` ).click();
+		}
 	}
 }
