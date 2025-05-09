@@ -90,6 +90,7 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
+		grunt.task.run( 'sass' );
 		grunt.task.run( 'watch:styles' );
 	} );
 

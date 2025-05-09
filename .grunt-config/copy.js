@@ -26,6 +26,7 @@ const getBuildFiles = [
 	'!docker-compose.yml',
 	'!docs/**',
 	'!Gruntfile.js',
+	'!local-dev/**',
 	'!local-site/**',
 	'!modules/**/assets/**',
 	'!nightwatch.conf.js',
