@@ -29,12 +29,8 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	} );
 
 	test.afterAll( async () => {
-		if ( wpAdmin ) {
-			//await wpAdmin.resetExperiments();
-		}
-		if ( context ) {
-			await context.close();
-		}
+		await wpAdmin.resetExperiments();
+		await context.close();
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {
