@@ -34,37 +34,27 @@ export default class v4Panel extends BasePage {
 	 * @param {number} [options.maxHeight] - Max height value in pixels
 	 * @param {('visible'|'hidden'|'auto')} [options.overflow] - Overflow value
 	 */
-	async setSize( options: SizeOptions ): Promise<void> {
+	async setWidgetSize(options: { width?: number, height?: number, minWidth?: number, minHeight?: number, maxWidth?: number, maxHeight?: number, overflow?: string }): Promise<void> {
 		const sizeControls = {
-			width: { label: 'Width', dataSetting: 'width' },
-			height: { label: 'Height', dataSetting: 'height' },
-			minWidth: { label: 'Min width', dataSetting: 'min_width' },
-			minHeight: { label: 'Min height', dataSetting: 'min_height' },
-			maxWidth: { label: 'Max width', dataSetting: 'max_width' },
-			maxHeight: { label: 'Max height', dataSetting: 'max_height' },
+			width: 'Width',
+			height: 'Height',
+			minWidth: 'Min width',
+			minHeight: 'Min height',
+			maxWidth: 'Max width',
+			maxHeight: 'Max height'
 		};
 
-		// Set numeric values
-		for ( const [ key, control ] of Object.entries( sizeControls ) ) {
-			if ( options[ key ] !== undefined ) {
-				// Wait for the section to be visible
-				await this.page.waitForSelector( '.elementor-control-size' );
-
-				// Find the input within the size section
-				const input = this.page.locator( '.elementor-control-size' )
-					.locator( `input[data-setting="${ control.dataSetting }"]` );
-
-				// Wait for the input to be visible
-				await input.waitFor( { state: 'visible' } );
-
-				// Fill the input
-				await input.fill( options[ key ].toString() );
+		for (const [key, label] of Object.entries(sizeControls)) {
+			if (options[key] !== undefined) {
+				const labelLocator = this.page.locator(`//label[contains(text(), '${label}')]`).last();
+				const inputLocator = labelLocator.locator('xpath=following::input[1]');
+				await inputLocator.fill(String(options[key]));
+				await inputLocator.dispatchEvent('input'); // Ensure value is triggered
 			}
 		}
 
-		// Set overflow if provided
-		if ( options.overflow ) {
-			await this.page.locator( `button[value="${ options.overflow }"]` ).click();
+		if (options.overflow) {
+			await this.page.locator(`button[value="${options.overflow}"]`).click();
 		}
 	}
 }
