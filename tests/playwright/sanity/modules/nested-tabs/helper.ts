@@ -109,7 +109,7 @@ export async function addItemFromRepeater( editor: EditorPage, widgetID: string 
 	// Arrange
 	const addItemButton = editor.page.locator( locators.repeaterAddButton ),
 		nestedItemTitle = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } .e-n-tab-title` ),
-		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-content > .e-con` ),
+		nestedItemContent = editor.getPreviewFrame().locator( `.elementor-element-${ widgetID } > .e-n-tabs > .e-n-tabs-content > .e-con` ),
 		numberOfTitles = await nestedItemTitle.count(),
 		numberOfContents = await nestedItemContent.count();
 
