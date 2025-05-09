@@ -80,7 +80,7 @@ class Control_Icons extends Control_Base_Multiple {
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Add', 'elementor' ); ?></span>
 					</div>
 					<div class="elementor-control-media-area">
-						<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+						<div class="elementor-control-media__remove elementor-control-media__content__remove" data-tooltip="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
 							<i class="eicon-trash-o" aria-hidden="true"></i>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 						</div>
@@ -134,21 +134,21 @@ class Control_Icons extends Control_Base_Multiple {
 				<div class="elementor-choices">
 					<# if ( ! data.exclude_inline_options.includes( 'none' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-none" type="radio" value="none">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{ get( 'none', 'label' ) }}" title="{{ get( 'none', 'label' ) }}">
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__none" for="<?php $this->print_control_uid(); ?>-none" data-tooltip="{{ get( 'none', 'label' ) }}">
 							<i class="{{ get( 'none', 'icon' ) }}" aria-hidden="true"></i>
 							<span class="elementor-screen-only">{{ get( 'none', 'label' ) }}</span>
 						</label>
 					<# }
 					if ( ! data.exclude_inline_options.includes( 'svg' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-svg" type="radio" value="svg">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{ get( 'svg', 'label' ) }}" title="{{ get( 'svg', 'label' ) }}">
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__svg" for="<?php $this->print_control_uid(); ?>-svg" data-tooltip="{{ get( 'svg', 'label' ) }}">
 							<i class="{{ get( 'svg', 'icon' ) }}" aria-hidden="true"></i>
 							<span class="elementor-screen-only">{{ get( 'svg', 'label' ) }}</span>
 						</label>
 					<# }
 					if ( ! data.exclude_inline_options.includes( 'icon' ) ) { #>
 						<input id="<?php $this->print_control_uid(); ?>-icon" type="radio" value="icon">
-						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="{{ get( 'icon', 'label' ) }}" title="{{ get( 'icon', 'label' ) }}">
+						<label class="elementor-choices-label elementor-control-unit-1 tooltip-target elementor-control-icons--inline__icon" for="<?php $this->print_control_uid(); ?>-icon" data-tooltip="{{ get( 'icon', 'label' ) }}">
 							<span class="elementor-control-icons--inline__displayed-icon">
 								<i class="{{ get( 'icon', 'icon' ) }}" aria-hidden="true"></i>
 							</span>
