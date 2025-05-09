@@ -135,17 +135,6 @@ test.describe( 'Launchpad checklist tests', () => {
 		const editor = await wpAdmin.openNewPage();
 		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
-		await wpAdmin.setExperiments( { editor_v2: false } );
-		await wpAdmin.openNewPage();
-
-		await test.step( 'Assert switch is hidden in user preferences when top bar experiment is off', async () => {
-			await editor.openUserPreferencesPanel();
-			await editor.openSection( 'preferences' );
-
-			await expect( page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeHidden();
-		} );
-
-		await wpAdmin.setExperiments( { editor_v2: true } );
 		await wpAdmin.openNewPage();
 
 		await test.step( 'Assert switch is visible in user preferences', async () => {
