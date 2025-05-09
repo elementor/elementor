@@ -29,7 +29,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
-		await editor.addWidget( 'button' );
+		await editor.addWidget( { widgetType: 'button' } );
 
 		// Load template.
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
@@ -83,7 +83,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
-		await editor.addWidget( 'button' );
+		await editor.addWidget( { widgetType: 'button' } );
 
 		// Load template.
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
@@ -146,7 +146,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -165,11 +165,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			parentWidgetId = await editor.addWidget( 'nested-tabs', container ),
+			parentWidgetId = await editor.addWidget( { widgetType: 'nested-tabs', container } ),
 			tabsContainer = editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .e-con.e-active` ),
 			tabsContainerId = await tabsContainer.getAttribute( 'data-id' );
 
-		await editor.addWidget( 'nested-tabs', tabsContainerId );
+		await editor.addWidget( { widgetType: 'nested-tabs', container: tabsContainerId } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-n-tabs-content .e-con.e-active' );
 
 		await editor.closeNavigatorIfOpen();

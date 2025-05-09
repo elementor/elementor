@@ -7,7 +7,7 @@ test( 'Image widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
-	await editor.addWidget( 'image' );
+	await editor.addWidget( { widgetType: 'image' } );
 
 	await page.click( '.elementor-control-media__preview' );
 	await page.click( 'text=Media Library' );

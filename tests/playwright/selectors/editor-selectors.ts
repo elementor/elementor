@@ -19,6 +19,7 @@ const EditorSelectors = {
 		},
 		elements: {
 			wrapper: '#elementor-panel-page-elements',
+			v4elements: '#elementor-panel-category-v4-elements',
 			footerButton: '#elementor-panel-header-add-button i',
 		},
 		pageSettings: {

@@ -44,7 +44,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			// Act
 			// Set horizontal icon & style size to 70
 			await editor.closeNavigatorIfOpen();
-			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
 			await addIcon( editor, page, 'address card' );
 			await setIconSize( editor, '70' );
@@ -81,9 +81,9 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.closeNavigatorIfOpen();
-		const parentAccordionID = await editor.addWidget( 'nested-accordion', container );
+		const parentAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 		await editor.selectElement( parentAccordionID );
-		const nestedAccordionID = await editor.addWidget( 'nested-accordion', parentAccordionID, true );
+		const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container: parentAccordionID, isContainerASection: true } );
 		await editor.selectElement( nestedAccordionID );
 		await addIcon( editor, page, 'address card' );
 		await editor.publishAndViewPage();

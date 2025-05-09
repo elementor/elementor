@@ -10,6 +10,7 @@ import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, Co
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
+import v4Panel from './editor/v4-elements-panel';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -17,6 +18,7 @@ let Backbone: BackboneType;
 let window: WindowType;
 
 export default class EditorPage extends BasePage {
+	readonly v4Panel: v4Panel;
 	readonly previewFrame: Frame;
 	postId: number;
 
@@ -29,6 +31,7 @@ export default class EditorPage extends BasePage {
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
+		this.v4Panel = new v4Panel( page, testInfo );
 		this.previewFrame = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
@@ -142,7 +145,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<string>} Element ID
 	 */
-	async addElement( model: unknown, container: null | string = null, isContainerASection = false ): Promise<string> {
+	async addElement( model: unknown, container: null | string = null, isContainerASection: boolean = false ): Promise<string> {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
@@ -162,19 +165,34 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Generates a CSS selector string for a widget element based on its ID.
+	 *
+	 * @param {string} widgetId - The unique identifier of the widget.
+	 * @return {string} The CSS selector string for targeting the widget.
+	 */
+	getWidgetSelector( widgetId: string ): string {
+		return `[data-id="${ widgetId }"]`;
+	}
+
+	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string}  widgetType          - Widget type.
-	 * @param {string}  container           - Optional. Container to create the element in.
-	 * @param {boolean} isContainerASection - Optional. Whether the container is a section.
+	 * @param {Object}  props                       - Widget properties
+	 * @param {string}  props.widgetType            - Widget type
+	 * @param {string}  [props.container]           - Optional. Container to create the element in
+	 * @param {boolean} [props.isContainerASection] - Optional. Whether the container is a section
 	 *
-	 * @return {Promise<string>} The widget ID.
+	 * @return {Promise<string>} The widget ID
 	 */
-	async addWidget( widgetType: string, container: string = null, isContainerASection: boolean = false ): Promise<string> {
-		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
-		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
+	async addWidget( props: { widgetType: string, container?: string | null, isContainerASection?: boolean } ): Promise<string> {
+		const widgetId = await this.addElement( { widgetType: props.widgetType, elType: 'widget' }, props.container, props.isContainerASection );
+		await this.getPreviewFrame().waitForSelector( this.getWidgetSelector( widgetId ) );
 
 		return widgetId;
+	}
+
+	async getWidget( widgetId: string ): Promise<Locator> {
+		return this.getPreviewFrame().locator( this.getWidgetSelector( widgetId ) );
 	}
 
 	/**
@@ -332,7 +350,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ) {
+	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
 		const selectorMap: Record< 'style' | 'general', string > = {
 			style: 'style',
 			general: 'settings',
@@ -406,7 +424,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ) {
+	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ): Promise<void> {
 		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
 		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
 		const isContentVisible = await this.page.evaluate( ( selector ) => {
@@ -733,7 +751,7 @@ export default class EditorPage extends BasePage {
 	async hideEditorElements(): Promise<void> {
 		const css = '<style>.elementor-element-overlay,.elementor-empty-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
 
-		await this.addWidget( 'html' );
+		await this.addWidget( { widgetType: 'html' } );
 		await this.setTextareaControlValue( 'type-code', css );
 	}
 

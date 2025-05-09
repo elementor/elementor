@@ -35,7 +35,7 @@ test.describe( 'Video tests inside a container @video', () => {
 
 		// Act.
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const videoId = await editor.addWidget( widgets.video, containerId );
+		const videoId = await editor.addWidget( { widgetType: widgets.video, container: containerId } );
 		await editor.selectElement( containerId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );
@@ -60,7 +60,7 @@ test.describe( 'Video tests inside a container @video', () => {
 			await editor.closeNavigatorIfOpen();
 
 			// Act.
-			await editor.addWidget( 'video' );
+			await editor.addWidget( { widgetType: widgets.video } );
 			await editor.setSelectControlValue( 'video_type', video );
 			await editor.setNumberControlValue( 'start', startTime );
 			if ( 'youtube' === video ) {
@@ -90,7 +90,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await wpAdmin.openNewPage();
 
 		// Act 1.
-		await editor.addWidget( 'video' );
+		await editor.addWidget( { widgetType: widgets.video } );
 		await editor.openSection( 'section_image_overlay' );
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
@@ -116,7 +116,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.closeNavigatorIfOpen();
 
 		// Act.
-		await editor.addWidget( 'video' );
+		await editor.addWidget( { widgetType: widgets.video } );
 		await editor.openSection( 'section_image_overlay' );
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
 		await editor.setMediaControlImageValue( 'image_overlay', 'About-Pic-3-1.png' );
@@ -158,7 +158,7 @@ test.describe( 'Video tests inside a section @video', () => {
 		const sectionId = await editor.addElement( { elType: 'section' }, 'document' );
 		const column = editor.getPreviewFrame().locator( '.elementor-element-' + sectionId + ' .elementor-column' );
 		const columnId = await column.getAttribute( 'data-id' );
-		const videoId = await editor.addWidget( widgets.video, columnId );
+		const videoId = await editor.addWidget( { widgetType: widgets.video, container: columnId } );
 		await editor.selectElement( columnId );
 		await editor.openPanelTab( 'advanced' );
 		await editor.setDimensionsValue( 'padding', '0' );

@@ -13,7 +13,7 @@ test( 'Button widget sanity test', async ( { page, apiRequests }, testInfo ) => 
 		editor = await wpAdmin.openNewPage();
 
 	// Act.
-	await editor.addWidget( 'button' );
+	await editor.addWidget( { widgetType: 'button' } );
 
 	const button = await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );
 
@@ -26,7 +26,7 @@ test( 'Button controls should return to default', async ( { page, apiRequests },
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
-	await editor.addWidget( 'button' );
+	await editor.addWidget( { widgetType: 'button' } );
 	await editor.openPanelTab( 'style' );
 
 	await editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( defaultBtnName ) );

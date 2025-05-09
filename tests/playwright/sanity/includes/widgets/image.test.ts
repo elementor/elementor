@@ -29,7 +29,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			const imageTitle = 'About-Pic-3-1';
 
 			await wpAdmin.openNewPage();
-			await editor.addWidget( data[ i ].widgetTitle );
+			await editor.addWidget( { widgetType: data[ i ].widgetTitle } );
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 
 			const imageSize = [ 'thumbnail', 'large', 'full' ];
@@ -80,7 +80,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			const imageTitle = 'About-Pic-3-1';
 
 			await wpAdmin.openNewPage();
-			await editor.addWidget( data[ i ].widgetTitle );
+			await editor.addWidget( { widgetType: data[ i ].widgetTitle } );
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
 			await editor.waitForPanelToLoad();
 			await contentTab.setCustomImageSize(
@@ -102,7 +102,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
-		const widgetId = await editor.addWidget( 'image' );
+		const widgetId = await editor.addWidget( { widgetType: 'image' } );
 		await editor.setMediaControlImageValue( 'image', `${ image }.png` );
 		await editor.setSelectControlValue( 'caption_source', 'attachment' );
 		await editor.setSelectControlValue( 'link_to', 'file' );
@@ -119,7 +119,7 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 
 		const imageSrc = await editor.getPreviewFrame().locator( EditorSelectors.image.image ).getAttribute( 'src' );
 		await editor.removeElement( widgetId );
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.setTextControlValue( 'link', imageSrc );
 
 		await editor.publishAndViewPage();
