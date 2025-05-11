@@ -1,6 +1,6 @@
 {% if settings.image.src is not empty %}
 	{% if settings.link.href %}
-		<a href="{{ settings.link.href }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}">
+		<a href="{{ settings.link.href | e('html_attr') }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}">
 	{% endif %}
 	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
 		{% for attr, value in settings.image %}

@@ -1,9 +1,9 @@
 {% if settings.text is not empty %}
-    {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+	{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 
     {% if settings.link.href %}
         <a
-                href="{{ settings.link.href }}"
+                href="{{ settings.link.href | e('html_attr') }}"
                 target="{{ settings.link.target }}"
                 class="{{ classes }}"
         >
