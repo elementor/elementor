@@ -377,7 +377,7 @@ $remote-templates-items-space: 30px;
 				border: var(--e-a-border);
 				border-radius: 3px;
 
-				&:hover {
+				&:not([data-status="locked"]):hover {
 					.elementor-template-library-template-preview {
 						display: flex;
 					}
@@ -421,9 +421,7 @@ $remote-templates-items-space: 30px;
 
 				.elementor-template-library-template-name {
 					font-size: 11px;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-					overflow: hidden;
+					@include ellipsis;
 				}
 
 				.elementor-template-library-card-footer {
@@ -433,6 +431,14 @@ $remote-templates-items-space: 30px;
 					align-items: center;
 					font-size: 11px;
 					min-height: 38px;
+
+					i {
+						vertical-align: middle;
+
+						svg {
+							cursor: pointer;
+						}
+					}
 
 					.elementor-template-library-template-card-footer-overlay {
 						display: none;
@@ -455,10 +461,8 @@ $remote-templates-items-space: 30px;
 							flex-direction: column;
 							justify-content: center;
 							width: 65%;
-							white-space: nowrap;
-							text-overflow: ellipsis;
-							overflow: hidden;
 							align-items: start;
+							@include ellipsis;
 						}
 					}
 				}
@@ -528,23 +532,17 @@ $remote-templates-items-space: 30px;
 	#elementor-template-library-navigation-container {
 		display: flex;
 		flex: 1;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
+		@include ellipsis;
 
 		.elementor-template-library-navigation-container {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			gap: 15px;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
+			@include ellipsis;
 
 			> span {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
+				@include ellipsis;
 			}
 
 			.elementor-template-library-navigation-back-button {
@@ -1037,6 +1035,16 @@ label.elementor-template-library-order-label {
 			display: flex;
 			align-items: center;
 			gap: 8px;
+
+			&.disabled {
+				cursor: not-allowed;
+				color: var(--e-a-color-txt-disabled);
+
+				a {
+					color: var(--e-a-color-txt-disabled);
+					cursor: not-allowed;
+				}
+			}
 		}
 
 		a {
@@ -1094,6 +1102,12 @@ label.elementor-template-library-order-label {
 		font-weight: 500;
 		i {
 			font-size: 16px;
+			line-height: 1;
+			vertical-align: middle;
+
+			svg {
+				cursor: pointer;
+			}
 		}
 	}
 
@@ -1125,6 +1139,13 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-insert {
+		&.disabled {
+			color: var(--e-a-color-primary);
+			&:hover,
+			&:focus {
+				cursor: not-allowed;
+			}
+		}
 
 		i {
 			margin-inline-end: 3px;
@@ -1332,9 +1353,7 @@ label.elementor-template-library-order-label {
 
 			&.cloud,
 			&.local {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
+				@include ellipsis;
 				line-height: 27px;
 			}
 
@@ -1395,9 +1414,7 @@ label.elementor-template-library-order-label {
 			max-width: 450px;
 
 			li {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
+				@include ellipsis;
 			}
 
 			.eicon-loading {

@@ -591,7 +591,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onHoverBulkAction() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'not-allowed' );
 			this.ui.bulkCopy.find( 'i' ).css( 'cursor', 'not-allowed' );
 		} else {
@@ -601,7 +601,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onClickBulkMove() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			return;
 		}
 
@@ -622,8 +622,19 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} );
 	},
 
+	hasLockedTemplatesInBulkSelection() {
+		const bulkSelectedItems = elementor.templates.getBulkSelectionItems();
+
+		return this.collection.some( ( model ) => {
+			const templateId = model.get( 'template_id' );
+			const status = model.get( 'status' );
+
+			return bulkSelectedItems.has( templateId ) && 'locked' === status;
+		} );
+	},
+
 	onClickBulkCopy() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			return;
 		}
 

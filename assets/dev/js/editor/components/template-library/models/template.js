@@ -9,6 +9,7 @@ module.exports = Backbone.Model.extend( {
 		thumbnail: '',
 		url: '',
 		export_link: '',
+		status: null,
 		preview_url: null,
 		generate_preview_url: null,
 		tags: [],

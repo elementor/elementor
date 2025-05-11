@@ -38,6 +38,15 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		'change:title': 'onTitleChange',
 	},
 
+	handleLockedTemplate() {
+		const isLocked = 'locked' === this.model.get( 'status' );
+
+		this.ui.renameButton.toggleClass( 'disabled', isLocked );
+		this.ui.moveButton.toggleClass( 'disabled', isLocked );
+		this.ui.copyButton.toggleClass( 'disabled', isLocked );
+		this.ui.exportButton.toggleClass( 'disabled', isLocked );
+	},
+
 	onTitleChange() {
 		const title = _.escape( this.model.get( 'title' ) );
 
@@ -100,6 +109,8 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onToggleMoreClick( event ) {
 		event.stopPropagation();
 
+		this.handleLockedTemplate();
+
 		this.ui.morePopup.show();
 
 		elementor.templates.eventManager.sendPageViewEvent( {
@@ -116,6 +127,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	async onRenameClick( event ) {
 		event.stopPropagation();
 
+		if ( 'locked' === this.model.get( 'status' ) ) {
+			return;
+		}
+
 		try {
 			await elementor.templates.renameTemplate( this.model, {
 				onConfirm: () => this.showToggleMoreLoader(),
@@ -126,6 +141,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onMoveClick() {
+		if ( 'locked' === this.model.get( 'status' ) ) {
+			return;
+		}
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.MOVE,
@@ -133,6 +152,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onCopyClick() {
+		if ( 'locked' === this.model.get( 'status' ) ) {
+			return;
+		}
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.COPY,
@@ -141,6 +164,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	onExportClick( e ) {
 		e.stopPropagation();
+
+		if ( 'locked' === this.model.get( 'status' ) ) {
+			e.preventDefault();
+		}
 	},
 
 	showToggleMoreLoader() {
