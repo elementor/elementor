@@ -379,7 +379,9 @@ abstract class Document extends Controls_Stack {
 		// Start buffering
 		ob_start();
 
-		$data = $this->remove_elements_caching_shortcode( $data );
+		if ( ! empty( $data['settings'] ) ) {
+			$data['settings'] = $this->remove_caching_shortcode_from_settings( $data['settings'] );
+		}
 
 		/** @var Widget_Base $widget */
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
@@ -901,19 +903,35 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function remove_elements_caching_shortcode( $data ) {
-		return Plugin::$instance->db->iterate_data( $data, function ( $item ) {
-			if ( ! empty( $item['settings'] ) ) {
-				$item['settings'] = array_map( function ( $setting ) {
-					if ( is_string( $setting ) ) {
-						return preg_replace( '/\[elementor-element[^\]]*\]/', '', $setting );
-					}
+		if ( ! empty( $data['elements'] ) ) {
+			$data['elements'] = $this->remove_caching_shortcode_from_elements( $data['elements'] );
+		}
 
-					return $setting;
-				}, $item['settings'] );
+		return $data;
+	}
+
+	private function remove_caching_shortcode_from_elements( $elements ) {
+		return array_map( function ( $element ) {
+			if ( ! empty( $element['elements'] ) ) {
+				$element['elements'] = $this->remove_caching_shortcode_from_elements( $element['elements'] );
 			}
 
-			return $item;
-		} );
+			if ( ! empty( $element['settings'] ) ) {
+				$element['settings'] = $this->remove_caching_shortcode_from_settings( $element['settings'] );
+			}
+
+			return $element;
+		}, $elements );
+	}
+
+	private function remove_caching_shortcode_from_settings( $settings ) {
+		return array_map( function ( $setting ) {
+			if ( is_string( $setting ) ) {
+				return preg_replace( '/\[elementor-element[^\]]*\]/', '', $setting );
+			}
+
+			return $setting;
+		}, $settings );
 	}
 
 	public function refresh_post() {
