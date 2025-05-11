@@ -103,12 +103,12 @@ class Module extends BaseModule {
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
 
-			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
-			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
-			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
-			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
-			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
+			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
+			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+			add_action( 'elementor/elements/elements_registered', fn( $elements_manager ) => $this->register_elements( $elements_manager ) );
+			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
