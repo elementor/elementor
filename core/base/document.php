@@ -379,6 +379,8 @@ abstract class Document extends Controls_Stack {
 		// Start buffering
 		ob_start();
 
+		$data = $this->remove_elements_caching_shortcode( $data );
+
 		/** @var Widget_Base $widget */
 		$widget = Plugin::$instance->elements_manager->create_element_instance( $data );
 
@@ -846,6 +848,8 @@ abstract class Document extends Controls_Stack {
 			$data = wp_kses_post_deep( $data );
 		}
 
+		$data = $this->remove_elements_caching_shortcode( $data );
+
 		if ( ! empty( $data['settings'] ) ) {
 			if ( isset( $data['settings']['post_status'] ) && self::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
 				if ( ! defined( 'DOING_AUTOSAVE' ) ) {
@@ -894,6 +898,22 @@ abstract class Document extends Controls_Stack {
 		setlocale( LC_NUMERIC, $original_lc );
 
 		return true;
+	}
+
+	private function remove_elements_caching_shortcode( $data ) {
+		return Plugin::$instance->db->iterate_data( $data, function ( $item ) {
+			if ( ! empty( $item['settings'] ) ) {
+				$item['settings'] = array_map( function ( $setting ) {
+					if ( is_string( $setting ) ) {
+						return preg_replace( '/\[elementor-element[^\]]*\]/', '', $setting );
+					}
+
+					return $setting;
+				}, $item['settings'] );
+			}
+
+			return $item;
+		} );
 	}
 
 	public function refresh_post() {
