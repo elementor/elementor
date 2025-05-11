@@ -174,7 +174,7 @@ export default function HelloTheme() {
 	/**
 	 * Skip Button
 	 */
-	const skipButton= {};
+	const skipButton = {};
 
 	if ( isInstalling ) {
 		skipButton.className = 'e-onboarding__button-skip--disabled';
