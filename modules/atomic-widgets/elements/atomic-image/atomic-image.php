@@ -67,7 +67,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->set_items( [
 					Image_Control::bind_to( 'image' )
 						->set_show_mode( 'sizes' ),
-					Link_Control::bind_to( 'link' ),
+					Link_Control::bind_to( 'link' )->set_meta( [
+						'topDivider' => true,
+					] ),
 				] ),
 		];
 	}
