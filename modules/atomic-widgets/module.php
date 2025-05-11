@@ -224,19 +224,19 @@ class Module extends BaseModule {
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
+			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn( $_, $key ) => "border-{$key}-radius" )
 		);
 		$transformers->register(
 			Border_Width_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $_, $key ) => "border-{$key}-width" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $_, $key ) => "border-{$key}-width" )
 		);
 		$transformers->register(
 			Layout_Direction_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'column', 'row' ], fn ( $prop_key, $key ) => "{$key}-{$prop_key}" )
+			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
 		);
 		$transformers->register(
 			Dimensions_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
 	}
 
@@ -266,7 +266,6 @@ class Module extends BaseModule {
 
 		return $title;
 	}
-
 	/**
 	 * Enqueue the module scripts.
 	 *
@@ -284,7 +283,7 @@ class Module extends BaseModule {
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
-		<span class="elementor-panel-heading-category-chip">
+			<span class="elementor-panel-heading-category-chip">
 				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
