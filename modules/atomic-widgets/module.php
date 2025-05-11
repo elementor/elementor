@@ -91,7 +91,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experimental_features();
+		if ( self::is_active() ) {
+			$this->register_experimental_features();
+		}
 
 		( new Opt_In() )->init();
 
@@ -130,24 +132,22 @@ class Module extends BaseModule {
 	}
 
 	private function register_experimental_features() {
-		if ( self::is_active() ) {
-			Plugin::$instance->experiments->add_feature( [
-				'name' => 'e_display_none',
-				'title' => esc_html__( 'V4 Display None', 'elementor' ),
-				'description' => esc_html__( 'The None display setting enables you to hide an element completely.', 'elementor' ),
-				'hidden' => true,
-				'default' => Experiments_Manager::STATE_INACTIVE,
-				'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-			] );
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_display_none',
+			'title' => esc_html__( 'V4 Display None', 'elementor' ),
+			'description' => esc_html__( 'The None display setting enables you to hide an element completely.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+		] );
 
-			Plugin::$instance->experiments->add_feature( [
-				'name' => 'e_indications_popover',
-				'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-				'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-				'hidden' => true,
-				'default' => Experiments_Manager::STATE_INACTIVE,
-			] );
-		}
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_indications_popover',
+			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::CSSID_EXPERIMENT_NAME,
