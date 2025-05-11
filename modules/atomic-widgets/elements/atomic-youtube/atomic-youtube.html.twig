@@ -1,18 +1,18 @@
-{% if settings.link is not empty %}
+{% if settings.source is not empty %}
 	{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 	{% set data_settings = {
-		'mute': settings.mute|default(false),
-		'controls': settings.controls|default(true),
-		'autoplay': settings.autoplay|default(false),
-		'loop': settings.loop|default(false),
-		'rel': settings.rel|default(false),
-		'play_on_mobile': settings.play_on_mobile|default(false),
-		'cc_load_policy': settings.cc_load_policy|default(false),
-		'start': settings.start|default(null),
-		'end': settings.end|default(null),
-		'yt_privacy': settings.yt_privacy|default(false)
-	} %}
-	<div data-id="{{ id }}" data-e-type="{{ type }}" class="{{ classes }}" data-settings="{{ data_settings|json_encode }}">
-		{{  settings.link }}
-	</div>
+        'source': settings.source,
+        'autoplay': settings.autoplay,
+        'mute': settings.mute,
+        'controls': settings.controls,
+        'rel': settings.rel,
+        'playsinline': settings.play_on_mobile,
+        'start': settings.start,
+        'end': settings.end,
+        'cc_load_policy': settings.cc_load_policy,
+        'privacy': settings.yt_privacy
+    } %}
+    <div data-id="{{ id }}" data-e-type="{{ type }}" class="{{ classes }}" data-settings="{{ data_settings|json_encode|e('html_attr') }}">
+        {{ settings.source }}
+    </div>
 {% endif %}

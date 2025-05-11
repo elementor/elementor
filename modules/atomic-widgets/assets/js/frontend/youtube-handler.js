@@ -40,7 +40,10 @@ register( {
 		youtubeElement.classList.add( 'youtube-video' );
 		element.appendChild( youtubeElement );
 
-		const videoId = getYoutubeVideoIdFromUrl( element.innerText );
+		const settingsAttr = element.getAttribute( 'data-settings' );
+		const parsedSettings = settingsAttr ? JSON.parse( settingsAttr ) : {};
+
+		const videoId = getYoutubeVideoIdFromUrl( parsedSettings.source );
 
 		if ( ! videoId ) {
 			return;
@@ -51,10 +54,6 @@ register( {
 		loadYouTubeAPI().then( ( apiObject ) => prepareYTVideo( apiObject ) );
 
 		const prepareYTVideo = ( YT ) => {
-			const settingsAttr = element.getAttribute( 'data-settings' );
-			const parsedSettings = settingsAttr ? JSON.parse( settingsAttr ) : {};
-			console.log( parsedSettings );
-
 			const playerOptions = {
 				videoId: videoId,
 				events: {
@@ -65,6 +64,7 @@ register( {
 
 						if ( parsedSettings.autoplay ) {
 							player.playVideo();
+							console.log( 'playing' );
 						}
 					},
 					onStateChange: ( event ) => {
@@ -83,6 +83,8 @@ register( {
 					end: parsedSettings.end,
 				},
 			};
+
+			console.log( parsedSettings.autoplay );
 
 			// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
 			if ( parsedSettings.yt_privacy ) {
