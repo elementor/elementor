@@ -911,7 +911,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function remove_caching_shortcode_from_elements( $elements ) {
-		return array_map( function ( $element ) {
+		return array_map( function( $element ) {
 			if ( ! empty( $element['elements'] ) ) {
 				$element['elements'] = $this->remove_caching_shortcode_from_elements( $element['elements'] );
 			}
@@ -925,7 +925,7 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function remove_caching_shortcode_from_settings( $settings ) {
-		return array_map( function ( $setting ) {
+		return array_map( function( $setting ) {
 			if ( is_string( $setting ) ) {
 				return preg_replace( '/\[elementor-element[^\]]*\]/', '', $setting );
 			}
