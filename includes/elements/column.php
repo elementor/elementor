@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
