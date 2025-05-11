@@ -11,7 +11,7 @@ class Control_Conditions {
 	const COMPARATOR = 'comparator';
 	const OPERATOR = 'operator';
 	const CONTROL_ID = 'bind';
-	const CONTROL_VALUE = 'controlValue';
+	const VALUE_TO_TEST = 'valueToTest';
 	const PATH_TO_VALUE = 'pathToValue';
 	const ITEMS = 'terms';
 
@@ -54,14 +54,14 @@ class Control_Conditions {
 	/**
 	 * @param string $control_id
 	 * @param (self::EQUAL | self::NOT_EQUAL | self::GREATER_THAN | self::LESS_THAN | self::GREATER_THAN_OR_EQUAL | self::LESS_THAN_OR_EQUAL | self::IN | self::NOT_IN | self::CONTAINS | self::NOT_CONTAINS | self::SET | self::UNSET) $comparator
-	 * @param $control_value
+	 * @param $value_to_test
 	 * @param string $path_to_value
 	 */
-	public function create_condition( $control_id, $comparator, $control_value, $path_to_value ): array {
+	public function create_condition( $control_id, $comparator, $value_to_test, $path_to_value ): array {
 		return [
 			self::CONTROL_ID => $control_id,
 			self::COMPARATOR => $comparator,
-			self::CONTROL_VALUE => $control_value,
+			self::VALUE_TO_TEST => $value_to_test,
 			self::PATH_TO_VALUE => $path_to_value,
 		];
 	}
@@ -69,15 +69,15 @@ class Control_Conditions {
 	/**
 	 * @param string $control_id
 	 * @param (self::EQUAL | self::NOT_EQUAL | self::GREATER_THAN | self::LESS_THAN | self::GREATER_THAN_OR_EQUAL | self::LESS_THAN_OR_EQUAL | self::IN | self::NOT_IN | self::CONTAINS | self::NOT_CONTAINS | self::SET | self::UNSET) $comparator
-	 * @param $control_value
+	 * @param $value_to_test
 	 * @param string $path_to_value
 	 */
-	public function add_condition( $control_id, $comparator, $control_value = null, $path_to_value = '' ): self {
+	public function add_condition( $control_id, $comparator, $value_to_test = null, $path_to_value = '' ): self {
 		if ( ! $this->conditions ) {
 			$this->init_conditions();
 		}
 
-		$this->conditions[ self::ITEMS ][] = $this->create_condition( $control_id, $comparator, $control_value, $path_to_value );
+		$this->conditions[ self::ITEMS ][] = $this->create_condition( $control_id, $comparator, $value_to_test, $path_to_value );
 
 		return $this;
 	}

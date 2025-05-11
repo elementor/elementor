@@ -18,4 +18,8 @@ class Background_Color_Overlay_Prop_Type extends Object_Prop_Type {
 			'color' => Color_Prop_Type::make(),
 		];
 	}
+
+	public static function get_path_to_value( ?string $dynamic_key ): string {
+		return 'value/color/value';
+	}
 }

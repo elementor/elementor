@@ -14,4 +14,5 @@ interface Prop_Type extends \JsonSerializable {
 	public function get_meta_item( string $key, $default = null );
 	public function get_settings(): array;
 	public function get_setting( string $key, $default = null );
+//	public static function get_path_to_value( ?string $dynamic_key ): string;
 }

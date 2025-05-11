@@ -75,8 +75,4 @@ class Link_Control extends Atomic_Control_Base {
 
 		return $this;
 	}
-
-	public static function get_path_to_value(): string {
-		return 'value/destination/value';
-	}
 }

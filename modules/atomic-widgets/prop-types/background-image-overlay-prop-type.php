@@ -41,4 +41,12 @@ class Background_Image_Overlay_Prop_Type extends Object_Prop_Type {
 			'bottom right',
 		];
 	}
+
+	/**
+	 * @param 'image'|'repeat'|'size'|'position'|'attachment'|null $dynamic_key
+	 * @return string
+	 */
+	public static function get_path_to_value( ?string $dynamic_key ): string {
+		return $dynamic_key ? 'value' : "value/{$dynamic_key}";
+	}
 }

@@ -21,4 +21,8 @@ class Border_Radius_Prop_Type extends Object_Prop_Type {
 			'end-end' => Size_Prop_Type::make(),
 		];
 	}
+
+	public static function get_path_to_value( ?string $dynamic_key ): string {
+		return 'value/border-radius/value';
+	}
 }

@@ -27,4 +27,8 @@ class Link_Prop_Type extends Object_Prop_Type {
 			'isTargetBlank' => Boolean_Prop_Type::make(),
 		];
 	}
+
+	public static function get_path_to_value(): string {
+		return 'value/destination/value';
+	}
 }
