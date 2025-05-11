@@ -422,6 +422,10 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$importNowButton = self.elements.$importNowButton,
 				$importFormFileInput = self.elements.$importFormFileInput;
 
+			if ( ! Array.isArray( $importNowButton ) ) {
+				return;
+			}
+
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
 			$( '#wpbody-content' ).find( '.page-title-action' ).last().after( $importButton );
