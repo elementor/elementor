@@ -422,7 +422,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$importNowButton = self.elements.$importNowButton,
 				$importFormFileInput = self.elements.$importFormFileInput;
 
-			if ( ! Array.isArray( $importNowButton ) ) {
+			if ( undefined === $importNowButton[0] ) {
 				return;
 			}
 
