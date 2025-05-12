@@ -415,16 +415,16 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				return;
 			}
 
+			if ( 0 === this.elements.$importNowButton.length ) {
+				return;
+			}
+
 			const self = this,
 				$importForm = self.elements.$importForm,
 				$importButton = self.elements.$importButton,
 				$importArea = self.elements.$importArea,
 				$importNowButton = self.elements.$importNowButton,
 				$importFormFileInput = self.elements.$importFormFileInput;
-
-			if ( undefined === $importNowButton[ 0 ] ) {
-				return;
-			}
 
 			self.elements.$formAnchor = $( '.wp-header-end' );
 
