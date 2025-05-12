@@ -26,7 +26,7 @@ test( 'Verify Google maps controls', async ( { page, apiRequests }, testInfo ) =
 	await editor.closeNavigatorIfOpen();
 
 	// Act - Add Google Maps widget.
-	await editor.addWidget( 'google_maps' );
+	await editor.addWidget( { widgetType: 'google_maps' } );
 	await editor.setTextControlValue( 'address', setValues.location );
 	await editor.setSliderControlValue( 'zoom', setValues.zoom );
 	await editor.setSliderControlValue( 'height', setValues.height );
