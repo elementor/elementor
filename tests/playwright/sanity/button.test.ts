@@ -7,7 +7,7 @@ import _path from 'path';
 
 const defaultBtnName = 'Click here';
 
-test( 'Button widget sanity test', async ( { page, apiRequests }, testInfo ) => {
+test( 'Button widget sanity test REMOVE ME', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
