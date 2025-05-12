@@ -40,6 +40,7 @@ jobs:
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
         include:
+        - shardIndex: "v4-tests"
         - shardIndex: "elements-regression"
         - shardIndex: "plugin_tester_section"
         - shardIndex: "plugin_tester_container"
@@ -86,10 +87,14 @@ jobs:
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
           matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section'
+          matrix.shardIndex != 'plugin_tester_section' &&
+          matrix.shardIndex != 'v4-tests'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run v4 tests
+        if: ${{ matrix.shardIndex == 'v4-tests' }}
+        run: npm run test:playwright -- --grep="@v4-tests"
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
         run: npm run test:playwright -- --grep="@plugin_tester_container"
