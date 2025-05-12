@@ -7,9 +7,7 @@ test.describe( 'Onboarding Skip disabled until Hello Theme loaded', async () => 
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.installAndActivateTheme( 'twentytwentyfive' );
-		const theme = await wpAdmin.deleteTheme('hello-elementor' );
-		console.log(theme);
+		await wpAdmin.activateTheme( 'twentytwentyfive' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
