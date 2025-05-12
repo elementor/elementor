@@ -28,7 +28,11 @@ class Link_Prop_Type extends Object_Prop_Type {
 		];
 	}
 
-	public static function get_path_to_value(): string {
-		return 'value/destination/value';
+	/**
+	 * @param 'destination'|'label'|'isTargetBlank'|null $dynamic_key
+	 * @return string
+	 */
+	public static function get_path_to_value( ?string $dynamic_key = null ): string {
+		return $dynamic_key ? "value/{$dynamic_key}/value" : 'value';
 	}
 }

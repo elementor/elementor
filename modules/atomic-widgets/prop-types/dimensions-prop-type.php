@@ -31,4 +31,12 @@ class Dimensions_Prop_Type extends Object_Prop_Type {
 				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
 	}
+
+	/**
+	 * @param 'block-start'|'block-end'|'inline-start'|'inline-end'|null $dynamic_key
+	 * @return string
+	 */
+	public static function get_path_to_value( ?string $dynamic_key = null ): string {
+		return $dynamic_key ? "value/{$dynamic_key}/value" : 'value';
+	}
 }

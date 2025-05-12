@@ -19,7 +19,7 @@ class Background_Color_Overlay_Prop_Type extends Object_Prop_Type {
 		];
 	}
 
-	public static function get_path_to_value( ?string $dynamic_key ): string {
+	public static function get_path_to_value( ?string $dynamic_key = null ): string {
 		return 'value/color/value';
 	}
 }

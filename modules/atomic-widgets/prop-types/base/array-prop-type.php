@@ -101,4 +101,8 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	abstract protected function define_item_type(): Prop_Type;
+
+	public static function get_path_to_value( ?string $dynamic_key = null ): string {
+		return 'value';
+	}
 }
