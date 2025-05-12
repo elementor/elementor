@@ -6,16 +6,11 @@ import _path from 'path';
 import { setupExperiments } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
 
-test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
+test.describe( 'Nested Accordion inactive @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: 'inactive',
-			'nested-elements': 'inactive',
-		} );
-
+		await wpAdmin.setExperiments( { container: false } );
 		await page.close();
 	} );
 
@@ -23,11 +18,7 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'active',
-			container: 'active',
-		} );
-
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
@@ -52,13 +43,11 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 	} );
 } );
 
-test.describe( 'Nested Accordion experiment is active @nested-accordion', () => {
+test.describe( 'Nested Accordion is active @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		await setupExperiments( wpAdmin, {} );
-
 		await page.close();
 	} );
 
@@ -66,11 +55,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-		} );
-
+		await wpAdmin.setExperiments( { container: false } );
 		await page.close();
 	} );
 
