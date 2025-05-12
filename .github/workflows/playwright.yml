@@ -91,7 +91,7 @@ jobs:
           matrix.shardIndex != 'v4-tests'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run v4 tests
         if: ${{ matrix.shardIndex == 'v4-tests' }}
         run: npm run test:playwright -- --grep="@v4-tests"
