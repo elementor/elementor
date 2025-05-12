@@ -41,16 +41,12 @@ test.describe( 'Editing panel tabs', () => {
 		const lastSection = editor.page.locator( '.MuiButtonBase-root', { hasText: /effects/i } );
 		await lastSection.scrollIntoViewIfNeeded();
 
-		await editor.page.waitForTimeout( 500 );
-
 		await expect( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-down.png' );
 	} );
 
 	test( 'should display tabs header when scrolling back up', async () => {
 		const firstSection = editor.page.locator( '.MuiButtonBase-root', { hasText: /layout/i } );
 		await firstSection.scrollIntoViewIfNeeded();
-
-		await editor.page.waitForTimeout( 500 );
 
 		await expect( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-up.png' );
 	} );
@@ -66,8 +62,6 @@ test.describe( 'Editing panel tabs', () => {
 		} ).locator( '[role="button"]' ).click();
 
 		await editor.page.getByText( 'Google Fonts' ).scrollIntoViewIfNeeded();
-
-		await editor.page.waitForTimeout( 500 );
 
 		await expect( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
