@@ -28,15 +28,33 @@ on:
           required: false
 
 jobs:
+  label-check:
+    name: Check for run-tests label
+    runs-on: ubuntu-22.04
+    outputs:
+      run_tests: ${{ steps.check-label.outputs.run_tests }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Check for run-tests label
+        id: check-label
+        run: |
+          if [[ "${{ github.event.pull_request.labels[*].name }}" == *"run-tests"* ]]; then
+            echo "::set-output name=run_tests::true"
+          else
+            echo "::set-output name=run_tests::false"
+          fi
   build-plugin:
-    if: ${{ github.event.label.name == 'run-tests' }}
+    if: ${{ needs.label-check.outputs.run_tests == 'true' }}
+    needs: [label-check]
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
-    if: ${{ github.event.pull_request.labels && contains(github.event.pull_request.labels.*.name, 'run-tests') }}
+    needs: [build-plugin, label-check]
+    if: ${{ needs.label-check.outputs.run_tests == 'true' }}
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
