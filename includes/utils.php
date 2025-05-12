@@ -941,4 +941,8 @@ class Utils {
 
 		return $is_private || $not_allowed || $password_required;
 	}
+
+	public static function is_custom_kit_applied() {
+		return (bool) Plugin::$instance->kits_manager->get_previous_id();
+	}
 }
