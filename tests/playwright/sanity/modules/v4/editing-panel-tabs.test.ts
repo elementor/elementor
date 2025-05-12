@@ -31,7 +31,7 @@ test.describe( 'Editing panel tabs', () => {
 		const panel = editor.page.locator( '#elementor-panel-category-v4-elements' );
 		await panel.isVisible();
 
-		await editor.addWidget( atomicWidget.name );
+		await editor.addWidget( { widgetType: atomicWidget.name } );
 		await editor.openV2PanelTab( 'style' );
 
 		await editor.openV2Section( 'spacing' );
