@@ -1,6 +1,7 @@
 //
 // Switcher Preview by Devices
 //
+@use "sass:map";
 
 body {
 	--e-preview-width: calc(100% - var(--e-editor-panel-width, 300px));
@@ -49,7 +50,7 @@ body {
 	overflow: hidden;
 
 	.elementor-device-desktop & {
-		min-width: map_get($breakpoints, lg);
+		min-width: map.get($breakpoints, lg);
 		width: 100%;
 		height: 100%;
 		margin: 0;
