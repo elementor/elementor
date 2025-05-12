@@ -93,7 +93,7 @@ class Div_Block extends Atomic_Element_Base {
 							'link',
 							Control_Conditions::UNSET,
 							null,
-							Link_Prop_Type::get_path_to_value()
+							Link_Prop_Type::get_path_to_value( 'destination' )
 						),
 
 					Link_Control::bind_to( 'link' )->set_meta( [

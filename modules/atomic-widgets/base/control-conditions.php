@@ -11,7 +11,7 @@ class Control_Conditions {
 	const COMPARATOR = 'comparator';
 	const OPERATOR = 'operator';
 	const CONTROL_ID = 'bind';
-	const VALUE_TO_TEST = 'valueToTest';
+	const VALUE_TO_COMPARE = 'valueToCompare';
 	const PATH_TO_VALUE = 'pathToValue';
 	const ITEMS = 'terms';
 
@@ -27,9 +27,9 @@ class Control_Conditions {
 	const GREATER_THAN_OR_EQUAL = '>=';
 	const LESS_THAN_OR_EQUAL = '<=';
 	const IN = 'IN';
-	const NOT_IN = 'NOT IN';
+	const NOT_IN = 'NOT_IN';
 	const CONTAINS = 'CONTAINS';
-	const NOT_CONTAINS = 'NOT CONTAINS';
+	const NOT_CONTAINS = 'NOT_CONTAINS';
 	const SET = 'SET';
 	const UNSET = 'UNSET';
 
@@ -61,7 +61,7 @@ class Control_Conditions {
 		return [
 			self::CONTROL_ID => $control_id,
 			self::COMPARATOR => $comparator,
-			self::VALUE_TO_TEST => $value_to_test,
+			self::VALUE_TO_COMPARE => $value_to_test,
 			self::PATH_TO_VALUE => $path_to_value,
 		];
 	}

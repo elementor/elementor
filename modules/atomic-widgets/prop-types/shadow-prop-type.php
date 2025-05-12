@@ -24,12 +24,4 @@ class Shadow_Prop_Type extends Object_Prop_Type {
 			'position' => String_Prop_Type::make()->enum( [ 'inset' ] ),
 		];
 	}
-
-	/**
-	 * @param 'hOffset'|'vOffset'|'blur'|'spread'|'color'|'position'|null $dynamic_key
-	 * @return string
-	 */
-	public static function get_path_to_value( ?string $dynamic_key = null ): string {
-		return $dynamic_key ? "value/{$dynamic_key}/value" : 'value';
-	}
 }

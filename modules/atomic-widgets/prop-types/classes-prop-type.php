@@ -43,8 +43,4 @@ class Classes_Prop_Type extends Plain_Prop_Type {
 			return ! empty( $class_name );
 		});
 	}
-
-	public static function get_path_to_value( ?string $dynamic_key = null ): string {
-		return $dynamic_key ? "value/{$dynamic_key}/value" : 'value';
-	}
 }
