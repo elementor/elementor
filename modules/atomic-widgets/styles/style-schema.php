@@ -58,6 +58,24 @@ class Style_Schema {
 				'hidden',
 				'auto',
 			]),
+			'object-fit' => String_Prop_Type::make()->enum([
+				'fill',
+				'cover',
+				'contain',
+				'scale-down',
+			]),
+			'object-position' => String_Prop_Type::make()->enum([
+				'center center',
+				'center left',
+				'center right',
+				'top center',
+				'top left',
+				'top right',
+				'bottom center',
+				'bottom left',
+				'bottom right',
+				'custom'
+			]),
 		];
 	}
 
