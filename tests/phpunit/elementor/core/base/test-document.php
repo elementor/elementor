@@ -49,7 +49,7 @@ class Test_Document extends Elementor_Test_Base {
 					],
 				],
 			],
-		]
+		],
 	];
 
 	public function test_save() {
@@ -224,6 +224,42 @@ class Test_Document extends Elementor_Test_Base {
 			"Ensure user with design restriction have '$default_route_excepted' as default route");
 
 		wp_set_current_user( $before_user->ID );
+	}
+
+	public function test_remove_elements_caching_shortcode_on_save() {
+		// Arrange.
+		require_once __DIR__ . '/document.php';
+
+		$this->act_as_admin();
+
+		$post = $this->factory()->create_and_get_default_post();
+
+		$document = new Document( [
+			'post_id' => $post->ID,
+		] );
+
+		$document_mock = self::$document_mock_default;
+
+		$document_mock['elements'][0]['elements'][0]['elements'] = [
+			[
+				'id' => '75431642',
+				'elType' => 'widget',
+				'settings' => [
+					'title' => 'Text Start[elementor-element dummy-data="dummy-data"]Text End',
+				],
+				'elements' => [],
+				'widgetType' => 'heading',
+			],
+		];
+
+		$expected_document_elements = $document_mock['elements'];
+		$expected_document_elements[0]['elements'][0]['elements'][0]['settings']['title'] = 'Text StartText End';
+
+		// Act.
+		$document->save( $document_mock );
+
+		// Assert.
+		$this->assertEquals( $expected_document_elements, $document->get_elements_data() );
 	}
 
 	public function tearDown(): void {
