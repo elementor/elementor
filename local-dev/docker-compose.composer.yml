@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+  composer:
+    image: composer:latest
+    volumes:
+      - ../:/app
+      - ./php-composer.ini:/usr/local/etc/php/conf.d/custom.ini
+    working_dir: /app
+    environment:
+      - COMPOSER_MEMORY_LIMIT=-1
+      - PHP_INI_ZEND_EXTENSION=opcache.so
+      - PHP_INI_OPCACHE_ENABLE=1
+      - PHP_INI_ERROR_REPORTING=E_ALL & ~E_DEPRECATED & ~E_STRICT
+      - COMPOSER_ALLOW_SUPERUSER=1
+    command: install --ignore-platform-req=ext-bcmath 
