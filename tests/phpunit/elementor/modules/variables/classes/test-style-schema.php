@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
@@ -59,6 +60,27 @@ class Test_Style_Schema extends TestCase {
 			'color' => Union_Prop_Type::make()
 				->add_prop_type( Color_Prop_Type::make() )
 				->add_prop_type( Color_Variable_Prop_Type::make() ),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
+	public function test_augment__will_convert_font_prop_type() {
+		// Arrange.
+		$style_def = [
+			'font-family' => String_Prop_Type::make(),
+			'some-type' => String_Prop_Type::make(),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'some-type' => String_Prop_Type::make(),
+			'font-family' => Union_Prop_Type::make()
+				->add_prop_type( Font_Variable_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
