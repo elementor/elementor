@@ -25,6 +25,6 @@ class Performance {
 			);
 		}
 
-		return static::$is_frontend;
+		return apply_filters( 'elementor/core/frontend/performance/should_optimize_controls', static::$is_frontend );
 	}
 }
