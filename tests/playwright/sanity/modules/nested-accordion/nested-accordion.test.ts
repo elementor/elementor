@@ -10,7 +10,7 @@ test.describe( 'Nested Accordion inactive @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: false } );
+		await wpAdmin.setExperiments( { container: 'inactive' } );
 		await page.close();
 	} );
 
@@ -26,15 +26,15 @@ test.describe( 'Nested Accordion inactive @nested-accordion', () => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
-			container = await editor.addElement( { elType: 'container' }, 'document' ),
+			section = await editor.addElement( { elType: 'section' }, 'document' ),
 			frame = editor.getPreviewFrame(),
 			accordionWrapper = frame.locator( '.elementor-accordion' ).first(),
 			toggleWrapper = frame.locator( '.elementor-toggle' ).first();
 
-		await test.step( 'Check that Toggle and Accordion widgets appear when nested accordion experiment is off', async () => {
+		await test.step( 'Check that Toggle and Accordion widgets appear when Nested Accordion widget is not visible', async () => {
 			// Act
-			await editor.addWidget( 'accordion', container );
-			await editor.addWidget( 'toggle', container );
+			await editor.addWidget( 'accordion', section );
+			await editor.addWidget( 'toggle', section );
 
 			// Assert
 			await expect.soft( accordionWrapper ).toHaveCount( 1 );
@@ -55,7 +55,7 @@ test.describe( 'Nested Accordion is active @nested-accordion', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: false } );
+		await wpAdmin.setExperiments( { container: 'inactive' } );
 		await page.close();
 	} );
 
@@ -73,7 +73,7 @@ test.describe( 'Nested Accordion is active @nested-accordion', () => {
 		let nestedAccordionID,
 			nestedAccordion;
 
-		await test.step( 'Check that Toggle widget does not appear when nested accordion experiment is on', async () => {
+		await test.step( 'Check that Toggle widget does not appear when Nested Accordion widget is visible', async () => {
 			// Act
 			await editor.closeNavigatorIfOpen();
 			await editor.openElementsPanel();
