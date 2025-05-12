@@ -174,12 +174,14 @@ export default function HelloTheme() {
 	/**
 	 * Skip Button
 	 */
-	let skipButton;
+	const skipButton = {};
+
+	if ( isInstalling ) {
+		skipButton.className = 'e-onboarding__button-skip--disabled';
+	}
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
-		skipButton = {
-			text: __( 'Skip', 'elementor' ),
-		};
+		skipButton.text = __( 'Skip', 'elementor' );
 	}
 
 	/**
