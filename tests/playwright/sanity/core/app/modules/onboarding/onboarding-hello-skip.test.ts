@@ -7,7 +7,9 @@ test.describe( 'Onboarding Skip disabled until Hello Theme loaded', async () => 
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.deleteTheme('hello-elementor');
+		await wpAdmin.installAndActivateTheme( 'twentytwentyfive' );
+		const theme = await wpAdmin.deleteTheme('hello-elementor' );
+		console.log(theme);
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -17,6 +19,7 @@ test.describe( 'Onboarding Skip disabled until Hello Theme loaded', async () => 
 		await wpAdmin.installAndActivateTheme( 'hello-elementor' );
 	} );
 	test( 'Onboarding Skip disabled until Hello Theme loaded', async ( { page } ) => {
+
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/hello' );
 		await page.waitForSelector( 'text=Skip' );
 
