@@ -23,7 +23,7 @@ test.describe( 'Testing link control for widgets: @styleguide_image_link', () =>
 			const editor = await wpAdmin.openNewPage();
 			const contentTab = new Content( page, testInfo );
 
-			await editor.addWidget( data[ widget ].title );
+			await editor.addWidget( { widgetType: data[ widget ].title } );
 			if ( 'image-carousel' === data[ widget ].title ) {
 				await editor.openPanelTab( 'content' );
 				await editor.addImagesToGalleryControl();

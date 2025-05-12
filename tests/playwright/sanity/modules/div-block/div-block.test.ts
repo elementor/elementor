@@ -29,9 +29,9 @@ test.describe( 'Div Block tests @div-block', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' ),
-			heading = await editor.addWidget( widgets.heading, divBlock ),
-			button = await editor.addWidget( widgets.button, divBlock ),
-			image = await editor.addWidget( widgets.image, divBlock );
+			heading = await editor.addWidget( { widgetType: widgets.heading, container: divBlock } ),
+			button = await editor.addWidget( { widgetType: widgets.button, container: divBlock } ),
+			image = await editor.addWidget( { widgetType: widgets.image, container: divBlock } );
 
 		await editor.previewFrame.dragAndDrop(
 			getElementSelector( button ),
@@ -54,9 +54,9 @@ test.describe( 'Div Block tests @div-block', () => {
 		const editor = await wpAdmin.openNewPage(),
 			parentDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' ),
 			childDivBlock = await editor.addElement( { elType: 'e-div-block' }, parentDivBlock ),
-			heading = await editor.addWidget( widgets.heading, childDivBlock ),
-			button = await editor.addWidget( widgets.button, parentDivBlock ),
-			image = await editor.addWidget( widgets.image, childDivBlock ),
+			heading = await editor.addWidget( { widgetType: widgets.heading, container: childDivBlock } ),
+			button = await editor.addWidget( { widgetType: widgets.button, container: parentDivBlock } ),
+			image = await editor.addWidget( { widgetType: widgets.image, container: childDivBlock } ),
 
 			// Arrange.
 			locatorParentDivBlock = page.locator( getElementSelector( parentDivBlock ) ),

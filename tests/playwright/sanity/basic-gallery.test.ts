@@ -11,7 +11,7 @@ test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
 		editor = await wpAdmin.openNewPage();
 
 	await editor.closeNavigatorIfOpen();
-	await editor.addWidget( 'image-gallery' );
+	await editor.addWidget( { widgetType: 'image-gallery' } );
 
 	// Act.
 	await editor.openPanelTab( 'content' );
@@ -30,7 +30,7 @@ test( 'Basic Gallery Lightbox', async ( { page, apiRequests }, testInfo ) => {
 	const editor = await wpAdmin.openNewPage();
 
 	await editor.closeNavigatorIfOpen();
-	await editor.addWidget( 'image-gallery' );
+	await editor.addWidget( { widgetType: 'image-gallery' } );
 
 	// Act.
 	await editor.openPanelTab( 'content' );
@@ -52,7 +52,7 @@ test( 'Basic Gallery Lightbox test with breakpoints', async ( { page, apiRequest
 
 	await editor.closeNavigatorIfOpen();
 
-	await editor.addWidget( 'image-gallery' );
+	await editor.addWidget( { widgetType: 'image-gallery' } );
 	await editor.openPanelTab( 'content' );
 	await editor.addImagesToGalleryControl();
 	await editor.setSelectControlValue( 'open_lightbox', 'yes' );
