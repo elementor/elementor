@@ -28,23 +28,13 @@ on:
           required: false
 
 jobs:
-  label-check:
-    name: Check for run-tests label
-    runs-on: ubuntu-22.04
-    outputs:
-      run_tests: ${{ steps.check-label.outputs.run_tests }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
   build-plugin:
-    if: ${{ needs.label-check.outputs.run_tests == 'true' }}
-    needs: [label-check]
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
-    needs: [build-plugin, label-check]
+    needs: [build-plugin]
     if: |
       (
         github.event_name == 'push' ||
