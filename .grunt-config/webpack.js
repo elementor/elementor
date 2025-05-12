@@ -145,6 +145,7 @@ const entry = {
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
+	'js-handler-example': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/js-handler-example.js' ),
 };
 
 const frontendEntries = {
@@ -166,6 +167,7 @@ const externals = [
 		'@elementor/icons': 'elementorV2.icons',
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
+		'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 		'@wordpress/core-data': 'wp.coreData',
