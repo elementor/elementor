@@ -91,7 +91,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_features();
+		if ( self::is_active() ) {
+			$this->register_experimental_features();
+		}
 
 		( new Opt_In() )->init();
 
@@ -118,15 +120,34 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_features() {
-		Plugin::$instance->experiments->add_feature([
+	public static function get_experimental_data() {
+		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		]);
+		];
+	}
+
+	private function register_experimental_features() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_display_none',
+			'title' => esc_html__( 'V4 Display None', 'elementor' ),
+			'description' => esc_html__( 'The None display setting enables you to hide an element completely.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+		] );
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_indications_popover',
+			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 
 		Plugin::$instance->experiments->add_feature( [
 			'name' => self::CSSID_EXPERIMENT_NAME,
@@ -136,14 +157,6 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 		] );
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_indications_popover',
-			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-		]);
 
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
@@ -237,6 +250,10 @@ class Module extends BaseModule {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
+	}
+
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	private function get_element_usage_name( $title, $type ) {
