@@ -36,7 +36,7 @@ jobs:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [build-plugin]
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'run-tests') && github.event.label.name == 'run-tests' && ( github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff ) && github.event.inputs.tag == '' }}
+    if: ${{ github.event.pull_request.labels && contains(github.event.pull_request.labels.*.name, 'run-tests') }}
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
