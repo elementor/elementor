@@ -29,6 +29,18 @@ on:
 
 jobs:
   build-plugin:
+    if: |
+      (
+        github.event_name == 'push' ||
+        github.event_name == 'schedule' ||
+        github.event_name == 'workflow_dispatch'
+      ) && (
+        github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff
+      ) && github.event.inputs.tag == '' ||
+      (
+        github.event_name == 'pull_request' &&
+        contains(github.event.pull_request.labels.*.name, 'run-tests')
+      )
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
