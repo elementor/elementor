@@ -8,7 +8,7 @@ test( 'Icon widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
-	await editor.addWidget( 'icon' );
+	await editor.addWidget( { widgetType: 'icon' } );
 	let icon = await editor.getPreviewFrame().waitForSelector( 'i.fa-star' );
 	let style = await getComputedStyle( icon, 'before' );
 	expect( style.content.charCodeAt() ).toBe( 34 );

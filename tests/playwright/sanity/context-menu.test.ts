@@ -10,7 +10,7 @@ test.describe( 'Context menu', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.openElementsPanel();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Edit Heading' );
 		await expect( page.getByPlaceholder( 'Enter your title' ) ).toBeVisible();
@@ -21,7 +21,7 @@ test.describe( 'Context menu', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.openElementsPanel();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Duplicate' );
 		expect( await contextMenu.editor.getWidgetCount() ).toBe( 2 );
@@ -32,7 +32,7 @@ test.describe( 'Context menu', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const contextMenu = new ContextMenu( page, testInfo );
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.openElementsPanel();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Copy' );
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Paste' );
@@ -46,7 +46,7 @@ test.describe( 'Context menu', () => {
 		const headingSelector = '.elementor-heading-title';
 
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.openPanelTab( 'style' );
 		await editor.setColorControlValue( 'title_color', '#E46E6E' );
 		await expect( editor.getPreviewFrame().locator( headingSelector ) ).toHaveCSS( 'color', 'rgb(228, 110, 110)' );
@@ -60,7 +60,7 @@ test.describe( 'Context menu', () => {
 		const contextMenu = new ContextMenu( page, testInfo );
 
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.openElementsPanel();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Structure' );
 		await expect( page.locator( '#elementor-navigator' ) ).toBeVisible();
@@ -72,7 +72,7 @@ test.describe( 'Context menu', () => {
 		const contextMenu = new ContextMenu( page, testInfo );
 
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.openElementsPanel();
 		await contextMenu.selectWidgetContextMenuItem( 'heading', 'Delete' );
 		expect( await contextMenu.editor.getWidgetCount() ).toBe( 0 );
@@ -84,7 +84,7 @@ test.describe( 'Context menu', () => {
 		const contextMenu = new ContextMenu( page, testInfo );
 
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'heading' );
+		await editor.addWidget( { widgetType: 'heading' } );
 		await editor.openElementsPanel();
 		await contextMenu.openContextMenu( 'heading' );
 		await expect( page.locator( '.dialog-message.dialog-simple-message' ) ).toHaveScreenshot();
