@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ labeled ]
+    types: [ labeled, synchronize, opened, reopened ]
   push:
     branches:
       - 'main'
@@ -36,15 +36,6 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-
-      - name: Check for run-tests label
-        id: check-label
-        run: |
-          if [[ "${{ github.event.pull_request.labels[*].name }}" == *"run-tests"* ]]; then
-            echo "::set-output name=run_tests::true"
-          else
-            echo "::set-output name=run_tests::false"
-          fi
   build-plugin:
     if: ${{ needs.label-check.outputs.run_tests == 'true' }}
     needs: [label-check]
@@ -54,7 +45,18 @@ jobs:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [build-plugin, label-check]
-    if: ${{ needs.label-check.outputs.run_tests == 'true' }}
+    if: |
+      (
+        github.event_name == 'push' ||
+        github.event_name == 'schedule' ||
+        github.event_name == 'workflow_dispatch'
+      ) && (
+        github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff
+      ) && github.event.inputs.tag == '' ||
+      (
+        github.event_name == 'pull_request' &&
+        contains(github.event.pull_request.labels.*.name, 'run-tests')
+      )
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
