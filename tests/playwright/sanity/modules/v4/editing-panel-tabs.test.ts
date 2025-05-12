@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 
-test.describe( 'Editing panel tabs', () => {
+test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
