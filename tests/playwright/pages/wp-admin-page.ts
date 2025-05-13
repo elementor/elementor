@@ -311,6 +311,7 @@ export default class WpAdminPage extends BasePage {
 	async getActiveTheme(): Promise<string> {
 		const request: APIRequestContext = this.page.context().request;
 		const themeData = await this.apiRequests.getTheme( request, 'active' );
+		console.log(themeData)
 		return themeData[ 0 ].stylesheet;
 	}
 
@@ -318,13 +319,13 @@ export default class WpAdminPage extends BasePage {
 		await wpCli( `wp theme activate ${ theme }` );
 	}
 
-	async deleteTheme(theme: string) {
-		await wpCli(`wp theme delete ${theme}`);
-	}
+	// async deleteTheme(theme: string) {
+	// 	await wpCli(`wp theme delete ${theme}`);
+	// }
 
-	async installAndActivateTheme(theme: string) {
-		await wpCli(`wp theme install ${theme} --activate`);
-	}
+	// async installAndActivateTheme(theme: string) {
+	// 	await wpCli(`wp theme install ${theme} --activate`);
+	// }
 	/**
 	 * Enable uploading SVG files.
 	 *
