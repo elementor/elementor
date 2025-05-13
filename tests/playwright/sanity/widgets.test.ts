@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 
-test.describe( 'Transform controls', () => {
+test.describe( '0 Transform controls', () => {
 	test( 'Widget Transform controls', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
