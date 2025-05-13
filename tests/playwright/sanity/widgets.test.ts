@@ -5,6 +5,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 test.describe( 'Widget tests', () => {
 	test( 'Widget Transform controls', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
 		await wpAdmin.setExperiments( {
 			container: true,
 		} );
