@@ -28,8 +28,8 @@ test.describe( 'Section tests', () => {
 			section2ColumnId = await section2Column.getAttribute( 'data-id' );
 
 		// Add widgets.
-		await editor.addWidget( widgets.button, section1ColumnId );
-		await editor.addWidget( widgets.heading, section2ColumnId );
+		await editor.addWidget( { widgetType: widgets.button, container: section1ColumnId } );
+		await editor.addWidget( { widgetType: widgets.heading, container: section2ColumnId } );
 
 		// Copy section 1.
 		await contextMenu.copyElement( sectionId1 );
