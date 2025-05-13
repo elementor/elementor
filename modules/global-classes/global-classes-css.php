@@ -2,13 +2,19 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
+use Elementor\Modules\AtomicWidgets\Styles_Manager;
 use Elementor\Plugin;
 
 class Global_Classes_CSS {
+	private ?array $css_by_breakpoint = null;
+
 	public function register_hooks() {
 		add_action(
-			'elementor/frontend/after_enqueue_styles',
-			fn() => $this->enqueue_styles()
+			'elementor/atomic-widget/styles/enqueue',
+			fn( string $breakpoint, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $styles_manager ),
+			10,
+			2
 		);
 
 		add_action(
@@ -32,12 +38,76 @@ class Global_Classes_CSS {
 		);
 	}
 
-	private function enqueue_styles() {
-		$css_file = is_preview()
-			? new Global_Classes_CSS_Preview()
-			: new Global_Classes_CSS_File();
+	private function enqueue_styles( string $breakpoint, Styles_Manager $styles_manager ) {
+		if ( ! $this->css_by_breakpoint ) {
+			$this->css_by_breakpoint = $this->render_css();
+		}
 
-		$css_file->enqueue();
+		$css = $this->css_by_breakpoint[ $breakpoint ] ?? null;
+
+		if ( ! $css ) {
+			return;
+		}
+
+		$styles_manager->register(
+			$breakpoint,
+			'elementor-global-classes-' . $breakpoint,
+			'global-classes-' . $breakpoint,
+			$css
+		);
+	}
+
+	private function render_css() {
+		$global_classes = Global_Classes_Repository::make()->all();
+
+		if ( $global_classes->get_items()->is_empty() ) {
+			return null;
+		}
+
+		$sorted_items = $global_classes
+			->get_order()
+			->reverse()
+			->map(
+				fn( $id ) => $global_classes->get_items()->get( $id )
+			);
+
+		$grouped = $this->group_by_breakpoint( $sorted_items->all() );
+		$result = [];
+
+		foreach ( $grouped as $breakpoint => $styles ) {
+			$css = Styles_Renderer::make(
+				Plugin::$instance->breakpoints->get_breakpoints_config()
+			)->on_prop_transform( function( $key, $value ) {
+				if ( 'font-family' !== $key ) {
+					return;
+				}
+
+				// TODO: Add the font somewhere.
+//				$this->add_font( $value );
+			} )->render( $styles );
+
+			$result[ $breakpoint ] = $css;
+		}
+
+		return $result;
+	}
+
+	private function group_by_breakpoint( $styles ) {
+		$groups = [];
+
+		foreach ( $styles as $style ) {
+			foreach ( $style['variants'] as $variant ) {
+				$breakpoint = $variant['meta']['breakpoint'] ?? 'desktop';
+
+				$groups[ $breakpoint ][] = [
+					'id' => $style['id'],
+					'type' => $style['type'],
+					'variants' => [ $variant ],
+				];
+			}
+		}
+
+		return $groups;
 	}
 
 	private function generate_styles() {
