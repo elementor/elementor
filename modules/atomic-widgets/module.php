@@ -70,6 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
@@ -149,7 +150,7 @@ class Module extends BaseModule {
 		]);
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => 'e_version_3_30',
+			'name' => self::EXPERIMENT_VERSION_3_30,
 			'title' => esc_html__( 'Version 3.30', 'elementor' ),
 			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
 			'hidden' => true,
