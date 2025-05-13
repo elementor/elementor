@@ -101,7 +101,7 @@ class Test_CSS_Renderer extends TestCase {
 						'value' => '2rem',
 					],
 				],
-				Color_Variable_Prop_Type::get_key() => [
+				Font_Variable_Prop_Type::get_key() => [
 					'a-01' => [
 						'label' => 'Font 1',
 						'value' => '<style>color: red;</style>',
