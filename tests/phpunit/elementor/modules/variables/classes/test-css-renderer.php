@@ -67,15 +67,16 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange.
 		add_filter( Variables::FILTER, function () {
 			return [
-				'a-01' => [
-					'label' => 'Black',
-					'value' => '#000',
-				],
-
-				'a-02' => [
-					'label' => 'Border Width',
-					'value' => '6px',
-				],
+				Color_Variable_Prop_Type::get_key() => [
+					'a-01' => [
+						'label' => 'Black',
+						'value' => '#000',
+						],
+					'a-02' => [
+						'label' => 'Border Width',
+						'value' => '6px',
+					],
+				]
 			];
 		} );
 
@@ -90,13 +91,23 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange,
 		add_filter( Variables::FILTER, function () {
 			return [
-				'a-01' => [
-					'label' => 'a-width',
-					'value' => '<script type="text/javascript">alert("here");</script>',
-				],
-				Font_Variable_Prop_Type::get_key() => [
+				Color_Variable_Prop_Type::get_key() => [
+					'a-01' => [
+						'label' => 'a-width',
+						'value' => '<script type="text/javascript">alert("here");</script>',
+						],
 					'<script>alert("there")</script>' => [
 						'label' => 'a-height',
+						'value' => '2rem',
+					],
+				],
+				Color_Variable_Prop_Type::get_key() => [
+					'a-01' => [
+						'label' => 'Font 1',
+						'value' => '<style>color: red;</style>',
+					],
+					'<script>alert("font here")</script>' => [
+						'label' => 'Font 3',
 						'value' => '2rem',
 					],
 				],
