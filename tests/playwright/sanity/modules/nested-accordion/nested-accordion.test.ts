@@ -22,7 +22,7 @@ test.describe( 'Nested Accordion inactive @nested-accordion', () => {
 		await page.close();
 	} );
 
-	test( 'Nested-accordion should not appear in widgets panel', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion widget should not appear in widgets panel', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
