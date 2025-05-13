@@ -149,7 +149,7 @@ class Module extends BaseModule {
 		]);
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => 'e_v_3_30',
+			'name' => 'e_version_3_30',
 			'title' => esc_html__( 'Version 3.30', 'elementor' ),
 			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
 			'hidden' => true,
