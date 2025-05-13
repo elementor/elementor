@@ -51,8 +51,6 @@ register( {
 
 		let player;
 
-		loadYouTubeAPI().then( ( apiObject ) => prepareYTVideo( apiObject ) );
-
 		const prepareYTVideo = ( YT ) => {
 			const playerOptions = {
 				videoId: videoId,
@@ -64,7 +62,6 @@ register( {
 
 						if ( parsedSettings.autoplay ) {
 							player.playVideo();
-							console.log( 'playing' );
 						}
 					},
 					onStateChange: ( event ) => {
@@ -84,10 +81,8 @@ register( {
 				},
 			};
 
-			console.log( parsedSettings.autoplay );
-
 			// To handle CORS issues, when the default host is changed, the origin parameter has to be set.
-			if ( parsedSettings.yt_privacy ) {
+			if ( parsedSettings.privacy ) {
 				playerOptions.host = 'https://www.youtube-nocookie.com';
 				playerOptions.origin = window.location.hostname;
 			}
@@ -96,6 +91,21 @@ register( {
 
 			return player;
 		};
+
+		if ( parsedSettings.lazyload ) {
+			const observer = new IntersectionObserver(
+				( entries ) => {
+					if ( entries[ 0 ].isIntersecting ) {
+						loadYouTubeAPI().then( ( apiObject ) => prepareYTVideo( apiObject ) );
+						observer.unobserve( element );
+					}
+				}
+			);
+
+			observer.observe( element );
+		} else {
+			loadYouTubeAPI().then( ( apiObject ) => prepareYTVideo( apiObject ) );
+		}
 
 		return () => {
 			if ( player && typeof player.destroy === 'function' ) {
