@@ -7,7 +7,7 @@ test( `$e.run( 'editor/documents/attach-preview' ) - Ensure loaded in custom sel
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 		editor = await wpAdmin.openNewPage();
 
-	await editor.addWidget( 'tabs' );
+	await editor.addWidget( { widgetType: 'tabs' } );
 	await editor.getPreviewFrame().waitForSelector( '.elementor-tab-title.elementor-active' );
 
 	// Attach-preview inside the tab as a custom selector.
