@@ -47,9 +47,8 @@ class Module extends BaseModule {
 			->register_styles_transformers()
 			->register_packages()
 			->filter_for_style_schema()
-			->register_css_renderer();
-
-		( new Variables_CSS_Renderer( new Variables() ) )->enqueue_font_variables();
+			->register_css_renderer()
+			->enqueue_font_variables();
 	}
 
 	private function is_experiment_active(): bool {

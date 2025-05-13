@@ -13,14 +13,10 @@ class Variables {
 	const FILTER = 'elementor/atomic-variables/variables';
 
 	public function get_all() {
-		$variables = [
+		return apply_filters( self::FILTER, [
 			Color_Variable_Prop_Type::get_key() => $this->get_color_variables(),
 			Font_Variable_Prop_Type::get_key() => $this->get_font_variables(),
-		];
-
-		$all_variables = apply_filters( self::FILTER, $variables );
-
-		return array_intersect_key( $all_variables, $variables );
+		] );
 	}
 
 	private function get_color_variables(): array {

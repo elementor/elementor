@@ -76,15 +76,4 @@ class CSS_Renderer {
 	private function wrap_with_root( array $css_entries ): string {
 		return ':root { ' . implode( ' ', $css_entries ) . ' }';
 	}
-
-	public function enqueue_font_variables() {
-		$variable_groups = $this->global_variables();
-		$font_variables = $variable_groups[ Font_Variable_Prop_Type::get_key() ];
-
-		foreach ( $font_variables as $variable ) {
-			$font = $variable['value'];
-
-			Plugin::instance()->frontend->enqueue_font( $font );
-		}
-	}
 }

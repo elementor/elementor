@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
@@ -69,6 +70,25 @@ class Hooks {
 			$post_css->get_stylesheet()->add_raw_css(
 				( new Variables_CSS_Renderer( new Variables() ) )->raw_css()
 			);
+		} );
+
+		return $this;
+	}
+
+	public function enqueue_font_variables() {
+		add_action( 'elementor/css-file/post/parse', function ( Post_CSS $post_css ) {
+			if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
+				return;
+			}
+
+			$variable_groups = ( new Variables() )->get_all();
+			$font_variables = $variable_groups[ Font_Variable_Prop_Type::get_key() ];
+
+			foreach ( $font_variables as $variable ) {
+				$font = $variable['value'];
+
+				$post_css->add_font( $font );
+			}
 		} );
 
 		return $this;
