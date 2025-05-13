@@ -11,10 +11,10 @@ test.describe( '0 Transform controls', () => {
 		} );
 
 		// Arrange.
-		const editor = await wpAdmin.openNewPage(),
-			containerId = await editor.addElement( { elType: 'container' }, 'document' ),
-			widgetId = await editor.addWidget( { widgetType: 'heading', container: containerId } ),
-			widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + widgetId + ' > .elementor-widget-container';
+		const editor = await wpAdmin.openNewPage()
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const widgetContainerSelector = '.elementor-edit-mode .elementor-element-' + containerId;
+		await editor.addWidget( { widgetType: 'heading', container: containerId } );
 
 		// Act.
 		await editor.openPanelTab( 'advanced' );
