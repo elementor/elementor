@@ -627,9 +627,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		return this.collection.some( ( model ) => {
 			const templateId = model.get( 'template_id' );
-			const status = model.get( 'status' );
 
-			return bulkSelectedItems.has( templateId ) && 'locked' === status;
+			return bulkSelectedItems.has( templateId ) && model.isLocked();
 		} );
 	},
 

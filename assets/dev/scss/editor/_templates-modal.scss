@@ -1140,7 +1140,7 @@ label.elementor-template-library-order-label {
 
 	.elementor-template-library-template-insert {
 		&.disabled {
-			color: var(--e-a-color-primary);
+			color: $e-pink-100;
 			&:hover,
 			&:focus {
 				cursor: not-allowed;

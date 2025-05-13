@@ -39,7 +39,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	handleLockedTemplate() {
-		const isLocked = 'locked' === this.model.get( 'status' );
+		const isLocked = this.model.isLocked();
 
 		this.ui.renameButton.toggleClass( 'disabled', isLocked );
 		this.ui.moveButton.toggleClass( 'disabled', isLocked );
@@ -127,7 +127,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	async onRenameClick( event ) {
 		event.stopPropagation();
 
-		if ( 'locked' === this.model.get( 'status' ) ) {
+		if ( this.model.isLocked() ) {
 			return;
 		}
 
@@ -141,7 +141,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onMoveClick() {
-		if ( 'locked' === this.model.get( 'status' ) ) {
+		if ( this.model.isLocked() ) {
 			return;
 		}
 
@@ -152,7 +152,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onCopyClick() {
-		if ( 'locked' === this.model.get( 'status' ) ) {
+		if ( this.model.isLocked() ) {
 			return;
 		}
 
@@ -165,7 +165,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onExportClick( e ) {
 		e.stopPropagation();
 
-		if ( 'locked' === this.model.get( 'status' ) ) {
+		if ( this.model.isLocked() ) {
 			e.preventDefault();
 		}
 	},

@@ -14,4 +14,8 @@ module.exports = Backbone.Model.extend( {
 		generate_preview_url: null,
 		tags: [],
 	},
+
+	isLocked() {
+		return 'locked' === this.get( 'status' );
+	},
 } );
