@@ -62,6 +62,7 @@ class Style_Schema {
 				'fill',
 				'cover',
 				'contain',
+				'none',
 				'scale-down',
 			]),
 			'object-position' => String_Prop_Type::make()->enum([
