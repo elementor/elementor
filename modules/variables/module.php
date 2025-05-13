@@ -5,8 +5,6 @@ namespace Elementor\Modules\Variables;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
-use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
-use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
