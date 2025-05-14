@@ -43,6 +43,13 @@ class Rest_Api {
                     'methods'             => \WP_REST_Server::CREATABLE, // POST
                     'callback'            => [ $this, 'connect' ],
                     'permission_callback' => [ $this, 'connect_permissions_check' ],
+                    'args' => [
+                        'token' => [
+                            'required' => true,
+                            'type' => 'string',
+                            'description' => 'Connect CLI token',
+                        ],
+                    ],
                 ],
             ]
         );
@@ -52,7 +59,7 @@ class Rest_Api {
             self::REST_BASE . '/disconnect',
             [
                 [
-                    'methods'             => \WP_REST_Server::CREATABLE, // POST
+                    'methods'             => \WP_REST_Server::DELETABLE, // DELETE
                     'callback'            => [ $this, 'disconnect' ],
                     'permission_callback' => [ $this, 'connect_permissions_check' ],
                 ],
@@ -118,12 +125,10 @@ class Rest_Api {
         // Set REST auth mode
         $app->set_auth_mode( 'rest' );
 
-        // Mock $_REQUEST for backward compatibility
+        // Mhttps://desktop.postman.com/?desktopVersion=11.44.0&webVersion=11.44.0-ui-250504-2334&userId=21887712&teamId=3945143&region=usock $_REQUEST for backward compatibility
         $_REQUEST['mode'] = 'rest';
-
+        $_REQUEST['token'] = $request->get_param('token');
         try {
-            $_REQUEST['token'] = $response->auth_secret;
-
             $app->action_authorize();
             $app->action_get_token();
 
