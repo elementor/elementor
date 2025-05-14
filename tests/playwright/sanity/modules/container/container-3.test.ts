@@ -221,7 +221,7 @@ test.describe( 'Container tests #3 @container', () => {
 		} ) ).toMatchSnapshot( 'container-ltr-centered.jpeg' );
 	} );
 
-	test( 'Container Transform controls', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Container Transform controls just trigger tests', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
