@@ -447,11 +447,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				Url_Prop_Type::make()->default( 'http://example.com' ),
 				[ V1DynamicTags::URL_CATEGORY ],
 			],
-
-			'url for link' => [
-				Url_Prop_Type::make()->default( 'http://example.com' ),
-				[ V1DynamicTags::URL_CATEGORY ],
-			]
 		];
 	}
 
