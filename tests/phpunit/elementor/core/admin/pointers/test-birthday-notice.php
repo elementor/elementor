@@ -2,7 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Admin\Pointers;
 
-use Elementor\Core\Admin\Pointers\Notices\Birthday as Birthday_Notice;
+use Elementor\Core\Admin\PointerNotices\Birthday as Birthday_Notice;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Birthday_Notice extends PHPUnit_TestCase {
@@ -13,8 +13,6 @@ class Test_Birthday_Notice extends PHPUnit_TestCase {
 	public function tearDown(): void {}
 
 	public function test_should_display_notice__true() {
-		echo 'trytrytrytrytrytrytry';
-
 		$birthday_notice = $this->get_notice_class_mock( [
 			'is_campaign_time' => true,
 		] );

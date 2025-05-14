@@ -5,8 +5,7 @@ use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
-use Elementor\Core\Admin\Pointers\Manager as Pointers_Manager;
-use Elementor\Core\Admin\Pointers\Notices\Birthday as Birthday_Notice;
+use Elementor\Core\Admin\PointerNotices\Birthday as Birthday_Notice;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
@@ -23,7 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin extends App {
 
 	private $menus = [];
-	private ?Pointers_Manager $pointers_manager = null;
 
 	/**
 	 * Get module name.
@@ -1074,6 +1072,12 @@ class Admin extends App {
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
+	private function init_pointers() {
+		if ( Birthday_Notice::should_display_notice() ) {
+			new Birthday_Notice();
+		}
+	}
+
 	public function ajax_site_mailer_campaign( $request ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
 			return;
@@ -1090,11 +1094,5 @@ class Admin extends App {
 		];
 
 		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
-	}
-
-	private function init_pointers() {
-		$this->pointers_manager = new Pointers_Manager();
-
-		$this->pointers_manager->register_pointer( Birthday_Notice::SLUG, Birthday_Notice::class );
 	}
 }
