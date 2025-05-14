@@ -75,7 +75,7 @@ class Hooks {
 		return $this;
 	}
 
-	public function register_fonts_manager() {
+	public function register_fonts() {
 		add_action( 'elementor/css-file/post/parse', function ( $post_css ) {
 			( new Fonts() )->append_to( $post_css );
 		} );
