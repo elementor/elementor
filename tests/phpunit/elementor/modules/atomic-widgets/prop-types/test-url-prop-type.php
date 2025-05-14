@@ -11,15 +11,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Url_Prop_Type extends Elementor_Test_Base {
 
-	/**
-	 *	@dataProvider urls_provider
-	 */
-	public function test_validate( $url ) {
+	public function test_validate() {
 		// Arrange.
 		$prop_type = new Url_Prop_Type();
 
 		// Act.
-		$result = $prop_type->validate( [ '$$type' => 'url', 'value' => $url ] );
+		$result = $prop_type->validate( [ '$$type' => 'url', 'value' => 'https://example.com' ] );
+
+		// Assert.
+		$this->assertTrue( $result );
+	}
+
+	/**
+	 *	@dataProvider urls_provider
+	 */
+	public function test_skip_validation( $url ) {
+		// Arrange.
+		$prop_type = new Url_Prop_Type();
+
+		// Act.
+		$result = $prop_type->skip_validation()->validate( [ '$$type' => 'url', 'value' => $url ] );
 
 		// Assert.
 		$this->assertTrue( $result );
