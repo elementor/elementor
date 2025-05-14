@@ -6,7 +6,7 @@ use Elementor\Beta_Testers;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
 use Elementor\Core\Admin\Pointers\Manager as Pointers_Manager;
-use Elementor\Core\Admin\Pointers\Notices\Birthday as Notices_Birthday;
+use Elementor\Core\Admin\Pointers\Notices\Birthday as Birthday_Notice;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
@@ -1095,6 +1095,6 @@ class Admin extends App {
 	private function init_pointers() {
 		$this->pointers_manager = new Pointers_Manager();
 
-		$this->pointers_manager->register_pointer( Notices_Birthday::SLUG, Notices_Birthday::class );
+		$this->pointers_manager->register_pointer( Birthday_Notice::SLUG, Birthday_Notice::class );
 	}
 }

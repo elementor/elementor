@@ -109,13 +109,8 @@ class Birthday {
 		return $now >= $start && $now <= $end;
 	}
 
-	private function enqueue_dependencies() {
-		wp_enqueue_script( 'wp-pointer' );
-		wp_enqueue_style( 'wp-pointer' );
-	}
-
 	private function is_already_seen_toady() {
-		return ! get_transient( $this->get_user_transient_id() );
+		return get_transient( $this->get_user_transient_id() );
 	}
 
 	private function set_seen_today() {
@@ -128,5 +123,10 @@ class Birthday {
 
 	private function get_user_transient_id() {
 		return self::SEEN_TODAY_KEY . '_' . get_current_user_id();
+	}
+
+	private function enqueue_dependencies() {
+		wp_enqueue_script( 'wp-pointer' );
+		wp_enqueue_style( 'wp-pointer' );
 	}
 }
