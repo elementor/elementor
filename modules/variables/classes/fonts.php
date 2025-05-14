@@ -17,10 +17,14 @@ class Fonts {
 		}
 
 		$variable_groups = ( new Variables() )->get_all();
-		$font_variables = $variable_groups[ Font_Variable_Prop_Type::get_key() ];
+		$font_variables = $variable_groups[ Font_Variable_Prop_Type::get_key() ] ?? [];
 
 		foreach ( $font_variables as $variable ) {
 			$font_family = sanitize_text_field( $variable['value'] ?? '' );
+
+			if ( empty( $font_family ) ) {
+				continue;
+			}
 
 			$post_css->add_font( $font_family );
 		}
