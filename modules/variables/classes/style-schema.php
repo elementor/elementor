@@ -21,7 +21,7 @@ class Style_Schema {
 		}
 
 		if ( isset( $schema['font-family'] ) ) {
-			$schema['font-family'] = $this->update_font_family( $schema['font-family' ] );
+			$schema['font-family'] = $this->update_font_family( $schema['font-family'] );
 		}
 
 		return $schema;
