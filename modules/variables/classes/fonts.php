@@ -20,9 +20,9 @@ class Fonts {
 		$font_variables = $variable_groups[ Font_Variable_Prop_Type::get_key() ];
 
 		foreach ( $font_variables as $variable ) {
-			$font = $variable['value'];
+			$font_family = sanitize_text_field( $variable['value'] ?? '' );
 
-			$post_css->add_font( $font );
+			$post_css->add_font( $font_family );
 		}
 
 		return $this;
