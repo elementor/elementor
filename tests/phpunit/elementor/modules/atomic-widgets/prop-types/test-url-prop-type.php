@@ -2,21 +2,21 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Control_Url_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
+class Test_Url_Prop_Type extends Elementor_Test_Base {
 
 	/**
 	 *	@dataProvider urls_provider
 	 */
 	public function test_validate( $url ) {
 		// Arrange.
-		$prop_type = new Link_Control_Url_Prop_Type();
+		$prop_type = new Url_Prop_Type();
 
 		// Act.
 		$result = $prop_type->validate( [ '$$type' => 'url', 'value' => $url ] );
@@ -31,7 +31,7 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 	public function test_sanitize( $value, $expected )
 	{
 		// Arrange.
-		$prop_type = new Link_Control_Url_Prop_Type();
+		$prop_type = new Url_Prop_Type();
 
 		// Act.
 		$result = $prop_type->sanitize( ["value" => $value] );
@@ -70,6 +70,4 @@ class Test_Link_Control_Url_Prop_Type extends Elementor_Test_Base {
 			[ "value" => $japanese_domain, "expected" => $japanese_domain ],
 		];
 	}
-
-
 }
