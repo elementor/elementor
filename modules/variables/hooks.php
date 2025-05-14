@@ -8,6 +8,7 @@ use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Modules\Variables\Classes\Style_Schema;
+use Elementor\Modules\Variables\Classes\Fonts_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

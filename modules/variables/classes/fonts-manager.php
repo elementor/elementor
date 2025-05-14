@@ -2,9 +2,9 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use \Elementor\Plugin;
-use \Elementor\Core\Files\CSS\Post as Post_CSS;
-use \Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Plugin;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
