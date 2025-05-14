@@ -18,13 +18,13 @@ class CSS_Renderer {
 	}
 
 	public function raw_css(): string {
-		$groups_of_variables = $this->global_variables();
+		$variable_groups = $this->global_variables();
 
-		if ( empty( $groups_of_variables ) ) {
+		if ( empty( $variable_groups ) ) {
 			return '';
 		}
 
-		$css_entries = $this->generate_css_entries( $groups_of_variables );
+		$css_entries = $this->generate_css_entries( $variable_groups );
 
 		if ( empty( $css_entries ) ) {
 			return '';
