@@ -5,9 +5,10 @@ namespace Elementor\Modules\Variables;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
-use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
+use Elementor\Modules\Variables\Classes\Style_Schema;
+use Elementor\Modules\Variables\Classes\Fonts;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -69,6 +70,14 @@ class Hooks {
 			$post_css->get_stylesheet()->add_raw_css(
 				( new Variables_CSS_Renderer( new Variables() ) )->raw_css()
 			);
+		} );
+
+		return $this;
+	}
+
+	public function register_fonts() {
+		add_action( 'elementor/css-file/post/parse', function ( $post_css ) {
+			( new Fonts() )->append_to( $post_css );
 		} );
 
 		return $this;
