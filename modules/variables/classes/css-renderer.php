@@ -46,8 +46,8 @@ class CSS_Renderer {
 	private function css_entries_for( array $list_of_variables ): array {
 		$entries = [];
 
-		foreach ( $list_of_variables as $id => $variable ) {
-			$entry = $this->build_css_variable_entry( $id, $variable );
+		foreach ( $list_of_variables as $variable_id => $variable ) {
+			$entry = $this->build_css_variable_entry( $variable_id, $variable );
 
 			if ( empty( $entry ) ) {
 				continue;
