@@ -616,6 +616,7 @@ abstract class Base_App {
 				break;
 
 			case 'cli':
+			case 'rest':
 				$this->admin_notice();
 				die;
 
@@ -751,6 +752,13 @@ abstract class Base_App {
 					printf( '[%s] %s', wp_kses_post( $notice['type'] ), wp_kses_post( $notice['content'] ) );
 				}
 				break;
+
+			case 'rest':
+				// After `wp_send_json` the script will die.
+				$this->delete( 'notices' );
+				wp_send_json( $notices );
+				break;
+
 			default:
 				/**
 				 * @var Admin_Notices $admin_notices

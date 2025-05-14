@@ -124,8 +124,6 @@ class Rest_Api {
 
         // Set REST auth mode
         $app->set_auth_mode( 'rest' );
-
-        // Mhttps://desktop.postman.com/?desktopVersion=11.44.0&webVersion=11.44.0-ui-250504-2334&userId=21887712&teamId=3945143&region=usock $_REQUEST for backward compatibility
         $_REQUEST['mode'] = 'rest';
         $_REQUEST['token'] = $request->get_param('token');
         try {
