@@ -33,8 +33,8 @@ test.describe( 'Nested Accordion inactive @nested-accordion', () => {
 
 		await test.step( 'Check that Toggle and Accordion widgets appear when Nested Accordion widget is not visible', async () => {
 			// Act
-			await editor.addWidget( 'accordion', section );
-			await editor.addWidget( 'toggle', section );
+			await editor.addWidget( { widgetType: 'accordion', section } );
+			await editor.addWidget( { widgetType: 'toggle', section } );
 
 			// Assert
 			await expect.soft( accordionWrapper ).toHaveCount( 1 );
@@ -87,7 +87,7 @@ test.describe( 'Nested Accordion is active @nested-accordion', () => {
 
 		await test.step( 'Check that Nested accordion replaces old accordion widget', async () => {
 			// Act
-			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 			// Assert
@@ -200,7 +200,7 @@ test.describe( 'Nested Accordion is active @nested-accordion', () => {
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		const frame = editor.getPreviewFrame(),
-			nestedAccordionId = await editor.addWidget( 'nested-accordion', containerId ),
+			nestedAccordionId = await editor.addWidget( { widgetType: 'nested-accordion', container: containerId } ),
 			containerElement = frame.locator( `.elementor-element-${ containerId } .e-con-inner` ),
 			nestedAccordionElement = frame.locator( `.elementor-element-${ nestedAccordionId }.elementor-widget-n-accordion` ),
 			containerWidth = ( await containerElement.boundingBox() ).width,

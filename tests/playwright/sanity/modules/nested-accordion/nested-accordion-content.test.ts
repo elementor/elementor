@@ -114,7 +114,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		const frame = editor.getPreviewFrame();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.addWidget( 'nested-accordion', container );
+		await editor.addWidget( { widgetType: 'nested-accordion', container } );
 		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Check that an SVG title icon is displayed', async () => {
@@ -151,7 +151,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		let frame = editor.getPreviewFrame();
 
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.addWidget( 'nested-accordion', container );
+		await editor.addWidget( { widgetType: 'nested-accordion', container } );
 		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Check that an SVG title icon is displayed', async () => {
@@ -351,7 +351,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
 			frame = editor.getPreviewFrame(),
-			nestedAccordionID = await editor.addWidget( 'nested-accordion', container ),
+			nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } ),
 			animationDuration = 500;
 
 		await editor.closeNavigatorIfOpen();

@@ -12,7 +12,7 @@ test.describe( 'Tabs widget tests', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'tabs' );
+		await editor.addWidget( { widgetType: 'tabs' } );
 
 		// Assert.
 		await expect( editor.page.locator( '.elementor-control-alert.elementor-panel-alert.elementor-panel-alert-info' ) )
@@ -31,7 +31,7 @@ test.describe( 'Tabs widget tests', () => {
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
-		await editor.addWidget( 'tabs' );
+		await editor.addWidget( { widgetType: 'tabs' } );
 		await tabsWidget.createNewTab( newTabTitle, tabText );
 
 		await editor.getPreviewFrame().getByRole( 'tab', { name: 'Tab #1' } ).click();

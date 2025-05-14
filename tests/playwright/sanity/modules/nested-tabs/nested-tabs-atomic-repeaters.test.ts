@@ -24,7 +24,7 @@ test.describe( 'Nested Tabs tests @nested-atomic-repeaters', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			nestedTabsID = await editor.addWidget( 'nested-tabs', container );
+			nestedTabsID = await editor.addWidget( { widgetType: 'nested-tabs', container } );
 
 		await editor.selectElement( nestedTabsID );
 
@@ -64,7 +64,7 @@ test.describe( 'Nested Tabs tests @nested-atomic-repeaters', () => {
 
 		await test.step( 'Add an item to the second tabs', async () => {
 			const secondContainer = await editor.addElement( { elType: 'container' }, 'document' ),
-				secondNestedTabsID = await editor.addWidget( 'nested-tabs', secondContainer );
+				secondNestedTabsID = await editor.addWidget( { widgetType: 'nested-tabs', container: secondContainer } );
 
 			await editor.selectElement( secondNestedTabsID );
 
@@ -76,7 +76,7 @@ test.describe( 'Nested Tabs tests @nested-atomic-repeaters', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			nestedTabsID = await editor.addWidget( 'nested-tabs', container ),
+			nestedTabsID = await editor.addWidget( { widgetType: 'nested-tabs', container } ),
 			// Before ( fix ) value 25000
 			timeExpected = 300;
 

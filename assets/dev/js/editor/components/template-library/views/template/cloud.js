@@ -21,20 +21,14 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend( {
 			return {
 				'data-template_id': data.template_id,
 				'data-type': data.type,
+				'data-status': data.status,
 			};
 		}
 	},
 
 	ui() {
 		return _.extend( TemplateLibraryTemplateLocalView.prototype.ui.apply( this, arguments ), {
-			toggleMore: '.elementor-template-library-template-more-toggle',
 			previewImg: '.elementor-template-library-template-thumbnail img',
-		} );
-	},
-
-	events() {
-		return _.extend( TemplateLibraryTemplateLocalView.prototype.events.apply( this, arguments ), {
-			'click @ui.toggleMore': 'onToggleMoreClick',
 		} );
 	},
 

@@ -37,7 +37,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await test.step( 'Editor', async () => {
 			// Add Widget and navigate to Style Tab
 			await editor.closeNavigatorIfOpen();
-			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			await nestedAccordionItem.first().click();
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
 			await editor.openPanelTab( 'style' );
@@ -73,7 +73,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			nestedAccordionItemContent = nestedAccordionItemTitle.locator( '.e-con' );
 
 		await editor.closeNavigatorIfOpen();
-		const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+		const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 		const nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 		await editor.openSection( 'section_interactions' );
@@ -181,7 +181,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 			await test.step( 'Add Widget and navigate to Style Tab', async () => {
 				// Act
 				await editor.closeNavigatorIfOpen();
-				nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+				nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 				nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 				await editor.openPanelTab( 'style' );
@@ -237,7 +237,7 @@ test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
 		await test.step( 'Add Widget and navigate to Style Tab', async () => {
 			// Act
 			await editor.closeNavigatorIfOpen();
-			await editor.addWidget( 'nested-accordion', container );
+			await editor.addWidget( { widgetType: 'nested-accordion', container } );
 
 			await editor.openPanelTab( 'style' );
 			await editor.openSection( 'section_header_style' );

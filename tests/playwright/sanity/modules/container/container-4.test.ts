@@ -45,7 +45,7 @@ test.describe( 'Container tests #4 @container', () => {
 
 		// Act.
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
-		await editor.addWidget( widgets.button, container );
+		await editor.addWidget( { widgetType: widgets.button, container } );
 		await editor.publishPage();
 		await page.reload();
 		await editor.waitForPanelToLoad();
@@ -64,8 +64,8 @@ test.describe( 'Container tests #4 @container', () => {
 
 		await test.step( 'Column container, spacer default size', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
-			await editor.addWidget( widgets.spacer, container );
-			await editor.addWidget( widgets.image, container );
+			await editor.addWidget( { widgetType: widgets.spacer, container } );
+			await editor.addWidget( { widgetType: widgets.image, container } );
 
 			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientHeight ) );
 			expect.soft( spacerElementHeight ).toBe( defaultSpacerSize );
@@ -75,8 +75,8 @@ test.describe( 'Container tests #4 @container', () => {
 		await test.step( 'Row container, spacer default size', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-			await editor.addWidget( widgets.spacer, container );
-			await editor.addWidget( widgets.image, container );
+			await editor.addWidget( { widgetType: widgets.spacer, container } );
+			await editor.addWidget( { widgetType: widgets.image, container } );
 
 			const spacerElementWidth = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientWidth ) );
 			expect.soft( spacerElementWidth ).toBe( defaultSpacerSize );
@@ -85,10 +85,10 @@ test.describe( 'Container tests #4 @container', () => {
 
 		await test.step( 'Spacer added and container set to column', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
-			await editor.addWidget( widgets.spacer, container );
+			await editor.addWidget( { widgetType: widgets.spacer, container } );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await page.waitForTimeout( 500 );
-			await editor.addWidget( widgets.image, container );
+			await editor.addWidget( { widgetType: widgets.image, container } );
 
 			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientHeight ) );
 			expect.soft( spacerElementHeight ).toBe( spacerSize );
@@ -98,10 +98,10 @@ test.describe( 'Container tests #4 @container', () => {
 		await test.step( 'Container set to column and then Spacer added', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-down' );
-			await editor.addWidget( widgets.spacer, container );
+			await editor.addWidget( { widgetType: widgets.spacer, container } );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await page.waitForTimeout( 500 );
-			await editor.addWidget( widgets.image, container );
+			await editor.addWidget( { widgetType: widgets.image, container } );
 
 			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientHeight ) );
 			expect.soft( spacerElementHeight ).toBe( spacerSize );
@@ -111,10 +111,10 @@ test.describe( 'Container tests #4 @container', () => {
 		await test.step( 'Spacer added and container set to row', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-			await editor.addWidget( widgets.spacer, container );
+			await editor.addWidget( { widgetType: widgets.spacer, container } );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await page.waitForTimeout( 500 );
-			await editor.addWidget( widgets.image, container );
+			await editor.addWidget( { widgetType: widgets.image, container } );
 
 			const spacerElementWidth = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientWidth ) );
 			expect.soft( spacerElementWidth ).toBe( spacerSize );
@@ -124,10 +124,10 @@ test.describe( 'Container tests #4 @container', () => {
 		await test.step( 'Container set to row and then Spacer added', async () => {
 			const container = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
-			await editor.addWidget( widgets.spacer, container );
+			await editor.addWidget( { widgetType: widgets.spacer, container } );
 			await editor.setSliderControlValue( 'space', spacerSize );
 			await page.waitForTimeout( 500 );
-			await editor.addWidget( widgets.image, container );
+			await editor.addWidget( { widgetType: widgets.image, container } );
 
 			const spacerElementHeight = await editor.getPreviewFrame().locator( '.elementor-widget-spacer' ).evaluate( ( node ) => String( node.clientWidth ) );
 			expect.soft( spacerElementHeight ).toBe( spacerSize );
@@ -250,7 +250,7 @@ test.describe( 'Container tests #4 @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage();
 
-		await test.step( '“Boxed” Parent container to default to "Full Width" content width on child container ', async () => {
+		await test.step( '"Boxed" Parent container to default to "Full Width" content width on child container ', async () => {
 			// Act.
 			const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setSelectControlValue( 'content_width', 'boxed' );
@@ -266,7 +266,7 @@ test.describe( 'Container tests #4 @container', () => {
 			await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ nestedChildContainer2 }` ) ).toHaveClass( /e-con-full/ );
 		} );
 
-		await test.step( '“Full Width” Parent container to default to "Boxed" content width on child container', async () => {
+		await test.step( '"Full Width" Parent container to default to "Boxed" content width on child container', async () => {
 			const parentContainer = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setSelectControlValue( 'content_width', 'full' );
 
