@@ -69,6 +69,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -88,7 +89,9 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_feature();
+		if ( self::is_active() ) {
+			$this->register_experimental_features();
+		}
 
 		( new Opt_In() )->init();
 
@@ -114,14 +117,25 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_feature() {
-		Plugin::$instance->experiments->add_feature([
+	public static function get_experimental_data() {
+		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
 			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+		];
+	}
+
+	private function register_experimental_features() {
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_VERSION_3_30,
+			'title' => esc_html__( 'Version 3.30', 'elementor' ),
+			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 	}
 
@@ -207,6 +221,10 @@ class Module extends BaseModule {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
+	}
+
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
 	private function get_element_usage_name( $title, $type ) {
