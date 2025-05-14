@@ -85,7 +85,7 @@ class Birthday {
 		<?php
 	}
 
-	private function should_display_notice(): bool {
+	public function should_display_notice(): bool {
 		return $this->is_dashboard_page() &&
 			$this->is_user_allowed() &&
 			! Manager::is_dismissed( self::SLUG ) &&
@@ -93,15 +93,15 @@ class Birthday {
 			! $this->is_already_seen_toady();
 	}
 
-	private function is_dashboard_page(): bool {
+	protected function is_dashboard_page(): bool {
 		return is_admin() && 'dashboard' === get_current_screen()->id;
 	}
 
-	private function is_user_allowed(): bool {
+	protected function is_user_allowed(): bool {
 		return current_user_can( 'manage_options' ) || current_user_can( 'edit_pages' );
 	}
 
-	private function is_campaign_time() {
+	protected function is_campaign_time() {
 		$start = new \DateTime( '2025-06-10 12:00:00', new \DateTimeZone( 'UTC' ) );
 		$end = new \DateTime( '2025-06-17 03:59:00', new \DateTimeZone( 'UTC' ) );
 		$now = new \DateTime( 'now', new \DateTimeZone( 'UTC' ) );
@@ -109,11 +109,11 @@ class Birthday {
 		return $now >= $start && $now <= $end;
 	}
 
-	private function is_already_seen_toady() {
+	protected function is_already_seen_toady() {
 		return get_transient( $this->get_user_transient_id() );
 	}
 
-	private function set_seen_today() {
+	protected function set_seen_today() {
 		$now = time();
 		$midnight = strtotime( 'tomorrow midnight' );
 		$seconds_until_midnight = $midnight - $now;
@@ -121,11 +121,11 @@ class Birthday {
 		set_transient( $this->get_user_transient_id(), $now, $seconds_until_midnight );
 	}
 
-	private function get_user_transient_id() {
+	protected function get_user_transient_id() {
 		return self::SEEN_TODAY_KEY . '_' . get_current_user_id();
 	}
 
-	private function enqueue_dependencies() {
+	protected function enqueue_dependencies() {
 		wp_enqueue_script( 'wp-pointer' );
 		wp_enqueue_style( 'wp-pointer' );
 	}
