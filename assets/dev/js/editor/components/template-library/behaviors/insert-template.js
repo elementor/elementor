@@ -9,7 +9,17 @@ InsertTemplateHandler = Marionette.Behavior.extend( {
 		'click @ui.insertButton': 'onInsertButtonClick',
 	},
 
-	onInsertButtonClick() {
+	onRender() {
+		this.ui.insertButton.toggleClass( 'disabled', this.view.model.isLocked() );
+	},
+
+	onInsertButtonClick( e ) {
+		if ( 'locked' === this.view.model.get( 'status' ) ) {
+			e.preventDefault();
+			e.stopPropagation();
+			return;
+		}
+
 		const args = {
 			model: this.view.model,
 		};
