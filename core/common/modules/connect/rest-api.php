@@ -30,7 +30,6 @@ class Rest_Api {
     /**
      * Register REST API routes.
      *
-     * @since x.x.x
      * @access public
      * @return void
      */
@@ -70,7 +69,6 @@ class Rest_Api {
     /**
      * Check if user has permission to connect.
      *
-     * @since x.x.x
      * @access public
      *
      * @param \WP_REST_Request $request Full data about the request.
@@ -91,7 +89,6 @@ class Rest_Api {
     /**
      * Connect to Elementor Library.
      *
-     * @since x.x.x
      * @access public
      *
      * @param \WP_REST_Request $request Full data about the request.
@@ -108,6 +105,9 @@ class Rest_Api {
             );
         }
 
+        /**
+         * @var Library
+         */
         $app = $connect->get_app( 'library' );
         if ( ! $app ) {
             $connect->init();
@@ -155,7 +155,6 @@ class Rest_Api {
     /**
      * Disconnect from Elementor Library.
      *
-     * @since x.x.x
      * @access public
      *
      * @param \WP_REST_Request $request Full data about the request.
