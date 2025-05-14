@@ -22,8 +22,4 @@ class Link_Control_Url_Prop_Type extends Plain_Prop_Type {
 
 		return htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
 	}
-
-	public static function get_path_to_value( ?string $dynamic_key = null ): string {
-		return 'value';
-	}
 }

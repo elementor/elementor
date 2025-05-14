@@ -58,8 +58,4 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	abstract protected function validate_value( $value ): bool;
 
 	abstract protected function sanitize_value( $value );
-
-	public static function get_path_to_value( ?string $dynamic_key = null): string {
-		return 'value';
-	}
 }
