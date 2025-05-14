@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Fonts_Manager {
+class Fonts {
 	public function append_to( Post_CSS $post_css ) {
 		if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
 			return;
