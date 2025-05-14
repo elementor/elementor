@@ -17,10 +17,10 @@ class Birthday {
 	const SEEN_TODAY_KEY = 'elementor-birthday-seen';
 
 	public function __construct() {
-		add_action( 'in_admin_header', array( $this, 'enqueue_notice' ) );
+		add_action( 'in_admin_header', [ $this, 'enqueue_notice' ] );
 	}
 
-	function enqueue_notice() {
+	public function enqueue_notice() {
 		if ( ! $this->should_display_notice() ) {
 			return;
 		}
@@ -52,7 +52,7 @@ class Birthday {
 					url: ajaxurl,
 					method: "POST",
 					data: {
-						action: "<?php echo Manager::DISMISSED_POINTERS_META_KEY; ?>".replaceAll( "-", "_" ),
+						action: "<?php echo esc_attr( Manager::DISMISSED_POINTERS_META_KEY ); ?>".replaceAll( "-", "_" ),
 						data: {
 							pointer: '<?php echo esc_attr( self::SLUG ); ?>'
 						},
@@ -62,7 +62,7 @@ class Birthday {
 			};
 
 			jQuery( document ).ready( function( $ ) {
-				$( "#<?php echo self::ELEMENTOR_POINTER_ID; ?>" ).pointer( {
+				$( "#<?php echo esc_attr( self::ELEMENTOR_POINTER_ID ); ?>" ).pointer( {
 					content: '<?php echo wp_kses( $pointer_content, $allowed_tags ); ?>',
 					position: {
 						edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
@@ -71,7 +71,7 @@ class Birthday {
 					close: onClose
 				} ).pointer( "open" );
 
-				$( ".<?php echo self::LINK_SELECTOR; ?>" ).first().on( "click", function( e ) {
+				$( ".<?php echo esc_attr( self::LINK_SELECTOR ); ?>" ).first().on( "click", function( e ) {
 					e.preventDefault();
 
 					$( this ).attr( "disabled", true );
