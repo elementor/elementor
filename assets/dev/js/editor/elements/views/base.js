@@ -277,6 +277,29 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
+	updateHandlesOverlay() {
+		const elementStyles = window.getComputedStyle( this.el ),
+			elementType = this.$el.data( 'element_type' ),
+			overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ],
+			isHaveOverflow = overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' ),
+			isContainer = [ 'container', 'e-div-block', 'e-flexbox' ].includes( elementType ),
+			$overlayList = this.$el.find( '.elementor-editor-element-settings' );
+
+		$overlayList[ 0 ].style.display = 'none';
+
+		// JS Hack to force browser element rerender
+		// eslint-disable-next-line no-unused-expressions
+		$overlayList[ 0 ].offsetHeight;
+
+		if ( isHaveOverflow && isContainer ) {
+			$overlayList.addClass( 'elementor-editor-element-settings-overlay' );
+		} else {
+			$overlayList.removeClass( 'elementor-editor-element-settings-overlay' );
+		}
+
+		$overlayList.removeAttr( 'style' );
+	},
+
 	getHandlesOverlay() {
 		const elementType = this.getElementType(),
 			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
@@ -600,6 +623,7 @@ BaseElementView = BaseContainer.extend( {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
+		this.updateHandlesOverlay();
 		this.enqueueFonts();
 	},
 
@@ -973,6 +997,7 @@ BaseElementView = BaseContainer.extend( {
 		setTimeout( () => {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
+			this.updateHandlesOverlay();
 			elementorFrontend.elements.$window.on( 'elementor/elements/link-data-bindings', this.linkDataBindings.bind( this ) );
 		} );
 	},
