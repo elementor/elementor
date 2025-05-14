@@ -9,8 +9,8 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page,
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const contextMenu = new ContextMenu( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
-	const heading1 = await editor.addWidget( 'heading' );
-	const heading2 = await editor.addWidget( 'heading' );
+	const heading1 = await editor.addWidget( { widgetType: 'heading' } );
+	const heading2 = await editor.addWidget( { widgetType: 'heading' } );
 
 	await editor.closeNavigatorIfOpen();
 	await editor.selectElement( heading1 );
