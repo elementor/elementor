@@ -47,7 +47,7 @@ class Style_Schema {
 		return $prop_type;
 	}
 
-	private function update_font_family( String_Prop_Type $prop_type ) : Union_Prop_Type {
+	private function update_font_family( String_Prop_Type $prop_type ): Union_Prop_Type {
 		return Union_Prop_Type::create_from( $prop_type )
 			->add_prop_type( Font_Variable_Prop_Type::make() );
 	}
