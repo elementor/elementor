@@ -672,6 +672,8 @@ class Frontend extends App {
 					$css_file->enqueue();
 				}
 			}
+
+			do_action( 'elementor/frontend/after_enqueue_post_styles' );
 		}
 	}
 
