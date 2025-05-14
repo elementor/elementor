@@ -20,4 +20,8 @@ class Url_Prop_Type extends Plain_Prop_Type {
 	protected function sanitize_value( $value ) {
 		return esc_url_raw( $value );
 	}
+
+	public static function get_path_to_value( ?string $dynamic_key = null ): string {
+		return 'value';
+	}
 }

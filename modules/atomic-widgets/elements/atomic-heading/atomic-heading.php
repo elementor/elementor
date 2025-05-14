@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
+use Elementor\Modules\AtomicWidgets\Base\Control_Conditions;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
@@ -101,7 +102,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'value' => 'h6',
 						'label' => 'H6',
 					],
-				]),
+				])->add_condition(
+					'border-radius',
+					Control_Conditions::UNSET,
+					null,
+					Link_Prop_Type::get_path_to_value()
+				),
 			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
 			] ),

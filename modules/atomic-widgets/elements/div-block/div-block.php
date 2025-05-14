@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
+use Elementor\Modules\AtomicWidgets\Base\Control_Conditions;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
@@ -88,7 +89,12 @@ class Div_Block extends Atomic_Element_Base {
 								'value' => 'footer',
 								'label' => 'Footer',
 							],
-						]),
+						])->add_condition(
+							'link',
+							Control_Conditions::UNSET,
+							null,
+							Link_Prop_Type::get_path_to_value( 'destination' )
+						),
 
 					Link_Control::bind_to( 'link' )->set_meta( [
 						'topDivider' => true,
