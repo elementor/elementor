@@ -274,11 +274,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				const sourceIcon = typeof subType !== 'undefined' && 'FOLDER' === subType
 					? '<i class="eicon-library-folder" aria-hidden="true"></i>'
 					: 'locked' === status
-						? `<i aria-hidden="true" title="<?php esc_attr_e( 'Upgrade to get more storage space or delete old templates to make room.', 'elementor' ); ?>">
-								<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<path d="M5.62927 7.88216V5.21549C5.62927 4.50825 5.91022 3.82997 6.41032 3.32988C6.91042 2.82978 7.58869 2.54883 8.29594 2.54883C9.00318 2.54883 9.68146 2.82978 10.1816 3.32988C10.6817 3.82997 10.9626 4.50825 10.9626 5.21549V7.88216M3.62927 9.21549C3.62927 8.86187 3.76975 8.52273 4.0198 8.27269C4.26985 8.02264 4.60898 7.88216 4.96261 7.88216H11.6293C11.9829 7.88216 12.322 8.02264 12.5721 8.27269C12.8221 8.52273 12.9626 8.86187 12.9626 9.21549V13.2155C12.9626 13.5691 12.8221 13.9083 12.5721 14.1583C12.322 14.4084 11.9829 14.5488 11.6293 14.5488H4.96261C4.60898 14.5488 4.26985 14.4084 4.0198 14.1583C3.76975 13.9083 3.62927 13.5691 3.62927 13.2155V9.21549ZM7.62927 11.2155C7.62927 11.3923 7.69951 11.5619 7.82453 11.6869C7.94956 11.8119 8.11913 11.8822 8.29594 11.8822C8.47275 11.8822 8.64232 11.8119 8.76734 11.6869C8.89237 11.5619 8.96261 11.3923 8.96261 11.2155C8.96261 11.0387 8.89237 10.8691 8.76734 10.7441C8.64232 10.6191 8.47275 10.5488 8.29594 10.5488C8.11913 10.5488 7.94956 10.6191 7.82453 10.7441C7.69951 10.8691 7.62927 11.0387 7.62927 11.2155Z" stroke="#69727D" stroke-linecap="round" stroke-linejoin="round"/>
-								</svg>
-							</i>`
+						? '<i class="eicon-lock-outline" aria-hidden="true" title="<?php esc_attr_e( 'Upgrade to get more storage space or delete old templates to make room.', 'elementor' ); ?>"></i>'
 						: '<i class="eicon-global-colors" aria-hidden="true"></i>';
 
 					print( sourceIcon );
@@ -387,11 +383,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="elementor-template-library-card-footer">
 				<div class="elementor-template-library-template-name">
 					<# if ( 'locked' === status ) { #>
-						<i aria-hidden="true" title="<?php esc_attr_e( 'Upgrade to get more storage space or delete old templates to make room.', 'elementor' ); ?>">
-							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M5.62927 7.88216V5.21549C5.62927 4.50825 5.91022 3.82997 6.41032 3.32988C6.91042 2.82978 7.58869 2.54883 8.29594 2.54883C9.00318 2.54883 9.68146 2.82978 10.1816 3.32988C10.6817 3.82997 10.9626 4.50825 10.9626 5.21549V7.88216M3.62927 9.21549C3.62927 8.86187 3.76975 8.52273 4.0198 8.27269C4.26985 8.02264 4.60898 7.88216 4.96261 7.88216H11.6293C11.9829 7.88216 12.322 8.02264 12.5721 8.27269C12.8221 8.52273 12.9626 8.86187 12.9626 9.21549V13.2155C12.9626 13.5691 12.8221 13.9083 12.5721 14.1583C12.322 14.4084 11.9829 14.5488 11.6293 14.5488H4.96261C4.60898 14.5488 4.26985 14.4084 4.0198 14.1583C3.76975 13.9083 3.62927 13.5691 3.62927 13.2155V9.21549ZM7.62927 11.2155C7.62927 11.3923 7.69951 11.5619 7.82453 11.6869C7.94956 11.8119 8.11913 11.8822 8.29594 11.8822C8.47275 11.8822 8.64232 11.8119 8.76734 11.6869C8.89237 11.5619 8.96261 11.3923 8.96261 11.2155C8.96261 11.0387 8.89237 10.8691 8.76734 10.7441C8.64232 10.6191 8.47275 10.5488 8.29594 10.5488C8.11913 10.5488 7.94956 10.6191 7.82453 10.7441C7.69951 10.8691 7.62927 11.0387 7.62927 11.2155Z" stroke="#69727D" stroke-linecap="round" stroke-linejoin="round"/>
-							</svg>
-						</i>
+						<i class="eicon-lock-outline" aria-hidden="true" title="<?php esc_attr_e( 'Upgrade to get more storage space or delete old templates to make room.', 'elementor' ); ?>"></i>
 					<# } #>
 					<span>{{ title }}</span>
 				</div>

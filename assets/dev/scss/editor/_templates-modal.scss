@@ -432,14 +432,6 @@ $remote-templates-items-space: 30px;
 					font-size: 11px;
 					min-height: 38px;
 
-					i {
-						vertical-align: middle;
-
-						svg {
-							cursor: pointer;
-						}
-					}
-
 					.elementor-template-library-template-card-footer-overlay {
 						display: none;
 						width: 90%;
@@ -1102,12 +1094,6 @@ label.elementor-template-library-order-label {
 		font-weight: 500;
 		i {
 			font-size: 16px;
-			line-height: 1;
-			vertical-align: middle;
-
-			svg {
-				cursor: pointer;
-			}
 		}
 	}
 
