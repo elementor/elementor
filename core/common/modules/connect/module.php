@@ -9,6 +9,7 @@ use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Plugin;
 use Elementor\Utils;
 use WP_User_Query;
+use Elementor\Core\Common\Modules\Connect\Rest\Rest_Api;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

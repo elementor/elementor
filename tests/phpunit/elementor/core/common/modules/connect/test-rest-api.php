@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Core\Common\Modules\Connect\Rest;
 
-use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Common\Modules\Connect\Rest\Rest_Api;
 use Elementor\Plugin;

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Core\Common\Modules\Connect;
+namespace Elementor\Core\Common\Modules\Connect\Rest;
 
 use Elementor\Plugin;
 
@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor Library Connect REST API.
  *
  * REST API controller for handling library connect operations.
-
  */
 class Rest_Api {
 
