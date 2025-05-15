@@ -29,10 +29,6 @@ class Module extends Module_Base {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
-		$is_tests = Utils::is_elementor_tests();
-		if ( ! $is_tests ) {
-			return;
-		}
 
 		$this->register_pages_panel_experiment();
 
