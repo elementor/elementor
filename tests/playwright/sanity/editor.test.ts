@@ -27,7 +27,7 @@ test.describe( 'Editor tests', () => {
 		expect.soft( await appBar.screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'app-bar.jpg', { maxDiffPixels: 100 } );
+		} ) ).toMatchSnapshot( 'editor-app-bar.jpg', { maxDiffPixels: 100 } );
 	} );
 
 	test( 'Check for panel styles', async ( { page, apiRequests }, testInfo ) => {
@@ -41,6 +41,6 @@ test.describe( 'Editor tests', () => {
 		expect.soft( await editor.page.locator( 'aside#elementor-panel' ).screenshot( {
 			type: 'jpeg',
 			quality: 70,
-		} ) ).toMatchSnapshot( 'panel.jpg', { maxDiffPixels: 100 } );
+		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 } );
