@@ -168,6 +168,13 @@
 	--order: initial;
 	--align-self: initial;
 
+	// Flex item.
+	flex-basis: var(--flex-basis);
+	flex-grow: var(--flex-grow);
+	flex-shrink: var(--flex-shrink);
+	order: var(--order);
+	align-self: var(--align-self);
+
 	&:where( .e-con-full, .elementor-widget ) {
 		// Flex container.
 		flex-direction: var( --flex-direction );
@@ -177,13 +184,6 @@
 		align-content: var( --align-content );
 		gap: var( --row-gap ) var( --column-gap );
 	}
-
-	// Flex item.
-	flex-basis: var( --flex-basis );
-	flex-grow: var( --flex-grow );
-	flex-shrink: var( --flex-shrink );
-	order: var( --order );
-	align-self: var( --align-self );
 }
 
 .elementor-invisible {
@@ -289,21 +289,6 @@
 			transform: scale(1.3);
 		}
 	}
-}
-
-.elementor-widget-e-heading .e-heading-base a,
-.elementor-widget-e-paragraph .e-paragraph-base a {
-	color: unset;
-	font-family: unset;
-	font-size: unset;
-	font-weight: unset;
-	text-transform: unset;
-	font-style: unset;
-	text-decoration: unset;
-	line-height: unset;
-	text-align: unset;
-	letter-spacing: unset;
-	text-indent: unset;
 }
 
 @mixin button-alignment($device) {

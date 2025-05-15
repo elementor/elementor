@@ -11,7 +11,6 @@ use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
 use Elementor\Core\Admin\Notices\Base_Notice;
-use Elementor\Core\Admin\Notices\Elementor_Dev_Notice;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -30,6 +29,7 @@ class Admin_Notices extends Module {
 		'experiment_promotion',
 		'site_mailer_promotion',
 		'plugin_image_optimization',
+		'ally_pages_promotion',
 	];
 
 	private $elementor_pages_count = null;
@@ -39,10 +39,6 @@ class Admin_Notices extends Module {
 	private $current_screen_id = null;
 
 	private function get_notices() {
-		$notices = [
-			new Elementor_Dev_Notice(),
-		];
-
 		/**
 		 * Admin notices.
 		 *
@@ -53,7 +49,7 @@ class Admin_Notices extends Module {
 		 *
 		 * @param array $notices A list of notice classes.
 		 */
-		$notices = apply_filters( 'elementor/core/admin/notices', $notices );
+		$notices = apply_filters( 'elementor/core/admin/notices', [] );
 
 		return $notices;
 	}
@@ -390,6 +386,54 @@ class Admin_Notices extends Module {
 		return class_exists( 'WooCommerce' );
 	}
 
+	private function notice_ally_pages_promotion() {
+		global $pagenow;
+		$notice_id = 'ally_pages_promotion';
+
+		if ( 'edit.php' !== $pagenow || empty( $_GET['post_type'] ) || 'page' !== $_GET['post_type'] ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$plugin_file_path = 'pojo-accessibility/pojo-accessibility.php';
+		$plugin_slug = 'pojo-accessibility';
+
+		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
+		if ( empty( $cta_data ) ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Make sure your site has an accessibility statement page', 'elementor' ),
+			'description' => esc_html__( 'Create a more inclusive site experience for all your visitors. With Ally, it\'s easy to add your statement page in just a few clicks.', 'elementor' ),
+			'id' => $notice_id,
+			'type' => 'cta',
+			'button' => [
+				'text' => $cta_data['text'],
+				'url' => self::add_plg_campaign_data( $cta_data['url'], [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-statement-plg-pages',
+					'source' => 'wp-pages',
+					'medium' => 'wp-dash',
+				] ),
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/acc-plg-learn-more',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
 	private function notice_site_mailer_promotion() {
 		$notice_id = 'site_mailer_promotion';
 		$has_forms = $this->site_has_forms_plugins();
@@ -654,12 +698,66 @@ class Admin_Notices extends Module {
 		}
 	}
 
+	public function maybe_log_campaign() {
+		if ( empty( $_GET['plg_campaign'] ) || empty( $_GET['plg_campaign_name'] ) ) {
+			return;
+		}
+
+		$allowed_plgs = [
+			'elementor_image_optimization_campaign',
+			'elementor_ea11y_campaign',
+			'elementor_site_mailer_campaign',
+		];
+
+		if ( ! in_array( $_GET['plg_campaign_name'], $allowed_plgs, true ) ) {
+			return;
+		}
+
+		if ( ! isset( $_GET['plg_campaign_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_GET['plg_campaign_nonce'] ), sanitize_key( $_GET['plg_campaign_name'] ) ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( empty( $_GET['plg_source'] ) || empty( $_GET['plg_medium'] ) ) {
+			return;
+		}
+
+		$campaign_data = [
+			'source' => sanitize_key( $_GET['plg_source'] ),
+			'campaign' => sanitize_key( $_GET['plg_campaign'] ),
+			'medium' => sanitize_key( $_GET['plg_medium'] ),
+		];
+
+		set_transient( sanitize_key( $_GET['plg_campaign_name'] ), $campaign_data, 30 * DAY_IN_SECONDS );
+	}
+
+	private static function add_plg_campaign_data( $url, $campaign_data ) {
+
+		foreach ( [ 'name', 'campaign' ] as $key ) {
+			if ( empty( $campaign_data[ $key ] ) ) {
+				return $url;
+			}
+		}
+
+		return add_query_arg( [
+			'plg_campaign_name' => $campaign_data['name'],
+			'plg_campaign' => $campaign_data['campaign'],
+			'plg_source' => empty( $campaign_data['source'] ) ? '' : $campaign_data['source'],
+			'plg_medium' => empty( $campaign_data['medium'] ) ? '' : $campaign_data['medium'],
+			'plg_campaign_nonce' => wp_create_nonce( $campaign_data['name'] ),
+		], $url );
+	}
+
 	/**
 	 * @since 2.9.0
 	 * @access public
 	 */
 	public function __construct() {
 		add_action( 'admin_notices', [ $this, 'admin_notices' ], 20 );
+		add_action( 'admin_action_install-plugin', [ $this, 'maybe_log_campaign' ] );
 	}
 
 	/**
