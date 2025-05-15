@@ -45,4 +45,52 @@ test.describe( 'Editor tests', () => {
 			quality: 70,
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
+
+	test( 'Visible widgets should be shown in search results', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.openNewPage();
+
+		// Act - search for a visible widget.
+		const widgetSearchBar = 'input#elementor-panel-elements-search-input';
+		await page.waitForSelector( widgetSearchBar );
+		await page.locator( widgetSearchBar ).fill( 'Spacer' );
+
+		// Assert - the widget should be shown in search result.
+		const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
+		expect( widgetsInSearchResult ).toHaveCount( 1 );
+	} );
+
+	test( 'Hidden widgets should not be shown in search results', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.openNewPage();
+
+		// Act - search for a hidden widget.
+		const widgetSearchBar = 'input#elementor-panel-elements-search-input';
+		await page.waitForSelector( widgetSearchBar );
+		await page.locator( widgetSearchBar ).fill( 'RSS' );
+
+		// Assert - the widget should not be shown in search result.
+		const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
+		expect( widgetsInSearchResult ).toHaveCount( 0 );
+	} );
+
+	test( 'Navigator empty placeholder should be in dark mode', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const navigator = editor.page.locator( '#elementor-navigator' );
+
+		// Act.
+		await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.setDisplayMode( 'dark' );
+		await navigator.locator( '#elementor-navigator__toggle-all' ).click();
+
+		// Assert
+		expect( await navigator.screenshot( {
+			type: 'jpeg',
+			quality: 70,
+		} ) ).toMatchSnapshot( 'navigator-empty-dark-mode.jpg' );
+	} );
 } );
