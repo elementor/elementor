@@ -136,10 +136,8 @@ class Birthday {
 	}
 
 	public function dismiss_pointers() {
-		$nonce = Utils::get_super_global_value( $_POST, 'nonce' );
-
-		if ( ! wp_verify_nonce( $nonce, self::DISMISS_ACTION_KEY ) ) {
-			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
+		if ( ! wp_verify_nonce( Utils::get_super_global_value( $_POST, 'nonce' ), self::DISMISS_ACTION_KEY ) ) {
+			return wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
 		}
 
 		$data = Utils::get_super_global_value( wp_unslash( $_POST ), 'data' );
@@ -154,6 +152,6 @@ class Birthday {
 	}
 
 	public static function is_dismissed(): bool {
-		return !! get_user_meta( get_current_user_id(), self::DISMISS_ACTION_KEY, true );
+		return (bool) get_user_meta( get_current_user_id(), self::DISMISS_ACTION_KEY, true );
 	}
 }
