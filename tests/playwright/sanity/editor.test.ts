@@ -51,10 +51,11 @@ test.describe( 'Editor tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
+		const widgetSearchBar = 'input#elementor-panel-elements-search-input';
+		await page.waitForSelector( widgetSearchBar );
+
 		await test.step( 'Visible widgets should be shown in search results', async () => {
 			// Act - search for a visible widget.
-			const widgetSearchBar = 'input#elementor-panel-elements-search-input';
-			await page.waitForSelector( widgetSearchBar );
 			await page.locator( widgetSearchBar ).fill( 'Spacer' );
 
 			// Assert - the widget should be shown in search result.
@@ -64,8 +65,6 @@ test.describe( 'Editor tests', () => {
 
 		await test.step( 'Hidden widgets should not be shown in search results', async () => {
 			// Act - search for a hidden widget.
-			const widgetSearchBar = 'input#elementor-panel-elements-search-input';
-			await page.waitForSelector( widgetSearchBar );
 			await page.locator( widgetSearchBar ).fill( 'RSS' );
 
 			// Assert - the widget should not be shown in search result.
