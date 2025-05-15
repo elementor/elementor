@@ -11,8 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor Library Connect REST API.
  *
  * REST API controller for handling library connect operations.
- *
- * @since x.x.x
+
  */
 class Rest_Api {
 
