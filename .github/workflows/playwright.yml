@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ labeled, synchronize, reopened ]
+    types: [ labeled, reopened ]
   push:
     branches:
       - 'main'
@@ -14,7 +14,6 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
-    if: github.event_name != 'pull_request'
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
