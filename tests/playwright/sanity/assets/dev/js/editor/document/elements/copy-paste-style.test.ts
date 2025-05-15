@@ -9,10 +9,8 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page,
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const contextMenu = new ContextMenu( page, testInfo );
 	const editor = await wpAdmin.openNewPage();
-	const hasTopBar = await editor.hasTopBar();
 	const heading1 = await editor.addWidget( { widgetType: 'heading' } );
 	const heading2 = await editor.addWidget( { widgetType: 'heading' } );
-	let publishButton;
 
 	await editor.closeNavigatorIfOpen();
 	await editor.selectElement( heading1 );
@@ -23,31 +21,16 @@ test( 'A page can be saved successfully after copy-paste style', async ( { page,
 	await contextMenu.copyElement( heading1 );
 	await contextMenu.pasteStyleElement( heading2 );
 
-	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
-
 	// Assert.
+	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
 
-	if ( hasTopBar ) {
-		publishButton = page.locator( EditorSelectors.panels.topBar.wrapper + ' button', { hasText: 'Publish' } );
-	} else {
-		publishButton = page.locator( '#elementor-panel-saver-button-publish' );
-	}
-
-	// Check that the panel footer save button is enabled.
-	if ( hasTopBar ) {
-		await expect( publishButton ).not.toBeDisabled();
-	} else {
-		await expect( publishButton ).not.toHaveClass( /(^|\s)elementor-disabled(\s|$)/ );
-	}
+	const publishButton = page.locator( EditorSelectors.panels.topBar.wrapper + ' button', { hasText: 'Publish' } );
+	await expect( publishButton ).not.toBeDisabled();
 
 	// Act.
 	await publishButton.click();
 
 	// Assert.
-	if ( hasTopBar ) {
-		await expect( publishButton ).toBeDisabled( { timeout: 10000 } );
-	} else {
-		await expect( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, { timeout: 10000 } );
-	}
+	await expect( publishButton ).toBeDisabled( { timeout: 10000 } );
 } );
