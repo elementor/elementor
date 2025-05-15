@@ -24,7 +24,7 @@ class Test_Birthday_Notice extends PHPUnit_TestCase {
 			'is_campaign_time' => true,
 		] );
 
-		$this->assetTrue( Birthday_Notice::should_display_notice() );
+		$this->assertTrue( Birthday_Notice::should_display_notice() );
 
 		new $birthday_notice();
 
