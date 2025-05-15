@@ -12,6 +12,6 @@ export class SetQuotaData extends $e.modules.hookUI.Before {
 	}
 
 	apply() {
-		$e.components.get( 'cloud-library' ).utils.setQuotaConfig();
+		// $e.components.get( 'cloud-library' ).utils.setQuotaConfig();
 	}
 }

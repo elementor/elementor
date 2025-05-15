@@ -743,11 +743,11 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		if ( this.shouldShowCloudStateView( args.source ) ) {
-			self.layout.showCloudStateView();
+		// if ( this.shouldShowCloudStateView( args.source ) ) {
+		// 	self.layout.showCloudStateView();
 
-			return;
-		}
+		// 	return;
+		// }
 
 		self.showTemplates();
 	};
@@ -770,29 +770,49 @@ const TemplateLibraryManager = function() {
 
 		this.setFilter( 'parent', null, query );
 
-		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
-			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
+		const loadTemplatesData = () => {
+			return $e.data.get( 'library/templates', query, options ).then( ( result ) => {
+				const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
 
-			templatesCollection = new TemplateLibraryCollection(
-				templates,
-			);
+				templatesCollection = new TemplateLibraryCollection(
+					templates,
+				);
 
-			if ( result.data?.templates?.total ) {
-				total = result.data?.templates?.total;
-			}
+				if ( result.data?.templates?.total ) {
+					total = result.data?.templates?.total;
+				}
 
-			if ( result.data.config ) {
-				config = result.data.config;
-			}
+				if ( result.data.config ) {
+					config = result.data.config;
+				}
 
-			self.layout.hideLoadingView();
+				self.layout.hideLoadingView();
 
-			if ( onUpdate ) {
-				onUpdate();
-			}
-		} ).finally( ( ) => {
-			isLoading = false;
-		} );
+				if ( onUpdate ) {
+					onUpdate();
+				}
+			} ).finally( ( ) => {
+				isLoading = false;
+			} );
+		};
+
+		if ( 'cloud' === query.source ) {
+			$e.components.get( 'cloud-library' ).utils.getQuotaConfig( true )
+				.then( ( quota ) => {
+					if ( ! quota || ! quota.threshold ) {
+						self.layout.showCloudStateView();
+						return;
+					}
+
+					return loadTemplatesData();
+				} )
+				.catch( () => {
+					self.layout.showCloudStateView();
+					isLoading = false;
+				} );
+		} else {
+			loadTemplatesData();
+		}
 	};
 
 	this.searchTemplates = ( data ) => {
@@ -956,12 +976,6 @@ const TemplateLibraryManager = function() {
 		self.setSourceSelection( templatesSource );
 		self.setFilter( filterName, templatesSource, true );
 		self.clearBulkSelectionItems();
-
-		if ( this.shouldShowCloudStateView( templatesSource ) ) {
-			self.layout.showCloudStateView();
-
-			return;
-		}
 
 		self.loadTemplates( function() {
 			const templatesToShow = self.filterTemplates();
