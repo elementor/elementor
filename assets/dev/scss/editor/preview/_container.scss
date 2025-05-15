@@ -278,18 +278,6 @@
 	}
 }
 
-.e-div-block-base:has( > .elementor-empty-view ),
-.e-flexbox-base:has( > .elementor-empty-view ) {
-	display: grid !important;
-	grid-template-rows: minmax(100%, 100px);
-
-	& > .elementor-empty-view {
-		position: absolute;
-		height: auto;
-		grid-row: 1 / -1;
-	}
-}
-
 // Fix RTL placeholder placement for Grid Container with `grid-auto-flow: row`.
 body.rtl {
 
