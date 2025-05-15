@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ labeled, reopened ]
+    types: [ opened, synchronize, reopened ]
   push:
     branches:
       - 'main'
