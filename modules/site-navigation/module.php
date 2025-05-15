@@ -29,7 +29,6 @@ class Module extends Module_Base {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
-
 		$this->register_pages_panel_experiment();
 
 		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
