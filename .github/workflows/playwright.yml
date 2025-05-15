@@ -165,7 +165,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: ${{ always() }}
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
