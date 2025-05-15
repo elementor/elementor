@@ -1165,7 +1165,26 @@ const TemplateLibraryManager = function() {
 			return true;
 		}
 
-		return ! this.hasCloudLibraryQuota();
+		return ! this.hasCloudLibraryQuota() || this.cloudLibraryIsDeactivated();
+	};
+
+	this.cloudLibraryIsDeactivated = function() {
+		const quota = elementorAppConfig[ 'cloud-library' ]?.quota;
+
+		if ( ! quota ) {
+			return false;
+		}
+
+		const {
+			currentUsage = 0,
+			threshold = 0,
+			subscriptionId = '',
+		} = quota;
+
+		const isOverThreshold = currentUsage > threshold;
+		const hasSubscription = '' !== subscriptionId;
+
+		return isOverThreshold && ! hasSubscription;
 	};
 
 	this.hasCloudLibraryQuota = function() {

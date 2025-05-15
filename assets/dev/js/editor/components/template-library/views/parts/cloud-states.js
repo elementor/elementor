@@ -51,30 +51,11 @@ module.exports = Marionette.ItemView.extend( {
 			return 'notConnected';
 		}
 
-		if ( this.isDeactivated() ) {
+		if ( elementor.templates.cloudLibraryIsDeactivated() ) {
 			return 'deactivated';
 		}
 
 		return 'connectedNoQuota';
-	},
-
-	isDeactivated() {
-		const quota = elementorAppConfig[ 'cloud-library' ]?.quota;
-
-		if ( ! quota ) {
-			return false;
-		}
-
-		const {
-			currentUsage = 0,
-			threshold = 0,
-			subscriptionId = '',
-		} = quota;
-
-		const isOverThreshold = currentUsage > threshold;
-		const hasNoSubscription = '' === subscriptionId;
-
-		return isOverThreshold && hasNoSubscription;
 	},
 
 	onRender() {
