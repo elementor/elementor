@@ -1,12 +1,16 @@
 <?php
 
-namespace Elementor\Modules\Variables\Classes;
+namespace Elementor\Modules\Variables;
 
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class Test_Style_Render extends Elementor_Test_Base {
+/**
+ * @gorup Elementor\Modules
+ * @group Elementor\Modules\Variables
+ */
+class Test_Style_Renderer extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
 	public function test_render__style_with_color_variable() {

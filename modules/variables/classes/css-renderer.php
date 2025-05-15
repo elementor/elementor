@@ -36,18 +36,18 @@ class CSS_Renderer {
 	private function generate_css_entries( array $groups ): array {
 		$entries = [];
 
-		foreach ( $groups as $group ) {
-			$entries = array_merge( $entries, $this->process_variable_group( $group ) );
+		foreach ( $groups as $list_of_variables ) {
+			$entries = array_merge( $entries, $this->css_entries_for( $list_of_variables ) );
 		}
 
 		return $entries;
 	}
 
-	private function process_variable_group( array $group ): array {
+	private function css_entries_for( array $list_of_variables ): array {
 		$entries = [];
 
-		foreach ( $group as $name => $variable ) {
-			$entry = $this->build_css_variable_entry( $name, $variable );
+		foreach ( $list_of_variables as $variable_id => $variable ) {
+			$entry = $this->build_css_variable_entry( $variable_id, $variable );
 
 			if ( empty( $entry ) ) {
 				continue;
@@ -59,8 +59,8 @@ class CSS_Renderer {
 		return $entries;
 	}
 
-	private function build_css_variable_entry( string $name, array $variable ): ?string {
-		$variable_name = sanitize_text_field( $name );
+	private function build_css_variable_entry( string $id, array $variable ): ?string {
+		$variable_name = sanitize_text_field( $id );
 		$value = sanitize_text_field( $variable['value'] ?? '' );
 
 		if ( empty( $value ) || empty( $variable_name ) ) {
