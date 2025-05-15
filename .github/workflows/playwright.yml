@@ -206,3 +206,18 @@ jobs:
       - name: Check Playwright matrix status
         if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
         run: exit 1
+      - name: Remove "run-tests" label
+        if: github.event_name == 'pull_request' && success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labelToRemove = 'run-tests';
+            const issueNumber = context.payload.pull_request.number;
+
+            await github.rest.issues.removeLabel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              name: labelToRemove
+            });
+
