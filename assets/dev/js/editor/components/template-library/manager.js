@@ -935,30 +935,33 @@ const TemplateLibraryManager = function() {
 			} );
 		};
 
-		if ( 'cloud' === query.source ) {
+		const handleCloudSource = () => {
 			if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota ) {
-				$e.components.get( 'cloud-library' ).utils.getQuotaConfig( true )
-				.then( ( quota ) => {
-					if ( ! quota || ! quota.threshold || self.shouldShowCloudStateView() ) {
+				return $e.components.get( 'cloud-library' ).utils.getQuotaConfig( true )
+					.then( () => {
+						if ( self.shouldShowCloudStateView() ) {
+							self.layout.showCloudStateView();
+							return;
+						}
+
+						return loadTemplatesData();
+					} )
+					.catch( () => {
 						self.layout.showCloudStateView();
-						return;
-					}
-
-					return loadTemplatesData();
-				} )
-				.catch( () => {
-					self.layout.showCloudStateView();
-					isLoading = false;
-				} );
-			} else {
-				if ( self.shouldShowCloudStateView() ) {
-					self.layout.showCloudStateView();
-
-					return;
-				}
-
-				loadTemplatesData();
+						isLoading = false;
+					} );
 			}
+
+			if ( self.shouldShowCloudStateView() ) {
+				self.layout.showCloudStateView();
+				return;
+			}
+
+			return loadTemplatesData();
+		};
+
+		if ( 'cloud' === query.source ) {
+			handleCloudSource();
 		} else {
 			loadTemplatesData();
 		}
