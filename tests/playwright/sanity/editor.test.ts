@@ -46,34 +46,32 @@ test.describe( 'Editor tests', () => {
 		} ) ).toMatchSnapshot( 'editor-panel.jpg', { maxDiffPixels: 100 } );
 	} );
 
-	test( 'Visible widgets should be shown in search results', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Check for hidden/visible widgets in search results', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.openNewPage();
 
-		// Act - search for a visible widget.
-		const widgetSearchBar = 'input#elementor-panel-elements-search-input';
-		await page.waitForSelector( widgetSearchBar );
-		await page.locator( widgetSearchBar ).fill( 'Spacer' );
+		await test.step( 'Visible widgets should be shown in search results', async () => {
+			// Act - search for a visible widget.
+			const widgetSearchBar = 'input#elementor-panel-elements-search-input';
+			await page.waitForSelector( widgetSearchBar );
+			await page.locator( widgetSearchBar ).fill( 'Spacer' );
 
-		// Assert - the widget should be shown in search result.
-		const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
-		expect( widgetsInSearchResult ).toHaveCount( 1 );
-	} );
+			// Assert - the widget should be shown in search result.
+			const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
+			expect( widgetsInSearchResult ).toHaveCount( 1 );
+		} );
 
-	test( 'Hidden widgets should not be shown in search results', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.openNewPage();
+		await test.step( 'Hidden widgets should not be shown in search results', async () => {
+			// Act - search for a hidden widget.
+			const widgetSearchBar = 'input#elementor-panel-elements-search-input';
+			await page.waitForSelector( widgetSearchBar );
+			await page.locator( widgetSearchBar ).fill( 'RSS' );
 
-		// Act - search for a hidden widget.
-		const widgetSearchBar = 'input#elementor-panel-elements-search-input';
-		await page.waitForSelector( widgetSearchBar );
-		await page.locator( widgetSearchBar ).fill( 'RSS' );
-
-		// Assert - the widget should not be shown in search result.
-		const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
-		expect( widgetsInSearchResult ).toHaveCount( 0 );
+			// Assert - the widget should not be shown in search result.
+			const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
+			expect( widgetsInSearchResult ).toHaveCount( 0 );
+		} );
 	} );
 
 	test( 'Navigator empty placeholder should be in dark mode', async ( { page, apiRequests }, testInfo ) => {
