@@ -888,12 +888,6 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		// if ( this.shouldShowCloudStateView( args.source ) ) {
-		// 	self.layout.showCloudStateView();
-
-		// 	return;
-		// }
-
 		self.showTemplates();
 	};
 
@@ -942,9 +936,10 @@ const TemplateLibraryManager = function() {
 		};
 
 		if ( 'cloud' === query.source ) {
-			$e.components.get( 'cloud-library' ).utils.getQuotaConfig( true )
+			if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota ) {
+				$e.components.get( 'cloud-library' ).utils.getQuotaConfig( true )
 				.then( ( quota ) => {
-					if ( ! quota || ! quota.threshold ) {
+					if ( ! quota || ! quota.threshold || self.shouldShowCloudStateView() ) {
 						self.layout.showCloudStateView();
 						return;
 					}
@@ -955,6 +950,15 @@ const TemplateLibraryManager = function() {
 					self.layout.showCloudStateView();
 					isLoading = false;
 				} );
+			} else {
+				if ( self.shouldShowCloudStateView() ) {
+					self.layout.showCloudStateView();
+
+					return;
+				}
+
+				loadTemplatesData();
+			}
 		} else {
 			loadTemplatesData();
 		}
@@ -1153,11 +1157,7 @@ const TemplateLibraryManager = function() {
 		this.layout.handleBulkActionBarUi();
 	};
 
-	this.shouldShowCloudStateView = function( source ) {
-		if ( 'cloud' !== source ) {
-			return false;
-		}
-
+	this.shouldShowCloudStateView = function() {
 		if ( ! elementor.config.library_connect.is_connected ) {
 			return true;
 		}
@@ -1167,8 +1167,7 @@ const TemplateLibraryManager = function() {
 
 	this.hasCloudLibraryQuota = function() {
 		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
-			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
-			elementor.helpers.hasPro();
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
