@@ -169,7 +169,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect.soft( parentContainer ).toHaveScreenshot( `elements-panel-promotion-linux.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `elements-panel-promotion.png` );
 	} );
 
 	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {

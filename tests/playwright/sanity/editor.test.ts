@@ -12,6 +12,7 @@ test.describe( 'Editor tests', () => {
 	} );
 
 	test( 'Check that app-bar exists', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		const appBar = editor.page.locator( EditorSelectors.panels.topBar.wrapper );
@@ -31,6 +32,7 @@ test.describe( 'Editor tests', () => {
 	} );
 
 	test( 'Check for panel styles', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
