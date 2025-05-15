@@ -265,7 +265,6 @@ class Module extends BaseModule {
 	/**
 	 * Register REST routes.
 	 *
-	 * @since x.x.x
 	 * @access public
 	 */
 	public function register_rest_routes() {
