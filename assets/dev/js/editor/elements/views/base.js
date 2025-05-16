@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -275,6 +276,34 @@ BaseElementView = BaseContainer.extend( {
 				this.$el.removeClass( 'elementor-loading' );
 			}, 100 );
 		}
+	},
+
+	updateHandlesOverlay() {
+		const $overlayList = this.$el.find( '.elementor-editor-element-settings' );
+
+		if ( ! $overlayList || ! $overlayList?.length ) {
+			return;
+		}
+
+		const elementStyles = window.getComputedStyle( this.el ),
+			elementType = this.$el.data( 'element_type' ),
+			overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ],
+			isHaveOverflow = overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' ),
+			isContainer = getAllElementTypes().includes( elementType );
+
+		$overlayList[ 0 ].style.display = 'none';
+
+		// JS Hack to force browser element repaint ( till function end disables transition animations for V3 )
+		// eslint-disable-next-line no-unused-expressions
+		$overlayList[ 0 ].offsetHeight;
+
+		if ( isHaveOverflow && isContainer ) {
+			$overlayList.addClass( 'elementor-editor-element-settings-overlay' );
+		} else {
+			$overlayList.removeClass( 'elementor-editor-element-settings-overlay' );
+		}
+
+		$overlayList.removeAttr( 'style' );
 	},
 
 	getHandlesOverlay() {
@@ -600,6 +629,7 @@ BaseElementView = BaseContainer.extend( {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
+		this.updateHandlesOverlay();
 		this.enqueueFonts();
 	},
 
@@ -973,6 +1003,7 @@ BaseElementView = BaseContainer.extend( {
 		setTimeout( () => {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
+			this.updateHandlesOverlay();
 			elementorFrontend.elements.$window.on( 'elementor/elements/link-data-bindings', this.linkDataBindings.bind( this ) );
 		} );
 	},
