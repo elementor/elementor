@@ -1260,7 +1260,7 @@ const TemplateLibraryManager = function() {
 								name: 'undo_bulk_delete',
 								text: __( 'Undo', 'elementor' ),
 								callback: () => {
-									this.onUndoDelete();
+									this.onUndoDelete( isBulk );
 								},
 							},
 						] : null;
@@ -1300,7 +1300,7 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.onUndoDelete = function() {
+	this.onUndoDelete = function( isBulk ) {
 		return new Promise( ( resolve ) => {
 			isLoading = true;
 
@@ -1340,6 +1340,10 @@ const TemplateLibraryManager = function() {
 			};
 
 			elementorCommon.ajax.addRequest( 'bulk_undo_delete_items', ajaxOptions );
+
+			self.eventManager.sendDeletionUndoEvent( {
+				is_bulk: isBulk,
+			} );
 		} );
 	};
 
