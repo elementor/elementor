@@ -3,7 +3,6 @@ namespace Elementor\Core\Settings\EditorPreferences;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
-use Elementor\Modules\EditorAppBar\Module as AppBarModule;
 use Elementor\Modules\Checklist\Module as ChecklistModule;
 use Elementor\Plugin;
 
@@ -110,26 +109,6 @@ class Model extends BaseModel {
 				'separator' => 'before',
 			]
 		);
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) ) {
-
-			$this->add_control(
-				'default_device_view',
-				[
-					'label' => esc_html__( 'Default device view', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => [
-						'default' => esc_html__( 'Default', 'elementor' ),
-						'mobile' => esc_html__( 'Mobile', 'elementor' ),
-						'tablet' => esc_html__( 'Tablet', 'elementor' ),
-						'desktop' => esc_html__( 'Desktop', 'elementor' ),
-					],
-					'description' => esc_html__( 'Choose which device to display when clicking the Responsive Mode icon.', 'elementor' ),
-				]
-			);
-
-		}
 
 		$this->add_control(
 			'edit_buttons',
