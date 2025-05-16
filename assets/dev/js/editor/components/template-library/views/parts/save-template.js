@@ -195,6 +195,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	onFormSubmit( event ) {
 		event.preventDefault();
 
+		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
+
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
 
