@@ -1,8 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Variables\Styles;
-
-use Elementor\Modules\Variables\Classes\Variables;
+namespace Elementor\Modules\Variables\Classes;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

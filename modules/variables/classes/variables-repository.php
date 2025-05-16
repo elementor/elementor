@@ -19,7 +19,6 @@ class Variables_Repository {
 		$this->kit = $kit;
 	}
 
-	// should we return the deleted variables as well?
 	public function all(): array {
 		$meta_key = $this->get_meta_key();
 		$data = $this->kit->get_json_meta( $meta_key );
@@ -67,10 +66,7 @@ class Variables_Repository {
 		$variables_data = $this->all();
 		$variables_items = $variables_data['data'];
 
-		// check if the payload is validated outside
 		$variables_items[ $group_name ][ $id ] = $payload;
-		// if we pass id of something that no longer exist should we throw an error?
-		// if variables are empty
 
 		$variables_data['data'] = $variables_items;
 

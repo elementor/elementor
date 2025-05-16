@@ -75,10 +75,6 @@ class Test_Variables_Repository extends TestCase {
         $this->assertEquals( $expected, $result );
     }
 
-	// do we need order of the variables list?
-	// or frontend will decide the order
-	// bulk creation is not allowed to test that too because we dont have that use case
-
 	public function test_create_new_variable__when_empty() {
 		// Arrange.
 		$captured_variables_data = null;

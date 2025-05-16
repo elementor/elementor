@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\Variables\Styles;
+namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
