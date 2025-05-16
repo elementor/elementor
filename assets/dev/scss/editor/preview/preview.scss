@@ -268,7 +268,7 @@ html.elementor-html {
 
 			.elementor-editor-element-edit {
 
-				&:not(.elementor-active) {
+				&:not(:hover) {
 
 					~ * {
 						width: 0;
