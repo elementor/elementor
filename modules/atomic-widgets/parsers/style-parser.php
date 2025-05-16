@@ -19,13 +19,15 @@ class Style_Parser {
 	];
 
 	private array $schema;
+	private array $existing_labels;
 
-	public function __construct( array $schema ) {
+	public function __construct( array $schema, array $existing_labels ) {
 		$this->schema = $schema;
+		$this->existing_labels = array_map( 'strtolower', $existing_labels );
 	}
 
-	public static function make( array $schema ): self {
-		return new static( $schema );
+	public static function make( array $schema, array $existing_labels = [] ): self {
+		return new static( $schema, $existing_labels );
 	}
 
 	/**
@@ -46,6 +48,12 @@ class Style_Parser {
 
 		if ( ! isset( $style['label'] ) || ! is_string( $style['label'] ) ) {
 			$result->errors()->add( 'label', 'missing_or_invalid' );
+		}  else {
+			$label_validation = $this->validate_style_label( $style['label'], $this->existing_labels );
+		
+			if ( ! $label_validation['is_valid'] ) {
+				$result->errors()->add( 'label', $label_validation['error_message'] );
+			}
 		}
 
 		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
@@ -143,6 +151,85 @@ class Style_Parser {
 		}
 
 		return Parse_Result::make()->wrap( $style );
+	}
+
+	private function validate_style_label( string $label, array $existing_labels = [] ): array {
+		$label = strtolower( $label );
+		$existing_labels[] = 'local';
+	
+		$reserved_class_names = [ 'container' ];
+	
+		if ( strlen( $label ) > 50 ) {
+			return [
+				'is_valid'      => false,
+				'error_message' => 'Class name is too long. Should be under 50 characters.',
+			];
+		}
+	
+		if ( strlen( $label ) < 2 ) {
+			return [
+				'is_valid'      => false,
+				'error_message' => 'Class name is too short. Should be least 2 characters.',
+			];
+		}
+	
+		if ( in_array( $label, $existing_labels, true ) ) {
+			return [
+				'is_valid'      => false,
+				'error_message' => 'Class name already exists.',
+			];
+		}
+
+		if ( in_array( $label, $reserved_class_names, true ) ) {
+			return [
+				'is_valid'      => false,
+				'error_message' => 'This name is reserved and can’t be used.',
+			];
+		}
+	
+		$regexes = [
+			[
+				'pattern' => '/^(|[^0-9].*)$/',
+				'message' => 'Class names must start with a letter.',
+			],
+			[
+				'pattern' => '/^\S*$/',
+				'message' => 'Class names can’t contain spaces.',
+			],
+			[
+				'pattern' => '/^(|[a-zA-Z0-9_-]+)$/',
+				'message' => 'Class names can only use letters, numbers, dashes (-), and underscores (_).',
+			],
+			[
+				'pattern' => '/^(?!--).*/',
+				'message' => 'Double hyphens are reserved for custom properties.',
+			],
+			[
+				'pattern' => '/^(?!-[0-9])/',
+				'message' => 'Class names can’t start with a hyphen followed by a number.',
+			],
+			[
+				'pattern' => '/^(?!.*(--|__)).*/',
+				'message' => 'Avoid using multiple dashes or underscores in a row.',
+			],
+			[
+				'pattern' => '/^(?![-_]).*(?<![-_])$/',
+				'message' => 'Class names can’t start or end with a dash or underscore.',
+			],
+		];
+	
+		foreach ( $regexes as $rule ) {
+			if ( ! preg_match( $rule['pattern'], $label ) ) {
+				return [
+					'is_valid'      => false,
+					'error_message' => $rule['message'],
+				];
+			}
+		}
+		return [
+			'is_valid'      => true,
+			'error_message' => null,
+		];
 	}
 
 	/**

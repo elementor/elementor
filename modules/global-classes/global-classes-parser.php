@@ -67,7 +67,14 @@ class Global_Classes_Parser {
 	public function parse_items( array $items ) {
 		$sanitized_items = [];
 		$result = Parse_Result::make();
-		$style_parser = Style_Parser::make( Style_Schema::get() );
+
+		$existing_global_classes_labels = array_map(
+			function( $item ) {
+				return $item['label'] ?? '';
+			},
+			$items
+		);
+		$style_parser = Style_Parser::make( Style_Schema::get(), $existing_global_classes_labels  );
 
 		foreach ( $items as $item_id => $item ) {
 			$item_result = $style_parser->parse( $item );
