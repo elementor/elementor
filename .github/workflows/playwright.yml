@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [ labeled, synchronize, opened, reopened ]
   push:
     branches:
       - 'main'
@@ -26,6 +26,10 @@ on:
         tag:
           description: 'Provide @tag or a keyword'
           required: false
+
+concurrency:
+    group: pr-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
 
 jobs:
   build-plugin:
