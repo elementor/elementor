@@ -25,7 +25,7 @@ export async function clickTabByPosition( context: Page | Frame, tabPosition: nu
 }
 
 export async function setupExperiments( wpAdmin: WpAdminPage, customExperiment = {} ): Promise<void> {
-	const experiments = { container: 'active', 'nested-elements': 'active', ...customExperiment };
+	const experiments = { container: true, ...customExperiment };
 	await wpAdmin.setExperiments( experiments );
 }
 
