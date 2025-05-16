@@ -169,7 +169,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    if: needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped'
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
