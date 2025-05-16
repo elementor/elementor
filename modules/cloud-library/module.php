@@ -28,7 +28,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiment();
+		$this->register_experiments();
 
 		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
 			$this->register_app();
@@ -63,13 +63,22 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
-	private function register_experiment() {
+	private function register_experiments() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
 			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
 			'description' => esc_html__( 'Cloud Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
+		] );
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_cloud_library_kits',
+			'title' => esc_html__( 'Cloud Kits', 'elementor' ),
+			'description' => esc_html__( 'Cloud Kits', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+			'default' => ExperimentsManager::STATE_INACTIVE,
+			'hidden' => true,
 		] );
 	}
 
@@ -120,9 +129,9 @@ class Module extends BaseModule {
 				'utm_content' => 'cloud-library',
 				'source' => 'cloud-library',
 			] ) ),
-			'library_connect_title' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
-			'library_connect_sub_title' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
-			'library_connect_button_text' => esc_html__( 'Connect', 'elementor' ),
+			'library_connect_title_copy' => esc_html__( 'Connect to your Elementor account', 'elementor' ),
+			'library_connect_sub_title_copy' => esc_html__( 'Then you can find all your templates in one convenient library.', 'elementor' ),
+			'library_connect_button_copy' => esc_html__( 'Connect', 'elementor' ),
 		] );
 	}
 
