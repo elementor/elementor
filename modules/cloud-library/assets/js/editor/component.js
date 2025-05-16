@@ -1,5 +1,3 @@
-import * as hooks from './hooks/';
-
 export default class Component extends $e.modules.ComponentBase {
 	promise = null;
 
@@ -85,10 +83,6 @@ export default class Component extends $e.modules.ComponentBase {
 			quota_usage_alert: quotaUsageAlert,
 		} );
 	};
-
-	defaultHooks() {
-		return this.importHooks( hooks );
-	}
 
 	defaultUtils() {
 		return {
