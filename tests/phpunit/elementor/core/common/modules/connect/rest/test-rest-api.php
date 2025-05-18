@@ -220,9 +220,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		parent::tearDown();
-		global $wp_rest_server;
-		$wp_rest_server = null;
-		parent::tearDown();
 		Plugin::$instance->common = $this->original_common;
 	}
 }
