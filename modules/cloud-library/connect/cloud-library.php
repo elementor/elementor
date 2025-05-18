@@ -70,6 +70,7 @@ class Cloud_Library extends Library {
 			'type' => $template_data['templateType'],
 			'subType' => $template_data['type'],
 			'title' => $template_data['title'],
+			'status' => $template_data['status'],
 			'author' => $template_data['authorEmail'],
 			'human_date' => date_i18n( get_option( 'date_format' ), strtotime( $template_data['createdAt'] ) ),
 			'export_link' => $this->get_export_link( $template_data['id'] ),

@@ -17,7 +17,7 @@ test.describe( 'Device mode', () => {
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( 'heading', container );
+		await editor.addWidget( { widgetType: 'heading', container } );
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.e-con' );
 

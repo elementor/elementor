@@ -1,5 +1,5 @@
-		<div class="elementor-element elementor-element-e8e55a1 e-con e-flexbox-base" data-id="e8e55a1" data-element_type="e-flexbox">
-				<div class="elementor-element elementor-element-a3v23u9 e-con e-flexbox-base" data-id="a3v23u9" data-element_type="e-flexbox">
+		<div class="elementor-element elementor-element-e8e55a1" data-id="e8e55a1" data-element_type="e-flexbox">
+				<div class="elementor-element elementor-element-a3v23u9" data-id="a3v23u9" data-element_type="e-flexbox">
 				</div>
 				</div>
 		

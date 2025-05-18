@@ -8,7 +8,7 @@ test( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
 		editor = await wpAdmin.openNewPage();
 
 	// Act.
-	await editor.addWidget( 'accordion' );
+	await editor.addWidget( { widgetType: 'accordion' } );
 
 	// Assert
 	await editor.togglePreviewMode();
