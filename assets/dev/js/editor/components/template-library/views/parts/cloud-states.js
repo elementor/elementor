@@ -22,10 +22,10 @@ module.exports = Marionette.ItemView.extend( {
 
 		return {
 			notConnected: {
-				title: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_title,
-				message: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_sub_title,
+				title: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_title_copy ?? __( 'Connect to your Elementor account', 'elementor' ),
+				message: elementorAppConfig?.[ 'cloud-library' ]?.library_connect_sub_title_copy ?? __( 'Then you can find all your templates in one convenient library.', 'elementor' ),
 				icon: defaultIcon,
-				button: `<a class="elementor-button e-primary" href="${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }" target="_blank">${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_text }</a>`,
+				button: `<a class="elementor-button e-primary" href="${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }" target="_blank">${ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_copy ?? __( 'Connect', 'elementor' ) }</a>`,
 			},
 			connectedNoQuota: {
 				title: __( 'It’s time to level up', 'elementor' ),
@@ -51,30 +51,11 @@ module.exports = Marionette.ItemView.extend( {
 			return 'notConnected';
 		}
 
-		if ( this.isDeactivated() ) {
+		if ( elementor.templates.cloudLibraryIsDeactivated() ) {
 			return 'deactivated';
 		}
 
 		return 'connectedNoQuota';
-	},
-
-	isDeactivated() {
-		const quota = elementorAppConfig[ 'cloud-library' ]?.quota;
-
-		if ( ! quota ) {
-			return false;
-		}
-
-		const {
-			currentUsage = 0,
-			threshold = 0,
-			subscriptionId = '',
-		} = quota;
-
-		const isOverThreshold = currentUsage > threshold;
-		const hasNoSubscription = '' === subscriptionId;
-
-		return isOverThreshold && hasNoSubscription;
 	},
 
 	onRender() {
