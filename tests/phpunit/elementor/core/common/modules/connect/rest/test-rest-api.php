@@ -85,8 +85,8 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$connect_mock = $this->createMock( \Elementor\Core\Common\Modules\Connect\Module::class );
 		$connect_mock->method( 'get_app' )->willReturn( null );
 
-		$common_mock = $this->createMock( \Elementor\Core\Common\Module::class );
-		$common_mock->method( 'get_component' )->with( 'connect' )->willReturn( $connect_mock );
+		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
+		$common_mock->method( 'get_component' )->with( ['connect'] )->willReturn( $connect_mock );
 
 		$plugin_instance = Plugin::$instance;
 		$plugin_instance->common = $common_mock;
@@ -108,7 +108,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( 'rest' );
+			->with( ['rest'] );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_authorize' );
@@ -136,7 +136,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( 'rest' );
+			->with( ['rest'] );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_authorize' );
@@ -162,7 +162,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( 'rest' );
+			->with( ['rest'] );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_authorize' )
@@ -183,7 +183,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( 'rest' );
+			->with( ['rest'] );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_disconnect' );
@@ -203,8 +203,8 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$connect_mock = $this->createMock( \Elementor\Core\Common\Modules\Connect\Module::class );
 		$connect_mock->method( 'get_app' )->willReturn( null );
 
-		$common_mock = $this->createMock( \Elementor\Core\Common\Module::class );
-		$common_mock->method( 'get_component' )->with( 'connect' )->willReturn( $connect_mock );
+		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
+		$common_mock->method( 'get_component' )->with( ['connect'] )->willReturn( $connect_mock );
 
 		$plugin_instance = Plugin::$instance;
 		$plugin_instance->common = $common_mock;
@@ -225,7 +225,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( 'rest' );
+			->with( ['rest'] );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_disconnect' )
