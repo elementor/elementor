@@ -47,8 +47,8 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$connect_mock = $this->createMock( \Elementor\Core\Common\Modules\Connect\Module::class );
 		$connect_mock->method( 'get_app' )->willReturn( $this->mock_app );
 
-		$common_mock = $this->createMock( \Elementor\Core\Common\Module::class );
-		$common_mock->method( 'get_component' )->with( 'connect' )->willReturn( $connect_mock );
+		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
+		$common_mock->method( 'get_component' )->with( ['connect'] )->willReturn( $connect_mock );
 
 		$plugin_instance = Plugin::$instance;
 		$plugin_instance->common = $common_mock;
