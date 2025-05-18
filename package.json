@@ -123,6 +123,7 @@
 		"webpack": "^5.97.1"
 	},
 	"dependencies": {
+		"omerisra6-a": "14.0.0",
 		"@elementor/editor": "0.19.2",
 		"@elementor/editor-app-bar": "0.29.2",
 		"@elementor/editor-canvas": "0.21.2",
