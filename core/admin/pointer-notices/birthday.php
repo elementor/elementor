@@ -2,7 +2,6 @@
 
 namespace Elementor\Core\Admin\PointerNotices;
 
-use Elementor\Settings;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,34 +9,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Birthday {
-	const ELEMENTOR_PAGE_ID = Settings::PAGE_ID;
+	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-birthday/';
 	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor';
-	const LINK_SELECTOR = 'elementor-pointer-settings-link';
 	const SEEN_TODAY_KEY = 'elementor-birthday-seen';
-	const DISMISS_ACTION_KEY = 'elementor-birthday-dismissed-pointer';
+	const DISMISS_ACTION_KEY = 'elementor_birthday_dismissed_pointer';
 
 	public function __construct() {
 		$this->register_notice();
 		$this->register_dismiss_action();
 	}
 
-	private function register_notice() {
-		add_action( 'in_admin_header', [ $this, 'enqueue_notice' ] );
-	}
-
 	private function register_dismiss_action() {
 		add_action( 'wp_ajax_' . self::DISMISS_ACTION_KEY, [ $this, 'dismiss_pointers' ] );
 	}
 
+	private function register_notice() {
+		add_action( 'in_admin_header', [ $this, 'enqueue_notice' ] );
+	}
+
 	public function enqueue_notice() {
+		if ( ! self::should_display_notice() ) {
+			return;
+		}
+
 		$this->set_seen_today();
 		$this->enqueue_dependencies();
 
 		$pointer_content = '<h3>' . esc_html__( 'Elementor’s 9th Birthday sale!', 'elementor' ) . '</h3>';
 		$pointer_content .= '<p>' . esc_html__( 'Celebrate Elementor’s birthday with us—exclusive deals are available now.', 'elementor' );
 		$pointer_content .= sprintf(
-			'<p><a class="button button-primary ' . self::LINK_SELECTOR . '" href="%s">%s</a></p>',
-			admin_url( 'admin.php?page=' . self::ELEMENTOR_PAGE_ID ),
+			'<p><a class="button button-primary" href="%s" target="_blank">%s</a></p>',
+			self::PROMOTION_URL,
 			esc_html__( 'View Deals', 'elementor' )
 		);
 
@@ -46,6 +48,7 @@ class Birthday {
 			'p' => [],
 			'a' => [
 				'class' => [],
+				'target' => [ '_blank' ],
 				'href' => [],
 			],
 		];
@@ -75,38 +78,31 @@ class Birthday {
 					},
 					close: onClose
 				} ).pointer( "open" );
-
-				$( ".<?php echo esc_attr( self::LINK_SELECTOR ); ?>" ).first().on( "click", function( e ) {
-					e.preventDefault();
-
-					$( this ).attr( "disabled", true );
-
-					onClose().promise().done( () => {
-						location = $( this ).attr( "href" );
-					} );
-				} );
 			} );
 		</script>
 		<?php
 	}
 
-	public static function should_display_notice(): bool {
+	private static function should_display_notice(): bool {
 		return self::is_dashboard_page() &&
 			self::is_user_allowed() &&
 			! self::is_dismissed() &&
 			self::is_campaign_time() &&
-			! self::is_already_seen_toady();
+			! self::is_already_seen_today() &&
+			! Utils::has_pro();
 	}
 
-	protected static function is_dashboard_page(): bool {
-		return is_admin() && 'dashboard' === get_current_screen()->id;
+	private static function is_dashboard_page(): bool {
+		$current_screen = get_current_screen();
+
+		return isset( $current_screen->id ) && 'dashboard' === $current_screen->id;
 	}
 
-	protected static function is_user_allowed(): bool {
+	private static function is_user_allowed(): bool {
 		return current_user_can( 'manage_options' ) || current_user_can( 'edit_pages' );
 	}
 
-	protected static function is_campaign_time() {
+	private static function is_campaign_time() {
 		$start = new \DateTime( '2025-06-10 12:00:00', new \DateTimeZone( 'UTC' ) );
 		$end = new \DateTime( '2025-06-17 03:59:00', new \DateTimeZone( 'UTC' ) );
 		$now = new \DateTime( 'now', new \DateTimeZone( 'UTC' ) );
@@ -114,11 +110,11 @@ class Birthday {
 		return $now >= $start && $now <= $end;
 	}
 
-	protected static function is_already_seen_toady() {
+	private static function is_already_seen_today() {
 		return get_transient( self::get_user_transient_id() );
 	}
 
-	protected function set_seen_today() {
+	private function set_seen_today() {
 		$now = time();
 		$midnight = strtotime( 'tomorrow midnight' );
 		$seconds_until_midnight = $midnight - $now;
@@ -137,7 +133,7 @@ class Birthday {
 
 	public function dismiss_pointers() {
 		if ( ! wp_verify_nonce( Utils::get_super_global_value( $_POST, 'nonce' ), self::DISMISS_ACTION_KEY ) ) {
-			return wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
+			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
 		}
 
 		$data = Utils::get_super_global_value( wp_unslash( $_POST ), 'data' );
@@ -151,7 +147,7 @@ class Birthday {
 		wp_send_json_success( [] );
 	}
 
-	public static function is_dismissed(): bool {
+	private static function is_dismissed(): bool {
 		return (bool) get_user_meta( get_current_user_id(), self::DISMISS_ACTION_KEY, true );
 	}
 }

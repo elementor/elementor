@@ -1072,10 +1072,8 @@ class Admin extends App {
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
-	private function init_pointers() {
-		if ( Birthday_Notice::should_display_notice() ) {
-			new Birthday_Notice();
-		}
+	public function init_pointers() {
+		new Birthday_Notice();
 	}
 
 	public function ajax_site_mailer_campaign( $request ) {
