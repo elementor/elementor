@@ -62,11 +62,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		do_action( 'rest_api_init' );
 	}
 
-	public function tearDown(): void {
-		parent::tearDown();
-		Plugin::$instance->common = $this->original_common;
-	}
-
 	public function test_connect_permissions_check__admin_can_access() {
 		$this->act_as_admin();
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/library/connect' );
@@ -265,5 +260,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		parent::tearDown();
 		global $wp_rest_server;
 		$wp_rest_server = null;
+		parent::tearDown();
+		Plugin::$instance->common = $this->original_common;
 	}
 }
