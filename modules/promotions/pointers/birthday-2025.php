@@ -76,12 +76,6 @@ class Birthday_2025 {
 			! Utils::has_pro();
 	}
 
-	private static function is_dashboard_page(): bool {
-		$current_screen = get_current_screen();
-
-		return isset( $current_screen->id ) && 'dashboard' === $current_screen->id;
-	}
-
 	private static function is_user_allowed(): bool {
 		return current_user_can( 'manage_options' ) || current_user_can( 'edit_pages' );
 	}
