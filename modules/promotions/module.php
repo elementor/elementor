@@ -12,6 +12,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
+use Elementor\Modules\Promotions\Pointers\Birthday_2025;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -57,6 +58,10 @@ class Module extends Base_Module {
 				] ) );
 			}
 		} );
+
+		if ( Birthday_2025::should_display_notice() ) {
+			new Birthday_2025();
+		}
 
 		if ( Utils::has_pro() ) {
 			return;

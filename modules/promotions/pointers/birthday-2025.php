@@ -1,30 +1,23 @@
 <?php
 
-namespace Elementor\Core\Admin\PointerNotices;
+namespace Elementor\Modules\Promotions\Pointers;
 
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Birthday {
+class Birthday_2025 {
 	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-birthday/';
+	const GLOBAL_POINTERS_ENDPOINT = 'introduction_viewed';
 	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor';
-	const SEEN_TODAY_KEY = 'elementor-birthday-seen';
-	const DISMISS_ACTION_KEY = 'elementor_birthday_dismissed_pointer';
+	const SEEN_TODAY_KEY = 'elementor-2025_birthday-seen';
+	const DISMISS_ACTION_KEY = 'elementor_2025_birthday_dismissed_pointer';
 
 	public function __construct() {
-		$this->register_notice();
-		$this->register_dismiss_action();
-	}
-
-	private function register_dismiss_action() {
-		add_action( 'wp_ajax_' . self::DISMISS_ACTION_KEY, [ $this, 'dismiss_pointers' ] );
-	}
-
-	private function register_notice() {
-		add_action( 'in_admin_header', [ $this, 'enqueue_notice' ] );
+		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'enqueue_notice' ] );
 	}
 
 	public function enqueue_notice() {
@@ -55,20 +48,6 @@ class Birthday {
 		?>
 
 		<script>
-			const onClose = () => {
-				return jQuery.ajax( {
-					url: ajaxurl,
-					method: "POST",
-					data: {
-						action: "<?php echo esc_attr( self::DISMISS_ACTION_KEY ); ?>".replaceAll( "-", "_" ),
-						data: {
-							pointer: '<?php echo esc_attr( self::DISMISS_ACTION_KEY ); ?>'
-						},
-						nonce: '<?php echo esc_attr( wp_create_nonce( self::DISMISS_ACTION_KEY ) ); ?>'
-					}
-				} );
-			};
-
 			jQuery( document ).ready( function( $ ) {
 				$( "#<?php echo esc_attr( self::ELEMENTOR_POINTER_ID ); ?>" ).pointer( {
 					content: '<?php echo wp_kses( $pointer_content, $allowed_tags ); ?>',
@@ -76,16 +55,21 @@ class Birthday {
 						edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
 						align: "center"
 					},
-					close: onClose
+					close: function() {
+						elementorCommon.ajax.addRequest( "<?php echo self::GLOBAL_POINTERS_ENDPOINT; ?>", {
+							data: {
+								introductionKey: '<?php echo esc_attr( static::DISMISS_ACTION_KEY ); ?>'
+							}
+						} );
+					}
 				} ).pointer( "open" );
 			} );
 		</script>
 		<?php
 	}
 
-	private function should_display_notice(): bool {
-		return self::is_dashboard_page() &&
-			self::is_user_allowed() &&
+	public static function should_display_notice(): bool {
+		return self::is_user_allowed() &&
 			! self::is_dismissed() &&
 			self::is_campaign_time() &&
 			! self::is_already_seen_today() &&
@@ -122,7 +106,7 @@ class Birthday {
 		set_transient( self::get_user_transient_id(), $now, $seconds_until_midnight );
 	}
 
-	private static function get_user_transient_id() {
+	private static function get_user_transient_id(): string {
 		return self::SEEN_TODAY_KEY . '_' . get_current_user_id();
 	}
 
@@ -131,23 +115,7 @@ class Birthday {
 		wp_enqueue_style( 'wp-pointer' );
 	}
 
-	public function dismiss_pointers() {
-		if ( ! wp_verify_nonce( Utils::get_super_global_value( $_POST, 'nonce' ), self::DISMISS_ACTION_KEY ) ) {
-			wp_send_json_error( [ 'message' => 'Invalid nonce' ] );
-		}
-
-		$data = Utils::get_super_global_value( wp_unslash( $_POST ), 'data' );
-		$pointer = isset( $data['pointer'] ) ? $data['pointer'] : null;
-
-		if ( ! $pointer ) {
-			wp_send_json_error( [ 'message' => 'The pointer id must be provided' ] );
-		}
-
-		update_user_meta( get_current_user_id(), self::DISMISS_ACTION_KEY, true );
-		wp_send_json_success( [] );
-	}
-
 	private static function is_dismissed(): bool {
-		return (bool) get_user_meta( get_current_user_id(), self::DISMISS_ACTION_KEY, true );
+		return User::get_introduction_meta( static::DISMISS_ACTION_KEY );
 	}
 }
