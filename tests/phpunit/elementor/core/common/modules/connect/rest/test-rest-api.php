@@ -26,6 +26,8 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	 */
 	private $mock_app;
 
+	private $original_common;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -51,11 +53,18 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$common_mock->method( 'get_component' )->with( ['connect'] )->willReturn( $connect_mock );
 
 		$plugin_instance = Plugin::$instance;
+
+		$this->original_common = $plugin_instance->common;
 		$plugin_instance->common = $common_mock;
 
 		$this->rest_api = new Rest_Api();
 		
 		do_action( 'rest_api_init' );
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		Plugin::$instance->common = $this->original_common;
 	}
 
 	public function test_connect_permissions_check__admin_can_access() {
