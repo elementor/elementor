@@ -17,11 +17,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	private $rest_api;
 
 	/**
-	 * @var \WP_REST_Server
-	 */
-	private $wp_rest_server;
-
-	/**
 	 * @var Library|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $mock_app;
@@ -32,8 +27,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->original_common = Plugin::$instance->common;
-
-		$this->wp_rest_server = new \WP_REST_Server();
 		
 		$this->mock_app = $this->getMockBuilder( Library::class )
 			->setMethods( [
@@ -52,12 +45,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
 		$common_mock->method( 'get_component' )->with( 'connect' )->willReturn( $connect_mock );
 
-
 		Plugin::$instance->common = $common_mock;
 
 		$this->rest_api = new Rest_Api();
-		
-		do_action( 'rest_api_init' );
+	
 	}
 
 	public function test_connect_permissions_check__admin_can_access() {
