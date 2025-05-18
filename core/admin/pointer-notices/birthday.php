@@ -28,7 +28,7 @@ class Birthday {
 	}
 
 	public function enqueue_notice() {
-		if ( ! self::should_display_notice() ) {
+		if ( ! $this->should_display_notice() ) {
 			return;
 		}
 
@@ -83,7 +83,7 @@ class Birthday {
 		<?php
 	}
 
-	private static function should_display_notice(): bool {
+	private function should_display_notice(): bool {
 		return self::is_dashboard_page() &&
 			self::is_user_allowed() &&
 			! self::is_dismissed() &&
