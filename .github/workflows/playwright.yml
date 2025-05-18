@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [ labeled, synchronize, opened, reopened ]
   push:
     branches:
       - 'main'
@@ -26,6 +26,10 @@ on:
         tag:
           description: 'Provide @tag or a keyword'
           required: false
+
+concurrency:
+    group: pr-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
 
 jobs:
   build-plugin:
@@ -165,7 +169,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    if: needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped'
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
