@@ -829,7 +829,7 @@ abstract class Base_App {
 			if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				$allowed_auth_modes[] = 'cli';
 			}
-			
+
 			if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 				$allowed_auth_modes[] = 'rest';
 			}
