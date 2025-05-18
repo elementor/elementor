@@ -115,7 +115,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s">%s</a>',
-				esc_attr( $settings['link']['href'] ),
+				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
 				$svg_html
