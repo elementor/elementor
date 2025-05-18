@@ -31,9 +31,9 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		global $wp_rest_server;
+		$this->original_common = Plugin::$instance->common;
 
-		$this->wp_rest_server = $wp_rest_server = new \WP_REST_Server();
+		$this->wp_rest_server = new \WP_REST_Server();
 		
 		$this->mock_app = $this->getMockBuilder( Library::class )
 			->setMethods( [
@@ -52,10 +52,8 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
 		$common_mock->method( 'get_component' )->with( 'connect' )->willReturn( $connect_mock );
 
-		$plugin_instance = Plugin::$instance;
 
-		$this->original_common = $plugin_instance->common;
-		$plugin_instance->common = $common_mock;
+		Plugin::$instance->common = $common_mock;
 
 		$this->rest_api = new Rest_Api();
 		
