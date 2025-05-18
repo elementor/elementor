@@ -4,7 +4,6 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorAppBar\Module as EditorAppBarModule;
 use Elementor\Modules\GlobalClasses\Module as GlobalClassesModule;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
@@ -23,7 +22,6 @@ class Opt_In {
 		self::EXPERIMENT_NAME,
 		'container',
 		NestedElementsModule::EXPERIMENT_NAME,
-		EditorAppBarModule::EXPERIMENT_NAME,
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
 	];
