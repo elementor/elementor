@@ -5,6 +5,7 @@ use Elementor\Api;
 use Elementor\Beta_Testers;
 use Elementor\App\Modules\Onboarding\Module as Onboarding_Module;
 use Elementor\Core\Base\App;
+use Elementor\Core\Admin\PointerNotices\Birthday as Birthday_Notice;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
@@ -936,6 +937,8 @@ class Admin extends App {
 		} );
 
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_hints' ] );
+
+		$this->init_pointers();
 	}
 
 	/**
@@ -1067,6 +1070,10 @@ class Admin extends App {
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
+	}
+
+	public function init_pointers() {
+		new Birthday_Notice();
 	}
 
 	public function ajax_site_mailer_campaign( $request ) {
