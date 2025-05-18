@@ -14,7 +14,7 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
       - name: Run action
-        uses: Omerisra6/elementor-editor-github-actions/actions/update-versions-in-elementor@update-elementor-packages
+        uses: Omerisra6/elementor-editor-github-actions/actions/update-versions-in-elementor@update-elementor-packages-versions
         with:
           target-branch: ${{ github.event.inputs.branch }}
           package-directories: "
