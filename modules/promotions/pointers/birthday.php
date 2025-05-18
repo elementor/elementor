@@ -9,12 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Birthday_2025 {
+class Birthday {
 	const PROMOTION_URL = 'https://go.elementor.com/go-pro-wordpress-notice-birthday/';
-	const GLOBAL_POINTERS_ENDPOINT = 'introduction_viewed';
 	const ELEMENTOR_POINTER_ID = 'toplevel_page_elementor';
-	const SEEN_TODAY_KEY = 'elementor-2025_birthday-seen';
-	const DISMISS_ACTION_KEY = 'elementor_2025_birthday_dismissed_pointer';
+	const SEEN_TODAY_KEY = '_elementor-2025-birthday';
+	const DISMISS_ACTION_KEY = 'birthday_pointer_2025';
 
 	public function __construct() {
 		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'enqueue_notice' ] );
@@ -56,7 +55,7 @@ class Birthday_2025 {
 						align: "center"
 					},
 					close: function() {
-						elementorCommon.ajax.addRequest( "<?php echo self::GLOBAL_POINTERS_ENDPOINT; ?>", {
+						elementorCommon.ajax.addRequest( "introduction_viewed", {
 							data: {
 								introductionKey: '<?php echo esc_attr( static::DISMISS_ACTION_KEY ); ?>'
 							}
