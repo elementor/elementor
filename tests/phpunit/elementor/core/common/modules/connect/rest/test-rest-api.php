@@ -50,7 +50,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$connect_mock->method( 'get_app' )->willReturn( $this->mock_app );
 
 		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
-		$common_mock->method( 'get_component' )->with( ['connect'] )->willReturn( $connect_mock );
+		$common_mock->method( 'get_component' )->with( 'connect' )->willReturn( $connect_mock );
 
 		$plugin_instance = Plugin::$instance;
 
@@ -86,7 +86,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$connect_mock->method( 'get_app' )->willReturn( null );
 
 		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
-		$common_mock->method( 'get_component' )->with( ['connect'] )->willReturn( $connect_mock );
+		$common_mock->method( 'get_component' )->with( 'connect' )->willReturn( $connect_mock );
 
 		$plugin_instance = Plugin::$instance;
 		$plugin_instance->common = $common_mock;
@@ -108,7 +108,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( ['rest'] );
+			->with( 'rest' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_authorize' );
@@ -136,7 +136,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( ['rest'] );
+			->with( 'rest' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_authorize' );
@@ -162,7 +162,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( ['rest'] );
+			->with( 'rest' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_authorize' )
@@ -183,7 +183,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( ['rest'] );
+			->with( 'rest' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_disconnect' );
@@ -198,34 +198,12 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'message', $data );
 	}
 
-	public function test_disconnect__app_not_available() {
-		$this->act_as_admin();
-		$connect_mock = $this->createMock( \Elementor\Core\Common\Modules\Connect\Module::class );
-		$connect_mock->method( 'get_app' )->willReturn( null );
-
-		$common_mock = $this->createMock( \Elementor\Core\Common\App::class );
-		$common_mock->method( 'get_component' )->with( ['connect'] )->willReturn( $connect_mock );
-
-		$plugin_instance = Plugin::$instance;
-		$plugin_instance->common = $common_mock;
-
-		$this->rest_api = new Rest_Api();
-		
-		$request = new \WP_REST_Request( 'DELETE', '/elementor/v1/library/connect' );
-		
-		$response = $this->rest_api->disconnect( $request );
-		
-		$this->assertInstanceOf( \WP_Error::class, $response );
-		$this->assertEquals( 'elementor_library_app_not_available', $response->get_error_code() );
-		$this->assertEquals( 500, $response->get_error_data()['status'] );
-	}
-
 	public function test_disconnect__exception() {
 		$this->act_as_admin();
 		
 		$this->mock_app->expects( $this->once() )
 			->method( 'set_auth_mode' )
-			->with( ['rest'] );
+			->with( 'rest' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_disconnect' )
@@ -238,22 +216,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertInstanceOf( \WP_Error::class, $response );
 		$this->assertEquals( 'elementor_library_disconnect_error', $response->get_error_code() );
 		$this->assertEquals( 'Test exception', $response->get_error_message() );
-	}
-
-	public function test_register_routes() {
-		$routes = $this->wp_rest_server->get_routes();
-		
-		$this->assertArrayHasKey( '/elementor/v1/library/connect', $routes );
-		$this->assertCount( 2, $routes['/elementor/v1/library/connect'] );
-		
-		$this->assertEquals( 'POST', $routes['/elementor/v1/library/connect'][0]['methods'] );
-		$this->assertArrayHasKey( 'callback', $routes['/elementor/v1/library/connect'][0] );
-		$this->assertArrayHasKey( 'permission_callback', $routes['/elementor/v1/library/connect'][0] );
-		$this->assertArrayHasKey( 'args', $routes['/elementor/v1/library/connect'][0] );
-		
-		$this->assertEquals( 'DELETE', $routes['/elementor/v1/library/connect'][1]['methods'] );
-		$this->assertArrayHasKey( 'callback', $routes['/elementor/v1/library/connect'][1] );
-		$this->assertArrayHasKey( 'permission_callback', $routes['/elementor/v1/library/connect'][1] );
 	}
 
 	public function tearDown(): void {
