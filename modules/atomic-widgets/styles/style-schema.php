@@ -75,7 +75,6 @@ class Style_Schema {
 				'bottom center',
 				'bottom left',
 				'bottom right',
-				'custom',
 			]),
 		];
 	}
