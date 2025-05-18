@@ -1,0 +1,1 @@
+.test-color-variable{background-color:var(--e-gc-a01);}

@@ -17,7 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends Module_Base {
 	const PAGES_PANEL_EXPERIMENT_NAME = 'pages_panel';
-
+	const PACKAGES = [
+		'editor-site-navigation',
+	];
 	/**
 	 * Initialize the Site navigation module.
 	 *
@@ -27,13 +29,9 @@ class Module extends Module_Base {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 
-		$is_tests = Utils::is_elementor_tests();
-		$is_v2_experiment_on = Plugin::$instance->experiments->is_feature_active( 'editor_v2' );
-		if ( ! $is_v2_experiment_on && ! $is_tests ) {
-			return;
-		}
-
 		$this->register_pages_panel_experiment();
+
+		add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::PAGES_PANEL_EXPERIMENT_NAME ) ) {
 			add_filter( 'elementor/editor/v2/scripts/env', function( $env ) {
@@ -43,6 +41,7 @@ class Module extends Module_Base {
 
 				return $env;
 			} );
+
 			$this->register_rest_fields();
 		}
 	}
@@ -70,9 +69,6 @@ class Module extends Module_Base {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'hidden' => true,
-			'dependencies' => [
-				'editor_v2',
-			],
 		] );
 	}
 
@@ -80,5 +76,9 @@ class Module extends Module_Base {
 		add_action( 'rest_api_init', function() {
 			( new Page_User_Can() )->register_rest_field();
 		} );
+	}
+
+	private function add_packages( $packages ) {
+		return array_merge( $packages, self::PACKAGES );
 	}
 }

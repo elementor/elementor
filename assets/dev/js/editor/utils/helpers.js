@@ -48,10 +48,20 @@ module.exports = {
 			container: {
 				widget: null,
 				container: null,
+				'e-div-block': null,
+				'e-flexbox': null,
 			},
-			'div-block': {
+			'e-div-block': {
 				widget: null,
-				'div-block': null,
+				'e-div-block': null,
+				container: null,
+				'e-flexbox': null,
+			},
+			'e-flexbox': {
+				widget: null,
+				'e-div-block': null,
+				container: null,
+				'e-flexbox': null,
 			},
 		},
 	},
@@ -273,7 +283,7 @@ module.exports = {
 
 		const enqueueOptions = {};
 
-		let	fontUrl;
+		let fontUrl;
 
 		switch ( fontType ) {
 			case 'googlefonts':
@@ -285,7 +295,7 @@ module.exports = {
 
 				enqueueOptions.crossOrigin = true;
 
-				if ( elementorCommon.config.experimentalFeatures?.e_local_google_fonts && 'preview' === target ) {
+				if ( 'preview' === target ) {
 					elementorCommon.ajax.addRequest( 'enqueue_google_fonts', {
 						data: { font_name: font },
 						unique_id: 'enqueue_google_fonts_' + font,
@@ -571,7 +581,7 @@ module.exports = {
 
 		setTimeout( function() {
 			// Sometimes element removed during the timeout.
-			if ( ! $element[ 0 ].isConnected ) {
+			if ( ! $element[ 0 ]?.isConnected ) {
 				return;
 			}
 
@@ -730,5 +740,57 @@ module.exports = {
 		} catch ( e ) {
 			return '';
 		}
+	},
+
+	/**
+	 * @param {HTMLElement} element - The referenced element whose children are searched.
+	 * @return {HTMLAnchorElement | null} The closest anchor child element, or null if none is found.
+	 */
+	findChildWithAnchor( element ) {
+		return element?.querySelector( 'a' ) || null;
+	},
+
+	/**
+	 * @param {HTMLElement} element - The referenced element whose parents are searched.
+	 * @return {HTMLAnchorElement | null} The closest anchor parent element, or null if none is found.
+	 */
+	findParentWithAnchor( element ) {
+		return element?.closest( 'a' ) || null;
+	},
+
+	getAtomicElementTypes() {
+		const { elements } = elementor.config;
+
+		return Object.keys( elements )
+			.filter( ( elementKey ) => Object.keys( elements[ elementKey ] )
+				.some( ( key ) => key.includes( 'atom' ) ) );
+	},
+
+	isElementAtomic( elementId ) {
+		const { type: elType = null } = elementor.getContainer( elementId ) || {};
+
+		return this.getAtomicElementTypes().includes( elType );
+	},
+
+	getWidgetCache( model ) {
+		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
+
+		return elementor.widgetsCache[ elementType ];
+	},
+
+	isAtomicWidget( model ) {
+		const widgetCache = this.getWidgetCache( model );
+
+		return !! widgetCache?.atomic_props_schema;
+	},
+
+	getAtomicWidgetBaseStyles( model ) {
+		if ( ! this.isAtomicWidget( model ) ) {
+			return;
+		}
+
+		const widgetCache = this.getWidgetCache( model );
+
+		return widgetCache.base_styles;
 	},
 };

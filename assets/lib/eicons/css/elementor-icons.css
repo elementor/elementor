@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.36.0");
-  src: url("../fonts/eicons.eot?5.36.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.36.0") format("woff2"), url("../fonts/eicons.woff?5.36.0") format("woff"), url("../fonts/eicons.ttf?5.36.0") format("truetype"), url("../fonts/eicons.svg?5.36.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.41.0");
+  src: url("../fonts/eicons.eot?5.41.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.41.0") format("woff2"), url("../fonts/eicons.woff?5.41.0") format("woff"), url("../fonts/eicons.ttf?5.41.0") format("truetype"), url("../fonts/eicons.svg?5.41.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -712,7 +712,7 @@
 }
 
 .eicon-library-download:before {
-  content: "\e8aa";
+  content: "\e9dd";
 }
 
 .eicon-insert:before {
@@ -1913,6 +1913,74 @@
 
 .eicon-e-heading:before {
   content: "\e9d7";
+}
+
+.eicon-atomic:before {
+  content: "\ebae";
+}
+
+.eicon-library-delete:before {
+  content: "\e9d8";
+}
+
+.eicon-library-copy:before {
+  content: "\e9d9";
+}
+
+.eicon-library-folder-empty:before {
+  content: "\e9da";
+}
+
+.eicon-library-move:before {
+  content: "\e9db";
+}
+
+.eicon-library-edit:before {
+  content: "\e9dc";
+}
+
+.eicon-library-subscription-upgrade:before {
+  content: "\e9de";
+}
+
+.eicon-library-folder-view:before {
+  content: "\e9df";
+}
+
+.eicon-library-grid:before {
+  content: "\e9e1";
+}
+
+.eicon-library-cloud-connect:before {
+  content: "\e9e2";
+}
+
+.eicon-library-import:before {
+  content: "\e9e3";
+}
+
+.eicon-library-list:before {
+  content: "\e9e4";
+}
+
+.eicon-library-cloud-empty:before {
+  content: "\e9e5";
+}
+
+.eicon-folder-plus:before {
+  content: "\e8aa";
+}
+
+.eicon-library-folder:before {
+  content: "\e9e6";
+}
+
+.eicon-accessibility:before {
+  content: "\e9bf";
+}
+
+.eicon-lock-outline:before {
+  content: "\e9e7";
 }
 
 .eicon-eye:before {

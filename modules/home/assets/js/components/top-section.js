@@ -4,7 +4,7 @@ import Button from '@elementor/ui/Button';
 import YoutubeIcon from '../icons/youtube-icon';
 
 const TopSection = ( { ...props } ) => {
-	const { topData } = props;
+	const { topData, buttonCtaUrl } = props;
 
 	if ( ! topData ) {
 		return null;
@@ -13,7 +13,6 @@ const TopSection = ( { ...props } ) => {
 	const {
 		title,
 		description,
-		button_cta_url: buttonCtaURL,
 		button_cta_text: buttonCtaTitle,
 		button_create_page_title: buttonCreatePageTitle,
 		youtube_embed_id: youtubeEmbeddedId,
@@ -31,7 +30,7 @@ const TopSection = ( { ...props } ) => {
 					<Typography variant="body2" color="secondary">{ description }</Typography>
 				</Box>
 				<Box sx={ { display: 'flex', gap: 1 } }>
-					<Button variant="contained" size="small" href={ buttonCtaURL } target="_blank">{ ctaButtonTitle }</Button>
+					<Button data-testid="e-create-button" variant="contained" size="small" href={ buttonCtaUrl } target="_blank">{ ctaButtonTitle }</Button>
 					<Button variant="outlined" color="secondary" size="small" startIcon={ <YoutubeIcon /> } href={ buttonWatchURL } target="_blank">{ buttonWatchTitle }</Button>
 				</Box>
 			</Stack>
@@ -49,6 +48,7 @@ const TopSection = ( { ...props } ) => {
 
 TopSection.propTypes = {
 	topData: PropTypes.object.isRequired,
+	buttonCtaUrl: PropTypes.string.isRequired,
 };
 
 export default TopSection;

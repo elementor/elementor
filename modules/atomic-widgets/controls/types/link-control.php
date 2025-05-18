@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
-use Elementor\Modules\WpRest\Classes\WP_Post;
+use Elementor\Modules\WpRest\Classes\Post_Query;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -20,10 +20,10 @@ class Link_Control extends Atomic_Control_Base {
 
 	public static function bind_to( string $prop_name ) {
 		$instance = parent::bind_to( $prop_name );
-		$instance->set_placeholder( __( 'Paste URL or type', 'elementor' ) );
-		$instance->set_endpoint( WP_Post::ENDPOINT );
-		$instance->set_request_params( WP_Post::build_query_params( [
-			WP_Post::KEYS_FORMAT_MAP_KEY => [
+		$instance->set_placeholder( __( 'Type or paste your URL', 'elementor' ) );
+		$instance->set_endpoint( Post_Query::NAMESPACE . '/' . Post_Query::ENDPOINT );
+		$instance->set_request_params( Post_Query::build_query_params( [
+			Post_Query::POST_KEYS_CONVERSION_MAP => [
 				'ID' => 'id',
 				'post_title' => 'label',
 				'post_type' => 'groupLabel',

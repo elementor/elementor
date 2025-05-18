@@ -1,6 +1,8 @@
 name: Playwright
 
 on:
+  pull_request:
+    types: [ labeled, synchronize, opened, reopened ]
   push:
     branches:
       - 'main'
@@ -25,21 +27,27 @@ on:
           description: 'Provide @tag or a keyword'
           required: false
 
+concurrency:
+    group: pr-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
 jobs:
   build-plugin:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [build-plugin]
-    if: ${{ ( github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff ) && github.event.inputs.tag == '' }}
+    if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
         include:
+        - shardIndex: "v4-tests"
         - shardIndex: "elements-regression"
         - shardIndex: "plugin_tester_section"
         - shardIndex: "plugin_tester_container"
@@ -82,35 +90,27 @@ jobs:
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      - name: Get skipped tests from JSON
-        id: read_skipped_tests
-        uses: elementor/elementor-tests-configuration/.github/actions/skip-tests@main
-        with:
-            file_path: "skipped_tests.json"
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
           matrix.shardIndex != 'plugin_tester_container' &&
-          matrix.shardIndex != 'plugin_tester_section'
+          matrix.shardIndex != 'plugin_tester_section' &&
+          matrix.shardIndex != 'v4-tests'
           }}
         run: |
-          SKIP_DEFAULT="@plugin_tester_container|@plugin_tester_section"
-          if [ -n "${{ steps.read_skipped_tests.outputs.skip_pattern }}" ]; then
-            ALL_SKIP_PATTERN="$SKIP_DEFAULT|${{ steps.read_skipped_tests.outputs.skip_pattern }}"
-          else
-            ALL_SKIP_PATTERN="$SKIP_DEFAULT"
-          fi
-          echo "Using grep invert pattern: $ALL_SKIP_PATTERN"
-          npm run test:playwright -- --grep-invert="$ALL_SKIP_PATTERN" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run v4 tests
+        if: ${{ matrix.shardIndex == 'v4-tests' }}
+        run: npm run test:playwright -- --grep="@v4-tests"
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_container" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright -- --grep="@plugin_tester_container"
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_section" --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright -- --grep="@plugin_tester_section"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression --grep-invert="${{ steps.read_skipped_tests.outputs.skip_pattern }}"
+        run: npm run test:playwright:elements-regression
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -169,7 +169,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: ${{ always() }}
+    if: needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped'
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
@@ -178,14 +178,8 @@ jobs:
       - name: Checkout source code
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
-      - name: Map GitHub user to Slack
-        if: ${{ needs.Playwright.result == 'failure' }}
-        id: map_user
-        uses: elementor/elementor-tests-configuration/.github/actions/map-github-to-slack@main
-        with:
-          github_user: ${{ github.actor }}
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -208,7 +202,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User : <${{ steps.map_user.outputs.slack_user }}>"
+                    "text": "Github User : <${{ github.actor }}>"
                   }
                 }
               ]

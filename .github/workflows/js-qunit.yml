@@ -2,13 +2,14 @@ name: Qunit
 
 on:
   pull_request:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
+    paths:
+      - '**/*.jsx?'
+      - '**/*.tsx?'
+      - '**/*.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/js-qunit.yml'
+
   merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
@@ -17,28 +18,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  file-diff:
-    runs-on: ubuntu-20.04
-    name: Qunit - File Diff
-    if: startsWith( github.repository, 'elementor/' )
-    outputs:
-      js_diff: ${{ steps.js_diff_files.outputs.diff }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
-      - name: Check JS files diff
-        id: js_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/*.+(js|ts|json|jsx|tsx)
-            package*.json
-            .github/**/*.yml
-
   q-unit:
-    runs-on: ubuntu-20.04
-    needs: [ 'file-diff' ]
-    if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
+    runs-on: ubuntu-latest
     name: Qunit - Test
     steps:
       - name: Checkout source code
@@ -47,20 +28,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-      - name: Cache node modules
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          cache: npm
       - name: Install Dependencies
         run: npm ci
-      - name: "Grunt Scripts"
-        run: npx grunt scripts
+      - name: "Build Scripts"
+        run: npx grunt webpack:production
       - name: "Run Qunit"
         run: npx grunt karma:unit

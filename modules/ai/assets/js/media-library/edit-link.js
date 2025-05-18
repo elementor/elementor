@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
-import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
 import { getImageId } from './utils';
 import { AIMediaEditApp } from './components';
+import { styled } from '@elementor/ui';
 
-const ImageLink = styled.a`
+const ImageLink = styled( 'a' )`
 	&& {
 		color: var(--e-a-color-primary-bold);
 		cursor: pointer;

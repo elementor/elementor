@@ -69,7 +69,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				const actions = contactButtonActionsContainer.locator( 'li' );
 				await expect( actions ).toHaveCount( 1 );
 
-				const contactButtonElement = editor.getPreviewFrame().locator( '.elementor-widget-container .e-contact-buttons' );
+				const contactButtonElement = editor.getPreviewFrame().locator( '.e-contact-buttons' );
 
 				await contactButtonElement.hover();
 				const deleteContainer = contactButtonActionsContainer.locator( '.elementor-editor-element-remove' );

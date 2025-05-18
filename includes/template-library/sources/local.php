@@ -765,6 +765,20 @@ class Source_Local extends Source_Base {
 		return wp_delete_post( $template_id, true );
 	}
 
+	public function bulk_delete_items( array $template_ids ) {
+		foreach ( $template_ids as $template_id ) {
+			if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
+				return new \WP_Error( 'template_error', esc_html__( 'Access denied.', 'elementor' ) );
+			}
+		}
+
+		foreach ( $template_ids as $template_id ) {
+			wp_delete_post( $template_id, true );
+		}
+
+		return true;
+	}
+
 	/**
 	 * Export local template.
 	 *
@@ -1457,40 +1471,17 @@ class Source_Local extends Source_Base {
 	 *                             `WP_Error`.
 	 */
 	private function import_single_template( $file_path ) {
-		$data = json_decode( Utils::file_get_contents( $file_path ), true );
+		$data = $this->prepare_import_template_data( $file_path );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
-		$content = $data['content'];
-
-		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid Content In File' );
-		}
-
-		$content = $this->process_export_import_content( $content, 'on_import' );
-
-		$page_settings = [];
-
-		if ( ! empty( $data['page_settings'] ) ) {
-			$page = new Model( [
-				'id' => 0,
-				'settings' => $data['page_settings'],
-			] );
-
-			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
-
-			if ( ! empty( $page_settings_data['settings'] ) ) {
-				$page_settings = $page_settings_data['settings'];
-			}
-		}
-
 		$template_id = $this->save_item( [
-			'content' => $content,
+			'content' => $data['content'],
 			'title' => $data['title'],
 			'type' => $data['type'],
-			'page_settings' => $page_settings,
+			'page_settings' => $data['page_settings'],
 		] );
 
 		if ( is_wp_error( $template_id ) ) {
@@ -1521,8 +1512,13 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
+		$content = apply_filters(
+			'elementor/template_library/sources/local/export/elements',
+			$template_data['content']
+		);
+
 		$export_data = [
-			'content' => $template_data['content'],
+			'content' => $content,
 			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
 			'title' => $document->get_main_post()->post_title,
@@ -1773,6 +1769,21 @@ class Source_Local extends Source_Base {
 
 			return $value;
 		}, 10, 3 );
+	}
+
+	public function save_bulk_items( array $args = [] ) {
+		$items = [];
+
+		foreach ( $args as $item ) {
+			$items[] = $this->save_item( [
+				'content' => $item['content'],
+				'title' => $item['title'],
+				'type' => $item['type'],
+				'page_settings' => $item['page_settings'],
+			] );
+		}
+
+		return $items;
 	}
 
 	/**

@@ -92,6 +92,7 @@
 			currentElement,
 			currentSide,
 			isDroppingAllowedState = false,
+			placeholderContext = {},
 			defaultSettings = {
 				element: '',
 				items: '>',
@@ -121,11 +122,19 @@
 		};
 
 		var hasHorizontalDetection = function() {
-			return -1 !== settings.axis.indexOf( 'horizontal' );
+			if ( !! settings.axis ) {
+				return -1 !== settings.axis.indexOf( 'horizontal' );
+			}
+
+			return placeholderContext.isFlexRowContainer;
 		};
 
 		var hasVerticalDetection = function() {
-			return -1 !== settings.axis.indexOf( 'vertical' );
+			if ( !! settings.axis ) {
+				return -1 !== settings.axis.indexOf( 'vertical' );
+			}
+
+			return ! placeholderContext.isFlexRowContainer;
 		};
 
 		var checkHorizontal = function( offsetX, clientX, elementWidth ) {
@@ -138,7 +147,7 @@
 
 			if ( ! hasVerticalDetection() ) {
 				const threshold = settings.horizontalThreshold,
-					{ left, right } = currentElement.getBoundingClientRect();
+					{ left, right } = placeholderContext.placeholderTarget.getBoundingClientRect();
 
 				// For cases when the event is actually dispatched on the parent element, but
 				// `currentElement` is the actual element that the offset should be calculated by.
@@ -177,9 +186,10 @@
 		};
 
 		var setSide = function( event ) {
-			var $element = $( currentElement ),
-				elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight(),
-				elementWidth = $element.outerWidth();
+			const { placeholderTarget } = placeholderContext;
+			const $element = $( placeholderTarget );
+			const elementHeight = $element.outerHeight() - elementsCache.$placeholder.outerHeight();
+			const elementWidth = $element.outerWidth();
 
 			event = event.originalEvent;
 
@@ -195,7 +205,7 @@
 				return;
 			}
 
-			var elementPosition = currentElement.getBoundingClientRect();
+			const elementPosition = placeholderTarget.getBoundingClientRect();
 
 			currentSide = event.clientY > elementPosition.top + ( elementHeight / 2 ) ? 'bottom' : 'top';
 		};
@@ -205,40 +215,184 @@
 				return;
 			}
 
-			const $currentElement = $( currentElement ),
-				isGridRowContainer = $currentElement.parents( '.e-grid.e-con--row' ).length,
-				isFirstInsert = $currentElement.hasClass( 'elementor-first-add' ),
-				$parentContainer = $currentElement.closest( '.e-con' ).parent().closest( '.e-con' );
+			clearPreviousPlaceholder();
 
-			// Make sure that the previous placeholder is removed before inserting a new one.
-			$parentContainer.find( '.elementor-widget-placeholder' )?.remove();
+			const insertMode = getInsertMode();
 
-			// Fix placeholder placement for Grid Container with `grid-auto-flow: row`.
-			if ( isGridRowContainer ) {
-				elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right' );
+			switch ( insertMode ) {
+				case 'gridRow':
+					insertGridRowPlaceholder();
+					break;
+				case 'flexRow':
+					insertFlexRowPlaceholder();
+					break;
+				default:
+					insertDefaultPlaceholder();
+					break;
 			}
+		};
 
-			if ( isGridRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo',
-					gridPlaceHolder = elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
-				gridPlaceHolder[ insertMethod ]( currentElement );
-
+		const createPlaceholderContext = function() {
+			if ( ! currentElement || ! currentElement.nodeType ) {
 				return;
 			}
 
-			// Fix placeholder placement for Flex Container with `flex-direction: row`.
-			const isRowContainer = $currentElement.parents( '.e-con--row' ).length,
-				isInnerContainer = $currentElement.hasClass( 'e-con-inner' );
-			if ( isRowContainer && ! isFirstInsert ) {
-				const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before',
-					$rowTargetElement = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
-				$rowTargetElement[ insertMethod ]( elementsCache.$placeholder );
+			const $currentElement = $( currentElement );
+			const hasLogicalWrapper = 'contents' === getComputedStyle( currentElement ).display;
 
+			const container = currentElement.closest( '.e-con' );
+			const containerDisplayStyle = container ? getComputedStyle( container ).display : null;
+
+			const innerContainer = container?.querySelector( ':scope > .e-con-inner' );
+			const containerWrapperStyle = !! container ? getComputedStyle( innerContainer || container ) : null;
+
+			const isFlexContainer = !! container && [ 'flex', 'inline-flex' ].includes( containerWrapperStyle.display );
+			const isRowDirection = !! container && [ 'row', 'row-reverse' ].includes( containerWrapperStyle.flexDirection );
+
+			maybeAddFlexRowClass( container );
+
+			return {
+				$currentElement,
+				placeholderTarget: hasLogicalWrapper ? currentElement.querySelector( ':not(.elementor-widget-placeholder)' ) : currentElement,
+				$parentContainer: $currentElement.closest( '.e-con' ).parent().closest( '.e-con' ),
+				isFirstInsert: $currentElement.hasClass( 'elementor-first-add' ),
+				isInnerContainer: $currentElement.hasClass( 'e-con-inner' ),
+				isGridRowContainer: 0 !== $currentElement.parents( '.e-grid.e-con--row' ).length,
+				isFlexContainer,
+				isRowDirection,
+				isFlexRowContainer: isFlexContainer && isRowDirection,
+				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
+				hasLogicalWrapper,
+				isAtomicContainer: [ 'e-div-block', 'e-flexbox' ].includes( currentElement.dataset.element_type ),
+			};
+		};
+
+		const maybeAddFlexRowClass = function( container ) {
+			if ( ! container || container.classList.contains( 'e-grid' ) ) {
 				return;
 			}
 
-			const insertMethod = 'top' === currentSide ? 'prependTo' : 'appendTo';
-			elementsCache.$placeholder[ insertMethod ]( currentElement );
+			const { isFlexRowContainer } = placeholderContext;
+
+			if ( isFlexRowContainer ) {
+				container.classList.add( 'e-con--row' );
+				return;
+			}
+
+			container.classList.remove( 'e-con--row' );
+		};
+
+		const getInsertMode = function() {
+			if ( placeholderContext.isFirstInsert ) {
+				return 'default';
+			}
+
+			if ( placeholderContext.isGridRowContainer ) {
+				return 'gridRow';
+			}
+
+			if ( placeholderContext.isFlexRowContainer ) {
+				return 'flexRow';
+			}
+
+			if ( placeholderContext.isBlockContainer ) {
+				return 'block';
+			}
+
+			return 'default';
+		};
+
+		const clearPreviousPlaceholder = function() {
+			placeholderContext.$parentContainer.find( '.elementor-widget-placeholder' ).remove();
+
+			elementsCache.$placeholder.removeClass( 'e-dragging-left e-dragging-right is-logical' );
+			elementsCache.$placeholder.css( '--e-placeholder-margin-top', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-margin-bottom', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-margin-inline-start', '' );
+			elementsCache.$placeholder.css( '--e-placeholder-width', '' );
+		};
+
+		const insertPlaceholderInsideElement = function( targetElement = null ) {
+			if ( ! targetElement ) {
+				targetElement = currentElement;
+			}
+
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'appendTo' : 'prependTo';
+			elementsCache.$placeholder[ insertMethod ]( targetElement );
+		};
+
+		const insertPlaceholderOutsideElement = function( targetElement = null ) {
+			if ( ! targetElement ) {
+				targetElement = currentElement;
+			}
+
+			const insertMethod = [ 'bottom', 'right' ].includes( currentSide ) ? 'after' : 'before';
+			$( targetElement )[ insertMethod ]( elementsCache.$placeholder );
+		};
+
+		const insertGridRowPlaceholder = function() {
+			const { hasLogicalWrapper, placeholderTarget } = placeholderContext;
+
+			// If we want to use horizontal placeholders inside V3, then we should remove these 3 lines of the code.
+			if ( ! hasLogicalWrapper ) {
+				elementsCache.$placeholder.addClass( 'e-dragging-' + currentSide );
+			}
+
+			insertPlaceholderInsideElement( placeholderTarget );
+		};
+
+		const insertFlexRowPlaceholder = function() {
+			const { $currentElement, isInnerContainer } = placeholderContext;
+			const $target = isInnerContainer ? $currentElement.closest( '.e-con' ) : $currentElement;
+
+			insertPlaceholderOutsideElement( $target[ 0 ] );
+		};
+
+		const insertDefaultPlaceholder = function() {
+			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+
+			if ( hasLogicalWrapper || isAtomicContainer ) {
+				addLogicalAttributesToPlaceholder();
+			}
+
+			insertPlaceholderInsideElement( placeholderTarget );
+		};
+
+		const addLogicalAttributesToPlaceholder = function() {
+			const PLACEHOLDER_HEIGHT = 10;
+
+			const { placeholderTarget } = placeholderContext;
+			const placeholder = elementsCache.$placeholder[ 0 ];
+
+			placeholder.classList.add( 'is-logical' );
+
+			const styles = getComputedStyle( placeholderTarget );
+
+			const paddingTop = parseFloat( styles.paddingTop ) || 0;
+			const borderTop = parseFloat( styles.borderTopWidth ) || 0;
+
+			const paddingBottom = parseFloat( styles.paddingBottom ) || 0;
+			const borderBottom = parseFloat( styles.borderBottomWidth ) || 0;
+
+			const paddingInlineStart = parseFloat( styles.paddingInlineStart ) || 0;
+			const borderInlineStart = parseFloat( styles.borderInlineStartWidth ) || 0;
+
+			const width = parseFloat( styles.width ) || '100%';
+
+			const totalTopOffset = paddingTop + borderTop;
+			const totalBottomOffset = paddingBottom + borderBottom;
+			const totalInlineStartOffset = paddingInlineStart + borderInlineStart;
+
+			placeholder.style.setProperty( '--e-placeholder-width', `${ width }px` );
+			placeholder.style.setProperty( '--e-placeholder-margin-inline-start', `-${ totalInlineStartOffset }px` );
+
+			if ( 'top' === currentSide ) {
+				placeholder.style.setProperty( '--e-placeholder-margin-top', `-${ totalTopOffset }px` );
+				placeholder.style.setProperty( '--e-placeholder-margin-bottom', `${ PLACEHOLDER_HEIGHT }px` );
+			} else if ( 'bottom' === currentSide ) {
+				placeholder.style.setProperty( '--e-placeholder-margin-bottom', `-${ totalBottomOffset }px` );
+				placeholder.style.setProperty( '--e-placeholder-margin-top', `${ PLACEHOLDER_HEIGHT }px` );
+			}
 		};
 
 		var isDroppingAllowed = function( event ) {
@@ -317,6 +471,8 @@
 
 				droppableInstance.doDragLeave();
 			} );
+
+			placeholderContext = createPlaceholderContext();
 
 			setSide( event );
 

@@ -1,0 +1,129 @@
+name: Performance Check
+
+on:
+  # push:
+  #   branches:
+  #     - 'main'
+  #     - '3.*'
+  #   paths-ignore:
+  #     - '**.md'
+  #     - '**.txt'
+  #     - '.github/config.json'
+  #     - 'bin/**'
+  #     - '.gitignore'
+  #     - 'docs/**'
+  workflow_dispatch:
+
+jobs:
+  build-plugin:
+    name: Build plugin
+    uses: ./.github/workflows/build.yml
+
+  compare-v4-to-v3:
+    name: Compare V4 to V3
+    runs-on: ubuntu-latest
+    needs: [build-plugin]
+    env:
+      PERFORMANCE_SCORE_THRESHOLD: 0.87
+    steps:
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./elementor
+
+      - name: Setup wp-env
+        uses: elementor/elementor-editor-github-actions/actions/setup-wp-env@main
+        with:
+          php: 7.4
+          active-theme: 'hello-elementor'
+          plugins: |-
+            ./elementor
+          themes: |-
+            https://downloads.wordpress.org/theme/hello-elementor.zip
+          mappings: |-
+            templates:./tests/lighthouse/compare-templates
+
+      - name: Setup Elementor ENV
+        uses: elementor/elementor-editor-github-actions/actions/setup-elementor-env@main
+        with:
+          env: 'testing'
+          enable-svg-upload: true
+          experiments: |-
+            e_optimized_markup:true
+            e_atomic_elements:true
+            e_classes:true
+          templates: |-
+            templates
+
+      - name: Warm up the cache
+        run: |
+          curl -o /dev/null http://localhost:8889/v3-only/ &&
+          curl -o /dev/null http://localhost:8889/mixed-template/
+
+      - name: Run Performance Check
+        uses: elementor/elementor-editor-github-actions/actions/run-lighthouse-tests@main
+        id: run-performance-check
+        with:
+          number-of-runs: 3
+          urls: |-
+            v3:http://localhost:8889/v3-only/
+            mixed:http://localhost:8889/mixed-template/
+          categories: |-
+            performance
+
+      - name: Check if score meets the threshold
+        uses: actions/github-script@v7
+        env:
+          V3_SCORE: ${{ steps.run-performance-check.outputs.v3-performance-median-score }}
+          MIXED_SCORE: ${{ steps.run-performance-check.outputs.mixed-performance-median-score }}
+        with:
+          script: |
+            const v3Score = parseFloat( process.env.V3_SCORE );
+            const mixedScore = parseFloat( process.env.MIXED_SCORE );
+            const threshold = parseFloat( process.env.PERFORMANCE_SCORE_THRESHOLD );
+
+            if ( mixedScore < v3Score ) {
+              core.setFailed( `The performance score of the mixed page (v3 and v4 elements) is ${mixedScore}, which is below the performance score of the V3 page ${v3Score}.` );
+            }
+
+            if ( mixedScore < threshold ) {
+              core.setFailed( `The performance score of the mixed page (v3 and v4 elements) is ${mixedScore}, which is below the threshold of ${threshold}.` );
+            }
+
+      - name: Upload reports
+        id: upload-reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compare-v4-to-v3
+          path: ${{ steps.run-performance-check.outputs.reports-path }}
+          retention-days: 1
+
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v2.0.0
+        if: failure()
+        env:
+          RUN_ID: ${{ github.run_id }}
+          ARTIFACT_ID: ${{ steps.upload-reports.outputs.artifact-id }}
+          V3_SCORE: ${{ steps.run-performance-check.outputs.v3-performance-median-score }}
+          MIXED_SCORE: ${{ steps.run-performance-check.outputs.mixed-performance-median-score }}
+        with:
+          webhook: ${{ secrets.SLACK_COMPARE_PERFORMANCE_WEBHOOK_URL }}
+          webhook-type: webhook-trigger
+          payload: |
+            run_id: ${{ env.RUN_ID }}
+            artifact_id: ${{ env.ARTIFACT_ID }}
+            v3_score: ${{ env.V3_SCORE }}
+            mixed_score: ${{ env.MIXED_SCORE }}
+            threshold: ${{ env.PERFORMANCE_SCORE_THRESHOLD }}
