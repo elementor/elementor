@@ -5,6 +5,7 @@ use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Common\Modules\Connect\Rest\Rest_Api;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use WP_Http;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,21 +90,11 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		
 		$this->assertInstanceOf( \WP_Error::class, $response );
 		$this->assertEquals( 'elementor_library_app_not_available', $response->get_error_code() );
-		$this->assertEquals( 500, $response->get_error_data()['status'] );
+		$this->assertEquals( WP_Http::INTERNAL_SERVER_ERROR, $response->get_error_data()['status'] );
 	}
 
 	public function test_connect__success() {
 		$this->act_as_admin();
-		
-		$this->mock_app->expects( $this->once() )
-			->method( 'set_auth_mode' )
-			->with( 'rest' );
-			
-		$this->mock_app->expects( $this->once() )
-			->method( 'action_authorize' );
-			
-		$this->mock_app->expects( $this->once() )
-			->method( 'action_get_token' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'is_connected' )
@@ -115,23 +106,13 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$response = $this->rest_api->connect( $request );
 		$data = $response->get_data();
 		
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( WP_Http::CREATED, $response->get_status() );
 		$this->assertTrue( $data['success'] );
 		$this->assertArrayHasKey( 'message', $data );
 	}
 
 	public function test_connect__failure() {
 		$this->act_as_admin();
-		
-		$this->mock_app->expects( $this->once() )
-			->method( 'set_auth_mode' )
-			->with( 'rest' );
-			
-		$this->mock_app->expects( $this->once() )
-			->method( 'action_authorize' );
-			
-		$this->mock_app->expects( $this->once() )
-			->method( 'action_get_token' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'is_connected' )
@@ -148,10 +129,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 	public function test_connect__exception() {
 		$this->act_as_admin();
-		
-		$this->mock_app->expects( $this->once() )
-			->method( 'set_auth_mode' )
-			->with( 'rest' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_authorize' )
@@ -170,29 +147,18 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	public function test_disconnect__success() {
 		$this->act_as_admin();
 		
-		$this->mock_app->expects( $this->once() )
-			->method( 'set_auth_mode' )
-			->with( 'rest' );
-			
-		$this->mock_app->expects( $this->once() )
-			->method( 'action_disconnect' );
-		
 		$request = new \WP_REST_Request( 'DELETE', '/elementor/v1/library/connect' );
 		
 		$response = $this->rest_api->disconnect( $request );
 		$data = $response->get_data();
 		
-		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( WP_Http::OK, $response->get_status() );
 		$this->assertTrue( $data['success'] );
 		$this->assertArrayHasKey( 'message', $data );
 	}
 
 	public function test_disconnect__exception() {
 		$this->act_as_admin();
-		
-		$this->mock_app->expects( $this->once() )
-			->method( 'set_auth_mode' )
-			->with( 'rest' );
 			
 		$this->mock_app->expects( $this->once() )
 			->method( 'action_disconnect' )

@@ -2,6 +2,7 @@
 namespace Elementor\Core\Common\Modules\Connect\Rest;
 
 use Elementor\Plugin;
+use WP_Http;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,6 +26,11 @@ class Rest_Api {
 	const REST_BASE = 'library';
 
 	/**
+	 * Authentication mode.
+	 */
+	const AUTH_MODE = 'rest';
+
+	/**
 	 * Register REST API routes.
 	 *
 	 * @access public
@@ -36,7 +42,7 @@ class Rest_Api {
 			self::REST_BASE . '/connect',
 			[
 				[
-					'methods' => \WP_REST_Server::CREATABLE, // POST
+					'methods' => \WP_REST_Server::CREATABLE,
 					'callback' => [ $this, 'connect' ],
 					'permission_callback' => [ $this, 'connect_permissions_check' ],
 					'args' => [
@@ -55,7 +61,7 @@ class Rest_Api {
 			self::REST_BASE . '/connect',
 			[
 				[
-					'methods' => \WP_REST_Server::DELETABLE, // DELETE
+					'methods' => \WP_REST_Server::DELETABLE,
 					'callback' => [ $this, 'disconnect' ],
 					'permission_callback' => [ $this, 'connect_permissions_check' ],
 				],
@@ -65,36 +71,58 @@ class Rest_Api {
 	public function connect( \WP_REST_Request $request ) {
 		$app = $this->get_connect_app();
 		if ( ! $app ) {
-			return $this->error_response( 'elementor_library_app_not_available', __( 'Elementor Library app is not available.', 'elementor' ), 500 );
+			return $this->elementor_library_app_not_available();
 		}
-		$app->set_auth_mode( 'rest' );
-		$_REQUEST['mode'] = 'rest';
+
+		$app->set_auth_mode( self::AUTH_MODE );
+		$_REQUEST['mode'] = self::AUTH_MODE;
 		$_REQUEST['token'] = $request->get_param( 'token' );
+
 		try {
-			$app->action_authorize();
+			$app->action_authorize();	
 			$app->action_get_token();
+
 			if ( $app->is_connected() ) {
-				return $this->success_response( [ 'message' => __( 'Connected successfully.', 'elementor' ) ] );
+				return $this->success_response( 
+					[ 'message' => __( 'Connected successfully.', 'elementor' ) ], 
+					WP_Http::CREATED );
 			} else {
-				return $this->error_response( 'elementor_library_not_connected', __( 'Failed to connect to Elementor Library.', 'elementor' ), 500 );
+				return $this->error_response( 
+					'elementor_library_not_connected', 
+					__( 'Failed to connect to Elementor Library.', 'elementor' ), 
+					WP_Http::INTERNAL_SERVER_ERROR
+				 );
 			}
 		} catch ( \Exception $e ) {
-			return $this->error_response( 'elementor_library_connect_error', $e->getMessage(), 500 );
+			return $this->error_response( 
+				'elementor_library_connect_error', 
+				$e->getMessage(), 
+				WP_Http::INTERNAL_SERVER_ERROR
+			);
 		}
 	}
 
 	public function disconnect( \WP_REST_Request $request ) {
 		$app = $this->get_connect_app();
 		if ( ! $app ) {
-			return $this->error_response( 'elementor_library_app_not_available', __( 'Elementor Library app is not available.', 'elementor' ), 500 );
+			return $this->elementor_library_app_not_available();
 		}
-		$app->set_auth_mode( 'rest' );
-		$_REQUEST['mode'] = 'rest';
+
+		$app->set_auth_mode( self::AUTH_MODE );
+		$_REQUEST['mode'] = self::AUTH_MODE;
+
 		try {
 			$app->action_disconnect();
-			return $this->success_response( [ 'message' => __( 'Disconnected successfully.', 'elementor' ) ] );
+			return $this->success_response( 
+				[ 'message' => __( 'Disconnected successfully.', 'elementor' ) ],
+				WP_Http::OK
+			);
 		} catch ( \Exception $e ) {
-			return $this->error_response( 'elementor_library_disconnect_error', $e->getMessage(), 500 );
+			return $this->error_response( 
+				'elementor_library_disconnect_error', 
+				$e->getMessage(), 
+				WP_Http::INTERNAL_SERVER_ERROR
+			);
 		}
 	}
 
@@ -106,12 +134,16 @@ class Rest_Api {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			return $this->error_response( 'unexpected_error', __( 'Something went wrong', 'elementor' ), 500 );
+			return $this->error_response( 
+				'unexpected_error', 
+				__( 'Something went wrong', 'elementor' ), 
+				WP_Http::INTERNAL_SERVER_ERROR
+			);
 		}
 		return $response;
 	}
 
-	private function error_response( $code, $message, $status = 400 ) {
+	private function error_response( $code, $message, $status = WP_Http::BAD_REQUEST ) {
 		return new \WP_Error(
 			$code,
 			$message,
@@ -119,8 +151,18 @@ class Rest_Api {
 		);
 	}
 
-	private function success_response( $data = [], $status = 200 ) {
-		return rest_ensure_response( array_merge( [ 'success' => true ], $data ) );
+	private function success_response( $data = [], $status = WP_Http::OK ) {
+		$response = rest_ensure_response( array_merge( [ 'success' => true ], $data ) );
+		$response->set_status( $status );
+		return $response;
+	}
+
+	private function elementor_library_app_not_available() {
+		return $this->error_response( 
+			'elementor_library_app_not_available', 
+			__( 'Elementor Library app is not available.', 'elementor' ), 
+			WP_Http::INTERNAL_SERVER_ERROR
+		);
 	}
 
 	/**
