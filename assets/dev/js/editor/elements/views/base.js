@@ -281,23 +281,23 @@ BaseElementView = BaseContainer.extend( {
 	updateHandlesOverlay() {
 		const $overlayList = this.$el.find( '.elementor-editor-element-settings' );
 
-		if ( ! $overlayList || ! $overlayList?.length ) {
-			return;
-		}
-
 		const elementStyles = window.getComputedStyle( this.el ),
 			elementType = this.$el.data( 'element_type' ),
 			overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ],
 			isHaveOverflow = overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' ),
 			isContainer = getAllElementTypes().includes( elementType );
 
+		if ( ! $overlayList?.length || ! isContainer ) {
+			return;
+		}
+
 		$overlayList[ 0 ].style.display = 'none';
 
-		// JS Hack to force browser element repaint ( till function end disables transition animations for V3 )
+		// JS Hack to force browser element rerender
 		// eslint-disable-next-line no-unused-expressions
 		$overlayList[ 0 ].offsetHeight;
 
-		if ( isHaveOverflow && isContainer ) {
+		if ( isHaveOverflow ) {
 			$overlayList.addClass( 'elementor-editor-element-settings-overlay' );
 		} else {
 			$overlayList.removeClass( 'elementor-editor-element-settings-overlay' );
