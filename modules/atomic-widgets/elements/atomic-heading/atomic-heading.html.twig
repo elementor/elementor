@@ -2,7 +2,7 @@
 	{% set id_attribute = settings.cssid is not empty ? 'id=' ~ settings.cssid | e('html_attr') : '' %}
 	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }}>
 	{% if settings.link.href %}
-		<a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
+		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
 			{{ settings.title }}
 		</a>
 	{% else %}
