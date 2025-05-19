@@ -20,4 +20,4 @@ jobs:
           package-directories: "
             packages
           "
-          token: ${{ secrets.ACCESS_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
