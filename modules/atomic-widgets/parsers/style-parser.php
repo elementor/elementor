@@ -6,6 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Plugin;
+
 class Style_Parser {
 	const VALID_TYPES = [
 		'class',
@@ -46,7 +49,7 @@ class Style_Parser {
 
 		if ( ! isset( $style['label'] ) || ! is_string( $style['label'] ) ) {
 			$result->errors()->add( 'label', 'missing_or_invalid' );
-		} else {
+		} elseif ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
 			$label_validation = $this->validate_style_label( $style['label'] );
 
 			if ( ! $label_validation['is_valid'] ) {
