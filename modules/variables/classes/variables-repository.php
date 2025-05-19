@@ -21,10 +21,10 @@ class Variables_Repository {
 
 	public function all(): array {
 		$meta_key = $this->get_meta_key();
-		$data = $this->kit->get_json_meta( $meta_key );
+		$meta_data = $this->kit->get_json_meta( $meta_key );
 
-		if ( is_array( $data ) && ! empty( $data ) ) {
-			return $data;
+		if ( is_array( $meta_data ) && ! empty( $meta_data ) ) {
+			return $meta_data;
 		}
 
 		return $this->get_default_meta();
@@ -33,24 +33,19 @@ class Variables_Repository {
 	/**
 	 * @throws Exception
 	 */
-	public function create( array $payload, string $group_name ): string {
-		$variables_data = $this->all();
-		$variables_items = $variables_data['data'];
+	public function create( array $payload ): string {
+		$meta_data = $this->all();
+		$data = $meta_data['data'];
 
-		if ( ! isset( $variables_items[ $group_name ] ) ) {
-			$variables_items[ $group_name ] = [];
-		}
+		$existing_ids = array_keys( $data );
 
-		$id = Utils::generate_id( 'e-', array_keys( $variables_items[ $group_name ] ) );
+		$id = $this->generate_id( $existing_ids );
 
-		$variables_items[ $group_name ][ $id ] = [
-			'label' => $payload['label'],
-			'value' => $payload['value'],
-		];
+		$data[ $id ] = $this->only_from_array( $payload, [ 'type', 'label', 'value' ] );
 
-		$variables_data['data'] = $variables_items;
+		$meta_data['data'] = $data;
 
-		$saved = $this->save( $variables_data );
+		$saved = $this->save( $meta_data );
 
 		if ( ! $saved ) {
 			throw new Exception( 'Failed to create variable' );
@@ -62,15 +57,20 @@ class Variables_Repository {
 	/**
 	 * @throws Exception
 	 */
-	public function update( string $group_name, string $id, array $payload ) {
-		$variables_data = $this->all();
-		$variables_items = $variables_data['data'];
+	public function update( array $payload, string $id ): bool {
+		$meta_data = $this->all();
+		$data = $meta_data['data'];
 
-		$variables_items[ $group_name ][ $id ] = $payload;
+		$variable = $this->only_from_array( $payload, [ 'label', 'value' ] );
 
-		$variables_data['data'] = $variables_items;
+		$data[ $id ] = [
+			...$data[ $id ],
+			...$variable,
+		];
 
-		$value = $this->save( $variables_data );
+		$meta_data['data'] = $data;
+
+		$value = $this->save( $meta_data );
 
 		if ( ! $value ) {
 			throw new Exception( 'Failed to update variables' );
@@ -79,33 +79,36 @@ class Variables_Repository {
 		return true;
 	}
 
-	public function delete( string $id, string $group_name ) {
-		$variables = $this->all();
-		$data = $variables['data'];
+	public function delete( string $id ): bool | int {
+		$meta_data = $this->all();
+		$data = $meta_data['data'];
 
-		if ( ! isset( $data[ $group_name ][ $id ] ) ) {
+		if ( ! isset( $data[ $id ] ) ) {
 			return false;
 		}
 
-		$data[ $group_name ][ $id ]['deleted'] = true;
-		$data[ $group_name ][ $id ]['deleted_at'] = gmdate( 'Y-m-d H:i:s' );
+		$data[ $id ]['deleted'] = true;
+		$data[ $id ]['deleted_at'] = gmdate( 'Y-m-d H:i:s' );
 
-		$variables['data'] = $data;
+		$meta_data['data'] = $data;
 
-		return $this->save( $variables );
+		return $this->save( $meta_data );
 	}
 
-	public function restore( string $id, string $group_name ) {
-		$variables = $this->all();
+	public function restore( string $id ): bool|int {
+		$meta_data = $this->all();
+		$data = $meta_data['data'];
 
-		if ( ! isset( $variables[ $group_name ][ $id ] ) ) {
+		if ( ! isset( $data[ $id ] ) ) {
 			return false;
 		}
 
-		$variables[ $group_name ][ $id ]['deleted'] = false;
-		$variables[ $group_name ][ $id ]['deleted_at'] = null;
+		unset( $data[ $id ]['deleted'] );
+		unset( $data[ $id ]['deleted_at'] );
 
-		return $this->save( $variables );
+		$meta_data['data'] = $data;
+
+		return $this->save( $meta_data );
 	}
 
 	private function get_meta_key(): string {
@@ -128,5 +131,13 @@ class Variables_Repository {
 		$data['watermark']++;
 
 		return $this->kit->update_json_meta( $this->get_meta_key(), $data );
+	}
+
+	private function generate_id( array $existing_ids ): string {
+		return Utils::generate_id( 'e-', $existing_ids );
+	}
+
+	private function only_from_array( array $array, array $keys ): array {
+		return array_intersect_key( $array, array_flip( $keys ) );
 	}
 }
