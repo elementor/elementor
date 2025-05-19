@@ -279,13 +279,23 @@
 }
 
 .e-div-block-base, .e-flexbox-base {
+	// When has one of this classes inside set height to 120
+	&:has( > .elementor-empty-view, > .e-div-block-base, > .e-flexbox-base ) {
+		height: 120px;
+	}
+
+	// When has empty view inside set min height to 0, then make empty view inherit from parent
 	&:has( > .elementor-empty-view ) {
 		min-height: 0;
-		height: 120px;
 
 		.elementor-empty-view {
 			min-height: calc( 100% - 20px );
 		}
+	}
+
+	// Set nested containers height back to auto
+	> .e-div-block-base, > .e-flexbox-base {
+		height: auto;
 	}
 }
 
