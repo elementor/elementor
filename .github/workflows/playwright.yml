@@ -27,6 +27,10 @@ on:
           description: 'Provide @tag or a keyword'
           required: false
 
+concurrency:
+    group: pr-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
 jobs:
   build-plugin:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
@@ -165,7 +169,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: ${{ always() }}
+    if: needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped'
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
