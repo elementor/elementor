@@ -79,24 +79,24 @@ class Rest_Api {
 		$_REQUEST['token'] = $request->get_param( 'token' );
 
 		try {
-			$app->action_authorize();	
+			$app->action_authorize();
 			$app->action_get_token();
 
 			if ( $app->is_connected() ) {
-				return $this->success_response( 
-					[ 'message' => __( 'Connected successfully.', 'elementor' ) ], 
-					WP_Http::CREATED );
+				return $this->success_response(
+					[ 'message' => __( 'Connected successfully.', 'elementor' ) ],
+				WP_Http::CREATED );
 			} else {
-				return $this->error_response( 
-					'elementor_library_not_connected', 
-					__( 'Failed to connect to Elementor Library.', 'elementor' ), 
+				return $this->error_response(
+					'elementor_library_not_connected',
+					__( 'Failed to connect to Elementor Library.', 'elementor' ),
 					WP_Http::INTERNAL_SERVER_ERROR
-				 );
+				);
 			}
 		} catch ( \Exception $e ) {
-			return $this->error_response( 
-				'elementor_library_connect_error', 
-				$e->getMessage(), 
+			return $this->error_response(
+				'elementor_library_connect_error',
+				$e->getMessage(),
 				WP_Http::INTERNAL_SERVER_ERROR
 			);
 		}
@@ -113,14 +113,14 @@ class Rest_Api {
 
 		try {
 			$app->action_disconnect();
-			return $this->success_response( 
+			return $this->success_response(
 				[ 'message' => __( 'Disconnected successfully.', 'elementor' ) ],
 				WP_Http::OK
 			);
 		} catch ( \Exception $e ) {
-			return $this->error_response( 
-				'elementor_library_disconnect_error', 
-				$e->getMessage(), 
+			return $this->error_response(
+				'elementor_library_disconnect_error',
+				$e->getMessage(),
 				WP_Http::INTERNAL_SERVER_ERROR
 			);
 		}
@@ -134,9 +134,9 @@ class Rest_Api {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			return $this->error_response( 
-				'unexpected_error', 
-				__( 'Something went wrong', 'elementor' ), 
+			return $this->error_response(
+				'unexpected_error',
+				__( 'Something went wrong', 'elementor' ),
 				WP_Http::INTERNAL_SERVER_ERROR
 			);
 		}
@@ -158,9 +158,9 @@ class Rest_Api {
 	}
 
 	private function elementor_library_app_not_available() {
-		return $this->error_response( 
-			'elementor_library_app_not_available', 
-			__( 'Elementor Library app is not available.', 'elementor' ), 
+		return $this->error_response(
+			'elementor_library_app_not_available',
+			__( 'Elementor Library app is not available.', 'elementor' ),
 			WP_Http::INTERNAL_SERVER_ERROR
 		);
 	}
