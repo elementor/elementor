@@ -62,6 +62,10 @@ class Variables_Repository {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
 
+		if ( ! isset( $data[ $id ] ) ) {
+			throw new InvalidArgumentException( 'Variable id does not exist' );
+		}
+
 		$variable = $this->only_from_array( $payload, [ 'label', 'value' ] );
 
 		$data[ $id ] = [
@@ -78,6 +82,9 @@ class Variables_Repository {
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function delete( string $id ) {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
@@ -98,6 +105,9 @@ class Variables_Repository {
 		}
 	}
 
+	/**
+	 * @throws Exception
+	 */
 	public function restore( string $id ) {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
@@ -136,7 +146,7 @@ class Variables_Repository {
 
 		$data['watermark']++;
 
-		return !! $this->kit->update_json_meta( $this->get_meta_key(), $data );
+		return (bool) $this->kit->update_json_meta( $this->get_meta_key(), $data );
 	}
 
 	private function generate_id( array $existing_ids ): string {

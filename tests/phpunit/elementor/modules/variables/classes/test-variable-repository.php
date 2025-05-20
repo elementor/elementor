@@ -365,7 +365,31 @@ class Test_Variables_Repository extends TestCase {
         $this->repository->update( $updatedVariable, 'e-123' );
     }
 
-    public function test_delete_variable__with_existing_variable() {
+	public function test_update_variable__throws_exception_when_id_not_found() {
+		// Arrange.
+		$existingData = [
+			'data' => [
+				'e-123' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		];
+
+		$this->kit->method( 'get_json_meta' )->willReturn( $existingData );
+
+		// Assert.
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Variable id does not exist' );
+
+		// Act.
+		$this->repository->delete( 'e-4567890' );
+	}
+
+	public function test_delete_variable__with_existing_variable() {
         // Arrange.
 	    $captured_data = null;
 	    $id = 'e-123';
