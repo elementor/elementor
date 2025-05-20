@@ -384,6 +384,66 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'image_height',
+			[
+				'label' => esc_html__( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_object_fit',
+			[
+				'label' => esc_html__( 'Object Fit', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'fill' => esc_html__( 'Fill', 'elementor' ),
+					'cover' => esc_html__( 'Cover', 'elementor' ),
+					'contain' => esc_html__( 'Contain', 'elementor' ),
+					'scale-down' => esc_html__( 'Scale Down', 'elementor' ),
+				],
+				'condition' => [
+					'image_height[size]!' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'object-fit: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_object_position',
+			[
+				'label' => esc_html__( 'Object Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'center center' => esc_html__( 'Center Center', 'elementor' ),
+					'center left' => esc_html__( 'Center Left', 'elementor' ),
+					'center right' => esc_html__( 'Center Right', 'elementor' ),
+					'top center' => esc_html__( 'Top Center', 'elementor' ),
+					'top left' => esc_html__( 'Top Left', 'elementor' ),
+					'top right' => esc_html__( 'Top Right', 'elementor' ),
+					'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+					'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+					'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+				],
+				'default' => 'center center',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'object-position: {{VALUE}};',
+				],
+				'condition' => [
+					'image_height[size]!' => '',
+					'image_object_fit' => [ 'cover', 'contain', 'scale-down' ],
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
