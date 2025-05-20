@@ -56,6 +56,7 @@ class Variables_Repository {
 	}
 
 	/**
+	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
 	public function update( array $payload, string $id ) {
@@ -83,6 +84,7 @@ class Variables_Repository {
 	}
 
 	/**
+	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
 	public function delete( string $id ) {
@@ -106,6 +108,7 @@ class Variables_Repository {
 	}
 
 	/**
+	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
 	public function restore( string $id ) {
