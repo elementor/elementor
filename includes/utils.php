@@ -908,7 +908,7 @@ class Utils {
 
 	public static function is_sale_time(): bool {
 		$sale_start_time = gmmktime( 13, 0, 0, 6, 10, 2025 );
-		$sale_end_time = gmmktime( 9, 59, 0, 06, 17, 2025 );
+		$sale_end_time = gmmktime( 9, 59, 0, 6, 17, 2025 );
 
 		$now_time = gmdate( 'U' );
 
