@@ -64,7 +64,7 @@ test( 'Verify Button with Icon styling', async ( { page, apiRequests }, testInfo
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
-	const filePath = _path.resolve( __dirname, `./templates/button-icon-styling.json` );
+	const filePath = _path.resolve( __dirname, `./../../templates/button-icon-styling.json` );
 	await editor.loadTemplate( filePath, false );
 	await editor.getPreviewFrame().locator( '.elementor-widget-button' ).first().waitFor();
 	await editor.closeNavigatorIfOpen();
