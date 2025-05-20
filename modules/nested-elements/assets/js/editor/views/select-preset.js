@@ -15,7 +15,6 @@ export default function SelectPreset( props ) {
 			<button
 				type="button"
 				className="elementor-add-section-close"
-				title={ __( 'Close', 'elementor' ) }
 				aria-label={ __( 'Close', 'elementor' ) }
 				onClick={ () => props.setIsRenderPresets( false ) }
 			>
