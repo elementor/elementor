@@ -282,10 +282,9 @@ class Test_Variables_Repository extends TestCase {
 
 	    $color_variable = $captured_data[ $id ];
 
-		$expected = [
-			...$updatedVariable,
+		$expected = array_merge( $updatedVariable, [
 			'type' => Color_Variable_Prop_Type::get_key(),
-		];
+		] );
 
 	    $this->assertEquals( $expected, $color_variable );
     }
