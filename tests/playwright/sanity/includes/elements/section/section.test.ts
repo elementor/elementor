@@ -12,6 +12,7 @@ test.describe( 'Section tests', () => {
 		await wpAdmin.setExperiments( { container: false } );
 		await page.close();
 	} );
+
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

@@ -14,6 +14,7 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 				container: false,
 			} );
 		} );
+
 		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 			const context = await browser.newContext();
 			const page = await context.newPage();
@@ -21,6 +22,7 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 			await wpAdmin.resetExperiments();
 			await page.close();
 		} );
+
 		for ( const testDevice of Breakpoints.getBasic() ) {
 			if ( 'desktop' === testDevice ) {
 				continue;
