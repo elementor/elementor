@@ -1,9 +1,9 @@
 import { expect, Frame, Page } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
-import EditorPage from '../pages/editor-page';
-import Breakpoints from '../assets/breakpoints';
-import { viewportSize } from '../enums/viewport-sizes';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import EditorPage from '../../../pages/editor-page';
+import Breakpoints from '../../../assets/breakpoints';
+import { viewportSize } from '../../../enums/viewport-sizes';
 
 test( 'Basic Gallery', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.

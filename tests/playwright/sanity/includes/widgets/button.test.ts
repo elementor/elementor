@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
-import EditorSelectors from '../selectors/editor-selectors';
-import ButtonWidget from '../pages/widgets/button_widget';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import EditorSelectors from '../../../selectors/editor-selectors';
+import ButtonWidget from '../../../pages/widgets/button_widget';
 import _path from 'path';
 
 const defaultBtnName = 'Click here';
@@ -64,7 +64,7 @@ test( 'Verify Button with Icon styling', async ( { page, apiRequests }, testInfo
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 	const editor = await wpAdmin.openNewPage();
 
-	const filePath = _path.resolve( __dirname, `./templates/button-icon-styling.json` );
+	const filePath = _path.resolve( __dirname, `./../../templates/button-icon-styling.json` );
 	await editor.loadTemplate( filePath, false );
 	await editor.getPreviewFrame().locator( '.elementor-widget-button' ).first().waitFor();
 	await editor.closeNavigatorIfOpen();
