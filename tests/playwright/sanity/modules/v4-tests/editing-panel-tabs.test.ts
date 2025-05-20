@@ -12,6 +12,16 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	const experimentName = 'e_atomic_elements';
 	const panelSelector = '#elementor-panel-inner';
 
+	const sections: Array<'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border'> = [
+		'layout',
+		'spacing',
+		'size',
+		'position',
+		'typography',
+		'background',
+		'border',
+	];
+
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		const page = await context.newPage();
@@ -25,6 +35,16 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test.afterAll( async () => {
 		await wpAdmin.resetExperiments();
 		await context.close();
+	} );
+
+	sections.forEach( ( section ) => {
+		test( `expand ${ section } section and compare screenshot`, async () => {
+			await editor.addWidget( { widgetType: atomicWidget.name } );
+			await editor.openV2PanelTab( 'style' );
+			await editor.openV2Section( section );
+
+			await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( `expanded-${ section }-section.png` );
+		} );
 	} );
 
 	test( 'should hide tabs header when scrolling down in the panel', async () => {
