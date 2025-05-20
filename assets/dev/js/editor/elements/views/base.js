@@ -278,6 +278,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		const elementType = this.getElementType(),
 			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
 			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
