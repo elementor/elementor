@@ -113,6 +113,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	},
 
 	showCloudStateView() {
+		elementor.templates.layout.hideLoadingView();
 		this.modalContent.show( new TemplateLibraryCloudStateView() );
 	},
 
