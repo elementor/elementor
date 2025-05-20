@@ -12,7 +12,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	const experimentName = 'e_atomic_elements';
 	const panelSelector = '#elementor-panel-inner';
 
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		const page = await context.newPage();
 
@@ -46,10 +46,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	} );
 
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
-		await editor.openV2PanelTab( 'general' );
-		await editor.openV2PanelTab( 'style' );
-
-		await editor.openV2Section( 'typography' );
+		await openScrollableStylePanel();
 
 		await editor.page.locator( 'div.MuiGrid-container' ).filter( {
 			has: editor.page.locator( 'label', { hasText: 'Font family' } ),
