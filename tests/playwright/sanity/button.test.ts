@@ -68,7 +68,6 @@ test( 'Verify Button with Icon styling', async ( { page, apiRequests }, testInfo
 	await editor.loadTemplate( filePath, false );
 	await editor.getPreviewFrame().locator( '.elementor-widget-button' ).first().waitFor();
 	await editor.closeNavigatorIfOpen();
-	await page.pause();
 
 	// Assert
 	await expect.soft( editor.getPreviewFrame().locator( '.e-con' ) ).toHaveScreenshot( 'button-container.png' );
