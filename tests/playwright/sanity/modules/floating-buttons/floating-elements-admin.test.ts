@@ -127,7 +127,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		} );
 	} );
 
-	test.only( 'Verify floating elements admin page behavior', async ( {
+	test( 'Verify floating elements admin page behavior', async ( {
 		page,
 		apiRequests,
 	}, testInfo ) => {
