@@ -87,7 +87,7 @@ register( {
 				playerOptions.origin = window.location.hostname;
 			}
 
-			player = new YT.Player( element, playerOptions );
+			player = new YT.Player( youtubeElement, playerOptions );
 
 			return player;
 		};
