@@ -391,7 +391,7 @@ class Widget_Image_Box extends Widget_Base {
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'height: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'height: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -412,7 +412,7 @@ class Widget_Image_Box extends Widget_Base {
 					'image_height[size]!' => '',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'object-fit: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'object-fit: {{VALUE}};',
 				],
 			]
 		);
@@ -435,7 +435,7 @@ class Widget_Image_Box extends Widget_Base {
 				],
 				'default' => 'center center',
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-wrapper .elementor-image-box-img img' => 'object-position: {{VALUE}};',
+					'{{WRAPPER}} .elementor-image-box-img img' => 'object-position: {{VALUE}};',
 				],
 				'condition' => [
 					'image_height[size]!' => '',
