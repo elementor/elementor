@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Classes;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Exception;
+use InvalidArgumentException;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -57,7 +58,7 @@ class Variables_Repository {
 	/**
 	 * @throws Exception
 	 */
-	public function update( array $payload, string $id ): bool {
+	public function update( array $payload, string $id ) {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
 
@@ -73,18 +74,16 @@ class Variables_Repository {
 		$value = $this->save( $meta_data );
 
 		if ( ! $value ) {
-			throw new Exception( 'Failed to update variables' );
+			throw new Exception( 'Failed to update variable' );
 		}
-
-		return true;
 	}
 
-	public function delete( string $id ): bool {
+	public function delete( string $id ) {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
 
 		if ( ! isset( $data[ $id ] ) ) {
-			return false;
+			throw new InvalidArgumentException( 'Variable id does not exist' );
 		}
 
 		$data[ $id ]['deleted'] = true;
@@ -92,23 +91,30 @@ class Variables_Repository {
 
 		$meta_data['data'] = $data;
 
-		return $this->save( $meta_data );
+		$value = $this->save( $meta_data );
+
+		if ( ! $value ) {
+			throw new Exception( 'Failed to delete variable' );
+		}
 	}
 
-	public function restore( string $id ): bool {
+	public function restore( string $id ) {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
 
 		if ( ! isset( $data[ $id ] ) ) {
-			return false;
+			throw new InvalidArgumentException( 'Variable id does not exist' );
 		}
 
-		unset( $data[ $id ]['deleted'] );
-		unset( $data[ $id ]['deleted_at'] );
+		$data[ $id ] = $this->only_from_array( $data[ $id ], [ 'label', 'value', 'type' ] );
 
 		$meta_data['data'] = $data;
 
-		return $this->save( $meta_data );
+		$value = $this->save( $meta_data );
+
+		if ( ! $value ) {
+			throw new Exception( 'Failed to delete variable' );
+		}
 	}
 
 	private function get_meta_key(): string {
@@ -130,7 +136,7 @@ class Variables_Repository {
 
 		$data['watermark']++;
 
-		return $this->kit->update_json_meta( $this->get_meta_key(), $data );
+		return !! $this->kit->update_json_meta( $this->get_meta_key(), $data );
 	}
 
 	private function generate_id( array $existing_ids ): string {

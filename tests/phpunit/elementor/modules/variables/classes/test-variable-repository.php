@@ -6,6 +6,7 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -353,7 +354,7 @@ class Test_Variables_Repository extends TestCase {
 
         // Assert.
         $this->expectException( Exception::class );
-        $this->expectExceptionMessage( 'Failed to update variables' );
+        $this->expectExceptionMessage( 'Failed to update variable' );
 
         // Act.
         $updatedVariable = [
@@ -394,15 +395,37 @@ class Test_Variables_Repository extends TestCase {
             ->willReturn( true );
 
         // Act.
-        $result = $this->repository->delete( $id );
+        $this->repository->delete( $id );
 
 	    $variable = $captured_data[$id];
 
 	    // Assert.
-        $this->assertTrue( $result );
-
 	    $this->assertTrue( $variable['deleted'] );
 	    $this->assertNotNull( $variable['deleted_at'] );
+    }
+
+    public function test_delete_variable__throws_exception_when_id_not_found() {
+        // Arrange.
+        $existingData = [
+            'data' => [
+	            'e-123' => [
+		            'type' => Color_Variable_Prop_Type::get_key(),
+		            'label' => 'Primary',
+		            'value' => '#000000',
+	            ],
+            ],
+            'watermark' => 5,
+	        'version' => 1,
+        ];
+
+        $this->kit->method( 'get_json_meta' )->willReturn( $existingData );
+
+	    // Assert.
+	    $this->expectException( InvalidArgumentException::class );
+	    $this->expectExceptionMessage( 'Variable id does not exist' );
+
+	    // Act.
+        $this->repository->delete( 'e-4567890' );
     }
 
 	public function test_restore_variable() {
@@ -437,13 +460,36 @@ class Test_Variables_Repository extends TestCase {
 		          ->willReturn(true);
 
 		// Act.
-		$result = $this->repository->restore( $id );
+		$this->repository->restore( $id );
 
 	    // Assert.
-		$this->assertTrue( $result );
-
 		$this->assertArrayNotHasKey( 'deleted', $captured_data[$id] );
 		$this->assertArrayNotHasKey( 'deleted_at', $captured_data[$id] );
+	}
+
+	public function test_restore_variable__throws_exception_when_id_not_found() {
+		// Arrange.
+		$existingData = [
+			'data' => [
+				'e-123' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#000000',
+					'deleted' => true,
+					'deleted_at' => 1234567890,
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		];
+
+		$this->kit->method( 'get_json_meta' )->willReturn( $existingData );
+
+		// Assert.
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Variable id does not exist' );
+
+		$this->repository->restore( '12345' );
 	}
 
     public function test_watermark__resets_when_reaching_max() {
