@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
-import ContextMenu from '../pages/widgets/context-menu';
-import widgets from '../enums/widgets';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import ContextMenu from '../../../../pages/widgets/context-menu';
+import widgets from '../../../../enums/widgets';
 
 test.describe( 'Section tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {

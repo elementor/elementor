@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
-import EditorSelectors from '../selectors/editor-selectors';
-import ButtonWidget from '../pages/widgets/button_widget';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import EditorSelectors from '../../../selectors/editor-selectors';
+import ButtonWidget from '../../../pages/widgets/button_widget';
 import _path from 'path';
 
 const defaultBtnName = 'Click here';
