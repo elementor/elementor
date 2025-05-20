@@ -33,11 +33,11 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		await context.close();
 	} );
 
-	test("Atomic elements tab UI", async () => {
+	test( 'Atomic elements tab UI', async () => {
 		editor = await wpAdmin.openNewPage();
 		await editor.openElementsPanel();
 		await expect.soft( editor.page.locator( editorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
-	})
+	} );
 
 	atomicWidgets.forEach( ( widget ) => {
 		test.describe( widget.name, () => {
