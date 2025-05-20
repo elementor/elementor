@@ -69,10 +69,7 @@ class Variables_Repository {
 
 		$variable = $this->only_from_array( $payload, [ 'label', 'value' ] );
 
-		$data[ $id ] = [
-			...$data[ $id ],
-			...$variable,
-		];
+		$data[ $id ] = array_merge( $data[ $id ], $variable );
 
 		$meta_data['data'] = $data;
 
