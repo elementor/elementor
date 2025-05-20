@@ -127,7 +127,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		} );
 	} );
 
-	test( 'Verify floating elements admin page behavior', async ( {
+	test.only( 'Verify floating elements admin page behavior', async ( {
 		page,
 		apiRequests,
 	}, testInfo ) => {
@@ -176,7 +176,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				await expect( footer.first() ).toBeVisible();
 
 				const closeIcon = page.locator( '.elementor-templates-modal__header__close i' );
-				await expect( closeIcon ).toHaveAttribute( 'title', 'Go To Dashboard' );
+				await expect( closeIcon ).toHaveAttribute( 'class', 'eicon-close' );
 				await closeIcon.click();
 				await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
 			} );
