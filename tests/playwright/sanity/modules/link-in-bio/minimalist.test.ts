@@ -1,6 +1,6 @@
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
-import EditorPage from '../pages/editor-page';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
+import EditorPage from '../../../pages/editor-page';
 import { expect } from '@playwright/test';
 import { resolve } from 'path';
 
@@ -19,7 +19,7 @@ test( 'Minimalist widget basic sanity test with content in bio tab', async ( { b
 	await page.locator( 'text=Media Library' ).click();
 	await page.waitForSelector( 'text=Insert Media' );
 	await page.locator( '[id="menu-item-upload"]' ).click();
-	await page.setInputFiles( 'input[type="file"]', resolve( __dirname, '../resources/mountain-image.jpeg' ) );
+	await page.setInputFiles( 'input[type="file"]', resolve( __dirname, '../../../resources/mountain-image.jpeg' ) );
 	await page.getByRole( 'button', { name: 'Insert Media' } )
 		.or( page.getByRole( 'button', { name: 'Select' } ) ).nth( 1 ).click();
 	await editor.openSection( 'bio_section' );

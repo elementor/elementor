@@ -30,5 +30,5 @@ test( 'Icon widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 		icon = await editor.getPreviewFrame().waitForSelector( '.elementor-icon:first-child' );
 		style = await getComputedStyle( icon, '' );
 		return style.fontSize;
-	} ).toBe( `${width}px` );
+	} ).toBe( `${ width }px` );
 } );

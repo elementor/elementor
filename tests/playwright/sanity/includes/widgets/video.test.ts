@@ -41,14 +41,14 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.setDimensionsValue( 'padding', '0' );
 
 		// Assert - verify that the container has an equal height to the video iFrame.
-		const container = editor.getPreviewFrame().locator( `.elementor-element-${containerId}` );
+		const container = editor.getPreviewFrame().locator( `.elementor-element-${ containerId }` );
 		const containerHeight = await container.boundingBox();
-		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${videoId} iframe` ).boundingBox();
+		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
 		expect( containerHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 
 	for ( const video in videos ) {
-		test( `${video} controls and link test`, async ( { page, apiRequests }, testInfo ) => {
+		test( `${ video } controls and link test`, async ( { page, apiRequests }, testInfo ) => {
 			// Arrange.
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
@@ -68,7 +68,7 @@ test.describe( 'Video tests inside a container @video', () => {
 				await editor.setSelectControlValue( 'rel', 'yes' );
 			}
 			await videoWidget.toggleVideoControls( player.controls );
-			await editor.setTextControlValue( `${video}_url`, player.link );
+			await editor.setTextControlValue( `${ video }_url`, player.link );
 
 			// Assert 1 - in the Editor.
 			let src = await videoWidget.getVideoSrc( false );
@@ -93,7 +93,7 @@ test.describe( 'Video tests inside a container @video', () => {
 		await editor.addWidget( { widgetType: widgets.video } );
 		await editor.openSection( 'section_image_overlay' );
 		await editor.setSwitcherControlValue( 'show_image_overlay', true );
-		await editor.setMediaControlImageValue( 'image_overlay', `${imageTitle}.png` );
+		await editor.setMediaControlImageValue( 'image_overlay', `${ imageTitle }.png` );
 		const frame: Frame = editor.getPreviewFrame();
 		await frame.locator( EditorSelectors.video.widget ).click();
 		await editor.setSelectControlValue( 'image_overlay_size', 'thumbnail' );
@@ -165,7 +165,7 @@ test.describe( 'Video tests inside a section @video', () => {
 
 		// Assert - verify that the column has an equal height to the video iFrame.
 		const columnHeight = await column.boundingBox();
-		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${videoId} iframe` ).boundingBox();
+		const videoIframeHeight = await editor.getPreviewFrame().locator( `.elementor-element-${ videoId } iframe` ).boundingBox();
 		expect( columnHeight.height ).toEqual( videoIframeHeight.height );
 	} );
 } );

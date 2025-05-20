@@ -79,5 +79,5 @@ async function assertLightboxStyling( editor: EditorPage, context: Page | Frame,
 	await context.locator( '.swiper-slide-active img[data-title="B"]' ).waitFor();
 
 	await expect( context.locator( '.elementor-lightbox' ) )
-		.toHaveScreenshot( `gallery-lightbox-swiper${suffix}.png` );
+		.toHaveScreenshot( `gallery-lightbox-swiper${ suffix }.png` );
 }
