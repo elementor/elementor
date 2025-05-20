@@ -150,7 +150,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		// Assert
 		$css = $css_file->get_content();
 
-		$this->assertEquals( '@media(max-width:767px){.elementor .g-4-123{color:pink;}}.elementor .g-4-124{color:blue;}', $css );
+		$this->assertEquals( '@media(max-width:767px){.elementor .pinky{color:pink;}}.elementor .bluey{color:blue;}', $css );
 	}
 
 	public function test_it__does_not_parse_global_classes_to_css_file_if_no_classes() {
@@ -227,8 +227,8 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		);
 
 		// Assert.
-		$this->assert_css_contains( '.elementor .g-4-123{color:pink;}' );
-		$this->assert_css_contains( '.elementor .g-4-124{color:blue;}' );
+		$this->assert_css_contains( '.elementor .pinky{color:pink;}' );
+		$this->assert_css_contains( '.elementor .bluey{color:blue;}' );
 
 		// Arrange.
 		$updated_classes = $this->mock_global_classes['items'];
@@ -242,15 +242,16 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		// Add a new class.
 		$updated_classes['g-4-125'] = $this->mock_global_classes['items']['g-4-123'];
 		$updated_classes['g-4-125']['id'] = 'g-4-125';
+		$updated_classes['g-4-125']['label'] = 'newy';
 		$updated_classes['g-4-125']['variants'][0]['props']['color']['value'] = 'pink';
 
 		// Act.
 		Global_Classes_Repository::make()->put( $updated_classes, [ 'g-4-123', 'g-4-125' ] );
 
 		// Assert.
-		$this->assert_css_contains( '.elementor .g-4-123{color:red;}' );
-		$this->assert_css_not_contains( '.elementor .g-4-124{color:blue;}' );
-		$this->assert_css_contains( '.elementor .g-4-125{color:pink;}' );
+		$this->assert_css_contains( '.elementor .pinky{color:red;}' );
+		$this->assert_css_not_contains( '.elementor .bluey{color:blue;}' );
+		$this->assert_css_contains( '.elementor .newy{color:pink;}' );
 	}
 
 	public function test__enqueues_fonts() {
