@@ -79,7 +79,7 @@ class Variables_Repository {
 		return true;
 	}
 
-	public function delete( string $id ): bool | int {
+	public function delete( string $id ): bool {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
 
@@ -95,7 +95,7 @@ class Variables_Repository {
 		return $this->save( $meta_data );
 	}
 
-	public function restore( string $id ): bool|int {
+	public function restore( string $id ): bool {
 		$meta_data = $this->all();
 		$data = $meta_data['data'];
 
