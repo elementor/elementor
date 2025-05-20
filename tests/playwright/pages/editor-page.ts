@@ -350,7 +350,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
+	async openV2PanelTab( sectionName: 'size' | 'style' | 'general' ): Promise<void> {
 		const selectorMap: Record< 'style' | 'general', string > = {
 			style: 'style',
 			general: 'settings',
