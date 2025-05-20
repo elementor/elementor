@@ -7,15 +7,22 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 	test.describe( 'Experiment Breakpoints: Off', () => {
 		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 			const context = await browser.newContext();
-
 			const page = await context.newPage();
-
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				additional_custom_breakpoints: false,
 				container: false,
 			} );
 		} );
+
+		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+			const context = await browser.newContext();
+			const page = await context.newPage();
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.resetExperiments();
+			await page.close();
+		} );
+
 		for ( const testDevice of Breakpoints.getBasic() ) {
 			if ( 'desktop' === testDevice ) {
 				continue;
@@ -37,7 +44,6 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 			const context = await browser.newContext();
 			const page = await context.newPage();
-
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( {
 				additional_custom_breakpoints: true,
@@ -49,7 +55,6 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 			const context = await browser.newContext();
 			const page = await context.newPage();
-
 			const reverseColumns = new ReverseColumns( page, testInfo, apiRequests );
 			await reverseColumns.resetAdditionalBreakpoints();
 		} );
