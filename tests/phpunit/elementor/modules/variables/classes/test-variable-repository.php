@@ -69,7 +69,26 @@ class Test_Variables_Repository extends TestCase {
         $result = $this->repository->all();
 
 	    // Assert.
-	    $expected = $data;
+	    $expected = [
+		    'data' => [
+			    'e-123' => [
+				    'label' => 'Primary',
+				    'value' => '#000000',
+				    'type' => Color_Variable_Prop_Type::get_key(),
+			    ],
+			    'e-498' => [
+				    'label' => 'Primary',
+				    'value' => '#000000',
+				    'type' => Color_Variable_Prop_Type::get_key(),
+			    ],
+			    'e-456' => [
+				    'label' => 'Primary Font',
+				    'value' => 'Robotto',
+				    'type' => Font_Variable_Prop_Type::get_key(),
+			    ],
+		    ],
+		    'watermark' => 5,
+	    ];
 
         $this->assertEquals( $expected, $result );
     }
