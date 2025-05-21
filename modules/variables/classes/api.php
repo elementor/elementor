@@ -25,7 +25,7 @@ class Api {
 	public function get_variables() {
 		try {
 			return $this->list_of_variables();
-		} catch ( \Exception $e ) {
+		} catch ( Exception $e ) {
 			return $this->error_response( $e );
 		}
 	}
@@ -38,9 +38,10 @@ class Api {
 		], 200 );
 	}
 
-	private function error_response( \Exception $e ) {
+	private function error_response( Exception $e ) {
 		return new WP_REST_Response( [
-			'message' => $e->getMessage(),
+			'message' => 'Unexpected server error',
+			'details' => $e->getMessage(),
 		], 500 );
 	}
 }
