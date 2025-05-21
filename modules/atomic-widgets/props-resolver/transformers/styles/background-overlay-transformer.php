@@ -24,7 +24,7 @@ class Background_Overlay_Transformer extends Transformer_Base {
 	}
 
 	private function normalize_overlay_values( $overlays ): array {
-		return array_filter( array_map( function( $value ) {
+		$mapped_values = array_map( function( $value ) {
 			if ( is_string( $value ) ) {
 				return [
 					'src' => $value,
@@ -36,7 +36,9 @@ class Background_Overlay_Transformer extends Transformer_Base {
 			}
 
 			return $value;
-		}, $overlays ), function( $value ) {;
+		}, $overlays );
+
+		return array_filter( $mapped_values, function( $value ) {
 			return is_array( $value ) && ! empty( $value['src'] );
 		} );
 	}
