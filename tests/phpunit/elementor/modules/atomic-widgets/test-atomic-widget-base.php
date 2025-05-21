@@ -521,7 +521,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			's-1234' => [
 				'id' => 's-1234',
 				'type' => 'class',
-				'label' => 'My Class',
+				'label' => 'my-class',
 				'variants' => [
 					[
 						'props' => [
@@ -645,7 +645,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -680,7 +680,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -758,7 +758,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'invalid-type',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
