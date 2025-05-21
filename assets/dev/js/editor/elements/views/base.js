@@ -294,7 +294,7 @@ BaseElementView = BaseContainer.extend( {
 		$overlayList[ 0 ].style.display = 'none';
 
 		// JS Hack to force browser element rerender
-		void( $overlayList[ 0 ].offsetHeight );
+		void ( $overlayList[ 0 ].offsetHeight );
 
 		if ( isHaveOverflow ) {
 			$overlayList.addClass( 'elementor-editor-element-settings-overlay' );
