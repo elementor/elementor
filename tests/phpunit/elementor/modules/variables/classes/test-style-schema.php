@@ -41,7 +41,12 @@ class Test_Style_Schema extends TestCase {
 		$schema = $this->style_schema()->augment( $style_def );
 
 		// Assert.
-		$this->assertSchemaIsEqual( $schema, $style_def );
+		$expected = [
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+		];
+
+		$this->assertSchemaIsEqual( $schema, $expected );
 	}
 
 	public function test_augment__will_convert_color_prop_type() {
