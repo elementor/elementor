@@ -147,7 +147,7 @@ class Variables_Repository {
 
 		$db_record['watermark']++;
 
-		return (bool) $this->kit->update_json_meta( self::VARIABLES_META_KEY, $db_record );
+		return (bool) $this->kit->update_json_meta( static::VARIABLES_META_KEY, $db_record );
 	}
 
 	private function new_id_for( array $list_of_variables ): string {
