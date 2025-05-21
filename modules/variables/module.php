@@ -46,7 +46,8 @@ class Module extends BaseModule {
 			->register_packages()
 			->filter_for_style_schema()
 			->register_css_renderer()
-			->register_fonts();
+			->register_fonts()
+			->register_api_endpoints();
 	}
 
 	private function is_experiment_active(): bool {
