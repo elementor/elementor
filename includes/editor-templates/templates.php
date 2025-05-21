@@ -10,16 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<?php if ( User::is_current_user_can_upload_json() ) { ?>
 		<div id="elementor-template-library-header-import" class="elementor-templates-modal__header__item">
-			<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
+			<i class="eicon-upload-circle-o" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Import Template', 'elementor' ); ?></span>
 		</div>
 	<?php } ?>
 	<div id="elementor-template-library-header-sync" class="elementor-templates-modal__header__item">
-		<i class="eicon-sync" aria-hidden="true" title="<?php esc_attr_e( 'Sync Library', 'elementor' ); ?>"></i>
+		<i class="eicon-sync" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Sync Library', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-save" class="elementor-templates-modal__header__item">
-		<i class="eicon-save-o" aria-hidden="true" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>"></i>
+		<i class="eicon-save-o" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
 	</div>
 </script>
@@ -134,16 +134,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<# if ( 'cloud' === activeSource ) { #>
 					<div id="elementor-template-library-add-new-folder" class="elementor-template-library-action-item">
-						<i class="eicon-folder-plus" aria-hidden="true" title="<?php esc_attr_e( 'Create a New Folder', 'elementor' ); ?>"></i>
+						<i class="eicon-folder-plus" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Create a New Folder', 'elementor' ); ?></span>
 					</div>
 					<span class="divider"></span>
 					<div id="elementor-template-library-view-grid" class="elementor-template-library-action-item">
-						<i class="eicon-library-grid" aria-hidden="true" title="<?php esc_attr_e( 'Grid View', 'elementor' ); ?>"></i>
+						<i class="eicon-library-grid" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Grid view', 'elementor' ); ?></span>
 					</div>
 					<div id="elementor-template-library-view-list" class="elementor-template-library-action-item">
-						<i class="eicon-library-list" aria-hidden="true" title="<?php esc_attr_e( 'List View', 'elementor' ); ?>"></i>
+						<i class="eicon-library-list" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'List view', 'elementor' ); ?></span>
 					</div>
 				<# } #>

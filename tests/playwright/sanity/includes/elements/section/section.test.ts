@@ -1,17 +1,23 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
-import ContextMenu from '../pages/widgets/context-menu';
-import widgets from '../enums/widgets';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
+import ContextMenu from '../../../../pages/widgets/context-menu';
+import widgets from '../../../../enums/widgets';
 
 test.describe( 'Section tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		await wpAdmin.setExperiments( { container: false } );
+		await page.close();
+	} );
+
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
