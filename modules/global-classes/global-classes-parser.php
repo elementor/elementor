@@ -3,9 +3,11 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Plugin;
 
 class Global_Classes_Parser {
 	public static function make() {
@@ -68,6 +70,7 @@ class Global_Classes_Parser {
 		$sanitized_items = [];
 		$result = Parse_Result::make();
 		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$existing_labels = [];
 
 		foreach ( $items as $item_id => $item ) {
 			$item_result = $style_parser->parse( $item );
@@ -86,7 +89,16 @@ class Global_Classes_Parser {
 				continue;
 			}
 
+			if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+				if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
+					$result->errors()->add( "$item_id.id", 'duplicated_class_label' );
+
+					continue;
+				}
+			}
+
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
+			$existing_labels[] = $sanitized_item['label'];
 		}
 
 		return $result->wrap( $sanitized_items );

@@ -6,6 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Plugin;
+
 class Style_Parser {
 	const VALID_TYPES = [
 		'class',
@@ -46,6 +49,12 @@ class Style_Parser {
 
 		if ( ! isset( $style['label'] ) || ! is_string( $style['label'] ) ) {
 			$result->errors()->add( 'label', 'missing_or_invalid' );
+		} elseif ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+			$label_validation = $this->validate_style_label( $style['label'] );
+
+			if ( ! $label_validation['is_valid'] ) {
+				$result->errors()->add( 'label', $label_validation['error_message'] );
+			}
 		}
 
 		if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
@@ -81,6 +90,69 @@ class Style_Parser {
 		}
 
 		return $result->wrap( $validated_style );
+	}
+
+	private function validate_style_label( string $label ): array {
+		$label = strtolower( $label );
+
+		$reserved_class_names = [ 'container' ];
+
+		if ( strlen( $label ) > 50 ) {
+			return [
+				'is_valid' => false,
+				'error_message' => 'class_name_too_long',
+			];
+		}
+
+		if ( strlen( $label ) < 2 ) {
+			return [
+				'is_valid' => false,
+				'error_message' => 'class_name_too_short',
+			];
+		}
+
+		if ( in_array( $label, $reserved_class_names, true ) ) {
+			return [
+				'is_valid' => false,
+				'error_message' => 'reserved_class_name',
+			];
+		}
+
+		$regexes = [
+			[
+				'pattern' => '/^(|[^0-9].*)$/',
+				'message' => 'class_name_starts_with_digit',
+			],
+			[
+				'pattern' => '/^\S*$/',
+				'message' => 'class_name_contains_spaces',
+			],
+			[
+				'pattern' => '/^(|[a-zA-Z0-9_-]+)$/',
+				'message' => 'class_name_invalid_chars',
+			],
+			[
+				'pattern' => '/^(?!--).*/',
+				'message' => 'class_name_double_hyphen',
+			],
+			[
+				'pattern' => '/^(?!-[0-9])/',
+				'message' => 'class_name_starts_with_hyphen_digit',
+			],
+		];
+
+		foreach ( $regexes as $rule ) {
+			if ( ! preg_match( $rule['pattern'], $label ) ) {
+				return [
+					'is_valid' => false,
+					'error_message' => $rule['message'],
+				];
+			}
+		}
+		return [
+			'is_valid' => true,
+			'error_message' => null,
+		];
 	}
 
 	private function validate_meta( $meta ): Parse_Result {
