@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Variables_Repository {
+	const FORMAT_VERSION_V1 = 1;
 	const VARIABLES_META_KEY = '_elementor_global_variables';
 
 	private Kit $kit;
@@ -20,12 +21,11 @@ class Variables_Repository {
 		$this->kit = $kit;
 	}
 
-	public function all(): array {
-		$meta_key = $this->get_meta_key();
-		$meta_data = $this->kit->get_json_meta( $meta_key );
+	public function load(): array {
+		$db_record = $this->kit->get_json_meta( static::VARIABLES_META_KEY );
 
-		if ( is_array( $meta_data ) && ! empty( $meta_data ) ) {
-			return $meta_data;
+		if ( is_array( $db_record ) && ! empty( $db_record ) ) {
+			return $db_record;
 		}
 
 		return $this->get_default_meta();
@@ -35,20 +35,23 @@ class Variables_Repository {
 	 * @throws Exception
 	 */
 	public function create( array $payload ): string {
-		$meta_data = $this->all();
-		$data = $meta_data['data'];
+		$db_record = $this->load();
 
-		$existing_ids = array_keys( $data );
+		$list_of_variables = $db_record['data'] ?? [];
 
-		$id = $this->generate_id( $existing_ids );
+		$id = $this->new_id_for( $list_of_variables );
 
-		$data[ $id ] = $this->only_from_array( $payload, [ 'type', 'label', 'value' ] );
+		$list_of_variables[ $id ] = $this->extract_from( $payload, [
+			'type',
+			'label',
+			'value',
+		] );
 
-		$meta_data['data'] = $data;
+		$db_record['data'] = $list_of_variables;
 
-		$saved = $this->save( $meta_data );
+		$result = $this->save( $db_record );
 
-		if ( ! $saved ) {
+		if ( ! $result ) {
 			throw new Exception( 'Failed to create variable' );
 		}
 
@@ -59,23 +62,27 @@ class Variables_Repository {
 	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
-	public function update( array $payload, string $id ) {
-		$meta_data = $this->all();
-		$data = $meta_data['data'];
+	public function update( string $id, array $payload ) {
+		$db_record = $this->load();
 
-		if ( ! isset( $data[ $id ] ) ) {
+		$list_of_variables = $db_record['data'] ?? [];
+
+		if ( ! isset( $list_of_variables[ $id ] ) ) {
 			throw new InvalidArgumentException( 'Variable id does not exist' );
 		}
 
-		$variable = $this->only_from_array( $payload, [ 'label', 'value' ] );
+		$variable = $this->extract_from( $payload, [
+			'label',
+			'value',
+		] );
 
-		$data[ $id ] = array_merge( $data[ $id ], $variable );
+		$list_of_variables[ $id ] = array_merge( $list_of_variables[ $id ], $variable );
 
-		$meta_data['data'] = $data;
+		$db_record['data'] = $list_of_variables;
 
-		$value = $this->save( $meta_data );
+		$result = $this->save( $db_record );
 
-		if ( ! $value ) {
+		if ( ! $result ) {
 			throw new Exception( 'Failed to update variable' );
 		}
 	}
@@ -85,21 +92,22 @@ class Variables_Repository {
 	 * @throws Exception
 	 */
 	public function delete( string $id ) {
-		$meta_data = $this->all();
-		$data = $meta_data['data'];
+		$db_record = $this->load();
 
-		if ( ! isset( $data[ $id ] ) ) {
+		$list_of_variables = $db_record['data'] ?? [];
+
+		if ( ! isset( $list_of_variables[ $id ] ) ) {
 			throw new InvalidArgumentException( 'Variable id does not exist' );
 		}
 
-		$data[ $id ]['deleted'] = true;
-		$data[ $id ]['deleted_at'] = gmdate( 'Y-m-d H:i:s' );
+		$list_of_variables[ $id ]['deleted'] = true;
+		$list_of_variables[ $id ]['deleted_at'] = $this->now();
 
-		$meta_data['data'] = $data;
+		$db_record['data'] = $list_of_variables;
 
-		$value = $this->save( $meta_data );
+		$result = $this->save( $db_record );
 
-		if ( ! $value ) {
+		if ( ! $result ) {
 			throw new Exception( 'Failed to delete variable' );
 		}
 	}
@@ -109,51 +117,56 @@ class Variables_Repository {
 	 * @throws Exception
 	 */
 	public function restore( string $id ) {
-		$meta_data = $this->all();
-		$data = $meta_data['data'];
+		$db_record = $this->load();
 
-		if ( ! isset( $data[ $id ] ) ) {
+		$list_of_variables = $db_record['data'] ?? [];
+
+		if ( ! isset( $list_of_variables[ $id ] ) ) {
 			throw new InvalidArgumentException( 'Variable id does not exist' );
 		}
 
-		$data[ $id ] = $this->only_from_array( $data[ $id ], [ 'label', 'value', 'type' ] );
+		$list_of_variables[ $id ] = $this->extract_from( $list_of_variables[ $id ], [
+			'label',
+			'value',
+			'type',
+		] );
 
-		$meta_data['data'] = $data;
+		$db_record['data'] = $list_of_variables;
 
-		$value = $this->save( $meta_data );
+		$result = $this->save( $db_record );
 
-		if ( ! $value ) {
-			throw new Exception( 'Failed to delete variable' );
+		if ( ! $result ) {
+			throw new Exception( 'Failed to restore variable' );
 		}
 	}
 
-	private function get_meta_key(): string {
-		return self::VARIABLES_META_KEY;
+	private function save( array $db_record ) {
+		if ( PHP_INT_MAX === $db_record['watermark'] ) {
+			$db_record['watermark'] = 0;
+		}
+
+		$db_record['watermark']++;
+
+		return (bool) $this->kit->update_json_meta( static::VARIABLES_META_KEY, $db_record );
+	}
+
+	private function new_id_for( array $list_of_variables ): string {
+		return Utils::generate_id( 'e-gv-', array_keys( $list_of_variables ) );
+	}
+
+	private function now(): string {
+		return gmdate( 'Y-m-d H:i:s' );
+	}
+
+	private function extract_from( array $source, array $fields ): array {
+		return array_intersect_key( $source, array_flip( $fields ) );
 	}
 
 	private function get_default_meta(): array {
 		return [
 			'data' => [],
 			'watermark' => 0,
-			'version' => 1,
+			'version' => self::FORMAT_VERSION_V1,
 		];
-	}
-
-	private function save( array $data ) {
-		if ( PHP_INT_MAX === $data['watermark'] ) {
-			$data['watermark'] = 0;
-		}
-
-		$data['watermark']++;
-
-		return (bool) $this->kit->update_json_meta( $this->get_meta_key(), $data );
-	}
-
-	private function generate_id( array $existing_ids ): string {
-		return Utils::generate_id( 'e-', $existing_ids );
-	}
-
-	private function only_from_array( array $array, array $keys ): array {
-		return array_intersect_key( $array, array_flip( $keys ) );
 	}
 }
