@@ -37,7 +37,7 @@ class Background_Overlay_Transformer extends Transformer_Base {
 
 			return $value;
 		}, $overlays ), function( $value ) {;
-			return is_array( $value );
+			return is_array( $value ) && ! empty( $value['src'] );
 		} );
 	}
 
