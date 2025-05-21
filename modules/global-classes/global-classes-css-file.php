@@ -58,7 +58,13 @@ class Global_Classes_CSS_File extends Post_CSS {
 			}
 
 			$this->add_font( $value );
-		} )->render( $sorted_items->all() );
+		} )->render(
+			$sorted_items->map( function( $item ) {
+				$item['cssName'] = $item['label'];
+
+				return $item;
+			} )->all()
+		);
 
 		$this->get_stylesheet()->add_raw_css( $css );
 	}

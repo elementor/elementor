@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import EditorSelectors from '../selectors/editor-selectors';
-import WpAdminPage from '../pages/wp-admin-page';
+import { parallelTest as test } from '../../../../parallelTest';
+import EditorSelectors from '../../../../selectors/editor-selectors';
+import WpAdminPage from '../../../../pages/wp-admin-page';
 
 test.describe( 'Editor tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
