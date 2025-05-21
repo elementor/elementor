@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Api {
+class Rest_Api {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'variables';
 
@@ -31,9 +31,8 @@ class Api {
 	}
 
 	private function list_of_variables() {
-		$list_of_variables = ( new Variables() )->get_all();
 		return new WP_REST_Response( [
-			'list' => $list_of_variables,
+			'data' => ( new Variables() )->get_all(),
 			'watermark' => time(),
 		], 200 );
 	}
