@@ -37,6 +37,7 @@ class Styles_Renderer {
 	 *   array<int, array{
 	 *     id: string,
 	 *     type: string,
+	 *     cssName: string | null,
 	 *     variants: array<int, array{
 	 *         props: array<string, mixed>,
 	 *         meta: array<string, mixed>
@@ -96,11 +97,11 @@ class Styles_Renderer {
 			$style_def['id']
 		) {
 			$type = $map[ $style_def['type'] ];
-			$id = $style_def['id'];
+			$name = $style_def['cssName'] ?? $style_def['id'];
 
 			$selector_parts = array_filter( [
 				$this->selector_prefix,
-				"{$type}{$id}",
+				"{$type}{$name}",
 			] );
 
 			return implode( ' ', $selector_parts );
