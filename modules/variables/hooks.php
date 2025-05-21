@@ -20,7 +20,18 @@ class Hooks {
 		'editor-variables',
 	];
 
-	public function register_packages() {
+	public function register() {
+		$this->register_styles_transformers()
+			->register_packages()
+			->filter_for_style_schema()
+			->register_css_renderer()
+			->register_fonts()
+			->register_api_endpoints();
+
+		return $this;
+	}
+
+	private function register_packages() {
 		add_filter( 'elementor/editor/v2/packages', function ( $packages ) {
 			return array_merge( $packages, self::PACKAGES );
 		} );
@@ -28,7 +39,7 @@ class Hooks {
 		return $this;
 	}
 
-	public function register_styles_transformers() {
+	private function register_styles_transformers() {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			( new Style_Transformers() )->append_to( $registry );
 		} );
@@ -36,7 +47,7 @@ class Hooks {
 		return $this;
 	}
 
-	public function filter_for_style_schema() {
+	private function filter_for_style_schema() {
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
 			return ( new Style_Schema() )->augment( $schema );
 		} );
@@ -44,7 +55,7 @@ class Hooks {
 		return $this;
 	}
 
-	public function register_css_renderer() {
+	private function register_css_renderer() {
 		add_action( 'elementor/css-file/post/parse', function ( Post_CSS $post_css ) {
 			if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
 				return;
@@ -58,7 +69,7 @@ class Hooks {
 		return $this;
 	}
 
-	public function register_fonts() {
+	private function register_fonts() {
 		add_action( 'elementor/css-file/post/parse', function ( $post_css ) {
 			( new Fonts() )->append_to( $post_css );
 		} );
@@ -66,7 +77,7 @@ class Hooks {
 		return $this;
 	}
 
-	public function register_api_endpoints() {
+	private function register_api_endpoints() {
 		add_action( 'rest_api_init', function () {
 			( new Variables_API() )->register_routes();
 		} );
