@@ -285,17 +285,16 @@ BaseElementView = BaseContainer.extend( {
 			elementType = this.$el.data( 'element_type' ),
 			overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ],
 			isHaveOverflow = overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' ),
-			isContainer = getAllElementTypes().includes( elementType );
+			isElement = getAllElementTypes().includes( elementType );
 
-		if ( ! $overlayList?.length || ! isContainer ) {
+		if ( ! $overlayList?.length || ! isElement ) {
 			return;
 		}
 
 		$overlayList[ 0 ].style.display = 'none';
 
 		// JS Hack to force browser element rerender
-		// eslint-disable-next-line no-unused-expressions
-		$overlayList[ 0 ].offsetHeight;
+		void( $overlayList[ 0 ].offsetHeight );
 
 		if ( isHaveOverflow ) {
 			$overlayList.addClass( 'elementor-editor-element-settings-overlay' );
