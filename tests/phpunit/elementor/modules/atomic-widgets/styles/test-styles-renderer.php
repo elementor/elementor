@@ -368,6 +368,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'value' => [
 													'color' => 'blue',
 												],
+												'disabled' => true,
+											], // this should not be rendered due to `disabled` => true
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => [
+													'color' => 'blue',
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
