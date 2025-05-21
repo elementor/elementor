@@ -151,7 +151,7 @@ class Variables_Repository {
 	}
 
 	private function new_id_for( array $list_of_variables ): string {
-		return Utils::generate_id( 'e-agv-', array_keys( $list_of_variables ) );
+		return Utils::generate_id( 'e-gv-', array_keys( $list_of_variables ) );
 	}
 
 	private function now(): string {
