@@ -122,6 +122,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/core/files/clear_cache' );
 		remove_all_actions( 'elementor/frontend/after_enqueue_styles' );
 		remove_all_actions( 'elementor/core/files/after_generate_css' );
+		remove_all_actions( 'elementor/atomic-widgets/settings/transformers/classes' );
 
 		( new Global_Classes_CSS() )->register_hooks();
 	}
@@ -149,7 +150,7 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		// Assert
 		$css = $css_file->get_content();
 
-		$this->assertEquals( '@media(max-width:767px){.elementor .g-4-123{color:pink;}}.elementor .g-4-124{color:blue;}', $css );
+		$this->assertEquals( '@media(max-width:767px){.elementor .pinky{color:pink;}}.elementor .bluey{color:blue;}', $css );
 	}
 
 	public function test_it__does_not_parse_global_classes_to_css_file_if_no_classes() {
@@ -226,8 +227,8 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		);
 
 		// Assert.
-		$this->assert_css_contains( '.elementor .g-4-123{color:pink;}' );
-		$this->assert_css_contains( '.elementor .g-4-124{color:blue;}' );
+		$this->assert_css_contains( '.elementor .pinky{color:pink;}' );
+		$this->assert_css_contains( '.elementor .bluey{color:blue;}' );
 
 		// Arrange.
 		$updated_classes = $this->mock_global_classes['items'];
@@ -241,15 +242,16 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		// Add a new class.
 		$updated_classes['g-4-125'] = $this->mock_global_classes['items']['g-4-123'];
 		$updated_classes['g-4-125']['id'] = 'g-4-125';
+		$updated_classes['g-4-125']['label'] = 'newy';
 		$updated_classes['g-4-125']['variants'][0]['props']['color']['value'] = 'pink';
 
 		// Act.
 		Global_Classes_Repository::make()->put( $updated_classes, [ 'g-4-123', 'g-4-125' ] );
 
 		// Assert.
-		$this->assert_css_contains( '.elementor .g-4-123{color:red;}' );
-		$this->assert_css_not_contains( '.elementor .g-4-124{color:blue;}' );
-		$this->assert_css_contains( '.elementor .g-4-125{color:pink;}' );
+		$this->assert_css_contains( '.elementor .pinky{color:red;}' );
+		$this->assert_css_not_contains( '.elementor .bluey{color:blue;}' );
+		$this->assert_css_contains( '.elementor .newy{color:pink;}' );
 	}
 
 	public function test__enqueues_fonts() {
@@ -377,6 +379,55 @@ class Test_Global_Classes_CSS extends Elementor_Test_Base {
 		$css_path = ( new Global_Classes_CSS_File() )->get_path();
 
 		$this->assertFileExists( $css_path );
+	}
+
+	public function test_transform_classes_names() {
+		// Arrange.
+		Global_Classes_Repository::make()->put(
+			[
+				'g-2' => [ 'id' => 'g-2', 'label' => 'pinky' ],
+				'g-3' => [ 'id' => 'g-3', 'label' => 'bluey' ],
+			],
+			[],
+		);
+
+		// Act.
+		$result = apply_filters( 'elementor/atomic-widgets/settings/transformers/classes', [ 'e-1', 'g-2', 'g-3', 'd-1' ] );
+
+		// Assert.
+		$this->assertEquals( [ 'e-1', 'pinky', 'bluey', 'd-1' ], $result );
+	}
+
+	public function test_transform_classes_names__for_preview_mode() {
+		// Arrange.
+		global $wp_query;
+
+		$wp_query->is_preview = true;
+
+		Global_Classes_Repository::make()->put(
+			[
+				'g-only-frontend' => [ 'id' => 'g-only-frontend', 'label' => 'frontend' ],
+				'g-both' => [ 'id' => 'g-both', 'label' => 'both' ],
+			],
+			[],
+		);
+
+		Global_Classes_Repository::make()->context( Global_Classes_Repository::CONTEXT_PREVIEW )->put(
+			[
+				'g-both' => [ 'id' => 'g-both', 'label' => 'both' ],
+				'g-only-preview' => [ 'id' => 'g-only-preview', 'label' => 'preview' ],
+			],
+			[],
+		);
+
+		// Act.
+		$result = apply_filters(
+			'elementor/atomic-widgets/settings/transformers/classes',
+			[ 'g-only-frontend', 'g-both', 'g-only-preview' ]
+		);
+
+		// Assert.
+		$this->assertEquals( [ 'g-only-frontend', 'both', 'preview' ], $result );
 	}
 
 	private function assert_css_contains( string $substring, bool $contains = true ) {
