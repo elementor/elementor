@@ -36,6 +36,27 @@ const DivBlockView = BaseElementView.extend( {
 		return ui;
 	},
 
+	attributes() {
+		const attr = BaseElementView.prototype.attributes.apply( this );
+		const local = {};
+		const cssId = this.model.getSetting( 'cssid' );
+
+		if ( cssId ) {
+			local.id = cssId.value;
+		}
+
+		const href = this.getHref();
+
+		if ( href ) {
+			local.href = href;
+		}
+
+		return {
+			...attr,
+			...local,
+		};
+	},
+
 	// TODO: Copied from `views/column.js`.
 	attachElContent() {
 		BaseElementView.prototype.attachElContent.apply( this, arguments );
@@ -80,6 +101,16 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
+		if ( changed.cssid ) {
+			if ( changed.cssid.value ) {
+				this.$el.attr( 'id', changed.cssid.value );
+			} else {
+				this.$el.removeAttr( 'id' );
+			}
+
+			return;
+		}
+
 		this.$el.addClass( this.getClasses() );
 
 		if ( this.isTagChanged( changed ) ) {
@@ -99,22 +130,11 @@ const DivBlockView = BaseElementView.extend( {
 
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
-		this.handleLink();
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
 		} );
-	},
-
-	handleLink() {
-		const href = this.getHref();
-
-		if ( ! href ) {
-			return;
-		}
-
-		this.$el.attr( 'href', href );
 	},
 
 	haveLink() {

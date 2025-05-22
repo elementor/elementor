@@ -11,7 +11,6 @@ use Elementor\Tracker;
 use Elementor\User;
 use Elementor\Utils;
 use Elementor\Core\Admin\Notices\Base_Notice;
-use Elementor\Core\Admin\Notices\Elementor_Dev_Notice;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,10 +39,6 @@ class Admin_Notices extends Module {
 	private $current_screen_id = null;
 
 	private function get_notices() {
-		$notices = [
-			new Elementor_Dev_Notice(),
-		];
-
 		/**
 		 * Admin notices.
 		 *
@@ -54,7 +49,7 @@ class Admin_Notices extends Module {
 		 *
 		 * @param array $notices A list of notice classes.
 		 */
-		$notices = apply_filters( 'elementor/core/admin/notices', $notices );
+		$notices = apply_filters( 'elementor/core/admin/notices', [] );
 
 		return $notices;
 	}

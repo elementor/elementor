@@ -42,7 +42,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Element Caching', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Elements caching reduces loading times by serving up a copy of an element instead of rendering it fresh every time the page is loaded. When active, Elementor will determine which elements can benefit from static loading - but you can override this.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
+			'release_status' => ExperimentsManager::RELEASE_STATUS_STABLE,
 			'default' => ExperimentsManager::STATE_INACTIVE,
 			'new_site' => [
 				'default_active' => true,
@@ -63,8 +63,6 @@ class Module extends BaseModule {
 			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
 				return '';
 			}
-
-			$widget_data['settings']['isShortcode'] = true;
 
 			ob_start();
 

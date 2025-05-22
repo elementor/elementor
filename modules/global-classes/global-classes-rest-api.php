@@ -64,6 +64,28 @@ class Global_Classes_REST_API {
 							Global_Classes_Repository::CONTEXT_PREVIEW,
 						],
 					],
+					'changes' => [
+						'type' => 'object',
+						'required' => true,
+						'additionalProperties' => false,
+						'properties' => [
+							'added' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
+							'deleted' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
+							'modified' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
+						],
+					],
 					'items' => [
 						'required' => true,
 						'type' => 'object',
@@ -150,11 +172,17 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		$context = $request->get_param( 'context' );
+		$repository = $this->get_repository()
+			->context( $request->get_param( 'context' ) );
 
-		$this->get_repository()->context( $context )->put(
-			$items_result->unwrap(),
-			$order_result->unwrap(),
+		$changes_resolver = Global_Classes_Changes_Resolver::make(
+			$repository,
+			$request->get_param( 'changes' ) ?? [],
+		);
+
+		$repository->put(
+			$changes_resolver->resolve_items( $items_result->unwrap() ),
+			$changes_resolver->resolve_order( $order_result->unwrap() ),
 		);
 
 		return Response_Builder::make()->no_content()->build();

@@ -110,7 +110,12 @@ trait Has_Atomic_Base {
 	}
 
 	public function get_atomic_controls() {
-		$controls = $this->define_atomic_controls();
+		$controls = apply_filters(
+			'elementor/atomic-widgets/controls',
+			$this->define_atomic_controls(),
+			$this
+		);
+
 		$schema = static::get_props_schema();
 
 		// Validate the schema only in the Editor.

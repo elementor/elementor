@@ -14,14 +14,12 @@ use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
 use Elementor\Core\Utils\Isolation_Manager;
-use Elementor\Modules\EditorAppBar\Module as AppBarModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule implements Checklist_Module_Interface {
-	const EXPERIMENT_ID = 'launchpad-checklist';
 	const DB_OPTION_KEY = 'elementor_checklist';
 	const VISIBILITY_SWITCH_ID = 'show_launchpad_checklist';
 	const FIRST_CLOSED_CHECKLIST_IN_EDITOR = 'first_closed_checklist_in_editor';
@@ -51,10 +49,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		parent::__construct();
 		$this->init_user_progress();
 
-		if ( ! $this->is_experiment_active() ) {
-			return;
-		}
-
 		Plugin::$instance->data_manager_v2->register_controller( new Controller() );
 		$this->user_progress = $this->user_progress ?? $this->get_user_progress_from_db();
 		$this->handle_checklist_visibility_with_kit();
@@ -74,15 +68,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	 */
 	public function get_name(): string {
 		return 'e-checklist';
-	}
-
-	/**
-	 * Checks if the experiment is active
-	 *
-	 * @return bool
-	 */
-	public function is_experiment_active(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID );
 	}
 
 	/**
@@ -218,20 +203,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		return ! $this->elementor_adapter->is_active_kit_default() && ! $this->user_progress[ self::LAST_OPENED_TIMESTAMP ] && ! $this->elementor_adapter->get_count( Elementor_Counter::EDITOR_COUNTER_KEY );
 	}
 
-	public static function get_experimental_data(): array {
-		return [
-			'name' => self::EXPERIMENT_ID,
-			'title' => esc_html__( 'Launchpad Checklist', 'elementor' ),
-			'description' => esc_html__( 'Launchpad Checklist feature to boost productivity and deliver your site faster', 'elementor' ),
-			'release_status' => Manager::RELEASE_STATUS_STABLE,
-			'hidden' => true,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.25.0',
-			],
-		];
-	}
-
 	private function init_user_progress(): void {
 		$default_settings = $this->get_default_user_progress();
 
@@ -270,8 +241,6 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 	}
 
 	public static function should_display_checklist_toggle_control(): bool {
-		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_ID ) &&
-			Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) &&
-			current_user_can( 'manage_options' );
+		return current_user_can( 'manage_options' );
 	}
 }
