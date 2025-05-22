@@ -3,6 +3,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Repeatable_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
@@ -55,6 +56,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'repeater' => String_Prop_Type::make()
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
@@ -105,7 +108,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
 			] ),
+			Repeatable_Control::bind_to('repeater')
+			->set_label( __( 'Repeater', 'elementor' ) )
+			->set_control_Type ( 'TextControl' ),
 		];
+
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
 			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
