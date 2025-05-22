@@ -3,102 +3,115 @@ body:
     - type: markdown
       attributes:
           value: |
-              **👋 Hello, welcome to Elementor Feature Requests!**
-              # ⚠️ BEFORE POSTING READ THIS CAREFULLY
-              ## 🚀 Please only use this form to request an Elementor feature or enhancement.
-              **🚩 Check our [Roadmap](https://elemn.to/gh-to-roadmap) to learn what's in the pipeline.**
-              ### 🛟 Need Help, Guidance, Assistance, or Support? <br>[Click here to get support](https://elemn.to/support-ticket).
-              ### 🐞 Need to Report an Elementor Bug? <br>[Click here to report a bug](https://elemn.to/gh-new-bug-report).
-
-              **ℹ️ For more information, please read our [Contribution Guidelines](https://elemn.to/gh-contributing).**
+              # 🚀 Request a Feature or Enhancement in Elementor
               <br>
 
-              ### 😉 Follow these best practices to help save time
-              - ✒️ **Write a Clear and Concise Title** <br>Summarize your title in a short sentence that can help identify your request at a glance without needing to read the description.
-              - ☝️ **One Request Per Thread** <br>If you have multiple requests, please submit only **<ins>ONE REQUEST PER THREAD</ins>**. <br>Requests with more than one subject may be closed without action.
+              👋 **Hello, and thank you for helping shape the future of Elementor!**
+
+              Use this form to suggest new features or enhancements that could improve Elementor.
+
+              ## 🧭 Guidelines
+
+              Before getting started, please take a moment to review our **[Contribution Guidelines](https://elemn.to/gh-contributing)** and **[Code of Conduct](https://elemn.to/gh-code-of-conduct)**. These help us keep this space organized, respectful, and inclusive for everyone.
               <br>
 
+              > [!IMPORTANT]
+              > ### 🚀 This form is specifically for <ins>requesting features or enhancements in Elementor</ins>.
+              > If you're experiencing a confirmed bug, and can reproduce it consistently after troubleshooting it, please use the **[🐞 Bug Report Form](https://elemn.to/gh-new-bug-report)** instead.
+              >
+              > For Personal Help, Assistance or Support, please use one of our **[🛟 Personal Support Channels](https://elemn.to/support-ticket)** instead.
+              >
+              > Before posting, make sure the feature doesn't already exist by checking the **[✔️ Features Page](https://elemn.to/features)** and our **[🚩 Roadmap](https://elemn.to/roadmap)**.
+              >
+              > ⚠️ _**Submitting unrelated or incomplete discussions may result in them being closed without further action.**_
 
-              ### ✳️ Fill-in all required fields!
-              - ❌ Requests lacking detail or submitted for any other reason than to suggest new ideas, features, or enhancements for the Elementor plugin may be closed without action.
-              <br>
+              <details>
+              <summary>
+              <h3>📋 Requirements</h3> <em>(click to expand)</em>
+              
+              To increase the chances of your request being selected for implementation, please ensure your Feature Request meets the following requirements.
+              </summary>
 
-              ---
-              <br>
+              - 🔍 **Search for similar Feature Requests before opening a new one.** <br>Avoid duplicates and save time by **[using the filters at the top of the Feature Requests list](https://elemn.to/gh-feature-requests)** to narrow your search.
 
-              ## THE REQUEST
-              ### 📋 Prerequisites
-              - 🔍 **Search Before Posting** <br>Before creating a new Feature Request, please [search for similar requests](https://elemn.to/gh-feature-requests) to prevent creating duplicates. 
-              - ✔️ **Confirm Before Posting** <br>Please check the [Elementor Features page](https://elemn.to/features) before posting to avoid requesting an existing feature.
-    - type: checkboxes
-      id: prerequisites
-      attributes:
-          label: "Prerequisites"
-          options:
-              - label: "I have searched for similar feature requests in both open and closed discussions and cannot find an existing request."
-                required: true
-              - label: "I have verified that the feature is still missing from the latest stable versions of Elementor or Elementor Pro."
-                required: true
-    - type: markdown
-      attributes:
-          value: |
-              <br>
+              - 🗳️ **Vote for existing Feature Requests.** <br>Instead of opening a new discussion or writing "+1", use the **Upvote** button to express your interest in suggested features. The most voted Feature Requests are more likely to be considered for implementation in future versions.
 
-              ### 💬 Provide a Detailed Description
-              - Please explain in detail what problem your idea is going to solve. (Required)
-              - Describe how you'd like a solution to be implemented. (Required)
-              - Give examples of alternative solutions you've considered.
-              - Add context to your suggestion by providing examples, screenshots, screen recordings, related links, and additional information.
+              - ☝️ **Only one request per discussion.** <br>Please don't bundle multiple Feature Requests in a single submission. This helps us track and prioritize features that the majority of users are interested. Discussions with bundled requests can't be considered for implementation.
+              </details>
+              <details>
+              <summary>
+              <h3>🎯 Scope</h3> <em>(click to expand)</em>
+              
+              To keep this repository focused and efficient, there are some types of discussions that we are unable to handle here. These discussions will be **closed without further action**.
+              </summary>
+
+              - 🛟 **Requests for personal support** <br>This includes help with setup, troubleshooting, or usage guidance. For that, please contact one of our **[official Support Channels](https://elemn.to/support-ticket)**.
+
+              - 🐞 **Bug Reports and conflicts** <br>If you're here to report issues with existing features in Elementor, please **[use our 🐞 Bug Report form instead](https://elemn.to/gh-new-bug-report)** <br>We're only able to address issues related to Elementor and Elementor Pro directly. If the problem occurs when using a plugin, theme, or integration that is not officially supported by Elementor, please reach out to the 3rd-party provider for assistance.
+
+              - 📚 **Questions about custom code or extending Elementor.** <br>We cannot provide assistance with writing or debugging custom code. If your goal is to extend Elementor, we recommend referring to our **[Developers Documentation](https://elemn.to/dev-docs)**.
+
+              - 🛡️ **Security and vulnerability disclosures.** <br>We take security seriously. Please use our managed **[Bug Bounty Programs](https://elemn.to/bug-bounty)** to responsibly report security issues.
+
+              - ☹️ **Complaints or offensive content.** <br>While we are open to feedback, this is not the appropriate place to submit complaints about Elementor's products or services. We also do not tolerate offensive, discriminatory, or hostile remarks. Please keep discussions respectful as outlined in our **[Code of Conduct](https://elemn.to/gh-code-of-conduct)**.
+
+              - ❌ **Incomplete, invalid, or out-of-scope discussions.** <br>Discussions without clear descriptions, or unrelated to Elementor or Elementor Pro feature suggestions will be closed without further action.
+              </details>
+
+              ## 📝 Instructions
+
+              To help us understand and consider your request, follow these best practices:
+
+              - ✒️ **Use a clear and descriptive title.** <br>A good title helps everyone quickly understand your suggestion and increases the chances of votes. Try to summarize the problem in a few words.
+
+              - 💬 **Describe the problem your feature would solve.** <br>What is the pain point or limitation this feature would improve?
+
+              - 💡 **Describe your proposed solution.** <br>How do you imagine it working?
+
+              - 🔄 **Optionally suggest alternatives or workarounds.** <br>If you've tried other approaches, share those too.
+
+              - 🖼️ **Attach screenshots or examples.** <br>Help us visualize your idea.
     - type: textarea
       id: the_problem
       validations:
           required: true
       attributes:
-          label: "What problem is your feature request going to solve? Please describe.."
-          description: "Help everyone understand in detail what problems you are trying to solve."
-          placeholder: "I'm always frustrated when ..."
+          label: "Describe the Problem"
+          description: "What problems are you experiencing? <br>Help everyone understand in detail what problems you encountered that could be solved by your suggestion."
+          placeholder: "Example: \nI'm always frustrated when ..."
+    - type: markdown
+      attributes:
+          value: |
+              <br>
     - type: textarea
       id: the_solution
       validations:
           required: true
       attributes:
-          label: "Describe the solution you'd like."
-          description: "Help everyone understand in a clear and concise description what you want to happen."
-          placeholder: "It would be nice if ..."
-    - type: textarea
-      id: alternatives
-      attributes:
-          label: "Describe alternatives you've considered."
-          description: "Give examples of any alternative solutions or features you've considered."
-          placeholder: "It can also be solved by ..."
-    - type: textarea
-      id: additional_context
-      attributes:
-          label: "Additional context"
-          description: "Add any other context, references, or illustrations about the feature request here."
-          placeholder: "Here's an example of ..."
+          label: "Propose a Solution"
+          description: "Help everyone understand in a clear and concise description what solution would you like to be implemented."
+          placeholder: "Example: \nIt would be nice if we could ..."
     - type: markdown
       attributes:
           value: |
               <br>
-
-              ### 📃 Agreement
-              - ⚠️ Please follow all the instructions above and fill in all the required fields with valid information. <br>We reserve the right to close requests that do not comply with these guidelines without any action.
+    - type: textarea
+      id: additional_context
+      attributes:
+          label: "Additional Context"
+          description: "Optional: Give examples of any alternative solutions or features you've considered, or share any other information you think should be relevant."
+          placeholder: "Examples: \nIt can also be solved by ... \nHere's an example of ... \nDrag and drop your attachments here:"
+    - type: markdown
+      attributes:
+          value: |
+              <br>
     - type: checkboxes
       id: final_agreement
       attributes:
           label: "Agreement"
+          description: "By submitting this request, you confirm that you have read and followed all the guidelines, requirements, scope, and instructions outlined above, and you agree your discussion may be closed without further action if it doesn't meet them."
           options:
-              - label: "I agree that my request may be closed without action if it doesn't meet all the requirements."
+              - label: "I confirm I have read and followed all the guidelines and instructions outlined in the Feature Request form."
                 required: true
-    - type: markdown
-      attributes:
-          value: |
-              <br>
-
-              ---
-              ### Thank you for contributing and helping shape the future of Elementor! 🙏
-
-              We are thrilled to receive your request, and we will consider adding it to our [Roadmap](https://elemn.to/gh-to-roadmap) if we see enough demand from other users.
-
-              _Please understand that due to the high volume of requests we receive and our commitment to continuous improvement, we can't guarantee that every suggestion will be implemented. We will, however, continue to monitor every submission. <br>Thank you for understanding!_
+              - label: "I agree that my discussion may be closed without further action if it doesn't meet all the requirements outlined in the Feature Request form."
+                required: true

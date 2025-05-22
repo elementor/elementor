@@ -212,7 +212,7 @@ class Control_Media extends Control_Base_Multiple {
 				<div class="{{{ inputWrapperClasses }}}">
 					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area">
 						<div class="elementor-control-media-area">
-							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+							<div class="elementor-control-media__remove elementor-control-media__content__remove" data-tooltip="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
 								<i class="eicon-trash-o" aria-hidden="true"></i>
 								<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 							</div>
@@ -276,11 +276,11 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 					<div class="elementor-control-media__file__controls">
-						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" data-tooltip="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
 							<i class="eicon-trash-o" aria-hidden="true"></i>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 						</div>
-						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" title="<?php echo esc_attr__( 'Upload', 'elementor' ); ?>">
+						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" data-tooltip="<?php echo esc_attr__( 'Upload', 'elementor' ); ?>">
 							<i class="eicon-upload" aria-hidden="true"></i>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Upload', 'elementor' ); ?></span>
 						</div>

@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 
 test( 'Icon widget sanity test', async ( { page, apiRequests }, testInfo ) => {
 	const getComputedStyle = async ( element, pseudo: string ) => page.evaluate( ( [ e, p ] ) => getComputedStyle( e, p ), [ element, pseudo ] );

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Import_Runner extends Elementor_Test_Base {
+class ç extends Elementor_Test_Base {
 
 	public function test_import() {
 		// Act.
@@ -24,7 +24,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 			'g-123' => [
 				'id' => 'g-123',
 				'type' => 'class',
-				'label' => 'Test',
+				'label' => 'Test1',
 				'variants' => [
 					[
 						'meta' => [
@@ -52,7 +52,7 @@ class Test_Import_Runner extends Elementor_Test_Base {
 			'g-456' => [
 				'id' => 'g-456',
 				'type' => 'class',
-				'label' => 'Test',
+				'label' => 'Test2',
 				"variants" => [],
 			],
 		];
