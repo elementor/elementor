@@ -22,6 +22,7 @@ class Module extends BaseModule {
 	const DOCUMENT_TYPE = 'landing-page';
 	const CPT = 'e-landing-page';
 	const ADMIN_PAGE_SLUG = 'edit.php?post_type=' . self::CPT;
+	const META_KEY = 'elementor_landing_pages_activation';
 
 	private $has_pages = null;
 	private $trashed_posts;
@@ -55,16 +56,16 @@ class Module extends BaseModule {
 	}
 
 	private function should_activate_landing_pages() {
-		if ( '1' === get_option( 'elementor_landing_pages_activation' ) ) {
+		if ( '1' === get_option( static::META_KEY ) ) {
 			return true;
 		}
 
 		if ( $this->has_landing_pages() ) {
-			update_option( 'elementor_landing_pages_activation', '1' );
+			update_option( static::META_KEY, '1' );
 			return true;
 		}
 
-		update_option( 'elementor_landing_pages_activation', '0' );
+		update_option( static::META_KEY, '0' );
 		return false;
 	}
 
