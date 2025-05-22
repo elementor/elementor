@@ -24,7 +24,7 @@ class Control_Visual_Choice extends Base_Data_Control {
 		<div class="elementor-control-field">
 			<label class="elementor-control-title">{{{ data.label }}}</label>
 			<div class="elementor-control-input-wrapper">
-				<div class="elementor-visual-choice-choices" style="--elementor-visual-choice-columns: {{ data.columns }};">
+				<div class="elementor-visual-choice-choices" style="--elementor-visual-choice-columns: {{ data.columns }}; --elementor-visual-choice-height: {{ data.height }};">
 
 					<# _.each( data.options, function( options, value ) { #>
 					<div class="elementor-visual-choice-element">
@@ -50,6 +50,7 @@ class Control_Visual_Choice extends Base_Data_Control {
 			'options' => [],
 			'toggle' => true,
 			'columns' => 1,
+			'height' => 'fit-content',
 		];
 	}
 }
