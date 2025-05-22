@@ -122,4 +122,31 @@ test.describe( 'Div Block tests @div-block', () => {
 			await expect( secondContainerHandles ).toHaveScreenshot( 'normal-handles.png' );
 		} );
 	} );
+	test( 'Verify that text stroke style do not apply to empty view and frame handle elements', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
+		await divBlock.waitFor();
+		const divBlockHandles = divBlock.locator( '.elementor-editor-element-settings' );
+		const divBlockEmptyView = divBlock.locator( '.elementor-empty-view' );
+
+		// Apply text stroke style to div block, no need to go through entire UI, just need to check styles are not passed to empty view and frame handle elements.
+		await divBlock.evaluate( ( el ) => {
+			el.style.stroke = 'red';
+			el.style.strokeWidth = '10px';
+		} );
+
+		await divBlockEmptyView.waitFor();
+
+		await divBlock.hover();
+
+		// Assert.
+		expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		expect( divBlockEmptyView ).toHaveCSS( 'strokeWidth', '0px' );
+		expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		expect( divBlockHandles ).toHaveCSS( 'strokeWidth', '0px' );
+	} );
 } );
