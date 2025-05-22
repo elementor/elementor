@@ -58,6 +58,7 @@ class Style_Schema {
 				'hidden',
 				'auto',
 			]),
+			'aspect-ratio' => String_Prop_Type::make(),
 			'object-fit' => String_Prop_Type::make()->enum([
 				'fill',
 				'cover',
