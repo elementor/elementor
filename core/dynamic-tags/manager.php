@@ -40,26 +40,12 @@ class Manager {
 	}
 
 	/**
-	 * Localize settings.
-	 *
-	 * Add new localized settings for the dynamic module.
-	 *
-	 * Fired by `elementor/editor/localize_settings` filter.
-	 *
-	 * @access public
-	 *
-	 * @param array $settings Localized settings.
-	 *
-	 * @return array Localized settings.
+	 * @deprecated 3.1.0
 	 */
-	public function localize_settings( $settings ) {
-		$settings = array_replace_recursive( $settings, [
-			'i18n' => [
-				'dynamic' => __( 'Dynamic', 'elementor' ),
-			],
-		] );
+	public function localize_settings() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
 
-		return $settings;
+		return [];
 	}
 
 	/**
@@ -120,7 +106,7 @@ class Manager {
 			return '';
 		}
 
-		return call_user_func_array( $parse_callback, $tag_data );
+		return call_user_func_array( $parse_callback, array_values( $tag_data ) );
 	}
 
 	/**
@@ -260,10 +246,29 @@ class Manager {
 			 * Fires when Elementor registers dynamic tags.
 			 *
 			 * @since 2.0.9
+			 * @deprecated 3.5.0 Use `elementor/dynamic_tags/register` hook instead.
 			 *
 			 * @param Manager $this Dynamic tags manager.
 			 */
-			do_action( 'elementor/dynamic_tags/register_tags', $this );
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->do_deprecated_action(
+				'elementor/dynamic_tags/register_tags',
+				[ $this ],
+				'3.5.0',
+				'elementor/dynamic_tags/register'
+			);
+		}
+
+		if ( ! did_action( 'elementor/dynamic_tags/register' ) ) {
+			/**
+			 * Register dynamic tags.
+			 *
+			 * Fires when Elementor registers dynamic tags.
+			 *
+			 * @since 3.5.0
+			 *
+			 * @param Manager $this Dynamic tags manager.
+			 */
+			do_action( 'elementor/dynamic_tags/register', $this );
 		}
 
 		return $this->tags_info;
@@ -272,26 +277,68 @@ class Manager {
 	/**
 	 * @since 2.0.0
 	 * @access public
+	 * @deprecated 3.5.0 Use `$this->register()` instead.
 	 *
 	 * @param string $class
 	 */
 	public function register_tag( $class ) {
-		/** @var Tag $tag */
-		$tag = new $class();
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'register'
+		);
 
-		$this->tags_info[ $tag->get_name() ] = [
-			'class' => $class,
-			'instance' => $tag,
+		/** @var Base_Tag $tag */
+		$instance = new $class();
+
+		$this->register( $instance );
+	}
+
+	/**
+	 * Register a new Dynamic Tag.
+	 *
+	 * @param Base_Tag $dynamic_tag_instance
+	 *
+	 * @return void
+	 * @since  3.5.0
+	 * @access public
+	 *
+	 */
+	public function register( Base_Tag $dynamic_tag_instance ) {
+		$this->tags_info[ $dynamic_tag_instance->get_name() ] = [
+			'class' => get_class( $dynamic_tag_instance ),
+			'instance' => $dynamic_tag_instance,
 		];
 	}
 
 	/**
 	 * @since 2.0.9
 	 * @access public
+	 * @deprecated 3.5.0 Use `$this->unregister()` instead.
 	 *
 	 * @param string $tag_name
 	 */
 	public function unregister_tag( $tag_name ) {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function(
+			__METHOD__,
+			'3.5.0',
+			'unregister'
+		);
+
+		$this->unregister( $tag_name );
+	}
+
+	/**
+	 * Unregister a dynamic tag.
+	 *
+	 * @since 3.5.0
+	 * @access public
+	 *
+	 * @param string $tag_name Dynamic Tag name to unregister.
+	 *
+	 * @return void
+	 */
+	public function unregister( $tag_name ) {
 		unset( $this->tags_info[ $tag_name ] );
 	}
 
@@ -434,16 +481,12 @@ class Manager {
 	 */
 	public function after_enqueue_post_css( $css_file ) {
 		$post_id = $css_file->get_post_id();
+		$should_enqueue = apply_filters( 'elementor/css-file/dynamic/should_enqueue', true, $post_id );
 
-		if ( $css_file instanceof Post_Preview ) {
-			$post_id_for_data = $css_file->get_preview_id();
-		} else {
-			$post_id_for_data = $post_id;
+		if ( $should_enqueue ) {
+			$css_file = Dynamic_CSS::create( $post_id, $css_file );
+			$css_file->enqueue();
 		}
-
-		$css_file = Dynamic_CSS::create( $post_id, $post_id_for_data );
-
-		$css_file->enqueue();
 	}
 
 	/**
@@ -461,6 +504,5 @@ class Manager {
 	private function add_actions() {
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
 		add_action( 'elementor/css-file/post/enqueue', [ $this, 'after_enqueue_post_css' ] );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'localize_settings' ] );
 	}
 }

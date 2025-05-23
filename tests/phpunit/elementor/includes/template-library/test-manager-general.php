@@ -1,8 +1,12 @@
 <?php
 namespace Elementor\Testing\Includes\TemplateLibrary;
 
+use Elementor\Api;
+use Elementor\Core\Base\Document;
+use Elementor\Plugin;
 use Elementor\TemplateLibrary\Manager;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\TemplateLibrary\Source_Local;
 
 class Elementor_Test_Manager_General extends Elementor_Test_Base {
 	/**
@@ -161,5 +165,190 @@ class Elementor_Test_Manager_General extends Elementor_Test_Base {
 				]
 			), 'template_error'
 		);
+	}
+
+	public function test_get_templates() {
+		// Arrange
+		$admin = $this->act_as_admin();
+
+		$document_ids = $this->create_mock_templates( $admin, 'container_flexbox' );
+
+		// Act
+		$templates = self::$manager->get_templates();
+
+		// Assert
+		$ids = array_map( function ( $item ) {
+			return $item['template_id'];
+		}, $templates );
+
+		$this->assertCount( 3, $templates );
+		$this->assertEqualSets( $document_ids, $ids );
+	}
+
+	public function test_get_templates__only_local() {
+		// Arrange
+		$admin = $this->act_as_admin();
+
+		$document_ids = $this->create_mock_templates( $admin );
+
+		// Act
+		$templates = self::$manager->get_templates( [ 'local' ] );
+
+		// Assert
+		$ids = array_map( function ( $item ) {
+			return $item['template_id'];
+		}, $templates );
+
+		$this->assertCount( 1, $templates );
+		$this->assertEqualSets( [ $document_ids[0] ], $ids );
+	}
+
+	public function test_get_templates__only_remote_from_transient() {
+		// Arrange
+		$admin = $this->act_as_admin();
+
+		$document_ids = $this->create_mock_templates( $admin, 'container_flexbox' );
+
+		// Act
+		$templates = self::$manager->get_templates( [ 'remote' ] );
+
+		// Assert
+		$ids = array_map( function ( $item ) {
+			return $item['template_id'];
+		}, $templates );
+
+		$this->assertCount( 2, $templates );
+		$this->assertEqualSets( [ $document_ids[1], $document_ids[2] ], $ids );
+	}
+
+	public function test_get_templates__only_remote_from_remote() {
+		// Arrange
+		$admin = $this->act_as_admin();
+
+		$this->create_remote_mock_templates();
+
+		// Act
+		$templates = self::$manager->get_templates( [ 'remote' ] );
+
+		// Assert
+		$this->assertCount( 2, $templates );
+	}
+
+	public function test_get_templates__only_remote_with_force_update() {
+		// Arrange
+		$admin = $this->act_as_admin();
+
+		$this->create_remote_mock_templates();
+
+		// Act
+		$templates = self::$manager->get_templates( [ 'remote' ], true );
+
+		// Assert
+		$this->assertCount( 2, $templates );
+	}
+
+	private function create_mock_templates( $user, $layout_type = '' ) {
+		$templates = [
+			[
+				'id' => 100,
+				'title' => 'A',
+				'thumbnail' => 'https://localhost/test.png',
+				'author' => 'Elementor',
+				'url' => 'https://localhost/url',
+				'type' => 'popup',
+				'subtype' => 'classic',
+				'tags' => '[]',
+				'menu_order' => 0,
+				'popularity_index' => 100,
+				'trend_index' => 100,
+				'has_page_settings' => 1,
+				'is_pro' => 1,
+				'access_level' => 1,
+				'tmpl_created' => '2020-10-10',
+			],
+			[
+				'id' => 200,
+				'title' => 'B',
+				'thumbnail' => 'https://localhost/test.png',
+				'author' => 'Elementor',
+				'url' => 'https://localhost/url',
+				'type' => 'popup',
+				'subtype' => 'classic',
+				'tags' => '[]',
+				'menu_order' => 0,
+				'popularity_index' => 100,
+				'trend_index' => 100,
+				'has_page_settings' => 1,
+				'is_pro' => 1,
+				'access_level' => 1,
+				'tmpl_created' => '2020-10-10',
+			]
+		];
+
+		set_transient( 'elementor_remote_templates_data_' . ELEMENTOR_VERSION, $templates );
+
+		$document = $this->factory()->documents->create_and_get([
+			'type' => 'page',
+			'post_author' => $user->ID,
+			'post_status' => 'publish',
+			'post_type' => Source_Local::CPT,
+			'meta_input' => [
+				Document::TYPE_META_KEY => 'page'
+			]
+		]);
+
+		return [ $document->get_id(), 100, 200 ];
+	}
+
+	private function create_remote_mock_templates( $layout_type = '' ) {
+		$templates = [
+			[
+				'id' => 100,
+				'title' => 'A',
+				'thumbnail' => 'https://localhost/test.png',
+				'author' => 'Elementor',
+				'url' => 'https://localhost/url',
+				'type' => 'popup',
+				'subtype' => 'classic',
+				'tags' => '[]',
+				'menu_order' => 0,
+				'popularity_index' => 100,
+				'trend_index' => 100,
+				'has_page_settings' => 1,
+				'is_pro' => 1,
+				'access_level' => 1,
+				'tmpl_created' => '2020-10-10',
+			],
+			[
+				'id' => 200,
+				'title' => 'B',
+				'thumbnail' => 'https://localhost/test.png',
+				'author' => 'Elementor',
+				'url' => 'https://localhost/url',
+				'type' => 'popup',
+				'subtype' => 'classic',
+				'tags' => '[]',
+				'menu_order' => 0,
+				'popularity_index' => 100,
+				'trend_index' => 100,
+				'has_page_settings' => 1,
+				'is_pro' => 1,
+				'access_level' => 1,
+				'tmpl_created' => '2020-10-10',
+			]
+		];
+
+		add_filter( 'pre_http_request', function () use ( $templates ) {
+			return [
+				'headers' => [],
+				'response' => [
+					'code' => 200,
+					'message' => 'OK',
+				],
+				'cookies' => [],
+				'filename' => '',
+				'body' => wp_json_encode( $templates ),
+			];
+		}, 10, 3 );
 	}
 }

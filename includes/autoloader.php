@@ -42,15 +42,43 @@ class Autoloader {
 	private static $classes_aliases;
 
 	/**
+	 * Default path for autoloader.
+	 *
+	 * @var string
+	 */
+	private static $default_path;
+
+	/**
+	 * Default namespace for autoloader.
+	 *
+	 * @var string
+	 */
+	private static $default_namespace;
+
+	/**
 	 * Run autoloader.
 	 *
 	 * Register a function as `__autoload()` implementation.
+	 *
+	 * @param string $default_path
+	 * @param string $default_namespace
 	 *
 	 * @since 1.6.0
 	 * @access public
 	 * @static
 	 */
-	public static function run() {
+	public static function run( $default_path = '', $default_namespace = '' ) {
+		if ( '' === $default_path ) {
+			$default_path = ELEMENTOR_PATH;
+		}
+
+		if ( '' === $default_namespace ) {
+			$default_namespace = __NAMESPACE__;
+		}
+
+		self::$default_path = $default_path;
+		self::$default_namespace = $default_namespace;
+
 		spl_autoload_register( [ __CLASS__, 'autoload' ] );
 	}
 
@@ -92,6 +120,7 @@ class Autoloader {
 			'Conditions' => 'includes/conditions.php',
 			'Controls_Manager' => 'includes/managers/controls.php',
 			'Controls_Stack' => 'includes/base/controls-stack.php',
+			'Sub_Controls_Stack' => 'includes/base/sub-controls-stack.php',
 			'DB' => 'includes/db.php',
 			'Elements_Manager' => 'includes/managers/elements.php',
 			'Embed' => 'includes/embed.php',
@@ -115,6 +144,7 @@ class Autoloader {
 			'Stylesheet' => 'includes/stylesheet.php',
 			'System_Info\Main' => 'includes/settings/system-info/main.php',
 			'TemplateLibrary\Classes\Import_Images' => 'includes/template-library/classes/class-import-images.php',
+			'TemplateLibrary\Forms\New_Template_Form' => 'includes/template-library/forms/new-template-form.php',
 			'TemplateLibrary\Manager' => 'includes/template-library/manager.php',
 			'TemplateLibrary\Source_Base' => 'includes/template-library/sources/base.php',
 			'TemplateLibrary\Source_Local' => 'includes/template-library/sources/local.php',
@@ -144,7 +174,7 @@ class Autoloader {
 		$controls_groups_names = Controls_Manager::get_groups_names();
 
 		foreach ( $controls_groups_names as $group_name ) {
-			$class_name = 'Group_Control_' . self::normalize_class_name( str_replace( '-', '_', $group_name ), '_' );
+			$class_name = 'Group_Control_' . self::normalize_class_name( $group_name, '_' );
 
 			self::$classes_map[ $class_name ] = 'includes/controls/groups/' . $group_name . '.php';
 		}
@@ -153,50 +183,46 @@ class Autoloader {
 	/**
 	 * Normalize Class Name
 	 *
-	 * Used to convert control names to class name,
-	 * a ucwords polyfill for php versions not supporting delimiter parameter
-	 * reference : https://github.com/elementor/elementor/issues/7310#issuecomment-469593385
+	 * Used to convert control names to class names.
 	 *
 	 * @param $string
 	 * @param string $delimiter
 	 *
-	 * @todo Remove once we bump minimum php version to 5.6
 	 * @return mixed
 	 */
 	private static function normalize_class_name( $string, $delimiter = ' ' ) {
-		return str_replace( ' ', $delimiter, ucwords( str_replace( $delimiter, ' ', $string ) ) );
+		return ucwords( str_replace( '-', '_', $string ), $delimiter );
 	}
 
+	/**
+	 * Init classes aliases.
+	 *
+	 * When Elementor classes renamed or moved to different folders, developers
+	 * can still use the old names by setting an aliase.
+	 *
+	 * While in deprecation period both classes will work. When the deprecation
+	 * period ends, the alies should be removed from the list of aliases.
+	 *
+	 * Usage:
+	 *
+	 *  self::$classes_aliases = [
+	 *    'Namespace\OldClassName' => [
+	 *      'replacement' => 'Namespace\NewClassName',
+	 *      'version' => '3.0.0',
+	 *    ],
+	 *    'Namespace\OldModule\ClassName' => [
+	 *      'replacement' => 'Namespace\NewModule\ClassName',
+	 *      'version' => '3.5.0',
+	 *    ],
+	 *  ];
+	 *
+	 * @access private
+	 * @static
+	 *
+	 * @return void
+	 */
 	private static function init_classes_aliases() {
 		self::$classes_aliases = [
-			'Core\Ajax' => [
-				'replacement' => 'Core\Common\Modules\Ajax\Module',
-				'version' => '2.3.0',
-			],
-			'Editor' => [
-				'replacement' => 'Core\Editor\Editor',
-				'version' => '2.6.0',
-			],
-			'Scheme_Base' => [
-				'replacement' => 'Core\Schemes\Base',
-				'version' => '2.8.0',
-			],
-			'Scheme_Color' => [
-				'replacement' => 'Core\Schemes\Color',
-				'version' => '2.8.0',
-			],
-			'Scheme_Color_Picker' => [
-				'replacement' => 'Core\Schemes\Color_Picker',
-				'version' => '2.8.0',
-			],
-			'Schemes_Manager' => [
-				'replacement' => 'Core\Schemes\Manager',
-				'version' => '2.8.0',
-			],
-			'Scheme_Typography' => [
-				'replacement' => 'Core\Schemes\Typography',
-				'version' => '2.8.0',
-			],
 			'System_Info\Main' => [
 				'replacement' => 'Modules\System_Info\Module',
 				'version' => '2.9.0',
@@ -251,7 +277,7 @@ class Autoloader {
 		$classes_map = self::get_classes_map();
 
 		if ( isset( $classes_map[ $relative_class_name ] ) ) {
-			$filename = ELEMENTOR_PATH . '/' . $classes_map[ $relative_class_name ];
+			$filename = self::$default_path . '/' . $classes_map[ $relative_class_name ];
 		} else {
 			$filename = strtolower(
 				preg_replace(
@@ -261,7 +287,7 @@ class Autoloader {
 				)
 			);
 
-			$filename = ELEMENTOR_PATH . $filename . '.php';
+			$filename = self::$default_path . $filename . '.php';
 		}
 
 		if ( is_readable( $filename ) ) {
@@ -281,11 +307,11 @@ class Autoloader {
 	 * @param string $class Class name.
 	 */
 	private static function autoload( $class ) {
-		if ( 0 !== strpos( $class, __NAMESPACE__ . '\\' ) ) {
+		if ( 0 !== strpos( $class, self::$default_namespace . '\\' ) ) {
 			return;
 		}
 
-		$relative_class_name = preg_replace( '/^' . __NAMESPACE__ . '\\\/', '', $class );
+		$relative_class_name = preg_replace( '/^' . self::$default_namespace . '\\\/', '', $class );
 
 		$classes_aliases = self::get_classes_aliases();
 
@@ -298,7 +324,7 @@ class Autoloader {
 			$relative_class_name = $alias_data['replacement'];
 		}
 
-		$final_class_name = __NAMESPACE__ . '\\' . $relative_class_name;
+		$final_class_name = self::$default_namespace . '\\' . $relative_class_name;
 
 		if ( ! class_exists( $final_class_name ) ) {
 			self::load_class( $relative_class_name );

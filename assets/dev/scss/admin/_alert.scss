@@ -4,7 +4,7 @@
 
 .elementor-admin-alert {
 	padding: 15px;
-	border-left: 5px solid transparent;
+	border-left: 3px solid transparent;
 	position: relative;
 	font-size: 12px;
 	line-height: 1.5;
@@ -17,27 +17,27 @@
 	&.elementor-alert- {
 
 		&info {
-			color: $info-text;
-			background-color: $info-bg;
-			border-color: $info-border;
+			color: var(--e-a-color-info);
+			background-color: var(--e-a-bg-info);
+			border-color: var(--e-a-color-info);
 		}
 
 		&success {
-			color: $success-text;
-			background-color: $success-bg;
-			border-color: $success-border;
+			color: var(--e-a-color-success);
+			background-color: var(--e-a-bg-success);
+			border-color: var(--e-a-color-success);
 		}
 
 		&warning {
-			color: $warning-text;
-			background-color: $warning-bg;
-			border-color: $warning-border;
+			color: var(--e-admin-color-warning);
+			background-color: var(--e-a-bg-warning);
+			border-color: var(--e-a-color-warning);
 		}
 
 		&danger {
-			color: $danger-text;
-			background-color: $danger-bg;
-			border-color: $danger-border;
+			color: var(--e-a-color-danger);
+			background-color: var(--e-a-bg-danger);
+			border-color: var(--e-a-color-danger);
 		}
 	}
 }

@@ -2,7 +2,7 @@ var PanelElementsElementModel = require( '../models/element' ),
 	PanelElementsElementsCollection;
 
 PanelElementsElementsCollection = Backbone.Collection.extend( {
-	model: PanelElementsElementModel, /*,
+	model: PanelElementsElementModel, /* ,
 	comparator: 'title'*/
 } );
 

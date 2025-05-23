@@ -18,6 +18,7 @@ class JS extends File {
 		$this->date = gmdate( 'Y-m-d H:i:s', $args['timestamp'] );
 	}
 
+	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
 		$json_arr = parent::jsonSerialize();
 		$json_arr['column'] = $this->column;

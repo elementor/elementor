@@ -1,6 +1,6 @@
-import Base from '../base/base';
+import CommandInternalBase from '../base/command-history-internal-base';
 
-export class EndTransaction extends Base {
+export class EndTransaction extends CommandInternalBase {
 	apply() {
 		if ( ! this.component.isTransactionStarted() ) {
 			return;
@@ -14,7 +14,7 @@ export class EndTransaction extends Base {
 
 		// 'elements' title for multiple containers.
 		if ( transactions.length > 1 ) {
-			title = elementor.translate( 'elements' );
+			title = __( 'Elements', 'elementor' );
 			subTitle = '';
 		}
 

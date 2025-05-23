@@ -1,5 +1,3 @@
-import DocumentHelper from 'elementor-document/helper';
-
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-empty-preview',
 
@@ -9,7 +7,7 @@ module.exports = Marionette.ItemView.extend( {
 		click: 'onClickAdd',
 	},
 
-	behaviors: function() {
+	behaviors() {
 		return {
 			contextMenu: {
 				behaviorClass: require( 'elementor-behaviors/context-menu' ),
@@ -18,15 +16,15 @@ module.exports = Marionette.ItemView.extend( {
 		};
 	},
 
-	getContextMenuGroups: function() {
+	getContextMenuGroups() {
 		return [
 			{
 				name: 'general',
 				actions: [
 					{
 						name: 'paste',
-						title: elementor.translate( 'paste' ),
-						isEnabled: () => DocumentHelper.isPasteEnabled( this._parent.getContainer() ),
+						title: __( 'Paste', 'elementor' ),
+						isEnabled: () => $e.components.get( 'document/elements' ).utils.isPasteEnabled( this._parent.getContainer() ),
 						callback: () => $e.run( 'document/ui/paste', {
 							container: this._parent.getContainer(),
 						} ),
@@ -36,7 +34,7 @@ module.exports = Marionette.ItemView.extend( {
 		];
 	},
 
-	onClickAdd: function() {
+	onClickAdd() {
 		$e.route( 'panel/elements/categories' );
 	},
 } );

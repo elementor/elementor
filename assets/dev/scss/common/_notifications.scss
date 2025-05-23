@@ -1,0 +1,48 @@
+#elementor-toast {
+	position: absolute;
+	width: 280px;
+	padding: 20px;
+	border-radius: 5px;
+	color: var(--e-a-dark-color-txt);
+	background-color: rgba(0, 0, 0, .8);
+	z-index: $super-layer;
+
+	&.dialog-position-window {
+		position: fixed;
+	}
+
+	.dialog-message {
+		font-size: 13px;
+	}
+
+	.dialog-buttons-wrapper {
+		display: flex;
+		justify-content: flex-end;
+
+		&:not( :empty ) {
+			margin-top: 15px;
+		}
+	}
+
+	.dialog-button {
+		font-size: 12px;
+		font-weight: 500;
+		line-height: 1.2;
+		text-transform: uppercase;
+		padding: 8px 16px;
+		@include margin-end(10px);
+		color: var(--e-a-dark-color-txt);
+		border-radius: var(--e-a-border-radius);
+		transition: var(--e-a-transition-hover);
+		cursor: pointer;
+
+		&:hover {
+			background: var(--e-a-bg-hover);
+			color: var(--e-a-color-txt-hover);
+		}
+
+		&:last-child {
+			@include margin-end(0);
+		}
+	}
+}

@@ -1,77 +1,88 @@
 .elementor-control-type-dimensions {
 
 	.elementor-control-dimensions {
-		overflow: hidden;
+		display: flex;
 	}
 
 	li {
-		float: left;
-		width: 20%;
+		flex: 1;
+		transition: flex-grow .3s ease-in-out;
 
 		input,
 		.elementor-link-dimensions {
 			display: block;
 			text-align: center;
 			width: 100%;
-			border-color: $editor-lightest;
 			height: $control-unit;
 		}
 
 		input {
-			border-left: none;
+			@include border-start(none);
 			border-radius: 0;
-			padding: 4px 0;
+			padding: var(--e-a-border-radius);
 
 			&:focus {
-				border-left: solid 1px;
-				border-color: $editor-light;
-				margin-left: -1px;
+				@include border-start(var(--e-a-border-bold));
+				@include margin-start(-1px);
 				width: calc(100% + 1px);
 
 				+ .elementor-control-dimension-label {
-					color: $editor-light;
+					color: var(--e-a-color-txt);
 				}
 			}
 		}
 
 		.elementor-link-dimensions {
-			border: 1px solid $editor-lightest;
-			border-left: none;
-			background-color: #fff;
+			border: var(--e-a-border-bold);
+			@include border-start(none);
+			background-color: var(--e-a-bg-default);
 			padding: 0;
 			outline: none;
-			border-radius: 0 3px 3px 0;
+			border-radius: getValueByDirection(0 var(--e-a-border-radius) var(--e-a-border-radius) 0, var(--e-a-border-radius) 0 0 var(--e-a-border-radius));
 			cursor: pointer;
 		}
 
 		&:first-child {
 
 			input {
-				border-left: 1px solid $editor-lightest;
-				border-radius: 3px 0 0 3px;
+				@include border-start(1px solid var(--e-a-border-color-bold));
+				border-radius: getValueByDirection(var(--e-a-border-radius) 0 0 var(--e-a-border-radius), 0 var(--e-a-border-radius) var(--e-a-border-radius)0);
 
 				&:focus {
-					border-color: $editor-light;
-					margin-left: 0;
+					border-color: var(--e-a-border-color-focus);
+					@include margin-start(0);
 					width: 100%;
 				}
+			}
+		}
+
+		&:last-child {
+			max-width: $control-unit;
+		}
+	}
+
+	&.e-units-custom {
+
+		li {
+
+			&.elementor-control-dimension:focus-within {
+				flex: 2.5;
 			}
 		}
 	}
 
 	.elementor-control-dimension-label {
+		color: var(--e-a-color-txt-disabled);
 		display: block;
 		text-align: center;
-		color: $editor-lightest;
 		font-size: 9px;
-		text-transform: uppercase;
 		padding-top: 5px;
 	}
 
 	.elementor-link-dimensions {
 
 		&.unlinked {
-			background-color: #fff;
+			background-color: var(--e-a-bg-default);
 
 			.elementor-linked {
 				display: none;
@@ -79,17 +90,13 @@
 		}
 
 		&:not(.unlinked) {
-			background-color: $editor-light;
-			border-color: $editor-light;
+			background-color: var(--e-a-bg-active-bold);
+			color: var(--e-a-color-txt-accent);
+			border-color: var(--e-a-border-color-bold);
 
 			.elementor-unlinked {
 				display: none;
 			}
 		}
-
-		.elementor-linked {
-			color: #fff;
-		}
-
 	}
 }

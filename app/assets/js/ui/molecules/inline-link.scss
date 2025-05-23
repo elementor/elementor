@@ -1,0 +1,58 @@
+$eps-inline-link-color-primary: theme-colors(success);
+$eps-inline-link-color-secondary: tints(400);
+$eps-inline-link-color-danger: theme-colors(danger);
+$eps-inline-link-color-cta: theme-colors(cta);
+$eps-inline-link-color-link: theme-elements-colors(link-color);
+$eps-inline-link-color-disabled: theme-colors(disabled);
+
+.eps-inline-link {
+	color: var(--eps-inline-link-color);
+
+	&--color {
+		&-primary {
+			--eps-inline-link-color: #{$eps-inline-link-color-primary};
+		}
+
+		&-secondary {
+			--eps-inline-link-color: #{$eps-inline-link-color-secondary};
+		}
+
+		&-danger {
+			--eps-inline-link-color: #{$eps-inline-link-color-danger};
+		}
+
+		&-cta {
+			--eps-inline-link-color: #{$eps-inline-link-color-cta};
+		}
+
+		&-link {
+			--eps-inline-link-color: #{$eps-inline-link-color-link};
+		}
+
+		&-disabled {
+			--eps-inline-link-color: #{$eps-inline-link-color-disabled};
+		}
+	}
+
+	&--underline {
+		&-hover:hover,
+		&-always,
+		&-always:hover {
+			text-decoration: underline;
+		}
+	}
+
+	&--italic {
+		font-style: italic;
+	}
+
+	// Reset style for button tag.
+	background-color: initial;
+	border: 0;
+	padding: 0;
+
+	&,
+	&:focus {
+		outline: none;
+	}
+}

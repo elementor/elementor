@@ -1,18 +1,11 @@
 #elementor-fatal-error-dialog {
-	&.elementor-preview-loading-error {
-		.dialog {
-			&-header {
-				color: $editor-darkest;
-			}
-			&-message a {
-				color: $editor-dark;
-				text-decoration: underline;
-				font-style: italic;
-			}
+
+	.dialog {
+		&-message a {
+			text-decoration: underline;
 		}
 	}
 }
-
 
 #elementor-preview-debug-link-text {
 	display: inline-block;

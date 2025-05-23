@@ -1,0 +1,46 @@
+.elementor-control-type-textarea,
+.elementor-control-type-code {
+
+	.elementor-control-dynamic-switcher {
+		border-inline-start-width: 1px;
+		border-start-start-radius: 0;
+		border-start-end-radius: 0;
+		border-end-end-radius: 0;
+		border-end-start-radius: var(--e-a-border-radius);
+	}
+
+	&:not(.elementor-control-dynamic-value) {
+
+		.elementor-control-dynamic-switcher {
+			position: absolute;
+			top: 0;
+			z-index: $first-layer;
+			#{$end}: 0;
+		}
+	}
+
+	.elementor-control-input-wrapper {
+		position: relative;
+	}
+
+	textarea {
+		display: block;
+		font-family: inherit;
+
+		&:focus {
+
+			+ .elementor-control-dynamic-switcher {
+				display: none;
+			}
+		}
+	}
+
+	pre {
+		&:focus-within {
+
+			+ .elementor-control-dynamic-switcher {
+				display: none;
+			}
+		}
+	}
+}

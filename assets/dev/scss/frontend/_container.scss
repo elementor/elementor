@@ -1,0 +1,197 @@
+.e-con {
+	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
+	--border-radius: 0;
+	--display: flex;
+	--flex-direction: column;
+	--flex-basis: auto;
+	--flex-grow: 0;
+	--flex-shrink: 1;
+	--container-widget-width: 100%;
+	--container-widget-height: initial;
+	--container-widget-flex-grow: 0;
+	--container-widget-align-self: initial;
+	// Use the width from `Site Settings` or default to 1140px.
+	// Take the smaller value in order to fix bug ED-6712 where the content-width (AKA "padding hack", see below)
+	// isn't working properly.
+	--content-width: Min( 100%, var( --container-max-width, 1140px ) );
+	--width: 100%;
+	--min-height: initial;
+	--height: auto;
+	--text-align: initial;
+	--margin-top: 0;
+	--margin-right: 0;
+	--margin-bottom: 0;
+	--margin-left: 0;
+	--padding-top: var( --container-default-padding-top, 10px );
+	--padding-right: var( --container-default-padding-right, 10px );
+	--padding-bottom: var( --container-default-padding-bottom, 10px );
+	--padding-left: var( --container-default-padding-left, 10px );
+	--position: relative;
+	--z-index: revert;
+	--overflow: visible;
+	--gap: var( --widgets-spacing, 20px ); // Use the gap from `Site Settings` or default to 20px.
+	--overlay-mix-blend-mode: initial;
+	--overlay-opacity: 1;
+	--overlay-transition: 0.3s;
+
+	position: var( --position );
+	flex: var( --flex-grow ) var( --flex-shrink ) var( --flex-basis );
+	width: var( --width );
+	// Set `min-width` to fix nested Containers shrink bug (ED-4964).
+	// Ref: https://stackoverflow.com/questions/43934648/how-to-make-flexbox-items-shrink-correctly-when-in-a-nested-container
+	min-width: 0;
+	min-height: var( --min-height );
+	height: var( --height );
+	border-radius: var( --border-radius );
+	margin: var( --margin-top ) var( --margin-right ) var( --margin-bottom ) var( --margin-left );
+	padding-left: var( --padding-left );
+	padding-right: var( --padding-right );
+	z-index: var( --z-index );
+	overflow: var( --overflow );
+	transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
+
+	&-full,
+	& > .e-con-inner {
+		flex-direction: var( --flex-direction );
+		text-align: var( --text-align );
+		padding-top: var( --padding-top );
+		padding-bottom: var( --padding-bottom );
+	}
+
+	&,
+	& > .e-con-inner {
+		display: var( --display );
+	}
+
+	// Set default values to the outer div of the boxed container.
+	&-boxed {
+		flex-direction: column;
+		text-align: initial;
+		flex-wrap: initial;
+		justify-content: initial;
+		align-items: initial;
+		align-content: initial;
+		gap: initial;
+	}
+
+	& > .e-con-inner {
+		flex-wrap: var( --flex-wrap );
+		justify-content: var( --justify-content );
+		align-items: var( --align-items );
+		align-content: var( --align-content );
+		gap: var( --gap );
+		width: 100%;
+		max-width: var( --content-width );
+		margin: 0 auto;
+		padding-inline: 0;
+		height: 100%;
+
+		// Set default values to the inner div of the boxed container.
+		flex-basis: initial;
+		// Ensure that the inner div covers the full height of the container.
+		flex-grow: 1;
+		flex-shrink: initial;
+		align-self: initial;
+	}
+
+	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+		// Default top-level containers to be centered.
+		--margin-right: auto;
+		--margin-left: auto;
+
+		// Use the `min()` function to fix cases when a top-level Container is 100% width due to `max-width: 100%;`,
+		// or cases when a nested Container overflows the parent Container due to `max-width: 1140px;`.
+		// Capital `M` in order to use the CSS function and not the SCSS one.
+		max-width: Min( 100%, var( --width ) );
+	}
+
+	// Hack to increase specificity and avoid using `!important`.
+	.elementor-widget.elementor-widget {
+		// Override the default margin-bottom of widgets.
+		margin-bottom: 0;
+	}
+
+	// Background overlay.
+	&::before,
+	> .elementor-background-video-container::before,
+	> .e-con-inner > .elementor-background-video-container::before,
+	> .elementor-background-slideshow::before,
+	> .e-con-inner > .elementor-background-slideshow::before,
+	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before {
+		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
+		// control with an empty string (e.g. `--background-overlay: '';`).
+		content: var( --background-overlay );
+		display: block;
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		left: 0;
+		top: 0;
+		mix-blend-mode: var( --overlay-mix-blend-mode );
+		opacity: var( --overlay-opacity );
+		transition: var( --overlay-transition, 0.3s );
+		border-radius: var( --border-radius );
+	}
+
+	&::before {
+		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
+	}
+
+	> .elementor-background-video-container::before,
+	> .e-con-inner > .elementor-background-video-container::before {
+		z-index: $first-layer;
+	}
+
+	> .elementor-background-slideshow::before,
+	> .e-con-inner > .elementor-background-slideshow::before {
+		z-index: $second-layer;
+	}
+
+	.elementor-widget {
+		// Fix swiper-based widgets (ED-6716).
+		// Since the default is `min-width: auto` for flex items.
+		min-width: 0;
+
+		// Fix iframe-based widgets (ED-5338) & widget with empty placeholder.
+		&-video,
+		&-google_maps,
+		&-empty {
+			width: 100%;
+		}
+
+		// Fix swiper-based widgets broken (ED-6849).
+		// TODO: Use `:has( .swiper )` or `:has( .swiper-container )` selector when available && remove this class from `frontend/utils/swiper.js`.
+		&.e-widget-swiper {
+			width: 100%;
+		}
+	}
+
+	&,
+	& > .e-con-inner {
+
+		& > .elementor-widget {
+
+			& > .elementor-widget-container {
+				// Fix align-self:stretch (ED-7359)
+				height: 100%;
+			}
+		}
+	}
+
+	// Hack with repeated classnames to increase the specificity.
+	.elementor.elementor &,
+	&.e-con > .e-con-inner {
+
+		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
+		& > .elementor-widget {
+			max-width: 100%;
+		}
+	}
+}
+
+@media ( max-width: $editor-screen-sm-max ) {
+	.e-con {
+		--width: 100%;
+		--flex-wrap: wrap;
+	}
+}

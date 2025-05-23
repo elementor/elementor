@@ -18,6 +18,12 @@
 			display: inline-block;
 			width: 1em;
 
+			svg {
+				margin-inline-start: -5px; // The position of the SVG icon is different from the <i> tag icon position.
+				width: 1em;
+				height: 1em;
+			}
+
 			&.elementor-toggle-icon- {
 
 				&right {
@@ -59,7 +65,7 @@
 }
 
 // Responsive mode
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-toggle {
 
@@ -70,5 +76,15 @@
 		.elementor-tab-content {
 			padding: 12px 10px;
 		}
+	}
+}
+
+.e-con,
+.e-con-inner {
+
+	> .elementor-widget-toggle {
+		// Fix - Toggle widget disappears because the 'flex column' setting causes an undefined width inside the flex container (ED-7524).
+		width: var( --container-widget-width );
+		--flex-grow: var( --container-widget-flex-grow );
 	}
 }

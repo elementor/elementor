@@ -1,14 +1,19 @@
+body {
+	--e-editor-navigator-width: 240px;
+}
+
 #elementor-navigator {
 	position: fixed;
 	top: 100px;
-	width: 240px;
-	height: 339px;
+	width: var(--e-editor-navigator-width);
+	height: 50vh;
 	@include end(30px);
-	background-color: #fff;
+	background-color: var(--e-a-bg-default);
+	border: var(--e-a-border);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
 	user-select: none;
 	overflow: hidden; // Ensure the bottom border radius is visible
-	z-index: 2;
+	z-index: 100; // Above the Responsive Bar
 	display: none;
 
 	body.elementor-navigator-docked & {
@@ -23,7 +28,6 @@
 
 	&__inner {
 		height: 100%;
-		background-color: $editor-background;
 	}
 
 	&__header {
@@ -31,8 +35,7 @@
 		align-items: center;
 		justify-content: space-between;
 		padding: 12px 10px;
-		background-color: #fff;
-		border-bottom: 1px solid $editor-background;
+		border-bottom: var(--e-a-border);
 		cursor: move;
 	}
 
@@ -42,7 +45,7 @@
 		cursor: pointer;
 
 		&:not(:hover) {
-			color: $editor-light;
+			color: var(--e-a-color-txt-hover);
 		}
 	}
 
@@ -66,6 +69,10 @@
 		.elementor-nerd-box {
 			padding: 25px;
 		}
+
+		> &-section {
+			border-bottom: var(--e-a-border);
+		}
 	}
 
 	&__footer {
@@ -74,9 +81,7 @@
 		left: 0;
 		bottom: 0;
 		text-align: center;
-		background-color: #fff;
-		border-top: 1px solid $editor-background;
-		color: $editor-light;
+		border-top: var(--e-a-border);
 
 		.elementor-navigator-docked & {
 			display: none;
@@ -90,11 +95,22 @@
 		position: relative;
 		display: flex;
 		height: 30px;
-		font-size: 11px;
-		border-bottom: 1px solid $editor-background;
 		cursor: pointer;
 		transition: padding .5s linear;
 		overflow: hidden;
+
+		&:hover {
+			background-color: var(--e-a-bg-hover);
+		}
+
+		&:active {
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-accent);
+		}
+
+		&[data-locked="true"] {
+			cursor: not-allowed;
+		}
 
 		&:not(.elementor-active) {
 
@@ -118,28 +134,31 @@
 
 	&__elements {
 
+		> .elementor-navigator__element-section,
+		> .elementor-navigator__element-container:not(:last-child),{
+			border-bottom: var(--e-a-border);
+		}
+
 		.elementor-empty-view {
 			padding: 10px;
-			border-bottom: 1px solid $editor-background;
 
 			&__title {
 				@include margin-start(23px);
-				color: $editor-lighter;
 				font-size: 10px;
 				font-style: italic;
 			}
 		}
 
 		.ui-sortable-helper {
-			background-color: #fff;
 			box-shadow: 1px 2px 5px 0 rgba(0, 0, 0, 0.1);
 			transform: rotate(4deg);
-			border: 1px solid $editor-background;
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-color-txt-accent);
 			pointer-events: none;
 		}
 
 		.ui-sortable-placeholder {
-			background-color: $editor-background-light;
+			background-color: var(--e-a-bg-hover);
 		}
 	}
 
@@ -150,7 +169,7 @@
 			> .elementor-navigator__elements {
 
 				> .elementor-empty-view {
-					border-top: 2px solid $editor-info;
+					border-top: var(--e-a-border);
 
 					.elementor-empty-view__title {
 						display: none;
@@ -175,7 +194,11 @@
 			> .elementor-navigator__item {
 
 				.elementor-navigator__element__toggle {
-					color: $editor-info;
+					color: var(--e-a-color-txt-default);
+
+					&:hover {
+						color: var(--e-a-color-txt-hover);
+					}
 				}
 
 				&:not(:hover) {
@@ -189,11 +212,7 @@
 			> .elementor-navigator__item {
 
 				&.elementor-editing {
-					background-color: $editor-info;
-
-					> * {
-						color: #fff;
-					}
+					background-color: var(--e-a-bg-active);
 				}
 			}
 		}
@@ -201,11 +220,11 @@
 		&__list-toggle {
 			@include margin-end(7px);
 			transition: transform .3s;
-			color: $editor-light;
 		}
 
 		&__element-type {
 			@include margin-end(8px);
+			font-size: 14px;
 		}
 
 		&__title {
@@ -214,17 +233,17 @@
 
 			&__text {
 				white-space: nowrap;
-				-webkit-user-select: text;
+				user-select: text;
 
 				&[contenteditable="true"] {
 					outline: none;
-					color: $editor-dark;
-					background-color: #fff;
-					padding: 2px 3px;
-					box-shadow: 0 0 4px rgba(0,0,0,0.2);
+					background-color: var(--e-a-bg-hover);
+					padding: var(--e-admin-border-radius);
+					border: var(--e-a-border);
 				}
 
 				&:not([contenteditable="true"]) {
+					padding: 3px 0;
 					@include ellipsis;
 				}
 			}
@@ -257,20 +276,20 @@
 			display: inline-flex;
 			align-items: center;
 			justify-content: center;
-			color: $editor-dark;
-			background-color: #fff;
-			@include border-start(1px solid $editor-background);
+			color: var(--e-a-color-txt-invert);
+			background-color: var(--e-a-color-white);
+			@include border-start(--e-a-border);
 
 			&:first-child {
-				@include border-start(3px solid $editor-info);
+				@include border-start(3px solid var(--e-a-border-color-accent));
 
 				.elementor-editing & {
-					border-color: darken($editor-info, 10%);
+					border-color: lighten($e-gray-900, 10%);
 				}
 			}
 
 			&:hover {
-				color: $editor-darkest;
+				color: var(--e-a-color-txt-hover);
 			}
 		}
 
@@ -280,21 +299,6 @@
 			.elementor-navigator__element__toggle {
 				opacity: .5;
 			}
-		}
-
-		&-column {
-			background-color: lighten($editor-background-light, 3%);
-
-			> .elementor-navigator__item {
-
-				.elementor-navigator__element__element-type {
-					color: $editor-light;
-				}
-			}
-		}
-
-		&-section {
-			background-color: #fff;
 		}
 	}
 }

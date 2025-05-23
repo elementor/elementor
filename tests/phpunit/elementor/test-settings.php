@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Testing;
 
+use ElementorEditorTesting\Elementor_Test_Base;
+
 class Elementor_Test_Settings extends Elementor_Test_Base {
 
 	public function test_validationsCheckboxList() {

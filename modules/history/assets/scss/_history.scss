@@ -1,18 +1,27 @@
+.elementor-panel-revisions-buttons {
+	display: flex;
+	justify-content: space-between;
+	padding: 15px 20px;
+	border-bottom: var(--e-a-border);
+}
+
 .elementor-history- {
 
 	&item {
 		display: flex;
 		align-items: center;
-		border: 1px solid $editor-lightest;
+		border: var(--e-a-border);
+		border-radius: var(--e-a-border-radius);
 		padding: 10px 15px;
 		margin-bottom: 10px;
 		font-size: 11px;
 		line-height: 1.4;
 		cursor: pointer;
-		transition: $transition-hover;
+		transition: var(--e-a-transition-hover);
 
-		&:hover {
-			background-color: fade_out($editor-background, 0.7) ;
+		&:hover:not(.elementor-history-item-current) {
+			background-color: var(--e-a-bg-hover);
+			color: var(--e-a-txt-color-hover);
 
 			.elementor-history-item__icon{
 				.eicon:before {
@@ -21,15 +30,14 @@
 			}
 		}
 
-		&-applied {
-			color: $editor-light;
-		}
-
 		&-current {
-			background: $editor-background;
-			cursor: default;
+			border-color: var(--e-a-border-color-accent);
+			background-color: var(--e-a-bg-active);
+			color: var(--e-a-txt-color-active);
 
-			.elementor-history-item__icon, &:hover .elementor-history-item__icon{
+			.elementor-history-item__icon,
+			&:hover .elementor-history-item__icon{
+
 				.eicon:before {
 					content:'\e90e';
 				}
@@ -76,7 +84,6 @@
 	}
 
 	&:not(.elementor-empty) {
-		background-color: #fff;
 		margin-top: 10px;
 	}
 }

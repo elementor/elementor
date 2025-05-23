@@ -1,0 +1,66 @@
+name: Release Dev From Beta
+description: Dev release is created from the latest beta release.
+
+inputs:
+  BUILD_ZIP_FILE_PATH:
+    description: 'The path to the zip file.'
+    required: true
+  PLUGIN_NAME:
+    description: 'The name of the plugin.'
+    required: true
+  REPOSITORY_OWNER:
+    description: 'The owner of the repository.'
+    required: true
+  SVN_PASSWORD:
+    description: 'The password for the SVN.'
+    required: true
+  SVN_USERNAME:
+    description: 'The username for the SVN.'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Replace Release Name In Plugin File With Dev
+      shell: bash
+      run: |
+            PLUGIN_RELATIVE_PATH=${{ inputs.PLUGIN_NAME }}/${{ inputs.PLUGIN_NAME }}.php
+            unzip -o ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_RELATIVE_PATH
+            PLUGIN_FILE_PATH=./$PLUGIN_RELATIVE_PATH
+
+            # Replace beta with dev
+            DEV_RELEASE_NAME=${{ env.RELEASE_NAME }}
+            DEV_RELEASE_NAME=$(echo "$DEV_RELEASE_NAME" | sed 's/beta/dev/')
+
+            # Remove rc
+            sed -i -E "s/Version: .*/Version: ${DEV_RELEASE_NAME}/g" $PLUGIN_FILE_PATH
+            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${DEV_RELEASE_NAME}'/g" $PLUGIN_FILE_PATH
+
+            # Add the updated plugin file to the zip archive
+            zip -u ${{ inputs.BUILD_ZIP_FILE_PATH }} $PLUGIN_FILE_PATH -p $PLUGIN_RELATIVE_PATH
+
+            # Set zip file name to dev, and remove '-rc'
+            DEV_BUILD_ZIP_FILE_PATH=$(echo "${{ inputs.BUILD_ZIP_FILE_PATH }}" | sed 's/beta/dev/' | sed 's/-rc//')
+
+            # Rename the zip file
+            mv ${{ inputs.BUILD_ZIP_FILE_PATH }} $DEV_BUILD_ZIP_FILE_PATH
+
+            echo "DEV_BUILD_ZIP_FILE_PATH=${DEV_BUILD_ZIP_FILE_PATH}" >> $GITHUB_ENV
+            echo "DEV_RELEASE_NAME=${DEV_RELEASE_NAME}" >> $GITHUB_ENV
+    - name: Create Dev GitHub release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.DEV_RELEASE_NAME }}
+        files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
+        body_path: ${{ env.CHANGELOG_FILE }}
+    - name: Publish to WordPress.org SVN
+      shell: bash
+      env:
+        PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
+        SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
+        SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
+      run: |
+            if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
+              bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
+            fi
+

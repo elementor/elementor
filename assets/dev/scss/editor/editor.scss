@@ -8,7 +8,6 @@
 @import "wrapper";
 @import "global";
 @import "loader";
-@import "buttons";
 @import "forms";
 
 // Components
@@ -23,12 +22,10 @@
 
 @import "animations";
 @import "devices";
-@import "tipsy";
 @import "templates-modal";
+@import "dialog-confirm";
 @import "dynamic-tags";
-@import "notifications";
 @import "context-menu";
-@import "introduction";
 @import "hotkeys";
 
 @import "resizable";
@@ -37,3 +34,9 @@
 @import "preview-loading-error";
 @import "icons-manager";
 @import "color-picker";
+@import "select2";
+@import "control-scrubbing";
+@import "paste-area";
+
+// Temp flex icons
+@import "flex-icons";

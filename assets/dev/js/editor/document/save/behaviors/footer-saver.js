@@ -67,7 +67,12 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 	}
 
 	setMenuItems( document ) {
-		const postStatus = document.container.settings.get( 'post_status' );
+		const postStatus = document.container.settings.get( 'post_status' ),
+			translationMap = {
+				publish: __( 'Publish', 'elementor' ),
+				update: __( 'Update', 'elementor' ),
+				submit: __( 'Submit', 'elementor' ),
+			};
 
 		let publishLabel = 'publish';
 
@@ -96,17 +101,22 @@ module.exports = class FooterSaver extends Marionette.Behavior {
 				break;
 		}
 
-		this.ui.buttonPublishLabel.html( elementor.translate( publishLabel ) );
+		this.ui.buttonPublishLabel.html( translationMap[ publishLabel ] );
 	}
 
 	addTooltip() {
 		// Create tooltip on controls
-		this.$el.find( '.tooltip-target' ).tipsy( {
-			// `n` for down, `s` for up
-			gravity: 's',
-			title() {
-				return this.getAttribute( 'data-tooltip' );
-			},
+		this.$el.find( '.tooltip-target' ).each( ( index, button ) => {
+			const $button = jQuery( button );
+
+			$button.tipsy( {
+				// `n` for down, `s` for up
+				gravity: 's',
+				offset: $button.data( 'tooltip-offset' ),
+				title() {
+					return this.getAttribute( 'data-tooltip' );
+				},
+			} );
 		} );
 	}
 

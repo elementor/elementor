@@ -1,4 +1,4 @@
-class Progress extends elementorModules.frontend.handlers.Base {
+export default class Progress extends elementorModules.frontend.handlers.Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
@@ -24,9 +24,3 @@ class Progress extends elementorModules.frontend.handlers.Base {
 		} );
 	}
 }
-
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( Progress, {
-		$element: $scope,
-	} );
-};

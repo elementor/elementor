@@ -1,0 +1,13 @@
+{
+	"name": "@elementor/top-bar",
+	"dependencies": {
+		"@elementor/icons": "*",
+		"@elementor/editor": "*",
+		"@elementor/locations": "*",
+		"@elementor/ui": "*",
+		"@wordpress/i18n": "*"
+	},
+	"peerDependencies": {
+		"react": "17.x"
+	}
+}

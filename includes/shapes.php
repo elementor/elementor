@@ -131,82 +131,82 @@ class Shapes {
 	private static function init_shapes() {
 		$native_shapes = [
 			'mountains' => [
-				'title' => _x( 'Mountains', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Mountains', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'drops' => [
-				'title' => _x( 'Drops', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Drops', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 				'height_only' => true,
 			],
 			'clouds' => [
-				'title' => _x( 'Clouds', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Clouds', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 				'height_only' => true,
 			],
 			'zigzag' => [
-				'title' => _x( 'Zigzag', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Zigzag', 'Shapes', 'elementor' ),
 			],
 			'pyramids' => [
-				'title' => _x( 'Pyramids', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Pyramids', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'triangle' => [
-				'title' => _x( 'Triangle', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Triangle', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 			'triangle-asymmetrical' => [
-				'title' => _x( 'Triangle Asymmetrical', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Triangle Asymmetrical', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'tilt' => [
-				'title' => _x( 'Tilt', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Tilt', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 				'height_only' => true,
 			],
 			'opacity-tilt' => [
-				'title' => _x( 'Tilt Opacity', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Tilt Opacity', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'opacity-fan' => [
-				'title' => _x( 'Fan Opacity', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Fan Opacity', 'Shapes', 'elementor' ),
 			],
 			'curve' => [
-				'title' => _x( 'Curve', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Curve', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 			'curve-asymmetrical' => [
-				'title' => _x( 'Curve Asymmetrical', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Curve Asymmetrical', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'waves' => [
-				'title' => _x( 'Waves', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Waves', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 				'has_flip' => true,
 			],
 			'wave-brush' => [
-				'title' => _x( 'Waves Brush', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Waves Brush', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'waves-pattern' => [
-				'title' => _x( 'Waves Pattern', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Waves Pattern', 'Shapes', 'elementor' ),
 				'has_flip' => true,
 			],
 			'arrow' => [
-				'title' => _x( 'Arrow', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Arrow', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 			'split' => [
-				'title' => _x( 'Split', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Split', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 			'book' => [
-				'title' => _x( 'Book', 'Shapes', 'elementor' ),
+				'title' => esc_html_x( 'Book', 'Shapes', 'elementor' ),
 				'has_negative' => true,
 			],
 		];

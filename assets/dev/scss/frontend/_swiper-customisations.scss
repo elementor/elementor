@@ -1,0 +1,116 @@
+.elementor {
+
+	&-element,
+	&-lightbox {
+        --swiper-theme-color: #000;
+        --swiper-navigation-size: 44px;
+        --swiper-pagination-bullet-size: 6px;
+        --swiper-pagination-bullet-horizontal-gap: 6px;
+
+        .swiper {
+
+            .swiper-slide {
+        
+                figure {
+                    line-height: 0;
+                }
+            }
+        
+            .elementor-lightbox-content-source {
+                display: none;
+            }
+
+            .elementor-swiper-button {
+                position: absolute;
+                display: inline-flex; // Position exactly in center
+                z-index: 1;
+                cursor: pointer;
+                font-size: 25px;
+                color: $slides_gui;
+                top: 50%;
+                transform: translateY(-50%);
+            
+                svg {
+                    fill: $slides_gui;
+                    height: 1em;
+                    width: 1em;
+                }
+            
+                &-prev {
+                    left: 10px;
+                }
+            
+                &-next {
+                    right: 10px;
+                }
+            
+                &.swiper-button-disabled {
+                    opacity: 0.3;
+                }
+            }
+
+            .swiper-image-stretch {
+        
+                .swiper-slide {
+            
+                    .swiper-slide-image {
+                        width: 100%;
+                    }
+                }
+            }
+
+            .swiper-pagination-fraction,
+            .swiper-pagination-custom,
+            .swiper-horizontal > .swiper-pagination-bullets,
+            .swiper-pagination-bullets.swiper-pagination-horizontal {
+                bottom: 5px;
+            }
+
+            // Fix for Safari - Navigation arrows don't appear in cube mode without adding a 1px translateZ
+            &.swiper-cube  .elementor-swiper-button {
+                transform: translate3d(0, -50%, 1px);
+            }
+        }
+        
+        &.elementor-pagination-position-outside {
+            $caption-space: 30px;
+        
+            .swiper {
+                padding-bottom: $caption-space;
+
+                .elementor-swiper-button {
+                    top: calc(50% - #{$caption-space} / 2);
+                }
+            }
+        }
+        
+        .elementor-swiper {
+            position: relative;
+        }
+        
+        .elementor-main-swiper {
+            position: static;
+        }
+        
+        &.elementor-arrows-position- {
+        
+            &outside {
+        
+                .swiper {
+                    width: calc(100% - 60px);
+
+                    .elementor-swiper-button {
+        
+                        &-prev {
+                            left: 0;
+                        }
+            
+                        &-next {
+                            right: 0;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

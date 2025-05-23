@@ -1,3 +1,5 @@
+import ControlsPopover from './controls-popover';
+
 var ControlsStack;
 
 ControlsStack = Marionette.CompositeView.extend( {
@@ -9,31 +11,31 @@ ControlsStack = Marionette.CompositeView.extend( {
 
 	activeSection: null,
 
-	className: function() {
+	className() {
 		return 'elementor-controls-stack';
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			elementData: elementor.getElementData( this.model ),
 		};
 	},
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			// TODO: elementSettingsModel is deprecated since 2.8.0.
 			elementSettingsModel: this.model,
 		};
 	},
 
-	ui: function() {
+	ui() {
 		return {
 			tabs: '.elementor-panel-navigation-tab',
 			reloadButton: '.elementor-update-preview-button',
 		};
 	},
 
-	events: function() {
+	events() {
 		return {
 			'click @ui.reloadButton': 'onReloadButtonClick',
 		};
@@ -49,17 +51,22 @@ ControlsStack = Marionette.CompositeView.extend( {
 		},
 	},
 
-	initialize: function() {
+	initialize( options ) {
 		this.initCollection();
+
+		if ( options.tab ) {
+			this.activeTab = options.tab;
+			this.activateFirstSection();
+		}
 
 		this.listenTo( elementor.channels.deviceMode, 'change', this.onDeviceModeChange );
 	},
 
-	initCollection: function() {
+	initCollection() {
 		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( this.getOption( 'controls' ) ) ) );
 	},
 
-	filter: function( controlModel ) {
+	filter( controlModel ) {
 		if ( controlModel.get( 'tab' ) !== this.activeTab ) {
 			return false;
 		}
@@ -73,23 +80,23 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return ! section || section === this.activeSection;
 	},
 
-	getControlViewByModel: function( model ) {
+	getControlViewByModel( model ) {
 		return this.children.findByModelCid( model.cid );
 	},
 
-	getControlViewByName: function( name ) {
+	getControlViewByName( name ) {
 		return this.getControlViewByModel( this.getControlModel( name ) );
 	},
 
-	getControlModel: function( name ) {
-		return this.collection.findWhere( { name: name } );
+	getControlModel( name ) {
+		return this.collection.findWhere( { name } );
 	},
 
-	isVisibleSectionControl: function( sectionControlModel ) {
+	isVisibleSectionControl( sectionControlModel ) {
 		return this.activeTab === sectionControlModel.get( 'tab' );
 	},
 
-	activateTab: function( tab ) {
+	activateTab( tab ) {
 		this.activeTab = tab;
 
 		this.activateFirstSection();
@@ -99,20 +106,27 @@ ControlsStack = Marionette.CompositeView.extend( {
 		return this;
 	},
 
-	activateSection: function( sectionName ) {
+	activateSection( sectionName ) {
 		this.activeSection = sectionName;
 
 		return this;
 	},
-	activateFirstSection: function() {
+
+	activateFirstSection() {
 		var self = this;
 
 		var sectionControls = self.collection.filter( function( controlModel ) {
 			return 'section' === controlModel.get( 'type' ) && self.isVisibleSectionControl( controlModel );
 		} );
 
+		let sectionToActivate;
+
 		if ( ! sectionControls[ 0 ] ) {
-			return;
+			self.activeSection = null;
+
+			sectionToActivate = null;
+		} else {
+			sectionToActivate = sectionControls[ 0 ].get( 'name' );
 		}
 
 		var preActivatedSection = sectionControls.filter( function( controlModel ) {
@@ -123,67 +137,29 @@ ControlsStack = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		self.activateSection( sectionControls[ 0 ].get( 'name' ) );
+		self.activateSection( sectionToActivate );
 
 		return this;
 	},
 
-	getChildView: function( item ) {
+	getChildView( item ) {
 		var controlType = item.get( 'type' );
 
 		return elementor.getControlView( controlType );
 	},
 
-	handlePopovers: function() {
-		var self = this,
-			popoverStarted = false,
-			$popover;
-
-		self.removePopovers();
-
-		self.children.each( function( child ) {
-			if ( popoverStarted ) {
-				$popover.append( child.$el );
-			}
-
-			var popover = child.model.get( 'popover' );
-
-			if ( ! popover ) {
-				return;
-			}
-
-			if ( popover.start ) {
-				popoverStarted = true;
-
-				$popover = jQuery( '<div>', { class: self.classes.popover } );
-
-				child.$el.before( $popover );
-
-				$popover.append( child.$el );
-			}
-
-			if ( popover.end ) {
-				popoverStarted = false;
-			}
-		} );
-	},
-
-	removePopovers: function() {
-		this.$el.find( '.' + this.classes.popover ).remove();
-	},
-
-	getNamespaceArray: function() {
+	getNamespaceArray() {
 		return [ elementor.getPanelView().getCurrentPageName() ];
 	},
 
-	openActiveSection: function() {
+	openActiveSection() {
 		var activeSection = this.activeSection,
 			activeSectionView = this.children.filter( function( view ) {
 				return activeSection === view.model.get( 'name' );
 			} );
 
 		if ( activeSectionView[ 0 ] ) {
-			activeSectionView[ 0 ].$el.addClass( 'elementor-open' );
+			activeSectionView[ 0 ].$el.addClass( 'e-open' );
 
 			const eventNamespace = this.getNamespaceArray();
 
@@ -193,39 +169,72 @@ ControlsStack = Marionette.CompositeView.extend( {
 		}
 	},
 
-	onRenderCollection: function() {
+	onRenderCollection() {
 		this.openActiveSection();
 
-		this.handlePopovers();
+		ControlsStack.handlePopovers( this );
 	},
 
-	onModelDestroy: function() {
+	onModelDestroy() {
 		this.destroy();
 	},
 
-	onReloadButtonClick: function() {
+	onReloadButtonClick() {
 		elementor.reloadPreview();
 	},
 
-	onDeviceModeChange: function() {
+	onDeviceModeChange() {
 		if ( 'desktop' === elementor.channels.deviceMode.request( 'currentMode' ) ) {
 			this.$el.removeClass( 'elementor-responsive-switchers-open' );
 		}
 	},
 
-	onChildviewControlSectionClicked: function( childView ) {
-		var isSectionOpen = childView.$el.hasClass( 'elementor-open' );
+	onChildviewControlSectionClicked( childView ) {
+		var isSectionOpen = childView.$el.hasClass( 'e-open' );
 
 		this.activateSection( isSectionOpen ? null : childView.model.get( 'name' ) );
 
 		this._renderChildren();
 	},
 
-	onChildviewResponsiveSwitcherClick: function( childView, device ) {
+	onChildviewResponsiveSwitcherClick( childView, device ) {
 		if ( 'desktop' === device ) {
 			this.$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
 	},
+}, {
+	handlePopovers( view ) {
+		let popover;
+
+		view.popovers = [];
+
+		this.removePopovers( view );
+
+		view.children.each( ( control ) => {
+			if ( popover ) {
+				popover.addChild( control );
+			}
+
+			const popoverData = control.model.get( 'popover' );
+
+			if ( ! popoverData ) {
+				return;
+			}
+
+			if ( popoverData.start ) {
+				popover = new ControlsPopover( control );
+
+				view.popovers.push( popover );
+			}
+
+			if ( popoverData.end ) {
+				popover = null;
+			}
+		} );
+	},
+	removePopovers( view ) {
+		view.popovers.forEach( ( popover ) => popover.destroy() );
+	},
 } );
 
-module.exports = ControlsStack;
+export default ControlsStack;

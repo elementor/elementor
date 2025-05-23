@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Base\App;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -78,7 +79,7 @@ class Preview extends App {
 				$e = error_get_last();
 				if ( $e ) {
 					echo '<div id="elementor-preview-debug-error"><pre>';
-					echo $e['message'];
+					Utils::print_unescaped_internal_string( $e['message'] );
 					echo '</pre></div>';
 				}
 			} );
@@ -207,8 +208,6 @@ class Preview extends App {
 
 			$attributes = $document->get_container_attributes();
 
-			$attributes['class'] .= ' elementor-' . $this->post_id;
-
 			$content = '<div ' . Utils::render_html_attributes( $attributes ) . '></div>';
 		}
 
@@ -253,7 +252,28 @@ class Preview extends App {
 			ELEMENTOR_VERSION
 		);
 
+		wp_enqueue_style(
+			'e-theme-ui-light',
+			$this->get_css_assets_url( 'theme-light' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		wp_enqueue_style( 'editor-preview' );
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' ) ) {
+			wp_register_style(
+				'editor-preview-legacy',
+				ELEMENTOR_ASSETS_URL . 'css/editor-preview-legacy' . $direction_suffix . $suffix . '.css',
+				[],
+				ELEMENTOR_VERSION
+			);
+
+			wp_enqueue_style( 'editor-preview-legacy' );
+		}
+
+		// Handle the 'wp audio' in editor preview.
+		wp_enqueue_style( 'wp-mediaelement' );
 
 		/**
 		 * Preview enqueue styles.
@@ -289,6 +309,9 @@ class Preview extends App {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		// Handle the 'wp audio' in editor preview.
+		wp_enqueue_script( 'wp-mediaelement' );
 
 		/**
 		 * Preview enqueue scripts.

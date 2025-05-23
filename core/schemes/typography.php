@@ -61,7 +61,7 @@ class Typography extends Base_UI {
 	 * @return string Typography scheme title.
 	 */
 	public function get_title() {
-		return __( 'Typography', 'elementor' );
+		return esc_html__( 'Typography', 'elementor' );
 	}
 
 	/**
@@ -75,7 +75,7 @@ class Typography extends Base_UI {
 	 * @return string Typography scheme disabled title.
 	 */
 	public function get_disabled_title() {
-		return __( 'Default Fonts', 'elementor' );
+		return esc_html__( 'Default Fonts', 'elementor' );
 	}
 
 	/**
@@ -90,10 +90,10 @@ class Typography extends Base_UI {
 	 */
 	public function get_scheme_titles() {
 		return [
-			self::TYPOGRAPHY_1 => __( 'Primary Headline', 'elementor' ),
-			self::TYPOGRAPHY_2 => __( 'Secondary Headline', 'elementor' ),
-			self::TYPOGRAPHY_3 => __( 'Body Text', 'elementor' ),
-			self::TYPOGRAPHY_4 => __( 'Accent Text', 'elementor' ),
+			self::TYPOGRAPHY_1 => esc_html__( 'Primary Headline', 'elementor' ),
+			self::TYPOGRAPHY_2 => esc_html__( 'Secondary Headline', 'elementor' ),
+			self::TYPOGRAPHY_3 => esc_html__( 'Body Text', 'elementor' ),
+			self::TYPOGRAPHY_4 => esc_html__( 'Accent Text', 'elementor' ),
 		];
 	}
 

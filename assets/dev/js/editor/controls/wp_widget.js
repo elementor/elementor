@@ -2,7 +2,7 @@ var ControlBaseDataView = require( 'elementor-controls/base-data' ),
 	ControlWPWidgetItemView;
 
 ControlWPWidgetItemView = ControlBaseDataView.extend( {
-	ui: function() {
+	ui() {
 		var ui = ControlBaseDataView.prototype.ui.apply( this, arguments );
 
 		ui.form = 'form';
@@ -11,21 +11,21 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 		return ui;
 	},
 
-	events: function() {
+	events() {
 		return {
 			'keyup @ui.form :input': 'onFormChanged',
 			'change @ui.form :input': 'onFormChanged',
 		};
 	},
 
-	onFormChanged: function() {
+	onFormChanged() {
 		var idBase = 'widget-' + this.model.get( 'id_base' ),
 			settings = this.ui.form.elementorSerializeObject()[ idBase ].REPLACE_TO_ID;
 
 		this.setValue( settings );
 	},
 
-	onReady: function() {
+	onReady() {
 		var self = this;
 
 		elementorCommon.ajax.addRequest( 'editor_get_wp_widget_form', {
@@ -35,7 +35,7 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 				widget_type: self.model.get( 'widget' ),
 				data: self.container.settings.toJSON(),
 			},
-			success: function( data ) {
+			success( data ) {
 				self.ui.form.html( data );
 				// WP >= 4.8
 				if ( wp.textWidgets ) {
@@ -50,7 +50,9 @@ ControlWPWidgetItemView = ControlBaseDataView.extend( {
 					}
 				}
 
-				elementor.hooks.doAction( 'panel/widgets/' + self.model.get( 'widget' ) + '/controls/wp_widget/loaded', self );
+				const widgetType = self.model.get( 'widget' );
+
+				elementor.hooks.doAction( `panel/widgets/${ widgetType }/controls/wp_widget/loaded`, self );
 			},
 		} );
 	},

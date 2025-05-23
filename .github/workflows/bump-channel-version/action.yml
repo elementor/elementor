@@ -1,0 +1,43 @@
+name: Bump Channel Version
+description: Bump the version of the current channel, and set it as an environment variable. (The Bump is for the current build only, No changes are made to the repo)
+
+inputs:
+  CHANNEL:
+    required: true
+    description: 'The channel to bump the version to (cloud, beta or ga).'
+  CLEAN_PACKAGE_VERSION:
+    required: true
+    description: 'The current package version, e.g. "3.11.7".'
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+            CURRENT_CHANNEL_VERSION=${{ env.CURRENT_CHANNEL_VERSION }}
+            NEW_CHANNEL_VERSION=$((CURRENT_CHANNEL_VERSION+1))
+            ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
+
+            if [[ ${{ inputs.CHANNEL }} == "ga" ]]; then
+              ELEMENTOR_CHANNEL_PACKAGE_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}
+            fi
+
+            sed -i -E "s/Version: .*/Version: ${ELEMENTOR_CHANNEL_PACKAGE_VERSION}/g" elementor.php
+            sed -i -E "s/ELEMENTOR_VERSION', '.*'/ELEMENTOR_VERSION', '${ELEMENTOR_CHANNEL_PACKAGE_VERSION}'/g" elementor.php
+
+            echo "ELEMENTOR_CHANNEL_PACKAGE_VERSION=${ELEMENTOR_CHANNEL_PACKAGE_VERSION}"
+            echo "NEW_CHANNEL_VERSION=${NEW_CHANNEL_VERSION}"
+
+            if [[ ${{ inputs.CHANNEL }} == "beta" ]]; then
+                BETA_VERSION=${{ inputs.CLEAN_PACKAGE_VERSION }}-${{ inputs.CHANNEL }}${NEW_CHANNEL_VERSION}
+                echo "BETA_VERSION=$BETA_VERSION" >> $GITHUB_ENV
+
+                if grep -q "Beta tag:" ./readme.txt
+                  then
+                    echo "Replace existing beta tag in readme file"
+                    sed -i -E "s/Beta tag: .*/Beta tag: $BETA_VERSION/g" ./readme.txt
+                  else
+                    echo "Add beta tag to readme file"
+                    sed -i -E '/^Stable tag: .*/a\'$'\n'"Beta tag: $BETA_VERSION$(printf '\n\r')" ./readme.txt
+                fi
+            fi

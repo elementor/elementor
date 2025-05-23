@@ -13,9 +13,13 @@ export default class extends Marionette.Behavior {
 
 		// Save this instance for external use eg: ( hooks ).
 		this.view.options.draggable = this;
+
+		this.isActive = false;
 	}
 
 	activate() {
+		this.isActive = true;
+
 		this.$el.draggable( {
 			addClasses: false,
 		} );
@@ -26,6 +30,8 @@ export default class extends Marionette.Behavior {
 			return;
 		}
 
+		this.isActive = false;
+
 		this.$el.draggable( 'destroy' );
 	}
 
@@ -34,7 +40,7 @@ export default class extends Marionette.Behavior {
 
 		this.deactivate();
 
-		if ( isAbsolute && this.view.container.isDesignable() ) {
+		if ( isAbsolute && this.view.getContainer().isDesignable() ) {
 			this.activate();
 		}
 	}

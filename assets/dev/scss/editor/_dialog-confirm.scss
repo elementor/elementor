@@ -1,0 +1,59 @@
+@import "buttons";
+
+//
+// Dialog Confirm
+//
+
+$e-dialog-confirm-space: 20px;
+
+.dialog-type-confirm,
+.dialog-type-alert {
+
+	.dialog-widget-content {
+		margin: auto;
+		width: 400px;
+		padding: $e-dialog-confirm-space;
+	}
+
+	.dialog-header {
+		font-size: 15px;
+		font-weight: 500;
+
+		&:after {
+			content: '';
+			display: block;
+			border-bottom: var(--e-a-border);
+			padding-bottom: 10px;
+			margin-bottom: 10px;
+			margin-right: -$e-dialog-confirm-space;
+			margin-left: -$e-dialog-confirm-space;
+		}
+	}
+
+	.dialog-message {
+		min-height: 50px;
+	}
+
+	.dialog-buttons-wrapper {
+		padding-top: 10px;
+		display: flex;
+		justify-content: flex-end;
+		gap: 15px;
+
+		.dialog-button {
+			@extend .elementor-button;
+
+			&.dialog-ok {
+				@extend .e-primary;
+			}
+
+			&.dialog-cancel {
+				@extend .e-btn-txt;
+			}
+
+			&.dialog-take_over {
+				@extend .e-primary;
+			}
+		}
+	}
+}

@@ -14,7 +14,7 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		'submit @ui.form': 'onFormSubmit',
 	},
 
-	getSaveType: function() {
+	getSaveType() {
 		let type;
 		if ( this.model ) {
 			type = this.model.get( 'elType' );
@@ -27,14 +27,14 @@ TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		return type;
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		var saveType = this.getSaveType(),
 			templateType = elementor.templates.getTemplateTypes( saveType );
 
 		return templateType.saveDialog;
 	},
 
-	onFormSubmit: function( event ) {
+	onFormSubmit( event ) {
 		event.preventDefault();
 
 		var formData = this.ui.form.elementorSerializeObject(),

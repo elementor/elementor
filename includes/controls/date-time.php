@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Modules\DynamicTags\Module as TagsModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -44,6 +46,11 @@ class Control_Date_Time extends Base_Data_Control {
 		return [
 			'label_block' => true,
 			'picker_options' => [],
+			'dynamic' => [
+				'categories' => [
+					TagsModule::DATETIME_CATEGORY,
+				],
+			],
 		];
 	}
 
@@ -58,12 +65,11 @@ class Control_Date_Time extends Base_Data_Control {
 	 * @access public
 	 */
 	public function content_template() {
-		$control_uid = $this->get_control_uid();
 		?>
 		<div class="elementor-control-field">
-			<label for="<?php echo $control_uid; ?>" class="elementor-control-title">{{{ data.label }}}</label>
-			<div class="elementor-control-input-wrapper">
-				<input id="<?php echo $control_uid; ?>" placeholder="{{ data.placeholder }}" class="elementor-date-time-picker flatpickr" type="text" data-setting="{{ data.name }}">
+			<label for="<?php $this->print_control_uid(); ?>" class="elementor-control-title">{{{ data.label }}}</label>
+			<div class="elementor-control-input-wrapper elementor-control-dynamic-switcher-wrapper">
+				<input id="<?php $this->print_control_uid(); ?>" placeholder="{{ view.getControlPlaceholder() }}" class="elementor-date-time-picker flatpickr elementor-control-tag-area" type="text" data-setting="{{ data.name }}">
 			</div>
 		</div>
 		<# if ( data.description ) { #>

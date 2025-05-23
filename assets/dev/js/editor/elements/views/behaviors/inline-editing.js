@@ -5,28 +5,28 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 
 	$currentEditingArea: null,
 
-	ui: function() {
+	ui() {
 		return {
 			inlineEditingArea: '.' + this.getOption( 'inlineEditingClass' ),
 		};
 	},
 
-	events: function() {
+	events() {
 		return {
 			'click @ui.inlineEditingArea': 'onInlineEditingClick',
 			'input @ui.inlineEditingArea': 'onInlineEditingUpdate',
 		};
 	},
 
-	initialize: function() {
+	initialize() {
 		this.onInlineEditingBlur = this.onInlineEditingBlur.bind( this );
 	},
 
-	getEditingSettingKey: function() {
+	getEditingSettingKey() {
 		return this.$currentEditingArea.data().elementorSettingKey;
 	},
 
-	startEditing: function( $element ) {
+	startEditing( $element ) {
 		if (
 			this.editing ||
 			! this.view.container.isEditable() ||
@@ -86,10 +86,10 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 			linksInNewWindow: true,
 			stay: false,
 			editor: this.$currentEditingArea[ 0 ],
-			mode: mode,
+			mode,
 			list: 'none' === elementDataToolbar ? [] : inlineEditingConfig.toolbar[ elementDataToolbar || 'basic' ],
 			cleanAttrs: [ 'id', 'class', 'name' ],
-			placeholder: elementor.translate( 'type_here' ) + '...',
+			placeholder: __( 'Type Here', 'elementor' ) + '...',
 			toolbarIconsPrefix: 'eicon-editor-',
 			toolbarIconsDictionary: {
 				externalLink: {
@@ -138,7 +138,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		elementorCommon.elements.$body.on( 'mousedown', this.onInlineEditingBlur );
 	},
 
-	stopEditing: function() {
+	stopEditing() {
 		this.editing = false;
 
 		this.$currentEditingArea.off( 'blur', this.onInlineEditingBlur );
@@ -159,7 +159,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}
 	},
 
-	onInlineEditingClick: function( event ) {
+	onInlineEditingClick( event ) {
 		var self = this,
 			$targetElement = jQuery( event.currentTarget );
 
@@ -172,7 +172,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}, 30 );
 	},
 
-	onInlineEditingBlur: function( event ) {
+	onInlineEditingBlur( event ) {
 		if ( 'mousedown' === event.type ) {
 			this.stopEditing();
 
@@ -195,7 +195,7 @@ InlineEditingBehavior = Marionette.Behavior.extend( {
 		}, 20 );
 	},
 
-	onInlineEditingUpdate: function() {
+	onInlineEditingUpdate() {
 		let key = this.getEditingSettingKey(),
 			container = this.view.getContainer();
 

@@ -1,0 +1,23 @@
+.sr-only {
+	@include sr-only();
+}
+
+@each $breakpoint in map-keys($breakpoints) {
+	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
+		.text-start-#{$breakpoint} {
+			text-align: start;
+		}
+	}
+
+	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
+		.text-center-#{$breakpoint} {
+			text-align: center;
+		}
+	}
+
+	@media screen and (min-width: #{map-get($breakpoints, $breakpoint)}) {
+		.text-end-#{$breakpoint} {
+			text-align: end;
+		}
+	}
+}

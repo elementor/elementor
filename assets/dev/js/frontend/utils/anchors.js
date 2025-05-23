@@ -1,16 +1,18 @@
+import { isScrollSnapActive } from './utils';
+
 module.exports = elementorModules.ViewModule.extend( {
-	getDefaultSettings: function() {
+	getDefaultSettings() {
 		return {
 			scrollDuration: 500,
 			selectors: {
 				links: 'a[href*="#"]',
 				targets: '.elementor-element, .elementor-menu-anchor',
-				scrollable: 'html, body',
+				scrollable: isScrollSnapActive() ? 'body' : 'html, body',
 			},
 		};
 	},
 
-	getDefaultElements: function() {
+	getDefaultElements() {
 		var $ = jQuery,
 			selectors = this.getSettings( 'selectors' );
 
@@ -19,11 +21,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	bindEvents: function() {
+	bindEvents() {
 		elementorFrontend.elements.$document.on( 'click', this.getSettings( 'selectors.links' ), this.handleAnchorLinks );
 	},
 
-	handleAnchorLinks: function( event ) {
+	handleAnchorLinks( event ) {
 		var clickedLink = event.currentTarget,
 			isSamePathname = ( location.pathname === clickedLink.pathname ),
 			isSameHostname = ( location.hostname === clickedLink.hostname ),
@@ -65,14 +67,22 @@ module.exports = elementorModules.ViewModule.extend( {
 
 		scrollTop = elementorFrontend.hooks.applyFilters( 'frontend/handlers/menu_anchor/scroll_top_distance', scrollTop );
 
+		// On scroll animation start: remove scroll-snap.
+		if ( isScrollSnapActive() ) {
+			elementorFrontend.elements.$body.css( 'scroll-snap-type', 'none' );
+		}
+
 		this.elements.$scrollable.animate( {
-			scrollTop: scrollTop,
-		}, this.getSettings( 'scrollDuration' ), 'linear' );
+			scrollTop,
+		}, this.getSettings( 'scrollDuration' ), 'linear', () => {
+			// On scroll animation complete: add scroll-snap back.
+			if ( isScrollSnapActive() ) {
+					elementorFrontend.elements.$body.css( 'scroll-snap-type', '' );
+			}
+		} );
 	},
 
-	onInit: function() {
+	onInit() {
 		elementorModules.ViewModule.prototype.onInit.apply( this, arguments );
-
-		this.bindEvents();
 	},
 } );

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * jQuery Serialize Object v1.0.1
  */

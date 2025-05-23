@@ -1,6 +1,6 @@
 import BaseAddSectionView from './base';
 
-class AddSectionView extends BaseAddSectionView {
+export default class AddSectionView extends BaseAddSectionView {
 	get id() {
 		return 'elementor-add-new-section';
 	}
@@ -9,5 +9,3 @@ class AddSectionView extends BaseAddSectionView {
 		this.closeSelectPresets();
 	}
 }
-
-export default AddSectionView;

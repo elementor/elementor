@@ -1,16 +1,17 @@
-var ControlBaseDataView = require( 'elementor-controls/base-data' ),
-	RepeaterRowView;
+import ControlsStack from 'elementor-views/controls-stack';
 
-RepeaterRowView = Marionette.CompositeView.extend( {
+module.exports = Marionette.CompositeView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-repeater-row' ),
 
 	className: 'elementor-repeater-fields',
 
-	ui: {
-		duplicateButton: '.elementor-repeater-tool-duplicate',
-		editButton: '.elementor-repeater-tool-edit',
-		removeButton: '.elementor-repeater-tool-remove',
-		itemTitle: '.elementor-repeater-row-item-title',
+	ui() {
+		return {
+			duplicateButton: '.elementor-repeater-tool-duplicate',
+			editButton: '.elementor-repeater-tool-edit',
+			removeButton: '.elementor-repeater-tool-remove',
+			itemTitle: '.elementor-repeater-row-item-title',
+		};
 	},
 
 	behaviors: {
@@ -29,7 +30,7 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		change: 'onModelChange',
 	},
 
-	templateHelpers: function() {
+	templateHelpers() {
 		return {
 			itemIndex: this.getOption( 'itemIndex' ),
 			itemActions: this.getOption( 'itemActions' ),
@@ -38,23 +39,23 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '.elementor-repeater-row-controls',
 
-	getChildView: function( item ) {
+	getChildView( item ) {
 		var controlType = item.get( 'type' );
 
 		return elementor.getControlView( controlType );
 	},
 
-	childViewOptions: function() {
+	childViewOptions() {
 		return {
 			container: this.options.container,
 		};
 	},
 
-	updateIndex: function( newIndex ) {
+	updateIndex( newIndex ) {
 		this.itemIndex = newIndex;
 	},
 
-	setTitle: function() {
+	setTitle() {
 		const titleField = this.getOption( 'titleField' );
 
 		let title = '';
@@ -64,7 +65,8 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		}
 
 		if ( ! title ) {
-			title = elementor.translate( 'Item #%s', [ this.getOption( 'itemIndex' ) ] );
+			/* Translators: %s: Item Index (number). */
+			title = sprintf( __( 'Item #%s', 'elementor' ), this.getOption( 'itemIndex' ) );
 		}
 
 		this.ui.itemTitle.html( title );
@@ -74,28 +76,28 @@ RepeaterRowView = Marionette.CompositeView.extend( {
 		this.$el.toggleClass( 'elementor-repeater-row--disable-sort', ! enable );
 	},
 
-	initialize: function( options ) {
+	initialize( options ) {
 		this.itemIndex = 0;
 
 		// Collection for Controls list
 		this.collection = new Backbone.Collection( _.values( elementor.mergeControlsSettings( options.controlFields ) ) );
 	},
 
-	onRender: function() {
+	onRender() {
 		this.setTitle();
+
+		ControlsStack.handlePopovers( this );
 	},
 
-	onModelChange: function() {
+	onModelChange() {
 		if ( this.getOption( 'titleField' ) ) {
 			this.setTitle();
 		}
 	},
 
-	onChildviewResponsiveSwitcherClick: function( childView, device ) {
+	onChildviewResponsiveSwitcherClick( childView, device ) {
 		if ( 'desktop' === device ) {
 			elementor.getPanelView().getCurrentPageView().$el.toggleClass( 'elementor-responsive-switchers-open' );
 		}
 	},
 } );
-
-module.exports = RepeaterRowView;

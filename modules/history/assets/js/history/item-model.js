@@ -9,7 +9,7 @@ module.exports = Backbone.Model.extend( {
 		history: {},
 	},
 
-	initialize: function() {
+	initialize() {
 		this.set( 'items', new Backbone.Collection() );
 	},
 } );

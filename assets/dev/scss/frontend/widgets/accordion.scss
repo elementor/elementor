@@ -25,6 +25,11 @@
 			display: inline-block;
 			width: 1.5em;
 
+			svg {
+				width: 1em;
+				height: 1em;
+			}
+
 			&.elementor-accordion-icon- {
 
 				&right {
@@ -66,7 +71,7 @@
 }
 
 // Responsive mode
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
 
 	.elementor-accordion {
 
@@ -81,5 +86,15 @@
 		.elementor-tab-content {
 			padding: 7px 15px;
 		}
+	}
+}
+
+.e-con,
+.e-con-inner {
+
+	> .elementor-widget-accordion {
+		// Fix - Accordion widget disappears because the 'flex column' setting causes an undefined width inside the flex container (ED-7524).
+		width: var( --container-widget-width );
+		--flex-grow: var( --container-widget-flex-grow );
 	}
 }

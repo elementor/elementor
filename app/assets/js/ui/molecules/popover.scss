@@ -1,0 +1,74 @@
+@import "popover-api";
+
+// checkbox label
+.#{$eps-prefix}popover {
+	padding: $eps-popover-padding-y 0;
+	background-color: var(--popover-background-color);
+	box-shadow: var(--popover-box-shadow-size) var(--popover-box-shadow-color);
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	min-width: 120px;
+	border-radius: $eps-popover-border-radius;
+	position: absolute;
+	z-index: $eps-zindex-popover;
+	margin-top: $eps-popover-arrow-height;
+	transform: translateX(-50%);
+	left: px-to-rem(4);
+
+	&__background {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: $eps-zindex-modal-backdrop;
+	}
+
+	&__container {
+		position: relative;
+	}
+
+	&::before {
+		content: "";
+		display: block;
+		position: absolute;
+		width: $eps-popover-arrow-width;
+		height: $eps-popover-arrow-height;
+		margin: 0 $eps-popover-border-radius $eps-popover-arrow-height;
+		top: -$eps-popover-arrow-height;
+		left: 50%;
+		transform: translateX(-50%);
+		border-color: transparent;
+		border-style: solid;
+		border-width: 0 calc(#{$eps-popover-arrow-width} / 2) $eps-popover-arrow-height calc(#{$eps-popover-arrow-width} / 2);
+		border-bottom-color: var(--popover-arrow-color);
+	}
+
+	&__item {
+		padding: $eps-popover-item-spacing-y $eps-popover-item-spacing-x;
+		background-color: var(--popover-item-background-color);
+		color: var(--popover-item-color);
+		font-size: $eps-popover-item-font-size;
+		font-weight: $eps-popover-font-weight;
+		line-height: $eps-popover-item-line-height;
+		width: 100%;
+		align-items: center;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--popover-item-hover-color);
+		}
+
+		&--danger {
+			&:hover {
+				color: var(--popover-item-danger-hover-color);
+			}
+		}
+
+		.#{$eps-prefix}icon {
+			font-size: inherit;
+			margin-inline-end: spacing(5);
+		}
+	}
+}

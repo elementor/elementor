@@ -1,15 +1,16 @@
 #elementor-beta-tester-modal {
+	color: var(--e-a-color-txt);
 
 	.elementor-templates-modal__header__items-area {
 
-		color: $editor-lighter;
+		color: var(--e-a-color-txt);
 		cursor: pointer;
 
 		&:hover {
 
 			.elementor-beta-tester-do-not-show-again,
 			.elementor-templates-modal__header__item > i {
-				color: $editor-dark;
+				color: var(--e-a-color-txt-hover)
 			}
 		}
 
@@ -21,7 +22,7 @@
 			text-transform: uppercase;
 			font-weight: bold;
 			font-size: 12px;
-			transition: $transition-hover;
+			transition: var(--e-a-transition-hover);
 		}
 
 	}
@@ -34,7 +35,7 @@
 	.dialog-lightbox-message{
 		padding: 40px;
 		height: 300px;
-		background-color: #fff;
+		background-color: var(--e-a-bg-default);
 	}
 }
 
@@ -43,12 +44,10 @@
 	&__caption {
 		font-weight: bold;
 		font-size: 20px;
-		color: $editor-darkest;
 	}
 
 	&__description {
 		font-size: 15px;
-		color: $editor-dark;
 		margin-top: 10px;
 	}
 
@@ -63,7 +62,7 @@
 
 	&__email {
 		flex-grow: 1;
-		border: $editor-lightest 1px solid;
+		border: var(--e-a-border);
 		@include border-end(0);
 		border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
 		margin: 0;
@@ -74,6 +73,6 @@
 	&__terms {
 		margin-top: 40px;
 		font-size: 11px;
-		color: $editor-light;
+		color: var(--e-a-color-txt-muted);
 	}
 }

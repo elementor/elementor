@@ -10,9 +10,6 @@
 		}
 	}
 
-	// Reset Style for some themes and browsers
-	hyphens: manual;
-
 	a {
 		box-shadow: none;
 		text-decoration: none;
@@ -31,8 +28,15 @@
 		box-shadow: none;
 	}
 
-	.elementor-widget:not(.elementor-widget-text-editor) figure {
-		margin: 0;
+	.elementor-widget {
+
+		// Classic Editor & Gutenberg Compatibility
+		&:not(.elementor-widget-text-editor):not(.elementor-widget-theme-post-content) {
+
+			figure {
+				margin: 0;
+			}
+		}
 	}
 
 	// Responsive Embed
@@ -45,10 +49,6 @@
 		margin: 0;
 		line-height: 1;
 		border: none;
-	}
-
-	.elementor-custom-embed {
-		line-height: 0; //for google maps margin bottom
 	}
 
 	// Background Video
@@ -104,7 +104,7 @@
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		z-index: 0;
+		z-index: $ground-layer;
 		top: 0;
 		@include start(0);
 
@@ -117,7 +117,9 @@
 	}
 }
 
-.elementor-widget-wrap {
+.elementor-widget-wrap,
+.e-con,
+.e-con-inner {
 
 	> .elementor-element.elementor-absolute {
 		position: absolute;
@@ -145,11 +147,11 @@
 
 		@include inline-width('');
 
-		@media (max-width: $screen-md-max) {
+		@media (max-width: $screen-tablet-max) {
 			@include inline-width(-tablet);
 		}
 
-		@media (max-width: $screen-sm-max) {
+		@media (max-width: $screen-mobile-max) {
 			@include inline-width(-mobile);
 		}
 	}
@@ -159,8 +161,38 @@
 
 	&.elementor-absolute,
 	&.elementor-fixed {
-		z-index: 1;
+		z-index: $first-layer;
 	}
+
+	// Set to initial values in order to avoid inheritance which might cause unexpected behavior.
+	--flex-direction: initial;
+	--flex-wrap: initial;
+	--justify-content: initial;
+	--align-items: initial;
+	--align-content: initial;
+	--gap: initial;
+	--flex-basis: initial;
+	--flex-grow: initial;
+	--flex-shrink: initial;
+	--order: initial;
+	--align-self: initial;
+
+	&:where( .e-con-full, .elementor-widget ) {
+		// Flex container.
+		flex-direction: var( --flex-direction );
+		flex-wrap: var( --flex-wrap );
+		justify-content: var( --justify-content );
+		align-items: var( --align-items );
+		align-content: var( --align-content );
+		gap: var( --gap );
+	}
+
+	// Flex item.
+	flex-basis: var( --flex-basis );
+	flex-grow: var( --flex-grow );
+	flex-shrink: var( --flex-shrink );
+	order: var( --order );
+	align-self: var( --align-self );
 }
 
 .elementor-invisible {
@@ -204,12 +236,26 @@
 
 .elementor-custom-embed-play {
 	@include absolute-center;
+	$elementor-custom-embed-play-icon-size: 100px;
+	$elementor-custom-embed-play-icon-color: #fff;
+	$elementor-custom-embed-play-icon-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 
 	i {
-		font-size: 100px;
-		color: #fff;
+		font-size: $elementor-custom-embed-play-icon-size;
+		color: $elementor-custom-embed-play-icon-color;
+		text-shadow: $elementor-custom-embed-play-icon-shadow;
+	}
+
+	svg {
+		height: $elementor-custom-embed-play-icon-size;
+		width: $elementor-custom-embed-play-icon-size;
+		fill: $elementor-custom-embed-play-icon-color;
+		filter: drop-shadow($elementor-custom-embed-play-icon-shadow);
+	}
+
+	i,
+	svg {
 		opacity: 0.8;
-		text-shadow: 1px 0 6px rgba(0, 0, 0, 0.3);
 		transition: all .5s;
 	}
 
@@ -217,11 +263,16 @@
 
 		i {
 			font-family: eicons;
-			animation: fa-spin 2s infinite linear;
 
 			&:before {
 				content: '\e8fb';
 			}
+		}
+
+		// Using the eicon-spin animation for not being dependent in any external library.
+		i,
+		svg {
+			animation: eicon-spin 2s infinite linear;
 		}
 	}
 }
@@ -252,10 +303,8 @@
 	}
 }
 
-// Alignment for Tablet
-@media (max-width: $screen-md-max) {
-
-	.elementor-tablet-align- {
+@mixin button-alignment($device) {
+	.elementor-#{$device}-align- {
 
 		&center {
 			text-align: center;
@@ -288,58 +337,58 @@
 			}
 		}
 	}
+}
+
+// Alignment for Widescreen
+@media (min-width: $screen-widescreen-min) {
+	@include button-alignment(widescreen);
+}
+
+// Alignment for Laptop
+@media (max-width: $screen-laptop-max) {
+	@include button-alignment(laptop);
+}
+
+// Alignment for Tablet Extra
+@media (max-width: $screen-tablet-extra-max) {
+	@include button-alignment(tablet_extra);
+}
+
+// Alignment for Tablet
+@media (max-width: $screen-tablet-max) {
+	@include button-alignment(tablet);
+}
+
+// Alignment for Mobile Extra
+@media (max-width: $screen-mobile-extra-max) {
+	@include button-alignment(mobile_extra);
 }
 
 // Alignment for Mobile
-@media (max-width: $screen-sm-max) {
+@media (max-width: $screen-mobile-max) {
+	@include button-alignment(mobile);
+}
 
-	.elementor-mobile-align- {
+// Elementor Page Title
+:root {
+	--page-title-display: block;
+}
 
-		&center {
-			text-align: center;
+.elementor-page-title, h1.entry-title {
+	display: var(--page-title-display);
+}
 
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&right {
-			text-align: right;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&left {
-			text-align: left;
-
-			.elementor-button {
-				width: auto;
-			}
-		}
-
-		&justify {
-
-			.elementor-button {
-				width: 100%;
-			}
-		}
+// Global animation that should be available even when the elementor-icons library is not loaded.
+@keyframes eicon-spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(359deg);
 	}
 }
 
-// Admin Bar - Icon (Front-End)
-#wpadminbar {
-
-	#wp-admin-bar-elementor_edit_page > .ab-item::before {
-		content: "\e813";
-		font-family: eicons;
-		top: 3px;
-		font-size: 18px;
-	}
-
-	#wp-admin-bar-elementor_inspector > .ab-item::before {
-		content: "\f348";
-		top: 2px;
-	}
+// Global animation class that should be available even when the elementor-icons library is not loaded.
+.eicon-animation-spin {
+	animation: eicon-spin 2s infinite linear;
 }

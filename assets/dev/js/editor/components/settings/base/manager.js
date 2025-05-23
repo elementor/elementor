@@ -7,21 +7,21 @@ module.exports = elementorModules.ViewModule.extend( {
 
 	changeCallbacks: {},
 
-	addChangeCallback: function( attribute, callback ) {
+	addChangeCallback( attribute, callback ) {
 		this.changeCallbacks[ attribute ] = callback;
 	},
 
-	bindEvents: function() {
+	bindEvents() {
 		elementor.on( 'document:loaded', this.onElementorDocumentLoaded );
 
 		this.model.on( 'change', this.onModelChange );
 	},
 
-	unbindEvents: function() {
+	unbindEvents() {
 		elementor.off( 'document:loaded', this.onElementorDocumentLoaded );
 	},
 
-	addPanelPage: function() {
+	addPanelPage() {
 		var name = this.getSettings( 'name' );
 
 		elementor.getPanelView().addPage( name + '_settings', {
@@ -31,32 +31,42 @@ module.exports = elementorModules.ViewModule.extend( {
 				editedView: this.getEditedView(),
 				model: this.model,
 				controls: this.model.controls,
-				name: name,
+				name,
 			},
 		} );
 	},
 
-	getContainerId() {
+	getContainerType() {
 		return this.getSettings( 'name' ) + '_settings';
+	},
+
+	getContainerId() {
+		elementorDevTools.deprecation.deprecated( 'getContainerId', '3.7.0', 'getContainerType' );
+
+		return this.getContainerType();
 	},
 
 	// Emulate an element view/model structure with the parts needed for a container.
 	getEditedView() {
-		const id = this.getContainerId(),
-			editModel = new Backbone.Model( {
-				id,
-				elType: id,
+		const documentElementType = elementor.elementsManager.getElementTypeClass( 'document' ),
+			ModelClass = documentElementType.getModel(),
+			type = this.getContainerType(),
+			editModel = new ModelClass( {
+				id: type,
+				elType: type,
 				settings: this.model,
 		} );
 
 		const container = new elementorModules.editor.Container( {
-			type: id,
-			id: editModel.id,
+			type,
+			id: type,
 			model: editModel,
 			settings: editModel.get( 'settings' ),
 			view: false,
+			parent: false,
 			label: this.getSettings( 'panelPage' ).title,
 			controls: this.model.controls,
+			document: this.getDocument(),
 			renderer: false,
 		} );
 
@@ -64,32 +74,43 @@ module.exports = elementorModules.ViewModule.extend( {
 			getContainer: () => container,
 			getEditModel: () => editModel,
 			model: editModel,
+			container,
 		};
 	},
 
-	updateStylesheet: function( keepOldEntries ) {
+	getDocument() {
+		return false;
+	},
+
+	updateStylesheet( keepOldEntries ) {
 		var controlsCSS = this.getControlsCSS();
 
 		if ( ! keepOldEntries ) {
 			controlsCSS.stylesheet.empty();
 		}
 
+		this.model.handleRepeaterData( this.model.attributes );
+
 		controlsCSS.addStyleRules( this.model.getStyleControls(), this.model.attributes, this.model.controls, [ /{{WRAPPER}}/g ], [ this.getSettings( 'cssWrapperSelector' ) ] );
 
-		controlsCSS.addStyleToDocument();
+		controlsCSS.addStyleToDocument( {
+			// Ensures we don't override default global style
+			at: 'before',
+			of: '#elementor-style-e-global-style',
+		} );
 	},
 
-	initModel: function() {
+	initModel() {
 		this.model = new elementorModules.editor.elements.models.BaseSettings( this.getSettings( 'settings' ), {
 			controls: this.getSettings( 'controls' ),
 		} );
 	},
 
-	getStyleId: function() {
+	getStyleId() {
 		return this.getSettings( 'name' );
 	},
 
-	initControlsCSSParser: function() {
+	initControlsCSSParser() {
 		var controlsCSS;
 
 		this.destroyControlsCSS = function() {
@@ -109,11 +130,11 @@ module.exports = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	getDataToSave: function( data ) {
+	getDataToSave( data ) {
 		return data;
 	},
 
-	save: function( callback ) {
+	async save( callback ) {
 		var self = this;
 
 		if ( ! self.hasChange ) {
@@ -125,16 +146,12 @@ module.exports = elementorModules.ViewModule.extend( {
 				data: settings,
 			} );
 
-		if ( ! elementorCommonConfig.isTesting ) {
-			NProgress.start();
-		}
+		NProgress.start();
 
-		elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
-			data: data,
-			success: function() {
-				if ( ! elementorCommonConfig.isTesting ) {
-					NProgress.done();
-				}
+		return elementorCommon.ajax.addRequest( 'save_' + this.getSettings( 'name' ) + '_settings', {
+			data,
+			success() {
+				NProgress.done();
 
 				self.setSettings( 'settings', settings );
 
@@ -144,13 +161,14 @@ module.exports = elementorModules.ViewModule.extend( {
 					callback.apply( self, arguments );
 				}
 			},
-			error: function() {
+			error() {
+				// eslint-disable-next-line no-alert
 				alert( 'An error occurred' );
 			},
 		} );
 	},
 
-	onInit: function() {
+	onInit() {
 		this.initModel();
 
 		this.initControlsCSSParser();
@@ -165,7 +183,7 @@ module.exports = elementorModules.ViewModule.extend( {
 	/**
 	 * BC for custom settings without a JS component.
 	 */
-	addPanelMenuItem: function() {
+	addPanelMenuItem() {
 		const menuSettings = this.getSettings( 'panelPage.menu' );
 
 		if ( ! menuSettings ) {
@@ -186,7 +204,7 @@ module.exports = elementorModules.ViewModule.extend( {
 		elementor.modules.layouts.panel.pages.menu.Menu.addItem( menuItemOptions, 'settings', menuSettings.beforeItem );
 	},
 
-	onModelChange: function( model ) {
+	onModelChange( model ) {
 		var self = this;
 
 		self.hasChange = true;
@@ -204,17 +222,13 @@ module.exports = elementorModules.ViewModule.extend( {
 		self.debounceSave();
 	},
 
-	onElementorDocumentLoaded: function() {
+	onElementorDocumentLoaded() {
 		this.updateStylesheet();
 
 		this.addPanelPage();
-
-		if ( ! elementor.userCan( 'design' ) ) {
-			$e.route( 'panel/page-settings/settings' );
-		}
 	},
 
-	destroy: function() {
+	destroy() {
 		this.unbindEvents();
 
 		this.model.destroy();

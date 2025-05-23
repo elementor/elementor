@@ -1,8 +1,12 @@
 import TabsModule from './base-tabs';
 
-export default ( $scope ) => {
-	elementorFrontend.elementsHandler.addHandler( TabsModule, {
-		$element: $scope,
-		toggleSelf: false,
-	} );
-};
+export default class Tabs extends TabsModule {
+	getDefaultSettings() {
+		const defaultSettings = super.getDefaultSettings();
+
+		return {
+			...defaultSettings,
+			toggleSelf: false,
+		};
+	}
+}

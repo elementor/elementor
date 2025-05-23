@@ -2,7 +2,7 @@ var ControlBaseView = require( 'elementor-controls/base' );
 
 module.exports = ControlBaseView.extend( {
 
-	ui: function() {
+	ui() {
 		var ui = ControlBaseView.prototype.ui.apply( this, arguments );
 
 		ui.button = 'button';
@@ -14,7 +14,7 @@ module.exports = ControlBaseView.extend( {
 		'click @ui.button': 'onButtonClick',
 	},
 
-	onButtonClick: function() {
+	onButtonClick() {
 		var eventName = this.model.get( 'event' );
 
 		elementor.channels.editor.trigger( eventName, this );

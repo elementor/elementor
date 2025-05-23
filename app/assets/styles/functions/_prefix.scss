@@ -1,0 +1,12 @@
+// Function: Prefix
+// - Argument: string
+// - Output string + hypen, E.g: .#{$prefix}some-element => .prefix-some-element
+
+
+@function prefix($prefix:null){
+  @if $prefix{
+	@return $prefix + "-";
+  } @else {
+	@return null;
+  }
+}

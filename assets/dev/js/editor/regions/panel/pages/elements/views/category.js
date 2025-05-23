@@ -15,7 +15,7 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		'click @ui.title': 'onTitleClick',
 	},
 
-	id: function() {
+	id() {
 		return 'elementor-panel-category-' + this.model.get( 'name' );
 	},
 
@@ -23,37 +23,63 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	childViewContainer: '.elementor-panel-category-items',
 
-	initialize: function() {
-		this.collection = new PanelElementsElementsCollection( this.model.get( 'items' ) );
+	initialize() {
+		let items = this.model.get( 'items' ) || [];
+
+		switch ( this.model.get( 'sort' ) ) {
+			case 'a-z':
+				items = items.sort(
+					( a, b ) => ( a.get( 'title' ) > b.get( 'title' ) ) ? 1 : -1,
+				);
+				break;
+		}
+
+		this.collection = new PanelElementsElementsCollection( items );
 	},
 
-	onRender: function() {
-		var isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
+	behaviors() {
+		return elementor.hooks.applyFilters( 'panel/category/behaviors', {}, this );
+	},
+
+	onRender() {
+		let isActive = elementor.channels.panelElements.request( 'category:' + this.model.get( 'name' ) + ':active' );
 
 		if ( undefined === isActive ) {
 			isActive = this.model.get( 'defaultActive' );
 		}
 
+		if ( ! this.collection.length && this.model.get( 'hideIfEmpty' ) ) {
+			this.$el.css( 'display', 'none' );
+		}
+
 		if ( isActive ) {
 			this.$el.addClass( 'elementor-active' );
-
-			this.ui.items.show();
+		} else {
+			this.ui.items.css( 'display', 'none' );
 		}
 	},
 
-	onTitleClick: function() {
+	onTitleClick() {
+		this.toggle();
+	},
+
+	toggle( state, animate = true ) {
 		var $items = this.ui.items,
 			activeClass = 'elementor-active',
-			isActive = this.$el.hasClass( activeClass ),
-			slideFn = isActive ? 'slideUp' : 'slideDown';
+			isActive = undefined !== state ? ! state : this.$el.hasClass( activeClass ),
+			visibilityFn = isActive ? 'hide' : 'show',
+			slideFn = isActive ? 'slideUp' : 'slideDown',
+			updateScrollbar = () => elementor.getPanelView().updateScrollbar();
 
 		elementor.channels.panelElements.reply( 'category:' + this.model.get( 'name' ) + ':active', ! isActive );
 
 		this.$el.toggleClass( activeClass, ! isActive );
 
-		$items[ slideFn ]( 300, function() {
-			elementor.getPanelView().updateScrollbar();
-		} );
+		if ( animate ) {
+			$items[ slideFn ]( 300, updateScrollbar );
+		} else {
+			$items[ visibilityFn ]( 0, updateScrollbar );
+		}
 	},
 } );
 

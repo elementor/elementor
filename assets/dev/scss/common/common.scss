@@ -1,0 +1,23 @@
+// Global for all (editor, admin, preview, front-end ADMIN)
+@import "../../../../assets/dev/scss/helpers/variables";
+@import "../../../../assets/dev/scss/editor/breakpoints";
+@import "../global/global";
+@import "dialog-common";
+@import "dialog-templates";
+@import "notifications";
+@import "app/modules/site-editor/assets/scss/admin/admin-bar";
+
+//Elementor icon logo wrapper
+.e-logo-wrapper {
+	background: var(--e-a-bg-logo);
+	display: inline-block;
+	padding: 0.75em;
+	border-radius: 50%;
+	line-height: 1;
+
+	i {
+		color: var(--e-a-color-logo);
+		font-size: 1em;
+	}
+}
+

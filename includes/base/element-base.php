@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -28,18 +30,6 @@ abstract class Element_Base extends Controls_Stack {
 	 * @var Element_Base[]
 	 */
 	private $children;
-
-	/**
-	 * Element render attributes.
-	 *
-	 * Holds all the render attributes of the element. Used to store data like
-	 * the HTML class name and the class value, or HTML element ID name and value.
-	 *
-	 * @access private
-	 *
-	 * @var array
-	 */
-	private $render_attributes = [];
 
 	/**
 	 * Element default arguments.
@@ -141,10 +131,7 @@ abstract class Element_Base extends Controls_Stack {
 	 */
 	final public function enqueue_scripts() {
 		$deprecated_scripts = [
-			'jquery-slick' => [
-				'version' => '2.7.0',
-				'replacement' => 'Swiper',
-			],
+			//Insert here when you have a deprecated script
 		];
 
 		foreach ( $this->get_script_depends() as $script ) {
@@ -366,64 +353,6 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
-	 * Add render attribute.
-	 *
-	 * Used to add attributes to a specific HTML element.
-	 *
-	 * The HTML tag is represented by the element parameter, then you need to
-	 * define the attribute key and the attribute key. The final result will be:
-	 * `<element attribute_key="attribute_value">`.
-	 *
-	 * Example usage:
-	 *
-	 * `$this->add_render_attribute( 'wrapper', 'class', 'custom-widget-wrapper-class' );`
-	 * `$this->add_render_attribute( 'widget', 'id', 'custom-widget-id' );`
-	 * `$this->add_render_attribute( 'button', [ 'class' => 'custom-button-class', 'id' => 'custom-button-id' ] );`
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param array|string $element   The HTML element.
-	 * @param array|string $key       Optional. Attribute key. Default is null.
-	 * @param array|string $value     Optional. Attribute value. Default is null.
-	 * @param bool         $overwrite Optional. Whether to overwrite existing
-	 *                                attribute. Default is false, not to overwrite.
-	 *
-	 * @return Element_Base Current instance of the element.
-	 */
-	public function add_render_attribute( $element, $key = null, $value = null, $overwrite = false ) {
-		if ( is_array( $element ) ) {
-			foreach ( $element as $element_key => $attributes ) {
-				$this->add_render_attribute( $element_key, $attributes, null, $overwrite );
-			}
-
-			return $this;
-		}
-
-		if ( is_array( $key ) ) {
-			foreach ( $key as $attribute_key => $attributes ) {
-				$this->add_render_attribute( $element, $attribute_key, $attributes, $overwrite );
-			}
-
-			return $this;
-		}
-
-		if ( empty( $this->render_attributes[ $element ][ $key ] ) ) {
-			$this->render_attributes[ $element ][ $key ] = [];
-		}
-
-		settype( $value, 'array' );
-
-		if ( $overwrite ) {
-			$this->render_attributes[ $element ][ $key ] = $value;
-		} else {
-			$this->render_attributes[ $element ][ $key ] = array_merge( $this->render_attributes[ $element ][ $key ], $value );
-		}
-
-		return $this;
-	}
-
-	/**
 	 * Add link render attributes.
 	 *
 	 * Used to add link tag attributes to a specific HTML element.
@@ -450,7 +379,9 @@ abstract class Element_Base extends Controls_Stack {
 		$attributes = [];
 
 		if ( ! empty( $url_control['url'] ) ) {
-			$attributes['href'] = esc_url( $url_control['url'] );
+			$allowed_protocols = array_merge( wp_allowed_protocols(), [ 'skype', 'viber' ] );
+
+			$attributes['href'] = esc_url( $url_control['url'], $allowed_protocols );
 		}
 
 		if ( ! empty( $url_control['is_external'] ) ) {
@@ -467,140 +398,10 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		if ( $attributes ) {
-			$this->add_render_attribute( $element, $attributes, $overwrite );
+			$this->add_render_attribute( $element, $attributes, null, $overwrite );
 		}
 
 		return $this;
-	}
-
-	/**
-	 * Get Render Attributes
-	 *
-	 * Used to retrieve render attribute.
-	 *
-	 * The returned array is either all elements and their attributes if no `$element` is specified, an array of all
-	 * attributes of a specific element or a specific attribute properties if `$key` is specified.
-	 *
-	 * Returns null if one of the requested parameters isn't set.
-	 *
-	 * @since 2.2.6
-	 * @access public
-	 * @param string $element
-	 * @param string $key
-	 *
-	 * @return array
-	 */
-	public function get_render_attributes( $element = '', $key = '' ) {
-		$attributes = $this->render_attributes;
-
-		if ( $element ) {
-			if ( ! isset( $attributes[ $element ] ) ) {
-				return null;
-			}
-
-			$attributes = $attributes[ $element ];
-
-			if ( $key ) {
-				if ( ! isset( $attributes[ $key ] ) ) {
-					return null;
-				}
-
-				$attributes = $attributes[ $key ];
-			}
-		}
-
-		return $attributes;
-	}
-
-	/**
-	 * Set render attribute.
-	 *
-	 * Used to set the value of the HTML element render attribute or to update
-	 * an existing render attribute.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param array|string $element The HTML element.
-	 * @param array|string $key     Optional. Attribute key. Default is null.
-	 * @param array|string $value   Optional. Attribute value. Default is null.
-	 *
-	 * @return Element_Base Current instance of the element.
-	 */
-	public function set_render_attribute( $element, $key = null, $value = null ) {
-		return $this->add_render_attribute( $element, $key, $value, true );
-	}
-
-	/**
-	 * Remove render attribute.
-	 *
-	 * Used to remove an element (with its keys and their values), key (with its values),
-	 * or value/s from an HTML element's render attribute.
-	 *
-	 * @since 2.7.0
-	 * @access public
-	 *
-	 * @param string $element       The HTML element.
-	 * @param string $key           Optional. Attribute key. Default is null.
-	 * @param array|string $values   Optional. Attribute value/s. Default is null.
-	 */
-	public function remove_render_attribute( $element, $key = null, $values = null ) {
-		if ( $key && ! isset( $this->render_attributes[ $element ][ $key ] ) ) {
-			return;
-		}
-
-		if ( $values ) {
-			$values = (array) $values;
-
-			$this->render_attributes[ $element ][ $key ] = array_diff( $this->render_attributes[ $element ][ $key ], $values );
-
-			return;
-		}
-
-		if ( $key ) {
-			unset( $this->render_attributes[ $element ][ $key ] );
-
-			return;
-		}
-
-		if ( isset( $this->render_attributes[ $element ] ) ) {
-			unset( $this->render_attributes[ $element ] );
-		}
-	}
-
-	/**
-	 * Get render attribute string.
-	 *
-	 * Used to retrieve the value of the render attribute.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 *
-	 * @param string $element The element.
-	 *
-	 * @return string Render attribute string, or an empty string if the attribute
-	 *                is empty or not exist.
-	 */
-	public function get_render_attribute_string( $element ) {
-		if ( empty( $this->render_attributes[ $element ] ) ) {
-			return '';
-		}
-
-		return Utils::render_html_attributes( $this->render_attributes[ $element ] );
-	}
-
-	/**
-	 * Print render attribute string.
-	 *
-	 * Used to output the rendered attribute.
-	 *
-	 * @since 2.0.0
-	 * @access public
-	 *
-	 * @param array|string $element The element.
-	 */
-	public function print_render_attribute_string( $element ) {
-		echo $this->get_render_attribute_string( $element ); // XSS ok.
 	}
 
 	/**
@@ -639,7 +440,15 @@ abstract class Element_Base extends Controls_Stack {
 		do_action( "elementor/frontend/{$element_type}/before_render", $this );
 
 		ob_start();
-		$this->_print_content();
+
+		if ( $this->has_own_method( '_print_content', self::class ) ) {
+			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_print_content', '3.1.0', __CLASS__ . '::print_content()' );
+
+			$this->_print_content();
+		} else {
+			$this->print_content();
+		}
+
 		$content = ob_get_clean();
 
 		$should_render = ( ! empty( $content ) || $this->should_print_empty() );
@@ -657,10 +466,17 @@ abstract class Element_Base extends Controls_Stack {
 		$should_render = apply_filters( "elementor/frontend/{$element_type}/should_render", $should_render, $this );
 
 		if ( $should_render ) {
-			$this->_add_render_attributes();
+			if ( $this->has_own_method( '_add_render_attributes', self::class ) ) {
+				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_add_render_attributes', '3.1.0', __CLASS__ . '::add_render_attributes()' );
+
+				$this->_add_render_attributes();
+			} else {
+				$this->add_render_attributes();
+			}
 
 			$this->before_render();
-			echo $content;
+			// PHPCS - The content has already been escaped by the `render` method.
+			echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			$this->after_render();
 
 			$this->enqueue_scripts();
@@ -720,13 +536,39 @@ abstract class Element_Base extends Controls_Stack {
 			$elements[] = $child->get_raw_data( $with_html_content );
 		}
 
-		return [
+		$raw_data = [
 			'id' => $this->get_id(),
 			'elType' => $data['elType'],
 			'settings' => $data['settings'],
 			'elements' => $elements,
 			'isInner' => $data['isInner'],
 		];
+
+		if ( ! empty( $data['isLocked'] ) ) {
+			$raw_data['isLocked'] = $data['isLocked'];
+		}
+
+		return $raw_data;
+	}
+
+	public function get_data_for_save() {
+		$data = $this->get_raw_data();
+
+		$elements = [];
+
+		foreach ( $this->get_children() as $child ) {
+			$elements[] = $child->get_data_for_save();
+		}
+
+		if ( ! empty( $elements ) ) {
+			$data['elements'] = $elements;
+		}
+
+		if ( ! empty( $data['settings'] ) ) {
+			$data['settings'] = $this->on_save( $data['settings'] );
+		}
+
+		return $data;
 	}
 
 	/**
@@ -760,14 +602,68 @@ abstract class Element_Base extends Controls_Stack {
 	}
 
 	/**
+	 * On import update dynamic content (e.g. post and term IDs).
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param array      $config   The config of the passed element.
+	 * @param array      $data     The data that requires updating/replacement when imported.
+	 * @param array|null $controls The available controls.
+	 *
+	 * @return array Element data.
+	 */
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+		$tags_manager = Plugin::$instance->dynamic_tags;
+
+		if ( empty( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] ) ) {
+			return $config;
+		}
+
+		foreach ( $config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ] as $dynamic_name => $dynamic_value ) {
+			$tag_config = $tags_manager->tag_text_to_tag_data( $dynamic_value );
+			$tag_instance = $tags_manager->create_tag( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+
+			if ( is_null( $tag_instance ) ) {
+				continue;
+			}
+
+			if ( $tag_instance->has_own_method( 'on_import_replace_dynamic_content' ) ) {
+				// TODO: Remove this check in the future.
+				$tag_config = $tag_instance->on_import_replace_dynamic_content( $tag_config, $data['post_ids'] );
+			} else {
+				$tag_config = $tag_instance->on_import_update_dynamic_content( $tag_config, $data, $tag_instance->get_controls() );
+			}
+
+			$config['settings'][ $tags_manager::DYNAMIC_SETTING_KEY ][ $dynamic_name ] = $tags_manager->tag_data_to_tag_text( $tag_config['id'], $tag_config['name'], $tag_config['settings'] );
+		}
+
+		return $config;
+	}
+
+	/**
 	 * Add render attributes.
 	 *
 	 * Used to add attributes to the current element wrapper HTML tag.
 	 *
 	 * @since 1.3.0
 	 * @access protected
+	 * @deprecated 3.1.0
 	 */
 	protected function _add_render_attributes() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::add_render_attributes()' );
+
+		return $this->add_render_attributes();
+	}
+
+	/**
+	 * Add render attributes.
+	 *
+	 * Used to add attributes to the current element wrapper HTML tag.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected function add_render_attributes() {
 		$id = $this->get_id();
 
 		$settings = $this->get_settings_for_display();
@@ -799,9 +695,17 @@ abstract class Element_Base extends Controls_Stack {
 			$this->add_render_attribute( '_wrapper', 'class', $controls[ $setting_key ]['prefix_class'] . $setting );
 		}
 
-		if ( ! empty( $settings['animation'] ) || ! empty( $settings['_animation'] ) ) {
-			// Hide the element until the animation begins
-			$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+		$_animation = ! empty( $settings['_animation'] );
+		$animation = ! empty( $settings['animation'] );
+		$has_animation = $_animation && 'none' !== $settings['_animation'] || $animation && 'none' !== $settings['animation'];
+
+		if ( $has_animation ) {
+			$is_static_render_mode = Plugin::$instance->frontend->is_static_render_mode();
+
+			if ( ! $is_static_render_mode ) {
+				// Hide the element until the animation begins
+				$this->add_render_attribute( '_wrapper', 'class', 'elementor-invisible' );
+			}
 		}
 
 		if ( ! empty( $settings['_element_id'] ) ) {
@@ -822,6 +726,583 @@ abstract class Element_Base extends Controls_Stack {
 		 * @param Element_Base $this The element.
 		 */
 		do_action( 'elementor/element/after_add_attributes', $this );
+	}
+
+	/**
+	 * Register the Transform controls in the advanced tab of the element.
+	 *
+	 * Previously registered under the Widget_Common class, but registered a more fundamental level now to enable access from other widgets.
+	 *
+	 * @since 3.9.0
+	 * @access protected
+	 * @return void
+	 */
+	protected function register_transform_section( $element_selector = '' ) {
+		$default_unit_values_deg = [];
+		$default_unit_values_ms = [];
+
+		// Set the default unit sizes for all active breakpoints.
+		foreach ( Breakpoints_Manager::get_default_config() as $breakpoint_name => $breakpoint_config ) {
+			$default_unit_values_deg[ $breakpoint_name ] = [
+				'default' => [
+					'unit' => 'deg',
+				],
+			];
+
+			$default_unit_values_ms[ $breakpoint_name ] = [
+				'default' => [
+					'unit' => 'ms',
+				],
+			];
+		}
+
+		$this->start_controls_section(
+			'_section_transform',
+			[
+				'label' => esc_html__( 'Transform', 'elementor' ),
+				'tab' => Controls_Manager::TAB_ADVANCED,
+			]
+		);
+
+		$this->start_controls_tabs( '_tabs_positioning' );
+
+		$transform_prefix_class = 'e-';
+		$transform_return_value = 'transform';
+		$transform_selector_class = ' > .elementor-widget-container';
+		$transform_css_modifier = '';
+
+		if ( 'con' === $element_selector ) {
+			$transform_selector_class = '.e-' . $element_selector;
+			$transform_css_modifier = $element_selector . '-';
+		}
+
+		foreach ( [ '', '_hover' ] as $tab ) {
+			$state = '_hover' === $tab ? ':hover' : '';
+
+			$this->start_controls_tab(
+				"_tab_positioning{$tab}",
+				[
+					'label' => '' === $tab ? esc_html__( 'Normal', 'elementor' ) : esc_html__( 'Hover', 'elementor' ),
+				]
+			);
+
+			$this->add_control(
+				"_transform_rotate_popover{$tab}",
+				[
+					'label' => esc_html__( 'Rotate', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_responsive_control(
+				"_transform_rotateZ_effect{$tab}",
+				[
+					'label' => esc_html__( 'Rotate', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'device_args' => $default_unit_values_deg,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateZ: {{SIZE}}deg',
+					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_control(
+				"_transform_rotate_3d{$tab}",
+				[
+					'label' => esc_html__( '3D Rotate', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'On', 'elementor' ),
+					'label_off' => esc_html__( 'Off', 'elementor' ),
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: 1{{UNIT}};  --e-' . $transform_css_modifier . 'transform-perspective: 20px;',
+					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+					],
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_rotateX_effect{$tab}",
+				[
+					'label' => esc_html__( 'Rotate X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'device_args' => $default_unit_values_deg,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'condition' => [
+						"_transform_rotate_3d{$tab}!" => '',
+						"_transform_rotate_popover{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateX: {{SIZE}}deg;',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_rotateY_effect{$tab}",
+				[
+					'label' => esc_html__( 'Rotate Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'device_args' => $default_unit_values_deg,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'condition' => [
+						"_transform_rotate_3d{$tab}!" => '',
+						"_transform_rotate_popover{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-rotateY: {{SIZE}}deg;',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_perspective_effect{$tab}",
+				[
+					'label' => esc_html__( 'Perspective', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 1000,
+						],
+					],
+					'condition' => [
+						"_transform_rotate_popover{$tab}!" => '',
+						"_transform_rotate_3d{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-perspective: {{SIZE}}px',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_transform_translate_popover{$tab}",
+				[
+					'label' => esc_html__( 'Offset', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_responsive_control(
+				"_transform_translateX_effect{$tab}",
+				[
+					'label' => esc_html__( 'Offset X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
+					'range' => [
+						'%' => [
+							'min' => -100,
+							'max' => 100,
+						],
+						'px' => [
+							'min' => -1000,
+							'max' => 1000,
+						],
+					],
+					'condition' => [
+						"_transform_translate_popover{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-translateX: {{SIZE}}{{UNIT}};',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_translateY_effect{$tab}",
+				[
+					'label' => esc_html__( 'Offset Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
+					'range' => [
+						'%' => [
+							'min' => -100,
+							'max' => 100,
+						],
+						'px' => [
+							'min' => -1000,
+							'max' => 1000,
+						],
+					],
+					'condition' => [
+						"_transform_translate_popover{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-translateY: {{SIZE}}{{UNIT}};',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_transform_scale_popover{$tab}",
+				[
+					'label' => esc_html__( 'Scale', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_control(
+				"_transform_keep_proportions{$tab}",
+				[
+					'label' => esc_html__( 'Keep Proportions', 'elementor' ),
+					'type' => Controls_Manager::SWITCHER,
+					'label_on' => esc_html__( 'On', 'elementor' ),
+					'label_off' => esc_html__( 'Off', 'elementor' ),
+					'default' => 'yes',
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_scale_effect{$tab}",
+				[
+					'label' => esc_html__( 'Scale', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 2,
+							'step' => 0.1,
+						],
+					],
+					'condition' => [
+						"_transform_scale_popover{$tab}!" => '',
+						"_transform_keep_proportions{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scale: {{SIZE}};',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_scaleX_effect{$tab}",
+				[
+					'label' => esc_html__( 'Scale X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 2,
+							'step' => 0.1,
+						],
+					],
+					'condition' => [
+						"_transform_scale_popover{$tab}!" => '',
+						"_transform_keep_proportions{$tab}" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleX: {{SIZE}};',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_scaleY_effect{$tab}",
+				[
+					'label' => esc_html__( 'Scale Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'range' => [
+						'px' => [
+							'min' => 0,
+							'max' => 2,
+							'step' => 0.1,
+						],
+					],
+					'condition' => [
+						"_transform_scale_popover{$tab}!" => '',
+						"_transform_keep_proportions{$tab}" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-scaleY: {{SIZE}};',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_transform_skew_popover{$tab}",
+				[
+					'label' => esc_html__( 'Skew', 'elementor' ),
+					'type' => Controls_Manager::POPOVER_TOGGLE,
+					'prefix_class' => $transform_prefix_class,
+					'return_value' => $transform_return_value,
+				]
+			);
+
+			$this->start_popover();
+
+			$this->add_responsive_control(
+				"_transform_skewX_effect{$tab}",
+				[
+					'label' => esc_html__( 'Skew X', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'device_args' => $default_unit_values_deg,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'condition' => [
+						"_transform_skew_popover{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewX: {{SIZE}}deg;',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_responsive_control(
+				"_transform_skewY_effect{$tab}",
+				[
+					'label' => esc_html__( 'Skew Y', 'elementor' ),
+					'type' => Controls_Manager::SLIDER,
+					'device_args' => $default_unit_values_deg,
+					'range' => [
+						'px' => [
+							'min' => -360,
+							'max' => 360,
+						],
+					],
+					'condition' => [
+						"_transform_skew_popover{$tab}!" => '',
+					],
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-skewY: {{SIZE}}deg;',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->end_popover();
+
+			$this->add_control(
+				"_transform_flipX_effect{$tab}",
+				[
+					'label' => esc_html__( 'Flip Horizontal', 'elementor' ),
+					'type' => Controls_Manager::CHOOSE,
+					'options' => [
+						'transform' => [
+							'title' => esc_html__( 'Flip Horizontal', 'elementor' ),
+							'icon' => 'eicon-flip eicon-tilted',
+						],
+					],
+					'prefix_class' => $transform_prefix_class,
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-flipX: -1',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			$this->add_control(
+				"_transform_flipY_effect{$tab}",
+				[
+					'label' => esc_html__( 'Flip Vertical', 'elementor' ),
+					'type' => Controls_Manager::CHOOSE,
+					'options' => [
+						'transform' => [
+							'title' => esc_html__( 'Flip Vertical', 'elementor' ),
+							'icon' => 'eicon-flip',
+						],
+					],
+					'prefix_class' => $transform_prefix_class,
+					'selectors' => [
+						"{{WRAPPER}}{$transform_selector_class}{$state}" => '--e-' . $transform_css_modifier . 'transform-flipY: -1',
+					],
+					'frontend_available' => true,
+				]
+			);
+
+			if ( '_hover' === $tab ) {
+				$this->add_control(
+					'_transform_transition_hover',
+					[
+						'label' => esc_html__( 'Transition Duration', 'elementor' ) . ' (ms)',
+						'type' => Controls_Manager::SLIDER,
+						'device_args' => $default_unit_values_ms,
+						'range' => [
+							'px' => [
+								'min' => 100,
+								'max' => 10000,
+							],
+						],
+						'selectors' => [
+							'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-transition-duration: {{SIZE}}ms',
+						],
+					]
+				);
+			}
+
+			${"transform_origin_conditions{$tab}"} = [
+				[
+					'name' => "_transform_scale_popover{$tab}",
+					'operator' => '!=',
+					'value' => '',
+				],
+				[
+					'name' => "_transform_rotate_popover{$tab}",
+					'operator' => '!=',
+					'value' => '',
+				],
+				[
+					'name' => "_transform_flipX_effect{$tab}",
+					'operator' => '!=',
+					'value' => '',
+				],
+				[
+					'name' => "_transform_flipY_effect{$tab}",
+					'operator' => '!=',
+					'value' => '',
+				],
+			];
+
+			$this->end_controls_tab();
+		}
+
+		$this->end_controls_tabs();
+
+		$transform_origin_conditions = [
+			'relation' => 'or',
+			'terms' => array_merge( $transform_origin_conditions, $transform_origin_conditions_hover ),
+		];
+
+		// Will override motion effect transform-origin
+		$this->add_responsive_control(
+			'motion_fx_transform_x_anchor_point',
+			[
+				'label' => esc_html__( 'X Anchor Point', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-h-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-h-align-center',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-h-align-right',
+					],
+				],
+				'conditions' => $transform_origin_conditions,
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-origin-x: {{VALUE}}',
+				],
+			]
+		);
+
+		// Will override motion effect transform-origin
+		$this->add_responsive_control(
+			'motion_fx_transform_y_anchor_point',
+			[
+				'label' => esc_html__( 'Y Anchor Point', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'top' => [
+						'title' => esc_html__( 'Top', 'elementor' ),
+						'icon' => 'eicon-v-align-top',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-v-align-middle',
+					],
+					'bottom' => [
+						'title' => esc_html__( 'Bottom', 'elementor' ),
+						'icon' => 'eicon-v-align-bottom',
+					],
+				],
+				'conditions' => $transform_origin_conditions,
+				'selectors' => [
+					'{{WRAPPER}}' => '--e-' . $transform_css_modifier . 'transform-origin-y: {{VALUE}}',
+				],
+			]
+		);
+
+		$this->end_controls_section();
+	}
+
+	/**
+	 * Add Hidden Device Controls
+	 *
+	 * Adds controls for hiding elements within certain devices' viewport widths. Adds a control for each active device.
+	 *
+	 * @since 3.4.0
+	 * @access protected
+	 */
+	protected function add_hidden_device_controls() {
+		// The 'Hide On X' controls are displayed from largest to smallest, while the method returns smallest to largest.
+		$active_devices = Plugin::$instance->breakpoints->get_active_devices_list( [ 'reverse' => true ] );
+		$active_breakpoints = Plugin::$instance->breakpoints->get_active_breakpoints();
+
+		foreach ( $active_devices as $breakpoint_key ) {
+			$label = 'desktop' === $breakpoint_key ? esc_html__( 'Desktop', 'elementor' ) : $active_breakpoints[ $breakpoint_key ]->get_label();
+
+			$this->add_control(
+				'hide_' . $breakpoint_key,
+				[
+					/* translators: %s: Device name. */
+					'label' => sprintf( __( 'Hide On %s', 'elementor' ), $label ),
+					'type' => Controls_Manager::SWITCHER,
+					'default' => '',
+					'prefix_class' => 'elementor-',
+					'label_on' => esc_html__( 'Hide', 'elementor' ),
+					'label_off' => esc_html__( 'Show', 'elementor' ),
+					'return_value' => 'hidden-' . $breakpoint_key,
+				]
+			);
+		}
 	}
 
 	/**
@@ -852,8 +1333,23 @@ abstract class Element_Base extends Controls_Stack {
 	 *
 	 * @since 1.0.0
 	 * @access protected
+	 * @deprecated 3.1.0
 	 */
 	protected function _print_content() {
+		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0', __CLASS__ . '::print_content()' );
+
+		$this->print_content();
+	}
+
+	/**
+	 * Print element content.
+	 *
+	 * Output the element final HTML on the frontend.
+	 *
+	 * @since 3.1.0
+	 * @access protected
+	 */
+	protected function print_content() {
 		foreach ( $this->get_children() as $child ) {
 			$child->print_element();
 		}
@@ -892,6 +1388,14 @@ abstract class Element_Base extends Controls_Stack {
 		}
 
 		return $config;
+	}
+
+	/**
+	 * A Base method for sanitizing the settings before save.
+	 * This method is meant to be overridden by the element.
+	 */
+	protected function on_save( array $settings ) {
+		return $settings;
 	}
 
 	/**

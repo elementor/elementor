@@ -1,0 +1,241 @@
+// Elementor Global Controls
+.e-global {
+
+	&__popover {
+		// Default panel width is 300px. 288px width positions it at the center of the panel by default.
+		width: 288px;
+		z-index: 1;
+		font-size: 12px;
+		@include padding-start(10px);
+
+		&-toggle {
+			border: var(--e-a-border-bold);
+			@include border-end(0);
+			border-radius: getValueByDirection(3px 0 0 3px, 0 3px 3px 0);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+
+			&--active {
+				color: var(--e-a-color-primary-bold);
+				background-color: var(--e-a-bg-active);
+			}
+		}
+
+		&-container {
+			box-shadow: var(--e-a-popover-shadow);
+			border-radius: var(--e-a-border-radius);
+			background-color: var(--e-a-bg-default);
+			padding-bottom: 5px;
+		}
+
+		&-title {
+			padding: 15px 20px;
+			font-weight: 500;
+			border-bottom: var(--e-a-border);
+			display: flex;
+
+			& > i {
+				@include margin-end(5px);
+			}
+
+			&-text {
+				flex-grow: 1;
+			}
+		}
+
+		&-info {
+			@include margin-end(5px);
+			display: inline-block;
+
+			&-tooltip {
+				width: 270px;
+				z-index: 1;
+				background-color: rgba(0,0,0,0.9);
+				color: var(--e-a-color-white);
+				padding: 20px;
+				border-radius: 3px;
+
+				&:after {
+					content: '';
+					position: absolute;
+					bottom: -17px;
+					@include start(16px);
+					border: 10px solid transparent;
+					border-top-color: rgba(0,0,0,0.9);
+				}
+			}
+
+			i {
+				font-size: 13px;
+			}
+		}
+	}
+
+	&__preview-items-container {
+		max-height: 260px;
+		overflow-y: auto;
+		margin-top: 5px;
+
+		@include webkit-scrollbar(7px, $editor-lighter, 10px)
+	}
+
+	&__manage-button {
+		font-weight: 500;
+		cursor: pointer;
+	}
+
+	// Typography Globals
+	&__typography {
+		padding: getValueByDirection(5px 10px 5px 35px, 5px 35px 5px 10px);
+		@include ellipsis;
+
+		&.e-global__preview-item--selected {
+
+			&:before {
+				font-family: 'eicons';
+				font-size: 13px;
+				content: '\e90e'; // eicon-check
+				position: absolute;
+				transform: translateY(-50%);
+				top: 50%;
+				left: 12px;
+			}
+		}
+	}
+
+	// Color Globals
+	&__color {
+		margin: 5px auto;
+		padding: 5px 20px;
+		display: flex;
+		align-items: center;
+
+		&:first-child {
+			margin-top: 5px;
+		}
+
+		&:last-child {
+			margin-bottom: 10px;
+		}
+
+		&-preview {
+
+			&-container {
+				height: 20px;
+				width: 20px;
+				border-radius: 3px;
+				border: 1px solid rgba(0, 0, 0, 0.1);
+				@include margin-end(10px);
+				flex-shrink: 0;
+				position: relative;
+			}
+
+			&-color,
+			&-transparent-bg {
+				border-radius: 3px;
+				height: 100%;
+				width: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+
+			&-transparent-bg {
+				@include checkers-background(12px);
+			}
+		}
+
+		&-title {
+			flex-grow: 1;
+			@include ellipsis;
+			@include padding-end(10px);
+		}
+
+		&-hex {
+			font-size: 10px;
+			color: var(--e-a-color-txt-muted);
+		}
+
+		.pcr-button {
+			background-color: var(--e-a-bg-default);
+		}
+
+		&.e-global__preview-item--selected {
+
+			.e-global__color-preview-container {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: var(--e-a-color-white);
+
+				&:before {
+					font-family: 'eicons';
+					font-size: 13px;
+					content: '\e90e'; // eicon-check
+					text-shadow: 0 0 1px #000;
+					z-index: 1;
+				 }
+			}
+		}
+	}
+
+	&__preview-item {
+		cursor: pointer;
+		position: relative;
+
+		&:hover {
+			background-color: var(--e-a-bg-hover);
+		}
+	}
+
+	&__confirm {
+
+		&-delete,
+		&-message-text {
+
+			i {
+				color: var(--e-a-color-warning);
+			}
+		}
+
+		&-input-wrapper {
+			display: flex;
+			align-items: center;
+			border: var(--e-a-border);
+			border-radius: var(--e-a-border-radius);
+			margin: 15px 0;
+			padding: 2px;
+
+			input {
+				font-family: var(--e-a-font-family);
+				font-size: 12px;
+				padding: 2px;
+				border: 0;
+			}
+		}
+	}
+}
+
+.e-control-global {
+
+	.elementor-control-input-wrapper {
+		display: flex;
+		justify-content: flex-end;
+		max-width: $control-unit * 5;
+		width: 100%;
+	}
+
+	&.elementor-control {
+
+		// A hardened selector to override popover-toggle's inverse direction CSS (in _popover-toggle.scss)
+		.elementor-control-input-wrapper {
+			direction: $direction;
+		}
+	}
+
+	.elementor-control-spinner {
+		@include margin-end(4px);
+	}
+}

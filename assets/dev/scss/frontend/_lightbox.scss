@@ -40,6 +40,12 @@
 			padding: .25em;
 			z-index: 2;
 			line-height: 1;
+			display: flex;
+
+			svg {
+				height: 1em;
+				width: 1em;
+			}
 		}
 	}
 
@@ -49,16 +55,22 @@
 		transition: $transition-hover;
 		opacity: 1;
 
+		svg {
+			fill: var(--lightbox-ui-color);
+		}
+
 		&:hover {
 			color:  var(--lightbox-ui-color-hover);
+
+			svg {
+				fill: var(--lightbox-ui-color-hover);
+			}
 		}
 	}
 
-	.swiper- {
-
-		&container {
-			height: 100%;
-		}
+	.swiper,
+	.swiper-container {
+		height: 100%;
 	}
 
 	.elementor-lightbox-item {
@@ -71,7 +83,7 @@
 		height: 100%;
 		margin: auto;
 
-		@media (max-width: $screen-sm-max) {
+		@media (max-width: $screen-mobile-max) {
 			padding: 70px 0;
 		}
 	}
@@ -96,11 +108,11 @@
 	.elementor-video-container {
 		@include absolute-center;
 
-		@media (min-width: $screen-lg-min) {
+		@media (min-width: $screen-tablet-next) {
 			width: 75%;
 		}
 
-		@media (max-width: $screen-md-max) {
+		@media (max-width: $screen-tablet-max) {
 			width: 100%;
 		}
 	}
@@ -113,9 +125,29 @@
 		}
 	}
 
+	.swiper,
+	.swiper-container {
+
+		.elementor-swiper-button {
+
+			&-prev {
+				left: 0;
+			}
+
+			&-next {
+				right: 0;
+			}
+		}
+
+		.swiper-pagination-fraction {
+			width: max-content;
+			color: $white;
+		}
+	}
+
 	.elementor-swiper-button {
 		&:focus {
-			outline: none;
+			outline-width: 1px;
 		}
 
 		&-prev, &-next {
@@ -127,15 +159,11 @@
 			font-size: var(--lightbox-navigation-icons-size);
 		}
 
-		&-prev {
-			left: 0;
-		}
+		@media (max-width: $screen-mobile-max) {
+			&:focus {
+				outline: none;
+			}
 
-		&-next {
-			right: 0;
-		}
-
-		@media (max-width: $screen-sm-max) {
 			&-prev, &-next {
 				width: 20%;
 				i {
@@ -179,6 +207,7 @@
 	&__header {
 		color: var(--lightbox-ui-color);
 		display: flex;
+		flex-direction: row-reverse;
 		font-size: var(--lightbox-header-icons-size);
 		@include padding-start( 1em );
 		@include padding-end( 2.6em );
@@ -186,19 +215,34 @@
 		align-items: center;
 		z-index: 10;
 
-		> i {
-			font-size: inherit;
+		> i,
+		> svg {
 			cursor: pointer;
 			padding: .25em;
 			margin: 0 .35em;
+		}
+
+		> i {
+			font-size: inherit;
 
 			&:hover {
 				color: var(--lightbox-ui-color-hover);
 			}
+		}
 
-			&:first-of-type {
-				@include margin-start( auto );
+		> svg {
+			box-sizing: content-box;
+			fill: var(--lightbox-ui-color);
+			height: 1em;
+			width: 1em;
+
+			&:hover {
+				fill: var(--lightbox-ui-color-hover);
 			}
+		}
+
+		.elementor-slideshow__counter {
+			@include margin-end( auto );
 		}
 
 		.elementor-icon-share {
@@ -248,9 +292,18 @@
 				color: #000;
 			}
 
+			i,
+			svg {
+				@include margin-end(0.75em);
+			}
+
 			i {
 				font-size: 1.25em;
-				@include margin-end(0.75em);
+			}
+
+			svg {
+				height: 1.25em;
+				width: 1.25em;
 			}
 		}
 
@@ -358,6 +411,26 @@
 
 					&-download-bold {
 						color: $editor-light;
+					}
+				}
+
+				// SVG Icons.
+				.e-eicon {
+
+					&-twitter {
+						fill: $twitter;
+					}
+
+					&-facebook {
+						fill: $facebook;
+					}
+
+					&-pinterest {
+						fill: $pinterest;
+					}
+
+					&-download-bold {
+						fill: $editor-light;
 					}
 				}
 			}

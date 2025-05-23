@@ -5,6 +5,11 @@
 		.dialog-message {
 			max-height: 70vh;
 		}
+
+		// Add specificity only here to avoid changing the global code selector.
+		.e-hidden {
+			display: none !important;
+		}
 	}
 
 	&-dialog-content {
@@ -12,8 +17,7 @@
 		align-items: center;
 		height: 100%;
 		text-align: $start;
-		color: $editor-dark;
-		
+
 		@media (max-width: $library_screen_breakpoint) {
 			padding: 0 50px;
 		}
@@ -30,7 +34,6 @@
 
 		&__title {
 			font-size: 30px;
-			color: $editor-darker;
 
 			span {
 				font-weight: bold;
@@ -49,14 +52,12 @@
 		font-size: 15px;
 
 		i {
-			color: $brand-color-light;
+			color: var(--e-a-color-accent);
 			font-size: 30px;
 		}
 
 		a {
-			color: $editor-dark;
 			@include padding-start(10px);
-			text-decoration: none;
 			font-weight: 500;
 		}
 	}
@@ -65,18 +66,35 @@
 		flex-grow: 1;
 		max-width: 440px;
 		padding: 55px;
-		background-color: #fff;
-		border-radius: 3px;
-		box-shadow: 0 2px 30px 0 rgba(0,0,0,0.08);
+		background-color: var(--e-a-color-white);
+		border-radius: var(--e-a-border-radius);
+		border: var(--e-a-border);
 
 		&__title {
 			font-size: 23px;
-			color: $editor-darker;
 		}
 
 		&__template-type.elementor-form-field__select {
 			// Override new wp-core-ui class <select> width starting WP v5.3/5.4
 			max-width: initial;
+		}
+
+		&__template-type-badge {
+			position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 2px;
+			border-radius: 2px;
+			background-color: $editor-background-light;
+			padding: 4px;
+			font-size: 8px;
+			font-weight: 500;
+			line-height: 1;
+			text-transform: uppercase;
+			top: 50%;
+			inset-inline-end: 28px;
+			transform: translateY( -50% );
 		}
 
 		.elementor-form-field {
@@ -95,25 +113,18 @@
 				padding: 10px;
 				font-size: 14px;
 				box-shadow: none;
-				border-radius: 3px;
+				border-radius: var(--e-a-border-radius);
 				background: none;
-				color: $editor-darkest;
-				border: 1px solid;
+				border: var(--e-a-border-bold);
 				outline: none;
 
-				&:not(:focus) {
-					border-color: $editor-lightest;
-				}
-
 				&:focus {
-					border-color: $editor-light;
+					border-color: var(--e-a-border-color-focus);
 				}
 			}
 
 			&__select {
 				appearance: none;
-				-webkit-appearance: none;
-				-moz-appearance: none;
 				cursor: pointer;
 
 				&__wrapper {
@@ -131,10 +142,14 @@
 			}
 		}
 
-		&__submit {
+		&__submit,
+		&__lock_button {
+			display: block;
 			width: 100%;
 			height: 50px;
-			margin-top: 25px;
+			margin-top: 24px;
+			box-sizing: border-box;
+			text-align: center;
 		}
 	}
 }

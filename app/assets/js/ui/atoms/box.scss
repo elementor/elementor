@@ -1,0 +1,34 @@
+$eps-box-color: tints(800);
+$eps-box-dark-color: dark-tints(100);
+$eps-box-input-color: tints(800);
+$eps-box-input-dark-color: dark-tints(100);
+
+$root: eps-box;
+
+.#{$root} {
+	--eps-box-color: #{$eps-box-color};
+	--eps-box-input-color: #{$eps-box-input-color};
+
+	padding: 0;
+	border-radius: $eps-radius;
+	color: var(--eps-box-color);
+
+	&--padding {
+		padding: var(--eps-box-padding);
+	}
+
+	> input {
+		width: 100%;
+		outline: 0;
+		border: 0;
+		background-color: transparent;
+		color: var(--eps-box-input-color);
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--eps-box-color: #{$eps-box-dark-color};
+		--eps-box-input-color: #{$eps-box-input-dark-color};
+	}
+}

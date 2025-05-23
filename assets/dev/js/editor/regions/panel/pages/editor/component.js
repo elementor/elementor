@@ -1,4 +1,6 @@
 import ComponentBase from 'elementor-api/modules/component-base';
+import * as commands from './commands/';
+import { SetDirectionMode } from 'elementor-document/hooks';
 
 export default class Component extends ComponentBase {
 	__construct( args ) {
@@ -14,50 +16,38 @@ export default class Component extends ComponentBase {
 
 	defaultTabs() {
 		return {
-			content: { title: elementor.translate( 'content' ) },
-			style: { title: elementor.translate( 'style' ) },
-			advanced: { title: elementor.translate( 'advanced' ) },
-			layout: { title: elementor.translate( 'layout' ) },
+			content: { title: __( 'Content', 'elementor' ) },
+			style: { title: __( 'Style', 'elementor' ) },
+			advanced: { title: __( 'Advanced', 'elementor' ) },
+			layout: { title: __( 'Layout', 'elementor' ) },
 		};
 	}
 
 	defaultCommands() {
-		return {
-			open: ( args ) => {
-				if ( ! this.setDefaultTab( args ) ) {
-					elementorCommon.helpers.softDeprecated( "model.trigger( 'request:edit' )", '2.9.0', 'editSettings.defaultEditRoute' );
-
-					args.model.trigger( 'request:edit' );
-				} else {
-					this.openEditor( args.model, args.view );
-
-					$e.route( this.getDefaultRoute(), args );
-				}
-
-				// BC: Run hooks after the route render's the view.
-				const action = 'panel/open_editor/' + args.model.get( 'elType' );
-
-				// Example: panel/open_editor/widget
-				elementor.hooks.doAction( action, this.manager, args.model, args.view );
-
-				// Example: panel/open_editor/widget/heading
-				elementor.hooks.doAction( action + '/' + args.model.get( 'widgetType' ), this.manager, args.model, args.view );
-			},
-		};
+		return this.importCommands( commands );
 	}
 
 	getTabsWrapperSelector() {
 		return '.elementor-panel-navigation';
 	}
 
-	renderTab( tab ) {
-		this.manager.getCurrentPageView().activateTab( tab );
+	renderTab( tab, args ) {
+		const { model, view } = args,
+			/* Translators: %s: Element name. */
+			title = sprintf( __( 'Edit %s', 'elementor' ), elementor.getElementData( model ).title );
+
+		elementor.getPanelView().setPage( 'editor', title, {
+			tab,
+			model,
+			controls: elementor.getElementControls( model ),
+			editedElementView: view,
+		} );
 	}
 
-	activateTab( tab ) {
-		this.activeTabs[ this.manager.getCurrentPageView().model.id ] = tab;
+	activateTab( tab, args ) {
+		this.activeTabs[ args.model.id ] = tab;
 
-		super.activateTab( tab );
+		super.activateTab( tab, args );
 	}
 
 	setDefaultTab( args ) {
@@ -88,14 +78,36 @@ export default class Component extends ComponentBase {
 		return false;
 	}
 
-	openEditor( model, view ) {
-		const title = elementor.translate( 'edit_element', [ elementor.getElementData( model ).title ] ),
-			editor = elementor.getPanelView().setPage( 'editor', title, {
-				model: model,
-				controls: elementor.getElementControls( model ),
-				editedElementView: view,
-			} );
+	/**
+	 * Callback on route open under the current namespace.
+	 *
+	 * @param {string} route
+	 * @param {Object} routeArgs
+	 *
+	 * @return {void}
+	 */
+	onRoute( route, routeArgs = {} ) {
+		super.onRoute( route );
 
-		return editor;
+		const { view } = routeArgs;
+
+		if ( ! view?.getContainer() ) {
+			return;
+		}
+
+		SetDirectionMode.set( view.getContainer() );
+	}
+
+	/**
+	 * Callback on route close under the current namespace.
+	 *
+	 * @param {string } route - Route ID.
+	 *
+	 * @return {void}
+	 */
+	onCloseRoute( route ) {
+		super.onCloseRoute( route );
+
+		$e.uiStates.remove( 'document/direction-mode' );
 	}
 }

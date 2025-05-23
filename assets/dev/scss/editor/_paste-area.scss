@@ -1,0 +1,60 @@
+#elementor-paste-area-dialog {
+	text-align: center;
+
+	.dialog-header {
+		padding-top: 60px;
+		font-size: 30px;
+	}
+
+	.dialog-message {
+		padding: 0 15px 15px;
+		font-size: 15px;
+		position: relative;
+	}
+
+	#elementor-paste-area-dialog__input {
+		background: transparent;
+		color: transparent;
+		border-color: transparent;
+		padding: 0;
+		margin: 0;
+		height: 100px;
+		position: absolute;
+		top: -60px;
+		left: 0;
+		right: 0;
+
+		&:focus {
+			border-color: transparent;
+			outline: none;
+		}
+	}
+
+	.dialog-widget-content {
+		width: 400px;
+
+		.eicon-loading {
+			display: none;
+		}
+
+		&.e-state-loading {
+
+			.eicon-loading {
+				display: block;
+				margin-top: 15px;
+			}
+		}
+	}
+
+	#elementor-paste-area-dialog__error {
+		color: var(--e-a-color-danger);
+		font-size: 12px;
+
+		&:before {
+			content: '';
+			border-top: var(--e-a-border);
+			display: block;
+			margin: 10px -15px;
+		}
+	}
+}

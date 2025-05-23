@@ -1,10 +1,34 @@
 import ColorPicker from './color-picker';
-import DocumentHelper from 'elementor-editor/document/helper';
+import DocumentHelper from 'elementor-editor/document/helper-bc';
+import ContainerHelper from 'elementor-editor-utils/container-helper';
+
+const allowedHTMLWrapperTags = [
+	'article',
+	'aside',
+	'div',
+	'footer',
+	'h1',
+	'h2',
+	'h3',
+	'h4',
+	'h5',
+	'h6',
+	'header',
+	'main',
+	'nav',
+	'p',
+	'section',
+	'span',
+];
 
 module.exports = {
+	container: ContainerHelper,
 	document: DocumentHelper,
 
-	_enqueuedFonts: [],
+	_enqueuedFonts: {
+		editor: [],
+		preview: [],
+	},
 	_enqueuedIconFonts: [],
 	_inlineSvg: [],
 
@@ -14,7 +38,15 @@ module.exports = {
 				column: {
 					widget: null,
 					section: null,
+					container: {
+						widget: null,
+						container: null,
+					},
 				},
+			},
+			container: {
+				widget: null,
+				container: null,
 			},
 		},
 	},
@@ -28,7 +60,7 @@ module.exports = {
 		}
 
 		if ( ! $document.find( selector ).length ) {
-			$document.find( 'link:last' ).after( link );
+			$document.find( 'link' ).last().after( link );
 		}
 	},
 
@@ -41,10 +73,11 @@ module.exports = {
 	},
 
 	/**
+	 * @param {string} url
 	 * @deprecated 2.6.0
 	 */
 	enqueueStylesheet( url ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.enqueueStylesheet()', '2.6.0', 'elementor.helpers.enqueuePreviewStylesheet()' );
 		this.enqueuePreviewStylesheet( url );
 	},
 
@@ -63,14 +96,14 @@ module.exports = {
 			return;
 		}
 
-		if ( this._inlineSvg.hasOwnProperty( value.id ) ) {
+		if ( Object.prototype.hasOwnProperty.call( this._inlineSvg, value.id ) ) {
 			return this._inlineSvg[ value.id ];
 		}
 
 		const self = this;
 		this.fetchInlineSvg( value.url, ( data ) => {
 			if ( data ) {
-				self._inlineSvg[ value.id ] = data; //$( data ).find( 'svg' )[ 0 ].outerHTML;
+				self._inlineSvg[ value.id ] = data; // $( data ).find( 'svg' )[ 0 ].outerHTML;
 				if ( view ) {
 					view.render();
 				}
@@ -80,7 +113,7 @@ module.exports = {
 	},
 
 	enqueueIconFonts( iconType ) {
-		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config[ 'icons_update_needed' ] ) {
+		if ( -1 !== this._enqueuedIconFonts.indexOf( iconType ) || !! elementor.config.icons_update_needed ) {
 			return;
 		}
 
@@ -116,12 +149,12 @@ module.exports = {
 
 	/**
 	 *
-	 * @param view - view to refresh if needed
-	 * @param icon - icon control data
-	 * @param attributes - default {} - attributes to attach to rendered html tag
-	 * @param tag - default i - html tag to render
-	 * @param returnType - default value - retrun type
-	 * @returns {string|boolean|*}
+	 * @param {*}      view       - view to refresh if needed
+	 * @param {*}      icon       - icon control data
+	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
+	 * @param {string} tag        - default i - html tag to render
+	 * @param {*}      returnType - default value - retrun type
+	 * @return {string|boolean|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
 		if ( ! icon || ! icon.library ) {
@@ -145,7 +178,7 @@ module.exports = {
 			};
 		}
 		const iconSettings = this.getIconLibrarySettings( iconType );
-		if ( iconSettings && ! iconSettings.hasOwnProperty( 'isCustom' ) ) {
+		if ( iconSettings && ! Object.prototype.hasOwnProperty.call( iconSettings, 'isCustom' ) ) {
 			this.enqueueIconFonts( iconType );
 			if ( 'panel' === returnType ) {
 				return '<' + tag + ' class="' + iconValue + '"></' + tag + '>';
@@ -191,15 +224,20 @@ module.exports = {
 		if ( mapping[ fa4Value ] ) {
 			return mapping[ fa4Value ];
 		}
-		// every thing else is converted to solid
+		// Every thing else is converted to solid
 		return {
 			value: 'fas' + fa4Value.replace( 'fa ', ' ' ),
 			library: 'fa-solid',
 		};
 	},
 
-	enqueueFont( font ) {
-		if ( -1 !== this._enqueuedFonts.indexOf( font ) ) {
+	// The target parameter = 'editor'/'preview'. Defaults to 'preview' for backwards compatibility.
+	enqueueFont( font, target = 'preview' ) {
+		if ( $e.devTools ) {
+			$e.devTools.log.info( `enqueueFont font: '${ font }', target: '${ target }'` );
+		}
+
+		if ( -1 !== this._enqueuedFonts[ target ].indexOf( font ) ) {
 			return;
 		}
 
@@ -216,7 +254,7 @@ module.exports = {
 		let	fontUrl;
 
 		switch ( fontType ) {
-			case 'googlefonts' :
+			case 'googlefonts':
 				fontUrl = 'https://fonts.googleapis.com/css?family=' + font + ':100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic';
 
 				if ( subsets[ elementor.config.locale ] ) {
@@ -225,23 +263,32 @@ module.exports = {
 
 				break;
 
-			case 'earlyaccess' :
-				const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
-				fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
-				break;
+			case 'earlyaccess': {
+					const fontLowerString = font.replace( /\s+/g, '' ).toLowerCase();
+					fontUrl = 'https://fonts.googleapis.com/earlyaccess/' + fontLowerString + '.css';
+					break;
+				}
 		}
 
 		if ( ! _.isEmpty( fontUrl ) ) {
-			this.enqueuePreviewStylesheet( fontUrl );
+			if ( 'editor' === target ) {
+				// TODO: Find better solution, temporary fix, covering issue: 'fonts does not rendered in global styles'.
+				this.enqueueCSS( fontUrl, elementorCommon.elements.$document );
+			} else {
+				this.enqueueCSS( fontUrl, elementor.$previewContents );
+			}
 		}
 
-		this._enqueuedFonts.push( font );
+		this._enqueuedFonts[ target ].push( font );
 
 		elementor.channels.editor.trigger( 'font:insertion', fontType, font );
 	},
 
 	resetEnqueuedFontsCache() {
-		this._enqueuedFonts = [];
+		this._enqueuedFonts = {
+			editor: [],
+			preview: [],
+		};
 		this._enqueuedIconFonts = [];
 	},
 
@@ -277,7 +324,9 @@ module.exports = {
 	},
 
 	getUniqueID() {
-		return Math.random().toString( 16 ).substr( 2, 7 );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.getUniqueID()', '3.0.0', 'elementorCommon.helpers.getUniqueId()' );
+
+		return elementorCommon.helpers.getUniqueId();
 	},
 
 	getSocialNetworkNameFromIcon( iconsControl, fallbackControl, toUpperCase = false, migrated = null, withIcon = false ) {
@@ -310,28 +359,28 @@ module.exports = {
 
 	getSimpleDialog( id, title, message, confirmString, onConfirm ) {
 		return elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: id,
+			id,
 			headerMessage: title,
-			message: message,
+			message,
 			position: {
 				my: 'center center',
 				at: 'center center',
 			},
 			strings: {
 				confirm: confirmString,
-				cancel: elementor.translate( 'cancel' ),
+				cancel: __( 'Cancel', 'elementor' ),
 			},
-			onConfirm: onConfirm,
+			onConfirm,
 		} );
 	},
 
-	maybeDisableWidget() {
-		if ( ! elementor.config[ 'icons_update_needed' ] ) {
+	maybeDisableWidget( givenWidgetType = null ) {
+		if ( ! elementor.config.icons_update_needed ) {
 			return false;
 		}
 
 		const elementView = elementor.channels.panelElements.request( 'element:selected' ),
-			widgetType = elementView.model.get( 'widgetType' ),
+			widgetType = givenWidgetType || elementView.model.get( 'widgetType' ),
 			widgetData = elementor.widgetsCache[ widgetType ],
 			hasControlOfType = ( controls, type ) => {
 				let has = false;
@@ -354,14 +403,17 @@ module.exports = {
 			const hasIconsControl = hasControlOfType( widgetData.controls, 'icons' );
 			if ( hasIconsControl ) {
 				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
+						'#tab-fontawesome4_migration';
 				};
 				elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
-					elementor.translate( 'enable_fa5' ),
-					elementor.translate( 'dialog_confirm_enable_fa5' ),
-					elementor.translate( 'update' ),
-					onConfirm
+					__( 'Elementor\'s New Icon Library', 'elementor' ),
+					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
+					__( 'Update', 'elementor' ),
+					onConfirm,
 				).show();
 				return true;
 			}
@@ -380,68 +432,31 @@ module.exports = {
 		} );
 	},
 
-	isActiveControl: function( controlModel, values ) {
-		let condition,
-			conditions;
+	isActiveControl( controlModel, values, controls ) {
+		const condition = controlModel.condition || controlModel.get?.( 'condition' );
+		let conditions = controlModel.conditions || controlModel.get?.( 'conditions' );
 
-		// TODO: Better way to get this?
-		if ( _.isFunction( controlModel.get ) ) {
-			condition = controlModel.get( 'condition' );
-			conditions = controlModel.get( 'conditions' );
-		} else {
-			condition = controlModel.condition;
-			conditions = controlModel.conditions;
+		// If there is a 'condition' format, convert it to a 'conditions' format.
+		if ( condition ) {
+			const terms = [];
+
+			Object.entries( condition ).forEach( ( [ conditionName, conditionValue ] ) => {
+				const convertedCondition = elementor.conditions.convertConditionToConditions( conditionName, conditionValue, controlModel, values, controls );
+
+				terms.push( convertedCondition );
+			} );
+
+			conditions = {
+				relation: 'and',
+				terms: conditions ? terms.concat( conditions ) : terms,
+			};
 		}
 
-		// Multiple conditions with relations.
-		if ( conditions && ! elementor.conditions.check( conditions, values ) ) {
-			return false;
-		}
-
-		if ( _.isEmpty( condition ) ) {
-			return true;
-		}
-
-		var hasFields = _.filter( condition, function( conditionValue, conditionName ) {
-			var conditionNameParts = conditionName.match( /([a-z_\-0-9]+)(?:\[([a-z_]+)])?(!?)$/i ),
-				conditionRealName = conditionNameParts[ 1 ],
-				conditionSubKey = conditionNameParts[ 2 ],
-				isNegativeCondition = !! conditionNameParts[ 3 ],
-				controlValue = values[ conditionRealName ];
-
-			if ( values.__dynamic__ && values.__dynamic__[ conditionRealName ] ) {
-				controlValue = values.__dynamic__[ conditionRealName ];
-			}
-
-			if ( undefined === controlValue ) {
-				return true;
-			}
-
-			if ( conditionSubKey && 'object' === typeof controlValue ) {
-				controlValue = controlValue[ conditionSubKey ];
-			}
-
-			// If it's a non empty array - check if the conditionValue contains the controlValue,
-			// If the controlValue is a non empty array - check if the controlValue contains the conditionValue
-			// otherwise check if they are equal. ( and give the ability to check if the value is an empty array )
-			var isContains;
-
-			if ( _.isArray( conditionValue ) && ! _.isEmpty( conditionValue ) ) {
-				isContains = _.contains( conditionValue, controlValue );
-			} else if ( _.isArray( controlValue ) && ! _.isEmpty( controlValue ) ) {
-				isContains = _.contains( controlValue, conditionValue );
-			} else {
-				isContains = _.isEqual( conditionValue, controlValue );
-			}
-
-			return isNegativeCondition ? isContains : ! isContains;
-		} );
-
-		return _.isEmpty( hasFields );
+		return ! ( conditions && ! elementor.conditions.check( conditions, values, controls ) );
 	},
 
 	cloneObject( object ) {
-		elementorCommon.helpers.hardDeprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.cloneObject', '2.3.0', 'elementorCommon.helpers.cloneObject' );
 
 		return elementorCommon.helpers.cloneObject( object );
 	},
@@ -476,7 +491,7 @@ module.exports = {
 	},
 
 	wpColorPicker( $element ) {
-		elementorCommon.helpers.deprecatedMethod( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
+		elementorDevTools.deprecation.deprecated( 'elementor.helpers.wpColorPicker()', '2.8.0', 'new ColorPicker()' );
 
 		return new ColorPicker( { picker: { el: $element } } );
 	},
@@ -554,7 +569,7 @@ module.exports = {
 		$element.removeData( backupKey );
 	},
 
-	elementSizeToUnit: function( $element, size, unit ) {
+	elementSizeToUnit( $element, size, unit ) {
 		const window = elementorFrontend.elements.window;
 
 		switch ( unit ) {
@@ -571,7 +586,7 @@ module.exports = {
 		return Math.round( size * 1000 ) / 1000;
 	},
 
-	compareVersions: function( versionA, versionB, operator ) {
+	compareVersions( versionA, versionB, operator ) {
 		const prepareVersion = ( version ) => {
 			version = version + '';
 
@@ -623,5 +638,22 @@ module.exports = {
 
 	hasPro() {
 		return !! window.elementorPro;
+	},
+
+	hasProAndNotConnected() {
+		return elementor.helpers.hasPro() && elementorProEditorConfig.urls.connect;
+	},
+
+	/**
+	 * Function validateHTMLTag().
+	 *
+	 * Validate an HTML tag against a safe allowed list.
+	 *
+	 * @param {string} tag
+	 *
+	 * @return {string} the tag, if it is valid, otherwise, 'div'
+	 */
+	validateHTMLTag( tag ) {
+		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
 	},
 };

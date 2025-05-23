@@ -13,7 +13,7 @@ export class DeleteSectionIsFull extends After {
 		const { containers = [ args.container ] } = args;
 
 		return containers.some( ( /* Container */ container ) =>
-			'column' === container.model.get( 'elType' )
+			'column' === container.model.get( 'elType' ),
 		);
 	}
 

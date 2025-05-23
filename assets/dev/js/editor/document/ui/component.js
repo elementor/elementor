@@ -7,27 +7,36 @@ export default class Component extends ComponentBase {
 	}
 
 	defaultCommands() {
-		return {
-			copy: ( args ) => ( new commands.Copy( args ) ).run(),
-			delete: ( args ) => ( new commands.Delete( args ) ).run(),
-			duplicate: ( args ) => ( new commands.Duplicate( args ) ).run(),
-			paste: ( args ) => ( new commands.Paste( args ) ).run(),
-			'paste-style': ( args ) => ( new commands.PasteStyle( args ) ).run(),
-		};
+		return this.importCommands( commands );
 	}
 
 	defaultShortcuts() {
+		const shouldRun = () => {
+			const selectedElements = elementor.selection.getElements();
+
+			if ( ! selectedElements.length ) {
+				return false;
+			}
+
+			const hasLockedContainers = selectedElements.some( ( container ) => container?.isLocked?.() );
+
+			return ! hasLockedContainers;
+		};
+
 		return {
 			copy: {
 				keys: 'ctrl+c',
 				exclude: [ 'input' ],
+				dependency: () => shouldRun(),
 			},
 			delete: {
 				keys: 'del',
 				exclude: [ 'input' ],
+				dependency: () => shouldRun(),
 			},
 			duplicate: {
 				keys: 'ctrl+d',
+				dependency: () => shouldRun(),
 			},
 			paste: {
 				keys: 'ctrl+v',

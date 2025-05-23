@@ -6,7 +6,7 @@ export default class VimeoLoader extends BaseLoader {
 	}
 
 	getURLRegex() {
-		return /^(?:https?:\/\/)?(?:www|player\.)?(?:vimeo\.com\/)?(?:video\/)?(\d+)([^?&#"'>]?)/;
+		return /^(?:https?:\/\/)?(?:www|player\.)?(?:vimeo\.com\/)?(?:video\/|external\/)?(\d+)([^.?&#"'>]?)/;
 	}
 
 	isApiLoaded() {
@@ -15,5 +15,14 @@ export default class VimeoLoader extends BaseLoader {
 
 	getApiObject() {
 		return Vimeo;
+	}
+
+	getAutoplayURL( videoURL ) {
+		videoURL = super.getAutoplayURL( videoURL );
+
+		// Vimeo requires the '#t=' param to be last in the URL.
+		const timeMatch = videoURL.match( /#t=[^&]*/ );
+
+		return videoURL.replace( timeMatch[ 0 ], '' ) + timeMatch;
 	}
 }

@@ -4,7 +4,7 @@ var ControlMultipleBaseItemView = require( 'elementor-controls/base-multiple' ),
 import ColorPicker from '../utils/color-picker';
 
 ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
-	ui: function() {
+	ui() {
 		var ui = ControlMultipleBaseItemView.prototype.ui.apply( this, arguments );
 
 		ui.sliders = '.elementor-slider';
@@ -13,7 +13,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		return ui;
 	},
 
-	initSliders: function() {
+	initSliders() {
 		const value = this.getControlValue();
 
 		this.ui.sliders.each( ( index, slider ) => {
@@ -42,7 +42,7 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
-	initColors: function() {
+	initColors() {
 		this.colorPicker = new ColorPicker( {
 			picker: {
 				el: this.ui.colorPickerPlaceholder[ 0 ],
@@ -57,19 +57,19 @@ ControlBoxShadowItemView = ControlMultipleBaseItemView.extend( {
 		} );
 	},
 
-	onInputChange: function( event ) {
+	onInputChange( event ) {
 		var type = event.currentTarget.dataset.setting,
 			$slider = this.ui.sliders.filter( '[data-input="' + type + '"]' );
 
 		$slider[ 0 ].noUiSlider.set( this.getControlValue( type ) );
 	},
 
-	onReady: function() {
+	onReady() {
 		this.initSliders();
 		this.initColors();
 	},
 
-	onBeforeDestroy: function() {
+	onBeforeDestroy() {
 		this.colorPicker.destroy();
 	},
 } );

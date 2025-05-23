@@ -1,9 +1,12 @@
 <?php
 namespace Elementor\Modules\System_Info;
 
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
+use Elementor\Plugin;
+use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,6 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 2.9.0
  */
 class Module extends BaseModule {
+
 	/**
 	 * Get module name.
 	 *
@@ -63,6 +67,10 @@ class Module extends BaseModule {
 		'network_plugins' => [],
 		'mu_plugins' => [],
 	];
+
+	public function get_capability() {
+		return $this->capability;
+	}
 
 	/**
 	 * Main system info page constructor.
@@ -110,7 +118,12 @@ class Module extends BaseModule {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'admin_menu', [ $this, 'register_menu' ], 500 );
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'admin_menu_rearrangement' ) ) {
+			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
+				$this->register_menu( $admin_menu_manager );
+			}, Settings::ADMIN_MENU_PRIORITY + 30 );
+		}
+
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 
@@ -122,19 +135,10 @@ class Module extends BaseModule {
 	 * Fired by `admin_menu` action.
 	 *
 	 * @since 2.9.0
-	 * @access public
+	 * @access private
 	 */
-	public function register_menu() {
-		$system_info_text = __( 'System Info', 'elementor' );
-
-		add_submenu_page(
-			'elementor',
-			$system_info_text,
-			$system_info_text,
-			$this->capability,
-			'elementor-system-info',
-			[ $this, 'display_page' ]
-		);
+	private function register_menu( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
 	}
 
 	/**
@@ -148,22 +152,17 @@ class Module extends BaseModule {
 	public function display_page() {
 		$reports_info = self::get_allowed_reports();
 
-		$reports = $this->load_reports( $reports_info, 'html' );
-
-		$raw_reports = $this->load_reports( $reports_info, 'raw' );
-
+		$reports = $this->load_reports( $reports_info );
 		?>
 		<div id="elementor-system-info">
-			<h3><?php echo __( 'System Info', 'elementor' ); ?></h3>
+			<h3 class="wp-heading-inline"><?php echo esc_html__( 'System Info', 'elementor' ); ?></h3>
 			<div><?php $this->print_report( $reports, 'html' ); ?></div>
-			<h3><?php echo __( 'Copy & Paste Info', 'elementor' ); ?></h3>
+			<h3><?php echo esc_html__( 'Copy & Paste Info', 'elementor' ); ?></h3>
 			<div id="elementor-system-info-raw">
-				<label id="elementor-system-info-raw-code-label" for="elementor-system-info-raw-code"><?php echo __( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ); ?></label>
+				<label id="elementor-system-info-raw-code-label" for="elementor-system-info-raw-code"><?php echo esc_html__( 'You can copy the below info as simple text with Ctrl+C / Ctrl+V:', 'elementor' ); ?></label>
 				<textarea id="elementor-system-info-raw-code" readonly>
 					<?php
-						unset( $raw_reports['wordpress']['report']['admin_email'] );
-
-						$this->print_report( $raw_reports, 'raw' );
+						$this->print_report( $reports, 'raw' );
 					?>
 				</textarea>
 				<script>
@@ -176,9 +175,9 @@ class Module extends BaseModule {
 				</script>
 			</div>
 			<hr>
-			<form action="<?php echo admin_url( 'admin-ajax.php' ); ?>" method="post">
+			<form action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" method="post">
 				<input type="hidden" name="action" value="elementor_system_info_download_file">
-				<input type="submit" class="button button-primary" value="<?php echo __( 'Download System Info', 'elementor' ); ?>">
+				<input type="submit" class="button button-primary" value="<?php echo esc_html__( 'Download System Info', 'elementor' ); ?>">
 			</form>
 		</div>
 		<?php
@@ -196,11 +195,11 @@ class Module extends BaseModule {
 	 */
 	public function download_file() {
 		if ( ! current_user_can( $this->capability ) ) {
-			wp_die( __( 'You don\'t have permissions to download this file', 'elementor' ) );
+			wp_die( esc_html__( 'You don\'t have permissions to download this file', 'elementor' ) );
 		}
 
 		$reports_info = self::get_allowed_reports();
-		$reports = $this->load_reports( $reports_info, 'raw' );
+		$reports = $this->load_reports( $reports_info );
 
 		$domain = parse_url( site_url(), PHP_URL_HOST );
 
@@ -237,17 +236,15 @@ class Module extends BaseModule {
 	 * @access public
 	 *
 	 * @param array $reports An array of system info reports.
-	 * @param string $format - possible values: 'raw' or empty string, meaning 'html'
 	 *
 	 * @return array An array of system info reports.
 	 */
-	public function load_reports( $reports, $format = '' ) {
+	public function load_reports( $reports ) {
 		$result = [];
 
 		foreach ( $reports as $report_name => $report_info ) {
 			$reporter_params = [
 				'name' => $report_name,
-				'format' => $format,
 			];
 
 			$reporter_params = array_merge( $reporter_params, $report_info );
@@ -259,7 +256,7 @@ class Module extends BaseModule {
 			}
 
 			$result[ $report_name ] = [
-				'report' => $reporter->get_report( $format ),
+				'report' => $reporter,
 				'label' => $reporter->get_title(),
 			];
 
@@ -317,13 +314,6 @@ class Module extends BaseModule {
 	public function print_report( $reports, $template = 'raw' ) {
 		static $tabs_count = 0;
 
-		static $required_plugins_properties = [
-			'Name',
-			'Version',
-			'URL',
-			'Author',
-		];
-
 		$template_path = __DIR__ . '/templates/' . $template . '.php';
 
 		require $template_path;
@@ -341,6 +331,8 @@ class Module extends BaseModule {
 	 * @return array Available reports in Elementor system info page.
 	 */
 	public static function get_allowed_reports() {
+		do_action( 'elementor/system_info/get_allowed_reports' );
+
 		return self::$reports;
 	}
 

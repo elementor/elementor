@@ -1,0 +1,67 @@
+$e-app-collapse-icon-color: tints(600);
+$e-app-collapse-icon-dark-color: dark-tints(200);
+
+$root: e-app-collapse;
+
+.#{$root} {
+	--e-app-collapse-icon-color: #{$e-app-collapse-icon-color};
+
+	&-toggle {
+		position: relative;
+
+		&--active {
+			cursor: pointer;
+		}
+
+		&__icon {
+			color: var(--e-app-collapse-icon-color);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: type(size, "14");
+			position: absolute;
+			top: 50%;
+			right: var(--e-app-collapse-toggle-icon-spacing);
+			transform: translateY(-50%);
+
+			&:before {
+				transition: all 0.2s linear;
+			}
+		}
+	}
+
+	&-content {
+		display: none;
+	}
+
+	&--opened {
+		.#{$root}-toggle {
+			&__icon {
+				&:before {
+					transform: rotate(-180deg);
+				}
+			}
+		}
+
+		.#{$root}-content {
+			display: block;
+		}
+	}
+}
+
+[dir="rtl"] {
+	.#{$root} {
+		&-toggle {
+			&__icon {
+				right: initial;
+				left: var(--e-app-collapse-toggle-icon-spacing);
+			}
+		}
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-collapse-icon-color: #{$e-app-collapse-icon-dark-color};
+	}
+}

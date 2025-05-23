@@ -1,0 +1,30 @@
+$e-app-import-export-message-banner-heading-color: tints(700);
+$e-app-import-export-message-banner-heading-dark-color: dark-tints(300);
+$e-app-import-export-message-banner-description-color: tints(600);
+$e-app-import-export-message-banner-description-dark-color: dark-tints(200);
+
+$root: e-app-import-export-message-banner;
+
+.#{$root} {
+	--e-app-import-export-message-banner-heading-color: #{$e-app-import-export-message-banner-heading-color};
+	--e-app-import-export-message-banner-description-color: #{$e-app-import-export-message-banner-description-color};
+
+	margin-bottom: spacing(30);
+
+	&__heading {
+		color: var(--e-app-import-export-message-banner-heading-color);
+		margin-bottom: spacing(10);
+	}
+
+	&__description {
+		color: var(--e-app-import-export-message-banner-description-color);
+		margin-bottom :0;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-export-message-banner-heading-color: #{$e-app-import-export-message-banner-heading-dark-color};
+		--e-app-import-export-message-banner-description-color: #{$e-app-import-export-message-banner-description-dark-color};
+	}
+}

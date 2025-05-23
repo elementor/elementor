@@ -1,0 +1,12 @@
+// MIXIN: Create Atom
+// - This mixin is a small to for creating an atom selector
+// - This mixin uses the 'atomize' function which uses '$eps-atoms' map
+// - Each Atom is configured within map.
+// - Map key are 'properties' and values are mapped to tokens.
+// - Please see 'tokens/,aps/_atoms.css' for more info.
+@mixin create-atom($keys...) {
+	$map: atomizer($keys...);
+	@each $key, $value in $map {
+		#{$key}: $value;
+	}
+}

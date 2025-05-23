@@ -2,6 +2,7 @@
 namespace Elementor\Modules\System_Info\Reporters;
 
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -64,6 +65,48 @@ abstract class Base {
 	 */
 	public function is_enabled() {
 		return true;
+	}
+
+	public function print_html() {
+		foreach ( $this->get_report( 'html' ) as $field ) {
+			$warning_class = ! empty( $field['warning'] ) ? ' class="elementor-warning"' : '';
+			$log_label = ! empty( $field['label'] ) ? $field['label'] . ':' : '';
+			?>
+			<tr<?php Utils::print_unescaped_internal_string( $warning_class ); ?>>
+				<td><?php Utils::print_unescaped_internal_string( $log_label ); ?></td>
+				<td><?php Utils::print_unescaped_internal_string( $field['value'] ); ?></td>
+				<td><?php
+				if ( ! empty( $field['recommendation'] ) ) :
+					Utils::print_unescaped_internal_string( $field['recommendation'] );
+					endif;
+				?></td>
+			</tr>
+			<?php
+		}
+	}
+
+	public function print_html_label( $label ) {
+		Utils::print_unescaped_internal_string( $label );
+	}
+
+	public function print_raw( $tabs_count ) {
+		$indent = str_repeat( "\t", $tabs_count - 1 );
+
+		$report = $this->get_report( 'raw' );
+
+		echo PHP_EOL . $indent . '== ' . $this->get_title() . ' =='; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo PHP_EOL;
+
+		foreach ( $report as $field_name => $field ) :
+			$sub_indent = str_repeat( "\t", $tabs_count );
+
+			$label = $field['label'];
+
+			if ( ! empty( $label ) ) {
+				$label .= ': ';
+			}
+			echo "{$sub_indent}{$label}{$field['value']}" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		endforeach;
 	}
 
 	/**

@@ -64,8 +64,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	getControlValue() {
-		const value = super.getControlValue(),
-			model = this.model,
+		const model = this.model,
 			valueToMigrate = this.getValueToMigrate();
 
 		if ( ! this.isMigrationAllowed() ) {
@@ -73,18 +72,19 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		// Bail if no migration flag or no value to migrate
+		const value = super.getControlValue();
 		if ( ! valueToMigrate ) {
 			return value;
 		}
 
-		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey ),
-			controlName = model.get( 'name' );
+		const controlName = model.get( 'name' );
 
 		// Check if migration had been done and is stored locally
 		if ( this.cache.migratedFlag[ controlName ] ) {
 			return this.cache.migratedFlag[ controlName ];
 		}
 		// Check if already migrated
+		const didMigration = this.elementSettingsModel.get( this.dataKeys.migratedKey );
 		if ( didMigration && didMigration[ controlName ] ) {
 			return value;
 		}
@@ -107,7 +107,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	isMigrationAllowed() {
-		return ! elementor.config[ 'icons_update_needed' ];
+		return ! elementor.config.icons_update_needed;
 	}
 
 	getValueToMigrate() {
@@ -125,7 +125,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 	}
 
 	onReady() {
-		// is migration allowed from fa4
+		// Is migration allowed from fa4
 		if ( ! this.isMigrationAllowed() ) {
 			const migrationPopupTrigger = 'media' === this.model.get( 'skin' ) ? this.ui.previewContainer[ 0 ] : this.ui.inlineIconContainer[ 0 ];
 
@@ -135,14 +135,17 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 				event.stopPropagation();
 
 				const onConfirm = () => {
-					window.location.href = elementor.config.tools_page_link + '&redirect_to=' + encodeURIComponent( document.location.href ) + '#tab-fontawesome4_migration';
+					window.location.href = elementor.config.tools_page_link +
+						'&redirect_to_document=' + elementor.documents.getCurrent()?.id +
+						'&_wpnonce=' + elementor.config.tools_page_nonce +
+						'#tab-fontawesome4_migration';
 				};
 				const enableMigrationDialog = elementor.helpers.getSimpleDialog(
 					'elementor-enable-fa5-dialog',
-					elementor.translate( 'enable_fa5' ),
-					elementor.translate( 'dialog_confirm_enable_fa5' ),
-					elementor.translate( 'update' ),
-					onConfirm
+					__( 'Elementor\'s New Icon Library', 'elementor' ),
+					__( 'Elementor v2.6 includes an upgrade from Font Awesome 4 to 5. In order to continue using icons, be sure to click "Update".', 'elementor' ) + ' <a href="https://go.elementor.com/fontawesome-migration/" target="_blank">' + __( 'Learn More', 'elementor' ) + '</a>',
+					__( 'Update', 'elementor' ),
+					onConfirm,
 				);
 				enableMigrationDialog.show();
 				return false;
@@ -170,12 +173,12 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		wp.media.view.settings.post.id = elementor.config.document.id;
 		this.frame = wp.media( {
 			button: {
-				text: elementor.translate( 'insert_media' ),
+				text: __( 'Insert Media', 'elementor' ),
 			},
 			library: { type: [ 'image/svg+xml' ] },
 			states: [
 				new wp.media.controller.Library( {
-					title: elementor.translate( 'insert_media' ),
+					title: __( 'Insert Media', 'elementor' ),
 					library: wp.media.query( { type: [ 'image/svg+xml' ] } ),
 					multiple: false,
 					date: false,
@@ -199,7 +202,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		} );
 
 		this.frame.on( 'close', () => {
-			// restore allowed upload extensions
+			// Restore allowed upload extensions
 			_wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions = oldExtensions;
 		} );
 	}
@@ -261,6 +264,7 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		const controlValue = this.getControlValue(),
 			skin = this.model.get( 'skin' ),
 			iconContainer = 'inline' === skin ? this.ui.inlineDisplayedIcon : this.ui.previewPlaceholder,
+			disableActiveState = this.model.get( 'disable_initial_active_state' ),
 			defaultIcon = this.model.get( 'default' );
 
 		let iconValue = controlValue.value,
@@ -272,8 +276,10 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 		}
 
 		if ( 'media' === skin ) {
-			this.ui.controlMedia.toggleClass( 'elementor-media-empty', ! iconValue );
-		} else {
+			this.ui.controlMedia.toggleClass( 'e-media-empty', ! iconValue );
+		}
+
+		if ( ( 'inline' === skin && ! disableActiveState ) || iconType ) {
 			this.markChecked( iconType );
 		}
 
@@ -311,7 +317,8 @@ class ControlIconsView extends ControlMultipleBaseItemView {
 			// If (1) the control does NOT have a default icon,
 			// OR (2) the control DOES have a default icon BUT the default icon is an SVG,
 			// set the default icon-library label's icon to a simple circle
-			iconContainer.html( '<i class="eicon-circle"></i>' );
+			const skinOptions = this.model.get( 'skin_settings' );
+			iconContainer.html( '<i class="' + skinOptions.inline.icon.icon + '"></i>' );
 		}
 	}
 

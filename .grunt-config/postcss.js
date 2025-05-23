@@ -8,9 +8,7 @@ module.exports = {
 			map: true,
 
 			processors: [
-				require( 'autoprefixer' )( {
-					browsers: 'last 10 versions'
-				} )
+				require( 'autoprefixer' )()
 			]
 		},
 		files: [ {
@@ -23,12 +21,13 @@ module.exports = {
 	minify: {
 		options: {
 			processors: [
-				require( 'autoprefixer' )( {
-					browsers: 'last 10 versions'
-				} ),
+				require( 'autoprefixer' )(),
 				require( 'cssnano' )( {
-					reduceIdents: false,
-					zindex: false,
+					preset: [ 'default', {
+						reduceIdents: false,
+						zindex: false,
+						calc: false
+					} ]
 				} )
 			]
 		},
@@ -36,7 +35,11 @@ module.exports = {
 			expand: true,
 			src: [
 				'assets/css/*.css',
-				'!assets/css/*.min.css'
+				'!assets/css/*.min.css',
+				'assets/css/modules/**/*.css',
+				'!assets/css/modules/**/*.min.css',
+				'assets/lib/swiper/css/*.css',
+				'!assets/lib/swiper/css/*.min.css'
 			],
 			ext: '.min.css'
 		} ]

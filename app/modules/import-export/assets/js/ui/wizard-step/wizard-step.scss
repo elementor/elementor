@@ -1,0 +1,67 @@
+$e-app-import-export-wizard-step-icon-color: tints(400);
+$e-app-import-export-wizard-step-icon-dark-color: dark-tints(400);
+$e-app-import-export-wizard-step-text-color: tints(500);
+$e-app-import-export-wizard-step-text-dark-color: dark-tints(200);
+$e-app-import-export-wizard-step-bottom-text-color: tints(500);
+$e-app-import-export-wizard-step-bottom-text-dark-color: dark-tints(200);
+
+$root: e-app-import-export-wizard-step;
+
+.#{$root} {
+	--e-app-import-export-wizard-step-icon-color: #{$e-app-import-export-wizard-step-icon-color};
+	--e-app-import-export-wizard-step-text-color: #{$e-app-import-export-wizard-step-text-color};
+	--e-app-import-export-wizard-step-bottom-text-color: #{$e-app-import-export-wizard-step-bottom-text-color};
+
+	height: 100%;
+	position: relative;
+	text-align: center;
+
+	&__media-container {
+		height: 140px;
+		margin: (spacing(44) * 2) 0 spacing(44);
+	}
+
+	&__icon {
+		color: var(--e-app-import-export-wizard-step-icon-color);
+		font-size: 50px;
+
+		&.eicon-loading {
+			font-size: type( size, '30' );
+		}
+	}
+
+	&__heading {
+		margin-bottom: spacing(24);
+	}
+
+	&__description,
+	&__info {
+		color: var(--e-app-import-export-wizard-step-text-color);
+	}
+
+	&__info {
+		margin-top: spacing(24);
+	}
+
+	&__content {
+		text-align: initial;
+		margin-bottom: spacing(20);
+	}
+
+	&__notice {
+		display: block;
+		position: sticky;
+		top: 100%; /* Will prevent text overlapping when window height is too short. */
+		color: var(--e-app-import-export-wizard-step-bottom-text-color);
+		font-style: italic;
+		margin-bottom: 0;
+	}
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-app-import-export-wizard-step-icon-color: #{$e-app-import-export-wizard-step-icon-dark-color};
+		--e-app-import-export-wizard-step-text-color: #{$e-app-import-export-wizard-step-text-dark-color};
+		--e-app-import-export-wizard-step-bottom-text-color: #{$e-app-import-export-wizard-step-bottom-text-dark-color};
+	}
+}

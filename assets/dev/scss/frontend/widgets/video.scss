@@ -8,6 +8,18 @@
 		transform: translate3d(0, 0, 0); // Allow border-radius in Safari
 	}
 
+	.elementor-wrapper {
+
+		iframe,
+		video {
+			height: 100%;
+			width: 100%;
+			display: flex; // To deal with the space between the iframe and the wrapper
+			border: none; // To deal with inconsistencies
+			background-color: $black; // To show the effect of the aspect ratio when the player does not support responsive well (e.g. Vimeo)
+		}
+	}
+
 	.elementor-open-inline {
 
 		.elementor-custom-embed-image-overlay {
@@ -41,7 +53,20 @@
 		}
 	}
 
-	.elementor-video {
-		object-fit: cover;
+	.e-hosted-video {
+
+		.elementor-video {
+			object-fit: cover;
+		}
+	}
+}
+
+.e-con,
+.e-con-inner {
+
+	> .elementor-widget-video {
+		// Fix - Video widget has an undefined height on mobile using 'flex column wrap' inside the flex container (ED-7604).
+		width: var( --container-widget-width );
+		--flex-grow: var( --container-widget-flex-grow );
 	}
 }

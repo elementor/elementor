@@ -19,6 +19,10 @@ export default class Shapes extends elementorModules.frontend.handlers.Base {
 		return elements;
 	}
 
+	isActive() {
+		return elementorFrontend.isEditMode();
+	}
+
 	getSvgURL( shapeType, fileName ) {
 		let svgURL = this.getSettings( 'svgURL' ) + fileName + '.svg';
 		if ( elementor.config.additional_shapes && shapeType in elementor.config.additional_shapes ) {
@@ -62,6 +66,10 @@ export default class Shapes extends elementorModules.frontend.handlers.Base {
 	}
 
 	onInit( ...args ) {
+		if ( ! this.isActive( this.getSettings() ) ) {
+			return;
+		}
+
 		super.onInit( ...args );
 
 		[ 'top', 'bottom' ].forEach( ( side ) => {

@@ -29,16 +29,35 @@ class AddSectionView extends BaseAddSectionView {
 		this.destroy();
 	}
 
+	onContainerPresetSelected( e ) {
+		super.onContainerPresetSelected( e );
+
+		this.destroy();
+	}
+
 	onAddTemplateButtonClick() {
 		super.onAddTemplateButtonClick();
 
 		this.destroy();
 	}
 
+	getDroppableOptions() {
+		return {
+			onDropping: ( side, event ) => {
+				super.getDroppableOptions().onDropping( side, event );
+				this.destroy();
+			},
+		};
+	}
+
 	onDropping() {
+		const droppableOptions = this.getDroppableOptions();
+
 		super.onDropping();
 
-		this.destroy();
+		if ( droppableOptions.onDropping ) {
+			droppableOptions.onDropping();
+		}
 	}
 }
 

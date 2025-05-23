@@ -1,16 +1,25 @@
 
+// Tools
 #tab-replace_url.elementor-active,
-#tab-fontawesome4_migration.elementor-active {
-
+#tab-fontawesome4_migration.elementor-active,
+#tab-import-export-kit.elementor-active {
 	~ p.submit {
 		display: none;
 	}
 }
 
-#elementor_rollback,
-#elementor_rollback_pro,
 #elementor_replace_url {
+	> div {
+		max-width: 800px;
 
+		input {
+			margin-bottom: 6px;
+		}
+	}
+}
+
+#elementor_rollback,
+#elementor_rollback_pro {
 	> div {
 		display: flex;
 
@@ -18,5 +27,90 @@
 		select {
 			@include margin-end(6px);
 		}
+	}
+}
+
+// Import / Export Kit
+.tab-import-export-kit {
+	&__wrapper {
+		margin: 40px 0;
+		max-width: 700px;
+	}
+
+	&__container {
+		background-color: white;
+		font-size: 16px;
+		max-width: 700px;
+		padding: 30px;
+
+		&:not(:first-child) {
+			margin-top: 5px;
+		}
+
+		p {
+			font-size: 16px;
+			margin: 20px 0 25px;
+		}
+	}
+
+	&__info {
+		font-size: 14px;
+	}
+
+	&__container a:not(.elementor-button),
+	&__info a {
+		color: var(--e-a-color-info);
+		text-decoration: underline;
+	}
+
+	&__box {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+
+		h2 {
+			font-size: 28px;
+			font-weight: normal;
+			line-height: 1;
+			margin: 0;
+		}
+
+		.elementor-button.elementor-button-success {
+			font-weight: bold;
+			padding: 8px 16px;
+			text-transform: initial;
+		}
+	}
+}
+
+.tab-import-export-kit__revert {
+	.tab-import-export-kit__kit-item {
+		background-color: rgba(255, 255, 255, 0.5);
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+		border-radius: 0.1875rem;
+		margin-bottom: 15px;
+		display: inline-block;
+
+		header {
+			border-bottom: 1px solid $editor-background-light;
+			padding: 0.625rem;
+		}
+
+		h3 {
+			font-size: 0.875rem;
+			margin: 0;
+		}
+
+		img {
+			width: 330px;
+			height: 315px;
+			padding: 0.625rem;
+		}
+	}
+
+	.button, .button:hover {
+		color: $danger-text;
+		border-color: $danger-text;
+		display: inline-block;
 	}
 }

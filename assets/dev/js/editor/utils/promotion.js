@@ -1,4 +1,26 @@
 export default class extends elementorModules.Module {
+	defaultOptions = {
+		title: '',
+		content: '',
+		targetElement: null,
+		position: {
+			blockStart: null,
+			inlineStart: null,
+		},
+		actionButton: {
+			url: null,
+			text: null,
+			classes: [ 'elementor-button', 'e-accent' ],
+		},
+	};
+
+	elements = {
+		$title: null,
+		$titleBadge: null,
+		$closeButton: null,
+		$header: null,
+	};
+
 	constructor() {
 		super();
 
@@ -20,41 +42,69 @@ export default class extends elementorModules.Module {
 			},
 		} );
 
-		this.dialog.addButton( {
-			name: 'action',
-			text: elementor.translate( 'see_it_in_action' ),
-			callback: () => {
-				open( this.actionURL, '_blank' );
-			},
-		} );
+		this.elements.$header = this.dialog.getElements( 'header' );
 
-		this.dialog.getElements( 'action' ).addClass( 'elementor-button elementor-button-success' );
+		this.elements.$title = jQuery( '<div>', { id: 'elementor-element--promotion__dialog__title' } );
+		this.elements.$titleBadge = jQuery( '<i>', { class: 'eicon-pro-icon' } );
+		this.elements.$closeButton = jQuery( '<i>', { class: 'eicon-close' } );
 
-		const $promotionTitle = jQuery( '<div>', { id: 'elementor-element--promotion__dialog__title' } ),
-			$proIcon = jQuery( '<i>', { class: 'eicon-pro-icon' } ),
-			$closeButton = jQuery( '<i>', { class: 'eicon-close' } );
+		this.elements.$closeButton.on( 'click', () => this.dialog.hide() );
 
-		$closeButton.on( 'click', () => this.dialog.hide() );
-
-		this.dialog.getElements( 'header' ).append( $promotionTitle, $proIcon, $closeButton );
-
-		this.$promotionTitle = $promotionTitle;
+		this.elements.$header.append(
+			this.elements.$title,
+			this.elements.$titleBadge,
+			this.elements.$closeButton,
+		);
 	}
 
-	showDialog( options ) {
+	createButton( options ) {
+		const $actionButton = this.dialog.getElements( 'action' );
+
+		if ( $actionButton ) {
+			$actionButton.remove();
+		}
+
+		this.dialog.addButton( {
+			name: 'action',
+			text: options.text,
+			classes: options.classes.join( ' ' ),
+			callback: () => open( options.url, '_blank' ),
+		} );
+	}
+
+	parseOptions( options = {} ) {
+		return {
+			...this.defaultOptions,
+			...options,
+			position: {
+				...this.defaultOptions.position,
+				...( options?.position || {} ),
+			},
+			actionButton: {
+				...this.defaultOptions.actionButton,
+				...( options?.actionButton || {} ),
+			},
+		};
+	}
+
+	showDialog( options = {} ) {
 		if ( ! this.dialog ) {
 			this.initDialog();
 		}
 
-		this.actionURL = options.actionURL;
+		options = this.parseOptions( options );
 
-		this.$promotionTitle.text( options.headerMessage );
+		this.createButton( options.actionButton );
+
+		this.elements.$title.text( options.title );
+
+		const inlineStartKey = elementorCommon.config.isRTL ? 'left' : 'right';
 
 		this.dialog
-			.setMessage( options.message )
+			.setMessage( options.content )
 			.setSettings( 'position', {
-				of: options.element,
-				at: ( elementorCommon.config.isRTL ? 'left' : 'right' ) + ' top' + options.top,
+				of: options.targetElement,
+				at: `${ inlineStartKey }${ options.position.inlineStart || '' } top${ options.position.blockStart || '' }`,
 			} );
 
 		return this.dialog.show();

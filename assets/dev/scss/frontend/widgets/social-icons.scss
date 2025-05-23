@@ -2,20 +2,58 @@
 // Social Icons
 //
 
-.elementor-social-icons-wrapper {
-	font-size: 0;
+$icon-size: var(--icon-size, 25px);
+$icon-padding: var(--icon-padding, 0.5em);
+$icon-total-size: calc(#{$icon-size} + (2 * #{$icon-padding}));
+
+.elementor-widget-social-icons {
+/*TODO: This Grid-0 needs to be removed after PRO is Updated */
+	&.elementor-grid-0, &.elementor-grid-tablet-0, &.elementor-grid-mobile-0 {
+		.elementor-widget-container {
+			line-height: 1;
+			font-size: 0;
+		}
+	}
+
+	&:not(.elementor-grid-0):not(.elementor-grid-tablet-0):not(.elementor-grid-mobile-0) {
+		.elementor-grid {
+			display: inline-grid;
+		}
+	}
+
+	.elementor-grid {
+		grid-column-gap: var(--grid-column-gap, 5px);
+		grid-row-gap: var(--grid-row-gap, 5px);
+		grid-template-columns: var(--grid-template-columns);
+		justify-content: var(--justify-content, center);
+		justify-items: var(--justify-content, center);
+	}
+}
+
+// This is for specificity, to avoid being overridden by Theme Style Link Typography.
+.elementor-icon.elementor-social-icon {
+	font-size: $icon-size;
+	line-height: $icon-size;
+	width: $icon-total-size;
+	height: $icon-total-size;
 }
 
 .elementor-social-icon {
+	--e-social-icon-icon-color: #fff;
+
+	display: inline-flex;
 	background-color: $gray;
-	font-size: 25px;
+	align-items: center;
+	justify-content: center;
 	text-align: center;
-	padding: 0.5em;
-	@include margin-end(5px);
 	cursor: pointer;
 
 	i {
-		color: white;
+		color: var(--e-social-icon-icon-color);
+	}
+
+	svg {
+		fill: var(--e-social-icon-icon-color);
 	}
 
 	&:last-child {
@@ -50,7 +88,7 @@
 		&houzz			{ background-color: $houzz; }
 		&instagram		{ background-color: $instagram; }
 		&jsfiddle		{ background-color: $jsfiddle; }
-		&link			{ background-color: $gray; }
+		&link			{ background-color: $link; }
 		&linkedin, &linkedin-in		{ background-color: $linkedin; }
 		&medium			{ background-color: $medium; }
 		&meetup			{ background-color: $meetup; }

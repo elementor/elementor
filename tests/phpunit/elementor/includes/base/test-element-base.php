@@ -2,7 +2,7 @@
 namespace Elementor\Tests\Phpunit\Includes\Base;
 
 use Elementor\Plugin;
-use Elementor\Testing\Elementor_Test_Base;
+use ElementorEditorTesting\Elementor_Test_Base;
 
 class Elementor_Test_Element_Base extends Elementor_Test_Base {
 
@@ -13,7 +13,7 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 		'id' => '5a1e8e5',
 		'elType' => 'widget',
 		'isInner' => false,
-		'settings' => ['text' => 'Click here', ],
+		'settings' => [ 'text' => 'Click here', ],
 		'elements' => [],
 		'widgetType' => 'button',
 	];
@@ -142,12 +142,12 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 
 		foreach ( self::$urls as $type => $config ) {
 			$element->add_link_attributes( $type, [
-				'url' => $config['test']
+				'url' => $config['test'],
 			] );
 
 			$results = $element->get_render_attributes( $type );
 
-			$this->assertEquals( $config['results'], $results[ 'href' ][0], 'Test ' . $type );
+			$this->assertEquals( $config['results'], $results['href'][0], 'Test ' . $type );
 		}
 	}
 
@@ -156,12 +156,55 @@ class Elementor_Test_Element_Base extends Elementor_Test_Base {
 
 		foreach ( self::$custom_attributes as $type => $config ) {
 			$element->add_link_attributes( $type, [
-				'custom_attributes' => $config['test']
+				'custom_attributes' => $config['test'],
 			] );
 
 			$results = $element->get_render_attribute_string( $type );
 
 			$this->assertEquals( $config['results'], $results, 'Test ' . $type );
 		}
+	}
+
+	public function test_add_invisible_class_attribute_when_animation_on() {
+		$element = Plugin::$instance->elements_manager->create_element_instance( self::$element_mock );
+
+		$element->set_settings( 'animation', true );
+
+		ob_start();
+		$element->print_element();
+		ob_end_clean();
+
+		$this->assertTrue( in_array( 'elementor-invisible', $element->get_render_attributes( '_wrapper', 'class' ) ) );
+	}
+
+	public function test_get_data_for_save() {
+		// Arrange.
+		$element = Plugin::$instance->elements_manager->create_element_instance( static::$element_mock );
+
+		// Act.
+		$data = $element->get_data_for_save();
+
+		// Assert.
+		$this->assertEquals( [
+			'id' => '5a1e8e5',
+			'elType' => 'widget',
+			'settings' => [ 'text' => 'Click here', ],
+			'widgetType' => 'button',
+			'elements' => [],
+		], $data );
+	}
+
+	public function test_get_data_for_save__with_on_save_filtering() {
+		// Arrange.
+		// Make the button class available.
+		Plugin::$instance->widgets_manager->get_widget_types( 'button' );
+		require_once __DIR__ . '/mock/mock-button--on-save.php';
+		$button = new \Elementor\Tests\Phpunit\Includes\Base\Mock\Mock_Button__On_Save( static::$element_mock, [] );
+
+		// Act.
+		$data = $button->get_data_for_save();
+
+		// Assert.
+		$this->assertEquals( 'On Save', $data['settings']['text'] );
 	}
 }

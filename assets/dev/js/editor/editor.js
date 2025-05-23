@@ -16,5 +16,3 @@ export class Editor extends EditorBase {
 }
 
 window.elementor = new Editor();
-
-elementor.start();

@@ -1,0 +1,40 @@
+.eps-dialog {
+	border-radius: 3px;
+	width: 375px;
+
+	&__close-button {
+		position: absolute;
+		top: spacing(44) * -1;
+		right: spacing(44) * -1;
+		margin-top: spacing(10);
+		margin-right: spacing(10);
+		z-index: $eps-zindex-modal;
+		font-size: type(size, "20");
+		color: theme-colors(light);
+	}
+
+	&__content {
+		padding: spacing(24) spacing(30) spacing(16);
+		font-size: type(text, xs);
+	}
+
+	&__title, &__text {
+		text-align: center;
+	}
+
+	&__buttons {
+		display: flex;
+	}
+
+	&__button {
+		flex: 1;
+		border-top: 1px solid var(--hr-color);
+		line-height: spacing(44);
+		text-align: center;
+		justify-content: center;
+
+		&:last-child:not(:first-child) {
+			border-inline-start: 1px solid var(--hr-color);
+		}
+	}
+}

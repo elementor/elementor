@@ -7,7 +7,7 @@ export default class extends Marionette.LayoutView {
 
 	templateHelpers() {
 		return {
-			environment: environment,
+			environment,
 		};
 	}
 

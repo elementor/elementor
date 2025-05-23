@@ -6,6 +6,7 @@ use Elementor\Settings;
 use Elementor\Tools;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -38,16 +39,16 @@ class Module extends \Elementor\Core\Base\Module {
 	public function add_admin_button( $tools_page ) {
 		$tools_page->add_fields( Settings::TAB_GENERAL, 'tools', [
 			'safe_mode' => [
-				'label' => __( 'Safe Mode', 'elementor' ),
+				'label' => esc_html__( 'Safe Mode', 'elementor' ),
 				'field_args' => [
 					'type' => 'select',
-					'std' => $this->is_enabled(),
+					'std' => $this->is_enabled() ? 'global' : '',
 					'options' => [
-						'' => __( 'Disable', 'elementor' ),
-						'global' => __( 'Enable', 'elementor' ),
+						'' => esc_html__( 'Disable', 'elementor' ),
+						'global' => esc_html__( 'Enable', 'elementor' ),
 
 					],
-					'desc' => __( 'Safe Mode allows you to troubleshoot issues by only loading the editor, without loading the theme or any other plugin.', 'elementor' ),
+					'desc' => esc_html__( 'Safe Mode allows you to troubleshoot issues by only loading the editor, without loading the theme or any other plugin.', 'elementor' ),
 				],
 			],
 		] );
@@ -91,7 +92,7 @@ class Module extends \Elementor\Core\Base\Module {
 		}
 
 		if ( ! is_dir( WPMU_PLUGIN_DIR ) ) {
-			wp_die( __( 'Cannot enable Safe Mode', 'elementor' ) );
+			wp_die( esc_html__( 'Cannot enable Safe Mode', 'elementor' ) );
 		}
 
 		$results = copy_dir( __DIR__ . '/mu-plugin/', WPMU_PLUGIN_DIR );
@@ -100,13 +101,13 @@ class Module extends \Elementor\Core\Base\Module {
 			return;
 		}
 
-		$token = md5( wp_rand() );
+		$token = hash( 'sha256', wp_rand() );
 
 		// Only who own this key can use 'elementor-safe-mode'.
 		update_option( self::OPTION_TOKEN, $token );
 
 		// Save for later use.
-		setcookie( self::OPTION_TOKEN, $token, time() + HOUR_IN_SECONDS, COOKIEPATH );
+		setcookie( self::OPTION_TOKEN, $token, time() + HOUR_IN_SECONDS, COOKIEPATH, '', is_ssl(), true );
 	}
 
 	public function disable_safe_mode() {
@@ -130,7 +131,7 @@ class Module extends \Elementor\Core\Base\Module {
 		delete_option( 'elementor_safe_mode_created_mu_dir' );
 
 		delete_option( self::OPTION_TOKEN );
-		setcookie( self::OPTION_TOKEN, '', 1 );
+		setcookie( self::OPTION_TOKEN, '', 1, '', '', is_ssl(), true );
 	}
 
 	public function filter_preview_url( $url ) {
@@ -150,11 +151,12 @@ class Module extends \Elementor\Core\Base\Module {
 				bottom: 10px;
 				width: 400px;
 				line-height: 30px;
-				background: white;
+				color: var(--e-a-color-txt);
+				background: var(--e-a-bg-default);
 				padding: 20px 25px 25px;
 				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 				border-radius: 5px;
-				font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+				font-family: var(--e-a-font-family);
 			}
 
 			body.rtl .elementor-safe-mode-toast {
@@ -172,17 +174,16 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast .elementor-toast-content {
 				font-size: 13px;
 				line-height: 22px;
-				color: #6D7882;
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content a {
-				color: #138FFF;
+				color: var(--e-a-color-info);
 			}
 
 			.elementor-safe-mode-toast .elementor-toast-content hr {
 				margin: 15px auto;
 				border: 0 none;
-				border-top: 1px solid #F1F3F5;
+				border-top: var(--e-a-border);
 			}
 
 			.elementor-safe-mode-toast header {
@@ -197,25 +198,9 @@ class Module extends \Elementor\Core\Base\Module {
 				margin-top: 10px;
 			}
 
-			.elementor-safe-mode-toast .elementor-safe-mode-button {
-				display: inline-block;
-				font-weight: 500;
-				font-size: 11px;
-				text-transform: uppercase;
-				color: white;
-				padding: 10px 15px;
-				line-height: 1;
-				background: #A4AFB7;
-				border-radius: 3px;
-			}
-
-			#elementor-try-safe-mode .elementor-safe-mode-button {
-				background: #39B54A;
-			}
-
 			.elementor-safe-mode-toast header i {
 				font-size: 25px;
-				color: #fcb92c;
+				color: var(--e-a-color-warning);
 			}
 
 			body:not(.rtl) .elementor-safe-mode-toast header i {
@@ -229,7 +214,6 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast header h2 {
 				flex-grow: 1;
 				font-size: 18px;
-				color: #6D7882;
 			}
 
 			.elementor-safe-mode-list-item {
@@ -251,7 +235,7 @@ class Module extends \Elementor\Core\Base\Module {
 
 			.elementor-safe-mode-list-item-content {
 				font-style: italic;
-				color: #a4afb7;
+				color: var(--e-a-color-txt);
 			}
 
 			.elementor-safe-mode-list-item-title {
@@ -259,7 +243,8 @@ class Module extends \Elementor\Core\Base\Module {
 			}
 
 			.elementor-safe-mode-mu-plugins {
-				background-color: #f1f3f5;
+				background-color: var(--e-a-bg-hover);
+				color: var(--e-a-color-txt-hover);
 				margin-top: 20px;
 				padding: 10px 15px;
 			}
@@ -268,33 +253,63 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function print_safe_mode_notice() {
-		echo $this->print_safe_mode_css();
+		$this->print_safe_mode_css()
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-safe-mode-message">
 			<header>
 				<i class="eicon-warning"></i>
-				<h2><?php echo __( 'Safe Mode ON', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo $this->get_admin_page_url(); ?>">
-					<?php echo __( 'Disable Safe Mode', 'elementor' ); ?>
+				<h2><?php echo esc_html__( 'Safe Mode ON', 'elementor' ); ?></h2>
+				<a class="elementor-button elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
+					<?php echo esc_html__( 'Disable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
 
 			<div class="elementor-toast-content">
 				<ul class="elementor-safe-mode-list">
 					<li class="elementor-safe-mode-list-item">
-						<div class="elementor-safe-mode-list-item-title"><?php echo __( 'Editor successfully loaded?', 'elementor' ); ?></div>
-						<div class="elementor-safe-mode-list-item-content"><?php echo __( 'The issue was probably caused by one of your plugins or theme.', 'elementor' ); ?> <?php printf( __( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_HELPED_URL ); ?></div>
+						<div class="elementor-safe-mode-list-item-title"><?php echo esc_html__( 'Editor successfully loaded?', 'elementor' ); ?></div>
+						<div class="elementor-safe-mode-list-item-content">
+							<?php
+								echo esc_html__( 'The issue was probably caused by one of your plugins or theme.', 'elementor' );
+								echo ' ';
+
+								printf(
+									/* translators: %1$s Link open tag, %2$s: Link close tag. */
+									esc_html__( '%1$sClick here%2$s to troubleshoot', 'elementor' ),
+									'<a href="' . self::DOCS_HELPED_URL . '" target="_blank">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									'</a>'
+								);
+							?>
+						</div>
 					</li>
 					<li class="elementor-safe-mode-list-item">
-						<div class="elementor-safe-mode-list-item-title"><?php echo __( 'Still experiencing issues?', 'elementor' ); ?></div>
-						<div class="elementor-safe-mode-list-item-content"><?php printf( __( '<a href="%s" target="_blank">Click here</a> to troubleshoot', 'elementor' ), self::DOCS_DIDNT_HELP_URL ); ?></div>
+						<div class="elementor-safe-mode-list-item-title"><?php echo esc_html__( 'Still experiencing issues?', 'elementor' ); ?></div>
+						<div class="elementor-safe-mode-list-item-content">
+							<?php
+								printf(
+									/* translators: %1$s Link open tag, %2$s: Link close tag. */
+									esc_html__( '%1$sClick here%2$s to troubleshoot', 'elementor' ),
+									'<a href="' . self::DOCS_DIDNT_HELP_URL . '" target="_blank">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									'</a>'
+								);
+							?>
+						</div>
 					</li>
 				</ul>
 				<?php
 				$mu_plugins = wp_get_mu_plugins();
 
 				if ( 1 < count( $mu_plugins ) ) : ?>
-					<div class="elementor-safe-mode-mu-plugins"><?php printf( __( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please <a href="%s" target="_blank">read more</a> about this issue.', 'elementor' ), self::DOCS_MU_PLUGINS_URL ); ?></div>
+					<div class="elementor-safe-mode-mu-plugins">
+						<?php
+						printf(
+							/* translators: %1$s Link open tag, %2$s: Link close tag. */
+							esc_html__( 'Please note! We couldn\'t deactivate all of your plugins on Safe Mode. Please %1$sread more%2$s about this issue', 'elementor' ),
+							'<a href="' . self::DOCS_MU_PLUGINS_URL . '" target="_blank">', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+							'</a>'
+						);
+						?>
+					</div>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -302,7 +317,7 @@ class Module extends \Elementor\Core\Base\Module {
 		<script>
 			var ElementorSafeMode = function() {
 				var attachEvents = function() {
-				  jQuery( '.elementor-disable-safe-mode' ).on( 'click', function( e ) {
+					jQuery( '.elementor-disable-safe-mode' ).on( 'click', function( e ) {
 						if ( ! elementorCommon || ! elementorCommon.ajax ) {
 							return;
 						}
@@ -345,29 +360,29 @@ class Module extends \Elementor\Core\Base\Module {
 			return;
 		}
 
-		echo $this->print_safe_mode_css();
+		$this->print_safe_mode_css();
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-try-safe-mode">
 		<?php if ( current_user_can( 'install_plugins' ) ) : ?>
 			<header>
 				<i class="eicon-warning"></i>
-				<h2><?php echo __( 'Can\'t Edit?', 'elementor' ); ?></h2>
-				<a class="elementor-safe-mode-button elementor-enable-safe-mode" target="_blank" href="<?php echo $this->get_admin_page_url(); ?>">
-					<?php echo __( 'Enable Safe Mode', 'elementor' ); ?>
+				<h2><?php echo esc_html__( 'Can\'t Edit?', 'elementor' ); ?></h2>
+				<a class="elementor-button e-primary elementor-safe-mode-button elementor-enable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
+					<?php echo esc_html__( 'Enable Safe Mode', 'elementor' ); ?>
 				</a>
 			</header>
 			<div class="elementor-toast-content">
-				<?php echo __( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot.', 'elementor' ); ?>
-				<a href="<?php echo self::DOCS_TRY_SAFE_MODE_URL; ?>" target="_blank"><?php echo __( 'Learn More', 'elementor' ); ?></a>
+				<?php echo esc_html__( 'Having problems loading Elementor? Please enable Safe Mode to troubleshoot.', 'elementor' ); ?>
+				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		<?php else : ?>
 			<header>
 				<i class="eicon-warning"></i>
-				<h2><?php echo __( 'Can\'t Edit?', 'elementor' ); ?></h2>
+				<h2><?php echo esc_html__( 'Can\'t Edit?', 'elementor' ); ?></h2>
 			</header>
 			<div class="elementor-toast-content">
-				<?php echo __( 'If you are experiencing a loading issue, contact your site administrator to troubleshoot the problem using Safe Mode.', 'elementor' ); ?>
-				<a href="<?php echo self::DOCS_TRY_SAFE_MODE_URL; ?>" target="_blank"><?php echo __( 'Learn More', 'elementor' ); ?></a>
+				<?php echo esc_html__( 'If you are experiencing a loading issue, contact your site administrator to troubleshoot the problem using Safe Mode.', 'elementor' ); ?>
+				<a href="<?php Utils::print_unescaped_internal_string( self::DOCS_TRY_SAFE_MODE_URL ); ?>" target="_blank"><?php echo esc_html__( 'Learn More', 'elementor' ); ?></a>
 			</div>
 		<?php endif; ?>
 		</div>
@@ -385,7 +400,10 @@ class Module extends \Elementor\Core\Base\Module {
 						elementorCommon.ajax.addRequest(
 							'enable_safe_mode', {
 								data: {
-									editor_post_id: '<?php echo Plugin::$instance->editor->get_post_id(); ?>',
+									editor_post_id: '<?php
+										// PHPCS - the method get_post_id is safe.
+										echo Plugin::$instance->editor->get_post_id(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									?>',
 								},
 								success: function( url ) {
 									location.assign( url );
@@ -432,7 +450,7 @@ class Module extends \Elementor\Core\Base\Module {
 				};
 
 				var init = function() {
-					setTimeout( handleTrySafeModeNotice, <?php echo self::EDITOR_NOTICE_TIMEOUT; ?> );
+					setTimeout( handleTrySafeModeNotice, <?php Utils::print_unescaped_internal_string( self::EDITOR_NOTICE_TIMEOUT ); ?> );
 
 					attachEvents();
 				};
@@ -472,7 +490,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	public function plugin_action_links( $actions ) {
-		$actions['disable'] = '<a href="' . self::get_admin_page_url() . '">' . __( 'Disable Safe Mode', 'elementor' ) . '</a>';
+		$actions['disable'] = '<a href="' . self::get_admin_page_url() . '">' . esc_html__( 'Disable Safe Mode', 'elementor' ) . '</a>';
 
 		return $actions;
 	}

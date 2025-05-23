@@ -1,0 +1,241 @@
+@import "../helpers/variables";
+
+:root {
+	--e-is-device-mode: 0;
+}
+
+.e-is-device-mode {
+	--e-is-device-mode: 1;
+}
+
+#elementor-responsive-bar {
+	position: sticky;
+	height: calc(40px * var(--e-is-device-mode));
+	align-self: stretch;
+	flex-shrink: 0;
+	transition: height .2s ease-in-out, opacity .1s ;
+	left: 0; // Fix position:sticky for RTL [ _devices.scss -> #elementor-preview ] ( browser bug )
+	top: 0;
+	z-index: 100;
+	opacity: var(--e-is-device-mode);
+	box-shadow: 0 0 10px 2px rgba(0,0,0,.33), 0 0 2px 1px rgba(0,0,0,.25), 0 0 6px -3px rgba(255,255,255,.5);
+
+	&:before {
+		content: "";
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: -1;
+		transform: scaleX( var( --e-preview-scale, 1 ) );
+	}
+}
+
+.e-responsive-bar {
+
+	&-switcher__option {
+		cursor: pointer;
+		text-align: center;
+		width: 22px;
+		height: 22px;
+		margin: 0 4px;
+		line-height: 22px;
+		border-radius: 3px;
+		font-size: 16px;
+		transition: var(--e-a-transition-hover);
+
+		&:hover {
+			color: var(--e-a-color-primary-bold);
+			background-color: $e-primary-dark-bg;
+		}
+
+		&[aria-selected="true"] {
+			background-color: $e-gray-700;
+			color: $e-gray-25;
+		}
+
+		input {
+			display: none;
+
+			&:checked {
+
+			}
+		}
+
+		&:not(:last-child) {
+			margin-inline-end: 6px;
+		}
+
+	}
+
+	&__button {
+		appearance: none;
+		background: none;
+		border: 0 none;
+		cursor: pointer;
+		color: inherit;
+
+		&:focus:not(:focus-visible) {
+			outline: none;
+		}
+
+		&:hover {
+			color: $e-gray-50;
+			background-color: $e-gray-700;
+		}
+	}
+
+	&--pipe {
+		position: relative;
+
+		&::before {
+			content: '';
+			display: block;
+			height: 20px;
+			width: 1px;
+			background-color: $e-gray-200;
+			position: absolute;
+			inset-inline-end: -5px;
+			top: calc(50% - 10px);
+		}
+	}
+
+	&__input-size {
+		background-color: transparent;
+		color: $e-gray-200;
+		border: 1px solid $e-gray-200;
+		padding: 0 3px;
+		width: 60px;
+		font-size: 12px;
+		line-height: 16px;
+		height: 18px;
+		margin: auto 8px auto 4px;
+		text-align: center;
+
+		&-separator {
+			color: $e-gray-200;
+		}
+
+		&[disabled] {
+			background-color: transparent;
+			color: $e-gray-400;
+			cursor: default;
+			appearance: none;
+			-webkit-appearance: none; //Safari
+		}
+	}
+
+}
+
+#e-responsive-bar {
+	width: 100%;
+	margin-top: calc(-40px + (40px * var(--e-is-device-mode)));
+	z-index: 1;
+	transition: margin-top .2s ease-in-out;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	justify-content: space-between;
+	color: $e-gray-200;
+	background-color: $e-gray-800;
+
+	&__center,
+	&__end,
+	&-scale,
+	&-switcher {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		font-size: 13px;
+		background-color: $e-gray-800;
+		padding: 2px 0;
+	}
+
+	&__end {
+		justify-self: end;
+	}
+
+	@media ( min-width:1400px ) {
+		// Make the devices list centered on large screens.
+		& {
+			grid-template-columns: 1fr auto 1fr;
+		}
+
+		&::before {
+			content: '';
+		}
+	}
+
+	&__close-button,
+	&__settings-button {
+		width: 22px;
+		height: 22px;
+		border-radius: 3px;
+		margin: 7px 5px;
+		font-size: 16px;
+	}
+
+	&__size-inputs-wrapper {
+		display: flex;
+		align-items: center;
+		margin-inline-end: 8px;
+		color: $e-gray-200;
+	}
+
+	&-switcher {
+		padding: 0 20px;
+	}
+
+	&-scale {
+		padding: 0 20px;
+
+		&__value-wrapper {
+			margin: 0 14px;
+			min-width: 32px;
+			text-align: center;
+		}
+
+		&__plus,
+		&__minus,
+		&__reset {
+			cursor: pointer;
+			width: 20px;
+			height: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border-radius: 3px;
+			transition: $transition-hover;
+
+			&:hover {
+				color: $e-gray-50;
+				background-color: $e-gray-700;
+			}
+		}
+
+		&__minus {
+
+			&:before {
+				content: "";
+				display: block;
+				width: 13px;
+				height: 2px;
+				background-color: $e-gray-200;
+				border-radius: 3px;
+			}
+
+			&:hover {
+
+				&:before {
+					background-color: $e-gray-50;
+				}
+			}
+
+		}
+
+		&__reset {
+			margin: 0 8px;
+		}
+	}
+}

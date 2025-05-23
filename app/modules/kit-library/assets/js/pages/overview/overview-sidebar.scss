@@ -1,0 +1,58 @@
+.#{$root} {
+	--e-kit-library-item-sidebar-header-title-color: #{tints(600)};
+	--e-kit-library-item-sidebar-description-color: #{tints(600)};
+	--e-kit-library-item-information-text-color: #{tints(600)};
+}
+
+.eps-theme-dark {
+	.#{$root} {
+		--e-kit-library-item-sidebar-header-title-color: #{dark-tints(200)};
+		--e-kit-library-item-sidebar-description-color: #{dark-tints(200)};
+		--e-kit-library-item-information-text-color: #{dark-tints(200)};
+	}
+}
+
+.e-kit-library {
+	&__item-sidebar {
+		padding: spacing(24) spacing(30);
+	}
+
+	&__item-sidebar-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	&__item-sidebar-header-title {
+		color: var(--e-kit-library-item-sidebar-header-title-color);
+		margin-bottom: 0;
+	}
+
+	&__item-sidebar-thumbnail {
+		margin-top: spacing(24);
+		box-shadow: shadow("2");
+	}
+
+	&__item-sidebar-description {
+		margin-top: spacing(24);
+		color: var(--e-kit-library-item-sidebar-description-color);
+	}
+
+	&__item-sidebar-collapse-tags {
+		margin-top: spacing(44);
+	}
+
+	&__item-sidebar-collapse-info {
+		margin-top: spacing(30);
+	}
+
+	&__item-sidebar-tags-container {
+		gap: spacing(10);
+	}
+
+	&__item-information-text {
+		font-size: type(size, "13");
+		color: var(--e-kit-library-item-information-text-color);
+		margin-bottom: spacing(5);
+	}
+}

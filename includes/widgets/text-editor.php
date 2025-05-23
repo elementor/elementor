@@ -5,7 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor text editor widget.
@@ -42,7 +43,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @return string Widget title.
 	 */
 	public function get_title() {
-		return __( 'Text Editor', 'elementor' );
+		return esc_html__( 'Text Editor', 'elementor' );
 	}
 
 	/**
@@ -94,14 +95,14 @@ class Widget_Text_Editor extends Widget_Base {
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 1.0.0
+	 * @since 3.1.0
 	 * @access protected
 	 */
-	protected function _register_controls() {
+	protected function register_controls() {
 		$this->start_controls_section(
 			'section_editor',
 			[
-				'label' => __( 'Text Editor', 'elementor' ),
+				'label' => esc_html__( 'Text Editor', 'elementor' ),
 			]
 		);
 
@@ -110,97 +111,34 @@ class Widget_Text_Editor extends Widget_Base {
 			[
 				'label' => '',
 				'type' => Controls_Manager::WYSIWYG,
-				'default' => '<p>' . __( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ) . '</p>',
+				'default' => '<p>' . esc_html__( 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.', 'elementor' ) . '</p>',
 			]
 		);
 
 		$this->add_control(
 			'drop_cap', [
-				'label' => __( 'Drop Cap', 'elementor' ),
+				'label' => esc_html__( 'Drop Cap', 'elementor' ),
 				'type' => Controls_Manager::SWITCHER,
-				'label_off' => __( 'Off', 'elementor' ),
-				'label_on' => __( 'On', 'elementor' ),
+				'label_off' => esc_html__( 'Off', 'elementor' ),
+				'label_on' => esc_html__( 'On', 'elementor' ),
 				'prefix_class' => 'elementor-drop-cap-',
 				'frontend_available' => true,
 			]
 		);
 
-		$this->end_controls_section();
-
-		$this->start_controls_section(
-			'section_style',
-			[
-				'label' => __( 'Text Editor', 'elementor' ),
-				'tab' => Controls_Manager::TAB_STYLE,
-			]
-		);
-
-		$this->add_responsive_control(
-			'align',
-			[
-				'label' => __( 'Alignment', 'elementor' ),
-				'type' => Controls_Manager::CHOOSE,
-				'options' => [
-					'left' => [
-						'title' => __( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
-					],
-					'center' => [
-						'title' => __( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
-					],
-					'right' => [
-						'title' => __( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
-					],
-					'justify' => [
-						'title' => __( 'Justified', 'elementor' ),
-						'icon' => 'eicon-text-align-justify',
-					],
-				],
-				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'text-align: {{VALUE}};',
-				],
-			]
-		);
-
-		$this->add_control(
-			'text_color',
-			[
-				'label' => __( 'Text Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}}' => 'color: {{VALUE}};',
-				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_3,
-				],
-			]
-		);
-
-		$this->add_group_control(
-			Group_Control_Typography::get_type(),
-			[
-				'name' => 'typography',
-				'scheme' => Schemes\Typography::TYPOGRAPHY_3,
-			]
-		);
-
 		$text_columns = range( 1, 10 );
 		$text_columns = array_combine( $text_columns, $text_columns );
-		$text_columns[''] = __( 'Default', 'elementor' );
+		$text_columns[''] = esc_html__( 'Default', 'elementor' );
 
 		$this->add_responsive_control(
 			'text_columns',
 			[
-				'label' => __( 'Columns', 'elementor' ),
+				'label' => esc_html__( 'Columns', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'separator' => 'before',
 				'options' => $text_columns,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'columns: {{VALUE}};',
+					'{{WRAPPER}}' => 'columns: {{VALUE}};',
 				],
 			]
 		);
@@ -208,9 +146,9 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_responsive_control(
 			'column_gap',
 			[
-				'label' => __( 'Columns Gap', 'elementor' ),
+				'label' => esc_html__( 'Columns Gap', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ 'px', '%', 'em', 'vw' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'range' => [
 					'px' => [
 						'max' => 100,
@@ -229,8 +167,80 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-text-editor' => 'column-gap: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => 'column-gap: {{SIZE}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->end_controls_section();
+
+		$this->start_controls_section(
+			'section_style',
+			[
+				'label' => esc_html__( 'Text Editor', 'elementor' ),
+				'tab' => Controls_Manager::TAB_STYLE,
+			]
+		);
+
+		$this->add_responsive_control(
+			'align',
+			[
+				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'left' => [
+						'title' => esc_html__( 'Left', 'elementor' ),
+						'icon' => 'eicon-text-align-left',
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'right' => [
+						'title' => esc_html__( 'Right', 'elementor' ),
+						'icon' => 'eicon-text-align-right',
+					],
+					'justify' => [
+						'title' => esc_html__( 'Justified', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'selectors' => [
+					'{{WRAPPER}}' => 'text-align: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_control(
+			'text_color',
+			[
+				'label' => esc_html__( 'Text Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Typography::get_type(),
+			[
+				'name' => 'typography',
+				'global' => [
+					'default' => Global_Typography::TYPOGRAPHY_TEXT,
+				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'text_shadow',
+				'selector' => '{{WRAPPER}}',
 			]
 		);
 
@@ -239,7 +249,7 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->start_controls_section(
 			'section_drop_cap',
 			[
-				'label' => __( 'Drop Cap', 'elementor' ),
+				'label' => esc_html__( 'Drop Cap', 'elementor' ),
 				'tab' => Controls_Manager::TAB_STYLE,
 				'condition' => [
 					'drop_cap' => 'yes',
@@ -250,12 +260,12 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_control(
 			'drop_cap_view',
 			[
-				'label' => __( 'View', 'elementor' ),
+				'label' => esc_html__( 'View', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'default' => __( 'Default', 'elementor' ),
-					'stacked' => __( 'Stacked', 'elementor' ),
-					'framed' => __( 'Framed', 'elementor' ),
+					'default' => esc_html__( 'Default', 'elementor' ),
+					'stacked' => esc_html__( 'Stacked', 'elementor' ),
+					'framed' => esc_html__( 'Framed', 'elementor' ),
 				],
 				'default' => 'default',
 				'prefix_class' => 'elementor-drop-cap-view-',
@@ -265,15 +275,14 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_control(
 			'drop_cap_primary_color',
 			[
-				'label' => __( 'Primary Color', 'elementor' ),
+				'label' => esc_html__( 'Primary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}}.elementor-drop-cap-view-stacked .elementor-drop-cap' => 'background-color: {{VALUE}};',
 					'{{WRAPPER}}.elementor-drop-cap-view-framed .elementor-drop-cap, {{WRAPPER}}.elementor-drop-cap-view-default .elementor-drop-cap' => 'color: {{VALUE}}; border-color: {{VALUE}};',
 				],
-				'scheme' => [
-					'type' => Schemes\Color::get_type(),
-					'value' => Schemes\Color::COLOR_1,
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
 				],
 			]
 		);
@@ -281,7 +290,7 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_control(
 			'drop_cap_secondary_color',
 			[
-				'label' => __( 'Secondary Color', 'elementor' ),
+				'label' => esc_html__( 'Secondary Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
 					'{{WRAPPER}}.elementor-drop-cap-view-framed .elementor-drop-cap' => 'background-color: {{VALUE}};',
@@ -293,10 +302,18 @@ class Widget_Text_Editor extends Widget_Base {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Text_Shadow::get_type(),
+			[
+				'name' => 'drop_cap_shadow',
+				'selector' => '{{WRAPPER}} .elementor-drop-cap',
+			]
+		);
+
 		$this->add_control(
 			'drop_cap_size',
 			[
-				'label' => __( 'Size', 'elementor' ),
+				'label' => esc_html__( 'Size', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 5,
@@ -318,7 +335,7 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_control(
 			'drop_cap_space',
 			[
-				'label' => __( 'Space', 'elementor' ),
+				'label' => esc_html__( 'Space', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'default' => [
 					'size' => 10,
@@ -338,9 +355,9 @@ class Widget_Text_Editor extends Widget_Base {
 		$this->add_control(
 			'drop_cap_border_radius',
 			[
-				'label' => __( 'Border Radius', 'elementor' ),
+				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
-				'size_units' => [ '%', 'px' ],
+				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'default' => [
 					'unit' => '%',
 				],
@@ -357,8 +374,9 @@ class Widget_Text_Editor extends Widget_Base {
 
 		$this->add_control(
 			'drop_cap_border_width', [
-				'label' => __( 'Border Width', 'elementor' ),
+				'label' => esc_html__( 'Border Width', 'elementor' ),
 				'type' => Controls_Manager::DIMENSIONS,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-drop-cap' => 'border-width: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
 				],
@@ -391,15 +409,27 @@ class Widget_Text_Editor extends Widget_Base {
 	 * @access protected
 	 */
 	protected function render() {
-		$editor_content = $this->get_settings_for_display( 'editor' );
+		$is_dom_optimized = Plugin::$instance->experiments->is_feature_active( 'e_dom_optimization' );
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+		$should_render_inline_editing = ( ! $is_dom_optimized || $is_edit_mode );
 
+		$editor_content = $this->get_settings_for_display( 'editor' );
 		$editor_content = $this->parse_text_editor( $editor_content );
 
-		$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		if ( $should_render_inline_editing ) {
+			$this->add_render_attribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		}
 
 		$this->add_inline_editing_attributes( 'editor', 'advanced' );
 		?>
-		<div <?php echo $this->get_render_attribute_string( 'editor' ); ?>><?php echo $editor_content; ?></div>
+		<?php if ( $should_render_inline_editing ) { ?>
+			<div <?php $this->print_render_attribute_string( 'editor' ); ?>>
+		<?php } ?>
+		<?php // PHPCS - the main text of a widget should not be escaped.
+				echo $editor_content; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+		<?php if ( $should_render_inline_editing ) { ?>
+			</div>
+		<?php } ?>
 		<?php
 	}
 
@@ -413,7 +443,7 @@ class Widget_Text_Editor extends Widget_Base {
 	 */
 	public function render_plain_content() {
 		// In plain mode, render without shortcode
-		echo $this->get_settings( 'editor' );
+		$this->print_unescaped_setting( 'editor' );
 	}
 
 	/**
@@ -427,11 +457,25 @@ class Widget_Text_Editor extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
-		view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		const isDomOptimized = ! ! elementorFrontend.config.experimentalFeatures.e_dom_optimization,
+			isEditMode = elementorFrontend.isEditMode(),
+			shouldRenderInlineEditing = ( ! isDomOptimized || isEditMode );
+
+		if ( shouldRenderInlineEditing ) {
+			view.addRenderAttribute( 'editor', 'class', [ 'elementor-text-editor', 'elementor-clearfix' ] );
+		}
 
 		view.addInlineEditingAttributes( 'editor', 'advanced' );
-		#>
-		<div {{{ view.getRenderAttributeString( 'editor' ) }}}>{{{ settings.editor }}}</div>
+
+		if ( shouldRenderInlineEditing ) { #>
+			<div {{{ view.getRenderAttributeString( 'editor' ) }}}>
+		<# } #>
+
+			{{{ settings.editor }}}
+
+		<# if ( shouldRenderInlineEditing ) { #>
+			</div>
+		<# } #>
 		<?php
 	}
 }

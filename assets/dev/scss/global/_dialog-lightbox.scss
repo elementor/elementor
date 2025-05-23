@@ -1,0 +1,14 @@
+//
+// Dialog Lightbox
+//
+
+.dialog-type-lightbox {
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	background-color: rgba(0, 0, 0, 0.8);
+	z-index: 9999;
+	user-select: none;
+}

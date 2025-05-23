@@ -5,7 +5,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\DocumentTypes\Page;
 use Elementor\Core\DocumentTypes\Post;
-use Elementor\DB;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
@@ -183,29 +182,21 @@ class Documents_Manager {
 			return false;
 		}
 
+		/**
+		 * Retrieve document post ID.
+		 *
+		 * Filters the document post ID.
+		 *
+		 * @since 2.0.7
+		 *
+		 * @param int $post_id The post ID of the document.
+		 */
 		$post_id = apply_filters( 'elementor/documents/get/post_id', $post_id );
 
 		if ( ! $from_cache || ! isset( $this->documents[ $post_id ] ) ) {
-
-			if ( wp_is_post_autosave( $post_id ) ) {
-				$post_type = get_post_type( wp_get_post_parent_id( $post_id ) );
-			} else {
-				$post_type = get_post_type( $post_id );
-			}
-
-			$doc_type = 'post';
-
-			if ( isset( $this->cpt[ $post_type ] ) ) {
-				$doc_type = $this->cpt[ $post_type ];
-			}
-
-			$meta_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
-
-			if ( $meta_type && isset( $this->types[ $meta_type ] ) ) {
-				$doc_type = $meta_type;
-			}
-
+			$doc_type = $this->get_doc_type_by_id( $post_id );
 			$doc_type_class = $this->get_document_type( $doc_type );
+
 			$this->documents[ $post_id ] = new $doc_type_class( [
 				'post_id' => $post_id,
 			] );
@@ -352,10 +343,10 @@ class Documents_Manager {
 		}
 
 		if ( empty( $post_data['post_title'] ) ) {
-			$post_data['post_title'] = __( 'Elementor', 'elementor' );
+			$post_data['post_title'] = esc_html__( 'Elementor', 'elementor' );
 			if ( 'post' !== $type ) {
 				$post_data['post_title'] = sprintf(
-					/* translators: %s: Document title */
+					/* translators: %s: Document title. */
 					__( 'Elementor %s', 'elementor' ),
 					call_user_func( [ $class, 'get_title' ] )
 				);
@@ -369,6 +360,12 @@ class Documents_Manager {
 		$meta_data[ Document::TYPE_META_KEY ] = $type;
 
 		$post_data['meta_input'] = $meta_data;
+
+		$post_types = $class::get_property( 'cpt' );
+
+		if ( ! empty( $post_types[0] ) && empty( $post_data['post_type'] ) ) {
+			$post_data['post_type'] = $post_types[0];
+		}
 
 		$post_id = wp_insert_post( $post_data );
 
@@ -485,16 +482,16 @@ class Documents_Manager {
 		// Set the post as global post.
 		Plugin::$instance->db->switch_to_post( $document->get_post()->ID );
 
-		$status = DB::STATUS_DRAFT;
+		$status = Document::STATUS_DRAFT;
 
-		if ( isset( $request['status'] ) && in_array( $request['status'], [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE, DB::STATUS_PENDING, DB::STATUS_AUTOSAVE ], true ) ) {
+		if ( isset( $request['status'] ) && in_array( $request['status'], [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE, Document::STATUS_PENDING, Document::STATUS_AUTOSAVE ], true ) ) {
 			$status = $request['status'];
 		}
 
-		if ( DB::STATUS_AUTOSAVE === $status ) {
+		if ( Document::STATUS_AUTOSAVE === $status ) {
 			// If the post is a draft - save the `autosave` to the original draft.
 			// Allow a revision only if the original post is already published.
-			if ( in_array( $document->get_post()->post_status, [ DB::STATUS_PUBLISH, DB::STATUS_PRIVATE ], true ) ) {
+			if ( in_array( $document->get_post()->post_status, [ Document::STATUS_PUBLISH, Document::STATUS_PRIVATE ], true ) ) {
 				$document = $document->get_autosave( 0, true );
 			}
 		}
@@ -512,11 +509,14 @@ class Documents_Manager {
 
 		$document->save( $data );
 
+		$post = $document->get_post();
+		$main_post = $document->get_main_post();
+
 		// Refresh after save.
-		$document = $this->get( $document->get_post()->ID, false );
+		$document = $this->get( $post->ID, false );
 
 		$return_data = [
-			'status' => $document->get_post()->post_status,
+			'status' => $post->post_status,
 			'config' => [
 				'document' => [
 					'last_edited' => $document->get_last_edited(),
@@ -526,6 +526,15 @@ class Documents_Manager {
 				],
 			],
 		];
+
+		$post_status_object = get_post_status_object( $main_post->post_status );
+
+		if ( $post_status_object ) {
+			$return_data['config']['document']['status'] = [
+				'value' => $post_status_object->name,
+				'label' => $post_status_object->label,
+			];
+		}
 
 		/**
 		 * Returned documents ajax saved data.
@@ -576,7 +585,7 @@ class Documents_Manager {
 		$document = $this->get_doc_or_auto_save( $post_id );
 
 		if ( ! $document ) {
-			throw new \Exception( 'Not Found.' );
+			throw new \Exception( 'Not found.' );
 		}
 
 		if ( ! $document->is_editable_by_current_user() ) {
@@ -589,7 +598,7 @@ class Documents_Manager {
 		$this->switch_to_document( $document );
 
 		// Change mode to Builder
-		Plugin::$instance->db->set_is_elementor_page( $post_id );
+		$document->set_is_built_with_elementor( true );
 
 		$doc_config = $document->get_config();
 
@@ -654,21 +663,6 @@ class Documents_Manager {
 		return $this->current_doc;
 	}
 
-	/**
-	 * Get groups.
-	 *
-	 * @since 2.0.0
-	 * @deprecated 2.4.0
-	 * @access public
-	 *
-	 * @return array
-	 */
-	public function get_groups() {
-		_deprecated_function( __METHOD__, '2.4.0' );
-
-		return [];
-	}
-
 	public function localize_settings( $settings ) {
 		$translations = [];
 
@@ -692,5 +686,51 @@ class Documents_Manager {
 			 */
 			do_action( 'elementor/documents/register', $this );
 		}
+	}
+
+	/**
+	 * Get create new post URL.
+	 *
+	 * Retrieve a custom URL for creating a new post/page using Elementor.
+	 *
+	 * @param string $post_type Optional. Post type slug. Default is 'page'.
+	 * @param string|null $template_type Optional. Query arg 'template_type'. Default is null.
+	 *
+	 * @return string A URL for creating new post using Elementor.
+	 */
+	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
+		$query_args = [
+			'action' => 'elementor_new_post',
+			'post_type' => $post_type,
+		];
+
+		if ( $template_type ) {
+			$query_args['template_type'] = $template_type;
+		}
+
+		$new_post_url = add_query_arg( $query_args, admin_url( 'edit.php' ) );
+
+		$new_post_url = add_query_arg( '_wpnonce', wp_create_nonce( 'elementor_action_new_post' ), $new_post_url );
+
+		return $new_post_url;
+	}
+
+	private function get_doc_type_by_id( $post_id ) {
+		// Auto-save inherits from the original post.
+		if ( wp_is_post_autosave( $post_id ) ) {
+			$post_id = wp_get_post_parent_id( $post_id );
+		}
+
+		// Content built with Elementor.
+		$template_type = get_post_meta( $post_id, Document::TYPE_META_KEY, true );
+
+		if ( $template_type && isset( $this->types[ $template_type ] ) ) {
+			return $template_type;
+		}
+
+		// Elementor installation on a site with existing content (which doesn't contain Elementor's meta).
+		$post_type = get_post_type( $post_id );
+
+		return $this->cpt[ $post_type ] ?? 'post';
 	}
 }

@@ -12,48 +12,44 @@ export default class extends BaseManager {
 
 		this.changeCallbacks = {
 			ui_theme: this.onUIThemeChanged,
+			panel_width: this.onPanelWidthChanged,
 			edit_buttons: this.onEditButtonsChanged,
+			show_hidden_elements: this.onShowHiddenElementsChange,
 		};
 	}
 
-	createDarkModeStylesheetLink() {
-		const darkModeLinkID = this.getSettings( 'darkModeLinkID' );
-
-		let $darkModeLink = jQuery( '#' + darkModeLinkID );
-
-		if ( ! $darkModeLink.length ) {
-			$darkModeLink = jQuery( '<link>', {
-				id: darkModeLinkID,
-				rel: 'stylesheet',
-				href: elementor.config.ui.darkModeStylesheetURL,
-			} );
-		}
-
-		this.$link = $darkModeLink;
-	}
-
-	getDarkModeStylesheetLink() {
-		if ( ! this.$link ) {
-			this.createDarkModeStylesheetLink();
-		}
-
-		return this.$link;
-	}
-
 	onUIThemeChanged( newValue ) {
-		const $link = this.getDarkModeStylesheetLink();
+		const $lightUi = jQuery( '#e-theme-ui-light-css' );
+		const $darkUi = jQuery( '#e-theme-ui-dark-css' );
 
-		if ( 'light' === newValue ) {
-			$link.remove();
+		if ( 'auto' === newValue ) {
+			$lightUi.attr( 'media', '(prefers-color-scheme: light)' );
+			$darkUi.attr( 'media', '(prefers-color-scheme: dark)' );
 
 			return;
 		}
 
-		$link.attr( 'media', 'auto' === newValue ? '(prefers-color-scheme: dark)' : '' ).appendTo( elementorCommon.elements.$body );
+		if ( 'light' === newValue ) {
+			$lightUi.attr( 'media', 'all' );
+			$darkUi.attr( 'media', 'none' );
+		} else {
+			$lightUi.attr( 'media', 'none' );
+			$darkUi.attr( 'media', 'all' );
+		}
+	}
+
+	onPanelWidthChanged( newValue ) {
+		elementor.panel.saveSize( { width: newValue.size + newValue.unit } );
+
+		elementor.panel.setSize();
 	}
 
 	onEditButtonsChanged() {
 		// Let the button change before the high-performance action of rendering the entire page
-		setTimeout( () => elementor.getPreviewView().render(), 300 );
+		setTimeout( () => elementor.getPreviewView()._renderChildren(), 300 );
+	}
+
+	onShowHiddenElementsChange() {
+		elementorFrontend.elements.$body.toggleClass( 'e-preview--show-hidden-elements' );
 	}
 }

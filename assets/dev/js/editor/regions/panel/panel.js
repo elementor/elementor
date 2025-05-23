@@ -3,11 +3,11 @@ var BaseRegion = require( 'elementor-regions/base' );
 module.exports = BaseRegion.extend( {
 	el: '#elementor-panel',
 
-	getStorageKey: function() {
+	getStorageKey() {
 		return 'panel';
 	},
 
-	getDefaultStorage: function() {
+	getDefaultStorage() {
 		return {
 			size: {
 				width: '',
@@ -15,7 +15,7 @@ module.exports = BaseRegion.extend( {
 		};
 	},
 
-	constructor: function() {
+	constructor() {
 		BaseRegion.prototype.constructor.apply( this, arguments );
 
 		var PanelLayoutView = require( 'elementor-regions/panel/layout' );
@@ -29,40 +29,42 @@ module.exports = BaseRegion.extend( {
 		this.listenTo( elementor.channels.dataEditMode, 'switch', this.onEditModeSwitched );
 	},
 
-	setSize: function() {
-		var width = this.storage.size.width,
-			side = elementorCommon.config.isRTL ? 'right' : 'left';
+	setSize() {
+		const savedWidth = this.storage.size.width;
 
-		this.$el.css( 'width', width );
-
-		elementor.$previewWrapper.css( side, width );
+		elementorCommon.elements.$body.css( '--e-editor-panel-width', savedWidth );
 	},
 
-	resizable: function() {
-		var self = this,
-			side = elementorCommon.config.isRTL ? 'right' : 'left';
+	resizable() {
+		var self = this;
 
 		self.$el.resizable( {
 			handles: elementorCommon.config.isRTL ? 'w' : 'e',
 			minWidth: 200,
 			maxWidth: 680,
-			start: function() {
+			start() {
 				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );
 			},
-			stop: function() {
+			stop( event, ui ) {
 				elementor.$previewWrapper.removeClass( 'ui-resizable-resizing' );
 
 				elementor.getPanelView().updateScrollbar();
 
-				self.saveSize();
+				self.saveSize( { width: ui.size.width + 'px' } );
 			},
-			resize: function( event, ui ) {
-				elementor.$previewWrapper.css( side, ui.size.width );
+			resize( event, ui ) {
+				elementorCommon.elements.$body.css( '--e-editor-panel-width', ui.size.width + 'px' );
+
+				self.$el.css( {
+					width: '',
+					// For RTL
+					left: '',
+				} );
 			},
 		} );
 	},
 
-	onEditModeSwitched: function( activeMode ) {
+	onEditModeSwitched( activeMode ) {
 		if ( 'edit' !== activeMode ) {
 			return;
 		}
