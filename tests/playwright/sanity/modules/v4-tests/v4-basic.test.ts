@@ -10,6 +10,11 @@ test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		e_opt_in_v4_page: 'active',
 		e_atomic_elements: 'active',
 	} );
+
+	await wpAdmin.setExperiments( {
+		e_v_3_30: 'active',
+	} );
+
 	await page.close();
 } );
 
@@ -83,5 +88,25 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 
 		expect( buttonBox.width ).toBe( 200 );
 		expect( buttonBox.height ).toBe( 60 );
+	} );
+
+	test( 'ID control sanity test', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		await editor.closeNavigatorIfOpen();
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		const buttonId = await editor.addWidget( { widgetType: 'e-button', container } );
+		const buttonCssId = 'custom-button-id';
+
+		await editor.openV2PanelTab( 'general' );
+		await editor.v4Panel.fillField( 1, buttonCssId );
+
+		const button = editor.getPreviewFrame().locator( `[data-id="${ buttonId }"] button` );
+
+		const buttonIdValue = await button.evaluate( ( el ) => el.getAttribute( 'id' ) );
+		const idLabel = page.locator( '.MuiFormLabel-root:has-text("ID")' );
+
+		expect( buttonIdValue ).toBe( buttonCssId );
+		await expect( idLabel ).toBeVisible();
 	} );
 } );
