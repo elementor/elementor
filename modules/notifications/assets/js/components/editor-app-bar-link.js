@@ -1,3 +1,4 @@
+import * as EditorAppBar from '@elementor/editor-app-bar';
 import { editorOnButtonClicked } from './editor-on-button-clicked';
 import { Badge } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -16,8 +17,8 @@ IconWithBadge.propTypes = {
 	invisible: PropTypes.bool,
 };
 
-export const editorV2 = () => {
-	const { utilitiesMenu } = window.elementorV2.editorAppBar;
+export const editorAppBarLink = () => {
+	const { utilitiesMenu } = EditorAppBar;
 
 	utilitiesMenu.registerLink( {
 		id: 'app-bar-menu-item-whats-new',
