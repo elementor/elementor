@@ -9,9 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Render_Mode_Preview extends Render_Mode_Base {
-	const ENQUEUE_SCRIPTS_PRIORITY = 1000;
-
+class Render_Mode_Template_Preview extends Render_Mode_Preview_Base {
 	const MODE = 'cloud-template-preview';
 
 	protected int $template_id;
@@ -28,50 +26,12 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 	public function prepare_render() {
 		parent::prepare_render();
-		show_admin_bar( false );
 
 		add_filter( 'template_include', [ $this, 'filter_template' ] );
 	}
 
 	public function filter_template() {
 		return ELEMENTOR_PATH . 'modules/page-templates/templates/canvas.php';
-	}
-
-	public function enqueue_scripts() {
-		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
-
-		wp_enqueue_script(
-			'dom-to-image',
-			ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
-			[],
-			'2.6.0',
-			true
-		);
-
-		wp_enqueue_script(
-			'html2canvas',
-			ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
-			[],
-			'1.4.1',
-			true
-		);
-
-		wp_enqueue_script(
-			'cloud-library-screenshot',
-			ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
-			[ 'dom-to-image', 'html2canvas' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		$config = [
-			'selector' => '.elementor-' . $this->document->get_main_id(),
-			'home_url' => home_url(),
-			'post_id' => $this->document->get_main_id(),
-			'template_id' => $this->template_id,
-		];
-
-		wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
 	}
 
 	private function create_document() {
@@ -89,4 +49,13 @@ class Render_Mode_Preview extends Render_Mode_Base {
 
 		return $document;
 	}
+
+    public function get_config() {
+        return [
+            'selector' => '.elementor-' . $this->document->get_main_id(),
+            'home_url' => home_url(),
+            'post_id' => $this->document->get_main_id(),
+            'template_id' => $this->template_id,
+        ];
+    }
 }
