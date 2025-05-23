@@ -1,9 +1,11 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary;
 
+use Elementor\App\Modules\ImportExport\Render_Mode_Kit_Thumbnail;
 use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
@@ -113,5 +115,18 @@ class Module extends BaseModule {
 		add_action( 'elementor/init', function () {
 			$this->set_kit_library_settings();
 		}, 12 /** After the initiation of the connect kit library */ );
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) {
+			add_action( 'elementor/frontend/render_mode/register', [ $this, 'register_render_mode' ] );
+		}
+	}
+
+	/**
+	 * @param Render_Mode_Manager $manager
+	 *
+	 * @throws \Exception
+	 */
+	public function register_render_mode( Render_Mode_Manager $manager ) {
+		$manager->register_render_mode( Render_Mode_Kit_Thumbnail::class );
 	}
 }

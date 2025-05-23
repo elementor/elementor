@@ -22,8 +22,38 @@ export default function ExportProcess() {
 			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
 		},
-		exportKit = () => {
+		generateScreenshot = ( ) => {
+			return new Promise( ( resolve ) => {
+				const iframe = document.createElement( 'iframe' );
+				iframe.style = 'visibility: hidden;';
+				iframe.width = '1200';
+				iframe.height = '1000';
+
+				const messageHandler = ( event ) => {
+					if ( 'kit-screenshot-done' === event.data.name ) {
+						window.removeEventListener( 'message', messageHandler );
+						document.body.removeChild( iframe );
+						resolve( event.data.imageUrl || null );
+
+						window.removeEventListener( 'message', messageHandler );
+					}
+				};
+
+				window.addEventListener( 'message', messageHandler );
+
+				const previewUrl = new URL( window.location.origin );
+				previewUrl.searchParams.set( 'kit_preview', 'true' );
+				previewUrl.searchParams.set( 'render_mode', 'kit-thumbnail' );
+				previewUrl.searchParams.set( 'render_mode_nonce', elementorAppConfig[ 'import-export' ].kitPreviewNonce );
+
+				document.body.appendChild( iframe );
+				iframe.src = previewUrl.toString();
+			} );
+		},
+		exportKit = async () => {
 			const { includes, selectedCustomPostTypes } = sharedContext.data;
+
+			const screenShotBlob = await generateScreenshot();
 
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
@@ -35,6 +65,7 @@ export default function ExportProcess() {
 				kitInfo,
 				plugins: pluginsData,
 				selectedCustomPostTypes,
+				screenShotBlob,
 			} );
 		};
 
