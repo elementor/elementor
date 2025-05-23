@@ -1,20 +1,12 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater, setupExperiments } from './helper';
+import { addItemFromRepeater, cloneItemFromRepeater, deleteItemFromRepeater } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-atomic-repeaters', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: true } );
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await page.close();
@@ -106,7 +98,6 @@ test.describe( 'Nested Tabs tests @nested-atomic-repeaters', () => {
 	test( 'Test Nested Tabs with Inner Nested Tabs', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await setupExperiments( wpAdmin );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 

@@ -24,11 +24,6 @@ export async function clickTabByPosition( context: Page | Frame, tabPosition: nu
 	await context.locator( locators.tabTitle ).nth( tabPosition ).first().click();
 }
 
-export async function setupExperiments( wpAdmin: WpAdminPage, customExperiment = {} ): Promise<void> {
-	const experiments = { container: true, ...customExperiment };
-	await wpAdmin.setExperiments( experiments );
-}
-
 export async function setTabItemColor(
 	editor: EditorPage,
 	panelClass: string,
