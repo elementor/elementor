@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -15,14 +16,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Style_Schema {
 	public function augment( array $schema ): array {
-		$result = array_map( fn ( $prop_type ) => $this->update( $prop_type ), $schema );
-
-		if ( isset( $result['font-family'] ) ) {
-			$result['font-family'] = Union_Prop_Type::create_from( $schema['font-family'] )
-				->add_prop_type( Font_Variable_Prop_Type::make() );
+		foreach ( $schema as $key => $prop_type ) {
+			$schema[ $key ] = $this->update( $prop_type );
 		}
 
-		return $result;
+		if ( isset( $schema['font-family'] ) ) {
+			$schema['font-family'] = $this->update_font_family( $schema['font-family'] );
+		}
+
+		return $schema;
 	}
 
 	private function update( $prop_type ) {
@@ -43,6 +45,11 @@ class Style_Schema {
 		}
 
 		return $prop_type;
+	}
+
+	private function update_font_family( String_Prop_Type $prop_type ): Union_Prop_Type {
+		return Union_Prop_Type::create_from( $prop_type )
+			->add_prop_type( Font_Variable_Prop_Type::make() );
 	}
 
 	private function update_color( Color_Prop_Type $color_prop_type ): Union_Prop_Type {

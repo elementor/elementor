@@ -58,6 +58,24 @@ class Style_Schema {
 				'hidden',
 				'auto',
 			]),
+			'object-fit' => String_Prop_Type::make()->enum([
+				'fill',
+				'cover',
+				'contain',
+				'none',
+				'scale-down',
+			]),
+			'object-position' => String_Prop_Type::make()->enum([
+				'center center',
+				'center left',
+				'center right',
+				'top center',
+				'top left',
+				'top right',
+				'bottom center',
+				'bottom left',
+				'bottom right',
+			]),
 		];
 	}
 
@@ -109,6 +127,8 @@ class Style_Schema {
 			'color' => Color_Prop_Type::make(),
 			'letter-spacing' => Size_Prop_Type::make(),
 			'word-spacing' => Size_Prop_Type::make(),
+			'column-count' => Number_Prop_Type::make(),
+			'column-gap' => Size_Prop_Type::make(),
 			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum([
 				'start',

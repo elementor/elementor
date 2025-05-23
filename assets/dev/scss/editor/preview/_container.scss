@@ -278,14 +278,13 @@
 	}
 }
 
-.e-div-block-base:has( > .elementor-empty-view ),
-.e-flexbox-base:has( > .elementor-empty-view ) {
-	display: grid !important;
-	grid-template-rows: minmax(100%, 100px);
+.e-div-block-base, .e-flexbox-base {
+	&:has( .elementor-empty-view ) {
+		min-height: 120px;
+	}
 
-	& > .elementor-empty-view {
-		height: auto;
-		grid-row: 1 / -1;
+	& > .elementor-empty-view.elementor-empty-view {
+		min-height: inherit;
 	}
 }
 
