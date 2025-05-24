@@ -13,34 +13,24 @@ class CSS_Renderer {
 		$this->variables = $variables;
 	}
 
-	private function global_variables(): array {
+	private function get_variables(): array {
 		return $this->variables->get_all();
 	}
 
 	public function raw_css(): string {
-		$variable_groups = $this->global_variables();
+		$list_of_variables = $this->get_variables();
 
-		if ( empty( $variable_groups ) ) {
+		if ( empty( $list_of_variables ) ) {
 			return '';
 		}
 
-		$css_entries = $this->generate_css_entries( $variable_groups );
+		$css_entries = $this->css_entries_for( $list_of_variables );
 
 		if ( empty( $css_entries ) ) {
 			return '';
 		}
 
 		return $this->wrap_with_root( $css_entries );
-	}
-
-	private function generate_css_entries( array $groups ): array {
-		$entries = [];
-
-		foreach ( $groups as $list_of_variables ) {
-			$entries = array_merge( $entries, $this->css_entries_for( $list_of_variables ) );
-		}
-
-		return $entries;
 	}
 
 	private function css_entries_for( array $list_of_variables ): array {
@@ -60,14 +50,22 @@ class CSS_Renderer {
 	}
 
 	private function build_css_variable_entry( string $id, array $variable ): ?string {
-		$variable_name = sanitize_text_field( $id );
+		$id = sanitize_text_field( $id );
 		$value = sanitize_text_field( $variable['value'] ?? '' );
+		$label = $this->normalize_label_to_css_var( $variable['label'] );
 
-		if ( empty( $value ) || empty( $variable_name ) ) {
+		if ( empty( $value ) || empty( $label ) || empty( $id ) ) {
 			return null;
 		}
 
-		return "--{$variable_name}:{$value};";
+		return "--{$label}:{$value};";
+	}
+
+	private function normalize_label_to_css_var( $label ): string {
+		$label = strtolower( $label );
+		$label = preg_replace( '/[^a-z0-9]+/', '-', $label );
+
+		return trim( $label, '-' );
 	}
 
 	private function wrap_with_root( array $css_entries ): string {
