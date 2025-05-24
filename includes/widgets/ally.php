@@ -56,7 +56,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	 * @return string Widget icon.
 	 */
 	public function get_icon() {
-		return 'eicon-globe';
+		return 'eicon-accessibility';
 	}
 
 	/**
@@ -174,10 +174,17 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'heading'      => __( 'Ally Accessibility Widget', 'elementor' ),
 				'content'      => __( 'To use the Ally Accessibility widget, please install and activate the Ally Accessibility plugin first.', 'elementor' ),
 				'button_text'  => Hints::is_plugin_installed( $plugin ) ? __( 'Activate Ally', 'elementor' ) : __( 'Install & activate Ally', 'elementor' ),
-				'button_event' => 'openLink#' . base64_encode( json_encode( [
-					'target' => 'fetch',
-					'url'    => hints::get_plugin_action_url( $plugin ),
-				] ) ),
+				'button_event' => 'pluginActions',
+				'plugin_action' => [
+					'action' => 'installAndActivate',
+					'url' => hints::get_plugin_action_url( $plugin ),
+					'loaderTab' => true,
+					'followLink' => admin_url( 'admin.php?page=accessibility-settings' ),
+					'pluginSlug' => 'pojo-accessibility',
+					'loaderTitle' => __( 'Installing Ally Accessibility', 'elementor' ),
+					'installText' => __( 'Installing Ally Accessibility', 'elementor' ),
+					'activateText' => __( 'Activating Ally Accessibility', 'elementor' ),
+				],
 			] );
 		} else {
 			$this->add_control( 'install_hint', [
@@ -209,7 +216,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'content'       => __( 'To use the Ally Accessibility widget, please install and activate the Connect plugin first.', 'elementor' ),
 				'button_text'   => 'Connect Now',
 				'button_event'  => 'openLink#' . base64_encode( json_encode( [
-					'target' => 'fetch',
+					'target' => 'blank',
 					'url'    => admin_url( 'admin.php?page=accessibility-settings' ),
 				] ) ),
 			] );
