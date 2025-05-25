@@ -8,7 +8,7 @@ import { TogglePopup } from './commands';
 
 const queryClient = new QueryClient();
 
-export const editorV2 = () => {
+export const editorAppBarLink = () => {
 	const { utilitiesMenu } = EditorAppBar;
 
 	utilitiesMenu.registerLink( {
