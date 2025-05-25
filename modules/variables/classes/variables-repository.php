@@ -169,4 +169,21 @@ class Variables_Repository {
 			'version' => self::FORMAT_VERSION_V1,
 		];
 	}
+
+	/**
+	 * Find a variable by its ID.
+	 *
+	 * @param string $id The variable ID to find.
+	 * @return array|null The variable data if found, null otherwise.
+	 */
+	public function find_by_id( string $id ): ?array {
+		$db_record = $this->load();
+		$list_of_variables = $db_record['data'] ?? [];
+
+		if ( isset( $list_of_variables[ $id ] ) && empty( $list_of_variables[ $id ]['deleted'] ) ) {
+			return $list_of_variables[ $id ];
+		}
+
+		return null;
+	}
 }
