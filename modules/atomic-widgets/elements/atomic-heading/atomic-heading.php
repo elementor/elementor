@@ -110,7 +110,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			] ),
 			Repeatable_Control::bind_to('repeater')
 			->set_label( __( 'Repeater', 'elementor' ) )
-			->set_control_Type ( 'TextControl' ),
+			->set_control_Type ( 'TextAreaControl' ),
 		];
 
 
