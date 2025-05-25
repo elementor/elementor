@@ -1,8 +1,8 @@
 import { editorV1 } from './components/editor-v1';
-import { editorV2 } from './components/editor-v2';
+import { editorAppBarLink } from './components/editor-app-bar-link';
 
 if ( window?.elementorV2?.editorAppBar ) {
-	editorV2();
+	editorAppBarLink();
 } else {
 	editorV1();
 }
