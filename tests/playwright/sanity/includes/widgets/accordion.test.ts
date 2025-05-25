@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
+import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 
 test( 'Accordion', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.

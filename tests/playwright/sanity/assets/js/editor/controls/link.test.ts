@@ -1,7 +1,7 @@
-import { parallelTest as test } from '../parallelTest';
-import WpAdminPage from '../pages/wp-admin-page';
-import EditorSelectors from '../selectors/editor-selectors';
-import Content from '../pages/elementor-panel-tabs/content';
+import { parallelTest as test } from '../../../../../parallelTest';
+import WpAdminPage from '../../../../../pages/wp-admin-page';
+import EditorSelectors from '../../../../../selectors/editor-selectors';
+import Content from '../../../../../pages/elementor-panel-tabs/content';
 
 test.describe( 'Testing link control for widgets: @styleguide_image_link', () => {
 	const data = [
