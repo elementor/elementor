@@ -14,7 +14,7 @@ const loadYouTubeAPI = () => {
 		}
 
 		const YOUTUBE_IFRAME_API_URL = 'https://www.youtube.com/iframe_api';
-		if ( ! document.querySelector( `script[src="${YOUTUBE_IFRAME_API_URL}"]` ) ) {
+		if ( ! document.querySelector( `script[src="${ YOUTUBE_IFRAME_API_URL }"]` ) ) {
 			const tag = document.createElement( 'script' );
 			tag.src = YOUTUBE_IFRAME_API_URL;
 			const firstScriptTag = document.getElementsByTagName( 'script' )[ 0 ];
@@ -53,7 +53,7 @@ register( {
 
 		const prepareYTVideo = ( YT ) => {
 			const playerOptions = {
-				videoId: videoId,
+				videoId,
 				events: {
 					onReady: () => {
 						if ( parsedSettings.mute ) {
@@ -99,7 +99,7 @@ register( {
 						loadYouTubeAPI().then( ( apiObject ) => prepareYTVideo( apiObject ) );
 						observer.unobserve( element );
 					}
-				}
+				},
 			);
 
 			observer.observe( element );
@@ -108,13 +108,13 @@ register( {
 		}
 
 		return () => {
-			if ( player && typeof player.destroy === 'function' ) {
+			if ( player && 'function' === typeof player.destroy ) {
 				player.destroy();
 			}
 
 			if ( element.contains( youtubeElement ) ) {
 				element.removeChild( youtubeElement );
 			}
-		}
-	}
+		};
+	},
 } );
