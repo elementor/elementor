@@ -41,19 +41,16 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	}
 
 	public function test_admin_user__has__enough_permissions_to_perform_action() {
-		// Test with admin user
 		$this->act_as_admin();
 		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_action() );
 	}
 
 	public function test_editor_user__has__enough_permissions_to_perform_action() {
-		// Test with editor user
 		$this->act_as_editor();
 		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_action() );
 	}
 
 	public function test_subscriber_user__does_not_have__enough_permissions_to_perform_action() {
-		// Test with non-admin user
 		$this->act_as_subscriber();
 		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_action() );
 	}
