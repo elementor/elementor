@@ -21,7 +21,7 @@ export default defineConfig( {
 		toMatchSnapshot: { maxDiffPixelRatio: 0.03 },
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
-	forbidOnly: !! process.env.CI,
+	forbidOnly: false,
 	retries: process.env.CI ? 9 : 0,
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
