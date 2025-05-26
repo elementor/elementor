@@ -102,10 +102,10 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		await editor.v4Panel.fillField( 1, buttonCssId );
 
 		const button = await editor.getWidget( buttonId );
-		const buttonIdValue = await button.getAttribute( 'id', { timeout: 1000 } );
+		const anchor = button.locator( 'button' );
 		const idLabel = page.locator( '.MuiFormLabel-root:has-text("ID")' );
 
-		expect( buttonIdValue ).toBe( buttonCssId );
+		await expect( anchor ).toHaveAttribute( 'id', buttonCssId, { timeout: 1000 } );
 		await expect( idLabel ).toBeVisible();
 	} );
 } );
