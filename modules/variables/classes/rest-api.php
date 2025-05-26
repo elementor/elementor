@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Variables\Classes;
 
 use Exception;
+use InvalidArgumentException;
 use WP_Error;
 use WP_REST_Response;
 use WP_REST_Request;
@@ -19,6 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Rest_Api {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'variables';
+
+	const HTTP_OK = 200;
+	const HTTP_CREATED = 201;
+	const HTTP_BAD_REQUEST = 400;
+	const HTTP_NOT_FOUND = 404;
+	const HTTP_SERVER_ERROR = 500;
 
 	const MAX_ID_LENGTH = 64;
 	const MAX_LABEL_LENGTH = 50;
@@ -218,7 +225,7 @@ class Rest_Api {
 				'variable' => $result['variable'],
 				'watermark' => $result['watermark'],
 			],
-		], 201 );
+		], self::HTTP_CREATED );
 	}
 
 	public function update_variable( WP_REST_Request $request ) {
@@ -245,7 +252,7 @@ class Rest_Api {
 				'variable' => $result['variable'],
 				'watermark' => $result['watermark'],
 			],
-		], 200 );
+		], self::HTTP_OK );
 	}
 
 	public function delete_variable( WP_REST_Request $request ) {
@@ -267,7 +274,7 @@ class Rest_Api {
 				'variable' => $result['variable'],
 				'watermark' => $result['watermark'],
 			],
-		], 200 );
+		], self::HTTP_OK );
 	}
 
 	public function restore_variable( WP_REST_Request $request ) {
@@ -289,7 +296,7 @@ class Rest_Api {
 				'variable' => $result['variable'],
 				'watermark' => $result['watermark'],
 			],
-		], 200 );
+		], self::HTTP_OK );
 	}
 
 	public function get_variables() {
@@ -310,7 +317,7 @@ class Rest_Api {
 				'total' => $response['total'],
 				'watermark' => $response['watermark'],
 			],
-		], 200 );
+		], self::HTTP_OK );
 	}
 
 	private function prepare_list_response() {
@@ -325,16 +332,21 @@ class Rest_Api {
 
 	private function error_response( Exception $e ) {
 		$error = 'unexpected_server_error';
-		$error_code = 500;
+		$error_code = self::HTTP_SERVER_ERROR;
 		$message = __( 'Unexpected server error', 'elementor' );
 
 		if ( $e->getCode() ) {
 			$error_code = $e->getCode();
 		}
 
-		if ( 404 === $error_code && $e instanceof \InvalidArgumentException ) {
-			$error = 'variable_not_found';
-			$message = __( 'Variable not found', 'elementor' );
+		if ( $e instanceof InvalidArgumentException ) {
+			if ( self::HTTP_NOT_FOUND === $error_code ) {
+				$error = 'variable_not_found';
+				$message = __( 'Variable not found', 'elementor' );
+			} else if ( self::HTTP_BAD_REQUEST === $error_code ) {
+				$error = 'invalid_variable_limit_reached';
+				$message = __( 'Reached the maximum number of variables', 'elementor' );
+			}
 		}
 
 		return new WP_REST_Response( [

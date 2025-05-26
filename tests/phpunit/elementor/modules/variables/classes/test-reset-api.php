@@ -323,4 +323,38 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertWPError($this->rest_api->is_valid_variable_value(''));
 		$this->assertWPError($this->rest_api->is_valid_variable_value(str_repeat('a', 513)));
 	}
+
+	public function test_variables_limit_reached() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => array_fill( 0, Variables_Repository::TOTAL_VARIABLES_COUNT, [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'primary-color',
+					'value' => '#FF0000',
+				] ),
+				'watermark' => 10,
+			] );
+
+		// Act
+		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/create' );
+		$request->set_body_params( [
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'new-variable',
+			'value' => '#FF0000',
+		] );
+
+		$response = $this->rest_api->create_variable( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'invalid_variable_limit_reached', $response_data['code'] );
+	}
 }

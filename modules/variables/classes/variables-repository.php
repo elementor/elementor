@@ -58,8 +58,6 @@ class Variables_Repository {
 	public function create( array $variable ) {
 		$db_record = $this->load();
 
-		$this->assert_if_variables_limit_reached( $db_record );
-
 		$list_of_variables = $db_record['data'] ?? [];
 
 		$id = $this->new_id_for( $list_of_variables );
@@ -71,6 +69,8 @@ class Variables_Repository {
 		] );
 
 		$db_record['data'] = $list_of_variables;
+
+		$this->assert_if_variables_limit_reached( $db_record );
 
 		$watermark = $this->save( $db_record );
 
@@ -153,8 +153,6 @@ class Variables_Repository {
 	public function restore( string $id ) {
 		$db_record = $this->load();
 
-		$this->assert_if_variables_limit_reached( $db_record );
-
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
@@ -167,7 +165,10 @@ class Variables_Repository {
 			'type',
 		] );
 
+
 		$db_record['data'] = $list_of_variables;
+
+		$this->assert_if_variables_limit_reached( $db_record );
 
 		$watermark = $this->save( $db_record );
 
