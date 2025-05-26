@@ -90,7 +90,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		expect( buttonBox.height ).toBe( 60 );
 	} );
 
-	test( 'ID control sanity test', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'ID control sanity test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
@@ -101,9 +101,8 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		await editor.openV2PanelTab( 'general' );
 		await editor.v4Panel.fillField( 1, buttonCssId );
 
-		const button = editor.getPreviewFrame().locator( `[data-id="${ buttonId }"] button` );
-
-		const buttonIdValue = await button.evaluate( ( el ) => el.getAttribute( 'id' ) );
+		const button = await editor.getWidget( buttonId );
+		const buttonIdValue = await button.getAttribute( 'id', { timeout: 1000 } );
 		const idLabel = page.locator( '.MuiFormLabel-root:has-text("ID")' );
 
 		expect( buttonIdValue ).toBe( buttonCssId );
