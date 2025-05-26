@@ -163,7 +163,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 		$this->assertStringContainsString( 
 			$expected, 
 			$rendered_output, 
-			"Original URL '{$url}' not found in output" 
+			"Sanitized URL '{$expected}' not found in output"
 		);
 	}
 }
