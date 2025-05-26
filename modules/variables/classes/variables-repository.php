@@ -38,7 +38,7 @@ class Variables_Repository {
 		}
 
 		if ( self::TOTAL_VARIABLES_COUNT < $variables_in_use ) {
-			throw new InvalidArgumentException( 'Total variables count limit reached' );
+			throw new InvalidArgumentException( 'Total variables count limit reached', 400 );
 		}
 	}
 
@@ -94,7 +94,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist' );
+			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
 		}
 
 		$list_of_variables[ $id ] = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
@@ -126,7 +126,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist' );
+			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
 		}
 
 		$list_of_variables[ $id ]['deleted'] = true;
@@ -158,7 +158,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist' );
+			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
 		}
 
 		$list_of_variables[ $id ] = $this->extract_from( $list_of_variables[ $id ], [

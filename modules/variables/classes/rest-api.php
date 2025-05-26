@@ -321,15 +321,22 @@ class Rest_Api {
 	}
 
 	private function error_response( Exception $e ) {
+		$error = 'unexpected_server_error';
 		$error_code = 500;
+		$message = 'Unexpected server error';
 
 		if ( $e->getCode() ) {
 			$error_code = $e->getCode();
 		}
 
+		if ( 404 === $error_code && $e instanceof \InvalidArgumentException ) {
+			$error = 'variable_not_found';
+			$message = 'Variable not found';
+		}
+
 		return new WP_REST_Response( [
-			'code' => 'unexpected_server_error',
-			'message' => 'Unexpected server error',
+			'code' => $error,
+			'message' => $message,
 			'data' => [
 				'status' => $error_code,
 			],
