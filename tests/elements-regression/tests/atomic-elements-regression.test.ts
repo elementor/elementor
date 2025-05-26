@@ -8,11 +8,11 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdmin.resetExperiments();
-		// await wpAdmin.setExperiments( {
-		// 	e_opt_in_v4_page: 'active',
-		// 	e_atomic_elements: 'active',
-		// } );
+		await wpAdmin.resetExperiments();
+		await wpAdmin.setExperiments( {
+			e_opt_in_v4_page: 'active',
+			e_atomic_elements: 'active',
+		} );
 		await page.close();
 	} );
 
@@ -20,7 +20,7 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		// await wpAdmin.resetExperiments();
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
