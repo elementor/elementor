@@ -143,7 +143,7 @@ class Render_Mode_Manager {
 		return $this;
 	}
 
-	private function is_template_preview_mode($template_id, $render_mode, $nonce ) {
+	private function is_template_preview_mode( $template_id, $render_mode, $nonce ) {
 		if ( empty( $template_id ) ) {
 			return false;
 		}
@@ -164,7 +164,7 @@ class Render_Mode_Manager {
 	}
 
 	private function is_kit_preview_mode( $kit_id, $render_mode, $nonce ) {
-		if (! $kit_id ) {
+		if ( ! $kit_id ) {
 			return false;
 		}
 

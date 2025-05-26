@@ -4,8 +4,8 @@ class Screenshot extends elementorModules.ViewModule {
 		return {
 			empty_content_headline: 'Empty Content.',
 			crop: {
-				width: 1200,
-				height: 1500,
+				width: ElementorScreenshotConfig?.crop?.width || 1200,
+				height: ElementorScreenshotConfig?.crop?.height || 1500,
 			},
 			excluded_external_css_urls: [
 				'https://kit-pro.fontawesome.com',

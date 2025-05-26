@@ -5,7 +5,7 @@ use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Plugin;
 use Elementor\Utils;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
@@ -38,14 +38,14 @@ class Render_Mode_Preview_Base extends Render_Mode_Base {
 		wp_enqueue_script(
 			'cloud-library-screenshot',
 			ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
-			['dom-to-image', 'html2canvas'],
+			[ 'dom-to-image', 'html2canvas' ],
 			ELEMENTOR_VERSION,
 			true
 		);
 
 		$config = $this->get_config();
 
-		wp_add_inline_script('cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode($config) . ';');
+		wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
 	}
 
 	public function get_config() {

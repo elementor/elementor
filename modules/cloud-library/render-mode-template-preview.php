@@ -50,7 +50,7 @@ class Render_Mode_Template_Preview extends Render_Mode_Preview_Base {
 		return $document;
 	}
 
-    public function get_config() {
+	public function get_config() {
         return [
             'selector' => '.elementor-' . $this->document->get_main_id(),
             'home_url' => home_url(),
