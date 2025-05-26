@@ -293,12 +293,16 @@ class Module extends BaseModule {
 
 		$assets_config_provider->load( 'frontend-handlers' );
 
-		$package = $assets_config_provider->get( 'frontend-handlers' );
+		$package_config = $assets_config_provider->get( 'frontend-handlers' );
+
+		if ( ! $package_config ) {
+			return;
+		}
 
 		wp_register_script(
-			$package['handle'],
+			$package_config['handle'],
 			$this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
-			$package['deps'],
+			$package_config['deps'],
 			ELEMENTOR_VERSION,
 			true
 		);
