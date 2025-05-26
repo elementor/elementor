@@ -86,28 +86,28 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 	public function link_sanitization_data_provider(): array {
 		return [
 			'url_with_query_params' => [
-				'input' => 'https://stackabuse.com/search/?type=article&q=Python',
-				'expected' => 'https://stackabuse.com/search/?type=article&amp;q=Python',
+				'input' => 'https://elementor.com/search/?type=article&q=Python',
+				'expected' => 'https://elementor.com/search/?type=article&amp;q=Python',
 			],
 			'anchor_link' => [
-				'input' => 'https://example.com/page#section-1',
-				'expected' => 'https://example.com/page#section-1',
+				'input' => 'https://elementor.com/page#section-1',
+				'expected' => 'https://elementor.com/page#section-1',
 			],
 			'complex_url_with_multiple_params_and_anchor' => [
-				'input' => 'https://example.com/search?q=test&category=php&sort=date&order=desc#results',
-				'expected' => 'https://example.com/search?q=test&amp;category=php&amp;sort=date&amp;order=desc#results',
+				'input' => 'https://elementor.com/search?q=test&category=php&sort=date&order=desc#results',
+				'expected' => 'https://elementor.com/search?q=test&amp;category=php&amp;sort=date&amp;order=desc#results',
 			],
 			'url_with_special_characters' => [
-				'input' => 'https://example.com/search?q=hello%20world&filter=a+b&special=%21%40%23',
-				'expected' => 'https://example.com/search?q=hello%20world&amp;filter=a+b&amp;special=%21%40%23',
+				'input' => 'https://elementor.com/search?q=hello%20world&filter=a+b&special=%21%40%23',
+				'expected' => 'https://elementor.com/search?q=hello%20world&amp;filter=a+b&amp;special=%21%40%23',
 			],
 			'already_sanitized_url_no_double_encoding' => [
-				'input' => 'https://example.com/search?q=test&amp;category=php',
-				'expected' => 'https://example.com/search?q=test&amp;category=php',
+				'input' => 'https://elementor.com/search?q=test&amp;category=php',
+				'expected' => 'https://elementor.com/search?q=test&amp;category=php',
 			],
 			'url_with_html_entities_no_double_encoding' => [
-				'input' => 'https://example.com/search?q=test&#038;category=php',
-				'expected' => 'https://example.com/search?q=test&#038;category=php',
+				'input' => 'https://elementor.com/search?q=test&#038;category=php',
+				'expected' => 'https://elementor.com/search?q=test&#038;category=php',
 			],
 			'unsafe_javascript_url' => [
 				'input' => 'javascript:alert("xss")',
@@ -118,8 +118,8 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 				'expected' => '',
 			],
 			'url_with_spaces' => [
-				'input' => 'https://example.com/search?q=hello world',
-				'expected' => 'https://example.com/search?q=hello%20world',
+				'input' => 'https://elementor.com/search?q=hello world',
+				'expected' => 'https://elementor.com/search?q=hello%20world',
 			],
 		];
 	}
