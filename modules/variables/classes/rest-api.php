@@ -50,19 +50,19 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_type' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 				'label' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_label' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 				'value' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
 		] );
@@ -76,19 +76,19 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 				'label' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_label' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 				'value' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
 		] );
@@ -102,7 +102,7 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
 		] );
@@ -116,7 +116,7 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
 		] );
@@ -149,7 +149,7 @@ class Rest_Api {
 		return in_array( $type, [
 			Color_Variable_Prop_Type::get_key(),
 			Font_Variable_Prop_Type::get_key(),
-		] );
+		], true );
 	}
 
 	public function is_valid_variable_label( $label ) {
@@ -311,30 +311,21 @@ class Rest_Api {
 	}
 
 	private function prepare_list_response() {
-		$list_of_variables = [];
 		$db_record = $this->variables_repository->load();
 
-		$total = count( $db_record['data'] );
-
-		foreach ( $db_record['data'] as $id => $variable ) {
-			$type = $variable['type'];
-
-			if ( ! array_key_exists( $type, $list_of_variables ) ) {
-				$list_of_variables[ $type ] = [];
-			}
-
-			$list_of_variables[ $type ][ $id ] = $variable;
-		}
-
 		return [
-			'list' => $list_of_variables,
-			'total' => $total,
+			'list' => $db_record['data'],
+			'total' => count( $db_record['data'] ),
 			'watermark' => $db_record['watermark'],
 		];
 	}
 
 	private function error_response( Exception $e ) {
 		$error_code = 500;
+
+		if ( $e->getCode() ) {
+			$error_code = $e->getCode();
+		}
 
 		return new WP_REST_Response( [
 			'code' => 'unexpected_server_error',

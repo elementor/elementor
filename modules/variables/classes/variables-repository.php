@@ -34,7 +34,7 @@ class Variables_Repository {
 				continue;
 			}
 
-			$variables_in_use++;
+			++$variables_in_use;
 		}
 
 		if ( self::TOTAL_VARIABLES_COUNT < $variables_in_use ) {
@@ -186,7 +186,7 @@ class Variables_Repository {
 			$db_record['watermark'] = 0;
 		}
 
-		$db_record['watermark']++;
+		++$db_record['watermark'];
 
 		if ( $this->kit->update_json_meta( static::VARIABLES_META_KEY, $db_record ) ) {
 			return $db_record['watermark'];
