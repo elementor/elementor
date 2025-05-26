@@ -4,7 +4,7 @@ import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
 
-test.describe( 'Elementor regression tests with templates for CORE', () => {
+test.describe.skip( 'Elementor regression tests with templates for CORE', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

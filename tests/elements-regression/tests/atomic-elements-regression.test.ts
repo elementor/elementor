@@ -8,11 +8,11 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( {
-			e_opt_in_v4_page: 'active',
-			e_atomic_elements: 'active',
-		} );
+		// await wpAdmin.resetExperiments();
+		// await wpAdmin.setExperiments( {
+		// 	e_opt_in_v4_page: 'active',
+		// 	e_atomic_elements: 'active',
+		// } );
 		await page.close();
 	} );
 
@@ -20,7 +20,7 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		// await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
@@ -31,14 +31,14 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/atomic/${ widgetType }.json` );
-			// const hoverSelector = {
-			// 	button_hover: 'a',
-			// 	image_hover: 'img',
-			// 	image_box_hover: 'img',
-			// 	icon_hover: '.elementor-icon.elementor-animation-rotate',
-			// 	social_icons_hover: '.elementor-social-icon-facebook',
-			// 	text_path_hover: 'textPath',
-			// };
+			const hoverSelector = {
+				button_hover: 'a',
+				image_hover: 'img',
+				image_box_hover: 'img',
+				icon_hover: '.elementor-icon.elementor-animation-rotate',
+				social_icons_hover: '.elementor-social-icon-facebook',
+				text_path_hover: 'textPath',
+			};
 
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
@@ -47,11 +47,12 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 			await editor.closeNavigatorIfOpen();
 
 			await editor.loadTemplate( filePath, true );
+			await page.pause();
 			await editor.waitForIframeToLoaded( widgetType );
 
 			await page.setViewportSize( { width: 1920, height: 3080 } );
 			await helper.doScreenshot( widgetType, false );
-			//await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: false } );
+			await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: false } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: false, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: false, widgetType } );
 
@@ -61,7 +62,7 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 			await editor.removeWpAdminBar();
 			await page.setViewportSize( { width: 1920, height: 1080 } );
 			await helper.doScreenshot( widgetType, true );
-			//await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: true } );
+			await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: true } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: true, widgetType } );
 			await helper.doResponsiveScreenshot( { device: 'tablet', isPublished: true, widgetType } );
 		} );
