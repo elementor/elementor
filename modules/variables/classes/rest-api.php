@@ -50,19 +50,19 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_type' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 				'label' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_label' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 				'value' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 			],
 		] );
@@ -76,19 +76,19 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 				'label' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_label' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 				'value' => [
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 			],
 		] );
@@ -102,7 +102,7 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 			],
 		] );
@@ -116,10 +116,14 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
-					'sanitize_callback' => 'sanitize_text_field',
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field'],
 				],
 			],
 		] );
+	}
+
+	public function trim_and_sanitize_text_field( $value ) {
+		return trim( sanitize_text_field( $value ) );
 	}
 
 	public function is_valid_variable_id( $id ) {
