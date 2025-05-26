@@ -90,7 +90,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		expect( buttonBox.height ).toBe( 60 );
 	} );
 
-	test.only( 'ID control sanity test', async ( { page, apiRequests }, testInfo ) => {
+	test( 'ID control sanity test', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
