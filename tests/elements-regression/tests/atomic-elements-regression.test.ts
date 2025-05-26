@@ -4,13 +4,15 @@ import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
 
-test.describe.skip( 'Elementor regression tests with templates for CORE', () => {
+test.describe( 'Elementor regression tests with templates for CORE - V4', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { e_optimized_markup: 'active' } );
-
+		// await wpAdmin.resetExperiments();
+		// await wpAdmin.setExperiments( {
+		// 	e_opt_in_v4_page: 'active',
+		// 	e_atomic_elements: 'active',
+		// } );
 		await page.close();
 	} );
 
@@ -18,49 +20,17 @@ test.describe.skip( 'Elementor regression tests with templates for CORE', () => 
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		// await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
 	const testData = [
-		'container_flexbox',
-		'container_grid',
-		'divider',
-		'heading',
-		'text_editor',
-		'button',
-		'image',
-		'icon',
-		'image_box',
-		'image_carousel',
-		'tabs',
-		'video',
-		'spacer',
-		'text_path',
-		'social_icons',
-		'accordion',
-		'icon_box',
-		'icon_list',
-		'star_rating',
-		'basic_gallery',
-		'counter',
-		'progress_bar',
-		'testimonial',
-		'toggle',
-		'sound_cloud',
-		'html',
-		'alert',
-		'button_hover',
-		'image_hover',
-		'image_box_hover',
-		'icon_hover',
-		'social_icons_hover',
-		'text_path_hover',
+		'e-button',
 	];
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
-			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
+			const filePath = _path.resolve( __dirname, `./templates/atomic/${ widgetType }.json` );
 			const hoverSelector = {
 				button_hover: 'a',
 				image_hover: 'img',
