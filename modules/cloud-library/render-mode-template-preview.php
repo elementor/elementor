@@ -51,11 +51,11 @@ class Render_Mode_Template_Preview extends Render_Mode_Preview_Base {
 	}
 
 	public function get_config() {
-        return [
-            'selector' => '.elementor-' . $this->document->get_main_id(),
-            'home_url' => home_url(),
-            'post_id' => $this->document->get_main_id(),
-            'template_id' => $this->template_id,
-        ];
-    }
+		return [
+			'selector' => '.elementor-' . $this->document->get_main_id(),
+			'home_url' => home_url(),
+			'post_id' => $this->document->get_main_id(),
+			'template_id' => $this->template_id,
+		];
+	}
 }
