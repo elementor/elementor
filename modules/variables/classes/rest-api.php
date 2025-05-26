@@ -75,6 +75,7 @@ class Rest_Api {
 				'id' => [
 					'required' => true,
 					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_id' ],
 					'sanitize_callback' => 'sanitize_text_field',
 				],
 				'label' => [
@@ -100,6 +101,7 @@ class Rest_Api {
 				'id' => [
 					'required' => true,
 					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_id' ],
 					'sanitize_callback' => 'sanitize_text_field',
 				],
 			],
@@ -121,6 +123,14 @@ class Rest_Api {
 	}
 
 	public function is_valid_variable_id( $id ) {
+		$id = trim( $id );
+
+		if ( empty( $id ) ) {
+			return new WP_Error( 'invalid_variable_id_empty', sprintf(
+				__( 'ID cannot be empty', 'elementor' )
+			) );
+		}
+
 		if ( self::MAX_ID_LENGTH < strlen( $id ) ) {
 			return new WP_Error( 'invalid_variable_id_length', sprintf(
 				__( 'ID cannot exceed %d characters', 'elementor' ),
