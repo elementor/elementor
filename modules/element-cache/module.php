@@ -83,8 +83,6 @@ class Module extends BaseModule {
 				return '';
 			}
 
-			$widget_data['settings']['isShortcode'] = true;
-
 			ob_start();
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $widget_data );
