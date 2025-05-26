@@ -130,9 +130,10 @@ class Rest_Api {
 		$id = trim( $id );
 
 		if ( empty( $id ) ) {
-			return new WP_Error( 'invalid_variable_id_empty', sprintf(
+			return new WP_Error(
+				'invalid_variable_id_empty',
 				__( 'ID cannot be empty', 'elementor' )
-			) );
+			);
 		}
 
 		if ( self::MAX_ID_LENGTH < strlen( $id ) ) {
@@ -156,9 +157,10 @@ class Rest_Api {
 		$label = trim( $label );
 
 		if ( empty( $label ) ) {
-			return new WP_Error( 'invalid_variable_value_empty', sprintf(
-				__( 'Value cannot be empty', 'elementor' )
-			) );
+			return new WP_Error(
+				'invalid_variable_label_empty',
+				__( 'Label cannot be empty', 'elementor' )
+			);
 		}
 
 		if ( self::MAX_LABEL_LENGTH < strlen( $label ) ) {
@@ -175,9 +177,10 @@ class Rest_Api {
 		$value = trim( $value );
 
 		if ( empty( $value ) ) {
-			return new WP_Error( 'invalid_variable_value_empty', sprintf(
+			return new WP_Error(
+				'invalid_variable_value_empty',
 				__( 'Value cannot be empty', 'elementor' )
-			) );
+			);
 		}
 
 		if ( self::MAX_VALUE_LENGTH < strlen( $value ) ) {
@@ -323,7 +326,7 @@ class Rest_Api {
 	private function error_response( Exception $e ) {
 		$error = 'unexpected_server_error';
 		$error_code = 500;
-		$message = 'Unexpected server error';
+		$message = __( 'Unexpected server error', 'elementor' );
 
 		if ( $e->getCode() ) {
 			$error_code = $e->getCode();
@@ -331,7 +334,7 @@ class Rest_Api {
 
 		if ( 404 === $error_code && $e instanceof \InvalidArgumentException ) {
 			$error = 'variable_not_found';
-			$message = 'Variable not found';
+			$message = __( 'Variable not found', 'elementor' );
 		}
 
 		return new WP_REST_Response( [
