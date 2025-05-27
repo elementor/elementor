@@ -1,5 +1,6 @@
 import Favorites from './pages/favorites/favorites';
 import Index from './pages/index';
+import Cloud from './pages/cloud/cloud';
 import Overview from './pages/overview/overview';
 import Preview from './pages/preview/preview';
 import { LastFilterProvider } from './context/last-filter-context';
@@ -19,6 +20,8 @@ const queryClient = new QueryClient( {
 } );
 
 export default function App() {
+	const isCloudKitsExperimentActive = elementorCommon?.config?.experimentalFeatures?.e_cloud_library_kits;
+
 	return (
 		<div className="e-kit-library">
 			<QueryClientProvider client={ queryClient }>
@@ -29,6 +32,7 @@ export default function App() {
 							<Favorites path="/favorites" />
 							<Preview path="/preview/:id" />
 							<Overview path="/overview/:id" />
+							{ isCloudKitsExperimentActive && <Cloud path="/cloud" /> }
 						</Router>
 					</LastFilterProvider>
 				</SettingsProvider>
