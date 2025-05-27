@@ -169,7 +169,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: always() && (needs.Playwright.result != 'skipped')
+    if: always() && (needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped' )
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
@@ -179,7 +179,7 @@ jobs:
         if: ${{ (needs.Playwright.result == 'failure') }}
         uses: actions/checkout@v4
       - name: Send slack message
-        if: ${{ (needs.Playwright.result == 'failure') && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
+        if: ${{ (needs.Playwright.result == 'failure') && github.event_name != 'workflow_dispatch' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
