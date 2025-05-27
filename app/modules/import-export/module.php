@@ -144,7 +144,7 @@ class Module extends BaseModule {
 				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
-					'text' => esc_html__( 'Start Export', 'elementor' ),
+					'text' => esc_html__( 'Export', 'elementor' ),
 				],
 				'description' => esc_html__( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
 				'link' => [
@@ -156,7 +156,11 @@ class Module extends BaseModule {
 				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => esc_html__( 'Start Import', 'elementor' ),
+					'text' => Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
+				],
+				'button_secondary' => [
+					'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+					'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
 				],
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
@@ -200,18 +204,9 @@ class Module extends BaseModule {
 			<p class="tab-import-export-kit__info"><?php ElementorUtils::print_unescaped_internal_string( $intro_text ); ?></p>
 
 			<div class="tab-import-export-kit__wrapper">
-				<?php foreach ( $content_data as $data ) { ?>
-					<div class="tab-import-export-kit__container">
-						<div class="tab-import-export-kit__box">
-							<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-								<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-							</a>
-						</div>
-						<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-					</div>
-				<?php } ?>
+				<?php foreach ( $content_data as $data ) {
+					$this->print_item_content( $data );
+				} ?>
 			</div>
 
 			<?php
@@ -238,6 +233,39 @@ class Module extends BaseModule {
 			<?php } ?>
 		</div>
 		<?php
+	}
+
+	private function print_item_content( $data ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) { ?>
+			<div class="tab-import-export-kit__container">
+				<div class="tab-import-export-kit__box">
+					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+				</div>
+				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+				<div class="tab-import-export-kit__box action-buttons">
+					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
+						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
+						</a>
+					<?php endif; ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+					</a>
+				</div>
+			</div>
+		<?php } else { ?>
+			<div class="tab-import-export-kit__container">
+				<div class="tab-import-export-kit__box">
+					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+					</a>
+				</div>
+				<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+			</div>
+		<?php }
 	}
 
 	private function get_revert_href(): string {
