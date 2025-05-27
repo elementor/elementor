@@ -16,7 +16,7 @@ const KitListCloudItem = ( props ) => {
 			{
 				kit_name: props.model.title,
 				grid_location: props.index,
-				page_source: cloud,
+				page_source: 'cloud',
 			},
 		);
 	};
