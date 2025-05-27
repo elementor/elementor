@@ -88,11 +88,11 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 
 		await newScopePage.locator( '[aria-label="Toggle link"]' ).click();
 		await editor.v4Panel.fillField( 1, 'https://example.com' );
-		await newScopePage.locator('text="Open in a new tab"')
-			.locator('xpath=..')
-			.locator('xpath=./following-sibling::*[1]')
-			.locator('> :first-child')
-			.locator('> :first-child')
+		await newScopePage.locator( 'text="Open in a new tab"' )
+			.locator( 'xpath=..' )
+			.locator( 'xpath=./following-sibling::*[1]' )
+			.locator( '> :first-child' )
+			.locator( '> :first-child' )
 			.click();
 
 		await editor.saveAndReloadPage();
