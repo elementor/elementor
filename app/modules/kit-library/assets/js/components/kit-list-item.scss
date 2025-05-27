@@ -69,4 +69,41 @@ $root: e-kit-library__kit-item;
 		color: theme-colors( light );
 		text-transform: uppercase;
 	}
+
+	&-header {
+		position: relative;
+	}
+	
+	&-actions-popover {
+		display: flex;
+		flex-direction: column;
+		gap: 14px;
+    	align-items: start;
+		min-width: 0;
+		padding: 14px;
+		position: absolute;
+		top: 20px;
+		left: 100%;
+		transform: translateX(-100%);
+
+		&-item {
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			cursor: pointer;
+		
+			i {
+				font-size: 16px;
+			}
+		
+			&--danger {
+				color: #D13939;
+		
+				i {
+					color: #D13939;
+				}
+			}
+		}
+	}
 }
+
