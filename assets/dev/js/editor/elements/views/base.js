@@ -1058,6 +1058,19 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	handleAnchorClick( event ) {
+		const anchor = event.target.closest( 'a' );
+		const hash =
+			anchor?.getAttribute( 'href' ) ||
+			this.model?.get( 'settings' )?.get( 'link' )?.url ||
+			'';
+		if ( hash && hash.startsWith( '#' ) ) {
+			const scrollTargetElem = event.target?.ownerDocument.querySelector( hash );
+
+			if ( scrollTargetElem ) {
+				scrollTargetElem.scrollIntoView();
+			}
+		}
+
 		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
 			event.preventDefault();
 		}
