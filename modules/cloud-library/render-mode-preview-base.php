@@ -16,7 +16,7 @@ class Render_Mode_Preview_Base extends Render_Mode_Base {
 		parent::prepare_render();
 	}
 
-	public function enqueue_scripts() {
+	public static function enqueue_scripts_for_screenshot( $after = [] ) {
 		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		wp_enqueue_script(
@@ -38,10 +38,17 @@ class Render_Mode_Preview_Base extends Render_Mode_Base {
 		wp_enqueue_script(
 			'cloud-library-screenshot',
 			ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
-			[ 'dom-to-image', 'html2canvas' ],
+			array_merge(
+				[ 'dom-to-image', 'html2canvas' ],
+				is_array( $after ) ? $after : [],
+			),
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	public function enqueue_scripts() {
+		self::enqueue_scripts_for_screenshot();
 
 		$config = $this->get_config();
 

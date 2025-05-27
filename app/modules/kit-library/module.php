@@ -1,11 +1,10 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary;
 
-use Elementor\App\Modules\ImportExport\Render_Mode_Kit_Thumbnail;
 use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\Core\Frontend\Render_Mode_Manager;
+use Elementor\Modules\CloudLibrary\Render_Mode_Preview_Base;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
@@ -14,6 +13,7 @@ use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -117,16 +117,37 @@ class Module extends BaseModule {
 		}, 12 /** After the initiation of the connect kit library */ );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) {
-			add_action( 'elementor/frontend/render_mode/register', [ $this, 'register_render_mode' ] );
+			add_action( 'elementor/kit-library/generate-screenshot', [ $this, 'handle_kit_screenshot' ], 10, 1 );
+			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 		}
+		add_action( 'elementor/kit-library/generate-screenshot', [ $this, 'handle_kit_screenshot' ], 10, 1 );
+		add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 	}
 
-	/**
-	 * @param Render_Mode_Manager $manager
-	 *
-	 * @throws \Exception
-	 */
-	public function register_render_mode( Render_Mode_Manager $manager ) {
-		$manager->register_render_mode( Render_Mode_Kit_Thumbnail::class );
+	public function handle_kit_screenshot() {
+		$config = [
+			'home_url' => home_url(),
+			'kit_id' => uniqid(),
+		];
+
+		show_admin_bar( false );
+
+		Render_Mode_Preview_Base::enqueue_scripts_for_screenshot( [ 'elementor-common', 'elementor-common-modules' ] );
+
+		wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
+	}
+
+	public function handle_kit_screenshot_generation() {
+		$is_kit_preview = ElementorUtils::get_super_global_value( $_GET, 'kit_thumbnail' );
+
+		if ( $is_kit_preview ) {
+			$nonce = ElementorUtils::get_super_global_value( $_GET, 'nonce' );
+
+			if ( ! wp_verify_nonce( $nonce, 'kit_thumbnail' ) ) {
+				wp_die( esc_html__( 'Not Authorized', 'elementor' ), esc_html__( 'Error', 'elementor' ), 403 );
+			}
+
+			do_action( 'elementor/kit-library/generate-screenshot' );
+		}
 	}
 }

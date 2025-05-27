@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Frontend;
 
-use Elementor\App\Modules\ImportExport\Render_Mode_Kit_Thumbnail;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Normal;
 use Elementor\Modules\CloudLibrary\Render_Mode_Template_Preview;
@@ -16,7 +15,6 @@ class Render_Mode_Manager {
 
 	const QUERY_STRING_TEMPLATE_ID = 'template_id';
 
-	const QUERY_STRING_KIT_PREVIEW = 'kit_preview';
 	const QUERY_STRING_NONCE_PARAM_NAME = 'render_mode_nonce';
 	const NONCE_ACTION_PATTERN = 'render_mode_{post_id}';
 
@@ -120,10 +118,6 @@ class Render_Mode_Manager {
 			$template_id = $_GET[ self::QUERY_STRING_TEMPLATE_ID ]; // phpcs:ignore -- Nonce will be checked next line.
 		}
 
-		if ( isset( $_GET[ self::QUERY_STRING_KIT_PREVIEW ] ) ) {
-			$kit_preview = $_GET[ self::QUERY_STRING_KIT_PREVIEW ]; // phpcs:ignore -- Nonce will be checked next line.
-		}
-
 		if (
 			$post_id &&
 			$nonce &&
@@ -134,8 +128,6 @@ class Render_Mode_Manager {
 			$this->set_current( new $this->render_modes[ $key ]( $post_id ) );
 		} else if ( $this->is_template_preview_mode( $template_id, $key, $nonce ) ) {
 			$this->set_current( new $this->render_modes[ $key ]( $template_id ) );
-		} else if ( $this->is_kit_preview_mode( $kit_preview, $key, $nonce ) ) {
-			$this->set_current( new $this->render_modes[ $key ]( $kit_preview ) );
 		} else {
 			$this->set_current( new Render_Mode_Normal( $post_id ) );
 		}
@@ -157,26 +149,6 @@ class Render_Mode_Manager {
 		}
 
 		if ( ! wp_verify_nonce( $nonce, self::get_nonce_action( $template_id ) ) ) {
-			wp_die( esc_html__( 'Not Authorized', 'elementor' ), esc_html__( 'Error', 'elementor' ), 403 );
-		}
-
-		return true;
-	}
-
-	private function is_kit_preview_mode( $kit_id, $render_mode, $nonce ) {
-		if ( ! $kit_id ) {
-			return false;
-		}
-
-		if ( Render_Mode_Kit_Thumbnail::MODE !== $render_mode ) {
-			return false;
-		}
-
-		if ( ! array_key_exists( $render_mode, $this->render_modes ) ) {
-			return false;
-		}
-
-		if ( ! wp_verify_nonce( $nonce, Render_Mode_Kit_Thumbnail::MODE ) ) {
 			wp_die( esc_html__( 'Not Authorized', 'elementor' ), esc_html__( 'Error', 'elementor' ), 403 );
 		}
 

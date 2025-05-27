@@ -42,9 +42,8 @@ export default function ExportProcess() {
 				window.addEventListener( 'message', messageHandler );
 
 				const previewUrl = new URL( window.location.origin );
-				previewUrl.searchParams.set( 'kit_preview', 'true' );
-				previewUrl.searchParams.set( 'render_mode', 'kit-thumbnail' );
-				previewUrl.searchParams.set( 'render_mode_nonce', elementorAppConfig[ 'import-export' ].kitPreviewNonce );
+				previewUrl.searchParams.set( 'kit_thumbnail', '1' );
+				previewUrl.searchParams.set( 'nonce', elementorAppConfig[ 'import-export' ].kitPreviewNonce );
 
 				document.body.appendChild( iframe );
 				iframe.src = previewUrl.toString();

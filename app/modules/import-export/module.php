@@ -743,7 +743,7 @@ class Module extends BaseModule {
 			'tools_url' => Tools::get_url(),
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
-			'kitPreviewNonce' => wp_create_nonce( Render_Mode_Kit_Thumbnail::MODE ),
+			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 		];
 	}
 
