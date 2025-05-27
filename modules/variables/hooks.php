@@ -5,11 +5,12 @@ namespace Elementor\Modules\Variables;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
-use Elementor\Modules\Variables\Classes\Style_Transformers;
-use Elementor\Modules\Variables\Classes\Variables;
-use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Fonts;
 use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
+use Elementor\Modules\Variables\Classes\Variables;
+use Elementor\Modules\Variables\Classes\Variables_Repository;
+use Elementor\Modules\Variables\Classes\Style_Schema;
+use Elementor\Modules\Variables\Classes\Style_Transformers;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -77,9 +78,17 @@ class Hooks {
 		return $this;
 	}
 
+	private function rest_api() {
+		return new Variables_API(
+			new Variables_Repository(
+				Plugin::$instance->kits_manager->get_active_kit()
+			)
+		);
+	}
+
 	private function register_api_endpoints() {
 		add_action( 'rest_api_init', function () {
-			( new Variables_API() )->register_routes();
+			$this->rest_api()->register_routes();
 		} );
 
 		// TODO: Remove this, when there are API-endpoints available to access the list of variables
