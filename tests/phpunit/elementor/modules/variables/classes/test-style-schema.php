@@ -2,17 +2,15 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Color_Variable as Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
@@ -43,7 +41,12 @@ class Test_Style_Schema extends TestCase {
 		$schema = $this->style_schema()->augment( $style_def );
 
 		// Assert.
-		$this->assertSchemaIsEqual( $schema, $style_def );
+		$expected = [
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+		];
+
+		$this->assertSchemaIsEqual( $schema, $expected );
 	}
 
 	public function test_augment__will_convert_color_prop_type() {
@@ -62,6 +65,27 @@ class Test_Style_Schema extends TestCase {
 			'color' => Union_Prop_Type::make()
 				->add_prop_type( Color_Prop_Type::make() )
 				->add_prop_type( Color_Variable_Prop_Type::make() ),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
+	public function test_augment__will_convert_font_prop_type() {
+		// Arrange.
+		$style_def = [
+			'font-family' => String_Prop_Type::make(),
+			'some-type' => String_Prop_Type::make(),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'some-type' => String_Prop_Type::make(),
+			'font-family' => Union_Prop_Type::make()
+				->add_prop_type( Font_Variable_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );

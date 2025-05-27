@@ -14,13 +14,13 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
@@ -70,7 +70,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const CSSID_EXPERIMENT_NAME = 'e_css_id';
+	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
@@ -135,15 +135,6 @@ class Module extends BaseModule {
 
 	private function register_experimental_features() {
 		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_display_none',
-			'title' => esc_html__( 'V4 Display None', 'elementor' ),
-			'description' => esc_html__( 'The None display setting enables you to hide an element completely.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
-		] );
-
-		Plugin::$instance->experiments->add_feature( [
 			'name' => 'e_indications_popover',
 			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
 			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
@@ -151,19 +142,19 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		] );
 
-		Plugin::$instance->experiments->add_feature( [
-			'name' => self::CSSID_EXPERIMENT_NAME,
-			'title' => esc_html__( 'V4 - CSS ID', 'elementor' ),
-			'description' => esc_html__( 'Enable CSS ID control for V4.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-		] );
-
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
 			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
 			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_VERSION_3_30,
+			'title' => esc_html__( 'Version 3.30', 'elementor' ),
+			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -200,7 +191,7 @@ class Module extends BaseModule {
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Plain_Transformer() );
 
-		$transformers->register( Classes_Prop_Type::get_key(), new Array_Transformer() );
+		$transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );

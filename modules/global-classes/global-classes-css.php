@@ -36,6 +36,10 @@ class Global_Classes_CSS {
 			'elementor/core/files/after_generate_css',
 			fn() => $this->generate_styles()
 		);
+
+		add_filter('elementor/atomic-widgets/settings/transformers/classes',
+			fn( $value ) => $this->transform_classes_names( $value )
+		);
 	}
 
 	private function enqueue_styles( string $breakpoint, Styles_Manager $styles_manager ) {
@@ -131,5 +135,23 @@ class Global_Classes_CSS {
 		if ( Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
 			( new Global_Classes_CSS_File( $kit_id ) )->delete();
 		}
+	}
+
+	private function transform_classes_names( $ids ) {
+		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$classes = Global_Classes_Repository::make()
+			->context( $context )
+			->all()
+			->get_items();
+
+		return array_map(
+			function( $id ) use ( $classes ) {
+				$class = $classes->get( $id );
+
+				return $class ? $class['label'] : $id;
+			},
+			$ids
+		);
 	}
 }

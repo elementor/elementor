@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,19 +38,45 @@ class Test_CSS_Renderer extends TestCase {
 		$this->assertEquals('', $raw_css );
 	}
 
+	public function test_list_of_font_variables__generates_entries_for_root_pseudo_element() {
+		// Arrange.
+		add_filter( Variables::FILTER, function () {
+			return [
+				Font_Variable_Prop_Type::get_key() => [
+					'gf-045' => [
+						'label' => 'Main: Montserrat',
+						'value' => 'Montserrat',
+					],
+
+					'gr-roboto' => [
+						'label' => 'Global Roboto',
+						'value' => 'Roboto',
+					],
+				],
+			];
+		} );
+
+		// Act.
+		$raw_css = $this->css_renderer()->raw_css();
+
+		// Assert.
+		$this->assertEquals(':root { --gf-045:Montserrat; --gr-roboto:Roboto; }', $raw_css );
+	}
+
 	public function test_list_of_variables__generates_entries_for_root_pseudo_element() {
 		// Arrange.
 		add_filter( Variables::FILTER, function () {
 			return [
-				'a-01' => [
-					'label' => 'Black',
-					'value' => '#000',
-				],
-
-				'a-02' => [
-					'label' => 'Border Width',
-					'value' => '6px',
-				],
+				Color_Variable_Prop_Type::get_key() => [
+					'a-01' => [
+						'label' => 'Black',
+						'value' => '#000',
+						],
+					'a-02' => [
+						'label' => 'Border Width',
+						'value' => '6px',
+					],
+				]
 			];
 		} );
 
@@ -63,14 +91,25 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange,
 		add_filter( Variables::FILTER, function () {
 			return [
-				'a-01' => [
-					'label' => 'a-width',
-					'value' => '<script type="text/javascript">alert("here");</script>',
+				Color_Variable_Prop_Type::get_key() => [
+					'a-01' => [
+						'label' => 'a-width',
+						'value' => '<script type="text/javascript">alert("here");</script>',
+						],
+					'<script>alert("there")</script>' => [
+						'label' => 'a-height',
+						'value' => '2rem',
+					],
 				],
-
-				'<script>alert("there")</script>' => [
-					'label' => 'a-height',
-					'value' => '2rem',
+				Font_Variable_Prop_Type::get_key() => [
+					'a-01' => [
+						'label' => 'Font 1',
+						'value' => '<style>color: red;</style>',
+					],
+					'<script>alert("font here")</script>' => [
+						'label' => 'Font 3',
+						'value' => '2rem',
+					],
 				],
 			];
 		} );

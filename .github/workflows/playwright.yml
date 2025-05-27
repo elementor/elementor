@@ -1,6 +1,8 @@
 name: Playwright
 
 on:
+  pull_request:
+    types: [ labeled, synchronize, opened, reopened ]
   push:
     branches:
       - 'main'
@@ -25,15 +27,20 @@ on:
           description: 'Provide @tag or a keyword'
           required: false
 
+concurrency:
+  group: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}-{1}', github.run_id, github.event.inputs.core_branch || github.ref) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build-plugin:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [build-plugin]
-    if: ${{ ( github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff ) && github.event.inputs.tag == '' }}
+    if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
@@ -162,7 +169,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: ${{ always() }}
+    if: needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped'
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
@@ -172,7 +179,7 @@ jobs:
         if: ${{ needs.Playwright.result == 'failure' }}
         uses: actions/checkout@v4
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' &&  github.event_name != 'workflow_dispatch'}}
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}

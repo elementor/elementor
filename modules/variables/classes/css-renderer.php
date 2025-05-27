@@ -18,29 +18,59 @@ class CSS_Renderer {
 	}
 
 	public function raw_css(): string {
-		$list_of_variables = $this->global_variables();
+		$variable_groups = $this->global_variables();
 
-		if ( empty( $list_of_variables ) ) {
+		if ( empty( $variable_groups ) ) {
 			return '';
 		}
 
-		$css_entries = [];
-
-		foreach ( $list_of_variables as $idx => $variable ) {
-			$variable_name = sanitize_text_field( $idx );
-			$value = sanitize_text_field( $variable['value'] );
-
-			if ( empty( $value ) || empty( $variable_name ) ) {
-				continue;
-			}
-
-			$css_entries[] = '--' . $variable_name . ':' . $value . ';';
-		}
+		$css_entries = $this->generate_css_entries( $variable_groups );
 
 		if ( empty( $css_entries ) ) {
 			return '';
 		}
 
+		return $this->wrap_with_root( $css_entries );
+	}
+
+	private function generate_css_entries( array $groups ): array {
+		$entries = [];
+
+		foreach ( $groups as $list_of_variables ) {
+			$entries = array_merge( $entries, $this->css_entries_for( $list_of_variables ) );
+		}
+
+		return $entries;
+	}
+
+	private function css_entries_for( array $list_of_variables ): array {
+		$entries = [];
+
+		foreach ( $list_of_variables as $variable_id => $variable ) {
+			$entry = $this->build_css_variable_entry( $variable_id, $variable );
+
+			if ( empty( $entry ) ) {
+				continue;
+			}
+
+			$entries[] = $entry;
+		}
+
+		return $entries;
+	}
+
+	private function build_css_variable_entry( string $id, array $variable ): ?string {
+		$variable_name = sanitize_text_field( $id );
+		$value = sanitize_text_field( $variable['value'] ?? '' );
+
+		if ( empty( $value ) || empty( $variable_name ) ) {
+			return null;
+		}
+
+		return "--{$variable_name}:{$value};";
+	}
+
+	private function wrap_with_root( array $css_entries ): string {
 		return ':root { ' . implode( ' ', $css_entries ) . ' }';
 	}
 }

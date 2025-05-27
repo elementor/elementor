@@ -348,49 +348,38 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.28.4 - 2025-04-22 =
+= 3.29.0 - 2025-05-19 =
 
-* Tweak: Added Site Planner as an option in the onboarding wizard
-* Tweak: Changed the default theme to Hello Biz in the onboarding wizard
-* Tweak: Added inline editing support for controls using multiple repeaters
-
-= 3.28.3 - 2025-04-01 =
-
-* Tweak: Added Isolate object tool to Elementor AI image editing capabilities
-* Fix: Third dropdown in template display conditions not working in Theme Builder ([#30729](https://github.com/elementor/elementor/issues/30729), [#30732](https://github.com/elementor/elementor/issues/30732))
-
-= 3.28.2 - 2025-03-30 =
-
-* New: Generate logo with AI
-* Tweak: Adjusted supported attributes and elements in SVG files ([#29340](https://github.com/elementor/elementor/issues/29340), [#30132](https://github.com/elementor/elementor/issues/30132))
-* Fix: "Create a page" button is not working in Elementor Home
-* Fix: Icons in Button widgets are not vertically aligned when changing the text line-height ([#30606](https://github.com/elementor/elementor/issues/30606))
-
-= 3.28.1 - 2025-03-23 =
-
-* Fix: Font URL is not updating after domain change when "Load Google Fonts Locally" feature is activated
-
-= 3.28.0 - 2025-03-17 =
-
-* New: Added a Clear Files & Data button to the WordPress frontend admin bar for quick and easy cache clearing ([#21642](https://github.com/elementor/elementor/issues/21642))
-* Tweak: Added a note clarifying that the Image Resolution control doesn't support dynamic background images ([#21359](https://github.com/elementor/elementor/issues/21359), [#22055](https://github.com/elementor/elementor/issues/22055))
-* Tweak: Added hover state Box Shadow controls to Button widget ([#4859](https://github.com/elementor/elementor/issues/4859), [#30210](https://github.com/elementor/elementor/issues/30210), [#17509](https://github.com/elementor/elementor/issues/17509))
-* Tweak: Renamed "Regenerate CSS & Data" to "Elementor Cache" in Elementor Tools for better clarity
-* Tweak: Hide Landing Page feature when no landing page posts exist on the site
-* Tweak: Promoted Load Google Fonts Locally feature to Stable status and enabled it by default for all websites
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Accordion widget
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Tabs widget
-* Tweak: Removed unused deprecated methods from `elementorCommon.helpers`
-* Tweak: Optimized style loading for the Text Editor widget by applying styles at the control level ensuring Drop Cap styles load only when enabled
-* Tweak: Updated Drop Cap controls to use CSS logical properties in Text Editor widget
-* Tweak: Updated minimum required WordPress version to 6.5
-* Tweak: Removed Modest Branding control from Video widget
-* Tweak: Promoted Optimized Markup feature to Beta status
-* Tweak: Added link color controls in Text Editor widget
-* Tweak: Applied hover color on focus for keyboard users in the Heading widget
-* Fix: Button icon alignment breaks when Inline Font Icons feature is activated ([#16077](https://github.com/elementor/elementor/issues/16077), [#16511](https://github.com/elementor/elementor/issues/16511), [#17692](https://github.com/elementor/elementor/issues/17692), [#17922](https://github.com/elementor/elementor/issues/17922), [#19253](https://github.com/elementor/elementor/issues/19253), [#19370](https://github.com/elementor/elementor/issues/19370), [#21236](https://github.com/elementor/elementor/issues/21236), [#21844](https://github.com/elementor/elementor/issues/21844), [#28080](https://github.com/elementor/elementor/issues/28080))
-* Fix: Editor fails to load in some edge cases when ACF Term fields are used as Dynamic Tags ([#29160](https://github.com/elementor/elementor/issues/29160))
-* Fix: Improved sanitization of titles to ensure consistent handling for Admin users in the Heading widget
-* Fix: Hover link color transition duration is not being applied in Heading widget
+* New: Introduced the first Alpha release of the next-generation Editor - a faster, modular, CSS-based infrastructure available as an opt-in experience - Editor V4
+* New: Combine familiar and new Editor elements for a seamless editing experience - Editor V4
+* New: Introduced cleaner code and fewer div wrappers for faster performance and a lighter editing experience - Editor V4
+* New: Gain full responsive control - adjust every style property individually for each device, without limitations - Editor V4
+* New: Introduced Classes - a reusable styling system that brings consistency, modularity, and CSS-based workflows to your designs - Editor V4
+* New: Introduced Class Manager - centrally manage, rename, reorder, and delete Classes across your site - Editor V4
+* New: Introduced States - define hover, focus, and active styles for Classes to create dynamic, interactive designs - Editor V4
+* New: Introduced Local Class - a fixed, non-removable class with highest styling priority, ensuring unique styling for each element - Editor V4
+* New: Introduced Class Indicators - color-coded visual cues that show where styles originate, inherit, or conflict - Editor V4
+* New: Introduced a unified Style Tab - a consistent, CSS-based styling system shared across all elements, streamlining design workflows - Editor V4
+* New: Introduced Style Repeaters - create and manage multiple background and box shadow layers with full control over their order and visibility - Editor V4
+* New: Introduced Actions Floating Bar - a cleaner, context-aware toolbar that appears on hover, starting with Dynamic Tags support - Editor V4
+* New: Introduced Link Control - add and customize links across elements with clean HTML, while preventing nested links - Editor V4
+* New: Introduced Logical Properties - styling adapts automatically to different writing directions for global language support - Editor V4
+* New: Added DIV Block element - a container element for structuring layouts with customizable display options - Editor V4
+* New: Added Flexbox element - a layout element for precise alignment and distribution - Editor V4
+* New: Added Heading element - a standalone heading element with flexible styling - Editor V4
+* New: Added Paragraph element - a simple, dedicated text element for paragraphs - Editor V4
+* New: Added Image element - a modular image element with clean markup and consistent styling - Editor V4
+* New: Added Button element - a customizable button element for modular design - Editor V4
+* New: Added SVG element - a lightweight element for adding scalable vector graphics - Editor V4
+* Tweak: Added `AVIF` image format support to Lightbox ([#28256](https://github.com/elementor/elementor/issues/28256), [#25175](https://github.com/elementor/elementor/issues/25175), [#28169](https://github.com/elementor/elementor/issues/28169), [#29624](https://github.com/elementor/elementor/issues/29624))
+* Tweak: Renamed "My Templates" to "Templates" in the Templates Library
+* Tweak: Marked local templates as "Site Templates" to distinguish them from Cloud Templates
+* Tweak: Excluded Shape Dividers from the accessibility tree
+* Tweak: Improved accessibility with `role` attributes in the Social Icons widget
+* Tweak: Added Display Title control to the Progress Bar widget to enhance accessibility
+* Fix: Strings are not translating properly in the Global Style Guide ([#23237](https://github.com/elementor/elementor/issues/23237))
+* Fix: Mask shape URLs use double slashes instead of single slashes ([#17534](https://github.com/elementor/elementor/issues/17534))
+* Fix: Common scripts are loaded late when using the Theme Builder
+* Fix: 'New Prompt' Button does not work in Generate Code AI feature
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

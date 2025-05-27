@@ -57,7 +57,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( Module::CSSID_EXPERIMENT_NAME ) ) {
+		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
 			$props['cssid'] = String_Prop_Type::make();
 		}
 
@@ -107,8 +107,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			] ),
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( Module::CSSID_EXPERIMENT_NAME ) ) {
-			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
+		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
 				'layout' => 'two-columns',
 				'topDivider' => true,
 			] );

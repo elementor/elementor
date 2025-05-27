@@ -1,4 +1,4 @@
-			        <p class="e-paragraph-base">
+					        <p class="e-paragraph-base" >
                             <a href="https://example.com" target="_blank" class="e-paragraph-link-base">
                     Type your paragraph here
                 </a>
