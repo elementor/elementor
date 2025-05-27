@@ -13,10 +13,6 @@ $root: e-kit-library__kit-item;
 .#{$root} {
 	&-overlay {
 		height: 100%;
-
-		& > *:first-child {
-			flex: 1;
-		}
 	}
 
 	&-overlay-overview-button {
@@ -77,10 +73,9 @@ $root: e-kit-library__kit-item;
 	&-actions-popover {
 		display: flex;
 		flex-direction: column;
-		gap: 14px;
     	align-items: start;
 		min-width: 0;
-		padding: 14px;
+		padding: 12px 0;
 		position: absolute;
 		top: 20px;
 		left: 100%;
@@ -88,20 +83,55 @@ $root: e-kit-library__kit-item;
 
 		&-item {
 			display: flex;
+			height: 25px;
+			width: 100%;
 			align-items: center;
 			gap: 8px;
+			padding: 0 12px;
 			cursor: pointer;
 		
 			i {
 				font-size: 16px;
 			}
+
+			&:hover {
+				background-color: var(--e-a-bg-hover);
+			}
 		
 			&--danger {
-				color: #D13939;
+				color: var(--e-a-color-danger);
+
+				&:hover {
+					background-color: var(--e-a-bg-danger);
+				}
 		
 				i {
-					color: #D13939;
+					color: var(--e-a-color-danger);
 				}
+			}
+		}
+	}
+
+	&-cloud-overlay {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		&-import-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 8px 22px;
+			gap: 8px;
+
+			& > i {
+				font-size: 20px;
+			}
+
+			& > span {
+				font-size: 15px;
 			}
 		}
 	}

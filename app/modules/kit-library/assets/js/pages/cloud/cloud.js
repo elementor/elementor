@@ -14,9 +14,16 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 
 import '../index/index.scss';
 
+/**
+ * Cloud page component for managing cloud-based kits
+ *
+ * @param {Object}   props                          - Component props
+ * @param {string}   props.path                     - Current page path for routing and menu state
+ * @param {Function} props.renderNoResultsComponent - Custom component renderer for no results state
+ */
 export default function Cloud( {
-	path,
-	renderNoResultsComponent: renderNoResultsComponent = ( { defaultComponent } ) => defaultComponent,
+	path = '',
+	renderNoResultsComponent = ( { defaultComponent } ) => defaultComponent,
 } ) {
 	usePageTitle( {
 		title: __( 'Kit Library', 'elementor' ),
