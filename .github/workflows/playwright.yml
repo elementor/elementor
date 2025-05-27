@@ -37,7 +37,7 @@ jobs:
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
-    name: Playwright test (${{ github.event_name }}) - ${{ matrix.shardIndex }} on PHP 8.1
+    name: ${{ github.event_name == 'pull_request' && 'Playwright test (PR)' || format('Playwright test ({0})', github.event_name) }} - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [build-plugin]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
@@ -119,7 +119,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
-    name: Playwright test (${{ github.event_name }}) - tagged tests on PHP 8.1
+    name: ${{ github.event_name == 'pull_request' && 'Playwright test (PR)' || format('Playwright test ({0})', github.event_name) }} - tagged tests on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [ build-plugin ]
     if: ${{ github.event.inputs.tag }}
@@ -171,7 +171,7 @@ jobs:
     needs: [ Playwright, PlaywrightWithTag ]
     if: always() && (needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped')
     runs-on: ubuntu-22.04
-    name: Playwright (${{ github.event_name }}) - Test Results
+    name: ${{ github.event_name == 'pull_request' && 'Playwright (PR)' || format('Playwright ({0})', github.event_name) }} - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
