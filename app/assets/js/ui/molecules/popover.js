@@ -5,10 +5,10 @@ import './popover.scss';
 
 export default function Popover( props ) {
 	const getArrowPositionClass = () => {
-		switch (props.arrowPosition) {
+		switch ( props.arrowPosition ) {
 			case 'start':
 				return 'eps-popover--arrow-start';
-			case 'end': 
+			case 'end':
 				return 'eps-popover--arrow-end';
 			case 'none':
 				return 'eps-popover--arrow-none';

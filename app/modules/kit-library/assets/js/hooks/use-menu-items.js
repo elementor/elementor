@@ -37,4 +37,4 @@ export default function useMenuItems( path ) {
 
 		return menuItems;
 	}, [ path ] );
-} 
+}

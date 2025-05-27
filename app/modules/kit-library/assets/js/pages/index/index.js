@@ -52,8 +52,6 @@ function useTaxonomiesSelection( setQueryParams ) {
 	return [ selectTaxonomy, unselectTaxonomy ];
 }
 
-
-
 /**
  * Update and read the query param from the url
  *

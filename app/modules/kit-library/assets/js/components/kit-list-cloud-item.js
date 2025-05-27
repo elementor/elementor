@@ -45,46 +45,46 @@ const KitListCloudItem = ( props ) => {
 					} }
 				/>
 				{ isPopoverOpen && (
-								<Popover
-									className="e-kit-library__kit-item-actions-popover"
-									closeFunction={ () => setIsPopoverOpen( false ) }
-									arrowPosition="none"
-								>
-									<div
-										className="e-kit-library__kit-item-actions-popover-item"
-										onClick={ () => {
-											eventTracking( 'kit-library/cloud/export' );
-											// Export functionality would go here
-											setIsPopoverOpen( false );
-										} }
-									>
-										<i className="eicon-library-download" />
-										<span>{ __( 'Export', 'elementor' ) }</span>
-									</div>
-									<div
-										className="e-kit-library__kit-item-actions-popover-item"
-										onClick={ () => {
-											eventTracking( 'kit-library/cloud/rename' );
-											// Rename functionality would go here
-											setIsPopoverOpen( false );
-										} }
-									>
-										<i className="eicon-library-edit" />
-										<span>{ __( 'Rename', 'elementor' ) }</span>
-									</div>
-									<div
-										className="e-kit-library__kit-item-actions-popover-item e-kit-library__kit-item-actions-popover-item--danger"
-										onClick={ () => {
-											eventTracking( 'kit-library/cloud/delete' );
-											// Delete functionality would go here
-											setIsPopoverOpen( false );
-										} }
-									>
-										<i className="eicon-library-delete" />
-										<span>{ __( 'Delete', 'elementor' ) }</span>
-									</div>
-								</Popover>
-							) }
+					<Popover
+						className="e-kit-library__kit-item-actions-popover"
+						closeFunction={ () => setIsPopoverOpen( false ) }
+						arrowPosition="none"
+					>
+						<div
+							className="e-kit-library__kit-item-actions-popover-item"
+							onClick={ () => {
+								eventTracking( 'kit-library/cloud/export' );
+								// Export functionality would go here
+								setIsPopoverOpen( false );
+							} }
+						>
+							<i className="eicon-library-download" />
+							<span>{ __( 'Export', 'elementor' ) }</span>
+						</div>
+						<div
+							className="e-kit-library__kit-item-actions-popover-item"
+							onClick={ () => {
+								eventTracking( 'kit-library/cloud/rename' );
+								// Rename functionality would go here
+								setIsPopoverOpen( false );
+							} }
+						>
+							<i className="eicon-library-edit" />
+							<span>{ __( 'Rename', 'elementor' ) }</span>
+						</div>
+						<div
+							className="e-kit-library__kit-item-actions-popover-item e-kit-library__kit-item-actions-popover-item--danger"
+							onClick={ () => {
+								eventTracking( 'kit-library/cloud/delete' );
+								// Delete functionality would go here
+								setIsPopoverOpen( false );
+							} }
+						>
+							<i className="eicon-library-delete" />
+							<span>{ __( 'Delete', 'elementor' ) }</span>
+						</div>
+					</Popover>
+				) }
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
