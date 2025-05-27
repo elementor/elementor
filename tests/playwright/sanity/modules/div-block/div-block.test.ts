@@ -145,8 +145,8 @@ test.describe( 'Div Block tests @div-block', () => {
 
 		// Assert.
 		expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
-		expect( divBlockEmptyView ).toHaveCSS( 'strokeWidth', '0px' );
+		expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
 		expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
-		expect( divBlockHandles ).toHaveCSS( 'strokeWidth', '0px' );
+		expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
 	} );
 } );
