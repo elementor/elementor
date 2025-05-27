@@ -343,7 +343,7 @@ class Rest_Api {
 			if ( self::HTTP_NOT_FOUND === $error_code ) {
 				$error = 'variable_not_found';
 				$message = __( 'Variable not found', 'elementor' );
-			} else if ( self::HTTP_BAD_REQUEST === $error_code ) {
+			} elseif ( self::HTTP_BAD_REQUEST === $error_code ) {
 				$error = 'invalid_variable_limit_reached';
 				$message = __( 'Reached the maximum number of variables', 'elementor' );
 			}

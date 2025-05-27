@@ -165,7 +165,6 @@ class Variables_Repository {
 			'type',
 		] );
 
-
 		$db_record['data'] = $list_of_variables;
 
 		$this->assert_if_variables_limit_reached( $db_record );
