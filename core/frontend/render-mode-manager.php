@@ -3,7 +3,7 @@ namespace Elementor\Core\Frontend;
 
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Base;
 use Elementor\Core\Frontend\RenderModes\Render_Mode_Normal;
-use Elementor\Modules\CloudLibrary\Render_Mode_Template_Preview;
+use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -140,7 +140,7 @@ class Render_Mode_Manager {
 			return false;
 		}
 
-		if ( Render_Mode_Template_Preview::MODE !== $render_mode ) {
+		if ( Render_Mode_Preview::MODE !== $render_mode ) {
 			return false;
 		}
 

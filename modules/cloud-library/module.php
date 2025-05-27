@@ -44,7 +44,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/render_mode/module', function( $module_name ) {
 				$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-				if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Template_Preview ) {
+				if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
 					return 'cloud-library';
 				}
 
@@ -122,7 +122,7 @@ class Module extends BaseModule {
 	 * @throws \Exception
 	 */
 	public function register_render_mode( Render_Mode_Manager $manager ) {
-		$manager->register_render_mode( Render_Mode_Template_Preview::class );
+		$manager->register_render_mode( Render_Mode_Preview::class );
 	}
 
 	private function set_cloud_library_settings() {

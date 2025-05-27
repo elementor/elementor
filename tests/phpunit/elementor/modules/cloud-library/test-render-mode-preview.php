@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\CloudLibrary;
 
-use Elementor\Modules\CloudLibrary\Render_Mode_Template_Preview;
+use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -75,7 +75,7 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
             return $show;
         });
 
-        $render_mode = new Render_Mode_Template_Preview( 123 );
+        $render_mode = new Render_Mode_Preview( 123 );
 
         // Act
         $render_mode->prepare_render();
@@ -86,7 +86,7 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
 
     public function test_constructor() {
         // Arrange & Act
-        $render_mode = new Render_Mode_Template_Preview( 123 );
+        $render_mode = new Render_Mode_Preview( 123 );
 
         // Assert
         $this->assertEquals( 123, $render_mode->get_document()->get_main_id() );
@@ -105,7 +105,7 @@ class Test_Render_Mode_Preview extends Elementor_Test_Base {
                 'content' => json_encode( $template_data )
             ] );
 
-        $render_mode = new Render_Mode_Template_Preview( 123 );
+        $render_mode = new Render_Mode_Preview( 123 );
 
         $reflection = new \ReflectionClass( $render_mode );
         $method = $reflection->getMethod( 'create_document' );
