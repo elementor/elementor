@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Variables_Repository {
+	const TOTAL_VARIABLES_COUNT = 100;
+
 	const FORMAT_VERSION_V1 = 1;
 	const VARIABLES_META_KEY = '_elementor_global_variables';
 
@@ -19,6 +21,25 @@ class Variables_Repository {
 
 	public function __construct( Kit $kit ) {
 		$this->kit = $kit;
+	}
+
+	/**
+	 * @throws InvalidArgumentException
+	 */
+	private function assert_if_variables_limit_reached( array $db_record ) {
+		$variables_in_use = 0;
+
+		foreach ( $db_record['data'] as $variable ) {
+			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
+				continue;
+			}
+
+			++$variables_in_use;
+		}
+
+		if ( self::TOTAL_VARIABLES_COUNT < $variables_in_use ) {
+			throw new InvalidArgumentException( 'Total variables count limit reached', 400 );
+		}
 	}
 
 	public function load(): array {
@@ -34,14 +55,14 @@ class Variables_Repository {
 	/**
 	 * @throws Exception
 	 */
-	public function create( array $payload ): string {
+	public function create( array $variable ) {
 		$db_record = $this->load();
 
 		$list_of_variables = $db_record['data'] ?? [];
 
 		$id = $this->new_id_for( $list_of_variables );
 
-		$list_of_variables[ $id ] = $this->extract_from( $payload, [
+		$list_of_variables[ $id ] = $this->extract_from( $variable, [
 			'type',
 			'label',
 			'value',
@@ -49,42 +70,50 @@ class Variables_Repository {
 
 		$db_record['data'] = $list_of_variables;
 
-		$result = $this->save( $db_record );
+		$this->assert_if_variables_limit_reached( $db_record );
 
-		if ( ! $result ) {
+		$watermark = $this->save( $db_record );
+
+		if ( false === $watermark ) {
 			throw new Exception( 'Failed to create variable' );
 		}
 
-		return $id;
+		return [
+			'variable' => array_merge( [ 'id' => $id ], $list_of_variables[ $id ] ),
+			'watermark' => $watermark,
+		];
 	}
 
 	/**
 	 * @throws InvalidArgumentException
 	 * @throws Exception
 	 */
-	public function update( string $id, array $payload ) {
+	public function update( string $id, array $variable ) {
 		$db_record = $this->load();
 
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist' );
+			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
 		}
 
-		$variable = $this->extract_from( $payload, [
+		$list_of_variables[ $id ] = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
 			'label',
 			'value',
-		] );
-
-		$list_of_variables[ $id ] = array_merge( $list_of_variables[ $id ], $variable );
+		] ) );
 
 		$db_record['data'] = $list_of_variables;
 
-		$result = $this->save( $db_record );
+		$watermark = $this->save( $db_record );
 
-		if ( ! $result ) {
+		if ( false === $watermark ) {
 			throw new Exception( 'Failed to update variable' );
 		}
+
+		return [
+			'variable' => array_merge( [ 'id' => $id ], $list_of_variables[ $id ] ),
+			'watermark' => $watermark,
+		];
 	}
 
 	/**
@@ -97,7 +126,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist' );
+			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
 		}
 
 		$list_of_variables[ $id ]['deleted'] = true;
@@ -105,11 +134,16 @@ class Variables_Repository {
 
 		$db_record['data'] = $list_of_variables;
 
-		$result = $this->save( $db_record );
+		$watermark = $this->save( $db_record );
 
-		if ( ! $result ) {
+		if ( false === $watermark ) {
 			throw new Exception( 'Failed to delete variable' );
 		}
+
+		return [
+			'variable' => array_merge( [ 'id' => $id ], $list_of_variables[ $id ] ),
+			'watermark' => $watermark,
+		];
 	}
 
 	/**
@@ -122,7 +156,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist' );
+			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
 		}
 
 		$list_of_variables[ $id ] = $this->extract_from( $list_of_variables[ $id ], [
@@ -133,11 +167,18 @@ class Variables_Repository {
 
 		$db_record['data'] = $list_of_variables;
 
-		$result = $this->save( $db_record );
+		$this->assert_if_variables_limit_reached( $db_record );
 
-		if ( ! $result ) {
+		$watermark = $this->save( $db_record );
+
+		if ( false === $watermark ) {
 			throw new Exception( 'Failed to restore variable' );
 		}
+
+		return [
+			'variable' => array_merge( [ 'id' => $id ], $list_of_variables[ $id ] ),
+			'watermark' => $watermark,
+		];
 	}
 
 	private function save( array $db_record ) {
@@ -145,9 +186,13 @@ class Variables_Repository {
 			$db_record['watermark'] = 0;
 		}
 
-		$db_record['watermark']++;
+		++$db_record['watermark'];
 
-		return (bool) $this->kit->update_json_meta( static::VARIABLES_META_KEY, $db_record );
+		if ( $this->kit->update_json_meta( static::VARIABLES_META_KEY, $db_record ) ) {
+			return $db_record['watermark'];
+		}
+
+		return false;
 	}
 
 	private function new_id_for( array $list_of_variables ): string {
