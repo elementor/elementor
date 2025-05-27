@@ -11,14 +11,15 @@ import useMenuItems from '../../hooks/use-menu-items';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import PropTypes from 'prop-types';
 
 import '../index/index.scss';
 
 /**
  * Cloud page component for managing cloud-based kits
- *
- * @param {Object}   props                          - Component props
- * @param {string}   props.path                     - Current page path for routing and menu state
+ * 
+ * @param {Object} props - Component props
+ * @param {string} props.path - Current page path for routing and menu state
  * @param {Function} props.renderNoResultsComponent - Custom component renderer for no results state
  */
 export default function Cloud( {
@@ -122,3 +123,8 @@ export default function Cloud( {
 		</Layout>
 	);
 }
+
+Cloud.propTypes = {
+	path: PropTypes.string,
+	renderNoResultsComponent: PropTypes.func,
+};
