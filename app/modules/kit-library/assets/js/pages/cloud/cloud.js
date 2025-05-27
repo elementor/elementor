@@ -15,13 +15,6 @@ import PropTypes from 'prop-types';
 
 import '../index/index.scss';
 
-/**
- * Cloud page component for managing cloud-based kits
- * 
- * @param {Object} props - Component props
- * @param {string} props.path - Current page path for routing and menu state
- * @param {Function} props.renderNoResultsComponent - Custom component renderer for no results state
- */
 export default function Cloud( {
 	path = '',
 	renderNoResultsComponent = ( { defaultComponent } ) => defaultComponent,
