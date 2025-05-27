@@ -357,4 +357,46 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 'invalid_variable_limit_reached', $response_data['code'] );
 	}
+
+	public function test_trim_and_sanitize_text_field() {
+		// Test regular text is accepted
+		$this->assertEquals(
+			'sample-label',
+			$this->rest_api->trim_and_sanitize_text_field('sample-label')
+		);
+
+		// Test sample color value
+		$this->assertEquals(
+			'rgba(0, 0, 0, 0.5)',
+			$this->rest_api->trim_and_sanitize_text_field('  rgba(0, 0, 0, 0.5)  ')
+		);
+
+		// Test hex color value
+		$this->assertEquals(
+			'#00ff00',
+			$this->rest_api->trim_and_sanitize_text_field('  #00ff00  ')
+		);
+
+		// Test XSS attempts are sanitized
+		$this->assertEquals(
+			'Alert',
+			$this->rest_api->trim_and_sanitize_text_field('<script>alert("XSS")</script>Alert')
+		);
+
+		$this->assertEquals(
+			'onclick',
+			$this->rest_api->trim_and_sanitize_text_field('<a href="javascript:alert(\'XSS\')" >onclick</a>')
+		);
+
+		$this->assertEquals(
+			'img',
+			$this->rest_api->trim_and_sanitize_text_field('<img src="x" onerror="alert(\'XSS\')">img')
+		);
+
+		// Test HTML entities are encoded
+		$this->assertEquals(
+			'bold',
+			$this->rest_api->trim_and_sanitize_text_field('<strong>bold</strong>')
+		);
+	}
 }
