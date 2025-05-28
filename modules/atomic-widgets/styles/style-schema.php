@@ -40,24 +40,12 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'min-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'min-height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'max-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'max-height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+			'min-width' => Size_Prop_Type::make(),
+			'min-height' => Size_Prop_Type::make(),
+			'max-width' => Size_Prop_Type::make(),
+			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum( [
 				'visible',
 				'hidden',
@@ -94,22 +82,12 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			] ),
-			'inset-block-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'inset-inline-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'inset-block-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'inset-inline-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+			'inset-block-start' => Size_Prop_Type::make(),
+			'inset-inline-end' => Size_Prop_Type::make(),
+			'inset-block-end' => Size_Prop_Type::make(),
+			'inset-inline-start' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
-			'scroll-margin-top' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+			'scroll-margin-top' => Size_Prop_Type::make(),
 		];
 	}
 
@@ -131,23 +109,13 @@ class Style_Schema {
 				'bolder',
 				'lighter',
 			] ),
-			'font-size' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+			'font-size' => Size_Prop_Type::make(),
 			'color' => Color_Prop_Type::make(),
-			'letter-spacing' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'word-spacing' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+			'letter-spacing' => Size_Prop_Type::make(),
+			'word-spacing' => Size_Prop_Type::make(),
 			'column-count' => Number_Prop_Type::make(),
-			'column-gap' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
-			'line-height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+			'column-gap' => Size_Prop_Type::make(),
+			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
 				'center',
@@ -189,12 +157,10 @@ class Style_Schema {
 		return [
 			'padding' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+				->add_prop_type( Size_Prop_Type::make() ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+				->add_prop_type( Size_Prop_Type::make() ),
 		];
 	}
 
@@ -267,9 +233,7 @@ class Style_Schema {
 			] ),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+			'flex-basis' => Size_Prop_Type::make(),
 		];
 	}
 
