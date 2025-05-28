@@ -32,42 +32,49 @@ class Styles_Manager {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
 	}
 
-	public function register( string $breakpoint, string $handle, string $name, string $content ) {
+	public function register( string $breakpoint, string $handle, string $name, string $content, array $fonts = [] ) {
 		$this->registered_styles_by_breakpoint[ $breakpoint ][ $handle ] ??= new Style(
 			$handle,
 			$name,
+			$fonts
 		);
 
 		$this->registered_styles_by_breakpoint[ $breakpoint ][ $handle ]->append( $content );
 	}
 
 	private function enqueue_styles() {
-		foreach ( $this->breakpoints as $breakpoint ) {
-			do_action( 'elementor/atomic-widget/styles/enqueue', $breakpoint, $this );
+		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
 
-			if ( ! isset( $this->registered_styles_by_breakpoint[ $breakpoint ] ) ) {
-				continue;
-			}
+		foreach ( $post_ids as $post_id ) {
+			foreach ($this->breakpoints as $breakpoint) {
+				do_action('elementor/atomic-widget/styles/enqueue', $breakpoint, $post_id, $this);
 
-			$styles = $this->registered_styles_by_breakpoint[ $breakpoint ];
+				if (!isset($this->registered_styles_by_breakpoint[$breakpoint])) {
+					continue;
+				}
 
-			$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint );
+				$styles = $this->registered_styles_by_breakpoint[$breakpoint];
 
-			$media = $breakpoint_instance
-				? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
-				: 'all';
+				$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints($breakpoint);
 
-			foreach ( $styles as $style ) {
-				$this->write_to_file( $style );
+				$media = $breakpoint_instance
+					? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
+					: 'all';
 
-				// TODO: Add "media" attribute.
-				wp_enqueue_style(
-					$style->get_handle(),
-					$style->get_src(),
-					[],
-					ELEMENTOR_VERSION,
-					$media
-				);
+				foreach ($styles as $style) {
+
+					$this->write_to_file($style);
+
+					wp_enqueue_style(
+						$style->get_handle(),
+						$style->get_src(),
+						[],
+						ELEMENTOR_VERSION,
+						$media
+					);
+
+					$style->get_fonts()->each( fn($font) => Plugin::$instance->frontend->enqueue_font( $font ) );
+				}
 			}
 		}
 	}

@@ -2,10 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
@@ -13,54 +12,73 @@ class Atomic_Widget_Styles {
 	private array $css = [];
 
 	public function register_hooks() {
-		add_action( 'elementor/element/parse_css', fn( Post_CSS $post, Element_Base $element ) => $this->parse_element_style( $post, $element ), 10, 2 );
-
-		add_action( 'elementor/atomic-widget/styles/enqueue', fn( string $breakpoint, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $styles_manager ), 10, 2 );
+		add_action( 'elementor/atomic-widget/styles/enqueue', fn( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $post_id, $styles_manager ), 10, 3 );
 	}
 
-	private function enqueue_styles( string $breakpoint, Styles_Manager $styles_manager ) {
-		if ( ! isset( $this->css[ $breakpoint ] ) ) {
+	private function enqueue_styles( string $breakpoint, string $post_id,  Styles_Manager $styles_manager ) {
+		$document = Plugin::$instance->documents->get( $post_id );
+
+		if ( ! $document ) {
 			return;
 		}
 
-		foreach ( $this->css[ $breakpoint ] as $post_id => $css ) {
-			$styles_manager->register(
-				$breakpoint,
-				'elementor-atomic-widget-styles-' . $post_id . '-' . $breakpoint,
-				'atomic-widget-styles-' . $post_id . '-' . $breakpoint,
-				$css
-			);
-		}
-	}
+		$elements_data = $document->get_elements_data();
 
-	private function parse_element_style( Post_CSS $post, Element_Base $element ) {
-		if ( ! Utils::is_atomic( $element ) ) {
+		if ( empty( $elements_data ) ) {
 			return;
 		}
 
-		$styles = $element->get_raw_data()['styles'];
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $post_id ) {
+			$this->parse_element_style( $element_data, $post_id );
+		});
+
+		if ( ! isset( $this->css[ $breakpoint ][ $post_id ] ) ) {
+			return;
+		}
+
+		$styles_manager->register(
+			$breakpoint,
+			'elementor-atomic-widget-styles-' . $post_id . '-' . $breakpoint,
+			'atomic-widget-styles-' . $post_id . '-' . $breakpoint,
+			$this->css[ $breakpoint ][ $post_id ]['css'] ?? '',
+			$this->css[ $breakpoint ][ $post_id ]['fonts'] ?? []
+		);
+	}
+
+	private function parse_element_style(  array $element_data, string $post_id ) {
+		$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
+		$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
+
+		if ( ! Utils::is_atomic( $element_instance ) ) {
+			return;
+		}
+
+		$styles = $element_data['styles'] ?? [];
 
 		if ( empty( $styles ) ) {
 			return;
 		}
+
+		$fonts = [];
 
 		$grouped = $this->group_by_breakpoint( $styles );
 
 		foreach ( $grouped as $breakpoint => $styles ) {
 			$css = Styles_Renderer::make(
 				Plugin::$instance->breakpoints->get_breakpoints_config()
-			)->on_prop_transform( function( $key, $value ) use ( &$post ) {
+			)->on_prop_transform( function( $key, $value ) use ( &$fonts ) {
 				if ( 'font-family' !== $key ) {
 					return;
 				}
 
-				// TODO: Is it ok to add the font here?
-				$post->add_font( $value );
+				$fonts[] = $value;
 			} )->render( $styles );
 
-			$this->css[ $breakpoint ][ $post->get_post_id() ] ??= '';
+			$this->css[ $breakpoint ][ $post_id ]['css'] ??= '';
 
-			$this->css[ $breakpoint ][ $post->get_post_id() ] .= $css;
+			$this->css[ $breakpoint ][ $post_id ]['css'] .= $css;
+
+			$this->css[ $breakpoint ][ $post_id ]['fonts'] = array_unique( $fonts );
 		}
 	}
 

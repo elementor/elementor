@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -13,11 +14,14 @@ class Style {
 
 	private string $name;
 
+	private array $fonts;
+
 	private string $content = '';
 
-	public function __construct( string $handle, string $name ) {
+	public function __construct( string $handle, string $name, array $fonts ) {
 		$this->handle = $handle;
 		$this->name = $name;
+		$this->fonts = $fonts;
 	}
 
 	public function append( string $content ) {
@@ -54,5 +58,9 @@ class Style {
 		);
 
 		return $base_url . '/' . $this->name . '.css';
+	}
+
+	public function get_fonts(): Collection {
+		return Collection::make( $this->fonts );
 	}
 }
