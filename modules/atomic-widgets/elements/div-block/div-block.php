@@ -198,8 +198,8 @@ class Div_Block extends Atomic_Element_Base {
 			],
 		];
 
-		if ( ! empty( $settings['cssid'] ) ) {
-			$attributes['id'] = esc_attr( $settings['cssid'] );
+		if ( ! empty( $settings['_cssid'] ) ) {
+			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
 		if ( ! empty( $settings['link']['href'] ) ) {

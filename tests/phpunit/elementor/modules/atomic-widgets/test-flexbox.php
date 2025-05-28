@@ -112,7 +112,7 @@ class Test_Flexbox extends Elementor_Test_Base {
 			'id' => 'e8e55a1',
 			'elType' => Flexbox::get_element_type(),
 			'settings' => [
-				'cssid' => 'test-css-id',
+				'_cssid' => 'test-css-id',
 			],
 			'widgetType' => Flexbox::get_element_type(),
 		];
