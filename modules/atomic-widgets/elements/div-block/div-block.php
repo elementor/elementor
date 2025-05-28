@@ -203,7 +203,7 @@ class Div_Block extends Atomic_Element_Base {
 		}
 
 		if ( ! empty( $settings['link']['href'] ) ) {
-			$attributes = [ ...$attributes, ...$settings['link'] ];
+			$attributes = array_merge( $attributes, $settings['link'] );
 		}
 
 		$this->add_render_attribute( '_wrapper', $attributes );
