@@ -143,7 +143,7 @@
 		"@elementor/editor-v1-adapters": "0.12.0",
 		"@elementor/env": "0.3.5",
 		"@elementor/http-client": "0.3.0",
-		"@elementor/icons": "1.43.1",
+		"@elementor/icons": "1.44.0",
 		"@elementor/locations": "0.8.0",
 		"@elementor/menus": "0.1.5",
 		"@elementor/query": "0.2.4",
