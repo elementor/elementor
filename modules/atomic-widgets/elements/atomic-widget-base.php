@@ -3,6 +3,10 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Widget_Base;
+use Elementor\Plugin;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -55,4 +59,25 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	 * @return array<string, Prop_Type>
 	 */
 	abstract protected static function define_props_schema(): array;
+
+	protected function register_common_controls() {
+		$common_controls = [];
+		
+		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+			$common_controls[] = Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
+				'layout' => 'two-columns',
+				'topDivider' => true,
+			] );
+		}
+
+		return $common_controls;
+	}
+
+	protected static function add_common_controls_to_props_scheme( $props ) {
+		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+			$props['_cssid'] = String_Prop_Type::make();
+		}
+
+		return $props;
+	}
 }

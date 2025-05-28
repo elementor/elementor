@@ -58,7 +58,7 @@ class Div_Block extends Atomic_Element_Base {
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['cssid'] = String_Prop_Type::make();
+			$props['_cssid'] = String_Prop_Type::make();
 		}
 
 		return $props;
@@ -101,7 +101,7 @@ class Div_Block extends Atomic_Element_Base {
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
+			$settings_section_items[] = Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
 				'layout' => 'two-columns',
 				'topDivider' => true,
 			] );
