@@ -73,7 +73,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 		$settings_section_items = [
 			Image_Control::bind_to( 'image' )
 				->set_show_mode( 'sizes' ),
-			Link_Control::bind_to( 'link' )
+			Link_Control::bind_to( 'link' ),
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {

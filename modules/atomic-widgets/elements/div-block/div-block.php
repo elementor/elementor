@@ -95,7 +95,7 @@ class Div_Block extends Atomic_Element_Base {
 					],
 				]),
 
-			Link_Control::bind_to( 'link' )
+			Link_Control::bind_to( 'link' ),
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
