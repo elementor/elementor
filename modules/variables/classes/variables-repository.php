@@ -24,7 +24,7 @@ class Variables_Repository {
 	}
 
 	/**
-	 * @throws InvalidArgumentException
+	 * @throws VariablesLimitReached
 	 */
 	private function assert_if_variables_limit_reached( array $db_record ) {
 		$variables_in_use = 0;
@@ -38,7 +38,7 @@ class Variables_Repository {
 		}
 
 		if ( self::TOTAL_VARIABLES_COUNT < $variables_in_use ) {
-			throw new InvalidArgumentException( 'Total variables count limit reached', 400 );
+			throw new VariablesLimitReached( 'Total variables count limit reached' );
 		}
 	}
 
@@ -53,7 +53,8 @@ class Variables_Repository {
 	}
 
 	/**
-	 * @throws Exception
+	 * @throws VariablesLimitReached
+	 * @throws FatalError
 	 */
 	public function create( array $variable ) {
 		$db_record = $this->load();
@@ -75,7 +76,7 @@ class Variables_Repository {
 		$watermark = $this->save( $db_record );
 
 		if ( false === $watermark ) {
-			throw new Exception( 'Failed to create variable' );
+			throw new FatalError( 'Failed to create variable' );
 		}
 
 		return [
@@ -85,8 +86,8 @@ class Variables_Repository {
 	}
 
 	/**
-	 * @throws InvalidArgumentException
-	 * @throws Exception
+	 * @throws RecordNotFound
+	 * @throws FatalError
 	 */
 	public function update( string $id, array $variable ) {
 		$db_record = $this->load();
@@ -94,7 +95,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$list_of_variables[ $id ] = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
@@ -107,7 +108,7 @@ class Variables_Repository {
 		$watermark = $this->save( $db_record );
 
 		if ( false === $watermark ) {
-			throw new Exception( 'Failed to update variable' );
+			throw new FatalError( 'Failed to update variable' );
 		}
 
 		return [
@@ -117,8 +118,8 @@ class Variables_Repository {
 	}
 
 	/**
-	 * @throws InvalidArgumentException
-	 * @throws Exception
+	 * @throws RecordNotFound
+	 * @throws FatalError
 	 */
 	public function delete( string $id ) {
 		$db_record = $this->load();
@@ -126,7 +127,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$list_of_variables[ $id ]['deleted'] = true;
@@ -137,7 +138,7 @@ class Variables_Repository {
 		$watermark = $this->save( $db_record );
 
 		if ( false === $watermark ) {
-			throw new Exception( 'Failed to delete variable' );
+			throw new FatalError( 'Failed to delete variable' );
 		}
 
 		return [
@@ -147,8 +148,9 @@ class Variables_Repository {
 	}
 
 	/**
-	 * @throws InvalidArgumentException
-	 * @throws Exception
+	 * @throws VariablesLimitReached
+	 * @throws RecordNotFound
+	 * @throws FatalError
 	 */
 	public function restore( string $id ) {
 		$db_record = $this->load();
@@ -156,7 +158,7 @@ class Variables_Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		if ( ! isset( $list_of_variables[ $id ] ) ) {
-			throw new InvalidArgumentException( 'Variable id does not exist', 404 );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$list_of_variables[ $id ] = $this->extract_from( $list_of_variables[ $id ], [
@@ -172,7 +174,7 @@ class Variables_Repository {
 		$watermark = $this->save( $db_record );
 
 		if ( false === $watermark ) {
-			throw new Exception( 'Failed to restore variable' );
+			throw new FatalError( 'Failed to restore variable' );
 		}
 
 		return [
@@ -215,3 +217,7 @@ class Variables_Repository {
 		];
 	}
 }
+
+class RecordNotFound extends Exception {}
+class VariablesLimitReached extends Exception {}
+class FatalError extends Exception {}

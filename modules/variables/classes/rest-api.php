@@ -219,12 +219,9 @@ class Rest_Api {
 			'value' => $value,
 		] );
 
-		return new WP_REST_Response( [
-			'success' => true,
-			'data' => [
-				'variable' => $result['variable'],
-				'watermark' => $result['watermark'],
-			],
+		return $this->success_response( [
+			'variable' => $result['variable'],
+			'watermark' => $result['watermark'],
 		], self::HTTP_CREATED );
 	}
 
@@ -246,13 +243,10 @@ class Rest_Api {
 			'value' => $value,
 		] );
 
-		return new WP_REST_Response( [
-			'success' => true,
-			'data' => [
-				'variable' => $result['variable'],
-				'watermark' => $result['watermark'],
-			],
-		], self::HTTP_OK );
+		return $this->success_response( [
+			'variable' => $result['variable'],
+			'watermark' => $result['watermark'],
+		] );
 	}
 
 	public function delete_variable( WP_REST_Request $request ) {
@@ -268,13 +262,10 @@ class Rest_Api {
 
 		$result = $this->variables_repository->delete( $id );
 
-		return new WP_REST_Response( [
-			'success' => true,
-			'data' => [
-				'variable' => $result['variable'],
-				'watermark' => $result['watermark'],
-			],
-		], self::HTTP_OK );
+		return $this->success_response( [
+			'variable' => $result['variable'],
+			'watermark' => $result['watermark'],
+		] );
 	}
 
 	public function restore_variable( WP_REST_Request $request ) {
@@ -290,13 +281,10 @@ class Rest_Api {
 
 		$result = $this->variables_repository->restore( $id );
 
-		return new WP_REST_Response( [
-			'success' => true,
-			'data' => [
-				'variable' => $result['variable'],
-				'watermark' => $result['watermark'],
-			],
-		], self::HTTP_OK );
+		return $this->success_response( [
+			'variable' => $result['variable'],
+			'watermark' => $result['watermark'],
+		] );
 	}
 
 	public function get_variables() {
@@ -308,53 +296,53 @@ class Rest_Api {
 	}
 
 	private function list_of_variables() {
-		$response = $this->prepare_list_response();
-
-		return new WP_REST_Response( [
-			'success' => true,
-			'data' => [
-				'variables' => $response['list'],
-				'total' => $response['total'],
-				'watermark' => $response['watermark'],
-			],
-		], self::HTTP_OK );
-	}
-
-	private function prepare_list_response() {
 		$db_record = $this->variables_repository->load();
 
-		return [
-			'list' => $db_record['data'],
+		return $this->success_response( [
+			'variables' => $db_record['data'],
 			'total' => count( $db_record['data'] ),
 			'watermark' => $db_record['watermark'],
-		];
+		] );
+	}
+
+	private function success_response( $payload, $status_code = null ) {
+		return new WP_REST_Response( [
+			'success' => true,
+			'data' => $payload,
+		], $status_code ?? self::HTTP_OK );
 	}
 
 	private function error_response( Exception $e ) {
-		$error = 'unexpected_server_error';
-		$error_code = self::HTTP_SERVER_ERROR;
-		$message = __( 'Unexpected server error', 'elementor' );
-
-		if ( $e->getCode() ) {
-			$error_code = $e->getCode();
+		if ( $e instanceof VariablesLimitReached ) {
+			return $this->prepare_error_response(
+				self::HTTP_BAD_REQUEST,
+				'invalid_variable_limit_reached',
+				__( 'Reached the maximum number of variables', 'elementor' )
+			);
 		}
 
-		if ( $e instanceof InvalidArgumentException ) {
-			if ( self::HTTP_NOT_FOUND === $error_code ) {
-				$error = 'variable_not_found';
-				$message = __( 'Variable not found', 'elementor' );
-			} elseif ( self::HTTP_BAD_REQUEST === $error_code ) {
-				$error = 'invalid_variable_limit_reached';
-				$message = __( 'Reached the maximum number of variables', 'elementor' );
-			}
+		if ( $e instanceof RecordNotFound ) {
+			return $this->prepare_error_response(
+				self::HTTP_NOT_FOUND,
+				'variable_not_found',
+				__( 'Variable not found', 'elementor' )
+			);
 		}
 
+		return $this->prepare_error_response(
+			self::HTTP_SERVER_ERROR,
+			'unexpected_server_error',
+			__( 'Unexpected server error', 'elementor' )
+		);
+	}
+
+	private function prepare_error_response( $status_code, $error, $message ) {
 		return new WP_REST_Response( [
 			'code' => $error,
 			'message' => $message,
 			'data' => [
-				'status' => $error_code,
+				'status' => $status_code,
 			],
-		], $error_code );
+		], $status_code );
 	}
 }
