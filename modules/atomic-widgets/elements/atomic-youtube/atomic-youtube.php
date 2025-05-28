@@ -41,7 +41,9 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'source' => String_Prop_Type::make(),
+			'source' => String_Prop_Type::make()
+				->default( 'https://www.youtube.com/watch?v=XHOmBV4js_E' ),
+
 			'start' => String_Prop_Type::make(),
 			'end' => String_Prop_Type::make(),
 			'autoplay' => Boolean_Prop_Type::make()->default( false ),
