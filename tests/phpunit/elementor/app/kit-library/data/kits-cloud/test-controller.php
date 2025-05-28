@@ -77,15 +77,15 @@ class Test_Controller extends Elementor_Test_Base {
 				'id' => 'id_1',
 				'title' => 'kit_1',
 				'thumbnailUrl' => 'https://localhost/image.png',
-				'created_at' => '2021-05-26T22:30:39.397Z',
-				'updated_at' => '2021-05-26T22:30:39.397Z',
+				'createdAt' => '2021-05-26T22:30:39.397Z',
+				'updatedAt' => '2021-05-26T22:30:39.397Z',
 			],
 			[
 				'id' => 'id_2',
 				'title' => 'kit_2',
 				'thumbnailUrl' => 'https://localhost/image2.png',
-				'created_at' => '2021-05-26T22:30:39.397Z',
-				'updated_at' => '2021-05-26T22:30:39.397Z',
+				'createdAt' => '2021-05-26T22:30:39.397Z',
+				'updatedAt' => '2021-05-26T22:30:39.397Z',
 			],
 		];
 	}
