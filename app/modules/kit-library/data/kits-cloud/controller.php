@@ -29,9 +29,9 @@ class Controller extends Base_Controller {
 			return [
 				'id' => $kit['id'],
 				'title' => $kit['title'],
-				'thumbnail_url' => isset( $kit['thumbnailUrl'] ) ? $kit['thumbnailUrl'] : null,
-				'created_at' => isset( $kit['created_at'] ) ? $kit['created_at'] : null,
-				'updated_at' => isset( $kit['updated_at'] ) ? $kit['updated_at'] : null,
+				'thumbnail_url' => $kit['thumbnailUrl'],
+				'created_at' => $kit['createdAt'],
+				'updated_at' => $kit['updatedAt'],
 			];
 		} );
 
