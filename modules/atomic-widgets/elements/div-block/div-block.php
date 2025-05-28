@@ -184,4 +184,28 @@ class Div_Block extends Atomic_Element_Base {
 			'unit' => 'px',
 		] );
 	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+
+		$attributes = [
+			'class' => [
+				'e-con',
+				$base_style_class,
+				...( $settings['classes'] ?? [] ),
+			],
+		];
+
+		if ( ! empty( $settings['cssid'] ) ) {
+			$attributes['id'] = esc_attr( $settings['cssid'] );
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = [ ...$attributes, ...$settings['link'] ];
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
+	}
 }
