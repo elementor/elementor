@@ -53,9 +53,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['_cssid'] = String_Prop_Type::make();
-		}
+		$props = static::add_common_controls_to_props_scheme( $props );
 
 		return $props;
 	}
@@ -67,13 +65,6 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			] ),
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
-				'topDivider' => true,
-			] );
-		}
-
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
@@ -84,7 +75,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( $settings_section_items ),
+				->set_items( array_merge( $settings_section_items, $this->register_common_controls() ) ),
 		];
 	}
 
