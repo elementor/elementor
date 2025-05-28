@@ -16,17 +16,6 @@ class Controller extends Base_Controller {
 		return 'kits-cloud';
 	}
 
-	public function get_collection_params() {
-		return [
-			'force' => [
-				'description' => 'Force an API request and skip the cache.',
-				'required' => false,
-				'default' => false,
-				'type' => 'boolean',
-			],
-		];
-	}
-
 	public function get_items( $request ) {
 		$data = $this->get_app()->get_kits();
 

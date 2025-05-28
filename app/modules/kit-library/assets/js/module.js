@@ -4,7 +4,6 @@ import TaxonomiesComponent from './data/taxonomies/component';
 import KitLibraryComponent from './e-component';
 import KitsCloudComponent from './data/kits-cloud/component';
 
-
 export default class KitLibrary {
 	constructor() {
 		if ( ! this.hasAccessToModule() ) {
