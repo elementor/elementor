@@ -1,5 +1,13 @@
 == Changelog ==
 
+= 3.29.1 - 2025-05-28 =
+
+* Tweak: Disabled the ability to use elements caching shortcode via the interface
+* Security Fix: Improved code security enforcement in Shortcode widget
+* Fix: Information modals are not showing as expected in the Editor - Editor V4
+* Fix: Error on the frontend when background overlay is set to hidden - Editor V4
+* Fix: Editor load issue when a widget does not register the "Advanced" tab
+
 = 3.29.0 - 2025-05-19 =
 
 * New: Introduced the first Alpha release of the next-generation Editor - a faster, modular, CSS-based infrastructure available as an opt-in experience - Editor V4
