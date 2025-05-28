@@ -10,7 +10,7 @@ use ElementorEditorTesting\Traits\Rest_Trait;
 
 class Test_Controller extends Elementor_Test_Base {
 	use Rest_Trait {
-		setUp as traitSetUP;
+		Rest_Trait::setUp as traitSetUP;
 	}
 
 	/**
