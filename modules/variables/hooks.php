@@ -8,7 +8,7 @@ use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
 use Elementor\Modules\Variables\Classes\Fonts;
 use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
 use Elementor\Modules\Variables\Classes\Variables;
-use Elementor\Modules\Variables\Classes\Variables_Repository;
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 
