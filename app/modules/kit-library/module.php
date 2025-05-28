@@ -11,6 +11,7 @@ use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
+use Elementor\App\Modules\KitLibrary\Data\KitsCloud\Controller as Kits_Cloud_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -98,6 +99,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
+		Plugin::$instance->data_manager_v2->register_controller( new Kits_Cloud_Controller() );
 
 		// Assigning this action here since the repository is being loaded by demand.
 		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
