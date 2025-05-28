@@ -19,6 +19,12 @@ class Controller extends Base_Controller {
 	public function get_items( $request ) {
 		$data = $this->get_app()->get_kits();
 
+		if ( is_wp_error( $data ) ) {
+			return [
+				'data' => [],
+			];
+		}
+
 		$kits = ( new Collection( $data ) )->map( function ( $kit ) {
 			return [
 				'id' => $kit['id'],
