@@ -1,17 +1,18 @@
 <?php
 
-namespace Elementor\Modules\Variables\Classes;
+namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Utils;
-use Exception;
-use InvalidArgumentException;
+use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
+use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
+use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Variables_Repository {
+class Repository {
 	const TOTAL_VARIABLES_COUNT = 100;
 
 	const FORMAT_VERSION_V1 = 1;
@@ -53,7 +54,6 @@ class Variables_Repository {
 	}
 
 	/**
-	 * @throws VariablesLimitReached
 	 * @throws FatalError
 	 */
 	public function create( array $variable ) {
@@ -148,7 +148,6 @@ class Variables_Repository {
 	}
 
 	/**
-	 * @throws VariablesLimitReached
 	 * @throws RecordNotFound
 	 * @throws FatalError
 	 */
@@ -217,7 +216,3 @@ class Variables_Repository {
 		];
 	}
 }
-
-class RecordNotFound extends Exception {}
-class VariablesLimitReached extends Exception {}
-class FatalError extends Exception {}

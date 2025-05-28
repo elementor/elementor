@@ -3,15 +3,16 @@
 namespace Elementor\Modules\Variables\Classes;
 
 use Exception;
-use InvalidArgumentException;
 use WP_Error;
 use WP_REST_Response;
 use WP_REST_Request;
 use WP_REST_Server;
 
-use Elementor\Modules\Variables\Classes\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
+use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
