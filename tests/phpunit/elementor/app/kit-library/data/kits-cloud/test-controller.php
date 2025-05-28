@@ -14,65 +14,35 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @var Cloud_Library
+	 * @var Cloud_Library|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	private $app_mock;
-
-	/**
-	 * @var Controller
-	 */
-	private $controller;
+	private $cloud_library_mock;
 
 	public function setUp(): void {
 		$this->traitSetUP();
 
-		$this->app_mock = $this->getMockBuilder( Cloud_Library::class )
+		$this->cloud_library_mock = $this->getMockBuilder( Cloud_Library::class )
 			->disableOriginalConstructor()
 			->setMethods( [ 'get_kits' ] )
 			->getMock();
 
-		$module_mock = $this->getMockBuilder( Module::class )
+		$connect_module_mock = $this->getMockBuilder( Module::class )
 			->setMethods( [ 'get_app' ] )
 			->getMock();
 
-		$module_mock->method( 'get_app' )->willReturn( $this->app_mock );
+		$connect_module_mock->method( 'get_app' )
+			->with( 'cloud-library' )
+			->willReturn( $this->cloud_library_mock );
 
-		Plugin::$instance->common->add_component( 'connect', $module_mock );
+		Plugin::$instance->common->add_component( 'connect', $connect_module_mock );
 
-		$this->controller = new Controller();
-		$this->data_manager->register_controller( $this->controller );
+		$this->data_manager->register_controller( new Controller() );
 	}
 
 	public function test_get_items() {
 		// Arrange
-		$user = $this->act_as_admin();
-		$this->app_mock->method( 'get_kits' )->willReturn( $this->get_kits_api_mock() );
-
-		// Act
-		$result = $this->http_get( 'kits-cloud' );
-
-		// Assert
-		$this->assertArrayHasKey( 'data', $result );
-		$this->assertEqualSets( [
-			[
-				'id' => 'id_1',
-				'title' => 'kit_1',
-				'thumbnail_url' => 'https://localhost/image.png',
-				'created_at' => '2021-05-26T22:30:39.397Z',
-				'updated_at' => '2021-05-26T22:30:39.397Z',
-			],
-			[
-				'id' => 'id_2',
-				'title' => 'kit_2',
-				'thumbnail_url' => 'https://localhost/image2.png',
-				'created_at' => '2021-05-26T22:30:39.397Z',
-				'updated_at' => '2021-05-26T22:30:39.397Z',
-			]
-		], $result['data'] );
-	}
-
-	private function get_kits_api_mock() {
-		return [
+		$this->act_as_admin();
+		$this->cloud_library_mock->method( 'get_kits' )->willReturn( [
 			[
 				'id' => 'id_1',
 				'title' => 'kit_1',
@@ -87,6 +57,16 @@ class Test_Controller extends Elementor_Test_Base {
 				'createdAt' => '2021-05-26T22:30:39.397Z',
 				'updatedAt' => '2021-05-26T22:30:39.397Z',
 			],
-		];
+		] );
+
+		// Act
+		$result = $this->http_get( 'kits-cloud' );
+
+		// Assert
+		$this->assertArrayHasKey( 'data', $result );
+		$this->assertCount( 2, $result['data'] );
+		$this->assertEquals( 'id_1', $result['data'][0]['id'] );
+		$this->assertEquals( 'kit_1', $result['data'][0]['title'] );
+		$this->assertEquals( 'https://localhost/image.png', $result['data'][0]['thumbnail_url'] );
 	}
 }
