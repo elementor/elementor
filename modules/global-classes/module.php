@@ -69,10 +69,6 @@ class Module extends BaseModule {
 	}
 
 	private function add_packages( $packages ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return $packages;
-		}
-
 		return array_merge( $packages, self::PACKAGES );
 	}
 }
