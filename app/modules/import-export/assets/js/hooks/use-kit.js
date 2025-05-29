@@ -134,6 +134,9 @@ export default function useKit() {
 				},
 			} );
 		},
+		exportKitToCloud = () => {
+			return null;
+		},
 		reset = () => ajaxActions.reset();
 
 	useEffect( () => {
@@ -164,6 +167,7 @@ export default function useKit() {
 			upload: uploadKit,
 			import: importKit,
 			export: exportKit,
+			exportKitToCloud,
 			reset,
 		},
 	};
