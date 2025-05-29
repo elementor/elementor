@@ -9,19 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends \Elementor\Core\Base\Module {
 
-	const EXPERIMENT_NAME = 'nested-elements';
-
-	public static function get_experimental_data() {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Nested Elements', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'hidden' => true,
-			'mutable' => true,
-		];
-	}
-
 	public function get_name() {
 		return 'nested-elements';
 	}

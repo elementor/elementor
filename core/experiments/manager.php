@@ -243,6 +243,40 @@ class Manager extends Base_Object {
 	}
 
 	/**
+	 * Get Merged Features
+	 *
+	 * @since 3.30.0
+	 * @access public
+	 *
+	 * @return array
+	 */
+	private function merged_features() {
+		return [
+			'ai-layout',
+			'block_editor_assets_optimize',
+			'container_grid',
+			'display-conditions',
+			'e_dom_optimization',
+			'e_global_styleguide',
+			'e_image_loading_optimization',
+			'e_lazyload',
+			'e_optimized_assets_loading',
+			'e_optimized_css_loading',
+			'e_scroll_snap',
+			'floating-buttons',
+			'form-submissions',
+			'link-in-bio',
+			'loop',
+			'notes',
+			'off-canvas',
+			'page-transitions',
+			'search',
+			'taxonomy-filter',
+			'nested-elements',
+		];
+	}
+
+	/**
 	 * Is Feature Active
 	 *
 	 * @since 3.1.0
@@ -254,6 +288,10 @@ class Manager extends Base_Object {
 	 */
 	public function is_feature_active( $feature_name, $check_dependencies = false ) {
 		$feature = $this->get_features( $feature_name );
+
+		if ( in_array( $feature_name, $this->merged_features() ) ) {
+			return true;
+		}
 
 		if ( ! $feature || self::STATE_ACTIVE !== $this->get_feature_actual_state( $feature ) ) {
 			return false;
@@ -939,26 +977,37 @@ class Manager extends Base_Object {
 	 */
 	private function initialize_feature_dependencies( array $experimental_data ): array {
 		foreach ( $experimental_data['dependencies'] as $key => $dependency ) {
-			$feature = $this->get_features( $dependency );
+			if ( ! in_array( $dependency, $this->merged_features() ) ) {
 
-			if ( ! isset( $feature ) ) {
-				// since we must validate the state of each dependency, we have to make sure that dependencies are initialized in the correct order, otherwise, error.
-				throw new Exceptions\Dependency_Exception(
-					sprintf(
-						'Feature %s cannot be initialized before dependency feature: %s.',
-						esc_html( $experimental_data['name'] ),
-						esc_html( $dependency )
-					)
-				);
-			}
+				$feature = $this->get_features( $dependency );
 
-			if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
-				throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
+				if ( ! isset( $feature ) ) {
+					// since we must validate the state of each dependency, we have to make sure that dependencies are initialized in the correct order, otherwise, error.
+					throw new Exceptions\Dependency_Exception(
+						sprintf(
+							'The "%s" feature cannot be initialized before dependent "%s" feature.',
+							esc_html( $experimental_data['name'] ),
+							esc_html( $dependency )
+						)
+					);
+				}
+
+				if ( ! empty( $feature[ static::TYPE_HIDDEN ] ) ) {
+					throw new Exceptions\Dependency_Exception( 'Depending on a hidden experiment is not allowed.' );
+				}
 			}
 
 			$experimental_data['dependencies'][ $key ] = $this->create_dependency_class( $dependency, $feature );
 			$experimental_data = $this->set_feature_default_state_to_match_dependencies( $feature, $experimental_data );
 		}
+
+		// Remove duplicate dependencies by name.
+		$experimental_data['dependencies'] = array_values(
+			array_unique(
+				$experimental_data['dependencies'],
+				SORT_REGULAR
+			)
+		);
 
 		return $experimental_data;
 	}

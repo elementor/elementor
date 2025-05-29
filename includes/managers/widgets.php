@@ -11,7 +11,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
-use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,7 +52,7 @@ class Widgets_Manager {
 	 * @return array
 	 */
 	private array $promoted_widgets = [
-		NestedElementsModule::EXPERIMENT_NAME => [
+		'nested-elements' => [
 			NestedTabs::class,
 			Nested_Accordion::class,
 		],
