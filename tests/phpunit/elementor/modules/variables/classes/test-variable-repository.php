@@ -5,8 +5,10 @@ namespace Elementor\Modules\Variables\Classes;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
+use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use PHPUnit\Framework\TestCase;
-use InvalidArgumentException;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -100,45 +102,29 @@ class Test_Variables_Repository extends TestCase {
 
 	public function test_create_new_variable__when_empty() {
 		// Arrange.
-		$captured_data = [];
-
 		$this->kit->expects( $this->once() )
 			->method( 'update_json_meta' )
-			->with(
-				Variables_Repository::VARIABLES_META_KEY,
-				$this->callback( function ( $record ) use ( &$captured_data ) {
-					$captured_data = $record['data'];
-
-					return isset( $captured_data )
-						&& count( $captured_data ) === 1
-						&& $record['watermark'] === 1;
-				} )
-			)
 			->willReturn( true );
 
 		$this->kit->method( 'get_json_meta' )->willReturn( [] );
 
 		// Act.
-		$id = $this->repository->create( [
+		$result = $this->repository->create( [
 			'type' => Color_Variable_Prop_Type::get_key(),
 			'label' => 'Secondary: Text Color',
 			'value' => '#fff328',
 		] );
 
 		// Assert.
-		$expected = [
-			'label' => 'Secondary: Text Color',
-			'value' => '#fff328',
-			'type' => Color_Variable_Prop_Type::get_key(),
-		];
+		$this->assertEquals( 1, $result['watermark'] );
 
-		$this->assertEquals( $expected, $captured_data[ $id ] );
+		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $result['variable']['type'] );
+		$this->assertEquals( 'Secondary: Text Color', $result['variable']['label'] );
+		$this->assertEquals( '#fff328', $result['variable']['value'] );
 	}
 
 	public function test_create_new_variable__add_color_variable_to_existing_list() {
 		// Arrange.
-		$captured_data = [];
-
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
 				'e-123' => [
@@ -160,6 +146,8 @@ class Test_Variables_Repository extends TestCase {
 			'watermark' => 5,
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
+
+		$captured_data = [];
 
 		$this->kit->expects( $this->once() )
 			->method( 'update_json_meta' )
@@ -194,8 +182,6 @@ class Test_Variables_Repository extends TestCase {
 
 	public function test_create_new_variable__font_variable() {
 		// Arrange.
-		$captured_data = [];
-
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
 				'e-123' => [
@@ -207,6 +193,8 @@ class Test_Variables_Repository extends TestCase {
 			'watermark' => 10,
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
+
+		$captured_data = [];
 
 		$this->kit->expects( $this->once() )
 			->method( 'update_json_meta' )
@@ -223,21 +211,18 @@ class Test_Variables_Repository extends TestCase {
 			->willReturn( true );
 
 		// Act.
-
-		$id = $this->repository->create( [
+		$result = $this->repository->create( [
 			'type' => Font_Variable_Prop_Type::get_key(),
 			'label' => 'Primary Font',
 			'value' => 'Roboto',
 		] );
 
 		// Assert.
-		$expected = [
-			'label' => 'Primary Font',
-			'value' => 'Roboto',
-			'type' => Font_Variable_Prop_Type::get_key(),
-		];
+		$this->assertEquals( 11, $result['watermark'] );
 
-		$this->assertEquals( $expected, $captured_data[ $id ] );
+		$this->assertEquals( Font_Variable_Prop_Type::get_key(), $result['variable']['type'] );
+		$this->assertEquals( 'Primary Font', $result['variable']['label'] );
+		$this->assertEquals( 'Roboto', $result['variable']['value'] );
 	}
 
 	public function test_create_new_variable__throws_exception_when_save_fails() {
@@ -245,7 +230,7 @@ class Test_Variables_Repository extends TestCase {
 		$this->kit->method( 'update_json_meta' )->willReturn( false );
 
 		// Assert.
-		$this->expectException( Exception::class );
+		$this->expectException( FatalError::class );
 		$this->expectExceptionMessage( 'Failed to create variable' );
 
 		// Act.
@@ -258,13 +243,9 @@ class Test_Variables_Repository extends TestCase {
 
 	public function test_update_variable__with_valid_data() {
 		// Arrange.
-		$captured_data = [];
-
-		$id = 'e-123';
-
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
-				$id => [
+				'e-123' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
 					'label' => 'Primary',
 					'value' => '#000000',
@@ -276,40 +257,30 @@ class Test_Variables_Repository extends TestCase {
 
 		$this->kit->expects( $this->once() )
 			->method( 'update_json_meta' )
-			->with(
-				Variables_Repository::VARIABLES_META_KEY,
-				$this->callback( function( $meta ) use ( &$captured_data ) {
-					$captured_data = $meta['data'];
-
-					return $meta['watermark'] === 9;
-				} )
-			)
 			->willReturn( true );
 
 		// Act.
-		$this->repository->update( $id, [
+		$result = $this->repository->update( 'e-123', [
 			'label' => 'Text Primary',
 			'value' => '#111111',
 		] );
 
 		$expected = [
+			'id' => 'e-123',
 			'label' => 'Text Primary',
 			'value' => '#111111',
 			'type' => Color_Variable_Prop_Type::get_key(),
 		];
 
-		$this->assertEquals( $expected, $captured_data[ $id ] );
+		$this->assertEquals( $expected, $result['variable'] );
+		$this->assertEquals( 9, $result['watermark'] );
 	}
 
 	public function test_update_variable__updating_wont_change_its_original_type() {
 		// Arrange.
-		$captured_data = [];
-
-		$id = 'e-123';
-
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
-				$id => [
+				'e-123' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
 					'label' => 'Primary',
 					'value' => '#000000',
@@ -321,30 +292,24 @@ class Test_Variables_Repository extends TestCase {
 
 		$this->kit->expects( $this->once() )
 			->method('update_json_meta')
-			->with(
-				Variables_Repository::VARIABLES_META_KEY,
-				$this->callback( function ( $meta ) use ( &$captured_data ) {
-					$captured_data = $meta['data'];
-
-					return $meta['watermark'] === 9;
-				} )
-			)
 			->willReturn( true );
 
 		// Act.
-		$this->repository->update( $id, [
+		$result = $this->repository->update( 'e-123', [
 			'label' => 'Text Primary',
 			'value' => '#111111',
 			'type' => Font_Variable_Prop_Type::get_key(),
 		] );
 
 		$expected = [
+			'id' => 'e-123',
 			'label' => 'Text Primary',
 			'value' => '#111111',
 			'type' => Color_Variable_Prop_Type::get_key(),
 		];
 
-		$this->assertEquals( $expected, $captured_data[ $id ] );
+		$this->assertEquals( $expected, $result['variable'] );
+		$this->assertEquals( 9, $result['watermark'] );
 	}
 
 	public function test_update_variable__throws_exception_when_save_fails() {
@@ -389,22 +354,18 @@ class Test_Variables_Repository extends TestCase {
 		] );
 
 		// Assert.
-		$this->expectException( InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'Variable id does not exist' );
+		$this->expectException( RecordNotFound::class );
+		$this->expectExceptionMessage( 'Variable not found' );
 
 		// Act.
-		$this->repository->delete( 'e-4567890' );
+		$this->repository->delete( 'non-existing-id' );
 	}
 
 	public function test_delete_variable__with_existing_variable() {
 		// Arrange.
-		$captured_data = [];
-
-		$id = 'e-123';
-
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
-				$id => [
+				'e-123' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
 					'label' => 'Primary',
 					'value' => '#000000',
@@ -415,25 +376,16 @@ class Test_Variables_Repository extends TestCase {
 		] );
 
 		$this->kit->expects( $this->once() )
-		          ->method( 'update_json_meta' )
-		          ->with(
-			          Variables_Repository::VARIABLES_META_KEY,
-			          $this->callback( function( $meta ) use ( &$captured_data ) {
-				          $captured_data = $meta['data'];
-
-				          return true;
-			          })
-		          )
-		          ->willReturn( true );
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
-		$this->repository->delete( $id );
-
-		$variable = $captured_data[$id];
+		$result = $this->repository->delete( 'e-123' );
 
 		// Assert.
-		$this->assertTrue( $variable['deleted'] );
-		$this->assertNotNull( $variable['deleted_at'] );
+		$this->assertTrue( $result['variable']['deleted'] );
+		$this->assertNotNull( $result['variable']['deleted_at'] );
+		$this->assertEquals( 6, $result['watermark'] );
 	}
 
 	public function test_delete_variable__throws_exception_when_id_not_found() {
@@ -451,22 +403,18 @@ class Test_Variables_Repository extends TestCase {
 		] );
 
 		// Assert.
-		$this->expectException( InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'Variable id does not exist' );
+		$this->expectException( RecordNotFound::class );
+		$this->expectExceptionMessage( 'Variable not found' );
 
 		// Act.
-		$this->repository->delete( 'e-4567890' );
+		$this->repository->delete( 'non-existing-id' );
 	}
 
 	public function test_restore_variable() {
 		// Arrange.
-		$captured_data = [];
-
-		$id = 'e-123';
-
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
-				$id => [
+				'e-123' => [
 					'type' => Color_Variable_Prop_Type::get_key(),
 					'label' => 'Primary',
 					'value' => '#000000',
@@ -480,22 +428,14 @@ class Test_Variables_Repository extends TestCase {
 
 		$this->kit->expects( $this->once() )
 			->method('update_json_meta')
-			->with(
-				Variables_Repository::VARIABLES_META_KEY,
-				$this->callback( function ( $meta ) use ( &$captured_data ) {
-					$captured_data = $meta['data'];
-
-					return $meta['watermark'] === 6;
-				} )
-			)
 			->willReturn( true );
 
 		// Act.
-		$this->repository->restore( $id );
+		$result = $this->repository->restore( 'e-123' );
 
 		// Assert.
-		$this->assertArrayNotHasKey( 'deleted', $captured_data[ $id ] );
-		$this->assertArrayNotHasKey( 'deleted_at', $captured_data[ $id ] );
+		$this->assertArrayNotHasKey( 'deleted', $result['variable'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result );
 	}
 
 	public function test_restore_variable__throws_exception_when_id_not_found() {
@@ -515,16 +455,14 @@ class Test_Variables_Repository extends TestCase {
 		] );
 
 		// Assert.
-		$this->expectException( InvalidArgumentException::class );
-		$this->expectExceptionMessage( 'Variable id does not exist' );
+		$this->expectException( RecordNotFound::class );
+		$this->expectExceptionMessage( 'Variable not found' );
 
-		$this->repository->restore( '12345' );
+		$this->repository->restore( 'non-existing-id' );
 	}
 
 	public function test_watermark__resets_when_reaching_max() {
 		// Arrange.
-		$captured_watermark = null;
-
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
 				'e-123' => [
@@ -536,6 +474,8 @@ class Test_Variables_Repository extends TestCase {
 			'watermark' => PHP_INT_MAX,
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
+
+		$captured_watermark = null;
 
 		$this->kit->expects( $this->once() )
 			->method('update_json_meta')
@@ -550,11 +490,11 @@ class Test_Variables_Repository extends TestCase {
 			->willReturn( true );
 
 		// Act.
-		$this->repository->update( 'e-123', [
+		$result = $this->repository->update( 'e-123', [
 			'label' => 'Tertiary',
 			'value' => '#123456',
 		] );
 
-		$this->assertEquals( 1, $captured_watermark );
+		$this->assertEquals( 1, $result['watermark'] );
 	}
 }
