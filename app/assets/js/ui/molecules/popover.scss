@@ -42,6 +42,27 @@
 		border-block-end-color: var(--popover-arrow-color);
 	}
 
+	&--arrow-start {
+		&::before {
+			@include start(#{$eps-popover-border-radius});
+			transform: none;
+		}
+	}
+
+	&--arrow-end {
+		&::before {
+			@include end(#{$eps-popover-border-radius});
+			@include start(auto);
+			transform: none;
+		}
+	}
+
+	&--arrow-none {
+		&::before {
+			display: none;
+		}
+	}
+
 	&__item {
 		padding: $eps-popover-item-spacing-y $eps-popover-item-spacing-x;
 		background-color: var(--popover-item-background-color);
