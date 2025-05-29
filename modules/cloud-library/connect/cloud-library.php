@@ -339,5 +339,14 @@ class Cloud_Library extends Library {
 		] );
 	}
 
+	/**
+	 * @return array|\WP_Error
+	 */
+	public function get_kits() {
+		return $this->http_request( 'GET', 'kits', [], [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+	}
+
 	protected function init() {}
 }
