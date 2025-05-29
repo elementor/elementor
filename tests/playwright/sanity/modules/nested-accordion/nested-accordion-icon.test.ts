@@ -8,7 +8,12 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: true } );
+
+		await wpAdmin.setExperiments( {
+			container: 'active',
+			'nested-elements': 'active',
+		} );
+
 		await page.close();
 	} );
 
@@ -17,9 +22,11 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
+			'nested-elements': 'inactive',
 			container: 'inactive',
 			e_font_icon_svg: 'default',
 		} );
+
 		await page.close();
 	} );
 
