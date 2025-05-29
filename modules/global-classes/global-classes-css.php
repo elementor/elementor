@@ -99,7 +99,13 @@ class Global_Classes_CSS {
 				}
 
 				$fonts[] = $value;
-			} )->render( $styles );
+			} )->render(
+				$sorted_items->map( function( $item ) {
+					$item['cssName'] = $item['label'];
+
+					return $item;
+				} )->all()
+			);
 
 			$result[ $breakpoint ] = [ 'css' => $css, 'fonts' => array_unique( $fonts ) ];
 		}

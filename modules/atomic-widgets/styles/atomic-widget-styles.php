@@ -12,7 +12,7 @@ class Atomic_Widget_Styles {
 	private array $css = [];
 
 	public function register_hooks() {
-		add_action( 'elementor/atomic-widget/styles/enqueue', fn( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $post_id, $styles_manager ), 10, 3 );
+		add_action( 'elementor/atomic-widget/styles/enqueue', fn( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $post_id, $styles_manager ), 30, 3 );
 	}
 
 	private function enqueue_styles( string $breakpoint, string $post_id,  Styles_Manager $styles_manager ) {

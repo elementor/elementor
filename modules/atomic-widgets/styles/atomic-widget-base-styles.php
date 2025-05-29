@@ -16,7 +16,7 @@ class Atomic_Widget_Base_Styles {
 		add_action(
 			'elementor/atomic-widget/styles/enqueue',
 			fn( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $post_id, $styles_manager ),
-			30,
+			10,
 			3
 		);
 	}
