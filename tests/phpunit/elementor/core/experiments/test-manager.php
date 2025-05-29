@@ -358,7 +358,7 @@ class Test_Manager extends Elementor_Test_Base {
 
 		// Assert.
 		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature test_feature cannot be initialized before dependency feature: feature-that-not-exists' );
+		$this->expectExceptionMessage( 'The "test_feature" feature cannot be initialized before dependent "feature-that-not-exists" feature.' );
 
 		// Act.
 		$this->add_test_feature( $test_feature_data );
@@ -598,7 +598,7 @@ class Test_Manager extends Elementor_Test_Base {
 		];
 		// Assert.
 		$this->expectException( \Elementor\Core\Experiments\Exceptions\Dependency_Exception::class );
-		$this->expectExceptionMessage( 'Feature module-a cannot be initialized before dependency feature: Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B' );
+		$this->expectExceptionMessage( 'The "module-a" feature cannot be initialized before dependent "Elementor\Tests\Phpunit\Elementor\Core\Experiments\Mock\Modules\Module_B" feature.' );
 
 		$this->add_test_feature( $test_feature_data );
 
