@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,7 +35,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => true,
 				'args' => [
 					'context' => [
 						'type' => 'string',
@@ -53,7 +54,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 				'args' => [
 					'context' => [
 						'type' => 'string',
