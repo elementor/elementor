@@ -297,9 +297,9 @@ BaseElementView = BaseContainer.extend( {
 		void ( $overlayList[ 0 ].offsetHeight );
 
 		if ( isHaveOverflow ) {
-			$overlayList.addClass( 'elementor-editor-element-settings-overlay' );
+			this.$el.addClass( 'e-handles-inside' );
 		} else {
-			$overlayList.removeClass( 'elementor-editor-element-settings-overlay' );
+			this.$el.removeClass( 'e-handles-inside' );
 		}
 
 		$overlayList.removeAttr( 'style' );

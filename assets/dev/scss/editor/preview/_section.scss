@@ -17,11 +17,6 @@
 	border-end-start-radius: 0;
 	border-end-end-radius: 0;
 
-	&.elementor-editor-element-settings-overlay {
-		transform: translateX( -50% ) rotate(180deg);
-		flex-direction: row-reverse;
-	}
-
 	i.eicon-handle {
 		font-size: 16px;
 	}
