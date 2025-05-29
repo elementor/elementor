@@ -73,6 +73,7 @@ register( {
 				playerVars: {
 					controls: parsedSettings.controls ? 1 : 0,
 					rel: parsedSettings.rel ? 0 : 1,
+					playsinline: parsedSettings.play_on_mobile ? 1 : 0,
 					cc_load_policy: parsedSettings.cc_load_policy ? 1 : 0,
 					autoplay: parsedSettings.autoplay ? 1 : 0,
 					start: parsedSettings.start,
