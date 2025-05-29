@@ -4,6 +4,7 @@ import { TaxonomyTypes } from '../models/taxonomy';
 import { isKitInTaxonomy } from '../models/taxonomy-transformer';
 import { useQuery } from 'react-query';
 import { useState, useMemo, useCallback, useEffect } from 'react';
+import { pipe } from '../utils';
 
 export const KEY = 'kits';
 
@@ -101,20 +102,6 @@ const kitsPipeFunctions = {
 		} );
 	},
 };
-
-/**
- * A util function to transform data throw transform functions
- *
- * @param {Array<Function>} functions
- * @return {function(*=, ...[*]): *} function
- */
-function pipe( ...functions ) {
-	return ( value, ...args ) =>
-		functions.reduce(
-			( currentValue, currentFunction ) => currentFunction( currentValue, ...args ),
-			value,
-		);
-}
 
 /**
  * Fetch kits
