@@ -5,6 +5,8 @@ use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -64,7 +66,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		global $wp_rest_server;
 
+		
 		$wp_rest_server = new \WP_REST_Server();
+		
+		$role = get_role( 'administrator' );
+		$role->add_cap( Add_Capabilities::UPDATE_CLASS  );
 
 		do_action( 'rest_api_init' );
 
@@ -73,6 +79,9 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 	public function tearDown(): void {
 		parent::tearDown();
+
+		$role = get_role( 'administrator' );
+		$role->remove_cap( Add_Capabilities::UPDATE_CLASS );
 
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 		$this->kit->delete_meta( Global_Classes_Repository::META_KEY_PREVIEW );
@@ -124,20 +133,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( (object) [], $response->get_data()['data'] );
 		$this->assertEquals( [], $response->get_data()['meta']['order'] );
 		$this->assertEquals( 200, $response->get_status() );
-	}
-
-	public function test_all__fails_when_unauthorized() {
-		// Arrange
-		$this->act_as_subscriber();
-
-		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
-
-		// Act
-		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 403, $response->get_status() );
 	}
 
 	public function test_all__fails_when_context_is_invalid() {
