@@ -22,7 +22,7 @@ export default function ExportProcess() {
 			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
 		},
-		generateScreenshot = ( ) => {
+		generateScreenshot = () => {
 			return new Promise( ( resolve ) => {
 				const iframe = document.createElement( 'iframe' );
 				iframe.style = 'visibility: hidden;';
@@ -49,11 +49,8 @@ export default function ExportProcess() {
 				iframe.src = previewUrl.toString();
 			} );
 		},
-		exportKit = async () => {
+		exportKitToZip = async () => {
 			const { includes, selectedCustomPostTypes } = sharedContext.data;
-
-			const screenShotBlob = await generateScreenshot();
-
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
 				The plugins must be added to the includes items, otherwise they will not be exported.
@@ -64,8 +61,29 @@ export default function ExportProcess() {
 				kitInfo,
 				plugins: pluginsData,
 				selectedCustomPostTypes,
+			} );
+		},
+		exportKitToCloud = async () => {
+			const { includes, selectedCustomPostTypes } = sharedContext.data;
+
+			const screenShotBlob = await generateScreenshot();
+
+			kitActions.exportKitToCloud( {
+				include: [ ...includes, 'plugins' ],
+				kitInfo,
+				plugins: pluginsData,
+				selectedCustomPostTypes,
 				screenShotBlob,
 			} );
+		},
+		exportKit = () => {
+			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.e_cloud_library_kits;
+
+			if ( isCloudKitFeatureActive ) {
+				exportKitToCloud();
+			} else {
+				exportKitToZip();
+			}
 		};
 
 	// On load.
