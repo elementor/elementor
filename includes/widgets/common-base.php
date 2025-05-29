@@ -1067,7 +1067,7 @@ class Widget_Common_Base extends Widget_Base {
 				'label' => esc_html__( 'Shape', 'elementor' ),
 				'type' => Controls_Manager::VISUAL_CHOICE,
 				'label_block' => true,
-				'columns' => 3,
+				'columns' => 4,
 				'height' => '250px',
 				'options' => $this->get_shapes(),
 				'default' => 'circle',
