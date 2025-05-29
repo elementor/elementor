@@ -157,7 +157,7 @@ const KitListCloudItem = ( props ) => {
 						<Grid container direction="column" className="e-kit-library__kit-item-cloud-overlay">
 							<Button
 								className="eps-button e-kit-library__kit-item-cloud-overlay-import-button eps-button--primary eps-button--sm eps-button--contained"
-								text={ __( 'Import Kit', 'elementor' ) }
+								text={ __( 'Apply', 'elementor' ) }
 								icon="eicon-library-download"
 								onClick={ () => eventTracking( 'kit-library/cloud/import' ) }
 							/>
