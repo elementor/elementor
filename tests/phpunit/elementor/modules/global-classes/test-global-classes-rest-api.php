@@ -66,7 +66,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		global $wp_rest_server;
 
-		
 		$wp_rest_server = new \WP_REST_Server();
 		
 		$role = get_role( 'administrator' );
