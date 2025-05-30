@@ -216,8 +216,8 @@ class Widget_Common_Base extends Widget_Base {
 
 		if ( $add_custom ) {
 			$shapes['custom'] = [
-				'title' => esc_html__( 'Custom', 'elementor' ),
-				'image' => ELEMENTOR_ASSETS_URL . 'mask-shapes/_custom.svg',
+				'type' => 'button',
+				'title' => esc_html__( 'Custom Mask', 'elementor' ),
 			];
 		}
 
