@@ -53,26 +53,13 @@
 	}
 
 	&-label {
-		border-block-start: var(--e-a-border-bold);
-		border-block-end: var(--e-a-border-bold);
-		border-inline-start: var(--e-a-border-bold);
-		border-inline-end: none;
+		border: var(--e-a-border-bold);
+		border-radius: var(--e-a-border-radius);
 		font-size: 12px;
 		transition: var(--e-a-transition-hover);
 		cursor: pointer;
 		overflow: hidden;
 		padding: 8px;
-
-		&:nth-child(2) {
-			border-start-start-radius: var(--e-a-border-radius);
-			border-end-start-radius: var(--e-a-border-radius);
-		}
-
-		&:last-child {
-			border-inline-end: var(--e-a-border-bold);
-			border-start-end-radius: var(--e-a-border-radius);
-			border-end-end-radius: var(--e-a-border-radius);
-		}
 	}
 
 	&-image {
