@@ -4,6 +4,8 @@ namespace Elementor\App\Modules\KitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Core\Utils\Exceptions;
+use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
@@ -169,5 +171,17 @@ class Module extends BaseModule {
 
 			wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
 		}
+	}
+
+	public function get_cloud_api(): Cloud_Library {
+		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
+
+		if ( ! $cloud_library_app ) {
+			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
+
+			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return $cloud_library_app;
 	}
 }

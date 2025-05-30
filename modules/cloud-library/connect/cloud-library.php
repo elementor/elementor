@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\CloudLibrary\Connect;
 
-use Automattic\WooCommerce\GoogleListingsAndAds\Exception\WPError;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Render_Mode_Preview;
@@ -360,7 +359,7 @@ class Cloud_Library extends Library {
 			'Content-Type' => 'multipart/form-data; boundary=' . $boundary,
 		];
 
-		$body = $this->createMultipartBody(
+		$body = $this->create_multipart_body(
 			[
 				'title' => $title,
 			],
@@ -397,7 +396,7 @@ class Cloud_Library extends Library {
 		return $response;
 	}
 
-	private function createMultipartBody( $fields, $files, $boundary ) {
+	private function create_multipart_body($fields, $files, $boundary ) {
 		$eol = "\r\n";
 		$body = '';
 

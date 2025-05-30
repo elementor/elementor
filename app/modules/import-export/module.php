@@ -7,7 +7,6 @@ use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
@@ -104,16 +103,8 @@ class Module extends BaseModule {
 		$this->revert = new Revert();
 	}
 
-	protected function get_cloud_app(): Cloud_Library {
-		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
-
-		if ( ! $cloud_library_app ) {
-			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
-
-			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-		}
-
-		return $cloud_library_app;
+	public function get_cloud_api(): Cloud_Library {
+		return Plugin::$instance->modules_manager->get_modules( 'kit-library' )->get_cloud_api();
 	}
 
 	public function get_init_settings() {
@@ -768,18 +759,17 @@ class Module extends BaseModule {
 		];
 
 		if ( self::EXPORT_SOURCE_CLOUD === $source ) {
-			$rawScreenShot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
+			$raw_screen_shot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
 			$title = $export['manifest'][ 'title' ];
 
-			$kit = $this->get_cloud_app()->create_kit(
+			$kit = $this->get_cloud_api()->create_kit(
 				$title,
 				$file,
-				$rawScreenShot,
+				$raw_screen_shot,
 			);
 
 			if ( is_wp_error( $kit ) ) {
 				wp_send_json_error( $kit );
-				return;
 			}
 
 			$result['kit'] = $kit;

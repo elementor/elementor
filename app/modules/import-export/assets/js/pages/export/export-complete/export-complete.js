@@ -22,8 +22,7 @@ export default function ExportComplete() {
 		getFooter = () => (
 			<ActionsFooter>
 				{ isSavedToCloud
-					? <DashboardButton text={ __( 'Close', 'elementor' ) } />
-					: (
+					? (
 						<Button
 							text={ __( 'Open library', 'elementor' ) }
 							variant="contained"
@@ -31,6 +30,7 @@ export default function ExportComplete() {
 							url="/kit-library/cloud"
 						/>
 					)
+					: <DashboardButton text={ __( 'Close', 'elementor' ) } />
 				}
 			</ActionsFooter>
 		),
@@ -70,12 +70,12 @@ export default function ExportComplete() {
 	const heading = useMemo( () => {
 		return isSavedToCloud
 			? __( 'Your kit is now saved to your cloud!', 'elementor' )
-			: __( 'You\'ve imported and applied the following to your site:', 'elementor' );
+			: __( 'Your export is ready', 'elementor' );
 	}, [ isSavedToCloud ] );
 
 	const description = useMemo( () => {
 		return isSavedToCloud
-			? __( 'Your kit is now saved to your cloud!', 'elementor' )
+			? __( 'You\'ve imported and applied the following to your site:', 'elementor' )
 			: __( 'Now you can import this kit and use it on other sites.', 'elementor' );
 	}, [ isSavedToCloud ] );
 
@@ -83,12 +83,13 @@ export default function ExportComplete() {
 		isSavedToCloud
 			? (
 				<>
-					{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to download', 'elementor' ) }
+					{ __( 'Learn more about building your site with Elementor Kits', 'elementor' ) } { getLearnMoreAboutKitsLink() }
 				</>
+
 			)
 			: (
 				<>
-					{ __( 'Learn more about building your site with Elementor Kits', 'elementor' ) } { getLearnMoreAboutKitsLink() }
+					{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to download', 'elementor' ) }
 				</>
 			)
 

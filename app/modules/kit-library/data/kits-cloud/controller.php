@@ -45,14 +45,6 @@ class Controller extends Base_Controller {
 	}
 
 	protected function get_app(): Cloud_Library {
-		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
-
-		if ( ! $cloud_library_app ) {
-			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
-
-			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-		}
-
-		return $cloud_library_app;
+		return Plugin::$instance->modules_manager->get_modules( 'kits-library' )->get_cloud_api();
 	}
 }
