@@ -16,6 +16,7 @@ export default class Component extends ComponentBase {
 		return {
 			actions: {
 				keys: 'ctrl+shift+h',
+				dependency: () => 'edit' === elementor.channels.dataEditMode.request( 'activeMode' ),
 			},
 		};
 	}

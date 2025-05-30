@@ -199,6 +199,17 @@
 		font-weight: bold;
 	}
 
+	&-category-chip {
+		margin-inline-start: auto;
+		background-color: var(--e-a-bg-chip);
+		border-radius: 100px;
+		padding: 5px 8px;
+
+		i {
+			margin-inline-start: 4px;
+		}
+	}
+
 	&-promotion {
 		margin-inline-start: auto;
 
@@ -224,7 +235,9 @@
 	}
 }
 
-#elementor-controls {
+#elementor-controls,
+#elementor-panel-page-settings-controls,
+#elementor-panel-editorPreferences-settings-controls {
 
 	.elementor-control-type-section:first-child {
 
@@ -421,6 +434,8 @@
 @import "controls/textarea_and_code";
 
 @import "controls/url";
+
+@import "controls/visual-choice";
 
 @import "controls/wp-widget";
 

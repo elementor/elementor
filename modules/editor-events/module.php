@@ -17,12 +17,6 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'editor_events';
 
-	public function __construct() {
-		parent::__construct();
-
-		$this->register_experiment();
-	}
-
 	public function get_name() {
 		return 'editor-events';
 	}
@@ -40,21 +34,41 @@ class Module extends BaseModule {
 			'user_agent' => esc_html( Utils::get_super_global_value( $_SERVER, 'HTTP_USER_AGENT' ) ),
 			'site_language' => get_locale(),
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
-			'subscription_id' => null,
+			'subscription_id' => self::get_subscription_id(),
 			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
 		];
 
 		return $settings;
 	}
 
-	private function register_experiment() {
-		Plugin::$instance->experiments->add_feature( [
+	public static function get_experimental_data(): array {
+		return [
 			'name' => static::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Elementor Editor Events', 'elementor' ),
 			'description' => esc_html__( 'Editor events processing', 'elementor' ),
 			'hidden' => true,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
 			'default' => Experiments_Manager::STATE_INACTIVE,
-		] );
+		];
+	}
+
+	private static function get_subscription_id() {
+		if ( ! Utils::has_pro() ) {
+
+			return null;
+		}
+
+		$license_data = get_option( '_elementor_pro_license_v2_data' );
+		if ( isset( $license_data['value'] ) ) {
+			$license_info = json_decode( $license_data['value'], true );
+
+			if ( isset( $license_info['subscription_id'] ) ) {
+				$subscription_id = $license_info['subscription_id'];
+
+				return $subscription_id;
+			}
+		}
+
+		return null;
 	}
 }

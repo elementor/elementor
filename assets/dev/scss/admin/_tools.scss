@@ -51,6 +51,15 @@
 			font-size: 16px;
 			margin: 20px 0 25px;
 		}
+
+		.description {
+			font-size: 16px;
+			margin: 8px 0 8px;
+		}
+
+		.action-buttons {
+			margin-block-start: 20px;
+		}
 	}
 
 	&__info {
@@ -67,6 +76,11 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: flex-start;
+
+		&.action-buttons {
+			justify-content: end;
+			gap: 12px;
+		}
 
 		h2 {
 			font-size: 28px;

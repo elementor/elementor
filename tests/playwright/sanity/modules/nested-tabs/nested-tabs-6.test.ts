@@ -2,17 +2,14 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { clickTab, setup } from './helper';
-import _path from 'path';
+import { clickTabByPosition, setupExperiments, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () => {
-	const templatePath = _path.resolve( __dirname, '../../../templates/nested-tabs-with-icons.json' );
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await setup( wpAdmin, { e_font_icon_svg: 'active' } );
+		await setupExperiments( wpAdmin, { e_font_icon_svg: 'active' } );
 
 		await page.close();
 	} );
@@ -40,9 +37,9 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 
 		// Assert
 		await expect.soft( activeTabIcon ).toBeVisible();
-		await clickTab( currentContext, 1 );
+		await clickTabByPosition( currentContext, 1 );
 		await expect.soft( icon ).toBeVisible();
-		await clickTab( currentContext, 0 );
+		await clickTabByPosition( currentContext, 0 );
 	} );
 
 	test( `Check the icon size on frontend`, async ( { page, apiRequests }, testInfo ) => {
@@ -68,10 +65,10 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 		// Assert
 		await expect.soft( activeTabIcon ).toBeVisible();
 		await expect.soft( activeTabIcon ).toHaveCSS( 'width', '50px' );
-		await clickTab( currentContext, 1 );
+		await clickTabByPosition( currentContext, 1 );
 		await expect.soft( icon ).toBeVisible();
 		await expect.soft( icon ).toHaveCSS( 'width', '50px' );
-		await clickTab( currentContext, 0 );
+		await clickTabByPosition( currentContext, 0 );
 	} );
 
 	test( 'Check if the svg icons are visible on mobile display on the front end', async ( { page, apiRequests }, testInfo ) => {

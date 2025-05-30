@@ -1,1 +1,1 @@
-.test-style{background:linear-gradient(blue, blue) red;}
+.test-style{background-image:linear-gradient(blue, blue),url("https://example.com/image-300x300.jpg");background-repeat:repeat,repeat-y;background-attachment:scroll,fixed;background-position:0% 0%,top center;background-color:red;}

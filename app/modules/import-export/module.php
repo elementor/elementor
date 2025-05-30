@@ -144,7 +144,7 @@ class Module extends BaseModule {
 				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
-					'text' => esc_html__( 'Start Export', 'elementor' ),
+					'text' => esc_html__( 'Export', 'elementor' ),
 				],
 				'description' => esc_html__( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
 				'link' => [
@@ -156,7 +156,11 @@ class Module extends BaseModule {
 				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => esc_html__( 'Start Import', 'elementor' ),
+					'text' => Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
+				],
+				'button_secondary' => [
+					'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+					'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
 				],
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
@@ -200,18 +204,9 @@ class Module extends BaseModule {
 			<p class="tab-import-export-kit__info"><?php ElementorUtils::print_unescaped_internal_string( $intro_text ); ?></p>
 
 			<div class="tab-import-export-kit__wrapper">
-				<?php foreach ( $content_data as $data ) { ?>
-					<div class="tab-import-export-kit__container">
-						<div class="tab-import-export-kit__box">
-							<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-								<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-							</a>
-						</div>
-						<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-					</div>
-				<?php } ?>
+				<?php foreach ( $content_data as $data ) {
+					$this->print_item_content( $data );
+				} ?>
 			</div>
 
 			<?php
@@ -238,6 +233,39 @@ class Module extends BaseModule {
 			<?php } ?>
 		</div>
 		<?php
+	}
+
+	private function print_item_content( $data ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) { ?>
+			<div class="tab-import-export-kit__container">
+				<div class="tab-import-export-kit__box">
+					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+				</div>
+				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+				<div class="tab-import-export-kit__box action-buttons">
+					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
+						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
+						</a>
+					<?php endif; ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+					</a>
+				</div>
+			</div>
+		<?php } else { ?>
+			<div class="tab-import-export-kit__container">
+				<div class="tab-import-export-kit__box">
+					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+					</a>
+				</div>
+				<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+			</div>
+		<?php }
 	}
 
 	private function get_revert_href(): string {
@@ -480,25 +508,25 @@ class Module extends BaseModule {
 
 		// WP Content dir has to be exists and writable.
 		if ( ! $permissions[ Server::KEY_PATH_WP_CONTENT_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		// WP Uploads dir has to be exists and writable.
 		if ( ! $permissions[ Server::KEY_PATH_UPLOADS_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		// Elementor uploads dir permissions is divided to 2 cases:
 		// 1. If the dir exists, it has to be writable.
 		// 2. If the dir doesn't exist, the parent dir has to be writable (wp uploads dir), so we can create it.
 		if ( $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['exists'] && ! $permissions[ Server::KEY_PATH_ELEMENTOR_UPLOADS_DIR ]['write'] ) {
-			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY );
+			throw new \Error( self::NO_WRITE_PERMISSIONS_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
 	private function ensure_DOMDocument_exists() {
 		if ( ! class_exists( 'DOMDocument' ) ) {
-			throw new \Error( self::DOMDOCUMENT_MISSING );
+			throw new \Error( self::DOMDOCUMENT_MISSING ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
@@ -590,19 +618,19 @@ class Module extends BaseModule {
 			}
 
 			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
+				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 
 			$remote_zip_request = wp_safe_remote_get( $file_url );
 
 			if ( is_wp_error( $remote_zip_request ) ) {
 				Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
+				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 
 			if ( 200 !== $remote_zip_request['response']['code'] ) {
 				Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY );
+				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 
 			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
@@ -631,7 +659,7 @@ class Module extends BaseModule {
 		}
 
 		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
-			throw new \Error( static::PLUGIN_PERMISSIONS_ERROR_KEY );
+			throw new \Error( static::PLUGIN_PERMISSIONS_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$result = [
@@ -743,6 +771,7 @@ class Module extends BaseModule {
 			'tools_url' => Tools::get_url(),
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
+			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 		];
 	}
 

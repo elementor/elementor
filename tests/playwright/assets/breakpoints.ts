@@ -7,44 +7,23 @@ export default class {
 	readonly page: Page;
 	constructor( page: Page ) {
 		this.page = page;
-		// TODO: throw exception if experiment Breakpoints is deactivated.
 	}
 
 	static getDeviceLocator( page: Page, device: Device ): Locator {
-		// TODO: use the new data-testid attribute
 		const baseLocator = page.locator( '[aria-label="Switch Device"]' );
-		const locators = {
-			mobile: baseLocator.locator( 'button[aria-label="Mobile Portrait (up to 767px)"]' ),
-			mobile_extra: baseLocator.locator( 'button[aria-label="Mobile Landscape (up to 880px)"]' ),
-			tablet: baseLocator.locator( 'button[aria-label="Tablet Portrait (up to 1024px)"]' ),
-			tablet_extra: baseLocator.locator( 'button[aria-label="Tablet Landscape (up to 1200px)"]' ),
-			laptop: baseLocator.locator( 'button[aria-label="Laptop (up to 1366px)"]' ),
-			desktop: baseLocator.locator( 'button[aria-label="Desktop"]' ),
-			widescreen: baseLocator.locator( 'button[aria-label="Widescreen (2400px and up)"]' ),
-		};
-
-		return locators[ device ];
+		return baseLocator.locator( `[data-testid="switch-device-to-${ device }"]` );
 	}
 
-	static getAll() {
+	static getAll(): Device[] {
 		return [ 'mobile', 'mobile_extra', 'tablet', 'tablet_extra', 'laptop', 'desktop', 'widescreen' ];
 	}
 
-	static getBasic() {
+	static getBasic(): Device[] {
 		return [ 'mobile', 'tablet', 'desktop' ];
 	}
 
-	async saveOrUpdate( editor: EditorPage, toReload = false ) {
-		const hasTopBar: boolean = await editor.hasTopBar();
-		if ( hasTopBar ) {
-			await editor.saveSiteSettingsWithTopBar( toReload );
-		} else {
-			await editor.saveSiteSettingsNoTopBar();
-		}
-	}
-
 	async addAllBreakpoints( editor: EditorPage, experimentPostId?: string ) {
-		await editor.openSiteSettings( 'layout' );
+		await editor.openSiteSettings( 'settings-layout' );
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
@@ -57,7 +36,7 @@ export default class {
 			}
 		}
 
-		await this.saveOrUpdate( editor, true );
+		await editor.saveSiteSettings( true );
 
 		if ( experimentPostId ) {
 			await this.page.goto( `/wp-admin/post.php?post=${ experimentPostId }&action=elementor` );
@@ -73,7 +52,7 @@ export default class {
 	}
 
 	async resetBreakpoints( editor: EditorPage ) {
-		await editor.openSiteSettings( 'layout' );
+		await editor.openSiteSettings( 'settings-layout' );
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
@@ -81,30 +60,21 @@ export default class {
 		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
 			await this.page.click( removeBreakpointButton );
 		}
-		await this.saveOrUpdate( editor, true );
+		await editor.saveSiteSettings( true );
 	}
 
 	getBreakpointInputLocator( page: Page, device: BreakpointEditableDevice ): Locator {
-		const locators = {
-			mobile: page.locator( 'input[data-setting="viewport_mobile"]' ),
-			mobile_extra: page.locator( 'input[data-setting="viewport_mobile_extra"]' ),
-			tablet: page.locator( 'input[data-setting="viewport_tablet"]' ),
-			tablet_extra: page.locator( 'input[data-setting="viewport_tablet_extra"]' ),
-			laptop: page.locator( 'input[data-setting="viewport_laptop"]' ),
-			widescreen: page.locator( 'input[data-setting="viewport_widescreen"]' ),
-		};
-
-		return locators[ device ];
+		return page.locator( `input[data-setting="viewport_${ device }"]` );
 	}
 
 	async setBreakpoint( editor: EditorPage, device: BreakpointEditableDevice, value: number ) {
-		await editor.openSiteSettings( 'layout' );
+		await editor.openSiteSettings( 'settings-layout' );
 		await editor.openSection( 'section_breakpoints' );
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const locator = this.getBreakpointInputLocator( this.page, device );
 		await locator.fill( String( value ) );
-		await this.saveOrUpdate( editor );
+		await editor.saveSiteSettings( false );
 		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 }

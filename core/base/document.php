@@ -19,6 +19,7 @@ use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,6 +41,7 @@ abstract class Document extends Controls_Stack {
 	 */
 	const TYPE_META_KEY = '_elementor_template_type';
 	const PAGE_META_KEY = '_elementor_page_settings';
+	const ELEMENTOR_DATA_META_KEY = '_elementor_data';
 
 	const BUILT_WITH_ELEMENTOR_META_KEY = '_elementor_edit_mode';
 
@@ -731,9 +733,13 @@ abstract class Document extends Controls_Stack {
 					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
 			}
 
-			if ( Plugin::$instance->experiments->is_feature_active( 'atomic_widgets' ) ) {
-				$container_config['div-block'] =
-					Plugin::$instance->elements_manager->get_element_types( 'div-block' )->get_config();
+			if ( Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
+				// Order reflects the order in the editor.
+				$atomic_elements = [ 'e-flexbox', 'e-div-block' ];
+
+				foreach ( $atomic_elements as $element ) {
+					$container_config[ $element ] = Plugin::$instance->elements_manager->get_element_types( $element )->get_config();
+				}
 			}
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
@@ -1103,7 +1109,7 @@ abstract class Document extends Controls_Stack {
 	 * @return array
 	 */
 	public function get_elements_data( $status = self::STATUS_PUBLISH ) {
-		$elements = $this->get_json_meta( '_elementor_data' );
+		$elements = $this->get_json_meta( self::ELEMENTOR_DATA_META_KEY );
 
 		if ( self::STATUS_DRAFT === $status ) {
 			$autosave = $this->get_newer_autosave();
@@ -1111,7 +1117,7 @@ abstract class Document extends Controls_Stack {
 			if ( is_object( $autosave ) ) {
 				$autosave_elements = Plugin::$instance->documents
 					->get( $autosave->get_post()->ID )
-					->get_json_meta( '_elementor_data' );
+					->get_json_meta( self::ELEMENTOR_DATA_META_KEY );
 			}
 		}
 
@@ -1350,7 +1356,7 @@ abstract class Document extends Controls_Stack {
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );
 
 		// Don't use `update_post_meta` that can't handle `revision` post type
-		$is_meta_updated = update_metadata( 'post', $this->post->ID, '_elementor_data', $json_value );
+		$is_meta_updated = update_metadata( 'post', $this->post->ID, self::ELEMENTOR_DATA_META_KEY, $json_value );
 
 		/**
 		 * Before saving data.
@@ -1621,6 +1627,8 @@ abstract class Document extends Controls_Stack {
 	public function get_export_data() {
 		$content = Plugin::$instance->db->iterate_data( $this->get_elements_data(), function( $element_data ) {
 			$element_data['id'] = Utils::generate_random_string();
+
+			$element_data = apply_filters( 'elementor/document/element/replace_id', $element_data );
 
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 

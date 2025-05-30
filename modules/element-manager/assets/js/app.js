@@ -308,7 +308,7 @@ export const App = () => {
 				<p>
 					<Notice
 						onRemove={ () => {
-							markNoticeViewed( noticeData.notice_id );
+							markNoticeViewed( noticeData.notice_id, noticeData.nonce );
 							setNoticeData( { ...noticeData, is_viewed: true } );
 						} }
 						status="warning"

@@ -5,7 +5,8 @@
 // Section & Container - Overlay Settings
 .elementor-editor-section-settings,
 .elementor-editor-container-settings,
-.elementor-editor-div-block-settings {
+.elementor-editor-e-flexbox-settings,
+.elementor-editor-e-div-block-settings {
 	height: 24px;
 	top: 1px;
 	left: 50%;
@@ -15,6 +16,9 @@
 	border-start-end-radius: 5px;
 	border-end-start-radius: 0;
 	border-end-end-radius: 0;
+	stroke: transparent;
+	stroke-width: 0;
+	-webkit-text-stroke: 0 transparent;
 
 	i.eicon-handle {
 		font-size: 16px;
@@ -80,9 +84,8 @@
 	}
 }
 
-// Top Section / Container (Handles inside)
-.e-handles-inside,
-.elementor-section--handles-inside {
+// Top Section / Container / Div-block / Flexbox (Handles inside)
+.e-handles-inside {
 
 	> .elementor-element-overlay > .elementor-editor-element-settings {
 		transform: translateX(-50%);

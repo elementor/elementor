@@ -11,9 +11,28 @@ export default class VideoWidget extends Content {
 	 * @return {Promise<string>}
 	 */
 	async getVideoSrc( isPublished: boolean ): Promise<string> {
-		const page = true === isPublished ? this.page : this.editor.getPreviewFrame();
+		const page = ( true === isPublished )
+			? this.page
+			: this.editor.getPreviewFrame();
 		const src = await page.locator( EditorSelectors.video.iframe ).getAttribute( 'src' );
 		return src;
+	}
+
+	/**
+	 * Verify that the video overlay image has expected value.
+	 *
+	 * @param {Object}  args             - Image arguments.
+	 * @param {string}  args.imageTitle  - Image title.
+	 * @param {boolean} args.isPublished - Whether the post/page is published.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async verifyVideoOverlayImageSrc( args: { imageTitle: string, isPublished: boolean } ): Promise<void> {
+		const imageLocator = ( args.isPublished )
+			? this.page.locator( EditorSelectors.video.image )
+			: await this.editor.getPreviewFrame().waitForSelector( EditorSelectors.video.image );
+		const imageSrc = await imageLocator.getAttribute( 'style' );
+		expect( imageSrc ).toContain( args.imageTitle );
 	}
 
 	/**
@@ -43,9 +62,7 @@ export default class VideoWidget extends Content {
 	 */
 	async toggleVideoControls( controlSelectors: string[] ): Promise<void> {
 		for ( const i in controlSelectors ) {
-			await this.page.locator( controlSelectors[ i ] )
-				.locator( '..' )
-				.locator( EditorSelectors.video.switch ).click();
+			await this.editor.setSwitcherControlValue( controlSelectors[ i ], true );
 		}
 	}
 }

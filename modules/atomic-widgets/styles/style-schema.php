@@ -6,13 +6,13 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Linked_Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Gap_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,6 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Style_Schema {
 	public static function get() {
+		return apply_filters( 'elementor/atomic-widgets/styles/schema', static::get_style_schema() );
+	}
+
+	public static function get_style_schema(): array {
 		return array_merge(
 			self::get_size_props(),
 			self::get_position_props(),
@@ -35,41 +39,77 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Size_Prop_Type::make(),
-			'height' => Size_Prop_Type::make(),
-			'min-width' => Size_Prop_Type::make(),
-			'min-height' => Size_Prop_Type::make(),
+			'width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'height' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'min-width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'min-height' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
-			'overflow' => String_Prop_Type::make()->enum([
+			'overflow' => String_Prop_Type::make()->enum( [
 				'visible',
 				'hidden',
 				'auto',
-			]),
+			] ),
+			'aspect-ratio' => String_Prop_Type::make(),
+			'object-fit' => String_Prop_Type::make()->enum( [
+				'fill',
+				'cover',
+				'contain',
+				'none',
+				'scale-down',
+			] ),
+			'object-position' => String_Prop_Type::make()->enum( [
+				'center center',
+				'center left',
+				'center right',
+				'top center',
+				'top left',
+				'top right',
+				'bottom center',
+				'bottom left',
+				'bottom right',
+			] ),
 		];
 	}
 
 	private static function get_position_props() {
 		return [
-			'position' => String_Prop_Type::make()->enum([
+			'position' => String_Prop_Type::make()->enum( [
 				'static',
 				'relative',
 				'absolute',
 				'fixed',
 				'sticky',
-			]),
-			'top' => Size_Prop_Type::make(),
-			'right' => Size_Prop_Type::make(),
-			'bottom' => Size_Prop_Type::make(),
-			'left' => Size_Prop_Type::make(),
+			] ),
+			'inset-block-start' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'inset-inline-end' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'inset-block-end' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'inset-inline-start' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 			'z-index' => Number_Prop_Type::make(),
+			'scroll-margin-top' => Size_Prop_Type::make(),
 		];
 	}
 
 	private static function get_typography_props() {
 		return [
 			'font-family' => String_Prop_Type::make(),
-			'font-weight' => String_Prop_Type::make()->enum([
+			'font-weight' => String_Prop_Type::make()->enum( [
 				'100',
 				'200',
 				'300',
@@ -83,56 +123,73 @@ class Style_Schema {
 				'bold',
 				'bolder',
 				'lighter',
-			]),
+			] ),
 			'font-size' => Size_Prop_Type::make(),
 			'color' => Color_Prop_Type::make(),
 			'letter-spacing' => Size_Prop_Type::make(),
 			'word-spacing' => Size_Prop_Type::make(),
+			'column-count' => Number_Prop_Type::make(),
+			'column-gap' => Size_Prop_Type::make(),
 			'line-height' => Size_Prop_Type::make(),
-			'text-align' => String_Prop_Type::make()->enum([
-				'left',
+			'text-align' => String_Prop_Type::make()->enum( [
+				'start',
 				'center',
-				'right',
+				'end',
 				'justify',
-			]),
-			'font-style' => String_Prop_Type::make()->enum([
+			] ),
+			'font-style' => String_Prop_Type::make()->enum( [
 				'normal',
 				'italic',
 				'oblique',
-			]),
+			] ),
 			// TODO: validate text-decoration in more specific way [EDS-524]
 			'text-decoration' => String_Prop_Type::make(),
-			'text-transform' => String_Prop_Type::make()->enum([
+			'text-transform' => String_Prop_Type::make()->enum( [
 				'none',
 				'capitalize',
 				'uppercase',
 				'lowercase',
-			]),
-			'direction' => String_Prop_Type::make()->enum([
+			] ),
+			'direction' => String_Prop_Type::make()->enum( [
 				'ltr',
 				'rtl',
-			]),
-			'-webkit-text-stroke' => Stroke_Prop_Type::make(),
+			] ),
+			'stroke' => Stroke_Prop_Type::make(),
+			'all' => String_Prop_Type::make()->enum( [
+				'initial',
+				'inherit',
+				'unset',
+				'revert',
+				'revert-layer',
+			] ),
+			'cursor' => String_Prop_Type::make()->enum( [
+				'pointer',
+			] ),
 		];
 	}
 
 	private static function get_spacing_props() {
 		return [
-			'padding' => Linked_Dimensions_Prop_Type::make(),
-			'margin' => Linked_Dimensions_Prop_Type::make(),
+			'padding' => Union_Prop_Type::make()
+				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() ),
+			'margin' => Union_Prop_Type::make()
+				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
 	}
 
 	private static function get_border_props() {
 		return [
-			'border-radius' => Union_Prop_Type::make()->add_prop_type(
-				Size_Prop_Type::make()
-			)->add_prop_type(
-				Border_Radius_Prop_Type::make()
-			),
-			'border-width' => Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() )->add_prop_type( Border_Width_Prop_Type::make() ),
+			'border-radius' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Radius_Prop_Type::make() ),
+			'border-width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
-			'border-style' => String_Prop_Type::make()->enum([
+			'border-style' => String_Prop_Type::make()->enum( [
 				'none',
 				'hidden',
 				'dotted',
@@ -143,7 +200,7 @@ class Style_Schema {
 				'ridge',
 				'inset',
 				'outset',
-			]),
+			] ),
 		];
 	}
 
@@ -161,7 +218,7 @@ class Style_Schema {
 
 	private static function get_layout_props() {
 		return [
-			'display' => String_Prop_Type::make()->enum([
+			'display' => String_Prop_Type::make()->enum( [
 				'block',
 				'inline',
 				'inline-block',
@@ -172,28 +229,32 @@ class Style_Schema {
 				'flow-root',
 				'none',
 				'contents',
-			]),
-			'flex-direction' => String_Prop_Type::make()->enum([
+			] ),
+			'flex-direction' => String_Prop_Type::make()->enum( [
 				'row',
 				'row-reverse',
 				'column',
 				'column-reverse',
-			]),
-			'gap' => Gap_Prop_Type::make(),
-			'flex-wrap' => String_Prop_Type::make()->enum([
+			] ),
+			'gap' => Union_Prop_Type::make()
+				->add_prop_type( Layout_Direction_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make() ),
+			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
 				'wrap-reverse',
-			]),
+			] ),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Size_Prop_Type::make(),
+			'flex-basis' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
 		];
 	}
 
 	private static function get_alignment_props() {
 		return [
-			'justify-content' => String_Prop_Type::make()->enum([
+			'justify-content' => String_Prop_Type::make()->enum( [
 				'center',
 				'start',
 				'end',
@@ -206,8 +267,16 @@ class Style_Schema {
 				'space-around',
 				'space-evenly',
 				'stretch',
-			]),
-			'align-items' => String_Prop_Type::make()->enum([
+			] ),
+			'align-content' => String_Prop_Type::make()->enum( [
+				'center',
+				'start',
+				'end',
+				'space-between',
+				'space-around',
+				'space-evenly',
+			] ),
+			'align-items' => String_Prop_Type::make()->enum( [
 				'normal',
 				'stretch',
 				'center',
@@ -218,8 +287,8 @@ class Style_Schema {
 				'self-start',
 				'self-end',
 				'anchor-center',
-			]),
-			'align-self' => String_Prop_Type::make()->enum([
+			] ),
+			'align-self' => String_Prop_Type::make()->enum( [
 				'auto',
 				'normal',
 				'center',
@@ -234,7 +303,7 @@ class Style_Schema {
 				'first baseline',
 				'last baseline',
 				'stretch',
-			]),
+			] ),
 			'order' => Number_Prop_Type::make(),
 		];
 	}

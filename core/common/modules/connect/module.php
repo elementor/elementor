@@ -9,6 +9,7 @@ use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Plugin;
 use Elementor\Utils;
 use WP_User_Query;
+use Elementor\Core\Common\Modules\Connect\Rest\Rest_Api;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,6 +26,7 @@ class Module extends BaseModule {
 	const ACCESS_TIER_ADVANCED = 'advanced';
 	const ACCESS_TIER_EXPERT = 'expert';
 	const ACCESS_TIER_AGENCY = 'agency';
+	const ACCESS_TIER_PRO_LEGACY = 'pro';
 
 	/**
 	 * @since 2.3.0
@@ -83,6 +85,8 @@ class Module extends BaseModule {
 			// Note: The priority 11 is for allowing plugins to add their register callback on elementor init.
 			add_action( 'elementor/init', [ $this, 'init' ], 11 );
 		}
+
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 
 		add_filter( 'elementor/tracker/send_tracking_data_params', function ( $params ) {
 			return $this->add_tracking_data( $params );
@@ -256,5 +260,10 @@ class Module extends BaseModule {
 		];
 
 		return $params;
+	}
+
+	public function register_rest_routes() {
+		$rest_api = new Rest_Api();
+		$rest_api->register_routes();
 	}
 }

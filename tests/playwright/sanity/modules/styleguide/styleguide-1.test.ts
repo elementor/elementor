@@ -107,7 +107,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 		await Promise.all( [
 			page.waitForResponse( '/wp-admin/admin-ajax.php' ),
-			editor.openSiteSettings( ),
+			editor.openSiteSettings(),
 		] );
 
 		// Assert.
@@ -144,8 +144,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Switching between tabs makes relevant area visible', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
-		await page.waitForTimeout( 2000 );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
 
 		await page.locator( '#elementor-panel-header-kit-back' ).click();
 		await styleguideSaveChanges( page );
@@ -170,7 +169,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Enabling Styleguide Preview at Global Colors shows the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', false );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', false );
 
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -195,7 +194,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Enabling Styleguide Preview at Global Typography shows the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', false );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-typography', false );
 
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -221,7 +220,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 	test( 'Disabling Styleguide Preview at Global Colors hides the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="colors_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
 
@@ -245,7 +244,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Disabling Styleguide Preview at Global Typography hides the Styleguide Modal and updates user preferences', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Fonts', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-typography', true );
 
 		const siteSettingsStyleguideSwitcherBeforeClick = await page.isChecked( 'input[type=checkbox][data-setting="typography_enable_styleguide_preview"]' );
 		const styleguidePreviewDialog = editor.getPreviewFrame().locator( '#e-styleguide-preview-dialog' );
@@ -270,7 +269,7 @@ test.describe( 'Styleguide Preview tests @styleguide_image_link', () => {
 
 	test( 'Clicks on color trigger picker state and active state', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
-		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'Global Colors', true );
+		const { editor } = await getInSettingsTab( page, testInfo, apiRequests, 'global-colors', true );
 
 		const primaryColor = editor.getPreviewFrame().getByText( /Primary#[A-Fa-f0-9]{6}/i );
 		const picker = page.locator( '.pcr-button' ).first();

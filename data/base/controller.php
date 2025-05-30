@@ -304,7 +304,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * Default controller permission callback.
 	 * By default endpoint will inherit the permission callback from the controller.
-	 * By default permission is `current_user_can( 'administrator' );`.
+	 * By default permission is `current_user_can( 'manage_options' );`.
 	 *
 	 * @param \WP_REST_Request $request
 	 *
@@ -319,7 +319,7 @@ abstract class Controller extends WP_REST_Controller {
 			case 'PUT':
 			case 'DELETE':
 			case 'PATCH':
-				return current_user_can( 'administrator' );
+				return current_user_can( 'manage_options' );
 		}
 
 		return false;

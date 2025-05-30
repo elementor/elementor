@@ -9,7 +9,6 @@ test.describe( 'Column tests @column', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			container: false,
-			'nested-elements': true,
 		} );
 		await page.close();
 	} );
@@ -27,7 +26,7 @@ test.describe( 'Column tests @column', () => {
 		const editor = await wpAdmin.openNewPage();
 		const sectionId = await editor.addElement( { elType: 'section' }, 'document' );
 		const columnId = await editor.addElement( { elType: 'column' }, sectionId );
-		await editor.addWidget( 'heading', columnId );
+		await editor.addWidget( { widgetType: 'heading', container: columnId } );
 		await editor.selectElement( columnId );
 
 		await editor.closeNavigatorIfOpen();

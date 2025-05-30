@@ -5,6 +5,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
 import { SetDirectionMode } from 'elementor-document/hooks';
 import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -33,7 +34,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	filterSettings( newItem ) {
-		if ( 'container' !== newItem?.elType ) {
+		if ( ! getAllElementTypes().includes( newItem.elType ) ) {
 			return;
 		}
 
@@ -289,7 +290,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
-	 * Add a `Save as Template` button to the context menu.
+	 * Add a `Save as a Template` button to the context menu.
 	 *
 	 * @return {Object} groups
 	 */
@@ -303,7 +304,8 @@ const ContainerView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: __( 'Save as Template', 'elementor' ),
+					title: __( 'Save as a template', 'elementor' ),
+					shortcut: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>` : '',
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
@@ -339,7 +341,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return [ 'widget', 'container' ].includes( elementView.model.get( 'elType' ) );
+		return [ ...getAllElementTypes(), 'widget' ].includes( elementView.model.get( 'elType' ) );
 	},
 
 	/**

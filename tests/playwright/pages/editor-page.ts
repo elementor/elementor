@@ -6,17 +6,21 @@ import EditorSelectors from '../selectors/editor-selectors';
 import _path, { resolve as pathResolve } from 'path';
 import { getComparator } from 'playwright-core/lib/utils';
 import AxeBuilder from '@axe-core/playwright';
-import { $eType, Device, WindowType, BackboneType, ElementorType } from '../types/types';
+import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, ContainerType, ContainerPreset } from '../types/types';
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
+import { timeouts } from '../config/timeouts';
+import v4Panel from './editor/v4-elements-panel';
+
 let $e: $eType;
 let elementor: ElementorType;
 let Backbone: BackboneType;
 let window: WindowType;
 
 export default class EditorPage extends BasePage {
+	readonly v4Panel: v4Panel;
 	readonly previewFrame: Frame;
-	postId: number | null;
+	postId: number;
 
 	/**
 	 * Create an Elementor editor page.
@@ -24,11 +28,10 @@ export default class EditorPage extends BasePage {
 	 * @param {Page}     page        - Playwright page instance.
 	 * @param {TestInfo} testInfo    - Test information.
 	 * @param {number}   cleanPostId - Optional. Post ID.
-	 *
-	 * @return {void}
 	 */
 	constructor( page: Page, testInfo: TestInfo, cleanPostId: null | number = null ) {
 		super( page, testInfo );
+		this.v4Panel = new v4Panel( page, testInfo );
 		this.previewFrame = this.getPreviewFrame();
 		this.postId = cleanPostId;
 	}
@@ -62,7 +65,10 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Upload SVG in the Media Library. Expects media library to be open.
+	 * Upload SVG in the Media Library. Can be used on both Media Control and Icons Control.
+	 *
+	 * Please note that this method expects media library to be open as different controls
+	 * have different ways to open the media library.
 	 *
 	 * @param {string} svgFileName - Optional. SVG file name, without extension.
 	 *
@@ -139,7 +145,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<string>} Element ID
 	 */
-	async addElement( model: unknown, container: null | string = null, isContainerASection = false ): Promise<string> {
+	async addElement( model: unknown, container: null | string = null, isContainerASection: boolean = false ): Promise<string> {
 		return await this.page.evaluate( addElement, { model, container, isContainerASection } );
 	}
 
@@ -159,19 +165,34 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Generates a CSS selector string for a widget element based on its ID.
+	 *
+	 * @param {string} widgetId - The unique identifier of the widget.
+	 * @return {string} The CSS selector string for targeting the widget.
+	 */
+	getWidgetSelector( widgetId: string ): string {
+		return `[data-id="${ widgetId }"]`;
+	}
+
+	/**
 	 * Add a widget by `widgetType`.
 	 *
-	 * @param {string}  widgetType          - Widget type.
-	 * @param {string}  container           - Optional. Container to create the element in.
-	 * @param {boolean} isContainerASection - Optional. Whether the container is a section.
+	 * @param {Object}  props                       - Widget properties
+	 * @param {string}  props.widgetType            - Widget type
+	 * @param {string}  [props.container]           - Optional. Container to create the element in
+	 * @param {boolean} [props.isContainerASection] - Optional. Whether the container is a section
 	 *
-	 * @return {Promise<string>} The widget ID.
+	 * @return {Promise<string>} The widget ID
 	 */
-	async addWidget( widgetType: string, container = null, isContainerASection = false ): Promise<string> {
-		const widgetId = await this.addElement( { widgetType, elType: 'widget' }, container, isContainerASection );
-		await this.getPreviewFrame().waitForSelector( `[data-id='${ widgetId }']` );
+	async addWidget( props: { widgetType: string, container?: string | null, isContainerASection?: boolean } ): Promise<string> {
+		const widgetId = await this.addElement( { widgetType: props.widgetType, elType: 'widget' }, props.container, props.isContainerASection );
+		await this.getPreviewFrame().waitForSelector( this.getWidgetSelector( widgetId ) );
 
 		return widgetId;
+	}
+
+	async getWidget( widgetId: string ): Promise<Locator> {
+		return this.getPreviewFrame().locator( this.getWidgetSelector( widgetId ) );
 	}
 
 	/**
@@ -231,6 +252,17 @@ export default class EditorPage extends BasePage {
 		return this.getPreviewFrame().$( getElementSelector( id ) );
 	}
 
+	async waitForPreviewFrame(): Promise<Frame> {
+		await this.page.waitForSelector( '[id="elementor-preview-iframe"]', { timeout: timeouts.longAction } );
+
+		const frame = this.page.frame( { name: 'elementor-preview-iframe' } );
+		if ( ! frame ) {
+			throw new Error( 'Iframe is null even after it appeared in the DOM.' );
+		}
+
+		return frame;
+	}
+
 	/**
 	 * Get the frame of the Elementor editor preview.
 	 *
@@ -256,6 +288,21 @@ export default class EditorPage extends BasePage {
 
 		await this.getPreviewFrame().waitForSelector( '.elementor-element-' + elementId + '.elementor-element-editable' );
 		return this.getPreviewFrame().locator( '.elementor-element-' + elementId );
+	}
+
+	/**
+	 * Add new container preset.
+	 *
+	 * @param {ContainerType}   element - Element type. Available values: 'flex', 'grid'.
+	 * @param {ContainerPreset} preset  - Container preset.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async addNewContainerPreset( element: ContainerType, preset: ContainerPreset ): Promise<void> {
+		const frame = this.getPreviewFrame();
+		await frame.locator( '.elementor-add-section-button' ).click();
+		await frame.locator( `.${ element }-preset-button` ).click();
+		await frame.locator( `[data-preset=${ preset }]` ).click();
 	}
 
 	/**
@@ -303,7 +350,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ) {
+	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
 		const selectorMap: Record< 'style' | 'general', string > = {
 			style: 'style',
 			general: 'settings',
@@ -377,7 +424,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ) {
+	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ): Promise<void> {
 		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
 		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
 		const isContentVisible = await this.page.evaluate( ( selector ) => {
@@ -557,6 +604,30 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Set gap control value.
+	 *
+	 * @param {string}     controlId - The control to set the value to.
+	 * @param {GapControl} value     - The value to set. Either a string or an object with column, row and unit values.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async setGapControlValue( controlId: string, value: GapControl ): Promise<void> {
+		const control = this.page.locator( `.elementor-control-${ controlId }` );
+
+		if ( 'string' === typeof value ) {
+			await control.locator( '.elementor-control-gap >> nth=0' ).locator( 'input' ).fill( value );
+		} else if ( 'object' === typeof value ) {
+			await control.locator( '.elementor-link-gaps' ).click();
+			await control.locator( '.elementor-control-gap input[data-setting="column"]' ).fill( value.column );
+			await control.locator( '.elementor-control-gap input[data-setting="row"]' ).fill( value.row );
+			if ( value.unit ) {
+				await control.locator( '.e-units-switcher' ).click();
+				await control.locator( `[data-choose="${ value.unit }"]` ).click();
+			}
+		}
+	}
+
+	/**
 	 * Set an image on a media control.
 	 *
 	 * @param {string}  controlId  - The control to set the value to.
@@ -587,42 +658,19 @@ export default class EditorPage extends BasePage {
 		await this.page.locator( controlSelector ).click();
 	}
 
-	/**
-	 * Set shadow control value.
-	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Shadow type. Available options are 'text' or 'box.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setShadowControlValue( controlId: string, type: string ): Promise<void> {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_shadow_type label` ).first().click();
+	async setShadowControlValue( controlId: string, shadowType: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ shadowType }_shadow_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ shadowType }_shadow_type label` ).first().click();
 	}
 
-	/**
-	 * Set text stroke control value.
-	 *
-	 * @param {string} controlId - The control to set the value to.
-	 * @param {string} type      - Stroke type. Available options are 'text' or 'box.
-	 * @param {number} value     - Stroke value.
-	 * @param {string} color     - Stroke color.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async setTextStrokeControlValue( controlId: string, type: string, value: number, color: string ): Promise<void> {
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type i.eicon-edit` ).click();
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke input[type="number"]` ).first().fill( value.toString() );
+	async setTextStrokeControlValue( controlId: string, strokeType: string, value: number, color: string ): Promise<void> {
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke_type i.eicon-edit` ).click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke input[type="number"]` ).first().fill( value.toString() );
 		await this.page.locator( `.elementor-control-${ controlId }_stroke_color .pcr-button` ).first().click();
 		await this.page.locator( '.pcr-app.visible .pcr-result' ).first().fill( color );
-		await this.page.locator( `.elementor-control-${ controlId }_${ type }_stroke_type label` ).first().click();
+		await this.page.locator( `.elementor-control-${ controlId }_${ strokeType }_stroke_type label` ).first().click();
 	}
 
-	/**
-	 * Set a widget mask.
-	 *
-	 * @return {Promise<void>}
-	 */
 	async setWidgetMask(): Promise<void> {
 		await this.openSection( '_section_masking' );
 		await this.setSwitcherControlValue( '_mask_switch', true );
@@ -703,17 +751,8 @@ export default class EditorPage extends BasePage {
 	async hideEditorElements(): Promise<void> {
 		const css = '<style>.elementor-element-overlay,.elementor-empty-view{opacity: 0;}.elementor-widget,.elementor-widget:hover{box-shadow:none!important;}</style>';
 
-		await this.addWidget( 'html' );
+		await this.addWidget( { widgetType: 'html' } );
 		await this.setTextareaControlValue( 'type-code', css );
-	}
-
-	/**
-	 * Whether the Top Bar is active or not.
-	 *
-	 * @return {Promise<boolean>}
-	 */
-	async hasTopBar(): Promise<boolean> {
-		return await this.page.locator( EditorSelectors.panels.topBar.wrapper ).isVisible();
 	}
 
 	/**
@@ -733,37 +772,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open the menu panel. Or, when an inner panel is provided, open the inner panel.
-	 *
-	 * TODO: Delete when Editor Top Bar feature is merged.
-	 *
-	 * @param {string} innerPanel - Optional. The inner menu to open.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openMenuPanel( innerPanel?: string ): Promise<void> {
-		await this.page.locator( EditorSelectors.panels.menu.footerButton ).click();
-		await this.page.locator( EditorSelectors.panels.menu.wrapper ).waitFor();
-
-		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
-		}
-	}
-
-	/**
 	 * Open the elements/widgets panel.
 	 *
 	 * @return {Promise<void>}
 	 */
 	async openElementsPanel(): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.elementsPanel );
-		} else {
-			await this.page.locator( EditorSelectors.panels.elements.footerButton ).click();
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.elementsPanel );
 		await this.page.locator( EditorSelectors.panels.elements.wrapper ).waitFor();
 	}
 
@@ -773,14 +787,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openPageSettingsPanel(): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.documentSettings );
-		} else {
-			await this.page.locator( EditorSelectors.panels.pageSettings.footerButton ).click();
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.documentSettings );
 		await this.page.locator( EditorSelectors.panels.pageSettings.wrapper ).waitFor();
 	}
 
@@ -792,18 +799,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSiteSettings( innerPanel?: string ): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.siteSettings );
-		} else {
-			await this.openMenuPanel( 'global-settings' );
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.siteSettings );
 		await this.page.locator( EditorSelectors.panels.siteSettings.wrapper ).waitFor();
 
 		if ( innerPanel ) {
-			await this.page.locator( `.elementor-panel-menu-item-settings-${ innerPanel }` ).click();
+			await this.page.locator( `.elementor-panel-menu-item-${ innerPanel }` ).click();
 		}
 	}
 
@@ -813,16 +813,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openUserPreferencesPanel(): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.elementorLogo );
-			await this.page.waitForTimeout( 100 );
-			await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
-		} else {
-			await this.openMenuPanel( 'editor-preferences' );
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.elementorLogo );
+		await this.page.waitForTimeout( 100 );
+		await this.page.getByRole( 'menuitem', { name: 'User Preferences' } ).click();
 		await this.page.locator( EditorSelectors.panels.userPreferences.wrapper ).waitFor();
 	}
 
@@ -832,6 +825,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeNavigatorIfOpen(): Promise<void> {
+		await this.waitForPreviewFrame();
 		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
 
 		if ( ! isOpen ) {
@@ -849,8 +843,8 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setPageTemplate( template: 'default' | 'canvas' | 'full-width' ): Promise<void> {
-		let templateValue;
-		let templateClass;
+		let templateValue: string;
+		let templateClass: string;
 
 		switch ( template ) {
 			case 'default':
@@ -897,21 +891,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open the responsive view bar.
-	 *
-	 * TODO: Delete when Editor Top Bar feature is merged.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openResponsiveViewBar(): Promise<void> {
-		const hasResponsiveViewBar = await this.page.evaluate( () => elementor.isDeviceModeActive() );
-
-		if ( ! hasResponsiveViewBar ) {
-			await this.page.locator( '#elementor-panel-footer-responsive i' ).click();
-		}
-	}
-
-	/**
 	 * Select a responsive view.
 	 *
 	 * @param {Device} device - The name of the device breakpoint, such as `tablet_extra`.
@@ -919,13 +898,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async changeResponsiveView( device: Device ): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-		if ( hasTopBar ) {
-			await Breakpoints.getDeviceLocator( this.page, device ).click();
-		} else {
-			await this.openResponsiveViewBar();
-			await this.page.locator( `#e-responsive-bar-switcher__option-${ device }` ).first().locator( 'i' ).click();
-		}
+		await Breakpoints.getDeviceLocator( this.page, device ).click();
 	}
 
 	/**
@@ -934,17 +907,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage(): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.publish );
-			await this.page.waitForLoadState();
-			await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor();
-		} else {
-			await this.page.locator( 'button#elementor-panel-saver-button-publish' ).click();
-			await this.page.waitForLoadState();
-			await this.page.getByRole( 'button', { name: 'Update' } ).waitFor();
-		}
+		await this.clickTopBarItem( TopBarSelectors.publish );
+		await this.page.waitForLoadState();
+		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
 	}
 
 	/**
@@ -953,19 +918,11 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishAndViewPage(): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-
 		await this.publishPage();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.saveOptions );
-			await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
-			const pageId = await this.getPageId();
-			await this.page.goto( `/?p=${ pageId }` );
-		} else {
-			await this.openMenuPanel( 'view-page' );
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.saveOptions );
+		await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
+		const pageId = await this.getPageId();
+		await this.page.goto( `/?p=${ pageId }` );
 		await this.page.waitForLoadState();
 	}
 
@@ -981,14 +938,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async saveAndReloadPage(): Promise<void> {
-		const hasTopBar = await this.hasTopBar();
-
-		if ( hasTopBar ) {
-			await this.clickTopBarItem( TopBarSelectors.publish );
-		} else {
-			await this.page.locator( '#elementor-panel-saver-button-publish' ).click();
-		}
-
+		await this.clickTopBarItem( TopBarSelectors.publish );
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
@@ -1186,8 +1136,10 @@ export default class EditorPage extends BasePage {
 	async isUiStable( locator: Locator, retries: number = 3, timeout: number = 500 ): Promise<void> {
 		const comparator = getComparator( 'image/png' );
 		let retry = 0,
-			beforeImage,
-			afterImage;
+			beforeImage: Buffer,
+			afterImage: Buffer;
+
+		await locator.waitFor();
 
 		do {
 			if ( retry === retries ) {
@@ -1271,7 +1223,7 @@ export default class EditorPage extends BasePage {
 	 */
 	async removeWpAdminBar(): Promise<void> {
 		const adminBar = 'wpadminbar';
-		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: 10000 } );
+		await this.page.locator( `#${ adminBar }` ).waitFor( { timeout: timeouts.longAction } );
 		await this.page.evaluate( ( selector ) => {
 			const admin = document.getElementById( selector );
 			admin.remove();
@@ -1323,13 +1275,11 @@ export default class EditorPage extends BasePage {
 	/**
 	 * Save the site settings with the top bar.
 	 *
-	 * TODO: Rename when Editor Top Bar feature is merged.
-	 *
 	 * @param {boolean} toReload - Whether to reload the page after saving.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async saveSiteSettingsWithTopBar( toReload: boolean ): Promise<void> {
+	async saveSiteSettings( toReload: boolean ): Promise<void> {
 		if ( await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).isEnabled() ) {
 			await this.page.locator( EditorSelectors.panels.siteSettings.saveButton ).click();
 		} else {
@@ -1342,18 +1292,6 @@ export default class EditorPage extends BasePage {
 		if ( toReload ) {
 			await this.page.locator( EditorSelectors.refreshPopup.reloadButton ).click();
 		}
-	}
-
-	/**
-	 * Save the site settings without the top bar.
-	 *
-	 * TODO: Delete when Editor Top Bar feature is merged.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async saveSiteSettingsNoTopBar(): Promise<void> {
-		await this.page.locator( EditorSelectors.panels.footerTools.updateButton ).click();
-		await this.page.locator( EditorSelectors.toast ).waitFor();
 	}
 
 	async assertCorrectVwWidthStylingOfElement( element: Locator, vwValue: number = 100 ): Promise<void> {

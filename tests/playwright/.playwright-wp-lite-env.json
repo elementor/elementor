@@ -1,5 +1,5 @@
 {
-	"core": "6.7",
+	"core": "6.8",
 	"phpVersion": "8.1",
 	"plugins": {
 		"elementor": "./build"

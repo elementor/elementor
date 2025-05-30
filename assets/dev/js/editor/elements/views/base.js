@@ -79,6 +79,7 @@ BaseElementView = BaseContainer.extend( {
 	events() {
 		return {
 			mousedown: 'onMouseDown',
+			click: 'handleAnchorClick',
 			'click @ui.editButton': 'onEditButtonClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
@@ -277,6 +278,10 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
+		if ( ! elementor.userCan( 'design' ) ) {
+			return;
+		}
+
 		const elementType = this.getElementType(),
 			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
 			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
@@ -322,7 +327,11 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title, 'aria-label': tool.title } );
+			const $item = jQuery( '<li>', {
+				class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`,
+				title: tool.title,
+				'aria-label': tool.title,
+			} );
 			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
 			$item.append( $icon );
@@ -348,13 +357,42 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibility() {
-		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+		this.model.toggleVisibility();
 
 		this.toggleVisibilityClass();
 	},
 
 	toggleVisibilityClass() {
-		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
+		const isVisible = this.model.getVisibility();
+
+		if ( ! elementor.helpers.isAtomicWidget( this.model ) ) {
+			this.$el.toggleClass( 'elementor-edit-hidden', isVisible );
+
+			return;
+		}
+
+		/**
+		 * We cannot know for sure the nature of this.$el in atomic widgets in terms of its css display value.
+		 * Though most atomic widgets are wrapped with a { display: contents !important } inline styled div, not all are, i.e. div-block and flexbox - both have display: flex.
+		 *
+		 * The simplest solution might be to switch the inline display value to 'none',
+		 * but that would require us to also store the original display value to revert to upon showing back the widget.
+		 *
+		 * This leaves us with a slightly less elegant workaround - to wrap/unwrap it with a {display: none} inline styled div
+		 */
+		const isWrappedWithHiddenElement = this.$el.parent().is( 'div[data-type="hide-atomic-widget"]' );
+
+		if ( isVisible ) {
+			if ( ! isWrappedWithHiddenElement ) {
+				this.$el.wrap( '<div data-type="hide-atomic-widget" style="display: none" />' );
+			}
+
+			return;
+		}
+
+		if ( isWrappedWithHiddenElement ) {
+			this.$el.unwrap();
+		}
 	},
 
 	addElementFromPanel( options ) {
@@ -654,11 +692,11 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
-	isAtomicDynamic( changedSettings, dataBinding, changedControl ) {
+	isAtomicDynamic( changedSettings, dataBinding, changedControl, bindingDynamicCssId ) {
 		return '__dynamic__' in changedSettings &&
 			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
-			elementorCommon.config.experimentalFeatures.e_nested_atomic_repeaters &&
-			dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl;
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+				this.isCssIdControl( changedControl, bindingDynamicCssId ) );
 	},
 
 	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
@@ -757,24 +795,23 @@ BaseElementView = BaseContainer.extend( {
 		let changed = false;
 
 		const renderDataBinding = async ( dataBinding ) => {
-			const { bindingSetting } = dataBinding.dataset,
-				changedControl = this.getChangedDynamicControlKey( settings );
-			let change = settings.changed[ bindingSetting ];
+			const { bindingSetting, bindingConfig } = dataBinding.dataset;
+			// BindingSetting is kept for backward compatibility, should be removed once two versions from ED-17823 has been merged
+			// And use only the bindingConfig which contains all the needed information
+			const bindingSettings = bindingSetting.split( ' ' ); // Multiple binding settings can appear
+			const config = JSON.parse( bindingConfig );
+			let isChangeHandled = false;
 
-			if ( this.isAtomicDynamic( settings.changed, dataBinding, changedControl ) ) {
-				const dynamicValue = await this.getDynamicValue( settings, changedControl, bindingSetting );
+			for await ( const currentChange of this.bindingChangesGenerator( settings, bindingSettings, config ) ) {
+				const { key, value } = currentChange;
 
-				if ( dynamicValue ) {
-					change = dynamicValue;
+				if ( 'string' === typeof value ) {
+					this.renderDataBoundChange( value, dataBinding.el, config[ key ] );
+					isChangeHandled = true;
 				}
 			}
 
-			if ( change !== undefined ) {
-				dataBinding.el.innerHTML = change;
-				return true;
-			}
-
-			return false;
+			return isChangeHandled;
 		};
 
 		for ( const dataBinding of dataBindings ) {
@@ -808,6 +845,44 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		return changed;
+	},
+
+	async * bindingChangesGenerator( settings, bindingSettings, config ) {
+		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
+			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
+				continue;
+			}
+
+			if ( '__dynamic__' !== key ) {
+				yield { key, value };
+				continue;
+			}
+
+			for ( const dynamicKey of Object.keys( value ) ) {
+				if ( this.isHandledAsDatabinding( dynamicKey, bindingSettings, config ) ) {
+					const actual = await this.getDynamicValue( settings, dynamicKey, dynamicKey );
+					yield { key: dynamicKey, value: actual };
+				}
+			}
+		}
+	},
+
+	isHandledAsDatabinding( key, bindingSettings, config ) {
+		return bindingSettings.some( ( x ) => x === key ) || config[ key ] !== undefined;
+	},
+
+	renderDataBoundChange( change, element, config ) {
+		switch ( config?.editType ) {
+			case 'attribute':
+				element.closest( config.selector ).setAttribute( config.attr, change );
+				break;
+			case 'text':
+				element.innerHTML = change;
+				break;
+			// Backward compatibility should be deleted once two versions from ED-17823 has been merged
+			default:
+				element.innerHTML = change;
+		}
 	},
 
 	/**
@@ -946,7 +1021,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		if ( options.scrollIntoView ) {
-			elementor.helpers.scrollToView( this.$el, 200 );
+			elementor.helpers.scrollToView( this.getDomElement(), 200 );
 		}
 
 		$e.run( 'document/elements/toggle-selection', {
@@ -977,8 +1052,28 @@ BaseElementView = BaseContainer.extend( {
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
+		this.handleAnchorClick( event );
 
 		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+	},
+
+	handleAnchorClick( event ) {
+		const anchor = event.target.closest( 'a' );
+		const hash =
+			anchor?.getAttribute( 'href' ) ||
+			this.model?.get( 'settings' )?.get( 'link' )?.url ||
+			'';
+		if ( hash && hash.startsWith( '#' ) ) {
+			const scrollTargetElem = event.target?.ownerDocument.querySelector( hash );
+
+			if ( scrollTargetElem ) {
+				scrollTargetElem.scrollIntoView();
+			}
+		}
+
+		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
+			event.preventDefault();
+		}
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`
@@ -1048,7 +1143,7 @@ BaseElementView = BaseContainer.extend( {
 		return helper;
 	},
 
-	getDraggableElement() {
+	getDomElement() {
 		return this.$el;
 	},
 
@@ -1065,7 +1160,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.getDraggableElement().html5Draggable( {
+		this.getDomElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 

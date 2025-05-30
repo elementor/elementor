@@ -11,7 +11,7 @@ test.describe( 'ProgressBar test', () => {
 		// Assert.
 		await editor.addElement( { elType: 'container' }, 'document' );
 		await editor.setSliderControlValue( 'min_height', '1000' );
-		await editor.addWidget( 'progress' );
+		await editor.addWidget( { widgetType: 'progress' } );
 		await editor.publishAndViewPage();
 
 		const progressBar = page.locator( '.elementor-progress-bar' );

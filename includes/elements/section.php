@@ -1452,8 +1452,8 @@ class Element_Section extends Element_Base {
 			</div>
 		<# } #>
 		<div class="elementor-background-overlay"></div>
-		<div class="elementor-shape elementor-shape-top"></div>
-		<div class="elementor-shape elementor-shape-bottom"></div>
+		<div class="elementor-shape elementor-shape-top" aria-hidden="true"></div>
+		<div class="elementor-shape elementor-shape-bottom" aria-hidden="true"></div>
 		<div class="elementor-container elementor-column-gap-{{ settings.gap }}"></div>
 		<?php
 	}
@@ -1624,7 +1624,7 @@ class Element_Section extends Element_Base {
 		}
 
 		?>
-		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php
+		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" aria-hidden="true" data-negative="<?php
 			Utils::print_unescaped_internal_string( $negative ? 'true' : 'false' );
 		?>">
 			<?php

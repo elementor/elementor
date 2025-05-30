@@ -29,6 +29,7 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_IMAGE,
 		self::HISTORY_TYPE_BLOCK,
 	];
+	const MIN_PAGES_FOR_CREATE_WITH_AI_BANNER = 10;
 
 	public function get_name() {
 		return 'ai';
@@ -44,13 +45,11 @@ class Module extends BaseModule {
 			add_action( 'elementor/import-export/import-kit/runner/after-run', [ $this, 'handle_kit_install' ] );
 		}
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
+		if ( ! $this->is_ai_enabled() ) {
 			return;
 		}
 
-		if ( ! Preferences::is_ai_enabled( get_current_user_id() ) ) {
-			return;
-		}
+		add_filter( 'elementor/core/admin/homescreen', [ $this, 'add_create_with_ai_banner_to_homescreen' ] );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -86,6 +85,7 @@ class Module extends BaseModule {
 				'ai_toggle_favorite_history_item' => [ $this, 'ajax_ai_toggle_favorite_history_item' ],
 				'ai_get_product_image_unification' => [ $this, 'ajax_ai_get_product_image_unification' ],
 				'ai_get_animation' => [ $this, 'ajax_ai_get_animation' ],
+				'ai_get_image_to_image_isolate_objects' => [ $this, 'ajax_ai_get_product_image_unification' ],
 			];
 
 			foreach ( $handlers as $tag => $callback ) {
@@ -170,7 +170,19 @@ class Module extends BaseModule {
 		add_action( 'elementor/element/container/_section_transform/after_section_end', [ $this, 'register_ai_hover_effect_control' ], 10, 1 );
 	}
 
+	public function is_ai_enabled() {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
+			return false;
+		}
+
+		return Preferences::is_ai_enabled( get_current_user_id() );
+	}
+
 	public function handle_kit_install( $imported_data ) {
+		if ( ! $this->is_ai_enabled() ) {
+			return;
+		}
+
 		if ( ! isset( $imported_data['status'] ) || 'success' !== $imported_data['status'] ) {
 			return;
 		}
@@ -179,13 +191,13 @@ class Module extends BaseModule {
 			return;
 		}
 
-		$is_connected = $this->get_ai_app()->is_connected() && User::get_introduction_meta( 'ai_get_started' );
-
-		if ( ! $is_connected ) {
+		if ( ! isset( $imported_data['configData']['lastImportedSession']['instance_data']['site_settings']['settings']['ai'] ) ) {
 			return;
 		}
 
-		if ( ! isset( $imported_data['configData']['lastImportedSession']['instance_data']['site_settings']['settings']['ai'] ) ) {
+		$is_connected = $this->get_ai_app()->is_connected() && User::get_introduction_meta( 'ai_get_started' );
+
+		if ( ! $is_connected ) {
 			return;
 		}
 
@@ -403,7 +415,6 @@ class Module extends BaseModule {
 
 		wp_send_json_success( [
 			'message' => __( 'Image added successfully', 'elementor' ),
-			'refresh' => true,
 		] );
 	}
 
@@ -465,11 +476,6 @@ class Module extends BaseModule {
 			'is_get_started' => User::get_introduction_meta( 'ai_get_started' ),
 			'connect_url' => $this->get_ai_connect_url(),
 		];
-
-		if ( $this->get_ai_app()->is_connected() ) {
-			// Use a cached version, don't call the API on every editor load.
-			$config['usage'] = $this->get_ai_app()->get_cached_usage();
-		}
 
 		wp_localize_script(
 			'elementor-ai',
@@ -1015,10 +1021,6 @@ class Module extends BaseModule {
 			throw new \Exception( 'Missing prompt settings' );
 		}
 
-		if ( ! $app->is_connected() ) {
-			throw new \Exception( 'not_connected' );
-		}
-
 		if ( empty( $data['payload']['mask'] ) ) {
 			throw new \Exception( 'Missing Mask' );
 		}
@@ -1309,7 +1311,21 @@ class Module extends BaseModule {
 			throw new \Exception( 'Not Allowed to Upload images' );
 		}
 
+		$uploads_manager = new \Elementor\Core\Files\Uploads_Manager();
+		if ( $uploads_manager::are_unfiltered_uploads_enabled() ) {
+			Plugin::$instance->uploads_manager->set_elementor_upload_state( true );
+			add_filter( 'wp_handle_sideload_prefilter', [ Plugin::$instance->uploads_manager, 'handle_elementor_upload' ] );
+			add_filter( 'image_sideload_extensions', function( $extensions ) {
+				$extensions[] = 'svg';
+				return $extensions;
+			});
+		}
+
 		$attachment_id = media_sideload_image( $image_url, $parent_post_id, $image_title, 'id' );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return new \WP_Error( 'upload_error', $attachment_id->get_error_message() );
+		}
 
 		if ( ! empty( $attachment_id['error'] ) ) {
 			return new \WP_Error( 'upload_error', $attachment_id['error'] );
@@ -1395,21 +1411,23 @@ class Module extends BaseModule {
 	}
 
 	public function ajax_ai_get_product_image_unification( $data ): array {
-		$data['editor_post_id'] = $data['payload']['postId'];
+		if ( ! empty( $data['payload']['postId'] ) ) {
+			$data['editor_post_id'] = $data['payload']['postId'];
+		}
 		$this->verify_upload_permissions( $data );
 
 		$app = $this->get_ai_app();
 
 		if ( empty( $data['payload']['image'] ) || empty( $data['payload']['image']['id'] ) ) {
-			throw new \Exception( esc_html__( 'Missing Image', 'elementor' ) );
+			throw new \Exception( 'Missing Image' );
 		}
 
 		if ( empty( $data['payload']['settings'] ) ) {
-			throw new \Exception( esc_html__( 'Missing prompt settings', 'elementor' ) );
+			throw new \Exception( 'Missing prompt settings' );
 		}
 
 		if ( ! $app->is_connected() ) {
-			throw new \Exception( esc_html__( 'not_connected', 'elementor' ) );
+			throw new \Exception( 'not_connected' );
 		}
 
 		$context = $this->get_request_context( $data );
@@ -1418,6 +1436,7 @@ class Module extends BaseModule {
 		$result = $app->get_unify_product_images( [
 			'promptSettings' => $data['payload']['settings'],
 			'attachment_id' => $data['payload']['image']['id'],
+			'featureIdentifier' => $data['payload']['featureIdentifier'] ?? '',
 		], $context, $request_ids );
 
 		$this->throw_on_error( $result );
@@ -1529,5 +1548,48 @@ class Module extends BaseModule {
 
 		$product->set_gallery_image_ids( $gallery_image_ids );
 		$product->save();
+	}
+
+	private function should_display_create_with_ai_banner() {
+		$elementor_pages = new \WP_Query( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+			'fields' => 'ids',
+			'posts_per_page' => self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER + 1,
+		] );
+
+		if ( $elementor_pages->post_count > self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER ) {
+			return false;
+		}
+
+		if ( Utils::is_custom_kit_applied() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function get_create_with_ai_banner_data() {
+		return [
+			'title' => 'Create and launch your site faster with AI',
+			'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',
+			'input_placeholder' => 'Start describing the site you want to create...',
+			'button_title' => 'Create with AI',
+			'button_cta_url' => 'http://planner.elementor.com/chat.html',
+			'background_image' => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
+			'utm_source' => 'editor-home',
+			'utm_medium' => 'wp-dash',
+			'utm_campaign' => 'generate-with-ai',
+		];
+	}
+
+	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
+		if ( $this->should_display_create_with_ai_banner() ) {
+			$home_screen_data['create_with_ai'] = $this->get_create_with_ai_banner_data();
+		} else {
+			$home_screen_data['create_with_ai'] = null;
+		}
+
+		return $home_screen_data;
 	}
 }

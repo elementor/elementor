@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';
-import { setup } from '../nested-tabs/helper';
+import { setupExperiments } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
 
 test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
@@ -42,8 +42,8 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 
 		await test.step( 'Check that Toggle and Accordion widgets appear when nested accordion experiment is off', async () => {
 			// Act
-			await editor.addWidget( 'accordion', container );
-			await editor.addWidget( 'toggle', container );
+			await editor.addWidget( { widgetType: 'accordion', container } );
+			await editor.addWidget( { widgetType: 'toggle', container } );
 
 			// Assert
 			await expect.soft( accordionWrapper ).toHaveCount( 1 );
@@ -57,7 +57,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await setup( wpAdmin, {} );
+		await setupExperiments( wpAdmin, {} );
 
 		await page.close();
 	} );
@@ -102,7 +102,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 
 		await test.step( 'Check that Nested accordion replaces old accordion widget', async () => {
 			// Act
-			nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			nestedAccordion = await editor.selectElement( nestedAccordionID );
 
 			// Assert
@@ -215,7 +215,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		await editor.setChooseControlValue( 'flex_direction', 'eicon-arrow-right' );
 
 		const frame = editor.getPreviewFrame(),
-			nestedAccordionId = await editor.addWidget( 'nested-accordion', containerId ),
+			nestedAccordionId = await editor.addWidget( { widgetType: 'nested-accordion', container: containerId } ),
 			containerElement = frame.locator( `.elementor-element-${ containerId } .e-con-inner` ),
 			nestedAccordionElement = frame.locator( `.elementor-element-${ nestedAccordionId }.elementor-widget-n-accordion` ),
 			containerWidth = ( await containerElement.boundingBox() ).width,

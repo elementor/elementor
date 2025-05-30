@@ -38,6 +38,8 @@ class API {
 			static::set_transient( '_elementor_notifications_data', $notifications, '+1 hour' );
 		}
 
+		$notifications = apply_filters( 'elementor/core/admin/notifications', $notifications );
+
 		return $notifications;
 	}
 

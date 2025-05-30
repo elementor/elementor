@@ -6,6 +6,7 @@ use Elementor\Core\Editor\Loader\Editor_Base_Loader;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,18 +21,27 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 */
 	const LIBS = [
 		'editor-responsive',
+		'editor-ui',
 		'editor-v1-adapters',
 		self::ENV_PACKAGE,
-		'http',
+		'http-client',
 		'icons',
 		'locations',
 		'menus',
 		'query',
 		'schema',
 		'store',
+		'session',
+		'twing',
 		'ui',
 		'utils',
 		'wp-media',
+	];
+
+	const EXTENSIONS = [
+		'editor-documents',
+		'editor-notifications',
+		'editor-panels',
 	];
 
 	/**
@@ -124,11 +134,14 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 
 		if ( $env_config ) {
 			$client_env = apply_filters( 'elementor/editor/v2/scripts/env', [
-				'@elementor/http' => [
-					'base_url' => rest_url( 'elementor/v1' ),
+				'@elementor/http-client' => [
+					'base_url' => rest_url(),
 					'headers' => [
 						'X-WP-Nonce' => wp_create_nonce( 'wp_rest' ),
 					],
+				],
+				'@elementor/editor-controls' => [
+					'background_placeholder_image' => Placeholder_Image::get_background_placeholder_image(),
 				],
 			] );
 
@@ -198,13 +211,13 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 	 */
 	public function print_root_template() {
 		// Exposing the path for the view part to render the body of the editor template.
-		$body_file_path = __DIR__ . '/templates/editor-body-v2.view.php';
+		$body_file_path = __DIR__ . '/templates/editor-body-v2-view.php';
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}
 
 	public static function get_packages_to_enqueue(): array {
-		return apply_filters( 'elementor/editor/v2/packages', [] );
+		return apply_filters( 'elementor/editor/v2/packages', self::EXTENSIONS );
 	}
 
 	private function get_styles(): array {

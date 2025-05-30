@@ -1,0 +1,1 @@
+.test-style{background-image:linear-gradient(blue, blue),url("https://example.com/image.jpg"),url("https://example.com/image.jpg");background-attachment:scroll,fixed,scroll;background-size:auto auto,cover,auto auto;background-position:0% 0%,bottom right,40px 70px;background-color:red;}

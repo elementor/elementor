@@ -2,6 +2,7 @@
 namespace Elementor\Core\Base;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -223,7 +224,7 @@ abstract class Module extends Base_Object {
 		static $is_test_mode = null;
 
 		if ( null === $is_test_mode ) {
-			$is_test_mode = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) || ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS );
+			$is_test_mode = Utils::is_script_debug() || Utils::is_elementor_tests();
 		}
 
 		if ( ! $relative_url ) {

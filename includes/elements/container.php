@@ -173,8 +173,8 @@ class Container extends Element_Base {
 				<video class="elementor-background-video-hosted" {{ videoAttributes }}></video>
 			</div>
 		<# } #>
-		<div class="elementor-shape elementor-shape-top"></div>
-		<div class="elementor-shape elementor-shape-bottom"></div>
+		<div class="elementor-shape elementor-shape-top" aria-hidden="true"></div>
+		<div class="elementor-shape elementor-shape-bottom" aria-hidden="true"></div>
 		<# if ( 'boxed' === settings.content_width ) { #>
 			</div>
 		<# } #>
@@ -241,7 +241,7 @@ class Container extends Element_Base {
 			return;
 		}
 		?>
-		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" data-negative="<?php
+		<div class="elementor-shape elementor-shape-<?php echo esc_attr( $side ); ?>" aria-hidden="true" data-negative="<?php
 			Utils::print_unescaped_internal_string( $negative ? 'true' : 'false' );
 		?>">
 			<?php
@@ -323,8 +323,10 @@ class Container extends Element_Base {
 	 * @return \Elementor\Element_Base|\Elementor\Widget_Base|null
 	 */
 	protected function _get_default_child_type( array $element_data ) {
-		if ( 'container' === $element_data['elType'] ) {
-			return Plugin::$instance->elements_manager->get_element_types( 'container' );
+		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+
+		if ( in_array( $element_data['elType'], $el_types, true ) ) {
+			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
@@ -1400,8 +1402,8 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Column Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',
@@ -1444,8 +1446,8 @@ class Container extends Element_Base {
 			[
 				'label' => esc_html__( 'Row Span', 'elementor' ),
 				'type' => Controls_Manager::SELECT,
-				'default' => '1',
 				'options' => [
+					'' => ' Default',
 					'1' => '1',
 					'2' => '2',
 					'3' => '3',

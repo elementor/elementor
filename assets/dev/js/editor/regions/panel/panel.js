@@ -40,7 +40,7 @@ module.exports = BaseRegion.extend( {
 
 		self.$el.resizable( {
 			handles: elementorCommon.config.isRTL ? 'w' : 'e',
-			minWidth: 200,
+			minWidth: 250,
 			maxWidth: 680,
 			start() {
 				elementor.$previewWrapper.addClass( 'ui-resizable-resizing' );

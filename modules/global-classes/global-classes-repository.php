@@ -1,10 +1,11 @@
 <?php
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
-use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Styles\Utils as Atomic_Styles_Utils;
+use Elementor\Core\Base\Document;
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,99 +13,75 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Global_Classes_Repository {
-	const META_KEY = '_elementor_global_classes';
+
+	const META_KEY_FRONTEND = '_elementor_global_classes';
+	const META_KEY_PREVIEW = '_elementor_global_classes_preview';
+
+	const CONTEXT_FRONTEND = 'frontend';
+	const CONTEXT_PREVIEW = 'preview';
+
+	private string $context = self::CONTEXT_FRONTEND;
 
 	public static function make(): Global_Classes_Repository {
 		return new self();
 	}
 
+	public function context( string $context ): self {
+		$this->context = $context;
+
+		return $this;
+	}
+
 	public function all() {
-		$all = Plugin::$instance->kits_manager->get_active_kit()->get_json_meta( self::META_KEY );
+		$meta_key = $this->get_meta_key();
+		$all = $this->get_kit()->get_json_meta( $meta_key );
+
+		$is_preview = static::META_KEY_PREVIEW === $meta_key;
+		$is_empty = empty( $all );
+
+		if ( $is_preview && $is_empty ) {
+			$all = $this->get_kit()->get_json_meta( static::META_KEY_FRONTEND );
+		}
 
 		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 	}
 
-	public function get( string $id ) {
-		return $this->all()->get_items()->get( $id );
-	}
+	public function put( array $items, array $order ) {
+		$current_value = $this->all()->get();
 
-	public function delete( string $id ) {
-		$all = $this->all();
+		$updated_value = [
+			'items' => $items,
+			'order' => $order,
+		];
 
-		if ( ! isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( "Global class with id ${id} not found" );
+		// `update_metadata` fails for identical data, so we skip it.
+		if ( $current_value === $updated_value ) {
+			return;
 		}
 
-		Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->except( [ $id ] )->all(),
-			'order' => $all->get_order()->filter( fn( $item ) => $item !== $id )->all(),
-		] );
-	}
+		$meta_key = $this->get_meta_key();
+		$value = $this->get_kit()->update_json_meta( $meta_key, $updated_value );
 
-	public function put( string $id, array $value ) {
-		$all = $this->all();
+		$should_delete_preview = static::META_KEY_FRONTEND === $meta_key;
 
-		if ( ! isset( $all->get_items()[ $id ] ) ) {
-			throw new \Exception( "Global class with id {$id} not found" );
+		if ( $should_delete_preview ) {
+			$this->get_kit()->delete_meta( static::META_KEY_PREVIEW );
 		}
-
-		if ( $value === $all->get_items()[ $id ] ) {
-			return $value;
-		}
-
-		$value = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
-			'order' => $all->get_order()->all(),
-		] );
 
 		if ( ! $value ) {
-			throw new \Exception( 'Failed to update global class' );
+			throw new \Exception( 'Failed to update global classes' );
 		}
 
-		return $this->get( $id );
+		do_action( 'elementor/global_classes/update', $this->context, $updated_value, $current_value );
 	}
 
-	public function create( array $value ) {
-		$all = $this->all();
-		$id = $this->generate_global_class_id();
-
-		$value['id'] = $id;
-
-		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->merge( [ $id => $value ] )->all(),
-			'order' => $all->get_order()->push( $id )->all(),
-		] );
-
-		if ( ! $updated ) {
-			throw new \Exception( 'Failed to create global class' );
-		}
-
-		return $this->get( $id );
+	private function get_meta_key(): string {
+		return static::CONTEXT_FRONTEND === $this->context
+			? static::META_KEY_FRONTEND
+			: static::META_KEY_PREVIEW;
 	}
 
-	public function arrange( array $value ) {
-		$all = $this->all();
-
-		if ( $all->get_order()->all() === $value ) {
-			return $value;
-		}
-
-		$updated = Plugin::$instance->kits_manager->get_active_kit()->update_json_meta( self::META_KEY, [
-			'items' => $all->get_items()->all(),
-			'order' => $value,
-		] );
-
-		if ( ! $updated ) {
-			throw new \Exception( 'Failed to arrange global classes' );
-		}
-
-		return $this->all()->get_order()->all();
-	}
-
-	private function generate_global_class_id() {
-		$existing_ids = $this->all()->get_items()->keys();
-		$kit_id = Plugin::$instance->kits_manager->get_active_kit()->get_id();
-
-		return Atomic_Styles_Utils::generate_id( 'g-' . $kit_id . '-', $existing_ids );
+	private function get_kit() {
+		return Plugin::$instance->kits_manager->get_active_kit();
 	}
 }

@@ -417,9 +417,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'default' => [
-					'is_external' => true,
-				],
 				'dynamic' => [
 					'active' => true,
 				],

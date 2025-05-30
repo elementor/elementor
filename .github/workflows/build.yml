@@ -2,7 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-  pull_request:
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -20,6 +19,13 @@ on:
     branches:
       - 'main'
       - '3.*'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
 
 jobs:
   build-plugin:
@@ -57,7 +63,8 @@ jobs:
         run: npm config set git-tag-version false
 
       - name: Install Dependencies
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        if: github.event_name != 'pull_request' || steps.changelog_diff_files.outputs.diff == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+
         uses: ./.github/workflows/install-dependencies
 
       - name: Set ENV variables
@@ -78,14 +85,14 @@ jobs:
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
 
       - name: Build plugin
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        if: github.event_name != 'pull_request' || steps.changelog_diff_files.outputs.diff == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests')
         uses: ./.github/workflows/build-plugin
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
 
       - uses: actions/upload-artifact@v4
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
+        if: github.event_name != 'pull_request' || steps.changelog_diff_files.outputs.diff == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests')
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
           path: elementor

@@ -6,6 +6,9 @@ class Response_Builder {
 	private $data;
 	private int $status;
 	private array $meta = [];
+	private bool $empty = false;
+
+	const NO_CONTENT = 204;
 
 	private function __construct( $data, $status ) {
 		$this->data = $data;
@@ -28,11 +31,17 @@ class Response_Builder {
 		return $this;
 	}
 
+	public function no_content() {
+		return $this->set_status( static::NO_CONTENT );
+	}
+
 	public function build() {
-		$res_data = [
-			'data' => $this->data,
-			'meta' => $this->meta,
-		];
+		$res_data = static::NO_CONTENT === $this->status
+			? null
+			: [
+				'data' => $this->data,
+				'meta' => $this->meta,
+			];
 
 		return new \WP_REST_Response( $res_data, $this->status );
 	}

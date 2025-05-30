@@ -59,7 +59,7 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 	];
 
 	for ( const widgetType of testData ) {
-		test.skip( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
+		test( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
 			const hoverSelector = {
 				button_hover: 'a',

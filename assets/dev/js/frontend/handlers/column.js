@@ -1,4 +1,3 @@
-import BackgroundSlideshow from './background-slideshow';
-
-export default [ BackgroundSlideshow ];
-
+export default [
+	() => import( /* webpackChunkName: 'shared-frontend-handlers' */ './background-slideshow' ),
+];

@@ -1,14 +1,12 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Frontend;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
-use Elementor\Modules\AtomicWidgets\Base\Atomic_Widget_Base;
-use Elementor\Plugin;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Core\Files\CSS\Post;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Spatie\Snapshots\MatchesSnapshots;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,24 +18,11 @@ require_once __DIR__ . '/../props-factory.php';
 class Test_Atomic_Styles extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-	private Frontend $frontend;
-	private Frontend $frontend_mock;
-
 	public function set_up() {
 		parent::set_up();
 
-		$this->frontend = Plugin::$instance->frontend;
-		$this->frontend_mock = $this->createMock( Frontend::class );
-		Plugin::$instance->frontend = $this->frontend_mock;
-
 		remove_all_filters( 'elementor/atomic-widgets/styles/transformers' );
 		remove_all_actions( 'elementor/element/parse_css' );
-	}
-
-	public function tear_down() {
-		parent::tear_down();
-
-		Plugin::$instance->frontend = $this->frontend;
 	}
 
 	public function test_parse_atomic_widget_styles__append_css_of_multiple_widgets() {
@@ -213,40 +198,6 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
 	}
 
-	public function test_parse_atomic_widget_styles__enqueue_font_family() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'font-family' => 'Roboto',
-							],
-							'meta' => [],
-						],
-					],
-				],
-			],
-		]);
-
-		// Assert.
-		$this->frontend_mock->expects( $this->once() )
-			->method( 'enqueue_font' )
-			->with( 'Roboto' );
-
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-	}
-
 	public function test_parse_atomic_widget_styles__no_append_when_styles_are_empty() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();
@@ -294,8 +245,75 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
 	}
 
+	public function test_parse_atomic_widget_styles__enqueues_fonts() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$post_css = $this->make_mock_post();
+		$element = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'font-family' => 'Poppins',
+							],
+							'meta' => [
+								'breakpoint' => 'mobile',
+								'state' => null,
+							],
+						],
+					],
+				],
+				[
+					'id' => 'test-style-2',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'font-family' => 'Roboto',
+							],
+							'meta' => [
+								'breakpoint' => 'tablet',
+								'state' => null,
+							],
+						],
+					],
+				],
+				[
+					'id' => 'test-style-3',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'font-family' => 'Poppins',
+							],
+							'meta' => [
+								'breakpoint' => 'desktop',
+								'state' => null,
+							],
+						],
+					],
+				]
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post_css, $element );
+		$post_css->get_content();
+
+		// Assert.
+		$this->assertSame( [ 'Poppins', 'Roboto' ], $post_css->get_fonts() );
+	}
+
 	private function make_mock_post() {
-		return new Post( 1 );
+		$document = $this->factory()->documents->create_and_get();
+
+		return new Post_CSS( $document->get_id() );
 	}
 
 	/**
@@ -317,7 +335,7 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				], [] );
 			}
 
-			public function get_name() {
+			public static function get_element_type(): string {
 				return 'test-widget';
 			}
 
@@ -327,6 +345,10 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 
 			protected static function define_props_schema(): array {
 				return static::$options['props_schema'] ?? [];
+			}
+
+			public function define_base_styles(): array {
+				return static::$options['base_styles'] ?? [];
 			}
 		};
 	}

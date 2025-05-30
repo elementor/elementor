@@ -198,7 +198,7 @@ class Test_Export extends Elementor_Test_Base {
 
 		$documents = ( new Collection( [
 			$elementor_page,
-			$this->factory()->documents->publish_and_get( [ 'post_type' => 'e-landing-page', ] ),
+			$this->factory()->documents->publish_and_get( [ 'post_type' => 'post', ] ),
 			$this->factory()->documents->publish_and_get(),
 		] ) )
 			->map_with_keys( function( $document ) {

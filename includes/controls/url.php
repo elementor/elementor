@@ -65,7 +65,7 @@ class Control_URL extends Control_Base_Multiple {
 	protected function get_default_settings() {
 		return [
 			'label_block' => true,
-			'placeholder' => esc_html__( 'Paste URL or type', 'elementor' ),
+			'placeholder' => esc_html__( 'Type or paste your URL', 'elementor' ),
 			'autocomplete' => true,
 			'options' => [ 'is_external', 'nofollow', 'custom_attributes' ],
 			'dynamic' => [
@@ -115,7 +115,7 @@ class Control_URL extends Control_Base_Multiple {
 					<input id="<?php $this->print_control_uid( 'nofollow' ); ?>" type="checkbox" class="elementor-control-url-option-input" data-setting="nofollow">
 					<label for="<?php $this->print_control_uid( 'nofollow' ); ?>"><?php echo esc_html__( 'Add nofollow', 'elementor' ); ?></label>
 				</div>
-				<div class="elementor-control-url__custom-attributes">
+				<div class="elementor-control-url__custom-attributes elementor-control-direction-ltr">
 					<label for="<?php $this->print_control_uid( 'custom_attributes' ); ?>" class="elementor-control-url__custom-attributes-label"><?php echo esc_html__( 'Custom Attributes', 'elementor' ); ?></label>
 					<input type="text" id="<?php $this->print_control_uid( 'custom_attributes' ); ?>" class="elementor-control-unit-5" placeholder="key|value" data-setting="custom_attributes">
 				</div>

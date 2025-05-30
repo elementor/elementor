@@ -1,0 +1,1 @@
+.test-font-variable{font-family:var(--e-gf-009);}

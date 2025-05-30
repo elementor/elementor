@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module {
 	const NOT_TRANSLATED_APP_NAME = 'Site Planner';
 	const PLANNER_ORIGIN = 'https://planner.elementor.com';
-	const HIDDEN_PAGE_SLUG = null;
+	const HIDDEN_PAGE_SLUG = '';
 
 	public function __construct() {
 		add_action( 'rest_api_init', [ $this, 'on_rest_init' ] );

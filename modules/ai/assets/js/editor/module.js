@@ -8,7 +8,7 @@ import { getUiConfig } from './utils/editor-integration';
 import { getRemoteFrontendConfig } from './api';
 import { getUniqueId } from './context/requests-ids';
 import ApplyAiTitlesNavigatorBehavior from './integration/navigator/apply-ai-titles-to-navigator-behaviour';
-
+import { addAiPromotionForSiteLogo } from './utils/ai-promotion';
 setTimeout( async () => {
 	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
 		return;
@@ -44,6 +44,12 @@ export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
+
+		$e.routes.on( 'run:after', ( component, route ) => {
+			if ( 'panel/global/settings-site-identity' === route ) {
+				addAiPromotionForSiteLogo();
+			}
+		} );
 
 		window.addEventListener( 'hashchange', function( e ) {
 			if ( e.newURL.includes( 'welcome-ai' ) ) {
@@ -135,8 +141,9 @@ export default class Module extends elementorModules.editor.utils.Module {
 		const mediaControl = [ 'media' ];
 		if ( mediaControl.includes( aiOptions.type ) ) {
 			const mediaTypes = view.options.model.get( 'media_types' );
+			const type = view.options.model.get( 'type' );
 
-			if ( mediaTypes.length && mediaTypes.includes( 'image' ) ) {
+			if ( this.isAiImageGenerationEnabled( mediaTypes, type ) ) {
 				behaviors.ai = {
 					behaviorClass: AiBehavior,
 					type: aiOptions.type,
@@ -237,5 +244,11 @@ export default class Module extends elementorModules.editor.utils.Module {
 			controlType,
 			controlValue: view.options.container.settings.get( controlName ),
 		};
+	}
+
+	isAiImageGenerationEnabled( mediaTypes, controlType ) {
+		return mediaTypes.length &&
+			mediaTypes.includes( 'image' ) &&
+			! controlType.includes( 'media-preview' );
 	}
 }

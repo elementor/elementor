@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { setup } from './helper';
+import { setupExperiments } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
@@ -9,7 +9,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await setup( wpAdmin );
+		await setupExperiments( wpAdmin );
 
 		await page.close();
 	} );
@@ -29,7 +29,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
-		await editor.addWidget( 'button' );
+		await editor.addWidget( { widgetType: 'button' } );
 
 		// Load template.
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
@@ -83,7 +83,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
-		await editor.addWidget( 'button' );
+		await editor.addWidget( { widgetType: 'button' } );
 
 		// Load template.
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
@@ -146,7 +146,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-heading .e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -165,11 +165,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' ),
-			parentWidgetId = await editor.addWidget( 'nested-tabs', container ),
+			parentWidgetId = await editor.addWidget( { widgetType: 'nested-tabs', container } ),
 			tabsContainer = editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .e-con.e-active` ),
 			tabsContainerId = await tabsContainer.getAttribute( 'data-id' );
 
-		await editor.addWidget( 'nested-tabs', tabsContainerId );
+		await editor.addWidget( { widgetType: 'nested-tabs', container: tabsContainerId } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tabs-content .e-n-tabs-content .e-con.e-active' );
 
 		await editor.closeNavigatorIfOpen();
@@ -186,12 +186,12 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Assert.
 		// Check if title's are aligned on the left for the parent widget.
-		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"]` ) ).toHaveCSS( 'justify-content', 'flex-start' );
+		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"]` ) ).toHaveCSS( 'justify-content', 'flex-start' );
 		// Check if title's are aligned on the center for the child widget.
-		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"]` ) ).toHaveCSS( 'justify-content', 'center' );
+		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"]` ) ).toHaveCSS( 'justify-content', 'center' );
 		// Check if parent widget has red tabs.
-		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"] + .e-n-tab-title` ) ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"] + .e-n-tab-title` ) ).toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
 		// Check if child widget doesn't have red tabs.
-		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .elementor-widget-container > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"] + .e-n-tab-title` ) ).not.toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
+		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"] + .e-n-tab-title` ) ).not.toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
 	} );
 } );

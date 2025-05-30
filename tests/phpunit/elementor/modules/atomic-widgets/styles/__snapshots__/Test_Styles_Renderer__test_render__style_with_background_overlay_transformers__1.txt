@@ -1,1 +1,1 @@
-.test-background-overlay{background:linear-gradient(blue, blue);}
+.test-background-overlay{background-image:linear-gradient(blue, blue),url("https://example.com/image-1024x682.jpg");background-repeat:repeat,repeat-x;background-size:auto auto,140px auto;}

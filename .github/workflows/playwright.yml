@@ -2,6 +2,11 @@ name: Playwright
 
 on:
   pull_request:
+    types: [ labeled, synchronize, opened, reopened ]
+  push:
+    branches:
+      - 'main'
+      - '3.*'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -13,15 +18,6 @@ on:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
       inputs:
-        path-to-results:
-          required: false
-          description: 'Provide path to reporter files'
-          default: allure-results
-          type: choice
-          options:
-            - test-results/
-            - tests/playwright/blob-report
-            - allure-results
         fail_fast:
             type: boolean
             required: true
@@ -31,27 +27,30 @@ on:
           description: 'Provide @tag or a keyword'
           required: false
 
-# This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-  cancel-in-progress: true
+  group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-plugin:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
     needs: [build-plugin]
-    if: ${{ ( github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff ) && github.event.inputs.tag == '' }}
+    if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
         include:
+        - shardIndex: "v4-tests"
         - shardIndex: "elements-regression"
+        - shardIndex: "plugin_tester_section"
+        - shardIndex: "plugin_tester_container"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -92,8 +91,23 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        if: ${{ matrix.shardIndex != 'elements-regression' }}
-        run: npm run test:playwright  -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        if: ${{
+          matrix.shardIndex != 'elements-regression' &&
+          matrix.shardIndex != 'plugin_tester_container' &&
+          matrix.shardIndex != 'plugin_tester_section' &&
+          matrix.shardIndex != 'v4-tests'
+          }}
+        run: |
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run v4 tests
+        if: ${{ matrix.shardIndex == 'v4-tests' }}
+        run: npm run test:playwright -- --grep="@v4-tests"
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_container"
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_section"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression
@@ -120,7 +134,6 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          sed -i -e "s/image: 'mariadb:lts'/image: 'mariadb:11.2.4-jammy'/g" node_modules/@wordpress/env/lib/build-docker-compose-config.js
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -156,34 +169,44 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
+    if: always() && (needs.Playwright.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        if: ${{ (needs.Playwright.result == 'failure') }}
         uses: actions/checkout@v4
       - name: Send slack message
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'schedule' }}
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         uses: ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "Elementor Core: Playwright with WordPress nightly has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "Elementor Core: Playwright - ${{github.event_name}} has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright with WordPress nightly failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Github User : <${{ github.actor }}>"
                   }
                 }
               ]
             }
       - name: Check Playwright matrix status
-        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
+        if: ${{ (needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped') || (needs.PlaywrightWithTag.result != 'success' && needs.PlaywrightWithTag.result != 'skipped') }}
         run: exit 1

@@ -11,6 +11,7 @@ export const LOCATIONS = {
 	REMOVE_TEXT: 'remove-text',
 	CLEANUP: 'cleanup',
 	PRODUCT_IMAGE_UNIFICATION: 'product-image-unification',
+	ISOLATE_OBJECT: 'isolate-objects',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {
@@ -21,6 +22,10 @@ export const IMAGE_PROMPT_SETTINGS = {
 	IMAGE_ZOOM: 'zoom',
 	IMAGE_UPSCALE: 'upscale_to',
 	IMAGE_BACKGROUND_COLOR: 'background_color',
+};
+
+export const FEATURE_IDENTIFIER = {
+	ISOLATE_OBJECT: 'isolate-object',
 };
 
 export const IMAGE_PROMPT_CATEGORIES = {
@@ -38,6 +43,17 @@ export const IMAGE_PROMPT_CATEGORIES = {
 			'long-exposure': __( 'Long Exposure', 'elementor' ),
 			product: __( 'Product', 'elementor' ),
 			photorealistic: __( 'Photorealistic', 'elementor' ),
+		},
+	},
+	vector: {
+		label: __( 'Vector / Logo', 'elementor' ),
+		subCategories: {
+			'': __( 'None', 'elementor' ),
+			'typographic-logo': __( 'Typographic Logo', 'elementor' ),
+			'shape-logo': __( 'Shape Logo', 'elementor' ),
+			'handwritten-logo': __( 'Handwritten Logo', 'elementor' ),
+			'line-art-logo': __( 'Line Art Logo', 'elementor' ),
+			'old-school-logo': __( 'Old School Logo', 'elementor' ),
 		},
 	},
 	background: {

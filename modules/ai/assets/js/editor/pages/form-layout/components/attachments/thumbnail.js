@@ -1,11 +1,10 @@
-import { Box } from '@elementor/ui';
+import { Box, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
 
 export const THUMBNAIL_SIZE = 64;
 
-const StyledBody = styled.body`
+const StyledBody = styled( 'body' )`
 	html, body {
 		margin: 0;
 		padding: 0;

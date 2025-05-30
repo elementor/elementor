@@ -66,9 +66,9 @@ export const getUsageWidgets = async () => {
 	}
 };
 
-export const markNoticeViewed = async ( noticeId ) => {
+export const markNoticeViewed = async ( noticeId, nonce ) => {
 	try {
-		const response = await fetch( eElementManagerConfig.ajaxurl, {
+		await fetch( eElementManagerConfig.ajaxurl, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
@@ -76,13 +76,9 @@ export const markNoticeViewed = async ( noticeId ) => {
 			body: new URLSearchParams( {
 				action: 'elementor_set_admin_notice_viewed',
 				notice_id: noticeId,
+				_wpnonce: nonce,
 			} ),
 		} );
-
-		const data = await response.json();
-		if ( data.success ) {
-			return data.data;
-		}
 	} catch ( error ) {
 		console.error( error ); // eslint-disable-line no-console
 	}

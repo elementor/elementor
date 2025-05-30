@@ -2,7 +2,6 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
-import Content from '../../../pages/elementor-panel-tabs/content';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Icon and social icon widget tests', () => {
@@ -23,9 +22,8 @@ test.describe( 'Icon and social icon widget tests', () => {
 	test( 'Enable SVG fit-to-size', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
-			iconWidget = await editor.addWidget( 'icon' ),
+			iconWidget = await editor.addWidget( { widgetType: 'icon' } ),
 			iconSelector = '.elementor-element-' + iconWidget + ' .elementor-icon';
-		const contentTab = new Content( page, testInfo );
 
 		await test.step( 'Fit Aspect hidden for Icons', async () => {
 			await editor.openPanelTab( 'style' );
@@ -33,7 +31,12 @@ test.describe( 'Icon and social icon widget tests', () => {
 		} );
 
 		await test.step( 'Act', async () => {
-			await contentTab.uploadSVG();
+			await editor.openPanelTab( 'content' );
+			const mediaUploadControl = page.locator( '.elementor-control-selected_icon .elementor-control-media__preview' ).first();
+			await mediaUploadControl.hover();
+			await mediaUploadControl.waitFor();
+			await page.getByText( 'Upload SVG' ).first().click();
+			await editor.uploadSVG();
 			await editor.openPanelTab( 'style' );
 			await page.locator( '.elementor-switch-label' ).click();
 			await editor.setSliderControlValue( 'size', '300' );
@@ -62,13 +65,21 @@ test.describe( 'Icon and social icon widget tests', () => {
 	} );
 
 	test( 'Social icons: upload svg', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
-		const contentTab = new Content( page, testInfo );
 		await wpAdmin.openNewPage();
-		await editor.addWidget( 'social-icons' );
+
+		// Act.
+		await editor.addWidget( { widgetType: 'social-icons' } );
 		await page.locator( EditorSelectors.item ).first().click();
-		await contentTab.uploadSVG();
+		const mediaUploadControl = page.locator( '.elementor-control-social_icon .elementor-control-media__preview' ).first();
+		await mediaUploadControl.hover();
+		await mediaUploadControl.waitFor();
+		await page.getByText( 'Upload SVG' ).first().click();
+		await editor.uploadSVG();
+
+		// Assert.
 		await expect( editor.getPreviewFrame().locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();
 		await editor.publishAndViewPage();
 		await expect( page.locator( EditorSelectors.socialIcons.svgIcon ) ).toBeVisible();

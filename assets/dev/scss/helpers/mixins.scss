@@ -210,6 +210,10 @@
 	&.e-danger {
 		background-color: var(--e-a-btn-bg-danger);
 
+		&.color-white {
+			color: var(--e-a-color-white);
+		}
+
 		&:hover,
 		&:focus {
 			background-color: var(--e-a-btn-bg-danger-hover);

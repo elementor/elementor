@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\DevTools;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -210,7 +212,7 @@ class Deprecation {
 				];
 			}
 
-			if ( defined( 'ELEMENTOR_DEBUG' ) && ELEMENTOR_DEBUG ) {
+			if ( Utils::is_elementor_debug() ) {
 				$print_deprecated = true;
 			}
 		}
