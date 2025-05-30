@@ -173,7 +173,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	public function get_cloud_api(): Cloud_Library {
+	public static function get_cloud_api(): Cloud_Library {
 		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
 
 		if ( ! $cloud_library_app ) {

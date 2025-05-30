@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\KitLibrary\Data\KitsCloud;
 
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Base_Controller;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
@@ -45,6 +46,6 @@ class Controller extends Base_Controller {
 	}
 
 	protected function get_app(): Cloud_Library {
-		return Plugin::$instance->modules_manager->get_modules( 'kits-library' )->get_cloud_api();
+		return KitLibrary::get_cloud_api();
 	}
 }

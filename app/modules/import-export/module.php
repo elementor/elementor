@@ -7,7 +7,7 @@ use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
-use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use Elementor\Tools;
@@ -101,10 +101,6 @@ class Module extends BaseModule {
 		( new Usage() )->register();
 
 		$this->revert = new Revert();
-	}
-
-	public function get_cloud_api(): Cloud_Library {
-		return Plugin::$instance->modules_manager->get_modules( 'kit-library' )->get_cloud_api();
 	}
 
 	public function get_init_settings() {
@@ -762,7 +758,7 @@ class Module extends BaseModule {
 			$raw_screen_shot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
 			$title = $export['manifest']['title'];
 
-			$kit = $this->get_cloud_api()->create_kit(
+			$kit = KitLibrary::get_cloud_api()->create_kit(
 				$title,
 				$file,
 				$raw_screen_shot,
