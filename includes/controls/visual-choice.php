@@ -30,19 +30,19 @@ class Control_Visual_Choice extends Base_Data_Control {
 						choiceType = options.type || 'image';
 					#>
 					<div class="elementor-visual-choice-element elementor-visual-choice-element-{{ choiceType }}" style="--elementor-visual-choice-span: {{ data.toggle ? '1' : '0' }};">
-						<input id="<?php $this->print_control_uid( $control_uid_input_type ); ?>" type="radio" name="elementor-visual-choice-{{ data.name }}-{{ data._cid }}" value="{{ value }}">
+						<input id="<?php $this->print_control_uid( $control_uid_input_type ); ?>" type="radio" name="elementor-visual-choice-{{ data.name }}-{{ data._cid }}" value="{{ value }}" class="elementor-screen-only">
 						<label class="elementor-visual-choice-label tooltip-target" for="<?php $this->print_control_uid( $control_uid_input_type ); ?>" data-tooltip="{{ options.title }}">
 							<#
 							switch ( choiceType ) {
 								case 'button':
 									#>
-									<button class="elementor-visual-choice-button elementor-button">{{{ options.title }}}</button>
+									<button class="elementor-button">{{{ options.title }}}</button>
 									<#
 									break;
 								case 'image':
 								default:
 									#>
-										<img class="elementor-visual-choice-image" src="{{ options.image }}" aria-hidden="true" alt="{{ options.title }}" data-hover="{{ value }}" />
+										<img src="{{ options.image }}" aria-hidden="true" alt="{{ options.title }}" data-hover="{{ value }}" />
 										<span class="elementor-screen-only">{{{ options.title }}}</span>
 									<#
 							};
