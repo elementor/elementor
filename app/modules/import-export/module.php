@@ -741,7 +741,7 @@ class Module extends BaseModule {
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
 		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
-		$source = $settings[ 'kitInfo' ][ 'source' ];
+		$source = $settings['kitInfo']['source'];
 
 		$export = $this->export_kit( $settings );
 
@@ -760,7 +760,7 @@ class Module extends BaseModule {
 
 		if ( self::EXPORT_SOURCE_CLOUD === $source ) {
 			$raw_screen_shot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
-			$title = $export['manifest'][ 'title' ];
+			$title = $export['manifest']['title'];
 
 			$kit = $this->get_cloud_api()->create_kit(
 				$title,

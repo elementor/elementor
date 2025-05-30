@@ -388,15 +388,15 @@ class Cloud_Library extends Library {
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 
-		if ( empty( $response[ 'id' ] ) ) {
-			$error_message = esc_html__('Failed to create kit: Invalid response', 'elementor' );
-			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR );
+		if ( empty( $response['id'] ) ) {
+			$error_message = esc_html__( 'Failed to create kit: Invalid response', 'elementor' );
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		return $response;
 	}
 
-	private function create_multipart_body($fields, $files, $boundary ) {
+	private function create_multipart_body( $fields, $files, $boundary ): string {
 		$eol = "\r\n";
 		$body = '';
 
