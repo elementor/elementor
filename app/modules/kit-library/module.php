@@ -120,10 +120,8 @@ class Module extends BaseModule {
 		}, 12 /** After the initiation of the connect kit library */ );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) {
-			add_action( 'elementor/kit-library/generate-screenshot', [ $this, 'handle_kit_screenshot' ], 10, 1 );
 			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 		}
-		add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ], 1000 );
 	}
 
 	public function handle_kit_screenshot_generation() {
