@@ -1068,7 +1068,6 @@ class Widget_Common_Base extends Widget_Base {
 				'type' => Controls_Manager::VISUAL_CHOICE,
 				'label_block' => true,
 				'columns' => 4,
-				'height' => '250px',
 				'options' => $this->get_shapes(),
 				'default' => 'circle',
 				'selectors' => $this->get_mask_selectors( '-webkit-mask-image: url( ' . ELEMENTOR_ASSETS_URL . 'mask-shapes/{{VALUE}}.svg );' ),

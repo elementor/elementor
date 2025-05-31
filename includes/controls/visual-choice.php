@@ -36,14 +36,14 @@ class Control_Visual_Choice extends Base_Data_Control {
 							switch ( choiceType ) {
 								case 'button':
 									#>
-									<button class="elementor-button">{{{ options.title }}}</button>
+									<div class="elementor-button">{{{ options.title }}}</div>
 									<#
 									break;
 								case 'image':
 								default:
 									#>
-										<img src="{{ options.image }}" aria-hidden="true" alt="{{ options.title }}" data-hover="{{ value }}" />
-										<span class="elementor-screen-only">{{{ options.title }}}</span>
+									<img src="{{ options.image }}" aria-hidden="true" alt="{{ options.title }}" data-hover="{{ value }}" />
+									<span class="elementor-screen-only">{{{ options.title }}}</span>
 									<#
 							};
 							#>
