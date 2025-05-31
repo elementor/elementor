@@ -2,7 +2,7 @@ import WizardFooter from 'elementor-app/organisms/wizard-footer';
 
 export default function ActionsFooter( props ) {
 	return (
-		<WizardFooter separator justify="end">
+		<WizardFooter separator justify="end" className={ props.className }>
 			{ props.children }
 		</WizardFooter>
 	);
@@ -10,4 +10,5 @@ export default function ActionsFooter( props ) {
 
 ActionsFooter.propTypes = {
 	children: PropTypes.any,
+	className: PropTypes.string,
 };

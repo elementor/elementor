@@ -13,6 +13,7 @@ export default function ExportContextProvider( props ) {
 			kitInfo: {
 				title: null,
 				description: null,
+				source: null,
 			},
 		},
 		[ data, dispatch ] = useReducer( reducer, initialState );

@@ -7,7 +7,7 @@ import { ExportContext } from '../../../context/export-context/export-context-pr
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 
-import useKit from '../../../hooks/use-kit';
+import useKit, { KIT_SOURCE_MAP } from '../../../hooks/use-kit';
 import useExportPluginsData from './hooks/use-export-plugins-data';
 
 export default function ExportProcess() {
@@ -49,41 +49,28 @@ export default function ExportProcess() {
 				iframe.src = previewUrl.toString();
 			} );
 		},
-		exportKitToZip = async () => {
+		exportKit = async () => {
 			const { includes, selectedCustomPostTypes } = sharedContext.data;
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
 				The plugins must be added to the includes items, otherwise they will not be exported.
 				The plugins should always be added in order to include the Core plugin data in the kit.
 			 */
-			kitActions.export( {
+			const kitData = {
 				include: [ ...includes, 'plugins' ],
 				kitInfo,
 				plugins: pluginsData,
 				selectedCustomPostTypes,
-			} );
-		},
-		exportKitToCloud = async () => {
-			const { includes, selectedCustomPostTypes } = sharedContext.data;
+			};
 
-			const screenShotBlob = await generateScreenshot();
-
-			kitActions.exportKitToCloud( {
-				include: [ ...includes, 'plugins' ],
-				kitInfo,
-				plugins: pluginsData,
-				selectedCustomPostTypes,
-				screenShotBlob,
-			} );
-		},
-		exportKit = () => {
 			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.e_cloud_library_kits;
 
-			if ( isCloudKitFeatureActive ) {
-				exportKitToCloud();
-			} else {
-				exportKitToZip();
+			if ( isCloudKitFeatureActive && KIT_SOURCE_MAP.CLOUD === exportContext.data.kitInfo.source ) {
+				const scr = await generateScreenshot();
+				kitData.screenShotBlob = scr;
 			}
+
+			kitActions.export( kitData );
 		};
 
 	// On load.

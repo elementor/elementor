@@ -11,6 +11,7 @@ import KitInformation from './components/kit-information/kit-information';
 import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
+import Grid from 'elementor-app/ui/grid/grid';
 
 import kitContentData from '../../../shared/kit-content-data/kit-content-data';
 
@@ -24,8 +25,8 @@ export default function ExportKit() {
 				<Button
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
-					color="primary"
-					url="/export/plugins"
+					color={ exportContext.data.kitInfo.title ? 'primary' : 'disabled' }
+					url={ exportContext.data.kitInfo.title ? '/export/plugins' : '' }
 				/>
 			</ActionsFooter>
 		),
@@ -53,9 +54,11 @@ export default function ExportKit() {
 					] }
 				/>
 
-				<KitContent contentData={ kitContentData } />
+				<Grid container direction="column" className="e-app-export-kit__content">
+					<KitInformation />
 
-				<KitInformation />
+					<KitContent contentData={ kitContentData } />
+				</Grid>
 			</section>
 		</Layout>
 	);
