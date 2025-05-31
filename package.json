@@ -142,6 +142,7 @@
 		"@elementor/editor-ui": "0.10.0",
 		"@elementor/editor-v1-adapters": "0.12.0",
 		"@elementor/env": "0.3.5",
+		"@elementor/frontend-handlers": "^0.1.1",
 		"@elementor/http-client": "0.3.0",
 		"@elementor/icons": "1.44.0",
 		"@elementor/locations": "0.8.0",
