@@ -7,6 +7,7 @@ use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use Elementor\Tools;
@@ -55,6 +56,8 @@ class Module extends BaseModule {
 
 	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
 	const IMPORT_PLUGINS_ACTION = 'import-plugins';
+	const EXPORT_SOURCE_CLOUD = 'cloud';
+	const EXPORT_SOURCE_FILE = 'file';
 
 	/**
 	 * Assigning the export process to a property, so we can use the process from outside the class.
@@ -734,6 +737,8 @@ class Module extends BaseModule {
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
 		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$source = $settings['kitInfo']['source'];
+
 		$export = $this->export_kit( $settings );
 
 		$file_name = $export['file_name'];
@@ -747,8 +752,26 @@ class Module extends BaseModule {
 
 		$result = [
 			'manifest' => $export['manifest'],
-			'file' => base64_encode( $file ),
 		];
+
+		if ( self::EXPORT_SOURCE_CLOUD === $source ) {
+			$raw_screen_shot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
+			$title = $export['manifest']['title'];
+
+			$kit = KitLibrary::get_cloud_api()->create_kit(
+				$title,
+				$file,
+				$raw_screen_shot,
+			);
+
+			if ( is_wp_error( $kit ) ) {
+				wp_send_json_error( $kit );
+			}
+
+			$result['kit'] = $kit;
+		} else {
+			$result['file'] = base64_encode( $file );
+		}
 
 		wp_send_json_success( $result );
 	}

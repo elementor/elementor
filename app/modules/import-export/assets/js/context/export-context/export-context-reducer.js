@@ -12,6 +12,8 @@ export const reducer = ( state, { type, payload } ) => {
 			return { ...state, kitInfo: { ...state.kitInfo, title: payload } };
 		case 'SET_KIT_DESCRIPTION':
 			return { ...state, kitInfo: { ...state.kitInfo, description: payload } };
+		case 'SET_KIT_SAVE_SOURCE':
+			return { ...state, kitInfo: { ...state.kitInfo, source: payload } };
 		default:
 			return state;
 	}
