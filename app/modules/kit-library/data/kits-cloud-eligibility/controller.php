@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Data\KitsCloud;
+namespace Elementor\App\Modules\KitLibrary\Data\KitsCloudEligibility;
 
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
@@ -13,30 +13,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Controller extends Base_Controller {
 
 	public function get_name() {
-		return 'kits-cloud';
+		return 'kits-cloud-eligibility';
 	}
 
 	public function get_items( $request ) {
-		$data = $this->get_app()->get_kits();
-
-		if ( is_wp_error( $data ) ) {
-			return [
-				'data' => [],
-			];
-		}
-
-		$kits = ( new Collection( $data ) )->map( function ( $kit ) {
-			return [
-				'id' => $kit['id'],
-				'title' => $kit['title'],
-				'thumbnail_url' => $kit['thumbnailUrl'],
-				'created_at' => $kit['createdAt'],
-				'updated_at' => $kit['updatedAt'],
-			];
-		} );
-
 		return [
-			'data' => $kits->values(),
+			'data' => $this->get_app()->get_kits_quota(),
 		];
 	}
 
