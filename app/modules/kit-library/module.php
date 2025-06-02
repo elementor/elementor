@@ -126,6 +126,7 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) {
 			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 		}
+		add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 	}
 
 	public function handle_kit_screenshot_generation() {

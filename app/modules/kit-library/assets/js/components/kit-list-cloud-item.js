@@ -1,12 +1,27 @@
-import Kit from '../models/kit';
-import { Card, CardHeader, CardBody, Heading, CardImage, CardOverlay, Grid, Button, Popover } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { __ } from '@wordpress/i18n';
+import { useNavigate } from '@reach/router';
 import { useState } from 'react';
+
+import Kit from '../models/kit';
+import {
+	Card,
+	CardHeader,
+	CardBody,
+	Heading,
+	CardImage,
+	CardOverlay,
+	Grid,
+	Button,
+	Popover,
+} from '@elementor/app-ui';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-kit';
 
 import './kit-list-item.scss';
 
 const KitListCloudItem = ( props ) => {
+	const navigate = useNavigate();
+
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 
 	const eventTracking = ( command ) => {
@@ -54,14 +69,14 @@ const KitListCloudItem = ( props ) => {
 							role="button"
 							tabIndex={ 0 }
 							onClick={ () => {
-								eventTracking( 'kit-library/cloud/export' );
+								eventTracking( 'kit-library/cloud-export' );
 								// Export functionality would go here
 								setIsPopoverOpen( false );
 							} }
 							onKeyDown={ ( event ) => {
 								if ( 'Enter' === event.key || ' ' === event.key ) {
 									event.preventDefault();
-									eventTracking( 'kit-library/cloud/export' );
+									eventTracking( 'kit-library/cloud-export' );
 									setIsPopoverOpen( false );
 								}
 							} }
@@ -74,14 +89,14 @@ const KitListCloudItem = ( props ) => {
 							role="button"
 							tabIndex={ 0 }
 							onClick={ () => {
-								eventTracking( 'kit-library/cloud/rename' );
+								eventTracking( 'kit-library/cloud-rename' );
 								// Rename functionality would go here
 								setIsPopoverOpen( false );
 							} }
 							onKeyDown={ ( event ) => {
 								if ( 'Enter' === event.key || ' ' === event.key ) {
 									event.preventDefault();
-									eventTracking( 'kit-library/cloud/rename' );
+									eventTracking( 'kit-library/cloud-rename' );
 									setIsPopoverOpen( false );
 								}
 							} }
@@ -94,14 +109,14 @@ const KitListCloudItem = ( props ) => {
 							role="button"
 							tabIndex={ 0 }
 							onClick={ () => {
-								eventTracking( 'kit-library/cloud/delete' );
+								eventTracking( 'kit-library/cloud-delete' );
 								// Delete functionality would go here
 								setIsPopoverOpen( false );
 							} }
 							onKeyDown={ ( event ) => {
 								if ( 'Enter' === event.key || ' ' === event.key ) {
 									event.preventDefault();
-									eventTracking( 'kit-library/cloud/delete' );
+									eventTracking( 'kit-library/cloud-delete' );
 									setIsPopoverOpen( false );
 								}
 							} }
@@ -118,9 +133,12 @@ const KitListCloudItem = ( props ) => {
 						<Grid container direction="column" className="e-kit-library__kit-item-cloud-overlay">
 							<Button
 								className="eps-button e-kit-library__kit-item-cloud-overlay-import-button eps-button--primary eps-button--sm eps-button--contained"
-								text={ __( 'Import Kit', 'elementor' ) }
+								text={ __( 'Apply', 'elementor' ) }
 								icon="eicon-library-download"
-								onClick={ () => eventTracking( 'kit-library/cloud/import' ) }
+								onClick={ () => {
+									eventTracking( 'kit-library/cloud-import' );
+									navigate( `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`, { replace: true } );
+								} }
 							/>
 						</Grid>
 					</CardOverlay>
