@@ -81,16 +81,11 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$margin_value = Size_Prop_Type::generate( [
-			'unit' => 'px',
-			'size' => 0 ,
-		] );
-
 		return [
 			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'margin', $margin_value )
+						->add_prop( 'aspect-ratio', String_Prop_Type::generate( '16/9' ) )
 				),
 		];
 	}

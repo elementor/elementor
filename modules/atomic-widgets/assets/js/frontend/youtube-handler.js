@@ -37,7 +37,7 @@ register( {
 	uniqueId: 'e-youtube-handler',
 	callback: ( { element } ) => {
 		const youtubeElement = document.createElement( 'div' );
-		youtubeElement.classList.add( 'youtube-video' );
+		youtubeElement.style.height = '100%';
 		element.appendChild( youtubeElement );
 
 		const settingsAttr = element.getAttribute( 'data-settings' );
