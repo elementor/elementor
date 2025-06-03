@@ -3,7 +3,6 @@ import router from '@elementor/router';
 import TaxonomiesComponent from './data/taxonomies/component';
 import KitLibraryComponent from './e-component';
 import KitsCloudComponent from './data/kits-cloud/component';
-import KitsCloudEligibilityComponent from './data/kits-cloud-eligibility/component';
 
 export default class KitLibrary {
 	constructor() {
@@ -15,7 +14,6 @@ export default class KitLibrary {
 		$e.components.register( new TaxonomiesComponent() );
 		$e.components.register( new KitLibraryComponent() );
 		$e.components.register( new KitsCloudComponent() );
-		$e.components.register( new KitsCloudEligibilityComponent() );
 
 		router.addRoute( {
 			path: '/kit-library/*',

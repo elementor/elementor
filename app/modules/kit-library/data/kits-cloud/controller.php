@@ -40,6 +40,10 @@ class Controller extends Base_Controller {
 		];
 	}
 
+	public function register_endpoints() {
+		$this->register_endpoint( new Endpoints\Eligibility( $this ) );
+	}
+
 	public function get_permission_callback( $request ) {
 		return current_user_can( 'manage_options' );
 	}
