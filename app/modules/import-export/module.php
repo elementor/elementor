@@ -809,11 +809,14 @@ class Module extends BaseModule {
 		if ( self::EXPORT_SOURCE_CLOUD === $source ) {
 			$raw_screen_shot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
 			$title = $export['manifest']['title'];
+			$description = $export['manifest']['description'];
 
 			$kit = KitLibrary::get_cloud_api()->create_kit(
 				$title,
+				$description,
 				$file,
 				$raw_screen_shot,
+				$settings['include'],
 			);
 
 			if ( is_wp_error( $kit ) ) {
