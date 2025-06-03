@@ -350,7 +350,7 @@ class Cloud_Library extends Library {
 		] );
 	}
 
-	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $meta ) {
+	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
 		$endpoint = 'kits';
 
 		$boundary = wp_generate_password( 24, false );
@@ -363,10 +363,7 @@ class Cloud_Library extends Library {
 			[
 				'title' => $title,
 				'description' => $description,
-				'hasTemplates' => $this->get_kit_meta_value( 'templates', $meta ),
-				'hasContent' => $this->get_kit_meta_value( 'content', $meta ),
-				'hasSiteSettings' => $this->get_kit_meta_value( 'settings', $meta ),
-				'hasPlugins' => $this->get_kit_meta_value( 'plugins', $meta ),
+				'includes' => wp_json_encode( $includes ),
 			],
 			[
 				'file' => [
@@ -399,10 +396,6 @@ class Cloud_Library extends Library {
 		}
 
 		return $response;
-	}
-
-	private function get_kit_meta_value( $key, $meta ): string {
-		return in_array( $key, $meta, true ) ? 'true' : 'false';
 	}
 
 	private function create_multipart_body( $fields, $files, $boundary ): string {
