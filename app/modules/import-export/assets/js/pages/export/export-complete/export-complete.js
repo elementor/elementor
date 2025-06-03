@@ -14,6 +14,8 @@ import DashboardButton from 'elementor-app/molecules/dashboard-button';
 
 import './export-complete.scss';
 
+const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
+
 export default function ExportComplete() {
 	const exportContext = useContext( ExportContext );
 	const isSavedToCloud = KIT_SOURCE_MAP.CLOUD === exportContext.data.kitInfo.source;
@@ -38,8 +40,16 @@ export default function ExportComplete() {
 			if ( ! downloadLink.current ) {
 				const link = document.createElement( 'a' );
 
+				const defaultKitName = 'elementor-kit';
+				const kitName = exportContext.data.kitInfo?.title || defaultKitName;
+				const sanitizedKitName = kitName
+					.replace( INVALID_FILENAME_CHARS, '' )
+					.trim();
+
+				const fileName = sanitizedKitName || defaultKitName;
+
 				link.href = 'data:text/plain;base64,' + exportContext.data.exportedData.file;
-				link.download = 'elementor-kit.zip';
+				link.download = fileName + '.zip';
 
 				downloadLink.current = link;
 			}

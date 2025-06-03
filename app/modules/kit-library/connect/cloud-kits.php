@@ -36,7 +36,7 @@ class Cloud_Kits extends Library {
 		] );
 	}
 
-	public function create_kit( $title, $content_file_data, $preview_file_data ) {
+	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
 		$endpoint = 'kits';
 
 		$boundary = wp_generate_password( 24, false );
@@ -48,6 +48,8 @@ class Cloud_Kits extends Library {
 		$body = $this->create_multipart_body(
 			[
 				'title' => $title,
+				'description' => $description,
+				'includes' => wp_json_encode( $includes ),
 			],
 			[
 				'file' => [
