@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
 
+export const KIT_SOURCE_MAP = {
+	CLOUD: 'cloud',
+	FILE: 'file',
+};
+
 const KIT_STATUS_MAP = Object.freeze( {
 		INITIAL: 'initial',
 		UPLOADED: 'uploaded',
@@ -121,7 +126,7 @@ export default function useKit() {
 
 			await runImportRunners( importSession.data.session, importSession.data.runners );
 		},
-		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
+		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes, screenShotBlob } ) => {
 			setAjax( {
 				data: {
 					action: EXPORT_KIT_KEY,
@@ -130,6 +135,7 @@ export default function useKit() {
 						kitInfo,
 						plugins,
 						selectedCustomPostTypes,
+						screenShotBlob,
 					} ),
 				},
 			} );
@@ -141,7 +147,7 @@ export default function useKit() {
 			const newState = {};
 
 			if ( 'success' === ajaxState.status ) {
-				if ( ajaxState.response?.file ) {
+				if ( ajaxState.response?.file || ajaxState.response?.kit ) {
 					newState.status = KIT_STATUS_MAP.EXPORTED;
 				} else {
 					newState.status = ajaxState.response?.manifest ? KIT_STATUS_MAP.UPLOADED : KIT_STATUS_MAP.IMPORTED;

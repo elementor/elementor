@@ -4,7 +4,7 @@ namespace Elementor\Tests\Modules\Variables\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Variables\Classes\Rest_Api;
-use Elementor\Modules\Variables\Classes\Variables_Repository;
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;

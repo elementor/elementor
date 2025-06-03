@@ -52,20 +52,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['cssid'] = String_Prop_Type::make();
+			$props['_element_id'] = String_Prop_Type::make();
 		}
 		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
 		$settings_section_items = [
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
+			Link_Control::bind_to( 'link' ),
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
+			$settings_section_items[] = Text_Control::bind_to( '_element_id' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
 				'layout' => 'two-columns',
 				'topDivider' => true,
 			] );
@@ -129,7 +127,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$classes_string = implode( ' ', $classes );
 
-		$cssid_attribute = ! empty( $settings['cssid'] ) ? 'id="' . esc_attr( $settings['cssid'] ) . '"' : '';
+		$cssid_attribute = ! empty( $settings['_element_id'] ) ? 'id="' . esc_attr( $settings['_element_id'] ) . '"' : '';
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s" %s>%s</a>',

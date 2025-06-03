@@ -7,7 +7,7 @@ import { ExportContext } from '../../../context/export-context/export-context-pr
 import Layout from '../../../templates/layout';
 import FileProcess from '../../../shared/file-process/file-process';
 
-import useKit from '../../../hooks/use-kit';
+import useKit, { KIT_SOURCE_MAP } from '../../../hooks/use-kit';
 import useExportPluginsData from './hooks/use-export-plugins-data';
 
 export default function ExportProcess() {
@@ -22,20 +22,55 @@ export default function ExportProcess() {
 			exportContext.dispatch( { type: 'SET_DOWNLOAD_URL', payload: '' } );
 			navigate( 'export' );
 		},
-		exportKit = () => {
-			const { includes, selectedCustomPostTypes } = sharedContext.data;
+		generateScreenshot = () => {
+			return new Promise( ( resolve ) => {
+				const iframe = document.createElement( 'iframe' );
+				iframe.style = 'visibility: hidden;';
+				iframe.width = '1200';
+				iframe.height = '1000';
 
+				const messageHandler = ( event ) => {
+					if ( 'kit-screenshot-done' === event.data.name ) {
+						window.removeEventListener( 'message', messageHandler );
+						document.body.removeChild( iframe );
+						resolve( event.data.imageUrl || null );
+
+						window.removeEventListener( 'message', messageHandler );
+					}
+				};
+
+				window.addEventListener( 'message', messageHandler );
+
+				const previewUrl = new URL( window.location.origin );
+				previewUrl.searchParams.set( 'kit_thumbnail', '1' );
+				previewUrl.searchParams.set( 'nonce', elementorAppConfig[ 'import-export' ].kitPreviewNonce );
+
+				document.body.appendChild( iframe );
+				iframe.src = previewUrl.toString();
+			} );
+		},
+		exportKit = async () => {
+			const { includes, selectedCustomPostTypes } = sharedContext.data;
 			/*
 				Adding the plugins just before the export process begins for not mixing the kit-content selection with the plugins.
 				The plugins must be added to the includes items, otherwise they will not be exported.
 				The plugins should always be added in order to include the Core plugin data in the kit.
 			 */
-			kitActions.export( {
+			const kitData = {
 				include: [ ...includes, 'plugins' ],
 				kitInfo,
 				plugins: pluginsData,
 				selectedCustomPostTypes,
-			} );
+			};
+
+			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.e_cloud_library_kits;
+
+			if ( isCloudKitFeatureActive && KIT_SOURCE_MAP.CLOUD === exportContext.data.kitInfo.source ) {
+				const scr = await generateScreenshot();
+				kitData.screenShotBlob = scr;
+			}
+
+			kitActions.export( kitData );
 		};
 
 	// On load.

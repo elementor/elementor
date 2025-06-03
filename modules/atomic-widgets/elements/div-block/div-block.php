@@ -58,7 +58,7 @@ class Div_Block extends Atomic_Element_Base {
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['cssid'] = String_Prop_Type::make();
+			$props['_element_id'] = String_Prop_Type::make();
 		}
 
 		return $props;
@@ -95,13 +95,11 @@ class Div_Block extends Atomic_Element_Base {
 					],
 				]),
 
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
+			Link_Control::bind_to( 'link' ),
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
+			$settings_section_items[] = Text_Control::bind_to( '_element_id' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
 				'layout' => 'two-columns',
 				'topDivider' => true,
 			] );
@@ -183,5 +181,29 @@ class Div_Block extends Atomic_Element_Base {
 			'size' => 30,
 			'unit' => 'px',
 		] );
+	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+
+		$attributes = [
+			'class' => [
+				'e-con',
+				$base_style_class,
+				...( $settings['classes'] ?? [] ),
+			],
+		];
+
+		if ( ! empty( $settings['_element_id'] ) ) {
+			$attributes['id'] = esc_attr( $settings['_element_id'] );
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = array_merge( $attributes, $settings['link'] );
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 }

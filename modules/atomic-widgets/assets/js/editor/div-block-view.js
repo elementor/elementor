@@ -39,7 +39,7 @@ const DivBlockView = BaseElementView.extend( {
 	attributes() {
 		const attr = BaseElementView.prototype.attributes.apply( this );
 		const local = {};
-		const cssId = this.model.getSetting( 'cssid' );
+		const cssId = this.model.getSetting( '_element_id' );
 
 		if ( cssId ) {
 			local.id = cssId.value;
