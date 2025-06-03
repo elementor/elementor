@@ -23,7 +23,7 @@ class Eligibility extends Endpoint {
 
 	public function get_items( $request ) {
 		return [
-			'data' => KitLibrary::get_cloud_api()->get_kits_quota(),
+			'data' => KitLibrary::get_cloud_api()->get_quota(),
 		];
 	}
 }

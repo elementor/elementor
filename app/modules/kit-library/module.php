@@ -5,11 +5,11 @@ use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Utils\Exceptions;
-use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
@@ -113,6 +113,7 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );
+			$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
 		} );
 
 		add_action( 'elementor/init', function () {
@@ -171,15 +172,15 @@ class Module extends BaseModule {
 		}
 	}
 
-	public static function get_cloud_api(): Cloud_Library {
-		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
+	public static function get_cloud_api(): Cloud_Kits {
+		$cloud_kits_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-kits' );
 
-		if ( ! $cloud_library_app ) {
+		if ( ! $cloud_kits_app ) {
 			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
 
 			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		return $cloud_library_app;
+		return $cloud_kits_app;
 	}
 }

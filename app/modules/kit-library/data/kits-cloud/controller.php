@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary\Data\KitsCloud;
 
-use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
 use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Base_Controller;
 use Elementor\Core\Utils\Collection;
@@ -17,7 +17,7 @@ class Controller extends Base_Controller {
 	}
 
 	public function get_items( $request ) {
-		$data = $this->get_app()->get_kits();
+		$data = $this->get_app()->get_all();
 
 		if ( is_wp_error( $data ) ) {
 			return [
@@ -48,7 +48,7 @@ class Controller extends Base_Controller {
 		return current_user_can( 'manage_options' );
 	}
 
-	protected function get_app(): Cloud_Library {
+	protected function get_app(): Cloud_Kits {
 		return KitLibrary::get_cloud_api();
 	}
 }
