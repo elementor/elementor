@@ -10,8 +10,6 @@ use Elementor\Modules\AtomicWidgets\Styles_Manager;
 use Elementor\Plugin;
 
 class Atomic_Widget_Base_Styles {
-	private ?array $css_by_breakpoint = null;
-
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widget/styles/enqueue',
@@ -28,25 +26,23 @@ class Atomic_Widget_Base_Styles {
 			return;
 		}
 
+		$styles = [];
+
 		foreach ( $post_ids as $post_id ) {
 			$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
 			$used_atomic_elements = $this->get_used_atomic_elements( $elements_data );
 
-			if ( empty( $used_atomic_elements ) ) {
-				return;
-			}
-
 			$styles = Collection::make( $used_atomic_elements )
 				->map( fn( $element ) => $element->get_base_styles() )
 				->flatten()
+				->merge( $styles )
 				->all();
-
-
-			$styles_manager->register(
-				'base',
-				$styles,
-			);
 		}
+
+		$styles_manager->register(
+			'base',
+			$styles,
+		);
 	}
 
 	private function get_used_atomic_elements( array $elements_data ): array {
