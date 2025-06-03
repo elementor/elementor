@@ -68,7 +68,7 @@ const messagesContent = {
 		title: __( 'Unable to download the Kit', 'elementor' ),
 		text: __( 'This download requires the \'DOMDocument\' PHP extension, which we couldn’t detect on your server. Enable this extension, or get in touch with your hosting service for support, and then give the download another go.', 'elementor' ),
 	},
-	'insuffiecient-quota': {
+	'insufficient-quota': {
 		title: __( 'Couldn’t Export the Kit', 'elementor' ),
 		text: __( 'The export failed because it will pass the maximum kits you can export.', 'elementor' ),
 	},

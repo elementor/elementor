@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cloud_Kits extends Library {
 	const THRESHOLD_UNLIMITED = -1;
 	const FAILED_TO_FETCH_QUOTA_KEY = 'failed-to-fetch-quota';
-	const INSUFFIECIENT_QUOTA_KEY = 'insuffiecient-quota';
+	const INSUFFIECIENT_QUOTA_KEY = 'insufficient-quota';
 
 	public function get_title() {
 		return esc_html__( 'Cloud Kits', 'elementor' );
