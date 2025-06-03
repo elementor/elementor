@@ -3,8 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
