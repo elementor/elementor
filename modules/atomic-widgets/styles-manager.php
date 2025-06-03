@@ -12,11 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Styles_Manager {
 	private static ?self $instance = null;
 
-//	/** @var array<string, array<string, Style>> */
-//	private array $registered_styles_by_breakpoint = [];
-
 	private array $registered_styles_by_provider = [];
-
 
 	const BREAKPOINTS = [
 		'desktop',

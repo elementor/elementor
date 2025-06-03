@@ -53,7 +53,12 @@ class Global_Classes_CSS {
 		foreach ( $post_ids as $post_id ) {
 			$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
 			$used_global_classes_ids = array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
-			$global_classes = array_merge($global_classes, Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids )->get_items()->all() );
+			$used_global_classes = Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids )->get_items()->map( function( $item ) {
+				$item['id'] = $item['label'];
+				return $item;
+			})->all();
+
+			$global_classes = array_merge($global_classes,  $used_global_classes);
 		}
 
 		$styles_manager->register(
