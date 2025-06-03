@@ -113,7 +113,10 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );
-			$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) {
+				$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
+			}
 		} );
 
 		add_action( 'elementor/init', function () {
