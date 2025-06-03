@@ -18,7 +18,7 @@ class Size_Transformer extends Transformer_Base {
 			return $size;
 		}
 
-		if ( $unit === 'auto' ) {
+		if ( 'auto' === $unit ) {
 			return 'auto';
 		}
 
