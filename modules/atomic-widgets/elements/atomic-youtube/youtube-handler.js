@@ -50,6 +50,7 @@ register( {
 		}
 
 		let player;
+		let observer;
 
 		const prepareYTVideo = ( YT ) => {
 			const playerOptions = {
@@ -92,7 +93,7 @@ register( {
 		};
 
 		if ( parsedSettings.lazyload ) {
-			const observer = new IntersectionObserver(
+			observer = new IntersectionObserver(
 				( entries ) => {
 					if ( entries[ 0 ].isIntersecting ) {
 						loadYouTubeAPI().then( ( apiObject ) => prepareYTVideo( apiObject ) );
@@ -113,6 +114,11 @@ register( {
 
 			if ( element.contains( youtubeElement ) ) {
 				element.removeChild( youtubeElement );
+			}
+
+			if ( observer && 'function' === typeof observer.disconnect ) {
+				observer.disconnect();
+				observer = null;
 			}
 		};
 	},

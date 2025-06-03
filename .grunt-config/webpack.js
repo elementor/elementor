@@ -145,12 +145,12 @@ const entry = {
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
-	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/youtube-handler.js' ),
 };
 
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
+	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
 };
 
 const externals = [

@@ -293,16 +293,16 @@ class Module extends BaseModule {
 
 		$assets_config_provider->load( 'frontend-handlers' );
 
-		$package_config = $assets_config_provider->get( 'frontend-handlers' );
+		$frontend_handlers_package_config = $assets_config_provider->get( 'frontend-handlers' );
 
-		if ( ! $package_config ) {
+		if ( ! $frontend_handlers_package_config ) {
 			return;
 		}
 
 		wp_register_script(
-			$package_config['handle'],
+			$frontend_handlers_package_config['handle'],
 			$this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
-			$package_config['deps'],
+			$frontend_handlers_package_config['deps'],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -310,7 +310,7 @@ class Module extends BaseModule {
 		wp_register_script(
 			'elementor-youtube-handler',
 			$this->get_js_assets_url( 'youtube-handler' ),
-			[ 'elementor-v2-frontend-handlers' ],
+			[ $frontend_handlers_package_config['handle'] ],
 			ELEMENTOR_VERSION,
 			true
 		);
