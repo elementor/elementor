@@ -18,29 +18,19 @@ class CSS_Renderer {
 	}
 
 	public function raw_css(): string {
-		$variable_groups = $this->global_variables();
+		$list_of_variables = $this->global_variables();
 
-		if ( empty( $variable_groups ) ) {
+		if ( empty( $list_of_variables ) ) {
 			return '';
 		}
 
-		$css_entries = $this->generate_css_entries( $variable_groups );
+		$css_entries = $this->css_entries_for( $list_of_variables );
 
 		if ( empty( $css_entries ) ) {
 			return '';
 		}
 
 		return $this->wrap_with_root( $css_entries );
-	}
-
-	private function generate_css_entries( array $groups ): array {
-		$entries = [];
-
-		foreach ( $groups as $list_of_variables ) {
-			$entries = array_merge( $entries, $this->css_entries_for( $list_of_variables ) );
-		}
-
-		return $entries;
 	}
 
 	private function css_entries_for( array $list_of_variables ): array {

@@ -138,6 +138,7 @@ class Cloud_Library extends Library {
 				'Content-Type' => 'application/json',
 			],
 			'body' => wp_json_encode( $data ),
+			'timeout' => 120,
 		];
 
 		return $this->http_request( 'POST', 'resources/bulk', $resource, [
@@ -191,6 +192,7 @@ class Cloud_Library extends Library {
 
 		$response = $this->http_request( 'PATCH', $endpoint, $payload, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+			'timeout' => 120,
 		]);
 
 		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {
@@ -335,15 +337,6 @@ class Cloud_Library extends Library {
 	 */
 	public function get_quota() {
 		return $this->http_request( 'GET', 'quota', [], [
-			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
-		] );
-	}
-
-	/**
-	 * @return array|\WP_Error
-	 */
-	public function get_kits() {
-		return $this->http_request( 'GET', 'kits', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 	}
