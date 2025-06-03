@@ -18,11 +18,11 @@ class Fonts {
 
 		$list_of_variables = ( new Variables() )->get_all();
 
-		$font_variables = array_filter( $list_of_variables, function( $variable ) {
-			return $variable['type'] === Font_Variable_Prop_Type::get_key();
-		} );
+		foreach ( $list_of_variables as $variable ) {
+			if ( $variable['type'] !== Font_Variable_Prop_Type::get_key() ) {
+				continue;
+			}
 
-		foreach ( $font_variables as $variable ) {
 			$font_family = sanitize_text_field( $variable['value'] ?? '' );
 
 			if ( empty( $font_family ) ) {
