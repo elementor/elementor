@@ -16,8 +16,11 @@ class Fonts {
 			return;
 		}
 
-		$variable_groups = ( new Variables() )->get_all();
-		$font_variables = $variable_groups[ Font_Variable_Prop_Type::get_key() ] ?? [];
+		$list_of_variables = ( new Variables() )->get_all();
+
+		$font_variables = array_filter( $list_of_variables, function( $variable ) {
+			return $variable['type'] === Font_Variable_Prop_Type::get_key();
+		} );
 
 		foreach ( $font_variables as $variable ) {
 			$font_family = sanitize_text_field( $variable['value'] ?? '' );
