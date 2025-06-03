@@ -17,16 +17,14 @@ $root: e-app-export-kit;
 		&__info-icon {
 			margin-inline-start: spacing(10);
 		}
+
+		&__content {
+			gap: 20px;
+		}
 	}
 
-	&-info-modal {
-		&__icon {
-			padding-inline-start: spacing(10);
-		}
-
-		&__heading {
-			margin-block-end: spacing(20);
-		}
+	&__content {
+		gap: 20px;
 	}
 }
 
