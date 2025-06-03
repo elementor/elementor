@@ -339,18 +339,10 @@ class Module extends BaseModule {
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function upload_kit( $file, $referrer, $kit_id = null ) {
+	public function upload_kit( $file, $referrer ) {
 		$this->ensure_writing_permissions();
 
-		$settings = [
-			'referrer' => $referrer,
-		];
-
-		if ( self::REFERRER_CLOUD === $referrer ) {
-			$settings['id'] = $kit_id;
-		}
-
-		$this->import = new Import( $file, $settings );
+		$this->import = new Import( $file, [ 'referrer' => $referrer ] );
 
 		return [
 			'session' => $this->import->get_session_id(),
@@ -623,13 +615,14 @@ class Module extends BaseModule {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			? wp_unslash( $_POST['e_import_file'] )
 			: '';
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$kit_id = $_POST['kit_id'];
 
 		$is_import_from_library = ! empty( $file_url );
 		$is_import_from_cloud = isset( $_POST['source'] ) && self::REFERRER_CLOUD === $_POST['source'];
 
 		if ( $is_import_from_cloud ) {
-			$result = $this->handle_import_kit_from_cloud( $_POST['kit_id'] );
+			$result = $this->handle_import_kit_from_cloud( $kit_id );
 		} else if ( $is_import_from_library ) {
 			$result = $this->handle_import_kit_from_library( $file_url );
 		} else {
@@ -643,7 +636,7 @@ class Module extends BaseModule {
 			],
 		] );
 
-		$uploaded_kit = $this->upload_kit( $result['file_name'], $result['referrer'], $kit_id );
+		$uploaded_kit = $this->upload_kit( $result['file_name'], $result['referrer'] );
 
 		$session_dir = $uploaded_kit['session'];
 		$manifest = $uploaded_kit['manifest'];
