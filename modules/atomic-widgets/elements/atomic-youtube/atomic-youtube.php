@@ -33,7 +33,7 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-video';
+		return 'eicon-e-youtube';
 	}
 
 	protected static function define_props_schema(): array {
