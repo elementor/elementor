@@ -8,6 +8,7 @@ use WP_REST_Response;
 use WP_REST_Request;
 use WP_REST_Server;
 
+use Elementor\Plugin;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
@@ -209,6 +210,10 @@ class Rest_Api {
 		}
 	}
 
+	protected function clear_cache() {
+		Plugin::$instance->files_manager->clear_cache();
+	}
+
 	private function create_new_variable( WP_REST_Request $request ) {
 		$type = $request->get_param( 'type' );
 		$label = $request->get_param( 'label' );
@@ -219,6 +224,8 @@ class Rest_Api {
 			'label' => $label,
 			'value' => $value,
 		] );
+
+		$this->clear_cache();
 
 		return $this->success_response( [
 			'variable' => $result['variable'],
