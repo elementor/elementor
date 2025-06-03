@@ -31,7 +31,7 @@ class Test_Controller extends Elementor_Test_Base {
 			->getMock();
 
 		$connect_module_mock->method( 'get_app' )
-			->with( 'cloud-library' )
+			->with( 'cloud-kits' )
 			->willReturn( $this->cloud_kits_mock );
 
 		Plugin::$instance->common->add_component( 'connect', $connect_module_mock );
