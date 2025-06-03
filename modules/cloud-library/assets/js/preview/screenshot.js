@@ -4,8 +4,8 @@ class Screenshot extends elementorModules.ViewModule {
 		return {
 			empty_content_headline: 'Empty Content.',
 			crop: {
-				width: 1200,
-				height: 1500,
+				width: ElementorScreenshotConfig?.crop?.width || 1200,
+				height: ElementorScreenshotConfig?.crop?.height || 1500,
 			},
 			excluded_external_css_urls: [
 				'https://kit-pro.fontawesome.com',
@@ -56,7 +56,7 @@ class Screenshot extends elementorModules.ViewModule {
 	 * The main method for this class.
 	 */
 	captureScreenshot() {
-		if ( ! this.elements.$elementor.length ) {
+		if ( ! this.elements.$elementor.length && ! this.getSettings( 'kit_id' ) ) {
 			elementorCommon.helpers.consoleWarn(
 				'Screenshots: The content of this page is empty, the module will create a fake conent just for this screenshot.',
 			);
@@ -164,6 +164,11 @@ class Screenshot extends elementorModules.ViewModule {
 	 */
 	removeUnnecessaryElements() {
 		let currentHeight = 0;
+
+		// We need to keep all elements as for Kit we render the entire homepage
+		if ( this.getSettings( 'kit_id' ) ) {
+			return;
+		}
 
 		this.elements.$sections
 			.filter( ( index, el ) => {
@@ -312,16 +317,19 @@ class Screenshot extends elementorModules.ViewModule {
 	 * @return {Promise<unknown>} Screenshot URL
 	 */
 	save( canvas ) {
-		const isTemplate = this.getSettings( 'template_id' );
+		const { key, action } = this.getSaveAction();
 
-		const endpoint = isTemplate ? 'save_template_screenshot' : 'screenshot_save';
 		const data = {
-			...( isTemplate ? { template_id: this.getSettings( 'template_id' ) } : { post_id: this.getSettings( 'post_id' ) } ),
+			[ key ]: this.getSettings( key ),
 			screenshot: canvas.toDataURL( 'image/png' ),
 		};
 
 		return new Promise( ( resolve, reject ) => {
-			elementorCommon.ajax.addRequest( endpoint, {
+			if ( 'kit_id' === key ) {
+				return resolve( data.screenshot );
+			}
+
+			elementorCommon.ajax.addRequest( action, {
 				data,
 				success: ( url ) => {
 					this.log( `Screenshot created: ${ encodeURI( url ) }` );
@@ -345,29 +353,34 @@ class Screenshot extends elementorModules.ViewModule {
 		return new Promise( ( resolve, reject ) => {
 			const templateId = this.getSettings( 'template_id' );
 			const postId = this.getSettings( 'post_id' );
+			const kitId = this.getSettings( 'kit_id' );
 
-			const route = templateId ? 'template_screenshot_failed' : 'screenshot_failed';
+			if ( kitId ) {
+				resolve();
+			} else {
+				const route = templateId ? 'template_screenshot_failed' : 'screenshot_failed';
 
-			const data = templateId ? {
-				template_id: templateId,
-				error: e.message || e.toString(),
-			} : {
-				post_id: postId,
-			};
+				const data = templateId ? {
+					template_id: templateId,
+					error: e.message || e.toString(),
+				} : {
+					post_id: postId,
+				};
 
-			elementorCommon.ajax.addRequest( route, {
-				data,
-				success: () => {
-					this.log( `Marked as failed.` );
+				elementorCommon.ajax.addRequest( route, {
+					data,
+					success: () => {
+						this.log( `Marked as failed.` );
 
-					resolve();
-				},
-				error: () => {
-					this.log( 'Failed to mark this screenshot as failed.' );
+						resolve();
+					},
+					error: () => {
+						this.log( 'Failed to mark this screenshot as failed.' );
 
-					reject();
-				},
-			} );
+						reject();
+					},
+				} );
+			}
 		} );
 	}
 
@@ -409,10 +422,7 @@ class Screenshot extends elementorModules.ViewModule {
 	screenshotDone( success, imageUrl = null ) {
 		clearTimeout( this.timeoutTimer );
 		this.timeoutTimer = null;
-		const templateId = this.getSettings( 'template_id' );
-		const postId = this.getSettings( 'post_id' );
-
-		const message = templateId ? 'library/capture-screenshot-done' : 'capture-screenshot-done';
+		const { message, key } = this.getSaveAction();
 
 		// Send the message to the parent window and not to the top.
 		// e.g: The `Theme builder` is loaded into an iFrame so the message of the screenshot
@@ -420,7 +430,7 @@ class Screenshot extends elementorModules.ViewModule {
 		window.parent.postMessage( {
 			name: message,
 			success,
-			id: templateId ? templateId : postId,
+			id: this.getSettings( key ),
 			imageUrl,
 		}, '*' );
 
@@ -449,6 +459,32 @@ class Screenshot extends elementorModules.ViewModule {
 			// eslint-disable-next-line no-console
 			console[ timerMethod ]( this.getSettings( 'timer_label' ) );
 		}
+	}
+
+	getSaveAction() {
+		const config = this.getSettings();
+
+		if ( config.kit_id ) {
+			return {
+				message: 'kit-screenshot-done',
+				action: 'update_kit_preview',
+				key: 'kit_id',
+			};
+		}
+
+		if ( config.template_id ) {
+			return {
+				message: 'library/capture-screenshot-done',
+				action: 'save_template_screenshot',
+				key: 'template_id',
+			};
+		}
+
+		return {
+			message: 'capture-screenshot-done',
+			action: 'screenshot_save',
+			key: 'post_id',
+		};
 	}
 }
 
