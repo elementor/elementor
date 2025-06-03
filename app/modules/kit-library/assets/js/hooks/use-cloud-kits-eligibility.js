@@ -12,7 +12,7 @@ async function fetchCloudKitsEligibility() {
 	if ( ! isCloudKitsExperimentActive ) {
 		return false;
 	}
-	
+
 	const response = await $e.data.get( 'kits-cloud-eligibility/index', {}, { refresh: true } );
 
 	return response?.data?.data?.threshold >= 1;
