@@ -15,7 +15,6 @@ export default function ExportContextProvider( props ) {
 				description: null,
 				source: null,
 			},
-			kitNameValidator: null,
 		},
 		[ data, dispatch ] = useReducer( reducer, initialState );
 

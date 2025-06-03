@@ -9,7 +9,6 @@ import Text from 'elementor-app/ui/atoms/text';
 export default function KitName() {
 	const exportContext = useContext( ExportContext );
 	const [ error, setError ] = useState( null );
-	const [ touched, setTouched ] = useState( false );
 
 	const validateKitName = ( value ) => {
 		if ( ! value || 0 === value.trim().length ) {
@@ -21,35 +20,15 @@ export default function KitName() {
 
 	const handleChange = ( event ) => {
 		const value = event.target.value;
-
 		exportContext.dispatch( { type: 'SET_KIT_TITLE', payload: value } );
-
-		if ( touched ) {
-			const validationError = validateKitName( value );
-			setError( validationError );
-		}
-	};
-
-	const handleBlur = ( event ) => {
-		setTouched( true );
-		const value = event.target.value;
-		const validationError = validateKitName( value );
-		setError( validationError );
+		validateAndShowError( value );
 	};
 
 	const validateAndShowError = ( value ) => {
-		setTouched( true );
 		const validationError = validateKitName( value );
 		setError( validationError );
 		return validationError;
 	};
-
-	useEffect( () => {
-		exportContext.dispatch( {
-			type: 'SET_KIT_NAME_VALIDATOR',
-			payload: validateAndShowError,
-		} );
-	}, [] );
 
 	return (
 		<Grid container direction="column">
@@ -57,9 +36,10 @@ export default function KitName() {
 			<TextField
 				placeholder={ __( 'Type kit name here...', 'elementor' ) }
 				onChange={ handleChange }
-				onBlur={ handleBlur }
+				onBlur={ handleChange }
 				className={ error ? 'e-app-export-kit-information__field--error' : '' }
 				title={ error || '' }
+				value={ exportContext.data.kitInfo?.title || '' }
 			/>
 			<div className="e-app-export-kit-information__error-container">
 				{ error && (
