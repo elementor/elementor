@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets;
 
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,10 +12,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Styles_Manager {
 	private static ?self $instance = null;
 
-	/** @var array<string, array<string, Style>> */
-	private array $registered_styles_by_breakpoint = [];
+//	/** @var array<string, array<string, Style>> */
+//	private array $registered_styles_by_breakpoint = [];
 
-	private $breakpoints = [
+	private array $registered_styles_by_provider = [];
+
+
+	const BREAKPOINTS = [
 		'desktop',
 		'tablet',
 		'mobile',
@@ -32,48 +36,47 @@ class Styles_Manager {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
 	}
 
-	public function register( string $breakpoint, string $handle, string $name, string $content, array $fonts = [] ) {
-		$this->registered_styles_by_breakpoint[ $breakpoint ][ $handle ] ??= new Style(
-			$handle,
-			$name,
-			$fonts
-		);
-
-		$this->registered_styles_by_breakpoint[ $breakpoint ][ $handle ]->append( $content );
+	public function register( string $provider_key, array $style_defs ) {
+		$this->registered_styles_by_provider[ $provider_key ] = $style_defs;
 	}
 
 	private function enqueue_styles() {
-		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
+		do_action('elementor/atomic-widget/styles/enqueue', $this);
 
-		foreach ( $post_ids as $post_id ) {
-			foreach ($this->breakpoints as $breakpoint) {
-				do_action('elementor/atomic-widget/styles/enqueue', $breakpoint, $post_id, $this);
+		foreach ( self::BREAKPOINTS as $breakpoint_key ) {
+			foreach ($this->registered_styles_by_provider as $provider => $styles ) {
+				$styles_by_breakpoint = $this->group_by_breakpoint( $styles );
 
-				if (!isset($this->registered_styles_by_breakpoint[$breakpoint])) {
-					continue;
-				}
+				foreach ( $styles_by_breakpoint as $breakpoint => $breakpoint_styles ) {
+					$css = Styles_Renderer::make(
+						Plugin::$instance->breakpoints->get_breakpoints_config()
+					)->on_prop_transform( function( $key, $value ) {
+						if ( 'font-family' !== $key ) {
+							return;
+						}
 
-				$styles = $this->registered_styles_by_breakpoint[$breakpoint];
+						Plugin::instance()->frontend->enqueue_font( $value );
+					} )->render( $breakpoint_styles );
 
-				$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints($breakpoint);
+					$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
 
-				$media = $breakpoint_instance
-					? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
-					: 'all';
+					$media = $breakpoint_instance
+						? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
+						: 'all';
 
-				foreach ($styles as $style) {
+					$style_file = new Style( $provider . '-' . $breakpoint, $provider . '-' . $breakpoint);
 
-					$this->write_to_file($style);
+					$style_file->append( $css );
+
+					$this->write_to_file($style_file);
 
 					wp_enqueue_style(
-						$style->get_handle(),
-						$style->get_src(),
+						$style_file->get_handle(),
+						$style_file->get_src(),
 						[],
 						ELEMENTOR_VERSION,
 						$media
 					);
-
-					$style->get_fonts()->each( fn($font) => Plugin::$instance->frontend->enqueue_font( $font ) );
 				}
 			}
 		}
@@ -84,5 +87,23 @@ class Styles_Manager {
 			$style->get_path(),
 			$style->get_content(),
 		);
+	}
+
+	private function group_by_breakpoint( $styles ) {
+		$groups = [];
+
+		foreach ( $styles as $style ) {
+			foreach ( $style['variants'] as $variant ) {
+				$breakpoint = $variant['meta']['breakpoint'] ?? 'desktop';
+
+				$groups[ $breakpoint ][] = [
+					'id' => $style['id'],
+					'type' => $style['type'],
+					'variants' => [ $variant ],
+				];
+			}
+		}
+
+		return $groups;
 	}
 }

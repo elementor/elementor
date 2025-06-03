@@ -15,37 +15,38 @@ class Atomic_Widget_Base_Styles {
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widget/styles/enqueue',
-			fn( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $post_id, $styles_manager ),
+			fn( Styles_Manager $styles_manager ) => $this->enqueue_styles( $styles_manager ),
 			10,
 			3
 		);
 	}
 
-	private function enqueue_styles( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) {
-		$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
-		$used_atomic_elements = $this->get_used_atomic_elements( $elements_data );
+	private function enqueue_styles( Styles_Manager $styles_manager ) {
+		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
 
-		if ( empty( $used_atomic_elements ) ) {
+		if ( empty( $post_ids ) ) {
 			return;
 		}
 
-		if ( ! $this->css_by_breakpoint ) {
-			$this->css_by_breakpoint = $this->render_and_group_base_styles( $used_atomic_elements );
+		foreach ( $post_ids as $post_id ) {
+			$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
+			$used_atomic_elements = $this->get_used_atomic_elements( $elements_data );
+
+			if ( empty( $used_atomic_elements ) ) {
+				return;
+			}
+
+			$styles = Collection::make( $used_atomic_elements )
+				->map( fn( $element ) => $element->get_base_styles() )
+				->flatten()
+				->all();
+
+
+			$styles_manager->register(
+				'base',
+				$styles,
+			);
 		}
-
-		$css = $this->css_by_breakpoint[ $breakpoint ] ?? null;
-
-		if ( ! $css ) {
-			return;
-		}
-
-		$styles_manager->register(
-			$breakpoint,
-			'elementor-atomic-base-' . $post_id . '-' . $breakpoint,
-			'atomic-base-' . $post_id . '-' . $breakpoint,
-			$css['css'] ?? '',
-			$css['fonts'] ?? []
-		);
 	}
 
 	private function get_used_atomic_elements( array $elements_data ): array {
@@ -66,49 +67,6 @@ class Atomic_Widget_Base_Styles {
 		});
 
 		return $used_elements;
-	}
-
-	private function render_and_group_base_styles( array $atomic_elements ): array {
-		$base_styles = Collection::make( $atomic_elements )
-			->map( fn( $element ) => $element->get_base_styles() )
-			->flatten()
-			->all();
-
-		if ( empty( $base_styles ) ) {
-			return [];
-		}
-
-		return $this->group_base_styles_by_breakpoint( $base_styles );
-	}
-
-	private function group_base_styles_by_breakpoint( array $styles ): array {
-		$groups = [];
-		$fonts = [];
-
-		foreach ( $styles as $style ) {
-			$breakpoint = $style['meta']['breakpoint'] ?? 'desktop';
-			$groups[ $breakpoint ][] = $style;
-		}
-
-		$result = [];
-		foreach ( $groups as $breakpoint => $breakpoint_styles ) {
-			$css = Styles_Renderer::make(
-				Plugin::$instance->breakpoints->get_breakpoints_config()
-			)->on_prop_transform( function( $key, $value ) use ( &$fonts ) {
-				if ( 'font-family' !== $key ) {
-					return;
-				}
-
-				$fonts[] = $value;
-			} )->render( $breakpoint_styles );
-
-			$result[ $breakpoint ] = [
-				'css' => $css,
-				'fonts' => array_unique( $fonts ),
-			];
-		}
-
-		return $result;
 	}
 
 	/**

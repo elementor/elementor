@@ -2,18 +2,15 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Modules\AtomicWidgets\Styles_Manager;
 use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
 use Elementor\Plugin;
 
 class Global_Classes_CSS {
-	private ?array $css_by_breakpoint = null;
-
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widget/styles/enqueue',
-			fn( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $post_id, $styles_manager ),
+			fn( Styles_Manager $styles_manager ) => $this->enqueue_styles( $styles_manager ),
 			20,
 			3
 		);
@@ -43,92 +40,26 @@ class Global_Classes_CSS {
 		);
 	}
 
-	private function enqueue_styles( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) {
+	private function enqueue_styles( Styles_Manager $styles_manager ) {
 		$global_classes_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 
 		if ( empty( $global_classes_ids ) ) {
 			return;
 		}
 
-		$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
-		$used_global_classes_ids =array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
+		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
 
-		if ( ! $this->css_by_breakpoint ) {
-			$this->css_by_breakpoint = $this->render_css( $used_global_classes_ids );
-		}
-
-		$css = $this->css_by_breakpoint[ $breakpoint ] ?? null;
-
-		if ( ! $css ) {
-			return;
+		$global_classes = [];
+		foreach ( $post_ids as $post_id ) {
+			$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
+			$used_global_classes_ids = array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
+			$global_classes = array_merge($global_classes, Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids )->get_items()->all() );
 		}
 
 		$styles_manager->register(
-			$breakpoint,
-			'elementor-global-classes-' . $post_id . '-' . $breakpoint,
-			'global-classes-' . $post_id . '-' . $breakpoint,
-			$css['css'],
-			$css['fonts']
+			'global',
+			$global_classes
 		);
-	}
-
-	private function render_css( array $used_global_classes_ids ) {
-		$global_classes = Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids );
-		$fonts = [];
-
-		if ( $global_classes->get_items()->is_empty() ) {
-			return null;
-		}
-
-		$sorted_items = $global_classes
-			->get_order()
-			->reverse()
-			->map(
-				fn( $id ) => $global_classes->get_items()->get( $id )
-			);
-
-		$grouped = $this->group_by_breakpoint( $sorted_items->all() );
-		$result = [];
-
-		foreach ( $grouped as $breakpoint => $styles ) {
-			$css = Styles_Renderer::make(
-				Plugin::$instance->breakpoints->get_breakpoints_config()
-			)->on_prop_transform( function( $key, $value ) use ( &$fonts ) {
-				if ( 'font-family' !== $key ) {
-					return;
-				}
-
-				$fonts[] = $value;
-			} )->render(
-				$sorted_items->map( function( $item ) {
-					$item['cssName'] = $item['label'];
-
-					return $item;
-				} )->all()
-			);
-
-			$result[ $breakpoint ] = [ 'css' => $css, 'fonts' => array_unique( $fonts ) ];
-		}
-
-		return $result;
-	}
-
-	private function group_by_breakpoint( $styles ) {
-		$groups = [];
-
-		foreach ( $styles as $style ) {
-			foreach ( $style['variants'] as $variant ) {
-				$breakpoint = $variant['meta']['breakpoint'] ?? 'desktop';
-
-				$groups[ $breakpoint ][] = [
-					'id' => $style['id'],
-					'type' => $style['type'],
-					'variants' => [ $variant ],
-				];
-			}
-		}
-
-		return $groups;
 	}
 
 	private function generate_styles() {

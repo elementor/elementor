@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
@@ -11,19 +9,29 @@ use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
 
-	private array $css = [];
+	private array $style_defs = [];
 
 	public function register_hooks() {
-		add_action( 'elementor/element/parse_css', function( Post_CSS $post, Element_Base $element ) {
-			$this->parse_element_style( $element->get_raw_data(),  $post->get_post_id() );
-		} , 10, 2 );
-
-		add_action( 'elementor/atomic-widget/styles/enqueue', function( string $breakpoint, string $post_id, Styles_Manager $styles_manager ){
-			$this->enqueue_styles( $breakpoint, $post_id, $styles_manager );
+		add_action( 'elementor/atomic-widget/styles/enqueue', function( Styles_Manager $styles_manager ){
+			$this->enqueue_styles( $styles_manager );
 		}, 30, 3 );
 	}
 
-	private function enqueue_styles( string $breakpoint, string $post_id,  Styles_Manager $styles_manager ) {
+	private function enqueue_styles( Styles_Manager $styles_manager ) {
+		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
+
+		if ( empty( $post_ids ) ) {
+			return;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$this->parse_post_styles( $post_id );
+		}
+
+		$styles_manager->register( 'local', $this->style_defs );
+	}
+
+	private  function parse_post_styles( $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
@@ -36,24 +44,12 @@ class Atomic_Widget_Styles {
 			return;
 		}
 
-		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $post_id ) {
-			$this->parse_element_style( $element_data, $post_id );
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) {
+			$this->parse_element_style( $element_data );
 		});
-
-		if ( ! isset( $this->css[ $breakpoint ][ $post_id ] ) ) {
-			return;
-		}
-
-		$styles_manager->register(
-			$breakpoint,
-			'elementor-atomic-widget-styles-' . $post_id . '-' . $breakpoint,
-			'atomic-widget-styles-' . $post_id . '-' . $breakpoint,
-			$this->css[ $breakpoint ][ $post_id ]['css'] ?? '',
-			$this->css[ $breakpoint ][ $post_id ]['fonts'] ?? []
-		);
 	}
 
-	private function parse_element_style(  array $element_data, string $post_id ) {
+	private function parse_element_style(  array $element_data ) {
 		$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
 		$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
 
@@ -61,50 +57,6 @@ class Atomic_Widget_Styles {
 			return;
 		}
 
-		$styles = $element_data['styles'] ?? [];
-
-		if ( empty( $styles ) ) {
-			return;
-		}
-
-		$fonts = [];
-
-		$grouped = $this->group_by_breakpoint( $styles );
-
-		foreach ( $grouped as $breakpoint => $styles ) {
-			$css = Styles_Renderer::make(
-				Plugin::$instance->breakpoints->get_breakpoints_config()
-			)->on_prop_transform( function( $key, $value ) use ( &$fonts ) {
-				if ( 'font-family' !== $key ) {
-					return;
-				}
-
-				$fonts[] = $value;
-			} )->render( $styles );
-
-			$this->css[ $breakpoint ][ $post_id ]['css'] ??= '';
-
-			$this->css[ $breakpoint ][ $post_id ]['css'] .= $css;
-
-			$this->css[ $breakpoint ][ $post_id ]['fonts'] = array_unique( $fonts );
-		}
-	}
-
-	private function group_by_breakpoint( $styles ) {
-		$groups = [];
-
-		foreach ( $styles as $style ) {
-			foreach ( $style['variants'] as $variant ) {
-				$breakpoint = $variant['meta']['breakpoint'] ?? 'desktop';
-
-				$groups[ $breakpoint ][] = [
-					'id' => $style['id'],
-					'type' => $style['type'],
-					'variants' => [ $variant ],
-				];
-			}
-		}
-
-		return $groups;
+		$this->style_defs = array_merge( $this->style_defs, $element_data['styles'] );
 	}
 }
