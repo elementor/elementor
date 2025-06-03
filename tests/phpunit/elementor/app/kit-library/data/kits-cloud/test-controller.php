@@ -3,7 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\App\KitLibrary\Data\KitsCloud;
 
 use Elementor\Plugin;
 use Elementor\Core\Common\Modules\Connect\Module;
-use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
 use Elementor\App\Modules\KitLibrary\Data\KitsCloud\Controller;
 use ElementorEditorTesting\Elementor_Test_Base;
 use ElementorEditorTesting\Traits\Rest_Trait;
@@ -16,14 +16,14 @@ class Test_Controller extends Elementor_Test_Base {
 	/**
 	 * @var Cloud_Library|\PHPUnit\Framework\MockObject\MockObject
 	 */
-	private $cloud_library_mock;
+	private $cloud_kits_mock;
 
 	public function setUp(): void {
 		$this->traitSetUP();
 
-		$this->cloud_library_mock = $this->getMockBuilder( Cloud_Library::class )
+		$this->cloud_kits_mock = $this->getMockBuilder( Cloud_Kits::class )
 			->disableOriginalConstructor()
-			->setMethods( [ 'get_kits' ] )
+			->setMethods( [ 'get_all' ] )
 			->getMock();
 
 		$connect_module_mock = $this->getMockBuilder( Module::class )
@@ -31,8 +31,8 @@ class Test_Controller extends Elementor_Test_Base {
 			->getMock();
 
 		$connect_module_mock->method( 'get_app' )
-			->with( 'cloud-library' )
-			->willReturn( $this->cloud_library_mock );
+			->with( 'cloud-kits' )
+			->willReturn( $this->cloud_kits_mock );
 
 		Plugin::$instance->common->add_component( 'connect', $connect_module_mock );
 
@@ -42,7 +42,7 @@ class Test_Controller extends Elementor_Test_Base {
 	public function test_get_items() {
 		// Arrange
 		$this->act_as_admin();
-		$this->cloud_library_mock->method( 'get_kits' )->willReturn( [
+		$this->cloud_kits_mock->method( 'get_all' )->willReturn( [
 			[
 				'id' => 'id_1',
 				'title' => 'kit_1',
