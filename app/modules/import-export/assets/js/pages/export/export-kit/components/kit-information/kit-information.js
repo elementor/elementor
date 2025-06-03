@@ -17,7 +17,7 @@ export default function KitInformation() {
 							<Grid padding="0">
 								<KitName />
 							</Grid>
-							
+
 							<Grid padding="0">
 								<KitDescription />
 							</Grid>

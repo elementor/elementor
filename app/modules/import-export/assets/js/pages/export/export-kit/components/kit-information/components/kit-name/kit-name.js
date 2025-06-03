@@ -12,7 +12,7 @@ export default function KitName() {
 	const [ touched, setTouched ] = useState( false );
 
 	const validateKitName = ( value ) => {
-		if ( ! value || value.trim().length === 0 ) {
+		if ( ! value || 0 === value.trim().length ) {
 			return __( 'Must add a kit name', 'elementor' );
 		}
 
@@ -21,7 +21,7 @@ export default function KitName() {
 
 	const handleChange = ( event ) => {
 		const value = event.target.value;
-		
+
 		exportContext.dispatch( { type: 'SET_KIT_TITLE', payload: value } );
 
 		if ( touched ) {
@@ -45,9 +45,9 @@ export default function KitName() {
 	};
 
 	useEffect( () => {
-		exportContext.dispatch( { 
-			type: 'SET_KIT_NAME_VALIDATOR', 
-			payload: validateAndShowError
+		exportContext.dispatch( {
+			type: 'SET_KIT_NAME_VALIDATOR',
+			payload: validateAndShowError,
 		} );
 	}, [] );
 
