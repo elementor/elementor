@@ -18,13 +18,27 @@ class Size_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		return (
-			is_array( $value ) &&
-			array_key_exists( 'size', $value ) &&
-			! empty( $value['unit'] ) &&
-			in_array( $value['unit'], static::SUPPORTED_UNITS, true ) &&
-			( $this->validate_numeric_size( $value ) || $this->validate_string_size( $value ) )
-		);
+		if ( ! is_array( $value ) ||
+			! array_key_exists( 'size', $value ) ||
+			! array_key_exists( 'unit', $value ) ||
+			empty( $value['unit'] ) ||
+			! in_array( $value['unit'], static::SUPPORTED_UNITS, true )
+		) {
+			return false;
+		}
+
+		switch ( $value['unit'] ) {
+			case 'custom':
+				return null !== $value['size'];
+			case 'auto':
+				return ! $value['size'];
+			default:
+				return (
+					! in_array( $value['unit'], [ 'auto', 'custom' ], true ) &&
+					( ! empty( $value['size'] ) || 0 === $value['size'] ) &&
+					is_numeric( $value['size'] )
+				);
+		}
 	}
 
 	public function sanitize_value( $value ) {
@@ -43,14 +57,5 @@ class Size_Prop_Type extends Object_Prop_Type {
 				->add_prop_type( String_Prop_Type::make() )
 				->add_prop_type( Number_Prop_Type::make() ),
 		];
-	}
-
-	private function validate_string_size( $value ): bool {
-		return ( 'custom' === $value['unit'] && null !== $value['size'] ) ||
-			( 'auto' === $value['unit'] && empty( $value['size'] ) );
-	}
-
-	private function validate_numeric_size( $value ): bool {
-		return ( ! in_array( $value['unit'], [ 'auto', 'custom' ], true ) && ( ! empty( $value['size'] ) || 0 === $value['size'] ) && is_numeric( $value['size'] ) );
 	}
 }
