@@ -29,6 +29,25 @@ class Hooks {
 			->register_fonts()
 			->register_api_endpoints();
 
+		// TODO: Remove this, later, temporary solution
+		$this->filter_for_stored_variables();
+
+		return $this;
+	}
+
+	private function filter_for_stored_variables() {
+		add_filter( Variables::FILTER, function ( $variables ) {
+			$db_record = ( new Variables_Repository(
+				Plugin::$instance->kits_manager->get_active_kit()
+			) )->load();
+
+			foreach ( $db_record['data'] as $id => $variable ) {
+				$variables[ $id ] = $variable;
+			}
+
+			return $variables;
+		} );
+
 		return $this;
 	}
 
