@@ -2,7 +2,6 @@ import KitName from './components/kit-name/kit-name';
 import KitDescription from './components/kit-description/kit-description';
 
 import Grid from 'elementor-app/ui/grid/grid';
-import Heading from 'elementor-app/ui/atoms/heading';
 
 import Box from 'elementor-app/ui/atoms/box';
 import List from 'elementor-app/ui/molecules/list';
