@@ -1,14 +1,15 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary\Connect;
 
-use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Core\Utils\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Cloud_Kits extends Library {
+	const THRESHOLD_UNLIMITED = -1;
 
 	public function get_title() {
 		return esc_html__( 'Cloud Kits', 'elementor' );
@@ -36,7 +37,26 @@ class Cloud_Kits extends Library {
 		] );
 	}
 
+	public function validate_quota() {
+		$quota = $this->get_quota();
+
+		if ( is_wp_error( $quota ) ) {
+			$error_message = esc_html__( 'Failed to fetch quota', 'elementor' );
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		$is_unlimited = $quota['threshold'] === self::THRESHOLD_UNLIMITED;
+		$has_quota = $quota['currentUsage'] < $quota['threshold'];
+
+		if ( ! $is_unlimited && ! $has_quota ) {
+			$error_message = esc_html__( 'The export failed because it will pass the maximum kits you can save.', 'elementor' );
+			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+	}
+
 	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
+		$this->validate_quota();
+
 		$endpoint = 'kits';
 
 		$boundary = wp_generate_password( 24, false );
