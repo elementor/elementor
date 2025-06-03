@@ -92,6 +92,7 @@ const KitListCloudItem = ( props ) => {
 								eventTracking( 'kit-library/cloud-rename' );
 								// Rename functionality would go here
 								setIsPopoverOpen( false );
+								props.onRename();
 							} }
 							onKeyDown={ ( event ) => {
 								if ( 'Enter' === event.key || ' ' === event.key ) {
@@ -110,8 +111,8 @@ const KitListCloudItem = ( props ) => {
 							tabIndex={ 0 }
 							onClick={ () => {
 								eventTracking( 'kit-library/cloud-delete' );
-								// Delete functionality would go here
 								setIsPopoverOpen( false );
+								props.onRemove();
 							} }
 							onKeyDown={ ( event ) => {
 								if ( 'Enter' === event.key || ' ' === event.key ) {
@@ -152,6 +153,8 @@ KitListCloudItem.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
 	index: PropTypes.number,
 	source: PropTypes.string,
+	onRemove: PropTypes.func.isRequired,
+	onRename: PropTypes.func.isRequired,
 };
 
 export default React.memo( KitListCloudItem );

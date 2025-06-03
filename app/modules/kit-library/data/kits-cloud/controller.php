@@ -40,6 +40,30 @@ class Controller extends Base_Controller {
 		];
 	}
 
+	public function update_item( $request ) {
+		$id = $request->get_param( 'id' );
+		$title = $request->get_param( 'title' );
+
+		return [
+			'data' => $this->get_app()->update_kit( [
+				'id' => $id,
+				'title' => $title,
+			] ),
+		];
+	}
+
+	public function delete_item( $request ) {
+		return [
+			'data' => $this->get_app()->delete_kit( $request->get_param( 'id' ) ),
+		];
+	}
+
+	public function get_item( $request ) {
+		return [
+			'data' => $this->get_app()->get_kit( [ 'id' => $request->get_param( 'id' ) ] ),
+		];
+	}
+
 	public function register_endpoints() {
 		$this->register_endpoint( new Endpoints\Eligibility( $this ) );
 	}

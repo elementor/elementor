@@ -63,6 +63,8 @@ export default class EComponent extends $e.modules.ComponentBase {
 			'view-demo-part',
 			'view-overview-page',
 			'cloud-import',
+			'cloud-delete',
+			'cloud-rename',
 		].reduce( ( allCommands, command ) => ( {
 			...allCommands,
 			[ command ]: () => {
