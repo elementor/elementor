@@ -4,7 +4,6 @@ import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 import './kit-list-item.scss';
 
@@ -41,13 +40,13 @@ PopoverItem.propTypes = {
 	onClick: PropTypes.func.isRequired,
 };
 
-const KitActionsPopover = ( { 
-	isOpen, 
-	onClose, 
-	onExport, 
-	onRename, 
+const KitActionsPopover = ( {
+	isOpen,
+	onClose,
+	onExport,
+	onRename,
 	onDelete,
-	className = 'e-kit-library__kit-item-actions-popover'
+	className = 'e-kit-library__kit-item-actions-popover',
 } ) => {
 	if ( ! isOpen ) {
 		return null;
