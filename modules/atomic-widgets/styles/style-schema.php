@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -66,17 +67,7 @@ class Style_Schema {
 				'none',
 				'scale-down',
 			] ),
-			'object-position' => String_Prop_Type::make()->enum( [
-				'center center',
-				'center left',
-				'center right',
-				'top center',
-				'top left',
-				'top right',
-				'bottom center',
-				'bottom left',
-				'bottom right',
-			] ),
+			'object-position' => Position_Prop_Type::make(),
 		];
 	}
 
