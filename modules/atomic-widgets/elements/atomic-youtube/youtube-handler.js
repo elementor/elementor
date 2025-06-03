@@ -110,6 +110,7 @@ register( {
 		return () => {
 			if ( player && 'function' === typeof player.destroy ) {
 				player.destroy();
+				player = null;
 			}
 
 			if ( element.contains( youtubeElement ) ) {
