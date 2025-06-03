@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Cloud_Kits extends Library {
 	const THRESHOLD_UNLIMITED = -1;
+	const FAILED_TO_FETCH_QUOTA_KEY = 'failed-to-fetch-quota';
+	const INSUFFIECIENT_QUOTA_KEY = 'insuffiecient-quota';
 
 	public function get_title() {
 		return esc_html__( 'Cloud Kits', 'elementor' );
@@ -41,16 +43,14 @@ class Cloud_Kits extends Library {
 		$quota = $this->get_quota();
 
 		if ( is_wp_error( $quota ) ) {
-			$error_message = esc_html__( 'Failed to fetch quota', 'elementor' );
-			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Error( static::FAILED_TO_FETCH_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		$is_unlimited = self::THRESHOLD_UNLIMITED === $quota['threshold'];
 		$has_quota = $quota['currentUsage'] < $quota['threshold'];
 
 		if ( ! $is_unlimited && ! $has_quota ) {
-			$error_message = esc_html__( 'The export failed because it will pass the maximum kits you can save.', 'elementor' );
-			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Error( static::INSUFFIECIENT_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 	}
 
