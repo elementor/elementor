@@ -39,10 +39,10 @@ const DivBlockView = BaseElementView.extend( {
 	attributes() {
 		const attr = BaseElementView.prototype.attributes.apply( this );
 		const local = {};
-		const cssId = this.model.getSetting( '_cssid' );
+		const elementId = this.model.getSetting( '_element_id' );
 
-		if ( cssId ) {
-			local.id = cssId.value;
+		if ( elementId ) {
+			local.id = elementId.value;
 		}
 
 		const href = this.getHref();
@@ -101,9 +101,9 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( changed.cssid ) {
-			if ( changed.cssid.value ) {
-				this.$el.attr( 'id', changed.cssid.value );
+		if ( changed._element_id ) {
+			if ( changed._element_id.value ) {
+				this.$el.attr( 'id', changed._element_id.value );
 			} else {
 				this.$el.removeAttr( 'id' );
 			}
