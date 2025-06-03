@@ -4,6 +4,7 @@ namespace Elementor\Modules\NestedAccordion;
 use Elementor\Plugin;
 use Elementor\Core\Base\Module as BaseModule;
 
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -11,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	public static function is_active() {
-		return Plugin::$instance->experiments->is_feature_active( 'container' );
+		return Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
 	}
 
 	public function get_name() {
