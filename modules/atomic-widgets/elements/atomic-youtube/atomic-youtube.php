@@ -63,7 +63,7 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
 					Text_Control::bind_to( 'source' )
-			            ->set_label( esc_html__( 'YouTube URL', 'elementor' ) )
+						->set_label( esc_html__( 'YouTube URL', 'elementor' ) )
 						->set_placeholder( esc_html__( 'Type or paste your URL', 'elementor' ) ),
 
 					Text_Control::bind_to( 'start' )->set_label( esc_html__( 'Start time', 'elementor' ) ),
