@@ -106,13 +106,13 @@ class Test_Flexbox extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__render_with_css_id(): void {
+	public function test__render_with_element_id(): void {
 		// Arrange.
 		$mock_flexbox = [
 			'id' => 'e8e55a1',
 			'elType' => Flexbox::get_element_type(),
 			'settings' => [
-				'_cssid' => 'test-css-id',
+				'_element_id' => 'test-css-id',
 			],
 			'widgetType' => Flexbox::get_element_type(),
 		];
