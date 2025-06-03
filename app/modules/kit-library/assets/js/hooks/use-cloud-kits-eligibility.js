@@ -8,9 +8,12 @@ export const KEY = 'cloud-kits-availability';
  * @return {Promise<boolean>} Whether cloud kits should be available
  */
 async function fetchCloudKitsEligibility() {
-	const response = await $e.data.get( 'kits-cloud-eligibility/index', {}, { refresh: true } );
-
 	const isCloudKitsExperimentActive = elementorCommon?.config?.experimentalFeatures?.e_cloud_library_kits;
+	 if( ! isCloudKitsExperimentActive ) {
+	 return false;
+	 }
+	
+	const response = await $e.data.get( 'kits-cloud-eligibility/index', {}, { refresh: true } );
 
 	return ( response?.data?.data?.threshold >= 1 && isCloudKitsExperimentActive ) || false;
 }
