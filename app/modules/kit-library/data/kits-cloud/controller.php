@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\KitLibrary\Data\KitsCloud;
 
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
+use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Base_Controller;
 use Elementor\Core\Utils\Collection;
 use Elementor\Plugin;
@@ -45,14 +46,6 @@ class Controller extends Base_Controller {
 	}
 
 	protected function get_app(): Cloud_Library {
-		$cloud_library_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-library' );
-
-		if ( ! $cloud_library_app ) {
-			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
-
-			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-		}
-
-		return $cloud_library_app;
+		return KitLibrary::get_cloud_api();
 	}
 }

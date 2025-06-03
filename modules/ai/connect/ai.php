@@ -787,7 +787,7 @@ class Ai extends Library {
 			$context['features']['subscriptions'] = [ 'Pro' ];
 		}
 
-		if ( Plugin::instance()->experiments->get_active_features()['container'] ) {
+		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
 			$context['features']['supportedFeatures'][] = 'Nested';
 		}
 
