@@ -12,12 +12,12 @@ export default function KitInformation() {
 			<Box>
 				<List padding="24 40" separated className="e-app-export-kit-information">
 					<List.Item>
-						<Grid container direction="column" spacing="16" className="e-app-export-kit-information__content">
-							<Grid padding="0">
+						<Grid container noWrap direction="column" className="e-app-export-kit-information__content">
+							<Grid item container >
 								<KitName />
 							</Grid>
 
-							<Grid padding="0">
+							<Grid item container >
 								<KitDescription />
 							</Grid>
 						</Grid>
