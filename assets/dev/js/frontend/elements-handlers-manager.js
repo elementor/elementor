@@ -24,9 +24,15 @@ module.exports = function( $ ) {
 		column: columnHandlers,
 	};
 
-	if ( elementorFrontendConfig.experimentalFeatures.container ) {
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-tabs.default' ] = () => import( /* webpackChunkName: 'nested-tabs' */ 'elementor/modules/nested-tabs/assets/js/frontend/handlers/nested-tabs' );
+	}
+
+	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
 		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
+	}
+
+	if ( elementorFrontendConfig.experimentalFeatures.container ) {
 		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/floating-buttons/frontend/handlers/contact-buttons' );
 		this.elementsHandlers[ 'floating-bars-var-1.default' ] = () => import( /* webpackChunkName: 'floating-bars' */ 'elementor/modules/floating-buttons/assets/js/floating-bars/frontend/handlers/floating-bars' );
 	}
