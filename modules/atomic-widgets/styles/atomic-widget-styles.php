@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
@@ -12,7 +14,13 @@ class Atomic_Widget_Styles {
 	private array $css = [];
 
 	public function register_hooks() {
-		add_action( 'elementor/atomic-widget/styles/enqueue', fn( string $breakpoint, string $post_id, Styles_Manager $styles_manager ) => $this->enqueue_styles( $breakpoint, $post_id, $styles_manager ), 30, 3 );
+		add_action( 'elementor/element/parse_css', function( Post_CSS $post, Element_Base $element ) {
+			$this->parse_element_style( $element->get_raw_data(),  $post->get_post_id() );
+		} , 10, 2 );
+
+		add_action( 'elementor/atomic-widget/styles/enqueue', function( string $breakpoint, string $post_id, Styles_Manager $styles_manager ){
+			$this->enqueue_styles( $breakpoint, $post_id, $styles_manager );
+		}, 30, 3 );
 	}
 
 	private function enqueue_styles( string $breakpoint, string $post_id,  Styles_Manager $styles_manager ) {
