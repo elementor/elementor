@@ -45,7 +45,7 @@ class Cloud_Kits extends Library {
 			throw new \Exception( $error_message, Exceptions::INTERNAL_SERVER_ERROR ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		$is_unlimited = $quota['threshold'] === self::THRESHOLD_UNLIMITED;
+		$is_unlimited = self::THRESHOLD_UNLIMITED === $quota['threshold'];
 		$has_quota = $quota['currentUsage'] < $quota['threshold'];
 
 		if ( ! $is_unlimited && ! $has_quota ) {
