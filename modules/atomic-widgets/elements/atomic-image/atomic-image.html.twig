@@ -1,5 +1,5 @@
 {% if settings.image.src is not empty %}
-	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+	{% set id_attribute = settings._element_id is not empty ? 'id=' ~ settings._element_id | e('html_attr') : '' %}
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}">
 	{% endif %}
