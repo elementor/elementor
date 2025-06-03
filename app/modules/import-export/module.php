@@ -170,7 +170,7 @@ class Module extends BaseModule {
 		];
 
 		$quota = KitLibrary::get_cloud_api()->get_quota();
-		$is_cloud_kits_available = ! is_wp_error( $quota ) && isset( $quota['threshold'] ) && $quota['threshold'] !== 0;
+		$is_cloud_kits_available = ! is_wp_error( $quota ) && isset( $quota['threshold'] ) && 0 !== $quota['threshold'];
 
 		if ( $is_cloud_kits_available ) {
 			$content_data['import']['button_secondary'] = [
