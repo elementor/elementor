@@ -279,55 +279,20 @@ BaseElementView = BaseContainer.extend( {
 
 	getHandlesOverlay() {
 		const elementType = this.getElementType();
-
-		// For content-only editors (users without 'design' capability)
-		if ( ! elementor.userCan( 'design' ) ) {
-			// Only show handles for widgets, hide for sections/columns/containers
-			if ( 'widget' !== elementType ) {
-				return;
-			}
-
-			// For widgets, show only the edit (pencil) button
-			const $handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-				$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
-				elementData = elementor.getElementData( this.model );
-
-			const editButtons = {
-				edit: {
-					/* Translators: %s: Element name. */
-					title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
-					icon: 'edit',
-				}
-			};
-
-			jQuery.each( editButtons, ( toolName, tool ) => {
-				const $item = jQuery( '<li>', {
-					class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`,
-					title: tool.title,
-					'aria-label': tool.title,
-				} );
-				const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
-
-				$item.append( $icon );
-
-				$overlayList.append( $item );
-			} );
-
-			$handlesOverlay.append( $overlayList );
-
-			return $handlesOverlay;
+		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
+			return;
 		}
 
-		// Original logic for users with 'design' capability
-		const $handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
 			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
 		let editButtons = this.getEditButtons();
+		const shouldShowEditButtons = editButtonsEnabled || 'widget' === elementType;
 
-		// We should only allow external modification to edit buttons if the user enabled edit buttons.
-		if ( editButtonsEnabled ) {
+		// We should only allow external modification to edit buttons if the user enabled edit buttons or it's a widget.
+		if ( shouldShowEditButtons ) {
 			/**
 			 * Filter edit buttons.
 			 *
