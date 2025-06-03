@@ -4,10 +4,12 @@ namespace Elementor\App\Modules\KitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
+use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
@@ -111,6 +113,10 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) {
+				$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
+			}
 		} );
 
 		add_action( 'elementor/init', function () {
@@ -118,60 +124,66 @@ class Module extends BaseModule {
 		}, 12 /** After the initiation of the connect kit library */ );
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) {
-			add_action( 'elementor/kit-library/generate-screenshot', [ $this, 'handle_kit_screenshot' ], 10, 1 );
 			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 		}
 	}
 
-	public function handle_kit_screenshot() {
-		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
-
-		show_admin_bar( false );
-
-		wp_enqueue_script(
-			'dom-to-image',
-			ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
-			[],
-			'2.6.0',
-			true
-		);
-
-		wp_enqueue_script(
-			'html2canvas',
-			ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
-			[],
-			'1.4.1',
-			true
-		);
-
-		wp_enqueue_script(
-			'cloud-library-screenshot',
-			ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
-			[ 'dom-to-image', 'html2canvas', 'elementor-common', 'elementor-common-modules' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		$config = [
-			'home_url' => home_url(),
-			'kit_id' => uniqid(),
-			'selector' => 'body',
-		];
-
-		wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
-	}
-
 	public function handle_kit_screenshot_generation() {
 		$is_kit_preview = ElementorUtils::get_super_global_value( $_GET, 'kit_thumbnail' );
+		$nonce = ElementorUtils::get_super_global_value( $_GET, 'nonce' );
 
 		if ( $is_kit_preview ) {
-			$nonce = ElementorUtils::get_super_global_value( $_GET, 'nonce' );
-
 			if ( ! wp_verify_nonce( $nonce, 'kit_thumbnail' ) ) {
 				wp_die( esc_html__( 'Not Authorized', 'elementor' ), esc_html__( 'Error', 'elementor' ), 403 );
 			}
 
-			do_action( 'elementor/kit-library/generate-screenshot' );
+			$suffix = ( ElementorUtils::is_script_debug() || ElementorUtils::is_elementor_tests() ) ? '' : '.min';
+
+			show_admin_bar( false );
+
+			wp_enqueue_script(
+				'dom-to-image',
+				ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
+				[],
+				'2.6.0',
+				true
+			);
+
+			wp_enqueue_script(
+				'html2canvas',
+				ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
+				[],
+				'1.4.1',
+				true
+			);
+
+			wp_enqueue_script(
+				'cloud-library-screenshot',
+				ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
+				[ 'dom-to-image', 'html2canvas', 'elementor-common', 'elementor-common-modules' ],
+				ELEMENTOR_VERSION,
+				true
+			);
+
+			$config = [
+				'home_url' => home_url(),
+				'kit_id' => uniqid(),
+				'selector' => 'body',
+			];
+
+			wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
 		}
+	}
+
+	public static function get_cloud_api(): Cloud_Kits {
+		$cloud_kits_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-kits' );
+
+		if ( ! $cloud_kits_app ) {
+			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
+
+			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return $cloud_kits_app;
 	}
 }
