@@ -19,7 +19,7 @@ class Fonts {
 		$list_of_variables = ( new Variables() )->get_all();
 
 		foreach ( $list_of_variables as $variable ) {
-			if ( $variable['type'] !== Font_Variable_Prop_Type::get_key() ) {
+			if ( Font_Variable_Prop_Type::get_key() !== $variable['type'] ) {
 				continue;
 			}
 
