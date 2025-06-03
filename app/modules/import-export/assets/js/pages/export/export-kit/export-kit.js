@@ -1,4 +1,5 @@
 import React, { useEffect, useContext } from 'react';
+import { useNavigate } from '@reach/router';
 
 import { ExportContext } from '../../../context/export-context/export-context-provider';
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
@@ -20,6 +21,24 @@ import './export-kit.scss';
 export default function ExportKit() {
 	const exportContext = useContext( ExportContext ),
 		sharedContext = useContext( SharedContext ),
+		navigate = useNavigate(),
+		handleNextClick = () => {
+			const { kitInfo, kitNameValidator } = exportContext.data;
+			const kitTitle = kitInfo?.title || '';
+
+			// Validate kit name before proceeding
+			if ( kitNameValidator ) {
+				const validationError = kitNameValidator( kitTitle );
+				if ( validationError ) {
+					// Show error - we could dispatch an action to show the error in the field
+					// For now, we'll just prevent navigation
+					return;
+				}
+			}
+
+			// If validation passes, navigate to next step
+			navigate( '/export/plugins' );
+		},
 		getFooter = () => (
 			<ActionsFooter>
 				<Button

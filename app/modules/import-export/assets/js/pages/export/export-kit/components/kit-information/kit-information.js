@@ -11,16 +11,14 @@ export default function KitInformation() {
 	return (
 		<>
 			<Box>
-				<List padding="20" separated className="e-app-export-kit-information">
-					<Heading variant="h4" tag="h3" className="e-app-export-kit-content__title">
-						{ __( 'Kit name and description', 'elementor' ) }
-					</Heading>
+				<List padding="24 40" separated className="e-app-export-kit-information">
 					<List.Item>
-						<Grid container noWrap direction="column" className="e-app-export-kit-information__content">
-							<Grid item container alignItems="baseline" >
+						<Grid container direction="column" spacing="16" className="e-app-export-kit-information__content">
+							<Grid padding="0">
 								<KitName />
 							</Grid>
-							<Grid item container alignItems="baseline" >
+							
+							<Grid padding="0">
 								<KitDescription />
 							</Grid>
 						</Grid>

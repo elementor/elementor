@@ -37,9 +37,16 @@ export default function ExportComplete() {
 		downloadFile = () => {
 			if ( ! downloadLink.current ) {
 				const link = document.createElement( 'a' );
+				
+				const kitName = exportContext.data.kitInfo?.title || 'elementor-kit';
+				const sanitizedKitName = kitName
+					.replace(/[<>:"/\\|?*]/g, '')
+					.trim();
+				
+				const fileName = sanitizedKitName || 'elementor-kit';
 
 				link.href = 'data:text/plain;base64,' + exportContext.data.exportedData.file;
-				link.download = 'elementor-kit.zip';
+				link.download = fileName + '.zip';
 
 				downloadLink.current = link;
 			}

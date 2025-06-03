@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 
 import { ExportContext } from '../../../../../../../context/export-context/export-context-provider';
 
@@ -8,16 +8,66 @@ import Text from 'elementor-app/ui/atoms/text';
 
 export default function KitName() {
 	const exportContext = useContext( ExportContext );
+	const [ error, setError ] = useState( null );
+	const [ touched, setTouched ] = useState( false );
+
+	const validateKitName = ( value ) => {
+		if ( ! value || value.trim().length === 0 ) {
+			return __( 'Must add a kit name', 'elementor' );
+		}
+
+		return null;
+	};
+
+	const handleChange = ( event ) => {
+		const value = event.target.value;
+		
+		exportContext.dispatch( { type: 'SET_KIT_TITLE', payload: value } );
+
+		if ( touched ) {
+			const validationError = validateKitName( value );
+			setError( validationError );
+		}
+	};
+
+	const handleBlur = ( event ) => {
+		setTouched( true );
+		const value = event.target.value;
+		const validationError = validateKitName( value );
+		setError( validationError );
+	};
+
+	const validateAndShowError = ( value ) => {
+		setTouched( true );
+		const validationError = validateKitName( value );
+		setError( validationError );
+		return validationError;
+	};
+
+	useEffect( () => {
+		exportContext.dispatch( { 
+			type: 'SET_KIT_NAME_VALIDATOR', 
+			payload: validateAndShowError
+		} );
+	}, [] );
 
 	return (
 		<Grid container direction="column">
 			<Text tag="span" variant="xs">{ __( 'Kit name', 'elementor' ) }</Text>
 			<TextField
 				placeholder={ __( 'Type kit name here...', 'elementor' ) }
-				onChange={ ( event ) => {
-					exportContext.dispatch( { type: 'SET_KIT_TITLE', payload: event.target.value } );
-				} }
+				onChange={ handleChange }
+				onBlur={ handleBlur }
+				className={ error ? 'e-app-export-kit-information__field--error' : '' }
+				title={ error || '' }
 			/>
+			<div className="e-app-export-kit-information__error-container">
+				{ error && (
+					<Text variant="xs" className="e-app-export-kit-information__validation-error">
+						{ error }
+					</Text>
+				) }
+			</div>
 		</Grid>
 	);
 }
