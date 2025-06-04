@@ -259,7 +259,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 			'dismissible'   => false,
 			'heading'       => __( 'Make Ally Match Your Site', 'elementor' ),
 			'content'       => __( "Fine-tune the widget's icon, position, and features, and update your accessibility statement- all in just a few clicks.", 'elementor' ),
-			'button_text'   => 'Customize Now',
+			'button_text'   => __( 'Customize Now', 'elementor' ),
 			'button_event'  => 'openLink#' . base64_encode( json_encode( [
 				'target' => '_blank',
 				'url'    => admin_url( 'admin.php?page=accessibility-settings' ),
