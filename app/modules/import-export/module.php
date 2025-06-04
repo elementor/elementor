@@ -161,10 +161,6 @@ class Module extends BaseModule {
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
 				],
-				'button_secondary' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
-					'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
-				],
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
 					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow/',
@@ -172,6 +168,13 @@ class Module extends BaseModule {
 				],
 			],
 		];
+
+		if ( KitLibrary::get_cloud_api()->is_eligible() ) {
+			$content_data['import']['button_secondary'] = [
+				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+				'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
+			];
+		}
 
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
