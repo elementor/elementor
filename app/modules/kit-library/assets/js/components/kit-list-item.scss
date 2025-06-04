@@ -69,21 +69,27 @@ $root: e-kit-library__kit-item;
 	&-header {
 		position: relative;
 	}
+
+	&-actions-menu {
+		i {
+			font-size: 16px;
+		}
+	}
 	
 	&-actions-popover {
 		display: flex;
 		flex-direction: column;
-    		align-items: start;
+	    align-items: start;
 		min-width: 0;
 		padding: 12px 0;
 		position: absolute;
-		top: 20px;
+		top: 25px;
 		left: 100%;
 		transform: translateX(-100%);
 
 		&-item {
 			display: flex;
-			height: 25px;
+			height: 30px;
 			width: 100%;
 			align-items: center;
 			gap: 8px;
@@ -128,6 +134,7 @@ $root: e-kit-library__kit-item;
 
 			& > i {
 				font-size: 20px;
+				font-weight: 600;
 			}
 
 			& > span {
