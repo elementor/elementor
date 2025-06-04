@@ -5,8 +5,6 @@ import { CssGrid } from '@elementor/app-ui';
 import { useKitCloudMutations } from '../hooks/use-kit-cloud-mutation';
 import KitCloudDeleteDialog from './kit-cloud-delete-dialog';
 
-import './kit-list-cloud.scss';
-
 export default function KitListCloud( props ) {
 	const [ isDeleteModalOpen, setIsDeleteModalOpen ] = useState( false );
 	const { remove, isLoading } = useKitCloudMutations();
