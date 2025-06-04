@@ -144,7 +144,7 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
-        $is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) && KitLibrary::get_cloud_app()->is_eligible();
+		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) && KitLibrary::get_cloud_app()->is_eligible();
 
 		$content_data = [
 			'export' => [
