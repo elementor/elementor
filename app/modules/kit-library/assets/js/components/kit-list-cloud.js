@@ -4,20 +4,17 @@ import KitListCloudItem from './kit-list-cloud-item';
 import { CssGrid } from '@elementor/app-ui';
 import { useKitCloudMutations } from '../hooks/use-kit-cloud-mutation';
 import KitCloudDeleteDialog from './kit-cloud-delete-dialog';
-import KitCloudRenameDialog from './kit-cloud-rename-dialog';
 
 import './kit-list-cloud.scss';
 
 export default function KitListCloud( props ) {
 	const [ isDeleteModalOpen, setInDeleteModalOpen ] = useState( false );
-	const [ isRenameModalOpen, setIsRenameModalOpen ] = useState( false );
-	const { remove, rename, isLoading } = useKitCloudMutations();
+	const { remove, isLoading } = useKitCloudMutations();
 	const [ kit, setKit ] = useState();
 
 	const resetKit = useCallback( () => {
 		setKit( null );
 		setInDeleteModalOpen( false );
-		setIsRenameModalOpen( false );
 	}, [] );
 
 	const handleDelete = useCallback( async () => {
@@ -27,14 +24,6 @@ export default function KitListCloud( props ) {
 			resetKit();
 		}
 	}, [ kit, remove, resetKit ] );
-
-	const handleRename = useCallback( async ( { id, title } ) => {
-		try {
-			await rename.mutate( { id, title } );
-		} finally {
-			resetKit();
-		}
-	}, [ rename, resetKit ] );
 
 	return (
 		<CssGrid spacing={ 24 } colMinWidth={ 290 }>
@@ -50,10 +39,6 @@ export default function KitListCloud( props ) {
 								setKit( model );
 								setInDeleteModalOpen( true );
 							} }
-							onRename={ () => {
-								setKit( model );
-								setIsRenameModalOpen( true );
-							} }
 						/>
 					) )
 				}
@@ -63,14 +48,6 @@ export default function KitListCloud( props ) {
 				show={ isDeleteModalOpen }
 				setShow={ setInDeleteModalOpen }
 				onDeleteClick={ handleDelete }
-				onCancelClick={ resetKit }
-				isLoading={ isLoading }
-			/>
-			<KitCloudRenameDialog
-				kit={ kit }
-				show={ isRenameModalOpen }
-				setShow={ setIsRenameModalOpen }
-				onConfirmClick={ handleRename }
 				onCancelClick={ resetKit }
 				isLoading={ isLoading }
 			/>

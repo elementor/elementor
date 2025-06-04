@@ -85,27 +85,6 @@ const KitListCloudItem = ( props ) => {
 							<span>{ __( 'Export', 'elementor' ) }</span>
 						</div>
 						<div
-							className="e-kit-library__kit-item-actions-popover-item"
-							role="button"
-							tabIndex={ 0 }
-							onClick={ () => {
-								eventTracking( 'kit-library/cloud-rename' );
-								// Rename functionality would go here
-								setIsPopoverOpen( false );
-								props.onRename();
-							} }
-							onKeyDown={ ( event ) => {
-								if ( 'Enter' === event.key || ' ' === event.key ) {
-									event.preventDefault();
-									eventTracking( 'kit-library/cloud-rename' );
-									setIsPopoverOpen( false );
-								}
-							} }
-						>
-							<i className="eicon-library-edit" />
-							<span>{ __( 'Rename', 'elementor' ) }</span>
-						</div>
-						<div
 							className="e-kit-library__kit-item-actions-popover-item e-kit-library__kit-item-actions-popover-item--danger"
 							role="button"
 							tabIndex={ 0 }
@@ -154,7 +133,6 @@ KitListCloudItem.propTypes = {
 	index: PropTypes.number,
 	source: PropTypes.string,
 	onRemove: PropTypes.func.isRequired,
-	onRename: PropTypes.func.isRequired,
 };
 
 export default React.memo( KitListCloudItem );
