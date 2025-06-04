@@ -8,13 +8,13 @@ import KitCloudDeleteDialog from './kit-cloud-delete-dialog';
 import './kit-list-cloud.scss';
 
 export default function KitListCloud( props ) {
-	const [ isDeleteModalOpen, setInDeleteModalOpen ] = useState( false );
+	const [ isDeleteModalOpen, setIsDeleteModalOpen ] = useState( false );
 	const { remove, isLoading } = useKitCloudMutations();
 	const [ kit, setKit ] = useState();
 
 	const resetKit = useCallback( () => {
 		setKit( null );
-		setInDeleteModalOpen( false );
+		setIsDeleteModalOpen( false );
 	}, [] );
 
 	const handleDelete = useCallback( async () => {
@@ -37,7 +37,7 @@ export default function KitListCloud( props ) {
 							source={ props.source }
 							onRemove={ () => {
 								setKit( model );
-								setInDeleteModalOpen( true );
+								setIsDeleteModalOpen( true );
 							} }
 						/>
 					) )
@@ -46,7 +46,7 @@ export default function KitListCloud( props ) {
 			<KitCloudDeleteDialog
 				kit={ kit }
 				show={ isDeleteModalOpen }
-				setShow={ setInDeleteModalOpen }
+				setShow={ setIsDeleteModalOpen }
 				onDeleteClick={ handleDelete }
 				onCancelClick={ resetKit }
 				isLoading={ isLoading }

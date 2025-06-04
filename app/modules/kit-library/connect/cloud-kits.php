@@ -131,15 +131,6 @@ class Cloud_Kits extends Library {
 		] );
 	}
 
-	public function update_kit( array $args ) {
-		$id = $args['id'];
-
-		return $this->http_request( 'DELETE', 'kits/' . $id, $args , [
-			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
-		] );
-	}
-
-
 	private function create_multipart_body( $fields, $files, $boundary ): string {
 		$eol = "\r\n";
 		$body = '';

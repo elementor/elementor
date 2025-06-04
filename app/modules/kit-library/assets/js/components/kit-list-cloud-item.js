@@ -134,8 +134,8 @@ const KitListCloudItem = ( props ) => {
 				<KitActionsPopover
 					isOpen={ isPopoverOpen }
 					onClose={ () => setIsPopoverOpen( false ) }
+					onDelete={ props.onRemove }
 				/>
-					onDelete={ props.onRemove() }
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
