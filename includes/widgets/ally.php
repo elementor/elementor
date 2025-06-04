@@ -166,24 +166,34 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 		);
 
 		if ( $has_capability ) {
+			$plugin_installed = Hints::is_plugin_installed( $plugin );
+			$cta = $plugin_installed ? __( 'Activate Ally Now', 'elementor' ) : __( 'Install Ally Now', 'elementor' );
+			$heading = $plugin_installed ? __( "Don't Let Accessibility Hold You Back", 'elementor' ) : __( 'Make Accessibility Simple', 'elementor' );
+			$content = $plugin_installed ? __( 'Activate Ally to add an accessibility widget and statement in one click.', 'elementor' ) : __( 'Ally gives you a ready-to-use accessibility widget and statement - fast.', 'elementor' );
 			$this->add_control( 'install_hint', [
 				'type'         => Controls_Manager::NOTICE,
 				'notice_type'  => 'info',
 				'icon'         => true,
 				'dismissible'  => false,
-				'heading'      => __( 'Ally Accessibility Widget', 'elementor' ),
-				'content'      => __( 'To use the Ally Accessibility widget, please install and activate the Ally Accessibility plugin first.', 'elementor' ),
-				'button_text'  => Hints::is_plugin_installed( $plugin ) ? __( 'Activate Ally', 'elementor' ) : __( 'Install & activate Ally', 'elementor' ),
+				'heading'      => $heading,
+				'content'      => $content,
+				'button_text'  => $cta,
 				'button_event' => 'pluginActions',
 				'plugin_action' => [
-					'action' => 'installAndActivate',
+					'action' => $plugin_installed ? 'activate' : 'installAndActivate',
 					'url' => hints::get_plugin_action_url( $plugin ),
 					'loaderTab' => true,
 					'followLink' => admin_url( 'admin.php?page=accessibility-settings' ),
 					'pluginSlug' => 'pojo-accessibility',
-					'loaderTitle' => __( 'Installing Ally Accessibility', 'elementor' ),
+					'loaderTitle' => $plugin_installed ? __( 'Activating Ally Accessibility', 'elementor' ) : __( 'Installing Ally Accessibility', 'elementor' ),
 					'installText' => __( 'Installing Ally Accessibility', 'elementor' ),
 					'activateText' => __( 'Activating Ally Accessibility', 'elementor' ),
+					'preInstallCampaign' => [
+						'action' => 'elementor_core_ally_campaign',
+						'data' => [
+							'source' => 'ally-editor-widget-install',
+						],
+					],
 				],
 			] );
 		} else {
@@ -193,7 +203,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'icon'         => true,
 				'dismissible'  => false,
 				'heading'      => __( 'Ally Accessibility Widget', 'elementor' ),
-				'content'      => __( 'To use the Ally Accessibility widget please contact your site administrator and ask him to install and activate the Ally Accessibility plugin first', 'elementor' ),
+				'content'      => __( 'To use the Ally Accessibility widget please contact your site administrator and ask him to install and activate the Ally Accessibility plugin first.', 'elementor' ),
 			] );
 		}
 
@@ -212,8 +222,8 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'notice_type'   => 'info',
 				'icon'          => true,
 				'dismissible'   => false,
-				'heading'       => __( 'Ally Accessibility Widget', 'elementor' ),
-				'content'       => __( 'To use the Ally Accessibility widget, please install and activate the Connect plugin first.', 'elementor' ),
+				'heading'       => __( 'Set Yourself Up for Smarter Accessibility', 'elementor' ),
+				'content'       => __( 'Connect to manage your widget and accessibility statement in one place.', 'elementor' ),
 				'button_text'   => 'Connect Now',
 				'button_event'  => 'openLink#' . base64_encode( json_encode( [
 					'target' => 'blank',
@@ -247,8 +257,8 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 			'notice_type'   => 'info',
 			'icon'          => true,
 			'dismissible'   => false,
-			'heading'       => __( 'Ally Accessibility Widget', 'elementor' ),
-			'content'       => __( 'The Ally Accessibility Widget, is installed and ready to be used. You can customize the widget settings and appearance from the Ally Accessibility plugin settings page.', 'elementor' ),
+			'heading'       => __( 'Make Ally Match Your Site', 'elementor' ),
+			'content'       => __( "Fine-tune the widget's icon, position, and features, and update your accessibility statement- all in just a few clicks.", 'elementor' ),
 			'button_text'   => 'Customize Now',
 			'button_event'  => 'openLink#' . base64_encode( json_encode( [
 				'target' => '_blank',
