@@ -6,7 +6,6 @@ module.exports = elementorModules.Module.extend( {
 
 	handlePluginAction( element ) {
 		const eventData = element?.model.get( 'plugin_action' );
-		debugger;
 		if ( ! eventData || ! eventData?.action ) {
 			return;
 		}
@@ -32,10 +31,23 @@ module.exports = elementorModules.Module.extend( {
 		const installResponse = await this.asyncFetch( url );
 		return installResponse;
 	},
-	async activate( url ) {
-		const installResponse = await this.asyncFetch( url );
-		return installResponse;
+
+	async activate( eventData ) {
+		if ( ! eventData ) {
+			return;
+		}
+		console.log( eventData );
+		if ( eventData?.loaderTab ) {
+			this.showLoaderTab( eventData?.installText ?? eventData?.loaderTitle );
+		}
+		const activateResponse = await this.asyncFetch( eventData.url.replaceAll( '&amp;', '&' ) );
+		const activateBody = await activateResponse.text();
+		if ( this.requestHasErrors( activateBody ) ) {
+			return this.handleError( 'Plugin activation failed. Please try again.' );
+		}
+		this.handleFollowLinkAndRefresh( eventData );
 	},
+
 	async installAndActivate( eventData ) {
 		if ( ! eventData ) {
 			return;
@@ -44,28 +56,42 @@ module.exports = elementorModules.Module.extend( {
 			this.showLoaderTab( eventData?.installText ?? eventData?.loaderTitle );
 		}
 
+		if ( eventData?.preInstallCampaign ) {
+			this.handlePreInstallCampaign( eventData?.preInstallCampaign );
+		}
+
 		const installResponse = await this.asyncFetch( eventData.url.replaceAll( '&amp;', '&' ) );
 		const installBody = await installResponse.text();
-		if ( installBody.indexOf( 'error-page' ) > -1 ) {
-			this.hideLoaderTab();
-			// eslint-disable-next-line no-alert
-			return alert( 'Plugin installation failed. Please try again.' );
+		if ( this.requestHasErrors( installBody ) ) {
+			return this.handleError( 'Plugin installation failed. Please try again.' );
 		}
 		this.updateLoaderHeading( eventData?.activateText ?? eventData?.loaderTitle );
 		const activateLink = this.getActivateLink( installBody, eventData );
 		if ( false === activateLink ) {
-			this.hideLoaderTab();
-			// eslint-disable-next-line no-alert
-			return alert( 'Plugin activation link not found. Please try again.' );
+			this.handleError( 'Plugin activation link not found. Please try again.' );
 		}
 		const activateResponse = await this.asyncFetch( activateLink.replaceAll( '&amp;', '&' ) );
 		const activateBody = await activateResponse.text();
-		if ( activateBody.indexOf( 'error-page' ) > -1 ) {
-			this.hideLoaderTab();
-			// eslint-disable-next-line no-alert
-			return alert( 'Plugin activation failed. Please try again.' );
+		if ( this.requestHasErrors( activateBody ) ) {
+			return this.handleError( 'Plugin activation failed. Please try again.' );
 		}
 
+		this.handleFollowLinkAndRefresh( eventData );
+	},
+
+	handlePreInstallCampaign( campaign ) {
+		if ( campaign?.action ) {
+			elementorCommon.ajax.addRequest( campaign.action, { data: { ...campaign.data } } );
+		}
+	},
+
+	handleError( errorMessage ) {
+		this.hideLoaderTab();
+		// eslint-disable-next-line no-alert
+		return alert( errorMessage );
+	},
+
+	handleFollowLinkAndRefresh( eventData ) {
 		if ( eventData?.followLink ) {
 			this.loaderTab.location.href = eventData?.followLink;
 			this.loaderTab.focus();
@@ -76,6 +102,10 @@ module.exports = elementorModules.Module.extend( {
 		if ( eventData?.refresh ) {
 			window.location.reload();
 		}
+	},
+
+	requestHasErrors( body ) {
+		return body.indexOf( 'error-page' ) > -1;
 	},
 
 	/**
@@ -184,7 +214,9 @@ module.exports = elementorModules.Module.extend( {
 			new Blob( [ winHtml ], { type: 'text/html' } ),
 		);
 		this.loaderTab = window.open( winUrl, '_blank' );
-		this.loaderTab.blur();
+		try {
+			this.loaderTab.blur();	
+		} catch (error) {}
 		window.focus();
 	},
 
