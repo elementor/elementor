@@ -615,8 +615,7 @@ class Module extends BaseModule {
 	private function handle_upload_kit() {
 		// PHPCS - A URL that should contain special chars (auth headers information).
 		$file_url = isset( $_POST['e_import_file'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			? wp_unslash( $_POST['e_import_file'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			? wp_unslash( $_POST['e_import_file'] ) // phpcs:ignore
 			: '';
 		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
