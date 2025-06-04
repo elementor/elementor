@@ -613,11 +613,11 @@ class Module extends BaseModule {
 	 * Handle upload kit ajax request.
 	 */
 	private function handle_upload_kit() {
-		$file_url = ElementorUtils::get_super_global_value( $_POST, 'e_import_file' );
-		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' );
+		$file_url = ElementorUtils::get_super_global_value( $_POST, 'e_import_file' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		$is_import_from_library = ! empty( $file_url );
-		$is_import_from_cloud = isset( $_POST['source'] ) && self::REFERRER_CLOUD === ElementorUtils::get_super_global_value( $_POST, 'source' );
+		$is_import_from_cloud = isset( $_POST['source'] ) && self::REFERRER_CLOUD === ElementorUtils::get_super_global_value( $_POST, 'source' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		if ( $is_import_from_cloud ) {
 			$result = $this->handle_import_kit_from_cloud( $kit_id );
@@ -629,7 +629,7 @@ class Module extends BaseModule {
 
 		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', [
 			'meta' => [
-				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
+				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ), // phpcs:ignore WordPress.Security.NonceVerification.Missing
 				'referrer' => $result['referrer'],
 			],
 		] );
@@ -684,7 +684,7 @@ class Module extends BaseModule {
 	protected function handle_import_kit_from_upload() {
 		return [
 			// PHPCS - Already validated in caller function.
-			'file_name' => ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'],
+			'file_name' => ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'], // phpcs:ignore WordPress.Security.NonceVerification.Missing
 			'referrer' => static::REFERRER_LOCAL,
 		];
 	}
