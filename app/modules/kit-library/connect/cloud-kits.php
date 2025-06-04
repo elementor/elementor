@@ -1,14 +1,17 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary\Connect;
 
-use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Core\Utils\Exceptions;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Cloud_Kits extends Library {
+	const THRESHOLD_UNLIMITED = -1;
+	const FAILED_TO_FETCH_QUOTA_KEY = 'failed-to-fetch-quota';
+	const INSUFFICIENT_QUOTA_KEY = 'insufficient-quota';
 
 	public function get_title() {
 		return esc_html__( 'Cloud Kits', 'elementor' );
@@ -36,7 +39,34 @@ class Cloud_Kits extends Library {
 		] );
 	}
 
+	public function validate_quota() {
+		$quota = $this->get_quota();
+
+		if ( is_wp_error( $quota ) ) {
+			throw new \Error( static::FAILED_TO_FETCH_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		$is_unlimited = self::THRESHOLD_UNLIMITED === $quota['threshold'];
+		$has_quota = $quota['currentUsage'] < $quota['threshold'];
+
+		if ( ! $is_unlimited && ! $has_quota ) {
+			throw new \Error( static::INSUFFICIENT_QUOTA_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+	}
+
+	public function is_eligible() {
+		$quota = $this->get_quota();
+
+		if ( is_wp_error( $quota ) ) {
+			return false;
+		}
+
+		return isset( $quota['threshold'] ) && 0 !== $quota['threshold'];
+	}
+
 	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
+		$this->validate_quota();
+
 		$endpoint = 'kits';
 
 		$boundary = wp_generate_password( 24, false );
