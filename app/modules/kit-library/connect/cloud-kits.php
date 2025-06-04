@@ -114,6 +114,17 @@ class Cloud_Kits extends Library {
 		return $response;
 	}
 
+	public function get_kit( array $args ) {
+
+		$args = array_merge_recursive( $args, [
+			'timeout' => 60, // just in case if zip is big
+		] );
+
+		return $this->http_request( 'GET', 'kits/' . $args['id'], $args, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+	}
+
 	private function create_multipart_body( $fields, $files, $boundary ): string {
 		$eol = "\r\n";
 		$body = '';
