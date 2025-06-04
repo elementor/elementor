@@ -179,7 +179,7 @@ class Module extends BaseModule {
 		$cloud_kits_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-kits' );
 
 		if ( ! $cloud_kits_app ) {
-			$error_message = esc_html__( 'Cloud-Library is not instantiated.', 'elementor' );
+			$error_message = esc_html__( 'Cloud-Kits is not instantiated.', 'elementor' );
 
 			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}

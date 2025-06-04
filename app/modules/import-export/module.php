@@ -171,7 +171,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		if ( KitLibrary::get_cloud_api()->is_eligible() ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) && KitLibrary::get_cloud_api()->is_eligible() ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
 				'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
