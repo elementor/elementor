@@ -250,9 +250,10 @@ class Screenshot extends elementorModules.ViewModule {
 				}
 
 				this.log( 'Creating screenshot with "dom-to-image"' );
-				return domtoimage.toPng( document.body, {
-					imagePlaceholder: this.getSettings( 'image_placeholder' ),
-				} );
+				return domtoimage.toPng( document.body, { imagePlaceholder: this.getSettings('image_placeholder') } )
+					.catch( () => {
+						return html2canvas( document.body ).then( ( canvas ) => canvas.toDataURL( 'image/png' ) );
+					} );
 			} );
 	}
 
