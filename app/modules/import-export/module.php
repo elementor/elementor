@@ -621,6 +621,7 @@ class Module extends BaseModule {
 
 		if ( $is_import_from_cloud ) {
 			$result = $this->handle_import_kit_from_cloud( $kit_id );
+			$file_url = $result['file_url'];
 		} elseif ( $is_import_from_library ) {
 			$result = $this->handle_import_kit_from_library( $file_url );
 		} else {
@@ -652,6 +653,10 @@ class Module extends BaseModule {
 			'session' => $session_dir,
 			'manifest' => $manifest,
 		];
+
+        if ( isset( $file_url ) ) {
+			$result['file_url'] = $file_url;
+		}
 
 		if ( ! empty( $conflicts ) ) {
 			$result['conflicts'] = $conflicts;
@@ -705,6 +710,7 @@ class Module extends BaseModule {
 		return [
 			'file_name' => $this->get_remote_kit_zip( $kit['downloadUrl'] ),
 			'referrer' => static::REFERRER_CLOUD,
+            'file_url' => $kit['downloadUrl'],
 		];
 	}
 	protected function get_remote_kit_zip( $url ) {

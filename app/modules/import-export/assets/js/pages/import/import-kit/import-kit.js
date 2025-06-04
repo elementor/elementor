@@ -103,6 +103,10 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+
+			if ( KIT_SOURCE_MAP.CLOUD === source && kitState.data.file_url ) {
+				importContext.dispatch( { type: 'SET_FILE', payload: kitState.data.file_url } );
+			}
 		} else if ( 'error' === kitState.status ) {
 			setErrorType( kitState.data );
 		}
@@ -110,7 +114,7 @@ export default function ImportKit() {
 
 	// After kit was uploaded.
 	useEffect( () => {
-		if ( importContext.data.uploadedData && ( importContext.data.file || KIT_SOURCE_MAP.CLOUD === importContext.data.source ) ) {
+		if ( importContext.data.uploadedData && importContext.data.file ) {
 			const url = importContext.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
 
 			navigate( url );
