@@ -120,7 +120,7 @@ class Cloud_Kits extends Library {
 			'timeout' => 60, // just in case if zip is big
 		] );
 
-		return $this->http_request( 'GET', 'kits/' . $args['id'], $args , [
+		return $this->http_request( 'GET', 'kits/' . $args['id'], $args, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 	}
