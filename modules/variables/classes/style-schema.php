@@ -2,6 +2,10 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Types_Mapping;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -28,6 +32,15 @@ class Style_Schema {
 	}
 
 	private function update( $prop_type ) {
+		if ($prop_type instanceof Background_Prop_Type) {
+			/**
+			 * @var Background_Overlay_Prop_Type $bg_overlay_prop_type
+			 */
+			$bg_overlay_prop_type = $prop_type->get_shape_field(Background_Overlay_Prop_Type::get_key());
+			$bg_image_prop_type = $bg_overlay_prop_type->get_item_type()->get_prop_type(Background_Image_Overlay_Prop_Type::get_key());
+			Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types($bg_image_prop_type->get_shape());
+		}
+
 		if ( $prop_type instanceof Color_Prop_Type ) {
 			return $this->update_color( $prop_type );
 		}
