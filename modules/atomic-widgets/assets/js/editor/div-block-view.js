@@ -101,9 +101,9 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( changed.cssid ) {
-			if ( changed.cssid.value ) {
-				this.$el.attr( 'id', changed.cssid.value );
+		if ( changed._cssid ) {
+			if ( changed._cssid.value ) {
+				this.$el.attr( 'id', changed._cssid.value );
 			} else {
 				this.$el.removeAttr( 'id' );
 			}
