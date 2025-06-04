@@ -1,25 +1,5 @@
 import { useState, useEffect } from 'react';
-
-export const KEY = 'cloud-kits-availability';
-
-/**
- * Fetch cloud kits availability from WordPress backend
- *
- * @return {Promise<boolean>} Whether cloud kits should be available
- */
-async function fetchCloudKitsEligibility() {
-	const isCloudKitsExperimentActive = elementorCommon?.config?.experimentalFeatures?.e_cloud_library_kits;
-	if ( ! isCloudKitsExperimentActive ) {
-		return false;
-	}
-
-	try {
-		const response = await $e.data.get( 'kits-cloud/eligibility', {}, { refresh: true } );
-		return response?.data?.data?.threshold >= 1;
-	} catch ( error ) {
-		return false;
-	}
-}
+import { fetchCloudKitsEligibility } from 'elementor-app/utils/cloud-kits.js';
 
 /**
  * Hook to check if cloud kits should be available

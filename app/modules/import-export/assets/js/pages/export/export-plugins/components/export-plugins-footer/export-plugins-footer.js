@@ -26,8 +26,8 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 					<Button
 						text={ __( 'Add Kit to Cloud', 'elementor' ) }
 						variant="outlined"
-						color={ isKitReady && ! isCheckingEligibility ? 'secondary' : 'disabled' }
-						url={ isKitReady && ! isCheckingEligibility ? '/export/process' : '' }
+						color="secondary"
+						url="/export/process"
 						onClick={ () => {
 							exportContext.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: KIT_SOURCE_MAP.CLOUD } );
 						} }
@@ -38,8 +38,10 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 			<Button
 				text={ __( 'Export as Zip', 'elementor' ) }
 				variant="contained"
-				color={ isKitReady ? 'primary' : 'disabled' }
-				url={ isKitReady ? '/export/process' : '' }
+				color={ isKitReady && ! isCheckingEligibility ? 'primary' : 'disabled' }
+				url={ isKitReady && ! isCheckingEligibility ? '/export/process' : '' }
+				hideText={ isCheckingEligibility }
+				icon={ isCheckingEligibility ? 'eicon-loading eicon-animation-spin' : '' }
 				onClick={ () => {
 					exportContext.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: KIT_SOURCE_MAP.FILE } );
 				} }
