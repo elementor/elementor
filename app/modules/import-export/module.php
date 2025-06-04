@@ -161,7 +161,7 @@ class Module extends BaseModule {
 				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
+					'text' => Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
 				],
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
@@ -171,7 +171,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) && KitLibrary::get_cloud_api()->is_eligible() ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && KitLibrary::get_cloud_api()->is_eligible() ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
 				'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
@@ -244,7 +244,7 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' );
+		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
 
 		if ( $is_cloud_kits_feature_active ) { ?>
 			<div class="tab-import-export-kit__container">
