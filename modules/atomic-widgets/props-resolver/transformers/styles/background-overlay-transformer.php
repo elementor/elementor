@@ -14,6 +14,10 @@ class Background_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$normalized_values = $this->normalize_overlay_values( $value );
 
+		if ( empty( $normalized_values ) ) {
+			return null;
+		}
+
 		return array_filter( [
 			'background-image' => $this->get_values_string( $normalized_values, 'src', Background_Image_Overlay_Transformer::DEFAULT_IMAGE, true ),
 			'background-repeat' => $this->get_values_string( $normalized_values, 'repeat', Background_Image_Overlay_Transformer::DEFAULT_REPEAT ),
@@ -49,7 +53,7 @@ class Background_Overlay_Transformer extends Transformer_Base {
 		} ) );
 
 		if ( $is_empty ) {
-			return null;
+			return $default_value;
 		}
 
 		$formatted_values = array_map( function ( $item ) use ( $prop, $default_value ) {
