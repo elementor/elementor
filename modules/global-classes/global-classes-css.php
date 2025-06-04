@@ -2,13 +2,17 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Modules\AtomicWidgets\Styles_Manager;
+use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
 use Elementor\Plugin;
 
 class Global_Classes_CSS {
 	public function register_hooks() {
 		add_action(
-			'elementor/frontend/after_enqueue_styles',
-			fn() => $this->enqueue_styles()
+			'elementor/atomic-widget/styles/enqueue',
+			fn( Styles_Manager $styles_manager ) => $this->enqueue_styles( $styles_manager ),
+			20,
+			3
 		);
 
 		add_action(
@@ -36,12 +40,31 @@ class Global_Classes_CSS {
 		);
 	}
 
-	private function enqueue_styles() {
-		$css_file = is_preview()
-			? new Global_Classes_CSS_Preview()
-			: new Global_Classes_CSS_File();
+	private function enqueue_styles( Styles_Manager $styles_manager ) {
+		$global_classes_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 
-		$css_file->enqueue();
+		if ( empty( $global_classes_ids ) ) {
+			return;
+		}
+
+		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
+
+		$global_classes = [];
+		foreach ( $post_ids as $post_id ) {
+			$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
+			$used_global_classes_ids = array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
+			$used_global_classes = Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids )->get_items()->map( function( $item ) {
+				$item['id'] = $item['label'];
+				return $item;
+			})->all();
+
+			$global_classes = array_merge($global_classes,  $used_global_classes);
+		}
+
+		$styles_manager->register(
+			'global',
+			$global_classes
+		);
 	}
 
 	private function generate_styles() {

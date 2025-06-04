@@ -46,7 +46,7 @@ class Applied_Global_Classes_Usage {
 		return $total_count_per_class_id;
 	}
 
-	private function get_classes_count_per_class( $elements_data, $global_class_ids ) {
+	public function get_classes_count_per_class( $elements_data, $global_class_ids ) {
 		$count_per_class = [];
 
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$count_per_class ) {

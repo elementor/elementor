@@ -97,6 +97,8 @@ class Module extends BaseModule {
 			$this->register_experimental_features();
 		}
 
+		Styles_Manager::instance()->register_hooks();
+
 		( new Opt_In() )->init();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
