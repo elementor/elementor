@@ -379,7 +379,7 @@ class Admin_Notices extends Module {
 	}
 
 	private function site_has_forms_plugins() {
-		return defined( 'WPFORMS_VERSION' ) || defined( 'WPCF7_VERSION' ) || defined( 'FLUENTFORM_VERSION' ) || class_exists( '\GFCommon' ) || class_exists( '\Ninja_Forms' ) || function_exists( 'load_formidable_forms' );
+		return defined( 'WPFORMS_VERSION' ) || defined( 'WPCF7_VERSION' ) || defined( 'FLUENTFORM_VERSION' ) || class_exists( '\GFCommon' ) || class_exists( '\Ninja_Forms' ) || function_exists( 'load_formidable_forms' ) || did_action( 'metform/after_load' ) || defined( 'FORMINATOR_PLUGIN_BASENAME' );
 	}
 
 	private function site_has_woocommerce() {
