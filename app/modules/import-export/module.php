@@ -613,20 +613,15 @@ class Module extends BaseModule {
 	 * Handle upload kit ajax request.
 	 */
 	private function handle_upload_kit() {
-		// PHPCS - A URL that should contain special chars (auth headers information).
-		$file_url = isset( $_POST['e_import_file'] )
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			? wp_unslash( $_POST['e_import_file'] )
-			: '';
-		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-		$kit_id = $_POST['kit_id'];
+		$file_url = ElementorUtils::get_super_global_value( $_POST, 'e_import_file' );
+		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' );
 
 		$is_import_from_library = ! empty( $file_url );
-		$is_import_from_cloud = isset( $_POST['source'] ) && self::REFERRER_CLOUD === $_POST['source'];
+		$is_import_from_cloud = isset( $_POST['source'] ) && self::REFERRER_CLOUD === ElementorUtils::get_super_global_value( $_POST, 'source' );
 
 		if ( $is_import_from_cloud ) {
 			$result = $this->handle_import_kit_from_cloud( $kit_id );
-		} else if ( $is_import_from_library ) {
+		} elseif ( $is_import_from_library ) {
 			$result = $this->handle_import_kit_from_library( $file_url );
 		} else {
 			$result = $this->handle_import_kit_from_upload();
@@ -706,7 +701,6 @@ class Module extends BaseModule {
 		if ( empty( $kit['downloadUrl'] ) ) {
 			throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
-
 
 		return [
 			'file_name' => $this->get_remote_kit_zip( $kit['downloadUrl'] ),
