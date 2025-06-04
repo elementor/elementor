@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets;
 
+use Elementor\Core\Breakpoints\Breakpoint;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Plugin;
 
@@ -14,11 +16,7 @@ class Styles_Manager {
 
 	private array $registered_styles_by_provider = [];
 
-	const BREAKPOINTS = [
-		'desktop',
-		'tablet',
-		'mobile',
-	];
+	const DEFAULT_BREAKPOINT = 'desktop';
 
 	public static function instance() {
 		if ( ! self::$instance ) {
@@ -39,43 +37,49 @@ class Styles_Manager {
 	private function enqueue_styles() {
 		do_action('elementor/atomic-widget/styles/enqueue', $this);
 
-		foreach ( self::BREAKPOINTS as $breakpoint_key ) {
-			foreach ($this->registered_styles_by_provider as $provider => $styles ) {
-				$styles_by_breakpoint = $this->group_by_breakpoint( $styles );
+        $breakpoints = $this->get_breakpoints();
+        foreach ( $breakpoints as $breakpoint_key ) {
+            foreach ($this->registered_styles_by_provider as $provider_key => $styles ) {
+                $styles_by_breakpoint = $this->group_by_breakpoint( $styles );
 
-				foreach ( $styles_by_breakpoint as $breakpoint => $breakpoint_styles ) {
-					$css = Styles_Renderer::make(
-						Plugin::$instance->breakpoints->get_breakpoints_config()
-					)->on_prop_transform( function( $key, $value ) {
-						if ( 'font-family' !== $key ) {
-							return;
-						}
+                $breakpoint_styles = $styles_by_breakpoint[ $breakpoint_key ] ?? [];
 
-						Plugin::instance()->frontend->enqueue_font( $value );
-					} )->render( $breakpoint_styles );
+                $css = Styles_Renderer::make(
+                    Plugin::$instance->breakpoints->get_breakpoints_config()
+                )->on_prop_transform( function( $key, $value ) {
+                    if ( 'font-family' !== $key ) {
+                        return;
+                    }
 
-					$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
+                    Plugin::instance()->frontend->enqueue_font( $value );
+                } )->render( $breakpoint_styles );
 
-					$media = $breakpoint_instance
-						? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
-						: 'all';
+                if ( empty( $css ) ) {
+                    continue;
+                }
 
-					$style_file = new Style( $provider . '-' . $breakpoint, $provider . '-' . $breakpoint);
+                $breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
 
-					$style_file->append( $css );
+                $media = $breakpoint_instance
+                    ? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
+                    : 'all';
 
-					$this->write_to_file($style_file);
+                $style_file = new Style( $provider_key . '-' . $breakpoint_key );
 
-					wp_enqueue_style(
-						$style_file->get_handle(),
-						$style_file->get_src(),
-						[],
-						ELEMENTOR_VERSION,
-						$media
-					);
-				}
-			}
-		}
+                $style_file->append( $css );
+
+                $this->write_to_file($style_file);
+
+                wp_enqueue_style(
+                    $style_file->get_handle(),
+                    $style_file->get_src(),
+                    [],
+                    ELEMENTOR_VERSION,
+                    $media
+                );
+            }
+
+        }
 	}
 
 	private function write_to_file( Style $style ) {
@@ -102,4 +106,12 @@ class Styles_Manager {
 
 		return $groups;
 	}
+
+    private function get_breakpoints() {
+        return Collection::make( Plugin::$instance->breakpoints->get_breakpoints() )
+            ->map( fn( Breakpoint $breakpoint) => $breakpoint->get_name() )
+            ->reverse()
+            ->prepend( self::DEFAULT_BREAKPOINT )
+            ->all();
+    }
 }

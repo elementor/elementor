@@ -16,9 +16,9 @@ class Style {
 
 	private string $content = '';
 
-	public function __construct( string $handle, string $name ) {
+	public function __construct( string $handle ) {
 		$this->handle = $handle;
-		$this->name = $name;
+		$this->name = $handle;
 	}
 
 	public function append( string $content ) {
