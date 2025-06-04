@@ -657,7 +657,7 @@ class Module extends BaseModule {
 			'session' => $session_dir,
 			'manifest' => $manifest,
 		];
-		
+
 		if ( isset( $file_url ) ) {
 			$result['file_url'] = $file_url;
 		}
