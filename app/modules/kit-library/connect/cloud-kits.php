@@ -115,7 +115,6 @@ class Cloud_Kits extends Library {
 	}
 
 	public function get_kit( array $args ) {
-
 		$args = array_merge_recursive( $args, [
 			'timeout' => 60, // just in case if zip is big
 		] );

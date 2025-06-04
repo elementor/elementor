@@ -46,7 +46,6 @@ export default function KitListCloud( props ) {
 			<KitCloudDeleteDialog
 				kit={ kit }
 				show={ isDeleteModalOpen }
-				setShow={ setIsDeleteModalOpen }
 				onDeleteClick={ handleDelete }
 				onCancelClick={ resetKit }
 				isLoading={ isLoading }

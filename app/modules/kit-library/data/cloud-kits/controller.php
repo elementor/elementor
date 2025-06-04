@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Data\KitsCloud;
+namespace Elementor\App\Modules\KitLibrary\Data\CloudKits;
 
 use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
 use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Controller extends Base_Controller {
 
 	public function get_name() {
-		return 'kits-cloud';
+		return 'cloud-kits';
 	}
 
 	public function get_items( $request ) {
@@ -40,18 +40,6 @@ class Controller extends Base_Controller {
 		];
 	}
 
-	public function update_item( $request ) {
-		$id = $request->get_param( 'id' );
-		$title = $request->get_param( 'title' );
-
-		return [
-			'data' => $this->get_app()->update_kit( [
-				'id' => $id,
-				'title' => $title,
-			] ),
-		];
-	}
-
 	public function delete_item( $request ) {
 		return [
 			'data' => $this->get_app()->delete_kit( $request->get_param( 'id' ) ),
@@ -65,6 +53,14 @@ class Controller extends Base_Controller {
 	}
 
 	public function register_endpoints() {
+		$this->index_endpoint->register_item_route( \WP_REST_Server::DELETABLE, [
+			'id' => [
+				'description' => 'Unique identifier for the object.',
+				'type' => 'integer',
+				'required' => true,
+			],
+		] );
+
 		$this->register_endpoint( new Endpoints\Eligibility( $this ) );
 	}
 
@@ -73,6 +69,6 @@ class Controller extends Base_Controller {
 	}
 
 	protected function get_app(): Cloud_Kits {
-		return KitLibrary::get_cloud_api();
+		return KitLibrary::get_cloud_app();
 	}
 }

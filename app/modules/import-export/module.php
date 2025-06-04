@@ -144,6 +144,8 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
+        $is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) && KitLibrary::get_cloud_app()->is_eligible();
+
 		$content_data = [
 			'export' => [
 				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
@@ -161,7 +163,7 @@ class Module extends BaseModule {
 				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
+					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
 				],
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
@@ -171,7 +173,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) && KitLibrary::get_cloud_api()->is_eligible() ) {
+		if ( $is_cloud_kits_available ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
 				'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
@@ -698,7 +700,7 @@ class Module extends BaseModule {
 	}
 
 	protected function handle_import_kit_from_cloud( $kit_id ) {
-		$kit = KitLibrary::get_cloud_api()->get_kit( [
+		$kit = KitLibrary::get_cloud_app()->get_kit( [
 			'id' => $kit_id,
 		] );
 
@@ -810,7 +812,7 @@ class Module extends BaseModule {
 			$title = $export['manifest']['title'];
 			$description = $export['manifest']['description'];
 
-			$kit = KitLibrary::get_cloud_api()->create_kit(
+			$kit = KitLibrary::get_cloud_app()->create_kit(
 				$title,
 				$description,
 				$file,

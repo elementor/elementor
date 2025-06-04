@@ -114,7 +114,7 @@ export default function ImportKit() {
 
 	// After kit was uploaded.
 	useEffect( () => {
-		if ( importContext.data.uploadedData && ( importContext.data.file || KIT_SOURCE_MAP.CLOUD === importContext.data.source ) ) {
+		if ( importContext.data.uploadedData && importContext.data.file ) {
 			const url = importContext.data.uploadedData.manifest.plugins ? '/import/plugins' : '/import/content';
 
 			navigate( url );
