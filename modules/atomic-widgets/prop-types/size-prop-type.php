@@ -42,10 +42,19 @@ class Size_Prop_Type extends Object_Prop_Type {
 	}
 
 	public function sanitize_value( $value ) {
+		$unit = sanitize_text_field( $value['unit'] );
+
+		if ( ! in_array( $value['unit'], [ 'auto', 'custom' ] ) ) {
+			return [
+				// The + operator cast the $value['size'] to numeric (either int or float - depends on the value)
+				'size' => +$value['size'],
+				'unit' => $unit,
+			];
+		}
+
 		return [
-			// The + operator cast the $value['size'] to numeric (either int or float - depends on the value)
-			'size' => +$value['size'],
-			'unit' => sanitize_text_field( $value['unit'] ),
+			'size' => 'auto' === $value['unit'] ? '' : sanitize_text_field( $value['size'] ),
+			'unit' => $unit,
 		];
 	}
 
