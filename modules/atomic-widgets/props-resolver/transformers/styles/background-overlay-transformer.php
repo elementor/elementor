@@ -18,13 +18,13 @@ class Background_Overlay_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		return array_filter( [
+		return [
 			'background-image' => $this->get_values_string( $normalized_values, 'src', Background_Image_Overlay_Transformer::DEFAULT_IMAGE, true ),
 			'background-repeat' => $this->get_values_string( $normalized_values, 'repeat', Background_Image_Overlay_Transformer::DEFAULT_REPEAT ),
 			'background-attachment' => $this->get_values_string( $normalized_values, 'attachment', Background_Image_Overlay_Transformer::DEFAULT_ATTACHMENT ),
 			'background-size' => $this->get_values_string( $normalized_values, 'size', Background_Image_Overlay_Transformer::DEFAULT_SIZE ),
 			'background-position' => $this->get_values_string( $normalized_values, 'position', Background_Image_Overlay_Transformer::DEFAULT_POSITION ),
-		] );
+		];
 	}
 
 	private function normalize_overlay_values( $overlays ): array {
