@@ -1,0 +1,28 @@
+.e-kit-library-actions_modal {
+	&__content {
+		gap: 20px;
+	}
+
+	&__actions {
+		&-container {
+			gap: 20px;
+		}
+		&-delete-button {
+			background-color: theme-colors( danger );
+			&:hover {
+				background-color: rgba( theme-colors( danger ), $opacity-01 );
+			}
+		}
+	}
+
+	&__error-container {
+		height: 20px;
+		display: flex;
+		align-items: flex-start;
+		margin-top: 4px;
+	}
+
+	&__validation-error {
+		color: var(--e-a-color-danger);
+	}
+}
