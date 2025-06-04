@@ -153,7 +153,7 @@ test.describe( 'Container Grid tests @container', () => {
 			expect( gridDragAreaOffsetLeft ).toEqual( flexDragAreaOffsetLeft );
 
 			// Add heading.
-			await editor.addWidget( 'heading', flexContainerId );
+			await editor.addWidget( { widgetType: 'heading', container: flexContainerId } );
 			await editor.getPreviewFrame().waitForSelector( '.elementor-widget-heading' );
 
 			// Assert.
@@ -224,7 +224,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 		await test.step( 'Elements with class .ui-resizable-e inside grid-containers should not be visible', async () => {
 			// Act
-			const buttonID = await editor.addWidget( 'button', containerId ),
+			const buttonID = await editor.addWidget( { widgetType: 'button', container: containerId } ),
 				buttonSelector = `.elementor-element-${ buttonID }`,
 				buttonHandle = frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
@@ -239,7 +239,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Elements with class .ui-resizable-e inside flex-containers should be visible', async () => {
 			// Act
 			const flexContainerId = await editor.addElement( { elType: 'container' }, 'document' ),
-				buttonID = await editor.addWidget( 'button', flexContainerId ),
+				buttonID = await editor.addWidget( { widgetType: 'button', container: flexContainerId } ),
 				buttonSelector = `.elementor-element-${ buttonID }`,
 				buttonHandle = frame.locator( buttonSelector ).locator( '.ui-resizable-e' );
 
@@ -359,7 +359,7 @@ test.describe( 'Container Grid tests @container', () => {
 
 			// Act.
 			for ( let i = 0; i < numberOfWidgets; i++ ) {
-				await editor.addWidget( 'button', newParentContainer );
+				await editor.addWidget( { widgetType: 'button', container: newParentContainer } );
 			}
 
 			// Assert.
@@ -544,7 +544,7 @@ test.describe( 'Container Grid tests @container', () => {
 		await test.step( 'Arrange', async () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.setSelectControlValue( 'container_type', 'grid' );
-			await editor.addWidget( 'heading', containerId );
+			await editor.addWidget( { widgetType: 'heading', container: containerId } );
 		} );
 
 		await test.step( 'After a widget is added', async () => {
@@ -573,7 +573,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSliderControlValue( 'grid_rows_grid', '2' );
 
 			for ( let i = 0; i < 6; i++ ) {
-				await editor.addWidget( 'heading', containerId );
+				await editor.addWidget( { widgetType: 'heading', container: containerId } );
 			}
 		} );
 
@@ -582,7 +582,7 @@ test.describe( 'Container Grid tests @container', () => {
 		} );
 
 		await test.step( 'Add one more item to see empty item', async () => {
-			const latestAddedWidgetId = await editor.addWidget( 'heading', containerId );
+			const latestAddedWidgetId = await editor.addWidget( { widgetType: 'heading', container: containerId } );
 			await expect( editor.getPreviewFrame().locator( '.elementor-empty-view' ) ).toBeVisible();
 
 			await editor.removeElement( latestAddedWidgetId );
@@ -610,7 +610,7 @@ test.describe( 'Container Grid tests @container', () => {
 			await editor.setSliderControlValue( 'grid_rows_grid', '2' );
 
 			for ( let i = 0; i < 6; i++ ) {
-				await editor.addWidget( 'heading', containerId );
+				await editor.addWidget( { widgetType: 'heading', container: containerId } );
 			}
 		} );
 

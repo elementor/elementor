@@ -36,6 +36,27 @@ const DivBlockView = BaseElementView.extend( {
 		return ui;
 	},
 
+	attributes() {
+		const attr = BaseElementView.prototype.attributes.apply( this );
+		const local = {};
+		const cssId = this.model.getSetting( '_cssid' );
+
+		if ( cssId ) {
+			local.id = cssId.value;
+		}
+
+		const href = this.getHref();
+
+		if ( href ) {
+			local.href = href;
+		}
+
+		return {
+			...attr,
+			...local,
+		};
+	},
+
 	// TODO: Copied from `views/column.js`.
 	attachElContent() {
 		BaseElementView.prototype.attachElContent.apply( this, arguments );
@@ -80,6 +101,16 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
+		if ( changed._cssid ) {
+			if ( changed._cssid.value ) {
+				this.$el.attr( 'id', changed._cssid.value );
+			} else {
+				this.$el.removeAttr( 'id' );
+			}
+
+			return;
+		}
+
 		this.$el.addClass( this.getClasses() );
 
 		if ( this.isTagChanged( changed ) ) {
@@ -99,22 +130,11 @@ const DivBlockView = BaseElementView.extend( {
 
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
-		this.handleLink();
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
 		} );
-	},
-
-	handleLink() {
-		const href = this.getHref();
-
-		if ( ! href ) {
-			return;
-		}
-
-		this.$el.attr( 'href', href );
 	},
 
 	haveLink() {
@@ -138,7 +158,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	/**
-	 * Add a `Save as Template` button to the context menu.
+	 * Add a `Save as a Template` button to the context menu.
 	 *
 	 * @return {Object} groups
 	 */
@@ -151,8 +171,8 @@ const DivBlockView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: __( 'Save as Template', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					title: __( 'Save as a template', 'elementor' ),
+					shortcut: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>` : '',
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
@@ -194,26 +214,11 @@ const DivBlockView = BaseElementView.extend( {
 		};
 	},
 
-	getDroppableAxis() {
-		if ( this.isHorizontalAxis() ) {
-			return 'horizontal';
-		}
-
-		return 'vertical';
-	},
-
-	isHorizontalAxis() {
-		const styles = window.getComputedStyle( this.$el[ 0 ] );
-
-		return 'flex' === styles.display &&
-			[ 'row', 'row-reverse' ].includes( styles.flexDirection );
-	},
-
 	getDroppableOptions() {
 		const items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
 
 		return {
-			axis: this.getDroppableAxis(),
+			axis: null,
 			items,
 			groups: [ 'elementor-element' ],
 			horizontalThreshold: 0,
@@ -225,62 +230,97 @@ const DivBlockView = BaseElementView.extend( {
 			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
-				// Triggering drag end manually, since it won't fired above iframe
+				// Triggering the drag end manually, since it won't fire above the iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggingInSameParent = ( draggedView?.parent === this ),
-					containerSelector = event.currentTarget.parentElement;
+					draggedElement = draggedView?.getContainer().view.el,
+					containerElement = event.currentTarget.parentElement,
+					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] ),
+					targetIndex = elements.indexOf( event.currentTarget );
 
-				let $elements = jQuery( containerSelector ).find( '> .elementor-element' );
-
-				// Exclude the dragged element from the indexing calculations.
-				if ( draggingInSameParent ) {
-					$elements = $elements.not( draggedView.$el );
-				}
-
-				const widgetsArray = Object.values( $elements );
-
-				let newIndex = widgetsArray.indexOf( event.currentTarget );
-
-				// Plus one in order to insert it after the current target element.
-				if ( this.shouldIncrementIndex( side ) ) {
-					newIndex++;
-				}
-
-				// User is sorting inside a Container.
-				if ( draggedView ) {
-					// Prevent the user from dragging a parent container into its own child container
-					const draggedId = draggedView.getContainer().id;
-
-					let currentTargetParentContainer = this.container;
-
-					while ( currentTargetParentContainer ) {
-						if ( currentTargetParentContainer.id === draggedId ) {
-							return;
-						}
-
-						currentTargetParentContainer = currentTargetParentContainer.parent;
-					}
-
-					// Reset the dragged element cache.
-					elementor.channels.editor.reply( 'element:dragged', null );
-
-					$e.run( 'document/elements/move', {
-						container: draggedView.getContainer(),
-						target: this.getContainer(),
-						options: {
-							at: newIndex,
-						},
-					} );
+				if ( this.isPanelElement( draggedView, draggedElement ) ) {
+					this.onDrop( event, { at: targetIndex } );
 
 					return;
 				}
 
-				// User is dragging an element from the panel.
-				this.onDrop( event, { at: newIndex } );
+				if ( this.isParentElement( draggedView.getContainer().id ) ) {
+					return;
+				}
+
+				const selfIndex = elements.indexOf( draggedElement );
+
+				if ( targetIndex === selfIndex ) {
+					return;
+				}
+
+				const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
+
+				this.moveDroppedItem( draggedView, dropIndex );
 			},
 		};
+	},
+
+	isPanelElement( draggedView, draggedElement ) {
+		return ! draggedView || ! draggedElement;
+	},
+
+	isParentElement( draggedId ) {
+		let current = this.container;
+
+		while ( current ) {
+			if ( current.id === draggedId ) {
+				return true;
+			}
+
+			current = current.parent;
+		}
+
+		return false;
+	},
+
+	getDropIndex( container, side, index, selfIndex ) {
+		const styles = window.getComputedStyle( container );
+
+		const isFlex = [ 'flex', 'inline-flex' ].includes( styles.display );
+		const isFlexReverse = isFlex &&
+			[ 'column-reverse', 'row-reverse' ].includes( styles.flexDirection );
+
+		const isRow = isFlex && [ 'row-reverse', 'row' ].includes( styles.flexDirection );
+
+		const isRtl = elementorCommon.config.isRTL;
+
+		const isReverse = isRow ? isFlexReverse !== isRtl : isFlexReverse;
+
+		// The element should be placed BEFORE the current target
+		// if is reversed + side is bottom/right OR not is reversed + side is top/left
+		if ( ( isReverse === this.draggingOnBottomOrRightSide( side ) ) ) {
+			if ( -1 === selfIndex || selfIndex >= index - 1 ) {
+				return index;
+			}
+
+			return index > 0 ? index - 1 : 0;
+		}
+
+		if ( 0 <= selfIndex && selfIndex < index ) {
+			return index;
+		}
+
+		return index + 1;
+	},
+
+	moveDroppedItem( draggedView, dropIndex ) {
+		// Reset the dragged element cache.
+		elementor.channels.editor.reply( 'element:dragged', null );
+
+		$e.run( 'document/elements/move', {
+			container: draggedView.getContainer(),
+			target: this.getContainer(),
+			options: {
+				at: dropIndex,
+			},
+		} );
 	},
 
 	getEditButtons() {
@@ -320,20 +360,8 @@ const DivBlockView = BaseElementView.extend( {
 		return editTools;
 	},
 
-	shouldIncrementIndex( side ) {
-		if ( ! this.draggingOnBottomOrRightSide( side ) ) {
-			return false;
-		}
-
-		return ! this.emptyViewIsCurrentlyBeingDraggedOver();
-	},
-
 	draggingOnBottomOrRightSide( side ) {
 		return [ 'bottom', 'right' ].includes( side );
-	},
-
-	emptyViewIsCurrentlyBeingDraggedOver() {
-		return this.$el.find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
 	},
 
 	/**
@@ -381,7 +409,9 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getBaseClass() {
-		return 'e-flexbox' === this.options?.model?.getSetting( 'elType' ) ? 'e-flexbox-base' : 'e-div-block-base';
+		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
+
+		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
 	},
 } );
 

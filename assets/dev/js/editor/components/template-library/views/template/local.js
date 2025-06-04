@@ -38,6 +38,15 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		'change:title': 'onTitleChange',
 	},
 
+	handleLockedTemplate() {
+		const isLocked = this.model.isLocked();
+
+		this.ui.renameButton.toggleClass( 'disabled', isLocked );
+		this.ui.moveButton.toggleClass( 'disabled', isLocked );
+		this.ui.copyButton.toggleClass( 'disabled', isLocked );
+		this.ui.exportButton.toggleClass( 'disabled', isLocked );
+	},
+
 	onTitleChange() {
 		const title = _.escape( this.model.get( 'title' ) );
 
@@ -100,7 +109,13 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	onToggleMoreClick( event ) {
 		event.stopPropagation();
 
+		this.handleLockedTemplate();
+
 		this.ui.morePopup.show();
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.morePopup,
+		} );
 	},
 
 	onPreviewButtonClick( event ) {
@@ -112,6 +127,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	async onRenameClick( event ) {
 		event.stopPropagation();
 
+		if ( this.model.isLocked() ) {
+			return;
+		}
+
 		try {
 			await elementor.templates.renameTemplate( this.model, {
 				onConfirm: () => this.showToggleMoreLoader(),
@@ -122,6 +141,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onMoveClick() {
+		if ( this.model.isLocked() ) {
+			return;
+		}
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.MOVE,
@@ -129,6 +152,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onCopyClick() {
+		if ( this.model.isLocked() ) {
+			return;
+		}
+
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.COPY,
@@ -137,6 +164,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 	onExportClick( e ) {
 		e.stopPropagation();
+
+		if ( this.model.isLocked() ) {
+			e.preventDefault();
+		}
 	},
 
 	showToggleMoreLoader() {
@@ -152,8 +183,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 		if ( event?.target?.checked ) {
 			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
+			this.$el.addClass( 'bulk-selected-item' );
 		} else {
 			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
+			this.$el.removeClass( 'bulk-selected-item' );
 		}
 
 		elementor.templates.layout.handleBulkActionBarUi();

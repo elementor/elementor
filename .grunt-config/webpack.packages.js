@@ -3,6 +3,7 @@ const fs = require( 'fs' );
 const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generate-wordpress-asset-file-webpack-plugin' );
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
+const { EntryInitializationWebpackPlugin } = require( '@elementor/entry-initialization-webpack-plugin' );
 
 const usingLocalRepo = process.env.ELEMENTOR_PACKAGES_USE_LOCAL;
 
@@ -65,6 +66,11 @@ const common = {
 				{ request: 'react', global: 'React' },
 				{ request: 'react-dom', global: 'ReactDOM' },
 			]
+		} ),
+		new EntryInitializationWebpackPlugin( {
+			initializer: ( { entryName } ) => {
+				return `window.elementorV2.${ entryName }?.init?.();`;
+			},
 		} ),
 	],
 	output: {

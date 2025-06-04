@@ -8,9 +8,9 @@ export const SAVE_CONTEXTS = Object.freeze( {
 
 export const QUOTA_WARNINGS = Object.freeze( {
 	/* Translators: 1: Quota usage percentage */
-	warning: __( 'You\'ve reached %1$d%% of your storage.', 'elementor' ),
+	warning: __( 'You\'ve saved %1$d%% of the templates in your plan. To get more space ', 'elementor' ) + '<a href="https://go.elementor.com/go-pro-cloud-templates-usage-bar-80" target="_blank">' + __( 'Upgrade now', 'elementor' ) + '</a>',
 	/* Translators: 1: Quota usage percentage */
-	alert: __( 'You\'ve reached %1$d1%% of the space available in your plan. Upgrade to save more templates', 'elementor' ),
+	alert: __( 'You\'ve saved %1$d%% of the templates in your plan. To get more space ', 'elementor' ) + '<a href="https://go.elementor.com/go-pro-cloud-templates-usage-bar-100" target="_blank">' + __( 'Upgrade now', 'elementor' ) + '</a>',
 } );
 
 export const QUOTA_BAR_STATES = Object.freeze( {

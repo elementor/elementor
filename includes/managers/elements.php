@@ -277,7 +277,7 @@ class Elements_Manager {
 	private function init_categories() {
 		$this->categories = [
 			'v4-elements' => [
-				'title' => esc_html__( 'V4 Elements', 'elementor' ),
+				'title' => esc_html__( 'Atomic Elements', 'elementor' ),
 				'hideIfEmpty' => true,
 			],
 			'layout' => [

@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -34,7 +35,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => true,
 				'args' => [
 					'context' => [
 						'type' => 'string',
@@ -53,7 +54,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 				'args' => [
 					'context' => [
 						'type' => 'string',
@@ -62,6 +63,28 @@ class Global_Classes_REST_API {
 						'enum' => [
 							Global_Classes_Repository::CONTEXT_FRONTEND,
 							Global_Classes_Repository::CONTEXT_PREVIEW,
+						],
+					],
+					'changes' => [
+						'type' => 'object',
+						'required' => true,
+						'additionalProperties' => false,
+						'properties' => [
+							'added' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
+							'deleted' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
+							'modified' => [
+								'type' => 'array',
+								'required' => true,
+								'items' => [ 'type' => 'string' ],
+							],
 						],
 					],
 					'items' => [
@@ -150,11 +173,17 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		$context = $request->get_param( 'context' );
+		$repository = $this->get_repository()
+			->context( $request->get_param( 'context' ) );
 
-		$this->get_repository()->context( $context )->put(
-			$items_result->unwrap(),
-			$order_result->unwrap(),
+		$changes_resolver = Global_Classes_Changes_Resolver::make(
+			$repository,
+			$request->get_param( 'changes' ) ?? [],
+		);
+
+		$repository->put(
+			$changes_resolver->resolve_items( $items_result->unwrap() ),
+			$changes_resolver->resolve_order( $order_result->unwrap() ),
 		);
 
 		return Response_Builder::make()->no_content()->build();

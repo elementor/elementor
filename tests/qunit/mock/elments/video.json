@@ -7249,8 +7249,8 @@
 			},
 			"default": "circle",
 			"selectors": {
-				"{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container": "-webkit-mask-image: url( http://localhost/wordpress/wp-content/plugins/elementor/assets//mask-shapes/{{VALUE}}.svg );",
-				"{{WRAPPER}}.elementor-widget-image .elementor-widget-container img": "-webkit-mask-image: url( http://localhost/wordpress/wp-content/plugins/elementor/assets//mask-shapes/{{VALUE}}.svg );"
+				"{{WRAPPER}}:not( .elementor-widget-image ) .elementor-widget-container": "-webkit-mask-image: url( http://localhost/wordpress/wp-content/plugins/elementor/assets/mask-shapes/{{VALUE}}.svg );",
+				"{{WRAPPER}}.elementor-widget-image .elementor-widget-container img": "-webkit-mask-image: url( http://localhost/wordpress/wp-content/plugins/elementor/assets/mask-shapes/{{VALUE}}.svg );"
 			},
 			"condition": {
 				"_mask_switch!": ""

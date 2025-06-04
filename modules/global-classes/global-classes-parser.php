@@ -3,9 +3,11 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
+use Elementor\Plugin;
 
 class Global_Classes_Parser {
 	public static function make() {
@@ -68,6 +70,7 @@ class Global_Classes_Parser {
 		$sanitized_items = [];
 		$result = Parse_Result::make();
 		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$existing_labels = [];
 
 		foreach ( $items as $item_id => $item ) {
 			$item_result = $style_parser->parse( $item );
@@ -80,17 +83,22 @@ class Global_Classes_Parser {
 
 			$sanitized_item = $item_result->unwrap();
 
-			if ( isset( $sanitized_item['label'] ) ) {
-				$sanitized_item['label'] = $this->sanitize_label( $sanitized_item['label'] );
-			}
-
 			if ( $item_id !== $sanitized_item['id'] ) {
 				$result->errors()->add( "$item_id.id", 'mismatching_value' );
 
 				continue;
 			}
 
+			if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+				if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
+					$result->errors()->add( "$item_id.id", 'duplicated_class_label' );
+
+					continue;
+				}
+			}
+
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
+			$existing_labels[] = $sanitized_item['label'];
 		}
 
 		return $result->wrap( $sanitized_items );
@@ -116,13 +124,5 @@ class Global_Classes_Parser {
 		return $result->is_valid()
 			? $result->wrap( $order->values() )
 			: $result;
-	}
-
-	private function sanitize_label( $label ): string {
-		if ( ! is_string( $label ) ) {
-			return '';
-		}
-
-		return preg_replace( '/[^a-zA-Z0-9_-]/', '', $label );
 	}
 }

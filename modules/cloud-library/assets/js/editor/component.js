@@ -1,5 +1,3 @@
-import * as hooks from './hooks/';
-
 export default class Component extends $e.modules.ComponentBase {
 	promise = null;
 
@@ -44,6 +42,9 @@ export default class Component extends $e.modules.ComponentBase {
 
 				success: ( data ) => {
 					elementorAppConfig[ 'cloud-library' ].quota = data;
+
+					this.maybeSendQuotaCapacityEvent( data );
+
 					resolve( data );
 					this.promise = null;
 					this.request = null;
@@ -64,9 +65,24 @@ export default class Component extends $e.modules.ComponentBase {
 
 		return this.promise;
 	}
-	defaultHooks() {
-		return this.importHooks( hooks );
-	}
+
+	maybeSendQuotaCapacityEvent = ( data ) => {
+		const value = data ? Math.round( ( data.currentUsage / data.threshold ) * 100 ) : 0;
+
+		let quotaUsageAlert = null;
+
+		if ( value < 80 ) {
+			return;
+		} else if ( 80 <= value < 100 ) {
+			quotaUsageAlert = '80%';
+		} else {
+			quotaUsageAlert = '100%';
+		}
+
+		elementor.templates.eventManager.sendQuotaBarCapacityEvent( {
+			quota_usage_alert: quotaUsageAlert,
+		} );
+	};
 
 	defaultUtils() {
 		return {

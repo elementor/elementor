@@ -8,7 +8,7 @@ import { getUiConfig } from './utils/editor-integration';
 import { getRemoteFrontendConfig } from './api';
 import { getUniqueId } from './context/requests-ids';
 import ApplyAiTitlesNavigatorBehavior from './integration/navigator/apply-ai-titles-to-navigator-behaviour';
-
+import { addAiPromotionForSiteLogo } from './utils/ai-promotion';
 setTimeout( async () => {
 	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
 		return;
@@ -44,6 +44,12 @@ export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
+
+		$e.routes.on( 'run:after', ( component, route ) => {
+			if ( 'panel/global/settings-site-identity' === route ) {
+				addAiPromotionForSiteLogo();
+			}
+		} );
 
 		window.addEventListener( 'hashchange', function( e ) {
 			if ( e.newURL.includes( 'welcome-ai' ) ) {

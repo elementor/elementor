@@ -197,10 +197,6 @@ html.elementor-html {
 		min-height: 15px;
 	}
 
-	.elementor-html5dnd-current-element .e-min-height {
-		min-height: 20px;
-	}
-
 	.elementor-edit-hidden {
 		display: none;
 	}
@@ -434,16 +430,11 @@ html.elementor-html {
 	animation-name: placeholder-widget;
 
 	&.is-logical {
-		--e-margin-block: calc( -1 * var(--e-row-gap) );
-
-		&:first-child {
-			margin-bottom: var(--e-margin-block, 0px);
-			border-top: 10px solid transparent;
-		}
-
-		&:last-child {
-			margin-top: var(--e-margin-block, 0px);
-		}
+		margin-top: var(--e-placeholder-margin-top);
+		margin-bottom: var(--e-placeholder-margin-bottom);
+		margin-inline-start: var(--e-placeholder-margin-inline-start);
+		width: var(--e-placeholder-width);
+		min-width: 200px;
 	}
 }
 
@@ -545,6 +536,10 @@ html.elementor-html {
 	&.elementor-edit-hidden {
 		display: none;
 	}
+}
+
+.e-youtube-base iframe {
+	pointer-events: none;
 }
 
 @import "section";

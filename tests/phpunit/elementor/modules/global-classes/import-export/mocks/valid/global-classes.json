@@ -3,7 +3,7 @@
     "g-123": {
       "id": "g-123",
       "type": "class",
-      "label": "Test",
+      "label": "Test1",
       "variants": [
         {
           "meta": {
@@ -31,7 +31,7 @@
     "g-456": {
       "id": "g-456",
       "type": "class",
-      "label": "Test",
+      "label": "Test2",
       "variants": []
     }
   },

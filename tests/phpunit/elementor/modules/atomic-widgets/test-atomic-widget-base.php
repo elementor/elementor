@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
@@ -470,13 +471,57 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget->get_atomic_controls();
 	}
 
+	public function test_get_atomic_controls__supports_control_injections() {
+		// Arrange.
+		$widget = $this->make_mock_widget( [
+			'props_schema' => [
+				'prop-1' => String_Prop_Type::make()->default( '' ),
+				'prop-2' => String_Prop_Type::make()->default( '' ),
+				'prop-3' => String_Prop_Type::make()->default( '' ),
+			],
+			'controls' => [
+				Section::make()
+					->set_id( 'test-section-1')
+					->set_items( [
+						Textarea_Control::bind_to( 'prop-1' ),
+					] ),
+
+				Section::make()
+					->set_id( 'test-section-2')
+					->set_items( [
+						Textarea_Control::bind_to( 'prop-2' ),
+					] ),
+			]
+		] );
+
+		add_filter( 'elementor/atomic-widgets/controls', function ( $controls ) {
+			/** @var Section $second_section */
+			$second_section = Collection::make( $controls )->find(
+				fn( $control ) => $control instanceof Section && $control->get_id() === 'test-section-2'
+			);
+
+			$second_section->add_item(
+				Textarea_Control::bind_to( 'prop-3' )
+			);
+
+			return $controls;
+		} );
+
+		// Act.
+		$controls = $widget->get_atomic_controls();
+
+		// Assert.
+		$this->assertCount( 2, $controls[1]->get_items() );
+		$this->assertEquals( Textarea_Control::bind_to( 'prop-3' ), $controls[1]->get_items()[1] );
+	}
+
 	public function test_get_data_for_save() {
 		// Arrange.
 		$widget_styles = [
 			's-1234' => [
 				'id' => 's-1234',
 				'type' => 'class',
-				'label' => 'My Class',
+				'label' => 'my-class',
 				'variants' => [
 					[
 						'props' => [
@@ -600,7 +645,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -635,7 +680,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -713,7 +758,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'invalid-type',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],

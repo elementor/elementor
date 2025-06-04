@@ -30,6 +30,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
 		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		addNewFolder: '#elementor-template-library-add-new-folder',
+		addNewFolderDivider: '.elementor-template-library-filter-toolbar-side-actions .divider',
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
@@ -43,6 +44,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaFill: '.quota-progress-container  .quota-progress-bar .quota-progress-bar-fill',
 		quotaValue: '.quota-progress-container .quota-progress-bar-value',
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
+		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
 		navigationContainer: '#elementor-template-library-navigation-container',
 	},
 
@@ -62,6 +64,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.bulkMove': 'onClickBulkMove',
 		'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
 		'click @ui.bulkCopy': 'onClickBulkCopy',
+		'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked',
 	},
 
 	className: 'no-bulk-selections',
@@ -91,7 +94,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			return;
 		}
 
-		this.ui.quotaWarning.text( sprintf( message, quotaUsage ) );
+		this.ui.quotaWarning.html( sprintf( message, quotaUsage ) );
 		this.ui.quotaWarning.show();
 	},
 
@@ -102,7 +105,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		this.ui.quotaFill.css( 'width', `${ value }%` );
 
-		this.ui.quotaValue.text( `${ quota?.currentUsage }/${ quota?.threshold }` );
+		this.ui.quotaValue.text( `${ quota?.currentUsage?.toLocaleString() }/${ quota?.threshold?.toLocaleString() }` );
 
 		this.ui.quotaWarning.hide();
 
@@ -158,11 +161,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
 			checkbox.checked = isChecked;
 			const templateId = checkbox.dataset.template_id;
+			const parentDiv = checkbox.closest( '.elementor-template-library-template' );
 
 			if ( isChecked ) {
 				elementor.templates.addBulkSelectionItem( templateId );
+				parentDiv?.classList.add( 'bulk-selected-item' );
 			} else {
 				elementor.templates.removeBulkSelectionItem( templateId );
+				parentDiv?.classList.remove( 'bulk-selected-item' );
 			}
 		} );
 	},
@@ -413,7 +419,20 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 
 		if ( 'cloud' === activeSource ) {
+			const isFolderView = elementor.templates.getFilter( 'parentId' );
+			const location = isFolderView
+				? elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabFolder
+				: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab;
+
+			elementor.templates.eventManager.sendPageViewEvent( { location } );
+
 			this.handleQuotaBar();
+		}
+
+		if ( 'local' === activeSource ) {
+			elementor.templates.eventManager.sendPageViewEvent( {
+				location: elementor.editorEvents.config.secondaryLocations.templateLibrary.siteTab,
+			} );
 		}
 	},
 
@@ -572,7 +591,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onHoverBulkAction() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			this.ui.bulkMove.find( 'i' ).css( 'cursor', 'not-allowed' );
 			this.ui.bulkCopy.find( 'i' ).css( 'cursor', 'not-allowed' );
 		} else {
@@ -582,7 +601,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	onClickBulkMove() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			return;
 		}
 
@@ -603,14 +622,35 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		} );
 	},
 
+	hasLockedTemplatesInBulkSelection() {
+		const bulkSelectedItems = elementor.templates.getBulkSelectionItems();
+
+		return this.collection.some( ( model ) => {
+			const templateId = model.get( 'template_id' );
+
+			return bulkSelectedItems.has( templateId ) && model.isLocked();
+		} );
+	},
+
 	onClickBulkCopy() {
-		if ( this.hasFolderInBulkSelection() ) {
+		if ( this.hasFolderInBulkSelection() || this.hasLockedTemplatesInBulkSelection() ) {
 			return;
 		}
 
 		$e.route( 'library/save-template', {
 			model: this.model,
 			context: SAVE_CONTEXTS.BULK_COPY,
+		} );
+	},
+
+	onQuotaUpgradeClicked() {
+		const quota = elementorAppConfig?.[ 'cloud-library' ]?.quota;
+
+		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
+
+		elementor.templates.eventManager.sendUpgradeClickedEvent( {
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.quotaBar,
+			upgrade_position: `quota bar ${ value ? value + '%' : '' }`,
 		} );
 	},
 } );

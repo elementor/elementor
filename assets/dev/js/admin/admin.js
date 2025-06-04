@@ -415,6 +415,10 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				return;
 			}
 
+			if ( 0 === this.elements.$importNowButton.length ) {
+				return;
+			}
+
 			const self = this,
 				$importForm = self.elements.$importForm,
 				$importButton = self.elements.$importButton,

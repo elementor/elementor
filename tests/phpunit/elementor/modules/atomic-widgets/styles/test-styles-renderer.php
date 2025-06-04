@@ -368,6 +368,13 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'value' => [
 													'color' => 'blue',
 												],
+												'disabled' => true,
+											], // this should not be rendered due to `disabled` => true
+											[
+												'$$type' => 'background-color-overlay',
+												'value' => [
+													'color' => 'blue',
+												],
 											],
 											[
 												'$$type' => 'background-image-overlay',
@@ -585,7 +592,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => 'cover',
 													'position' => 'bottom right',
-													'repeat' => 'repeat',
 													'attachment' => 'fixed',
 												]
 											],
@@ -750,7 +756,6 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 															],
 														],
 													],
-													'attachment' => 'scroll',
 													'repeat' => 'repeat-x',
 												]
 											],
@@ -804,6 +809,165 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												'value' => [
 													'color' => 'blue',
 												],
+											],
+										],
+									],
+								],
+							],
+						],
+
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertNotEmpty( $css, 'CSS should not be empty' );
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_with_background_with_fields_of_similar_valus() {
+		// Arrange.
+		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+			$resolution = $args[2];
+			$images = $this->mock_images();
+
+			return $images[ $resolution ];
+		}, 10, 3 );
+
+		$styles = [
+			[
+				'id' => 'test-background-overlay',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'background' => [
+								'$$type' => 'background',
+								'value' => [
+									'background-overlay' => [
+										'$$type' => 'background-overlay',
+										'value' => [
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null
+																],
+															],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'large',
+															]
+														]
+													],
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value'  => [
+															//Missing 'height'
+															'width'  => [
+																'$$type' => 'size',
+																'value'  => [
+																	'size' => 140,
+																	'unit' => 'px'
+																]
+															],
+														],
+													],
+													'position' => 'center left',
+												]
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null
+																],
+															],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'large',
+															]
+														]
+													],
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value'  => [
+															//Missing 'height'
+															'width'  => [
+																'$$type' => 'size',
+																'value'  => [
+																	'size' => 140,
+																	'unit' => 'px'
+																]
+															],
+														],
+													],
+													'position' => 'center left',
+													'attachment' => 'scroll',
+												]
+											],
+											[
+												'$$type' => 'background-image-overlay',
+												'value' => [
+													'image' => [
+														'$$type' => 'image',
+														'value' => [
+															'src' => [
+																'$$type' => 'image-src',
+																'value' => [
+																	'id' => [
+																		'$$type' => 'image-attachment-id',
+																		'value' => 3,
+																	],
+																	'url' => null
+																],
+															],
+															'size' => [
+																'$$type' => 'string',
+																'value' => 'large',
+															]
+														]
+													],
+													'size' => [
+														'$$type' => 'background-image-size-scale',
+														'value'  => [
+															//Missing 'height'
+															'width'  => [
+																'$$type' => 'size',
+																'value'  => [
+																	'size' => 150,
+																	'unit' => 'px'
+																]
+															],
+														],
+													],
+													'position' => 'center left',
+												]
 											],
 										],
 									],

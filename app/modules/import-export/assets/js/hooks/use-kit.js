@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 
 import useAjax from 'elementor-app/hooks/use-ajax';
 
+export const KIT_SOURCE_MAP = {
+	CLOUD: 'cloud',
+	FILE: 'file',
+};
+
 const KIT_STATUS_MAP = Object.freeze( {
 		INITIAL: 'initial',
 		UPLOADED: 'uploaded',
@@ -21,11 +26,12 @@ export default function useKit() {
 			data: null,
 		},
 		[ kitState, setKitState ] = useState( kitStateInitialState ),
-		uploadKit = ( { kitId, file, kitLibraryNonce } ) => {
+		uploadKit = ( { kitId, file, kitLibraryNonce, source } ) => {
 			setAjax( {
 				data: {
 					action: UPLOAD_KIT_KEY,
-					e_import_file: file,
+					source,
+					...( file ? { e_import_file: file } : null ),
 					kit_id: kitId,
 					...( kitLibraryNonce ? { e_kit_library_nonce: kitLibraryNonce } : {} ),
 				},
@@ -121,7 +127,7 @@ export default function useKit() {
 
 			await runImportRunners( importSession.data.session, importSession.data.runners );
 		},
-		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes } ) => {
+		exportKit = ( { include, kitInfo, plugins, selectedCustomPostTypes, screenShotBlob } ) => {
 			setAjax( {
 				data: {
 					action: EXPORT_KIT_KEY,
@@ -130,6 +136,7 @@ export default function useKit() {
 						kitInfo,
 						plugins,
 						selectedCustomPostTypes,
+						screenShotBlob,
 					} ),
 				},
 			} );
@@ -141,7 +148,7 @@ export default function useKit() {
 			const newState = {};
 
 			if ( 'success' === ajaxState.status ) {
-				if ( ajaxState.response?.file ) {
+				if ( ajaxState.response?.file || ajaxState.response?.kit ) {
 					newState.status = KIT_STATUS_MAP.EXPORTED;
 				} else {
 					newState.status = ajaxState.response?.manifest ? KIT_STATUS_MAP.UPLOADED : KIT_STATUS_MAP.IMPORTED;

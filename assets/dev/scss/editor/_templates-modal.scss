@@ -19,6 +19,13 @@ $remote-templates-items-space: 30px;
 		overflow-y: scroll;
 	}
 
+	&:has(#elementor-template-library-save-template) {
+
+		.dialog-message {
+			overflow-y: hidden;
+		}
+	}
+
 	.e-back-to-editor {
 		color: var(--e-a-color-txt);
 		text-decoration: underline;
@@ -53,6 +60,14 @@ $remote-templates-items-space: 30px;
 
 	> div {
 		padding-inline-end: 16px;
+	}
+}
+
+#elementor-template-library-header-tools {
+
+	&.e-hidden-disabled {
+		opacity: 0;
+		visibility: hidden;
 	}
 }
 
@@ -136,12 +151,16 @@ $remote-templates-items-space: 30px;
 
 			.progress-bar-container {
 				width: 200px;
-				margin: 5px 10px 0 10px;
+				margin: 0px 10px;
 				align-self: center;
 				text-align: start;
 
 				.quota-warning {
 					font-size: 10px;
+				}
+
+				a {
+					color: var(--e-a-btn-bg-accent);
 				}
 			}
 
@@ -292,7 +311,7 @@ $remote-templates-items-space: 30px;
 	.elementor-template-library-filter-toolbar-side-actions {
 		display: flex;
 		align-items: center;
-		gap: 10px;
+		gap: 8px;
 
 		.elementor-template-library-action-item {
 			cursor: pointer;
@@ -309,7 +328,7 @@ $remote-templates-items-space: 30px;
 		.divider {
 			width: 1px;
 			height: 20px;
-			background-color: var(--e-a-border);
+			background-color: var(--e-a-border-color);
 		}
 	}
 
@@ -358,7 +377,7 @@ $remote-templates-items-space: 30px;
 				border: var(--e-a-border);
 				border-radius: 3px;
 
-				&:hover {
+				&:not([data-status="locked"]):hover {
 					.elementor-template-library-template-preview {
 						display: flex;
 					}
@@ -402,9 +421,7 @@ $remote-templates-items-space: 30px;
 
 				.elementor-template-library-template-name {
 					font-size: 11px;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-					overflow: hidden;
+					@include ellipsis;
 				}
 
 				.elementor-template-library-card-footer {
@@ -436,10 +453,8 @@ $remote-templates-items-space: 30px;
 							flex-direction: column;
 							justify-content: center;
 							width: 65%;
-							white-space: nowrap;
-							text-overflow: ellipsis;
-							overflow: hidden;
 							align-items: start;
+							@include ellipsis;
 						}
 					}
 				}
@@ -509,12 +524,18 @@ $remote-templates-items-space: 30px;
 	#elementor-template-library-navigation-container {
 		display: flex;
 		flex: 1;
+		@include ellipsis;
 
 		.elementor-template-library-navigation-container {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			gap: 15px;
+			@include ellipsis;
+
+			> span {
+				@include ellipsis;
+			}
 
 			.elementor-template-library-navigation-back-button {
 				padding-inline-start: 8px;
@@ -592,7 +613,7 @@ $remote-templates-items-space: 30px;
 
 		.new-badge {
 			border: 1px solid var(--e-a-color-primary-bold);
-			padding: 2px 8px;
+			padding: 2px 4px;
 			color: var(--e-a-color-primary-bold);
 			border-radius: 10px;
 			font-size: 10px;
@@ -1006,6 +1027,16 @@ label.elementor-template-library-order-label {
 			display: flex;
 			align-items: center;
 			gap: 8px;
+
+			&.disabled {
+				cursor: not-allowed;
+				color: var(--e-a-color-txt-disabled);
+
+				a {
+					color: var(--e-a-color-txt-disabled);
+					cursor: not-allowed;
+				}
+			}
 		}
 
 		a {
@@ -1016,10 +1047,7 @@ label.elementor-template-library-order-label {
 		}
 
 		.elementor-template-library-template-delete {
-
-			&:hover {
-				color: var(--e-a-color-danger);
-			}
+			color: var(--e-a-color-danger);
 		}
 
 		i {
@@ -1032,7 +1060,7 @@ label.elementor-template-library-order-label {
 		cursor: pointer;
 
 		i {
-			font-size: 16px;
+			font-size: 20px;
 		}
 	}
 }
@@ -1097,14 +1125,17 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-insert {
+		&.disabled {
+			color: $e-pink-100;
+			&:hover,
+			&:focus {
+				cursor: not-allowed;
+			}
+		}
 
 		i {
 			margin-inline-end: 3px;
 		}
-	}
-
-	.elementor-template-library-template-control-title {
-		margin-inline-start: 6px;
 	}
 }
 
@@ -1132,7 +1163,11 @@ label.elementor-template-library-order-label {
 	line-height: 1;
 
 	i {
-		font-size: 105px;
+		font-size: 85px;
+
+		&.eicon-library-upload {
+			font-size: 65px;
+		}
 	}
 
 	img {
@@ -1191,14 +1226,19 @@ label.elementor-template-library-order-label {
 			display: none;
 		}
 
+		.divider {
+			margin-inline: 5px;
+		}
+
 		.upgrade-badge {
 			display: none;
 			border: 1px solid #93003F80;
 			padding: 3px 5px;
 			border-radius: 100px;
+			margin-inline: 5px;
 
 			a {
-				color: $e-rose-800;
+				color: var(--e-a-btn-bg-accent);
 
 				i {
 					margin-inline-end: 5px;
@@ -1213,6 +1253,19 @@ label.elementor-template-library-order-label {
 			}
 		}
 
+		.ellipsis-container {
+			display: inline;
+			background: var(--e-a-bg-hover);
+			padding: 0 2px 1px;
+			border-radius: 2px;
+			vertical-align: bottom;
+			cursor: pointer;
+
+			&:hover {
+				background: var(--e-a-bg-active);
+			}
+		}
+
 		&.promotion,
 		&.max-capacity {
 
@@ -1222,10 +1275,20 @@ label.elementor-template-library-order-label {
 				display: inline;
 			}
 
-			.eicon-ellipsis-h,
+			.ellipsis-container,
 			#cloud,
 			.cloud label {
 				pointer-events: none;
+			}
+
+			.ellipsis-container,
+			.divider {
+				display: none;
+			}
+
+			.connect-divider {
+				color: var(--e-a-color-txt-muted);
+				margin-inline: 5px;
 			}
 		}
 
@@ -1235,12 +1298,12 @@ label.elementor-template-library-order-label {
 
 			p {
 				font-size: 13px;
-				color: $e-rose-800;
+				color: var(--e-a-btn-bg-accent);
 				text-align: start;
 			}
 
 			a {
-				color: $e-rose-800;
+				color: var(--e-a-btn-bg-accent);
 				text-decoration: underline;
 			}
 		}
@@ -1261,6 +1324,7 @@ label.elementor-template-library-order-label {
 			padding: 15px;
 			height: auto;
 			gap: 10px;
+			position: relative;
 
 			input[type=checkbox]:checked {
 				background: $gray;
@@ -1273,21 +1337,35 @@ label.elementor-template-library-order-label {
 			position: relative;
   			display: inline-block;
 
+			&.cloud,
+			&.local {
+				@include ellipsis;
+				line-height: 27px;
+			}
+
+			#cloud,
+			#local {
+				position: relative;
+				top: 2px;
+
+				&:checked {
+					top: -2px;
+				}
+			}
+
 			.eicon-ellipsis-h {
-				background: var(--e-a-border-color);
-				margin-inline: 5px;
-				cursor: pointer;
+				vertical-align: bottom;
 			}
 
 			.eicon-info {
 				margin-inline: 5px;
-				color: #919191;
+				color: var(--e-a-color-txt-muted);
 				cursor: pointer;
 			}
 
 			.selected-folder {
 				display: none;
-				margin-inline: 5px;
+				margin-inline-end: 5px;
 
 				&-text {
 					text-decoration: underline;
@@ -1312,11 +1390,18 @@ label.elementor-template-library-order-label {
 		.cloud-folder-selection-dropdown {
 			display: none;
 			position: absolute;
+			top: 40px;
 			background-color: var(--e-a-bg-default);
-			min-width: 182px;
+			min-width: 187px;
 			overflow: auto;
 			box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 			z-index: 1;
+			border-radius: 2px;
+			max-width: 450px;
+
+			li {
+				@include ellipsis;
+			}
 
 			.eicon-loading {
 				margin: 15px;
@@ -1359,11 +1444,16 @@ label.elementor-template-library-order-label {
 
 			.no-results {
 				text-align: center;
-				font-size: 11px;
-				width: 75%;
+				font-size: 13px;
+				width: 155px;
 				margin: 0 auto;
-				padding-block: 20px;
+				padding-block: 15px;
 				pointer-events: none;
+
+				i {
+					font-size: 24px;
+					padding-block-end: 10px;
+				}
 			}
 		}
 
@@ -1549,7 +1639,7 @@ label.elementor-template-library-order-label {
 
 	.dialog {
 		&-buttons-wrapper {
-			padding: 0 20px 10px;
+			padding: 10px 0 10px 10px;
 			float: inline-end;
 		}
 
@@ -1557,16 +1647,17 @@ label.elementor-template-library-order-label {
 			padding: 7px 25px;
 			font-size: 13px;
 			background: none;
-			color: $e-pink-900;
+			color: var(--e-a-btn-bg-accent);
 			border: none;
 			font-weight: 500;
+			cursor: pointer;
 		}
 	}
 
 	&:after {
 		content: '';
 		position: absolute;
-		@include end(90%);
+		@include end(46%);
 		transform: scaleX(0.7);
 		border: 10px solid transparent;
 	}
@@ -1586,7 +1677,7 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-library--connect_infotip__dialog {
-	width: 235px;
+	width: 265px;
 
 	.dialog-message {
 		padding: 20px;

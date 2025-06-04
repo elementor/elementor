@@ -10,16 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-template-library-header-actions">
 	<?php if ( User::is_current_user_can_upload_json() ) { ?>
 		<div id="elementor-template-library-header-import" class="elementor-templates-modal__header__item">
-			<i class="eicon-upload-circle-o" aria-hidden="true" title="<?php esc_attr_e( 'Import Template', 'elementor' ); ?>"></i>
+			<i class="eicon-upload-circle-o" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'Import Template', 'elementor' ); ?></span>
 		</div>
 	<?php } ?>
 	<div id="elementor-template-library-header-sync" class="elementor-templates-modal__header__item">
-		<i class="eicon-sync" aria-hidden="true" title="<?php esc_attr_e( 'Sync Library', 'elementor' ); ?>"></i>
+		<i class="eicon-sync" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Sync Library', 'elementor' ); ?></span>
 	</div>
 	<div id="elementor-template-library-header-save" class="elementor-templates-modal__header__item">
-		<i class="eicon-save-o" aria-hidden="true" title="<?php esc_attr_e( 'Save', 'elementor' ); ?>"></i>
+		<i class="eicon-save-o" aria-hidden="true"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
 	</div>
 </script>
@@ -116,7 +116,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 							<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 							<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-							<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>
+							<#
+								const tabIcon = elementor.templates.hasCloudLibraryQuota()
+									? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>'
+									: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
+
+								print( tabIcon );
+							#>
 						</div>
 					</div>
 				</div>
@@ -128,16 +134,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
 				<# if ( 'cloud' === activeSource ) { #>
 					<div id="elementor-template-library-add-new-folder" class="elementor-template-library-action-item">
-						<i class="eicon-folder-plus" aria-hidden="true" title="<?php esc_attr_e( 'Create a New Folder', 'elementor' ); ?>"></i>
+						<i class="eicon-folder-plus" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Create a New Folder', 'elementor' ); ?></span>
 					</div>
 					<span class="divider"></span>
 					<div id="elementor-template-library-view-grid" class="elementor-template-library-action-item">
-						<i class="eicon-library-grid" aria-hidden="true" title="<?php esc_attr_e( 'Grid View', 'elementor' ); ?>"></i>
+						<i class="eicon-library-grid" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Grid view', 'elementor' ); ?></span>
 					</div>
 					<div id="elementor-template-library-view-list" class="elementor-template-library-action-item">
-						<i class="eicon-library-list" aria-hidden="true" title="<?php esc_attr_e( 'List View', 'elementor' ); ?>"></i>
+						<i class="eicon-library-list" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'List view', 'elementor' ); ?></span>
 					</div>
 				<# } #>
@@ -155,11 +161,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="bulk-selection-action-bar">
 					<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
 					<span class="selected-count"></span>
-					<# if ( elementor.templates.hasCloudLibraryQuota() ) { #>
-						<span class="bulk-copy"><i class="eicon-library-copy"></i></span>
-						<span class="bulk-move"><i class="eicon-library-move"></i></span>
+					<# if ( elementor.templates.hasCloudLibraryQuota() && ! elementor.templates.cloudLibraryIsDeactivated() ) { #>
+					<span class="bulk-copy"><i class="eicon-library-copy" aria-hidden="true" title="<?php esc_attr_e( 'Copy', 'elementor' ); ?>"></i></span>
+					<span class="bulk-move"><i class="eicon-library-move"  aria-hidden="true" title="<?php esc_attr_e( 'Move', 'elementor' ); ?>"></i></span>
 					<# } #>
-					<span class="bulk-delete"><i class="eicon-library-delete"></i></span>
+					<span class="bulk-delete"><i class="eicon-library-delete" aria-hidden="true" title="<?php esc_attr_e( 'Delete', 'elementor' ); ?>"></i></span>
 				</div>
 			<?php endif; ?>
 			<div id="elementor-template-library-navigation-container"></div>
@@ -168,7 +174,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="quota-progress-container">
 					<span class="quota-progress-info">
 						<?php echo esc_html__( 'Usage', 'elementor' ); ?>
-						<i class="eicon-info-circle-o tooltip-target" aria-hidden="true" data-tooltip="Back"></i>
 					</span>
 					<div class="progress-bar-container">
 						<div class="quota-progress-bar quota-progress-bar-normal">
@@ -263,12 +268,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	#>
 		<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}">
+			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}" data-status="{{ status }}">
 			<?php endif; ?>
 			<# if ( 'cloud' === activeSource ) {
 				const sourceIcon = typeof subType !== 'undefined' && 'FOLDER' === subType
 					? '<i class="eicon-library-folder" aria-hidden="true"></i>'
-					: '<i class="eicon-global-colors" aria-hidden="true"></i>';
+					: 'locked' === status
+						? '<i class="eicon-lock-outline" aria-hidden="true" title="<?php esc_attr_e( 'Upgrade to get more storage space or delete old templates to make room.', 'elementor' ); ?>"></i>'
+						: '<i class="eicon-global-colors" aria-hidden="true"></i>';
 
 					print( sourceIcon );
 			} #>
@@ -304,7 +311,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<div class="elementor-template-library-template-more">
 			<?php if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) : ?>
-				<# if ( ( typeof subType === 'undefined' || 'FOLDER' !== subType ) && elementor.templates.hasCloudLibraryQuota() ) { #>
+				<# if ( ( typeof subType === 'undefined' || 'FOLDER' !== subType ) && elementor.templates.hasCloudLibraryQuota() && ! elementor.templates.cloudLibraryIsDeactivated() ) { #>
 					<div class="elementor-template-library-template-move">
 						<i class="eicon-library-move" aria-hidden="true"></i>
 						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
@@ -367,7 +374,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</div>
 		<# } else { #>
 			<#
-				const imageSource = preview_url || '<?php echo esc_html( Utils::get_placeholder_image_src() ); ?>';
+				const imageSource = preview_url || '<?php echo esc_html( ELEMENTOR_ASSETS_URL . 'images/placeholder-cloud-grid.png' ); ?>';
 			#>
 			<div class="elementor-template-library-template-thumbnail">
 				<img src="{{{ imageSource }}}"/>
@@ -375,6 +382,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 			<div class="elementor-template-library-card-footer">
 				<div class="elementor-template-library-template-name">
+					<# if ( 'locked' === status ) { #>
+						<i class="eicon-lock-outline" aria-hidden="true" title="<?php esc_attr_e( 'Upgrade to get more storage space or delete old templates to make room.', 'elementor' ); ?>"></i>
+					<# } #>
 					<span>{{ title }}</span>
 				</div>
 				<div class="elementor-template-library-template-card-footer-overlay">
@@ -482,24 +492,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="cloud-library-form-inputs">
 			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Give your template a name', 'elementor' ); ?>" required>
 			<div class="source-selections">
+				<div class="cloud-folder-selection-dropdown">
+					<div class="cloud-folder-selection-dropdown-list"></div>
+				</div>
 				<div class="source-selections-input cloud">
 					<input type="checkbox" id="cloud" name="cloud" value="cloud">
-					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <i class="eicon-info upgrade-tooltip" aria-hidden="true"></i> /  <i class="eicon-ellipsis-h"></i>
-					<div class="cloud-folder-selection-dropdown">
-						<div class="cloud-folder-selection-dropdown-list"></div>
-					</div>
+					<label for="cloud"> <?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label> <span class="divider">/</span>  <div class="ellipsis-container"><i class="eicon-ellipsis-h"></i></div>
 					<span class="selected-folder">
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
 					</span>
 					<# if ( elementor.config.library_connect.is_connected ) { #>
+						<#
+							const goLink = elementor.templates.hasCloudLibraryQuota()
+								? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge'
+								: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-badge/';
+						#>
 					<span class="upgrade-badge">
-						<a href="" target="_blank">
+						<a href="{{{ goLink }}}" target="_blank">
 							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
 						</a>
 					</span>
+					<i class="eicon-info upgrade-tooltip" aria-hidden="true"></i>
 					<# } else { #>
 					<span class="connect-badge">
+						<span class="connect-divider">|</span>
 						<a id="elementor-template-library-connect__badge" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
 							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
 						</a>
@@ -519,7 +536,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php printf(
 					/* translators: %s is the "Upgrade now" link */
 						esc_html__( 'To get more space %s', 'elementor' ),
-						'<a href="#">' . esc_html__( 'Upgrade now', 'elementor' ) . '</a>'
+						'<a href="https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-notice">' . esc_html__( 'Upgrade now', 'elementor' ) . '</a>'
 					); ?>
 				</p>
 			</div>
@@ -527,14 +544,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<span class="elementor-state-icon">
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				</span>
-				<?php echo esc_html__( 'Save', 'elementor' ); ?>
+				{{{ saveBtnText }}}
 			</button>
 		</div>
 		<# } #>
 	</form>
 	<div class="elementor-template-library-blank-footer">
-		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+		<?php echo esc_html__( 'Learn more about the', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -549,8 +566,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<label for="elementor-template-library-import-form-input" id="elementor-template-library-import-form-label" class="elementor-button e-primary"><?php echo esc_html__( 'Select File', 'elementor' ); ?></label>
 		<input id="elementor-template-library-import-form-input" type="file" name="file" accept=".json,.zip" required/>
 		<div class="elementor-template-library-blank-footer">
-			<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+			<?php echo esc_html__( 'Learn more about the', 'elementor' ); ?>
+			<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></a>
 		</div>
 	</form>
 </script>
@@ -563,8 +580,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-cloud-empty__button"></div>
 
 	<div class="elementor-template-library-blank-footer">
-		<?php echo esc_html__( 'Want to learn more about the Elementor library?', 'elementor' ); ?>
-		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Click here', 'elementor' ); ?></a>
+		<?php echo esc_html__( 'Learn more about the', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></a>
 	</div>
 </script>
 
@@ -617,7 +634,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
 					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 					<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
-					<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>
+					<#
+						const tabIcon = elementor.templates.hasCloudLibraryQuota()
+							? '<span class="new-badge"><?php echo esc_html__( 'New', 'elementor' ); ?></span>'
+							: '<span class="new-badge"><i class="eicon-upgrade-crown" style="margin-inline-end: 0;"></i> <?php echo esc_html__( 'Pro', 'elementor' ); ?></span>';
+
+						print( tabIcon );
+					#>
 				</div>
 			</div>
 		</div>

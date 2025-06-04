@@ -2,9 +2,11 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
@@ -44,7 +46,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -54,45 +56,61 @@ class Div_Block extends Atomic_Element_Base {
 
 			'link' => Link_Prop_Type::make(),
 		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+			$props['_cssid'] = String_Prop_Type::make();
+		}
+
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
+		$settings_section_items = [
+			Select_Control::bind_to( 'tag' )
+				->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
+				->set_options( [
+					[
+						'value' => 'div',
+						'label' => 'Div',
+					],
+					[
+						'value' => 'header',
+						'label' => 'Header',
+					],
+					[
+						'value' => 'section',
+						'label' => 'Section',
+					],
+					[
+						'value' => 'article',
+						'label' => 'Article',
+					],
+					[
+						'value' => 'aside',
+						'label' => 'Aside',
+					],
+					[
+						'value' => 'footer',
+						'label' => 'Footer',
+					],
+				]),
+
+			Link_Control::bind_to( 'link' )->set_meta( [
+				'topDivider' => true,
+			] ),
+		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+			$settings_section_items[] = Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
+				'layout' => 'two-columns',
+				'topDivider' => true,
+			] );
+		}
+
 		return [
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( [
-					Select_Control::bind_to( 'tag' )
-						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
-						->set_options( [
-							[
-								'value' => 'div',
-								'label' => 'Div',
-							],
-							[
-								'value' => 'header',
-								'label' => 'Header',
-							],
-							[
-								'value' => 'section',
-								'label' => 'Section',
-							],
-							[
-								'value' => 'article',
-								'label' => 'Article',
-							],
-							[
-								'value' => 'aside',
-								'label' => 'Aside',
-							],
-							[
-								'value' => 'footer',
-								'label' => 'Footer',
-							],
-						]),
-
-					Link_Control::bind_to( 'link' ),
-
-				]),
+				->set_items( $settings_section_items ),
 		];
 	}
 
@@ -109,26 +127,6 @@ class Div_Block extends Atomic_Element_Base {
 	protected function content_template() {
 		?>
 		<?php
-	}
-
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-
-		$attributes = [
-			'class' => [
-				'e-con',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-		];
-
-		if ( ! empty( $settings['link']['href'] ) ) {
-			$attributes = array_merge( $attributes, $settings['link'] );
-		}
-
-		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 
 	public function before_render() {
@@ -168,6 +166,7 @@ class Div_Block extends Atomic_Element_Base {
 					Style_Variant::make()
 						->add_prop( 'display', $display )
 						->add_prop( 'padding', $this->get_base_padding() )
+						->add_prop( 'min-width', $this->get_base_min_width() )
 				),
 		];
 	}
@@ -177,5 +176,36 @@ class Div_Block extends Atomic_Element_Base {
 			'size' => 10,
 			'unit' => 'px',
 		] );
+	}
+
+	protected function get_base_min_width(): array {
+		return Size_Prop_Type::generate( [
+			'size' => 30,
+			'unit' => 'px',
+		] );
+	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+
+		$attributes = [
+			'class' => [
+				'e-con',
+				$base_style_class,
+				...( $settings['classes'] ?? [] ),
+			],
+		];
+
+		if ( ! empty( $settings['_cssid'] ) ) {
+			$attributes['id'] = esc_attr( $settings['_cssid'] );
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = array_merge( $attributes, $settings['link'] );
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 }

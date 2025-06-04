@@ -3,7 +3,6 @@ namespace Elementor\Core\Settings\EditorPreferences;
 
 use Elementor\Controls_Manager;
 use Elementor\Core\Settings\Base\Model as BaseModel;
-use Elementor\Modules\EditorAppBar\Module as AppBarModule;
 use Elementor\Modules\Checklist\Module as ChecklistModule;
 use Elementor\Plugin;
 
@@ -111,26 +110,6 @@ class Model extends BaseModel {
 			]
 		);
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( AppBarModule::EXPERIMENT_NAME ) ) {
-
-			$this->add_control(
-				'default_device_view',
-				[
-					'label' => esc_html__( 'Default device view', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'default' => 'default',
-					'options' => [
-						'default' => esc_html__( 'Default', 'elementor' ),
-						'mobile' => esc_html__( 'Mobile', 'elementor' ),
-						'tablet' => esc_html__( 'Tablet', 'elementor' ),
-						'desktop' => esc_html__( 'Desktop', 'elementor' ),
-					],
-					'description' => esc_html__( 'Choose which device to display when clicking the Responsive Mode icon.', 'elementor' ),
-				]
-			);
-
-		}
-
 		$this->add_control(
 			'edit_buttons',
 			[
@@ -179,12 +158,12 @@ class Model extends BaseModel {
 			$this->add_control(
 				ChecklistModule::VISIBILITY_SWITCH_ID,
 				[
-					'label' => esc_html__( 'Launchpad Checklist', 'elementor' ),
+					'label' => esc_html__( 'Show launchpad checklist', 'elementor' ),
 					'type' => Controls_Manager::SWITCHER,
-					'label_on' => esc_html__( 'Show', 'elementor' ),
-					'label_off' => esc_html__( 'Hide', 'elementor' ),
+					'label_on' => esc_html__( 'Yes', 'elementor' ),
+					'label_off' => esc_html__( 'No', 'elementor' ),
 					'default' => Plugin::$instance->modules_manager->get_modules( 'checklist' )->is_preference_switch_on() ? 'yes' : '',
-					'description' => esc_html__( 'Show a checklist to guide you through your first steps of website creation.', 'elementor' ),
+					'description' => esc_html__( 'These will guide you through the first steps of creating your site.', 'elementor' ),
 				]
 			);
 		}

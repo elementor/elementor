@@ -17,7 +17,7 @@ test.describe( 'Accessibility & Structured data @rating', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		await test.step( 'Add rating widget', async () => {
-			await editor.addWidget( 'rating', container );
+			await editor.addWidget( { widgetType: 'rating', container } );
 			await editor.setSliderControlValue( 'rating_scale', '7' );
 			await editor.setNumberControlValue( 'rating_value', '3.543' );
 			await editor.publishAndViewPage();

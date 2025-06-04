@@ -13,10 +13,6 @@ $root: e-kit-library__kit-item;
 .#{$root} {
 	&-overlay {
 		height: 100%;
-
-		& > *:first-child {
-			flex: 1;
-		}
 	}
 
 	&-overlay-overview-button {
@@ -69,4 +65,82 @@ $root: e-kit-library__kit-item;
 		color: theme-colors( light );
 		text-transform: uppercase;
 	}
+
+	&-header {
+		position: relative;
+	}
+
+	&-actions-menu {
+		i {
+			font-size: 16px;
+		}
+	}
+	
+	&-actions-popover {
+		display: flex;
+		flex-direction: column;
+	    align-items: start;
+		min-width: 0;
+		padding: 12px 0;
+		position: absolute;
+		top: 25px;
+		left: 100%;
+		transform: translateX(-100%);
+
+		&-item {
+			display: flex;
+			height: 30px;
+			width: 100%;
+			align-items: center;
+			gap: 8px;
+			padding: 0 12px;
+			cursor: pointer;
+		
+			i {
+				font-size: 16px;
+			}
+
+			&:hover {
+				background-color: var(--e-a-bg-hover);
+			}
+		
+			&--danger {
+				color: var(--e-a-color-danger);
+
+				&:hover {
+					background-color: var(--e-a-bg-danger);
+				}
+		
+				i {
+					color: var(--e-a-color-danger);
+				}
+			}
+		}
+	}
+
+	&-cloud-overlay {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+
+		&-import-button {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 8px 22px;
+			gap: 8px;
+
+			& > i {
+				font-size: 20px;
+				font-weight: 600;
+			}
+
+			& > span {
+				font-size: 15px;
+			}
+		}
+	}
 }
+

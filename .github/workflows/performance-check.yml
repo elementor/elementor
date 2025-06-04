@@ -1,17 +1,17 @@
 name: Performance Check
 
 on:
-  push:
-    branches:
-      - 'main'
-      - '3.*'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
+  # push:
+  #   branches:
+  #     - 'main'
+  #     - '3.*'
+  #   paths-ignore:
+  #     - '**.md'
+  #     - '**.txt'
+  #     - '.github/config.json'
+  #     - 'bin/**'
+  #     - '.gitignore'
+  #     - 'docs/**'
   workflow_dispatch:
 
 jobs:
@@ -61,7 +61,6 @@ jobs:
           enable-svg-upload: true
           experiments: |-
             e_optimized_markup:true
-            editor_v2:true
             e_atomic_elements:true
             e_classes:true
           templates: |-
