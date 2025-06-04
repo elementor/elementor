@@ -103,6 +103,10 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+
+			if ( KIT_SOURCE_MAP.CLOUD === source && kitState.data.file_url ) {
+				importContext.dispatch( { type: 'SET_FILE', payload: kitState.data.file_url } );
+			}
 		} else if ( 'error' === kitState.status ) {
 			setErrorType( kitState.data );
 		}

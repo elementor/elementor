@@ -14,13 +14,17 @@ class Background_Overlay_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$normalized_values = $this->normalize_overlay_values( $value );
 
-		return array_filter( [
+		if ( empty( $normalized_values ) ) {
+			return null;
+		}
+
+		return [
 			'background-image' => $this->get_values_string( $normalized_values, 'src', Background_Image_Overlay_Transformer::DEFAULT_IMAGE, true ),
 			'background-repeat' => $this->get_values_string( $normalized_values, 'repeat', Background_Image_Overlay_Transformer::DEFAULT_REPEAT ),
 			'background-attachment' => $this->get_values_string( $normalized_values, 'attachment', Background_Image_Overlay_Transformer::DEFAULT_ATTACHMENT ),
 			'background-size' => $this->get_values_string( $normalized_values, 'size', Background_Image_Overlay_Transformer::DEFAULT_SIZE ),
 			'background-position' => $this->get_values_string( $normalized_values, 'position', Background_Image_Overlay_Transformer::DEFAULT_POSITION ),
-		] );
+		];
 	}
 
 	private function normalize_overlay_values( $overlays ): array {
@@ -49,7 +53,7 @@ class Background_Overlay_Transformer extends Transformer_Base {
 		} ) );
 
 		if ( $is_empty ) {
-			return null;
+			return $default_value;
 		}
 
 		$formatted_values = array_map( function ( $item ) use ( $prop, $default_value ) {

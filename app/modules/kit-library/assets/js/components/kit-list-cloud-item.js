@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useNavigate } from '@reach/router';
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 
 import Kit from '../models/kit';
 import {
@@ -19,6 +20,72 @@ import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-ki
 
 import './kit-list-item.scss';
 
+const PopoverItem = ( { className = '', icon, title, onClick } ) => {
+	const handleClick = () => {
+		onClick();
+	};
+
+	const handleKeyDown = ( event ) => {
+		if ( 'Enter' === event.key || ' ' === event.key ) {
+			event.preventDefault();
+			onClick();
+		}
+	};
+
+	return (
+		<div
+			className={ `e-kit-library__kit-item-actions-popover-item ${ className }` }
+			role="button"
+			tabIndex={ 0 }
+			onClick={ handleClick }
+			onKeyDown={ handleKeyDown }
+		>
+			<i className={ icon } />
+			<span>{ title }</span>
+		</div>
+	);
+};
+
+PopoverItem.propTypes = {
+	className: PropTypes.string,
+	icon: PropTypes.string.isRequired,
+	title: PropTypes.string.isRequired,
+	onClick: PropTypes.func.isRequired,
+};
+
+const KitActionsPopover = ( {
+	isOpen,
+	onClose,
+	onDelete,
+	className = 'e-kit-library__kit-item-actions-popover',
+} ) => {
+	if ( ! isOpen ) {
+		return null;
+	}
+
+	return (
+		<Popover
+			className={ className }
+			closeFunction={ onClose }
+			arrowPosition="none"
+		>
+			<PopoverItem
+				className="e-kit-library__kit-item-actions-popover-item--danger"
+				icon="eicon-library-delete"
+				title={ __( 'Delete', 'elementor' ) }
+				onClick={ onDelete }
+			/>
+		</Popover>
+	);
+};
+
+KitActionsPopover.propTypes = {
+	isOpen: PropTypes.bool.isRequired,
+	onClose: PropTypes.func.isRequired,
+	onDelete: PropTypes.func.isRequired,
+	className: PropTypes.string,
+};
+
 const KitListCloudItem = ( props ) => {
 	const navigate = useNavigate();
 
@@ -33,6 +100,12 @@ const KitListCloudItem = ( props ) => {
 				page_source: 'cloud',
 			},
 		);
+	};
+
+	const handleDelete = () => {
+		eventTracking( 'kit-library/cloud/delete' );
+		// Delete functionality would go here
+		setIsPopoverOpen( false );
 	};
 
 	return (
@@ -58,54 +131,11 @@ const KitListCloudItem = ( props ) => {
 						setIsPopoverOpen( true );
 					} }
 				/>
-				{ isPopoverOpen && (
-					<Popover
-						className="e-kit-library__kit-item-actions-popover"
-						closeFunction={ () => setIsPopoverOpen( false ) }
-						arrowPosition="none"
-					>
-						<div
-							className="e-kit-library__kit-item-actions-popover-item"
-							role="button"
-							tabIndex={ 0 }
-							onClick={ () => {
-								eventTracking( 'kit-library/cloud-export' );
-								// Export functionality would go here
-								setIsPopoverOpen( false );
-							} }
-							onKeyDown={ ( event ) => {
-								if ( 'Enter' === event.key || ' ' === event.key ) {
-									event.preventDefault();
-									eventTracking( 'kit-library/cloud-export' );
-									setIsPopoverOpen( false );
-								}
-							} }
-						>
-							<i className="eicon-library-download" />
-							<span>{ __( 'Export', 'elementor' ) }</span>
-						</div>
-						<div
-							className="e-kit-library__kit-item-actions-popover-item e-kit-library__kit-item-actions-popover-item--danger"
-							role="button"
-							tabIndex={ 0 }
-							onClick={ () => {
-								eventTracking( 'kit-library/cloud-delete' );
-								setIsPopoverOpen( false );
-								props.onRemove();
-							} }
-							onKeyDown={ ( event ) => {
-								if ( 'Enter' === event.key || ' ' === event.key ) {
-									event.preventDefault();
-									eventTracking( 'kit-library/cloud-delete' );
-									setIsPopoverOpen( false );
-								}
-							} }
-						>
-							<i className="eicon-library-delete" />
-							<span>{ __( 'Delete', 'elementor' ) }</span>
-						</div>
-					</Popover>
-				) }
+				<KitActionsPopover
+					isOpen={ isPopoverOpen }
+					onClose={ () => setIsPopoverOpen( false ) }
+				/>
+					onDelete={ props.onRemove() }
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
