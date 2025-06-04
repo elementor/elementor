@@ -169,10 +169,7 @@ class Module extends BaseModule {
 			],
 		];
 
-		$quota = KitLibrary::get_cloud_api()->get_quota();
-		$is_cloud_kits_available = ! is_wp_error( $quota ) && isset( $quota['threshold'] ) && 0 !== $quota['threshold'];
-
-		if ( $is_cloud_kits_available ) {
+		if ( KitLibrary::get_cloud_api()->is_eligible() ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
 				'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),

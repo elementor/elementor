@@ -15,7 +15,7 @@ async function fetchCloudKitsEligibility() {
 
 	const response = await $e.data.get( 'kits-cloud/eligibility', {}, { refresh: true } );
 
-	return response?.data?.data?.threshold !== 0;
+	return response?.data;
 }
 
 /**
