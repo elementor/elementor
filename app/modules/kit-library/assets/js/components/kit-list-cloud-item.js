@@ -43,7 +43,6 @@ PopoverItem.propTypes = {
 const KitActionsPopover = ( {
 	isOpen,
 	onClose,
-	onExport,
 	onDelete,
 	className = 'e-kit-library__kit-item-actions-popover',
 } ) => {
@@ -58,11 +57,6 @@ const KitActionsPopover = ( {
 			arrowPosition="none"
 		>
 			<PopoverItem
-				icon="eicon-library-download"
-				title={ __( 'Export', 'elementor' ) }
-				onClick={ onExport }
-			/>
-			<PopoverItem
 				className="e-kit-library__kit-item-actions-popover-item--danger"
 				icon="eicon-library-delete"
 				title={ __( 'Delete', 'elementor' ) }
@@ -75,7 +69,6 @@ const KitActionsPopover = ( {
 KitActionsPopover.propTypes = {
 	isOpen: PropTypes.bool.isRequired,
 	onClose: PropTypes.func.isRequired,
-	onExport: PropTypes.func.isRequired,
 	onDelete: PropTypes.func.isRequired,
 	className: PropTypes.string,
 };
@@ -92,12 +85,6 @@ const KitListCloudItem = ( props ) => {
 				page_source: 'cloud',
 			},
 		);
-	};
-
-	const handleExport = () => {
-		eventTracking( 'kit-library/cloud/export' );
-		// Export functionality would go here
-		setIsPopoverOpen( false );
 	};
 
 	const handleDelete = () => {
@@ -132,7 +119,6 @@ const KitListCloudItem = ( props ) => {
 				<KitActionsPopover
 					isOpen={ isPopoverOpen }
 					onClose={ () => setIsPopoverOpen( false ) }
-					onExport={ handleExport }
 					onDelete={ handleDelete }
 				/>
 			</CardHeader>
