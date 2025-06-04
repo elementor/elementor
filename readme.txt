@@ -348,6 +348,12 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.29.2 - 2025-06-04 =
+
+* Fix: Missing responsive resize handles in responsive mode preventing manual preview adjustments
+* Fix: Style sections expanded by default instead of remaining collapsed - Editor V4
+* Fix: Publish button not triggered when applying a class - Editor V4
+
 = 3.29.1 - 2025-05-28 =
 
 * Tweak: Disabled the ability to use elements caching shortcode via the interface
