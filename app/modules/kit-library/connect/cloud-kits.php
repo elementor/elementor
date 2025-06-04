@@ -61,7 +61,7 @@ class Cloud_Kits extends Library {
 			return false;
 		}
 
-		return isset( $quota['threshold'] ) && $quota['threshold'] !== 0;
+		return isset( $quota['threshold'] ) && 0 !== $quota['threshold'];
 	}
 
 	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
