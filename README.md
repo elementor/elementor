@@ -1,6 +1,8 @@
 # Elementor Fork – Page Editing Patch
 
-**Are you experiencing issues with Elementor Page Editing, such as slow load times or duplicate Google Font downloads?**  
+**Are you experiencing issues with Elementor Page Editing, such as slow load times or duplicate Google Font downloads?
+
+For 3+ years, Elementor Page Loading problem wasn't resolved. This was mainly due to network speed and duplicate google-font downloading.**  
 This fork offers a patch to:
 
 - Avoid duplicate Google Font downloads
@@ -36,6 +38,8 @@ This patch directly addresses those issues for smoother, faster page editing in 
 ## For Users Suffering from Elementor Page Editing Problems
 
 If you have searched for:
+- "Elementor page gets stucked"
+- "My network has low speed, and my Elementor Page freezed"
 - "Elementor page editor slow"
 - "Elementor Google Fonts loading bug"
 - "Elementor font caching fix"
