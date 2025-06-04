@@ -503,6 +503,10 @@ class Admin_Notices extends Module {
 			return true;
 		}
 
+		if ( ! $has_woocommerce ) {
+			return false;
+		}
+
 		return (bool) wp_rand( 0, 1 );
 	}
 
