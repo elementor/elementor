@@ -133,6 +133,16 @@ class Style_Schema {
 				'rtl',
 			]),
 			'stroke' => Stroke_Prop_Type::make(),
+			'all' => String_Prop_Type::make()->enum([
+				'initial',
+				'inherit',
+				'unset',
+				'revert',
+				'revert-layer',
+			]),
+			'cursor' => String_Prop_Type::make()->enum([
+				'pointer',
+			]),
 		];
 	}
 

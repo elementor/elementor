@@ -46,7 +46,7 @@ export const IMAGE_PROMPT_CATEGORIES = {
 		},
 	},
 	vector: {
-		label: __( 'Vector', 'elementor' ),
+		label: __( 'Vector / Logo', 'elementor' ),
 		subCategories: {
 			'': __( 'None', 'elementor' ),
 			'typographic-logo': __( 'Typographic Logo', 'elementor' ),

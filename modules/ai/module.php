@@ -29,6 +29,7 @@ class Module extends BaseModule {
 		self::HISTORY_TYPE_IMAGE,
 		self::HISTORY_TYPE_BLOCK,
 	];
+	const MIN_PAGES_FOR_CREATE_WITH_AI_BANNER = 10;
 
 	public function get_name() {
 		return 'ai';
@@ -47,6 +48,8 @@ class Module extends BaseModule {
 		if ( ! $this->is_ai_enabled() ) {
 			return;
 		}
+
+		add_filter( 'elementor/core/admin/homescreen', [ $this, 'add_create_with_ai_banner_to_homescreen' ] );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'ai', Ai::get_class_name() );
@@ -1545,5 +1548,48 @@ class Module extends BaseModule {
 
 		$product->set_gallery_image_ids( $gallery_image_ids );
 		$product->save();
+	}
+
+	private function should_display_create_with_ai_banner() {
+		$elementor_pages = new \WP_Query( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+			'fields' => 'ids',
+			'posts_per_page' => self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER + 1,
+		] );
+
+		if ( $elementor_pages->post_count > self::MIN_PAGES_FOR_CREATE_WITH_AI_BANNER ) {
+			return false;
+		}
+
+		if ( Utils::is_custom_kit_applied() ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function get_create_with_ai_banner_data() {
+		return [
+			'title' => 'Create and launch your site faster with AI',
+			'description' => 'Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:',
+			'input_placeholder' => 'Start describing the site you want to create...',
+			'button_title' => 'Create with AI',
+			'button_cta_url' => 'http://planner.elementor.com/chat.html',
+			'background_image' => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
+			'utm_source' => 'editor-home',
+			'utm_medium' => 'wp-dash',
+			'utm_campaign' => 'generate-with-ai',
+		];
+	}
+
+	public function add_create_with_ai_banner_to_homescreen( $home_screen_data ) {
+		if ( $this->should_display_create_with_ai_banner() ) {
+			$home_screen_data['create_with_ai'] = $this->get_create_with_ai_banner_data();
+		} else {
+			$home_screen_data['create_with_ai'] = null;
+		}
+
+		return $home_screen_data;
 	}
 }

@@ -772,9 +772,25 @@ module.exports = {
 		return this.getAtomicElementTypes().includes( elType );
 	},
 
-	isAtomicWidget( model ) {
+	getWidgetCache( model ) {
 		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
 
-		return !! elementor.widgetsCache[ elementType ]?.atomic_controls;
+		return elementor.widgetsCache[ elementType ];
+	},
+
+	isAtomicWidget( model ) {
+		const widgetCache = this.getWidgetCache( model );
+
+		return !! widgetCache?.atomic_props_schema;
+	},
+
+	getAtomicWidgetBaseStyles( model ) {
+		if ( ! this.isAtomicWidget( model ) ) {
+			return;
+		}
+
+		const widgetCache = this.getWidgetCache( model );
+
+		return widgetCache.base_styles;
 	},
 };

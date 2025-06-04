@@ -291,21 +291,6 @@
 	}
 }
 
-.elementor-widget-e-heading .e-heading-base a,
-.elementor-widget-e-paragraph .e-paragraph-base a {
-	color: unset;
-	font-family: unset;
-	font-size: unset;
-	font-weight: unset;
-	text-transform: unset;
-	font-style: unset;
-	text-decoration: unset;
-	line-height: unset;
-	text-align: unset;
-	letter-spacing: unset;
-	text-indent: unset;
-}
-
 @mixin button-alignment($device) {
 	.elementor-#{$device}-align- {
 

@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const OPTION_UNIQUE_ID = '_elementor_element_cache_unique_id';
+
 	public function get_name() {
 		return 'element-cache';
 	}
@@ -26,6 +28,8 @@ class Module extends BaseModule {
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
 			return;
 		}
+
+		add_filter( 'elementor/element_cache/unique_id', [ $this, 'get_unique_id' ] );
 
 		$this->add_advanced_tab_actions();
 
@@ -52,9 +56,24 @@ class Module extends BaseModule {
 		];
 	}
 
+	public function get_unique_id() {
+		$unique_id = get_option( static::OPTION_UNIQUE_ID );
+
+		if ( ! $unique_id ) {
+			$unique_id = md5( uniqid( wp_generate_password() ) );
+			update_option( static::OPTION_UNIQUE_ID, $unique_id );
+		}
+
+		return $unique_id;
+	}
+
 	private function register_shortcode() {
 		add_shortcode( 'elementor-element', function ( $atts ) {
 			if ( empty( $atts['data'] ) ) {
+				return '';
+			}
+
+			if ( empty( $atts['k'] ) || $atts['k'] !== $this->get_unique_id() ) {
 				return '';
 			}
 
@@ -63,8 +82,6 @@ class Module extends BaseModule {
 			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
 				return '';
 			}
-
-			$widget_data['settings']['isShortcode'] = true;
 
 			ob_start();
 

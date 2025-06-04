@@ -1,7 +1,7 @@
 {% if settings.paragraph is not empty %}
         <p class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}">
             {% if settings.link.href %}
-                <a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}">
+                <a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
                     {{ settings.paragraph }}
                 </a>
             {% else %}

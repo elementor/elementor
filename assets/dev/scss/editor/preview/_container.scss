@@ -284,8 +284,8 @@
 	grid-template-rows: minmax(100%, 100px);
 
 	& > .elementor-empty-view {
-		min-height: 0;
 		height: auto;
+		grid-row: 1 / -1;
 	}
 }
 
