@@ -35,7 +35,7 @@ export default function KitListCloud( props ) {
 							model={ model }
 							index={ index }
 							source={ props.source }
-							onRemove={ () => {
+							onDelete={ () => {
 								setKit( model );
 								setIsDeleteModalOpen( true );
 							} }

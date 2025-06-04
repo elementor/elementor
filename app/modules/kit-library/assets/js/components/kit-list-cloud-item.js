@@ -103,9 +103,9 @@ const KitListCloudItem = ( props ) => {
 	};
 
 	const handleDelete = () => {
-		eventTracking( 'kit-library/cloud/delete' );
-		// Delete functionality would go here
 		setIsPopoverOpen( false );
+		eventTracking( 'kit-library/cloud-delete' );
+		props.onDelete();
 	};
 
 	return (
@@ -134,7 +134,7 @@ const KitListCloudItem = ( props ) => {
 				<KitActionsPopover
 					isOpen={ isPopoverOpen }
 					onClose={ () => setIsPopoverOpen( false ) }
-					onDelete={ props.onRemove }
+					onDelete={ handleDelete }
 				/>
 			</CardHeader>
 			<CardBody>
@@ -162,7 +162,7 @@ KitListCloudItem.propTypes = {
 	model: PropTypes.instanceOf( Kit ).isRequired,
 	index: PropTypes.number,
 	source: PropTypes.string,
-	onRemove: PropTypes.func.isRequired,
+	onDelete: PropTypes.func.isRequired,
 };
 
 export default React.memo( KitListCloudItem );
