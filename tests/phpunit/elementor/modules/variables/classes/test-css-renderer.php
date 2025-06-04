@@ -42,16 +42,15 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange.
 		add_filter( Variables::FILTER, function () {
 			return [
-				Font_Variable_Prop_Type::get_key() => [
-					'gf-045' => [
-						'label' => 'Main: Montserrat',
-						'value' => 'Montserrat',
-					],
-
-					'gr-roboto' => [
-						'label' => 'Global Roboto',
-						'value' => 'Roboto',
-					],
+				'gf-045' => [
+					'label' => 'Main: Montserrat',
+					'value' => 'Montserrat',
+					'type' => Font_Variable_Prop_Type::get_key(),
+				],
+				'gr-roboto' => [
+					'label' => 'Global Roboto',
+					'value' => 'Roboto',
+					'type' => Font_Variable_Prop_Type::get_key(),
 				],
 			];
 		} );
@@ -67,16 +66,16 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange.
 		add_filter( Variables::FILTER, function () {
 			return [
-				Color_Variable_Prop_Type::get_key() => [
-					'a-01' => [
-						'label' => 'Black',
-						'value' => '#000',
-						],
-					'a-02' => [
-						'label' => 'Border Width',
-						'value' => '6px',
-					],
-				]
+				'a-01' => [
+					'label' => 'Black',
+					'value' => '#000',
+					'type' => Color_Variable_Prop_Type::get_key(),
+				],
+				'a-02' => [
+					'label' => 'Border Width',
+					'value' => '6px',
+					'type' => Color_Variable_Prop_Type::get_key(),
+				],
 			];
 		} );
 
@@ -91,25 +90,25 @@ class Test_CSS_Renderer extends TestCase {
 		// Arrange,
 		add_filter( Variables::FILTER, function () {
 			return [
-				Color_Variable_Prop_Type::get_key() => [
-					'a-01' => [
-						'label' => 'a-width',
-						'value' => '<script type="text/javascript">alert("here");</script>',
-						],
-					'<script>alert("there")</script>' => [
-						'label' => 'a-height',
-						'value' => '2rem',
-					],
+				'a-01' => [
+					'label' => 'a-width',
+					'value' => '<script type="text/javascript">alert("here");</script>',
+					'type' => Color_Variable_Prop_Type::get_key(),
 				],
-				Font_Variable_Prop_Type::get_key() => [
-					'a-01' => [
-						'label' => 'Font 1',
-						'value' => '<style>color: red;</style>',
-					],
-					'<script>alert("font here")</script>' => [
-						'label' => 'Font 3',
-						'value' => '2rem',
-					],
+				'<script>alert("there")</script>' => [
+					'label' => 'a-height',
+					'value' => '2rem',
+					'type' => Color_Variable_Prop_Type::get_key(),
+				],
+				'a-01' => [
+					'label' => 'Font 1',
+					'value' => '<style>color: red;</style>',
+					'type' => Font_Variable_Prop_Type::get_key(),
+				],
+				'<script>alert("font here")</script>' => [
+					'label' => 'Font 3',
+					'value' => '2rem',
+					'type' => Font_Variable_Prop_Type::get_key(),
 				],
 			];
 		} );

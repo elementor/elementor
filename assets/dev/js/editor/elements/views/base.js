@@ -306,20 +306,21 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
-		if ( ! elementor.userCan( 'design' ) ) {
+		const elementType = this.getElementType();
+		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
 			return;
 		}
 
-		const elementType = this.getElementType(),
-			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
 			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
 		let editButtons = this.getEditButtons();
+		const shouldShowEditButtons = editButtonsEnabled || 'widget' === elementType;
 
-		// We should only allow external modification to edit buttons if the user enabled edit buttons.
-		if ( editButtonsEnabled ) {
+		// We should only allow external modification to edit buttons if the user enabled edit buttons or it's a widget.
+		if ( shouldShowEditButtons ) {
 			/**
 			 * Filter edit buttons.
 			 *
