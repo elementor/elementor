@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
+import PropTypes from 'prop-types';
 
 import './error-screen.scss';
 
@@ -22,8 +23,16 @@ const ErrorScreenButton = ( props ) => {
 	);
 };
 
+ErrorScreenButton.propTypes = {
+	text: PropTypes.string,
+	action: PropTypes.func,
+	url: PropTypes.string,
+	target: PropTypes.string,
+	color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
+	variant: PropTypes.oneOf( [ 'contained', 'underlined', 'outlined', '' ] ),
+};
+
 export default function ErrorScreen( props ) {
-	
 	return (
 
 		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
@@ -37,13 +46,12 @@ export default function ErrorScreen( props ) {
 			</Heading>
 			<Text variant="xl" className="e-kit-library__error-screen-description">
 				{ props.description } { ' ' }
-				{console.log(props.newLineButton)}	
 				{ ! props.newLineButton && (
-					<ErrorScreenButton {...props.button} />
+					<ErrorScreenButton { ...props.button } />
 				) }
 			</Text>
 			{ props.newLineButton && (
-				<ErrorScreenButton {...props.button} />
+				<ErrorScreenButton { ...props.button } />
 			) }
 		</Grid>
 	);
