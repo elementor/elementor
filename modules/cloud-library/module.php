@@ -85,19 +85,10 @@ class Module extends BaseModule {
 	private function register_experiments() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
-			'description' => esc_html__( 'Cloud Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
+			'title' => esc_html__( 'Cloud Library', 'elementor' ),
+			'description' => esc_html__( 'Cloud Templates and Kits empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
-		] );
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_cloud_library_kits',
-			'title' => esc_html__( 'Cloud Kits', 'elementor' ),
-			'description' => esc_html__( 'Cloud Kits', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-			'hidden' => true,
 		] );
 	}
 
