@@ -97,8 +97,6 @@ class Module extends BaseModule {
 			$this->register_experimental_features();
 		}
 
-		( new Opt_In() )->init();
-
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
@@ -157,7 +155,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Version 3.30', 'elementor' ),
 			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 	}
