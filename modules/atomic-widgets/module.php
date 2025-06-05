@@ -97,8 +97,6 @@ class Module extends BaseModule {
 			$this->register_experimental_features();
 		}
 
-		( new Opt_In() )->init();
-
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 

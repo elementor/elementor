@@ -6,7 +6,7 @@ import KitListCloud from '../../components/kit-list-cloud';
 import Layout from '../../components/layout';
 import PageLoader from '../../components/page-loader';
 import SearchInput from '../../components/search-input';
-import useKitsCloud from '../../hooks/use-kits-cloud';
+import useCloudKits from '../../hooks/use-cloud-kits';
 import useMenuItems from '../../hooks/use-menu-items';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
@@ -36,7 +36,7 @@ export default function Cloud( {
 		clearQueryParams,
 		forceRefetch,
 		isFilterActive,
-	} = useKitsCloud();
+	} = useCloudKits();
 
 	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
 		appsEventTrackingDispatch(
