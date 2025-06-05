@@ -167,7 +167,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 
 		if ( $has_capability ) {
 			$plugin_installed = Hints::is_plugin_installed( $plugin );
-			$cta = $plugin_installed ? __( 'Activate Ally Now', 'elementor' ) : __( 'Install Ally Now', 'elementor' );
+			$cta = $plugin_installed ? __( 'Activate Ally Now', 'elementor' ) : __( 'Install & Activate', 'elementor' );
 			$heading = $plugin_installed ? __( "Don't Let Accessibility Hold You Back", 'elementor' ) : __( 'Make Accessibility Simple', 'elementor' );
 			$content = $plugin_installed ? __( 'Activate Ally to add an accessibility widget and statement in one click.', 'elementor' ) : __( 'Ally gives you a ready-to-use accessibility widget and statement - fast.', 'elementor' );
 			$this->add_control( 'install_hint', [
