@@ -13,7 +13,7 @@ use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
-use Elementor\App\Modules\KitLibrary\Data\KitsCloud\Controller as Kits_Cloud_Controller;
+use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller as Cloud_Kits_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils as ElementorUtils;
 
@@ -102,7 +102,7 @@ class Module extends BaseModule {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
-		Plugin::$instance->data_manager_v2->register_controller( new Kits_Cloud_Controller() );
+		Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
 
 		// Assigning this action here since the repository is being loaded by demand.
 		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
@@ -175,7 +175,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	public static function get_cloud_api(): Cloud_Kits {
+	public static function get_cloud_app(): Cloud_Kits {
 		$cloud_kits_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-kits' );
 
 		if ( ! $cloud_kits_app ) {
