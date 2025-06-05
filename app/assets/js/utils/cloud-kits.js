@@ -9,7 +9,7 @@ export async function fetchCloudKitsEligibility() {
 		return false;
 	}
 
-	const response = await $e.data.get( 'kits-cloud/eligibility', {}, { refresh: true } );
+	const response = await $e.data.get( 'cloud-kits/eligibility', {}, { refresh: true } );
 
 	return response?.data;
 }
