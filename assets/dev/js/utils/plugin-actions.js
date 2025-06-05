@@ -36,7 +36,7 @@ module.exports = elementorModules.Module.extend( {
 		if ( ! eventData ) {
 			return;
 		}
-		console.log( eventData );
+
 		if ( eventData?.loaderTab ) {
 			this.showLoaderTab( eventData?.installText ?? eventData?.loaderTitle );
 		}
@@ -215,8 +215,8 @@ module.exports = elementorModules.Module.extend( {
 		);
 		this.loaderTab = window.open( winUrl, '_blank' );
 		try {
-			this.loaderTab.blur();	
-		} catch (error) {}
+			this.loaderTab.blur();
+		} catch ( error ) {}
 		window.focus();
 	},
 
