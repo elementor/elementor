@@ -144,7 +144,7 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) && KitLibrary::get_cloud_app()->is_eligible();
+		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && KitLibrary::get_cloud_app()->is_eligible();
 
 		$content_data = [
 			'export' => [
@@ -246,7 +246,7 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' );
+		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
 
 		if ( $is_cloud_kits_feature_active ) { ?>
 			<div class="tab-import-export-kit__container">

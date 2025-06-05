@@ -101,9 +101,6 @@ const devConfig = {
 		...( common.output || {} ),
 		filename: '[name]/[name].js',
 	},
-	plugins: [
-		...common.plugins,
-	]
 }
 
 const prodConfig = {

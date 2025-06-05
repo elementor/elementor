@@ -28,9 +28,6 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title><?php printf( esc_html__( 'Edit "%s" with Elementor', 'elementor' ), esc_html( get_the_title() ) ); ?></title>
-	<?php if( function_exists( 'xdebug_is_debugger_active' ) && xdebug_is_debugger_active() ): ?>
-	<script src="http://localhost:8097"></script>
-	<?php endif; ?>
 	<?php wp_head(); ?>
 	<script>
 		var ajaxurl = '<?php Utils::print_unescaped_internal_string( admin_url( 'admin-ajax.php', 'relative' ) ); ?>';
