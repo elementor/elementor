@@ -9,7 +9,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 
@@ -78,6 +77,10 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 					Switch_Control::bind_to( 'rel' )->set_label( esc_html__( 'Related videos', 'elementor' ) ),
 				] ),
 		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [];
 	}
 
 	protected function define_base_styles(): array {
