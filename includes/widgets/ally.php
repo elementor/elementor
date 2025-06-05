@@ -103,11 +103,11 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	 * @param string $content Heading title.
 	 * @return string
 	 */
-	public function sanitize( $content ) : string {
+	public function sanitize( $content ): string {
 		return $content;
 	}
 
-	private static function should_display_instructions() : bool {
+	private static function should_display_instructions(): bool {
 		$plugin = 'pojo-accessibility';
 		return ! Hints::is_plugin_installed( $plugin ) || ! Hints::is_plugin_active( $plugin ) || ! class_exists( '\EA11y\Plugin' );
 	}
@@ -286,7 +286,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	 *
 	 * @return bool
 	 */
-	private function should_sanitize( array $settings ) : bool {
+	private function should_sanitize( array $settings ): bool {
 		return ( is_admin() && ! current_user_can( 'manage_options' ) );
 	}
 }
