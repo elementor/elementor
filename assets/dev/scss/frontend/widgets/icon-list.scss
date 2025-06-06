@@ -6,7 +6,7 @@
 	$e-icon-list-svg-icon-size: var(--e-icon-list-icon-size, 1em);
 
 	&.elementor-icon-list--layout-inline,
-	&:where(:not(:has(.elementor-widget-container))) {
+	&:not(:has(.elementor-widget-container)) {
 
 		.elementor-widget-container {
 			overflow: hidden;
