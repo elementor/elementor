@@ -15,7 +15,7 @@
 
 .e-transform {
 	.elementor-widget-container,
-	&:not(:has(.elementor-widget-container)) {
+	&:where(:not(:has(.elementor-widget-container))) {
 		@include transform-styling('');
 	}
 }
