@@ -257,7 +257,7 @@ class Widget_Common_Base extends Widget_Base {
 
 		return $additional_mask_shapes;
 	}
-	
+
 	/**
 	 * Gets a string of CSS rules to apply, and returns an array of selectors with those rules.
 	 * This function has been created in order to deal with masking for image widget.
