@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Types_Mapping;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -205,8 +208,13 @@ class Style_Schema {
 	}
 
 	private static function get_background_props() {
+		// Background image overlay as an exception
+		$background_prop_type = Background_Prop_Type::make();
+		$bg_overlay_prop_type = $background_prop_type->get_shape_field( Background_Overlay_Prop_Type::get_key() );
+		$bg_image_overlay_prop_type = $bg_overlay_prop_type->get_item_type()->get_prop_type( Background_Image_Overlay_Prop_Type::get_key() );
+		Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types( $bg_image_overlay_prop_type->get_shape() );
 		return [
-			'background' => Background_Prop_Type::make(),
+			'background' => $background_prop_type,
 		];
 	}
 
