@@ -5,13 +5,13 @@ import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
 
 test.describe( 'Elementor regression tests with templates for CORE - V4', () => {
+	const experimentName = 'e_atomic_elements';
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await wpAdmin.setExperiments( {
-			e_opt_in_v4_page: 'active',
-			e_atomic_elements: 'active',
+			[ experimentName ]: 'active',
 		} );
 		await page.close();
 	} );
@@ -25,19 +25,19 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 	} );
 
 	const testData = [
-		'e-button',
+		'e_button_hover',
+		'e_heading_hover',
+		// 'e_svg',
+		// 'e_paragraph',
+		'e_image_hover',
 	];
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/atomic/${ widgetType }.json` );
 			const hoverSelector = {
-				button_hover: 'a',
-				image_hover: 'img',
-				image_box_hover: 'img',
-				icon_hover: '.elementor-icon.elementor-animation-rotate',
-				social_icons_hover: '.elementor-social-icon-facebook',
-				text_path_hover: 'textPath',
+				e_image_hover: 'img',
+				e_heading_hover: 'h1',
 			};
 
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
