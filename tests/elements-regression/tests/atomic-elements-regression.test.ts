@@ -25,20 +25,17 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 	} );
 
 	const testData = [
-		'e_button_hover',
-		'e_heading_hover',
-		// 'e_svg',
-		// 'e_paragraph',
-		'e_image_hover',
+		'e_button',
+		'e_heading',
+		'e_svg',
+		'e_paragraph',
+		'e_image',
 	];
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
 			const filePath = _path.resolve( __dirname, `./templates/atomic/${ widgetType }.json` );
-			const hoverSelector = {
-				e_image_hover: 'img',
-				e_heading_hover: 'h1',
-			};
+			const hoverSelector = {};
 
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			const editor = new EditorPage( page, testInfo );
