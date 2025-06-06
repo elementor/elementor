@@ -4,6 +4,7 @@ const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generat
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
 const { EntryInitializationWebpackPlugin } = require( '@elementor/entry-initialization-webpack-plugin' );
+const TerserPlugin = require('terser-webpack-plugin');
 
 const usingLocalRepo = process.env.ELEMENTOR_PACKAGES_USE_LOCAL;
 
@@ -87,11 +88,19 @@ const devConfig = {
 		...( common.optimization || {} ),
 		// Intentionally minimizing the dev assets to reduce the bundle size.
 		minimize: true,
+		minimizer: [
+			new TerserPlugin({
+				terserOptions: {
+					keep_classnames: true,
+					keep_fnames: true,
+				}
+			})
+		]
 	},
 	output: {
 		...( common.output || {} ),
 		filename: '[name]/[name].js',
-	}
+	},
 }
 
 const prodConfig = {
