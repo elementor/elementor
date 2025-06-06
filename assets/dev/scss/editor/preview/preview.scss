@@ -538,6 +538,10 @@ html.elementor-html {
 	}
 }
 
+.e-youtube-base iframe {
+	pointer-events: none;
+}
+
 @import "section";
 @import "column";
 @import "widget";

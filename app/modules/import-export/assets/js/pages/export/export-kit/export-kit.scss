@@ -4,7 +4,6 @@ $root: e-app-export-kit;
 	padding-block-end: spacing(20);
 
 	&-information {
-		margin-block-start: spacing(20);
 
 		&__field-header {
 			margin-block-end: spacing(10);
@@ -17,16 +16,45 @@ $root: e-app-export-kit;
 		&__info-icon {
 			margin-inline-start: spacing(10);
 		}
+
+		&__content {
+			gap: 16px;
+		}
+
+		&__field--error {
+			border-color: var(--e-a-color-danger);
+
+			&::placeholder {
+				color: var(--e-a-color-danger);
+			}
+
+			&::-webkit-input-placeholder {
+				color: var(--e-a-color-danger);
+			}
+
+			&::-moz-placeholder {
+				color: var(--e-a-color-danger);
+			}
+
+			&:-ms-input-placeholder {
+				color: var(--e-a-color-danger);
+			}
+		}
+
+		&__error-container {
+			height: 20px;
+			display: flex;
+			align-items: flex-start;
+			margin-top: 4px;
+		}
+
+		&__validation-error {
+			color: var(--e-a-color-danger);
+		}
 	}
 
-	&-info-modal {
-		&__icon {
-			padding-inline-start: spacing(10);
-		}
-
-		&__heading {
-			margin-block-end: spacing(20);
-		}
+	&__content {
+		gap: 20px;
 	}
 }
 

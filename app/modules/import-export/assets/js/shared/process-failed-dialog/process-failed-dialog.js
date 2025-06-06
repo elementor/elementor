@@ -6,6 +6,7 @@ import Dialog from 'elementor-app/ui/dialog/dialog';
 import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
+import { KIT_SOURCE_MAP } from '../../hooks/use-kit';
 
 const messagesContent = {
 	general: {
@@ -68,12 +69,20 @@ const messagesContent = {
 		title: __( 'Unable to download the Kit', 'elementor' ),
 		text: __( 'This download requires the \'DOMDocument\' PHP extension, which we couldn’t detect on your server. Enable this extension, or get in touch with your hosting service for support, and then give the download another go.', 'elementor' ),
 	},
+	'insufficient-quota': {
+		title: __( 'Couldn’t Export the Kit', 'elementor' ),
+		text: __( 'The export failed because it will pass the maximum kits you can export.', 'elementor' ),
+	},
+	'failed-to-fetch-quota': {
+		title: __( 'Couldn’t fetch quota', 'elementor' ),
+		text: __( 'Failed to fetch quota.', 'elementor' ),
+	},
 };
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
 	const action = useAction(),
 		navigate = useNavigate(),
-		{ referrer } = useQueryParams().getAll(),
+		{ referrer, source } = useQueryParams().getAll(),
 		error = 'string' === typeof errorType && messagesContent[ errorType ] ? errorType : 'general',
 		{ title, text } = messagesContent[ error ],
 		tryAgainText = __( 'Try Again', 'elementor' ),
@@ -91,11 +100,13 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 			onLearnMore?.();
 		},
 		handleOnDismiss = ( event ) => {
+			const isLoadingKitFromCloud = KIT_SOURCE_MAP.CLOUD === source;
+
 			if ( 'general' === error && onDismiss ) {
 				onDismiss();
 			} else if ( 'kit-library' === referrer ) {
 				onModalClose?.( event );
-				navigate( '/kit-library' );
+				navigate( `/kit-library${ isLoadingKitFromCloud ? '/cloud' : '' }` );
 			} else {
 				action.backToDashboard();
 			}
