@@ -91,7 +91,7 @@ class Google_Font {
 		if ( empty( $fonts_folder ) || empty( $css_folder ) ) {
 			return false;
 		}
-
+		
 		$css_content = static::get_css_content( $font_name, $font_type );
 
 		if ( empty( $css_content ) ) {
@@ -198,36 +198,41 @@ class Google_Font {
 		}
 
 		if ( ! empty( $font_urls[1] ) ) {
-			$font_urls = $font_urls[1];
+			 // Remove duplicates to avoid redundant downloads.
+			$font_urls = array_unique( $font_urls[1] );
 
 			$fonts_folder = static::get_folder( static::FOLDER_FONTS );
 			$sanitize_font_name = static::sanitize_font_name( $font_name );
 
 			foreach ( $font_urls as $current_font_url ) {
 				$original_font_url = trim( $current_font_url, '\'"' );
-
 				$cleaned_url = set_url_scheme( $original_font_url, 'https' );
-				$cleaned_url = strtok( $cleaned_url, '?#' );
-
-				$tmp_font_file = download_url( $cleaned_url );
-				if ( is_wp_error( $tmp_font_file ) ) {
-					return '';
-				}
+				$cleaned_url = strtok( $cleaned_url, '?#' ); // Remove query/hash for consistent filenames.
 
 				$current_font_basename = $sanitize_font_name . '-' . strtolower( sanitize_file_name( basename( $cleaned_url ) ) );
-
 				$dest_file = $fonts_folder['path'] . $current_font_basename;
 				$dest_file_url = $fonts_folder['url'] . $current_font_basename;
 
-				// Use copy and unlink because rename breaks streams.
-				// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-				$is_font_file_saved = @copy( $tmp_font_file, $dest_file );
-				@unlink( $tmp_font_file );
+				// Check if font file already exists to skip re-downloading.
+				if ( ! file_exists( $dest_file ) ) {
+					$tmp_font_file = download_url( $cleaned_url );
+					if ( is_wp_error( $tmp_font_file ) ) {
+						// Optionally log error for debugging, but don't abort all processing.
+						continue;
+					}
 
-				if ( ! $is_font_file_saved ) {
-					return '';
+					// Use copy and unlink because rename breaks streams.
+					// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+					$is_font_file_saved = @copy( $tmp_font_file, $dest_file );
+					@unlink( $tmp_font_file );
+
+					if ( ! $is_font_file_saved ) {
+						// Optionally log file save error here.
+						continue;
+					}
 				}
 
+				// Replace all references to this font URL in CSS with the local file URL.
 				$css_content = str_replace( $original_font_url, $dest_file_url, $css_content );
 			}
 		}
