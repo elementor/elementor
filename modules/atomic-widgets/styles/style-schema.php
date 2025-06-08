@@ -168,12 +168,10 @@ class Style_Schema {
 		return [
 			'border-radius' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( Border_Radius_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+				->add_prop_type( Border_Radius_Prop_Type::make() ),
 			'border-width' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( Border_Width_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+				->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum( [
 				'none',
@@ -224,8 +222,7 @@ class Style_Schema {
 			] ),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make() ),
+				->add_prop_type( Size_Prop_Type::make() ),
 			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
