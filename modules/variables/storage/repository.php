@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -209,8 +210,11 @@ class Repository {
 	}
 
 	private function get_default_meta(): array {
+		// TODO: Replace with an empty array, when we have the full flow for the variables
+		$predefined_variables = ( new Variables() )->get_all();
+
 		return [
-			'data' => [],
+			'data' => $predefined_variables,
 			'watermark' => 0,
 			'version' => self::FORMAT_VERSION_V1,
 		];
