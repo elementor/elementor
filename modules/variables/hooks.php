@@ -29,6 +29,23 @@ class Hooks {
 			->register_fonts()
 			->register_api_endpoints();
 
+		// TODO: Remove this, later, temporary solution
+		$this->filter_for_stored_variables();
+
+		return $this;
+	}
+
+	private function filter_for_stored_variables() {
+		add_filter( Variables::FILTER, function ( $variables ) {
+			$list_of_variables = $this->variables_repository()->variables();
+
+			foreach ( $list_of_variables as $id => $variable ) {
+				$variables[ $id ] = $variable;
+			}
+
+			return $variables;
+		} );
+
 		return $this;
 	}
 
@@ -79,11 +96,7 @@ class Hooks {
 	}
 
 	private function rest_api() {
-		return new Variables_API(
-			new Variables_Repository(
-				Plugin::$instance->kits_manager->get_active_kit()
-			)
-		);
+		return new Variables_API( $this->variables_repository() );
 	}
 
 	private function register_api_endpoints() {
@@ -92,5 +105,11 @@ class Hooks {
 		} );
 
 		return $this;
+	}
+
+	private function variables_repository() {
+		return new Variables_Repository(
+			Plugin::$instance->kits_manager->get_active_kit()
+		);
 	}
 }
