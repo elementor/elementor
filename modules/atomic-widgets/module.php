@@ -73,6 +73,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
+	const EXPERIMENT_VERSION_3_31 = 'e_v_3_31';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
@@ -96,8 +97,6 @@ class Module extends BaseModule {
 		if ( self::is_active() ) {
 			$this->register_experimental_features();
 		}
-
-		( new Opt_In() )->init();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
@@ -148,7 +147,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
 			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
@@ -156,6 +155,15 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_VERSION_3_30,
 			'title' => esc_html__( 'Version 3.30', 'elementor' ),
 			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_VERSION_3_31,
+			'title' => esc_html__( 'Version 3.31', 'elementor' ),
+			'description' => esc_html__( 'Features for version 3.31.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
