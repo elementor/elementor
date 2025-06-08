@@ -37,11 +37,9 @@ class Hooks {
 
 	private function filter_for_stored_variables() {
 		add_filter( Variables::FILTER, function ( $variables ) {
-			$db_record = ( new Variables_Repository(
-				Plugin::$instance->kits_manager->get_active_kit()
-			) )->load();
+			$list_of_variables = $this->variables_repository()->variables();
 
-			foreach ( $db_record['data'] as $id => $variable ) {
+			foreach ( $list_of_variables as $id => $variable ) {
 				$variables[ $id ] = $variable;
 			}
 
@@ -98,11 +96,7 @@ class Hooks {
 	}
 
 	private function rest_api() {
-		return new Variables_API(
-			new Variables_Repository(
-				Plugin::$instance->kits_manager->get_active_kit()
-			)
-		);
+		return new Variables_API( $this->variables_repository() );
 	}
 
 	private function register_api_endpoints() {
@@ -110,24 +104,12 @@ class Hooks {
 			$this->rest_api()->register_routes();
 		} );
 
-		// TODO: Remove this, when there are API-endpoints available to access the list of variables
-		add_action( 'elementor/editor/before_enqueue_scripts', function () {
-			// We must enqueue a random script, so that localize will be triggered as well...
-			wp_enqueue_script(
-				'e-variables',
-				ELEMENTOR_ASSETS_URL . '/variables-' . md5( microtime() ) . '.js',
-				[],
-				ELEMENTOR_VERSION,
-				true
-			);
-
-			wp_localize_script(
-				'e-variables',
-				'ElementorV4Variables',
-				( new Variables() )->get_all()
-			);
-		} );
-
 		return $this;
+	}
+
+	private function variables_repository() {
+		return new Variables_Repository(
+			Plugin::$instance->kits_manager->get_active_kit()
+		);
 	}
 }
