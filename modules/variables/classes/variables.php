@@ -9,7 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-// TODO: Remove this, when we have the full flow for the variables
+/**
+ * TODO: Remove this, when we have the full flow for the variables
+ */
 class Variables {
 	const FILTER = 'elementor/atomic-variables/variables';
 
