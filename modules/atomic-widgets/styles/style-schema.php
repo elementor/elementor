@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Position_Offset_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -67,7 +68,19 @@ class Style_Schema {
 				'none',
 				'scale-down',
 			] ),
-			'object-position' => Position_Prop_Type::make(),
+			'object-position' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make()->enum( [
+					'center center',
+					'center left',
+					'center right',
+					'top center',
+					'top left',
+					'top right',
+					'bottom center',
+					'bottom left',
+					'bottom right',
+				]) )
+				->add_prop_type( Position_Prop_Type::make() ),
 		];
 	}
 

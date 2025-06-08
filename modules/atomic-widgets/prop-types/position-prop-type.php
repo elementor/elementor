@@ -11,29 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Position_Prop_Type extends Object_Prop_Type {
 	public static function get_key(): string {
-		return 'position';
+		return 'object-position';
 	}
 
 	protected function define_shape(): array {
 		return [
-			'position' => Union_Prop_Type::make()
-				->add_prop_type( String_Prop_Type::make()->enum( self::get_position_enum_values() ) )
-				->add_prop_type( Position_Custom_Prop_Type::make() ),
-		];
-	}
-
-	private static function get_position_enum_values(): array {
-		return [
-			'center center',
-			'center left',
-			'center right',
-			'top center',
-			'top left',
-			'top right',
-			'bottom center',
-			'bottom left',
-			'bottom right',
-			'custom',
+			'x' => Size_Prop_Type::make(),
+			'y' => Size_Prop_Type::make(),
 		];
 	}
 }
