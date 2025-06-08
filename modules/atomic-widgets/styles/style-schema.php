@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
@@ -39,18 +40,10 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+			'min-width' => Size_Prop_Type::make(),
+			'min-height' => Size_Prop_Type::make(),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum([
@@ -69,19 +62,11 @@ class Style_Schema {
 				'absolute',
 				'fixed',
 				'sticky',
-			]),
-			'inset-block-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-inline-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-block-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-inline-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			] ),
+			'inset-block-start' => Size_Prop_Type::make(),
+			'inset-inline-end' => Size_Prop_Type::make(),
+			'inset-block-end' => Size_Prop_Type::make(),
+			'inset-inline-start' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
 		];
 	}
@@ -153,8 +138,7 @@ class Style_Schema {
 				->add_prop_type( Size_Prop_Type::make() ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+				->add_prop_type( Size_Prop_Type::make() ),
 		];
 	}
 
@@ -162,10 +146,12 @@ class Style_Schema {
 		return [
 			'border-radius' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( Border_Radius_Prop_Type::make() ),
+				->add_prop_type( Border_Radius_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
 			'border-width' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( Border_Width_Prop_Type::make() ),
+				->add_prop_type( Border_Width_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum([
 				'none',
@@ -216,17 +202,16 @@ class Style_Schema {
 			]),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
-			'flex-wrap' => String_Prop_Type::make()->enum([
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( String_Prop_Type::make() ),
+			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
 				'wrap-reverse',
 			]),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'flex-basis' => Size_Prop_Type::make(),
 		];
 	}
 
