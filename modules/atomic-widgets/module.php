@@ -4,8 +4,10 @@ namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
@@ -73,6 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
+	const EXPERIMENT_VERSION_3_31 = 'e_v_3_31';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
@@ -97,8 +100,6 @@ class Module extends BaseModule {
 			$this->register_experimental_features();
 		}
 
-		( new Opt_In() )->init();
-
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
@@ -113,6 +114,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
+			add_action( 'elementor/frontend/after_register_scripts', fn() => $this->register_frontend_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -147,7 +149,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
 			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
@@ -155,6 +157,15 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_VERSION_3_30,
 			'title' => esc_html__( 'Version 3.30', 'elementor' ),
 			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_VERSION_3_31,
+			'title' => esc_html__( 'Version 3.31', 'elementor' ),
+			'description' => esc_html__( 'Features for version 3.31.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -181,6 +192,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
+		$widgets_manager->register( new Atomic_Youtube() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -282,5 +294,36 @@ class Module extends BaseModule {
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
 		<# } #><?php
+	}
+
+	private function register_frontend_scripts() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		$assets_config_provider->load( 'frontend-handlers' );
+
+		$frontend_handlers_package_config = $assets_config_provider->get( 'frontend-handlers' );
+
+		if ( ! $frontend_handlers_package_config ) {
+			return;
+		}
+
+		wp_register_script(
+			$frontend_handlers_package_config['handle'],
+			$this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
+			$frontend_handlers_package_config['deps'],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'elementor-youtube-handler',
+			$this->get_js_assets_url( 'youtube-handler' ),
+			[ $frontend_handlers_package_config['handle'] ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 }

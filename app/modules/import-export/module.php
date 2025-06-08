@@ -38,6 +38,8 @@ class Module extends BaseModule {
 
 	const REFERRER_LOCAL = 'local';
 
+	const REFERRER_CLOUD = 'cloud';
+
 	const PLUGIN_PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
 
 	const KIT_LIBRARY_ERROR_KEY = 'invalid-kit-library-zip-error';
@@ -142,6 +144,8 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
+		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && KitLibrary::get_cloud_app()->is_eligible();
+
 		$content_data = [
 			'export' => [
 				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
@@ -159,11 +163,7 @@ class Module extends BaseModule {
 				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
-				],
-				'button_secondary' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
-					'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
+					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
 				],
 				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
 				'link' => [
@@ -172,6 +172,13 @@ class Module extends BaseModule {
 				],
 			],
 		];
+
+		if ( $is_cloud_kits_available ) {
+			$content_data['import']['button_secondary'] = [
+				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+				'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
+			];
+		}
 
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
@@ -239,7 +246,9 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_cloud_library_kits' ) ) { ?>
+		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
+
+		if ( $is_cloud_kits_feature_active ) { ?>
 			<div class="tab-import-export-kit__container">
 				<div class="tab-import-export-kit__box">
 					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
@@ -607,58 +616,38 @@ class Module extends BaseModule {
 	 */
 	private function handle_upload_kit() {
 		// PHPCS - A URL that should contain special chars (auth headers information).
-		$file_url = isset( $_POST['e_import_file'] )
-			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			? wp_unslash( $_POST['e_import_file'] )
+		$file_url = isset( $_POST['e_import_file'] ) // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			? wp_unslash( $_POST['e_import_file'] ) // phpcs:ignore
 			: '';
+		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-		// Import from kit library
-		if ( ! empty( $file_url ) ) {
-			if (
-				! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
-			) {
-				throw new \Error( 'Invalid kit library nonce.' );
-			}
+		$is_import_from_library = ! empty( $file_url );
+		$is_import_from_cloud = isset( $_POST['source'] ) && self::REFERRER_CLOUD === ElementorUtils::get_super_global_value( $_POST, 'source' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
-			if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			}
-
-			$remote_zip_request = wp_safe_remote_get( $file_url );
-
-			if ( is_wp_error( $remote_zip_request ) ) {
-				Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			}
-
-			if ( 200 !== $remote_zip_request['response']['code'] ) {
-				Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			}
-
-			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
-			$referrer = static::REFERRER_KIT_LIBRARY;
+		if ( $is_import_from_cloud ) {
+			$result = $this->handle_import_kit_from_cloud( $kit_id );
+			$file_url = $result['file_url'];
+		} elseif ( $is_import_from_library ) {
+			$result = $this->handle_import_kit_from_library( $file_url );
 		} else {
-			// PHPCS - Already validated in caller function.
-			$file_name = ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
-			$referrer = static::REFERRER_LOCAL;
+			$result = $this->handle_import_kit_from_upload();
 		}
 
 		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', [
 			'meta' => [
-				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
-				'referrer' => $referrer,
+				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ), // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				'referrer' => $result['referrer'],
 			],
 		] );
 
-		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
+		$uploaded_kit = $this->upload_kit( $result['file_name'], $result['referrer'] );
 
 		$session_dir = $uploaded_kit['session'];
 		$manifest = $uploaded_kit['manifest'];
 		$conflicts = $uploaded_kit['conflicts'];
 
-		if ( ! empty( $file_url ) ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+		if ( $is_import_from_cloud || $is_import_from_library ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $result['file_name'] ) );
 		}
 
 		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
@@ -670,6 +659,10 @@ class Module extends BaseModule {
 			'manifest' => $manifest,
 		];
 
+		if ( isset( $file_url ) ) {
+			$result['file_url'] = $file_url;
+		}
+
 		if ( ! empty( $conflicts ) ) {
 			$result['conflicts'] = $conflicts;
 		} else {
@@ -679,6 +672,66 @@ class Module extends BaseModule {
 		}
 
 		wp_send_json_success( $result );
+	}
+
+	protected function handle_import_kit_from_library( $file_url ) {
+		if (
+			! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
+		) {
+			throw new \Error( 'Invalid kit library nonce.' );
+		}
+
+		if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
+			throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return [
+			'file_name' => $this->get_remote_kit_zip( $file_url ),
+			'referrer' => static::REFERRER_KIT_LIBRARY,
+		];
+	}
+
+	protected function handle_import_kit_from_upload() {
+		return [
+			// PHPCS - Already validated in caller function.
+			'file_name' => ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'], // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			'referrer' => static::REFERRER_LOCAL,
+		];
+	}
+
+	protected function handle_import_kit_from_cloud( $kit_id ) {
+		$kit = KitLibrary::get_cloud_app()->get_kit( [
+			'id' => $kit_id,
+		] );
+
+		if ( is_wp_error( $kit ) ) {
+			wp_send_json_error( $kit->get_error_message() );
+		}
+
+		if ( empty( $kit['downloadUrl'] ) ) {
+			throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return [
+			'file_name' => $this->get_remote_kit_zip( $kit['downloadUrl'] ),
+			'referrer' => static::REFERRER_CLOUD,
+			'file_url' => $kit['downloadUrl'],
+		];
+	}
+	protected function get_remote_kit_zip( $url ) {
+		$remote_zip_request = wp_safe_remote_get( $url );
+
+		if ( is_wp_error( $remote_zip_request ) ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
+			throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		if ( 200 !== $remote_zip_request['response']['code'] ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
+			throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
 	}
 
 	/**
@@ -757,11 +810,14 @@ class Module extends BaseModule {
 		if ( self::EXPORT_SOURCE_CLOUD === $source ) {
 			$raw_screen_shot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
 			$title = $export['manifest']['title'];
+			$description = $export['manifest']['description'];
 
-			$kit = KitLibrary::get_cloud_api()->create_kit(
+			$kit = KitLibrary::get_cloud_app()->create_kit(
 				$title,
+				$description,
 				$file,
 				$raw_screen_shot,
+				$settings['include'],
 			);
 
 			if ( is_wp_error( $kit ) ) {

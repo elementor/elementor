@@ -2,14 +2,9 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -49,23 +44,20 @@ class Div_Block extends Atomic_Element_Base {
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' ),
-
 			'link' => Link_Prop_Type::make(),
 		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['_cssid'] = String_Prop_Type::make();
-		}
-
 		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
-		$settings_section_items = [
+		return [];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
 			Select_Control::bind_to( 'tag' )
 				->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
 				->set_options( [
@@ -94,21 +86,9 @@ class Div_Block extends Atomic_Element_Base {
 						'label' => 'Footer',
 					],
 				]),
-
-			Link_Control::bind_to( 'link' ),
-		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
+			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
-			] );
-		}
-
-		return [
-			Section::make()
-				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( $settings_section_items ),
+			] ),
 		];
 	}
 
