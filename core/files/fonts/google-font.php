@@ -203,8 +203,6 @@ class Google_Font {
 			$fonts_folder = static::get_folder( static::FOLDER_FONTS );
 			$sanitize_font_name = static::sanitize_font_name( $font_name );
 
-			$unique_ids = [];
-
 			foreach ( $font_urls as $current_font_url ) {
 				$original_font_url = trim( $current_font_url, '\'"' );
 
@@ -218,8 +216,7 @@ class Google_Font {
 					return '';
 				}
 
-				$unique_font_id = static::get_unique_font_id( $cleaned_url, $unique_ids );
-				$unique_ids[] = $unique_font_id;
+				$unique_font_id = static::get_unique_font_id( $cleaned_url );
 
 				$current_font_basename = sprintf(
 					'%s-%s.%s',
@@ -247,7 +244,7 @@ class Google_Font {
 		return $css_content;
 	}
 
-	private static function get_unique_font_id( $font_url, $available_ids ): string {
+	private static function get_unique_font_id( $font_url ): string {
 		return substr( sha1( $font_url ), 0, 8 );
 	}
 
