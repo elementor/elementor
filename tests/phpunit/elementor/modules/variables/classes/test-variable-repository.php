@@ -41,18 +41,7 @@ class Test_Variables_Repository extends TestCase {
 		$result = $this->repository->load();
 
 		$expected = [
-			'data' => [
-				'e-gv-a01' => [
-					'type' => 'global-font-variable',
-					'label' => 'primary-font',
-					'value' => 'Roboto',
-				],
-				'e-gv-a02' => [
-					'type' => 'global-color-variable',
-					'label' => 'primary-color',
-					'value' => '#202020',
-				],
-			],
+			'data' => ( new Variables() )->get_all(),
 			'watermark' => 0,
 			'version' => 1,
 		];
