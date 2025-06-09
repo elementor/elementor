@@ -1,0 +1,6 @@
+			
+<hr
+    class="e-divider-base"
+    id=my-custom-divider
+/>
+		
