@@ -43,6 +43,12 @@ class Repository {
 		}
 	}
 
+	public function variables(): array {
+		$db_record = $this->load();
+
+		return $db_record['data'] ?? [];
+	}
+
 	public function load(): array {
 		$db_record = $this->kit->get_json_meta( static::VARIABLES_META_KEY );
 
@@ -209,8 +215,22 @@ class Repository {
 	}
 
 	private function get_default_meta(): array {
+		// TODO: Replace with an empty array, when we have the full flow for the variables
+		$predefined_variables = [
+			'e-gv-a01' => [
+				'type' => 'global-font-variable',
+				'label' => 'primary-font',
+				'value' => 'Roboto',
+			],
+			'e-gv-a02' => [
+				'type' => 'global-color-variable',
+				'label' => 'primary-color',
+				'value' => '#202020',
+			],
+		];
+
 		return [
-			'data' => [],
+			'data' => $predefined_variables,
 			'watermark' => 0,
 			'version' => self::FORMAT_VERSION_V1,
 		];
