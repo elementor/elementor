@@ -83,7 +83,7 @@ export default function ImportKit() {
 		} );
 
 	const { source, kit_id: kitId } = useQueryParams().getAll();
-	const isLoadingKitFromCloud = KIT_SOURCE_MAP.CLOUD === source;
+	const isLoadingKitFromCloud = [ importContext.data.source, source ].includes( KIT_SOURCE_MAP.CLOUD );
 
 	// On load.
 	useEffect( () => {
