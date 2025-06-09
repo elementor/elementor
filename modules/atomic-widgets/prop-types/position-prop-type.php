@@ -20,4 +20,18 @@ class Position_Prop_Type extends Object_Prop_Type {
 			'y' => Size_Prop_Type::make(),
 		];
 	}
+
+	public static function get_position_enum_values(): array {
+		return [
+			'center center',
+			'center left',
+			'center right',
+			'top center',
+			'top left',
+			'top right',
+			'bottom center',
+			'bottom left',
+			'bottom right',
+		];
+	}
 }

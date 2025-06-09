@@ -10,7 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Position_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
-		var_dump($value);die();
 		return ( $value['x'] ?? '0px' ) . ' ' . ( $value['y'] ?? '0px' );
 	}
 }
