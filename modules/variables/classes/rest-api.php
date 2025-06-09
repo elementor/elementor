@@ -251,6 +251,8 @@ class Rest_Api {
 			'value' => $value,
 		] );
 
+		$this->clear_cache();
+
 		return $this->success_response( [
 			'variable' => $result['variable'],
 			'watermark' => $result['watermark'],
