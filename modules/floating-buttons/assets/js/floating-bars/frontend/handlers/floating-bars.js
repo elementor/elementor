@@ -80,10 +80,14 @@ export default class FloatingBarsHandler extends Base {
 		return this.elements.main.classList.contains( isSticky ) && this.elements.main.classList.contains( hasVerticalPositionBottom );
 	}
 
-	hasStickyElements() {
-		const stickyElements = document.querySelectorAll( '.elementor-sticky' );
+	getStickyElements() {
+		return document.querySelectorAll(
+			'.elementor-sticky:not(.elementor-sticky__spacer), .ehp-header[data-scroll-behavior="scroll-up"], .ehp-header[data-scroll-behavior="always"]',
+		);
+	}
 
-		return stickyElements.length > 0;
+	hasStickyElements() {
+		return this.getStickyElements() > 0;
 	}
 
 	focusOnLoad() {
@@ -111,7 +115,7 @@ export default class FloatingBarsHandler extends Base {
 	handleStickyElements() {
 		const mainHeight = this.elements.main.offsetHeight;
 		const wpAdminBar = elementorFrontend.elements.$wpAdminBar;
-		const stickyElements = document.querySelectorAll( '.elementor-sticky:not(.elementor-sticky__spacer)' );
+		const stickyElements = this.getStickyElements();
 
 		if ( 0 === stickyElements.length ) {
 			return;
