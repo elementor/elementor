@@ -1,6 +1,10 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Types_Mapping;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
@@ -40,18 +44,10 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+			'min-width' => Size_Prop_Type::make(),
+			'min-height' => Size_Prop_Type::make(),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum( [
@@ -82,18 +78,10 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			] ),
-			'inset-block-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-inline-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-block-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-inline-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'inset-block-start' => Size_Prop_Type::make(),
+			'inset-inline-end' => Size_Prop_Type::make(),
+			'inset-block-end' => Size_Prop_Type::make(),
+			'inset-inline-start' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
 			'scroll-margin-top' => Size_Prop_Type::make(),
 		];
@@ -168,8 +156,7 @@ class Style_Schema {
 				->add_prop_type( Size_Prop_Type::make() ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+				->add_prop_type( Size_Prop_Type::make() ),
 		];
 	}
 
@@ -198,8 +185,13 @@ class Style_Schema {
 	}
 
 	private static function get_background_props() {
+		// Background image overlay as an exception
+		$background_prop_type = Background_Prop_Type::make();
+		$bg_overlay_prop_type = $background_prop_type->get_shape_field( Background_Overlay_Prop_Type::get_key() );
+		$bg_image_overlay_prop_type = $bg_overlay_prop_type->get_item_type()->get_prop_type( Background_Image_Overlay_Prop_Type::get_key() );
+		Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types( $bg_image_overlay_prop_type->get_shape() );
 		return [
-			'background' => Background_Prop_Type::make(),
+			'background' => $background_prop_type,
 		];
 	}
 
@@ -239,9 +231,7 @@ class Style_Schema {
 			] ),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'flex-basis' => Size_Prop_Type::make(),
 		];
 	}
 

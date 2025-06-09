@@ -2,19 +2,21 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class CSS_Renderer {
-	private Variables $variables;
+	private Variables_Repository $repository;
 
-	public function __construct( Variables $variables ) {
-		$this->variables = $variables;
+	public function __construct( Variables_Repository $repository ) {
+		$this->repository = $repository;
 	}
 
 	private function global_variables(): array {
-		return $this->variables->get_all();
+		return $this->repository->variables();
 	}
 
 	public function raw_css(): string {
