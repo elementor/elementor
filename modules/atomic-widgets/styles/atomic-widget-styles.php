@@ -31,7 +31,7 @@ class Atomic_Widget_Styles {
 		$styles_manager->register( 'local', $this->style_defs );
 	}
 
-	private  function parse_post_styles( $post_id ) {
+	private function parse_post_styles( $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
