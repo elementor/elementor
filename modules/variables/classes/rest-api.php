@@ -309,11 +309,7 @@ class Rest_Api {
 		$db_record = $this->variables_repository->load();
 
 		return $this->success_response( [
-			'variables' => array_merge( $db_record['data'], [ 'e-gv-1234567890' => [
-				'type' => 'global-color-variable',
-				'label' => 'Test',
-				'value' => '#000000',
-			] ]),
+			'variables' => $db_record['data'],
 			'total' => count( $db_record['data'] ),
 			'watermark' => $db_record['watermark'],
 		] );
