@@ -7,7 +7,6 @@ use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
 use Elementor\Modules\Variables\Classes\Fonts;
 use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
-use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
@@ -28,23 +27,6 @@ class Hooks {
 			->register_css_renderer()
 			->register_fonts()
 			->register_api_endpoints();
-
-		// TODO: Remove this, later, temporary solution
-		$this->filter_for_stored_variables();
-
-		return $this;
-	}
-
-	private function filter_for_stored_variables() {
-		add_filter( Variables::FILTER, function ( $variables ) {
-			$list_of_variables = $this->variables_repository()->variables();
-
-			foreach ( $list_of_variables as $id => $variable ) {
-				$variables[ $id ] = $variable;
-			}
-
-			return $variables;
-		} );
 
 		return $this;
 	}
@@ -73,6 +55,10 @@ class Hooks {
 		return $this;
 	}
 
+	private function css_renderer() {
+		return new Variables_CSS_Renderer( $this->variables_repository() );
+	}
+
 	private function register_css_renderer() {
 		add_action( 'elementor/css-file/post/parse', function ( Post_CSS $post_css ) {
 			if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
@@ -80,16 +66,20 @@ class Hooks {
 			}
 
 			$post_css->get_stylesheet()->add_raw_css(
-				( new Variables_CSS_Renderer( new Variables() ) )->raw_css()
+				$this->css_renderer()->raw_css()
 			);
 		} );
 
 		return $this;
 	}
 
+	private function fonts() {
+		return new Fonts( $this->variables_repository() );
+	}
+
 	private function register_fonts() {
 		add_action( 'elementor/css-file/post/parse', function ( $post_css ) {
-			( new Fonts() )->append_to( $post_css );
+			$this->fonts()->append_to( $post_css );
 		} );
 
 		return $this;
