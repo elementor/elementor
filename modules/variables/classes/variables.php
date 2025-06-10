@@ -9,14 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * TODO: Remove this, when we have the full flow for the variables
+ */
 class Variables {
 	const FILTER = 'elementor/atomic-variables/variables';
 
 	public function get_all() {
-		return apply_filters( self::FILTER, [
-			Color_Variable_Prop_Type::get_key() => $this->get_color_variables(),
-			Font_Variable_Prop_Type::get_key() => $this->get_font_variables(),
-		] );
+		return apply_filters( self::FILTER, array_merge(
+			$this->get_color_variables(),
+			$this->get_font_variables()
+		) );
 	}
 
 	private function get_color_variables(): array {

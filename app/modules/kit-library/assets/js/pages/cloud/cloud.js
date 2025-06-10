@@ -6,7 +6,7 @@ import KitListCloud from '../../components/kit-list-cloud';
 import Layout from '../../components/layout';
 import PageLoader from '../../components/page-loader';
 import SearchInput from '../../components/search-input';
-import useKitsCloud from '../../hooks/use-kits-cloud';
+import useCloudKits from '../../hooks/use-cloud-kits';
 import useMenuItems from '../../hooks/use-menu-items';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
@@ -36,7 +36,7 @@ export default function Cloud( {
 		clearQueryParams,
 		forceRefetch,
 		isFilterActive,
-	} = useKitsCloud();
+	} = useCloudKits();
 
 	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
 		appsEventTrackingDispatch(
@@ -97,18 +97,34 @@ export default function Cloud( {
 						}
 						{ isSuccess && 0 < data.length && <KitListCloud data={ data } source={ path } /> }
 						{
-							isSuccess && 0 === data.length && renderNoResultsComponent( {
-								defaultComponent: <ErrorScreen
-									title={ __( 'No results matched your search.', 'elementor' ) }
-									description={ __( 'Try different keywords or ', 'elementor' ) }
-									button={ {
-										text: __( 'Continue browsing.', 'elementor' ),
-										action: clearQueryParams,
-										category: path,
-									} }
-								/>,
-								isFilterActive,
-							} )
+							isSuccess && 0 === data.length && (
+								queryParams.search ? (
+									<ErrorScreen
+										title={ __( 'No kits found for your search', 'elementor' ) }
+										description={ __( 'Try different keywords or ', 'elementor' ) }
+										button={ {
+											text: __( 'Continue browsing.', 'elementor' ),
+											action: clearQueryParams,
+										} }
+									/>
+								) : (
+									renderNoResultsComponent( {
+										defaultComponent: <ErrorScreen
+											title={ __( 'No kits to show here yet', 'elementor' ) }
+											description={ __( "Once you export a Website Kit to the cloud, you'll find it here and be able to use it on all your sites.", 'elementor' ) }
+											newLineButton={ true }
+											button={ {
+												text: __( 'Export this site', 'elementor' ),
+												url: elementorAppConfig.base_url + '#/export',
+												target: '_blank',
+												variant: 'contained',
+												color: 'primary',
+											} }
+										/>,
+										isFilterActive,
+									} )
+								)
+							)
 						}
 					</>
 				</Content>

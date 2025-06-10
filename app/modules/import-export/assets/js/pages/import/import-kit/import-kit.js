@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 import { useConfirmAction } from '@elementor/hooks';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
 
 import { SharedContext } from '../../../context/shared-context/shared-context-provider';
 import { ImportContext } from '../../../context/import-context/import-context-provider';
@@ -12,13 +13,14 @@ import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Notice from 'elementor-app/ui/molecules/notice';
 import DropZone from 'elementor-app/organisms/drop-zone';
 import Button from 'elementor-app/ui/molecules/button';
+import ElementorLoading from 'elementor-app/molecules/elementor-loading';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import Checkbox from 'elementor-app/ui/atoms/checkbox';
 import Dialog from 'elementor-app/ui/dialog/dialog';
 
-import useKit from '../../../hooks/use-kit';
+import useKit, { KIT_SOURCE_MAP } from '../../../hooks/use-kit';
 
 import './import-kit.scss';
-import Checkbox from 'elementor-app/ui/atoms/checkbox';
 
 export default function ImportKit() {
 	const sharedContext = useContext( SharedContext ),
@@ -80,9 +82,13 @@ export default function ImportKit() {
 			},
 		} );
 
+	const { source, kit_id: kitId } = useQueryParams().getAll();
+	const isLoadingKitFromCloud = [ importContext.data.source, source ].includes( KIT_SOURCE_MAP.CLOUD );
+
 	// On load.
 	useEffect( () => {
 		sharedContext.dispatch( { type: 'SET_INCLUDES', payload: [] } );
+		importContext.dispatch( { type: 'SET_KIT_SOURCE', payload: source } );
 		sharedContext.dispatch( { type: 'SET_CURRENT_PAGE_NAME', payload: ImportKit.name } );
 	}, [] );
 
@@ -97,6 +103,10 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
+
+			if ( KIT_SOURCE_MAP.CLOUD === source && kitState.data.file_url ) {
+				importContext.dispatch( { type: 'SET_FILE', payload: kitState.data.file_url } );
+			}
 		} else if ( 'error' === kitState.status ) {
 			setErrorType( kitState.data );
 		}
@@ -111,43 +121,78 @@ export default function ImportKit() {
 		}
 	}, [ importContext.data.uploadedData ] );
 
+	// Trigger import kit from Cloud Library
+	useEffect( () => {
+		if ( KIT_SOURCE_MAP.CLOUD === source && kitId ) {
+			kitActions.upload( { source, kitId } );
+		}
+	}, [ source, kitId ] );
+
 	return (
 		<Layout type="import">
 			<section className="e-app-import">
-				{
-					'kit-library' === referrer &&
-					<Button
-						className="e-app-import__back-to-library"
-						icon="eicon-chevron-left"
-						text={ __( 'Back to Kit Library', 'elementor' ) }
-						url="/kit-library"
-					/>
-				}
+				{ isLoadingKitFromCloud ? (
+					<ElementorLoading />
+				) : (
+					<>
+						{
+							'kit-library' === referrer &&
+							<Button
+								className="e-app-import__back-to-library"
+								icon="eicon-chevron-left"
+								text={ __( 'Back to Kit Library', 'elementor' ) }
+								url={ isLoading ? '' : `/kit-library${ isLoadingKitFromCloud ? '/cloud' : '' }` }
+							/>
+						}
 
-				<PageHeader
-					heading={ __( 'Import a Website Kit', 'elementor' ) }
-					description={ [
-						__( 'Upload a file with templates, site settings, content, etc., and apply them to your site automatically.', 'elementor' ),
-						getLearnMoreLink(),
-					] }
-				/>
+						<PageHeader
+							heading={ __( 'Import a Website Kit', 'elementor' ) }
+							description={ [
+								__( 'Upload a file with templates, site settings, content, etc., and apply them to your site automatically.', 'elementor' ),
+								getLearnMoreLink(),
+							] }
+						/>
 
-				<Notice label={ __( 'Important:', 'elementor' ) } color="warning" className="e-app-import__notice">
-					{ __( 'We recommend that you backup your site before importing a kit file.', 'elementor' ) }
-				</Notice>
+						<Notice label={ __( 'Important:', 'elementor' ) } color="warning" className="e-app-import__notice">
+							{ __( 'We recommend that you backup your site before importing a kit file.', 'elementor' ) }
+						</Notice>
 
-				<DropZone
-					className="e-app-import__drop-zone"
-					heading={ __( 'Upload Files to Your Library', 'elementor' ) }
-					text={ __( 'Drag & drop the .zip file with your Kit', 'elementor' ) }
-					secondaryText={ __( 'Or', 'elementor' ) }
-					filetypes={ [ 'zip' ] }
-					onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
-					onFileSelect={ uploadFile }
-					onError={ () => setErrorType( 'general' ) }
-					isLoading={ isLoading }
-				/>
+						<DropZone
+							className="e-app-import__drop-zone"
+							heading={ __( 'Upload Files to Your Library', 'elementor' ) }
+							text={ __( 'Drag & drop the .zip file with your Kit', 'elementor' ) }
+							secondaryText={ __( 'Or', 'elementor' ) }
+							filetypes={ [ 'zip' ] }
+							onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
+							onFileSelect={ uploadFile }
+							onError={ () => setErrorType( 'general' ) }
+							isLoading={ isLoading }
+						/>
 
+						{ dialog.isOpen &&
+							<Dialog
+								title={ __( 'Warning: JSON or ZIP files may be unsafe', 'elementor' ) }
+								text={ __( 'Uploading JSON or ZIP files from unknown sources can be harmful and put your site at risk. For maximum safety, upload only JSON or ZIP files from trusted sources.', 'elementor' ) }
+								approveButtonColor="link"
+								approveButtonText={ __( 'Continue', 'elementor' ) }
+								approveButtonOnClick={ dialog.approve }
+								dismissButtonText={ __( 'Cancel', 'elementor' ) }
+								dismissButtonOnClick={ dialog.dismiss }
+								onClose={ dialog.dismiss }
+							>
+								<label htmlFor="do-not-show-upload-json-warning-again" style={ { display: 'flex', alignItems: 'center', gap: '5px' } }>
+									<Checkbox
+										id="do-not-show-upload-json-warning-again"
+										type="checkbox"
+										value={ checkbox.isChecked }
+										onChange={ ( event ) => checkbox.setIsChecked( !! event.target.checked ) }
+									/>
+									{ __( 'Do not show this message again', 'elementor' ) }
+								</label>
+							</Dialog>
+						}
+					</>
+				) }
 				{ errorType && <ProcessFailedDialog
 					errorType={ errorType }
 					onApprove={ resetImportProcess }
@@ -155,29 +200,6 @@ export default function ImportKit() {
 					onError={ () => eventTracking( 'kit-library/modal-open', null, 'load', errorType, 'error' ) }
 					onLearnMore={ () => eventTracking( 'kit-library/seek-more-info', null, 'click', null, 'error' ) }
 				/> }
-
-				{ dialog.isOpen &&
-					<Dialog
-						title={ __( 'Warning: JSON or ZIP files may be unsafe', 'elementor' ) }
-						text={ __( 'Uploading JSON or ZIP files from unknown sources can be harmful and put your site at risk. For maximum safety, upload only JSON or ZIP files from trusted sources.', 'elementor' ) }
-						approveButtonColor="link"
-						approveButtonText={ __( 'Continue', 'elementor' ) }
-						approveButtonOnClick={ dialog.approve }
-						dismissButtonText={ __( 'Cancel', 'elementor' ) }
-						dismissButtonOnClick={ dialog.dismiss }
-						onClose={ dialog.dismiss }
-					>
-						<label htmlFor="do-not-show-upload-json-warning-again" style={ { display: 'flex', alignItems: 'center', gap: '5px' } }>
-							<Checkbox
-								id="do-not-show-upload-json-warning-again"
-								type="checkbox"
-								value={ checkbox.isChecked }
-								onChange={ ( event ) => checkbox.setIsChecked( !! event.target.checked ) }
-							/>
-							{ __( 'Do not show this message again', 'elementor' ) }
-						</label>
-					</Dialog>
-				}
 			</section>
 		</Layout>
 	);

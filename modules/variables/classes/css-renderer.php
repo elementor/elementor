@@ -2,45 +2,37 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class CSS_Renderer {
-	private Variables $variables;
+	private Variables_Repository $repository;
 
-	public function __construct( Variables $variables ) {
-		$this->variables = $variables;
+	public function __construct( Variables_Repository $repository ) {
+		$this->repository = $repository;
 	}
 
 	private function global_variables(): array {
-		return $this->variables->get_all();
+		return $this->repository->variables();
 	}
 
 	public function raw_css(): string {
-		$variable_groups = $this->global_variables();
+		$list_of_variables = $this->global_variables();
 
-		if ( empty( $variable_groups ) ) {
+		if ( empty( $list_of_variables ) ) {
 			return '';
 		}
 
-		$css_entries = $this->generate_css_entries( $variable_groups );
+		$css_entries = $this->css_entries_for( $list_of_variables );
 
 		if ( empty( $css_entries ) ) {
 			return '';
 		}
 
 		return $this->wrap_with_root( $css_entries );
-	}
-
-	private function generate_css_entries( array $groups ): array {
-		$entries = [];
-
-		foreach ( $groups as $list_of_variables ) {
-			$entries = array_merge( $entries, $this->css_entries_for( $list_of_variables ) );
-		}
-
-		return $entries;
 	}
 
 	private function css_entries_for( array $list_of_variables ): array {
