@@ -12,14 +12,13 @@ export default function KitAlreadyAppliedDialog( props ) {
 
 	return (
 		<Dialog
-			// TODO: fix
 			title={ __( 'You\'ve already applied a Website Templates.', 'elementor' ) }
 			text={ <>
 				{ __( 'Applying two Website Templates on the same website will mix global styles and colors and hurt your site\'s performance.', 'elementor' ) }
 				<br /><br />
 				{ __( 'Remove the existing Website Template before applying a new one.', 'elementor' ) }
 			</> }
-			approveButtonText={ __( 'Remove existing Website Template', 'elementor' ) }
+			approveButtonText={ __( 'Remove existing', 'elementor' ) }
 			approveButtonColor="primary"
 			approveButtonOnClick={ () => location.href = getRemoveKitUrl() }
 			dismissButtonText={ __( 'Apply anyway', 'elementor' ) }

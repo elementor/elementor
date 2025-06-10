@@ -62,8 +62,7 @@ export default function ExportComplete() {
 		</InlineLink>
 	);
 	const getShowMeHowLink = () => (
-		// TODO: add link here
-		<InlineLink italic>
+		<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
 			{ __( 'Show me how', 'elementor' ) }
 		</InlineLink>
 	);

@@ -13,19 +13,18 @@ export default function ImportInfoModal( props ) {
 		},
 	);
 	return (
-		// TODO: fix the text here
-		<InfoModal { ...props } title={ __( 'Import a Website Kit', 'elementor' ) }>
+		<InfoModal { ...props } title={ __( 'Import a Website Template', 'elementor' ) }>
 			<InfoModal.Section>
-				<InfoModal.Heading>{ __( 'What’s a Website Kit?', 'elementor' ) }</InfoModal.Heading>
+				<InfoModal.Heading>{ __( 'What’s a Website Template?', 'elementor' ) }</InfoModal.Heading>
 				<InfoModal.Text>
 					<>
-						{ __( 'A Website Kit is a .zip file that contains all the parts of a complete site. It’s an easy way to get a site up and running quickly.', 'elementor' ) }
+						{ __( 'A Website Template is a .zip file that contains all the parts of a complete site. It’s an easy way to get a site up and running quickly.', 'elementor' ) }
 						<br /><br />
 						<InlineLink
 							url="https://go.elementor.com/app-what-are-kits"
-							onClick={ () => eventTracking( 'Learn more about website kits' ) }
+							onClick={ () => eventTracking( 'Learn more about website templates' ) }
 						>
-							{ __( ' Learn more about Website Kits', 'elementor' ) }
+							{ __( ' Learn more about Website Templates', 'elementor' ) }
 						</InlineLink>
 					</>
 				</InfoModal.Text>
