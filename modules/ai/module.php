@@ -1612,7 +1612,7 @@ class Module extends BaseModule {
 
 		return $params;
 	}
-	
+
 	private function extract_ai_settings_from_kit( $kit_data ) {
 		$ai_settings = [];
 
