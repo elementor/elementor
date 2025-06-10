@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\KitLibrary;
 
 use Elementor\App\Modules\KitLibrary\Data\Repository;
+use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Utils\Exceptions;
@@ -16,6 +17,7 @@ use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Co
 use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller as Cloud_Kits_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils as ElementorUtils;
+use Elementor\App\Modules\ImportExport\Module as ImportExport_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -103,7 +105,9 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
+	}
 
+	public function register_actions() {
 		// Assigning this action here since the repository is being loaded by demand.
 		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
 
@@ -125,9 +129,38 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
 			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
+			add_filter('elementor/import-export/export-result', [ $this, 'handle_export_kit_result' ] );
+			add_filter('elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ] );
 		}
 	}
 
+	public function handle_export_kit_result( $result, $source, $export, $settings, $file ) {
+		if ( ImportExport_Module::EXPORT_SOURCE_CLOUD !== $source ) {
+			return $result;
+		}
+
+		unset( $result['file'] );
+
+		$raw_screen_shot = base64_decode( substr( $settings['screenShotBlob'], strlen( 'data:image/png;base64,' ) ) );
+		$title = $export['manifest']['title'];
+		$description = $export['manifest']['description'];
+
+		$kit = KitLibrary::get_cloud_app()->create_kit(
+			$title,
+			$description,
+			$file,
+			$raw_screen_shot,
+			$settings['include'],
+		);
+
+		if ( is_wp_error( $kit ) ) {
+			return $kit;
+		}
+
+		$result['kit'] = $kit;
+
+		return $result;
+	}
 	public function handle_kit_screenshot_generation() {
 		$is_kit_preview = ElementorUtils::get_super_global_value( $_GET, 'kit_thumbnail' );
 		$nonce = ElementorUtils::get_super_global_value( $_GET, 'nonce' );
@@ -185,5 +218,40 @@ class Module extends BaseModule {
 		}
 
 		return $cloud_kits_app;
+	}
+
+	protected function handle_import_kit_from_cloud( $args ) {
+		$kit = self::get_cloud_app()->get_kit( [
+			'id' => $args['kit_id'],
+		] );
+
+		if ( is_wp_error( $kit ) ) {
+			return $kit;
+		}
+
+		if ( empty( $kit['downloadUrl'] ) ) {
+			throw new \Error( ImportExport_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return [
+			'file_name' => self::get_remote_kit_zip( $kit['downloadUrl'] ),
+			'referrer' => ImportExport_Module::REFERRER_CLOUD,
+			'file_url' => $kit['downloadUrl'],
+		];
+	}
+	public static function get_remote_kit_zip( $url ) {
+		$remote_zip_request = wp_safe_remote_get( $url );
+
+		if ( is_wp_error( $remote_zip_request ) ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
+			throw new \Error( ImportExport_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		if ( 200 !== $remote_zip_request['response']['code'] ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
+			throw new \Error( ImportExport_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
 	}
 }
