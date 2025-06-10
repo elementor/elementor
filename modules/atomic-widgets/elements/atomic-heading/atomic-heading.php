@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -54,7 +55,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
-			'repeater' => String_Array_Prop_Type::make()
+			'repeater' => Key_Value_Array_Prop_Type::make()
 		];
 
 		return $props;
@@ -109,7 +110,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			] ),
 			Repeatable_Control::bind_to('repeater')
 				->set_label( __( 'Repeater', 'elementor' ) )
-				->set_child_control_type( 'text' )->set_child_control_props( (object) [ 'placeholder' => 'from config11' ] )
+				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [] )
 				->hide_duplicate()->hide_toggle(),
 		];
 	}
