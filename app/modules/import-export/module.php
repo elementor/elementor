@@ -247,9 +247,9 @@ class Module extends BaseModule {
 				</div>
 				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
 
-			    <?php if ( ! empty( $data['link'] ) ) : ?>
-				    <a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-			    <?php endif; ?>
+				<?php if ( ! empty( $data['link'] ) ) : ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+				<?php endif; ?>
 				<div class="tab-import-export-kit__box action-buttons">
 					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
 						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
