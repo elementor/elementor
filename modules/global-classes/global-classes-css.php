@@ -53,10 +53,11 @@ class Global_Classes_CSS {
 			$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
 
 			$global_classes = [];
+			$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 			foreach ( $post_ids as $post_id ) {
 				$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
 				$used_global_classes_ids = array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
-				$used_global_classes = Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids )->get_items()->map( function( $item ) {
+				$used_global_classes = Global_Classes_Repository::make()->context( $context )->get_by_ids( $used_global_classes_ids )->get_items()->map( function( $item ) {
 					$item['id'] = $item['label'];
 					return $item;
 				})->all();
