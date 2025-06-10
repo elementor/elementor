@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Core\Utils\Collection;

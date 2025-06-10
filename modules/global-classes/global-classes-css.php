@@ -2,15 +2,17 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Modules\AtomicWidgets\Styles_Manager;
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Manager;
 use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
 use Elementor\Plugin;
 
 class Global_Classes_CSS {
+	CONST CSS_FILE_KEY = 'global';
+
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widget/styles/enqueue',
-			fn( Styles_Manager $styles_manager ) => $this->enqueue_styles( $styles_manager ),
+			fn( Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			20,
 			3
 		);
@@ -40,30 +42,35 @@ class Global_Classes_CSS {
 		);
 	}
 
-	private function enqueue_styles( Styles_Manager $styles_manager ) {
-		$global_classes_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
+	private function register_styles( Styles_Manager $styles_manager ) {
+		$get_styles = function () {
+			$global_classes_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 
-		if ( empty( $global_classes_ids ) ) {
-			return;
-		}
+			if ( empty( $global_classes_ids ) ) {
+				return [];
+			}
 
-		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
+			$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
 
-		$global_classes = [];
-		foreach ( $post_ids as $post_id ) {
-			$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
-			$used_global_classes_ids = array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
-			$used_global_classes = Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids )->get_items()->map( function( $item ) {
-				$item['id'] = $item['label'];
-				return $item;
-			})->all();
+			$global_classes = [];
+			foreach ( $post_ids as $post_id ) {
+				$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
+				$used_global_classes_ids = array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
+				$used_global_classes = Global_Classes_Repository::make()->get_by_ids( $used_global_classes_ids )->get_items()->map( function( $item ) {
+					$item['id'] = $item['label'];
+					return $item;
+				})->all();
 
-			$global_classes = array_merge($global_classes,  $used_global_classes);
-		}
+				$global_classes = array_merge($global_classes,  $used_global_classes);
+			}
+
+			return $global_classes;
+		};
+
 
 		$styles_manager->register(
-			'global',
-			$global_classes
+			self::CSS_FILE_KEY,
+			$get_styles
 		);
 	}
 

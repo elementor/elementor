@@ -2,51 +2,59 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
-
-	private array $style_defs = [];
+	CONST CSS_FILE_KEY = 'local';
 
 	public function register_hooks() {
 		add_action( 'elementor/atomic-widget/styles/enqueue', function( Styles_Manager $styles_manager ){
-			$this->enqueue_styles( $styles_manager );
+			$this->register_styles( $styles_manager );
 		}, 30, 3 );
 	}
 
-	private function enqueue_styles( Styles_Manager $styles_manager ) {
-		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
+	private function register_styles( Styles_Manager $styles_manager ) {
+		$get_styles = function() {
+			$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
 
-		if ( empty( $post_ids ) ) {
-			return;
-		}
+			if ( empty( $post_ids ) ) {
+				return [];
+			}
 
-		foreach ( $post_ids as $post_id ) {
-			$this->parse_post_styles( $post_id );
-		}
+			$styles = [];
 
-		$styles_manager->register( 'local', $this->style_defs );
+			foreach ( $post_ids as $post_id ) {
+				$styles = array_merge( $styles, $this->parse_post_styles( $post_id ) );
+			}
+
+			return $styles;
+		};
+
+		$styles_manager->register( self::CSS_FILE_KEY, $get_styles );
 	}
 
 	private function parse_post_styles( $post_id ) {
 		$document = Plugin::$instance->documents->get( $post_id );
 
 		if ( ! $document ) {
-			return;
+			return [];
 		}
 
 		$elements_data = $document->get_elements_data();
 
 		if ( empty( $elements_data ) ) {
-			return;
+			return [];
 		}
 
-		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) {
-			$this->parse_element_style( $element_data );
+		$post_styles = [];
+
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( &$post_styles ) {
+			$post_styles = array_merge( $post_styles,  $this->parse_element_style( $element_data ) );
 		});
+
+		return $post_styles;
 	}
 
 	private function parse_element_style(  array $element_data ) {
@@ -54,9 +62,9 @@ class Atomic_Widget_Styles {
 		$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
 
 		if ( ! Utils::is_atomic( $element_instance ) ) {
-			return;
+			return [];
 		}
 
-		$this->style_defs = array_merge( $this->style_defs, $element_data['styles'] );
+		return $element_data['styles'] ?? [];
 	}
 }
