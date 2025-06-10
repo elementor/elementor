@@ -1,4 +1,5 @@
 import DivBlockEmptyView from './container/div-block-empty-view';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 const DivBlockView = BaseElementView.extend( {
@@ -88,6 +89,10 @@ const DivBlockView = BaseElementView.extend( {
 	renderOnChange( settings ) {
 		const changed = settings.changedAttributes();
 
+		setTimeout( () => {
+			this.updateHandlesOverlay();
+		} );
+
 		if ( ! changed ) {
 			return;
 		}
@@ -134,6 +139,7 @@ const DivBlockView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
+			this.updateHandlesOverlay();
 		} );
 	},
 
@@ -413,6 +419,28 @@ const DivBlockView = BaseElementView.extend( {
 
 		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
 	},
+
+	updateHandlesOverlay() {
+		const $itemsWithOverley = this.$el.find( '.elementor-editor-element-settings' );
+
+		const elementStyles = window.getComputedStyle( this.el ),
+			elementType = this.$el.data( 'element_type' ),
+			overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ],
+			isHaveOverflow = overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' ),
+			isElement = getAllElementTypes().includes( elementType );
+
+		if ( ! $itemsWithOverley?.length || ! isElement ) {
+			return;
+		}
+
+		if ( isHaveOverflow ) {
+			this.$el.addClass( 'e-handles-inside' );
+		} else {
+			this.$el.removeClass( 'e-handles-inside' );
+		}
+
+		$itemsWithOverley.removeAttr( 'style' );
+	}
 } );
 
 module.exports = DivBlockView;
