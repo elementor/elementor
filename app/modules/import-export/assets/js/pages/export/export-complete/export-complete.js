@@ -96,7 +96,7 @@ export default function ExportComplete() {
 				</>
 
 			)
-			: __( 'Once the download is complete, your can upload it to be used for other sites.', 'elementor' );
+			: __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' );
 	}, [ isSavedToCloud ] );
 
 	const getNotice = () => (
