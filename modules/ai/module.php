@@ -1595,12 +1595,6 @@ class Module extends BaseModule {
 		return $home_screen_data;
 	}
 
-	/**
-	 * Add AI settings from active kit to tracking data.
-	 *
-	 * @param array $params Tracking data parameters.
-	 * @return array Modified tracking data parameters.
-	 */
 	public function add_tracking_data( $params ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
@@ -1610,7 +1604,6 @@ class Module extends BaseModule {
 
 		$kit_data = $kit->get_data();
 
-		// Extract AI settings from the kit
 		$ai_settings = $this->extract_ai_settings_from_kit( $kit_data );
 
 		if ( ! empty( $ai_settings ) ) {
@@ -1619,17 +1612,10 @@ class Module extends BaseModule {
 
 		return $params;
 	}
-
-	/**
-	 * Extract AI settings from kit data.
-	 *
-	 * @param array $kit_data Kit data.
-	 * @return array AI settings.
-	 */
+	
 	private function extract_ai_settings_from_kit( $kit_data ) {
 		$ai_settings = [];
 
-		// Look for AI settings in kit settings
 		if ( isset( $kit_data['settings']['ai'] ) ) {
 			$ai_settings = $this->parse_ai_generator_settings( $kit_data['settings']['ai'] );
 		}
@@ -1637,16 +1623,9 @@ class Module extends BaseModule {
 		return $ai_settings;
 	}
 
-	/**
-	 * Parse AI generator settings structure.
-	 *
-	 * @param array $ai_data AI generator data from settings.
-	 * @return array Parsed AI generator settings.
-	 */
 	private function parse_ai_generator_settings( $ai_data ) {
 		$parsed_settings = [];
 
-		// Extract request IDs
 		if ( isset( $ai_data['requestIds'] ) ) {
 			$request_ids = $ai_data['requestIds'];
 			$parsed_settings['site_planner_kit_id'] = $request_ids['sessionId'];
