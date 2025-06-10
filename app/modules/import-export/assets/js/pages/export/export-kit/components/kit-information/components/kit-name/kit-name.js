@@ -34,7 +34,7 @@ export default function KitName() {
 		<Grid container direction="column">
 			<Text tag="span" variant="xs">{ __( 'Name', 'elementor' ) }</Text>
 			<TextField
-				placeholder={ __( '{{Sitename}} Template', 'elementor' ) }
+				placeholder={ __( 'Type name here...', 'elementor' ) }
 				onChange={ handleChange }
 				onBlur={ handleChange }
 				className={ error ? 'e-app-export-kit-information__field--error' : '' }
