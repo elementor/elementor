@@ -13,6 +13,7 @@ export default function ImportInfoModal( props ) {
 		},
 	);
 	return (
+		// TODO: fix the text here
 		<InfoModal { ...props } title={ __( 'Import a Website Kit', 'elementor' ) }>
 			<InfoModal.Section>
 				<InfoModal.Heading>{ __( 'What’s a Website Kit?', 'elementor' ) }</InfoModal.Heading>

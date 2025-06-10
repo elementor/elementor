@@ -71,6 +71,7 @@ export default function IndexHeader( props ) {
 			>
 				{ __( 'Import Kit', 'elementor' ) }
 			</PopoverDialog>
+			{ /* //TODO: we should fix the text here*/ }
 			<ModalProvider title={ __( 'Welcome to the Library', 'elementor' ) }
 				show={ isInfoModalOpen }
 				setShow={ setIsInfoModalOpen }
