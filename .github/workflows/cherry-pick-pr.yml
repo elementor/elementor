@@ -32,6 +32,7 @@ jobs:
         shell: bash
 
       - name: Cherry-Pick and Create PRs
+        if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
         env:
           GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
@@ -54,8 +55,8 @@ jobs:
       
             # Create a new branch for cherry-pick
             CHERRY_PICK_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET_BRANCH}"
-            echo "Attempting to checkout and create branch $CHERRY_PICK_BRANCH from $TARGET_BRANCH"
-            git checkout -b "$CHERRY_PICK_BRANCH" "$TARGET_BRANCH" || { echo "::error::Branch $TARGET_BRANCH does not exist or cannot be checked out."; exit 1; }
+            echo "Attempting to checkout and create branch $CHERRY_PICK_BRANCH from origin/$TARGET_BRANCH"
+            git checkout -b "$CHERRY_PICK_BRANCH" "origin/$TARGET_BRANCH" || { echo "::error::Branch $TARGET_BRANCH does not exist or cannot be checked out."; exit 1; }
             echo "Checked out to new branch: $CHERRY_PICK_BRANCH"
 
             # Cherry-pick the commit
