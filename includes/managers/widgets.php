@@ -65,8 +65,6 @@ class Widgets_Manager {
 			Atomic_Paragraph::class,
 			Atomic_Button::class,
 			Atomic_Svg::class,
-		],
-		AtomicWidgetsModule::EXPERIMENT_VERSION_3_31 => [
 			Atomic_Divider::class,
 		],
 	];
