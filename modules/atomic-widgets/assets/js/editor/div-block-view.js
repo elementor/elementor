@@ -428,7 +428,6 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	updateHandlesOverlay() {
-		const $itemsWithOverley = this.$el.find( '.elementor-editor-element-settings' );
 		const elementType = this.$el.data( 'element_type' );
 		const isElement = getAllElementTypes().includes( elementType );
 
@@ -440,7 +439,7 @@ const DivBlockView = BaseElementView.extend( {
 			this.$el.addClass( 'e-handles-inside' );
 		} else {
 			this.$el.removeClass( 'e-handles-inside' );
-		}
+		};
 	},
 } );
 
