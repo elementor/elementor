@@ -398,7 +398,13 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getClasses() {
-		return this.options?.model?.getSetting( 'classes' )?.value || [];
+		const transformer = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry?.get?.( 'classes' );
+
+		if ( ! transformer ) {
+			return [];
+		}
+
+		return transformer( this.options?.model?.getSetting( 'classes' )?.value || [] );
 	},
 
 	getClassString() {
