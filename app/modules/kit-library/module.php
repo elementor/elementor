@@ -105,6 +105,8 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
+
+		$this->register_actions();
 	}
 
 	public function register_actions() {
@@ -129,8 +131,8 @@ class Module extends BaseModule {
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
 			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
-			add_filter('elementor/import-export/export-result', [ $this, 'handle_export_kit_result' ] );
-			add_filter('elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ] );
+			add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 5 );
+			add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud', 10, 1 ] );
 		}
 	}
 

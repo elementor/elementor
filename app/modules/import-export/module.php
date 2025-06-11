@@ -628,8 +628,9 @@ class Module extends BaseModule {
 			? wp_unslash( $_POST['e_import_file'] )
 			: '';
 
-		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' );
-		$source = ElementorUtils::get_super_global_value( $_POST, 'source' );
+		// PHPCS - Already validated in caller function
+		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$source = ElementorUtils::get_super_global_value( $_POST, 'source' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		$is_import_from_library = ! empty( $file_url );
 
@@ -785,7 +786,7 @@ class Module extends BaseModule {
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
 		$result = apply_filters(
-			'elementor/import-export/export-result',
+			'elementor/export/kit/export-result',
 			[
 				'manifest' => $export['manifest'],
 				'file' => base64_encode( $file ),
