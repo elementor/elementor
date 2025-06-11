@@ -32,6 +32,7 @@ jobs:
         shell: bash
 
       - name: Cherry-Pick and Create PRs
+        if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
         env:
           GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
