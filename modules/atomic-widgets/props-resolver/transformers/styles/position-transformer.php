@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Background_Image_Position_Offset_Transformer extends Transformer_Base {
+class Position_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
 		return ( $value['x'] ?? '0px' ) . ' ' . ( $value['y'] ?? '0px' );
 	}
