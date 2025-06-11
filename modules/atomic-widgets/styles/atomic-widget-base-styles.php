@@ -2,41 +2,68 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Base_Styles {
+	CONST CSS_FILE_KEY = 'base';
+
 	public function register_hooks() {
-		add_action( 'elementor/css-file/post/parse', fn( Post_CSS $post ) => $this->inject_elements_base_styles( $post ), 10 );
+		add_action(
+			'elementor/atomic-widget/styles/enqueue',
+			fn( Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
+			10,
+			3
+		);
 	}
 
-	private function inject_elements_base_styles( Post_CSS $post ) {
-		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
-			return;
-		}
+	private function register_styles( Styles_Manager $styles_manager ) {
+		$get_styles = function( $post_ids ) {
+			if ( empty( $post_ids ) ) {
+				return [];
+			}
 
-		$elements = Plugin::$instance->elements_manager->get_element_types();
-		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
+			$styles = [];
 
-		$base_styles = Collection::make( $elements )
-			->merge( $widgets )
-			->filter( fn( $element ) => Utils::is_atomic( $element ) )
-			->map( fn( $element ) => $element->get_base_styles() )
-			->flatten()
-			->all();
+			foreach ( $post_ids as $post_id ) {
+				$elements_data = Plugin::instance()->documents->get_doc_for_frontend( $post_id )->get_elements_data();
+				$used_atomic_elements = $this->get_used_atomic_elements( $elements_data );
 
-		$css = Styles_Renderer::make(
-			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) use ( &$post ) {
-			if ( 'font-family' !== $key ) {
+				$styles = Collection::make( $used_atomic_elements )
+					->map( fn( $element ) => $element->get_base_styles() )
+					->flatten()
+					->merge( $styles )
+					->all();
+			}
+
+			return $styles;
+		};
+
+
+		$styles_manager->register(
+			self::CSS_FILE_KEY,
+			$get_styles,
+		);
+	}
+
+	private function get_used_atomic_elements( array $elements_data ): array {
+		$used_elements = [];
+
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( &$used_elements ) {
+			if ( empty( $element_data['widgetType'] ) && empty( $element_data['elType'] ) ) {
 				return;
 			}
 
-			$post->add_font( $value );
-		} )->render( $base_styles );
+			$element_type = $element_data['widgetType'] ?? $element_data['elType'];
+			$element = Plugin::$instance->elements_manager->get_element_types( $element_type ) ??
+					  Plugin::$instance->widgets_manager->get_widget_types( $element_type );
 
-		$post->get_stylesheet()->add_raw_css( $css );
+			if ( $element && Utils::is_atomic( $element ) ) {
+				$used_elements[ $element_type ] = $element;
+			}
+		});
+
+		return $used_elements;
 	}
 }
