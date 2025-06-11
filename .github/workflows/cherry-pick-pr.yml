@@ -38,9 +38,8 @@ jobs:
           echo "Final cherry_pick_branches=${CP_LABELS}" >> "$GITHUB_OUTPUT"
         shell: bash
 
-
-
       - name: Cherry-Pick and Create PRs
+        if: steps.get_labels.outputs.cherry_pick_branches != ''
         env:
           GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
