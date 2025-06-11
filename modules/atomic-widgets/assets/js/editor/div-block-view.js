@@ -420,27 +420,28 @@ const DivBlockView = BaseElementView.extend( {
 		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
 	},
 
+	isOverlayHidden() {
+		const elementStyles = window.getComputedStyle( this.el )
+		const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ]
+		
+		return overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' )
+	},
+
 	updateHandlesOverlay() {
 		const $itemsWithOverley = this.$el.find( '.elementor-editor-element-settings' );
+		const elementType = this.$el.data( 'element_type' );
+		const isElement = getAllElementTypes().includes( elementType );
 
-		const elementStyles = window.getComputedStyle( this.el ),
-			elementType = this.$el.data( 'element_type' ),
-			overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ],
-			isHaveOverflow = overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' ),
-			isElement = getAllElementTypes().includes( elementType );
-
-		if ( ! $itemsWithOverley?.length || ! isElement ) {
+		if ( ! isElement ) {
 			return;
 		}
 
-		if ( isHaveOverflow ) {
+		if ( this.isOverlayHidden() ) {
 			this.$el.addClass( 'e-handles-inside' );
 		} else {
 			this.$el.removeClass( 'e-handles-inside' );
 		}
-
-		$itemsWithOverley.removeAttr( 'style' );
-	}
+	},
 } );
 
 module.exports = DivBlockView;
