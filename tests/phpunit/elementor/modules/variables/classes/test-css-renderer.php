@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,21 +16,24 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor\Modules\Variables
  */
 class Test_CSS_Renderer extends TestCase {
+	private $repository;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->repository = $this->createMock( Variables_Repository::class );
 	}
 
 	private function css_renderer() {
 		return new CSS_Renderer(
-			new Variables()
+			$this->repository
 		);
 	}
 
 	public function test_empty_list_of_variables__generates_empty_css_entry() {
 		// Arrange.
-		add_filter( Variables::FILTER, function () {
-			return [];
-		} );
+		$this->repository->method( 'variables' )
+			->willReturn( [] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
@@ -40,8 +44,8 @@ class Test_CSS_Renderer extends TestCase {
 
 	public function test_list_of_font_variables__generates_entries_for_root_pseudo_element() {
 		// Arrange.
-		add_filter( Variables::FILTER, function () {
-			return [
+		$this->repository->method( 'variables' )
+			->willReturn( [
 				'gf-045' => [
 					'label' => 'Main: Montserrat',
 					'value' => 'Montserrat',
@@ -52,8 +56,7 @@ class Test_CSS_Renderer extends TestCase {
 					'value' => 'Roboto',
 					'type' => Font_Variable_Prop_Type::get_key(),
 				],
-			];
-		} );
+			] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
@@ -64,8 +67,8 @@ class Test_CSS_Renderer extends TestCase {
 
 	public function test_list_of_variables__generates_entries_for_root_pseudo_element() {
 		// Arrange.
-		add_filter( Variables::FILTER, function () {
-			return [
+		$this->repository->method( 'variables' )
+			->willReturn( [
 				'a-01' => [
 					'label' => 'Black',
 					'value' => '#000',
@@ -76,8 +79,7 @@ class Test_CSS_Renderer extends TestCase {
 					'value' => '6px',
 					'type' => Color_Variable_Prop_Type::get_key(),
 				],
-			];
-		} );
+			] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
@@ -88,8 +90,8 @@ class Test_CSS_Renderer extends TestCase {
 
 	public function test_list_of_variables__will_sanitize_the_input() {
 		// Arrange,
-		add_filter( Variables::FILTER, function () {
-			return [
+		$this->repository->method( 'variables' )
+			->willReturn( [
 				'a-01' => [
 					'label' => 'a-width',
 					'value' => '<script type="text/javascript">alert("here");</script>',
@@ -110,8 +112,7 @@ class Test_CSS_Renderer extends TestCase {
 					'value' => '2rem',
 					'type' => Font_Variable_Prop_Type::get_key(),
 				],
-			];
-		} );
+			] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
