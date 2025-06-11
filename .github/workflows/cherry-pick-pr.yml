@@ -51,7 +51,7 @@ jobs:
       
           for TARGET_BRANCH in ${{ steps.get_labels.outputs.cherry_pick_branches }}; do
             echo "Attempting to cherry-pick to branch: $TARGET_BRANCH"
-      
+            if [ -z "$TARGET_BRANCH" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       
