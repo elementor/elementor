@@ -22,11 +22,10 @@ jobs:
       - name: Get branch labels
         id: get_labels
         run: |
-          LABELS_JSON_RAW='${{ toJSON(github.event.pull_request.labels) }}'
-          FILTERED_LABELS_CSV=$(echo "$LABELS_JSON_RAW" | jq -r '.[].name' | grep -E '^cp_([0-9]+\\.[0-9]+|main)$' | paste -sd ',')
-          echo "Labels from first step: $FILTERED_LABELS_CSV"
-          echo "filtered_labels_csv=$FILTERED_LABELS_CSV" >> "$GITHUB_OUTPUT"
-        shell: bash 
+          LABELS=$(echo '${{ toJSON(github.event.pull_request.labels) }}' | jq -r '.[] | select(.name | test("^cp_([0-9]+\\\\.[0-9]+)$")) | .name | sub("cp_"; "")' | paste -sd ',')
+          echo "Labels from first step: $LABELS"
+          echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
+        shell: bash
 
 
 
