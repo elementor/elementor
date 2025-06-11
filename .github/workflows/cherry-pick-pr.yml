@@ -24,17 +24,19 @@ jobs:
       - name: Extract Cherry-Pick Labels
         id: get_labels
         run: |
+          LABELS_JSON='${{ toJSON(github.event.pull_request.labels) }}'
+          echo "Raw Labels JSON: $LABELS_JSON"
           CP_LABELS=""
-          for label in $(echo '${{ toJSON(github.event.pull_request.labels) }}' | jq -r '.[].name'); do
-            if [[ "$label" =~ ^cp_[0-9]+\\.[0-9]+$ ]]; then
+          for label in $(echo "$LABELS_JSON" | jq -r '.[].name'); do
+            echo "Processing label: $label"
+            if [[ "$label" =~ ^cp_[0-9]+\.[0-9]+$ ]]; then
               TARGET_BRANCH=$(echo "$label" | sed 's/^cp_//')
               CP_LABELS+=" $TARGET_BRANCH"
+              echo "Identified target branch: $TARGET_BRANCH"
             fi
           done
-          echo "cherry_pick_branches=${CP_LABELS}" >> "$GITHUB_OUTPUT"
+          echo "Final cherry_pick_branches=${CP_LABELS}" >> "$GITHUB_OUTPUT"
         shell: bash
-
-
 
       - name: Cherry-Pick and Create PRs
         env:
@@ -44,13 +46,13 @@ jobs:
           MERGE_COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
           ORIGINAL_PR_TITLE="${{ github.event.pull_request.title }}"
           ORIGINAL_PR_URL="${{ github.event.pull_request.html_url }}"
-
+      
           for TARGET_BRANCH in ${{ steps.get_labels.outputs.cherry_pick_branches }}; do
             echo "Attempting to cherry-pick to branch: $TARGET_BRANCH"
-            
+      
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
+      
             # Create a new branch for cherry-pick
             CHERRY_PICK_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET_BRANCH}"
             git checkout -b "$CHERRY_PICK_BRANCH" "$TARGET_BRANCH" || { echo "::error::Branch $TARGET_BRANCH does not exist or cannot be checked out."; exit 1; }
@@ -73,6 +75,4 @@ jobs:
               # Optionally, you could notify here, e.g., using GitHub comments API
             fi
           done
-        env:
-          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}' # This is automatically provided by GitHub Actions
         shell: bash 
