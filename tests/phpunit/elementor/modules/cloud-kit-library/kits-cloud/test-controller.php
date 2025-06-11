@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\App\KitLibrary\Data\CloudKits;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\CloudKitLibrary\Data\CloudKits;
 
 use Elementor\Plugin;
 use Elementor\Core\Common\Modules\Connect\Module;
-use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
-use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller;
+use Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits;
+use Elementor\Modules\CloudKitLibrary\Data\CloudKits\Controller;
 use ElementorEditorTesting\Elementor_Test_Base;
 use ElementorEditorTesting\Traits\Rest_Trait;
 
@@ -14,7 +14,7 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @var Cloud_Library|\PHPUnit\Framework\MockObject\MockObject
+	 * @var Cloud_Kits|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $cloud_kits_mock;
 

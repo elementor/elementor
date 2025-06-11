@@ -7,7 +7,7 @@ use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
-use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
+use Elementor\Modules\CloudKitLibrary\Module as KitCloudLibrary;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use Elementor\Tools;
@@ -144,7 +144,7 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && KitLibrary::get_cloud_app()->is_eligible();
+		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && KitCloudLibrary::get_cloud_app()->is_eligible();
 
 		$content_data = [
 			'export' => [
