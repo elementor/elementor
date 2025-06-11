@@ -15,6 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Divider extends Atomic_Widget_Base {
 	use Has_Template;
 
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => false,
+		];
+	}
+
 	public static function get_element_type(): string {
 		return 'e-divider';
 	}
