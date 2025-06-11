@@ -22,8 +22,8 @@ jobs:
       - name: Get branch labels
         id: get_labels
         run: |
-          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | paste -sd ',')
           echo "Labels from first step: $LABELS"
+          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | paste -sd ',')
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
 
