@@ -23,7 +23,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 			{
 				seeItLiveUrl &&
 				<Button
-					text={ __( 'See it live', 'elementor' ) }
+					text={ __( 'See It Live', 'elementor' ) }
 					variant="contained"
 					onClick={ () => {
 						eventTracking( 'kit-library/see-it-live' );
@@ -33,7 +33,7 @@ export default function ImportCompleteFooter( { seeItLiveUrl, referrer } ) {
 			}
 
 			<Button
-				text={ __( 'Close', 'elementor' ) }
+				text={ __( 'Got It', 'elementor' ) }
 				variant="contained"
 				color="primary"
 				onClick={ () => {
