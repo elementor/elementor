@@ -427,10 +427,10 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	isOverlayHidden() {
-		const elementStyles = window.getComputedStyle( this.el )
-		const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ]
-		
-		return overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' )
+		const elementStyles = window.getComputedStyle( this.el );
+		const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ];
+
+		return overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' );
 	},
 
 	updateHandlesOverlay() {
@@ -445,7 +445,7 @@ const DivBlockView = BaseElementView.extend( {
 			this.$el.addClass( 'e-handles-inside' );
 		} else {
 			this.$el.removeClass( 'e-handles-inside' );
-		};
+		}
 	},
 } );
 
