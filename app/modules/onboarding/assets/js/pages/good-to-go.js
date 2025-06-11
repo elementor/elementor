@@ -32,7 +32,7 @@ export default function GoodToGo() {
 				<Card
 					name="template"
 					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Library.svg' }
-					imageAlt={ __( 'Click here to go to Elementor\'s Kit Library', 'elementor' ) }
+					imageAlt={ __( 'Click here to go to Elementor\'s Website Templates', 'elementor' ) }
 					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
 					link={ kitLibraryLink }
 					clickAction={ () => {
