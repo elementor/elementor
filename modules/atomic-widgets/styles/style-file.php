@@ -163,18 +163,6 @@ class Style_File {
 	}
 
 	/**
-	 * Get file size in bytes using WordPress Filesystem API
-	 *
-	 * @return int|false File size in bytes or false on failure
-	 */
-	public function get_size() {
-		$filesystem = $this->get_filesystem();
-
-		$filesystem_path = $this->get_filesystem_path();
-		return $filesystem->size( $filesystem_path );
-	}
-
-	/**
 	 * Get file modification time
 	 *
 	 * @return int|false Unix timestamp or false on failure
