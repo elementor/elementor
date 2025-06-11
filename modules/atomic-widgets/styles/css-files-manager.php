@@ -3,32 +3,84 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 class CSS_Files_Manager {
-	public static function enqueue( string $key, callable $get_css ) {
-		// TODO: Add caching mechanism to avoid re-generating CSS on every request.
-		$style = new Style( $key );
+
+	/**
+	 * Enqueue CSS file with caching support
+	 *
+	 * @param string   $key     Unique identifier for the CSS file
+	 * @param callable $get_css Callback function that returns CSS data
+	 * @return bool True if CSS was enqueued, false otherwise
+	 */
+	public static function enqueue( string $key, callable $get_css ): bool {
+		$style = new Style_File( $key );
 		$css = $get_css();
 
-		if ( empty( $css['content'] )) {
-			return;
+		if ( empty( $css['content'] ) ) {
+			return false;
 		}
 
-		$style->append( $css['content'] );
+		$style->set_content( $css['content'] );
 
-		self::write_to_file( $style );
+		$bytes_written = self::write_to_file( $style );
+
+		if ( false === $bytes_written ) {
+			return false;
+		}
 
 		wp_enqueue_style(
 			$style->get_handle(),
-			$style->get_src(),
+			$style->get_versioned_url(),
 			[],
-			filemtime( $style->get_path() ),
+			null, // Version is handled by get_versioned_url()
 			$css['media'] ?? 'all'
 		);
+
+		return true;
 	}
 
-	private static function write_to_file( Style $style ) {
-		file_put_contents(
-			$style->get_path(),
-			$style->get_content(),
-		);
+	/**
+	 * Write style content to file
+	 *
+	 * @param Style_File $style The style file instance
+	 * @return bool|int Number of bytes written or false on failure
+	 */
+	private static function write_to_file( Style_File $style ) {
+		return $style->write();
+	}
+
+	/**
+	 * Delete CSS file
+	 *
+	 * @param string $key Unique identifier for the CSS file
+	 * @return bool True on success, false on failure
+	 */
+	public static function delete( string $key ): bool {
+		$style = new Style_File( $key );
+
+		return $style->delete();
+	}
+
+	/**
+	 * Check if CSS file exists
+	 *
+	 * @param string $key Unique identifier for the CSS file
+	 * @return bool True if file exists, false otherwise
+	 */
+	public static function exists( string $key ): bool {
+		$style = new Style_File( $key );
+
+		return $style->exists();
+	}
+
+	/**
+	 * Get CSS file URL
+	 *
+	 * @param string $key Unique identifier for the CSS file
+	 * @return string File URL
+	 */
+	public static function get_url( string $key ): string {
+		$style = new Style_File( $key );
+
+		return $style->get_versioned_url();
 	}
 }
