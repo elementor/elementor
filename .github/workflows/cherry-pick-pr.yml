@@ -38,6 +38,8 @@ jobs:
           echo "Final cherry_pick_branches=${CP_LABELS}" >> "$GITHUB_OUTPUT"
         shell: bash
 
+
+
       - name: Cherry-Pick and Create PRs
         env:
           GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -46,16 +48,13 @@ jobs:
           MERGE_COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
           ORIGINAL_PR_TITLE="${{ github.event.pull_request.title }}"
           ORIGINAL_PR_URL="${{ github.event.pull_request.html_url }}"
-
+      
           for TARGET_BRANCH in ${{ steps.get_labels.outputs.cherry_pick_branches }}; do
             echo "Attempting to cherry-pick to branch: $TARGET_BRANCH"
             if [ -z "$TARGET_BRANCH" ]; then
-              continue # Skip empty lines
-            fi
-
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
+      
             # Create a new branch for cherry-pick
             CHERRY_PICK_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET_BRANCH}"
             git checkout -b "$CHERRY_PICK_BRANCH" "$TARGET_BRANCH" || { echo "::error::Branch $TARGET_BRANCH does not exist or cannot be checked out."; exit 1; }
