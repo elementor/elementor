@@ -36,22 +36,27 @@ class Styles_Manager {
 
 	private function enqueue_styles() {
 		do_action('elementor/atomic-widget/styles/enqueue', $this);
+		$post_ids = apply_filters('elementor/atomic-widgets/styles/posts', []);
+
+		$style_by_breakpoints = Collection::make( $this->registered_styles_by_provider )
+			->map_with_keys( fn( $get_styles, $key ) => [ $key => $this->group_by_breakpoint( $get_styles( $post_ids ) ) ] )
+			->all();
 
         $breakpoints = $this->get_breakpoints();
         foreach ( $breakpoints as $breakpoint_key ) {
-            foreach ($this->registered_styles_by_provider as $provider_key => $styles ) {
-                $render_css = fn() => $this->render_css_by_breakpoint( $styles(), $breakpoint_key );
+            foreach ($style_by_breakpoints as $provider_key => $styles ) {
+				if ( empty( $styles[ $breakpoint_key ] ) ) {
+					continue;
+				}
 
-				CSS_Files_Manager::enqueue( $provider_key, $render_css );
+                $render_css = fn() => $this->render_css( $styles[ $breakpoint_key ], $breakpoint_key );
+
+				CSS_Files_Manager::enqueue( $provider_key . '-' . $breakpoint_key, $render_css );
             }
         }
 	}
 
-    private function render_css_by_breakpoint( array $styles, string $breakpoint_key ) {
-        $styles_by_breakpoint = $this->group_by_breakpoint( $styles );
-
-        $breakpoint_styles = $styles_by_breakpoint[ $breakpoint_key ] ?? [];
-
+    private function render_css( array $styles, string $breakpoint_key ) {
         $css = Styles_Renderer::make(
             Plugin::$instance->breakpoints->get_breakpoints_config()
         )->on_prop_transform( function( $key, $value ) {
@@ -60,7 +65,7 @@ class Styles_Manager {
             }
 
             Plugin::instance()->frontend->enqueue_font( $value );
-        } )->render( $breakpoint_styles );
+        } )->render( $styles );
 
         $breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
 
@@ -73,8 +78,6 @@ class Styles_Manager {
             'media' => $media,
         ];
     }
-
-
 
 	private function group_by_breakpoint( $styles ) {
 		$groups = [];

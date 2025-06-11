@@ -43,20 +43,21 @@ class Global_Classes_CSS {
 	}
 
 	private function register_styles( Styles_Manager $styles_manager ) {
-		$get_styles = function () {
-			$global_classes_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
+		$get_styles = function ( $post_ids ) {
+			$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+			$global_classes_ids = Global_Classes_Repository::make()->context( $context )->all()->get_items()->keys()->all();
 
 			if ( empty( $global_classes_ids ) ) {
 				return [];
 			}
 
-			$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
-
 			$global_classes = [];
-			$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+
 			foreach ( $post_ids as $post_id ) {
-				$elements_data = Plugin::instance()->documents->get( $post_id )->get_elements_data();
+				$elements_data = Plugin::instance()->documents->get_doc_for_frontend( $post_id )->get_elements_data();
+
 				$used_global_classes_ids = array_keys( ( new Applied_Global_Classes_Usage )->get_classes_count_per_class( $elements_data, $global_classes_ids ) );
+
 				$used_global_classes = Global_Classes_Repository::make()->context( $context )->get_by_ids( $used_global_classes_ids )->get_items()->map( function( $item ) {
 					$item['id'] = $item['label'];
 					return $item;
@@ -67,7 +68,6 @@ class Global_Classes_CSS {
 
 			return $global_classes;
 		};
-
 
 		$styles_manager->register(
 			self::CSS_FILE_KEY,

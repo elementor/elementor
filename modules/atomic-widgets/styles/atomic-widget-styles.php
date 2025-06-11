@@ -16,9 +16,7 @@ class Atomic_Widget_Styles {
 	}
 
 	private function register_styles( Styles_Manager $styles_manager ) {
-		$get_styles = function() {
-			$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts-to-enqueue', [] );
-
+		$get_styles = function( $post_ids ) {
 			if ( empty( $post_ids ) ) {
 				return [];
 			}
@@ -36,7 +34,7 @@ class Atomic_Widget_Styles {
 	}
 
 	private function parse_post_styles( $post_id ) {
-		$document = Plugin::$instance->documents->get( $post_id );
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		if ( ! $document ) {
 			return [];

@@ -666,7 +666,7 @@ class Frontend extends App {
 				$post_id = get_the_ID();
 				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 				if ( $post_id && is_singular() ) {
-					add_filter( 'elementor/atomic-widgets/styles/posts-to-enqueue', fn( $posts ) => array_merge( $posts, [ $post_id ] ));
+					add_filter( 'elementor/atomic-widgets/styles/posts', fn( $posts ) => array_merge( $posts, [ $post_id ] ));
 					$this->handle_page_assets( $post_id );
 
 					$css_file = Post_CSS::create( get_the_ID() );
