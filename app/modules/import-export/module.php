@@ -118,10 +118,10 @@ class Module extends BaseModule {
 	 */
 	public function register_settings_tab( Tools $tools ) {
 		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
+			'label' => esc_html__( 'Website Templates', 'elementor' ),
 			'sections' => [
 				'intro' => [
-					'label' => esc_html__( 'Template Kits', 'elementor' ),
+					'label' => esc_html__( 'Website Templates', 'elementor' ),
 					'callback' => function() {
 						$this->render_import_export_tab_content();
 					},
@@ -139,7 +139,7 @@ class Module extends BaseModule {
 
 		$intro_text = sprintf(
 			/* translators: 1: New line break, 2: Learn more link. */
-			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
+			__( 'Here’s where you can export this website as a .zip file, upload it to the cloud, or start the process of applying an existing template to your site. %2$s', 'elementor' ),
 			'<br>',
 			$intro_text_link
 		);
@@ -148,35 +148,27 @@ class Module extends BaseModule {
 
 		$content_data = [
 			'export' => [
-				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
+				'title' => esc_html__( 'Export this website', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
 					'text' => esc_html__( 'Export', 'elementor' ),
 				],
-				'description' => esc_html__( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
-				'link' => [
-					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow/',
-					'text' => esc_html__( 'Learn More', 'elementor' ),
-				],
+				'description' => esc_html__( 'You can download this website as a .zip file, or upload it to the library.', 'elementor' ),
 			],
 			'import' => [
-				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
+				'title' => esc_html__( 'Apply a Website Template', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
 				],
-				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
-				'link' => [
-					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow/',
-					'text' => esc_html__( 'Learn More', 'elementor' ),
-				],
+				'description' => esc_html__( 'You can import design and settings from a .zip file or choose from the library.', 'elementor' ),
 			],
 		];
 
 		if ( $is_cloud_kits_available ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
-				'text' => esc_html__( 'Choose from Cloud Library', 'elementor' ),
+				'text' => esc_html__( 'Open the Library', 'elementor' ),
 			];
 		}
 
@@ -230,14 +222,14 @@ class Module extends BaseModule {
 				?>
 				<div class="tab-import-export-kit__revert">
 					<h2>
-						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove the most recent Kit', 'elementor' ) ); ?>
+						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove the most recent Website Template', 'elementor' ) ); ?>
 					</h2>
 					<p class="tab-import-export-kit__info">
 						<?php ElementorUtils::print_unescaped_internal_string( $revert_text ); ?>
 					</p>
 					<?php $this->render_last_kit_thumbnail( $last_imported_kit ); ?>
 					<a <?php ElementorUtils::print_html_attributes( $link_attributes ); ?> >
-						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Kit', 'elementor' ) ); ?>
+						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Website Template', 'elementor' ) ); ?>
 					</a>
 				</div>
 			<?php } ?>
@@ -254,7 +246,10 @@ class Module extends BaseModule {
 					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
 				</div>
 				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+
+				<?php if ( ! empty( $data['link'] ) ) : ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+				<?php endif; ?>
 				<div class="tab-import-export-kit__box action-buttons">
 					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
 						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
