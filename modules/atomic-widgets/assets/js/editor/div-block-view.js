@@ -90,7 +90,7 @@ const DivBlockView = BaseElementView.extend( {
 		const changed = settings.changedAttributes();
 
 		setTimeout( () => {
-			this.updateHandlesOverlay();
+			this.updateHandlesPosition();
 		} );
 
 		if ( ! changed ) {
@@ -139,7 +139,7 @@ const DivBlockView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
-			this.updateHandlesOverlay();
+			this.updateHandlesPosition();
 		} );
 	},
 
@@ -426,14 +426,14 @@ const DivBlockView = BaseElementView.extend( {
 		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
 	},
 
-	isOverlayHidden() {
+	isOverflowHidden() {
 		const elementStyles = window.getComputedStyle( this.el );
 		const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ];
 
 		return overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' );
 	},
 
-	updateHandlesOverlay() {
+	updateHandlesPosition() {
 		const elementType = this.$el.data( 'element_type' );
 		const isElement = getAllElementTypes().includes( elementType );
 
@@ -441,7 +441,7 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( this.isOverlayHidden() ) {
+		if ( this.isOverflowHidden() ) {
 			this.$el.addClass( 'e-handles-inside' );
 		} else {
 			this.$el.removeClass( 'e-handles-inside' );
