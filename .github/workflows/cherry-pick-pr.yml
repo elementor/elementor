@@ -22,12 +22,10 @@ jobs:
       - name: Get branch labels
         id: get_labels
         run: |
-          LABELS=$(echo '${{ toJSON(github.event.pull_request.labels) }}' | jq -r '.[] | select(.name | test("^cp_([0-9]+\\\\.[0-9]+)$")) | .name | sub("cp_"; "")' | paste -sd ',')
+          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | paste -sd ',')
           echo "Labels from first step: $LABELS"
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
-
-
 
       - name: Cherry-Pick and Create PRs
         env:
@@ -38,6 +36,8 @@ jobs:
           ORIGINAL_PR_TITLE="${{ github.event.pull_request.title }}"
           ORIGINAL_PR_URL="${{ github.event.pull_request.html_url }}"
       
+          echo "Filtered labels for cherry-picking: ${{ steps.get_labels.outputs.filtered_labels_csv }}"
+
           IFS=',' read -ra ADDR <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
           for label in "${ADDR[@]}"; do
             TARGET_BRANCH=$(echo "$label" | sed 's/^cp_//')
