@@ -27,17 +27,22 @@ jobs:
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
 
+      - name: Fetch all branches
+        run: git fetch --all
+        shell: bash
+
       - name: Cherry-Pick and Create PRs
         env:
           GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
+          git fetch --all
           PR_NUMBER="${{ github.event.pull_request.number }}"
           MERGE_COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
           ORIGINAL_PR_TITLE="${{ github.event.pull_request.title }}"
           ORIGINAL_PR_URL="${{ github.event.pull_request.html_url }}"
       
           echo "Filtered labels for cherry-picking: ${{ steps.get_labels.outputs.filtered_labels_csv }}"
-
+      
           IFS=',' read -ra ADDR <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
           for label in "${ADDR[@]}"; do
             TARGET_BRANCH=$(echo "$label" | sed 's/^cp_//')
@@ -45,20 +50,29 @@ jobs:
       
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            echo "Git config set."
       
             # Create a new branch for cherry-pick
             CHERRY_PICK_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET_BRANCH}"
+            echo "Attempting to checkout and create branch $CHERRY_PICK_BRANCH from $TARGET_BRANCH"
             git checkout -b "$CHERRY_PICK_BRANCH" "$TARGET_BRANCH" || { echo "::error::Branch $TARGET_BRANCH does not exist or cannot be checked out."; exit 1; }
+            echo "Checked out to new branch: $CHERRY_PICK_BRANCH"
 
             # Cherry-pick the commit
+            echo "Attempting to cherry-pick $MERGE_COMMIT_SHA to $CHERRY_PICK_BRANCH"
             if git cherry-pick -m 1 "$MERGE_COMMIT_SHA"; then
+              # If cherry-pick results in changes, stage and commit them.
+              git add .
+              git commit --no-edit
               echo "Successfully cherry-picked $MERGE_COMMIT_SHA to $CHERRY_PICK_BRANCH"
+              echo "Attempting to push $CHERRY_PICK_BRANCH to origin"
               git push origin "$CHERRY_PICK_BRANCH"
+              echo "Pushed branch $CHERRY_PICK_BRANCH."
 
               # Create Pull Request
               PR_TITLE="Cherry-pick PR #${PR_NUMBER} to ${TARGET_BRANCH}: ${ORIGINAL_PR_TITLE}"
               PR_BODY="This is an automated cherry-pick of PR #${PR_NUMBER} (${ORIGINAL_PR_URL}) to the \`${TARGET_BRANCH}\` branch."
-              
+              echo "Attempting to create PR for $TARGET_BRANCH"
               gh pr create --base "$TARGET_BRANCH" --head "$CHERRY_PICK_BRANCH" --title "$PR_TITLE" --body "$PR_BODY" || { echo "::error::Failed to create pull request for $TARGET_BRANCH."; exit 1; }
               echo "Created PR for $TARGET_BRANCH"
 
