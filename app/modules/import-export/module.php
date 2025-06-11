@@ -336,13 +336,14 @@ class Module extends BaseModule {
 	 *
 	 * @param string $file Path to the file.
 	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
+	 * @param string $kit_id  Kit id from 'cloud' or 'kit-library'.
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function upload_kit( $file, $referrer ) {
+	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
 
-		$this->import = new Import( $file, [ 'referrer' => $referrer ] );
+		$this->import = new Import( $file, [ 'referrer' => $referrer, 'id' => $kit_id ] );
 
 		return [
 			'session' => $this->import->get_session_id(),
@@ -669,7 +670,7 @@ class Module extends BaseModule {
 			wp_send_json_error( $import_result->get_error_message() );
 		}
 
-		$uploaded_kit = $this->upload_kit( $import_result['file_name'], $import_result['referrer'] );
+		$uploaded_kit = $this->upload_kit( $import_result['file_name'], $import_result['referrer'], $kit_id );
 
 		$session_dir = $uploaded_kit['session'];
 		$manifest = $uploaded_kit['manifest'];
@@ -683,21 +684,25 @@ class Module extends BaseModule {
 			throw new \Error( static::PLUGIN_PERMISSIONS_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		$import_result = [
+		$result = [
 			'session' => $session_dir,
 			'manifest' => $manifest,
 			'file_url' => $import_result['file_url'],
 		];
 
+		if ( ! empty( $import_result['kit'] )) {
+			$result['uploaded_kit'] = $import_result['kit'];
+		}
+
 		if ( ! empty( $conflicts ) ) {
-			$import_result['conflicts'] = $conflicts;
+			$result['conflicts'] = $conflicts;
 		} else {
 			// Moved into the IE process \Elementor\App\Modules\ImportExport\Processes\Import::get_default_settings_conflicts
 			// TODO: remove in 3.10.0
-			$import_result = apply_filters( 'elementor/import/stage_1/result', $import_result );
+			$result = apply_filters( 'elementor/import/stage_1/result', $result );
 		}
 
-		wp_send_json_success( $import_result );
+		wp_send_json_success( $result );
 	}
 
 	protected function get_remote_kit_zip( $url ) {

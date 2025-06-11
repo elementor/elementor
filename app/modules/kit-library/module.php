@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\App\Modules\KitLibrary;
 
+use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
@@ -132,8 +133,34 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
 			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 			add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 5 );
-			add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud', 10, 1 ] );
+			add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ], 10, 1 );
+			add_filter( 'elementor/import/kit_thumbnail', [ $this, 'handle_import_kit_thumbnail' ], 10, 3  );
 		}
+	}
+
+	public function handle_import_kit_thumbnail( $thumbnail, $kit_id, $referrer ) {
+		if ( ImportExport_Module::REFERRER_KIT_LIBRARY === $referrer ) {
+			$api = new Kit_Library_Api();
+			$kit = $api->get_by_id( $kit_id );
+
+			if ( is_wp_error( $kit ) ) {
+				return '';
+			}
+
+			return $kit->thumbnail;
+		}
+
+		if ( ImportExport_Module::REFERRER_CLOUD === $referrer ) {
+			$kit = self::get_cloud_app()->get_kit( [ 'id' => $kit_id ] );
+
+			if ( is_wp_error( $kit ) ) {
+				return '';
+			}
+
+			return $kit['thumbnailUrl'] ?? '';
+		}
+
+		return $thumbnail;
 	}
 
 	public function handle_export_kit_result( $result, $source, $export, $settings, $file ) {
@@ -222,7 +249,7 @@ class Module extends BaseModule {
 		return $cloud_kits_app;
 	}
 
-	protected function handle_import_kit_from_cloud( $args ) {
+	public function handle_import_kit_from_cloud( $args ) {
 		$kit = self::get_cloud_app()->get_kit( [
 			'id' => $args['kit_id'],
 		] );
@@ -239,6 +266,7 @@ class Module extends BaseModule {
 			'file_name' => self::get_remote_kit_zip( $kit['downloadUrl'] ),
 			'referrer' => ImportExport_Module::REFERRER_CLOUD,
 			'file_url' => $kit['downloadUrl'],
+			'kit' => $kit,
 		];
 	}
 	public static function get_remote_kit_zip( $url ) {
