@@ -4,8 +4,6 @@ on:
   pull_request:
     types:
       - closed
-    #branches:
-    # - main # Or your main development branch, e.g., 'master'
 
 jobs:
   cherry-pick:
@@ -21,25 +19,17 @@ jobs:
         with:
           fetch-depth: 0 # Required for cherry-pick
 
-      - name: Extract Cherry-Pick Labels
+      - name: Get branch labels
         id: get_labels
         run: |
-          LABELS_JSON='${{ toJSON(github.event.pull_request.labels) }}'
-          echo "Raw Labels JSON: $LABELS_JSON"
-          CP_LABELS=""
-          for label in $(echo "$LABELS_JSON" | jq -r '.[].name'); do
-            echo "Processing label: $label"
-            if [[ "$label" =~ ^cp_[0-9]+\.[0-9]+$ ]]; then
-              TARGET_BRANCH=$(echo "$label" | sed 's/^cp_//')
-              CP_LABELS+=" $TARGET_BRANCH"
-              echo "Identified target branch: $TARGET_BRANCH"
-            fi
-          done
-          echo "Final cherry_pick_branches=${CP_LABELS}" >> "$GITHUB_OUTPUT"
-        shell: bash
+          LABELS_JSON_RAW='${{ toJSON(github.event.pull_request.labels) }}'
+          FILTERED_LABELS_CSV=$(echo "$LABELS_JSON_RAW" | jq -r '.[].name' | grep -E '^cp_([0-9]+\\.[0-9]+|main)$' | paste -sd ',')
+          echo "Labels from first step: $FILTERED_LABELS_CSV"
+          echo "filtered_labels_csv=$FILTERED_LABELS_CSV" >> "$GITHUB_OUTPUT"
+        shell: bash 
 
-      - name: Cherry-Pick and Create PRs
-        if: steps.get_labels.outputs.cherry_pick_branches != ''
+      - name: Create Cherry Picks
+        if: steps.get_labels.outputs.filtered_labels_csv != ''
         env:
           GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
@@ -48,9 +38,11 @@ jobs:
           ORIGINAL_PR_TITLE="${{ github.event.pull_request.title }}"
           ORIGINAL_PR_URL="${{ github.event.pull_request.html_url }}"
       
-          for TARGET_BRANCH in ${{ steps.get_labels.outputs.cherry_pick_branches }}; do
+          IFS=',' read -ra ADDR <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
+          for label in "${ADDR[@]}"; do
+            TARGET_BRANCH=$(echo "$label" | sed 's/^cp_//')
             echo "Attempting to cherry-pick to branch: $TARGET_BRANCH"
-            if [ -z "$TARGET_BRANCH" ]; then
+
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       
@@ -76,4 +68,4 @@ jobs:
               # Optionally, you could notify here, e.g., using GitHub comments API
             fi
           done
-        shell: bash 
+        shell: bash
