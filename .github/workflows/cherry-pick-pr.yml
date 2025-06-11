@@ -75,7 +75,6 @@ jobs:
               echo "Attempting to create PR for $TARGET_BRANCH"
               gh pr create --base "$TARGET_BRANCH" --head "$CHERRY_PICK_BRANCH" --title "$PR_TITLE" --body "$PR_BODY" || { echo "::error::Failed to create pull request for $TARGET_BRANCH."; exit 1; }
               echo "Created PR for $TARGET_BRANCH"
-
             else
               echo "::error::Cherry-pick failed for branch $TARGET_BRANCH. Manual intervention required."
               git cherry-pick --abort
