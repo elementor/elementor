@@ -191,8 +191,12 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
-		$widgets_manager->register( new Atomic_Divider() );
 		$widgets_manager->register( new Atomic_Youtube() );
+
+		// Register widgets that require version 3.31 experiment
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_VERSION_3_31 ) ) {
+			$widgets_manager->register( new Atomic_Divider() );
+		}
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {

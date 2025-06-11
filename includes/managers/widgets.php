@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
+use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
@@ -64,6 +65,8 @@ class Widgets_Manager {
 			Atomic_Paragraph::class,
 			Atomic_Button::class,
 			Atomic_Svg::class,
+		],
+		AtomicWidgetsModule::EXPERIMENT_VERSION_3_31 => [
 			Atomic_Divider::class,
 		],
 	];
