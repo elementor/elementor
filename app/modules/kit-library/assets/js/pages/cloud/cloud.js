@@ -20,7 +20,7 @@ export default function Cloud( {
 	renderNoResultsComponent = ( { defaultComponent } ) => defaultComponent,
 } ) {
 	usePageTitle( {
-		title: __( 'Kit Library', 'elementor' ),
+		title: __( 'Website Templates', 'elementor' ),
 	} );
 
 	const menuItems = useMenuItems( path );
@@ -72,7 +72,7 @@ export default function Cloud( {
 					<Grid item className="e-kit-library__index-layout-heading-search">
 						<SearchInput
 							// eslint-disable-next-line @wordpress/i18n-ellipsis
-							placeholder={ __( 'Search all Cloud Kits...', 'elementor' ) }
+							placeholder={ __( 'Search my Website Templates...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
@@ -110,8 +110,8 @@ export default function Cloud( {
 								) : (
 									renderNoResultsComponent( {
 										defaultComponent: <ErrorScreen
-											title={ __( 'No kits to show here yet', 'elementor' ) }
-											description={ __( "Once you export a Website Kit to the cloud, you'll find it here and be able to use it on all your sites.", 'elementor' ) }
+											title={ __( 'No Website Templates to show here yet', 'elementor' ) }
+											description={ __( "Once you export a Website to the cloud, you'll find it here and be able to use it on all your sites.", 'elementor' ) }
 											newLineButton={ true }
 											button={ {
 												text: __( 'Export this site', 'elementor' ),
