@@ -28,8 +28,9 @@ jobs:
           echo "filtered_labels_csv=$FILTERED_LABELS_CSV" >> "$GITHUB_OUTPUT"
         shell: bash 
 
-      - name: Create Cherry Picks
-        if: steps.get_labels.outputs.filtered_labels_csv != ''
+
+
+      - name: Cherry-Pick and Create PRs
         env:
           GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
@@ -42,7 +43,7 @@ jobs:
           for label in "${ADDR[@]}"; do
             TARGET_BRANCH=$(echo "$label" | sed 's/^cp_//')
             echo "Attempting to cherry-pick to branch: $TARGET_BRANCH"
-
+      
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       
