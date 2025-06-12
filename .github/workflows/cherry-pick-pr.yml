@@ -78,6 +78,7 @@ jobs:
             CHERRY_PICK_EXIT_CODE=$?
             set -e # Re-enable exit on error
 
+            
             if [ $CHERRY_PICK_EXIT_CODE -ne 0 ]; then
               echo "Conflict during cherry-pick, committing partial changes for manual resolution"
               git add .
@@ -95,7 +96,7 @@ jobs:
 
             echo "Attempting to push $CHERRY_PICK_BRANCH to origin"
             set +e # Temporarily disable exit on error
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git "$CHERRY_PICK_BRANCH"
+            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git "$CHERRY_PICK_BRANCH"
             PUSH_EXIT_CODE=$?
             set -e # Re-enable exit on error
 
