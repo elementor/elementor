@@ -250,7 +250,9 @@ class Shapes {
 		if ( null !== $additional_shapes ) {
 			return $additional_shapes;
 		}
+
 		$additional_shapes = [];
+
 		/**
 		 * Additional shapes.
 		 *
@@ -261,6 +263,14 @@ class Shapes {
 		 * @param array $additional_shapes Additional Elementor shapes.
 		 */
 		$additional_shapes = apply_filters( 'elementor/shapes/additional_shapes', $additional_shapes );
+
+		// BC for addons that add additional shapes the old way using `url` instead of `image`.
+		foreach ( $additional_shapes as $shape_name => $shape_settings ) {
+			if ( ! isset( $shape_settings['image'] ) && isset( $shape_settings['url'] ) ) {
+				$additional_shapes[ $shape_name ]['image'] = $shape_settings['url'];
+			}
+		}
+
 		return $additional_shapes;
 	}
 
