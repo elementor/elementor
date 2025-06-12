@@ -3,8 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 
-// The test is skipped due to bug: ED-19375
-test.describe.skip( 'Editing panel tabs @v4-tests', () => {
+test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;

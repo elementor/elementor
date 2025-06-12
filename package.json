@@ -32,7 +32,11 @@
 		"scripts:watch:packages:local": "npx cross-env ELEMENTOR_PACKAGES_USE_LOCAL=1 npm run scripts:watch",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
-		"lint:js": "eslint ."
+		"lint:js": "eslint .",
+		"setup:testing": "bash scripts/setup-testing.sh",
+		"troubleshoot": "bash scripts/troubleshoot-testing.sh",
+		"restart:clean": "docker stop $(docker ps -q) 2>/dev/null || true && docker rm $(docker ps -aq) 2>/dev/null || true && rm -f test-results/.storageState-*.json && npm run start-local-server",
+		"fix:elementor": "curl -L -o /tmp/elementor.zip https://downloads.wordpress.org/plugin/elementor.latest-stable.zip && unzip -q /tmp/elementor.zip -d /tmp/ && rm -rf build/* && cp -r /tmp/elementor/* build/ && rm -rf /tmp/elementor.zip /tmp/elementor && docker exec port8888-cli-1 wp plugin activate elementor && docker exec port8889-cli-1 wp plugin activate elementor"
 	},
 	"engines": {
 		"node": ">=16.0.0",
