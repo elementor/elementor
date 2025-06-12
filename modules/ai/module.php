@@ -49,6 +49,8 @@ class Module extends BaseModule {
 			return;
 		}
 
+		add_filter( 'elementor/tracker/send_tracking_data_params', [ $this, 'add_tracking_data' ] );
+
 		add_filter( 'elementor/core/admin/homescreen', [ $this, 'add_create_with_ai_banner_to_homescreen' ] );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
@@ -1591,5 +1593,44 @@ class Module extends BaseModule {
 		}
 
 		return $home_screen_data;
+	}
+
+	public function add_tracking_data( $params ) {
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		if ( ! $kit ) {
+			return $params;
+		}
+
+		$kit_data = $kit->get_data();
+
+		$ai_settings = $this->extract_ai_settings_from_kit( $kit_data );
+
+		if ( ! empty( $ai_settings ) ) {
+			$params['usages']['ai'] = $ai_settings;
+		}
+
+		return $params;
+	}
+
+	private function extract_ai_settings_from_kit( $kit_data ) {
+		$ai_settings = [];
+
+		if ( isset( $kit_data['settings']['ai'] ) ) {
+			$ai_settings = $this->parse_ai_generator_settings( $kit_data['settings']['ai'] );
+		}
+
+		return $ai_settings;
+	}
+
+	private function parse_ai_generator_settings( $ai_data ) {
+		$parsed_settings = [];
+
+		if ( isset( $ai_data['requestIds'] ) ) {
+			$request_ids = $ai_data['requestIds'];
+			$parsed_settings['site_planner_kit_id'] = $request_ids['sessionId'];
+		}
+
+		return $parsed_settings;
 	}
 }
