@@ -5,6 +5,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Repeatable_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
@@ -111,8 +112,18 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
 			] ),
+		];
+	}
+
+	protected function combine_controls(): array {
+		$common_settings_controls = [
+			Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
+				'layout' => 'two-columns',
+				'topDivider' => true,
+			] ),
 			Repeatable_Control::bind_to('repeater')
-				-> set_repeaterLabel( __( 'Attributes', 'elementor' ) )
+				->set_meta(['topDivider' => true])
+				->set_repeaterLabel( __( 'Attributes', 'elementor' ) )
 				->set_initialV((object) ['key' => '', 'value' => ''])
 				->set_patternLabel('${key}=${value}')
 				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [
@@ -121,6 +132,15 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				] )
 				->hide_duplicate()->hide_toggle(),
 		];
+
+		return array_merge(
+			$this->define_atomic_controls(),
+			[
+				Section::make()
+					->set_label( __( 'Settings', 'elementor' ) )
+					->set_items( array_merge( $this->get_settings_controls(), $common_settings_controls ) ),
+			],
+		);
 	}
 
 	protected function define_base_styles(): array {
