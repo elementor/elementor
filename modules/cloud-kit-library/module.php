@@ -51,7 +51,6 @@ class Module extends BaseModule {
 				return '';
 			}
 
-
 			return $kit->thumbnail;
 		}
 
