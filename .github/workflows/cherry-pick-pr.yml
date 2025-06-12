@@ -72,30 +72,25 @@ jobs:
             echo "Checked out to new branch: $CHERRY_PICK_BRANCH"
 
             # Cherry-pick the commit
-            echo "Attempting to cherry-pick $MERGE_COMMIT_SHA to $CHERRY_PICK_BRANCH (no-commit)"
+            echo "Attempting to cherry-pick $MERGE_COMMIT_SHA to $CHERRY_PICK_BRANCH"
             set +e # Temporarily disable exit on error for cherry-pick
-            git cherry-pick -m 1 --no-commit "$MERGE_COMMIT_SHA"
+            git cherry-pick "$MERGE_COMMIT_SHA"
             CHERRY_PICK_EXIT_CODE=$?
             set -e # Re-enable exit on error
 
             if [ $CHERRY_PICK_EXIT_CODE -ne 0 ]; then
-              echo "::warning::Cherry-pick failed for branch $TARGET_BRANCH (commit $MERGE_COMMIT_SHA, exit code: $CHERRY_PICK_EXIT_CODE). Manual intervention required."
-              git cherry-pick --abort
-              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Cherry-pick failed with exit code $CHERRY_PICK_EXIT_CODE. Manual intervention required.\n"
-              continue # Skip to the next label in the loop
+              echo "Conflict during cherry-pick, committing partial changes for manual resolution"
+              git add .
+              git commit -m "Cherry-pick PR #${PR_NUMBER} to ${TARGET_BRANCH} (${MERGE_COMMIT_SHA}) with conflicts – manual resolution required" || true
+              
+              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Cherry-pick completed with conflicts. Manual resolution required.\\n"
+            else
+              echo "Cherry-pick succeeded."
+              git add .
+              git commit --no-edit
+              SUCCESSFUL_CHERRY_PICKS+="Branch $TARGET_BRANCH\\n"
             fi
-
-            # Check for conflicts after --no-commit
-            if git status --porcelain | grep -q '^'; then
-                echo "::warning::Cherry-pick for branch $TARGET_BRANCH resulted in conflicts. Manual intervention required."
-                git cherry-pick --abort
-                FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Cherry-pick resulted in conflicts. Manual intervention required.\n"
-                continue # Skip to the next label in the loop
-            fi
-
-            # If cherry-pick was successful and no conflicts, commit and push
-            git add .
-            git commit --no-edit
+            
             echo "Successfully cherry-picked and committed to $CHERRY_PICK_BRANCH"
 
             echo "Attempting to push $CHERRY_PICK_BRANCH to origin"
@@ -106,14 +101,14 @@ jobs:
 
             if [ $PUSH_EXIT_CODE -ne 0 ]; then
               echo "::warning::Failed to push branch $CHERRY_PICK_BRANCH (exit code: $PUSH_EXIT_CODE). Skipping PR creation."
-              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Failed to push branch. Check remote configuration or permissions. (Exit code: $PUSH_EXIT_CODE)\n"
+              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Failed to push branch. Check remote configuration or permissions. (Exit code: $PUSH_EXIT_CODE)\\n"
               continue # Skip to the next label in the loop
             fi
             echo "Pushed branch $CHERRY_PICK_BRANCH."
 
             # Create Pull Request
             PR_TITLE="Cherry-pick PR #${PR_NUMBER} to ${TARGET_BRANCH}: ${ORIGINAL_PR_TITLE}"
-            PR_BODY="This is an automated cherry-pick of PR #${PR_NUMBER} (${ORIGINAL_PR_URL}) to the \`${TARGET_BRANCH}\` branch."
+            PR_BODY="This is an automated cherry-pick of PR #${PR_NUMBER} (${ORIGINAL_PR_URL}) to the \`${TARGET_BRANCH}\` branch.\n\n⚠️ **Conflicts may need manual resolution.**"
             echo "Attempting to create PR for $TARGET_BRANCH"
             set +e # Temporarily disable exit on error
             gh pr create --base "$TARGET_BRANCH" --head "$CHERRY_PICK_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
@@ -122,10 +117,7 @@ jobs:
 
             if [ $PR_CREATE_EXIT_CODE -ne 0 ]; then
               echo "::warning::Failed to create pull request for $TARGET_BRANCH (exit code: $PR_CREATE_EXIT_CODE)."
-              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Failed to create pull request. (Exit code: $PR_CREATE_EXIT_CODE)\n"
-            else
-              echo "Created PR for $TARGET_BRANCH"
-              SUCCESSFUL_CHERRY_PICKS+="Branch $TARGET_BRANCH\n"
+              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Failed to create pull request. (Exit code: $PR_CREATE_EXIT_CODE)\\n"
             fi
           done
 
@@ -140,7 +132,7 @@ jobs:
           fi
 
           if [ ${#FAILED_CHERRY_PICKS[@]} -gt 0 ]; then
-            echo "## Failed Cherry-Picks" >> $GITHUB_STEP_SUMMARY
+            echo "## Cherry-Picks with Conflicts or Failures" >> $GITHUB_STEP_SUMMARY
             for failure in "${FAILED_CHERRY_PICKS[@]}"; do
               echo "- $failure" >> $GITHUB_STEP_SUMMARY
             done
