@@ -11,8 +11,7 @@ npm run setup:testing
 # Daily usage
 npm run start-local-server          # Start environment
 npm run test:elements-regression     # Run tests
-npm run restart:clean               # Fix most issues
-npm run troubleshoot                # Diagnose problems
+npm run restart:testing             # Clean restart (fixes most issues)
 ```
 
 ## Prerequisites

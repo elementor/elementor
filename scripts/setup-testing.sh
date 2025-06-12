@@ -1,11 +1,18 @@
 #!/bin/bash
 
 # Elementor Testing Environment Setup Script
-# This script automates the setup process for new developers
+# Usage: npm run setup:testing [--restart]
 
 set -e  # Exit on any error
 
-echo "🚀 Setting up Elementor Testing Environment..."
+# Check if restart flag is provided
+RESTART_MODE=false
+if [[ "$1" == "--restart" ]]; then
+    RESTART_MODE=true
+    echo "🔄 Restarting Elementor Testing Environment..."
+else
+    echo "🚀 Setting up Elementor Testing Environment..."
+fi
 
 # Colors for output
 RED='\033[0;31m'
@@ -82,11 +89,18 @@ echo "📦 Installing dependencies..."
 npm install
 print_status "Dependencies installed"
 
-# Clean up any existing containers
+# Clean up any existing containers (always do this for both modes)
 echo "🧹 Cleaning up existing containers..."
 docker stop $(docker ps -q) 2>/dev/null || true
 docker rm $(docker ps -aq) 2>/dev/null || true
-print_status "Cleaned up existing containers"
+
+# Clean storage state files if restarting
+if [ "$RESTART_MODE" = true ]; then
+    rm -f test-results/.storageState-*.json
+    print_status "Cleaned up containers and storage"
+else
+    print_status "Cleaned up existing containers"
+fi
 
 # Start WordPress environment
 echo "🌐 Starting WordPress environment..."
@@ -116,28 +130,32 @@ fi
 
 print_status "WordPress is accessible"
 
-# Install Elementor plugin
-echo "🔌 Installing Elementor plugin..."
+# Clean WordPress content
+echo "🧹 Cleaning WordPress content..."
+docker exec port8888-cli-1 wp post delete $(docker exec port8888-cli-1 wp post list --post_type=post --format=ids) --force 2>/dev/null || true
+docker exec port8888-cli-1 wp post delete $(docker exec port8888-cli-1 wp post list --post_type=page --format=ids) --force 2>/dev/null || true
+docker exec port8888-cli-1 wp comment delete $(docker exec port8888-cli-1 wp comment list --format=ids) --force 2>/dev/null || true
 
-# Check if elementor directory is mounted (empty) and populate it
-if docker exec port8888-cli-1 test -d /var/www/html/wp-content/plugins/elementor && [ -z "$(docker exec port8888-cli-1 ls -A /var/www/html/wp-content/plugins/elementor)" ]; then
-    print_warning "Elementor directory is mounted but empty, downloading stable version..."
-    
-    # Download and extract Elementor to build directory
-    curl -L -o /tmp/elementor.zip https://downloads.wordpress.org/plugin/elementor.latest-stable.zip
-    unzip -q /tmp/elementor.zip -d /tmp/
-    rm -rf build/*
-    cp -r /tmp/elementor/* build/
-    rm -rf /tmp/elementor.zip /tmp/elementor
-    
-    # Activate the plugin
-    docker exec port8888-cli-1 wp plugin activate elementor
-    docker exec port8889-cli-1 wp plugin activate elementor
-else
-    # Standard installation
-    docker exec port8888-cli-1 wp plugin install elementor --activate
-    docker exec port8889-cli-1 wp plugin install elementor --activate
-fi
+docker exec port8889-cli-1 wp post delete $(docker exec port8889-cli-1 wp post list --post_type=post --format=ids) --force 2>/dev/null || true
+docker exec port8889-cli-1 wp post delete $(docker exec port8889-cli-1 wp post list --post_type=page --format=ids) --force 2>/dev/null || true
+docker exec port8889-cli-1 wp comment delete $(docker exec port8889-cli-1 wp comment list --format=ids) --force 2>/dev/null || true
+
+print_status "WordPress content cleaned"
+
+# Install/Fix Elementor plugin
+echo "🔌 Setting up Elementor plugin..."
+
+# Always try to fix mount issues by downloading stable version
+print_warning "Ensuring Elementor is properly installed..."
+curl -L -o /tmp/elementor.zip https://downloads.wordpress.org/plugin/elementor.latest-stable.zip
+unzip -q /tmp/elementor.zip -d /tmp/
+rm -rf build/*
+cp -r /tmp/elementor/* build/
+rm -rf /tmp/elementor.zip /tmp/elementor
+
+# Activate the plugin
+docker exec port8888-cli-1 wp plugin activate elementor 2>/dev/null || docker exec port8888-cli-1 wp plugin install elementor --activate
+docker exec port8889-cli-1 wp plugin activate elementor 2>/dev/null || docker exec port8889-cli-1 wp plugin install elementor --activate
 
 print_status "Elementor plugin installed and activated"
 
@@ -183,7 +201,7 @@ echo "   • Run Playwright tests: npm run test:playwright"
 echo "   • View setup guide: cat TESTING_SETUP.md"
 echo ""
 echo "🛠️  Useful commands:"
-echo "   • Clean restart: npm run restart:clean"
-echo "   • Stop containers: npm run stop:containers"
-echo "   • Check status: npm run test:setup:verify"
+echo "   • Clean restart: npm run restart:testing"
+echo "   • Start environment: npm run start-local-server"
+echo "   • View setup guide: cat TESTING_SETUP.md"
 echo "" 
