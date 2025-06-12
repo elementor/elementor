@@ -125,10 +125,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->set_meta(['topDivider' => true])
 				->set_repeaterLabel( __( 'Attributes', 'elementor' ) )
 				->set_initialV((object) ['key' => '', 'value' => ''])
-				->set_patternLabel('${key}=${value}')
+				->set_patternLabel('${key.value}=${value.value}')
 				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [
 					'regexKey' => '^[a-zA-Z]*$',
-					'validationErrorMessage' => "Only Unicode letters, numbers, '-', '_' and ':' are allowed",
+					'validationErrorMessage' => "Names can only use letters, numbers, dashes (-) and underscores (_).",
 				] )
 				->hide_duplicate()->hide_toggle(),
 		];
