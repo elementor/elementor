@@ -7,7 +7,7 @@ use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
-use Elementor\Modules\CloudKitLibrary\Module as KitCloudLibrary;
+use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use Elementor\Tools;
