@@ -67,7 +67,7 @@ PASSWORD=password
 
 # WordPress URLs for testing
 BASE_URL=http://localhost:8888
-ELEMENTS_REGRESSION_BASE_URL=http://localhost:8888
+ELEMENTS_REGRESSION_BASE_URL=http://localhost:8889
 
 # Test Configuration
 TEST_PARALLEL_INDEX=0
@@ -204,4 +204,4 @@ echo "🛠️  Useful commands:"
 echo "   • Clean restart: npm run restart:testing"
 echo "   • Start environment: npm run start-local-server"
 echo "   • View setup guide: cat TESTING_SETUP.md"
-echo "" 
+echo ""
