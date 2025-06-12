@@ -23,44 +23,16 @@ test.describe( 'Elementor regression tests with templates for CORE', () => {
 	} );
 
 	const testData = [
-		'container_flexbox',
-		'container_grid',
-		'divider',
-		'heading',
-		'text_editor',
-		'button',
-		'image',
-		'icon',
-		'image_box',
-		'image_carousel',
-		'tabs',
-		'video',
-		'spacer',
-		'text_path',
-		'social_icons',
-		'accordion',
-		'icon_box',
-		'icon_list',
-		'star_rating',
-		'basic_gallery',
-		'counter',
-		'progress_bar',
-		'testimonial',
-		'toggle',
-		'sound_cloud',
-		'html',
-		'alert',
-		'button_hover',
-		'image_hover',
-		'image_box_hover',
-		'icon_hover',
-		'social_icons_hover',
-		'text_path_hover',
+		'e_heading',
+		'e_image',
+		'e_paragraph',
+		'e_svg',
+		'e_button',
 	];
 
 	for ( const widgetType of testData ) {
 		test( `Test ${ widgetType } template`, async ( { page, apiRequests }, testInfo ) => {
-			const filePath = _path.resolve( __dirname, `./templates/${ widgetType }.json` );
+			const filePath = _path.resolve( __dirname, `./templates-atomic/${ widgetType }.json` );
 			const hoverSelector = {
 				button_hover: 'a',
 				image_hover: 'img',
