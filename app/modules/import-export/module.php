@@ -336,7 +336,7 @@ class Module extends BaseModule {
 	 *
 	 * @param string $file Path to the file.
 	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
-	 * @param string $kit_id  Kit id from 'cloud' or 'kit-library'.
+	 * @param string $kit_id
 	 * @return array
 	 * @throws \Exception
 	 */
