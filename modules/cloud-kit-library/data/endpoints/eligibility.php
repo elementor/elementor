@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\Modules\CloudKitLibrary\Data\CloudKits\Endpoints;
+namespace Elementor\Modules\CloudKitLibrary\Data\Endpoints;
 
-use Elementor\Modules\CloudKitLibrary\Data\CloudKits\Controller;
+use Elementor\Modules\CloudKitLibrary\Data\Controller;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Data\V2\Base\Endpoint;
 

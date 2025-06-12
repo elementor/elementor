@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CloudKitLibrary\Data\CloudKits;
+namespace Elementor\Modules\CloudKitLibrary\Data;
 
 use Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;

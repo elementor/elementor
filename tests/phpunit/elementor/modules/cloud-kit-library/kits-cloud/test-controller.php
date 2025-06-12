@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\Modules\CloudKitLibrary\Data\CloudKits;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\CloudKitLibrary\Data;
 
 use Elementor\Plugin;
 use Elementor\Core\Common\Modules\Connect\Module;
 use Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits;
-use Elementor\Modules\CloudKitLibrary\Data\CloudKits\Controller;
+use Elementor\Modules\CloudKitLibrary\Data\Controller;
 use ElementorEditorTesting\Elementor_Test_Base;
 use ElementorEditorTesting\Traits\Rest_Trait;
 
@@ -40,6 +40,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		Plugin::$instance->common->add_component( 'connect', $connect_module_mock );
 
+
 		$this->data_manager->register_controller( new Controller() );
 	}
 
@@ -48,7 +49,7 @@ class Test_Controller extends Elementor_Test_Base {
 		parent::tearDown();
 	}
 
-	public function test_get_items() {
+	public function test_get_items_kits() {
 		// Arrange
 		$this->act_as_admin();
 		$this->cloud_kits_mock->method( 'get_all' )->willReturn( [

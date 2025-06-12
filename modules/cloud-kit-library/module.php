@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\CloudKitLibrary;
 
-use Elementor\Modules\CloudKitLibrary\Data\CloudKits\Controller as Cloud_Kits_Controller;
+use Elementor\Modules\CloudKitLibrary\Data\Controller as Cloud_Kits_Controller;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\Core\Base\Module as BaseModule;
