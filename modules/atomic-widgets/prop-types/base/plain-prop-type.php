@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Prop_Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 
@@ -18,6 +19,8 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Required_Setting;
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
+
+	private ?Prop_Dependency_Manager $prop_dependency_manager = null;
 
 	/**
 	 * @return static
@@ -50,6 +53,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			'default' => $this->get_default(),
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
+			'dependencies' => $this->prop_dependency_manager ? $this->prop_dependency_manager->get() : [],
 		];
 	}
 
@@ -58,4 +62,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	abstract protected function validate_value( $value ): bool;
 
 	abstract protected function sanitize_value( $value );
+
+	public function dependencies( Prop_Dependency_Manager $manager ): self {
+		$this->prop_dependency_manager = $manager;
+
+		return $this;
+	}
 }

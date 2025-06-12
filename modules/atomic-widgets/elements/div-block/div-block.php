@@ -4,6 +4,8 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Term;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -46,7 +48,11 @@ class Div_Block extends Atomic_Element_Base {
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' ),
+				->default( 'div' )
+				->dependencies( Manager::make()
+					->where( 'disable', Term::make( [
+						'operator' => 'set',
+						'path_to_value'=>'link/destination'] ) ) ),
 			'link' => Link_Prop_Type::make(),
 		];
 		return $props;
