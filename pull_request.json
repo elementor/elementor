@@ -1,0 +1,29 @@
+{
+  "pull_request": {
+    "labels": [
+      {
+        "color": "A554F2",
+        "default": false,
+        "description": "",
+        "id": 8758713321,
+        "name": "cp_3.42",
+        "node_id": "LA_kwDOA5Owsc8AAAACCg9b6Q",
+        "url": "https://api.github.com/repos/elementor/elementor/labels/cp_3.42"
+      },
+      {
+        "color": "02E078",
+        "default": false,
+        "description": "",
+        "id": 8758715935,
+        "name": "cp_3.43",
+        "node_id": "LA_kwDOA5Owsc8AAAACCg9mHw",
+        "url": "https://api.github.com/repos/elementor/elementor/labels/cp_3.43"
+      }
+    ],
+    "merged": true,
+    "number": 31478,
+    "title": "Fix: My awesome bug fix",
+    "html_url": "https://github.com/elementor/elementor/pull/31478",
+    "merge_commit_sha": "416af717a380bef3821afe727cacd5e30b443220"
+  }
+} 
