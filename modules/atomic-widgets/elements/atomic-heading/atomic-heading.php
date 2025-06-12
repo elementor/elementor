@@ -116,7 +116,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->set_initialV((object) ['key' => '', 'value' => ''])
 				->set_patternLabel('${key}=${value}')
 				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [
-					'regexKey' => '^[a-zA-Z]+$',
+					'regexKey' => '^[a-zA-Z]*$',
 					'validationErrorMessage' => "Only Unicode letters, numbers, '-', '_' and ':' are allowed",
 				] )
 				->hide_duplicate()->hide_toggle(),
