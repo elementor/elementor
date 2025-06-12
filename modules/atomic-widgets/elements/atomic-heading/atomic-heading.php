@@ -126,6 +126,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->set_repeaterLabel( __( 'Attributes', 'elementor' ) )
 				->set_initialValues((object) ['key' => '', 'value' => ''])
 				->set_patternLabel('${key.value}=${value.value}')
+				->set_placeholder('Empty attribute')
 				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [
 					'regexKey' => '^[a-zA-Z]*$',
 					'validationErrorMessage' => "Names can only use letters, numbers, dashes (-) and underscores (_).",

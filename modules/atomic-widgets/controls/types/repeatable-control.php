@@ -13,9 +13,11 @@ class Repeatable_Control extends Atomic_Control_Base {
 	private object $childControlProps;
 	private bool $showDuplicate = true;
 	private bool $showToggle = true;
+	private string $repeaterLabel;
 	private? object $initialValues;
 	private? string $patternLabel;
-	private string $repeaterLabel;
+	private ?string $placeholder;
+
 
 	public function get_type(): string {
 		return 'repeatable';
@@ -59,6 +61,11 @@ class Repeatable_Control extends Atomic_Control_Base {
 		$this->repeaterLabel = $label;
 		return $this;
 	}
+	public function set_placeholder( string $placeholder ): self
+	{
+		$this->placeholder = $placeholder;
+		return $this;
+	}
 
 	public function get_props(): array {
 		return [
@@ -67,8 +74,9 @@ class Repeatable_Control extends Atomic_Control_Base {
 			'showDuplicate' => $this->showDuplicate,
 			'showToggle' => $this->showToggle,
 			'initialValues'=> $this->initialValues,
-		    'patternLabel'=>$this->patternLabel,
+		    'patternLabel'=> $this->patternLabel,
 			'repeaterLabel' => $this->repeaterLabel,
+			'placeholder' => $this->placeholder,
 		];
 	}
 }
