@@ -4,16 +4,13 @@ namespace Elementor\App\Modules\KitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
-use Elementor\Core\Utils\Exceptions;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library;
-use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
-use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller as Cloud_Kits_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils as ElementorUtils;
 
@@ -102,8 +99,13 @@ class Module extends BaseModule {
 	public function __construct() {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
-		Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
 
+		$this->register_actions();
+
+		do_action( 'elementor/kit_library/registered', $this );
+	}
+
+	public function register_actions() {
 		// Assigning this action here since the repository is being loaded by demand.
 		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
 
@@ -113,10 +115,6 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-				$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
-			}
 		} );
 
 		add_action( 'elementor/init', function () {
@@ -173,17 +171,5 @@ class Module extends BaseModule {
 
 			wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
 		}
-	}
-
-	public static function get_cloud_app(): Cloud_Kits {
-		$cloud_kits_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-kits' );
-
-		if ( ! $cloud_kits_app ) {
-			$error_message = esc_html__( 'Cloud-Kits is not instantiated.', 'elementor' );
-
-			throw new \Exception( $error_message, Exceptions::FORBIDDEN ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-		}
-
-		return $cloud_kits_app;
 	}
 }

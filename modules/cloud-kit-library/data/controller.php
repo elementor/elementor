@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Data\CloudKits;
+namespace Elementor\Modules\CloudKitLibrary\Data;
 
-use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
-use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
+use Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits;
+use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Base_Controller;
 use Elementor\Core\Utils\Collection;
 
@@ -69,6 +69,6 @@ class Controller extends Base_Controller {
 	}
 
 	protected function get_app(): Cloud_Kits {
-		return KitLibrary::get_cloud_app();
+		return CloudKitLibrary::get_app();
 	}
 }
