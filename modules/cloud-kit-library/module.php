@@ -39,6 +39,11 @@ class Module extends BaseModule {
 
 	public function handle_import_kit_thumbnail( $thumbnail, $kit_id, $referrer ) {
 		if ( ImportExport_Module::REFERRER_KIT_LIBRARY === $referrer ) {
+
+			if ( empty( $kit_id ) ) {
+				return '';
+			}
+
 			$api = new Kit_Library_Api();
 			$kit = $api->get_by_id( $kit_id );
 
@@ -46,10 +51,15 @@ class Module extends BaseModule {
 				return '';
 			}
 
+
 			return $kit->thumbnail;
 		}
 
 		if ( ImportExport_Module::REFERRER_CLOUD === $referrer ) {
+			if ( empty( $kit_id ) ) {
+				return '';
+			}
+
 			$kit = self::get_app()->get_kit( [ 'id' => $kit_id ] );
 
 			if ( is_wp_error( $kit ) ) {
