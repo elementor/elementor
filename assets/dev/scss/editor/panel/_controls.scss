@@ -129,22 +129,25 @@
 		}
 	}
 
-	&-shape_divider_top,
-	&-shape_divider_bottom {
-		label {
-			padding: 4px;
+	&-shape_divider {
+
+		&_top,
+		&_bottom {
+			.elementor-visual-choice-element-image label {
+				padding: 4px;
+			}
+
+			img {
+				aspect-ratio: 4 / 1;
+				object-fit: cover;
+				object-position: center;
+			}
 		}
 
-		img {
-			aspect-ratio: 4 / 1;
-			object-fit: cover;
-			object-position: center;
-		}
-	}
-
-	&-shape_divider_bottom {
-		img {
-			rotate: X 180deg;
+		&_bottom {
+			img {
+				rotate: X 180deg;
+			}
 		}
 	}
 
