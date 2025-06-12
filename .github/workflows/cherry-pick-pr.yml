@@ -46,8 +46,8 @@ jobs:
       
           echo "Filtered labels for cherry-picking: ${{ steps.get_labels.outputs.filtered_labels_csv }}"
       
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ secrets.MAINTAIN_USERNAME }}"
+          git config user.email "${{ secrets.MAINTAIN_EMAIL }}"
           echo "Git config set."
 
           IFS=',' read -ra ADDR <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
