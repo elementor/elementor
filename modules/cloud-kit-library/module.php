@@ -23,10 +23,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_app();
-	}
-
-	private function register_app() {
 		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
 			add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 				$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
@@ -54,7 +50,7 @@ class Module extends BaseModule {
 		}
 
 		if ( ImportExport_Module::REFERRER_CLOUD === $referrer ) {
-			$kit = self::get_cloud_app()->get_kit( [ 'id' => $kit_id ] );
+			$kit = self::get_app()->get_kit( [ 'id' => $kit_id ] );
 
 			if ( is_wp_error( $kit ) ) {
 				return '';
@@ -77,7 +73,7 @@ class Module extends BaseModule {
 		$title = $export['manifest']['title'];
 		$description = $export['manifest']['description'];
 
-		$kit = self::get_cloud_app()->create_kit(
+		$kit = self::get_app()->create_kit(
 			$title,
 			$description,
 			$file,
@@ -95,7 +91,7 @@ class Module extends BaseModule {
 	}
 
 	public function handle_import_kit_from_cloud( $args ) {
-		$kit = self::get_cloud_app()->get_kit( [
+		$kit = self::get_app()->get_kit( [
 			'id' => $args['kit_id'],
 		] );
 

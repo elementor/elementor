@@ -144,7 +144,7 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && KitCloudLibrary::get_cloud_app()->is_eligible();
+		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->is_eligible();
 
 		$content_data = [
 			'export' => [
@@ -653,10 +653,10 @@ class Module extends BaseModule {
 				'source' => $source,
 			] );
 		} else {
-			$import_result = apply_filters( 'elementor/import/kit/result', [
+			$import_result = [
 				'file_name' => ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'],
 				'referrer' => static::REFERRER_LOCAL,
-			] );
+			];
 		}
 
 		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', [

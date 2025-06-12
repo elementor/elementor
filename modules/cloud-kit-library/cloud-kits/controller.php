@@ -69,6 +69,6 @@ class Controller extends Base_Controller {
 	}
 
 	protected function get_app(): Cloud_Kits {
-		return CloudKitLibrary::get_cloud_app();
+		return CloudKitLibrary::get_app();
 	}
 }
