@@ -23,10 +23,11 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
+		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
+			$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
+		} );
+
 		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
-				$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
-			} );
 			add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 5 );
 			add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ], 10, 1 );
 			add_filter( 'elementor/import/kit_thumbnail', [ $this, 'handle_import_kit_thumbnail' ], 10, 3 );
