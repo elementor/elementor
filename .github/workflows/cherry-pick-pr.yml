@@ -78,6 +78,7 @@ jobs:
             CHERRY_PICK_EXIT_CODE=$?
             set -e # Re-enable exit on error
 
+            
             if [ $CHERRY_PICK_EXIT_CODE -ne 0 ]; then
               echo "Conflict during cherry-pick, committing partial changes for manual resolution"
               git add .
