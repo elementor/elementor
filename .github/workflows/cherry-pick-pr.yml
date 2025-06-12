@@ -95,7 +95,7 @@ jobs:
 
             echo "Attempting to push $CHERRY_PICK_BRANCH to origin"
             set +e # Temporarily disable exit on error
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git "$CHERRY_PICK_BRANCH"
+            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git "$CHERRY_PICK_BRANCH"
             PUSH_EXIT_CODE=$?
             set -e # Re-enable exit on error
 
