@@ -343,7 +343,10 @@ class Module extends BaseModule {
 	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
 
-		$this->import = new Import( $file, [ 'referrer' => $referrer, 'id' => $kit_id ] );
+		$this->import = new Import( $file, [
+			'referrer' => $referrer,
+			'id' => $kit_id,
+		] );
 
 		return [
 			'session' => $this->import->get_session_id(),
@@ -690,7 +693,7 @@ class Module extends BaseModule {
 			'file_url' => $import_result['file_url'],
 		];
 
-		if ( ! empty( $import_result['kit'] )) {
+		if ( ! empty( $import_result['kit'] ) ) {
 			$result['uploaded_kit'] = $import_result['kit'];
 		}
 
