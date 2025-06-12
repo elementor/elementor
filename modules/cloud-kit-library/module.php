@@ -131,7 +131,7 @@ class Module extends BaseModule {
 		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
 	}
 
-	public static function get_cloud_app(): Cloud_Kits {
+	public static function get_app(): Cloud_Kits {
 		$cloud_kits_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'cloud-kits' );
 
 		if ( ! $cloud_kits_app ) {
