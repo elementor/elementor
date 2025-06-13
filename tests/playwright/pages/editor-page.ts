@@ -59,8 +59,13 @@ export default class EditorPage extends BasePage {
 	updateImageDates( templateData: JSON ): JSON {
 		const date = new Date();
 		const month = date.toLocaleString( 'default', { month: '2-digit' } );
+		const year = date.getFullYear();
 		const data = JSON.stringify( templateData );
-		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
+
+		// Update date patterns in URLs (handles both YYYY/MM and YYYY\/MM formats)
+		const updatedData = data
+			.replace( /[0-9]{4}\/[0-9]{2}/g, `${ year }/${ month }` )
+			.replace( /[0-9]{4}\\\/[0-9]{2}/g, `${ year }\\/${ month }` );
 		return JSON.parse( updatedData ) as JSON;
 	}
 
@@ -68,7 +73,8 @@ export default class EditorPage extends BasePage {
 	 * Fix atomic widget settings validation issues.
 	 *
 	 * Atomic widgets using Image_Src_Prop_Type require only one of 'id' or 'url' to be set.
-	 * This method prioritizes 'id' over 'url' when both are present.
+	 * This method prioritizes 'url' over 'id' when both are present to ensure images load
+	 * in test environments where attachment IDs from templates may not exist.
 	 *
 	 * @param {JSON} templateData - Template data to fix.
 	 * @return {JSON} Fixed template data.
@@ -100,7 +106,9 @@ export default class EditorPage extends BasePage {
 			if ( config ) {
 				const imageSrcValue = getNestedValue( obj, config.path );
 				if ( imageSrcValue?.id && imageSrcValue?.url ) {
-					imageSrcValue.url = null; // Prioritize attachment ID over URL
+					// For test environments, prioritize URL over attachment ID
+					// since template attachment IDs may not exist in the test database
+					imageSrcValue.id = null;
 				}
 			}
 
