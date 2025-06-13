@@ -65,6 +65,54 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Fix atomic widget settings validation issues.
+	 *
+	 * Atomic widgets using Image_Src_Prop_Type require only one of 'id' or 'url' to be set.
+	 * This method prioritizes 'id' over 'url' when both are present.
+	 *
+	 * @param {JSON} templateData - Template data to fix.
+	 * @return {JSON} Fixed template data.
+	 */
+	fixAtomicWidgetSettings( templateData: JSON ): JSON {
+		const WIDGET_CONFIGS = {
+			'e-svg': { path: [ 'settings', 'svg', 'value' ] },
+			'e-image': { path: [ 'settings', 'image', 'value', 'src', 'value' ] },
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const getNestedValue = ( obj: any, path: string[] ): any => {
+			return path.reduce( ( current, key ) => current?.[ key ], obj );
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const fixImageSrcValidation = ( obj: any ): void => {
+			if ( ! obj || typeof obj !== 'object' ) {
+				return;
+			}
+
+			if ( Array.isArray( obj ) ) {
+				obj.forEach( fixImageSrcValidation );
+				return;
+			}
+
+			// Fix atomic widgets with Image_Src_Prop_Type validation issues
+			const config = WIDGET_CONFIGS[ obj.widgetType as keyof typeof WIDGET_CONFIGS ];
+			if ( config ) {
+				const imageSrcValue = getNestedValue( obj, config.path );
+				if ( imageSrcValue?.id && imageSrcValue?.url ) {
+					imageSrcValue.url = null; // Prioritize attachment ID over URL
+				}
+			}
+
+			// Recursively process all object properties
+			Object.values( obj ).forEach( fixImageSrcValidation );
+		};
+
+		fixImageSrcValidation( templateData );
+		return templateData;
+	}
+
+	/**
 	 * Upload SVG in the Media Library. Can be used on both Media Control and Icons Control.
 	 *
 	 * Please note that this method expects media library to be open as different controls
@@ -101,6 +149,9 @@ export default class EditorPage extends BasePage {
 			templateData = this.updateImageDates( templateData );
 		}
 
+		// Fix atomic widget validation issues by ensuring only one of id or url is set
+		templateData = this.fixAtomicWidgetSettings( templateData );
+
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
 
@@ -113,6 +164,16 @@ export default class EditorPage extends BasePage {
 				},
 			} );
 		}, templateData );
+
+		// Wait for document state to be properly set after template import
+		await this.page.waitForFunction( () => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const elementorInstance = ( window as any ).elementor;
+			return elementorInstance &&
+				elementorInstance.documents &&
+				elementorInstance.documents.getCurrent() &&
+				true === elementorInstance.documents.getCurrent().editor.isChanged;
+		}, { timeout: 10000 } );
 	}
 
 	/**
