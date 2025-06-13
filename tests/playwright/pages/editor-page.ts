@@ -59,9 +59,65 @@ export default class EditorPage extends BasePage {
 	updateImageDates( templateData: JSON ): JSON {
 		const date = new Date();
 		const month = date.toLocaleString( 'default', { month: '2-digit' } );
+		const year = date.getFullYear();
 		const data = JSON.stringify( templateData );
-		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
+
+		// Update date patterns in URLs (handles both YYYY/MM and YYYY\/MM formats)
+		const updatedData = data
+			.replace( /[0-9]{4}\/[0-9]{2}/g, `${ year }/${ month }` )
+			.replace( /[0-9]{4}\\\/[0-9]{2}/g, `${ year }\\/${ month }` );
 		return JSON.parse( updatedData ) as JSON;
+	}
+
+	/**
+	 * Fix atomic widget settings validation issues.
+	 *
+	 * Atomic widgets using Image_Src_Prop_Type require only one of 'id' or 'url' to be set.
+	 * This method prioritizes 'url' over 'id' when both are present to ensure images load
+	 * in test environments where attachment IDs from templates may not exist.
+	 *
+	 * @param {JSON} templateData - Template data to fix.
+	 * @return {JSON} Fixed template data.
+	 */
+	fixAtomicWidgetSettings( templateData: JSON ): JSON {
+		const WIDGET_CONFIGS = {
+			'e-svg': { path: [ 'settings', 'svg', 'value' ] },
+			'e-image': { path: [ 'settings', 'image', 'value', 'src', 'value' ] },
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const getNestedValue = ( obj: any, path: string[] ): any => {
+			return path.reduce( ( current, key ) => current?.[ key ], obj );
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const fixImageSrcValidation = ( obj: any ): void => {
+			if ( ! obj || typeof obj !== 'object' ) {
+				return;
+			}
+
+			if ( Array.isArray( obj ) ) {
+				obj.forEach( fixImageSrcValidation );
+				return;
+			}
+
+			// Fix atomic widgets with Image_Src_Prop_Type validation issues
+			const config = WIDGET_CONFIGS[ obj.widgetType as keyof typeof WIDGET_CONFIGS ];
+			if ( config ) {
+				const imageSrcValue = getNestedValue( obj, config.path );
+				if ( imageSrcValue?.id && imageSrcValue?.url ) {
+					// For test environments, prioritize URL over attachment ID
+					// since template attachment IDs may not exist in the test database
+					imageSrcValue.id = null;
+				}
+			}
+
+			// Recursively process all object properties
+			Object.values( obj ).forEach( fixImageSrcValidation );
+		};
+
+		fixImageSrcValidation( templateData );
+		return templateData;
 	}
 
 	/**
@@ -101,6 +157,9 @@ export default class EditorPage extends BasePage {
 			templateData = this.updateImageDates( templateData );
 		}
 
+		// Fix atomic widget validation issues by ensuring only one of id or url is set
+		templateData = this.fixAtomicWidgetSettings( templateData );
+
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
 
@@ -113,6 +172,16 @@ export default class EditorPage extends BasePage {
 				},
 			} );
 		}, templateData );
+
+		// Wait for document state to be properly set after template import
+		await this.page.waitForFunction( () => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const elementorInstance = ( window as any ).elementor;
+			return elementorInstance &&
+				elementorInstance.documents &&
+				elementorInstance.documents.getCurrent() &&
+				true === elementorInstance.documents.getCurrent().editor.isChanged;
+		}, { timeout: 10000 } );
 	}
 
 	/**

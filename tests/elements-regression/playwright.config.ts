@@ -22,8 +22,8 @@ export default defineConfig( {
 	},
 	forbidOnly: !! process.env.CI,
 	retries: process.env.CI ? 9 : 0,
-	workers: process.env.CI ? 3 : 5,
-	fullyParallel: true,
+	workers: process.env.CI ? 3 : 1,
+	fullyParallel: false,
 	reporter: process.env.CI ? [
 		[ 'github' ],
 		[ 'list' ],
