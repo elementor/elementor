@@ -47,6 +47,7 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 			await editor.waitForIframeToLoaded( widgetType );
 
 			await page.setViewportSize( { width: 1920, height: 3080 } );
+			await editor.page.waitForLoadState( 'domcontentloaded' );
 			await helper.doScreenshot( widgetType, false );
 			await helper.doHoverScreenshot( { widgetType, hoverSelector, isPublished: false } );
 			await helper.doResponsiveScreenshot( { device: 'mobile', isPublished: false, widgetType } );
