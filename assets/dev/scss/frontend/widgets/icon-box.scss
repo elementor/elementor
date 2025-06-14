@@ -5,11 +5,13 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
+		&top,
+		&bottom,
 		&left,
 		&right {
 
 			.elementor-icon-box-wrapper {
-				gap: var(--icon-box-gap, 15px);
+				gap: var(--icon-box-gap);
 			}
 		}
 
@@ -33,7 +35,6 @@
 		&bottom {
 
 			.elementor-icon-box-wrapper {
-				gap: var(--icon-box-gap);
 				text-align: center;
 			}
 
@@ -47,20 +48,12 @@
 			.elementor-icon-box-wrapper {
 				flex-direction: column;
 			}
-
-			.elementor-icon-box-icon {
-				margin-block-end: var(--icon-box-icon-margin, 15px);
-			}
 		}
 
 		&bottom {
 
 			.elementor-icon-box-wrapper {
 				flex-direction: column-reverse;
-			}
-
-			.elementor-icon-box-icon {
-				margin-block-start: var(--icon-box-icon-margin, 15px);
 			}
 		}
 	}
@@ -70,6 +63,7 @@
 
 	.elementor-icon-box-wrapper {
 		display: flex;
+		gap: var(--icon-box-gap);
 		text-align: center;
 	}
 
