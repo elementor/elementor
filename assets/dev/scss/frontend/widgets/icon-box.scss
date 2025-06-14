@@ -9,12 +9,7 @@
 		&right {
 
 			.elementor-icon-box-wrapper {
-				display: flex;
-			}
-
-			.elementor-icon-box-icon {
-				display: inline-flex;
-				flex: 0 0 auto; // Hack for Safari
+				gap: var(--icon-box-gap, 15px);
 			}
 		}
 
@@ -24,12 +19,6 @@
 				text-align: end;
 				flex-direction: getValueByDirection(row-reverse, row);
 			}
-
-			.elementor-icon-box-icon {
-				margin-left: var(--icon-box-icon-margin, 15px);
-				margin-right: 0;
-				margin-bottom: unset;
-			}
 		}
 
 		&left {
@@ -38,26 +27,40 @@
 				text-align: start;
 				flex-direction: getValueByDirection(row, row-reverse);
 			}
+		}
+
+		&top,
+		&bottom {
+
+			.elementor-icon-box-wrapper {
+				gap: var(--icon-box-gap);
+				text-align: center;
+			}
 
 			.elementor-icon-box-icon {
-				margin-right: var(--icon-box-icon-margin, 15px);
-				margin-left: 0;
-				margin-bottom: unset;
+				margin-inline: auto;
 			}
 		}
 
 		&top {
 
 			.elementor-icon-box-wrapper {
-				display: block;
-				text-align: center;
-				flex-direction: unset;
+				flex-direction: column;
 			}
 
 			.elementor-icon-box-icon {
-				margin-bottom: var(--icon-box-icon-margin, 15px);
-				margin-right: auto;
-				margin-left: auto;
+				margin-block-end: var(--icon-box-icon-margin, 15px);
+			}
+		}
+
+		&bottom {
+
+			.elementor-icon-box-wrapper {
+				flex-direction: column-reverse;
+			}
+
+			.elementor-icon-box-icon {
+				margin-block-start: var(--icon-box-icon-margin, 15px);
 			}
 		}
 	}
@@ -66,14 +69,12 @@
 .elementor-widget-icon-box {
 
 	.elementor-icon-box-wrapper {
-		display: block;
+		display: flex;
 		text-align: center;
 	}
 
 	.elementor-icon-box-icon {
-		margin-bottom: var(--icon-box-icon-margin, 15px);
-		margin-right: auto;
-		margin-left: auto;
+		margin-inline: auto;
 	}
 
 	@include icon-position('');
@@ -107,8 +108,7 @@
 			&right {
 
 				.elementor-icon-box-icon {
-					display: block;
-					flex: unset;
+					flex-direction: column;
 				}
 			}
 		}
