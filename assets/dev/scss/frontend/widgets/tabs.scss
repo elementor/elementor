@@ -166,7 +166,7 @@
 			.elementor-tabs-content-wrapper {
 				flex-grow: 1;
 				border-style: solid;
-				@include border-start-property(style, none);
+				border-inline-start-style: none;
 			}
 		}
 	}
