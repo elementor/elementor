@@ -15,6 +15,14 @@
 			}
 		}
 
+		&left,
+		&right {
+
+			.elementor-icon-box-icon {
+				margin-inline: auto;
+			}
+		}
+
 		&right {
 
 			.elementor-icon-box-wrapper {
@@ -36,10 +44,6 @@
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
-			}
-
-			.elementor-icon-box-icon {
-				margin-inline: auto;
 			}
 		}
 
@@ -64,10 +68,6 @@
 	.elementor-icon-box-wrapper {
 		display: flex;
 		text-align: center;
-	}
-
-	.elementor-icon-box-icon {
-		margin-inline: auto;
 	}
 
 	@include icon-position('');
