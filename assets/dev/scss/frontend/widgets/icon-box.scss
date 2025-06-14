@@ -63,7 +63,7 @@
 
 	.elementor-icon-box-wrapper {
 		display: flex;
-		gap: var(--icon-box-gap);
+		gap: var(--icon-box-gap, 15px);
 		text-align: center;
 	}
 
