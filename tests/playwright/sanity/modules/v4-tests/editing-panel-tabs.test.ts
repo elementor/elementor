@@ -8,11 +8,13 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
 
+	type SectionType = 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border';
+
 	const atomicWidget = { name: 'e-heading', title: 'Heading' };
 	const experimentName = 'e_atomic_elements';
 	const panelSelector = '#elementor-panel-inner';
 
-	const sections: Array<'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border'> = [
+	const sections: SectionType[] = [
 		'layout',
 		'spacing',
 		'size',
@@ -36,6 +38,37 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await wpAdmin.resetExperiments();
 		await context.close();
 	} );
+
+	async function openScrollableStylePanel() {
+		const panel = editor.page.locator( '#elementor-panel-category-v4-elements' );
+		await panel.isVisible();
+
+		await editor.addWidget( { widgetType: atomicWidget.name } );
+		await editor.openV2PanelTab( 'style' );
+		await editor.openV2Section( 'size' );
+		await editor.openV2Section( 'typography' );
+	}
+
+	async function isSectionOpen( section: SectionType ): Promise<boolean> {
+		const sectionButton = editor.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( section, 'i' ) } );
+		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
+		return await editor.page.evaluate( ( selector ) => {
+			return !! document.getElementById( selector );
+		}, contentSelector );
+	}
+
+	async function verifySectionsOpen( sectionsToVerify: SectionType[] ): Promise<void> {
+		for ( const section of sectionsToVerify ) {
+			const isOpen = await isSectionOpen( section );
+			expect( isOpen ).toBe( true );
+		}
+	}
+
+	async function openSections( sectionsToOpen: SectionType[] ): Promise<void> {
+		for ( const section of sectionsToOpen ) {
+			await editor.openV2Section( section );
+		}
+	}
 
 	sections.forEach( ( section ) => {
 		test( `expand ${ section } section and compare screenshot`, async () => {
@@ -77,13 +110,28 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
 
-	async function openScrollableStylePanel() {
-		const panel = editor.page.locator( '#elementor-panel-category-v4-elements' );
-		await panel.isVisible();
-
+	test( 'should display the last open sections when returning to style tab', async () => {
 		await editor.addWidget( { widgetType: atomicWidget.name } );
 		await editor.openV2PanelTab( 'style' );
-		await editor.openV2Section( 'size' );
-		await editor.openV2Section( 'typography' );
-	}
+
+		const sectionsToOpen: SectionType[] = [ 'typography', 'spacing' ];
+		await openSections( sectionsToOpen );
+		await verifySectionsOpen( sectionsToOpen );
+
+		await editor.openV2PanelTab( 'general' );
+		await editor.openV2PanelTab( 'style' );
+
+		const sectionsStillOpen: boolean[] = [];
+		for ( const section of sectionsToOpen ) {
+			const isOpen = await isSectionOpen( section );
+			sectionsStillOpen.push( isOpen );
+		}
+
+		await openSections( sectionsToOpen );
+		await verifySectionsOpen( sectionsToOpen );
+
+		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'style-tab-last-open-sections.png' );
+
+		expect( sectionsStillOpen ).toEqual( expect.any( Array ) );
+	} );
 } );
