@@ -283,8 +283,14 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'default' => 'top',
-				'toggle' => false,
-				'prefix_class' => 'elementor-vertical-align-',
+				'selectors_dictionary' => [
+					'top' => 'start',
+					'middle' => 'center',
+					'bottom' => 'end',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'align-items: {{VALUE}};',
+				],
 				'condition' => [
 					'position' => [ 'right' , 'left' ],
 				],
