@@ -10,28 +10,6 @@ $end: right;
 	$end: left;
 }
 
-//
-// Mixins
-//
-
-@mixin start($value) {
-
-	@if $direction == rtl {
-		right: $value;
-	} @else {
-		left: $value;
-	}
-}
-
-@mixin end($value) {
-
-	@if $direction == rtl {
-		left: $value;
-	} @else {
-		right: $value;
-	}
-}
-
 // Box-Shadow Mixins
 
 @mixin direction-box-shadow($x, $extra-values) {

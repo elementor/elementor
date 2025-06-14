@@ -59,10 +59,10 @@
 
 	+ i {
 		position: absolute;
-		@include start(10px);
-		top: 50%;
-		color: var(--e-a-color-txt-disabled);
+		inset-block-start: 50%;
+		inset-inline-start: 10px;
 		transform: translateY(-50%);
+		color: var(--e-a-color-txt-disabled);
 	}
 
 	&:focus {
@@ -96,8 +96,8 @@
 
 		.eicon-atomic {
 			position: absolute;
-			top: 5px;
-			@include end(5px);
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 			color: var(--e-a-color-txt);
 		}
 
@@ -129,8 +129,8 @@
 
 		> .eicon-lock {
 			position: absolute;
-			top: 5px;
-			@include end(5px);
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 			color: var(--e-a-color-txt-disabled);
 		}
 
@@ -153,8 +153,8 @@
 	&:after {
 		content: '';
 		position: absolute;
-		top: 15px;
-		@include end(100%);
+		inset-block-start: 15px;
+		inset-inline-end: 100%;
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
 		border-inline-end-color: var(--e-a-bg-default);
@@ -215,8 +215,8 @@
 	&:after {
 		content: '';
 		position: absolute;
-		top: 15px;
-		@include end(100%);
+		inset-block-start: 15px;
+		inset-inline-end: 100%;
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
 		border-inline-end-color: var(--e-a-bg-default);
