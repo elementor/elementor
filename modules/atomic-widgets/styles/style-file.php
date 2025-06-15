@@ -79,7 +79,7 @@ class Style_File {
 
 	public function get_versioned_url(): string {
 		$modification_time = $this->get_modification_time();
-		$version = $modification_time ?: time();
+		$version = $modification_time ?? time();
 
 		return add_query_arg( 'ver', $version, $this->url );
 	}
