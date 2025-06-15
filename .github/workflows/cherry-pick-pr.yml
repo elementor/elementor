@@ -5,14 +5,17 @@ on:
     types:
       - closed
 
+permissions:
+  contents: write
+  id-token: write
+  pull-requests: write
+
 jobs:
   cherry-pick:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      id-token: write
-      pull-requests: write
+      write-all
 
     steps:
       - name: Checkout Repository
@@ -51,6 +54,7 @@ jobs:
           git config user.name "${{ secrets.MAINTAIN_USERNAME }}"
           git config user.email "${{ secrets.MAINTAIN_EMAIL }}"
           echo "Git config set."
+          git config --list # Debugging line - remove after verifying
 
           IFS=',' read -ra ADDR <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
           for label in "${ADDR[@]}"; do
