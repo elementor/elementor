@@ -74,7 +74,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 			'showDuplicate' => $this->showDuplicate,
 			'showToggle' => $this->showToggle,
 			'initialValues'=> $this->initialValues,
-		    'patternLabel'=> $this->patternLabel,
+		    	'patternLabel'=> $this->patternLabel,
 			'repeaterLabel' => $this->repeaterLabel,
 			'placeholder' => $this->placeholder,
 		];
