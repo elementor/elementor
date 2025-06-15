@@ -1,0 +1,202 @@
+<?php
+
+namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
+
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Styles\Styles_Manager;
+use ElementorEditorTesting\Elementor_Test_Base;
+use WP_Filesystem_Base;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Test_Styles_Manager extends Elementor_Test_Base {
+	private $test_provider_key = 'test-provider';
+	private $test_additional_provider_key = 'another-provider';
+	private $filesystemMock;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+
+		// Mock the filesystem
+		$this->filesystemMock = $this->createMock(WP_Filesystem_Base::class);
+		$this->filesystemMock->method('abspath')->willReturn(ABSPATH);
+
+		global $wp_filesystem;
+		$wp_filesystem = $this->filesystemMock;
+
+		remove_all_actions( 'elementor/atomic-widget/styles/enqueue' );
+		remove_all_actions( 'elementor/frontend/after_enqueue_post_styles' );
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+
+		global $wp_filesystem;
+		$wp_filesystem = null;
+
+		global $wp_styles;
+		$wp_styles = null;
+	}
+
+	private function get_test_style_defs() {
+		return [
+			'test-style' => [
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+						],
+						'props' => [
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'red',
+							],
+						],
+					],
+					[
+						'meta' => [
+							'breakpoint' => 'mobile',
+						],
+						'props' => [
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'blue',
+							],
+						],
+					],
+				],
+			],
+		];
+	}
+
+	private function get_additional_test_style_defs() {
+		return [
+			'another-style' => [
+				'id' => 'another-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+						],
+						'props' => [
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'green',
+							],
+						],
+					],
+					[
+						'meta' => [
+							'breakpoint' => 'tablet',
+						],
+						'props' => [
+							'color' => [
+								'$$type' => 'color',
+								'value' => 'yellow',
+							],
+						],
+					],
+				],
+			],
+		];
+	}
+
+	public function test_enqueue_styles() {
+		// Arrange.
+		$styles_manager = new Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = function() {
+			return $this->get_test_style_defs();
+		};
+
+		$this->filesystemMock->method('put_contents')->willReturn(true);
+
+		$invoked_count = $this->exactly( 2 );
+		$this->filesystemMock->expects( $invoked_count )
+			->method( 'put_contents' )
+			->willReturnCallback( function( $file, $content ) use ( $invoked_count ) {
+				if ( $invoked_count->getInvocationCount() === 1 ) {
+					$this->assertEquals( '.elementor .test-style{color:red;}', $content );
+					return;
+				}
+
+				// Enqueues more specific breakpoint last.
+				$this->assertEquals( '@media(max-width:767px){.elementor .test-style{color:blue;}}', $content );
+			} );
+
+		add_action( 'elementor/atomic-widget/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( $this->test_provider_key, $get_style_defs );
+		}, 100, 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert
+		global $wp_styles;
+		$this->assertArrayHasKey( $this->test_provider_key . '-desktop', $wp_styles->registered );
+		$this->assertArrayHasKey( $this->test_provider_key . '-mobile', $wp_styles->registered );
+	}
+
+	public function test_enqueue_multiple_styles_from_multiple_providers() {
+		// Arrange.
+		$styles_manager = new Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = function() {
+			return $this->get_test_style_defs();
+		};
+
+		$get_additional_style_defs = function() {
+			return $this->get_additional_test_style_defs();
+		};
+
+		$this->filesystemMock->method('put_contents')->willReturn(true);
+
+		$invoked_count = $this->exactly( 4 );
+		$this->filesystemMock->expects( $invoked_count )
+			->method( 'put_contents' )
+			->willReturnCallback( function( $file, $content ) use ( $invoked_count ) {
+				switch ( $invoked_count->getInvocationCount() ) {
+					case 1:
+						$this->assertEquals( '.elementor .another-style{color:green;}', $content );
+						break;
+					case 2:
+						$this->assertEquals( '.elementor .test-style{color:red;}', $content );
+						break;
+					case 3:
+						$this->assertEquals( '@media(max-width:1024px){.elementor .another-style{color:yellow;}}', $content );
+						break;
+					case 4:
+						$this->assertEquals( '@media(max-width:767px){.elementor .test-style{color:blue;}}', $content );
+						break;
+				}
+			} );
+
+		add_action( 'elementor/atomic-widget/styles/register', function( $styles_manager ) use ( $get_style_defs, $get_additional_style_defs ) {
+			$styles_manager->register( $this->test_additional_provider_key, $get_additional_style_defs );
+		}, 10, 1 );
+
+		add_action( 'elementor/atomic-widget/styles/register', function( $styles_manager ) use ( $get_style_defs, $get_additional_style_defs ) {
+			$styles_manager->register( $this->test_provider_key, $get_style_defs );
+		}, 20, 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert
+		global $wp_styles;
+
+		$this->assertArrayHasKey( $this->test_provider_key . '-desktop', $wp_styles->registered );
+		$this->assertArrayHasKey( $this->test_provider_key . '-mobile', $wp_styles->registered );
+		$this->assertArrayHasKey( $this->test_additional_provider_key . '-tablet', $wp_styles->registered );
+		$this->assertArrayHasKey( $this->test_additional_provider_key . '-desktop', $wp_styles->registered );
+	}
+}

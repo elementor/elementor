@@ -6,6 +6,7 @@ use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Plugin;
+use function ElementorDeps\DI\value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -14,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Styles_Manager {
 	private static ?self $instance = null;
 
-	private array $registered_styles_by_provider = [];
+	private array $registered_styles_by_key = [];
 
 	const DEFAULT_BREAKPOINT = 'desktop';
 
@@ -30,28 +31,28 @@ class Styles_Manager {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
 	}
 
-	public function register( string $provider_key, callable $get_style_defs ) {
-		$this->registered_styles_by_provider[ $provider_key ] = $get_style_defs;
+	public function register(string $key, callable $get_style_defs ) {
+		$this->registered_styles_by_key[ $key ] = $get_style_defs;
 	}
 
 	private function enqueue_styles() {
-		do_action('elementor/atomic-widget/styles/enqueue', $this);
+		do_action('elementor/atomic-widget/styles/register', $this);
 		$post_ids = apply_filters('elementor/atomic-widgets/styles/posts', []);
 
-		$style_by_breakpoints = Collection::make( $this->registered_styles_by_provider )
+		$style_by_breakpoints = Collection::make( $this->registered_styles_by_key )
 			->map_with_keys( fn( $get_styles, $key ) => [ $key => $this->group_by_breakpoint( $get_styles( $post_ids ) ) ] )
 			->all();
 
         $breakpoints = $this->get_breakpoints();
         foreach ( $breakpoints as $breakpoint_key ) {
-            foreach ($style_by_breakpoints as $provider_key => $styles ) {
+            foreach ($style_by_breakpoints as $style_key => $styles ) {
 				if ( empty( $styles[ $breakpoint_key ] ) ) {
 					continue;
 				}
 
                 $render_css = fn() => $this->render_css( $styles[ $breakpoint_key ], $breakpoint_key );
 
-				CSS_Files_Manager::enqueue( $provider_key . '-' . $breakpoint_key, $render_css );
+				CSS_Files_Manager::enqueue( $style_key . '-' . $breakpoint_key, $render_css );
             }
         }
 	}
