@@ -1177,14 +1177,6 @@ class Container extends Element_Base {
 
 		$this->start_controls_tabs( 'tabs_shape_dividers' );
 
-		$shapes_options = [
-			'' => esc_html__( 'None', 'elementor' ),
-		];
-
-		foreach ( Shapes::get_shapes() as $shape_name => $shape_props ) {
-			$shapes_options[ $shape_name ] = $shape_props['title'];
-		}
-
 		foreach ( [
 			'top' => esc_html__( 'Top', 'elementor' ),
 			'bottom' => esc_html__( 'Bottom', 'elementor' ),
@@ -1202,8 +1194,10 @@ class Container extends Element_Base {
 				$base_control_key,
 				[
 					'label' => esc_html__( 'Type', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'options' => $shapes_options,
+					'type' => Controls_Manager::VISUAL_CHOICE,
+					'label_block' => true,
+					'columns' => 2,
+					'options' => Shapes::get_shapes(),
 					'render_type' => 'none',
 					'frontend_available' => true,
 					'assets' => [
