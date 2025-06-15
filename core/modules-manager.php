@@ -129,6 +129,7 @@ class Modules_Manager {
 			'wc-product-editor',
 			'checklist',
 			'cloud-library',
+			'cloud-kit-library',
 			'atomic-opt-in',
 		];
 	}

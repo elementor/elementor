@@ -10,7 +10,7 @@ import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dial
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
-import useKit from '../../../hooks/use-kit';
+import useKit, { KIT_SOURCE_MAP } from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
 
@@ -118,12 +118,17 @@ export default function ImportProcess() {
 	// Starting the import process.
 	useEffect( () => {
 		if ( startImport ) {
+			const { data } = importContext;
+			const isImportFromCloud = KIT_SOURCE_MAP.CLOUD === data.source;
+			const kitId = isImportFromCloud ? data.file.id : data.id;
+			const importReferrer = isImportFromCloud ? data.source : referrer;
+
 			kitActions.import( {
-				id: importContext.data.id,
+				id: kitId,
 				session: uploadedData.session,
 				include: includes,
 				overrideConditions,
-				referrer,
+				referrer: importReferrer,
 				selectedCustomPostTypes,
 			} );
 		}

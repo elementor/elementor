@@ -445,18 +445,7 @@ class Import {
 			return $this->manifest['thumbnail'];
 		}
 
-		if ( empty( $this->kit_id ) ) {
-			return '';
-		}
-
-		$api = new Kit_Library_Api();
-		$kit = $api->get_by_id( $this->kit_id );
-
-		if ( is_wp_error( $kit ) ) {
-			return '';
-		}
-
-		return $kit->thumbnail;
+		return apply_filters( 'elementor/import/kit_thumbnail', '', $this->kit_id, $this->settings_referrer );
 	}
 
 	public function get_runners_name(): array {
