@@ -124,7 +124,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Repeatable_Control::bind_to('repeater')
 				->set_meta(['topDivider' => true])
 				->set_repeaterLabel( __( 'Attributes', 'elementor' ) )
-				->set_initialValues((object) ['key' => '', 'value' => ''])
+				->set_initialValues((object) [
+					'key' => ['$$type' => 'string', 'value' => ''],
+					'value' => ['$$type' => 'string', 'value' => '']
+				])
 				->set_patternLabel('${key.value}=${value.value}')
 				->set_placeholder('Empty attribute')
 				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [
