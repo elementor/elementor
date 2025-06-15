@@ -53,7 +53,8 @@ class Div_Block extends Atomic_Element_Base {
 				->dependencies( Manager::make()
 					->where( 'disable', Term::make( [
 						'operator' => 'set',
-						'path_to_value' => 'link/destination' ] ) ) ),
+						'path_to_value' => 'link/destination',
+					] ) ) ),
 			'link' => Link_Prop_Type::make(),
 		];
 		return $props;
@@ -116,7 +117,7 @@ class Div_Block extends Atomic_Element_Base {
 
 	public function before_render() {
 		?>
-		<<?php $this->print_html_tag(); ?><?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 

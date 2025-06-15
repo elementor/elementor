@@ -41,7 +41,6 @@ class Manager {
 				'terms' => [],
 			],
 		];
-
 	}
 
 	public static function make(): self {
@@ -66,7 +65,7 @@ class Manager {
 				'relation' => $effect['relation'],
 				'terms' => Collection::make( $effect['terms'] )
 					->map( fn ( Term $term ) => $term->get() )
-					->all()
+					->all(),
 			] )
 			->all();
 	}

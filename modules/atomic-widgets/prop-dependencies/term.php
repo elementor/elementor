@@ -21,12 +21,12 @@ class Term {
 	}
 
 	/**
-	 * @param array{
+	 * @param $config array{
 	 * operator: string,
 	 * path_to_value?: string,
 	 * value_to_compare?: mixed,
 	 * value_on_fail?: mixed,
-	 * } $config
+	 * }
 	 * @return self
 	 */
 	public static function make( $config ) {
@@ -47,4 +47,3 @@ class Term {
 		];
 	}
 }
-
