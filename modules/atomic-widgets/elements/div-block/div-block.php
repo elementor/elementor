@@ -51,7 +51,7 @@ class Div_Block extends Atomic_Element_Base {
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' )
 				->dependencies( Manager::make()
-					->where( 'disable', Term::make( [ 'operator' => 'set', 'path_to_value' => [ 'link', 'destination' ] ] ) ) ),
+					->where( 'disable', self::get_tag_dependencies() ) ),
 			'link' => Link_Prop_Type::make(),
 		];
 		return $props;
@@ -190,5 +190,11 @@ class Div_Block extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', $attributes );
+	}
+
+	private static function get_tag_dependencies() {
+		return Term::make( [
+			'operator' => 'set', 'path_to_value' => [ 'link', 'destination' ],
+			] );
 	}
 }
