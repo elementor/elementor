@@ -55,13 +55,13 @@
 		object-fit: contain;
 		object-position: top;
 		position: absolute;
-		top: 0;
-		@include start(0);
+		inset-block-start: 0;
+		inset-inline-start: 0;
 	}
 
 	&__image-overlay {
 		position: absolute;
-		top: 0;
+		inset-block-start: 0;
 		background-color: var(--card-image-overlay-background-color);
 		z-index: 1;
 		width: 100%;
