@@ -39,8 +39,8 @@
 			&:before {
 				content: '';
 				position: absolute;
-				top: 2px;
-				@include end(calc(100% - 1px));
+				inset-block-start: 2px;
+				inset-inline-end: calc(100% - 1px);
 				border-block-start: 22px solid transparent;
 				border-block-end: 0 none transparent;
 				border-inline-start: 0 none transparent;
@@ -65,8 +65,8 @@
 			&:after {
 				content: '';
 				position: absolute;
-				top: 2px;
-				@include start(calc(100% - 1px));
+				inset-block-start: 2px;
+				inset-inline-start: calc(100% - 1px);
 				border-block-start: 22px solid transparent;
 				border-block-end: 0 none transparent;
 				border-inline-start: 12px solid var(--e-p-border-section);
