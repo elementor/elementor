@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Term {
 
 	private string $operator;
-	private string $path_to_value;
+	private array $path_to_value;
 	private $value_to_compare;
 	private $value_on_fail;
 
