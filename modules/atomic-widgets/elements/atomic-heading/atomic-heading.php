@@ -3,11 +3,14 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Repeatable_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -52,6 +55,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'repeater' => Key_Value_Array_Prop_Type::make(),
+
 		];
 
 		return $props;
@@ -105,6 +111,38 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				'topDivider' => true,
 			] ),
 		];
+	}
+
+	protected function combine_controls(): array {
+		$common_settings_controls = [
+			Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
+				'layout' => 'two-columns',
+				'topDivider' => true,
+			] ),
+			Repeatable_Control::bind_to('repeater')
+				->set_meta(['topDivider' => true])
+				->set_repeaterLabel( __( 'Attributes', 'elementor' ) )
+				->set_initialValues((object) [
+					'key' => ['$$type' => 'string', 'value' => ''],
+					'value' => ['$$type' => 'string', 'value' => '']
+				])
+				->set_patternLabel('${key.value}=${value.value}')
+				->set_placeholder('Empty attribute')
+				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [
+					'regexKey' => '^[a-zA-Z0-9_-]+$',
+					'validationErrorMessage' => "Names can only use letters, numbers, dashes (-) and underscores (_).",
+				] )
+				->hide_duplicate()->hide_toggle(),
+		];
+
+		return array_merge(
+			$this->define_atomic_controls(),
+			[
+				Section::make()
+					->set_label( __( 'Settings', 'elementor' ) )
+					->set_items( array_merge( $this->get_settings_controls(), $common_settings_controls ) ),
+			],
+		);
 	}
 
 	protected function define_base_styles(): array {
