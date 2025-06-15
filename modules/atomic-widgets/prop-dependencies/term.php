@@ -23,13 +23,13 @@ class Term {
 	/**
 	 * @param $config array{
 	 * operator: string,
-	 * path_to_value?: string,
+	 * path_to_value: array<string>,
 	 * value_to_compare?: mixed,
 	 * value_on_fail?: mixed,
 	 * }
 	 * @return self
 	 */
-	public static function make( $config ) {
+	public static function make( $config ): self {
 		return new self(
 			$config['operator'],
 			$config['path_to_value'],
@@ -38,7 +38,7 @@ class Term {
 		);
 	}
 
-	public function get() {
+	public function get(): array {
 		return [
 			'operator' => $this->operator,
 			'path_to_value' => $this->path_to_value,
