@@ -5,8 +5,8 @@
 .e-con {
 
 	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 
 		&:after {
 			position: absolute;
