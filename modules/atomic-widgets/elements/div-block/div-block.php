@@ -54,7 +54,7 @@ class Div_Block extends Atomic_Element_Base {
 					->where( 'disable', Term::make( [
 						'operator' => 'set',
 						'path_to_value' => 'link/destination',
-				] ) ) ),
+					] ) ) ),
 			'link' => Link_Prop_Type::make(),
 		];
 		return $props;
