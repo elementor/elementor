@@ -198,6 +198,7 @@ class Style_Schema {
 	private static function get_effects_props() {
 		return [
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
+			'opacity' => Size_Prop_Type::make(),
 		];
 	}
 
