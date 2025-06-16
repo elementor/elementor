@@ -112,7 +112,6 @@ export default class EditorPage extends BasePage {
 				}
 			}
 
-			// Recursively process all object properties
 			Object.values( obj ).forEach( fixImageSrcValidation );
 		};
 
