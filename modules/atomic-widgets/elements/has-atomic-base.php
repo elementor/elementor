@@ -130,7 +130,7 @@ trait Has_Atomic_Base {
 
 	protected function combine_controls(): array {
 		$common_settings_controls = [
-			Text_Control::bind_to( '_cssid' )
+			Text_Control::bind_to( '_cssid', __( 'ID', 'elementor' ) )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),
 		];

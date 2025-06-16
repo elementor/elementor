@@ -61,7 +61,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_items( [
-				Textarea_Control::bind_to( 'title' )
+				Textarea_Control::bind_to( 'title', __( 'Title', 'elementor' ) )
 					->set_label( __( 'Title', 'elementor' ) )
 					->set_placeholder( __( 'Type your title here', 'elementor' ) ),
 			] );
@@ -73,7 +73,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected function get_settings_controls(): array {
 		return [
-			Select_Control::bind_to( 'tag' )
+			Select_Control::bind_to( 'tag', esc_html__( 'Tag', 'elementor' ) )
 				->set_label( esc_html__( 'Tag', 'elementor' ) )
 				->set_options([
 					[
@@ -101,7 +101,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'label' => 'H6',
 					],
 				]),
-			Link_Control::bind_to( 'link' )->set_meta( [
+			Link_Control::bind_to( 'link', __( 'Link', 'elementor' ) )->set_meta( [
 				'topDivider' => true,
 			] ),
 		];

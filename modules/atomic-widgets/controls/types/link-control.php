@@ -18,8 +18,8 @@ class Link_Control extends Atomic_Control_Base {
 		'requestParams' => [],
 	];
 
-	public static function bind_to( string $prop_name ) {
-		$instance = parent::bind_to( $prop_name );
+	public static function bind_to( string $prop_name, string $prop_display_name ) {
+		$instance = parent::bind_to( $prop_name, $prop_display_name );
 		$instance->set_placeholder( __( 'Type or paste your URL', 'elementor' ) );
 		$instance->set_endpoint( Post_Query::NAMESPACE . '/' . Post_Query::ENDPOINT );
 		$instance->set_request_params( Post_Query::build_query_params( [

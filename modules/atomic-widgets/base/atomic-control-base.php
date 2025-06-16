@@ -13,17 +13,18 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 	private $label = null;
 	private $description = null;
 	private $meta = null;
-
+	private $prop_display_name = null;
 	abstract public function get_type(): string;
 
 	abstract public function get_props(): array;
 
-	public static function bind_to( string $prop_name ) {
-		return new static( $prop_name );
+	public static function bind_to( string $prop_name, string $prop_display_name ) {
+		return new static( $prop_name,  $prop_display_name );
 	}
 
-	protected function __construct( string $prop_name ) {
+	protected function __construct( string $prop_name, string $prop_display_name ) {
 		$this->bind = $prop_name;
+		$this->prop_display_name = $prop_display_name;
 	}
 
 	public function get_bind() {
@@ -54,6 +55,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 			'value' => [
 				'type' => $this->get_type(),
 				'bind' => $this->get_bind(),
+				'prop_display_name' => $this->prop_display_name,
 				'label' => $this->label,
 				'description' => $this->description,
 				'props' => $this->get_props(),

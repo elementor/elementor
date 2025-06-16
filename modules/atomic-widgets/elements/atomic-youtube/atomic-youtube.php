@@ -68,20 +68,20 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
-					Text_Control::bind_to( 'source' )
+					Text_Control::bind_to( 'source', esc_html__( 'YouTube URL', 'elementor' ) )
 						->set_label( esc_html__( 'YouTube URL', 'elementor' ) )
 						->set_placeholder( esc_html__( 'Type or paste your URL', 'elementor' ) ),
 
-					Text_Control::bind_to( 'start' )->set_label( esc_html__( 'Start time', 'elementor' ) ),
-					Text_Control::bind_to( 'end' )->set_label( esc_html__( 'End time', 'elementor' ) ),
-					Switch_Control::bind_to( 'autoplay' )->set_label( esc_html__( 'Autoplay', 'elementor' ) ),
-					Switch_Control::bind_to( 'mute' )->set_label( esc_html__( 'Mute', 'elementor' ) ),
-					Switch_Control::bind_to( 'loop' )->set_label( esc_html__( 'Loop', 'elementor' ) ),
-					Switch_Control::bind_to( 'lazyload' )->set_label( esc_html__( 'Lazy load', 'elementor' ) ),
-					Switch_Control::bind_to( 'player_controls' )->set_label( esc_html__( 'Player controls', 'elementor' ) ),
-					Switch_Control::bind_to( 'captions' )->set_label( esc_html__( 'Captions', 'elementor' ) ),
-					Switch_Control::bind_to( 'privacy_mode' )->set_label( esc_html__( 'Privacy mode', 'elementor' ) ),
-					Switch_Control::bind_to( 'rel' )->set_label( esc_html__( 'Related videos', 'elementor' ) ),
+					Text_Control::bind_to( 'start', esc_html__( 'Start time', 'elementor' ) )->set_label( esc_html__( 'Start time', 'elementor' ) ),
+					Text_Control::bind_to( 'end', esc_html__( 'End time', 'elementor' ) )->set_label( esc_html__( 'End time', 'elementor' ) ),
+					Switch_Control::bind_to( 'autoplay', esc_html__( 'Autoplay', 'elementor' ) )->set_label( esc_html__( 'Autoplay', 'elementor' ) ),
+					Switch_Control::bind_to( 'mute', esc_html__( 'Mute', 'elementor' ) )->set_label( esc_html__( 'Mute', 'elementor' ) ),
+					Switch_Control::bind_to( 'loop', esc_html__( 'Loop', 'elementor' ) )->set_label( esc_html__( 'Loop', 'elementor' ) ),
+					Switch_Control::bind_to( 'lazyload', esc_html__( 'Lazy load', 'elementor' ) )->set_label( esc_html__( 'Lazy load', 'elementor' ) ),
+					Switch_Control::bind_to( 'player_controls', esc_html__( 'Player controls', 'elementor' ) )->set_label( esc_html__( 'Player controls', 'elementor' ) ),
+					Switch_Control::bind_to( 'captions', esc_html__( 'Captions', 'elementor' ) )->set_label( esc_html__( 'Captions', 'elementor' ) ),
+					Switch_Control::bind_to( 'privacy_mode', esc_html__( 'Privacy mode', 'elementor' ) )->set_label( esc_html__( 'Privacy mode', 'elementor' ) ),
+					Switch_Control::bind_to( 'rel', esc_html__( 'Related videos', 'elementor' ) )->set_label( esc_html__( 'Related videos', 'elementor' ) ),
 				] ),
 		];
 	}

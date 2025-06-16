@@ -58,7 +58,7 @@ class Div_Block extends Atomic_Element_Base {
 
 	protected function get_settings_controls(): array {
 		return [
-			Select_Control::bind_to( 'tag' )
+			Select_Control::bind_to( 'tag', esc_html__( 'HTML Tag', 'elementor' ) )
 				->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
 				->set_options( [
 					[
@@ -86,7 +86,7 @@ class Div_Block extends Atomic_Element_Base {
 						'label' => 'Footer',
 					],
 				]),
-			Link_Control::bind_to( 'link' )->set_meta( [
+			Link_Control::bind_to( 'link', __( 'Link', 'elementor' ) )->set_meta( [
 				'topDivider' => true,
 			] ),
 		];

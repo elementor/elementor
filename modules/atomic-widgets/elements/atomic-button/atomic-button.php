@@ -59,7 +59,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
-					Text_Control::bind_to( 'text' )
+					Text_Control::bind_to( 'text', __( 'Button text', 'elementor' ) )
 						->set_label( __( 'Button text', 'elementor' ) )
 						->set_placeholder( __( 'Type your button text here', 'elementor' ) ),
 				] ),
@@ -68,7 +68,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 
 	protected function get_settings_controls(): array {
 		return [
-			Link_Control::bind_to( 'link' ),
+			Link_Control::bind_to( 'link', __( 'Link', 'elementor' ) ),
 		];
 	}
 
