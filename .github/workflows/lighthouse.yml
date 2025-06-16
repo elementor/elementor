@@ -6,7 +6,7 @@ on:
     branches:
       - 'main'
       - '3.*'
-      - 'lighthouse-issue'
+      - '04-06-25'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -46,7 +46,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ github.ref_name == 'lighthouse-issue' && 'elementor-3.31.0' || needs.build-plugin-lh.outputs.artifact_name }}
+          name: ${{ github.ref_name == '04-06-25' && 'elementor-3.31.0' || needs.build-plugin-lh.outputs.artifact_name }}
           path: ./elementor
 
       - name: Setup wp-env
