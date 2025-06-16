@@ -38,7 +38,10 @@ export default class ApiRequests {
 		const imagePath = image.filePath;
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
-			params: { rest_route: '/wp/v2/media' },
+			params: {
+				rest_route: '/wp/v2/media',
+				uploadTypeCaller: 'elementor-wp-media-upload',
+			},
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},
@@ -276,7 +279,7 @@ export default class ApiRequests {
 				username,
 				email,
 				password,
-				roles: [ ...roles ],
+				roles: roles ? roles.join( ',' ) : '',
 			},
 		} );
 
