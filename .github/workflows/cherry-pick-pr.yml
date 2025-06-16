@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   cherry-pick:
-    if: ${{ github.event.pull_request.merged == true }}
+    if: ${{ github.event.pull_request.state == 'closed' }}
     runs-on: ubuntu-latest
 
     # Job-level permissions - same as global ones
