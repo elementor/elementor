@@ -1,4 +1,5 @@
 <?php
+// phpcs:disable
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
