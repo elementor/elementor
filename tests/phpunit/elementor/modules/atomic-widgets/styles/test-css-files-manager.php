@@ -29,19 +29,6 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 		$wp_filesystem = null;
 	}
 
-	public function test_create__throws_exception_when_css_content_is_empty() {
-		// Arrange.
-		$get_css = function() {
-			return [];
-		};
-
-		// Assert.
-		$this->expectException(\Exception::class);
-
-		// Act.
-		( new Css_Files_Manager() )->create( 'test-style', $get_css );
-	}
-
 	public function test_enqueue__throws_exception_when_writing_file_fails() {
 		// Arrange.
 		$get_css = function() {

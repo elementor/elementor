@@ -9,10 +9,6 @@ class CSS_Files_Manager {
 	public function create( string $filename, callable $get_css ): Style_File {
 		$css = $get_css();
 
-		if ( empty( $css['content'] ) ) {
-			throw new \Exception( 'CSS content is empty for file: ' . $filename );
-		}
-
 		$style_file = Style_File::make( $filename, self::DEFAULT_CSS_DIR );
 
 		$path = $style_file->get_path();
