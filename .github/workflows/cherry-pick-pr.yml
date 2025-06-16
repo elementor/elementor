@@ -47,31 +47,18 @@ jobs:
 
       - name: Cherry-Pick and Create PRs
         if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          MERGE_SHA: ${{ github.event.pull_request.merge_commit_sha }}
-          ORIG_TITLE: ${{ github.event.pull_request.title }}
-          ORIG_URL: ${{ github.event.pull_request.html_url }}
-          FILTERED_LABELS: ${{ steps.get_labels.outputs.filtered_labels_csv }}
         run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          ORIG_TITLE="${{ github.event.pull_request.title }}"
+          ORIG_URL="${{ github.event.pull_request.html_url }}"
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          IFS=',' read -ra BRANCHES <<< "$FILTERED_LABELS"
+          IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
           for lbl in "${BRANCHES[@]}"; do
-            # Sanitize label name - only allow alphanumeric, dots, hyphens, underscores
-            if [[ ! "$lbl" =~ ^cp_[a-zA-Z0-9._-]+$ ]]; then
-              echo "::warning:: Invalid label format: $lbl - skipping"
-              continue
-            fi
-
             TARGET=${lbl#cp_}
-            # Sanitize target branch name
-            if [[ ! "$TARGET" =~ ^[a-zA-Z0-9._-]+$ ]]; then
-              echo "::warning:: Invalid target branch name: $TARGET - skipping"
-              continue
-            fi
-
             BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}"
 
             # Create branch
@@ -95,14 +82,11 @@ jobs:
               continue
             fi
 
-            # Create PR via gh CLI
-            PR_TITLE="Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}"
-            PR_BODY="Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
-
+            # Create PR via gh CLI (token already in env: GH_TOKEN)
             gh pr create \
               --base "$TARGET" \
               --head "$BRANCH" \
-              --title "$PR_TITLE" \
-              --body "$PR_BODY"
+              --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+              --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
           done
         shell: bash
