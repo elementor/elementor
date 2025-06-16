@@ -6,6 +6,7 @@ on:
     branches:
       - 'main'
       - '3.*'
+      - 'lighthouse-issue'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -45,7 +46,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.build-plugin-lh.outputs.artifact_name }}
+          name: ${{ github.ref_name == 'lighthouse-issue' && 'elementor-3.31.0' || needs.build-plugin-lh.outputs.artifact_name }}
           path: ./elementor
 
       - name: Setup wp-env
@@ -100,7 +101,7 @@ jobs:
 
   lighthouse:
     needs: lighthouse_test
-    if: ${{ always() }} # Will be run even if 'Lighthouse' matrix will be skipped
+    if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: Lighthouse - Test Results
     steps:
