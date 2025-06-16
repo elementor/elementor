@@ -113,38 +113,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 	}
 
-	protected function combine_controls(): array {
-		$common_settings_controls = [
-			Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
-				'topDivider' => true,
-			] ),
-			Repeatable_Control::bind_to('repeater')
-				->set_meta(['topDivider' => true])
-				->set_repeaterLabel( __( 'Attributes', 'elementor' ) )
-				->set_initialValues((object) [
-					'key' => ['$$type' => 'string', 'value' => ''],
-					'value' => ['$$type' => 'string', 'value' => '']
-				])
-				->set_patternLabel('${key.value}=${value.value}')
-				->set_placeholder('Empty attribute')
-				->set_child_control_type( 'key-value' )->set_child_control_props( (object) [
-					'regexKey' => '^[a-zA-Z0-9_-]+$',
-					'validationErrorMessage' => "Names can only use letters, numbers, dashes (-) and underscores (_).",
-				] )
-				->hide_duplicate()->hide_toggle(),
-		];
-
-		return array_merge(
-			$this->define_atomic_controls(),
-			[
-				Section::make()
-					->set_label( __( 'Settings', 'elementor' ) )
-					->set_items( array_merge( $this->get_settings_controls(), $common_settings_controls ) ),
-			],
-		);
-	}
-
 	protected function define_base_styles(): array {
 		$margin_value = Size_Prop_Type::generate( [
 			'unit' => 'px',
