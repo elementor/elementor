@@ -18,8 +18,8 @@
 
 	button.elementor-alert-dismiss {
 		position: absolute;
-		@include end(var(--dismiss-icon-horizontal-position, 10px));
-		top: var(--dismiss-icon-vertical-position, 10px);
+		inset-inline-end: var(--dismiss-icon-horizontal-position, 10px);
+		inset-block-start: var(--dismiss-icon-vertical-position, 10px);
 		padding: 3px;
 		font-size: var(--dismiss-icon-size, 20px);
 		line-height: 1;

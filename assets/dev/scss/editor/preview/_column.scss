@@ -5,8 +5,8 @@
 .elementor-column {
 
 	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 
 		&:after {
 			position: absolute;
@@ -51,8 +51,8 @@
 		cursor: col-resize;
 		width: 7px;
 		position: absolute;
-		@include end(-5px);
-		top: 0;
+		inset-block-start: 0;
+		inset-inline-end: -5px;
 		height: 100%;
 	}
 
@@ -70,8 +70,8 @@
 }
 
 .elementor-editor-column-settings {
-	top: -1px;
-	@include start(-1px);
+	inset-block-start: -1px;
+	inset-inline-start: -1px;
 	border-start-start-radius: 0;
 	border-start-end-radius: 0;
 	border-end-start-radius: 0;

@@ -6,10 +6,10 @@ body {
 
 #elementor-navigator {
 	position: fixed;
-	top: 100px;
+	inset-block-start: 100px;
+	inset-inline-end: 30px;
 	width: var(--e-editor-navigator-width);
 	height: 50vh;
-	@include end(30px);
 	background-color: var(--e-a-bg-default);
 	border: var(--e-a-border);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
@@ -307,7 +307,7 @@ body {
 
 		&__toggle {
 			position: absolute;
-			@include end(15px);
+			inset-inline-end: 15px;
 			height: 100%;
 			z-index: 0;
 			font-size: 13px;
