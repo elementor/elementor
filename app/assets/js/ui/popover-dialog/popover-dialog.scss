@@ -13,8 +13,8 @@
 	&:before {
 		content: '';
 		position: absolute;
-		top: -$triangle-size * 2;
-		@include end(var(--popover-arrow-offset-end, 22px));
+		inset-block-start: -$triangle-size * 2;
+		inset-inline-end: var(--popover-arrow-offset-end, 22px);
 		border: $triangle-size solid transparent;
 		border-block-end-color: #fff;
 	}

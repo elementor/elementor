@@ -29,16 +29,15 @@
 
 			&:after {
 				width: auto;
-				left: auto;
-				right: auto;
 				position: relative;
+				inset-inline-start: auto;
+				inset-inline-end: -8px;
 				height: 100%;
 				border-top: 0;
 				border-bottom: 0;
 				border-right: 0;
 				border-left-width: 1px;
 				border-style: solid;
-				@include end(-8px);
 			}
 		}
 	}
@@ -164,7 +163,7 @@
 			.elementor-icon-list-item {
 
 				&:after {
-					@include start(0);
+					inset-inline-start: 0;
 				}
 			}
 		}
@@ -174,7 +173,7 @@
 			.elementor-icon-list-item {
 
 				&:after {
-					@include end(0);
+					inset-inline-end: 0;
 				}
 			}
 		}
