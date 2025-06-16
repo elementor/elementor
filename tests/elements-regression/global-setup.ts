@@ -23,10 +23,16 @@ async function globalSetup( config: FullConfig ) {
 		title: 'image2',
 		extension: 'jpg',
 	};
+	const svg = {
+		filePath: path.resolve( __dirname, 'assets/test-images/alien.svg' ),
+		title: 'svg',
+		extension: 'svg',
+	};
 
 	const apiRequests = new ApiRequests( baseURL, nonce );
 	imageIds.push( await apiRequests.createMedia( context, image1 ) );
 	imageIds.push( await apiRequests.createMedia( context, image2 ) );
+	imageIds.push( await apiRequests.createMedia( context, svg ) );
 
 	// Teardown function.
 	return async () => {
