@@ -30,6 +30,19 @@ for id in $(wp user list --field=ID)
 do wp user meta add "$id" "announcements_user_counter" 999
 done
 
+# Enable SVG uploads for tests
+wp eval "
+\$functions_file = get_template_directory() . '/functions.php';
+\$svg_code = '
+// Enable SVG uploads for tests
+add_filter(\"upload_mimes\", function(\$mimes) {
+    \$mimes[\"svg\"] = \"image/svg+xml\";
+    return \$mimes;
+});
+';
+file_put_contents(\$functions_file, \$svg_code, FILE_APPEND);
+"
+
 wp --user=admin elementor library import-dir /var/www/html/elementor-templates
 
 wp cache flush
