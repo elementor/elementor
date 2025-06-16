@@ -68,12 +68,12 @@ jobs:
             fi
 
             # Cherry-pick
-            if ! git cherry-pick "$MERGE_SHA"; then
+            if ! git cherry-pick -m 1 "$MERGE_SHA"; then
               echo "Conflict - saving for manual resolution"
               git add .
               git commit -m "Cherry-pick #${PR_NUMBER} to ${TARGET} (${MERGE_SHA}) - conflicts"
             else
-              git commit --no-edit
+              echo "Cherry-pick successful"
             fi
 
             # Push
