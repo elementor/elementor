@@ -1,0 +1,92 @@
+name: Cherry Pick Merged PR
+
+on:
+  pull_request:
+    types:
+      - closed
+
+# Global permissions for checkout, push and PR creation
+permissions:
+  contents: write        # for git push
+  pull-requests: write   # for gh pr create
+  id-token: write        # if OIDC tokens are needed
+
+jobs:
+  cherry-pick:
+    if: ${{ github.event.pull_request.state == 'closed' }}
+    runs-on: ubuntu-latest
+
+    # Job-level permissions - same as global ones
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+
+    # Pass token to GH CLI and git
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}    # explicitly specify token
+          fetch-depth: 0                        # needed for cherry-pick
+          persist-credentials: true            # preserve credentials for subsequent git push
+
+      - name: Get branch labels
+        id: get_labels
+        run: |
+          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | paste -sd ',')
+          echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Fetch all branches
+        run: git fetch --all
+        shell: bash
+
+      - name: Cherry-Pick and Create PRs
+        if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          ORIG_TITLE="${{ github.event.pull_request.title }}"
+          ORIG_URL="${{ github.event.pull_request.html_url }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
+          for lbl in "${BRANCHES[@]}"; do
+            TARGET=${lbl#cp_}
+            BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}"
+
+            # Create branch
+            if ! git checkout -b "$BRANCH" "origin/$TARGET"; then
+              echo "::warning:: Branch $TARGET does not exist - skipping"
+              continue
+            fi
+
+            # Cherry-pick
+            if ! git cherry-pick -m 1 "$MERGE_SHA"; then
+              echo "Conflict - saving for manual resolution"
+              git add .
+              git commit -m "Cherry-pick #${PR_NUMBER} to ${TARGET} (${MERGE_SHA}) - conflicts"
+            else
+              echo "Cherry-pick successful"
+            fi
+
+            # Push
+            if ! git push origin "$BRANCH"; then
+              echo "::warning:: Failed to push branch $BRANCH"
+              continue
+            fi
+
+            # Create PR via gh CLI (token already in env: GH_TOKEN)
+            gh pr create \
+              --base "$TARGET" \
+              --head "$BRANCH" \
+              --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+              --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
+          done
+        shell: bash
