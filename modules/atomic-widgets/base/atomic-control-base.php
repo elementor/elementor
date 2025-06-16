@@ -19,7 +19,7 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 	abstract public function get_props(): array;
 
 	public static function bind_to( string $prop_name, string $prop_display_name ) {
-		return new static( $prop_name,  $prop_display_name );
+		return new static( $prop_name, $prop_display_name );
 	}
 
 	protected function __construct( string $prop_name, string $prop_display_name ) {
