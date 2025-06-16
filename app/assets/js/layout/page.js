@@ -28,7 +28,7 @@ export default function Page( props ) {
 	return (
 		<div className={ `eps-app__lightbox ${ props.className }` }>
 			<div className="eps-app">
-				<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } onClose={ () => props.onClose?.() } />
+				<Header title={ props.title } buttons={ props.headerButtons } titleRedirectRoute={ props.titleRedirectRoute } onClose={ props.onClose ? () => props.onClose() : undefined } />
 				<div className="eps-app__main">
 					{ AppSidebar() }
 					<Content>

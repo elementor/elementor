@@ -22,7 +22,7 @@ export default function Header( props ) {
 				<i className="eps-app__logo eicon-elementor" />
 				<h1 className="eps-app__title">{ props.title }</h1>
 			</TitleTag>
-			<HeaderButtons buttons={ props.buttons } />
+			<HeaderButtons buttons={ props.buttons } onClose={ props.onClose ? () => props.onClose() : undefined } />
 		</Grid>
 	);
 }
