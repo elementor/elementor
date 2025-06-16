@@ -86,6 +86,12 @@ class Style_Schema {
 			$new_union->add_prop_type( $updated );
 		}
 
+		$dependency_manager = $union_prop_type->get_dependency_manager();
+
+		if ( $dependency_manager ) {
+			$new_union->dependencies( $dependency_manager );
+		}
+
 		return $new_union;
 	}
 }

@@ -74,7 +74,13 @@ class Manager {
 			->filter( fn ( $effect ) => ! empty( $effect['terms'] ) )
 			->map( fn ( $effect ) => [
 				'relation' => $effect['relation'],
-				'terms' => $effect['terms'],
+				'terms' => Collection::make( $effect['terms'] )
+					->map( fn ( $term ) => [
+						'operator' => $term['operator'],
+						'pathToValue' => $term['path_to_value'],
+						'valueToCompare' => $term['value_to_compare'],
+						'valueOnFail' => $term['value_on_fail'],
+					] )->all(),
 			] )
 			->all();
 	}

@@ -296,9 +296,9 @@ class Style_Schema {
 	private static function get_flex_prop_dependencies() {
 		return Manager::make()->where( [
 			'effect' => 'hide',
-			'operator' => 'not_contains',
+			'operator' => 'not_in',
 			'path_to_value' => [ 'display' ],
-			'value_to_compare' => 'flex',
+			'value_to_compare' => [ 'flex', 'inline-flex' ],
 		] );
 	}
 }

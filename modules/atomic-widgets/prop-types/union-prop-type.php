@@ -105,6 +105,7 @@ class Union_Prop_Type implements Prop_Type {
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
+			'dependencies' => $this->prop_dependency_manager ? $this->prop_dependency_manager->get() : [],
 		];
 	}
 
@@ -112,5 +113,9 @@ class Union_Prop_Type implements Prop_Type {
 		$this->prop_dependency_manager = $manager;
 
 		return $this;
+	}
+
+	public function get_dependency_manager(): ?Prop_Dependency_Manager {
+		return $this->prop_dependency_manager;
 	}
 }
