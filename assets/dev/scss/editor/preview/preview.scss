@@ -218,8 +218,8 @@ html.elementor-html {
 
 	> .elementor-element-overlay {
 		position: absolute;
-		top: 0;
-		@include end(0);
+		inset-block-start: 0;
+		inset-inline-end: 0;
 		letter-spacing: 0; // Hack for front-end style themes
 		z-index: $element-overlay;
 		pointer-events: none;
