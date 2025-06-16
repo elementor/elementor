@@ -3,52 +3,45 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 class CSS_Files_Manager {
-	public static function enqueue( string $key, callable $get_css ): bool {
-		$style = Style_File::create( $key );
+	CONST DEFAULT_CSS_DIR = 'elementor/css/';
+	CONST PERMISSIONS = 0644;
+
+	public function create(string $filename, callable $get_css ): Style_File {
 		$css = $get_css();
 
 		if ( empty( $css['content'] ) ) {
-			return false;
+			throw new \Exception( 'CSS content is empty for file: ' . $filename );
 		}
 
-		$style->set_content( $css['content'] );
+		$style_file = Style_File::make( $filename, self::DEFAULT_CSS_DIR );
 
-		$bytes_written = self::write_to_file( $style );
+		$path = $style_file->get_path();
+		$filesystem_path = $this->get_filesystem_path( $path );
+
+		$filesystem = $this->get_filesystem();
+		$bytes_written = $filesystem->put_contents( $filesystem_path, $css['content'], self::PERMISSIONS );
 
 		if ( false === $bytes_written ) {
-			return false;
+			throw new \Exception( 'Could not write the file: ' . $filesystem_path );
 		}
 
-		wp_enqueue_style(
-			$style->get_handle(),
-			$style->get_versioned_url(),
-			[],
-			null,
-			$css['media'] ?? 'all'
-		);
-
-		return true;
+		return $style_file;
 	}
 
-	private static function write_to_file( Style_File $style ) {
-		return $style->write();
+	private function get_filesystem(): \WP_Filesystem_Base {
+		global $wp_filesystem;
+
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		return $wp_filesystem;
 	}
 
-	public static function delete( string $key ): bool {
-		$style = Style_File::create( $key );
+	private function get_filesystem_path( $path ): string {
+		$filesystem = self::get_filesystem();
 
-		return $style->delete();
-	}
-
-	public static function exists( string $key ): bool {
-		$style = Style_File::create( $key );
-
-		return $style->exists();
-	}
-
-	public static function get_url( string $key ): string {
-		$style = Style_File::create( $key );
-
-		return $style->get_versioned_url();
+		return str_replace( ABSPATH, $filesystem->abspath(), $path );
 	}
 }

@@ -29,20 +29,20 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 		$wp_filesystem = null;
 	}
 
-	public function test_enqueue__returns_false_when_no_css() {
+	public function test_create__throws_exception_when_css_content_is_empty() {
 		// Arrange.
 		$get_css = function() {
 			return [];
 		};
 
-		// Act.
-		$result = CSS_Files_Manager::enqueue( 'test-style', $get_css );
-
 		// Assert.
-		$this->assertFalse( $result );
+		$this->expectException(\Exception::class);
+
+		// Act.
+		( new Css_Files_Manager() )->create( 'test-style', $get_css );
 	}
 
-	public function test_enqueue__returns_false_when_write_fails() {
+	public function test_enqueue__throws_exception_when_writing_file_fails() {
 		// Arrange.
 		$get_css = function() {
 			return [
@@ -53,14 +53,14 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 
 		$this->filesystemMock->method('put_contents')->willReturn(false);
 
-		// Act.
-		$result = CSS_Files_Manager::enqueue( 'test-style', $get_css );
-
 		// Assert.
-		$this->assertFalse( $result );
+		$this->expectException(\Exception::class);
+
+		// Act.
+		$result = ( new CSS_Files_Manager() )->create( 'test-style', $get_css );
 	}
 
-	public function test_enqueue__returns_true() {
+	public function test_create__creates_file() {
 		// Arrange.
 		$get_css = function() {
 			return [
@@ -71,23 +71,24 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 
 		$this->filesystemMock->method('put_contents')->willReturn(true);
 
+		// Assert.
 		$this->filesystemMock->expects($this->once())
 			->method('put_contents')
 			->with(
 				$this->callback(function($path) {
-					return str_contains($path, Style_File::DEFAULT_CSS_DIR . 'test-style.css');
+					return str_contains($path, CSS_Files_Manager::DEFAULT_CSS_DIR . 'test-style.css');
 				}),
 				'body { margin: 0; }',
 				0644
 			);
 
 		// Act.
-		$result = CSS_Files_Manager::enqueue( 'test-style', $get_css );
+		$result = ( new CSS_Files_Manager() )->create( 'test-style.css+$', $get_css );
 
 		// Assert.
-		$this->assertTrue( $result );
-
-		global $wp_styles;
-		$this->assertArrayHasKey( 'test-style', $wp_styles->registered );
+		$this->assertEquals(
+			'test-style',
+			$result->get_filename()
+		);
 	}
 }
