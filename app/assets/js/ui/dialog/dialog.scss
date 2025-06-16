@@ -4,8 +4,8 @@
 
 	&__close-button {
 		position: absolute;
-		top: spacing(44) * -1;
-		@include end(spacing(44) * -1);
+		inset-block-start: calc( spacing(44) * -1 );
+		inset-inline-end: calc( spacing(44) * -1 );
 		margin-block-start: spacing(10);
 		margin-inline-end: spacing(10);
 		z-index: $eps-zindex-modal;
