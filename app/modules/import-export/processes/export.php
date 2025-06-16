@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExport\Processes;
 
 use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Runners\Export\Themes;
 use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Utils\Str;
 use Elementor\Plugin;
@@ -85,6 +86,7 @@ class Export {
 
 	public function register_default_runners() {
 		$this->register( new Site_Settings() );
+		$this->register( new Themes() );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );
 		$this->register( new Taxonomies() );

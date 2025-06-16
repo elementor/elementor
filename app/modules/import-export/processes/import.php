@@ -5,6 +5,7 @@ namespace Elementor\App\Modules\ImportExport\Processes;
 use Elementor\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\App\Modules\ImportExport\Compatibility\Kit_Library;
+use Elementor\App\Modules\ImportExport\Runners\Import\Themes;
 use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
@@ -246,6 +247,7 @@ class Import {
 	}
 
 	public function register_default_runners() {
+		$this->register( new Themes() );
 		$this->register( new Site_Settings() );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );
