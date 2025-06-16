@@ -6,7 +6,14 @@ on:
     branches:
       - 'main'
       - '3.*'
-    pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+  pull_request:
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -34,7 +41,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -63,6 +69,9 @@ jobs:
 
       - name: Install lhci
         run: npm install --no-package-lock --no-save @lhci/cli@0.14.0
+
+      - name: Clear npm cache
+        run: npm cache clean --force
 
       - name: Run Lighthouse tests
         run: |
