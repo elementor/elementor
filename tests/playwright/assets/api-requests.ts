@@ -38,10 +38,7 @@ export default class ApiRequests {
 		const imagePath = image.filePath;
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
-			params: {
-				rest_route: '/wp/v2/media',
-				uploadTypeCaller: 'elementor-wp-media-upload',
-			},
+			params: { rest_route: '/wp/v2/media' },
 			headers: {
 				'X-WP-Nonce': this.nonce,
 			},

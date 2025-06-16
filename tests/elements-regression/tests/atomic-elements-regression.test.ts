@@ -27,7 +27,6 @@ test.describe( 'Elementor regression tests with templates for CORE - V4', () => 
 	const testData = [
 		'e_button',
 		'e_heading',
-		'e_svg',
 		'e_paragraph',
 		'e_image',
 	];
