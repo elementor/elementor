@@ -1,10 +1,20 @@
 name: Lighthouse
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'main'
       - '3.*'
+      - '04-06-25'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+  pull_request:
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -32,7 +42,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -62,6 +71,9 @@ jobs:
       - name: Install lhci
         run: npm install --no-package-lock --no-save @lhci/cli@0.14.0
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Run Lighthouse tests
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/run-lighthouse-tests.sh"
@@ -89,7 +101,7 @@ jobs:
 
   lighthouse:
     needs: lighthouse_test
-    if: ${{ always() }} # Will be run even if 'Lighthouse' matrix will be skipped
+    if: ${{ always() }}
     runs-on: ubuntu-22.04
     name: Lighthouse - Test Results
     steps:
