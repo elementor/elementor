@@ -9,20 +9,18 @@ use Elementor\Core\Utils\Hints;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
 
 /**
- * Elementor heading widget.
+ * Elementor Ally widget.
  *
- * Elementor widget that displays an eye-catching headlines.
+ * Elementor widget that displays an eye-catching Ally Accessibility widget.
  *
- * @since 1.0.0
  */
 class Widget_Ally extends Widget_Base implements Sanitizable {
 
 	/**
 	 * Get widget name.
 	 *
-	 * Retrieve heading widget name.
+	 * Retrieve widget name.
 	 *
-	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget name.
@@ -34,9 +32,8 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	/**
 	 * Get widget title.
 	 *
-	 * Retrieve heading widget title.
+	 * Retrieve widget title.
 	 *
-	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget title.
@@ -48,9 +45,8 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	/**
 	 * Get widget icon.
 	 *
-	 * Retrieve heading widget icon.
+	 * Retrieve widget icon.
 	 *
-	 * @since 1.0.0
 	 * @access public
 	 *
 	 * @return string Widget icon.
@@ -62,11 +58,10 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	/**
 	 * Get widget categories.
 	 *
-	 * Retrieve the list of categories the heading widget belongs to.
+	 * Retrieve the list of categories the widget belongs to.
 	 *
 	 * Used to determine where to display the widget in the editor.
 	 *
-	 * @since 2.0.0
 	 * @access public
 	 *
 	 * @return array Widget categories.
@@ -80,7 +75,6 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	 *
 	 * Retrieve the list of keywords the widget belongs to.
 	 *
-	 * @since 2.1.0
 	 * @access public
 	 *
 	 * @return array Widget keywords.
@@ -113,45 +107,44 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	}
 
 	/**
-	 * Register heading widget controls.
+	 * Register widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
 	 *
-	 * @since 3.1.0
 	 * @access protected
 	 */
 	protected function register_controls() {
 		if ( self::should_display_instructions() ) {
 			$this->get_install_instructions();
 			return;
+		}
+
+		if ( ! class_exists( ' \EA11y\Plugin' ) ) {
+			try {
+				include_once EA11Y_PATH . '/plugin.php';
+			} catch ( \Exception $e ) {
+				$this->start_controls_section(
+					'error_notice',
+					[
+						'label' => esc_html__( 'Error', 'elementor' ),
+					]
+				);
+				$this->add_control( 'error_hint', [
+					'type'         => Controls_Manager::NOTICE,
+					'notice_type'  => 'error',
+					'icon'         => true,
+					'dismissible'  => false,
+					'heading'      => __( 'Ally Accessibility Widget', 'elementor' ),
+					'content'      => __( 'To use the Ally Accessibility widget, please install and activate the Ally Accessibility plugin first.', 'elementor' ),
+				] );
+				$this->end_controls_section();
+			}
+		}
+		$connect = \EA11y\Plugin::instance()->modules_manager->get_modules( 'Connect' );
+		if ( ! $connect::is_connected() ) {
+			$this->get_connect_instructions();
 		} else {
-			if ( ! class_exists( ' \EA11y\Plugin' ) ) {
-				try {
-					include_once EA11Y_PATH . '/plugin.php';
-				} catch ( \Exception $e ) {
-					$this->start_controls_section(
-						'error_notice',
-						[
-							'label' => esc_html__( 'Error', 'elementor' ),
-						]
-					);
-					$this->add_control( 'error_hint', [
-						'type'         => Controls_Manager::NOTICE,
-						'notice_type'  => 'error',
-						'icon'         => true,
-						'dismissible'  => false,
-						'heading'      => __( 'Ally Accessibility Widget', 'elementor' ),
-						'content'      => __( 'To use the Ally Accessibility widget, please install and activate the Ally Accessibility plugin first.', 'elementor' ),
-					] );
-					$this->end_controls_section();
-				}
-			}
-			$connect = \EA11y\Plugin::instance()->modules_manager->get_modules( 'Connect' );
-			if ( ! $connect::is_connected() ) {
-				$this->get_connect_instructions();
-			} else {
-				$this->add_ally_widget_controls();
-			}
+			$this->add_ally_widget_controls();
 		}
 	}
 
@@ -270,11 +263,10 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	}
 
 	/**
-	 * Render heading widget output on the frontend.
+	 * Render widget output on the frontend.
 	 *
 	 * Written in PHP and used to generate the final HTML.
 	 *
-	 * @since 1.0.0
 	 * @access protected
 	 */
 	protected function render() {}
