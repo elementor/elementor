@@ -12,7 +12,6 @@ use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
  * Elementor Ally widget.
  *
  * Elementor widget that displays an eye-catching Ally Accessibility widget.
- *
  */
 class Widget_Ally extends Widget_Base implements Sanitizable {
 
@@ -148,6 +147,11 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 		}
 	}
 
+	/**
+	 * get_install_instructions
+	 *
+	 * @return void
+	 */
 	public function get_install_instructions() {
 		$plugin = 'pojo-accessibility';
 		$has_capability = current_user_can( 'manage_options' );
@@ -237,6 +241,11 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * add_ally_widget_controls
+	 *
+	 * @return void
+	 */
 	public function add_ally_widget_controls() {
 		$this->start_controls_section(
 			'section_ally',
