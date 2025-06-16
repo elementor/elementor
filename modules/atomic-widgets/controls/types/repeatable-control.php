@@ -11,11 +11,11 @@ class Repeatable_Control extends Atomic_Control_Base {
 
 	private string $child_control_type;
 	private object $child_control_props;
-	private bool $show_duplicate;
-	private bool $show_toggle;
+	private bool $show_duplicate = true;
+	private bool $show_toggle = true;
 	private string $repeater_label;
-	private? object $initial_values;
-	private? string $pattern_label;
+	private ?object $initial_values;
+	private ?string $pattern_label;
 	private ?string $placeholder;
 
 
@@ -23,14 +23,14 @@ class Repeatable_Control extends Atomic_Control_Base {
 		return 'repeatable';
 	}
 
-	public function set_child_control_type( $controlType ): self {
-		$this->child_control_type = $controlType;
+	public function set_child_control_type( $control_type ): self {
+		$this->child_control_type = $control_type;
 
 		return $this;
 	}
 
-	public function set_child_control_props( $controlProps ): self {
-		$this->child_control_props = $controlProps;
+	public function set_child_control_props( $control_props ): self {
+		$this->child_control_props = $control_props;
 
 		return $this;
 	}
@@ -46,23 +46,25 @@ class Repeatable_Control extends Atomic_Control_Base {
 
 		return $this;
 	}
-	public function set_initialValues( $initialValues ): self {
-		$this->initial_values = $initialValues;
+
+	public function set_initialValues( $initial_values ): self {
+		$this->initial_values = $initial_values;
 
 		return $this;
 	}
-	public function set_patternLabel( $patternLabel ): self {
-		$this->pattern_label = $patternLabel;
+
+	public function set_patternLabel( $pattern_label ): self {
+		$this->pattern_label = $pattern_label;
 
 		return $this;
 	}
-	public function set_repeaterLabel( string $label ): self
-	{
+
+	public function set_repeaterLabel( string $label ): self {
 		$this->repeater_label = $label;
 		return $this;
 	}
-	public function set_placeholder( string $placeholder ): self
-	{
+
+	public function set_placeholder( string $placeholder ): self {
 		$this->placeholder = $placeholder;
 		return $this;
 	}
@@ -73,8 +75,8 @@ class Repeatable_Control extends Atomic_Control_Base {
 			'childControlProps' => $this->child_control_props,
 			'showDuplicate' => $this->show_duplicate,
 			'showToggle' => $this->show_toggle,
-			'initialValues'=> $this->initial_values,
-			'patternLabel'=> $this->pattern_label,
+			'initialValues' => $this->initial_values,
+			'patternLabel' => $this->pattern_label,
 			'repeaterLabel' => $this->repeater_label,
 			'placeholder' => $this->placeholder,
 		];
