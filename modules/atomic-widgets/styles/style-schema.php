@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Types_Mapping;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
@@ -220,15 +221,16 @@ class Style_Schema {
 				'row-reverse',
 				'column',
 				'column-reverse',
-			] ),
+			] )->dependencies( self::get_flex_prop_dependencies() ),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
+				->add_prop_type( Size_Prop_Type::make() )
+				->dependencies( self::get_flex_prop_dependencies() ),
 			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
 				'wrap-reverse',
-			] ),
+			] )->dependencies( self::get_flex_prop_dependencies() ),
 			'flex-grow' => Number_Prop_Type::make(),
 			'flex-shrink' => Number_Prop_Type::make(),
 			'flex-basis' => Size_Prop_Type::make(),
@@ -250,7 +252,7 @@ class Style_Schema {
 				'space-around',
 				'space-evenly',
 				'stretch',
-			] ),
+			] )->dependencies( self::get_flex_prop_dependencies() ),
 			'align-content' => String_Prop_Type::make()->enum( [
 				'center',
 				'start',
@@ -270,7 +272,7 @@ class Style_Schema {
 				'self-start',
 				'self-end',
 				'anchor-center',
-			] ),
+			] )->dependencies( self::get_flex_prop_dependencies() ),
 			'align-self' => String_Prop_Type::make()->enum( [
 				'auto',
 				'normal',
@@ -289,5 +291,14 @@ class Style_Schema {
 			] ),
 			'order' => Number_Prop_Type::make(),
 		];
+	}
+
+	private static function get_flex_prop_dependencies() {
+		return Manager::make()->where( [
+			'effect' => 'hide',
+			'operator' => 'not_contains',
+			'path_to_value' => [ 'display' ],
+			'value_to_compare' => 'flex',
+		] );
 	}
 }
