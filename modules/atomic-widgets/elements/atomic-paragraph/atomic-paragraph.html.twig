@@ -1,7 +1,8 @@
 {% if settings.paragraph is not empty %}
-        <p class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}">
+		{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+        <p class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }}>
             {% if settings.link.href %}
-                <a href="{{ settings.link.href | e('full_url') }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
+                <a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
                     {{ settings.paragraph }}
                 </a>
             {% else %}

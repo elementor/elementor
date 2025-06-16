@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,21 +16,24 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor\Modules\Variables
  */
 class Test_CSS_Renderer extends TestCase {
+	private $repository;
+
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->repository = $this->createMock( Variables_Repository::class );
 	}
 
 	private function css_renderer() {
 		return new CSS_Renderer(
-			new Variables()
+			$this->repository
 		);
 	}
 
 	public function test_empty_list_of_variables__generates_empty_css_entry() {
 		// Arrange.
-		add_filter( Variables::FILTER, function () {
-			return [];
-		} );
+		$this->repository->method( 'variables' )
+			->willReturn( [] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
@@ -40,21 +44,19 @@ class Test_CSS_Renderer extends TestCase {
 
 	public function test_list_of_font_variables__generates_entries_for_root_pseudo_element() {
 		// Arrange.
-		add_filter( Variables::FILTER, function () {
-			return [
-				Font_Variable_Prop_Type::get_key() => [
-					'gf-045' => [
-						'label' => 'Main: Montserrat',
-						'value' => 'Montserrat',
-					],
-
-					'gr-roboto' => [
-						'label' => 'Global Roboto',
-						'value' => 'Roboto',
-					],
+		$this->repository->method( 'variables' )
+			->willReturn( [
+				'gf-045' => [
+					'label' => 'Main: Montserrat',
+					'value' => 'Montserrat',
+					'type' => Font_Variable_Prop_Type::get_key(),
 				],
-			];
-		} );
+				'gr-roboto' => [
+					'label' => 'Global Roboto',
+					'value' => 'Roboto',
+					'type' => Font_Variable_Prop_Type::get_key(),
+				],
+			] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
@@ -65,20 +67,19 @@ class Test_CSS_Renderer extends TestCase {
 
 	public function test_list_of_variables__generates_entries_for_root_pseudo_element() {
 		// Arrange.
-		add_filter( Variables::FILTER, function () {
-			return [
-				Color_Variable_Prop_Type::get_key() => [
-					'a-01' => [
-						'label' => 'Black',
-						'value' => '#000',
-						],
-					'a-02' => [
-						'label' => 'Border Width',
-						'value' => '6px',
-					],
-				]
-			];
-		} );
+		$this->repository->method( 'variables' )
+			->willReturn( [
+				'a-01' => [
+					'label' => 'Black',
+					'value' => '#000',
+					'type' => Color_Variable_Prop_Type::get_key(),
+				],
+				'a-02' => [
+					'label' => 'Border Width',
+					'value' => '6px',
+					'type' => Color_Variable_Prop_Type::get_key(),
+				],
+			] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
@@ -89,30 +90,29 @@ class Test_CSS_Renderer extends TestCase {
 
 	public function test_list_of_variables__will_sanitize_the_input() {
 		// Arrange,
-		add_filter( Variables::FILTER, function () {
-			return [
-				Color_Variable_Prop_Type::get_key() => [
-					'a-01' => [
-						'label' => 'a-width',
-						'value' => '<script type="text/javascript">alert("here");</script>',
-						],
-					'<script>alert("there")</script>' => [
-						'label' => 'a-height',
-						'value' => '2rem',
-					],
+		$this->repository->method( 'variables' )
+			->willReturn( [
+				'a-01' => [
+					'label' => 'a-width',
+					'value' => '<script type="text/javascript">alert("here");</script>',
+					'type' => Color_Variable_Prop_Type::get_key(),
 				],
-				Font_Variable_Prop_Type::get_key() => [
-					'a-01' => [
-						'label' => 'Font 1',
-						'value' => '<style>color: red;</style>',
-					],
-					'<script>alert("font here")</script>' => [
-						'label' => 'Font 3',
-						'value' => '2rem',
-					],
+				'<script>alert("there")</script>' => [
+					'label' => 'a-height',
+					'value' => '2rem',
+					'type' => Color_Variable_Prop_Type::get_key(),
 				],
-			];
-		} );
+				'a-01' => [
+					'label' => 'Font 1',
+					'value' => '<style>color: red;</style>',
+					'type' => Font_Variable_Prop_Type::get_key(),
+				],
+				'<script>alert("font here")</script>' => [
+					'label' => 'Font 3',
+					'value' => '2rem',
+					'type' => Font_Variable_Prop_Type::get_key(),
+				],
+			] );
 
 		// Act.
 		$raw_css = $this->css_renderer()->raw_css();

@@ -888,12 +888,6 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'type', args.type, true );
 		self.setFilter( 'subtype', args.subtype, true );
 
-		if ( this.shouldShowCloudStateView( args.source ) ) {
-			self.layout.showCloudStateView();
-
-			return;
-		}
-
 		self.showTemplates();
 	};
 
@@ -915,29 +909,62 @@ const TemplateLibraryManager = function() {
 
 		this.setFilter( 'parent', null, query );
 
-		$e.data.get( 'library/templates', query, options ).then( ( result ) => {
-			const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
+		const loadTemplatesData = () => {
+			return $e.data.get( 'library/templates', query, options ).then( ( result ) => {
+				const templates = 'cloud' === query.source ? result.data.templates.templates : result.data.templates;
 
-			templatesCollection = new TemplateLibraryCollection(
-				templates,
-			);
+				templatesCollection = new TemplateLibraryCollection(
+					templates,
+				);
 
-			if ( result.data?.templates?.total ) {
-				total = result.data?.templates?.total;
+				if ( result.data?.templates?.total ) {
+					total = result.data?.templates?.total;
+				}
+
+				if ( result.data.config ) {
+					config = result.data.config;
+				}
+
+				self.layout.hideLoadingView();
+
+				if ( onUpdate ) {
+					onUpdate();
+				}
+			} ).finally( ( ) => {
+				isLoading = false;
+			} );
+		};
+
+		const handleCloudSource = () => {
+			if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota ) {
+				return $e.components.get( 'cloud-library' ).utils.getQuotaConfig( true )
+					.then( () => {
+						if ( self.shouldShowCloudStateView() ) {
+							self.layout.showCloudStateView();
+							return;
+						}
+
+						return loadTemplatesData();
+					} )
+					.catch( () => {
+						self.layout.showCloudStateView();
+						isLoading = false;
+					} );
 			}
 
-			if ( result.data.config ) {
-				config = result.data.config;
+			if ( self.shouldShowCloudStateView() ) {
+				self.layout.showCloudStateView();
+				return;
 			}
 
-			self.layout.hideLoadingView();
+			return loadTemplatesData();
+		};
 
-			if ( onUpdate ) {
-				onUpdate();
-			}
-		} ).finally( ( ) => {
-			isLoading = false;
-		} );
+		if ( 'cloud' === query.source ) {
+			handleCloudSource();
+		} else {
+			loadTemplatesData();
+		}
 	};
 
 	this.searchTemplates = ( data ) => {
@@ -1112,12 +1139,6 @@ const TemplateLibraryManager = function() {
 		self.setFilter( 'source', templatesSource, true );
 		self.clearBulkSelectionItems();
 
-		if ( this.shouldShowCloudStateView( templatesSource ) ) {
-			self.layout.showCloudStateView();
-
-			return;
-		}
-
 		self.loadTemplates( function() {
 			const templatesToShow = self.filterTemplates();
 
@@ -1139,22 +1160,36 @@ const TemplateLibraryManager = function() {
 		this.layout.handleBulkActionBarUi();
 	};
 
-	this.shouldShowCloudStateView = function( source ) {
-		if ( 'cloud' !== source ) {
-			return false;
-		}
-
+	this.shouldShowCloudStateView = function() {
 		if ( ! elementor.config.library_connect.is_connected ) {
 			return true;
 		}
 
-		return ! this.hasCloudLibraryQuota();
+		return ! this.hasCloudLibraryQuota() || this.cloudLibraryIsDeactivated();
+	};
+
+	this.cloudLibraryIsDeactivated = function() {
+		const quota = elementorAppConfig[ 'cloud-library' ]?.quota;
+
+		if ( ! quota ) {
+			return false;
+		}
+
+		const {
+			currentUsage = 0,
+			threshold = 0,
+			subscriptionId = '',
+		} = quota;
+
+		const isOverThreshold = currentUsage > threshold;
+		const hasSubscription = '' !== subscriptionId;
+
+		return isOverThreshold && ! hasSubscription;
 	};
 
 	this.hasCloudLibraryQuota = function() {
 		return 'undefined' !== typeof elementorAppConfig[ 'cloud-library' ]?.quota &&
-			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold &&
-			elementor.helpers.hasPro();
+			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
 	this.addBulkSelectionItem = function( templateId ) {
@@ -1225,7 +1260,7 @@ const TemplateLibraryManager = function() {
 								name: 'undo_bulk_delete',
 								text: __( 'Undo', 'elementor' ),
 								callback: () => {
-									this.onUndoDelete();
+									this.onUndoDelete( isBulk );
 								},
 							},
 						] : null;
@@ -1265,7 +1300,7 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.onUndoDelete = function() {
+	this.onUndoDelete = function( isBulk ) {
 		return new Promise( ( resolve ) => {
 			isLoading = true;
 
@@ -1305,6 +1340,10 @@ const TemplateLibraryManager = function() {
 			};
 
 			elementorCommon.ajax.addRequest( 'bulk_undo_delete_items', ajaxOptions );
+
+			self.eventManager.sendDeletionUndoEvent( {
+				is_bulk: isBulk,
+			} );
 		} );
 	};
 

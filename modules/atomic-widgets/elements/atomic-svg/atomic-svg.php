@@ -56,13 +56,12 @@ class Atomic_Svg extends Atomic_Widget_Base {
 				->set_items( [
 					Svg_Control::bind_to( 'svg' ),
 				] ),
-			Section::make()
-				->set_label( esc_html__( 'Settings', 'elementor' ) )
-				->set_items( [
-					Link_Control::bind_to( 'link' )->set_meta( [
-						'topDivider' => true,
-					] ),
-				] ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Link_Control::bind_to( 'link' ),
 		];
 	}
 
@@ -112,16 +111,18 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$classes_string = implode( ' ', $classes );
 
+		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
-				'<a href="%s" target="%s" class="%s">%s</a>',
-				esc_url( $settings['link']['href'] ),
+				'<a href="%s" target="%s" class="%s" %s>%s</a>',
+				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
+				$cssid_attribute,
 				$svg_html
 			);
 		} else {
-			$svg_html = sprintf( '<div class="%s">%s</div>', esc_attr( $classes_string ), $svg_html );
+			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $cssid_attribute, $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

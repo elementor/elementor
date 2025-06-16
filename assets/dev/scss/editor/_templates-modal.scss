@@ -377,7 +377,7 @@ $remote-templates-items-space: 30px;
 				border: var(--e-a-border);
 				border-radius: 3px;
 
-				&:hover {
+				&:not([data-status="locked"]):hover {
 					.elementor-template-library-template-preview {
 						display: flex;
 					}
@@ -421,9 +421,7 @@ $remote-templates-items-space: 30px;
 
 				.elementor-template-library-template-name {
 					font-size: 11px;
-					white-space: nowrap;
-					text-overflow: ellipsis;
-					overflow: hidden;
+					@include ellipsis;
 				}
 
 				.elementor-template-library-card-footer {
@@ -455,10 +453,8 @@ $remote-templates-items-space: 30px;
 							flex-direction: column;
 							justify-content: center;
 							width: 65%;
-							white-space: nowrap;
-							text-overflow: ellipsis;
-							overflow: hidden;
 							align-items: start;
+							@include ellipsis;
 						}
 					}
 				}
@@ -528,23 +524,17 @@ $remote-templates-items-space: 30px;
 	#elementor-template-library-navigation-container {
 		display: flex;
 		flex: 1;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
+		@include ellipsis;
 
 		.elementor-template-library-navigation-container {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
 			gap: 15px;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
+			@include ellipsis;
 
 			> span {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
+				@include ellipsis;
 			}
 
 			.elementor-template-library-navigation-back-button {
@@ -746,8 +736,8 @@ label.elementor-template-library-order-label {
 
 	i {
 		position: absolute;
-		top: 50%;
-		@include end(0);
+		inset-block-start: 50%;
+		inset-inline-end: 0;
 		transform: translateY(-50%);
 
 		&.eicon-loading.eicon-animation-spin {
@@ -809,8 +799,8 @@ label.elementor-template-library-order-label {
 			position: absolute;
 			text-transform: uppercase;
 			line-height: 1;
-			top: 5px;
-			@include end(5px);
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 			padding: 3px 5px;
 			font-size: 8px;
 			border-radius: 2px;
@@ -831,8 +821,8 @@ label.elementor-template-library-order-label {
 		.elementor-template-library-template-footer {
 			position: absolute;
 			width: 100%;
-			bottom: 0;
-			@include start(0);
+			inset-block-end: 0;
+			inset-inline-start: 0;
 			padding: 10px;
 			background-color: var(--e-a-bg-default);
 			transition: transform .5s;
@@ -1026,8 +1016,8 @@ label.elementor-template-library-order-label {
 		background-color: var(--e-a-bg-default);
 		border-radius:  var(--e-a-border-radius);
 		box-shadow: 1px 3px 11px rgba(0,0,0,0.3);
-		top: 100%;
-		@include end(0);
+		inset-block-start: 100%;
+		inset-inline-end: 0;
 		z-index: 1;
 
 		> div {
@@ -1037,6 +1027,16 @@ label.elementor-template-library-order-label {
 			display: flex;
 			align-items: center;
 			gap: 8px;
+
+			&.disabled {
+				cursor: not-allowed;
+				color: var(--e-a-color-txt-disabled);
+
+				a {
+					color: var(--e-a-color-txt-disabled);
+					cursor: not-allowed;
+				}
+			}
 		}
 
 		a {
@@ -1125,6 +1125,13 @@ label.elementor-template-library-order-label {
 	}
 
 	.elementor-template-library-template-insert {
+		&.disabled {
+			color: $e-pink-100;
+			&:hover,
+			&:focus {
+				cursor: not-allowed;
+			}
+		}
 
 		i {
 			margin-inline-end: 3px;
@@ -1332,9 +1339,7 @@ label.elementor-template-library-order-label {
 
 			&.cloud,
 			&.local {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
+				@include ellipsis;
 				line-height: 27px;
 			}
 
@@ -1395,9 +1400,7 @@ label.elementor-template-library-order-label {
 			max-width: 450px;
 
 			li {
-				white-space: nowrap;
-				text-overflow: ellipsis;
-				overflow: hidden;
+				@include ellipsis;
 			}
 
 			.eicon-loading {
@@ -1654,7 +1657,7 @@ label.elementor-template-library-order-label {
 	&:after {
 		content: '';
 		position: absolute;
-		@include end(46%);
+		inset-inline-end: 46%;
 		transform: scaleX(0.7);
 		border: 10px solid transparent;
 	}

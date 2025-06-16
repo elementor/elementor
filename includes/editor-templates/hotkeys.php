@@ -1,14 +1,11 @@
 <?php
 namespace Elementor;
 
-use Elementor\Modules\EditorAppBar\Module as App_Bar_Module;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-
-$is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_Module::EXPERIMENT_NAME );
 ?>
 <script type="text/template" id="tmpl-elementor-hotkeys">
 	<# var ctrlLabel = environment.mac ? '&#8984;' : 'Ctrl'; #>
@@ -120,11 +117,7 @@ $is_app_bar_active = Plugin::$instance->experiments->is_feature_active( App_Bar_
 				</li>
 
 				<li class="elementor-hotkeys__item">
-					<div class="elementor-hotkeys__item--label"><?php
-						echo $is_app_bar_active
-							? esc_html__( 'Structure', 'elementor' )
-							: esc_html__( 'Navigator', 'elementor' );
-					?></div>
+					<div class="elementor-hotkeys__item--label"><?php echo esc_html__( 'Structure', 'elementor' ); ?></div>
 					<div class="elementor-hotkeys__item--shortcut">
 						<kbd>{{{ ctrlLabel }}}</kbd>
 						<kbd>I</kbd>

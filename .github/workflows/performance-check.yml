@@ -61,7 +61,6 @@ jobs:
           enable-svg-upload: true
           experiments: |-
             e_optimized_markup:true
-            editor_v2:true
             e_atomic_elements:true
             e_classes:true
           templates: |-

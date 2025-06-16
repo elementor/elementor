@@ -40,7 +40,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -50,27 +50,28 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 		];
+
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
-		$content_section = Section::make()
-			->set_label( esc_html__( 'Content', 'elementor' ) )
-			->set_items( [
-				Image_Control::bind_to( 'image' )
-					->set_show_mode( 'media' ),
-			] );
-
 		return [
-			$content_section,
 			Section::make()
-				->set_label( esc_html__( 'Settings', 'elementor' ) )
+				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
 					Image_Control::bind_to( 'image' )
-						->set_show_mode( 'sizes' ),
-					Link_Control::bind_to( 'link' )->set_meta( [
-						'topDivider' => true,
-					] ),
+						->set_show_mode( 'media' ),
 				] ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Image_Control::bind_to( 'image' )
+				->set_show_mode( 'sizes' ),
+			Link_Control::bind_to( 'link' )->set_meta( [
+				'topDivider' => true,
+			] ),
 		];
 	}
 

@@ -156,12 +156,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
 	} );
 
-	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotions - Sticky Free to Pro - Main panel', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			editor_v2: false,
-		} );
 		const wrapperContainer = '#elementor-panel-inner',
 			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
@@ -172,26 +169,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
-	} );
-
-	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			editor_v2: true,
-		} );
-		const wrapperContainer = '#elementor-panel-inner',
-			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
-
-		// Act.
-		await wpAdmin.openNewPage();
-		const parentContainer = page.locator( wrapperContainer );
-		const promoContainer = page.locator( promotionContainer );
-		await promoContainer.waitFor();
-
-		// Assert.
-		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `elements-panel-promotion.png` );
 	} );
 
 	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {

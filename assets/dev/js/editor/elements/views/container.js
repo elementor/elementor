@@ -263,9 +263,6 @@ const ContainerView = BaseElementView.extend( {
 	saveAsTemplate() {
 		$e.route( 'library/save-template', {
 			model: this.model,
-			onAfter: () => {
-				elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
-			},
 		} );
 	},
 

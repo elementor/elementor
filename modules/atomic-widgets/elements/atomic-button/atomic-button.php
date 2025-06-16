@@ -41,7 +41,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -50,6 +50,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 		];
+
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
@@ -61,13 +63,12 @@ class Atomic_Button extends Atomic_Widget_Base {
 						->set_label( __( 'Button text', 'elementor' ) )
 						->set_placeholder( __( 'Type your button text here', 'elementor' ) ),
 				] ),
-			Section::make()
-				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( [
-					Link_Control::bind_to( 'link' )->set_meta( [
-						'topDivider' => true,
-					] ),
-				] ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Link_Control::bind_to( 'link' ),
 		];
 	}
 

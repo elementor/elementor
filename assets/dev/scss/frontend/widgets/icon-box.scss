@@ -8,7 +8,7 @@
 		&left,
 		&right {
 
-			.elementor-icon-box-wrapper	 {
+			.elementor-icon-box-wrapper {
 				display: flex;
 			}
 
@@ -74,33 +74,6 @@
 		margin-bottom: var(--icon-box-icon-margin, 15px);
 		margin-right: auto;
 		margin-left: auto;
-	}
-
-	@media (min-width: $screen-mobile-next) {
-
-		&.elementor-vertical-align- {
-
-			&top {
-
-				.elementor-icon-box-wrapper {
-					align-items: flex-start;
-				}
-			}
-
-			&middle {
-
-				.elementor-icon-box-wrapper {
-					align-items: center;
-				}
-			}
-
-			&bottom {
-
-				.elementor-icon-box-wrapper {
-					align-items: flex-end;
-				}
-			}
-		}
 	}
 
 	@include icon-position('');

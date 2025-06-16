@@ -1,4 +1,5 @@
 import DivBlockEmptyView from './container/div-block-empty-view';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 const DivBlockView = BaseElementView.extend( {
@@ -36,6 +37,27 @@ const DivBlockView = BaseElementView.extend( {
 		return ui;
 	},
 
+	attributes() {
+		const attr = BaseElementView.prototype.attributes.apply( this );
+		const local = {};
+		const cssId = this.model.getSetting( '_cssid' );
+
+		if ( cssId ) {
+			local.id = cssId.value;
+		}
+
+		const href = this.getHref();
+
+		if ( href ) {
+			local.href = href;
+		}
+
+		return {
+			...attr,
+			...local,
+		};
+	},
+
 	// TODO: Copied from `views/column.js`.
 	attachElContent() {
 		BaseElementView.prototype.attachElContent.apply( this, arguments );
@@ -67,6 +89,10 @@ const DivBlockView = BaseElementView.extend( {
 	renderOnChange( settings ) {
 		const changed = settings.changedAttributes();
 
+		setTimeout( () => {
+			this.updateHandlesPosition();
+		} );
+
 		if ( ! changed ) {
 			return;
 		}
@@ -76,6 +102,16 @@ const DivBlockView = BaseElementView.extend( {
 		if ( changed.classes ) {
 			// Rebuild the whole class attribute to remove previous outdated classes
 			this.$el.attr( 'class', this.className() );
+
+			return;
+		}
+
+		if ( changed._cssid ) {
+			if ( changed._cssid.value ) {
+				this.$el.attr( 'id', changed._cssid.value );
+			} else {
+				this.$el.removeAttr( 'id' );
+			}
 
 			return;
 		}
@@ -99,22 +135,12 @@ const DivBlockView = BaseElementView.extend( {
 
 	onRender() {
 		BaseElementView.prototype.onRender.apply( this, arguments );
-		this.handleLink();
 
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
+			this.updateHandlesPosition();
 		} );
-	},
-
-	handleLink() {
-		const href = this.getHref();
-
-		if ( ! href ) {
-			return;
-		}
-
-		this.$el.attr( 'href', href );
 	},
 
 	haveLink() {
@@ -378,7 +404,13 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getClasses() {
-		return this.options?.model?.getSetting( 'classes' )?.value || [];
+		const transformer = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry?.get?.( 'classes' );
+
+		if ( ! transformer ) {
+			return [];
+		}
+
+		return transformer( this.options?.model?.getSetting( 'classes' )?.value || [] );
 	},
 
 	getClassString() {
@@ -392,6 +424,28 @@ const DivBlockView = BaseElementView.extend( {
 		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
 
 		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
+	},
+
+	isOverflowHidden() {
+		const elementStyles = window.getComputedStyle( this.el );
+		const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ];
+
+		return overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' );
+	},
+
+	updateHandlesPosition() {
+		const elementType = this.$el.data( 'element_type' );
+		const isElement = getAllElementTypes().includes( elementType );
+
+		if ( ! isElement ) {
+			return;
+		}
+
+		if ( this.isOverflowHidden() ) {
+			this.$el.addClass( 'e-handles-inside' );
+		} else {
+			this.$el.removeClass( 'e-handles-inside' );
+		}
 	},
 } );
 

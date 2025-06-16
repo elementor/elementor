@@ -3,11 +3,8 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -44,56 +41,54 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' ),
-
 			'link' => Link_Prop_Type::make(),
 		];
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
-		return [
-			Section::make()
-				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( [
-					Select_Control::bind_to( 'tag' )
-						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
-						->set_options( [
-							[
-								'value' => 'div',
-								'label' => 'Div',
-							],
-							[
-								'value' => 'header',
-								'label' => 'Header',
-							],
-							[
-								'value' => 'section',
-								'label' => 'Section',
-							],
-							[
-								'value' => 'article',
-								'label' => 'Article',
-							],
-							[
-								'value' => 'aside',
-								'label' => 'Aside',
-							],
-							[
-								'value' => 'footer',
-								'label' => 'Footer',
-							],
-						]),
+		return [];
+	}
 
-					Link_Control::bind_to( 'link' )->set_meta( [
-						'topDivider' => true,
-					] ),
+	protected function get_settings_controls(): array {
+		return [
+			Select_Control::bind_to( 'tag' )
+				->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
+				->set_options( [
+					[
+						'value' => 'div',
+						'label' => 'Div',
+					],
+					[
+						'value' => 'header',
+						'label' => 'Header',
+					],
+					[
+						'value' => 'section',
+						'label' => 'Section',
+					],
+					[
+						'value' => 'article',
+						'label' => 'Article',
+					],
+					[
+						'value' => 'aside',
+						'label' => 'Aside',
+					],
+					[
+						'value' => 'footer',
+						'label' => 'Footer',
+					],
 				]),
+			Link_Control::bind_to( 'link' )->set_meta( [
+				'topDivider' => true,
+			] ),
 		];
 	}
 
@@ -110,26 +105,6 @@ class Div_Block extends Atomic_Element_Base {
 	protected function content_template() {
 		?>
 		<?php
-	}
-
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-
-		$attributes = [
-			'class' => [
-				'e-con',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-		];
-
-		if ( ! empty( $settings['link']['href'] ) ) {
-			$attributes = array_merge( $attributes, $settings['link'] );
-		}
-
-		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 
 	public function before_render() {
@@ -186,5 +161,29 @@ class Div_Block extends Atomic_Element_Base {
 			'size' => 30,
 			'unit' => 'px',
 		] );
+	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+
+		$attributes = [
+			'class' => [
+				'e-con',
+				$base_style_class,
+				...( $settings['classes'] ?? [] ),
+			],
+		];
+
+		if ( ! empty( $settings['_cssid'] ) ) {
+			$attributes['id'] = esc_attr( $settings['_cssid'] );
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = array_merge( $attributes, $settings['link'] );
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 }
