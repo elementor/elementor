@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Files\Fonts\Google_Font;
+use Elementor\Core\Utils\Hints;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
@@ -246,6 +247,18 @@ class Settings extends Settings_Page {
 	 */
 	protected function create_tabs() {
 		$validations_class_name = __NAMESPACE__ . '\Settings_Validations';
+		$image_optimization_description = sprintf(
+			/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
+			esc_html__( 'Improve performance by applying %1$s on LCP image and %2$s on images below the fold.', 'elementor' ),
+			'<code>fetchpriority="high"</code>',
+			'<code>loading="lazy"</code>'
+		);
+		if ( ! Hints::is_plugin_installed( 'image-optimizer' ) || ! Hints::is_plugin_active( 'image-optimizer' ) ) {
+			$image_optimization_description .= '<br><br><strong>' . esc_html__( 'Image Optimization Recommended:', 'elementor' ) . '</strong> ' .
+			esc_html__( 'Large image files and outdated formats JPEG and PNG can slow down your site.', 'elementor' ) .
+			'<br><a href="' . Hints::get_plugin_action_url( 'image-optimizer' ) . '" target="_blank">' . esc_html__( 'Use Image Optimizer by Elementor', 'elementor' ) . '</a> ' .
+			esc_html__( 'to automatically optimize, compress and convert your images to modern formats like AVIF and WebP.', 'elementor' );
+		}
 
 		return [
 			self::TAB_GENERAL => [
@@ -434,12 +447,7 @@ class Settings extends Settings_Page {
 										'1' => esc_html__( 'Enable', 'elementor' ),
 										'0' => esc_html__( 'Disable', 'elementor' ),
 									],
-									'desc' => sprintf(
-										/* translators: 1: fetchpriority attribute, 2: lazy loading attribute. */
-										esc_html__( 'Improve performance by applying %1$s on LCP image and %2$s on images below the fold.', 'elementor' ),
-										'<code>fetchpriority="high"</code>',
-										'<code>loading="lazy"</code>'
-									),
+									'desc' => $image_optimization_description,
 								],
 							],
 							'optimized_gutenberg_loading' => [
