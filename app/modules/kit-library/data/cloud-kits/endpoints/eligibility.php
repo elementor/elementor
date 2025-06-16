@@ -1,7 +1,7 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Data\KitsCloud\Endpoints;
+namespace Elementor\App\Modules\KitLibrary\Data\CloudKits\Endpoints;
 
-use Elementor\App\Modules\KitLibrary\Data\KitsCloud\Controller;
+use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller;
 use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
 use Elementor\Data\V2\Base\Endpoint;
 
@@ -18,10 +18,10 @@ class Eligibility extends Endpoint {
 	}
 
 	public function get_format() {
-		return 'kits-cloud/eligibility';
+		return 'cloud-kits/eligibility';
 	}
 
 	public function get_items( $request ) {
-		return KitLibrary::get_cloud_api()->is_eligible();
+		return KitLibrary::get_cloud_app()->is_eligible();
 	}
 }

@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\App\KitLibrary\Data\KitsCloud;
+namespace Elementor\Tests\Phpunit\Elementor\App\KitLibrary\Data\CloudKits;
 
 use Elementor\Plugin;
 use Elementor\Core\Common\Modules\Connect\Module;
 use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
-use Elementor\App\Modules\KitLibrary\Data\KitsCloud\Controller;
+use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller;
 use ElementorEditorTesting\Elementor_Test_Base;
 use ElementorEditorTesting\Traits\Rest_Trait;
 
@@ -60,7 +60,7 @@ class Test_Controller extends Elementor_Test_Base {
 		] );
 
 		// Act
-		$result = $this->http_get( 'kits-cloud' );
+		$result = $this->http_get( 'cloud-kits' );
 
 		// Assert
 		$this->assertArrayHasKey( 'data', $result );
