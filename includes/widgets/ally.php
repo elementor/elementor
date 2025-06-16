@@ -148,7 +148,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	}
 
 	/**
-	 * get_install_instructions
+	 * Get Install Instructions
 	 *
 	 * @return void
 	 */
@@ -242,7 +242,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 	}
 
 	/**
-	 * add_ally_widget_controls
+	 * Add Ally Widget Controls
 	 *
 	 * @return void
 	 */
