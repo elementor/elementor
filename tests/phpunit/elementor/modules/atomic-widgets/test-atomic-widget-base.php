@@ -381,7 +381,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			'props_schema' => [],
 			'controls' => [
 				Section::make()->set_items( [
-					Textarea_Control::bind_to( 'not-in-schema' )
+					Textarea_Control::bind_to( 'not-in-schema', __( 'Not in schema', 'elementor' ) )
 				] )
 			],
 		] );
@@ -399,7 +399,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [],
 			'controls' => [
-				Textarea_Control::bind_to( 'not-in-schema' ),
+				Textarea_Control::bind_to( 'not-in-schema', __( 'Not in schema', 'elementor' ) ),
 			],
 		] );
 
@@ -416,7 +416,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$widget = $this->make_mock_widget( [
 			'props_schema' => [],
 			'controls' => [
-				Textarea_Control::bind_to( '' ),
+				Textarea_Control::bind_to( '', '' ),
 			],
 		] );
 
@@ -432,15 +432,15 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		// Arrange.
 		$controls_definitions = [
 			// Top-level control
-			Textarea_Control::bind_to( 'text' ),
+			Textarea_Control::bind_to( 'text', __( 'Test Label', 'elementor' ) ),
 
 			// Control in section
 			Section::make()->set_items( [
-				Select_Control::bind_to( 'select' ),
+				Select_Control::bind_to( 'select', __( 'Test Label', 'elementor' ) ),
 
 				// Nested section
 				Section::make()->set_items( [
-					Textarea_Control::bind_to( 'nested-text' ),
+					Textarea_Control::bind_to( 'nested-text', __( 'Test Label', 'elementor' ) ),
 				] ),
 			] ),
 		];
@@ -490,13 +490,13 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				Section::make()
 					->set_id( 'test-section-1')
 					->set_items( [
-						Textarea_Control::bind_to( 'prop-1' ),
+						Textarea_Control::bind_to( 'prop-1', __( 'Prop 1', 'elementor' ) ),
 					] ),
 
 				Section::make()
 					->set_id( 'test-section-2')
 					->set_items( [
-						Textarea_Control::bind_to( 'prop-2' ),
+						Textarea_Control::bind_to( 'prop-2', __( 'Prop 2', 'elementor' ) ),
 					] ),
 			]
 		] );
@@ -508,7 +508,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			);
 
 			$second_section->add_item(
-				Textarea_Control::bind_to( 'prop-3' )
+				Textarea_Control::bind_to( 'prop-3', __( 'Prop 3', 'elementor' ) )
 			);
 
 			return $controls;
@@ -519,7 +519,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertCount( 2, $controls[1]->get_items() );
-		$this->assertEquals( Textarea_Control::bind_to( 'prop-3' ), $controls[1]->get_items()[1] );
+		$this->assertEquals( Textarea_Control::bind_to( 'prop-3', __( 'Prop 3', 'elementor' ) ), $controls[1]->get_items()[1] );
 	}
 
 	public function test_get_data_for_save() {

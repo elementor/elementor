@@ -122,6 +122,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 									'value' => [
 										'bind' => 'before',
 										'label' => 'Before',
+										'prop_display_name' => 'Before',
 										'description' => null,
 										'type' => 'text',
 										'props' => [
@@ -135,6 +136,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 									'value' => [
 										'bind' => 'key',
 										'label' => 'Key',
+										'prop_display_name' => 'Key',
 										'description' => null,
 										'type' => 'select',
 										'props' => [
