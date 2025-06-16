@@ -44,12 +44,10 @@ class Atomic_Divider extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$props = [
+		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 		];
-
-		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
