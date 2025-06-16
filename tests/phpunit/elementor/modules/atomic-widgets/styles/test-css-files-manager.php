@@ -29,7 +29,7 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 		$wp_filesystem = null;
 	}
 
-	public function test_enqueue__throws_exception_when_writing_file_fails() {
+	public function test_get__throws_exception_when_writing_file_fails() {
 		// Arrange.
 		$get_css = function() {
 			return [
@@ -44,10 +44,10 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 		$this->expectException(\Exception::class);
 
 		// Act.
-		$result = ( new CSS_Files_Manager() )->create( 'test-style', $get_css );
+		( new CSS_Files_Manager() )->get( 'test-style', $get_css );
 	}
 
-	public function test_create__creates_file() {
+	public function test_get__creates_file() {
 		// Arrange.
 		$get_css = function() {
 			return [
@@ -70,7 +70,7 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 			);
 
 		// Act.
-		$result = ( new CSS_Files_Manager() )->create( 'test-style.css+$', $get_css );
+		$result = ( new CSS_Files_Manager() )->get( 'test-style.css+$', $get_css );
 
 		// Assert.
 		$this->assertEquals(
