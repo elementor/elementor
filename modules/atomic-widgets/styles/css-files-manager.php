@@ -3,10 +3,10 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 class CSS_Files_Manager {
-	CONST DEFAULT_CSS_DIR = 'elementor/css/';
-	CONST PERMISSIONS = 0644;
+	const DEFAULT_CSS_DIR = 'elementor/css/';
+	const PERMISSIONS = 0644;
 
-	public function create(string $filename, callable $get_css ): Style_File {
+	public function create( string $filename, callable $get_css ): Style_File {
 		$css = $get_css();
 
 		if ( empty( $css['content'] ) ) {
@@ -19,9 +19,9 @@ class CSS_Files_Manager {
 		$filesystem_path = $this->get_filesystem_path( $path );
 
 		$filesystem = $this->get_filesystem();
-		$bytes_written = $filesystem->put_contents( $filesystem_path, $css['content'], self::PERMISSIONS );
+		$is_created = $filesystem->put_contents( $filesystem_path, $css['content'], self::PERMISSIONS );
 
-		if ( false === $bytes_written ) {
+		if ( false === $is_created ) {
 			throw new \Exception( 'Could not write the file: ' . $filesystem_path );
 		}
 
