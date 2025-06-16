@@ -52,7 +52,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
-
 		];
 
 		return $props;
