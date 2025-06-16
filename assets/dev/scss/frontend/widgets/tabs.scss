@@ -26,7 +26,7 @@
 				&:after {
 					height: 999em;
 					width: 0;
-					@include end(0);
+					inset-inline-end: 0;
 					border-inline-end-style: solid;
 				}
 
@@ -166,7 +166,7 @@
 			.elementor-tabs-content-wrapper {
 				flex-grow: 1;
 				border-style: solid;
-				@include border-start-property(style, none);
+				border-inline-start-style: none;
 			}
 		}
 	}
