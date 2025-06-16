@@ -20,11 +20,11 @@ class Manager {
 	 * @var array{
 	 *     disable: array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
-	 *         terms: (Term|self)[]
+	 *         terms: array
 	 *     },
 	 *     hide: array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
-	 *         terms: (Term|self)[]
+	 *         terms: array
 	 *     }
 	 * }
 	 */
@@ -48,12 +48,23 @@ class Manager {
 	}
 
 	/**
-	 * @param self::EFFECT_DISABLE|self::EFFECT_HIDE $effect
-	 * @param Term $term
-	 * @return $this
+	 * @param $config array{
+	 * effect?: self::EFFECT_DISABLE | self::EFFECT_HIDE,
+	 * operator: string,
+	 * path_to_value: array<string>,
+	 * value_to_compare?: mixed,
+	 * value_on_fail?: mixed,
+	 * }
+	 * @return self
 	 */
-	public function where( $effect, Term $term ): self {
-		$this->dependencies[ $effect ]['terms'][] = $term;
+	public function where( array $config ): self {
+		$effect = $config['effect'] ?? self::EFFECT_DISABLE;
+		$this->dependencies[ $effect ]['terms'][] = [
+			'operator' => $config['operator'],
+			'path_to_value' => $config['path_to_value'],
+			'value_to_compare' => $config['value_to_compare'] ?? null,
+			'value_on_fail' => $config['value_on_fail'] ?? null,
+		];
 
 		return $this;
 	}
@@ -63,9 +74,7 @@ class Manager {
 			->filter( fn ( $effect ) => ! empty( $effect['terms'] ) )
 			->map( fn ( $effect ) => [
 				'relation' => $effect['relation'],
-				'terms' => Collection::make( $effect['terms'] )
-					->map( fn ( Term $term ) => $term->get() )
-					->all(),
+				'terms' => $effect['terms'],
 			] )
 			->all();
 	}
