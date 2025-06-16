@@ -160,8 +160,8 @@ module.exports = elementorModules.Module.extend( {
 			.elementor-loader-box:nth-of-type(1) {
 			    width: 20%;
 			    height: 100%;
-			    left: 0;
-			    top: 0;
+			    inset-block-start: 0;
+			    inset-inline-start: 0;
 			}
 			.elementor-loader-box:nth-of-type(2) {
 			    top: 0;
