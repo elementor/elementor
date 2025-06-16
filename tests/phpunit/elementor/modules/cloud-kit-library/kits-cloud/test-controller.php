@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Tests\Phpunit\Elementor\App\KitLibrary\Data\CloudKits;
+namespace Elementor\Tests\Phpunit\Elementor\Modules\CloudKitLibrary\Data;
 
 use Elementor\Plugin;
 use Elementor\Core\Common\Modules\Connect\Module;
-use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
-use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller;
+use Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits;
+use Elementor\Modules\CloudKitLibrary\Data\Controller;
 use ElementorEditorTesting\Elementor_Test_Base;
 use ElementorEditorTesting\Traits\Rest_Trait;
 
@@ -14,9 +14,11 @@ class Test_Controller extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @var Cloud_Library|\PHPUnit\Framework\MockObject\MockObject
+	 * @var Cloud_Kits|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	private $cloud_kits_mock;
+
+	private $connect_component;
 
 	public function setUp(): void {
 		$this->traitSetUP();
@@ -34,12 +36,20 @@ class Test_Controller extends Elementor_Test_Base {
 			->with( 'cloud-kits' )
 			->willReturn( $this->cloud_kits_mock );
 
+		$this->connect_component = Plugin::$instance->common->get_component( 'connect' );
+
 		Plugin::$instance->common->add_component( 'connect', $connect_module_mock );
+
 
 		$this->data_manager->register_controller( new Controller() );
 	}
 
-	public function test_get_items() {
+	public function tearDown(): void {
+		Plugin::$instance->common->add_component( 'connect', $this->connect_component );
+		parent::tearDown();
+	}
+
+	public function test_get_items_kits() {
 		// Arrange
 		$this->act_as_admin();
 		$this->cloud_kits_mock->method( 'get_all' )->willReturn( [
