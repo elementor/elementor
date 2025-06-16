@@ -23,22 +23,6 @@ $root: e-app-export-kit;
 
 		&__field--error {
 			border-color: var(--e-a-color-danger);
-
-			&::placeholder {
-				color: var(--e-a-color-danger);
-			}
-
-			&::-webkit-input-placeholder {
-				color: var(--e-a-color-danger);
-			}
-
-			&::-moz-placeholder {
-				color: var(--e-a-color-danger);
-			}
-
-			&:-ms-input-placeholder {
-				color: var(--e-a-color-danger);
-			}
 		}
 
 		&__error-container {

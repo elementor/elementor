@@ -15,14 +15,14 @@ export default function useMenuItems( path ) {
 
 		const menuItems = [
 			{
-				label: __( 'All Website Kits', 'elementor' ),
+				label: __( 'All Website Templates', 'elementor' ),
 				icon: 'eicon-filter',
 				isActive: ! page,
 				url: '/kit-library',
 				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
 			},
 			...( isCloudKitsAvailable ? [ {
-				label: __( 'My Cloud Kits', 'elementor' ),
+				label: __( 'My Website Templates', 'elementor' ),
 				icon: 'eicon-library-cloud-empty',
 				isActive: 'cloud' === page,
 				url: '/kit-library/cloud',
