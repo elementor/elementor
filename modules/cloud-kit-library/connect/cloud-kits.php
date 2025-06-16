@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Connect;
+namespace Elementor\Modules\CloudKitLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Utils\Exceptions;
