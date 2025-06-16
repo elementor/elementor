@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Data\CloudKits\Endpoints;
+namespace Elementor\Modules\CloudKitLibrary\Data\Endpoints;
 
-use Elementor\App\Modules\KitLibrary\Data\CloudKits\Controller;
-use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
+use Elementor\Modules\CloudKitLibrary\Data\Controller;
+use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Data\V2\Base\Endpoint;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +22,6 @@ class Eligibility extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		return KitLibrary::get_cloud_app()->is_eligible();
+		return CloudKitLibrary::get_app()->is_eligible();
 	}
 }
