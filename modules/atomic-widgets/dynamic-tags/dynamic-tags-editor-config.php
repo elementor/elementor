@@ -164,7 +164,7 @@ class Dynamic_Tags_Editor_Config {
 			$control['options']
 		);
 
-		return Select_Control::bind_to( $control['name'] )
+		return Select_Control::bind_to( $control['name'], $control['label'] ?? '' )
 			->set_label( $control['label'] )
 			->set_options( $options );
 	}
@@ -175,7 +175,7 @@ class Dynamic_Tags_Editor_Config {
 	 * @return Text_Control
 	 */
 	private function convert_text_control_to_atomic( $control ) {
-		return Text_Control::bind_to( $control['name'] )
+		return Text_Control::bind_to( $control['name'], $control['label'] ?? '' )
 			->set_label( $control['label'] );
 	}
 }
