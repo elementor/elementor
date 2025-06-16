@@ -19,6 +19,11 @@ class Link_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
+		$is_target_blank_dependencies = [
+			'operator' => 'unset',
+			'path_to_value' => [ 'link', 'destination' ],
+		];
+
 		return [
 			'destination' => Union_Prop_Type::make()
 				->add_prop_type( Url_Prop_Type::make()->skip_validation() )
@@ -28,10 +33,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 				->add_prop_type( String_Prop_Type::make() ),
 			'isTargetBlank' => Boolean_Prop_Type::make()
 				->dependencies( Manager::make()
-					->where( [
-						'operator' => 'unset',
-						'path_to_value' => [ 'link', 'destination' ]
-					] ) ),
+				->where( $is_target_blank_dependencies ) ),
 		];
 	}
 }

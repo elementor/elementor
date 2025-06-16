@@ -43,6 +43,11 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$tag_dependencies = [
+			'operator' => 'set',
+			'path_to_value' => [ 'link', 'destination' ],
+		];
+
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -50,10 +55,7 @@ class Div_Block extends Atomic_Element_Base {
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' )
 				->dependencies( Manager::make()
-					->where( [
-						'operator' => 'set',
-						'path_to_value' => [ 'link', 'destination' ],
-					] ) ),
+				->where( $tag_dependencies ) ),
 			'link' => Link_Prop_Type::make(),
 		];
 		return $props;
