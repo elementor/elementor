@@ -40,7 +40,7 @@ class CSS_Files_Manager {
 	}
 
 	private function get_filesystem_path( $path ): string {
-		$filesystem = self::get_filesystem();
+                $filesystem = $this->get_filesystem();
 
 		return str_replace( ABSPATH, $filesystem->abspath(), $path );
 	}
