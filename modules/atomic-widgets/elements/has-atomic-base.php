@@ -130,10 +130,9 @@ trait Has_Atomic_Base {
 
 	protected function combine_controls(): array {
 		$common_settings_controls = [
-			Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
-				'topDivider' => true,
-			] ),
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
 		];
 
 		return array_merge(
@@ -144,6 +143,13 @@ trait Has_Atomic_Base {
 					->set_items( array_merge( $this->get_settings_controls(), $common_settings_controls ) ),
 			],
 		);
+	}
+
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => true,
+		];
 	}
 
 	protected function get_settings_controls(): array {
