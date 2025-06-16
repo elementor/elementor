@@ -12,64 +12,55 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Atomic_Divider extends Atomic_Widget_Base
-{
+class Atomic_Divider extends Atomic_Widget_Base {
+
 	use Has_Template;
 
-	protected function get_css_id_control_meta(): array
-	{
+	protected function get_css_id_control_meta(): array {
 		return [
 			'layout' => 'two-columns',
 			'topDivider' => false,
 		];
 	}
 
-	public static function get_element_type(): string
-	{
+	public static function get_element_type(): string {
 		return 'e-divider';
 	}
 
-	public function get_title()
-	{
-		return esc_html__('Divider', 'elementor');
+	public function get_title() {
+		return esc_html__( 'Divider', 'elementor' );
 	}
 
-	public function get_keywords()
-	{
-		return ['ato', 'atom', 'atoms', 'atomic', 'divider', 'hr', 'line', 'border', 'separator'];
+	public function get_keywords() {
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'divider', 'hr', 'line', 'border', 'separator' ];
 	}
 
-	public function get_icon()
-	{
+	public function get_icon() {
 		return 'eicon-e-divider';
 	}
 
-	protected static function define_props_schema(): array
-	{
+	protected static function define_props_schema(): array {
 		$props = [
 			'classes' => Classes_Prop_Type::make()
-				->default([]),
+				->default( [] ),
 		];
 
 		return $props;
 	}
 
-	protected function define_atomic_controls(): array
-	{
+	protected function define_atomic_controls(): array {
 		return [];
 	}
 
-	protected function get_settings_controls(): array
-	{
+	protected function get_settings_controls(): array {
 		return [];
 	}
 
-	protected function define_base_styles(): array
-	{
+	protected function define_base_styles(): array {
 		$border_width_value = Size_Prop_Type::generate([
 			'size' => 0,
 			'unit' => 'px',
@@ -81,24 +72,23 @@ class Atomic_Divider extends Atomic_Widget_Base
 		]);
 
 		$background_value = Background_Prop_Type::generate([
-			'color' => Color_Prop_Type::generate('#000'),
+			'color' => Color_Prop_Type::generate( '#000' ),
 		]);
 
 		return [
 			'base' => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop('border-width', $border_width_value)
-						->add_prop('border-color', 'transparent')
-						->add_prop('border-style', 'none')
-						->add_prop('background', $background_value)
-						->add_prop('height', $height_value)
+						->add_prop( 'border-width', $border_width_value )
+						->add_prop( 'border-color', 'transparent' )
+						->add_prop( 'border-style', 'none' )
+						->add_prop( 'background', $background_value )
+						->add_prop( 'height', $height_value )
 				),
 		];
 	}
 
-	protected function get_templates(): array
-	{
+	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-divider' => __DIR__ . '/atomic-divider.html.twig',
 		];
