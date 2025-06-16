@@ -83,7 +83,7 @@ export default function ImportKit() {
 		} );
 
 	const { source, kit_id: kitId } = useQueryParams().getAll();
-	const isLoadingKitFromCloud = KIT_SOURCE_MAP.CLOUD === source;
+	const isLoadingKitFromCloud = [ importContext.data.source, source ].includes( KIT_SOURCE_MAP.CLOUD );
 
 	// On load.
 	useEffect( () => {
@@ -104,8 +104,8 @@ export default function ImportKit() {
 		if ( KIT_STATUS_MAP.UPLOADED === kitState.status ) {
 			importContext.dispatch( { type: 'SET_UPLOADED_DATA', payload: kitState.data } );
 
-			if ( KIT_SOURCE_MAP.CLOUD === source && kitState.data.file_url ) {
-				importContext.dispatch( { type: 'SET_FILE', payload: kitState.data.file_url } );
+			if ( isLoadingKitFromCloud && kitState.data.uploaded_kit ) {
+				importContext.dispatch( { type: 'SET_FILE', payload: kitState.data.uploaded_kit } );
 			}
 		} else if ( 'error' === kitState.status ) {
 			setErrorType( kitState.data );
@@ -140,33 +140,35 @@ export default function ImportKit() {
 							<Button
 								className="e-app-import__back-to-library"
 								icon="eicon-chevron-left"
-								text={ __( 'Back to Kit Library', 'elementor' ) }
+								text={ __( 'Back to Website Templates', 'elementor' ) }
 								url={ isLoading ? '' : `/kit-library${ isLoadingKitFromCloud ? '/cloud' : '' }` }
 							/>
 						}
 
 						<PageHeader
-							heading={ __( 'Import a Website Kit', 'elementor' ) }
-							description={ [
-								__( 'Upload a file with templates, site settings, content, etc., and apply them to your site automatically.', 'elementor' ),
-								getLearnMoreLink(),
-							] }
+							heading={ __( 'Import a Website Template', 'elementor' ) }
+							description={ <>
+								{ __( 'Upload a .zip file with style, site settings, content, etc. Then, we’ll apply them to your site.', 'elementor' ) }
+								{ ' ' }
+								{ getLearnMoreLink() }
+							</> }
 						/>
 
-						<Notice label={ __( 'Important:', 'elementor' ) } color="warning" className="e-app-import__notice">
-							{ __( 'We recommend that you backup your site before importing a kit file.', 'elementor' ) }
+						<Notice label={ __( 'Heads up!', 'elementor' ) } color="warning" className="e-app-import__notice">
+							{ __( 'Before applying a new template, we recommend backing up your site so you can roll back any undesired changes.', 'elementor' ) }
 						</Notice>
 
 						<DropZone
 							className="e-app-import__drop-zone"
-							heading={ __( 'Upload Files to Your Library', 'elementor' ) }
-							text={ __( 'Drag & drop the .zip file with your Kit', 'elementor' ) }
-							secondaryText={ __( 'Or', 'elementor' ) }
+							heading={ __( 'Choose a file to import', 'elementor' ) }
+							text={ __( 'Drag & drop the .zip file with your website template', 'elementor' ) }
+							secondaryText={ 'Or' }
 							filetypes={ [ 'zip' ] }
 							onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
 							onFileSelect={ uploadFile }
 							onError={ () => setErrorType( 'general' ) }
 							isLoading={ isLoading }
+							buttonText={ __( 'Import from files' ) }
 						/>
 
 						{ dialog.isOpen &&

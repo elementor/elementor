@@ -30,7 +30,29 @@ class Test_Variables_Repository extends TestCase {
 		$this->repository = new Variables_Repository( $this->kit );
 	}
 
+	/**
+	 * TODO: Remove this, when we have the full flow for the variables
+	 */
+	public function test_list_of_variables__returns_predefined_variables() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( null );
+
+		// Act.
+		$result = $this->repository->load();
+
+		$expected = [
+			'data' => ( new Variables() )->get_all(),
+			'watermark' => 0,
+			'version' => 1,
+		];
+
+		// Assert.
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_list_of_variables__returns_default_when_empty() {
+		return $this->markTestSkipped( 'TODO: Unskip, when we have the full flow for the variables' );
+
 		// Arrange.
 		$this->kit->method( 'get_json_meta' )->willReturn( null );
 

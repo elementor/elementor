@@ -124,13 +124,13 @@ class Widget_Common_Base extends Widget_Base {
 	}
 
 	/**
-	 * Return a translated user-friendly list of the available masking shapes.
+	 * Get a list of the available mask shapes.
 	 *
-	 * @param bool $add_custom Determine if the output should contain `Custom` options.
+	 * @param bool $custom_button Determine if the output should contain `Custom Mask` button.
 	 *
-	 * @return array Array of shapes with their URL as key.
+	 * @return array A list of mask shapes.
 	 */
-	private function get_shapes( $add_custom = true ) {
+	private function get_shapes( $custom_button = true ): array {
 		$shapes = [
 			'circle' => [
 				'title' => esc_html__( 'Circle', 'elementor' ),
@@ -214,7 +214,9 @@ class Widget_Common_Base extends Widget_Base {
 			],
 		];
 
-		if ( $add_custom ) {
+		$shapes = array_merge( $shapes, self::get_additional_mask_shapes() );
+
+		if ( $custom_button ) {
 			$shapes['custom'] = [
 				'type' => 'button',
 				'title' => esc_html__( 'Custom Mask', 'elementor' ),
@@ -222,6 +224,38 @@ class Widget_Common_Base extends Widget_Base {
 		}
 
 		return $shapes;
+	}
+
+	/**
+	 * Get additional mask shapes.
+	 *
+	 * Used to add custom mask shapes to elementor.
+	 *
+	 * @since 3.30.0
+	 *
+	 * @return array A list of additional mask shapes.
+	 */
+	private static function get_additional_mask_shapes(): array {
+		static $additional_mask_shapes = null;
+
+		if ( null !== $additional_mask_shapes ) {
+			return $additional_mask_shapes;
+		}
+
+		$additional_mask_shapes = [];
+
+		/**
+		 * Additional mask shapes.
+		 *
+		 * Filters the mask shapes used by Elementor to add additional mask shapes.
+		 *
+		 * @since 3.30.0
+		 *
+		 * @param array $additional_mask_shapes Additional mask shapes.
+		 */
+		$additional_mask_shapes = apply_filters( 'elementor/mask_shapes/additional_shapes', $additional_mask_shapes );
+
+		return $additional_mask_shapes;
 	}
 
 	/**

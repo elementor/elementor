@@ -24,7 +24,7 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 			{
 				isCloudKitsEligible && (
 					<Button
-						text={ __( 'Add Kit to Cloud', 'elementor' ) }
+						text={ __( 'Upload to Cloud', 'elementor' ) }
 						variant="outlined"
 						color="secondary"
 						url="/export/process"
@@ -36,7 +36,7 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 			}
 
 			<Button
-				text={ __( 'Export as Zip', 'elementor' ) }
+				text={ __( 'Export as .zip', 'elementor' ) }
 				variant="contained"
 				color={ isKitReady && ! isCheckingEligibility ? 'primary' : 'disabled' }
 				url={ isKitReady && ! isCheckingEligibility ? '/export/process' : '' }

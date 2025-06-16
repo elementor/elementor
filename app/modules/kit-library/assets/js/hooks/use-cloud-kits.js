@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { pipe } from '../utils';
 
-export const KEY = 'kits-cloud';
+export const KEY = 'cloud-kits';
 
 /**
  * The default query params
@@ -43,7 +43,7 @@ const kitsPipeFunctions = {
  * @return {*} kits
  */
 function fetchKits() {
-	return $e.data.get( 'kits-cloud/index', {}, { refresh: true } )
+	return $e.data.get( 'cloud-kits/index', {}, { refresh: true } )
 		.then( ( response ) => response.data )
 		.then( ( { data } ) => data.map( ( item ) => Kit.createFromResponse( item ) ) );
 }
@@ -54,7 +54,7 @@ function fetchKits() {
  * @param {*} initialQueryParams
  * @return {Object} query
  */
-export default function useKitsCloud( initialQueryParams = {} ) {
+export default function useCloudKits( initialQueryParams = {} ) {
 	const [ force, setForce ] = useState( false );
 	const [ queryParams, setQueryParams ] = useState( () => ( {
 		ready: false, // When the query param is ready to use (after parsing and assign the query param from the url)

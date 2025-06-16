@@ -32,14 +32,16 @@ export default function KitName() {
 
 	return (
 		<Grid container direction="column">
-			<Text tag="span" variant="xs">{ __( 'Kit name', 'elementor' ) }</Text>
+			<Text tag="span" variant="xs">{ __( 'Name', 'elementor' ) }</Text>
 			<TextField
-				placeholder={ __( 'Type kit name here...', 'elementor' ) }
+				placeholder={ __( 'Type name here...', 'elementor' ) }
 				onChange={ handleChange }
 				onBlur={ handleChange }
 				className={ error ? 'e-app-export-kit-information__field--error' : '' }
 				title={ error || '' }
 				value={ exportContext.data.kitInfo?.title || '' }
+				// eslint-disable-next-line jsx-a11y/no-autofocus
+				autoFocus
 			/>
 			<div className="e-app-export-kit-information__error-container">
 				{ error && (

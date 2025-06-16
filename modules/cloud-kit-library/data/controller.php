@@ -1,8 +1,8 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Data\KitsCloud;
+namespace Elementor\Modules\CloudKitLibrary\Data;
 
-use Elementor\App\Modules\KitLibrary\Connect\Cloud_Kits;
-use Elementor\App\Modules\KitLibrary\Module as KitLibrary;
+use Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits;
+use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\App\Modules\KitLibrary\Data\Base_Controller;
 use Elementor\Core\Utils\Collection;
 
@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Controller extends Base_Controller {
 
 	public function get_name() {
-		return 'kits-cloud';
+		return 'cloud-kits';
 	}
 
 	public function get_items( $request ) {
@@ -40,7 +40,27 @@ class Controller extends Base_Controller {
 		];
 	}
 
+	public function delete_item( $request ) {
+		return [
+			'data' => $this->get_app()->delete_kit( $request->get_param( 'id' ) ),
+		];
+	}
+
+	public function get_item( $request ) {
+		return [
+			'data' => $this->get_app()->get_kit( [ 'id' => $request->get_param( 'id' ) ] ),
+		];
+	}
+
 	public function register_endpoints() {
+		$this->index_endpoint->register_item_route( \WP_REST_Server::DELETABLE, [
+			'id' => [
+				'description' => 'Unique identifier for the object.',
+				'type' => 'integer',
+				'required' => true,
+			],
+		] );
+
 		$this->register_endpoint( new Endpoints\Eligibility( $this ) );
 	}
 
@@ -49,6 +69,6 @@ class Controller extends Base_Controller {
 	}
 
 	protected function get_app(): Cloud_Kits {
-		return KitLibrary::get_cloud_api();
+		return CloudKitLibrary::get_app();
 	}
 }

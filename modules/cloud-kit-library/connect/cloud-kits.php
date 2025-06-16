@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\App\Modules\KitLibrary\Connect;
+namespace Elementor\Modules\CloudKitLibrary\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Utils\Exceptions;
@@ -115,12 +115,17 @@ class Cloud_Kits extends Library {
 	}
 
 	public function get_kit( array $args ) {
-
 		$args = array_merge_recursive( $args, [
 			'timeout' => 60, // just in case if zip is big
 		] );
 
 		return $this->http_request( 'GET', 'kits/' . $args['id'], $args, [
+			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+		] );
+	}
+
+	public function delete_kit( int $id ) {
+		return $this->http_request( 'DELETE', 'kits/' . $id, [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
 	}
