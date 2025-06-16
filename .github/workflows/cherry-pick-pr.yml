@@ -5,28 +5,38 @@ on:
     types:
       - closed
 
+# Global permissions for checkout, push and PR creation
 permissions:
-  contents: write
-  id-token: write
-  pull-requests: write
+  contents: write        # for git push
+  pull-requests: write   # for gh pr create
+  id-token: write        # if OIDC tokens are needed
 
 jobs:
   cherry-pick:
-    if: github.event.pull_request.merged == true
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
+
+    # Job-level permissions - same as global ones
     permissions:
-      write-all
+      contents: write
+      pull-requests: write
+      id-token: write
+
+    # Pass token to GH CLI and git
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for cherry-pick
+          token: ${{ secrets.GITHUB_TOKEN }}    # explicitly specify token
+          fetch-depth: 0                        # needed for cherry-pick
+          persist-credentials: true            # preserve credentials for subsequent git push
 
       - name: Get branch labels
         id: get_labels
         run: |
-          echo "Labels from first step: $LABELS"
           LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | paste -sd ',')
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
@@ -37,113 +47,46 @@ jobs:
 
       - name: Cherry-Pick and Create PRs
         if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
-        env:
-          GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          # Initialize variables for summary
-          FAILED_CHERRY_PICKS=()
-          SUCCESSFUL_CHERRY_PICKS=()
-          
           PR_NUMBER="${{ github.event.pull_request.number }}"
-          MERGE_COMMIT_SHA="${{ github.event.pull_request.merge_commit_sha }}"
-          ORIGINAL_PR_TITLE="${{ github.event.pull_request.title }}"
-          ORIGINAL_PR_URL="${{ github.event.pull_request.html_url }}"
-      
-          echo "Filtered labels for cherry-picking: ${{ steps.get_labels.outputs.filtered_labels_csv }}"
-      
+          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          ORIG_TITLE="${{ github.event.pull_request.title }}"
+          ORIG_URL="${{ github.event.pull_request.html_url }}"
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          echo "Git config set."
 
-          IFS=',' read -ra ADDR <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
-          for label in "${ADDR[@]}"; do
-            TARGET_BRANCH=$(echo "$label" | sed 's/^cp_//')
-            echo "Attempting to cherry-pick to branch: $TARGET_BRANCH"
-      
-            # Create a new branch for cherry-pick
-            CHERRY_PICK_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET_BRANCH}"
-            echo "Attempting to checkout and create branch $CHERRY_PICK_BRANCH from origin/$TARGET_BRANCH"
-            set +e # Temporarily disable exit on error
-            git checkout -b "$CHERRY_PICK_BRANCH" "origin/$TARGET_BRANCH"
-            CHECKOUT_EXIT_CODE=$?
-            set -e # Re-enable exit on error
+          IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
+          for lbl in "${BRANCHES[@]}"; do
+            TARGET=${lbl#cp_}
+            BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}"
 
-            if [ $CHECKOUT_EXIT_CODE -ne 0 ]; then
-              echo "::warning::Branch $TARGET_BRANCH does not exist or cannot be checked out (exit code: $CHECKOUT_EXIT_CODE). Skipping cherry-pick for this branch."
-              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Target branch does not exist or cannot be checked out.\n"
-              continue # Skip to the next label in the loop
+            # Create branch
+            if ! git checkout -b "$BRANCH" "origin/$TARGET"; then
+              echo "::warning:: Branch $TARGET does not exist - skipping"
+              continue
             fi
-            echo "Checked out to new branch: $CHERRY_PICK_BRANCH"
 
-            # Cherry-pick the commit
-            echo "Attempting to cherry-pick $MERGE_COMMIT_SHA to $CHERRY_PICK_BRANCH"
-            set +e # Temporarily disable exit on error for cherry-pick
-            git cherry-pick "$MERGE_COMMIT_SHA"
-            CHERRY_PICK_EXIT_CODE=$?
-            set -e # Re-enable exit on error
-
-            
-            if [ $CHERRY_PICK_EXIT_CODE -ne 0 ]; then
-              echo "Conflict during cherry-pick, committing partial changes for manual resolution"
+            # Cherry-pick
+            if ! git cherry-pick "$MERGE_SHA"; then
+              echo "Conflict - saving for manual resolution"
               git add .
-              git commit -m "Cherry-pick PR #${PR_NUMBER} to ${TARGET_BRANCH} (${MERGE_COMMIT_SHA}) with conflicts – manual resolution required" || true
-              
-              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Cherry-pick completed with conflicts. Manual resolution required.\\n"
+              git commit -m "Cherry-pick #${PR_NUMBER} to ${TARGET} (${MERGE_SHA}) - conflicts"
             else
-              echo "Cherry-pick succeeded."
-              git add .
               git commit --no-edit
-              SUCCESSFUL_CHERRY_PICKS+="Branch $TARGET_BRANCH\\n"
             fi
-            
-            echo "Successfully cherry-picked and committed to $CHERRY_PICK_BRANCH"
 
-            echo "Attempting to push $CHERRY_PICK_BRANCH to origin"
-            set +e # Temporarily disable exit on error
-            git push https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git "$CHERRY_PICK_BRANCH"
-            PUSH_EXIT_CODE=$?
-            set -e # Re-enable exit on error
-
-            if [ $PUSH_EXIT_CODE -ne 0 ]; then
-              echo "::warning::Failed to push branch $CHERRY_PICK_BRANCH (exit code: $PUSH_EXIT_CODE). Skipping PR creation."
-              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Failed to push branch. Check remote configuration or permissions. (Exit code: $PUSH_EXIT_CODE)\\n"
-              continue # Skip to the next label in the loop
+            # Push
+            if ! git push origin "$BRANCH"; then
+              echo "::warning:: Failed to push branch $BRANCH"
+              continue
             fi
-            echo "Pushed branch $CHERRY_PICK_BRANCH."
 
-            # Create Pull Request
-            PR_TITLE="Cherry-pick PR #${PR_NUMBER} to ${TARGET_BRANCH}: ${ORIGINAL_PR_TITLE}"
-            PR_BODY="This is an automated cherry-pick of PR #${PR_NUMBER} (${ORIGINAL_PR_URL}) to the \`${TARGET_BRANCH}\` branch.\n\n⚠️ **Conflicts may need manual resolution.**"
-            echo "Attempting to create PR for $TARGET_BRANCH"
-            set +e # Temporarily disable exit on error
-            gh pr create --base "$TARGET_BRANCH" --head "$CHERRY_PICK_BRANCH" --title "$PR_TITLE" --body "$PR_BODY"
-            PR_CREATE_EXIT_CODE=$?
-            set -e # Re-enable exit on error
-
-            if [ $PR_CREATE_EXIT_CODE -ne 0 ]; then
-              echo "::warning::Failed to create pull request for $TARGET_BRANCH (exit code: $PR_CREATE_EXIT_CODE)."
-              FAILED_CHERRY_PICKS+="Branch $TARGET_BRANCH: Failed to create pull request. (Exit code: $PR_CREATE_EXIT_CODE)\\n"
-            fi
+            # Create PR via gh CLI (token already in env: GH_TOKEN)
+            gh pr create \
+              --base "$TARGET" \
+              --head "$BRANCH" \
+              --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+              --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
           done
-
-          # Generate workflow summary
-          echo "# Cherry-Pick Summary" >> $GITHUB_STEP_SUMMARY
-
-          if [ ${#SUCCESSFUL_CHERRY_PICKS[@]} -gt 0 ]; then
-            echo "## Successful Cherry-Picks" >> $GITHUB_STEP_SUMMARY
-            for success in "${SUCCESSFUL_CHERRY_PICKS[@]}"; do
-              echo "- $success" >> $GITHUB_STEP_SUMMARY
-            done
-          fi
-
-          if [ ${#FAILED_CHERRY_PICKS[@]} -gt 0 ]; then
-            echo "## Cherry-Picks with Conflicts or Failures" >> $GITHUB_STEP_SUMMARY
-            for failure in "${FAILED_CHERRY_PICKS[@]}"; do
-              echo "- $failure" >> $GITHUB_STEP_SUMMARY
-            done
-            # Exit with a non-zero code to indicate overall job failure due to failed cherry-picks
-            exit 1
-          else
-            echo "All cherry-picks completed successfully." >> $GITHUB_STEP_SUMMARY
-          fi
         shell: bash
