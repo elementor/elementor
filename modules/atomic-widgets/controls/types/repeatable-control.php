@@ -1,5 +1,4 @@
 <?php
-// phpcs:disable
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
@@ -10,13 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Repeatable_Control extends Atomic_Control_Base {
 
-	private string $childControlType;
-	private object $childControlProps;
-	private bool $showDuplicate = true;
-	private bool $showToggle = true;
-	private string $repeaterLabel;
-	private? object $initialValues;
-	private? string $patternLabel;
+	private string $child_control_type;
+	private object $child_control_props;
+	private bool $show_duplicate;
+	private bool $show_toggle;
+	private string $repeater_label;
+	private? object $initial_values;
+	private? string $pattern_label;
 	private ?string $placeholder;
 
 
@@ -25,41 +24,41 @@ class Repeatable_Control extends Atomic_Control_Base {
 	}
 
 	public function set_child_control_type( $controlType ): self {
-		$this->childControlType = $controlType;
+		$this->child_control_type = $controlType;
 
 		return $this;
 	}
 
 	public function set_child_control_props( $controlProps ): self {
-		$this->childControlProps = $controlProps;
+		$this->child_control_props = $controlProps;
 
 		return $this;
 	}
 
 	public function hide_duplicate(): self {
-		$this->showDuplicate = false;
+		$this->show_duplicate = false;
 
 		return $this;
 	}
 
 	public function hide_toggle(): self {
-		$this->showToggle = false;
+		$this->show_toggle = false;
 
 		return $this;
 	}
 	public function set_initialValues( $initialValues ): self {
-		$this->initialValues = $initialValues;
+		$this->initial_values = $initialValues;
 
 		return $this;
 	}
 	public function set_patternLabel( $patternLabel ): self {
-		$this->patternLabel = $patternLabel;
+		$this->pattern_label = $patternLabel;
 
 		return $this;
 	}
 	public function set_repeaterLabel( string $label ): self
 	{
-		$this->repeaterLabel = $label;
+		$this->repeater_label = $label;
 		return $this;
 	}
 	public function set_placeholder( string $placeholder ): self
@@ -70,13 +69,13 @@ class Repeatable_Control extends Atomic_Control_Base {
 
 	public function get_props(): array {
 		return [
-			'childControlType' => $this->childControlType,
-			'childControlProps' => $this->childControlProps,
-			'showDuplicate' => $this->showDuplicate,
-			'showToggle' => $this->showToggle,
-			'initialValues'=> $this->initialValues,
-		    	'patternLabel'=> $this->patternLabel,
-			'repeaterLabel' => $this->repeaterLabel,
+			'childControlType' => $this->child_control_type,
+			'childControlProps' => $this->child_control_props,
+			'showDuplicate' => $this->show_duplicate,
+			'showToggle' => $this->show_toggle,
+			'initialValues'=> $this->initial_values,
+			'patternLabel'=> $this->pattern_label,
+			'repeaterLabel' => $this->repeater_label,
 			'placeholder' => $this->placeholder,
 		];
 	}
