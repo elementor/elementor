@@ -1,6 +1,13 @@
 {% if settings.text is not empty %}
     {% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+	{% set attributes %}
+		{% for item in settings.repeater %}
+			{% if item.key is not empty and item.value is not empty %}
+				{{- item.key | e('html_attr') }}="{{ item.value | e('html_attr') }}"{% if not loop.last %} {% endif %}
+			{% endif %}
+		{% endfor %}
+	{% endset %}
     {% if settings.link.href %}
         <a
                 href="{{ settings.link.href }}"
@@ -11,7 +18,7 @@
             {{ settings.text }}
         </a>
     {% else %}
-        <button class="{{ classes }}" {{ id_attribute }}>
+        <button class="{{ classes }}" {{ id_attribute }} {{ attributes }}>
             {{ settings.text }}
         </button>
     {% endif %}

@@ -1,9 +1,16 @@
 {% if settings.image.src is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+		{% set attributes %}
+		{% for item in settings.repeater %}
+			{% if item.key is not empty and item.value is not empty %}
+				{{- item.key | e('html_attr') }}="{{ item.value | e('html_attr') }}"{% if not loop.last %} {% endif %}
+			{% endif %}
+		{% endfor %}
+	{% endset %}
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}">
 	{% endif %}
-	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}" {{ id_attribute }}
+	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}" {{ id_attribute }} {{ attributes }}
 		{% for attr, value in settings.image %}
 			{% if attr == 'src' %}
 				src="{{ value | e('full_url') }}"
