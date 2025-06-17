@@ -4,6 +4,16 @@
 // Mixins
 //
 
+// Direction based value function
+@function getValueByDirection($value-for-left, $value-for-right) {
+
+	@if ($direction == rtl) {
+		@return $value-for-right;
+	}
+
+	@return $value-for-left;
+}
+
 // Simple PX to REM units converter
 @function pxToRem($size) {
 	@return math.div( $size, 16px ) * 1rem;
