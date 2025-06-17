@@ -216,11 +216,8 @@ class Repository {
 	}
 
 	private function get_default_meta(): array {
-		// TODO: Replace with an empty array, when we have the full flow for the variables
-		$predefined_variables = ( new Variables() )->get_all();
-
 		return [
-			'data' => $predefined_variables,
+			'data' => [],
 			'watermark' => 0,
 			'version' => self::FORMAT_VERSION_V1,
 		];
