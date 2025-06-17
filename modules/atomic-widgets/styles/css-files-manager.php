@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 class CSS_Files_Manager {
 	const DEFAULT_CSS_DIR = 'elementor/css/';
 	const FILE_EXTENSION = '.css';
+	// Read and write permissions for the owner
 	const PERMISSIONS = 0644;
 
 	public function get( string $handle, callable $get_css ): Style_File {
