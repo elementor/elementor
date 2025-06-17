@@ -65,7 +65,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Manager;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -101,7 +101,7 @@ class Module extends BaseModule {
 			$this->register_experimental_features();
 		}
 
-		Styles_Manager::instance()->register_hooks();
+		Atomic_Styles_Manager::instance()->register_hooks();
 
 		( new Opt_In() )->init();
 

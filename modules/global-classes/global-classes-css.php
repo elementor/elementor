@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Manager;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Plugin;
 
 class Global_Classes_CSS {
@@ -11,7 +11,7 @@ class Global_Classes_CSS {
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widget/styles/register',
-			fn( Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
+			fn(Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			20,
 			3
 		);
@@ -41,7 +41,7 @@ class Global_Classes_CSS {
 		);
 	}
 
-	private function register_styles( Styles_Manager $styles_manager ) {
+	private function register_styles(Atomic_Styles_Manager $styles_manager ) {
 		$get_styles = function ( $post_ids ) {
 			if ( empty( $post_ids ) ) {
 				return [];

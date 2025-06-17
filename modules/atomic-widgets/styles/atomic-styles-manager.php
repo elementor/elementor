@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Styles_Manager {
+class Atomic_Styles_Manager {
 	private static ?self $instance = null;
 
 	private array $registered_styles_by_key = [];

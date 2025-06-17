@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Manager;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_Filesystem_Base;
 
@@ -110,7 +110,7 @@ class Test_Styles_Manager extends Elementor_Test_Base {
 
 	public function test_enqueue__enqueues_styles() {
 		// Arrange.
-		$styles_manager = new Styles_Manager();
+		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
 
 		$get_style_defs = function() {
@@ -147,7 +147,7 @@ class Test_Styles_Manager extends Elementor_Test_Base {
 
 	public function test_enqueue__with_multiple_styles_from_multiple_keys() {
 		// Arrange.
-		$styles_manager = new Styles_Manager();
+		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
 
 		$get_style_defs = function() {
@@ -202,7 +202,7 @@ class Test_Styles_Manager extends Elementor_Test_Base {
 
     public function test_enqueue__calls_get_styles_once_for_each_key_with_multiple_breakpoints() {
         // Arrange.
-        $styles_manager = new Styles_Manager();
+        $styles_manager = new Atomic_Styles_Manager();
         $styles_manager->register_hooks();
 
         $call_count = 0;

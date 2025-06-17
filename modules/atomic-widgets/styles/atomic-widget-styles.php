@@ -10,12 +10,12 @@ class Atomic_Widget_Styles {
 	const CSS_FILE_KEY = 'local';
 
 	public function register_hooks() {
-		add_action( 'elementor/atomic-widget/styles/register', function( Styles_Manager $styles_manager ) {
+		add_action( 'elementor/atomic-widget/styles/register', function(Atomic_Styles_Manager $styles_manager ) {
 			$this->register_styles( $styles_manager );
 		}, 30, 3 );
 	}
 
-	private function register_styles( Styles_Manager $styles_manager ) {
+	private function register_styles(Atomic_Styles_Manager $styles_manager ) {
 		$get_styles = function( $post_ids ) {
 			if ( empty( $post_ids ) ) {
 				return [];
