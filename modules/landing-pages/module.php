@@ -507,13 +507,9 @@ class Module extends BaseModule {
 			return $cpts;
 		} );
 
-		// When deleting a posts in Landing Page CPT, force Elementor to check again whether this feature should be activated.
-		add_filter( 'pre_delete_post', function ( $delete, $post ) {
-			if ( self::CPT === $post->type ) {
-				delete_option( self::ACTIVATION_KEY );
-			}
-
-			return $delete;
+		// When deleting posts in Landing Page CPT, force Elementor to check again whether this feature should be activated.
+		add_action( 'deleted_post_' . self::CPT, function () {
+			delete_option( self::ACTIVATION_KEY );
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column header title.
