@@ -18,7 +18,6 @@ class Repeatable_Control extends Atomic_Control_Base {
 	private ?string $pattern_label;
 	private ?string $placeholder;
 
-
 	public function get_type(): string {
 		return 'repeatable';
 	}
@@ -30,7 +29,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 	}
 
 	public function set_child_control_props( $control_props ): self {
-		$this->child_control_props = $control_props;
+		$this->child_control_props = (object) $control_props;
 
 		return $this;
 	}
@@ -48,7 +47,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 	}
 
 	public function set_initialValues( $initial_values ): self {
-		$this->initial_values = $initial_values;
+		$this->initial_values = (object) $initial_values;
 
 		return $this;
 	}
@@ -61,24 +60,26 @@ class Repeatable_Control extends Atomic_Control_Base {
 
 	public function set_repeaterLabel( string $label ): self {
 		$this->repeater_label = $label;
+
 		return $this;
 	}
 
 	public function set_placeholder( string $placeholder ): self {
 		$this->placeholder = $placeholder;
+
 		return $this;
 	}
 
 	public function get_props(): array {
 		return [
-			'childControlType' => $this->child_control_type,
-			'childControlProps' => $this->child_control_props,
-			'showDuplicate' => $this->show_duplicate,
-			'showToggle' => $this->show_toggle,
-			'initialValues' => $this->initial_values,
-			'patternLabel' => $this->pattern_label,
-			'repeaterLabel' => $this->repeater_label,
-			'placeholder' => $this->placeholder,
+			'childControlType'   => $this->child_control_type,
+			'childControlProps'  => $this->child_control_props,
+			'showDuplicate'      => $this->show_duplicate,
+			'showToggle'         => $this->show_toggle,
+			'initialValues'      => $this->initial_values,
+			'patternLabel'       => $this->pattern_label,
+			'repeaterLabel'      => $this->repeater_label,
+			'placeholder'        => $this->placeholder,
 		];
 	}
 }
