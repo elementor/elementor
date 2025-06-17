@@ -30,7 +30,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 	}
 
 	public function set_child_control_props( $control_props ): self {
-		$this->child_control_props = $control_props;
+		$this->child_control_props = (object) $control_props;
 
 		return $this;
 	}
