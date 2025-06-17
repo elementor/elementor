@@ -223,8 +223,7 @@ class Style_Schema {
 			] ),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() )
-				,
+				->add_prop_type( Size_Prop_Type::make() ),
 			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
