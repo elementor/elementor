@@ -38,7 +38,7 @@ class Themes extends Import_Runner_Base {
 
 		$themes = $data['manifest']['themes'];
 
-		$existing_themes = Collection::make($themes)
+		$existing_themes = Collection::make( $themes )
 			->map( function( $theme ) {
 				return $theme->get_stylesheet();
 			} );
@@ -47,16 +47,16 @@ class Themes extends Import_Runner_Base {
 
 		foreach ( $themes as $theme ) {
 			try {
-				// todo 19570: check version ?
 				if ( $existing_themes->contains( $theme['slug'] ) ) {
-					// todo 19570: notify somehow in import_result that theme is already installed ?
 					continue;
 				}
 
 				$import = $this->install_theme( $theme['slug'], $theme['version'] );
 
 				if ( is_wp_error( $import ) ) {
-					$result['templates']['failed'][ $theme['slug'] ] = __( "Failed to install theme: " . $theme['name'], 'elementor' );
+					/* translators: %s: Theme name. */
+					$result['templates']['failed'][ $theme['slug'] ] = sprintf( __( 'Failed to install theme: %s', 'elementor' ), $theme['name'] );
+
 					continue;
 				}
 
