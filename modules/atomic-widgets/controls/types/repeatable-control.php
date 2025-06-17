@@ -48,7 +48,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 	}
 
 	public function set_initialValues( $initial_values ): self {
-        $this->initial_values = (object) $initial_values;
+        	$this->initial_values = (object) $initial_values;
 
 		return $this;
 	}
