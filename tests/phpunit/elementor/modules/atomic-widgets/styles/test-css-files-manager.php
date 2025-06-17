@@ -70,12 +70,12 @@ class Test_Css_Files_Manager extends Elementor_Test_Base {
 			);
 
 		// Act.
-		$result = ( new CSS_Files_Manager() )->get( 'test-style.css+$', $get_css );
+		$result = ( new CSS_Files_Manager() )->get( 'test-style(/../..$', $get_css );
 
 		// Assert.
 		$this->assertEquals(
 			'test-style',
-			$result->get_filename()
+			$result->get_handle()
 		);
 	}
 }

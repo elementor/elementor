@@ -7,11 +7,11 @@ class CSS_Files_Manager {
 	const FILE_EXTENSION = '.css';
 	const PERMISSIONS = 0644;
 
-	public function get( string $filename, callable $get_css ): Style_File {
+	public function get( string $handle, callable $get_css ): Style_File {
 		// TODO: Check if the file is cached and return it if so.
 		$css = $get_css();
 
-		$path = $this->get_path( $filename );
+		$path = $this->get_path( $handle );
 		$filesystem_path = $this->get_filesystem_path( $path );
 
 		$filesystem = $this->get_filesystem();
@@ -22,9 +22,9 @@ class CSS_Files_Manager {
 		}
 
 		return Style_File::create(
-			$this->sanitize_filename( $filename ),
+			$this->sanitize_handle( $handle ),
 			$filesystem_path,
-			$this->get_url( $filename )
+			$this->get_url( $handle )
 		);
 	}
 
@@ -40,30 +40,28 @@ class CSS_Files_Manager {
 	}
 
 	private function get_filesystem_path( $path ): string {
-				$filesystem = $this->get_filesystem();
+		$filesystem = $this->get_filesystem();
 
 		return str_replace( ABSPATH, $filesystem->abspath(), $path );
 	}
 
-	private function get_url( string $filename ): string {
+	private function get_url( string $handle ): string {
 		$upload_dir = wp_upload_dir();
-		$sanitized_handle = $this->sanitize_filename( $filename );
-		$filename = $sanitized_handle . self::FILE_EXTENSION;
+		$sanitized_handle = $this->sanitize_handle( $handle );
+		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return trailingslashit( $upload_dir['baseurl'] ) . self::DEFAULT_CSS_DIR . $filename;
+		return trailingslashit( $upload_dir['baseurl'] ) . self::DEFAULT_CSS_DIR . $handle;
 	}
 
-	private function get_path( string $filename ): string {
+	private function get_path( string $handle ): string {
 		$upload_dir = wp_upload_dir();
-		$sanitized_handle = $this->sanitize_filename( $filename );
-		$filename = $sanitized_handle . self::FILE_EXTENSION;
+		$sanitized_handle = $this->sanitize_handle( $handle );
+		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $filename;
+		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $handle;
 	}
 
-	private function sanitize_filename( string $filename ): string {
-		$filename = preg_replace( '/\.[^.]+$/', '', $filename );
-
-		return sanitize_file_name( $filename );
+	private function sanitize_handle( string $handle ): string {
+		return preg_replace( '/[^a-zA-Z0-9_-]/', '', $handle );
 	}
 }
