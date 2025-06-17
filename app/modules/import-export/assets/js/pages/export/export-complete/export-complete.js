@@ -32,7 +32,7 @@ export default function ExportComplete() {
 							url="/kit-library/cloud"
 						/>
 					)
-					: <DashboardButton text={ __( 'Close', 'elementor' ) } />
+					: <DashboardButton text={ __( 'Done', 'elementor' ) } />
 				}
 			</ActionsFooter>
 		),
@@ -58,12 +58,17 @@ export default function ExportComplete() {
 		};
 	const getDownloadLink = () => (
 		<InlineLink onClick={ downloadFile } italic>
-			{ __( 'Click here', 'elementor' ) }
+			{ __( 'Download manually', 'elementor' ) }
 		</InlineLink>
 	);
-	const getLearnMoreAboutKitsLink = () => (
-		<InlineLink italic>
-			{ __( 'Click here', 'elementor' ) }
+	const getShowMeHowLink = () => (
+		<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
+			{ __( 'Show me how', 'elementor' ) }
+		</InlineLink>
+	);
+	const getTakeMeThereLink = () => (
+		<InlineLink url="/kit-library/cloud" italic>
+			{ __( 'Take me there', 'elementor' ) }
 		</InlineLink>
 	);
 
@@ -79,27 +84,32 @@ export default function ExportComplete() {
 
 	const heading = useMemo( () => {
 		return isSavedToCloud
-			? __( 'Your kit is now saved to your cloud!', 'elementor' )
-			: __( 'Your export is ready', 'elementor' );
+			? __( 'Your website template is now saved to the library!', 'elementor' )
+			: __( 'Your .zip file is ready', 'elementor' );
 	}, [ isSavedToCloud ] );
 
 	const description = useMemo( () => {
 		return isSavedToCloud
-			? __( 'You\'ve imported and applied the following to your site:', 'elementor' )
-			: __( 'Now you can import this kit and use it on other sites.', 'elementor' );
+			? (
+				<>
+					{ __( 'You can find it in the My Website Templates tab.', 'elementor' ) } { getTakeMeThereLink() }
+				</>
+
+			)
+			: __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' );
 	}, [ isSavedToCloud ] );
 
 	const getNotice = () => (
 		isSavedToCloud
 			? (
 				<>
-					{ __( 'Learn more about building your site with Elementor Kits', 'elementor' ) } { getLearnMoreAboutKitsLink() }
+					{ __( 'Build sites faster with Website Templates.', 'elementor' ) } { getShowMeHowLink() }
 				</>
 
 			)
 			: (
 				<>
-					{ __( 'Download not working?', 'elementor' ) } { getDownloadLink() } { __( 'to download', 'elementor' ) }
+					{ __( 'Is the automatic download not starting?', 'elementor' ) } { getDownloadLink() }
 				</>
 			)
 
