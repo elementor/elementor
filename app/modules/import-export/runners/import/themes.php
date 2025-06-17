@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\App\Modules\ImportExport\Runners\Import;
 
-use Automattic\WooCommerce\Admin\Overrides\ThemeUpgrader;
 use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use Elementor\Core\Utils\Collection;
 
@@ -11,12 +10,12 @@ class Themes extends Import_Runner_Base {
 	private Collection $installed_themes;
 
 	/**
-	 * @var ThemeUpgrader
+	 * @var \Theme_Upgrader
 	 */
-	private ThemeUpgrader $theme_upgrader;
+	private \Theme_Upgrader $theme_upgrader;
 
 	public function __construct() {
-		$this->theme_upgrader = new ThemeUpgrader( new ImportExportUtils() );
+		$this->theme_upgrader  = new \Theme_Upgrader( new \WP_Upgrader_Skin() );
 		$this->installed_themes = new Collection();
 	}
 
