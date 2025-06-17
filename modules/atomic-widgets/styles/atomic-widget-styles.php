@@ -7,10 +7,10 @@ use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
-	CONST CSS_FILE_KEY = 'local';
+	const CSS_FILE_KEY = 'local';
 
 	public function register_hooks() {
-		add_action( 'elementor/atomic-widget/styles/register', function( Styles_Manager $styles_manager ){
+		add_action( 'elementor/atomic-widget/styles/register', function( Styles_Manager $styles_manager ) {
 			$this->register_styles( $styles_manager );
 		}, 30, 3 );
 	}
@@ -49,13 +49,13 @@ class Atomic_Widget_Styles {
 		$post_styles = [];
 
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( &$post_styles ) {
-			$post_styles = array_merge( $post_styles,  $this->parse_element_style( $element_data ) );
+			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
 		});
 
 		return $post_styles;
 	}
 
-	private function parse_element_style(  array $element_data ) {
+	private function parse_element_style( array $element_data ) {
 		$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
 		$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
 

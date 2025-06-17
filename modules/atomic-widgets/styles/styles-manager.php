@@ -31,13 +31,13 @@ class Styles_Manager {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
 	}
 
-	public function register(string $key, callable $get_style_defs ) {
+	public function register( string $key, callable $get_style_defs ) {
 		$this->registered_styles_by_key[ $key ] = $get_style_defs;
 	}
 
 	private function enqueue_styles() {
-		do_action('elementor/atomic-widget/styles/register', $this);
-		$post_ids = apply_filters('elementor/atomic-widgets/styles/posts', []);
+		do_action( 'elementor/atomic-widget/styles/register', $this );
+		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts', [] );
 
 		$styles_cache = [];
 
@@ -45,58 +45,58 @@ class Styles_Manager {
 			->map_with_keys( fn( $get_styles, $key ) => [ $key => $get_styles ] )
 			->all();
 
-        $breakpoints = $this->get_breakpoints();
-        foreach ( $breakpoints as $breakpoint_key ) {
-            foreach ($style_by_breakpoints as $style_key => $get_styles ) {
+		$breakpoints = $this->get_breakpoints();
+		foreach ( $breakpoints as $breakpoint_key ) {
+			foreach ( $style_by_breakpoints as $style_key => $get_styles ) {
 
-                $render_css = function () use ( $get_styles, $post_ids, &$styles_cache, $style_key, $breakpoint_key ) {
-                    if ( ! isset( $styles_cache[ $style_key ] ) ) {
-                        $styles_cache[ $style_key ] = $get_styles( $post_ids );
-                    }
+				$render_css = function () use ( $get_styles, $post_ids, &$styles_cache, $style_key, $breakpoint_key ) {
+					if ( ! isset( $styles_cache[ $style_key ] ) ) {
+						$styles_cache[ $style_key ] = $get_styles( $post_ids );
+					}
 
-                    $grouped_styles = $this->group_by_breakpoint( $styles_cache[ $style_key ] );
+					$grouped_styles = $this->group_by_breakpoint( $styles_cache[ $style_key ] );
 
-                    return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
-                };
+					return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
+				};
 
-                try{
-                    $style_file = ( new CSS_Files_Manager() )->get( $style_key . '-' . $breakpoint_key, $render_css );
+				try {
+					$style_file = ( new CSS_Files_Manager() )->get( $style_key . '-' . $breakpoint_key, $render_css );
 
-                    wp_enqueue_style(
-                        $style_file->get_handle(),
-                        $style_file->get_url(),
-                        [],
-                        $style_file->get_media()
-                    );
-                } catch ( \Exception $e ) {
-                    continue;
-                }
-            }
-        }
+					wp_enqueue_style(
+						$style_file->get_handle(),
+						$style_file->get_url(),
+						[],
+						$style_file->get_media()
+					);
+				} catch ( \Exception $e ) {
+					continue;
+				}
+			}
+		}
 	}
 
-    private function render_css( array $styles, string $breakpoint_key ) {
-        $css = Styles_Renderer::make(
-            Plugin::$instance->breakpoints->get_breakpoints_config()
-        )->on_prop_transform( function( $key, $value ) {
-            if ( 'font-family' !== $key ) {
-                return;
-            }
+	private function render_css( array $styles, string $breakpoint_key ) {
+		$css = Styles_Renderer::make(
+			Plugin::$instance->breakpoints->get_breakpoints_config()
+		)->on_prop_transform( function( $key, $value ) {
+			if ( 'font-family' !== $key ) {
+				return;
+			}
 
-            Plugin::instance()->frontend->enqueue_font( $value );
-        } )->render( $styles );
+			Plugin::instance()->frontend->enqueue_font( $value );
+		} )->render( $styles );
 
-        $breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
+		$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
 
-        $media = $breakpoint_instance
-            ? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
-            : 'all';
+		$media = $breakpoint_instance
+			? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
+			: 'all';
 
-        return [
-            'content' => $css,
-            'media' => $media,
-        ];
-    }
+		return [
+			'content' => $css,
+			'media' => $media,
+		];
+	}
 
 	private function group_by_breakpoint( $styles ) {
 		$groups = [];
@@ -116,11 +116,11 @@ class Styles_Manager {
 		return $groups;
 	}
 
-    private function get_breakpoints() {
-        return Collection::make( Plugin::$instance->breakpoints->get_breakpoints() )
-            ->map( fn( Breakpoint $breakpoint) => $breakpoint->get_name() )
-            ->reverse()
-            ->prepend( self::DEFAULT_BREAKPOINT )
-            ->all();
-    }
+	private function get_breakpoints() {
+		return Collection::make( Plugin::$instance->breakpoints->get_breakpoints() )
+			->map( fn( Breakpoint $breakpoint ) => $breakpoint->get_name() )
+			->reverse()
+			->prepend( self::DEFAULT_BREAKPOINT )
+			->all();
+	}
 }

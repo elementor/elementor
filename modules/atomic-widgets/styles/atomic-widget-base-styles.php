@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Base_Styles {
-	CONST CSS_FILE_KEY = 'base';
+	const CSS_FILE_KEY = 'base';
 
 	public function register_hooks() {
 		add_action(
@@ -26,7 +26,6 @@ class Atomic_Widget_Base_Styles {
 
 			return $this->get_all_base_styles();
 		};
-
 
 		$styles_manager->register(
 			self::CSS_FILE_KEY,

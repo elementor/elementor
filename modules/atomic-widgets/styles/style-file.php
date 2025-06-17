@@ -10,7 +10,7 @@ class Style_File {
 	private string $handle;
 	private string $path;
 	private string $url;
-	private  string $media;
+	private string $media;
 
 	private function __construct( string $handle, string $path, string $url, string $media ) {
 		$this->handle = $handle;
@@ -19,7 +19,7 @@ class Style_File {
 		$this->media = $media;
 	}
 
-	public static function create(string $handle, string $path, string $url, string $media ): self {
+	public static function create( string $handle, string $path, string $url, string $media ): self {
 		return new self( $handle, $path, $url, $media );
 	}
 
