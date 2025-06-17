@@ -40,6 +40,8 @@ export default function KitName() {
 				className={ error ? 'e-app-export-kit-information__field--error' : '' }
 				title={ error || '' }
 				value={ exportContext.data.kitInfo?.title || '' }
+				// eslint-disable-next-line jsx-a11y/no-autofocus
+				autoFocus
 			/>
 			<div className="e-app-export-kit-information__error-container">
 				{ error && (
