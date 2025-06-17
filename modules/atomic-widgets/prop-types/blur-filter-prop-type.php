@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class BlurFilter_Prop_Type extends Object_Prop_Type {
+class Blur_Filter_Prop_Type extends Object_Prop_Type {
 
 	public static function get_key(): string {
 		return 'blur';
