@@ -66,8 +66,48 @@ jobs:
             # Cherry-pick
             if ! git cherry-pick -m 1 "$MERGE_SHA"; then
               echo "::error:: Cherry-pick conflicts detected for PR #${PR_NUMBER} on branch ${TARGET}"
-              git cherry-pick --abort
-              echo "Cherry-pick aborted due to conflicts. Manual resolution required."
+              
+              # Create a conflict resolution branch
+              CONFLICT_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}-conflicts"
+              
+              # Add conflict markers and create a commit for manual resolution
+              git add .
+              git commit -m "Cherry-pick PR #${PR_NUMBER} with conflicts - manual resolution needed"
+              
+              # Push the conflict branch
+              if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
+                # Create draft PR with conflict information
+                if ! gh pr list --head "$CONFLICT_BRANCH" --base "$TARGET" --state open | grep -q .; then
+                  gh pr create \
+                    --base "$TARGET" \
+                    --head "$CONFLICT_BRANCH" \
+                    --title "🔧 [CONFLICTS] Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                    --body "⚠️ **Manual Resolution Required**
+
+                  This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
+
+                  **Conflict Files:**
+                  The conflicted files are included in this branch with conflict markers.
+
+                  **Resolution Steps:**
+                  1. Check out this branch: \`git checkout $CONFLICT_BRANCH\`
+                  2. Resolve conflicts in the marked files
+                  3. Stage resolved files: \`git add <resolved-files>\`
+                  4. Amend the commit: \`git commit --amend\`
+                  5. Push changes: \`git push --force-with-lease\`
+                  6. Mark this PR as ready for review
+
+                  **Original PR:** [#${PR_NUMBER}](${ORIG_URL})" \
+                    --draft
+                  
+                  echo "::notice:: Created draft PR for manual conflict resolution: $CONFLICT_BRANCH"
+                else
+                  echo "::notice:: Draft PR already exists for conflict resolution: $CONFLICT_BRANCH"
+                fi
+              else
+                echo "::warning:: Failed to push conflict branch $CONFLICT_BRANCH"
+                git cherry-pick --abort
+              fi
               continue
             else
               echo "Cherry-pick successful"
