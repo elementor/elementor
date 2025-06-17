@@ -69,61 +69,27 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Fix atomic widget settings validation issues.
+	 * Fix atomic widget image validation issues for test environments.
 	 *
-	 * Atomic widgets using Image_Src_Prop_Type require only one of 'id' or 'url' to be set.
-	 * This method prioritizes 'url' over 'id' when both are present to ensure images load
+	 * Removes attachment IDs from e-image widgets since test database doesn't have
+	 * the referenced attachments, keeping only the URL for image loading.
 	 *
 	 * @param {Record<string, unknown>} templateData - Template data to fix.
 	 * @return {Record<string, unknown>} Fixed template data.
 	 */
 	fixAtomicWidgetSettings( templateData: Record<string, unknown> ): Record<string, unknown> {
-		const WIDGET_CONFIGS = {
-			'e-image': { path: [ 'settings', 'image', 'value', 'src', 'value' ] },
-		};
+		const data = JSON.stringify( templateData );
 
-		type NestedObject = Record<string, unknown>;
-		type ImageSrcValue = { id?: number | null; url?: string };
+		// Find and fix e-image widgets with both id and url set
+		const fixedData = data.replace(
+			/"widgetType":"e-image"[^}]*"settings":\{[^}]*"image":\{[^}]*"value":\{[^}]*"src":\{[^}]*"value":\{[^}]*"id":(\d+|null)[^}]*"url":"([^"]+)"[^}]*}/g,
+			( match ) => {
+				// Remove the id field, keep only url
+				return match.replace( /"id":(\d+|null),?/, '' );
+			},
+		);
 
-		const getNestedValue = ( obj: NestedObject, path: string[] ): unknown => {
-			return path.reduce( ( current: unknown, key: string ) => {
-				if ( current && 'object' === typeof current && key in current ) {
-					return ( current as NestedObject )[ key ];
-				}
-				return undefined;
-			}, obj );
-		};
-
-		const fixImageSrcValidation = ( obj: unknown ): void => {
-			if ( ! obj || 'object' !== typeof obj ) {
-				return;
-			}
-
-			if ( Array.isArray( obj ) ) {
-				obj.forEach( fixImageSrcValidation );
-				return;
-			}
-
-			const objAsRecord = obj as NestedObject;
-
-			// Fix atomic widgets with Image_Src_Prop_Type validation issues
-			if ( 'widgetType' in objAsRecord && 'string' === typeof objAsRecord.widgetType ) {
-				const config = WIDGET_CONFIGS[ objAsRecord.widgetType as keyof typeof WIDGET_CONFIGS ];
-				if ( config ) {
-					const imageSrcValue = getNestedValue( objAsRecord, config.path ) as ImageSrcValue;
-					if ( imageSrcValue && 'object' === typeof imageSrcValue && imageSrcValue.id && imageSrcValue.url ) {
-						// For test environments, prioritize URL over attachment ID
-						// since template attachment IDs may not exist in the test database
-						imageSrcValue.id = null;
-					}
-				}
-			}
-
-			Object.values( objAsRecord ).forEach( fixImageSrcValidation );
-		};
-
-		fixImageSrcValidation( templateData );
-		return templateData;
+		return JSON.parse( fixedData ) as Record<string, unknown>;
 	}
 
 	/**
