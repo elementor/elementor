@@ -10,7 +10,7 @@ class Atomic_Widget_Styles {
 	CONST CSS_FILE_KEY = 'local';
 
 	public function register_hooks() {
-		add_action( 'elementor/atomic-widget/styles/enqueue', function( Styles_Manager $styles_manager ){
+		add_action( 'elementor/atomic-widget/styles/register', function( Styles_Manager $styles_manager ){
 			$this->register_styles( $styles_manager );
 		}, 30, 3 );
 	}

@@ -39,20 +39,38 @@ class Styles_Manager {
 		do_action('elementor/atomic-widget/styles/register', $this);
 		$post_ids = apply_filters('elementor/atomic-widgets/styles/posts', []);
 
+		$styles_cache = [];
+
 		$style_by_breakpoints = Collection::make( $this->registered_styles_by_key )
-			->map_with_keys( fn( $get_styles, $key ) => [ $key => $this->group_by_breakpoint( $get_styles( $post_ids ) ) ] )
+			->map_with_keys( fn( $get_styles, $key ) => [ $key => $get_styles ] )
 			->all();
 
         $breakpoints = $this->get_breakpoints();
         foreach ( $breakpoints as $breakpoint_key ) {
-            foreach ($style_by_breakpoints as $style_key => $styles ) {
-				if ( empty( $styles[ $breakpoint_key ] ) ) {
-					continue;
-				}
+            foreach ($style_by_breakpoints as $style_key => $get_styles ) {
 
-                $render_css = fn() => $this->render_css( $styles[ $breakpoint_key ], $breakpoint_key );
+                $render_css = function () use ( $get_styles, $post_ids, &$styles_cache, $style_key, $breakpoint_key ) {
+                    if ( ! isset( $styles_cache[ $style_key ] ) ) {
+                        $styles_cache[ $style_key ] = $get_styles( $post_ids );
+                    }
 
-				CSS_Files_Manager::enqueue( $style_key . '-' . $breakpoint_key, $render_css );
+                    $grouped_styles = $this->group_by_breakpoint( $styles_cache[ $style_key ] );
+
+                    return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
+                };
+
+                try{
+                    $style_file = ( new CSS_Files_Manager() )->get( $style_key . '-' . $breakpoint_key, $render_css );
+
+                    wp_enqueue_style(
+                        $style_file->get_handle(),
+                        $style_file->get_url(),
+                        [],
+                        $style_file->get_media()
+                    );
+                } catch ( \Exception $e ) {
+                    continue;
+                }
             }
         }
 	}

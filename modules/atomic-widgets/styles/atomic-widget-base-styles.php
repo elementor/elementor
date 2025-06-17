@@ -11,7 +11,7 @@ class Atomic_Widget_Base_Styles {
 
 	public function register_hooks() {
 		add_action(
-			'elementor/atomic-widget/styles/enqueue',
+			'elementor/atomic-widget/styles/register',
 			fn( Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			10,
 			3
