@@ -22,10 +22,10 @@
 		position: fixed;
 		height: 100%;
 		width: 100%;
+		inset-inline-start: 0;
 		background-color: var(--app-lightbox-background-color);
 		z-index: $app-lightbox-z-index;
 		bottom: 0;
-		@include start(0);
 	}
 
 	&__header {
