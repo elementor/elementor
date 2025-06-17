@@ -67,7 +67,11 @@ export default function Layout( props ) {
 		},
 		onClose = () => {
 			eventTracking( 'kit-library/close', 'app_header', null, 'click' );
-			window.top.location = elementorAppConfig.admin_url;
+			if ( 'kit-library' === sharedContext.data.referrer || 'kit-library' === referrer ) {
+				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-app#/kit-library';
+			} else {
+				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools#tab-import-export-kit';
+			}
 		},
 		config = {
 			title: 'import' === props.type ? __( 'Import', 'elementor' ) : __( 'Export', 'elementor' ),

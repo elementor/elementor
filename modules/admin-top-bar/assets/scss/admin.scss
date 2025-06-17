@@ -1,5 +1,4 @@
 // Ask Josh
-@import "../../../../assets/dev/scss/helpers/direction";
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/helpers/mixins";
 @import "../../../../assets/dev/scss/editor/breakpoints";
@@ -16,13 +15,13 @@ $top-bar-height: 50px;
 
 // The width for top bar is calculated according to the width of the wordpress admin sidebar menu.
 #e-admin-top-bar-root {
-	@include end( 0 );
 	font-family: var(--e-a-font-family);
 	background: var(--e-a-bg-default);
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
 	display: none;
 	position: absolute;
-	top: 0;
+	inset-block-start: 0;
+	inset-inline-end: 0;
 	width: calc(100% - 160px);
 	z-index: $first-layer;
 

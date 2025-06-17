@@ -40,8 +40,8 @@ body {
 	&:after {
 		content: '';
 		position: absolute;
-		top: 0;
-		@include end(0);
+		inset-block-start: 0;
+		inset-inline-end: 0;
 		height: 100%;
 		width: 0;
 		background-color: var(--e-a-bg-default);

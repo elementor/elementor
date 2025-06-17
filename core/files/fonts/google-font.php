@@ -209,12 +209,21 @@ class Google_Font {
 				$cleaned_url = set_url_scheme( $original_font_url, 'https' );
 				$cleaned_url = strtok( $cleaned_url, '?#' );
 
+				$font_ext = pathinfo( $cleaned_url, PATHINFO_EXTENSION );
+
 				$tmp_font_file = download_url( $cleaned_url );
 				if ( is_wp_error( $tmp_font_file ) ) {
 					return '';
 				}
 
-				$current_font_basename = $sanitize_font_name . '-' . strtolower( sanitize_file_name( basename( $cleaned_url ) ) );
+				$unique_font_id = static::get_unique_font_id( $cleaned_url );
+
+				$current_font_basename = sprintf(
+					'%s-%s.%s',
+					$sanitize_font_name,
+					strtolower( sanitize_file_name( $unique_font_id ) ),
+					$font_ext
+				);
 
 				$dest_file = $fonts_folder['path'] . $current_font_basename;
 				$dest_file_url = $fonts_folder['url'] . $current_font_basename;
@@ -233,6 +242,10 @@ class Google_Font {
 		}
 
 		return $css_content;
+	}
+
+	private static function get_unique_font_id( $font_url ): string {
+		return substr( sha1( $font_url ), 0, 8 );
 	}
 
 	private static function enqueue_from_cdn( string $font_name, string $font_type ): void {

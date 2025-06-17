@@ -5,8 +5,8 @@
 .e-con {
 
 	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 
 		&:after {
 			position: absolute;
@@ -71,6 +71,9 @@
 		width: 100%;
 		height: 100%;
 		min-height: 100px;
+		stroke: transparent;
+		stroke-width: 0;
+		-webkit-text-stroke: 0 transparent;
 
 		.elementor-first-add {
 			width: auto;
@@ -278,15 +281,13 @@
 	}
 }
 
-.e-div-block-base:has( > .elementor-empty-view ),
-.e-flexbox-base:has( > .elementor-empty-view ) {
-	display: grid !important;
-	grid-template-rows: minmax(100%, 100px);
+.e-div-block-base, .e-flexbox-base {
+	&:has( .elementor-empty-view ) {
+		min-height: 120px;
+	}
 
-	& > .elementor-empty-view {
-		position: absolute;
-		height: auto;
-		grid-row: 1 / -1;
+	& > .elementor-empty-view.elementor-empty-view {
+		min-height: inherit;
 	}
 }
 

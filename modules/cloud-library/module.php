@@ -50,7 +50,26 @@ class Module extends BaseModule {
 
 				return $module_name;
 			}, 12);
+
+			if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+				echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
+				die;
+			}
 		}
+	}
+
+	public function get_proxy_data( $url ) {
+		$response = wp_safe_remote_get( utf8_decode( $url ) );
+
+		if ( is_wp_error( $response ) ) {
+			return '';
+		}
+
+		$content_type = wp_remote_retrieve_headers( $response )->offsetGet( 'content-type' );
+
+		header( 'content-type: ' . $content_type );
+
+		return wp_remote_retrieve_body( $response );
 	}
 
 	public function localize_settings( $settings ) {
@@ -66,19 +85,10 @@ class Module extends BaseModule {
 	private function register_experiments() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
-			'description' => esc_html__( 'Cloud Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
+			'title' => esc_html__( 'Cloud Library', 'elementor' ),
+			'description' => esc_html__( 'Cloud Templates and Kits empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
-		] );
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_cloud_library_kits',
-			'title' => esc_html__( 'Cloud Kits', 'elementor' ),
-			'description' => esc_html__( 'Cloud Kits', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-			'hidden' => true,
 		] );
 	}
 
@@ -164,5 +174,32 @@ class Module extends BaseModule {
 		echo Plugin::$instance->frontend->get_builder_content_for_display( $doc->get_main_id(), true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		wp_delete_post( $doc->get_main_id(), true );
+	}
+
+
+	protected function is_screenshot_proxy_mode( array $query_params ) {
+		$is_proxy = isset( $query_params['screenshot_proxy'] );
+
+		if ( $is_proxy ) {
+			if ( ! wp_verify_nonce( $query_params['nonce'], 'screenshot-proxy' ) ) {
+				// WP >= 6.2-alpha
+				if ( class_exists( '\WpOrg\Requests\Exception\Http\Status403' ) ) {
+					throw new \WpOrg\Requests\Exception\Http\Status403();
+				} else {
+					throw new \Requests_Exception_HTTP_403();
+				}
+			}
+
+			if ( ! $query_params['href'] ) {
+				// WP >= 6.2-alpha
+				if ( class_exists( '\WpOrg\Requests\Exception\Http\Status400' ) ) {
+					throw new \WpOrg\Requests\Exception\Http\Status400();
+				} else {
+					throw new \Requests_Exception_HTTP_400();
+				}
+			}
+		}
+
+		return $is_proxy;
 	}
 }

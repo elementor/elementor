@@ -2,6 +2,7 @@ import KitsComponent from './data/kits/component';
 import router from '@elementor/router';
 import TaxonomiesComponent from './data/taxonomies/component';
 import KitLibraryComponent from './e-component';
+import CloudKitsComponent from './data/cloud-kits/component';
 
 export default class KitLibrary {
 	constructor() {
@@ -12,6 +13,7 @@ export default class KitLibrary {
 		$e.components.register( new KitsComponent() );
 		$e.components.register( new TaxonomiesComponent() );
 		$e.components.register( new KitLibraryComponent() );
+		$e.components.register( new CloudKitsComponent() );
 
 		router.addRoute( {
 			path: '/kit-library/*',

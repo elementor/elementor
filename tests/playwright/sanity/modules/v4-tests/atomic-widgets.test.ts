@@ -17,6 +17,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-paragraph', title: 'Paragraph' },
 		{ name: 'e-svg', title: 'SVG' },
 		{ name: 'e-button', title: 'Button' },
+		{ name: 'e-divider', title: 'Divider' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -31,6 +32,12 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	test.afterAll( async () => {
 		await wpAdmin.resetExperiments();
 		await context.close();
+	} );
+
+	test( 'Atomic elements tab UI', async () => {
+		editor = await wpAdmin.openNewPage();
+		await editor.openElementsPanel();
+		await expect.soft( editor.page.locator( editorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {

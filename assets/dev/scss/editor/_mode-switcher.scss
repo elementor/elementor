@@ -7,11 +7,11 @@
 	--e-a-mode-switcher-height: 50px;
 	--e-a-mode-switcher-icon-size: 15px;
 	position: absolute;
-	@include start(100%);
-	top: 50%;
+	inset-block-start: 50%;
+	inset-inline-start: 100%;
 	transform: translateY(-50%);
 	background-color: var(--e-a-bg-default);
-	@include direction-box-shadow(3px, 1px 3px rgba(0, 0, 0, 0.05));
+        box-shadow: calc(3px * var(--direction-multiplier, 1)) 1px 3px rgba(0, 0, 0, 0.05);
 	transition: .3s opacity;
 
 	&:hover {
