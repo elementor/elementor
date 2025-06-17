@@ -80,10 +80,15 @@ jobs:
             fi
 
             # Create PR via gh CLI (token already in env: GH_TOKEN)
-            gh pr create \
-              --base "$TARGET" \
-              --head "$BRANCH" \
-              --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
-              --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
+            # Check if PR already exists
+            if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
+              echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
+            else
+              gh pr create \
+                --base "$TARGET" \
+                --head "$BRANCH" \
+                --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
+            fi
           done
         shell: bash
