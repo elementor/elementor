@@ -29,12 +29,8 @@ class Manager {
 	 *     }
 	 * }
 	 */
-	private $dependencies;
+	private array $dependencies = [];
 
-	public function __construct() {
-		$this->dependencies = [
-		];
-	}
 
 	public static function make(): self {
 		return new self();
