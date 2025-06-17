@@ -308,6 +308,13 @@ class Rest_Api {
 	private function list_of_variables() {
 		$db_record = $this->variables_repository->load();
 
+		$db_record['data'][] = [
+			'id' => 'test',
+			'type' => Font_Variable_Prop_Type::get_key(),
+			'label' => 'Test',
+			'value' => 'Robott',
+		];
+
 		return $this->success_response( [
 			'variables' => $db_record['data'],
 			'total' => count( $db_record['data'] ),
