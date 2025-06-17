@@ -11,7 +11,6 @@ class Style_File {
 	private string $path;
 	private string $url;
 
-
 	private function __construct( string $filename, string $path, string $url ) {
 		$this->filename = $filename;
 		$this->path = $path;
