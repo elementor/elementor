@@ -47,6 +47,7 @@ class Div_Block extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' ),
+			'link' => Link_Prop_Type::make(),
 		];
 		return $props;
 	}
