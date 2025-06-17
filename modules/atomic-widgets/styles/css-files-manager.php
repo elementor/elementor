@@ -3,52 +3,65 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 class CSS_Files_Manager {
-	public static function enqueue( string $key, callable $get_css ): bool {
-		$style = Style_File::create( $key );
+	const DEFAULT_CSS_DIR = 'elementor/css/';
+	const FILE_EXTENSION = '.css';
+	const PERMISSIONS = 0644;
+
+	public function get( string $handle, callable $get_css ): Style_File {
+		// TODO: Check if the file is cached and return it if so.
 		$css = $get_css();
 
-		if ( empty( $css['content'] ) ) {
-			return false;
+		$path = $this->get_path( $handle );
+		$filesystem_path = $this->get_filesystem_path( $path );
+
+		$filesystem = $this->get_filesystem();
+		$is_created = $filesystem->put_contents( $filesystem_path, $css['content'], self::PERMISSIONS );
+
+		if ( false === $is_created ) {
+			throw new \Exception( 'Could not write the file: ' . $filesystem_path );
 		}
 
-		$style->set_content( $css['content'] );
-
-		$bytes_written = self::write_to_file( $style );
-
-		if ( false === $bytes_written ) {
-			return false;
-		}
-
-		wp_enqueue_style(
-			$style->get_handle(),
-			$style->get_versioned_url(),
-			[],
-			null,
-			$css['media'] ?? 'all'
+		return Style_File::create(
+			$this->sanitize_handle( $handle ),
+			$filesystem_path,
+			$this->get_url( $handle )
 		);
-
-		return true;
 	}
 
-	private static function write_to_file( Style_File $style ) {
-		return $style->write();
+	private function get_filesystem(): \WP_Filesystem_Base {
+		global $wp_filesystem;
+
+		if ( empty( $wp_filesystem ) ) {
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		return $wp_filesystem;
 	}
 
-	public static function delete( string $key ): bool {
-		$style = Style_File::create( $key );
+	private function get_filesystem_path( $path ): string {
+		$filesystem = $this->get_filesystem();
 
-		return $style->delete();
+		return str_replace( ABSPATH, $filesystem->abspath(), $path );
 	}
 
-	public static function exists( string $key ): bool {
-		$style = Style_File::create( $key );
+	private function get_url( string $handle ): string {
+		$upload_dir = wp_upload_dir();
+		$sanitized_handle = $this->sanitize_handle( $handle );
+		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return $style->exists();
+		return trailingslashit( $upload_dir['baseurl'] ) . self::DEFAULT_CSS_DIR . $handle;
 	}
 
-	public static function get_url( string $key ): string {
-		$style = Style_File::create( $key );
+	private function get_path( string $handle ): string {
+		$upload_dir = wp_upload_dir();
+		$sanitized_handle = $this->sanitize_handle( $handle );
+		$handle = $sanitized_handle . self::FILE_EXTENSION;
 
-		return $style->get_versioned_url();
+		return trailingslashit( $upload_dir['basedir'] ) . self::DEFAULT_CSS_DIR . $handle;
+	}
+
+	private function sanitize_handle( string $handle ): string {
+		return preg_replace( '/[^a-zA-Z0-9_-]/', '', $handle );
 	}
 }
