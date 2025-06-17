@@ -1,1 +1,87 @@
-{"content":[{"id":"511cb717","settings":[],"elements":[{"id":"309b96a6","settings":{"classes":{"$$type":"classes","value":["e-309b96a6-279ef57","g-f663e35"]},"tag":{"$$type":"string","value":"h1"},"title":{"$$type":"string","value":"H1 Main Heading - Large Size"}},"elements":[],"isInner":false,"widgetType":"e-heading","elType":"widget","styles":{"e-309b96a6-279ef57":{"id":"e-309b96a6-279ef57","label":"local","type":"class","variants":[{"meta":{"breakpoint":"desktop","state":null},"props":{"font-family":{"$$type":"string","value":"Helvetica"},"font-size":{"$$type":"size","value":{"size":48,"unit":"px"}},"color":{"$$type":"color","value":"#059669"},"padding":{"$$type":"size","value":{"size":20,"unit":"px"}},"background":{"$$type":"background","value":{"color":{"$$type":"color","value":"#ecfdf5"}}}}}]}},"editor_settings":[],"version":"0.0"}],"isInner":false,"elType":"container"}],"page_settings":[],"version":"0.4","title":"heading","type":"container"}
+{
+  "content": [
+    {
+      "id": "511cb717",
+      "settings": [],
+      "elements": [
+        {
+          "id": "309b96a6",
+          "settings": {
+            "classes": {
+              "$$type": "classes",
+              "value": ["e-309b96a6-279ef57", "g-f663e35"]
+            },
+            "tag": {
+              "$$type": "string",
+              "value": "h1"
+            },
+            "title": {
+              "$$type": "string",
+              "value": "H1 Main Heading - Large Size"
+            }
+          },
+          "elements": [],
+          "isInner": false,
+          "widgetType": "e-heading",
+          "elType": "widget",
+          "styles": {
+            "e-309b96a6-279ef57": {
+              "id": "e-309b96a6-279ef57",
+              "label": "local",
+              "type": "class",
+              "variants": [
+                {
+                  "meta": {
+                    "breakpoint": "desktop",
+                    "state": null
+                  },
+                  "props": {
+                    "font-family": {
+                      "$$type": "string",
+                      "value": "Helvetica"
+                    },
+                    "font-size": {
+                      "$$type": "size",
+                      "value": {
+                        "size": 48,
+                        "unit": "px"
+                      }
+                    },
+                    "color": {
+                      "$$type": "color",
+                      "value": "#059669"
+                    },
+                    "padding": {
+                      "$$type": "size",
+                      "value": {
+                        "size": 20,
+                        "unit": "px"
+                      }
+                    },
+                    "background": {
+                      "$$type": "background",
+                      "value": {
+                        "color": {
+                          "$$type": "color",
+                          "value": "#ecfdf5"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "editor_settings": [],
+          "version": "0.0"
+        }
+      ],
+      "isInner": false,
+      "elType": "container"
+    }
+  ],
+  "page_settings": [],
+  "version": "0.4",
+  "title": "heading",
+  "type": "container"
+}

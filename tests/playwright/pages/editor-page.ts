@@ -62,7 +62,6 @@ export default class EditorPage extends BasePage {
 		const year = date.getFullYear();
 		const data = JSON.stringify( templateData );
 
-		// Update date patterns in URLs (handles both YYYY/MM and YYYY\/MM formats)
 		const updatedData = data
 			.replace( /[0-9]{4}\/[0-9]{2}/g, `${ year }/${ month }` )
 			.replace( /[0-9]{4}\\\/[0-9]{2}/g, `${ year }\\/${ month }` );
@@ -74,25 +73,29 @@ export default class EditorPage extends BasePage {
 	 *
 	 * Atomic widgets using Image_Src_Prop_Type require only one of 'id' or 'url' to be set.
 	 * This method prioritizes 'url' over 'id' when both are present to ensure images load
-	 * in test environments where attachment IDs from templates may not exist.
 	 *
 	 * @param {JSON} templateData - Template data to fix.
 	 * @return {JSON} Fixed template data.
 	 */
 	fixAtomicWidgetSettings( templateData: JSON ): JSON {
 		const WIDGET_CONFIGS = {
-			'e-svg': { path: [ 'settings', 'svg', 'value' ] },
 			'e-image': { path: [ 'settings', 'image', 'value', 'src', 'value' ] },
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const getNestedValue = ( obj: any, path: string[] ): any => {
-			return path.reduce( ( current, key ) => current?.[ key ], obj );
+		type NestedObject = Record<string, unknown>;
+		type ImageSrcValue = { id?: number | null; url?: string };
+
+		const getNestedValue = ( obj: NestedObject, path: string[] ): unknown => {
+			return path.reduce( ( current: unknown, key: string ) => {
+				if ( current && 'object' === typeof current && key in current ) {
+					return ( current as NestedObject )[ key ];
+				}
+				return undefined;
+			}, obj );
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const fixImageSrcValidation = ( obj: any ): void => {
-			if ( ! obj || typeof obj !== 'object' ) {
+		const fixImageSrcValidation = ( obj: unknown ): void => {
+			if ( ! obj || 'object' !== typeof obj ) {
 				return;
 			}
 
@@ -101,18 +104,22 @@ export default class EditorPage extends BasePage {
 				return;
 			}
 
+			const objAsRecord = obj as NestedObject;
+
 			// Fix atomic widgets with Image_Src_Prop_Type validation issues
-			const config = WIDGET_CONFIGS[ obj.widgetType as keyof typeof WIDGET_CONFIGS ];
-			if ( config ) {
-				const imageSrcValue = getNestedValue( obj, config.path );
-				if ( imageSrcValue?.id && imageSrcValue?.url ) {
-					// For test environments, prioritize URL over attachment ID
-					// since template attachment IDs may not exist in the test database
-					imageSrcValue.id = null;
+			if ( 'widgetType' in objAsRecord && 'string' === typeof objAsRecord.widgetType ) {
+				const config = WIDGET_CONFIGS[ objAsRecord.widgetType as keyof typeof WIDGET_CONFIGS ];
+				if ( config ) {
+					const imageSrcValue = getNestedValue( objAsRecord, config.path ) as ImageSrcValue;
+					if ( imageSrcValue && 'object' === typeof imageSrcValue && imageSrcValue.id && imageSrcValue.url ) {
+						// For test environments, prioritize URL over attachment ID
+						// since template attachment IDs may not exist in the test database
+						imageSrcValue.id = null;
+					}
 				}
 			}
 
-			Object.values( obj ).forEach( fixImageSrcValidation );
+			Object.values( objAsRecord ).forEach( fixImageSrcValidation );
 		};
 
 		fixImageSrcValidation( templateData );
@@ -174,8 +181,16 @@ export default class EditorPage extends BasePage {
 
 		// Wait for document state to be properly set after template import
 		await this.page.waitForFunction( () => {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const elementorInstance = ( window as any ).elementor;
+			interface ElementorWindow extends Window {
+				elementor?: {
+					documents?: {
+						getCurrent(): {
+							editor: { isChanged: boolean };
+						};
+					};
+				};
+			}
+			const elementorInstance = ( window as ElementorWindow ).elementor;
 			return elementorInstance &&
 				elementorInstance.documents &&
 				elementorInstance.documents.getCurrent() &&
