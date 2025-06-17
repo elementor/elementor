@@ -73,8 +73,8 @@ jobs:
               echo "Cherry-pick successful"
             fi
 
-            # Push
-            if ! git push origin "$BRANCH"; then
+            # Push (force push to handle existing branches)
+            if ! git push --force-with-lease origin "$BRANCH"; then
               echo "::warning:: Failed to push branch $BRANCH"
               continue
             fi
