@@ -56,7 +56,7 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {JSON}
 	 */
-	updateImageDates( templateData: JSON ): JSON {
+	updateImageDates( templateData: Record<string, unknown> ): Record<string, unknown> {
 		const date = new Date();
 		const month = date.toLocaleString( 'default', { month: '2-digit' } );
 		const year = date.getFullYear();
@@ -65,7 +65,7 @@ export default class EditorPage extends BasePage {
 		const updatedData = data
 			.replace( /[0-9]{4}\/[0-9]{2}/g, `${ year }/${ month }` )
 			.replace( /[0-9]{4}\\\/[0-9]{2}/g, `${ year }\\/${ month }` );
-		return JSON.parse( updatedData ) as JSON;
+		return JSON.parse( updatedData ) as Record<string, unknown>;
 	}
 
 	/**
@@ -74,10 +74,10 @@ export default class EditorPage extends BasePage {
 	 * Atomic widgets using Image_Src_Prop_Type require only one of 'id' or 'url' to be set.
 	 * This method prioritizes 'url' over 'id' when both are present to ensure images load
 	 *
-	 * @param {JSON} templateData - Template data to fix.
-	 * @return {JSON} Fixed template data.
+	 * @param {Record<string, unknown>} templateData - Template data to fix.
+	 * @return {Record<string, unknown>} Fixed template data.
 	 */
-	fixAtomicWidgetSettings( templateData: JSON ): JSON {
+	fixAtomicWidgetSettings( templateData: Record<string, unknown> ): Record<string, unknown> {
 		const WIDGET_CONFIGS = {
 			'e-image': { path: [ 'settings', 'image', 'value', 'src', 'value' ] },
 		};
@@ -163,7 +163,6 @@ export default class EditorPage extends BasePage {
 			templateData = this.updateImageDates( templateData );
 		}
 
-		// Fix atomic widget validation issues by ensuring only one of id or url is set
 		templateData = this.fixAtomicWidgetSettings( templateData );
 
 		await this.page.evaluate( ( data ) => {
@@ -190,12 +189,17 @@ export default class EditorPage extends BasePage {
 					};
 				};
 			}
-			const elementorInstance = ( window as ElementorWindow ).elementor;
-			return elementorInstance &&
-				elementorInstance.documents &&
-				elementorInstance.documents.getCurrent() &&
-				true === elementorInstance.documents.getCurrent().editor.isChanged;
-		}, { timeout: 10000 } );
+			try {
+				const elementorInstance = ( window as ElementorWindow ).elementor;
+				const currentDoc = elementorInstance?.documents?.getCurrent();
+				return true === currentDoc?.editor?.isChanged;
+			} catch ( error ) {
+				return false;
+			}
+		}, {
+			timeout: 5000,
+			polling: 100,
+		} );
 	}
 
 	/**
