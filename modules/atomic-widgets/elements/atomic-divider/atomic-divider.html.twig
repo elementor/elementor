@@ -1,0 +1,6 @@
+{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+
+<hr
+    class="{{ classes }}"
+    {% if settings._cssid is not empty %}id="{{ settings._cssid | e('html_attr') }}"{% endif %}
+ />
