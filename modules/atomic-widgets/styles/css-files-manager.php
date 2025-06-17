@@ -19,7 +19,7 @@ class CSS_Files_Manager {
 		$is_created = $filesystem->put_contents( $filesystem_path, $css['content'], self::PERMISSIONS );
 
 		if ( false === $is_created ) {
-			throw new \Exception( 'Could not write the file: ' . $filesystem_path );
+			throw new \Exception( 'Could not write the file' );
 		}
 
 		return Style_File::create(
