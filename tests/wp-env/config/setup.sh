@@ -30,8 +30,6 @@ for id in $(wp user list --field=ID)
 do wp user meta add "$id" "announcements_user_counter" 999
 done
 
-
-
 wp --user=admin elementor library import-dir /var/www/html/elementor-templates
 
 wp cache flush
