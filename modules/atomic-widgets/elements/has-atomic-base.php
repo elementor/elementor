@@ -140,6 +140,7 @@ trait Has_Atomic_Base {
 			[
 				Section::make()
 					->set_label( __( 'Settings', 'elementor' ) )
+					->set_id( 'settings' )
 					->set_items( array_merge( $this->get_settings_controls(), $common_settings_controls ) ),
 			],
 		);
