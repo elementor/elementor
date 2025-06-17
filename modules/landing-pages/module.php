@@ -509,7 +509,7 @@ class Module extends BaseModule {
 
 		// When deleting a posts in Landing Page CPT, force Elementor to check again whether this feature should be activated.
 		add_filter( 'pre_delete_post', function ( $delete, $post ) {
-			if ( $post->type == self::CPT ) { 
+			if ( self::CPT === $post->type ) {
 				delete_option( self::ACTIVATION_KEY );
 			}
 
