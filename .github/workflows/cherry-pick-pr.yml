@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   cherry-pick:
-    if: ${{ github.event.pull_request.state == 'closed' }}
+    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
 
     permissions:
@@ -66,14 +66,14 @@ jobs:
             # Cherry-pick
             if ! git cherry-pick -m 1 "$MERGE_SHA"; then
               echo "::error:: Cherry-pick conflicts detected for PR #${PR_NUMBER} on branch ${TARGET}"
-              
+
               # Create a conflict resolution branch
               CONFLICT_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}-conflicts"
-              
+
               # Add conflict markers and create a commit for manual resolution
               git add .
               git commit -m "Cherry-pick PR #${PR_NUMBER} with conflicts - manual resolution needed"
-              
+
               # Push the conflict branch
               if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
                 # Create draft PR with conflict information
@@ -99,7 +99,7 @@ jobs:
 
                   **Original PR:** [#${PR_NUMBER}](${ORIG_URL})" \
                     --draft
-                  
+
                   echo "::notice:: Created draft PR for manual conflict resolution: $CONFLICT_BRANCH"
                 else
                   echo "::notice:: Draft PR already exists for conflict resolution: $CONFLICT_BRANCH"
