@@ -17,7 +17,7 @@ class Style_File {
 		$this->url = $url;
 	}
 
-	public static function create(string $handle, string $path, string $url = '' ): self {
+	public static function create( string $handle, string $path, string $url = '' ): self {
 		return new self( $handle, $path, $url );
 	}
 
