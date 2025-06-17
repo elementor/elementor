@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager;
-use Elementor\Modules\AtomicWidgets\PropDependencies\Term;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
@@ -19,11 +17,6 @@ class Link_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		$is_target_blank_dependencies = [
-			'operator' => 'unset',
-			'path_to_value' => [ 'link', 'destination' ],
-		];
-
 		return [
 			'destination' => Union_Prop_Type::make()
 				->add_prop_type( Url_Prop_Type::make()->skip_validation() )
@@ -31,9 +24,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 				->required(),
 			'label' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() ),
-			'isTargetBlank' => Boolean_Prop_Type::make()
-				->dependencies( Manager::make()
-				->where( $is_target_blank_dependencies ) ),
+			'isTargetBlank' => Boolean_Prop_Type::make(),
 		];
 	}
 }

@@ -18,13 +18,14 @@ class Manager {
 
 	/**
 	 * @var array{
-	 *     disable: array{
+	 *     array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
-	 *         terms: array
-	 *     },
-	 *     hide: array{
-	 *         relation: self::RELATION_OR|self::RELATION_AND,
-	 *         terms: array
+	 *         effect: self::EFFECT_DISABLE|self::EFFECT_HIDE,
+	 *         terms: array{
+	 *             operator: string,
+	 *             path: array<string>,
+	 *             value?: mixed,
+	 *         }
 	 *     }
 	 * }
 	 */
@@ -32,14 +33,6 @@ class Manager {
 
 	public function __construct() {
 		$this->dependencies = [
-			'disable' => [
-				'relation' => self::RELATION_OR,
-				'terms' => [],
-			],
-			'hide' => [
-				'relation' => self::RELATION_OR,
-				'terms' => [],
-			],
 		];
 	}
 
@@ -49,21 +42,24 @@ class Manager {
 
 	/**
 	 * @param $config array{
-	 * effect?: self::EFFECT_DISABLE | self::EFFECT_HIDE,
-	 * operator: string,
-	 * path_to_value: array<string>,
-	 * value_to_compare?: mixed,
-	 * value_on_fail?: mixed,
+	 *  effect?: self::EFFECT_DISABLE | self::EFFECT_HIDE,
+	 *  relation?: self::RELATION_OR | self::RELATION_AND,
+	 *  operator: string,
+	 *  path: array<string>,
+	 *  value?: mixed,
 	 * }
 	 * @return self
 	 */
 	public function where( array $config ): self {
 		$effect = $config['effect'] ?? self::EFFECT_DISABLE;
-		$this->dependencies[ $effect ]['terms'][] = [
-			'operator' => $config['operator'],
-			'path_to_value' => $config['path_to_value'],
-			'value_to_compare' => $config['value_to_compare'] ?? null,
-			'value_on_fail' => $config['value_on_fail'] ?? null,
+		$this->dependencies[] = [
+			'effect' => $effect,
+			'relation' => $config['relation'] ?? self::RELATION_OR,
+			'terms' => [
+				'operator' => $config['operator'],
+				'path' => $config['path'],
+				'value' => $config['value'] ?? null,
+			],
 		];
 
 		return $this;
@@ -71,17 +67,7 @@ class Manager {
 
 	public function get(): array {
 		return Collection::make( $this->dependencies )
-			->filter( fn ( $effect ) => ! empty( $effect['terms'] ) )
-			->map( fn ( $effect ) => [
-				'relation' => $effect['relation'],
-				'terms' => Collection::make( $effect['terms'] )
-					->map( fn ( $term ) => [
-						'operator' => $term['operator'],
-						'pathToValue' => $term['path_to_value'],
-						'valueToCompare' => $term['value_to_compare'],
-						'valueOnFail' => $term['value_on_fail'],
-					] )->all(),
-			] )
+			->filter( fn ( $dependency ) => ! empty( $dependency['terms'] ) )
 			->all();
 	}
 }

@@ -163,7 +163,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						'default' => [ '$$type' => 'string', 'value' => '' ],
 						'settings' => [],
 						'meta' => [],
-						'dependencies' => [],
 					],
 					'key' => [
 						'kind' => 'plain',
@@ -176,7 +175,6 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 							],
 						],
 						'meta' => [],
-						'dependencies' => [],
 					],
 				],
 			],

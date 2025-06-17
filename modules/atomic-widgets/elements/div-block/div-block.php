@@ -1,11 +1,9 @@
 <?php
-
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -43,20 +41,12 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$tag_dependencies = [
-			'operator' => 'set',
-			'path_to_value' => [ 'link', 'destination' ],
-		];
-
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' )
-				->dependencies( Manager::make()
-				->where( $tag_dependencies ) ),
-			'link' => Link_Prop_Type::make(),
+				->default( 'div' ),
 		];
 		return $props;
 	}
@@ -94,7 +84,7 @@ class Div_Block extends Atomic_Element_Base {
 						'value' => 'footer',
 						'label' => 'Footer',
 					],
-				] ),
+				]),
 			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
 			] ),
