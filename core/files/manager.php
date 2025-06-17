@@ -7,7 +7,6 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Page_Assets\Data_Managers\Base as Page_Assets_Data_Manager;
 use Elementor\Core\Responsive\Files\Frontend;
-use Elementor\Modules\LandingPages\Module as LandingPage;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -118,7 +117,6 @@ class Manager {
 		delete_post_meta_by_key( Assets::ASSETS_META_KEY );
 
 		delete_option( Frontend::META_KEY );
-		delete_option( LandingPage::META_KEY );
 
 		$this->reset_assets_data();
 
