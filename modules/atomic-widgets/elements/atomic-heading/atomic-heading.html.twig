@@ -7,7 +7,12 @@
 			{% endif %}
 		{% endfor %}
 	{% endset %}
-	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }}>
+	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }} {{ attributes | raw }}>
+	{% if settings.icon %}
+		<span class="{{ base_styles['icon-base'] }}">
+			{{ settings.icon | icon }}
+		</span>
+	{% endif %}
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
 			{{ settings.title }}
