@@ -25,7 +25,8 @@ class CSS_Files_Manager {
 		return Style_File::create(
 			$this->sanitize_handle( $handle ),
 			$filesystem_path,
-			$this->get_url( $handle )
+			$this->get_url( $handle ),
+			$css['media']
 		);
 	}
 
