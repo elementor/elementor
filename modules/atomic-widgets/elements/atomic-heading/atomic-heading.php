@@ -9,6 +9,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Repeatable_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -107,6 +108,32 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
 			] ),
+			Repeatable_Control::bind_to( 'attributes' )
+				->set_meta( [ 'topDivider' => true ] )
+				->set_repeaterLabel( __( 'Attributes', 'elementor-pro' ) )
+				->set_initialValues(
+					[
+						'key'   => [
+							'$$type' => 'string',
+							'value'  => '',
+						],
+						'value' => [
+							'$$type' => 'string',
+							'value'  => '',
+						],
+					]
+				)
+				->set_patternLabel( '${key.value}="${value.value}"' )
+				->set_placeholder( 'Empty attribute' )
+				->set_child_control_type( 'key-value' )
+				->set_child_control_props(
+					[
+						'regexKey'=> '^[a-zA-Z0-9_-]+$',
+						'validationErrorMessage' => 'Names can only use letters, numbers, dashes (-) and underscores (_).',
+					]
+				)
+				->hide_duplicate()
+				->hide_toggle()
 		];
 	}
 
