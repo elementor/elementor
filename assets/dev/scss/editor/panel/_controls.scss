@@ -129,6 +129,27 @@
 		}
 	}
 
+	&-shape_divider {
+
+		&_top,
+		&_bottom {
+			.elementor-visual-choice-element-image label {
+				padding: 4px;
+			}
+
+			img {
+				aspect-ratio: 4 / 1;
+				object-fit: cover;
+				object-position: center;
+			}
+		}
+
+		&_bottom {
+			img {
+				rotate: X 180deg;
+			}
+		}
+	}
 
 	&-custom_css_pro,
 	&-custom_attributes_pro {
