@@ -42,12 +42,12 @@ class Atomic_Divider extends Atomic_Widget_Base {
 		return 'eicon-e-divider';
 	}
 
-	protected static function define_props_schema(): array {
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-                ];
-	}
+    protected static function define_props_schema(): array {
+        return [
+            'classes' => Classes_Prop_Type::make()
+                ->default( [] ),
+        ];
+    }
 
 	protected function define_atomic_controls(): array {
 		return [];
