@@ -110,7 +110,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			] ),
 			Repeatable_Control::bind_to( 'attributes' )
 				->set_meta( [ 'topDivider' => true ] )
-				->set_repeaterLabel( __( 'Attributes', 'elementor-pro' ) )
+				->set_repeaterLabel( __( 'Attributes', 'elementor' ) )
 				->set_initialValues(
 					[
 						'key'   => [
@@ -128,12 +128,12 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->set_child_control_type( 'key-value' )
 				->set_child_control_props(
 					[
-						'regexKey'=> '^[a-zA-Z0-9_-]+$',
+						'regexKey' => '^[a-zA-Z0-9_-]+$',
 						'validationErrorMessage' => 'Names can only use letters, numbers, dashes (-) and underscores (_).',
 					]
 				)
 				->hide_duplicate()
-				->hide_toggle()
+				->hide_toggle(),
 		];
 	}
 
