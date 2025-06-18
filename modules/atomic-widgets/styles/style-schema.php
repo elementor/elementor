@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -198,6 +199,8 @@ class Style_Schema {
 	private static function get_effects_props() {
 		return [
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
+			'opacity' => Size_Prop_Type::make(),
+			'filter' => Filter_Prop_Type::make(),
 		];
 	}
 
