@@ -1,13 +1,6 @@
 {% if settings.title is not empty %}
-	{% set id_attribute = settings.cssid is not empty ? 'id=' ~ settings.cssid | e('html_attr') : '' %}
-	{% set attributes %}
-		{% for item in settings.attributes %}
-			{% if item.key is not empty and item.value is not empty %}
-				{{- item.key | e('html_attr') }}="{{ item.value | e('html_attr') }}"{% if not loop.last %} {% endif %}
-			{% endif %}
-		{% endfor %}
-	{% endset %}
-	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }} {{ attributes | raw }}>
+	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }}>
 	{% if settings.icon %}
 		<span class="{{ base_styles['icon-base'] }}">
 			{{ settings.icon | icon }}
