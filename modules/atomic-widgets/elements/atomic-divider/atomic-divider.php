@@ -46,7 +46,7 @@ class Atomic_Divider extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-            ];
+                ];
 	}
 
 	protected function define_atomic_controls(): array {
