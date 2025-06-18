@@ -38,24 +38,41 @@ class Manager {
 
 	/**
 	 * @param $config array{
-	 *  effect?: self::EFFECT_DISABLE | self::EFFECT_HIDE,
-	 *  relation?: self::RELATION_OR | self::RELATION_AND,
 	 *  operator: string,
 	 *  path: array<string>,
 	 *  value?: mixed,
 	 * }
 	 * @return self
 	 */
-	public function where( array $config ): self {
-		$effect = $config['effect'] ?? self::EFFECT_DISABLE;
+	public function where( array $config, int $index = -1 ): self {
+		$term = [
+			'operator' => $config['operator'],
+			'path' => $config['path'],
+			'value' => $config['value'] ?? null,
+		];
+
+		if ( -1 === $index ) {
+			$this->new_dependency();
+			$index = array_key_last( $this->dependencies );
+		}
+
+		$this->dependencies[ $index ]['terms'][] = $term;
+
+		return $this;
+	}
+
+	/**
+	 * @param $config array{
+	 *     relation?: self::RELATION_OR | self::RELATION_AND,
+	 *     effect?: self::EFFECT_DISABLE | self::EFFECT_HIDE,
+	 * }
+	 * @return self
+	 */
+	public function new_dependency( array $config = [] ) {
 		$this->dependencies[] = [
-			'effect' => $effect,
 			'relation' => $config['relation'] ?? self::RELATION_OR,
-			'terms' => [
-				'operator' => $config['operator'],
-				'path' => $config['path'],
-				'value' => $config['value'] ?? null,
-			],
+			'effect' => $config['effect'] ?? self::EFFECT_DISABLE,
+			'terms' => [],
 		];
 
 		return $this;
