@@ -51,7 +51,7 @@ class Manager {
 			'value' => $config['value'] ?? null,
 		];
 
-		if ( -1 === $index ) {
+		if ( -1 === $index || ! isset( $this->dependencies[ $index ] ) ) {
 			$this->new_dependency();
 			$index = array_key_last( $this->dependencies );
 		}
