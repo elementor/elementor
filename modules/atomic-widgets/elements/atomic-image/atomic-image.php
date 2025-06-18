@@ -49,7 +49,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->default_size( 'full' ),
 
 			'link' => Link_Prop_Type::make(),
-        ];
+            ];
 
 		return $props;
 	}
