@@ -17,6 +17,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-paragraph', title: 'Paragraph' },
 		{ name: 'e-svg', title: 'SVG' },
 		{ name: 'e-button', title: 'Button' },
+		{ name: 'e-divider', title: 'Divider' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {

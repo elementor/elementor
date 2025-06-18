@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -49,6 +50,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 				->default( __( 'Click here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'repeater' => Key_Value_Array_Prop_Type::make(),
 		];
 
 		return $props;
