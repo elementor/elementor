@@ -9,7 +9,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
-	const experimentName = 'e_atomic_elements';
 
 	const atomicWidgets = [
 		{ name: 'e-heading', title: 'Heading' },
@@ -25,7 +24,11 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
-			[ experimentName ]: 'active',
+			e_opt_in_v4_page: 'active',
+			e_atomic_elements: 'active',
+		} );
+		await wpAdmin.setExperiments( {
+			e_v_3_31: 'active',
 		} );
 	} );
 
