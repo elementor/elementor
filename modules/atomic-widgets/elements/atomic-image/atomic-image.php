@@ -39,20 +39,20 @@ class Atomic_Image extends Atomic_Widget_Base {
 		return 'eicon-e-image';
 	}
 
-    protected static function define_props_schema(): array {
-        $props = [
-            'classes' => Classes_Prop_Type::make()
-                ->default( [] ),
+	protected static function define_props_schema(): array {
+		$props = [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
 
-            'image' => Image_Prop_Type::make()
-                ->default_url( Placeholder_Image::get_placeholder_image() )
-                ->default_size( 'full' ),
+			'image' => Image_Prop_Type::make()
+				->default_url( Placeholder_Image::get_placeholder_image() )
+				->default_size( 'full' ),
 
-            'link' => Link_Prop_Type::make(),
-        ];
+			'link' => Link_Prop_Type::make(),
+                ];
 
-        return $props;
-    }
+		return $props;
+	}
 
 	protected function define_atomic_controls(): array {
 		return [
