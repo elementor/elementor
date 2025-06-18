@@ -3,7 +3,7 @@ name: Cherry Pick Merged PR
 on:
   pull_request:
     types:
-      - closed
+      types: [ closed, labeled ]
 
 permissions:
   contents: write
