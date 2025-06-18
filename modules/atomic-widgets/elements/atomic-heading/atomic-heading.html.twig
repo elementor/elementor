@@ -1,7 +1,7 @@
 {% if settings.title is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 	{% set attributes %}
-		{% for item in settings.repeater %}
+		{% for item in settings.attributes %}
 			{% if item.key is not empty and item.value is not empty %}
 				{{- item.key | e('html_attr') }}="{{ item.value | e('html_attr') }}"{% if not loop.last %} {% endif %}
 			{% endif %}
