@@ -48,6 +48,7 @@
 				}
 
 				&:not(:checked) + label {
+					background-color: var(--e-a-color-white);
 					opacity: 0.5;
 				}
 			}
