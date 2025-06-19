@@ -11,14 +11,14 @@ class Atomic_Widget_Base_Styles {
 
 	public function register_hooks() {
 		add_action(
-			'elementor/atomic-widget/styles/register',
+			'elementor/atomic-widgets/styles/register',
 			fn(Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			10,
 			3
 		);
 	}
 
-	private function register_styles(Atomic_Styles_Manager $styles_manager ) {
+	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
 		$get_styles = function( $post_ids ) {
 			if ( empty( $post_ids ) ) {
 				return [];

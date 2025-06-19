@@ -10,7 +10,7 @@ class Global_Classes_CSS {
 
 	public function register_hooks() {
 		add_action(
-			'elementor/atomic-widget/styles/register',
+			'elementor/atomic-widgets/styles/register',
 			fn(Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			20,
 			3

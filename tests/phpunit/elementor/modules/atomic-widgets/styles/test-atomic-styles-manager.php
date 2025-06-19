@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Styles_Manager extends Elementor_Test_Base {
+class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 	private $test_style_key = 'test-style';
 	private $test_additional_style_key = 'another-style';
 	private $filesystemMock;
@@ -132,7 +132,7 @@ class Test_Styles_Manager extends Elementor_Test_Base {
 				$this->assertEquals( '@media(max-width:767px){.elementor .test-style{color:blue;}}', $content );
 			} );
 
-		add_action( 'elementor/atomic-widget/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
+		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 100, 1 );
 
@@ -180,11 +180,11 @@ class Test_Styles_Manager extends Elementor_Test_Base {
 				}
 			} );
 
-		add_action( 'elementor/atomic-widget/styles/register', function( $styles_manager ) use ( $get_additional_style_defs ) {
+		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_additional_style_defs ) {
 			$styles_manager->register( $this->test_additional_style_key, $get_additional_style_defs );
 		}, 10, 1 );
 
-		add_action( 'elementor/atomic-widget/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
+		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 20, 1 );
 
@@ -213,7 +213,7 @@ class Test_Styles_Manager extends Elementor_Test_Base {
 
         $this->filesystemMock->method('put_contents')->willReturn(true);
 
-        add_action( 'elementor/atomic-widget/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
+        add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
             $styles_manager->register( $this->test_style_key, $get_style_defs );
         }, 20, 1 );
 
