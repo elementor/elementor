@@ -86,7 +86,7 @@ class Module extends BaseModule {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
 			'title' => esc_html__( 'Cloud Library', 'elementor' ),
-			'description' => esc_html__( 'Cloud Templates and Kits empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
+			'description' => esc_html__( 'Cloud Templates and Website Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
 		] );
