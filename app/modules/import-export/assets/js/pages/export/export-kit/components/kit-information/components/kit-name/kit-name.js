@@ -12,7 +12,7 @@ export default function KitName() {
 
 	const validateKitName = ( value ) => {
 		if ( ! value || 0 === value.trim().length ) {
-			return __( 'Must add a kit name', 'elementor' );
+			return __( 'Must add a name', 'elementor' );
 		}
 
 		return null;
