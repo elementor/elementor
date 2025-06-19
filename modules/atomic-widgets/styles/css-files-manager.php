@@ -12,6 +12,10 @@ class CSS_Files_Manager {
 		// TODO: Check if the file is cached and return it if so.
 		$css = $get_css();
 
+		if ( empty( $css['content'] ) ) {
+			throw new \Exception( 'No CSS content provided' );
+		}
+
 		$path = $this->get_path( $handle );
 		$filesystem_path = $this->get_filesystem_path( $path );
 

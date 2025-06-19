@@ -12,24 +12,16 @@ class Atomic_Widget_Base_Styles {
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widgets/styles/register',
-			fn(Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
+			fn( Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			10,
-			3
+			1
 		);
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
-		$get_styles = function( $post_ids ) {
-			if ( empty( $post_ids ) ) {
-				return [];
-			}
-
-			return $this->get_all_base_styles();
-		};
-
 		$styles_manager->register(
 			self::CSS_FILE_KEY,
-			$get_styles,
+			fn () => $this->get_all_base_styles(),
 		);
 	}
 

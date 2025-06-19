@@ -5,14 +5,14 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 
 class Atomic_Global_Styles {
-	CONST CSS_FILE_KEY = 'global';
+	const CSS_FILE_KEY = 'global';
 
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widgets/styles/register',
-			fn(Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
+			fn( Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			20,
-			3
+			1
 		);
 
 		add_filter('elementor/atomic-widgets/settings/transformers/classes',
@@ -20,12 +20,8 @@ class Atomic_Global_Styles {
 		);
 	}
 
-	private function register_styles(Atomic_Styles_Manager $styles_manager ) {
-		$get_styles = function ( $post_ids ) {
-			if ( empty( $post_ids ) ) {
-				return [];
-			}
-
+	private function register_styles( Atomic_Styles_Manager $styles_manager, $post_ids ) {
+		$get_styles = function () {
 			$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 			return  Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {

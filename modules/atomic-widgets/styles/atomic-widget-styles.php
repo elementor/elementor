@@ -10,27 +10,19 @@ class Atomic_Widget_Styles {
 	const CSS_FILE_KEY = 'local';
 
 	public function register_hooks() {
-		add_action( 'elementor/atomic-widgets/styles/register', function( Atomic_Styles_Manager $styles_manager ) {
-			$this->register_styles( $styles_manager );
-		}, 30, 3 );
+		add_action( 'elementor/atomic-widgets/styles/register', function( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
+			$this->register_styles( $styles_manager, $post_ids );
+		}, 30, 2 );
 	}
 
-	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
-		$get_styles = function( $post_ids ) {
-			if ( empty( $post_ids ) ) {
-				return [];
-			}
+	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
+		foreach ( $post_ids as $post_id ) {
+			$get_styles = function() use ( $post_id ) {
+				return $this->parse_post_styles( $post_id );
+			};
 
-			$styles = [];
-
-			foreach ( $post_ids as $post_id ) {
-				$styles = array_merge( $styles, $this->parse_post_styles( $post_id ) );
-			}
-
-			return $styles;
-		};
-
-		$styles_manager->register( self::CSS_FILE_KEY, $get_styles );
+			$styles_manager->register( self::CSS_FILE_KEY . '-' . $post_id, $get_styles );
+		}
 	}
 
 	private function parse_post_styles( $post_id ) {

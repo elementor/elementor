@@ -36,22 +36,17 @@ class Atomic_Styles_Manager {
 	}
 
 	private function enqueue_styles() {
-		do_action( 'elementor/atomic-widgets/styles/register', $this );
 		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts', [] );
+		do_action( 'elementor/atomic-widgets/styles/register', $this, $post_ids );
 
 		$styles_cache = [];
 
-		$style_by_breakpoints = Collection::make( $this->registered_styles_by_key )
-			->map_with_keys( fn( $get_styles, $key ) => [ $key => $get_styles ] )
-			->all();
-
 		$breakpoints = $this->get_breakpoints();
 		foreach ( $breakpoints as $breakpoint_key ) {
-			foreach ( $style_by_breakpoints as $style_key => $get_styles ) {
-
-				$render_css = function () use ( $get_styles, $post_ids, &$styles_cache, $style_key, $breakpoint_key ) {
+			foreach ( $this->registered_styles_by_key as $style_key => $get_styles ) {
+				$render_css = function () use ( $get_styles, &$styles_cache, $style_key, $breakpoint_key ) {
 					if ( ! isset( $styles_cache[ $style_key ] ) ) {
-						$styles_cache[ $style_key ] = $get_styles( $post_ids );
+						$styles_cache[ $style_key ] = $get_styles();
 					}
 
 					$grouped_styles = $this->group_by_breakpoint( $styles_cache[ $style_key ] );
