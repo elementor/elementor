@@ -47,7 +47,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()->default( [] ),
 			'svg' => Image_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
 			'link' => Link_Prop_Type::make(),
-			'repeater' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 	}
 
@@ -114,17 +114,31 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$classes_string = implode( ' ', $classes );
 
 		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
+
+		$attributes_string = '';
+		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
+			$attributes_array = [];
+			foreach ( $settings['attributes'] as $item ) {
+				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
+					$attributes_array[] = esc_attr( $item['key'] ) . '="' . esc_attr( $item['value'] ) . '"';
+				}
+			}
+			$attributes_string = implode( ' ', $attributes_array );
+		}
+
+		$all_attributes = trim( $cssid_attribute . ' ' . $attributes_string );
+
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s" %s>%s</a>',
 				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
-				$cssid_attribute,
+				$all_attributes,
 				$svg_html
 			);
 		} else {
-			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $cssid_attribute, $svg_html );
+			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $all_attributes, $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

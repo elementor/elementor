@@ -50,7 +50,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'repeater' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 
 		return $props;

@@ -48,7 +48,7 @@ class Atomic_Divider extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'repeater' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 	}
 

@@ -62,7 +62,7 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'privacy_mode' => Boolean_Prop_Type::make()->default( false ),
 			'rel' => Boolean_Prop_Type::make()->default( true ),
 
-			'repeater' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 	}
 
