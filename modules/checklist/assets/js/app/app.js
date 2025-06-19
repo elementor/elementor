@@ -41,7 +41,7 @@ const App = () => {
 
 	return (
 		<DirectionProvider rtl={ isRTL }>
-			<ThemeProvider colorScheme="dark">
+			<ThemeProvider colorScheme="light">
 				<Checklist steps={ [ ...steps ] } userProgress={ userProgress } />
 			</ThemeProvider>
 		</DirectionProvider>
