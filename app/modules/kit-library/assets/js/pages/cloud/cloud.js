@@ -110,7 +110,7 @@ export default function Cloud( {
 				}
 			>
 				<div className="e-kit-library__index-layout-container">
-					<Content className="e-kit-library__index-layout-main">
+					<Content className="e-kit-library__index-layout-main e-kit-library__connect-container">
 						<>
 							<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
 								<i className="eicon-library-cloud-connect" aria-hidden="true"></i>

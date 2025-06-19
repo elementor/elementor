@@ -35,6 +35,11 @@ $e-kit-library-sticky-search-z-index: 2;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+
+		&.e-kit-library__connect-container {
+			justify-content: center;
+			align-items: center;
+		}
 	}
 
 	&__connect-button {
