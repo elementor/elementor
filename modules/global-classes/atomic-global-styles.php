@@ -20,7 +20,7 @@ class Atomic_Global_Styles {
 		);
 	}
 
-	private function register_styles( Atomic_Styles_Manager $styles_manager, $post_ids ) {
+	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
 		$get_styles = function () {
 			$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
