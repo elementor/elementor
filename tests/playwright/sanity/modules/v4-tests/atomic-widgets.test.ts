@@ -38,8 +38,16 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Atomic elements tab UI', async () => {
+	test.only( 'Atomic elements tab UI', async () => {
 		editor = await wpAdmin.openNewPage();
+
+		await editor.openElementsPanel();
+		await page.pause();
+
+		const elementsPanel = editor.page.locator( editorSelectors.panels.elements.elementorPanel );
+		await elementsPanel.hover();
+		await editor.page.mouse.wheel( 0, 300 );
+
 		await editor.openElementsPanel();
 		await expect.soft( editor.page.locator( editorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
 	} );
