@@ -192,7 +192,7 @@ class Tracker {
 
 		$last_update_time = self::get_last_update_time();
 		if ( $last_update_time ) {
-			$terms_updated_timestamp = strtotime( $terms_updated );
+			$terms_updated_timestamp = strtotime( $terms_updated . ' UTC' );
 
 			return $last_update_time < $terms_updated_timestamp;
 		}
