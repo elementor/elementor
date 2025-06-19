@@ -38,7 +38,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		await context.close();
 	} );
 
-	test.only( 'Atomic elements tab UI', async () => {
+	test( 'Atomic elements tab UI', async () => {
 		editor = await wpAdmin.openNewPage();
 
 		await editor.openElementsPanel();
