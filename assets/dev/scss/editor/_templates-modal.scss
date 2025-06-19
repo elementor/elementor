@@ -97,7 +97,7 @@ $remote-templates-items-space: 30px;
 
 		&:before {
 			content: '\e87e';
-			scale: calc(1 * var(--direction-multiplier)) 1;  // Flip the icon in RTL
+			scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 		}
 	}
 }

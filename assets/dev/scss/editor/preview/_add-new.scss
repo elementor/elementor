@@ -162,7 +162,7 @@
 
 	.elementor-add-section-back {
 		inset-inline-start: 40px;
-		scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
+		scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 	}
 
 	.elementor-add-section-close,
@@ -255,7 +255,7 @@
 			svg {
 				height: 50px;
 				width: 100%;
-				scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
+				scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 			}
 		}
 	}

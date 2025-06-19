@@ -59,7 +59,7 @@ body {
 	&.elementor-editor-active {
 		#elementor-mode-switcher-preview {
 			i {
-				scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
+				scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 			}
 		}
 	}
@@ -69,7 +69,7 @@ body {
 
 		#elementor-mode-switcher-preview {
 			i {
-				scale: calc(-1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
+				scale: calc(-1 * var(--direction-multiplier)) 1; // Flip in RTL
 			}
 		}
 	}

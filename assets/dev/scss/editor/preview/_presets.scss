@@ -65,7 +65,7 @@
 					height: auto;
 
 					&:not(.exclude-rtl-scale) {
-						scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
+						scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 					}
 				}
 
@@ -96,7 +96,7 @@
 				}
 
 				&[data-preset="r100"] {
-					scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
+					scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 				}
 			}
 		}
