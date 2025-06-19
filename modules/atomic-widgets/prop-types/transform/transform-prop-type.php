@@ -18,6 +18,6 @@ class Transform_Prop_Type extends Array_Prop_Type {
 
 	protected function define_item_type(): Prop_Type {
 		return Union_Prop_Type::make()
-			->add_prop_type( Move_Transform_Prop_Type::make() );
+			->add_prop_type( Transform_Move_Prop_Type::make() );
 	}
 }

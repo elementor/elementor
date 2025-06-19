@@ -9,10 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Move_Transform_Prop_Type extends Object_Prop_Type {
+class Transform_Move_Prop_Type extends Object_Prop_Type {
 
 	public static function get_key(): string {
-		return 'move';
+		return 'transform-move';
 	}
 
 	protected function define_shape(): array {
