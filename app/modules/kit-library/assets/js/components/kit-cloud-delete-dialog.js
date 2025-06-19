@@ -27,7 +27,7 @@ export default function KitCloudDeleteDialog( {
 
 	return (
 		<Dialog
-			title={ __( 'Delete this kit?', 'elementor' ) }
+			title={ __( 'Delete this Website Template?', 'elementor' ) }
 			text={ /* Translators: %s: Kit title. */ sprintf( __( 'Removing "%s" will permanently delete this website template from your library.', 'elementor' ), kit?.title || '' ) }
 			onClose={ handleCancelClick }
 			dismissButtonText={ __( 'Cancel', 'elementor' ) }
