@@ -103,7 +103,7 @@ class Rest_Api {
 		] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/delete', [
-			'methods' => WP_REST_Server::DELETABLE,
+			'methods' => WP_REST_Server::EDITABLE,
 			'callback' => [ $this, 'delete_variable' ],
 			'permission_callback' => [ $this, 'enough_permissions_to_perform_action' ],
 			'args' => [
