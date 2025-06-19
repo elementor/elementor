@@ -86,7 +86,9 @@ class Div_Block extends Atomic_Element_Base {
 						'label' => 'Footer',
 					],
 				]),
-			Link_Control::bind_to( 'link' )->set_meta( [
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
 				'topDivider' => true,
 			] ),
 		];
