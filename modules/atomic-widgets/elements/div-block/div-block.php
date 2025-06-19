@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -41,12 +42,19 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$tag_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'exists',
+				'path' => [ 'link', 'destination' ],
+			] );
+
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' ),
+				->default( 'div' )
+				->dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 		];
 		return $props;
