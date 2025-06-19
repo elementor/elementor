@@ -36,4 +36,19 @@ $e-kit-library-sticky-search-z-index: 2;
 		flex-direction: column;
 		justify-content: space-between;
 	}
+
+	&__connect-button {
+		background-color: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color);
+		border-radius: 4px;
+    	padding: 8px;
+	
+		&:hover {
+			opacity: 0.8;
+		}
+	}
+	
+	.eicon-library-cloud-connect {
+		font-size: 65px;
+	}
 }

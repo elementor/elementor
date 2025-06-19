@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import useCloudKitsEligibility from './use-cloud-kits-eligibility';
 
 /**
  * Generate the menu items for the kit library pages.
@@ -8,8 +7,6 @@ import useCloudKitsEligibility from './use-cloud-kits-eligibility';
  * @return {Array} menu items
  */
 export default function useMenuItems( path ) {
-	const { data: isCloudKitsAvailable } = useCloudKitsEligibility();
-
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
 
@@ -21,13 +18,13 @@ export default function useMenuItems( path ) {
 				url: '/kit-library',
 				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
 			},
-			...( isCloudKitsAvailable ? [ {
+			{
 				label: __( 'My Website Templates', 'elementor' ),
 				icon: 'eicon-library-cloud-empty',
 				isActive: 'cloud' === page,
 				url: '/kit-library/cloud',
 				trackEventData: { command: 'kit-library/select-organizing-category', category: 'cloud' },
-			} ] : [] ),
+			},
 			{
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
@@ -38,5 +35,5 @@ export default function useMenuItems( path ) {
 		];
 
 		return menuItems;
-	}, [ path, isCloudKitsAvailable ] );
+	}, [ path ] );
 }
