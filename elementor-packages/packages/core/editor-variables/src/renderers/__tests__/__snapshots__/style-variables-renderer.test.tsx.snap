@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<StyleVariablesRenderer /> should render style variables in portal when container is available 1`] = `
+<div
+  data-testid="portal"
+>
+  <style
+    data-e-style-id="e-variables"
+  >
+    body{--e-gv-3b395ca:#ff0000;--e-gf-3b78Hyo:Arial;--test-id:yellow;}
+  </style>
+</div>
+`;
