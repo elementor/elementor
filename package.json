@@ -8,7 +8,7 @@
 	"prev_stable_version": "3.1.4",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
-	"packageManager": "npm@11.4.0",
+	"packageManager": "npm@10.0.0",
 	"scripts": {
 		"start": "cd elementor-packages && npm run build:tools && cd .. && npm run styles && npm run scripts",
 		"serve": "cd elementor-packages && npm run build:tools && cd .. && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\"",
@@ -129,8 +129,6 @@
 		"@wordpress/dom-ready": "^3.45.0",
 		"@wordpress/element": "^5.22.0",
 		"@wordpress/plugins": "^7.5.0",
-		"acorn": "^8.7.1",
-		"core-js": "^3.24.1",
 		"dompurify": "^3.2.6",
 		"html-to-image": "^1.11.11",
 		"mime": "^3.0.0",
@@ -143,8 +141,7 @@
 		"react-markdown": "^8.0.5",
 		"react-redux": "^7.2.6",
 		"react-sketch-canvas": "^6.2.0",
-		"validator": "^13.11.0",
-		"write": "^2.0.0"
+		"validator": "^13.11.0"
 	},
 	"overrides": {
 		"@reach/router": {
