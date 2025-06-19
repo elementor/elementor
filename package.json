@@ -8,12 +8,16 @@
 	"prev_stable_version": "3.1.4",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
-	"packageManager": "npm@10.0.0",
+	"packageManager": "npm@11.4.0",
 	"scripts": {
+		"start": "cd elementor-packages && npm run build:tools && cd .. && npm run styles && npm run scripts",
+		"serve": "cd elementor-packages && npm run build:tools && cd .. && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\"",
+		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
+		"prepare-environment": "npm ci && composer install && cd elementor-packages && npm ci",
+		"reinstall": "rm -rf node_modules elementor-packages/node_modules && npm cache clean --force && npm ci && cd elementor-packages && npm ci",
 		"test:setup:playwright:mac": "npm run build && npm run start-local-server && npm run test:setup:playwright && npx playwright install chromium",
 		"wp-env": "wp-env",
 		"test:linux": "node ./run-on-linux.js",
-		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
 		"setup-templates": "rm -rf ./templates && mkdir -p ./templates/playwright && mkdir -p ./templates/lighthouse && cp ./tests/playwright/templates/* ./templates/playwright && cp ./tests/lighthouse/templates/* ./templates/lighthouse",
 		"start-local-server": "npm run setup-templates && wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 && wp-lite-env start --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889",
 		"test:php": "docker-compose run --rm wordpress_phpunit phpunit",
@@ -24,20 +28,16 @@
 		"test:playwright:elements-regression": "playwright test -c tests/elements-regression/playwright.config.ts",
 		"test:playwright:elements-regression:linux": "node ./tests/elements-regression/scripts/run-on-linux.js",
 		"test:playwright:elements-regression:linux:update-snapshots": "npm run test:playwright:elements-regression:linux -- -u",
-		"dev:start": "npm ci && composer install",
 		"test:jest": "jest --config='./tests/jest/jest.config.js'",
 		"scripts": "grunt scripts",
 		"scripts:watch": "grunt watch_scripts",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
-		"lint:js": "eslint .",
-		"preper-environment": "npm ci && composer install && cd elementor-packages && npm ci",
-		"dev:all": "cd elementor-packages && npm run build:tools && cd .. && npm run styles && npm run scripts",
-		"dev:all:watch": "cd elementor-packages && npm run build:tools && cd .. && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\""
+		"lint:js": "eslint ."
 	},
 	"engines": {
-		"node": ">=20.0.0",
-		"npm": ">=10.0.0"
+		"node": ">=20.19.0",
+		"npm": ">=11.4.0"
 	},
 	"devDependencies": {
 		"@actions/core": "^1.11.1",
