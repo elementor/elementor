@@ -32,7 +32,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Tests.
@@ -49,7 +49,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( locators.selectedTabTitle );
 
 		// Act.
@@ -97,7 +97,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -123,7 +123,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -190,7 +190,7 @@ const testCarouselIsVisibleWhenUsingDirectionRightOrLeft = async ( editor: Edito
 	// Act.
 	const contentContainerId = await selectDropdownContainer( editor, '', 0 ),
 		activeContentContainer = editor.getPreviewFrame().locator( '.e-n-tabs-content > .e-con.e-active' ),
-		carouselId = await editor.addWidget( 'image-carousel', contentContainerId );
+		carouselId = await editor.addWidget( { widgetType: 'image-carousel', container: contentContainerId } );
 
 	// Add images.
 	await editor.openPanelTab( 'content' );

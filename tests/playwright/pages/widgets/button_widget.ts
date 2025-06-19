@@ -11,7 +11,7 @@ export default class ButtonWidget extends Content {
 	 * @return {Promise<void>}
 	 */
 	async addWidget( buttonName: string ): Promise<void> {
-		await this.editor.addWidget( 'button' );
+		await this.editor.addWidget( { widgetType: 'button' } );
 		await this.editor.getPreviewFrame().waitForSelector( EditorSelectors.button.getByName( buttonName ) );
 	}
 

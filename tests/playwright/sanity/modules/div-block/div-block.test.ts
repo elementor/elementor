@@ -29,9 +29,9 @@ test.describe( 'Div Block tests @div-block', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
 			divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' ),
-			heading = await editor.addWidget( widgets.heading, divBlock ),
-			button = await editor.addWidget( widgets.button, divBlock ),
-			image = await editor.addWidget( widgets.image, divBlock );
+			heading = await editor.addWidget( { widgetType: widgets.heading, container: divBlock } ),
+			button = await editor.addWidget( { widgetType: widgets.button, container: divBlock } ),
+			image = await editor.addWidget( { widgetType: widgets.image, container: divBlock } );
 
 		await editor.previewFrame.dragAndDrop(
 			getElementSelector( button ),
@@ -54,9 +54,9 @@ test.describe( 'Div Block tests @div-block', () => {
 		const editor = await wpAdmin.openNewPage(),
 			parentDivBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' ),
 			childDivBlock = await editor.addElement( { elType: 'e-div-block' }, parentDivBlock ),
-			heading = await editor.addWidget( widgets.heading, childDivBlock ),
-			button = await editor.addWidget( widgets.button, parentDivBlock ),
-			image = await editor.addWidget( widgets.image, childDivBlock ),
+			heading = await editor.addWidget( { widgetType: widgets.heading, container: childDivBlock } ),
+			button = await editor.addWidget( { widgetType: widgets.button, container: parentDivBlock } ),
+			image = await editor.addWidget( { widgetType: widgets.image, container: childDivBlock } ),
 
 			// Arrange.
 			locatorParentDivBlock = page.locator( getElementSelector( parentDivBlock ) ),
@@ -121,5 +121,32 @@ test.describe( 'Div Block tests @div-block', () => {
 			// Assert.
 			await expect( secondContainerHandles ).toHaveScreenshot( 'normal-handles.png' );
 		} );
+	} );
+	test( 'Verify that text stroke style do not apply to empty view and frame handle elements', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
+		await divBlock.waitFor();
+		const divBlockHandles = divBlock.locator( '.elementor-editor-element-settings' );
+		const divBlockEmptyView = divBlock.locator( '.elementor-empty-view' );
+
+		// Apply text stroke style to div block, no need to go through entire UI, just need to check styles are not passed to empty view and frame handle elements.
+		await divBlock.evaluate( ( el ) => {
+			el.style.stroke = 'red';
+			el.style.strokeWidth = '10px';
+		} );
+
+		await divBlockEmptyView.waitFor();
+
+		await divBlock.hover();
+
+		// Assert.
+		expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
+		expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
 	} );
 } );

@@ -10,6 +10,10 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -110,13 +114,47 @@ trait Has_Atomic_Base {
 	}
 
 	public function get_atomic_controls() {
-		$controls = $this->define_atomic_controls();
+		$controls = apply_filters(
+			'elementor/atomic-widgets/controls',
+			$this->combine_controls(),
+			$this
+		);
+
 		$schema = static::get_props_schema();
 
 		// Validate the schema only in the Editor.
 		static::validate_schema( $schema );
 
 		return $this->get_valid_controls( $schema, $controls );
+	}
+
+	protected function combine_controls(): array {
+		$common_settings_controls = [
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
+		];
+
+		return array_merge(
+			$this->define_atomic_controls(),
+			[
+				Section::make()
+					->set_label( __( 'Settings', 'elementor' ) )
+					->set_id( 'settings' )
+					->set_items( array_merge( $this->get_settings_controls(), $common_settings_controls ) ),
+			],
+		);
+	}
+
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => true,
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [];
 	}
 
 	final public function get_controls( $control_id = null ) {
@@ -172,9 +210,12 @@ trait Has_Atomic_Base {
 	}
 
 	public static function get_props_schema(): array {
+		$schema = static::define_props_schema();
+		$schema['_cssid'] = String_Prop_Type::make();
+
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
-			static::define_props_schema()
+			$schema
 		);
 	}
 }

@@ -14,6 +14,8 @@ const EVENTS_MAP = {
 	QUOTA_BAR_CAPACITY: 'quota_bar_capacity',
 	INSERT_APPLY_SETTINGS: 'insert_apply_settings',
 	UPGRADE_CLICKED: 'upgrade_clicked',
+	PAGE_VIEWED: 'page_viewed',
+	DELETION_UNDO: 'deletion_undo',
 };
 
 export class EventManager {
@@ -40,8 +42,17 @@ export class EventManager {
 		} );
 	}
 
+	sendTemplateSavedEvent( data ) {
+		return this.sendEvent( EVENTS_MAP.TEMPLATE_SAVED, {
+			location: elementor.editorEvents.config.locations.templatesLibrary.library,
+			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
+			trigger: elementor.editorEvents.config.triggers.click,
+			...data,
+		} );
+	}
+
 	sendTemplateTransferEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.NEW_SAVE_TEMPLATE_CLICKED, {
+		return this.sendEvent( EVENTS_MAP.TEMPLATE_TRANSFER, {
 			location: elementor.editorEvents.config.locations.templatesLibrary.library,
 			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
 			...data,
@@ -128,8 +139,14 @@ export class EventManager {
 	}
 
 	sendPageViewEvent( data ) {
-		return this.sendEvent( EVENTS_MAP.UPGRADE_CLICKED, {
+		return this.sendEvent( EVENTS_MAP.PAGE_VIEWED, {
 			page_loaded: data.location,
+			...data,
+		} );
+	}
+
+	sendDeletionUndoEvent( data ) {
+		return this.sendEvent( EVENTS_MAP.DELETION_UNDO, {
 			...data,
 		} );
 	}

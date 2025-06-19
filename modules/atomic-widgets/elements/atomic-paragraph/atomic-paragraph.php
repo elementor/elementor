@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -21,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
+
+	const LINK_BASE_STYLE_KEY = 'link-base';
 
 	public static function get_element_type(): string {
 		return 'e-paragraph';
@@ -39,7 +40,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		return [
+		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
@@ -48,6 +49,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 		];
+
+		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
@@ -58,9 +61,13 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 					Textarea_Control::bind_to( 'paragraph' )
 						->set_label( __( 'Paragraph', 'elementor' ) )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
-
-					Link_Control::bind_to( 'link' ),
 				] ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Link_Control::bind_to( 'link' ),
 		];
 	}
 
@@ -75,6 +82,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'margin', $margin_value )
+				),
+			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
+				->add_variant(
+					Style_Variant::make()
+						->add_prop( 'all', 'unset' )
+						->add_prop( 'cursor', 'pointer' )
 				),
 		];
 	}

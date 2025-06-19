@@ -29,16 +29,18 @@
 	// Global
 	@import "global";
 
-	position: relative;
-	height: 100%;
-	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
-	width: var(--e-editor-panel-width);
-	overflow: visible;
-	background-color: var(--e-a-bg-default);
-	z-index: $first-layer;
-	font-family: var(--e-a-font-family);
-	font-size: 13px;
-	@include start(0);
+	& {
+		position: relative;
+		height: 100%;
+		inset-inline-start: 0;
+		margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
+		width: var(--e-editor-panel-width);
+		overflow: visible;
+		background-color: var(--e-a-bg-default);
+		z-index: $first-layer;
+		font-family: var(--e-a-font-family);
+		font-size: 13px;
+	}
 
 	.elementor-editor-preview & {
 		--e-is-preview-mode: 1;
@@ -100,7 +102,7 @@
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	@include direction-box-shadow(0, 0 5px 0 rgba(0, 0, 0, 0.1));
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 }
 
 // Main Panel
