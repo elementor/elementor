@@ -96,7 +96,8 @@ $remote-templates-items-space: 30px;
 		font-size: 18px;
 
 		&:before {
-			content: getValueByDirection( '\e87e', '\e87d' );
+			content: '\e87e';
+			scale: calc(1 * var(--direction-multiplier)) 1;  // Flip the icon in RTL
 		}
 	}
 }
@@ -1145,7 +1146,7 @@ label.elementor-template-library-order-label {
 
 	iframe {
 		height: 150%;
-		transform: scale(0.666) translateX(getValueByDirection(-25%, 25%)) translateY(-25%);
+		transform: scale(0.666) translateX(calc(-25% * var(--direction-multiplier))) translateY(-25%);
 
 		@media (max-width: $library_screen_breakpoint) {
 			width: 1440px;

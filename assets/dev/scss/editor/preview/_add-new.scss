@@ -162,9 +162,7 @@
 
 	.elementor-add-section-back {
 		inset-inline-start: 40px;
-		@if 'rtl' == $direction {
-			transform: scaleX(-1);
-		}
+		scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
 	}
 
 	.elementor-add-section-close,
@@ -257,10 +255,7 @@
 			svg {
 				height: 50px;
 				width: 100%;
-
-				@if 'rtl' == $direction {
-					transform: rotate(180deg);
-				}
+				scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
 			}
 		}
 	}

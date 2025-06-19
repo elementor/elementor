@@ -24,6 +24,6 @@
 	}
 
 	.#{$eps-prefix}icon {
-		transform: getValueByDirection(rotate(0deg), rotate(180deg));
+		scale: calc(1 * var(--direction-multiplier)) 1;  // Flip the icon in RTL
 	}
 }

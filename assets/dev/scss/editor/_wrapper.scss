@@ -58,10 +58,8 @@ body {
 
 	&.elementor-editor-active {
 		#elementor-mode-switcher-preview {
-			.eicon {
-				&:before {
-					content: getValueByDirection('\e89f', '\e89e');
-				}
+			i {
+				scale: calc(1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
 			}
 		}
 	}
@@ -70,10 +68,8 @@ body {
 		--e-preview-width: 100%;
 
 		#elementor-mode-switcher-preview {
-			.eicon {
-				&:before {
-					content: getValueByDirection('\e89e', '\e89f');
-				}
+			i {
+				scale: calc(-1 * var(--direction-multiplier)) 1; // Flip the icon in RTL
 			}
 		}
 	}
