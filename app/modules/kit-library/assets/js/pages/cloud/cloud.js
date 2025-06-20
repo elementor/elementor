@@ -8,11 +8,12 @@ import SearchInput from '../../components/search-input';
 import useCloudKits from '../../hooks/use-cloud-kits';
 import useCloudKitsEligibility from '../../hooks/use-cloud-kits-eligibility';
 import useMenuItems from '../../hooks/use-menu-items';
+import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import ConnectScreen from './connect-screen';
 import UpgradeScreen from './upgrade-screen';
 import FullPageLoader from './full-page-loader';
@@ -27,9 +28,7 @@ export default function Cloud( {
 		title: __( 'Website Templates', 'elementor' ),
 	} );
 
-	const menuItems = useMenuItems( path );
-	const [ isConnected, setIsConnected ] = useState( elementorCommon.config.library_connect.is_connected );
-	const [ isConnecting, setIsConnecting ] = useState( false );
+	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
 
 	const {
 		data,
@@ -48,6 +47,8 @@ export default function Cloud( {
 		enabled: isConnected,
 	} );
 
+	const menuItems = useMenuItems( path );
+
 	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
 		appsEventTrackingDispatch(
 			command,
@@ -63,31 +64,29 @@ export default function Cloud( {
 		);
 	};
 
-	const handleConnectSuccess = () => {
-		setIsConnecting( true );
-		setIsConnected( true );
+	const onConnectSuccess = ( data ) => {
 		refetchEligibility();
 		forceRefetch();
+		handleConnectSuccess();
 	};
 
-	const handleConnectError = () => {
-		setIsConnected( false );
-		setIsConnecting( false );
+	const onConnectError = () => {
+		handleConnectError();
 	};
 
 	const shouldShowLoading = isConnecting || isCheckingEligibility || ( isConnected && isLoading );
 
 	useEffect( () => {
 		if ( isConnecting && ! isCheckingEligibility && ! isLoading ) {
-			setIsConnecting( false );
+			setConnecting( false );
 		}
-	}, [ isConnecting, isCheckingEligibility, isLoading ] );
+	}, [ isConnecting, isCheckingEligibility, isLoading, setConnecting ] );
 
 	if ( ! isConnected ) {
 		return (
 			<ConnectScreen
-				onConnectSuccess={ handleConnectSuccess }
-				onConnectError={ handleConnectError }
+				onConnectSuccess={ onConnectSuccess }
+				onConnectError={ onConnectError }
 				menuItems={ menuItems }
 				forceRefetch={ forceRefetch }
 				isFetching={ isFetching }
