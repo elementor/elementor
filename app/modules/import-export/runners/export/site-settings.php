@@ -12,7 +12,7 @@ class Site_Settings extends Export_Runner_Base {
 	public function should_export( array $data ) {
 		return (
 			isset( $data['include'] ) &&
-			in_array( 'settings', $data['include'], true )
+			( in_array( 'settings', $data['include'], true ) || in_array( 'theme', $data['include'], true ) )
 		);
 	}
 
@@ -36,6 +36,19 @@ class Site_Settings extends Export_Runner_Base {
 
 		$kit_tabs = array_keys( $kit_tabs );
 		$manifest_data['site-settings'] = $kit_tabs;
+
+		if ( isset( $data['include'] ) && in_array( 'theme', $data['include'], true ) ) {
+			$theme = wp_get_theme();
+
+			if ( ! empty( $theme ) && ! empty( $theme->get( 'ThemeURI' ) ) ) {
+				$themes_data['name'] = $theme->get( 'Name' );
+				$themes_data['theme_uri'] = $theme->get( 'ThemeURI' );
+				$themes_data['version'] = $theme->get( 'Version' );
+				$themes_data['slug'] = $theme->get_stylesheet();
+
+				$manifest_data['theme'] = $themes_data;
+			}
+		}
 
 		return [
 			'files' => [
