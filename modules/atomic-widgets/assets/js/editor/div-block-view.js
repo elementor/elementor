@@ -247,11 +247,15 @@ const DivBlockView = BaseElementView.extend( {
 
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
 					this.onDrop( event, { at: targetIndex } );
-
 					return;
 				}
 
 				if ( this.isParentElement( draggedView.getContainer().id ) ) {
+					return;
+				}
+
+				if ( this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+					this.moveDroppedItem( draggedView, 0 );
 					return;
 				}
 
@@ -368,6 +372,10 @@ const DivBlockView = BaseElementView.extend( {
 
 	draggingOnBottomOrRightSide( side ) {
 		return [ 'bottom', 'right' ].includes( side );
+	},
+
+	emptyViewIsCurrentlyBeingDraggedOver() {
+		return this.$el.find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
 	},
 
 	/**

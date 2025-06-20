@@ -48,6 +48,45 @@ test.describe( 'Div Block tests @div-block', () => {
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
+	test( 'Dragging an element from a container to empty v4 containers renders the element correctly', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const sourceContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const heading = await editor.addWidget( { widgetType: widgets.heading, container: sourceContainer } );
+
+		const flexbox = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		const divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const testDragToEmptyContainer = async ( targetContainer: string ) => {
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( targetContainer ),
+			);
+
+			const headingEl = await editor.getElementHandle( heading );
+
+			const headingParent = await headingEl.evaluate( ( node ) => {
+				return node.closest( '.elementor-element' ).parentElement?.closest( '.elementor-element' )?.getAttribute( 'data-id' );
+			} );
+
+			expect.soft( headingParent ).toBe( targetContainer );
+
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( sourceContainer ),
+			);
+		};
+
+		await test.step( 'Drag heading to empty flexbox', async () => {
+			await testDragToEmptyContainer( flexbox );
+		} );
+
+		await test.step( 'Drag heading to empty div block', async () => {
+			await testDragToEmptyContainer( divBlock );
+		} );
+	} );
+
 	test( 'Nested Div block with widget', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		// Act.
