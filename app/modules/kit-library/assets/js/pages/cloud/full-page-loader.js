@@ -37,4 +37,4 @@ FullPageLoader.propTypes = {
 	menuItems: PropTypes.array.isRequired,
 	forceRefetch: PropTypes.func.isRequired,
 	isFetching: PropTypes.bool.isRequired,
-}; 
+};

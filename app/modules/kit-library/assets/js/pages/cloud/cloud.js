@@ -156,36 +156,36 @@ export default function Cloud( {
 						/>
 						}
 						{ isSuccess && 0 < data.length && <KitListCloud data={ data } source={ path } /> }
-						{isSuccess && data.length === 0 && (
-							queryParams.search ? (
-								<ErrorScreen
-									title={ __( 'No Website Templates found for your search', 'elementor' ) }
-									description={ __( 'Try different keywords or ', 'elementor' ) }
-									button={{
-										text: __( 'Continue browsing.', 'elementor' ),
-										action: clearQueryParams,
-									}}
-								/>
-							) : (
-								renderNoResultsComponent({
-									defaultComponent: (
-										<ErrorScreen
+						{
+							isSuccess && 0 === data.length && (
+								queryParams.search ? (
+									<ErrorScreen
+										title={ __( 'No Website Templates found for your search', 'elementor' ) }
+										description={ __( 'Try different keywords or ', 'elementor' ) }
+										button={ {
+											text: __( 'Continue browsing.', 'elementor' ),
+											action: clearQueryParams,
+										} }
+									/>
+								) : (
+									renderNoResultsComponent( {
+										defaultComponent: <ErrorScreen
 											title={ __( 'No Website Templates to show here yet', 'elementor' ) }
 											description={ __( "Once you export a Website to the cloud, you'll find it here and be able to use it on all your sites.", 'elementor' ) }
 											newLineButton={ true }
-											button={{
+											button={ {
 												text: __( 'Export this site', 'elementor' ),
 												url: elementorAppConfig.base_url + '#/export',
 												target: '_blank',
 												variant: 'contained',
 												color: 'primary',
-											}}
-										/>
-									),
-									isFilterActive,
-								})
+											} }
+										/>,
+										isFilterActive,
+									} )
+								)
 							)
-						)}
+						}
 					</>
 				</Content>
 			</div>
