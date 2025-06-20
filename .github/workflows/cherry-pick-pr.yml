@@ -1,7 +1,7 @@
 name: Cherry Pick Merged PR
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - closed
 
@@ -22,8 +22,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
           persist-credentials: true
+
+      - name: Check if PR is from fork
+        id: check_fork
+        run: |
+          IS_FORK="${{ github.event.pull_request.head.repo.full_name != github.repository }}"
+          echo "is_fork=$IS_FORK" >> "$GITHUB_OUTPUT"
+          echo "Fork status: $IS_FORK"
+        shell: bash
+
+      - name: Log PR source information
+        run: |
+          echo "PR #${{ github.event.pull_request.number }} from: ${{ github.event.pull_request.head.repo.full_name }}"
+          echo "Target repository: ${{ github.repository }}"
+          echo "Is fork PR: ${{ steps.check_fork.outputs.is_fork }}"
+        shell: bash
 
       - name: Get branch labels
         id: get_labels
@@ -123,7 +140,10 @@ jobs:
                 --base "$TARGET" \
                 --head "$BRANCH" \
                 --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
-                --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
+                --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
+
+                **Source:** ${{ github.event.pull_request.head.repo.full_name }}
+                **Original Author:** @${{ github.event.pull_request.user.login }}"
             fi
           done
         shell: bash
