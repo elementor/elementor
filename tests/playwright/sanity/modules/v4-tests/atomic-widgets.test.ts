@@ -9,7 +9,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
-	const experimentName = 'e_atomic_elements';
 
 	const atomicWidgets = [
 		{ name: 'e-heading', title: 'Heading' },
@@ -25,7 +24,12 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
-			[ experimentName ]: 'active',
+			e_atomic_elements: 'active',
+		} );
+
+		// Version experiments are visible after the atomic elements experiment is active
+		await wpAdmin.setExperiments( {
+			e_v_3_31: 'active',
 		} );
 	} );
 
@@ -36,6 +40,13 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 
 	test( 'Atomic elements tab UI', async () => {
 		editor = await wpAdmin.openNewPage();
+
+		await editor.openElementsPanel();
+
+		const elementsPanel = editor.page.locator( editorSelectors.panels.elements.elementorPanel );
+		await elementsPanel.hover();
+		await editor.page.mouse.wheel( 0, 300 );
+
 		await editor.openElementsPanel();
 		await expect.soft( editor.page.locator( editorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
 	} );
