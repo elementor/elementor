@@ -100,7 +100,7 @@ export default function Cloud( {
 							isSuccess && 0 === data.length && (
 								queryParams.search ? (
 									<ErrorScreen
-										title={ __( 'No kits found for your search', 'elementor' ) }
+										title={ __( 'No Website Templates found for your search', 'elementor' ) }
 										description={ __( 'Try different keywords or ', 'elementor' ) }
 										button={ {
 											text: __( 'Continue browsing.', 'elementor' ),

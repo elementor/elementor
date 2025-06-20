@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
@@ -37,6 +38,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Stroke_Tra
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
@@ -60,6 +62,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -192,6 +195,11 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
 		$widgets_manager->register( new Atomic_Youtube() );
+
+		// Register widgets that require version 3.31 experiment
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_VERSION_3_31 ) ) {
+			$widgets_manager->register( new Atomic_Divider() );
+		}
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -224,6 +232,7 @@ class Module extends BaseModule {
 		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
 		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+		$transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
