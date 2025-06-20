@@ -1,0 +1,45 @@
+{
+  "name": "@elementor/utils",
+  "description": "This package contains utility functions that are being used across the Elementor packages",
+  "version": "0.4.0",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor-packages.git",
+    "directory": "packages/libs/utils"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor-packages/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "/dist",
+    "/src",
+    "!**/__tests__"
+  ],
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}

@@ -168,6 +168,7 @@ const externals = [
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
 		'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
+		'@elementor/query': 'elementorV2.query',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 		'@wordpress/core-data': 'wp.coreData',
@@ -352,9 +353,11 @@ webpackProductionConfig.forEach( ( config, index ) => {
 // The 'packages' config doesn't need a `.min` suffix (it has its own config).
 webpackProductionConfig.push( packagesConfigs.prod );
 
-const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
-	return { ...config, watch: false };
-} );
+const developmentNoWatchConfig = [
+	...webpackConfig.map( ( config ) => {
+		return { ...config, watch: false };
+	} ),
+];
 
 const productionWatchConfig = webpackProductionConfig.map( ( config ) => {
 	return { ...config, watch: true };
@@ -365,7 +368,6 @@ const gruntWebpackConfig = {
 	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig,
 	productionWatch: productionWatchConfig,
-	packages: packagesConfigs.dev,
 };
 
 module.exports = gruntWebpackConfig;
