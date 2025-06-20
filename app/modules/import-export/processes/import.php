@@ -247,7 +247,6 @@ class Import {
 	}
 
 	public function register_default_runners() {
-		$this->register( new Themes() );
 		$this->register( new Site_Settings() );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );

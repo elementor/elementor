@@ -23,5 +23,19 @@ class Site_Settings extends Revert_Runner_Base {
 			$data['runners'][ static::get_name() ]['active_kit_id'],
 			$data['runners'][ static::get_name() ]['previous_kit_id']
 		);
+
+		$installed_theme = $data['runners'][ static::get_name() ]['installed_theme'];
+
+		if ( ! empty( $installed_theme ) ) {
+			if ( $this->should_delete_theme( $installed_theme ) ) {
+				delete_theme( $installed_theme );
+			}
+		}
+	}
+
+	private function should_delete_theme( $theme_slug ): bool {
+		$current_theme = wp_get_theme();
+
+		return $theme_slug !== $current_theme->get_stylesheet() && wp_get_theme( $theme_slug )->exists();
 	}
 }

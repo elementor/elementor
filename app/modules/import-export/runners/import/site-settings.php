@@ -23,6 +23,20 @@ class Site_Settings extends Import_Runner_Base {
 	 */
 	private $imported_kit_id;
 
+	/**
+	 * @var string|null
+	 */
+	private $installed_theme;
+
+	/**
+	 * @var \Theme_Upgrader
+	 */
+	private \Theme_Upgrader $theme_upgrader;
+
+	public function __construct() {
+		$this->theme_upgrader = new \Theme_Upgrader( new \WP_Ajax_Upgrader_Skin() );
+	}
+
 	public static function get_name(): string {
 		return 'site-settings';
 	}
@@ -30,7 +44,7 @@ class Site_Settings extends Import_Runner_Base {
 	public function should_import( array $data ) {
 		return (
 			isset( $data['include'] ) &&
-			in_array( 'settings', $data['include'], true ) &&
+			( in_array( 'settings', $data['include'], true ) || in_array( 'theme', $data['include'], true ) ) &&
 			! empty( $data['site_settings']['settings'] )
 		);
 	}
@@ -72,6 +86,39 @@ class Site_Settings extends Import_Runner_Base {
 
 		$result['site-settings'] = (bool) $new_kit;
 
+		if ( ! empty( $data['manifest']['theme'] ) ) {
+			$theme = $data['manifest']['theme'];
+
+			$existing_theme = wp_get_theme( $theme['slug'] );
+
+			try {
+				if ( ! $existing_theme->exists() ) {
+					$import = $this->install_theme( $theme['slug'], $theme['version'] );
+
+					if ( is_wp_error( $import ) ) {
+						$result['theme']['failed'][ $theme['slug'] ] = __( "Failed to install theme: " . $theme['name'], 'elementor' );
+					} else {
+						$result['theme']['succeed'][ $theme['slug'] ] = $import;
+						$this->installed_theme = $theme['slug'];
+					}
+				}
+			} catch ( \Exception $error ) {
+				$result['theme']['failed'][ $theme['slug'] ] = $error->getMessage();
+			}
+		}
+
+		return $result;
+	}
+
+	private function install_theme( $slug, $version ) {
+		$download_url = "https://downloads.wordpress.org/theme/{$slug}.{$version}.zip";
+
+		$result = $this->theme_upgrader->install( $download_url );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
 		return $result;
 	}
 
@@ -80,6 +127,7 @@ class Site_Settings extends Import_Runner_Base {
 			'previous_kit_id' => $this->previous_kit_id,
 			'active_kit_id' => $this->active_kit_id,
 			'imported_kit_id' => $this->imported_kit_id,
+			'installed_theme' => $this->installed_theme,
 		];
 	}
 }

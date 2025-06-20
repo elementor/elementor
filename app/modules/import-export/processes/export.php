@@ -86,7 +86,6 @@ class Export {
 
 	public function register_default_runners() {
 		$this->register( new Site_Settings() );
-		$this->register( new Themes() );
 		$this->register( new Plugins() );
 		$this->register( new Templates() );
 		$this->register( new Taxonomies() );
