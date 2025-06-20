@@ -8,7 +8,7 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Router } from '@reach/router';
 import { SettingsProvider } from './context/settings-context';
-import useCloudKitsEligibility from './hooks/use-cloud-kits-eligibility';
+import { ConnectStateProvider } from './context/connect-state-context';
 
 const queryClient = new QueryClient( {
 	defaultOptions: {
@@ -21,19 +21,19 @@ const queryClient = new QueryClient( {
 } );
 
 function AppContent() {
-	const { data: isCloudKitsAvailable } = useCloudKitsEligibility();
-
 	return (
 		<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
-			<LastFilterProvider>
-				<Router>
-					<Index path="/" />
-					<Favorites path="/favorites" />
-					<Preview path="/preview/:id" />
-					<Overview path="/overview/:id" />
-					{ isCloudKitsAvailable && <Cloud path="/cloud" /> }
-				</Router>
-			</LastFilterProvider>
+			<ConnectStateProvider>
+				<LastFilterProvider>
+					<Router>
+						<Index path="/" />
+						<Favorites path="/favorites" />
+						<Preview path="/preview/:id" />
+						<Overview path="/overview/:id" />
+						<Cloud path="/cloud" />
+					</Router>
+				</LastFilterProvider>
+			</ConnectStateProvider>
 		</SettingsProvider>
 	);
 }

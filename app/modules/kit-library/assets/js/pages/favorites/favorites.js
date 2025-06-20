@@ -1,6 +1,7 @@
 import Index from '../index/index';
 import ErrorScreen from '../../components/error-screen';
 import { useNavigate } from '@reach/router';
+import PropTypes from 'prop-types';
 
 export default function Favorites( props ) {
 	const navigate = useNavigate();
