@@ -145,15 +145,16 @@ export default function Cloud( {
 				</Grid>
 				<Content className="e-kit-library__index-layout-main">
 					<>
-						{ isError && <ErrorScreen
-							title={ __( 'Something went wrong.', 'elementor' ) }
-							description={ __( 'Nothing to worry about, use 🔄 on the top corner to try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
-							button={ {
-								text: __( 'Learn More', 'elementor' ),
-								url: 'https://go.elementor.com/app-kit-library-error/',
-								target: '_blank',
-							} }
-						/>
+						{
+							isError && <ErrorScreen
+								title={ __( 'Something went wrong.', 'elementor' ) }
+								description={ __( 'Nothing to worry about, use 🔄 on the top corner to try again. If the problem continues, head over to the Help Center.', 'elementor' ) }
+								button={ {
+									text: __( 'Learn More', 'elementor' ),
+									url: 'https://go.elementor.com/app-kit-library-error/',
+									target: '_blank',
+								} }
+							/>
 						}
 						{ isSuccess && 0 < data.length && <KitListCloud data={ data } source={ path } /> }
 						{
