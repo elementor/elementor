@@ -276,7 +276,7 @@ export default class ApiRequests {
 				username,
 				email,
 				password,
-				roles: [ ...roles ],
+				roles: roles ? roles.join( ',' ) : '',
 			},
 		} );
 
