@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -48,6 +49,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				->default( __( 'Type your paragraph here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 
 		return $props;

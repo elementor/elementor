@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -49,6 +50,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->default_size( 'full' ),
 
 			'link' => Link_Prop_Type::make(),
+
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 
 		return $props;
