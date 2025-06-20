@@ -72,7 +72,7 @@ export default function ConnectScreen( {
 						</Text>
 						<Button
 							elRef={ connectButtonRef }
-							text={ __( 'Connect', 'elementor' ) }
+							text={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_text }
 							url={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) }
 							className="e-kit-library__connect-button"
 						/>
