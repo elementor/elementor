@@ -13,7 +13,10 @@ import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import PropTypes from 'prop-types';
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
+import ConnectScreen from './connect-screen';
+import { KEY as eligibilityKey } from '../../hooks/use-cloud-kits-eligibility';
 
 import '../index/index.scss';
 
@@ -26,9 +29,11 @@ export default function Cloud( {
 	} );
 
 	const menuItems = useMenuItems( path );
-	const connectButtonRef = useRef();
 	const [ isConnected, setIsConnected ] = useState( elementorCommon.config.library_connect.is_connected );
 	const [ isConnecting, setIsConnecting ] = useState( false );
+	const [ isWaitingForEligibility, setIsWaitingForEligibility ] = useState( false );
+	const [ isEligibilityRefetching, setIsEligibilityRefetching ] = useState( false );
+	const queryClient = useQueryClient();
 
 	const {
 		data,
@@ -43,7 +48,7 @@ export default function Cloud( {
 		isFilterActive,
 	} = useCloudKits();
 
-	const { data: isCloudKitsAvailable, isLoading: isCheckingEligibility } = useCloudKitsEligibility();
+	const { data: isCloudKitsAvailable, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility();
 
 	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
 		appsEventTrackingDispatch(
@@ -60,44 +65,34 @@ export default function Cloud( {
 		);
 	};
 
-	useEffect( () => {
-		if ( ! connectButtonRef.current ) {
-			return;
-		}
-
-		jQuery( connectButtonRef.current ).elementorConnect( {
-			popup: {
-				width: 600,
-				height: 700,
-			},
-			success: ( data ) => {
-				elementorCommon.config.library_connect.is_connected = true;
-				elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
-				elementorCommon.config.library_connect.current_access_tier = data.access_tier;
-
-				setIsConnecting( true );
-				setIsConnected( true );
-				
-				forceRefetch();
-			},
-			error: () => {
-				elementorCommon.config.library_connect.is_connected = false;
-				elementorCommon.config.library_connect.current_access_level = 0;
-				elementorCommon.config.library_connect.current_access_tier = '';
-
-				setIsConnected( false );
-				setIsConnecting( false );
-			},
+	const handleConnectSuccess = ( data ) => {
+		setIsConnecting( true );
+		setIsConnected( true );
+		setIsWaitingForEligibility( true );
+		setIsEligibilityRefetching( true );
+		queryClient.invalidateQueries( eligibilityKey );
+		refetchEligibility().then( () => {
+			setIsEligibilityRefetching( false );
 		} );
-	}, [] );
+		forceRefetch();
+	};
+
+	const handleConnectError = () => {
+		setIsConnected( false );
+		setIsConnecting( false );
+		setIsWaitingForEligibility( false );
+		setIsEligibilityRefetching( false );
+	};
 
 	useEffect( () => {
-		if ( isConnecting && isSuccess && data.length > 0 ) {
+		if ( isConnecting && isSuccess && data.length > 0 && !isCheckingEligibility && !isEligibilityRefetching && isCloudKitsAvailable !== undefined ) {
 			setIsConnecting( false );
+			setIsWaitingForEligibility( false );
 		}
-	}, [ isConnecting, isSuccess, data.length ] );
+	}, [ isConnecting, isSuccess, data.length, isCheckingEligibility, isEligibilityRefetching, isCloudKitsAvailable ] );
 
 	if ( ! isConnected ) {
+		console.log( 'Rendering: Connect Screen' );
 		return (
 			<Layout
 				sidebar={
@@ -114,27 +109,10 @@ export default function Cloud( {
 			>
 				<div className="e-kit-library__index-layout-container">
 					<Content className="e-kit-library__index-layout-main e-kit-library__connect-container">
-						<>
-							<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
-								<i className="eicon-library-cloud-connect" aria-hidden="true"></i>
-								<Heading
-									tag="h3"
-									variant="display-1"
-									className="e-kit-library__error-screen-title"
-								>
-									{ __( 'Connect to your Elementor account', 'elementor' ) }
-								</Heading>
-								<Text variant="xl" className="e-kit-library__error-screen-description">
-									{ __( 'Then you can find all your templates in one convenient library.', 'elementor' ) }
-								</Text>
-								<Button
-									elRef={ connectButtonRef }
-									text={ __( 'Connect', 'elementor' ) }
-									url={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace(/&#038;/g, '&') }
-									className="e-kit-library__connect-button"
-								/>
-							</Grid>
-						</>
+						<ConnectScreen
+							onConnectSuccess={ handleConnectSuccess }
+							onConnectError={ handleConnectError }
+						/>
 					</Content>
 				</div>
 			</Layout>
@@ -142,6 +120,7 @@ export default function Cloud( {
 	}
 
 	if ( isCheckingEligibility ) {
+		console.log( 'Rendering: Eligibility Loading Screen' );
 		return (
 			<Layout
 				sidebar={
@@ -165,7 +144,38 @@ export default function Cloud( {
 		);
 	}
 
-	if ( ! isCloudKitsAvailable ) {
+	if ( isConnecting || isWaitingForEligibility || isEligibilityRefetching || ( isConnected && isLoading ) ) {
+		console.log( 'Rendering: Connecting/Loading Screen' );
+		return (
+			<Layout
+				sidebar={
+					<IndexSidebar menuItems={ menuItems } />
+				}
+				header={
+					<IndexHeader
+						refetch={ () => {
+							forceRefetch();
+						} }
+						isFetching={ isFetching }
+					/>
+				}
+			>
+				<div className="e-kit-library__index-layout-container">
+					<Content className="e-kit-library__index-layout-main">
+						<PageLoader />
+					</Content>
+				</div>
+			</Layout>
+		);
+	}
+
+	if ( ! isCloudKitsAvailable && ! isConnecting && ! isCheckingEligibility ) {
+		console.log( 'Rendering: Upgrade Screen - Conditions met:', {
+			isCloudKitsAvailable: isCloudKitsAvailable,
+			isConnecting: isConnecting,
+			isCheckingEligibility: isCheckingEligibility,
+			isWaitingForEligibility: isWaitingForEligibility,
+		} );
 		return (
 			<Layout
 				sidebar={
@@ -190,7 +200,7 @@ export default function Cloud( {
 									variant="display-1"
 									className="e-kit-library__error-screen-title"
 								>
-									{ __( 'It’s time to level up', 'elementor' ) }
+									{ __( 'It\'s time to level up', 'elementor' ) }
 								</Heading>
 								<Text variant="xl" className="e-kit-library__error-screen-description">
 									{ __( 'Upgrade to Elementor Pro to import your own website template and save templates that you can reuse on any of your connected websites.', 'elementor' ) }
@@ -209,6 +219,7 @@ export default function Cloud( {
 		);
 	}
 
+	console.log( 'Rendering: Main Templates Screen' );
 	return (
 		<Layout
 			sidebar={
