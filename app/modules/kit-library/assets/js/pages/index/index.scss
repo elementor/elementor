@@ -52,8 +52,20 @@ $e-kit-library-sticky-search-z-index: 2;
 			opacity: 0.8;
 		}
 	}
+
+	&__upgrade-button {
+		background-color: var(--e-a-color-accent);
+		color: var(--e-a-color-txt-invert);
+		border-radius: 4px;
+    	padding: 8px;
 	
-	.eicon-library-cloud-connect {
+		&:hover {
+			opacity: 0.8;
+		}
+	}
+	
+	.eicon-library-cloud-connect,
+	.eicon-library-subscription-upgrade {
 		font-size: 65px;
 	}
 }
