@@ -59,12 +59,16 @@ test.describe( 'Div Block tests @div-block', () => {
 		const divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		const testDragToEmptyContainer = async ( targetContainer: string ) => {
+			// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
 			await editor.previewFrame.dragAndDrop(
 				getElementSelector( heading ),
 				getElementSelector( targetContainer ),
 			);
 
-			await page.waitForTimeout( 500 );
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( targetContainer ),
+			);
 
 			const headingEl = await editor.getElementHandle( heading );
 
@@ -72,14 +76,18 @@ test.describe( 'Div Block tests @div-block', () => {
 				return node.closest( '.elementor-element' ).parentElement?.closest( '.e-con' )?.getAttribute( 'data-id' );
 			} );
 
-			expect.soft( headingParent ).toBe( targetContainer );
+			expect( headingParent ).toBe( targetContainer );
 
+			// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
 			await editor.previewFrame.dragAndDrop(
 				getElementSelector( heading ),
 				getElementSelector( sourceContainer ),
 			);
 
-			await page.waitForTimeout( 500 );
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( sourceContainer ),
+			);
 		};
 
 		await test.step( 'Drag heading to empty flexbox', async () => {
