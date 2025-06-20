@@ -56,12 +56,40 @@ export default class EditorPage extends BasePage {
 	 *
 	 * @return {JSON}
 	 */
-	updateImageDates( templateData: JSON ): JSON {
+	updateImageDates( templateData: Record<string, unknown> ): Record<string, unknown> {
 		const date = new Date();
 		const month = date.toLocaleString( 'default', { month: '2-digit' } );
+		const year = date.getFullYear();
 		const data = JSON.stringify( templateData );
-		const updatedData = data.replace( /[0-9]{4}\/[0-9]{2}/g, `${ date.getFullYear() }/${ month }` );
-		return JSON.parse( updatedData ) as JSON;
+
+		const updatedData = data
+			.replace( /[0-9]{4}\/[0-9]{2}/g, `${ year }/${ month }` )
+			.replace( /[0-9]{4}\\\/[0-9]{2}/g, `${ year }\\/${ month }` );
+		return JSON.parse( updatedData ) as Record<string, unknown>;
+	}
+
+	/**
+	 * Fix atomic widget image validation issues for test environments.
+	 *
+	 * Removes attachment IDs from e-image widgets since test database doesn't have
+	 * the referenced attachments, keeping only the URL for image loading.
+	 *
+	 * @param {Record<string, unknown>} templateData - Template data to fix.
+	 * @return {Record<string, unknown>} Fixed template data.
+	 */
+	fixAtomicWidgetSettings( templateData: Record<string, unknown> ): Record<string, unknown> {
+		const data = JSON.stringify( templateData );
+
+		// Find and fix e-image widgets with both id and url set
+		const fixedData = data.replace(
+			/"widgetType":"e-image"[^}]*"settings":\{[^}]*"image":\{[^}]*"value":\{[^}]*"src":\{[^}]*"value":\{[^}]*"id":(\d+|null)[^}]*"url":"([^"]+)"[^}]*}/g,
+			( match ) => {
+				// Remove the id field, keep only url
+				return match.replace( /"id":(\d+|null),?/, '' );
+			},
+		);
+
+		return JSON.parse( fixedData ) as Record<string, unknown>;
 	}
 
 	/**
@@ -101,6 +129,8 @@ export default class EditorPage extends BasePage {
 			templateData = this.updateImageDates( templateData );
 		}
 
+		templateData = this.fixAtomicWidgetSettings( templateData );
+
 		await this.page.evaluate( ( data ) => {
 			const model = new Backbone.Model( { title: 'test' } );
 
@@ -113,6 +143,29 @@ export default class EditorPage extends BasePage {
 				},
 			} );
 		}, templateData );
+
+		// Wait for document state to be properly set after template import
+		await this.page.waitForFunction( () => {
+			interface ElementorWindow extends Window {
+				elementor?: {
+					documents?: {
+						getCurrent(): {
+							editor: { isChanged: boolean };
+						};
+					};
+				};
+			}
+			try {
+				const elementorInstance = ( window as ElementorWindow ).elementor;
+				const currentDoc = elementorInstance?.documents?.getCurrent();
+				return true === currentDoc?.editor?.isChanged;
+			} catch ( error ) {
+				return false;
+			}
+		}, {
+			timeout: 5000,
+			polling: 100,
+		} );
 	}
 
 	/**
