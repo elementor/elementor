@@ -42,7 +42,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		editor = await wpAdmin.openNewPage();
 
 		await editor.openElementsPanel();
-		await page.pause();
 
 		const elementsPanel = editor.page.locator( editorSelectors.panels.elements.elementorPanel );
 		await elementsPanel.hover();
