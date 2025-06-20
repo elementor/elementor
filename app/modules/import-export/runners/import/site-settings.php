@@ -96,7 +96,8 @@ class Site_Settings extends Import_Runner_Base {
 					$import = $this->install_theme( $theme['slug'], $theme['version'] );
 
 					if ( is_wp_error( $import ) ) {
-						$result['theme']['failed'][ $theme['slug'] ] = __( sprintf( 'Failed to install theme: %1$s', $theme['name'] ), 'elementor' );
+						$result['theme']['failed'][ $theme['slug'] ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme['name'] );
+
 					} else {
 						$result['theme']['succeed'][ $theme['slug'] ] = $import;
 						$this->installed_theme = $theme['slug'];
