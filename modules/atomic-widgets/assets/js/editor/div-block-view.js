@@ -247,6 +247,7 @@ const DivBlockView = BaseElementView.extend( {
 
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
 					this.onDrop( event, { at: targetIndex } );
+
 					return;
 				}
 
