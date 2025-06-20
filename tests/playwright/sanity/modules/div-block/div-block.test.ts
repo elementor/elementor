@@ -64,10 +64,12 @@ test.describe( 'Div Block tests @div-block', () => {
 				getElementSelector( targetContainer ),
 			);
 
+			await page.waitForTimeout( 500 );
+
 			const headingEl = await editor.getElementHandle( heading );
 
 			const headingParent = await headingEl.evaluate( ( node ) => {
-				return node.closest( '.elementor-element' ).parentElement?.closest( '.elementor-element' )?.getAttribute( 'data-id' );
+				return node.closest( '.elementor-element' ).parentElement?.closest( '.e-con' )?.getAttribute( 'data-id' );
 			} );
 
 			expect.soft( headingParent ).toBe( targetContainer );
@@ -76,6 +78,8 @@ test.describe( 'Div Block tests @div-block', () => {
 				getElementSelector( heading ),
 				getElementSelector( sourceContainer ),
 			);
+
+			await page.waitForTimeout( 500 );
 		};
 
 		await test.step( 'Drag heading to empty flexbox', async () => {
