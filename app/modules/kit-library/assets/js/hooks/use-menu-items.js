@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import useCloudKitsEligibility from './use-cloud-kits-eligibility';
+import useConnectState from './use-connect-state';
 
 /**
  * Generate the menu items for the kit library pages.
@@ -8,10 +9,36 @@ import useCloudKitsEligibility from './use-cloud-kits-eligibility';
  * @return {Array} menu items
  */
 export default function useMenuItems( path ) {
-	const { data: isCloudKitsAvailable } = useCloudKitsEligibility();
+	const { isConnected } = useConnectState();
+
+	const { data: isCloudKitsAvailable } = useCloudKitsEligibility( {
+		enabled: isConnected,
+	} );
 
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
+
+		let myWebsiteTemplatesLabel = __( 'My Website Templates', 'elementor' );
+
+		if ( ! isConnected ) {
+			myWebsiteTemplatesLabel = (
+				<>
+					{ __( 'My Website Templates', 'elementor' ) }
+					<span className="connect-badge">
+						{ __( 'Connect', 'elementor' ) }
+					</span>
+				</>
+			);
+		} else if ( isConnected && false === isCloudKitsAvailable ) {
+			myWebsiteTemplatesLabel = (
+				<>
+					{ __( 'My Website Templates', 'elementor' ) }
+					<span className="upgrade-badge">
+						{ __( 'Upgrade', 'elementor' ) }
+					</span>
+				</>
+			);
+		}
 
 		const menuItems = [
 			{
@@ -21,13 +48,13 @@ export default function useMenuItems( path ) {
 				url: '/kit-library',
 				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
 			},
-			...( isCloudKitsAvailable ? [ {
-				label: __( 'My Website Templates', 'elementor' ),
+			{
+				label: myWebsiteTemplatesLabel,
 				icon: 'eicon-library-cloud-empty',
 				isActive: 'cloud' === page,
 				url: '/kit-library/cloud',
 				trackEventData: { command: 'kit-library/select-organizing-category', category: 'cloud' },
-			} ] : [] ),
+			},
 			{
 				label: __( 'Favorites', 'elementor' ),
 				icon: 'eicon-heart-o',
@@ -38,5 +65,5 @@ export default function useMenuItems( path ) {
 		];
 
 		return menuItems;
-	}, [ path, isCloudKitsAvailable ] );
+	}, [ path, isConnected, isCloudKitsAvailable ] );
 }
