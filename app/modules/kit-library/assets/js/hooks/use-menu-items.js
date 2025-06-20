@@ -18,12 +18,26 @@ export default function useMenuItems( path ) {
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
 
-		// Determine the label suffix for "My Website Templates"
-		let myTemplatesLabel = __( 'My Website Templates', 'elementor' );
+		let myWebsiteTemplatesLabel = __( 'My Website Templates', 'elementor' );
+
 		if ( ! isConnected ) {
-			myTemplatesLabel += ' ' + __( '(Connect)', 'elementor' );
+			myWebsiteTemplatesLabel = (
+				<>
+					{ __( 'My Website Templates', 'elementor' ) }
+					<span className="connect-badge">
+						{ __( 'Connect', 'elementor' ) }
+					</span>
+				</>
+			);
 		} else if ( isConnected && isCloudKitsAvailable === false ) {
-			myTemplatesLabel += ' ' + __( '(Upgrade)', 'elementor' );
+			myWebsiteTemplatesLabel = (
+				<>
+					{ __( 'My Website Templates', 'elementor' ) }
+					<span className="upgrade-badge">
+						{ __( 'Upgrade', 'elementor' ) }
+					</span>
+				</>
+			);
 		}
 
 		const menuItems = [
@@ -35,7 +49,7 @@ export default function useMenuItems( path ) {
 				trackEventData: { command: 'kit-library/select-organizing-category', category: 'all' },
 			},
 			{
-				label: myTemplatesLabel,
+				label: myWebsiteTemplatesLabel,
 				icon: 'eicon-library-cloud-empty',
 				isActive: 'cloud' === page,
 				url: '/kit-library/cloud',

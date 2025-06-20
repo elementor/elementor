@@ -68,4 +68,17 @@ $e-kit-library-sticky-search-z-index: 2;
 	.eicon-library-subscription-upgrade {
 		font-size: 65px;
 	}
+
+	.connect-badge {
+		color: $e-pink-900;
+		margin-inline-start: 10px;
+	}
+
+	.upgrade-badge {
+		color: $e-accent;
+		border: 1px solid $e-accent;
+		border-radius: 10px;
+		padding: 2px 6px;
+		margin-inline-start: 10px;
+	}
 }
