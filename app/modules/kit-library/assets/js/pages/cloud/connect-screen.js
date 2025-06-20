@@ -65,14 +65,14 @@ export default function ConnectScreen( {
 							variant="display-1"
 							className="e-kit-library__error-screen-title"
 						>
-							{ __( 'Connect to your Elementor account', 'elementor' ) }
+							{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_title_copy }
 						</Heading>
 						<Text variant="xl" className="e-kit-library__error-screen-description">
-							{ __( 'Then you can find all your templates in one convenient library.', 'elementor' ) }
+							{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_sub_title_copy }
 						</Text>
 						<Button
 							elRef={ connectButtonRef }
-							text={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_text }
+							text={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_button_copy?.replace( /&amp;/g, '&' ) }
 							url={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) }
 							className="e-kit-library__connect-button"
 						/>
