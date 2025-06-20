@@ -68,7 +68,7 @@ export default function ConnectScreen( {
 							{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_title_copy }
 						</Heading>
 						<Text variant="xl" className="e-kit-library__error-screen-description">
-							{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_sub_title_copy }
+							{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_sub_title_copy?.replace( /<br\s*\/?>/gi, '\n' ) }
 						</Text>
 						<Button
 							elRef={ connectButtonRef }
