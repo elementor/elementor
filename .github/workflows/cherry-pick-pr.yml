@@ -4,6 +4,7 @@ on:
   pull_request_target:
     types:
       - closed
+      - labeled
 
 permissions:
   contents: write
@@ -12,7 +13,7 @@ permissions:
 
 jobs:
   cherry-pick:
-    if: ${{ github.event.pull_request.merged == true }}
+    if: ${{ github.event.pull_request.merged == true && (github.event.action == 'closed' || (github.event.action == 'labeled' && startsWith(github.event.label.name, 'cp_'))) }}
     runs-on: ubuntu-latest
 
     env:
@@ -35,11 +36,16 @@ jobs:
           echo "Fork status: $IS_FORK"
         shell: bash
 
-      - name: Log PR source information
+      - name: Log trigger and PR information
         run: |
+          echo "Trigger: ${{ github.event.action }}"
+          if [ "${{ github.event.action }}" = "labeled" ]; then
+            echo "Added label: ${{ github.event.label.name }}"
+          fi
           echo "PR #${{ github.event.pull_request.number }} from: ${{ github.event.pull_request.head.repo.full_name }}"
           echo "Target repository: ${{ github.repository }}"
           echo "Is fork PR: ${{ steps.check_fork.outputs.is_fork }}"
+          echo "PR merged: ${{ github.event.pull_request.merged }}"
         shell: bash
 
       - name: Get branch labels
@@ -90,6 +96,12 @@ jobs:
               if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
                 # Create draft PR with conflict information
                 if ! gh pr list --head "$CONFLICT_BRANCH" --base "$TARGET" --state open | grep -q .; then
+                  CONFLICT_TRIGGER_INFO=""
+                  if [ "${{ github.event.action }}" = "labeled" ]; then
+                    CONFLICT_TRIGGER_INFO="
+                  **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
+                  fi
+                  
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
@@ -109,7 +121,7 @@ jobs:
                   5. Push changes: \`git push --force-with-lease\`
                   6. Mark this PR as ready for review
 
-                  **Original PR:** [#${PR_NUMBER}](${ORIG_URL})" \
+                  **Original PR:** [#${PR_NUMBER}](${ORIG_URL})${CONFLICT_TRIGGER_INFO}" \
                     --draft
 
                   echo "::notice:: Created draft PR for manual conflict resolution: $CONFLICT_BRANCH"
@@ -136,6 +148,12 @@ jobs:
             if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
               echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
             else
+              TRIGGER_INFO=""
+              if [ "${{ github.event.action }}" = "labeled" ]; then
+                TRIGGER_INFO="
+                **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
+              fi
+              
               gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
@@ -143,7 +161,7 @@ jobs:
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}
-                **Original Author:** @${{ github.event.pull_request.user.login }}"
+                **Original Author:** @${{ github.event.pull_request.user.login }}${TRIGGER_INFO}"
             fi
           done
         shell: bash
