@@ -5,21 +5,6 @@ on:
     types:
       - closed
       - labeled
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: 'PR number to test cherry-pick'
-        required: true
-        type: string
-      target_branches:
-        description: 'Target branches (comma-separated, e.g., "3.30,dev")'
-        required: true
-        type: string
-      dry_run:
-        description: 'Dry run mode (just log what would happen)'
-        required: false
-        type: boolean
-        default: true
 
 permissions:
   contents: write
@@ -68,18 +53,6 @@ jobs:
         run: |
           LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | grep '^cp_' | paste -sd ',' || echo "")
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
-        shell: bash
-
-      - name: Check for dry-run mode
-        id: dry_run
-        run: |
-          # Enable dry-run if PR title contains [DRY-RUN] or if there's a dry_run label
-          DRY_RUN="false"
-          if [[ "${{ github.event.pull_request.title }}" == *"[DRY-RUN]"* ]] || echo '${{ toJSON(github.event.pull_request.labels) }}' | jq -r '.[].name' | grep -q '^dry_run$'; then
-            DRY_RUN="true"
-          fi
-          echo "enabled=$DRY_RUN" >> "$GITHUB_OUTPUT"
-          echo "Dry-run mode: $DRY_RUN"
         shell: bash
 
       - name: Fetch all branches
@@ -165,189 +138,30 @@ jobs:
             fi
 
             # Push (force push to handle existing branches)
-            if [ "${{ steps.dry_run.outputs.enabled }}" = "true" ]; then
-              echo "::notice:: [DRY-RUN] Would push branch: $BRANCH"
-            else
-              if ! git push --force-with-lease origin "$BRANCH"; then
-                echo "::warning:: Failed to push branch $BRANCH"
-                continue
-              fi
+            if ! git push --force-with-lease origin "$BRANCH"; then
+              echo "::warning:: Failed to push branch $BRANCH"
+              continue
             fi
 
             # Create PR via gh CLI (token already in env: GH_TOKEN)
             # Check if PR already exists
-            if [ "${{ steps.dry_run.outputs.enabled }}" = "true" ]; then
-              echo "::notice:: [DRY-RUN] Would create PR: $BRANCH -> $TARGET"
-              echo "::notice:: [DRY-RUN] Title: Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}"
+            if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
+              echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
             else
-              if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
-                echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
-              else
-                TRIGGER_INFO=""
-                if [ "${{ github.event.action }}" = "labeled" ]; then
-                  TRIGGER_INFO="
-                  **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
-                fi
-                
-                gh pr create \
-                  --base "$TARGET" \
-                  --head "$BRANCH" \
-                  --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
-                  --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
-
-                  **Source:** ${{ github.event.pull_request.head.repo.full_name }}
-                  **Original Author:** @${{ github.event.pull_request.user.login }}${TRIGGER_INFO}"
+              TRIGGER_INFO=""
+              if [ "${{ github.event.action }}" = "labeled" ]; then
+                TRIGGER_INFO="
+                **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
               fi
+              
+              gh pr create \
+                --base "$TARGET" \
+                --head "$BRANCH" \
+                --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
+
+                **Source:** ${{ github.event.pull_request.head.repo.full_name }}
+                **Original Author:** @${{ github.event.pull_request.user.login }}${TRIGGER_INFO}"
             fi
           done
-        shell: bash
-
-  # Manual testing job
-  manual-test:
-    if: ${{ github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0
-          persist-credentials: true
-
-      - name: Get PR information
-        id: pr_info
-        run: |
-          PR_NUMBER="${{ github.event.inputs.pr_number }}"
-          echo "Getting PR #${PR_NUMBER} information..."
-          
-          # Get PR details using GitHub API
-          PR_DATA=$(gh pr view ${PR_NUMBER} --json number,title,url,mergeCommit,merged,headRepository)
-          
-          PR_TITLE=$(echo "$PR_DATA" | jq -r '.title')
-          PR_URL=$(echo "$PR_DATA" | jq -r '.url')
-          MERGE_SHA=$(echo "$PR_DATA" | jq -r '.mergeCommit.oid // empty')
-          IS_MERGED=$(echo "$PR_DATA" | jq -r '.merged')
-          HEAD_REPO=$(echo "$PR_DATA" | jq -r '.headRepository.nameWithOwner')
-          
-          echo "pr_number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
-          echo "pr_title=${PR_TITLE}" >> "$GITHUB_OUTPUT"
-          echo "pr_url=${PR_URL}" >> "$GITHUB_OUTPUT"
-          echo "merge_sha=${MERGE_SHA}" >> "$GITHUB_OUTPUT"
-          echo "is_merged=${IS_MERGED}" >> "$GITHUB_OUTPUT"
-          echo "head_repo=${HEAD_REPO}" >> "$GITHUB_OUTPUT"
-          
-          echo "PR #${PR_NUMBER}: ${PR_TITLE}"
-          echo "Merged: ${IS_MERGED}"
-          echo "Source: ${HEAD_REPO}"
-          echo "Merge SHA: ${MERGE_SHA}"
-        shell: bash
-
-      - name: Validate PR state
-        run: |
-          if [ "${{ steps.pr_info.outputs.is_merged }}" != "true" ]; then
-            echo "::error::PR #${{ steps.pr_info.outputs.pr_number }} is not merged yet"
-            exit 1
-          fi
-          
-          if [ -z "${{ steps.pr_info.outputs.merge_sha }}" ]; then
-            echo "::error::Could not find merge commit for PR #${{ steps.pr_info.outputs.pr_number }}"
-            exit 1
-          fi
-        shell: bash
-
-      - name: Parse target branches
-        id: branches
-        run: |
-          BRANCHES="${{ github.event.inputs.target_branches }}"
-          echo "Target branches: $BRANCHES"
-          echo "branches_csv=$BRANCHES" >> "$GITHUB_OUTPUT"
-        shell: bash
-
-      - name: Fetch all branches
-        run: git fetch --all
-        shell: bash
-
-      - name: Test Cherry-Pick Process
-        run: |
-          PR_NUMBER="${{ steps.pr_info.outputs.pr_number }}"
-          MERGE_SHA="${{ steps.pr_info.outputs.merge_sha }}"
-          ORIG_TITLE="${{ steps.pr_info.outputs.pr_title }}"
-          ORIG_URL="${{ steps.pr_info.outputs.pr_url }}"
-          DRY_RUN="${{ github.event.inputs.dry_run }}"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          echo "=== Cherry-pick Test for PR #${PR_NUMBER} ==="
-          echo "Dry run: ${DRY_RUN}"
-          echo "Merge SHA: ${MERGE_SHA}"
-          echo ""
-
-          IFS=',' read -ra BRANCHES <<< "${{ steps.branches.outputs.branches_csv }}"
-          for TARGET in "${BRANCHES[@]}"; do
-            TARGET=$(echo "$TARGET" | xargs) # trim whitespace
-            BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}"
-
-            echo "--- Testing cherry-pick to: ${TARGET} ---"
-
-            # Check if target branch exists
-            if ! git show-ref --verify --quiet "refs/remotes/origin/$TARGET"; then
-              echo "::warning:: Branch $TARGET does not exist - skipping"
-              continue
-            fi
-
-            # Create branch
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "::notice:: [DRY-RUN] Would create branch: $BRANCH from origin/$TARGET"
-            else
-              if ! git checkout -b "$BRANCH" "origin/$TARGET"; then
-                echo "::warning:: Failed to create branch $BRANCH - skipping"
-                continue
-              fi
-            fi
-
-            # Cherry-pick
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "::notice:: [DRY-RUN] Would cherry-pick: $MERGE_SHA"
-              # Test if cherry-pick would succeed
-              if git cherry-pick --no-commit -m 1 "$MERGE_SHA" 2>/dev/null; then
-                echo "::notice:: [DRY-RUN] Cherry-pick would succeed"
-                git cherry-pick --abort 2>/dev/null || true
-              else
-                echo "::warning:: [DRY-RUN] Cherry-pick would have conflicts"
-                git cherry-pick --abort 2>/dev/null || true
-              fi
-            else
-              if ! git cherry-pick -m 1 "$MERGE_SHA"; then
-                echo "::error:: Cherry-pick conflicts detected for PR #${PR_NUMBER} on branch ${TARGET}"
-                git cherry-pick --abort
-                continue
-              else
-                echo "Cherry-pick successful"
-              fi
-            fi
-
-            # Test push/PR creation
-            if [ "$DRY_RUN" = "true" ]; then
-              echo "::notice:: [DRY-RUN] Would push branch: $BRANCH"
-              echo "::notice:: [DRY-RUN] Would create PR: $BRANCH -> $TARGET"
-              echo "::notice:: [DRY-RUN] Title: Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}"
-            else
-              echo "::notice:: Would push branch and create PR (skipped in test)"
-            fi
-
-            # Cleanup
-            if [ "$DRY_RUN" != "true" ]; then
-              git checkout main 2>/dev/null || git checkout master 2>/dev/null || true
-              git branch -D "$BRANCH" 2>/dev/null || true
-            fi
-
-            echo ""
-          done
-
-          echo "=== Test completed ==="
         shell: bash
