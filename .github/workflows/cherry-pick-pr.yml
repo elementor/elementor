@@ -55,6 +55,18 @@ jobs:
           echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
         shell: bash
 
+      - name: Check for dry-run mode
+        id: dry_run
+        run: |
+          # Enable dry-run if PR title contains [DRY-RUN] or if there's a dry_run label
+          DRY_RUN="false"
+          if [[ "${{ github.event.pull_request.title }}" == *"[DRY-RUN]"* ]] || echo '${{ toJSON(github.event.pull_request.labels) }}' | jq -r '.[].name' | grep -q '^dry_run$'; then
+            DRY_RUN="true"
+          fi
+          echo "enabled=$DRY_RUN" >> "$GITHUB_OUTPUT"
+          echo "Dry-run mode: $DRY_RUN"
+        shell: bash
+
       - name: Fetch all branches
         run: git fetch --all
         shell: bash
@@ -138,30 +150,39 @@ jobs:
             fi
 
             # Push (force push to handle existing branches)
-            if ! git push --force-with-lease origin "$BRANCH"; then
-              echo "::warning:: Failed to push branch $BRANCH"
-              continue
+            if [ "${{ steps.dry_run.outputs.enabled }}" = "true" ]; then
+              echo "::notice:: [DRY-RUN] Would push branch: $BRANCH"
+            else
+              if ! git push --force-with-lease origin "$BRANCH"; then
+                echo "::warning:: Failed to push branch $BRANCH"
+                continue
+              fi
             fi
 
             # Create PR via gh CLI (token already in env: GH_TOKEN)
             # Check if PR already exists
-            if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
-              echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
+            if [ "${{ steps.dry_run.outputs.enabled }}" = "true" ]; then
+              echo "::notice:: [DRY-RUN] Would create PR: $BRANCH -> $TARGET"
+              echo "::notice:: [DRY-RUN] Title: Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}"
             else
-              TRIGGER_INFO=""
-              if [ "${{ github.event.action }}" = "labeled" ]; then
-                TRIGGER_INFO="
-                **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
-              fi
-              
-              gh pr create \
-                --base "$TARGET" \
-                --head "$BRANCH" \
-                --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
-                --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
+              if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
+                echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
+              else
+                TRIGGER_INFO=""
+                if [ "${{ github.event.action }}" = "labeled" ]; then
+                  TRIGGER_INFO="
+                  **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
+                fi
+                
+                gh pr create \
+                  --base "$TARGET" \
+                  --head "$BRANCH" \
+                  --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                  --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
-                **Source:** ${{ github.event.pull_request.head.repo.full_name }}
-                **Original Author:** @${{ github.event.pull_request.user.login }}${TRIGGER_INFO}"
+                  **Source:** ${{ github.event.pull_request.head.repo.full_name }}
+                  **Original Author:** @${{ github.event.pull_request.user.login }}${TRIGGER_INFO}"
+              fi
             fi
           done
         shell: bash
