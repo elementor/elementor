@@ -5,10 +5,10 @@ import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
 
-export default function UpgradeScreen( { 
+export default function UpgradeScreen( {
 	menuItems,
 	forceRefetch,
-	isFetching
+	isFetching,
 } ) {
 	return (
 		<Layout

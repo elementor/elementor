@@ -13,6 +13,6 @@ export default function useCloudKitsEligibility( options = {} ) {
 	return useQuery(
 		[ KEY ],
 		fetchCloudKitsEligibility,
-		options
+		options,
 	);
 }

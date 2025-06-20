@@ -5,10 +5,10 @@ import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
 import PageLoader from '../../components/page-loader';
 
-export default function FullPageLoader( { 
+export default function FullPageLoader( {
 	menuItems,
 	forceRefetch,
-	isFetching
+	isFetching,
 } ) {
 	return (
 		<Layout

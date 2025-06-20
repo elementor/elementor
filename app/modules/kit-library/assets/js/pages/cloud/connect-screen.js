@@ -6,12 +6,12 @@ import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
 
-export default function ConnectScreen( { 
-	onConnectSuccess, 
+export default function ConnectScreen( {
+	onConnectSuccess,
 	onConnectError,
 	menuItems,
 	forceRefetch,
-	isFetching
+	isFetching,
 } ) {
 	const connectButtonRef = useRef();
 
@@ -73,7 +73,7 @@ export default function ConnectScreen( {
 						<Button
 							elRef={ connectButtonRef }
 							text={ __( 'Connect', 'elementor' ) }
-							url={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace(/&#038;/g, '&') }
+							url={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) }
 							className="e-kit-library__connect-button"
 						/>
 					</Grid>
