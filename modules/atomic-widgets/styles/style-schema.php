@@ -18,6 +18,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -201,6 +202,7 @@ class Style_Schema {
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
 			'opacity' => Size_Prop_Type::make(),
 			'filter' => Filter_Prop_Type::make(),
+			'transform' => Transform_Prop_Type::make(),
 		];
 	}
 
