@@ -21,8 +21,8 @@ export default defineConfig( {
 		toHaveScreenshot: { maxDiffPixelRatio: 0.03 },
 	},
 	forbidOnly: !! process.env.CI,
-	retries: process.env.CI ? 9 : 0,
-	workers: process.env.CI ? 3 : 5,
+	retries: process.env.CI ? 5 : 0,
+	workers: process.env.CI ? 3 : 1,
 	fullyParallel: true,
 	reporter: process.env.CI ? [
 		[ 'github' ],
