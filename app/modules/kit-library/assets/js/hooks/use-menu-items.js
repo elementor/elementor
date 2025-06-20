@@ -10,7 +10,7 @@ import useConnectState from './use-connect-state';
  */
 export default function useMenuItems( path ) {
 	const { isConnected } = useConnectState();
-	
+
 	const { data: isCloudKitsAvailable } = useCloudKitsEligibility( {
 		enabled: isConnected,
 	} );
@@ -29,7 +29,7 @@ export default function useMenuItems( path ) {
 					</span>
 				</>
 			);
-		} else if ( isConnected && isCloudKitsAvailable === false ) {
+		} else if ( isConnected && false === isCloudKitsAvailable ) {
 			myWebsiteTemplatesLabel = (
 				<>
 					{ __( 'My Website Templates', 'elementor' ) }

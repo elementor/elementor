@@ -64,7 +64,7 @@ export default function Cloud( {
 		);
 	};
 
-	const onConnectSuccess = ( data ) => {
+	const onConnectSuccess = () => {
 		refetchEligibility();
 		forceRefetch();
 		handleConnectSuccess();

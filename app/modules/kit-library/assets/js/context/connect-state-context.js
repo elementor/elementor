@@ -1,4 +1,5 @@
 import { createContext, useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
 
 export const ConnectStateContext = createContext();
 
@@ -9,9 +10,9 @@ export function ConnectStateProvider( { children } ) {
 	const handleConnectSuccess = useCallback( ( callback ) => {
 		setIsConnecting( true );
 		setIsConnected( true );
-		
+
 		elementorCommon.config.library_connect.is_connected = true;
-		
+
 		if ( callback ) {
 			callback();
 		}
@@ -20,9 +21,9 @@ export function ConnectStateProvider( { children } ) {
 	const handleConnectError = useCallback( ( callback ) => {
 		setIsConnected( false );
 		setIsConnecting( false );
-		
+
 		elementorCommon.config.library_connect.is_connected = false;
-		
+
 		if ( callback ) {
 			callback();
 		}
@@ -46,3 +47,7 @@ export function ConnectStateProvider( { children } ) {
 		</ConnectStateContext.Provider>
 	);
 }
+
+ConnectStateProvider.propTypes = {
+	children: PropTypes.node.isRequired,
+};
