@@ -10,6 +10,7 @@ use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
+use Elementor\Modules\Variables\Classes\Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,6 +41,8 @@ class Hooks {
 	}
 
 	private function register_styles_transformers() {
+		Variables::init( $this->variables_repository() );
+
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			( new Style_Transformers() )->append_to( $registry );
 		} );
