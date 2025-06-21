@@ -6,19 +6,19 @@
 		max-width: 1em;
 	}
 
-	--is-ltr: 1;
-	--is-rtl: 0;
+	@if 'rtl' == $direction {
+		--is-ltr: 0;
+		--is-rtl: 1;
+	} @else {
+		--is-ltr: 1;
+		--is-rtl: 0;
+	}
 
 	// Rotation direction - Will be `1` for LTR, `-1` for RTL.
 	&:is(.eicon-justify-start-h,.eicon-justify-end-h) {
 		--rotation-direction: calc(var(--is-ltr) + var(--is-rtl));
   	}
   	--rotation-direction: calc(var(--is-ltr) - var(--is-rtl));
-
-	@if 'rtl' == $direction {
-		--is-ltr: 0;
-		--is-rtl: 1;
-	}
 
 	// Rotate flex icons based on RTL/LTR & flex direction.
 	&:not( .eicon-wrap ):not( .eicon-nowrap ):not( .eicon-grow ) {

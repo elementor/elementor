@@ -12,7 +12,7 @@
 	align-items: center;
 	align-content: center;
 	margin: auto;
-	transform: translate( -10px, 40px );
+	transform: translate(calc(-10px * var(--direction-multiplier)), 40px);
 	text-align: center;
 	font-family: var(--e-a-font-family);
 
@@ -84,10 +84,6 @@
 		width: 608px;
 		border: none;
 	}
-}
-
-body.rtl .e-feature-promotion {
-	transform: translateX( 10px );
 }
 
 @media ( max-width: 1410px ) {

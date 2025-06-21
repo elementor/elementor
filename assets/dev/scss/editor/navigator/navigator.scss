@@ -173,7 +173,7 @@ body {
 			.elementor-navigator__element__list-toggle {
 
 				i {
-					transform: rotate(getValueByDirection(-90deg, 90deg));
+					transform: rotate(calc(-90deg * var(--direction-multiplier)));
 				}
 			}
 		}
@@ -319,9 +319,7 @@ body {
 			z-index: 91;
 
 			&:not(:hover) {
-				$transform: getValueByDirection(calc(100% - var(--e-editor-navigator-indicator-width)), calc(-100% + var(--e-editor-navigator-indicator-width)));
-
-				transform: translateX($transform);
+				transform: translateX(calc(100% * var(--direction-multiplier) - var(--e-editor-navigator-indicator-width)));
 			}
 		}
 

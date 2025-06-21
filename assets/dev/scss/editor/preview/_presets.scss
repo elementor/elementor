@@ -65,9 +65,7 @@
 					height: auto;
 
 					&:not(.exclude-rtl-scale) {
-						@if 'rtl' == $direction {
-							transform: scaleX(-1);
-						}
+						scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 					}
 				}
 
@@ -98,9 +96,7 @@
 				}
 
 				&[data-preset="r100"] {
-					@if 'rtl' == $direction {
-						transform: scaleX(-1);
-					}
+					scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 				}
 			}
 		}

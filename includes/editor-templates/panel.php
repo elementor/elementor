@@ -138,7 +138,7 @@ $document = Plugin::$instance->documents->get( Plugin::$instance->editor->get_po
 
 <script type="text/template" id="tmpl-elementor-mode-switcher-content">
 	<label for="elementor-mode-switcher-preview-input" id="elementor-mode-switcher-preview" title="<?php echo esc_attr__( 'Hide Panel', 'elementor' ); ?>">
-		<i class="eicon" aria-hidden="true" tabindex="0"></i>
+		<i class="eicon eicon-angle-left" aria-hidden="true" tabindex="0"></i>
 		<span class="elementor-screen-only"><?php echo esc_html__( 'Hide Panel', 'elementor' ); ?></span>
 	</label>
 	<input id="elementor-mode-switcher-preview-input" type="checkbox">
