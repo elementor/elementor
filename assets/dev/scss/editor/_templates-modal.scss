@@ -81,6 +81,7 @@ $remote-templates-items-space: 30px;
 }
 
 #elementor-template-library-header-preview-back {
+	gap: 10px;
 	padding-block: 16.5px 15px;
 	padding-inline: 0 16.5px;
 	border-inline-end: var(--e-a-border);
@@ -92,13 +93,8 @@ $remote-templates-items-space: 30px;
 	}
 
 	i {
-		padding-inline-end: 10px;
 		font-size: 18px;
-
-		&:before {
-			content: '\e87e';
-			scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
-		}
+		scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 	}
 }
 
