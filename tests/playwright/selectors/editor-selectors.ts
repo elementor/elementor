@@ -2,6 +2,7 @@ const EditorSelectors = {
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',
+	eflexbox: '[data-element_type="e-flexbox"]',
 	item: '.elementor-repeater-row-item-title',
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
@@ -17,6 +18,7 @@ const EditorSelectors = {
 			wrapper: '#elementor-panel-page-elements',
 			v4elements: '#elementor-panel-category-v4-elements',
 			footerButton: '#elementor-panel-header-add-button i',
+			elementorPanel: '#elementor-panel',
 		},
 		pageSettings: {
 			wrapper: '#elementor-panel-page-settings',

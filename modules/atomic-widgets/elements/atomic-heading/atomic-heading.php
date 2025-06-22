@@ -104,9 +104,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'label' => 'H6',
 					],
 				]),
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 
