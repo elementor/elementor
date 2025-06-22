@@ -67,7 +67,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	protected function get_settings_controls(): array {
 		return [
-			Link_Control::bind_to( 'link' ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) ),
 		];
 	}
 
