@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropDependencies;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -18,7 +19,6 @@ class Manager {
 
 	/**
 	 * @var array{
-	 *     array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
 	 *         effect: self::EFFECT_DISABLE|self::EFFECT_HIDE,
 	 *         terms: array{
@@ -27,9 +27,12 @@ class Manager {
 	 *             value?: mixed,
 	 *         }
 	 *     }
-	 * }
 	 */
-	private array $dependencies = [];
+	private array $dependencies;
+
+	public function __construct() {
+		$this->dependencies = [];
+	}
 
 
 	public static function make(): self {
@@ -44,19 +47,19 @@ class Manager {
 	 * }
 	 * @return self
 	 */
-	public function where( array $config, int $index = -1 ): self {
+	public function where( array $config ): self {
 		$term = [
 			'operator' => $config['operator'],
 			'path' => $config['path'],
 			'value' => $config['value'] ?? null,
 		];
 
-		if ( -1 === $index || ! isset( $this->dependencies[ $index ] ) ) {
+		if ( empty( $this->dependencies ) ) {
 			$this->new_dependency();
-			$index = array_key_last( $this->dependencies );
 		}
 
-		$this->dependencies[ $index ]['terms'][] = $term;
+		$last_index = array_key_last( $this->dependencies );
+		$this->dependencies[ $last_index ]['terms'][] = $term;
 
 		return $this;
 	}
@@ -69,11 +72,20 @@ class Manager {
 	 * @return self
 	 */
 	public function new_dependency( array $config = [] ) {
-		$this->dependencies[] = [
+		$new_dependency = [
 			'relation' => $config['relation'] ?? self::RELATION_OR,
 			'effect' => $config['effect'] ?? self::EFFECT_DISABLE,
 			'terms' => [],
 		];
+
+		$existing_dependency_with_effect = Collection::make( $this->dependencies )
+			->find( fn ( $dependency ) => $dependency['effect'] === $new_dependency['effect'] );
+
+		if ( $existing_dependency_with_effect ) {
+			Utils::safe_throw( "Dependency with effect of {$new_dependency['effect']} already exists." );
+		}
+
+		$this->dependencies[] = $new_dependency;
 
 		return $this;
 	}
