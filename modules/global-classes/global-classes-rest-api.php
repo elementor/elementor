@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
+use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
@@ -13,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
+	const API_BASE_USAGE = self::API_BASE . '-usage';
 
 	const MAX_ITEMS = 50;
 
@@ -31,108 +34,135 @@ class Global_Classes_REST_API {
 	}
 
 	private function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
+			array(
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
 				'permission_callback' => fn() => true,
-				'args' => [
-					'context' => [
+				'args' => array(
+					'context' => array(
 						'type' => 'string',
 						'required' => false,
 						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
-						'enum' => [
+						'enum' => array(
 							Global_Classes_Repository::CONTEXT_FRONTEND,
 							Global_Classes_Repository::CONTEXT_PREVIEW,
-						],
-					],
-				],
-			],
-		] );
+						),
+					),
+				),
+			),
+		) );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
-			[
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, array(
+			array(
+				'methods' => 'GET',
+				'callback' => fn( ) => $this->route_wrapper( fn() => $this->get_usage() ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => array(
+					'context' => array(
+						'type' => 'string',
+						'required' => false,
+						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
+						'enum' => array(
+							Global_Classes_Repository::CONTEXT_FRONTEND,
+							Global_Classes_Repository::CONTEXT_PREVIEW,
+						),
+					),
+				),
+			),
+		) );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
+			array(
 				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
-				'args' => [
-					'context' => [
+				'args' => array(
+					'context' => array(
 						'type' => 'string',
 						'required' => false,
 						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
-						'enum' => [
+						'enum' => array(
 							Global_Classes_Repository::CONTEXT_FRONTEND,
 							Global_Classes_Repository::CONTEXT_PREVIEW,
-						],
-					],
-					'changes' => [
+						),
+					),
+					'changes' => array(
 						'type' => 'object',
 						'required' => true,
 						'additionalProperties' => false,
-						'properties' => [
-							'added' => [
+						'properties' => array(
+							'added' => array(
 								'type' => 'array',
 								'required' => true,
-								'items' => [ 'type' => 'string' ],
-							],
-							'deleted' => [
+								'items' => array( 'type' => 'string' ),
+							),
+							'deleted' => array(
 								'type' => 'array',
 								'required' => true,
-								'items' => [ 'type' => 'string' ],
-							],
-							'modified' => [
+								'items' => array( 'type' => 'string' ),
+							),
+							'modified' => array(
 								'type' => 'array',
 								'required' => true,
-								'items' => [ 'type' => 'string' ],
-							],
-						],
-					],
-					'items' => [
+								'items' => array( 'type' => 'string' ),
+							),
+						),
+					),
+					'items' => array(
 						'required' => true,
 						'type' => 'object',
-						'additionalProperties' => [
+						'additionalProperties' => array(
 							'type' => 'object',
-							'properties' => [
-								'id' => [
+							'properties' => array(
+								'id' => array(
 									'type' => 'string',
 									'required' => true,
-								],
-								'variants' => [
+								),
+								'variants' => array(
 									'type' => 'array',
 									'required' => true,
-								],
-								'type' => [
+								),
+								'type' => array(
 									'type' => 'string',
-									'enum' => [ 'class' ],
+									'enum' => array( 'class' ),
 									'required' => true,
-								],
-								'label' => [
+								),
+								'label' => array(
 									'type' => 'string',
 									'required' => true,
-								],
-							],
-						],
-					],
-					'order' => [
+								),
+							),
+						),
+					),
+					'order' => array(
 						'required' => true,
 						'type' => 'array',
-						'items' => [
+						'items' => array(
 							'type' => 'string',
-						],
-					],
-				],
-			],
-		] );
+						),
+					),
+				),
+			),
+		) );
 	}
 
 	private function all( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
 
 		$classes = $this->get_repository()->context( $context )->all();
-
 		return Response_Builder::make( (object) $classes->get_items()->all() )
-			->set_meta( [ 'order' => $classes->get_order()->all() ] )
+			->set_meta( array(
+				'order' => $classes->get_order()->all(),
+				'usage' => $classesUsage,
+			) )
 			->build();
+	}
+
+	private function get_usage(  ) {
+		$classesUsage = ( new Applied_Global_Classes_Usage() )->get_detailed_usage();
+		return Response_Builder::make( (object) $classesUsage  )
+								->build();
 	}
 
 	private function put( \WP_REST_Request $request ) {
@@ -178,7 +208,7 @@ class Global_Classes_REST_API {
 
 		$changes_resolver = Global_Classes_Changes_Resolver::make(
 			$repository,
-			$request->get_param( 'changes' ) ?? [],
+			$request->get_param( 'changes' ) ?? array(),
 		);
 
 		$repository->put(

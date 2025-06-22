@@ -20,7 +20,7 @@ class Applied_Global_Classes_Usage {
 	 *
 	 * @return array<string, int> Statistics about applied global classes per global class
 	 */
-	public function get() {
+	public function  get() {
 		$total_count_per_class_id = [];
 		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 
@@ -29,6 +29,10 @@ class Applied_Global_Classes_Usage {
 		}
 
 		Plugin::$instance->db->iterate_elementor_documents( function( $document, $elements_data ) use ( &$total_count_per_class_id, $global_class_ids ) {
+//			var_dump( $document );
+			echo json_encode((array) $document);
+			echo json_encode((array) $elements_data);
+
 			$count_per_global_class = $this->get_classes_count_per_class( $elements_data, $global_class_ids );
 
 			$total_count_per_class_id = Collection::make( $count_per_global_class )->reduce( function( $carry, $count, $class_id ) {
@@ -42,7 +46,6 @@ class Applied_Global_Classes_Usage {
 		foreach ( $global_class_ids as $global_class_id ) {
 			$total_count_per_class_id[ $global_class_id ] ??= 0;
 		}
-
 		return $total_count_per_class_id;
 	}
 
@@ -81,7 +84,6 @@ class Applied_Global_Classes_Usage {
 				$carry[ $global_class_id ] ??= 0;
 				$carry[ $global_class_id ] += 1;
 			}
-
 			return $carry;
 		}, [] );
 	}
@@ -89,4 +91,72 @@ class Applied_Global_Classes_Usage {
 	private function get_applied_global_classes( $prop, $global_class_ids ) {
 		return array_intersect( $prop, $global_class_ids );
 	}
+
+	public function get_detailed_usage() {
+		$result = [];
+
+		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
+
+		if ( empty( $global_class_ids ) ) {
+			return [];
+		}
+
+		Plugin::$instance->db->iterate_elementor_documents( function ( $document, $elements_data ) use ( &$result, $global_class_ids ) {
+			$page_id = $document->get_main_id();
+
+			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( $global_class_ids, $page_id, &$result ) {
+				$element_id = $element_data['id'] ?? null;
+				if ( ! $element_id ) {
+					return;
+				}
+
+				$element_type     = Atomic_Elements_Utils::get_element_type( $element_data );
+				$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
+
+				if ( ! Atomic_Elements_Utils::is_atomic_element( $element_instance ) ) {
+					return;
+				}
+
+				$applied_classes = $this->get_applied_global_classes_per_element(
+					$element_instance::get_props_schema(),
+					$element_data,
+					$global_class_ids
+				);
+
+				foreach ( array_keys( $applied_classes ) as $global_class_id ) {
+					// Initialize result for this class
+					$result[ $global_class_id ] ??= [];
+
+					// Try to find an entry for this pageId
+					$page_entry_index = null;
+					foreach ( $result[ $global_class_id ] as $index => $entry ) {
+						if ( $entry['pageId'] === $page_id ) {
+							$page_entry_index = $index;
+							break;
+						}
+					}
+
+					if ( $page_entry_index !== null ) {
+						// Avoid duplicates
+						if ( ! in_array( $element_id, $result[ $global_class_id ][ $page_entry_index ]['elements'], true ) ) {
+							$result[ $global_class_id ][ $page_entry_index ]['elements'][] = $element_id;
+							$result[ $global_class_id ][ $page_entry_index ]['total']++;
+
+						}
+					} else {
+						// New page entry
+						$result[ $global_class_id ][] = [
+							'pageId'   => $page_id,
+							'elements' => [ $element_id ],
+							'total'    => 1SxProps,
+
+						];
+					}
+				}
+			});
+		});
+
+		return $result;
+	}
+
 }
