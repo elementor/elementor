@@ -144,13 +144,9 @@
 		"validator": "^13.11.0"
 	},
 	"overrides": {
-		"@reach/router": {
-			"react": "$react",
-			"react-dom": "$react-dom"
-		},
-		"@woocommerce/admin-layout": {
-			"react": "^18.2.0",
-			"react-dom": "^18.2.0"
-		}
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"date-fns": "^3.6.0",
+		"scheduler": "^0.20.0"
 	}
 }
