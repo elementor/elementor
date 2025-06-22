@@ -75,8 +75,8 @@ class Atomic_Image extends Atomic_Widget_Base {
 			Link_Control::bind_to( 'link' )
 				->set_label( __( 'Link', 'elementor' ) )
 				->set_meta( [
-				'topDivider' => true,
-			] ),
+					'topDivider' => true,
+				] ),
 		];
 	}
 
