@@ -8,3 +8,10 @@ build/**
 packages/**/*
 tests/qunit/setup/tinymce.js
 /tmp/**
+elementor-packages/**/*
+eslint-local-rules.js
+.eslintrc.js
+
+elementor-packages/node_modules/
+elementor-packages/packages/**/dist/
+elementor-packages/docs/**

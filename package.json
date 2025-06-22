@@ -33,7 +33,7 @@
 		"scripts:watch": "grunt watch_scripts",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
-		"lint:js": "eslint ."
+		"lint": "eslint . && cd elementor-packages && npm run lint"
 	},
 	"engines": {
 		"node": ">=20.19.0",
