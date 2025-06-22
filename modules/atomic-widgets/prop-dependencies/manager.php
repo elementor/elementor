@@ -18,7 +18,7 @@ class Manager {
 	const EFFECT_HIDE = 'hide';
 
 	/**
-	 * @var Collection<array{
+	 * @var array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
 	 *         effect: self::EFFECT_DISABLE|self::EFFECT_HIDE,
 	 *         terms: array{
@@ -27,12 +27,11 @@ class Manager {
 	 *             value?: mixed,
 	 *         }
 	 *     }
-	 * >
 	 */
-	private Collection $dependencies;
+	private array $dependencies;
 
 	public function __construct() {
-		$this->dependencies = new Collection( [] );
+		$this->dependencies = [];
 	}
 
 
@@ -48,24 +47,19 @@ class Manager {
 	 * }
 	 * @return self
 	 */
-	public function where( array $config, int $index = -1 ): self {
+	public function where( array $config ): self {
 		$term = [
 			'operator' => $config['operator'],
 			'path' => $config['path'],
 			'value' => $config['value'] ?? null,
 		];
 
-		if ( -1 === $index && ! empty( $this->dependencies->count() ) ) {
-			$index = $this->dependencies->count() - 1;
-		} else if ( ! $this->dependencies->get( $index ) ) {
+		if ( empty( $this->dependencies ) ) {
 			$this->new_dependency();
-			$index = $this->dependencies->count() - 1;
 		}
 
-		$dependency = $this->dependencies->get( $index );
-		$dependency['terms'][] = $term;
-
-		$this->dependencies->offsetSet( $index, $dependency );
+		$last_index = array_key_last( $this->dependencies );
+		$this->dependencies[ $last_index ]['terms'][] = $term;
 
 		return $this;
 	}
@@ -84,20 +78,20 @@ class Manager {
 			'terms' => [],
 		];
 
-		$existing_dependency_with_effect = $this->dependencies
+		$existing_dependency_with_effect = Collection::make( $this->dependencies )
 			->find( fn ( $dependency ) => $dependency['effect'] === $new_dependency['effect'] );
 
 		if ( $existing_dependency_with_effect ) {
 			Utils::safe_throw( "Dependency with effect of {$new_dependency['effect']} already exists." );
 		}
 
-		$this->dependencies->push( $new_dependency );
+		$this->dependencies[] = $new_dependency;
 
 		return $this;
 	}
 
 	public function get(): array {
-		return $this->dependencies
+		return Collection::make( $this->dependencies )
 			->filter( fn ( $dependency ) => ! empty( $dependency['terms'] ) )
 			->all();
 	}
