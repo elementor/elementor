@@ -55,7 +55,9 @@ class Manager {
 			'value' => $config['value'] ?? null,
 		];
 
-		if ( -1 === $index || ! $this->dependencies->get( $index ) ) {
+		if ( -1 === $index && ! empty( $this->dependencies->count() ) ) {
+			$index = $this->dependencies->count() - 1;
+		} else if ( ! $this->dependencies->get( $index ) ) {
 			$this->new_dependency();
 			$index = $this->dependencies->count() - 1;
 		}
