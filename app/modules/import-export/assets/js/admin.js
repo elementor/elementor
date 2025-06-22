@@ -117,10 +117,10 @@ class Admin {
 
 		if ( 0 === referrerKitId.length ) {
 			this.createKitDeletedWidget( {
-				message: __( 'Try a different Kit or build your site from scratch.', 'elementor' ),
+				message: __( 'Try a different Website Template or build your site from scratch.', 'elementor' ),
 				strings: {
 					confirm: __( 'OK', 'elementor' ),
-					cancel: __( 'Kit Library', 'elementor' ),
+					cancel: __( 'Library', 'elementor' ),
 				},
 				onCancel: () => {
 					location.href = elementorImportExport.appUrl;
