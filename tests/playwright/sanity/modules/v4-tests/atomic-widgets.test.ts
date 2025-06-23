@@ -75,21 +75,24 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
 
-					const selector = 'e-youtube' === widget.name
-						? `${ widgetSelector }.e-youtube-base`
-						: widgetSelector;
+					if ( 'e-youtube' === widget.name ) {
+						widgetSelector = `${ widgetSelector }.e-youtube-base`;
+						await editor.isUiStable( editor.getPreviewFrame().locator( widgetSelector ) );
+						await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					} else {
+						await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					}
 
-					await editor.isUiStable( editor.getPreviewFrame().locator( selector ) );
-
-					await expect( editor.getPreviewFrame().locator( selector ) ).toBeVisible();
-					await expect( editor.getPreviewFrame().locator( selector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 				} );
 
 				await test.step( 'Check frontend display', async () => {
 					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
 
-					await editor.isUiStable( editor.page.locator( containerSelector ) );
+					if ( 'e-youtube' === widget.name ) {
+						await editor.isUiStable( editor.page.locator( containerSelector ) );
+					}
 
 					await expect.soft( editor.page.locator( containerSelector ) )
 						.toHaveScreenshot( `${ widget.name }-published.png` );
