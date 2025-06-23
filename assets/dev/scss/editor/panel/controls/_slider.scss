@@ -40,7 +40,7 @@
 				.noUi-handle {
 					border-radius: 0;
 					width: 10px;
-					transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(4px, -4px));
+					transform: translateY(calc(50% - 14px)) translateX(calc(4px * var(--direction-multiplier)));
 
 					&:after {
 						content: '';
@@ -155,7 +155,7 @@
 			background-color: var(--e-a-color-white);
 			position: absolute;
 			inset-inline-end: 0;
-			transform: translateY(calc(50% - 14px)) translateX(getValueByDirection(8px, -8px));
+			transform: translateY(calc(50% - 14px)) translateX(calc(8px * var(--direction-multiplier)));
 			box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
 			border-radius: 50%;
 		}
