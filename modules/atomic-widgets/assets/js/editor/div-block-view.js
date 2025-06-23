@@ -41,19 +41,9 @@ const DivBlockView = BaseElementView.extend( {
 		const attr = BaseElementView.prototype.attributes.apply( this );
 		const local = {};
 		const cssId = this.model.getSetting( '_cssid' );
-		const attributes = this.model.getSetting( 'attributes' );
 
 		if ( cssId ) {
 			local.id = cssId.value;
-		}
-
-		if ( attributes?.value ) {
-			// Process custom attributes similar to how CSS ID is handled
-			attributes.value.forEach( ( attribute ) => {
-				if ( attribute.key && attribute.value ) {
-					local[ attribute.key ] = attribute.value;
-				}
-			} );
 		}
 
 		const href = this.getHref();
@@ -121,18 +111,6 @@ const DivBlockView = BaseElementView.extend( {
 				this.$el.attr( 'id', changed._cssid.value );
 			} else {
 				this.$el.removeAttr( 'id' );
-			}
-
-			return;
-		}
-
-		if ( changed.attributes ) {
-			if ( changed.attributes.value ) {
-				changed.attributes.value.forEach( ( attribute ) => {
-					if ( attribute.key && attribute.value ) {
-						this.$el.attr( attribute.key, attribute.value );
-					}
-				} );
 			}
 
 			return;
