@@ -2,12 +2,12 @@ module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
 	plugins: [
-		'@elementor/editor',
 		'@typescript-eslint',
 		'@tanstack/query',
 		'simple-import-sort',
 		'unicorn',
 		'react-compiler',
+		'local-rules',
 	],
 	extends: [
 		'plugin:@wordpress/eslint-plugin/recommended',
@@ -21,6 +21,9 @@ module.exports = {
 		'import/resolver': {
 			typescript: {},
 			node: {},
+		},
+		'local-rules': {
+			'no-react-namespace': require.resolve('./eslint-local-rules.js'),
 		},
 	},
 	reportUnusedDisableDirectives: true,
@@ -117,7 +120,7 @@ module.exports = {
 		],
 
 		// Internal rules.
-		'@elementor/editor/no-react-namespace': 'error',
+		'no-react-namespace': 'error',
 	},
 	overrides: [
 		{
