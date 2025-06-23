@@ -46,8 +46,14 @@ class Test_Revert extends Elementor_Test_Base {
 
 		$import = new Import( static::MOCK_KIT_ZIP_PATH );
 
+		$import_site_settings_runner = $this->getMockBuilder( Import_Site_Settings::class )
+		->onlyMethods( [ 'import_theme' ] )
+			->getMock();
+
+		$import_site_settings_runner->method( 'import_theme' )->willReturn( null );
+
 		$import->register( new Import_Plugins( $plugins_manager_mock ) );
-		$import->register( new Import_Site_Settings() );
+		$import->register( $import_site_settings_runner );
 		$import->register( new Import_Taxonomies() );
 		$import->register( new Import_Templates() );
 		$import->register( new Import_Elementor_Content() );
@@ -99,8 +105,14 @@ class Test_Revert extends Elementor_Test_Base {
 		// Arrange
 		$original_kit = Plugin::$instance->kits_manager->get_active_kit();
 
+		$import_site_settings_runner = $this->getMockBuilder( Import_Site_Settings::class )
+			->onlyMethods( [ 'import_theme' ] )
+			->getMock();
+
+		$import_site_settings_runner->method( 'import_theme' )->willReturn( null );
+
 		$import = new Import( static::MOCK_KIT_ZIP_PATH );
-		$import->register( new Import_Site_Settings() );
+		$import->register( $import_site_settings_runner );
 		$import->run();
 
 		$after_import__kit = Plugin::$instance->kits_manager->get_active_kit();
