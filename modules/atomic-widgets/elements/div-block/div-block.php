@@ -183,14 +183,13 @@ class Div_Block extends Atomic_Element_Base {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-//		// Handle custom attributes like in the SVG
-//		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
-//			foreach ( $settings['attributes'] as $item ) {
-//				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
-//					$attributes[ esc_attr( $item['key'] ) ] = esc_attr( $item['value'] );
-//				}
-//			}
-//		}
+		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
+			foreach ( $settings['attributes'] as $item ) {
+				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
+					$attributes[ esc_attr( $item['key'] ) ] = esc_attr( $item['value'] );
+				}
+			}
+		}
 
 		if ( ! empty( $settings['link']['href'] ) ) {
 			$attributes = array_merge( $attributes, $settings['link'] );
