@@ -11,7 +11,7 @@ import useConnectState from './use-connect-state';
 export default function useMenuItems( path ) {
 	const { isConnected } = useConnectState();
 
-	const { data: cloudKitsData, isLoading: isCheckingEligibility } = useCloudKitsEligibility( {
+	const { data: cloudKitsData } = useCloudKitsEligibility( {
 		enabled: isConnected,
 	} );
 
