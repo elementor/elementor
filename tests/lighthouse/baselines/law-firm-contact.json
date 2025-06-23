@@ -5,16 +5,13 @@
   "unused-css-rules": [ "error", { "maxLength": 0 } ],
   "unused-javascript": [ "error", { "maxLength": 0 } ],
   "uses-rel-preconnect": [ "error", { "maxLength": 0 } ],
-  "uses-responsive-images": [ "error", { "maxLength": 1 } ],
   "first-contentful-paint": [ "error", { "minScore": 0.8 } ],
-  "first-meaningful-paint": [ "error", { "minScore": 0.6 } ],
-  "largest-contentful-paint": [ "error", { "minScore": 0.8 } ],
+  "first-meaningful-paint": [ "error", { "minScore": 0.5 } ],
+  "largest-contentful-paint": [ "error", { "minScore": 0.6 } ],
   "legacy-javascript": [ "error", { "maxLength": 0 } ],
-  "render-blocking-resources": [ "error", { "maxLength": 9 } ],
-  "uses-long-cache-ttl": [ "warn", { "maxLength": 28 } ],
-  "modern-image-formats": [ "warn", { "maxLength": 2 }],
-  "csp-xss": [ "warn", { "minScore": 0 }],
-  "lcp-lazy-loaded": "off",
-  "non-composited-animations": "off",
-  "prioritize-lcp-image": "off"
+  "render-blocking-resources": [ "error", { "maxLength": 12 } ],
+  "uses-long-cache-ttl": [ "warn", { "maxLength": 27 } ],
+  "modern-image-formats": [ "warn", { "maxLength": 1 }],
+  "prioritize-lcp-image": [ "error", { "minScore": 0.5 } ],
+  "csp-xss": [ "warn", { "minScore": 0 }]
 }

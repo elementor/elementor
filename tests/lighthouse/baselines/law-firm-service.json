@@ -13,8 +13,5 @@
   "render-blocking-resources": [ "error", { "maxLength": 9 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 28 } ],
   "modern-image-formats": [ "warn", { "maxLength": 2 }],
-  "csp-xss": [ "warn", { "minScore": 0 }],
-  "lcp-lazy-loaded": "off",
-  "non-composited-animations": "off",
-  "prioritize-lcp-image": "off"
+  "csp-xss": [ "warn", { "minScore": 0 }]
 }
