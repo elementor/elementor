@@ -36,7 +36,7 @@ class Site_Settings extends Revert_Runner_Base {
 		}
 
 		if ( $this->delete_theme( $installed_theme ) ) {
-			$this->activate_previous_theme ( $previous_active_theme );
+			$this->activate_previous_theme( $previous_active_theme );
 		}
 	}
 
