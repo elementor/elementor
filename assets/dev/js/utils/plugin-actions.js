@@ -176,7 +176,7 @@ module.exports = elementorModules.Module.extend( {
 			    animation-delay: calc(1.8s / 4 * -3);
 			}
 			.elementor-loader-box:not(:nth-of-type(1)) {
-			    right: 0;
+			    inset-inline-end: 0;
 			    height: 20%;
 			    width: 60%;
 			}
