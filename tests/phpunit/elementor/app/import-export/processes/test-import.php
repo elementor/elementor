@@ -56,8 +56,14 @@ class Test_Import extends Elementor_Test_Base {
 		$import = new Import( $session );
 		$manifest = $import->get_manifest();
 
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( [ 'import_theme' ] )
+			->getMock();
+
+		$site_settings_runner->method( 'import_theme' )->willReturn( null );
+
 		$import->register( new Plugins( $plugins_manager_mock ) );
-		$import->register( new Site_Settings() );
+		$import->register( $site_settings_runner );
 		$import->register( new Taxonomies() );
 		$import->register( new Templates() );
 		$import->register( new Elementor_Content() );
@@ -203,7 +209,14 @@ class Test_Import extends Elementor_Test_Base {
 			'include' => [ 'settings' ],
 		];
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
-		$import->register( new Site_Settings() );
+
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( [ 'import_theme' ] )
+			->getMock();
+
+		$site_settings_runner->method( 'import_theme' )->willReturn( null );
+
+		$import->register( $site_settings_runner );
 
 		$extracted_directory_path = $import->get_extracted_directory_path();
 		$site_settings = ImportExportUtils::read_json_file( $extracted_directory_path . 'site-settings' );

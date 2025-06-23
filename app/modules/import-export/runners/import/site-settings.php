@@ -86,7 +86,7 @@ class Site_Settings extends Import_Runner_Base {
 
 		$result['site-settings'] = (bool) $new_kit;
 
-		$import_theme_result = $this->import_theme( $data );
+		$import_theme_result = $this->import_theme( $new_site_settings );
 
 		if ( ! empty( $import_theme_result ) ) {
 			$result['theme'] = $import_theme_result;
@@ -101,12 +101,12 @@ class Site_Settings extends Import_Runner_Base {
 		return $this->theme_upgrader->install( $download_url );
 	}
 
-	public function import_theme( array $data ) {
-		if ( empty( $data['manifest']['theme'] ) ) {
+	public function import_theme( array $settings ) {
+		if ( empty( $settings['theme'] ) ) {
 			return null;
 		}
 
-		$theme = $data['manifest']['theme'];
+		$theme = $settings['theme'];
 
 		$existing_theme = wp_get_theme( $theme['slug'] );
 
