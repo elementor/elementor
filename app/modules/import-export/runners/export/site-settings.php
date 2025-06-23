@@ -59,7 +59,7 @@ class Site_Settings extends Export_Runner_Base {
 	public function export_theme() {
 		$theme = wp_get_theme();
 
-		if ( empty( $theme ) && empty( $theme->get( 'ThemeURI' ) ) ) {
+		if ( empty( $theme ) || empty( $theme->get( 'ThemeURI' ) ) ) {
 			return null;
 		}
 

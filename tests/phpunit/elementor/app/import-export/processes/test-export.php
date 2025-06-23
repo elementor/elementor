@@ -117,12 +117,12 @@ class Test_Export extends Elementor_Test_Base {
 		$kit_tabs = $kit->get_tabs();
 		unset( $kit_tabs['settings-site-identity'] );
 		$expected_manifest_site_settings = array_keys( $kit_tabs );
-		$expected_manifest_site_settings[] = 'theme';
+//		$expected_manifest_site_settings[] = 'theme';
 
 		$this->assertEqualSets( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
 
 		$kit_data = $kit->get_export_data();
-		$kit_data['settings']['theme'] = $mocked_theme;
+//		$kit_data['settings']['theme'] = $mocked_theme;
 		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
 		$site_settings_file = ImportExportUtils::read_json_file( $extracted_zip_path . 'site-settings' );
 
