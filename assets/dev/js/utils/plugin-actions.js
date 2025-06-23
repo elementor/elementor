@@ -142,7 +142,7 @@ module.exports = elementorModules.Module.extend( {
 			    width: 150px;
 			    background-color: #E6E8EB;
 			    box-sizing: border-box;
-			    box-shadow: 2px 2px 20px 4px rgba(0, 0, 0, 0.02);
+			    box-shadow: calc(2px * var(--direction-multiplier, 1)) 2px 20px 4px rgba(0, 0, 0, 0.02);
 			}
 			.elementor-loader-boxes {
 			    height: 100%;
