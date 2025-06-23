@@ -63,6 +63,52 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 		exportContext.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: KIT_SOURCE_MAP.CLOUD } );
 	};
 
+	// Determine which cloud button to show
+	const renderCloudButton = () => {
+		if ( ! isConnected ) {
+			return (
+				<Button
+					elRef={ connectButtonRef }
+					text={ __( 'Save to library', 'elementor' ) }
+					variant="outlined"
+					color="secondary"
+					url={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) || '#' }
+				/>
+			);
+		}
+
+		if ( isProcessingConnection || isCheckingEligibility ) {
+			return (
+				<Button
+					variant="outlined"
+					color="secondary"
+					icon="eicon-loading eicon-animation-spin"
+				/>
+			);
+		}
+
+		if ( ! isCloudKitsEligible ) {
+			return (
+				<Button
+					text={ __( 'Save to library', 'elementor' ) }
+					variant="outlined"
+					color="secondary"
+					onClick={ handleUpgradeClick }
+				/>
+			);
+		}
+
+		return (
+			<Button
+				text={ __( 'Save to library', 'elementor' ) }
+				variant="outlined"
+				color="secondary"
+				url="/export/process"
+				onClick={ handleUploadClick }
+			/>
+		);
+	};
+
 	return (
 		<ActionsFooter className="e-app-export-actions-container" >
 			<Button
@@ -71,36 +117,7 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 				url="/export"
 			/>
 
-			{ ! isConnected ? (
-				<Button
-					elRef={ connectButtonRef }
-					text={ __( 'Save to library', 'elementor' ) }
-					variant="outlined"
-					color="secondary"
-					url={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) || '#' }
-				/>
-			) : isProcessingConnection || isCheckingEligibility ? (
-				<Button
-					variant="outlined"
-					color="secondary"
-					icon="eicon-loading eicon-animation-spin"
-				/>
-			) : ! isCloudKitsEligible ? (
-				<Button
-					text={ __( 'Save to library', 'elementor' ) }
-					variant="outlined"
-					color="secondary"
-					onClick={ handleUpgradeClick }
-				/>
-			) : (
-				<Button
-					text={ __( 'Save to library', 'elementor' ) }
-					variant="outlined"
-					color="secondary"
-					url="/export/process"
-					onClick={ handleUploadClick }
-				/>
-			) }
+			{ renderCloudButton() }
 
 			<Button
 				text={ __( 'Export as .zip', 'elementor' ) }
