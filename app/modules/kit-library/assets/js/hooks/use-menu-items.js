@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import useCloudKitsEligibility from './use-cloud-kits-eligibility';
+import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from './use-connect-state';
 
 /**
