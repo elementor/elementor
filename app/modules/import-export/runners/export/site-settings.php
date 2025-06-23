@@ -36,11 +36,11 @@ class Site_Settings extends Export_Runner_Base {
 
 		$kit_tabs = array_keys( $kit_tabs );
 
-		$themes_data = $this->export_theme();
+		$theme_data = $this->export_theme();
 
-		if ( $themes_data ) {
+		if ( $theme_data ) {
 			$kit_tabs[] = 'theme';
-			$kit_data['settings']['theme'] = $themes_data;
+			$kit_data['settings']['theme'] = $theme_data;
 		}
 
 		$manifest_data['site-settings'] = $kit_tabs;
@@ -63,11 +63,11 @@ class Site_Settings extends Export_Runner_Base {
 			return null;
 		}
 
-		$themes_data['name'] = $theme->get( 'Name' );
-		$themes_data['theme_uri'] = $theme->get( 'ThemeURI' );
-		$themes_data['version'] = $theme->get( 'Version' );
-		$themes_data['slug'] = $theme->get_stylesheet();
+		$theme_data['name'] = $theme->get( 'Name' );
+		$theme_data['theme_uri'] = $theme->get( 'ThemeURI' );
+		$theme_data['version'] = $theme->get( 'Version' );
+		$theme_data['slug'] = $theme->get_stylesheet();
 
-		return $themes_data;
+		return $theme_data;
 	}
 }
