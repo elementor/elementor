@@ -10,6 +10,12 @@ jest.mock( '@elementor/editor-styles' );
 jest.mock( '../../../../hooks/use-styles-field' );
 jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
+jest.mock( '../../../../contexts/style-context', () => ( {
+	useStyle: () => ( { meta: null } ),
+} ) );
+jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
+	useStylesInheritanceChain: () => [],
+} ) );
 
 describe( '<JustifyContentField />', () => {
 	it( 'should switch order in RTL', () => {

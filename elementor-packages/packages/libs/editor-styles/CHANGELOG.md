@@ -1,5 +1,14 @@
 # @elementor/editor-styles
 
+## 0.6.11
+
+### Patch Changes
+
+- Updated dependencies [ab6ad10]
+- Updated dependencies [ea388a1]
+  - @elementor/editor-props@0.15.0
+  - @elementor/editor-responsive@0.13.6
+
 ## 0.6.10
 
 ### Patch Changes

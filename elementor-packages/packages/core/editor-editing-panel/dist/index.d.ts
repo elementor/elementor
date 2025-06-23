@@ -6,6 +6,12 @@ import * as _elementor_editor_props from '@elementor/editor-props';
 import { ChipProps, Theme } from '@elementor/ui';
 import * as _elementor_locations from '@elementor/locations';
 import * as _elementor_menus from '@elementor/menus';
+import { PopoverScrollableContent as PopoverScrollableContent$1 } from '@elementor/editor-ui';
+
+declare const EXPERIMENTAL_FEATURES: {
+    V_3_30: string;
+    V_3_31: string;
+};
 
 type PopoverActionProps = {
     title: string;
@@ -65,8 +71,11 @@ declare const controlActionsMenu: _elementor_menus.Menu<{
 
 declare const useFontFamilies: () => FontCategory[];
 
-declare const useSectionRef: () => React.RefObject<HTMLElement> | null;
+type Props = React.ComponentProps<typeof PopoverScrollableContent$1>;
+declare const PopoverScrollableContent: (props: Props) => React.JSX.Element;
+
+declare const useSectionWidth: () => number;
 
 declare function init(): void;
 
-export { type PopoverActionProps, type ValidationEvent, type ValidationResult, controlActionsMenu, init, injectIntoClassSelectorActions, registerControlReplacement, registerStyleProviderToColors, useFontFamilies, usePanelActions, usePanelStatus, useSectionRef };
+export { EXPERIMENTAL_FEATURES, type PopoverActionProps, PopoverScrollableContent, type ValidationEvent, type ValidationResult, controlActionsMenu, init, injectIntoClassSelectorActions, registerControlReplacement, registerStyleProviderToColors, useFontFamilies, usePanelActions, usePanelStatus, useSectionWidth };

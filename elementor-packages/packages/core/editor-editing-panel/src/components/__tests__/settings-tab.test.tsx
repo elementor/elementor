@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockElementType, renderWithTheme } from 'test-utils';
-import { type Control, type ControlsSection } from '@elementor/editor-elements';
+import { type Control, type ControlsSection, getElementLabel } from '@elementor/editor-elements';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { screen } from '@testing-library/react';
 
@@ -11,6 +11,10 @@ import { SettingsTab } from '../settings-tab';
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '../../contexts/element-context' );
 jest.mock( '../../hooks/use-default-panel-settings' );
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	getElementLabel: jest.fn(),
+} ) );
 
 const MockSelectComponent = ( { id }: { id?: string } ) => <select id={ id } />;
 
@@ -34,6 +38,10 @@ jest.mock( '../../controls-registry/control', () => ( {
 } ) );
 
 describe( '<SettingsTab />', () => {
+	beforeEach( () => {
+		jest.mocked( getElementLabel ).mockReturnValue( 'Mock Element' );
+	} );
+
 	it( 'should render the widget sections', () => {
 		// Arrange.
 		const elementType = createMockElementType( {

@@ -68,7 +68,7 @@ export const LinkedDimensionsControl = createControl(
 				propType={ propType }
 				value={ dimensionsValue }
 				setValue={ setDimensionsValue }
-				disabled={ disabled }
+				isDisabled={ () => disabled }
 			>
 				<Stack direction="row" gap={ 2 } flexWrap="nowrap">
 					{ isUsingNestedProps ? (

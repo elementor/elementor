@@ -21,6 +21,9 @@ jest.mock( '../../../../hooks/use-styles-field' );
 jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../contexts/style-context' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
+jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
+	useStylesInheritanceChain: () => [],
+} ) );
 
 const renderPositionSection = () => {
 	return renderField( <PositionSection />, {
@@ -37,6 +40,16 @@ const renderPositionSection = () => {
 };
 
 describe( '<PositionSection />', () => {
+	beforeEach( () => {
+		jest.mocked( useStyle ).mockReturnValue( {
+			id: 'styleDefId',
+			setId: jest.fn(),
+			meta: { breakpoint: 'desktop', state: null },
+			setMetaState: jest.fn(),
+			provider: {} as StylesProvider,
+		} );
+	} );
+
 	it( 'should hide position inputs if position is static', () => {
 		// Arrange.
 		mockPosition( 'static' );
@@ -123,12 +136,14 @@ describe( '<PositionSection />', () => {
 	} );
 
 	describe( 'Dimensions values persistence', () => {
-		jest.mocked( useStyle ).mockReturnValue( {
-			id: 'styleDefId',
-			setId: jest.fn(),
-			meta: { breakpoint: 'mobile', state: null },
-			setMetaState: jest.fn(),
-			provider: {} as StylesProvider,
+		beforeEach( () => {
+			jest.mocked( useStyle ).mockReturnValue( {
+				id: 'styleDefId',
+				setId: jest.fn(),
+				meta: { breakpoint: 'mobile', state: null },
+				setMetaState: jest.fn(),
+				provider: {} as StylesProvider,
+			} );
 		} );
 
 		it( 'should save dimension values to history when changing position to static', () => {
@@ -196,12 +211,15 @@ describe( '<PositionSection />', () => {
 				'inset-inline-start',
 				'inset-inline-end',
 			] );
-			expect( setStylesFields ).toHaveBeenCalledWith( {
-				'inset-block-start': undefined,
-				'inset-block-end': undefined,
-				'inset-inline-start': undefined,
-				'inset-inline-end': undefined,
-			} );
+			expect( setStylesFields ).toHaveBeenCalledWith(
+				{
+					'inset-block-start': undefined,
+					'inset-block-end': undefined,
+					'inset-inline-start': undefined,
+					'inset-inline-end': undefined,
+				},
+				{ history: { propDisplayName: 'Dimensions' } }
+			);
 		} );
 
 		it( `should populate the model's dimension values from history when switching from static to a different position`, () => {
@@ -242,15 +260,18 @@ describe( '<PositionSection />', () => {
 				'inset-inline-start',
 				'inset-inline-end',
 			] );
-			expect( setStylesFields ).toHaveBeenCalledWith( {
-				'inset-inline-start': {
-					value: {
-						size: 54,
-						unit: 'px',
+			expect( setStylesFields ).toHaveBeenCalledWith(
+				{
+					'inset-inline-start': {
+						value: {
+							size: 54,
+							unit: 'px',
+						},
+						$$type: 'size',
 					},
-					$$type: 'size',
 				},
-			} );
+				{ history: { propDisplayName: 'Dimensions' } }
+			);
 		} );
 	} );
 

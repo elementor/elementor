@@ -40,4 +40,4 @@ export type Control = {
 
 export type ControlItem = ControlsSection | Control;
 
-export type ControlLayout = 'full' | 'two-columns';
+export type ControlLayout = 'full' | 'two-columns' | 'custom';

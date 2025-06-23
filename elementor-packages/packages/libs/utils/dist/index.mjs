@@ -34,6 +34,9 @@ var ensureError = (error) => {
   return new Error(`Unexpected non-error thrown: ${message}`, { cause });
 };
 
+// src/use-debounce-state.ts
+import { useCallback, useEffect, useRef, useState } from "react";
+
 // src/debounce.ts
 function debounce(fn, wait) {
   let timer = null;
@@ -61,10 +64,44 @@ function debounce(fn, wait) {
   run.pending = pending;
   return run;
 }
+
+// src/use-debounce-state.ts
+function useDebounceState(options = {}) {
+  const { delay = 300, initialValue = "" } = options;
+  const [debouncedValue, setDebouncedValue] = useState(initialValue);
+  const [inputValue, setInputValue] = useState(initialValue);
+  const runRef = useRef(null);
+  useEffect(() => {
+    return () => {
+      runRef.current?.cancel?.();
+    };
+  }, []);
+  const debouncedSetValue = useCallback(
+    (val) => {
+      runRef.current?.cancel?.();
+      runRef.current = debounce(() => {
+        setDebouncedValue(val);
+      }, delay);
+      runRef.current();
+    },
+    [delay]
+  );
+  const handleChange = (val) => {
+    setInputValue(val);
+    debouncedSetValue(val);
+  };
+  return {
+    debouncedValue,
+    inputValue,
+    handleChange,
+    setInputValue
+  };
+}
 export {
   ElementorError,
   createError,
   debounce,
-  ensureError
+  ensureError,
+  useDebounceState
 };
 //# sourceMappingURL=index.mjs.map

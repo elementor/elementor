@@ -20,8 +20,13 @@ import { GapControlField } from './gap-control-field';
 import { JustifyContentField } from './justify-content-field';
 import { WrapField } from './wrap-field';
 
+const DISPLAY_LABEL = __( 'Display', 'elementor' );
+const FLEX_WRAP_LABEL = __( 'Flex wrap', 'elementor' );
+
 export const LayoutSection = () => {
-	const { value: display } = useStylesField< StringPropValue >( 'display' );
+	const { value: display } = useStylesField< StringPropValue >( 'display', {
+		history: { propDisplayName: DISPLAY_LABEL },
+	} );
 	const displayPlaceholder = useDisplayPlaceholderValue();
 	const isDisplayFlex = shouldDisplayFlexFields( display, displayPlaceholder as StringPropValue );
 	const { element } = useElement();
@@ -39,7 +44,9 @@ export const LayoutSection = () => {
 };
 
 const FlexFields = () => {
-	const { value: flexWrap } = useStylesField< StringPropValue >( 'flex-wrap' );
+	const { value: flexWrap } = useStylesField< StringPropValue >( 'flex-wrap', {
+		history: { propDisplayName: FLEX_WRAP_LABEL },
+	} );
 
 	return (
 		<>

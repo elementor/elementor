@@ -27,7 +27,9 @@ const initTextStroke = {
 const TEXT_STROKE_LABEL = __( 'Text stroke', 'elementor' );
 
 export const TextStrokeField = () => {
-	const { value, setValue, canEdit } = useStylesField( 'stroke' );
+	const { value, setValue, canEdit } = useStylesField( 'stroke', {
+		history: { propDisplayName: TEXT_STROKE_LABEL },
+	} );
 
 	const addTextStroke = () => {
 		setValue( initTextStroke );

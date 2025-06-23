@@ -12,6 +12,7 @@ import { useWpMediaAttachment } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
+import { ControlFormLabel } from '../../../components/control-form-label';
 import { PopoverContent } from '../../../components/popover-content';
 import { Repeater } from '../../../components/repeater';
 import { createControl } from '../../../create-control';
@@ -74,7 +75,7 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 	const { propType, value: overlayValues, setValue, disabled } = useBoundProp( backgroundOverlayPropTypeUtil );
 
 	return (
-		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue } disabled={ disabled }>
+		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue } isDisabled={ () => disabled }>
 			<Repeater
 				openOnAdd
 				disabled={ disabled }
@@ -237,10 +238,14 @@ const ImageOverlayContent = () => {
 			<PropKeyProvider bind={ 'image' }>
 				<Grid container spacing={ 1 } alignItems="center">
 					<Grid item xs={ 12 }>
-						<ImageControl
-							resolutionLabel={ __( 'Resolution', 'elementor' ) }
-							sizes={ backgroundResolutionOptions }
-						/>
+						<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
+							<Grid item xs={ 6 }>
+								<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+							</Grid>
+							<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
+								<ImageControl sizes={ backgroundResolutionOptions } />
+							</Grid>
+						</Grid>
 					</Grid>
 				</Grid>
 			</PropKeyProvider>

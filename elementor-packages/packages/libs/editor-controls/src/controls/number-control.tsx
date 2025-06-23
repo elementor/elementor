@@ -13,7 +13,7 @@ const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+', '-' ];
 
 export const NumberControl = createControl(
 	( {
-		placeholder,
+		placeholder: labelPlaceholder,
 		max = Number.MAX_VALUE,
 		min = -Number.MAX_VALUE,
 		step = 1,
@@ -25,7 +25,7 @@ export const NumberControl = createControl(
 		step?: number;
 		shouldForceInt?: boolean;
 	} ) => {
-		const { value, setValue, disabled } = useBoundProp( numberPropTypeUtil );
+		const { value, setValue, placeholder, disabled } = useBoundProp( numberPropTypeUtil );
 
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
 			const eventValue: string = event.target.value;
@@ -50,7 +50,7 @@ export const NumberControl = createControl(
 					disabled={ disabled }
 					value={ isEmptyOrNaN( value ) ? '' : value }
 					onChange={ handleChange }
-					placeholder={ placeholder }
+					placeholder={ labelPlaceholder ?? ( placeholder ? String( placeholder ) : '' ) }
 					inputProps={ { step } }
 					onKeyDown={ ( event: KeyboardEvent ) => {
 						if ( RESTRICTED_INPUT_KEYS.includes( event.key ) ) {

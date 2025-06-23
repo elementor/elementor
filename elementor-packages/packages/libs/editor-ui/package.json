@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-ui",
   "description": "Elementor Editor UI",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -37,7 +37,7 @@
     "react-dom": "^18.3.1"
   },
   "dependencies": {
-    "@elementor/editor-v1-adapters": "0.12.0",
+    "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/icons": "1.44.0",
     "@elementor/ui": "1.35.5",
     "@tanstack/react-virtual": "^3.13.3",

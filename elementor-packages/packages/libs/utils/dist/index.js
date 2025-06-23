@@ -23,7 +23,8 @@ __export(index_exports, {
   ElementorError: () => ElementorError,
   createError: () => createError,
   debounce: () => debounce,
-  ensureError: () => ensureError
+  ensureError: () => ensureError,
+  useDebounceState: () => useDebounceState
 });
 module.exports = __toCommonJS(index_exports);
 
@@ -63,6 +64,9 @@ var ensureError = (error) => {
   return new Error(`Unexpected non-error thrown: ${message}`, { cause });
 };
 
+// src/use-debounce-state.ts
+var import_react = require("react");
+
 // src/debounce.ts
 function debounce(fn, wait) {
   let timer = null;
@@ -90,11 +94,45 @@ function debounce(fn, wait) {
   run.pending = pending;
   return run;
 }
+
+// src/use-debounce-state.ts
+function useDebounceState(options = {}) {
+  const { delay = 300, initialValue = "" } = options;
+  const [debouncedValue, setDebouncedValue] = (0, import_react.useState)(initialValue);
+  const [inputValue, setInputValue] = (0, import_react.useState)(initialValue);
+  const runRef = (0, import_react.useRef)(null);
+  (0, import_react.useEffect)(() => {
+    return () => {
+      runRef.current?.cancel?.();
+    };
+  }, []);
+  const debouncedSetValue = (0, import_react.useCallback)(
+    (val) => {
+      runRef.current?.cancel?.();
+      runRef.current = debounce(() => {
+        setDebouncedValue(val);
+      }, delay);
+      runRef.current();
+    },
+    [delay]
+  );
+  const handleChange = (val) => {
+    setInputValue(val);
+    debouncedSetValue(val);
+  };
+  return {
+    debouncedValue,
+    inputValue,
+    handleChange,
+    setInputValue
+  };
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   ElementorError,
   createError,
   debounce,
-  ensureError
+  ensureError,
+  useDebounceState
 });
 //# sourceMappingURL=index.js.map

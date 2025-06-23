@@ -87,10 +87,9 @@ type PopoverMenuListProps<T, V extends string> = {
     menuListTemplate?: React$1.ComponentType<React$1.ComponentProps<typeof MenuList>>;
     menuItemContentTemplate?: (item: VirtualizedItem<T, V>) => React$1.ReactNode;
     noResultsComponent?: React$1.ReactNode;
-    width: number;
 };
 declare const ITEM_HEIGHT = 32;
-declare const PopoverMenuList: <T, V extends string>({ items, onSelect, onClose, selectedValue, itemStyle, onChange, "data-testid": dataTestId, menuItemContentTemplate, noResultsComponent, menuListTemplate: CustomMenuList, width, }: PopoverMenuListProps<T, V>) => React$1.JSX.Element;
+declare const PopoverMenuList: <T, V extends string>({ items, onSelect, onClose, selectedValue, itemStyle, onChange, "data-testid": dataTestId, menuItemContentTemplate, noResultsComponent, menuListTemplate: CustomMenuList, }: PopoverMenuListProps<T, V>) => React$1.JSX.Element;
 declare const StyledMenuList: _emotion_styled.StyledComponent<any, {}, {
     ref?: React$1.Ref<any> | undefined;
 }>;

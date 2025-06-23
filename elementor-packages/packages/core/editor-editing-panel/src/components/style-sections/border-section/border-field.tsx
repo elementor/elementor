@@ -8,6 +8,8 @@ import { BorderColorField } from './border-color-field';
 import { BorderStyleField } from './border-style-field';
 import { BorderWidthField } from './border-width-field';
 
+const BORDER_LABEL = __( 'Border', 'elementor' );
+
 const initialBorder = {
 	'border-width': { $$type: 'size', value: { size: 1, unit: 'px' } },
 	'border-color': { $$type: 'color', value: '#000000' },
@@ -17,16 +19,21 @@ const initialBorder = {
 export const BorderField = () => {
 	const { values, setValues, canEdit } = useStylesFields( Object.keys( initialBorder ) );
 
+	const meta = { history: { propDisplayName: BORDER_LABEL } };
+
 	const addBorder = () => {
-		setValues( initialBorder );
+		setValues( initialBorder, meta );
 	};
 
 	const removeBorder = () => {
-		setValues( {
-			'border-width': null,
-			'border-color': null,
-			'border-style': null,
-		} );
+		setValues(
+			{
+				'border-width': null,
+				'border-color': null,
+				'border-style': null,
+			},
+			meta
+		);
 	};
 
 	const hasBorder = Object.values( values ?? {} ).some( Boolean );
@@ -37,7 +44,7 @@ export const BorderField = () => {
 			onAdd={ addBorder }
 			onRemove={ removeBorder }
 			disabled={ ! canEdit }
-			renderLabel={ () => <ControlFormLabel>{ __( 'Border', 'elementor' ) }</ControlFormLabel> }
+			renderLabel={ () => <ControlFormLabel>{ BORDER_LABEL }</ControlFormLabel> }
 		>
 			<BorderWidthField />
 			<BorderColorField />

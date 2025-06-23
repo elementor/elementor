@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 type ElementorErrorOptions = {
     cause?: Error['cause'];
     context?: Record<string, unknown> | null;
@@ -32,6 +34,18 @@ declare const createError: <T extends ElementorErrorOptions["context"]>({ code, 
 
 declare const ensureError: (error: unknown) => Error;
 
+type UseDebounceStateOptions = {
+    delay?: number;
+    initialValue?: string;
+};
+type UseDebounceStateResult = {
+    debouncedValue: string;
+    inputValue: string;
+    handleChange: (val: string) => void;
+    setInputValue: React.Dispatch<React.SetStateAction<string>>;
+};
+declare function useDebounceState(options?: UseDebounceStateOptions): UseDebounceStateResult;
+
 declare function debounce<TArgs extends any[]>(fn: (...args: TArgs) => void, wait: number): {
     (...args: TArgs): void;
     flush: (...args: TArgs) => void;
@@ -39,4 +53,4 @@ declare function debounce<TArgs extends any[]>(fn: (...args: TArgs) => void, wai
     pending: () => boolean;
 };
 
-export { type CreateErrorParams, ElementorError, type ElementorErrorOptions, createError, debounce, ensureError };
+export { type CreateErrorParams, ElementorError, type ElementorErrorOptions, type UseDebounceStateOptions, type UseDebounceStateResult, createError, debounce, ensureError, useDebounceState };

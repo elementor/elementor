@@ -15,7 +15,7 @@ type PropContext< T extends PropValue, P extends PropType > = {
 	value: T | null;
 	propType: P;
 	placeholder?: T;
-	disabled?: boolean;
+	isDisabled?: ( propType: PropType ) => boolean | undefined;
 };
 
 const PropContext = createContext< PropContext< PropValue, PropType > | null >( null );
@@ -30,7 +30,7 @@ export const PropProvider = < T extends PropValue, P extends PropType >( {
 	setValue,
 	propType,
 	placeholder,
-	disabled,
+	isDisabled,
 }: PropProviderProps< T, P > ) => {
 	return (
 		<PropContext.Provider
@@ -39,7 +39,7 @@ export const PropProvider = < T extends PropValue, P extends PropType >( {
 				propType,
 				setValue: setValue as SetValue< PropValue >,
 				placeholder,
-				disabled,
+				isDisabled,
 			} }
 		>
 			{ children }

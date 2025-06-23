@@ -1,5 +1,36 @@
 # @elementor/editor-controls
 
+## 1.2.0
+
+### Minor Changes
+
+- ab6ad10: Adds support for css filter property, blur and brightness only.
+- a0ff6bc: Reset value button position fix, input reset fix for aspect ratio control
+- bfe6b0b: Update the width settings for the popover selection list.
+- 125de7b: Show placeholders in Number control
+- 9bbd4e3: Ensure repeatable control works with key-value control
+- d85ca8c: Update the popover styling for version 3.30.
+
+### Patch Changes
+
+- 0b32e5c: Removed % units from blur css filter.
+- 16df763: Add changed prop name to atomic element setting history
+- 6c6f0d6: Standardize style field layout and add `propDisplayName` prop to `StylesField`
+- Updated dependencies [e953081]
+- Updated dependencies [ab6ad10]
+- Updated dependencies [c91168a]
+- Updated dependencies [bfe6b0b]
+- Updated dependencies [ea388a1]
+- Updated dependencies [16df763]
+- Updated dependencies [d85ca8c]
+  - @elementor/utils@0.5.0
+  - @elementor/editor-props@0.15.0
+  - @elementor/editor-ui@0.13.0
+  - @elementor/editor-elements@0.8.7
+  - @elementor/editor-v1-adapters@0.12.1
+  - @elementor/wp-media@0.6.1
+  - @elementor/editor-responsive@0.13.6
+
 ## 1.1.0
 
 ### Minor Changes

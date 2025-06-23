@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.36.1
+
+### Patch Changes
+
+- @elementor/editor-documents@0.13.8
+- @elementor/editor-v1-adapters@0.12.1
+- @elementor/editor-app-bar@0.31.1
+- @elementor/editor-panels@0.16.1
+
 ## 0.36.0
 
 ### Minor Changes

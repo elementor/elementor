@@ -1,9 +1,38 @@
 export type PropTypeKey = string;
 
+export type DependencyEffect = 'disable' | 'hide';
+
+export type DependencyOperator =
+	| 'lt'
+	| 'lte'
+	| 'eq'
+	| 'ne'
+	| 'gte'
+	| 'gt'
+	| 'exists'
+	| 'not_exist'
+	| 'in'
+	| 'nin'
+	| 'contains'
+	| 'ncontains';
+
+export type DependencyTerm = {
+	operator: DependencyOperator;
+	path: string[];
+	value: PropValue;
+};
+
+export type Dependency = {
+	effect: DependencyEffect;
+	relation: 'or' | 'and';
+	terms: ( DependencyTerm | Dependency )[];
+};
+
 type BasePropType< TValue > = {
 	default?: TValue | null;
 	settings: Record< string, unknown >;
 	meta: Record< string, unknown >;
+	dependencies?: Dependency[];
 };
 
 export type PlainPropType = BasePropType< PlainPropValue > & {

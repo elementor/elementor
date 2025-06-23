@@ -50,7 +50,13 @@ const items: ToggleButtonGroupItem< GroupControlItemOption >[] = [
 ];
 
 export const FlexOrderField = () => {
-	const { value: order, setValue: setOrder, canEdit } = useStylesField< NumberPropValue | null >( 'order' );
+	const {
+		value: order,
+		setValue: setOrder,
+		canEdit,
+	} = useStylesField< NumberPropValue | null >( 'order', {
+		history: { propDisplayName: ORDER_LABEL },
+	} );
 
 	const [ groupControlValue, setGroupControlValue ] = useState( getGroupControlValue( order?.value || null ) );
 

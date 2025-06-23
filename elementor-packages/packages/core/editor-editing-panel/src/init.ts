@@ -1,5 +1,4 @@
 import { injectIntoLogic } from '@elementor/editor';
-import { PrefetchUserData } from '@elementor/editor-current-user';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { blockCommand, isExperimentActive } from '@elementor/editor-v1-adapters';
 
@@ -18,11 +17,6 @@ export function init() {
 	injectIntoLogic( {
 		id: 'editing-panel-hooks',
 		component: EditingPanelHooks,
-	} );
-
-	injectIntoLogic( {
-		id: 'current-user-data',
-		component: PrefetchUserData,
 	} );
 
 	// TODO: Move it from here once we have dynamic package.

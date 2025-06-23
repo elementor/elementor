@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.20.1
+
+### Patch Changes
+
+- @elementor/editor-v1-adapters@0.12.1
+
 ## 0.20.0
 
 ### Minor Changes

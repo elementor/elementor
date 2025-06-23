@@ -275,10 +275,10 @@ var PopoverHeader = ({ title, onClose, icon, actions }) => {
 };
 
 // src/components/popover/menu-list.tsx
-import * as React11 from "react";
+import * as React10 from "react";
 import { useMemo, useRef } from "react";
-import { isExperimentActive as isExperimentActive3 } from "@elementor/editor-v1-adapters";
-import { MenuList, MenuSubheader, styled as styled2 } from "@elementor/ui";
+import { isExperimentActive as isExperimentActive2 } from "@elementor/editor-v1-adapters";
+import { Box as Box4, MenuList, MenuSubheader, styled as styled2 } from "@elementor/ui";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
 // src/hooks/use-scroll-to-selected.ts
@@ -317,33 +317,8 @@ var useScrollTop = ({ containerRef }) => {
   return scrollTop;
 };
 
-// src/components/popover/scrollable-content.tsx
-import * as React10 from "react";
-import { isExperimentActive as isExperimentActive2 } from "@elementor/editor-v1-adapters";
-import { Box as Box4 } from "@elementor/ui";
-var SECTION_PADDING_INLINE = 32;
-var DEFAULT_POPOVER_WIDTH = 220;
-var isVersion330Active2 = isExperimentActive2("e_v_3_30");
-var PopoverScrollableContent = React10.forwardRef(
-  ({ children, height = 260, width = DEFAULT_POPOVER_WIDTH }, ref) => {
-    return /* @__PURE__ */ React10.createElement(
-      Box4,
-      {
-        ref,
-        sx: {
-          overflowY: "auto",
-          height,
-          width: `${isVersion330Active2 ? width - SECTION_PADDING_INLINE : DEFAULT_POPOVER_WIDTH}px`,
-          maxWidth: 496
-        }
-      },
-      children
-    );
-  }
-);
-
 // src/components/popover/menu-list.tsx
-var isVersion330Active3 = isExperimentActive3("e_v_3_30");
+var isVersion330Active2 = isExperimentActive2("e_v_3_30");
 var ITEM_HEIGHT = 32;
 var LIST_ITEMS_BUFFER = 6;
 var MENU_LIST_PADDING_TOP = 8;
@@ -366,8 +341,7 @@ var PopoverMenuList = ({
   "data-testid": dataTestId,
   menuItemContentTemplate,
   noResultsComponent,
-  menuListTemplate: CustomMenuList,
-  width
+  menuListTemplate: CustomMenuList
 }) => {
   const containerRef = useRef(null);
   const scrollTop = useScrollTop({ containerRef });
@@ -403,7 +377,7 @@ var PopoverMenuList = ({
     onChange
   });
   useScrollToSelected({ selectedValue, items, virtualizer });
-  return /* @__PURE__ */ React11.createElement(PopoverScrollableContent, { ref: containerRef, width }, items.length === 0 && noResultsComponent ? noResultsComponent : /* @__PURE__ */ React11.createElement(
+  return /* @__PURE__ */ React10.createElement(Box4, { ref: containerRef }, items.length === 0 && noResultsComponent ? noResultsComponent : /* @__PURE__ */ React10.createElement(
     MenuListComponent,
     {
       role: "listbox",
@@ -421,17 +395,17 @@ var PopoverMenuList = ({
       }
       if (item.type === "category") {
         const shouldStick = virtualRow.start + MENU_LIST_PADDING_TOP <= scrollTop;
-        return /* @__PURE__ */ React11.createElement(
+        return /* @__PURE__ */ React10.createElement(
           MenuSubheader,
           {
             key: virtualRow.key,
             style: shouldStick ? {} : menuSubHeaderAbsoluteStyling(virtualRow.start),
-            sx: isVersion330Active3 ? { fontWeight: "400", color: "text.tertiary" } : void 0
+            sx: isVersion330Active2 ? { fontWeight: "400", color: "text.tertiary" } : void 0
           },
           item.label || item.value
         );
       }
-      return /* @__PURE__ */ React11.createElement(
+      return /* @__PURE__ */ React10.createElement(
         "li",
         {
           key: virtualRow.key,
@@ -496,12 +470,37 @@ var StyledMenuList = styled2(MenuList)(({ theme }) => ({
   position: "relative"
 }));
 
+// src/components/popover/scrollable-content.tsx
+import * as React11 from "react";
+import { isExperimentActive as isExperimentActive3 } from "@elementor/editor-v1-adapters";
+import { Box as Box5 } from "@elementor/ui";
+var SECTION_PADDING_INLINE = 32;
+var DEFAULT_POPOVER_WIDTH = 220;
+var isVersion330Active3 = isExperimentActive3("e_v_3_30");
+var PopoverScrollableContent = React11.forwardRef(
+  ({ children, height = 260, width = DEFAULT_POPOVER_WIDTH }, ref) => {
+    return /* @__PURE__ */ React11.createElement(
+      Box5,
+      {
+        ref,
+        sx: {
+          overflowY: "auto",
+          height,
+          width: `${isVersion330Active3 ? width - SECTION_PADDING_INLINE : DEFAULT_POPOVER_WIDTH}px`,
+          maxWidth: 496
+        }
+      },
+      children
+    );
+  }
+);
+
 // src/components/popover/search.tsx
 import * as React12 from "react";
 import { useRef as useRef2 } from "react";
 import { isExperimentActive as isExperimentActive4 } from "@elementor/editor-v1-adapters";
 import { SearchIcon, XIcon } from "@elementor/icons";
-import { Box as Box5, IconButton, InputAdornment, TextField } from "@elementor/ui";
+import { Box as Box6, IconButton, InputAdornment, TextField } from "@elementor/ui";
 import { __ as __2 } from "@wordpress/i18n";
 var isVersion330Active4 = isExperimentActive4("e_v_3_30");
 var SIZE2 = "tiny";
@@ -521,7 +520,7 @@ var PopoverSearch = ({ value, onSearch, placeholder }) => {
     px: 1.5,
     pb: 1
   };
-  return /* @__PURE__ */ React12.createElement(Box5, { ...padding }, /* @__PURE__ */ React12.createElement(
+  return /* @__PURE__ */ React12.createElement(Box6, { ...padding }, /* @__PURE__ */ React12.createElement(
     TextField,
     {
       autoFocus: true,

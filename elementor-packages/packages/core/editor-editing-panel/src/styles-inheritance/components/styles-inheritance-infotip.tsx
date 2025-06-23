@@ -17,7 +17,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useSectionRef } from '../../components/section';
+import { useSectionWidth } from '../../contexts/section-context';
 import { useDirection } from '../../hooks/use-direction';
 import { useNormalizedInheritanceChainItems } from '../hooks/use-normalized-inheritance-chain-items';
 import { stylesInheritanceTransformersRegistry } from '../styles-inheritance-transformers-registry';
@@ -41,8 +41,7 @@ export const StylesInheritanceInfotip = ( { inheritanceChain, propType, path, la
 
 	const key = path.join( '.' );
 
-	const sectionRef = useSectionRef();
-	const sectionWidth = sectionRef?.current?.offsetWidth ?? 320 + SECTION_PADDING_INLINE;
+	const sectionWidth = useSectionWidth() + SECTION_PADDING_INLINE;
 
 	const resolve = useMemo< PropsResolver >( () => {
 		return createPropsResolver( {

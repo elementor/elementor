@@ -7,6 +7,9 @@ import { BorderField } from '../border-field';
 
 jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
+jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
+	useStylesInheritanceChain: () => [],
+} ) );
 
 describe( 'BorderField', () => {
 	it( 'should render the field with empty state', () => {
@@ -30,11 +33,14 @@ describe( 'BorderField', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Add' } ) );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( {
-			'border-width': { $$type: 'size', value: { size: 1, unit: 'px' } },
-			'border-color': { $$type: 'color', value: '#000000' },
-			'border-style': { $$type: 'string', value: 'solid' },
-		} );
+		expect( setValues ).toHaveBeenCalledWith(
+			{
+				'border-width': { $$type: 'size', value: { size: 1, unit: 'px' } },
+				'border-color': { $$type: 'color', value: '#000000' },
+				'border-style': { $$type: 'string', value: 'solid' },
+			},
+			{ history: { propDisplayName: 'Border' } }
+		);
 	} );
 
 	it( 'should render the field with added state', () => {
@@ -66,10 +72,13 @@ describe( 'BorderField', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Remove' } ) );
 
 		// Assert.
-		expect( setValues ).toHaveBeenCalledWith( {
-			'border-width': null,
-			'border-color': null,
-			'border-style': null,
-		} );
+		expect( setValues ).toHaveBeenCalledWith(
+			{
+				'border-width': null,
+				'border-color': null,
+				'border-style': null,
+			},
+			{ history: { propDisplayName: 'Border' } }
+		);
 	} );
 } );

@@ -1,5 +1,12 @@
 # @elementor/editor-props
 
+## 0.15.0
+
+### Minor Changes
+
+- ab6ad10: Adds support for css filter property, blur and brightness only.
+- ea388a1: Added support for dependencies between props
+
 ## 0.14.0
 
 ### Minor Changes

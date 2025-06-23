@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-props",
   "description": "This package contains the props model for the Elementor editor",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",

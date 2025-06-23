@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.13.8
+
+### Patch Changes
+
+- Updated dependencies [e953081]
+  - @elementor/utils@0.5.0
+  - @elementor/editor-v1-adapters@0.12.1
+  - @elementor/editor@0.20.1
+
 ## 0.13.7
 
 ### Patch Changes

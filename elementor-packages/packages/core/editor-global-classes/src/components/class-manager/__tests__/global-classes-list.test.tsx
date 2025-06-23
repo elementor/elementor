@@ -38,7 +38,7 @@ describe( 'GlobalClassesList', () => {
 		] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
 
 		// Assert.
 		const [ firstClass, secondClass ] = screen.getAllByRole( 'listitem' );
@@ -53,7 +53,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
 
 		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Class 1' } ) );
 
@@ -83,7 +83,7 @@ describe( 'GlobalClassesList', () => {
 		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: false, errorMessage: 'Test Error' } );
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
 
 		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Class-1' } ) );
 
@@ -108,7 +108,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
@@ -146,7 +146,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
 
 		// Assert.
 		expect( screen.getByText( 'There are no global classes yet.' ) ).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe( 'GlobalClassesList', () => {
 		] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
 
 		const [ firstClass ] = screen.getAllByRole( 'listitem' );
 
@@ -188,7 +188,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList />, store );
+		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
@@ -207,6 +207,67 @@ describe( 'GlobalClassesList', () => {
 		// Assert.
 		expect( screen.queryByRole( 'dialog', { name: 'Delete this class?' } ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Class 1' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should show 1 class based on search value', () => {
+		mockClasses( [
+			{ id: 'class-1', label: 'Header' },
+			{ id: 'class-2', label: 'Footer' },
+		] );
+
+		renderWithStore( <GlobalClassesList onSearch={ jest.fn() } searchValue={ 'foo' } />, store );
+
+		expect( screen.queryByText( 'Header' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should show 2 class based on search value', () => {
+		mockClasses( [
+			{ id: 'class-1', label: 'Header' },
+			{ id: 'class-2', label: 'Footer' },
+		] );
+
+		renderWithStore( <GlobalClassesList onSearch={ jest.fn() } searchValue={ 'ER' } />, store );
+
+		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should show not found message if no match found with searchValue', () => {
+		mockClasses( [
+			{ id: 'class-1', label: 'Header' },
+			{ id: 'class-2', label: 'Footer' },
+		] );
+
+		renderWithStore( <GlobalClassesList searchValue="sidebar" onSearch={ jest.fn() } />, store );
+
+		expect( screen.getByText( /Sorry, nothing match/i ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /clear & try again/i } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should call onSearch("") when "Clear & try again" is clicked', () => {
+		const onSearch = jest.fn();
+
+		mockClasses( [ { id: 'class-1', label: 'Header' } ] );
+
+		renderWithStore( <GlobalClassesList searchValue="notfound" onSearch={ onSearch } />, store );
+
+		const clearBtn = screen.getByRole( 'button', { name: /clear & try again/i } );
+
+		fireEvent.click( clearBtn );
+
+		expect( onSearch ).toHaveBeenCalledWith( '' );
+	} );
+	it( 'should show full list when searchValue is too short', () => {
+		mockClasses( [
+			{ id: 'class-1', label: 'Header' },
+			{ id: 'class-2', label: 'Footer' },
+		] );
+
+		renderWithStore( <GlobalClassesList searchValue="h" onSearch={ jest.fn() } />, store );
+
+		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
 	} );
 } );
 

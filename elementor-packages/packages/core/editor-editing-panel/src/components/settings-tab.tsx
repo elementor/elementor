@@ -70,12 +70,15 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 
 	const layout = control.meta?.layout || getDefaultLayout( control.type as ControlType );
 	const controlProps = populateChildControlProps( control.props );
+	if ( layout === 'custom' ) {
+		controlProps.label = control.label;
+	}
 
 	return (
-		<SettingsField bind={ control.bind }>
+		<SettingsField bind={ control.bind } propDisplayName={ control.label || control.bind }>
 			{ control.meta?.topDivider && <Divider /> }
 			<ControlTypeContainer layout={ layout }>
-				{ control.label ? <ControlFormLabel>{ control.label }</ControlFormLabel> : null }
+				{ control.label && layout !== 'custom' ? <ControlFormLabel>{ control.label }</ControlFormLabel> : null }
 				<BaseControl type={ control.type as ControlType } props={ controlProps } />
 			</ControlTypeContainer>
 		</SettingsField>

@@ -303,6 +303,7 @@ describe( 'ClassManagerPanel', () => {
 
 	it( 'should reload the current document after deleting classes and saving the change.', async () => {
 		// Arrange.
+
 		const invalidateCache = jest.fn();
 		jest.mocked( getV1DocumentsManager ).mockReturnValue( { invalidateCache } as never );
 
@@ -377,13 +378,13 @@ describe( 'ClassManagerPanel', () => {
 		// Act.
 		fireEvent.click( renameButton );
 
-		const editableField = screen.getByRole( 'textbox' );
-
 		// Assert.
 		// Menu should be closed after clicking rename.
 		await waitFor( () => {
 			expect( renameButton ).not.toBeInTheDocument();
 		} );
+
+		const editableField = await screen.findByRole( 'textbox' );
 
 		expect( editableField ).toBeInTheDocument();
 

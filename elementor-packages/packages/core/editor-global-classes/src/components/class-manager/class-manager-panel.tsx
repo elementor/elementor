@@ -1,6 +1,7 @@
-import * as React from 'react';
 import { useEffect } from 'react';
+import * as React from 'react';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -10,7 +11,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { changeEditMode } from '@elementor/editor-v1-adapters';
+import { changeEditMode, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
@@ -19,22 +20,27 @@ import {
 	Box,
 	Button,
 	DialogHeader,
+	Divider,
 	ErrorBoundary,
 	IconButton,
 	type IconButtonProps,
 	Stack,
 } from '@elementor/ui';
+import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useDirtyState } from '../../hooks/use-dirty-state';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
 import { ClassManagerIntroduction } from './class-manager-introduction';
+import { ClassManagerSearch } from './class-manager-search';
 import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
 import { SaveChangesDialog, useDialog } from './save-changes-dialog';
+
+const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 const id = 'global-classes-manager';
 
@@ -59,6 +65,11 @@ export const { panel, usePanelActions } = createPanel( {
 } );
 
 export function ClassManagerPanel() {
+	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
+		delay: 300,
+		initialValue: '',
+	} );
+
 	const isDirty = useDirtyState();
 
 	const { close: closePanel } = usePanelActions();
@@ -97,9 +108,39 @@ export function ClassManagerPanel() {
 							/>
 						</Stack>
 					</PanelHeader>
-					<PanelBody px={ 2 }>
-						<GlobalClassesList disabled={ isPublishing } />
+					<PanelBody
+						sx={ {
+							display: 'flex',
+							flexDirection: 'column',
+							height: '100%',
+						} }
+					>
+						{ isVersion311IsActive && (
+							<>
+								<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
+								<Divider
+									sx={ {
+										borderWidth: '1px 0 0 0',
+									} }
+								/>
+							</>
+						) }
+
+						<Box
+							px={ 2 }
+							sx={ {
+								flexGrow: 1,
+								overflowY: 'auto',
+							} }
+						>
+							<GlobalClassesList
+								disabled={ isPublishing }
+								searchValue={ debouncedValue }
+								onSearch={ handleChange }
+							/>
+						</Box>
 					</PanelBody>
+
 					<PanelFooter>
 						<Button
 							fullWidth

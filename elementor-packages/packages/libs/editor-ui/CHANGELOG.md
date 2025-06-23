@@ -1,5 +1,17 @@
 # @elementor/editor-ui
 
+## 0.13.0
+
+### Minor Changes
+
+- c91168a: Update the virtualization of the sticky menu list items in the popover.
+- bfe6b0b: Update the width settings for the popover selection list.
+- d85ca8c: Update the popover styling for version 3.30.
+
+### Patch Changes
+
+- @elementor/editor-v1-adapters@0.12.1
+
 ## 0.12.0
 
 ### Minor Changes

@@ -31,6 +31,19 @@ var useElementSetting = (elementId, settingKey) => {
     [elementId, settingKey]
   );
 };
+var useElementSettings = (elementId, settingKeys) => {
+  return useListenTo(
+    commandEndEvent("document/elements/set-settings"),
+    () => settingKeys.reduce((settings, key) => {
+      const value = getElementSetting(elementId, key);
+      if (value !== null) {
+        settings[key] = value;
+      }
+      return settings;
+    }, {}),
+    [elementId, ...settingKeys]
+  );
+};
 
 // src/hooks/use-element-type.ts
 import { __privateUseListenTo as useListenTo2, commandEndEvent as commandEndEvent2 } from "@elementor/editor-v1-adapters";
@@ -456,6 +469,7 @@ export {
   updateElementSettings,
   updateElementStyle,
   useElementSetting,
+  useElementSettings,
   useElementType,
   useParentElement,
   useSelectedElement

@@ -9,7 +9,7 @@ interface VariableTagProps extends UnstableTagProps {
 	onUnlink?: () => void;
 }
 
-export const VariableTag = ( { startIcon, label, onUnlink, ...props }: VariableTagProps ) => {
+export const AssignedTag = ( { startIcon, label, onUnlink, ...props }: VariableTagProps ) => {
 	const actions = [];
 
 	if ( onUnlink ) {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import { FontFamilySelector, PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { useFontFamilies, useSectionRef } from '@elementor/editor-editing-panel';
-import { PopoverHeader, PopoverScrollableContent } from '@elementor/editor-ui';
+import { PopoverScrollableContent, useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
+import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, ChevronDownIcon, TextIcon } from '@elementor/icons';
 import {
 	bindPopover,
@@ -65,11 +65,10 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 		return ! fontFamily?.trim() || ! label?.trim();
 	};
 
-	const sectionRef = useSectionRef();
-	const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
+	const sectionWidth = useSectionWidth();
 
 	return (
-		<PopoverScrollableContent height="auto" width={ sectionWidth }>
+		<PopoverScrollableContent height="auto">
 			<PopoverHeader
 				icon={
 					<>

@@ -7,14 +7,14 @@ import { __privateListenTo as listenTo, v1ReadyEvent } from "@elementor/editor-v
 import { __registerSlice as registerSlice } from "@elementor/store";
 
 // src/components/class-manager/class-manager-button.tsx
-import * as React8 from "react";
+import * as React11 from "react";
 import {
   __useActiveDocument as useActiveDocument,
   __useActiveDocumentActions as useActiveDocumentActions
 } from "@elementor/editor-documents";
 import { useUserStylesCapability } from "@elementor/editor-styles-repository";
 import { IconButton as IconButton3, Tooltip as Tooltip2 } from "@elementor/ui";
-import { __ as __6 } from "@wordpress/i18n";
+import { __ as __9 } from "@wordpress/i18n";
 
 // src/global-classes-styles-provider.ts
 import { generateId } from "@elementor/editor-styles";
@@ -308,9 +308,10 @@ var globalClassesStylesProvider = createStylesProvider({
 });
 
 // src/components/class-manager/class-manager-panel.tsx
-import * as React7 from "react";
 import { useEffect as useEffect2 } from "react";
+import * as React10 from "react";
 import { setDocumentModifiedStatus } from "@elementor/editor-documents";
+import { EXPERIMENTAL_FEATURES as EXPERIMENTAL_FEATURES2 } from "@elementor/editor-editing-panel";
 import {
   __createPanel as createPanel,
   Panel,
@@ -320,20 +321,22 @@ import {
   PanelHeaderTitle
 } from "@elementor/editor-panels";
 import { ThemeProvider } from "@elementor/editor-ui";
-import { changeEditMode } from "@elementor/editor-v1-adapters";
+import { changeEditMode, isExperimentActive as isExperimentActive4 } from "@elementor/editor-v1-adapters";
 import { XIcon } from "@elementor/icons";
 import { useMutation } from "@elementor/query";
 import { __dispatch as dispatch4 } from "@elementor/store";
 import {
   Alert,
-  Box as Box4,
+  Box as Box6,
   Button as Button3,
   DialogHeader,
+  Divider,
   ErrorBoundary,
   IconButton as IconButton2,
-  Stack as Stack2
+  Stack as Stack5
 } from "@elementor/ui";
-import { __ as __5 } from "@wordpress/i18n";
+import { useDebounceState } from "@elementor/utils";
+import { __ as __8 } from "@wordpress/i18n";
 
 // src/hooks/use-dirty-state.ts
 import { __useSelector as useSelector } from "@elementor/store";
@@ -449,6 +452,26 @@ var IntroductionContent = () => {
   )));
 };
 
+// src/components/class-manager/class-manager-search.tsx
+import * as React2 from "react";
+import { SearchIcon } from "@elementor/icons";
+import { Box as Box2, Grid, InputAdornment, Stack, TextField } from "@elementor/ui";
+import { __ as __3 } from "@wordpress/i18n";
+var ClassManagerSearch = ({ searchValue, onChange }) => /* @__PURE__ */ React2.createElement(Grid, { item: true, xs: 6, px: 2, pb: 1 }, /* @__PURE__ */ React2.createElement(Stack, { direction: "row", gap: 0.5, sx: { width: "100%" } }, /* @__PURE__ */ React2.createElement(Box2, { sx: { flexGrow: 1 } }, /* @__PURE__ */ React2.createElement(
+  TextField,
+  {
+    role: "search",
+    fullWidth: true,
+    size: "tiny",
+    value: searchValue,
+    placeholder: __3("Search", "elementor"),
+    onChange: (e) => onChange(e.target.value),
+    InputProps: {
+      startAdornment: /* @__PURE__ */ React2.createElement(InputAdornment, { position: "start" }, /* @__PURE__ */ React2.createElement(SearchIcon, { fontSize: "tiny" }))
+    }
+  }
+))));
+
 // src/components/class-manager/delete-class.ts
 import { getCurrentDocument, getV1DocumentsManager } from "@elementor/editor-documents";
 import { __privateRunCommand as runCommand } from "@elementor/editor-v1-adapters";
@@ -475,32 +498,16 @@ var reloadDocument = () => {
 };
 
 // src/components/class-manager/flipped-color-swatch-icon.tsx
-import * as React2 from "react";
+import * as React3 from "react";
 import { ColorSwatchIcon } from "@elementor/icons";
-var FlippedColorSwatchIcon = ({ sx, ...props }) => /* @__PURE__ */ React2.createElement(ColorSwatchIcon, { sx: { transform: "rotate(90deg)", ...sx }, ...props });
+var FlippedColorSwatchIcon = ({ sx, ...props }) => /* @__PURE__ */ React3.createElement(ColorSwatchIcon, { sx: { transform: "rotate(90deg)", ...sx }, ...props });
 
 // src/components/class-manager/global-classes-list.tsx
-import * as React5 from "react";
-import { useEffect, useRef } from "react";
-import { validateStyleLabel } from "@elementor/editor-styles-repository";
-import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from "@elementor/editor-ui";
-import { DotsVerticalIcon } from "@elementor/icons";
+import * as React8 from "react";
+import { useEffect, useMemo } from "react";
 import { __useDispatch as useDispatch } from "@elementor/store";
-import {
-  bindMenu,
-  bindTrigger,
-  Box as Box3,
-  IconButton,
-  List,
-  ListItemButton,
-  Menu,
-  Stack,
-  styled as styled2,
-  Tooltip,
-  Typography as Typography3,
-  usePopupState
-} from "@elementor/ui";
-import { __ as __4 } from "@wordpress/i18n";
+import { List, Stack as Stack4, styled as styled3, Typography as Typography5 } from "@elementor/ui";
+import { __ as __7 } from "@wordpress/i18n";
 
 // src/hooks/use-classes-order.ts
 import { __useSelector as useSelector2 } from "@elementor/store";
@@ -514,8 +521,31 @@ var useOrderedClasses = () => {
   return useSelector3(selectOrderedClasses);
 };
 
+// src/components/class-manager/class-item.tsx
+import * as React6 from "react";
+import { useRef } from "react";
+import { EXPERIMENTAL_FEATURES } from "@elementor/editor-editing-panel";
+import { validateStyleLabel } from "@elementor/editor-styles-repository";
+import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from "@elementor/editor-ui";
+import { isExperimentActive as isExperimentActive3 } from "@elementor/editor-v1-adapters";
+import { DotsVerticalIcon } from "@elementor/icons";
+import {
+  bindMenu,
+  bindTrigger,
+  Box as Box4,
+  IconButton,
+  ListItemButton,
+  Menu,
+  Stack as Stack2,
+  styled as styled2,
+  Tooltip,
+  Typography as Typography3,
+  usePopupState
+} from "@elementor/ui";
+import { __ as __5 } from "@wordpress/i18n";
+
 // src/components/class-manager/delete-confirmation-dialog.tsx
-import * as React3 from "react";
+import * as React4 from "react";
 import { createContext, useContext, useState as useState2 } from "react";
 import { AlertOctagonFilledIcon } from "@elementor/icons";
 import {
@@ -527,7 +557,7 @@ import {
   DialogTitle,
   Typography as Typography2
 } from "@elementor/ui";
-import { __ as __3 } from "@wordpress/i18n";
+import { __ as __4 } from "@wordpress/i18n";
 var context = createContext(null);
 var DeleteConfirmationProvider = ({ children }) => {
   const [dialogProps, setDialogProps] = useState2(null);
@@ -537,7 +567,7 @@ var DeleteConfirmationProvider = ({ children }) => {
   const closeDialog = () => {
     setDialogProps(null);
   };
-  return /* @__PURE__ */ React3.createElement(context.Provider, { value: { openDialog, closeDialog, dialogProps } }, children, !!dialogProps && /* @__PURE__ */ React3.createElement(DeleteConfirmationDialog, { ...dialogProps }));
+  return /* @__PURE__ */ React4.createElement(context.Provider, { value: { openDialog, closeDialog, dialogProps } }, children, !!dialogProps && /* @__PURE__ */ React4.createElement(DeleteConfirmationDialog, { ...dialogProps }));
 };
 var TITLE_ID = "delete-class-dialog";
 var DeleteConfirmationDialog = ({ label, id: id2 }) => {
@@ -546,10 +576,10 @@ var DeleteConfirmationDialog = ({ label, id: id2 }) => {
     deleteClass(id2);
     closeDialog();
   };
-  return /* @__PURE__ */ React3.createElement(Dialog, { open: true, onClose: closeDialog, "aria-labelledby": TITLE_ID, maxWidth: "xs" }, /* @__PURE__ */ React3.createElement(DialogTitle, { id: TITLE_ID, display: "flex", alignItems: "center", gap: 1, sx: { lineHeight: 1 } }, /* @__PURE__ */ React3.createElement(AlertOctagonFilledIcon, { color: "error" }), __3("Delete this class?", "elementor")), /* @__PURE__ */ React3.createElement(DialogContent, null, /* @__PURE__ */ React3.createElement(DialogContentText, { variant: "body2", color: "textPrimary" }, __3("Deleting", "elementor"), /* @__PURE__ */ React3.createElement(Typography2, { variant: "subtitle2", component: "span" }, "\xA0", label, "\xA0"), __3(
+  return /* @__PURE__ */ React4.createElement(Dialog, { open: true, onClose: closeDialog, "aria-labelledby": TITLE_ID, maxWidth: "xs" }, /* @__PURE__ */ React4.createElement(DialogTitle, { id: TITLE_ID, display: "flex", alignItems: "center", gap: 1, sx: { lineHeight: 1 } }, /* @__PURE__ */ React4.createElement(AlertOctagonFilledIcon, { color: "error" }), __4("Delete this class?", "elementor")), /* @__PURE__ */ React4.createElement(DialogContent, null, /* @__PURE__ */ React4.createElement(DialogContentText, { variant: "body2", color: "textPrimary" }, __4("Deleting", "elementor"), /* @__PURE__ */ React4.createElement(Typography2, { variant: "subtitle2", component: "span" }, "\xA0", label, "\xA0"), __4(
     "will permanently remove it from your project and may affect the design across all elements using it. This action cannot be undone.",
     "elementor"
-  ))), /* @__PURE__ */ React3.createElement(DialogActions, null, /* @__PURE__ */ React3.createElement(Button, { color: "secondary", onClick: closeDialog }, __3("Not now", "elementor")), /* @__PURE__ */ React3.createElement(Button, { variant: "contained", color: "error", onClick: onConfirm }, __3("Delete", "elementor"))));
+  ))), /* @__PURE__ */ React4.createElement(DialogActions, null, /* @__PURE__ */ React4.createElement(Button, { color: "secondary", onClick: closeDialog }, __4("Not now", "elementor")), /* @__PURE__ */ React4.createElement(Button, { variant: "contained", color: "error", onClick: onConfirm }, __4("Delete", "elementor"))));
 };
 var useDeleteConfirmation = () => {
   const contextValue = useContext(context);
@@ -560,18 +590,18 @@ var useDeleteConfirmation = () => {
 };
 
 // src/components/class-manager/sortable.tsx
-import * as React4 from "react";
+import * as React5 from "react";
 import { GripVerticalIcon } from "@elementor/icons";
 import {
-  Box as Box2,
+  Box as Box3,
   styled,
   UnstableSortableItem,
   UnstableSortableProvider
 } from "@elementor/ui";
-var SortableProvider = (props) => /* @__PURE__ */ React4.createElement(UnstableSortableProvider, { restrictAxis: true, variant: "static", dragPlaceholderStyle: { opacity: "1" }, ...props });
-var SortableTrigger = (props) => /* @__PURE__ */ React4.createElement(StyledSortableTrigger, { ...props, role: "button", className: "class-item-sortable-trigger" }, /* @__PURE__ */ React4.createElement(GripVerticalIcon, { fontSize: "tiny" }));
+var SortableProvider = (props) => /* @__PURE__ */ React5.createElement(UnstableSortableProvider, { restrictAxis: true, variant: "static", dragPlaceholderStyle: { opacity: "1" }, ...props });
+var SortableTrigger = (props) => /* @__PURE__ */ React5.createElement(StyledSortableTrigger, { ...props, role: "button", className: "class-item-sortable-trigger" }, /* @__PURE__ */ React5.createElement(GripVerticalIcon, { fontSize: "tiny" }));
 var SortableItem = ({ children, id: id2, ...props }) => {
-  return /* @__PURE__ */ React4.createElement(
+  return /* @__PURE__ */ React5.createElement(
     UnstableSortableItem,
     {
       ...props,
@@ -587,8 +617,8 @@ var SortableItem = ({ children, id: id2, ...props }) => {
         isDragOverlay,
         isDragPlaceholder
       }) => {
-        return /* @__PURE__ */ React4.createElement(
-          Box2,
+        return /* @__PURE__ */ React5.createElement(
+          Box3,
           {
             ...itemProps,
             style: itemStyle,
@@ -606,7 +636,7 @@ var SortableItem = ({ children, id: id2, ...props }) => {
             triggerStyle,
             isDragPlaceholder
           }),
-          showDropIndication && /* @__PURE__ */ React4.createElement(SortableItemIndicator, { style: dropIndicationStyle })
+          showDropIndication && /* @__PURE__ */ React5.createElement(SortableItemIndicator, { style: dropIndicationStyle })
         );
       }
     }
@@ -619,70 +649,23 @@ var StyledSortableTrigger = styled("div")(({ theme }) => ({
   transform: `translate( -${theme.spacing(1.5)}, -50% )`,
   color: theme.palette.action.active
 }));
-var SortableItemIndicator = styled(Box2)`
+var SortableItemIndicator = styled(Box3)`
 	width: 100%;
 	height: 1px;
 	background-color: ${({ theme }) => theme.palette.text.primary};
 `;
 
-// src/components/class-manager/global-classes-list.tsx
-var GlobalClassesList = ({ disabled }) => {
-  const cssClasses = useOrderedClasses();
-  const dispatch5 = useDispatch();
-  const [classesOrder, reorderClasses] = useReorder();
-  useEffect(() => {
-    const handler = (event) => {
-      if (event.key === "z" && (event.ctrlKey || event.metaKey)) {
-        event.stopImmediatePropagation();
-        event.preventDefault();
-        if (event.shiftKey) {
-          dispatch5(slice.actions.redo());
-          return;
-        }
-        dispatch5(slice.actions.undo());
-      }
-    };
-    window.addEventListener("keydown", handler, {
-      capture: true
-    });
-    return () => window.removeEventListener("keydown", handler);
-  }, [dispatch5]);
-  if (!cssClasses?.length) {
-    return /* @__PURE__ */ React5.createElement(EmptyState, null);
-  }
-  return /* @__PURE__ */ React5.createElement(DeleteConfirmationProvider, null, /* @__PURE__ */ React5.createElement(List, { sx: { display: "flex", flexDirection: "column", gap: 0.5 } }, /* @__PURE__ */ React5.createElement(SortableProvider, { value: classesOrder, onChange: reorderClasses }, cssClasses?.map(({ id: id2, label }) => {
-    const renameClass = (newLabel) => {
-      dispatch5(
-        slice.actions.update({
-          style: {
-            id: id2,
-            label: newLabel
-          }
-        })
-      );
-    };
-    return /* @__PURE__ */ React5.createElement(SortableItem, { key: id2, id: id2 }, ({ isDragged, isDragPlaceholder, triggerProps, triggerStyle }) => /* @__PURE__ */ React5.createElement(
-      ClassItem,
-      {
-        id: id2,
-        label,
-        renameClass,
-        selected: isDragged,
-        disabled: disabled || isDragPlaceholder,
-        sortableTriggerProps: { ...triggerProps, style: triggerStyle }
-      }
-    ));
-  }))));
-};
-var useReorder = () => {
-  const dispatch5 = useDispatch();
-  const order = useClassesOrder();
-  const reorder = (newIds) => {
-    dispatch5(slice.actions.setOrder(newIds));
-  };
-  return [order, reorder];
-};
-var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTriggerProps }) => {
+// src/components/class-manager/class-item.tsx
+var isVersion311IsActive = isExperimentActive3(EXPERIMENTAL_FEATURES.V_3_31);
+var ClassItem = ({
+  id: id2,
+  label,
+  renameClass,
+  selected,
+  disabled,
+  sortableTriggerProps,
+  isSearchActive
+}) => {
   const itemRef = useRef(null);
   const {
     ref: editableRef,
@@ -701,7 +684,7 @@ var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTrig
     disableAutoFocus: true
   });
   const isSelected = (selected || popupState.isOpen) && !disabled;
-  return /* @__PURE__ */ React5.createElement(React5.Fragment, null, /* @__PURE__ */ React5.createElement(Stack, { p: 0 }, /* @__PURE__ */ React5.createElement(
+  return /* @__PURE__ */ React6.createElement(React6.Fragment, null, /* @__PURE__ */ React6.createElement(Stack2, { p: 0 }, /* @__PURE__ */ React6.createElement(
     WarningInfotip,
     {
       open: Boolean(error),
@@ -710,12 +693,13 @@ var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTrig
       width: itemRef.current?.getBoundingClientRect().width,
       offset: [0, -15]
     },
-    /* @__PURE__ */ React5.createElement(
+    /* @__PURE__ */ React6.createElement(
       StyledListItemButton,
       {
         ref: itemRef,
         dense: true,
         disableGutters: true,
+        showSortIndicator: isSearchActive,
         showActions: isSelected || isEditing,
         shape: "rounded",
         onDoubleClick: openEditMode,
@@ -723,8 +707,8 @@ var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTrig
         disabled,
         focusVisibleClassName: "visible-class-item"
       },
-      /* @__PURE__ */ React5.createElement(SortableTrigger, { ...sortableTriggerProps }),
-      /* @__PURE__ */ React5.createElement(Indicator, { isActive: isEditing, isError: !!error }, isEditing ? /* @__PURE__ */ React5.createElement(
+      /* @__PURE__ */ React6.createElement(SortableTrigger, { ...sortableTriggerProps }),
+      /* @__PURE__ */ React6.createElement(Indicator, { isActive: isEditing, isError: !!error }, isEditing ? /* @__PURE__ */ React6.createElement(
         EditableField,
         {
           ref: editableRef,
@@ -732,18 +716,18 @@ var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTrig
           variant: "caption",
           ...getEditableProps()
         }
-      ) : /* @__PURE__ */ React5.createElement(EllipsisWithTooltip, { title: label, as: Typography3, variant: "caption" })),
-      /* @__PURE__ */ React5.createElement(
+      ) : /* @__PURE__ */ React6.createElement(EllipsisWithTooltip, { title: label, as: Typography3, variant: "caption" })),
+      /* @__PURE__ */ React6.createElement(
         Tooltip,
         {
           placement: "top",
           className: "class-item-more-actions",
-          title: __4("More actions", "elementor")
+          title: __5("More actions", "elementor")
         },
-        /* @__PURE__ */ React5.createElement(IconButton, { size: "tiny", ...bindTrigger(popupState), "aria-label": "More actions" }, /* @__PURE__ */ React5.createElement(DotsVerticalIcon, { fontSize: "tiny" }))
+        /* @__PURE__ */ React6.createElement(IconButton, { size: "tiny", ...bindTrigger(popupState), "aria-label": "More actions" }, /* @__PURE__ */ React6.createElement(DotsVerticalIcon, { fontSize: "tiny" }))
       )
     )
-  )), /* @__PURE__ */ React5.createElement(
+  )), /* @__PURE__ */ React6.createElement(
     Menu,
     {
       ...bindMenu(popupState),
@@ -756,7 +740,7 @@ var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTrig
         horizontal: "right"
       }
     },
-    /* @__PURE__ */ React5.createElement(
+    /* @__PURE__ */ React6.createElement(
       MenuListItem,
       {
         sx: { minWidth: "160px" },
@@ -765,9 +749,9 @@ var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTrig
           openEditMode();
         }
       },
-      /* @__PURE__ */ React5.createElement(Typography3, { variant: "caption", sx: { color: "text.primary" } }, __4("Rename", "elementor"))
+      /* @__PURE__ */ React6.createElement(Typography3, { variant: "caption", sx: { color: "text.primary" } }, __5("Rename", "elementor"))
     ),
-    /* @__PURE__ */ React5.createElement(
+    /* @__PURE__ */ React6.createElement(
       MenuListItem,
       {
         onClick: () => {
@@ -775,28 +759,43 @@ var ClassItem = ({ id: id2, label, renameClass, selected, disabled, sortableTrig
           openDialog({ id: id2, label });
         }
       },
-      /* @__PURE__ */ React5.createElement(Typography3, { variant: "caption", sx: { color: "error.light" } }, __4("Delete", "elementor"))
+      /* @__PURE__ */ React6.createElement(Typography3, { variant: "caption", sx: { color: "error.light" } }, __5("Delete", "elementor"))
     )
   ));
 };
-var StyledListItemButton = styled2(ListItemButton, {
-  shouldForwardProp: (prop) => !["showActions"].includes(prop)
+var StyledListItemButtonV2 = styled2(ListItemButton, {
+  shouldForwardProp: (prop) => !["showActions", "showSortIndicator"].includes(prop)
 })(
-  ({ showActions }) => `
+  ({ showActions, showSortIndicator }) => `
 	min-height: 36px;
 
 	&.visible-class-item {
 		box-shadow: none !important;
 	}
-
+	.class-item-sortable-trigger {
+		visibility: ${showSortIndicator && showActions ? "visible" : "hidden"};
+	}
+	&:hover&:not(:disabled) {
+		.class-item-sortable-trigger  {
+			visibility: ${showSortIndicator ? "visible" : "hidden"};
+		}
+	}
+`
+);
+var StyledListItemButtonV1 = styled2(ListItemButton, {
+  shouldForwardProp: (prop) => !["showActions", "showSortIndicator"].includes(prop)
+})(
+  ({ showActions }) => `
+	min-height: 36px;
+	&.visible-class-item {
+		box-shadow: none !important;
+	}
 	.class-item-more-actions, .class-item-sortable-trigger {
 		visibility: ${showActions ? "visible" : "hidden"};
 	}
-
 	.class-item-sortable-trigger {
 		visibility: ${showActions ? "visible" : "hidden"};
 	}
-
 	&:hover&:not(:disabled) {
 		.class-item-more-actions, .class-item-sortable-trigger  {
 			visibility: visible;
@@ -804,16 +803,8 @@ var StyledListItemButton = styled2(ListItemButton, {
 	}
 `
 );
-var EmptyState = () => /* @__PURE__ */ React5.createElement(Stack, { alignItems: "center", gap: 1.5, pt: 10, px: 0.5, maxWidth: "260px", margin: "auto" }, /* @__PURE__ */ React5.createElement(FlippedColorSwatchIcon, { fontSize: "large" }), /* @__PURE__ */ React5.createElement(StyledHeader, { variant: "subtitle2", component: "h2", color: "text.secondary" }, __4("There are no global classes yet.", "elementor")), /* @__PURE__ */ React5.createElement(Typography3, { align: "center", variant: "caption", color: "text.secondary" }, __4(
-  "CSS classes created in the editor panel will appear here. Once they are available, you can arrange their hierarchy, rename them, or delete them as needed.",
-  "elementor"
-)));
-var StyledHeader = styled2(Typography3)(({ theme, variant }) => ({
-  "&.MuiTypography-root": {
-    ...theme.typography[variant]
-  }
-}));
-var Indicator = styled2(Box3, {
+var StyledListItemButton = isVersion311IsActive ? StyledListItemButtonV2 : StyledListItemButtonV1;
+var Indicator = styled2(Box4, {
   shouldForwardProp: (prop) => !["isActive", "isError"].includes(prop)
 })(({ theme, isActive, isError }) => ({
   display: "flex",
@@ -842,6 +833,129 @@ var validateLabel = (newLabel) => {
   return result.errorMessage;
 };
 
+// src/components/class-manager/class-manager-class-not-found.tsx
+import * as React7 from "react";
+import { Box as Box5, Link, Stack as Stack3, Typography as Typography4 } from "@elementor/ui";
+import { __ as __6 } from "@wordpress/i18n";
+var CssClassNotFound = ({ onClear, searchValue }) => /* @__PURE__ */ React7.createElement(
+  Stack3,
+  {
+    color: "text.secondary",
+    pt: 5,
+    alignItems: "center",
+    gap: 1,
+    overflow: "hidden",
+    maxWidth: "170px",
+    justifySelf: "center"
+  },
+  /* @__PURE__ */ React7.createElement(FlippedColorSwatchIcon, { color: "inherit", fontSize: "large" }),
+  /* @__PURE__ */ React7.createElement(Box5, null, /* @__PURE__ */ React7.createElement(Typography4, { align: "center", variant: "subtitle2", color: "inherit" }, __6("Sorry, nothing matched", "elementor")), /* @__PURE__ */ React7.createElement(
+    Typography4,
+    {
+      variant: "subtitle2",
+      color: "inherit",
+      sx: {
+        display: "flex",
+        width: "100%",
+        justifyContent: "center"
+      }
+    },
+    /* @__PURE__ */ React7.createElement("span", null, "\u201C"),
+    /* @__PURE__ */ React7.createElement(
+      "span",
+      {
+        style: {
+          maxWidth: "80%",
+          overflow: "hidden",
+          textOverflow: "ellipsis"
+        }
+      },
+      searchValue
+    ),
+    /* @__PURE__ */ React7.createElement("span", null, "\u201D.")
+  )),
+  /* @__PURE__ */ React7.createElement(Typography4, { align: "center", variant: "caption", color: "inherit" }, __6("Try something else.", "elementor"), /* @__PURE__ */ React7.createElement(Link, { color: "secondary", variant: "caption", component: "button", onClick: onClear }, __6("Clear & try again", "elementor")))
+);
+
+// src/components/class-manager/global-classes-list.tsx
+var GlobalClassesList = ({ disabled, searchValue, onSearch }) => {
+  const cssClasses = useOrderedClasses();
+  const dispatch5 = useDispatch();
+  const [classesOrder, reorderClasses] = useReorder();
+  const lowercaseLabels = useMemo(
+    () => cssClasses.map((cssClass) => ({
+      ...cssClass,
+      lowerLabel: cssClass.label.toLowerCase()
+    })),
+    [cssClasses]
+  );
+  const filteredClasses = useMemo(() => {
+    return searchValue.length > 1 ? lowercaseLabels.filter(
+      (cssClass) => cssClass.lowerLabel.toLowerCase().includes(searchValue.toLowerCase())
+    ) : cssClasses;
+  }, [searchValue, cssClasses, lowercaseLabels]);
+  useEffect(() => {
+    const handler = (event) => {
+      if (event.key === "z" && (event.ctrlKey || event.metaKey)) {
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        if (event.shiftKey) {
+          dispatch5(slice.actions.redo());
+          return;
+        }
+        dispatch5(slice.actions.undo());
+      }
+    };
+    window.addEventListener("keydown", handler, {
+      capture: true
+    });
+    return () => window.removeEventListener("keydown", handler);
+  }, [dispatch5]);
+  if (!cssClasses?.length) {
+    return /* @__PURE__ */ React8.createElement(EmptyState, null);
+  }
+  return /* @__PURE__ */ React8.createElement(DeleteConfirmationProvider, null, filteredClasses.length <= 0 && searchValue.length > 1 ? /* @__PURE__ */ React8.createElement(CssClassNotFound, { onClear: () => onSearch(""), searchValue }) : /* @__PURE__ */ React8.createElement(List, { sx: { display: "flex", flexDirection: "column", gap: 0.5 } }, /* @__PURE__ */ React8.createElement(SortableProvider, { value: classesOrder, onChange: reorderClasses }, filteredClasses?.map(({ id: id2, label }) => {
+    return /* @__PURE__ */ React8.createElement(SortableItem, { key: id2, id: id2 }, ({ isDragged, isDragPlaceholder, triggerProps, triggerStyle }) => /* @__PURE__ */ React8.createElement(
+      ClassItem,
+      {
+        isSearchActive: searchValue.length < 2,
+        id: id2,
+        label,
+        renameClass: (newLabel) => {
+          dispatch5(
+            slice.actions.update({
+              style: {
+                id: id2,
+                label: newLabel
+              }
+            })
+          );
+        },
+        selected: isDragged,
+        disabled: disabled || isDragPlaceholder,
+        sortableTriggerProps: { ...triggerProps, style: triggerStyle }
+      }
+    ));
+  }))));
+};
+var EmptyState = () => /* @__PURE__ */ React8.createElement(Stack4, { alignItems: "center", gap: 1.5, pt: 10, px: 0.5, maxWidth: "260px", margin: "auto" }, /* @__PURE__ */ React8.createElement(FlippedColorSwatchIcon, { fontSize: "large" }), /* @__PURE__ */ React8.createElement(StyledHeader, { variant: "subtitle2", component: "h2", color: "text.secondary" }, __7("There are no global classes yet.", "elementor")), /* @__PURE__ */ React8.createElement(Typography5, { align: "center", variant: "caption", color: "text.secondary" }, __7(
+  "CSS classes created in the editor panel will appear here. Once they are available, you can arrange their hierarchy, rename them, or delete them as needed.",
+  "elementor"
+)));
+var StyledHeader = styled3(Typography5)(({ theme, variant }) => ({
+  "&.MuiTypography-root": {
+    ...theme.typography[variant]
+  }
+}));
+var useReorder = () => {
+  const dispatch5 = useDispatch();
+  const order = useClassesOrder();
+  const reorder = (newIds) => {
+    dispatch5(slice.actions.setOrder(newIds));
+  };
+  return [order, reorder];
+};
+
 // src/components/class-manager/panel-interactions.ts
 function blockPanelInteractions() {
   const extendedWindow = window;
@@ -853,7 +967,7 @@ function unblockPanelInteractions() {
 }
 
 // src/components/class-manager/save-changes-dialog.tsx
-import * as React6 from "react";
+import * as React9 from "react";
 import { useState as useState3 } from "react";
 import { AlertTriangleFilledIcon } from "@elementor/icons";
 import {
@@ -865,10 +979,10 @@ import {
   DialogTitle as DialogTitle2
 } from "@elementor/ui";
 var TITLE_ID2 = "save-changes-dialog";
-var SaveChangesDialog = ({ children, onClose }) => /* @__PURE__ */ React6.createElement(Dialog2, { open: true, onClose, "aria-labelledby": TITLE_ID2, maxWidth: "xs" }, children);
-var SaveChangesDialogTitle = ({ children }) => /* @__PURE__ */ React6.createElement(DialogTitle2, { id: TITLE_ID2, display: "flex", alignItems: "center", gap: 1, sx: { lineHeight: 1 } }, /* @__PURE__ */ React6.createElement(AlertTriangleFilledIcon, { color: "secondary" }), children);
-var SaveChangesDialogContent = ({ children }) => /* @__PURE__ */ React6.createElement(DialogContent2, null, children);
-var SaveChangesDialogContentText = (props) => /* @__PURE__ */ React6.createElement(DialogContentText2, { variant: "body2", color: "textPrimary", display: "flex", flexDirection: "column", ...props });
+var SaveChangesDialog = ({ children, onClose }) => /* @__PURE__ */ React9.createElement(Dialog2, { open: true, onClose, "aria-labelledby": TITLE_ID2, maxWidth: "xs" }, children);
+var SaveChangesDialogTitle = ({ children }) => /* @__PURE__ */ React9.createElement(DialogTitle2, { id: TITLE_ID2, display: "flex", alignItems: "center", gap: 1, sx: { lineHeight: 1 } }, /* @__PURE__ */ React9.createElement(AlertTriangleFilledIcon, { color: "secondary" }), children);
+var SaveChangesDialogContent = ({ children }) => /* @__PURE__ */ React9.createElement(DialogContent2, null, children);
+var SaveChangesDialogContentText = (props) => /* @__PURE__ */ React9.createElement(DialogContentText2, { variant: "body2", color: "textPrimary", display: "flex", flexDirection: "column", ...props });
 var SaveChangesDialogActions = ({ actions }) => {
   const [isConfirming, setIsConfirming] = useState3(false);
   const { cancel, confirm, discard } = actions;
@@ -877,7 +991,7 @@ var SaveChangesDialogActions = ({ actions }) => {
     await confirm.action();
     setIsConfirming(false);
   };
-  return /* @__PURE__ */ React6.createElement(DialogActions2, null, cancel && /* @__PURE__ */ React6.createElement(Button2, { variant: "text", color: "secondary", onClick: cancel.action }, cancel.label), discard && /* @__PURE__ */ React6.createElement(Button2, { variant: "text", color: "secondary", onClick: discard.action }, discard.label), /* @__PURE__ */ React6.createElement(Button2, { variant: "contained", color: "secondary", onClick: onConfirm, loading: isConfirming }, confirm.label));
+  return /* @__PURE__ */ React9.createElement(DialogActions2, null, cancel && /* @__PURE__ */ React9.createElement(Button2, { variant: "text", color: "secondary", onClick: cancel.action }, cancel.label), discard && /* @__PURE__ */ React9.createElement(Button2, { variant: "text", color: "secondary", onClick: discard.action }, discard.label), /* @__PURE__ */ React9.createElement(Button2, { variant: "contained", color: "secondary", onClick: onConfirm, loading: isConfirming }, confirm.label));
 };
 SaveChangesDialog.Title = SaveChangesDialogTitle;
 SaveChangesDialog.Content = SaveChangesDialogContent;
@@ -891,6 +1005,7 @@ var useDialog = () => {
 };
 
 // src/components/class-manager/class-manager-panel.tsx
+var isVersion311IsActive2 = isExperimentActive4(EXPERIMENTAL_FEATURES2.V_3_31);
 var id = "global-classes-manager";
 var { panel, usePanelActions } = createPanel({
   id,
@@ -906,6 +1021,10 @@ var { panel, usePanelActions } = createPanel({
   }
 });
 function ClassManagerPanel() {
+  const { debouncedValue, inputValue, handleChange } = useDebounceState({
+    delay: 300,
+    initialValue: ""
+  });
   const isDirty2 = useDirtyState();
   const { close: closePanel } = usePanelActions();
   const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
@@ -915,7 +1034,7 @@ function ClassManagerPanel() {
     closeSaveChangesDialog();
   };
   usePreventUnload();
-  return /* @__PURE__ */ React7.createElement(ThemeProvider, null, /* @__PURE__ */ React7.createElement(ErrorBoundary, { fallback: /* @__PURE__ */ React7.createElement(ErrorBoundaryFallback, null) }, /* @__PURE__ */ React7.createElement(Panel, null, /* @__PURE__ */ React7.createElement(PanelHeader, null, /* @__PURE__ */ React7.createElement(Stack2, { p: 1, pl: 2, width: "100%", direction: "row", alignItems: "center" }, /* @__PURE__ */ React7.createElement(PanelHeaderTitle, { sx: { display: "flex", alignItems: "center", gap: 0.5 } }, /* @__PURE__ */ React7.createElement(FlippedColorSwatchIcon, { fontSize: "inherit" }), __5("Class Manager", "elementor")), /* @__PURE__ */ React7.createElement(
+  return /* @__PURE__ */ React10.createElement(ThemeProvider, null, /* @__PURE__ */ React10.createElement(ErrorBoundary, { fallback: /* @__PURE__ */ React10.createElement(ErrorBoundaryFallback, null) }, /* @__PURE__ */ React10.createElement(Panel, null, /* @__PURE__ */ React10.createElement(PanelHeader, null, /* @__PURE__ */ React10.createElement(Stack5, { p: 1, pl: 2, width: "100%", direction: "row", alignItems: "center" }, /* @__PURE__ */ React10.createElement(PanelHeaderTitle, { sx: { display: "flex", alignItems: "center", gap: 0.5 } }, /* @__PURE__ */ React10.createElement(FlippedColorSwatchIcon, { fontSize: "inherit" }), __8("Class Manager", "elementor")), /* @__PURE__ */ React10.createElement(
     CloseButton,
     {
       sx: { marginLeft: "auto" },
@@ -928,7 +1047,42 @@ function ClassManagerPanel() {
         closePanel();
       }
     }
-  ))), /* @__PURE__ */ React7.createElement(PanelBody, { px: 2 }, /* @__PURE__ */ React7.createElement(GlobalClassesList, { disabled: isPublishing })), /* @__PURE__ */ React7.createElement(PanelFooter, null, /* @__PURE__ */ React7.createElement(
+  ))), /* @__PURE__ */ React10.createElement(
+    PanelBody,
+    {
+      sx: {
+        display: "flex",
+        flexDirection: "column",
+        height: "100%"
+      }
+    },
+    isVersion311IsActive2 && /* @__PURE__ */ React10.createElement(React10.Fragment, null, /* @__PURE__ */ React10.createElement(ClassManagerSearch, { searchValue: inputValue, onChange: handleChange }), /* @__PURE__ */ React10.createElement(
+      Divider,
+      {
+        sx: {
+          borderWidth: "1px 0 0 0"
+        }
+      }
+    )),
+    /* @__PURE__ */ React10.createElement(
+      Box6,
+      {
+        px: 2,
+        sx: {
+          flexGrow: 1,
+          overflowY: "auto"
+        }
+      },
+      /* @__PURE__ */ React10.createElement(
+        GlobalClassesList,
+        {
+          disabled: isPublishing,
+          searchValue: debouncedValue,
+          onSearch: handleChange
+        }
+      )
+    )
+  ), /* @__PURE__ */ React10.createElement(PanelFooter, null, /* @__PURE__ */ React10.createElement(
     Button3,
     {
       fullWidth: true,
@@ -939,19 +1093,19 @@ function ClassManagerPanel() {
       disabled: !isDirty2,
       loading: isPublishing
     },
-    __5("Save changes", "elementor")
-  )))), /* @__PURE__ */ React7.createElement(ClassManagerIntroduction, null), isSaveChangesDialogOpen && /* @__PURE__ */ React7.createElement(SaveChangesDialog, null, /* @__PURE__ */ React7.createElement(DialogHeader, { onClose: closeSaveChangesDialog, logo: false }, /* @__PURE__ */ React7.createElement(SaveChangesDialog.Title, null, __5("You have unsaved changes", "elementor"))), /* @__PURE__ */ React7.createElement(SaveChangesDialog.Content, null, /* @__PURE__ */ React7.createElement(SaveChangesDialog.ContentText, null, __5("You have unsaved changes in the Class Manager.", "elementor")), /* @__PURE__ */ React7.createElement(SaveChangesDialog.ContentText, null, __5("To avoid losing your updates, save your changes before leaving.", "elementor"))), /* @__PURE__ */ React7.createElement(
+    __8("Save changes", "elementor")
+  )))), /* @__PURE__ */ React10.createElement(ClassManagerIntroduction, null), isSaveChangesDialogOpen && /* @__PURE__ */ React10.createElement(SaveChangesDialog, null, /* @__PURE__ */ React10.createElement(DialogHeader, { onClose: closeSaveChangesDialog, logo: false }, /* @__PURE__ */ React10.createElement(SaveChangesDialog.Title, null, __8("You have unsaved changes", "elementor"))), /* @__PURE__ */ React10.createElement(SaveChangesDialog.Content, null, /* @__PURE__ */ React10.createElement(SaveChangesDialog.ContentText, null, __8("You have unsaved changes in the Class Manager.", "elementor")), /* @__PURE__ */ React10.createElement(SaveChangesDialog.ContentText, null, __8("To avoid losing your updates, save your changes before leaving.", "elementor"))), /* @__PURE__ */ React10.createElement(
     SaveChangesDialog.Actions,
     {
       actions: {
         discard: {
-          label: __5("Discard", "elementor"),
+          label: __8("Discard", "elementor"),
           action: () => {
             resetAndClosePanel();
           }
         },
         confirm: {
-          label: __5("Save & Continue", "elementor"),
+          label: __8("Save & Continue", "elementor"),
           action: async () => {
             await publish();
             closeSaveChangesDialog();
@@ -962,8 +1116,8 @@ function ClassManagerPanel() {
     }
   )));
 }
-var CloseButton = ({ onClose, ...props }) => /* @__PURE__ */ React7.createElement(IconButton2, { size: "small", color: "secondary", onClick: onClose, "aria-label": "Close", ...props }, /* @__PURE__ */ React7.createElement(XIcon, { fontSize: "small" }));
-var ErrorBoundaryFallback = () => /* @__PURE__ */ React7.createElement(Box4, { role: "alert", sx: { minHeight: "100%", p: 2 } }, /* @__PURE__ */ React7.createElement(Alert, { severity: "error", sx: { mb: 2, maxWidth: 400, textAlign: "center" } }, /* @__PURE__ */ React7.createElement("strong", null, __5("Something went wrong", "elementor"))));
+var CloseButton = ({ onClose, ...props }) => /* @__PURE__ */ React10.createElement(IconButton2, { size: "small", color: "secondary", onClick: onClose, "aria-label": "Close", ...props }, /* @__PURE__ */ React10.createElement(XIcon, { fontSize: "small" }));
+var ErrorBoundaryFallback = () => /* @__PURE__ */ React10.createElement(Box6, { role: "alert", sx: { minHeight: "100%", p: 2 } }, /* @__PURE__ */ React10.createElement(Alert, { severity: "error", sx: { mb: 2, maxWidth: 400, textAlign: "center" } }, /* @__PURE__ */ React10.createElement("strong", null, __8("Something went wrong", "elementor"))));
 var usePreventUnload = () => {
   const isDirty2 = useDirtyState();
   useEffect2(() => {
@@ -1008,19 +1162,19 @@ var ClassManagerButton = () => {
     }
     openPanel();
   };
-  return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(Tooltip2, { title: __6("Class Manager", "elementor"), placement: "top" }, /* @__PURE__ */ React8.createElement(IconButton3, { size: "tiny", onClick: handleOpenPanel, sx: { marginInlineEnd: -0.75 } }, /* @__PURE__ */ React8.createElement(FlippedColorSwatchIcon, { fontSize: "tiny" }))), isSaveChangesDialogOpen && /* @__PURE__ */ React8.createElement(SaveChangesDialog, null, /* @__PURE__ */ React8.createElement(SaveChangesDialog.Title, null, __6("You have unsaved changes", "elementor")), /* @__PURE__ */ React8.createElement(SaveChangesDialog.Content, null, /* @__PURE__ */ React8.createElement(SaveChangesDialog.ContentText, { sx: { mb: 2 } }, __6(
+  return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(Tooltip2, { title: __9("Class Manager", "elementor"), placement: "top" }, /* @__PURE__ */ React11.createElement(IconButton3, { size: "tiny", onClick: handleOpenPanel, sx: { marginInlineEnd: -0.75 } }, /* @__PURE__ */ React11.createElement(FlippedColorSwatchIcon, { fontSize: "tiny" }))), isSaveChangesDialogOpen && /* @__PURE__ */ React11.createElement(SaveChangesDialog, null, /* @__PURE__ */ React11.createElement(SaveChangesDialog.Title, null, __9("You have unsaved changes", "elementor")), /* @__PURE__ */ React11.createElement(SaveChangesDialog.Content, null, /* @__PURE__ */ React11.createElement(SaveChangesDialog.ContentText, { sx: { mb: 2 } }, __9(
     "To open the Class Manager, save your page first. You can't continue without saving.",
     "elementor"
-  ))), /* @__PURE__ */ React8.createElement(
+  ))), /* @__PURE__ */ React11.createElement(
     SaveChangesDialog.Actions,
     {
       actions: {
         cancel: {
-          label: __6("Stay here", "elementor"),
+          label: __9("Stay here", "elementor"),
           action: closeSaveChangesDialog
         },
         confirm: {
-          label: __6("Save & Continue", "elementor"),
+          label: __9("Save & Continue", "elementor"),
           action: async () => {
             await saveDocument();
             closeSaveChangesDialog();

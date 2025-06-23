@@ -8,6 +8,12 @@ import { FIRST_DEFAULT_VALUE, FlexOrderField, LAST_DEFAULT_VALUE } from '../flex
 jest.mock( '@elementor/editor-styles' );
 jest.mock( '../../../../hooks/use-styles-field' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
+jest.mock( '../../../../contexts/style-context', () => ( {
+	useStyle: () => ( { meta: null } ),
+} ) );
+jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
+	useStylesInheritanceChain: () => [],
+} ) );
 
 jest.mock( '@elementor/editor-controls', () => {
 	const actual = jest.requireActual( '@elementor/editor-controls' );

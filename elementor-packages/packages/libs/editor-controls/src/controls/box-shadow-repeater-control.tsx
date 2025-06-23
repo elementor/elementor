@@ -17,7 +17,7 @@ export const BoxShadowRepeaterControl = createControl( () => {
 	const { propType, value, setValue, disabled } = useBoundProp( boxShadowPropTypeUtil );
 
 	return (
-		<PropProvider propType={ propType } value={ value } setValue={ setValue } disabled={ disabled }>
+		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
 			<Repeater
 				openOnAdd
 				disabled={ disabled }

@@ -13,6 +13,9 @@ jest.mock( '@elementor/editor-styles' );
 jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
+jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
+	useStylesInheritanceChain: () => [],
+} ) );
 
 jest.mock( '@elementor/editor-controls', () => {
 	const actual = jest.requireActual( '@elementor/editor-controls' );
@@ -50,6 +53,14 @@ describe( '<FlexSizeField />', () => {
 		return { values, setValues, canEdit: true };
 	};
 
+	const renderFlexSizeField = () => {
+		return renderWithTheme(
+			<ControlActionsProvider items={ [] }>
+				<FlexSizeField />
+			</ControlActionsProvider>
+		);
+	};
+
 	beforeEach( () => {
 		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: false } );
 
@@ -70,11 +81,7 @@ describe( '<FlexSizeField />', () => {
 
 	it( 'should not have any toggle button marked as "selected" when no value is set', () => {
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const buttons = screen.getAllByRole( 'button' );
 
@@ -84,11 +91,7 @@ describe( '<FlexSizeField />', () => {
 
 	it( 'should affect flex-grow prop when "Grow" button is clicked', () => {
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const growButton = screen.getByLabelText( 'Grow' );
 
@@ -112,11 +115,7 @@ describe( '<FlexSizeField />', () => {
 		styleFields[ 'flex-grow' ].value = { $$type: 'number', value: 1 };
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const growButton = screen.getByLabelText( 'Grow' );
 
@@ -126,11 +125,7 @@ describe( '<FlexSizeField />', () => {
 
 	it( 'should affect flex-shrink prop when "Shrink" button is clicked', () => {
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const shrinkButton = screen.getByLabelText( 'Shrink' );
 
@@ -155,11 +150,7 @@ describe( '<FlexSizeField />', () => {
 		styleFields[ 'flex-shrink' ].value = { $$type: 'number', value: 1 };
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const shrinkButton = screen.getByLabelText( 'Shrink' );
 
@@ -169,11 +160,7 @@ describe( '<FlexSizeField />', () => {
 
 	it( 'Flex custom button functionality', () => {
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const customButton = screen.getByLabelText( 'Custom' );
 
@@ -202,11 +189,7 @@ describe( '<FlexSizeField />', () => {
 		styleFields[ 'flex-grow' ].value = { $$type: 'number', value: 2 };
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const customButton = screen.getByLabelText( 'Custom' );
 
@@ -219,11 +202,7 @@ describe( '<FlexSizeField />', () => {
 		styleFields[ 'flex-shrink' ].value = { $$type: 'number', value: 2 };
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const customButton = screen.getByLabelText( 'Custom' );
 
@@ -239,11 +218,7 @@ describe( '<FlexSizeField />', () => {
 		};
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const customButton = screen.getByLabelText( 'Custom' );
 
@@ -263,11 +238,7 @@ describe( '<FlexSizeField />', () => {
 		};
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const customButton = screen.getByLabelText( 'Custom' );
 
@@ -287,11 +258,7 @@ describe( '<FlexSizeField />', () => {
 		};
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const growButton = screen.getByLabelText( 'Grow' );
 
@@ -311,11 +278,7 @@ describe( '<FlexSizeField />', () => {
 		};
 
 		// Act.
-		renderWithTheme(
-			<ControlActionsProvider items={ [] }>
-				<FlexSizeField />
-			</ControlActionsProvider>
-		);
+		renderFlexSizeField();
 
 		const customButton = screen.getByLabelText( 'Shrink' );
 

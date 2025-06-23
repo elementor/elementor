@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.5.0
+
+### Minor Changes
+
+- e953081: add search in css classes list
+  create useDebounceState in util
+
 ## 0.4.0
 
 ### Minor Changes

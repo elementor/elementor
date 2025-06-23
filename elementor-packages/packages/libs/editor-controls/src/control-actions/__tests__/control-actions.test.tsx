@@ -68,7 +68,7 @@ describe( 'ControlActions', () => {
 				</ControlActions>
 			</ControlActionsProvider>,
 			{
-				disabled: true,
+				isDisabled: () => true,
 			} as never
 		);
 

@@ -40,7 +40,7 @@ var import_editor = require("@elementor/editor");
 // src/init-color-variables.ts
 var import_editor_canvas2 = require("@elementor/editor-canvas");
 var import_editor_controls8 = require("@elementor/editor-controls");
-var import_editor_editing_panel8 = require("@elementor/editor-editing-panel");
+var import_editor_editing_panel7 = require("@elementor/editor-editing-panel");
 var import_editor_props4 = require("@elementor/editor-props");
 
 // src/components/variables-repeater-item-slot.tsx
@@ -314,28 +314,27 @@ var useFilteredVariables = (searchValue, propTypeKey) => {
 var usePropVariables = (propKey) => {
   return (0, import_react.useMemo)(() => normalizeVariables(propKey), [propKey]);
 };
+var isNotDeleted = ({ deleted }) => !deleted;
 var normalizeVariables = (propKey) => {
   const variables = service.variables();
-  styleVariablesRepository.update(variables);
-  return Object.entries(variables).filter(([, { type }]) => type === propKey).map(([key, { label, value }]) => ({
+  return Object.entries(variables).filter(([, variable]) => variable.type === propKey && isNotDeleted(variable)).map(([key, { label, value }]) => ({
     key,
     label,
     value
   }));
 };
 var createVariable = (newVariable) => {
-  return service.create(newVariable).then(({ id, variable }) => {
-    styleVariablesRepository.update({
-      [id]: variable
-    });
+  return service.create(newVariable).then(({ id }) => {
     return id;
   });
 };
 var updateVariable = (updateId, { value, label }) => {
-  return service.update(updateId, { value, label }).then(({ id, variable }) => {
-    styleVariablesRepository.update({
-      [id]: variable
-    });
+  return service.update(updateId, { value, label }).then(({ id }) => {
+    return id;
+  });
+};
+var deleteVariable = (deleteId) => {
+  return service.delete(deleteId).then(({ id }) => {
     return id;
   });
 };
@@ -370,7 +369,7 @@ var React13 = __toESM(require("react"));
 var import_react10 = require("react");
 var import_editor_controls7 = require("@elementor/editor-controls");
 var import_editor_props3 = require("@elementor/editor-props");
-var import_icons10 = require("@elementor/icons");
+var import_icons9 = require("@elementor/icons");
 var import_ui14 = require("@elementor/ui");
 
 // src/components/ui/variable-tag.tsx
@@ -460,9 +459,7 @@ var ColorVariableCreation = ({ onGoBack, onClose }) => {
   const isFormInvalid = () => {
     return !color?.trim() || !label?.trim();
   };
-  const sectionRef = (0, import_editor_editing_panel.useSectionRef)();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-  return /* @__PURE__ */ React3.createElement(import_editor_ui.PopoverScrollableContent, { height: "auto", width: sectionWidth }, /* @__PURE__ */ React3.createElement(
+  return /* @__PURE__ */ React3.createElement(import_editor_editing_panel.PopoverScrollableContent, { height: "auto" }, /* @__PURE__ */ React3.createElement(
     import_editor_ui.PopoverHeader,
     {
       icon: /* @__PURE__ */ React3.createElement(React3.Fragment, null, onGoBack && /* @__PURE__ */ React3.createElement(import_ui3.IconButton, { size: SIZE2, "aria-label": (0, import_i18n2.__)("Go Back", "elementor"), onClick: onGoBack }, /* @__PURE__ */ React3.createElement(import_icons2.ArrowLeftIcon, { fontSize: SIZE2 })), /* @__PURE__ */ React3.createElement(import_icons2.BrushIcon, { fontSize: SIZE2 })),
@@ -499,7 +496,6 @@ var ColorVariableCreation = ({ onGoBack, onClose }) => {
 var React4 = __toESM(require("react"));
 var import_react4 = require("react");
 var import_editor_controls2 = require("@elementor/editor-controls");
-var import_editor_editing_panel2 = require("@elementor/editor-editing-panel");
 var import_editor_ui2 = require("@elementor/editor-ui");
 var import_icons3 = require("@elementor/icons");
 var import_ui4 = require("@elementor/ui");
@@ -522,17 +518,25 @@ var ColorVariableEdit = ({ onClose, onGoBack, onSubmit, editId }) => {
       onSubmit?.();
     });
   };
+  const handleDelete = () => {
+    deleteVariable(editId).then(() => {
+      onSubmit?.();
+    });
+  };
   const noValueChanged = () => color === variable.value && label === variable.label;
   const hasEmptyValue = () => "" === color.trim() || "" === label.trim();
   const isSaveDisabled = () => noValueChanged() || hasEmptyValue();
-  const sectionRef = (0, import_editor_editing_panel2.useSectionRef)();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-  return /* @__PURE__ */ React4.createElement(import_editor_ui2.PopoverScrollableContent, { height: "auto", width: sectionWidth }, /* @__PURE__ */ React4.createElement(
+  const actions = [];
+  actions.push(
+    /* @__PURE__ */ React4.createElement(import_ui4.IconButton, { key: "delete", size: SIZE3, "aria-label": (0, import_i18n3.__)("Delete", "elementor"), onClick: handleDelete }, /* @__PURE__ */ React4.createElement(import_icons3.TrashIcon, { fontSize: SIZE3 }))
+  );
+  return /* @__PURE__ */ React4.createElement(import_editor_ui2.PopoverScrollableContent, { height: "auto" }, /* @__PURE__ */ React4.createElement(
     import_editor_ui2.PopoverHeader,
     {
       title: (0, import_i18n3.__)("Edit variable", "elementor"),
       onClose,
-      icon: /* @__PURE__ */ React4.createElement(React4.Fragment, null, onGoBack && /* @__PURE__ */ React4.createElement(import_ui4.IconButton, { size: SIZE3, "aria-label": (0, import_i18n3.__)("Go Back", "elementor"), onClick: onGoBack }, /* @__PURE__ */ React4.createElement(import_icons3.ArrowLeftIcon, { fontSize: SIZE3 })), /* @__PURE__ */ React4.createElement(import_icons3.BrushIcon, { fontSize: SIZE3 }))
+      icon: /* @__PURE__ */ React4.createElement(React4.Fragment, null, onGoBack && /* @__PURE__ */ React4.createElement(import_ui4.IconButton, { size: SIZE3, "aria-label": (0, import_i18n3.__)("Go Back", "elementor"), onClick: onGoBack }, /* @__PURE__ */ React4.createElement(import_icons3.ArrowLeftIcon, { fontSize: SIZE3 })), /* @__PURE__ */ React4.createElement(import_icons3.BrushIcon, { fontSize: SIZE3 })),
+      actions
     }
   ), /* @__PURE__ */ React4.createElement(import_ui4.Divider, null), /* @__PURE__ */ React4.createElement(import_editor_controls2.PopoverContent, { p: 2 }, /* @__PURE__ */ React4.createElement(import_ui4.Grid, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React4.createElement(import_ui4.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React4.createElement(import_ui4.FormLabel, { size: "tiny" }, (0, import_i18n3.__)("Name", "elementor"))), /* @__PURE__ */ React4.createElement(import_ui4.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React4.createElement(
     import_ui4.TextField,
@@ -564,9 +568,9 @@ var ColorVariableEdit = ({ onClose, onGoBack, onSubmit, editId }) => {
 var React8 = __toESM(require("react"));
 var import_react5 = require("react");
 var import_editor_controls3 = require("@elementor/editor-controls");
-var import_editor_editing_panel3 = require("@elementor/editor-editing-panel");
+var import_editor_editing_panel2 = require("@elementor/editor-editing-panel");
 var import_editor_ui4 = require("@elementor/editor-ui");
-var import_icons6 = require("@elementor/icons");
+var import_icons5 = require("@elementor/icons");
 var import_ui9 = require("@elementor/ui");
 var import_i18n7 = require("@wordpress/i18n");
 
@@ -630,10 +634,9 @@ var MenuItemContent = ({ item }) => {
 
 // src/components/ui/no-search-results.tsx
 var React6 = __toESM(require("react"));
-var import_icons5 = require("@elementor/icons");
 var import_ui6 = require("@elementor/ui");
 var import_i18n5 = require("@wordpress/i18n");
-var NoSearchResults = ({ searchValue, onClear }) => {
+var NoSearchResults = ({ searchValue, onClear, icon }) => {
   return /* @__PURE__ */ React6.createElement(
     import_ui6.Stack,
     {
@@ -645,7 +648,7 @@ var NoSearchResults = ({ searchValue, onClear }) => {
       color: "text.secondary",
       sx: { pb: 3.5 }
     },
-    /* @__PURE__ */ React6.createElement(import_icons5.ColorFilterIcon, { fontSize: "large" }),
+    icon,
     /* @__PURE__ */ React6.createElement(import_ui6.Typography, { align: "center", variant: "subtitle2" }, (0, import_i18n5.__)("Sorry, nothing matched", "elementor"), /* @__PURE__ */ React6.createElement("br", null), "\u201C", searchValue, "\u201D."),
     /* @__PURE__ */ React6.createElement(import_ui6.Typography, { align: "center", variant: "caption", sx: { display: "flex", flexDirection: "column" } }, (0, import_i18n5.__)("Try something else.", "elementor"), /* @__PURE__ */ React6.createElement(import_ui6.Link, { color: "text.secondary", variant: "caption", component: "button", onClick: onClear }, (0, import_i18n5.__)("Clear & try again", "elementor")))
   );
@@ -720,12 +723,12 @@ var ColorVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
   const actions = [];
   if (onAdd) {
     actions.push(
-      /* @__PURE__ */ React8.createElement(import_ui9.IconButton, { key: "add", size: SIZE5, onClick: onAdd }, /* @__PURE__ */ React8.createElement(import_icons6.PlusIcon, { fontSize: SIZE5 }))
+      /* @__PURE__ */ React8.createElement(import_ui9.IconButton, { key: "add", size: SIZE5, onClick: onAdd }, /* @__PURE__ */ React8.createElement(import_icons5.PlusIcon, { fontSize: SIZE5 }))
     );
   }
   if (onSettings) {
     actions.push(
-      /* @__PURE__ */ React8.createElement(import_ui9.IconButton, { key: "settings", size: SIZE5, onClick: onSettings }, /* @__PURE__ */ React8.createElement(import_icons6.SettingsIcon, { fontSize: SIZE5 }))
+      /* @__PURE__ */ React8.createElement(import_ui9.IconButton, { key: "settings", size: SIZE5, onClick: onSettings }, /* @__PURE__ */ React8.createElement(import_icons5.SettingsIcon, { fontSize: SIZE5 }))
     );
   }
   const items = variables.map(({ value, label, key }) => ({
@@ -742,13 +745,11 @@ var ColorVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
   const handleClearSearch = () => {
     setSearchValue("");
   };
-  const sectionRef = (0, import_editor_editing_panel3.useSectionRef)();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
   return /* @__PURE__ */ React8.createElement(React8.Fragment, null, /* @__PURE__ */ React8.createElement(
     import_editor_ui4.PopoverHeader,
     {
       title: (0, import_i18n7.__)("Variables", "elementor"),
-      icon: /* @__PURE__ */ React8.createElement(import_icons6.ColorFilterIcon, { fontSize: SIZE5 }),
+      icon: /* @__PURE__ */ React8.createElement(import_icons5.ColorFilterIcon, { fontSize: SIZE5 }),
       onClose: closePopover,
       actions
     }
@@ -759,7 +760,7 @@ var ColorVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
       onSearch: handleSearch,
       placeholder: (0, import_i18n7.__)("Search", "elementor")
     }
-  ), /* @__PURE__ */ React8.createElement(import_ui9.Divider, null), hasVariables && hasSearchResults && /* @__PURE__ */ React8.createElement(
+  ), /* @__PURE__ */ React8.createElement(import_ui9.Divider, null), /* @__PURE__ */ React8.createElement(import_editor_editing_panel2.PopoverScrollableContent, null, hasVariables && hasSearchResults && /* @__PURE__ */ React8.createElement(
     import_editor_ui4.PopoverMenuList,
     {
       items,
@@ -769,14 +770,20 @@ var ColorVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
       selectedValue: variable,
       "data-testid": "color-variables-list",
       menuListTemplate: VariablesStyledMenuList,
-      menuItemContentTemplate: (item) => /* @__PURE__ */ React8.createElement(MenuItemContent, { item }),
-      width: sectionWidth
+      menuItemContentTemplate: (item) => /* @__PURE__ */ React8.createElement(MenuItemContent, { item })
     }
-  ), !hasSearchResults && hasVariables && /* @__PURE__ */ React8.createElement(import_editor_ui4.PopoverScrollableContent, { width: sectionWidth }, /* @__PURE__ */ React8.createElement(NoSearchResults, { searchValue, onClear: handleClearSearch })), !hasVariables && /* @__PURE__ */ React8.createElement(import_editor_ui4.PopoverScrollableContent, { width: sectionWidth }, /* @__PURE__ */ React8.createElement(
+  ), !hasSearchResults && hasVariables && /* @__PURE__ */ React8.createElement(
+    NoSearchResults,
+    {
+      searchValue,
+      onClear: handleClearSearch,
+      icon: /* @__PURE__ */ React8.createElement(import_icons5.BrushIcon, { fontSize: "large" })
+    }
+  ), !hasVariables && /* @__PURE__ */ React8.createElement(
     NoVariables,
     {
       title: (0, import_i18n7.__)("Create your first color variable", "elementor"),
-      icon: /* @__PURE__ */ React8.createElement(import_icons6.BrushIcon, { fontSize: "large" }),
+      icon: /* @__PURE__ */ React8.createElement(import_icons5.BrushIcon, { fontSize: "large" }),
       onAdd
     }
   )));
@@ -786,14 +793,14 @@ var ColorVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
 var React9 = __toESM(require("react"));
 var import_react6 = require("react");
 var import_editor_controls4 = require("@elementor/editor-controls");
-var import_editor_editing_panel4 = require("@elementor/editor-editing-panel");
+var import_editor_editing_panel3 = require("@elementor/editor-editing-panel");
 var import_editor_ui5 = require("@elementor/editor-ui");
-var import_icons7 = require("@elementor/icons");
+var import_icons6 = require("@elementor/icons");
 var import_ui10 = require("@elementor/ui");
 var import_i18n8 = require("@wordpress/i18n");
 var SIZE6 = "tiny";
 var FontVariableCreation = ({ onClose, onGoBack }) => {
-  const fontFamilies = (0, import_editor_editing_panel4.useFontFamilies)();
+  const fontFamilies = (0, import_editor_editing_panel3.useFontFamilies)();
   const { setValue: setVariable } = (0, import_editor_controls4.useBoundProp)(fontVariablePropTypeUtil);
   const [fontFamily, setFontFamily] = (0, import_react6.useState)("");
   const [label, setLabel] = (0, import_react6.useState)("");
@@ -820,12 +827,11 @@ var FontVariableCreation = ({ onClose, onGoBack }) => {
   const isFormInvalid = () => {
     return !fontFamily?.trim() || !label?.trim();
   };
-  const sectionRef = (0, import_editor_editing_panel4.useSectionRef)();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-  return /* @__PURE__ */ React9.createElement(import_editor_ui5.PopoverScrollableContent, { height: "auto", width: sectionWidth }, /* @__PURE__ */ React9.createElement(
+  const sectionWidth = (0, import_editor_editing_panel3.useSectionWidth)();
+  return /* @__PURE__ */ React9.createElement(import_editor_editing_panel3.PopoverScrollableContent, { height: "auto" }, /* @__PURE__ */ React9.createElement(
     import_editor_ui5.PopoverHeader,
     {
-      icon: /* @__PURE__ */ React9.createElement(React9.Fragment, null, onGoBack && /* @__PURE__ */ React9.createElement(import_ui10.IconButton, { size: SIZE6, "aria-label": (0, import_i18n8.__)("Go Back", "elementor"), onClick: onGoBack }, /* @__PURE__ */ React9.createElement(import_icons7.ArrowLeftIcon, { fontSize: SIZE6 })), /* @__PURE__ */ React9.createElement(import_icons7.TextIcon, { fontSize: SIZE6 })),
+      icon: /* @__PURE__ */ React9.createElement(React9.Fragment, null, onGoBack && /* @__PURE__ */ React9.createElement(import_ui10.IconButton, { size: SIZE6, "aria-label": (0, import_i18n8.__)("Go Back", "elementor"), onClick: onGoBack }, /* @__PURE__ */ React9.createElement(import_icons6.ArrowLeftIcon, { fontSize: SIZE6 })), /* @__PURE__ */ React9.createElement(import_icons6.TextIcon, { fontSize: SIZE6 })),
       title: (0, import_i18n8.__)("Create variable", "elementor"),
       onClose: closePopover
     }
@@ -842,7 +848,7 @@ var FontVariableCreation = ({ onClose, onGoBack }) => {
     {
       variant: "outlined",
       label: fontFamily,
-      endIcon: /* @__PURE__ */ React9.createElement(import_icons7.ChevronDownIcon, { fontSize: "tiny" }),
+      endIcon: /* @__PURE__ */ React9.createElement(import_icons6.ChevronDownIcon, { fontSize: "tiny" }),
       ...(0, import_ui10.bindTrigger)(fontPopoverState),
       fullWidth: true
     }
@@ -873,9 +879,9 @@ var FontVariableCreation = ({ onClose, onGoBack }) => {
 var React10 = __toESM(require("react"));
 var import_react7 = require("react");
 var import_editor_controls5 = require("@elementor/editor-controls");
-var import_editor_editing_panel5 = require("@elementor/editor-editing-panel");
+var import_editor_editing_panel4 = require("@elementor/editor-editing-panel");
 var import_editor_ui6 = require("@elementor/editor-ui");
-var import_icons8 = require("@elementor/icons");
+var import_icons7 = require("@elementor/icons");
 var import_ui11 = require("@elementor/ui");
 var import_i18n9 = require("@wordpress/i18n");
 var SIZE7 = "tiny";
@@ -890,7 +896,7 @@ var FontVariableEdit = ({ onClose, onGoBack, onSubmit, editId }) => {
   const variableValueId = (0, import_react7.useId)();
   const anchorRef = (0, import_react7.useRef)(null);
   const fontPopoverState = (0, import_ui11.usePopupState)({ variant: "popover" });
-  const fontFamilies = (0, import_editor_editing_panel5.useFontFamilies)();
+  const fontFamilies = (0, import_editor_editing_panel4.useFontFamilies)();
   const handleUpdate = () => {
     updateVariable(editId, {
       value: fontFamily,
@@ -899,17 +905,26 @@ var FontVariableEdit = ({ onClose, onGoBack, onSubmit, editId }) => {
       onSubmit?.();
     });
   };
+  const handleDelete = () => {
+    deleteVariable(editId).then(() => {
+      onSubmit?.();
+    });
+  };
   const noValueChanged = () => fontFamily === variable.value && label === variable.label;
   const hasEmptyValue = () => "" === fontFamily.trim() || "" === label.trim();
   const isSaveDisabled = () => noValueChanged() || hasEmptyValue();
-  const sectionRef = (0, import_editor_editing_panel5.useSectionRef)();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-  return /* @__PURE__ */ React10.createElement(import_editor_ui6.PopoverScrollableContent, { height: "auto", width: sectionWidth }, /* @__PURE__ */ React10.createElement(
+  const sectionWidth = (0, import_editor_editing_panel4.useSectionWidth)();
+  const actions = [];
+  actions.push(
+    /* @__PURE__ */ React10.createElement(import_ui11.IconButton, { key: "delete", size: SIZE7, "aria-label": (0, import_i18n9.__)("Delete", "elementor"), onClick: handleDelete }, /* @__PURE__ */ React10.createElement(import_icons7.TrashIcon, { fontSize: SIZE7 }))
+  );
+  return /* @__PURE__ */ React10.createElement(import_editor_ui6.PopoverScrollableContent, { height: "auto" }, /* @__PURE__ */ React10.createElement(
     import_editor_ui6.PopoverHeader,
     {
-      icon: /* @__PURE__ */ React10.createElement(React10.Fragment, null, onGoBack && /* @__PURE__ */ React10.createElement(import_ui11.IconButton, { size: SIZE7, "aria-label": (0, import_i18n9.__)("Go Back", "elementor"), onClick: onGoBack }, /* @__PURE__ */ React10.createElement(import_icons8.ArrowLeftIcon, { fontSize: SIZE7 })), /* @__PURE__ */ React10.createElement(import_icons8.TextIcon, { fontSize: SIZE7 })),
+      icon: /* @__PURE__ */ React10.createElement(React10.Fragment, null, onGoBack && /* @__PURE__ */ React10.createElement(import_ui11.IconButton, { size: SIZE7, "aria-label": (0, import_i18n9.__)("Go Back", "elementor"), onClick: onGoBack }, /* @__PURE__ */ React10.createElement(import_icons7.ArrowLeftIcon, { fontSize: SIZE7 })), /* @__PURE__ */ React10.createElement(import_icons7.TextIcon, { fontSize: SIZE7 })),
       title: (0, import_i18n9.__)("Edit variable", "elementor"),
-      onClose
+      onClose,
+      actions
     }
   ), /* @__PURE__ */ React10.createElement(import_ui11.Divider, null), /* @__PURE__ */ React10.createElement(import_editor_controls5.PopoverContent, { p: 2 }, /* @__PURE__ */ React10.createElement(import_ui11.Grid, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React10.createElement(import_ui11.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React10.createElement(import_ui11.FormLabel, { htmlFor: variableNameId, size: "tiny" }, (0, import_i18n9.__)("Name", "elementor"))), /* @__PURE__ */ React10.createElement(import_ui11.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React10.createElement(
     import_ui11.TextField,
@@ -926,7 +941,7 @@ var FontVariableEdit = ({ onClose, onGoBack, onSubmit, editId }) => {
       id: variableValueId,
       variant: "outlined",
       label: fontFamily,
-      endIcon: /* @__PURE__ */ React10.createElement(import_icons8.ChevronDownIcon, { fontSize: "tiny" }),
+      endIcon: /* @__PURE__ */ React10.createElement(import_icons7.ChevronDownIcon, { fontSize: "tiny" }),
       ...(0, import_ui11.bindTrigger)(fontPopoverState),
       fullWidth: true
     }
@@ -957,9 +972,9 @@ var FontVariableEdit = ({ onClose, onGoBack, onSubmit, editId }) => {
 var React11 = __toESM(require("react"));
 var import_react8 = require("react");
 var import_editor_controls6 = require("@elementor/editor-controls");
-var import_editor_editing_panel6 = require("@elementor/editor-editing-panel");
+var import_editor_editing_panel5 = require("@elementor/editor-editing-panel");
 var import_editor_ui7 = require("@elementor/editor-ui");
-var import_icons9 = require("@elementor/icons");
+var import_icons8 = require("@elementor/icons");
 var import_ui12 = require("@elementor/ui");
 var import_i18n10 = require("@wordpress/i18n");
 var SIZE8 = "tiny";
@@ -978,19 +993,19 @@ var FontVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
   const actions = [];
   if (onAdd) {
     actions.push(
-      /* @__PURE__ */ React11.createElement(import_ui12.IconButton, { key: "add", size: SIZE8, onClick: onAdd }, /* @__PURE__ */ React11.createElement(import_icons9.PlusIcon, { fontSize: SIZE8 }))
+      /* @__PURE__ */ React11.createElement(import_ui12.IconButton, { key: "add", size: SIZE8, onClick: onAdd }, /* @__PURE__ */ React11.createElement(import_icons8.PlusIcon, { fontSize: SIZE8 }))
     );
   }
   if (onSettings) {
     actions.push(
-      /* @__PURE__ */ React11.createElement(import_ui12.IconButton, { key: "settings", size: SIZE8, onClick: onSettings }, /* @__PURE__ */ React11.createElement(import_icons9.SettingsIcon, { fontSize: SIZE8 }))
+      /* @__PURE__ */ React11.createElement(import_ui12.IconButton, { key: "settings", size: SIZE8, onClick: onSettings }, /* @__PURE__ */ React11.createElement(import_icons8.SettingsIcon, { fontSize: SIZE8 }))
     );
   }
   const items = variables.map(({ value, label, key }) => ({
     type: "item",
     value: key,
     label,
-    icon: /* @__PURE__ */ React11.createElement(import_icons9.TextIcon, { fontSize: SIZE8 }),
+    icon: /* @__PURE__ */ React11.createElement(import_icons8.TextIcon, { fontSize: SIZE8 }),
     secondaryText: value,
     onEdit: () => onEdit?.(key)
   }));
@@ -1000,14 +1015,12 @@ var FontVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
   const handleClearSearch = () => {
     setSearchValue("");
   };
-  const sectionRef = (0, import_editor_editing_panel6.useSectionRef)();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
   return /* @__PURE__ */ React11.createElement(React11.Fragment, null, /* @__PURE__ */ React11.createElement(
     import_editor_ui7.PopoverHeader,
     {
       title: (0, import_i18n10.__)("Variables", "elementor"),
       onClose: closePopover,
-      icon: /* @__PURE__ */ React11.createElement(import_icons9.ColorFilterIcon, { fontSize: SIZE8 }),
+      icon: /* @__PURE__ */ React11.createElement(import_icons8.ColorFilterIcon, { fontSize: SIZE8 }),
       actions
     }
   ), hasVariables && /* @__PURE__ */ React11.createElement(
@@ -1017,7 +1030,7 @@ var FontVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
       onSearch: handleSearch,
       placeholder: (0, import_i18n10.__)("Search", "elementor")
     }
-  ), /* @__PURE__ */ React11.createElement(import_ui12.Divider, null), hasVariables && hasSearchResults && /* @__PURE__ */ React11.createElement(
+  ), /* @__PURE__ */ React11.createElement(import_ui12.Divider, null), /* @__PURE__ */ React11.createElement(import_editor_editing_panel5.PopoverScrollableContent, null, hasVariables && hasSearchResults && /* @__PURE__ */ React11.createElement(
     import_editor_ui7.PopoverMenuList,
     {
       items,
@@ -1027,14 +1040,20 @@ var FontVariablesSelection = ({ closePopover, onAdd, onEdit, onSettings }) => {
       selectedValue: variable,
       "data-testid": "font-variables-list",
       menuListTemplate: VariablesStyledMenuList,
-      menuItemContentTemplate: (item) => /* @__PURE__ */ React11.createElement(MenuItemContent, { item }),
-      width: sectionWidth
+      menuItemContentTemplate: (item) => /* @__PURE__ */ React11.createElement(MenuItemContent, { item })
     }
-  ), !hasSearchResults && hasVariables && /* @__PURE__ */ React11.createElement(import_editor_ui7.PopoverScrollableContent, { width: sectionWidth }, /* @__PURE__ */ React11.createElement(NoSearchResults, { searchValue, onClear: handleClearSearch })), !hasVariables && /* @__PURE__ */ React11.createElement(import_editor_ui7.PopoverScrollableContent, { width: sectionWidth }, /* @__PURE__ */ React11.createElement(
+  ), !hasSearchResults && hasVariables && /* @__PURE__ */ React11.createElement(
+    NoSearchResults,
+    {
+      searchValue,
+      onClear: handleClearSearch,
+      icon: /* @__PURE__ */ React11.createElement(import_icons8.TextIcon, { fontSize: "large" })
+    }
+  ), !hasVariables && /* @__PURE__ */ React11.createElement(
     NoVariables,
     {
       title: (0, import_i18n10.__)("Create your first font variable", "elementor"),
-      icon: /* @__PURE__ */ React11.createElement(import_icons9.TextIcon, { fontSize: "large" }),
+      icon: /* @__PURE__ */ React11.createElement(import_icons8.TextIcon, { fontSize: "large" }),
       onAdd
     }
   )));
@@ -1163,7 +1182,7 @@ var ColorVariableControl = () => {
     VariableTag,
     {
       label: selectedVariable.label,
-      startIcon: /* @__PURE__ */ React13.createElement(React13.Fragment, null, /* @__PURE__ */ React13.createElement(import_icons10.ColorFilterIcon, { fontSize: SIZE }), /* @__PURE__ */ React13.createElement(ColorIndicator, { size: "inherit", value: selectedVariable.value, component: "span" })),
+      startIcon: /* @__PURE__ */ React13.createElement(React13.Fragment, null, /* @__PURE__ */ React13.createElement(import_icons9.ColorFilterIcon, { fontSize: SIZE }), /* @__PURE__ */ React13.createElement(ColorIndicator, { size: "inherit", value: selectedVariable.value, component: "span" })),
       onUnlink: unlinkVariable,
       ...(0, import_ui14.bindTrigger)(popupState)
     }
@@ -1192,8 +1211,8 @@ var ColorVariableControl = () => {
 
 // src/hooks/use-prop-color-variable-action.tsx
 var React14 = __toESM(require("react"));
-var import_editor_editing_panel7 = require("@elementor/editor-editing-panel");
-var import_icons11 = require("@elementor/icons");
+var import_editor_editing_panel6 = require("@elementor/editor-editing-panel");
+var import_icons10 = require("@elementor/icons");
 var import_i18n11 = require("@wordpress/i18n");
 
 // src/utils.ts
@@ -1212,11 +1231,11 @@ var supportsFontVariables = (propType) => {
 
 // src/hooks/use-prop-color-variable-action.tsx
 var usePropColorVariableAction = () => {
-  const { propType } = (0, import_editor_editing_panel7.useBoundProp)();
+  const { propType } = (0, import_editor_editing_panel6.useBoundProp)();
   const visible = !!propType && supportsColorVariables(propType);
   return {
     visible,
-    icon: import_icons11.ColorFilterIcon,
+    icon: import_icons10.ColorFilterIcon,
     title: (0, import_i18n11.__)("Variables", "elementor"),
     content: ({ close: closePopover }) => {
       return /* @__PURE__ */ React14.createElement(VariableSelectionPopover, { closePopover, propTypeKey: colorVariablePropTypeUtil.key });
@@ -1234,7 +1253,7 @@ var variableTransformer = (0, import_editor_canvas.createTransformer)((value) =>
 });
 
 // src/init-color-variables.ts
-var { registerPopoverAction } = import_editor_editing_panel8.controlActionsMenu;
+var { registerPopoverAction } = import_editor_editing_panel7.controlActionsMenu;
 var conditions = {
   backgroundOverlay: ({ value: prop }) => {
     return hasAssignedColorVariable(import_editor_props4.backgroundColorOverlayPropTypeUtil.extract(prop)?.color);
@@ -1244,7 +1263,7 @@ var conditions = {
   }
 };
 function registerControlsAndActions() {
-  (0, import_editor_editing_panel8.registerControlReplacement)({
+  (0, import_editor_editing_panel7.registerControlReplacement)({
     component: ColorVariableControl,
     condition: ({ value }) => hasAssignedColorVariable(value)
   });
@@ -1284,14 +1303,14 @@ function initColorVariables() {
 
 // src/init-font-variables.ts
 var import_editor_canvas3 = require("@elementor/editor-canvas");
-var import_editor_editing_panel10 = require("@elementor/editor-editing-panel");
+var import_editor_editing_panel9 = require("@elementor/editor-editing-panel");
 
 // src/controls/font-variable-control.tsx
 var React15 = __toESM(require("react"));
 var import_react11 = require("react");
 var import_editor_controls9 = require("@elementor/editor-controls");
 var import_editor_props5 = require("@elementor/editor-props");
-var import_icons12 = require("@elementor/icons");
+var import_icons11 = require("@elementor/icons");
 var import_ui15 = require("@elementor/ui");
 var FontVariableControl = () => {
   const { setValue: setFontFamily } = (0, import_editor_controls9.useBoundProp)();
@@ -1313,7 +1332,7 @@ var FontVariableControl = () => {
     VariableTag,
     {
       label: selectedVariable.label,
-      startIcon: /* @__PURE__ */ React15.createElement(import_icons12.ColorFilterIcon, { fontSize: SIZE }),
+      startIcon: /* @__PURE__ */ React15.createElement(import_icons11.ColorFilterIcon, { fontSize: SIZE }),
       onUnlink: unlinkVariable,
       ...(0, import_ui15.bindTrigger)(popupState)
     }
@@ -1342,15 +1361,15 @@ var FontVariableControl = () => {
 
 // src/hooks/use-prop-font-variable-action.tsx
 var React16 = __toESM(require("react"));
-var import_editor_editing_panel9 = require("@elementor/editor-editing-panel");
-var import_icons13 = require("@elementor/icons");
+var import_editor_editing_panel8 = require("@elementor/editor-editing-panel");
+var import_icons12 = require("@elementor/icons");
 var import_i18n12 = require("@wordpress/i18n");
 var usePropFontVariableAction = () => {
-  const { propType } = (0, import_editor_editing_panel9.useBoundProp)();
+  const { propType } = (0, import_editor_editing_panel8.useBoundProp)();
   const visible = !!propType && supportsFontVariables(propType);
   return {
     visible,
-    icon: import_icons13.ColorFilterIcon,
+    icon: import_icons12.ColorFilterIcon,
     title: (0, import_i18n12.__)("Variables", "elementor"),
     content: ({ close: closePopover }) => {
       return /* @__PURE__ */ React16.createElement(VariableSelectionPopover, { closePopover, propTypeKey: fontVariablePropTypeUtil.key });
@@ -1359,9 +1378,9 @@ var usePropFontVariableAction = () => {
 };
 
 // src/init-font-variables.ts
-var { registerPopoverAction: registerPopoverAction2 } = import_editor_editing_panel10.controlActionsMenu;
+var { registerPopoverAction: registerPopoverAction2 } = import_editor_editing_panel9.controlActionsMenu;
 function initFontVariables() {
-  (0, import_editor_editing_panel10.registerControlReplacement)({
+  (0, import_editor_editing_panel9.registerControlReplacement)({
     component: FontVariableControl,
     condition: ({ value }) => hasAssignedFontVariable(value)
   });

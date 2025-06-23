@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { NumberPropValue } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { __ } from '@wordpress/i18n';
 
 import { useStylesField } from '../../../hooks/use-styles-field';
 import { PanelDivider } from '../../panel-divider';
@@ -22,8 +23,12 @@ import { TextStrokeField } from './text-stroke-field';
 import { TransformField } from './transform-field';
 import { WordSpacingField } from './word-spacing-field';
 
+const COLUMN_COUNT_LABEL = __( 'Column count', 'elementor' );
+
 export const TypographySection = () => {
-	const { value: columnCount } = useStylesField< NumberPropValue >( 'column-count' );
+	const { value: columnCount } = useStylesField< NumberPropValue >( 'column-count', {
+		history: { propDisplayName: COLUMN_COUNT_LABEL },
+	} );
 	const hasMultiColumns = !! ( columnCount?.value && columnCount?.value > 1 );
 
 	const isVersion330Active = isExperimentActive( 'e_v_3_30' );

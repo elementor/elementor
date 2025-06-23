@@ -7,7 +7,6 @@ import { type OpenOptions, useWpMediaAttachment, useWpMediaFrame } from '@elemen
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../bound-prop-context';
-import { ControlFormLabel } from '../components/control-form-label';
 import { EnableUnfilteredModal } from '../components/enable-unfiltered-modal';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
@@ -83,7 +82,6 @@ export const SvgMediaControl = createControl( () => {
 	return (
 		<Stack gap={ 1 }>
 			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal } />
-			<ControlFormLabel> { __( 'SVG', 'elementor' ) } </ControlFormLabel>
 			<ControlActions>
 				<StyledCard variant="outlined">
 					<StyledCardMediaContainer>

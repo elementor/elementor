@@ -21,6 +21,7 @@ export type PropKeyContextValue< T, P > = {
 	propType: P;
 	placeholder?: T;
 	path: PropKey[];
+	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
 };
 

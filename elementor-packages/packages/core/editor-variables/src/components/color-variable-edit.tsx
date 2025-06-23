@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { PopoverContent } from '@elementor/editor-controls';
-import { useSectionRef } from '@elementor/editor-editing-panel';
+import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverHeader, PopoverScrollableContent } from '@elementor/editor-ui';
-import { ArrowLeftIcon, BrushIcon } from '@elementor/icons';
+import { ArrowLeftIcon, BrushIcon, TrashIcon } from '@elementor/icons';
 import {
 	Button,
 	CardActions,
@@ -16,7 +15,8 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { updateVariable, useVariable } from '../hooks/use-prop-variables';
+import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
+import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { usePopoverContentRef } from './variable-selection-popover.context';
 
 const SIZE = 'tiny';
@@ -29,6 +29,7 @@ type Props = {
 };
 
 export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
+	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( colorVariablePropTypeUtil );
 	const variable = useVariable( editId );
 	if ( ! variable ) {
 		throw new Error( `Global color variable not found` );
@@ -45,19 +46,38 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 			value: color,
 			label,
 		} ).then( () => {
+			maybeTriggerBoundPropChange();
 			onSubmit?.();
 		} );
+	};
+
+	const handleDelete = () => {
+		deleteVariable( editId ).then( () => {
+			maybeTriggerBoundPropChange();
+			onSubmit?.();
+		} );
+	};
+
+	const maybeTriggerBoundPropChange = () => {
+		if ( editId === assignedValue ) {
+			notifyBoundPropChange( editId );
+		}
 	};
 
 	const noValueChanged = () => color === variable.value && label === variable.label;
 	const hasEmptyValue = () => '' === color.trim() || '' === label.trim();
 	const isSaveDisabled = () => noValueChanged() || hasEmptyValue();
 
-	const sectionRef = useSectionRef();
-	const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
+	const actions = [];
+
+	actions.push(
+		<IconButton key="delete" size={ SIZE } aria-label={ __( 'Delete', 'elementor' ) } onClick={ handleDelete }>
+			<TrashIcon fontSize={ SIZE } />
+		</IconButton>
+	);
 
 	return (
-		<PopoverScrollableContent height="auto" width={ sectionWidth }>
+		<PopoverScrollableContent height="auto">
 			<PopoverHeader
 				title={ __( 'Edit variable', 'elementor' ) }
 				onClose={ onClose }
@@ -71,6 +91,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 						<BrushIcon fontSize={ SIZE } />
 					</>
 				}
+				actions={ actions }
 			/>
 
 			<Divider />

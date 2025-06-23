@@ -1,14 +1,8 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { useSectionRef } from '@elementor/editor-editing-panel';
-import {
-	PopoverHeader,
-	PopoverMenuList,
-	PopoverScrollableContent,
-	PopoverSearch,
-	type VirtualizedItem,
-} from '@elementor/editor-ui';
+import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
+import { PopoverHeader, PopoverMenuList, PopoverSearch, type VirtualizedItem } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon, TextIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -80,9 +74,6 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 		setSearchValue( '' );
 	};
 
-	const sectionRef = useSectionRef();
-	const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-
 	return (
 		<>
 			<PopoverHeader
@@ -102,36 +93,37 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 
 			<Divider />
 
-			{ hasVariables && hasSearchResults && (
-				<PopoverMenuList
-					items={ items }
-					onSelect={ handleSetVariable }
-					onClose={ () => {} }
-					selectedValue={ variable }
-					data-testid="font-variables-list"
-					menuListTemplate={ VariablesStyledMenuList }
-					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
-						<MenuItemContent item={ item } />
-					) }
-					width={ sectionWidth }
-				/>
-			) }
+			<PopoverScrollableContent>
+				{ hasVariables && hasSearchResults && (
+					<PopoverMenuList
+						items={ items }
+						onSelect={ handleSetVariable }
+						onClose={ () => {} }
+						selectedValue={ variable }
+						data-testid="font-variables-list"
+						menuListTemplate={ VariablesStyledMenuList }
+						menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
+							<MenuItemContent item={ item } />
+						) }
+					/>
+				) }
 
-			{ ! hasSearchResults && hasVariables && (
-				<PopoverScrollableContent width={ sectionWidth }>
-					<NoSearchResults searchValue={ searchValue } onClear={ handleClearSearch } />
-				</PopoverScrollableContent>
-			) }
+				{ ! hasSearchResults && hasVariables && (
+					<NoSearchResults
+						searchValue={ searchValue }
+						onClear={ handleClearSearch }
+						icon={ <TextIcon fontSize="large" /> }
+					/>
+				) }
 
-			{ ! hasVariables && (
-				<PopoverScrollableContent width={ sectionWidth }>
+				{ ! hasVariables && (
 					<NoVariables
 						title={ __( 'Create your first font variable', 'elementor' ) }
 						icon={ <TextIcon fontSize="large" /> }
 						onAdd={ onAdd }
 					/>
-				</PopoverScrollableContent>
-			) }
+				) }
+			</PopoverScrollableContent>
 		</>
 	);
 };

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { useSectionRef } from '@elementor/editor-editing-panel';
-import { PopoverHeader, PopoverScrollableContent } from '@elementor/editor-ui';
+import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
+import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, BrushIcon } from '@elementor/icons';
 import {
 	Button,
@@ -61,11 +61,8 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 		return ! color?.trim() || ! label?.trim();
 	};
 
-	const sectionRef = useSectionRef();
-	const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-
 	return (
-		<PopoverScrollableContent height="auto" width={ sectionWidth }>
+		<PopoverScrollableContent height="auto">
 			<PopoverHeader
 				icon={
 					<>

@@ -154,7 +154,7 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 					propType={ multiSizePropType }
 					value={ getMultiSizeValues() }
 					setValue={ setNestedProp }
-					disabled={ multiSizeDisabled }
+					isDisabled={ () => multiSizeDisabled }
 				>
 					<PopoverContent p={ 1.5 }>
 						<PopoverGridContainer ref={ rowRefs[ 1 ] }>

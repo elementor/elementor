@@ -19,6 +19,7 @@ import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
 import { Repeater } from '../components/repeater';
 import { createControl } from '../create-control';
+import { defaultUnits } from '../utils/size-control';
 import { SizeControl } from './size-control';
 
 type FilterType = FilterItemPropValue[ '$$type' ];
@@ -40,6 +41,7 @@ const filterConfig: Record< FilterType, FilterItemConfig > = {
 		name: __( 'Blur', 'elementor' ),
 		valueName: __( 'Radius', 'elementor' ),
 		propType: blurFilterPropTypeUtil,
+		units: defaultUnits.filter( ( unit ) => unit !== '%' ),
 	},
 	brightness: {
 		defaultValue: { $$type: 'amount', amount: { $$type: 'size', value: { size: 100, unit: '%' } } },

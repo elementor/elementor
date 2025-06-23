@@ -56,16 +56,15 @@ export const FontFamilySelector = ( {
 
 			<Divider />
 
-			{ filteredFontFamilies.length > 0 ? (
-				<FontList
-					fontListItems={ filteredFontFamilies }
-					setFontFamily={ onFontFamilyChange }
-					handleClose={ handleClose }
-					fontFamily={ fontFamily }
-					sectionWidth={ sectionWidth }
-				/>
-			) : (
-				<PopoverScrollableContent width={ sectionWidth }>
+			<PopoverScrollableContent width={ sectionWidth }>
+				{ filteredFontFamilies.length > 0 ? (
+					<FontList
+						fontListItems={ filteredFontFamilies }
+						setFontFamily={ onFontFamilyChange }
+						handleClose={ handleClose }
+						fontFamily={ fontFamily }
+					/>
+				) : (
 					<Stack
 						alignItems="center"
 						justifyContent="center"
@@ -112,8 +111,8 @@ export const FontFamilySelector = ( {
 							</Link>
 						</Typography>
 					</Stack>
-				</PopoverScrollableContent>
-			) }
+				) }
+			</PopoverScrollableContent>
 		</Stack>
 	);
 };
@@ -123,10 +122,9 @@ type FontListProps = {
 	setFontFamily: ( fontFamily: string ) => void;
 	handleClose: () => void;
 	fontFamily: string | null;
-	sectionWidth: number;
 };
 
-const FontList = ( { fontListItems, setFontFamily, handleClose, fontFamily, sectionWidth }: FontListProps ) => {
+const FontList = ( { fontListItems, setFontFamily, handleClose, fontFamily }: FontListProps ) => {
 	const selectedItem = fontListItems.find( ( item ) => item.value === fontFamily );
 
 	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
@@ -147,7 +145,6 @@ const FontList = ( { fontListItems, setFontFamily, handleClose, fontFamily, sect
 			onClose={ handleClose }
 			itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
 			data-testid="font-list"
-			width={ sectionWidth }
 		/>
 	);
 };

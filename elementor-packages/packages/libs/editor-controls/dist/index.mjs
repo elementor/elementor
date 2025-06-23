@@ -1,8 +1,7 @@
 // src/controls/image-control.tsx
-import * as React10 from "react";
+import * as React9 from "react";
 import { imagePropTypeUtil } from "@elementor/editor-props";
-import { Grid, Stack as Stack2 } from "@elementor/ui";
-import { __ as __2 } from "@wordpress/i18n";
+import { Stack as Stack2 } from "@elementor/ui";
 
 // src/bound-prop-context/prop-context.tsx
 import * as React from "react";
@@ -31,7 +30,7 @@ var PropProvider = ({
   setValue,
   propType,
   placeholder,
-  disabled
+  isDisabled
 }) => {
   return /* @__PURE__ */ React.createElement(
     PropContext.Provider,
@@ -41,7 +40,7 @@ var PropProvider = ({
         propType,
         setValue,
         placeholder,
-        disabled
+        isDisabled
       }
     },
     children
@@ -131,8 +130,9 @@ import { useState } from "react";
 function useBoundProp(propTypeUtil) {
   const propKeyContext = usePropKeyContext();
   const { isValid, validate, restoreValue } = useValidation(propKeyContext.propType);
+  const disabled = propKeyContext.isDisabled?.(propKeyContext.propType);
   if (!propTypeUtil) {
-    return propKeyContext;
+    return { ...propKeyContext, disabled };
   }
   function setValue(value2, options, meta) {
     if (!validate(value2)) {
@@ -152,7 +152,8 @@ function useBoundProp(propTypeUtil) {
     setValue,
     value: isValid ? value : null,
     restoreValue,
-    placeholder
+    placeholder,
+    disabled
   };
 }
 var useValidation = (propType) => {
@@ -184,23 +185,16 @@ var resolveUnionPropType = (propType, key) => {
   return resolvedPropType;
 };
 
-// src/components/control-form-label.tsx
-import * as React3 from "react";
-import { FormLabel } from "@elementor/ui";
-var ControlFormLabel = (props) => {
-  return /* @__PURE__ */ React3.createElement(FormLabel, { size: "tiny", ...props });
-};
-
 // src/create-control.tsx
-import * as React5 from "react";
+import * as React4 from "react";
 import { ErrorBoundary } from "@elementor/ui";
 
 // src/control-replacements.tsx
-import * as React4 from "react";
+import * as React3 from "react";
 import { createContext as createContext3, useContext as useContext3 } from "react";
 var ControlReplacementContext = createContext3([]);
 var ControlReplacementsProvider = ({ replacements, children }) => {
-  return /* @__PURE__ */ React4.createElement(ControlReplacementContext.Provider, { value: replacements }, children);
+  return /* @__PURE__ */ React3.createElement(ControlReplacementContext.Provider, { value: replacements }, children);
 };
 var useControlReplacement = (OriginalComponent) => {
   const { value } = useBoundProp();
@@ -228,7 +222,7 @@ var brandSymbol = Symbol("control");
 function createControl(Control5) {
   return (props) => {
     const Component = useControlReplacement(Control5);
-    return /* @__PURE__ */ React5.createElement(ErrorBoundary, { fallback: null }, /* @__PURE__ */ React5.createElement(Component, { ...props }));
+    return /* @__PURE__ */ React4.createElement(ErrorBoundary, { fallback: null }, /* @__PURE__ */ React4.createElement(Component, { ...props }));
   };
 }
 
@@ -272,7 +266,7 @@ var formatResponse = (response) => {
 };
 
 // src/controls/image-media-control.tsx
-import * as React8 from "react";
+import * as React7 from "react";
 import { imageSrcPropTypeUtil } from "@elementor/editor-props";
 import { UploadIcon } from "@elementor/icons";
 import { Button, Card, CardMedia, CardOverlay, CircularProgress, Stack } from "@elementor/ui";
@@ -280,14 +274,14 @@ import { useWpMediaAttachment, useWpMediaFrame } from "@elementor/wp-media";
 import { __ } from "@wordpress/i18n";
 
 // src/control-actions/control-actions.tsx
-import * as React7 from "react";
+import * as React6 from "react";
 import { styled, UnstableFloatingActionBar } from "@elementor/ui";
 
 // src/control-actions/control-actions-context.tsx
-import * as React6 from "react";
+import * as React5 from "react";
 import { createContext as createContext4, useContext as useContext4 } from "react";
 var Context = createContext4(null);
-var ControlActionsProvider = ({ children, items }) => /* @__PURE__ */ React6.createElement(Context.Provider, { value: { items } }, children);
+var ControlActionsProvider = ({ children, items }) => /* @__PURE__ */ React5.createElement(Context.Provider, { value: { items } }, children);
 var useControlActions = () => {
   const context = useContext4(Context);
   if (!context) {
@@ -314,8 +308,8 @@ function ControlActions({ children }) {
   if (items.length === 0 || disabled) {
     return children;
   }
-  const menuItems = items.map(({ MenuItem: MenuItem2, id }) => /* @__PURE__ */ React7.createElement(MenuItem2, { key: id }));
-  return /* @__PURE__ */ React7.createElement(FloatingBarContainer, null, /* @__PURE__ */ React7.createElement(UnstableFloatingActionBar, { actions: menuItems }, children));
+  const menuItems = items.map(({ MenuItem: MenuItem2, id }) => /* @__PURE__ */ React6.createElement(MenuItem2, { key: id }));
+  return /* @__PURE__ */ React6.createElement(FloatingBarContainer, null, /* @__PURE__ */ React6.createElement(UnstableFloatingActionBar, { actions: menuItems }, children));
 }
 
 // src/controls/image-media-control.tsx
@@ -338,7 +332,7 @@ var ImageMediaControl = createControl(({ mediaTypes = ["image"] }) => {
       });
     }
   });
-  return /* @__PURE__ */ React8.createElement(ControlActions, null, /* @__PURE__ */ React8.createElement(Card, { variant: "outlined" }, /* @__PURE__ */ React8.createElement(CardMedia, { image: src, sx: { height: 150 } }, isFetching ? /* @__PURE__ */ React8.createElement(Stack, { justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }, /* @__PURE__ */ React8.createElement(CircularProgress, null)) : /* @__PURE__ */ React8.createElement(React8.Fragment, null)), /* @__PURE__ */ React8.createElement(CardOverlay, null, /* @__PURE__ */ React8.createElement(Stack, { gap: 1 }, /* @__PURE__ */ React8.createElement(
+  return /* @__PURE__ */ React7.createElement(ControlActions, null, /* @__PURE__ */ React7.createElement(Card, { variant: "outlined" }, /* @__PURE__ */ React7.createElement(CardMedia, { image: src, sx: { height: 150 } }, isFetching ? /* @__PURE__ */ React7.createElement(Stack, { justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }, /* @__PURE__ */ React7.createElement(CircularProgress, null)) : /* @__PURE__ */ React7.createElement(React7.Fragment, null)), /* @__PURE__ */ React7.createElement(CardOverlay, null, /* @__PURE__ */ React7.createElement(Stack, { gap: 1 }, /* @__PURE__ */ React7.createElement(
     Button,
     {
       size: "tiny",
@@ -347,13 +341,13 @@ var ImageMediaControl = createControl(({ mediaTypes = ["image"] }) => {
       onClick: () => open({ mode: "browse" })
     },
     __("Select image", "elementor")
-  ), /* @__PURE__ */ React8.createElement(
+  ), /* @__PURE__ */ React7.createElement(
     Button,
     {
       size: "tiny",
       variant: "text",
       color: "inherit",
-      startIcon: /* @__PURE__ */ React8.createElement(UploadIcon, null),
+      startIcon: /* @__PURE__ */ React7.createElement(UploadIcon, null),
       onClick: () => open({ mode: "upload" })
     },
     __("Upload", "elementor")
@@ -361,7 +355,7 @@ var ImageMediaControl = createControl(({ mediaTypes = ["image"] }) => {
 });
 
 // src/controls/select-control.tsx
-import * as React9 from "react";
+import * as React8 from "react";
 import { stringPropTypeUtil } from "@elementor/editor-props";
 import { MenuListItem } from "@elementor/editor-ui";
 import { Select } from "@elementor/ui";
@@ -372,7 +366,7 @@ var SelectControl = createControl(({ options, onChange }) => {
     onChange?.(newValue, value);
     setValue(newValue);
   };
-  return /* @__PURE__ */ React9.createElement(ControlActions, null, /* @__PURE__ */ React9.createElement(
+  return /* @__PURE__ */ React8.createElement(ControlActions, null, /* @__PURE__ */ React8.createElement(
     Select,
     {
       sx: { overflow: "hidden" },
@@ -383,28 +377,26 @@ var SelectControl = createControl(({ options, onChange }) => {
       disabled,
       fullWidth: true
     },
-    options.map(({ label, ...props }) => /* @__PURE__ */ React9.createElement(MenuListItem, { key: props.value, ...props, value: props.value ?? "" }, label))
+    options.map(({ label, ...props }) => /* @__PURE__ */ React8.createElement(MenuListItem, { key: props.value, ...props, value: props.value ?? "" }, label))
   ));
 });
 
 // src/controls/image-control.tsx
-var ImageControl = createControl(
-  ({ sizes, resolutionLabel = __2("Image resolution", "elementor"), showMode = "all" }) => {
-    const propContext = useBoundProp(imagePropTypeUtil);
-    const { data: allowSvgUpload } = useUnfilteredFilesUpload();
-    const mediaTypes = allowSvgUpload ? ["image", "svg"] : ["image"];
-    return /* @__PURE__ */ React10.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React10.createElement(Stack2, { gap: 1.5 }, ["all", "media"].includes(showMode) ? /* @__PURE__ */ React10.createElement(PropKeyProvider, { bind: "src" }, /* @__PURE__ */ React10.createElement(ControlFormLabel, null, __2("Image", "elementor")), /* @__PURE__ */ React10.createElement(ImageMediaControl, { mediaTypes })) : null, ["all", "sizes"].includes(showMode) ? /* @__PURE__ */ React10.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React10.createElement(Grid, { container: true, gap: 1.5, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React10.createElement(Grid, { item: true, xs: 6 }, /* @__PURE__ */ React10.createElement(ControlFormLabel, null, resolutionLabel)), /* @__PURE__ */ React10.createElement(Grid, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React10.createElement(SelectControl, { options: sizes })))) : null));
-  }
-);
+var ImageControl = createControl(({ sizes, showMode = "all" }) => {
+  const propContext = useBoundProp(imagePropTypeUtil);
+  const { data: allowSvgUpload } = useUnfilteredFilesUpload();
+  const mediaTypes = allowSvgUpload ? ["image", "svg"] : ["image"];
+  return /* @__PURE__ */ React9.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React9.createElement(Stack2, { gap: 1.5 }, ["all", "media"].includes(showMode) ? /* @__PURE__ */ React9.createElement(PropKeyProvider, { bind: "src" }, /* @__PURE__ */ React9.createElement(ImageMediaControl, { mediaTypes })) : null, ["all", "sizes"].includes(showMode) ? /* @__PURE__ */ React9.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React9.createElement(SelectControl, { options: sizes })) : null));
+});
 
 // src/controls/text-control.tsx
-import * as React11 from "react";
+import * as React10 from "react";
 import { stringPropTypeUtil as stringPropTypeUtil2 } from "@elementor/editor-props";
 import { TextField } from "@elementor/ui";
 var TextControl = createControl(({ placeholder }) => {
   const { value, setValue, disabled } = useBoundProp(stringPropTypeUtil2);
   const handleChange = (event) => setValue(event.target.value);
-  return /* @__PURE__ */ React11.createElement(ControlActions, null, /* @__PURE__ */ React11.createElement(
+  return /* @__PURE__ */ React10.createElement(ControlActions, null, /* @__PURE__ */ React10.createElement(
     TextField,
     {
       size: "tiny",
@@ -418,7 +410,7 @@ var TextControl = createControl(({ placeholder }) => {
 });
 
 // src/controls/text-area-control.tsx
-import * as React12 from "react";
+import * as React11 from "react";
 import { stringPropTypeUtil as stringPropTypeUtil3 } from "@elementor/editor-props";
 import { TextField as TextField2 } from "@elementor/ui";
 var TextAreaControl = createControl(({ placeholder }) => {
@@ -426,7 +418,7 @@ var TextAreaControl = createControl(({ placeholder }) => {
   const handleChange = (event) => {
     setValue(event.target.value);
   };
-  return /* @__PURE__ */ React12.createElement(ControlActions, null, /* @__PURE__ */ React12.createElement(
+  return /* @__PURE__ */ React11.createElement(ControlActions, null, /* @__PURE__ */ React11.createElement(
     TextField2,
     {
       size: "tiny",
@@ -442,14 +434,14 @@ var TextAreaControl = createControl(({ placeholder }) => {
 });
 
 // src/controls/size-control.tsx
-import * as React16 from "react";
+import * as React15 from "react";
 import { useEffect as useEffect2, useState as useState3 } from "react";
 import { sizePropTypeUtil } from "@elementor/editor-props";
 import { useActiveBreakpoint } from "@elementor/editor-responsive";
 import { usePopupState as usePopupState2 } from "@elementor/ui";
 
 // src/components/size-control/size-input.tsx
-import * as React14 from "react";
+import * as React13 from "react";
 import { useRef } from "react";
 import { PencilIcon } from "@elementor/icons";
 import { Box, InputAdornment as InputAdornment2 } from "@elementor/ui";
@@ -462,7 +454,7 @@ function isUnitExtendedOption(unit) {
 }
 
 // src/components/size-control/text-field-inner-selection.tsx
-import * as React13 from "react";
+import * as React12 from "react";
 import { forwardRef, useId } from "react";
 import { MenuListItem as MenuListItem2 } from "@elementor/editor-ui";
 import {
@@ -487,7 +479,7 @@ var TextFieldInnerSelection = forwardRef(
     inputProps,
     disabled
   }, ref) => {
-    return /* @__PURE__ */ React13.createElement(
+    return /* @__PURE__ */ React12.createElement(
       TextField3,
       {
         ref,
@@ -523,7 +515,7 @@ var SelectionEndAdornment = ({
     onClick(options[index]);
     popupState.close();
   };
-  return /* @__PURE__ */ React13.createElement(InputAdornment, { position: "end" }, /* @__PURE__ */ React13.createElement(
+  return /* @__PURE__ */ React12.createElement(InputAdornment, { position: "end" }, /* @__PURE__ */ React12.createElement(
     Button2,
     {
       size: "small",
@@ -533,7 +525,7 @@ var SelectionEndAdornment = ({
       ...bindTrigger(popupState)
     },
     alternativeOptionLabels[value] ?? value
-  ), /* @__PURE__ */ React13.createElement(Menu, { MenuListProps: { dense: true }, ...bindMenu(popupState) }, options.map((option, index) => /* @__PURE__ */ React13.createElement(
+  ), /* @__PURE__ */ React12.createElement(Menu, { MenuListProps: { dense: true }, ...bindMenu(popupState) }, options.map((option, index) => /* @__PURE__ */ React12.createElement(
     MenuListItem2,
     {
       key: option,
@@ -586,8 +578,8 @@ var SizeInput = ({
     autoComplete: "off",
     onClick,
     onFocus,
-    startAdornment: startIcon ? /* @__PURE__ */ React14.createElement(InputAdornment2, { position: "start", disabled }, startIcon) : void 0,
-    endAdornment: /* @__PURE__ */ React14.createElement(
+    startAdornment: startIcon ? /* @__PURE__ */ React13.createElement(InputAdornment2, { position: "start", disabled }, startIcon) : void 0,
+    endAdornment: /* @__PURE__ */ React13.createElement(
       SelectionEndAdornment,
       {
         disabled,
@@ -595,7 +587,7 @@ var SizeInput = ({
         onClick: handleUnitChange,
         value: unit,
         alternativeOptionLabels: {
-          custom: /* @__PURE__ */ React14.createElement(PencilIcon, { fontSize: "small" })
+          custom: /* @__PURE__ */ React13.createElement(PencilIcon, { fontSize: "small" })
         },
         menuItemsAttributes: units2.includes("custom") ? {
           custom: popupAttributes
@@ -603,7 +595,7 @@ var SizeInput = ({
       }
     )
   };
-  return /* @__PURE__ */ React14.createElement(ControlActions, null, /* @__PURE__ */ React14.createElement(Box, null, /* @__PURE__ */ React14.createElement(
+  return /* @__PURE__ */ React13.createElement(ControlActions, null, /* @__PURE__ */ React13.createElement(Box, null, /* @__PURE__ */ React13.createElement(
     TextFieldInnerSelection,
     {
       disabled,
@@ -625,11 +617,11 @@ var SizeInput = ({
 };
 
 // src/components/text-field-popover.tsx
-import * as React15 from "react";
+import * as React14 from "react";
 import { bindPopover, Paper, Popover, TextField as TextField4 } from "@elementor/ui";
 var TextFieldPopover = (props) => {
   const { popupState, restoreValue, anchorRef, value, onChange } = props;
-  return /* @__PURE__ */ React15.createElement(
+  return /* @__PURE__ */ React14.createElement(
     Popover,
     {
       disablePortal: true,
@@ -641,7 +633,7 @@ var TextFieldPopover = (props) => {
         popupState.close();
       }
     },
-    /* @__PURE__ */ React15.createElement(
+    /* @__PURE__ */ React14.createElement(
       Paper,
       {
         sx: {
@@ -650,7 +642,7 @@ var TextFieldPopover = (props) => {
           p: 1.5
         }
       },
-      /* @__PURE__ */ React15.createElement(
+      /* @__PURE__ */ React14.createElement(
         TextField4,
         {
           value,
@@ -795,7 +787,7 @@ var SizeControl = createControl((props) => {
       setState(newState);
     }
   }, [activeBreakpoint]);
-  return /* @__PURE__ */ React16.createElement(React16.Fragment, null, /* @__PURE__ */ React16.createElement(
+  return /* @__PURE__ */ React15.createElement(React15.Fragment, null, /* @__PURE__ */ React15.createElement(
     SizeInput,
     {
       disabled,
@@ -811,7 +803,7 @@ var SizeControl = createControl((props) => {
       onClick: onInputClick,
       popupState
     }
-  ), anchorRef?.current && /* @__PURE__ */ React16.createElement(
+  ), anchorRef?.current && /* @__PURE__ */ React15.createElement(
     TextFieldPopover,
     {
       popupState,
@@ -867,8 +859,15 @@ function areStatesEqual(state1, state2) {
 import * as React19 from "react";
 import { forwardRef as forwardRef2, useRef as useRef2 } from "react";
 import { strokePropTypeUtil } from "@elementor/editor-props";
-import { Grid as Grid2 } from "@elementor/ui";
-import { __ as __3 } from "@wordpress/i18n";
+import { Grid } from "@elementor/ui";
+import { __ as __2 } from "@wordpress/i18n";
+
+// src/components/control-form-label.tsx
+import * as React16 from "react";
+import { FormLabel } from "@elementor/ui";
+var ControlFormLabel = (props) => {
+  return /* @__PURE__ */ React16.createElement(FormLabel, { size: "tiny", ...props });
+};
 
 // src/components/section-content.tsx
 import * as React17 from "react";
@@ -918,16 +917,16 @@ var units = ["px", "em", "rem"];
 var StrokeControl = createControl(() => {
   const propContext = useBoundProp(strokePropTypeUtil);
   const rowRef = useRef2(null);
-  return /* @__PURE__ */ React19.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React19.createElement(SectionContent, null, /* @__PURE__ */ React19.createElement(Control, { bind: "width", label: __3("Stroke width", "elementor"), ref: rowRef }, /* @__PURE__ */ React19.createElement(SizeControl, { units, anchorRef: rowRef })), /* @__PURE__ */ React19.createElement(Control, { bind: "color", label: __3("Stroke color", "elementor") }, /* @__PURE__ */ React19.createElement(ColorControl, null))));
+  return /* @__PURE__ */ React19.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React19.createElement(SectionContent, null, /* @__PURE__ */ React19.createElement(Control, { bind: "width", label: __2("Stroke width", "elementor"), ref: rowRef }, /* @__PURE__ */ React19.createElement(SizeControl, { units, anchorRef: rowRef })), /* @__PURE__ */ React19.createElement(Control, { bind: "color", label: __2("Stroke color", "elementor") }, /* @__PURE__ */ React19.createElement(ColorControl, null))));
 });
-var Control = forwardRef2(({ bind, label, children }, ref) => /* @__PURE__ */ React19.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React19.createElement(Grid2, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap", ref }, /* @__PURE__ */ React19.createElement(Grid2, { item: true, xs: 6 }, /* @__PURE__ */ React19.createElement(ControlFormLabel, null, label)), /* @__PURE__ */ React19.createElement(Grid2, { item: true, xs: 6 }, children))));
+var Control = forwardRef2(({ bind, label, children }, ref) => /* @__PURE__ */ React19.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React19.createElement(Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap", ref }, /* @__PURE__ */ React19.createElement(Grid, { item: true, xs: 6 }, /* @__PURE__ */ React19.createElement(ControlFormLabel, null, label)), /* @__PURE__ */ React19.createElement(Grid, { item: true, xs: 6 }, children))));
 
 // src/controls/box-shadow-repeater-control.tsx
 import * as React26 from "react";
 import { useRef as useRef3 } from "react";
 import { boxShadowPropTypeUtil, shadowPropTypeUtil } from "@elementor/editor-props";
-import { FormLabel as FormLabel2, Grid as Grid4, UnstableColorIndicator } from "@elementor/ui";
-import { __ as __5 } from "@wordpress/i18n";
+import { FormLabel as FormLabel2, Grid as Grid3, UnstableColorIndicator } from "@elementor/ui";
+import { __ as __4 } from "@wordpress/i18n";
 
 // src/components/popover-content.tsx
 import * as React20 from "react";
@@ -937,9 +936,9 @@ var PopoverContent = ({ gap = 1.5, children, ...props }) => /* @__PURE__ */ Reac
 // src/components/popover-grid-container.tsx
 import { forwardRef as forwardRef3 } from "react";
 import * as React21 from "react";
-import { Grid as Grid3 } from "@elementor/ui";
+import { Grid as Grid2 } from "@elementor/ui";
 var PopoverGridContainer = forwardRef3(
-  ({ gap = 1.5, alignItems = "center", flexWrap = "nowrap", children }, ref) => /* @__PURE__ */ React21.createElement(Grid3, { container: true, gap, alignItems, flexWrap, ref }, children)
+  ({ gap = 1.5, alignItems = "center", flexWrap = "nowrap", children }, ref) => /* @__PURE__ */ React21.createElement(Grid2, { container: true, gap, alignItems, flexWrap, ref }, children)
 );
 
 // src/components/repeater.tsx
@@ -958,7 +957,7 @@ import {
   UnstableTag,
   usePopupState as usePopupState3
 } from "@elementor/ui";
-import { __ as __4 } from "@wordpress/i18n";
+import { __ as __3 } from "@wordpress/i18n";
 
 // src/control-adornments/control-adornments.tsx
 import * as React23 from "react";
@@ -1164,7 +1163,7 @@ var Repeater = ({
         sx: { ml: "auto" },
         disabled,
         onClick: addRepeaterItem,
-        "aria-label": __4("Add item", "elementor")
+        "aria-label": __3("Add item", "elementor")
       },
       /* @__PURE__ */ React25.createElement(PlusIcon, { fontSize: SIZE })
     )
@@ -1208,9 +1207,9 @@ var RepeaterItem = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState4(null);
   const { popoverState, popoverProps, ref, setRef } = usePopover(openOnMount, onOpen);
-  const duplicateLabel = __4("Duplicate", "elementor");
-  const toggleLabel = propDisabled ? __4("Show", "elementor") : __4("Hide", "elementor");
-  const removeLabel = __4("Remove", "elementor");
+  const duplicateLabel = __3("Duplicate", "elementor");
+  const toggleLabel = propDisabled ? __3("Show", "elementor") : __3("Hide", "elementor");
+  const removeLabel = __3("Remove", "elementor");
   return /* @__PURE__ */ React25.createElement(React25.Fragment, null, /* @__PURE__ */ React25.createElement(
     UnstableTag,
     {
@@ -1220,7 +1219,7 @@ var RepeaterItem = ({
       fullWidth: true,
       ref: setRef,
       variant: "outlined",
-      "aria-label": __4("Open item", "elementor"),
+      "aria-label": __3("Open item", "elementor"),
       ...bindTrigger2(popoverState),
       startIcon,
       actions: /* @__PURE__ */ React25.createElement(React25.Fragment, null, showDuplicate && /* @__PURE__ */ React25.createElement(Tooltip, { title: duplicateLabel, placement: "top" }, /* @__PURE__ */ React25.createElement(IconButton, { size: SIZE, onClick: duplicateItem, "aria-label": duplicateLabel }, /* @__PURE__ */ React25.createElement(CopyIcon, { fontSize: SIZE }))), showToggle && /* @__PURE__ */ React25.createElement(Tooltip, { title: toggleLabel, placement: "top" }, /* @__PURE__ */ React25.createElement(IconButton, { size: SIZE, onClick: toggleDisableItem, "aria-label": toggleLabel }, propDisabled ? /* @__PURE__ */ React25.createElement(EyeOffIcon, { fontSize: SIZE }) : /* @__PURE__ */ React25.createElement(EyeIcon, { fontSize: SIZE }))), /* @__PURE__ */ React25.createElement(Tooltip, { title: removeLabel, placement: "top" }, /* @__PURE__ */ React25.createElement(IconButton, { size: SIZE, onClick: removeItem, "aria-label": removeLabel }, /* @__PURE__ */ React25.createElement(XIcon, { fontSize: SIZE }))))
@@ -1263,14 +1262,14 @@ var usePopover = (openOnMount, onOpen) => {
 // src/controls/box-shadow-repeater-control.tsx
 var BoxShadowRepeaterControl = createControl(() => {
   const { propType, value, setValue, disabled } = useBoundProp(boxShadowPropTypeUtil);
-  return /* @__PURE__ */ React26.createElement(PropProvider, { propType, value, setValue, disabled }, /* @__PURE__ */ React26.createElement(
+  return /* @__PURE__ */ React26.createElement(PropProvider, { propType, value, setValue, isDisabled: () => disabled }, /* @__PURE__ */ React26.createElement(
     Repeater,
     {
       openOnAdd: true,
       disabled,
       values: value ?? [],
       setValues: setValue,
-      label: __5("Box shadow", "elementor"),
+      label: __4("Box shadow", "elementor"),
       itemSettings: {
         Icon: ItemIcon,
         Label: ItemLabel,
@@ -1287,22 +1286,22 @@ var ItemContent = ({ anchorEl, bind }) => {
 var Content = ({ anchorEl }) => {
   const context = useBoundProp(shadowPropTypeUtil);
   const rowRef = [useRef3(null), useRef3(null)];
-  return /* @__PURE__ */ React26.createElement(PropProvider, { ...context }, /* @__PURE__ */ React26.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React26.createElement(PopoverGridContainer, null, /* @__PURE__ */ React26.createElement(Control2, { bind: "color", label: __5("Color", "elementor") }, /* @__PURE__ */ React26.createElement(ColorControl, { anchorEl })), /* @__PURE__ */ React26.createElement(Control2, { bind: "position", label: __5("Position", "elementor"), sx: { overflow: "hidden" } }, /* @__PURE__ */ React26.createElement(
+  return /* @__PURE__ */ React26.createElement(PropProvider, { ...context }, /* @__PURE__ */ React26.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React26.createElement(PopoverGridContainer, null, /* @__PURE__ */ React26.createElement(Control2, { bind: "color", label: __4("Color", "elementor") }, /* @__PURE__ */ React26.createElement(ColorControl, { anchorEl })), /* @__PURE__ */ React26.createElement(Control2, { bind: "position", label: __4("Position", "elementor"), sx: { overflow: "hidden" } }, /* @__PURE__ */ React26.createElement(
     SelectControl,
     {
       options: [
-        { label: __5("Inset", "elementor"), value: "inset" },
-        { label: __5("Outset", "elementor"), value: null }
+        { label: __4("Inset", "elementor"), value: "inset" },
+        { label: __4("Outset", "elementor"), value: null }
       ]
     }
-  ))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[0] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "hOffset", label: __5("Horizontal", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "vOffset", label: __5("Vertical", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] }))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[1] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "blur", label: __5("Blur", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "spread", label: __5("Spread", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })))));
+  ))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[0] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "hOffset", label: __4("Horizontal", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "vOffset", label: __4("Vertical", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] }))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[1] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "blur", label: __4("Blur", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "spread", label: __4("Spread", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })))));
 };
 var Control2 = ({
   label,
   bind,
   children,
   sx
-}) => /* @__PURE__ */ React26.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React26.createElement(Grid4, { item: true, xs: 6, sx }, /* @__PURE__ */ React26.createElement(Grid4, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React26.createElement(Grid4, { item: true, xs: 12 }, /* @__PURE__ */ React26.createElement(FormLabel2, { size: "tiny" }, label)), /* @__PURE__ */ React26.createElement(Grid4, { item: true, xs: 12 }, children))));
+}) => /* @__PURE__ */ React26.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React26.createElement(Grid3, { item: true, xs: 6, sx }, /* @__PURE__ */ React26.createElement(Grid3, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React26.createElement(Grid3, { item: true, xs: 12 }, /* @__PURE__ */ React26.createElement(FormLabel2, { size: "tiny" }, label)), /* @__PURE__ */ React26.createElement(Grid3, { item: true, xs: 12 }, children))));
 var ItemLabel = ({ value }) => {
   const { position, hOffset, vOffset, blur, spread } = value.value;
   const { size: blurSize = "", unit: blurUnit = "" } = blur?.value || {};
@@ -1354,8 +1353,8 @@ import {
   filterPropTypeUtil
 } from "@elementor/editor-props";
 import { MenuListItem as MenuListItem3 } from "@elementor/editor-ui";
-import { Box as Box3, Grid as Grid5, Select as Select2 } from "@elementor/ui";
-import { __ as __6 } from "@wordpress/i18n";
+import { Box as Box3, Grid as Grid4, Select as Select2 } from "@elementor/ui";
+import { __ as __5 } from "@wordpress/i18n";
 
 // src/components/control-label.tsx
 import * as React27 from "react";
@@ -1369,14 +1368,15 @@ var DEFAULT_FILTER_KEY = "blur";
 var filterConfig = {
   blur: {
     defaultValue: { $$type: "radius", radius: { $$type: "size", value: { size: 0, unit: "px" } } },
-    name: __6("Blur", "elementor"),
-    valueName: __6("Radius", "elementor"),
-    propType: blurFilterPropTypeUtil
+    name: __5("Blur", "elementor"),
+    valueName: __5("Radius", "elementor"),
+    propType: blurFilterPropTypeUtil,
+    units: defaultUnits.filter((unit) => unit !== "%")
   },
   brightness: {
     defaultValue: { $$type: "amount", amount: { $$type: "size", value: { size: 100, unit: "%" } } },
-    name: __6("Brightness", "elementor"),
-    valueName: __6("Amount", "elementor"),
+    name: __5("Brightness", "elementor"),
+    valueName: __5("Amount", "elementor"),
     propType: brightnessFilterPropTypeUtil,
     units: ["%"]
   }
@@ -1395,7 +1395,7 @@ var FilterRepeaterControl = createControl(() => {
       disabled,
       values: filterValues ?? [],
       setValues: setValue,
-      label: __6("Filter", "elementor"),
+      label: __5("Filter", "elementor"),
       itemSettings: {
         Icon: ItemIcon2,
         Label: ItemLabel2,
@@ -1434,7 +1434,7 @@ var ItemContent2 = ({ bind }) => {
     };
     setValue(newFilterValues);
   };
-  return /* @__PURE__ */ React28.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React28.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React28.createElement(PopoverGridContainer, null, /* @__PURE__ */ React28.createElement(Grid5, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(ControlLabel, null, __6("Filter", "elementor"))), /* @__PURE__ */ React28.createElement(Grid5, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(
+  return /* @__PURE__ */ React28.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React28.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React28.createElement(PopoverGridContainer, null, /* @__PURE__ */ React28.createElement(Grid4, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(ControlLabel, null, __5("Filter", "elementor"))), /* @__PURE__ */ React28.createElement(Grid4, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(
     Select2,
     {
       sx: { overflow: "hidden" },
@@ -1454,7 +1454,7 @@ var SingleSizeItemContent = ({ filterType }) => {
   const { $$type } = defaultValue;
   const context = useBoundProp(propType);
   const rowRef = useRef4(null);
-  return /* @__PURE__ */ React28.createElement(PropProvider, { ...context }, /* @__PURE__ */ React28.createElement(PropKeyProvider, { bind: $$type }, /* @__PURE__ */ React28.createElement(PopoverGridContainer, { ref: rowRef }, /* @__PURE__ */ React28.createElement(Grid5, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(ControlLabel, null, valueName)), /* @__PURE__ */ React28.createElement(Grid5, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(SizeControl, { anchorRef: rowRef, units: units2 })))));
+  return /* @__PURE__ */ React28.createElement(PropProvider, { ...context }, /* @__PURE__ */ React28.createElement(PropKeyProvider, { bind: $$type }, /* @__PURE__ */ React28.createElement(PopoverGridContainer, { ref: rowRef }, /* @__PURE__ */ React28.createElement(Grid4, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(ControlLabel, null, valueName)), /* @__PURE__ */ React28.createElement(Grid4, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(SizeControl, { anchorRef: rowRef, units: units2 })))));
 };
 
 // src/controls/toggle-control.tsx
@@ -1706,13 +1706,13 @@ var isEmptyOrNaN = (value) => value === null || value === void 0 || value === ""
 var RESTRICTED_INPUT_KEYS2 = ["e", "E", "+", "-"];
 var NumberControl = createControl(
   ({
-    placeholder,
+    placeholder: labelPlaceholder,
     max = Number.MAX_VALUE,
     min = -Number.MAX_VALUE,
     step = 1,
     shouldForceInt = false
   }) => {
-    const { value, setValue, disabled } = useBoundProp(numberPropTypeUtil);
+    const { value, setValue, placeholder, disabled } = useBoundProp(numberPropTypeUtil);
     const handleChange = (event) => {
       const eventValue = event.target.value;
       if (isEmptyOrNaN(eventValue)) {
@@ -1731,7 +1731,7 @@ var NumberControl = createControl(
         disabled,
         value: isEmptyOrNaN(value) ? "" : value,
         onChange: handleChange,
-        placeholder,
+        placeholder: labelPlaceholder ?? (placeholder ? String(placeholder) : ""),
         inputProps: { step },
         onKeyDown: (event) => {
           if (RESTRICTED_INPUT_KEYS2.includes(event.key)) {
@@ -1748,8 +1748,8 @@ import * as React33 from "react";
 import { useId as useId2, useRef as useRef6 } from "react";
 import { sizePropTypeUtil as sizePropTypeUtil2 } from "@elementor/editor-props";
 import { isExperimentActive as isExperimentActive2 } from "@elementor/editor-v1-adapters";
-import { bindPopover as bindPopover3, bindToggle, Grid as Grid6, Popover as Popover3, Stack as Stack7, ToggleButton as ToggleButton2, Tooltip as Tooltip3, usePopupState as usePopupState4 } from "@elementor/ui";
-import { __ as __7 } from "@wordpress/i18n";
+import { bindPopover as bindPopover3, bindToggle, Grid as Grid5, Popover as Popover3, Stack as Stack7, ToggleButton as ToggleButton2, Tooltip as Tooltip3, usePopupState as usePopupState4 } from "@elementor/ui";
+import { __ as __6 } from "@wordpress/i18n";
 var isEqualSizes = (propValue, items) => {
   const values = Object.values(propValue);
   if (values.length !== items.length) {
@@ -1805,10 +1805,10 @@ function EqualUnequalSizesControl({
   };
   const isShowingGeneralIndicator = !isExperimentActive2("e_v_3_30") || !popupState.isOpen;
   const isMixed = !!multiSizeValue;
-  return /* @__PURE__ */ React33.createElement(React33.Fragment, null, /* @__PURE__ */ React33.createElement(Grid6, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap", ref: rowRefs[0] }, /* @__PURE__ */ React33.createElement(Grid6, { item: true, xs: 6 }, !isShowingGeneralIndicator ? /* @__PURE__ */ React33.createElement(ControlFormLabel, null, label) : /* @__PURE__ */ React33.createElement(ControlLabel, null, label)), /* @__PURE__ */ React33.createElement(Grid6, { item: true, xs: 6 }, /* @__PURE__ */ React33.createElement(Stack7, { direction: "row", alignItems: "center", gap: 1 }, /* @__PURE__ */ React33.createElement(
+  return /* @__PURE__ */ React33.createElement(React33.Fragment, null, /* @__PURE__ */ React33.createElement(Grid5, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap", ref: rowRefs[0] }, /* @__PURE__ */ React33.createElement(Grid5, { item: true, xs: 6 }, !isShowingGeneralIndicator ? /* @__PURE__ */ React33.createElement(ControlFormLabel, null, label) : /* @__PURE__ */ React33.createElement(ControlLabel, null, label)), /* @__PURE__ */ React33.createElement(Grid5, { item: true, xs: 6 }, /* @__PURE__ */ React33.createElement(Stack7, { direction: "row", alignItems: "center", gap: 1 }, /* @__PURE__ */ React33.createElement(
     SizeControl,
     {
-      placeholder: isMixed ? __7("Mixed", "elementor") : void 0,
+      placeholder: isMixed ? __6("Mixed", "elementor") : void 0,
       anchorRef: rowRefs[0]
     }
   ), /* @__PURE__ */ React33.createElement(Tooltip3, { title: tooltipLabel, placement: "top" }, /* @__PURE__ */ React33.createElement(
@@ -1846,7 +1846,7 @@ function EqualUnequalSizesControl({
         propType: multiSizePropType,
         value: getMultiSizeValues(),
         setValue: setNestedProp,
-        disabled: multiSizeDisabled
+        isDisabled: () => multiSizeDisabled
       },
       /* @__PURE__ */ React33.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React33.createElement(PopoverGridContainer, { ref: rowRefs[1] }, /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[0], rowRef: rowRefs[1] }), /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[1], rowRef: rowRefs[1] })), /* @__PURE__ */ React33.createElement(PopoverGridContainer, { ref: rowRefs[2] }, /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[2], rowRef: rowRefs[2] }), /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[3], rowRef: rowRefs[2] })))
     )
@@ -1854,7 +1854,7 @@ function EqualUnequalSizesControl({
 }
 var MultiSizeValueControl = ({ item, rowRef }) => {
   const isUsingNestedProps = isExperimentActive2("e_v_3_30");
-  return /* @__PURE__ */ React33.createElement(PropKeyProvider, { bind: item.bind }, /* @__PURE__ */ React33.createElement(Grid6, { item: true, xs: 6 }, /* @__PURE__ */ React33.createElement(Grid6, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React33.createElement(Grid6, { item: true, xs: 12 }, isUsingNestedProps ? /* @__PURE__ */ React33.createElement(ControlLabel, null, item.label) : /* @__PURE__ */ React33.createElement(ControlFormLabel, null, item.label)), /* @__PURE__ */ React33.createElement(Grid6, { item: true, xs: 12 }, /* @__PURE__ */ React33.createElement(SizeControl, { startIcon: item.icon, anchorRef: rowRef })))));
+  return /* @__PURE__ */ React33.createElement(PropKeyProvider, { bind: item.bind }, /* @__PURE__ */ React33.createElement(Grid5, { item: true, xs: 6 }, /* @__PURE__ */ React33.createElement(Grid5, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React33.createElement(Grid5, { item: true, xs: 12 }, isUsingNestedProps ? /* @__PURE__ */ React33.createElement(ControlLabel, null, item.label) : /* @__PURE__ */ React33.createElement(ControlFormLabel, null, item.label)), /* @__PURE__ */ React33.createElement(Grid5, { item: true, xs: 12 }, /* @__PURE__ */ React33.createElement(SizeControl, { startIcon: item.icon, anchorRef: rowRef })))));
 };
 
 // src/controls/linked-dimensions-control.tsx
@@ -1863,8 +1863,8 @@ import { useRef as useRef7 } from "react";
 import { dimensionsPropTypeUtil, sizePropTypeUtil as sizePropTypeUtil3 } from "@elementor/editor-props";
 import { isExperimentActive as isExperimentActive3 } from "@elementor/editor-v1-adapters";
 import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from "@elementor/icons";
-import { Grid as Grid7, Stack as Stack8, ToggleButton as ToggleButton3, Tooltip as Tooltip4 } from "@elementor/ui";
-import { __ as __8 } from "@wordpress/i18n";
+import { Grid as Grid6, Stack as Stack8, ToggleButton as ToggleButton3, Tooltip as Tooltip4 } from "@elementor/ui";
+import { __ as __7 } from "@wordpress/i18n";
 var LinkedDimensionsControl = createControl(
   ({
     label,
@@ -1896,8 +1896,8 @@ var LinkedDimensionsControl = createControl(
     };
     const tooltipLabel = label.toLowerCase();
     const LinkedIcon = isLinked ? LinkIcon : DetachIcon;
-    const linkedLabel = __8("Link %s", "elementor").replace("%s", tooltipLabel);
-    const unlinkedLabel = __8("Unlink %s", "elementor").replace("%s", tooltipLabel);
+    const linkedLabel = __7("Link %s", "elementor").replace("%s", tooltipLabel);
+    const unlinkedLabel = __7("Unlink %s", "elementor").replace("%s", tooltipLabel);
     const disabled = sizeDisabled || dimensionsDisabled;
     return /* @__PURE__ */ React34.createElement(
       PropProvider,
@@ -1905,7 +1905,7 @@ var LinkedDimensionsControl = createControl(
         propType,
         value: dimensionsValue,
         setValue: setDimensionsValue,
-        disabled
+        isDisabled: () => disabled
       },
       /* @__PURE__ */ React34.createElement(Stack8, { direction: "row", gap: 2, flexWrap: "nowrap" }, isUsingNestedProps ? /* @__PURE__ */ React34.createElement(ControlFormLabel, null, label) : /* @__PURE__ */ React34.createElement(ControlLabel, null, label), /* @__PURE__ */ React34.createElement(Tooltip4, { title: isLinked ? unlinkedLabel : linkedLabel, placement: "top" }, /* @__PURE__ */ React34.createElement(
         ToggleButton3,
@@ -1920,7 +1920,7 @@ var LinkedDimensionsControl = createControl(
         },
         /* @__PURE__ */ React34.createElement(LinkedIcon, { fontSize: "tiny" })
       ))),
-      getCssMarginProps(isSiteRtl).map((row, index) => /* @__PURE__ */ React34.createElement(Stack8, { direction: "row", gap: 2, flexWrap: "nowrap", key: index, ref: gridRowRefs[index] }, row.map(({ icon, ...props }) => /* @__PURE__ */ React34.createElement(Grid7, { container: true, gap: 0.75, alignItems: "center", key: props.bind }, /* @__PURE__ */ React34.createElement(Grid7, { item: true, xs: 12 }, /* @__PURE__ */ React34.createElement(Label, { ...props })), /* @__PURE__ */ React34.createElement(Grid7, { item: true, xs: 12 }, /* @__PURE__ */ React34.createElement(
+      getCssMarginProps(isSiteRtl).map((row, index) => /* @__PURE__ */ React34.createElement(Stack8, { direction: "row", gap: 2, flexWrap: "nowrap", key: index, ref: gridRowRefs[index] }, row.map(({ icon, ...props }) => /* @__PURE__ */ React34.createElement(Grid6, { container: true, gap: 0.75, alignItems: "center", key: props.bind }, /* @__PURE__ */ React34.createElement(Grid6, { item: true, xs: 12 }, /* @__PURE__ */ React34.createElement(Label, { ...props })), /* @__PURE__ */ React34.createElement(Grid6, { item: true, xs: 12 }, /* @__PURE__ */ React34.createElement(
         Control3,
         {
           bind: props.bind,
@@ -1957,24 +1957,24 @@ function getCssMarginProps(isSiteRtl) {
     [
       {
         bind: "block-start",
-        label: __8("Top", "elementor"),
+        label: __7("Top", "elementor"),
         icon: /* @__PURE__ */ React34.createElement(SideTopIcon, { fontSize: "tiny" })
       },
       {
         bind: "inline-end",
-        label: isSiteRtl ? __8("Left", "elementor") : __8("Right", "elementor"),
+        label: isSiteRtl ? __7("Left", "elementor") : __7("Right", "elementor"),
         icon: isSiteRtl ? /* @__PURE__ */ React34.createElement(SideLeftIcon, { fontSize: "tiny" }) : /* @__PURE__ */ React34.createElement(SideRightIcon, { fontSize: "tiny" })
       }
     ],
     [
       {
         bind: "block-end",
-        label: __8("Bottom", "elementor"),
+        label: __7("Bottom", "elementor"),
         icon: /* @__PURE__ */ React34.createElement(SideBottomIcon, { fontSize: "tiny" })
       },
       {
         bind: "inline-start",
-        label: isSiteRtl ? __8("Right", "elementor") : __8("Left", "elementor"),
+        label: isSiteRtl ? __7("Right", "elementor") : __7("Left", "elementor"),
         icon: isSiteRtl ? /* @__PURE__ */ React34.createElement(SideRightIcon, { fontSize: "tiny" }) : /* @__PURE__ */ React34.createElement(SideLeftIcon, { fontSize: "tiny" })
       }
     ]
@@ -1994,7 +1994,7 @@ import { PopoverHeader, PopoverMenuList, PopoverScrollableContent, PopoverSearch
 import { TextIcon } from "@elementor/icons";
 import { Box as Box4, Divider as Divider2, Link, Stack as Stack9, Typography as Typography3 } from "@elementor/ui";
 import { debounce } from "@elementor/utils";
-import { __ as __9 } from "@wordpress/i18n";
+import { __ as __8 } from "@wordpress/i18n";
 
 // src/controls/font-family-control/enqueue-font.tsx
 var enqueueFont = (fontFamily, context = "editor") => {
@@ -2039,7 +2039,7 @@ var FontFamilySelector = ({
   return /* @__PURE__ */ React35.createElement(Stack9, null, /* @__PURE__ */ React35.createElement(
     PopoverHeader,
     {
-      title: __9("Font Family", "elementor"),
+      title: __8("Font Family", "elementor"),
       onClose: handleClose,
       icon: /* @__PURE__ */ React35.createElement(TextIcon, { fontSize: SIZE2 })
     }
@@ -2048,18 +2048,17 @@ var FontFamilySelector = ({
     {
       value: searchValue,
       onSearch: handleSearch,
-      placeholder: __9("Search", "elementor")
+      placeholder: __8("Search", "elementor")
     }
-  ), /* @__PURE__ */ React35.createElement(Divider2, null), filteredFontFamilies.length > 0 ? /* @__PURE__ */ React35.createElement(
+  ), /* @__PURE__ */ React35.createElement(Divider2, null), /* @__PURE__ */ React35.createElement(PopoverScrollableContent, { width: sectionWidth }, filteredFontFamilies.length > 0 ? /* @__PURE__ */ React35.createElement(
     FontList,
     {
       fontListItems: filteredFontFamilies,
       setFontFamily: onFontFamilyChange,
       handleClose,
-      fontFamily,
-      sectionWidth
+      fontFamily
     }
-  ) : /* @__PURE__ */ React35.createElement(PopoverScrollableContent, { width: sectionWidth }, /* @__PURE__ */ React35.createElement(
+  ) : /* @__PURE__ */ React35.createElement(
     Stack9,
     {
       alignItems: "center",
@@ -2070,7 +2069,7 @@ var FontFamilySelector = ({
       overflow: "hidden"
     },
     /* @__PURE__ */ React35.createElement(TextIcon, { fontSize: "large" }),
-    /* @__PURE__ */ React35.createElement(Box4, { sx: { maxWidth: 160, overflow: "hidden" } }, /* @__PURE__ */ React35.createElement(Typography3, { align: "center", variant: "subtitle2", color: "text.secondary" }, __9("Sorry, nothing matched", "elementor")), /* @__PURE__ */ React35.createElement(
+    /* @__PURE__ */ React35.createElement(Box4, { sx: { maxWidth: 160, overflow: "hidden" } }, /* @__PURE__ */ React35.createElement(Typography3, { align: "center", variant: "subtitle2", color: "text.secondary" }, __8("Sorry, nothing matched", "elementor")), /* @__PURE__ */ React35.createElement(
       Typography3,
       {
         variant: "subtitle2",
@@ -2093,7 +2092,7 @@ var FontFamilySelector = ({
         color: "text.secondary",
         sx: { display: "flex", flexDirection: "column" }
       },
-      __9("Try something else.", "elementor"),
+      __8("Try something else.", "elementor"),
       /* @__PURE__ */ React35.createElement(
         Link,
         {
@@ -2102,12 +2101,12 @@ var FontFamilySelector = ({
           component: "button",
           onClick: () => setSearchValue("")
         },
-        __9("Clear & try again", "elementor")
+        __8("Clear & try again", "elementor")
       )
     )
   )));
 };
-var FontList = ({ fontListItems, setFontFamily, handleClose, fontFamily, sectionWidth }) => {
+var FontList = ({ fontListItems, setFontFamily, handleClose, fontFamily }) => {
   const selectedItem = fontListItems.find((item) => item.value === fontFamily);
   const debouncedVirtualizeChange = useDebounce(({ getVirtualIndexes }) => {
     getVirtualIndexes().forEach((index) => {
@@ -2126,8 +2125,7 @@ var FontList = ({ fontListItems, setFontFamily, handleClose, fontFamily, section
       onSelect: setFontFamily,
       onClose: handleClose,
       itemStyle: (item) => ({ fontFamily: item.value }),
-      "data-testid": "font-list",
-      width: sectionWidth
+      "data-testid": "font-list"
     }
   );
 };
@@ -2196,11 +2194,10 @@ var UrlControl = createControl(({ placeholder }) => {
 });
 
 // src/controls/link-control.tsx
-import * as React39 from "react";
+import * as React40 from "react";
 import { useMemo as useMemo3, useState as useState7 } from "react";
 import { getLinkInLinkRestriction, selectElement } from "@elementor/editor-elements";
 import {
-  booleanPropTypeUtil,
   linkPropTypeUtil,
   numberPropTypeUtil as numberPropTypeUtil2,
   stringPropTypeUtil as stringPropTypeUtil6,
@@ -2210,9 +2207,9 @@ import { InfoTipCard } from "@elementor/editor-ui";
 import { httpService as httpService2 } from "@elementor/http-client";
 import { AlertTriangleIcon, MinusIcon, PlusIcon as PlusIcon2 } from "@elementor/icons";
 import { useSessionStorage } from "@elementor/session";
-import { Box as Box6, Collapse, Grid as Grid8, IconButton as IconButton3, Infotip, Stack as Stack10, Switch } from "@elementor/ui";
+import { Box as Box6, Collapse, Grid as Grid7, IconButton as IconButton3, Infotip, Stack as Stack10 } from "@elementor/ui";
 import { debounce as debounce2 } from "@elementor/utils";
-import { __ as __10 } from "@wordpress/i18n";
+import { __ as __9 } from "@wordpress/i18n";
 
 // src/components/autocomplete.tsx
 import * as React38 from "react";
@@ -2326,10 +2323,22 @@ function _factoryFilter(newValue, options, minInputLength) {
   );
 }
 
+// src/controls/switch-control.tsx
+import * as React39 from "react";
+import { booleanPropTypeUtil } from "@elementor/editor-props";
+import { Switch } from "@elementor/ui";
+var SwitchControl = createControl(() => {
+  const { value, setValue, disabled } = useBoundProp(booleanPropTypeUtil);
+  const handleChange = (event) => {
+    setValue(event.target.checked);
+  };
+  return /* @__PURE__ */ React39.createElement("div", { style: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React39.createElement(Switch, { checked: !!value, onChange: handleChange, size: "small", disabled }));
+});
+
 // src/controls/link-control.tsx
 var SIZE4 = "tiny";
 var learnMoreButton = {
-  label: __10("Learn More", "elementor"),
+  label: __9("Learn More", "elementor"),
   href: "https://go.elementor.com/element-link-inside-link-infotip"
 };
 var LinkControl = createControl((props) => {
@@ -2341,7 +2350,8 @@ var LinkControl = createControl((props) => {
     queryOptions: { endpoint = "", requestParams = {} },
     placeholder,
     minInputLength = 2,
-    context: { elementId }
+    context: { elementId },
+    label = __9("Link", "elementor")
   } = props || {};
   const [linkInLinkRestriction, setLinkInLinkRestriction] = useState7(getLinkInLinkRestriction(elementId));
   const [options, setOptions] = useState7(
@@ -2404,7 +2414,7 @@ var LinkControl = createControl((props) => {
     ),
     [endpoint]
   );
-  return /* @__PURE__ */ React39.createElement(PropProvider, { ...propContext, value, setValue }, /* @__PURE__ */ React39.createElement(Stack10, { gap: 1.5 }, /* @__PURE__ */ React39.createElement(
+  return /* @__PURE__ */ React40.createElement(PropProvider, { ...propContext, value, setValue }, /* @__PURE__ */ React40.createElement(Stack10, { gap: 1.5 }, /* @__PURE__ */ React40.createElement(
     Stack10,
     {
       direction: "row",
@@ -2414,17 +2424,17 @@ var LinkControl = createControl((props) => {
         marginInlineEnd: -0.75
       }
     },
-    /* @__PURE__ */ React39.createElement(ControlFormLabel, null, __10("Link", "elementor")),
-    /* @__PURE__ */ React39.createElement(ConditionalInfoTip, { isVisible: !isActive, linkInLinkRestriction }, /* @__PURE__ */ React39.createElement(
+    /* @__PURE__ */ React40.createElement(ControlFormLabel, null, label),
+    /* @__PURE__ */ React40.createElement(ConditionalInfoTip, { isVisible: !isActive, linkInLinkRestriction }, /* @__PURE__ */ React40.createElement(
       ToggleIconControl,
       {
         disabled: shouldDisableAddingLink,
         active: isActive,
         onIconClick: onEnabledChange,
-        label: __10("Toggle link", "elementor")
+        label: __9("Toggle link", "elementor")
       }
     ))
-  ), /* @__PURE__ */ React39.createElement(Collapse, { in: isActive, timeout: "auto", unmountOnExit: true }, /* @__PURE__ */ React39.createElement(Stack10, { gap: 1.5 }, /* @__PURE__ */ React39.createElement(PropKeyProvider, { bind: "destination" }, /* @__PURE__ */ React39.createElement(ControlActions, null, /* @__PURE__ */ React39.createElement(
+  ), /* @__PURE__ */ React40.createElement(Collapse, { in: isActive, timeout: "auto", unmountOnExit: true }, /* @__PURE__ */ React40.createElement(Stack10, { gap: 1.5 }, /* @__PURE__ */ React40.createElement(PropKeyProvider, { bind: "destination" }, /* @__PURE__ */ React40.createElement(ControlActions, null, /* @__PURE__ */ React40.createElement(
     Autocomplete,
     {
       options,
@@ -2435,22 +2445,10 @@ var LinkControl = createControl((props) => {
       onTextChange,
       minInputLength
     }
-  ))), /* @__PURE__ */ React39.createElement(PropKeyProvider, { bind: "isTargetBlank" }, /* @__PURE__ */ React39.createElement(SwitchControl, { disabled: propContext.disabled || !value }))))));
+  ))), /* @__PURE__ */ React40.createElement(PropKeyProvider, { bind: "isTargetBlank" }, /* @__PURE__ */ React40.createElement(Grid7, { container: true, alignItems: "center", flexWrap: "nowrap", justifyContent: "space-between" }, /* @__PURE__ */ React40.createElement(Grid7, { item: true }, /* @__PURE__ */ React40.createElement(ControlFormLabel, null, __9("Open in a new tab", "elementor"))), /* @__PURE__ */ React40.createElement(Grid7, { item: true, sx: { marginInlineEnd: -1 } }, /* @__PURE__ */ React40.createElement(SwitchControl, null))))))));
 });
 var ToggleIconControl = ({ disabled, active, onIconClick, label }) => {
-  return /* @__PURE__ */ React39.createElement(IconButton3, { size: SIZE4, onClick: onIconClick, "aria-label": label, disabled }, active ? /* @__PURE__ */ React39.createElement(MinusIcon, { fontSize: SIZE4 }) : /* @__PURE__ */ React39.createElement(PlusIcon2, { fontSize: SIZE4 }));
-};
-var SwitchControl = ({ disabled }) => {
-  const { value = false, setValue } = useBoundProp(booleanPropTypeUtil);
-  const onClick = () => {
-    setValue(!value);
-  };
-  const inputProps = disabled ? {
-    style: {
-      opacity: 0
-    }
-  } : {};
-  return /* @__PURE__ */ React39.createElement(Grid8, { container: true, alignItems: "center", flexWrap: "nowrap", justifyContent: "space-between" }, /* @__PURE__ */ React39.createElement(Grid8, { item: true }, /* @__PURE__ */ React39.createElement(ControlFormLabel, null, __10("Open in a new tab", "elementor"))), /* @__PURE__ */ React39.createElement(Grid8, { item: true, sx: { marginInlineEnd: -1 } }, /* @__PURE__ */ React39.createElement(Switch, { checked: value, onClick, disabled, inputProps })));
+  return /* @__PURE__ */ React40.createElement(IconButton3, { size: SIZE4, onClick: onIconClick, "aria-label": label, disabled }, active ? /* @__PURE__ */ React40.createElement(MinusIcon, { fontSize: SIZE4 }) : /* @__PURE__ */ React40.createElement(PlusIcon2, { fontSize: SIZE4 }));
 };
 async function fetchOptions(ajaxUrl, params) {
   if (!params || !ajaxUrl) {
@@ -2487,38 +2485,38 @@ var ConditionalInfoTip = ({ linkInLinkRestriction, isVisible, children }) => {
       selectElement(elementId);
     }
   };
-  return shouldRestrict && isVisible ? /* @__PURE__ */ React39.createElement(
+  return shouldRestrict && isVisible ? /* @__PURE__ */ React40.createElement(
     Infotip,
     {
       placement: "right",
-      content: /* @__PURE__ */ React39.createElement(
+      content: /* @__PURE__ */ React40.createElement(
         InfoTipCard,
         {
           content: INFOTIP_CONTENT[reason],
-          svgIcon: /* @__PURE__ */ React39.createElement(AlertTriangleIcon, null),
+          svgIcon: /* @__PURE__ */ React40.createElement(AlertTriangleIcon, null),
           learnMoreButton,
           ctaButton: {
-            label: __10("Take me there", "elementor"),
+            label: __9("Take me there", "elementor"),
             onClick: handleTakeMeClick
           }
         }
       )
     },
-    /* @__PURE__ */ React39.createElement(Box6, null, children)
-  ) : /* @__PURE__ */ React39.createElement(React39.Fragment, null, children);
+    /* @__PURE__ */ React40.createElement(Box6, null, children)
+  ) : /* @__PURE__ */ React40.createElement(React40.Fragment, null, children);
 };
 var INFOTIP_CONTENT = {
-  descendant: /* @__PURE__ */ React39.createElement(React39.Fragment, null, __10("To add a link to this container,", "elementor"), /* @__PURE__ */ React39.createElement("br", null), __10("first remove the link from the elements inside of it.", "elementor")),
-  ancestor: /* @__PURE__ */ React39.createElement(React39.Fragment, null, __10("To add a link to this element,", "elementor"), /* @__PURE__ */ React39.createElement("br", null), __10("first remove the link from its parent container.", "elementor"))
+  descendant: /* @__PURE__ */ React40.createElement(React40.Fragment, null, __9("To add a link to this container,", "elementor"), /* @__PURE__ */ React40.createElement("br", null), __9("first remove the link from the elements inside of it.", "elementor")),
+  ancestor: /* @__PURE__ */ React40.createElement(React40.Fragment, null, __9("To add a link to this element,", "elementor"), /* @__PURE__ */ React40.createElement("br", null), __9("first remove the link from its parent container.", "elementor"))
 };
 
 // src/controls/gap-control.tsx
-import * as React40 from "react";
+import * as React41 from "react";
 import { useRef as useRef8 } from "react";
 import { layoutDirectionPropTypeUtil, sizePropTypeUtil as sizePropTypeUtil4 } from "@elementor/editor-props";
 import { DetachIcon as DetachIcon2, LinkIcon as LinkIcon2 } from "@elementor/icons";
-import { Grid as Grid9, Stack as Stack11, ToggleButton as ToggleButton4, Tooltip as Tooltip5 } from "@elementor/ui";
-import { __ as __11 } from "@wordpress/i18n";
+import { Grid as Grid8, Stack as Stack11, ToggleButton as ToggleButton4, Tooltip as Tooltip5 } from "@elementor/ui";
+import { __ as __10 } from "@wordpress/i18n";
 var GapControl = createControl(({ label }) => {
   const {
     value: directionValue,
@@ -2542,10 +2540,10 @@ var GapControl = createControl(({ label }) => {
   };
   const tooltipLabel = label.toLowerCase();
   const LinkedIcon = isLinked ? LinkIcon2 : DetachIcon2;
-  const linkedLabel = __11("Link %s", "elementor").replace("%s", tooltipLabel);
-  const unlinkedLabel = __11("Unlink %s", "elementor").replace("%s", tooltipLabel);
+  const linkedLabel = __10("Link %s", "elementor").replace("%s", tooltipLabel);
+  const unlinkedLabel = __10("Unlink %s", "elementor").replace("%s", tooltipLabel);
   const disabled = sizeDisabled || directionDisabled;
-  return /* @__PURE__ */ React40.createElement(PropProvider, { propType, value: directionValue, setValue: setDirectionValue }, /* @__PURE__ */ React40.createElement(Stack11, { direction: "row", gap: 2, flexWrap: "nowrap" }, /* @__PURE__ */ React40.createElement(ControlLabel, null, label), /* @__PURE__ */ React40.createElement(Tooltip5, { title: isLinked ? unlinkedLabel : linkedLabel, placement: "top" }, /* @__PURE__ */ React40.createElement(
+  return /* @__PURE__ */ React41.createElement(PropProvider, { propType, value: directionValue, setValue: setDirectionValue }, /* @__PURE__ */ React41.createElement(Stack11, { direction: "row", gap: 2, flexWrap: "nowrap" }, /* @__PURE__ */ React41.createElement(ControlLabel, null, label), /* @__PURE__ */ React41.createElement(Tooltip5, { title: isLinked ? unlinkedLabel : linkedLabel, placement: "top" }, /* @__PURE__ */ React41.createElement(
     ToggleButton4,
     {
       "aria-label": isLinked ? unlinkedLabel : linkedLabel,
@@ -2556,8 +2554,8 @@ var GapControl = createControl(({ label }) => {
       onChange: onLinkToggle,
       disabled
     },
-    /* @__PURE__ */ React40.createElement(LinkedIcon, { fontSize: "tiny" })
-  ))), /* @__PURE__ */ React40.createElement(Stack11, { direction: "row", gap: 2, flexWrap: "nowrap", ref: stackRef }, /* @__PURE__ */ React40.createElement(Grid9, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React40.createElement(Grid9, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(ControlFormLabel, null, __11("Column", "elementor"))), /* @__PURE__ */ React40.createElement(Grid9, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(Control4, { bind: "column", isLinked, anchorRef: stackRef }))), /* @__PURE__ */ React40.createElement(Grid9, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React40.createElement(Grid9, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(ControlFormLabel, null, __11("Row", "elementor"))), /* @__PURE__ */ React40.createElement(Grid9, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(Control4, { bind: "row", isLinked, anchorRef: stackRef })))));
+    /* @__PURE__ */ React41.createElement(LinkedIcon, { fontSize: "tiny" })
+  ))), /* @__PURE__ */ React41.createElement(Stack11, { direction: "row", gap: 2, flexWrap: "nowrap", ref: stackRef }, /* @__PURE__ */ React41.createElement(Grid8, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React41.createElement(Grid8, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(ControlFormLabel, null, __10("Column", "elementor"))), /* @__PURE__ */ React41.createElement(Grid8, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(Control4, { bind: "column", isLinked, anchorRef: stackRef }))), /* @__PURE__ */ React41.createElement(Grid8, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React41.createElement(Grid8, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(ControlFormLabel, null, __10("Row", "elementor"))), /* @__PURE__ */ React41.createElement(Grid8, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(Control4, { bind: "row", isLinked, anchorRef: stackRef })))));
 });
 var Control4 = ({
   bind,
@@ -2565,21 +2563,21 @@ var Control4 = ({
   anchorRef
 }) => {
   if (isLinked) {
-    return /* @__PURE__ */ React40.createElement(SizeControl, { anchorRef });
+    return /* @__PURE__ */ React41.createElement(SizeControl, { anchorRef });
   }
-  return /* @__PURE__ */ React40.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React40.createElement(SizeControl, { anchorRef }));
+  return /* @__PURE__ */ React41.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React41.createElement(SizeControl, { anchorRef }));
 };
 
 // src/controls/aspect-ratio-control.tsx
-import * as React41 from "react";
+import * as React42 from "react";
 import { useEffect as useEffect6, useState as useState8 } from "react";
 import { stringPropTypeUtil as stringPropTypeUtil7 } from "@elementor/editor-props";
 import { MenuListItem as MenuListItem4 } from "@elementor/editor-ui";
 import { ArrowsMoveHorizontalIcon, ArrowsMoveVerticalIcon } from "@elementor/icons";
-import { Grid as Grid10, Select as Select3, Stack as Stack12, TextField as TextField8 } from "@elementor/ui";
-import { __ as __12 } from "@wordpress/i18n";
+import { Grid as Grid9, Select as Select3, Stack as Stack12, TextField as TextField8 } from "@elementor/ui";
+import { __ as __11 } from "@wordpress/i18n";
 var RATIO_OPTIONS = [
-  { label: __12("Auto", "elementor"), value: "auto" },
+  { label: __11("Auto", "elementor"), value: "auto" },
   { label: "1/1", value: "1/1" },
   { label: "4/3", value: "4/3" },
   { label: "3/4", value: "3/4" },
@@ -2638,7 +2636,7 @@ var AspectRatioControl = createControl(({ label }) => {
       setAspectRatioValue(`${customWidth}/${newHeight}`);
     }
   };
-  return /* @__PURE__ */ React41.createElement(ControlActions, null, /* @__PURE__ */ React41.createElement(Stack12, { direction: "column", gap: 2 }, /* @__PURE__ */ React41.createElement(Grid10, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React41.createElement(Grid10, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(ControlLabel, null, label)), /* @__PURE__ */ React41.createElement(Grid10, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(
+  return /* @__PURE__ */ React42.createElement(ControlActions, null, /* @__PURE__ */ React42.createElement(Stack12, { direction: "column", gap: 2 }, /* @__PURE__ */ React42.createElement(Grid9, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React42.createElement(Grid9, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(ControlLabel, null, label)), /* @__PURE__ */ React42.createElement(Grid9, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(
     Select3,
     {
       size: "tiny",
@@ -2649,10 +2647,10 @@ var AspectRatioControl = createControl(({ label }) => {
       onChange: handleSelectChange,
       fullWidth: true
     },
-    [...RATIO_OPTIONS, { label: __12("Custom", "elementor"), value: CUSTOM_RATIO }].map(
-      ({ label: optionLabel, ...props }) => /* @__PURE__ */ React41.createElement(MenuListItem4, { key: props.value, ...props, value: props.value ?? "" }, optionLabel)
+    [...RATIO_OPTIONS, { label: __11("Custom", "elementor"), value: CUSTOM_RATIO }].map(
+      ({ label: optionLabel, ...props }) => /* @__PURE__ */ React42.createElement(MenuListItem4, { key: props.value, ...props, value: props.value ?? "" }, optionLabel)
     )
-  ))), isCustom && /* @__PURE__ */ React41.createElement(Grid10, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React41.createElement(Grid10, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(
+  ))), isCustom && /* @__PURE__ */ React42.createElement(Grid9, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React42.createElement(Grid9, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(
     TextField8,
     {
       size: "tiny",
@@ -2662,10 +2660,10 @@ var AspectRatioControl = createControl(({ label }) => {
       value: customWidth,
       onChange: handleCustomWidthChange,
       InputProps: {
-        startAdornment: /* @__PURE__ */ React41.createElement(ArrowsMoveHorizontalIcon, { fontSize: "tiny" })
+        startAdornment: /* @__PURE__ */ React42.createElement(ArrowsMoveHorizontalIcon, { fontSize: "tiny" })
       }
     }
-  )), /* @__PURE__ */ React41.createElement(Grid10, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(
+  )), /* @__PURE__ */ React42.createElement(Grid9, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(
     TextField8,
     {
       size: "tiny",
@@ -2675,23 +2673,23 @@ var AspectRatioControl = createControl(({ label }) => {
       value: customHeight,
       onChange: handleCustomHeightChange,
       InputProps: {
-        startAdornment: /* @__PURE__ */ React41.createElement(ArrowsMoveVerticalIcon, { fontSize: "tiny" })
+        startAdornment: /* @__PURE__ */ React42.createElement(ArrowsMoveVerticalIcon, { fontSize: "tiny" })
       }
     }
   )))));
 });
 
 // src/controls/svg-media-control.tsx
-import * as React43 from "react";
+import * as React44 from "react";
 import { useState as useState10 } from "react";
 import { imageSrcPropTypeUtil as imageSrcPropTypeUtil2 } from "@elementor/editor-props";
 import { UploadIcon as UploadIcon2 } from "@elementor/icons";
 import { Button as Button4, Card as Card2, CardMedia as CardMedia2, CardOverlay as CardOverlay2, CircularProgress as CircularProgress3, Stack as Stack13, styled as styled4 } from "@elementor/ui";
 import { useWpMediaAttachment as useWpMediaAttachment2, useWpMediaFrame as useWpMediaFrame2 } from "@elementor/wp-media";
-import { __ as __14 } from "@wordpress/i18n";
+import { __ as __13 } from "@wordpress/i18n";
 
 // src/components/enable-unfiltered-modal.tsx
-import * as React42 from "react";
+import * as React43 from "react";
 import { useState as useState9 } from "react";
 import { useCurrentUserCapabilities } from "@elementor/editor-current-user";
 import {
@@ -2705,19 +2703,19 @@ import {
   DialogTitle,
   Divider as Divider3
 } from "@elementor/ui";
-import { __ as __13 } from "@wordpress/i18n";
-var ADMIN_TITLE_TEXT = __13("Enable Unfiltered Uploads", "elementor");
-var ADMIN_CONTENT_TEXT = __13(
+import { __ as __12 } from "@wordpress/i18n";
+var ADMIN_TITLE_TEXT = __12("Enable Unfiltered Uploads", "elementor");
+var ADMIN_CONTENT_TEXT = __12(
   "Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.",
   "elementor"
 );
-var NON_ADMIN_TITLE_TEXT = __13("Sorry, you can't upload that file yet", "elementor");
-var NON_ADMIN_CONTENT_TEXT = __13(
+var NON_ADMIN_TITLE_TEXT = __12("Sorry, you can't upload that file yet", "elementor");
+var NON_ADMIN_CONTENT_TEXT = __12(
   "This is because this file type may pose a security risk. To upload them anyway, ask the site administrator to enable unfiltered file uploads.",
   "elementor"
 );
-var ADMIN_FAILED_CONTENT_TEXT_PT1 = __13("Failed to enable unfiltered files upload.", "elementor");
-var ADMIN_FAILED_CONTENT_TEXT_PT2 = __13(
+var ADMIN_FAILED_CONTENT_TEXT_PT1 = __12("Failed to enable unfiltered files upload.", "elementor");
+var ADMIN_FAILED_CONTENT_TEXT_PT2 = __12(
   "You can try again, if the problem persists, please contact support.",
   "elementor"
 );
@@ -2744,9 +2742,9 @@ var EnableUnfilteredModal = (props) => {
     }
   };
   const dialogProps = { ...props, isPending, handleEnable, isError, onClose };
-  return canManageOptions ? /* @__PURE__ */ React42.createElement(AdminDialog, { ...dialogProps }) : /* @__PURE__ */ React42.createElement(NonAdminDialog, { ...dialogProps });
+  return canManageOptions ? /* @__PURE__ */ React43.createElement(AdminDialog, { ...dialogProps }) : /* @__PURE__ */ React43.createElement(NonAdminDialog, { ...dialogProps });
 };
-var AdminDialog = ({ open, onClose, handleEnable, isPending, isError }) => /* @__PURE__ */ React42.createElement(Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React42.createElement(DialogHeader, { logo: false }, /* @__PURE__ */ React42.createElement(DialogTitle, null, ADMIN_TITLE_TEXT)), /* @__PURE__ */ React42.createElement(Divider3, null), /* @__PURE__ */ React42.createElement(DialogContent, null, /* @__PURE__ */ React42.createElement(DialogContentText, null, isError ? /* @__PURE__ */ React42.createElement(React42.Fragment, null, ADMIN_FAILED_CONTENT_TEXT_PT1, " ", /* @__PURE__ */ React42.createElement("br", null), " ", ADMIN_FAILED_CONTENT_TEXT_PT2) : ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React42.createElement(DialogActions, null, /* @__PURE__ */ React42.createElement(Button3, { size: "medium", color: "secondary", onClick: () => onClose(false) }, __13("Cancel", "elementor")), /* @__PURE__ */ React42.createElement(
+var AdminDialog = ({ open, onClose, handleEnable, isPending, isError }) => /* @__PURE__ */ React43.createElement(Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React43.createElement(DialogHeader, { logo: false }, /* @__PURE__ */ React43.createElement(DialogTitle, null, ADMIN_TITLE_TEXT)), /* @__PURE__ */ React43.createElement(Divider3, null), /* @__PURE__ */ React43.createElement(DialogContent, null, /* @__PURE__ */ React43.createElement(DialogContentText, null, isError ? /* @__PURE__ */ React43.createElement(React43.Fragment, null, ADMIN_FAILED_CONTENT_TEXT_PT1, " ", /* @__PURE__ */ React43.createElement("br", null), " ", ADMIN_FAILED_CONTENT_TEXT_PT2) : ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React43.createElement(DialogActions, null, /* @__PURE__ */ React43.createElement(Button3, { size: "medium", color: "secondary", onClick: () => onClose(false) }, __12("Cancel", "elementor")), /* @__PURE__ */ React43.createElement(
   Button3,
   {
     size: "medium",
@@ -2755,9 +2753,9 @@ var AdminDialog = ({ open, onClose, handleEnable, isPending, isError }) => /* @_
     color: "primary",
     disabled: isPending
   },
-  isPending ? /* @__PURE__ */ React42.createElement(CircularProgress2, { size: 24 }) : __13("Enable", "elementor")
+  isPending ? /* @__PURE__ */ React43.createElement(CircularProgress2, { size: 24 }) : __12("Enable", "elementor")
 )));
-var NonAdminDialog = ({ open, onClose }) => /* @__PURE__ */ React42.createElement(Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React42.createElement(DialogHeader, { logo: false }, /* @__PURE__ */ React42.createElement(DialogTitle, null, NON_ADMIN_TITLE_TEXT)), /* @__PURE__ */ React42.createElement(Divider3, null), /* @__PURE__ */ React42.createElement(DialogContent, null, /* @__PURE__ */ React42.createElement(DialogContentText, null, NON_ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React42.createElement(DialogActions, null, /* @__PURE__ */ React42.createElement(Button3, { size: "medium", onClick: () => onClose(false), variant: "contained", color: "primary" }, __13("Got it", "elementor"))));
+var NonAdminDialog = ({ open, onClose }) => /* @__PURE__ */ React43.createElement(Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React43.createElement(DialogHeader, { logo: false }, /* @__PURE__ */ React43.createElement(DialogTitle, null, NON_ADMIN_TITLE_TEXT)), /* @__PURE__ */ React43.createElement(Divider3, null), /* @__PURE__ */ React43.createElement(DialogContent, null, /* @__PURE__ */ React43.createElement(DialogContentText, null, NON_ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React43.createElement(DialogActions, null, /* @__PURE__ */ React43.createElement(Button3, { size: "medium", onClick: () => onClose(false), variant: "contained", color: "primary" }, __12("Got it", "elementor"))));
 
 // src/controls/svg-media-control.tsx
 var TILE_SIZE = 8;
@@ -2818,15 +2816,15 @@ var SvgMediaControl = createControl(() => {
       open(openOptions);
     }
   };
-  return /* @__PURE__ */ React43.createElement(Stack13, { gap: 1 }, /* @__PURE__ */ React43.createElement(EnableUnfilteredModal, { open: unfilteredModalOpenState, onClose: onCloseUnfilteredModal }), /* @__PURE__ */ React43.createElement(ControlFormLabel, null, " ", __14("SVG", "elementor"), " "), /* @__PURE__ */ React43.createElement(ControlActions, null, /* @__PURE__ */ React43.createElement(StyledCard, { variant: "outlined" }, /* @__PURE__ */ React43.createElement(StyledCardMediaContainer, null, isFetching ? /* @__PURE__ */ React43.createElement(CircularProgress3, { role: "progressbar" }) : /* @__PURE__ */ React43.createElement(
+  return /* @__PURE__ */ React44.createElement(Stack13, { gap: 1 }, /* @__PURE__ */ React44.createElement(EnableUnfilteredModal, { open: unfilteredModalOpenState, onClose: onCloseUnfilteredModal }), /* @__PURE__ */ React44.createElement(ControlActions, null, /* @__PURE__ */ React44.createElement(StyledCard, { variant: "outlined" }, /* @__PURE__ */ React44.createElement(StyledCardMediaContainer, null, isFetching ? /* @__PURE__ */ React44.createElement(CircularProgress3, { role: "progressbar" }) : /* @__PURE__ */ React44.createElement(
     CardMedia2,
     {
       component: "img",
       image: src,
-      alt: __14("Preview SVG", "elementor"),
+      alt: __13("Preview SVG", "elementor"),
       sx: { maxHeight: "140px", width: "50px" }
     }
-  )), /* @__PURE__ */ React43.createElement(
+  )), /* @__PURE__ */ React44.createElement(
     CardOverlay2,
     {
       sx: {
@@ -2835,7 +2833,7 @@ var SvgMediaControl = createControl(() => {
         }
       }
     },
-    /* @__PURE__ */ React43.createElement(Stack13, { gap: 1 }, /* @__PURE__ */ React43.createElement(
+    /* @__PURE__ */ React44.createElement(Stack13, { gap: 1 }, /* @__PURE__ */ React44.createElement(
       Button4,
       {
         size: "tiny",
@@ -2843,46 +2841,46 @@ var SvgMediaControl = createControl(() => {
         variant: "outlined",
         onClick: () => handleClick(MODE_BROWSE)
       },
-      __14("Select SVG", "elementor")
-    ), /* @__PURE__ */ React43.createElement(
+      __13("Select SVG", "elementor")
+    ), /* @__PURE__ */ React44.createElement(
       Button4,
       {
         size: "tiny",
         variant: "text",
         color: "inherit",
-        startIcon: /* @__PURE__ */ React43.createElement(UploadIcon2, null),
+        startIcon: /* @__PURE__ */ React44.createElement(UploadIcon2, null),
         onClick: () => handleClick(MODE_UPLOAD)
       },
-      __14("Upload", "elementor")
+      __13("Upload", "elementor")
     ))
   ))));
 });
 
 // src/controls/background-control/background-control.tsx
-import * as React50 from "react";
+import * as React51 from "react";
 import { backgroundPropTypeUtil } from "@elementor/editor-props";
 import { isExperimentActive as isExperimentActive4 } from "@elementor/editor-v1-adapters";
-import { Grid as Grid16 } from "@elementor/ui";
-import { __ as __20 } from "@wordpress/i18n";
+import { Grid as Grid15 } from "@elementor/ui";
+import { __ as __19 } from "@wordpress/i18n";
 
 // src/controls/background-control/background-overlay/background-overlay-repeater-control.tsx
-import * as React49 from "react";
+import * as React50 from "react";
 import {
   backgroundColorOverlayPropTypeUtil as backgroundColorOverlayPropTypeUtil2,
   backgroundImageOverlayPropTypeUtil as backgroundImageOverlayPropTypeUtil2,
   backgroundOverlayPropTypeUtil,
   colorPropTypeUtil as colorPropTypeUtil3
 } from "@elementor/editor-props";
-import { Box as Box7, CardMedia as CardMedia3, Grid as Grid15, styled as styled5, Tab, TabPanel, Tabs, UnstableColorIndicator as UnstableColorIndicator2 } from "@elementor/ui";
+import { Box as Box7, CardMedia as CardMedia3, Grid as Grid14, styled as styled5, Tab, TabPanel, Tabs, UnstableColorIndicator as UnstableColorIndicator2 } from "@elementor/ui";
 import { useWpMediaAttachment as useWpMediaAttachment3 } from "@elementor/wp-media";
-import { __ as __19 } from "@wordpress/i18n";
+import { __ as __18 } from "@wordpress/i18n";
 
 // src/env.ts
 import { parseEnv } from "@elementor/env";
 var { env } = parseEnv("@elementor/editor-controls");
 
 // src/controls/background-control/background-gradient-color-control.tsx
-import * as React44 from "react";
+import * as React45 from "react";
 import {
   backgroundGradientOverlayPropTypeUtil,
   colorPropTypeUtil as colorPropTypeUtil2,
@@ -2929,7 +2927,7 @@ var BackgroundGradientColorControl = createControl(() => {
       positions: positions?.value.split(" ")
     };
   };
-  return /* @__PURE__ */ React44.createElement(ControlActions, null, /* @__PURE__ */ React44.createElement(
+  return /* @__PURE__ */ React45.createElement(ControlActions, null, /* @__PURE__ */ React45.createElement(
     UnstableGradientBox,
     {
       sx: { width: "auto", padding: 1.5 },
@@ -2954,47 +2952,47 @@ var initialBackgroundGradientOverlay = backgroundGradientOverlayPropTypeUtil.cre
 });
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-attachment.tsx
-import * as React45 from "react";
+import * as React46 from "react";
 import { PinIcon, PinnedOffIcon } from "@elementor/icons";
-import { Grid as Grid11 } from "@elementor/ui";
-import { __ as __15 } from "@wordpress/i18n";
+import { Grid as Grid10 } from "@elementor/ui";
+import { __ as __14 } from "@wordpress/i18n";
 var attachmentControlOptions = [
   {
     value: "fixed",
-    label: __15("Fixed", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(PinIcon, { fontSize: size }),
+    label: __14("Fixed", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(PinIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "scroll",
-    label: __15("Scroll", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(PinnedOffIcon, { fontSize: size }),
+    label: __14("Scroll", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(PinnedOffIcon, { fontSize: size }),
     showTooltip: true
   }
 ];
 var BackgroundImageOverlayAttachment = () => {
-  return /* @__PURE__ */ React45.createElement(PopoverGridContainer, null, /* @__PURE__ */ React45.createElement(Grid11, { item: true, xs: 6 }, /* @__PURE__ */ React45.createElement(ControlFormLabel, null, __15("Attachment", "elementor"))), /* @__PURE__ */ React45.createElement(Grid11, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React45.createElement(ToggleControl, { options: attachmentControlOptions })));
+  return /* @__PURE__ */ React46.createElement(PopoverGridContainer, null, /* @__PURE__ */ React46.createElement(Grid10, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(ControlFormLabel, null, __14("Attachment", "elementor"))), /* @__PURE__ */ React46.createElement(Grid10, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React46.createElement(ToggleControl, { options: attachmentControlOptions })));
 };
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-position.tsx
-import * as React46 from "react";
+import * as React47 from "react";
 import { useRef as useRef9 } from "react";
 import { backgroundImagePositionOffsetPropTypeUtil, stringPropTypeUtil as stringPropTypeUtil9 } from "@elementor/editor-props";
 import { MenuListItem as MenuListItem5 } from "@elementor/editor-ui";
 import { LetterXIcon, LetterYIcon } from "@elementor/icons";
-import { Grid as Grid12, Select as Select4 } from "@elementor/ui";
-import { __ as __16 } from "@wordpress/i18n";
+import { Grid as Grid11, Select as Select4 } from "@elementor/ui";
+import { __ as __15 } from "@wordpress/i18n";
 var backgroundPositionOptions = [
-  { label: __16("Center center", "elementor"), value: "center center" },
-  { label: __16("Center left", "elementor"), value: "center left" },
-  { label: __16("Center right", "elementor"), value: "center right" },
-  { label: __16("Top center", "elementor"), value: "top center" },
-  { label: __16("Top left", "elementor"), value: "top left" },
-  { label: __16("Top right", "elementor"), value: "top right" },
-  { label: __16("Bottom center", "elementor"), value: "bottom center" },
-  { label: __16("Bottom left", "elementor"), value: "bottom left" },
-  { label: __16("Bottom right", "elementor"), value: "bottom right" },
-  { label: __16("Custom", "elementor"), value: "custom" }
+  { label: __15("Center center", "elementor"), value: "center center" },
+  { label: __15("Center left", "elementor"), value: "center left" },
+  { label: __15("Center right", "elementor"), value: "center right" },
+  { label: __15("Top center", "elementor"), value: "top center" },
+  { label: __15("Top left", "elementor"), value: "top left" },
+  { label: __15("Top right", "elementor"), value: "top right" },
+  { label: __15("Bottom center", "elementor"), value: "bottom center" },
+  { label: __15("Bottom left", "elementor"), value: "bottom left" },
+  { label: __15("Bottom right", "elementor"), value: "bottom right" },
+  { label: __15("Custom", "elementor"), value: "custom" }
 ];
 var BackgroundImageOverlayPosition = () => {
   const backgroundImageOffsetContext = useBoundProp(backgroundImagePositionOffsetPropTypeUtil);
@@ -3009,7 +3007,7 @@ var BackgroundImageOverlayPosition = () => {
       stringPropContext.setValue(value);
     }
   };
-  return /* @__PURE__ */ React46.createElement(Grid12, { container: true, spacing: 1.5 }, /* @__PURE__ */ React46.createElement(Grid12, { item: true, xs: 12 }, /* @__PURE__ */ React46.createElement(PopoverGridContainer, null, /* @__PURE__ */ React46.createElement(Grid12, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(ControlFormLabel, null, __16("Position", "elementor"))), /* @__PURE__ */ React46.createElement(Grid12, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React46.createElement(
+  return /* @__PURE__ */ React47.createElement(Grid11, { container: true, spacing: 1.5 }, /* @__PURE__ */ React47.createElement(Grid11, { item: true, xs: 12 }, /* @__PURE__ */ React47.createElement(PopoverGridContainer, null, /* @__PURE__ */ React47.createElement(Grid11, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(ControlFormLabel, null, __15("Position", "elementor"))), /* @__PURE__ */ React47.createElement(Grid11, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React47.createElement(
     Select4,
     {
       fullWidth: true,
@@ -3018,59 +3016,59 @@ var BackgroundImageOverlayPosition = () => {
       disabled: stringPropContext.disabled,
       value: (backgroundImageOffsetContext.value ? "custom" : stringPropContext.value) ?? ""
     },
-    backgroundPositionOptions.map(({ label, value }) => /* @__PURE__ */ React46.createElement(MenuListItem5, { key: value, value: value ?? "" }, label))
-  )))), isCustom ? /* @__PURE__ */ React46.createElement(PropProvider, { ...backgroundImageOffsetContext }, /* @__PURE__ */ React46.createElement(Grid12, { item: true, xs: 12 }, /* @__PURE__ */ React46.createElement(Grid12, { container: true, spacing: 1.5, ref: rowRef }, /* @__PURE__ */ React46.createElement(Grid12, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(PropKeyProvider, { bind: "x" }, /* @__PURE__ */ React46.createElement(
+    backgroundPositionOptions.map(({ label, value }) => /* @__PURE__ */ React47.createElement(MenuListItem5, { key: value, value: value ?? "" }, label))
+  )))), isCustom ? /* @__PURE__ */ React47.createElement(PropProvider, { ...backgroundImageOffsetContext }, /* @__PURE__ */ React47.createElement(Grid11, { item: true, xs: 12 }, /* @__PURE__ */ React47.createElement(Grid11, { container: true, spacing: 1.5, ref: rowRef }, /* @__PURE__ */ React47.createElement(Grid11, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(PropKeyProvider, { bind: "x" }, /* @__PURE__ */ React47.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React46.createElement(LetterXIcon, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React47.createElement(LetterXIcon, { fontSize: "tiny" }),
       anchorRef: rowRef
     }
-  ))), /* @__PURE__ */ React46.createElement(Grid12, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(PropKeyProvider, { bind: "y" }, /* @__PURE__ */ React46.createElement(
+  ))), /* @__PURE__ */ React47.createElement(Grid11, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(PropKeyProvider, { bind: "y" }, /* @__PURE__ */ React47.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React46.createElement(LetterYIcon, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React47.createElement(LetterYIcon, { fontSize: "tiny" }),
       anchorRef: rowRef
     }
   )))))) : null);
 };
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-repeat.tsx
-import * as React47 from "react";
+import * as React48 from "react";
 import { DotsHorizontalIcon, DotsVerticalIcon, GridDotsIcon, XIcon as XIcon3 } from "@elementor/icons";
-import { Grid as Grid13 } from "@elementor/ui";
-import { __ as __17 } from "@wordpress/i18n";
+import { Grid as Grid12 } from "@elementor/ui";
+import { __ as __16 } from "@wordpress/i18n";
 var repeatControlOptions = [
   {
     value: "repeat",
-    label: __17("Repeat", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(GridDotsIcon, { fontSize: size }),
+    label: __16("Repeat", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(GridDotsIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "repeat-x",
-    label: __17("Repeat-x", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(DotsHorizontalIcon, { fontSize: size }),
+    label: __16("Repeat-x", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(DotsHorizontalIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "repeat-y",
-    label: __17("Repeat-y", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(DotsVerticalIcon, { fontSize: size }),
+    label: __16("Repeat-y", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(DotsVerticalIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "no-repeat",
-    label: __17("No-repeat", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(XIcon3, { fontSize: size }),
+    label: __16("No-repeat", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(XIcon3, { fontSize: size }),
     showTooltip: true
   }
 ];
 var BackgroundImageOverlayRepeat = () => {
-  return /* @__PURE__ */ React47.createElement(PopoverGridContainer, null, /* @__PURE__ */ React47.createElement(Grid13, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(ControlFormLabel, null, __17("Repeat", "elementor"))), /* @__PURE__ */ React47.createElement(Grid13, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React47.createElement(ToggleControl, { options: repeatControlOptions })));
+  return /* @__PURE__ */ React48.createElement(PopoverGridContainer, null, /* @__PURE__ */ React48.createElement(Grid12, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(ControlFormLabel, null, __16("Repeat", "elementor"))), /* @__PURE__ */ React48.createElement(Grid12, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React48.createElement(ToggleControl, { options: repeatControlOptions })));
 };
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-size.tsx
-import * as React48 from "react";
+import * as React49 from "react";
 import { useRef as useRef10 } from "react";
 import { backgroundImageSizeScalePropTypeUtil, stringPropTypeUtil as stringPropTypeUtil10 } from "@elementor/editor-props";
 import {
@@ -3081,31 +3079,31 @@ import {
   LetterAIcon,
   PencilIcon as PencilIcon2
 } from "@elementor/icons";
-import { Grid as Grid14 } from "@elementor/ui";
-import { __ as __18 } from "@wordpress/i18n";
+import { Grid as Grid13 } from "@elementor/ui";
+import { __ as __17 } from "@wordpress/i18n";
 var sizeControlOptions = [
   {
     value: "auto",
-    label: __18("Auto", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(LetterAIcon, { fontSize: size }),
+    label: __17("Auto", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(LetterAIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "cover",
-    label: __18("Cover", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(ArrowsMaximizeIcon, { fontSize: size }),
+    label: __17("Cover", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(ArrowsMaximizeIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "contain",
-    label: __18("Contain", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(ArrowBarBothIcon, { fontSize: size }),
+    label: __17("Contain", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(ArrowBarBothIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "custom",
-    label: __18("Custom", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(PencilIcon2, { fontSize: size }),
+    label: __17("Custom", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(PencilIcon2, { fontSize: size }),
     showTooltip: true
   }
 ];
@@ -3121,7 +3119,7 @@ var BackgroundImageOverlaySize = () => {
       stringPropContext.setValue(size);
     }
   };
-  return /* @__PURE__ */ React48.createElement(Grid14, { container: true, spacing: 1.5 }, /* @__PURE__ */ React48.createElement(Grid14, { item: true, xs: 12 }, /* @__PURE__ */ React48.createElement(PopoverGridContainer, null, /* @__PURE__ */ React48.createElement(Grid14, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(ControlFormLabel, null, __18("Size", "elementor"))), /* @__PURE__ */ React48.createElement(Grid14, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React48.createElement(
+  return /* @__PURE__ */ React49.createElement(Grid13, { container: true, spacing: 1.5 }, /* @__PURE__ */ React49.createElement(Grid13, { item: true, xs: 12 }, /* @__PURE__ */ React49.createElement(PopoverGridContainer, null, /* @__PURE__ */ React49.createElement(Grid13, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(ControlFormLabel, null, __17("Size", "elementor"))), /* @__PURE__ */ React49.createElement(Grid13, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React49.createElement(
     ControlToggleButtonGroup,
     {
       exclusive: true,
@@ -3130,17 +3128,17 @@ var BackgroundImageOverlaySize = () => {
       disabled: stringPropContext.disabled,
       value: backgroundImageScaleContext.value ? "custom" : stringPropContext.value
     }
-  )))), isCustom ? /* @__PURE__ */ React48.createElement(PropProvider, { ...backgroundImageScaleContext }, /* @__PURE__ */ React48.createElement(Grid14, { item: true, xs: 12, ref: rowRef }, /* @__PURE__ */ React48.createElement(PopoverGridContainer, null, /* @__PURE__ */ React48.createElement(Grid14, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(PropKeyProvider, { bind: "width" }, /* @__PURE__ */ React48.createElement(
+  )))), isCustom ? /* @__PURE__ */ React49.createElement(PropProvider, { ...backgroundImageScaleContext }, /* @__PURE__ */ React49.createElement(Grid13, { item: true, xs: 12, ref: rowRef }, /* @__PURE__ */ React49.createElement(PopoverGridContainer, null, /* @__PURE__ */ React49.createElement(Grid13, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "width" }, /* @__PURE__ */ React49.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React48.createElement(ArrowsMoveHorizontalIcon2, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React49.createElement(ArrowsMoveHorizontalIcon2, { fontSize: "tiny" }),
       extendedOptions: ["auto"],
       anchorRef: rowRef
     }
-  ))), /* @__PURE__ */ React48.createElement(Grid14, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(PropKeyProvider, { bind: "height" }, /* @__PURE__ */ React48.createElement(
+  ))), /* @__PURE__ */ React49.createElement(Grid13, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "height" }, /* @__PURE__ */ React49.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React48.createElement(ArrowsMoveVerticalIcon2, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React49.createElement(ArrowsMoveVerticalIcon2, { fontSize: "tiny" }),
       extendedOptions: ["auto"],
       anchorRef: rowRef
     }
@@ -3241,21 +3239,21 @@ var getInitialBackgroundOverlay = () => ({
   }
 });
 var backgroundResolutionOptions = [
-  { label: __19("Thumbnail - 150 x 150", "elementor"), value: "thumbnail" },
-  { label: __19("Medium - 300 x 300", "elementor"), value: "medium" },
-  { label: __19("Large 1024 x 1024", "elementor"), value: "large" },
-  { label: __19("Full", "elementor"), value: "full" }
+  { label: __18("Thumbnail - 150 x 150", "elementor"), value: "thumbnail" },
+  { label: __18("Medium - 300 x 300", "elementor"), value: "medium" },
+  { label: __18("Large 1024 x 1024", "elementor"), value: "large" },
+  { label: __18("Full", "elementor"), value: "full" }
 ];
 var BackgroundOverlayRepeaterControl = createControl(() => {
   const { propType, value: overlayValues, setValue, disabled } = useBoundProp(backgroundOverlayPropTypeUtil);
-  return /* @__PURE__ */ React49.createElement(PropProvider, { propType, value: overlayValues, setValue, disabled }, /* @__PURE__ */ React49.createElement(
+  return /* @__PURE__ */ React50.createElement(PropProvider, { propType, value: overlayValues, setValue, isDisabled: () => disabled }, /* @__PURE__ */ React50.createElement(
     Repeater,
     {
       openOnAdd: true,
       disabled,
       values: overlayValues ?? [],
       setValues: setValue,
-      label: __19("Overlay", "elementor"),
+      label: __18("Overlay", "elementor"),
       itemSettings: {
         Icon: ItemIcon3,
         Label: ItemLabel3,
@@ -3266,7 +3264,7 @@ var BackgroundOverlayRepeaterControl = createControl(() => {
   ));
 });
 var ItemContent3 = ({ anchorEl = null, bind }) => {
-  return /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React49.createElement(Content3, { anchorEl }));
+  return /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React50.createElement(Content3, { anchorEl }));
 };
 var Content3 = ({ anchorEl }) => {
   const { getTabsProps, getTabProps, getTabPanelProps } = useBackgroundTabsHistory({
@@ -3274,27 +3272,27 @@ var Content3 = ({ anchorEl }) => {
     color: initialBackgroundColorOverlay.value,
     gradient: initialBackgroundGradientOverlay.value
   });
-  return /* @__PURE__ */ React49.createElement(Box7, { sx: { width: "100%" } }, /* @__PURE__ */ React49.createElement(Box7, { sx: { borderBottom: 1, borderColor: "divider" } }, /* @__PURE__ */ React49.createElement(
+  return /* @__PURE__ */ React50.createElement(Box7, { sx: { width: "100%" } }, /* @__PURE__ */ React50.createElement(Box7, { sx: { borderBottom: 1, borderColor: "divider" } }, /* @__PURE__ */ React50.createElement(
     Tabs,
     {
       size: "small",
       variant: "fullWidth",
       ...getTabsProps(),
-      "aria-label": __19("Background Overlay", "elementor")
+      "aria-label": __18("Background Overlay", "elementor")
     },
-    /* @__PURE__ */ React49.createElement(Tab, { label: __19("Image", "elementor"), ...getTabProps("image") }),
-    /* @__PURE__ */ React49.createElement(Tab, { label: __19("Gradient", "elementor"), ...getTabProps("gradient") }),
-    /* @__PURE__ */ React49.createElement(Tab, { label: __19("Color", "elementor"), ...getTabProps("color") })
-  )), /* @__PURE__ */ React49.createElement(TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("image") }, /* @__PURE__ */ React49.createElement(PopoverContent, null, /* @__PURE__ */ React49.createElement(ImageOverlayContent, null))), /* @__PURE__ */ React49.createElement(TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("gradient") }, /* @__PURE__ */ React49.createElement(BackgroundGradientColorControl, null)), /* @__PURE__ */ React49.createElement(TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("color") }, /* @__PURE__ */ React49.createElement(PopoverContent, null, /* @__PURE__ */ React49.createElement(ColorOverlayContent, { anchorEl }))));
+    /* @__PURE__ */ React50.createElement(Tab, { label: __18("Image", "elementor"), ...getTabProps("image") }),
+    /* @__PURE__ */ React50.createElement(Tab, { label: __18("Gradient", "elementor"), ...getTabProps("gradient") }),
+    /* @__PURE__ */ React50.createElement(Tab, { label: __18("Color", "elementor"), ...getTabProps("color") })
+  )), /* @__PURE__ */ React50.createElement(TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("image") }, /* @__PURE__ */ React50.createElement(PopoverContent, null, /* @__PURE__ */ React50.createElement(ImageOverlayContent, null))), /* @__PURE__ */ React50.createElement(TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("gradient") }, /* @__PURE__ */ React50.createElement(BackgroundGradientColorControl, null)), /* @__PURE__ */ React50.createElement(TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("color") }, /* @__PURE__ */ React50.createElement(PopoverContent, null, /* @__PURE__ */ React50.createElement(ColorOverlayContent, { anchorEl }))));
 };
 var ItemIcon3 = ({ value }) => {
   switch (value.$$type) {
     case "background-image-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemIconImage, { value });
+      return /* @__PURE__ */ React50.createElement(ItemIconImage, { value });
     case "background-color-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemIconColor, { value });
+      return /* @__PURE__ */ React50.createElement(ItemIconColor, { value });
     case "background-gradient-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemIconGradient, { value });
+      return /* @__PURE__ */ React50.createElement(ItemIconGradient, { value });
     default:
       return null;
   }
@@ -3307,11 +3305,11 @@ var extractColorFrom = (prop) => {
 };
 var ItemIconColor = ({ value: prop }) => {
   const color = extractColorFrom(prop);
-  return /* @__PURE__ */ React49.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: color });
+  return /* @__PURE__ */ React50.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: color });
 };
 var ItemIconImage = ({ value }) => {
   const { imageUrl } = useImage(value);
-  return /* @__PURE__ */ React49.createElement(
+  return /* @__PURE__ */ React50.createElement(
     CardMedia3,
     {
       image: imageUrl,
@@ -3326,47 +3324,41 @@ var ItemIconImage = ({ value }) => {
 };
 var ItemIconGradient = ({ value }) => {
   const gradient = getGradientValue(value);
-  return /* @__PURE__ */ React49.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: gradient });
+  return /* @__PURE__ */ React50.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: gradient });
 };
 var ItemLabel3 = ({ value }) => {
   switch (value.$$type) {
     case "background-image-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemLabelImage, { value });
+      return /* @__PURE__ */ React50.createElement(ItemLabelImage, { value });
     case "background-color-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemLabelColor, { value });
+      return /* @__PURE__ */ React50.createElement(ItemLabelColor, { value });
     case "background-gradient-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemLabelGradient, { value });
+      return /* @__PURE__ */ React50.createElement(ItemLabelGradient, { value });
     default:
       return null;
   }
 };
 var ItemLabelColor = ({ value: prop }) => {
   const color = extractColorFrom(prop);
-  return /* @__PURE__ */ React49.createElement("span", null, color);
+  return /* @__PURE__ */ React50.createElement("span", null, color);
 };
 var ItemLabelImage = ({ value }) => {
   const { imageTitle } = useImage(value);
-  return /* @__PURE__ */ React49.createElement("span", null, imageTitle);
+  return /* @__PURE__ */ React50.createElement("span", null, imageTitle);
 };
 var ItemLabelGradient = ({ value }) => {
   if (value.value.type.value === "linear") {
-    return /* @__PURE__ */ React49.createElement("span", null, __19("Linear Gradient", "elementor"));
+    return /* @__PURE__ */ React50.createElement("span", null, __18("Linear Gradient", "elementor"));
   }
-  return /* @__PURE__ */ React49.createElement("span", null, __19("Radial Gradient", "elementor"));
+  return /* @__PURE__ */ React50.createElement("span", null, __18("Radial Gradient", "elementor"));
 };
 var ColorOverlayContent = ({ anchorEl }) => {
   const propContext = useBoundProp(backgroundColorOverlayPropTypeUtil2);
-  return /* @__PURE__ */ React49.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React49.createElement(ColorControl, { anchorEl })));
+  return /* @__PURE__ */ React50.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React50.createElement(ColorControl, { anchorEl })));
 };
 var ImageOverlayContent = () => {
   const propContext = useBoundProp(backgroundImageOverlayPropTypeUtil2);
-  return /* @__PURE__ */ React49.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "image" }, /* @__PURE__ */ React49.createElement(Grid15, { container: true, spacing: 1, alignItems: "center" }, /* @__PURE__ */ React49.createElement(Grid15, { item: true, xs: 12 }, /* @__PURE__ */ React49.createElement(
-    ImageControl,
-    {
-      resolutionLabel: __19("Resolution", "elementor"),
-      sizes: backgroundResolutionOptions
-    }
-  )))), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "position" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlayPosition, null)), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "repeat" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlayRepeat, null)), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlaySize, null)), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "attachment" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlayAttachment, null)));
+  return /* @__PURE__ */ React50.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "image" }, /* @__PURE__ */ React50.createElement(Grid14, { container: true, spacing: 1, alignItems: "center" }, /* @__PURE__ */ React50.createElement(Grid14, { item: true, xs: 12 }, /* @__PURE__ */ React50.createElement(Grid14, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React50.createElement(Grid14, { item: true, xs: 6 }, /* @__PURE__ */ React50.createElement(ControlFormLabel, null, __18("Resolution", "elementor"))), /* @__PURE__ */ React50.createElement(Grid14, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React50.createElement(ImageControl, { sizes: backgroundResolutionOptions })))))), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "position" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlayPosition, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "repeat" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlayRepeat, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlaySize, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "attachment" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlayAttachment, null)));
 };
 var StyledUnstableColorIndicator = styled5(UnstableColorIndicator2)(({ theme }) => ({
   borderRadius: `${theme.shape.borderRadius / 2}px`
@@ -3405,20 +3397,8 @@ var getGradientValue = (value) => {
 var BackgroundControl = createControl(() => {
   const propContext = useBoundProp(backgroundPropTypeUtil);
   const isUsingNestedProps = isExperimentActive4("e_v_3_30");
-  const colorLabel = __20("Color", "elementor");
-  return /* @__PURE__ */ React50.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "background-overlay" }, /* @__PURE__ */ React50.createElement(BackgroundOverlayRepeaterControl, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React50.createElement(Grid16, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React50.createElement(Grid16, { item: true, xs: 6 }, isUsingNestedProps ? /* @__PURE__ */ React50.createElement(ControlLabel, null, colorLabel) : /* @__PURE__ */ React50.createElement(ControlFormLabel, null, colorLabel)), /* @__PURE__ */ React50.createElement(Grid16, { item: true, xs: 6 }, /* @__PURE__ */ React50.createElement(ColorControl, null)))));
-});
-
-// src/controls/switch-control.tsx
-import * as React51 from "react";
-import { booleanPropTypeUtil as booleanPropTypeUtil2 } from "@elementor/editor-props";
-import { Switch as Switch2 } from "@elementor/ui";
-var SwitchControl2 = createControl(() => {
-  const { value, setValue, disabled } = useBoundProp(booleanPropTypeUtil2);
-  const handleChange = (event) => {
-    setValue(event.target.checked);
-  };
-  return /* @__PURE__ */ React51.createElement("div", { style: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React51.createElement(Switch2, { checked: !!value, onChange: handleChange, size: "small", disabled }));
+  const colorLabel = __19("Color", "elementor");
+  return /* @__PURE__ */ React51.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React51.createElement(PropKeyProvider, { bind: "background-overlay" }, /* @__PURE__ */ React51.createElement(BackgroundOverlayRepeaterControl, null)), /* @__PURE__ */ React51.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React51.createElement(Grid15, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React51.createElement(Grid15, { item: true, xs: 6 }, isUsingNestedProps ? /* @__PURE__ */ React51.createElement(ControlLabel, null, colorLabel) : /* @__PURE__ */ React51.createElement(ControlFormLabel, null, colorLabel)), /* @__PURE__ */ React51.createElement(Grid15, { item: true, xs: 6 }, /* @__PURE__ */ React51.createElement(ColorControl, null)))));
 });
 
 // src/controls/repeatable-control.tsx
@@ -3505,8 +3485,8 @@ var interpolate = (template, data) => {
 import * as React53 from "react";
 import { useMemo as useMemo5, useState as useState11 } from "react";
 import { keyValuePropTypeUtil } from "@elementor/editor-props";
-import { FormHelperText, FormLabel as FormLabel3, Grid as Grid17, TextField as TextField9 } from "@elementor/ui";
-import { __ as __21 } from "@wordpress/i18n";
+import { FormHelperText, FormLabel as FormLabel3, Grid as Grid16, TextField as TextField9 } from "@elementor/ui";
+import { __ as __20 } from "@wordpress/i18n";
 var KeyValueControl = createControl((props = {}) => {
   const { value, setValue } = useBoundProp(keyValuePropTypeUtil);
   const [keyError, setKeyError] = useState11(null);
@@ -3515,13 +3495,13 @@ var KeyValueControl = createControl((props = {}) => {
     key: value?.key?.value || "",
     value: value?.value?.value || ""
   });
-  const keyLabel = props.keyName || __21("Key", "elementor");
-  const valueLabel = props.valueName || __21("Value", "elementor");
+  const keyLabel = props.keyName || __20("Key", "elementor");
+  const valueLabel = props.valueName || __20("Value", "elementor");
   const [keyRegex, valueRegex, errMsg] = useMemo5(
     () => [
       props.regexKey ? new RegExp(props.regexKey) : void 0,
       props.regexValue ? new RegExp(props.regexValue) : void 0,
-      props.validationErrorMessage || __21("Invalid Format", "elementor")
+      props.validationErrorMessage || __20("Invalid Format", "elementor")
     ],
     [props.regexKey, props.regexValue, props.validationErrorMessage]
   );
@@ -3563,7 +3543,7 @@ var KeyValueControl = createControl((props = {}) => {
   };
   const isKeyInvalid = keyError !== null;
   const isValueInvalid = valueError !== null;
-  return /* @__PURE__ */ React53.createElement(ControlActions, null, /* @__PURE__ */ React53.createElement(Grid17, { container: true, gap: 1.5 }, /* @__PURE__ */ React53.createElement(Grid17, { item: true, xs: 12 }, /* @__PURE__ */ React53.createElement(FormLabel3, { size: "tiny" }, keyLabel), /* @__PURE__ */ React53.createElement(
+  return /* @__PURE__ */ React53.createElement(ControlActions, null, /* @__PURE__ */ React53.createElement(Grid16, { container: true, gap: 1.5 }, /* @__PURE__ */ React53.createElement(Grid16, { item: true, xs: 12 }, /* @__PURE__ */ React53.createElement(FormLabel3, { size: "tiny" }, keyLabel), /* @__PURE__ */ React53.createElement(
     TextField9,
     {
       autoFocus: true,
@@ -3574,7 +3554,7 @@ var KeyValueControl = createControl((props = {}) => {
       onChange: (e) => handleChange(e, "key"),
       error: isKeyInvalid
     }
-  ), isKeyInvalid && /* @__PURE__ */ React53.createElement(FormHelperText, { error: true }, keyError)), /* @__PURE__ */ React53.createElement(Grid17, { item: true, xs: 12 }, /* @__PURE__ */ React53.createElement(FormLabel3, { size: "tiny" }, valueLabel), /* @__PURE__ */ React53.createElement(
+  ), isKeyInvalid && /* @__PURE__ */ React53.createElement(FormHelperText, { error: true }, keyError)), /* @__PURE__ */ React53.createElement(Grid16, { item: true, xs: 12 }, /* @__PURE__ */ React53.createElement(FormLabel3, { size: "tiny" }, valueLabel), /* @__PURE__ */ React53.createElement(
     TextField9,
     {
       sx: { pt: 1 },
@@ -3595,18 +3575,18 @@ import { positionPropTypeUtil, stringPropTypeUtil as stringPropTypeUtil11 } from
 import { MenuListItem as MenuListItem6 } from "@elementor/editor-ui";
 import { isExperimentActive as isExperimentActive5 } from "@elementor/editor-v1-adapters";
 import { LetterXIcon as LetterXIcon2, LetterYIcon as LetterYIcon2 } from "@elementor/icons";
-import { Grid as Grid18, Select as Select5 } from "@elementor/ui";
-import { __ as __22 } from "@wordpress/i18n";
+import { Grid as Grid17, Select as Select5 } from "@elementor/ui";
+import { __ as __21 } from "@wordpress/i18n";
 var positionOptions = [
-  { label: __22("Center center", "elementor"), value: "center center" },
-  { label: __22("Center left", "elementor"), value: "center left" },
-  { label: __22("Center right", "elementor"), value: "center right" },
-  { label: __22("Top center", "elementor"), value: "top center" },
-  { label: __22("Top left", "elementor"), value: "top left" },
-  { label: __22("Top right", "elementor"), value: "top right" },
-  { label: __22("Bottom center", "elementor"), value: "bottom center" },
-  { label: __22("Bottom left", "elementor"), value: "bottom left" },
-  { label: __22("Bottom right", "elementor"), value: "bottom right" }
+  { label: __21("Center center", "elementor"), value: "center center" },
+  { label: __21("Center left", "elementor"), value: "center left" },
+  { label: __21("Center right", "elementor"), value: "center right" },
+  { label: __21("Top center", "elementor"), value: "top center" },
+  { label: __21("Top left", "elementor"), value: "top left" },
+  { label: __21("Top right", "elementor"), value: "top right" },
+  { label: __21("Bottom center", "elementor"), value: "bottom center" },
+  { label: __21("Bottom left", "elementor"), value: "bottom left" },
+  { label: __21("Bottom right", "elementor"), value: "bottom right" }
 ];
 var PositionControl = () => {
   const positionContext = useBoundProp(positionPropTypeUtil);
@@ -3616,7 +3596,7 @@ var PositionControl = () => {
   const availablePositionOptions = useMemo6(() => {
     const options = [...positionOptions];
     if (isVersion331Active) {
-      options.push({ label: __22("Custom", "elementor"), value: "custom" });
+      options.push({ label: __21("Custom", "elementor"), value: "custom" });
     }
     return options;
   }, [isVersion331Active]);
@@ -3628,7 +3608,7 @@ var PositionControl = () => {
       stringPropContext.setValue(value);
     }
   };
-  return /* @__PURE__ */ React54.createElement(Grid18, { container: true, spacing: 1.5 }, /* @__PURE__ */ React54.createElement(Grid18, { item: true, xs: 12 }, /* @__PURE__ */ React54.createElement(Grid18, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React54.createElement(Grid18, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(ControlFormLabel, null, __22("Object position", "elementor"))), /* @__PURE__ */ React54.createElement(Grid18, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React54.createElement(
+  return /* @__PURE__ */ React54.createElement(Grid17, { container: true, spacing: 1.5 }, /* @__PURE__ */ React54.createElement(Grid17, { item: true, xs: 12 }, /* @__PURE__ */ React54.createElement(Grid17, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React54.createElement(Grid17, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(ControlFormLabel, null, __21("Object position", "elementor"))), /* @__PURE__ */ React54.createElement(Grid17, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React54.createElement(
     Select5,
     {
       size: "tiny",
@@ -3638,7 +3618,7 @@ var PositionControl = () => {
       fullWidth: true
     },
     availablePositionOptions.map(({ label, value }) => /* @__PURE__ */ React54.createElement(MenuListItem6, { key: value, value: value ?? "" }, label))
-  )))), isCustom && /* @__PURE__ */ React54.createElement(PropProvider, { ...positionContext }, /* @__PURE__ */ React54.createElement(Grid18, { item: true, xs: 12 }, /* @__PURE__ */ React54.createElement(Grid18, { container: true, spacing: 1.5 }, /* @__PURE__ */ React54.createElement(Grid18, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(PropKeyProvider, { bind: "x" }, /* @__PURE__ */ React54.createElement(SizeControl, { startIcon: /* @__PURE__ */ React54.createElement(LetterXIcon2, { fontSize: "tiny" }) }))), /* @__PURE__ */ React54.createElement(Grid18, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(PropKeyProvider, { bind: "y" }, /* @__PURE__ */ React54.createElement(SizeControl, { startIcon: /* @__PURE__ */ React54.createElement(LetterYIcon2, { fontSize: "tiny" }) })))))));
+  )))), isCustom && /* @__PURE__ */ React54.createElement(PropProvider, { ...positionContext }, /* @__PURE__ */ React54.createElement(Grid17, { item: true, xs: 12 }, /* @__PURE__ */ React54.createElement(Grid17, { container: true, spacing: 1.5 }, /* @__PURE__ */ React54.createElement(Grid17, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(PropKeyProvider, { bind: "x" }, /* @__PURE__ */ React54.createElement(SizeControl, { startIcon: /* @__PURE__ */ React54.createElement(LetterXIcon2, { fontSize: "tiny" }) }))), /* @__PURE__ */ React54.createElement(Grid17, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(PropKeyProvider, { bind: "y" }, /* @__PURE__ */ React54.createElement(SizeControl, { startIcon: /* @__PURE__ */ React54.createElement(LetterYIcon2, { fontSize: "tiny" }) })))))));
 };
 export {
   AspectRatioControl,
@@ -3670,7 +3650,7 @@ export {
   SizeControl,
   StrokeControl,
   SvgMediaControl,
-  SwitchControl2 as SwitchControl,
+  SwitchControl,
   TextAreaControl,
   TextControl,
   ToggleControl,

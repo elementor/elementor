@@ -9,10 +9,9 @@ type ImageControlProps = {
         label: string;
         value: string;
     }[];
-    resolutionLabel?: string;
     showMode?: 'all' | 'media' | 'sizes';
 };
-declare const ImageControl: ControlComponent<({ sizes, resolutionLabel, showMode }: ImageControlProps) => React$1.JSX.Element>;
+declare const ImageControl: ControlComponent<({ sizes, showMode }: ImageControlProps) => React$1.JSX.Element>;
 
 declare const TextControl: ControlComponent<({ placeholder }: {
     placeholder?: string;
@@ -101,7 +100,7 @@ type ToggleControlProps<T extends PropValue> = {
 };
 declare const ToggleControl: ControlComponent<({ options, fullWidth, size, exclusive, maxItems, }: ToggleControlProps<StringPropValue["value"]>) => React$1.JSX.Element>;
 
-declare const NumberControl: ControlComponent<({ placeholder, max, min, step, shouldForceInt, }: {
+declare const NumberControl: ControlComponent<({ placeholder: labelPlaceholder, max, min, step, shouldForceInt, }: {
     placeholder?: string;
     max?: number;
     min?: number;
@@ -159,6 +158,7 @@ type Props$1 = ControlProps<{
     allowCustomValues?: boolean;
     minInputLength?: number;
     placeholder?: string;
+    label?: string;
 }>;
 declare const LinkControl: ControlComponent<(props: Props$1) => React$1.JSX.Element>;
 
@@ -245,11 +245,11 @@ type PropContext<T extends PropValue, P extends PropType> = {
     value: T | null;
     propType: P;
     placeholder?: T;
-    disabled?: boolean;
+    isDisabled?: (propType: PropType) => boolean | undefined;
 };
 declare const PropContext: React$1.Context<PropContext<PropValue, PropType> | null>;
 type PropProviderProps<T extends PropValue, P extends PropType> = React$1.PropsWithChildren<PropContext<T, P>>;
-declare const PropProvider: <T extends PropValue, P extends PropType>({ children, value, setValue, propType, placeholder, disabled, }: PropProviderProps<T, P>) => React$1.JSX.Element;
+declare const PropProvider: <T extends PropValue, P extends PropType>({ children, value, setValue, propType, placeholder, isDisabled, }: PropProviderProps<T, P>) => React$1.JSX.Element;
 
 type PropKeyContextValue<T, P> = {
     bind: PropKey;
@@ -258,6 +258,7 @@ type PropKeyContextValue<T, P> = {
     propType: P;
     placeholder?: T;
     path: PropKey[];
+    isDisabled?: (propType: PropType) => boolean | undefined;
     disabled?: boolean;
 };
 type PropKeyProviderProps = React$1.PropsWithChildren<{
@@ -273,6 +274,7 @@ type UseBoundProp<TValue extends PropValue> = {
     placeholder?: TValue;
     path: PropKey[];
     restoreValue: () => void;
+    isDisabled?: (propType: PropType) => boolean | undefined;
     disabled?: boolean;
 };
 declare function useBoundProp<T extends PropValue = PropValue, P extends PropType = PropType>(): PropKeyContextValue<T, P>;

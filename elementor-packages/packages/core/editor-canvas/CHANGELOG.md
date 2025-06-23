@@ -1,5 +1,30 @@
 # @elementor/editor-canvas
 
+## 0.25.0
+
+### Minor Changes
+
+- ab6ad10: Adds support for css filter property, blur and brightness only.
+- c694e33: updated overlay styling for small elements
+  changed default tab for editing panel for divider widget
+
+### Patch Changes
+
+- Updated dependencies [e953081]
+- Updated dependencies [ab6ad10]
+- Updated dependencies [ea388a1]
+- Updated dependencies [16df763]
+  - @elementor/utils@0.5.0
+  - @elementor/editor-props@0.15.0
+  - @elementor/editor-elements@0.8.7
+  - @elementor/editor-styles-repository@0.10.4
+  - @elementor/editor-v1-adapters@0.12.1
+  - @elementor/wp-media@0.6.1
+  - @elementor/editor-styles@0.6.11
+  - @elementor/editor@0.20.1
+  - @elementor/editor-responsive@0.13.6
+  - @elementor/editor-notifications@1.3.1
+
 ## 0.24.0
 
 ### Minor Changes

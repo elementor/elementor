@@ -2,7 +2,6 @@ import * as React from 'react';
 import { type PropsWithChildren, useMemo, useState } from 'react';
 import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
 import {
-	booleanPropTypeUtil,
 	linkPropTypeUtil,
 	type LinkPropValue,
 	numberPropTypeUtil,
@@ -13,7 +12,7 @@ import { InfoTipCard } from '@elementor/editor-ui';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { AlertTriangleIcon, MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
-import { Box, Collapse, Grid, IconButton, Infotip, Stack, Switch } from '@elementor/ui';
+import { Box, Collapse, Grid, IconButton, Infotip, Stack } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
@@ -29,6 +28,7 @@ import { ControlFormLabel } from '../components/control-form-label';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
+import { SwitchControl } from './switch-control';
 
 type Props = ControlProps< {
 	queryOptions: {
@@ -38,6 +38,7 @@ type Props = ControlProps< {
 	allowCustomValues?: boolean;
 	minInputLength?: number;
 	placeholder?: string;
+	label?: string;
 } >;
 
 type LinkSessionValue = {
@@ -66,6 +67,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 		placeholder,
 		minInputLength = 2,
 		context: { elementId },
+		label = __( 'Link', 'elementor' ),
 	} = props || {};
 
 	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
@@ -163,7 +165,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 						marginInlineEnd: -0.75,
 					} }
 				>
-					<ControlFormLabel>{ __( 'Link', 'elementor' ) }</ControlFormLabel>
+					<ControlFormLabel>{ label }</ControlFormLabel>
 					<ConditionalInfoTip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
 						<ToggleIconControl
 							disabled={ shouldDisableAddingLink }
@@ -189,7 +191,14 @@ export const LinkControl = createControl( ( props: Props ) => {
 							</ControlActions>
 						</PropKeyProvider>
 						<PropKeyProvider bind={ 'isTargetBlank' }>
-							<SwitchControl disabled={ propContext.disabled || ! value } />
+							<Grid container alignItems="center" flexWrap="nowrap" justifyContent="space-between">
+								<Grid item>
+									<ControlFormLabel>{ __( 'Open in a new tab', 'elementor' ) }</ControlFormLabel>
+								</Grid>
+								<Grid item sx={ { marginInlineEnd: -1 } }>
+									<SwitchControl />
+								</Grid>
+							</Grid>
 						</PropKeyProvider>
 					</Stack>
 				</Collapse>
@@ -210,34 +219,6 @@ const ToggleIconControl = ( { disabled, active, onIconClick, label }: ToggleIcon
 		<IconButton size={ SIZE } onClick={ onIconClick } aria-label={ label } disabled={ disabled }>
 			{ active ? <MinusIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
 		</IconButton>
-	);
-};
-
-// @TODO Should be refactored in ED-16323
-const SwitchControl = ( { disabled }: { disabled: boolean } ) => {
-	const { value = false, setValue } = useBoundProp( booleanPropTypeUtil );
-
-	const onClick = () => {
-		setValue( ! value );
-	};
-
-	const inputProps = disabled
-		? {
-				style: {
-					opacity: 0,
-				},
-		  }
-		: {};
-
-	return (
-		<Grid container alignItems="center" flexWrap="nowrap" justifyContent="space-between">
-			<Grid item>
-				<ControlFormLabel>{ __( 'Open in a new tab', 'elementor' ) }</ControlFormLabel>
-			</Grid>
-			<Grid item sx={ { marginInlineEnd: -1 } }>
-				<Switch checked={ value } onClick={ onClick } disabled={ disabled } inputProps={ inputProps } />
-			</Grid>
-		</Grid>
 	);
 };
 

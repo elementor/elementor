@@ -1,14 +1,14 @@
 import * as React from 'react';
-import { ColorFilterIcon } from '@elementor/icons';
 import { Link, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type Props = {
 	searchValue: string;
 	onClear?: () => void;
+	icon?: React.ReactNode;
 };
 
-export const NoSearchResults = ( { searchValue, onClear }: Props ) => {
+export const NoSearchResults = ( { searchValue, onClear, icon }: Props ) => {
 	return (
 		<Stack
 			gap={ 1 }
@@ -19,7 +19,7 @@ export const NoSearchResults = ( { searchValue, onClear }: Props ) => {
 			color="text.secondary"
 			sx={ { pb: 3.5 } }
 		>
-			<ColorFilterIcon fontSize="large" />
+			{ icon }
 			<Typography align="center" variant="subtitle2">
 				{ __( 'Sorry, nothing matched', 'elementor' ) }
 				<br />

@@ -59,7 +59,7 @@ __export(index_exports, {
   SizeControl: () => SizeControl,
   StrokeControl: () => StrokeControl,
   SvgMediaControl: () => SvgMediaControl,
-  SwitchControl: () => SwitchControl2,
+  SwitchControl: () => SwitchControl,
   TextAreaControl: () => TextAreaControl,
   TextControl: () => TextControl,
   ToggleControl: () => ToggleControl,
@@ -74,10 +74,9 @@ __export(index_exports, {
 module.exports = __toCommonJS(index_exports);
 
 // src/controls/image-control.tsx
-var React10 = __toESM(require("react"));
+var React9 = __toESM(require("react"));
 var import_editor_props3 = require("@elementor/editor-props");
-var import_ui6 = require("@elementor/ui");
-var import_i18n2 = require("@wordpress/i18n");
+var import_ui5 = require("@elementor/ui");
 
 // src/bound-prop-context/prop-context.tsx
 var React = __toESM(require("react"));
@@ -106,7 +105,7 @@ var PropProvider = ({
   setValue,
   propType,
   placeholder,
-  disabled
+  isDisabled
 }) => {
   return /* @__PURE__ */ React.createElement(
     PropContext.Provider,
@@ -116,7 +115,7 @@ var PropProvider = ({
         propType,
         setValue,
         placeholder,
-        disabled
+        isDisabled
       }
     },
     children
@@ -206,8 +205,9 @@ var import_react3 = require("react");
 function useBoundProp(propTypeUtil) {
   const propKeyContext = usePropKeyContext();
   const { isValid, validate, restoreValue } = useValidation(propKeyContext.propType);
+  const disabled = propKeyContext.isDisabled?.(propKeyContext.propType);
   if (!propTypeUtil) {
-    return propKeyContext;
+    return { ...propKeyContext, disabled };
   }
   function setValue(value2, options, meta) {
     if (!validate(value2)) {
@@ -227,7 +227,8 @@ function useBoundProp(propTypeUtil) {
     setValue,
     value: isValid ? value : null,
     restoreValue,
-    placeholder
+    placeholder,
+    disabled
   };
 }
 var useValidation = (propType) => {
@@ -259,23 +260,16 @@ var resolveUnionPropType = (propType, key) => {
   return resolvedPropType;
 };
 
-// src/components/control-form-label.tsx
-var React3 = __toESM(require("react"));
-var import_ui = require("@elementor/ui");
-var ControlFormLabel = (props) => {
-  return /* @__PURE__ */ React3.createElement(import_ui.FormLabel, { size: "tiny", ...props });
-};
-
 // src/create-control.tsx
-var React5 = __toESM(require("react"));
-var import_ui2 = require("@elementor/ui");
+var React4 = __toESM(require("react"));
+var import_ui = require("@elementor/ui");
 
 // src/control-replacements.tsx
-var React4 = __toESM(require("react"));
+var React3 = __toESM(require("react"));
 var import_react4 = require("react");
 var ControlReplacementContext = (0, import_react4.createContext)([]);
 var ControlReplacementsProvider = ({ replacements, children }) => {
-  return /* @__PURE__ */ React4.createElement(ControlReplacementContext.Provider, { value: replacements }, children);
+  return /* @__PURE__ */ React3.createElement(ControlReplacementContext.Provider, { value: replacements }, children);
 };
 var useControlReplacement = (OriginalComponent) => {
   const { value } = useBoundProp();
@@ -303,7 +297,7 @@ var brandSymbol = Symbol("control");
 function createControl(Control5) {
   return (props) => {
     const Component = useControlReplacement(Control5);
-    return /* @__PURE__ */ React5.createElement(import_ui2.ErrorBoundary, { fallback: null }, /* @__PURE__ */ React5.createElement(Component, { ...props }));
+    return /* @__PURE__ */ React4.createElement(import_ui.ErrorBoundary, { fallback: null }, /* @__PURE__ */ React4.createElement(Component, { ...props }));
   };
 }
 
@@ -347,22 +341,22 @@ var formatResponse = (response) => {
 };
 
 // src/controls/image-media-control.tsx
-var React8 = __toESM(require("react"));
+var React7 = __toESM(require("react"));
 var import_editor_props = require("@elementor/editor-props");
 var import_icons = require("@elementor/icons");
-var import_ui4 = require("@elementor/ui");
+var import_ui3 = require("@elementor/ui");
 var import_wp_media = require("@elementor/wp-media");
 var import_i18n = require("@wordpress/i18n");
 
 // src/control-actions/control-actions.tsx
-var React7 = __toESM(require("react"));
-var import_ui3 = require("@elementor/ui");
+var React6 = __toESM(require("react"));
+var import_ui2 = require("@elementor/ui");
 
 // src/control-actions/control-actions-context.tsx
-var React6 = __toESM(require("react"));
+var React5 = __toESM(require("react"));
 var import_react5 = require("react");
 var Context = (0, import_react5.createContext)(null);
-var ControlActionsProvider = ({ children, items }) => /* @__PURE__ */ React6.createElement(Context.Provider, { value: { items } }, children);
+var ControlActionsProvider = ({ children, items }) => /* @__PURE__ */ React5.createElement(Context.Provider, { value: { items } }, children);
 var useControlActions = () => {
   const context = (0, import_react5.useContext)(Context);
   if (!context) {
@@ -372,7 +366,7 @@ var useControlActions = () => {
 };
 
 // src/control-actions/control-actions.tsx
-var FloatingBarContainer = (0, import_ui3.styled)("span")`
+var FloatingBarContainer = (0, import_ui2.styled)("span")`
 	display: contents;
 
 	.MuiFloatingActionBar-popper:has( .MuiFloatingActionBar-actions:empty ) {
@@ -389,8 +383,8 @@ function ControlActions({ children }) {
   if (items.length === 0 || disabled) {
     return children;
   }
-  const menuItems = items.map(({ MenuItem: MenuItem2, id }) => /* @__PURE__ */ React7.createElement(MenuItem2, { key: id }));
-  return /* @__PURE__ */ React7.createElement(FloatingBarContainer, null, /* @__PURE__ */ React7.createElement(import_ui3.UnstableFloatingActionBar, { actions: menuItems }, children));
+  const menuItems = items.map(({ MenuItem: MenuItem2, id }) => /* @__PURE__ */ React6.createElement(MenuItem2, { key: id }));
+  return /* @__PURE__ */ React6.createElement(FloatingBarContainer, null, /* @__PURE__ */ React6.createElement(import_ui2.UnstableFloatingActionBar, { actions: menuItems }, children));
 }
 
 // src/controls/image-media-control.tsx
@@ -413,8 +407,8 @@ var ImageMediaControl = createControl(({ mediaTypes = ["image"] }) => {
       });
     }
   });
-  return /* @__PURE__ */ React8.createElement(ControlActions, null, /* @__PURE__ */ React8.createElement(import_ui4.Card, { variant: "outlined" }, /* @__PURE__ */ React8.createElement(import_ui4.CardMedia, { image: src, sx: { height: 150 } }, isFetching ? /* @__PURE__ */ React8.createElement(import_ui4.Stack, { justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }, /* @__PURE__ */ React8.createElement(import_ui4.CircularProgress, null)) : /* @__PURE__ */ React8.createElement(React8.Fragment, null)), /* @__PURE__ */ React8.createElement(import_ui4.CardOverlay, null, /* @__PURE__ */ React8.createElement(import_ui4.Stack, { gap: 1 }, /* @__PURE__ */ React8.createElement(
-    import_ui4.Button,
+  return /* @__PURE__ */ React7.createElement(ControlActions, null, /* @__PURE__ */ React7.createElement(import_ui3.Card, { variant: "outlined" }, /* @__PURE__ */ React7.createElement(import_ui3.CardMedia, { image: src, sx: { height: 150 } }, isFetching ? /* @__PURE__ */ React7.createElement(import_ui3.Stack, { justifyContent: "center", alignItems: "center", width: "100%", height: "100%" }, /* @__PURE__ */ React7.createElement(import_ui3.CircularProgress, null)) : /* @__PURE__ */ React7.createElement(React7.Fragment, null)), /* @__PURE__ */ React7.createElement(import_ui3.CardOverlay, null, /* @__PURE__ */ React7.createElement(import_ui3.Stack, { gap: 1 }, /* @__PURE__ */ React7.createElement(
+    import_ui3.Button,
     {
       size: "tiny",
       color: "inherit",
@@ -422,13 +416,13 @@ var ImageMediaControl = createControl(({ mediaTypes = ["image"] }) => {
       onClick: () => open({ mode: "browse" })
     },
     (0, import_i18n.__)("Select image", "elementor")
-  ), /* @__PURE__ */ React8.createElement(
-    import_ui4.Button,
+  ), /* @__PURE__ */ React7.createElement(
+    import_ui3.Button,
     {
       size: "tiny",
       variant: "text",
       color: "inherit",
-      startIcon: /* @__PURE__ */ React8.createElement(import_icons.UploadIcon, null),
+      startIcon: /* @__PURE__ */ React7.createElement(import_icons.UploadIcon, null),
       onClick: () => open({ mode: "upload" })
     },
     (0, import_i18n.__)("Upload", "elementor")
@@ -436,10 +430,10 @@ var ImageMediaControl = createControl(({ mediaTypes = ["image"] }) => {
 });
 
 // src/controls/select-control.tsx
-var React9 = __toESM(require("react"));
+var React8 = __toESM(require("react"));
 var import_editor_props2 = require("@elementor/editor-props");
 var import_editor_ui = require("@elementor/editor-ui");
-var import_ui5 = require("@elementor/ui");
+var import_ui4 = require("@elementor/ui");
 var SelectControl = createControl(({ options, onChange }) => {
   const { value, setValue, disabled } = useBoundProp(import_editor_props2.stringPropTypeUtil);
   const handleChange = (event) => {
@@ -447,8 +441,8 @@ var SelectControl = createControl(({ options, onChange }) => {
     onChange?.(newValue, value);
     setValue(newValue);
   };
-  return /* @__PURE__ */ React9.createElement(ControlActions, null, /* @__PURE__ */ React9.createElement(
-    import_ui5.Select,
+  return /* @__PURE__ */ React8.createElement(ControlActions, null, /* @__PURE__ */ React8.createElement(
+    import_ui4.Select,
     {
       sx: { overflow: "hidden" },
       displayEmpty: true,
@@ -458,29 +452,27 @@ var SelectControl = createControl(({ options, onChange }) => {
       disabled,
       fullWidth: true
     },
-    options.map(({ label, ...props }) => /* @__PURE__ */ React9.createElement(import_editor_ui.MenuListItem, { key: props.value, ...props, value: props.value ?? "" }, label))
+    options.map(({ label, ...props }) => /* @__PURE__ */ React8.createElement(import_editor_ui.MenuListItem, { key: props.value, ...props, value: props.value ?? "" }, label))
   ));
 });
 
 // src/controls/image-control.tsx
-var ImageControl = createControl(
-  ({ sizes, resolutionLabel = (0, import_i18n2.__)("Image resolution", "elementor"), showMode = "all" }) => {
-    const propContext = useBoundProp(import_editor_props3.imagePropTypeUtil);
-    const { data: allowSvgUpload } = useUnfilteredFilesUpload();
-    const mediaTypes = allowSvgUpload ? ["image", "svg"] : ["image"];
-    return /* @__PURE__ */ React10.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React10.createElement(import_ui6.Stack, { gap: 1.5 }, ["all", "media"].includes(showMode) ? /* @__PURE__ */ React10.createElement(PropKeyProvider, { bind: "src" }, /* @__PURE__ */ React10.createElement(ControlFormLabel, null, (0, import_i18n2.__)("Image", "elementor")), /* @__PURE__ */ React10.createElement(ImageMediaControl, { mediaTypes })) : null, ["all", "sizes"].includes(showMode) ? /* @__PURE__ */ React10.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React10.createElement(import_ui6.Grid, { container: true, gap: 1.5, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React10.createElement(import_ui6.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React10.createElement(ControlFormLabel, null, resolutionLabel)), /* @__PURE__ */ React10.createElement(import_ui6.Grid, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React10.createElement(SelectControl, { options: sizes })))) : null));
-  }
-);
+var ImageControl = createControl(({ sizes, showMode = "all" }) => {
+  const propContext = useBoundProp(import_editor_props3.imagePropTypeUtil);
+  const { data: allowSvgUpload } = useUnfilteredFilesUpload();
+  const mediaTypes = allowSvgUpload ? ["image", "svg"] : ["image"];
+  return /* @__PURE__ */ React9.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React9.createElement(import_ui5.Stack, { gap: 1.5 }, ["all", "media"].includes(showMode) ? /* @__PURE__ */ React9.createElement(PropKeyProvider, { bind: "src" }, /* @__PURE__ */ React9.createElement(ImageMediaControl, { mediaTypes })) : null, ["all", "sizes"].includes(showMode) ? /* @__PURE__ */ React9.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React9.createElement(SelectControl, { options: sizes })) : null));
+});
 
 // src/controls/text-control.tsx
-var React11 = __toESM(require("react"));
+var React10 = __toESM(require("react"));
 var import_editor_props4 = require("@elementor/editor-props");
-var import_ui7 = require("@elementor/ui");
+var import_ui6 = require("@elementor/ui");
 var TextControl = createControl(({ placeholder }) => {
   const { value, setValue, disabled } = useBoundProp(import_editor_props4.stringPropTypeUtil);
   const handleChange = (event) => setValue(event.target.value);
-  return /* @__PURE__ */ React11.createElement(ControlActions, null, /* @__PURE__ */ React11.createElement(
-    import_ui7.TextField,
+  return /* @__PURE__ */ React10.createElement(ControlActions, null, /* @__PURE__ */ React10.createElement(
+    import_ui6.TextField,
     {
       size: "tiny",
       fullWidth: true,
@@ -493,16 +485,16 @@ var TextControl = createControl(({ placeholder }) => {
 });
 
 // src/controls/text-area-control.tsx
-var React12 = __toESM(require("react"));
+var React11 = __toESM(require("react"));
 var import_editor_props5 = require("@elementor/editor-props");
-var import_ui8 = require("@elementor/ui");
+var import_ui7 = require("@elementor/ui");
 var TextAreaControl = createControl(({ placeholder }) => {
   const { value, setValue, disabled } = useBoundProp(import_editor_props5.stringPropTypeUtil);
   const handleChange = (event) => {
     setValue(event.target.value);
   };
-  return /* @__PURE__ */ React12.createElement(ControlActions, null, /* @__PURE__ */ React12.createElement(
-    import_ui8.TextField,
+  return /* @__PURE__ */ React11.createElement(ControlActions, null, /* @__PURE__ */ React11.createElement(
+    import_ui7.TextField,
     {
       size: "tiny",
       multiline: true,
@@ -517,17 +509,17 @@ var TextAreaControl = createControl(({ placeholder }) => {
 });
 
 // src/controls/size-control.tsx
-var React16 = __toESM(require("react"));
+var React15 = __toESM(require("react"));
 var import_react10 = require("react");
 var import_editor_props6 = require("@elementor/editor-props");
 var import_editor_responsive = require("@elementor/editor-responsive");
-var import_ui12 = require("@elementor/ui");
+var import_ui11 = require("@elementor/ui");
 
 // src/components/size-control/size-input.tsx
-var React14 = __toESM(require("react"));
+var React13 = __toESM(require("react"));
 var import_react7 = require("react");
 var import_icons2 = require("@elementor/icons");
-var import_ui10 = require("@elementor/ui");
+var import_ui9 = require("@elementor/ui");
 
 // src/utils/size-control.ts
 var defaultUnits = ["px", "%", "em", "rem", "vw", "vh"];
@@ -537,10 +529,10 @@ function isUnitExtendedOption(unit) {
 }
 
 // src/components/size-control/text-field-inner-selection.tsx
-var React13 = __toESM(require("react"));
+var React12 = __toESM(require("react"));
 var import_react6 = require("react");
 var import_editor_ui2 = require("@elementor/editor-ui");
-var import_ui9 = require("@elementor/ui");
+var import_ui8 = require("@elementor/ui");
 var TextFieldInnerSelection = (0, import_react6.forwardRef)(
   ({
     placeholder,
@@ -554,8 +546,8 @@ var TextFieldInnerSelection = (0, import_react6.forwardRef)(
     inputProps,
     disabled
   }, ref) => {
-    return /* @__PURE__ */ React13.createElement(
-      import_ui9.TextField,
+    return /* @__PURE__ */ React12.createElement(
+      import_ui8.TextField,
       {
         ref,
         sx: { input: { cursor: shouldBlockInput ? "default !important" : void 0 } },
@@ -582,7 +574,7 @@ var SelectionEndAdornment = ({
   menuItemsAttributes = {},
   disabled
 }) => {
-  const popupState = (0, import_ui9.usePopupState)({
+  const popupState = (0, import_ui8.usePopupState)({
     variant: "popover",
     popupId: (0, import_react6.useId)()
   });
@@ -590,17 +582,17 @@ var SelectionEndAdornment = ({
     onClick(options[index]);
     popupState.close();
   };
-  return /* @__PURE__ */ React13.createElement(import_ui9.InputAdornment, { position: "end" }, /* @__PURE__ */ React13.createElement(
-    import_ui9.Button,
+  return /* @__PURE__ */ React12.createElement(import_ui8.InputAdornment, { position: "end" }, /* @__PURE__ */ React12.createElement(
+    import_ui8.Button,
     {
       size: "small",
       color: "secondary",
       disabled,
       sx: { font: "inherit", minWidth: "initial", textTransform: "uppercase" },
-      ...(0, import_ui9.bindTrigger)(popupState)
+      ...(0, import_ui8.bindTrigger)(popupState)
     },
     alternativeOptionLabels[value] ?? value
-  ), /* @__PURE__ */ React13.createElement(import_ui9.Menu, { MenuListProps: { dense: true }, ...(0, import_ui9.bindMenu)(popupState) }, options.map((option, index) => /* @__PURE__ */ React13.createElement(
+  ), /* @__PURE__ */ React12.createElement(import_ui8.Menu, { MenuListProps: { dense: true }, ...(0, import_ui8.bindMenu)(popupState) }, options.map((option, index) => /* @__PURE__ */ React12.createElement(
     import_editor_ui2.MenuListItem,
     {
       key: option,
@@ -653,8 +645,8 @@ var SizeInput = ({
     autoComplete: "off",
     onClick,
     onFocus,
-    startAdornment: startIcon ? /* @__PURE__ */ React14.createElement(import_ui10.InputAdornment, { position: "start", disabled }, startIcon) : void 0,
-    endAdornment: /* @__PURE__ */ React14.createElement(
+    startAdornment: startIcon ? /* @__PURE__ */ React13.createElement(import_ui9.InputAdornment, { position: "start", disabled }, startIcon) : void 0,
+    endAdornment: /* @__PURE__ */ React13.createElement(
       SelectionEndAdornment,
       {
         disabled,
@@ -662,7 +654,7 @@ var SizeInput = ({
         onClick: handleUnitChange,
         value: unit,
         alternativeOptionLabels: {
-          custom: /* @__PURE__ */ React14.createElement(import_icons2.PencilIcon, { fontSize: "small" })
+          custom: /* @__PURE__ */ React13.createElement(import_icons2.PencilIcon, { fontSize: "small" })
         },
         menuItemsAttributes: units2.includes("custom") ? {
           custom: popupAttributes
@@ -670,7 +662,7 @@ var SizeInput = ({
       }
     )
   };
-  return /* @__PURE__ */ React14.createElement(ControlActions, null, /* @__PURE__ */ React14.createElement(import_ui10.Box, null, /* @__PURE__ */ React14.createElement(
+  return /* @__PURE__ */ React13.createElement(ControlActions, null, /* @__PURE__ */ React13.createElement(import_ui9.Box, null, /* @__PURE__ */ React13.createElement(
     TextFieldInnerSelection,
     {
       disabled,
@@ -692,15 +684,15 @@ var SizeInput = ({
 };
 
 // src/components/text-field-popover.tsx
-var React15 = __toESM(require("react"));
-var import_ui11 = require("@elementor/ui");
+var React14 = __toESM(require("react"));
+var import_ui10 = require("@elementor/ui");
 var TextFieldPopover = (props) => {
   const { popupState, restoreValue, anchorRef, value, onChange } = props;
-  return /* @__PURE__ */ React15.createElement(
-    import_ui11.Popover,
+  return /* @__PURE__ */ React14.createElement(
+    import_ui10.Popover,
     {
       disablePortal: true,
-      ...(0, import_ui11.bindPopover)(popupState),
+      ...(0, import_ui10.bindPopover)(popupState),
       anchorOrigin: { vertical: "bottom", horizontal: "center" },
       transformOrigin: { vertical: "top", horizontal: "center" },
       onClose: () => {
@@ -708,8 +700,8 @@ var TextFieldPopover = (props) => {
         popupState.close();
       }
     },
-    /* @__PURE__ */ React15.createElement(
-      import_ui11.Paper,
+    /* @__PURE__ */ React14.createElement(
+      import_ui10.Paper,
       {
         sx: {
           width: anchorRef.current?.offsetWidth + "px",
@@ -717,8 +709,8 @@ var TextFieldPopover = (props) => {
           p: 1.5
         }
       },
-      /* @__PURE__ */ React15.createElement(
-        import_ui11.TextField,
+      /* @__PURE__ */ React14.createElement(
+        import_ui10.TextField,
         {
           value,
           onChange,
@@ -795,7 +787,7 @@ var SizeControl = createControl((props) => {
   const [internalState, setInternalState] = (0, import_react10.useState)(createStateFromSizeProp(sizeValue, defaultUnit));
   const activeBreakpoint = (0, import_editor_responsive.useActiveBreakpoint)();
   const extendedOptions = useSizeExtendedOptions(props.extendedOptions || [], props.disableCustom ?? false);
-  const popupState = (0, import_ui12.usePopupState)({ variant: "popover" });
+  const popupState = (0, import_ui11.usePopupState)({ variant: "popover" });
   const [state, setState] = useSyncExternalState({
     external: internalState,
     setExternal: (newState) => setSizeValue(extractValueFromState(newState)),
@@ -862,7 +854,7 @@ var SizeControl = createControl((props) => {
       setState(newState);
     }
   }, [activeBreakpoint]);
-  return /* @__PURE__ */ React16.createElement(React16.Fragment, null, /* @__PURE__ */ React16.createElement(
+  return /* @__PURE__ */ React15.createElement(React15.Fragment, null, /* @__PURE__ */ React15.createElement(
     SizeInput,
     {
       disabled,
@@ -878,7 +870,7 @@ var SizeControl = createControl((props) => {
       onClick: onInputClick,
       popupState
     }
-  ), anchorRef?.current && /* @__PURE__ */ React16.createElement(
+  ), anchorRef?.current && /* @__PURE__ */ React15.createElement(
     TextFieldPopover,
     {
       popupState,
@@ -935,7 +927,14 @@ var React19 = __toESM(require("react"));
 var import_react11 = require("react");
 var import_editor_props8 = require("@elementor/editor-props");
 var import_ui15 = require("@elementor/ui");
-var import_i18n3 = require("@wordpress/i18n");
+var import_i18n2 = require("@wordpress/i18n");
+
+// src/components/control-form-label.tsx
+var React16 = __toESM(require("react"));
+var import_ui12 = require("@elementor/ui");
+var ControlFormLabel = (props) => {
+  return /* @__PURE__ */ React16.createElement(import_ui12.FormLabel, { size: "tiny", ...props });
+};
 
 // src/components/section-content.tsx
 var React17 = __toESM(require("react"));
@@ -985,7 +984,7 @@ var units = ["px", "em", "rem"];
 var StrokeControl = createControl(() => {
   const propContext = useBoundProp(import_editor_props8.strokePropTypeUtil);
   const rowRef = (0, import_react11.useRef)(null);
-  return /* @__PURE__ */ React19.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React19.createElement(SectionContent, null, /* @__PURE__ */ React19.createElement(Control, { bind: "width", label: (0, import_i18n3.__)("Stroke width", "elementor"), ref: rowRef }, /* @__PURE__ */ React19.createElement(SizeControl, { units, anchorRef: rowRef })), /* @__PURE__ */ React19.createElement(Control, { bind: "color", label: (0, import_i18n3.__)("Stroke color", "elementor") }, /* @__PURE__ */ React19.createElement(ColorControl, null))));
+  return /* @__PURE__ */ React19.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React19.createElement(SectionContent, null, /* @__PURE__ */ React19.createElement(Control, { bind: "width", label: (0, import_i18n2.__)("Stroke width", "elementor"), ref: rowRef }, /* @__PURE__ */ React19.createElement(SizeControl, { units, anchorRef: rowRef })), /* @__PURE__ */ React19.createElement(Control, { bind: "color", label: (0, import_i18n2.__)("Stroke color", "elementor") }, /* @__PURE__ */ React19.createElement(ColorControl, null))));
 });
 var Control = (0, import_react11.forwardRef)(({ bind, label, children }, ref) => /* @__PURE__ */ React19.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React19.createElement(import_ui15.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap", ref }, /* @__PURE__ */ React19.createElement(import_ui15.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React19.createElement(ControlFormLabel, null, label)), /* @__PURE__ */ React19.createElement(import_ui15.Grid, { item: true, xs: 6 }, children))));
 
@@ -994,7 +993,7 @@ var React26 = __toESM(require("react"));
 var import_react15 = require("react");
 var import_editor_props9 = require("@elementor/editor-props");
 var import_ui20 = require("@elementor/ui");
-var import_i18n5 = require("@wordpress/i18n");
+var import_i18n4 = require("@wordpress/i18n");
 
 // src/components/popover-content.tsx
 var React20 = __toESM(require("react"));
@@ -1014,7 +1013,7 @@ var React25 = __toESM(require("react"));
 var import_react14 = require("react");
 var import_icons4 = require("@elementor/icons");
 var import_ui19 = require("@elementor/ui");
-var import_i18n4 = require("@wordpress/i18n");
+var import_i18n3 = require("@wordpress/i18n");
 
 // src/control-adornments/control-adornments.tsx
 var React23 = __toESM(require("react"));
@@ -1213,7 +1212,7 @@ var Repeater = ({
         sx: { ml: "auto" },
         disabled,
         onClick: addRepeaterItem,
-        "aria-label": (0, import_i18n4.__)("Add item", "elementor")
+        "aria-label": (0, import_i18n3.__)("Add item", "elementor")
       },
       /* @__PURE__ */ React25.createElement(import_icons4.PlusIcon, { fontSize: SIZE })
     )
@@ -1257,9 +1256,9 @@ var RepeaterItem = ({
 }) => {
   const [anchorEl, setAnchorEl] = (0, import_react14.useState)(null);
   const { popoverState, popoverProps, ref, setRef } = usePopover(openOnMount, onOpen);
-  const duplicateLabel = (0, import_i18n4.__)("Duplicate", "elementor");
-  const toggleLabel = propDisabled ? (0, import_i18n4.__)("Show", "elementor") : (0, import_i18n4.__)("Hide", "elementor");
-  const removeLabel = (0, import_i18n4.__)("Remove", "elementor");
+  const duplicateLabel = (0, import_i18n3.__)("Duplicate", "elementor");
+  const toggleLabel = propDisabled ? (0, import_i18n3.__)("Show", "elementor") : (0, import_i18n3.__)("Hide", "elementor");
+  const removeLabel = (0, import_i18n3.__)("Remove", "elementor");
   return /* @__PURE__ */ React25.createElement(React25.Fragment, null, /* @__PURE__ */ React25.createElement(
     import_ui19.UnstableTag,
     {
@@ -1269,7 +1268,7 @@ var RepeaterItem = ({
       fullWidth: true,
       ref: setRef,
       variant: "outlined",
-      "aria-label": (0, import_i18n4.__)("Open item", "elementor"),
+      "aria-label": (0, import_i18n3.__)("Open item", "elementor"),
       ...(0, import_ui19.bindTrigger)(popoverState),
       startIcon,
       actions: /* @__PURE__ */ React25.createElement(React25.Fragment, null, showDuplicate && /* @__PURE__ */ React25.createElement(import_ui19.Tooltip, { title: duplicateLabel, placement: "top" }, /* @__PURE__ */ React25.createElement(import_ui19.IconButton, { size: SIZE, onClick: duplicateItem, "aria-label": duplicateLabel }, /* @__PURE__ */ React25.createElement(import_icons4.CopyIcon, { fontSize: SIZE }))), showToggle && /* @__PURE__ */ React25.createElement(import_ui19.Tooltip, { title: toggleLabel, placement: "top" }, /* @__PURE__ */ React25.createElement(import_ui19.IconButton, { size: SIZE, onClick: toggleDisableItem, "aria-label": toggleLabel }, propDisabled ? /* @__PURE__ */ React25.createElement(import_icons4.EyeOffIcon, { fontSize: SIZE }) : /* @__PURE__ */ React25.createElement(import_icons4.EyeIcon, { fontSize: SIZE }))), /* @__PURE__ */ React25.createElement(import_ui19.Tooltip, { title: removeLabel, placement: "top" }, /* @__PURE__ */ React25.createElement(import_ui19.IconButton, { size: SIZE, onClick: removeItem, "aria-label": removeLabel }, /* @__PURE__ */ React25.createElement(import_icons4.XIcon, { fontSize: SIZE }))))
@@ -1312,14 +1311,14 @@ var usePopover = (openOnMount, onOpen) => {
 // src/controls/box-shadow-repeater-control.tsx
 var BoxShadowRepeaterControl = createControl(() => {
   const { propType, value, setValue, disabled } = useBoundProp(import_editor_props9.boxShadowPropTypeUtil);
-  return /* @__PURE__ */ React26.createElement(PropProvider, { propType, value, setValue, disabled }, /* @__PURE__ */ React26.createElement(
+  return /* @__PURE__ */ React26.createElement(PropProvider, { propType, value, setValue, isDisabled: () => disabled }, /* @__PURE__ */ React26.createElement(
     Repeater,
     {
       openOnAdd: true,
       disabled,
       values: value ?? [],
       setValues: setValue,
-      label: (0, import_i18n5.__)("Box shadow", "elementor"),
+      label: (0, import_i18n4.__)("Box shadow", "elementor"),
       itemSettings: {
         Icon: ItemIcon,
         Label: ItemLabel,
@@ -1336,15 +1335,15 @@ var ItemContent = ({ anchorEl, bind }) => {
 var Content = ({ anchorEl }) => {
   const context = useBoundProp(import_editor_props9.shadowPropTypeUtil);
   const rowRef = [(0, import_react15.useRef)(null), (0, import_react15.useRef)(null)];
-  return /* @__PURE__ */ React26.createElement(PropProvider, { ...context }, /* @__PURE__ */ React26.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React26.createElement(PopoverGridContainer, null, /* @__PURE__ */ React26.createElement(Control2, { bind: "color", label: (0, import_i18n5.__)("Color", "elementor") }, /* @__PURE__ */ React26.createElement(ColorControl, { anchorEl })), /* @__PURE__ */ React26.createElement(Control2, { bind: "position", label: (0, import_i18n5.__)("Position", "elementor"), sx: { overflow: "hidden" } }, /* @__PURE__ */ React26.createElement(
+  return /* @__PURE__ */ React26.createElement(PropProvider, { ...context }, /* @__PURE__ */ React26.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React26.createElement(PopoverGridContainer, null, /* @__PURE__ */ React26.createElement(Control2, { bind: "color", label: (0, import_i18n4.__)("Color", "elementor") }, /* @__PURE__ */ React26.createElement(ColorControl, { anchorEl })), /* @__PURE__ */ React26.createElement(Control2, { bind: "position", label: (0, import_i18n4.__)("Position", "elementor"), sx: { overflow: "hidden" } }, /* @__PURE__ */ React26.createElement(
     SelectControl,
     {
       options: [
-        { label: (0, import_i18n5.__)("Inset", "elementor"), value: "inset" },
-        { label: (0, import_i18n5.__)("Outset", "elementor"), value: null }
+        { label: (0, import_i18n4.__)("Inset", "elementor"), value: "inset" },
+        { label: (0, import_i18n4.__)("Outset", "elementor"), value: null }
       ]
     }
-  ))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[0] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "hOffset", label: (0, import_i18n5.__)("Horizontal", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "vOffset", label: (0, import_i18n5.__)("Vertical", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] }))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[1] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "blur", label: (0, import_i18n5.__)("Blur", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "spread", label: (0, import_i18n5.__)("Spread", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })))));
+  ))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[0] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "hOffset", label: (0, import_i18n4.__)("Horizontal", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "vOffset", label: (0, import_i18n4.__)("Vertical", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[0] }))), /* @__PURE__ */ React26.createElement(PopoverGridContainer, { ref: rowRef[1] }, /* @__PURE__ */ React26.createElement(Control2, { bind: "blur", label: (0, import_i18n4.__)("Blur", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })), /* @__PURE__ */ React26.createElement(Control2, { bind: "spread", label: (0, import_i18n4.__)("Spread", "elementor") }, /* @__PURE__ */ React26.createElement(SizeControl, { anchorRef: rowRef[1] })))));
 };
 var Control2 = ({
   label,
@@ -1400,7 +1399,7 @@ var import_react16 = require("react");
 var import_editor_props10 = require("@elementor/editor-props");
 var import_editor_ui3 = require("@elementor/editor-ui");
 var import_ui22 = require("@elementor/ui");
-var import_i18n6 = require("@wordpress/i18n");
+var import_i18n5 = require("@wordpress/i18n");
 
 // src/components/control-label.tsx
 var React27 = __toESM(require("react"));
@@ -1414,14 +1413,15 @@ var DEFAULT_FILTER_KEY = "blur";
 var filterConfig = {
   blur: {
     defaultValue: { $$type: "radius", radius: { $$type: "size", value: { size: 0, unit: "px" } } },
-    name: (0, import_i18n6.__)("Blur", "elementor"),
-    valueName: (0, import_i18n6.__)("Radius", "elementor"),
-    propType: import_editor_props10.blurFilterPropTypeUtil
+    name: (0, import_i18n5.__)("Blur", "elementor"),
+    valueName: (0, import_i18n5.__)("Radius", "elementor"),
+    propType: import_editor_props10.blurFilterPropTypeUtil,
+    units: defaultUnits.filter((unit) => unit !== "%")
   },
   brightness: {
     defaultValue: { $$type: "amount", amount: { $$type: "size", value: { size: 100, unit: "%" } } },
-    name: (0, import_i18n6.__)("Brightness", "elementor"),
-    valueName: (0, import_i18n6.__)("Amount", "elementor"),
+    name: (0, import_i18n5.__)("Brightness", "elementor"),
+    valueName: (0, import_i18n5.__)("Amount", "elementor"),
     propType: import_editor_props10.brightnessFilterPropTypeUtil,
     units: ["%"]
   }
@@ -1440,7 +1440,7 @@ var FilterRepeaterControl = createControl(() => {
       disabled,
       values: filterValues ?? [],
       setValues: setValue,
-      label: (0, import_i18n6.__)("Filter", "elementor"),
+      label: (0, import_i18n5.__)("Filter", "elementor"),
       itemSettings: {
         Icon: ItemIcon2,
         Label: ItemLabel2,
@@ -1479,7 +1479,7 @@ var ItemContent2 = ({ bind }) => {
     };
     setValue(newFilterValues);
   };
-  return /* @__PURE__ */ React28.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React28.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React28.createElement(PopoverGridContainer, null, /* @__PURE__ */ React28.createElement(import_ui22.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(ControlLabel, null, (0, import_i18n6.__)("Filter", "elementor"))), /* @__PURE__ */ React28.createElement(import_ui22.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(
+  return /* @__PURE__ */ React28.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React28.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React28.createElement(PopoverGridContainer, null, /* @__PURE__ */ React28.createElement(import_ui22.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(ControlLabel, null, (0, import_i18n5.__)("Filter", "elementor"))), /* @__PURE__ */ React28.createElement(import_ui22.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React28.createElement(
     import_ui22.Select,
     {
       sx: { overflow: "hidden" },
@@ -1742,13 +1742,13 @@ var isEmptyOrNaN = (value) => value === null || value === void 0 || value === ""
 var RESTRICTED_INPUT_KEYS2 = ["e", "E", "+", "-"];
 var NumberControl = createControl(
   ({
-    placeholder,
+    placeholder: labelPlaceholder,
     max = Number.MAX_VALUE,
     min = -Number.MAX_VALUE,
     step = 1,
     shouldForceInt = false
   }) => {
-    const { value, setValue, disabled } = useBoundProp(import_editor_props12.numberPropTypeUtil);
+    const { value, setValue, placeholder, disabled } = useBoundProp(import_editor_props12.numberPropTypeUtil);
     const handleChange = (event) => {
       const eventValue = event.target.value;
       if (isEmptyOrNaN(eventValue)) {
@@ -1767,7 +1767,7 @@ var NumberControl = createControl(
         disabled,
         value: isEmptyOrNaN(value) ? "" : value,
         onChange: handleChange,
-        placeholder,
+        placeholder: labelPlaceholder ?? (placeholder ? String(placeholder) : ""),
         inputProps: { step },
         onKeyDown: (event) => {
           if (RESTRICTED_INPUT_KEYS2.includes(event.key)) {
@@ -1785,7 +1785,7 @@ var import_react18 = require("react");
 var import_editor_props13 = require("@elementor/editor-props");
 var import_editor_v1_adapters2 = require("@elementor/editor-v1-adapters");
 var import_ui26 = require("@elementor/ui");
-var import_i18n7 = require("@wordpress/i18n");
+var import_i18n6 = require("@wordpress/i18n");
 var isEqualSizes = (propValue, items) => {
   const values = Object.values(propValue);
   if (values.length !== items.length) {
@@ -1844,7 +1844,7 @@ function EqualUnequalSizesControl({
   return /* @__PURE__ */ React33.createElement(React33.Fragment, null, /* @__PURE__ */ React33.createElement(import_ui26.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap", ref: rowRefs[0] }, /* @__PURE__ */ React33.createElement(import_ui26.Grid, { item: true, xs: 6 }, !isShowingGeneralIndicator ? /* @__PURE__ */ React33.createElement(ControlFormLabel, null, label) : /* @__PURE__ */ React33.createElement(ControlLabel, null, label)), /* @__PURE__ */ React33.createElement(import_ui26.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React33.createElement(import_ui26.Stack, { direction: "row", alignItems: "center", gap: 1 }, /* @__PURE__ */ React33.createElement(
     SizeControl,
     {
-      placeholder: isMixed ? (0, import_i18n7.__)("Mixed", "elementor") : void 0,
+      placeholder: isMixed ? (0, import_i18n6.__)("Mixed", "elementor") : void 0,
       anchorRef: rowRefs[0]
     }
   ), /* @__PURE__ */ React33.createElement(import_ui26.Tooltip, { title: tooltipLabel, placement: "top" }, /* @__PURE__ */ React33.createElement(
@@ -1882,7 +1882,7 @@ function EqualUnequalSizesControl({
         propType: multiSizePropType,
         value: getMultiSizeValues(),
         setValue: setNestedProp,
-        disabled: multiSizeDisabled
+        isDisabled: () => multiSizeDisabled
       },
       /* @__PURE__ */ React33.createElement(PopoverContent, { p: 1.5 }, /* @__PURE__ */ React33.createElement(PopoverGridContainer, { ref: rowRefs[1] }, /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[0], rowRef: rowRefs[1] }), /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[1], rowRef: rowRefs[1] })), /* @__PURE__ */ React33.createElement(PopoverGridContainer, { ref: rowRefs[2] }, /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[2], rowRef: rowRefs[2] }), /* @__PURE__ */ React33.createElement(MultiSizeValueControl, { item: items[3], rowRef: rowRefs[2] })))
     )
@@ -1900,7 +1900,7 @@ var import_editor_props14 = require("@elementor/editor-props");
 var import_editor_v1_adapters3 = require("@elementor/editor-v1-adapters");
 var import_icons6 = require("@elementor/icons");
 var import_ui27 = require("@elementor/ui");
-var import_i18n8 = require("@wordpress/i18n");
+var import_i18n7 = require("@wordpress/i18n");
 var LinkedDimensionsControl = createControl(
   ({
     label,
@@ -1932,8 +1932,8 @@ var LinkedDimensionsControl = createControl(
     };
     const tooltipLabel = label.toLowerCase();
     const LinkedIcon = isLinked ? import_icons6.LinkIcon : import_icons6.DetachIcon;
-    const linkedLabel = (0, import_i18n8.__)("Link %s", "elementor").replace("%s", tooltipLabel);
-    const unlinkedLabel = (0, import_i18n8.__)("Unlink %s", "elementor").replace("%s", tooltipLabel);
+    const linkedLabel = (0, import_i18n7.__)("Link %s", "elementor").replace("%s", tooltipLabel);
+    const unlinkedLabel = (0, import_i18n7.__)("Unlink %s", "elementor").replace("%s", tooltipLabel);
     const disabled = sizeDisabled || dimensionsDisabled;
     return /* @__PURE__ */ React34.createElement(
       PropProvider,
@@ -1941,7 +1941,7 @@ var LinkedDimensionsControl = createControl(
         propType,
         value: dimensionsValue,
         setValue: setDimensionsValue,
-        disabled
+        isDisabled: () => disabled
       },
       /* @__PURE__ */ React34.createElement(import_ui27.Stack, { direction: "row", gap: 2, flexWrap: "nowrap" }, isUsingNestedProps ? /* @__PURE__ */ React34.createElement(ControlFormLabel, null, label) : /* @__PURE__ */ React34.createElement(ControlLabel, null, label), /* @__PURE__ */ React34.createElement(import_ui27.Tooltip, { title: isLinked ? unlinkedLabel : linkedLabel, placement: "top" }, /* @__PURE__ */ React34.createElement(
         import_ui27.ToggleButton,
@@ -1993,24 +1993,24 @@ function getCssMarginProps(isSiteRtl) {
     [
       {
         bind: "block-start",
-        label: (0, import_i18n8.__)("Top", "elementor"),
+        label: (0, import_i18n7.__)("Top", "elementor"),
         icon: /* @__PURE__ */ React34.createElement(import_icons6.SideTopIcon, { fontSize: "tiny" })
       },
       {
         bind: "inline-end",
-        label: isSiteRtl ? (0, import_i18n8.__)("Left", "elementor") : (0, import_i18n8.__)("Right", "elementor"),
+        label: isSiteRtl ? (0, import_i18n7.__)("Left", "elementor") : (0, import_i18n7.__)("Right", "elementor"),
         icon: isSiteRtl ? /* @__PURE__ */ React34.createElement(import_icons6.SideLeftIcon, { fontSize: "tiny" }) : /* @__PURE__ */ React34.createElement(import_icons6.SideRightIcon, { fontSize: "tiny" })
       }
     ],
     [
       {
         bind: "block-end",
-        label: (0, import_i18n8.__)("Bottom", "elementor"),
+        label: (0, import_i18n7.__)("Bottom", "elementor"),
         icon: /* @__PURE__ */ React34.createElement(import_icons6.SideBottomIcon, { fontSize: "tiny" })
       },
       {
         bind: "inline-start",
-        label: isSiteRtl ? (0, import_i18n8.__)("Right", "elementor") : (0, import_i18n8.__)("Left", "elementor"),
+        label: isSiteRtl ? (0, import_i18n7.__)("Right", "elementor") : (0, import_i18n7.__)("Left", "elementor"),
         icon: isSiteRtl ? /* @__PURE__ */ React34.createElement(import_icons6.SideRightIcon, { fontSize: "tiny" }) : /* @__PURE__ */ React34.createElement(import_icons6.SideLeftIcon, { fontSize: "tiny" })
       }
     ]
@@ -2030,7 +2030,7 @@ var import_editor_ui4 = require("@elementor/editor-ui");
 var import_icons7 = require("@elementor/icons");
 var import_ui28 = require("@elementor/ui");
 var import_utils2 = require("@elementor/utils");
-var import_i18n9 = require("@wordpress/i18n");
+var import_i18n8 = require("@wordpress/i18n");
 
 // src/controls/font-family-control/enqueue-font.tsx
 var enqueueFont = (fontFamily, context = "editor") => {
@@ -2075,7 +2075,7 @@ var FontFamilySelector = ({
   return /* @__PURE__ */ React35.createElement(import_ui28.Stack, null, /* @__PURE__ */ React35.createElement(
     import_editor_ui4.PopoverHeader,
     {
-      title: (0, import_i18n9.__)("Font Family", "elementor"),
+      title: (0, import_i18n8.__)("Font Family", "elementor"),
       onClose: handleClose,
       icon: /* @__PURE__ */ React35.createElement(import_icons7.TextIcon, { fontSize: SIZE2 })
     }
@@ -2084,18 +2084,17 @@ var FontFamilySelector = ({
     {
       value: searchValue,
       onSearch: handleSearch,
-      placeholder: (0, import_i18n9.__)("Search", "elementor")
+      placeholder: (0, import_i18n8.__)("Search", "elementor")
     }
-  ), /* @__PURE__ */ React35.createElement(import_ui28.Divider, null), filteredFontFamilies.length > 0 ? /* @__PURE__ */ React35.createElement(
+  ), /* @__PURE__ */ React35.createElement(import_ui28.Divider, null), /* @__PURE__ */ React35.createElement(import_editor_ui4.PopoverScrollableContent, { width: sectionWidth }, filteredFontFamilies.length > 0 ? /* @__PURE__ */ React35.createElement(
     FontList,
     {
       fontListItems: filteredFontFamilies,
       setFontFamily: onFontFamilyChange,
       handleClose,
-      fontFamily,
-      sectionWidth
+      fontFamily
     }
-  ) : /* @__PURE__ */ React35.createElement(import_editor_ui4.PopoverScrollableContent, { width: sectionWidth }, /* @__PURE__ */ React35.createElement(
+  ) : /* @__PURE__ */ React35.createElement(
     import_ui28.Stack,
     {
       alignItems: "center",
@@ -2106,7 +2105,7 @@ var FontFamilySelector = ({
       overflow: "hidden"
     },
     /* @__PURE__ */ React35.createElement(import_icons7.TextIcon, { fontSize: "large" }),
-    /* @__PURE__ */ React35.createElement(import_ui28.Box, { sx: { maxWidth: 160, overflow: "hidden" } }, /* @__PURE__ */ React35.createElement(import_ui28.Typography, { align: "center", variant: "subtitle2", color: "text.secondary" }, (0, import_i18n9.__)("Sorry, nothing matched", "elementor")), /* @__PURE__ */ React35.createElement(
+    /* @__PURE__ */ React35.createElement(import_ui28.Box, { sx: { maxWidth: 160, overflow: "hidden" } }, /* @__PURE__ */ React35.createElement(import_ui28.Typography, { align: "center", variant: "subtitle2", color: "text.secondary" }, (0, import_i18n8.__)("Sorry, nothing matched", "elementor")), /* @__PURE__ */ React35.createElement(
       import_ui28.Typography,
       {
         variant: "subtitle2",
@@ -2129,7 +2128,7 @@ var FontFamilySelector = ({
         color: "text.secondary",
         sx: { display: "flex", flexDirection: "column" }
       },
-      (0, import_i18n9.__)("Try something else.", "elementor"),
+      (0, import_i18n8.__)("Try something else.", "elementor"),
       /* @__PURE__ */ React35.createElement(
         import_ui28.Link,
         {
@@ -2138,12 +2137,12 @@ var FontFamilySelector = ({
           component: "button",
           onClick: () => setSearchValue("")
         },
-        (0, import_i18n9.__)("Clear & try again", "elementor")
+        (0, import_i18n8.__)("Clear & try again", "elementor")
       )
     )
   )));
 };
-var FontList = ({ fontListItems, setFontFamily, handleClose, fontFamily, sectionWidth }) => {
+var FontList = ({ fontListItems, setFontFamily, handleClose, fontFamily }) => {
   const selectedItem = fontListItems.find((item) => item.value === fontFamily);
   const debouncedVirtualizeChange = useDebounce(({ getVirtualIndexes }) => {
     getVirtualIndexes().forEach((index) => {
@@ -2162,8 +2161,7 @@ var FontList = ({ fontListItems, setFontFamily, handleClose, fontFamily, section
       onSelect: setFontFamily,
       onClose: handleClose,
       itemStyle: (item) => ({ fontFamily: item.value }),
-      "data-testid": "font-list",
-      width: sectionWidth
+      "data-testid": "font-list"
     }
   );
 };
@@ -2232,17 +2230,17 @@ var UrlControl = createControl(({ placeholder }) => {
 });
 
 // src/controls/link-control.tsx
-var React39 = __toESM(require("react"));
+var React40 = __toESM(require("react"));
 var import_react22 = require("react");
 var import_editor_elements = require("@elementor/editor-elements");
-var import_editor_props17 = require("@elementor/editor-props");
+var import_editor_props18 = require("@elementor/editor-props");
 var import_editor_ui5 = require("@elementor/editor-ui");
 var import_http_client2 = require("@elementor/http-client");
 var import_icons10 = require("@elementor/icons");
 var import_session = require("@elementor/session");
-var import_ui32 = require("@elementor/ui");
+var import_ui33 = require("@elementor/ui");
 var import_utils3 = require("@elementor/utils");
-var import_i18n10 = require("@wordpress/i18n");
+var import_i18n9 = require("@wordpress/i18n");
 
 // src/components/autocomplete.tsx
 var React38 = __toESM(require("react"));
@@ -2350,14 +2348,26 @@ function _factoryFilter(newValue, options, minInputLength) {
   );
 }
 
+// src/controls/switch-control.tsx
+var React39 = __toESM(require("react"));
+var import_editor_props17 = require("@elementor/editor-props");
+var import_ui32 = require("@elementor/ui");
+var SwitchControl = createControl(() => {
+  const { value, setValue, disabled } = useBoundProp(import_editor_props17.booleanPropTypeUtil);
+  const handleChange = (event) => {
+    setValue(event.target.checked);
+  };
+  return /* @__PURE__ */ React39.createElement("div", { style: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React39.createElement(import_ui32.Switch, { checked: !!value, onChange: handleChange, size: "small", disabled }));
+});
+
 // src/controls/link-control.tsx
 var SIZE4 = "tiny";
 var learnMoreButton = {
-  label: (0, import_i18n10.__)("Learn More", "elementor"),
+  label: (0, import_i18n9.__)("Learn More", "elementor"),
   href: "https://go.elementor.com/element-link-inside-link-infotip"
 };
 var LinkControl = createControl((props) => {
-  const { value, path, setValue, ...propContext } = useBoundProp(import_editor_props17.linkPropTypeUtil);
+  const { value, path, setValue, ...propContext } = useBoundProp(import_editor_props18.linkPropTypeUtil);
   const [linkSessionValue, setLinkSessionValue] = (0, import_session.useSessionStorage)(path.join("/"));
   const [isActive, setIsActive] = (0, import_react22.useState)(!!value);
   const {
@@ -2365,7 +2375,8 @@ var LinkControl = createControl((props) => {
     queryOptions: { endpoint = "", requestParams = {} },
     placeholder,
     minInputLength = 2,
-    context: { elementId }
+    context: { elementId },
+    label = (0, import_i18n9.__)("Link", "elementor")
   } = props || {};
   const [linkInLinkRestriction, setLinkInLinkRestriction] = (0, import_react22.useState)((0, import_editor_elements.getLinkInLinkRestriction)(elementId));
   const [options, setOptions] = (0, import_react22.useState)(
@@ -2393,8 +2404,8 @@ var LinkControl = createControl((props) => {
   const onOptionChange = (newValue) => {
     const valueToSave = newValue ? {
       ...value,
-      destination: import_editor_props17.numberPropTypeUtil.create(newValue),
-      label: import_editor_props17.stringPropTypeUtil.create(findMatchingOption(options, newValue)?.label || null)
+      destination: import_editor_props18.numberPropTypeUtil.create(newValue),
+      label: import_editor_props18.stringPropTypeUtil.create(findMatchingOption(options, newValue)?.label || null)
     } : null;
     onSaveNewValue(valueToSave);
   };
@@ -2402,8 +2413,8 @@ var LinkControl = createControl((props) => {
     newValue = newValue?.trim() || "";
     const valueToSave = newValue ? {
       ...value,
-      destination: import_editor_props17.urlPropTypeUtil.create(newValue),
-      label: import_editor_props17.stringPropTypeUtil.create("")
+      destination: import_editor_props18.urlPropTypeUtil.create(newValue),
+      label: import_editor_props18.stringPropTypeUtil.create("")
     } : null;
     onSaveNewValue(valueToSave);
     updateOptions(newValue);
@@ -2428,8 +2439,8 @@ var LinkControl = createControl((props) => {
     ),
     [endpoint]
   );
-  return /* @__PURE__ */ React39.createElement(PropProvider, { ...propContext, value, setValue }, /* @__PURE__ */ React39.createElement(import_ui32.Stack, { gap: 1.5 }, /* @__PURE__ */ React39.createElement(
-    import_ui32.Stack,
+  return /* @__PURE__ */ React40.createElement(PropProvider, { ...propContext, value, setValue }, /* @__PURE__ */ React40.createElement(import_ui33.Stack, { gap: 1.5 }, /* @__PURE__ */ React40.createElement(
+    import_ui33.Stack,
     {
       direction: "row",
       sx: {
@@ -2438,17 +2449,17 @@ var LinkControl = createControl((props) => {
         marginInlineEnd: -0.75
       }
     },
-    /* @__PURE__ */ React39.createElement(ControlFormLabel, null, (0, import_i18n10.__)("Link", "elementor")),
-    /* @__PURE__ */ React39.createElement(ConditionalInfoTip, { isVisible: !isActive, linkInLinkRestriction }, /* @__PURE__ */ React39.createElement(
+    /* @__PURE__ */ React40.createElement(ControlFormLabel, null, label),
+    /* @__PURE__ */ React40.createElement(ConditionalInfoTip, { isVisible: !isActive, linkInLinkRestriction }, /* @__PURE__ */ React40.createElement(
       ToggleIconControl,
       {
         disabled: shouldDisableAddingLink,
         active: isActive,
         onIconClick: onEnabledChange,
-        label: (0, import_i18n10.__)("Toggle link", "elementor")
+        label: (0, import_i18n9.__)("Toggle link", "elementor")
       }
     ))
-  ), /* @__PURE__ */ React39.createElement(import_ui32.Collapse, { in: isActive, timeout: "auto", unmountOnExit: true }, /* @__PURE__ */ React39.createElement(import_ui32.Stack, { gap: 1.5 }, /* @__PURE__ */ React39.createElement(PropKeyProvider, { bind: "destination" }, /* @__PURE__ */ React39.createElement(ControlActions, null, /* @__PURE__ */ React39.createElement(
+  ), /* @__PURE__ */ React40.createElement(import_ui33.Collapse, { in: isActive, timeout: "auto", unmountOnExit: true }, /* @__PURE__ */ React40.createElement(import_ui33.Stack, { gap: 1.5 }, /* @__PURE__ */ React40.createElement(PropKeyProvider, { bind: "destination" }, /* @__PURE__ */ React40.createElement(ControlActions, null, /* @__PURE__ */ React40.createElement(
     Autocomplete,
     {
       options,
@@ -2459,22 +2470,10 @@ var LinkControl = createControl((props) => {
       onTextChange,
       minInputLength
     }
-  ))), /* @__PURE__ */ React39.createElement(PropKeyProvider, { bind: "isTargetBlank" }, /* @__PURE__ */ React39.createElement(SwitchControl, { disabled: propContext.disabled || !value }))))));
+  ))), /* @__PURE__ */ React40.createElement(PropKeyProvider, { bind: "isTargetBlank" }, /* @__PURE__ */ React40.createElement(import_ui33.Grid, { container: true, alignItems: "center", flexWrap: "nowrap", justifyContent: "space-between" }, /* @__PURE__ */ React40.createElement(import_ui33.Grid, { item: true }, /* @__PURE__ */ React40.createElement(ControlFormLabel, null, (0, import_i18n9.__)("Open in a new tab", "elementor"))), /* @__PURE__ */ React40.createElement(import_ui33.Grid, { item: true, sx: { marginInlineEnd: -1 } }, /* @__PURE__ */ React40.createElement(SwitchControl, null))))))));
 });
 var ToggleIconControl = ({ disabled, active, onIconClick, label }) => {
-  return /* @__PURE__ */ React39.createElement(import_ui32.IconButton, { size: SIZE4, onClick: onIconClick, "aria-label": label, disabled }, active ? /* @__PURE__ */ React39.createElement(import_icons10.MinusIcon, { fontSize: SIZE4 }) : /* @__PURE__ */ React39.createElement(import_icons10.PlusIcon, { fontSize: SIZE4 }));
-};
-var SwitchControl = ({ disabled }) => {
-  const { value = false, setValue } = useBoundProp(import_editor_props17.booleanPropTypeUtil);
-  const onClick = () => {
-    setValue(!value);
-  };
-  const inputProps = disabled ? {
-    style: {
-      opacity: 0
-    }
-  } : {};
-  return /* @__PURE__ */ React39.createElement(import_ui32.Grid, { container: true, alignItems: "center", flexWrap: "nowrap", justifyContent: "space-between" }, /* @__PURE__ */ React39.createElement(import_ui32.Grid, { item: true }, /* @__PURE__ */ React39.createElement(ControlFormLabel, null, (0, import_i18n10.__)("Open in a new tab", "elementor"))), /* @__PURE__ */ React39.createElement(import_ui32.Grid, { item: true, sx: { marginInlineEnd: -1 } }, /* @__PURE__ */ React39.createElement(import_ui32.Switch, { checked: value, onClick, disabled, inputProps })));
+  return /* @__PURE__ */ React40.createElement(import_ui33.IconButton, { size: SIZE4, onClick: onIconClick, "aria-label": label, disabled }, active ? /* @__PURE__ */ React40.createElement(import_icons10.MinusIcon, { fontSize: SIZE4 }) : /* @__PURE__ */ React40.createElement(import_icons10.PlusIcon, { fontSize: SIZE4 }));
 };
 async function fetchOptions(ajaxUrl, params) {
   if (!params || !ajaxUrl) {
@@ -2511,54 +2510,54 @@ var ConditionalInfoTip = ({ linkInLinkRestriction, isVisible, children }) => {
       (0, import_editor_elements.selectElement)(elementId);
     }
   };
-  return shouldRestrict && isVisible ? /* @__PURE__ */ React39.createElement(
-    import_ui32.Infotip,
+  return shouldRestrict && isVisible ? /* @__PURE__ */ React40.createElement(
+    import_ui33.Infotip,
     {
       placement: "right",
-      content: /* @__PURE__ */ React39.createElement(
+      content: /* @__PURE__ */ React40.createElement(
         import_editor_ui5.InfoTipCard,
         {
           content: INFOTIP_CONTENT[reason],
-          svgIcon: /* @__PURE__ */ React39.createElement(import_icons10.AlertTriangleIcon, null),
+          svgIcon: /* @__PURE__ */ React40.createElement(import_icons10.AlertTriangleIcon, null),
           learnMoreButton,
           ctaButton: {
-            label: (0, import_i18n10.__)("Take me there", "elementor"),
+            label: (0, import_i18n9.__)("Take me there", "elementor"),
             onClick: handleTakeMeClick
           }
         }
       )
     },
-    /* @__PURE__ */ React39.createElement(import_ui32.Box, null, children)
-  ) : /* @__PURE__ */ React39.createElement(React39.Fragment, null, children);
+    /* @__PURE__ */ React40.createElement(import_ui33.Box, null, children)
+  ) : /* @__PURE__ */ React40.createElement(React40.Fragment, null, children);
 };
 var INFOTIP_CONTENT = {
-  descendant: /* @__PURE__ */ React39.createElement(React39.Fragment, null, (0, import_i18n10.__)("To add a link to this container,", "elementor"), /* @__PURE__ */ React39.createElement("br", null), (0, import_i18n10.__)("first remove the link from the elements inside of it.", "elementor")),
-  ancestor: /* @__PURE__ */ React39.createElement(React39.Fragment, null, (0, import_i18n10.__)("To add a link to this element,", "elementor"), /* @__PURE__ */ React39.createElement("br", null), (0, import_i18n10.__)("first remove the link from its parent container.", "elementor"))
+  descendant: /* @__PURE__ */ React40.createElement(React40.Fragment, null, (0, import_i18n9.__)("To add a link to this container,", "elementor"), /* @__PURE__ */ React40.createElement("br", null), (0, import_i18n9.__)("first remove the link from the elements inside of it.", "elementor")),
+  ancestor: /* @__PURE__ */ React40.createElement(React40.Fragment, null, (0, import_i18n9.__)("To add a link to this element,", "elementor"), /* @__PURE__ */ React40.createElement("br", null), (0, import_i18n9.__)("first remove the link from its parent container.", "elementor"))
 };
 
 // src/controls/gap-control.tsx
-var React40 = __toESM(require("react"));
+var React41 = __toESM(require("react"));
 var import_react23 = require("react");
-var import_editor_props18 = require("@elementor/editor-props");
+var import_editor_props19 = require("@elementor/editor-props");
 var import_icons11 = require("@elementor/icons");
-var import_ui33 = require("@elementor/ui");
-var import_i18n11 = require("@wordpress/i18n");
+var import_ui34 = require("@elementor/ui");
+var import_i18n10 = require("@wordpress/i18n");
 var GapControl = createControl(({ label }) => {
   const {
     value: directionValue,
     setValue: setDirectionValue,
     propType,
     disabled: directionDisabled
-  } = useBoundProp(import_editor_props18.layoutDirectionPropTypeUtil);
+  } = useBoundProp(import_editor_props19.layoutDirectionPropTypeUtil);
   const stackRef = (0, import_react23.useRef)(null);
-  const { value: sizeValue, setValue: setSizeValue, disabled: sizeDisabled } = useBoundProp(import_editor_props18.sizePropTypeUtil);
+  const { value: sizeValue, setValue: setSizeValue, disabled: sizeDisabled } = useBoundProp(import_editor_props19.sizePropTypeUtil);
   const isLinked = !directionValue && !sizeValue ? true : !!sizeValue;
   const onLinkToggle = () => {
     if (!isLinked) {
       setSizeValue(directionValue?.column?.value ?? null);
       return;
     }
-    const value = sizeValue ? import_editor_props18.sizePropTypeUtil.create(sizeValue) : null;
+    const value = sizeValue ? import_editor_props19.sizePropTypeUtil.create(sizeValue) : null;
     setDirectionValue({
       row: value,
       column: value
@@ -2566,11 +2565,11 @@ var GapControl = createControl(({ label }) => {
   };
   const tooltipLabel = label.toLowerCase();
   const LinkedIcon = isLinked ? import_icons11.LinkIcon : import_icons11.DetachIcon;
-  const linkedLabel = (0, import_i18n11.__)("Link %s", "elementor").replace("%s", tooltipLabel);
-  const unlinkedLabel = (0, import_i18n11.__)("Unlink %s", "elementor").replace("%s", tooltipLabel);
+  const linkedLabel = (0, import_i18n10.__)("Link %s", "elementor").replace("%s", tooltipLabel);
+  const unlinkedLabel = (0, import_i18n10.__)("Unlink %s", "elementor").replace("%s", tooltipLabel);
   const disabled = sizeDisabled || directionDisabled;
-  return /* @__PURE__ */ React40.createElement(PropProvider, { propType, value: directionValue, setValue: setDirectionValue }, /* @__PURE__ */ React40.createElement(import_ui33.Stack, { direction: "row", gap: 2, flexWrap: "nowrap" }, /* @__PURE__ */ React40.createElement(ControlLabel, null, label), /* @__PURE__ */ React40.createElement(import_ui33.Tooltip, { title: isLinked ? unlinkedLabel : linkedLabel, placement: "top" }, /* @__PURE__ */ React40.createElement(
-    import_ui33.ToggleButton,
+  return /* @__PURE__ */ React41.createElement(PropProvider, { propType, value: directionValue, setValue: setDirectionValue }, /* @__PURE__ */ React41.createElement(import_ui34.Stack, { direction: "row", gap: 2, flexWrap: "nowrap" }, /* @__PURE__ */ React41.createElement(ControlLabel, null, label), /* @__PURE__ */ React41.createElement(import_ui34.Tooltip, { title: isLinked ? unlinkedLabel : linkedLabel, placement: "top" }, /* @__PURE__ */ React41.createElement(
+    import_ui34.ToggleButton,
     {
       "aria-label": isLinked ? unlinkedLabel : linkedLabel,
       size: "tiny",
@@ -2580,8 +2579,8 @@ var GapControl = createControl(({ label }) => {
       onChange: onLinkToggle,
       disabled
     },
-    /* @__PURE__ */ React40.createElement(LinkedIcon, { fontSize: "tiny" })
-  ))), /* @__PURE__ */ React40.createElement(import_ui33.Stack, { direction: "row", gap: 2, flexWrap: "nowrap", ref: stackRef }, /* @__PURE__ */ React40.createElement(import_ui33.Grid, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React40.createElement(import_ui33.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(ControlFormLabel, null, (0, import_i18n11.__)("Column", "elementor"))), /* @__PURE__ */ React40.createElement(import_ui33.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(Control4, { bind: "column", isLinked, anchorRef: stackRef }))), /* @__PURE__ */ React40.createElement(import_ui33.Grid, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React40.createElement(import_ui33.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(ControlFormLabel, null, (0, import_i18n11.__)("Row", "elementor"))), /* @__PURE__ */ React40.createElement(import_ui33.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React40.createElement(Control4, { bind: "row", isLinked, anchorRef: stackRef })))));
+    /* @__PURE__ */ React41.createElement(LinkedIcon, { fontSize: "tiny" })
+  ))), /* @__PURE__ */ React41.createElement(import_ui34.Stack, { direction: "row", gap: 2, flexWrap: "nowrap", ref: stackRef }, /* @__PURE__ */ React41.createElement(import_ui34.Grid, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(ControlFormLabel, null, (0, import_i18n10.__)("Column", "elementor"))), /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(Control4, { bind: "column", isLinked, anchorRef: stackRef }))), /* @__PURE__ */ React41.createElement(import_ui34.Grid, { container: true, gap: 0.75, alignItems: "center" }, /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(ControlFormLabel, null, (0, import_i18n10.__)("Row", "elementor"))), /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React41.createElement(Control4, { bind: "row", isLinked, anchorRef: stackRef })))));
 });
 var Control4 = ({
   bind,
@@ -2589,21 +2588,21 @@ var Control4 = ({
   anchorRef
 }) => {
   if (isLinked) {
-    return /* @__PURE__ */ React40.createElement(SizeControl, { anchorRef });
+    return /* @__PURE__ */ React41.createElement(SizeControl, { anchorRef });
   }
-  return /* @__PURE__ */ React40.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React40.createElement(SizeControl, { anchorRef }));
+  return /* @__PURE__ */ React41.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React41.createElement(SizeControl, { anchorRef }));
 };
 
 // src/controls/aspect-ratio-control.tsx
-var React41 = __toESM(require("react"));
+var React42 = __toESM(require("react"));
 var import_react24 = require("react");
-var import_editor_props19 = require("@elementor/editor-props");
+var import_editor_props20 = require("@elementor/editor-props");
 var import_editor_ui6 = require("@elementor/editor-ui");
 var import_icons12 = require("@elementor/icons");
-var import_ui34 = require("@elementor/ui");
-var import_i18n12 = require("@wordpress/i18n");
+var import_ui35 = require("@elementor/ui");
+var import_i18n11 = require("@wordpress/i18n");
 var RATIO_OPTIONS = [
-  { label: (0, import_i18n12.__)("Auto", "elementor"), value: "auto" },
+  { label: (0, import_i18n11.__)("Auto", "elementor"), value: "auto" },
   { label: "1/1", value: "1/1" },
   { label: "4/3", value: "4/3" },
   { label: "3/4", value: "3/4" },
@@ -2614,7 +2613,7 @@ var RATIO_OPTIONS = [
 ];
 var CUSTOM_RATIO = "custom";
 var AspectRatioControl = createControl(({ label }) => {
-  const { value: aspectRatioValue, setValue: setAspectRatioValue, disabled } = useBoundProp(import_editor_props19.stringPropTypeUtil);
+  const { value: aspectRatioValue, setValue: setAspectRatioValue, disabled } = useBoundProp(import_editor_props20.stringPropTypeUtil);
   const isCustomSelected = aspectRatioValue && !RATIO_OPTIONS.some((option) => option.value === aspectRatioValue);
   const [initialWidth, initialHeight] = isCustomSelected ? aspectRatioValue.split("/") : ["", ""];
   const [isCustom, setIsCustom] = (0, import_react24.useState)(isCustomSelected);
@@ -2662,8 +2661,8 @@ var AspectRatioControl = createControl(({ label }) => {
       setAspectRatioValue(`${customWidth}/${newHeight}`);
     }
   };
-  return /* @__PURE__ */ React41.createElement(ControlActions, null, /* @__PURE__ */ React41.createElement(import_ui34.Stack, { direction: "column", gap: 2 }, /* @__PURE__ */ React41.createElement(import_ui34.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(ControlLabel, null, label)), /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(
-    import_ui34.Select,
+  return /* @__PURE__ */ React42.createElement(ControlActions, null, /* @__PURE__ */ React42.createElement(import_ui35.Stack, { direction: "column", gap: 2 }, /* @__PURE__ */ React42.createElement(import_ui35.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React42.createElement(import_ui35.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(ControlLabel, null, label)), /* @__PURE__ */ React42.createElement(import_ui35.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(
+    import_ui35.Select,
     {
       size: "tiny",
       displayEmpty: true,
@@ -2673,11 +2672,11 @@ var AspectRatioControl = createControl(({ label }) => {
       onChange: handleSelectChange,
       fullWidth: true
     },
-    [...RATIO_OPTIONS, { label: (0, import_i18n12.__)("Custom", "elementor"), value: CUSTOM_RATIO }].map(
-      ({ label: optionLabel, ...props }) => /* @__PURE__ */ React41.createElement(import_editor_ui6.MenuListItem, { key: props.value, ...props, value: props.value ?? "" }, optionLabel)
+    [...RATIO_OPTIONS, { label: (0, import_i18n11.__)("Custom", "elementor"), value: CUSTOM_RATIO }].map(
+      ({ label: optionLabel, ...props }) => /* @__PURE__ */ React42.createElement(import_editor_ui6.MenuListItem, { key: props.value, ...props, value: props.value ?? "" }, optionLabel)
     )
-  ))), isCustom && /* @__PURE__ */ React41.createElement(import_ui34.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(
-    import_ui34.TextField,
+  ))), isCustom && /* @__PURE__ */ React42.createElement(import_ui35.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React42.createElement(import_ui35.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(
+    import_ui35.TextField,
     {
       size: "tiny",
       type: "number",
@@ -2686,11 +2685,11 @@ var AspectRatioControl = createControl(({ label }) => {
       value: customWidth,
       onChange: handleCustomWidthChange,
       InputProps: {
-        startAdornment: /* @__PURE__ */ React41.createElement(import_icons12.ArrowsMoveHorizontalIcon, { fontSize: "tiny" })
+        startAdornment: /* @__PURE__ */ React42.createElement(import_icons12.ArrowsMoveHorizontalIcon, { fontSize: "tiny" })
       }
     }
-  )), /* @__PURE__ */ React41.createElement(import_ui34.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React41.createElement(
-    import_ui34.TextField,
+  )), /* @__PURE__ */ React42.createElement(import_ui35.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React42.createElement(
+    import_ui35.TextField,
     {
       size: "tiny",
       type: "number",
@@ -2699,39 +2698,39 @@ var AspectRatioControl = createControl(({ label }) => {
       value: customHeight,
       onChange: handleCustomHeightChange,
       InputProps: {
-        startAdornment: /* @__PURE__ */ React41.createElement(import_icons12.ArrowsMoveVerticalIcon, { fontSize: "tiny" })
+        startAdornment: /* @__PURE__ */ React42.createElement(import_icons12.ArrowsMoveVerticalIcon, { fontSize: "tiny" })
       }
     }
   )))));
 });
 
 // src/controls/svg-media-control.tsx
-var React43 = __toESM(require("react"));
+var React44 = __toESM(require("react"));
 var import_react26 = require("react");
-var import_editor_props20 = require("@elementor/editor-props");
+var import_editor_props21 = require("@elementor/editor-props");
 var import_icons13 = require("@elementor/icons");
-var import_ui36 = require("@elementor/ui");
+var import_ui37 = require("@elementor/ui");
 var import_wp_media2 = require("@elementor/wp-media");
-var import_i18n14 = require("@wordpress/i18n");
+var import_i18n13 = require("@wordpress/i18n");
 
 // src/components/enable-unfiltered-modal.tsx
-var React42 = __toESM(require("react"));
+var React43 = __toESM(require("react"));
 var import_react25 = require("react");
 var import_editor_current_user = require("@elementor/editor-current-user");
-var import_ui35 = require("@elementor/ui");
-var import_i18n13 = require("@wordpress/i18n");
-var ADMIN_TITLE_TEXT = (0, import_i18n13.__)("Enable Unfiltered Uploads", "elementor");
-var ADMIN_CONTENT_TEXT = (0, import_i18n13.__)(
+var import_ui36 = require("@elementor/ui");
+var import_i18n12 = require("@wordpress/i18n");
+var ADMIN_TITLE_TEXT = (0, import_i18n12.__)("Enable Unfiltered Uploads", "elementor");
+var ADMIN_CONTENT_TEXT = (0, import_i18n12.__)(
   "Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.",
   "elementor"
 );
-var NON_ADMIN_TITLE_TEXT = (0, import_i18n13.__)("Sorry, you can't upload that file yet", "elementor");
-var NON_ADMIN_CONTENT_TEXT = (0, import_i18n13.__)(
+var NON_ADMIN_TITLE_TEXT = (0, import_i18n12.__)("Sorry, you can't upload that file yet", "elementor");
+var NON_ADMIN_CONTENT_TEXT = (0, import_i18n12.__)(
   "This is because this file type may pose a security risk. To upload them anyway, ask the site administrator to enable unfiltered file uploads.",
   "elementor"
 );
-var ADMIN_FAILED_CONTENT_TEXT_PT1 = (0, import_i18n13.__)("Failed to enable unfiltered files upload.", "elementor");
-var ADMIN_FAILED_CONTENT_TEXT_PT2 = (0, import_i18n13.__)(
+var ADMIN_FAILED_CONTENT_TEXT_PT1 = (0, import_i18n12.__)("Failed to enable unfiltered files upload.", "elementor");
+var ADMIN_FAILED_CONTENT_TEXT_PT2 = (0, import_i18n12.__)(
   "You can try again, if the problem persists, please contact support.",
   "elementor"
 );
@@ -2758,10 +2757,10 @@ var EnableUnfilteredModal = (props) => {
     }
   };
   const dialogProps = { ...props, isPending, handleEnable, isError, onClose };
-  return canManageOptions ? /* @__PURE__ */ React42.createElement(AdminDialog, { ...dialogProps }) : /* @__PURE__ */ React42.createElement(NonAdminDialog, { ...dialogProps });
+  return canManageOptions ? /* @__PURE__ */ React43.createElement(AdminDialog, { ...dialogProps }) : /* @__PURE__ */ React43.createElement(NonAdminDialog, { ...dialogProps });
 };
-var AdminDialog = ({ open, onClose, handleEnable, isPending, isError }) => /* @__PURE__ */ React42.createElement(import_ui35.Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React42.createElement(import_ui35.DialogHeader, { logo: false }, /* @__PURE__ */ React42.createElement(import_ui35.DialogTitle, null, ADMIN_TITLE_TEXT)), /* @__PURE__ */ React42.createElement(import_ui35.Divider, null), /* @__PURE__ */ React42.createElement(import_ui35.DialogContent, null, /* @__PURE__ */ React42.createElement(import_ui35.DialogContentText, null, isError ? /* @__PURE__ */ React42.createElement(React42.Fragment, null, ADMIN_FAILED_CONTENT_TEXT_PT1, " ", /* @__PURE__ */ React42.createElement("br", null), " ", ADMIN_FAILED_CONTENT_TEXT_PT2) : ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React42.createElement(import_ui35.DialogActions, null, /* @__PURE__ */ React42.createElement(import_ui35.Button, { size: "medium", color: "secondary", onClick: () => onClose(false) }, (0, import_i18n13.__)("Cancel", "elementor")), /* @__PURE__ */ React42.createElement(
-  import_ui35.Button,
+var AdminDialog = ({ open, onClose, handleEnable, isPending, isError }) => /* @__PURE__ */ React43.createElement(import_ui36.Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React43.createElement(import_ui36.DialogHeader, { logo: false }, /* @__PURE__ */ React43.createElement(import_ui36.DialogTitle, null, ADMIN_TITLE_TEXT)), /* @__PURE__ */ React43.createElement(import_ui36.Divider, null), /* @__PURE__ */ React43.createElement(import_ui36.DialogContent, null, /* @__PURE__ */ React43.createElement(import_ui36.DialogContentText, null, isError ? /* @__PURE__ */ React43.createElement(React43.Fragment, null, ADMIN_FAILED_CONTENT_TEXT_PT1, " ", /* @__PURE__ */ React43.createElement("br", null), " ", ADMIN_FAILED_CONTENT_TEXT_PT2) : ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React43.createElement(import_ui36.DialogActions, null, /* @__PURE__ */ React43.createElement(import_ui36.Button, { size: "medium", color: "secondary", onClick: () => onClose(false) }, (0, import_i18n12.__)("Cancel", "elementor")), /* @__PURE__ */ React43.createElement(
+  import_ui36.Button,
   {
     size: "medium",
     onClick: () => handleEnable(),
@@ -2769,16 +2768,16 @@ var AdminDialog = ({ open, onClose, handleEnable, isPending, isError }) => /* @_
     color: "primary",
     disabled: isPending
   },
-  isPending ? /* @__PURE__ */ React42.createElement(import_ui35.CircularProgress, { size: 24 }) : (0, import_i18n13.__)("Enable", "elementor")
+  isPending ? /* @__PURE__ */ React43.createElement(import_ui36.CircularProgress, { size: 24 }) : (0, import_i18n12.__)("Enable", "elementor")
 )));
-var NonAdminDialog = ({ open, onClose }) => /* @__PURE__ */ React42.createElement(import_ui35.Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React42.createElement(import_ui35.DialogHeader, { logo: false }, /* @__PURE__ */ React42.createElement(import_ui35.DialogTitle, null, NON_ADMIN_TITLE_TEXT)), /* @__PURE__ */ React42.createElement(import_ui35.Divider, null), /* @__PURE__ */ React42.createElement(import_ui35.DialogContent, null, /* @__PURE__ */ React42.createElement(import_ui35.DialogContentText, null, NON_ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React42.createElement(import_ui35.DialogActions, null, /* @__PURE__ */ React42.createElement(import_ui35.Button, { size: "medium", onClick: () => onClose(false), variant: "contained", color: "primary" }, (0, import_i18n13.__)("Got it", "elementor"))));
+var NonAdminDialog = ({ open, onClose }) => /* @__PURE__ */ React43.createElement(import_ui36.Dialog, { open, maxWidth: "sm", onClose: () => onClose(false) }, /* @__PURE__ */ React43.createElement(import_ui36.DialogHeader, { logo: false }, /* @__PURE__ */ React43.createElement(import_ui36.DialogTitle, null, NON_ADMIN_TITLE_TEXT)), /* @__PURE__ */ React43.createElement(import_ui36.Divider, null), /* @__PURE__ */ React43.createElement(import_ui36.DialogContent, null, /* @__PURE__ */ React43.createElement(import_ui36.DialogContentText, null, NON_ADMIN_CONTENT_TEXT)), /* @__PURE__ */ React43.createElement(import_ui36.DialogActions, null, /* @__PURE__ */ React43.createElement(import_ui36.Button, { size: "medium", onClick: () => onClose(false), variant: "contained", color: "primary" }, (0, import_i18n12.__)("Got it", "elementor"))));
 
 // src/controls/svg-media-control.tsx
 var TILE_SIZE = 8;
 var TILE_WHITE = "transparent";
 var TILE_BLACK = "#c1c1c1";
 var TILES_GRADIENT_FORMULA = `linear-gradient(45deg, ${TILE_BLACK} 25%, ${TILE_WHITE} 0, ${TILE_WHITE} 75%, ${TILE_BLACK} 0, ${TILE_BLACK})`;
-var StyledCard = (0, import_ui36.styled)(import_ui36.Card)`
+var StyledCard = (0, import_ui37.styled)(import_ui37.Card)`
 	background-color: white;
 	background-image: ${TILES_GRADIENT_FORMULA}, ${TILES_GRADIENT_FORMULA};
 	background-size: ${TILE_SIZE}px ${TILE_SIZE}px;
@@ -2787,7 +2786,7 @@ var StyledCard = (0, import_ui36.styled)(import_ui36.Card)`
 		${TILE_SIZE / 2}px ${TILE_SIZE / 2}px;
 	border: none;
 `;
-var StyledCardMediaContainer = (0, import_ui36.styled)(import_ui36.Stack)`
+var StyledCardMediaContainer = (0, import_ui37.styled)(import_ui37.Stack)`
 	position: relative;
 	height: 140px;
 	object-fit: contain;
@@ -2799,7 +2798,7 @@ var StyledCardMediaContainer = (0, import_ui36.styled)(import_ui36.Stack)`
 var MODE_BROWSE = { mode: "browse" };
 var MODE_UPLOAD = { mode: "upload" };
 var SvgMediaControl = createControl(() => {
-  const { value, setValue } = useBoundProp(import_editor_props20.imageSrcPropTypeUtil);
+  const { value, setValue } = useBoundProp(import_editor_props21.imageSrcPropTypeUtil);
   const { id, url } = value ?? {};
   const { data: attachment, isFetching } = (0, import_wp_media2.useWpMediaAttachment)(id?.value || null);
   const src = attachment?.url ?? url?.value ?? null;
@@ -2832,16 +2831,16 @@ var SvgMediaControl = createControl(() => {
       open(openOptions);
     }
   };
-  return /* @__PURE__ */ React43.createElement(import_ui36.Stack, { gap: 1 }, /* @__PURE__ */ React43.createElement(EnableUnfilteredModal, { open: unfilteredModalOpenState, onClose: onCloseUnfilteredModal }), /* @__PURE__ */ React43.createElement(ControlFormLabel, null, " ", (0, import_i18n14.__)("SVG", "elementor"), " "), /* @__PURE__ */ React43.createElement(ControlActions, null, /* @__PURE__ */ React43.createElement(StyledCard, { variant: "outlined" }, /* @__PURE__ */ React43.createElement(StyledCardMediaContainer, null, isFetching ? /* @__PURE__ */ React43.createElement(import_ui36.CircularProgress, { role: "progressbar" }) : /* @__PURE__ */ React43.createElement(
-    import_ui36.CardMedia,
+  return /* @__PURE__ */ React44.createElement(import_ui37.Stack, { gap: 1 }, /* @__PURE__ */ React44.createElement(EnableUnfilteredModal, { open: unfilteredModalOpenState, onClose: onCloseUnfilteredModal }), /* @__PURE__ */ React44.createElement(ControlActions, null, /* @__PURE__ */ React44.createElement(StyledCard, { variant: "outlined" }, /* @__PURE__ */ React44.createElement(StyledCardMediaContainer, null, isFetching ? /* @__PURE__ */ React44.createElement(import_ui37.CircularProgress, { role: "progressbar" }) : /* @__PURE__ */ React44.createElement(
+    import_ui37.CardMedia,
     {
       component: "img",
       image: src,
-      alt: (0, import_i18n14.__)("Preview SVG", "elementor"),
+      alt: (0, import_i18n13.__)("Preview SVG", "elementor"),
       sx: { maxHeight: "140px", width: "50px" }
     }
-  )), /* @__PURE__ */ React43.createElement(
-    import_ui36.CardOverlay,
+  )), /* @__PURE__ */ React44.createElement(
+    import_ui37.CardOverlay,
     {
       sx: {
         "&:hover": {
@@ -2849,69 +2848,69 @@ var SvgMediaControl = createControl(() => {
         }
       }
     },
-    /* @__PURE__ */ React43.createElement(import_ui36.Stack, { gap: 1 }, /* @__PURE__ */ React43.createElement(
-      import_ui36.Button,
+    /* @__PURE__ */ React44.createElement(import_ui37.Stack, { gap: 1 }, /* @__PURE__ */ React44.createElement(
+      import_ui37.Button,
       {
         size: "tiny",
         color: "inherit",
         variant: "outlined",
         onClick: () => handleClick(MODE_BROWSE)
       },
-      (0, import_i18n14.__)("Select SVG", "elementor")
-    ), /* @__PURE__ */ React43.createElement(
-      import_ui36.Button,
+      (0, import_i18n13.__)("Select SVG", "elementor")
+    ), /* @__PURE__ */ React44.createElement(
+      import_ui37.Button,
       {
         size: "tiny",
         variant: "text",
         color: "inherit",
-        startIcon: /* @__PURE__ */ React43.createElement(import_icons13.UploadIcon, null),
+        startIcon: /* @__PURE__ */ React44.createElement(import_icons13.UploadIcon, null),
         onClick: () => handleClick(MODE_UPLOAD)
       },
-      (0, import_i18n14.__)("Upload", "elementor")
+      (0, import_i18n13.__)("Upload", "elementor")
     ))
   ))));
 });
 
 // src/controls/background-control/background-control.tsx
-var React50 = __toESM(require("react"));
-var import_editor_props26 = require("@elementor/editor-props");
+var React51 = __toESM(require("react"));
+var import_editor_props27 = require("@elementor/editor-props");
 var import_editor_v1_adapters4 = require("@elementor/editor-v1-adapters");
-var import_ui44 = require("@elementor/ui");
-var import_i18n20 = require("@wordpress/i18n");
+var import_ui45 = require("@elementor/ui");
+var import_i18n19 = require("@wordpress/i18n");
 
 // src/controls/background-control/background-overlay/background-overlay-repeater-control.tsx
-var React49 = __toESM(require("react"));
-var import_editor_props25 = require("@elementor/editor-props");
-var import_ui43 = require("@elementor/ui");
+var React50 = __toESM(require("react"));
+var import_editor_props26 = require("@elementor/editor-props");
+var import_ui44 = require("@elementor/ui");
 var import_wp_media3 = require("@elementor/wp-media");
-var import_i18n19 = require("@wordpress/i18n");
+var import_i18n18 = require("@wordpress/i18n");
 
 // src/env.ts
 var import_env = require("@elementor/env");
 var { env } = (0, import_env.parseEnv)("@elementor/editor-controls");
 
 // src/controls/background-control/background-gradient-color-control.tsx
-var React44 = __toESM(require("react"));
-var import_editor_props21 = require("@elementor/editor-props");
-var import_ui37 = require("@elementor/ui");
+var React45 = __toESM(require("react"));
+var import_editor_props22 = require("@elementor/editor-props");
+var import_ui38 = require("@elementor/ui");
 var BackgroundGradientColorControl = createControl(() => {
-  const { value, setValue } = useBoundProp(import_editor_props21.backgroundGradientOverlayPropTypeUtil);
+  const { value, setValue } = useBoundProp(import_editor_props22.backgroundGradientOverlayPropTypeUtil);
   const handleChange = (newValue) => {
     const transformedValue = createTransformableValue(newValue);
     if (transformedValue.positions) {
-      transformedValue.positions = import_editor_props21.stringPropTypeUtil.create(newValue.positions.join(" "));
+      transformedValue.positions = import_editor_props22.stringPropTypeUtil.create(newValue.positions.join(" "));
     }
     setValue(transformedValue);
   };
   const createTransformableValue = (newValue) => ({
     ...newValue,
-    type: import_editor_props21.stringPropTypeUtil.create(newValue.type),
-    angle: import_editor_props21.numberPropTypeUtil.create(newValue.angle),
-    stops: import_editor_props21.gradientColorStopPropTypeUtil.create(
+    type: import_editor_props22.stringPropTypeUtil.create(newValue.type),
+    angle: import_editor_props22.numberPropTypeUtil.create(newValue.angle),
+    stops: import_editor_props22.gradientColorStopPropTypeUtil.create(
       newValue.stops.map(
-        ({ color, offset }) => import_editor_props21.colorStopPropTypeUtil.create({
-          color: import_editor_props21.colorPropTypeUtil.create(color),
-          offset: import_editor_props21.numberPropTypeUtil.create(offset)
+        ({ color, offset }) => import_editor_props22.colorStopPropTypeUtil.create({
+          color: import_editor_props22.colorPropTypeUtil.create(color),
+          offset: import_editor_props22.numberPropTypeUtil.create(offset)
         })
       )
     )
@@ -2931,8 +2930,8 @@ var BackgroundGradientColorControl = createControl(() => {
       positions: positions?.value.split(" ")
     };
   };
-  return /* @__PURE__ */ React44.createElement(ControlActions, null, /* @__PURE__ */ React44.createElement(
-    import_ui37.UnstableGradientBox,
+  return /* @__PURE__ */ React45.createElement(ControlActions, null, /* @__PURE__ */ React45.createElement(
+    import_ui38.UnstableGradientBox,
     {
       sx: { width: "auto", padding: 1.5 },
       value: normalizeValue(),
@@ -2940,67 +2939,67 @@ var BackgroundGradientColorControl = createControl(() => {
     }
   ));
 });
-var initialBackgroundGradientOverlay = import_editor_props21.backgroundGradientOverlayPropTypeUtil.create({
-  type: import_editor_props21.stringPropTypeUtil.create("linear"),
-  angle: import_editor_props21.numberPropTypeUtil.create(180),
-  stops: import_editor_props21.gradientColorStopPropTypeUtil.create([
-    import_editor_props21.colorStopPropTypeUtil.create({
-      color: import_editor_props21.colorPropTypeUtil.create("rgb(0,0,0)"),
-      offset: import_editor_props21.numberPropTypeUtil.create(0)
+var initialBackgroundGradientOverlay = import_editor_props22.backgroundGradientOverlayPropTypeUtil.create({
+  type: import_editor_props22.stringPropTypeUtil.create("linear"),
+  angle: import_editor_props22.numberPropTypeUtil.create(180),
+  stops: import_editor_props22.gradientColorStopPropTypeUtil.create([
+    import_editor_props22.colorStopPropTypeUtil.create({
+      color: import_editor_props22.colorPropTypeUtil.create("rgb(0,0,0)"),
+      offset: import_editor_props22.numberPropTypeUtil.create(0)
     }),
-    import_editor_props21.colorStopPropTypeUtil.create({
-      color: import_editor_props21.colorPropTypeUtil.create("rgb(255,255,255)"),
-      offset: import_editor_props21.numberPropTypeUtil.create(100)
+    import_editor_props22.colorStopPropTypeUtil.create({
+      color: import_editor_props22.colorPropTypeUtil.create("rgb(255,255,255)"),
+      offset: import_editor_props22.numberPropTypeUtil.create(100)
     })
   ])
 });
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-attachment.tsx
-var React45 = __toESM(require("react"));
+var React46 = __toESM(require("react"));
 var import_icons14 = require("@elementor/icons");
-var import_ui38 = require("@elementor/ui");
-var import_i18n15 = require("@wordpress/i18n");
+var import_ui39 = require("@elementor/ui");
+var import_i18n14 = require("@wordpress/i18n");
 var attachmentControlOptions = [
   {
     value: "fixed",
-    label: (0, import_i18n15.__)("Fixed", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(import_icons14.PinIcon, { fontSize: size }),
+    label: (0, import_i18n14.__)("Fixed", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(import_icons14.PinIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "scroll",
-    label: (0, import_i18n15.__)("Scroll", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(import_icons14.PinnedOffIcon, { fontSize: size }),
+    label: (0, import_i18n14.__)("Scroll", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(import_icons14.PinnedOffIcon, { fontSize: size }),
     showTooltip: true
   }
 ];
 var BackgroundImageOverlayAttachment = () => {
-  return /* @__PURE__ */ React45.createElement(PopoverGridContainer, null, /* @__PURE__ */ React45.createElement(import_ui38.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React45.createElement(ControlFormLabel, null, (0, import_i18n15.__)("Attachment", "elementor"))), /* @__PURE__ */ React45.createElement(import_ui38.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React45.createElement(ToggleControl, { options: attachmentControlOptions })));
+  return /* @__PURE__ */ React46.createElement(PopoverGridContainer, null, /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(ControlFormLabel, null, (0, import_i18n14.__)("Attachment", "elementor"))), /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React46.createElement(ToggleControl, { options: attachmentControlOptions })));
 };
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-position.tsx
-var React46 = __toESM(require("react"));
+var React47 = __toESM(require("react"));
 var import_react27 = require("react");
-var import_editor_props22 = require("@elementor/editor-props");
+var import_editor_props23 = require("@elementor/editor-props");
 var import_editor_ui7 = require("@elementor/editor-ui");
 var import_icons15 = require("@elementor/icons");
-var import_ui39 = require("@elementor/ui");
-var import_i18n16 = require("@wordpress/i18n");
+var import_ui40 = require("@elementor/ui");
+var import_i18n15 = require("@wordpress/i18n");
 var backgroundPositionOptions = [
-  { label: (0, import_i18n16.__)("Center center", "elementor"), value: "center center" },
-  { label: (0, import_i18n16.__)("Center left", "elementor"), value: "center left" },
-  { label: (0, import_i18n16.__)("Center right", "elementor"), value: "center right" },
-  { label: (0, import_i18n16.__)("Top center", "elementor"), value: "top center" },
-  { label: (0, import_i18n16.__)("Top left", "elementor"), value: "top left" },
-  { label: (0, import_i18n16.__)("Top right", "elementor"), value: "top right" },
-  { label: (0, import_i18n16.__)("Bottom center", "elementor"), value: "bottom center" },
-  { label: (0, import_i18n16.__)("Bottom left", "elementor"), value: "bottom left" },
-  { label: (0, import_i18n16.__)("Bottom right", "elementor"), value: "bottom right" },
-  { label: (0, import_i18n16.__)("Custom", "elementor"), value: "custom" }
+  { label: (0, import_i18n15.__)("Center center", "elementor"), value: "center center" },
+  { label: (0, import_i18n15.__)("Center left", "elementor"), value: "center left" },
+  { label: (0, import_i18n15.__)("Center right", "elementor"), value: "center right" },
+  { label: (0, import_i18n15.__)("Top center", "elementor"), value: "top center" },
+  { label: (0, import_i18n15.__)("Top left", "elementor"), value: "top left" },
+  { label: (0, import_i18n15.__)("Top right", "elementor"), value: "top right" },
+  { label: (0, import_i18n15.__)("Bottom center", "elementor"), value: "bottom center" },
+  { label: (0, import_i18n15.__)("Bottom left", "elementor"), value: "bottom left" },
+  { label: (0, import_i18n15.__)("Bottom right", "elementor"), value: "bottom right" },
+  { label: (0, import_i18n15.__)("Custom", "elementor"), value: "custom" }
 ];
 var BackgroundImageOverlayPosition = () => {
-  const backgroundImageOffsetContext = useBoundProp(import_editor_props22.backgroundImagePositionOffsetPropTypeUtil);
-  const stringPropContext = useBoundProp(import_editor_props22.stringPropTypeUtil);
+  const backgroundImageOffsetContext = useBoundProp(import_editor_props23.backgroundImagePositionOffsetPropTypeUtil);
+  const stringPropContext = useBoundProp(import_editor_props23.stringPropTypeUtil);
   const isCustom = !!backgroundImageOffsetContext.value;
   const rowRef = (0, import_react27.useRef)(null);
   const handlePositionChange = (event) => {
@@ -3011,8 +3010,8 @@ var BackgroundImageOverlayPosition = () => {
       stringPropContext.setValue(value);
     }
   };
-  return /* @__PURE__ */ React46.createElement(import_ui39.Grid, { container: true, spacing: 1.5 }, /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React46.createElement(PopoverGridContainer, null, /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(ControlFormLabel, null, (0, import_i18n16.__)("Position", "elementor"))), /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React46.createElement(
-    import_ui39.Select,
+  return /* @__PURE__ */ React47.createElement(import_ui40.Grid, { container: true, spacing: 1.5 }, /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React47.createElement(PopoverGridContainer, null, /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(ControlFormLabel, null, (0, import_i18n15.__)("Position", "elementor"))), /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end", overflow: "hidden" } }, /* @__PURE__ */ React47.createElement(
+    import_ui40.Select,
     {
       fullWidth: true,
       size: "tiny",
@@ -3020,93 +3019,93 @@ var BackgroundImageOverlayPosition = () => {
       disabled: stringPropContext.disabled,
       value: (backgroundImageOffsetContext.value ? "custom" : stringPropContext.value) ?? ""
     },
-    backgroundPositionOptions.map(({ label, value }) => /* @__PURE__ */ React46.createElement(import_editor_ui7.MenuListItem, { key: value, value: value ?? "" }, label))
-  )))), isCustom ? /* @__PURE__ */ React46.createElement(PropProvider, { ...backgroundImageOffsetContext }, /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React46.createElement(import_ui39.Grid, { container: true, spacing: 1.5, ref: rowRef }, /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(PropKeyProvider, { bind: "x" }, /* @__PURE__ */ React46.createElement(
+    backgroundPositionOptions.map(({ label, value }) => /* @__PURE__ */ React47.createElement(import_editor_ui7.MenuListItem, { key: value, value: value ?? "" }, label))
+  )))), isCustom ? /* @__PURE__ */ React47.createElement(PropProvider, { ...backgroundImageOffsetContext }, /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React47.createElement(import_ui40.Grid, { container: true, spacing: 1.5, ref: rowRef }, /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(PropKeyProvider, { bind: "x" }, /* @__PURE__ */ React47.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React46.createElement(import_icons15.LetterXIcon, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React47.createElement(import_icons15.LetterXIcon, { fontSize: "tiny" }),
       anchorRef: rowRef
     }
-  ))), /* @__PURE__ */ React46.createElement(import_ui39.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React46.createElement(PropKeyProvider, { bind: "y" }, /* @__PURE__ */ React46.createElement(
+  ))), /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(PropKeyProvider, { bind: "y" }, /* @__PURE__ */ React47.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React46.createElement(import_icons15.LetterYIcon, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React47.createElement(import_icons15.LetterYIcon, { fontSize: "tiny" }),
       anchorRef: rowRef
     }
   )))))) : null);
 };
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-repeat.tsx
-var React47 = __toESM(require("react"));
+var React48 = __toESM(require("react"));
 var import_icons16 = require("@elementor/icons");
-var import_ui40 = require("@elementor/ui");
-var import_i18n17 = require("@wordpress/i18n");
+var import_ui41 = require("@elementor/ui");
+var import_i18n16 = require("@wordpress/i18n");
 var repeatControlOptions = [
   {
     value: "repeat",
-    label: (0, import_i18n17.__)("Repeat", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(import_icons16.GridDotsIcon, { fontSize: size }),
+    label: (0, import_i18n16.__)("Repeat", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons16.GridDotsIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "repeat-x",
-    label: (0, import_i18n17.__)("Repeat-x", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(import_icons16.DotsHorizontalIcon, { fontSize: size }),
+    label: (0, import_i18n16.__)("Repeat-x", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons16.DotsHorizontalIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "repeat-y",
-    label: (0, import_i18n17.__)("Repeat-y", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(import_icons16.DotsVerticalIcon, { fontSize: size }),
+    label: (0, import_i18n16.__)("Repeat-y", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons16.DotsVerticalIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "no-repeat",
-    label: (0, import_i18n17.__)("No-repeat", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React47.createElement(import_icons16.XIcon, { fontSize: size }),
+    label: (0, import_i18n16.__)("No-repeat", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons16.XIcon, { fontSize: size }),
     showTooltip: true
   }
 ];
 var BackgroundImageOverlayRepeat = () => {
-  return /* @__PURE__ */ React47.createElement(PopoverGridContainer, null, /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React47.createElement(ControlFormLabel, null, (0, import_i18n17.__)("Repeat", "elementor"))), /* @__PURE__ */ React47.createElement(import_ui40.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React47.createElement(ToggleControl, { options: repeatControlOptions })));
+  return /* @__PURE__ */ React48.createElement(PopoverGridContainer, null, /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(ControlFormLabel, null, (0, import_i18n16.__)("Repeat", "elementor"))), /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React48.createElement(ToggleControl, { options: repeatControlOptions })));
 };
 
 // src/controls/background-control/background-overlay/background-image-overlay/background-image-overlay-size.tsx
-var React48 = __toESM(require("react"));
+var React49 = __toESM(require("react"));
 var import_react28 = require("react");
-var import_editor_props23 = require("@elementor/editor-props");
+var import_editor_props24 = require("@elementor/editor-props");
 var import_icons17 = require("@elementor/icons");
-var import_ui41 = require("@elementor/ui");
-var import_i18n18 = require("@wordpress/i18n");
+var import_ui42 = require("@elementor/ui");
+var import_i18n17 = require("@wordpress/i18n");
 var sizeControlOptions = [
   {
     value: "auto",
-    label: (0, import_i18n18.__)("Auto", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons17.LetterAIcon, { fontSize: size }),
+    label: (0, import_i18n17.__)("Auto", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(import_icons17.LetterAIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "cover",
-    label: (0, import_i18n18.__)("Cover", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons17.ArrowsMaximizeIcon, { fontSize: size }),
+    label: (0, import_i18n17.__)("Cover", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(import_icons17.ArrowsMaximizeIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "contain",
-    label: (0, import_i18n18.__)("Contain", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons17.ArrowBarBothIcon, { fontSize: size }),
+    label: (0, import_i18n17.__)("Contain", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(import_icons17.ArrowBarBothIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "custom",
-    label: (0, import_i18n18.__)("Custom", "elementor"),
-    renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons17.PencilIcon, { fontSize: size }),
+    label: (0, import_i18n17.__)("Custom", "elementor"),
+    renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(import_icons17.PencilIcon, { fontSize: size }),
     showTooltip: true
   }
 ];
 var BackgroundImageOverlaySize = () => {
-  const backgroundImageScaleContext = useBoundProp(import_editor_props23.backgroundImageSizeScalePropTypeUtil);
-  const stringPropContext = useBoundProp(import_editor_props23.stringPropTypeUtil);
+  const backgroundImageScaleContext = useBoundProp(import_editor_props24.backgroundImageSizeScalePropTypeUtil);
+  const stringPropContext = useBoundProp(import_editor_props24.stringPropTypeUtil);
   const isCustom = !!backgroundImageScaleContext.value;
   const rowRef = (0, import_react28.useRef)(null);
   const handleSizeChange = (size) => {
@@ -3116,7 +3115,7 @@ var BackgroundImageOverlaySize = () => {
       stringPropContext.setValue(size);
     }
   };
-  return /* @__PURE__ */ React48.createElement(import_ui41.Grid, { container: true, spacing: 1.5 }, /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React48.createElement(PopoverGridContainer, null, /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(ControlFormLabel, null, (0, import_i18n18.__)("Size", "elementor"))), /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React48.createElement(
+  return /* @__PURE__ */ React49.createElement(import_ui42.Grid, { container: true, spacing: 1.5 }, /* @__PURE__ */ React49.createElement(import_ui42.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React49.createElement(PopoverGridContainer, null, /* @__PURE__ */ React49.createElement(import_ui42.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(ControlFormLabel, null, (0, import_i18n17.__)("Size", "elementor"))), /* @__PURE__ */ React49.createElement(import_ui42.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React49.createElement(
     ControlToggleButtonGroup,
     {
       exclusive: true,
@@ -3125,17 +3124,17 @@ var BackgroundImageOverlaySize = () => {
       disabled: stringPropContext.disabled,
       value: backgroundImageScaleContext.value ? "custom" : stringPropContext.value
     }
-  )))), isCustom ? /* @__PURE__ */ React48.createElement(PropProvider, { ...backgroundImageScaleContext }, /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 12, ref: rowRef }, /* @__PURE__ */ React48.createElement(PopoverGridContainer, null, /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(PropKeyProvider, { bind: "width" }, /* @__PURE__ */ React48.createElement(
+  )))), isCustom ? /* @__PURE__ */ React49.createElement(PropProvider, { ...backgroundImageScaleContext }, /* @__PURE__ */ React49.createElement(import_ui42.Grid, { item: true, xs: 12, ref: rowRef }, /* @__PURE__ */ React49.createElement(PopoverGridContainer, null, /* @__PURE__ */ React49.createElement(import_ui42.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "width" }, /* @__PURE__ */ React49.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React48.createElement(import_icons17.ArrowsMoveHorizontalIcon, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React49.createElement(import_icons17.ArrowsMoveHorizontalIcon, { fontSize: "tiny" }),
       extendedOptions: ["auto"],
       anchorRef: rowRef
     }
-  ))), /* @__PURE__ */ React48.createElement(import_ui41.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React48.createElement(PropKeyProvider, { bind: "height" }, /* @__PURE__ */ React48.createElement(
+  ))), /* @__PURE__ */ React49.createElement(import_ui42.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "height" }, /* @__PURE__ */ React49.createElement(
     SizeControl,
     {
-      startIcon: /* @__PURE__ */ React48.createElement(import_icons17.ArrowsMoveVerticalIcon, { fontSize: "tiny" }),
+      startIcon: /* @__PURE__ */ React49.createElement(import_icons17.ArrowsMoveVerticalIcon, { fontSize: "tiny" }),
       extendedOptions: ["auto"],
       anchorRef: rowRef
     }
@@ -3144,16 +3143,16 @@ var BackgroundImageOverlaySize = () => {
 
 // src/controls/background-control/background-overlay/use-background-tabs-history.ts
 var import_react29 = require("react");
-var import_editor_props24 = require("@elementor/editor-props");
-var import_ui42 = require("@elementor/ui");
+var import_editor_props25 = require("@elementor/editor-props");
+var import_ui43 = require("@elementor/ui");
 var useBackgroundTabsHistory = ({
   color: initialBackgroundColorOverlay2,
   image: initialBackgroundImageOverlay,
   gradient: initialBackgroundGradientOverlay2
 }) => {
-  const { value: imageValue, setValue: setImageValue } = useBoundProp(import_editor_props24.backgroundImageOverlayPropTypeUtil);
-  const { value: colorValue, setValue: setColorValue } = useBoundProp(import_editor_props24.backgroundColorOverlayPropTypeUtil);
-  const { value: gradientValue, setValue: setGradientValue } = useBoundProp(import_editor_props24.backgroundGradientOverlayPropTypeUtil);
+  const { value: imageValue, setValue: setImageValue } = useBoundProp(import_editor_props25.backgroundImageOverlayPropTypeUtil);
+  const { value: colorValue, setValue: setColorValue } = useBoundProp(import_editor_props25.backgroundColorOverlayPropTypeUtil);
+  const { value: gradientValue, setValue: setGradientValue } = useBoundProp(import_editor_props25.backgroundGradientOverlayPropTypeUtil);
   const getCurrentOverlayType = () => {
     if (colorValue) {
       return "color";
@@ -3163,7 +3162,7 @@ var useBackgroundTabsHistory = ({
     }
     return "image";
   };
-  const { getTabsProps, getTabProps, getTabPanelProps } = (0, import_ui42.useTabs)(getCurrentOverlayType());
+  const { getTabsProps, getTabProps, getTabPanelProps } = (0, import_ui43.useTabs)(getCurrentOverlayType());
   const valuesHistory = (0, import_react29.useRef)({
     image: initialBackgroundImageOverlay,
     color: initialBackgroundColorOverlay2,
@@ -3202,9 +3201,9 @@ var useBackgroundTabsHistory = ({
 
 // src/controls/background-control/background-overlay/background-overlay-repeater-control.tsx
 var DEFAULT_BACKGROUND_COLOR_OVERLAY_COLOR = "#00000033";
-var initialBackgroundColorOverlay = import_editor_props25.backgroundColorOverlayPropTypeUtil.create(
+var initialBackgroundColorOverlay = import_editor_props26.backgroundColorOverlayPropTypeUtil.create(
   {
-    color: import_editor_props25.colorPropTypeUtil.create(DEFAULT_BACKGROUND_COLOR_OVERLAY_COLOR)
+    color: import_editor_props26.colorPropTypeUtil.create(DEFAULT_BACKGROUND_COLOR_OVERLAY_COLOR)
   }
 );
 var getInitialBackgroundOverlay = () => ({
@@ -3232,21 +3231,21 @@ var getInitialBackgroundOverlay = () => ({
   }
 });
 var backgroundResolutionOptions = [
-  { label: (0, import_i18n19.__)("Thumbnail - 150 x 150", "elementor"), value: "thumbnail" },
-  { label: (0, import_i18n19.__)("Medium - 300 x 300", "elementor"), value: "medium" },
-  { label: (0, import_i18n19.__)("Large 1024 x 1024", "elementor"), value: "large" },
-  { label: (0, import_i18n19.__)("Full", "elementor"), value: "full" }
+  { label: (0, import_i18n18.__)("Thumbnail - 150 x 150", "elementor"), value: "thumbnail" },
+  { label: (0, import_i18n18.__)("Medium - 300 x 300", "elementor"), value: "medium" },
+  { label: (0, import_i18n18.__)("Large 1024 x 1024", "elementor"), value: "large" },
+  { label: (0, import_i18n18.__)("Full", "elementor"), value: "full" }
 ];
 var BackgroundOverlayRepeaterControl = createControl(() => {
-  const { propType, value: overlayValues, setValue, disabled } = useBoundProp(import_editor_props25.backgroundOverlayPropTypeUtil);
-  return /* @__PURE__ */ React49.createElement(PropProvider, { propType, value: overlayValues, setValue, disabled }, /* @__PURE__ */ React49.createElement(
+  const { propType, value: overlayValues, setValue, disabled } = useBoundProp(import_editor_props26.backgroundOverlayPropTypeUtil);
+  return /* @__PURE__ */ React50.createElement(PropProvider, { propType, value: overlayValues, setValue, isDisabled: () => disabled }, /* @__PURE__ */ React50.createElement(
     Repeater,
     {
       openOnAdd: true,
       disabled,
       values: overlayValues ?? [],
       setValues: setValue,
-      label: (0, import_i18n19.__)("Overlay", "elementor"),
+      label: (0, import_i18n18.__)("Overlay", "elementor"),
       itemSettings: {
         Icon: ItemIcon3,
         Label: ItemLabel3,
@@ -3257,7 +3256,7 @@ var BackgroundOverlayRepeaterControl = createControl(() => {
   ));
 });
 var ItemContent3 = ({ anchorEl = null, bind }) => {
-  return /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React49.createElement(Content3, { anchorEl }));
+  return /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind }, /* @__PURE__ */ React50.createElement(Content3, { anchorEl }));
 };
 var Content3 = ({ anchorEl }) => {
   const { getTabsProps, getTabProps, getTabPanelProps } = useBackgroundTabsHistory({
@@ -3265,27 +3264,27 @@ var Content3 = ({ anchorEl }) => {
     color: initialBackgroundColorOverlay.value,
     gradient: initialBackgroundGradientOverlay.value
   });
-  return /* @__PURE__ */ React49.createElement(import_ui43.Box, { sx: { width: "100%" } }, /* @__PURE__ */ React49.createElement(import_ui43.Box, { sx: { borderBottom: 1, borderColor: "divider" } }, /* @__PURE__ */ React49.createElement(
-    import_ui43.Tabs,
+  return /* @__PURE__ */ React50.createElement(import_ui44.Box, { sx: { width: "100%" } }, /* @__PURE__ */ React50.createElement(import_ui44.Box, { sx: { borderBottom: 1, borderColor: "divider" } }, /* @__PURE__ */ React50.createElement(
+    import_ui44.Tabs,
     {
       size: "small",
       variant: "fullWidth",
       ...getTabsProps(),
-      "aria-label": (0, import_i18n19.__)("Background Overlay", "elementor")
+      "aria-label": (0, import_i18n18.__)("Background Overlay", "elementor")
     },
-    /* @__PURE__ */ React49.createElement(import_ui43.Tab, { label: (0, import_i18n19.__)("Image", "elementor"), ...getTabProps("image") }),
-    /* @__PURE__ */ React49.createElement(import_ui43.Tab, { label: (0, import_i18n19.__)("Gradient", "elementor"), ...getTabProps("gradient") }),
-    /* @__PURE__ */ React49.createElement(import_ui43.Tab, { label: (0, import_i18n19.__)("Color", "elementor"), ...getTabProps("color") })
-  )), /* @__PURE__ */ React49.createElement(import_ui43.TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("image") }, /* @__PURE__ */ React49.createElement(PopoverContent, null, /* @__PURE__ */ React49.createElement(ImageOverlayContent, null))), /* @__PURE__ */ React49.createElement(import_ui43.TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("gradient") }, /* @__PURE__ */ React49.createElement(BackgroundGradientColorControl, null)), /* @__PURE__ */ React49.createElement(import_ui43.TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("color") }, /* @__PURE__ */ React49.createElement(PopoverContent, null, /* @__PURE__ */ React49.createElement(ColorOverlayContent, { anchorEl }))));
+    /* @__PURE__ */ React50.createElement(import_ui44.Tab, { label: (0, import_i18n18.__)("Image", "elementor"), ...getTabProps("image") }),
+    /* @__PURE__ */ React50.createElement(import_ui44.Tab, { label: (0, import_i18n18.__)("Gradient", "elementor"), ...getTabProps("gradient") }),
+    /* @__PURE__ */ React50.createElement(import_ui44.Tab, { label: (0, import_i18n18.__)("Color", "elementor"), ...getTabProps("color") })
+  )), /* @__PURE__ */ React50.createElement(import_ui44.TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("image") }, /* @__PURE__ */ React50.createElement(PopoverContent, null, /* @__PURE__ */ React50.createElement(ImageOverlayContent, null))), /* @__PURE__ */ React50.createElement(import_ui44.TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("gradient") }, /* @__PURE__ */ React50.createElement(BackgroundGradientColorControl, null)), /* @__PURE__ */ React50.createElement(import_ui44.TabPanel, { sx: { p: 1.5 }, ...getTabPanelProps("color") }, /* @__PURE__ */ React50.createElement(PopoverContent, null, /* @__PURE__ */ React50.createElement(ColorOverlayContent, { anchorEl }))));
 };
 var ItemIcon3 = ({ value }) => {
   switch (value.$$type) {
     case "background-image-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemIconImage, { value });
+      return /* @__PURE__ */ React50.createElement(ItemIconImage, { value });
     case "background-color-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemIconColor, { value });
+      return /* @__PURE__ */ React50.createElement(ItemIconColor, { value });
     case "background-gradient-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemIconGradient, { value });
+      return /* @__PURE__ */ React50.createElement(ItemIconGradient, { value });
     default:
       return null;
   }
@@ -3298,12 +3297,12 @@ var extractColorFrom = (prop) => {
 };
 var ItemIconColor = ({ value: prop }) => {
   const color = extractColorFrom(prop);
-  return /* @__PURE__ */ React49.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: color });
+  return /* @__PURE__ */ React50.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: color });
 };
 var ItemIconImage = ({ value }) => {
   const { imageUrl } = useImage(value);
-  return /* @__PURE__ */ React49.createElement(
-    import_ui43.CardMedia,
+  return /* @__PURE__ */ React50.createElement(
+    import_ui44.CardMedia,
     {
       image: imageUrl,
       sx: (theme) => ({
@@ -3317,49 +3316,43 @@ var ItemIconImage = ({ value }) => {
 };
 var ItemIconGradient = ({ value }) => {
   const gradient = getGradientValue(value);
-  return /* @__PURE__ */ React49.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: gradient });
+  return /* @__PURE__ */ React50.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: gradient });
 };
 var ItemLabel3 = ({ value }) => {
   switch (value.$$type) {
     case "background-image-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemLabelImage, { value });
+      return /* @__PURE__ */ React50.createElement(ItemLabelImage, { value });
     case "background-color-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemLabelColor, { value });
+      return /* @__PURE__ */ React50.createElement(ItemLabelColor, { value });
     case "background-gradient-overlay":
-      return /* @__PURE__ */ React49.createElement(ItemLabelGradient, { value });
+      return /* @__PURE__ */ React50.createElement(ItemLabelGradient, { value });
     default:
       return null;
   }
 };
 var ItemLabelColor = ({ value: prop }) => {
   const color = extractColorFrom(prop);
-  return /* @__PURE__ */ React49.createElement("span", null, color);
+  return /* @__PURE__ */ React50.createElement("span", null, color);
 };
 var ItemLabelImage = ({ value }) => {
   const { imageTitle } = useImage(value);
-  return /* @__PURE__ */ React49.createElement("span", null, imageTitle);
+  return /* @__PURE__ */ React50.createElement("span", null, imageTitle);
 };
 var ItemLabelGradient = ({ value }) => {
   if (value.value.type.value === "linear") {
-    return /* @__PURE__ */ React49.createElement("span", null, (0, import_i18n19.__)("Linear Gradient", "elementor"));
+    return /* @__PURE__ */ React50.createElement("span", null, (0, import_i18n18.__)("Linear Gradient", "elementor"));
   }
-  return /* @__PURE__ */ React49.createElement("span", null, (0, import_i18n19.__)("Radial Gradient", "elementor"));
+  return /* @__PURE__ */ React50.createElement("span", null, (0, import_i18n18.__)("Radial Gradient", "elementor"));
 };
 var ColorOverlayContent = ({ anchorEl }) => {
-  const propContext = useBoundProp(import_editor_props25.backgroundColorOverlayPropTypeUtil);
-  return /* @__PURE__ */ React49.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React49.createElement(ColorControl, { anchorEl })));
+  const propContext = useBoundProp(import_editor_props26.backgroundColorOverlayPropTypeUtil);
+  return /* @__PURE__ */ React50.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React50.createElement(ColorControl, { anchorEl })));
 };
 var ImageOverlayContent = () => {
-  const propContext = useBoundProp(import_editor_props25.backgroundImageOverlayPropTypeUtil);
-  return /* @__PURE__ */ React49.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "image" }, /* @__PURE__ */ React49.createElement(import_ui43.Grid, { container: true, spacing: 1, alignItems: "center" }, /* @__PURE__ */ React49.createElement(import_ui43.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React49.createElement(
-    ImageControl,
-    {
-      resolutionLabel: (0, import_i18n19.__)("Resolution", "elementor"),
-      sizes: backgroundResolutionOptions
-    }
-  )))), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "position" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlayPosition, null)), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "repeat" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlayRepeat, null)), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlaySize, null)), /* @__PURE__ */ React49.createElement(PropKeyProvider, { bind: "attachment" }, /* @__PURE__ */ React49.createElement(BackgroundImageOverlayAttachment, null)));
+  const propContext = useBoundProp(import_editor_props26.backgroundImageOverlayPropTypeUtil);
+  return /* @__PURE__ */ React50.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "image" }, /* @__PURE__ */ React50.createElement(import_ui44.Grid, { container: true, spacing: 1, alignItems: "center" }, /* @__PURE__ */ React50.createElement(import_ui44.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React50.createElement(import_ui44.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React50.createElement(import_ui44.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React50.createElement(ControlFormLabel, null, (0, import_i18n18.__)("Resolution", "elementor"))), /* @__PURE__ */ React50.createElement(import_ui44.Grid, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React50.createElement(ImageControl, { sizes: backgroundResolutionOptions })))))), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "position" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlayPosition, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "repeat" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlayRepeat, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "size" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlaySize, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "attachment" }, /* @__PURE__ */ React50.createElement(BackgroundImageOverlayAttachment, null)));
 };
-var StyledUnstableColorIndicator = (0, import_ui43.styled)(import_ui43.UnstableColorIndicator)(({ theme }) => ({
+var StyledUnstableColorIndicator = (0, import_ui44.styled)(import_ui44.UnstableColorIndicator)(({ theme }) => ({
   borderRadius: `${theme.shape.borderRadius / 2}px`
 }));
 var useImage = (image) => {
@@ -3394,22 +3387,10 @@ var getGradientValue = (value) => {
 
 // src/controls/background-control/background-control.tsx
 var BackgroundControl = createControl(() => {
-  const propContext = useBoundProp(import_editor_props26.backgroundPropTypeUtil);
+  const propContext = useBoundProp(import_editor_props27.backgroundPropTypeUtil);
   const isUsingNestedProps = (0, import_editor_v1_adapters4.isExperimentActive)("e_v_3_30");
-  const colorLabel = (0, import_i18n20.__)("Color", "elementor");
-  return /* @__PURE__ */ React50.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "background-overlay" }, /* @__PURE__ */ React50.createElement(BackgroundOverlayRepeaterControl, null)), /* @__PURE__ */ React50.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React50.createElement(import_ui44.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React50.createElement(import_ui44.Grid, { item: true, xs: 6 }, isUsingNestedProps ? /* @__PURE__ */ React50.createElement(ControlLabel, null, colorLabel) : /* @__PURE__ */ React50.createElement(ControlFormLabel, null, colorLabel)), /* @__PURE__ */ React50.createElement(import_ui44.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React50.createElement(ColorControl, null)))));
-});
-
-// src/controls/switch-control.tsx
-var React51 = __toESM(require("react"));
-var import_editor_props27 = require("@elementor/editor-props");
-var import_ui45 = require("@elementor/ui");
-var SwitchControl2 = createControl(() => {
-  const { value, setValue, disabled } = useBoundProp(import_editor_props27.booleanPropTypeUtil);
-  const handleChange = (event) => {
-    setValue(event.target.checked);
-  };
-  return /* @__PURE__ */ React51.createElement("div", { style: { display: "flex", justifyContent: "flex-end" } }, /* @__PURE__ */ React51.createElement(import_ui45.Switch, { checked: !!value, onChange: handleChange, size: "small", disabled }));
+  const colorLabel = (0, import_i18n19.__)("Color", "elementor");
+  return /* @__PURE__ */ React51.createElement(PropProvider, { ...propContext }, /* @__PURE__ */ React51.createElement(PropKeyProvider, { bind: "background-overlay" }, /* @__PURE__ */ React51.createElement(BackgroundOverlayRepeaterControl, null)), /* @__PURE__ */ React51.createElement(PropKeyProvider, { bind: "color" }, /* @__PURE__ */ React51.createElement(import_ui45.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React51.createElement(import_ui45.Grid, { item: true, xs: 6 }, isUsingNestedProps ? /* @__PURE__ */ React51.createElement(ControlLabel, null, colorLabel) : /* @__PURE__ */ React51.createElement(ControlFormLabel, null, colorLabel)), /* @__PURE__ */ React51.createElement(import_ui45.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React51.createElement(ColorControl, null)))));
 });
 
 // src/controls/repeatable-control.tsx
@@ -3497,7 +3478,7 @@ var React53 = __toESM(require("react"));
 var import_react32 = require("react");
 var import_editor_props29 = require("@elementor/editor-props");
 var import_ui47 = require("@elementor/ui");
-var import_i18n21 = require("@wordpress/i18n");
+var import_i18n20 = require("@wordpress/i18n");
 var KeyValueControl = createControl((props = {}) => {
   const { value, setValue } = useBoundProp(import_editor_props29.keyValuePropTypeUtil);
   const [keyError, setKeyError] = (0, import_react32.useState)(null);
@@ -3506,13 +3487,13 @@ var KeyValueControl = createControl((props = {}) => {
     key: value?.key?.value || "",
     value: value?.value?.value || ""
   });
-  const keyLabel = props.keyName || (0, import_i18n21.__)("Key", "elementor");
-  const valueLabel = props.valueName || (0, import_i18n21.__)("Value", "elementor");
+  const keyLabel = props.keyName || (0, import_i18n20.__)("Key", "elementor");
+  const valueLabel = props.valueName || (0, import_i18n20.__)("Value", "elementor");
   const [keyRegex, valueRegex, errMsg] = (0, import_react32.useMemo)(
     () => [
       props.regexKey ? new RegExp(props.regexKey) : void 0,
       props.regexValue ? new RegExp(props.regexValue) : void 0,
-      props.validationErrorMessage || (0, import_i18n21.__)("Invalid Format", "elementor")
+      props.validationErrorMessage || (0, import_i18n20.__)("Invalid Format", "elementor")
     ],
     [props.regexKey, props.regexValue, props.validationErrorMessage]
   );
@@ -3587,17 +3568,17 @@ var import_editor_ui8 = require("@elementor/editor-ui");
 var import_editor_v1_adapters5 = require("@elementor/editor-v1-adapters");
 var import_icons18 = require("@elementor/icons");
 var import_ui48 = require("@elementor/ui");
-var import_i18n22 = require("@wordpress/i18n");
+var import_i18n21 = require("@wordpress/i18n");
 var positionOptions = [
-  { label: (0, import_i18n22.__)("Center center", "elementor"), value: "center center" },
-  { label: (0, import_i18n22.__)("Center left", "elementor"), value: "center left" },
-  { label: (0, import_i18n22.__)("Center right", "elementor"), value: "center right" },
-  { label: (0, import_i18n22.__)("Top center", "elementor"), value: "top center" },
-  { label: (0, import_i18n22.__)("Top left", "elementor"), value: "top left" },
-  { label: (0, import_i18n22.__)("Top right", "elementor"), value: "top right" },
-  { label: (0, import_i18n22.__)("Bottom center", "elementor"), value: "bottom center" },
-  { label: (0, import_i18n22.__)("Bottom left", "elementor"), value: "bottom left" },
-  { label: (0, import_i18n22.__)("Bottom right", "elementor"), value: "bottom right" }
+  { label: (0, import_i18n21.__)("Center center", "elementor"), value: "center center" },
+  { label: (0, import_i18n21.__)("Center left", "elementor"), value: "center left" },
+  { label: (0, import_i18n21.__)("Center right", "elementor"), value: "center right" },
+  { label: (0, import_i18n21.__)("Top center", "elementor"), value: "top center" },
+  { label: (0, import_i18n21.__)("Top left", "elementor"), value: "top left" },
+  { label: (0, import_i18n21.__)("Top right", "elementor"), value: "top right" },
+  { label: (0, import_i18n21.__)("Bottom center", "elementor"), value: "bottom center" },
+  { label: (0, import_i18n21.__)("Bottom left", "elementor"), value: "bottom left" },
+  { label: (0, import_i18n21.__)("Bottom right", "elementor"), value: "bottom right" }
 ];
 var PositionControl = () => {
   const positionContext = useBoundProp(import_editor_props30.positionPropTypeUtil);
@@ -3607,7 +3588,7 @@ var PositionControl = () => {
   const availablePositionOptions = (0, import_react33.useMemo)(() => {
     const options = [...positionOptions];
     if (isVersion331Active) {
-      options.push({ label: (0, import_i18n22.__)("Custom", "elementor"), value: "custom" });
+      options.push({ label: (0, import_i18n21.__)("Custom", "elementor"), value: "custom" });
     }
     return options;
   }, [isVersion331Active]);
@@ -3619,7 +3600,7 @@ var PositionControl = () => {
       stringPropContext.setValue(value);
     }
   };
-  return /* @__PURE__ */ React54.createElement(import_ui48.Grid, { container: true, spacing: 1.5 }, /* @__PURE__ */ React54.createElement(import_ui48.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React54.createElement(import_ui48.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React54.createElement(import_ui48.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(ControlFormLabel, null, (0, import_i18n22.__)("Object position", "elementor"))), /* @__PURE__ */ React54.createElement(import_ui48.Grid, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React54.createElement(
+  return /* @__PURE__ */ React54.createElement(import_ui48.Grid, { container: true, spacing: 1.5 }, /* @__PURE__ */ React54.createElement(import_ui48.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React54.createElement(import_ui48.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React54.createElement(import_ui48.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React54.createElement(ControlFormLabel, null, (0, import_i18n21.__)("Object position", "elementor"))), /* @__PURE__ */ React54.createElement(import_ui48.Grid, { item: true, xs: 6, sx: { overflow: "hidden" } }, /* @__PURE__ */ React54.createElement(
     import_ui48.Select,
     {
       size: "tiny",

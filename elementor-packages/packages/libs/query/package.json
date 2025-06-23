@@ -28,13 +28,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "README.md",
-    "CHANGELOG.md",
-    "/dist",
-    "/src",
-    "!**/__tests__"
-  ],
   "scripts": {
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"

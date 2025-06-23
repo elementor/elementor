@@ -50,7 +50,10 @@ const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
 
 	const [ actualStyle ] = inheritanceChain;
 
-	if ( actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY ) {
+	if (
+		! isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 ) &&
+		actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY
+	) {
 		return null;
 	}
 

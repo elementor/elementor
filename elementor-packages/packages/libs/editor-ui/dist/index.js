@@ -312,10 +312,10 @@ var PopoverHeader = ({ title, onClose, icon, actions }) => {
 };
 
 // src/components/popover/menu-list.tsx
-var React11 = __toESM(require("react"));
+var React10 = __toESM(require("react"));
 var import_react9 = require("react");
-var import_editor_v1_adapters4 = require("@elementor/editor-v1-adapters");
-var import_ui11 = require("@elementor/ui");
+var import_editor_v1_adapters3 = require("@elementor/editor-v1-adapters");
+var import_ui10 = require("@elementor/ui");
 var import_react_virtual = require("@tanstack/react-virtual");
 
 // src/hooks/use-scroll-to-selected.ts
@@ -354,33 +354,8 @@ var useScrollTop = ({ containerRef }) => {
   return scrollTop;
 };
 
-// src/components/popover/scrollable-content.tsx
-var React10 = __toESM(require("react"));
-var import_editor_v1_adapters3 = require("@elementor/editor-v1-adapters");
-var import_ui10 = require("@elementor/ui");
-var SECTION_PADDING_INLINE = 32;
-var DEFAULT_POPOVER_WIDTH = 220;
-var isVersion330Active2 = (0, import_editor_v1_adapters3.isExperimentActive)("e_v_3_30");
-var PopoverScrollableContent = React10.forwardRef(
-  ({ children, height = 260, width = DEFAULT_POPOVER_WIDTH }, ref) => {
-    return /* @__PURE__ */ React10.createElement(
-      import_ui10.Box,
-      {
-        ref,
-        sx: {
-          overflowY: "auto",
-          height,
-          width: `${isVersion330Active2 ? width - SECTION_PADDING_INLINE : DEFAULT_POPOVER_WIDTH}px`,
-          maxWidth: 496
-        }
-      },
-      children
-    );
-  }
-);
-
 // src/components/popover/menu-list.tsx
-var isVersion330Active3 = (0, import_editor_v1_adapters4.isExperimentActive)("e_v_3_30");
+var isVersion330Active2 = (0, import_editor_v1_adapters3.isExperimentActive)("e_v_3_30");
 var ITEM_HEIGHT = 32;
 var LIST_ITEMS_BUFFER = 6;
 var MENU_LIST_PADDING_TOP = 8;
@@ -403,8 +378,7 @@ var PopoverMenuList = ({
   "data-testid": dataTestId,
   menuItemContentTemplate,
   noResultsComponent,
-  menuListTemplate: CustomMenuList,
-  width
+  menuListTemplate: CustomMenuList
 }) => {
   const containerRef = (0, import_react9.useRef)(null);
   const scrollTop = useScrollTop({ containerRef });
@@ -440,7 +414,7 @@ var PopoverMenuList = ({
     onChange
   });
   useScrollToSelected({ selectedValue, items, virtualizer });
-  return /* @__PURE__ */ React11.createElement(PopoverScrollableContent, { ref: containerRef, width }, items.length === 0 && noResultsComponent ? noResultsComponent : /* @__PURE__ */ React11.createElement(
+  return /* @__PURE__ */ React10.createElement(import_ui10.Box, { ref: containerRef }, items.length === 0 && noResultsComponent ? noResultsComponent : /* @__PURE__ */ React10.createElement(
     MenuListComponent,
     {
       role: "listbox",
@@ -458,17 +432,17 @@ var PopoverMenuList = ({
       }
       if (item.type === "category") {
         const shouldStick = virtualRow.start + MENU_LIST_PADDING_TOP <= scrollTop;
-        return /* @__PURE__ */ React11.createElement(
-          import_ui11.MenuSubheader,
+        return /* @__PURE__ */ React10.createElement(
+          import_ui10.MenuSubheader,
           {
             key: virtualRow.key,
             style: shouldStick ? {} : menuSubHeaderAbsoluteStyling(virtualRow.start),
-            sx: isVersion330Active3 ? { fontWeight: "400", color: "text.tertiary" } : void 0
+            sx: isVersion330Active2 ? { fontWeight: "400", color: "text.tertiary" } : void 0
           },
           item.label || item.value
         );
       }
-      return /* @__PURE__ */ React11.createElement(
+      return /* @__PURE__ */ React10.createElement(
         "li",
         {
           key: virtualRow.key,
@@ -506,7 +480,7 @@ var PopoverMenuList = ({
     })
   ));
 };
-var StyledMenuList = (0, import_ui11.styled)(import_ui11.MenuList)(({ theme }) => ({
+var StyledMenuList = (0, import_ui10.styled)(import_ui10.MenuList)(({ theme }) => ({
   "& > li": {
     height: ITEM_HEIGHT,
     width: "100%",
@@ -532,6 +506,31 @@ var StyledMenuList = (0, import_ui11.styled)(import_ui11.MenuList)(({ theme }) =
   width: "100%",
   position: "relative"
 }));
+
+// src/components/popover/scrollable-content.tsx
+var React11 = __toESM(require("react"));
+var import_editor_v1_adapters4 = require("@elementor/editor-v1-adapters");
+var import_ui11 = require("@elementor/ui");
+var SECTION_PADDING_INLINE = 32;
+var DEFAULT_POPOVER_WIDTH = 220;
+var isVersion330Active3 = (0, import_editor_v1_adapters4.isExperimentActive)("e_v_3_30");
+var PopoverScrollableContent = React11.forwardRef(
+  ({ children, height = 260, width = DEFAULT_POPOVER_WIDTH }, ref) => {
+    return /* @__PURE__ */ React11.createElement(
+      import_ui11.Box,
+      {
+        ref,
+        sx: {
+          overflowY: "auto",
+          height,
+          width: `${isVersion330Active3 ? width - SECTION_PADDING_INLINE : DEFAULT_POPOVER_WIDTH}px`,
+          maxWidth: 496
+        }
+      },
+      children
+    );
+  }
+);
 
 // src/components/popover/search.tsx
 var React12 = __toESM(require("react"));

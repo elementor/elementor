@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { type StringPropValue } from '@elementor/editor-props';
 import { type ToggleButtonProps, useTheme } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { useStylesField } from '../../../../hooks/use-styles-field';
 import type { FlexDirection } from '../flex-direction-field';
@@ -13,6 +14,8 @@ type Props = {
 	offset?: number;
 	disableRotationForReversed?: boolean;
 };
+
+const FLEX_DIRECTION_LABEL = __( 'Flex direction', 'elementor' );
 
 const CLOCKWISE_ANGLES: Record< FlexDirection, number > = {
 	row: 0,
@@ -48,7 +51,9 @@ const useGetTargetAngle = (
 	disableRotationForReversed: boolean,
 	existingRef?: React.MutableRefObject< number >
 ) => {
-	const { value: direction } = useStylesField< StringPropValue >( 'flex-direction' );
+	const { value: direction } = useStylesField< StringPropValue >( 'flex-direction', {
+		history: { propDisplayName: FLEX_DIRECTION_LABEL },
+	} );
 	const isRtl = 'rtl' === useTheme().direction;
 	const rotationMultiplier = isRtl ? -1 : 1;
 	const angleMap = isClockwise ? CLOCKWISE_ANGLES : COUNTER_CLOCKWISE_ANGLES;

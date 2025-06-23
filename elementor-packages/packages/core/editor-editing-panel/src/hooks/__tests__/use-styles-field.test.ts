@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react';
+import { __ } from '@wordpress/i18n';
 
 import { useStylesField } from '../use-styles-field';
 import { useStylesFields } from '../use-styles-fields';
@@ -19,7 +20,9 @@ describe( 'useStylesField', () => {
 		} );
 
 		// Act.
-		const { result } = renderHook( () => useStylesField( 'color' ) );
+		const { result } = renderHook( () =>
+			useStylesField( 'color', { history: { propDisplayName: __( 'Color', 'elementor' ) } } )
+		);
 
 		// Assert.
 		expect( result.current.value ).toEqual( '#000' );
@@ -36,7 +39,9 @@ describe( 'useStylesField', () => {
 		} );
 
 		// Act.
-		const { result } = renderHook( () => useStylesField( 'color' ) );
+		const { result } = renderHook( () =>
+			useStylesField( 'color', { history: { propDisplayName: __( 'Color', 'elementor' ) } } )
+		);
 
 		// Assert.
 		expect( result.current.value ).toBeNull();
@@ -49,15 +54,15 @@ describe( 'useStylesField', () => {
 			return { values: null, setValues: baseSetValue, canEdit: true };
 		} );
 
-		const { result } = renderHook( () => useStylesField( 'color' ) );
+		const { result } = renderHook( () =>
+			useStylesField( 'color', { history: { propDisplayName: __( 'Color', 'elementor' ) } } )
+		);
 		const { setValue } = result.current;
 
 		// Act.
 		setValue( '#fff' );
 
 		// Assert.
-		expect( baseSetValue ).toHaveBeenCalledWith( {
-			color: '#fff',
-		} );
+		expect( baseSetValue ).toHaveBeenCalledWith( { color: '#fff' }, { history: { propDisplayName: 'Color' } } );
 	} );
 } );

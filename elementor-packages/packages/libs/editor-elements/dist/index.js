@@ -40,6 +40,7 @@ __export(index_exports, {
   updateElementSettings: () => updateElementSettings,
   updateElementStyle: () => updateElementStyle,
   useElementSetting: () => useElementSetting,
+  useElementSettings: () => useElementSettings,
   useElementType: () => useElementType,
   useParentElement: () => useParentElement,
   useSelectedElement: () => useSelectedElement
@@ -77,6 +78,19 @@ var useElementSetting = (elementId, settingKey) => {
     (0, import_editor_v1_adapters2.commandEndEvent)("document/elements/set-settings"),
     () => getElementSetting(elementId, settingKey),
     [elementId, settingKey]
+  );
+};
+var useElementSettings = (elementId, settingKeys) => {
+  return (0, import_editor_v1_adapters2.__privateUseListenTo)(
+    (0, import_editor_v1_adapters2.commandEndEvent)("document/elements/set-settings"),
+    () => settingKeys.reduce((settings, key) => {
+      const value = getElementSetting(elementId, key);
+      if (value !== null) {
+        settings[key] = value;
+      }
+      return settings;
+    }, {}),
+    [elementId, ...settingKeys]
   );
 };
 
@@ -503,6 +517,7 @@ function isElementorElement(element) {
   updateElementSettings,
   updateElementStyle,
   useElementSetting,
+  useElementSettings,
   useElementType,
   useParentElement,
   useSelectedElement

@@ -60,31 +60,29 @@ export const FlexSizeField = () => {
 	const onChangeGroup = ( group: GroupItem | null = null ) => {
 		setActiveGroup( group );
 
+		let props;
+
 		if ( ! group || group === 'custom' ) {
-			setValues( {
+			props = {
 				'flex-basis': null,
 				'flex-grow': null,
 				'flex-shrink': null,
-			} );
-
-			return;
-		}
-
-		if ( group === 'flex-grow' ) {
-			setValues( {
+			};
+		} else if ( group === 'flex-grow' ) {
+			props = {
 				'flex-basis': null,
 				'flex-grow': numberPropTypeUtil.create( DEFAULT ),
 				'flex-shrink': null,
-			} );
-
-			return;
+			};
+		} else {
+			props = {
+				'flex-basis': null,
+				'flex-grow': null,
+				'flex-shrink': numberPropTypeUtil.create( DEFAULT ),
+			};
 		}
 
-		setValues( {
-			'flex-basis': null,
-			'flex-grow': null,
-			'flex-shrink': numberPropTypeUtil.create( DEFAULT ),
-		} );
+		setValues( props, { history: { propDisplayName: FLEX_SIZE_LABEL } } );
 	};
 
 	return (

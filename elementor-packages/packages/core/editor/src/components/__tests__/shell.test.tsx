@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderWithTheme } from 'test-utils';
+import { renderWithQuery } from 'test-utils';
 import { screen } from '@testing-library/react';
 
 import { injectIntoTop } from '../../locations';
@@ -14,7 +14,7 @@ describe( '<Shell />', () => {
 		} );
 
 		// Act.
-		renderWithTheme( <Shell /> );
+		renderWithQuery( <Shell /> );
 
 		// Assert.
 		expect( screen.getByText( 'test' ) ).toBeInTheDocument();

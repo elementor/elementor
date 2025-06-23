@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { EllipsisWithTooltip, type VirtualizedItem } from '@elementor/editor-ui';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { EditIcon } from '@elementor/icons';
 import { Box, IconButton, ListItemIcon, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
-
-const isVersion330Active = isExperimentActive( 'e_v_3_30' );
 
 export const MenuItemContent = < T, V extends string >( { item }: { item: VirtualizedItem< T, V > } ) => {
 	const onEdit = item.onEdit as ( ( value: V ) => void ) | undefined;
@@ -27,8 +24,8 @@ export const MenuItemContent = < T, V extends string >( { item }: { item: Virtua
 				<EllipsisWithTooltip
 					title={ item.label || item.value }
 					as={ Typography }
-					variant={ isVersion330Active ? 'caption' : 'body2' }
-					color={ isVersion330Active ? 'text.primary' : 'text.secondary' }
+					variant="caption"
+					color="text.primary"
 					sx={ { marginTop: '1px', lineHeight: '2' } }
 					maxWidth="50%"
 				/>

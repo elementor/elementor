@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-variables",
-  "version": "0.14.0",
+  "version": "0.15.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,18 +39,18 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor": "0.20.0",
-    "@elementor/editor-editing-panel": "1.46.0",
-    "@elementor/editor-canvas": "0.24.0",
-    "@elementor/editor-props": "0.14.0",
+    "@elementor/editor": "0.20.1",
+    "@elementor/editor-editing-panel": "1.47.0",
+    "@elementor/editor-canvas": "0.25.0",
+    "@elementor/editor-props": "0.15.0",
     "@elementor/schema": "0.1.2",
-    "@elementor/editor-controls": "1.1.0",
+    "@elementor/editor-controls": "1.2.0",
     "@elementor/icons": "1.44.0",
     "@wordpress/i18n": "^5.13.0",
     "@elementor/ui": "1.35.5",
-    "@elementor/editor-v1-adapters": "0.12.0",
+    "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/http-client": "0.3.0",
-    "@elementor/editor-ui": "0.12.0"
+    "@elementor/editor-ui": "0.13.0"
   },
   "peerDependencies": {
     "react": "^18.3.1",

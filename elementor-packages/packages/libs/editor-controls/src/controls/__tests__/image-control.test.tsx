@@ -55,8 +55,6 @@ describe( 'ImageControl', () => {
 		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
 
 		// Assert.
-		expect( screen.getByText( 'Image' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Image resolution' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Small' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Medium' ) ).toBeInTheDocument();
 	} );

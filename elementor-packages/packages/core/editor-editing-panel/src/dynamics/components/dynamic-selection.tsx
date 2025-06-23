@@ -6,7 +6,7 @@ import { DatabaseIcon } from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useSectionRef } from '../../components/section';
+import { PopoverScrollableContent } from '../../components/popover-scrollable-content';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { usePropDynamicTags } from '../hooks/use-prop-dynamic-tags';
 import { getAtomicDynamicTags } from '../sync/get-atomic-dynamic-tags';
@@ -75,9 +75,6 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 		} ) ),
 	] );
 
-	const sectionRef = useSectionRef();
-	const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-
 	return (
 		<>
 			<PopoverHeader
@@ -98,19 +95,20 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 
 						<Divider />
 
-						<PopoverMenuList
-							items={ virtualizedItems }
-							onSelect={ handleSetDynamicTag }
-							onClose={ closePopover }
-							selectedValue={ dynamicValue?.name }
-							itemStyle={ ( item ) =>
-								item.type === 'item' ? { paddingInlineStart: theme.spacing( 3.5 ) } : {}
-							}
-							noResultsComponent={
-								<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
-							}
-							width={ sectionWidth }
-						/>
+						<PopoverScrollableContent>
+							<PopoverMenuList
+								items={ virtualizedItems }
+								onSelect={ handleSetDynamicTag }
+								onClose={ closePopover }
+								selectedValue={ dynamicValue?.name }
+								itemStyle={ ( item ) =>
+									item.type === 'item' ? { paddingInlineStart: theme.spacing( 3.5 ) } : {}
+								}
+								noResultsComponent={
+									<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
+								}
+							/>
+						</PopoverScrollableContent>
 					</Fragment>
 				) }
 			</Stack>

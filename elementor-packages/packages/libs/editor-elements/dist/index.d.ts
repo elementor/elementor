@@ -36,7 +36,7 @@ type Control = {
     };
 };
 type ControlItem = ControlsSection | Control;
-type ControlLayout = 'full' | 'two-columns';
+type ControlLayout = 'full' | 'two-columns' | 'custom';
 
 type V1Element = {
     id: string;
@@ -77,6 +77,7 @@ type V1Model<T> = {
 };
 
 declare const useElementSetting: <TValue>(elementId: ElementID, settingKey: string) => TValue | null;
+declare const useElementSettings: <TValue>(elementId: ElementID, settingKeys: string[]) => Record<string, TValue>;
 
 declare function useElementType(type?: string): ElementType | null;
 
@@ -152,4 +153,4 @@ declare function getAnchoredDescendantId(elementId: string): string | null;
 declare function getAnchoredAncestorId(elementId: string): string | null;
 declare function isElementAnchored(elementId: string): boolean;
 
-export { type Control, type ControlItem, type ControlLayout, type ControlsSection, type CreateElementStyleArgs, ELEMENT_STYLE_CHANGE_EVENT, type Element, type ElementID, type ElementType, type LinkInLinkRestriction, type UpdateElementSettingsArgs, type UpdateElementStyleArgs, type V1Element, type V1ElementConfig, type V1ElementModelProps, type V1ElementSettingsProps, createElementStyle, deleteElementStyle, getAnchoredAncestorId, getAnchoredDescendantId, getContainer, getCurrentDocumentId, getElementLabel, getElementSetting, getElementStyles, getElements, getLinkInLinkRestriction, getSelectedElements, getWidgetsCache, isElementAnchored, selectElement, styleRerenderEvents, updateElementSettings, updateElementStyle, useElementSetting, useElementType, useParentElement, useSelectedElement };
+export { type Control, type ControlItem, type ControlLayout, type ControlsSection, type CreateElementStyleArgs, ELEMENT_STYLE_CHANGE_EVENT, type Element, type ElementID, type ElementType, type LinkInLinkRestriction, type UpdateElementSettingsArgs, type UpdateElementStyleArgs, type V1Element, type V1ElementConfig, type V1ElementModelProps, type V1ElementSettingsProps, createElementStyle, deleteElementStyle, getAnchoredAncestorId, getAnchoredDescendantId, getContainer, getCurrentDocumentId, getElementLabel, getElementSetting, getElementStyles, getElements, getLinkInLinkRestriction, getSelectedElements, getWidgetsCache, isElementAnchored, selectElement, styleRerenderEvents, updateElementSettings, updateElementStyle, useElementSetting, useElementSettings, useElementType, useParentElement, useSelectedElement };

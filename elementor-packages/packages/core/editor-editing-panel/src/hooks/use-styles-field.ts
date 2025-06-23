@@ -3,7 +3,8 @@ import type { PropKey, PropValue } from '@elementor/editor-props';
 import { useStylesFields } from './use-styles-fields';
 
 export function useStylesField< T extends PropValue >(
-	propName: PropKey
+	propName: PropKey,
+	meta: { history: { propDisplayName: string } }
 ): {
 	value: T;
 	setValue: ( newValue: T ) => void;
@@ -14,9 +15,7 @@ export function useStylesField< T extends PropValue >(
 	const value = values?.[ propName ] ?? null;
 
 	const setValue = ( newValue: T ) => {
-		setValues( {
-			[ propName ]: newValue,
-		} );
+		setValues( { [ propName ]: newValue }, meta );
 	};
 
 	return { value: value as T, setValue, canEdit };

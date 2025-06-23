@@ -23,9 +23,12 @@ export const EffectsSection = () => {
 				<BoxShadowRepeaterControl />
 			</StylesField>
 			{ isVersion331Active && (
-				<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
-					<FilterRepeaterControl />
-				</StylesField>
+				<>
+					<PanelDivider />
+					<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
+						<FilterRepeaterControl />
+					</StylesField>
+				</>
 			) }
 		</SectionContent>
 	);

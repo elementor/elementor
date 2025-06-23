@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { useMemo, useRef } from 'react';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { MenuList, MenuSubheader, styled } from '@elementor/ui';
+import { Box, MenuList, MenuSubheader, styled } from '@elementor/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
 import { useScrollTop, useScrollToSelected } from '../../hooks';
-import { PopoverScrollableContent } from './scrollable-content';
 
 export type VirtualizedItem< T, V extends string > = {
 	type: T;
@@ -27,7 +26,6 @@ export type PopoverMenuListProps< T, V extends string > = {
 	menuListTemplate?: React.ComponentType< React.ComponentProps< typeof MenuList > >;
 	menuItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	noResultsComponent?: React.ReactNode;
-	width: number;
 };
 
 const isVersion330Active = isExperimentActive( 'e_v_3_30' );
@@ -65,7 +63,6 @@ export const PopoverMenuList = < T, V extends string >( {
 	menuItemContentTemplate,
 	noResultsComponent,
 	menuListTemplate: CustomMenuList,
-	width,
 }: PopoverMenuListProps< T, V > ) => {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const scrollTop = useScrollTop( { containerRef } );
@@ -113,7 +110,7 @@ export const PopoverMenuList = < T, V extends string >( {
 	useScrollToSelected( { selectedValue, items, virtualizer } );
 
 	return (
-		<PopoverScrollableContent ref={ containerRef } width={ width }>
+		<Box ref={ containerRef }>
 			{ items.length === 0 && noResultsComponent ? (
 				noResultsComponent
 			) : (
@@ -190,7 +187,7 @@ export const PopoverMenuList = < T, V extends string >( {
 					} ) }
 				</MenuListComponent>
 			) }
-		</PopoverScrollableContent>
+		</Box>
 	);
 };
 

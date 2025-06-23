@@ -10,6 +10,9 @@ jest.mock( '@elementor/editor-styles' );
 jest.mock( '../../../../hooks/use-styles-field' );
 jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
+jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
+	useStylesInheritanceChain: () => [],
+} ) );
 
 jest.mock( '@elementor/editor-controls', () => {
 	const actual = jest.requireActual( '@elementor/editor-controls' );

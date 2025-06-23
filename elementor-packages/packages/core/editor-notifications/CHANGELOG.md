@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.3.1
+
+### Patch Changes
+
+- @elementor/editor@0.20.1
+
 ## 1.3.0
 
 ### Minor Changes

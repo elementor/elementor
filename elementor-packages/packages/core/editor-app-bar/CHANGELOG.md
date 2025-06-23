@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.31.1
+
+### Patch Changes
+
+- @elementor/editor-documents@0.13.8
+- @elementor/editor-v1-adapters@0.12.1
+- @elementor/editor@0.20.1
+- @elementor/editor-responsive@0.13.6
+
 ## 0.31.0
 
 ### Minor Changes

@@ -1,5 +1,53 @@
 # Change Log
 
+## 1.47.0
+
+### Minor Changes
+
+- ab6ad10: Adds support for css filter property, blur and brightness only.
+- a0ff6bc: Reset value button position fix, input reset fix for aspect ratio control
+- bfe6b0b: Update the width settings for the popover selection list.
+- 16df763: Add changed prop name to atomic element setting history
+- 6c6f0d6: Standardize style field layout and add `propDisplayName` prop to `StylesField`
+- 125de7b: Show placeholders in Number control
+- c694e33: updated overlay styling for small elements
+  changed default tab for editing panel for divider widget
+- d85ca8c: Update the popover styling for version 3.30.
+
+### Patch Changes
+
+- e953081: add search in css classes list
+  create useDebounceState in util
+- 9cf0fad: Show styles inheritance indicator even if all inherited values are from the base style
+- 668adb4: Adds a panel divider to css filter effects section
+- Updated dependencies [e953081]
+- Updated dependencies [ab6ad10]
+- Updated dependencies [0b32e5c]
+- Updated dependencies [c91168a]
+- Updated dependencies [a0ff6bc]
+- Updated dependencies [bfe6b0b]
+- Updated dependencies [ea388a1]
+- Updated dependencies [16df763]
+- Updated dependencies [6c6f0d6]
+- Updated dependencies [125de7b]
+- Updated dependencies [9bbd4e3]
+- Updated dependencies [c694e33]
+- Updated dependencies [d85ca8c]
+  - @elementor/utils@0.5.0
+  - @elementor/editor-controls@1.2.0
+  - @elementor/editor-canvas@0.25.0
+  - @elementor/editor-props@0.15.0
+  - @elementor/editor-ui@0.13.0
+  - @elementor/editor-elements@0.8.7
+  - @elementor/editor-documents@0.13.8
+  - @elementor/editor-styles-repository@0.10.4
+  - @elementor/editor-v1-adapters@0.12.1
+  - @elementor/wp-media@0.6.1
+  - @elementor/editor-styles@0.6.11
+  - @elementor/editor@0.20.1
+  - @elementor/editor-panels@0.16.1
+  - @elementor/editor-responsive@0.13.6
+
 ## 1.46.0
 
 ### Minor Changes

@@ -1,16 +1,13 @@
 import * as React from 'react';
-import { createContext, type PropsWithChildren, type ReactNode, useContext, useId, useRef } from 'react';
+import { type PropsWithChildren, type ReactNode, useId, useRef } from 'react';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
+import { SectionRefContext } from '../contexts/section-context';
 import { useStateByElement } from '../hooks/use-state-by-element';
 import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { CollapseIcon } from './collapse-icon';
 import { type CollapsibleValue, getCollapsibleValue } from './collapsible-content';
-
-const SectionRefContext = createContext< React.RefObject< HTMLElement > | null >( null );
-
-export const useSectionRef = () => useContext( SectionRefContext );
 
 type Props = PropsWithChildren< {
 	title: string;

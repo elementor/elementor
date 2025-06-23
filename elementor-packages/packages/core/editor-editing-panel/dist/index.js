@@ -30,6 +30,8 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
+  EXPERIMENTAL_FEATURES: () => EXPERIMENTAL_FEATURES,
+  PopoverScrollableContent: () => PopoverScrollableContent,
   controlActionsMenu: () => controlActionsMenu,
   init: () => init3,
   injectIntoClassSelectorActions: () => injectIntoClassSelectorActions,
@@ -39,9 +41,17 @@ __export(index_exports, {
   useFontFamilies: () => useFontFamilies,
   usePanelActions: () => usePanelActions,
   usePanelStatus: () => usePanelStatus,
-  useSectionRef: () => useSectionRef
+  useSectionWidth: () => useSectionWidth
 });
 module.exports = __toCommonJS(index_exports);
+
+// src/sync/experiments-flags.ts
+var EXPERIMENTAL_FEATURES = {
+  V_3_30: "e_v_3_30",
+  V_3_31: "e_v_3_31"
+};
+
+// src/index.ts
 var import_editor_controls60 = require("@elementor/editor-controls");
 
 // src/control-replacement.tsx
@@ -555,14 +565,6 @@ var import_editor_props = require("@elementor/editor-props");
 var import_editor_styles_repository3 = require("@elementor/editor-styles-repository");
 var import_editor_v1_adapters = require("@elementor/editor-v1-adapters");
 var import_i18n = require("@wordpress/i18n");
-
-// src/sync/experiments-flags.ts
-var EXPERIMENTAL_FEATURES = {
-  V_3_30: "e_v_3_30",
-  V_3_31: "e_v_3_31"
-};
-
-// src/components/css-classes/use-apply-and-unapply-class.ts
 function useApplyClass() {
   const { id: activeId, setId: setActiveId } = useStyle();
   const { element } = useElement();
@@ -1193,7 +1195,7 @@ var import_editor_ui5 = require("@elementor/editor-ui");
 var import_icons24 = require("@elementor/icons");
 var import_session5 = require("@elementor/session");
 var import_ui45 = require("@elementor/ui");
-var import_i18n58 = require("@wordpress/i18n");
+var import_i18n62 = require("@wordpress/i18n");
 
 // src/controls-actions.ts
 var import_menus = require("@elementor/menus");
@@ -1267,10 +1269,10 @@ function EditorPanelErrorFallback() {
 
 // src/components/editing-panel-tabs.tsx
 var React85 = __toESM(require("react"));
-var import_react36 = require("react");
-var import_editor_v1_adapters16 = require("@elementor/editor-v1-adapters");
+var import_react38 = require("react");
+var import_editor_v1_adapters18 = require("@elementor/editor-v1-adapters");
 var import_ui44 = require("@elementor/ui");
-var import_i18n57 = require("@wordpress/i18n");
+var import_i18n61 = require("@wordpress/i18n");
 
 // src/contexts/scroll-context.tsx
 var React12 = __toESM(require("react"));
@@ -1360,7 +1362,7 @@ var useStateByElement = (key, initialValue) => {
 // src/components/settings-tab.tsx
 var React19 = __toESM(require("react"));
 var import_editor_controls4 = require("@elementor/editor-controls");
-var import_editor_v1_adapters4 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters5 = require("@elementor/editor-v1-adapters");
 var import_session2 = require("@elementor/session");
 var import_ui16 = require("@elementor/ui");
 
@@ -1377,7 +1379,7 @@ var controlTypes = {
   textarea: { component: import_editor_controls2.TextAreaControl, layout: "full", propTypeUtil: import_editor_props2.stringPropTypeUtil },
   size: { component: import_editor_controls2.SizeControl, layout: "two-columns", propTypeUtil: import_editor_props2.sizePropTypeUtil },
   select: { component: import_editor_controls2.SelectControl, layout: "two-columns", propTypeUtil: import_editor_props2.stringPropTypeUtil },
-  link: { component: import_editor_controls2.LinkControl, layout: "full", propTypeUtil: import_editor_props2.linkPropTypeUtil },
+  link: { component: import_editor_controls2.LinkControl, layout: "custom", propTypeUtil: import_editor_props2.linkPropTypeUtil },
   url: { component: import_editor_controls2.UrlControl, layout: "full", propTypeUtil: import_editor_props2.stringPropTypeUtil },
   switch: { component: import_editor_controls2.SwitchControl, layout: "two-columns", propTypeUtil: import_editor_props2.booleanPropTypeUtil },
   repeatable: { component: import_editor_controls2.RepeatableControl, layout: "full", propTypeUtil: void 0 },
@@ -1403,6 +1405,9 @@ var Control = ({ props, type }) => {
 var React14 = __toESM(require("react"));
 var import_ui11 = require("@elementor/ui");
 var ControlTypeContainer = ({ children, layout }) => {
+  if (layout === "custom") {
+    return children;
+  }
   return /* @__PURE__ */ React14.createElement(StyledContainer, { layout }, children);
 };
 var StyledContainer = (0, import_ui11.styled)(import_ui11.Box, {
@@ -1422,8 +1427,13 @@ var getGridLayout = (layout) => ({
 
 // src/controls-registry/settings-field.tsx
 var React15 = __toESM(require("react"));
+var import_react15 = require("react");
 var import_editor_controls3 = require("@elementor/editor-controls");
+var import_editor_documents2 = require("@elementor/editor-documents");
 var import_editor_elements3 = require("@elementor/editor-elements");
+var import_editor_props3 = require("@elementor/editor-props");
+var import_editor_v1_adapters3 = require("@elementor/editor-v1-adapters");
+var import_i18n5 = require("@wordpress/i18n");
 
 // src/controls-registry/create-top-level-object-type.ts
 var createTopLevelOjectType = ({ schema }) => {
@@ -1439,25 +1449,79 @@ var createTopLevelOjectType = ({ schema }) => {
 };
 
 // src/controls-registry/settings-field.tsx
-var SettingsField = ({ bind, children }) => {
+var SettingsField = ({ bind, children, propDisplayName }) => {
   const { element, elementType } = useElement();
-  const settingsValue = (0, import_editor_elements3.useElementSetting)(element.id, bind);
-  const value = { [bind]: settingsValue };
+  const elementSettingValues = (0, import_editor_elements3.useElementSettings)(element.id, Object.keys(elementType.propsSchema));
+  const value = { [bind]: elementSettingValues?.[bind] };
   const propType = createTopLevelOjectType({ schema: elementType.propsSchema });
+  const undoableUpdateElementProp = useUndoableUpdateElementProp({
+    propKey: bind,
+    elementId: element.id,
+    propDisplayName
+  });
   const setValue = (newValue) => {
-    (0, import_editor_elements3.updateElementSettings)({
-      id: element.id,
-      props: { ...newValue }
-    });
+    const isVersion331Active = (0, import_editor_v1_adapters3.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_31);
+    if (isVersion331Active) {
+      undoableUpdateElementProp({ newValue });
+    } else {
+      (0, import_editor_elements3.updateElementSettings)({ id: element.id, props: newValue });
+    }
   };
-  return /* @__PURE__ */ React15.createElement(import_editor_controls3.PropProvider, { propType, value, setValue }, /* @__PURE__ */ React15.createElement(import_editor_controls3.PropKeyProvider, { bind }, children));
+  const isDisabled = (prop) => getDisableState(prop, elementSettingValues);
+  return /* @__PURE__ */ React15.createElement(import_editor_controls3.PropProvider, { propType, value, setValue, isDisabled }, /* @__PURE__ */ React15.createElement(import_editor_controls3.PropKeyProvider, { bind }, children));
 };
+function getDisableState(propType, elementValues) {
+  const disablingDependencies = propType.dependencies?.filter(({ effect }) => effect === "disable") || [];
+  if (!disablingDependencies.length) {
+    return false;
+  }
+  if (disablingDependencies.length > 1) {
+    throw new Error("Multiple disabling dependencies are not supported.");
+  }
+  return (0, import_editor_props3.shouldApplyEffect)(disablingDependencies[0], elementValues);
+}
+function useUndoableUpdateElementProp({
+  propKey,
+  elementId,
+  propDisplayName
+}) {
+  return (0, import_react15.useMemo)(() => {
+    return (0, import_editor_v1_adapters3.undoable)(
+      {
+        do: ({ newValue }) => {
+          const prevPropValue = (0, import_editor_elements3.getElementSetting)(elementId, propKey);
+          (0, import_editor_elements3.updateElementSettings)({ id: elementId, props: { ...newValue }, withHistory: false });
+          (0, import_editor_documents2.setDocumentModifiedStatus)(true);
+          return { [propKey]: prevPropValue };
+        },
+        undo: ({}, prevProps) => {
+          (0, import_editor_elements3.updateElementSettings)({ id: elementId, props: prevProps, withHistory: false });
+        }
+      },
+      {
+        title: (0, import_editor_elements3.getElementLabel)(elementId),
+        // translators: %s is the name of the property that was edited.
+        subtitle: (0, import_i18n5.__)("%s edited", "elementor").replace("%s", propDisplayName)
+      }
+    );
+  }, [propKey, elementId, propDisplayName]);
+}
 
 // src/components/section.tsx
 var React17 = __toESM(require("react"));
-var import_react16 = require("react");
-var import_editor_v1_adapters3 = require("@elementor/editor-v1-adapters");
+var import_react18 = require("react");
+var import_editor_v1_adapters4 = require("@elementor/editor-v1-adapters");
 var import_ui14 = require("@elementor/ui");
+
+// src/contexts/section-context.tsx
+var import_react16 = require("react");
+var FALLBACK_SECTION_WIDTH = 320;
+var SectionRefContext = (0, import_react16.createContext)(null);
+var useSectionRef = () => (0, import_react16.useContext)(SectionRefContext);
+var useSectionWidth = () => {
+  const sectionRef = useSectionRef();
+  return sectionRef?.current?.offsetWidth ?? FALLBACK_SECTION_WIDTH;
+};
 
 // src/components/collapse-icon.tsx
 var import_icons3 = require("@elementor/icons");
@@ -1473,9 +1537,9 @@ var CollapseIcon = (0, import_ui12.styled)(import_icons3.ChevronDownIcon, {
 
 // src/components/collapsible-content.tsx
 var React16 = __toESM(require("react"));
-var import_react15 = require("react");
+var import_react17 = require("react");
 var import_ui13 = require("@elementor/ui");
-var import_i18n5 = require("@wordpress/i18n");
+var import_i18n6 = require("@wordpress/i18n");
 var IndicatorsWrapper = (0, import_ui13.styled)("div")`
 	position: absolute;
 	top: 0;
@@ -1487,7 +1551,7 @@ var IndicatorsWrapper = (0, import_ui13.styled)("div")`
 	justify-content: center;
 `;
 var CollapsibleContent = ({ children, defaultOpen = false, titleEnd = null }) => {
-  const [open, setOpen] = (0, import_react15.useState)(defaultOpen);
+  const [open, setOpen] = (0, import_react17.useState)(defaultOpen);
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -1502,7 +1566,7 @@ var CollapsibleContent = ({ children, defaultOpen = false, titleEnd = null }) =>
       endIcon: /* @__PURE__ */ React16.createElement(CollapseIcon, { open }),
       sx: { my: 0.5 }
     },
-    open ? (0, import_i18n5.__)("Show less", "elementor") : (0, import_i18n5.__)("Show more", "elementor")
+    open ? (0, import_i18n6.__)("Show less", "elementor") : (0, import_i18n6.__)("Show more", "elementor")
   ), titleEnd && /* @__PURE__ */ React16.createElement(IndicatorsWrapper, null, getCollapsibleValue(titleEnd, open))), /* @__PURE__ */ React16.createElement(import_ui13.Collapse, { in: open, timeout: "auto", unmountOnExit: true }, children));
 };
 function getCollapsibleValue(value, isOpen) {
@@ -1513,18 +1577,16 @@ function getCollapsibleValue(value, isOpen) {
 }
 
 // src/components/section.tsx
-var SectionRefContext = (0, import_react16.createContext)(null);
-var useSectionRef = () => (0, import_react16.useContext)(SectionRefContext);
 function Section({ title, children, defaultExpanded = false, titleEnd }) {
   const [isOpen, setIsOpen] = useStateByElement(title, !!defaultExpanded);
-  const ref = (0, import_react16.useRef)(null);
+  const ref = (0, import_react18.useRef)(null);
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
-  const id = (0, import_react16.useId)();
+  const id = (0, import_react18.useId)();
   const labelId = `label-${id}`;
   const contentId = `content-${id}`;
-  const isUsingTitleEnd = (0, import_editor_v1_adapters3.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
+  const isUsingTitleEnd = (0, import_editor_v1_adapters4.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
   return /* @__PURE__ */ React17.createElement(React17.Fragment, null, /* @__PURE__ */ React17.createElement(
     import_ui14.ListItemButton,
     {
@@ -1556,7 +1618,7 @@ function SectionsList(props) {
 var SettingsTab = () => {
   const { elementType, element } = useElement();
   const settingsDefault = useDefaultPanelSettings();
-  const isDefaultExpanded = (sectionId) => (0, import_editor_v1_adapters4.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30) ? settingsDefault.defaultSectionsExpanded.settings?.includes(sectionId) : true;
+  const isDefaultExpanded = (sectionId) => (0, import_editor_v1_adapters5.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30) ? settingsDefault.defaultSectionsExpanded.settings?.includes(sectionId) : true;
   return /* @__PURE__ */ React19.createElement(import_session2.SessionStorageProvider, { prefix: element.id }, /* @__PURE__ */ React19.createElement(SectionsList, null, elementType.controls.map(({ type, value }, index) => {
     if (type === "control") {
       return /* @__PURE__ */ React19.createElement(Control2, { key: value.bind, control: value });
@@ -1586,7 +1648,10 @@ var Control2 = ({ control }) => {
   }
   const layout = control.meta?.layout || getDefaultLayout(control.type);
   const controlProps = populateChildControlProps(control.props);
-  return /* @__PURE__ */ React19.createElement(SettingsField, { bind: control.bind }, control.meta?.topDivider && /* @__PURE__ */ React19.createElement(import_ui16.Divider, null), /* @__PURE__ */ React19.createElement(ControlTypeContainer, { layout }, control.label ? /* @__PURE__ */ React19.createElement(import_editor_controls4.ControlFormLabel, null, control.label) : null, /* @__PURE__ */ React19.createElement(Control, { type: control.type, props: controlProps })));
+  if (layout === "custom") {
+    controlProps.label = control.label;
+  }
+  return /* @__PURE__ */ React19.createElement(SettingsField, { bind: control.bind, propDisplayName: control.label || control.bind }, control.meta?.topDivider && /* @__PURE__ */ React19.createElement(import_ui16.Divider, null), /* @__PURE__ */ React19.createElement(ControlTypeContainer, { layout }, control.label && layout !== "custom" ? /* @__PURE__ */ React19.createElement(import_editor_controls4.ControlFormLabel, null, control.label) : null, /* @__PURE__ */ React19.createElement(Control, { type: control.type, props: controlProps })));
 };
 function populateChildControlProps(props) {
   if (props.childControlType) {
@@ -1606,35 +1671,35 @@ function populateChildControlProps(props) {
 
 // src/components/style-tab.tsx
 var React84 = __toESM(require("react"));
-var import_react35 = require("react");
-var import_editor_props10 = require("@elementor/editor-props");
+var import_react37 = require("react");
+var import_editor_props11 = require("@elementor/editor-props");
 var import_editor_responsive3 = require("@elementor/editor-responsive");
 var import_session4 = require("@elementor/session");
 var import_ui43 = require("@elementor/ui");
-var import_i18n56 = require("@wordpress/i18n");
+var import_i18n60 = require("@wordpress/i18n");
 
 // src/contexts/styles-inheritance-context.tsx
 var React20 = __toESM(require("react"));
-var import_react18 = require("react");
+var import_react20 = require("react");
 var import_editor_elements4 = require("@elementor/editor-elements");
-var import_editor_props5 = require("@elementor/editor-props");
+var import_editor_props6 = require("@elementor/editor-props");
 var import_editor_responsive = require("@elementor/editor-responsive");
 var import_editor_styles = require("@elementor/editor-styles");
 var import_editor_styles_repository7 = require("@elementor/editor-styles-repository");
 
 // src/hooks/use-styles-rerender.ts
-var import_react17 = require("react");
+var import_react19 = require("react");
 var useStylesRerender = () => {
   const { provider } = useStyle();
-  const [, reRender] = (0, import_react17.useReducer)((p) => !p, false);
-  (0, import_react17.useEffect)(() => provider?.subscribe(reRender), [provider]);
+  const [, reRender] = (0, import_react19.useReducer)((p) => !p, false);
+  (0, import_react19.useEffect)(() => provider?.subscribe(reRender), [provider]);
 };
 
 // src/styles-inheritance/create-styles-inheritance.ts
-var import_editor_props4 = require("@elementor/editor-props");
+var import_editor_props5 = require("@elementor/editor-props");
 
 // src/styles-inheritance/create-snapshots-manager.ts
-var import_editor_props3 = require("@elementor/editor-props");
+var import_editor_props4 = require("@elementor/editor-props");
 
 // src/styles-inheritance/utils.ts
 var DEFAULT_STATE = "normal";
@@ -1734,7 +1799,7 @@ function buildInitialSnapshotFromStyles(styles) {
       variant: { props }
     } = styleData;
     Object.entries(props).forEach(([key, value]) => {
-      const filteredValue = (0, import_editor_props3.filterEmptyValues)(value);
+      const filteredValue = (0, import_editor_props4.filterEmptyValues)(value);
       if (filteredValue === null) {
         return;
       }
@@ -1780,7 +1845,7 @@ function createStylesInheritance(styleDefs, breakpointsRoot) {
         inheritanceChain = inheritanceChain.map(({ value: styleValue, ...rest }) => ({
           ...rest,
           value: getValueByPath(styleValue, nextFields, filterPropType)
-        })).filter(({ value: styleValue }) => !(0, import_editor_props4.isEmpty)(styleValue));
+        })).filter(({ value: styleValue }) => !(0, import_editor_props5.isEmpty)(styleValue));
       }
       return inheritanceChain;
     }
@@ -1822,7 +1887,7 @@ function getValueByPath(value, path, filterPropType) {
     if (!currentScope) {
       return null;
     }
-    if ((0, import_editor_props4.isTransformable)(currentScope)) {
+    if ((0, import_editor_props5.isTransformable)(currentScope)) {
       return currentScope.value?.[key] ?? null;
     }
     if (typeof currentScope === "object") {
@@ -1832,7 +1897,7 @@ function getValueByPath(value, path, filterPropType) {
   }, value);
 }
 function shouldUseOriginalValue(filterPropType, value) {
-  return !!filterPropType && (0, import_editor_props4.isTransformable)(value) && filterPropType.key !== value.$$type;
+  return !!filterPropType && (0, import_editor_props5.isTransformable)(value) && filterPropType.key !== value.$$type;
 }
 var getFilterPropType = (propType, path) => {
   if (!propType || propType.kind !== "union") {
@@ -1853,7 +1918,7 @@ var getFilterPropType = (propType, path) => {
 };
 
 // src/contexts/styles-inheritance-context.tsx
-var Context4 = (0, import_react18.createContext)(null);
+var Context4 = (0, import_react20.createContext)(null);
 function StyleInheritanceProvider({ children }) {
   const styleDefs = useAppliedStyles();
   const breakpointsTree = (0, import_editor_responsive.getBreakpointsTree)();
@@ -1861,7 +1926,7 @@ function StyleInheritanceProvider({ children }) {
   return /* @__PURE__ */ React20.createElement(Context4.Provider, { value: { getSnapshot, getInheritanceChain } }, children);
 }
 function useStylesInheritanceSnapshot() {
-  const context = (0, import_react18.useContext)(Context4);
+  const context = (0, import_react20.useContext)(Context4);
   const { meta } = useStyle();
   if (!context) {
     throw new Error("useStylesInheritanceSnapshot must be used within a StyleInheritanceProvider");
@@ -1872,7 +1937,7 @@ function useStylesInheritanceSnapshot() {
   return context.getSnapshot(meta) ?? null;
 }
 function useStylesInheritanceChain(path) {
-  const context = (0, import_react18.useContext)(Context4);
+  const context = (0, import_react20.useContext)(Context4);
   if (!context) {
     throw new Error("useStylesInheritanceChain must be used within a StyleInheritanceProvider");
   }
@@ -1890,7 +1955,7 @@ var useAppliedStyles = () => {
   const baseStyles = useBaseStyles();
   useStylesRerender();
   const classesProp = (0, import_editor_elements4.useElementSetting)(element.id, currentClassesProp);
-  const appliedStyles = import_editor_props5.classesPropTypeUtil.extract(classesProp) ?? [];
+  const appliedStyles = import_editor_props6.classesPropTypeUtil.extract(classesProp) ?? [];
   return import_editor_styles_repository7.stylesRepository.all().filter((style) => [...baseStyles, ...appliedStyles].includes(style.id));
 };
 var useBaseStyles = () => {
@@ -1929,51 +1994,37 @@ function useActiveAndAppliedClassId(id, appliedClassesIds) {
 // src/components/style-sections/background-section/background-section.tsx
 var React29 = __toESM(require("react"));
 var import_editor_controls7 = require("@elementor/editor-controls");
-var import_i18n11 = require("@wordpress/i18n");
+var import_i18n12 = require("@wordpress/i18n");
 
 // src/controls-registry/styles-field.tsx
 var React27 = __toESM(require("react"));
 var import_editor_controls6 = require("@elementor/editor-controls");
 var import_editor_styles3 = require("@elementor/editor-styles");
+var import_editor_v1_adapters9 = require("@elementor/editor-v1-adapters");
 
 // src/hooks/use-styles-fields.ts
-var import_react19 = require("react");
+var import_react21 = require("react");
 var import_editor_elements6 = require("@elementor/editor-elements");
 var import_editor_styles2 = require("@elementor/editor-styles");
 var import_editor_styles_repository8 = require("@elementor/editor-styles-repository");
-var import_editor_v1_adapters5 = require("@elementor/editor-v1-adapters");
-var import_i18n6 = require("@wordpress/i18n");
+var import_editor_styles_repository9 = require("@elementor/editor-styles-repository");
+var import_editor_v1_adapters6 = require("@elementor/editor-v1-adapters");
+var import_i18n7 = require("@wordpress/i18n");
 function useStylesFields(propNames) {
-  const { element } = useElement();
-  const { id, meta, provider, canEdit } = useStyle();
-  const classesProp = useClassesProp();
-  const undoableUpdateStyle = useUndoableUpdateStyle();
-  const undoableCreateElementStyle = useUndoableCreateElementStyle();
+  const {
+    element: { id: elementId }
+  } = useElement();
+  const { id: styleId, meta, provider, canEdit } = useStyle();
+  const undoableUpdateStyle = useUndoableUpdateStyle({ elementId, meta });
+  const undoableCreateElementStyle = useUndoableCreateElementStyle({ elementId, meta });
   useStylesRerender();
-  const values = getProps({
-    elementId: element.id,
-    styleId: id,
-    provider,
-    meta,
-    propNames
-  });
-  const setValues = (props) => {
-    if (id === null) {
-      undoableCreateElementStyle({
-        elementId: element.id,
-        classesProp,
-        meta,
-        props
-      });
-      return;
+  const values = getProps({ elementId, styleId, provider, meta, propNames });
+  const setValues = (props, { history: { propDisplayName } }) => {
+    if (styleId === null) {
+      undoableCreateElementStyle({ props, propDisplayName });
+    } else {
+      undoableUpdateStyle({ provider, styleId, props, propDisplayName });
     }
-    undoableUpdateStyle({
-      elementId: element.id,
-      styleId: id,
-      provider,
-      meta,
-      props
-    });
   };
   return { values, setValues, canEdit };
 }
@@ -1990,39 +2041,52 @@ function getProps({ styleId, elementId, provider, meta, propNames }) {
     propNames.map((key) => [key, variant?.props[key] ?? null])
   );
 }
-function useUndoableCreateElementStyle() {
-  return (0, import_react19.useMemo)(() => {
-    return (0, import_editor_v1_adapters5.undoable)(
+function useUndoableCreateElementStyle({
+  elementId,
+  meta
+}) {
+  const classesProp = useClassesProp();
+  return (0, import_react21.useMemo)(() => {
+    const isVersion331Active = (0, import_editor_v1_adapters6.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_31);
+    const createStyleArgs = { elementId, classesProp, meta, label: import_editor_styles_repository9.ELEMENTS_STYLES_RESERVED_LABEL };
+    return (0, import_editor_v1_adapters6.undoable)(
       {
-        do: (payload) => {
-          return (0, import_editor_elements6.createElementStyle)({
-            ...payload,
-            label: import_editor_styles_repository8.ELEMENTS_STYLES_RESERVED_LABEL
-          });
+        do: ({ props }) => {
+          return (0, import_editor_elements6.createElementStyle)({ ...createStyleArgs, props });
         },
-        undo: ({ elementId }, styleId) => {
+        undo: (_, styleId) => {
           (0, import_editor_elements6.deleteElementStyle)(elementId, styleId);
         },
-        redo: (payload, styleId) => {
-          return (0, import_editor_elements6.createElementStyle)({
-            ...payload,
-            styleId,
-            label: import_editor_styles_repository8.ELEMENTS_STYLES_RESERVED_LABEL
-          });
+        redo: ({ props }, styleId) => {
+          return (0, import_editor_elements6.createElementStyle)({ ...createStyleArgs, props, styleId });
         }
       },
       {
-        title: ({ elementId }) => (0, import_editor_elements6.getElementLabel)(elementId),
-        subtitle: (0, import_i18n6.__)("Style edited", "elementor")
+        title: () => {
+          if (isVersion331Active) {
+            return localStyleHistoryTitlesV331.title({ elementId });
+          }
+          return historyTitlesV330.title({ elementId });
+        },
+        subtitle: ({ propDisplayName }) => {
+          if (isVersion331Active) {
+            return localStyleHistoryTitlesV331.subtitle({ propDisplayName });
+          }
+          return historyTitlesV330.subtitle;
+        }
       }
     );
-  }, []);
+  }, [classesProp, elementId, meta]);
 }
-function useUndoableUpdateStyle() {
-  return (0, import_react19.useMemo)(() => {
-    return (0, import_editor_v1_adapters5.undoable)(
+function useUndoableUpdateStyle({
+  elementId,
+  meta
+}) {
+  return (0, import_react21.useMemo)(() => {
+    const isVersion331Active = (0, import_editor_v1_adapters6.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_31);
+    return (0, import_editor_v1_adapters6.undoable)(
       {
-        do: ({ elementId, styleId, provider, meta, props }) => {
+        do: ({ provider, styleId, props }) => {
           if (!provider.actions.updateProps) {
             throw new StylesProviderCannotUpdatePropsError({
               context: { providerKey: provider.getKey() }
@@ -2030,26 +2094,37 @@ function useUndoableUpdateStyle() {
           }
           const style = provider.actions.get(styleId, { elementId });
           const prevProps = getCurrentProps(style, meta);
-          provider.actions.updateProps(
-            {
-              id: styleId,
-              meta,
-              props
-            },
-            { elementId }
-          );
+          provider.actions.updateProps({ id: styleId, meta, props }, { elementId });
           return prevProps;
         },
-        undo: ({ elementId, styleId, meta, provider }, prevProps) => {
+        undo: ({ provider, styleId }, prevProps) => {
           provider.actions.updateProps?.({ id: styleId, meta, props: prevProps }, { elementId });
         }
       },
       {
-        title: ({ elementId }) => (0, import_editor_elements6.getElementLabel)(elementId),
-        subtitle: (0, import_i18n6.__)("Style edited", "elementor")
+        title: ({ provider }) => {
+          if (isVersion331Active) {
+            const isLocal = (0, import_editor_styles_repository8.isElementsStylesProvider)(provider.getKey());
+            if (isLocal) {
+              return localStyleHistoryTitlesV331.title({ elementId });
+            }
+            return defaultHistoryTitlesV331.title({ provider });
+          }
+          return historyTitlesV330.title({ elementId });
+        },
+        subtitle: ({ provider, styleId, propDisplayName }) => {
+          if (isVersion331Active) {
+            const isLocal = (0, import_editor_styles_repository8.isElementsStylesProvider)(provider.getKey());
+            if (isLocal) {
+              return localStyleHistoryTitlesV331.subtitle({ propDisplayName });
+            }
+            return defaultHistoryTitlesV331.subtitle({ provider, styleId, elementId, propDisplayName });
+          }
+          return historyTitlesV330.subtitle;
+        }
       }
     );
-  }, []);
+  }, [elementId, meta]);
 }
 function getCurrentProps(style, meta) {
   if (!style) {
@@ -2059,15 +2134,40 @@ function getCurrentProps(style, meta) {
   const props = variant?.props ?? {};
   return structuredClone(props);
 }
+var historyTitlesV330 = {
+  title: ({ elementId }) => (0, import_editor_elements6.getElementLabel)(elementId),
+  subtitle: (0, import_i18n7.__)("Style edited", "elementor")
+};
+var defaultHistoryTitlesV331 = {
+  title: ({ provider }) => {
+    const providerLabel = provider.labels?.singular;
+    return providerLabel ? capitalize(providerLabel) : (0, import_i18n7.__)("Style", "elementor");
+  },
+  subtitle: ({ provider, styleId, elementId, propDisplayName }) => {
+    const styleLabel = provider.actions.get(styleId, { elementId })?.label;
+    if (!styleLabel) {
+      throw new Error(`Style ${styleId} not found`);
+    }
+    return (0, import_i18n7.__)(`%s$1 %s$2 edited`, "elementor").replace("%s$1", styleLabel).replace("%s$2", propDisplayName);
+  }
+};
+var localStyleHistoryTitlesV331 = {
+  title: ({ elementId }) => (0, import_editor_elements6.getElementLabel)(elementId),
+  subtitle: ({ propDisplayName }) => (
+    // translators: %s is the name of the style property being edited
+    (0, import_i18n7.__)(`%s edited`, "elementor").replace("%s", propDisplayName)
+  )
+};
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 // src/hooks/use-styles-field.ts
-function useStylesField(propName) {
+function useStylesField(propName, meta) {
   const { values, setValues, canEdit } = useStylesFields([propName]);
   const value = values?.[propName] ?? null;
   const setValue = (newValue) => {
-    setValues({
-      [propName]: newValue
-    });
+    setValues({ [propName]: newValue }, meta);
   };
   return { value, setValue, canEdit };
 }
@@ -2075,14 +2175,14 @@ function useStylesField(propName) {
 // src/styles-inheritance/components/styles-inheritance-indicator.tsx
 var React26 = __toESM(require("react"));
 var import_editor_controls5 = require("@elementor/editor-controls");
-var import_editor_props6 = require("@elementor/editor-props");
-var import_editor_styles_repository11 = require("@elementor/editor-styles-repository");
-var import_editor_v1_adapters7 = require("@elementor/editor-v1-adapters");
+var import_editor_props7 = require("@elementor/editor-props");
+var import_editor_styles_repository12 = require("@elementor/editor-styles-repository");
+var import_editor_v1_adapters8 = require("@elementor/editor-v1-adapters");
 var import_ui23 = require("@elementor/ui");
-var import_i18n10 = require("@wordpress/i18n");
+var import_i18n11 = require("@wordpress/i18n");
 
 // src/styles-inheritance/consts.ts
-var import_editor_v1_adapters6 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters7 = require("@elementor/editor-v1-adapters");
 var excludePropTypeTransformers = /* @__PURE__ */ new Set([
   "background-color-overlay",
   "background-image-overlay",
@@ -2095,15 +2195,15 @@ var excludePropTypeTransformers = /* @__PURE__ */ new Set([
   "image",
   "background-overlay"
 ]);
-var isUsingIndicatorPopover = () => (0, import_editor_v1_adapters6.isExperimentActive)("e_v_3_30");
+var isUsingIndicatorPopover = () => (0, import_editor_v1_adapters7.isExperimentActive)("e_v_3_30");
 
 // src/styles-inheritance/components/styles-inheritance-infotip.tsx
 var React25 = __toESM(require("react"));
-var import_react21 = require("react");
+var import_react23 = require("react");
 var import_editor_canvas2 = require("@elementor/editor-canvas");
 var import_editor_ui4 = require("@elementor/editor-ui");
 var import_ui22 = require("@elementor/ui");
-var import_i18n9 = require("@wordpress/i18n");
+var import_i18n10 = require("@wordpress/i18n");
 
 // src/hooks/use-direction.ts
 var import_ui17 = require("@elementor/ui");
@@ -2126,20 +2226,20 @@ function useDirection() {
 }
 
 // src/styles-inheritance/hooks/use-normalized-inheritance-chain-items.tsx
-var import_react20 = require("react");
-var import_editor_styles_repository9 = require("@elementor/editor-styles-repository");
-var import_i18n7 = require("@wordpress/i18n");
+var import_react22 = require("react");
+var import_editor_styles_repository10 = require("@elementor/editor-styles-repository");
+var import_i18n8 = require("@wordpress/i18n");
 var MAXIMUM_ITEMS = 2;
 var useNormalizedInheritanceChainItems = (inheritanceChain, bind, resolve) => {
-  const [items3, setItems] = (0, import_react20.useState)([]);
-  (0, import_react20.useEffect)(() => {
+  const [items3, setItems] = (0, import_react22.useState)([]);
+  (0, import_react22.useEffect)(() => {
     (async () => {
       const normalizedItems = await Promise.all(
         inheritanceChain.filter(({ style }) => style).map((item, index) => normalizeInheritanceItem(item, index, bind, resolve))
       );
       const validItems = normalizedItems.map((item) => ({
         ...item,
-        displayLabel: import_editor_styles_repository9.ELEMENTS_BASE_STYLES_PROVIDER_KEY !== item.provider ? item.displayLabel : (0, import_i18n7.__)("Base", "elementor")
+        displayLabel: import_editor_styles_repository10.ELEMENTS_BASE_STYLES_PROVIDER_KEY !== item.provider ? item.displayLabel : (0, import_i18n8.__)("Base", "elementor")
       })).filter((item) => !item.value || item.displayLabel !== "").slice(0, MAXIMUM_ITEMS);
       setItems(validItems);
     })();
@@ -2171,7 +2271,7 @@ var getTransformedValue = async (item, bind, resolve) => {
       }
     });
     const value = result?.[bind] ?? result;
-    if ((0, import_react20.isValidElement)(value)) {
+    if ((0, import_react22.isValidElement)(value)) {
       return value;
     }
     if (typeof value === "object") {
@@ -2216,14 +2316,14 @@ var BreakpointIcon = ({ breakpoint }) => {
 
 // src/styles-inheritance/components/infotip/label-chip.tsx
 var React22 = __toESM(require("react"));
-var import_editor_styles_repository10 = require("@elementor/editor-styles-repository");
+var import_editor_styles_repository11 = require("@elementor/editor-styles-repository");
 var import_icons5 = require("@elementor/icons");
 var import_ui19 = require("@elementor/ui");
-var import_i18n8 = require("@wordpress/i18n");
+var import_i18n9 = require("@wordpress/i18n");
 var SIZE4 = "tiny";
 var LabelChip = ({ displayLabel, provider }) => {
-  const isBaseStyle = provider === import_editor_styles_repository10.ELEMENTS_BASE_STYLES_PROVIDER_KEY;
-  const chipIcon = isBaseStyle ? /* @__PURE__ */ React22.createElement(import_ui19.Tooltip, { title: (0, import_i18n8.__)("Inherited from base styles", "elementor"), placement: "top" }, /* @__PURE__ */ React22.createElement(import_icons5.InfoCircleIcon, { fontSize: SIZE4 })) : void 0;
+  const isBaseStyle = provider === import_editor_styles_repository11.ELEMENTS_BASE_STYLES_PROVIDER_KEY;
+  const chipIcon = isBaseStyle ? /* @__PURE__ */ React22.createElement(import_ui19.Tooltip, { title: (0, import_i18n9.__)("Inherited from base styles", "elementor"), placement: "top" }, /* @__PURE__ */ React22.createElement(import_icons5.InfoCircleIcon, { fontSize: SIZE4 })) : void 0;
   return /* @__PURE__ */ React22.createElement(
     import_ui19.Chip,
     {
@@ -2278,13 +2378,12 @@ var ActionIcons = () => /* @__PURE__ */ React24.createElement(import_ui21.Box, {
 // src/styles-inheritance/components/styles-inheritance-infotip.tsx
 var SECTION_PADDING_INLINE = 32;
 var StylesInheritanceInfotip = ({ inheritanceChain, propType, path, label, children }) => {
-  const [showInfotip, setShowInfotip] = (0, import_react21.useState)(false);
+  const [showInfotip, setShowInfotip] = (0, import_react23.useState)(false);
   const toggleInfotip = () => setShowInfotip((prev) => !prev);
   const closeInfotip = () => setShowInfotip(false);
   const key = path.join(".");
-  const sectionRef = useSectionRef();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320 + SECTION_PADDING_INLINE;
-  const resolve = (0, import_react21.useMemo)(() => {
+  const sectionWidth = useSectionWidth() + SECTION_PADDING_INLINE;
+  const resolve = (0, import_react23.useMemo)(() => {
     return (0, import_editor_canvas2.createPropsResolver)({
       transformers: stylesInheritanceTransformersRegistry,
       schema: { [key]: propType }
@@ -2314,7 +2413,7 @@ var StylesInheritanceInfotip = ({ inheritanceChain, propType, path, label, child
           }
         }
       },
-      /* @__PURE__ */ React25.createElement(import_editor_ui4.PopoverHeader, { title: (0, import_i18n9.__)("Style origin", "elementor"), onClose: closeInfotip }),
+      /* @__PURE__ */ React25.createElement(import_editor_ui4.PopoverHeader, { title: (0, import_i18n10.__)("Style origin", "elementor"), onClose: closeInfotip }),
       /* @__PURE__ */ React25.createElement(
         import_ui22.Stack,
         {
@@ -2330,7 +2429,7 @@ var StylesInheritanceInfotip = ({ inheritanceChain, propType, path, label, child
               display: "flex",
               gap: 0.5,
               role: "listitem",
-              "aria-label": (0, import_i18n9.__)("Inheritance item: %s", "elementor").replace(
+              "aria-label": (0, import_i18n10.__)("Inheritance item: %s", "elementor").replace(
                 "%s",
                 item.displayLabel
               )
@@ -2390,13 +2489,13 @@ function TooltipOrInfotip({
       children
     ));
   }
-  return /* @__PURE__ */ React25.createElement(import_ui22.Tooltip, { title: (0, import_i18n9.__)("Style origin", "elementor"), placement: "top" }, children);
+  return /* @__PURE__ */ React25.createElement(import_ui22.Tooltip, { title: (0, import_i18n10.__)("Style origin", "elementor"), placement: "top" }, children);
 }
 
 // src/styles-inheritance/components/styles-inheritance-indicator.tsx
 var StylesInheritanceIndicator = () => {
   const { path, propType } = (0, import_editor_controls5.useBoundProp)();
-  const isUsingNestedProps = (0, import_editor_v1_adapters7.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
+  const isUsingNestedProps = (0, import_editor_v1_adapters8.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
   const finalPath = isUsingNestedProps ? path : path.slice(0, 1);
   const inheritanceChain = useStylesInheritanceChain(finalPath);
   if (!inheritanceChain.length) {
@@ -2407,9 +2506,9 @@ var StylesInheritanceIndicator = () => {
 var Indicator = ({ inheritanceChain, path, propType }) => {
   const { id: currentStyleId, provider: currentStyleProvider, meta: currentStyleMeta } = useStyle();
   const currentItem = currentStyleId ? getValueFromInheritanceChain(inheritanceChain, currentStyleId, currentStyleMeta) : null;
-  const hasValue = !(0, import_editor_props6.isEmpty)(currentItem?.value);
+  const hasValue = !(0, import_editor_props7.isEmpty)(currentItem?.value);
   const [actualStyle] = inheritanceChain;
-  if (actualStyle.provider === import_editor_styles_repository11.ELEMENTS_BASE_STYLES_PROVIDER_KEY) {
+  if (!(0, import_editor_v1_adapters8.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_31) && actualStyle.provider === import_editor_styles_repository12.ELEMENTS_BASE_STYLES_PROVIDER_KEY) {
     return null;
   }
   const isFinalValue = currentItem === actualStyle;
@@ -2419,7 +2518,7 @@ var Indicator = ({ inheritanceChain, path, propType }) => {
     isOverridden: hasValue && !isFinalValue ? true : void 0
   };
   if (!isUsingIndicatorPopover()) {
-    return /* @__PURE__ */ React26.createElement(import_ui23.Tooltip, { title: (0, import_i18n10.__)("Style origin", "elementor"), placement: "top" }, /* @__PURE__ */ React26.createElement(StyleIndicator, { ...styleIndicatorProps, "aria-label": label }));
+    return /* @__PURE__ */ React26.createElement(import_ui23.Tooltip, { title: (0, import_i18n11.__)("Style origin", "elementor"), placement: "top" }, /* @__PURE__ */ React26.createElement(StyleIndicator, { ...styleIndicatorProps, "aria-label": label }));
   }
   return /* @__PURE__ */ React26.createElement(
     StylesInheritanceInfotip,
@@ -2434,21 +2533,28 @@ var Indicator = ({ inheritanceChain, path, propType }) => {
 };
 var getLabel = ({ isFinalValue, hasValue }) => {
   if (isFinalValue) {
-    return (0, import_i18n10.__)("This is the final value", "elementor");
+    return (0, import_i18n11.__)("This is the final value", "elementor");
   }
   if (hasValue) {
-    return (0, import_i18n10.__)("This value is overridden by another style", "elementor");
+    return (0, import_i18n11.__)("This value is overridden by another style", "elementor");
   }
-  return (0, import_i18n10.__)("This has value from another style", "elementor");
+  return (0, import_i18n11.__)("This has value from another style", "elementor");
 };
 
 // src/controls-registry/styles-field.tsx
-var StylesField = ({ bind, placeholder, children }) => {
-  const { value, setValue, canEdit } = useStylesField(bind);
+var StylesField = ({ bind, placeholder, propDisplayName, children }) => {
+  const { value, setValue, canEdit } = useStylesField(bind, {
+    history: { propDisplayName }
+  });
+  const isVersion331Active = (0, import_editor_v1_adapters9.isExperimentActive)("e_v_3_31");
+  const stylesInheritanceChain = useStylesInheritanceChain([bind]);
   const stylesSchema = (0, import_editor_styles3.getStylesSchema)();
   const propType = createTopLevelOjectType({ schema: stylesSchema });
   const values = { [bind]: value };
-  const placeholderValues = { [bind]: placeholder };
+  const [actualValue] = stylesInheritanceChain;
+  const placeholderValues = {
+    [bind]: isVersion331Active ? actualValue?.value : placeholder
+  };
   const setValues = (newValue) => {
     setValue(newValue[bind]);
   };
@@ -2469,7 +2575,7 @@ var StylesField = ({ bind, placeholder, children }) => {
         value: values,
         setValue: setValues,
         placeholder: placeholderValues,
-        disabled: !canEdit
+        isDisabled: () => !canEdit
       },
       /* @__PURE__ */ React27.createElement(import_editor_controls6.PropKeyProvider, { bind }, children)
     )
@@ -2482,7 +2588,7 @@ var import_ui24 = require("@elementor/ui");
 var SectionContent = ({ gap = 2, sx, children }) => /* @__PURE__ */ React28.createElement(import_ui24.Stack, { gap, sx: { ...sx } }, children);
 
 // src/components/style-sections/background-section/background-section.tsx
-var BACKGROUND_LABEL = (0, import_i18n11.__)("Background", "elementor");
+var BACKGROUND_LABEL = (0, import_i18n12.__)("Background", "elementor");
 var BackgroundSection = () => {
   return /* @__PURE__ */ React29.createElement(SectionContent, null, /* @__PURE__ */ React29.createElement(StylesField, { bind: "background", propDisplayName: BACKGROUND_LABEL }, /* @__PURE__ */ React29.createElement(import_editor_controls7.BackgroundControl, null)));
 };
@@ -2498,7 +2604,7 @@ var PanelDivider = () => /* @__PURE__ */ React30.createElement(import_ui25.Divid
 // src/components/style-sections/border-section/border-field.tsx
 var React37 = __toESM(require("react"));
 var import_editor_controls12 = require("@elementor/editor-controls");
-var import_i18n15 = require("@wordpress/i18n");
+var import_i18n16 = require("@wordpress/i18n");
 
 // src/components/add-or-remove-content.tsx
 var React31 = __toESM(require("react"));
@@ -2531,7 +2637,7 @@ var AddOrRemoveContent = ({
 // src/components/style-sections/border-section/border-color-field.tsx
 var React34 = __toESM(require("react"));
 var import_editor_controls9 = require("@elementor/editor-controls");
-var import_i18n12 = require("@wordpress/i18n");
+var import_i18n13 = require("@wordpress/i18n");
 
 // src/components/styles-field-layout.tsx
 var React33 = __toESM(require("react"));
@@ -2573,55 +2679,55 @@ var Column = React33.forwardRef(
 );
 
 // src/components/style-sections/border-section/border-color-field.tsx
-var BORDER_COLOR_LABEL = (0, import_i18n12.__)("Border color", "elementor");
+var BORDER_COLOR_LABEL = (0, import_i18n13.__)("Border color", "elementor");
 var BorderColorField = () => /* @__PURE__ */ React34.createElement(StylesField, { bind: "border-color", propDisplayName: BORDER_COLOR_LABEL }, /* @__PURE__ */ React34.createElement(StylesFieldLayout, { label: BORDER_COLOR_LABEL }, /* @__PURE__ */ React34.createElement(import_editor_controls9.ColorControl, null)));
 
 // src/components/style-sections/border-section/border-style-field.tsx
 var React35 = __toESM(require("react"));
 var import_editor_controls10 = require("@elementor/editor-controls");
-var import_i18n13 = require("@wordpress/i18n");
-var BORDER_TYPE_LABEL = (0, import_i18n13.__)("Border type", "elementor");
+var import_i18n14 = require("@wordpress/i18n");
+var BORDER_TYPE_LABEL = (0, import_i18n14.__)("Border type", "elementor");
 var borderStyles = [
-  { value: "none", label: (0, import_i18n13.__)("None", "elementor") },
-  { value: "solid", label: (0, import_i18n13.__)("Solid", "elementor") },
-  { value: "dashed", label: (0, import_i18n13.__)("Dashed", "elementor") },
-  { value: "dotted", label: (0, import_i18n13.__)("Dotted", "elementor") },
-  { value: "double", label: (0, import_i18n13.__)("Double", "elementor") },
-  { value: "groove", label: (0, import_i18n13.__)("Groove", "elementor") },
-  { value: "ridge", label: (0, import_i18n13.__)("Ridge", "elementor") },
-  { value: "inset", label: (0, import_i18n13.__)("Inset", "elementor") },
-  { value: "outset", label: (0, import_i18n13.__)("Outset", "elementor") }
+  { value: "none", label: (0, import_i18n14.__)("None", "elementor") },
+  { value: "solid", label: (0, import_i18n14.__)("Solid", "elementor") },
+  { value: "dashed", label: (0, import_i18n14.__)("Dashed", "elementor") },
+  { value: "dotted", label: (0, import_i18n14.__)("Dotted", "elementor") },
+  { value: "double", label: (0, import_i18n14.__)("Double", "elementor") },
+  { value: "groove", label: (0, import_i18n14.__)("Groove", "elementor") },
+  { value: "ridge", label: (0, import_i18n14.__)("Ridge", "elementor") },
+  { value: "inset", label: (0, import_i18n14.__)("Inset", "elementor") },
+  { value: "outset", label: (0, import_i18n14.__)("Outset", "elementor") }
 ];
 var BorderStyleField = () => /* @__PURE__ */ React35.createElement(StylesField, { bind: "border-style", propDisplayName: BORDER_TYPE_LABEL }, /* @__PURE__ */ React35.createElement(StylesFieldLayout, { label: BORDER_TYPE_LABEL }, /* @__PURE__ */ React35.createElement(import_editor_controls10.SelectControl, { options: borderStyles })));
 
 // src/components/style-sections/border-section/border-width-field.tsx
 var React36 = __toESM(require("react"));
 var import_editor_controls11 = require("@elementor/editor-controls");
-var import_editor_props7 = require("@elementor/editor-props");
+var import_editor_props8 = require("@elementor/editor-props");
 var import_icons7 = require("@elementor/icons");
 var import_ui29 = require("@elementor/ui");
-var import_i18n14 = require("@wordpress/i18n");
-var BORDER_WIDTH_LABEL = (0, import_i18n14.__)("Border width", "elementor");
+var import_i18n15 = require("@wordpress/i18n");
+var BORDER_WIDTH_LABEL = (0, import_i18n15.__)("Border width", "elementor");
 var InlineStartIcon = (0, import_ui29.withDirection)(import_icons7.SideRightIcon);
 var InlineEndIcon = (0, import_ui29.withDirection)(import_icons7.SideLeftIcon);
 var getEdges = (isSiteRtl) => [
   {
-    label: (0, import_i18n14.__)("Top", "elementor"),
+    label: (0, import_i18n15.__)("Top", "elementor"),
     icon: /* @__PURE__ */ React36.createElement(import_icons7.SideTopIcon, { fontSize: "tiny" }),
     bind: "block-start"
   },
   {
-    label: isSiteRtl ? (0, import_i18n14.__)("Left", "elementor") : (0, import_i18n14.__)("Right", "elementor"),
+    label: isSiteRtl ? (0, import_i18n15.__)("Left", "elementor") : (0, import_i18n15.__)("Right", "elementor"),
     icon: /* @__PURE__ */ React36.createElement(InlineStartIcon, { fontSize: "tiny" }),
     bind: "inline-end"
   },
   {
-    label: (0, import_i18n14.__)("Bottom", "elementor"),
+    label: (0, import_i18n15.__)("Bottom", "elementor"),
     icon: /* @__PURE__ */ React36.createElement(import_icons7.SideBottomIcon, { fontSize: "tiny" }),
     bind: "block-end"
   },
   {
-    label: isSiteRtl ? (0, import_i18n14.__)("Right", "elementor") : (0, import_i18n14.__)("Left", "elementor"),
+    label: isSiteRtl ? (0, import_i18n15.__)("Right", "elementor") : (0, import_i18n15.__)("Left", "elementor"),
     icon: /* @__PURE__ */ React36.createElement(InlineEndIcon, { fontSize: "tiny" }),
     bind: "inline-start"
   }
@@ -2634,13 +2740,14 @@ var BorderWidthField = () => {
       items: getEdges(isSiteRtl),
       label: BORDER_WIDTH_LABEL,
       icon: /* @__PURE__ */ React36.createElement(import_icons7.SideAllIcon, { fontSize: "tiny" }),
-      tooltipLabel: (0, import_i18n14.__)("Adjust borders", "elementor"),
-      multiSizePropTypeUtil: import_editor_props7.borderWidthPropTypeUtil
+      tooltipLabel: (0, import_i18n15.__)("Adjust borders", "elementor"),
+      multiSizePropTypeUtil: import_editor_props8.borderWidthPropTypeUtil
     }
   ));
 };
 
 // src/components/style-sections/border-section/border-field.tsx
+var BORDER_LABEL = (0, import_i18n16.__)("Border", "elementor");
 var initialBorder = {
   "border-width": { $$type: "size", value: { size: 1, unit: "px" } },
   "border-color": { $$type: "color", value: "#000000" },
@@ -2648,15 +2755,19 @@ var initialBorder = {
 };
 var BorderField = () => {
   const { values, setValues, canEdit } = useStylesFields(Object.keys(initialBorder));
+  const meta = { history: { propDisplayName: BORDER_LABEL } };
   const addBorder = () => {
-    setValues(initialBorder);
+    setValues(initialBorder, meta);
   };
   const removeBorder = () => {
-    setValues({
-      "border-width": null,
-      "border-color": null,
-      "border-style": null
-    });
+    setValues(
+      {
+        "border-width": null,
+        "border-color": null,
+        "border-style": null
+      },
+      meta
+    );
   };
   const hasBorder = Object.values(values ?? {}).some(Boolean);
   return /* @__PURE__ */ React37.createElement(
@@ -2666,7 +2777,7 @@ var BorderField = () => {
       onAdd: addBorder,
       onRemove: removeBorder,
       disabled: !canEdit,
-      renderLabel: () => /* @__PURE__ */ React37.createElement(import_editor_controls12.ControlFormLabel, null, (0, import_i18n15.__)("Border", "elementor"))
+      renderLabel: () => /* @__PURE__ */ React37.createElement(import_editor_controls12.ControlFormLabel, null, BORDER_LABEL)
     },
     /* @__PURE__ */ React37.createElement(BorderWidthField, null),
     /* @__PURE__ */ React37.createElement(BorderColorField, null),
@@ -2677,10 +2788,10 @@ var BorderField = () => {
 // src/components/style-sections/border-section/border-radius-field.tsx
 var React39 = __toESM(require("react"));
 var import_editor_controls13 = require("@elementor/editor-controls");
-var import_editor_props8 = require("@elementor/editor-props");
+var import_editor_props9 = require("@elementor/editor-props");
 var import_icons8 = require("@elementor/icons");
 var import_ui31 = require("@elementor/ui");
-var import_i18n16 = require("@wordpress/i18n");
+var import_i18n17 = require("@wordpress/i18n");
 
 // src/styles-inheritance/components/ui-providers.tsx
 var React38 = __toESM(require("react"));
@@ -2691,15 +2802,15 @@ var UiProviders = ({ children }) => {
 };
 
 // src/components/style-sections/border-section/border-radius-field.tsx
-var BORDER_RADIUS_LABEL = (0, import_i18n16.__)("Border radius", "elementor");
+var BORDER_RADIUS_LABEL = (0, import_i18n17.__)("Border radius", "elementor");
 var StartStartIcon = (0, import_ui31.withDirection)(import_icons8.RadiusTopLeftIcon);
 var StartEndIcon = (0, import_ui31.withDirection)(import_icons8.RadiusTopRightIcon);
 var EndStartIcon = (0, import_ui31.withDirection)(import_icons8.RadiusBottomLeftIcon);
 var EndEndIcon = (0, import_ui31.withDirection)(import_icons8.RadiusBottomRightIcon);
-var getStartStartLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n16.__)("Top right", "elementor") : (0, import_i18n16.__)("Top left", "elementor");
-var getStartEndLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n16.__)("Top left", "elementor") : (0, import_i18n16.__)("Top right", "elementor");
-var getEndStartLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n16.__)("Bottom right", "elementor") : (0, import_i18n16.__)("Bottom left", "elementor");
-var getEndEndLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n16.__)("Bottom left", "elementor") : (0, import_i18n16.__)("Bottom right", "elementor");
+var getStartStartLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n17.__)("Top right", "elementor") : (0, import_i18n17.__)("Top left", "elementor");
+var getStartEndLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n17.__)("Top left", "elementor") : (0, import_i18n17.__)("Top right", "elementor");
+var getEndStartLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n17.__)("Bottom right", "elementor") : (0, import_i18n17.__)("Bottom left", "elementor");
+var getEndEndLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n17.__)("Bottom left", "elementor") : (0, import_i18n17.__)("Bottom right", "elementor");
 var getCorners = (isSiteRtl) => [
   {
     label: getStartStartLabel(isSiteRtl),
@@ -2730,8 +2841,8 @@ var BorderRadiusField = () => {
       items: getCorners(isSiteRtl),
       label: BORDER_RADIUS_LABEL,
       icon: /* @__PURE__ */ React39.createElement(import_icons8.BorderCornersIcon, { fontSize: "tiny" }),
-      tooltipLabel: (0, import_i18n16.__)("Adjust corners", "elementor"),
-      multiSizePropTypeUtil: import_editor_props8.borderRadiusPropTypeUtil
+      tooltipLabel: (0, import_i18n17.__)("Adjust corners", "elementor"),
+      multiSizePropTypeUtil: import_editor_props9.borderRadiusPropTypeUtil
     }
   )));
 };
@@ -2742,43 +2853,43 @@ var BorderSection = () => /* @__PURE__ */ React40.createElement(SectionContent, 
 // src/components/style-sections/effects-section/effects-section.tsx
 var React42 = __toESM(require("react"));
 var import_editor_controls15 = require("@elementor/editor-controls");
-var import_editor_v1_adapters8 = require("@elementor/editor-v1-adapters");
-var import_i18n18 = require("@wordpress/i18n");
+var import_editor_v1_adapters10 = require("@elementor/editor-v1-adapters");
+var import_i18n19 = require("@wordpress/i18n");
 
 // src/components/style-sections/layout-section/opacity-control-field.tsx
 var React41 = __toESM(require("react"));
-var import_react22 = require("react");
+var import_react24 = require("react");
 var import_editor_controls14 = require("@elementor/editor-controls");
-var import_i18n17 = require("@wordpress/i18n");
-var OPACITY_LABEL = (0, import_i18n17.__)("Opacity", "elementor");
+var import_i18n18 = require("@wordpress/i18n");
+var OPACITY_LABEL = (0, import_i18n18.__)("Opacity", "elementor");
 var OpacityControlField = () => {
-  const rowRef = (0, import_react22.useRef)(null);
+  const rowRef = (0, import_react24.useRef)(null);
   return /* @__PURE__ */ React41.createElement(StylesField, { bind: "opacity", propDisplayName: OPACITY_LABEL }, /* @__PURE__ */ React41.createElement(StylesFieldLayout, { ref: rowRef, label: OPACITY_LABEL }, /* @__PURE__ */ React41.createElement(import_editor_controls14.SizeControl, { units: ["%"], anchorRef: rowRef, defaultUnit: "%" })));
 };
 
 // src/components/style-sections/effects-section/effects-section.tsx
-var BOX_SHADOW_LABEL = (0, import_i18n18.__)("Box shadow", "elementor");
-var FILTER_LABEL = (0, import_i18n18.__)("Filter", "elementor");
+var BOX_SHADOW_LABEL = (0, import_i18n19.__)("Box shadow", "elementor");
+var FILTER_LABEL = (0, import_i18n19.__)("Filter", "elementor");
 var EffectsSection = () => {
-  const isVersion331Active = (0, import_editor_v1_adapters8.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_31);
-  return /* @__PURE__ */ React42.createElement(SectionContent, null, /* @__PURE__ */ React42.createElement(OpacityControlField, null), /* @__PURE__ */ React42.createElement(PanelDivider, null), /* @__PURE__ */ React42.createElement(StylesField, { bind: "box-shadow", propDisplayName: BOX_SHADOW_LABEL }, /* @__PURE__ */ React42.createElement(import_editor_controls15.BoxShadowRepeaterControl, null)), isVersion331Active && /* @__PURE__ */ React42.createElement(StylesField, { bind: "filter", propDisplayName: FILTER_LABEL }, /* @__PURE__ */ React42.createElement(import_editor_controls15.FilterRepeaterControl, null)));
+  const isVersion331Active = (0, import_editor_v1_adapters10.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_31);
+  return /* @__PURE__ */ React42.createElement(SectionContent, null, /* @__PURE__ */ React42.createElement(OpacityControlField, null), /* @__PURE__ */ React42.createElement(PanelDivider, null), /* @__PURE__ */ React42.createElement(StylesField, { bind: "box-shadow", propDisplayName: BOX_SHADOW_LABEL }, /* @__PURE__ */ React42.createElement(import_editor_controls15.BoxShadowRepeaterControl, null)), isVersion331Active && /* @__PURE__ */ React42.createElement(React42.Fragment, null, /* @__PURE__ */ React42.createElement(PanelDivider, null), /* @__PURE__ */ React42.createElement(StylesField, { bind: "filter", propDisplayName: FILTER_LABEL }, /* @__PURE__ */ React42.createElement(import_editor_controls15.FilterRepeaterControl, null))));
 };
 
 // src/components/style-sections/layout-section/layout-section.tsx
 var React54 = __toESM(require("react"));
 var import_editor_controls26 = require("@elementor/editor-controls");
 var import_editor_elements7 = require("@elementor/editor-elements");
-var import_i18n29 = require("@wordpress/i18n");
+var import_i18n31 = require("@wordpress/i18n");
 
 // src/hooks/use-computed-style.ts
-var import_editor_v1_adapters9 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters11 = require("@elementor/editor-v1-adapters");
 function useComputedStyle(elementId) {
-  return (0, import_editor_v1_adapters9.__privateUseListenTo)(
+  return (0, import_editor_v1_adapters11.__privateUseListenTo)(
     [
-      (0, import_editor_v1_adapters9.windowEvent)("elementor/device-mode/change"),
-      (0, import_editor_v1_adapters9.commandEndEvent)("document/elements/reset-style"),
-      (0, import_editor_v1_adapters9.commandEndEvent)("document/elements/settings"),
-      (0, import_editor_v1_adapters9.commandEndEvent)("document/elements/paste-style")
+      (0, import_editor_v1_adapters11.windowEvent)("elementor/device-mode/change"),
+      (0, import_editor_v1_adapters11.commandEndEvent)("document/elements/reset-style"),
+      (0, import_editor_v1_adapters11.commandEndEvent)("document/elements/settings"),
+      (0, import_editor_v1_adapters11.commandEndEvent)("document/elements/paste-style")
     ],
     () => {
       if (!elementId) {
@@ -2800,12 +2911,14 @@ var React44 = __toESM(require("react"));
 var import_editor_controls16 = require("@elementor/editor-controls");
 var import_icons9 = require("@elementor/icons");
 var import_ui33 = require("@elementor/ui");
-var import_i18n19 = require("@wordpress/i18n");
+var import_i18n21 = require("@wordpress/i18n");
 
 // src/components/style-sections/layout-section/utils/rotated-icon.tsx
 var React43 = __toESM(require("react"));
-var import_react23 = require("react");
+var import_react25 = require("react");
 var import_ui32 = require("@elementor/ui");
+var import_i18n20 = require("@wordpress/i18n");
+var FLEX_DIRECTION_LABEL = (0, import_i18n20.__)("Flex direction", "elementor");
 var CLOCKWISE_ANGLES = {
   row: 0,
   column: 90,
@@ -2825,12 +2938,14 @@ var RotatedIcon = ({
   offset = 0,
   disableRotationForReversed = false
 }) => {
-  const rotate = (0, import_react23.useRef)(useGetTargetAngle(isClockwise, offset, disableRotationForReversed));
+  const rotate = (0, import_react25.useRef)(useGetTargetAngle(isClockwise, offset, disableRotationForReversed));
   rotate.current = useGetTargetAngle(isClockwise, offset, disableRotationForReversed, rotate);
   return /* @__PURE__ */ React43.createElement(Icon, { fontSize: size, sx: { transition: ".3s", rotate: `${rotate.current}deg` } });
 };
 var useGetTargetAngle = (isClockwise, offset, disableRotationForReversed, existingRef) => {
-  const { value: direction } = useStylesField("flex-direction");
+  const { value: direction } = useStylesField("flex-direction", {
+    history: { propDisplayName: FLEX_DIRECTION_LABEL }
+  });
   const isRtl = "rtl" === (0, import_ui32.useTheme)().direction;
   const rotationMultiplier = isRtl ? -1 : 1;
   const angleMap = isClockwise ? CLOCKWISE_ANGLES : COUNTER_CLOCKWISE_ANGLES;
@@ -2846,7 +2961,7 @@ var useGetTargetAngle = (isClockwise, offset, disableRotationForReversed, existi
 };
 
 // src/components/style-sections/layout-section/align-content-field.tsx
-var ALIGN_CONTENT_LABEL = (0, import_i18n19.__)("Align content", "elementor");
+var ALIGN_CONTENT_LABEL = (0, import_i18n21.__)("Align content", "elementor");
 var StartIcon = (0, import_ui33.withDirection)(import_icons9.JustifyTopIcon);
 var EndIcon = (0, import_ui33.withDirection)(import_icons9.JustifyBottomIcon);
 var iconProps = {
@@ -2857,37 +2972,37 @@ var iconProps = {
 var options = [
   {
     value: "start",
-    label: (0, import_i18n19.__)("Start", "elementor"),
+    label: (0, import_i18n21.__)("Start", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React44.createElement(RotatedIcon, { icon: StartIcon, size, ...iconProps }),
     showTooltip: true
   },
   {
     value: "center",
-    label: (0, import_i18n19.__)("Center", "elementor"),
+    label: (0, import_i18n21.__)("Center", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React44.createElement(RotatedIcon, { icon: import_icons9.JustifyCenterIcon, size, ...iconProps }),
     showTooltip: true
   },
   {
     value: "end",
-    label: (0, import_i18n19.__)("End", "elementor"),
+    label: (0, import_i18n21.__)("End", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React44.createElement(RotatedIcon, { icon: EndIcon, size, ...iconProps }),
     showTooltip: true
   },
   {
     value: "space-between",
-    label: (0, import_i18n19.__)("Space between", "elementor"),
+    label: (0, import_i18n21.__)("Space between", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React44.createElement(RotatedIcon, { icon: import_icons9.JustifySpaceBetweenVerticalIcon, size, ...iconProps }),
     showTooltip: true
   },
   {
     value: "space-around",
-    label: (0, import_i18n19.__)("Space around", "elementor"),
+    label: (0, import_i18n21.__)("Space around", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React44.createElement(RotatedIcon, { icon: import_icons9.JustifySpaceAroundVerticalIcon, size, ...iconProps }),
     showTooltip: true
   },
   {
     value: "space-evenly",
-    label: (0, import_i18n19.__)("Space evenly", "elementor"),
+    label: (0, import_i18n21.__)("Space evenly", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React44.createElement(RotatedIcon, { icon: import_icons9.JustifyDistributeVerticalIcon, size, ...iconProps }),
     showTooltip: true
   }
@@ -2899,8 +3014,8 @@ var React45 = __toESM(require("react"));
 var import_editor_controls17 = require("@elementor/editor-controls");
 var import_icons10 = require("@elementor/icons");
 var import_ui34 = require("@elementor/ui");
-var import_i18n20 = require("@wordpress/i18n");
-var ALIGN_ITEMS_LABEL = (0, import_i18n20.__)("Align items", "elementor");
+var import_i18n22 = require("@wordpress/i18n");
+var ALIGN_ITEMS_LABEL = (0, import_i18n22.__)("Align items", "elementor");
 var StartIcon2 = (0, import_ui34.withDirection)(import_icons10.LayoutAlignLeftIcon);
 var EndIcon2 = (0, import_ui34.withDirection)(import_icons10.LayoutAlignRightIcon);
 var iconProps2 = {
@@ -2910,25 +3025,25 @@ var iconProps2 = {
 var options2 = [
   {
     value: "start",
-    label: (0, import_i18n20.__)("Start", "elementor"),
+    label: (0, import_i18n22.__)("Start", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(RotatedIcon, { icon: StartIcon2, size, ...iconProps2 }),
     showTooltip: true
   },
   {
     value: "center",
-    label: (0, import_i18n20.__)("Center", "elementor"),
+    label: (0, import_i18n22.__)("Center", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(RotatedIcon, { icon: import_icons10.LayoutAlignCenterIcon, size, ...iconProps2 }),
     showTooltip: true
   },
   {
     value: "end",
-    label: (0, import_i18n20.__)("End", "elementor"),
+    label: (0, import_i18n22.__)("End", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(RotatedIcon, { icon: EndIcon2, size, ...iconProps2 }),
     showTooltip: true
   },
   {
     value: "stretch",
-    label: (0, import_i18n20.__)("Stretch", "elementor"),
+    label: (0, import_i18n22.__)("Stretch", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React45.createElement(RotatedIcon, { icon: import_icons10.LayoutDistributeVerticalIcon, size, ...iconProps2 }),
     showTooltip: true
   }
@@ -2942,8 +3057,8 @@ var React46 = __toESM(require("react"));
 var import_editor_controls18 = require("@elementor/editor-controls");
 var import_icons11 = require("@elementor/icons");
 var import_ui35 = require("@elementor/ui");
-var import_i18n21 = require("@wordpress/i18n");
-var ALIGN_SELF_LABEL = (0, import_i18n21.__)("Align self", "elementor");
+var import_i18n23 = require("@wordpress/i18n");
+var ALIGN_SELF_LABEL = (0, import_i18n23.__)("Align self", "elementor");
 var ALIGN_SELF_CHILD_OFFSET_MAP = {
   row: 90,
   "row-reverse": 90,
@@ -2958,7 +3073,7 @@ var iconProps3 = {
 var getOptions = (parentStyleDirection) => [
   {
     value: "start",
-    label: (0, import_i18n21.__)("Start", "elementor"),
+    label: (0, import_i18n23.__)("Start", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(
       RotatedIcon,
       {
@@ -2972,7 +3087,7 @@ var getOptions = (parentStyleDirection) => [
   },
   {
     value: "center",
-    label: (0, import_i18n21.__)("Center", "elementor"),
+    label: (0, import_i18n23.__)("Center", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(
       RotatedIcon,
       {
@@ -2986,7 +3101,7 @@ var getOptions = (parentStyleDirection) => [
   },
   {
     value: "end",
-    label: (0, import_i18n21.__)("End", "elementor"),
+    label: (0, import_i18n23.__)("End", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(
       RotatedIcon,
       {
@@ -3000,7 +3115,7 @@ var getOptions = (parentStyleDirection) => [
   },
   {
     value: "stretch",
-    label: (0, import_i18n21.__)("Stretch", "elementor"),
+    label: (0, import_i18n23.__)("Stretch", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React46.createElement(
       RotatedIcon,
       {
@@ -3018,44 +3133,44 @@ var AlignSelfChild = ({ parentStyleDirection }) => /* @__PURE__ */ React46.creat
 // src/components/style-sections/layout-section/display-field.tsx
 var React47 = __toESM(require("react"));
 var import_editor_controls19 = require("@elementor/editor-controls");
-var import_editor_v1_adapters10 = require("@elementor/editor-v1-adapters");
-var import_i18n22 = require("@wordpress/i18n");
-var DISPLAY_LABEL = (0, import_i18n22.__)("Display", "elementor");
+var import_editor_v1_adapters12 = require("@elementor/editor-v1-adapters");
+var import_i18n24 = require("@wordpress/i18n");
+var DISPLAY_LABEL = (0, import_i18n24.__)("Display", "elementor");
 var displayFieldItems = [
   {
     value: "block",
-    renderContent: () => (0, import_i18n22.__)("Block", "elementor"),
-    label: (0, import_i18n22.__)("Block", "elementor"),
+    renderContent: () => (0, import_i18n24.__)("Block", "elementor"),
+    label: (0, import_i18n24.__)("Block", "elementor"),
     showTooltip: true
   },
   {
     value: "flex",
-    renderContent: () => (0, import_i18n22.__)("Flex", "elementor"),
-    label: (0, import_i18n22.__)("Flex", "elementor"),
+    renderContent: () => (0, import_i18n24.__)("Flex", "elementor"),
+    label: (0, import_i18n24.__)("Flex", "elementor"),
     showTooltip: true
   },
   {
     value: "inline-block",
-    renderContent: () => (0, import_i18n22.__)("In-blk", "elementor"),
-    label: (0, import_i18n22.__)("Inline-block", "elementor"),
+    renderContent: () => (0, import_i18n24.__)("In-blk", "elementor"),
+    label: (0, import_i18n24.__)("Inline-block", "elementor"),
     showTooltip: true
   }
 ];
 var DisplayField = () => {
-  const isDisplayNoneFeatureActive = (0, import_editor_v1_adapters10.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
+  const isDisplayNoneFeatureActive = (0, import_editor_v1_adapters12.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
   const items3 = [...displayFieldItems];
   if (isDisplayNoneFeatureActive) {
     items3.push({
       value: "none",
-      renderContent: () => (0, import_i18n22.__)("None", "elementor"),
-      label: (0, import_i18n22.__)("None", "elementor"),
+      renderContent: () => (0, import_i18n24.__)("None", "elementor"),
+      label: (0, import_i18n24.__)("None", "elementor"),
       showTooltip: true
     });
   }
   items3.push({
     value: "inline-flex",
-    renderContent: () => (0, import_i18n22.__)("In-flx", "elementor"),
-    label: (0, import_i18n22.__)("Inline-flex", "elementor"),
+    renderContent: () => (0, import_i18n24.__)("In-flx", "elementor"),
+    label: (0, import_i18n24.__)("Inline-flex", "elementor"),
     showTooltip: true
   });
   const placeholder = useDisplayPlaceholderValue();
@@ -3068,12 +3183,12 @@ var React48 = __toESM(require("react"));
 var import_editor_controls20 = require("@elementor/editor-controls");
 var import_icons12 = require("@elementor/icons");
 var import_ui36 = require("@elementor/ui");
-var import_i18n23 = require("@wordpress/i18n");
-var FLEX_DIRECTION_LABEL = (0, import_i18n23.__)("Direction", "elementor");
+var import_i18n25 = require("@wordpress/i18n");
+var FLEX_DIRECTION_LABEL2 = (0, import_i18n25.__)("Direction", "elementor");
 var options3 = [
   {
     value: "row",
-    label: (0, import_i18n23.__)("Row", "elementor"),
+    label: (0, import_i18n25.__)("Row", "elementor"),
     renderContent: ({ size }) => {
       const StartIcon5 = (0, import_ui36.withDirection)(import_icons12.ArrowRightIcon);
       return /* @__PURE__ */ React48.createElement(StartIcon5, { fontSize: size });
@@ -3082,13 +3197,13 @@ var options3 = [
   },
   {
     value: "column",
-    label: (0, import_i18n23.__)("Column", "elementor"),
+    label: (0, import_i18n25.__)("Column", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons12.ArrowDownSmallIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "row-reverse",
-    label: (0, import_i18n23.__)("Reversed row", "elementor"),
+    label: (0, import_i18n25.__)("Reversed row", "elementor"),
     renderContent: ({ size }) => {
       const EndIcon5 = (0, import_ui36.withDirection)(import_icons12.ArrowLeftIcon);
       return /* @__PURE__ */ React48.createElement(EndIcon5, { fontSize: size });
@@ -3097,23 +3212,23 @@ var options3 = [
   },
   {
     value: "column-reverse",
-    label: (0, import_i18n23.__)("Reversed column", "elementor"),
+    label: (0, import_i18n25.__)("Reversed column", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React48.createElement(import_icons12.ArrowUpSmallIcon, { fontSize: size }),
     showTooltip: true
   }
 ];
 var FlexDirectionField = () => {
-  return /* @__PURE__ */ React48.createElement(StylesField, { bind: "flex-direction", propDisplayName: FLEX_DIRECTION_LABEL }, /* @__PURE__ */ React48.createElement(UiProviders, null, /* @__PURE__ */ React48.createElement(StylesFieldLayout, { label: FLEX_DIRECTION_LABEL }, /* @__PURE__ */ React48.createElement(import_editor_controls20.ToggleControl, { options: options3 }))));
+  return /* @__PURE__ */ React48.createElement(StylesField, { bind: "flex-direction", propDisplayName: FLEX_DIRECTION_LABEL2 }, /* @__PURE__ */ React48.createElement(UiProviders, null, /* @__PURE__ */ React48.createElement(StylesFieldLayout, { label: FLEX_DIRECTION_LABEL2 }, /* @__PURE__ */ React48.createElement(import_editor_controls20.ToggleControl, { options: options3 }))));
 };
 
 // src/components/style-sections/layout-section/flex-order-field.tsx
 var React49 = __toESM(require("react"));
-var import_react24 = require("react");
+var import_react26 = require("react");
 var import_editor_controls21 = require("@elementor/editor-controls");
 var import_icons13 = require("@elementor/icons");
 var import_ui37 = require("@elementor/ui");
-var import_i18n24 = require("@wordpress/i18n");
-var ORDER_LABEL = (0, import_i18n24.__)("Order", "elementor");
+var import_i18n26 = require("@wordpress/i18n");
+var ORDER_LABEL = (0, import_i18n26.__)("Order", "elementor");
 var FIRST_DEFAULT_VALUE = -99999;
 var LAST_DEFAULT_VALUE = 99999;
 var FIRST = "first";
@@ -3126,26 +3241,32 @@ var orderValueMap = {
 var items = [
   {
     value: FIRST,
-    label: (0, import_i18n24.__)("First", "elementor"),
+    label: (0, import_i18n26.__)("First", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(import_icons13.ArrowUpSmallIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: LAST,
-    label: (0, import_i18n24.__)("Last", "elementor"),
+    label: (0, import_i18n26.__)("Last", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(import_icons13.ArrowDownSmallIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: CUSTOM,
-    label: (0, import_i18n24.__)("Custom", "elementor"),
+    label: (0, import_i18n26.__)("Custom", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React49.createElement(import_icons13.PencilIcon, { fontSize: size }),
     showTooltip: true
   }
 ];
 var FlexOrderField = () => {
-  const { value: order, setValue: setOrder, canEdit } = useStylesField("order");
-  const [groupControlValue, setGroupControlValue] = (0, import_react24.useState)(getGroupControlValue(order?.value || null));
+  const {
+    value: order,
+    setValue: setOrder,
+    canEdit
+  } = useStylesField("order", {
+    history: { propDisplayName: ORDER_LABEL }
+  });
+  const [groupControlValue, setGroupControlValue] = (0, import_react26.useState)(getGroupControlValue(order?.value || null));
   const handleToggleButtonChange = (group) => {
     setGroupControlValue(group);
     if (!group || group === CUSTOM) {
@@ -3163,7 +3284,7 @@ var FlexOrderField = () => {
       exclusive: true,
       disabled: !canEdit
     }
-  ), CUSTOM === groupControlValue && /* @__PURE__ */ React49.createElement(import_ui37.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React49.createElement(import_ui37.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(ControlLabel, null, (0, import_i18n24.__)("Custom order", "elementor"))), /* @__PURE__ */ React49.createElement(import_ui37.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "end" } }, /* @__PURE__ */ React49.createElement(
+  ), CUSTOM === groupControlValue && /* @__PURE__ */ React49.createElement(import_ui37.Grid, { container: true, gap: 2, alignItems: "center", flexWrap: "nowrap" }, /* @__PURE__ */ React49.createElement(import_ui37.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React49.createElement(ControlLabel, null, (0, import_i18n26.__)("Custom order", "elementor"))), /* @__PURE__ */ React49.createElement(import_ui37.Grid, { item: true, xs: 6, sx: { display: "flex", justifyContent: "end" } }, /* @__PURE__ */ React49.createElement(
     import_editor_controls21.NumberControl,
     {
       min: FIRST_DEFAULT_VALUE + 1,
@@ -3184,29 +3305,29 @@ var getGroupControlValue = (order) => {
 
 // src/components/style-sections/layout-section/flex-size-field.tsx
 var React50 = __toESM(require("react"));
-var import_react25 = require("react");
+var import_react27 = require("react");
 var import_editor_controls22 = require("@elementor/editor-controls");
-var import_editor_props9 = require("@elementor/editor-props");
+var import_editor_props10 = require("@elementor/editor-props");
 var import_icons14 = require("@elementor/icons");
-var import_i18n25 = require("@wordpress/i18n");
-var FLEX_SIZE_LABEL = (0, import_i18n25.__)("Flex Size", "elementor");
+var import_i18n27 = require("@wordpress/i18n");
+var FLEX_SIZE_LABEL = (0, import_i18n27.__)("Flex Size", "elementor");
 var DEFAULT = 1;
 var items2 = [
   {
     value: "flex-grow",
-    label: (0, import_i18n25.__)("Grow", "elementor"),
+    label: (0, import_i18n27.__)("Grow", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React50.createElement(import_icons14.ExpandIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "flex-shrink",
-    label: (0, import_i18n25.__)("Shrink", "elementor"),
+    label: (0, import_i18n27.__)("Shrink", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React50.createElement(import_icons14.ShrinkIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "custom",
-    label: (0, import_i18n25.__)("Custom", "elementor"),
+    label: (0, import_i18n27.__)("Custom", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React50.createElement(import_icons14.PencilIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -3216,30 +3337,30 @@ var FlexSizeField = () => {
   const grow = values?.["flex-grow"]?.value || null;
   const shrink = values?.["flex-shrink"]?.value || null;
   const basis = values?.["flex-basis"]?.value || null;
-  const currentGroup = (0, import_react25.useMemo)(() => getActiveGroup({ grow, shrink, basis }), [grow, shrink, basis]), [activeGroup, setActiveGroup] = (0, import_react25.useState)(currentGroup);
+  const currentGroup = (0, import_react27.useMemo)(() => getActiveGroup({ grow, shrink, basis }), [grow, shrink, basis]), [activeGroup, setActiveGroup] = (0, import_react27.useState)(currentGroup);
   const onChangeGroup = (group = null) => {
     setActiveGroup(group);
+    let props;
     if (!group || group === "custom") {
-      setValues({
+      props = {
         "flex-basis": null,
         "flex-grow": null,
         "flex-shrink": null
-      });
-      return;
-    }
-    if (group === "flex-grow") {
-      setValues({
+      };
+    } else if (group === "flex-grow") {
+      props = {
         "flex-basis": null,
-        "flex-grow": import_editor_props9.numberPropTypeUtil.create(DEFAULT),
+        "flex-grow": import_editor_props10.numberPropTypeUtil.create(DEFAULT),
         "flex-shrink": null
-      });
-      return;
+      };
+    } else {
+      props = {
+        "flex-basis": null,
+        "flex-grow": null,
+        "flex-shrink": import_editor_props10.numberPropTypeUtil.create(DEFAULT)
+      };
     }
-    setValues({
-      "flex-basis": null,
-      "flex-grow": null,
-      "flex-shrink": import_editor_props9.numberPropTypeUtil.create(DEFAULT)
-    });
+    setValues(props, { history: { propDisplayName: FLEX_SIZE_LABEL } });
   };
   return /* @__PURE__ */ React50.createElement(UiProviders, null, /* @__PURE__ */ React50.createElement(SectionContent, null, /* @__PURE__ */ React50.createElement(StylesField, { bind: activeGroup ?? "", propDisplayName: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(StylesFieldLayout, { label: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(
     import_editor_controls22.ControlToggleButtonGroup,
@@ -3253,8 +3374,8 @@ var FlexSizeField = () => {
   ))), "custom" === activeGroup && /* @__PURE__ */ React50.createElement(FlexCustomField, null)));
 };
 var FlexCustomField = () => {
-  const flexBasisRowRef = (0, import_react25.useRef)(null);
-  return /* @__PURE__ */ React50.createElement(React50.Fragment, null, /* @__PURE__ */ React50.createElement(StylesField, { bind: "flex-grow", propDisplayName: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(StylesFieldLayout, { label: (0, import_i18n25.__)("Grow", "elementor") }, /* @__PURE__ */ React50.createElement(import_editor_controls22.NumberControl, { min: 0, shouldForceInt: true }))), /* @__PURE__ */ React50.createElement(StylesField, { bind: "flex-shrink", propDisplayName: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(StylesFieldLayout, { label: (0, import_i18n25.__)("Shrink", "elementor") }, /* @__PURE__ */ React50.createElement(import_editor_controls22.NumberControl, { min: 0, shouldForceInt: true }))), /* @__PURE__ */ React50.createElement(StylesField, { bind: "flex-basis", propDisplayName: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(StylesFieldLayout, { label: (0, import_i18n25.__)("Basis", "elementor"), ref: flexBasisRowRef }, /* @__PURE__ */ React50.createElement(import_editor_controls22.SizeControl, { extendedOptions: ["auto"], anchorRef: flexBasisRowRef }))));
+  const flexBasisRowRef = (0, import_react27.useRef)(null);
+  return /* @__PURE__ */ React50.createElement(React50.Fragment, null, /* @__PURE__ */ React50.createElement(StylesField, { bind: "flex-grow", propDisplayName: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(StylesFieldLayout, { label: (0, import_i18n27.__)("Grow", "elementor") }, /* @__PURE__ */ React50.createElement(import_editor_controls22.NumberControl, { min: 0, shouldForceInt: true }))), /* @__PURE__ */ React50.createElement(StylesField, { bind: "flex-shrink", propDisplayName: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(StylesFieldLayout, { label: (0, import_i18n27.__)("Shrink", "elementor") }, /* @__PURE__ */ React50.createElement(import_editor_controls22.NumberControl, { min: 0, shouldForceInt: true }))), /* @__PURE__ */ React50.createElement(StylesField, { bind: "flex-basis", propDisplayName: FLEX_SIZE_LABEL }, /* @__PURE__ */ React50.createElement(StylesFieldLayout, { label: (0, import_i18n27.__)("Basis", "elementor"), ref: flexBasisRowRef }, /* @__PURE__ */ React50.createElement(import_editor_controls22.SizeControl, { extendedOptions: ["auto"], anchorRef: flexBasisRowRef }))));
 };
 var getActiveGroup = ({
   grow,
@@ -3279,8 +3400,8 @@ var getActiveGroup = ({
 // src/components/style-sections/layout-section/gap-control-field.tsx
 var React51 = __toESM(require("react"));
 var import_editor_controls23 = require("@elementor/editor-controls");
-var import_i18n26 = require("@wordpress/i18n");
-var GAPS_LABEL = (0, import_i18n26.__)("Gaps", "elementor");
+var import_i18n28 = require("@wordpress/i18n");
+var GAPS_LABEL = (0, import_i18n28.__)("Gaps", "elementor");
 var GapControlField = () => {
   return /* @__PURE__ */ React51.createElement(StylesField, { bind: "gap", propDisplayName: GAPS_LABEL }, /* @__PURE__ */ React51.createElement(import_editor_controls23.GapControl, { label: GAPS_LABEL }));
 };
@@ -3290,8 +3411,8 @@ var React52 = __toESM(require("react"));
 var import_editor_controls24 = require("@elementor/editor-controls");
 var import_icons15 = require("@elementor/icons");
 var import_ui38 = require("@elementor/ui");
-var import_i18n27 = require("@wordpress/i18n");
-var JUSTIFY_CONTENT_LABEL = (0, import_i18n27.__)("Justify content", "elementor");
+var import_i18n29 = require("@wordpress/i18n");
+var JUSTIFY_CONTENT_LABEL = (0, import_i18n29.__)("Justify content", "elementor");
 var StartIcon4 = (0, import_ui38.withDirection)(import_icons15.JustifyTopIcon);
 var EndIcon4 = (0, import_ui38.withDirection)(import_icons15.JustifyBottomIcon);
 var iconProps4 = {
@@ -3301,37 +3422,37 @@ var iconProps4 = {
 var options4 = [
   {
     value: "flex-start",
-    label: (0, import_i18n27.__)("Start", "elementor"),
+    label: (0, import_i18n29.__)("Start", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React52.createElement(RotatedIcon, { icon: StartIcon4, size, ...iconProps4 }),
     showTooltip: true
   },
   {
     value: "center",
-    label: (0, import_i18n27.__)("Center", "elementor"),
+    label: (0, import_i18n29.__)("Center", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React52.createElement(RotatedIcon, { icon: import_icons15.JustifyCenterIcon, size, ...iconProps4 }),
     showTooltip: true
   },
   {
     value: "flex-end",
-    label: (0, import_i18n27.__)("End", "elementor"),
+    label: (0, import_i18n29.__)("End", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React52.createElement(RotatedIcon, { icon: EndIcon4, size, ...iconProps4 }),
     showTooltip: true
   },
   {
     value: "space-between",
-    label: (0, import_i18n27.__)("Space between", "elementor"),
+    label: (0, import_i18n29.__)("Space between", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React52.createElement(RotatedIcon, { icon: import_icons15.JustifySpaceBetweenVerticalIcon, size, ...iconProps4 }),
     showTooltip: true
   },
   {
     value: "space-around",
-    label: (0, import_i18n27.__)("Space around", "elementor"),
+    label: (0, import_i18n29.__)("Space around", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React52.createElement(RotatedIcon, { icon: import_icons15.JustifySpaceAroundVerticalIcon, size, ...iconProps4 }),
     showTooltip: true
   },
   {
     value: "space-evenly",
-    label: (0, import_i18n27.__)("Space evenly", "elementor"),
+    label: (0, import_i18n29.__)("Space evenly", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React52.createElement(RotatedIcon, { icon: import_icons15.JustifyDistributeVerticalIcon, size, ...iconProps4 }),
     showTooltip: true
   }
@@ -3342,24 +3463,24 @@ var JustifyContentField = () => /* @__PURE__ */ React52.createElement(StylesFiel
 var React53 = __toESM(require("react"));
 var import_editor_controls25 = require("@elementor/editor-controls");
 var import_icons16 = require("@elementor/icons");
-var import_i18n28 = require("@wordpress/i18n");
-var FLEX_WRAP_LABEL = (0, import_i18n28.__)("Wrap", "elementor");
+var import_i18n30 = require("@wordpress/i18n");
+var FLEX_WRAP_LABEL = (0, import_i18n30.__)("Wrap", "elementor");
 var options5 = [
   {
     value: "nowrap",
-    label: (0, import_i18n28.__)("No wrap", "elementor"),
+    label: (0, import_i18n30.__)("No wrap", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React53.createElement(import_icons16.ArrowRightIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "wrap",
-    label: (0, import_i18n28.__)("Wrap", "elementor"),
+    label: (0, import_i18n30.__)("Wrap", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React53.createElement(import_icons16.ArrowBackIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "wrap-reverse",
-    label: (0, import_i18n28.__)("Reversed wrap", "elementor"),
+    label: (0, import_i18n30.__)("Reversed wrap", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React53.createElement(import_icons16.ArrowForwardIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -3369,8 +3490,12 @@ var WrapField = () => {
 };
 
 // src/components/style-sections/layout-section/layout-section.tsx
+var DISPLAY_LABEL2 = (0, import_i18n31.__)("Display", "elementor");
+var FLEX_WRAP_LABEL2 = (0, import_i18n31.__)("Flex wrap", "elementor");
 var LayoutSection = () => {
-  const { value: display } = useStylesField("display");
+  const { value: display } = useStylesField("display", {
+    history: { propDisplayName: DISPLAY_LABEL2 }
+  });
   const displayPlaceholder = useDisplayPlaceholderValue();
   const isDisplayFlex = shouldDisplayFlexFields(display, displayPlaceholder);
   const { element } = useElement();
@@ -3380,10 +3505,12 @@ var LayoutSection = () => {
   return /* @__PURE__ */ React54.createElement(SectionContent, null, /* @__PURE__ */ React54.createElement(DisplayField, null), isDisplayFlex && /* @__PURE__ */ React54.createElement(FlexFields, null), "flex" === parentStyle?.display && /* @__PURE__ */ React54.createElement(FlexChildFields, { parentStyleDirection }));
 };
 var FlexFields = () => {
-  const { value: flexWrap } = useStylesField("flex-wrap");
+  const { value: flexWrap } = useStylesField("flex-wrap", {
+    history: { propDisplayName: FLEX_WRAP_LABEL2 }
+  });
   return /* @__PURE__ */ React54.createElement(React54.Fragment, null, /* @__PURE__ */ React54.createElement(FlexDirectionField, null), /* @__PURE__ */ React54.createElement(JustifyContentField, null), /* @__PURE__ */ React54.createElement(AlignItemsField, null), /* @__PURE__ */ React54.createElement(PanelDivider, null), /* @__PURE__ */ React54.createElement(GapControlField, null), /* @__PURE__ */ React54.createElement(WrapField, null), ["wrap", "wrap-reverse"].includes(flexWrap?.value) && /* @__PURE__ */ React54.createElement(AlignContentField, null));
 };
-var FlexChildFields = ({ parentStyleDirection }) => /* @__PURE__ */ React54.createElement(React54.Fragment, null, /* @__PURE__ */ React54.createElement(PanelDivider, null), /* @__PURE__ */ React54.createElement(import_editor_controls26.ControlFormLabel, null, (0, import_i18n29.__)("Flex child", "elementor")), /* @__PURE__ */ React54.createElement(AlignSelfChild, { parentStyleDirection }), /* @__PURE__ */ React54.createElement(FlexOrderField, null), /* @__PURE__ */ React54.createElement(FlexSizeField, null));
+var FlexChildFields = ({ parentStyleDirection }) => /* @__PURE__ */ React54.createElement(React54.Fragment, null, /* @__PURE__ */ React54.createElement(PanelDivider, null), /* @__PURE__ */ React54.createElement(import_editor_controls26.ControlFormLabel, null, (0, import_i18n31.__)("Flex child", "elementor")), /* @__PURE__ */ React54.createElement(AlignSelfChild, { parentStyleDirection }), /* @__PURE__ */ React54.createElement(FlexOrderField, null), /* @__PURE__ */ React54.createElement(FlexSizeField, null));
 var shouldDisplayFlexFields = (display, local) => {
   const value = display?.value ?? local?.value;
   if (!value) {
@@ -3394,16 +3521,17 @@ var shouldDisplayFlexFields = (display, local) => {
 
 // src/components/style-sections/position-section/position-section.tsx
 var React59 = __toESM(require("react"));
-var import_editor_v1_adapters11 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters13 = require("@elementor/editor-v1-adapters");
 var import_session3 = require("@elementor/session");
+var import_i18n36 = require("@wordpress/i18n");
 
 // src/components/style-sections/position-section/dimensions-field.tsx
 var React55 = __toESM(require("react"));
-var import_react26 = require("react");
+var import_react28 = require("react");
 var import_editor_controls27 = require("@elementor/editor-controls");
 var import_icons17 = require("@elementor/icons");
 var import_ui39 = require("@elementor/ui");
-var import_i18n30 = require("@wordpress/i18n");
+var import_i18n32 = require("@wordpress/i18n");
 var InlineStartIcon2 = (0, import_ui39.withDirection)(import_icons17.SideLeftIcon);
 var InlineEndIcon2 = (0, import_ui39.withDirection)(import_icons17.SideRightIcon);
 var sideIcons = {
@@ -3412,19 +3540,19 @@ var sideIcons = {
   "inset-inline-start": /* @__PURE__ */ React55.createElement(RotatedIcon, { icon: InlineStartIcon2, size: "tiny" }),
   "inset-inline-end": /* @__PURE__ */ React55.createElement(RotatedIcon, { icon: InlineEndIcon2, size: "tiny" })
 };
-var getInlineStartLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n30.__)("Right", "elementor") : (0, import_i18n30.__)("Left", "elementor");
-var getInlineEndLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n30.__)("Left", "elementor") : (0, import_i18n30.__)("Right", "elementor");
+var getInlineStartLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n32.__)("Right", "elementor") : (0, import_i18n32.__)("Left", "elementor");
+var getInlineEndLabel = (isSiteRtl) => isSiteRtl ? (0, import_i18n32.__)("Left", "elementor") : (0, import_i18n32.__)("Right", "elementor");
 var DimensionsField = () => {
   const { isSiteRtl } = useDirection();
-  const rowRefs = [(0, import_react26.useRef)(null), (0, import_react26.useRef)(null)];
-  return /* @__PURE__ */ React55.createElement(UiProviders, null, /* @__PURE__ */ React55.createElement(import_ui39.Stack, { direction: "row", gap: 2, flexWrap: "nowrap", ref: rowRefs[0] }, /* @__PURE__ */ React55.createElement(DimensionField, { side: "inset-block-start", label: (0, import_i18n30.__)("Top", "elementor"), rowRef: rowRefs[0] }), /* @__PURE__ */ React55.createElement(
+  const rowRefs = [(0, import_react28.useRef)(null), (0, import_react28.useRef)(null)];
+  return /* @__PURE__ */ React55.createElement(UiProviders, null, /* @__PURE__ */ React55.createElement(import_ui39.Stack, { direction: "row", gap: 2, flexWrap: "nowrap", ref: rowRefs[0] }, /* @__PURE__ */ React55.createElement(DimensionField, { side: "inset-block-start", label: (0, import_i18n32.__)("Top", "elementor"), rowRef: rowRefs[0] }), /* @__PURE__ */ React55.createElement(
     DimensionField,
     {
       side: "inset-inline-end",
       label: getInlineEndLabel(isSiteRtl),
       rowRef: rowRefs[0]
     }
-  )), /* @__PURE__ */ React55.createElement(import_ui39.Stack, { direction: "row", gap: 2, flexWrap: "nowrap", ref: rowRefs[1] }, /* @__PURE__ */ React55.createElement(DimensionField, { side: "inset-block-end", label: (0, import_i18n30.__)("Bottom", "elementor"), rowRef: rowRefs[1] }), /* @__PURE__ */ React55.createElement(
+  )), /* @__PURE__ */ React55.createElement(import_ui39.Stack, { direction: "row", gap: 2, flexWrap: "nowrap", ref: rowRefs[1] }, /* @__PURE__ */ React55.createElement(DimensionField, { side: "inset-block-end", label: (0, import_i18n32.__)("Bottom", "elementor"), rowRef: rowRefs[1] }), /* @__PURE__ */ React55.createElement(
     DimensionField,
     {
       side: "inset-inline-start",
@@ -3441,27 +3569,27 @@ var DimensionField = ({
 
 // src/components/style-sections/position-section/offset-field.tsx
 var React56 = __toESM(require("react"));
-var import_react27 = require("react");
+var import_react29 = require("react");
 var import_editor_controls28 = require("@elementor/editor-controls");
-var import_i18n31 = require("@wordpress/i18n");
-var OFFSET_LABEL = (0, import_i18n31.__)("Anchor offset", "elementor");
+var import_i18n33 = require("@wordpress/i18n");
+var OFFSET_LABEL = (0, import_i18n33.__)("Anchor offset", "elementor");
 var UNITS = ["px", "em", "rem", "vw", "vh"];
 var OffsetField = () => {
-  const rowRef = (0, import_react27.useRef)(null);
+  const rowRef = (0, import_react29.useRef)(null);
   return /* @__PURE__ */ React56.createElement(StylesField, { bind: "scroll-margin-top", propDisplayName: OFFSET_LABEL }, /* @__PURE__ */ React56.createElement(StylesFieldLayout, { label: OFFSET_LABEL, ref: rowRef }, /* @__PURE__ */ React56.createElement(import_editor_controls28.SizeControl, { units: UNITS, anchorRef: rowRef })));
 };
 
 // src/components/style-sections/position-section/position-field.tsx
 var React57 = __toESM(require("react"));
 var import_editor_controls29 = require("@elementor/editor-controls");
-var import_i18n32 = require("@wordpress/i18n");
-var POSITION_LABEL = (0, import_i18n32.__)("Position", "elementor");
+var import_i18n34 = require("@wordpress/i18n");
+var POSITION_LABEL = (0, import_i18n34.__)("Position", "elementor");
 var positionOptions = [
-  { label: (0, import_i18n32.__)("Static", "elementor"), value: "static" },
-  { label: (0, import_i18n32.__)("Relative", "elementor"), value: "relative" },
-  { label: (0, import_i18n32.__)("Absolute", "elementor"), value: "absolute" },
-  { label: (0, import_i18n32.__)("Fixed", "elementor"), value: "fixed" },
-  { label: (0, import_i18n32.__)("Sticky", "elementor"), value: "sticky" }
+  { label: (0, import_i18n34.__)("Static", "elementor"), value: "static" },
+  { label: (0, import_i18n34.__)("Relative", "elementor"), value: "relative" },
+  { label: (0, import_i18n34.__)("Absolute", "elementor"), value: "absolute" },
+  { label: (0, import_i18n34.__)("Fixed", "elementor"), value: "fixed" },
+  { label: (0, import_i18n34.__)("Sticky", "elementor"), value: "sticky" }
 ];
 var PositionField = ({ onChange }) => {
   return /* @__PURE__ */ React57.createElement(StylesField, { bind: "position", propDisplayName: POSITION_LABEL }, /* @__PURE__ */ React57.createElement(StylesFieldLayout, { label: POSITION_LABEL }, /* @__PURE__ */ React57.createElement(import_editor_controls29.SelectControl, { options: positionOptions, onChange })));
@@ -3470,15 +3598,19 @@ var PositionField = ({ onChange }) => {
 // src/components/style-sections/position-section/z-index-field.tsx
 var React58 = __toESM(require("react"));
 var import_editor_controls30 = require("@elementor/editor-controls");
-var import_i18n33 = require("@wordpress/i18n");
-var Z_INDEX_LABEL = (0, import_i18n33.__)("Z-index", "elementor");
+var import_i18n35 = require("@wordpress/i18n");
+var Z_INDEX_LABEL = (0, import_i18n35.__)("Z-index", "elementor");
 var ZIndexField = () => {
   return /* @__PURE__ */ React58.createElement(StylesField, { bind: "z-index", propDisplayName: Z_INDEX_LABEL }, /* @__PURE__ */ React58.createElement(StylesFieldLayout, { label: Z_INDEX_LABEL }, /* @__PURE__ */ React58.createElement(import_editor_controls30.NumberControl, null)));
 };
 
 // src/components/style-sections/position-section/position-section.tsx
+var POSITION_LABEL2 = (0, import_i18n36.__)("Position", "elementor");
+var DIMENSIONS_LABEL = (0, import_i18n36.__)("Dimensions", "elementor");
 var PositionSection = () => {
-  const { value: positionValue } = useStylesField("position");
+  const { value: positionValue } = useStylesField("position", {
+    history: { propDisplayName: POSITION_LABEL2 }
+  });
   const { values: dimensions, setValues: setDimensions } = useStylesFields([
     "inset-block-start",
     "inset-block-end",
@@ -3486,21 +3618,25 @@ var PositionSection = () => {
     "inset-inline-end"
   ]);
   const [dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory] = usePersistDimensions();
-  const isCssIdFeatureActive = (0, import_editor_v1_adapters11.isExperimentActive)("e_v_3_30");
+  const isCssIdFeatureActive = (0, import_editor_v1_adapters13.isExperimentActive)("e_v_3_30");
   const onPositionChange = (newPosition, previousPosition) => {
+    const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
     if (newPosition === "static") {
       if (dimensions) {
         updateDimensionsHistory(dimensions);
-        setDimensions({
-          "inset-block-start": void 0,
-          "inset-block-end": void 0,
-          "inset-inline-start": void 0,
-          "inset-inline-end": void 0
-        });
+        setDimensions(
+          {
+            "inset-block-start": void 0,
+            "inset-block-end": void 0,
+            "inset-inline-start": void 0,
+            "inset-inline-end": void 0
+          },
+          meta
+        );
       }
     } else if (previousPosition === "static") {
       if (dimensionsValuesFromHistory) {
-        setDimensions(dimensionsValuesFromHistory);
+        setDimensions(dimensionsValuesFromHistory, meta);
         clearDimensionsHistory();
       }
     }
@@ -3517,21 +3653,21 @@ var usePersistDimensions = () => {
 
 // src/components/style-sections/size-section/size-section.tsx
 var React65 = __toESM(require("react"));
-var import_react28 = require("react");
+var import_react30 = require("react");
 var import_editor_controls34 = require("@elementor/editor-controls");
-var import_editor_v1_adapters13 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters15 = require("@elementor/editor-v1-adapters");
 var import_ui41 = require("@elementor/ui");
-var import_i18n38 = require("@wordpress/i18n");
+var import_i18n41 = require("@wordpress/i18n");
 
 // src/components/style-tab-collapsible-content.tsx
 var React61 = __toESM(require("react"));
-var import_editor_v1_adapters12 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters14 = require("@elementor/editor-v1-adapters");
 
 // src/styles-inheritance/components/styles-inheritance-section-indicators.tsx
 var React60 = __toESM(require("react"));
-var import_editor_styles_repository12 = require("@elementor/editor-styles-repository");
+var import_editor_styles_repository13 = require("@elementor/editor-styles-repository");
 var import_ui40 = require("@elementor/ui");
-var import_i18n34 = require("@wordpress/i18n");
+var import_i18n37 = require("@wordpress/i18n");
 var StylesInheritanceSectionIndicators = ({ fields }) => {
   const { id, meta, provider } = useStyle();
   const snapshot = useStylesInheritanceSnapshot();
@@ -3542,13 +3678,13 @@ var StylesInheritanceSectionIndicators = ({ fields }) => {
   if (!hasValues && !hasOverrides) {
     return null;
   }
-  const hasValueLabel = (0, import_i18n34.__)("Has effective styles", "elementor");
-  const hasOverridesLabel = (0, import_i18n34.__)("Has overridden styles", "elementor");
-  return /* @__PURE__ */ React60.createElement(import_ui40.Tooltip, { title: (0, import_i18n34.__)("Has styles", "elementor"), placement: "top" }, /* @__PURE__ */ React60.createElement(import_ui40.Stack, { direction: "row", sx: { "& > *": { marginInlineStart: -0.25 } }, role: "list" }, hasValues && provider && /* @__PURE__ */ React60.createElement(
+  const hasValueLabel = (0, import_i18n37.__)("Has effective styles", "elementor");
+  const hasOverridesLabel = (0, import_i18n37.__)("Has overridden styles", "elementor");
+  return /* @__PURE__ */ React60.createElement(import_ui40.Tooltip, { title: (0, import_i18n37.__)("Has styles", "elementor"), placement: "top" }, /* @__PURE__ */ React60.createElement(import_ui40.Stack, { direction: "row", sx: { "& > *": { marginInlineStart: -0.25 } }, role: "list" }, hasValues && provider && /* @__PURE__ */ React60.createElement(
     StyleIndicator,
     {
       getColor: getStylesProviderThemeColor(provider.getKey()),
-      "data-variant": (0, import_editor_styles_repository12.isElementsStylesProvider)(provider.getKey()) ? "local" : "global",
+      "data-variant": (0, import_editor_styles_repository13.isElementsStylesProvider)(provider.getKey()) ? "local" : "global",
       role: "listitem",
       "aria-label": hasValueLabel
     }
@@ -3595,7 +3731,7 @@ var StyleTabCollapsibleContent = ({ fields = [], children }) => {
   return /* @__PURE__ */ React61.createElement(CollapsibleContent, { titleEnd: getStylesInheritanceIndicators(fields) }, children);
 };
 function getStylesInheritanceIndicators(fields) {
-  const isUsingFieldsIndicators = (0, import_editor_v1_adapters12.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
+  const isUsingFieldsIndicators = (0, import_editor_v1_adapters14.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30);
   if (fields.length === 0 || !isUsingFieldsIndicators) {
     return null;
   }
@@ -3605,14 +3741,14 @@ function getStylesInheritanceIndicators(fields) {
 // src/components/style-sections/size-section/object-fit-field.tsx
 var React62 = __toESM(require("react"));
 var import_editor_controls31 = require("@elementor/editor-controls");
-var import_i18n35 = require("@wordpress/i18n");
-var OBJECT_FIT_LABEL = (0, import_i18n35.__)("Object fit", "elementor");
+var import_i18n38 = require("@wordpress/i18n");
+var OBJECT_FIT_LABEL = (0, import_i18n38.__)("Object fit", "elementor");
 var positionOptions2 = [
-  { label: (0, import_i18n35.__)("Fill", "elementor"), value: "fill" },
-  { label: (0, import_i18n35.__)("Cover", "elementor"), value: "cover" },
-  { label: (0, import_i18n35.__)("Contain", "elementor"), value: "contain" },
-  { label: (0, import_i18n35.__)("None", "elementor"), value: "none" },
-  { label: (0, import_i18n35.__)("Scale down", "elementor"), value: "scale-down" }
+  { label: (0, import_i18n38.__)("Fill", "elementor"), value: "fill" },
+  { label: (0, import_i18n38.__)("Cover", "elementor"), value: "cover" },
+  { label: (0, import_i18n38.__)("Contain", "elementor"), value: "contain" },
+  { label: (0, import_i18n38.__)("None", "elementor"), value: "none" },
+  { label: (0, import_i18n38.__)("Scale down", "elementor"), value: "scale-down" }
 ];
 var ObjectFitField = () => {
   return /* @__PURE__ */ React62.createElement(StylesField, { bind: "object-fit", propDisplayName: OBJECT_FIT_LABEL }, /* @__PURE__ */ React62.createElement(StylesFieldLayout, { label: OBJECT_FIT_LABEL }, /* @__PURE__ */ React62.createElement(import_editor_controls31.SelectControl, { options: positionOptions2 })));
@@ -3621,8 +3757,8 @@ var ObjectFitField = () => {
 // src/components/style-sections/size-section/object-position-field.tsx
 var React63 = __toESM(require("react"));
 var import_editor_controls32 = require("@elementor/editor-controls");
-var import_i18n36 = require("@wordpress/i18n");
-var OBJECT_POSITION_LABEL = (0, import_i18n36.__)("Object position", "elementor");
+var import_i18n39 = require("@wordpress/i18n");
+var OBJECT_POSITION_LABEL = (0, import_i18n39.__)("Object position", "elementor");
 var ObjectPositionField = () => {
   return /* @__PURE__ */ React63.createElement(StylesField, { bind: "object-position", propDisplayName: OBJECT_POSITION_LABEL }, /* @__PURE__ */ React63.createElement(import_editor_controls32.PositionControl, null));
 };
@@ -3631,24 +3767,24 @@ var ObjectPositionField = () => {
 var React64 = __toESM(require("react"));
 var import_editor_controls33 = require("@elementor/editor-controls");
 var import_icons18 = require("@elementor/icons");
-var import_i18n37 = require("@wordpress/i18n");
-var OVERFLOW_LABEL = (0, import_i18n37.__)("Overflow", "elementor");
+var import_i18n40 = require("@wordpress/i18n");
+var OVERFLOW_LABEL = (0, import_i18n40.__)("Overflow", "elementor");
 var options6 = [
   {
     value: "visible",
-    label: (0, import_i18n37.__)("Visible", "elementor"),
+    label: (0, import_i18n40.__)("Visible", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React64.createElement(import_icons18.EyeIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "hidden",
-    label: (0, import_i18n37.__)("Hidden", "elementor"),
+    label: (0, import_i18n40.__)("Hidden", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React64.createElement(import_icons18.EyeOffIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "auto",
-    label: (0, import_i18n37.__)("Auto", "elementor"),
+    label: (0, import_i18n40.__)("Auto", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React64.createElement(import_icons18.LetterAIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -3663,40 +3799,43 @@ var CssSizeProps = [
   [
     {
       bind: "width",
-      label: (0, import_i18n38.__)("Width", "elementor")
+      label: (0, import_i18n41.__)("Width", "elementor")
     },
     {
       bind: "height",
-      label: (0, import_i18n38.__)("Height", "elementor")
+      label: (0, import_i18n41.__)("Height", "elementor")
     }
   ],
   [
     {
       bind: "min-width",
-      label: (0, import_i18n38.__)("Min width", "elementor")
+      label: (0, import_i18n41.__)("Min width", "elementor")
     },
     {
       bind: "min-height",
-      label: (0, import_i18n38.__)("Min height", "elementor")
+      label: (0, import_i18n41.__)("Min height", "elementor")
     }
   ],
   [
     {
       bind: "max-width",
-      label: (0, import_i18n38.__)("Max width", "elementor")
+      label: (0, import_i18n41.__)("Max width", "elementor")
     },
     {
       bind: "max-height",
-      label: (0, import_i18n38.__)("Max height", "elementor")
+      label: (0, import_i18n41.__)("Max height", "elementor")
     }
   ]
 ];
-var ASPECT_RATIO_LABEL = (0, import_i18n38.__)("Aspect Ratio", "elementor");
+var ASPECT_RATIO_LABEL = (0, import_i18n41.__)("Aspect Ratio", "elementor");
+var OBJECT_FIT_LABEL2 = (0, import_i18n41.__)("Object fit", "elementor");
 var SizeSection = () => {
-  const { value: fitValue } = useStylesField("object-fit");
+  const { value: fitValue } = useStylesField("object-fit", {
+    history: { propDisplayName: OBJECT_FIT_LABEL2 }
+  });
   const isNotFill = fitValue && fitValue?.value !== "fill";
-  const gridRowRefs = [(0, import_react28.useRef)(null), (0, import_react28.useRef)(null), (0, import_react28.useRef)(null)];
-  const isVersion330Active = (0, import_editor_v1_adapters13.isExperimentActive)(EXPERIMENT_ID);
+  const gridRowRefs = [(0, import_react30.useRef)(null), (0, import_react30.useRef)(null), (0, import_react30.useRef)(null)];
+  const isVersion330Active = (0, import_editor_v1_adapters15.isExperimentActive)(EXPERIMENT_ID);
   return /* @__PURE__ */ React65.createElement(SectionContent, null, CssSizeProps.map((row, rowIndex) => /* @__PURE__ */ React65.createElement(import_ui41.Grid, { key: rowIndex, container: true, gap: 2, flexWrap: "nowrap", ref: gridRowRefs[rowIndex] }, row.map((props) => /* @__PURE__ */ React65.createElement(import_ui41.Grid, { item: true, xs: 6, key: props.bind }, /* @__PURE__ */ React65.createElement(SizeField, { ...props, rowRef: gridRowRefs[rowIndex], extendedOptions: ["auto"] }))))), /* @__PURE__ */ React65.createElement(PanelDivider, null), /* @__PURE__ */ React65.createElement(import_ui41.Stack, null, /* @__PURE__ */ React65.createElement(OverflowField, null)), isVersion330Active && /* @__PURE__ */ React65.createElement(StyleTabCollapsibleContent, { fields: ["aspect-ratio", "object-fit"] }, /* @__PURE__ */ React65.createElement(import_ui41.Stack, { gap: 2, pt: 2 }, /* @__PURE__ */ React65.createElement(StylesField, { bind: "aspect-ratio", propDisplayName: ASPECT_RATIO_LABEL }, /* @__PURE__ */ React65.createElement(import_editor_controls34.AspectRatioControl, { label: ASPECT_RATIO_LABEL })), /* @__PURE__ */ React65.createElement(PanelDivider, null), /* @__PURE__ */ React65.createElement(ObjectFitField, null), isNotFill && /* @__PURE__ */ React65.createElement(import_ui41.Grid, { item: true, xs: 6 }, /* @__PURE__ */ React65.createElement(ObjectPositionField, null)))));
 };
 var SizeField = ({ label, bind, rowRef, extendedOptions }) => {
@@ -3706,9 +3845,9 @@ var SizeField = ({ label, bind, rowRef, extendedOptions }) => {
 // src/components/style-sections/spacing-section/spacing-section.tsx
 var React66 = __toESM(require("react"));
 var import_editor_controls35 = require("@elementor/editor-controls");
-var import_i18n39 = require("@wordpress/i18n");
-var MARGIN_LABEL = (0, import_i18n39.__)("Margin", "elementor");
-var PADDING_LABEL = (0, import_i18n39.__)("Padding", "elementor");
+var import_i18n42 = require("@wordpress/i18n");
+var MARGIN_LABEL = (0, import_i18n42.__)("Margin", "elementor");
+var PADDING_LABEL = (0, import_i18n42.__)("Padding", "elementor");
 var SpacingSection = () => {
   const { isSiteRtl } = useDirection();
   return /* @__PURE__ */ React66.createElement(SectionContent, null, /* @__PURE__ */ React66.createElement(StylesField, { bind: "margin", propDisplayName: MARGIN_LABEL }, /* @__PURE__ */ React66.createElement(
@@ -3723,40 +3862,41 @@ var SpacingSection = () => {
 
 // src/components/style-sections/typography-section/typography-section.tsx
 var React82 = __toESM(require("react"));
-var import_editor_v1_adapters14 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters16 = require("@elementor/editor-v1-adapters");
+var import_i18n59 = require("@wordpress/i18n");
 
 // src/components/style-sections/typography-section/column-count-field.tsx
 var React67 = __toESM(require("react"));
 var import_editor_controls36 = require("@elementor/editor-controls");
-var import_i18n40 = require("@wordpress/i18n");
-var COLUMN_COUNT_LABEL = (0, import_i18n40.__)("Columns", "elementor");
+var import_i18n43 = require("@wordpress/i18n");
+var COLUMN_COUNT_LABEL = (0, import_i18n43.__)("Columns", "elementor");
 var ColumnCountField = () => {
   return /* @__PURE__ */ React67.createElement(StylesField, { bind: "column-count", propDisplayName: COLUMN_COUNT_LABEL }, /* @__PURE__ */ React67.createElement(StylesFieldLayout, { label: COLUMN_COUNT_LABEL }, /* @__PURE__ */ React67.createElement(import_editor_controls36.NumberControl, { shouldForceInt: true, min: 0, step: 1 })));
 };
 
 // src/components/style-sections/typography-section/column-gap-field.tsx
 var React68 = __toESM(require("react"));
-var import_react29 = require("react");
+var import_react31 = require("react");
 var import_editor_controls37 = require("@elementor/editor-controls");
-var import_i18n41 = require("@wordpress/i18n");
-var COLUMN_GAP_LABEL = (0, import_i18n41.__)("Column gap", "elementor");
+var import_i18n44 = require("@wordpress/i18n");
+var COLUMN_GAP_LABEL = (0, import_i18n44.__)("Column gap", "elementor");
 var ColumnGapField = () => {
-  const rowRef = (0, import_react29.useRef)(null);
+  const rowRef = (0, import_react31.useRef)(null);
   return /* @__PURE__ */ React68.createElement(StylesField, { bind: "column-gap", propDisplayName: COLUMN_GAP_LABEL }, /* @__PURE__ */ React68.createElement(StylesFieldLayout, { label: COLUMN_GAP_LABEL, ref: rowRef }, /* @__PURE__ */ React68.createElement(import_editor_controls37.SizeControl, { anchorRef: rowRef })));
 };
 
 // src/components/style-sections/typography-section/font-family-field.tsx
 var React69 = __toESM(require("react"));
 var import_editor_controls38 = require("@elementor/editor-controls");
-var import_i18n43 = require("@wordpress/i18n");
+var import_i18n46 = require("@wordpress/i18n");
 
 // src/components/style-sections/typography-section/hooks/use-font-families.ts
-var import_react30 = require("react");
-var import_i18n42 = require("@wordpress/i18n");
+var import_react32 = require("react");
+var import_i18n45 = require("@wordpress/i18n");
 var supportedCategories = {
-  system: (0, import_i18n42.__)("System", "elementor"),
-  custom: (0, import_i18n42.__)("Custom Fonts", "elementor"),
-  googlefonts: (0, import_i18n42.__)("Google Fonts", "elementor")
+  system: (0, import_i18n45.__)("System", "elementor"),
+  custom: (0, import_i18n45.__)("Custom Fonts", "elementor"),
+  googlefonts: (0, import_i18n45.__)("Google Fonts", "elementor")
 };
 var getFontFamilies = () => {
   const { controls } = getElementorConfig();
@@ -3768,7 +3908,7 @@ var getFontFamilies = () => {
 };
 var useFontFamilies = () => {
   const fontFamilies = getFontFamilies();
-  return (0, import_react30.useMemo)(() => {
+  return (0, import_react32.useMemo)(() => {
     const categoriesOrder = ["system", "custom", "googlefonts"];
     return Object.entries(fontFamilies || {}).reduce((acc, [font, category]) => {
       if (!supportedCategories[category]) {
@@ -3788,25 +3928,24 @@ var useFontFamilies = () => {
 };
 
 // src/components/style-sections/typography-section/font-family-field.tsx
-var FONT_FAMILY_LABEL = (0, import_i18n43.__)("Font family", "elementor");
+var FONT_FAMILY_LABEL = (0, import_i18n46.__)("Font family", "elementor");
 var FontFamilyField = () => {
   const fontFamilies = useFontFamilies();
-  const sectionRef = useSectionRef();
+  const sectionWidth = useSectionWidth();
   if (fontFamilies.length === 0) {
     return null;
   }
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
   return /* @__PURE__ */ React69.createElement(StylesField, { bind: "font-family", propDisplayName: FONT_FAMILY_LABEL }, /* @__PURE__ */ React69.createElement(StylesFieldLayout, { label: FONT_FAMILY_LABEL }, /* @__PURE__ */ React69.createElement(import_editor_controls38.FontFamilyControl, { fontFamilies, sectionWidth })));
 };
 
 // src/components/style-sections/typography-section/font-size-field.tsx
 var React70 = __toESM(require("react"));
-var import_react31 = require("react");
+var import_react33 = require("react");
 var import_editor_controls39 = require("@elementor/editor-controls");
-var import_i18n44 = require("@wordpress/i18n");
-var FONT_SIZE_LABEL = (0, import_i18n44.__)("Font size", "elementor");
+var import_i18n47 = require("@wordpress/i18n");
+var FONT_SIZE_LABEL = (0, import_i18n47.__)("Font size", "elementor");
 var FontSizeField = () => {
-  const rowRef = (0, import_react31.useRef)(null);
+  const rowRef = (0, import_react33.useRef)(null);
   return /* @__PURE__ */ React70.createElement(StylesField, { bind: "font-size", propDisplayName: FONT_SIZE_LABEL }, /* @__PURE__ */ React70.createElement(StylesFieldLayout, { label: FONT_SIZE_LABEL, ref: rowRef }, /* @__PURE__ */ React70.createElement(import_editor_controls39.SizeControl, { anchorRef: rowRef })));
 };
 
@@ -3814,18 +3953,18 @@ var FontSizeField = () => {
 var React71 = __toESM(require("react"));
 var import_editor_controls40 = require("@elementor/editor-controls");
 var import_icons19 = require("@elementor/icons");
-var import_i18n45 = require("@wordpress/i18n");
-var FONT_STYLE_LABEL = (0, import_i18n45.__)("Font style", "elementor");
+var import_i18n48 = require("@wordpress/i18n");
+var FONT_STYLE_LABEL = (0, import_i18n48.__)("Font style", "elementor");
 var options7 = [
   {
     value: "normal",
-    label: (0, import_i18n45.__)("Normal", "elementor"),
+    label: (0, import_i18n48.__)("Normal", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React71.createElement(import_icons19.MinusIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "italic",
-    label: (0, import_i18n45.__)("Italic", "elementor"),
+    label: (0, import_i18n48.__)("Italic", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React71.createElement(import_icons19.ItalicIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -3837,18 +3976,18 @@ var FontStyleField = () => {
 // src/components/style-sections/typography-section/font-weight-field.tsx
 var React72 = __toESM(require("react"));
 var import_editor_controls41 = require("@elementor/editor-controls");
-var import_i18n46 = require("@wordpress/i18n");
-var FONT_WEIGHT_LABEL = (0, import_i18n46.__)("Font weight", "elementor");
+var import_i18n49 = require("@wordpress/i18n");
+var FONT_WEIGHT_LABEL = (0, import_i18n49.__)("Font weight", "elementor");
 var fontWeightOptions = [
-  { value: "100", label: (0, import_i18n46.__)("100 - Thin", "elementor") },
-  { value: "200", label: (0, import_i18n46.__)("200 - Extra light", "elementor") },
-  { value: "300", label: (0, import_i18n46.__)("300 - Light", "elementor") },
-  { value: "400", label: (0, import_i18n46.__)("400 - Normal", "elementor") },
-  { value: "500", label: (0, import_i18n46.__)("500 - Medium", "elementor") },
-  { value: "600", label: (0, import_i18n46.__)("600 - Semi bold", "elementor") },
-  { value: "700", label: (0, import_i18n46.__)("700 - Bold", "elementor") },
-  { value: "800", label: (0, import_i18n46.__)("800 - Extra bold", "elementor") },
-  { value: "900", label: (0, import_i18n46.__)("900 - Black", "elementor") }
+  { value: "100", label: (0, import_i18n49.__)("100 - Thin", "elementor") },
+  { value: "200", label: (0, import_i18n49.__)("200 - Extra light", "elementor") },
+  { value: "300", label: (0, import_i18n49.__)("300 - Light", "elementor") },
+  { value: "400", label: (0, import_i18n49.__)("400 - Normal", "elementor") },
+  { value: "500", label: (0, import_i18n49.__)("500 - Medium", "elementor") },
+  { value: "600", label: (0, import_i18n49.__)("600 - Semi bold", "elementor") },
+  { value: "700", label: (0, import_i18n49.__)("700 - Bold", "elementor") },
+  { value: "800", label: (0, import_i18n49.__)("800 - Extra bold", "elementor") },
+  { value: "900", label: (0, import_i18n49.__)("900 - Black", "elementor") }
 ];
 var FontWeightField = () => {
   return /* @__PURE__ */ React72.createElement(StylesField, { bind: "font-weight", propDisplayName: FONT_WEIGHT_LABEL }, /* @__PURE__ */ React72.createElement(StylesFieldLayout, { label: FONT_WEIGHT_LABEL }, /* @__PURE__ */ React72.createElement(import_editor_controls41.SelectControl, { options: fontWeightOptions })));
@@ -3856,23 +3995,23 @@ var FontWeightField = () => {
 
 // src/components/style-sections/typography-section/letter-spacing-field.tsx
 var React73 = __toESM(require("react"));
-var import_react32 = require("react");
+var import_react34 = require("react");
 var import_editor_controls42 = require("@elementor/editor-controls");
-var import_i18n47 = require("@wordpress/i18n");
-var LETTER_SPACING_LABEL = (0, import_i18n47.__)("Letter spacing", "elementor");
+var import_i18n50 = require("@wordpress/i18n");
+var LETTER_SPACING_LABEL = (0, import_i18n50.__)("Letter spacing", "elementor");
 var LetterSpacingField = () => {
-  const rowRef = (0, import_react32.useRef)(null);
+  const rowRef = (0, import_react34.useRef)(null);
   return /* @__PURE__ */ React73.createElement(StylesField, { bind: "letter-spacing", propDisplayName: LETTER_SPACING_LABEL }, /* @__PURE__ */ React73.createElement(StylesFieldLayout, { label: LETTER_SPACING_LABEL, ref: rowRef }, /* @__PURE__ */ React73.createElement(import_editor_controls42.SizeControl, { anchorRef: rowRef })));
 };
 
 // src/components/style-sections/typography-section/line-height-field.tsx
 var React74 = __toESM(require("react"));
-var import_react33 = require("react");
+var import_react35 = require("react");
 var import_editor_controls43 = require("@elementor/editor-controls");
-var import_i18n48 = require("@wordpress/i18n");
-var LINE_HEIGHT_LABEL = (0, import_i18n48.__)("Line height", "elementor");
+var import_i18n51 = require("@wordpress/i18n");
+var LINE_HEIGHT_LABEL = (0, import_i18n51.__)("Line height", "elementor");
 var LineHeightField = () => {
-  const rowRef = (0, import_react33.useRef)(null);
+  const rowRef = (0, import_react35.useRef)(null);
   return /* @__PURE__ */ React74.createElement(StylesField, { bind: "line-height", propDisplayName: LINE_HEIGHT_LABEL }, /* @__PURE__ */ React74.createElement(StylesFieldLayout, { label: LINE_HEIGHT_LABEL, ref: rowRef }, /* @__PURE__ */ React74.createElement(import_editor_controls43.SizeControl, { anchorRef: rowRef })));
 };
 
@@ -3881,32 +4020,32 @@ var React75 = __toESM(require("react"));
 var import_editor_controls44 = require("@elementor/editor-controls");
 var import_icons20 = require("@elementor/icons");
 var import_ui42 = require("@elementor/ui");
-var import_i18n49 = require("@wordpress/i18n");
-var TEXT_ALIGNMENT_LABEL = (0, import_i18n49.__)("Text align", "elementor");
+var import_i18n52 = require("@wordpress/i18n");
+var TEXT_ALIGNMENT_LABEL = (0, import_i18n52.__)("Text align", "elementor");
 var AlignStartIcon = (0, import_ui42.withDirection)(import_icons20.AlignLeftIcon);
 var AlignEndIcon = (0, import_ui42.withDirection)(import_icons20.AlignRightIcon);
 var options8 = [
   {
     value: "start",
-    label: (0, import_i18n49.__)("Start", "elementor"),
+    label: (0, import_i18n52.__)("Start", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React75.createElement(AlignStartIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "center",
-    label: (0, import_i18n49.__)("Center", "elementor"),
+    label: (0, import_i18n52.__)("Center", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React75.createElement(import_icons20.AlignCenterIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "end",
-    label: (0, import_i18n49.__)("End", "elementor"),
+    label: (0, import_i18n52.__)("End", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React75.createElement(AlignEndIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "justify",
-    label: (0, import_i18n49.__)("Justify", "elementor"),
+    label: (0, import_i18n52.__)("Justify", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React75.createElement(import_icons20.AlignJustifiedIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -3918,8 +4057,8 @@ var TextAlignmentField = () => {
 // src/components/style-sections/typography-section/text-color-field.tsx
 var React76 = __toESM(require("react"));
 var import_editor_controls45 = require("@elementor/editor-controls");
-var import_i18n50 = require("@wordpress/i18n");
-var TEXT_COLOR_LABEL = (0, import_i18n50.__)("Text color", "elementor");
+var import_i18n53 = require("@wordpress/i18n");
+var TEXT_COLOR_LABEL = (0, import_i18n53.__)("Text color", "elementor");
 var TextColorField = () => {
   return /* @__PURE__ */ React76.createElement(StylesField, { bind: "color", propDisplayName: TEXT_COLOR_LABEL }, /* @__PURE__ */ React76.createElement(StylesFieldLayout, { label: TEXT_COLOR_LABEL }, /* @__PURE__ */ React76.createElement(import_editor_controls45.ColorControl, null)));
 };
@@ -3928,31 +4067,31 @@ var TextColorField = () => {
 var React77 = __toESM(require("react"));
 var import_editor_controls46 = require("@elementor/editor-controls");
 var import_icons21 = require("@elementor/icons");
-var import_i18n51 = require("@wordpress/i18n");
-var TEXT_DECORATION_LABEL = (0, import_i18n51.__)("Line decoration", "elementor");
+var import_i18n54 = require("@wordpress/i18n");
+var TEXT_DECORATION_LABEL = (0, import_i18n54.__)("Line decoration", "elementor");
 var options9 = [
   {
     value: "none",
-    label: (0, import_i18n51.__)("None", "elementor"),
+    label: (0, import_i18n54.__)("None", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React77.createElement(import_icons21.MinusIcon, { fontSize: size }),
     showTooltip: true,
     exclusive: true
   },
   {
     value: "underline",
-    label: (0, import_i18n51.__)("Underline", "elementor"),
+    label: (0, import_i18n54.__)("Underline", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React77.createElement(import_icons21.UnderlineIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "line-through",
-    label: (0, import_i18n51.__)("Line-through", "elementor"),
+    label: (0, import_i18n54.__)("Line-through", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React77.createElement(import_icons21.StrikethroughIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "overline",
-    label: (0, import_i18n51.__)("Overline", "elementor"),
+    label: (0, import_i18n54.__)("Overline", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React77.createElement(import_icons21.OverlineIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -3963,18 +4102,18 @@ var TextDecorationField = () => /* @__PURE__ */ React77.createElement(StylesFiel
 var React78 = __toESM(require("react"));
 var import_editor_controls47 = require("@elementor/editor-controls");
 var import_icons22 = require("@elementor/icons");
-var import_i18n52 = require("@wordpress/i18n");
-var TEXT_DIRECTION_LABEL = (0, import_i18n52.__)("Direction", "elementor");
+var import_i18n55 = require("@wordpress/i18n");
+var TEXT_DIRECTION_LABEL = (0, import_i18n55.__)("Direction", "elementor");
 var options10 = [
   {
     value: "ltr",
-    label: (0, import_i18n52.__)("Left to right", "elementor"),
+    label: (0, import_i18n55.__)("Left to right", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React78.createElement(import_icons22.TextDirectionLtrIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "rtl",
-    label: (0, import_i18n52.__)("Right to left", "elementor"),
+    label: (0, import_i18n55.__)("Right to left", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React78.createElement(import_icons22.TextDirectionRtlIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -3986,7 +4125,7 @@ var TextDirectionField = () => {
 // src/components/style-sections/typography-section/text-stroke-field.tsx
 var React79 = __toESM(require("react"));
 var import_editor_controls48 = require("@elementor/editor-controls");
-var import_i18n53 = require("@wordpress/i18n");
+var import_i18n56 = require("@wordpress/i18n");
 var initTextStroke = {
   $$type: "stroke",
   value: {
@@ -4003,9 +4142,11 @@ var initTextStroke = {
     }
   }
 };
-var TEXT_STROKE_LABEL = (0, import_i18n53.__)("Text stroke", "elementor");
+var TEXT_STROKE_LABEL = (0, import_i18n56.__)("Text stroke", "elementor");
 var TextStrokeField = () => {
-  const { value, setValue, canEdit } = useStylesField("stroke");
+  const { value, setValue, canEdit } = useStylesField("stroke", {
+    history: { propDisplayName: TEXT_STROKE_LABEL }
+  });
   const addTextStroke = () => {
     setValue(initTextStroke);
   };
@@ -4030,30 +4171,30 @@ var TextStrokeField = () => {
 var React80 = __toESM(require("react"));
 var import_editor_controls49 = require("@elementor/editor-controls");
 var import_icons23 = require("@elementor/icons");
-var import_i18n54 = require("@wordpress/i18n");
-var TEXT_TRANSFORM_LABEL = (0, import_i18n54.__)("Text transform", "elementor");
+var import_i18n57 = require("@wordpress/i18n");
+var TEXT_TRANSFORM_LABEL = (0, import_i18n57.__)("Text transform", "elementor");
 var options11 = [
   {
     value: "none",
-    label: (0, import_i18n54.__)("None", "elementor"),
+    label: (0, import_i18n57.__)("None", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React80.createElement(import_icons23.MinusIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "capitalize",
-    label: (0, import_i18n54.__)("Capitalize", "elementor"),
+    label: (0, import_i18n57.__)("Capitalize", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React80.createElement(import_icons23.LetterCaseIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "uppercase",
-    label: (0, import_i18n54.__)("Uppercase", "elementor"),
+    label: (0, import_i18n57.__)("Uppercase", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React80.createElement(import_icons23.LetterCaseUpperIcon, { fontSize: size }),
     showTooltip: true
   },
   {
     value: "lowercase",
-    label: (0, import_i18n54.__)("Lowercase", "elementor"),
+    label: (0, import_i18n57.__)("Lowercase", "elementor"),
     renderContent: ({ size }) => /* @__PURE__ */ React80.createElement(import_icons23.LetterCaseLowerIcon, { fontSize: size }),
     showTooltip: true
   }
@@ -4062,20 +4203,23 @@ var TransformField = () => /* @__PURE__ */ React80.createElement(StylesField, { 
 
 // src/components/style-sections/typography-section/word-spacing-field.tsx
 var React81 = __toESM(require("react"));
-var import_react34 = require("react");
+var import_react36 = require("react");
 var import_editor_controls50 = require("@elementor/editor-controls");
-var import_i18n55 = require("@wordpress/i18n");
-var WORD_SPACING_LABEL = (0, import_i18n55.__)("Word spacing", "elementor");
+var import_i18n58 = require("@wordpress/i18n");
+var WORD_SPACING_LABEL = (0, import_i18n58.__)("Word spacing", "elementor");
 var WordSpacingField = () => {
-  const rowRef = (0, import_react34.useRef)(null);
+  const rowRef = (0, import_react36.useRef)(null);
   return /* @__PURE__ */ React81.createElement(StylesField, { bind: "word-spacing", propDisplayName: WORD_SPACING_LABEL }, /* @__PURE__ */ React81.createElement(StylesFieldLayout, { label: WORD_SPACING_LABEL, ref: rowRef }, /* @__PURE__ */ React81.createElement(import_editor_controls50.SizeControl, { anchorRef: rowRef })));
 };
 
 // src/components/style-sections/typography-section/typography-section.tsx
+var COLUMN_COUNT_LABEL2 = (0, import_i18n59.__)("Column count", "elementor");
 var TypographySection = () => {
-  const { value: columnCount } = useStylesField("column-count");
+  const { value: columnCount } = useStylesField("column-count", {
+    history: { propDisplayName: COLUMN_COUNT_LABEL2 }
+  });
   const hasMultiColumns = !!(columnCount?.value && columnCount?.value > 1);
-  const isVersion330Active = (0, import_editor_v1_adapters14.isExperimentActive)("e_v_3_30");
+  const isVersion330Active = (0, import_editor_v1_adapters16.isExperimentActive)("e_v_3_30");
   return /* @__PURE__ */ React82.createElement(SectionContent, null, /* @__PURE__ */ React82.createElement(FontFamilyField, null), /* @__PURE__ */ React82.createElement(FontWeightField, null), /* @__PURE__ */ React82.createElement(FontSizeField, null), /* @__PURE__ */ React82.createElement(PanelDivider, null), /* @__PURE__ */ React82.createElement(TextAlignmentField, null), /* @__PURE__ */ React82.createElement(TextColorField, null), /* @__PURE__ */ React82.createElement(
     StyleTabCollapsibleContent,
     {
@@ -4097,12 +4241,12 @@ var TypographySection = () => {
 
 // src/components/style-tab-section.tsx
 var React83 = __toESM(require("react"));
-var import_editor_v1_adapters15 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters17 = require("@elementor/editor-v1-adapters");
 var StyleTabSection = ({ section, fields = [] }) => {
   const { component, name, title } = section;
   const tabDefaults = useDefaultPanelSettings();
   const SectionComponent = component;
-  const isExpanded = (0, import_editor_v1_adapters15.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30) ? tabDefaults.defaultSectionsExpanded.style?.includes(name) : false;
+  const isExpanded = (0, import_editor_v1_adapters17.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30) ? tabDefaults.defaultSectionsExpanded.style?.includes(name) : false;
   return /* @__PURE__ */ React83.createElement(Section, { title, defaultExpanded: isExpanded, titleEnd: getStylesInheritanceIndicators(fields) }, /* @__PURE__ */ React83.createElement(SectionComponent, null));
 };
 
@@ -4118,7 +4262,7 @@ var stickyHeaderStyles = {
 var StyleTab = () => {
   const currentClassesProp = useCurrentClassesProp();
   const [activeStyleDefId, setActiveStyleDefId] = useActiveStyleDefId(currentClassesProp);
-  const [activeStyleState, setActiveStyleState] = (0, import_react35.useState)(null);
+  const [activeStyleState, setActiveStyleState] = (0, import_react37.useState)(null);
   const breakpoint = (0, import_editor_responsive3.useActiveBreakpoint)();
   return /* @__PURE__ */ React84.createElement(ClassesPropProvider, { prop: currentClassesProp }, /* @__PURE__ */ React84.createElement(
     StyleProvider,
@@ -4137,7 +4281,7 @@ var StyleTab = () => {
         section: {
           component: LayoutSection,
           name: "Layout",
-          title: (0, import_i18n56.__)("Layout", "elementor")
+          title: (0, import_i18n60.__)("Layout", "elementor")
         },
         fields: [
           "display",
@@ -4156,7 +4300,7 @@ var StyleTab = () => {
         section: {
           component: SpacingSection,
           name: "Spacing",
-          title: (0, import_i18n56.__)("Spacing", "elementor")
+          title: (0, import_i18n60.__)("Spacing", "elementor")
         },
         fields: ["margin", "padding"]
       }
@@ -4166,7 +4310,7 @@ var StyleTab = () => {
         section: {
           component: SizeSection,
           name: "Size",
-          title: (0, import_i18n56.__)("Size", "elementor")
+          title: (0, import_i18n60.__)("Size", "elementor")
         },
         fields: [
           "width",
@@ -4186,7 +4330,7 @@ var StyleTab = () => {
         section: {
           component: PositionSection,
           name: "Position",
-          title: (0, import_i18n56.__)("Position", "elementor")
+          title: (0, import_i18n60.__)("Position", "elementor")
         },
         fields: ["position", "z-index", "scroll-margin-top"]
       }
@@ -4196,7 +4340,7 @@ var StyleTab = () => {
         section: {
           component: TypographySection,
           name: "Typography",
-          title: (0, import_i18n56.__)("Typography", "elementor")
+          title: (0, import_i18n60.__)("Typography", "elementor")
         },
         fields: [
           "font-family",
@@ -4221,7 +4365,7 @@ var StyleTab = () => {
         section: {
           component: BackgroundSection,
           name: "Background",
-          title: (0, import_i18n56.__)("Background", "elementor")
+          title: (0, import_i18n60.__)("Background", "elementor")
         },
         fields: ["background"]
       }
@@ -4231,7 +4375,7 @@ var StyleTab = () => {
         section: {
           component: BorderSection,
           name: "Border",
-          title: (0, import_i18n56.__)("Border", "elementor")
+          title: (0, import_i18n60.__)("Border", "elementor")
         },
         fields: ["border-radius", "border-width", "border-color", "border-style"]
       }
@@ -4241,7 +4385,7 @@ var StyleTab = () => {
         section: {
           component: EffectsSection,
           name: "Effects",
-          title: (0, import_i18n56.__)("Effects", "elementor")
+          title: (0, import_i18n60.__)("Effects", "elementor")
         },
         fields: ["box-shadow"]
       }
@@ -4255,7 +4399,7 @@ function ClassesHeader({ children }) {
 function useCurrentClassesProp() {
   const { elementType } = useElement();
   const prop = Object.entries(elementType.propsSchema).find(
-    ([, propType]) => propType.kind === "plain" && propType.key === import_editor_props10.CLASSES_PROP_KEY
+    ([, propType]) => propType.kind === "plain" && propType.key === import_editor_props11.CLASSES_PROP_KEY
   );
   if (!prop) {
     throw new Error("Element does not have a classes prop");
@@ -4269,12 +4413,12 @@ var EditingPanelTabs = () => {
   return (
     // When switching between elements, the local states should be reset. We are using key to rerender the tabs.
     // Reference: https://react.dev/learn/preserving-and-resetting-state#resetting-a-form-with-a-key
-    /* @__PURE__ */ React85.createElement(import_react36.Fragment, { key: element.id }, /* @__PURE__ */ React85.createElement(PanelTabContent, null))
+    /* @__PURE__ */ React85.createElement(import_react38.Fragment, { key: element.id }, /* @__PURE__ */ React85.createElement(PanelTabContent, null))
   );
 };
 var PanelTabContent = () => {
   const editorDefaults = useDefaultPanelSettings();
-  const defaultComponentTab = (0, import_editor_v1_adapters16.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30) ? editorDefaults.defaultTab : "settings";
+  const defaultComponentTab = (0, import_editor_v1_adapters18.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30) ? editorDefaults.defaultTab : "settings";
   const [currentTab, setCurrentTab] = useStateByElement("tab", defaultComponentTab);
   const { getTabProps, getTabPanelProps, getTabsProps } = (0, import_ui44.useTabs)(currentTab);
   return /* @__PURE__ */ React85.createElement(ScrollProvider, null, /* @__PURE__ */ React85.createElement(import_ui44.Stack, { direction: "column", sx: { width: "100%" } }, /* @__PURE__ */ React85.createElement(import_ui44.Stack, { sx: { ...stickyHeaderStyles, top: 0 } }, /* @__PURE__ */ React85.createElement(
@@ -4289,8 +4433,8 @@ var PanelTabContent = () => {
         setCurrentTab(newValue);
       }
     },
-    /* @__PURE__ */ React85.createElement(import_ui44.Tab, { label: (0, import_i18n57.__)("General", "elementor"), ...getTabProps("settings") }),
-    /* @__PURE__ */ React85.createElement(import_ui44.Tab, { label: (0, import_i18n57.__)("Style", "elementor"), ...getTabProps("style") })
+    /* @__PURE__ */ React85.createElement(import_ui44.Tab, { label: (0, import_i18n61.__)("General", "elementor"), ...getTabProps("settings") }),
+    /* @__PURE__ */ React85.createElement(import_ui44.Tab, { label: (0, import_i18n61.__)("Style", "elementor"), ...getTabProps("style") })
   ), /* @__PURE__ */ React85.createElement(import_ui44.Divider, null)), /* @__PURE__ */ React85.createElement(import_ui44.TabPanel, { ...getTabPanelProps("settings"), disablePadding: true }, /* @__PURE__ */ React85.createElement(SettingsTab, null)), /* @__PURE__ */ React85.createElement(import_ui44.TabPanel, { ...getTabPanelProps("style"), disablePadding: true }, /* @__PURE__ */ React85.createElement(StyleTab, null))));
 };
 
@@ -4303,7 +4447,7 @@ var EditingPanel = () => {
   if (!element || !elementType) {
     return null;
   }
-  const panelTitle = (0, import_i18n58.__)("Edit %s", "elementor").replace("%s", elementType.title);
+  const panelTitle = (0, import_i18n62.__)("Edit %s", "elementor").replace("%s", elementType.title);
   return /* @__PURE__ */ React86.createElement(import_ui45.ErrorBoundary, { fallback: /* @__PURE__ */ React86.createElement(EditorPanelErrorFallback, null) }, /* @__PURE__ */ React86.createElement(import_session5.SessionStorageProvider, { prefix: "elementor" }, /* @__PURE__ */ React86.createElement(import_editor_ui5.ThemeProvider, null, /* @__PURE__ */ React86.createElement(import_editor_panels.Panel, null, /* @__PURE__ */ React86.createElement(import_editor_panels.PanelHeader, null, /* @__PURE__ */ React86.createElement(import_editor_panels.PanelHeaderTitle, null, panelTitle), /* @__PURE__ */ React86.createElement(import_icons24.AtomIcon, { fontSize: "small", sx: { color: "text.tertiary" } })), /* @__PURE__ */ React86.createElement(import_editor_panels.PanelBody, null, /* @__PURE__ */ React86.createElement(import_editor_controls51.ControlActionsProvider, { items: menuItems }, /* @__PURE__ */ React86.createElement(import_editor_controls51.ControlReplacementsProvider, { replacements: controlReplacements }, /* @__PURE__ */ React86.createElement(ElementProvider, { element, elementType }, /* @__PURE__ */ React86.createElement(EditingPanelTabs, null)))))))));
 };
 
@@ -4313,15 +4457,23 @@ var { panel, usePanelActions, usePanelStatus } = (0, import_editor_panels2.__cre
   component: EditingPanel
 });
 
+// src/components/popover-scrollable-content.tsx
+var React87 = __toESM(require("react"));
+var import_editor_ui6 = require("@elementor/editor-ui");
+var PopoverScrollableContent = (props) => {
+  const sectionWidth = useSectionWidth();
+  return /* @__PURE__ */ React87.createElement(import_editor_ui6.PopoverScrollableContent, { ...props, width: sectionWidth });
+};
+
 // src/init.ts
 var import_editor = require("@elementor/editor");
 var import_editor_current_user = require("@elementor/editor-current-user");
 var import_editor_panels3 = require("@elementor/editor-panels");
-var import_editor_v1_adapters18 = require("@elementor/editor-v1-adapters");
+var import_editor_v1_adapters20 = require("@elementor/editor-v1-adapters");
 
 // src/hooks/use-open-editor-panel.ts
-var import_react37 = require("react");
-var import_editor_v1_adapters17 = require("@elementor/editor-v1-adapters");
+var import_react39 = require("react");
+var import_editor_v1_adapters19 = require("@elementor/editor-v1-adapters");
 
 // src/sync/is-atomic-widget-selected.ts
 var import_editor_elements9 = require("@elementor/editor-elements");
@@ -4337,8 +4489,8 @@ var isAtomicWidgetSelected = () => {
 // src/hooks/use-open-editor-panel.ts
 var useOpenEditorPanel = () => {
   const { open } = usePanelActions();
-  (0, import_react37.useEffect)(() => {
-    return (0, import_editor_v1_adapters17.__privateListenTo)((0, import_editor_v1_adapters17.commandStartEvent)("panel/editor/open"), () => {
+  (0, import_react39.useEffect)(() => {
+    return (0, import_editor_v1_adapters19.__privateListenTo)((0, import_editor_v1_adapters19.commandStartEvent)("panel/editor/open"), () => {
       if (isAtomicWidgetSelected()) {
         open();
       }
@@ -4357,16 +4509,16 @@ var import_editor_canvas4 = require("@elementor/editor-canvas");
 var import_editor_controls58 = require("@elementor/editor-controls");
 
 // src/dynamics/components/background-control-dynamic-tag.tsx
-var React87 = __toESM(require("react"));
+var React88 = __toESM(require("react"));
 var import_editor_controls53 = require("@elementor/editor-controls");
-var import_editor_props12 = require("@elementor/editor-props");
+var import_editor_props13 = require("@elementor/editor-props");
 var import_icons25 = require("@elementor/icons");
 
 // src/dynamics/hooks/use-dynamic-tag.ts
-var import_react39 = require("react");
+var import_react41 = require("react");
 
 // src/dynamics/hooks/use-prop-dynamic-tags.ts
-var import_react38 = require("react");
+var import_react40 = require("react");
 var import_editor_controls52 = require("@elementor/editor-controls");
 
 // src/dynamics/sync/get-elementor-config.ts
@@ -4388,7 +4540,7 @@ var getAtomicDynamicTags = () => {
 };
 
 // src/dynamics/utils.ts
-var import_editor_props11 = require("@elementor/editor-props");
+var import_editor_props12 = require("@elementor/editor-props");
 var import_schema = require("@elementor/schema");
 var DYNAMIC_PROP_TYPE_KEY = "dynamic";
 var isDynamicPropType = (prop) => prop.key === DYNAMIC_PROP_TYPE_KEY;
@@ -4397,12 +4549,12 @@ var getDynamicPropType = (propType) => {
   return dynamicPropType && isDynamicPropType(dynamicPropType) ? dynamicPropType : null;
 };
 var isDynamicPropValue = (prop) => {
-  return (0, import_editor_props11.isTransformable)(prop) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
+  return (0, import_editor_props12.isTransformable)(prop) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
 };
 var supportsDynamic = (propType) => {
   return !!getDynamicPropType(propType);
 };
-var dynamicPropTypeUtil = (0, import_editor_props11.createPropUtils)(
+var dynamicPropTypeUtil = (0, import_editor_props12.createPropUtils)(
   DYNAMIC_PROP_TYPE_KEY,
   import_schema.z.strictObject({
     name: import_schema.z.string(),
@@ -4418,7 +4570,7 @@ var usePropDynamicTags = () => {
     const propDynamicType = getDynamicPropType(propType);
     categories = propDynamicType?.settings.categories || [];
   }
-  return (0, import_react38.useMemo)(() => getDynamicTagsByCategories(categories), [categories.join()]);
+  return (0, import_react40.useMemo)(() => getDynamicTagsByCategories(categories), [categories.join()]);
 };
 var getDynamicTagsByCategories = (categories) => {
   const dynamicTags = getAtomicDynamicTags();
@@ -4434,33 +4586,33 @@ var getDynamicTagsByCategories = (categories) => {
 // src/dynamics/hooks/use-dynamic-tag.ts
 var useDynamicTag = (tagName) => {
   const dynamicTags = usePropDynamicTags();
-  return (0, import_react39.useMemo)(() => dynamicTags.find((tag) => tag.name === tagName) ?? null, [dynamicTags, tagName]);
+  return (0, import_react41.useMemo)(() => dynamicTags.find((tag) => tag.name === tagName) ?? null, [dynamicTags, tagName]);
 };
 
 // src/dynamics/components/background-control-dynamic-tag.tsx
-var BackgroundControlDynamicTagIcon = () => /* @__PURE__ */ React87.createElement(import_icons25.DatabaseIcon, { fontSize: "tiny" });
+var BackgroundControlDynamicTagIcon = () => /* @__PURE__ */ React88.createElement(import_icons25.DatabaseIcon, { fontSize: "tiny" });
 var BackgroundControlDynamicTagLabel = ({ value }) => {
-  const context = (0, import_editor_controls53.useBoundProp)(import_editor_props12.backgroundImageOverlayPropTypeUtil);
-  return /* @__PURE__ */ React87.createElement(import_editor_controls53.PropProvider, { ...context, value: value.value }, /* @__PURE__ */ React87.createElement(import_editor_controls53.PropKeyProvider, { bind: "image" }, /* @__PURE__ */ React87.createElement(Wrapper, { rawValue: value.value })));
+  const context = (0, import_editor_controls53.useBoundProp)(import_editor_props13.backgroundImageOverlayPropTypeUtil);
+  return /* @__PURE__ */ React88.createElement(import_editor_controls53.PropProvider, { ...context, value: value.value }, /* @__PURE__ */ React88.createElement(import_editor_controls53.PropKeyProvider, { bind: "image" }, /* @__PURE__ */ React88.createElement(Wrapper, { rawValue: value.value })));
 };
 var Wrapper = ({ rawValue }) => {
   const { propType } = (0, import_editor_controls53.useBoundProp)();
   const imageOverlayPropType = propType.prop_types["background-image-overlay"];
-  return /* @__PURE__ */ React87.createElement(import_editor_controls53.PropProvider, { propType: imageOverlayPropType.shape.image, value: rawValue, setValue: () => void 0 }, /* @__PURE__ */ React87.createElement(import_editor_controls53.PropKeyProvider, { bind: "src" }, /* @__PURE__ */ React87.createElement(Content, { rawValue: rawValue.image })));
+  return /* @__PURE__ */ React88.createElement(import_editor_controls53.PropProvider, { propType: imageOverlayPropType.shape.image, value: rawValue, setValue: () => void 0 }, /* @__PURE__ */ React88.createElement(import_editor_controls53.PropKeyProvider, { bind: "src" }, /* @__PURE__ */ React88.createElement(Content, { rawValue: rawValue.image })));
 };
 var Content = ({ rawValue }) => {
   const src = rawValue.value.src;
   const dynamicTag = useDynamicTag(src.value.name || "");
-  return /* @__PURE__ */ React87.createElement(React87.Fragment, null, dynamicTag?.label);
+  return /* @__PURE__ */ React88.createElement(React88.Fragment, null, dynamicTag?.label);
 };
 
 // src/dynamics/components/dynamic-selection-control.tsx
-var React90 = __toESM(require("react"));
+var React91 = __toESM(require("react"));
 var import_editor_controls56 = require("@elementor/editor-controls");
-var import_editor_ui7 = require("@elementor/editor-ui");
+var import_editor_ui8 = require("@elementor/editor-ui");
 var import_icons27 = require("@elementor/icons");
 var import_ui47 = require("@elementor/ui");
-var import_i18n60 = require("@wordpress/i18n");
+var import_i18n64 = require("@wordpress/i18n");
 
 // src/hooks/use-persist-dynamic-value.ts
 var import_session6 = require("@elementor/session");
@@ -4471,7 +4623,7 @@ var usePersistDynamicValue = (propKey) => {
 };
 
 // src/dynamics/dynamic-control.tsx
-var React88 = __toESM(require("react"));
+var React89 = __toESM(require("react"));
 var import_editor_controls54 = require("@elementor/editor-controls");
 var DynamicControl = ({ bind, children }) => {
   const { value, setValue } = (0, import_editor_controls54.useBoundProp)(dynamicPropTypeUtil);
@@ -4493,20 +4645,20 @@ var DynamicControl = ({ bind, children }) => {
     });
   };
   const propType = createTopLevelOjectType({ schema: dynamicTag.props_schema });
-  return /* @__PURE__ */ React88.createElement(import_editor_controls54.PropProvider, { propType, setValue: setDynamicValue, value: { [bind]: dynamicValue } }, /* @__PURE__ */ React88.createElement(import_editor_controls54.PropKeyProvider, { bind }, children));
+  return /* @__PURE__ */ React89.createElement(import_editor_controls54.PropProvider, { propType, setValue: setDynamicValue, value: { [bind]: dynamicValue } }, /* @__PURE__ */ React89.createElement(import_editor_controls54.PropKeyProvider, { bind }, children));
 };
 
 // src/dynamics/components/dynamic-selection.tsx
-var import_react40 = require("react");
-var React89 = __toESM(require("react"));
+var import_react42 = require("react");
+var React90 = __toESM(require("react"));
 var import_editor_controls55 = require("@elementor/editor-controls");
-var import_editor_ui6 = require("@elementor/editor-ui");
+var import_editor_ui7 = require("@elementor/editor-ui");
 var import_icons26 = require("@elementor/icons");
 var import_ui46 = require("@elementor/ui");
-var import_i18n59 = require("@wordpress/i18n");
+var import_i18n63 = require("@wordpress/i18n");
 var SIZE6 = "tiny";
 var DynamicSelection = ({ close: closePopover }) => {
-  const [searchValue, setSearchValue] = (0, import_react40.useState)("");
+  const [searchValue, setSearchValue] = (0, import_react42.useState)("");
   const { groups: dynamicGroups } = getAtomicDynamicTags() || {};
   const theme = (0, import_ui46.useTheme)();
   const { value: anyValue } = (0, import_editor_controls55.useBoundProp)();
@@ -4538,36 +4690,33 @@ var DynamicSelection = ({ close: closePopover }) => {
       label: item.label
     }))
   ]);
-  const sectionRef = useSectionRef();
-  const sectionWidth = sectionRef?.current?.offsetWidth ?? 320;
-  return /* @__PURE__ */ React89.createElement(React89.Fragment, null, /* @__PURE__ */ React89.createElement(
-    import_editor_ui6.PopoverHeader,
+  return /* @__PURE__ */ React90.createElement(React90.Fragment, null, /* @__PURE__ */ React90.createElement(
+    import_editor_ui7.PopoverHeader,
     {
-      title: (0, import_i18n59.__)("Dynamic tags", "elementor"),
+      title: (0, import_i18n63.__)("Dynamic tags", "elementor"),
       onClose: closePopover,
-      icon: /* @__PURE__ */ React89.createElement(import_icons26.DatabaseIcon, { fontSize: SIZE6 })
+      icon: /* @__PURE__ */ React90.createElement(import_icons26.DatabaseIcon, { fontSize: SIZE6 })
     }
-  ), /* @__PURE__ */ React89.createElement(import_ui46.Stack, null, hasNoDynamicTags ? /* @__PURE__ */ React89.createElement(NoDynamicTags, null) : /* @__PURE__ */ React89.createElement(import_react40.Fragment, null, /* @__PURE__ */ React89.createElement(
-    import_editor_ui6.PopoverSearch,
+  ), /* @__PURE__ */ React90.createElement(import_ui46.Stack, null, hasNoDynamicTags ? /* @__PURE__ */ React90.createElement(NoDynamicTags, null) : /* @__PURE__ */ React90.createElement(import_react42.Fragment, null, /* @__PURE__ */ React90.createElement(
+    import_editor_ui7.PopoverSearch,
     {
       value: searchValue,
       onSearch: handleSearch,
-      placeholder: (0, import_i18n59.__)("Search dynamic tags\u2026", "elementor")
+      placeholder: (0, import_i18n63.__)("Search dynamic tags\u2026", "elementor")
     }
-  ), /* @__PURE__ */ React89.createElement(import_ui46.Divider, null), /* @__PURE__ */ React89.createElement(
-    import_editor_ui6.PopoverMenuList,
+  ), /* @__PURE__ */ React90.createElement(import_ui46.Divider, null), /* @__PURE__ */ React90.createElement(PopoverScrollableContent, null, /* @__PURE__ */ React90.createElement(
+    import_editor_ui7.PopoverMenuList,
     {
       items: virtualizedItems,
       onSelect: handleSetDynamicTag,
       onClose: closePopover,
       selectedValue: dynamicValue?.name,
       itemStyle: (item) => item.type === "item" ? { paddingInlineStart: theme.spacing(3.5) } : {},
-      noResultsComponent: /* @__PURE__ */ React89.createElement(NoResults, { searchValue, onClear: () => setSearchValue("") }),
-      width: sectionWidth
+      noResultsComponent: /* @__PURE__ */ React90.createElement(NoResults, { searchValue, onClear: () => setSearchValue("") })
     }
-  ))));
+  )))));
 };
-var NoResults = ({ searchValue, onClear }) => /* @__PURE__ */ React89.createElement(
+var NoResults = ({ searchValue, onClear }) => /* @__PURE__ */ React90.createElement(
   import_ui46.Stack,
   {
     gap: 1,
@@ -4578,11 +4727,11 @@ var NoResults = ({ searchValue, onClear }) => /* @__PURE__ */ React89.createElem
     color: "text.secondary",
     sx: { pb: 3.5 }
   },
-  /* @__PURE__ */ React89.createElement(import_icons26.DatabaseIcon, { fontSize: "large" }),
-  /* @__PURE__ */ React89.createElement(import_ui46.Typography, { align: "center", variant: "subtitle2" }, (0, import_i18n59.__)("Sorry, nothing matched", "elementor"), /* @__PURE__ */ React89.createElement("br", null), "\u201C", searchValue, "\u201D."),
-  /* @__PURE__ */ React89.createElement(import_ui46.Typography, { align: "center", variant: "caption", sx: { display: "flex", flexDirection: "column" } }, (0, import_i18n59.__)("Try something else.", "elementor"), /* @__PURE__ */ React89.createElement(import_ui46.Link, { color: "text.secondary", variant: "caption", component: "button", onClick: onClear }, (0, import_i18n59.__)("Clear & try again", "elementor")))
+  /* @__PURE__ */ React90.createElement(import_icons26.DatabaseIcon, { fontSize: "large" }),
+  /* @__PURE__ */ React90.createElement(import_ui46.Typography, { align: "center", variant: "subtitle2" }, (0, import_i18n63.__)("Sorry, nothing matched", "elementor"), /* @__PURE__ */ React90.createElement("br", null), "\u201C", searchValue, "\u201D."),
+  /* @__PURE__ */ React90.createElement(import_ui46.Typography, { align: "center", variant: "caption", sx: { display: "flex", flexDirection: "column" } }, (0, import_i18n63.__)("Try something else.", "elementor"), /* @__PURE__ */ React90.createElement(import_ui46.Link, { color: "text.secondary", variant: "caption", component: "button", onClick: onClear }, (0, import_i18n63.__)("Clear & try again", "elementor")))
 );
-var NoDynamicTags = () => /* @__PURE__ */ React89.createElement(import_ui46.Box, { sx: { overflowY: "hidden", height: 297, width: 220 } }, /* @__PURE__ */ React89.createElement(import_ui46.Divider, null), /* @__PURE__ */ React89.createElement(
+var NoDynamicTags = () => /* @__PURE__ */ React90.createElement(import_ui46.Box, { sx: { overflowY: "hidden", height: 297, width: 220 } }, /* @__PURE__ */ React90.createElement(import_ui46.Divider, null), /* @__PURE__ */ React90.createElement(
   import_ui46.Stack,
   {
     gap: 1,
@@ -4593,9 +4742,9 @@ var NoDynamicTags = () => /* @__PURE__ */ React89.createElement(import_ui46.Box,
     color: "text.secondary",
     sx: { pb: 3.5 }
   },
-  /* @__PURE__ */ React89.createElement(import_icons26.DatabaseIcon, { fontSize: "large" }),
-  /* @__PURE__ */ React89.createElement(import_ui46.Typography, { align: "center", variant: "subtitle2" }, (0, import_i18n59.__)("Streamline your workflow with dynamic tags", "elementor")),
-  /* @__PURE__ */ React89.createElement(import_ui46.Typography, { align: "center", variant: "caption" }, (0, import_i18n59.__)("You'll need Elementor Pro to use this feature.", "elementor"))
+  /* @__PURE__ */ React90.createElement(import_icons26.DatabaseIcon, { fontSize: "large" }),
+  /* @__PURE__ */ React90.createElement(import_ui46.Typography, { align: "center", variant: "subtitle2" }, (0, import_i18n63.__)("Streamline your workflow with dynamic tags", "elementor")),
+  /* @__PURE__ */ React90.createElement(import_ui46.Typography, { align: "center", variant: "caption" }, (0, import_i18n63.__)("You'll need Elementor Pro to use this feature.", "elementor"))
 ));
 var useFilteredOptions = (searchValue) => {
   const dynamicTags = usePropDynamicTags();
@@ -4628,25 +4777,25 @@ var DynamicSelectionControl = () => {
   if (!dynamicTag) {
     throw new Error(`Dynamic tag ${tagName} not found`);
   }
-  return /* @__PURE__ */ React90.createElement(import_ui47.Box, null, /* @__PURE__ */ React90.createElement(
+  return /* @__PURE__ */ React91.createElement(import_ui47.Box, null, /* @__PURE__ */ React91.createElement(
     import_ui47.UnstableTag,
     {
       fullWidth: true,
       showActionsOnHover: true,
       label: dynamicTag.label,
-      startIcon: /* @__PURE__ */ React90.createElement(import_icons27.DatabaseIcon, { fontSize: SIZE7 }),
+      startIcon: /* @__PURE__ */ React91.createElement(import_icons27.DatabaseIcon, { fontSize: SIZE7 }),
       ...(0, import_ui47.bindTrigger)(selectionPopoverState),
-      actions: /* @__PURE__ */ React90.createElement(React90.Fragment, null, /* @__PURE__ */ React90.createElement(DynamicSettingsPopover, { dynamicTag }), /* @__PURE__ */ React90.createElement(
+      actions: /* @__PURE__ */ React91.createElement(React91.Fragment, null, /* @__PURE__ */ React91.createElement(DynamicSettingsPopover, { dynamicTag }), /* @__PURE__ */ React91.createElement(
         import_ui47.IconButton,
         {
           size: SIZE7,
           onClick: removeDynamicTag,
-          "aria-label": (0, import_i18n60.__)("Remove dynamic value", "elementor")
+          "aria-label": (0, import_i18n64.__)("Remove dynamic value", "elementor")
         },
-        /* @__PURE__ */ React90.createElement(import_icons27.XIcon, { fontSize: SIZE7 })
+        /* @__PURE__ */ React91.createElement(import_icons27.XIcon, { fontSize: SIZE7 })
       ))
     }
-  ), /* @__PURE__ */ React90.createElement(
+  ), /* @__PURE__ */ React91.createElement(
     import_ui47.Popover,
     {
       disablePortal: true,
@@ -4658,7 +4807,7 @@ var DynamicSelectionControl = () => {
       },
       ...(0, import_ui47.bindPopover)(selectionPopoverState)
     },
-    /* @__PURE__ */ React90.createElement(import_ui47.Stack, null, /* @__PURE__ */ React90.createElement(DynamicSelection, { close: selectionPopoverState.close }))
+    /* @__PURE__ */ React91.createElement(import_ui47.Stack, null, /* @__PURE__ */ React91.createElement(DynamicSelection, { close: selectionPopoverState.close }))
   ));
 };
 var DynamicSettingsPopover = ({ dynamicTag }) => {
@@ -4667,7 +4816,7 @@ var DynamicSettingsPopover = ({ dynamicTag }) => {
   if (!hasDynamicSettings) {
     return null;
   }
-  return /* @__PURE__ */ React90.createElement(React90.Fragment, null, /* @__PURE__ */ React90.createElement(import_ui47.IconButton, { size: SIZE7, ...(0, import_ui47.bindTrigger)(popupState), "aria-label": (0, import_i18n60.__)("Settings", "elementor") }, /* @__PURE__ */ React90.createElement(import_icons27.SettingsIcon, { fontSize: SIZE7 })), /* @__PURE__ */ React90.createElement(
+  return /* @__PURE__ */ React91.createElement(React91.Fragment, null, /* @__PURE__ */ React91.createElement(import_ui47.IconButton, { size: SIZE7, ...(0, import_ui47.bindTrigger)(popupState), "aria-label": (0, import_i18n64.__)("Settings", "elementor") }, /* @__PURE__ */ React91.createElement(import_icons27.SettingsIcon, { fontSize: SIZE7 })), /* @__PURE__ */ React91.createElement(
     import_ui47.Popover,
     {
       disablePortal: true,
@@ -4678,15 +4827,15 @@ var DynamicSettingsPopover = ({ dynamicTag }) => {
       },
       ...(0, import_ui47.bindPopover)(popupState)
     },
-    /* @__PURE__ */ React90.createElement(
-      import_editor_ui7.PopoverHeader,
+    /* @__PURE__ */ React91.createElement(
+      import_editor_ui8.PopoverHeader,
       {
         title: dynamicTag.label,
         onClose: popupState.close,
-        icon: /* @__PURE__ */ React90.createElement(import_icons27.DatabaseIcon, { fontSize: SIZE7 })
+        icon: /* @__PURE__ */ React91.createElement(import_icons27.DatabaseIcon, { fontSize: SIZE7 })
       }
     ),
-    /* @__PURE__ */ React90.createElement(DynamicSettings, { controls: dynamicTag.atomic_controls })
+    /* @__PURE__ */ React91.createElement(DynamicSettings, { controls: dynamicTag.atomic_controls })
   ));
 };
 var DynamicSettings = ({ controls }) => {
@@ -4695,10 +4844,10 @@ var DynamicSettings = ({ controls }) => {
   if (!tabs.length) {
     return null;
   }
-  return /* @__PURE__ */ React90.createElement(import_editor_ui7.PopoverScrollableContent, null, /* @__PURE__ */ React90.createElement(import_ui47.Tabs, { size: "small", variant: "fullWidth", ...getTabsProps() }, tabs.map(({ value }, index) => /* @__PURE__ */ React90.createElement(import_ui47.Tab, { key: index, label: value.label, sx: { px: 1, py: 0.5 }, ...getTabProps(index) }))), /* @__PURE__ */ React90.createElement(import_ui47.Divider, null), tabs.map(({ value }, index) => {
-    return /* @__PURE__ */ React90.createElement(import_ui47.TabPanel, { key: index, sx: { flexGrow: 1, py: 0 }, ...getTabPanelProps(index) }, /* @__PURE__ */ React90.createElement(import_ui47.Stack, { p: 2, gap: 2 }, value.items.map((item) => {
+  return /* @__PURE__ */ React91.createElement(import_editor_ui8.PopoverScrollableContent, null, /* @__PURE__ */ React91.createElement(import_ui47.Tabs, { size: "small", variant: "fullWidth", ...getTabsProps() }, tabs.map(({ value }, index) => /* @__PURE__ */ React91.createElement(import_ui47.Tab, { key: index, label: value.label, sx: { px: 1, py: 0.5 }, ...getTabProps(index) }))), /* @__PURE__ */ React91.createElement(import_ui47.Divider, null), tabs.map(({ value }, index) => {
+    return /* @__PURE__ */ React91.createElement(import_ui47.TabPanel, { key: index, sx: { flexGrow: 1, py: 0 }, ...getTabPanelProps(index) }, /* @__PURE__ */ React91.createElement(import_ui47.Stack, { p: 2, gap: 2 }, value.items.map((item) => {
       if (item.type === "control") {
-        return /* @__PURE__ */ React90.createElement(Control3, { key: item.value.bind, control: item.value });
+        return /* @__PURE__ */ React91.createElement(Control3, { key: item.value.bind, control: item.value });
       }
       return null;
     })));
@@ -4708,12 +4857,12 @@ var Control3 = ({ control }) => {
   if (!getControl(control.type)) {
     return null;
   }
-  return /* @__PURE__ */ React90.createElement(DynamicControl, { bind: control.bind }, /* @__PURE__ */ React90.createElement(import_ui47.Grid, { container: true, gap: 0.75 }, control.label ? /* @__PURE__ */ React90.createElement(import_ui47.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React90.createElement(import_editor_controls56.ControlFormLabel, null, control.label)) : null, /* @__PURE__ */ React90.createElement(import_ui47.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React90.createElement(Control, { type: control.type, props: control.props }))));
+  return /* @__PURE__ */ React91.createElement(DynamicControl, { bind: control.bind }, /* @__PURE__ */ React91.createElement(import_ui47.Grid, { container: true, gap: 0.75 }, control.label ? /* @__PURE__ */ React91.createElement(import_ui47.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React91.createElement(import_editor_controls56.ControlFormLabel, null, control.label)) : null, /* @__PURE__ */ React91.createElement(import_ui47.Grid, { item: true, xs: 12 }, /* @__PURE__ */ React91.createElement(Control, { type: control.type, props: control.props }))));
 };
 
 // src/dynamics/dynamic-transformer.ts
 var import_editor_canvas3 = require("@elementor/editor-canvas");
-var import_editor_props13 = require("@elementor/editor-props");
+var import_editor_props14 = require("@elementor/editor-props");
 
 // src/dynamics/errors.ts
 var import_utils9 = require("@elementor/utils");
@@ -4731,7 +4880,7 @@ var dynamicTransformer = (0, import_editor_canvas3.createTransformer)((value) =>
 });
 function simpleTransform(props) {
   const transformed = Object.entries(props).map(([settingKey, settingValue]) => {
-    const value = (0, import_editor_props13.isTransformable)(settingValue) ? settingValue.value : settingValue;
+    const value = (0, import_editor_props14.isTransformable)(settingValue) ? settingValue.value : settingValue;
     return [settingKey, value];
   });
   return Object.fromEntries(transformed);
@@ -4761,18 +4910,18 @@ function getDynamicValue(name, settings) {
 }
 
 // src/dynamics/hooks/use-prop-dynamic-action.tsx
-var React91 = __toESM(require("react"));
+var React92 = __toESM(require("react"));
 var import_editor_controls57 = require("@elementor/editor-controls");
 var import_icons28 = require("@elementor/icons");
-var import_i18n61 = require("@wordpress/i18n");
+var import_i18n65 = require("@wordpress/i18n");
 var usePropDynamicAction = () => {
   const { propType } = (0, import_editor_controls57.useBoundProp)();
   const visible = !!propType && supportsDynamic(propType);
   return {
     visible,
     icon: import_icons28.DatabaseIcon,
-    title: (0, import_i18n61.__)("Dynamic tags", "elementor"),
-    content: ({ close }) => /* @__PURE__ */ React91.createElement(DynamicSelection, { close })
+    title: (0, import_i18n65.__)("Dynamic tags", "elementor"),
+    content: ({ close }) => /* @__PURE__ */ React92.createElement(DynamicSelection, { close })
   };
 };
 
@@ -4804,7 +4953,7 @@ var init = () => {
 // src/reset-style-props.tsx
 var import_editor_controls59 = require("@elementor/editor-controls");
 var import_icons29 = require("@elementor/icons");
-var import_i18n62 = require("@wordpress/i18n");
+var import_i18n66 = require("@wordpress/i18n");
 var { registerAction } = controlActionsMenu;
 function initResetStyleProps() {
   registerAction({
@@ -4818,7 +4967,7 @@ function useResetStyleValueProps() {
   const { value, setValue, path, bind } = (0, import_editor_controls59.useBoundProp)();
   return {
     visible: isStyle && value !== null && value !== void 0 && path.length <= 2 && !EXCLUDED_BINDS.includes(bind),
-    title: (0, import_i18n62.__)("Clear", "elementor"),
+    title: (0, import_i18n66.__)("Clear", "elementor"),
     icon: import_icons29.BrushBigIcon,
     onClick: () => setValue(null)
   };
@@ -4828,36 +4977,36 @@ function useResetStyleValueProps() {
 var import_editor_canvas9 = require("@elementor/editor-canvas");
 
 // src/styles-inheritance/transformers/background-color-overlay-transformer.tsx
-var React92 = __toESM(require("react"));
+var React93 = __toESM(require("react"));
 var import_editor_canvas5 = require("@elementor/editor-canvas");
 var import_ui48 = require("@elementor/ui");
-var backgroundColorOverlayTransformer = (0, import_editor_canvas5.createTransformer)((value) => /* @__PURE__ */ React92.createElement(import_ui48.Stack, { direction: "row", gap: 10 }, /* @__PURE__ */ React92.createElement(ItemIconColor, { value }), /* @__PURE__ */ React92.createElement(ItemLabelColor, { value })));
+var backgroundColorOverlayTransformer = (0, import_editor_canvas5.createTransformer)((value) => /* @__PURE__ */ React93.createElement(import_ui48.Stack, { direction: "row", gap: 10 }, /* @__PURE__ */ React93.createElement(ItemIconColor, { value }), /* @__PURE__ */ React93.createElement(ItemLabelColor, { value })));
 var ItemIconColor = ({ value }) => {
   const { color } = value;
-  return /* @__PURE__ */ React92.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: color });
+  return /* @__PURE__ */ React93.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: color });
 };
 var ItemLabelColor = ({ value: { color } }) => {
-  return /* @__PURE__ */ React92.createElement("span", null, color);
+  return /* @__PURE__ */ React93.createElement("span", null, color);
 };
 var StyledUnstableColorIndicator = (0, import_ui48.styled)(import_ui48.UnstableColorIndicator)(({ theme }) => ({
   borderRadius: `${theme.shape.borderRadius / 2}px`
 }));
 
 // src/styles-inheritance/transformers/background-gradient-overlay-transformer.tsx
-var React93 = __toESM(require("react"));
+var React94 = __toESM(require("react"));
 var import_editor_canvas6 = require("@elementor/editor-canvas");
 var import_ui49 = require("@elementor/ui");
-var import_i18n63 = require("@wordpress/i18n");
-var backgroundGradientOverlayTransformer = (0, import_editor_canvas6.createTransformer)((value) => /* @__PURE__ */ React93.createElement(import_ui49.Stack, { direction: "row", gap: 10 }, /* @__PURE__ */ React93.createElement(ItemIconGradient, { value }), /* @__PURE__ */ React93.createElement(ItemLabelGradient, { value })));
+var import_i18n67 = require("@wordpress/i18n");
+var backgroundGradientOverlayTransformer = (0, import_editor_canvas6.createTransformer)((value) => /* @__PURE__ */ React94.createElement(import_ui49.Stack, { direction: "row", gap: 10 }, /* @__PURE__ */ React94.createElement(ItemIconGradient, { value }), /* @__PURE__ */ React94.createElement(ItemLabelGradient, { value })));
 var ItemIconGradient = ({ value }) => {
   const gradient = getGradientValue(value);
-  return /* @__PURE__ */ React93.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: gradient });
+  return /* @__PURE__ */ React94.createElement(StyledUnstableColorIndicator, { size: "inherit", component: "span", value: gradient });
 };
 var ItemLabelGradient = ({ value }) => {
   if (value.type === "linear") {
-    return /* @__PURE__ */ React93.createElement("span", null, (0, import_i18n63.__)("Linear Gradient", "elementor"));
+    return /* @__PURE__ */ React94.createElement("span", null, (0, import_i18n67.__)("Linear Gradient", "elementor"));
   }
-  return /* @__PURE__ */ React93.createElement("span", null, (0, import_i18n63.__)("Radial Gradient", "elementor"));
+  return /* @__PURE__ */ React94.createElement("span", null, (0, import_i18n67.__)("Radial Gradient", "elementor"));
 };
 var getGradientValue = (gradient) => {
   const stops = gradient.stops?.map(({ color, offset }) => `${color} ${offset ?? 0}%`)?.join(",");
@@ -4868,15 +5017,15 @@ var getGradientValue = (gradient) => {
 };
 
 // src/styles-inheritance/transformers/background-image-overlay-transformer.tsx
-var React94 = __toESM(require("react"));
+var React95 = __toESM(require("react"));
 var import_editor_canvas7 = require("@elementor/editor-canvas");
-var import_editor_ui8 = require("@elementor/editor-ui");
+var import_editor_ui9 = require("@elementor/editor-ui");
 var import_ui50 = require("@elementor/ui");
 var import_wp_media = require("@elementor/wp-media");
-var backgroundImageOverlayTransformer = (0, import_editor_canvas7.createTransformer)((value) => /* @__PURE__ */ React94.createElement(import_ui50.Stack, { direction: "row", gap: 10 }, /* @__PURE__ */ React94.createElement(ItemIconImage, { value }), /* @__PURE__ */ React94.createElement(ItemLabelImage, { value })));
+var backgroundImageOverlayTransformer = (0, import_editor_canvas7.createTransformer)((value) => /* @__PURE__ */ React95.createElement(import_ui50.Stack, { direction: "row", gap: 10 }, /* @__PURE__ */ React95.createElement(ItemIconImage, { value }), /* @__PURE__ */ React95.createElement(ItemLabelImage, { value })));
 var ItemIconImage = ({ value }) => {
   const { imageUrl } = useImage(value);
-  return /* @__PURE__ */ React94.createElement(
+  return /* @__PURE__ */ React95.createElement(
     import_ui50.CardMedia,
     {
       image: imageUrl,
@@ -4891,7 +5040,7 @@ var ItemIconImage = ({ value }) => {
 };
 var ItemLabelImage = ({ value }) => {
   const { imageTitle } = useImage(value);
-  return /* @__PURE__ */ React94.createElement(import_editor_ui8.EllipsisWithTooltip, { title: imageTitle }, /* @__PURE__ */ React94.createElement("span", null, imageTitle));
+  return /* @__PURE__ */ React95.createElement(import_editor_ui9.EllipsisWithTooltip, { title: imageTitle }, /* @__PURE__ */ React95.createElement("span", null, imageTitle));
 };
 var useImage = (image) => {
   let imageTitle, imageUrl = null;
@@ -4916,14 +5065,14 @@ var getFileExtensionFromFilename = (filename) => {
 };
 
 // src/styles-inheritance/transformers/background-overlay-transformer.tsx
-var React95 = __toESM(require("react"));
+var React96 = __toESM(require("react"));
 var import_editor_canvas8 = require("@elementor/editor-canvas");
 var import_ui51 = require("@elementor/ui");
 var backgroundOverlayTransformer = (0, import_editor_canvas8.createTransformer)((values) => {
   if (!values || values.length === 0) {
     return null;
   }
-  return /* @__PURE__ */ React95.createElement(import_ui51.Stack, { direction: "column" }, values.map((item, index) => /* @__PURE__ */ React95.createElement(import_ui51.Stack, { key: index }, item)));
+  return /* @__PURE__ */ React96.createElement(import_ui51.Stack, { direction: "column" }, values.map((item, index) => /* @__PURE__ */ React96.createElement(import_ui51.Stack, { key: index }, item)));
 });
 
 // src/styles-inheritance/init-styles-inheritance-transformers.ts
@@ -4973,18 +5122,20 @@ function init3() {
   });
   init();
   init2();
-  if ((0, import_editor_v1_adapters18.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30)) {
+  if ((0, import_editor_v1_adapters20.isExperimentActive)(EXPERIMENTAL_FEATURES.V_3_30)) {
     initResetStyleProps();
   }
 }
 var blockV1Panel = () => {
-  (0, import_editor_v1_adapters18.blockCommand)({
+  (0, import_editor_v1_adapters20.blockCommand)({
     command: "panel/editor/open",
     condition: isAtomicWidgetSelected
   });
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  EXPERIMENTAL_FEATURES,
+  PopoverScrollableContent,
   controlActionsMenu,
   init,
   injectIntoClassSelectorActions,
@@ -4994,6 +5145,6 @@ var blockV1Panel = () => {
   useFontFamilies,
   usePanelActions,
   usePanelStatus,
-  useSectionRef
+  useSectionWidth
 });
 //# sourceMappingURL=index.js.map

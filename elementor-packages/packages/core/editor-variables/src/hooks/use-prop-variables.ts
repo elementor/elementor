@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 import { type PropKey } from '@elementor/editor-props';
 
 import { service } from '../service';
-import { type TVariable } from '../storage';
-import { styleVariablesRepository } from '../style-variables-repository';
 import { type Variable } from '../types';
 
 export const useVariable = ( key: string ) => {
@@ -37,13 +35,13 @@ const usePropVariables = ( propKey: PropKey ) => {
 	return useMemo( () => normalizeVariables( propKey ), [ propKey ] );
 };
 
+const isNotDeleted = ( { deleted }: { deleted?: boolean } ) => ! deleted;
+
 const normalizeVariables = ( propKey: string ) => {
 	const variables = service.variables();
 
-	styleVariablesRepository.update( variables );
-
 	return Object.entries( variables )
-		.filter( ( [ , { type } ] ) => type === propKey )
+		.filter( ( [ , variable ] ) => variable.type === propKey && isNotDeleted( variable ) )
 		.map( ( [ key, { label, value } ] ) => ( {
 			key,
 			label,
@@ -52,23 +50,19 @@ const normalizeVariables = ( propKey: string ) => {
 };
 
 export const createVariable = ( newVariable: Variable ): Promise< string > => {
-	return service.create( newVariable ).then( ( { id, variable }: { id: string; variable: TVariable } ) => {
-		styleVariablesRepository.update( {
-			[ id ]: variable,
-		} );
-
+	return service.create( newVariable ).then( ( { id }: { id: string } ) => {
 		return id;
 	} );
 };
 
 export const updateVariable = ( updateId: string, { value, label }: { value: string; label: string } ) => {
-	return service
-		.update( updateId, { value, label } )
-		.then( ( { id, variable }: { id: string; variable: TVariable } ) => {
-			styleVariablesRepository.update( {
-				[ id ]: variable,
-			} );
+	return service.update( updateId, { value, label } ).then( ( { id }: { id: string } ) => {
+		return id;
+	} );
+};
 
-			return id;
-		} );
+export const deleteVariable = ( deleteId: string ) => {
+	return service.delete( deleteId ).then( ( { id }: { id: string } ) => {
+		return id;
+	} );
 };

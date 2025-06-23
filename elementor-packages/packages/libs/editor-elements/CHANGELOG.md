@@ -1,5 +1,18 @@
 # @elementor/editor-elements
 
+## 0.8.7
+
+### Patch Changes
+
+- 16df763: Add changed prop name to atomic element setting history
+- Updated dependencies [e953081]
+- Updated dependencies [ab6ad10]
+- Updated dependencies [ea388a1]
+  - @elementor/utils@0.5.0
+  - @elementor/editor-props@0.15.0
+  - @elementor/editor-v1-adapters@0.12.1
+  - @elementor/editor-styles@0.6.11
+
 ## 0.8.6
 
 ### Patch Changes

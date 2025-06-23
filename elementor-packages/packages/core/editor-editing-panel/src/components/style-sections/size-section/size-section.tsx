@@ -52,9 +52,12 @@ const CssSizeProps = [
 ];
 
 const ASPECT_RATIO_LABEL = __( 'Aspect Ratio', 'elementor' );
+const OBJECT_FIT_LABEL = __( 'Object fit', 'elementor' );
 
 export const SizeSection = () => {
-	const { value: fitValue } = useStylesField< StringPropValue >( 'object-fit' );
+	const { value: fitValue } = useStylesField< StringPropValue >( 'object-fit', {
+		history: { propDisplayName: OBJECT_FIT_LABEL },
+	} );
 
 	const isNotFill = fitValue && fitValue?.value !== 'fill';
 

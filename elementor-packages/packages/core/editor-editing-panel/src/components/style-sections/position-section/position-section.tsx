@@ -2,6 +2,7 @@ import * as React from 'react';
 import { type StringPropValue } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { useSessionStorage } from '@elementor/session';
+import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../../contexts/style-context';
 import { useStylesField } from '../../../hooks/use-styles-field';
@@ -28,8 +29,13 @@ type DimensionsValues = {
 	'inset-inline-end': DimensionValue;
 };
 
+const POSITION_LABEL = __( 'Position', 'elementor' );
+const DIMENSIONS_LABEL = __( 'Dimensions', 'elementor' );
+
 export const PositionSection = () => {
-	const { value: positionValue } = useStylesField< StringPropValue >( 'position' );
+	const { value: positionValue } = useStylesField< StringPropValue >( 'position', {
+		history: { propDisplayName: POSITION_LABEL },
+	} );
 	const { values: dimensions, setValues: setDimensions } = useStylesFields< DimensionsValues >( [
 		'inset-block-start',
 		'inset-block-end',
@@ -41,19 +47,24 @@ export const PositionSection = () => {
 	const isCssIdFeatureActive = isExperimentActive( 'e_v_3_30' );
 
 	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
+		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
+
 		if ( newPosition === 'static' ) {
 			if ( dimensions ) {
 				updateDimensionsHistory( dimensions );
-				setDimensions( {
-					'inset-block-start': undefined,
-					'inset-block-end': undefined,
-					'inset-inline-start': undefined,
-					'inset-inline-end': undefined,
-				} );
+				setDimensions(
+					{
+						'inset-block-start': undefined,
+						'inset-block-end': undefined,
+						'inset-inline-start': undefined,
+						'inset-inline-end': undefined,
+					},
+					meta
+				);
 			}
 		} else if ( previousPosition === 'static' ) {
 			if ( dimensionsValuesFromHistory ) {
-				setDimensions( dimensionsValuesFromHistory );
+				setDimensions( dimensionsValuesFromHistory, meta );
 				clearDimensionsHistory();
 			}
 		}

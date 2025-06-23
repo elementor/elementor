@@ -10,3 +10,20 @@ export const useElementSetting = < TValue >( elementId: ElementID, settingKey: s
 		[ elementId, settingKey ]
 	);
 };
+
+export const useElementSettings = < TValue >( elementId: ElementID, settingKeys: string[] ) => {
+	return useListenTo(
+		commandEndEvent( 'document/elements/set-settings' ),
+		() =>
+			settingKeys.reduce< Record< string, TValue > >( ( settings, key ) => {
+				const value = getElementSetting< TValue >( elementId, key );
+
+				if ( value !== null ) {
+					settings[ key ] = value;
+				}
+
+				return settings;
+			}, {} ),
+		[ elementId, ...settingKeys ]
+	);
+};

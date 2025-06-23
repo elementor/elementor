@@ -1,41 +1,47 @@
 import * as React from 'react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
-import { validateStyleLabel } from '@elementor/editor-styles-repository';
-import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
-import { DotsVerticalIcon } from '@elementor/icons';
 import { __useDispatch as useDispatch } from '@elementor/store';
-import {
-	bindMenu,
-	bindTrigger,
-	Box,
-	IconButton,
-	List,
-	ListItemButton,
-	type ListItemButtonProps,
-	Menu,
-	Stack,
-	styled,
-	type Theme,
-	Tooltip,
-	Typography,
-	type TypographyProps,
-	usePopupState,
-} from '@elementor/ui';
+import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
-import { DeleteConfirmationProvider, useDeleteConfirmation } from './delete-confirmation-dialog';
+import { ClassItem } from './class-item';
+import { CssClassNotFound } from './class-manager-class-not-found';
+import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
-import { SortableItem, SortableProvider, SortableTrigger, type SortableTriggerProps } from './sortable';
+import { SortableItem, SortableProvider } from './sortable';
 
-export const GlobalClassesList = ( { disabled }: { disabled?: boolean } ) => {
+type GlobalClassesListProps = {
+	disabled?: boolean;
+	searchValue: string;
+	onSearch: ( searchValue: string ) => void;
+};
+
+export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalClassesListProps ) => {
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
 
 	const [ classesOrder, reorderClasses ] = useReorder();
+
+	const lowercaseLabels = useMemo(
+		() =>
+			cssClasses.map( ( cssClass ) => ( {
+				...cssClass,
+				lowerLabel: cssClass.label.toLowerCase(),
+			} ) ),
+		[ cssClasses ]
+	);
+
+	const filteredClasses = useMemo( () => {
+		return searchValue.length > 1
+			? lowercaseLabels.filter( ( cssClass ) =>
+					cssClass.lowerLabel.toLowerCase().includes( searchValue.toLowerCase() )
+			  )
+			: cssClasses;
+	}, [ searchValue, cssClasses, lowercaseLabels ] );
 
 	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
@@ -61,194 +67,43 @@ export const GlobalClassesList = ( { disabled }: { disabled?: boolean } ) => {
 
 	return (
 		<DeleteConfirmationProvider>
-			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-					{ cssClasses?.map( ( { id, label } ) => {
-						const renameClass = ( newLabel: string ) => {
-							dispatch(
-								slice.actions.update( {
-									style: {
-										id,
-										label: newLabel,
-									},
-								} )
+			{ filteredClasses.length <= 0 && searchValue.length > 1 ? (
+				<CssClassNotFound onClear={ () => onSearch( '' ) } searchValue={ searchValue } />
+			) : (
+				<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
+					<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
+						{ filteredClasses?.map( ( { id, label } ) => {
+							return (
+								<SortableItem key={ id } id={ id }>
+									{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
+										<ClassItem
+											isSearchActive={ searchValue.length < 2 }
+											id={ id }
+											label={ label }
+											renameClass={ ( newLabel: string ) => {
+												dispatch(
+													slice.actions.update( {
+														style: {
+															id,
+															label: newLabel,
+														},
+													} )
+												);
+											} }
+											selected={ isDragged }
+											disabled={ disabled || isDragPlaceholder }
+											sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+										/>
+									) }
+								</SortableItem>
 							);
-						};
-
-						return (
-							<SortableItem key={ id } id={ id }>
-								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
-									<ClassItem
-										id={ id }
-										label={ label }
-										renameClass={ renameClass }
-										selected={ isDragged }
-										disabled={ disabled || isDragPlaceholder }
-										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-									/>
-								) }
-							</SortableItem>
-						);
-					} ) }
-				</SortableProvider>
-			</List>
+						} ) }
+					</SortableProvider>
+				</List>
+			) }
 		</DeleteConfirmationProvider>
 	);
 };
-
-const useReorder = () => {
-	const dispatch = useDispatch();
-	const order = useClassesOrder();
-
-	const reorder = ( newIds: StyleDefinitionID[] ) => {
-		dispatch( slice.actions.setOrder( newIds ) );
-	};
-
-	return [ order, reorder ] as const;
-};
-
-type ClassItemProps = React.PropsWithChildren< {
-	id: string;
-	label: string;
-	renameClass: ( newLabel: string ) => void;
-	selected?: boolean;
-	disabled?: boolean;
-	sortableTriggerProps: SortableTriggerProps;
-} >;
-
-const ClassItem = ( { id, label, renameClass, selected, disabled, sortableTriggerProps }: ClassItemProps ) => {
-	const itemRef = useRef< HTMLElement >( null );
-
-	const {
-		ref: editableRef,
-		openEditMode,
-		isEditing,
-		error,
-		getProps: getEditableProps,
-	} = useEditable( {
-		value: label,
-		onSubmit: renameClass,
-		validation: validateLabel,
-	} );
-
-	const { openDialog } = useDeleteConfirmation();
-
-	const popupState = usePopupState( {
-		variant: 'popover',
-		disableAutoFocus: true,
-	} );
-
-	const isSelected = ( selected || popupState.isOpen ) && ! disabled;
-
-	return (
-		<>
-			<Stack p={ 0 }>
-				<WarningInfotip
-					open={ Boolean( error ) }
-					text={ error ?? '' }
-					placement="bottom"
-					width={ itemRef.current?.getBoundingClientRect().width }
-					offset={ [ 0, -15 ] }
-				>
-					<StyledListItemButton
-						ref={ itemRef }
-						dense
-						disableGutters
-						showActions={ isSelected || isEditing }
-						shape="rounded"
-						onDoubleClick={ openEditMode }
-						selected={ isSelected }
-						disabled={ disabled }
-						focusVisibleClassName="visible-class-item"
-					>
-						<SortableTrigger { ...sortableTriggerProps } />
-						<Indicator isActive={ isEditing } isError={ !! error }>
-							{ isEditing ? (
-								<EditableField
-									ref={ editableRef }
-									as={ Typography }
-									variant="caption"
-									{ ...getEditableProps() }
-								/>
-							) : (
-								<EllipsisWithTooltip title={ label } as={ Typography } variant="caption" />
-							) }
-						</Indicator>
-						<Tooltip
-							placement="top"
-							className={ 'class-item-more-actions' }
-							title={ __( 'More actions', 'elementor' ) }
-						>
-							<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
-								<DotsVerticalIcon fontSize="tiny" />
-							</IconButton>
-						</Tooltip>
-					</StyledListItemButton>
-				</WarningInfotip>
-			</Stack>
-			<Menu
-				{ ...bindMenu( popupState ) }
-				anchorOrigin={ {
-					vertical: 'bottom',
-					horizontal: 'right',
-				} }
-				transformOrigin={ {
-					vertical: 'top',
-					horizontal: 'right',
-				} }
-			>
-				<MenuListItem
-					sx={ { minWidth: '160px' } }
-					onClick={ () => {
-						popupState.close();
-						openEditMode();
-					} }
-				>
-					<Typography variant="caption" sx={ { color: 'text.primary' } }>
-						{ __( 'Rename', 'elementor' ) }
-					</Typography>
-				</MenuListItem>
-				<MenuListItem
-					onClick={ () => {
-						popupState.close();
-						openDialog( { id, label } );
-					} }
-				>
-					<Typography variant="caption" sx={ { color: 'error.light' } }>
-						{ __( 'Delete', 'elementor' ) }
-					</Typography>
-				</MenuListItem>
-			</Menu>
-		</>
-	);
-};
-
-// Custom styles for sortable list item, until the component is available in the UI package.
-const StyledListItemButton = styled( ListItemButton, {
-	shouldForwardProp: ( prop: string ) => ! [ 'showActions' ].includes( prop ),
-} )< ListItemButtonProps & { showActions: boolean } >(
-	( { showActions } ) => `
-	min-height: 36px;
-
-	&.visible-class-item {
-		box-shadow: none !important;
-	}
-
-	.class-item-more-actions, .class-item-sortable-trigger {
-		visibility: ${ showActions ? 'visible' : 'hidden' };
-	}
-
-	.class-item-sortable-trigger {
-		visibility: ${ showActions ? 'visible' : 'hidden' };
-	}
-
-	&:hover&:not(:disabled) {
-		.class-item-more-actions, .class-item-sortable-trigger  {
-			visibility: visible;
-		}
-	}
-`
-);
 
 const EmptyState = () => (
 	<Stack alignItems="center" gap={ 1.5 } pt={ 10 } px={ 0.5 } maxWidth="260px" margin="auto">
@@ -272,37 +127,13 @@ const StyledHeader = styled( Typography )< TypographyProps >( ( { theme, variant
 	},
 } ) );
 
-const Indicator = styled( Box, {
-	shouldForwardProp: ( prop: string ) => ! [ 'isActive', 'isError' ].includes( prop ),
-} )< { isActive: boolean; isError: boolean } >( ( { theme, isActive, isError } ) => ( {
-	display: 'flex',
-	width: '100%',
-	flexGrow: 1,
-	borderRadius: theme.spacing( 0.5 ),
-	border: getIndicatorBorder( { isActive, isError, theme } ),
-	padding: `0 ${ theme.spacing( 1 ) }`,
-	marginLeft: isActive ? theme.spacing( 1 ) : 0,
-	minWidth: 0,
-} ) );
+const useReorder = () => {
+	const dispatch = useDispatch();
+	const order = useClassesOrder();
 
-const getIndicatorBorder = ( { isActive, isError, theme }: { isActive: boolean; isError: boolean; theme: Theme } ) => {
-	if ( isError ) {
-		return `2px solid ${ theme.palette.error.main }`;
-	}
+	const reorder = ( newIds: StyleDefinitionID[] ) => {
+		dispatch( slice.actions.setOrder( newIds ) );
+	};
 
-	if ( isActive ) {
-		return `2px solid ${ theme.palette.secondary.main }`;
-	}
-
-	return 'none';
-};
-
-const validateLabel = ( newLabel: string ) => {
-	const result = validateStyleLabel( newLabel, 'rename' );
-
-	if ( result.isValid ) {
-		return null;
-	}
-
-	return result.errorMessage;
+	return [ order, reorder ] as const;
 };

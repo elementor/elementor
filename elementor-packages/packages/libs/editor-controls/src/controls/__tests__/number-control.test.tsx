@@ -94,4 +94,43 @@ describe( 'NumberControl', () => {
 		// Assert.
 		expect( setValue ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should use placeholder from NumberControl when both renderControl props and NumberControl have placeholder', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: { $$type: 'number', value: 5 },
+			bind: 'number',
+			propType,
+			placeholder: { $$type: 'number', value: 123 },
+		};
+
+		// Act.
+		renderControl( <NumberControl placeholder="Component placeholder" />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		expect( input ).toHaveAttribute( 'placeholder', 'Component placeholder' );
+	} );
+
+	it( 'should use placeholder from renderControl props when NumberControl has no placeholder', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: { $$type: 'number', value: 5 },
+			bind: 'number',
+			propType,
+			placeholder: { $$type: 'number', value: 123 },
+		};
+
+		// Act.
+		renderControl( <NumberControl />, props );
+
+		const input = screen.getByRole( 'spinbutton' );
+
+		// Assert.
+		expect( input ).toHaveAttribute( 'placeholder', '123' );
+	} );
 } );

@@ -19,6 +19,7 @@ type UseBoundProp< TValue extends PropValue > = {
 	placeholder?: TValue;
 	path: PropKey[];
 	restoreValue: () => void;
+	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
 };
 
@@ -38,9 +39,11 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 
 	const { isValid, validate, restoreValue } = useValidation( propKeyContext.propType );
 
+	const disabled = propKeyContext.isDisabled?.( propKeyContext.propType );
+
 	// allow using the hook without a propTypeUtil, with no modifications or validations.
 	if ( ! propTypeUtil ) {
-		return propKeyContext;
+		return { ...propKeyContext, disabled } as PropKeyContextValue< PropValue, PropType >;
 	}
 
 	function setValue( value: TValue | null, options: CreateOptions, meta: { bind?: PropKey } ) {
@@ -67,6 +70,7 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		value: isValid ? value : null,
 		restoreValue,
 		placeholder,
+		disabled,
 	};
 }
 

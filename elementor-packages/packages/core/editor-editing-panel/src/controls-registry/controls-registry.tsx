@@ -37,7 +37,7 @@ const controlTypes = {
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	size: { component: SizeControl, layout: 'two-columns', propTypeUtil: sizePropTypeUtil },
 	select: { component: SelectControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
-	link: { component: LinkControl, layout: 'full', propTypeUtil: linkPropTypeUtil },
+	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	switch: { component: SwitchControl, layout: 'two-columns', propTypeUtil: booleanPropTypeUtil },
 	repeatable: { component: RepeatableControl, layout: 'full', propTypeUtil: undefined },
