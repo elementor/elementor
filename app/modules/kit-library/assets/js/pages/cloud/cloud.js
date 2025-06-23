@@ -6,7 +6,7 @@ import KitListCloud from '../../components/kit-list-cloud';
 import Layout from '../../components/layout';
 import SearchInput from '../../components/search-input';
 import useCloudKits from '../../hooks/use-cloud-kits';
-import useCloudKitsEligibility from '../../hooks/use-cloud-kits-eligibility';
+import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useMenuItems from '../../hooks/use-menu-items';
 import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
