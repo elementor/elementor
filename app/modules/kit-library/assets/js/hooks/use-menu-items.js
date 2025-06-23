@@ -11,9 +11,11 @@ import useConnectState from './use-connect-state';
 export default function useMenuItems( path ) {
 	const { isConnected } = useConnectState();
 
-	const { data: isCloudKitsAvailable } = useCloudKitsEligibility( {
+	const { data: cloudKitsData, isLoading: isCheckingEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
 	} );
+
+	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
 
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
@@ -29,7 +31,7 @@ export default function useMenuItems( path ) {
 					</span>
 				</>
 			);
-		} else if ( isConnected && false === isCloudKitsAvailable ) {
+		} else if ( isConnected && ! isCloudKitsAvailable && ! isCheckingEligibility ) {
 			myWebsiteTemplatesLabel = (
 				<>
 					{ __( 'My Website Templates', 'elementor' ) }

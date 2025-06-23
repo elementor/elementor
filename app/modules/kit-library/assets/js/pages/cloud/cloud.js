@@ -43,9 +43,11 @@ export default function Cloud( {
 		isFilterActive,
 	} = useCloudKits();
 
-	const { data: isCloudKitsAvailable, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
+	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
 	} );
+
+	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
 
 	const menuItems = useMenuItems( path );
 
@@ -110,6 +112,7 @@ export default function Cloud( {
 				menuItems={ menuItems }
 				forceRefetch={ forceRefetch }
 				isFetching={ isFetching }
+				cloudKitsData={ cloudKitsData }
 			/>
 		);
 	}
