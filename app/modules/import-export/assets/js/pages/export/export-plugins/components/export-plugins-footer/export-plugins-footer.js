@@ -15,9 +15,11 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
 	const connectButtonRef = useRef();
 
-	const { data: isCloudKitsEligible = false, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
+	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
 	} );
+
+	const isCloudKitsEligible = cloudKitsData?.is_eligible || false;
 
 	useEffect( () => {
 		if ( ! connectButtonRef.current ) {
