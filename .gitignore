@@ -43,3 +43,6 @@ tests/playwright/blob-report
 playwright-test-results
 **/.env
 .turbo/
+elementor-packages/node_modules/
+elementor-packages/packages/**/dist/
+elementor-packages/docs/
