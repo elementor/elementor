@@ -15,7 +15,7 @@ export default function useMenuItems( path ) {
 		enabled: isConnected,
 	} );
 
-	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
+	const isCloudKitsAvailable = cloudKitsData?.is_eligible;
 
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
