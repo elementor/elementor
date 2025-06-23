@@ -48,8 +48,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await editor.openV2Section( 'size' );
 		await editor.openV2Section( 'typography' );
 
-		// Wait for typography section to be fully loaded
-		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: 10000 } );
+		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: 3000 } );
 	}
 
 	async function isSectionOpen( section: SectionType ): Promise<boolean> {
