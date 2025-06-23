@@ -12,7 +12,7 @@ class Site_Settings extends Export_Runner_Base {
 	public function should_export( array $data ) {
 		return (
 			isset( $data['include'] ) &&
-			( in_array( 'settings', $data['include'], true ) || in_array( 'theme', $data['include'], true ) )
+			in_array( 'settings', $data['include'], true )
 		);
 	}
 
@@ -35,20 +35,15 @@ class Site_Settings extends Export_Runner_Base {
 		unset( $kit_tabs['settings-site-identity'] );
 
 		$kit_tabs = array_keys( $kit_tabs );
-		$manifest_data['site-settings'] = $kit_tabs;
 
-		if ( isset( $data['include'] ) && in_array( 'theme', $data['include'], true ) ) {
-			$theme = wp_get_theme();
+		$themes_data = $this->export_theme();
 
-			if ( ! empty( $theme ) && ! empty( $theme->get( 'ThemeURI' ) ) ) {
-				$themes_data['name'] = $theme->get( 'Name' );
-				$themes_data['theme_uri'] = $theme->get( 'ThemeURI' );
-				$themes_data['version'] = $theme->get( 'Version' );
-				$themes_data['slug'] = $theme->get_stylesheet();
-
-				$manifest_data['theme'] = $themes_data;
-			}
+		if ( $themes_data ) {
+			$kit_tabs[] = 'theme';
+			$kit_data['settings']['theme'] = $themes_data;
 		}
+
+		$manifest_data['site-settings'] = $kit_tabs;
 
 		return [
 			'files' => [
@@ -59,5 +54,20 @@ class Site_Settings extends Export_Runner_Base {
 				$manifest_data,
 			],
 		];
+	}
+
+	public function export_theme() {
+		$theme = wp_get_theme();
+
+		if ( empty( $theme ) && empty( $theme->get( 'ThemeURI' ) ) ) {
+			return null;
+		}
+
+		$themes_data['name'] = $theme->get( 'Name' );
+		$themes_data['theme_uri'] = $theme->get( 'ThemeURI' );
+		$themes_data['version'] = $theme->get( 'Version' );
+		$themes_data['slug'] = $theme->get_stylesheet();
+
+		return $themes_data;
 	}
 }

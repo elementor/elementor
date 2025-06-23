@@ -44,7 +44,7 @@ class Site_Settings extends Import_Runner_Base {
 	public function should_import( array $data ) {
 		return (
 			isset( $data['include'] ) &&
-			( in_array( 'settings', $data['include'], true ) || in_array( 'theme', $data['include'], true ) ) &&
+			in_array( 'settings', $data['include'], true ) &&
 			! empty( $data['site_settings']['settings'] )
 		);
 	}
@@ -86,26 +86,10 @@ class Site_Settings extends Import_Runner_Base {
 
 		$result['site-settings'] = (bool) $new_kit;
 
-		if ( ! empty( $data['manifest']['theme'] ) ) {
-			$theme = $data['manifest']['theme'];
+		$import_theme_result = $this->import_theme( $new_site_settings );
 
-			$existing_theme = wp_get_theme( $theme['slug'] );
-
-			try {
-				if ( ! $existing_theme->exists() ) {
-					$import = $this->install_theme( $theme['slug'], $theme['version'] );
-
-					if ( is_wp_error( $import ) ) {
-						$result['theme']['failed'][ $theme['slug'] ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme['name'] );
-
-					} else {
-						$result['theme']['succeed'][ $theme['slug'] ] = $import;
-						$this->installed_theme = $theme['slug'];
-					}
-				}
-			} catch ( \Exception $error ) {
-				$result['theme']['failed'][ $theme['slug'] ] = $error->getMessage();
-			}
+		if ( ! empty( $import_theme_result ) ) {
+			$result['theme'] = $import_theme_result;
 		}
 
 		return $result;
@@ -114,10 +98,36 @@ class Site_Settings extends Import_Runner_Base {
 	private function install_theme( $slug, $version ) {
 		$download_url = "https://downloads.wordpress.org/theme/{$slug}.{$version}.zip";
 
-		$result = $this->theme_upgrader->install( $download_url );
+		var_dump("TRYING TO call install in Site_settings runner for url:", $download_url);
+		return $this->theme_upgrader->install( $download_url );
+	}
 
-		if ( is_wp_error( $result ) ) {
-			return $result;
+	public function import_theme( array $settings ) {
+		if ( empty( $settings['theme'] ) ) {
+			return null;
+		}
+
+		$theme = $settings['theme'];
+
+		$existing_theme = wp_get_theme( $theme['slug'] );
+
+		try {
+			if ( ! $existing_theme->exists() ) {
+				$import = $this->install_theme( $theme['slug'], $theme['version'] );
+
+				if ( is_wp_error( $import ) ) {
+					$result['failed'][ $theme['slug'] ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme['name'] );
+
+				} else {
+					$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme['name'] );;
+					$this->installed_theme = $theme['slug'];
+					switch_theme( $theme['slug'] );
+				}
+			} else {
+				$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme['name'] );;
+			}
+		} catch ( \Exception $error ) {
+			$result['failed'][ $theme['slug'] ] = $error->getMessage();
 		}
 
 		return $result;
