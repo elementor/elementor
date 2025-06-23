@@ -45,4 +45,4 @@ playwright-test-results
 .turbo/
 elementor-packages/node_modules/
 elementor-packages/packages/**/dist/
-elementor-packages/docs/
+elementor-packages/docs/api/
