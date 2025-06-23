@@ -63,6 +63,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
 					Image_Control::bind_to( 'image' )
+						->set_label( __( 'Image', 'elementor' ) )
 						->set_show_mode( 'media' ),
 				] ),
 		];
@@ -71,10 +72,14 @@ class Atomic_Image extends Atomic_Widget_Base {
 	protected function get_settings_controls(): array {
 		return [
 			Image_Control::bind_to( 'image' )
-				->set_show_mode( 'sizes' ),
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
+				->set_label( __( 'Image resolution', 'elementor' ) )
+				->set_show_mode( 'sizes' )
+				->set_meta( [ 'layout' => 'two-columns' ] ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 
