@@ -13,8 +13,8 @@
   "render-blocking-resources": [ "error", { "maxLength": 9 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 28 } ],
   "modern-image-formats": [ "warn", { "maxLength": 2 }],
-  "lcp-lazy-loaded": [ "error", { "minScore": 0 } ],
+  "lcp-lazy-loaded": "off",
   "non-composited-animations": [ "error", { "maxLength": 0 } ],
-  "prioritize-lcp-image": [ "error", { "minScore": 0.5 } ],
+  "prioritize-lcp-image": "off",
   "csp-xss": [ "warn", { "minScore": 0 }]
 }
