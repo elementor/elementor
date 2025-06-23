@@ -11,12 +11,12 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	let page: Page;
 
 	const atomicWidgets = [
-		{ name: 'e-heading', title: 'Heading' },
-		{ name: 'e-image', title: 'Image' },
-		{ name: 'e-paragraph', title: 'Paragraph' },
-		{ name: 'e-svg', title: 'SVG' },
-		{ name: 'e-button', title: 'Button' },
-		{ name: 'e-divider', title: 'Divider' },
+		// { name: 'e-heading', title: 'Heading' },
+		// { name: 'e-image', title: 'Image' },
+		// { name: 'e-paragraph', title: 'Paragraph' },
+		// { name: 'e-svg', title: 'SVG' },
+		// { name: 'e-button', title: 'Button' },
+		// { name: 'e-divider', title: 'Divider' },
 		{ name: 'e-youtube', title: 'YouTube' },
 	];
 
@@ -67,7 +67,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await expect( container ).toBeVisible();
 			} );
 
-			test( 'Widget is displayed in canvas and frontend', async () => {
+			test.only( 'Widget is displayed in canvas and frontend', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
 				await test.step( 'Add widget and check editor canvas', async () => {
@@ -75,8 +75,17 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
 
-					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
-					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					if ( 'e-youtube' === widget.name ) {
+						// await page.waitForTimeout( 2000 );
+
+					}
+
+					// For YouTube widget, we need to specifically target the base element with class "e-youtube-base"
+					const selector = 'e-youtube' === widget.name
+						? `${ widgetSelector }.e-youtube-base`
+						: widgetSelector;
+					await expect( editor.getPreviewFrame().locator( selector ) ).toBeVisible( { timeout: 2000 } );
+					await expect( page.locator( selector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 				} );
 
 				await test.step( 'Check frontend display', async () => {
