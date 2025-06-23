@@ -5,11 +5,14 @@
   "unused-css-rules": [ "error", { "maxLength": 0 } ],
   "unused-javascript": [ "error", { "maxLength": 0 } ],
   "uses-rel-preconnect": [ "error", { "maxLength": 0 } ],
+  "uses-responsive-images": [ "error", { "maxLength": 1 } ],
   "first-contentful-paint": [ "error", { "minScore": 0.8 } ],
   "first-meaningful-paint": [ "error", { "minScore": 0.7 } ],
   "largest-contentful-paint": [ "error", { "minScore": 0.8 } ],
   "legacy-javascript": [ "error", { "maxLength": 0 } ],
   "render-blocking-resources": [ "error", { "maxLength": 12 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 23 } ],
-  "csp-xss": [ "warn", { "minScore": 0 }]
+  "modern-image-formats": [ "warn", { "maxLength": 1 }],
+  "csp-xss": [ "warn", { "minScore": 0 }],
+  "non-composited-animations": "off"
 }
