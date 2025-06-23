@@ -67,7 +67,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await expect( container ).toBeVisible();
 			} );
 
-			test.only( 'Widget is displayed in canvas and frontend', async () => {
+			test( 'Widget is displayed in canvas and frontend', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
 				await test.step( 'Add widget and check editor canvas', async () => {
