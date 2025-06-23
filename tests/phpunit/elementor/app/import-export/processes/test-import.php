@@ -116,7 +116,7 @@ class Test_Import extends Elementor_Test_Base {
 	public function test_run__fail_when_not_registered_runners() {
 		// Expect
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
+		$this->expectExceptionMessage( 'Couldn\'t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 
 		// Arrange
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, [] );
@@ -218,11 +218,6 @@ class Test_Import extends Elementor_Test_Base {
 		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 
-		$this->mocked_theme_upgrader
-			->expects( $this->once() )
-			->method( 'install' )
-			->willReturn( true );
-
 		$import_settings = [
 			'include' => [ 'settings' ],
 		];
@@ -236,6 +231,11 @@ class Test_Import extends Elementor_Test_Base {
 		$expected_custom_typography =  $site_settings['settings']['custom_typography'];
 		$expected_theme =  $site_settings['settings']['theme'];
 
+		$this->mocked_theme_upgrader
+			->expects( $this->once() )
+			->method( 'install' )
+			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" );
+
 		// Act
 		$result = $import->run();
 
@@ -243,10 +243,6 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 2, $result );
 		$this->assertTrue( $result['site-settings'] );
 
-		$this->mocked_theme_upgrader
-			->expects( $this->once() )
-			->method( 'install' )
-			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" );
 
 		$expected_runners = [
 			'site-settings' => [
@@ -491,7 +487,7 @@ class Test_Import extends Elementor_Test_Base {
 		$elementor_tmp_directory = Plugin::$instance->uploads_manager->get_temp_dir();
 
 		// Expect
-		$this->expectExceptionMessage( 'Couldn’t execute the import process because the import session does not exist.' );
+		$this->expectExceptionMessage( 'Couldn\'t execute the import process because the import session does not exist.' );
 
 		// Act
 		$import = new Import( $elementor_tmp_directory . 'session-not-exits', [] );
