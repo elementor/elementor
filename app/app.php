@@ -294,7 +294,7 @@ class App extends BaseApp {
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
-			
+
 			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
 				$this->add_component( 'import-export-customization', new Modules\ImportExportCustomization\Module() );
 			}

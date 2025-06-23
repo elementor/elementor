@@ -94,16 +94,16 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
-        $this->register_actions();
+		$this->register_actions();
 
-        if ( ElementorUtils::is_wp_cli() ) {
-            \WP_CLI::add_command( 'elementor kit', WP_CLI::class );
-        }
+		if ( ElementorUtils::is_wp_cli() ) {
+			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
+		}
 
-        ( new Usage() )->register();
+		( new Usage() )->register();
 
-        $this->revert = new Revert();
-    }
+		$this->revert = new Revert();
+	}
 
 	public function get_init_settings() {
 		if ( ! Plugin::$instance->app->is_current() ) {
@@ -665,7 +665,7 @@ class Module extends BaseModule {
 				}
 			}
 		} catch ( \Exception $e ) {
-			// Silently handle any errors with kit tabs
+			Plugin::$instance->logger->get_logger()->error( $e->getMessage() );
 		}
 
 		return $summary_titles;
