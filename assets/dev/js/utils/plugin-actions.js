@@ -172,7 +172,7 @@ module.exports = elementorModules.Module.extend( {
 			    animation-delay: calc(1.8s / 4 * -2);
 			}
 			.elementor-loader-box:nth-of-type(4) {
-			    bottom: 0;
+			    inset-block-end: 0;
 			    animation-delay: calc(1.8s / 4 * -3);
 			}
 			.elementor-loader-box:not(:nth-of-type(1)) {
