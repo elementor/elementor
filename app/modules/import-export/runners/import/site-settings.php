@@ -29,6 +29,11 @@ class Site_Settings extends Import_Runner_Base {
 	private $installed_theme;
 
 	/**
+	 * @var string|null
+	 */
+	private $previous_active_theme;
+
+	/**
 	 * @var \Theme_Upgrader
 	 */
 	private \Theme_Upgrader $theme_upgrader;
@@ -86,7 +91,7 @@ class Site_Settings extends Import_Runner_Base {
 
 		$result['site-settings'] = (bool) $new_kit;
 
-		$import_theme_result = $this->import_theme( $new_site_settings );
+		$import_theme_result = $this->import_theme( $data );
 
 		if ( ! empty( $import_theme_result ) ) {
 			$result['theme'] = $import_theme_result;
@@ -95,37 +100,44 @@ class Site_Settings extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function install_theme( $slug, $version ) {
+	protected function install_theme( $slug, $version ) {
 		$download_url = "https://downloads.wordpress.org/theme/{$slug}.{$version}.zip";
 
 		return $this->theme_upgrader->install( $download_url );
 	}
 
-	public function import_theme( array $settings ) {
-		if ( empty( $settings['theme'] ) ) {
+	protected function activate_theme( $slug ) {
+		return switch_to_blog( $slug );
+	}
+
+	public function import_theme( array $data ) {
+		if ( empty( $data['site_settings']['theme'] ) ) {
 			return null;
 		}
 
-		$theme = $settings['theme'];
+		$theme = $data['site_settings']['theme'];
+		$theme_slug = $theme['slug'];
+		$theme_name = $theme['name'];
 
-		$existing_theme = wp_get_theme( $theme['slug'] );
+		$existing_theme = wp_get_theme();
+		$this->previous_active_theme = $existing_theme->get_stylesheet();
 
 		try {
 			if ( ! $existing_theme->exists() ) {
-				$import = $this->install_theme( $theme['slug'], $theme['version'] );
+				$import = $this->install_theme( $theme_slug, $theme['version'] );
 
 				if ( is_wp_error( $import ) ) {
-					$result['failed'][ $theme['slug'] ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme['name'] );
+					$result['failed'][ $theme_slug ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme_name );
 				} else {
-					$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme['name'] );
-					$this->installed_theme = $theme['slug'];
-					switch_theme( $theme['slug'] );
+					$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme_name );
+					$this->installed_theme = $theme_slug;
+					$this->activate_theme( $theme_slug );
 				}
 			} else {
-				$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme['name'] );
+				$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme_name );
 			}
 		} catch ( \Exception $error ) {
-			$result['failed'][ $theme['slug'] ] = $error->getMessage();
+			$result['failed'][ $theme_slug ] = $error->getMessage();
 		}
 
 		return $result;
@@ -137,6 +149,7 @@ class Site_Settings extends Import_Runner_Base {
 			'active_kit_id' => $this->active_kit_id,
 			'imported_kit_id' => $this->imported_kit_id,
 			'installed_theme' => $this->installed_theme,
+			'previous_active_theme' => $this->previous_active_theme,
 		];
 	}
 }
