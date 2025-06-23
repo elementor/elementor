@@ -31,7 +31,7 @@ export default function useMenuItems( path ) {
 					</span>
 				</>
 			);
-		} else if ( isConnected && ! isCloudKitsAvailable && ! isCheckingEligibility ) {
+		} else if ( isConnected && ! isCloudKitsAvailable ) {
 			myWebsiteTemplatesLabel = (
 				<>
 					{ __( 'My Website Templates', 'elementor' ) }
