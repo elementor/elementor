@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import { fetchCloudKitsEligibility } from 'elementor-app/utils/cloud-kits.js';
+import { fetchCloudKitsEligibility } from '../utils/cloud-kits.js';
 
 export const KEY = 'cloud-kits-availability';
 
@@ -15,4 +15,4 @@ export default function useCloudKitsEligibility( options = {} ) {
 		fetchCloudKitsEligibility,
 		options,
 	);
-}
+} 
