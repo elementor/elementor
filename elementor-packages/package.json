@@ -9,7 +9,7 @@
   "packageManager": "npm@10.0.0",
   "scripts": {
     "start": "npm start --workspace=apps/demo",
-    "build": "npx -y turbo build",
+    "build": "turbo build",
     "build:tools": "turbo build --filter=\"./packages/tools/*\"",
     "dev": "concurrently -n turbo,tsc -c red,blue 'turbo dev --parallel' 'tsc -w --preserveWatchOutput'",
     "test": "jest --config='./jest.config.js'",

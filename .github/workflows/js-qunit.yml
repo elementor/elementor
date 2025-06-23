@@ -30,7 +30,7 @@ jobs:
           node-version: 20.x
           cache: npm
       - name: Install Dependencies
-        run: npm ci
+        run: npm run prepare-environment:ci
       - name: "Build Scripts"
         run: npm run build:ci
       - name: "Run Qunit"

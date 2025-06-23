@@ -15,6 +15,7 @@
 		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
 		"build:ci": "cd elementor-packages && npm run build && cd .. && npx grunt webpack:production",
 		"prepare-environment": "npm ci && composer install && cd elementor-packages && npm ci",
+		"prepare-environment:ci": "npm ci && cd elementor-packages && npm ci",
 		"reinstall": "rm -rf node_modules elementor-packages/node_modules && npm cache clean --force && npm ci && cd elementor-packages && npm ci",
 		"test:setup:playwright:mac": "npm run build && npm run start-local-server && npm run test:setup:playwright && npx playwright install chromium",
 		"wp-env": "wp-env",
