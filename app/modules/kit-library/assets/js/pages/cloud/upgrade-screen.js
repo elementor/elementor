@@ -9,7 +9,11 @@ export default function UpgradeScreen( {
 	menuItems,
 	forceRefetch,
 	isFetching,
+	cloudKitsData,
 } ) {
+	const hasSubscription = '' !== cloudKitsData?.subscription_id;
+	const url = hasSubscription ? 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/' : 'https://go.elementor.com/go-pro-cloud-website-templates-library/';
+
 	return (
 		<Layout
 			sidebar={
@@ -40,7 +44,7 @@ export default function UpgradeScreen( {
 						</Text>
 						<Button
 							text={ __( 'Upgrade now', 'elementor' ) }
-							url="https://go.elementor.com/go-pro-cloud-website-templates-library/"
+							url={ url }
 							target="_blank"
 							className="e-kit-library__upgrade-button"
 						/>
@@ -55,4 +59,5 @@ UpgradeScreen.propTypes = {
 	menuItems: PropTypes.array.isRequired,
 	forceRefetch: PropTypes.func.isRequired,
 	isFetching: PropTypes.bool.isRequired,
+	cloudKitsData: PropTypes.object.isRequired,
 };
