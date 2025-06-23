@@ -86,6 +86,7 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'aspect-ratio', String_Prop_Type::generate( '16/9' ) )
+						->add_prop( 'overflow', String_Prop_Type::generate( 'hidden' ) )
 				),
 		];
 	}
