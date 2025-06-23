@@ -24,7 +24,7 @@ const QueryClientWrapper = ( { children }: PropsWithChildren ) => (
 );
 
 export const renderControl = ( ui: React.ReactElement, props: RenderControlProps ) => {
-	const { bind = '', controlActions = [], setValue: setValueProp = jest.fn(), isDisabled, placeholder } = props;
+	const { bind = '', controlActions = [], setValue: setValueProp = jest.fn(), disabled } = props;
 
 	const propType: ObjectPropType = {
 		key: '',
@@ -42,17 +42,10 @@ export const renderControl = ( ui: React.ReactElement, props: RenderControlProps
 	};
 
 	const value = { [ bind ]: props.value };
-	const placeholderValue = placeholder ? { [ bind ]: placeholder } : undefined;
 
 	const { rerender, ...rest } = renderWithTheme(
 		<QueryClientWrapper>
-			<PropProvider
-				propType={ propType }
-				value={ value }
-				setValue={ setValue }
-				isDisabled={ isDisabled }
-				placeholder={ placeholderValue }
-			>
+			<PropProvider propType={ propType } value={ value } setValue={ setValue } disabled={ disabled }>
 				<PropKeyProvider bind={ bind }>
 					<ControlActionsProvider items={ controlActions }>{ ui }</ControlActionsProvider>
 				</PropKeyProvider>
@@ -65,13 +58,7 @@ export const renderControl = ( ui: React.ReactElement, props: RenderControlProps
 		rerender: ( rerenderUi: React.ReactElement, rerenderProps = {} ) => {
 			rerender(
 				<QueryClientWrapper>
-					<PropProvider
-						propType={ propType }
-						value={ value }
-						setValue={ setValue }
-						placeholder={ placeholderValue }
-						{ ...rerenderProps }
-					>
+					<PropProvider propType={ propType } value={ value } setValue={ setValue } { ...rerenderProps }>
 						<PropKeyProvider bind={ bind }>
 							<ControlActionsProvider items={ controlActions }>{ rerenderUi }</ControlActionsProvider>
 						</PropKeyProvider>
