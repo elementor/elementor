@@ -11,12 +11,12 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	let page: Page;
 
 	const atomicWidgets = [
-		// { name: 'e-heading', title: 'Heading' },
-		// { name: 'e-image', title: 'Image' },
-		// { name: 'e-paragraph', title: 'Paragraph' },
-		// { name: 'e-svg', title: 'SVG' },
-		// { name: 'e-button', title: 'Button' },
-		// { name: 'e-divider', title: 'Divider' },
+		{ name: 'e-heading', title: 'Heading' },
+		{ name: 'e-image', title: 'Image' },
+		{ name: 'e-paragraph', title: 'Paragraph' },
+		{ name: 'e-svg', title: 'SVG' },
+		{ name: 'e-button', title: 'Button' },
+		{ name: 'e-divider', title: 'Divider' },
 		{ name: 'e-youtube', title: 'YouTube' },
 	];
 
@@ -73,24 +73,25 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await test.step( 'Add widget and check editor canvas', async () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
+
 					widgetSelector = editor.getWidgetSelector( widgetId );
 
-					if ( 'e-youtube' === widget.name ) {
-						// await page.waitForTimeout( 2000 );
-
-					}
-
-					// For YouTube widget, we need to specifically target the base element with class "e-youtube-base"
 					const selector = 'e-youtube' === widget.name
 						? `${ widgetSelector }.e-youtube-base`
 						: widgetSelector;
-					await expect( editor.getPreviewFrame().locator( selector ) ).toBeVisible( { timeout: 2000 } );
-					await expect( page.locator( selector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+
+					await editor.isUiStable( editor.getPreviewFrame().locator( selector ) );
+
+					await expect( editor.getPreviewFrame().locator( selector ) ).toBeVisible();
+					await expect( editor.getPreviewFrame().locator( selector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 				} );
 
 				await test.step( 'Check frontend display', async () => {
 					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
+
+					await editor.isUiStable( editor.page.locator( containerSelector ) );
+
 					await expect.soft( editor.page.locator( containerSelector ) )
 						.toHaveScreenshot( `${ widget.name }-published.png` );
 				} );
