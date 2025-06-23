@@ -63,7 +63,6 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 		exportContext.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: KIT_SOURCE_MAP.CLOUD } );
 	};
 
-	// Determine which cloud button to show
 	const renderCloudButton = () => {
 		if ( ! isConnected ) {
 			return (
