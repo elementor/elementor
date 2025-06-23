@@ -54,14 +54,16 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
-					Svg_Control::bind_to( 'svg' ),
+					Svg_Control::bind_to( 'svg' )
+						->set_label( __( 'SVG', 'elementor' ) ),
 				] ),
 		];
 	}
 
 	protected function get_settings_controls(): array {
 		return [
-			Link_Control::bind_to( 'link' ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) ),
 		];
 	}
 

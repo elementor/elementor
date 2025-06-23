@@ -129,6 +129,27 @@
 		}
 	}
 
+	&-shape_divider {
+
+		&_top,
+		&_bottom {
+			.elementor-visual-choice-element-image label {
+				padding: 4px;
+			}
+
+			img {
+				aspect-ratio: 4 / 1;
+				object-fit: cover;
+				object-position: center;
+			}
+		}
+
+		&_bottom {
+			img {
+				rotate: X 180deg;
+			}
+		}
+	}
 
 	&-custom_css_pro,
 	&-custom_attributes_pro {
@@ -167,7 +188,8 @@
 			.eicon {
 
 				&:before {
-					content: getValueByDirection('\e90a', '\e909');
+					content: '\e90a';
+					scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 				}
 			}
 		}
@@ -335,16 +357,13 @@
 	}
 }
 
-@if $direction == rtl {
-
 	.elementor-control-start-end {
 
 		.eicon-h-align-left,
 		.eicon-h-align-right {
-			transform: rotate(180deg);
+			scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 		}
 	}
-}
 
 .elementor-update-preview {
 	margin: 15px 15px 0;
