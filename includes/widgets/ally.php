@@ -178,7 +178,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'button_event' => 'pluginActions',
 				'plugin_action' => [
 					'action' => $plugin_installed ? 'activate' : 'installAndActivate',
-					'url' => hints::get_plugin_action_url( $plugin ),
+                                        'url' => Hints::get_plugin_action_url( $plugin ),
 					'loaderTab' => true,
 					'followLink' => admin_url( 'admin.php?page=accessibility-settings' ),
 					'pluginSlug' => 'pojo-accessibility',
