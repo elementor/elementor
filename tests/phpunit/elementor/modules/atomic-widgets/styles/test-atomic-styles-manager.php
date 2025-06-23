@@ -28,7 +28,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		global $wp_filesystem;
 		$wp_filesystem = $this->filesystemMock;
 
-		remove_all_actions( 'elementor/atomic-widget/styles/enqueue' );
+		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
 		remove_all_actions( 'elementor/frontend/after_enqueue_post_styles' );
 	}
 
@@ -39,7 +39,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$wp_filesystem = null;
 
 		global $wp_styles;
-		$wp_styles = null;
+		$wp_styles = new \WP_Styles();
 	}
 
 	private function get_test_style_defs() {
