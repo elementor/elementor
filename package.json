@@ -13,6 +13,7 @@
 		"start": "cd elementor-packages && npm run build:tools && cd .. && npm run styles && npm run scripts",
 		"serve": "cd elementor-packages && npm run build:tools && cd .. && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\"",
 		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
+		"build:ci": "cd elementor-packages && npm run build && cd .. && npx grunt webpack:production",
 		"prepare-environment": "npm ci && composer install && cd elementor-packages && npm ci",
 		"reinstall": "rm -rf node_modules elementor-packages/node_modules && npm cache clean --force && npm ci && cd elementor-packages && npm ci",
 		"test:setup:playwright:mac": "npm run build && npm run start-local-server && npm run test:setup:playwright && npx playwright install chromium",
@@ -124,7 +125,8 @@
 		"styled-components": "^6.1.13",
 		"terser-webpack-plugin": "^5.3.11",
 		"ts-node": "^10.9.2",
-		"webpack": "^5.97.1"
+		"webpack": "^5.97.1",
+		"write": "^2.0.0"
 	},
 	"dependencies": {
 		"@elementor/icons": "1.44.0",
