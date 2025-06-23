@@ -35,7 +35,9 @@
 		"scripts:watch": "grunt watch_scripts",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
-		"lint": "eslint . && cd elementor-packages && npm run lint"
+		"lint": "eslint . && cd elementor-packages && npm run lint",
+		"setup:testing": "bash scripts/setup-testing.sh",
+		"restart:testing": "bash scripts/setup-testing.sh --restart"
 	},
 	"engines": {
 		"node": ">=20.19.0",
