@@ -22,8 +22,6 @@ export default function useMenuItems( path ) {
 
 		let myWebsiteTemplatesLabel = __( 'My Website Templates', 'elementor' );
 
-		console.log( 'isCloudKitsAvailable', isCloudKitsAvailable );
-
 		if ( ! isConnected ) {
 			myWebsiteTemplatesLabel = (
 				<>
