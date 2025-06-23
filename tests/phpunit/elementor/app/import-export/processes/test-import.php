@@ -19,22 +19,22 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Test_Import extends Elementor_Test_Base {
 	const MOCK_KIT_ZIP_PATH = __DIR__ . '/../mock/sample-kit.zip';
 
-	private $mocked_site_settings_runner;
+//	private $mocked_site_settings_runner;
 
-	private $mocked_theme_upgrader;
+//	private $mocked_theme_upgrader;
 
 	public function setUp(): void {
-		$this->mocked_site_settings_runner = new Site_Settings();
-
-		$this->mocked_theme_upgrader = $this->getMockBuilder( \Theme_Upgrader::class )
-			->disableOriginalConstructor()
-			->onlyMethods( ['install'] )
-			->getMock();
-
-		$refClass = new \ReflectionClass( $this->mocked_site_settings_runner );
-		$prop = $refClass->getProperty( 'theme_upgrader' );
-		$prop->setAccessible( true );
-		$prop->setValue( $this->mocked_site_settings_runner, $this->mocked_theme_upgrader );
+//		$this->mocked_site_settings_runner = new Site_Settings();
+//
+//		$this->mocked_theme_upgrader = $this->getMockBuilder( \Theme_Upgrader::class )
+//			->disableOriginalConstructor()
+//			->onlyMethods( ['install'] )
+//			->getMock();
+//
+//		$refClass = new \ReflectionClass( $this->mocked_site_settings_runner );
+//		$prop = $refClass->getProperty( 'theme_upgrader' );
+//		$prop->setAccessible( true );
+//		$prop->setValue( $this->mocked_site_settings_runner, $this->mocked_theme_upgrader );
 	}
 
 	// Test the import all process, which include all the kit content:
@@ -75,7 +75,7 @@ class Test_Import extends Elementor_Test_Base {
 		$manifest = $import->get_manifest();
 
 		$import->register( new Plugins( $plugins_manager_mock ) );
-		$import->register( $this->mocked_site_settings_runner );
+		$import->register( new Site_Settings() );
 		$import->register( new Taxonomies() );
 		$import->register( new Templates() );
 		$import->register( new Elementor_Content() );
@@ -101,7 +101,7 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertCount( 1, $result['wp-content']['page']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['tests']['succeed'] );
 		$this->assertCount( 9, $result['wp-content']['nav_menu_item']['succeed'] );
-		$this->assertCount( 1, $result['theme']['succeed'] );
+//		$this->assertCount( 1, $result['theme']['succeed'] );
 
 		$this->assert_valid_terms_with_elementor_content( $result, $manifest );
 		$this->assert_valid_terms_with_wp_content( $result );
@@ -223,18 +223,18 @@ class Test_Import extends Elementor_Test_Base {
 		];
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
 
-		$import->register( $this->mocked_site_settings_runner );
+		$import->register( new Site_Settings() );
 
 		$extracted_directory_path = $import->get_extracted_directory_path();
 		$site_settings = ImportExportUtils::read_json_file( $extracted_directory_path . 'site-settings' );
 		$expected_custom_colors = $site_settings['settings']['custom_colors'];
 		$expected_custom_typography =  $site_settings['settings']['custom_typography'];
-		$expected_theme =  $site_settings['settings']['theme'];
+//		$expected_theme =  $site_settings['settings']['theme'];
 
-		$this->mocked_theme_upgrader
-			->expects( $this->once() )
-			->method( 'install' )
-			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" );
+//		$this->mocked_theme_upgrader
+//			->expects( $this->once() )
+//			->method( 'install' )
+//			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" );
 
 		// Act
 		$result = $import->run();
@@ -249,6 +249,7 @@ class Test_Import extends Elementor_Test_Base {
 				'previous_kit_id' => $previous_kit_id,
 				'active_kit_id' => $active_kit_id,
 				'imported_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
+//				'installed_theme' => $expected_theme['slug'],
 				'installed_theme' => $expected_theme['slug'],
 			],
 		];

@@ -117,12 +117,12 @@ class Site_Settings extends Import_Runner_Base {
 				if ( is_wp_error( $import ) ) {
 					$result['failed'][ $theme['slug'] ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme['name'] );
 				} else {
-					$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme['name'] );;
+					$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme['name'] );
 					$this->installed_theme = $theme['slug'];
 					switch_theme( $theme['slug'] );
 				}
 			} else {
-				$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme['name'] );;
+				$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme['name'] );
 			}
 		} catch ( \Exception $error ) {
 			$result['failed'][ $theme['slug'] ] = $error->getMessage();
