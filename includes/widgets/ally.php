@@ -120,7 +120,15 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 
                 if ( ! class_exists( '\EA11y\Plugin' ) ) {
 			try {
-				include_once EA11Y_PATH . '/plugin.php';
+                                if ( defined( 'EA11Y_PATH' ) ) {
+                                        include_once EA11Y_PATH . '/plugin.php';
+                                } else {
+                                        // Fallback: try to determine plugin path
+                                        $plugin_path = WP_PLUGIN_DIR . '/pojo-accessibility';
+                                        if ( file_exists( $plugin_path . '/plugin.php' ) ) {
+                                                include_once $plugin_path . '/plugin.php';
+                                        }
+                                }
 			} catch ( \Exception $e ) {
 				$this->start_controls_section(
 					'error_notice',
