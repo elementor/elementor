@@ -1,4 +1,4 @@
-import { useContext, useRef, useEffect, useState } from 'react';
+import { useContext, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { ExportContext } from '../../../../../context/export-context/export-context-provider';
@@ -12,9 +12,8 @@ import './export-plugins-footer.scss';
 
 export default function ExportPluginsFooter( { isKitReady } ) {
 	const exportContext = useContext( ExportContext );
-	const { isConnected, handleConnectSuccess, handleConnectError } = useConnectState();
+	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
 	const connectButtonRef = useRef();
-	const [ isProcessingConnection, setIsProcessingConnection ] = useState( false );
 
 	const { data: isCloudKitsEligible = false, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
@@ -32,18 +31,18 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 			},
 			success: () => {
 				handleConnectSuccess();
-				setIsProcessingConnection( true );
+				setConnecting( true );
 				refetchEligibility();
 			},
 			error: () => {
 				handleConnectError();
 			},
 		} );
-	}, [ handleConnectSuccess, handleConnectError, refetchEligibility ] );
+	}, [ handleConnectSuccess, handleConnectError, setConnecting, refetchEligibility ] );
 
 	// Handle post-connection flow
 	useEffect( () => {
-		if ( ! isProcessingConnection || isCheckingEligibility ) {
+		if ( ! isConnecting || isCheckingEligibility ) {
 			return;
 		}
 
@@ -53,7 +52,14 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 			exportContext.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: KIT_SOURCE_MAP.CLOUD } );
 			window.location.href = elementorAppConfig.base_url + '#/export/process';
 		}
-	}, [ isProcessingConnection, isCheckingEligibility, isCloudKitsEligible, exportContext ] );
+	}, [ isConnecting, isCheckingEligibility, isCloudKitsEligible, exportContext ] );
+
+	// Reset connecting state when eligibility check completes
+	useEffect( () => {
+		if ( isConnecting && ! isCheckingEligibility ) {
+			setConnecting( false );
+		}
+	}, [ isConnecting, isCheckingEligibility, setConnecting ] );
 
 	const handleUpgradeClick = () => {
 		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
@@ -76,7 +82,7 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 			);
 		}
 
-		if ( isProcessingConnection || isCheckingEligibility ) {
+		if ( isConnecting || isCheckingEligibility ) {
 			return (
 				<Button
 					variant="outlined"
