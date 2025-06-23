@@ -40,7 +40,6 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 		} );
 	}, [ handleConnectSuccess, handleConnectError, setConnecting, refetchEligibility ] );
 
-	// Handle post-connection flow
 	useEffect( () => {
 		if ( ! isConnecting || isCheckingEligibility ) {
 			return;
@@ -54,7 +53,6 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 		}
 	}, [ isConnecting, isCheckingEligibility, isCloudKitsEligible, exportContext ] );
 
-	// Reset connecting state when eligibility check completes
 	useEffect( () => {
 		if ( isConnecting && ! isCheckingEligibility ) {
 			setConnecting( false );
