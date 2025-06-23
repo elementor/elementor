@@ -61,10 +61,13 @@ jobs:
 
       - name: Cherry-Pick and Create PRs
         if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_USER_LOGIN: ${{ github.event.pull_request.user.login }}
+          LABEL_NAME: ${{ github.event.label.name }}
         run: |
           PR_NUMBER="${{ github.event.pull_request.number }}"
           MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
-          ORIG_TITLE="${{ github.event.pull_request.title }}"
           ORIG_URL="${{ github.event.pull_request.html_url }}"
 
           git config user.name "github-actions[bot]"
@@ -99,13 +102,13 @@ jobs:
                   CONFLICT_TRIGGER_INFO=""
                   if [ "${{ github.event.action }}" = "labeled" ]; then
                     CONFLICT_TRIGGER_INFO="
-                  **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
+                  **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
                   fi
                   
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
-                    --title "🔧 [CONFLICTS] Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                    --title "🔧 [CONFLICTS] Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${PR_TITLE}" \
                     --body "⚠️ **Manual Resolution Required**
 
                   This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
@@ -151,17 +154,17 @@ jobs:
               TRIGGER_INFO=""
               if [ "${{ github.event.action }}" = "labeled" ]; then
                 TRIGGER_INFO="
-                **Trigger:** Label \`${{ github.event.label.name }}\` added to closed PR"
+                **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
               fi
               
               gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
-                --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${PR_TITLE}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}
-                **Original Author:** @${{ github.event.pull_request.user.login }}${TRIGGER_INFO}"
+                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}"
             fi
           done
         shell: bash
