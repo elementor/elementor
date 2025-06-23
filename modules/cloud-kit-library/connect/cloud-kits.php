@@ -58,7 +58,10 @@ class Cloud_Kits extends Library {
 		$quota = $this->get_quota();
 
 		if ( is_wp_error( $quota ) ) {
-			return false;
+			return [
+				'is_eligible' => false,
+				'subscription_id' => '',
+			];
 		}
 
 		return [
