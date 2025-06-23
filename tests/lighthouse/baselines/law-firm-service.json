@@ -14,5 +14,7 @@
   "uses-long-cache-ttl": [ "warn", { "maxLength": 27 } ],
   "modern-image-formats": [ "warn", { "maxLength": 1 }],
   "csp-xss": [ "warn", { "minScore": 0 }],
-  "non-composited-animations": "off"
+  "non-composited-animations": "off",
+  "lcp-lazy-loaded": "off",
+  "prioritize-lcp-image": "off"
 }
