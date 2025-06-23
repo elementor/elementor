@@ -107,7 +107,7 @@ class Site_Settings extends Import_Runner_Base {
 	}
 
 	protected function activate_theme( $slug ) {
-		return switch_to_blog( $slug );
+		switch_theme( $slug );
 	}
 
 	public function import_theme( array $data ) {
