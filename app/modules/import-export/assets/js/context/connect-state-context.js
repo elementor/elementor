@@ -50,4 +50,4 @@ export function ConnectStateProvider( { children } ) {
 
 ConnectStateProvider.propTypes = {
 	children: PropTypes.node.isRequired,
-}; 
+};

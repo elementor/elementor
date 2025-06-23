@@ -15,4 +15,4 @@ export default function useCloudKitsEligibility( options = {} ) {
 		fetchCloudKitsEligibility,
 		options,
 	);
-} 
+}
