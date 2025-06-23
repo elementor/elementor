@@ -164,7 +164,7 @@ module.exports = elementorModules.Module.extend( {
 			    inset-inline-start: 0;
 			}
 			.elementor-loader-box:nth-of-type(2) {
-			    top: 0;
+			    inset-block-start: 0;
 			    animation-delay: calc(1.8s / 4 * -1);
 			}
 			.elementor-loader-box:nth-of-type(3) {
