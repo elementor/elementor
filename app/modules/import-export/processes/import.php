@@ -16,10 +16,8 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Plugins;
 use Elementor\App\Modules\ImportExport\Runners\Import\Site_Settings;
 use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
-use Elementor\App\Modules\ImportExport\Runners\Import\Themes;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Module;
-use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';

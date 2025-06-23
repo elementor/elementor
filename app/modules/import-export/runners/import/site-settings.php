@@ -98,7 +98,6 @@ class Site_Settings extends Import_Runner_Base {
 	private function install_theme( $slug, $version ) {
 		$download_url = "https://downloads.wordpress.org/theme/{$slug}.{$version}.zip";
 
-		var_dump("TRYING TO call install in Site_settings runner for url:", $download_url);
 		return $this->theme_upgrader->install( $download_url );
 	}
 
@@ -117,7 +116,6 @@ class Site_Settings extends Import_Runner_Base {
 
 				if ( is_wp_error( $import ) ) {
 					$result['failed'][ $theme['slug'] ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme['name'] );
-
 				} else {
 					$result['succeed'][ $theme['slug'] ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme['name'] );;
 					$this->installed_theme = $theme['slug'];
