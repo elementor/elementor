@@ -33,24 +33,27 @@ export default function ExportPluginsFooter( { isKitReady } ) {
 			success: () => {
 				handleConnectSuccess();
 				setIsProcessingConnection( true );
-				
-				refetchEligibility().then( ( result ) => {
-					const newEligibility = result.data;
-					if ( ! newEligibility ) {
-						window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
-					} else {
-						exportContext.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: KIT_SOURCE_MAP.CLOUD } );
-						window.location.href = elementorAppConfig.base_url + '#/export/process';
-					}
-				} ).catch( () => {
-					window.location.reload();
-				} );
+				refetchEligibility();
 			},
 			error: () => {
 				handleConnectError();
 			},
 		} );
-	}, [ handleConnectSuccess, handleConnectError, refetchEligibility, exportContext ] );
+	}, [ handleConnectSuccess, handleConnectError, refetchEligibility ] );
+
+	// Handle post-connection flow
+	useEffect( () => {
+		if ( ! isProcessingConnection || isCheckingEligibility ) {
+			return;
+		}
+
+		if ( ! isCloudKitsEligible ) {
+			window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+		} else {
+			exportContext.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: KIT_SOURCE_MAP.CLOUD } );
+			window.location.href = elementorAppConfig.base_url + '#/export/process';
+		}
+	}, [ isProcessingConnection, isCheckingEligibility, isCloudKitsEligible, exportContext ] );
 
 	const handleUpgradeClick = () => {
 		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
