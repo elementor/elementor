@@ -172,11 +172,8 @@
 
 		.elementor-panel-heading-toggle {
 
-			.eicon {
-
-				&:before {
-					content: '\e92a';
-				}
+			i {
+				transform: rotate(90deg);
 			}
 		}
 	}
@@ -185,12 +182,8 @@
 
 		.elementor-panel-heading-toggle {
 
-			.eicon {
-
-				&:before {
-					content: '\e90a';
-					scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
-				}
+			i {
+				scale: calc(1 * var(--direction-multiplier)) 1; // Flip in RTL
 			}
 		}
 	}
