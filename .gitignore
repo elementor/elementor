@@ -42,3 +42,7 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
+.turbo/
+elementor-packages/node_modules/
+elementor-packages/packages/**/dist/
+elementor-packages/docs/api/
