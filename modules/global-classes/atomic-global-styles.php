@@ -24,7 +24,7 @@ class Atomic_Global_Styles {
 		$get_styles = function () {
 			$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
-			return  Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
+			return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
 				$item['id'] = $item['label'];
 				return $item;
 			})->all();

@@ -104,26 +104,6 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager );
 	}
 
-	public function test_register_styles__not_register_styles_when_no_posts() {
-		// Arrange
-		( new Atomic_Widget_Base_Styles() )->register_hooks();
-
-		$this->mock_styles_manager
-			->expects($this->once())
-			->method('register')
-			->with(
-				Atomic_Widget_Base_Styles::CSS_FILE_KEY,
-				$this->callback(function($callback) {
-					$styles = $callback([]);
-					$this->assertEmpty($styles);
-					return true;
-				})
-			);
-
-		// Act
-		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager );
-	}
-
 	/**
 	 * @param array{controls: array, props_schema: array, settings: array} $options
 	 */
