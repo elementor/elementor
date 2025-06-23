@@ -118,7 +118,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 			return;
 		}
 
-		if ( ! class_exists( ' \EA11y\Plugin' ) ) {
+                if ( ! class_exists( '\EA11y\Plugin' ) ) {
 			try {
 				include_once EA11Y_PATH . '/plugin.php';
 			} catch ( \Exception $e ) {
