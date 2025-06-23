@@ -54,14 +54,17 @@ class Cloud_Kits extends Library {
 		}
 	}
 
-	public function is_eligible() {
+	public function check_eligibility() {
 		$quota = $this->get_quota();
 
 		if ( is_wp_error( $quota ) ) {
 			return false;
 		}
 
-		return isset( $quota['threshold'] ) && 0 !== $quota['threshold'];
+		return [
+			'is_eligible' => isset( $quota['threshold'] ) && 0 !== $quota['threshold'],
+			'subscription_id' => ! empty( $quota['subscriptionId'] ) ? $quota['subscriptionId'] : '',
+		];
 	}
 
 	public function create_kit( $title, $description, $content_file_data, $preview_file_data, array $includes ) {
