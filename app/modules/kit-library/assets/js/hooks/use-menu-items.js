@@ -11,9 +11,11 @@ import useConnectState from './use-connect-state';
 export default function useMenuItems( path ) {
 	const { isConnected } = useConnectState();
 
-	const { data: isCloudKitsAvailable } = useCloudKitsEligibility( {
+	const { data: cloudKitsData } = useCloudKitsEligibility( {
 		enabled: isConnected,
 	} );
+
+	const isCloudKitsAvailable = cloudKitsData?.is_eligible;
 
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
