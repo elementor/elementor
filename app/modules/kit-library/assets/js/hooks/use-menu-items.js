@@ -15,12 +15,14 @@ export default function useMenuItems( path ) {
 		enabled: isConnected,
 	} );
 
-	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
+	const isCloudKitsAvailable = cloudKitsData?.is_eligible;
 
 	return useMemo( () => {
 		const page = path.replace( '/', '' );
 
 		let myWebsiteTemplatesLabel = __( 'My Website Templates', 'elementor' );
+
+		console.log( 'isCloudKitsAvailable', isCloudKitsAvailable );
 
 		if ( ! isConnected ) {
 			myWebsiteTemplatesLabel = (
@@ -31,7 +33,7 @@ export default function useMenuItems( path ) {
 					</span>
 				</>
 			);
-		} else if ( isConnected && ! isCloudKitsAvailable ) {
+		} else if ( isConnected && false === isCloudKitsAvailable ) {
 			myWebsiteTemplatesLabel = (
 				<>
 					{ __( 'My Website Templates', 'elementor' ) }
