@@ -27,10 +27,13 @@ module.exports = elementorModules.Module.extend( {
 		return response;
 	},
 
-	async install( url ) {
-		const installResponse = await this.asyncFetch( url );
-		return installResponse;
-	},
+        async install( eventData ) {
+          if ( ! eventData ) {
+            return;
+          }
+          const installResponse = await this.asyncFetch( eventData.url.replaceAll( '&amp;', '&' ) );
+          return installResponse;
+        }
 
 	async activate( eventData ) {
 		if ( ! eventData ) {
