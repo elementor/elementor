@@ -7,7 +7,6 @@ use Elementor\App\Modules\ImportExport\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Files\Uploads_Manager;
-use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Modules\System_Info\Reporters\Server;
 use Elementor\Plugin;
 use Elementor\Tools;
@@ -144,8 +143,6 @@ class Module extends BaseModule {
 			$intro_text_link
 		);
 
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->is_eligible();
-
 		$content_data = [
 			'export' => [
 				'title' => esc_html__( 'Export this website', 'elementor' ),
@@ -156,19 +153,19 @@ class Module extends BaseModule {
 				'description' => esc_html__( 'You can download this website as a .zip file, or upload it to the library.', 'elementor' ),
 			],
 			'import' => [
-				'title' => esc_html__( 'Apply a Website Template', 'elementor' ),
+				'title' => esc_html__( 'Import website templates', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
+					'text' => esc_html__( 'Import', 'elementor' ),
 				],
 				'description' => esc_html__( 'You can import design and settings from a .zip file or choose from the library.', 'elementor' ),
 			],
 		];
 
-		if ( $is_cloud_kits_available ) {
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
-				'text' => esc_html__( 'Open the Library', 'elementor' ),
+				'text' => esc_html__( 'Import from library', 'elementor' ),
 			];
 		}
 

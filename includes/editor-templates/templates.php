@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-template-library-header-back">
-	<i class="eicon-" aria-hidden="true"></i>
+	<i class="eicon-chevron-left" aria-hidden="true"></i>
 	<span><?php echo esc_html__( 'Back to Library', 'elementor' ); ?></span>
 </script>
 
