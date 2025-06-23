@@ -73,7 +73,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await test.step( 'Add widget and check editor canvas', async () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
-
 					widgetSelector = editor.getWidgetSelector( widgetId );
 
 					const selector = 'e-youtube' === widget.name
