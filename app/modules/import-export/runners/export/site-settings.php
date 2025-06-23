@@ -39,7 +39,7 @@ class Site_Settings extends Export_Runner_Base {
 		$theme_data = $this->export_theme();
 
 		if ( $theme_data ) {
-//			$manifest_data['theme'] = $theme_data;
+			$manifest_data['theme'] = $theme_data;
 		}
 
 		$manifest_data['site-settings'] = $kit_tabs;
