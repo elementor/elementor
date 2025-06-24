@@ -110,7 +110,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			.locator( '[role="button"]' );
 
 		await controlButton.click();
-		//await editor.page.waitForSelector( '[role="listbox"], [role="menu"]', { timeout: timeouts.expect } );
+                await editor.page.waitForSelector( '[role="listbox"], [role="menu"]', { timeout: timeouts.expect } );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
