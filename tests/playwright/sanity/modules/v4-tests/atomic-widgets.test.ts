@@ -17,6 +17,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-svg', title: 'SVG' },
 		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
+		{ name: 'e-youtube', title: 'YouTube' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -40,14 +41,13 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 
 	test( 'Atomic elements tab UI', async () => {
 		editor = await wpAdmin.openNewPage();
-
 		await editor.openElementsPanel();
 
 		const elementsPanel = editor.page.locator( editorSelectors.panels.elements.elementorPanel );
+
 		await elementsPanel.hover();
 		await editor.page.mouse.wheel( 0, 300 );
 
-		await editor.openElementsPanel();
 		await expect.soft( editor.page.locator( editorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
 	} );
 
@@ -74,13 +74,18 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
 
-					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
-					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					await expect( page.locator( widgetSelector ).first() ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
 				} );
 
 				await test.step( 'Check frontend display', async () => {
 					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
+
+					if ( 'e-youtube' === widget.name ) {
+						await editor.isUiStable( editor.page.locator( containerSelector ) );
+					}
+
 					await expect.soft( editor.page.locator( containerSelector ) )
 						.toHaveScreenshot( `${ widget.name }-published.png` );
 				} );
