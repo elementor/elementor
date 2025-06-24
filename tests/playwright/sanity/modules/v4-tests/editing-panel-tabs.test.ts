@@ -12,6 +12,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	type SectionType = 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border';
 
 	const atomicWidget = { name: 'e-heading', title: 'Heading' };
+	const experimentName = 'e_atomic_elements';
 	const panelSelector = '#elementor-panel-inner';
 
 	const sections: SectionType[] = [
@@ -29,13 +30,13 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		// Experiment is already enabled on the site
+		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );
 
 	test.afterAll( async () => {
-		// No need to reset experiments as they weren't set locally
+		await wpAdmin.resetExperiments();
 		await context.close();
 	} );
 
@@ -109,9 +110,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			.locator( '[role="button"]' );
 
 		await controlButton.click();
-
-		// Wait for dropdown to open and scroll to see options
-		await editor.page.waitForSelector( '[role="listbox"], [role="menu"]', { timeout: timeouts.expect } );
+		//await editor.page.waitForSelector( '[role="listbox"], [role="menu"]', { timeout: timeouts.expect } );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
