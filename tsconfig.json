@@ -29,7 +29,7 @@
     },
     "paths": {
         "@elementor/generate-wordpress-asset-file-webpack-plugin": [
-            "elementor-packages/packages/core/generate-wordpress-asset-file-webpack-plugin/src"
+            "packages/packages/core/generate-wordpress-asset-file-webpack-plugin/src"
         ]
     }
 }
