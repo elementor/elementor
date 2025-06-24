@@ -1,4 +1,4 @@
-import Paper from '@elementor/ui/Paper';
+import { Paper } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 export default function Footer( props ) {

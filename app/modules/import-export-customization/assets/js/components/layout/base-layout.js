@@ -1,8 +1,6 @@
 import { LocationProvider } from '@reach/router';
 import router from '@elementor/router';
-import { ThemeProvider, DirectionProvider } from '@elementor/ui';
-import Stack from '@elementor/ui/Stack';
-import Box from '@elementor/ui/Box';
+import { ThemeProvider, DirectionProvider, Stack, Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 export default function BaseLayout( props ) {
@@ -14,9 +12,12 @@ export default function BaseLayout( props ) {
 		...rest
 	} = props;
 
+	const isDarkMode = document.body.classList.contains( 'eps-theme-dark' );
+	const colorScheme = isDarkMode ? 'dark' : 'light';
+
 	return (
 		<DirectionProvider rtl={ false }>
-			<ThemeProvider colorScheme={ window.elementor?.getPreferences?.( 'ui_theme' ) || 'auto' }>
+			<ThemeProvider colorScheme={ colorScheme }>
 				<LocationProvider history={ router.appHistory }>
 					<Stack
 						direction="column"

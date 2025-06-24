@@ -1,10 +1,7 @@
-import Button from '@elementor/ui/Button';
-import Box from '@elementor/ui/Box';
-import Typography from '@elementor/ui/Typography';
-import Stack from '@elementor/ui/Stack';
-import IconButton from '@elementor/ui/IconButton';
+import { Button, Box, Typography, Stack, IconButton } from '@elementor/ui';
 
 import { BaseLayout, TopBar, Footer } from '../components/layout';
+import { XIcon } from '../components/icons';
 
 export default function Index() {
 	const handleClose = () => {
@@ -53,10 +50,12 @@ export default function Index() {
 				</Button>
 				<IconButton
 					onClick={ handleClose }
-					sx={ { ml: 1 } }
+					sx={ { 
+						ml: 1,
+					} }
 					aria-label={ __( 'Close', 'elementor' ) }
 				>
-					<Box component="i" className="eicon-close" />
+					<XIcon />
 				</IconButton>
 			</Box>
 		</>
