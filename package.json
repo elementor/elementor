@@ -16,6 +16,7 @@
 		"prepare-environment": "npm ci && composer install && cd packages && npm ci",
 		"prepare-environment:ci": "npm ci && cd packages && npm ci",
 		"reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm ci && cd packages && npm ci",
+		"hard-reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm i && cd packages && npm i",
 		"test:setup:playwright:mac": "npm run build && npm run start-local-server && npm run test:setup:playwright && npx playwright install chromium",
 		"wp-env": "wp-env",
 		"test:linux": "node ./run-on-linux.js",
