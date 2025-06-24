@@ -103,6 +103,24 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
+		// Wait for the font family dropdown to be fully loaded and interactable
+		const fontFamilyContainer = editor.page.locator( 'div.MuiGrid-container' ).filter( {
+			has: editor.page.locator( 'label', { hasText: 'Font family' } ),
+		} );
+
+		await fontFamilyContainer.waitFor( { state: 'visible', timeout: 10000 } );
+
+		const fontFamilyButton = fontFamilyContainer.locator( '[role="button"]' );
+		await fontFamilyButton.waitFor( { state: 'visible', timeout: 10000 } );
+
+		// Ensure the button is stable before clicking
+		await fontFamilyButton.hover();
+		await editor.page.waitForTimeout( 500 );
+
+		await fontFamilyButton.click( { timeout: 10000 } );
+
+		// Wait for the dropdown to open and Google Fonts option to be available
+		await editor.page.getByText( 'Google Fonts' ).waitFor( { state: 'visible', timeout: 10000 } );
 		await editor.page.getByText( 'Google Fonts' ).scrollIntoViewIfNeeded();
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
