@@ -118,17 +118,17 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 			return;
 		}
 
-                if ( ! class_exists( '\EA11y\Plugin' ) ) {
+		if ( ! class_exists( '\EA11y\Plugin' ) ) {
 			try {
-                                if ( defined( 'EA11Y_PATH' ) ) {
-                                        include_once EA11Y_PATH . '/plugin.php';
-                                } else {
-                                        // Fallback: try to determine plugin path
-                                        $plugin_path = WP_PLUGIN_DIR . '/pojo-accessibility';
-                                        if ( file_exists( $plugin_path . '/plugin.php' ) ) {
-                                                include_once $plugin_path . '/plugin.php';
-                                        }
-                                }
+				if ( defined( 'EA11Y_PATH' ) ) {
+						include_once EA11Y_PATH . '/pojo-accessibility.php';
+				} else {
+					// Fallback: try to determine plugin path
+					$plugin_path = WP_PLUGIN_DIR . '/pojo-accessibility';
+					if ( file_exists( $plugin_path . '/pojo-accessibility.php' ) ) {
+						include_once $plugin_path . '/pojo-accessibility.php';
+					}
+				}
 			} catch ( \Exception $e ) {
 				$this->start_controls_section(
 					'error_notice',
@@ -186,7 +186,7 @@ class Widget_Ally extends Widget_Base implements Sanitizable {
 				'button_event' => 'pluginActions',
 				'plugin_action' => [
 					'action' => $plugin_installed ? 'activate' : 'installAndActivate',
-                                        'url' => Hints::get_plugin_action_url( $plugin ),
+					'url' => Hints::get_plugin_action_url( $plugin ),
 					'loaderTab' => true,
 					'followLink' => admin_url( 'admin.php?page=accessibility-settings' ),
 					'pluginSlug' => 'pojo-accessibility',

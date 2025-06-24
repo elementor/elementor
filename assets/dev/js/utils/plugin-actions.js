@@ -27,13 +27,13 @@ module.exports = elementorModules.Module.extend( {
 		return response;
 	},
 
-        async install( eventData ) {
-          if ( ! eventData ) {
-            return;
-          }
-          const installResponse = await this.asyncFetch( eventData.url.replaceAll( '&amp;', '&' ) );
-          return installResponse;
-        }
+	async install( eventData ) {
+		if ( ! eventData ) {
+		return;
+		}
+		const installResponse = await this.asyncFetch( eventData.url.replaceAll( '&amp;', '&' ) );
+		return installResponse;
+	},
 
 	async activate( eventData ) {
 		if ( ! eventData ) {
@@ -199,18 +199,18 @@ module.exports = elementorModules.Module.extend( {
 			}
 		</style>
 		<div id="elementor-loading">
-<div class="elementor-loader-wrapper">
-	<div class="elementor-loader" aria-hidden="true">
-		<div class="elementor-loader-boxes">
-			<div class="elementor-loader-box"></div>
-			<div class="elementor-loader-box"></div>
-			<div class="elementor-loader-box"></div>
-			<div class="elementor-loader-box"></div>
+			<div class="elementor-loader-wrapper">
+				<div class="elementor-loader" aria-hidden="true">
+					<div class="elementor-loader-boxes">
+						<div class="elementor-loader-box"></div>
+						<div class="elementor-loader-box"></div>
+						<div class="elementor-loader-box"></div>
+						<div class="elementor-loader-box"></div>
+					</div>
+				</div>
+				<div id="heading" class="elementor-loading-title">${ heading }</div>
+			</div>
 		</div>
-	</div>
-	<div id="heading" class="elementor-loading-title">${ heading }</div>
-</div>
-</div>
     </body>
 </html>`;
 		const winUrl = URL.createObjectURL(
