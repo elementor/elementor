@@ -5,13 +5,8 @@ assets/js/
 **/vendor/**
 **/vendor_prefixed/**
 build/**
-packages/**/*
 tests/qunit/setup/tinymce.js
 /tmp/**
 packages/**/*
 eslint-local-rules.js
 .eslintrc.js
-
-packages/node_modules/
-packages/packages/**/dist/
-packages/docs/**
