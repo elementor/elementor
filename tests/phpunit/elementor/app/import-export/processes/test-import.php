@@ -255,9 +255,6 @@ class Test_Import extends Elementor_Test_Base {
 		];
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
 
-		var_dump($expected_runners);
-		var_dump( array_pop( $import_sessions_options )['runners'] );
-
 		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		$new_active_kit = Plugin::$instance->kits_manager->get_active_kit();
