@@ -19,7 +19,7 @@ export default function TopBar( props ) {
 				} }
 				{ ...rest }
 			>
-							<Toolbar
+			<Toolbar
 				sx={ {
 					minHeight: { xs: 56, sm: 64 },
 					px: 3,
