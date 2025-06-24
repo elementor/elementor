@@ -16,4 +16,4 @@ export const XIcon = forwardRef( ( props, ref ) => {
 			/>
 		</SvgIcon>
 	);
-} ); 
+} );

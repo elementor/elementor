@@ -1,110 +1,24 @@
-import { Button, Box, Typography, Stack, IconButton } from '@elementor/ui';
+import { Button, Box, Typography, Stack } from '@elementor/ui';
 
-import { BaseLayout, TopBar, Footer } from '../components/layout';
-import { XIcon } from '../components/icons';
+import { BaseLayout, TopBar, Footer, PageHeader } from '../components';
 
 export default function Index() {
-	const handleClose = () => {
-		window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools';
-	};
 
-	// Build the TopBar content to maintain the same visual layout
-	const topBarContent = (
-		<>
-			{/* Start Content */}
-			<Box sx={ { display: 'flex', alignItems: 'center', flex: '0 0 auto' } }>
-				<Stack direction="row" spacing={ 2 } alignItems="center">
-					<Box
-						component="i"
-						sx={ {
-							fontSize: 24,
-							color: 'primary.main',
-						} }
-						className="eicon-elementor"
-					/>
-					<Typography
-						variant="h6"
-						component="h1"
-						sx={ {
-							fontWeight: 600,
-						} }
-					>
-						{ __( 'Export Kit', 'elementor' ) }
-					</Typography>
-				</Stack>
-			</Box>
-
-			{/* Center Content */}
-			<Box sx={ { display: 'flex', alignItems: 'center', flex: '1 1 auto', justifyContent: 'center' } }>
-				{/* Empty center space */}
-			</Box>
-
-			{/* End Content */}
-			<Box sx={ { display: 'flex', alignItems: 'center', flex: '0 0 auto' } }>
-				<Button
-					variant="outlined"
-					size="small"
-					startIcon={ <Box component="i" className="eicon-help-o" /> }
-				>
-					{ __( 'Help', 'elementor' ) }
-				</Button>
-				<IconButton
-					onClick={ handleClose }
-					sx={ { 
-						ml: 1,
-					} }
-					aria-label={ __( 'Close', 'elementor' ) }
-				>
-					<XIcon />
-				</IconButton>
-			</Box>
-		</>
-	);
-
-	// Build the Footer content to maintain the same visual layout
 	const footerContent = (
-		<Stack
-			direction="row"
-			alignItems="center"
-			justifyContent="space-between"
-			spacing={ 2 }
-		>
-			{/* Start Content */}
-			<Box sx={ { flex: '0 0 auto' } }>
-				<Typography variant="body2" color="text.secondary">
-					{ __( 'Version 1.0.0', 'elementor' ) }
-				</Typography>
-			</Box>
-
-			{/* Center Content */}
-			<Box sx={ { flex: '1 1 auto', textAlign: 'center' } }>
-				{/* Empty center space */}
-			</Box>
-
-			{/* End Content */}
-			<Box sx={ { flex: '0 0 auto' } }>
-				<Stack direction="row" spacing={ 1 }>
-					<Button
-						variant="outlined"
-						size="small"
-					>
-						{ __( 'Cancel', 'elementor' ) }
-					</Button>
-					<Button
-						variant="contained"
-						color="primary"
-						size="small"
-					>
-						{ __( 'Export Kit', 'elementor' ) }
-					</Button>
-				</Stack>
-			</Box>
+		<Stack direction="row" spacing={ 1 }>
+			<Button
+				variant="contained"
+				color="primary"
+				size="small"
+			>
+				{ __( 'Next', 'elementor' ) }
+			</Button>
 		</Stack>
 	);
 
 	return (
 		<BaseLayout
-			topBar={ <TopBar>{ topBarContent }</TopBar> }
+			topBar={ <TopBar><PageHeader title={ __( 'Export', 'elementor' ) } /></TopBar> }
 			footer={ <Footer>{ footerContent }</Footer> }
 		>
 			<Box sx={ { p: 3, mb: 2 } }>

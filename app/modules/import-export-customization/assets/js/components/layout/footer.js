@@ -19,6 +19,9 @@ export default function Footer( props ) {
 				px: 3,
 				borderTop: 1,
 				borderColor: 'divider',
+				display: 'flex',
+				justifyContent: 'flex-end',
+				alignItems: 'center',
 				...sx,
 			} }
 			{ ...rest }

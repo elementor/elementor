@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Divider, Box } from '@elementor/ui';
+import { AppBar, Toolbar, Divider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 export default function TopBar( props ) {
@@ -19,12 +19,13 @@ export default function TopBar( props ) {
 				} }
 				{ ...rest }
 			>
-				<Toolbar
-					sx={ {
-						minHeight: { xs: 56, sm: 64 },
-						px: 3,
-					} }
-				>
+							<Toolbar
+				sx={ {
+					minHeight: { xs: 56, sm: 64 },
+					px: 3,
+					justifyContent: 'space-between',
+				} }
+			>
 					{ children }
 				</Toolbar>
 			</AppBar>
