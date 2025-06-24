@@ -1,5 +1,3 @@
 			
-<hr
-    class="e-divider-base"
-    id="my-custom-divider" />
+<hr class="e-divider-base" id=my-custom-divider  />
 		
