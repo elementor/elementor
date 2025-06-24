@@ -521,6 +521,27 @@ class Group_Control_Background extends Group_Control_Base {
 			],
 		];
 
+		$fields['clip'] = [
+			'label' => esc_html__( 'Clip', 'elementor' ),
+			'type' => Controls_Manager::SELECT,
+			'responsive' => true,
+			'default' => '',
+			'options' => [
+				'' => esc_html__( 'Default', 'elementor' ),
+				'border-box' => esc_html__( 'Border Box', 'elementor' ),
+				'padding-box' => esc_html__( 'Padding Box', 'elementor' ),
+				'content-box' => esc_html__( 'Content Box', 'elementor' ),
+				'text' => esc_html__( 'Text', 'elementor' ),
+			],
+			'selectors' => [
+				'{{SELECTOR}}' => 'background-clip: {{VALUE}};',
+			],
+			'condition' => [
+				'background' => [ 'classic' ],
+				'image[url]!' => '',
+			],
+		];
+
 		$fields['video_link'] = [
 			'label' => esc_html__( 'Video Link', 'elementor' ),
 			'type' => Controls_Manager::TEXT,
