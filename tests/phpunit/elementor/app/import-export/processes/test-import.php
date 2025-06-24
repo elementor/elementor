@@ -17,7 +17,7 @@ use Elementor\Tests\Phpunit\Elementor\App\ImportExport\Test_Module;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 class Test_Import extends Elementor_Test_Base {
-	const MOCK_KIT_ZIP_PATH = __DIR__ . '/../mock/sample-kit-new.zip';
+	const MOCK_KIT_ZIP_PATH = __DIR__ . '/../mock/sample-kit.zip';
 
 	// Test the import all process, which include all the kit content:
 	// The plugins, site-settings, taxonomies ( for Elementor and WP including CPT taxonomy - tests_tax ),
