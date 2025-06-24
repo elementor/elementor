@@ -25,13 +25,13 @@ class Link_Prop_Type extends Object_Prop_Type {
 				->required(),
 			'label' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() ),
-			'isTargetBlank' => Boolean_Prop_Type::make()
-				->dependencies( 
-					Dependency_Manager::make()
-					->where( [
-						'operator' => 'not_exist',
-						'path' => [ 'link', 'destination' ],
-				] ) ),
+                        'isTargetBlank' => Boolean_Prop_Type::make()
+                          ->dependencies( 
+                            Dependency_Manager::make()
+                            ->where( [
+                              'operator' => 'exist',
+                              'path' => [ 'link', 'destination' ],
+                          ] ) ),
 		];
 	}
 }
