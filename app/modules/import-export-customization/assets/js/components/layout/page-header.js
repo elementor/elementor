@@ -60,7 +60,6 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 				open={ isHelpModalOpen }
 				onClose={ handleHelpModalClose }
 				maxWidth="sm"
-				fullWidth
 			>
 				<DialogTitle>
 					{ __( 'Export a Website Template', 'elementor' ) }
@@ -75,8 +74,8 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 						</Typography>
 						<Link
 							href="https://go.elementor.com/app-what-are-kits"
+							target="_blank"
 							variant="body2"
-							sx={ { display: 'block', mb: 2 } }
 						>
 							{ __( 'Learn more about Website Templates', 'elementor' ) }
 						</Link>
@@ -92,7 +91,6 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 						<Link
 							href="https://go.elementor.com/app-export-kit"
 							target="_blank"
-							rel="noopener noreferrer"
 							variant="body2"
 						>
 							{ __( 'Learn More', 'elementor' ) }
