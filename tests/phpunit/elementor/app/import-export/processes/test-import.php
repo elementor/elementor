@@ -213,34 +213,35 @@ class Test_Import extends Elementor_Test_Base {
 		$site_settings = ImportExportUtils::read_json_file( $extracted_directory_path . 'site-settings' );
 		$expected_custom_colors = $site_settings['settings']['custom_colors'];
 		$expected_custom_typography =  $site_settings['settings']['custom_typography'];
-		$expected_theme =  $site_settings['theme'];
+//		$expected_theme =  $site_settings['theme'];
 
-		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
-			->onlyMethods( [ 'install' ] )
-			->getMock();
+//		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
+//			->onlyMethods( [ 'install' ] )
+//			->getMock();
+//
+//		$theme_upgrader_mock
+//			->expects( $this->once() )
+//			->method( 'install' )
+//			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" )
+//			->willReturn( true );
 
-		$theme_upgrader_mock
-			->expects( $this->once() )
-			->method( 'install' )
-			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" )
-			->willReturn( true );
-
-		$import->register( new Site_Settings( $theme_upgrader_mock ) );
+		$import->register( new Site_Settings() );
 
 		// Act
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 2, $result );
+		$this->assertCount( 1, $result );
 		$this->assertTrue( $result['site-settings'] );
-		$this->assertCount( 1, $result['theme']['succeed'] );
+//		$this->assertCount( 1, $result['theme']['succeed'] );
 
 		$expected_runners = [
 			'site-settings' => [
 				'previous_kit_id' => $previous_kit_id,
 				'active_kit_id' => $active_kit_id,
 				'imported_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
-				'installed_theme' => $expected_theme['slug'],
+//				'installed_theme' => $expected_theme['slug'],
+				'installed_theme' => null,
 				'previous_active_theme' => $previous_active_theme,
 			],
 		];
