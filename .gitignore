@@ -44,6 +44,8 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
+
+# packages
 .turbo/
 packages/node_modules/
 packages/packages/**/dist/
