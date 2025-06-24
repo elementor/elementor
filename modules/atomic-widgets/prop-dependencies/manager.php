@@ -39,15 +39,6 @@ class Manager {
 		return new self();
 	}
 
-	/**
-	 * Create a manager with a single where condition for common use cases
-	 *
-	 * @param array $config
-	 * @return self
-	 */
-	public static function when( array $config ): self {
-		return static::make()->where( $config );
-	}
 
 	/**
 	 * @param $config array{

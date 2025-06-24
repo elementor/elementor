@@ -42,18 +42,11 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$tag_dependencies = Dependency_Manager::when( [
-			'operator' => 'exists',
-			'path' => [ 'link', 'destination' ],
-		] );
-
-		$link_target_blank_dependencies = Dependency_Manager::when( [
-			'operator' => 'not_exist',
-			'path' => [ 'link', 'destination' ],
-		] );
-
-		$link_prop = Link_Prop_Type::make();
-		$link_prop->get_is_target_blank_prop()->dependencies( $link_target_blank_dependencies );
+		$tag_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'exists',
+				'path' => [ 'link', 'destination' ],
+			] );
 
 		$props = [
 			'classes' => Classes_Prop_Type::make()
@@ -62,8 +55,9 @@ class Div_Block extends Atomic_Element_Base {
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' )
 				->dependencies( $tag_dependencies ),
-			'link' => $link_prop,
+			'link' => Link_Prop_Type::make(),
 		];
+
 		return $props;
 	}
 
