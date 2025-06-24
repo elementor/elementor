@@ -98,8 +98,16 @@ class Test_Export extends Elementor_Test_Base {
 
 		Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
 
+		// used mock as default theme doesn't have URI
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( ['export_theme'] )
+			->getMock();
+
+		$site_settings_runner->method('export_theme')
+			->willReturn( $mocked_theme );
+
 		$export = new Export();
-		$export->register( new Site_Settings() );
+		$export->register( $site_settings_runner );
 
 		// Act
 		$result = $export->run();
