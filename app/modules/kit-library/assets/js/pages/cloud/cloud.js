@@ -6,7 +6,7 @@ import KitListCloud from '../../components/kit-list-cloud';
 import Layout from '../../components/layout';
 import SearchInput from '../../components/search-input';
 import useCloudKits from '../../hooks/use-cloud-kits';
-import useCloudKitsEligibility from '../../hooks/use-cloud-kits-eligibility';
+import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useMenuItems from '../../hooks/use-menu-items';
 import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
@@ -43,9 +43,11 @@ export default function Cloud( {
 		isFilterActive,
 	} = useCloudKits();
 
-	const { data: isCloudKitsAvailable, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
+	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
 	} );
+
+	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
 
 	const menuItems = useMenuItems( path );
 
@@ -110,6 +112,7 @@ export default function Cloud( {
 				menuItems={ menuItems }
 				forceRefetch={ forceRefetch }
 				isFetching={ isFetching }
+				cloudKitsData={ cloudKitsData }
 			/>
 		);
 	}

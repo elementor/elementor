@@ -55,7 +55,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <script type="text/template" id="tmpl-elementor-panel-elements-category">
 	<button class="elementor-panel-heading elementor-panel-category-title">
 		<span class="elementor-panel-heading-toggle">
-			<i class="eicon" aria-hidden="true"></i>
+			<i class="eicon-caret-right" aria-hidden="true"></i>
 		</span>
 		<span class="elementor-panel-heading-title">{{{ title }}}</span>
 		<?php do_action( 'elementor/editor/templates/panel/category' ); ?>
