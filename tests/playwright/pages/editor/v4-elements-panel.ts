@@ -23,44 +23,6 @@ export default class v4Panel extends BasePage {
 		await this.page.locator( this.inputField ).nth( nth ).fill( text );
 	}
 
-	async setV4SelectControlValue( labelText: string, value: string, exactMatch: boolean = true ): Promise<void> {
-		const controlButton = this.page
-			.locator( 'div.MuiGrid-container' )
-			.filter( { has: this.page.locator( 'label', { hasText: labelText } ) } )
-			.locator( '[role="button"]' );
-
-		await controlButton.click();
-
-		// Wait for dropdown to appear
-		await this.page.waitForSelector( '[role="listbox"], [role="menu"], [role="option"]', { timeout: 5000 } );
-
-		// Try multiple selectors to find the option
-		let option = null;
-
-		if ( exactMatch ) {
-			// Try different ways to find the exact option
-			option = this.page.getByRole( 'option', { name: value, exact: true } )
-				.or( this.page.getByText( value, { exact: true } ) )
-				.or( this.page.locator( `[role="option"]:has-text("${ value }")` ).first() );
-		} else {
-			// For partial matches
-			option = this.page.getByRole( 'option', { name: new RegExp( value, 'i' ) } )
-				.or( this.page.getByText( value ) )
-				.or( this.page.locator( `[role="option"]:has-text("${ value }")` ) ).first();
-		}
-
-		// Check if option exists and is visible
-		const isVisible = await option.isVisible().catch( () => false );
-
-		if ( ! isVisible ) {
-			// If specific font not found, just select the first available option
-			const firstOption = this.page.locator( '[role="option"]' ).first();
-			await firstOption.click();
-		} else {
-			await option.click();
-		}
-	}
-
 	/**
 	 * Set size parameters for an element
 	 * @param {SizeOptions}                 options             - Object containing size parameters
