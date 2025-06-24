@@ -41,7 +41,7 @@ const DivBlockView = BaseElementView.extend( {
 		const attr = BaseElementView.prototype.attributes.apply( this );
 		const local = {};
 		const cssId = this.model.getSetting( '_cssid' );
-		const customAttributes = this.model.getSetting( 'attributes' );
+		const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
 
 		if ( cssId ) {
 			local.id = cssId.value;
@@ -53,16 +53,14 @@ const DivBlockView = BaseElementView.extend( {
 			local.href = href;
 		}
 
-		if ( Array.isArray( customAttributes?.value ) ) {
-			customAttributes.value.forEach( ( attribute ) => {
-				const key = attribute.value?.key?.value;
-				const value = attribute.value?.value?.value;
+		customAttributes.forEach( ( attribute ) => {
+			const key = attribute.value?.key?.value;
+			const value = attribute.value?.value?.value;
 
-				if ( key && value ) {
-					local[ key ] = value;
-				}
-			} );
-		}
+			if ( key && value ) {
+				local[ key ] = value;
+			}
+		} );
 
 		return {
 			...attr,
