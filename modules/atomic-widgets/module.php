@@ -63,11 +63,11 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 
@@ -104,8 +104,6 @@ class Module extends BaseModule {
 		}
 
 		Atomic_Styles_Manager::instance()->register_hooks();
-
-		( new Opt_In() )->init();
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
@@ -302,7 +300,7 @@ class Module extends BaseModule {
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
-			<span class="elementor-panel-heading-category-chip">
+		<span class="elementor-panel-heading-category-chip">
 				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
