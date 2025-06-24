@@ -56,14 +56,11 @@ class Test_Import extends Elementor_Test_Base {
 		$import = new Import( $session );
 		$manifest = $import->get_manifest();
 
-		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
-			->onlyMethods( [ 'import_theme' ] )
+		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
 			->getMock();
 
-		$site_settings_runner->method( 'import_theme' )->willReturn( null );
-
 		$import->register( new Plugins( $plugins_manager_mock ) );
-		$import->register( $site_settings_runner );
+		$import->register( new Site_Settings( $theme_upgrader_mock ) );
 		$import->register( new Taxonomies() );
 		$import->register( new Templates() );
 		$import->register( new Elementor_Content() );
@@ -218,23 +215,17 @@ class Test_Import extends Elementor_Test_Base {
 		$expected_custom_typography =  $site_settings['settings']['custom_typography'];
 		$expected_theme =  $site_settings['theme'];
 
-		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
-			->onlyMethods( [ 'install_theme', 'activate_theme' ] )
+		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
+			->onlyMethods( [ 'install' ] )
 			->getMock();
 
-		$site_settings_runner
+		$theme_upgrader_mock
 			->expects( $this->once() )
-			->method( 'install_theme' )
-			->with( $expected_theme['slug'], $expected_theme['version'] )
+			->method( 'install' )
+			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" )
 			->willReturn( true );
 
-		$site_settings_runner
-			->expects( $this->once() )
-			->method( 'activate_theme' )
-			->with( $expected_theme['slug'] )
-			->willReturn( true );
-
-		$import->register( $site_settings_runner );
+		$import->register( new Site_Settings( $theme_upgrader_mock ) );
 
 		// Act
 		$result = $import->run();

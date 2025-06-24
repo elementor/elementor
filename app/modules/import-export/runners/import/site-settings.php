@@ -38,8 +38,12 @@ class Site_Settings extends Import_Runner_Base {
 	 */
 	private \Theme_Upgrader $theme_upgrader;
 
-	public function __construct() {
-		$this->theme_upgrader = new \Theme_Upgrader( new \WP_Ajax_Upgrader_Skin() );
+	public function __construct( $theme_upgrader = null ) {
+		if ( $theme_upgrader ) {
+			$this->theme_upgrader = $theme_upgrader;
+		} else {
+			$this->theme_upgrader = new \Theme_Upgrader( new \WP_Ajax_Upgrader_Skin() );
+		}
 	}
 
 	public static function get_name(): string {
