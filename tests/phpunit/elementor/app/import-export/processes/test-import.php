@@ -202,6 +202,8 @@ class Test_Import extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
+		delete_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+
 		$previous_active_theme = wp_get_theme()->get_stylesheet();
 
 		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
