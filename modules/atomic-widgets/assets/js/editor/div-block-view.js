@@ -41,6 +41,7 @@ const DivBlockView = BaseElementView.extend( {
 		const attr = BaseElementView.prototype.attributes.apply( this );
 		const local = {};
 		const cssId = this.model.getSetting( '_cssid' );
+		const customAttributes = this.model.getSetting( 'attributes' );
 
 		if ( cssId ) {
 			local.id = cssId.value;
@@ -50,6 +51,17 @@ const DivBlockView = BaseElementView.extend( {
 
 		if ( href ) {
 			local.href = href;
+		}
+
+		if ( Array.isArray( customAttributes?.value ) ) {
+			customAttributes.value.forEach( ( attribute ) => {
+				const key = attribute.value?.key?.value;
+				const value = attribute.value?.value?.value;
+
+				if ( key && value ) {
+					local[ key ] = value;
+				}
+			} );
 		}
 
 		return {
@@ -99,10 +111,31 @@ const DivBlockView = BaseElementView.extend( {
 
 		BaseElementView.prototype.renderOnChange.apply( this, settings );
 
-		if ( changed.classes ) {
-			// Rebuild the whole class attribute to remove previous outdated classes
-			this.$el.attr( 'class', this.className() );
+		if ( changed.attributes ) {
+			const preserveAttrs = [ 'id', 'class', 'href' ];
+			const $elAttrs = this.$el[ 0 ].attributes;
+			for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
+				const attrName = $elAttrs[ i ].name;
+				if ( ! preserveAttrs.includes( attrName ) ) {
+					this.$el.removeAttr( attrName );
+				}
+			}
 
+			const attrs = this.model.getSetting( 'attributes' )?.value || [];
+			attrs.forEach( ( attribute ) => {
+				const key = attribute?.value?.key?.value;
+				const value = attribute?.value?.value?.value;
+				if ( key && value ) {
+					this.$el.attr( key, value );
+				}
+			} );
+
+			return;
+		}
+
+		if ( changed.classes ) {
+			this.$el.attr( 'class', this.className() );
+			
 			return;
 		}
 
