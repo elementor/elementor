@@ -123,11 +123,11 @@ class Site_Settings extends Import_Runner_Base {
 		$theme_slug = $theme['slug'];
 		$theme_name = $theme['name'];
 
-		$existing_theme = wp_get_theme();
-		$this->previous_active_theme = $existing_theme->get_stylesheet();
+		$current_theme = wp_get_theme();
+		$this->previous_active_theme = $current_theme->get_stylesheet();
 
 		try {
-			if ( ! $existing_theme->exists() ) {
+			if ( ! wp_get_theme( $theme_slug)->exists() ) {
 				$import = $this->install_theme( $theme_slug, $theme['version'] );
 
 				if ( is_wp_error( $import ) ) {
