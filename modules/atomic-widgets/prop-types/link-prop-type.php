@@ -17,10 +17,6 @@ class Link_Prop_Type extends Object_Prop_Type {
 		return 'link';
 	}
 
-	public function get_is_target_blank_prop(): Boolean_Prop_Type {
-		return $this->get_shape_field( 'isTargetBlank' );
-	}
-
 	protected function define_shape(): array {
 		return [
 			'destination' => Union_Prop_Type::make()
