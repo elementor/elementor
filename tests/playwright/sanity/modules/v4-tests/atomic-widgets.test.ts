@@ -12,11 +12,11 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 
 	const atomicWidgets = [
 		{ name: 'e-heading', title: 'Heading' },
-		// { name: 'e-image', title: 'Image' },
-		// { name: 'e-paragraph', title: 'Paragraph' },
-		// { name: 'e-svg', title: 'SVG' },
-		// { name: 'e-button', title: 'Button' },
-		// { name: 'e-divider', title: 'Divider' },
+		{ name: 'e-image', title: 'Image' },
+		{ name: 'e-paragraph', title: 'Paragraph' },
+		{ name: 'e-svg', title: 'SVG' },
+		{ name: 'e-button', title: 'Button' },
+		{ name: 'e-divider', title: 'Divider' },
 		{ name: 'e-youtube', title: 'YouTube' },
 	];
 
