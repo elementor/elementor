@@ -11,11 +11,11 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	let page: Page;
 
 	const atomicWidgets = [
-		// { name: 'e-heading', title: 'Heading' },
-		// { name: 'e-image', title: 'Image' },
-		// { name: 'e-paragraph', title: 'Paragraph' },
-		// { name: 'e-svg', title: 'SVG' },
-		// { name: 'e-button', title: 'Button' },
+		{ name: 'e-heading', title: 'Heading' },
+		{ name: 'e-image', title: 'Image' },
+		{ name: 'e-paragraph', title: 'Paragraph' },
+		{ name: 'e-svg', title: 'SVG' },
+		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
 		{ name: 'e-youtube', title: 'YouTube' },
 	];
@@ -56,7 +56,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 			let widgetId: string;
 			let widgetSelector: string;
 
-			test.only( 'Widget is displayed in panel', async () => {
+			test( 'Widget is displayed in panel', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
 				const layout = editor.page.locator( editorSelectors.panels.elements.v4elements );
@@ -65,7 +65,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await expect( container ).toBeVisible();
 			} );
 
-			test.only( 'Widget is displayed in canvas and frontend', async () => {
+			test( 'Widget is displayed in canvas and frontend', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
 				await test.step( 'Add widget and check editor canvas', async () => {
