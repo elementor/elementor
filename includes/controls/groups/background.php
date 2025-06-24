@@ -528,9 +528,9 @@ class Group_Control_Background extends Group_Control_Base {
 			'default' => '',
 			'options' => [
 				'' => esc_html__( 'Default', 'elementor' ),
-				'border-box' => esc_html__( 'Border Box', 'elementor' ),
-				'padding-box' => esc_html__( 'Padding Box', 'elementor' ),
-				'content-box' => esc_html__( 'Content Box', 'elementor' ),
+				'border-box' => esc_html__( 'Border Edges', 'elementor' ),
+				'padding-box' => esc_html__( 'Padding Edges', 'elementor' ),
+				'content-box' => esc_html__( 'Content Edges', 'elementor' ),
 				'text' => esc_html__( 'Text', 'elementor' ),
 			],
 			'selectors' => [
