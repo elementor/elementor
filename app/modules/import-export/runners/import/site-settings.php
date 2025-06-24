@@ -38,12 +38,15 @@ class Site_Settings extends Import_Runner_Base {
 	 */
 	private \Theme_Upgrader $theme_upgrader;
 
-	public function __construct( $theme_upgrader = null ) {
-		if ( $theme_upgrader ) {
-			$this->theme_upgrader = $theme_upgrader;
-		} else {
-			$this->theme_upgrader = new \Theme_Upgrader( new \WP_Ajax_Upgrader_Skin() );
+	public function get_theme_upgrader(): \Theme_Upgrader {
+		if ( ! class_exists( '\Theme_Upgrader' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		}
+		if ( ! class_exists( '\WP_Ajax_Upgrader_Skin' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+		}
+
+		return new \Theme_Upgrader( new \WP_Ajax_Upgrader_Skin() );
 	}
 
 	public static function get_name(): string {
@@ -107,7 +110,7 @@ class Site_Settings extends Import_Runner_Base {
 	protected function install_theme( $slug, $version ) {
 		$download_url = "https://downloads.wordpress.org/theme/{$slug}.{$version}.zip";
 
-		return $this->theme_upgrader->install( $download_url );
+		return $this->get_theme_upgrader()->install( $download_url );
 	}
 
 	protected function activate_theme( $slug ) {
@@ -138,6 +141,7 @@ class Site_Settings extends Import_Runner_Base {
 					$this->activate_theme( $theme_slug );
 				}
 			} else {
+				$this->activate_theme( $theme_slug );
 				$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme_name );
 			}
 		} catch ( \Exception $error ) {
