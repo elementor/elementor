@@ -1,6 +1,6 @@
 import { LocationProvider } from '@reach/router';
 import router from '@elementor/router';
-import { ThemeProvider, DirectionProvider, Stack, Box } from '@elementor/ui';
+import { ThemeProvider, DirectionProvider, Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 export default function BaseLayout( props ) {
