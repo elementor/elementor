@@ -14,7 +14,7 @@ class Test_Atomic_Youtube extends Elementor_Test_Base {
 			'id' => 'e8e55a1',
 			'elType' => 'widget',
 			'settings' => [
-                'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+				'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 			],
 			'widgetType' => Atomic_Youtube::get_element_type(),
 		];
@@ -37,7 +37,7 @@ class Test_Atomic_Youtube extends Elementor_Test_Base {
 			'elType' => 'widget',
 			'settings' => [
 				'_cssid' => 'my-custom-youtube',
-                'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+				'youtube_url' => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 			],
 			'widgetType' => Atomic_Youtube::get_element_type(),
 		];
