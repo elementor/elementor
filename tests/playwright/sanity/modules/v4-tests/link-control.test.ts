@@ -69,7 +69,7 @@ test.describe( 'Link control tests @v4-tests', () => {
 		for ( const { name, input, expected } of testData ) {
 			await test.step( `Test case: ${ name }`, async () => {
 				await editor.selectElement( buttonId );
-				await editor.openV4PanelTab( 'general' );
+				await editor.openV2PanelTab( 'general' );
 				await page.locator( '[aria-label="Toggle link"]' ).click();
 				await editor.v4Panel.fillField( 1, input );
 
