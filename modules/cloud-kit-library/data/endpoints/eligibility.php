@@ -22,6 +22,6 @@ class Eligibility extends Endpoint {
 	}
 
 	public function get_items( $request ) {
-		return CloudKitLibrary::get_app()->is_eligible();
+		return CloudKitLibrary::get_app()->check_eligibility();
 	}
 }
