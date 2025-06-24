@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { XIcon } from '../icons';
 
 export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
-	const [isHelpModalOpen, setIsHelpModalOpen] = useState( false );
+	const [ isHelpModalOpen, setIsHelpModalOpen ] = useState( false );
 
 	const handleClose = () => {
 		window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools';
@@ -71,7 +71,7 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 							{ __( "What's a Website Template?", 'elementor' ) }
 						</Typography>
 						<Typography variant="body2" color="text.secondary" paragraph>
-							{ __( "A Website Template is a .zip file that contains all the parts of a complete site. It's an easy way to get a site up and running quickly.", 'elementor' ) }
+							{ __( 'A Website Template is a .zip file that contains all the parts of a complete site. It\'s an easy way to get a site up and running quickly.', 'elementor' ) }
 						</Typography>
 						<Link
 							href="https://go.elementor.com/app-what-are-kits"
@@ -87,7 +87,7 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 							{ __( 'How does exporting work?', 'elementor' ) }
 						</Typography>
 						<Typography variant="body2" color="text.secondary" paragraph>
-							{ __( "To turn your site into a Website Template, select the templates, content, settings and plugins you want to include. Once it's ready, you'll get a .zip file that you can import to other sites.", 'elementor' ) }
+							{ __( 'To turn your site into a Website Template, select the templates, content, settings and plugins you want to include. Once it\'s ready, you\'ll get a .zip file that you can import to other sites.', 'elementor' ) }
 						</Typography>
 						<Link
 							href="https://go.elementor.com/app-export-kit"
