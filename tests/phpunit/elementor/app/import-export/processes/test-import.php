@@ -59,8 +59,13 @@ class Test_Import extends Elementor_Test_Base {
 		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
 			->getMock();
 
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( [ 'get_theme_upgrader'] )
+			->getMock();
+		$site_settings_runner->method( 'get_theme_upgrader' )->willReturn( $theme_upgrader_mock );
+
 		$import->register( new Plugins( $plugins_manager_mock ) );
-		$import->register( new Site_Settings( $theme_upgrader_mock ) );
+		$import->register( $site_settings_runner );
 		$import->register( new Taxonomies() );
 		$import->register( new Templates() );
 		$import->register( new Elementor_Content() );
@@ -225,7 +230,12 @@ class Test_Import extends Elementor_Test_Base {
 			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" )
 			->willReturn( true );
 
-		$import->register( new Site_Settings( $theme_upgrader_mock ) );
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( [ 'get_theme_upgrader' ] )
+			->getMock();
+		$site_settings_runner->method( 'get_theme_upgrader' )->willReturn( $theme_upgrader_mock );
+
+		$import->register( $site_settings_runner );
 
 		// Act
 		$result = $import->run();
