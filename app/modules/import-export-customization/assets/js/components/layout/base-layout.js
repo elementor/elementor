@@ -5,16 +5,11 @@ import Stack from '@elementor/ui/Stack';
 import Box from '@elementor/ui/Box';
 import PropTypes from 'prop-types';
 
-import TopBar from './top-bar';
-import Footer from './footer';
-
 export default function BaseLayout( props ) {
 	const {
 		children,
-		topBarProps = {},
-		footerProps = {},
-		showTopBar = true,
-		showFooter = false,
+		topBar,
+		footer,
 		sx = {},
 		...rest
 	} = props;
@@ -31,9 +26,7 @@ export default function BaseLayout( props ) {
 						} }
 						{ ...rest }
 					>
-						{ showTopBar && (
-							<TopBar { ...topBarProps } />
-						) }
+						{ topBar }
 						
 						<Box
 							component="main"
@@ -47,9 +40,7 @@ export default function BaseLayout( props ) {
 							{ children }
 						</Box>
 						
-						{ showFooter && (
-							<Footer { ...footerProps } />
-						) }
+						{ footer }
 					</Stack>
 				</LocationProvider>
 			</ThemeProvider>
@@ -59,9 +50,7 @@ export default function BaseLayout( props ) {
 
 BaseLayout.propTypes = {
 	children: PropTypes.node.isRequired,
-	topBarProps: PropTypes.object,
-	footerProps: PropTypes.object,
-	showTopBar: PropTypes.bool,
-	showFooter: PropTypes.bool,
+	topBar: PropTypes.node,
+	footer: PropTypes.node,
 	sx: PropTypes.object,
 };

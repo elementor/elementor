@@ -2,54 +2,111 @@ import Button from '@elementor/ui/Button';
 import Box from '@elementor/ui/Box';
 import Typography from '@elementor/ui/Typography';
 import Stack from '@elementor/ui/Stack';
+import IconButton from '@elementor/ui/IconButton';
 
-import { BaseLayout } from '../components/layout';
+import { BaseLayout, TopBar, Footer } from '../components/layout';
 
 export default function Index() {
-	const topBarProps = {
-		title: __( 'Export Kit', 'elementor' ),
-		showCloseButton: true,
-		endContent: (
-			<Button
-				variant="outlined"
-				size="small"
-				startIcon={ <Box component="i" className="eicon-help-o" /> }
-			>
-				{ __( 'Help', 'elementor' ) }
-			</Button>
-		),
+	const handleClose = () => {
+		window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools';
 	};
 
-	const footerProps = {
-		startContent: (
-			<Typography variant="body2" color="text.secondary">
-				{ __( 'Version 1.0.0', 'elementor' ) }
-			</Typography>
-		),
-		endContent: (
-			<Stack direction="row" spacing={ 1 }>
+	// Build the TopBar content to maintain the same visual layout
+	const topBarContent = (
+		<>
+			{/* Start Content */}
+			<Box sx={ { display: 'flex', alignItems: 'center', flex: '0 0 auto' } }>
+				<Stack direction="row" spacing={ 2 } alignItems="center">
+					<Box
+						component="i"
+						sx={ {
+							fontSize: 24,
+							color: 'primary.main',
+						} }
+						className="eicon-elementor"
+					/>
+					<Typography
+						variant="h6"
+						component="h1"
+						sx={ {
+							fontWeight: 600,
+						} }
+					>
+						{ __( 'Export Kit', 'elementor' ) }
+					</Typography>
+				</Stack>
+			</Box>
+
+			{/* Center Content */}
+			<Box sx={ { display: 'flex', alignItems: 'center', flex: '1 1 auto', justifyContent: 'center' } }>
+				{/* Empty center space */}
+			</Box>
+
+			{/* End Content */}
+			<Box sx={ { display: 'flex', alignItems: 'center', flex: '0 0 auto' } }>
 				<Button
 					variant="outlined"
 					size="small"
+					startIcon={ <Box component="i" className="eicon-help-o" /> }
 				>
-					{ __( 'Cancel', 'elementor' ) }
+					{ __( 'Help', 'elementor' ) }
 				</Button>
-				<Button
-					variant="contained"
-					color="primary"
-					size="small"
+				<IconButton
+					onClick={ handleClose }
+					sx={ { ml: 1 } }
+					aria-label={ __( 'Close', 'elementor' ) }
 				>
-					{ __( 'Export Kit', 'elementor' ) }
-				</Button>
-			</Stack>
-		),
-	};
+					<Box component="i" className="eicon-close" />
+				</IconButton>
+			</Box>
+		</>
+	);
+
+	// Build the Footer content to maintain the same visual layout
+	const footerContent = (
+		<Stack
+			direction="row"
+			alignItems="center"
+			justifyContent="space-between"
+			spacing={ 2 }
+		>
+			{/* Start Content */}
+			<Box sx={ { flex: '0 0 auto' } }>
+				<Typography variant="body2" color="text.secondary">
+					{ __( 'Version 1.0.0', 'elementor' ) }
+				</Typography>
+			</Box>
+
+			{/* Center Content */}
+			<Box sx={ { flex: '1 1 auto', textAlign: 'center' } }>
+				{/* Empty center space */}
+			</Box>
+
+			{/* End Content */}
+			<Box sx={ { flex: '0 0 auto' } }>
+				<Stack direction="row" spacing={ 1 }>
+					<Button
+						variant="outlined"
+						size="small"
+					>
+						{ __( 'Cancel', 'elementor' ) }
+					</Button>
+					<Button
+						variant="contained"
+						color="primary"
+						size="small"
+					>
+						{ __( 'Export Kit', 'elementor' ) }
+					</Button>
+				</Stack>
+			</Box>
+		</Stack>
+	);
 
 	return (
 		<BaseLayout
-			topBarProps={ topBarProps }
-			footerProps={ footerProps }
-			showFooter={ true }
+			topBar={ <TopBar>{ topBarContent }</TopBar> }
+			footer={ <Footer>{ footerContent }</Footer> }
 		>
 			<Box sx={ { p: 3, mb: 2 } }>
 				<Box sx={ { mb: 2 } }>
