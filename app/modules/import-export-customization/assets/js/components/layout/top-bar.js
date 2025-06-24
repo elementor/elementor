@@ -19,13 +19,13 @@ export default function TopBar( props ) {
 				} }
 				{ ...rest }
 			>
-			<Toolbar
-				sx={ {
-					minHeight: { xs: 56, sm: 64 },
-					px: 3,
-					justifyContent: 'space-between',
-				} }
-			>
+				<Toolbar
+					sx={ {
+						minHeight: { xs: 56, sm: 64 },
+						px: 3,
+						justifyContent: 'space-between',
+					} }
+				>
 					{ children }
 				</Toolbar>
 			</AppBar>
