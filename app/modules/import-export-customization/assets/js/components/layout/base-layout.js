@@ -16,7 +16,7 @@ export default function BaseLayout( props ) {
 	const colorScheme = isDarkMode ? 'dark' : 'light';
 
 	return (
-		<DirectionProvider rtl={ false }>
+		<DirectionProvider rtl={ elementorCommon.config.isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
 				<LocationProvider history={ router.appHistory }>
 					<Box
