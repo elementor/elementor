@@ -135,7 +135,7 @@ const DivBlockView = BaseElementView.extend( {
 
 		if ( changed.classes ) {
 			this.$el.attr( 'class', this.className() );
-			
+
 			return;
 		}
 
