@@ -19,30 +19,36 @@ export default function BaseLayout( props ) {
 		<DirectionProvider rtl={ false }>
 			<ThemeProvider colorScheme={ colorScheme }>
 				<LocationProvider history={ router.appHistory }>
-					<Stack
-						direction="column"
+					<Box
 						sx={ {
-							minHeight: '100vh',
+							height: '100vh',
+							display: 'flex',
+							flexDirection: 'column',
+							overflow: 'hidden',
 							...sx,
 						} }
 						{ ...rest }
 					>
-						{ topBar }
+						<Box sx={ { position: 'sticky', top: 0, zIndex: 1100 } }>
+							{ topBar }
+						</Box>
 						
 						<Box
 							component="main"
 							sx={ {
 								flex: 1,
+								overflow: 'auto',
 								display: 'flex',
 								flexDirection: 'column',
-								overflow: 'auto',
 							} }
 						>
 							{ children }
 						</Box>
 						
-						{ footer }
-					</Stack>
+						<Box sx={ { position: 'sticky', bottom: 0, zIndex: 1100 } }>
+							{ footer }
+						</Box>
+					</Box>
 				</LocationProvider>
 			</ThemeProvider>
 		</DirectionProvider>
