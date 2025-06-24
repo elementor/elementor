@@ -12,7 +12,6 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	type SectionType = 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border';
 
 	const atomicWidget = { name: 'e-heading', title: 'Heading' };
-	const experimentName = 'e_atomic_elements';
 	const panelSelector = '#elementor-panel-inner';
 
 	const sections: SectionType[] = [
@@ -30,13 +29,13 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
+		// Experiment is already enabled on the site
 
 		editor = await wpAdmin.openNewPage();
 	} );
 
 	test.afterAll( async () => {
-		await wpAdmin.resetExperiments();
+		// No need to reset experiments as they weren't set locally
 		await context.close();
 	} );
 
@@ -104,25 +103,15 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
-		// Wait for the font family dropdown to be fully loaded and interactable
-		const fontFamilyContainer = editor.page.locator( 'div.MuiGrid-container' ).filter( {
-			has: editor.page.locator( 'label', { hasText: 'Font family' } ),
-		} );
+		const controlButton = editor.page
+			.locator( 'div.MuiGrid-container' )
+			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } )
+			.locator( '[role="button"]' );
 
-		await fontFamilyContainer.waitFor( { state: 'visible', timeout: timeouts.longAction } );
+		await controlButton.click();
 
-		const fontFamilyButton = fontFamilyContainer.locator( '[role="button"]' );
-		await fontFamilyButton.waitFor( { state: 'visible', timeout: timeouts.longAction } );
-
-		// Ensure the button is stable before clicking
-		await fontFamilyButton.hover();
-		await editor.page.waitForTimeout( 500 );
-
-		await fontFamilyButton.click( { timeout: timeouts.longAction } );
-
-		// Wait for the dropdown to open and Google Fonts option to be available
-		await editor.page.getByText( 'Google Fonts' ).waitFor( { state: 'visible', timeout: timeouts.longAction } );
-		await editor.page.getByText( 'Google Fonts' ).scrollIntoViewIfNeeded();
+		// Wait for dropdown to open and scroll to see options
+		await editor.page.waitForSelector( '[role="listbox"], [role="menu"]', { timeout: timeouts.expect } );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
