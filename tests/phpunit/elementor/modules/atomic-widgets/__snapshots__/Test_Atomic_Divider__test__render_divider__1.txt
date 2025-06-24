@@ -1,5 +1,3 @@
 			
-<hr
-    class="e-divider-base"
-     />
+<hr class="e-divider-base"   />
 		
