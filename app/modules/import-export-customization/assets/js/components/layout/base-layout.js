@@ -1,5 +1,3 @@
-import { LocationProvider } from '@reach/router';
-import router from '@elementor/router';
 import { ThemeProvider, DirectionProvider, Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
@@ -19,38 +17,36 @@ export default function BaseLayout( props ) {
 	return (
 		<DirectionProvider rtl={ isRTL }>
 			<ThemeProvider colorScheme={ colorScheme }>
-				<LocationProvider history={ router.appHistory }>
+				<Box
+					sx={ {
+						height: '100vh',
+						display: 'flex',
+						flexDirection: 'column',
+						overflow: 'hidden',
+						...sx,
+					} }
+					{ ...rest }
+				>
+					<Box sx={ { position: 'sticky', top: 0 } }>
+						{ topBar }
+					</Box>
+
 					<Box
+						component="main"
 						sx={ {
-							height: '100vh',
+							flex: 1,
+							overflow: 'auto',
 							display: 'flex',
 							flexDirection: 'column',
-							overflow: 'hidden',
-							...sx,
 						} }
-						{ ...rest }
 					>
-						<Box sx={ { position: 'sticky', top: 0 } }>
-							{ topBar }
-						</Box>
-
-						<Box
-							component="main"
-							sx={ {
-								flex: 1,
-								overflow: 'auto',
-								display: 'flex',
-								flexDirection: 'column',
-							} }
-						>
-							{ children }
-						</Box>
-
-						<Box sx={ { position: 'sticky', bottom: 0 } }>
-							{ footer }
-						</Box>
+						{ children }
 					</Box>
-				</LocationProvider>
+
+					<Box sx={ { position: 'sticky', bottom: 0 } }>
+						{ footer }
+					</Box>
+				</Box>
 			</ThemeProvider>
 		</DirectionProvider>
 	);
