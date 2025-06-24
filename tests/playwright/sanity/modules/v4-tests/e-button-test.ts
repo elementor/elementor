@@ -50,7 +50,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container } );
 		const newText = 'New Button Text';
 
-		await editor.openV2PanelTab( 'general' );
+		await editor.openV4PanelTab( 'general' );
 		await editor.v4Panel.fillField( 0, newText );
 		const button = await editor.getWidget( buttonId );
 
@@ -65,7 +65,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container } );
 		const linkUrl = 'https://example.com';
 
-		await editor.openV2PanelTab( 'general' );
+		await editor.openV4PanelTab( 'general' );
 		await page.locator( '[aria-label="Toggle link"]' ).click();
 		await editor.v4Panel.fillField( 1, linkUrl );
 		const button = await editor.getWidget( buttonId );
@@ -109,8 +109,8 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		const container = await editor.addElement( { elType: 'container' }, 'document' );
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container } );
 
-		await editor.openV2PanelTab( 'style' );
-		await editor.openV2Section( 'size' );
+		await editor.openV4PanelTab( 'style' );
+		await editor.openV4Section( 'size' );
 		await editor.v4Panel.setWidgetSize( {
 			width: 200,
 			height: 60,
@@ -131,7 +131,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		const buttonId = await editor.addWidget( { widgetType: 'e-button', container } );
 		const buttonCssId = 'custom-button-id';
 
-		await editor.openV2PanelTab( 'general' );
+		await editor.openV4PanelTab( 'general' );
 		await editor.v4Panel.fillField( 1, buttonCssId );
 
 		const button = await editor.getWidget( buttonId );

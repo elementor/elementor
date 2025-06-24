@@ -397,13 +397,13 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a tab inside an Editor panel for V2 widgets.
+	 * Open a tab inside an Editor panel for V4 widgets.
 	 *
 	 * @param {'style' | 'general'} sectionName - The section to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
+	async openV4PanelTab( sectionName: 'style' | 'general' ): Promise<void> {
 		const selectorMap: Record< 'style' | 'general', string > = {
 			style: 'style',
 			general: 'settings',
@@ -471,13 +471,13 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a section in an active panel tab.
+	 * Open a V4 section in an active panel tab.
 	 *
 	 * @param {string} sectionId - The section to open.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async openV2Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ): Promise<void> {
+	async openV4Section( sectionId: 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border' ): Promise<void> {
 		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
 		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
 		const isContentVisible = await this.page.evaluate( ( selector ) => {
