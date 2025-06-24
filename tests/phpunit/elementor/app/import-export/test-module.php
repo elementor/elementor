@@ -97,7 +97,6 @@ class Test_Module extends Elementor_Test_Base {
 		];
 		$import_export_module = new Module();
 		$import = $import_export_module->import_kit( static::MOCK_KIT_ZIP_PATH, $import_settings, true );
-		// test
 		$site_settings_import_runner = $this->getMockBuilder( Site_Settings::class )
 			->onlyMethods( [ 'import_theme' ] )
 			->getMock();
