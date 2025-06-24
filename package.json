@@ -32,7 +32,9 @@
 		"scripts:watch:packages:local": "npx cross-env ELEMENTOR_PACKAGES_USE_LOCAL=1 npm run scripts:watch",
 		"styles": "grunt styles",
 		"styles:watch": "grunt watch_styles",
-		"lint:js": "eslint ."
+		"lint:js": "eslint .",
+		"setup:testing": "bash scripts/setup-testing.sh",
+		"restart:testing": "bash scripts/setup-testing.sh --restart"
 	},
 	"engines": {
 		"node": ">=16.0.0",
