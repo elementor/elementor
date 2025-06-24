@@ -22,9 +22,7 @@ module.exports = {
 			typescript: {},
 			node: {},
 		},
-		'local-rules': {
-			'no-react-namespace': require.resolve('./eslint-local-rules.js'),
-		},
+		'local-rules:no-react-namespace': 'error',
 	},
 	reportUnusedDisableDirectives: true,
 	rules: {
@@ -118,9 +116,6 @@ module.exports = {
 				],
 			},
 		],
-
-		// Internal rules.
-		'no-react-namespace': 'error',
 	},
 	overrides: [
 		{

@@ -353,11 +353,9 @@ webpackProductionConfig.forEach( ( config, index ) => {
 // The 'packages' config doesn't need a `.min` suffix (it has its own config).
 webpackProductionConfig.push( packagesConfigs.prod );
 
-const developmentNoWatchConfig = [
-	...webpackConfig.map( ( config ) => {
-		return { ...config, watch: false };
-	} ),
-];
+const developmentNoWatchConfig = webpackConfig.map( ( config ) => {
+	return { ...config, watch: false };
+} );
 
 const productionWatchConfig = webpackProductionConfig.map( ( config ) => {
 	return { ...config, watch: true };
