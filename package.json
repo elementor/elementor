@@ -8,7 +8,6 @@
 	"prev_stable_version": "3.1.4",
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
-	"packageManager": "npm@10.0.0",
 	"scripts": {
 		"start": "cd packages && npm run build:tools && cd .. && npm run styles && npm run scripts",
 		"serve": "cd packages && npm run build:tools && cd .. && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\"",
@@ -56,7 +55,6 @@
 		"@babel/preset-react": "^7.26.3",
 		"@babel/preset-typescript": "^7.26.0",
 		"@babel/runtime-corejs3": "^7.26.0",
-		"@commitlint/types": "^19.8.1",
 		"@lodder/grunt-postcss": "^3.1.1",
 		"@playwright/test": "^1.49.1",
 		"@tanstack/eslint-plugin-query": "^5.81.2",

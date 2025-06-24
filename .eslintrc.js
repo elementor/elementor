@@ -53,7 +53,7 @@ module.exports = {
 				'@typescript-eslint/no-var-requires': 'error',
 				'@typescript-eslint/ban-ts-comment': 'error',
 				// Local rules
-				'no-react-namespace': 'error',
+				'local-rules:no-react-namespace': 'error',
 			},
 			parserOptions: {
 				project: [ './tsconfig.json' ],
@@ -62,7 +62,7 @@ module.exports = {
 		{
 			files: [ 'tests/**/*.ts', 'tests/**/*.tsx' ],
 			rules: {
-				'no-react-namespace': 'off',
+				'local-rules:no-react-namespace': 'off',
 			},
 		},
 	],
@@ -140,8 +140,5 @@ module.exports = {
 			},
 		},
 		jsdoc: { mode: 'typescript' },
-		'local-rules': {
-			'no-react-namespace': require.resolve('./eslint-local-rules.js'),
-		},
 	},
 };
