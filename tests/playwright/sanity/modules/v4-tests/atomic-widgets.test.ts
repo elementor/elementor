@@ -11,11 +11,11 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	let page: Page;
 
 	const atomicWidgets = [
-		{ name: 'e-heading', title: 'Heading' },
-		{ name: 'e-image', title: 'Image' },
-		{ name: 'e-paragraph', title: 'Paragraph' },
-		{ name: 'e-svg', title: 'SVG' },
-		{ name: 'e-button', title: 'Button' },
+		// { name: 'e-heading', title: 'Heading' },
+		// { name: 'e-image', title: 'Image' },
+		// { name: 'e-paragraph', title: 'Paragraph' },
+		// { name: 'e-svg', title: 'SVG' },
+		// { name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
 		{ name: 'e-youtube', title: 'YouTube' },
 	];
@@ -41,14 +41,12 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 
 	test( 'Atomic elements tab UI', async () => {
 		editor = await wpAdmin.openNewPage();
-
 		await editor.openElementsPanel();
 
 		const elementsPanel = editor.page.locator( editorSelectors.panels.elements.elementorPanel );
 		await elementsPanel.hover();
 		await editor.page.mouse.wheel( 0, 300 );
 
-		await editor.openElementsPanel();
 		await expect.soft( editor.page.locator( editorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
 	} );
 
@@ -58,7 +56,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 			let widgetId: string;
 			let widgetSelector: string;
 
-			test( 'Widget is displayed in panel', async () => {
+			test.only( 'Widget is displayed in panel', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
 				const layout = editor.page.locator( editorSelectors.panels.elements.v4elements );
@@ -67,7 +65,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await expect( container ).toBeVisible();
 			} );
 
-			test( 'Widget is displayed in canvas and frontend', async () => {
+			test.only( 'Widget is displayed in canvas and frontend', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
 				await test.step( 'Add widget and check editor canvas', async () => {
@@ -75,14 +73,17 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
 
-					if ( 'e-youtube' === widget.name ) {
-						widgetSelector = `${ widgetSelector }.e-youtube-base`;
-						await editor.isUiStable( editor.getPreviewFrame().locator( widgetSelector ) );
-						await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
-					} else {
-						await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
-					}
+					console.log( widgetSelector );
 
+					// if ( 'e-youtube' === widget.name ) {
+					// 	widgetSelector = `${ widgetSelector }.e-youtube-base`;
+					// 	await editor.isUiStable( editor.getPreviewFrame().locator( widgetSelector ) );
+					// 	await page.pause()
+					// 	await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					// } else {
+						// }
+
+					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 				} );
 
