@@ -29,7 +29,7 @@ export default function BaseLayout( props ) {
 						} }
 						{ ...rest }
 					>
-						<Box sx={ { position: 'sticky', top: 0, zIndex: 1100 } }>
+						<Box sx={ { position: 'sticky', top: 0 } }>
 							{ topBar }
 						</Box>
 						
@@ -45,7 +45,7 @@ export default function BaseLayout( props ) {
 							{ children }
 						</Box>
 						
-						<Box sx={ { position: 'sticky', bottom: 0, zIndex: 1100 } }>
+						<Box sx={ { position: 'sticky', bottom: 0 } }>
 							{ footer }
 						</Box>
 					</Box>
