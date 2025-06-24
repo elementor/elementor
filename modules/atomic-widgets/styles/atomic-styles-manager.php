@@ -37,6 +37,11 @@ class Atomic_Styles_Manager {
 
 	private function enqueue_styles() {
 		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts', [] );
+
+		if ( ! is_array( $post_ids ) || empty( $post_ids ) ) {
+			return;
+		}
+
 		do_action( 'elementor/atomic-widgets/styles/register', $this, $post_ids );
 
 		$styles_cache = [];

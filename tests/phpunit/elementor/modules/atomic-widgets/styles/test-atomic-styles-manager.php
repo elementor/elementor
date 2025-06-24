@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_Filesystem_Base;
+use function ElementorDeps\DI\add;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -28,7 +29,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		global $wp_filesystem;
 		$wp_filesystem = $this->filesystemMock;
 
-		remove_all_actions( 'elementor/atomic-widget/styles/enqueue' );
+		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
 		remove_all_actions( 'elementor/frontend/after_enqueue_post_styles' );
 	}
 
@@ -39,7 +40,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$wp_filesystem = null;
 
 		global $wp_styles;
-		$wp_styles = null;
+		$wp_styles = new \WP_Styles();
 	}
 
 	private function get_test_style_defs() {
@@ -136,6 +137,8 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 100, 1 );
 
+		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+
 		// Act
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
@@ -188,6 +191,8 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 20, 1 );
 
+		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+
 		// Act
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
@@ -217,10 +222,29 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
             $styles_manager->register( $this->test_style_key, $get_style_defs );
         }, 20, 1 );
 
+		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+
         // Act.
         do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
         // Assert.
         $this->assertEquals( 1, $call_count );
     }
+
+	public function test_enqueue__not_enqueues_styles_when_no_post_ids() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) {
+			$styles_manager->register( $this->test_style_key, fn() => $this->get_test_style_defs() );
+		}, 10, 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert
+		global $wp_styles;
+		$this->assertArrayNotHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
+	}
 }

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Atomic_Global_Classes extends Elementor_Test_Base {
+class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 	private $mock_global_classes = [
 		'items' => [
 			'g-4-123' => [

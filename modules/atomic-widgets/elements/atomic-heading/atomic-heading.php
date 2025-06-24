@@ -8,7 +8,6 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -55,7 +54,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'attributes' => Key_Value_Array_Prop_Type::make(),
+			'repeater' => Key_Value_Array_Prop_Type::make(),
 		];
 
 		return $props;
@@ -105,11 +104,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'label' => 'H6',
 					],
 				]),
-			Link_Control::bind_to( 'link' )
-				->set_label( __( 'Link', 'elementor' ) )
-				->set_meta( [
-					'topDivider' => true,
-				] ),
+			Link_Control::bind_to( 'link' )->set_meta( [
+				'topDivider' => true,
+			] ),
 		];
 	}
 
@@ -124,7 +121,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'margin', $margin_value )
-						->add_prop( 'color', Color_Prop_Type::generate( 'yellow' ) )
 				),
 			self::LINK_BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
