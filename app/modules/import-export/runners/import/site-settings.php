@@ -130,20 +130,22 @@ class Site_Settings extends Import_Runner_Base {
 		$this->previous_active_theme = $current_theme->get_stylesheet();
 
 		try {
-			if ( ! wp_get_theme( $theme_slug )->exists() ) {
-				$import = $this->install_theme( $theme_slug, $theme['version'] );
-
-				if ( is_wp_error( $import ) ) {
-					$result['failed'][ $theme_slug ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme_name );
-				} else {
-					$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme_name );
-					$this->installed_theme = $theme_slug;
-					$this->activate_theme( $theme_slug );
-				}
-			} else {
+			if ( wp_get_theme( $theme_slug )->exists() ) {
 				$this->activate_theme( $theme_slug );
 				$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme_name );
+				return $result;
 			}
+
+			$import = $this->install_theme( $theme_slug, $theme['version'] );
+
+			if ( is_wp_error( $import ) ) {
+				$result['failed'][ $theme_slug ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme_name );
+				return $result;
+			}
+
+			$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme_name );
+			$this->installed_theme = $theme_slug;
+			$this->activate_theme( $theme_slug );
 		} catch ( \Exception $error ) {
 			$result['failed'][ $theme_slug ] = $error->getMessage();
 		}
