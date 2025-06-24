@@ -44,6 +44,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		await editor.openElementsPanel();
 
 		const elementsPanel = editor.page.locator( editorSelectors.panels.elements.elementorPanel );
+
 		await elementsPanel.hover();
 		await editor.page.mouse.wheel( 0, 300 );
 
@@ -72,16 +73,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
-
-					console.log( widgetSelector );
-
-					// if ( 'e-youtube' === widget.name ) {
-					// 	widgetSelector = `${ widgetSelector }.e-youtube-base`;
-					// 	await editor.isUiStable( editor.getPreviewFrame().locator( widgetSelector ) );
-					// 	await page.pause()
-					// 	await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
-					// } else {
-						// }
 
 					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
