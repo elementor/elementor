@@ -2,6 +2,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
+import { timeouts } from '../../../config/timeouts';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -48,7 +49,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await editor.openV2Section( 'size' );
 		await editor.openV2Section( 'typography' );
 
-		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: 3000 } );
+		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: timeouts.expect } );
 	}
 
 	async function isSectionOpen( section: SectionType ): Promise<boolean> {
@@ -108,19 +109,19 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			has: editor.page.locator( 'label', { hasText: 'Font family' } ),
 		} );
 
-		await fontFamilyContainer.waitFor( { state: 'visible', timeout: 10000 } );
+		await fontFamilyContainer.waitFor( { state: 'visible', timeout: timeouts.longAction } );
 
 		const fontFamilyButton = fontFamilyContainer.locator( '[role="button"]' );
-		await fontFamilyButton.waitFor( { state: 'visible', timeout: 10000 } );
+		await fontFamilyButton.waitFor( { state: 'visible', timeout: timeouts.longAction } );
 
 		// Ensure the button is stable before clicking
 		await fontFamilyButton.hover();
 		await editor.page.waitForTimeout( 500 );
 
-		await fontFamilyButton.click( { timeout: 10000 } );
+		await fontFamilyButton.click( { timeout: timeouts.longAction } );
 
 		// Wait for the dropdown to open and Google Fonts option to be available
-		await editor.page.getByText( 'Google Fonts' ).waitFor( { state: 'visible', timeout: 10000 } );
+		await editor.page.getByText( 'Google Fonts' ).waitFor( { state: 'visible', timeout: timeouts.longAction } );
 		await editor.page.getByText( 'Google Fonts' ).scrollIntoViewIfNeeded();
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
