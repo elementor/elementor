@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -60,6 +61,8 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'captions' => Boolean_Prop_Type::make()->default( false ),
 			'privacy_mode' => Boolean_Prop_Type::make()->default( false ),
 			'rel' => Boolean_Prop_Type::make()->default( true ),
+
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 	}
 
@@ -96,6 +99,7 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'aspect-ratio', String_Prop_Type::generate( '16/9' ) )
+						->add_prop( 'overflow', String_Prop_Type::generate( 'hidden' ) )
 				),
 		];
 	}
