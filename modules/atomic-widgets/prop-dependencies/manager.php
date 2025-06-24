@@ -39,7 +39,6 @@ class Manager {
 		return new self();
 	}
 
-
 	/**
 	 * @param $config array{
 	 *  operator: string,

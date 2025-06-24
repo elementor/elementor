@@ -57,7 +57,6 @@ class Div_Block extends Atomic_Element_Base {
 				->dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 		];
-
 		return $props;
 	}
 
