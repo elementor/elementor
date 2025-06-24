@@ -127,7 +127,7 @@ class Site_Settings extends Import_Runner_Base {
 		$this->previous_active_theme = $current_theme->get_stylesheet();
 
 		try {
-			if ( ! wp_get_theme( $theme_slug)->exists() ) {
+			if ( ! wp_get_theme( $theme_slug )->exists() ) {
 				$import = $this->install_theme( $theme_slug, $theme['version'] );
 
 				if ( is_wp_error( $import ) ) {
