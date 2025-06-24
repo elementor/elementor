@@ -15,7 +15,7 @@ export default function ExportKit() {
 		</Stack>
 	);
 
-    const headerContent = (
+	const headerContent = (
 		<PageHeader title={ __( 'Export', 'elementor' ) } />
 	);
 
