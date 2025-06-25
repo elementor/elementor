@@ -9,9 +9,10 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-		"start": "cd packages && npm run build:tools && cd .. && npm run styles && npm run scripts",
-		"serve": "cd packages && npm run build:tools && cd .. && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\"",
-		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
+		"start": "cd packages && npm run build && cd .. && npm run styles && npm run scripts",
+		"watch": "cd packages && npm run build:tools && cd .. && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\" \"cd packages && npm run dev\"",
+		"build": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && npm run build:packages && grunt build",
+		"build:packages": "cd packages && npm run build",
 		"build:ci": "cd packages && npm run build && cd .. && npx grunt webpack:production",
 		"prepare-environment": "npm ci && composer install && cd packages && npm ci",
 		"prepare-environment:ci": "npm ci && cd packages && npm ci",

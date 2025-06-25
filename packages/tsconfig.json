@@ -21,7 +21,6 @@
     "paths": {
       "@elementor/*": [
         "./packages/core/*/src",
-        "./packages/pro/*/src",
         "./packages/libs/*/src",
         "./packages/tools/*/src"
       ],
