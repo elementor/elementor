@@ -49,7 +49,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await editor.openV2Section( 'size' );
 		await editor.openV2Section( 'typography' );
 
-		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: timeouts.expect } );
+		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: timeouts.action } );
 	}
 
 	async function isSectionOpen( section: SectionType ): Promise<boolean> {
@@ -109,7 +109,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );
 
 		await fontFamilyControl.scrollIntoViewIfNeeded();
-		await editor.page.waitForTimeout( 500 );
+		await editor.page.waitForTimeout( timeouts.action );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
