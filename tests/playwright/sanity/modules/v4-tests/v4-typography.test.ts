@@ -8,6 +8,7 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
+	const experimentName = 'e_atomic_elements';
 
 	const FONT_FAMILIES = {
 		system: 'Arial',
@@ -19,9 +20,12 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
 	test.afterAll( async () => {
+		await wpAdmin.resetExperiments();
 		await context.close();
 	} );
 
