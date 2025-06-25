@@ -31,8 +31,9 @@ class Site_Settings extends Revert_Runner_Base {
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		}
+
 		if ( ! class_exists( '\WP_Ajax_Upgrader_Skin' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+			require_once ABSPATH . 'wp-admin/includes/class-wp-ajax-upgrader-skin.php';
 		}
 
 		return new \Theme_Upgrader( new \WP_Ajax_Upgrader_Skin() );
