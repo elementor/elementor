@@ -13,6 +13,7 @@ use Elementor\Plugin;
 use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+use Elementor\App\Modules\ImportExportCustomization\Data\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -82,6 +83,8 @@ class Module extends BaseModule {
 	 */
 	public $revert;
 
+	private Controller $controller;
+
 	/**
 	 * Get name.
 	 *
@@ -93,8 +96,11 @@ class Module extends BaseModule {
 		return 'import-export-customization';
 	}
 
-	public function __construct() {
+	public function __construct() 	{
 		$this->register_actions();
+
+        $this->controller = new Controller();
+        $this->controller->register_hooks();
 
 		if ( ElementorUtils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
@@ -380,7 +386,7 @@ class Module extends BaseModule {
 		$this->import->register_default_runners();
 
 		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
-		do_action( 'elementor/import-export/import-kit', $this->import );
+		do_action( 'elementor/import-export-customization/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
 			$this->import->init_import_session( true );
@@ -436,7 +442,7 @@ class Module extends BaseModule {
 		$this->export = new Export( $settings );
 		$this->export->register_default_runners();
 
-		do_action( 'elementor/import-export/export-kit', $this->export );
+		do_action( 'elementor/import-export-customization/export-kit', $this->export );
 
 		return $this->export->run();
 	}
@@ -448,7 +454,7 @@ class Module extends BaseModule {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
 
-		do_action( 'elementor/import-export/revert-kit', $this->revert );
+		do_action( 'elementor/import-export-customization/revert-kit', $this->revert );
 
 		$this->revert->run();
 	}
@@ -600,6 +606,7 @@ class Module extends BaseModule {
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
+            'restApiBaseUrl' => $this->controller->get_route(),
 		];
 	}
 
