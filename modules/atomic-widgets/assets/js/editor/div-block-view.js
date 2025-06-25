@@ -267,18 +267,12 @@ const DivBlockView = BaseElementView.extend( {
 			onDropping: ( side, event ) => {
 				event.stopPropagation();
 
-				// Triggering the drag end manually, since it won't fire above the iframe
 				elementor.getPreviewView().onPanelElementDragEnd();
 
-				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
-					draggedElement = draggedView?.getContainer().view.el,
-					containerElement = event.currentTarget.parentElement,
-					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] ),
-					targetIndex = elements.indexOf( event.currentTarget );
+				const draggedView = elementor.channels.editor.request( 'element:dragged' );
 
-				if ( this.isPanelElement( draggedView, draggedElement ) ) {
-					this.onDrop( event, { at: targetIndex } );
-
+				if ( this.isPanelElement( draggedView ) ) {
+					this.handlePanelElementDrop( side, event );
 					return;
 				}
 
@@ -291,21 +285,40 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
-				const selfIndex = elements.indexOf( draggedElement );
-
-				if ( targetIndex === selfIndex ) {
-					return;
-				}
-
-				const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
-
-				this.moveDroppedItem( draggedView, dropIndex );
+				this.handleSortExistingElement( side, event, draggedView );
 			},
 		};
 	},
 
-	isPanelElement( draggedView, draggedElement ) {
-		return ! draggedView || ! draggedElement;
+	handlePanelElementDrop( side, event ) {
+		const elements = Array.from( event.currentTarget.parentElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+		let targetIndex = elements.indexOf( event.currentTarget );
+
+		if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+			targetIndex++;
+		}
+
+		this.onDrop( event, { at: targetIndex } );
+	},
+
+	handleSortExistingElement( side, event, draggedView ) {
+		const draggedElement = draggedView.getContainer().view.el;
+		const containerElement = event.currentTarget.parentElement;
+		const elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+		const targetIndex = elements.indexOf( event.currentTarget );
+		const selfIndex = elements.indexOf( draggedElement );
+
+		if ( targetIndex === selfIndex ) {
+			return;
+		}
+
+		const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
+
+		this.moveDroppedItem( draggedView, dropIndex );
+	},
+
+	isPanelElement( draggedView ) {
+		return ! draggedView;
 	},
 
 	isParentElement( draggedId ) {
