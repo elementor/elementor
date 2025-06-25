@@ -1,23 +1,26 @@
 import * as React from 'react';
-import { AlertTriangleFilledIcon } from '@elementor/icons';
-import { styled, UnstableTag, type UnstableTagProps } from '@elementor/ui';
+import { ColorFilterIcon } from '@elementor/icons';
+import { Box, Typography, UnstableTag as Tag, type UnstableTagProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 export const DeletedTag = ( { label }: UnstableTagProps ) => {
 	return (
-		<StyledTag
-			label={ label + __( 'deleted', 'elementor' ) }
-			startIcon={ <AlertTriangleFilledIcon fontSize="tiny" /> }
+		<Tag
+			showActionsOnHover
+			fullWidth
+			label={
+				<Box sx={ { display: 'inline-grid', minWidth: 0 } }>
+					<Typography sx={ { lineHeight: 1.34 } } variant="caption" noWrap>
+						{ label }
+					</Typography>
+				</Box>
+			}
+			startIcon={ <ColorFilterIcon fontSize="tiny" /> }
+			endAdornment={
+				<Typography sx={ { lineHeight: 1.34 } } variant="caption" noWrap>
+					({ __( 'deleted', 'elementor' ) })
+				</Typography>
+			}
 		/>
 	);
 };
-
-const StyledTag = styled( UnstableTag )( ( { theme } ) => ( {
-	background: '#FBF4EB',
-	'.MuiTypography-root': {
-		color: theme.palette.warning.dark,
-	},
-	'.MuiSvgIcon-root': {
-		color: theme.palette.warning.dark,
-	},
-} ) );

@@ -47,25 +47,21 @@ export const RepeatableControl = createControl(
 			[ childPropTypeUtil.key, childPropTypeUtil.schema ]
 		);
 
+		const contextValue = useMemo(
+			() => ({
+				...childControlConfig,
+				placeholder: placeholder || '',
+				patternLabel: patternLabel || '',
+			}),
+			[ childControlConfig, placeholder, patternLabel ]
+		);
+
 		const { propType, value, setValue } = useBoundProp( childArrayPropTypeUtil );
-		const ItemLabel = ( { value: itemValue }: { value: any } ) => {
-			const pattern = patternLabel || '';
-			const finalLabel = interpolate( pattern, itemValue.value );
 
-			if ( finalLabel ) {
-				return <span>{ finalLabel }</span>;
-			}
-
-			return (
-				<Box component="span" color="text.tertiary">
-					{ placeholder }
-				</Box>
-			);
-		};
 
 		return (
 			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
-				<RepeatableControlContext.Provider value={ childControlConfig }>
+				<RepeatableControlContext.Provider value={ contextValue }>
 					<Repeater
 						openOnAdd
 						values={ value ?? [] }
@@ -111,9 +107,73 @@ const Content = () => {
 };
 
 const interpolate = ( template: string, data: object ) => {
-	//remove it to be generic
-	if ( Object.values( data ).some( ( value ) => value.value === '' || value === '' ) ) {
-		return null;
+	if ( ! data ) {
+		return template;
 	}
+
 	return new Function( ...Object.keys( data ), `return \`${ template }\`;` )( ...Object.values( data ) );
+};
+
+const getNestedValue = ( obj: any, path: string ) => {
+    return path.split( '.' ).reduce( ( current, key ) => current?.[key], obj);
+};
+
+const isEmptyValue = (val: unknown) => {
+    if ( typeof val === 'string' ) {
+        return val.trim() === '';
+    }
+
+    if ( Number.isNaN( val ) ) {
+        return true;
+    }
+
+    if ( Array.isArray( val ) ) {
+        return val.length === 0;
+    }
+
+    if ( typeof val === 'object' && val !== null && Object.keys( val ).length === 0 ) {
+        return true;
+    }
+
+    return false;
+};
+
+const shouldShowPlaceholder = ( pattern: string, data: unknown ): boolean => {
+	const propertyPaths = getAllProperties( pattern );
+
+	const values = propertyPaths.map( path => getNestedValue( data, path ) );
+
+	if ( values.length === 0 ) {
+		return false;
+	}
+
+	if ( values.some( ( value ) => value === null || value === undefined ) ) {
+		return true;
+	}
+
+	if ( values.every( isEmptyValue ) ) {
+		return true;
+	}
+
+	return false;
+};
+
+const ItemLabel = ( { value }: { value: any } ) => {
+	const { placeholder, patternLabel } = useRepeatableControlContext();
+
+	const label = shouldShowPlaceholder( patternLabel, value ) ? placeholder : interpolate( patternLabel, value );
+
+	return (
+		<Box component="span" color="text.tertiary">
+			{ label }
+		</Box>
+	);
+};
+
+const getAllProperties = ( pattern: string ) => {
+	const properties = pattern.match(/\$\{([^}]+)\}/g)?.map(match =>
+		match.slice(2, -1)
+	) || [];
+
+	return properties;
 };

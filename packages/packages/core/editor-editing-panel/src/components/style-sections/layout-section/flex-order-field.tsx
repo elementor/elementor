@@ -75,8 +75,8 @@ export const FlexOrderField = () => {
 	return (
 		<StylesField bind="order" propDisplayName={ ORDER_LABEL }>
 			<UiProviders>
-				<StylesFieldLayout label={ ORDER_LABEL }>
-					<SectionContent>
+				<SectionContent>
+					<StylesFieldLayout label={ ORDER_LABEL }>
 						<ControlToggleButtonGroup
 							items={ items }
 							value={ groupControlValue }
@@ -84,22 +84,22 @@ export const FlexOrderField = () => {
 							exclusive={ true }
 							disabled={ ! canEdit }
 						/>
-						{ CUSTOM === groupControlValue && (
-							<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
-								<Grid item xs={ 6 }>
-									<ControlLabel>{ __( 'Custom order', 'elementor' ) }</ControlLabel>
-								</Grid>
-								<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'end' } }>
-									<NumberControl
-										min={ FIRST_DEFAULT_VALUE + 1 }
-										max={ LAST_DEFAULT_VALUE - 1 }
-										shouldForceInt={ true }
-									/>
-								</Grid>
+					</StylesFieldLayout>
+					{ CUSTOM === groupControlValue && (
+						<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
+							<Grid item xs={ 6 }>
+								<ControlLabel>{ __( 'Custom order', 'elementor' ) }</ControlLabel>
 							</Grid>
-						) }
-					</SectionContent>
-				</StylesFieldLayout>
+							<Grid item xs={ 6 } sx={ { display: 'flex', justifyContent: 'end' } }>
+								<NumberControl
+									min={ FIRST_DEFAULT_VALUE + 1 }
+									max={ LAST_DEFAULT_VALUE - 1 }
+									shouldForceInt={ true }
+								/>
+							</Grid>
+						</Grid>
+					) }
+				</SectionContent>
 			</UiProviders>
 		</StylesField>
 	);

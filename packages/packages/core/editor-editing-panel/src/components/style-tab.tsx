@@ -29,7 +29,7 @@ const TABS_HEADER_HEIGHT = '37px';
 
 export const stickyHeaderStyles = {
 	position: 'sticky',
-	zIndex: 1,
+	zIndex: 1100,
 	opacity: 1,
 	backgroundColor: 'background.default',
 	transition: 'top 300ms ease',

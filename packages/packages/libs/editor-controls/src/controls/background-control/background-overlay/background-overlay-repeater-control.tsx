@@ -7,12 +7,11 @@ import {
 	colorPropTypeUtil,
 	type PropKey,
 } from '@elementor/editor-props';
-import { Box, CardMedia, Grid, styled, Tab, TabPanel, Tabs, type Theme, UnstableColorIndicator } from '@elementor/ui';
+import { Box, CardMedia, styled, Tab, TabPanel, Tabs, type Theme, UnstableColorIndicator } from '@elementor/ui';
 import { useWpMediaAttachment } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
-import { ControlFormLabel } from '../../../components/control-form-label';
 import { PopoverContent } from '../../../components/popover-content';
 import { Repeater } from '../../../components/repeater';
 import { createControl } from '../../../create-control';
@@ -236,18 +235,7 @@ const ImageOverlayContent = () => {
 	return (
 		<PropProvider { ...propContext }>
 			<PropKeyProvider bind={ 'image' }>
-				<Grid container spacing={ 1 } alignItems="center">
-					<Grid item xs={ 12 }>
-						<Grid container gap={ 2 } alignItems="center" flexWrap="nowrap">
-							<Grid item xs={ 6 }>
-								<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
-							</Grid>
-							<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
-								<ImageControl sizes={ backgroundResolutionOptions } />
-							</Grid>
-						</Grid>
-					</Grid>
-				</Grid>
+				<ImageControl sizes={ backgroundResolutionOptions } />
 			</PropKeyProvider>
 			<PropKeyProvider bind={ 'position' }>
 				<BackgroundImageOverlayPosition />

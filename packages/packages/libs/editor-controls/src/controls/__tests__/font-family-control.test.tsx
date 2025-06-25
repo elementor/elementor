@@ -115,4 +115,128 @@ describe( 'FontFamilyControl', () => {
 			value: 'Roboto',
 		} );
 	} );
+
+	it( 'should display the font family value when value is set', () => {
+		// Arrange.
+		const propsWithValue = {
+			...defaultProps,
+			value: { $$type: 'string', value: 'Helvetica' },
+		};
+
+		// Act.
+		renderControl( <FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />, propsWithValue );
+
+		// Assert.
+		const selectedOption = screen.getByText( 'Helvetica' );
+		expect( selectedOption ).toBeInTheDocument();
+	} );
+
+	it( 'should display placeholder when no value is set and placeholder is provided', () => {
+		// Arrange.
+		const propsWithPlaceholder = {
+			...defaultProps,
+			value: { $$type: 'string', value: null },
+			placeholder: { $$type: 'string', value: 'Arial' },
+		};
+
+		// Act.
+		renderControl(
+			<FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />,
+			propsWithPlaceholder
+		);
+
+		// Assert.
+		const selectedOption = screen.getByText( 'Arial' );
+		expect( selectedOption ).toBeInTheDocument();
+	} );
+
+	it( 'should display empty state when no value and no placeholder', () => {
+		// Arrange.
+		const propsWithoutValueOrPlaceholder = {
+			...defaultProps,
+			value: { $$type: 'string', value: null },
+			placeholder: undefined,
+		};
+
+		// Act.
+		renderControl(
+			<FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />,
+			propsWithoutValueOrPlaceholder
+		);
+
+		// Assert.
+		const fontFamilyButton = screen.getByRole( 'button' );
+
+		expect( fontFamilyButton ).toBeInTheDocument();
+
+		const allGenericElements = screen.getAllByRole( 'generic' );
+		const hasEmptyElement = allGenericElements.some( ( el ) => el.textContent === '' );
+
+		expect( hasEmptyElement ).toBe( true );
+	} );
+
+	it( 'should update from placeholder to value when font is selected', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const propsWithPlaceholder = {
+			...defaultProps,
+			setValue,
+			value: { $$type: 'string', value: null },
+			placeholder: { $$type: 'string', value: 'Choose a font' },
+		};
+
+		renderControl(
+			<FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />,
+			propsWithPlaceholder
+		);
+		const fontFamilyButton = screen.getByRole( 'button' );
+
+		expect( screen.getByText( 'Choose a font' ) ).toBeInTheDocument();
+
+		// Act.
+		fireEvent.click( fontFamilyButton );
+		const selectedOption = screen.getByText( 'Lato' );
+		fireEvent.click( selectedOption );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'string',
+			value: 'Lato',
+		} );
+	} );
+
+	it( 'should not apply placeholder when value is set', () => {
+		// Arrange.
+		const propsWithValue = {
+			...defaultProps,
+			value: { $$type: 'string', value: 'Roboto' },
+			placeholder: { $$type: 'string', value: 'Select font family' },
+		};
+
+		// Act.
+		renderControl( <FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />, propsWithValue );
+
+		// Assert.
+		expect( screen.getByText( 'Roboto' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should apply placeholder styling when showing placeholder', () => {
+		// Arrange.
+		const propsWithPlaceholder = {
+			...defaultProps,
+			value: { $$type: 'string', value: null },
+			placeholder: { $$type: 'string', value: 'Select font family' },
+		};
+
+		// Act.
+		renderControl(
+			<FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />,
+			propsWithPlaceholder
+		);
+
+		// Assert.
+		const placeholderText = screen.getByText( 'Select font family' );
+		expect( placeholderText ).toBeInTheDocument();
+		expect( placeholderText ).toHaveClass( 'MuiTypography-caption' );
+	} );
 } );

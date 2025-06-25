@@ -14,7 +14,15 @@ export const SwitchControl = createControl( () => {
 
 	return (
 		<div style={ { display: 'flex', justifyContent: 'flex-end' } }>
-			<Switch checked={ !! value } onChange={ handleChange } size="small" disabled={ disabled } />
+			<Switch
+				checked={ !! value }
+				onChange={ handleChange }
+				size="small"
+				disabled={ disabled }
+				inputProps={ {
+					...( disabled ? { style: { opacity: 0 } } : {} ),
+				} }
+			/>
 		</div>
 	);
 } );

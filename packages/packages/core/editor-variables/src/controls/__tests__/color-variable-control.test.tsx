@@ -49,7 +49,7 @@ describe( 'ColorVariableControl', () => {
 		globalThis.Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
 	} );
 
-	it( 'should render with the selected variable', () => {
+	it( 'should render with the assigned variable', () => {
 		// Arrange
 		const setValue = jest.fn();
 
@@ -100,5 +100,33 @@ describe( 'ColorVariableControl', () => {
 		} );
 
 		expect( screen.getByText( '#911f1f' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render with a deleted variable', () => {
+		// Arrange
+		const setValue = jest.fn();
+		const deletedVariable = {
+			...mockVariable,
+			deleted: true,
+		};
+
+		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( deletedVariable );
+
+		const props = {
+			setValue,
+			value: {
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-123',
+			},
+			bind: 'color',
+			propType,
+		};
+
+		// Act
+		renderControl( <ColorVariableControl />, props );
+
+		// Assert
+		expect( screen.getByText( 'Primary Background Color' ) ).toBeInTheDocument();
+		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
 	} );
 } );

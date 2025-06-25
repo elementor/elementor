@@ -50,7 +50,7 @@ describe( 'FontVariableControl', () => {
 		globalThis.Element.prototype.getBoundingClientRect = originalGetBoundingClientRect;
 	} );
 
-	it( 'should render with the selected variable', () => {
+	it( 'should render with the assigned variable', () => {
 		// Arrange
 		const setValue = jest.fn();
 
@@ -101,5 +101,33 @@ describe( 'FontVariableControl', () => {
 		} );
 
 		expect( screen.getByText( 'Roboto' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render with a deleted variable', () => {
+		// Arrange
+		const setValue = jest.fn();
+		const deletedVariable = {
+			...mockVariable,
+			deleted: true,
+		};
+
+		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( deletedVariable );
+
+		const props = {
+			setValue,
+			value: {
+				$$type: fontVariablePropTypeUtil.key,
+				value: 'e-gv-123',
+			},
+			bind: 'font-family',
+			propType,
+		};
+
+		// Act
+		renderControl( <FontVariableControl />, props );
+
+		// Assert
+		expect( screen.getByText( 'Main: Roboto' ) ).toBeInTheDocument();
+		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
 	} );
 } );

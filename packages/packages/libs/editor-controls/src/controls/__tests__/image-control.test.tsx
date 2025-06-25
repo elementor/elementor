@@ -17,6 +17,11 @@ const propType = createMockPropType( {
 	},
 } );
 
+const sizes = [
+	{ label: 'Small', value: 'small' },
+	{ label: 'Medium', value: 'medium' },
+];
+
 describe( 'ImageControl', () => {
 	beforeEach( () => {
 		jest.mocked( ImageMediaControl ).mockImplementation( MockImageMediaControl );
@@ -26,13 +31,8 @@ describe( 'ImageControl', () => {
 		jest.resetAllMocks();
 	} );
 
-	it( 'should render a composition of size and media controls', () => {
+	it( 'should render a composition of size and media controls when showMode is all (default)', () => {
 		// Arrange.
-		const sizes = [
-			{ label: 'Small', value: 'small' },
-			{ label: 'Medium', value: 'medium' },
-		];
-
 		const props = {
 			bind: 'image',
 			setValue: jest.fn(),
@@ -57,6 +57,40 @@ describe( 'ImageControl', () => {
 		// Assert.
 		expect( screen.getByText( 'Small' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Medium' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render only media control when showMode is media', () => {
+		// Arrange.
+		const props = {
+			bind: 'image',
+			setValue: jest.fn(),
+			propType,
+		};
+
+		renderControl( <ImageControl sizes={ sizes } showMode="media" />, props );
+
+		// Assert.
+		expect( screen.getByRole( 'button', { name: 'src' } ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should render only size control when showMode is sizes', () => {
+		// Arrange.
+		const props = {
+			bind: 'image',
+			setValue: jest.fn(),
+			propType,
+		};
+
+		renderControl( <ImageControl sizes={ sizes } showMode="sizes" />, props );
+
+		fireEvent.mouseDown( screen.getByRole( 'combobox' ) );
+
+		// Assert.
+		expect( screen.getByText( 'Small' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Medium' ) ).toBeInTheDocument();
+
+		expect( screen.queryByRole( 'button', { name: 'src' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should update the image src', () => {

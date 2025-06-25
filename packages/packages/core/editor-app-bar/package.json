@@ -44,10 +44,10 @@
     "@elementor/editor-documents": "0.13.8",
     "@elementor/editor-responsive": "0.13.6",
     "@elementor/editor-v1-adapters": "0.12.1",
-    "@elementor/icons": "1.44.0",
+    "@elementor/icons": "1.46.0",
     "@elementor/locations": "0.8.0",
     "@elementor/menus": "0.1.5",
-    "@elementor/ui": "1.35.5",
+    "@elementor/ui": "1.36.0",
     "@wordpress/i18n": "^5.13.0"
   },
   "devDependencies": {

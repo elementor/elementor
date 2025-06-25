@@ -1,27 +1,17 @@
 import * as React from 'react';
-import { useId, useRef, useState } from 'react';
-import { FontFamilySelector, PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
-import { PopoverHeader, PopoverScrollableContent } from '@elementor/editor-ui';
-import { ArrowLeftIcon, ChevronDownIcon, TextIcon, TrashIcon } from '@elementor/icons';
-import {
-	bindPopover,
-	bindTrigger,
-	Button,
-	CardActions,
-	Divider,
-	FormLabel,
-	Grid,
-	IconButton,
-	Popover,
-	TextField,
-	UnstableTag,
-	usePopupState,
-} from '@elementor/ui';
+import { useState } from 'react';
+import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
+import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
+import { PopoverHeader } from '@elementor/editor-ui';
+import { ArrowLeftIcon, TextIcon, TrashIcon } from '@elementor/icons';
+import { Button, CardActions, Divider, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { FontField } from './fields/font-field';
+import { LabelField } from './fields/label-field';
+import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 
 const SIZE = 'tiny';
 
@@ -34,22 +24,15 @@ type Props = {
 
 export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( fontVariablePropTypeUtil );
-	const variable = useVariable( editId );
+	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 
+	const variable = useVariable( editId );
 	if ( ! variable ) {
 		throw new Error( `Global font variable "${ editId }" not found` );
 	}
 
 	const [ fontFamily, setFontFamily ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
-
-	const variableNameId = useId();
-	const variableValueId = useId();
-
-	const anchorRef = useRef< HTMLDivElement >( null );
-	const fontPopoverState = usePopupState( { variant: 'popover' } );
-
-	const fontFamilies = useFontFamilies();
 
 	const handleUpdate = () => {
 		updateVariable( editId, {
@@ -74,100 +57,82 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 		}
 	};
 
-	const noValueChanged = () => fontFamily === variable.value && label === variable.label;
-	const hasEmptyValue = () => '' === fontFamily.trim() || '' === label.trim();
-	const isSaveDisabled = () => noValueChanged() || hasEmptyValue();
+	const handleDeleteConfirmation = () => {
+		setDeleteConfirmation( true );
+	};
 
-	const sectionWidth = useSectionWidth();
+	const closeDeleteDialog = () => () => {
+		setDeleteConfirmation( false );
+	};
+
+	const hasEmptyValue = () => {
+		return ! fontFamily.trim() || ! label.trim();
+	};
+
+	const noValueChanged = () => {
+		return fontFamily === variable.value && label === variable.label;
+	};
+
+	const isSubmitDisabled = noValueChanged() || hasEmptyValue();
 
 	const actions = [];
 
 	actions.push(
-		<IconButton key="delete" size={ SIZE } aria-label={ __( 'Delete', 'elementor' ) } onClick={ handleDelete }>
+		<IconButton
+			key="delete"
+			size={ SIZE }
+			aria-label={ __( 'Delete', 'elementor' ) }
+			onClick={ handleDeleteConfirmation }
+		>
 			<TrashIcon fontSize={ SIZE } />
 		</IconButton>
 	);
 
 	return (
-		<PopoverScrollableContent height="auto">
-			<PopoverHeader
-				icon={
-					<>
-						{ onGoBack && (
-							<IconButton size={ SIZE } aria-label={ __( 'Go Back', 'elementor' ) } onClick={ onGoBack }>
-								<ArrowLeftIcon fontSize={ SIZE } />
-							</IconButton>
-						) }
-						<TextIcon fontSize={ SIZE } />
-					</>
-				}
-				title={ __( 'Edit variable', 'elementor' ) }
-				onClose={ onClose }
-				actions={ actions }
-			/>
-
-			<Divider />
-
-			<PopoverContent p={ 2 }>
-				<Grid container gap={ 0.75 } alignItems="center">
-					<Grid item xs={ 12 }>
-						<FormLabel htmlFor={ variableNameId } size="tiny">
-							{ __( 'Name', 'elementor' ) }
-						</FormLabel>
-					</Grid>
-					<Grid item xs={ 12 }>
-						<TextField
-							id={ variableNameId }
-							size="tiny"
-							fullWidth
-							value={ label }
-							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => setLabel( e.target.value ) }
-						/>
-					</Grid>
-				</Grid>
-
-				<Grid container gap={ 0.75 } alignItems="center">
-					<Grid item xs={ 12 }>
-						<FormLabel htmlFor={ variableValueId } size="tiny">
-							{ __( 'Value', 'elementor' ) }
-						</FormLabel>
-					</Grid>
-					<Grid item xs={ 12 }>
+		<>
+			<PopoverScrollableContent height="auto">
+				<PopoverHeader
+					icon={
 						<>
-							<UnstableTag
-								id={ variableValueId }
-								variant="outlined"
-								label={ fontFamily }
-								endIcon={ <ChevronDownIcon fontSize="tiny" /> }
-								{ ...bindTrigger( fontPopoverState ) }
-								fullWidth
-							/>
-							<Popover
-								disablePortal
-								disableScrollLock
-								anchorEl={ anchorRef.current }
-								anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-								transformOrigin={ { vertical: 'top', horizontal: -20 } }
-								{ ...bindPopover( fontPopoverState ) }
-							>
-								<FontFamilySelector
-									fontFamilies={ fontFamilies }
-									fontFamily={ fontFamily }
-									onFontFamilyChange={ setFontFamily }
-									onClose={ fontPopoverState.close }
-									sectionWidth={ sectionWidth }
-								/>
-							</Popover>
+							{ onGoBack && (
+								<IconButton
+									size={ SIZE }
+									aria-label={ __( 'Go Back', 'elementor' ) }
+									onClick={ onGoBack }
+								>
+									<ArrowLeftIcon fontSize={ SIZE } />
+								</IconButton>
+							) }
+							<TextIcon fontSize={ SIZE } />
 						</>
-					</Grid>
-				</Grid>
-			</PopoverContent>
+					}
+					title={ __( 'Edit variable', 'elementor' ) }
+					onClose={ onClose }
+					actions={ actions }
+				/>
 
-			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSaveDisabled() } onClick={ handleUpdate }>
-					{ __( 'Save', 'elementor' ) }
-				</Button>
-			</CardActions>
-		</PopoverScrollableContent>
+				<Divider />
+
+				<PopoverContent p={ 2 }>
+					<LabelField value={ label } onChange={ setLabel } />
+					<FontField value={ fontFamily } onChange={ setFontFamily } />
+				</PopoverContent>
+
+				<CardActions sx={ { pt: 0.5, pb: 1 } }>
+					<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleUpdate }>
+						{ __( 'Save', 'elementor' ) }
+					</Button>
+				</CardActions>
+			</PopoverScrollableContent>
+
+			{ deleteConfirmation && (
+				<DeleteConfirmationDialog
+					open
+					label={ label }
+					onConfirm={ handleDelete }
+					closeDialog={ closeDeleteDialog() }
+				/>
+			) }
+		</>
 	);
 };

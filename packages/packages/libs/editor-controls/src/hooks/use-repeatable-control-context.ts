@@ -9,7 +9,12 @@ export type ChildControlConfig = {
 	label?: string;
 };
 
-const RepeatableControlContext = createContext< ChildControlConfig | undefined >( undefined );
+type RepeatableControlContextType = ChildControlConfig & {
+	placeholder: string;
+	patternLabel: string;
+};
+
+const RepeatableControlContext = createContext< RepeatableControlContextType | undefined >( undefined );
 
 const useRepeatableControlContext = () => {
 	const context = useContext( RepeatableControlContext );

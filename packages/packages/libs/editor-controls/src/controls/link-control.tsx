@@ -2,6 +2,7 @@ import * as React from 'react';
 import { type PropsWithChildren, useMemo, useState } from 'react';
 import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
 import {
+	booleanPropTypeUtil,
 	linkPropTypeUtil,
 	type LinkPropValue,
 	numberPropTypeUtil,
@@ -9,10 +10,11 @@ import {
 	urlPropTypeUtil,
 } from '@elementor/editor-props';
 import { InfoTipCard } from '@elementor/editor-ui';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 import { AlertTriangleIcon, MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
-import { Box, Collapse, Grid, IconButton, Infotip, Stack } from '@elementor/ui';
+import { Box, Collapse, Grid, IconButton, Infotip, Stack, Switch } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
@@ -196,7 +198,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 									<ControlFormLabel>{ __( 'Open in a new tab', 'elementor' ) }</ControlFormLabel>
 								</Grid>
 								<Grid item sx={ { marginInlineEnd: -1 } }>
-									<SwitchControl />
+									<SwitchControlComponent disabled={ propContext.disabled || ! value } />
 								</Grid>
 							</Grid>
 						</PropKeyProvider>
@@ -219,6 +221,30 @@ const ToggleIconControl = ( { disabled, active, onIconClick, label }: ToggleIcon
 		<IconButton size={ SIZE } onClick={ onIconClick } aria-label={ label } disabled={ disabled }>
 			{ active ? <MinusIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
 		</IconButton>
+	);
+};
+
+const SwitchControlComponent = ( { disabled }: { disabled: boolean } ) => {
+	const { value, setValue } = useBoundProp( booleanPropTypeUtil );
+	const isVersion331Active = isExperimentActive( 'e_v_3_31' );
+
+	if ( isVersion331Active ) {
+		return <SwitchControl />;
+	}
+
+	const onClick = () => {
+		setValue( ! value );
+	};
+
+	return (
+		<Switch
+			checked={ value ?? false }
+			onClick={ onClick }
+			disabled={ disabled }
+			inputProps={ {
+				...( disabled ? { style: { opacity: 0 } } : {} ),
+			} }
+		/>
 	);
 };
 

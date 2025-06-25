@@ -1,24 +1,16 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, BrushIcon } from '@elementor/icons';
-import {
-	Button,
-	CardActions,
-	Divider,
-	FormLabel,
-	Grid,
-	IconButton,
-	TextField,
-	UnstableColorField,
-} from '@elementor/ui';
+import { Button, CardActions, Divider, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
-import { usePopoverContentRef } from './variable-selection-popover.context';
+import { ColorField } from './fields/color-field';
+import { LabelField } from './fields/label-field';
 
 const SIZE = 'tiny';
 
@@ -32,9 +24,6 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 	const [ color, setColor ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
-
-	const defaultRef = useRef< HTMLDivElement >( null );
-	const anchorRef = usePopoverContentRef() ?? defaultRef;
 
 	const resetFields = () => {
 		setColor( '' );
@@ -57,9 +46,11 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 		} );
 	};
 
-	const isFormInvalid = () => {
-		return ! color?.trim() || ! label?.trim();
+	const hasEmptyValue = () => {
+		return '' === color.trim() || '' === label.trim();
 	};
+
+	const isSubmitDisabled = hasEmptyValue();
 
 	return (
 		<PopoverScrollableContent height="auto">
@@ -81,44 +72,12 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 			<Divider />
 
 			<PopoverContent p={ 2 }>
-				<Grid container gap={ 0.75 } alignItems="center">
-					<Grid item xs={ 12 }>
-						<FormLabel size="tiny">{ __( 'Name', 'elementor' ) }</FormLabel>
-					</Grid>
-					<Grid item xs={ 12 }>
-						<TextField
-							size="tiny"
-							fullWidth
-							value={ label }
-							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => setLabel( e.target.value ) }
-						/>
-					</Grid>
-				</Grid>
-
-				<Grid container gap={ 0.75 } alignItems="center">
-					<Grid item xs={ 12 }>
-						<FormLabel size="tiny">{ __( 'Value', 'elementor' ) }</FormLabel>
-					</Grid>
-					<Grid item xs={ 12 }>
-						<UnstableColorField
-							size="tiny"
-							fullWidth
-							value={ color }
-							onChange={ setColor }
-							slotProps={ {
-								colorPicker: {
-									anchorEl: anchorRef.current,
-									anchorOrigin: { vertical: 'top', horizontal: 'right' },
-									transformOrigin: { vertical: 'top', horizontal: -10 },
-								},
-							} }
-						/>
-					</Grid>
-				</Grid>
+				<LabelField value={ label } onChange={ setLabel } />
+				<ColorField value={ color } onChange={ setColor } />
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isFormInvalid() } onClick={ handleCreate }>
+				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreate }>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>

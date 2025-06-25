@@ -45,9 +45,9 @@
     "@elementor/editor-props": "0.15.0",
     "@elementor/schema": "0.1.2",
     "@elementor/editor-controls": "1.2.0",
-    "@elementor/icons": "1.44.0",
+    "@elementor/icons": "1.46.0",
     "@wordpress/i18n": "^5.13.0",
-    "@elementor/ui": "1.35.5",
+    "@elementor/ui": "1.36.0",
     "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/http-client": "0.3.0",
     "@elementor/editor-ui": "0.13.0"

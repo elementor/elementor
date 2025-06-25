@@ -30,3 +30,5 @@ export * from './position';
 export * from './filter-prop-types/filter';
 export * from './filter-prop-types/blur-filter';
 export * from './filter-prop-types/brightness-filter';
+export * from './transform-prop-types/transform';
+export * from './transform-prop-types/move-transform';

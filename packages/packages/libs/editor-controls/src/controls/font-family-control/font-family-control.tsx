@@ -21,20 +21,32 @@ type FontFamilyControlProps = {
 const SIZE = 'tiny';
 
 export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }: FontFamilyControlProps ) => {
-	const { value: fontFamily, setValue: setFontFamily, disabled } = useBoundProp( stringPropTypeUtil );
+	const { value: fontFamily, setValue: setFontFamily, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
+
+	const isShowingPlaceholder = ! fontFamily && placeholder;
 
 	return (
 		<>
 			<ControlActions>
 				<UnstableTag
 					variant="outlined"
-					label={ fontFamily }
+					label={ fontFamily || placeholder }
 					endIcon={ <ChevronDownIcon fontSize={ SIZE } /> }
 					{ ...bindTrigger( popoverState ) }
 					fullWidth
 					disabled={ disabled }
+					sx={
+						isShowingPlaceholder
+							? {
+									'& .MuiTag-label': {
+										color: ( theme ) => theme.palette.text.tertiary,
+									},
+									textTransform: 'capitalize',
+							  }
+							: undefined
+					}
 				/>
 			</ControlActions>
 			<Popover

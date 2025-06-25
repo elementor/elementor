@@ -1,27 +1,16 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
-import { FontFamilySelector, PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverScrollableContent, useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
+import { useState } from 'react';
+import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
+import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { ArrowLeftIcon, ChevronDownIcon, TextIcon } from '@elementor/icons';
-import {
-	bindPopover,
-	bindTrigger,
-	Button,
-	CardActions,
-	Divider,
-	FormLabel,
-	Grid,
-	IconButton,
-	Popover,
-	TextField,
-	UnstableTag,
-	usePopupState,
-} from '@elementor/ui';
+import { ArrowLeftIcon, TextIcon } from '@elementor/icons';
+import { Button, CardActions, Divider, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { FontField } from './fields/font-field';
+import { LabelField } from './fields/label-field';
 
 const SIZE = 'tiny';
 
@@ -31,14 +20,10 @@ type Props = {
 };
 
 export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
-	const fontFamilies = useFontFamilies();
 	const { setValue: setVariable } = useBoundProp( fontVariablePropTypeUtil );
 
 	const [ fontFamily, setFontFamily ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
-
-	const anchorRef = useRef< HTMLDivElement >( null );
-	const fontPopoverState = usePopupState( { variant: 'popover' } );
 
 	const resetFields = () => {
 		setFontFamily( '' );
@@ -61,11 +46,11 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 		} );
 	};
 
-	const isFormInvalid = () => {
-		return ! fontFamily?.trim() || ! label?.trim();
+	const hasEmptyValue = () => {
+		return '' === fontFamily.trim() || '' === label.trim();
 	};
 
-	const sectionWidth = useSectionWidth();
+	const isSubmitDisabled = hasEmptyValue();
 
 	return (
 		<PopoverScrollableContent height="auto">
@@ -87,56 +72,12 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			<Divider />
 
 			<PopoverContent p={ 2 }>
-				<Grid container gap={ 0.75 } alignItems="center">
-					<Grid item xs={ 12 }>
-						<FormLabel size="tiny">{ __( 'Name', 'elementor' ) }</FormLabel>
-					</Grid>
-					<Grid item xs={ 12 }>
-						<TextField
-							size="tiny"
-							fullWidth
-							value={ label }
-							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => setLabel( e.target.value ) }
-						/>
-					</Grid>
-				</Grid>
-
-				<Grid container gap={ 0.75 } alignItems="center">
-					<Grid item xs={ 12 }>
-						<FormLabel size="tiny">{ __( 'Value', 'elementor' ) }</FormLabel>
-					</Grid>
-					<Grid item xs={ 12 }>
-						<>
-							<UnstableTag
-								variant="outlined"
-								label={ fontFamily }
-								endIcon={ <ChevronDownIcon fontSize="tiny" /> }
-								{ ...bindTrigger( fontPopoverState ) }
-								fullWidth
-							/>
-							<Popover
-								disablePortal
-								disableScrollLock
-								anchorEl={ anchorRef.current }
-								anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-								transformOrigin={ { vertical: 'top', horizontal: -20 } }
-								{ ...bindPopover( fontPopoverState ) }
-							>
-								<FontFamilySelector
-									fontFamilies={ fontFamilies }
-									fontFamily={ fontFamily }
-									onFontFamilyChange={ setFontFamily }
-									onClose={ fontPopoverState.close }
-									sectionWidth={ sectionWidth }
-								/>
-							</Popover>
-						</>
-					</Grid>
-				</Grid>
+				<LabelField value={ label } onChange={ setLabel } />
+				<FontField value={ fontFamily } onChange={ setFontFamily } />
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isFormInvalid() } onClick={ handleCreate }>
+				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreate }>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
