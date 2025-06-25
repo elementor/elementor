@@ -254,7 +254,7 @@ class Test_Import extends Elementor_Test_Base {
 				'activated_theme' => null,
 				'previous_active_theme' => [
 					'slug' => $previous_active_theme->get_stylesheet(),
-					'version' => $previous_active_theme->get( 'version' ),
+					'version' => $previous_active_theme->get( 'Version' ),
 				],
 			],
 		];
