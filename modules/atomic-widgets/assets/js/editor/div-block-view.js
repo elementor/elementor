@@ -277,7 +277,6 @@ const DivBlockView = BaseElementView.extend( {
 
 				let targetIndex = elements.indexOf( event.currentTarget );
 
-				// Handle dropping a new element from the panel.
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
 					if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
 						targetIndex++;
@@ -287,7 +286,6 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
-				// Prevent dragging a parent element into one of its children.
 				if ( this.isParentElement( draggedView.getContainer().id ) ) {
 					return;
 				}
@@ -297,18 +295,21 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
-				// Handle sorting an existing element.
-				const selfIndex = elements.indexOf( draggedElement );
-
-				if ( targetIndex === selfIndex ) {
-					return;
-				}
-
-				const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
-
-				this.moveDroppedItem( draggedView, dropIndex );
+				this.moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement );
 			},
 		};
+	},
+
+	moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement ) {
+		const selfIndex = elements.indexOf( draggedElement );
+
+		if ( targetIndex === selfIndex ) {
+			return;
+		}
+
+		const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
+
+		this.moveDroppedItem( draggedView, dropIndex );
 	},
 
 	isPanelElement( draggedView, draggedElement ) {
