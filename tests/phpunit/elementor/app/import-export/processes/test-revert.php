@@ -46,8 +46,11 @@ class Test_Revert extends Elementor_Test_Base {
 
 		$import = new Import( static::MOCK_KIT_ZIP_PATH );
 
+		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
+			->getMock();
+
 		$import->register( new Import_Plugins( $plugins_manager_mock ) );
-		$import->register( new Import_Site_Settings() );
+		$import->register( new Import_Site_Settings( $theme_upgrader_mock ) );
 		$import->register( new Import_Taxonomies() );
 		$import->register( new Import_Templates() );
 		$import->register( new Import_Elementor_Content() );
@@ -99,8 +102,11 @@ class Test_Revert extends Elementor_Test_Base {
 		// Arrange
 		$original_kit = Plugin::$instance->kits_manager->get_active_kit();
 
+		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
+			->getMock();
+
 		$import = new Import( static::MOCK_KIT_ZIP_PATH );
-		$import->register( new Import_Site_Settings() );
+		$import->register( new Import_Site_Settings( $theme_upgrader_mock ) );
 		$import->run();
 
 		$after_import__kit = Plugin::$instance->kits_manager->get_active_kit();
