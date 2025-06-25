@@ -26,10 +26,5 @@
         "checkJs": false,
         "allowJs": false,
         "resolveJsonModule": true
-    },
-    "paths": {
-        "@elementor/generate-wordpress-asset-file-webpack-plugin": [
-            "packages/packages/core/generate-wordpress-asset-file-webpack-plugin/src"
-        ]
     }
 }
