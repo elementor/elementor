@@ -24,6 +24,7 @@ class Admin_Notices extends Module {
 		'api_notice',
 		'api_upgrade_plugin',
 		'tracker',
+		'tracker_last_update',
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
@@ -241,6 +242,47 @@ class Admin_Notices extends Module {
 				'text' => esc_html__( 'No thanks', 'elementor' ),
 				'url' => $optout_url,
 				'variant' => 'outline',
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function notice_tracker_last_update() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		if ( ! Tracker::has_terms_changed() ) {
+			return false;
+		}
+
+		$notice_id = 'tracker_last_update_' . Tracker::LAST_TERMS_UPDATED;
+
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
+
+		$message = esc_html__( 'We\'re updating our Terms and Conditions to include the collection of usage and behavioral data. This information helps us understand how you use Elementor so we can make informed improvements to the product.', 'elementor' );
+
+		$options = [
+			'id' => $notice_id,
+			'title' => esc_html__( 'Update regarding usage data collection', 'elementor' ),
+			'description' => $message,
+			'button' => [
+				'text' => esc_html__( 'Opt in', 'elementor' ),
+				'url' => $optin_url,
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/wp-dash-update-usage-notice/',
+				'new_tab' => true,
 				'type' => 'cta',
 			],
 		];

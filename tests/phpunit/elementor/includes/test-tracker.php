@@ -155,4 +155,55 @@ class Test_Tracker extends Elementor_Test_Base {
 			}
 		}
 	}
+
+	public function test_has_terms_changed_when_tracking_not_allowed() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'no' );
+
+		// Act
+		$result = Tracker::has_terms_changed();
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_has_terms_changed_when_last_update_time_not_set() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'yes' );
+		delete_option( 'elementor_allow_tracking_last_update' );
+
+		// Act
+		$result = Tracker::has_terms_changed();
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_has_terms_changed_when_last_update_time_before_terms_update() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'yes' );
+		$terms_updated = '2024-01-01';
+		$last_update_time = strtotime( '2023-12-31 UTC' );
+		update_option( 'elementor_allow_tracking_last_update', $last_update_time );
+
+		// Act
+		$result = Tracker::has_terms_changed( $terms_updated );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_has_terms_changed_when_last_update_time_after_terms_update() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'yes' );
+		$terms_updated = '2024-01-01';
+		$last_update_time = strtotime( '2024-01-02 UTC' );
+		update_option( 'elementor_allow_tracking_last_update', $last_update_time );
+
+		// Act
+		$result = Tracker::has_terms_changed( $terms_updated );
+
+		// Assert
+		$this->assertFalse( $result );
+	}
 }
