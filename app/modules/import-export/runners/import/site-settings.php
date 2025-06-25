@@ -26,17 +26,17 @@ class Site_Settings extends Import_Runner_Base {
 	/**
 	 * @var string|null
 	 */
-	private $installed_theme;
+	private ?string $installed_theme;
 
 	/**
 	 * @var string|null
 	 */
-	private $previous_active_theme;
+	private ?string $activated_theme;
 
 	/**
-	 * @var \Theme_Upgrader
+	 * @var array|null
 	 */
-	private \Theme_Upgrader $theme_upgrader;
+	private ?array $previous_active_theme;
 
 	public function get_theme_upgrader(): \Theme_Upgrader {
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
@@ -127,12 +127,19 @@ class Site_Settings extends Import_Runner_Base {
 		$theme_name = $theme['name'];
 
 		$current_theme = wp_get_theme();
-		$this->previous_active_theme = $current_theme->get_stylesheet();
+		$this->previous_active_theme['slug'] = $current_theme->get_stylesheet();
+		$this->previous_active_theme['version'] = $current_theme->get( 'Version' );
+
+		if ( $current_theme->get_stylesheet() === $theme_slug ) {
+			$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s is already used', 'elementor' ), $theme_name );
+			return $result;
+		}
 
 		try {
 			if ( wp_get_theme( $theme_slug )->exists() ) {
 				$this->activate_theme( $theme_slug );
-				$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has already been installed', 'elementor' ), $theme_name );
+				$this->activated_theme = $theme_slug;
+				$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has already been installed and activated', 'elementor' ), $theme_name );
 				return $result;
 			}
 
@@ -159,6 +166,7 @@ class Site_Settings extends Import_Runner_Base {
 			'active_kit_id' => $this->active_kit_id,
 			'imported_kit_id' => $this->imported_kit_id,
 			'installed_theme' => $this->installed_theme,
+			'activated_theme' => $this->installed_theme,
 			'previous_active_theme' => $this->previous_active_theme,
 		];
 	}
