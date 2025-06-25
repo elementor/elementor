@@ -85,7 +85,7 @@ class Module extends BaseModule {
 		return 'import-export-customization';
 	}
 
-	public function __construct() 	{
+	public function __construct() {
 		$this->register_actions();
 
 		Controller::register_hooks();
@@ -594,7 +594,7 @@ class Module extends BaseModule {
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
-            'restApiBaseUrl' => Controller::get_route(),
+			'restApiBaseUrl' => Controller::get_base_url(),
 		];
 	}
 

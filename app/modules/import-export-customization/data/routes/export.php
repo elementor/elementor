@@ -17,15 +17,13 @@ class Export extends Base_Route {
 		return 'POST';
 	}
 
-	public function callback( $request ): \WP_REST_Response
-	{
+	public function callback( $request ): \WP_REST_Response {
 		try {
 			$settings = [
 				'include' => $request->get_param( 'include' ) ?: [],
 				'kitInfo' => $request->get_param( 'kitInfo' ) ?: [],
-				'selected_plugins' => $request->get_param( 'selected_plugins' ) ?: [],
-				'selected_cpt' => $request->get_param( 'selected_cpt' ) ?: [],
-				'selected_override_conditions' => $request->get_param( 'selected_override_conditions' ) ?: [],
+				'plugins' => $request->get_param( 'plugins' ) ?: [],
+				'selectedCustomPostTypes' => $request->get_param( 'selectedCustomPostTypes' ) ?: [],
 			];
 
 			$settings = array_filter( $settings );
@@ -63,21 +61,15 @@ class Export extends Base_Route {
 				'required' => false,
 				'default' => [],
 			],
-			'selected_plugins' => [
+			'plugins' => [
 				'type' => 'array',
 				'description' => 'Selected plugins to export',
 				'required' => false,
 				'default' => [],
 			],
-			'selected_cpt' => [
+			'selectedCustomPostTypes' => [
 				'type' => 'array',
 				'description' => 'Selected custom post types',
-				'required' => false,
-				'default' => [],
-			],
-			'selected_override_conditions' => [
-				'type' => 'array',
-				'description' => 'Selected override conditions',
 				'required' => false,
 				'default' => [],
 			],
