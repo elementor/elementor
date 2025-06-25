@@ -20,22 +20,18 @@ class Applied_Global_Classes_Usage {
 	 *
 	 * @return array<string, int> Statistics about applied global classes per global class
 	 */
-	public function  get() {
-		$total_count_per_class_id = [];
+	public function get() {
+		$total_count_per_class_id = array();
 		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 
 		if ( empty( $global_class_ids ) ) {
-			return [];
+			return array();
 		}
 
-		Plugin::$instance->db->iterate_elementor_documents( function( $document, $elements_data ) use ( &$total_count_per_class_id, $global_class_ids ) {
-//			var_dump( $document );
-			echo json_encode((array) $document);
-			echo json_encode((array) $elements_data);
-
+		Plugin::$instance->db->iterate_elementor_documents( function ( $document, $elements_data ) use ( &$total_count_per_class_id, $global_class_ids ) {
 			$count_per_global_class = $this->get_classes_count_per_class( $elements_data, $global_class_ids );
 
-			$total_count_per_class_id = Collection::make( $count_per_global_class )->reduce( function( $carry, $count, $class_id ) {
+			$total_count_per_class_id = Collection::make( $count_per_global_class )->reduce( function ( $carry, $count, $class_id ) {
 				$carry[ $class_id ] ??= 0;
 				$carry[ $class_id ] += $count;
 
@@ -50,9 +46,9 @@ class Applied_Global_Classes_Usage {
 	}
 
 	private function get_classes_count_per_class( $elements_data, $global_class_ids ) {
-		$count_per_class = [];
+		$count_per_class = array();
 
-		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$count_per_class ) {
+		Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( $global_class_ids, &$count_per_class ) {
 			$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
 			$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
 
@@ -73,19 +69,19 @@ class Applied_Global_Classes_Usage {
 	}
 
 	private function get_applied_global_classes_per_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
-		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop_value, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
+		return Collection::make( $atomic_props_schema )->reduce( function ( $carry, $prop_value, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
 			if ( ! Atomic_Elements_Utils::is_classes_prop( $prop_value ) ) {
 				return $carry;
 			}
 
-			$prop_applied_global_class_ids = $this->get_applied_global_classes( $atomic_element_data['settings'][ $prop_name ]['value'] ?? [], $global_class_ids );
+			$prop_applied_global_class_ids = $this->get_applied_global_classes( $atomic_element_data['settings'][ $prop_name ]['value'] ?? array(), $global_class_ids );
 
 			foreach ( $prop_applied_global_class_ids as $global_class_id ) {
 				$carry[ $global_class_id ] ??= 0;
 				$carry[ $global_class_id ] += 1;
 			}
 			return $carry;
-		}, [] );
+		}, array() );
 	}
 
 	private function get_applied_global_classes( $prop, $global_class_ids ) {
@@ -93,12 +89,12 @@ class Applied_Global_Classes_Usage {
 	}
 
 	public function get_detailed_usage() {
-		$result = [];
+		$result = array();
 
 		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 
 		if ( empty( $global_class_ids ) ) {
-			return [];
+			return array();
 		}
 
 		Plugin::$instance->db->iterate_elementor_documents( function ( $document, $elements_data ) use ( &$result, $global_class_ids ) {
@@ -125,7 +121,7 @@ class Applied_Global_Classes_Usage {
 
 				foreach ( array_keys( $applied_classes ) as $global_class_id ) {
 					// Initialize result for this class
-					$result[ $global_class_id ] ??= [];
+					$result[ $global_class_id ] ??= array();
 
 					// Try to find an entry for this pageId
 					$page_entry_index = null;
@@ -145,12 +141,12 @@ class Applied_Global_Classes_Usage {
 						}
 					} else {
 						// New page entry
-						$result[ $global_class_id ][] = [
+						$result[ $global_class_id ][] = array(
 							'pageId'   => $page_id,
-							'elements' => [ $element_id ],
-							'total'    => 1SxProps,
+							'elements' => array( $element_id ),
+							'total'    => 1,
 
-						];
+						);
 					}
 				}
 			});
@@ -158,5 +154,4 @@ class Applied_Global_Classes_Usage {
 
 		return $result;
 	}
-
 }

@@ -56,7 +56,7 @@ class Global_Classes_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, array(
 			array(
 				'methods' => 'GET',
-				'callback' => fn( ) => $this->route_wrapper( fn() => $this->get_usage() ),
+				'callback' => fn() => $this->route_wrapper( fn() => $this->get_usage() ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => array(
 					'context' => array(
@@ -151,6 +151,8 @@ class Global_Classes_REST_API {
 		$context = $request->get_param( 'context' );
 
 		$classes = $this->get_repository()->context( $context )->all();
+		$classesUsage = ( new Applied_Global_Classes_Usage() )->get();
+
 		return Response_Builder::make( (object) $classes->get_items()->all() )
 			->set_meta( array(
 				'order' => $classes->get_order()->all(),
@@ -159,9 +161,9 @@ class Global_Classes_REST_API {
 			->build();
 	}
 
-	private function get_usage(  ) {
+	private function get_usage() {
 		$classesUsage = ( new Applied_Global_Classes_Usage() )->get_detailed_usage();
-		return Response_Builder::make( (object) $classesUsage  )
+		return Response_Builder::make( (object) $classesUsage )
 								->build();
 	}
 

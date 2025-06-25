@@ -76,7 +76,7 @@ class Global_Classes_CSS {
 			->get_items();
 
 		return array_map(
-			function( $id ) use ( $classes ) {
+			function ( $id ) use ( $classes ) {
 				$class = $classes->get( $id );
 
 				return $class ? $class['label'] : $id;
