@@ -5,7 +5,6 @@ use Elementor\App\Modules\ImportExportCustomization\Processes\Export;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Modules\System_Info\Reporters\Server;
@@ -26,14 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Module extends BaseModule {
 	const FORMAT_VERSION = '2.0';
-
-	const EXPORT_TRIGGER_KEY = 'elementor_export_kit';
-
-	const UPLOAD_TRIGGER_KEY = 'elementor_upload_kit';
-
-	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
-
-	const IMPORT_RUNNER_TRIGGER_KEY = 'elementor_import_kit__runner';
 
 	const REFERRER_KIT_LIBRARY = 'kit-library';
 
@@ -83,8 +74,6 @@ class Module extends BaseModule {
 	 */
 	public $revert;
 
-	private Controller $controller;
-
 	/**
 	 * Get name.
 	 *
@@ -99,8 +88,7 @@ class Module extends BaseModule {
 	public function __construct() 	{
 		$this->register_actions();
 
-        $this->controller = new Controller();
-        $this->controller->register_hooks();
+		Controller::register_hooks();
 
 		if ( ElementorUtils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
@@ -606,7 +594,7 @@ class Module extends BaseModule {
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
-            'restApiBaseUrl' => $this->controller->get_route(),
+            'restApiBaseUrl' => Controller::get_route(),
 		];
 	}
 
