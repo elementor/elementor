@@ -2,6 +2,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
+import { timeouts } from '../../../config/timeouts';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -47,6 +48,8 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		await editor.openV2PanelTab( 'style' );
 		await editor.openV2Section( 'size' );
 		await editor.openV2Section( 'typography' );
+
+		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: timeouts.action } );
 	}
 
 	async function isSectionOpen( section: SectionType ): Promise<boolean> {
@@ -101,11 +104,12 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
-		await editor.page.locator( 'div.MuiGrid-container' ).filter( {
-			has: editor.page.locator( 'label', { hasText: 'Font family' } ),
-		} ).locator( '[role="button"]' ).click();
+		const fontFamilyControl = editor.page
+			.locator( 'div.MuiGrid-container' )
+			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );
 
-		await editor.page.getByText( 'Google Fonts' ).scrollIntoViewIfNeeded();
+		await fontFamilyControl.scrollIntoViewIfNeeded();
+		await editor.page.waitForTimeout( timeouts.action );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
