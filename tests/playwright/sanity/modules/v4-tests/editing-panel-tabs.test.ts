@@ -104,13 +104,12 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
-		const controlButton = editor.page
+		const fontFamilyControl = editor.page
 			.locator( 'div.MuiGrid-container' )
-			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } )
-			.locator( '[role="button"]' );
+			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );
 
-		await controlButton.click();
-		await editor.page.waitForSelector( '[role="listbox"], [role="menu"]', { timeout: timeouts.expect } );
+		await fontFamilyControl.scrollIntoViewIfNeeded();
+		await editor.page.waitForTimeout( 500 );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
