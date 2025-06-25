@@ -281,6 +281,7 @@ const DivBlockView = BaseElementView.extend( {
 					if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
 						targetIndex++;
 					}
+
 					this.onDrop( event, { at: targetIndex } );
 
 					return;
