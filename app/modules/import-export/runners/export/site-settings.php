@@ -35,6 +35,13 @@ class Site_Settings extends Export_Runner_Base {
 		unset( $kit_tabs['settings-site-identity'] );
 
 		$kit_tabs = array_keys( $kit_tabs );
+
+		$theme_data = $this->export_theme();
+
+		if ( $theme_data ) {
+			$kit_data['theme'] = $theme_data;
+		}
+
 		$manifest_data['site-settings'] = $kit_tabs;
 
 		return [
@@ -46,5 +53,20 @@ class Site_Settings extends Export_Runner_Base {
 				$manifest_data,
 			],
 		];
+	}
+
+	public function export_theme() {
+		$theme = wp_get_theme();
+
+		if ( empty( $theme ) || empty( $theme->get( 'ThemeURI' ) ) ) {
+			return null;
+		}
+
+		$theme_data['name'] = $theme->get( 'Name' );
+		$theme_data['theme_uri'] = $theme->get( 'ThemeURI' );
+		$theme_data['version'] = $theme->get( 'Version' );
+		$theme_data['slug'] = $theme->get_stylesheet();
+
+		return $theme_data;
 	}
 }
