@@ -274,8 +274,10 @@ const DivBlockView = BaseElementView.extend( {
 					draggedElement = draggedView?.getContainer().view.el,
 					containerElement = event.currentTarget.parentElement,
 					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+
 				let targetIndex = elements.indexOf( event.currentTarget );
 
+				// Handle dropping a new element from the panel.
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
 					if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
 						targetIndex++;
@@ -285,6 +287,7 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
+				// Prevent dragging a parent element into one of its children.
 				if ( this.isParentElement( draggedView.getContainer().id ) ) {
 					return;
 				}
@@ -294,6 +297,7 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
+				// Handle sorting an existing element.
 				const selfIndex = elements.indexOf( draggedElement );
 
 				if ( targetIndex === selfIndex ) {
@@ -305,33 +309,6 @@ const DivBlockView = BaseElementView.extend( {
 				this.moveDroppedItem( draggedView, dropIndex );
 			},
 		};
-	},
-
-	handlePanelElementDrop( side, event ) {
-		const elements = Array.from( event.currentTarget.parentElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
-		let targetIndex = elements.indexOf( event.currentTarget );
-
-		if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
-			targetIndex++;
-		}
-
-		this.onDrop( event, { at: targetIndex } );
-	},
-
-	handleSortExistingElement( side, event, draggedView ) {
-		const draggedElement = draggedView.getContainer().view.el;
-		const containerElement = event.currentTarget.parentElement;
-		const elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
-		const targetIndex = elements.indexOf( event.currentTarget );
-		const selfIndex = elements.indexOf( draggedElement );
-
-		if ( targetIndex === selfIndex ) {
-			return;
-		}
-
-		const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
-
-		this.moveDroppedItem( draggedView, dropIndex );
 	},
 
 	isPanelElement( draggedView, draggedElement ) {
