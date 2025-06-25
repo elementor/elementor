@@ -26,17 +26,17 @@ class Site_Settings extends Import_Runner_Base {
 	/**
 	 * @var string|null
 	 */
-	private ?string $installed_theme;
+	private ?string $installed_theme = null;
 
 	/**
 	 * @var string|null
 	 */
-	private ?string $activated_theme;
+	private ?string $activated_theme = null;
 
 	/**
 	 * @var array|null
 	 */
-	private ?array $previous_active_theme;
+	private ?array $previous_active_theme = null;
 
 	public function get_theme_upgrader(): \Theme_Upgrader {
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
@@ -127,6 +127,7 @@ class Site_Settings extends Import_Runner_Base {
 		$theme_name = $theme['name'];
 
 		$current_theme = wp_get_theme();
+		$this->previous_active_theme = [];
 		$this->previous_active_theme['slug'] = $current_theme->get_stylesheet();
 		$this->previous_active_theme['version'] = $current_theme->get( 'Version' );
 
@@ -166,7 +167,7 @@ class Site_Settings extends Import_Runner_Base {
 			'active_kit_id' => $this->active_kit_id,
 			'imported_kit_id' => $this->imported_kit_id,
 			'installed_theme' => $this->installed_theme,
-			'activated_theme' => $this->installed_theme,
+			'activated_theme' => $this->activated_theme,
 			'previous_active_theme' => $this->previous_active_theme,
 		];
 	}

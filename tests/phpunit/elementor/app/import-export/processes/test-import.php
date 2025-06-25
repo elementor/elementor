@@ -204,7 +204,7 @@ class Test_Import extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$previous_active_theme = wp_get_theme()->get_stylesheet();
+		$previous_active_theme = wp_get_theme();
 
 		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
@@ -251,7 +251,11 @@ class Test_Import extends Elementor_Test_Base {
 				'active_kit_id' => $active_kit_id,
 				'imported_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
 				'installed_theme' => $expected_theme['slug'],
-				'previous_active_theme' => $previous_active_theme,
+				'activated_theme' => null,
+				'previous_active_theme' => [
+					'slug' => $previous_active_theme->get_stylesheet(),
+					'version' => $previous_active_theme->get( 'version' ),
+				],
 			],
 		];
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
