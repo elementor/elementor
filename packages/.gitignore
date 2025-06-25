@@ -5,6 +5,7 @@ node_modules/
 log/
 *.log
 *.map
+**/.env
 
 .turbo/
 .cspell/
