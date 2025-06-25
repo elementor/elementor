@@ -84,6 +84,7 @@ export const generatePluginTests = ( testType: string ) => {
 				if ( plugin.hasInstallationPage ) {
 					try {
 						await page.goto( '/wp-admin/index.php' );
+						await page.goto( '/law-firm-about/?elementor' );
 					} catch ( error ) {
 						throw Error( `Error during navigation: ${ error.message }` );
 					}
