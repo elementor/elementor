@@ -53,6 +53,11 @@ class CSS_Renderer {
 
 	private function build_css_variable_entry( string $id, array $variable ): ?string {
 		$variable_name = sanitize_text_field( $id );
+
+		if ( ! array_key_exists( 'deleted', $variable ) ) {
+			$variable_name = sanitize_text_field( $variable['label'] ?? '' );
+		}
+
 		$value = sanitize_text_field( $variable['value'] ?? '' );
 
 		if ( empty( $value ) || empty( $variable_name ) ) {
