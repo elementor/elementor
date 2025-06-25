@@ -146,7 +146,3 @@ export default function ExportKitFooter() {
 		</Stack>
 	);
 }
-
-ExportKitFooter.propTypes = {
-	// No props needed since it uses context directly
-}; 
