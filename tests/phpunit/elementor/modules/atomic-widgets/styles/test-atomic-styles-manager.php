@@ -137,7 +137,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 100, 1 );
 
-		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+		do_action( 'elementor/post/render', 1 );
 
 		// Act
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
@@ -191,7 +191,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 20, 1 );
 
-		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+		do_action( 'elementor/post/render', 1 );
 
 		// Act
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
@@ -222,7 +222,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
             $styles_manager->register( $this->test_style_key, $get_style_defs );
         }, 20, 1 );
 
-		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+		do_action( 'elementor/post/render', 1 );
 
         // Act.
         do_action( 'elementor/frontend/after_enqueue_post_styles' );
