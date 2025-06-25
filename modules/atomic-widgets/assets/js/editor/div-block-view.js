@@ -278,7 +278,11 @@ const DivBlockView = BaseElementView.extend( {
 				let targetIndex = elements.indexOf( event.currentTarget );
 
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
-					if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+					const isReverse = this.getIsReverse( containerElement );
+
+					const shouldIncrement = isReverse !== this.draggingOnBottomOrRightSide( side );
+
+					if ( shouldIncrement && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
 						targetIndex++;
 					}
 
@@ -299,6 +303,16 @@ const DivBlockView = BaseElementView.extend( {
 				this.moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement );
 			},
 		};
+	},
+
+	getIsReverse( container ) {
+		const styles = window.getComputedStyle( container );
+		const isFlex = [ 'flex', 'inline-flex' ].includes( styles.display );
+		const isFlexReverse = isFlex && [ 'column-reverse', 'row-reverse' ].includes( styles.flexDirection );
+		const isRow = isFlex && [ 'row-reverse', 'row' ].includes( styles.flexDirection );
+		const isRtl = elementorCommon.config.isRTL;
+
+		return isRow ? isFlexReverse !== isRtl : isFlexReverse;
 	},
 
 	moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement ) {
@@ -332,17 +346,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getDropIndex( container, side, index, selfIndex ) {
-		const styles = window.getComputedStyle( container );
-
-		const isFlex = [ 'flex', 'inline-flex' ].includes( styles.display );
-		const isFlexReverse = isFlex &&
-			[ 'column-reverse', 'row-reverse' ].includes( styles.flexDirection );
-
-		const isRow = isFlex && [ 'row-reverse', 'row' ].includes( styles.flexDirection );
-
-		const isRtl = elementorCommon.config.isRTL;
-
-		const isReverse = isRow ? isFlexReverse !== isRtl : isFlexReverse;
+		const isReverse = this.getIsReverse( container );
 
 		// The element should be placed BEFORE the current target
 		// if is reversed + side is bottom/right OR not is reversed + side is top/left
