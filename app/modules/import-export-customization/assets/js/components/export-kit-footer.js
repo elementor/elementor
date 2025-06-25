@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { Button, Stack, CircularProgress } from '@elementor/ui';
-import PropTypes from 'prop-types';
 
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from '../hooks/use-connect-state';
