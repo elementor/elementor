@@ -35,7 +35,7 @@ export default function ExportComplete() {
 		if ( kitInfo.source !== 'cloud' && exportedData.file ) {
 			downloadFile();
 		}
-	}, [ exportedData, kitInfo.source ] );
+	}, [ exportedData, kitInfo.source, downloadFile ] );
 
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;
