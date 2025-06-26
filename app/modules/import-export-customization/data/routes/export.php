@@ -27,6 +27,7 @@ class Export extends Base_Route {
 				'kitInfo' => $request->get_param( 'kitInfo' ),
 				'plugins' => $request->get_param( 'plugins' ),
 				'selectedCustomPostTypes' => $request->get_param( 'selectedCustomPostTypes' ),
+				'screenShotBlob' => $request->get_param( 'screenShotBlob' ),
 			];
 
 			$settings = array_filter( $settings );
@@ -103,6 +104,12 @@ class Export extends Base_Route {
 				'description' => 'Selected custom post types',
 				'required' => false,
 				'default' => [],
+			],
+			'screenShotBlob' => [
+				'type' => 'string',
+				'description' => 'Base64 encoded screenshot for cloud exports',
+				'required' => false,
+				'default' => null,
 			],
 		];
 	}
