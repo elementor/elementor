@@ -1,72 +1,78 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Button, Box, Typography, Stack, Link, Card, CardContent } from '@elementor/ui';
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';
 import { useExportContext } from '../../context/export-context';
 
+const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
+
 export default function ExportComplete() {
 	const { data, dispatch } = useExportContext();
 	const { exportedData, kitInfo } = data;
+	const downloadLink = useRef( null );
 
 	useEffect( () => {
 		if ( ! exportedData ) {
 			// Redirect back if no export data
 			window.location.href = elementorAppConfig.base_url + '#/export-customization/';
+			return;
 		}
-	}, [ exportedData ] );
+
+		// Auto-download file for file exports
+		if ( kitInfo.source !== 'cloud' && exportedData.file ) {
+			downloadFile();
+		}
+	}, [ exportedData, kitInfo.source ] );
+
+	const downloadFile = () => {
+		if ( ! downloadLink.current ) {
+			const link = document.createElement( 'a' );
+			
+			const defaultKitName = 'elementor-kit';
+			const kitName = kitInfo.title || defaultKitName;
+			const sanitizedKitName = kitName
+				.replace( INVALID_FILENAME_CHARS, '' )
+				.trim();
+			
+			const fileName = sanitizedKitName || defaultKitName;
+			
+			link.href = exportedData.file;
+			link.download = fileName + '.zip';
+			
+			downloadLink.current = link;
+		}
+		
+		downloadLink.current.click();
+	};
+
+	const handleDone = () => {
+		window.top.location = elementorAppConfig.admin_url;
+	};
 
 	if ( ! exportedData ) {
 		return null;
 	}
 
 	const isCloudExport = kitInfo.source === 'cloud';
-	const downloadUrl = exportedData.file;
-
-	const handleDownload = () => {
-		if ( downloadUrl ) {
-			window.open( downloadUrl, '_blank' );
-		}
-	};
-
-	const handleNewExport = () => {
-		// Reset export context and go back to export page
-		dispatch( { type: 'SET_EXPORTED_DATA', payload: null } );
-		dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: false } );
-		dispatch( { type: 'SET_KIT_TITLE', payload: '' } );
-		dispatch( { type: 'SET_KIT_DESCRIPTION', payload: '' } );
-		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: null } );
-		window.location.href = elementorAppConfig.base_url + '#/export-customization/';
-	};
 
 	const footerContent = (
 		<Stack direction="row" spacing={ 1 }>
-			<Button
-				variant="outlined"
-				color="secondary"
-				size="small"
-				onClick={ handleNewExport }
-			>
-				{ __( 'Export Another', 'elementor' ) }
-			</Button>
-			
-			{ ! isCloudExport && downloadUrl && (
+			{ isCloudExport ? (
 				<Button
 					variant="contained"
 					color="primary"
 					size="small"
-					onClick={ handleDownload }
-				>
-					{ __( 'Download File', 'elementor' ) }
-				</Button>
-			) }
-			
-			{ isCloudExport && (
-				<Button
-					variant="contained"
-					color="primary"
-					size="small"
-					onClick={ () => window.location.href = elementorAppConfig.base_url + '#/kit-library' }
+					onClick={ () => window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud' }
 				>
 					{ __( 'View in Library', 'elementor' ) }
+				</Button>
+			) : (
+				<Button
+					variant="contained"
+					color="primary"
+					size="small"
+					onClick={ handleDone }
+				>
+					{ __( 'Done', 'elementor' ) }
 				</Button>
 			) }
 		</Stack>
@@ -101,15 +107,25 @@ export default function ExportComplete() {
 
 					<Typography variant="h4" component="h2" gutterBottom>
 						{ isCloudExport 
-							? __( 'Saved to Cloud Library!', 'elementor' )
-							: __( 'Export Complete!', 'elementor' )
+							? __( 'Your website template is now saved to the library!', 'elementor' )
+							: __( 'Your .zip file is ready', 'elementor' )
 						}
 					</Typography>
 
-					<Typography variant="body1" color="text.secondary" sx={ { mb: 3 } }>
+					<Typography variant="body2" color="text.secondary" sx={ { mb: 3 } }>
 						{ isCloudExport 
-							? __( 'Your website template has been successfully saved to your cloud library and is ready to use.', 'elementor' )
-							: __( 'Your website template has been exported and is ready for download.', 'elementor' )
+							? (
+								<>
+									{ __( 'You can find it in the My Website Templates tab.', 'elementor' ) }{' '}
+									<Link 
+										href={ elementorAppConfig.base_url + '#/kit-library/cloud' }
+										sx={ { cursor: 'pointer' } }
+									>
+										{ __( 'Take me there', 'elementor' ) }
+									</Link>
+								</>
+							)
+							: __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' )
 						}
 					</Typography>
 
@@ -157,6 +173,11 @@ export default function ExportComplete() {
 					{ ! isCloudExport && (
 						<Typography variant="body2" color="text.secondary">
 							{ __( 'You can use this file to import the template on any WordPress site with Elementor.', 'elementor' ) }{' '}
+							{ __( 'If the download didn\'t start automatically,', 'elementor' ) }{' '}
+							<Link href="#" onClick={ downloadFile } sx={ { cursor: 'pointer' } }>
+								{ __( 'click here to download manually', 'elementor' ) }
+							</Link>
+							{'. '}
 							<Link href="https://go.elementor.com/app-what-are-kits" target="_blank" rel="noopener noreferrer">
 								{ __( 'Learn more', 'elementor' ) }
 							</Link>
