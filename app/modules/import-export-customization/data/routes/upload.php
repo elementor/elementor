@@ -2,7 +2,6 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
 use Elementor\Plugin;
-use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
