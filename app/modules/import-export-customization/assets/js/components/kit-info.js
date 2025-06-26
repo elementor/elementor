@@ -23,7 +23,7 @@ export default function KitInfo() {
 	const handleTitleChange = ( e ) => {
 		const value = e.target.value;
 		dispatch( { type: 'SET_KIT_TITLE', payload: value } );
-		
+
 		const validationError = validateKitName( value );
 		setTitleError( validationError );
 	};
@@ -48,7 +48,7 @@ export default function KitInfo() {
 					onBlur={ handleTitleBlur }
 					placeholder={ __( 'Type name here...', 'elementor' ) }
 					inputProps={ { maxLength: 75 } }
-					sx={ { 
+					sx={ {
 						mb: titleError ? 1 : 2,
 						'& .MuiInputBase-root': {
 							borderColor: titleError ? 'error.main' : undefined,
@@ -56,7 +56,7 @@ export default function KitInfo() {
 					} }
 					error={ !! titleError }
 				/>
-				
+
 				{ titleError && (
 					<Typography variant="caption" color="error" sx={ { fontSize: '0.75rem', mb: 1.5, display: 'block' } }>
 						{ titleError }

@@ -62,11 +62,11 @@ const sanitizeFilename = ( filename ) => {
 	if ( ! filename ) {
 		return 'elementor-kit';
 	}
-	
+
 	const sanitized = filename
 		.replace( INVALID_FILENAME_CHARS, '' )
 		.trim();
-	
+
 	return sanitized || 'elementor-kit';
 };
 
