@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { generateScreenshot } from '../utils/screenshot';
 
 const STATUS_PROCESSING = 'processing';
@@ -7,7 +7,7 @@ const STATUS_ERROR = 'error';
 export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStarted, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
 
-	const exportKit = async () => {
+	const exportKit = useCallback( async () => {
 		try {
 			setStatus( STATUS_PROCESSING );
 
@@ -72,7 +72,7 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 		} catch ( error ) {
 			setStatus( STATUS_ERROR );
 		}
-	};
+	}, [ includes, kitInfo, plugins, dispatch ] );
 
 	useEffect( () => {
 		if ( ! isExportProcessStarted ) {
@@ -82,7 +82,7 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 		}
 
 		exportKit();
-	}, [ isExportProcessStarted, includes, kitInfo, plugins, dispatch, exportKit ] );
+	}, [ isExportProcessStarted, exportKit ] );
 
 	const getStatusText = () => {
 		if ( status === STATUS_PROCESSING ) {
