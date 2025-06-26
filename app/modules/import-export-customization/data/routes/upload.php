@@ -39,8 +39,8 @@ class Upload extends Base_Route {
 			} else {
 				$files = $request->get_file_params();
 				$file = $files['e_import_file'] ?? null;
-				
-				if ( empty( $file ) || empty( $file['tmp_name'] ) || $file['error'] !== UPLOAD_ERR_OK ) {
+
+				if ( empty( $file ) || empty( $file['tmp_name'] )  ) {
 					return Response::error( 'No file uploaded or upload error occurred.', 'no_file_uploaded' );
 				}
 
