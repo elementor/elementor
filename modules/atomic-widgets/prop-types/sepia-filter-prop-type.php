@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Blur_Filter_Prop_Type extends Object_Prop_Type {
+class Sepia_Filter_Prop_Type extends Object_Prop_Type {
 
 	public static function get_key(): string {
-		return 'blur';
+		return 'sepia';
 	}
 
 	protected function define_shape(): array {
 		return [
-			'radius' => Size_Prop_Type::make()->default( 0 )->required(),
+			'sepia' => Size_Prop_Type::make()->default( 0 )->required(),
 		];
 	}
 }
