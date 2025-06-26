@@ -70,12 +70,12 @@ class Style_Schema {
 				->add_prop_type( String_Prop_Type::make()->enum( Position_Prop_Type::get_position_enum_values() ) )
 				->add_prop_type( Position_Prop_Type::make() )
 				->dependencies( Dependency_Manager::make()
-				->new_dependency( [ 'effect' => 'hide' ] )
-				->where( [
-				'operator' => 'eq',
-				'path' => [ 'object-fit' ],
-				'value' => 'fill',
-				] ) ),
+					->new_dependency( [ 'effect' => 'hide' ] )
+					->where( [
+						'operator' => 'eq',
+						'path' => [ 'object-fit' ],
+						'value' => 'fill',
+					] ) ),
 		];
 	}
 
@@ -122,16 +122,16 @@ class Style_Schema {
 			'column-count' => Number_Prop_Type::make(),
 			'column-gap' => Size_Prop_Type::make()
 				->dependencies( Dependency_Manager::make()
-				->new_dependency( [ 'effect' => 'hide' ] )
-				->where( [
-					'operator' => 'lt',
-					'path' => [ 'column-count' ],
-					'value' => 1,
-				] )
-				->where( [
-					'operator' => 'not_exist',
-					'path' => [ 'column-count' ],
-				] ) ),
+					->new_dependency( [ 'effect' => 'hide' ] )
+					->where( [
+						'operator' => 'lt',
+						'path' => [ 'column-count' ],
+						'value' => 1,
+					] )
+					->where( [
+						'operator' => 'not_exist',
+						'path' => [ 'column-count' ],
+					] ) ),
 			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
