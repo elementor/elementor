@@ -8,7 +8,6 @@
   },
   "packageManager": "npm@10.0.0",
   "scripts": {
-    "start": "npm start --workspace=apps/demo",
     "build": "turbo build",
     "build:tools": "turbo build --filter=\"./packages/tools/*\"",
     "dev": "concurrently -n turbo,tsc -c red,blue 'turbo dev --parallel' 'tsc -w --preserveWatchOutput'",
