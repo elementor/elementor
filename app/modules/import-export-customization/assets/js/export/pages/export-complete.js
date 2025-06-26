@@ -6,7 +6,7 @@ import { useExportContext } from '../../context/export-context';
 const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 
 export default function ExportComplete() {
-	const { data, dispatch } = useExportContext();
+	const { data } = useExportContext();
 	const { exportedData, kitInfo } = data;
 	const downloadLink = useRef( null );
 
@@ -87,22 +87,25 @@ export default function ExportComplete() {
 			topBar={ <TopBar>{ headerContent }</TopBar> }
 			footer={ <Footer>{ footerContent }</Footer> }
 		>
-			<Box sx={ { p: 3, mb: 2, maxWidth: '600px', mx: 'auto', textAlign: 'center', mt: 4 } }>
+			<Box sx={ { 
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				minHeight: 'calc(100vh - 180px)',
+				p: 3
+			} }>
+				<Box sx={ { 
+					maxWidth: '600px',
+					textAlign: 'center',
+					width: '100%'
+				} }>
 				<Stack spacing={ 3 } alignItems="center">
-					{/* Success Icon */}
-					<Box sx={ { 
-						width: 80, 
-						height: 80, 
-						borderRadius: '50%', 
-						backgroundColor: 'success.main',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
-						color: 'white',
-						fontSize: '32px',
-						mb: 2
-					} }>
-						✓
+					<Box sx={ { mb: 2 } }>
+						<img 
+							src={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
+							alt=""
+							style={ { width: '80px', height: '80px' } }
+						/>
 					</Box>
 
 					<Typography variant="h4" component="h2" gutterBottom>
@@ -156,17 +159,6 @@ export default function ExportComplete() {
 									return itemLabels[ item ] || item;
 								} ).join( ', ' ) }
 							</Typography>
-
-							{ isCloudExport && exportedData.kit && (
-								<>
-									<Typography variant="caption" color="text.secondary" sx={ { display: 'block', mt: 2, mb: 1 } }>
-										{ __( 'Cloud Library ID:', 'elementor' ) }
-									</Typography>
-									<Typography variant="body2">
-										#{ exportedData.kit.id }
-									</Typography>
-								</>
-							) }
 						</CardContent>
 					</Card>
 
@@ -184,6 +176,7 @@ export default function ExportComplete() {
 						</Typography>
 					) }
 				</Stack>
+				</Box>
 			</Box>
 		</BaseLayout>
 	);

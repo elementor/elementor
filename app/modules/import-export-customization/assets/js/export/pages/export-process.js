@@ -81,13 +81,17 @@ export default function ExportProcess() {
 	return (
 		<BaseLayout topBar={ <TopBar>{ headerContent }</TopBar> }>
 			<Box sx={ { 
-				p: 3, 
-				mb: 2, 
-				maxWidth: '600px', 
-				mx: 'auto',
-				textAlign: 'center',
-				mt: 8
+				display: 'flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				minHeight: 'calc(100vh - 120px)',
+				p: 3
 			} }>
+				<Box sx={ { 
+					maxWidth: '600px',
+					textAlign: 'center',
+					width: '100%'
+				} }>
 				<Stack spacing={ 3 } alignItems="center">
 					{ status === 'processing' && (
 						<>
@@ -138,6 +142,7 @@ export default function ExportProcess() {
 						</>
 					) }
 				</Stack>
+				</Box>
 			</Box>
 		</BaseLayout>
 	);
