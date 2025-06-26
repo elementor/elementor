@@ -8,7 +8,6 @@ module.exports = {
 	moduleNameMapper: {
 		'^@elementor/(?!ui|icons|design-tokens)(.*)$': [
 			'<rootDir>/packages/core/$1/src',
-			'<rootDir>/packages/pro/$1/src',
 			'<rootDir>/packages/libs/$1/src',
 			'<rootDir>/packages/tools/$1/src',
 		],

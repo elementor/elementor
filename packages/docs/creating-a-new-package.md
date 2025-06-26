@@ -42,13 +42,3 @@ In order to add a new package to Elementor Core, you need to do the following:
    - Conditional Loading: Add the package name to the filter `elementor/editor/v2/packages`. This option provides flexibility, enabling you to load the package based on specific criteria. It also allows you to encapsulate the package loading separately for better organization and maintainability.
 3. Ensure that everything works properly.
 4. Open a PR and merge your new changes (main, release, etc.).
-
-### Adding the Package to Elementor Pro Plugin
-
-In order to add a new package to Elementor Pro, you need to do the following:
-1. Install the newly published version of the package in the plugin (`npm i @elementor/package-name`).
-2. To load the package within the plugin, you can choose from the following options:
-    - Direct Loading: Add the package name directly to the editor loader file `{elementor-pro-plugin-path}/core/editor/editor.php`. This option always loads the package.
-    - Conditional Loading: Add the package name to the filter `elementor-pro/editor/v2/packages`. This option provides flexibility, enabling you to load the package based on specific criteria. It also allows you to encapsulate the package loading separately for better organization and maintainability.
-3. Ensure that everything works properly.
-4. Open a PR and merge your new changes (main, release, etc.).
