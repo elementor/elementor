@@ -75,7 +75,7 @@ class Style_Schema {
 						'operator' => 'eq',
 						'path' => [ 'object-fit' ],
 						'value' => 'fill',
-					] ) ),
+				] ) ),
 		];
 	}
 
@@ -131,7 +131,7 @@ class Style_Schema {
 					->where( [
 						'operator' => 'not_exist',
 						'path' => [ 'column-count' ],
-					] ) ),
+				] ) ),
 			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
