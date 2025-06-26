@@ -3,10 +3,8 @@ import { Button, Box, Typography, Stack, Link, Card, CardContent } from '@elemen
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';
 import { useExportContext } from '../../context/export-context';
 
-const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
-
 export default function ExportComplete() {
-	const { data } = useExportContext();
+	const { data, sanitizeFilename } = useExportContext();
 	const { exportedData, kitInfo } = data;
 	const downloadLink = useRef( null );
 
@@ -16,13 +14,7 @@ export default function ExportComplete() {
 		if ( ! downloadLink.current ) {
 			const link = document.createElement( 'a' );
 
-			const defaultKitName = 'elementor-kit';
-			const kitName = kitInfo.title || defaultKitName;
-			const sanitizedKitName = kitName
-				.replace( INVALID_FILENAME_CHARS, '' )
-				.trim();
-
-			const fileName = sanitizedKitName || defaultKitName;
+			const fileName = sanitizeFilename( kitInfo.title );
 
 			link.href = 'data:application/zip;base64,' + exportedData.file;
 			link.download = fileName + '.zip';
@@ -53,7 +45,7 @@ export default function ExportComplete() {
 		return null;
 	}
 
-	const isCloudExport = 'cloud' === kitInfo.source;
+	const isCloudExport = kitInfo.source === 'cloud';
 
 	const footerContent = (
 		<Stack direction="row" spacing={ 1 }>

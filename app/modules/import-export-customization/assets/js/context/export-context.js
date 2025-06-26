@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 export const ExportContext = createContext();
 
+const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
+
 const initialState = {
 	downloadUrl: '',
 	exportedData: null,
@@ -49,13 +51,33 @@ function exportReducer( state, { type, payload } ) {
 	}
 }
 
+const validateKitName = ( value ) => {
+	if ( ! value || 0 === value.trim().length ) {
+		return false;
+	}
+	return true;
+};
+
+const sanitizeFilename = ( filename ) => {
+	if ( ! filename ) {
+		return 'elementor-kit';
+	}
+	
+	const sanitized = filename
+		.replace( INVALID_FILENAME_CHARS, '' )
+		.trim();
+	
+	return sanitized || 'elementor-kit';
+};
+
 export function ExportContextProvider( { children } ) {
 	const [ data, dispatch ] = useReducer( exportReducer, initialState );
 
 	const value = {
 		data,
 		dispatch,
-		isTemplateNameValid: ( data.kitInfo.title?.trim() || '' ).length > 0,
+		isTemplateNameValid: validateKitName( data.kitInfo.title ),
+		sanitizeFilename,
 	};
 
 	return (
