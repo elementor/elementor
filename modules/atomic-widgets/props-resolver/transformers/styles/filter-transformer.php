@@ -44,6 +44,10 @@ class Filter_Transformer extends Transformer_Base {
 			return 'sepia(' . $filter['sepia'] . ')';
 		}
 
+		if ( isset( $filter['hue-rotate'] ) ) {
+			return 'hue-rotate(' . $filter['hue-rotate'] . ')';
+		}
+
 		return '';
 	}
 }
