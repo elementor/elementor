@@ -375,6 +375,47 @@ class Test_Variables_Repository extends TestCase {
 		] );
 	}
 
+	public function test_update_variable__allows_duplicate_label_for_same_id() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'id-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'a',
+					'value' => '#000000',
+				],
+				'id-2' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'b',
+					'value' => '#ffffff',
+				],
+			],
+			'watermark' => 5,
+			'version' => Variables_Repository::FORMAT_VERSION_V1,
+		] );
+
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->repository->update( 'id-1', [
+			'label' => 'a',
+			'value' => '#111111',
+		] );
+
+		// Assert.
+		$expected = [
+			'id' => 'id-1',
+			'label' => 'a',
+			'value' => '#111111',
+			'type' => Color_Variable_Prop_Type::get_key(),
+		];
+
+		$this->assertEquals( $expected, $result['variable'] );
+		$this->assertEquals( 6, $result['watermark'] );
+	}
+
 	public function test_update_variable__throws_exception_when_save_fails() {
 		// Arrange.
 		$this->kit->method( 'get_json_meta' )->willReturn( [
@@ -531,6 +572,48 @@ class Test_Variables_Repository extends TestCase {
 
 		// Act.
 		$this->repository->restore( 'id-2' );
+	}
+
+	public function test_restore_variable__allows_restoring_deleted_variable_when_no_active_label_conflict() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'id-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'a',
+					'value' => '#000000',
+					'deleted' => true,
+					'deleted_at' => 1234567890,
+				],
+				'id-2' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'b',
+					'value' => '#ffffff',
+				],
+			],
+			'watermark' => 5,
+			'version' => Variables_Repository::FORMAT_VERSION_V1,
+		] );
+
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->repository->restore( 'id-1' );
+
+		// Assert.
+		$expected = [
+			'id' => 'id-1',
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'a',
+			'value' => '#000000',
+		];
+
+		$this->assertEquals( $expected, $result['variable'] );
+		$this->assertEquals( 6, $result['watermark'] );
+		$this->assertArrayNotHasKey( 'deleted', $result['variable'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 	}
 	public function test_restore_variable__throws_exception_when_id_not_found() {
 		// Arrange.
