@@ -247,7 +247,7 @@ class Test_Variables_Repository extends TestCase {
 
 		// Assert.
 		$this->expectException( DuplicatedLabel::class );
-		$this->expectExceptionMessage( 'Variable name already exists' );
+		$this->expectExceptionMessage( 'Variable label already exists' );
 
 		// Act.
 		$this->repository->create( [
@@ -272,6 +272,45 @@ class Test_Variables_Repository extends TestCase {
 			'value' => 'test',
 			'type' => Color_Variable_Prop_Type::get_key(),
 		] );
+	}
+
+	public function test_create_variable__allows_duplicated_label_used_by_deleted_record() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'id-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Deleted Variable',
+					'value' => '#000000',
+					'deleted' => true,
+					'deleted_at' => 1234567890,
+				],
+				'id-2' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Active Variable',
+					'value' => '#ffffff',
+				],
+			],
+			'watermark' => 5,
+			'version' => Variables_Repository::FORMAT_VERSION_V1,
+		] );
+
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->repository->create( [
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'Deleted Variable',
+			'value' => '#123456',
+		] );
+
+		// Assert.
+		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $result['variable']['type'] );
+		$this->assertEquals( 'Deleted Variable', $result['variable']['label'] );
+		$this->assertEquals( '#123456', $result['variable']['value'] );
+		$this->assertEquals( 6, $result['watermark'] );
 	}
 
 	public function test_update_variable__with_valid_data() {
@@ -366,7 +405,7 @@ class Test_Variables_Repository extends TestCase {
 
 		// Assert.
 		$this->expectException( DuplicatedLabel::class );
-		$this->expectExceptionMessage( 'Variable name already exists' );
+		$this->expectExceptionMessage( 'Variable label already exists' );
 
 		// Act.
 		$this->repository->update( 'id-1', [
@@ -466,6 +505,49 @@ class Test_Variables_Repository extends TestCase {
 			'label' => 'Updated Label',
 			'value' => '#123456',
 		] );
+	}
+
+	public function test_update_variable__allows_duplicated_label_used_by_deleted_record() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'id-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Deleted Variable',
+					'value' => '#000000',
+					'deleted' => true,
+					'deleted_at' => 1234567890,
+				],
+				'id-2' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Active Variable',
+					'value' => '#ffffff',
+				],
+			],
+			'watermark' => 5,
+			'version' => Variables_Repository::FORMAT_VERSION_V1,
+		] );
+
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->repository->update( 'id-2', [
+			'label' => 'Deleted Variable',
+			'value' => '#111111',
+		] );
+
+		// Assert.
+		$expected = [
+			'id' => 'id-2',
+			'label' => 'Deleted Variable',
+			'value' => '#111111',
+			'type' => Color_Variable_Prop_Type::get_key(),
+		];
+
+		$this->assertEquals( $expected, $result['variable'] );
+		$this->assertEquals( 6, $result['watermark'] );
 	}
 
 	public function test_delete_variable__with_existing_variable() {
@@ -568,7 +650,7 @@ class Test_Variables_Repository extends TestCase {
 
 		// Assert.
 		$this->expectException( DuplicatedLabel::class );
-		$this->expectExceptionMessage( 'Variable name already exists' );
+		$this->expectExceptionMessage( 'Variable label already exists' );
 
 		// Act.
 		$this->repository->restore( 'id-2' );
@@ -636,6 +718,50 @@ class Test_Variables_Repository extends TestCase {
 		$this->expectExceptionMessage( 'Variable not found' );
 
 		$this->repository->restore( 'non-existing-id' );
+	}
+
+	public function test_restore_variable__allows_restoring_when_conflict_with_deleted_record() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'id-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Conflicting Label',
+					'value' => '#000000',
+					'deleted' => true,
+					'deleted_at' => 1234567890,
+				],
+				'id-2' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Conflicting Label',
+					'value' => '#ffffff',
+					'deleted' => true,
+					'deleted_at' => 1234567891,
+				],
+			],
+			'watermark' => 5,
+			'version' => Variables_Repository::FORMAT_VERSION_V1,
+		] );
+
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->repository->restore( 'id-1' );
+
+		// Assert.
+		$expected = [
+			'id' => 'id-1',
+			'type' => Color_Variable_Prop_Type::get_key(),
+			'label' => 'Conflicting Label',
+			'value' => '#000000',
+		];
+
+		$this->assertEquals( $expected, $result['variable'] );
+		$this->assertEquals( 6, $result['watermark'] );
+		$this->assertArrayNotHasKey( 'deleted', $result['variable'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 	}
 
 	public function test_watermark__resets_when_reaching_max() {

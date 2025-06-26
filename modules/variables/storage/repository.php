@@ -48,7 +48,7 @@ class Repository {
 	/**
 	 * @throws DuplicatedLabel
 	 */
-	private function assert_if_variable_label_is_duplicate( array $db_record, array $new_variable = [] ) {
+	private function assert_if_variable_label_is_duplicated( array $db_record, array $new_variable = [] ) {
 		foreach ( $db_record['data'] as $id => $variable ) {
 			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
 				continue;
@@ -59,7 +59,7 @@ class Repository {
 			}
 
 			if ( isset( $variable['label'] ) && $variable['label'] === $new_variable['label'] ) {
-				throw new DuplicatedLabel( 'Variable name already exists' );
+				throw new DuplicatedLabel( 'Variable label already exists' );
 			}
 		}
 	}
@@ -95,7 +95,7 @@ class Repository {
 			'value',
 		] );
 
-		$this->assert_if_variable_label_is_duplicate( $db_record, $new_variable );
+		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
 
 		$list_of_variables[ $id ] = $new_variable;
 		$db_record['data'] = $list_of_variables;
@@ -132,7 +132,7 @@ class Repository {
 			'value',
 		] ) );
 
-		$this->assert_if_variable_label_is_duplicate( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
 
 		$list_of_variables[ $id ] = $updated_variable;
 		$db_record['data'] = $list_of_variables;
@@ -198,7 +198,7 @@ class Repository {
 			'type',
 		] );
 
-		$this->assert_if_variable_label_is_duplicate( $db_record, array_merge( $restored_variable, [ 'id' => $id ] ) );
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $restored_variable, [ 'id' => $id ] ) );
 
 		$list_of_variables[ $id ] = $restored_variable;
 		$db_record['data'] = $list_of_variables;
