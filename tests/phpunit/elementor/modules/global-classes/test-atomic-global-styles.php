@@ -72,6 +72,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		// Arrange.
 		$global_classes = new Atomic_Global_Styles();
 		$global_classes->register_hooks();
+		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],
@@ -90,7 +91,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Global_Styles::STYLES_KEY,
+				Atomic_Global_Styles::STYLES_KEY . '-' . $context,
 				$this->callback( function ( $callback ) use ( $expected ) {
 					$styles = $callback( [ 1, 2 ] );
 					$this->assertEquals( $expected, $styles );

@@ -21,9 +21,8 @@ class Atomic_Global_Styles {
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
-		$get_styles = function () {
-			$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
-
+        $context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$get_styles = function () use ( $context ) {
 			return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
 				$item['id'] = $item['label'];
 				return $item;
@@ -31,7 +30,7 @@ class Atomic_Global_Styles {
 		};
 
 		$styles_manager->register(
-			self::STYLES_KEY,
+			self::STYLES_KEY . '-' . $context,
 			$get_styles
 		);
 	}
