@@ -48,17 +48,17 @@ class Repository {
 	/**
 	 * @throws DuplicatedLabel
 	 */
-	private function assert_if_variable_label_is_duplicated( array $db_record, array $new_variable = [] ) {
-		foreach ( $db_record['data'] as $id => $variable ) {
-			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
+	private function assert_if_variable_label_is_duplicated( array $db_record, array $variable = [] ) {
+		foreach ( $db_record['data'] as $id => $existing_variable ) {
+			if ( isset( $existing_variable['deleted'] ) && $existing_variable['deleted'] ) {
 				continue;
 			}
 
-			if ( isset( $new_variable['id'] ) && $new_variable['id'] === $id ) {
+			if ( isset( $variable['id'] ) && $variable['id'] === $id ) {
 				continue;
 			}
 
-			if ( isset( $variable['label'] ) && $variable['label'] === $new_variable['label'] ) {
+			if ( isset( $existing_variable['label'] ) && $existing_variable['label'] === $variable['label'] ) {
 				throw new DuplicatedLabel( 'Variable label already exists' );
 			}
 		}
