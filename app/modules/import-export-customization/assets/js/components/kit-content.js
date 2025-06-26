@@ -25,6 +25,7 @@ export default function KitContent() {
 										<Checkbox 
 											checked={ data.includes.includes( item.type ) }
 											onChange={ () => handleCheckboxChange( item.type ) }
+											sx={ { py: 0 } }
 										/> 
 									}
 									label={ <Typography variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }

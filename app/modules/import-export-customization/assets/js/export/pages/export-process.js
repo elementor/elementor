@@ -18,8 +18,35 @@ export default function ExportProcess() {
 			return;
 		}
 
-		// Simulate the export process
-		const performExport = async () => {
+		const generateScreenshot = () => {
+			return new Promise( ( resolve ) => {
+				const iframe = document.createElement( 'iframe' );
+				iframe.style = 'visibility: hidden;';
+				iframe.width = '1200';
+				iframe.height = '1000';
+
+				const messageHandler = ( event ) => {
+					if ( 'kit-screenshot-done' === event.data.name ) {
+						window.removeEventListener( 'message', messageHandler );
+						document.body.removeChild( iframe );
+						resolve( event.data.imageUrl || null );
+
+						window.removeEventListener( 'message', messageHandler );
+					}
+				};
+
+				window.addEventListener( 'message', messageHandler );
+
+				const previewUrl = new URL( window.location.origin );
+				previewUrl.searchParams.set( 'kit_thumbnail', '1' );
+				previewUrl.searchParams.set( 'nonce', elementorAppConfig[ 'import-export-customization' ].kitPreviewNonce );
+
+				document.body.appendChild( iframe );
+				iframe.src = previewUrl.toString();
+			} );
+		};
+
+		const exportKit = async () => {
 			try {
 				setStatus( 'processing' );
 
@@ -34,28 +61,62 @@ export default function ExportProcess() {
 					selectedCustomPostTypes: [],
 				};
 
-				// TODO: Replace with actual export API call
-				console.log( 'Export data:', exportData );
+				const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.[ 'cloud-library' ];
 
-				// Simulate API delay
-				await new Promise( resolve => setTimeout( resolve, 3000 ) );
+				if ( isCloudKitFeatureActive && 'cloud' === kitInfo.source ) {
+					const scr = await generateScreenshot();
+					exportData.screenShotBlob = scr;
+				}
 
-				// Simulate success - navigate directly without showing success state
-				const mockResponse = {
-					file: kitInfo.source === 'file' ? 'https://example.com/export.zip' : null,
-					kit: kitInfo.source === 'cloud' ? { id: 123, name: kitInfo.title } : null,
-				};
+				const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
+				const exportUrl = `${ baseUrl }/export`;
 
-				dispatch( { type: 'SET_EXPORTED_DATA', payload: mockResponse } );
-				
+				const response = await fetch( exportUrl, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+					},
+					body: JSON.stringify( exportData )
+				} );
+
+				const result = await response.json();
+
+				if ( ! response.ok ) {
+					const errorMessage = result?.data?.message || `HTTP error! with the following code: ${result?.data?.code}`;
+					throw new Error( errorMessage );
+				}
+
+				// Handle file export
+				if ( kitInfo.source === 'file' && result.data && result.data.file ) {
+					const exportedData = {
+						file: result.data.file, // This is base64 encoded file data
+						manifest: result.data.manifest
+					};
+
+					dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
+				} 
+				// Handle cloud export
+				else if ( kitInfo.source === 'cloud' && result.data && result.data.kit ) {
+					const exportedData = {
+						kit: result.data.kit
+					};
+
+					dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
+				}
+				else {
+					throw new Error( 'Invalid response format from server' );
+				}
+
 				window.location.href = elementorAppConfig.base_url + '#/export-customization/complete';
 
 			} catch ( error ) {
+				console.error( 'Export error:', error );
 				setStatus( 'error' );
 			}
 		};
 
-		performExport();
+		exportKit();
 	}, [ isExportProcessStarted, includes, kitInfo, plugins, dispatch ] );
 
 	const handleTryAgain = () => {

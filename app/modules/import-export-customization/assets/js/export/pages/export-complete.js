@@ -23,7 +23,9 @@ export default function ExportComplete() {
 		}
 	}, [ exportedData, kitInfo.source ] );
 
-	const downloadFile = () => {
+	const downloadFile = ( event ) => {
+		event?.preventDefault();
+		
 		if ( ! downloadLink.current ) {
 			const link = document.createElement( 'a' );
 			
@@ -35,7 +37,7 @@ export default function ExportComplete() {
 			
 			const fileName = sanitizedKitName || defaultKitName;
 			
-			link.href = exportedData.file;
+			link.href = 'data:application/zip;base64,' + exportedData.file;
 			link.download = fileName + '.zip';
 			
 			downloadLink.current = link;
@@ -164,15 +166,11 @@ export default function ExportComplete() {
 
 					{ ! isCloudExport && (
 						<Typography variant="body2" color="text.secondary">
-							{ __( 'You can use this file to import the template on any WordPress site with Elementor.', 'elementor' ) }{' '}
-							{ __( 'If the download didn\'t start automatically,', 'elementor' ) }{' '}
-							<Link href="#" onClick={ downloadFile } sx={ { cursor: 'pointer' } }>
-								{ __( 'click here to download manually', 'elementor' ) }
+							{ __( 'Is the automatic download not starting?', 'elementor' ) }{' '}
+							<Link href="#" onClick={ downloadFile } sx={ { cursor: 'pointer', textDecoration: 'underline' } }>
+								{ __( 'Download manually', 'elementor' ) }
 							</Link>
 							{'. '}
-							<Link href="https://go.elementor.com/app-what-are-kits" target="_blank" rel="noopener noreferrer">
-								{ __( 'Learn more', 'elementor' ) }
-							</Link>
 						</Typography>
 					) }
 				</Stack>
