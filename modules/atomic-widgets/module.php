@@ -106,13 +106,14 @@ class Module extends BaseModule {
 			$this->register_experimental_features();
 		}
 
-		Atomic_Styles_Manager::instance()->register_hooks();
-
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
+
+			Atomic_Styles_Manager::instance()->register_hooks();
+
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
 
