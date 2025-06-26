@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Upload extends Base_Route {
-
 	public function get_route(): string {
 		return 'upload';
 	}
@@ -39,13 +38,15 @@ class Upload extends Base_Route {
 					'source' => $source,
 				] );
 			} else {
-				$file_name = Utils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
-				if ( empty(  $file_name ) ) {
-					return Response::error( 'No file uploaded.', 'no_file_uploaded' );
+				$files = $request->get_file_params();
+				$file = $files['e_import_file'] ?? null;
+				
+				if ( empty( $file ) || empty( $file['tmp_name'] ) || $file['error'] !== UPLOAD_ERR_OK ) {
+					return Response::error( 'No file uploaded or upload error occurred.', 'no_file_uploaded' );
 				}
 
 				$import_result = [
-					'file_name' => $file_name,
+					'file_name' => $file['tmp_name'],
 					'referrer' => $module::REFERRER_LOCAL,
 				];
 			}
