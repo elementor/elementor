@@ -1095,7 +1095,7 @@ class Widget_Common_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_responsive_control(
+		$this->add_control(
 			'_mask_shape',
 			[
 				'label' => esc_html__( 'Shape', 'elementor' ),
