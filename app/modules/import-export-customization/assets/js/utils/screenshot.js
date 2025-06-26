@@ -24,4 +24,4 @@ export const generateScreenshot = () => {
 		document.body.appendChild( iframe );
 		iframe.src = previewUrl.toString();
 	} );
-}; 
+};

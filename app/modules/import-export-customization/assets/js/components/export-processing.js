@@ -11,8 +11,8 @@ export default function ExportProcessing( { statusText } ) {
 			<Typography variant="body1" color="text.secondary">
 				{ __( 'This usually takes a few moments.', 'elementor' ) }
 				<br/>
-				{ __( "Don't close this window until the process is finished.", 'elementor' ) }
+				{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }
 			</Typography>
 		</>
 	);
-} 
+}
