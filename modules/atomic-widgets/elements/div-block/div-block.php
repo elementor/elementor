@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -56,6 +57,8 @@ class Div_Block extends Atomic_Element_Base {
 				->default( 'div' )
 				->dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
+
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 		return $props;
 	}
@@ -188,6 +191,14 @@ class Div_Block extends Atomic_Element_Base {
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
+		}
+
+		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
+			foreach ( $settings['attributes'] as $item ) {
+				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
+					$attributes[ esc_attr( $item['key'] ) ] = esc_attr( $item['value'] );
+				}
+			}
 		}
 
 		if ( ! empty( $settings['link']['href'] ) ) {
