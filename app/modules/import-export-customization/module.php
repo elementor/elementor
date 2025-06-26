@@ -5,7 +5,6 @@ use Elementor\App\Modules\ImportExportCustomization\Processes\Export;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
 use Elementor\App\Modules\ImportExportCustomization\Processes\Revert;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Modules\CloudKitLibrary\Module as CloudKitLibrary;
 use Elementor\Modules\System_Info\Reporters\Server;
@@ -13,6 +12,7 @@ use Elementor\Plugin;
 use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+use Elementor\App\Modules\ImportExportCustomization\Data\Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,14 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Module extends BaseModule {
 	const FORMAT_VERSION = '2.0';
-
-	const EXPORT_TRIGGER_KEY = 'elementor_export_kit';
-
-	const UPLOAD_TRIGGER_KEY = 'elementor_upload_kit';
-
-	const IMPORT_TRIGGER_KEY = 'elementor_import_kit';
-
-	const IMPORT_RUNNER_TRIGGER_KEY = 'elementor_import_kit__runner';
 
 	const REFERRER_KIT_LIBRARY = 'kit-library';
 
@@ -95,6 +87,8 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		$this->register_actions();
+
+		Controller::register_hooks();
 
 		if ( ElementorUtils::is_wp_cli() ) {
 			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
@@ -380,7 +374,7 @@ class Module extends BaseModule {
 		$this->import->register_default_runners();
 
 		remove_filter( 'elementor/document/save/data', [ Plugin::$instance->modules_manager->get_modules( 'content-sanitizer' ), 'sanitize_content' ] );
-		do_action( 'elementor/import-export/import-kit', $this->import );
+		do_action( 'elementor/import-export-customization/import-kit', $this->import );
 
 		if ( $split_to_chunks ) {
 			$this->import->init_import_session( true );
@@ -436,7 +430,7 @@ class Module extends BaseModule {
 		$this->export = new Export( $settings );
 		$this->export->register_default_runners();
 
-		do_action( 'elementor/import-export/export-kit', $this->export );
+		do_action( 'elementor/import-export-customization/export-kit', $this->export );
 
 		return $this->export->run();
 	}
@@ -448,7 +442,7 @@ class Module extends BaseModule {
 		$this->revert = new Revert();
 		$this->revert->register_default_runners();
 
-		do_action( 'elementor/import-export/revert-kit', $this->revert );
+		do_action( 'elementor/import-export-customization/revert-kit', $this->revert );
 
 		$this->revert->run();
 	}
@@ -600,6 +594,7 @@ class Module extends BaseModule {
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
+			'restApiBaseUrl' => Controller::get_base_url(),
 		];
 	}
 
