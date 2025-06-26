@@ -18,7 +18,7 @@ class Brightness_Filter_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'amount' => Size_Prop_Type::make()->default( 100 ), // in percentage, default is 100%
+			'amount' => Size_Prop_Type::make()->default( 100 )->required(), // in percentage, default is 100%
 		];
 	}
 }
