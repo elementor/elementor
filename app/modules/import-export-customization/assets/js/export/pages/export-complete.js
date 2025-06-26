@@ -17,7 +17,6 @@ export default function ExportComplete() {
 			return;
 		}
 
-		// Auto-download file for file exports
 		if ( kitInfo.source !== 'cloud' && exportedData.file ) {
 			downloadFile();
 		}
