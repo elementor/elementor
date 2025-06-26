@@ -23,8 +23,8 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 			};
 
 			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.[ 'cloud-library' ];
-			const isCloudExport = 'cloud' === kitInfo.source;
-			
+			const isCloudExport = kitInfo.source === 'cloud';
+
 			if ( isCloudKitFeatureActive && isCloudExport ) {
 				const screenshot = await generateScreenshot();
 				exportData.screenShotBlob = screenshot;
@@ -39,13 +39,13 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 					'Content-Type': 'application/json',
 					'X-WP-Nonce': window.wpApiSettings?.nonce || '',
 				},
-				body: JSON.stringify( exportData )
+				body: JSON.stringify( exportData ),
 			} );
 
 			const result = await response.json();
 
 			if ( ! response.ok ) {
-				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${result?.data?.code}`;
+				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
 				throw new Error( errorMessage );
 			}
 
@@ -53,27 +53,23 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 			if ( kitInfo.source === 'file' && result.data && result.data.file ) {
 				const exportedData = {
 					file: result.data.file, // This is base64 encoded file data
-					manifest: result.data.manifest
+					manifest: result.data.manifest,
 				};
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
-			} 
-			// Handle cloud export
-			else if ( kitInfo.source === 'cloud' && result.data && result.data.kit ) {
+			} else if ( kitInfo.source === 'cloud' && result.data && result.data.kit ) {
+				// Handle cloud export
 				const exportedData = {
-					kit: result.data.kit
+					kit: result.data.kit,
 				};
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
-			}
-			else {
+			} else {
 				throw new Error( 'Invalid response format from server' );
 			}
-			
-			window.location.href = elementorAppConfig.base_url + '#/export-customization/complete';
 
+			window.location.href = elementorAppConfig.base_url + '#/export-customization/complete';
 		} catch ( error ) {
-			console.error( 'Export error:', error );
 			setStatus( STATUS_ERROR );
 		}
 	};
@@ -86,7 +82,7 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 		}
 
 		exportKit();
-	}, [ isExportProcessStarted, includes, kitInfo, plugins, dispatch ] );
+	}, [ isExportProcessStarted, includes, kitInfo, plugins, dispatch, exportKit ] );
 
 	const getStatusText = () => {
 		if ( status === STATUS_PROCESSING ) {
@@ -100,6 +96,6 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 		status,
 		getStatusText,
 		STATUS_PROCESSING,
-		STATUS_ERROR
+		STATUS_ERROR,
 	};
 };

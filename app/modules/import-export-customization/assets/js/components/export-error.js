@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, Typography, Stack, Button } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const HELP_URL = 'https://go.elementor.com/app-import-download-failed';
 
@@ -47,3 +47,7 @@ export default function ExportError( { statusText } ) {
 		</>
 	);
 }
+
+ExportError.propTypes = {
+	statusText: PropTypes.string.isRequired,
+};

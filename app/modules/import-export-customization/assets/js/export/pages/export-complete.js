@@ -10,6 +10,29 @@ export default function ExportComplete() {
 	const { exportedData, kitInfo } = data;
 	const downloadLink = useRef( null );
 
+	const downloadFile = ( event ) => {
+		event?.preventDefault();
+
+		if ( ! downloadLink.current ) {
+			const link = document.createElement( 'a' );
+
+			const defaultKitName = 'elementor-kit';
+			const kitName = kitInfo.title || defaultKitName;
+			const sanitizedKitName = kitName
+				.replace( INVALID_FILENAME_CHARS, '' )
+				.trim();
+
+			const fileName = sanitizedKitName || defaultKitName;
+
+			link.href = 'data:application/zip;base64,' + exportedData.file;
+			link.download = fileName + '.zip';
+
+			downloadLink.current = link;
+		}
+
+		downloadLink.current.click();
+	};
+
 	useEffect( () => {
 		if ( ! exportedData ) {
 			// Redirect back if no export data
@@ -20,30 +43,7 @@ export default function ExportComplete() {
 		if ( kitInfo.source !== 'cloud' && exportedData.file ) {
 			downloadFile();
 		}
-	}, [ exportedData, kitInfo.source ] );
-
-	const downloadFile = ( event ) => {
-		event?.preventDefault();
-		
-		if ( ! downloadLink.current ) {
-			const link = document.createElement( 'a' );
-			
-			const defaultKitName = 'elementor-kit';
-			const kitName = kitInfo.title || defaultKitName;
-			const sanitizedKitName = kitName
-				.replace( INVALID_FILENAME_CHARS, '' )
-				.trim();
-			
-			const fileName = sanitizedKitName || defaultKitName;
-			
-			link.href = 'data:application/zip;base64,' + exportedData.file;
-			link.download = fileName + '.zip';
-			
-			downloadLink.current = link;
-		}
-		
-		downloadLink.current.click();
-	};
+	}, [ exportedData, kitInfo.source, downloadFile ] );
 
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;
@@ -88,91 +88,91 @@ export default function ExportComplete() {
 			topBar={ <TopBar>{ headerContent }</TopBar> }
 			footer={ <Footer>{ footerContent }</Footer> }
 		>
-			<Box sx={ { 
+			<Box sx={ {
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				minHeight: 'calc(100vh - 180px)',
-				p: 3
+				p: 3,
 			} }>
-				<Box sx={ { 
+				<Box sx={ {
 					maxWidth: '600px',
 					textAlign: 'center',
-					width: '100%'
+					width: '100%',
 				} }>
-				<Stack spacing={ 3 } alignItems="center">
-					<Box sx={ { mb: 2 } }>
-						<img 
-							src={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
-							alt=""
-							style={ { width: '80px', height: '80px' } }
-						/>
-					</Box>
+					<Stack spacing={ 3 } alignItems="center">
+						<Box sx={ { mb: 2 } }>
+							<img
+								src={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
+								alt=""
+								style={ { width: '80px', height: '80px' } }
+							/>
+						</Box>
 
-					<Typography variant="h4" component="h2" gutterBottom>
-						{ isCloudExport 
-							? __( 'Your website template is now saved to the library!', 'elementor' )
-							: __( 'Your .zip file is ready', 'elementor' )
-						}
-					</Typography>
-
-					<Typography variant="body2" color="text.secondary" sx={ { mb: 3 } }>
-						{ isCloudExport 
-							? (
-								<>
-									{ __( 'You can find it in the My Website Templates tab.', 'elementor' ) }{' '}
-									<Link 
-										href={ elementorAppConfig.base_url + '#/kit-library/cloud' }
-										sx={ { cursor: 'pointer' } }
-									>
-										{ __( 'Take me there', 'elementor' ) }
-									</Link>
-								</>
-							)
-							: __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' )
-						}
-					</Typography>
-
-					{/* Export Details Card */}
-					<Card sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 }>
-						<CardContent sx={ { p: 2.5 } }>
-							<Typography variant="h6" component="h3" gutterBottom>
-								{ kitInfo.title }
-							</Typography>
-							
-							{ kitInfo.description && (
-								<Typography variant="body2" color="text.secondary" sx={ { mb: 2 } }>
-									{ kitInfo.description }
-								</Typography>
-							) }
-
-							<Typography variant="caption" color="text.secondary" sx={ { display: 'block', mb: 1 } }>
-								{ __( 'Exported items:', 'elementor' ) }
-							</Typography>
-							<Typography variant="body2">
-								{ data.includes.map( item => {
-									const itemLabels = {
-										content: __( 'Content', 'elementor' ),
-										templates: __( 'Templates', 'elementor' ),
-										settings: __( 'Settings & configurations', 'elementor' ),
-										plugins: __( 'Plugins', 'elementor' )
-									};
-									return itemLabels[ item ] || item;
-								} ).join( ', ' ) }
-							</Typography>
-						</CardContent>
-					</Card>
-
-					{ ! isCloudExport && (
-						<Typography variant="body2" color="text.secondary">
-							{ __( 'Is the automatic download not starting?', 'elementor' ) }{' '}
-							<Link href="#" onClick={ downloadFile } sx={ { cursor: 'pointer', textDecoration: 'underline' } }>
-								{ __( 'Download manually', 'elementor' ) }
-							</Link>
-							{'. '}
+						<Typography variant="h4" component="h2" gutterBottom>
+							{ isCloudExport
+								? __( 'Your website template is now saved to the library!', 'elementor' )
+								: __( 'Your .zip file is ready', 'elementor' )
+							}
 						</Typography>
-					) }
-				</Stack>
+
+						<Typography variant="body2" color="text.secondary" sx={ { mb: 3 } }>
+							{ isCloudExport
+								? (
+									<>
+										{ __( 'You can find it in the My Website Templates tab.', 'elementor' ) }{ ' ' }
+										<Link
+											href={ elementorAppConfig.base_url + '#/kit-library/cloud' }
+											sx={ { cursor: 'pointer' } }
+										>
+											{ __( 'Take me there', 'elementor' ) }
+										</Link>
+									</>
+								)
+								: __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' )
+							}
+						</Typography>
+
+						{/* Export Details Card */}
+						<Card sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 }>
+							<CardContent sx={ { p: 2.5 } }>
+								<Typography variant="h6" component="h3" gutterBottom>
+									{ kitInfo.title }
+								</Typography>
+
+								{ kitInfo.description && (
+									<Typography variant="body2" color="text.secondary" sx={ { mb: 2 } }>
+										{ kitInfo.description }
+									</Typography>
+								) }
+
+								<Typography variant="caption" color="text.secondary" sx={ { display: 'block', mb: 1 } }>
+									{ __( 'Exported items:', 'elementor' ) }
+								</Typography>
+								<Typography variant="body2">
+									{ data.includes.map( ( item ) => {
+										const itemLabels = {
+											content: __( 'Content', 'elementor' ),
+											templates: __( 'Templates', 'elementor' ),
+											settings: __( 'Settings & configurations', 'elementor' ),
+											plugins: __( 'Plugins', 'elementor' ),
+										};
+										return itemLabels[ item ] || item;
+									} ).join( ', ' ) }
+								</Typography>
+							</CardContent>
+						</Card>
+
+						{ ! isCloudExport && (
+							<Typography variant="body2" color="text.secondary">
+								{ __( 'Is the automatic download not starting?', 'elementor' ) }{ ' ' }
+								<Link href="#" onClick={ downloadFile } sx={ { cursor: 'pointer', textDecoration: 'underline' } }>
+									{ __( 'Download manually', 'elementor' ) }
+								</Link>
+								{ '. ' }
+							</Typography>
+						) }
+					</Stack>
 				</Box>
 			</Box>
 		</BaseLayout>

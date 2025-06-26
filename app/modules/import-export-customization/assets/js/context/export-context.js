@@ -33,16 +33,16 @@ function exportReducer( state, { type, payload } ) {
 		case 'SET_KIT_SAVE_SOURCE':
 			return { ...state, kitInfo: { ...state.kitInfo, source: payload } };
 		case 'ADD_INCLUDE':
-			return { 
-				...state, 
-				includes: state.includes.includes( payload ) 
-					? state.includes 
-					: [ ...state.includes, payload ] 
+			return {
+				...state,
+				includes: state.includes.includes( payload )
+					? state.includes
+					: [ ...state.includes, payload ],
 			};
 		case 'REMOVE_INCLUDE':
-			return { 
-				...state, 
-				includes: state.includes.filter( item => item !== payload ) 
+			return {
+				...state,
+				includes: state.includes.filter( ( item ) => item !== payload ),
 			};
 		default:
 			return state;

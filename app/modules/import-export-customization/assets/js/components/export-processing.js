@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Typography, CircularProgress } from '@elementor/ui';
 
 export default function ExportProcessing( { statusText } ) {
@@ -10,9 +11,13 @@ export default function ExportProcessing( { statusText } ) {
 			</Typography>
 			<Typography variant="body1" color="text.secondary">
 				{ __( 'This usually takes a few moments.', 'elementor' ) }
-				<br/>
+				<br />
 				{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }
 			</Typography>
 		</>
 	);
 }
+
+ExportProcessing.propTypes = {
+	statusText: PropTypes.string.isRequired,
+};

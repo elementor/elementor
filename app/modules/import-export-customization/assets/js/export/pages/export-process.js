@@ -15,7 +15,7 @@ export default function ExportProcess() {
 		kitInfo,
 		plugins,
 		isExportProcessStarted,
-		dispatch
+		dispatch,
 	} );
 
 	const headerContent = (
@@ -24,23 +24,23 @@ export default function ExportProcess() {
 
 	return (
 		<BaseLayout topBar={ <TopBar>{ headerContent }</TopBar> }>
-			<Box sx={ { 
+			<Box sx={ {
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				minHeight: 'calc(100vh - 120px)',
-				p: 3
+				p: 3,
 			} }>
-				<Box sx={ { 
+				<Box sx={ {
 					maxWidth: '600px',
 					textAlign: 'center',
-					width: '100%'
+					width: '100%',
 				} }>
 					<Stack spacing={ 3 } alignItems="center">
 						{ status === STATUS_PROCESSING && (
 							<ExportProcessing statusText={ getStatusText() } />
 						) }
-						
+
 						{ status === STATUS_ERROR && (
 							<ExportError statusText={ getStatusText() } />
 						) }

@@ -135,7 +135,7 @@ export default function ExportKitFooter() {
 			{ renderSaveToLibraryButton() }
 			<Button
 				variant="contained"
-				color="primary" 
+				color="primary"
 				size="small"
 				disabled={ ! isTemplateNameValid }
 				onClick={ handleExportAsZip }

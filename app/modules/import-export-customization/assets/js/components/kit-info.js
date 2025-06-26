@@ -21,7 +21,7 @@ export default function KitInfo() {
 					fullWidth
 					required
 					value={ templateName }
-					onChange={ (e) => dispatch( { type: 'SET_KIT_TITLE', payload: e.target.value || '' } ) }
+					onChange={ ( e ) => dispatch( { type: 'SET_KIT_TITLE', payload: e.target.value || '' } ) }
 					placeholder={ __( 'Type name here...', 'elementor' ) }
 					inputProps={ { maxLength: 75 } }
 					sx={ { mb: 2 } }
@@ -34,7 +34,7 @@ export default function KitInfo() {
 					fullWidth
 					multiline
 					value={ description }
-					onChange={ (e) => dispatch( { type: 'SET_KIT_DESCRIPTION', payload: e.target.value || '' } ) }
+					onChange={ ( e ) => dispatch( { type: 'SET_KIT_DESCRIPTION', payload: e.target.value || '' } ) }
 					placeholder={ __( 'Type description here...', 'elementor' ) }
 				/>
 			</CardContent>

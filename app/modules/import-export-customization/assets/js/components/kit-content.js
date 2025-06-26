@@ -21,12 +21,12 @@ export default function KitContent() {
 						<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
 							<Box sx={ { flex: 1 } }>
 								<FormControlLabel
-									control={ 
-										<Checkbox 
+									control={
+										<Checkbox
 											checked={ data.includes.includes( item.type ) }
 											onChange={ () => handleCheckboxChange( item.type ) }
 											sx={ { py: 0 } }
-										/> 
+										/>
 									}
 									label={ <Typography variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }
 								/>
