@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 
 class Atomic_Global_Styles {
-	const CSS_FILE_KEY = 'global';
+	const STYLES_KEY = 'global';
 
 	public function register_hooks() {
 		add_action(
@@ -31,7 +31,7 @@ class Atomic_Global_Styles {
 		};
 
 		$styles_manager->register(
-			self::CSS_FILE_KEY,
+			self::STYLES_KEY,
 			$get_styles
 		);
 	}

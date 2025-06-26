@@ -86,7 +86,7 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 			->expects($this->once())
 			->method('register')
 			->with(
-				Atomic_Widget_Base_Styles::CSS_FILE_KEY,
+				Atomic_Widget_Base_Styles::STYLE_KEY,
 				$this->callback(function($callback) use ($widget, $element) {
 					$styles = $callback([1]);
 

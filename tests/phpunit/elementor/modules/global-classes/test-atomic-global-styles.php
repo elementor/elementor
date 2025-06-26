@@ -90,7 +90,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Global_Styles::CSS_FILE_KEY,
+				Atomic_Global_Styles::STYLES_KEY,
 				$this->callback( function ( $callback ) use ( $expected ) {
 					$styles = $callback( [ 1, 2 ] );
 					$this->assertEquals( $expected, $styles );
