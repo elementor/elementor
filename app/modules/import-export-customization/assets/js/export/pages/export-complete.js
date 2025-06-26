@@ -45,7 +45,7 @@ export default function ExportComplete() {
 		return null;
 	}
 
-	const isCloudExport = 'cloud' ===  kitInfo.source;
+	const isCloudExport = 'cloud' === kitInfo.source;
 
 	const footerContent = (
 		<Stack direction="row" spacing={ 1 }>
