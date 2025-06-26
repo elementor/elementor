@@ -77,7 +77,6 @@ class Module extends BaseModule {
 
 	const PACKAGES = [
 		'editor-canvas',
-		'editor-current-user',
 		'editor-controls', // TODO: Need to be registered and not enqueued.
 		'editor-editing-panel',
 		'editor-elements', // TODO: Need to be registered and not enqueued.
