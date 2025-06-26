@@ -14,16 +14,16 @@ export default function ExportError( { statusText } ) {
 
 	return (
 		<>
-			<Box sx={ { 
-				width: 60, 
-				height: 60, 
-				borderRadius: '50%', 
+			<Box sx={ {
+				width: 60,
+				height: 60,
+				borderRadius: '50%',
 				backgroundColor: 'error.main',
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
 				color: 'white',
-				fontSize: '24px'
+				fontSize: '24px',
 			} }>
 				✕
 			</Box>

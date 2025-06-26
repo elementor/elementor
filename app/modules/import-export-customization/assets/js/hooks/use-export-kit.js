@@ -23,7 +23,7 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 			};
 
 			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.[ 'cloud-library' ];
-			const isCloudExport = kitInfo.source === 'cloud';
+			const isCloudExport = 'cloud' === kitInfo.source;
 
 			if ( isCloudKitFeatureActive && isCloudExport ) {
 				const screenshot = await generateScreenshot();
@@ -50,14 +50,14 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 			}
 
 			// Handle file export
-			if ( kitInfo.source === 'file' && result.data && result.data.file ) {
+			if ( 'file' === kitInfo.source && result.data && result.data.file ) {
 				const exportedData = {
 					file: result.data.file, // This is base64 encoded file data
 					manifest: result.data.manifest,
 				};
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
-			} else if ( kitInfo.source === 'cloud' && result.data && result.data.kit ) {
+			} else if ( 'cloud' === kitInfo.source && result.data && result.data.kit ) {
 				// Handle cloud export
 				const exportedData = {
 					kit: result.data.kit,

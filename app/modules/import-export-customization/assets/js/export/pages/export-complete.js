@@ -43,7 +43,7 @@ export default function ExportComplete() {
 		if ( kitInfo.source !== 'cloud' && exportedData.file ) {
 			downloadFile();
 		}
-	}, [ exportedData, kitInfo.source, downloadFile ] );
+	}, [ exportedData, kitInfo.source ] );
 
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;
@@ -53,7 +53,7 @@ export default function ExportComplete() {
 		return null;
 	}
 
-	const isCloudExport = kitInfo.source === 'cloud';
+	const isCloudExport = 'cloud' === kitInfo.source;
 
 	const footerContent = (
 		<Stack direction="row" spacing={ 1 }>
@@ -133,7 +133,6 @@ export default function ExportComplete() {
 							}
 						</Typography>
 
-						{/* Export Details Card */}
 						<Card sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 }>
 							<CardContent sx={ { p: 2.5 } }>
 								<Typography variant="h6" component="h3" gutterBottom>
