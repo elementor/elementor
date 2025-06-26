@@ -5,15 +5,26 @@ namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 abstract class Base_Route {
 	public function __construct() {}
 
-	abstract public function get_route(): string;
+	public function register_route( $namespace, $base_route ): void {
+		register_rest_route( $namespace, '/' . $base_route . '/' . $this->get_route(), [
+			[
+				'methods' => $this->get_method(),
+				'callback' => fn( $request ) => $this->callback( $request ),
+				'permission_callback' => fn() => $this->get_permission_callback()(),
+				'args' => $this->get_args(),
+			],
+		] );
+	}
 
-	abstract public function get_method(): string;
+	abstract protected function get_route(): string;
 
-	abstract public function callback( $request ): \WP_REST_Response;
+	abstract protected function get_method(): string;
 
-	public function get_permission_callback(): callable {
+	abstract protected function callback( $request ): \WP_REST_Response;
+
+	protected function get_permission_callback(): callable {
 		return fn() => current_user_can( 'manage_options' );
 	}
 
-	abstract public function get_args(): array;
+	abstract protected function get_args(): array;
 }

@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Export extends Base_Route {
 
-	public function get_route(): string {
+	protected function get_route(): string {
 		return 'export';
 	}
 
-	public function get_method(): string {
-		return 'POST';
+	protected function get_method(): string {
+		return \WP_REST_Server::CREATABLE;
 	}
 
-	public function callback( $request ): \WP_REST_Response {
+	protected function callback( $request ): \WP_REST_Response {
 		try {
 			$settings = [
 				'include' => $request->get_param( 'include' ),
@@ -47,7 +47,7 @@ class Export extends Base_Route {
 		}
 	}
 
-	public function get_args(): array {
+	protected function get_args(): array {
 		return [
 			'include' => [
 				'type' => 'array',

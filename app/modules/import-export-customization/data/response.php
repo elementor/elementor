@@ -3,15 +3,15 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
 class Response {
-	private $data;
-	private $meta;
+	private array $data;
+	private array $meta;
 
-	public function __construct( $data, array $meta = [] ) {
+	public function __construct( array $data, array $meta = [] ) {
 		$this->data = $data;
 		$this->meta = $meta;
 	}
 
-	public static function success( $data, array $meta = [] ): \WP_REST_Response {
+	public static function success( array $data, array $meta = [] ): \WP_REST_Response {
 		$response = new self( $data, $meta );
 		return $response->to_wp_rest_response( 200 );
 	}

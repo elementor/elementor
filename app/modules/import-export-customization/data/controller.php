@@ -21,15 +21,6 @@ class Controller {
 	}
 
 	private static function register_routes() {
-		$export_route = new Export();
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/' . $export_route->get_route(), [
-			[
-				'methods' => $export_route->get_method(),
-				'callback' => fn( $request ) => $export_route->callback( $request )->to_wp_rest_response(),
-				'permission_callback' => fn() => $export_route->get_permission_callback()(),
-				'args' => $export_route->get_args(),
-			],
-		] );
+		( new Export() )->register_route( self::API_NAMESPACE, self::API_BASE );
 	}
 }

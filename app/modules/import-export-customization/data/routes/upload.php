@@ -8,15 +8,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Upload extends Base_Route {
-	public function get_route(): string {
+	protected function get_route(): string {
 		return 'upload';
 	}
 
-	public function get_method(): string {
-		return 'POST';
+	protected function get_method(): string {
+		return \WP_REST_Server::CREATABLE;
 	}
 
-	public function callback( $request ): \WP_REST_Response {
+	protected function callback( $request ): \WP_REST_Response {
 		try {
 			$file_url = $request->get_param( 'file_url' );
 			$kit_id = $request->get_param( 'kit_id' );
@@ -40,7 +40,7 @@ class Upload extends Base_Route {
 				$files = $request->get_file_params();
 				$file = $files['e_import_file'] ?? null;
 
-				if ( empty( $file ) || empty( $file['tmp_name'] )  ) {
+				if ( empty( $file ) || empty( $file['tmp_name'] ) ) {
 					return Response::error( 'No file uploaded or upload error occurred.', 'no_file_uploaded' );
 				}
 
@@ -98,7 +98,7 @@ class Upload extends Base_Route {
 		}
 	}
 
-	public function get_args(): array {
+	protected function get_args(): array {
 		return [
 			'file_url' => [
 				'type' => 'string',

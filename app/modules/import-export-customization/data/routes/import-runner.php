@@ -9,15 +9,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Import_Runner extends Base_Route {
 
-	public function get_route(): string {
+	protected function get_route(): string {
 		return 'import-runner';
 	}
 
-	public function get_method(): string {
-		return 'POST';
+	protected function get_method(): string {
+		return \WP_REST_Server::CREATABLE;
 	}
 
-	public function callback( $request ): \WP_REST_Response {
+	protected function callback( $request ): \WP_REST_Response {
 		try {
 			$session_id = $request->get_param( 'session' );
 			$runner = $request->get_param( 'runner' );
@@ -57,7 +57,7 @@ class Import_Runner extends Base_Route {
 		}
 	}
 
-	public function get_args(): array {
+	protected function get_args(): array {
 		return [
 			'session' => [
 				'type' => 'string',
