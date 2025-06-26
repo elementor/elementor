@@ -93,25 +93,19 @@ module.exports = {
 				zones: [
 					{
 						target: './packages/core',
-						from: [ './packages/pro', './packages/tools' ],
-						message: 'Core cannot import from Pro or Tools.',
-					},
-
-					{
-						target: './packages/pro',
-						from: './packages/tools',
-						message: 'Pro cannot import from Tools.',
+						from: [ './packages/tools' ],
+						message: 'Core cannot import from Tools.',
 					},
 
 					{
 						target: './packages/libs',
-						from: [ './packages/core', './packages/pro', './packages/tools' ],
+						from: [ './packages/core', './packages/tools' ],
 						message: 'Libraries can only import other libraries.',
 					},
 					{
 						target: './packages/tools',
 						from: [ './packages/*' ],
-						message: 'Tools cannot import from Core, Pro, Libs or Tools.',
+						message: 'Tools cannot import from Core, Libs or Tools.',
 					},
 				],
 			},
@@ -123,13 +117,6 @@ module.exports = {
 			files: [ '**/packages/@(core|libs)/**/*.[tj]s?(x)' ],
 			rules: {
 				'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'elementor' } ],
-			},
-		},
-		{
-			// Pro Packages.
-			files: [ '**/packages/pro/**/*.[tj]s?(x)' ],
-			rules: {
-				'@wordpress/i18n-text-domain': [ 'error', { allowedTextDomain: 'elementor-pro' } ],
 			},
 		},
 		{

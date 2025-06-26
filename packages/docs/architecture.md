@@ -204,8 +204,7 @@ Read more about workspaces & monorepo:
 ### Structure & Naming Conventions
 
 In order to make everything clear and easy to understand, we've decided that instead of having a flat folder structure
-for all the packages, we'll organize them under the `/packages` folder by their domain (e.g. `/packages/core`, 
-`/packages/pro`, `/packages/libs`, etc.). This separation helps us understand which package belongs to which domain, and
+for all the packages, we'll organize them under the `/packages` folder by their domain (e.g. `/packages/core`, `/packages/libs`, etc.). This separation helps us understand which package belongs to which domain, and
 to easily manage CI processes based on domain (i.e. run tests for all the packages in the `core` domain, or disallow
 importing packages from the `pro` domain into the `core` domain). 
 
