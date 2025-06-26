@@ -20,10 +20,10 @@ class Export extends Base_Route {
 	public function callback( $request ): \WP_REST_Response {
 		try {
 			$settings = [
-				'include' => $request->get_param( 'include' ) ?: [],
-				'kitInfo' => $request->get_param( 'kitInfo' ) ?: [],
-				'plugins' => $request->get_param( 'plugins' ) ?: [],
-				'selectedCustomPostTypes' => $request->get_param( 'selectedCustomPostTypes' ) ?: [],
+				'include' => $request->get_param( 'include' ),
+				'kitInfo' => $request->get_param( 'kitInfo' ),
+				'plugins' => $request->get_param( 'plugins' ),
+				'selectedCustomPostTypes' => $request->get_param( 'selectedCustomPostTypes' ),
 			];
 
 			$settings = array_filter( $settings );
@@ -53,13 +53,16 @@ class Export extends Base_Route {
 				'type' => 'array',
 				'description' => 'Content types to include in export',
 				'required' => false,
-				'default' => [],
+				'default' => [ 'templates', 'content', 'settings', 'plugins' ],
 			],
 			'kitInfo' => [
 				'type' => 'object',
 				'description' => 'Kit information',
 				'required' => false,
-				'default' => [],
+				'default' => [
+					'name' => 'Elementor Website Template',
+					'description' => '',
+				],
 			],
 			'plugins' => [
 				'type' => 'array',

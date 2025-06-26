@@ -20,7 +20,7 @@ class Import extends Base_Route {
 	public function callback( $request ): \WP_REST_Response {
 		try {
 			$session = $request->get_param( 'session' );
-			$settings = $request->get_param( 'settings' ) ?: [];
+			$settings = $request->get_param( 'settings' );
 			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 			if ( empty( $session ) ) {

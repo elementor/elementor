@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,13 +39,13 @@ class Upload extends Base_Route {
 					'source' => $source,
 				] );
 			} else {
-				// Handle file upload from $_FILES
-				if ( empty( $_FILES['e_import_file']['tmp_name'] ) ) {
+				$file_name = Utils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
+				if ( empty(  $file_name ) ) {
 					return Response::error( 'No file uploaded.', 'no_file_uploaded' );
 				}
 
 				$import_result = [
-					'file_name' => $_FILES['e_import_file']['tmp_name'],
+					'file_name' => $file_name,
 					'referrer' => $module::REFERRER_LOCAL,
 				];
 			}
