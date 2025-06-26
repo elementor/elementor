@@ -90,11 +90,9 @@ class Atomic_Styles_Manager {
 			Plugin::instance()->frontend->enqueue_font( $value );
 		} )->render( $styles );
 
-		$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
+		$breakpoint_config = Plugin::$instance->breakpoints->get_breakpoints_config()[ $breakpoint_key ] ?? null;
 
-		$media = $breakpoint_instance
-			? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
-			: 'all';
+		$media = $breakpoint_config ? Styles_Renderer::get_media_query( $breakpoint_config ) : 'all';
 
 		return [
 			'content' => $css,
