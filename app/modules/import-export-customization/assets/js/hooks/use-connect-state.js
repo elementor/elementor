@@ -1,12 +1,40 @@
-import { useContext } from 'react';
-import { ConnectStateContext } from '../context/connect-state-context';
+import { useState, useCallback } from 'react';
 
 export default function useConnectState() {
-	const context = useContext( ConnectStateContext );
+	const [ isConnected, setIsConnected ] = useState( elementorCommon.config.library_connect.is_connected );
+	const [ isConnecting, setIsConnecting ] = useState( false );
 
-	if ( ! context ) {
-		throw new Error( 'useConnectState must be used within a ConnectStateProvider' );
-	}
+	const handleConnectSuccess = useCallback( ( callback ) => {
+		setIsConnecting( true );
+		setIsConnected( true );
 
-	return context;
+		elementorCommon.config.library_connect.is_connected = true;
+
+		if ( callback ) {
+			callback();
+		}
+	}, [] );
+
+	const handleConnectError = useCallback( ( callback ) => {
+		setIsConnected( false );
+		setIsConnecting( false );
+
+		elementorCommon.config.library_connect.is_connected = false;
+
+		if ( callback ) {
+			callback();
+		}
+	}, [] );
+
+	const setConnecting = useCallback( ( connecting ) => {
+		setIsConnecting( connecting );
+	}, [] );
+
+	return {
+		isConnected,
+		isConnecting,
+		setConnecting,
+		handleConnectSuccess,
+		handleConnectError,
+	};
 }
