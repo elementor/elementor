@@ -4,7 +4,7 @@ import { Typography, CircularProgress } from '@elementor/ui';
 export default function ExportProcessing( { statusText } ) {
 	return (
 		<>
-			<CircularProgress size={ 60 } />
+			<CircularProgress size={ 20 } />
 			<Typography variant="h5" component="h2">
 				{ statusText }
 			</Typography>
