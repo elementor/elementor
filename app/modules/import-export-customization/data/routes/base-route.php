@@ -10,7 +10,7 @@ abstract class Base_Route {
 			[
 				'methods' => $this->get_method(),
 				'callback' => fn( $request ) => $this->callback( $request ),
-				'permission_callback' => fn() => $this->get_permission_callback()(),
+				'permission_callback' => fn() => $this->permission_callback(),
 				'args' => $this->get_args(),
 			],
 		] );
@@ -22,7 +22,7 @@ abstract class Base_Route {
 
 	abstract protected function callback( $request ): \WP_REST_Response;
 
-	protected function get_permission_callback(): callable {
+	protected function permission_callback(): callable {
 		return fn() => current_user_can( 'manage_options' );
 	}
 
