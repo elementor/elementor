@@ -273,10 +273,15 @@ const DivBlockView = BaseElementView.extend( {
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggedElement = draggedView?.getContainer().view.el,
 					containerElement = event.currentTarget.parentElement,
-					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] ),
-					targetIndex = elements.indexOf( event.currentTarget );
+					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+
+				let targetIndex = elements.indexOf( event.currentTarget );
 
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
+					if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+						targetIndex++;
+					}
+
 					this.onDrop( event, { at: targetIndex } );
 
 					return;
@@ -291,17 +296,21 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
-				const selfIndex = elements.indexOf( draggedElement );
-
-				if ( targetIndex === selfIndex ) {
-					return;
-				}
-
-				const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
-
-				this.moveDroppedItem( draggedView, dropIndex );
+				this.moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement );
 			},
 		};
+	},
+
+	moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement ) {
+		const selfIndex = elements.indexOf( draggedElement );
+
+		if ( targetIndex === selfIndex ) {
+			return;
+		}
+
+		const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
+
+		this.moveDroppedItem( draggedView, dropIndex );
 	},
 
 	isPanelElement( draggedView, draggedElement ) {
