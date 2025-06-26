@@ -88,19 +88,21 @@ class Applied_Global_Classes_Usage {
 		return array_intersect( $prop, $global_class_ids );
 	}
 
-	public function get_detailed_usage() {
-		$result = array();
+	public function get_detailed_usage( bool $with_page_info = false ) {
+		$result = [];
 
 		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
-
 		if ( empty( $global_class_ids ) ) {
-			return array();
+			return [];
 		}
 
-		Plugin::$instance->db->iterate_elementor_documents( function ( $document, $elements_data ) use ( &$result, $global_class_ids ) {
+		Plugin::$instance->db->iterate_elementor_documents( function ( $document, $elements_data ) use ( &$result, $global_class_ids, $with_page_info ) {
 			$page_id = $document->get_main_id();
 
-			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( $global_class_ids, $page_id, &$result ) {
+			// Only resolve title if the flag is explicitly set
+			$page_title = $with_page_info ? get_the_title( $page_id ) : null;
+
+			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( $global_class_ids, $page_id, $page_title, $with_page_info, &$result ) {
 				$element_id = $element_data['id'] ?? null;
 				if ( ! $element_id ) {
 					return;
@@ -120,10 +122,8 @@ class Applied_Global_Classes_Usage {
 				);
 
 				foreach ( array_keys( $applied_classes ) as $global_class_id ) {
-					// Initialize result for this class
-					$result[ $global_class_id ] ??= array();
+					$result[ $global_class_id ] ??= [];
 
-					// Try to find an entry for this pageId
 					$page_entry_index = null;
 					foreach ( $result[ $global_class_id ] as $index => $entry ) {
 						if ( $entry['pageId'] === $page_id ) {
@@ -133,20 +133,22 @@ class Applied_Global_Classes_Usage {
 					}
 
 					if ( $page_entry_index !== null ) {
-						// Avoid duplicates
 						if ( ! in_array( $element_id, $result[ $global_class_id ][ $page_entry_index ]['elements'], true ) ) {
 							$result[ $global_class_id ][ $page_entry_index ]['elements'][] = $element_id;
 							$result[ $global_class_id ][ $page_entry_index ]['total']++;
-
 						}
 					} else {
-						// New page entry
-						$result[ $global_class_id ][] = array(
+						$new_entry = [
 							'pageId'   => $page_id,
-							'elements' => array( $element_id ),
+							'elements' => [ $element_id ],
 							'total'    => 1,
+						];
 
-						);
+						if ( $with_page_info ) {
+							$new_entry['title'] = $page_title;
+						}
+
+						$result[ $global_class_id ][] = $new_entry;
 					}
 				}
 			});
