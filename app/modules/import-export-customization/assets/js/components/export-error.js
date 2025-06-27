@@ -1,5 +1,6 @@
 import { Box, Typography, Stack, Button } from '@elementor/ui';
 import PropTypes from 'prop-types';
+import { XIcon } from './icons';
 
 const HELP_URL = 'https://go.elementor.com/app-import-download-failed';
 
@@ -23,9 +24,8 @@ export default function ExportError( { statusText } ) {
 				alignItems: 'center',
 				justifyContent: 'center',
 				color: 'white',
-				fontSize: '24px',
 			} }>
-				✕
+				<XIcon sx={ { fontSize: '24px' } } />
 			</Box>
 
 			<Typography variant="h5" component="h2">
