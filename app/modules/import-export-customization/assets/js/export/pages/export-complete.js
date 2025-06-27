@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Redirect } from '@reach/router';
 import { Button, Box, Typography, Stack, Link, Card, CardContent } from '@elementor/ui';
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';
 import { useExportContext } from '../../context/export-context';
@@ -26,13 +27,7 @@ export default function ExportComplete() {
 	};
 
 	useEffect( () => {
-		if ( ! exportedData ) {
-			// Redirect back if no export data
-			window.location.href = elementorAppConfig.base_url + '#/export-customization/';
-			return;
-		}
-
-		if ( kitInfo.source !== 'cloud' && exportedData.file ) {
+		if ( 'cloud' !== kitInfo.source && exportedData?.file ) {
 			downloadFile();
 		}
 	}, [ exportedData, kitInfo.source, downloadFile ] );
@@ -42,7 +37,7 @@ export default function ExportComplete() {
 	};
 
 	if ( ! exportedData ) {
-		return null;
+		return <Redirect to="/export-customization/" replace />;
 	}
 
 	const isCloudExport = 'cloud' === kitInfo.source;
