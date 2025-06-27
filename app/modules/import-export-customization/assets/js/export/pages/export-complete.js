@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Redirect } from '@reach/router';
-import { Button, Typography, Stack, Link } from '@elementor/ui';
+import { Button, Stack } from '@elementor/ui';
 import { BaseLayout, TopBar, Footer, PageHeader, CenteredContent } from '../../components';
 import { useExportContext } from '../../context/export-context';
 import ExportCompleteSummary from '../../components/export-complete-summary';
@@ -93,9 +93,9 @@ export default function ExportComplete() {
 
 					<ExportCompleteHeading isCloudExport={ isCloudExport } />
 
-					<ExportCompleteSummary 
-						kitInfo={ kitInfo } 
-						includes={ data.includes } 
+					<ExportCompleteSummary
+						kitInfo={ kitInfo }
+						includes={ data.includes }
 					/>
 
 					{ ! isCloudExport && (

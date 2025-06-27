@@ -1,4 +1,5 @@
 import { Box } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 const DEFAULT_OFFSET_WITHOUT_FOOTER = 120;
 const DEFAULT_OFFSET_WITH_FOOTER = 180;
@@ -29,3 +30,10 @@ export default function CenteredContent( {
 		</Box>
 	);
 }
+
+CenteredContent.propTypes = {
+	children: PropTypes.node.isRequired,
+	hasFooter: PropTypes.bool,
+	offsetHeight: PropTypes.number,
+	maxWidth: PropTypes.string,
+};
