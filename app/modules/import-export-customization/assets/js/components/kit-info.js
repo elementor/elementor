@@ -13,8 +13,8 @@ export default function KitInfo() {
 	return (
 		<Card sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 } square={ true }>
 			<CardContent sx={ { p: 2.5 } }>
-				<Typography variant="caption" component="label" color="text.secondary" sx={ { fontSize: '0.75rem', mb: 0.5, display: 'block' } }>
-					{ __( 'Website templates name', 'elementor' ) }
+				<Typography variant="caption" component="label" color="text.secondary">
+					{ __( 'Website templates name', 'elementor' ) } *
 				</Typography>
 				<Input
 					fullWidth
@@ -26,7 +26,7 @@ export default function KitInfo() {
 					sx={ { mb: 2 } }
 				/>
 
-				<Typography variant="caption" component="label" color="text.secondary" sx={ { fontSize: '0.75rem', mb: 0.5, display: 'block' } }>
+				<Typography variant="caption" component="label" color="text.secondary">
 					{ __( 'Description (Optional)', 'elementor' ) }
 				</Typography>
 				<Input
