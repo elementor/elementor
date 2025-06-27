@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box } from '@elementor/ui';
 
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Redirect } from '@reach/router';
 import { Button, Box, Typography, Stack, Link, Card, CardContent } from '@elementor/ui';
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';

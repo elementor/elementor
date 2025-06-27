@@ -1,4 +1,3 @@
-import React from 'react';
 import { Box, Typography, Link } from '@elementor/ui';
 
 export default function ExportIntro() {

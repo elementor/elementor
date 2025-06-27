@@ -1,4 +1,3 @@
-import React from 'react';
 import { Redirect } from '@reach/router';
 import { Box, Stack } from '@elementor/ui';
 import { BaseLayout, TopBar, PageHeader } from '../../components';
