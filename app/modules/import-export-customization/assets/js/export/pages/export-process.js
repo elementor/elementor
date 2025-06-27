@@ -1,6 +1,6 @@
 import { Redirect } from '@reach/router';
-import { Box, Stack } from '@elementor/ui';
-import { BaseLayout, TopBar, PageHeader } from '../../components';
+import { Stack } from '@elementor/ui';
+import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../components';
 import { useExportContext } from '../../context/export-context';
 import { useExportKit } from '../../hooks/use-export-kit';
 import ExportProcessing from '../../components/export-processing';
@@ -36,29 +36,17 @@ export default function ExportProcess() {
 
 	return (
 		<BaseLayout topBar={ <TopBar>{ headerContent }</TopBar> }>
-			<Box sx={ {
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				minHeight: 'calc(100vh - 120px)',
-				p: 3,
-			} }>
-				<Box sx={ {
-					maxWidth: '600px',
-					textAlign: 'center',
-					width: '100%',
-				} }>
-					<Stack spacing={ 3 } alignItems="center">
-						{ status === STATUS_PROCESSING && (
-							<ExportProcessing statusText={ getStatusText() } />
-						) }
+			<CenteredContent>
+				<Stack spacing={ 3 } alignItems="center">
+					{ status === STATUS_PROCESSING && (
+						<ExportProcessing statusText={ getStatusText() } />
+					) }
 
-						{ status === STATUS_ERROR && (
-							<ExportError statusText={ getStatusText() } />
-						) }
-					</Stack>
-				</Box>
-			</Box>
+					{ status === STATUS_ERROR && (
+						<ExportError statusText={ getStatusText() } />
+					) }
+				</Stack>
+			</CenteredContent>
 		</BaseLayout>
 	);
 }

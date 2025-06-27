@@ -1,8 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { Redirect } from '@reach/router';
-import { Button, Box, Typography, Stack, Link, Card, CardContent } from '@elementor/ui';
-import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';
+import { Button, Typography, Stack, Link } from '@elementor/ui';
+import { BaseLayout, TopBar, Footer, PageHeader, CenteredContent } from '../../components';
 import { useExportContext } from '../../context/export-context';
+import ExportCompleteSummary from '../../components/export-complete-summary';
+import ExportCompleteIcon from '../../components/export-complete-icon';
+import ExportCompleteHeading from '../../components/export-complete-heading';
+import ExportCompleteDownloadLink from '../../components/export-complete-download-link';
 
 const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 
@@ -83,92 +87,24 @@ export default function ExportComplete() {
 			topBar={ <TopBar>{ headerContent }</TopBar> }
 			footer={ <Footer>{ footerContent }</Footer> }
 		>
-			<Box sx={ {
-				display: 'flex',
-				alignItems: 'center',
-				justifyContent: 'center',
-				minHeight: 'calc(100vh - 180px)',
-				p: 3,
-			} }>
-				<Box sx={ {
-					maxWidth: '600px',
-					textAlign: 'center',
-					width: '100%',
-				} }>
-					<Stack spacing={ 3 } alignItems="center">
-						<Box sx={ { mb: 2 } }>
-							<img
-								src={ elementorAppConfig.assets_url + 'images/go-pro.svg' }
-								alt=""
-								style={ { width: '80px', height: '80px' } }
-							/>
-						</Box>
+			<CenteredContent hasFooter={ true }>
+				<Stack spacing={ 3 } alignItems="center">
+					<ExportCompleteIcon />
 
-						<Typography variant="h4" component="h2" gutterBottom>
-							{ isCloudExport
-								? __( 'Your website template is now saved to the library!', 'elementor' )
-								: __( 'Your .zip file is ready', 'elementor' )
-							}
-						</Typography>
+					<ExportCompleteHeading isCloudExport={ isCloudExport } />
 
-						<Typography variant="body2" color="text.secondary" sx={ { mb: 3 } }>
-							{ isCloudExport
-								? (
-									<>
-										{ __( 'You can find it in the My Website Templates tab.', 'elementor' ) }{ ' ' }
-										<Link
-											href={ elementorAppConfig.base_url + '#/kit-library/cloud' }
-											sx={ { cursor: 'pointer' } }
-										>
-											{ __( 'Take me there', 'elementor' ) }
-										</Link>
-									</>
-								)
-								: __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' )
-							}
-						</Typography>
+					<ExportCompleteSummary 
+						kitInfo={ kitInfo } 
+						includes={ data.includes } 
+					/>
 
-						<Card sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 }>
-							<CardContent sx={ { p: 2.5 } }>
-								<Typography variant="h6" component="h3" gutterBottom>
-									{ kitInfo.title }
-								</Typography>
-
-								{ kitInfo.description && (
-									<Typography variant="body2" color="text.secondary" sx={ { mb: 2 } }>
-										{ kitInfo.description }
-									</Typography>
-								) }
-
-								<Typography variant="caption" color="text.secondary" sx={ { display: 'block', mb: 1 } }>
-									{ __( 'Exported items:', 'elementor' ) }
-								</Typography>
-								<Typography variant="body2">
-									{ data.includes.map( ( item ) => {
-										const itemLabels = {
-											content: __( 'Content', 'elementor' ),
-											templates: __( 'Templates', 'elementor' ),
-											settings: __( 'Settings & configurations', 'elementor' ),
-											plugins: __( 'Plugins', 'elementor' ),
-										};
-										return itemLabels[ item ] || item;
-									} ).join( ', ' ) }
-								</Typography>
-							</CardContent>
-						</Card>
-
-						{ ! isCloudExport && (
-							<Typography variant="body2" color="text.secondary">
-								{ __( 'Is the automatic download not starting?', 'elementor' ) }{ ' ' }
-								<Link href="#" onClick={ downloadFile } sx={ { cursor: 'pointer', textDecoration: 'underline' } }>
-									{ __( 'Download manually', 'elementor' ) }
-								</Link>
-								{ '. ' }
-							</Typography>
-						) }
-					</Stack>
-				</Box>
-			</Box>
+					{ ! isCloudExport && (
+						<ExportCompleteDownloadLink
+							onDownloadClick={ downloadFile }
+						/>
+					) }
+				</Stack>
+			</CenteredContent>
 		</BaseLayout>
 	);
 }
