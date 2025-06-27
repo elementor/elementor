@@ -84,17 +84,8 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 		exportKit();
 	}, [ isExportProcessStarted, exportKit ] );
 
-	const getStatusText = () => {
-		if ( status === STATUS_PROCESSING ) {
-			return __( 'Setting up your website template...', 'elementor' );
-		}
-
-		return __( 'Export failed', 'elementor' );
-	};
-
 	return {
 		status,
-		getStatusText,
 		STATUS_PROCESSING,
 		STATUS_ERROR,
 	};

@@ -10,13 +10,21 @@ export default function ExportProcess() {
 	const { data, dispatch } = useExportContext();
 	const { kitInfo, includes, plugins, isExportProcessStarted } = data;
 
-	const { status, getStatusText, STATUS_PROCESSING, STATUS_ERROR } = useExportKit( {
+	const { status, STATUS_PROCESSING, STATUS_ERROR } = useExportKit( {
 		includes,
 		kitInfo,
 		plugins,
 		isExportProcessStarted,
 		dispatch,
 	} );
+
+	const getStatusText = () => {
+		if ( status === STATUS_PROCESSING ) {
+			return __( 'Setting up your website template...', 'elementor' );
+		}
+
+		return __( 'Export failed', 'elementor' );
+	};
 
 	const headerContent = (
 		<PageHeader title={ __( 'Export', 'elementor' ) } />
