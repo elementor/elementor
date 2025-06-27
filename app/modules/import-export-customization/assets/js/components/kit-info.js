@@ -14,7 +14,7 @@ export default function KitInfo() {
 		<Card sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 } square={ true }>
 			<CardContent sx={ { p: 2.5 } }>
 				<Typography variant="caption" component="label" color="text.secondary">
-					{ __( 'Website templates name', 'elementor' ) } *
+					{ __( 'Website template name', 'elementor' ) } *
 				</Typography>
 				<Input
 					fullWidth
