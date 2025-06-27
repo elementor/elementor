@@ -11,10 +11,6 @@ export default function ExportProcess() {
 	const { data, dispatch } = useExportContext();
 	const { kitInfo, includes, plugins, isExportProcessStarted } = data;
 
-	if ( ! isExportProcessStarted ) {
-		return <Redirect to="/export-customization/" replace />;
-	}
-
 	const { status, STATUS_PROCESSING, STATUS_ERROR } = useExportKit( {
 		includes,
 		kitInfo,
@@ -22,6 +18,10 @@ export default function ExportProcess() {
 		isExportProcessStarted,
 		dispatch,
 	} );
+
+	if ( ! isExportProcessStarted ) {
+		return <Redirect to="/export-customization/" replace />;
+	}
 
 	const getStatusText = () => {
 		if ( status === STATUS_PROCESSING ) {

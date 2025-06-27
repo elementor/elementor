@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Typography, Input, Card, CardContent } from '@elementor/ui';
 
 import { useExportContext } from '../context/export-context';

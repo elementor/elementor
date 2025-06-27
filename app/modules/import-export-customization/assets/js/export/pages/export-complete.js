@@ -25,7 +25,6 @@ export default function ExportComplete() {
 
 			const fileName = sanitizedKitName || defaultKitName;
 
-
 			link.href = 'data:application/zip;base64,' + exportedData.file;
 			link.download = fileName + '.zip';
 
