@@ -75,12 +75,6 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 	}, [ includes, kitInfo, plugins, dispatch ] );
 
 	useEffect( () => {
-		if ( ! isExportProcessStarted ) {
-			// Redirect back if not started from export page
-			window.location.href = elementorAppConfig.base_url + '#/export-customization/';
-			return;
-		}
-
 		exportKit();
 	}, [ isExportProcessStarted, exportKit ] );
 

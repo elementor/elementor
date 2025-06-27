@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from '@reach/router';
 import { Box, Stack } from '@elementor/ui';
 import { BaseLayout, TopBar, PageHeader } from '../../components';
 import { useExportContext } from '../../context/export-context';
@@ -9,6 +10,10 @@ import ExportError from '../../components/export-error';
 export default function ExportProcess() {
 	const { data, dispatch } = useExportContext();
 	const { kitInfo, includes, plugins, isExportProcessStarted } = data;
+
+	if ( ! isExportProcessStarted ) {
+		return <Redirect to="/export-customization/" replace />;
+	}
 
 	const { status, STATUS_PROCESSING, STATUS_ERROR } = useExportKit( {
 		includes,
