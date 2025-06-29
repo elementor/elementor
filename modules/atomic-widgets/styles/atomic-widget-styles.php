@@ -7,7 +7,7 @@ use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
-	const CSS_FILE_KEY = 'local';
+	const STYLES_KEY = 'local';
 
 	public function register_hooks() {
 		add_action( 'elementor/atomic-widgets/styles/register', function( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
@@ -21,7 +21,7 @@ class Atomic_Widget_Styles {
 				return $this->parse_post_styles( $post_id );
 			};
 
-			$styles_manager->register( self::CSS_FILE_KEY . '-' . $post_id, $get_styles );
+			$styles_manager->register( self::STYLES_KEY . '-' . $post_id, $get_styles );
 		}
 	}
 

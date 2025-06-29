@@ -17,7 +17,7 @@ class Blur_Filter_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'radius' => Size_Prop_Type::make()->default( 0 ),
+			'radius' => Size_Prop_Type::make()->default( 0 )->required(),
 		];
 	}
 }

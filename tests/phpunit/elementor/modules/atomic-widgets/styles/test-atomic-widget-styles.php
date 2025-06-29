@@ -123,7 +123,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			->willReturnCallback(function($key, $callback) use ($element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count) {
 				switch( $invoked_count->getInvocationCount() ) {
 					case 1:
-						$this->assertEquals(Atomic_Widget_Styles::CSS_FILE_KEY . '-' . $doc_1_id, $key);
+						$this->assertEquals(Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_1_id, $key);
 						$this->callback( function($callback) use ($element_1, $element_2, $doc_1_id) {
 							$styles = $callback();
 
@@ -137,7 +137,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 						});
 						break;
 					case 2:
-						$this->assertEquals(Atomic_Widget_Styles::CSS_FILE_KEY . '-' . $doc_2_id, $key);
+						$this->assertEquals(Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_2_id, $key);
 						$this->callback( function($callback) use ($element_3, $doc_2_id) {
 							$styles = $callback();
 							$this->assertEquals($element_3->get_raw_data()['styles'], $styles);
@@ -202,7 +202,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			->expects($this->once())
 			->method('register')
 			->with(
-				Atomic_Widget_Styles::CSS_FILE_KEY . '-' . $doc_id,
+				Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_id,
 				$this->callback(function($callback) use ( $element, $atomic_element) {
 					$styles = $callback();
 					$expected = $atomic_element->get_raw_data()['styles'];

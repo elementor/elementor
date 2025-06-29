@@ -17,6 +17,8 @@ class Atomic_Styles_Manager {
 
 	private array $registered_styles_by_key = [];
 
+	private array $post_ids = [];
+
 	const DEFAULT_BREAKPOINT = 'desktop';
 
 	public static function instance() {
@@ -29,6 +31,9 @@ class Atomic_Styles_Manager {
 
 	public function register_hooks() {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
+		add_action( 'elementor/post/render', function( $post_id ) {
+			$this->post_ids[] = $post_id;
+		} );
 	}
 
 	public function register( string $key, callable $get_style_defs ) {
@@ -36,25 +41,24 @@ class Atomic_Styles_Manager {
 	}
 
 	private function enqueue_styles() {
-		$post_ids = apply_filters( 'elementor/atomic-widgets/styles/posts', [] );
-
-		if ( ! is_array( $post_ids ) || empty( $post_ids ) ) {
+		if ( empty( $this->post_ids )) {
 			return;
 		}
 
-		do_action( 'elementor/atomic-widgets/styles/register', $this, $post_ids );
+		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
 
-		$styles_cache = [];
+		$styles_by_key = Collection::make( $this->registered_styles_by_key )->map_with_keys( function( $get_styles, $style_key ) {
+			return [
+				$style_key => $this->once( $style_key, $get_styles ),
+			];
+		} )->all();
 
 		$breakpoints = $this->get_breakpoints();
 		foreach ( $breakpoints as $breakpoint_key ) {
-			foreach ( $this->registered_styles_by_key as $style_key => $get_styles ) {
-				$render_css = function () use ( $get_styles, &$styles_cache, $style_key, $breakpoint_key ) {
-					if ( ! isset( $styles_cache[ $style_key ] ) ) {
-						$styles_cache[ $style_key ] = $get_styles();
-					}
+			foreach ( $styles_by_key as $style_key => $get_styles ) {
+				$render_css = function () use ( $get_styles, $style_key, $breakpoint_key ) {
 
-					$grouped_styles = $this->group_by_breakpoint( $styles_cache[ $style_key ] );
+					$grouped_styles = $this->group_by_breakpoint( $get_styles() );
 
 					return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
 				};
@@ -86,11 +90,9 @@ class Atomic_Styles_Manager {
 			Plugin::instance()->frontend->enqueue_font( $value );
 		} )->render( $styles );
 
-		$breakpoint_instance = Plugin::$instance->breakpoints->get_breakpoints( $breakpoint_key );
+		$breakpoint_config = Plugin::$instance->breakpoints->get_breakpoints_config()[ $breakpoint_key ] ?? null;
 
-		$media = $breakpoint_instance
-			? 'screen and (max-width: ' . $breakpoint_instance->get_value() . 'px)'
-			: 'all';
+		$media = $breakpoint_config ? Styles_Renderer::get_media_query( $breakpoint_config ) : 'all';
 
 		return [
 			'content' => $css,
@@ -122,5 +124,19 @@ class Atomic_Styles_Manager {
 			->reverse()
 			->prepend( self::DEFAULT_BREAKPOINT )
 			->all();
+	}
+
+	private function once( $key, $callback ) {
+		$cache = [];
+
+		return function() use ( $key, $callback, &$cache ) {
+			if ( isset( $cache[ $key ] ) ) {
+				return $cache[ $key ];
+			}
+
+			$cache[ $key ] = $callback();
+
+			return $cache[ $key ];
+		};
 	}
 }

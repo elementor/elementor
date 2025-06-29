@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
+use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_Filesystem_Base;
 use function ElementorDeps\DI\add;
@@ -57,6 +58,10 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 							'color' => [
 								'$$type' => 'color',
 								'value' => 'red',
+							],
+							'font-family' => [
+								'$$type' => 'string',
+								'value' => 'Poppins',
 							],
 						],
 					],
@@ -125,7 +130,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			->method( 'put_contents' )
 			->willReturnCallback( function( $file, $content ) use ( $invoked_count ) {
 				if ( $invoked_count->getInvocationCount() === 1 ) {
-					$this->assertEquals( '.elementor .test-style{color:red;}', $content );
+					$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}', $content );
 					return;
 				}
 
@@ -137,7 +142,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 100, 1 );
 
-		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+		do_action( 'elementor/post/render', 1 );
 
 		// Act
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
@@ -146,6 +151,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		global $wp_styles;
 		$this->assertArrayHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
 		$this->assertArrayHasKey( $this->test_style_key . '-mobile', $wp_styles->registered );
+		$this->assertContains( 'Poppins', Plugin::$instance->frontend->fonts_to_enqueue );
 	}
 
 	public function test_enqueue__with_multiple_styles_from_multiple_keys() {
@@ -172,7 +178,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 						$this->assertEquals( '.elementor .another-style{color:green;}', $content );
 						break;
 					case 2:
-						$this->assertEquals( '.elementor .test-style{color:red;}', $content );
+						$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}', $content );
 						break;
 					case 3:
 						$this->assertEquals( '@media(max-width:1024px){.elementor .another-style{color:yellow;}}', $content );
@@ -191,7 +197,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			$styles_manager->register( $this->test_style_key, $get_style_defs );
 		}, 20, 1 );
 
-		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+		do_action( 'elementor/post/render', 1 );
 
 		// Act
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
@@ -222,7 +228,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
             $styles_manager->register( $this->test_style_key, $get_style_defs );
         }, 20, 1 );
 
-		add_filter( 'elementor/atomic-widgets/styles/posts', fn() => [1] );
+		do_action( 'elementor/post/render', 1 );
 
         // Act.
         do_action( 'elementor/frontend/after_enqueue_post_styles' );
