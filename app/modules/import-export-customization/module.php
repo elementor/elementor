@@ -129,15 +129,6 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
-		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
-
-		$intro_text = sprintf(
-			/* translators: 1: New line break, 2: Learn more link. */
-			__( 'Here’s where you can export this website as a .zip file, upload it to the cloud, or start the process of applying an existing template to your site. %2$s', 'elementor' ),
-			'<br>',
-			$intro_text_link
-		);
-
 		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->is_eligible();
 
 		$content_data = [
@@ -197,7 +188,13 @@ class Module extends BaseModule {
 		?>
 
 		<div class="tab-import-export-kit__content">
-			<p class="tab-import-export-kit__info"><?php ElementorUtils::print_unescaped_internal_string( $intro_text ); ?></p>
+			<p class="tab-import-export-kit__info"><?php
+				printf(
+					'%1$s <a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%2$s</a>',
+					esc_html__( 'Here’s where you can export this website as a .zip file, upload it to the cloud, or start the process of applying an existing template to your site.', 'elementor' ),
+					esc_html__( 'Learn more', 'elementor' )
+				);
+			?></p>
 
 			<div class="tab-import-export-kit__wrapper">
 				<?php foreach ( $content_data as $data ) {
@@ -216,14 +213,14 @@ class Module extends BaseModule {
 				?>
 				<div class="tab-import-export-kit__revert">
 					<h2>
-						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove the most recent Website Template', 'elementor' ) ); ?>
+						<?php echo esc_html__( 'Remove the most recent Website Template', 'elementor' ); ?>
 					</h2>
 					<p class="tab-import-export-kit__info">
 						<?php ElementorUtils::print_unescaped_internal_string( $revert_text ); ?>
 					</p>
 					<?php $this->render_last_kit_thumbnail( $last_imported_kit ); ?>
 					<a <?php ElementorUtils::print_html_attributes( $link_attributes ); ?> >
-						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Website Template', 'elementor' ) ); ?>
+						<?php echo esc_html__( 'Remove Website Template', 'elementor' ); ?>
 					</a>
 				</div>
 			<?php } ?>
