@@ -85,6 +85,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<i class="eicon-atomic"></i>
 		<# } #>
 		<div class="icon">
+			<# if ( obj.external_icon ) { #>
+				<h6>E</h6>
+			<# } #>
 			<i class="{{ icon }}" aria-hidden="true"></i>
 		</div>
 		<div class="title-wrapper">

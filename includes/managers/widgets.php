@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
+use Elementor\Modules\Sdk\V4\Builder\Elements\Element_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -247,6 +248,11 @@ class Widgets_Manager {
 		);
 
 		return $this->register( $widget );
+	}
+
+	public function widget_builder($name = ''): Element_Builder
+	{
+		return new Element_Builder($name);
 	}
 
 	/**
