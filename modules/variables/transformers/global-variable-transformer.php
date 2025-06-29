@@ -17,7 +17,7 @@ class Global_Variable_Transformer extends Transformer_Base {
 			return null;
 		}
 
-		if ( array_key_exists( 'deleted', $variable) && $variable['deleted'] ) {
+		if ( array_key_exists( 'deleted', $variable ) && $variable['deleted'] ) {
 			return "var(--{$value})";
 		}
 

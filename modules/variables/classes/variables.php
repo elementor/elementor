@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Variables {
-	static private $lookup = [];
+	private static $lookup = [];
 
 	public static function init( Variables_Repository $repository ) {
 		self::$lookup = $repository->variables();
