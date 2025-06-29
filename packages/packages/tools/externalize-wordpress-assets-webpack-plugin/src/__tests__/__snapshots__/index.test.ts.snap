@@ -1,0 +1,116 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`@elementor/externalize-wordpress-assets-webpack-plugin should externalize Elementor & WordPress assets 1`] = `
+""use strict";
+(self["webpackChunk"] = self["webpackChunk"] || []).push([["my-app-test"],{
+
+/***/ "./.":
+/*!***********!*\\
+  !*** ./. ***!
+  \\***********/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   test: () => (/* binding */ test)
+/* harmony export */ });
+/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor */ "@elementor/editor");
+/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-panels */ "@elementor/editor-panels");
+/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-dom */ "react-dom");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _other_package_name__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @other/package-name */ "@other/package-name");
+/* harmony import */ var _other_package_name__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_other_package_name__WEBPACK_IMPORTED_MODULE_5__);
+
+			
+			
+			
+			
+			
+			
+
+			_elementor_editor__WEBPACK_IMPORTED_MODULE_0___default()();
+			_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_1___default()();
+			_wordpress_element__WEBPACK_IMPORTED_MODULE_2___default()();
+			react__WEBPACK_IMPORTED_MODULE_3___default()();
+			react_dom__WEBPACK_IMPORTED_MODULE_4___default()();
+			_other_package_name__WEBPACK_IMPORTED_MODULE_5___default()();
+			
+			const test = 'This is test for exporting something';
+		
+
+/***/ }),
+
+/***/ "@elementor/editor":
+/*!***********************************************!*\\
+  !*** external ["elementorPackages","editor"] ***!
+  \\***********************************************/
+/***/ ((module) => {
+
+module.exports = window["elementorPackages"]["editor"];
+
+/***/ }),
+
+/***/ "@elementor/editor-panels":
+/*!*****************************************************!*\\
+  !*** external ["elementorPackages","editorPanels"] ***!
+  \\*****************************************************/
+/***/ ((module) => {
+
+module.exports = window["elementorPackages"]["editorPanels"];
+
+/***/ }),
+
+/***/ "@other/package-name":
+/*!*************************************!*\\
+  !*** external ["otherPackageName"] ***!
+  \\*************************************/
+/***/ ((module) => {
+
+module.exports = window["otherPackageName"];
+
+/***/ }),
+
+/***/ "@wordpress/element":
+/*!*********************************!*\\
+  !*** external ["wp","element"] ***!
+  \\*********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["element"];
+
+/***/ }),
+
+/***/ "react":
+/*!**************************!*\\
+  !*** external ["React"] ***!
+  \\**************************/
+/***/ ((module) => {
+
+module.exports = window["React"];
+
+/***/ }),
+
+/***/ "react-dom":
+/*!*****************************!*\\
+  !*** external ["ReactDOM"] ***!
+  \\*****************************/
+/***/ ((module) => {
+
+module.exports = window["ReactDOM"];
+
+/***/ })
+
+},
+/******/ __webpack_require__ => { // webpackRuntimeModules
+/******/ var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
+/******/ var __webpack_exports__ = (__webpack_exec__("./."));
+/******/ (window.elementorPackages = window.elementorPackages || {}).myAppTest = __webpack_exports__;
+/******/ }
+]);"
+`;
