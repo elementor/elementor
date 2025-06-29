@@ -188,13 +188,15 @@ class Module extends BaseModule {
 		?>
 
 		<div class="tab-import-export-kit__content">
-			<p class="tab-import-export-kit__info"><?php
+			<p class="tab-import-export-kit__info">
+				<?php
 				printf(
 					'%1$s <a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%2$s</a>',
 					esc_html__( 'Here’s where you can export this website as a .zip file, upload it to the cloud, or start the process of applying an existing template to your site.', 'elementor' ),
-					esc_html__( 'Learn more', 'elementor' )
+					esc_html__( 'Learn more', 'elementor' ),
 				);
-			?></p>
+				?>
+			</p>
 
 			<div class="tab-import-export-kit__wrapper">
 				<?php foreach ( $content_data as $data ) {
