@@ -1111,7 +1111,7 @@ class Widget_Common_Base extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
+		$this->add_responsive_control(
 			'_mask_image',
 			[
 				'label' => esc_html__( 'Image', 'elementor' ),
