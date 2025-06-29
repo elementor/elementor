@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
+namespace Elementor\App\Modules\ImportExportCustomization\Data;
 
 class Response {
 	private array $data;
