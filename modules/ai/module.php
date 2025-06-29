@@ -1607,7 +1607,7 @@ class Module extends BaseModule {
 		$ai_session_data = $this->extract_session_data_from_ai_settings( $kit_data );
 
 		if ( ! empty( $ai_session_data ) ) {
-			$params['usages']['ai'] = $ai_session_data;
+			$params['ai'] = $ai_session_data;
 		}
 
 		return $params;
@@ -1617,19 +1617,19 @@ class Module extends BaseModule {
 		$ai_session_data = [];
 
 		if ( isset( $kit_data['settings']['ai'] ) ) {
-			$ai_session_data = $this->parse_session_ids( $kit_data['settings']['ai'] );
+			$ai_session_data = $this->extract_session_ids( $kit_data['settings']['ai'] );
 		}
 
 		return $ai_session_data;
 	}
 
-	private function parse_session_ids( $ai_data ) {
+	private function extract_session_ids( $ai_data ) {
 		$session_data = [];
 
 		if ( isset( $ai_data['requestIds'] ) ) {
 			$request_ids = $ai_data['requestIds'];
 			if ( isset( $request_ids['sessionId'] ) ) {
-				$session_data['site_planner_kit_id'] = $request_ids['sessionId'];
+				$session_data['site_planner_session_id'] = $request_ids['sessionId'];
 			}
 		}
 
