@@ -224,8 +224,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'info',
 					'content' => sprintf(
-						__( 'Add up to <b>%d</b> Images', 'elementor' ),
-						$config['content']['image_links_section']['images_max']
+						/* translators: %s: Maximum number of images allowed. */
+						esc_html__( 'Add up to %s Images', 'elementor' ),
+						'<b>' . $config['content']['image_links_section']['images_max'] . '</b>'
 					),
 				]
 			);
@@ -311,8 +312,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'info',
 					'content' => sprintf(
-						__( 'Add up to <b>%d</b> CTA links', 'elementor' ),
-						$config['content']['cta_section']['cta_max']
+						/* translators: %s: Maximum number of CTA links allowed. */
+						esc_html__( 'Add up to %s CTA links', 'elementor' ),
+						'<b>' . $config['content']['cta_section']['cta_max'] . '</b>'
 					),
 				]
 			);
@@ -566,8 +568,9 @@ abstract class Widget_Link_In_Bio_Base extends Widget_Base {
 					'type' => Controls_Manager::ALERT,
 					'alert_type' => 'info',
 					'content' => sprintf(
-						__( 'Add up to <b>%d</b> icons', 'elementor' ),
-						$config['content']['icon_section']['platform']['limit']
+						/* translators: %s: Maximum number of icons allowed. */
+						esc_html__( 'Add up to %s icons', 'elementor' ),
+						'<b>' . $config['content']['icon_section']['platform']['limit'] . '</b>'
 					),
 				]
 			);

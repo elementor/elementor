@@ -379,8 +379,8 @@ class Module extends BaseModule {
 				<div class="e-trashed-items">
 					<?php
 					printf(
-					/* translators: %1$s Link open tag, %2$s: Link close tag. */
-						esc_html__( 'Or view %1$sTrashed Items%1$s', 'elementor' ),
+						/* translators: %1$s Link open tag, %2$s: Link close tag. */
+						esc_html__( 'Or view %1$sTrashed Items%2$s', 'elementor' ),
 						'<a href="' . esc_url( admin_url( 'edit.php?post_status=trash&post_type=' . self::CPT_FLOATING_BUTTONS ) ) . '">',
 						'</a>'
 					);

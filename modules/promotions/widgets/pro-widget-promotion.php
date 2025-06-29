@@ -53,6 +53,7 @@ class Pro_Widget_Promotion extends Widget_Base {
 			[
 				'image_url' => esc_url( $this->get_promotion_image_url() ),
 				'text' => sprintf(
+					/* translators: %s: Widget title. */
 					esc_html__( 'This result includes the Elementor Pro %s widget. Upgrade now to unlock it and grow your web creation toolkit.', 'elementor' ),
 					esc_html( $this->widget_data['widget_title'] )
 				),
