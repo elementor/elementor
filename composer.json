@@ -28,6 +28,7 @@
 	},
 	"scripts": {
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
+		"format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
 		"test": "phpunit",
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
 		"coverage": "composer run coverage:test && composer run coverage:check",
