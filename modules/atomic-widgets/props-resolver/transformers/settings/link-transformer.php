@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,16 +10,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Link_Transformer extends Transformer_Base {
-	public function transform( $value, $key ): array {
-		if ( empty( $value['href'] ) ) {
-			throw new \Exception( 'Url is not provided.' );
-		}
+	public function transform( $value, Props_Resolver_Context $context ): ?array {
+		$url = $this->extract_url( $value );
 
 		$link_attrs = [
-			'href' => esc_url( $value['href'] ),
-			'target' => $value['isTargetBlank'] ? '_blank' : '',
+			'href' => $url,
+			'target' => $value['isTargetBlank'] ? '_blank' : '_self',
 		];
 
 		return array_filter( $link_attrs );
+	}
+
+	private function extract_url( $value ): ?string {
+		$destination = $value['destination'];
+		$post = is_numeric( $destination ) ? get_post( $destination ) : null;
+
+		return $post ? $post->guid : $destination;
 	}
 }

@@ -42,7 +42,10 @@ export default class extends ComponentBase {
 			open: {
 				keys: 'ctrl+k',
 				dependency: () => {
-					return 'kit' !== elementor.documents.getCurrent().config.type;
+					return (
+						'kit' !== elementor.documents.getCurrent().config.type &&
+						'edit' === elementor.channels.dataEditMode.request( 'activeMode' )
+					);
 				},
 			},
 			back: {

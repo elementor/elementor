@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Collection;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -246,6 +247,7 @@ class Utils {
 		$rows_affected += (int) apply_filters( 'elementor/tools/replace-urls', 0, $from, $to );
 
 		Plugin::$instance->files_manager->clear_cache();
+		Google_Font::clear_cache();
 
 		return sprintf(
 			/* translators: %d: Number of rows. */
@@ -905,8 +907,8 @@ class Utils {
 	}
 
 	public static function is_sale_time(): bool {
-		$sale_start_time = gmmktime( 13, 0, 0, 11, 26, 2024 );
-		$sale_end_time = gmmktime( 9, 59, 0, 12, 4, 2024 );
+		$sale_start_time = gmmktime( 12, 0, 0, 6, 10, 2025 );
+		$sale_end_time = gmmktime( 3, 59, 0, 6, 17, 2025 );
 
 		$now_time = gmdate( 'U' );
 
@@ -938,5 +940,9 @@ class Utils {
 			&& ! current_user_can( 'edit_post', $post->ID );
 
 		return $is_private || $not_allowed || $password_required;
+	}
+
+	public static function is_custom_kit_applied() {
+		return (bool) Plugin::$instance->kits_manager->get_previous_id();
 	}
 }

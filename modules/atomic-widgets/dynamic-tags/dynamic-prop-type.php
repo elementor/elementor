@@ -53,15 +53,17 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 			return false;
 		}
 
-		[ $is_valid ] = Props_Parser::make( $tag['props_schema'] )->validate( $value['settings'] );
-
-		return $is_valid;
+		return Props_Parser::make( $tag['props_schema'] )
+			->validate( $value['settings'] )
+			->is_valid();
 	}
 
 	protected function sanitize_value( $value ): array {
 		$tag = Dynamic_Tags_Module::instance()->registry->get_tag( $value['name'] );
 
-		$sanitized = Props_Parser::make( $tag['props_schema'] )->sanitize( $value['settings'] );
+		$sanitized = Props_Parser::make( $tag['props_schema'] )
+			->sanitize( $value['settings'] )
+			->unwrap();
 
 		return [
 			'name' => $value['name'],

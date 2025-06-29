@@ -929,11 +929,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 		const itemTitleTextAttributes = {
 			'class': [ 'e-n-accordion-item-title-text' ],
+			'data-binding-index': view.collection.length + 1,
 			'data-binding-type': 'repeater-item',
 			'data-binding-repeater-name': 'items',
-			'data-binding-setting': ['item_title'],
-			'data-binding-index': view.collection.length + 1,
-			'data-binding-dynamic': 'true',
+			'data-binding-setting': ['item_title', 'element_css_id'],
+			'data-binding-config': JSON.stringify({
+				'element_css_id': {
+					editType: 'attribute',
+					attr: 'id',
+					selector: 'details'
+				},
+				'item_title': {
+					editType: 'text'
+				}
+			}),
 		};
 
 		view.addRenderAttribute( 'details-container', itemWrapperAttributes, null, true );
@@ -1003,13 +1012,20 @@ class Nested_Accordion extends Widget_Nested_Base {
 
 					view.addRenderAttribute( itemTitleTextKey, {
 						'class': ['e-n-accordion-item-title-text'],
+						'data-binding-index': itemCount,
 						'data-binding-type': 'repeater-item',
 						'data-binding-repeater-name': 'items',
-						'data-binding-setting': ['item_title'],
-						'data-binding-index': itemCount,
-						'data-binding-dynamic': 'true',
-						'data-binding-dynamic-css-id': 'element_css_id',
-						'data-binding-single-item-html-wrapper-tag': 'details',
+						'data-binding-setting': ['item_title', 'element_css_id'],
+						'data-binding-config': JSON.stringify({
+							'element_css_id': {
+								editType: 'attribute',
+								attr: 'id',
+								selector: 'details'
+							},
+							'item_title': {
+								editType: 'text'
+							}
+						}),
 					});
 				#>
 

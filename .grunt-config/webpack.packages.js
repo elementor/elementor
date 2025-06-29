@@ -3,6 +3,8 @@ const fs = require( 'fs' );
 const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generate-wordpress-asset-file-webpack-plugin' );
 const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
 const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
+const { EntryInitializationWebpackPlugin } = require( '@elementor/entry-initialization-webpack-plugin' );
+const TerserPlugin = require('terser-webpack-plugin');
 
 const usingLocalRepo = process.env.ELEMENTOR_PACKAGES_USE_LOCAL;
 
@@ -66,6 +68,11 @@ const common = {
 				{ request: 'react-dom', global: 'ReactDOM' },
 			]
 		} ),
+		new EntryInitializationWebpackPlugin( {
+			initializer: ( { entryName } ) => {
+				return `window.elementorV2.${ entryName }?.init?.();`;
+			},
+		} ),
 	],
 	output: {
 		path: path.resolve( __dirname, '../assets/js/packages/' ),
@@ -81,11 +88,19 @@ const devConfig = {
 		...( common.optimization || {} ),
 		// Intentionally minimizing the dev assets to reduce the bundle size.
 		minimize: true,
+		minimizer: [
+			new TerserPlugin({
+				terserOptions: {
+					keep_classnames: true,
+					keep_fnames: true,
+				}
+			})
+		]
 	},
 	output: {
 		...( common.output || {} ),
 		filename: '[name]/[name].js',
-	}
+	},
 }
 
 const prodConfig = {

@@ -212,7 +212,7 @@ class Control_Media extends Control_Base_Multiple {
 				<div class="{{{ inputWrapperClasses }}}">
 					<div class="elementor-control-media__content elementor-control-tag-area elementor-control-preview-area">
 						<div class="elementor-control-media-area">
-							<div class="elementor-control-media__remove elementor-control-media__content__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+							<div class="elementor-control-media__remove elementor-control-media__content__remove" data-tooltip="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
 								<i class="eicon-trash-o" aria-hidden="true"></i>
 								<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 							</div>
@@ -262,25 +262,7 @@ class Control_Media extends Control_Base_Multiple {
 					</div>
 					<?php
 					*/ ?>
-
-					<?php if ( Hints::should_display_hint( 'image-optimization' ) ) : ?>
-					<div class="elementor-control-media__promotions" role="alert" style="display: none;">
-						<?php
-						Hints::get_notice_template( [
-							'display' => ! Hints::is_dismissed( 'image-optimization' ),
-							'type' => 'info',
-							'content' => __( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
-							'icon' => true,
-							'dismissible' => 'image_optimizer_hint',
-							'button_text' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
-							'button_event' => 'image_optimizer_hint',
-							'button_data' => [
-								'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
-							],
-						] ); ?>
-					</div>
-					<?php endif; ?>
-
+					<?php $this->maybe_display_io_hints(); ?>
 				</div>
 			<# } /* endif isViewable() */ else { #>
 				<div class="elementor-control-media__file elementor-control-preview-area">
@@ -294,11 +276,11 @@ class Control_Media extends Control_Base_Multiple {
 						</div>
 					</div>
 					<div class="elementor-control-media__file__controls">
-						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" title="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
+						<div class="elementor-control-media__remove elementor-control-media__file__controls__remove" data-tooltip="<?php echo esc_attr__( 'Remove', 'elementor' ); ?>">
 							<i class="eicon-trash-o" aria-hidden="true"></i>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Remove', 'elementor' ); ?></span>
 						</div>
-						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" title="<?php echo esc_attr__( 'Upload', 'elementor' ); ?>">
+						<div class="elementor-control-media__file__controls__upload-button elementor-control-media-upload-button" data-tooltip="<?php echo esc_attr__( 'Upload', 'elementor' ); ?>">
 							<i class="eicon-upload" aria-hidden="true"></i>
 							<span class="elementor-screen-only"><?php echo esc_html__( 'Upload', 'elementor' ); ?></span>
 						</div>
@@ -327,6 +309,38 @@ class Control_Media extends Control_Base_Multiple {
 			<# } #>
 
 			<input type="hidden" data-setting="{{ data.name }}"/>
+		</div>
+		<?php
+	}
+
+	private function maybe_display_io_hints() {
+		if ( Hints::should_display_hint( 'image-optimization' ) ) {
+			$content_text = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$button_text = Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Plugin', 'elementor' ) : esc_html__( 'Install Plugin', 'elementor' );
+			$action_url = Hints::get_plugin_action_url( 'image-optimization' );
+		} elseif ( Hints::should_display_hint( 'image-optimization-connect' ) ) {
+			$content_text = esc_html__( "This image isn't optimized. You need to connect your Image Optimizer account first.", 'elementor' );
+			$button_text = esc_html__( 'Connect Now', 'elementor' );
+			$action_url = admin_url( 'admin.php?page=image-optimization-settings' );
+		} else {
+			return;
+		}
+
+		?>
+		<div class="elementor-control-media__promotions" role="alert" style="display: none;">
+			<?php
+			Hints::get_notice_template( [
+				'display' => ! Hints::is_dismissed( 'image-optimization' ),
+				'type' => 'info',
+				'content' => $content_text,
+				'icon' => true,
+				'dismissible' => 'image_optimizer_hint',
+				'button_text' => $button_text,
+				'button_event' => 'image_optimizer_hint',
+				'button_data' => [
+					'action_url' => $action_url,
+				],
+			] ); ?>
 		</div>
 		<?php
 	}

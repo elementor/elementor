@@ -69,12 +69,15 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				const actions = contactButtonActionsContainer.locator( 'li' );
 				await expect( actions ).toHaveCount( 1 );
 
-				const contactButtonElement = editor.getPreviewFrame().locator( '.elementor-widget-container .e-contact-buttons' );
+				const contactButtonElement = editor.getPreviewFrame().locator( '.e-contact-buttons' );
 
 				await contactButtonElement.hover();
 				const deleteContainer = contactButtonActionsContainer.locator( '.elementor-editor-element-remove' );
 				await deleteContainer.click();
 				const libraryModal = page.locator( '#elementor-template-library-modal' );
+				await expect( libraryModal ).toBeVisible();
+				await libraryModal.focus();
+				await page.keyboard.press( 'Escape' );
 				await expect( libraryModal ).toBeVisible();
 			} );
 
@@ -176,7 +179,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				await expect( footer.first() ).toBeVisible();
 
 				const closeIcon = page.locator( '.elementor-templates-modal__header__close i' );
-				await expect( closeIcon ).toHaveAttribute( 'title', 'Go To Dashboard' );
+				await expect( closeIcon ).toHaveAttribute( 'class', 'eicon-close' );
 				await closeIcon.click();
 				await page.waitForURL( '/wp-admin/edit.php?post_type=e-floating-buttons' );
 			} );

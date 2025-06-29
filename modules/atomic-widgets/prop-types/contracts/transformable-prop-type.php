@@ -8,4 +8,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 interface Transformable_Prop_Type extends Prop_Type {
 	public static function get_key(): string;
+	public static function generate( $value, $disable = false ): array;
 }

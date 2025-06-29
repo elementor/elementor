@@ -11,6 +11,7 @@ import KitInformation from './components/kit-information/kit-information';
 import ActionsFooter from '../../../shared/actions-footer/actions-footer';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import Button from 'elementor-app/ui/molecules/button';
+import Grid from 'elementor-app/ui/grid/grid';
 
 import kitContentData from '../../../shared/kit-content-data/kit-content-data';
 
@@ -24,8 +25,8 @@ export default function ExportKit() {
 				<Button
 					variant="contained"
 					text={ __( 'Next', 'elementor' ) }
-					color="primary"
-					url="/export/plugins"
+					color={ exportContext.data.kitInfo.title ? 'primary' : 'disabled' }
+					url={ exportContext.data.kitInfo.title ? '/export/plugins' : '' }
 				/>
 			</ActionsFooter>
 		),
@@ -44,18 +45,20 @@ export default function ExportKit() {
 		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export-kit">
 				<PageHeader
-					heading={ __( 'Export a Website Kit', 'elementor' ) }
+					heading={ __( 'Select which items to export', 'elementor' ) }
 					description={ [
-						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit file.', 'elementor' ),
+						__( 'You can export the content, site settings, and templates as a Website Template to be reused in the future.', 'elementor' ),
 						<React.Fragment key="description-secondary-line">
-							{ __( 'By default, all of your components will be exported.', 'elementor' ) } { getLearnMoreLink() }
+							{ __( 'Uncheck the items you don\'t want to include.', 'elementor' ) } { getLearnMoreLink() }
 						</React.Fragment>,
 					] }
 				/>
 
-				<KitContent contentData={ kitContentData } />
+				<Grid container direction="column" className="e-app-export-kit__content">
+					<KitInformation />
 
-				<KitInformation />
+					<KitContent contentData={ kitContentData } />
+				</Grid>
 			</section>
 		</Layout>
 	);

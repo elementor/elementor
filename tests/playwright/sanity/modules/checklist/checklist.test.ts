@@ -132,39 +132,9 @@ test.describe( 'Launchpad checklist tests', () => {
 
 	test( 'Checklist preference switch effects', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		let checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			'launchpad-checklist': false,
-		} );
-
 		const editor = await wpAdmin.openNewPage();
-		checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
+		const checklistHelper = new ChecklistHelper( page, testInfo, apiRequests );
 
-		await test.step( 'Assert nothing is visible when experiment is off', async () => {
-			await editor.openUserPreferencesPanel();
-			await editor.openSection( 'preferences' );
-
-			await expect( page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeHidden();
-			await expect( page.locator( selectors.topBarIcon ) ).toBeHidden();
-		} );
-
-		await wpAdmin.setExperiments( {
-			'launchpad-checklist': true,
-			editor_v2: false,
-		} );
-		await wpAdmin.openNewPage();
-
-		await test.step( 'Assert switch is hidden in user preferences when top bar experiment is off', async () => {
-			await editor.openUserPreferencesPanel();
-			await editor.openSection( 'preferences' );
-
-			await expect( page.locator( `.elementor-control-${ controlIds.preferencePanel.checklistSwitcher }` ) ).toBeHidden();
-		} );
-
-		await wpAdmin.setExperiments( {
-			editor_v2: true,
-		} );
 		await wpAdmin.openNewPage();
 
 		await test.step( 'Assert switch is visible in user preferences', async () => {

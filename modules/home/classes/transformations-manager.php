@@ -18,7 +18,7 @@ class Transformations_Manager {
 		'Create_New_Page_Url',
 		'Filter_Plugins',
 		'Filter_Get_Started_By_License',
-		'Filter_Sidebar_Upgrade_By_License',
+		'Filter_Sidebar_Promotion_By_License',
 		'Filter_Condition_Introduction_Meta',
 		'Create_Site_Settings_Url',
 		'Filter_Top_Section_By_License',

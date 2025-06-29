@@ -41,7 +41,10 @@ export default class Component extends ComponentBase {
 				keys: 'esc',
 				// TODO: replace dependency with scopes.
 				dependency: () => {
-					return ! jQuery( '.dialog-widget:visible' ).length;
+					return (
+						! jQuery( '.dialog-widget:visible' ).length &&
+						isEditMode()
+					);
 				},
 				scopes: [ 'panel', 'preview' ],
 			},
@@ -50,9 +53,11 @@ export default class Component extends ComponentBase {
 			},
 			'page-settings': {
 				keys: 'ctrl+shift+y',
+				dependency: () => isEditMode(),
 			},
 			'editor-preferences': {
 				keys: 'ctrl+shift+u',
+				dependency: () => isEditMode(),
 			},
 		};
 	}
@@ -72,4 +77,8 @@ export default class Component extends ComponentBase {
 	isUserInteractionsBlocked() {
 		return this.#userInteractionsBlocked;
 	}
+}
+
+function isEditMode() {
+	return 'edit' === elementor.channels.dataEditMode.request( 'activeMode' );
 }

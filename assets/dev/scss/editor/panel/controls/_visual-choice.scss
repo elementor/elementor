@@ -1,0 +1,93 @@
+@import "../../../helpers/variables.scss";
+
+.elementor-control-type-visual_choice {
+	width: 100%;
+}
+
+.elementor-visual-choice-choices {
+	display: grid;
+	gap: 8px;
+	grid-template-columns: repeat(var(--elementor-visual-choice-columns), 1fr);
+	text-align: center;
+	border-radius: var(--e-a-border-radius);
+	overflow: hidden;
+}
+
+.elementor-visual-choice {
+	&-element {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 8px;
+		width: auto;
+
+		&-image {
+
+			label {
+				border: var(--e-a-border-bold);
+				border-radius: var(--e-a-border-radius);
+				font-size: 12px;
+				transition: var(--e-a-transition-hover);
+				cursor: pointer;
+				overflow: hidden;
+				padding: 8px;
+			}
+
+			input {
+
+				&.e-visual-choice-placeholder + label,
+				&:checked + label,
+				&:hover + label {
+					background-color: var(--e-a-bg-active-bold);
+					opacity: 1;
+				}
+
+				&:checked + label {
+					border-color: var(--e-a-color-primary-bold);
+				}
+
+				&:not(:checked) + label {
+					background-color: var(--e-a-color-white);
+					opacity: 0.5;
+				}
+			}
+
+			img {
+				width: 100%;
+				height: auto;
+			}
+		}
+
+		&-button {
+			grid-column: span var(--elementor-visual-choice-columns);
+
+			label {
+				width: fit-content;
+			}
+
+			input {
+
+				&:checked + .elementor-button,
+				&:hover + .elementor-button {
+					background-color: var(--e-a-bg-active-bold);
+				}
+
+				&:checked + .elementor-button {
+					border-color: var(--e-a-color-primary-bold);
+				}
+			}
+		}
+	}
+}
+
+.elementor-label-inline {
+
+	.elementor-visual-choice-choices {
+		justify-content: flex-end;
+	}
+}
+
+.tipsy-inner {
+	white-space: pre-line;
+}

@@ -2,47 +2,86 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Plugin;
 
 class Global_Classes_CSS {
 	public function register_hooks() {
-		add_action( 'elementor/css-file/post/parse', fn( Post_CSS $post ) => $this->inject_global_classes( $post ) );
+		add_action(
+			'elementor/frontend/after_enqueue_styles',
+			fn() => $this->enqueue_styles()
+		);
 
-		add_action( 'elementor/global_classes/create', fn() => $this->clear_kit_css_cache() );
-		add_action( 'elementor/global_classes/update', fn() => $this->clear_kit_css_cache() );
-		add_action( 'elementor/global_classes/delete', fn() => $this->clear_kit_css_cache() );
-		add_action( 'elementor/global_classes/arrange', fn() => $this->clear_kit_css_cache() );
+		add_action(
+			'elementor/global_classes/update',
+			fn( $context ) => $this->clear_css_cache( $context )
+		);
+
+		add_action(
+			'elementor/core/files/clear_cache',
+			fn() => $this->clear_css_cache( Global_Classes_Repository::CONTEXT_FRONTEND )
+		);
+
+		add_action(
+			'deleted_post',
+			fn( $post_id ) => $this->on_post_delete( $post_id )
+		);
+
+		add_action(
+			'elementor/core/files/after_generate_css',
+			fn() => $this->generate_styles()
+		);
+
+		add_filter('elementor/atomic-widgets/settings/transformers/classes',
+			fn( $value ) => $this->transform_classes_names( $value )
+		);
 	}
 
-	private function inject_global_classes( Post_CSS $post ) {
-		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
+	private function enqueue_styles() {
+		$css_file = is_preview()
+			? new Global_Classes_CSS_Preview()
+			: new Global_Classes_CSS_File();
+
+		$css_file->enqueue();
+	}
+
+	private function generate_styles() {
+		( new Global_Classes_CSS_File() )->update();
+	}
+
+	private function on_post_delete( $post_id ) {
+		if ( ! Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
 			return;
 		}
 
-		$global_classes = Global_Classes_Repository::make()->all();
-
-		if ( $global_classes->get_items()->is_empty() ) {
-			return;
-		}
-
-		$sorted_items = $global_classes
-			->get_order()
-			->map(
-				fn( $id ) => $global_classes->get_items()->get( $id )
-			);
-
-		$css = Styles_Renderer::make(
-			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->render( $sorted_items->all() );
-
-		$post->get_stylesheet()->add_raw_css( $css );
+		$this->clear_css_cache(
+			Global_Classes_Repository::CONTEXT_FRONTEND,
+			$post_id
+		);
 	}
 
-	private function clear_kit_css_cache() {
-		$kit_id = Plugin::$instance->kits_manager->get_active_id();
+	private function clear_css_cache( string $context, $kit_id = null ): void {
+		( new Global_Classes_CSS_Preview( $kit_id ) )->delete();
 
-		Post_CSS::create( $kit_id )->delete();
+		if ( Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
+			( new Global_Classes_CSS_File( $kit_id ) )->delete();
+		}
+	}
+
+	private function transform_classes_names( $ids ) {
+		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+
+		$classes = Global_Classes_Repository::make()
+			->context( $context )
+			->all()
+			->get_items();
+
+		return array_map(
+			function( $id ) use ( $classes ) {
+				$class = $classes->get( $id );
+
+				return $class ? $class['label'] : $id;
+			},
+			$ids
+		);
 	}
 }

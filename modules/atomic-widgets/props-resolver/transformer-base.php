@@ -6,5 +6,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Transformer_Base {
-	abstract public function transform( $value, $key );
+	abstract public function transform( $value, Props_Resolver_Context $context );
 }

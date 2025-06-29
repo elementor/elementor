@@ -55,6 +55,14 @@ class Test_Filter_Hosting extends PHPUnit_TestCase {
 					"youtube_embed_id" => "QdkDGrS8ZZs?si=s_VjZCQR6Fh1jgB5",
 				],
 			],
+			"create_with_ai" => [
+				"title" => "Create and launch your site faster with AI",
+				"description" => "Share your vision with our AI Chat and watch as it becomes a brief, sitemap, and wireframes in minutes:",
+				"input_placeholder" => "Start describing the site you want to create...",
+				"button_title" => "Create with AI",
+				"button_cta_url" => "http://planner.elementor.com/chat.html",
+				"background_image" => ELEMENTOR_ASSETS_URL . 'images/app/ai/ai-site-creator-homepage-bg.svg',
+			],
 			"get_started" => [
 				[
 					"license" => [ "free" ],

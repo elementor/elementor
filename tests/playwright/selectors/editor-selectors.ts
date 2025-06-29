@@ -1,8 +1,8 @@
 const EditorSelectors = {
-	addNewPreset: ( preset: string ) => `[data-preset=${ preset }]`,
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',
+	eflexbox: '[data-element_type="e-flexbox"]',
 	item: '.elementor-repeater-row-item-title',
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
@@ -14,13 +14,11 @@ const EditorSelectors = {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
 		},
-		menu: {
-			wrapper: '#elementor-panel-page-menu',
-			footerButton: '#elementor-panel-header-menu-button i',
-		},
 		elements: {
 			wrapper: '#elementor-panel-page-elements',
+			v4elements: '#elementor-panel-category-v4-elements',
 			footerButton: '#elementor-panel-header-add-button i',
+			elementorPanel: '#elementor-panel',
 		},
 		pageSettings: {
 			wrapper: '#elementor-panel-page-settings',
@@ -38,10 +36,6 @@ const EditorSelectors = {
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
 		},
-		footerTools: {
-			wrapper: '#elementor-panel-footer',
-			updateButton: '#elementor-panel-saver-button-publish-label',
-		},
 		navigator: {
 			wrapper: '#elementor-navigator',
 			footer: '#elementor-navigator__footer',
@@ -49,6 +43,7 @@ const EditorSelectors = {
 			footerButton: '#elementor-panel-footer-navigator i',
 		},
 		promotionCard: '[data-testid="e-promotion-card"]',
+		popoverCard: '[data-testid="e-popover-card"]',
 	},
 	refreshPopup: {
 		reloadButton: '#elementor-save-kit-refresh-page .dialog-button.dialog-ok.dialog-alert-ok',
@@ -140,26 +135,9 @@ const EditorSelectors = {
 	},
 	video: {
 		widget: '[data-widget_type="video.default"]',
-		youtube: { linkInp: '[data-setting="youtube_url"]' },
-		vimeo: { linkInp: '[data-setting="vimeo_url"]' },
-		dailymotion: { linkInp: '[data-setting="dailymotion_url"]' },
-		autoplayInp: 'input[data-setting="autoplay"]',
-		muteInp: 'input[data-setting="mute"]',
-		loopInp: 'input[data-setting="loop"]',
-		playerControlInp: 'input[data-setting="controls"]',
-		modestbrandingInp: 'input[data-setting="modestbranding"]',
-		ccLoadPolicyInp: 'input[data-setting="cc_load_policy"]',
-		privacyInp: 'input[data-setting="yt_privacy"]',
-		switch: '.elementor-switch-handle',
-		suggestedVideoSelect: '[data-setting="rel"]',
-		playOnMobileInp: 'input[data-setting="play_on_mobile"]',
-		lazyLoadInp: 'input[data-setting="lazy_load"]',
-		videoSourceSelect: '[data-setting="video_type"]',
-		showImageOverlay: '[data-setting="show_image_overlay"]',
 		get image() {
 			return `${ this.widget } .elementor-custom-embed-image-overlay`;
 		},
-		imageSizeSelect: 'image_overlay_size',
 		lightBoxControlInp: '[data-setting="lightbox"]',
 		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
 		lightBoxDialog: '.elementor-lightbox',

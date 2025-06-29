@@ -168,6 +168,13 @@
 	--order: initial;
 	--align-self: initial;
 
+	// Flex item.
+	flex-basis: var(--flex-basis);
+	flex-grow: var(--flex-grow);
+	flex-shrink: var(--flex-shrink);
+	order: var(--order);
+	align-self: var(--align-self);
+
 	&:where( .e-con-full, .elementor-widget ) {
 		// Flex container.
 		flex-direction: var( --flex-direction );
@@ -177,13 +184,6 @@
 		align-content: var( --align-content );
 		gap: var( --row-gap ) var( --column-gap );
 	}
-
-	// Flex item.
-	flex-basis: var( --flex-basis );
-	flex-grow: var( --flex-grow );
-	flex-shrink: var( --flex-shrink );
-	order: var( --order );
-	align-self: var( --align-self );
 }
 
 .elementor-invisible {

@@ -103,3 +103,25 @@ export type ElementorType = {
 export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'laptop' | 'desktop' | 'widescreen';
 
 export type BreakpointEditableDevice = Exclude<Device, 'desktop'>;
+
+export type GapControl = string | {
+	column: string,
+	row: string,
+	unit?: string
+}
+
+export type ContainerType = 'flex' | 'grid';
+
+export type ContainerPreset =
+	| 'c100'
+	| 'r100'
+	| '50-50'
+	| '33-66'
+	| '25-25-25-25'
+	| '25-50-25'
+	| '50-50-50-50'
+	| '50-50-100'
+	| 'c100-c50-50'
+	| '33-33-33-33-33-33'
+	| '33-33-33-33-66'
+	| '66-33-33-66'

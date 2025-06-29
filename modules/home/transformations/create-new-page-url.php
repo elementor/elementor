@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Create_New_Page_Url extends Transformations_Abstract {
 
 	public function transform( array $home_screen_data ): array {
-		$home_screen_data['create_new_page_url'] = Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		$home_screen_data['button_cta_url'] = Plugin::$instance->documents->get_create_new_post_url( 'page' );
 
 		return $home_screen_data;
 	}

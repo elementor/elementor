@@ -1,6 +1,7 @@
 import { useEditImage } from '../context/edit-image-context';
 import useImageUpload from './use-image-upload';
 import { useGlobalActions } from '../context/global-actions-context';
+import FilesUploadHandler from 'elementor-editor/utils/files-upload-handler';
 
 const normalizeImageData = ( imageToUpload ) => {
 	if ( ! imageToUpload?.imageUrl ) {
@@ -19,7 +20,29 @@ const useImageActions = () => {
 	const { setControlValue, saveAndClose } = useGlobalActions();
 	const { attachmentData, isUploading, uploadError, upload: uploadImage, resetUpload } = useImageUpload();
 
+	const ensureSVGUploading = ( imageUrl ) => {
+		if ( ! imageUrl ) {
+			return true;
+		}
+		const imageExtension = new URL( imageUrl ).pathname.split( '.' ).pop();
+		const isUploadAllowed = window._wpPluploadSettings.defaults.filters.mime_types[ 0 ].extensions.split( ',' ).includes(
+			imageExtension,
+		) || elementorCommon.config.filesUpload.unfilteredFiles;
+
+		if ( ! isUploadAllowed ) {
+			const dialog = FilesUploadHandler.getUnfilteredFilesNotEnabledDialog( () => {} );
+			dialog.getElements( 'widget' ).css( 'z-index', '170001' );
+			dialog.show();
+		}
+
+		return isUploadAllowed;
+	};
+
 	const upload = ( imageToUpload, prompt ) => {
+		if ( ! ensureSVGUploading( imageToUpload.image_url ) ) {
+			return Promise.reject( new Error( 'SVG Uploading is not allowed' ) );
+		}
+
 		return uploadImage( {
 			image: normalizeImageData( imageToUpload ),
 			prompt: prompt || imageToUpload.prompt,
@@ -38,7 +61,7 @@ const useImageActions = () => {
 
 		const result = await upload( imageToUpload, prompt );
 
-		return result.image;
+		return result?.image;
 	};
 
 	const edit = async ( imageToUpload, prompt ) => {

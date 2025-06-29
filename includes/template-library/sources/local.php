@@ -618,9 +618,17 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'save_error', esc_html__( 'Template not exist.', 'elementor' ) );
 		}
 
-		$document->save( [
-			'elements' => $new_data['content'],
-		] );
+		$save_data = [];
+
+		if ( isset( $new_data['title'] ) ) {
+			$save_data['post_title'] = $new_data['title'];
+		}
+
+		if ( isset( $new_data['content'] ) ) {
+			$save_data['elements'] = $new_data['content'];
+		}
+
+		$document->save( $save_data );
 
 		/**
 		 * After template library update.
@@ -757,6 +765,20 @@ class Source_Local extends Source_Base {
 		return wp_delete_post( $template_id, true );
 	}
 
+	public function bulk_delete_items( array $template_ids ) {
+		foreach ( $template_ids as $template_id ) {
+			if ( ! current_user_can( $this->post_type_object->cap->delete_post, $template_id ) ) {
+				return new \WP_Error( 'template_error', esc_html__( 'Access denied.', 'elementor' ) );
+			}
+		}
+
+		foreach ( $template_ids as $template_id ) {
+			wp_delete_post( $template_id, true );
+		}
+
+		return true;
+	}
+
 	/**
 	 * Export local template.
 	 *
@@ -770,6 +792,12 @@ class Source_Local extends Source_Base {
 	 * @return \WP_Error WordPress error if template export failed.
 	 */
 	public function export_template( $template_id ) {
+		$permissions_error = $this->validate_template_export_permissions( $template_id );
+
+		if ( is_wp_error( $permissions_error ) ) {
+			return $permissions_error;
+		}
+
 		$file_data = $this->prepare_template_export( $template_id );
 
 		if ( is_wp_error( $file_data ) ) {
@@ -778,16 +806,27 @@ class Source_Local extends Source_Base {
 
 		$this->send_file_headers( $file_data['name'], strlen( $file_data['content'] ) );
 
-		// Clear buffering just in case.
-		@ob_end_clean();
-
-		flush();
-
-		// Output file contents.
-		// PHPCS - Export widget json
-		echo $file_data['content']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		$this->serve_file( $file_data['content'] );
 
 		die;
+	}
+
+	private function validate_template_export_permissions( $template_id ) {
+		$post_id = intval( $template_id );
+		if ( get_post_type( $post_id ) !== self::CPT ) {
+			return new \WP_Error( 'template_error', esc_html__( 'Invalid template type or template does not exist.', 'elementor' ) );
+		}
+
+		$post_status = get_post_status( $post_id );
+		if ( 'private' === $post_status && ! current_user_can( 'read_private_posts', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to access this template.', 'elementor' ) );
+		}
+
+		if ( 'publish' !== $post_status && ! current_user_can( 'edit_post', $post_id ) ) {
+			return new \WP_Error( 'template_error', esc_html__( 'You do not have permission to export this template.', 'elementor' ) );
+		}
+
+		return null;
 	}
 
 	/**
@@ -857,11 +896,9 @@ class Source_Local extends Source_Base {
 			unlink( $file['path'] );
 		}
 
-		$this->send_file_headers( $zip_archive_filename, filesize( $zip_complete_path ) );
+		$this->send_file_headers( $zip_archive_filename, $this->filesize( $zip_complete_path ) );
 
-		@ob_end_flush();
-
-		@readfile( $zip_complete_path );
+		$this->serve_zip( $zip_complete_path );
 
 		unlink( $zip_complete_path );
 
@@ -1434,40 +1471,17 @@ class Source_Local extends Source_Base {
 	 *                             `WP_Error`.
 	 */
 	private function import_single_template( $file_path ) {
-		$data = json_decode( Utils::file_get_contents( $file_path ), true );
+		$data = $this->prepare_import_template_data( $file_path );
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
 		}
 
-		$content = $data['content'];
-
-		if ( ! is_array( $content ) ) {
-			return new \WP_Error( 'file_error', 'Invalid Content In File' );
-		}
-
-		$content = $this->process_export_import_content( $content, 'on_import' );
-
-		$page_settings = [];
-
-		if ( ! empty( $data['page_settings'] ) ) {
-			$page = new Model( [
-				'id' => 0,
-				'settings' => $data['page_settings'],
-			] );
-
-			$page_settings_data = $this->process_element_export_import_content( $page, 'on_import' );
-
-			if ( ! empty( $page_settings_data['settings'] ) ) {
-				$page_settings = $page_settings_data['settings'];
-			}
-		}
-
 		$template_id = $this->save_item( [
-			'content' => $content,
+			'content' => $data['content'],
 			'title' => $data['title'],
 			'type' => $data['type'],
-			'page_settings' => $page_settings,
+			'page_settings' => $data['page_settings'],
 		] );
 
 		if ( is_wp_error( $template_id ) ) {
@@ -1498,8 +1512,13 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'empty_template', 'The template is empty' );
 		}
 
+		$content = apply_filters(
+			'elementor/template_library/sources/local/export/elements',
+			$template_data['content']
+		);
+
 		$export_data = [
-			'content' => $template_data['content'],
+			'content' => $content,
 			'page_settings' => $template_data['settings'],
 			'version' => DB::DB_VERSION,
 			'title' => $document->get_main_post()->post_title,
@@ -1510,26 +1529,6 @@ class Source_Local extends Source_Base {
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),
 		];
-	}
-
-	/**
-	 * Send file headers.
-	 *
-	 * Set the file header when export template data to a file.
-	 *
-	 * @since 1.6.0
-	 * @access private
-	 *
-	 * @param string $file_name File name.
-	 * @param int    $file_size File size.
-	 */
-	private function send_file_headers( $file_name, $file_size ) {
-		header( 'Content-Type: application/octet-stream' );
-		header( 'Content-Disposition: attachment; filename=' . $file_name );
-		header( 'Expires: 0' );
-		header( 'Cache-Control: must-revalidate' );
-		header( 'Pragma: public' );
-		header( 'Content-Length: ' . $file_size );
 	}
 
 	/**
@@ -1652,6 +1651,8 @@ class Source_Local extends Source_Base {
 			add_action( 'manage_posts_extra_tablenav', [ $this, 'maybe_render_blank_state' ] );
 		}
 
+		add_action( 'elementor/document/after_save', [ $this, 'on_template_update' ], 10, 2 );
+
 		add_action( 'template_redirect', [ $this, 'block_template_frontend' ] );
 
 		// Remove elementor library templates from WP Sitemap
@@ -1661,6 +1662,15 @@ class Source_Local extends Source_Base {
 				return $this->remove_elementor_cpt_from_sitemap( $post_types );
 			}
 		);
+	}
+
+	public function on_template_update( \Elementor\Core\Base\Document $document, array $data ) {
+		if ( ! empty( $data['post_title'] ) ) {
+			wp_update_post( [
+				'ID' => $document->get_main_id(),
+				'post_title' => $data['post_title'],
+			] );
+		}
 	}
 
 	/**
@@ -1759,6 +1769,21 @@ class Source_Local extends Source_Base {
 
 			return $value;
 		}, 10, 3 );
+	}
+
+	public function save_bulk_items( array $args = [] ) {
+		$items = [];
+
+		foreach ( $args as $item ) {
+			$items[] = $this->save_item( [
+				'content' => $item['content'],
+				'title' => $item['title'],
+				'type' => $item['type'],
+				'page_settings' => $item['page_settings'],
+			] );
+		}
+
+		return $items;
 	}
 
 	/**

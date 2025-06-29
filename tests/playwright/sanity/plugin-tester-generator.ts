@@ -34,7 +34,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
 	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
-	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api' },
+	{ pluginName: 'skyboot-custom-icons-for-elementor', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'sticky-header-effects-for-elementor', installSource: 'api' },
 	{ pluginName: 'timeline-widget-addon-for-elementor', installSource: 'api' },
 	{ pluginName: 'unlimited-elements-for-elementor', installSource: 'api' },
@@ -77,6 +77,8 @@ export const generatePluginTests = ( testType: string ) => {
 					admin.remove();
 				}, adminBar );
 				await editor.removeClasses( 'elementor-motion-effects-element' );
+				await page.locator( '[data-widget_type="progress.default"]' ).first().scrollIntoViewIfNeeded();
+				await page.waitForTimeout( 500 );
 				await expect.soft( page ).toHaveScreenshot( 'frontPage.png', { fullPage: true } );
 
 				if ( plugin.hasInstallationPage ) {

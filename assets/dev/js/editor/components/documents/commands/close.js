@@ -31,6 +31,8 @@ export class Close extends $e.modules.CommandBase {
 				break;
 		}
 
+		$e.run( 'document/elements/deselect-all' );
+
 		await $e.internal( 'editor/documents/unload', { document } );
 
 		if ( onClose ) {

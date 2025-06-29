@@ -11,6 +11,11 @@ return [
 	'prefix' => 'ElementorDeps',
 	'finders' => [
 		$finder::create()->files()->in( 'vendor/twig/twig' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		$finder::create()->files()->in( 'vendor/symfony/polyfill-php80' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		$finder::create()->files()->in( 'vendor/symfony/polyfill-php81' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		$finder::create()->files()->in( 'vendor/symfony/deprecation-contracts' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		$finder::create()->files()->in( 'vendor/symfony/polyfill-mbstring' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
+		$finder::create()->files()->in( 'vendor/symfony/polyfill-ctype' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 	],
 	'patchers' => [
 		/**

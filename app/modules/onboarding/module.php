@@ -83,6 +83,13 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'urls' => [
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '#/kit-library?order[direction]=desc&order[by]=featuredIndex',
+				'sitePlanner' => add_query_arg( [
+					'type' => 'editor',
+					'siteUrl' => esc_url( home_url() ),
+					'siteName' => esc_html( $site_name ),
+					'siteDescription' => esc_html( get_bloginfo( 'description' ) ),
+					'siteLanguage' => get_locale(),
+				], 'https://planner.elementor.com/onboarding.html' ),
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 				'connect' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
@@ -318,7 +325,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		switch_theme( 'hello-elementor' );
+		switch_theme( 'hello-biz' );
 
 		return [
 			'status' => 'success',

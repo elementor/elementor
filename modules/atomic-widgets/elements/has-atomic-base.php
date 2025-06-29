@@ -2,20 +2,30 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
+use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * @mixin Element_Base
+ */
 trait Has_Atomic_Base {
+	use Has_Base_Styles;
+
 	public function has_widget_inner_wrapper(): bool {
 		return false;
 	}
@@ -78,13 +88,13 @@ trait Has_Atomic_Base {
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
-			[ $is_valid, $sanitized_style, $errors ] = $style_parser->parse( $style );
+			$result = $style_parser->parse( $style );
 
-			if ( ! $is_valid ) {
-				throw new \Exception( esc_html( 'Styles validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
+			if ( ! $result->is_valid() ) {
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
 			}
 
-			$styles[ $style_id ] = $sanitized_style;
+			$styles[ $style_id ] = $result->unwrap();
 		}
 
 		return $styles;
@@ -94,23 +104,57 @@ trait Has_Atomic_Base {
 		$schema = static::get_props_schema();
 		$props_parser = Props_Parser::make( $schema );
 
-		[ $is_valid, $parsed, $errors ] = $props_parser->parse( $settings );
+		$result = $props_parser->parse( $settings );
 
-		if ( ! $is_valid ) {
-			throw new \Exception( esc_html( 'Settings validation failed. Invalid keys: ' . join( ', ', $errors ) ) );
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
 		}
 
-		return $parsed;
+		return $result->unwrap();
 	}
 
 	public function get_atomic_controls() {
-		$controls = $this->define_atomic_controls();
+		$controls = apply_filters(
+			'elementor/atomic-widgets/controls',
+			$this->combine_controls(),
+			$this
+		);
+
 		$schema = static::get_props_schema();
 
 		// Validate the schema only in the Editor.
 		static::validate_schema( $schema );
 
 		return $this->get_valid_controls( $schema, $controls );
+	}
+
+	protected function combine_controls(): array {
+		$common_settings_controls = [
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
+		];
+
+		return array_merge(
+			$this->define_atomic_controls(),
+			[
+				Section::make()
+					->set_label( __( 'Settings', 'elementor' ) )
+					->set_id( 'settings' )
+					->set_items( array_merge( $this->get_settings_controls(), $common_settings_controls ) ),
+			],
+		);
+	}
+
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => true,
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [];
 	}
 
 	final public function get_controls( $control_id = null ) {
@@ -127,6 +171,7 @@ trait Has_Atomic_Base {
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		return $data;
 	}
@@ -135,6 +180,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
 	}
@@ -146,38 +192,30 @@ trait Has_Atomic_Base {
 		];
 	}
 
-	final public function get_atomic_settings(): array {
+	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
-		return Props_Resolver::for_settings()->resolve( $schema, $props );
+		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	private function parse_editor_settings( array $data ): array {
+		$editor_data = [];
+
+		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
+			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		return $editor_data;
 	}
 
 	public static function get_props_schema(): array {
+		$schema = static::define_props_schema();
+		$schema['_cssid'] = String_Prop_Type::make();
+
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
-			static::define_props_schema()
+			$schema
 		);
-	}
-
-	public static function define_base_styles(): array {
-		return [];
-	}
-
-	public static function get_base_styles() {
-		$base_styles = static::define_base_styles();
-		$style_definitions = [];
-
-		foreach ( $base_styles as $key => $style ) {
-			$id = static::get_base_style_class( $key );
-
-			$style_definitions[] = $style->build( $id );
-		}
-
-		return $style_definitions;
-	}
-
-	public static function get_base_style_class( string $key ) {
-		return static::get_element_type() . '-' . $key;
 	}
 }

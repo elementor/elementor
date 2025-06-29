@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 
 class Styles_Renderer {
 	const DEFAULT_SELECTOR_PREFIX = '.elementor';
@@ -12,6 +12,8 @@ class Styles_Renderer {
 	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
 	 */
 	private array $breakpoints;
+
+	private $on_prop_transform;
 
 	private string $selector_prefix;
 
@@ -35,6 +37,7 @@ class Styles_Renderer {
 	 *   array<int, array{
 	 *     id: string,
 	 *     type: string,
+	 *     cssName: string | null,
 	 *     variants: array<int, array{
 	 *         props: array<string, mixed>,
 	 *         meta: array<string, mixed>
@@ -54,6 +57,12 @@ class Styles_Renderer {
 		}
 
 		return implode( '', $css_style );
+	}
+
+	public function on_prop_transform( callable $callback ): self {
+		$this->on_prop_transform = $callback;
+
+		return $this;
 	}
 
 	private function style_definition_to_css_string( array $style ): string {
@@ -88,11 +97,11 @@ class Styles_Renderer {
 			$style_def['id']
 		) {
 			$type = $map[ $style_def['type'] ];
-			$id = $style_def['id'];
+			$name = $style_def['cssName'] ?? $style_def['id'];
 
 			$selector_parts = array_filter( [
 				$this->selector_prefix,
-				"{$type}{$id}",
+				"{$type}{$name}",
 			] );
 
 			return implode( ' ', $selector_parts );
@@ -123,9 +132,13 @@ class Styles_Renderer {
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();
 
-		return Collection::make( Props_Resolver::for_styles()->resolve( $schema, $props ) )
+		return Collection::make( Render_Props_Resolver::for_styles()->resolve( $schema, $props ) )
 			->filter()
 			->map( function ( $value, $prop ) {
+				if ( $this->on_prop_transform ) {
+					call_user_func( $this->on_prop_transform, $prop, $value );
+				}
+
 				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );

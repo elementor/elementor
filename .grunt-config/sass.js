@@ -58,6 +58,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/atomic-opt-in/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/editor-v4-opt-in',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'modules/ai/assets/scss',
 				src: '*.scss',
 				dest: 'assets/css/modules/ai',
@@ -96,13 +103,6 @@ const sass = {
 				cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints',
 				src: '*.scss',
 				dest: 'assets/css/templates',
-				ext: '.css',
-			},
-			{
-				expand: true,
-				cwd: 'assets/dev/scss/frontend',
-				src: 'div-block.scss',
-				dest: 'assets/css',
 				ext: '.css',
 			},
 		]

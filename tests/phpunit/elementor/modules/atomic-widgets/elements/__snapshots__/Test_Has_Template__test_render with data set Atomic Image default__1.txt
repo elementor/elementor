@@ -1,0 +1,5 @@
+								<img class="e-image-base "  
+									id="123"
+												src="https://example.com/image.jpg"
+						/>
+			

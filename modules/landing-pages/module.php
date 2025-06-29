@@ -22,6 +22,7 @@ class Module extends BaseModule {
 	const DOCUMENT_TYPE = 'landing-page';
 	const CPT = 'e-landing-page';
 	const ADMIN_PAGE_SLUG = 'edit.php?post_type=' . self::CPT;
+	const ACTIVATION_KEY = 'elementor_landing_pages_activation';
 
 	private $has_pages = null;
 	private $trashed_posts;
@@ -33,16 +34,14 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Get Experimental Data
+	 * Register Experimental Feature
 	 *
 	 * Implementation of this method makes the module an experiment.
 	 *
-	 * @since 3.1.0
-	 *
-	 * @return array
+	 * @since 3.28.0
 	 */
-	public static function get_experimental_data() {
-		return [
+	private function register_experiment() {
+		Plugin::$instance->experiments->add_feature( [
 			'name' => 'landing-pages',
 			'title' => esc_html__( 'Landing Pages', 'elementor' ),
 			'description' => esc_html__( 'Adds a new Elementor content type that allows creating beautiful landing pages instantly in a streamlined workflow.', 'elementor' ),
@@ -53,7 +52,32 @@ class Module extends BaseModule {
 				'minimum_installation_version' => '3.22.0',
 			],
 			'deprecated' => true,
-		];
+		] );
+	}
+
+	/**
+	 * Should activate landing pages
+	 *
+	 * Checks whether the Landing Pages should be activated.
+	 *
+	 * If the activation key set to `1` in wp_options, the Landing Pages feature should be active. Otherwise not.
+	 * This is a backwards compatibility for websites that had Landing Pages, therefore couldn't be deactivated.
+	 * When deleting posts in Landing Pages CPT, Elementor checks again whether this feature should be activated.
+	 *
+	 * @since 3.31.0
+	 */
+	private function should_activate_landing_pages() {
+		if ( '1' === get_option( self::ACTIVATION_KEY ) ) {
+			return true;
+		}
+
+		if ( $this->has_landing_pages() ) {
+			update_option( self::ACTIVATION_KEY, '1' );
+			return true;
+		}
+
+		update_option( self::ACTIVATION_KEY, '0' );
+		return false;
 	}
 
 	/**
@@ -428,6 +452,16 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		if ( ! $this->should_activate_landing_pages() ) {
+			return;
+		}
+
+		$this->register_experiment();
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'landing-pages' ) ) {
+			return;
+		}
+
 		$this->permalink_structure = get_option( 'permalink_structure' );
 
 		$this->register_landing_page_cpt();
@@ -471,6 +505,11 @@ class Module extends BaseModule {
 			$cpts[] = self::CPT;
 
 			return $cpts;
+		} );
+
+		// When deleting posts in Landing Page CPT, force Elementor to check again whether this feature should be activated.
+		add_action( 'deleted_post_' . self::CPT, function () {
+			delete_option( self::ACTIVATION_KEY );
 		} );
 
 		// In the Landing Pages Admin Table page - Overwrite Template type column header title.

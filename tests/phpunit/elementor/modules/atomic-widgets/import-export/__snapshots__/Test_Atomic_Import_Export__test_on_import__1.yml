@@ -1,0 +1,9 @@
+-
+    id: test-container
+    elType: container
+    elements: [{ id: test-image, elType: widget, widgetType: e-image, settings: { classes: { $$type: classes, value: [test-class] }, image: { $$type: image, value: { src: { $$type: image-src, value: { id: { $$type: image-attachment-id, value: 20 }, url: null } }, size: { $$type: string, value: full } }, disabled: true } }, styles: { test-style-id: { id: test-style-id, type: class, label: test, variants: [{ meta: { breakpoint: null, state: null }, props: { color: { $$type: color, value: '#000000' }, background: { $$type: background, value: { background-overlay: { $$type: background-overlay, value: [{ $$type: background-image-overlay, value: { image: { $$type: image, value: { src: { $$type: image-src, value: { id: { $$type: image-attachment-id, value: 20 }, url: null } }, size: { $$type: string, value: full } } } } }] } } } } }] } } }]
+-
+    id: not-atomic
+    elType: widget
+    widgetType: image
+    settings: { image: { $$type: image, value: { src: { $$type: image-src, value: { id: { $$type: image-attachment-id, value: 1 }, url: { $$type: url, value: 'https://example.local/image.jpg' } } }, size: { $$type: string, value: full } } }, some-other: value }

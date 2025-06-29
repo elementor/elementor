@@ -23,8 +23,6 @@ class Manager extends Base_Object {
 
 	const RELEASE_STATUS_BETA = 'beta';
 
-	const RELEASE_STATUS_RC = 'rc';
-
 	const RELEASE_STATUS_STABLE = 'stable';
 
 	const STATE_DEFAULT = 'default';
@@ -373,16 +371,10 @@ class Manager extends Base_Object {
 			'description' => esc_html__( 'Reduce the DOM size by eliminating HTML tags in various elements and widgets. This experiment includes markup changes so it might require updating custom CSS/JS code and cause compatibility issues with third party plugins.', 'elementor' ),
 			'release_status' => self::RELEASE_STATUS_BETA,
 			'default' => self::STATE_INACTIVE,
-		] );
-
-		$this->add_feature( [
-			'name' => 'e_local_google_fonts',
-			'title' => esc_html__( 'Load Google Fonts locally', 'elementor' ),
-			'description' => esc_html__( "To improve page load performance and user privacy, replace Google Fonts CDN links with self-hosted font files. This approach downloads and serves font files directly from your server, eliminating external requests to Google's servers.", 'elementor' ),
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'release_status' => self::RELEASE_STATUS_STABLE,
-			'generator_tag' => true,
-			'default' => self::STATE_ACTIVE,
+			'new_site' => [
+				'default_active' => true,
+				'minimum_installation_version' => '3.30.0',
+			],
 		] );
 	}
 
@@ -411,7 +403,6 @@ class Manager extends Base_Object {
 			self::RELEASE_STATUS_DEV => esc_html__( 'Development', 'elementor' ),
 			self::RELEASE_STATUS_ALPHA => esc_html__( 'Alpha', 'elementor' ),
 			self::RELEASE_STATUS_BETA => esc_html__( 'Beta', 'elementor' ),
-			self::RELEASE_STATUS_RC => esc_html__( 'Release Candidate', 'elementor' ),
 			self::RELEASE_STATUS_STABLE => esc_html__( 'Stable', 'elementor' ),
 		];
 	}
