@@ -228,7 +228,7 @@ class Api {
 		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		$library_data = empty( $library_data ) ? [] : $library_data;
-		set_transient( self::TRANSIENT_KEY_PREFIX_LIBRARY . ELEMENTOR_VERSION, $library_data, 10 * MINUTE_IN_SECONDS );
+		set_transient( self::TRANSIENT_KEY_PREFIX_LIBRARY . ELEMENTOR_VERSION, $library_data, HOUR_IN_SECONDS );
 
 		return $library_data;
 	}
