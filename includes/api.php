@@ -24,7 +24,7 @@ class Api {
 
 	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
 
-	const TRANSIENT_KEY_PREFIX_TEMPLATES = 'elementor_remote_templates_api_data_';
+	const TRANSIENT_KEY_PREFIX_LIBRARY = 'elementor_remote_library_info_api_data_';
 
 	/**
 	 * API info URL.
@@ -34,9 +34,9 @@ class Api {
 	 * @access public
 	 * @static
 	 *
-	 * @var string API info URL.
+	 * @var string API info URL. (v2 excludes the Library info)
 	 */
-	public static $api_info_url = 'https://my.elementor.com/api/v1/info/';
+	public static $api_info_url = 'https://my.elementor.com/api/v2/info/';
 
 	/**
 	 * API feedback URL.
@@ -50,7 +50,7 @@ class Api {
 	 */
 	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
-	private static $api_templates_info_url = 'https://my.elementor.com/api/v1/templates-info/';
+	private static $api_library_info_url = 'https://my.elementor.com/api/v1/library-info/';
 
 	private static function get_info_data( $force_update = false, $additinal_status = false ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
@@ -191,7 +191,7 @@ class Api {
 	 * @return array The templates' data.
 	 */
 	public static function get_library_data( bool $force_update = false ): array {
-		$library_data = get_transient( self::TRANSIENT_KEY_PREFIX_TEMPLATES . ELEMENTOR_VERSION );
+		$library_data = get_transient( self::TRANSIENT_KEY_PREFIX_LIBRARY . ELEMENTOR_VERSION );
 
 		if ( ! $force_update && ! empty( $library_data ) ) {
 			return $library_data;
@@ -214,7 +214,7 @@ class Api {
 		 *
 		 * @param-out string $url The URL to get library templates data.
 		 */
-		$url = apply_filters( 'elementor/remote/library/templates/request/url', self::$api_templates_info_url );
+		$url = apply_filters( 'elementor/remote/library/templates/request/url', self::$api_library_info_url );
 
 		$response = wp_remote_get( $url, [
 			'timeout' => 25,
@@ -228,7 +228,7 @@ class Api {
 		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		$library_data = empty( $library_data ) ? [] : $library_data;
-		set_transient( self::TRANSIENT_KEY_PREFIX_TEMPLATES . ELEMENTOR_VERSION, $library_data, 10 * MINUTE_IN_SECONDS );
+		set_transient( self::TRANSIENT_KEY_PREFIX_LIBRARY . ELEMENTOR_VERSION, $library_data, 10 * MINUTE_IN_SECONDS );
 
 		return $library_data;
 	}

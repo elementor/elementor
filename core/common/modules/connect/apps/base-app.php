@@ -172,7 +172,7 @@ abstract class Base_App {
 
 	public function action_reset() {
 		if ( current_user_can( 'manage_options' ) ) {
-			delete_transient( Api::TRANSIENT_KEY_PREFIX_TEMPLATES . ELEMENTOR_VERSION );
+			delete_transient( Api::TRANSIENT_KEY_PREFIX_LIBRARY . ELEMENTOR_VERSION );
 		}
 
 		$this->redirect_to_admin_page();
