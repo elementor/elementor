@@ -4,9 +4,8 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
+use Elementor\Modules\AtomicWidgets\Cache;
 use Elementor\Plugin;
-use function ElementorDeps\DI\value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -47,18 +46,21 @@ class Atomic_Styles_Manager {
 
 		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
 
-		$styles_by_key = Collection::make( $this->registered_styles_by_key )->map_with_keys( function( $get_styles, $style_key ) {
+		$get_styles_cache = new Cache();
+		$styles_by_key = Collection::make( $this->registered_styles_by_key )->map_with_keys( function( $get_styles, $style_key ) use ( $get_styles_cache ) {
 			return [
-				$style_key => $this->once( $style_key, $get_styles ),
+				$style_key => $get_styles_cache->cache( $style_key, $get_styles ),
 			];
 		} )->all();
 
+		$group_by_breakpoint_cache = new Cache();
 		$breakpoints = $this->get_breakpoints();
 		foreach ( $breakpoints as $breakpoint_key ) {
 			foreach ( $styles_by_key as $style_key => $get_styles ) {
-				$render_css = function () use ( $get_styles, $style_key, $breakpoint_key ) {
-
-					$grouped_styles = $this->group_by_breakpoint( $get_styles() );
+				$render_css = function () use ( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache ) {
+					$cache_key = $style_key . '-' . $breakpoint_key;
+					$get_grouped_styles = $group_by_breakpoint_cache->cache($cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
+					$grouped_styles = $get_grouped_styles();
 
 					return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
 				};
@@ -126,19 +128,5 @@ class Atomic_Styles_Manager {
 			->reverse()
 			->prepend( self::DEFAULT_BREAKPOINT )
 			->all();
-	}
-
-	private function once( $key, $callback ) {
-		$cache = [];
-
-		return function() use ( $key, $callback, &$cache ) {
-			if ( isset( $cache[ $key ] ) ) {
-				return $cache[ $key ];
-			}
-
-			$cache[ $key ] = $callback();
-
-			return $cache[ $key ];
-		};
 	}
 }
