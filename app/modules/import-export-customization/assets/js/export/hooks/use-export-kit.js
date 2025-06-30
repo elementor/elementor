@@ -49,16 +49,17 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 				throw new Error( errorMessage );
 			}
 
-			// Handle file export
-			if ( 'file' === kitInfo.source && result.data && result.data.file ) {
+			const isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
+			const isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;
+
+			if ( isExportLocal ) {
 				const exportedData = {
 					file: result.data.file, // This is base64 encoded file data
 					manifest: result.data.manifest,
 				};
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
-			} else if ( 'cloud' === kitInfo.source && result.data && result.data.kit ) {
-				// Handle cloud export
+			} else if ( isExportToCloud ) {
 				const exportedData = {
 					kit: result.data.kit,
 				};
