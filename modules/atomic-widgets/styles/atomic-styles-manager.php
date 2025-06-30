@@ -63,18 +63,18 @@ class Atomic_Styles_Manager {
 					return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
 				};
 
-				try {
-					$style_file = ( new CSS_Files_Manager() )->get( $style_key . '-' . $breakpoint_key, $render_css );
+				$style_file = ( new CSS_Files_Manager() )->get( $style_key . '-' . $breakpoint_key, $render_css );
 
-					wp_enqueue_style(
-						$style_file->get_handle(),
-						$style_file->get_url(),
-						[],
-						$style_file->get_media()
-					);
-				} catch ( \Exception $e ) {
+				if ( ! $style_file ) {
 					continue;
 				}
+
+				wp_enqueue_style(
+					$style_file->get_handle(),
+					$style_file->get_url(),
+					[],
+					$style_file->get_media()
+				);
 			}
 		}
 	}
@@ -101,21 +101,23 @@ class Atomic_Styles_Manager {
 	}
 
 	private function group_by_breakpoint( $styles ) {
-		$groups = [];
+		return Collection::make( $styles )->reduce( function( $group, $style ) {
+			Collection::make( $style['variants'] )->each( function( $variant ) use ( &$group, $style ) {
+				$breakpoint = $variant['meta']['breakpoint'] ?? self::DEFAULT_BREAKPOINT;
 
-		foreach ( $styles as $style ) {
-			foreach ( $style['variants'] as $variant ) {
-				$breakpoint = $variant['meta']['breakpoint'] ?? 'desktop';
+				if ( !isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
+					$group[ $breakpoint ][ $style['id'] ] = [
+						'id' => $style['id'],
+						'type' => $style['type'],
+						'variants' => [],
+					];
+				}
 
-				$groups[ $breakpoint ][] = [
-					'id' => $style['id'],
-					'type' => $style['type'],
-					'variants' => [ $variant ],
-				];
-			}
-		}
+				$group[ $breakpoint ][ $style['id'] ]['variants'][] = $variant;
+			} );
 
-		return $groups;
+			return $group;
+		},  [] );
 	}
 
 	private function get_breakpoints() {
