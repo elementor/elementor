@@ -273,6 +273,8 @@ class Rest_Api {
 
 		$result = $this->variables_repository->delete( $id );
 
+		$this->clear_cache();
+
 		return $this->success_response( [
 			'variable' => $result['variable'],
 			'watermark' => $result['watermark'],
@@ -291,6 +293,8 @@ class Rest_Api {
 		$id = $request->get_param( 'id' );
 
 		$result = $this->variables_repository->restore( $id );
+
+		$this->clear_cache();
 
 		return $this->success_response( [
 			'variable' => $result['variable'],

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Size_Prop_Type extends Object_Prop_Type {
-	const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax', 'auto', 'custom' ];
+	const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax', 'deg', 'rad', 'grad', 'turn', 'custom', 'auto' ];
 
 	public static function get_key(): string {
 		return 'size';
