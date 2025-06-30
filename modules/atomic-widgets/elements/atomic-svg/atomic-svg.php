@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -46,6 +47,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()->default( [] ),
 			'svg' => Image_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
 			'link' => Link_Prop_Type::make(),
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
 	}
 
@@ -54,14 +56,16 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
-					Svg_Control::bind_to( 'svg' ),
+					Svg_Control::bind_to( 'svg' )
+						->set_label( __( 'SVG', 'elementor' ) ),
 				] ),
 		];
 	}
 
 	protected function get_settings_controls(): array {
 		return [
-			Link_Control::bind_to( 'link' ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) ),
 		];
 	}
 
@@ -112,17 +116,31 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$classes_string = implode( ' ', $classes );
 
 		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
+
+		$attributes_string = '';
+		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
+			$attributes_array = [];
+			foreach ( $settings['attributes'] as $item ) {
+				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
+					$attributes_array[] = esc_attr( $item['key'] ) . '="' . esc_attr( $item['value'] ) . '"';
+				}
+			}
+			$attributes_string = implode( ' ', $attributes_array );
+		}
+
+		$all_attributes = trim( $cssid_attribute . ' ' . $attributes_string );
+
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s" %s>%s</a>',
 				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
-				$cssid_attribute,
+				$all_attributes,
 				$svg_html
 			);
 		} else {
-			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $cssid_attribute, $svg_html );
+			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $all_attributes, $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

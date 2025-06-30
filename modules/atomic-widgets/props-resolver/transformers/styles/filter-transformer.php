@@ -24,6 +24,30 @@ class Filter_Transformer extends Transformer_Base {
 			return 'brightness(' . $filter['amount'] . ')';
 		}
 
+		if ( isset( $filter['contrast'] ) ) {
+			return 'contrast(' . $filter['contrast'] . ')';
+		}
+
+		if ( isset( $filter['grayscale'] ) ) {
+			return 'grayscale(' . $filter['grayscale'] . ')';
+		}
+
+		if ( isset( $filter['invert'] ) ) {
+			return 'invert(' . $filter['invert'] . ')';
+		}
+
+		if ( isset( $filter['saturate'] ) ) {
+			return 'saturate(' . $filter['saturate'] . ')';
+		}
+
+		if ( isset( $filter['sepia'] ) ) {
+			return 'sepia(' . $filter['sepia'] . ')';
+		}
+
+		if ( isset( $filter['hue-rotate'] ) ) {
+			return 'hue-rotate(' . $filter['hue-rotate'] . ')';
+		}
+
 		return '';
 	}
 }

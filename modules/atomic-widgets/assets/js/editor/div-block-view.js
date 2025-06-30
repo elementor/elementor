@@ -41,6 +41,7 @@ const DivBlockView = BaseElementView.extend( {
 		const attr = BaseElementView.prototype.attributes.apply( this );
 		const local = {};
 		const cssId = this.model.getSetting( '_cssid' );
+		const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
 
 		if ( cssId ) {
 			local.id = cssId.value;
@@ -51,6 +52,15 @@ const DivBlockView = BaseElementView.extend( {
 		if ( href ) {
 			local.href = href;
 		}
+
+		customAttributes.forEach( ( attribute ) => {
+			const key = attribute.value?.key?.value;
+			const value = attribute.value?.value?.value;
+
+			if ( key && value ) {
+				local[ key ] = value;
+			}
+		} );
 
 		return {
 			...attr,
@@ -99,8 +109,29 @@ const DivBlockView = BaseElementView.extend( {
 
 		BaseElementView.prototype.renderOnChange.apply( this, settings );
 
+		if ( changed.attributes ) {
+			const preserveAttrs = [ 'id', 'class', 'href' ];
+			const $elAttrs = this.$el[ 0 ].attributes;
+			for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
+				const attrName = $elAttrs[ i ].name;
+				if ( ! preserveAttrs.includes( attrName ) ) {
+					this.$el.removeAttr( attrName );
+				}
+			}
+
+			const attrs = this.model.getSetting( 'attributes' )?.value || [];
+			attrs.forEach( ( attribute ) => {
+				const key = attribute?.value?.key?.value;
+				const value = attribute?.value?.value?.value;
+				if ( key && value ) {
+					this.$el.attr( key, value );
+				}
+			} );
+
+			return;
+		}
+
 		if ( changed.classes ) {
-			// Rebuild the whole class attribute to remove previous outdated classes
 			this.$el.attr( 'class', this.className() );
 
 			return;
@@ -242,10 +273,15 @@ const DivBlockView = BaseElementView.extend( {
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggedElement = draggedView?.getContainer().view.el,
 					containerElement = event.currentTarget.parentElement,
-					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] ),
-					targetIndex = elements.indexOf( event.currentTarget );
+					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+
+				let targetIndex = elements.indexOf( event.currentTarget );
 
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
+					if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+						targetIndex++;
+					}
+
 					this.onDrop( event, { at: targetIndex } );
 
 					return;
@@ -255,17 +291,26 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
-				const selfIndex = elements.indexOf( draggedElement );
-
-				if ( targetIndex === selfIndex ) {
+				if ( this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+					this.moveDroppedItem( draggedView, 0 );
 					return;
 				}
 
-				const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
-
-				this.moveDroppedItem( draggedView, dropIndex );
+				this.moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement );
 			},
 		};
+	},
+
+	moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement ) {
+		const selfIndex = elements.indexOf( draggedElement );
+
+		if ( targetIndex === selfIndex ) {
+			return;
+		}
+
+		const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
+
+		this.moveDroppedItem( draggedView, dropIndex );
 	},
 
 	isPanelElement( draggedView, draggedElement ) {
@@ -368,6 +413,10 @@ const DivBlockView = BaseElementView.extend( {
 
 	draggingOnBottomOrRightSide( side ) {
 		return [ 'bottom', 'right' ].includes( side );
+	},
+
+	emptyViewIsCurrentlyBeingDraggedOver() {
+		return this.$el.find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
 	},
 
 	/**
