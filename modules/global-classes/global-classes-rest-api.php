@@ -151,12 +151,10 @@ class Global_Classes_REST_API {
 		$context = $request->get_param( 'context' );
 
 		$classes = $this->get_repository()->context( $context )->all();
-		$classesUsage = ( new Applied_Global_Classes_Usage() )->get();
 
 		return Response_Builder::make( (object) $classes->get_items()->all() )
 			->set_meta( array(
 				'order' => $classes->get_order()->all(),
-				'usage' => $classesUsage,
 			) )
 			->build();
 	}
