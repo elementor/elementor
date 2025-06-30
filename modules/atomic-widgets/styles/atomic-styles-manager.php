@@ -40,7 +40,7 @@ class Atomic_Styles_Manager {
 	}
 
 	private function enqueue_styles() {
-		if ( empty( $this->post_ids )) {
+		if ( empty( $this->post_ids ) ) {
 			return;
 		}
 
@@ -59,7 +59,7 @@ class Atomic_Styles_Manager {
 			foreach ( $styles_by_key as $style_key => $get_styles ) {
 				$render_css = function () use ( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache ) {
 					$cache_key = $style_key . '-' . $breakpoint_key;
-					$get_grouped_styles = $group_by_breakpoint_cache->cache($cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
+					$get_grouped_styles = $group_by_breakpoint_cache->cache( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
 					$grouped_styles = $get_grouped_styles();
 
 					return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
@@ -107,7 +107,7 @@ class Atomic_Styles_Manager {
 			Collection::make( $style['variants'] )->each( function( $variant ) use ( &$group, $style ) {
 				$breakpoint = $variant['meta']['breakpoint'] ?? self::DEFAULT_BREAKPOINT;
 
-				if ( !isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
+				if ( ! isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
 					$group[ $breakpoint ][ $style['id'] ] = [
 						'id' => $style['id'],
 						'type' => $style['type'],
@@ -119,7 +119,7 @@ class Atomic_Styles_Manager {
 			} );
 
 			return $group;
-		},  [] );
+		}, [] );
 	}
 
 	private function get_breakpoints() {
