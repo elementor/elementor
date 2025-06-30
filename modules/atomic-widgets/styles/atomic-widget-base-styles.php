@@ -22,6 +22,7 @@ class Atomic_Widget_Base_Styles {
 		$styles_manager->register(
 			self::CSS_FILE_KEY,
 			fn () => $this->get_all_base_styles(),
+			[self::CSS_FILE_KEY]
 		);
 	}
 

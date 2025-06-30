@@ -13,6 +13,8 @@ class Atomic_Widget_Styles {
 		add_action( 'elementor/atomic-widgets/styles/register', function( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
 			$this->register_styles( $styles_manager, $post_ids );
 		}, 30, 2 );
+
+		add_action('elementor/atomic-widgets/styles/post-change', fn(array $post_ids) => $this->invalidate_cache($post_ids), 20, 2);
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
@@ -21,7 +23,9 @@ class Atomic_Widget_Styles {
 				return $this->parse_post_styles( $post_id );
 			};
 
-			$styles_manager->register( self::STYLES_KEY . '-' . $post_id, $get_styles );
+			$style_key = $this->get_style_key( $post_id );
+
+			$styles_manager->register( $style_key, $get_styles, [ $style_key ] );
 		}
 	}
 
@@ -56,5 +60,19 @@ class Atomic_Widget_Styles {
 		}
 
 		return $element_data['styles'] ?? [];
+	}
+
+	private function invalidate_cache( array $post_ids ) {
+		$cache_state_manager = new Cache_State_Manager();
+
+		foreach ( $post_ids as $post_id ) {
+			$style_key = $this->get_style_key( $post_id );
+
+			$cache_state_manager->invalidate( [ $style_key ] );
+		}
+	}
+
+	private function get_style_key( $post_id ) {
+		return self::STYLES_KEY . '-' . $post_id;
 	}
 }
