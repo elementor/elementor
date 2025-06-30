@@ -108,8 +108,8 @@ class Floating_Bars_Core_Render extends Floating_Bars_Render_Base {
 		$this->widget->add_render_attribute( 'close-button', [
 			'class' => $close_button_classnames,
 			'aria-label' => sprintf(
-				/* translators: 1: Accessible name. */
-				esc_html__( 'Close %1$s', 'elementor' ),
+				/* translators: %s: Accessible name. */
+				esc_html__( 'Close %s', 'elementor' ),
 				$accessible_name,
 			),
 			'type' => 'button',
