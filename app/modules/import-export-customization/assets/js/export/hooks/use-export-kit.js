@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
 import { generateScreenshot } from '../utils/screenshot';
+import { EXPORT_STATUS } from '../context/export-context';
 
 const STATUS_PROCESSING = 'processing';
 const STATUS_ERROR = 'error';
 
-export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStarted, dispatch } ) => {
+export const useExportKit = ( { includes, kitInfo, plugins, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
 
 	const exportKit = useCallback( async () => {
@@ -69,6 +70,7 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 				throw new Error( 'Invalid response format from server' );
 			}
 
+			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 			window.location.href = elementorAppConfig.base_url + '#/export-customization/complete';
 		} catch ( error ) {
 			setStatus( STATUS_ERROR );
@@ -76,8 +78,10 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExportProcessStart
 	}, [ includes, kitInfo, plugins, dispatch ] );
 
 	useEffect( () => {
-		exportKit();
-	}, [ isExportProcessStarted, exportKit ] );
+		if ( isExporting ) {
+			exportKit();
+		}
+	}, [ isExporting, exportKit ] );
 
 	return {
 		status,

@@ -3,7 +3,7 @@ import { Button, Stack, CircularProgress } from '@elementor/ui';
 
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from '../../shared/hooks/use-connect-state';
-import { useExportContext } from '../context/export-context';
+import { useExportContext, EXPORT_STATUS } from '../context/export-context';
 
 export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
@@ -46,7 +46,7 @@ export default function ExportKitFooter() {
 			window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
 		} else {
 			dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
-			dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 			window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 		}
 	}, [ isConnecting, isCheckingEligibility, isCloudKitsEligible, dispatch ] );
@@ -63,13 +63,13 @@ export default function ExportKitFooter() {
 
 	const handleUploadClick = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
-		dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
 	const handleExportAsZip = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
-		dispatch( { type: 'SET_IS_EXPORT_PROCESS_STARTED', payload: true } );
+		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 

@@ -3,10 +3,16 @@ import PropTypes from 'prop-types';
 
 export const ExportContext = createContext();
 
+export const EXPORT_STATUS = {
+	PENDING: 'PENDING',
+	EXPORTING: 'EXPORTING',
+	COMPLETED: 'COMPLETED',
+};
+
 const initialState = {
 	downloadUrl: '',
 	exportedData: null,
-	isExportProcessStarted: false,
+	exportStatus: EXPORT_STATUS.PENDING,
 	plugins: [],
 	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
 	kitInfo: {
@@ -24,8 +30,8 @@ function exportReducer( state, { type, payload } ) {
 			return { ...state, exportedData: payload };
 		case 'SET_PLUGINS':
 			return { ...state, plugins: payload };
-		case 'SET_IS_EXPORT_PROCESS_STARTED':
-			return { ...state, isExportProcessStarted: payload };
+		case 'SET_EXPORT_STATUS':
+			return { ...state, exportStatus: payload };
 		case 'SET_KIT_TITLE':
 			return { ...state, kitInfo: { ...state.kitInfo, title: payload } };
 		case 'SET_KIT_DESCRIPTION':
@@ -56,6 +62,9 @@ export function ExportContextProvider( { children } ) {
 		data,
 		dispatch,
 		isTemplateNameValid: ( data.kitInfo.title?.trim() || '' ).length > 0,
+		isExporting: data.exportStatus === EXPORT_STATUS.EXPORTING,
+		isCompleted: data.exportStatus === EXPORT_STATUS.COMPLETED,
+		isPending: data.exportStatus === EXPORT_STATUS.PENDING,
 	};
 
 	return (

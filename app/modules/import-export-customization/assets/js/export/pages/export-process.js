@@ -7,18 +7,18 @@ import ExportProcessing from '../components/export-processing';
 import ExportError from '../components/export-error';
 
 export default function ExportProcess() {
-	const { data, dispatch } = useExportContext();
-	const { kitInfo, includes, plugins, isExportProcessStarted } = data;
+	const { data, dispatch, isExporting, isPending } = useExportContext();
+	const { kitInfo, includes, plugins } = data;
 
 	const { status, STATUS_PROCESSING, STATUS_ERROR } = useExportKit( {
 		includes,
 		kitInfo,
 		plugins,
-		isExportProcessStarted,
+		isExporting,
 		dispatch,
 	} );
 
-	if ( ! isExportProcessStarted ) {
+	if ( isPending ) {
 		return <Redirect to="/export-customization/" replace />;
 	}
 

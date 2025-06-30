@@ -11,7 +11,7 @@ import ExportCompleteDownloadLink from '../components/export-complete-download-l
 const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 
 export default function ExportComplete() {
-	const { data } = useExportContext();
+	const { data, isCompleted } = useExportContext();
 	const { exportedData, kitInfo } = data;
 	const downloadLink = useRef( null );
 
@@ -48,7 +48,7 @@ export default function ExportComplete() {
 		window.top.location = elementorAppConfig.admin_url;
 	};
 
-	if ( ! exportedData ) {
+	if ( ! isCompleted ) {
 		return <Redirect to="/export-customization/" replace />;
 	}
 
