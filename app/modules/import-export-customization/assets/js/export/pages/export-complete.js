@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { Redirect } from '@reach/router';
 import { Button, Stack } from '@elementor/ui';
-import { BaseLayout, TopBar, Footer, PageHeader, CenteredContent } from '../../components';
-import { useExportContext } from '../../context/export-context';
-import ExportCompleteSummary from '../../components/export-complete-summary';
-import ExportCompleteIcon from '../../components/export-complete-icon';
-import ExportCompleteHeading from '../../components/export-complete-heading';
-import ExportCompleteDownloadLink from '../../components/export-complete-download-link';
+import { BaseLayout, TopBar, Footer, PageHeader, CenteredContent } from '../../shared/components';
+import { useExportContext } from '../context/export-context';
+import ExportCompleteSummary from '../components/export-complete-summary';
+import ExportCompleteIcon from '../components/export-complete-icon';
+import ExportCompleteHeading from '../components/export-complete-heading';
+import ExportCompleteDownloadLink from '../components/export-complete-download-link';
 
 const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 

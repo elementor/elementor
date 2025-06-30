@@ -1,6 +1,6 @@
 import { Box, Typography, Stack, Checkbox, FormControlLabel, Link, Card, CardContent } from '@elementor/ui';
 
-import kitContentData from '../shared/kit-content-data';
+import kitContentData from '../../shared/kit-content-data';
 import { useExportContext } from '../context/export-context';
 
 export default function KitContent() {

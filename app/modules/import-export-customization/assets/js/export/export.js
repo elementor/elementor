@@ -1,6 +1,6 @@
 import { LocationProvider, Router } from '@reach/router';
 import router from '@elementor/router';
-import { ExportContextProvider } from '../context/export-context';
+import { ExportContextProvider } from './context/export-context';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import ExportKit from './pages/export-kit';
 import ExportProcess from './pages/export-process';

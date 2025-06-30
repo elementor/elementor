@@ -1,10 +1,10 @@
 import { Redirect } from '@reach/router';
 import { Stack } from '@elementor/ui';
-import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../components';
-import { useExportContext } from '../../context/export-context';
-import { useExportKit } from '../../hooks/use-export-kit';
-import ExportProcessing from '../../components/export-processing';
-import ExportError from '../../components/export-error';
+import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../shared/components';
+import { useExportContext } from '../context/export-context';
+import { useExportKit } from '../hooks/use-export-kit';
+import ExportProcessing from '../components/export-processing';
+import ExportError from '../components/export-error';
 
 export default function ExportProcess() {
 	const { data, dispatch } = useExportContext();

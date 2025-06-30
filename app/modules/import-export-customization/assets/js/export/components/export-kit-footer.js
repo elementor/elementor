@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import { Button, Stack, CircularProgress } from '@elementor/ui';
 
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
-import useConnectState from '../hooks/use-connect-state';
+import useConnectState from '../../shared/hooks/use-connect-state';
 import { useExportContext } from '../context/export-context';
 
 export default function ExportKitFooter() {

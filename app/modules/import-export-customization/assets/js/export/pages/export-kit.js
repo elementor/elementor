@@ -1,10 +1,10 @@
 import { Box } from '@elementor/ui';
 
-import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';
-import ExportIntro from '../../components/export-intro';
-import ExportKitFooter from '../../components/export-kit-footer';
-import KitContent from '../../components/kit-content';
-import KitInfo from '../../components/kit-info';
+import { BaseLayout, TopBar, Footer, PageHeader } from '../../shared/components';
+import ExportIntro from '../components/export-intro';
+import ExportKitFooter from '../components/export-kit-footer';
+import KitContent from '../components/kit-content';
+import KitInfo from '../components/kit-info';
 
 export default function ExportKit() {
 	const footerContent = <ExportKitFooter />;
