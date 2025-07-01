@@ -95,6 +95,17 @@ class Test_Export extends Elementor_Test_Base {
 			'version'   => '1.2.3',
 			'slug'      => 'my-custom-theme',
 		];
+		$experiments = [];
+
+		foreach ( Plugin::$instance->experiments->get_features() as $feature_name => $feature ) {
+			$experiments[ $feature_name ] = [
+				'name' => $feature_name,
+				'title' => $feature['title'],
+				'state' => $feature['state'],
+				'default' => $feature['default'],
+				'release_status' => $feature['release_status'],
+			];
+		}
 
 		Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
 
@@ -124,6 +135,7 @@ class Test_Export extends Elementor_Test_Base {
 		$kit_data['theme'] = $mocked_theme;
 		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
 		$site_settings_file = ImportExportUtils::read_json_file( $extracted_zip_path . 'site-settings' );
+		$kit_data['experiments'] = $experiments;
 
 		$this->assertEquals( $kit_data, $site_settings_file );
 
