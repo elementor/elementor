@@ -748,9 +748,10 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'type' => Controls_Manager::ALERT,
 						'alert_type' => 'info',
 						'content' => sprintf(
-							__( 'Add between <b>%1$d</b> to <b>%2$d</b> contact buttons', 'elementor' ),
-							$config['content']['contact_section']['platform']['min_items'],
-							$config['content']['contact_section']['platform']['limit']
+							/* translators: 1: Minimum items, 2: Items limit. */
+							esc_html__( 'Add between %1$s to %2$s contact buttons', 'elementor' ),
+							'<b>' . $config['content']['contact_section']['platform']['min_items'] . '</b>',
+							'<b>' . $config['content']['contact_section']['platform']['limit'] . '</b>'
 						),
 					]
 				);
@@ -761,8 +762,9 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 						'type' => Controls_Manager::ALERT,
 						'alert_type' => 'info',
 						'content' => sprintf(
-							__( 'Add up to <b>%d</b> contact buttons', 'elementor' ),
-							$config['content']['contact_section']['platform']['limit']
+							/* translators: %s: Items limit. */
+							esc_html__( 'Add up to %s contact buttons', 'elementor' ),
+							'<b>' . $config['content']['contact_section']['platform']['limit'] . '</b>'
 						),
 					]
 				);
