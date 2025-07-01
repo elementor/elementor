@@ -76,11 +76,6 @@ class Site_Settings extends Export_Runner_Base {
 		return $theme_data;
 	}
 
-	/**
-	 * Export experiments data
-	 *
-	 * @return array|null
-	 */
 	private function export_experiments() {
 		$features = Plugin::$instance->experiments->get_features();
 

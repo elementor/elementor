@@ -178,12 +178,6 @@ class Site_Settings extends Import_Runner_Base {
 		return $result;
 	}
 
-	/**
-	 * Import experiments data
-	 *
-	 * @param array $data
-	 * @return array|null
-	 */
 	private function import_experiments( array $data ) {
 		if ( empty( $data['site_settings']['experiments'] ) ) {
 			return null;

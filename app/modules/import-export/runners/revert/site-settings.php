@@ -96,11 +96,6 @@ class Site_Settings extends Revert_Runner_Base {
 		switch_theme( $previous_active_theme['slug'] );
 	}
 
-	/**
-	 * Revert experiments to their previous state
-	 *
-	 * @param array $data
-	 */
 	protected function revert_experiments( array $data ) {
 		$runner_data = $data['runners'][ static::get_name() ];
 		$previous_experiments = $runner_data['previous_experiments'] ?? [];
