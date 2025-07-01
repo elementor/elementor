@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ControlToggleButtonGroup, NumberControl, type ToggleButtonGroupItem } from '@elementor/editor-controls';
 import { type NumberPropValue } from '@elementor/editor-props';
 import { ArrowDownSmallIcon, ArrowUpSmallIcon, PencilIcon } from '@elementor/icons';
@@ -59,6 +59,11 @@ export const FlexOrderField = () => {
 	} );
 
 	const [ groupControlValue, setGroupControlValue ] = useState( getGroupControlValue( order?.value || null ) );
+
+	useEffect( () => {
+		const newGroupControlValue = getGroupControlValue( order?.value || null );
+		setGroupControlValue( newGroupControlValue );
+	}, [ order?.value ] );
 
 	const handleToggleButtonChange = ( group: GroupControlItemOption | null ) => {
 		setGroupControlValue( group );

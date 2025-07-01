@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-canvas",
   "description": "Elementor Editor Canvas",
-  "version": "0.25.0",
+  "version": "0.27.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -37,13 +37,13 @@
     "react-dom": "^18.3.1"
   },
   "dependencies": {
-    "@elementor/editor": "0.20.1",
-    "@elementor/editor-notifications": "1.3.1",
-    "@elementor/editor-elements": "0.8.7",
-    "@elementor/editor-props": "0.15.0",
+    "@elementor/editor": "0.21.0",
+    "@elementor/editor-notifications": "1.4.0",
+    "@elementor/editor-elements": "0.9.1",
+    "@elementor/editor-props": "0.17.0",
     "@elementor/editor-responsive": "0.13.6",
-    "@elementor/editor-styles": "0.6.11",
-    "@elementor/editor-styles-repository": "0.10.4",
+    "@elementor/editor-styles": "0.6.13",
+    "@elementor/editor-styles-repository": "0.10.6",
     "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/twing": "0.0.2",
     "@elementor/ui": "1.36.0",

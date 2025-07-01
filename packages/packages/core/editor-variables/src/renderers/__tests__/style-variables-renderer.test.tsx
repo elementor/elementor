@@ -44,9 +44,10 @@ describe( '<StyleVariablesRenderer />', () => {
 		// Arrange.
 		const mockContainer = document.createElement( 'div' );
 		const mockVariables = {
-			'e-gv-3b395ca': '#ff0000',
-			'e-gf-3b78Hyo': 'Arial',
-			'test-id': 'yellow',
+			'e-gv-a1': { value: '#ff0000', label: 'red-color', type: 'global-color-variable' },
+			'e-gv-a2': { value: 'Arial', label: 'font-arial', type: 'global-font-variable' },
+			'e-gv-a3': { value: 'yellow', label: 'yellow-color', type: 'global-color-variable' },
+			'e-gv-a4': { value: 'red', label: 'red-color', type: 'global-color-variable', deleted: true },
 		};
 
 		jest.mocked( useListenTo ).mockReturnValue( mockContainer );

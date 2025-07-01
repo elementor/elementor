@@ -19,7 +19,13 @@ export const ColorVariableControl = () => {
 	const isVariableDeleted = assignedVariable?.deleted;
 
 	if ( isVariableDeleted ) {
-		return <DeletedVariable variable={ assignedVariable } />;
+		return (
+			<DeletedVariable
+				variable={ assignedVariable }
+				variablePropTypeUtil={ colorVariablePropTypeUtil }
+				fallbackPropTypeUtil={ colorPropTypeUtil }
+			/>
+		);
 	}
 
 	return (

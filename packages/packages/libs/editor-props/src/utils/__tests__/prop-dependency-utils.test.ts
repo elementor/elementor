@@ -5,7 +5,6 @@ type TestCase = DependencyTerm & {
 	description: string;
 	expected: boolean;
 	actualValue: PropValue;
-	shouldError?: boolean;
 };
 
 describe( 'prop-dependency-utils', () => {
@@ -85,8 +84,8 @@ describe( 'prop-dependency-utils', () => {
 					operator: 'gt',
 					actualValue: '10',
 					value: '5',
-					expected: true,
-					description: 'should handle string numbers for greater than',
+					expected: false,
+					description: 'should not handle string numbers for greater than',
 				},
 				{
 					operator: 'gt',
@@ -94,7 +93,6 @@ describe( 'prop-dependency-utils', () => {
 					value: 5,
 					expected: false,
 					description: 'should return false for invalid numbers',
-					shouldError: true,
 				},
 				{
 					operator: 'gte',
@@ -138,18 +136,14 @@ describe( 'prop-dependency-utils', () => {
 					expected: false,
 					description: 'should return false when actual value is greater than target',
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected, shouldError } ) => {
+			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
 				const term: DependencyTerm = {
 					operator,
 					path: [ 'test' ],
 					value,
 				};
 
-				if ( shouldError ) {
-					expect( () => evaluateTerm( term, actualValue ) ).toThrow();
-				} else {
-					expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-				}
+				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
 			} );
 		} );
 
@@ -196,20 +190,15 @@ describe( 'prop-dependency-utils', () => {
 					value: 'not-an-array',
 					expected: false,
 					description: 'should return false when value is not an array',
-					shouldError: true,
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected, shouldError } ) => {
+			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
 				const term: DependencyTerm = {
 					operator,
 					path: [ 'test' ],
 					value,
 				};
 
-				if ( shouldError ) {
-					expect( () => evaluateTerm( term, actualValue ) ).toThrow();
-				} else {
-					expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-				}
+				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
 			} );
 		} );
 
@@ -249,7 +238,6 @@ describe( 'prop-dependency-utils', () => {
 					value: 'test',
 					expected: false,
 					description: 'should return false when actual value is not a string',
-					shouldError: true,
 				},
 				{
 					operator: 'contains',
@@ -257,20 +245,15 @@ describe( 'prop-dependency-utils', () => {
 					value: 123,
 					expected: false,
 					description: 'should return false when target value is not a string',
-					shouldError: true,
 				},
-			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected, shouldError } ) => {
+			] as TestCase[] )( '$description', ( { operator, actualValue, value, expected } ) => {
 				const term: DependencyTerm = {
 					operator,
 					path: [ 'test' ],
 					value,
 				};
 
-				if ( shouldError ) {
-					expect( () => evaluateTerm( term, actualValue ) ).toThrow();
-				} else {
-					expect( evaluateTerm( term, actualValue ) ).toBe( expected );
-				}
+				expect( evaluateTerm( term, actualValue ) ).toBe( expected );
 			} );
 		} );
 

@@ -18,7 +18,13 @@ export const FontVariableControl = () => {
 	const isVariableDeleted = assignedVariable?.deleted;
 
 	if ( isVariableDeleted ) {
-		return <DeletedVariable variable={ assignedVariable } />;
+		return (
+			<DeletedVariable
+				variable={ assignedVariable }
+				variablePropTypeUtil={ fontVariablePropTypeUtil }
+				fallbackPropTypeUtil={ stringPropTypeUtil }
+			/>
+		);
 	}
 
 	return (

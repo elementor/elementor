@@ -1,5 +1,65 @@
 # @elementor/editor-variables
 
+## 0.17.0
+
+### Minor Changes
+
+- f2df660: Fix font variable not rendering on the canvas
+- 5fc23ea: Created an alert popover for deleted variables
+- 0b2145a: Update the text on the delete variable dialog.
+
+### Patch Changes
+
+- Updated dependencies [669f39f]
+- Updated dependencies [2e677ee]
+- Updated dependencies [90ec4c6]
+- Updated dependencies [068f659]
+- Updated dependencies [e7cca0a]
+- Updated dependencies [07ca7e9]
+  - @elementor/editor-controls@1.4.0
+  - @elementor/editor-ui@0.14.1
+  - @elementor/editor-editing-panel@1.49.0
+  - @elementor/editor-canvas@0.27.0
+  - @elementor/editor-props@0.17.0
+
+## 0.16.0
+
+### Minor Changes
+
+- 5236bf5: Deleted variable UI
+- fbc7523: Extract tag and popover into separate components
+- 6e18b13: Remove line break in dialog text
+- ab2f4f7: Remove the version specific references inside the variables popover item layout.
+- 1a37b1c: Update the Elementor UI version.
+- 12333b0: Update `@elementor/icons` package.
+- 8e7ac7c: Variables form handling improvements
+- 13f531e: Add validations errors for variables flow
+- fcbdf6c: Remove color in variables warning validation.
+- 064599a: Refactor background & box shadow color injections into a separate file
+
+### Patch Changes
+
+- Updated dependencies [49714e8]
+- Updated dependencies [b94c5af]
+- Updated dependencies [5c6a912]
+- Updated dependencies [b3726f6]
+- Updated dependencies [68ce0d9]
+- Updated dependencies [b17730a]
+- Updated dependencies [1a37b1c]
+- Updated dependencies [c62d64c]
+- Updated dependencies [d9aaedd]
+- Updated dependencies [d1fc9d2]
+- Updated dependencies [12333b0]
+- Updated dependencies [8f38cf3]
+- Updated dependencies [a88c14b]
+- Updated dependencies [d4406fd]
+  - @elementor/editor-editing-panel@1.48.0
+  - @elementor/editor-controls@1.3.0
+  - @elementor/editor-canvas@0.26.0
+  - @elementor/editor-props@0.16.0
+  - @elementor/editor@0.21.0
+  - @elementor/editor-ui@0.14.0
+
 ## 0.15.0
 
 ### Minor Changes

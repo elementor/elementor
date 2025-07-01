@@ -52,7 +52,7 @@ describe( 'FontVariableEdit', () => {
 
 		// Assert.
 		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete Variable' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'dialog', { name: 'Delete this variable?' } ) ).toBeInTheDocument();
 		} );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );
@@ -84,7 +84,7 @@ describe( 'FontVariableEdit', () => {
 
 		// Assert.
 		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete Variable' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'dialog', { name: 'Delete this variable?' } ) ).toBeInTheDocument();
 		} );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );

@@ -5,7 +5,7 @@ import { Portal } from '@elementor/ui';
 
 import { styleVariablesRepository } from '../style-variables-repository';
 import { getCanvasIframeDocument } from '../sync/get-canvas-iframe-document';
-import { type StyleVariables } from '../types';
+import { type StyleVariables, type Variable } from '../types';
 
 const VARIABLES_WRAPPER = 'body';
 
@@ -49,8 +49,14 @@ function useStyleVariables() {
 	return variables;
 }
 
+function cssVariableDeclaration( key: string, variable: Variable ) {
+	const variableName = variable?.deleted ? key : variable.label;
+	const value = variable.value;
+
+	return `--${ variableName }:${ value };`;
+}
+
 function convertToCssVariables( variables: StyleVariables ): string {
-	return Object.entries( variables )
-		.map( ( [ key, value ] ) => `--${ key }:${ value };` )
-		.join( '' );
+	const listOfVariables = Object.entries( variables );
+	return listOfVariables.map( ( [ key, variable ] ) => cssVariableDeclaration( key, variable ) ).join( '' );
 }

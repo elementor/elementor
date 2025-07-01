@@ -1,5 +1,18 @@
 # @elementor/editor-ui
 
+## 0.14.1
+
+### Patch Changes
+
+- 2e677ee: Automatically scroll to the selected popover item
+
+## 0.14.0
+
+### Minor Changes
+
+- 1a37b1c: Update the Elementor UI version.
+- 12333b0: Update `@elementor/icons` package.
+
 ## 0.13.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # Change Log
 
+## 1.4.0
+
+### Minor Changes
+
+- 1a37b1c: Update the Elementor UI version.
+
+### Patch Changes
+
+- Updated dependencies [68ce0d9]
+- Updated dependencies [1a37b1c]
+  - @elementor/editor@0.21.0
+
 ## 1.3.1
 
 ### Patch Changes

@@ -4,19 +4,19 @@ import { PencilIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
-import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
+import { type DegreeUnit, type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
 type SizeInputProps = {
-	unit: Unit | ExtendedOption;
+	unit: Unit | DegreeUnit | ExtendedOption;
 	size: number | string;
 	placeholder?: string;
 	startIcon?: React.ReactNode;
-	units: ( Unit | ExtendedOption )[];
+	units: ( Unit | DegreeUnit | ExtendedOption )[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onClick?: ( event: React.MouseEvent< HTMLInputElement > ) => void;
-	handleUnitChange: ( unit: Unit | ExtendedOption ) => void;
+	handleUnitChange: ( unit: Unit | DegreeUnit | ExtendedOption ) => void;
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
 	disabled?: boolean;

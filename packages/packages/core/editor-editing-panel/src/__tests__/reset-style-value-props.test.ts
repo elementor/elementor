@@ -102,7 +102,7 @@ describe( 'Reset Style Props Tests', () => {
 					value: 'some-value',
 					setValue: jest.fn(),
 					path: [ 'style' ],
-					bind: 'order',
+					bind: 'flex-grow',
 				} );
 
 				const { result } = renderHook( () => useResetStyleValueProps() );

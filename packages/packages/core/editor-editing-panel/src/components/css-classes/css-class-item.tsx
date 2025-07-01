@@ -10,6 +10,7 @@ import {
 	type ChipOwnProps,
 	Stack,
 	type Theme,
+	ThemeProvider,
 	Typography,
 	UnstableChipGroup,
 	usePopupState,
@@ -69,7 +70,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const isShowingState = isActive && meta.state;
 
 	return (
-		<>
+		<ThemeProvider palette="default">
 			<UnstableChipGroup
 				ref={ setChipRef }
 				{ ...chipGroupProps }
@@ -144,7 +145,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 			<CssClassProvider { ...classProps } handleRename={ openEditMode }>
 				<CssClassMenu popupState={ popupState } anchorEl={ chipRef } fixed={ fixed } />
 			</CssClassProvider>
-		</>
+		</ThemeProvider>
 	);
 }
 

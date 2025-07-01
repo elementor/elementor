@@ -1,5 +1,49 @@
 # @elementor/editor-controls
 
+## 1.4.0
+
+### Minor Changes
+
+- 669f39f: Display a placeholder value inside the color control.
+- 068f659: Adds contrast, gray-scale, invert, sepia and saturate css filters
+- e7cca0a: Updated size control to support degree units
+
+### Patch Changes
+
+- Updated dependencies [2e677ee]
+- Updated dependencies [068f659]
+- Updated dependencies [e7cca0a]
+- Updated dependencies [07ca7e9]
+  - @elementor/editor-ui@0.14.1
+  - @elementor/editor-props@0.17.0
+  - @elementor/editor-elements@0.9.1
+
+## 1.3.0
+
+### Minor Changes
+
+- 5c6a912: Fixed issue with item label in repeatable control
+- b3726f6: Add transform move control
+- b17730a: Placeholder logic added to select control & font-family control
+- 1a37b1c: Update the Elementor UI version.
+- c62d64c: Injected prop dependency API into settings field
+- d1fc9d2: Update TextFieldPopover to use slotProps for Paper styling
+- 12333b0: Update `@elementor/icons` package.
+
+### Patch Changes
+
+- 8f38cf3: Fix image control layout
+- d4406fd: Add missing FF to link control.
+- Updated dependencies [b3726f6]
+- Updated dependencies [68ce0d9]
+- Updated dependencies [1a37b1c]
+- Updated dependencies [c62d64c]
+- Updated dependencies [12333b0]
+  - @elementor/editor-props@0.16.0
+  - @elementor/editor-current-user@0.6.0
+  - @elementor/editor-ui@0.14.0
+  - @elementor/editor-elements@0.9.0
+
 ## 1.2.0
 
 ### Minor Changes

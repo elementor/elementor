@@ -26,3 +26,11 @@ export const getStylesProviderThemeColor = ( provider: string ): ( ( theme: Them
 
 	return getStyleProviderColors( provider ).getThemeColor;
 };
+
+export function getTempStylesProviderThemeColor( provider: string ): ( ( theme: Theme ) => string ) | null {
+	if ( isElementsStylesProvider( provider ) ) {
+		return ( theme: Theme ) => theme.palette.primary.main;
+	}
+
+	return getStylesProviderThemeColor( provider );
+}

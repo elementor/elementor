@@ -7,7 +7,7 @@ exports[`<StyleVariablesRenderer /> should render style variables in portal when
   <style
     data-e-style-id="e-variables"
   >
-    body{--e-gv-3b395ca:#ff0000;--e-gf-3b78Hyo:Arial;--test-id:yellow;}
+    body{--red-color:#ff0000;--font-arial:Arial;--yellow-color:yellow;--e-gv-a4:red;}
   </style>
 </div>
 `;

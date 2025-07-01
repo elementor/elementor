@@ -3,7 +3,6 @@ import { useMemo } from 'react';
 import { createArrayPropUtils, type PropKey } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
-/* eslint-disable */
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
@@ -25,6 +24,8 @@ type RepeatableControlProps = {
 	patternLabel?: string;
 	placeholder?: string;
 };
+
+const PLACEHOLDER_REGEX = /\$\{([^}]+)\}/g;
 
 export const RepeatableControl = createControl(
 	( {
@@ -48,16 +49,15 @@ export const RepeatableControl = createControl(
 		);
 
 		const contextValue = useMemo(
-			() => ({
+			() => ( {
 				...childControlConfig,
 				placeholder: placeholder || '',
 				patternLabel: patternLabel || '',
-			}),
+			} ),
 			[ childControlConfig, placeholder, patternLabel ]
 		);
 
 		const { propType, value, setValue } = useBoundProp( childArrayPropTypeUtil );
-
 
 		return (
 			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
@@ -106,42 +106,63 @@ const Content = () => {
 	);
 };
 
-const interpolate = ( template: string, data: object ) => {
+const interpolate = ( template: string, data: Record< string, unknown > ) => {
 	if ( ! data ) {
 		return template;
 	}
 
-	return new Function( ...Object.keys( data ), `return \`${ template }\`;` )( ...Object.values( data ) );
+	return template.replace( PLACEHOLDER_REGEX, ( _, path ): string => {
+		const value = getNestedValue( data, path );
+
+		if ( typeof value === 'object' && value !== null && ! Array.isArray( value ) ) {
+			if ( value.name ) {
+				return value.name as string;
+			}
+
+			return JSON.stringify( value );
+		}
+
+		if ( Array.isArray( value ) ) {
+			return value.join( ', ' );
+		}
+
+		return String( value ?? '' );
+	} );
 };
 
-const getNestedValue = ( obj: any, path: string ) => {
-    return path.split( '.' ).reduce( ( current, key ) => current?.[key], obj);
+const getNestedValue = ( obj: Record< string, unknown >, path: string ) => {
+	return path.split( '.' ).reduce( ( current: Record< string, unknown >, key ) => {
+		if ( current && typeof current === 'object' ) {
+			return current[ key ] as Record< string, unknown >;
+		}
+		return {};
+	}, obj );
 };
 
-const isEmptyValue = (val: unknown) => {
-    if ( typeof val === 'string' ) {
-        return val.trim() === '';
-    }
+const isEmptyValue = ( val: unknown ) => {
+	if ( typeof val === 'string' ) {
+		return val.trim() === '';
+	}
 
-    if ( Number.isNaN( val ) ) {
-        return true;
-    }
+	if ( Number.isNaN( val ) ) {
+		return true;
+	}
 
-    if ( Array.isArray( val ) ) {
-        return val.length === 0;
-    }
+	if ( Array.isArray( val ) ) {
+		return val.length === 0;
+	}
 
-    if ( typeof val === 'object' && val !== null && Object.keys( val ).length === 0 ) {
-        return true;
-    }
+	if ( typeof val === 'object' && val !== null ) {
+		return Object.keys( val ).length === 0;
+	}
 
-    return false;
+	return false;
 };
 
-const shouldShowPlaceholder = ( pattern: string, data: unknown ): boolean => {
+const shouldShowPlaceholder = ( pattern: string, data: Record< string, unknown > ): boolean => {
 	const propertyPaths = getAllProperties( pattern );
 
-	const values = propertyPaths.map( path => getNestedValue( data, path ) );
+	const values = propertyPaths.map( ( path ) => getNestedValue( data, path ) );
 
 	if ( values.length === 0 ) {
 		return false;
@@ -158,7 +179,7 @@ const shouldShowPlaceholder = ( pattern: string, data: unknown ): boolean => {
 	return false;
 };
 
-const ItemLabel = ( { value }: { value: any } ) => {
+const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
 	const { placeholder, patternLabel } = useRepeatableControlContext();
 
 	const label = shouldShowPlaceholder( patternLabel, value ) ? placeholder : interpolate( patternLabel, value );
@@ -171,9 +192,7 @@ const ItemLabel = ( { value }: { value: any } ) => {
 };
 
 const getAllProperties = ( pattern: string ) => {
-	const properties = pattern.match(/\$\{([^}]+)\}/g)?.map(match =>
-		match.slice(2, -1)
-	) || [];
+	const properties = pattern.match( PLACEHOLDER_REGEX )?.map( ( match ) => match.slice( 2, -1 ) ) || [];
 
 	return properties;
 };

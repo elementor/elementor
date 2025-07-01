@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-controls",
   "description": "This package contains the controls model and utils for the Elementor editor",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,11 +40,11 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-current-user": "0.5.0",
-    "@elementor/editor-elements": "0.8.7",
-    "@elementor/editor-props": "0.15.0",
+    "@elementor/editor-current-user": "0.6.0",
+    "@elementor/editor-elements": "0.9.1",
+    "@elementor/editor-props": "0.17.0",
     "@elementor/editor-responsive": "0.13.6",
-    "@elementor/editor-ui": "0.13.0",
+    "@elementor/editor-ui": "0.14.1",
     "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/env": "0.3.5",
     "@elementor/http-client": "0.3.0",

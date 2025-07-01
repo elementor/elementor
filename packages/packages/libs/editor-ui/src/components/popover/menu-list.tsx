@@ -110,7 +110,7 @@ export const PopoverMenuList = < T, V extends string >( {
 	useScrollToSelected( { selectedValue, items, virtualizer } );
 
 	return (
-		<Box ref={ containerRef }>
+		<Box ref={ containerRef } sx={ { height: '100%', overflowY: 'auto' } }>
 			{ items.length === 0 && noResultsComponent ? (
 				noResultsComponent
 			) : (

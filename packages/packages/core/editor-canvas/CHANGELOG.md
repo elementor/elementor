@@ -1,5 +1,41 @@
 # @elementor/editor-canvas
 
+## 0.27.0
+
+### Minor Changes
+
+- 068f659: Adds contrast, gray-scale, invert, sepia and saturate css filters
+
+### Patch Changes
+
+- Updated dependencies [068f659]
+- Updated dependencies [e7cca0a]
+- Updated dependencies [07ca7e9]
+  - @elementor/editor-props@0.17.0
+  - @elementor/editor-styles-repository@0.10.6
+  - @elementor/editor-elements@0.9.1
+  - @elementor/editor-styles@0.6.13
+
+## 0.26.0
+
+### Minor Changes
+
+- b3726f6: Add transform move control
+- 1a37b1c: Update the Elementor UI version.
+
+### Patch Changes
+
+- Updated dependencies [b3726f6]
+- Updated dependencies [68ce0d9]
+- Updated dependencies [1a37b1c]
+- Updated dependencies [c62d64c]
+  - @elementor/editor-props@0.16.0
+  - @elementor/editor@0.21.0
+  - @elementor/editor-notifications@1.4.0
+  - @elementor/editor-elements@0.9.0
+  - @elementor/editor-styles-repository@0.10.5
+  - @elementor/editor-styles@0.6.12
+
 ## 0.25.0
 
 ### Minor Changes

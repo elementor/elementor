@@ -26,24 +26,23 @@ export function evaluateTerm( term: DependencyTerm, actualValue: PropValue ) {
 
 		case 'gt':
 		case 'lte':
-			if ( isNaN( Number( actualValue ) ) || isNaN( Number( valueToCompare ) ) ) {
-				throw new Error( 'Mathematical comparison requires numeric values.' );
+			if ( ! isNumber( actualValue ) || ! isNumber( valueToCompare ) ) {
+				return false;
 			}
 
 			return Number( actualValue ) > Number( valueToCompare ) === ( 'gt' === operator );
 
 		case 'lt':
 		case 'gte':
-			if ( isNaN( Number( actualValue ) ) || isNaN( Number( valueToCompare ) ) ) {
-				throw new Error( 'Mathematical comparison requires numeric values.' );
+			if ( ! isNumber( actualValue ) || ! isNumber( valueToCompare ) ) {
+				return false;
 			}
 
 			return Number( actualValue ) < Number( valueToCompare ) === ( 'lt' === operator );
-
 		case 'in':
 		case 'nin':
 			if ( ! Array.isArray( valueToCompare ) ) {
-				throw new Error( 'The "in" and "nin" operators require an array for comparison.' );
+				return false;
 			}
 
 			return valueToCompare.includes( actualValue ) === ( 'in' === operator );
@@ -54,9 +53,7 @@ export function evaluateTerm( term: DependencyTerm, actualValue: PropValue ) {
 				( 'string' !== typeof actualValue || 'string' !== typeof valueToCompare ) &&
 				! Array.isArray( actualValue )
 			) {
-				throw new Error(
-					'The "contains" and "ncontains" operators require a string or an array for comparison.'
-				);
+				return false;
 			}
 
 			return ( 'contains' === operator ) === actualValue.includes( valueToCompare as never );
@@ -70,6 +67,10 @@ export function evaluateTerm( term: DependencyTerm, actualValue: PropValue ) {
 		default:
 			return false;
 	}
+}
+
+function isNumber( value: PropValue ): value is number {
+	return typeof value === 'number' && ! isNaN( value );
 }
 
 function getRelationMethod( relation: Relation ) {

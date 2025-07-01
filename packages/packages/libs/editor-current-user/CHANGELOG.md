@@ -1,5 +1,11 @@
 # @elementor/editor-current-user
 
+## 0.6.0
+
+### Minor Changes
+
+- 68ce0d9: Ensure current user exist in the editor.
+
 ## 0.5.0
 
 ### Minor Changes

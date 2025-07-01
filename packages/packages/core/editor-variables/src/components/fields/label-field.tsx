@@ -47,7 +47,7 @@ export const LabelField = ( { value, onChange }: LabelFieldProps ) => {
 					inputProps={ { maxLength: VARIABLE_LABEL_MAX_LENGTH } }
 				/>
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
-				{ noticeMessage && <FormHelperText sx={ { textColor: '#982828' } }>{ noticeMessage }</FormHelperText> }
+				{ noticeMessage && <FormHelperText>{ noticeMessage }</FormHelperText> }
 			</Grid>
 		</Grid>
 	);

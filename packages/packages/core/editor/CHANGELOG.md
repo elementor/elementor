@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.21.0
+
+### Minor Changes
+
+- 68ce0d9: Ensure current user exist in the editor.
+- 1a37b1c: Update the Elementor UI version.
+
+### Patch Changes
+
+- Updated dependencies [68ce0d9]
+  - @elementor/editor-current-user@0.6.0
+
 ## 0.20.1
 
 ### Patch Changes

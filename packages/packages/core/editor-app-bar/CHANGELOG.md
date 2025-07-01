@@ -1,5 +1,19 @@
 # Change Log
 
+## 0.32.0
+
+### Minor Changes
+
+- 1a37b1c: Update the Elementor UI version.
+- 12333b0: Update `@elementor/icons` package.
+
+### Patch Changes
+
+- Updated dependencies [68ce0d9]
+- Updated dependencies [1a37b1c]
+  - @elementor/editor@0.21.0
+  - @elementor/editor-documents@0.13.9
+
 ## 0.31.1
 
 ### Patch Changes

@@ -28,23 +28,20 @@ export const DeleteConfirmationDialog = ( {
 		<Dialog open={ open } onClose={ closeDialog } aria-labelledby={ TITLE_ID } maxWidth="xs">
 			<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 } sx={ { lineHeight: 1 } }>
 				<AlertOctagonFilledIcon color="error" />
-				{ __( 'Delete Variable', 'elementor' ) }
+				{ __( 'Delete this variable?', 'elementor' ) }
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText variant="body2" color="textPrimary">
-					{ __( 'You are about to delete', 'elementor' ) }
+					{ __( 'All elements using', 'elementor' ) }
 					<Typography variant="subtitle2" component="span">
 						&nbsp;{ label }&nbsp;
 					</Typography>
-					{ __(
-						'Variable. Note that its value is still being used anywhere on your site where it was connected to the variable.',
-						'elementor'
-					) }
+					{ __( 'will keep their current values, but the variable itself will be removed.', 'elementor' ) }
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>
 				<Button color="secondary" onClick={ closeDialog }>
-					{ __( 'Cancel', 'elementor' ) }
+					{ __( 'Not now', 'elementor' ) }
 				</Button>
 				<Button variant="contained" color="error" onClick={ onConfirm }>
 					{ __( 'Delete', 'elementor' ) }

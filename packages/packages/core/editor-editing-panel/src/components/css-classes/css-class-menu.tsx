@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useStyle } from '../../contexts/style-context';
 import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/types';
-import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
+import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
 import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
 import { useUnapplyClass } from './use-apply-and-unapply-class';
@@ -161,7 +161,7 @@ function StateMenuItem( { state, closeMenu, ...props }: StateMenuItemProps ) {
 					{ isStyled && (
 						<StyleIndicator
 							aria-label={ __( 'Has style', 'elementor' ) }
-							getColor={ getStylesProviderThemeColor( provider ?? '' ) }
+							getColor={ getTempStylesProviderThemeColor( provider ?? '' ) }
 						/>
 					) }
 					{ state ?? 'normal' }

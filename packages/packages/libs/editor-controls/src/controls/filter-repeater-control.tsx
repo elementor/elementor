@@ -3,10 +3,16 @@ import { useRef } from 'react';
 import {
 	blurFilterPropTypeUtil,
 	brightnessFilterPropTypeUtil,
+	contrastFilterPropTypeUtil,
 	type FilterItemPropValue,
 	filterPropTypeUtil,
+	grayscaleFilterPropTypeUtil,
+	hueRotateFilterPropTypeUtil,
+	invertFilterPropTypeUtil,
 	type PropKey,
 	type PropTypeUtil,
+	saturateFilterPropTypeUtil,
+	sepiaFilterPropTypeUtil,
 	type SizePropValue,
 } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
@@ -49,6 +55,48 @@ const filterConfig: Record< FilterType, FilterItemConfig > = {
 		valueName: __( 'Amount', 'elementor' ),
 		propType: brightnessFilterPropTypeUtil,
 		units: [ '%' ],
+	},
+	contrast: {
+		defaultValue: { $$type: 'contrast', contrast: { $$type: 'size', value: { size: 100, unit: '%' } } },
+		name: __( 'Contrast', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		propType: contrastFilterPropTypeUtil,
+		units: [ '%' ],
+	},
+	grayscale: {
+		defaultValue: { $$type: 'grayscale', grayscale: { $$type: 'size', value: { size: 0, unit: '%' } } },
+		name: __( 'Grayscale', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		propType: grayscaleFilterPropTypeUtil,
+		units: [ '%' ],
+	},
+	invert: {
+		defaultValue: { $$type: 'invert', invert: { $$type: 'size', value: { size: 0, unit: '%' } } },
+		name: __( 'Invert', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		propType: invertFilterPropTypeUtil,
+		units: [ '%' ],
+	},
+	saturate: {
+		defaultValue: { $$type: 'saturate', saturate: { $$type: 'size', value: { size: 100, unit: '%' } } },
+		name: __( 'Saturate', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		propType: saturateFilterPropTypeUtil,
+		units: [ '%' ],
+	},
+	sepia: {
+		defaultValue: { $$type: 'sepia', sepia: { $$type: 'size', value: { size: 0, unit: '%' } } },
+		name: __( 'Sepia', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		propType: sepiaFilterPropTypeUtil,
+		units: [ '%' ],
+	},
+	'hue-rotate': {
+		defaultValue: { $$type: 'hue-rotate', 'hue-rotate': { $$type: 'size', value: { size: 0, unit: 'deg' } } },
+		name: __( 'Hue Rotate', 'elementor' ),
+		valueName: __( 'Angle', 'elementor' ),
+		propType: hueRotateFilterPropTypeUtil,
+		units: [ 'deg', 'rad', 'grad', 'turn' ],
 	},
 };
 
@@ -124,7 +172,7 @@ const ItemContent = ( { bind }: { bind: PropKey } ) => {
 
 		newFilterValues[ itemIndex ] = {
 			$$type: filterType,
-			value: filterConfig[ filterType ].defaultValue,
+			value: { ...filterConfig[ filterType ].defaultValue },
 		} as FilterItemPropValue;
 
 		setValue( newFilterValues );
@@ -168,6 +216,7 @@ const SingleSizeItemContent = ( { filterType }: { filterType: FilterType } ) => 
 	const { $$type } = defaultValue;
 	const context = useBoundProp( propType );
 	const rowRef = useRef< HTMLDivElement >( null );
+	const defaultUnit = defaultValue[ $$type ].value.unit;
 
 	return (
 		<PropProvider { ...context }>
@@ -177,7 +226,7 @@ const SingleSizeItemContent = ( { filterType }: { filterType: FilterType } ) => 
 						<ControlLabel>{ valueName }</ControlLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
-						<SizeControl anchorRef={ rowRef } units={ units } />
+						<SizeControl anchorRef={ rowRef } units={ units } defaultUnit={ defaultUnit } />
 					</Grid>
 				</PopoverGridContainer>
 			</PropKeyProvider>

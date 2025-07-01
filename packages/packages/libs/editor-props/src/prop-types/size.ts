@@ -6,7 +6,7 @@ export const sizePropTypeUtil = createPropUtils(
 	'size',
 	z
 		.strictObject( {
-			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh' ] ),
+			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'deg', 'rad', 'grad', 'turn' ] ),
 			size: z.number(),
 		} )
 		.or(

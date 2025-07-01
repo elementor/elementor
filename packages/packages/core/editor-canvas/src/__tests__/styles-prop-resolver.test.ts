@@ -15,15 +15,21 @@ import {
 	brightnessFilterPropTypeUtil,
 	colorPropTypeUtil,
 	colorStopPropTypeUtil,
+	contrastFilterPropTypeUtil,
 	dimensionsPropTypeUtil,
 	filterPropTypeUtil,
 	gradientColorStopPropTypeUtil,
+	grayscaleFilterPropTypeUtil,
+	hueRotateFilterPropTypeUtil,
 	imageAttachmentIdPropType,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
+	invertFilterPropTypeUtil,
 	layoutDirectionPropTypeUtil,
 	numberPropTypeUtil,
 	type Props,
+	saturateFilterPropTypeUtil,
+	sepiaFilterPropTypeUtil,
 	shadowPropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
@@ -280,10 +286,28 @@ describe( 'styles prop resolver', () => {
 					brightnessFilterPropTypeUtil.create( {
 						amount: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
 					} ),
+					contrastFilterPropTypeUtil.create( {
+						contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+					} ),
+					grayscaleFilterPropTypeUtil.create( {
+						grayscale: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+					} ),
+					invertFilterPropTypeUtil.create( {
+						invert: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+					} ),
+					sepiaFilterPropTypeUtil.create( {
+						sepia: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+					} ),
+					saturateFilterPropTypeUtil.create( {
+						saturate: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+					} ),
+					hueRotateFilterPropTypeUtil.create( {
+						'hue-rotate': sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+					} ),
 				] ),
 			},
 			expected: {
-				filter: 'blur(1px) brightness(90%)',
+				filter: 'blur(1px) brightness(90%) contrast(50%) grayscale(70%) invert(60%) sepia(30%) saturate(25%) hue-rotate(10deg)',
 			},
 		},
 		{

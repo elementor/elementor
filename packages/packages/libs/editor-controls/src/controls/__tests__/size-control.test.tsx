@@ -6,7 +6,7 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { type Unit } from '../../utils/size-control';
+import { type DegreeUnit, type Unit } from '../../utils/size-control';
 import { SizeControl } from '../size-control';
 
 const mockSizeProp = ( value?: SizePropValue[ 'value' ] ) => ( {
@@ -15,6 +15,8 @@ const mockSizeProp = ( value?: SizePropValue[ 'value' ] ) => ( {
 } );
 
 const mockUnits = (): Unit[] => [ 'px', 'rem', '%', 'em' ];
+const mockDegreeUnits = (): DegreeUnit[] => [ 'deg', 'rad', 'grad', 'turn' ];
+const mockAllUnits = (): ( Unit | DegreeUnit )[] => [ ...mockUnits(), ...mockDegreeUnits() ];
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mocked( isExperimentActive ).mockReturnValue( true );
@@ -496,6 +498,54 @@ describe( 'SizeControl', () => {
 
 			// Assert
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 20, unit: 'rem' } } );
+		} );
+	} );
+
+	describe( 'Degree Units Support', () => {
+		it( 'should support mixed size and degree units', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const allUnits = mockAllUnits();
+
+			const props = { setValue, value: mockSizeProp(), bind: 'select', propType };
+
+			// Act.
+			renderControl( <SizeControl units={ allUnits } disableCustom />, props );
+
+			const selectInput = screen.getByRole( 'button' );
+
+			fireEvent.click( selectInput );
+
+			// Assert.
+			const menuItems = screen.getAllByRole( 'menuitem' );
+			expect( menuItems ).toHaveLength( allUnits.length );
+
+			allUnits.forEach( ( unit, index ) => {
+				expect( menuItems[ index ] ).toHaveTextContent( unit.toUpperCase() );
+			} );
+		} );
+
+		it( 'should handle degree unit keyboard shortcuts', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = { setValue, value: mockSizeProp( { size: 45, unit: 'deg' } ), bind: 'select', propType };
+
+			// Act.
+			renderControl( <SizeControl units={ mockDegreeUnits() } disableCustom />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+
+			fireEvent.keyUp( sizeInput, { key: 'd' } );
+			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'deg' } } );
+
+			fireEvent.keyUp( sizeInput, { key: 'r' } );
+			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'rad' } } );
+
+			fireEvent.keyUp( sizeInput, { key: 'g' } );
+			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'grad' } } );
+
+			fireEvent.keyUp( sizeInput, { key: 't' } );
+			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'turn' } } );
 		} );
 	} );
 } );

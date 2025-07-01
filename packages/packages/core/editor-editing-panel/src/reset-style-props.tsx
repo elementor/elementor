@@ -15,7 +15,7 @@ export function initResetStyleProps() {
 }
 
 // Temporary fix for the issue with ControlToggleButtonGroup.
-const EXCLUDED_BINDS = [ 'order', 'flex-grow', 'flex-shrink', 'flex-basis' ];
+const EXCLUDED_BINDS = [ 'flex-grow', 'flex-shrink', 'flex-basis' ];
 
 export function useResetStyleValueProps() {
 	const isStyle = useIsStyle();

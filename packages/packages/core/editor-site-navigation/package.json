@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-site-navigation",
-  "version": "0.36.1",
+  "version": "0.37.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,9 +39,9 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-app-bar": "0.31.1",
-    "@elementor/editor-documents": "0.13.8",
-    "@elementor/editor-panels": "0.16.1",
+    "@elementor/editor-app-bar": "0.32.0",
+    "@elementor/editor-documents": "0.13.9",
+    "@elementor/editor-panels": "0.17.0",
     "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/env": "0.3.5",
     "@elementor/icons": "1.46.0",

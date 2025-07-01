@@ -13,7 +13,9 @@ type Props = Partial< Omit< UnstableColorFieldProps, 'value' | 'onChange' > > & 
 
 export const ColorControl = createControl(
 	( { propTypeUtil = colorPropTypeUtil, anchorEl, slotProps = {}, ...props }: Props ) => {
-		const { value, setValue, disabled } = useBoundProp( propTypeUtil );
+		const { value, setValue, placeholder: boundPropPlaceholder, disabled } = useBoundProp( propTypeUtil );
+
+		const placeholder = props.placeholder ?? boundPropPlaceholder;
 
 		const handleChange = ( selectedColor: string ) => {
 			setValue( selectedColor || null );
@@ -25,6 +27,7 @@ export const ColorControl = createControl(
 					size="tiny"
 					fullWidth
 					value={ value ?? '' }
+					placeholder={ placeholder ?? '' }
 					onChange={ handleChange }
 					{ ...props }
 					disabled={ disabled }
@@ -39,6 +42,14 @@ export const ColorControl = createControl(
 							transformOrigin: {
 								vertical: 'top',
 								horizontal: -10,
+							},
+							slotProps: {
+								colorIndicator: {
+									value: value ?? placeholder ?? '',
+								},
+								colorBox: {
+									value: value ?? placeholder ?? '',
+								},
 							},
 						},
 					} }

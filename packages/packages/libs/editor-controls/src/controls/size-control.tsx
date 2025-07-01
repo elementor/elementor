@@ -10,7 +10,13 @@ import { TextFieldPopover } from '../components/text-field-popover';
 import { createControl } from '../create-control';
 import { useSizeExtendedOptions } from '../hooks/use-size-extended-options';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
-import { defaultUnits, type ExtendedOption, isUnitExtendedOption, type Unit } from '../utils/size-control';
+import {
+	defaultUnits,
+	type DegreeUnit,
+	type ExtendedOption,
+	isUnitExtendedOption,
+	type Unit,
+} from '../utils/size-control';
 
 const DEFAULT_UNIT = 'px';
 const DEFAULT_SIZE = NaN;
@@ -20,17 +26,17 @@ type SizeValue = SizePropValue[ 'value' ];
 type SizeControlProps = {
 	placeholder?: string;
 	startIcon?: React.ReactNode;
-	units?: Unit[];
+	units?: ( Unit | DegreeUnit )[];
 	extendedOptions?: ExtendedOption[];
 	disableCustom?: boolean;
 	anchorRef?: RefObject< HTMLDivElement | null >;
-	defaultUnit?: Unit;
+	defaultUnit?: Unit | DegreeUnit;
 };
 
 type State = {
 	numeric: number;
 	custom: string;
-	unit: Unit | ExtendedOption;
+	unit: Unit | DegreeUnit | ExtendedOption;
 };
 
 export const SizeControl = createControl( ( props: SizeControlProps ) => {
@@ -58,15 +64,15 @@ export const SizeControl = createControl( ( props: SizeControlProps ) => {
 			return !! newState?.numeric || newState?.numeric === 0;
 		},
 		fallback: ( newState ) => ( {
-			unit: newState?.unit ?? props.defaultUnit ?? DEFAULT_UNIT,
+			unit: newState?.unit ?? defaultUnit,
 			numeric: newState?.numeric ?? DEFAULT_SIZE,
 			custom: newState?.custom ?? '',
 		} ),
 	} );
 
-	const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = DEFAULT_UNIT } = extractValueFromState( state ) || {};
+	const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = defaultUnit } = extractValueFromState( state ) || {};
 
-	const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
+	const handleUnitChange = ( newUnit: Unit | DegreeUnit | ExtendedOption ) => {
 		if ( newUnit === 'custom' ) {
 			popupState.open( anchorRef?.current );
 		}
@@ -103,9 +109,13 @@ export const SizeControl = createControl( ( props: SizeControlProps ) => {
 	};
 
 	useEffect( () => {
-		const newState = createStateFromSizeProp( sizeValue, defaultUnit );
-		const currentUnit = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
-		const mergedStates = { ...state, [ currentUnit ]: newState[ currentUnit ] };
+		const newState = createStateFromSizeProp( sizeValue, state.unit === 'custom' ? state.unit : defaultUnit );
+		const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
+		const mergedStates = {
+			...state,
+			unit: newState.unit ?? state.unit,
+			[ currentUnitType ]: newState[ currentUnitType ],
+		};
 
 		if ( mergedStates.unit !== 'auto' && areStatesEqual( state, mergedStates ) ) {
 			return;
@@ -159,7 +169,7 @@ export const SizeControl = createControl( ( props: SizeControlProps ) => {
 	);
 } );
 
-function formatSize< TSize extends string | number >( size: TSize, unit: Unit | ExtendedOption ): TSize {
+function formatSize< TSize extends string | number >( size: TSize, unit: Unit | DegreeUnit | ExtendedOption ): TSize {
 	if ( isUnitExtendedOption( unit ) ) {
 		return unit === 'auto' ? ( '' as TSize ) : ( String( size ?? '' ) as TSize );
 	}
@@ -167,7 +177,10 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 	return size || size === 0 ? ( Number( size ) as TSize ) : ( NaN as TSize );
 }
 
-function createStateFromSizeProp( sizeValue: SizeValue | null, defaultUnit: Unit ): State {
+function createStateFromSizeProp(
+	sizeValue: SizeValue | null,
+	defaultUnit: Unit | DegreeUnit | ExtendedOption
+): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
 	const size = sizeValue?.size ?? '';
 

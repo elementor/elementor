@@ -1,14 +1,19 @@
 import * as React from 'react';
-import { type ChangeEvent, useMemo, useState } from 'react';
-import { keyValuePropTypeUtil } from '@elementor/editor-props';
-import { FormHelperText, FormLabel, Grid, TextField } from '@elementor/ui';
+import { useMemo, useState } from 'react';
+import {
+	type CreateOptions,
+	isTransformable,
+	keyValuePropTypeUtil,
+	type PropKey,
+	type Props,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
+import { FormHelperText, FormLabel, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useBoundProp } from '../bound-prop-context';
-import ControlActions from '../control-actions/control-actions';
+import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { createControl } from '../create-control';
-
-type FieldType = 'key' | 'value';
+import { TextControl } from './text-control';
 
 type KeyValueControlProps = {
 	keyName?: string;
@@ -19,9 +24,9 @@ type KeyValueControlProps = {
 };
 
 export const KeyValueControl = createControl( ( props: KeyValueControlProps = {} ) => {
-	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
-	const [ keyError, setKeyError ] = useState< string | null >( null );
-	const [ valueError, setValueError ] = useState< string | null >( null );
+	const { value, setValue, ...propContext } = useBoundProp( keyValuePropTypeUtil );
+	const [ keyError, setKeyError ] = useState< string >( '' );
+	const [ valueError, setValueError ] = useState< string >( '' );
 
 	const [ sessionState, setSessionState ] = useState( {
 		key: value?.key?.value || '',
@@ -43,31 +48,48 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 	const validate = ( newValue: string, fieldType: string ): boolean => {
 		if ( fieldType === 'key' && keyRegex ) {
 			const isValid = keyRegex.test( newValue );
-			setKeyError( isValid ? null : errMsg );
+			setKeyError( isValid ? '' : errMsg );
+
 			return isValid;
 		} else if ( fieldType === 'value' && valueRegex ) {
 			const isValid = valueRegex.test( newValue );
-			setValueError( isValid ? null : errMsg );
+			setValueError( isValid ? '' : errMsg );
+
 			return isValid;
 		}
+
 		return true;
 	};
 
-	const handleChange = ( event: ChangeEvent< HTMLInputElement >, fieldType: FieldType ) => {
-		const newValue = event.target.value;
+	const handleChange = ( newValue: Props, options?: CreateOptions, meta?: { bind?: PropKey } ) => {
+		const fieldType = meta?.bind;
+
+		if ( ! fieldType ) {
+			return;
+		}
+
+		const newChangedValue = newValue[ fieldType ];
+
+		if ( isTransformable( newChangedValue ) && newChangedValue.$$type === 'dynamic' ) {
+			setValue( {
+				...value,
+				[ fieldType ]: newChangedValue,
+			} );
+
+			return;
+		}
+
+		const extractedValue = stringPropTypeUtil.extract( newChangedValue );
 
 		setSessionState( ( prev ) => ( {
 			...prev,
-			[ fieldType ]: newValue,
+			[ fieldType ]: extractedValue,
 		} ) );
 
-		if ( validate( newValue, fieldType ) ) {
+		if ( extractedValue && validate( extractedValue, fieldType ) ) {
 			setValue( {
 				...value,
-				[ fieldType ]: {
-					value: newValue,
-					$$type: 'string',
-				},
+				[ fieldType ]: newChangedValue,
 			} );
 		} else {
 			setValue( {
@@ -80,40 +102,29 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 		}
 	};
 
-	const isKeyInvalid = keyError !== null;
-	const isValueInvalid = valueError !== null;
-
 	return (
-		<ControlActions>
+		<PropProvider { ...propContext } value={ value } setValue={ handleChange }>
 			<Grid container gap={ 1.5 }>
 				<Grid item xs={ 12 }>
 					<FormLabel size="tiny">{ keyLabel }</FormLabel>
-					<TextField
-						// eslint-disable-next-line jsx-a11y/no-autofocus
-						autoFocus
-						sx={ { pt: 1 } }
-						size="tiny"
-						fullWidth
-						value={ sessionState.key }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) => handleChange( e, 'key' ) }
-						error={ isKeyInvalid }
-					/>
-					{ isKeyInvalid && <FormHelperText error>{ keyError }</FormHelperText> }
+					<PropKeyProvider bind={ 'key' }>
+						<TextControl inputValue={ sessionState.key } error={ !! keyError } sx={ { pt: 1 } } />
+					</PropKeyProvider>
+					{ !! keyError && <FormHelperText error>{ keyError }</FormHelperText> }
 				</Grid>
 				<Grid item xs={ 12 }>
 					<FormLabel size="tiny">{ valueLabel }</FormLabel>
-					<TextField
-						sx={ { pt: 1 } }
-						size="tiny"
-						fullWidth
-						value={ sessionState.value }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) => handleChange( e, 'value' ) }
-						disabled={ isKeyInvalid }
-						error={ isValueInvalid }
-					/>
-					{ isValueInvalid && <FormHelperText error>{ valueError }</FormHelperText> }
+					<PropKeyProvider bind={ 'value' }>
+						<TextControl
+							inputValue={ sessionState.value }
+							error={ !! valueError }
+							inputDisabled={ !! keyError }
+							sx={ { pt: 1 } }
+						/>
+					</PropKeyProvider>
+					{ !! valueError && <FormHelperText error>{ valueError }</FormHelperText> }
 				</Grid>
 			</Grid>
-		</ControlActions>
+		</PropProvider>
 	);
 } );

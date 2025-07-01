@@ -1,5 +1,63 @@
 # Change Log
 
+## 1.49.0
+
+### Minor Changes
+
+- 90ec4c6: reset functionality added to flex order filed
+
+### Patch Changes
+
+- Updated dependencies [669f39f]
+- Updated dependencies [2e677ee]
+- Updated dependencies [068f659]
+- Updated dependencies [e7cca0a]
+- Updated dependencies [07ca7e9]
+  - @elementor/editor-controls@1.4.0
+  - @elementor/editor-ui@0.14.1
+  - @elementor/editor-canvas@0.27.0
+  - @elementor/editor-props@0.17.0
+  - @elementor/editor-styles-repository@0.10.6
+  - @elementor/editor-elements@0.9.1
+  - @elementor/editor-styles@0.6.13
+
+## 1.48.0
+
+### Minor Changes
+
+- b94c5af: Fix floating icons on top of panel tab header
+- b3726f6: Add transform move control
+- 68ce0d9: Ensure current user exist in the editor.
+- 1a37b1c: Update the Elementor UI version.
+- c62d64c: Injected prop dependency API into settings field
+- 12333b0: Update `@elementor/icons` package.
+- a88c14b: Added the changed prop name to style editing history
+
+### Patch Changes
+
+- 49714e8: Fix flex order control layout
+- d9aaedd: Wrap opacity control with version experiment
+- Updated dependencies [5c6a912]
+- Updated dependencies [b3726f6]
+- Updated dependencies [68ce0d9]
+- Updated dependencies [b17730a]
+- Updated dependencies [1a37b1c]
+- Updated dependencies [c62d64c]
+- Updated dependencies [d1fc9d2]
+- Updated dependencies [12333b0]
+- Updated dependencies [8f38cf3]
+- Updated dependencies [d4406fd]
+  - @elementor/editor-controls@1.3.0
+  - @elementor/editor-canvas@0.26.0
+  - @elementor/editor-props@0.16.0
+  - @elementor/editor@0.21.0
+  - @elementor/editor-panels@0.17.0
+  - @elementor/editor-ui@0.14.0
+  - @elementor/editor-elements@0.9.0
+  - @elementor/editor-styles-repository@0.10.5
+  - @elementor/editor-styles@0.6.12
+  - @elementor/editor-documents@0.13.9
+
 ## 1.47.0
 
 ### Minor Changes

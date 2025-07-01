@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.13.9
+
+### Patch Changes
+
+- Updated dependencies [68ce0d9]
+- Updated dependencies [1a37b1c]
+  - @elementor/editor@0.21.0
+
 ## 0.13.8
 
 ### Patch Changes

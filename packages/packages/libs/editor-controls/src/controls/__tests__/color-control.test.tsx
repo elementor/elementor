@@ -40,7 +40,22 @@ describe( 'ColorControl', () => {
 		} );
 	} );
 
-	it( 'should have empty value when value is null', () => {
+	it( 'should have empty value when value is null and placeholder is not provided', () => {
+		// Arrange.
+		const setValue = jest.fn();
+
+		const props = { setValue, value: { $$type: 'color', value: null }, bind: 'color', propType };
+
+		// Act.
+		renderControl( <ColorControl />, props );
+
+		const colorInput = screen.getByRole( 'textbox' );
+
+		// Assert.
+		expect( colorInput ).toHaveValue( '' );
+	} );
+
+	it( 'should have empty value when value is null and placeholder is provided', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
@@ -53,5 +68,45 @@ describe( 'ColorControl', () => {
 
 		// Assert.
 		expect( colorInput ).toHaveValue( '' );
+	} );
+
+	it( 'should show useBoundProp placeholder when value is null', () => {
+		// Arrange
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: { $$type: 'color', value: null },
+			bind: 'color',
+			propType,
+			placeholder: { $$type: 'color', value: 'bound-placeholder' },
+		};
+
+		// Act
+		renderControl( <ColorControl />, props );
+
+		// Assert
+		const inputElement = screen.getByPlaceholderText( 'bound-placeholder' );
+		expect( inputElement ).toBeInTheDocument();
+		expect( inputElement ).toHaveValue( '' );
+	} );
+
+	it( 'should prioritize component placeholder prop over useBoundProp placeholder', () => {
+		// Arrange
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: { $$type: 'color', value: null },
+			bind: 'color',
+			propType,
+			placeholder: { $$type: 'color', value: 'bound-placeholder' },
+		};
+
+		// Act
+		renderControl( <ColorControl placeholder="direct-placeholder" />, props );
+
+		// Assert
+		const inputElement = screen.getByPlaceholderText( 'direct-placeholder' );
+		expect( inputElement ).toBeInTheDocument();
+		expect( inputElement ).toHaveValue( '' );
 	} );
 } );

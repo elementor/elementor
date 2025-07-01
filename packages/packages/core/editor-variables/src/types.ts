@@ -10,7 +10,7 @@ export type Variable = {
 	deleted_at?: string;
 };
 
-export type StyleVariables = Record< string, string >;
+export type StyleVariables = Record< string, Variable >;
 
 export type ExtendedVirtualizedItem = VirtualizedItem< 'item', string > & {
 	icon: React.ReactNode;
