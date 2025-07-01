@@ -17,7 +17,7 @@ class Union_Prop_Type implements Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Required_Setting;
 
-	private array $dependencies1 = [];
+	private array $prop_dependencies = [];
 
 	protected $default = null;
 
@@ -110,15 +110,15 @@ class Union_Prop_Type implements Prop_Type {
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
-			'dependencies' => $this->dependencies1,
+			'dependencies' => $this->prop_dependencies,
 		];
 	}
 
 	public function dependencies( ?Dependency_Manager $manager = null ): self {
-		$this->dependencies1 = $manager->get();
+		$this->prop_dependencies = $manager->get();
 
-		if ( ! empty( $this->dependencies1 ) ) {
-			$this->meta( 'dependencies', $this->dependencies1 );
+		if ( ! empty( $this->prop_dependencies ) ) {
+			$this->meta( 'dependencies', $this->prop_dependencies );
 		}
 
 		return $this;
