@@ -1,1 +1,1 @@
-.test-font-variable{font-family:var(--e-gf-009);}
+.test-font-variable{font-family:var(--primary-font);}.test-font-variable-primary{font-family:var(--e-gv-03);}

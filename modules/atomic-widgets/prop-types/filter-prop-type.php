@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Grayscale_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Invert_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Saturate_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Sepia_Filter_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Hue_Rotate_Filter_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -30,6 +31,7 @@ class Filter_Prop_Type extends Array_Prop_Type {
 				->add_prop_type( Grayscale_Filter_Prop_Type::make() )
 				->add_prop_type( Invert_Filter_Prop_Type::make() )
 				->add_prop_type( Saturate_Filter_Prop_Type::make() )
-				->add_prop_type( Sepia_Filter_Prop_Type::make() );
+				->add_prop_type( Sepia_Filter_Prop_Type::make() )
+				->add_prop_type( Hue_Rotate_Filter_Prop_Type::make() );
 	}
 }
