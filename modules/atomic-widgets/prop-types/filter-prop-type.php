@@ -27,14 +27,14 @@ class Filter_Prop_Type extends Array_Prop_Type {
 
 	protected function define_item_type(): Prop_Type {
 		return Union_Prop_Type::make()
-			->add_prop_type( Blur_Filter_Prop_Type::make() )
-			->add_prop_type( Brightness_Filter_Prop_Type::make() )
-			->add_prop_type( Contrast_Filter_Prop_Type::make() )
-			->add_prop_type( Grayscale_Filter_Prop_Type::make() )
-			->add_prop_type( Invert_Filter_Prop_Type::make() )
-			->add_prop_type( Saturate_Filter_Prop_Type::make() )
-			->add_prop_type( Sepia_Filter_Prop_Type::make() )
-			->add_prop_type( Hue_Rotate_Filter_Prop_Type::make() )
-			->add_prop_type( Drop_Shadow_Filter_Prop_Type::make() );
+				->add_prop_type( Blur_Filter_Prop_Type::make() )
+				->add_prop_type( Brightness_Filter_Prop_Type::make() )
+				->add_prop_type( Contrast_Filter_Prop_Type::make() )
+				->add_prop_type( Grayscale_Filter_Prop_Type::make() )
+				->add_prop_type( Invert_Filter_Prop_Type::make() )
+				->add_prop_type( Saturate_Filter_Prop_Type::make() )
+				->add_prop_type( Sepia_Filter_Prop_Type::make() )
+				->add_prop_type( Hue_Rotate_Filter_Prop_Type::make() )
+				->add_prop_type( Drop_Shadow_Filter_Prop_Type::make() );
 	}
 }
