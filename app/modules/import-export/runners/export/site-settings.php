@@ -42,6 +42,12 @@ class Site_Settings extends Export_Runner_Base {
 			$kit_data['theme'] = $theme_data;
 		}
 
+		// Export experiments
+		$experiments_data = $this->export_experiments();
+		if ( $experiments_data ) {
+			$kit_data['experiments'] = $experiments_data;
+		}
+
 		$manifest_data['site-settings'] = $kit_tabs;
 
 		return [
@@ -68,5 +74,38 @@ class Site_Settings extends Export_Runner_Base {
 		$theme_data['slug'] = $theme->get_stylesheet();
 
 		return $theme_data;
+	}
+
+	/**
+	 * Export experiments data
+	 *
+	 * @return array|null
+	 */
+	private function export_experiments() {
+		$experiments_manager = Plugin::$instance->experiments;
+		$features = $experiments_manager->get_features();
+
+		if ( empty( $features ) ) {
+			return null;
+		}
+
+		$experiments_data = [];
+
+		foreach ( $features as $feature_name => $feature ) {
+			// Only export mutable features (user-configurable)
+			if ( ! $feature['mutable'] ) {
+				continue;
+			}
+
+			$experiments_data[ $feature_name ] = [
+				'name' => $feature_name,
+				'title' => $feature['title'],
+				'state' => $feature['state'],
+				'default' => $feature['default'],
+				'release_status' => $feature['release_status'],
+			];
+		}
+
+		return empty( $experiments_data ) ? null : $experiments_data;
 	}
 }

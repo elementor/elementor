@@ -38,6 +38,16 @@ class Site_Settings extends Import_Runner_Base {
 	 */
 	private ?array $previous_active_theme = null;
 
+	/**
+	 * @var array
+	 */
+	private $previous_experiments = [];
+
+	/**
+	 * @var array
+	 */
+	private $imported_experiments = [];
+
 	public function get_theme_upgrader(): \Theme_Upgrader {
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -105,6 +115,12 @@ class Site_Settings extends Import_Runner_Base {
 			$result['theme'] = $import_theme_result;
 		}
 
+		// Import experiments
+		$import_experiments_result = $this->import_experiments( $data );
+		if ( ! empty( $import_experiments_result ) ) {
+			$result['experiments'] = $import_experiments_result;
+		}
+
 		return $result;
 	}
 
@@ -162,6 +178,90 @@ class Site_Settings extends Import_Runner_Base {
 		return $result;
 	}
 
+	/**
+	 * Import experiments data
+	 *
+	 * @param array $data
+	 * @return array|null
+	 */
+	private function import_experiments( array $data ) {
+		if ( empty( $data['site_settings']['experiments'] ) ) {
+			return null;
+		}
+
+		$experiments_data = $data['site_settings']['experiments'];
+		$experiments_manager = Plugin::$instance->experiments;
+		$current_features = $experiments_manager->get_features();
+
+		// Save current experiments state for revert
+		$this->save_previous_experiments_state( $current_features );
+
+		$imported_count = 0;
+
+		foreach ( $experiments_data as $feature_name => $feature_data ) {
+			// Check if the feature exists in current installation
+			if ( ! isset( $current_features[ $feature_name ] ) ) {
+				continue;
+			}
+
+			$current_feature = $current_features[ $feature_name ];
+
+			// Only import mutable features
+			if ( ! $current_feature['mutable'] ) {
+				continue;
+			}
+
+			// Validate state value
+			$new_state = $feature_data['state'];
+			if ( ! in_array( $new_state, [ 'default', 'active', 'inactive' ], true ) ) {
+				continue;
+			}
+
+			// Apply the experiment state
+			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
+
+			if ( 'default' === $new_state ) {
+				delete_option( $option_key );
+			} else {
+				update_option( $option_key, $new_state );
+			}
+
+			$this->imported_experiments[ $feature_name ] = $feature_data;
+			$imported_count++;
+		}
+
+		return [
+			'imported_count' => $imported_count,
+			'total_count' => count( $experiments_data ),
+		];
+	}
+
+	/**
+	 * Save the current experiments state for revert functionality
+	 *
+	 * @param array $current_features
+	 */
+	private function save_previous_experiments_state( array $current_features ) {
+		$experiments_manager = Plugin::$instance->experiments;
+
+		foreach ( $current_features as $feature_name => $feature ) {
+			if ( ! $feature['mutable'] ) {
+				continue;
+			}
+
+			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
+			$saved_state = get_option( $option_key );
+
+			$this->previous_experiments[ $feature_name ] = [
+				'name' => $feature_name,
+				'title' => $feature['title'],
+				'state' => $saved_state ?: 'default',
+				'default' => $feature['default'],
+				'release_status' => $feature['release_status'],
+			];
+		}
+	}
+
 	public function get_import_session_metadata(): array {
 		return [
 			'previous_kit_id' => $this->previous_kit_id,
@@ -170,6 +270,8 @@ class Site_Settings extends Import_Runner_Base {
 			'installed_theme' => $this->installed_theme,
 			'activated_theme' => $this->activated_theme,
 			'previous_active_theme' => $this->previous_active_theme,
+			'previous_experiments' => $this->previous_experiments,
+			'imported_experiments' => $this->imported_experiments,
 		];
 	}
 }
