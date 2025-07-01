@@ -47,23 +47,15 @@ class Atomic_Styles_Manager {
 		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
 
 		$get_styles_cache = new Cache();
-		$styles_by_key = Collection::make( $this->registered_styles_by_key )->map_with_keys( function( $get_styles, $style_key ) use ( $get_styles_cache ) {
-			return [
-				$style_key => $get_styles_cache->cache( $style_key, $get_styles ),
-			];
-		} )->all();
+		$styles_by_key = Collection::make( $this->registered_styles_by_key )
+			->map_with_keys( fn( $get_styles, $style_key ) => [ $style_key => $get_styles_cache->cache( $style_key, $get_styles ) ] )
+			->all();
 
 		$group_by_breakpoint_cache = new Cache();
 		$breakpoints = $this->get_breakpoints();
 		foreach ( $breakpoints as $breakpoint_key ) {
 			foreach ( $styles_by_key as $style_key => $get_styles ) {
-				$render_css = function () use ( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache ) {
-					$cache_key = $style_key . '-' . $breakpoint_key;
-					$get_grouped_styles = $group_by_breakpoint_cache->cache( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
-					$grouped_styles = $get_grouped_styles();
-
-					return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
-				};
+				$render_css = fn() => $this->render_css_by_breakpoints( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache );
 
 				$style_file = ( new CSS_Files_Manager() )->get( $style_key . '-' . $breakpoint_key, $render_css );
 
@@ -100,6 +92,14 @@ class Atomic_Styles_Manager {
 			'content' => $css,
 			'media' => $media,
 		];
+	}
+
+	private function render_css_by_breakpoints( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache ) {
+		$cache_key = $style_key . '-' . $breakpoint_key;
+		$get_grouped_styles = $group_by_breakpoint_cache->cache( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
+		$grouped_styles = $get_grouped_styles();
+
+		return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $breakpoint_key );
 	}
 
 	private function group_by_breakpoint( $styles ) {
