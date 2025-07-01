@@ -48,7 +48,6 @@ class Filter_Transformer extends Transformer_Base {
 			return 'hue-rotate(' . $filter['hue-rotate'] . ')';
 		}
 
-		// Handle drop-shadow filter with xAxis, yAxis, blur, color structure
 		if ( $filter['$$type'] === 'drop-shadow' ) {
 			$xAxis = $filter['xAxis'] ?? '0px';
 			$yAxis = $filter['yAxis'] ?? '0px';
