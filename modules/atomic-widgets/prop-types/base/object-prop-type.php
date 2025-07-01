@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -20,6 +21,8 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Required_Setting;
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
+
+	private array $dependencies = [];
 
 	/**
 	 * @var array<Prop_Type>
@@ -121,6 +124,12 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
+	public function dependencies( Dependency_Manager $manager ): self {
+		$this->dependencies = $manager->get();
+
+		return $this;
+	}
+
 	public function jsonSerialize(): array {
 		$default = $this->get_default();
 
@@ -131,6 +140,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
 			'shape' => (object) $this->get_shape(),
+			'dependencies' => $this->dependencies,
 		];
 	}
 
