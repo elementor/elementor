@@ -115,10 +115,10 @@ class Site_Settings extends Import_Runner_Base {
 			$result['theme'] = $import_theme_result;
 		}
 
-		$import_experiments_result = $this->import_experiments( $data );
+		$this->import_experiments( $data );
 
-		if ( ! empty( $import_experiments_result ) ) {
-			$result['experiments'] = $import_experiments_result;
+		if ( ! empty( $this->imported_experiments ) ) {
+			$result['experiments'] = $this->imported_experiments;
 		}
 
 		return $result;
@@ -189,8 +189,6 @@ class Site_Settings extends Import_Runner_Base {
 
 		$this->save_previous_experiments_state( $current_features );
 
-		$imported_count = 0;
-
 		foreach ( $experiments_data as $feature_name => $feature_data ) {
 			if ( ! isset( $current_features[ $feature_name ] ) ) {
 				continue;
@@ -198,11 +196,13 @@ class Site_Settings extends Import_Runner_Base {
 
 			$current_feature = $current_features[ $feature_name ];
 
-			if ( ! $current_feature['mutable'] ) {
+			$current_feature_state = $current_feature['state'];
+			$new_state = $feature_data['state'];
+
+			if ( $current_feature_state === $new_state ) {
 				continue;
 			}
 
-			$new_state = $feature_data['state'];
 			if ( ! in_array( $new_state, [ 'default', 'active', 'inactive' ], true ) ) {
 				continue;
 			}
@@ -216,13 +216,7 @@ class Site_Settings extends Import_Runner_Base {
 			}
 
 			$this->imported_experiments[ $feature_name ] = $feature_data;
-			$imported_count++;
 		}
-
-		return [
-			'imported_count' => $imported_count,
-			'total_count' => count( $experiments_data ),
-		];
 	}
 
 	private function save_previous_experiments_state( array $current_features ) {

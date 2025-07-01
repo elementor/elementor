@@ -112,9 +112,7 @@ class Site_Settings extends Revert_Runner_Base {
 				continue;
 			}
 
-			$current_feature = $current_features[ $feature_name ];
-
-			if ( ! $current_feature['mutable'] ) {
+			if ( ! array_key_exists( $feature_name, $previous_experiments ) ) {
 				continue;
 			}
 

@@ -86,10 +86,6 @@ class Site_Settings extends Export_Runner_Base {
 		$experiments_data = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			if ( ! $feature['mutable'] ) {
-				continue;
-			}
-
 			$experiments_data[ $feature_name ] = [
 				'name' => $feature_name,
 				'title' => $feature['title'],
