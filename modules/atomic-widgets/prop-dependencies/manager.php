@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\PropDependencies;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +18,7 @@ class Manager {
 	const EFFECT_DISABLE = 'disable';
 	const EFFECT_HIDE = 'hide';
 
+	const FRONTEND_CONFIG_KEY = 'dependencies_per_target_mapping';
 	/**
 	 * @var array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
@@ -34,9 +36,24 @@ class Manager {
 		$this->dependencies = [];
 	}
 
-
 	public static function make(): self {
 		return new self();
+	}
+
+	/**
+	 * @param array<string, Prop_Type> $props_schema
+	 * @return array<string, array<string>> Returns source prop path => array of dependent prop paths
+	 */
+	public static function get_source_to_dependents( array $props_schema ): array {
+		$dependency_graph = [];
+
+		self::build_dependency_graph( $props_schema, [], $dependency_graph );
+
+		if ( self::has_circular_dependencies( $dependency_graph ) ) {
+			Utils::safe_throw( 'Circular prop dependencies detected' );
+		}
+
+		return $dependency_graph;
 	}
 
 	/**
@@ -48,6 +65,10 @@ class Manager {
 	 * @return self
 	 */
 	public function where( array $config ): self {
+		if ( ! isset( $config['operator'] ) || ! isset( $config['path'] ) ) {
+			Utils::safe_throw( 'Term missing mandatory configurations' );
+		}
+
 		$term = [
 			'operator' => $config['operator'],
 			'path' => $config['path'],
@@ -78,6 +99,14 @@ class Manager {
 			'terms' => [],
 		];
 
+		if ( ! in_array( $new_dependency['effect'], [ self::EFFECT_DISABLE, self::EFFECT_HIDE ] ) ) {
+			Utils::safe_throw( "Invalid effect: {$new_dependency['effect']}." );
+		}
+
+		if ( ! in_array( $new_dependency['relation'], [ self::RELATION_OR, self::RELATION_AND ] ) ) {
+			Utils::safe_throw( "Invalid relation: {$new_dependency['relation']}." );
+		}
+
 		$existing_dependency_with_effect = Collection::make( $this->dependencies )
 			->find( fn ( $dependency ) => $dependency['effect'] === $new_dependency['effect'] );
 
@@ -94,5 +123,128 @@ class Manager {
 		return Collection::make( $this->dependencies )
 			->filter( fn ( $dependency ) => ! empty( $dependency['terms'] ) )
 			->all();
+	}
+
+	/**
+	 * @param array<string, Prop_Type> $props_schema The props schema to analyze, where keys are prop names
+	 * @param array<string> $current_path The current property path being processed
+	 * @param array<string, array<string>> &$dependency_graph The dependency graph to build
+	 */
+	private static function build_dependency_graph( array $props_schema, array $current_path, array &$dependency_graph ): void {
+		foreach ( $props_schema as $prop_name => $prop_type ) {
+			self::build_nested_prop_dependency_graph( $prop_name, $prop_type, $current_path, $dependency_graph );
+
+			$dependencies = $prop_type->get_meta()['dependencies'] ?? [];
+
+			foreach ( $dependencies as $dependency ) {
+				$terms = $dependency['terms'] ?? [];
+
+				foreach ( $terms as $term ) {
+					self::process_dependency_term( $term, $current_path, $prop_name, $dependency_graph );
+				}
+			}
+		}
+	}
+
+	private static function build_nested_prop_dependency_graph( string $prop_name, Prop_Type $prop_type, array $current_path, array &$dependency_graph ): void {
+		$nested_prop_path = array_merge( $current_path, [ $prop_name ] );
+
+		if ( self::is_object_prop_type( $prop_type ) ) {
+			foreach ( $prop_type->get_shape() as $nested_prop_name => $nested_prop_type ) {
+				self::build_dependency_graph( [ $nested_prop_name => $nested_prop_type ], $nested_prop_path, $dependency_graph );
+			}
+		} else if ( self::is_array_prop_type( $prop_type ) ) {
+			$item_prop_type = $prop_type->get_item_type();
+
+			self::build_dependency_graph( [ $prop_name => $item_prop_type ], $current_path, $dependency_graph );
+		} else if ( self::is_union_prop_type( $prop_type ) ) {
+			foreach ( $prop_type->get_prop_types() as $nested_prop_type ) {
+				self::build_dependency_graph( [ $prop_name => $nested_prop_type ], $current_path, $dependency_graph );
+			}
+		}
+	}
+
+	private static function process_dependency_term( array $term, array $current_path, string $prop_name, array &$dependency_graph ): void {
+		if ( self::is_term_nested( $term ) ) {
+			foreach ( $term['terms'] as $nested_term ) {
+				self::process_dependency_term( $nested_term, $current_path, $prop_name, $dependency_graph );
+			}
+
+			return;
+		}
+
+		if ( ! isset( $term['path'] ) || empty( $term['path'] ) ) {
+			Utils::safe_throw( 'Invalid term path in dependency.' );
+		}
+
+		$target_path = implode( '.', $term['path'] );
+		$source = array_merge( $current_path, [ $prop_name ] );
+		$source_path = implode( '.', $source );
+
+		if ( ! isset( $dependency_graph[ $target_path ] ) ) {
+			$dependency_graph[ $target_path ] = [];
+		}
+
+		if ( ! in_array( $source_path, $dependency_graph[ $target_path ] ) ) {
+			$dependency_graph[ $target_path ][] = $source_path;
+		}
+	}
+
+	private static function has_circular_dependencies( array $dependency_graph ): bool {
+		$visited_nodes = [];
+		$current_path_stack = [];
+
+		foreach ( array_keys( $dependency_graph ) as $node ) {
+			if ( isset( $visited_nodes[ $node ] ) ) {
+				continue;
+			}
+
+			if ( self::detect_cycle_from_node( $dependency_graph, $node, $visited_nodes, $current_path_stack ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static function detect_cycle_from_node( array $dependency_graph, string $current_node, array &$visited_nodes, array &$current_path_stack ): bool {
+		if ( isset( $current_path_stack[ $current_node ] ) ) {
+			return true;
+		}
+
+		if ( isset( $visited_nodes[ $current_node ] ) ) {
+			return false;
+		}
+
+		$visited_nodes[ $current_node ] = true;
+		$current_path_stack[ $current_node ] = true;
+
+		foreach ( $dependency_graph[ $current_node ] ?? [] as $dependent_node ) {
+			$is_circular = self::detect_cycle_from_node( $dependency_graph, $dependent_node, $visited_nodes, $current_path_stack );
+
+			if ( $is_circular ) {
+				return true;
+			}
+		}
+
+		unset( $current_path_stack[ $current_node ] );
+
+		return false;
+	}
+
+	private static function is_term_nested( $term ): bool {
+		return isset( $term['terms'] ) && is_array( $term['terms'] );
+	}
+
+	private static function is_object_prop_type( Prop_Type $prop_type ): bool {
+		return method_exists( $prop_type, 'get_shape' ) && is_array( $prop_type->get_shape() );
+	}
+
+	private static function is_array_prop_type( Prop_Type $prop_type ): bool {
+		return method_exists( $prop_type, 'get_item_type' ) && $prop_type->get_item_type();
+	}
+
+	private static function is_union_prop_type( Prop_Type $prop_type ): bool {
+		return method_exists( $prop_type, 'get_prop_types' ) && is_array( $prop_type->get_prop_types() );
 	}
 }

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -21,6 +22,8 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Transformable_Validation;
 
 	protected Prop_Type $item_type;
+
+	private array $dependencies = [];
 
 	public function __construct() {
 		$this->item_type = $this->define_item_type();
@@ -101,4 +104,14 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	abstract protected function define_item_type(): Prop_Type;
+
+	public function dependencies( ?Dependency_Manager $manager = null ): self {
+		$this->dependencies = $manager->get();
+
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
+
+		return $this;
+	}
 }

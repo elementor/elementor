@@ -66,6 +66,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	public function dependencies( Dependency_Manager $manager ): self {
 		$this->dependencies = $manager->get();
 
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
+
 		return $this;
 	}
 }

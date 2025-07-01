@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
@@ -18,8 +19,14 @@ class Union_Prop_Type implements Prop_Type {
 
 	protected $default = null;
 
+	private array $dependencies = [];
+
 	/** @var Array<string, Transformable_Prop_Type> */
 	protected array $prop_types = [];
+
+	public static function get_key(): string {
+		return 'union';
+	}
 
 	public static function make(): self {
 		return new static();
@@ -104,5 +111,15 @@ class Union_Prop_Type implements Prop_Type {
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
 		];
+	}
+
+	public function dependencies( ?Dependency_Manager $manager = null ): self {
+		$this->dependencies = $manager->get();
+
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
+
+		return $this;
 	}
 }
