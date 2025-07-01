@@ -24,7 +24,7 @@ const QueryClientWrapper = ( { children }: PropsWithChildren ) => (
 );
 
 export const renderControl = ( ui: React.ReactElement, props: RenderControlProps ) => {
-	const { bind = '', controlActions = [], setValue: setValueProp = jest.fn(), disabled } = props;
+	const { bind = '', controlActions = [], setValue: setValueProp = jest.fn(), isDisabled } = props;
 
 	const propType: ObjectPropType = {
 		key: '',
@@ -45,7 +45,7 @@ export const renderControl = ( ui: React.ReactElement, props: RenderControlProps
 
 	const { rerender, ...rest } = renderWithTheme(
 		<QueryClientWrapper>
-			<PropProvider propType={ propType } value={ value } setValue={ setValue } disabled={ disabled }>
+			<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
 				<PropKeyProvider bind={ bind }>
 					<ControlActionsProvider items={ controlActions }>{ ui }</ControlActionsProvider>
 				</PropKeyProvider>
