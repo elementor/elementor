@@ -1,1 +1,1 @@
-.test-color-variable{background-color:var(--e-gc-a01);}
+.test-color-variable{color:var(--e-gv-04);background-color:var(--primary-color);}
