@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Exception;
 use WP_Error;
 use WP_REST_Response;
@@ -272,6 +273,8 @@ class Rest_Api {
 
 		$result = $this->variables_repository->delete( $id );
 
+		$this->clear_cache();
+
 		return $this->success_response( [
 			'variable' => $result['variable'],
 			'watermark' => $result['watermark'],
@@ -290,6 +293,8 @@ class Rest_Api {
 		$id = $request->get_param( 'id' );
 
 		$result = $this->variables_repository->restore( $id );
+
+		$this->clear_cache();
 
 		return $this->success_response( [
 			'variable' => $result['variable'],
@@ -328,6 +333,14 @@ class Rest_Api {
 				self::HTTP_BAD_REQUEST,
 				'invalid_variable_limit_reached',
 				__( 'Reached the maximum number of variables', 'elementor' )
+			);
+		}
+
+		if ( $e instanceof DuplicatedLabel ) {
+			return $this->prepare_error_response(
+				self::HTTP_BAD_REQUEST,
+				'duplicated_label',
+				__( 'Variable name already exists', 'elementor' )
 			);
 		}
 
