@@ -18,11 +18,11 @@ class Drop_Shadow_Filter_Prop_Type extends Object_Prop_Type {
 
     protected function define_shape(): array {
         return [
-            'hOffset' => Size_Prop_Type::make()->default([
+            'xAxis' => Size_Prop_Type::make()->default([
                 'size' => 0,
                 'unit' => 'px'
             ])->required(),
-            'vOffset' => Size_Prop_Type::make()->default([
+            'yAxis' => Size_Prop_Type::make()->default([
                 'size' => 0,
                 'unit' => 'px'
             ])->required(),
