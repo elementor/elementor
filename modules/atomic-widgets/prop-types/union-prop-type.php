@@ -21,7 +21,7 @@ class Union_Prop_Type implements Prop_Type {
 
 	protected $default = null;
 
-	private array $dependencies = [];
+	private array $dependencies1 = [];
 
 	/** @var Array<string, Transformable_Prop_Type> */
 	protected array $prop_types = [];
@@ -123,10 +123,10 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function dependencies( ?Dependency_Manager $manager = null ): self {
-		$this->dependencies = $manager->get();
+		$this->dependencies1 = $manager->get();
 
-		if ( ! empty( $this->dependencies ) ) {
-			$this->meta( 'dependencies', $this->dependencies );
+		if ( ! empty( $this->dependencies1 ) ) {
+			$this->meta( 'dependencies', $this->dependencies1 );
 		}
 
 		return $this;
