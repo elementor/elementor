@@ -48,6 +48,16 @@ class Filter_Transformer extends Transformer_Base {
 			return 'hue-rotate(' . $filter['hue-rotate'] . ')';
 		}
 
+		// Handle drop-shadow filter with hOffset, vOffset, blur, color structure
+		if ( isset( $filter['hOffset'] ) && isset( $filter['vOffset'] ) && isset( $filter['blur'] ) && isset( $filter['color'] ) ) {
+			$hOffset = $filter['hOffset'] ?? '0px';
+			$vOffset = $filter['vOffset'] ?? '0px';
+			$blur = $filter['blur'] ?? '0px';
+			$color = $filter['color'] ?? 'transparent';
+
+			return "drop-shadow({$hOffset} {$vOffset} {$blur} {$color})";
+		}
+
 		return '';
 	}
 }
