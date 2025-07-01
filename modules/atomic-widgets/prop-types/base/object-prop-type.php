@@ -29,8 +29,6 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	 */
 	protected array $shape;
 
-	private array $dependencies = [];
-
 	public function __construct() {
 		$this->shape = $this->define_shape();
 	}
@@ -124,12 +122,6 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		}
 
 		return $value;
-	}
-
-	public function dependencies( Dependency_Manager $manager ): self {
-		$this->dependencies = $manager->get();
-
-		return $this;
 	}
 
 	public function jsonSerialize(): array {
