@@ -5,6 +5,7 @@ namespace Elementor\App\Modules\ImportExport\Runners\Import;
 use Elementor\Plugin;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\App\Modules\ImportExport\Utils;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
 
 class Site_Settings extends Import_Runner_Base {
 
@@ -203,7 +204,7 @@ class Site_Settings extends Import_Runner_Base {
 				continue;
 			}
 
-			if ( ! in_array( $new_state, [ 'default', 'active', 'inactive' ], true ) ) {
+			if ( ! in_array( $new_state, [ ExperimentsManager::STATE_DEFAULT, ExperimentsManager::STATE_ACTIVE, ExperimentsManager::STATE_ACTIVE ], true ) ) {
 				continue;
 			}
 

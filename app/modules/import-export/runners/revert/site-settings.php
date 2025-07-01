@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Revert;
 
 use Elementor\Plugin;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
 
 class Site_Settings extends Revert_Runner_Base {
 
@@ -119,7 +120,7 @@ class Site_Settings extends Revert_Runner_Base {
 			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
 			$previous_state = $feature_data['state'];
 
-			if ( 'default' === $previous_state ) {
+			if ( ExperimentsManager::STATE_DEFAULT === $previous_state ) {
 				delete_option( $option_key );
 			} else {
 				update_option( $option_key, $previous_state );
