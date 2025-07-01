@@ -113,19 +113,16 @@ class Site_Settings extends Revert_Runner_Base {
 		$current_features = $experiments_manager->get_features();
 
 		foreach ( $previous_experiments as $feature_name => $feature_data ) {
-			// Check if the feature still exists in current installation
 			if ( ! isset( $current_features[ $feature_name ] ) ) {
 				continue;
 			}
 
 			$current_feature = $current_features[ $feature_name ];
 
-			// Only revert mutable features
 			if ( ! $current_feature['mutable'] ) {
 				continue;
 			}
 
-			// Restore the previous experiment state
 			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
 			$previous_state = $feature_data['state'];
 

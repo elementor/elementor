@@ -42,8 +42,8 @@ class Site_Settings extends Export_Runner_Base {
 			$kit_data['theme'] = $theme_data;
 		}
 
-		// Export experiments
 		$experiments_data = $this->export_experiments();
+
 		if ( $experiments_data ) {
 			$kit_data['experiments'] = $experiments_data;
 		}
@@ -82,8 +82,7 @@ class Site_Settings extends Export_Runner_Base {
 	 * @return array|null
 	 */
 	private function export_experiments() {
-		$experiments_manager = Plugin::$instance->experiments;
-		$features = $experiments_manager->get_features();
+		$features = Plugin::$instance->experiments->get_features();
 
 		if ( empty( $features ) ) {
 			return null;
@@ -92,7 +91,6 @@ class Site_Settings extends Export_Runner_Base {
 		$experiments_data = [];
 
 		foreach ( $features as $feature_name => $feature ) {
-			// Only export mutable features (user-configurable)
 			if ( ! $feature['mutable'] ) {
 				continue;
 			}

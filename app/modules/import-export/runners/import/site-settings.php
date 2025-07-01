@@ -115,8 +115,8 @@ class Site_Settings extends Import_Runner_Base {
 			$result['theme'] = $import_theme_result;
 		}
 
-		// Import experiments
 		$import_experiments_result = $this->import_experiments( $data );
+
 		if ( ! empty( $import_experiments_result ) ) {
 			$result['experiments'] = $import_experiments_result;
 		}
@@ -193,31 +193,26 @@ class Site_Settings extends Import_Runner_Base {
 		$experiments_manager = Plugin::$instance->experiments;
 		$current_features = $experiments_manager->get_features();
 
-		// Save current experiments state for revert
 		$this->save_previous_experiments_state( $current_features );
 
 		$imported_count = 0;
 
 		foreach ( $experiments_data as $feature_name => $feature_data ) {
-			// Check if the feature exists in current installation
 			if ( ! isset( $current_features[ $feature_name ] ) ) {
 				continue;
 			}
 
 			$current_feature = $current_features[ $feature_name ];
 
-			// Only import mutable features
 			if ( ! $current_feature['mutable'] ) {
 				continue;
 			}
 
-			// Validate state value
 			$new_state = $feature_data['state'];
 			if ( ! in_array( $new_state, [ 'default', 'active', 'inactive' ], true ) ) {
 				continue;
 			}
 
-			// Apply the experiment state
 			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
 
 			if ( 'default' === $new_state ) {
@@ -236,11 +231,6 @@ class Site_Settings extends Import_Runner_Base {
 		];
 	}
 
-	/**
-	 * Save the current experiments state for revert functionality
-	 *
-	 * @param array $current_features
-	 */
 	private function save_previous_experiments_state( array $current_features ) {
 		$experiments_manager = Plugin::$instance->experiments;
 
