@@ -1,19 +1,13 @@
-import { Button, Box, Typography, Stack } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 
-import { BaseLayout, TopBar, Footer, PageHeader } from '../../components';
+import { BaseLayout, TopBar, Footer, PageHeader } from '../../shared/components';
+import ExportIntro from '../components/export-intro';
+import ExportKitFooter from '../components/export-kit-footer';
+import KitContent from '../components/kit-content';
+import KitInfo from '../components/kit-info';
 
 export default function ExportKit() {
-	const footerContent = (
-		<Stack direction="row" spacing={ 1 }>
-			<Button
-				variant="contained"
-				color="primary"
-				size="small"
-			>
-				{ __( 'Next', 'elementor' ) }
-			</Button>
-		</Stack>
-	);
+	const footerContent = <ExportKitFooter />;
 
 	const headerContent = (
 		<PageHeader title={ __( 'Export', 'elementor' ) } />
@@ -24,25 +18,10 @@ export default function ExportKit() {
 			topBar={ <TopBar>{ headerContent }</TopBar> }
 			footer={ <Footer>{ footerContent }</Footer> }
 		>
-			<Box sx={ { p: 3, mb: 2 } }>
-				<Box sx={ { mb: 2 } }>
-					<Typography variant="h4" component="h2" gutterBottom>
-						{ __( 'Export Your Website Kit', 'elementor' ) }
-					</Typography>
-					<Typography variant="body1" color="text.secondary">
-						{ __( 'Use the REST API endpoints to export and import your website kits', 'elementor' ) }.
-					</Typography>
-				</Box>
-
-				<Box sx={ { display: 'flex', gap: 2, mb: 2 } }>
-					<Button
-						variant="contained"
-						color="primary"
-						sx={ { minWidth: 120 } }
-					>
-						{ __( 'Export Kit', 'elementor' ) }
-					</Button>
-				</Box>
+			<Box sx={ { p: 3, mb: 2, maxWidth: '1075px', mx: 'auto' } }>
+				<ExportIntro />
+				<KitInfo />
+				<KitContent />
 			</Box>
 		</BaseLayout>
 	);
