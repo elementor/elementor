@@ -239,7 +239,7 @@ class Site_Settings extends Import_Runner_Base {
 			$this->previous_experiments[ $feature_name ] = [
 				'name' => $feature_name,
 				'title' => $feature['title'],
-				'state' => $saved_state ?: 'default',
+				'state' => empty( $saved_state ) ? 'default' : $saved_state,
 				'default' => $feature['default'],
 				'release_status' => $feature['release_status'],
 			];
