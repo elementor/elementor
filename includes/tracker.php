@@ -33,7 +33,7 @@ class Tracker {
 
 	private static $notice_shown = false;
 
-	const LAST_TERMS_UPDATED = '2025-04-23';
+	const LAST_TERMS_UPDATED = '2025-07-01';
 
 	/**
 	 * Init.
