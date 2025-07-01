@@ -17,7 +17,7 @@ class Drop_Shadow_Filter_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'blur' => Shadow_Prop_Type::make(),
+			'drop-shadow' => Size_Prop_Type::make()->default( 0 )->required(),
 		];
 	}
 }
