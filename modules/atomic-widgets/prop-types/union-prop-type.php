@@ -17,6 +17,8 @@ class Union_Prop_Type implements Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Required_Setting;
 
+	private array $dependencies = [];
+
 	protected $default = null;
 
 	private array $dependencies = [];
@@ -103,6 +105,12 @@ class Union_Prop_Type implements Prop_Type {
 		return $prop_type ? $prop_type->sanitize( $value ) : null;
 	}
 
+	public function dependencies( Dependency_Manager $manager ): self {
+		$this->dependencies = $manager->get();
+
+		return $this;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,
@@ -110,6 +118,7 @@ class Union_Prop_Type implements Prop_Type {
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
+			'dependencies' => $this->dependencies,
 		];
 	}
 
