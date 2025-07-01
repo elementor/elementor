@@ -976,7 +976,7 @@ BaseElementView = BaseContainer.extend( {
 
 		// Defer to wait for all of the children to render.
 		setTimeout( () => {
-			this.initDraggable();
+			// This.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
 			elementorFrontend.elements.$window.on( 'elementor/elements/link-data-bindings', this.linkDataBindings.bind( this ) );
 		} );
@@ -1152,55 +1152,55 @@ BaseElementView = BaseContainer.extend( {
 	 * Initialize the Droppable instance.
 	 */
 	initDraggable() {
-		if ( ! elementor.userCan( 'design' ) ) {
-			return;
-		}
-
-		// Init the draggable only for Containers and their children.
-		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
-			return;
-		}
-
-		this.getDomElement().html5Draggable( {
-			onDragStart: ( e ) => {
-				e.stopPropagation();
-
-				if ( this.getContainer().isLocked() ) {
-					e.originalEvent.preventDefault();
-
-					return;
-				}
-
-				// Need to stop this event when the element is absolute since it clashes with this one.
-				// See `behaviors/widget-draggable.js`.
-				if ( this.options.draggable?.isActive ) {
-					return;
-				}
-
-				const helper = this.getDraggableHelper();
-				this.$el[ 0 ].appendChild( helper );
-
-				// Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
-				e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
-
-				// Remove the helper element as soon as it's set as a drag image, since the element must be
-				// rendered for at least a fraction of a second in order to set it as a drag image.
-				setTimeout( () => {
-					helper.remove();
-				} );
-
-				this.onDragStart( e );
-
-				elementor.channels.editor.reply( 'element:dragged', this );
-			},
-			onDragEnd: ( e ) => {
-				e.stopPropagation();
-
-				this.onDragEnd( e );
-			},
-
-			groups: [ 'elementor-element' ],
-		} );
+		// If ( ! elementor.userCan( 'design' ) ) {
+		// 	return;
+		// }
+		//
+		// // Init the draggable only for Containers and their children.
+		// if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
+		// 	return;
+		// }
+		//
+		// this.getDomElement().html5Draggable( {
+		// 	onDragStart: ( e ) => {
+		// 		e.stopPropagation();
+		//
+		// 		if ( this.getContainer().isLocked() ) {
+		// 			e.originalEvent.preventDefault();
+		//
+		// 			return;
+		// 		}
+		//
+		// 		// Need to stop this event when the element is absolute since it clashes with this one.
+		// 		// See `behaviors/widget-draggable.js`.
+		// 		if ( this.options.draggable?.isActive ) {
+		// 			return;
+		// 		}
+		//
+		// 		const helper = this.getDraggableHelper();
+		// 		this.$el[ 0 ].appendChild( helper );
+		//
+		// 		// Set the x & y coordinates of the helper the same as the legacy jQuery sortable.
+		// 		e.originalEvent.dataTransfer.setDragImage( helper, 25, 20 );
+		//
+		// 		// Remove the helper element as soon as it's set as a drag image, since the element must be
+		// 		// rendered for at least a fraction of a second in order to set it as a drag image.
+		// 		setTimeout( () => {
+		// 			helper.remove();
+		// 		} );
+		//
+		// 		this.onDragStart( e );
+		//
+		// 		elementor.channels.editor.reply( 'element:dragged', this );
+		// 	},
+		// 	onDragEnd: ( e ) => {
+		// 		e.stopPropagation();
+		//
+		// 		this.onDragEnd( e );
+		// 	},
+		//
+		// 	groups: [ 'elementor-element' ],
+		// } );
 	},
 
 	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
