@@ -42,6 +42,12 @@ class Site_Settings extends Export_Runner_Base {
 			$kit_data['theme'] = $theme_data;
 		}
 
+		$experiments_data = $this->export_experiments();
+
+		if ( $experiments_data ) {
+			$kit_data['experiments'] = $experiments_data;
+		}
+
 		$manifest_data['site-settings'] = $kit_tabs;
 
 		return [
@@ -68,5 +74,27 @@ class Site_Settings extends Export_Runner_Base {
 		$theme_data['slug'] = $theme->get_stylesheet();
 
 		return $theme_data;
+	}
+
+	private function export_experiments() {
+		$features = Plugin::$instance->experiments->get_features();
+
+		if ( empty( $features ) ) {
+			return null;
+		}
+
+		$experiments_data = [];
+
+		foreach ( $features as $feature_name => $feature ) {
+			$experiments_data[ $feature_name ] = [
+				'name' => $feature_name,
+				'title' => $feature['title'],
+				'state' => $feature['state'],
+				'default' => $feature['default'],
+				'release_status' => $feature['release_status'],
+			];
+		}
+
+		return empty( $experiments_data ) ? null : $experiments_data;
 	}
 }
