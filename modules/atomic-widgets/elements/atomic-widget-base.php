@@ -39,7 +39,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['base_styles'] = $this->get_base_styles();
 		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
 		$config['atomic_props_schema'] = $props_schema;
-		$config[ 'dependencies_per_target_mapping' ] = Dependency_Manager::get_source_to_dependents( $props_schema );
+		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
 
 		return $config;
