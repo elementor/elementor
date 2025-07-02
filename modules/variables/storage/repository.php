@@ -58,7 +58,7 @@ class Repository {
 				continue;
 			}
 
-			if( ! isset( $variable['label'] ) || ! isset( $existing_variable['label'] )) {
+			if ( ! isset( $variable['label'] ) || ! isset( $existing_variable['label'] ) ) {
 				continue;
 			}
 
