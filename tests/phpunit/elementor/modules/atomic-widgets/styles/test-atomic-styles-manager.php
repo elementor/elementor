@@ -55,14 +55,17 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 							'breakpoint' => 'desktop',
 						],
 						'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'red',
-							],
-							'font-family' => [
-								'$$type' => 'string',
-								'value' => 'Poppins',
-							],
+							'color' => 'red',
+							'font-family' => 'Poppins',
+						],
+					],
+					[
+						'meta' => [
+							'breakpoint' => 'desktop',
+							'state' => 'hover',
+						],
+						'props' => [
+							'color' => 'yellow',
 						],
 					],
 					[
@@ -70,10 +73,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 							'breakpoint' => 'mobile',
 						],
 						'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'blue',
-							],
+							'color' => 'blue',
 						],
 					],
 				],
@@ -92,10 +92,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 							'breakpoint' => 'desktop',
 						],
 						'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'green',
-							],
+							'color' => 'green',
 						],
 					],
 					[
@@ -103,10 +100,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 							'breakpoint' => 'tablet',
 						],
 						'props' => [
-							'color' => [
-								'$$type' => 'color',
-								'value' => 'yellow',
-							],
+							'color' =>  'yellow',
 						],
 					],
 				],
@@ -130,7 +124,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			->method( 'put_contents' )
 			->willReturnCallback( function( $file, $content ) use ( $invoked_count ) {
 				if ( $invoked_count->getInvocationCount() === 1 ) {
-					$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}', $content );
+					$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}.elementor .test-style:hover{color:yellow;}', $content );
 					return;
 				}
 
@@ -178,7 +172,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 						$this->assertEquals( '.elementor .another-style{color:green;}', $content );
 						break;
 					case 2:
-						$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}', $content );
+						$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}.elementor .test-style:hover{color:yellow;}', $content );
 						break;
 					case 3:
 						$this->assertEquals( '@media(max-width:1024px){.elementor .another-style{color:yellow;}}', $content );
