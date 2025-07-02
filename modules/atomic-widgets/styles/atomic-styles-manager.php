@@ -5,9 +5,8 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
+use Elementor\Modules\AtomicWidgets\Cache;
 use Elementor\Plugin;
-use function ElementorDeps\DI\value;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -54,64 +53,64 @@ class Atomic_Styles_Manager {
 		];
 	}
 
-	private function enqueue_styles() {
-		if ( empty( $this->post_ids )) {
+	private function enqueue_styles()
+	{
+		if (empty($this->post_ids)) {
 			return;
 		}
 
-		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
+		do_action('elementor/atomic-widgets/styles/register', $this, $this->post_ids);
 
-		$styles_by_key = Collection::make( $this->registered_styles_by_key )->map_with_keys( function( $style_params, $style_key ) {
-			return [
-				$style_key => $this->once( $style_key, $style_params ),
-			];
-		} )->all();
+		$get_styles_cache = new Cache();
+		$styles_by_key = Collection::make($this->registered_styles_by_key)
+			->map_with_keys(fn($style_params, $style_key) => [$style_key => $get_styles_cache->cache($style_key, $style_params['get_styles'])])
+			->all();
+		$cache_keys_by_key = Collection::make($this->registered_styles_by_key)
+			->map(fn($style_params) => $style_params['cache_keys'])
+			->all();
 
+		$group_by_breakpoint_cache = new Cache();
 		$breakpoints = $this->get_breakpoints();
-		foreach ( $breakpoints as $breakpoint_key ) {
-			foreach ( $styles_by_key as $style_key => $_style_params ) {
-				$style_params = $this->registered_styles_by_key[ $style_key ];
+		foreach ($breakpoints as $breakpoint_key) {
+			foreach ($styles_by_key as $style_key => $get_styles) {
+				var_dump($cache_keys_by_key, $style_key);
+				$cache_keys = $cache_keys_by_key[$style_key];
+				$render_css = fn() => $this->render_css_by_breakpoints($get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache);
 
-				$render_css = function () use ( $style_params, $breakpoint_key ) {
-					echo '<h4 style="background-color:orange;color: white; text-shadow: 1px 1px 1px black">Running "render_css" for: ' . $breakpoint_key . '</h4>';
-					$grouped_styles = $this->group_by_breakpoint( $style_params['get_styles']() );
+				$breakpoint_media = $this->get_breakpoint_media($breakpoint_key);
 
-					return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [] );
-				};
-
-				try {
-					$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
-
-					if ( ! $breakpoint_media) {
-						continue;
-					}
-
-					$style_file = (new CSS_Files_Manager() )->get(
-						$style_key . '-' . $breakpoint_key,
-						$breakpoint_media,
-						$render_css,
-						$this->cache_state_manager->get( $style_params[ 'cache_keys' ] )
-					);
-
-					$this->cache_state_manager->validate( $style_params[ 'cache_keys' ] );
-
-					wp_enqueue_style(
-						$style_file->get_handle(),
-						$style_file->get_url(),
-						[],
-						$style_file->get_media()
-					);
-				} catch ( \Exception $e ) {
+				if (!$breakpoint_media) {
 					continue;
 				}
+
+				$style_file = (new CSS_Files_Manager())->get(
+					$style_key . '-' . $breakpoint_key,
+					$breakpoint_media,
+					$render_css,
+					$this->cache_state_manager->get($cache_keys)
+				);
+
+				$this->cache_state_manager->validate($cache_keys);
+
+				if (!$style_file) {
+					continue;
+				}
+
+				wp_enqueue_style(
+					$style_file->get_handle(),
+					$style_file->get_url(),
+					[],
+					$style_file->get_media()
+				);
 			}
 		}
 	}
 
-	private function render_css( array $styles ) {
+	private function render_css(array $styles)
+	{
 		$css = Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) {
+		)->on_prop_transform(function ($key, $value ) {
 			if ( 'font-family' !== $key ) {
 				return;
 			}
@@ -128,22 +127,32 @@ class Atomic_Styles_Manager {
 		return $breakpoint_config ? Styles_Renderer::get_media_query( $breakpoint_config ) : 'all';
 	}
 
+	private function render_css_by_breakpoints( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache ) {
+		$cache_key = $style_key . '-' . $breakpoint_key;
+		$get_grouped_styles = $group_by_breakpoint_cache->cache( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
+		$grouped_styles = $get_grouped_styles();
+
+		return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [] );
+	}
+
 	private function group_by_breakpoint( $styles ) {
-		$groups = [];
+		return Collection::make( $styles )->reduce( function( $group, $style ) {
+			Collection::make( $style['variants'] )->each( function( $variant ) use ( &$group, $style ) {
+				$breakpoint = $variant['meta']['breakpoint'] ?? self::DEFAULT_BREAKPOINT;
 
-		foreach ( $styles as $style ) {
-			foreach ( $style['variants'] as $variant ) {
-				$breakpoint = $variant['meta']['breakpoint'] ?? 'desktop';
+				if ( ! isset( $group[ $breakpoint ][ $style['id'] ] ) ) {
+					$group[ $breakpoint ][ $style['id'] ] = [
+						'id' => $style['id'],
+						'type' => $style['type'],
+						'variants' => [],
+					];
+				}
 
-				$groups[ $breakpoint ][] = [
-					'id' => $style['id'],
-					'type' => $style['type'],
-					'variants' => [ $variant ],
-				];
-			}
-		}
+				$group[ $breakpoint ][ $style['id'] ]['variants'][] = $variant;
+			} );
 
-		return $groups;
+			return $group;
+		}, [] );
 	}
 
 	private function get_breakpoints() {
@@ -152,29 +161,5 @@ class Atomic_Styles_Manager {
 			->reverse()
 			->prepend( self::DEFAULT_BREAKPOINT )
 			->all();
-	}
-
-	private function once( $key, $style_params ) {
-		$cache = [];
-
-		return function() use ( $key, $style_params, &$cache  ) {
-			if ( isset( $cache[ $key ] ) ) {
-				return $cache[ $key ];
-			}
-
-			$cache[ $key ] = $style_params;
-
-			return $cache[ $key ];
-		};
-	}
-
-	private function on_document_change( Document $document, array $post_data ): void {
-		$post_ids = [$document->get_main_post()->ID];
-
-		if ( ! is_array( $post_ids ) || empty( $post_ids ) ) {
-			return;
-		}
-
-		do_action( 'elementor/atomic-widgets/styles/post-change', $post_ids, $post_data );
 	}
 }

@@ -8,11 +8,11 @@ class CSS_Files_Manager {
 	// Read and write permissions for the owner
 	const PERMISSIONS = 0644;
 
-	public function get( string $handle, string $media, callable $get_css, bool $is_valid_cache ): Style_File {
-		$filesystem = $this->get_filesystem();
+	public function get( string $handle, string $media, callable $get_css, bool $is_valid_cache ): ?Style_File {
+        $filesystem = $this->get_filesystem();
         $path = $this->get_path( $handle );
 
-		if( $is_valid_cache && $filesystem->exists( $path ) ) {
+        if( $is_valid_cache && $filesystem->exists( $path ) ) {
             echo '<h3 style="background-color:green;color: white; text-shadow: 1px 1px 1px black">Using existing file for: '.$handle.'</h3>';
             // Return the existing file
             return Style_File::create(
@@ -23,10 +23,10 @@ class CSS_Files_Manager {
             );
         }
 
-		$css = $get_css();
+        $css = $get_css();
 
-		if ( empty( $css ) ) {
-			throw new \Exception( 'No CSS content provided' );
+        if ( empty( $css ) ) {
+			return null;
 		}
 
 		$filesystem_path = $this->get_filesystem_path( $path );
@@ -34,7 +34,7 @@ class CSS_Files_Manager {
 		$is_created = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
 
 		if ( false === $is_created ) {
-			throw new \Exception( 'Could not write the file' );
+			return null;
 		}
 
 		return Style_File::create(
