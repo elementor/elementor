@@ -24,6 +24,10 @@ class Union_Prop_Type implements Prop_Type {
 	/** @var Array<string, Transformable_Prop_Type> */
 	protected array $prop_types = [];
 
+	public static function get_key(): string {
+		return 'union';
+	}
+
 	public static function make(): self {
 		return new static();
 	}
@@ -32,6 +36,10 @@ class Union_Prop_Type implements Prop_Type {
 		return static::make()
 			->add_prop_type( $prop_type )
 			->default( $prop_type->get_default() );
+	}
+
+	public function get_type(): string {
+		return 'union';
 	}
 
 	public function add_prop_type( Transformable_Prop_Type $prop_type ): self {
@@ -99,12 +107,6 @@ class Union_Prop_Type implements Prop_Type {
 		return $prop_type ? $prop_type->sanitize( $value ) : null;
 	}
 
-	public function dependencies( Dependency_Manager $manager ): self {
-		$this->dependencies = $manager->get();
-
-		return $this;
-	}
-
 	public function jsonSerialize(): array {
 		return [
 			'kind' => static::KIND,
@@ -114,5 +116,15 @@ class Union_Prop_Type implements Prop_Type {
 			'prop_types' => $this->get_prop_types(),
 			'dependencies' => $this->dependencies,
 		];
+	}
+
+	public function dependencies( ?Dependency_Manager $manager = null ): self {
+		$this->dependencies = $manager->get();
+
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
+
+		return $this;
 	}
 }
