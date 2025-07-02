@@ -13,7 +13,7 @@ class Atomic_Global_Styles {
 			'elementor/atomic-widgets/styles/register',
 			fn( Atomic_Styles_Manager $styles_manager, array $post_ids ) => $this->register_styles( $styles_manager ),
 			20,
-			1
+			2
 		);
 
         add_action( 'elementor/global_classes/update', fn( string $context) => $this->invalidate_cache( $context ), 10, 1 );
@@ -43,10 +43,12 @@ class Atomic_Global_Styles {
     private function invalidate_cache(string $context) {
         $cache_state_manager = new Cache_State_Manager();
 
-        $cache_state_manager->invalidate( [self::CSS_FILE_KEY, $context] );
+        $cache_state_manager->invalidate( [self::STYLES_KEY, $context] );
     }
 
 	private function transform_classes_names( $ids ) {
+		echo '<h3 style="background-color:red;color: white; text-shadow: 1px 1px 1px black">Global render</h3>';
+
 		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$classes = Global_Classes_Repository::make()

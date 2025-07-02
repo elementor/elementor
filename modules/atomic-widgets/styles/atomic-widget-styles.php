@@ -30,6 +30,8 @@ class Atomic_Widget_Styles {
 	}
 
 	private function parse_post_styles( $post_id ) {
+		echo '<h3 style="background-color:red;color: white; text-shadow: 1px 1px 1px black">Local render</h3>';
+
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		if ( ! $document ) {

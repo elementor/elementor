@@ -12,11 +12,8 @@ class CSS_Files_Manager {
 		$filesystem = $this->get_filesystem();
         $path = $this->get_path( $handle );
 
-		if( $is_valid_cache ) {
-            if( ! $filesystem->exists( $path ) ) {
-                throw new \Exception( 'Cached file does not exist' );
-            }
-
+		if( $is_valid_cache && $filesystem->exists( $path ) ) {
+            echo '<h3 style="background-color:green;color: white; text-shadow: 1px 1px 1px black">Using existing file for: '.$handle.'</h3>';
             // Return the existing file
             return Style_File::create(
                 $this->sanitize_handle( $handle ),
