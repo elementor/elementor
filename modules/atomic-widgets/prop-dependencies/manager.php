@@ -147,18 +147,23 @@ class Manager {
 	private static function build_nested_prop_dependency_graph( string $prop_name, Prop_Type $prop_type, array $current_path, array $dependency_graph ): array {
 		$nested_prop_path = array_merge( $current_path, [ $prop_name ] );
 
-		if ( 'object' === $prop_type->get_type() ) {
-			foreach ( $prop_type->get_shape() as $nested_prop_name => $nested_prop_type ) {
-				$dependency_graph = self::build_dependency_graph( [ $nested_prop_name => $nested_prop_type ], $nested_prop_path, $dependency_graph );
-			}
-		} else if ( 'array' === $prop_type->get_type() ) {
-			$item_prop_type = $prop_type->get_item_type();
+		switch ( $prop_type->get_type() ) {
+			case 'object':
+				foreach ( $prop_type->get_shape() as $nested_prop_name => $nested_prop_type ) {
+					$dependency_graph = self::build_dependency_graph( [ $nested_prop_name => $nested_prop_type ], $nested_prop_path, $dependency_graph );
+				}
+				break;
 
-			$dependency_graph = self::build_dependency_graph( [ $prop_name => $item_prop_type ], $current_path, $dependency_graph );
-		} else if ( 'union' === $prop_type->get_type() ) {
-			foreach ( $prop_type->get_prop_types() as $nested_prop_type ) {
-				$dependency_graph = self::build_dependency_graph( [ $prop_name => $nested_prop_type ], $current_path, $dependency_graph );
-			}
+			case 'array':
+				$item_prop_type = $prop_type->get_item_type();
+				$dependency_graph = self::build_dependency_graph( [ $prop_name => $item_prop_type ], $current_path, $dependency_graph );
+				break;
+
+			case 'union':
+				foreach ( $prop_type->get_prop_types() as $nested_prop_type ) {
+					$dependency_graph = self::build_dependency_graph( [ $prop_name => $nested_prop_type ], $current_path, $dependency_graph );
+				}
+				break;
 		}
 
 		return $dependency_graph;
