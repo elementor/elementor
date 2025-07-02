@@ -27,6 +27,7 @@ class Atomic_Global_Styles {
         $context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$get_styles = function () use( $context ) {
+			echo '<h3 style="background-color:red;color: white; text-shadow: 1px 1px 1px black">Global classes render</h3>';
             return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
                 $item['id'] = $item['label'];
                 return $item;
@@ -47,8 +48,6 @@ class Atomic_Global_Styles {
     }
 
 	private function transform_classes_names( $ids ) {
-		echo '<h3 style="background-color:red;color: white; text-shadow: 1px 1px 1px black">Global render</h3>';
-
 		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$classes = Global_Classes_Repository::make()
