@@ -33,6 +33,10 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$this->shape = $this->define_shape();
 	}
 
+	public function get_type(): string {
+		return 'object';
+	}
+
 	public function get_default() {
 		if ( null !== $this->default ) {
 			return $this->default;

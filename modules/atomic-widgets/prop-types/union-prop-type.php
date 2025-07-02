@@ -38,6 +38,10 @@ class Union_Prop_Type implements Prop_Type {
 			->default( $prop_type->get_default() );
 	}
 
+	public function get_type(): string {
+		return 'union';
+	}
+
 	public function add_prop_type( Transformable_Prop_Type $prop_type ): self {
 		$this->prop_types[ $prop_type::get_key() ] = $prop_type;
 

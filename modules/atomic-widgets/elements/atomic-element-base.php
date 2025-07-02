@@ -39,7 +39,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['atomic_props_schema'] = $props_schema;
-		$config[ Dependency_Manager::FRONTEND_CONFIG_KEY ] = Dependency_Manager::get_source_to_dependents( $props_schema );
+		$config[ 'dependencies_per_target_mapping' ] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['base_styles'] = $this->get_base_styles();
 		$config['version'] = $this->version;
 		$config['show_in_panel'] = true;

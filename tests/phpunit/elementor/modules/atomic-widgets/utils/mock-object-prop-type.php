@@ -21,4 +21,8 @@ class Mock_Object_Prop_Type extends Mock_Prop_Type {
 	public static function get_key(): string {
 		return 'object';
 	}
+
+	public function get_type(): string {
+		return 'object';
+	}
 }

@@ -36,6 +36,10 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return new static();
 	}
 
+	public function get_type(): string {
+		return 'array';
+	}
+
 	/**
 	 * @param Prop_Type $item_type
 	 *

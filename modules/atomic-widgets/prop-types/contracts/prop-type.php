@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 interface Prop_Type extends \JsonSerializable {
 	public static function get_key(): string;
+	public function get_type(): string;
 	public function get_default();
 	public function validate( $value ): bool;
 	public function sanitize( $value );

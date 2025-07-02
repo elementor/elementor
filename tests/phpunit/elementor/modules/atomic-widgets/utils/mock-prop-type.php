@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Utils;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,7 +16,10 @@ class Mock_Prop_Type implements Prop_Type {
 		$this->meta = $meta;
 	}
 
-	// Implementation of Prop_Type interface
+	public function get_type(): string {
+		return 'plain';
+	}
+
 	public static function get_key(): string {
 		return 'mock';
 	}
@@ -48,11 +52,10 @@ class Mock_Prop_Type implements Prop_Type {
 		return $default;
 	}
 
-	public function dependencies( \Elementor\Modules\AtomicWidgets\PropDependencies\Manager $manager ): self {
+	public function dependencies( Dependency_Manager $manager ): self {
 		return $this;
 	}
 
-	// Implementation of JsonSerializable interface
 	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
 		return [

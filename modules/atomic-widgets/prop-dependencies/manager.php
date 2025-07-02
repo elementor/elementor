@@ -18,7 +18,6 @@ class Manager {
 	const EFFECT_DISABLE = 'disable';
 	const EFFECT_HIDE = 'hide';
 
-	const FRONTEND_CONFIG_KEY = 'dependencies_per_target_mapping';
 	/**
 	 * @var array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
@@ -45,9 +44,7 @@ class Manager {
 	 * @return array<string, array<string>> Returns source prop path => array of dependent prop paths
 	 */
 	public static function get_source_to_dependents( array $props_schema ): array {
-		$dependency_graph = [];
-
-		self::build_dependency_graph( $props_schema, [], $dependency_graph );
+		$dependency_graph = self::build_dependency_graph( $props_schema );
 
 		if ( self::has_circular_dependencies( $dependency_graph ) ) {
 			Utils::safe_throw( 'Circular prop dependencies detected' );
@@ -127,50 +124,53 @@ class Manager {
 
 	/**
 	 * @param array<string, Prop_Type> $props_schema The props schema to analyze, where keys are prop names
-	 * @param array<string> $current_path The current property path being processed
-	 * @param array<string, array<string>> &$dependency_graph The dependency graph to build
+	 * @param ?array<string> $current_path The current property path being processed
+	 * @param ?array<string, array<string>> $dependency_graph The dependency graph to build
 	 */
-	private static function build_dependency_graph( array $props_schema, array $current_path, array &$dependency_graph ): void {
+	private static function build_dependency_graph( array $props_schema, ?array $current_path = [], ?array $dependency_graph = [] ): array {
 		foreach ( $props_schema as $prop_name => $prop_type ) {
-			self::build_nested_prop_dependency_graph( $prop_name, $prop_type, $current_path, $dependency_graph );
-
+			$dependency_graph = self::build_nested_prop_dependency_graph( $prop_name, $prop_type, $current_path, $dependency_graph );
 			$dependencies = $prop_type->get_meta()['dependencies'] ?? [];
 
 			foreach ( $dependencies as $dependency ) {
 				$terms = $dependency['terms'] ?? [];
 
 				foreach ( $terms as $term ) {
-					self::process_dependency_term( $term, $current_path, $prop_name, $dependency_graph );
+					$dependency_graph = self::process_dependency_term( $term, $current_path, $prop_name, $dependency_graph );
 				}
 			}
 		}
+
+		return $dependency_graph;
 	}
 
-	private static function build_nested_prop_dependency_graph( string $prop_name, Prop_Type $prop_type, array $current_path, array &$dependency_graph ): void {
+	private static function build_nested_prop_dependency_graph( string $prop_name, Prop_Type $prop_type, array $current_path, array $dependency_graph ): array {
 		$nested_prop_path = array_merge( $current_path, [ $prop_name ] );
 
-		if ( self::is_object_prop_type( $prop_type ) ) {
+		if ( 'object' === $prop_type->get_type() ) {
 			foreach ( $prop_type->get_shape() as $nested_prop_name => $nested_prop_type ) {
-				self::build_dependency_graph( [ $nested_prop_name => $nested_prop_type ], $nested_prop_path, $dependency_graph );
+				$dependency_graph = self::build_dependency_graph( [ $nested_prop_name => $nested_prop_type ], $nested_prop_path, $dependency_graph );
 			}
-		} else if ( self::is_array_prop_type( $prop_type ) ) {
+		} else if ( 'array' === $prop_type->get_type() ) {
 			$item_prop_type = $prop_type->get_item_type();
 
-			self::build_dependency_graph( [ $prop_name => $item_prop_type ], $current_path, $dependency_graph );
-		} else if ( self::is_union_prop_type( $prop_type ) ) {
+			$dependency_graph = self::build_dependency_graph( [ $prop_name => $item_prop_type ], $current_path, $dependency_graph );
+		} else if ( 'union' === $prop_type->get_type() ) {
 			foreach ( $prop_type->get_prop_types() as $nested_prop_type ) {
-				self::build_dependency_graph( [ $prop_name => $nested_prop_type ], $current_path, $dependency_graph );
+				$dependency_graph = self::build_dependency_graph( [ $prop_name => $nested_prop_type ], $current_path, $dependency_graph );
 			}
 		}
+
+		return $dependency_graph;
 	}
 
-	private static function process_dependency_term( array $term, array $current_path, string $prop_name, array &$dependency_graph ): void {
+	private static function process_dependency_term( array $term, array $current_path, string $prop_name, array $dependency_graph ): array {
 		if ( self::is_term_nested( $term ) ) {
 			foreach ( $term['terms'] as $nested_term ) {
-				self::process_dependency_term( $nested_term, $current_path, $prop_name, $dependency_graph );
+				$dependency_graph = self::process_dependency_term( $nested_term, $current_path, $prop_name, $dependency_graph );
 			}
 
-			return;
+			return $dependency_graph;
 		}
 
 		if ( ! isset( $term['path'] ) || empty( $term['path'] ) ) {
@@ -188,6 +188,8 @@ class Manager {
 		if ( ! in_array( $source_path, $dependency_graph[ $target_path ] ) ) {
 			$dependency_graph[ $target_path ][] = $source_path;
 		}
+
+		return $dependency_graph;
 	}
 
 	private static function has_circular_dependencies( array $dependency_graph ): bool {
@@ -234,17 +236,5 @@ class Manager {
 
 	private static function is_term_nested( $term ): bool {
 		return isset( $term['terms'] ) && is_array( $term['terms'] );
-	}
-
-	private static function is_object_prop_type( Prop_Type $prop_type ): bool {
-		return method_exists( $prop_type, 'get_shape' ) && is_array( $prop_type->get_shape() );
-	}
-
-	private static function is_array_prop_type( Prop_Type $prop_type ): bool {
-		return method_exists( $prop_type, 'get_item_type' ) && $prop_type->get_item_type();
-	}
-
-	private static function is_union_prop_type( Prop_Type $prop_type ): bool {
-		return method_exists( $prop_type, 'get_prop_types' ) && is_array( $prop_type->get_prop_types() );
 	}
 }
