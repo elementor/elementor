@@ -12,7 +12,12 @@ class CSS_Files_Manager {
         $filesystem = $this->get_filesystem();
         $path = $this->get_path( $handle );
 
-        if( $is_valid_cache && $filesystem->exists( $path ) ) {
+        if( $is_valid_cache ) {
+            if(!$filesystem->exists( $path )) {
+                echo '<h3 style="background-color:green;color: white; text-shadow: 1px 1px 1px black">No file but valid cache for: '.$handle.'</h3>';
+                return null;
+            }
+
             echo '<h3 style="background-color:green;color: white; text-shadow: 1px 1px 1px black">Using existing file for: '.$handle.'</h3>';
             // Return the existing file
             return Style_File::create(
@@ -22,6 +27,8 @@ class CSS_Files_Manager {
                 $media,
             );
         }
+
+        echo '<h3 style="background-color:orange;color: white; text-shadow: 1px 1px 1px black">'.($is_valid_cache ? 'no existing file' : 'invalid cache').' for: '.$handle.'</h3>';
 
         $css = $get_css();
 

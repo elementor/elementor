@@ -62,20 +62,28 @@ class Atomic_Styles_Manager {
 		do_action('elementor/atomic-widgets/styles/register', $this, $this->post_ids);
 
 		$get_styles_cache = new Cache();
+//		$styles_by_key = Collection::make($this->registered_styles_by_key)
+//			->map_with_keys(fn($style_params, $style_key) => [$style_key => $get_styles_cache->cache($style_key, $style_params['get_styles'])])
+//			->all();
+//		$cache_keys_by_key = Collection::make($this->registered_styles_by_key)
+//			->map(fn($style_params) => $style_params['cache_keys'])
+//			->all();
+
 		$styles_by_key = Collection::make($this->registered_styles_by_key)
-			->map_with_keys(fn($style_params, $style_key) => [$style_key => $get_styles_cache->cache($style_key, $style_params['get_styles'])])
-			->all();
-		$cache_keys_by_key = Collection::make($this->registered_styles_by_key)
-			->map(fn($style_params) => $style_params['cache_keys'])
+			->map_with_keys( fn ( $style_params, $style_key ) => [
+				$style_key => [
+					'get_styles' => $get_styles_cache->cache($style_key, $style_params['get_styles']),
+					'cache_keys' => $style_params['cache_keys'],
+				]
+			])
 			->all();
 
 		$group_by_breakpoint_cache = new Cache();
 		$breakpoints = $this->get_breakpoints();
 		foreach ($breakpoints as $breakpoint_key) {
-			foreach ($styles_by_key as $style_key => $get_styles) {
-				var_dump($cache_keys_by_key, $style_key);
-				$cache_keys = $cache_keys_by_key[$style_key];
-				$render_css = fn() => $this->render_css_by_breakpoints($get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache);
+			foreach ($styles_by_key as $style_key => $style_params) {
+				$cache_keys = $style_params['cache_keys'];
+				$render_css = fn() => $this->render_css_by_breakpoints($style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_cache);
 
 				$breakpoint_media = $this->get_breakpoint_media($breakpoint_key);
 
