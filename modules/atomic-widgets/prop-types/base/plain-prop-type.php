@@ -29,6 +29,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		return new static();
 	}
 
+	public function get_type(): string {
+		return 'plain';
+	}
+
 	public function validate( $value ): bool {
 		if ( is_null( $value ) ) {
 			return ! $this->is_required();
@@ -65,6 +69,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function dependencies( Dependency_Manager $manager ): self {
 		$this->dependencies = $manager->get();
+
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
 
 		return $this;
 	}

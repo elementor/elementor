@@ -33,6 +33,10 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$this->shape = $this->define_shape();
 	}
 
+	public function get_type(): string {
+		return 'object';
+	}
+
 	public function get_default() {
 		if ( null !== $this->default ) {
 			return $this->default;
@@ -124,12 +128,6 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		return $value;
 	}
 
-	public function dependencies( Dependency_Manager $manager ): self {
-		$this->dependencies = $manager->get();
-
-		return $this;
-	}
-
 	public function jsonSerialize(): array {
 		$default = $this->get_default();
 
@@ -148,4 +146,14 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	 * @return array<Prop_Type>
 	 */
 	abstract protected function define_shape(): array;
+
+	public function dependencies( ?Dependency_Manager $manager = null ): self {
+		$this->dependencies = $manager->get();
+
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
+
+		return $this;
+	}
 }
