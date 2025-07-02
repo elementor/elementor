@@ -25,9 +25,9 @@ const WidgetView = BaseWidget.extend( {
 				behaviorClass: require( 'elementor-behaviors/inline-editing' ),
 				inlineEditingClass: 'elementor-inline-editing',
 			},
-			Draggable: {
-				behaviorClass: WidgetDraggable,
-			},
+			// Draggable: {
+			// 	BehaviorClass: WidgetDraggable,
+			// },
 			Resizable: {
 				behaviorClass: WidgetResizable,
 			},

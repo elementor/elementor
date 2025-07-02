@@ -35,13 +35,13 @@ export default class Manager extends elementorModules.editor.utils.Module {
 	constructor() {
 		super();
 
-		this.normalizer = new Normalizer( this );
-
-		$e.components.register(
-			new Component( { manager: this } ),
-		);
-
-		this.parseConfig( DefaultConfig );
+		// This.normalizer = new Normalizer( this );
+		//
+		// $e.components.register(
+		// 	new Component( { manager: this } ),
+		// );
+		//
+		// this.parseConfig( DefaultConfig );
 	}
 
 	/**

@@ -2,8 +2,10 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Button;
 
+use Elementor\Core\Elements\Atomic_Element;
+use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
@@ -22,14 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Atomic_Button extends Atomic_Widget_Base {
-	use Has_Template;
-
-	public static function get_element_type(): string {
+class Atomic_Button extends Atomic_Element {
+	public static function get_type(): string {
 		return 'e-button';
 	}
 
+
 	public function get_title() {
+		wp_upload_dir();
 		return esc_html__( 'Button', 'elementor' );
 	}
 
@@ -41,7 +43,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return 'eicon-e-button';
 	}
 
-	protected static function define_props_schema(): array {
+	protected function define_atomic_settings_schema(): array {
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
@@ -57,7 +59,7 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return $props;
 	}
 
-	protected function define_atomic_controls(): array {
+	protected function define_atomic_settings_controls(): array {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )

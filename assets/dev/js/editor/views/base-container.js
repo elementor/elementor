@@ -163,30 +163,30 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	onDrop( event, options ) {
-		const input = event.originalEvent.dataTransfer.files;
-
-		if ( input.length ) {
-			$e.run( 'editor/browser-import/import', {
-				input,
-				target: this.getContainer(),
-				options: { event, target: { at: options.at } },
-			} );
-
-			return;
-		}
-
-		const args = {};
-
-		args.model = Object.fromEntries(
-			Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
-				// The `custom` property is responsible for storing global-widgets related data.
-				.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) ),
-		);
-
-		args.container = this.getContainer();
-		args.options = options;
-
-		$e.run( 'preview/drop', args );
+		// Const input = event.originalEvent.dataTransfer.files;
+		//
+		// if ( input.length ) {
+		// 	$e.run( 'editor/browser-import/import', {
+		// 		input,
+		// 		target: this.getContainer(),
+		// 		options: { event, target: { at: options.at } },
+		// 	} );
+		//
+		// 	return;
+		// }
+		//
+		// const args = {};
+		//
+		// args.model = Object.fromEntries(
+		// 	Object.entries( elementor.channels.panelElements.request( 'element:selected' )?.model.attributes )
+		// 		// The `custom` property is responsible for storing global-widgets related data.
+		// 		.filter( ( [ key ] ) => [ 'elType', 'widgetType', 'custom' ].includes( key ) ),
+		// );
+		//
+		// args.container = this.getContainer();
+		// args.options = options;
+		//
+		// $e.run( 'preview/drop', args );
 	},
 
 	getHistoryType( event ) {

@@ -4,33 +4,21 @@ var BaseContainer = require( 'elementor-views/base-container' ),
 
 BaseSectionsContainerView = BaseContainer.extend( {
 	getChildView( model ) {
-		let ChildView;
-		const elType = model.get( 'elType' );
+		const type = elementor.elementsManager.getElementTypeClass( model.get( 'elType' ) );
 
-		switch ( elType ) {
-			case ELEMENT_TYPES.SECTION:
-				ChildView = require( 'elementor-elements/views/section' );
-				break;
-
-			case ELEMENT_TYPES.CONTAINER:
-				ChildView = require( 'elementor-elements/views/container' );
-				break;
-
-			case ELEMENT_TYPES.DIV_BLOCK:
-			case ELEMENT_TYPES.FLEXBOX:
-				ChildView = require( 'elementor-modules/atomic-widgets/assets/js/editor/div-block-view' );
-				break;
+		if ( ! type ) {
+			throw new Error( `Element type "${ type }" is not registered.` );
 		}
 
-		return ChildView;
+		return type.getView();
 	},
 
 	behaviors() {
 		var behaviors = {
-			Sortable: {
-				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: ELEMENT_TYPES.SECTION,
-			},
+			// Sortable: {
+			// 	behaviorClass: require( 'elementor-behaviors/sortable' ),
+			// 	elChildType: ELEMENT_TYPES.SECTION,
+			// },
 		};
 
 		return elementor.hooks.applyFilters( 'elements/base-section-container/behaviors', behaviors, this );
