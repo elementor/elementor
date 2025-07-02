@@ -58,7 +58,7 @@ class Repository {
 				continue;
 			}
 
-			if ( isset( $existing_variable['label'] ) && isset( $variable['label'] ) && 
+			if ( isset( $existing_variable['label'] ) && isset( $variable['label'] ) &&
 				 strtolower( $existing_variable['label'] ) === strtolower( $variable['label'] ) ) {
 				throw new DuplicatedLabel( 'Variable label already exists' );
 			}
