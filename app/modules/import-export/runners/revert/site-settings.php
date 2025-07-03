@@ -3,6 +3,7 @@
 namespace Elementor\App\Modules\ImportExport\Runners\Revert;
 
 use Elementor\Plugin;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
 
 class Site_Settings extends Revert_Runner_Base {
 
@@ -25,6 +26,7 @@ class Site_Settings extends Revert_Runner_Base {
 		);
 
 		$this->revert_theme( $data );
+		$this->revert_experiments( $data );
 	}
 
 	public function get_theme_upgrader(): \Theme_Upgrader {
@@ -93,5 +95,36 @@ class Site_Settings extends Revert_Runner_Base {
 		}
 
 		switch_theme( $previous_active_theme['slug'] );
+	}
+
+	protected function revert_experiments( array $data ) {
+		$runner_data = $data['runners'][ static::get_name() ];
+		$previous_experiments = $runner_data['previous_experiments'] ?? [];
+
+		if ( empty( $previous_experiments ) ) {
+			return;
+		}
+
+		$experiments_manager = Plugin::$instance->experiments;
+		$current_features = $experiments_manager->get_features();
+
+		foreach ( $previous_experiments as $feature_name => $feature_data ) {
+			if ( ! isset( $current_features[ $feature_name ] ) ) {
+				continue;
+			}
+
+			if ( ! array_key_exists( $feature_name, $previous_experiments ) ) {
+				continue;
+			}
+
+			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
+			$previous_state = $feature_data['state'];
+
+			if ( ExperimentsManager::STATE_DEFAULT === $previous_state ) {
+				delete_option( $option_key );
+			} else {
+				update_option( $option_key, $previous_state );
+			}
+		}
 	}
 }
