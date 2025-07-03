@@ -72,6 +72,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			$this->meta( 'dependencies', $dependencies );
 		}
 
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
+
 		return $this;
 	}
 }

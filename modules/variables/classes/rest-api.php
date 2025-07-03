@@ -340,7 +340,7 @@ class Rest_Api {
 			return $this->prepare_error_response(
 				self::HTTP_BAD_REQUEST,
 				'duplicated_label',
-				__( 'Variable name already exists', 'elementor' )
+				__( 'Variable label already exists', 'elementor' )
 			);
 		}
 

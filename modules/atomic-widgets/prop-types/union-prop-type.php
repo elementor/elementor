@@ -116,7 +116,7 @@ class Union_Prop_Type implements Prop_Type {
 		];
 	}
 
-	public function dependencies( ?Dependency_Manager $manager = null ): self {
+	public function dependencies( Dependency_Manager $manager ): self {
 		$dependencies = $manager->get();
 
 		if ( ! empty( $dependencies ) ) {
