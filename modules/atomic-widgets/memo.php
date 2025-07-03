@@ -6,10 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Cache {
+class Memo {
 	private array $cache = [];
 
-	public function cache( string $key, callable $callback ) {
+	public function memoize( string $key, callable $callback ) {
 		return function() use ( $key, $callback ) {
 			if ( array_key_exists( $key, $this->cache ) ) {
 				return $this->cache[ $key ];
