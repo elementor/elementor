@@ -261,6 +261,59 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
 	}
 
+	public function test_restore_variable__with_overrides() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'id-a01' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'primary-text-color',
+						'value' => '#404040',
+						'deleted' => true,
+						'deleted_at' => '2021-01-01 00:00:00',
+					],
+					'id-a02' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'primary-text-color',
+						'value' => '#202020',
+					],
+				],
+				'watermark' => 5,
+			] );
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
+		$request->set_body_params( [
+			'id' => 'id-a01',
+			'label' => 'main-text-color',
+			'value' => '#202020',
+		] );
+
+		$response = $this->rest_api->restore_variable( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 6, $response_data['data']['watermark'], 'Watermark validation failed' );
+
+		$this->assertEquals( 'main-text-color', $response_data['data']['variable']['label'] );
+		$this->assertEquals( '#202020', $response_data['data']['variable']['value'] );
+		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
+	}
+
 	public function test_get_variables() {
 		// Arrange
 		$this->act_as_admin();
