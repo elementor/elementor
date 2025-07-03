@@ -1,0 +1,54 @@
+{
+  "name": "@elementor/editor-elements",
+  "description": "This package contains the elements model for the Elementor editor",
+  "version": "0.9.1",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor-packages.git",
+    "directory": "packages/libs/editor-elements"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor-packages/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "/dist",
+    "/src",
+    "!**/__tests__"
+  ],
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "dependencies": {
+    "@elementor/editor-props": "0.17.0",
+    "@elementor/editor-styles": "0.6.13",
+    "@elementor/editor-v1-adapters": "0.12.1",
+    "@elementor/utils": "0.5.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}

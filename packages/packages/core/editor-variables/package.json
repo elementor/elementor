@@ -1,0 +1,62 @@
+{
+  "name": "@elementor/editor-variables",
+  "version": "0.17.0",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor-packages.git",
+    "directory": "packages/core/editor-variables"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor-packages/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "/dist",
+    "/src",
+    "!**/__tests__"
+  ],
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "dependencies": {
+    "@elementor/editor": "0.21.0",
+    "@elementor/editor-editing-panel": "1.49.0",
+    "@elementor/editor-canvas": "0.27.0",
+    "@elementor/editor-props": "0.17.0",
+    "@elementor/schema": "0.1.2",
+    "@elementor/editor-controls": "1.4.0",
+    "@elementor/icons": "1.46.0",
+    "@wordpress/i18n": "^5.13.0",
+    "@elementor/ui": "1.36.0",
+    "@elementor/editor-v1-adapters": "0.12.1",
+    "@elementor/http-client": "0.3.0",
+    "@elementor/editor-ui": "0.14.1"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}

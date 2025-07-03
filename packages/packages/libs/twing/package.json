@@ -1,0 +1,41 @@
+{
+  "name": "@elementor/twing",
+  "description": "Wrapper around `twing`",
+  "version": "0.0.2",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor-packages.git",
+    "directory": "packages/libs/twing"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor-packages/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup --config=./tsup.config.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "dependencies": {
+    "twing": "7.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
+}
