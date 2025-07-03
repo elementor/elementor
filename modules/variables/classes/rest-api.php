@@ -41,7 +41,6 @@ class Rest_Api {
 	}
 
 	public function enough_permissions_to_perform_action() {
-		// return true;
 		return current_user_can( 'edit_posts' );
 	}
 
