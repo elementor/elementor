@@ -574,10 +574,9 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['clip_box_notice'] = [
-			'type' => Controls_Manager::ALERT,
-			'alert_type' => 'warning',
-			'content' => esc_html__( 'This works only if padding or border values are set.', 'elementor' ),
-			'render_type' => 'ui',
+			'type' => Controls_Manager::RAW_HTML,
+			'content_classes' => 'elementor-control-field-description',
+			'raw' => esc_html__( 'Note: This works only if padding or border values are set.', 'elementor' ),
 			'conditions' => [
 				'relation' => 'and',
 				'terms' => [
@@ -626,10 +625,9 @@ class Group_Control_Background extends Group_Control_Base {
 		];
 
 		$fields['clip_text_notice'] = [
-			'type' => Controls_Manager::ALERT,
-			'alert_type' => 'warning',
-			'content' => esc_html__( 'Clipping text works only if the text is transparent.', 'elementor' ),
-			'render_type' => 'ui',
+			'type' => Controls_Manager::RAW_HTML,
+			'content_classes' => 'elementor-control-field-description',
+			'raw' => esc_html__( 'Note: Clipping text works only if the text is transparent.', 'elementor' ),
 			'conditions' => [
 				'relation' => 'and',
 				'terms' => [
