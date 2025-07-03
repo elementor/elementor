@@ -1,17 +1,17 @@
 name: Performance Check
 
 on:
-  # push:
-  #   branches:
-  #     - 'main'
-  #     - '3.*'
-  #   paths-ignore:
-  #     - '**.md'
-  #     - '**.txt'
-  #     - '.github/config.json'
-  #     - 'bin/**'
-  #     - '.gitignore'
-  #     - 'docs/**'
+  push:
+    branches:
+      - 'main'
+      - '3.*'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
   workflow_dispatch:
 
 jobs:
