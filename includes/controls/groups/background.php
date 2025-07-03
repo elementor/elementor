@@ -536,9 +536,144 @@ class Group_Control_Background extends Group_Control_Base {
 			'selectors' => [
 				'{{SELECTOR}}' => 'background-clip: {{VALUE}};',
 			],
-			'condition' => [
-				'background' => [ 'classic' ],
-				'image[url]!' => '',
+			'conditions' => [
+				'relation' => 'or',
+				'terms' => [
+					[
+						'name' => 'background',
+						'operator' => '===',
+						'value' => 'gradient',
+					],
+					[
+						'relation' => 'and',
+						'terms' => [
+							[
+								'name' => 'background',
+								'operator' => '===',
+								'value' => 'classic',
+							],
+							[
+								'relation' => 'or',
+								'terms' => [
+									[
+										'name' => 'color',
+										'operator' => '!==',
+										'value' => '',
+									],
+									[
+										'name' => 'image[url]',
+										'operator' => '!==',
+										'value' => '',
+									],
+								],
+							],
+						],
+					],
+				]
+			],
+		];
+
+		$fields['clip_box_notice'] = [
+			'type' => Controls_Manager::ALERT,
+			'alert_type' => 'warning',
+			'content' => esc_html__( 'This works only if padding or border values are set.', 'elementor' ),
+			'render_type' => 'ui',
+			'conditions' => [
+				'relation' => 'and',
+				'terms' => [
+					[
+						'relation' => 'or',
+						'terms' => [
+							[
+								'name' => 'background',
+								'operator' => '===',
+								'value' => 'gradient',
+							],
+							[
+								'relation' => 'and',
+								'terms' => [
+									[
+										'name' => 'background',
+										'operator' => '===',
+										'value' => 'classic',
+									],
+									[
+										'relation' => 'or',
+										'terms' => [
+											[
+												'name' => 'color',
+												'operator' => '!==',
+												'value' => '',
+											],
+											[
+												'name' => 'image[url]',
+												'operator' => '!==',
+												'value' => '',
+											],
+										],
+									],
+								],
+							],
+						]
+					],
+					[
+						'name' => 'clip',
+						'operator' => 'in',
+						'value' => [ 'border-box', 'padding-box', 'content-box' ],
+					],
+				],
+			],
+		];
+
+		$fields['clip_text_notice'] = [
+			'type' => Controls_Manager::ALERT,
+			'alert_type' => 'warning',
+			'content' => esc_html__( 'Clipping text works only if the text is transparent.', 'elementor' ),
+			'render_type' => 'ui',
+			'conditions' => [
+				'relation' => 'and',
+				'terms' => [
+					[
+						'relation' => 'or',
+						'terms' => [
+							[
+								'name' => 'background',
+								'operator' => '===',
+								'value' => 'gradient',
+							],
+							[
+								'relation' => 'and',
+								'terms' => [
+									[
+										'name' => 'background',
+										'operator' => '===',
+										'value' => 'classic',
+									],
+									[
+										'relation' => 'or',
+										'terms' => [
+											[
+												'name' => 'color',
+												'operator' => '!==',
+												'value' => '',
+											],
+											[
+												'name' => 'image[url]',
+												'operator' => '!==',
+												'value' => '',
+											],
+										],
+									],
+								],
+							],
+						]
+					],
+					[
+						'name' => 'clip',
+						'operator' => '===',
+						'value' => 'text',
+					],
+				],
 			],
 		];
 
