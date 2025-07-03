@@ -224,7 +224,7 @@ class Rest_Api {
 	}
 
 	protected function clear_cache() {
-		// Plugin::$instance->files_manager->clear_cache();
+		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	private function create_new_variable( WP_REST_Request $request ) {
