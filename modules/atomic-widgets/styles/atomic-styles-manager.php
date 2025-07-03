@@ -62,12 +62,6 @@ class Atomic_Styles_Manager {
 		do_action('elementor/atomic-widgets/styles/register', $this, $this->post_ids);
 
 		$get_styles_cache = new Cache();
-//		$styles_by_key = Collection::make($this->registered_styles_by_key)
-//			->map_with_keys(fn($style_params, $style_key) => [$style_key => $get_styles_cache->cache($style_key, $style_params['get_styles'])])
-//			->all();
-//		$cache_keys_by_key = Collection::make($this->registered_styles_by_key)
-//			->map(fn($style_params) => $style_params['cache_keys'])
-//			->all();
 
 		$styles_by_key = Collection::make($this->registered_styles_by_key)
 			->map_with_keys( fn ( $style_params, $style_key ) => [
