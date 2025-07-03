@@ -1536,6 +1536,11 @@ abstract class Element_Base extends Controls_Stack {
 		return $child_type;
 	}
 
+	protected function define_default_children() {
+		// This method is meant to be overridden by the element.
+		return [];
+	}
+
 	/**
 	 * Initialize children.
 	 *
@@ -1550,6 +1555,7 @@ abstract class Element_Base extends Controls_Stack {
 		$children_data = $this->get_data( 'elements' );
 
 		if ( ! $children_data ) {
+			$this->children = $this->define_default_children();
 			return;
 		}
 

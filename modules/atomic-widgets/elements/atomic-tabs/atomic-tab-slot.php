@@ -1,12 +1,12 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -15,25 +15,24 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Div_Block extends Atomic_Element_Base {
+class Atomic_Tab_Slot extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-div-block';
+		return 'e-tab-slot';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-div-block';
+		return 'e-tab-slot';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Div Block', 'elementor' );
+		return esc_html__( 'Tab Slot', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -41,7 +40,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-div-block';
+		return 'eicon-tab-slot';
 	}
 
 	protected static function define_props_schema(): array {
@@ -62,6 +61,7 @@ class Div_Block extends Atomic_Element_Base {
 
 			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
+
 		return $props;
 	}
 
@@ -151,31 +151,22 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
+		$display = String_Prop_Type::generate( 'flex' );
+		$padding = Size_Prop_Type::generate( [
+			'size' => 10,
+			'unit' => 'px',
+		] );
+		$bg_color = Color_Prop_Type::generate( 'pink' );
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
 						->add_prop( 'display', $display )
-						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-width', $this->get_base_min_width() )
+						->add_prop( 'padding', $padding )
+						->add_prop( 'background-color', $bg_color )
 				),
 		];
-	}
-
-	protected function get_base_padding(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-	}
-
-	protected function get_base_min_width(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 30,
-			'unit' => 'px',
-		] );
 	}
 
 	protected function add_render_attributes() {
