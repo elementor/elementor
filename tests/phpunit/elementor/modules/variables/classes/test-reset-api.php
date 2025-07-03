@@ -314,7 +314,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
 	}
 
-	public function test_restore_variable__with_overrides_and_duplicated_label() {
+	public function test_restore_variable__with_overrides_and_duplicated_label__results_in_bad_request() {
 		// Arrange
 		$this->act_as_admin();
 
