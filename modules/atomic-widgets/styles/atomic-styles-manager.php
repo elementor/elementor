@@ -43,7 +43,7 @@ class Atomic_Styles_Manager {
 		add_action( 'elementor/post/render', function( $post_id ) {
 			$this->post_ids[] = $post_id;
 		} );
-		add_action('elementor/documents/ajax_save/after_save', fn(Document $document, array $post_data) => $this->on_document_change($document, $post_data), 10, 2);
+		add_action( 'elementor/documents/ajax_save/after_save', fn( Document $document, array $post_data ) => $this->on_document_change( $document, $post_data ), 10, 2 );
 	}
 
 	public function register( string $key, callable $get_style_defs, array $cache_keys ) {
@@ -53,48 +53,47 @@ class Atomic_Styles_Manager {
 		];
 	}
 
-	private function enqueue_styles()
-	{
-		if (empty($this->post_ids)) {
+	private function enqueue_styles() {
+		if ( empty( $this->post_ids ) ) {
 			return;
 		}
 
-		do_action('elementor/atomic-widgets/styles/register', $this, $this->post_ids);
+		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
 
 		$get_styles_cache = new Cache();
 
-		$styles_by_key = Collection::make($this->registered_styles_by_key)
+		$styles_by_key = Collection::make( $this->registered_styles_by_key )
 			->map_with_keys( fn ( $style_params, $style_key ) => [
 				$style_key => [
-					'get_styles' => $get_styles_cache->cache($style_key, $style_params['get_styles']),
+					'get_styles' => $get_styles_cache->cache( $style_key, $style_params['get_styles'] ),
 					'cache_keys' => $style_params['cache_keys'],
-				]
+				],
 			])
 			->all();
 
 		$group_by_breakpoint_cache = new Cache();
 		$breakpoints = $this->get_breakpoints();
-		foreach ($breakpoints as $breakpoint_key) {
-			foreach ($styles_by_key as $style_key => $style_params) {
+		foreach ( $breakpoints as $breakpoint_key ) {
+			foreach ( $styles_by_key as $style_key => $style_params ) {
 				$cache_keys = $style_params['cache_keys'];
-				$render_css = fn() => $this->render_css_by_breakpoints($style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_cache);
+				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_cache );
 
-				$breakpoint_media = $this->get_breakpoint_media($breakpoint_key);
+				$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
 
-				if (!$breakpoint_media) {
+				if ( ! $breakpoint_media ) {
 					continue;
 				}
 
-				$style_file = (new CSS_Files_Manager())->get(
+				$style_file = ( new CSS_Files_Manager() )->get(
 					$style_key . '-' . $breakpoint_key,
 					$breakpoint_media,
 					$render_css,
-					$this->cache_state_manager->get($cache_keys)
+					$this->cache_state_manager->get( $cache_keys )
 				);
 
-				$this->cache_state_manager->validate($cache_keys);
+				$this->cache_state_manager->validate( $cache_keys );
 
-				if (!$style_file) {
+				if ( ! $style_file ) {
 					continue;
 				}
 
@@ -108,11 +107,10 @@ class Atomic_Styles_Manager {
 		}
 	}
 
-	private function render_css(array $styles)
-	{
+	private function render_css( array $styles ) {
 		$css = Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform(function ($key, $value ) {
+		)->on_prop_transform(function ( $key, $value ) {
 			if ( 'font-family' !== $key ) {
 				return;
 			}

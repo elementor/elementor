@@ -9,30 +9,26 @@ class CSS_Files_Manager {
 	const PERMISSIONS = 0644;
 
 	public function get( string $handle, string $media, callable $get_css, bool $is_valid_cache ): ?Style_File {
-        $filesystem = $this->get_filesystem();
-        $path = $this->get_path( $handle );
+		$filesystem = $this->get_filesystem();
+		$path = $this->get_path( $handle );
 
-        if( $is_valid_cache ) {
-            if(!$filesystem->exists( $path )) {
-                echo '<h3 style="background-color:green;color: white; text-shadow: 1px 1px 1px black">No file but valid cache for: '.$handle.'</h3>';
-                return null;
-            }
+		if ( $is_valid_cache ) {
+			if ( ! $filesystem->exists( $path ) ) {
+				return null;
+			}
 
-            echo '<h3 style="background-color:green;color: white; text-shadow: 1px 1px 1px black">Using existing file for: '.$handle.'</h3>';
-            // Return the existing file
-            return Style_File::create(
-                $this->sanitize_handle( $handle ),
-                $this->get_filesystem_path( $this->get_path( $handle ) ),
-                $this->get_url( $handle ),
-                $media,
-            );
-        }
+			// Return the existing file
+			return Style_File::create(
+				$this->sanitize_handle( $handle ),
+				$this->get_filesystem_path( $this->get_path( $handle ) ),
+				$this->get_url( $handle ),
+				$media,
+			);
+		}
 
-        echo '<h3 style="background-color:orange;color: white; text-shadow: 1px 1px 1px black">'.($is_valid_cache ? 'no existing file' : 'invalid cache').' for: '.$handle.'</h3>';
+		$css = $get_css();
 
-        $css = $get_css();
-
-        if ( empty( $css ) ) {
+		if ( empty( $css ) ) {
 			return null;
 		}
 
@@ -48,7 +44,7 @@ class CSS_Files_Manager {
 			$this->sanitize_handle( $handle ),
 			$filesystem_path,
 			$this->get_url( $handle ),
-            $media
+			$media
 		);
 	}
 

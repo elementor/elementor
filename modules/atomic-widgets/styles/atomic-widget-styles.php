@@ -14,7 +14,7 @@ class Atomic_Widget_Styles {
 			$this->register_styles( $styles_manager, $post_ids );
 		}, 30, 2 );
 
-		add_action('elementor/atomic-widgets/styles/post-change', fn(array $post_ids) => $this->invalidate_cache($post_ids), 20, 2);
+		add_action( 'elementor/atomic-widgets/styles/post-change', fn( array $post_ids ) => $this->invalidate_cache( $post_ids ), 20, 2 );
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
@@ -30,8 +30,6 @@ class Atomic_Widget_Styles {
 	}
 
 	private function parse_post_styles( $post_id ) {
-		echo '<h3 style="background-color:red;color: white; text-shadow: 1px 1px 1px black">Local render</h3>';
-
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		if ( ! $document ) {

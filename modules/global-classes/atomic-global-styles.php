@@ -16,36 +16,35 @@ class Atomic_Global_Styles {
 			2
 		);
 
-        add_action( 'elementor/global_classes/update', fn( string $context) => $this->invalidate_cache( $context ), 10, 1 );
+		add_action( 'elementor/global_classes/update', fn( string $context ) => $this->invalidate_cache( $context ), 10, 1 );
 
-        add_filter('elementor/atomic-widgets/settings/transformers/classes',
-            fn( $value ) => $this->transform_classes_names( $value )
-        );
-    }
+		add_filter('elementor/atomic-widgets/settings/transformers/classes',
+			fn( $value ) => $this->transform_classes_names( $value )
+		);
+	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
-        $context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
+		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
-		$get_styles = function () use( $context ) {
-			echo '<h3 style="background-color:red;color: white; text-shadow: 1px 1px 1px black">Global classes render</h3>';
-            return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
-                $item['id'] = $item['label'];
-                return $item;
-            })->all();
-        };
+		$get_styles = function () use ( $context ) {
+			return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
+				$item['id'] = $item['label'];
+				return $item;
+			})->all();
+		};
 
 		$styles_manager->register(
 			self::STYLES_KEY . '-' . $context,
 			$get_styles,
-            [self::STYLES_KEY, $context]
+			[ self::STYLES_KEY, $context ]
 		);
 	}
 
-    private function invalidate_cache(string $context) {
-        $cache_state_manager = new Cache_State_Manager();
+	private function invalidate_cache( string $context ) {
+		$cache_state_manager = new Cache_State_Manager();
 
-        $cache_state_manager->invalidate( [self::STYLES_KEY, $context] );
-    }
+		$cache_state_manager->invalidate( [ self::STYLES_KEY, $context ] );
+	}
 
 	private function transform_classes_names( $ids ) {
 		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;

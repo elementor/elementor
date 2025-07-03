@@ -15,7 +15,7 @@ class Cache_State_Manager {
 
 		$state_item = get_option( CACHE_KEY_PREFIX . $root, null );
 
-		if ( ! empty ( $keys ) ) {
+		if ( ! empty( $keys ) ) {
 			if ( ! $state_item ) {
 				return false;
 			}
@@ -31,7 +31,7 @@ class Cache_State_Manager {
 
 		$state_item = get_option( CACHE_KEY_PREFIX . $root, [
 			'state' => false,
-			'children' => []
+			'children' => [],
 		] );
 
 		$current_item = &$state_item;
@@ -75,17 +75,17 @@ class Cache_State_Manager {
 	private function &get_nested_item( array &$root_item, array $keys ): array {
 		$current_item = &$root_item;
 
-		while (!empty($keys)) {
-			$key = array_shift($keys);
+		while ( ! empty( $keys ) ) {
+			$key = array_shift( $keys );
 
-			if ( ! isset ( $current_item['children'][$key] ) ) {
-				$current_item['children'][$key] = [
+			if ( ! isset( $current_item['children'][ $key ] ) ) {
+				$current_item['children'][ $key ] = [
 					'state' => false,
 					'children' => [],
 				];
 			}
 
-			$current_item = &$current_item['children'][$key];
+			$current_item = &$current_item['children'][ $key ];
 
 		}
 

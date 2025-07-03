@@ -27,8 +27,6 @@ class Atomic_Widget_Base_Styles {
 	}
 
 	public function get_all_base_styles(): array {
-		echo '<h3 style="background-color:red;color: white; text-shadow: 1px 1px 1px black">Base render</h3>';
-
 		$elements = Plugin::$instance->elements_manager->get_element_types();
 		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
 
