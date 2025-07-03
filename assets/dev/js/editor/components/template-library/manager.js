@@ -37,6 +37,7 @@ const TemplateLibraryManager = function() {
 			container: __( 'Container', 'elementor' ),
 			'e-div-block': __( 'Div Block', 'elementor' ),
 			'e-flexbox': __( 'Flexbox', 'elementor' ),
+			'e-tabs': __( 'Tabs', 'elementor' ),
 
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};

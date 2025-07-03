@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -210,6 +211,17 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
-		return [];
+		$heading = Plugin::instance()->elements_manager->create_element_instance( [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [
+				'title' => String_Prop_Type::generate( 'Tabs Title' ),
+			],
+			'widgetType' => Atomic_Heading::get_element_type(),
+		] );
+
+		return [
+			$heading,
+		];
 	}
 }
