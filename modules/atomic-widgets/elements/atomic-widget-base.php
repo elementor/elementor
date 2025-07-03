@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Widget_Base;
 
@@ -31,12 +32,14 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
+		$props_schema = static::get_props_schema();
 
 		$config['atomic'] = true;
 		$config['atomic_controls'] = $this->get_atomic_controls();
 		$config['base_styles'] = $this->get_base_styles();
 		$config['base_styles_dictionary'] = $this->get_base_styles_dictionary();
-		$config['atomic_props_schema'] = static::get_props_schema();
+		$config['atomic_props_schema'] = $props_schema;
+		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
 
 		return $config;
