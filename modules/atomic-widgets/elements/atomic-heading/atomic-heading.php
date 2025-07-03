@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
@@ -7,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -50,7 +52,13 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' ),
 
 			'title' => String_Prop_Type::make()
-				->default( __( 'This is a title', 'elementor' ) ),
+				->default( __( 'This is a title', 'elementor' ) )
+				->dependencies( Manager::make()->where(
+					[
+						'path' => [ 'tag' ],
+						'operator' => 'not_exist',
+					]
+				) ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -78,7 +86,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		return [
 			Select_Control::bind_to( 'tag' )
 				->set_label( esc_html__( 'Tag', 'elementor' ) )
-				->set_options([
+				->set_options( [
 					[
 						'value' => 'h1',
 						'label' => 'H1',
@@ -103,7 +111,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'value' => 'h6',
 						'label' => 'H6',
 					],
-				]),
+				] ),
 			Link_Control::bind_to( 'link' )
 				->set_label( __( 'Link', 'elementor' ) )
 				->set_meta( [
@@ -115,7 +123,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	protected function define_base_styles(): array {
 		$margin_value = Size_Prop_Type::generate( [
 			'unit' => 'px',
-			'size' => 0 ,
+			'size' => 0,
 		] );
 
 		return [

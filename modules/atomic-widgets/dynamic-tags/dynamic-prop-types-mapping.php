@@ -80,13 +80,20 @@ class Dynamic_Prop_Types_Mapping {
 			return $prop_type;
 		}
 
-		$union_prop_type = $prop_type instanceof Transformable_Prop_Type ?
-			Union_Prop_Type::create_from( $prop_type ) :
-			$prop_type;
+		$dynamic_prop_type = Dynamic_Prop_Type::make()->categories( $categories );
 
-		$union_prop_type->add_prop_type(
-			Dynamic_Prop_Type::make()->categories( $categories )
-		);
+		if ( $prop_type instanceof Transformable_Prop_Type ) {
+			$dependencies = $prop_type->get_meta_item( 'dependencies', [] );
+			$prop_type->meta( 'dependencies', [] );
+			$union_prop_type = Union_Prop_Type::create_from( $prop_type )->meta( 'dependencies', $dependencies );
+		} else {
+			$prop_key_to_inherit_dependencies_from = array_key_first( $prop_type->get_prop_types() );
+			$dependencies = $prop_type->get_prop_type( $prop_key_to_inherit_dependencies_from )->get_meta_item( 'dependencies', [] );
+			$union_prop_type = $prop_type;
+			$dynamic_prop_type->meta( 'dependencies', $dependencies );
+		}
+
+		$union_prop_type->add_prop_type( $dynamic_prop_type );
 
 		return $union_prop_type;
 	}
