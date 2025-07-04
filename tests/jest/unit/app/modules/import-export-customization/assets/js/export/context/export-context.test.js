@@ -129,10 +129,16 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 			} );
 
-			expect( result.current.data.exportStatus ).toBe( EXPORT_STATUS.EXPORTING );
-			expect( result.current.isPending ).toBe( false );
-			expect( result.current.isExporting ).toBe( true );
-			expect( result.current.isCompleted ).toBe( false );
+			expect( result ).toMatchObject( {
+				current: {
+					data: {
+						exportStatus: EXPORT_STATUS.EXPORTING,
+					},
+					isPending: false,
+					isExporting: true,
+					isCompleted: false,
+				},
+			} );
 		} );
 
 		it( 'should transition from exporting to completed status', async () => {
@@ -144,10 +150,16 @@ describe( 'Export Context', () => {
 				result.current.dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 			} );
 
-			expect( result.current.data.exportStatus ).toBe( EXPORT_STATUS.COMPLETED );
-			expect( result.current.isPending ).toBe( false );
-			expect( result.current.isExporting ).toBe( false );
-			expect( result.current.isCompleted ).toBe( true );
+			expect( result ).toMatchObject( {
+				current: {
+					data: {
+						exportStatus: EXPORT_STATUS.COMPLETED,
+					},
+					isPending: false,
+					isExporting: false,
+					isCompleted: true,
+				},
+			} );
 		} );
 	} );
 
