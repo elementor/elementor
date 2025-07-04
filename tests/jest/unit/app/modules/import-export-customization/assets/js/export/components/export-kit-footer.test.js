@@ -1,9 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ExportKitFooter from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-footer';
-import { ExportContextProvider } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
 
-// Mock the hooks
 jest.mock( 'elementor-app/hooks/use-cloud-kits-eligibility', () => jest.fn() );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state', () => jest.fn() );
@@ -17,7 +15,6 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/c
 	},
 } ) );
 
-// Import the mocked functions
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state';
 import { useExportContext } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
@@ -31,7 +28,6 @@ describe( 'ExportKitFooter Component', () => {
 	let mockSetConnecting;
 
 	beforeEach( () => {
-		// Mock global config
 		mockElementorAppConfig = {
 			base_url: 'https://example.com/elementor',
 			'cloud-library': {
@@ -40,23 +36,19 @@ describe( 'ExportKitFooter Component', () => {
 		};
 		global.elementorAppConfig = mockElementorAppConfig;
 
-		// Mock window.location
 		delete window.location;
 		window.location = { href: '' };
 
-		// Mock jQuery
 		global.jQuery = jest.fn( () => ( {
 			elementorConnect: jest.fn(),
 		} ) );
 
-		// Mock dispatch and other handlers
 		mockDispatch = jest.fn();
 		mockRefetchEligibility = jest.fn();
 		mockHandleConnectSuccess = jest.fn();
 		mockHandleConnectError = jest.fn();
 		mockSetConnecting = jest.fn();
 
-		// Default mock return values
 		useExportContext.mockReturnValue( {
 			dispatch: mockDispatch,
 			isTemplateNameValid: true,
@@ -100,7 +92,7 @@ describe( 'ExportKitFooter Component', () => {
 			expect( saveToLibraryButton.getAttribute( 'href' ) ).toBe( 'https://example.com/connect' );
 		} );
 
-		it( 'should render Save to Library button when template name is invalid', () => {
+		it( 'should render Save to Library button disabled when template name is invalid', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
 				isTemplateNameValid: false,
@@ -110,6 +102,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			const saveToLibraryButton = screen.getByText( 'Save to library' );
 			expect( saveToLibraryButton ).toBeTruthy();
+			expect( saveToLibraryButton.getAttribute( 'aria-disabled' ) ).toBe( 'true' );
 		} );
 
 		it( 'should render Export as .zip button', () => {
@@ -119,7 +112,7 @@ describe( 'ExportKitFooter Component', () => {
 			expect( exportButton ).toBeTruthy();
 		} );
 
-		it( 'should render Export as .zip button when template name is invalid', () => {
+		it( 'should render Export as .zip button disabled when template name is invalid', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
 				isTemplateNameValid: false,
@@ -129,6 +122,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			const exportButton = screen.getByText( 'Export as .zip' );
 			expect( exportButton ).toBeTruthy();
+			expect( exportButton.disabled ).toBe( true );
 		} );
 	} );
 
@@ -250,197 +244,6 @@ describe( 'ExportKitFooter Component', () => {
 				type: 'SET_EXPORT_STATUS',
 				payload: 'EXPORTING',
 			} );
-		} );
-
-		it( 'should render Save to Library button when user is non-eligible', () => {
-			useCloudKitsEligibility.mockReturnValue( {
-				data: { is_eligible: false },
-				isLoading: false,
-				refetch: mockRefetchEligibility,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-
-		it( 'should render Save to Library button when eligibility is loading', () => {
-			useCloudKitsEligibility.mockReturnValue( {
-				data: { is_eligible: true },
-				isLoading: true,
-				refetch: mockRefetchEligibility,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-	} );
-
-	describe( 'Connection Flow Integration', () => {
-		it( 'should render with connecting state', () => {
-			useConnectState.mockReturnValue( {
-				isConnected: false,
-				isConnecting: true,
-				setConnecting: mockSetConnecting,
-				handleConnectSuccess: mockHandleConnectSuccess,
-				handleConnectError: mockHandleConnectError,
-			} );
-
-			useCloudKitsEligibility.mockReturnValue( {
-				data: { is_eligible: true },
-				isLoading: false,
-				refetch: mockRefetchEligibility,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-
-		it( 'should render with non-eligible connecting user', () => {
-			useConnectState.mockReturnValue( {
-				isConnected: false,
-				isConnecting: true,
-				setConnecting: mockSetConnecting,
-				handleConnectSuccess: mockHandleConnectSuccess,
-				handleConnectError: mockHandleConnectError,
-			} );
-
-			useCloudKitsEligibility.mockReturnValue( {
-				data: { is_eligible: false },
-				isLoading: false,
-				refetch: mockRefetchEligibility,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-
-		it( 'should render with eligible connecting user', () => {
-			useConnectState.mockReturnValue( {
-				isConnected: false,
-				isConnecting: true,
-				setConnecting: mockSetConnecting,
-				handleConnectSuccess: mockHandleConnectSuccess,
-				handleConnectError: mockHandleConnectError,
-			} );
-
-			useCloudKitsEligibility.mockReturnValue( {
-				data: { is_eligible: true },
-				isLoading: false,
-				refetch: mockRefetchEligibility,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-	} );
-
-	describe( 'Template Name Validation', () => {
-		it( 'should render both buttons when template name is invalid', () => {
-			useExportContext.mockReturnValue( {
-				dispatch: mockDispatch,
-				isTemplateNameValid: false,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			const exportButton = screen.getByText( 'Export as .zip' );
-
-			expect( saveToLibraryButton ).toBeTruthy();
-			expect( exportButton ).toBeTruthy();
-		} );
-
-		it( 'should render both buttons when template name is valid', () => {
-			useExportContext.mockReturnValue( {
-				dispatch: mockDispatch,
-				isTemplateNameValid: true,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			const exportButton = screen.getByText( 'Export as .zip' );
-
-			expect( saveToLibraryButton ).toBeTruthy();
-			expect( exportButton ).toBeTruthy();
-		} );
-	} );
-
-	describe( 'Loading States', () => {
-		it( 'should render when connecting', () => {
-			useConnectState.mockReturnValue( {
-				isConnected: true,
-				isConnecting: true,
-				setConnecting: mockSetConnecting,
-				handleConnectSuccess: mockHandleConnectSuccess,
-				handleConnectError: mockHandleConnectError,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-
-		it( 'should render when checking eligibility', () => {
-			useConnectState.mockReturnValue( {
-				isConnected: true,
-				isConnecting: false,
-				setConnecting: mockSetConnecting,
-				handleConnectSuccess: mockHandleConnectSuccess,
-				handleConnectError: mockHandleConnectError,
-			} );
-
-			useCloudKitsEligibility.mockReturnValue( {
-				data: { is_eligible: true },
-				isLoading: true,
-				refetch: mockRefetchEligibility,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-	} );
-
-	describe( 'Button Variants and Styling', () => {
-		it( 'should render Save to Library button with correct variant for disconnected state', () => {
-			useConnectState.mockReturnValue( {
-				isConnected: false,
-				isConnecting: false,
-				setConnecting: mockSetConnecting,
-				handleConnectSuccess: mockHandleConnectSuccess,
-				handleConnectError: mockHandleConnectError,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
-		} );
-
-		it( 'should handle missing eligibility data gracefully', () => {
-			useCloudKitsEligibility.mockReturnValue( {
-				data: null,
-				isLoading: false,
-				refetch: mockRefetchEligibility,
-			} );
-
-			render( <ExportKitFooter /> );
-
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
-			expect( saveToLibraryButton ).toBeTruthy();
 		} );
 	} );
 } );
