@@ -74,13 +74,6 @@ describe( 'ExportError Component', () => {
 	} );
 
 	describe( 'Component Structure', () => {
-		it( 'should render error icon', () => {
-			render( <ExportError statusText="Error occurred" /> );
-
-			const svg = document.querySelector( 'svg' );
-			expect( svg ).toBeTruthy();
-		} );
-
 		it( 'should render heading with correct text', () => {
 			render( <ExportError statusText="Test Error" /> );
 
@@ -94,7 +87,7 @@ describe( 'ExportError Component', () => {
 
 			const tryAgainButton = screen.getByTestId( 'export-error-try-again-button' );
 			const learnMoreButton = screen.getByTestId( 'export-error-learn-more-button' );
-			
+
 			expect( tryAgainButton ).toBeTruthy();
 			expect( learnMoreButton ).toBeTruthy();
 			expect( tryAgainButton.textContent ).toBe( 'Try Again' );

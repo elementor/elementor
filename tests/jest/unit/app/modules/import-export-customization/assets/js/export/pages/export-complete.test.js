@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 import ExportComplete from 'elementor/app/modules/import-export-customization/assets/js/export/pages/export-complete';
 
 let mockExportContext = {

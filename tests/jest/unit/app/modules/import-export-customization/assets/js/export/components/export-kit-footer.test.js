@@ -87,7 +87,7 @@ describe( 'ExportKitFooter Component', () => {
 		it( 'should render Save to Library button when user is not connected', () => {
 			render( <ExportKitFooter /> );
 
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
+			const saveToLibraryButton = screen.getByTestId( 'export-kit-footer-save-to-library-button' );
 			expect( saveToLibraryButton ).toBeTruthy();
 			expect( saveToLibraryButton.getAttribute( 'href' ) ).toBe( 'https://example.com/connect' );
 		} );
@@ -100,7 +100,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			render( <ExportKitFooter /> );
 
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
+			const saveToLibraryButton = screen.getByTestId( 'export-kit-footer-save-to-library-button' );
 			expect( saveToLibraryButton ).toBeTruthy();
 			expect( saveToLibraryButton.getAttribute( 'aria-disabled' ) ).toBe( 'true' );
 		} );
@@ -108,7 +108,7 @@ describe( 'ExportKitFooter Component', () => {
 		it( 'should render Export as .zip button', () => {
 			render( <ExportKitFooter /> );
 
-			const exportButton = screen.getByText( 'Export as .zip' );
+			const exportButton = screen.getByTestId( 'export-kit-footer-export-zip-button' );
 			expect( exportButton ).toBeTruthy();
 		} );
 
@@ -120,7 +120,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			render( <ExportKitFooter /> );
 
-			const exportButton = screen.getByText( 'Export as .zip' );
+			const exportButton = screen.getByTestId( 'export-kit-footer-export-zip-button' );
 			expect( exportButton ).toBeTruthy();
 			expect( exportButton.disabled ).toBe( true );
 		} );
@@ -146,7 +146,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			render( <ExportKitFooter /> );
 
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
+			const saveToLibraryButton = screen.getByTestId( 'export-kit-footer-save-to-library-button' );
 			expect( saveToLibraryButton ).toBeTruthy();
 			expect( saveToLibraryButton.hasAttribute( 'href' ) ).toBe( false );
 		} );
@@ -160,7 +160,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			render( <ExportKitFooter /> );
 
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
+			const saveToLibraryButton = screen.getByTestId( 'export-kit-footer-save-to-library-button' );
 			expect( saveToLibraryButton ).toBeTruthy();
 		} );
 
@@ -173,7 +173,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			render( <ExportKitFooter /> );
 
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
+			const saveToLibraryButton = screen.getByTestId( 'export-kit-footer-save-to-library-button' );
 			expect( saveToLibraryButton.disabled ).toBe( true );
 		} );
 	} );
@@ -182,7 +182,7 @@ describe( 'ExportKitFooter Component', () => {
 		it( 'should trigger file export when Export as .zip is clicked', () => {
 			render( <ExportKitFooter /> );
 
-			const exportButton = screen.getByText( 'Export as .zip' );
+			const exportButton = screen.getByTestId( 'export-kit-footer-export-zip-button' );
 			fireEvent.click( exportButton );
 
 			expect( mockDispatch ).toHaveBeenCalledWith( {
@@ -204,7 +204,7 @@ describe( 'ExportKitFooter Component', () => {
 
 			render( <ExportKitFooter /> );
 
-			const exportButton = screen.getByText( 'Export as .zip' );
+			const exportButton = screen.getByTestId( 'export-kit-footer-export-zip-button' );
 			expect( exportButton.disabled ).toBe( true );
 			fireEvent.click( exportButton );
 
@@ -232,7 +232,7 @@ describe( 'ExportKitFooter Component', () => {
 		it( 'should trigger cloud export when eligible user clicks Save to Library', () => {
 			render( <ExportKitFooter /> );
 
-			const saveToLibraryButton = screen.getByText( 'Save to library' );
+			const saveToLibraryButton = screen.getByTestId( 'export-kit-footer-save-to-library-button' );
 			fireEvent.click( saveToLibraryButton );
 
 			expect( mockDispatch ).toHaveBeenCalledWith( {
