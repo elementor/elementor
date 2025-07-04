@@ -648,9 +648,9 @@ class Widget_Counter extends Widget_Base {
 				#><{{ titleTag }} {{{ view.getRenderAttributeString( 'counter-title' ) }}}>{{{ elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } ) }}}</{{ titleTag }}><#
 			} #>
 			<div {{{ view.getRenderAttributeString( 'counter-number' ) }}}>
-				<span {{{ view.getRenderAttributeString( 'prefix' ) }}}>{{{ settings.prefix }}}</span>
-				<span {{{ view.getRenderAttributeString( 'counter' ) }}}>{{{ settings.starting_number }}}</span>
-				<span {{{ view.getRenderAttributeString( 'suffix' ) }}}>{{{ settings.suffix }}}</span>
+				<span {{{ view.getRenderAttributeString( 'prefix' ) }}}>{{ settings.prefix }}</span>
+				<span {{{ view.getRenderAttributeString( 'counter' ) }}}>{{ settings.starting_number }}</span>
+				<span {{{ view.getRenderAttributeString( 'suffix' ) }}}>{{ settings.suffix }}</span>
 			</div>
 		</div>
 		<?php
@@ -703,9 +703,9 @@ class Widget_Counter extends Widget_Base {
 			endif;
 			?>
 			<div <?php $this->print_render_attribute_string( 'counter-number' ); ?>>
-				<span <?php $this->print_render_attribute_string( 'prefix' ); ?>><?php $this->print_unescaped_setting( 'prefix' ); ?></span>
-				<span <?php $this->print_render_attribute_string( 'counter' ); ?>><?php $this->print_unescaped_setting( 'starting_number' ); ?></span>
-				<span <?php $this->print_render_attribute_string( 'suffix' ); ?>><?php $this->print_unescaped_setting( 'suffix' ); ?></span>
+				<span <?php $this->print_render_attribute_string( 'prefix' ); ?>><?php echo wp_kses_post( $settings['prefix'] ); ?></span>
+				<span <?php $this->print_render_attribute_string( 'counter' ); ?>><?php echo wp_kses_post( $settings['starting_number'] ); ?></span>
+				<span <?php $this->print_render_attribute_string( 'suffix' ); ?>><?php echo wp_kses_post( $settings['suffix'] ); ?></span>
 			</div>
 		</div>
 		<?php

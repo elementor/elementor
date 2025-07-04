@@ -495,11 +495,11 @@ class Widget_Alert extends Widget_Base {
 		<div <?php $this->print_render_attribute_string( 'alert_wrapper' ); ?>>
 
 			<?php if ( ! Utils::is_empty( $settings['alert_title'] ) ) : ?>
-			<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php $this->print_unescaped_setting( 'alert_title' ); ?></span>
+			<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php echo wp_kses_post( $settings['alert_title'] ); ?></span>
 			<?php endif; ?>
 
 			<?php if ( ! Utils::is_empty( $settings['alert_description'] ) ) : ?>
-			<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php $this->print_unescaped_setting( 'alert_description' ); ?></span>
+			<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php echo wp_kses_post( $settings['alert_description'] ); ?></span>
 			<?php endif; ?>
 
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
@@ -550,11 +550,11 @@ class Widget_Alert extends Widget_Base {
 		<div {{{ view.getRenderAttributeString( 'alert_wrapper' ) }}}>
 
 			<# if ( settings.alert_title ) { #>
-			<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
+			<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{ settings.alert_title }}</span>
 			<# } #>
 
 			<# if ( settings.alert_description ) { #>
-			<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
+			<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{ settings.alert_description }}</span>
 			<# } #>
 
 			<# if ( 'show' === settings.show_dismiss ) { #>
