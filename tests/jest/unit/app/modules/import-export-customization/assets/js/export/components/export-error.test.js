@@ -54,9 +54,9 @@ describe( 'ExportError Component', () => {
 	describe( 'User Interactions', () => {
 		it( 'should handle Try Again button click', () => {
 			render( <ExportError statusText="Error occurred" /> );
-			
+
 			const tryAgainButton = screen.getByText( 'Try Again' );
-			expect( tryAgainButton ).toBeTruthy();			
+			expect( tryAgainButton ).toBeTruthy();
 
 			fireEvent.click( tryAgainButton );
 			expect( window.location.href ).toBe( 'https://example.com#/export-customization/' );
@@ -64,11 +64,11 @@ describe( 'ExportError Component', () => {
 
 		it( 'should handle Learn More button click', () => {
 			render( <ExportError statusText="Error occurred" /> );
-			
+
 			const learnMoreButton = screen.getByText( 'Learn More' );
 			expect( learnMoreButton ).toBeTruthy();
 
-			fireEvent.click(learnMoreButton);
+			fireEvent.click( learnMoreButton );
 			expect( mockWindowOpen ).toHaveBeenCalledWith( 'https://go.elementor.com/app-import-download-failed', '_blank' );
 		} );
 	} );
