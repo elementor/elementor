@@ -23,13 +23,21 @@ describe( 'Export Context', () => {
 				wrapper: createWrapper(),
 			} );
 
-			expect( result.current.data.exportStatus ).toBe( EXPORT_STATUS.PENDING );
-			expect( result.current.data.includes ).toEqual( [ 'content', 'templates', 'settings', 'plugins' ] );
-			expect( result.current.data.kitInfo.title ).toBeNull();
-			expect( result.current.data.kitInfo.description ).toBeNull();
-			expect( result.current.data.kitInfo.source ).toBeNull();
-			expect( result.current.data.plugins ).toEqual( [] );
-			expect( result.current.data.exportedData ).toBeNull();
+			expect( result ).toMatchObject( {
+				current: {
+					data: {
+						exportStatus: EXPORT_STATUS.PENDING,
+						includes: [ 'content', 'templates', 'settings', 'plugins' ],
+						kitInfo: {
+							title: null,
+							description: null,
+							source: null,
+						},
+						plugins: [],
+						exportedData: null,
+					},
+				},
+			} );
 		} );
 
 		it( 'should correctly calculate template name validity', async () => {
@@ -51,9 +59,13 @@ describe( 'Export Context', () => {
 				wrapper: createWrapper(),
 			} );
 
-			expect( result.current.isPending ).toBe( true );
-			expect( result.current.isExporting ).toBe( false );
-			expect( result.current.isCompleted ).toBe( false );
+			expect( result ).toMatchObject( {
+				current: {
+					isPending: true,
+					isExporting: false,
+					isCompleted: false,
+				},
+			} );
 		} );
 	} );
 
