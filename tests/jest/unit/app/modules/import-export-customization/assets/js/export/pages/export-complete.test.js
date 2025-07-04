@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import PropTypes from 'prop-types';
 import ExportComplete from 'elementor/app/modules/import-export-customization/assets/js/export/pages/export-complete';
 
 let mockExportContext = {
@@ -23,16 +24,22 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/c
 } ) );
 
 // Mock the download link component to properly trigger the callback
-jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/components/export-complete-download-link', () => 
-	( { onDownloadClick } ) => (
-		<button 
-			data-testid="download-link" 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/components/export-complete-download-link', () => {
+	const MockDownloadLink = ( { onDownloadClick } ) => (
+		<button
+			data-testid="download-link"
 			onClick={ () => onDownloadClick && onDownloadClick() }
 		>
 			Download manually
 		</button>
-	)
-);
+	);
+
+	MockDownloadLink.propTypes = {
+		onDownloadClick: PropTypes.func,
+	};
+
+	return MockDownloadLink;
+});
 
 describe( 'ExportComplete Component', () => {
 	let mockElementorAppConfig;
@@ -60,6 +67,12 @@ describe( 'ExportComplete Component', () => {
 			base_url: 'https://example.com/elementor',
 		};
 		global.elementorAppConfig = mockElementorAppConfig;
+
+		global.elementorCommon = {
+			config: {
+				isRTL: false,
+			},
+		};
 
 		mockLink = {
 			href: '',

@@ -26,13 +26,13 @@ describe( 'ExportError Component', () => {
 	describe( 'Basic Rendering', () => {
 		it( 'should render with provided status text', () => {
 			render( <ExportError statusText="Test Error" /> );
-			
+
 			expect( screen.getByText( 'Test Error' ) ).toBeTruthy();
 		} );
 
 		it( 'should render component when statusText is empty', () => {
 			render( <ExportError statusText="" /> );
-			
+
 			// Component still renders the structure
 			expect( screen.getByText( 'Try Again' ) ).toBeTruthy();
 			expect( screen.getByText( 'Learn More' ) ).toBeTruthy();
@@ -40,13 +40,13 @@ describe( 'ExportError Component', () => {
 
 		it( 'should render Try Again button', () => {
 			render( <ExportError statusText="Error occurred" /> );
-			
+
 			expect( screen.getByText( 'Try Again' ) ).toBeTruthy();
 		} );
 
 		it( 'should render Learn More button', () => {
 			render( <ExportError statusText="Error occurred" /> );
-			
+
 			expect( screen.getByText( 'Learn More' ) ).toBeTruthy();
 		} );
 	} );

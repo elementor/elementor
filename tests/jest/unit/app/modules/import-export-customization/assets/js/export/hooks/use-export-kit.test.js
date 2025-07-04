@@ -1,4 +1,4 @@
-import { renderHook, act, waitFor } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useExportKit } from 'elementor/app/modules/import-export-customization/assets/js/export/hooks/use-export-kit';
 import { generateScreenshot } from 'elementor/app/modules/import-export-customization/assets/js/export/utils/screenshot';
 import { EXPORT_STATUS } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
@@ -18,7 +18,7 @@ describe( 'useExportKit Hook', () => {
 
 	beforeEach( () => {
 		mockDispatch = jest.fn();
-		
+
 		mockElementorCommon = {
 			config: {
 				experimentalFeatures: {
@@ -26,7 +26,7 @@ describe( 'useExportKit Hook', () => {
 				},
 			},
 		};
-		
+
 		mockElementorAppConfig = {
 			'import-export-customization': {
 				restApiBaseUrl: 'https://example.com/wp-json/elementor/v1',
@@ -106,7 +106,7 @@ describe( 'useExportKit Hook', () => {
 						plugins: [],
 						selectedCustomPostTypes: [],
 					} ),
-				}
+				},
 			);
 
 			expect( mockDispatch ).toHaveBeenCalledWith( {
@@ -167,7 +167,7 @@ describe( 'useExportKit Hook', () => {
 				'https://example.com/wp-json/elementor/v1/export',
 				expect.objectContaining( {
 					body: expect.stringContaining( '"screenShotBlob"' ),
-				} )
+				} ),
 			);
 
 			expect( mockDispatch ).toHaveBeenCalledWith( {

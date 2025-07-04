@@ -1,13 +1,20 @@
 import { renderHook } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
+import PropTypes from 'prop-types';
 import { ExportContextProvider, useExportContext, EXPORT_STATUS } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
 
 const createWrapper = () => {
-	return ( { children } ) => (
+	const Wrapper = ( { children } ) => (
 		<ExportContextProvider>
 			{ children }
 		</ExportContextProvider>
 	);
+
+	Wrapper.propTypes = {
+		children: PropTypes.node.isRequired,
+	};
+
+	return Wrapper;
 };
 
 describe( 'Export Context', () => {
