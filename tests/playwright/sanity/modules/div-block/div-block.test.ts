@@ -203,7 +203,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
 	} );
 
-	test( 'Drag and drop from elements panel to container', async ( { page, apiRequests }, testInfo ) => {
+	test.only( 'Drag and drop from elements panel to container', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
