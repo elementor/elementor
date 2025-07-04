@@ -187,7 +187,7 @@ class Repository {
 	 * @throws RecordNotFound
 	 * @throws FatalError
 	 */
-	public function restore( string $id ) {
+	public function restore( string $id, $overrides = [] ) {
 		$db_record = $this->load();
 
 		$list_of_variables = $db_record['data'] ?? [];
@@ -201,6 +201,14 @@ class Repository {
 			'value',
 			'type',
 		] );
+
+		if ( array_key_exists( 'label', $overrides ) ) {
+			$restored_variable['label'] = $overrides['label'];
+		}
+
+		if ( array_key_exists( 'value', $overrides ) ) {
+			$restored_variable['value'] = $overrides['value'];
+		}
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $restored_variable, [ 'id' => $id ] ) );
 
@@ -216,7 +224,7 @@ class Repository {
 		}
 
 		return [
-			'variable' => array_merge( [ 'id' => $id ], $list_of_variables[ $id ] ),
+			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
 			'watermark' => $watermark,
 		];
 	}
