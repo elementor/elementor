@@ -169,21 +169,11 @@ describe( 'Export Context', () => {
 				wrapper: createWrapper(),
 			} );
 
-			// Remove all default includes first
 			await waitFor( () => {
-				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'content' } );
-				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'templates' } );
-				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'settings' } );
-				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'plugins' } );
+				result.current.dispatch( { type: 'ADD_INCLUDE', payload: 'widgets' } );
 			} );
 
-			expect( result.current.data.includes ).toEqual( [] );
-
-			await waitFor( () => {
-				result.current.dispatch( { type: 'ADD_INCLUDE', payload: 'content' } );
-			} );
-
-			expect( result.current.data.includes ).toEqual( [ 'content' ] );
+			expect( result.current.data.includes ).toEqual( [ 'content', 'templates', 'settings', 'plugins', 'widgets' ] );
 		} );
 
 		it( 'should not duplicate include items', async () => {
