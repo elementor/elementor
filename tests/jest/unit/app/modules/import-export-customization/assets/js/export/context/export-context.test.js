@@ -1,5 +1,4 @@
-import { renderHook } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { renderHook, waitFor } from '@testing-library/react';
 import PropTypes from 'prop-types';
 import { ExportContextProvider, useExportContext, EXPORT_STATUS } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
 
@@ -33,14 +32,14 @@ describe( 'Export Context', () => {
 			expect( result.current.data.exportedData ).toBeNull();
 		} );
 
-		it( 'should correctly calculate template name validity', () => {
+		it( 'should correctly calculate template name validity', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
 			expect( result.current.isTemplateNameValid ).toBe( false );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Kit' } );
 			} );
 
@@ -59,48 +58,48 @@ describe( 'Export Context', () => {
 	} );
 
 	describe( 'Kit Information Management', () => {
-		it( 'should update kit title correctly', () => {
+		it( 'should update kit title correctly', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Custom Kit' } );
 			} );
 
 			expect( result.current.data.kitInfo.title ).toBe( 'My Custom Kit' );
 		} );
 
-		it( 'should update kit description correctly', () => {
+		it( 'should update kit description correctly', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_DESCRIPTION', payload: 'Kit description' } );
 			} );
 
 			expect( result.current.data.kitInfo.description ).toBe( 'Kit description' );
 		} );
 
-		it( 'should update kit source correctly for cloud export', () => {
+		it( 'should update kit source correctly for cloud export', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 			} );
 
 			expect( result.current.data.kitInfo.source ).toBe( 'cloud' );
 		} );
 
-		it( 'should update kit source correctly for file export', () => {
+		it( 'should update kit source correctly for file export', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
 			} );
 
@@ -109,12 +108,12 @@ describe( 'Export Context', () => {
 	} );
 
 	describe( 'Export Status Management', () => {
-		it( 'should transition from pending to exporting status', () => {
+		it( 'should transition from pending to exporting status', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 			} );
 
@@ -124,12 +123,12 @@ describe( 'Export Context', () => {
 			expect( result.current.isCompleted ).toBe( false );
 		} );
 
-		it( 'should transition from exporting to completed status', () => {
+		it( 'should transition from exporting to completed status', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
 			} );
 
@@ -141,13 +140,13 @@ describe( 'Export Context', () => {
 	} );
 
 	describe( 'Include Items Management', () => {
-		it( 'should add new include item when not present', () => {
+		it( 'should add new include item when not present', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
 			// Remove all default includes first
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'content' } );
 				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'templates' } );
 				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'settings' } );
@@ -156,19 +155,19 @@ describe( 'Export Context', () => {
 
 			expect( result.current.data.includes ).toEqual( [] );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'ADD_INCLUDE', payload: 'content' } );
 			} );
 
 			expect( result.current.data.includes ).toEqual( [ 'content' ] );
 		} );
 
-		it( 'should not duplicate include items', () => {
+		it( 'should not duplicate include items', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'ADD_INCLUDE', payload: 'content' } );
 			} );
 
@@ -176,24 +175,24 @@ describe( 'Export Context', () => {
 			expect( result.current.data.includes ).toEqual( [ 'content', 'templates', 'settings', 'plugins' ] );
 		} );
 
-		it( 'should remove include item when present', () => {
+		it( 'should remove include item when present', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'content' } );
 			} );
 
 			expect( result.current.data.includes ).toEqual( [ 'templates', 'settings', 'plugins' ] );
 		} );
 
-		it( 'should handle removing non-existent include item', () => {
+		it( 'should handle removing non-existent include item', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'non-existent' } );
 			} );
 
@@ -202,7 +201,7 @@ describe( 'Export Context', () => {
 	} );
 
 	describe( 'Export Data Management', () => {
-		it( 'should store exported data correctly', () => {
+		it( 'should store exported data correctly', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
@@ -212,14 +211,14 @@ describe( 'Export Context', () => {
 				manifest: { version: '1.0' },
 			};
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_EXPORTED_DATA', payload: mockExportedData } );
 			} );
 
 			expect( result.current.data.exportedData ).toEqual( mockExportedData );
 		} );
 
-		it( 'should store plugins list correctly', () => {
+		it( 'should store plugins list correctly', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
@@ -229,21 +228,21 @@ describe( 'Export Context', () => {
 				{ name: 'plugin2', version: '2.0' },
 			];
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_PLUGINS', payload: mockPlugins } );
 			} );
 
 			expect( result.current.data.plugins ).toEqual( mockPlugins );
 		} );
 
-		it( 'should store download URL correctly', () => {
+		it( 'should store download URL correctly', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
 			const downloadUrl = 'https://example.com/download/kit.zip';
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_DOWNLOAD_URL', payload: downloadUrl } );
 			} );
 
@@ -252,36 +251,36 @@ describe( 'Export Context', () => {
 	} );
 
 	describe( 'Template Name Validation', () => {
-		it( 'should validate empty title as invalid', () => {
+		it( 'should validate empty title as invalid', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: '' } );
 			} );
 
 			expect( result.current.isTemplateNameValid ).toBe( false );
 		} );
 
-		it( 'should validate whitespace-only title as invalid', () => {
+		it( 'should validate whitespace-only title as invalid', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: '   ' } );
 			} );
 
 			expect( result.current.isTemplateNameValid ).toBe( false );
 		} );
 
-		it( 'should validate proper title as valid', () => {
+		it( 'should validate proper title as valid', async () => {
 			const { result } = renderHook( () => useExportContext(), {
 				wrapper: createWrapper(),
 			} );
 
-			act( () => {
+			await waitFor( () => {
 				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: 'My Kit' } );
 			} );
 
