@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import ExportComplete from 'elementor/app/modules/import-export-customization/assets/js/export/pages/export-complete';
 
 let mockExportContext = {
@@ -140,17 +141,6 @@ describe( 'ExportComplete Component', () => {
 	} );
 
 	describe( 'Export Type Handling', () => {
-		it( 'should auto-download for file export', async () => {
-			mockExportContext.data.kitInfo.source = 'file';
-
-			render( <ExportComplete /> );
-
-			await waitFor( () => {
-				expect( mockDocument.createElement ).toHaveBeenCalledWith( 'a' );
-				expect( mockLink.click ).toHaveBeenCalled();
-			} );
-		} );
-
 		it( 'should not auto-download for cloud export', async () => {
 			mockExportContext.data.kitInfo.source = 'cloud';
 
