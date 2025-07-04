@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ExportError from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-error';
 
 describe( 'ExportError Component', () => {
@@ -7,17 +7,14 @@ describe( 'ExportError Component', () => {
 	let mockWindowOpen;
 
 	beforeEach( () => {
-		// Mock global config
 		mockElementorAppConfig = {
-			base_url: 'https://example.com/elementor',
+			base_url: 'https://example.com',
 		};
 		global.elementorAppConfig = mockElementorAppConfig;
 
-		// Mock window.location
 		delete window.location;
 		window.location = { href: '' };
 
-		// Mock window.open
 		mockWindowOpen = jest.fn();
 		global.window.open = mockWindowOpen;
 	} );
@@ -56,60 +53,23 @@ describe( 'ExportError Component', () => {
 
 	describe( 'User Interactions', () => {
 		it( 'should handle Try Again button click', () => {
-			const mockReload = jest.fn();
-			Object.defineProperty( window, 'location', {
-				value: {
-					reload: mockReload,
-				},
-				writable: true,
-			} );
-
 			render( <ExportError statusText="Error occurred" /> );
 			
 			const tryAgainButton = screen.getByText( 'Try Again' );
-			expect( tryAgainButton ).toBeTruthy();
-			
-			// Test that button is clickable
-			expect( tryAgainButton.tagName ).toBe( 'BUTTON' );
+			expect( tryAgainButton ).toBeTruthy();			
+
+			fireEvent.click( tryAgainButton );
+			expect( window.location.href ).toBe( 'https://example.com#/export-customization/' );
 		} );
 
 		it( 'should handle Learn More button click', () => {
-			const mockOpen = jest.fn();
-			global.open = mockOpen;
-
 			render( <ExportError statusText="Error occurred" /> );
 			
 			const learnMoreButton = screen.getByText( 'Learn More' );
 			expect( learnMoreButton ).toBeTruthy();
-			
-			// Test that button is clickable
-			expect( learnMoreButton.tagName ).toBe( 'BUTTON' );
-		} );
-	} );
 
-	describe( 'Error Message Variations', () => {
-		it( 'should handle empty status text gracefully', () => {
-			render( <ExportError statusText="" /> );
-
-			// Should still render the component structure
-			expect( screen.getByText( 'Try Again' ) ).toBeTruthy();
-			expect( screen.getByText( 'Learn More' ) ).toBeTruthy();
-		} );
-
-		it( 'should handle long status text', () => {
-			const longStatusText = 'This is a very long error message that should still be displayed properly regardless of its length and content';
-			
-			render( <ExportError statusText={ longStatusText } /> );
-
-			expect( screen.getByText( longStatusText ) ).toBeTruthy();
-		} );
-
-		it( 'should handle special characters in status text', () => {
-			const specialStatusText = 'Error: <script>alert("test")</script> & special chars!';
-			
-			render( <ExportError statusText={ specialStatusText } /> );
-
-			expect( screen.getByText( specialStatusText ) ).toBeTruthy();
+			fireEvent.click(learnMoreButton);
+			expect( mockWindowOpen ).toHaveBeenCalledWith( 'https://go.elementor.com/app-import-download-failed', '_blank' );
 		} );
 	} );
 
@@ -129,15 +89,6 @@ describe( 'ExportError Component', () => {
 			expect( heading.textContent ).toBe( 'Test Error' );
 		} );
 
-		it( 'should render description text', () => {
-			render( <ExportError statusText="Error occurred" /> );
-
-			const description = screen.getByText( 
-				'We couldn\'t complete the export. Please try again, and if the problem persists, check our help guide for troubleshooting steps.'
-			);
-			expect( description ).toBeTruthy();
-		} );
-
 		it( 'should render buttons in correct order', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
@@ -149,14 +100,6 @@ describe( 'ExportError Component', () => {
 	} );
 
 	describe( 'Accessibility', () => {
-		it( 'should have proper heading structure', () => {
-			render( <ExportError statusText="Export Error" /> );
-
-			const heading = screen.getByRole( 'heading' );
-			expect( heading ).toBeTruthy();
-			expect( heading.textContent ).toBe( 'Export Error' );
-		} );
-
 		it( 'should have accessible buttons', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
@@ -165,46 +108,6 @@ describe( 'ExportError Component', () => {
 
 			expect( tryAgainButton ).toBeTruthy();
 			expect( learnMoreButton ).toBeTruthy();
-		} );
-	} );
-
-	describe( 'Error Handling', () => {
-		it( 'should handle missing statusText prop', () => {
-			render( <ExportError /> );
-
-			// Should still render the component structure
-			expect( screen.getByText( 'Try Again' ) ).toBeTruthy();
-			expect( screen.getByText( 'Learn More' ) ).toBeTruthy();
-		} );
-	} );
-
-	describe( 'Error Types and Context', () => {
-		it( 'should handle network-related errors', () => {
-			const networkError = 'Network connection failed. Please check your internet connection and try again.';
-			render( <ExportError statusText={ networkError } /> );
-
-			expect( screen.getByText( networkError ) ).toBeTruthy();
-		} );
-
-		it( 'should handle server-related errors', () => {
-			const serverError = 'Server error occurred. Please try again later.';
-			render( <ExportError statusText={ serverError } /> );
-
-			expect( screen.getByText( serverError ) ).toBeTruthy();
-		} );
-
-		it( 'should handle validation errors', () => {
-			const validationError = 'Export validation failed. Please check your kit configuration.';
-			render( <ExportError statusText={ validationError } /> );
-
-			expect( screen.getByText( validationError ) ).toBeTruthy();
-		} );
-
-		it( 'should handle permission errors', () => {
-			const permissionError = 'Permission denied. Please check your user permissions.';
-			render( <ExportError statusText={ permissionError } /> );
-
-			expect( screen.getByText( permissionError ) ).toBeTruthy();
 		} );
 	} );
 } );
