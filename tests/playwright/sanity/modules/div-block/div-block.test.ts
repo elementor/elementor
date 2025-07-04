@@ -6,13 +6,14 @@ import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Div Block tests @div-block', () => {
+	const experimentName = 'e_atomic_elements';
+
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
-			e_atomic_elements: 'active',
+			[ experimentName ]: 'active',
 		} );
 
 		await page.close();
