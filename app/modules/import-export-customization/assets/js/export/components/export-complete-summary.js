@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 export default function ExportCompleteSummary( { kitInfo, includes } ) {
 	return (
-		<Card sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 }>
+		<Card sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus' } } elevation={ 0 } data-testid="export-complete-summary">
 			<CardContent sx={ { p: 2.5 } }>
 				<Typography variant="h6" component="h3" gutterBottom>
 					{ kitInfo.title }

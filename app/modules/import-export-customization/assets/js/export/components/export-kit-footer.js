@@ -83,6 +83,7 @@ export default function ExportKitFooter() {
 					size="small"
 					disabled={ ! isTemplateNameValid }
 					href={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) || '#' }
+					data-testid="export-kit-footer-save-to-library-button"
 				>
 					{ __( 'Save to library', 'elementor' ) }
 				</Button>
@@ -97,6 +98,7 @@ export default function ExportKitFooter() {
 					size="small"
 					disabled={ true }
 					startIcon={ <CircularProgress size={ 16 } /> }
+					data-testid="export-kit-footer-save-to-library-button"
 				>
 					{ __( 'Save to library', 'elementor' ) }
 				</Button>
@@ -111,6 +113,7 @@ export default function ExportKitFooter() {
 					size="small"
 					disabled={ ! isTemplateNameValid }
 					onClick={ handleUpgradeClick }
+					data-testid="export-kit-footer-save-to-library-button"
 				>
 					{ __( 'Save to library', 'elementor' ) }
 				</Button>
@@ -124,6 +127,7 @@ export default function ExportKitFooter() {
 				size="small"
 				disabled={ ! isTemplateNameValid }
 				onClick={ handleUploadClick }
+				data-testid="export-kit-footer-save-to-library-button"
 			>
 				{ __( 'Save to library', 'elementor' ) }
 			</Button>
@@ -139,6 +143,7 @@ export default function ExportKitFooter() {
 				size="small"
 				disabled={ ! isTemplateNameValid }
 				onClick={ handleExportAsZip }
+				data-testid="export-kit-footer-export-zip-button"
 			>
 				{ __( 'Export as .zip', 'elementor' ) }
 			</Button>
