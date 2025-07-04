@@ -23,7 +23,7 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/c
 } ) );
 
 // Mock the download link component to properly trigger the callback
-jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/components/export-complete-download-link', () => 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/components/export-complete-download-link', () =>
 	// eslint-disable-next-line react/prop-types
 	( { onDownloadClick } ) => (
 		<button
@@ -32,7 +32,7 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/c
 		>
 			Download manually
 		</button>
-	)
+	),
 );
 
 describe( 'ExportComplete Component', () => {
