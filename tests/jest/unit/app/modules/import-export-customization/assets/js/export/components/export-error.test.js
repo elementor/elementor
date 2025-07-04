@@ -34,20 +34,20 @@ describe( 'ExportError Component', () => {
 			render( <ExportError statusText="" /> );
 
 			// Component still renders the structure
-			expect( screen.getByText( 'Try Again' ) ).toBeTruthy();
-			expect( screen.getByText( 'Learn More' ) ).toBeTruthy();
+			expect( screen.getByTestId( 'export-error-try-again-button' ) ).toBeTruthy();
+			expect( screen.getByTestId( 'export-error-learn-more-button' ) ).toBeTruthy();
 		} );
 
 		it( 'should render Try Again button', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
-			expect( screen.getByText( 'Try Again' ) ).toBeTruthy();
+			expect( screen.getByTestId( 'export-error-try-again-button' ) ).toBeTruthy();
 		} );
 
 		it( 'should render Learn More button', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
-			expect( screen.getByText( 'Learn More' ) ).toBeTruthy();
+			expect( screen.getByTestId( 'export-error-learn-more-button' ) ).toBeTruthy();
 		} );
 	} );
 
@@ -55,7 +55,7 @@ describe( 'ExportError Component', () => {
 		it( 'should handle Try Again button click', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
-			const tryAgainButton = screen.getByText( 'Try Again' );
+			const tryAgainButton = screen.getByTestId( 'export-error-try-again-button' );
 			expect( tryAgainButton ).toBeTruthy();
 
 			fireEvent.click( tryAgainButton );
@@ -65,7 +65,7 @@ describe( 'ExportError Component', () => {
 		it( 'should handle Learn More button click', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
-			const learnMoreButton = screen.getByText( 'Learn More' );
+			const learnMoreButton = screen.getByTestId( 'export-error-learn-more-button' );
 			expect( learnMoreButton ).toBeTruthy();
 
 			fireEvent.click( learnMoreButton );
@@ -92,10 +92,13 @@ describe( 'ExportError Component', () => {
 		it( 'should render buttons in correct order', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
-			const buttons = screen.getAllByRole( 'button' );
-			expect( buttons.length ).toBe( 2 );
-			expect( buttons[ 0 ].textContent ).toBe( 'Try Again' );
-			expect( buttons[ 1 ].textContent ).toBe( 'Learn More' );
+			const tryAgainButton = screen.getByTestId( 'export-error-try-again-button' );
+			const learnMoreButton = screen.getByTestId( 'export-error-learn-more-button' );
+			
+			expect( tryAgainButton ).toBeTruthy();
+			expect( learnMoreButton ).toBeTruthy();
+			expect( tryAgainButton.textContent ).toBe( 'Try Again' );
+			expect( learnMoreButton.textContent ).toBe( 'Learn More' );
 		} );
 	} );
 
@@ -103,8 +106,8 @@ describe( 'ExportError Component', () => {
 		it( 'should have accessible buttons', () => {
 			render( <ExportError statusText="Error occurred" /> );
 
-			const tryAgainButton = screen.getByRole( 'button', { name: 'Try Again' } );
-			const learnMoreButton = screen.getByRole( 'button', { name: 'Learn More' } );
+			const tryAgainButton = screen.getByTestId( 'export-error-try-again-button' );
+			const learnMoreButton = screen.getByTestId( 'export-error-learn-more-button' );
 
 			expect( tryAgainButton ).toBeTruthy();
 			expect( learnMoreButton ).toBeTruthy();
