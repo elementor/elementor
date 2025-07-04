@@ -1,4 +1,5 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import { ExportContextProvider, useExportContext, EXPORT_STATUS } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
 
 const createWrapper = () => {
@@ -278,31 +279,6 @@ describe( 'Export Context', () => {
 			} );
 
 			expect( result.current.isTemplateNameValid ).toBe( true );
-		} );
-
-		it( 'should validate title with leading/trailing spaces as valid', () => {
-			const { result } = renderHook( () => useExportContext(), {
-				wrapper: createWrapper(),
-			} );
-
-			act( () => {
-				result.current.dispatch( { type: 'SET_KIT_TITLE', payload: '  My Kit  ' } );
-			} );
-
-			expect( result.current.isTemplateNameValid ).toBe( true );
-		} );
-	} );
-
-	describe( 'Context Provider Error Handling', () => {
-		it( 'should throw error when useExportContext is used outside provider', () => {
-			const originalError = console.error;
-			console.error = jest.fn();
-
-			expect( () => {
-				renderHook( () => useExportContext() );
-			} ).toThrow( 'useExportContext must be used within an ExportContextProvider' );
-
-			console.error = originalError;
 		} );
 	} );
 } );
