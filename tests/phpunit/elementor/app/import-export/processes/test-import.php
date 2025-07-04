@@ -256,6 +256,8 @@ class Test_Import extends Elementor_Test_Base {
 					'slug' => $previous_active_theme->get_stylesheet(),
 					'version' => $previous_active_theme->get( 'Version' ),
 				],
+				'previous_experiments' => [],
+				'imported_experiments' => [],
 			],
 		];
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
