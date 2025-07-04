@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ExportKitFooter from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-footer';
 
 jest.mock( 'elementor-app/hooks/use-cloud-kits-eligibility', () => jest.fn() );
