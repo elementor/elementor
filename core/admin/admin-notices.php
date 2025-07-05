@@ -214,7 +214,7 @@ class Admin_Notices extends Module {
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
-		$tracker_description_text = esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' );
+		$tracker_description_text = esc_html__( 'Become a super contributor by helping us understand how you use our service to enhance your experience and improve our product.', 'elementor' );
 
 		/**
 		 * Tracker admin description text.
@@ -230,7 +230,7 @@ class Admin_Notices extends Module {
 		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">' . esc_html__( 'Learn more.', 'elementor' ) . '</a>';
 
 		$options = [
-			'title' => esc_html__( 'Love using Elementor?', 'elementor' ),
+			'title' => esc_html__( 'Want to Shape the Future of Web Creation?', 'elementor' ),
 			'description' => $message,
 			'dismissible' => false,
 			'button' => [
