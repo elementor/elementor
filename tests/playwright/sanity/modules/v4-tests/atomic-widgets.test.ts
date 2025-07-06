@@ -75,10 +75,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					widgetSelector = editor.getWidgetSelector( widgetId );
 					const widgetElement = editor.getPreviewFrame().locator( widgetSelector );
 					await expect( widgetElement ).toBeVisible();
-
-					// Click on the widget to ensure it's active and visible
-					await widgetElement.click();
-
 					// Take screenshot of the container instead of the widget
 					const containerSelector = editor.getWidgetSelector( containerId );
 					const containerElement = editor.getPreviewFrame().locator( containerSelector );
