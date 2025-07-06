@@ -218,13 +218,32 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Remove element from the page using the editor overlay delete button.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async removeElementWithHandle( elementId: string ): Promise<void> {
+		const elementSelector = this.getWidgetSelector( elementId );
+		const elementInPreview = this.getPreviewFrame().locator( elementSelector );
+
+		// Hover over the element to show the overlay
+		await elementInPreview.hover();
+
+		// Click the delete button in the element overlay
+		const deleteButton = this.getPreviewFrame().locator( `${ elementSelector } .elementor-editor-element-setting.elementor-editor-element-remove` );
+		await deleteButton.click();
+	}
+
+	/**
 	 * Generates a CSS selector string for a widget element based on its ID.
 	 *
 	 * @param {string} widgetId - The unique identifier of the widget.
 	 * @return {string} The CSS selector string for targeting the widget.
 	 */
 	getWidgetSelector( widgetId: string ): string {
-		return `[data-id="${ widgetId }"]`;
+		return `[data-id="${ widgetId }"].elementor-element`;
 	}
 
 	/**

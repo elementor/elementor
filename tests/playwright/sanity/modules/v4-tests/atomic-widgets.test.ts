@@ -90,6 +90,46 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 						.toHaveScreenshot( `${ widget.name }-published.png` );
 				} );
 			} );
+			test( 'Widget can be removed from canvas', async () => {
+				editor = await wpAdmin.openNewPage();
+				await editor.openElementsPanel();
+
+				await test.step( 'Add widget and check editor canvas', async () => {
+					containerId = await editor.addElement( { elType: 'container' }, 'document' );
+					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
+					widgetSelector = editor.getWidgetSelector( widgetId );
+					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
+				} );
+
+				await test.step( 'Remove widget from editor', async () => {
+					// Click on the container element to select it
+					const containerSelector = editor.getWidgetSelector( containerId );
+					const containerInPreview = editor.getPreviewFrame().locator( containerSelector );
+					await containerInPreview.click();
+
+					// Remove the container using the editor overlay delete button
+					await editor.removeElementWithHandle( containerId );
+
+					// Verify widget is no longer visible in editor (since container is removed)
+					const widgetInPreview = editor.getPreviewFrame().locator( widgetSelector );
+					await expect( widgetInPreview ).not.toBeVisible();
+				} );
+
+				await test.step( 'Save page and check removed from UI', async () => {
+					await editor.publishPage();
+					await editor.viewPage();
+
+					// Check widget is not visible in frontend
+					await expect( editor.page.locator( widgetSelector ) ).not.toBeVisible();
+				} );
+
+				await test.step( 'Refresh page and verify widget still absent', async () => {
+					await editor.page.reload();
+
+					// Double-check that the widget is still not present
+					await expect( editor.page.locator( widgetSelector ) ).not.toBeVisible();
+				} );
+			} );
 		} );
 	} );
 } );
