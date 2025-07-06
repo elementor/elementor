@@ -58,9 +58,11 @@ jobs:
           node-version: 20.x
           cache: npm
       - name: Install Dependencies
-        run: npm ci
+        run: npm run prepare-environment:ci
+      - name: Build tools
+        run: npm run build:tools
       - name: Run Lint
-        run: ./node_modules/eslint/bin/eslint.js .
+        run: npm run lint
 
   PHP-Lint:
     runs-on: ubuntu-22.04
