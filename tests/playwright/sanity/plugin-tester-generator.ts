@@ -25,7 +25,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
-	{ pluginName: 'metform', installSource: 'api' },
+	{ pluginName: 'metform', installSource: 'cli' },
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
 	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
@@ -47,6 +47,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'enqueue-media-on-front', installSource: 'zip' },
 	{ pluginName: 'akismet', installSource: 'api' },
 	{ pluginName: 'wordpress-seo', installSource: 'api', hasInstallationPage: true },
+	{ pluginName: 'hello-plus', installSource: 'cli' },
 ];
 
 export const generatePluginTests = ( testType: string ) => {
