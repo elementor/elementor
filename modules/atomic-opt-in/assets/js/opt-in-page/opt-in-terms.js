@@ -112,7 +112,7 @@ export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 								size="small"
 							/>
 						}
-						label={ <TextNode variant="body2">{ i18n.checkboxText }</TextNode> }
+						label={ i18n.checkboxText }
 					/>
 				</Stack>
 			</DialogContent>
