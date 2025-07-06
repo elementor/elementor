@@ -1,3 +1,6 @@
+import { type AxiosResponse } from '@elementor/http-client';
+import { __ } from '@wordpress/i18n';
+
 import { apiClient } from './api';
 import { OP_RW, Storage, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
@@ -44,7 +47,8 @@ export const service = {
 				const { success, data: payload } = response.data;
 
 				if ( ! success ) {
-					throw new Error( 'Unexpected response from server' );
+					const errorMessage = payload?.message || __( 'Unexpected response from server', 'elementor' );
+					throw new Error( errorMessage );
 				}
 
 				return payload;
@@ -66,6 +70,10 @@ export const service = {
 					id: variableId,
 					variable: createdVariable,
 				};
+			} )
+			.catch( ( error ) => {
+				const message = getErrorMessage( error.response );
+				throw message ? new Error( message ) : error;
 			} );
 	},
 
@@ -76,7 +84,8 @@ export const service = {
 				const { success, data: payload } = response.data;
 
 				if ( ! success ) {
-					throw new Error( 'Unexpected response from server' );
+					const errorMessage = payload?.message || __( 'Unexpected response from server', 'elementor' );
+					throw new Error( errorMessage );
 				}
 
 				return payload;
@@ -98,6 +107,10 @@ export const service = {
 					id: variableId,
 					variable: updatedVariable,
 				};
+			} )
+			.catch( ( error ) => {
+				const message = getErrorMessage( error.response );
+				throw message ? new Error( message ) : error;
 			} );
 	},
 
@@ -171,4 +184,12 @@ const handleWatermark = ( operation: string, newWatermark: number ) => {
 		setTimeout( () => service.load(), 500 );
 	}
 	storage.watermark( newWatermark );
+};
+
+const getErrorMessage = ( response: AxiosResponse ) => {
+	if ( response?.data?.code === 'duplicated_label' ) {
+		return __( 'This variable name already exists. Please choose a unique name.', 'elementor' );
+	}
+
+	return __( 'There was a glitch. Try saving your variable again.', 'elementor' );
 };

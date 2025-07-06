@@ -4,6 +4,7 @@ import {
 	blurFilterPropTypeUtil,
 	brightnessFilterPropTypeUtil,
 	contrastFilterPropTypeUtil,
+	dropShadowFilterPropTypeUtil,
 	type FilterItemPropValue,
 	filterPropTypeUtil,
 	grayscaleFilterPropTypeUtil,
@@ -15,6 +16,7 @@ import {
 	sepiaFilterPropTypeUtil,
 	type SizePropValue,
 } from '@elementor/editor-props';
+import { backdropFilterPropTypeUtil } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
 import { Box, Grid, Select, type SelectChangeEvent } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -23,9 +25,11 @@ import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-conte
 import { ControlLabel } from '../components/control-label';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { Repeater } from '../components/repeater';
+import { type CollectionPropUtil, Repeater } from '../components/repeater';
 import { createControl } from '../create-control';
-import { defaultUnits } from '../utils/size-control';
+import { defaultUnits, type Unit } from '../utils/size-control';
+import { DropShadowItemContent } from './filter-control/drop-shadow-item-content';
+import { DropShadowItemLabel } from './filter-control/drop-shadow-item-label';
 import { SizeControl } from './size-control';
 
 type FilterType = FilterItemPropValue[ '$$type' ];
@@ -49,6 +53,21 @@ const filterConfig: Record< FilterType, FilterItemConfig > = {
 		propType: blurFilterPropTypeUtil,
 		units: defaultUnits.filter( ( unit ) => unit !== '%' ),
 	},
+	'drop-shadow': {
+		defaultValue: {
+			$$type: 'drop-shadow',
+			value: {
+				xAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
+				yAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
+				blur: { $$type: 'size', value: { size: 10, unit: 'px' } },
+				color: { $$type: 'color', value: 'rgba(0, 0, 0, 1)' },
+			},
+		},
+		name: __( 'Drop shadow', 'elementor' ),
+		valueName: __( 'Drop-shadow', 'elementor' ),
+		propType: dropShadowFilterPropTypeUtil,
+		units: defaultUnits.filter( ( unit ) => unit !== '%' ),
+	},
 	brightness: {
 		defaultValue: { $$type: 'amount', amount: { $$type: 'size', value: { size: 100, unit: '%' } } },
 		name: __( 'Brightness', 'elementor' ),
@@ -61,6 +80,20 @@ const filterConfig: Record< FilterType, FilterItemConfig > = {
 		name: __( 'Contrast', 'elementor' ),
 		valueName: __( 'Amount', 'elementor' ),
 		propType: contrastFilterPropTypeUtil,
+		units: [ '%' ],
+	},
+	'hue-rotate': {
+		defaultValue: { $$type: 'hue-rotate', 'hue-rotate': { $$type: 'size', value: { size: 0, unit: 'deg' } } },
+		name: __( 'Hue Rotate', 'elementor' ),
+		valueName: __( 'Angle', 'elementor' ),
+		propType: hueRotateFilterPropTypeUtil,
+		units: [ 'deg', 'rad', 'grad', 'turn' ],
+	},
+	saturate: {
+		defaultValue: { $$type: 'saturate', saturate: { $$type: 'size', value: { size: 100, unit: '%' } } },
+		name: __( 'Saturate', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		propType: saturateFilterPropTypeUtil,
 		units: [ '%' ],
 	},
 	grayscale: {
@@ -77,13 +110,6 @@ const filterConfig: Record< FilterType, FilterItemConfig > = {
 		propType: invertFilterPropTypeUtil,
 		units: [ '%' ],
 	},
-	saturate: {
-		defaultValue: { $$type: 'saturate', saturate: { $$type: 'size', value: { size: 100, unit: '%' } } },
-		name: __( 'Saturate', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		propType: saturateFilterPropTypeUtil,
-		units: [ '%' ],
-	},
 	sepia: {
 		defaultValue: { $$type: 'sepia', sepia: { $$type: 'size', value: { size: 0, unit: '%' } } },
 		name: __( 'Sepia', 'elementor' ),
@@ -91,25 +117,20 @@ const filterConfig: Record< FilterType, FilterItemConfig > = {
 		propType: sepiaFilterPropTypeUtil,
 		units: [ '%' ],
 	},
-	'hue-rotate': {
-		defaultValue: { $$type: 'hue-rotate', 'hue-rotate': { $$type: 'size', value: { size: 0, unit: 'deg' } } },
-		name: __( 'Hue Rotate', 'elementor' ),
-		valueName: __( 'Angle', 'elementor' ),
-		propType: hueRotateFilterPropTypeUtil,
-		units: [ 'deg', 'rad', 'grad', 'turn' ],
-	},
 };
 
 const filterKeys = Object.keys( filterConfig ) as FilterType[];
 
-const singleSizeFilterNames = filterKeys.filter( ( name ) => {
-	const filter = filterConfig[ name as FilterType ].defaultValue;
+const isSingleSize = ( key: FilterType ): boolean => {
+	return ! [ 'drop-shadow' ].includes( key );
+};
 
-	return filter[ filter.$$type ].$$type === 'size';
-} ) as FilterType[];
-
-export const FilterRepeaterControl = createControl( () => {
-	const { propType, value: filterValues, setValue, disabled } = useBoundProp( filterPropTypeUtil );
+export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter' }: { filterPropName?: string } ) => {
+	const [ propUtil, label ] =
+		filterPropName === 'backdrop-filter'
+			? [ backdropFilterPropTypeUtil, __( 'Backdrop Filters', 'elementor' ) ]
+			: [ filterPropTypeUtil, __( 'Filters', 'elementor' ) ];
+	const { propType, value: filterValues, setValue, disabled } = useBoundProp( propUtil );
 
 	return (
 		<PropProvider propType={ propType } value={ filterValues } setValue={ setValue }>
@@ -118,7 +139,8 @@ export const FilterRepeaterControl = createControl( () => {
 				disabled={ disabled }
 				values={ filterValues ?? [] }
 				setValues={ setValue }
-				label={ __( 'Filter', 'elementor' ) }
+				label={ label }
+				collectionPropUtil={ propUtil }
 				itemSettings={ {
 					Icon: ItemIcon,
 					Label: ItemLabel,
@@ -135,10 +157,12 @@ export const FilterRepeaterControl = createControl( () => {
 
 const ItemIcon = () => <></>;
 
-const ItemLabel = ( props: { value: FilterItemPropValue } ) => {
-	const { $$type } = props.value;
-
-	return singleSizeFilterNames.includes( $$type ) && <SingleSizeItemLabel value={ props.value } />;
+const ItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
+	return isSingleSize( value.$$type ) ? (
+		<SingleSizeItemLabel value={ value } />
+	) : (
+		<DropShadowItemLabel value={ value } />
+	);
 };
 
 const SingleSizeItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
@@ -161,8 +185,16 @@ const SingleSizeItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
 	);
 };
 
-const ItemContent = ( { bind }: { bind: PropKey } ) => {
-	const { value: filterValues, setValue } = useBoundProp( filterPropTypeUtil );
+const ItemContent = ( {
+	bind,
+	collectionPropUtil,
+	anchorEl,
+}: {
+	bind: PropKey;
+	collectionPropUtil?: CollectionPropUtil< FilterItemPropValue >;
+	anchorEl?: HTMLElement | null;
+} ) => {
+	const { value: filterValues, setValue } = useBoundProp( collectionPropUtil ?? filterPropTypeUtil );
 	const itemIndex = parseInt( bind, 10 );
 	const item = filterValues?.[ itemIndex ];
 
@@ -201,14 +233,20 @@ const ItemContent = ( { bind }: { bind: PropKey } ) => {
 						</Select>
 					</Grid>
 				</PopoverGridContainer>
-				<Content filterType={ item?.$$type } />
+				<Content filterType={ item?.$$type } anchorEl={ anchorEl } />
 			</PopoverContent>
 		</PropKeyProvider>
 	);
 };
 
-const Content = ( { filterType }: { filterType: FilterType } ) => {
-	return singleSizeFilterNames.includes( filterType ) && <SingleSizeItemContent filterType={ filterType } />;
+const Content = ( { filterType, anchorEl }: { filterType: FilterType; anchorEl?: HTMLElement | null } ) => {
+	const { propType, units = [] } = filterConfig[ filterType ];
+
+	return isSingleSize( filterType ) ? (
+		<SingleSizeItemContent filterType={ filterType } />
+	) : (
+		<DropShadowItemContent propType={ propType } units={ units as Unit[] } anchorEl={ anchorEl } />
+	);
 };
 
 const SingleSizeItemContent = ( { filterType }: { filterType: FilterType } ) => {

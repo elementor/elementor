@@ -9,7 +9,7 @@ export { usePanelActions, usePanelStatus } from './panel';
 export { type ValidationResult, type ValidationEvent } from './components/creatable-autocomplete';
 export { controlActionsMenu } from './controls-actions';
 export { useFontFamilies } from './components/style-sections/typography-section/hooks/use-font-families';
-export { PopoverScrollableContent } from './components/popover-scrollable-content';
+export { PopoverBody } from './components/popover-body';
 export { useSectionWidth } from './contexts/section-context';
 
 export { init } from './init';

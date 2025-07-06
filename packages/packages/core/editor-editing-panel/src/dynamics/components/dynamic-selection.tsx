@@ -3,10 +3,10 @@ import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
 import { DatabaseIcon } from '@elementor/icons';
-import { Box, Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
+import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PopoverScrollableContent } from '../../components/popover-scrollable-content';
+import { PopoverBody } from '../../components/popover-body';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { usePropDynamicTags } from '../hooks/use-prop-dynamic-tags';
 import { getAtomicDynamicTags } from '../sync/get-atomic-dynamic-tags';
@@ -76,43 +76,39 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 	] );
 
 	return (
-		<>
+		<PopoverBody>
 			<PopoverHeader
 				title={ __( 'Dynamic tags', 'elementor' ) }
 				onClose={ closePopover }
 				icon={ <DatabaseIcon fontSize={ SIZE } /> }
 			/>
-			<Stack>
-				{ hasNoDynamicTags ? (
-					<NoDynamicTags />
-				) : (
-					<Fragment>
-						<PopoverSearch
-							value={ searchValue }
-							onSearch={ handleSearch }
-							placeholder={ __( 'Search dynamic tags…', 'elementor' ) }
-						/>
+			{ hasNoDynamicTags ? (
+				<NoDynamicTags />
+			) : (
+				<Fragment>
+					<PopoverSearch
+						value={ searchValue }
+						onSearch={ handleSearch }
+						placeholder={ __( 'Search dynamic tags…', 'elementor' ) }
+					/>
 
-						<Divider />
+					<Divider />
 
-						<PopoverScrollableContent>
-							<PopoverMenuList
-								items={ virtualizedItems }
-								onSelect={ handleSetDynamicTag }
-								onClose={ closePopover }
-								selectedValue={ dynamicValue?.name }
-								itemStyle={ ( item ) =>
-									item.type === 'item' ? { paddingInlineStart: theme.spacing( 3.5 ) } : {}
-								}
-								noResultsComponent={
-									<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
-								}
-							/>
-						</PopoverScrollableContent>
-					</Fragment>
-				) }
-			</Stack>
-		</>
+					<PopoverMenuList
+						items={ virtualizedItems }
+						onSelect={ handleSetDynamicTag }
+						onClose={ closePopover }
+						selectedValue={ dynamicValue?.name }
+						itemStyle={ ( item ) =>
+							item.type === 'item' ? { paddingInlineStart: theme.spacing( 3.5 ) } : {}
+						}
+						noResultsComponent={
+							<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
+						}
+					/>
+				</Fragment>
+			) }
+		</PopoverBody>
 	);
 };
 
@@ -142,7 +138,7 @@ const NoResults = ( { searchValue, onClear }: NoResultsProps ) => (
 );
 
 const NoDynamicTags = () => (
-	<Box sx={ { overflowY: 'hidden', height: 297, width: 220 } }>
+	<>
 		<Divider />
 		<Stack
 			gap={ 1 }
@@ -161,7 +157,7 @@ const NoDynamicTags = () => (
 				{ __( "You'll need Elementor Pro to use this feature.", 'elementor' ) }
 			</Typography>
 		</Stack>
-	</Box>
+	</>
 );
 
 const useFilteredOptions = ( searchValue: string ): OptionEntry[] => {

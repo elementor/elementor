@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ControlFormLabel, useBoundProp } from '@elementor/editor-controls';
 import type { Control, ControlsSection } from '@elementor/editor-elements';
-import { PopoverHeader, PopoverScrollableContent } from '@elementor/editor-ui';
+import { PopoverHeader } from '@elementor/editor-ui';
 import { DatabaseIcon, SettingsIcon, XIcon } from '@elementor/icons';
 import {
 	bindPopover,
@@ -21,6 +21,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { PopoverBody } from '../../components/popover-body';
 import { Control as BaseControl } from '../../controls-registry/control';
 import { type ControlType, getControl } from '../../controls-registry/controls-registry';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
@@ -82,9 +83,9 @@ export const DynamicSelectionControl = () => {
 				} }
 				{ ...bindPopover( selectionPopoverState ) }
 			>
-				<Stack>
+				<PopoverBody>
 					<DynamicSelection close={ selectionPopoverState.close } />
-				</Stack>
+				</PopoverBody>
 			</Popover>
 		</Box>
 	);
@@ -107,18 +108,21 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 			<Popover
 				disablePortal
 				disableScrollLock
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } }
+				anchorOrigin={ { vertical: 'bottom', horizontal: 'right' } }
+				transformOrigin={ { vertical: 'top', horizontal: 'right' } }
 				PaperProps={ {
-					sx: { my: 0.5 },
+					sx: { my: 1 },
 				} }
 				{ ...bindPopover( popupState ) }
 			>
-				<PopoverHeader
-					title={ dynamicTag.label }
-					onClose={ popupState.close }
-					icon={ <DatabaseIcon fontSize={ SIZE } /> }
-				/>
-				<DynamicSettings controls={ dynamicTag.atomic_controls } />
+				<PopoverBody>
+					<PopoverHeader
+						title={ dynamicTag.label }
+						onClose={ popupState.close }
+						icon={ <DatabaseIcon fontSize={ SIZE } /> }
+					/>
+					<DynamicSettings controls={ dynamicTag.atomic_controls } />
+				</PopoverBody>
 			</Popover>
 		</>
 	);
@@ -134,7 +138,7 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 	}
 
 	return (
-		<PopoverScrollableContent>
+		<>
 			<Tabs size="small" variant="fullWidth" { ...getTabsProps() }>
 				{ tabs.map( ( { value }, index ) => (
 					<Tab key={ index } label={ value.label } sx={ { px: 1, py: 0.5 } } { ...getTabProps( index ) } />
@@ -144,7 +148,11 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 
 			{ tabs.map( ( { value }, index ) => {
 				return (
-					<TabPanel key={ index } sx={ { flexGrow: 1, py: 0 } } { ...getTabPanelProps( index ) }>
+					<TabPanel
+						key={ index }
+						sx={ { flexGrow: 1, py: 0, overflowY: 'auto' } }
+						{ ...getTabPanelProps( index ) }
+					>
 						<Stack p={ 2 } gap={ 2 }>
 							{ value.items.map( ( item ) => {
 								if ( item.type === 'control' ) {
@@ -156,7 +164,7 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 					</TabPanel>
 				);
 			} ) }
-		</PopoverScrollableContent>
+		</>
 	);
 };
 

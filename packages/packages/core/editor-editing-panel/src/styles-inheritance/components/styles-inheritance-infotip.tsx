@@ -41,7 +41,7 @@ export const StylesInheritanceInfotip = ( { inheritanceChain, propType, path, la
 
 	const key = path.join( '.' );
 
-	const sectionWidth = useSectionWidth() + SECTION_PADDING_INLINE;
+	const sectionWidth = useSectionWidth();
 
 	const resolve = useMemo< PropsResolver >( () => {
 		return createPropsResolver( {

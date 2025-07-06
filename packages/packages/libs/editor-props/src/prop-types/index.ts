@@ -38,3 +38,5 @@ export * from './filter-prop-types/invert-filter';
 export * from './filter-prop-types/saturate-filter';
 export * from './filter-prop-types/sepia-filter';
 export * from './filter-prop-types/hue-rotate-filter';
+export * from './filter-prop-types/backdrop-filter';
+export * from './filter-prop-types/drop-shadow-filter';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { type PropKey } from '@elementor/editor-props';
+import { type PropKey, type PropTypeUtil } from '@elementor/editor-props';
 import { CopyIcon, EyeIcon, EyeOffIcon, PlusIcon, XIcon } from '@elementor/icons';
 import {
 	bindPopover,
@@ -30,6 +30,16 @@ type AnchorEl = HTMLElement | null;
 type Item< T > = {
 	disabled?: boolean;
 } & T;
+export type CollectionPropUtil< T > = PropTypeUtil< PropKey, T[] >;
+
+type RepeaterItemContentProps< T > = {
+	anchorEl: AnchorEl;
+	bind: PropKey;
+	value: T;
+	collectionPropUtil?: CollectionPropUtil< T >;
+};
+
+type RepeaterItemContent< T > = React.ComponentType< RepeaterItemContentProps< T > >;
 
 type RepeaterProps< T > = {
 	label: string;
@@ -42,15 +52,12 @@ type RepeaterProps< T > = {
 		initialValues: T;
 		Label: React.ComponentType< { value: T } >;
 		Icon: React.ComponentType< { value: T } >;
-		Content: React.ComponentType< {
-			anchorEl: AnchorEl;
-			bind: PropKey;
-			value: T;
-		} >;
+		Content: RepeaterItemContent< T >;
 	};
 	showDuplicate?: boolean;
 	showToggle?: boolean;
 	isSortable?: boolean;
+	collectionPropUtil?: CollectionPropUtil< T >;
 };
 
 const EMPTY_OPEN_ITEM = -1;
@@ -66,6 +73,7 @@ export const Repeater = < T, >( {
 	showDuplicate = true,
 	showToggle = true,
 	isSortable = true,
+	collectionPropUtil,
 }: RepeaterProps< Item< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
 
@@ -203,6 +211,7 @@ export const Repeater = < T, >( {
 									onOpen={ () => setOpenItem( EMPTY_OPEN_ITEM ) }
 									showDuplicate={ showDuplicate }
 									showToggle={ showToggle }
+									collectionPropUtil={ collectionPropUtil }
 								>
 									{ ( props ) => (
 										<itemSettings.Content { ...props } value={ value } bind={ String( index ) } />
@@ -217,22 +226,23 @@ export const Repeater = < T, >( {
 	);
 };
 
-type RepeaterItemProps = {
+type RepeaterItemProps< T > = {
 	label: React.ReactNode;
 	propDisabled?: boolean;
 	startIcon: UnstableTagProps[ 'startIcon' ];
 	removeItem: () => void;
 	duplicateItem: () => void;
 	toggleDisableItem: () => void;
-	children: ( { anchorEl }: { anchorEl: AnchorEl } ) => React.ReactNode;
+	children: ( props: Pick< RepeaterItemContentProps< T >, 'anchorEl' | 'collectionPropUtil' > ) => React.ReactNode;
 	openOnMount: boolean;
 	onOpen: () => void;
 	showDuplicate: boolean;
 	showToggle: boolean;
 	disabled?: boolean;
+	collectionPropUtil?: CollectionPropUtil< T >;
 };
 
-const RepeaterItem = ( {
+const RepeaterItem = < T, >( {
 	label,
 	propDisabled,
 	startIcon,
@@ -245,7 +255,8 @@ const RepeaterItem = ( {
 	showDuplicate,
 	showToggle,
 	disabled,
-}: RepeaterItemProps ) => {
+	collectionPropUtil,
+}: RepeaterItemProps< T > ) => {
 	const [ anchorEl, setAnchorEl ] = useState< AnchorEl >( null );
 	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
 
@@ -301,7 +312,7 @@ const RepeaterItem = ( {
 				{ ...popoverProps }
 				anchorEl={ ref }
 			>
-				<Box>{ children( { anchorEl } ) }</Box>
+				<Box>{ children( { anchorEl, collectionPropUtil } ) }</Box>
 			</Popover>
 		</>
 	);

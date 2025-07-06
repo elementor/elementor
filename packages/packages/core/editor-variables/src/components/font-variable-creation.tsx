@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
+import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, TextIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, IconButton } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
@@ -24,10 +24,12 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 
 	const [ fontFamily, setFontFamily ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const resetFields = () => {
 		setFontFamily( '' );
 		setLabel( '' );
+		setErrorMessage( '' );
 	};
 
 	const closePopover = () => {
@@ -40,10 +42,14 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			value: fontFamily,
 			label,
 			type: fontVariablePropTypeUtil.key,
-		} ).then( ( key ) => {
-			setVariable( key );
-			closePopover();
-		} );
+		} )
+			.then( ( key ) => {
+				setVariable( key );
+				closePopover();
+			} )
+			.catch( ( error ) => {
+				setErrorMessage( error.message );
+			} );
 	};
 
 	const hasEmptyValue = () => {
@@ -53,7 +59,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 	const isSubmitDisabled = hasEmptyValue();
 
 	return (
-		<PopoverScrollableContent height="auto">
+		<PopoverBody height="auto">
 			<PopoverHeader
 				icon={
 					<>
@@ -72,8 +78,22 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			<Divider />
 
 			<PopoverContent p={ 2 }>
-				<LabelField value={ label } onChange={ setLabel } />
-				<FontField value={ fontFamily } onChange={ setFontFamily } />
+				<LabelField
+					value={ label }
+					onChange={ ( value ) => {
+						setLabel( value );
+						setErrorMessage( '' );
+					} }
+				/>
+				<FontField
+					value={ fontFamily }
+					onChange={ ( value ) => {
+						setFontFamily( value );
+						setErrorMessage( '' );
+					} }
+				/>
+
+				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
@@ -81,6 +101,6 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
-		</PopoverScrollableContent>
+		</PopoverBody>
 	);
 };

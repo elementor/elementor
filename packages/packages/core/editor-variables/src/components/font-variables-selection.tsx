@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
+import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader, PopoverMenuList, PopoverSearch, type VirtualizedItem } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon, TextIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
@@ -75,7 +75,7 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 	};
 
 	return (
-		<>
+		<PopoverBody>
 			<PopoverHeader
 				title={ __( 'Variables', 'elementor' ) }
 				onClose={ closePopover }
@@ -93,37 +93,35 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 
 			<Divider />
 
-			<PopoverScrollableContent>
-				{ hasVariables && hasSearchResults && (
-					<PopoverMenuList
-						items={ items }
-						onSelect={ handleSetVariable }
-						onClose={ () => {} }
-						selectedValue={ variable }
-						data-testid="font-variables-list"
-						menuListTemplate={ VariablesStyledMenuList }
-						menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
-							<MenuItemContent item={ item } />
-						) }
-					/>
-				) }
+			{ hasVariables && hasSearchResults && (
+				<PopoverMenuList
+					items={ items }
+					onSelect={ handleSetVariable }
+					onClose={ () => {} }
+					selectedValue={ variable }
+					data-testid="font-variables-list"
+					menuListTemplate={ VariablesStyledMenuList }
+					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
+						<MenuItemContent item={ item } />
+					) }
+				/>
+			) }
 
-				{ ! hasSearchResults && hasVariables && (
-					<NoSearchResults
-						searchValue={ searchValue }
-						onClear={ handleClearSearch }
-						icon={ <TextIcon fontSize="large" /> }
-					/>
-				) }
+			{ ! hasSearchResults && hasVariables && (
+				<NoSearchResults
+					searchValue={ searchValue }
+					onClear={ handleClearSearch }
+					icon={ <TextIcon fontSize="large" /> }
+				/>
+			) }
 
-				{ ! hasVariables && (
-					<NoVariables
-						title={ __( 'Create your first font variable', 'elementor' ) }
-						icon={ <TextIcon fontSize="large" /> }
-						onAdd={ onAdd }
-					/>
-				) }
-			</PopoverScrollableContent>
-		</>
+			{ ! hasVariables && (
+				<NoVariables
+					title={ __( 'Create your first font variable', 'elementor' ) }
+					icon={ <TextIcon fontSize="large" /> }
+					onAdd={ onAdd }
+				/>
+			) }
+		</PopoverBody>
 	);
 };

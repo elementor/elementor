@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
+import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader, PopoverMenuList, PopoverSearch, type VirtualizedItem } from '@elementor/editor-ui';
 import { BrushIcon, ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
@@ -76,7 +76,7 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 	};
 
 	return (
-		<>
+		<PopoverBody>
 			<PopoverHeader
 				title={ __( 'Variables', 'elementor' ) }
 				icon={ <ColorFilterIcon fontSize={ SIZE } /> }
@@ -94,37 +94,35 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 
 			<Divider />
 
-			<PopoverScrollableContent>
-				{ hasVariables && hasSearchResults && (
-					<PopoverMenuList
-						items={ items }
-						onSelect={ handleSetColorVariable }
-						onClose={ () => {} }
-						selectedValue={ variable }
-						data-testid="color-variables-list"
-						menuListTemplate={ VariablesStyledMenuList }
-						menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
-							<MenuItemContent item={ item } />
-						) }
-					/>
-				) }
+			{ hasVariables && hasSearchResults && (
+				<PopoverMenuList
+					items={ items }
+					onSelect={ handleSetColorVariable }
+					onClose={ () => {} }
+					selectedValue={ variable }
+					data-testid="color-variables-list"
+					menuListTemplate={ VariablesStyledMenuList }
+					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
+						<MenuItemContent item={ item } />
+					) }
+				/>
+			) }
 
-				{ ! hasSearchResults && hasVariables && (
-					<NoSearchResults
-						searchValue={ searchValue }
-						onClear={ handleClearSearch }
-						icon={ <BrushIcon fontSize="large" /> }
-					/>
-				) }
+			{ ! hasSearchResults && hasVariables && (
+				<NoSearchResults
+					searchValue={ searchValue }
+					onClear={ handleClearSearch }
+					icon={ <BrushIcon fontSize="large" /> }
+				/>
+			) }
 
-				{ ! hasVariables && (
-					<NoVariables
-						title={ __( 'Create your first color variable', 'elementor' ) }
-						icon={ <BrushIcon fontSize="large" /> }
-						onAdd={ onAdd }
-					/>
-				) }
-			</PopoverScrollableContent>
-		</>
+			{ ! hasVariables && (
+				<NoVariables
+					title={ __( 'Create your first color variable', 'elementor' ) }
+					icon={ <BrushIcon fontSize="large" /> }
+					onAdd={ onAdd }
+				/>
+			) }
+		</PopoverBody>
 	);
 };

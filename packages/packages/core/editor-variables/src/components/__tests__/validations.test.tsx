@@ -81,7 +81,7 @@ it( 'should show error message when name validation fails', async () => {
 	fireEvent.change( nameInput, { target: { value: 'invalid@name' } } );
 
 	// Assert.
-	const error = await screen.findByText( 'Names can only use letters, numbers, dashes (-) and underscores (_).' );
+	const error = await screen.findByText( 'Use letters, numbers, dashes (-), or underscores (_) for the name.' );
 	expect( error ).toBeInTheDocument();
 } );
 

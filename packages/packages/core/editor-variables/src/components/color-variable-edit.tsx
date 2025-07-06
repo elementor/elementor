@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverScrollableContent } from '@elementor/editor-editing-panel';
+import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, BrushIcon, TrashIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, IconButton } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
@@ -25,6 +25,7 @@ type Props = {
 export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( colorVariablePropTypeUtil );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const variable = useVariable( editId );
 	if ( ! variable ) {
@@ -38,10 +39,14 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 		updateVariable( editId, {
 			value: color,
 			label,
-		} ).then( () => {
-			maybeTriggerBoundPropChange();
-			onSubmit?.();
-		} );
+		} )
+			.then( () => {
+				maybeTriggerBoundPropChange();
+				onSubmit?.();
+			} )
+			.catch( ( error ) => {
+				setErrorMessage( error.message );
+			} );
 	};
 
 	const handleDelete = () => {
@@ -90,7 +95,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 
 	return (
 		<>
-			<PopoverScrollableContent height="auto">
+			<PopoverBody height="auto">
 				<PopoverHeader
 					title={ __( 'Edit variable', 'elementor' ) }
 					onClose={ onClose }
@@ -114,8 +119,22 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 				<Divider />
 
 				<PopoverContent p={ 2 }>
-					<LabelField value={ label } onChange={ setLabel } />
-					<ColorField value={ color } onChange={ setColor } />
+					<LabelField
+						value={ label }
+						onChange={ ( value ) => {
+							setLabel( value );
+							setErrorMessage( '' );
+						} }
+					/>
+					<ColorField
+						value={ color }
+						onChange={ ( value ) => {
+							setColor( value );
+							setErrorMessage( '' );
+						} }
+					/>
+
+					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>
 
 				<CardActions sx={ { pt: 0.5, pb: 1 } }>
@@ -123,7 +142,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 						{ __( 'Save', 'elementor' ) }
 					</Button>
 				</CardActions>
-			</PopoverScrollableContent>
+			</PopoverBody>
 
 			{ deleteConfirmation && (
 				<DeleteConfirmationDialog

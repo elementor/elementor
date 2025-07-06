@@ -32,6 +32,7 @@ export function initStyleTransformers() {
 			)
 		)
 		.register( 'filter', filterTransformer )
+		.register( 'backdrop-filter', filterTransformer )
 		.register( 'box-shadow', createCombineArrayTransformer( ',' ) )
 		.register( 'background', backgroundTransformer )
 		.register( 'background-overlay', backgroundOverlayTransformer )

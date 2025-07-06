@@ -86,7 +86,25 @@ describe( 'FilterRepeaterControl', () => {
 
 		// Assert.
 		const btn = screen.getAllByRole( 'button' )[ 0 ];
-		expect( screen.getByText( 'Filter' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
+		expect( btn ).toHaveAttribute( 'aria-label', 'Add item' );
+	} );
+
+	it( 'should render Filter repeater for backdrop filter', () => {
+		// Arrange.
+		const props = {
+			value: [],
+			setValue: jest.fn(),
+			bind: 'backdrop-filter',
+			propType,
+		};
+
+		// Act.
+		renderControl( <FilterRepeaterControl filterPropName="backdrop-filter" />, props );
+
+		// Assert.
+		const btn = screen.getAllByRole( 'button' )[ 0 ];
+		expect( screen.getByText( 'Backdrop Filters' ) ).toBeInTheDocument();
 		expect( btn ).toHaveAttribute( 'aria-label', 'Add item' );
 	} );
 
@@ -98,7 +116,7 @@ describe( 'FilterRepeaterControl', () => {
 		renderControl( <FilterRepeaterControl />, props );
 
 		// Assert.
-		expect( screen.getByText( 'Filter' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
 
 		expect( screen.getByText( 'blur:' ) ).toBeInTheDocument();
 		expect( screen.getByText( '1px' ) ).toBeInTheDocument();
@@ -135,7 +153,8 @@ describe( 'FilterRepeaterControl', () => {
 		fireEvent.click( btn );
 
 		// Assert.
-		expect( screen.getAllByText( 'Filter' ).length ).toBe( 2 );
+		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Filter' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Radius' ) ).toBeInTheDocument();
 	} );
 } );

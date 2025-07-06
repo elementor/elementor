@@ -10,8 +10,9 @@ import { SectionContent } from '../../section-content';
 import { OpacityControlField } from '../layout-section/opacity-control-field';
 
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
-const FILTER_LABEL = __( 'Filter', 'elementor' );
+const FILTER_LABEL = __( 'Filters', 'elementor' );
 const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
+const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 
 export const EffectsSection = () => {
 	const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
@@ -36,6 +37,10 @@ export const EffectsSection = () => {
 					<PanelDivider />
 					<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
 						<FilterRepeaterControl />
+					</StylesField>
+					<PanelDivider />
+					<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
+						<FilterRepeaterControl filterPropName="backdrop-filter" />
 					</StylesField>
 				</>
 			) }

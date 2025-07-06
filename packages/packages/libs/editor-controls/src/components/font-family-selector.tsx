@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { PopoverHeader, PopoverMenuList, PopoverScrollableContent, PopoverSearch } from '@elementor/editor-ui';
+import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
 import { TextIcon } from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
@@ -41,7 +41,7 @@ export const FontFamilySelector = ( {
 	};
 
 	return (
-		<Stack>
+		<PopoverBody width={ sectionWidth }>
 			<PopoverHeader
 				title={ __( 'Font Family', 'elementor' ) }
 				onClose={ handleClose }
@@ -56,64 +56,62 @@ export const FontFamilySelector = ( {
 
 			<Divider />
 
-			<PopoverScrollableContent width={ sectionWidth }>
-				{ filteredFontFamilies.length > 0 ? (
-					<FontList
-						fontListItems={ filteredFontFamilies }
-						setFontFamily={ onFontFamilyChange }
-						handleClose={ handleClose }
-						fontFamily={ fontFamily }
-					/>
-				) : (
-					<Stack
-						alignItems="center"
-						justifyContent="center"
-						height="100%"
-						p={ 2.5 }
-						gap={ 1.5 }
-						overflow={ 'hidden' }
-					>
-						<TextIcon fontSize="large" />
-						<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
-							<Typography align="center" variant="subtitle2" color="text.secondary">
-								{ __( 'Sorry, nothing matched', 'elementor' ) }
-							</Typography>
-							<Typography
-								variant="subtitle2"
-								color="text.secondary"
-								sx={ {
-									display: 'flex',
-									width: '100%',
-									justifyContent: 'center',
-								} }
-							>
-								<span>&ldquo;</span>
-								<span style={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }>
-									{ searchValue }
-								</span>
-								<span>&rdquo;.</span>
-							</Typography>
-						</Box>
-						<Typography
-							align="center"
-							variant="caption"
-							color="text.secondary"
-							sx={ { display: 'flex', flexDirection: 'column' } }
-						>
-							{ __( 'Try something else.', 'elementor' ) }
-							<Link
-								color="secondary"
-								variant="caption"
-								component="button"
-								onClick={ () => setSearchValue( '' ) }
-							>
-								{ __( 'Clear & try again', 'elementor' ) }
-							</Link>
+			{ filteredFontFamilies.length > 0 ? (
+				<FontList
+					fontListItems={ filteredFontFamilies }
+					setFontFamily={ onFontFamilyChange }
+					handleClose={ handleClose }
+					fontFamily={ fontFamily }
+				/>
+			) : (
+				<Stack
+					alignItems="center"
+					justifyContent="center"
+					height="100%"
+					p={ 2.5 }
+					gap={ 1.5 }
+					overflow={ 'hidden' }
+				>
+					<TextIcon fontSize="large" />
+					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
+						<Typography align="center" variant="subtitle2" color="text.secondary">
+							{ __( 'Sorry, nothing matched', 'elementor' ) }
 						</Typography>
-					</Stack>
-				) }
-			</PopoverScrollableContent>
-		</Stack>
+						<Typography
+							variant="subtitle2"
+							color="text.secondary"
+							sx={ {
+								display: 'flex',
+								width: '100%',
+								justifyContent: 'center',
+							} }
+						>
+							<span>&ldquo;</span>
+							<span style={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }>
+								{ searchValue }
+							</span>
+							<span>&rdquo;.</span>
+						</Typography>
+					</Box>
+					<Typography
+						align="center"
+						variant="caption"
+						color="text.secondary"
+						sx={ { display: 'flex', flexDirection: 'column' } }
+					>
+						{ __( 'Try something else.', 'elementor' ) }
+						<Link
+							color="secondary"
+							variant="caption"
+							component="button"
+							onClick={ () => setSearchValue( '' ) }
+						>
+							{ __( 'Clear & try again', 'elementor' ) }
+						</Link>
+					</Typography>
+				</Stack>
+			) }
+		</PopoverBody>
 	);
 };
 
