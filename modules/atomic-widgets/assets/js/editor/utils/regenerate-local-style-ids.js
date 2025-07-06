@@ -11,11 +11,12 @@ function isClassesProp( prop ) {
 
 /**
  * Update the style id of the container.
+ *
  * @param {Container} container
  */
 function updateStyleId( container ) {
 	const originalStyles = container.model.get( 'styles' );
-	const settings = container.settings?.toJSON() ?? {};
+	const settings = container.settings ? .toJSON() ? ? {};
 
 	const classesProps = Object.entries( settings ).filter(
 		( [ , propValue ] ) => ( isClassesProp( propValue ) ),
@@ -27,16 +28,14 @@ function updateStyleId( container ) {
 
 	Object.entries( originalStyles ).forEach( ( [ originalStyleId, style ] ) => {
 		const newStyleId = getRandomStyleId( container, newStyles );
-
 		newStyles[ newStyleId ] = structuredClone( { ...style, id: newStyleId } );
-
 		changedIds[ originalStyleId ] = newStyleId;
 	} );
 
 	const newClassesProps = classesProps.map( ( [ key, value ] ) => {
 		return [ key, {
 			...value,
-			value: value.value.map( ( className ) => changedIds[ className ] ?? className ),
+			value: value.value.map( ( className ) => changedIds[ className ] ? ? className ),
 		} ];
 	}, {} );
 
@@ -51,17 +50,18 @@ function updateStyleId( container ) {
 }
 
 function updateElementsStyleIdsInsideOut( styledElements ) {
-	styledElements?.reverse().forEach( updateStyleId );
+	styledElements ? .reverse().forEach( updateStyleId );
 }
 
 /**
  * Get a container - iterate over its children, find all styled atomic widgets and update their style ids
+ *
  * @param {Container} container
  */
 export function regenerateLocalStyleIds( container ) {
 	const allElements = getElementChildren( container );
 
-	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
+	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ? ? {} ).length > 0 );
 
 	updateElementsStyleIdsInsideOut( styledElements );
 }
