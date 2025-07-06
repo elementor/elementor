@@ -73,9 +73,16 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
+					const widgetElement = editor.getPreviewFrame().locator( widgetSelector );
+					await expect( widgetElement ).toBeVisible();
 
-					await expect( page.locator( widgetSelector ).first() ).toHaveScreenshot( `${ widget.name }-editor.png` );
-					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
+					// Click on the widget to ensure it's active and visible
+					await widgetElement.click();
+
+					// Take screenshot of the container instead of the widget
+					const containerSelector = editor.getWidgetSelector( containerId );
+					const containerElement = editor.getPreviewFrame().locator( containerSelector );
+					await expect( containerElement ).toHaveScreenshot( `${ widget.name }-editor.png` );
 				} );
 
 				await test.step( 'Check frontend display', async () => {
