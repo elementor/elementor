@@ -13,6 +13,7 @@ const TabsView = BaseElementView.extend( {
 		}
 
 		const tagControl = this.model.getSetting( 'tag' );
+		console.log( this.model.get( 'defaultChildren' ) );
 		const tagControlValue = tagControl?.value || tagControl;
 
 		return tagControlValue || 'div';
@@ -498,4 +499,4 @@ const TabsView = BaseElementView.extend( {
 	},
 } );
 
-module.exports = TabsView; 
+module.exports = TabsView;

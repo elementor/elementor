@@ -211,14 +211,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
-		$heading = Plugin::instance()->elements_manager->create_element_instance( [
-			'id' => 'e8e55a1',
+		$heading = [
 			'elType' => 'widget',
 			'settings' => [
 				'title' => String_Prop_Type::generate( 'Tabs Title' ),
 			],
 			'widgetType' => Atomic_Heading::get_element_type(),
-		] );
+		];
 
 		return [
 			$heading,
