@@ -3,14 +3,15 @@ module.exports = {
 		'plugin:react/recommended',
 		'plugin:no-jquery/deprecated',
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
+		'plugin:@elementor/editor/recommended',
 		'plugin:import/typescript',
 	],
 	plugins: [
 		'babel',
 		'react',
+		'@elementor/editor',
 		'no-jquery',
 		'@typescript-eslint',
-		'local-rules',
 	],
 	parser: '@typescript-eslint/parser',
 	globals: {
@@ -52,17 +53,9 @@ module.exports = {
 				'@typescript-eslint/await-thenable': 'error',
 				'@typescript-eslint/no-var-requires': 'error',
 				'@typescript-eslint/ban-ts-comment': 'error',
-				// Local rules
-				'local-rules:no-react-namespace': 'error',
 			},
 			parserOptions: {
 				project: [ './tsconfig.json' ],
-			},
-		},
-		{
-			files: [ 'tests/**/*.ts', 'tests/**/*.tsx' ],
-			rules: {
-				'local-rules:no-react-namespace': 'off',
 			},
 		},
 	],

@@ -1,1 +1,0 @@
-export { EntryInitializationWebpackPlugin } from './plugin';

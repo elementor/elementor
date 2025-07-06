@@ -65,7 +65,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm run prepare-environment:ci
+          npm ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -133,7 +133,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm run prepare-environment:ci
+          npm ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
