@@ -39,7 +39,7 @@ export default class ApiRequests {
 		const multipart = {
 			file: createReadStream( imagePath ),
 			status: 'publish',
-			...image
+			...image,
 		};
 		const response = await request.post( `${ this.baseUrl }/index.php`, {
 
