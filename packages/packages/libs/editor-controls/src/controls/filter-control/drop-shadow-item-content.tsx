@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import { ControlFormLabel } from '../../components/control-form-label';
 import { PopoverGridContainer } from '../../components/popover-grid-container';
-import { type Unit } from '../../utils/size-control';
+import { type LengthUnit } from '../../utils/size-control';
 import { ColorControl } from '../color-control';
 import { SizeControl } from '../size-control';
 
@@ -40,7 +40,7 @@ export const DropShadowItemContent = ( {
 	anchorEl,
 }: {
 	propType: PropTypeUtil< 'drop-shadow', DropShadowFilterPropValue[ 'value' ] >;
-	units: Unit[];
+	units: LengthUnit[];
 	anchorEl?: HTMLElement | null;
 } ) => {
 	const context = useBoundProp( propType );
