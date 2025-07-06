@@ -18,12 +18,6 @@ class Opt_In {
 		GlobalClassesModule::NAME,
 	];
 
-	const OPT_OUT_FEATURES = [
-		self::EXPERIMENT_NAME,
-		AtomicWidgetsModule::EXPERIMENT_NAME,
-		GlobalClassesModule::NAME,
-	];
-
 	const OPT_IN_FEATURES = [
 		self::EXPERIMENT_NAME,
 		'container',

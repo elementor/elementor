@@ -66,7 +66,6 @@ class Atomic_Styles_Manager {
 		$get_styles_memo = new Memo();
 
 		$styles_by_key = Collection::make( $this->registered_styles_by_key )
-			->map_with_keys( fn( $get_styles, $style_key ) => [ $style_key => $get_styles_memo->memoize( $style_key, $get_styles ) ] )
 			->map_with_keys( fn ( $style_params, $style_key ) => [
 				$style_key => [
 					'get_styles' => $get_styles_memo->memoize( $style_key, $style_params['get_styles'] ),
@@ -166,4 +165,14 @@ class Atomic_Styles_Manager {
 			->prepend( self::DEFAULT_BREAKPOINT )
 			->all();
 	}
+
+    private function on_document_change( Document $document, array $post_data ): void {
+        $post_ids = [$document->get_main_post()->ID];
+
+        if ( ! is_array( $post_ids ) || empty( $post_ids ) ) {
+            return;
+        }
+
+        do_action( 'elementor/atomic-widgets/styles/post-change', $post_ids, $post_data );
+    }
 }
