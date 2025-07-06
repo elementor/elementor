@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
@@ -14,7 +15,9 @@ class Atomic_Widget_Styles {
 			$this->register_styles( $styles_manager, $post_ids );
 		}, 30, 2 );
 
-		add_action( 'elementor/atomic-widgets/styles/post-change', fn( array $post_ids ) => $this->invalidate_cache( $post_ids ), 20, 2 );
+		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->invalidate_cache(
+			[ $document->get_main_post()->ID ]
+		), 20, 2 );
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {

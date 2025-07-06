@@ -46,7 +46,6 @@ class Atomic_Styles_Manager {
 		add_action( 'elementor/post/render', function( $post_id ) {
 			$this->post_ids[] = $post_id;
 		} );
-		add_action( 'elementor/documents/ajax_save/after_save', fn( Document $document, array $post_data ) => $this->on_document_change( $document, $post_data ), 10, 2 );
 	}
 
 	public function register( string $key, callable $get_style_defs, array $cache_keys ) {
@@ -165,14 +164,4 @@ class Atomic_Styles_Manager {
 			->prepend( self::DEFAULT_BREAKPOINT )
 			->all();
 	}
-
-    private function on_document_change( Document $document, array $post_data ): void {
-        $post_ids = [$document->get_main_post()->ID];
-
-        if ( ! is_array( $post_ids ) || empty( $post_ids ) ) {
-            return;
-        }
-
-        do_action( 'elementor/atomic-widgets/styles/post-change', $post_ids, $post_data );
-    }
 }

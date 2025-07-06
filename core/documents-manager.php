@@ -586,8 +586,6 @@ class Documents_Manager {
 		 */
 		$return_data = apply_filters( 'elementor/documents/ajax_save/return_data', $return_data, $document );
 
-		do_action( 'elementor/documents/ajax_save/after_save', $document, $return_data );
-
 		return $return_data;
 	}
 
