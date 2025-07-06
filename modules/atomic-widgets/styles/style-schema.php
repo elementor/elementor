@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
@@ -21,6 +22,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -68,7 +70,16 @@ class Style_Schema {
 			] ),
 			'object-position' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make()->enum( Position_Prop_Type::get_position_enum_values() ) )
-				->add_prop_type( Position_Prop_Type::make() ),
+				->add_prop_type( Position_Prop_Type::make() )
+				->dependencies(
+					Dependency_Manager::make()
+					->new_dependency( [ 'effect' => 'hide' ] )
+					->where( [
+						'operator' => 'eq',
+						'path' => [ 'object-fit' ],
+						'value' => 'fill',
+					] )
+				),
 		];
 	}
 
@@ -113,7 +124,20 @@ class Style_Schema {
 			'letter-spacing' => Size_Prop_Type::make(),
 			'word-spacing' => Size_Prop_Type::make(),
 			'column-count' => Number_Prop_Type::make(),
-			'column-gap' => Size_Prop_Type::make(),
+			'column-gap' => Size_Prop_Type::make()
+				->dependencies(
+					Dependency_Manager::make()
+					->new_dependency( [ 'effect' => 'hide' ] )
+					->where( [
+						'operator' => 'lt',
+						'path' => [ 'column-count' ],
+						'value' => 1,
+					] )
+					->where( [
+						'operator' => 'not_exist',
+						'path' => [ 'column-count' ],
+					] )
+				),
 			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
@@ -203,6 +227,7 @@ class Style_Schema {
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
 			'opacity' => Size_Prop_Type::make(),
 			'filter' => Filter_Prop_Type::make(),
+			'backdrop-filter' => Backdrop_Filter_Prop_Type::make(),
 			'transform' => Transform_Prop_Type::make(),
 		];
 	}

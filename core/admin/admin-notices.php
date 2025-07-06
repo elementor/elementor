@@ -24,6 +24,7 @@ class Admin_Notices extends Module {
 		'api_notice',
 		'api_upgrade_plugin',
 		'tracker',
+		'tracker_last_update',
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
@@ -213,7 +214,7 @@ class Admin_Notices extends Module {
 		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
 		$optout_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_out' ), 'opt_out' );
 
-		$tracker_description_text = esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' );
+		$tracker_description_text = esc_html__( 'Become a super contributor by helping us understand how you use our service to enhance your experience and improve our product.', 'elementor' );
 
 		/**
 		 * Tracker admin description text.
@@ -229,7 +230,7 @@ class Admin_Notices extends Module {
 		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">' . esc_html__( 'Learn more.', 'elementor' ) . '</a>';
 
 		$options = [
-			'title' => esc_html__( 'Love using Elementor?', 'elementor' ),
+			'title' => esc_html__( 'Want to shape the future of web creation?', 'elementor' ),
 			'description' => $message,
 			'dismissible' => false,
 			'button' => [
@@ -241,6 +242,47 @@ class Admin_Notices extends Module {
 				'text' => esc_html__( 'No thanks', 'elementor' ),
 				'url' => $optout_url,
 				'variant' => 'outline',
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function notice_tracker_last_update() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return false;
+		}
+
+		if ( ! Tracker::has_terms_changed() ) {
+			return false;
+		}
+
+		$notice_id = 'tracker_last_update_' . Tracker::LAST_TERMS_UPDATED;
+
+		if ( User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$optin_url = wp_nonce_url( add_query_arg( 'elementor_tracker', 'opt_into' ), 'opt_into' );
+
+		$message = esc_html__( 'We\'re updating our Terms and Conditions to include the collection of usage and behavioral data. This information helps us understand how you use Elementor so we can make informed improvements to the product.', 'elementor' );
+
+		$options = [
+			'id' => $notice_id,
+			'title' => esc_html__( 'Update regarding usage data collection', 'elementor' ),
+			'description' => $message,
+			'button' => [
+				'text' => esc_html__( 'Opt in', 'elementor' ),
+				'url' => $optin_url,
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/wp-dash-update-usage-notice/',
+				'new_tab' => true,
 				'type' => 'cta',
 			],
 		];
