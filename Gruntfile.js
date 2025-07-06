@@ -70,10 +70,6 @@ module.exports = function( grunt ) {
 		grunt.task.run( 'webpack:productionWatch' );
 	} );
 
-	grunt.registerTask( 'scripts:packages', () => {
-		grunt.task.run( 'webpack:packages' );
-	} );
-
 	grunt.registerTask( 'styles', ( isDevMode = false ) => {
 		if ( ! isDevMode ) {
 			grunt.task.run( 'create_widgets_temp_scss_files' );
@@ -90,6 +86,7 @@ module.exports = function( grunt ) {
 	} );
 
 	grunt.registerTask( 'watch_styles', () => {
+		grunt.task.run( 'styles' );
 		grunt.task.run( 'watch:styles' );
 	} );
 
