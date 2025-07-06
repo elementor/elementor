@@ -5,6 +5,7 @@ export * from './create-mock-menu-actions';
 export * from './create-mock-style-definition';
 export * from './create-mock-prop-type';
 export * from './create-mock-prop-util';
+export * from './create-mock-filter-schema';
 export * from './create-mock-breakpoints-tree';
 export * from './init-mock-styles-transformers-registry';
 export * from './v1-dispatchers';

@@ -1,5 +1,7 @@
 import { type PropsSchema } from '@elementor/editor-props';
 
+import { createMockSingleSizeFilterPropType } from './create-mock-filter-schema';
+
 export const mockStylesSchema = {
 	'font-size': {
 		kind: 'object',
@@ -1017,76 +1019,55 @@ export const mockStylesSchema = {
 			meta: {},
 			settings: {},
 			prop_types: {
-				blur: {
-					kind: 'object',
-					key: 'blur',
-					default: null,
-					meta: {},
-					settings: {},
-					shape: {
-						radius: {
-							kind: 'object',
-							key: 'size',
-							default: null,
-							meta: {},
-							settings: {},
-							shape: {
-								size: {
-									kind: 'plain',
-									key: 'number',
-									default: null,
-									meta: {},
-									settings: {},
-								},
-								unit: {
-									kind: 'plain',
-									key: 'string',
-									default: null,
-									meta: {},
-									settings: {
-										enum: [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ],
-										required: true,
-									},
-								},
-							},
-						},
-					},
-				},
-				brightness: {
-					kind: 'object',
-					key: 'brightness',
-					default: null,
-					meta: {},
-					settings: {},
-					shape: {
-						amount: {
-							kind: 'object',
-							key: 'size',
-							default: null,
-							meta: {},
-							settings: {},
-							shape: {
-								size: {
-									kind: 'plain',
-									key: 'number',
-									default: null,
-									meta: {},
-									settings: {},
-								},
-								unit: {
-									kind: 'plain',
-									key: 'string',
-									default: null,
-									meta: {},
-									settings: {
-										enum: [ '%' ],
-										required: true,
-									},
-								},
-							},
-						},
-					},
-				},
+				...createMockSingleSizeFilterPropType( 'blur', 'radius', [
+					'px',
+					'em',
+					'rem',
+					'%',
+					'vh',
+					'vw',
+					'vmin',
+					'vmax',
+				] ),
+				...createMockSingleSizeFilterPropType( 'brightness', 'amount', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'contrast', 'contrast', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'grayscale', 'grayscale', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'invert', 'invert', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'sepia', 'sepia', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'saturate', 'saturate', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'hue-rotate', 'hue-rotate', [ 'deg', 'rad', 'grad', 'turn' ] ),
+			},
+		},
+	},
+	'backdrop-filter': {
+		kind: 'array',
+		key: 'backdrop-filter',
+		default: null,
+		meta: {},
+		settings: {},
+		item_prop_type: {
+			kind: 'union',
+			default: null,
+			meta: {},
+			settings: {},
+			prop_types: {
+				...createMockSingleSizeFilterPropType( 'blur', 'radius', [
+					'px',
+					'em',
+					'rem',
+					'%',
+					'vh',
+					'vw',
+					'vmin',
+					'vmax',
+				] ),
+				...createMockSingleSizeFilterPropType( 'brightness', 'amount', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'contrast', 'contrast', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'grayscale', 'grayscale', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'invert', 'invert', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'sepia', 'sepia', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'saturate', 'saturate', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'hue-rotate', 'hue-rotate', [ 'deg', 'rad', 'grad', 'turn' ] ),
 			},
 		},
 	},
