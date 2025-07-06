@@ -59,6 +59,8 @@ jobs:
           cache: npm
       - name: Install Dependencies
         run: npm run prepare-environment:ci
+      - name: Build tools
+        run: npm run build:tools
       - name: Run Lint
         run: npm run lint
 
