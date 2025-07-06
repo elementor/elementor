@@ -49,6 +49,6 @@ jobs:
           node-version: 20.x
           cache: npm
       - name: Install Dependencies
-        run: npm ci
+        run: npm run prepare-environment:ci
       - name: "Run Jest"
         run: npm run test:jest
