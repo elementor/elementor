@@ -37,10 +37,10 @@ export default function ExportError( { statusText } ) {
 			</Typography>
 
 			<Stack direction="row" spacing={ 2 }>
-				<Button variant="contained" onClick={ handleTryAgain }>
+				<Button variant="contained" onClick={ handleTryAgain } data-testid="export-error-try-again-button">
 					{ __( 'Try Again', 'elementor' ) }
 				</Button>
-				<Button variant="outlined" onClick={ handleLearnMore }>
+				<Button variant="outlined" onClick={ handleLearnMore } data-testid="export-error-learn-more-button">
 					{ __( 'Learn More', 'elementor' ) }
 				</Button>
 			</Stack>
