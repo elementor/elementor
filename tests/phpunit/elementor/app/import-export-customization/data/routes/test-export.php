@@ -149,7 +149,7 @@ class Test_Export extends Elementor_Test_Base {
 		$response = $this->send_export_request( [
 			'include' => ['settings'],
 			'kitInfo' => [
-				'name' => 'Test Kit',
+                                'title' => 'Test Kit',
 				'source' => 'test'
 			]
 		] );
