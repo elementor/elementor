@@ -2,6 +2,9 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
 use Elementor\Plugin;
+use Elementor\App\Modules\ImportExportCustomization\Data\Response;
+use Elementor\Utils as ElementorUtils;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,17 +27,43 @@ class Export extends Base_Route {
 				'kitInfo' => $request->get_param( 'kitInfo' ),
 				'plugins' => $request->get_param( 'plugins' ),
 				'selectedCustomPostTypes' => $request->get_param( 'selectedCustomPostTypes' ),
+				'screenShotBlob' => $request->get_param( 'screenShotBlob' ),
 			];
 
 			$settings = array_filter( $settings );
 
+			$source = $settings['kitInfo']['source'];
+
 			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
-			$export_result = $module->export_kit( $settings );
+			$export = $module->export_kit( $settings );
 
-			Plugin::$instance->logger->get_logger()->info( 'Kit export completed via REST API' );
+			$file_name = $export['file_name'];
+			$file = ElementorUtils::file_get_contents( $file_name );
 
-			return Response::success( $export_result );
+			if ( ! $file ) {
+				throw new \Error( 'Could not read the exported file.' );
+			}
+
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+
+			$result = apply_filters(
+				'elementor/export/kit/export-result',
+				[
+					'manifest' => $export['manifest'],
+					'file' => base64_encode( $file ),
+				],
+				$source,
+				$export,
+				$settings,
+				$file,
+			);
+
+			if ( is_wp_error( $result ) ) {
+				throw new \Error( $result->get_error_message() );
+			}
+
+			return Response::success( $result );
 
 		} catch ( \Error | \Exception $e ) {
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
@@ -75,6 +104,12 @@ class Export extends Base_Route {
 				'description' => 'Selected custom post types',
 				'required' => false,
 				'default' => [],
+			],
+			'screenShotBlob' => [
+				'type' => 'string',
+				'description' => 'Base64 encoded screenshot for cloud exports',
+				'required' => false,
+				'default' => null,
 			],
 		];
 	}

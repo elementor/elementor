@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
@@ -16,10 +17,16 @@ class Union_Prop_Type implements Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Required_Setting;
 
+	private array $dependencies = [];
+
 	protected $default = null;
 
 	/** @var Array<string, Transformable_Prop_Type> */
 	protected array $prop_types = [];
+
+	public static function get_key(): string {
+		return 'union';
+	}
 
 	public static function make(): self {
 		return new static();
@@ -29,6 +36,10 @@ class Union_Prop_Type implements Prop_Type {
 		return static::make()
 			->add_prop_type( $prop_type )
 			->default( $prop_type->get_default() );
+	}
+
+	public function get_type(): string {
+		return 'union';
 	}
 
 	public function add_prop_type( Transformable_Prop_Type $prop_type ): self {
@@ -103,6 +114,17 @@ class Union_Prop_Type implements Prop_Type {
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
+			'dependencies' => $this->dependencies,
 		];
+	}
+
+	public function dependencies( ?Dependency_Manager $manager = null ): self {
+		$this->dependencies = $manager->get();
+
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
+
+		return $this;
 	}
 }
