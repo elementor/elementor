@@ -1,14 +1,12 @@
 const path = require( 'path' );
 const fs = require( 'fs' );
-const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generate-wordpress-asset-file-webpack-plugin' );
-const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
-const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
-const { EntryInitializationWebpackPlugin } = require( '@elementor/entry-initialization-webpack-plugin' );
+const { GenerateWordPressAssetFileWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/generate-wordpress-asset-file-webpack-plugin' ) );
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
+const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/externalize-wordpress-assets-webpack-plugin' ) );
+const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/entry-initialization-webpack-plugin' ) );
 const TerserPlugin = require('terser-webpack-plugin');
 
-const usingLocalRepo = process.env.ELEMENTOR_PACKAGES_USE_LOCAL;
-
-const packages = usingLocalRepo ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries();
+const packages = getLocalRepoPackagesEntries();
 
 const REGEXES = {
 	// @elementor/ui/SvgIcon. Used inside @elementor/icons
@@ -82,7 +80,7 @@ const common = {
 const devConfig = {
 	...common,
 	mode: 'development',
-	devtool: usingLocalRepo ? 'source-map' : false,
+	devtool: 'source-map',
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	optimization: {
 		...( common.optimization || {} ),
@@ -128,39 +126,9 @@ module.exports = {
 	prod: prodConfig,
 };
 
-function getNodeModulesPackagesEntries() {
-	const { dependencies } = require( '../package.json' );
-
-	return Object.keys( dependencies )
-		.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
-		.map( ( packageName ) => {
-			const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
-
-			const { main, module } = JSON.parse( pkgJSON );
-
-			return {
-				mainFile: module || main,
-				packageName,
-			}
-		} )
-		.filter( ( { mainFile } ) => !! mainFile )
-		.map( ( { mainFile, packageName } ) => ( {
-			name: packageName.replace( '@elementor/', '' ),
-			path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
-		} ) );
-}
-
 function getLocalRepoPackagesEntries() {
-	const repoPath = process.env.ELEMENTOR_PACKAGES_PATH;
+	const repoPath = path.resolve( __dirname, '../packages' );
 	const relevantDirs = [ 'packages/core', 'packages/libs' ]
-
-	if ( ! repoPath ) {
-		throw new Error( 'ELEMENTOR_PACKAGES_PATH is not defined, define it in your operating system environment variables.' );
-	}
-
-	if ( ! fs.existsSync( repoPath ) ) {
-		throw new Error( `ELEMENTOR_PACKAGES_PATH is defined but the path ${repoPath} does not exist.` );
-	}
 
 	const packages = relevantDirs.flatMap( ( dir ) =>
 		fs.readdirSync( path.resolve( repoPath, dir ) )
