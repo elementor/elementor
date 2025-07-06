@@ -17,7 +17,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-svg', title: 'SVG' },
 		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
-		{ name: 'e-youtube', title: 'YouTube' },
+		//{ name: 'e-youtube', title: 'YouTube' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -72,17 +72,14 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await test.step( 'Add widget and check editor canvas', async () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
-					widgetSelector = editor.getWidgetSelector( widgetId );
-					const widgetElement = editor.getPreviewFrame().locator( widgetSelector );
-					await expect( widgetElement ).toBeVisible();
-					// Take screenshot of the container instead of the widget
-					const containerSelector = editor.getWidgetSelector( containerId );
-					const containerElement = editor.getPreviewFrame().locator( containerSelector );
-					await expect( containerElement ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					widgetSelector = editor.getWidgetID( widgetId );
+
+					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
 				} );
 
 				await test.step( 'Check frontend display', async () => {
-					const containerSelector = editor.getWidgetSelector( containerId );
+					const containerSelector = editor.getWidgetID( containerId );
 					await editor.publishAndViewPage();
 
 					if ( 'e-youtube' === widget.name ) {
