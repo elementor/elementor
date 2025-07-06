@@ -39,11 +39,21 @@ class Props_Factory {
 		return Box_Shadow_Prop_Type::generate( $value );
 	}
 
-	public static function flex( ...$args ) {
-		return Flex_Prop_Type::generate( [
-			'flexGrow' => $args[0],
-			'flexShrink' => $args[1],
-			'flexBasis' => $args[2],
-		] );
+	public static function flex( $grow = null, $shrink = null, $basis = null ) {
+		$flex_data = [];
+		
+		if ( $grow !== null ) {
+			$flex_data['flexGrow'] = $grow;
+		}
+		
+		if ( $shrink !== null ) {
+			$flex_data['flexShrink'] = $shrink;
+		}
+		
+		if ( $basis !== null ) {
+			$flex_data['flexBasis'] = $basis;
+		}
+		
+		return Flex_Prop_Type::generate( $flex_data );
 	}
 }
