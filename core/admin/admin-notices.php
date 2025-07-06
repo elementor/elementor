@@ -230,7 +230,7 @@ class Admin_Notices extends Module {
 		$message = esc_html( $tracker_description_text ) . ' <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">' . esc_html__( 'Learn more.', 'elementor' ) . '</a>';
 
 		$options = [
-			'title' => esc_html__( 'Want to Shape the Future of Web Creation?', 'elementor' ),
+			'title' => esc_html__( 'Want to shape the future of web creation?', 'elementor' ),
 			'description' => $message,
 			'dismissible' => false,
 			'button' => [
