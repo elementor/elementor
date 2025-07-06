@@ -60,7 +60,7 @@ jobs:
       - name: Install Dependencies
         run: npm run prepare-environment:ci
       - name: Run Lint
-        run: ./node_modules/eslint/bin/eslint.js .
+        run: npm run lint
 
   PHP-Lint:
     runs-on: ubuntu-22.04
