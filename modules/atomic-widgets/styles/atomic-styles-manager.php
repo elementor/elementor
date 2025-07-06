@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Cache;
+use Elementor\Modules\AtomicWidgets\Memo;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -24,10 +24,13 @@ class Atomic_Styles_Manager {
 
 	private array $post_ids = [];
 
+	private CSS_Files_Manager $css_files_manager;
+
 	const DEFAULT_BREAKPOINT = 'desktop';
 
-	private function __construct() {
-		$this->cache_state_manager = new Cache_State_Manager();
+    private function __construct() {
+		$this->css_files_manager = new CSS_Files_Manager();
+        $this->cache_state_manager = new Cache_State_Manager();
 	}
 
 	public static function instance() {
@@ -60,38 +63,39 @@ class Atomic_Styles_Manager {
 
 		do_action( 'elementor/atomic-widgets/styles/register', $this, $this->post_ids );
 
-		$get_styles_cache = new Cache();
+		$get_styles_memo = new Memo();
 
 		$styles_by_key = Collection::make( $this->registered_styles_by_key )
+			->map_with_keys( fn( $get_styles, $style_key ) => [ $style_key => $get_styles_memo->memoize( $style_key, $get_styles ) ] )
 			->map_with_keys( fn ( $style_params, $style_key ) => [
 				$style_key => [
-					'get_styles' => $get_styles_cache->cache( $style_key, $style_params['get_styles'] ),
+					'get_styles' => $get_styles_memo->memoize( $style_key, $style_params['get_styles'] ),
 					'cache_keys' => $style_params['cache_keys'],
 				],
 			])
 			->all();
 
-		$group_by_breakpoint_cache = new Cache();
+		$group_by_breakpoint_memo = new Memo();
 		$breakpoints = $this->get_breakpoints();
 		foreach ( $breakpoints as $breakpoint_key ) {
-			foreach ( $styles_by_key as $style_key => $style_params ) {
-				$cache_keys = $style_params['cache_keys'];
-				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_cache );
+			foreach ( $styles_by_key as $style_key =>  $style_params ) {
+                $cache_keys = $style_params['cache_keys'];
+                $render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
 
-				$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
+                $breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
 
-				if ( ! $breakpoint_media ) {
-					continue;
-				}
+                if ( ! $breakpoint_media ) {
+                    continue;
+                }
 
-				$style_file = ( new CSS_Files_Manager() )->get(
-					$style_key . '-' . $breakpoint_key,
-					$breakpoint_media,
-					$render_css,
-					$this->cache_state_manager->get( $cache_keys )
-				);
+                $style_file = ( new CSS_Files_Manager() )->get(
+                    $style_key . '-' . $breakpoint_key,
+                    $breakpoint_media,
+                    $render_css,
+                    $this->cache_state_manager->get( $cache_keys )
+                );
 
-				$this->cache_state_manager->validate( $cache_keys );
+                $this->cache_state_manager->validate( $cache_keys );
 
 				if ( ! $style_file ) {
 					continue;
@@ -110,7 +114,7 @@ class Atomic_Styles_Manager {
 	private function render_css( array $styles ) {
 		$css = Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform(function ( $key, $value ) {
+		)->on_prop_transform( function( $key, $value ) {
 			if ( 'font-family' !== $key ) {
 				return;
 			}
@@ -127,9 +131,9 @@ class Atomic_Styles_Manager {
 		return $breakpoint_config ? Styles_Renderer::get_media_query( $breakpoint_config ) : 'all';
 	}
 
-	private function render_css_by_breakpoints( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_cache ) {
+	private function render_css_by_breakpoints($get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_memo ) {
 		$cache_key = $style_key . '-' . $breakpoint_key;
-		$get_grouped_styles = $group_by_breakpoint_cache->cache( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
+		$get_grouped_styles = $group_by_breakpoint_memo->memoize( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
 		$grouped_styles = $get_grouped_styles();
 
 		return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [] );
