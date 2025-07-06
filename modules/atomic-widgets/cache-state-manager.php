@@ -86,7 +86,6 @@ class Cache_State_Manager {
 			}
 
 			$current_item = &$current_item['children'][ $key ];
-
 		}
 
 		return $current_item;
