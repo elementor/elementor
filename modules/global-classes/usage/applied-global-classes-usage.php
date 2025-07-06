@@ -105,6 +105,15 @@ class Applied_Global_Classes_Usage {
 
 		Plugin::$instance->db->iterate_elementor_documents( function ( $document, $elements_data ) use ( &$result, &$pageMap, $global_class_ids, $with_page_info ) {
 			$page_id    = $document->get_main_id();
+
+			$post_type = get_post_type( $page_id );
+
+			// Skip templates, only process pages or desired post types
+			if ( 'elementor_library' === $post_type ) {
+				return; // Skip templates
+			}
+
+
 			$page_title = $with_page_info ? get_the_title( $page_id ) : null;
 
 			Plugin::$instance->db->iterate_data( $elements_data, function ( $element_data ) use ( $global_class_ids, $page_id, $page_title, $with_page_info, &$result, &$pageMap ) {
