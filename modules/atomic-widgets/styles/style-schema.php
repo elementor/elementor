@@ -20,6 +20,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -234,9 +235,7 @@ class Style_Schema {
 				'nowrap',
 				'wrap-reverse',
 			] ),
-			'flex-grow' => Number_Prop_Type::make(),
-			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Size_Prop_Type::make(),
+			'flex' => Flex_Prop_Type::make(),
 		];
 	}
 

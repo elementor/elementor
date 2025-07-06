@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,5 +37,13 @@ class Props_Factory {
 
 	public static function box_shadow( array $value ) {
 		return Box_Shadow_Prop_Type::generate( $value );
+	}
+
+	public static function flex( ...$args ) {
+		return Flex_Prop_Type::generate( [
+			'flexGrow' => $args[0],
+			'flexShrink' => $args[1],
+			'flexBasis' => $args[2],
+		] );
 	}
 }
