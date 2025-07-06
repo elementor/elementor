@@ -206,7 +206,7 @@ class Admin_Notices extends Module {
 		}
 
 		if ( 2 > $this->get_elementor_pages_count() ) {
-		return false;
+			return false;
 		}
 
 		// TODO: Skip for development env.
