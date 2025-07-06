@@ -246,6 +246,10 @@ export default class EditorPage extends BasePage {
 		return `[data-id="${ widgetId }"].elementor-element`;
 	}
 
+	getWidgetID( widgetId: string ): string {
+		return `[data-id="${ widgetId }"]`;
+	}
+
 	/**
 	 * Add a widget by `widgetType`.
 	 *
