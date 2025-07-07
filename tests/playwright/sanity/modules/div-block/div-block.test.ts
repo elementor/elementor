@@ -180,7 +180,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
-		await divBlock.waitFor({ state: 'visible' });
+		await divBlock.waitFor( { state: 'visible' } );
 		const divBlockHandles = divBlock.locator( '.elementor-editor-element-settings' );
 		const divBlockEmptyView = divBlock.locator( '.elementor-empty-view' );
 
