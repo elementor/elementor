@@ -128,6 +128,18 @@ class Rest_Api {
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
+				'label' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_label' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+				'value' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_value' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
 			],
 		] );
 	}
@@ -292,7 +304,19 @@ class Rest_Api {
 	private function restore_existing_variable( WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 
-		$result = $this->variables_repository->restore( $id );
+		$overrides = [];
+
+		$label = $request->get_param( 'label' );
+		if ( $label ) {
+			$overrides['label'] = $label;
+		}
+
+		$value = $request->get_param( 'value' );
+		if ( $value ) {
+			$overrides['value'] = $value;
+		}
+
+		$result = $this->variables_repository->restore( $id, $overrides );
 
 		$this->clear_cache();
 
