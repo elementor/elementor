@@ -231,18 +231,15 @@ const DropZone = ( {
 					</Box>
 
 					<Stack spacing={ 2 } alignItems="center" textAlign="center" data-testid="text-container">
-						<Typography
-							variant="body1"
-							component="div"
-							color="text.primary"
+						<Box
 							sx={ {
 								opacity: isLoading ? 0.5 : 1,
 								transition: 'opacity 0.2s ease-in-out',
-								fontSize: '16px',
 							} }
 							data-testid="main-text"
 						>
 							<Link
+								variant="body1"
 								component="span"
 								onClick={ handleButtonClick }
 								sx={ {
@@ -252,15 +249,23 @@ const DropZone = ( {
 							>
 								{ __( 'Click to upload', 'elementor' ) }
 							</Link>
-							{ ' ' + __( 'or drag and drop', 'elementor' ) }
-						</Typography>
+							<Typography
+								variant="body1"
+								component="span"
+								color="text.primary"
+								sx={ {
+									ml: 0.5,
+								} }
+							>
+								{ __( 'or drag and drop', 'elementor' ) }
+							</Typography>
+						</Box>
 						<Typography
 							variant="body2"
 							color={ error ? 'error' : 'text.secondary' }
 							sx={ {
 								opacity: isLoading ? 0.5 : 1,
 								transition: 'opacity 0.2s ease-in-out',
-								fontSize: '14px',
 							} }
 							data-testid="helper-text"
 						>
