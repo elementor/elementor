@@ -1,5 +1,9 @@
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
-import { controlActionsMenu, registerControlReplacement } from '@elementor/editor-editing-panel';
+import {
+	controlActionsMenu,
+	registerControlReplacement,
+	stylesInheritanceTransformersRegistry,
+} from '@elementor/editor-editing-panel';
 
 import { ColorVariableControl } from './controls/color-variable-control';
 import { usePropColorVariableAction } from './hooks/use-prop-color-variable-action';
@@ -22,6 +26,7 @@ export function initColorVariables() {
 	} );
 
 	styleTransformersRegistry.register( colorVariablePropTypeUtil.key, variableTransformer );
+	stylesInheritanceTransformersRegistry.register( colorVariablePropTypeUtil.key, variableTransformer );
 
 	registerRepeaterInjections();
 }
