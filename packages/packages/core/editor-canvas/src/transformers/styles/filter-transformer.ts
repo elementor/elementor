@@ -11,22 +11,15 @@ export const filterTransformer = createTransformer( ( filterValues: FilterItemPr
 } );
 
 const mapToFilterFunctionString = ( value: FilterItemPropValue[ 'value' ] ): string => {
-	if ( 'radius' in value ) {
-		return value.radius ? `blur(${ value.radius })` : '';
-	}
-
-	if ( 'amount' in value ) {
-		return value.amount ? `brightness(${ value.amount })` : '';
-	}
-
 	if ( 'xAxis' in value && 'yAxis' in value && 'blur' in value && 'color' in value ) {
 		const { xAxis, yAxis, blur, color } = value;
 		return `drop-shadow(${ xAxis || '0px' } ${ yAxis || '0px' } ${ blur || '10px' } ${ color || 'transparent' })`;
 	}
 
+	// handle single size filter
 	const keys = Object.keys( value );
 
-	if ( ! keys[ 0 ] ) {
+	if ( keys.length !== 1 ) {
 		return '';
 	}
 
