@@ -22,6 +22,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { CssClassUsageTrigger } from '../css-class-usage';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
 
@@ -35,7 +36,6 @@ type ClassItemProps = React.PropsWithChildren< {
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
 	isSearchActive: boolean;
-	suffix?: React.ReactNode;
 } >;
 
 export const ClassItem = ( {
@@ -46,7 +46,6 @@ export const ClassItem = ( {
 	disabled,
 	sortableTriggerProps,
 	isSearchActive,
-	suffix,
 }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 
@@ -105,7 +104,9 @@ export const ClassItem = ( {
 								<EllipsisWithTooltip title={ label } as={ Typography } variant="caption" />
 							) }
 						</Indicator>
-						<Box className={ 'class-item-locator' }>{ suffix }</Box>
+						<Box className={ 'class-item-locator' }>
+							<CssClassUsageTrigger id={ id } />
+						</Box>
 						<Tooltip
 							placement="top"
 							className={ 'class-item-more-actions' }

@@ -4,7 +4,13 @@ import { act, renderHook } from '@testing-library/react';
 
 import { apiClient } from '../../../api';
 import { usePrefetchCssClassUsage } from '../hooks';
-import { mockData } from './mocks/mock-data';
+
+export const mockData = {
+	'css-abc': [
+		{ pageId: 'page1', elements: [ 'el-1' ], total: 1, title: 'Title1' },
+		{ pageId: 'page2', elements: [ 'el-2' ], total: 1, title: 'Title2' },
+	],
+};
 
 jest.mock( '../../../api' );
 const mockedApi = apiClient as jest.Mocked< typeof apiClient >;
@@ -22,7 +28,7 @@ describe( 'usePrefetchCssClassUsage', () => {
 		const { result } = renderHook( () => usePrefetchCssClassUsage(), { wrapper } );
 
 		await act( async () => {
-			await result.current.runFetch();
+			await result.current.prefetchClassesUsage();
 		} );
 
 		expect( mockedApi.usage ).toHaveBeenCalledTimes( 1 );

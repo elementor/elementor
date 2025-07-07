@@ -1,4 +1,4 @@
-export const QUERY_KEY = 'cssClassesUsage';
+export const QUERY_KEY = 'css-classes-usage';
 
 export type CssClassID = string;
 

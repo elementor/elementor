@@ -57,13 +57,19 @@ const DeleteConfirmationDialog = ( { label, id }: DeleteConfirmationDialogProps 
 
 		closeDialog();
 	};
-
-	const text = __(
-		'Will permanently remove it from your project and may affect the design across all elements using it.Used %1 times across %2 pages.This action cannot be undone.',
-		'elementor'
-	)
-		.replace( '%1', total.toString() )
-		.replace( '%2', content.length.toString() );
+	// translators: %1: total usage count, %2: number of pages
+	const text =
+		total && content.length
+			? __(
+					'Will permanently remove it from your project and may affect the design across all elements using it. Used %1 times across %2 pages. This action cannot be undone.',
+					'elementor'
+			  )
+					.replace( '%1', total.toString() )
+					.replace( '%2', content.length.toString() )
+			: __(
+					'Will permanently remove it from your project and may affect the design across all elements using it. This action cannot be undone.',
+					'elementor'
+			  );
 
 	return (
 		<Dialog open onClose={ closeDialog } aria-labelledby={ TITLE_ID } maxWidth="xs">

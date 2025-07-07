@@ -9,7 +9,6 @@ import { __ } from '@wordpress/i18n';
 import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
-import { CssClassUsageTrigger } from '../css-class-usage';
 import { ClassItem } from './class-item';
 import { CssClassNotFound } from './class-manager-class-not-found';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
@@ -22,12 +21,10 @@ type GlobalClassesListProps = {
 	onSearch: ( searchValue: string ) => void;
 };
 // const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
-const isVersion311IsActive = true;
 
 export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalClassesListProps ) => {
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
-	const queryClient = createQueryClient();
 
 	const [ classesOrder, reorderClasses ] = useReorder();
 
@@ -71,45 +68,42 @@ export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalCl
 	}
 
 	return (
-		<QueryClientProvider client={ queryClient }>
-			<DeleteConfirmationProvider>
-				{ filteredClasses.length <= 0 && searchValue.length > 1 ? (
-					<CssClassNotFound onClear={ () => onSearch( '' ) } searchValue={ searchValue } />
-				) : (
-					<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-						<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-							{ filteredClasses?.map( ( { id, label } ) => {
-								return (
-									<SortableItem key={ id } id={ id }>
-										{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
-											<ClassItem
-												suffix={ <CssClassUsageTrigger id={ id } /> }
-												isSearchActive={ searchValue.length < 2 }
-												id={ id }
-												label={ label }
-												renameClass={ ( newLabel: string ) => {
-													dispatch(
-														slice.actions.update( {
-															style: {
-																id,
-																label: newLabel,
-															},
-														} )
-													);
-												} }
-												selected={ isDragged }
-												disabled={ disabled || isDragPlaceholder }
-												sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-											/>
-										) }
-									</SortableItem>
-								);
-							} ) }
-						</SortableProvider>
-					</List>
-				) }
-			</DeleteConfirmationProvider>
-		</QueryClientProvider>
+		<DeleteConfirmationProvider>
+			{ filteredClasses.length <= 0 && searchValue.length > 1 ? (
+				<CssClassNotFound onClear={ () => onSearch( '' ) } searchValue={ searchValue } />
+			) : (
+				<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
+					<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
+						{ filteredClasses?.map( ( { id, label } ) => {
+							return (
+								<SortableItem key={ id } id={ id }>
+									{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
+										<ClassItem
+											isSearchActive={ searchValue.length < 2 }
+											id={ id }
+											label={ label }
+											renameClass={ ( newLabel: string ) => {
+												dispatch(
+													slice.actions.update( {
+														style: {
+															id,
+															label: newLabel,
+														},
+													} )
+												);
+											} }
+											selected={ isDragged }
+											disabled={ disabled || isDragPlaceholder }
+											sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+										/>
+									) }
+								</SortableItem>
+							);
+						} ) }
+					</SortableProvider>
+				</List>
+			) }
+		</DeleteConfirmationProvider>
 	);
 };
 

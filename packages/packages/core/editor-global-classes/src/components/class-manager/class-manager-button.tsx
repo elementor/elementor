@@ -18,7 +18,7 @@ export const ClassManagerButton = () => {
 	const { open: openPanel } = usePanelActions();
 	const { save: saveDocument } = useActiveDocumentActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
-	const { runFetch } = usePrefetchCssClassUsage();
+	const { prefetchClassesUsage } = usePrefetchCssClassUsage();
 
 	const { userCan } = useUserStylesCapability();
 
@@ -35,7 +35,7 @@ export const ClassManagerButton = () => {
 		}
 
 		openPanel();
-		runFetch();
+		prefetchClassesUsage();
 	};
 
 	return (
@@ -68,6 +68,7 @@ export const ClassManagerButton = () => {
 									await saveDocument();
 									closeSaveChangesDialog();
 									openPanel();
+									prefetchClassesUsage();
 								},
 							},
 						} }

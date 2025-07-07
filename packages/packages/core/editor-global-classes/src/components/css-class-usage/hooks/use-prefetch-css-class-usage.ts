@@ -6,11 +6,11 @@ import { QUERY_KEY } from '../types';
 export function usePrefetchCssClassUsage() {
 	const queryClient = useQueryClient();
 
-	const runFetch = () =>
+	const prefetchClassesUsage = () =>
 		queryClient.prefetchQuery( {
 			queryKey: [ QUERY_KEY ],
 			queryFn: fetchCssClassUsage,
 		} );
 
-	return { runFetch };
+	return { prefetchClassesUsage };
 }

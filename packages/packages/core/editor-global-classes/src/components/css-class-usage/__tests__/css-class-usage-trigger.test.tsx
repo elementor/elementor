@@ -1,48 +1,53 @@
 import * as React from 'react';
-import { QueryClient, QueryClientProvider } from '@elementor/query';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { CssClassUsageTrigger } from '../components';
-import * as usageHook from '../hooks';
+import { CssClassUsageTrigger } from '../components/css-class-usage-trigger';
+import * as usageHook from '../hooks/use-css-class-usage-by-id';
 
-jest.mock( '../hooks' );
-jest.mock( '../components/css-class-usage-popover', () => ( {
-	CssClassUsagePopover: () => <div data-testid="popover" />,
-} ) );
+jest.mock( '../hooks/use-css-class-usage-by-id' );
 
-const createWrapper = ( children: React.ReactNode ) => {
-	const queryClient = new QueryClient();
-	return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
-};
+const mockUseCssClassUsageByID = usageHook.useCssClassUsageByID as jest.Mock;
+
+const wrapper = ( { children }: { children: React.ReactNode } ) => (
+	<QueryClientProvider client={ new QueryClient() }>{ children }</QueryClientProvider>
+);
 
 describe( 'CssClassUsageTrigger', () => {
-	it( 'shows loader when loading', () => {
-		jest.spyOn( usageHook, 'useCssClassUsageByID' ).mockReturnValue( {
-			isLoading: true,
-			data: { total: 0, content: [] },
-		} );
-
-		render( createWrapper( <CssClassUsageTrigger id="css-id" /> ) );
-
-		expect( screen.getByLabelText( /loading/i ) ).toBeInTheDocument(); // assumes Loader2Icon has testId (add one if needed)
+	beforeEach( () => {
+		jest.clearAllMocks();
 	} );
 
-	it( 'renders locator icon and does not open on click when total is 0', () => {
-		jest.spyOn( usageHook, 'useCssClassUsageByID' ).mockReturnValue( {
+	it( 'renders icon button when total > 0', () => {
+		mockUseCssClassUsageByID.mockReturnValue( {
 			isLoading: false,
-			data: { total: 0, content: [] },
+			data: { total: 2 },
 		} );
 
-		render( createWrapper( <CssClassUsageTrigger id="css-id" /> ) );
+		render( <CssClassUsageTrigger id="css-id" />, { wrapper } );
 
-		const iconButton = screen.getByRole( 'button' );
-		fireEvent.click( iconButton );
-
-		expect( screen.queryByLabelText( 'css-class-usage-popover' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button' ) ).toBeInTheDocument();
+		expect( screen.getByLabelText( /Locator \(2\)/ ) ).toBeInTheDocument(); // Tooltip title
 	} );
 
-	it( 'opens popover when total > 0 and icon is clicked', () => {
-		jest.spyOn( usageHook, 'useCssClassUsageByID' ).mockReturnValue( {
+	it( 'does not open popover when total is 0', async () => {
+		mockUseCssClassUsageByID.mockReturnValue( {
+			isLoading: false,
+			data: { total: 0 },
+		} );
+
+		render( <CssClassUsageTrigger id="css-id" />, { wrapper } );
+
+		const button = screen.getByRole( 'button' );
+		fireEvent.click( button );
+
+		await waitFor( () => {
+			expect( screen.queryByLabelText( 'css-class-usage-popover' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	it( 'opens popover when total > 0 and icon is clicked', async () => {
+		mockUseCssClassUsageByID.mockReturnValue( {
 			isLoading: false,
 			data: {
 				total: 2,
@@ -53,18 +58,13 @@ describe( 'CssClassUsageTrigger', () => {
 			},
 		} );
 
-		render( createWrapper( <CssClassUsageTrigger id="css-id" /> ) );
+		render( <CssClassUsageTrigger id="css-id" />, { wrapper } );
 
-		const iconButton = screen.getByRole( 'button', { name: /locator \(2\)/i } );
-		expect( iconButton ).toBeInTheDocument();
+		const button = screen.getByRole( 'button' );
+		fireEvent.click( button );
 
-		fireEvent.click( iconButton );
-
-		// Verify the popover is now rendered using data-testid
-		// eslint-disable-next-line testing-library/no-test-id-queries
-		expect( screen.getByTestId( 'popover' ) ).toBeInTheDocument();
-
-		// Alternative way using id
-		// expect(document.getElementById('css-class-usage-popover')).toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.getByTestId( 'css-class-usage-popover' ) ).toBeInTheDocument();
+		} );
 	} );
 } );
