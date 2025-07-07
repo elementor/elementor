@@ -28,7 +28,7 @@ const propType = createMockPropType( {
 		meta: {},
 		settings: {},
 		prop_types: {
-			...createMockSingleSizeFilterPropType( 'blur', 'radius', [
+			...createMockSingleSizeFilterPropType( 'blur', 'blur', [
 				'px',
 				'em',
 				'rem',
@@ -38,7 +38,7 @@ const propType = createMockPropType( {
 				'vmin',
 				'vmax',
 			] ),
-			...createMockSingleSizeFilterPropType( 'brightness', 'amount', [ '%' ] ),
+			...createMockSingleSizeFilterPropType( 'brightness', 'brightness', [ '%' ] ),
 			...createMockSingleSizeFilterPropType( 'contrast', 'contrast', [ '%' ] ),
 			...createMockSingleSizeFilterPropType( 'grayscale', 'grayscale', [ '%' ] ),
 			...createMockSingleSizeFilterPropType( 'invert', 'invert', [ '%' ] ),
@@ -51,10 +51,10 @@ const propType = createMockPropType( {
 
 const mockFilter = filterPropTypeUtil.create( [
 	blurFilterPropTypeUtil.create( {
-		radius: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
+		blur: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
 	} ),
 	brightnessFilterPropTypeUtil.create( {
-		amount: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
+		brightness: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
 	} ),
 	contrastFilterPropTypeUtil.create( {
 		contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
