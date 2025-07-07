@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 3.30.1 - 2025-07-07 =
+
+* Fix: Focus not applied correctly to chosen property in popovers - Editor V4
+* Fix: Font Family popover not loading as expected - Editor V4
+* Fix: Empty list displayed when opening the Class Manager - Editor V4
+
 = 3.30.0 - 2025-07-01 =
 
 * New: Added support for setting custom units in size controls - Editor V4 ([#31287](https://github.com/elementor/elementor/issues/31287))
