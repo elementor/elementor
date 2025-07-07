@@ -29,9 +29,9 @@ class Atomic_Styles_Manager {
 
 	const DEFAULT_BREAKPOINT = 'desktop';
 
-    public function __construct() {
+	public function __construct() {
 		$this->css_files_manager = new CSS_Files_Manager();
-        $this->cache_validity = new Cache_Validity();
+		$this->cache_validity = new Cache_Validity();
 	}
 
 	public static function instance() {
@@ -77,26 +77,26 @@ class Atomic_Styles_Manager {
 		$group_by_breakpoint_memo = new Memo();
 		$breakpoints = $this->get_breakpoints();
 		foreach ( $breakpoints as $breakpoint_key ) {
-			foreach ( $styles_by_key as $style_key =>  $style_params ) {
-                $cache_keys = $style_params['cache_keys'];
-                $render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
+			foreach ( $styles_by_key as $style_key => $style_params ) {
+				$cache_keys = $style_params['cache_keys'];
+				$render_css = fn() => $this->render_css_by_breakpoints( $style_params['get_styles'], $style_key, $breakpoint_key, $group_by_breakpoint_memo );
 
-                $breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
+				$breakpoint_media = $this->get_breakpoint_media( $breakpoint_key );
 
-                if ( ! $breakpoint_media ) {
-                    continue;
-                }
+				if ( ! $breakpoint_media ) {
+					continue;
+				}
 
 				$breakpoint_cache_keys = array_merge( $cache_keys, [ $breakpoint_key ] );
 
-                $style_file = ( new CSS_Files_Manager() )->get(
-                    $style_key . '-' . $breakpoint_key,
-                    $breakpoint_media,
-                    $render_css,
-                    $this->cache_validity->is_valid( $breakpoint_cache_keys )
-                );
+				$style_file = ( new CSS_Files_Manager() )->get(
+					$style_key . '-' . $breakpoint_key,
+					$breakpoint_media,
+					$render_css,
+					$this->cache_validity->is_valid( $breakpoint_cache_keys )
+				);
 
-                $this->cache_validity->validate( $breakpoint_cache_keys );
+				$this->cache_validity->validate( $breakpoint_cache_keys );
 
 				if ( ! $style_file ) {
 					continue;
@@ -132,7 +132,7 @@ class Atomic_Styles_Manager {
 		return $breakpoint_config ? Styles_Renderer::get_media_query( $breakpoint_config ) : 'all';
 	}
 
-	private function render_css_by_breakpoints($get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_memo ) {
+	private function render_css_by_breakpoints( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_memo ) {
 		$cache_key = $style_key . '-' . $breakpoint_key;
 		$get_grouped_styles = $group_by_breakpoint_memo->memoize( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
 		$grouped_styles = $get_grouped_styles();
