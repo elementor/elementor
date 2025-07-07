@@ -10,13 +10,41 @@ use ElementorEditorTesting\Elementor_Test_Base;
 class Test_Export extends Elementor_Test_Base {
 
 	/**
+	 * @var mixed Original component instance
+	 */
+	private $original_component;
+
+	/**
+	 * Set up test environment
+	 */
+	public function setUp(): void {
+		parent::setUp();
+
+		// Store original component if exists
+		$this->original_component = Plugin::$instance->app->get_component( 'import-export-customization' );
+
+		// Initialize the module and REST API
+		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
+		do_action( 'rest_api_init' );
+	}
+
+	/**
+	 * Clean up after test
+	 */
+	public function tearDown(): void {
+		// Restore original component if it existed
+		if ( $this->original_component ) {
+			Plugin::$instance->app->add_component( 'import-export-customization', $this->original_component );
+		}
+
+		parent::tearDown();
+	}
+
+	/**
 	 * Test permission callback requires admin
 	 */
 	public function test_permission_requires_admin() {
 		// Arrange
-		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-		do_action( 'rest_api_init' );
-        
 		// Act as subscriber (non-admin)
 		$this->act_as_subscriber();
 		
@@ -33,9 +61,6 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_permission_allows_admin() {
 		// Arrange
-		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-		do_action( 'rest_api_init' );
-        
 		// Mock the export kit method to avoid actual export
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )
 			->onlyMethods( ['export_kit'] )
@@ -58,9 +83,6 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_successful_export_with_required_params() {
 		// Arrange
-		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-		do_action( 'rest_api_init' );
-        
         $this->act_as_admin();
 		
 		// Act
@@ -87,9 +109,6 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_successful_export_with_all_parameters() {
 		// Arrange
-		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-		do_action( 'rest_api_init' );
-        
         $this->act_as_admin();
 
 		$this->register_post_type( 'test_post_type', 'Test Post Type' );
@@ -126,9 +145,6 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_export_error_file_not_readable() {
 		// Arrange
-		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-		do_action( 'rest_api_init' );
-        
 		$this->act_as_admin();
 		
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )
@@ -167,9 +183,6 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_export_error_with_exception() {
 		// Arrange
-		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-		do_action( 'rest_api_init' );
-        
 		$this->act_as_admin();
 		
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )
