@@ -68,7 +68,7 @@ class Cache_Validity {
 
 
 	/**
-	 * @param array{state: boolean, children: array<string, self>} $state_item
+	 * @param array{state: boolean, children: array<string, self>} $root_item
 	 * @param array<string> $keys
 	 * @return array{state: boolean, children: array<string, self>}
 	 */
