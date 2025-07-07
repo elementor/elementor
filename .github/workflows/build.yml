@@ -92,16 +92,7 @@ jobs:
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
 
       - uses: actions/upload-artifact@v4
-        id: upload-artifact
         if: github.event_name != 'pull_request' || steps.changelog_diff_files.outputs.diff == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests')
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
           path: elementor
-
-      - name: Comment the PR with the build artifact
-        if: success()
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            The build artifact is available at: ${{ steps.upload-artifact.outputs.artifact_url }}
