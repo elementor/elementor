@@ -23,7 +23,7 @@ export const ScaleAxisRow = ( { label, bindValue, startIcon, anchorRef }: ScaleA
 				</Grid>
 				<Grid item xs={ 6 }>
 					<PropKeyProvider bind={ bindValue }>
-                                                <NumberControl step={ 0.1 } placeholder="1" startIcon={ startIcon } />
+            <NumberControl step={ 0.1 } placeholder="1" startIcon={ startIcon } />
 					</PropKeyProvider>
 				</Grid>
 			</PopoverGridContainer>
