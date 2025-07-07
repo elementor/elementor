@@ -11,7 +11,6 @@ import { initialScaleValue, initialTransformValue, TransformFunctionKeys } from 
 import { useTransformTabsHistory } from './use-transform-tabs-history';
 
 export const TransformContent = ( { bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
-
 	return (
 		<PropKeyProvider bind={ bind }>
 			<Content />

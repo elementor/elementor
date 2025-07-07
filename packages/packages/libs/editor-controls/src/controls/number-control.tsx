@@ -53,6 +53,7 @@ export const NumberControl = createControl(
 					value={ isEmptyOrNaN( value ) ? '' : value }
 					onChange={ handleChange }
 					placeholder={ labelPlaceholder ?? ( placeholder ? String( placeholder ) : '' ) }
+					inputProps={ { step } }
 					InputProps={ {
 						startAdornment: startIcon ? (
 							<InputAdornment position="start" disabled={ disabled }>

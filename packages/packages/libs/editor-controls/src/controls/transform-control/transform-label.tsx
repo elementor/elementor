@@ -2,6 +2,7 @@ import * as React from 'react';
 import type { TransformItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
 import { TransformFunctionKeys } from './types';
 
 const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
