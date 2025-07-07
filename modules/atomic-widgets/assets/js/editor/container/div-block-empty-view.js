@@ -7,7 +7,7 @@ export default class DivBlockEmptyView extends Marionette.ItemView {
 	className = 'elementor-empty-view';
 
 	renderReactDefaultElement( container ) {
-		const { unmount } = ReactUtils.render( < EmptyComponent container = { container } / > , this.el );
+		const { unmount } = ReactUtils.render( <EmptyComponent container={ container } />, this.el );
 		this.unmount = unmount;
 	}
 
