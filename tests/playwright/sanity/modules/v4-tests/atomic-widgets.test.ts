@@ -75,7 +75,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					widgetSelector = editor.getWidgetID( widgetId );
 
 					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
-					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
+					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
 				} );
 
 				await test.step( 'Check frontend display', async () => {
@@ -83,7 +83,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await editor.publishAndViewPage();
 
 					if ( 'e-youtube' === widget.name ) {
-						await editor.isUiStable( editor.page.locator( containerSelector ).first() );
+						await editor.isUiStable( editor.page.locator( containerSelector ) );
 					}
 
 					await expect.soft( editor.page.locator( containerSelector ) )
