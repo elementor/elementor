@@ -14,7 +14,6 @@ export const CssClassUsagePopover = ( {
 	cssClassID: string;
 } ) => {
 	const { data: classUsage } = useCssClassUsageByID( cssClassID );
-
 	const items = classUsage?.content.map( ( { title, elements, pageId } ) => ( {
 		type: 'item' as const,
 		value: pageId,
@@ -42,7 +41,6 @@ export const CssClassUsagePopover = ( {
 					onSelect={ () => {} }
 					items={ items }
 					onClose={ () => {} }
-					data-testid="css-class-usage-list"
 					menuListTemplate={ StyledCssClassUsageItem }
 					menuItemContentTemplate={ ( item ) => (
 						<>
