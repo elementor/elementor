@@ -1,10 +1,14 @@
-import React, { useState, useRef, useId } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Typography, CircularProgress, Stack, Link, styled } from '@elementor/ui';
 import { UploadIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
+import useDropZone from '../hooks/use-drop-zone';
+import { isValidFileType, getAcceptedFileTypes } from '../utils/file-validation';
 
-const StyledDropZoneBox = styled( Box )( ( { theme, isDragOver, isLoading } ) => ( {
+const StyledDropZoneBox = styled( Box, {
+	shouldForwardProp: ( prop ) => ! [ 'isDragOver', 'isLoading' ].includes( prop ),
+} )( ( { theme, isDragOver, isLoading } ) => ( {
 	border: 2,
 	borderColor: isDragOver ? theme.palette.primary.main : theme.palette.divider,
 	borderStyle: 'dashed',
@@ -14,7 +18,9 @@ const StyledDropZoneBox = styled( Box )( ( { theme, isDragOver, isLoading } ) =>
 	position: 'relative',
 } ) );
 
-const StyledContentStack = styled( Stack )( ( { isLoading } ) => ( {
+const StyledContentStack = styled( Stack, {
+	shouldForwardProp: ( prop ) => prop !== 'isLoading',
+} )( ( { isLoading } ) => ( {
 	opacity: isLoading ? 0.5 : 1,
 	transition: 'opacity 0.2s ease-in-out',
 } ) );
@@ -47,102 +53,23 @@ const DropZone = ( {
 	onFileChoose,
 	...props
 } ) => {
-	const [ isDragOver, setIsDragOver ] = useState( false );
-	const [ dragCounter, setDragCounter ] = useState( 0 );
-	const fileInputRef = useRef( null );
-	const fileInputId = useId();
-
-	const getMimeTypeToExtensionMap = () => {
-		return {
-			'application/zip': [ 'zip' ],
-			'application/json': [ 'json' ],
-			'application/pdf': [ 'pdf' ],
-			'text/plain': [ 'txt' ],
-			'image/jpeg': [ 'jpg', 'jpeg' ],
-			'image/png': [ 'png' ],
-			'image/gif': [ 'gif' ],
-			'text/csv': [ 'csv' ],
-			'application/xml': [ 'xml' ],
-			'text/xml': [ 'xml' ],
-		};
-	};
-
-	const getValidExtensions = () => {
-		const mimeToExtMap = getMimeTypeToExtensionMap();
-		const validExtensions = [];
-
-		filetypes.forEach( ( mimeType ) => {
-			if ( mimeToExtMap[ mimeType ] ) {
-				validExtensions.push( ...mimeToExtMap[ mimeType ] );
-			}
-		} );
-
-		return validExtensions;
-	};
-
-	const isValidFileType = ( fileType, fileName = '' ) => {
-		if ( 0 === filetypes.length ) {
-			return true;
-		}
-
-		if ( filetypes.includes( fileType ) ) {
-			return true;
-		}
-
-		const extension = fileName.toLowerCase().split( '.' ).pop();
-		const validExtensions = getValidExtensions();
-
-		return validExtensions.includes( extension );
-	};
-
-	const handleDragEnter = ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		setDragCounter( ( prev ) => prev + 1 );
-
-		if ( e.dataTransfer.items && e.dataTransfer.items.length > 0 ) {
-			setIsDragOver( true );
-		}
-	};
-
-	const handleDragLeave = ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		setDragCounter( ( prev ) => prev - 1 );
-
-		if ( dragCounter <= 1 ) {
-			setIsDragOver( false );
-		}
-	};
+	const {
+		isDragOver,
+		fileInputRef,
+		fileInputId,
+		handleDragEnter,
+		handleDragLeave,
+		handleDrop,
+	} = useDropZone( {
+		onFileSelect,
+		onError,
+		filetypes,
+		isLoading,
+	} );
 
 	const handleDragOver = ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
-	};
-
-	const handleDrop = ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		setIsDragOver( false );
-		setDragCounter( 0 );
-
-		if ( isLoading ) {
-			return;
-		}
-
-		const file = e.dataTransfer.files[ 0 ];
-
-		if ( file && isValidFileType( file.type, file.name ) ) {
-			onFileSelect( file, e, 'drop' );
-		} else {
-			onError( {
-				id: 'file_not_allowed',
-				message: __( 'This file type is not allowed', 'elementor' ),
-			} );
-		}
 	};
 
 	const handleFileInputChange = ( e ) => {
@@ -151,7 +78,7 @@ const DropZone = ( {
 			return;
 		}
 
-		if ( ! isValidFileType( file.type, file.name ) ) {
+		if ( ! isValidFileType( file.type, file.name, filetypes ) ) {
 			onError( {
 				id: 'file_not_allowed',
 				message: __( 'This file type is not allowed', 'elementor' ),
@@ -166,7 +93,7 @@ const DropZone = ( {
 		}
 	};
 
-	const handleButtonClick = ( e ) => {
+	const handleUploadClick = ( e ) => {
 		if ( onButtonClick ) {
 			onButtonClick( e );
 		}
@@ -174,17 +101,6 @@ const DropZone = ( {
 		if ( fileInputRef.current ) {
 			fileInputRef.current.click();
 		}
-	};
-
-	const getAcceptedFileTypes = () => {
-		const acceptTypes = [ ...filetypes ];
-		const validExtensions = getValidExtensions();
-
-		validExtensions.forEach( ( ext ) => {
-			acceptTypes.push( `.${ ext }` );
-		} );
-
-		return acceptTypes.join( ',' );
 	};
 
 	return (
@@ -224,7 +140,7 @@ const DropZone = ( {
 							<StyledClickToUploadLink
 								variant="body1"
 								component="span"
-								onClick={ handleButtonClick }
+								onClick={ handleUploadClick }
 								data-testid="click-to-upload"
 							>
 								{ __( 'Click to upload', 'elementor' ) }
@@ -250,7 +166,7 @@ const DropZone = ( {
 						ref={ fileInputRef }
 						id={ fileInputId }
 						type="file"
-						accept={ getAcceptedFileTypes() }
+						accept={ getAcceptedFileTypes( filetypes ) }
 						onChange={ handleFileInputChange }
 						style={ { display: 'none' } }
 						data-testid="file-input"
