@@ -175,17 +175,14 @@ const DropZone = ( {
 					transition: 'all 0.2s ease-in-out',
 					cursor: isLoading ? 'not-allowed' : 'normal',
 					position: 'relative',
-					overflow: 'hidden',
 				} }
 			>
-				<Box
-					display="flex"
-					flexDirection="column"
+				<Stack
 					alignItems="center"
 					justifyContent="center"
-					gap={ ( theme ) => theme.spacing( 1 ) }
-					p={ ( theme ) => theme.spacing( 6 ) }
-					minHeight={ ( theme ) => theme.spacing( 65 ) }
+					gap={ 1 }
+					p={ 6 }
+					minHeight="520px"
 				>
 					{ isLoading && (
 						<Box
@@ -280,7 +277,7 @@ const DropZone = ( {
 						style={ { display: 'none' } }
 						data-testid="file-input"
 					/>
-				</Box>
+				</Stack>
 			</Box>
 		</Box>
 	);
