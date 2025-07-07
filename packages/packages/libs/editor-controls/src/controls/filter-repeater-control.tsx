@@ -47,7 +47,7 @@ type FilterItemConfig = {
 
 const filterConfig: Record< FilterType, FilterItemConfig > = {
 	blur: {
-		defaultValue: { $$type: 'radius', radius: { $$type: 'size', value: { size: 0, unit: 'px' } } },
+		defaultValue: { $$type: 'blur', blur: { $$type: 'size', value: { size: 0, unit: 'px' } } },
 		name: __( 'Blur', 'elementor' ),
 		valueName: __( 'Radius', 'elementor' ),
 		propType: blurFilterPropTypeUtil,
@@ -69,7 +69,7 @@ const filterConfig: Record< FilterType, FilterItemConfig > = {
 		units: defaultUnits.filter( ( unit ) => unit !== '%' ),
 	},
 	brightness: {
-		defaultValue: { $$type: 'amount', amount: { $$type: 'size', value: { size: 100, unit: '%' } } },
+		defaultValue: { $$type: 'brightness', brightness: { $$type: 'size', value: { size: 100, unit: '%' } } },
 		name: __( 'Brightness', 'elementor' ),
 		valueName: __( 'Amount', 'elementor' ),
 		propType: brightnessFilterPropTypeUtil,
