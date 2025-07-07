@@ -89,7 +89,7 @@ class Atomic_Styles_Manager {
 
 				$breakpoint_cache_keys = array_merge( $cache_keys, [ $breakpoint_key ] );
 
-				$style_file = ( new CSS_Files_Manager() )->get(
+                                $style_file = $this->css_files_manager->get(
 					$style_key . '-' . $breakpoint_key,
 					$breakpoint_media,
 					$render_css,
