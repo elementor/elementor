@@ -808,7 +808,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			const dependenciesPerTargetMapping = {
 				'source-control': [ 'mid-control' ],
-				'mid-control': [ 'nested-union.object.number' ],
+				'mid-control': [ 'nested-union.number' ],
 			};
 
 			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );

@@ -86,7 +86,7 @@ export function updateValues(
 			if ( isDependencyEffectActive( propType, combinedValues, 'disable' ) ) {
 				return {
 					...newValues,
-					...updateValue( path, null, combinedValues, propsSchema ),
+					...updateValue( path, null, combinedValues ),
 				};
 			}
 
@@ -96,7 +96,7 @@ export function updateValues(
 	);
 }
 
-function getPropType( schema: PropsSchema, elementValues: Values, path: string[] ) {
+function getPropType( schema: PropsSchema, elementValues: Values, path: string[] ): PropType | null {
 	if ( ! path.length ) {
 		return null;
 	}
@@ -114,10 +114,14 @@ function getPropType( schema: PropsSchema, elementValues: Values, path: string[]
 		}
 
 		if ( 'union' === prop.kind ) {
-			const value = extractValue( path.slice( 0, index + 1 ), elementValues, false );
+			const value = extractValue( path.slice( 0, index + 1 ), elementValues );
 			const type = ( value?.$$type as string ) ?? null;
 
-			return prop.prop_types?.[ type ] ?? value;
+			return getPropType(
+				{ [ basePropKey ]: prop.prop_types?.[ type ] },
+				elementValues,
+				path.slice( 0, index + 2 )
+			);
 		}
 
 		if ( 'array' === prop.kind ) {
@@ -132,7 +136,7 @@ function getPropType( schema: PropsSchema, elementValues: Values, path: string[]
 	}, baseProp );
 }
 
-function updateValue( path: string[], value: Value, values: Values, schema: PropsSchema ) {
+function updateValue( path: string[], value: Value, values: Values ) {
 	const topPropKey = path[ 0 ];
 	const newValue: Values = { ...values };
 
@@ -145,12 +149,6 @@ function updateValue( path: string[], value: Value, values: Values, schema: Prop
 			carry[ key ] = value !== null ? ( { ...( carry[ key ] ?? {} ), value } as Value ) : null;
 
 			return ( carry[ key ]?.value as Values ) ?? carry.value;
-		}
-
-		const propType = getPropType( schema, newValue, path.slice( 0, index + 1 ) );
-
-		if ( propType?.kind === 'union' ) {
-			return carry[ key ] as never;
 		}
 
 		return ( carry[ key ]?.value as Values ) ?? carry.value;
