@@ -101,7 +101,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 
 
 		// Act.
-		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager );
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ 0 ] );
 	}
 
 	public function test_transform_classes_names() {
