@@ -54,12 +54,10 @@ const DropZone = ( {
 			return true;
 		}
 
-		// Check by MIME type
 		if ( filetypes.includes( fileType ) ) {
 			return true;
 		}
 
-		// Check by file extension using dynamic mapping
 		const extension = fileName.toLowerCase().split( '.' ).pop();
 		const validExtensions = getValidExtensions();
 
@@ -149,10 +147,11 @@ const DropZone = ( {
 
 	const getAcceptedFileTypes = () => {
 		const acceptTypes = [ ...filetypes ];
+		const validExtensions = getValidExtensions();
 
-		if ( filetypes.includes( 'application/zip' ) ) {
-			acceptTypes.push( '.zip' );
-		}
+		validExtensions.forEach( ( ext ) => {
+			acceptTypes.push( `.${ ext }` );
+		} );
 
 		return acceptTypes.join( ',' );
 	};
