@@ -183,7 +183,7 @@ const DropZone = ( {
 					flexDirection="column"
 					alignItems="center"
 					justifyContent="center"
-					gap={ ( theme ) => theme.spacing( 4 ) }
+					gap={ ( theme ) => theme.spacing( 1 ) }
 					p={ ( theme ) => theme.spacing( 6 ) }
 					minHeight={ ( theme ) => theme.spacing( 65 ) }
 				>
