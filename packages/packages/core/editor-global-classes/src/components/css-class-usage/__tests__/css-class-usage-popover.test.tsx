@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { renderWithQuery } from 'test-utils';
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { CssClassUsagePopover } from '../components';
 
