@@ -1,0 +1,128 @@
+name: Cherry Pick Merged PR
+
+on:
+  pull_request:
+    types: [ closed, labeled ]
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  cherry-pick:
+    #if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Get branch labels
+        id: get_labels
+        run: |
+          LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | grep '^cp_' | paste -sd ',' || echo "")
+          echo "filtered_labels_csv=$LABELS" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      - name: Fetch all branches
+        run: git fetch --all
+        shell: bash
+
+      - name: Cherry-Pick and Create PRs
+        if: ${{ steps.get_labels.outputs.filtered_labels_csv != '' }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          MERGE_SHA="${{ github.event.pull_request.merge_commit_sha }}"
+          ORIG_TITLE="${{ github.event.pull_request.title }}"
+          ORIG_URL="${{ github.event.pull_request.html_url }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
+          for lbl in "${BRANCHES[@]}"; do
+            TARGET=${lbl#cp_}
+            BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}"
+
+            # Create branch
+            if ! git checkout -b "$BRANCH" "origin/$TARGET"; then
+              echo "::warning:: Branch $TARGET does not exist - skipping"
+              continue
+            fi
+
+            # Cherry-pick
+            if ! git cherry-pick -m 1 "$MERGE_SHA"; then
+              echo "::error:: Cherry-pick conflicts detected for PR #${PR_NUMBER} on branch ${TARGET}"
+
+              # Create a conflict resolution branch
+              CONFLICT_BRANCH="cherry-pick-pr-${PR_NUMBER}-${TARGET}-conflicts"
+
+              # Add conflict markers and create a commit for manual resolution
+              git add .
+              git commit -m "Cherry-pick PR #${PR_NUMBER} with conflicts - manual resolution needed"
+
+              # Push the conflict branch
+              if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
+                # Create draft PR with conflict information
+                if ! gh pr list --head "$CONFLICT_BRANCH" --base "$TARGET" --state open | grep -q .; then
+                  gh pr create \
+                    --base "$TARGET" \
+                    --head "$CONFLICT_BRANCH" \
+                    --title "🔧 [CONFLICTS] Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                    --body "⚠️ **Manual Resolution Required**
+
+                  This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
+
+                  **Conflict Files:**
+                  The conflicted files are included in this branch with conflict markers.
+
+                  **Resolution Steps:**
+                  1. Check out this branch: \`git checkout $CONFLICT_BRANCH\`
+                  2. Resolve conflicts in the marked files
+                  3. Stage resolved files: \`git add <resolved-files>\`
+                  4. Amend the commit: \`git commit --amend\`
+                  5. Push changes: \`git push --force-with-lease\`
+                  6. Mark this PR as ready for review
+
+                  **Original PR:** [#${PR_NUMBER}](${ORIG_URL})" \
+                    --draft
+
+                  echo "::notice:: Created draft PR for manual conflict resolution: $CONFLICT_BRANCH"
+                else
+                  echo "::notice:: Draft PR already exists for conflict resolution: $CONFLICT_BRANCH"
+                fi
+              else
+                echo "::warning:: Failed to push conflict branch $CONFLICT_BRANCH"
+                git cherry-pick --abort
+              fi
+              continue
+            else
+              echo "Cherry-pick successful"
+            fi
+
+            # Push (force push to handle existing branches)
+            if ! git push --force-with-lease origin "$BRANCH"; then
+              echo "::warning:: Failed to push branch $BRANCH"
+              continue
+            fi
+
+            # Create PR via gh CLI (token already in env: GH_TOKEN)
+            # Check if PR already exists
+            if gh pr list --head "$BRANCH" --base "$TARGET" --state open | grep -q .; then
+              echo "PR already exists for branch $BRANCH -> $TARGET, skipping creation"
+            else
+              gh pr create \
+                --base "$TARGET" \
+                --head "$BRANCH" \
+                --title "Cherry-pick PR #${PR_NUMBER} → ${TARGET}: ${ORIG_TITLE}" \
+                --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch."
+            fi
+          done
+        shell: bash
