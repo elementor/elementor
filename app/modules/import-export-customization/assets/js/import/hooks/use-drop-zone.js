@@ -54,12 +54,9 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading } ) => {
 	};
 
 	return {
-		// State
 		isDragOver,
 		fileInputRef,
 		fileInputId,
-
-		// Handlers that manage state
 		handleDragEnter,
 		handleDragLeave,
 		handleDrop,
