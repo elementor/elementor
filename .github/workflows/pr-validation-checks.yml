@@ -18,6 +18,8 @@ jobs:
         name: Install dependencies
         runs-on: ubuntu-22.04
         steps:
+            - name: Checkout source code
+              uses: actions/checkout@v4
             - name: Install Node.js 20.x
               uses: actions/setup-node@v4
               with:
