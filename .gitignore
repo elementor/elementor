@@ -23,6 +23,7 @@ yarn.lock
 # IDE's
 .project/
 .vscode/
+!vscode/extensions.json
 .idea/
 
 # other
