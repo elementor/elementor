@@ -15,9 +15,9 @@ class Flex_Transformer extends Transformer_Base {
 		$shrink = $value['flexShrink'] ?? null;
 		$basis = $value['flexBasis'] ?? null;
 
-		$has_grow = $grow !== null && $grow !== '';
-		$has_shrink = $shrink !== null && $shrink !== '';
-		$has_basis = $basis !== null && $basis !== '';
+		$has_grow = null !== $grow && '' !== $grow;
+		$has_shrink = null !== $shrink && '' !== $shrink;
+		$has_basis = null !== $basis && '' !== $basis;
 
 		if ( ! $has_grow && ! $has_shrink && ! $has_basis ) {
 			return null;
