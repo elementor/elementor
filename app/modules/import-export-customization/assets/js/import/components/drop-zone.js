@@ -9,7 +9,6 @@ const DropZone = ( {
 	onError = () => {},
 	filetypes = [ 'application/zip' ],
 	className = '',
-	icon,
 	isLoading = false,
 	error,
 	onButtonClick,
@@ -209,25 +208,13 @@ const DropZone = ( {
 						} }
 						data-testid="icon-container"
 					>
-						{ icon ? (
-							<Box
-								component="i"
-								className={ icon }
-								sx={ {
-									fontSize: '40px',
-									color: 'text.disabled',
-								} }
-								data-testid="custom-icon"
-							/>
-						) : (
-							<UploadIcon
+						<UploadIcon
 								sx={ {
 									fontSize: '40px',
 									color: 'text.disabled',
 								} }
 								data-testid="upload-icon"
 							/>
-						) }
 					</Box>
 
 					<Stack spacing={ 2 } alignItems="center" textAlign="center" data-testid="text-container">
@@ -293,7 +280,6 @@ DropZone.propTypes = {
 	onFileSelect: PropTypes.func.isRequired,
 	onError: PropTypes.func,
 	filetypes: PropTypes.array,
-	icon: PropTypes.string,
 	isLoading: PropTypes.bool,
 	error: PropTypes.shape( {
 		message: PropTypes.string.isRequired,
