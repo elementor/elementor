@@ -83,7 +83,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await editor.publishAndViewPage();
 
 					if ( 'e-youtube' === widget.name ) {
-						await editor.isUiStable( editor.page.locator( containerSelector ) );
+						await editor.isUiStable( editor.page.locator( containerSelector ).first() );
 					}
 
 					await expect.soft( editor.page.locator( containerSelector ) )
