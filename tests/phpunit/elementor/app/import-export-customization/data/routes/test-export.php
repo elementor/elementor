@@ -15,6 +15,16 @@ class Test_Export extends Elementor_Test_Base {
 	private $original_component;
 
 	/**
+	 * @var bool Whether REST API was initialized
+	 */
+	private $rest_api_initialized = false;
+
+	/**
+	 * @var array Backup of global filters
+	 */
+	private $filters_backup = [];
+
+	/**
 	 * Set up test environment
 	 */
 	public function setUp(): void {
@@ -23,9 +33,8 @@ class Test_Export extends Elementor_Test_Base {
 		// Store original component if exists
 		$this->original_component = Plugin::$instance->app->get_component( 'import-export-customization' );
 
-		// Initialize the module and REST API
+		// Initialize the module
 		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-		do_action( 'rest_api_init' );
 	}
 
 	/**
@@ -37,7 +46,35 @@ class Test_Export extends Elementor_Test_Base {
 			Plugin::$instance->app->add_component( 'import-export-customization', $this->original_component );
 		}
 
+		// Restore global filters if REST API was initialized
+		if ( $this->rest_api_initialized ) {
+			global $wp_filter;
+			
+			// Restore the backed up filters
+			if ( ! empty( $this->filters_backup ) ) {
+				$wp_filter = $this->filters_backup;
+			}
+			
+			$this->rest_api_initialized = false;
+			$this->filters_backup = [];
+		}
+
 		parent::tearDown();
+	}
+
+	/**
+	 * Initialize REST API for tests that need it
+	 */
+	private function init_rest_api() {
+		if ( ! $this->rest_api_initialized ) {
+			global $wp_filter;
+			
+			// Backup current filters state
+			$this->filters_backup = $wp_filter;
+			
+			do_action( 'rest_api_init' );
+			$this->rest_api_initialized = true;
+		}
 	}
 
 	/**
@@ -45,6 +82,8 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_permission_requires_admin() {
 		// Arrange
+		$this->init_rest_api();
+		
 		// Act as subscriber (non-admin)
 		$this->act_as_subscriber();
 		
@@ -61,6 +100,8 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_permission_allows_admin() {
 		// Arrange
+		$this->init_rest_api();
+		
 		// Mock the export kit method to avoid actual export
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )
 			->onlyMethods( ['export_kit'] )
@@ -83,6 +124,7 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_successful_export_with_required_params() {
 		// Arrange
+		$this->init_rest_api();
         $this->act_as_admin();
 		
 		// Act
@@ -109,6 +151,7 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_successful_export_with_all_parameters() {
 		// Arrange
+		$this->init_rest_api();
         $this->act_as_admin();
 
 		$this->register_post_type( 'test_post_type', 'Test Post Type' );
@@ -145,6 +188,7 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_export_error_file_not_readable() {
 		// Arrange
+		$this->init_rest_api();
 		$this->act_as_admin();
 		
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )
@@ -183,6 +227,7 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	public function test_export_error_with_exception() {
 		// Arrange
+		$this->init_rest_api();
 		$this->act_as_admin();
 		
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )

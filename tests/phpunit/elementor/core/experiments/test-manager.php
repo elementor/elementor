@@ -674,16 +674,6 @@ class Test_Manager extends Elementor_Test_Base {
 
 	public function test_sort_allowed_options_by_dependencies() {
 		// Arrange.
-		// Get the filter callback, remove it and restore it after the test.
-		$allowed_options_filter = has_filter( 'allowed_options', [ $this->experiments, 'sort_allowed_options_by_dependencies' ] );
-		if ( $allowed_options_filter ) {
-			remove_filter(
-				'allowed_options',
-				[ $this->experiments, 'sort_allowed_options_by_dependencies' ],
-				10
-			);
-		}
-
 		$this->experiments->add_feature( [
 			'name' => 'test_A',
 		] );
@@ -753,15 +743,6 @@ class Test_Manager extends Elementor_Test_Base {
 		$this->experiments->remove_feature( 'test_C' );
 		$this->experiments->remove_feature( 'test_D' );
 		$this->experiments->remove_feature( 'test_E' );
-
-		// Restore $allowed_options_filter
-		if ( $allowed_options_filter ) {
-			add_filter(
-				'allowed_options',
-				[ $this->experiments, 'sort_allowed_options_by_dependencies' ],
-				10
-			);
-		}
 	}
 
 	private function add_test_feature( array $args = [] ) {
