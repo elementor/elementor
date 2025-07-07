@@ -1,8 +1,40 @@
 import React, { useState, useRef, useId } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Typography, CircularProgress, Stack, Link } from '@elementor/ui';
+import { Box, Typography, CircularProgress, Stack, Link, styled } from '@elementor/ui';
 import { UploadIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
+
+const StyledDropZoneBox = styled( Box )( ( { theme, isDragOver, isLoading } ) => ( {
+	border: 2,
+	borderColor: isDragOver ? theme.palette.primary.main : theme.palette.divider,
+	borderStyle: 'dashed',
+	backgroundColor: isDragOver ? theme.palette.action.hover : theme.palette.background.default,
+	transition: 'all 0.2s ease-in-out',
+	cursor: isLoading ? 'not-allowed' : 'normal',
+	position: 'relative',
+} ) );
+
+const StyledContentStack = styled( Stack )( ( { isLoading } ) => ( {
+	opacity: isLoading ? 0.5 : 1,
+	transition: 'opacity 0.2s ease-in-out',
+} ) );
+
+const StyledUploadIcon = styled( UploadIcon )( ( { theme } ) => ( {
+	fontSize: '40px',
+	color: theme.palette.text.disabled,
+} ) );
+
+const StyledLoadingSpinner = styled( CircularProgress )( ( { theme } ) => ( {
+	color: theme.palette.primary.dark,
+} ) );
+
+const StyledClickToUploadLink = styled( Link )( () => ( {
+	cursor: 'pointer',
+} ) );
+
+const StyledDragDropText = styled( Typography )( ( { theme } ) => ( {
+	marginLeft: theme.spacing( 0.5 ),
+} ) );
 
 const DropZone = ( {
 	onFileSelect,
@@ -165,41 +197,23 @@ const DropZone = ( {
 			data-testid="drop-zone"
 			{ ...props }
 		>
-			<Box
-				sx={ {
-					border: 2,
-					borderColor: isDragOver ? 'primary.main' : 'divider',
-					borderStyle: 'dashed',
-					backgroundColor: isDragOver ? 'action.hover' : 'background.default',
-					transition: 'all 0.2s ease-in-out',
-					cursor: isLoading ? 'not-allowed' : 'normal',
-					position: 'relative',
-				} }
-			>
-				<Stack
+			<StyledDropZoneBox isDragOver={ isDragOver } isLoading={ isLoading }>
+				<StyledContentStack
 					alignItems="center"
 					justifyContent="center"
 					gap={ 1 }
 					p={ 6 }
 					minHeight="520px"
-					sx={ {
-						opacity: isLoading ? 0.5 : 1,
-						transition: 'opacity 0.2s ease-in-out',
-					} }
+					isLoading={ isLoading }
 				>
 					<Box data-testid="icon-container">
 						{ isLoading ? (
-							<CircularProgress
+							<StyledLoadingSpinner
 								size={ 40 }
-								sx={ { color: 'primary.dark' } }
 								data-testid="loading-spinner"
 							/>
 						) : (
-							<UploadIcon
-								sx={ {
-									fontSize: '40px',
-									color: 'text.disabled',
-								} }
+							<StyledUploadIcon
 								data-testid="upload-icon"
 							/>
 						) }
@@ -207,27 +221,21 @@ const DropZone = ( {
 
 					<Stack spacing={ 2 } alignItems="center" textAlign="center" data-testid="text-container">
 						<Box data-testid="main-text">
-							<Link
+							<StyledClickToUploadLink
 								variant="body1"
 								component="span"
 								onClick={ handleButtonClick }
-								sx={ {
-									cursor: 'pointer',
-								} }
 								data-testid="click-to-upload"
 							>
 								{ __( 'Click to upload', 'elementor' ) }
-							</Link>
-							<Typography
+							</StyledClickToUploadLink>
+							<StyledDragDropText
 								variant="body1"
 								component="span"
 								color="text.primary"
-								sx={ {
-									ml: 0.5,
-								} }
 							>
 								{ __( 'or drag and drop', 'elementor' ) }
-							</Typography>
+							</StyledDragDropText>
 						</Box>
 						<Typography
 							variant="body2"
@@ -247,8 +255,8 @@ const DropZone = ( {
 						style={ { display: 'none' } }
 						data-testid="file-input"
 					/>
-				</Stack>
-			</Box>
+				</StyledContentStack>
+			</StyledDropZoneBox>
 		</Box>
 	);
 };
