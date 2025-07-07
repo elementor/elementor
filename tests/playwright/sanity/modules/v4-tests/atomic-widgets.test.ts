@@ -17,7 +17,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-svg', title: 'SVG' },
 		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
-		// { name: 'e-youtube', title: 'YouTube' },
+		{ name: 'e-youtube', title: 'YouTube' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -107,7 +107,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await containerInPreview.click();
 					await editor.removeElementWithHandle( containerId );
 
-					// Verify widget is no longer visible in editor (since container is removed)
+					// Verify widget is no longer visible in editor
 					const widgetInPreview = editor.getPreviewFrame().locator( widgetSelector );
 					await expect( widgetInPreview ).not.toBeVisible();
 				} );
