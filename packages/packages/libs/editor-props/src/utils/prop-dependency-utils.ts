@@ -1,4 +1,11 @@
-import { type Dependency, type DependencyTerm, type PropValue, type TransformablePropValue } from '../types';
+import {
+	type Dependency,
+	type DependencyTerm,
+	type PropKey,
+	type PropValue,
+	type TransformablePropValue,
+} from '../types';
+import { isTransformable } from './is-transformable';
 
 type ParsedTerm = DependencyTerm;
 
@@ -12,7 +19,9 @@ export function shouldApplyEffect( { relation, terms }: Dependency, values: Prop
 	const method = getRelationMethod( relation );
 
 	return terms[ method ]( ( term: ParsedTerm | Dependency ) =>
-		isDependency( term ) ? shouldApplyEffect( term, values ) : evaluateTerm( term, getValue( term.path, values ) )
+		isDependency( term )
+			? shouldApplyEffect( term, values )
+			: evaluateTerm( term, extractValue( term.path, values ) )
 	);
 }
 
@@ -86,12 +95,19 @@ function getRelationMethod( relation: Relation ) {
 	}
 }
 
-function getValue( path: string[], elementValues: PropValue ): PropValue | null {
-	return path.reduce( ( acc, key ) => {
-		return 'object' === typeof acc && acc !== null && key in acc
-			? ( ( acc[ key as keyof typeof acc ] as TransformablePropValue< string > )?.value as PropValue )
-			: null;
-	}, elementValues );
+export function extractValue(
+	path: string[],
+	elementValues: PropValue,
+	shouldResolveValue: boolean = true
+): TransformablePropValue< PropKey > | null {
+	return path.reduce( ( acc, key, index ) => {
+		const value = acc?.[ key as keyof typeof acc ] as PropValue | undefined;
+
+		return ( ( ! shouldResolveValue && index !== path.length - 1 ) || shouldResolveValue ) &&
+			isTransformable( value )
+			? value.value ?? value
+			: value;
+	}, elementValues ) as TransformablePropValue< PropKey >;
 }
 
 function isDependency( term: DependencyTerm | Dependency ): term is Dependency {

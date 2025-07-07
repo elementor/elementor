@@ -87,10 +87,7 @@ class Dynamic_Prop_Types_Mapping {
 			$prop_type->meta( 'dependencies', [] );
 			$union_prop_type = Union_Prop_Type::create_from( $prop_type )->meta( 'dependencies', $dependencies );
 		} else {
-			$prop_key_to_inherit_dependencies_from = array_key_first( $prop_type->get_prop_types() );
-			$dependencies = $prop_type->get_prop_type( $prop_key_to_inherit_dependencies_from )->get_meta_item( 'dependencies', [] );
 			$union_prop_type = $prop_type;
-			$dynamic_prop_type->meta( 'dependencies', $dependencies );
 		}
 
 		$union_prop_type->add_prop_type( $dynamic_prop_type );
