@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Base\Document;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
@@ -66,12 +67,12 @@ class Atomic_Widget_Styles {
 	}
 
 	private function invalidate_cache( array $post_ids ) {
-		$cache_state_manager = new Cache_State_Manager();
+		$cache_validity = new Cache_Validity();
 
 		foreach ( $post_ids as $post_id ) {
 			$style_key = $this->get_style_key( $post_id );
 
-			$cache_state_manager->invalidate( [ $style_key ] );
+			$cache_validity->invalidate( [ $style_key ] );
 		}
 	}
 

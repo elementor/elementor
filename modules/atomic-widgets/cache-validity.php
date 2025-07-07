@@ -1,16 +1,16 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Styles;
+namespace Elementor\Modules\AtomicWidgets;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-const CACHE_KEY_PREFIX = 'elementor_atomic_cache_state-';
+const CACHE_KEY_PREFIX = 'elementor_atomic_cache_validity-';
 
-class Cache_State_Manager {
+class Cache_Validity {
 
-	public function get( array $keys ): bool {
+	public function is_valid( array $keys ): bool {
 		$root = array_shift( $keys );
 
 		$state_item = get_option( CACHE_KEY_PREFIX . $root, null );

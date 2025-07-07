@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Breakpoints\Breakpoint;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Memo;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +21,7 @@ class Atomic_Styles_Manager {
 	 */
 	private array $registered_styles_by_key = [];
 
-	private Cache_State_Manager $cache_state_manager;
+	private Cache_Validity $cache_validity;
 
 	private array $post_ids = [];
 
@@ -28,9 +29,9 @@ class Atomic_Styles_Manager {
 
 	const DEFAULT_BREAKPOINT = 'desktop';
 
-    private function __construct() {
+    public function __construct() {
 		$this->css_files_manager = new CSS_Files_Manager();
-        $this->cache_state_manager = new Cache_State_Manager();
+        $this->cache_validity = new Cache_Validity();
 	}
 
 	public static function instance() {
@@ -86,14 +87,16 @@ class Atomic_Styles_Manager {
                     continue;
                 }
 
+				$breakpoint_cache_keys = array_merge( $cache_keys, [ $breakpoint_key ] );
+
                 $style_file = ( new CSS_Files_Manager() )->get(
                     $style_key . '-' . $breakpoint_key,
                     $breakpoint_media,
                     $render_css,
-                    $this->cache_state_manager->get( $cache_keys )
+                    $this->cache_validity->is_valid( $breakpoint_cache_keys )
                 );
 
-                $this->cache_state_manager->validate( $cache_keys );
+                $this->cache_validity->validate( $breakpoint_cache_keys );
 
 				if ( ! $style_file ) {
 					continue;

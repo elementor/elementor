@@ -3,7 +3,7 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
-use Elementor\Modules\AtomicWidgets\Styles\Cache_State_Manager;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 
 class Atomic_Global_Styles {
 	const STYLES_KEY = 'global';
@@ -41,9 +41,9 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_cache( string $context ) {
-		$cache_state_manager = new Cache_State_Manager();
+		$cache_validity = new Cache_Validity();
 
-		$cache_state_manager->invalidate( [ self::STYLES_KEY, $context ] );
+		$cache_validity->invalidate( [ self::STYLES_KEY, $context ] );
 	}
 
 	private function transform_classes_names( $ids ) {

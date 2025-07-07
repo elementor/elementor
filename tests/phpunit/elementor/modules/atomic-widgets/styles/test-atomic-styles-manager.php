@@ -133,7 +133,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			} );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs );
+			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
 		}, 100, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -184,11 +184,11 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			} );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_additional_style_defs ) {
-			$styles_manager->register( $this->test_additional_style_key, $get_additional_style_defs );
+			$styles_manager->register( $this->test_additional_style_key, $get_additional_style_defs, [ $this->test_additional_style_key ] );
 		}, 10, 1 );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs );
+			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
 		}, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -219,7 +219,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
         $this->filesystemMock->method('put_contents')->willReturn(true);
 
         add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
-            $styles_manager->register( $this->test_style_key, $get_style_defs );
+            $styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
         }, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -237,7 +237,11 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$styles_manager->register_hooks();
 
 		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) {
-			$styles_manager->register( $this->test_style_key, fn() => $this->get_test_style_defs() );
+			$styles_manager->register(
+				$this->test_style_key,
+				fn() => $this->get_test_style_defs(),
+				[ $this->test_style_key ]
+			);
 		}, 10, 1 );
 
 		// Act
@@ -246,5 +250,42 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		// Assert
 		global $wp_styles;
 		$this->assertArrayNotHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
+	}
+
+	public function test_enqueue__not_executing_get_styles_more_than_once() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+		$call_count = 0;
+
+		$get_style_defs = function() use ( &$call_count ) {
+			$call_count++;
+
+			return $this->get_test_style_defs();
+		};
+
+		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert
+		global $wp_styles;
+		$this->assertArrayHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
+
+		// Ensure get_styles was called only once
+		$this->assertEquals( 1, $call_count );
+
+		// Act
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		// Assert again to ensure no additional calls
+		$this->assertArrayHasKey( $this->test_style_key . '-desktop', $wp_styles->registered );
+
+		$this->assertEquals( 1, $call_count, 'get_styles should not be called again' );
 	}
 }
