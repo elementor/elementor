@@ -21,7 +21,7 @@ class Applied_Global_Classes_Usage {
 		$total = array();
 		$class_ids = $this->get_all_class_ids();
 
-		if ( empty( $class_ids ) ) {
+		if ( array() === $class_ids ) {
 			return array();
 		}
 
@@ -42,7 +42,7 @@ class Applied_Global_Classes_Usage {
 		$page_map = array();
 		$class_ids = $this->get_all_class_ids();
 
-		if ( empty( $class_ids ) ) {
+		if ( array() === $class_ids ) {
 			return array();
 		}
 
@@ -59,8 +59,9 @@ class Applied_Global_Classes_Usage {
 		return $result;
 	}
 
-	// === Internal Utilities ===
-
+	/**
+	 * @return string[]
+	 */
 	private function get_all_class_ids(): array {
 		return Global_Classes_Repository::make()->all()->get_items()->keys()->all();
 	}
@@ -102,7 +103,7 @@ class Applied_Global_Classes_Usage {
 
 	private function process_document_for_usage( $document, $elements_data, array $class_ids, bool $with_page_info, array &$result, array &$page_map ): void {
 		$page_id = $document->get_main_id();
-		if ( get_post_type( $page_id ) === 'elementor_library' ) {
+		if ( 'elementor_library' === get_post_type( $page_id ) ) {
 			return;
 		}
 
@@ -118,7 +119,7 @@ class Applied_Global_Classes_Usage {
 
 	private function track_element_usage( array $element_data, array $class_ids, int $page_id, ?string $page_title, bool $with_page_info, array &$result, array &$page_map ): void {
 		$element_id = $element_data['id'] ?? null;
-		if ( ! $element_id || ! $this->is_valid_atomic_element( $element_data ) ) {
+		if ( null === $element_id || ! $this->is_valid_atomic_element( $element_data ) ) {
 			return;
 		}
 
@@ -128,16 +129,18 @@ class Applied_Global_Classes_Usage {
 		foreach ( $applied as $class_id => $_ ) {
 			$page_index = $page_map[ $class_id ][ $page_id ] ?? null;
 
-			if ( $page_index === null ) {
+			if ( null === $page_index ) {
 				$page_map[ $class_id ][ $page_id ] = count( $result[ $class_id ] );
 				$entry = array(
-					'pageId' => $page_id,
+					'pageId'   => $page_id,
 					'elements' => array( $element_id => true ),
-					'total' => 1,
+					'total'    => 1,
 				);
+
 				if ( $with_page_info ) {
 					$entry['title'] = $page_title;
 				}
+
 				$result[ $class_id ][] = $entry;
 			} else {
 				$entry = &$result[ $class_id ][ $page_index ];
