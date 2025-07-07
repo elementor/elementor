@@ -72,14 +72,14 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await test.step( 'Add widget and check editor canvas', async () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
-					widgetSelector = editor.getWidgetID( widgetId );
+					widgetSelector = editor.getWidgetSelector( widgetId );
 
 					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
 				} );
 
 				await test.step( 'Check frontend display', async () => {
-					const containerSelector = editor.getWidgetID( containerId );
+					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
 
 					if ( 'e-youtube' === widget.name ) {
@@ -98,7 +98,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
-					await expect( editor.getPreviewFrame().locator( widgetSelector ) ).toBeVisible();
+					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
 				} );
 
 				await test.step( 'Remove widget from editor', async () => {

@@ -243,10 +243,6 @@ export default class EditorPage extends BasePage {
 	 * @return {string} The CSS selector string for targeting the widget.
 	 */
 	getWidgetSelector( widgetId: string ): string {
-		return `[data-id="${ widgetId }"].elementor-element`;
-	}
-
-	getWidgetID( widgetId: string ): string {
 		return `[data-id="${ widgetId }"]`;
 	}
 
