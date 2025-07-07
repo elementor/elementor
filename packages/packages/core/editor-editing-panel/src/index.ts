@@ -11,5 +11,6 @@ export { controlActionsMenu } from './controls-actions';
 export { useFontFamilies } from './components/style-sections/typography-section/hooks/use-font-families';
 export { PopoverBody } from './components/popover-body';
 export { useSectionWidth } from './contexts/section-context';
+export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
 
 export { init } from './init';
