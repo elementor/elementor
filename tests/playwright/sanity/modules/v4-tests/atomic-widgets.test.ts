@@ -102,12 +102,9 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				} );
 
 				await test.step( 'Remove widget from editor', async () => {
-					// Click on the container element to select it
 					const containerSelector = editor.getWidgetSelector( containerId );
 					const containerInPreview = editor.getPreviewFrame().locator( containerSelector );
 					await containerInPreview.click();
-
-					// Remove the container using the editor overlay delete button
 					await editor.removeElementWithHandle( containerId );
 
 					// Verify widget is no longer visible in editor (since container is removed)
