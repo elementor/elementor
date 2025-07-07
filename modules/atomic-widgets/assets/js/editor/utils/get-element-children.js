@@ -10,7 +10,7 @@
  */
 export function getElementChildren( model ) {
 	const container = window.elementor.getContainer( model.id );
-	const children = ( container.model ? .get( 'elements' ) ? .models ? ? [] ).flatMap( ( child ) => getElementChildren( child ) ) ? ? [];
+	const children = ( container.model?.get( 'elements' )?.models ?? [] ).flatMap( ( child ) => getElementChildren( child ) ) ?? [];
 
 	return [ container, ...children ];
 }

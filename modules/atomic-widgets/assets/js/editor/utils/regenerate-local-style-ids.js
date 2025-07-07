@@ -16,7 +16,7 @@ function isClassesProp( prop ) {
  */
 function updateStyleId( container ) {
 	const originalStyles = container.model.get( 'styles' );
-	const settings = container.settings ? .toJSON() ? ? {};
+	const settings = container.settings?.toJSON() ?? {};
 
 	const classesProps = Object.entries( settings ).filter(
 		( [ , propValue ] ) => ( isClassesProp( propValue ) ),
@@ -35,7 +35,7 @@ function updateStyleId( container ) {
 	const newClassesProps = classesProps.map( ( [ key, value ] ) => {
 		return [ key, {
 			...value,
-			value: value.value.map( ( className ) => changedIds[ className ] ? ? className ),
+			value: value.value.map( ( className ) => changedIds[ className ] ?? className ),
 		} ];
 	}, {} );
 
@@ -50,7 +50,7 @@ function updateStyleId( container ) {
 }
 
 function updateElementsStyleIdsInsideOut( styledElements ) {
-	styledElements ? .reverse().forEach( updateStyleId );
+	styledElements?.reverse().forEach( updateStyleId );
 }
 
 /**
@@ -61,7 +61,7 @@ function updateElementsStyleIdsInsideOut( styledElements ) {
 export function regenerateLocalStyleIds( container ) {
 	const allElements = getElementChildren( container );
 
-	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ? ? {} ).length > 0 );
+	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
 
 	updateElementsStyleIdsInsideOut( styledElements );
 }
