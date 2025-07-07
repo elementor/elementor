@@ -1,5 +1,9 @@
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
-import { controlActionsMenu, registerControlReplacement } from '@elementor/editor-editing-panel';
+import {
+	controlActionsMenu,
+	registerControlReplacement,
+	stylesInheritanceTransformersRegistry,
+} from '@elementor/editor-editing-panel';
 
 import { FontVariableControl } from './controls/font-variable-control';
 import { usePropFontVariableAction } from './hooks/use-prop-font-variable-action';
@@ -21,4 +25,5 @@ export function initFontVariables() {
 	} );
 
 	styleTransformersRegistry.register( fontVariablePropTypeUtil.key, variableTransformer );
+	stylesInheritanceTransformersRegistry.register( fontVariablePropTypeUtil.key, variableTransformer );
 }
