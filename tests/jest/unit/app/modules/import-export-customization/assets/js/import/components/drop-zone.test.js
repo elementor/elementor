@@ -24,8 +24,10 @@ describe( 'DropZone Component', () => {
 
 	describe( 'Basic Rendering', () => {
 		it( 'should render with default props', () => {
+			// Act
 			render( <DropZone onFileSelect={ mockOnFileSelect } /> );
 
+			// Assert
 			expect( screen.getByTestId( 'upload-icon' ) ).toBeTruthy();
 			expect( screen.getByTestId( 'click-to-upload' ) ).toBeTruthy();
 			expect( screen.getByTestId( 'helper-text' ) ).toBeTruthy();
@@ -33,39 +35,56 @@ describe( 'DropZone Component', () => {
 		} );
 
 		it( 'should render with custom className', () => {
+			// Arrange
+			const customClassName = 'custom-class';
+
+			// Act
 			render(
-				<DropZone onFileSelect={ mockOnFileSelect } className="custom-class" />,
+				<DropZone onFileSelect={ mockOnFileSelect } className={ customClassName } />,
 			);
 
-			expect( screen.getByTestId( 'drop-zone' ).className ).toContain( 'custom-class' );
+			// Assert
+			expect( screen.getByTestId( 'drop-zone' ).className ).toContain( customClassName );
 		} );
 
 		it( 'should render with custom icon', () => {
+			// Arrange
+			const customIcon = 'custom-icon-class';
+
+			// Act
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
-					icon="custom-icon-class"
+					icon={ customIcon }
 				/>,
 			);
 
-			expect( screen.getByTestId( 'custom-icon' ).className ).toContain( 'custom-icon-class' );
+			// Assert
+			expect( screen.getByTestId( 'custom-icon' ).className ).toContain( customIcon );
 		} );
 
 		it( 'should render loading state', () => {
+			// Arrange
+			const isLoading = true;
+
+			// Act
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
-					isLoading={ true }
+					isLoading={ isLoading }
 				/>,
 			);
 
+			// Assert
 			expect( screen.getByTestId( 'loading-spinner' ) ).toBeTruthy();
 			expect( screen.getByTestId( 'loading-overlay' ) ).toBeTruthy();
 		} );
 
 		it( 'should render error state', () => {
+			// Arrange
 			const error = { message: 'Test error message' };
 
+			// Act
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
@@ -73,22 +92,26 @@ describe( 'DropZone Component', () => {
 				/>,
 			);
 
+			// Assert
 			expect( screen.getByTestId( 'helper-text' ).textContent ).toBe( 'Test error message' );
 		} );
 	} );
 
 	describe( 'File Validation', () => {
 		it( 'should validate allowed MIME types', () => {
+			// Arrange
+			const allowedFileTypes = [ 'application/zip' ];
+			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/zip' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
 					onError={ mockOnError }
-					filetypes={ [ 'application/zip' ] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
-			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/zip' } );
-
+			// Act
 			const dropZone = screen.getByTestId( 'drop-zone' );
 			fireEvent.drop( dropZone, {
 				dataTransfer: {
@@ -96,21 +119,25 @@ describe( 'DropZone Component', () => {
 				},
 			} );
 
+			// Assert
 			expect( mockOnFileSelect ).toHaveBeenCalledWith( mockFile, expect.any( Object ), 'drop' );
 			expect( mockOnError ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should validate file extensions', () => {
+			// Arrange
+			const allowedFileTypes = [ 'application/zip' ];
+			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/octet-stream' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
 					onError={ mockOnError }
-					filetypes={ [ 'application/zip' ] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
-			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/octet-stream' } );
-
+			// Act
 			const dropZone = screen.getByTestId( 'drop-zone' );
 			fireEvent.drop( dropZone, {
 				dataTransfer: {
@@ -118,21 +145,25 @@ describe( 'DropZone Component', () => {
 				},
 			} );
 
+			// Assert
 			expect( mockOnFileSelect ).toHaveBeenCalledWith( mockFile, expect.any( Object ), 'drop' );
 			expect( mockOnError ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should reject invalid file types', () => {
+			// Arrange
+			const allowedFileTypes = [ 'application/zip' ];
+			const mockFile = new File( [ 'test' ], 'test.txt', { type: 'text/plain' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
 					onError={ mockOnError }
-					filetypes={ [ 'application/zip' ] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
-			const mockFile = new File( [ 'test' ], 'test.txt', { type: 'text/plain' } );
-
+			// Act
 			const dropZone = screen.getByTestId( 'drop-zone' );
 			fireEvent.drop( dropZone, {
 				dataTransfer: {
@@ -140,6 +171,7 @@ describe( 'DropZone Component', () => {
 				},
 			} );
 
+			// Assert
 			expect( mockOnFileSelect ).not.toHaveBeenCalled();
 			expect( mockOnError ).toHaveBeenCalledWith( {
 				id: 'file_not_allowed',
@@ -148,16 +180,19 @@ describe( 'DropZone Component', () => {
 		} );
 
 		it( 'should allow all file types when filetypes is empty', () => {
+			// Arrange
+			const allowedFileTypes = [];
+			const mockFile = new File( [ 'test' ], 'test.txt', { type: 'text/plain' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
 					onError={ mockOnError }
-					filetypes={ [] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
-			const mockFile = new File( [ 'test' ], 'test.txt', { type: 'text/plain' } );
-
+			// Act
 			const dropZone = screen.getByTestId( 'drop-zone' );
 			fireEvent.drop( dropZone, {
 				dataTransfer: {
@@ -165,21 +200,25 @@ describe( 'DropZone Component', () => {
 				},
 			} );
 
+			// Assert
 			expect( mockOnFileSelect ).toHaveBeenCalledWith( mockFile, expect.any( Object ), 'drop' );
 			expect( mockOnError ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should handle multiple allowed file types', () => {
+			// Arrange
+			const allowedFileTypes = [ 'application/zip', 'application/json' ];
+			const mockJsonFile = new File( [ '{}' ], 'test.json', { type: 'application/json' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
 					onError={ mockOnError }
-					filetypes={ [ 'application/zip', 'application/json' ] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
-			const mockJsonFile = new File( [ '{}' ], 'test.json', { type: 'application/json' } );
-
+			// Act
 			const dropZone = screen.getByTestId( 'drop-zone' );
 			fireEvent.drop( dropZone, {
 				dataTransfer: {
@@ -187,6 +226,7 @@ describe( 'DropZone Component', () => {
 				},
 			} );
 
+			// Assert
 			expect( mockOnFileSelect ).toHaveBeenCalledWith( mockJsonFile, expect.any( Object ), 'drop' );
 			expect( mockOnError ).not.toHaveBeenCalled();
 		} );
@@ -194,10 +234,11 @@ describe( 'DropZone Component', () => {
 
 	describe( 'Drag and Drop Functionality', () => {
 		it( 'should handle drag enter event', () => {
+			// Arrange
 			render( <DropZone onFileSelect={ mockOnFileSelect } /> );
-
 			const dropZone = screen.getByTestId( 'drop-zone' );
 
+			// Act & Assert
 			expect( () => {
 				fireEvent.dragEnter( dropZone, {
 					dataTransfer: {
@@ -208,26 +249,31 @@ describe( 'DropZone Component', () => {
 		} );
 
 		it( 'should handle drag leave event', () => {
+			// Arrange
 			render( <DropZone onFileSelect={ mockOnFileSelect } /> );
-
 			const dropZone = screen.getByTestId( 'drop-zone' );
 
+			// Act & Assert
 			expect( () => {
 				fireEvent.dragLeave( dropZone );
 			} ).not.toThrow();
 		} );
 
 		it( 'should handle drag over event', () => {
+			// Arrange
 			render( <DropZone onFileSelect={ mockOnFileSelect } /> );
-
 			const dropZone = screen.getByTestId( 'drop-zone' );
 
+			// Act & Assert
 			expect( () => {
 				fireEvent.dragOver( dropZone );
 			} ).not.toThrow();
 		} );
 
 		it( 'should not process files when loading', () => {
+			// Arrange
+			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/zip' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
@@ -235,8 +281,7 @@ describe( 'DropZone Component', () => {
 				/>,
 			);
 
-			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/zip' } );
-
+			// Act
 			const dropZone = screen.getByTestId( 'drop-zone' );
 			fireEvent.drop( dropZone, {
 				dataTransfer: {
@@ -244,53 +289,62 @@ describe( 'DropZone Component', () => {
 				},
 			} );
 
+			// Assert
 			expect( mockOnFileSelect ).not.toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'File Input Handling', () => {
 		it( 'should handle file input change with valid file', () => {
+			// Arrange
+			const allowedFileTypes = [ 'application/zip' ];
+			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/zip' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
 					onFileChoose={ mockOnFileChoose }
-					filetypes={ [ 'application/zip' ] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
 			const fileInput = screen.getByTestId( 'file-input' );
-			const mockFile = new File( [ 'test' ], 'test.zip', { type: 'application/zip' } );
-
 			Object.defineProperty( fileInput, 'files', {
 				value: [ mockFile ],
 				writable: false,
 			} );
 
+			// Act
 			fireEvent.change( fileInput );
 
+			// Assert
 			expect( mockOnFileSelect ).toHaveBeenCalledWith( mockFile, expect.any( Object ), 'browse' );
 			expect( mockOnFileChoose ).toHaveBeenCalledWith( mockFile );
 		} );
 
 		it( 'should handle file input change with invalid file', () => {
+			// Arrange
+			const allowedFileTypes = [ 'application/zip' ];
+			const mockFile = new File( [ 'test' ], 'test.txt', { type: 'text/plain' } );
+
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
 					onError={ mockOnError }
-					filetypes={ [ 'application/zip' ] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
 			const fileInput = screen.getByTestId( 'file-input' );
-			const mockFile = new File( [ 'test' ], 'test.txt', { type: 'text/plain' } );
-
 			Object.defineProperty( fileInput, 'files', {
 				value: [ mockFile ],
 				writable: false,
 			} );
 
+			// Act
 			fireEvent.change( fileInput );
 
+			// Assert
 			expect( mockOnFileSelect ).not.toHaveBeenCalled();
 			expect( mockOnError ).toHaveBeenCalledWith( {
 				id: 'file_not_allowed',
@@ -299,6 +353,7 @@ describe( 'DropZone Component', () => {
 		} );
 
 		it( 'should handle file input change with no file selected', () => {
+			// Arrange
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
@@ -307,14 +362,15 @@ describe( 'DropZone Component', () => {
 			);
 
 			const fileInput = screen.getByTestId( 'file-input' );
-
 			Object.defineProperty( fileInput, 'files', {
 				value: [],
 				writable: false,
 			} );
 
+			// Act
 			fireEvent.change( fileInput );
 
+			// Assert
 			expect( mockOnFileSelect ).not.toHaveBeenCalled();
 			expect( mockOnError ).not.toHaveBeenCalled();
 		} );
@@ -322,6 +378,7 @@ describe( 'DropZone Component', () => {
 
 	describe( 'User Interactions', () => {
 		it( 'should handle click to upload', () => {
+			// Arrange
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
@@ -329,76 +386,99 @@ describe( 'DropZone Component', () => {
 				/>,
 			);
 
+			// Act
 			const clickableText = screen.getByTestId( 'click-to-upload' );
 			fireEvent.click( clickableText );
 
+			// Assert
 			expect( mockOnButtonClick ).toHaveBeenCalled();
 			expect( HTMLInputElement.prototype.click ).toHaveBeenCalled();
 		} );
 
 		it( 'should trigger file input click without onButtonClick', () => {
+			// Arrange
 			render( <DropZone onFileSelect={ mockOnFileSelect } /> );
 
+			// Act
 			const clickableText = screen.getByTestId( 'click-to-upload' );
 			fireEvent.click( clickableText );
 
+			// Assert
 			expect( HTMLInputElement.prototype.click ).toHaveBeenCalled();
 		} );
 	} );
 
 	describe( 'Props Handling', () => {
 		it( 'should use default filetypes when not provided', () => {
+			// Arrange & Act
 			render( <DropZone onFileSelect={ mockOnFileSelect } /> );
 
+			// Assert
 			const fileInput = screen.getByTestId( 'file-input' );
 			expect( fileInput.getAttribute( 'accept' ) ).toContain( 'application/zip' );
 		} );
 
 		it( 'should use provided filetypes', () => {
+			// Arrange
+			const customFileTypes = [ 'application/json' ];
+
+			// Act
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
-					filetypes={ [ 'application/json' ] }
+					filetypes={ customFileTypes }
 				/>,
 			);
 
+			// Assert
 			const fileInput = screen.getByTestId( 'file-input' );
 			expect( fileInput.getAttribute( 'accept' ) ).toContain( 'application/json' );
 		} );
 
 		it( 'should handle additional props spread', () => {
+			// Arrange
+			const customAttribute = 'custom-value';
+
+			// Act
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
-					data-custom="custom-value"
+					data-custom={ customAttribute }
 				/>,
 			);
 
+			// Assert
 			const dropZone = screen.getByTestId( 'drop-zone' );
-			expect( dropZone.getAttribute( 'data-custom' ) ).toBe( 'custom-value' );
+			expect( dropZone.getAttribute( 'data-custom' ) ).toBe( customAttribute );
 		} );
 	} );
 
 	describe( 'Accessibility', () => {
 		it( 'should have unique id for file input', () => {
+			// Arrange & Act
 			render( <DropZone onFileSelect={ mockOnFileSelect } /> );
-			const fileInput = screen.getByTestId( 'file-input' );
 
+			// Assert
+			const fileInput = screen.getByTestId( 'file-input' );
 			expect( fileInput ).toBeTruthy();
 			expect( fileInput.getAttribute( 'id' ) ).toBeTruthy();
 		} );
 
 		it( 'should have proper accept attribute', () => {
+			// Arrange
+			const allowedFileTypes = [ 'application/zip', 'application/json' ];
+
+			// Act
 			render(
 				<DropZone
 					onFileSelect={ mockOnFileSelect }
-					filetypes={ [ 'application/zip', 'application/json' ] }
+					filetypes={ allowedFileTypes }
 				/>,
 			);
 
+			// Assert
 			const fileInput = screen.getByTestId( 'file-input' );
 			const acceptValue = fileInput.getAttribute( 'accept' );
-
 			expect( acceptValue ).toContain( 'application/zip' );
 			expect( acceptValue ).toContain( 'application/json' );
 		} );
