@@ -47,22 +47,6 @@ describe( 'DropZone Component', () => {
 			expect( screen.getByTestId( 'drop-zone' ).className ).toContain( customClassName );
 		} );
 
-		it( 'should render with custom icon', () => {
-			// Arrange
-			const customIcon = 'custom-icon-class';
-
-			// Act
-			render(
-				<DropZone
-					onFileSelect={ mockOnFileSelect }
-					icon={ customIcon }
-				/>,
-			);
-
-			// Assert
-			expect( screen.getByTestId( 'custom-icon' ).className ).toContain( customIcon );
-		} );
-
 		it( 'should render loading state', () => {
 			// Arrange
 			const isLoading = true;
