@@ -19,110 +19,71 @@ class Test_Export extends Elementor_Test_Base {
 	 */
 	private $rest_api_initialized = false;
 
-	/**
-	 * @var array Backup of global filters
-	 */
-	private $filters_backup = [];
 
-	/**
-	 * Set up test environment
-	 */
 	public function setUp(): void {
 		parent::setUp();
 
-		// Store original component if exists
 		$this->original_component = Plugin::$instance->app->get_component( 'import-export-customization' );
 
-		// Initialize the module
 		Plugin::$instance->app->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
 	}
 
-	/**
-	 * Clean up after test
-	 */
+
 	public function tearDown(): void {
-		// Restore original component if it existed
 		if ( $this->original_component ) {
 			Plugin::$instance->app->add_component( 'import-export-customization', $this->original_component );
 		}
 
-		// Restore global filters if REST API was initialized
 		if ( $this->rest_api_initialized ) {
-			global $wp_filter;
-			
-			// Restore the backed up filters
-			if ( ! empty( $this->filters_backup ) ) {
-				$wp_filter = $this->filters_backup;
-			}
-			
+			remove_all_filters( 'rest_api_init' );
 			$this->rest_api_initialized = false;
-			$this->filters_backup = [];
 		}
 
 		parent::tearDown();
 	}
 
-	/**
-	 * Initialize REST API for tests that need it
-	 */
 	private function init_rest_api() {
 		if ( ! $this->rest_api_initialized ) {
-			global $wp_filter;
-			
-			// Backup current filters state
-			$this->filters_backup = $wp_filter;
-			
 			do_action( 'rest_api_init' );
 			$this->rest_api_initialized = true;
 		}
 	}
 
-	/**
-	 * Test permission callback requires admin
-	 */
+
 	public function test_permission_requires_admin() {
 		// Arrange
 		$this->init_rest_api();
 		
-		// Act as subscriber (non-admin)
 		$this->act_as_subscriber();
 		
 		// Act
 		$response = $this->send_export_request();
 
-		// Assert - Should get 403 Forbidden, not 500
+		// Assert
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
 	}
 
-	/**
-	 * Test permission callback allows admin users
-	 */
 	public function test_permission_allows_admin() {
 		// Arrange
 		$this->init_rest_api();
 		
-		// Mock the export kit method to avoid actual export
 		$mock_module = $this->getMockBuilder( ImportExportCustomizationModule::class )
 			->onlyMethods( ['export_kit'] )
 			->getMock();
 			
 		Plugin::$instance->app->add_component( 'import-export-customization', $mock_module );
 		
-		// Act as admin
 		$this->act_as_admin();
 		
 		// Act
 		$response = $this->send_export_request();
 
-		// Assert - Should NOT get 403 or 500
+		// Assert
 		$this->assertNotEquals( 403, $response->get_status() );
 	}
 
-	/**
-	 * Test successful export with minimal parameters
-	 */
-	public function test_successful_export_with_required_params() {
+	public function test_successful_export_with_required_parameters() {
 		// Arrange
 		$this->init_rest_api();
         $this->act_as_admin();
@@ -146,9 +107,6 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'file', $data['data'] );
 	}
 
-	/**
-	 * Test export with all parameters
-	 */
 	public function test_successful_export_with_all_parameters() {
 		// Arrange
 		$this->init_rest_api();
@@ -183,9 +141,6 @@ class Test_Export extends Elementor_Test_Base {
 		unregister_post_type( 'test_post_type' );
 	}
 
-	/**
-	 * Test export error handling when file cannot be read
-	 */
 	public function test_export_error_file_not_readable() {
 		// Arrange
 		$this->init_rest_api();
@@ -222,9 +177,6 @@ class Test_Export extends Elementor_Test_Base {
         $this->assertEquals( 'Could not read the exported file.', $data['data']['message'] );
 	}
 
-	/**
-	 * Test export error handling with exception
-	 */
 	public function test_export_error_with_exception() {
 		// Arrange
 		$this->init_rest_api();
@@ -244,7 +196,7 @@ class Test_Export extends Elementor_Test_Base {
 		$response = $this->send_export_request( [
 			'include' => ['settings'],
 			'kitInfo' => [
-				'name' => 'Test Kit',
+				'title' => 'Test Kit',
 				'source' => 'test'
 			]
 		] );
@@ -257,9 +209,6 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEquals( 'Export failed due to invalid data', $data['data']['message'] );
 	}
 
-	/**
-	 * Helper method to send export request
-	 */
 	private function send_export_request( $params = [] ) {
 		$request = new \WP_REST_Request( 
 			'POST', 
