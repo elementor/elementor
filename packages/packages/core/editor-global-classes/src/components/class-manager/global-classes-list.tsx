@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
-import { createQueryClient, QueryClientProvider } from '@elementor/query';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -20,7 +19,6 @@ type GlobalClassesListProps = {
 	searchValue: string;
 	onSearch: ( searchValue: string ) => void;
 };
-// const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalClassesListProps ) => {
 	const cssClasses = useOrderedClasses();

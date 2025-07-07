@@ -89,12 +89,17 @@ describe( 'CssClassUsagePopover', () => {
 		// Wait for the list to be populated
 
 		// Get the list and verify its contents
+
 		await waitFor( () => {
 			const listItems = screen.getAllByRole( 'option' );
 			expect( listItems ).toHaveLength( 2 );
+			// eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
 			expect( listItems[ 0 ] ).toHaveTextContent( 'Page One' );
+			// eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
 			expect( listItems[ 0 ] ).toHaveTextContent( '2' );
+			// eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
 			expect( listItems[ 1 ] ).toHaveTextContent( 'Page Two' );
+			// eslint-disable-next-line testing-library/no-wait-for-multiple-assertions
 			expect( listItems[ 1 ] ).toHaveTextContent( '1' );
 		} );
 	} );

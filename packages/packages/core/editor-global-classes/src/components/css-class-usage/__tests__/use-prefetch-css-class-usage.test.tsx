@@ -22,7 +22,9 @@ describe( 'usePrefetchCssClassUsage', () => {
 
 	it( 'should prefetch usage data and cache it', async () => {
 		mockedApi.usage.mockResolvedValue( {
-			data: { data: mockData },
+			data: {
+				data: mockData,
+			},
 		} );
 
 		const { result } = renderHook( () => usePrefetchCssClassUsage(), { wrapper } );

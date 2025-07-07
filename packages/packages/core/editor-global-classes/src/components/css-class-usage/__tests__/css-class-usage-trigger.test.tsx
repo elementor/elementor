@@ -64,7 +64,7 @@ describe( 'CssClassUsageTrigger', () => {
 		fireEvent.click( button );
 
 		await waitFor( () => {
-			expect( screen.getByTestId( 'css-class-usage-popover' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'css-class-usage-popover' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
