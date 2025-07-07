@@ -61,7 +61,7 @@ describe( 'DropZone Component', () => {
 
 			// Assert
 			expect( screen.getByTestId( 'loading-spinner' ) ).toBeTruthy();
-			expect( screen.getByTestId( 'loading-overlay' ) ).toBeTruthy();
+			expect( screen.queryByTestId( 'upload-icon' ) ).toBeFalsy();
 		} );
 
 		it( 'should render error state', () => {

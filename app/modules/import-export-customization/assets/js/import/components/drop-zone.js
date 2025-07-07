@@ -182,49 +182,31 @@ const DropZone = ( {
 					gap={ 1 }
 					p={ 6 }
 					minHeight="520px"
+					sx={ {
+						opacity: isLoading ? 0.5 : 1,
+						transition: 'opacity 0.2s ease-in-out',
+					} }
 				>
-					{ isLoading && (
-						<Box
-							position="absolute"
-							top={ 0 }
-							left={ 0 }
-							right={ 0 }
-							bottom={ 0 }
-							display="flex"
-							alignItems="center"
-							justifyContent="center"
-							bgcolor="action.hover"
-							zIndex={ 1 }
-							data-testid="loading-overlay"
-						>
-							<CircularProgress size={ 40 } data-testid="loading-spinner" />
-						</Box>
-					) }
-
-					<Box
-						sx={ {
-							opacity: isLoading ? 0.5 : 1,
-							transition: 'opacity 0.2s ease-in-out',
-						} }
-						data-testid="icon-container"
-					>
-						<UploadIcon
+					<Box data-testid="icon-container">
+						{ isLoading ? (
+							<CircularProgress
+								size={ 40 }
+								sx={ { color: 'primary.dark' } }
+								data-testid="loading-spinner"
+							/>
+						) : (
+							<UploadIcon
 								sx={ {
 									fontSize: '40px',
 									color: 'text.disabled',
 								} }
 								data-testid="upload-icon"
 							/>
+						) }
 					</Box>
 
 					<Stack spacing={ 2 } alignItems="center" textAlign="center" data-testid="text-container">
-						<Box
-							sx={ {
-								opacity: isLoading ? 0.5 : 1,
-								transition: 'opacity 0.2s ease-in-out',
-							} }
-							data-testid="main-text"
-						>
+						<Box data-testid="main-text">
 							<Link
 								variant="body1"
 								component="span"
@@ -250,10 +232,6 @@ const DropZone = ( {
 						<Typography
 							variant="body2"
 							color={ error ? 'error' : 'text.secondary' }
-							sx={ {
-								opacity: isLoading ? 0.5 : 1,
-								transition: 'opacity 0.2s ease-in-out',
-							} }
 							data-testid="helper-text"
 						>
 							{ error ? error.message : __( 'Upload a .zip file', 'elementor' ) }
