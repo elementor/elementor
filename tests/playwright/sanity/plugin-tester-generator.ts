@@ -25,7 +25,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'header-footer-elementor', installSource: 'api' },
 	{ pluginName: 'jeg-elementor-kit', installSource: 'cli' },
 	{ pluginName: 'make-column-clickable-elementor', installSource: 'api' },
-	{ pluginName: 'metform', installSource: 'api' },
+	{ pluginName: 'metform', installSource: 'cli' },
 	{ pluginName: 'music-player-for-elementor', installSource: 'cli' },
 	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
