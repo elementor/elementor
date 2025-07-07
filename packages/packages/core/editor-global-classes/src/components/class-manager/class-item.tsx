@@ -35,6 +35,7 @@ type ClassItemProps = React.PropsWithChildren< {
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
 	isSearchActive: boolean;
+	suffix?: React.ReactNode;
 } >;
 
 export const ClassItem = ( {
@@ -45,6 +46,7 @@ export const ClassItem = ( {
 	disabled,
 	sortableTriggerProps,
 	isSearchActive,
+	suffix,
 }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 
@@ -103,6 +105,7 @@ export const ClassItem = ( {
 								<EllipsisWithTooltip title={ label } as={ Typography } variant="caption" />
 							) }
 						</Indicator>
+						<Box className={ 'class-item-locator' }>{ suffix }</Box>
 						<Tooltip
 							placement="top"
 							className={ 'class-item-more-actions' }
@@ -159,22 +162,31 @@ export const ClassItem = ( {
 const StyledListItemButtonV2 = styled( ListItemButton, {
 	shouldForwardProp: ( prop: string ) => ! [ 'showActions', 'showSortIndicator' ].includes( prop ),
 } )< ListItemButtonProps & { showActions: boolean; showSortIndicator: boolean } >(
-	( { showActions, showSortIndicator } ) =>
-		`
-	min-height: 36px;
+	( { showActions, showSortIndicator } ) => `
+    min-height: 36px;
 
-	&.visible-class-item {
-		box-shadow: none !important;
-	}
-	.class-item-sortable-trigger {
-		visibility: ${ showSortIndicator && showActions ? 'visible' : 'hidden' };
-	}
-	&:hover&:not(:disabled) {
-		.class-item-sortable-trigger  {
-			visibility: ${ showSortIndicator ? 'visible' : 'hidden' };
-		}
-	}
-`
+    &.visible-class-item {
+      box-shadow: none !important;
+    }
+
+    .class-item-locator {
+      visibility: hidden;
+    }
+
+    .class-item-sortable-trigger {
+      visibility: ${ showSortIndicator && showActions ? 'visible' : 'hidden' };
+    }
+
+    &:hover:not(:disabled) {
+      .class-item-locator {
+        visibility: visible;
+      }
+
+      .class-item-sortable-trigger {
+        visibility: ${ showSortIndicator ? 'visible' : 'hidden' };
+      }
+    }
+  `
 );
 
 const StyledListItemButtonV1 = styled( ListItemButton, {

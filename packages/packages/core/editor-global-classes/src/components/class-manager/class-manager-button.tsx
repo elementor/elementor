@@ -8,6 +8,7 @@ import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { globalClassesStylesProvider } from '../../global-classes-styles-provider';
+import { usePrefetchCssClassUsage } from '../css-class-usage';
 import { usePanelActions } from './class-manager-panel';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { SaveChangesDialog, useDialog } from './save-changes-dialog';
@@ -17,6 +18,7 @@ export const ClassManagerButton = () => {
 	const { open: openPanel } = usePanelActions();
 	const { save: saveDocument } = useActiveDocumentActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
+	const { runFetch } = usePrefetchCssClassUsage();
 
 	const { userCan } = useUserStylesCapability();
 
@@ -33,6 +35,7 @@ export const ClassManagerButton = () => {
 		}
 
 		openPanel();
+		runFetch();
 	};
 
 	return (
