@@ -44,11 +44,7 @@ export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
 					</IconButton>
 				</Tooltip>
 			</Box>
-			<Box
-				sx={ {
-					background: 'green',
-				} }
-			>
+			<Box>
 				<Popover
 					sx={ { ml: 6 } }
 					anchorOrigin={ {
