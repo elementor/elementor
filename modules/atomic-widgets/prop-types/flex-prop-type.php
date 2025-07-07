@@ -22,4 +22,4 @@ class Flex_Prop_Type extends Object_Prop_Type {
 			'flexBasis' => Size_Prop_Type::make(),
 		];
 	}
-} 
+}

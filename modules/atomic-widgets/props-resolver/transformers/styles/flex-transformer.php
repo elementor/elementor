@@ -70,4 +70,4 @@ class Flex_Transformer extends Transformer_Base {
 
 		return (string) $basis;
 	}
-} 
+}

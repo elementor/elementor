@@ -1297,4 +1297,72 @@ export const mockStylesSchema = {
 			},
 		},
 	},
+	flex: {
+		kind: 'object',
+		key: 'flex',
+		default: null,
+		meta: {},
+		settings: {},
+		shape: {
+			flexGrow: {
+				kind: 'plain',
+				key: 'number',
+				default: null,
+				meta: {},
+				settings: {},
+			},
+			flexShrink: {
+				kind: 'plain',
+				key: 'number',
+				default: null,
+				meta: {},
+				settings: {},
+			},
+			flexBasis: {
+				kind: 'union',
+				default: null,
+				meta: {},
+				settings: {},
+				prop_types: {
+					size: {
+						kind: 'object',
+						key: 'size',
+						default: null,
+						meta: {},
+						settings: {},
+						shape: {
+							size: {
+								kind: 'plain',
+								key: 'number',
+								default: null,
+								meta: {},
+								settings: {
+									required: true,
+								},
+							},
+							unit: {
+								kind: 'plain',
+								key: 'string',
+								default: null,
+								meta: {},
+								settings: {
+									enum: [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ],
+									required: true,
+								},
+							},
+						},
+					},
+					string: {
+						kind: 'plain',
+						key: 'string',
+						default: null,
+						meta: {},
+						settings: {
+							enum: [ 'auto' ],
+						},
+					},
+				},
+			},
+		},
+	},
 } satisfies PropsSchema;

@@ -1,17 +1,20 @@
 import * as React from 'react';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	ControlToggleButtonGroup,
 	NumberControl,
+	PropKeyProvider,
+	PropProvider,
 	SizeControl,
 	type ToggleButtonGroupItem,
+	useBoundProp,
 } from '@elementor/editor-controls';
-import { numberPropTypeUtil, type NumberPropValue, type SizePropValue } from '@elementor/editor-props';
+import { flexPropTypeUtil, type FlexPropValue, numberPropTypeUtil } from '@elementor/editor-props';
 import { ExpandIcon, PencilIcon, ShrinkIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
-import { useStylesFields } from '../../../hooks/use-styles-fields';
+import { useStylesField } from '../../../hooks/use-styles-field';
 import { UiProviders } from '../../../styles-inheritance/components/ui-providers';
 import { SectionContent } from '../../section-content';
 import { StylesFieldLayout } from '../../styles-field-layout';
@@ -44,51 +47,70 @@ const items: ToggleButtonGroupItem< GroupItem >[] = [
 ];
 
 export const FlexSizeField = () => {
-	const { values, setValues, canEdit } = useStylesFields< {
-		'flex-grow': NumberPropValue | null;
-		'flex-shrink': NumberPropValue | null;
-		'flex-basis': SizePropValue | null;
-	} >( [ 'flex-grow', 'flex-shrink', 'flex-basis' ] );
+	const { value, setValue, canEdit } = useStylesField( 'flex', {
+		history: { propDisplayName: FLEX_SIZE_LABEL },
+	} );
 
-	const grow = values?.[ 'flex-grow' ]?.value || null;
-	const shrink = values?.[ 'flex-shrink' ]?.value || null;
-	const basis = values?.[ 'flex-basis' ]?.value || null;
+	const flexValue = value as FlexPropValue | null;
+	const grow = flexValue?.value?.flexGrow?.value || null;
+	const shrink = flexValue?.value?.flexShrink?.value || null;
+	const basis = flexValue?.value?.flexBasis?.value || null;
 
-	const currentGroup = useMemo( () => getActiveGroup( { grow, shrink, basis } ), [ grow, shrink, basis ] ),
-		[ activeGroup, setActiveGroup ] = useState( currentGroup );
+	const currentGroup = useMemo( () => getActiveGroup( { grow, shrink, basis } ), [ grow, shrink, basis ] );
+	const [ activeGroup, setActiveGroup ] = useState( currentGroup );
+	const [ customLocked, setCustomLocked ] = useState( false );
+
+	useEffect( () => {
+		if ( ! customLocked ) {
+			setActiveGroup( currentGroup );
+		}
+	}, [ currentGroup, customLocked ] );
+
+	useEffect( () => {
+		if ( value === null ) {
+			setCustomLocked( false );
+		}
+	}, [ value ] );
 
 	const onChangeGroup = ( group: GroupItem | null = null ) => {
 		setActiveGroup( group );
+		setCustomLocked( group === 'custom' );
 
-		let props;
+		let newFlexValue: FlexPropValue | null = null;
 
-		if ( ! group || group === 'custom' ) {
-			props = {
-				'flex-basis': null,
-				'flex-grow': null,
-				'flex-shrink': null,
-			};
+		if ( ! group ) {
+			newFlexValue = null;
 		} else if ( group === 'flex-grow' ) {
-			props = {
-				'flex-basis': null,
-				'flex-grow': numberPropTypeUtil.create( DEFAULT ),
-				'flex-shrink': null,
-			};
-		} else {
-			props = {
-				'flex-basis': null,
-				'flex-grow': null,
-				'flex-shrink': numberPropTypeUtil.create( DEFAULT ),
-			};
+			newFlexValue = flexPropTypeUtil.create( {
+				flexGrow: numberPropTypeUtil.create( DEFAULT ),
+				flexShrink: null,
+				flexBasis: null,
+			} );
+		} else if ( group === 'flex-shrink' ) {
+			newFlexValue = flexPropTypeUtil.create( {
+				flexGrow: null,
+				flexShrink: numberPropTypeUtil.create( DEFAULT ),
+				flexBasis: null,
+			} );
+		} else if ( group === 'custom' ) {
+			if ( flexValue ) {
+				newFlexValue = flexValue;
+			} else {
+				newFlexValue = flexPropTypeUtil.create( {
+					flexGrow: null,
+					flexShrink: null,
+					flexBasis: null,
+				} );
+			}
 		}
 
-		setValues( props, { history: { propDisplayName: FLEX_SIZE_LABEL } } );
+		setValue( newFlexValue );
 	};
 
 	return (
 		<UiProviders>
 			<SectionContent>
-				<StylesField bind={ activeGroup ?? '' } propDisplayName={ FLEX_SIZE_LABEL }>
+				<StylesField bind="flex" propDisplayName={ FLEX_SIZE_LABEL }>
 					<StylesFieldLayout label={ FLEX_SIZE_LABEL }>
 						<ControlToggleButtonGroup
 							value={ activeGroup }
@@ -98,8 +120,8 @@ export const FlexSizeField = () => {
 							exclusive={ true }
 						/>
 					</StylesFieldLayout>
+					{ 'custom' === activeGroup && <FlexCustomField /> }
 				</StylesField>
-				{ 'custom' === activeGroup && <FlexCustomField /> }
 			</SectionContent>
 		</UiProviders>
 	);
@@ -107,25 +129,28 @@ export const FlexSizeField = () => {
 
 const FlexCustomField = () => {
 	const flexBasisRowRef = useRef< HTMLDivElement >( null );
+	const context = useBoundProp( flexPropTypeUtil );
 
 	return (
-		<>
-			<StylesField bind="flex-grow" propDisplayName={ FLEX_SIZE_LABEL }>
+		<PropProvider { ...context }>
+			<>
 				<StylesFieldLayout label={ __( 'Grow', 'elementor' ) }>
-					<NumberControl min={ 0 } shouldForceInt={ true } />
+					<PropKeyProvider bind="flexGrow">
+						<NumberControl min={ 0 } shouldForceInt={ true } />
+					</PropKeyProvider>
 				</StylesFieldLayout>
-			</StylesField>
-			<StylesField bind="flex-shrink" propDisplayName={ FLEX_SIZE_LABEL }>
 				<StylesFieldLayout label={ __( 'Shrink', 'elementor' ) }>
-					<NumberControl min={ 0 } shouldForceInt={ true } />
+					<PropKeyProvider bind="flexShrink">
+						<NumberControl min={ 0 } shouldForceInt={ true } />
+					</PropKeyProvider>
 				</StylesFieldLayout>
-			</StylesField>
-			<StylesField bind="flex-basis" propDisplayName={ FLEX_SIZE_LABEL }>
 				<StylesFieldLayout label={ __( 'Basis', 'elementor' ) } ref={ flexBasisRowRef }>
-					<SizeControl extendedOptions={ [ 'auto' ] } anchorRef={ flexBasisRowRef } />
+					<PropKeyProvider bind="flexBasis">
+						<SizeControl extendedOptions={ [ 'auto' ] } anchorRef={ flexBasisRowRef } />
+					</PropKeyProvider>
 				</StylesFieldLayout>
-			</StylesField>
-		</>
+			</>
+		</PropProvider>
 	);
 };
 
@@ -134,9 +159,9 @@ const getActiveGroup = ( {
 	shrink,
 	basis,
 }: {
-	grow: NumberPropValue[ 'value' ] | null;
-	shrink: NumberPropValue[ 'value' ] | null;
-	basis: SizePropValue[ 'value' ] | null;
+	grow: number | null;
+	shrink: number | null;
+	basis: { size: number; unit: string } | string | null;
 } ): GroupItem | null => {
 	if ( null === grow && null === shrink && ! basis ) {
 		return null;
