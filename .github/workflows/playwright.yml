@@ -1,4 +1,4 @@
-name: Playwright
+name: Playwright Just Test
 
 on:
   pull_request:
