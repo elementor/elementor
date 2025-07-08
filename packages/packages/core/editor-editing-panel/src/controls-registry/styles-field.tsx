@@ -27,14 +27,15 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 	const stylesInheritanceChain = useStylesInheritanceChain( [ bind ] );
 
 	const {
-		values: { [ bind as never ]: value, ...depValues },
+		values,
 		setValues,
 		canEdit,
 	} = useStylesFields( [ ...depList, bind ] );
 
+	const  { [ bind  ]: value, ...depValues } = values ?? {}
+
 	const propType = createTopLevelOjectType( { schema: stylesSchema } );
 
-	const values = { [ bind ]: value };
 
 	const [ actualValue ] = stylesInheritanceChain;
 
@@ -70,7 +71,7 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 		>
 			<PropProvider
 				propType={ propType }
-				value={ values }
+				value={ { [ bind ]: value } }
 				setValue={ setValue }
 				placeholder={ placeholderValues }
 				isDisabled={ isDisabled }
