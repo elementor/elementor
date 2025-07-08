@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { type DropShadowFilterPropValue, type PropTypeUtil } from '@elementor/editor-props';
+import { dropShadowFilterPropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -34,16 +34,8 @@ const items = [
 	},
 ];
 
-export const DropShadowItemContent = ( {
-	propType,
-	units,
-	anchorEl,
-}: {
-	propType: PropTypeUtil< 'drop-shadow', DropShadowFilterPropValue[ 'value' ] >;
-	units: LengthUnit[];
-	anchorEl?: HTMLElement | null;
-} ) => {
-	const context = useBoundProp( propType );
+export const DropShadowItemContent = ( { units, anchorEl }: { units: LengthUnit[]; anchorEl?: HTMLElement | null } ) => {
+	const context = useBoundProp( dropShadowFilterPropTypeUtil );
 	const rowRefs = [ useRef< HTMLDivElement >( null ), useRef< HTMLDivElement >( null ) ];
 
 	return (
