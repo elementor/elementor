@@ -19,16 +19,15 @@ class Atomic_Global_Styles {
 
 		add_action( 'elementor/global_classes/update', fn( string $context ) => $this->invalidate_cache( $context ), 10, 1 );
 
-        add_action(
-            'deleted_post',
-            fn( $post_id ) => $this->on_post_delete( $post_id )
-        );
+		add_action(
+			'deleted_post',
+			fn( $post_id ) => $this->on_post_delete( $post_id )
+		);
 
-
-        add_action(
-            'elementor/core/files/clear_cache',
-            fn() => $this->invalidate_cache(),
-        );
+		add_action(
+			'elementor/core/files/clear_cache',
+			fn() => $this->invalidate_cache(),
+		);
 
 		add_filter('elementor/atomic-widgets/settings/transformers/classes',
 			fn( $value ) => $this->transform_classes_names( $value )
@@ -52,22 +51,22 @@ class Atomic_Global_Styles {
 		);
 	}
 
-    private function on_post_delete( $post_id ) {
-        if ( ! Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
-            return;
-        }
+	private function on_post_delete( $post_id ) {
+		if ( ! Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
+			return;
+		}
 
-        $this->invalidate_cache();
-    }
+		$this->invalidate_cache();
+	}
 
 	private function invalidate_cache( ?string $context = null ) {
 		$cache_validity = new Cache_Validity();
 
-        if( empty( $context ) ) {
-            $cache_validity->invalidate( [ self::STYLES_KEY ] );
+		if ( empty( $context ) ) {
+			$cache_validity->invalidate( [ self::STYLES_KEY ] );
 
-            return;
-        }
+			return;
+		}
 
 		$cache_validity->invalidate( [ self::STYLES_KEY, $context ] );
 	}

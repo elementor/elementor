@@ -38,15 +38,15 @@ class Atomic_Widget_Base_Styles {
 		$cache_validity->invalidate( [ self::STYLES_KEY ] );
 	}
 
-        public function get_all_base_styles(): array {
-          $elements = Plugin::$instance->elements_manager->get_element_types();
+	public function get_all_base_styles(): array {
+		$elements = Plugin::$instance->elements_manager->get_element_types();
 		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
 
 		return Collection::make( $elements )
-			->merge( $widgets )
-			->filter( fn( $element ) => Utils::is_atomic( $element ) )
-			->map( fn( $element ) => $element->get_base_styles() )
-			->flatten()
-			->all();
+		->merge( $widgets )
+		->filter( fn( $element ) => Utils::is_atomic( $element ) )
+		->map( fn( $element ) => $element->get_base_styles() )
+		->flatten()
+		->all();
 	}
 }

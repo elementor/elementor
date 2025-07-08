@@ -72,7 +72,7 @@ class Atomic_Widget_Styles {
 	private function invalidate_cache( ?array $post_ids = null ) {
 		$cache_validity = new Cache_Validity();
 
-		if( empty( $post_ids ) ) {
+		if ( empty( $post_ids ) ) {
 			$cache_validity->invalidate( [ self::STYLES_KEY ] );
 
 			return;
