@@ -232,7 +232,7 @@ export default class EditorPage extends BasePage {
 		await elementInPreview.hover();
 
 		// Click the delete button in the element overlay
-		const deleteButton = this.getPreviewFrame().locator( editorSelectors.removeContainer );
+		const deleteButton = this.getPreviewFrame().locator( EditorSelectors.removeContainer );
 		await deleteButton.click();
 	}
 
