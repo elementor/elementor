@@ -15,6 +15,7 @@ class Svg_Transformer extends Transformer_Base {
 	const DEFAULT_SVG = 'images/default-svg.svg';
 	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
 	const DEFAULT_SVG_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_SVG;
+	const ATTRIBUTE_BLACK_LIST = [ 'width', 'height', 'fill' ];
 
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$settings = [
@@ -96,6 +97,11 @@ class Svg_Transformer extends Transformer_Base {
 
 			foreach ( $attr_matches as $attr ) {
 				$key = $attr[1];
+
+				if ( in_array( $key, self::ATTRIBUTE_BLACK_LIST, true ) ) {
+					continue;
+				}
+
 				$attributes[ $key ] = $this->get_attribute_value_from_match( $attr );
 			}
 		}

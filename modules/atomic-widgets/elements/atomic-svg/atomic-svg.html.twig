@@ -1,5 +1,7 @@
 {% if settings.svg.content is not empty %}
-    {% set attributes = { 'class': (settings.classes | merge([ base_styles.base ]) ) | join(' '), 'fill': 'currentColor', 'style': 'width: 100%; height: 100%; overflow: unset;' } %}
+    {% set attributes = { 'class': (settings.classes | merge([ base_styles.base ]) ) | join(' ') } %}
+    {% set attributes = attributes | merge({ 'fill': 'currentColor' }) %}
+    {% set attributes = attributes | merge({ 'style': 'width: 100%; height: 100%; overflow: unset;' }) %}
 
     {% if settings._cssid is not empty %}
         {% set attributes = attributes | merge({ 'id': settings._cssid }) %}
@@ -29,11 +31,7 @@
         {% set merged = merged | merge({ (key): new_value ~ value }) %}
     {%  endfor %}
 
-
-    <svg {% for key, value in merged %}
-        {{ key }}="{{ value }}"
-            {% endfor %}
-    >
+    <svg {% for key, value in merged %} {{ key }}="{{ value }}" {% endfor %}>
         {{ settings.svg.content|raw }}
     </svg>
 
