@@ -74,7 +74,7 @@ class Style_Schema {
 		$dependencies = $union_prop_type->get_meta_item( 'dependencies' );
 
 		if ( ! empty( $dependencies ) ) {
-			$new_union->set_meta_item( 'dependencies', $dependencies );
+			$new_union->meta( 'dependencies', $dependencies );
 		}
 
 		foreach ( $union_prop_type->get_prop_types() as $prop_type ) {
