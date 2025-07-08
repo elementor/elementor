@@ -126,10 +126,10 @@ describe( '<StylesField />', () => {
 			expect( screen.getByRole( 'textbox', { name: 'padding' } ) ).toHaveProperty( 'placeholder', '' );
 		} );
 
-		it('should return empty value is there is no provider', () => {
+		it( 'should return empty value is there is no provider', () => {
 			// Arrange.
-			mockStyles( null as never)
-			
+			mockStyles( null as never );
+
 			// Act.
 			renderWithTheme(
 				<StylesField bind="padding" propDisplayName="Padding">
