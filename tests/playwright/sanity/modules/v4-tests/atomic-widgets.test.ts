@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import editorSelectors from '../../../selectors/editor-selectors';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Atomic Widgets @v4-tests', () => {
 	let editor: EditorPage;
@@ -108,7 +109,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 
 					// Take screenshot of empty editor preview frame after removal
 					await editor.closeNavigatorIfOpen();
-					await expect.soft( editor.getPreviewFrame().locator( '.page-content' ) ).toHaveScreenshot( `Widget-removed-editor.png` );
+					await expect.soft( editor.getPreviewFrame().locator( EditorSelectors.pageContent ) ).toHaveScreenshot( `Widget-removed-editor.png` );
 				} );
 
 				await test.step( 'Save page and check removed from UI', async () => {

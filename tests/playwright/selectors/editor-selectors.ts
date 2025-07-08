@@ -7,6 +7,7 @@ const EditorSelectors = {
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
 	pageTitle: '.entry-title >> nth=0',
+	pageContent: '.page-content',
 	pageHeader: '.page-header',
 	toast: '#elementor-toast',
 	addNewSection: '#elementor-add-new-section',
