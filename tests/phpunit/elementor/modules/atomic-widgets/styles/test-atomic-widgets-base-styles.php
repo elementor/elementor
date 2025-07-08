@@ -4,6 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Elements_Manager;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
@@ -22,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
+class Test_Atomic_Widgets_Base_Styles extends Elementor_Test_Base {
 	private Widgets_Manager $widgets_manager;
 	private MockObject $widgets_manager_mock;
 	private Elements_Manager $elements_manager;
@@ -86,7 +87,7 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 			->expects($this->once())
 			->method('register')
 			->with(
-				Atomic_Widget_Base_Styles::CSS_FILE_KEY,
+				Atomic_Widget_Base_Styles::STYLES_KEY,
 				$this->callback(function($callback) use ($widget, $element) {
 					$styles = $callback([1]);
 
@@ -102,6 +103,25 @@ class Test_Atomic_Widget_Base_Styles extends Elementor_Test_Base {
 
 		// Act
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager );
+	}
+
+	public function test_cache_invalidation_on_global_cache_clear() {
+		// Arrange.
+		( new Atomic_Widget_Base_Styles() )->register_hooks();
+
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate( [ Atomic_Widget_Base_Styles::STYLES_KEY ] );
+
+		// Assert.
+		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Base_Styles::STYLES_KEY ] ) );
+
+		// Act.
+		do_action('elementor/core/files/clear_cache' );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Base_Styles::STYLES_KEY ] ) );
 	}
 
 	/**
