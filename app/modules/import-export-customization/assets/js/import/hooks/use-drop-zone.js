@@ -48,7 +48,7 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading, onButtonCli
 			return;
 		}
 
-		if ( ! e.dataTransfer.files || e.dataTransfer.files.length === 0 ) {
+		if ( ! e.dataTransfer.files || 0 === e.dataTransfer.files.length ) {
 			return;
 		}
 
@@ -65,7 +65,7 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading, onButtonCli
 	};
 
 	const handleFileInputChange = ( e ) => {
-		if ( ! e.target.files || e.target.files.length === 0 ) {
+		if ( ! e.target.files || 0 === e.target.files.length ) {
 			return;
 		}
 
