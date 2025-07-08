@@ -2,7 +2,6 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
-import editorSelectors from '../../../selectors/editor-selectors';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Atomic Widgets @v4-tests', () => {
@@ -44,12 +43,12 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		editor = await wpAdmin.openNewPage();
 		await editor.openElementsPanel();
 
-		const elementsPanel = editor.page.locator( editorSelectors.panels.elements.elementorPanel );
+		const elementsPanel = editor.page.locator( EditorSelectors.panels.elements.elementorPanel );
 
 		await elementsPanel.hover();
 		await editor.page.mouse.wheel( 0, 300 );
 
-		await expect.soft( editor.page.locator( editorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
+		await expect.soft( editor.page.locator( EditorSelectors.panels.elements.v4elements ) ).toHaveScreenshot( 'widgets-panel.png' );
 	} );
 
 	atomicWidgets.forEach( ( widget ) => {
@@ -61,7 +60,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 			test( 'Widget is displayed in panel', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
-				const layout = editor.page.locator( editorSelectors.panels.elements.v4elements );
+				const layout = editor.page.locator( EditorSelectors.panels.elements.v4elements );
 				await expect( layout ).toBeVisible();
 				const container = layout.locator( '.title', { hasText: widget.title } );
 				await expect( container ).toBeVisible();
