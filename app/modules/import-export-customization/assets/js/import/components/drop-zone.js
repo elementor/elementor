@@ -51,6 +51,7 @@ const DropZone = ( {
 	error,
 	onButtonClick,
 	onFileChoose,
+	helperText = __( 'Upload a .zip file', 'elementor' ),
 	...props
 } ) => {
 	const {
@@ -158,7 +159,7 @@ const DropZone = ( {
 							color={ error ? 'error' : 'text.secondary' }
 							data-testid="helper-text"
 						>
-							{ error ? error.message : __( 'Upload a .zip file', 'elementor' ) }
+							{ error ? error.message : helperText }
 						</Typography>
 					</Stack>
 
@@ -188,6 +189,7 @@ DropZone.propTypes = {
 	} ),
 	onButtonClick: PropTypes.func,
 	onFileChoose: PropTypes.func,
+	helperText: PropTypes.string,
 };
 
 export default DropZone;
