@@ -1,0 +1,43 @@
+{% if settings.svg.content is not empty %}
+    {% set attributes = { 'class': (settings.classes | merge([ base_styles.base ]) ) | join(' '), 'fill': 'currentColor', 'style': 'width: 100%; height: 100%; overflow: unset;' } %}
+
+    {% if settings._cssid is not empty %}
+        {% set attributes = attributes | merge({ 'id': settings._cssid }) %}
+    {% endif %}
+
+    {% if settings.attributes is defined and settings.attributes is iterable %}
+        {% for item in settings.attributes %}
+            {% if item.key is not empty and item.value is not empty %}
+                {% set attributes = attributes | merge({ (item.key): item.value }) %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if settings.link.href %}
+        <a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
+    {% endif %}
+
+    {% set merged = settings.svg.attributes %}
+
+    {% for key, value in attributes %}
+        {%  set new_value = '' %}
+
+        {% if key in merged %}
+            {% set new_value = merged[key] ~ ' ' %}
+        {% endif %}
+
+        {% set merged = merged | merge({ (key): new_value ~ value }) %}
+    {%  endfor %}
+
+
+    <svg {% for key, value in merged %}
+        {{ key }}="{{ value }}"
+            {% endfor %}
+    >
+        {{ settings.svg.content|raw }}
+    </svg>
+
+    {% if settings.link.href %}
+        </a>
+    {% endif %}
+{% endif %}
