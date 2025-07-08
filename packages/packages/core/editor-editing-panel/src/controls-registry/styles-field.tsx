@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { ControlAdornmentsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
-import { type PropKey, type PropValue } from '@elementor/editor-props';
+import { type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { useStylesInheritanceChain } from '../contexts/styles-inheritance-context';
-import { useStylesField } from '../hooks/use-styles-field';
+import { useStylesFields } from '../hooks/use-styles-fields';
 import { StylesInheritanceIndicator } from '../styles-inheritance/components/styles-inheritance-indicator';
+import { ConditionalField, getDependencies } from './conditional-field';
 import { createTopLevelOjectType } from './create-top-level-object-type';
+import { getDisableState } from './get-dependency-state';
 
 export type StylesFieldProps = {
 	bind: PropKey;
@@ -17,24 +19,44 @@ export type StylesFieldProps = {
 };
 
 export const StylesField = ( { bind, placeholder, propDisplayName, children }: StylesFieldProps ) => {
-	const { value, setValue, canEdit } = useStylesField( bind, {
-		history: { propDisplayName },
-	} );
+	const stylesSchema = getStylesSchema();
+	const depList = getDependencies( stylesSchema[ bind ] );
 
 	const isVersion331Active = isExperimentActive( 'e_v_3_31' );
+
 	const stylesInheritanceChain = useStylesInheritanceChain( [ bind ] );
 
-	const stylesSchema = getStylesSchema();
+	const {
+		values: { [ bind as never ]: value, ...depValues },
+		setValues,
+		canEdit,
+	} = useStylesFields( [ ...depList, bind ] );
 
 	const propType = createTopLevelOjectType( { schema: stylesSchema } );
 
 	const values = { [ bind ]: value };
+
 	const [ actualValue ] = stylesInheritanceChain;
+
 	const placeholderValues = {
 		[ bind ]: isVersion331Active ? actualValue?.value : placeholder,
 	};
-	const setValues = ( newValue: Record< string, PropValue > ) => {
-		setValue( newValue[ bind ] );
+
+	const setValue = ( newValue: Record< string, PropValue > ) => {
+		setValues(
+			{ [ bind ]: newValue[ bind ] },
+			{
+				history: { propDisplayName },
+			}
+		);
+	};
+
+	const isDisabled = ( pt: PropType ) => {
+		if ( ! canEdit ) {
+			return true;
+		}
+
+		return getDisableState( pt, depValues );
 	};
 
 	return (
@@ -49,11 +71,13 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 			<PropProvider
 				propType={ propType }
 				value={ values }
-				setValue={ setValues }
+				setValue={ setValue }
 				placeholder={ placeholderValues }
-				isDisabled={ () => ! canEdit }
+				isDisabled={ isDisabled }
 			>
-				<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+				<PropKeyProvider bind={ bind }>
+					<ConditionalField>{ children }</ConditionalField>
+				</PropKeyProvider>
 			</PropProvider>
 		</ControlAdornmentsProvider>
 	);
