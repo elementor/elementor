@@ -110,7 +110,7 @@ class Test_Export extends Elementor_Test_Base {
 	public function test_successful_export_with_all_parameters() {
 		// Arrange
 		$this->init_rest_api();
-        $this->act_as_admin();
+		$this->act_as_admin();
 
 		$this->register_post_type( 'test_post_type', 'Test Post Type' );
 
