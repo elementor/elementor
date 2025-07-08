@@ -9,20 +9,20 @@ class Global_Classes {
 	private Collection $items;
 	private Collection $order;
 
-	private function __construct( array $data = array(), array $order = array() ) {
+	private function __construct( array $data = [], array $order = [] ) {
 		$this->items = Collection::make( $data );
 		$this->order = Collection::make( $order );
 	}
 
-	public static function make( array $items = array(), array $order = array() ): self {
+	public static function make( array $items = [], array $order = [] ): self {
 		return new static( $items, $order );
 	}
 
 	public function get(): array {
-		return array(
+		return [
 			'items' => $this->get_items()->all(),
 			'order' => $this->get_order()->all(),
-		);
+		];
 	}
 
 	public function get_items(): Collection {

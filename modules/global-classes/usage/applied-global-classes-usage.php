@@ -15,14 +15,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Applied_Global_Classes_Usage {
 
-	private array $title_cache = array();
+	private array $title_cache = [];
 
 	public function get(): array {
-		$total = array();
+		$total = [];
 		$class_ids = $this->get_all_class_ids();
 
-		if ( array() === $class_ids ) {
-			return array();
+		if ( [] === $class_ids ) {
+			return [];
 		}
 
 		Plugin::$instance->db->iterate_elementor_documents(
@@ -38,12 +38,12 @@ class Applied_Global_Classes_Usage {
 	}
 
 	public function get_detailed_usage( bool $with_page_info = false ): array {
-		$result = array();
-		$page_map = array();
+		$result = [];
+		$page_map = [];
 		$class_ids = $this->get_all_class_ids();
 
-		if ( array() === $class_ids ) {
-			return array();
+		if ( [] === $class_ids ) {
+			return [];
 		}
 
 		$this->initialize_tracking_maps( $class_ids, $result, $page_map );
@@ -67,7 +67,7 @@ class Applied_Global_Classes_Usage {
 	}
 
 	private function count_classes_in_document( $elements_data, array $class_ids ): array {
-		$counts = array();
+		$counts = [];
 		Plugin::$instance->db->iterate_data(
 			$elements_data,
 			function ( $element_data ) use ( $class_ids, &$counts ) {
@@ -96,8 +96,8 @@ class Applied_Global_Classes_Usage {
 
 	private function initialize_tracking_maps( array $class_ids, array &$result, array &$page_map ): void {
 		foreach ( $class_ids as $id ) {
-			$result[ $id ] = array();
-			$page_map[ $id ] = array();
+			$result[ $id ] = [];
+			$page_map[ $id ] = [];
 		}
 	}
 
@@ -131,11 +131,11 @@ class Applied_Global_Classes_Usage {
 
 			if ( null === $page_index ) {
 				$page_map[ $class_id ][ $page_id ] = count( $result[ $class_id ] );
-				$entry = array(
+				$entry = [
 					'pageId'   => $page_id,
-					'elements' => array( $element_id => true ),
+					'elements' => [ $element_id => true ],
 					'total'    => 1,
-				);
+				];
 
 				if ( $with_page_info ) {
 					$entry['title'] = $page_title;
@@ -158,7 +158,7 @@ class Applied_Global_Classes_Usage {
 				if ( ! Atomic_Elements_Utils::is_classes_prop( $prop ) ) {
 					return $carry;
 				}
-				$values = $element_data['settings'][ $name ]['value'] ?? array();
+				$values = $element_data['settings'][ $name ]['value'] ?? [];
 				$ids = array_intersect( $values, $class_ids );
 				foreach ( $ids as $id ) {
 					$carry[ $id ] ??= 0;
@@ -166,7 +166,7 @@ class Applied_Global_Classes_Usage {
 				}
 				return $carry;
 			},
-			array()
+			[]
 		);
 	}
 

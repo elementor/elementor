@@ -31,122 +31,122 @@ class Global_Classes_REST_API {
 	}
 
 	private function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
+			[
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
 				'permission_callback' => fn() => true,
-				'args' => array(
-					'context' => array(
+				'args' => [
+					'context' => [
 						'type' => 'string',
 						'required' => false,
 						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
-						'enum' => array(
+						'enum' => [
 							Global_Classes_Repository::CONTEXT_FRONTEND,
 							Global_Classes_Repository::CONTEXT_PREVIEW,
-						),
-					),
-				),
+						],
+					],
+				],
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
 				'permission_callback' => fn() => true,
-				'args' => array(),
-			),
-		) );
+				'args' => [],
+			],
+		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, [
+			[
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_usage( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-				'args' => array(
-					'context' => array(
+				'args' => [
+					'context' => [
 						'type' => 'string',
 						'required' => false,
 						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
-						'enum' => array(
+						'enum' => [
 							Global_Classes_Repository::CONTEXT_FRONTEND,
 							Global_Classes_Repository::CONTEXT_PREVIEW,
-						),
-					),
-				),
-			),
-		) );
+						],
+					],
+				],
+			],
+		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, array(
-			array(
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
+			[
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
-				'args' => array(
-					'context' => array(
+				'args' => [
+					'context' => [
 						'type' => 'string',
 						'required' => false,
 						'default' => Global_Classes_Repository::CONTEXT_FRONTEND,
-						'enum' => array(
+						'enum' => [
 							Global_Classes_Repository::CONTEXT_FRONTEND,
 							Global_Classes_Repository::CONTEXT_PREVIEW,
-						),
-					),
-					'changes' => array(
+						],
+					],
+					'changes' => [
 						'type' => 'object',
 						'required' => true,
 						'additionalProperties' => false,
-						'properties' => array(
-							'added' => array(
+						'properties' => [
+							'added' => [
 								'type' => 'array',
 								'required' => true,
-								'items' => array( 'type' => 'string' ),
-							),
-							'deleted' => array(
+								'items' => [ 'type' => 'string' ],
+							],
+							'deleted' => [
 								'type' => 'array',
 								'required' => true,
-								'items' => array( 'type' => 'string' ),
-							),
-							'modified' => array(
+								'items' => [ 'type' => 'string' ],
+							],
+							'modified' => [
 								'type' => 'array',
 								'required' => true,
-								'items' => array( 'type' => 'string' ),
-							),
-						),
-					),
-					'items' => array(
+								'items' => [ 'type' => 'string' ],
+							],
+						],
+					],
+					'items' => [
 						'required' => true,
 						'type' => 'object',
-						'additionalProperties' => array(
+						'additionalProperties' => [
 							'type' => 'object',
-							'properties' => array(
-								'id' => array(
+							'properties' => [
+								'id' => [
 									'type' => 'string',
 									'required' => true,
-								),
-								'variants' => array(
+								],
+								'variants' => [
 									'type' => 'array',
 									'required' => true,
-								),
-								'type' => array(
+								],
+								'type' => [
 									'type' => 'string',
-									'enum' => array( 'class' ),
+									'enum' => [ 'class' ],
 									'required' => true,
-								),
-								'label' => array(
+								],
+								'label' => [
 									'type' => 'string',
 									'required' => true,
-								),
-							),
-						),
-					),
-					'order' => array(
+								],
+							],
+						],
+					],
+					'order' => [
 						'required' => true,
 						'type' => 'array',
-						'items' => array( 'type' => 'string' ),
-					),
-				),
-			),
-		) );
+						'items' => [ 'type' => 'string' ],
+					],
+				],
+			],
+		] );
 	}
 
 	private function all( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
 		$classes = $this->get_repository()->context( $context )->all();
 		return Response_Builder::make( (object) $classes->get_items()->all() )
-								->set_meta( array( 'order' => $classes->get_order()->all() ) )
+								->set_meta( [ 'order' => $classes->get_order()->all() ] )
 								->build();
 	}
 
@@ -188,7 +188,7 @@ class Global_Classes_REST_API {
 
 		$changes_resolver = Global_Classes_Changes_Resolver::make(
 			$repository,
-			$request->get_param( 'changes' ) ?? array()
+			$request->get_param( 'changes' ) ?? []
 		);
 
 		$repository->put(
