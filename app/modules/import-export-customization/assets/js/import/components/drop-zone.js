@@ -16,6 +16,7 @@ const StyledDropZoneBox = styled( Box, {
 	transition: 'all 0.2s ease-in-out',
 	cursor: isLoading ? 'not-allowed' : 'normal',
 	position: 'relative',
+	borderRadius: '2px',
 } ) );
 
 const StyledContentStack = styled( Stack, {
