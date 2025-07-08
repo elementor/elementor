@@ -11,6 +11,7 @@ import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors'
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
 import v4Panel from './editor/v4-elements-panel';
+import editorSelectors from '../selectors/editor-selectors';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -232,7 +233,7 @@ export default class EditorPage extends BasePage {
 		await elementInPreview.hover();
 
 		// Click the delete button in the element overlay
-		const deleteButton = this.getPreviewFrame().locator( `${ elementSelector } .elementor-editor-element-setting.elementor-editor-element-remove` );
+		const deleteButton = this.getPreviewFrame().locator( editorSelectors.removeContainer );
 		await deleteButton.click();
 	}
 

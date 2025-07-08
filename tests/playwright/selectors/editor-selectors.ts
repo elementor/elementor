@@ -10,6 +10,7 @@ const EditorSelectors = {
 	pageHeader: '.page-header',
 	toast: '#elementor-toast',
 	addNewSection: '#elementor-add-new-section',
+	removeContainer: '.elementor-editor-element-setting.elementor-editor-element-remove',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
