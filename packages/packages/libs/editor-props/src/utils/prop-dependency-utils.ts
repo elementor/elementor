@@ -103,6 +103,6 @@ export function extractValue( path: string[], elementValues: PropValue ): Transf
 	}, elementValues ) as TransformablePropValue< PropKey >;
 }
 
-function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
+export function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
 	return 'relation' in term;
 }

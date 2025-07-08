@@ -22,6 +22,7 @@ import {
 	type Values,
 } from '../utils/prop-dependency-utils';
 import { createTopLevelOjectType } from './create-top-level-object-type';
+import { getDisableState } from './get-dependency-state';
 
 type SettingsFieldProps = {
 	bind: PropKey;
