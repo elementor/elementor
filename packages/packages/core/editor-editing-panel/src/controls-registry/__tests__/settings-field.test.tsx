@@ -10,7 +10,7 @@ import {
 import { useBoundProp } from '@elementor/editor-controls';
 import {
 	getElementLabel,
-	getElementSetting,
+	getElementSettings,
 	updateElementSettings,
 	useElementSettings,
 } from '@elementor/editor-elements';
@@ -35,7 +35,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	useElementSettings: jest.fn(),
 	updateElementSettings: jest.fn(),
 	getElementLabel: jest.fn(),
-	getElementSetting: jest.fn(),
+	getElementSettings: jest.fn(),
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
@@ -245,6 +245,8 @@ describe( '<SettingsField />', () => {
 	beforeEach( () => {
 		historyMock.beforeEach();
 
+		jest.useFakeTimers();
+
 		jest.mocked( useElementSettings ).mockReturnValue( {
 			text: {
 				$$type: 'string',
@@ -358,7 +360,8 @@ describe( '<SettingsField />', () => {
 			} );
 
 			const initialValue = { $$type: 'string', value: 'Initial Value' };
-			jest.mocked( getElementSetting ).mockReturnValue( initialValue );
+			jest.mocked( useElementSettings ).mockReturnValue( { [ bind ]: initialValue } );
+			jest.mocked( getElementSettings ).mockReturnValue( { [ bind ]: initialValue } );
 
 			renderWithTheme(
 				<ElementProvider element={ element } elementType={ elementType }>
@@ -373,6 +376,8 @@ describe( '<SettingsField />', () => {
 			const newValue = { $$type: 'string', value: 'New Value' };
 
 			fireEvent.change( input, { target: { value: newValue.value } } );
+
+			jest.runAllTimers();
 
 			// Assert - Setting updated and history created.
 			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
@@ -419,8 +424,6 @@ describe( 'Test <SettingsField /> isDisabled logic propagating correctly', () =>
 			Object.fromEntries( keys.map( ( key ) => [ key, values[ key ] ] ) )
 		);
 		jest.mocked( useElementSettings ).mockReturnValue( values );
-
-		// Act.
 		setup( { dependencies, values } );
 
 		const input = screen.getByRole( 'textbox', { name: bind } );
@@ -434,7 +437,624 @@ describe( 'Test <SettingsField /> isDisabled logic propagating correctly', () =>
 	} );
 } );
 
-const MockControl = () => {
+describe( 'SettingsField dependency logic', () => {
+	const historyMock = mockHistoryManager();
+
+	beforeEach( () => {
+		historyMock.beforeEach();
+
+		jest.mocked( isExperimentActive ).mockImplementation( () => {
+			return true;
+		} );
+	} );
+
+	afterEach( () => {
+		historyMock.afterEach();
+		jest.clearAllMocks();
+	} );
+
+	describe( 'Dependency extraction', () => {
+		it( 'should extract direct dependencies correctly', () => {
+			// Arrange.
+			const dependenciesPerTargetMapping = {
+				'control-a': [ 'control-b', 'control-c' ],
+				'control-b': [ 'control-d' ],
+				'control-c': [],
+				'control-d': [],
+			};
+
+			const propsSchema = {
+				'control-a': createMockPropType( { kind: 'plain' } ),
+				'control-b': createMockPropType( { kind: 'plain' } ),
+				'control-c': createMockPropType( { kind: 'plain' } ),
+				'control-d': createMockPropType( { kind: 'plain' } ),
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+
+			const elementSettings = {
+				'control-a': { $$type: 'string', value: 'value-a' },
+				'control-b': { $$type: 'string', value: 'value-b' },
+				'control-c': { $$type: 'string', value: 'value-c' },
+				'control-d': { $$type: 'string', value: 'value-d' },
+			};
+
+			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="control-a" propDisplayName={ __( 'Control A', 'elementor' ) }>
+						<MockControl bind="control-a" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'control-a' } );
+
+			fireEvent.change( input, { target: { value: 'new-value' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'control-a': { $$type: 'string', value: 'new-value' },
+				},
+				withHistory: false,
+			} );
+		} );
+
+		it( 'should extract nested object dependencies correctly', () => {
+			// Arrange.
+			const propsSchema = {
+				'parent-control': createMockPropType( {
+					kind: 'object',
+					shape: {
+						child1: createMockPropType( { kind: 'plain' } ),
+						child2: createMockPropType( { kind: 'plain' } ),
+					},
+				} ),
+				'dependent-control': createMockPropType( { kind: 'plain' } ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'parent-control': [ 'dependent-control' ],
+				'parent-control.child1': [ 'dependent-control' ],
+				'parent-control.child2': [],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+			const elementSettings = {
+				'parent-control': {
+					$$type: 'object',
+					value: {
+						child1: { $$type: 'string', value: 'child1-value' },
+						child2: { $$type: 'string', value: 'child2-value' },
+					},
+				},
+				'dependent-control': { $$type: 'string', value: 'dependent-value' },
+			};
+
+			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="parent-control" propDisplayName={ __( 'Parent Control', 'elementor' ) }>
+						<MockControl bind="parent-control" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'parent-control' } );
+
+			fireEvent.change( input, { target: { value: 'new-parent-value' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'parent-control': { $$type: 'string', value: 'new-parent-value' },
+				},
+				withHistory: false,
+			} );
+		} );
+	} );
+
+	describe( 'Dependent value updates', () => {
+		it( 'should update dependent control values when dependency condition is met', () => {
+			// Arrange.
+			const propsSchema = {
+				'source-control': createMockPropType( {
+					kind: 'union',
+					prop_types: {
+						string: createMockPropType( { kind: 'plain' } ),
+					},
+				} ),
+				'dependent-control': createMockPropType( {
+					kind: 'union',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						},
+					],
+				} ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'source-control': [ 'dependent-control' ],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+			const elementSettings = {
+				'source-control': { $$type: 'string', value: 'initial-value' },
+				'dependent-control': { $$type: 'string', value: 'dependent-value' },
+			};
+
+			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
+						<MockControl bind="source-control" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'source-control' } );
+
+			fireEvent.change( input, { target: { value: 'disable-trigger' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'dependent-control': null,
+					'source-control': { $$type: 'string', value: 'disable-trigger' },
+				},
+				withHistory: false,
+			} );
+		} );
+
+		it( 'should not update dependent control values when dependency condition is not met', () => {
+			// Arrange.
+			const propsSchema = {
+				'source-control': createMockPropType( { kind: 'plain' } ),
+				'dependent-control': createMockPropType( {
+					kind: 'plain',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						},
+					],
+				} ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'source-control': [ 'dependent-control' ],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+			const elementSettings = {
+				'source-control': { $$type: 'string', value: 'initial-value' },
+				'dependent-control': { $$type: 'string', value: 'dependent-value' },
+			};
+
+			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
+						<MockControl bind="source-control" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'source-control' } );
+
+			fireEvent.change( input, { target: { value: 'other-value' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'source-control': { $$type: 'string', value: 'other-value' },
+				},
+				withHistory: false,
+			} );
+		} );
+
+		it( 'should handle nested object dependent value updates', () => {
+			// Arrange.
+			const propsSchema = {
+				'source-control': createMockPropType( { kind: 'plain' } ),
+				'nested-object': createMockPropType( {
+					kind: 'object',
+					shape: {
+						child: createMockPropType( {
+							kind: 'plain',
+							dependencies: [
+								{
+									effect: 'disable',
+									relation: 'or',
+									terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+								},
+							],
+						} ),
+						sibling: createMockPropType( {
+							kind: 'plain',
+							dependencies: [],
+						} ),
+					},
+				} ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'source-control': [ 'nested-object.child' ],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+
+			jest.mocked( useElementSettings ).mockReturnValue( {
+				'source-control': { $$type: 'string', value: 'initial-value' },
+				'nested-object': {
+					$$type: 'object',
+					value: {
+						child: { $$type: 'string', value: 'child-value' },
+						sibling: { $$type: 'string', value: 'sibling-value' },
+					},
+				},
+			} );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
+						<MockControl bind="source-control" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'source-control' } );
+
+			fireEvent.change( input, { target: { value: 'disable-trigger' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'nested-object': {
+						$$type: 'object',
+						value: {
+							child: null,
+							sibling: {
+								$$type: 'string',
+								value: 'sibling-value',
+							},
+						},
+					},
+					'source-control': {
+						$$type: 'string',
+						value: 'disable-trigger',
+					},
+				},
+				withHistory: false,
+			} );
+		} );
+
+		it( 'should handle nested union dependent value updates', () => {
+			// Arrange.
+			const propsSchema = {
+				'source-control': createMockPropType( {
+					kind: 'plain',
+				} ),
+				'mid-control': createMockPropType( {
+					kind: 'plain',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [
+								{
+									path: [ 'source-control' ],
+									operator: 'ne',
+									value: 'initial-value-1',
+								},
+							],
+						},
+					],
+				} ),
+				'nested-union': createMockPropType( {
+					kind: 'union',
+					prop_types: {
+						string: createMockPropType( {
+							kind: 'plain',
+						} ),
+						object: createMockPropType( {
+							kind: 'object',
+							shape: {
+								number: createMockPropType( {
+									kind: 'plain',
+									dependencies: [
+										{
+											effect: 'disable',
+											relation: 'or',
+											terms: [
+												{
+													path: [ 'mid-control' ],
+													operator: 'not_exist',
+													value: null,
+												},
+											],
+										},
+									],
+								} ),
+							},
+						} ),
+					},
+				} ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'source-control': [ 'mid-control' ],
+				'mid-control': [ 'nested-union.number' ],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+
+			jest.mocked( useElementSettings ).mockReturnValue( {
+				'source-control': {
+					$$type: 'string',
+					value: 'initial-value-1',
+				},
+				'mid-control': {
+					$$type: 'string',
+					value: 'initial-value-2',
+				},
+				'nested-union': {
+					$$type: 'object',
+					value: {
+						number: { $$type: 'number', value: 1 },
+					},
+				},
+			} );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
+						<MockControl bind="source-control" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'source-control' } );
+
+			fireEvent.change( input, { target: { value: 'value-1' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'source-control': {
+						$$type: 'string',
+						value: 'value-1',
+					},
+					'mid-control': null,
+					'nested-union': {
+						$$type: 'object',
+						value: {
+							number: null,
+						},
+					},
+				},
+				withHistory: false,
+			} );
+		} );
+
+		it( 'should handle multiple dependent controls correctly', () => {
+			// Arrange.
+			const propsSchema = {
+				'source-control': createMockPropType( { kind: 'plain' } ),
+				'dependent-1': createMockPropType( {
+					kind: 'plain',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						},
+					],
+				} ),
+				'dependent-2': createMockPropType( {
+					kind: 'plain',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						},
+					],
+				} ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'source-control': [ 'dependent-1', 'dependent-2' ],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+
+			jest.mocked( useElementSettings ).mockReturnValue( {
+				'source-control': { $$type: 'string', value: 'initial-value' },
+				'dependent-1': { $$type: 'string', value: 'value-1' },
+				'dependent-2': { $$type: 'string', value: 'value-2' },
+			} );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
+						<MockControl bind="source-control" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'source-control' } );
+			fireEvent.change( input, { target: { value: 'disable-trigger' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'source-control': {
+						$$type: 'string',
+						value: 'disable-trigger',
+					},
+					'dependent-1': null,
+					'dependent-2': null,
+				},
+				withHistory: false,
+			} );
+		} );
+	} );
+
+	describe( 'Integration tests', () => {
+		it( 'should handle complex dependency chains correctly', () => {
+			// Arrange.
+			const propsSchema = {
+				'control-a': createMockPropType( { kind: 'plain' } ),
+				'control-b': createMockPropType( {
+					kind: 'plain',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [ { path: [ 'control-a' ], operator: 'eq', value: 'trigger-b' } ],
+						},
+					],
+				} ),
+				'control-c': createMockPropType( {
+					kind: 'plain',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [ { path: [ 'control-b' ], operator: 'eq', value: 'trigger-c' } ],
+						},
+					],
+				} ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'control-a': [ 'control-b' ],
+				'control-b': [ 'control-c' ],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+
+			jest.mocked( useElementSettings ).mockReturnValue( {
+				'control-a': { $$type: 'string', value: 'initial-a' },
+				'control-b': { $$type: 'string', value: 'initial-b' },
+				'control-c': { $$type: 'string', value: 'initial-c' },
+			} );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="control-a" propDisplayName={ __( 'Control A', 'elementor' ) }>
+						<MockControl bind="control-a" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'control-a' } );
+			fireEvent.change( input, { target: { value: 'trigger-b' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'control-a': { $$type: 'string', value: 'trigger-b' },
+					'control-b': null,
+				},
+				withHistory: false,
+			} );
+		} );
+
+		it( 'should preserve existing values when dependencies are not triggered', () => {
+			// Arrange.
+			const propsSchema = {
+				'source-control': createMockPropType( { kind: 'plain' } ),
+				'dependent-control': createMockPropType( {
+					kind: 'plain',
+					dependencies: [
+						{
+							effect: 'disable',
+							relation: 'or',
+							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						},
+					],
+				} ),
+			};
+
+			const dependenciesPerTargetMapping = {
+				'source-control': [ 'dependent-control' ],
+			};
+
+			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const element = mockElement();
+
+			const initialDependentValue = { $$type: 'string', value: 'preserved-value' };
+			const elementSettings = {
+				'source-control': { $$type: 'string', value: 'initial-value' },
+				'dependent-control': initialDependentValue,
+			};
+			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+
+			// Act.
+			renderWithTheme(
+				<ElementProvider element={ element } elementType={ elementType }>
+					<SettingsField bind="source-control" propDisplayName={ __( 'Source Control', 'elementor' ) }>
+						<MockControl bind="source-control" />
+					</SettingsField>
+				</ElementProvider>
+			);
+
+			const input = screen.getByRole( 'textbox', { name: 'source-control' } );
+			fireEvent.change( input, { target: { value: 'other-value' } } );
+
+			// Assert.
+			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
+				id: element.id,
+				props: {
+					'source-control': { $$type: 'string', value: 'other-value' },
+				},
+				withHistory: false,
+			} );
+		} );
+	} );
+} );
+
+const MockControl = ( { bind: controlBind = bind }: { bind?: string } = {} ) => {
 	const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
 
 	const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -442,7 +1062,13 @@ const MockControl = () => {
 	};
 
 	return (
-		<input type="text" aria-label={ bind } value={ value ?? '' } onChange={ handleChange } disabled={ disabled } />
+		<input
+			type="text"
+			aria-label={ controlBind }
+			value={ value ?? '' }
+			onChange={ handleChange }
+			disabled={ disabled }
+		/>
 	);
 };
 
