@@ -8,9 +8,9 @@ import {
 import { FontVariableControl } from './controls/font-variable-control';
 import { usePropFontVariableAction } from './hooks/use-prop-font-variable-action';
 import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
+import { inheritanceTransformer } from './transformers/inheritance-transformer';
 import { variableTransformer } from './transformers/variable-transformer';
 import { hasAssignedFontVariable } from './utils';
-import { inheritanceTransformer } from './transformers/inheritance-transformer';
 
 const { registerPopoverAction } = controlActionsMenu;
 

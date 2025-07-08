@@ -9,9 +9,9 @@ import { ColorVariableControl } from './controls/color-variable-control';
 import { usePropColorVariableAction } from './hooks/use-prop-color-variable-action';
 import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
 import { registerRepeaterInjections } from './repeater-injections';
+import { inheritanceTransformer } from './transformers/inheritance-transformer';
 import { variableTransformer } from './transformers/variable-transformer';
 import { hasAssignedColorVariable } from './utils';
-import { inheritanceTransformer } from './transformers/inheritance-transformer';
 
 const { registerPopoverAction } = controlActionsMenu;
 
