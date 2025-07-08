@@ -10,7 +10,7 @@ export default function BaseLayout( props ) {
 		...rest
 	} = props;
 
-	const uiTheme = elementorAppConfig[ 'import-export-customization']?.uiTheme || 'auto';
+	const uiTheme = elementorAppConfig[ 'import-export-customization' ]?.uiTheme || 'auto';
 	const isDarkMode = 'dark' === uiTheme || ( 'auto' === uiTheme && window.matchMedia && window.matchMedia( `(prefers-color-scheme: dark)` ).matches );
 
 	const colorScheme = isDarkMode ? 'dark' : 'light';
