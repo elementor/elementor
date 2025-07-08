@@ -4,7 +4,7 @@ import { Box, Typography, CircularProgress, Stack, Link, styled } from '@element
 import { UploadIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 import useDropZone from '../hooks/use-drop-zone';
-import { isValidFileType, getAcceptedFileTypes } from '../utils/file-validation';
+import { getAcceptedFileTypes } from '../utils/file-validation';
 
 const StyledDropZoneBox = styled( Box, {
 	shouldForwardProp: ( prop ) => ! [ 'isDragOver', 'isLoading' ].includes( prop ),
@@ -44,49 +44,18 @@ const DropZone = ( {
 		fileInputId,
 		handleDragEnter,
 		handleDragLeave,
+		handleDragOver,
 		handleDrop,
+		handleFileInputChange,
+		handleUploadClick,
 	} = useDropZone( {
 		onFileSelect,
 		onError,
 		filetypes,
 		isLoading,
+		onButtonClick,
+		onFileChoose,
 	} );
-
-	const handleDragOver = ( e ) => {
-		e.preventDefault();
-		e.stopPropagation();
-	};
-
-	const handleFileInputChange = ( e ) => {
-		const file = e.target.files[ 0 ];
-		if ( ! file ) {
-			return;
-		}
-
-		if ( ! isValidFileType( file.type, file.name, filetypes ) ) {
-			onError( {
-				id: 'file_not_allowed',
-				message: __( 'This file type is not allowed', 'elementor' ),
-			} );
-			return;
-		}
-
-		onFileSelect( file, e, 'browse' );
-
-		if ( onFileChoose ) {
-			onFileChoose( file );
-		}
-	};
-
-	const handleUploadClick = ( e ) => {
-		if ( onButtonClick ) {
-			onButtonClick( e );
-		}
-
-		if ( fileInputRef.current ) {
-			fileInputRef.current.click();
-		}
-	};
 
 	return (
 		<Box

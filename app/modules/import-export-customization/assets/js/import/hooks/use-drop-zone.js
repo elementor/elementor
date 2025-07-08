@@ -2,7 +2,7 @@ import { useState, useRef, useId } from 'react';
 import { __ } from '@wordpress/i18n';
 import { isValidFileType } from '../utils/file-validation';
 
-const useDropZone = ( { onFileSelect, onError, filetypes, isLoading } ) => {
+const useDropZone = ( { onFileSelect, onError, filetypes, isLoading, onButtonClick, onFileChoose } ) => {
 	const [ isDragOver, setIsDragOver ] = useState( false );
 	const [ dragCounter, setDragCounter ] = useState( 0 );
 	const fileInputRef = useRef( null );
@@ -30,6 +30,11 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading } ) => {
 		}
 	};
 
+	const handleDragOver = ( e ) => {
+		e.preventDefault();
+		e.stopPropagation();
+	};
+
 	const handleDrop = ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -53,13 +58,47 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading } ) => {
 		}
 	};
 
+	const handleFileInputChange = ( e ) => {
+		const file = e.target.files[ 0 ];
+		if ( ! file ) {
+			return;
+		}
+
+		if ( ! isValidFileType( file.type, file.name, filetypes ) ) {
+			onError( {
+				id: 'file_not_allowed',
+				message: __( 'This file type is not allowed', 'elementor' ),
+			} );
+			return;
+		}
+
+		onFileSelect( file, e, 'browse' );
+
+		if ( onFileChoose ) {
+			onFileChoose( file );
+		}
+	};
+
+	const handleUploadClick = ( e ) => {
+		if ( onButtonClick ) {
+			onButtonClick( e );
+		}
+
+		if ( fileInputRef.current ) {
+			fileInputRef.current.click();
+		}
+	};
+
 	return {
 		isDragOver,
 		fileInputRef,
 		fileInputId,
 		handleDragEnter,
 		handleDragLeave,
+		handleDragOver,
 		handleDrop,
+		handleFileInputChange,
+		handleUploadClick,
 	};
 };
 
