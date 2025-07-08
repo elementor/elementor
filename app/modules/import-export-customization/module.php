@@ -13,6 +13,7 @@ use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\App\Modules\ImportExportCustomization\Data\Controller;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -594,7 +595,14 @@ class Module extends BaseModule {
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 			'restApiBaseUrl' => Controller::get_base_url(),
+			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 		];
+	}
+
+	private function get_elementor_ui_theme_preference() {
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+
+		return $editor_preferences->get_model()->get_settings( 'ui_theme' );
 	}
 
 	/**
