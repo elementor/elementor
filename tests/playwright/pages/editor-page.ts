@@ -11,7 +11,6 @@ import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors'
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
 import v4Panel from './editor/v4-elements-panel';
-import editorSelectors from '../selectors/editor-selectors';
 
 let $e: $eType;
 let elementor: ElementorType;
