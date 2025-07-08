@@ -104,16 +104,17 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
 			'item_prop_type' => $this->get_item_type(),
+			'dependencies' => $this->get_meta_item( 'dependencies', [] ),
 		];
 	}
 
 	abstract protected function define_item_type(): Prop_Type;
 
-	public function dependencies( ?Dependency_Manager $manager = null ): self {
-		$this->dependencies = $manager->get();
+	public function dependencies( Dependency_Manager $manager ): self {
+		$dependencies = $manager->get();
 
-		if ( ! empty( $this->dependencies ) ) {
-			$this->meta( 'dependencies', $this->dependencies );
+		if ( ! empty( $dependencies ) ) {
+			$this->meta( 'dependencies', $dependencies );
 		}
 
 		return $this;
