@@ -28,6 +28,7 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
+		'send_app_promotion',
 		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
@@ -426,6 +427,85 @@ class Admin_Notices extends Module {
 
 	private function site_has_woocommerce() {
 		return class_exists( 'WooCommerce' );
+	}
+
+	private function get_installed_form_plugin_name() {
+		$form_plugins = [
+			'WPFORMS_VERSION' => 'WPForms',
+			'WPCF7_VERSION' => 'Contact Form 7',
+		];
+
+		$form_plugin_classes = [
+			'\GFCommon' => 'Gravity Forms',
+			'\Ninja_Forms' => 'Ninja Forms',
+		];
+
+		foreach ( $form_plugins as $constant => $name ) {
+			if ( defined( $constant ) ) {
+				return $name;
+			}
+		}
+
+		foreach ( $form_plugin_classes as $class => $name ) {
+			if ( class_exists( $class ) ) {
+				return $name;
+			}
+		}
+
+		return 'form';
+	}
+
+	private function notice_send_app_promotion() {
+		$notice_id = 'send_app_promotion';
+
+		if ( ! $this->site_has_forms_plugins() ) {
+			return false;
+		}
+
+		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$plugin_file_path = 'send/send-app.php';
+		$plugin_slug = 'send';
+
+		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
+		if ( empty( $cta_data ) ) {
+			return false;
+		}
+
+		$form_plugin_name = $this->get_installed_form_plugin_name();
+		$title = sprintf(
+			/* translators: %s: Form plugin name */
+			esc_html__( 'Turn %s leads into loyal shoppers', 'elementor' ),
+			$form_plugin_name
+		);
+
+		$options = [
+			'title' => $title,
+			'description' => esc_html__( 'Collecting leads is just the beginning. With Send by Elementor, you can manage contacts, launch automations, and turn form submissions into sales.', 'elementor' ),
+			'id' => $notice_id,
+			'type' => 'cta',
+			'button' => [
+				'text' => $cta_data['text'],
+				'url' => $cta_data['url'],
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/send-app-promotion/',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
 	}
 
 	private function notice_ally_pages_promotion() {
