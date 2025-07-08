@@ -12,7 +12,7 @@ export default function BaseLayout( props ) {
 
 	const isDarkMode = document.body.classList.contains( 'eps-theme-dark' );
 	const colorScheme = isDarkMode ? 'dark' : 'light';
-    const isRTL = elementorCommon?.config?.isRTL || false;
+        const isRTL = elementorCommon?.config?.isRTL || false;
 
 	return (
 		<DirectionProvider rtl={ isRTL }>
