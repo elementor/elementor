@@ -1,4 +1,11 @@
-import { type Dependency, type DependencyTerm, type PropValue, type TransformablePropValue } from '../types';
+import {
+	type Dependency,
+	type DependencyTerm,
+	type PropKey,
+	type PropValue,
+	type TransformablePropValue,
+} from '../types';
+import { isTransformable } from './is-transformable';
 
 type ParsedTerm = DependencyTerm;
 
@@ -12,11 +19,13 @@ export function shouldApplyEffect( { relation, terms }: Dependency, values: Prop
 	const method = getRelationMethod( relation );
 
 	return terms[ method ]( ( term: ParsedTerm | Dependency ) =>
-		isDependency( term ) ? shouldApplyEffect( term, values ) : evaluateTerm( term, getValue( term.path, values ) )
+		isDependency( term )
+			? shouldApplyEffect( term, values )
+			: evaluateTerm( term, extractValue( term.path, values )?.value )
 	);
 }
 
-export function evaluateTerm( term: DependencyTerm, actualValue: PropValue ) {
+export function evaluateTerm( term: DependencyTerm, actualValue: unknown ) {
 	const { value: valueToCompare, operator } = term;
 
 	switch ( operator ) {
@@ -45,7 +54,7 @@ export function evaluateTerm( term: DependencyTerm, actualValue: PropValue ) {
 				return false;
 			}
 
-			return valueToCompare.includes( actualValue ) === ( 'in' === operator );
+			return valueToCompare.includes( actualValue as never ) === ( 'in' === operator );
 
 		case 'contains':
 		case 'ncontains':
@@ -69,7 +78,7 @@ export function evaluateTerm( term: DependencyTerm, actualValue: PropValue ) {
 	}
 }
 
-function isNumber( value: PropValue ): value is number {
+function isNumber( value: unknown ): value is number {
 	return typeof value === 'number' && ! isNaN( value );
 }
 
@@ -86,14 +95,14 @@ function getRelationMethod( relation: Relation ) {
 	}
 }
 
-function getValue( path: string[], elementValues: PropValue ): PropValue | null {
-	return path.reduce( ( acc, key ) => {
-		return 'object' === typeof acc && acc !== null && key in acc
-			? ( ( acc[ key as keyof typeof acc ] as TransformablePropValue< string > )?.value as PropValue )
-			: null;
-	}, elementValues );
+export function extractValue( path: string[], elementValues: PropValue ): TransformablePropValue< PropKey > | null {
+	return path.reduce( ( acc, key, index ) => {
+		const value = acc?.[ key as keyof typeof acc ] as PropValue | null;
+
+		return index !== path.length - 1 && isTransformable( value ) ? value.value ?? null : value;
+	}, elementValues ) as TransformablePropValue< PropKey >;
 }
 
-function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
+export function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
 	return 'relation' in term;
 }

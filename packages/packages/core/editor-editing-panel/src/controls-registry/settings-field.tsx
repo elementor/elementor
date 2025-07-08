@@ -5,50 +5,67 @@ import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
 	getElementLabel,
-	getElementSetting,
+	getElementSettings,
 	updateElementSettings,
 	useElementSettings,
 } from '@elementor/editor-elements';
-import { type PropKey, type PropType, type PropValue, shouldApplyEffect } from '@elementor/editor-props';
+import { type PropKey, type Props, type PropType, type PropValue } from '@elementor/editor-props';
 import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
+import {
+	extractOrderedDependencies,
+	isDependencyEffectActive,
+	updateValues,
+	type Values,
+} from '../utils/prop-dependency-utils';
 import { createTopLevelOjectType } from './create-top-level-object-type';
 
-type Props = {
+type SettingsFieldProps = {
 	bind: PropKey;
 	propDisplayName: string;
 	children: React.ReactNode;
 };
 
-export const SettingsField = ( { bind, children, propDisplayName }: Props ) => {
-	const { element, elementType } = useElement();
+export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
+	const {
+		element: { id: elementId },
+		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
+	} = useElement();
 
-	const elementSettingValues = useElementSettings< PropValue >( element.id, Object.keys( elementType.propsSchema ) );
+	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
 
-	const value = { [ bind ]: elementSettingValues?.[ bind ] };
+	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
-	const propType = createTopLevelOjectType( { schema: elementType.propsSchema } );
+	const propType = createTopLevelOjectType( { schema: propsSchema } );
 
 	const undoableUpdateElementProp = useUndoableUpdateElementProp( {
-		propKey: bind,
-		elementId: element.id,
+		elementId,
 		propDisplayName,
 	} );
 
-	const setValue = ( newValue: Record< string, PropValue > ) => {
+	const setValue = ( newValue: Values ) => {
 		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 		if ( isVersion331Active ) {
-			undoableUpdateElementProp( { newValue } );
+			const dependents = extractOrderedDependencies(
+				bind,
+				propsSchema,
+				elementSettingValues,
+				dependenciesPerTargetMapping
+			);
+
+			const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues );
+
+			undoableUpdateElementProp( settings );
 		} else {
-			updateElementSettings( { id: element.id, props: newValue } );
+			updateElementSettings( { id: elementId, props: newValue } );
 		}
 	};
 
-	const isDisabled = ( prop: PropType ) => getDisableState( prop, elementSettingValues );
+	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues, 'disable' );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
@@ -57,43 +74,23 @@ export const SettingsField = ( { bind, children, propDisplayName }: Props ) => {
 	);
 };
 
-function getDisableState( propType: PropType, elementValues: PropValue ): boolean | undefined {
-	const disablingDependencies = propType.dependencies?.filter( ( { effect } ) => effect === 'disable' ) || [];
-
-	if ( ! disablingDependencies.length ) {
-		return false;
-	}
-
-	if ( disablingDependencies.length > 1 ) {
-		throw new Error( 'Multiple disabling dependencies are not supported.' );
-	}
-
-	return shouldApplyEffect( disablingDependencies[ 0 ], elementValues );
-}
-
-type UndoableUpdateElementSettingsArgs = {
-	newValue: Record< string, PropValue >;
-};
-
 function useUndoableUpdateElementProp( {
-	propKey,
 	elementId,
 	propDisplayName,
 }: {
-	propKey: PropKey;
 	elementId: ElementID;
 	propDisplayName: string;
 } ) {
 	return useMemo( () => {
 		return undoable(
 			{
-				do: ( { newValue }: UndoableUpdateElementSettingsArgs ) => {
-					const prevPropValue = getElementSetting( elementId, propKey ) as PropValue;
+				do: ( newSettings: Props ) => {
+					const prevPropValue = getElementSettings( elementId, Object.keys( newSettings ) ) as Props;
 
-					updateElementSettings( { id: elementId, props: { ...newValue }, withHistory: false } );
+					updateElementSettings( { id: elementId, props: newSettings as Props, withHistory: false } );
 					setDocumentModifiedStatus( true );
 
-					return { [ propKey ]: prevPropValue };
+					return prevPropValue;
 				},
 
 				undo: ( {}, prevProps ) => {
@@ -106,5 +103,5 @@ function useUndoableUpdateElementProp( {
 				subtitle: __( '%s edited', 'elementor' ).replace( '%s', propDisplayName ),
 			}
 		);
-	}, [ propKey, elementId, propDisplayName ] );
+	}, [ elementId, propDisplayName ] );
 }
