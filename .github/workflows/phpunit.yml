@@ -1,17 +1,6 @@
 name: PHPUnit
 
 on:
-  push:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
-    branches:
-      - 'main'
-      - '3.*'
   pull_request:
     paths-ignore:
       - '**.md'
@@ -59,7 +48,7 @@ jobs:
     name: PHPUnit - WordPress ${{ matrix.wordpress_versions }} - PHP version ${{ matrix.php_versions }}
     env:
       WP_TESTS_DIR: /tmp/wordpress-tests-lib
-      COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' && github.event_name == 'push' }}
+      COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' }}
     services:
       mysql:
         image: mysql:5.7
