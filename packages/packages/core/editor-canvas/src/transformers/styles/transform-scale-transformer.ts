@@ -7,5 +7,5 @@ type TransformScale = {
 };
 
 export const transformScaleTransformer = createTransformer( ( value: TransformScale ) => {
-	return `scale3d(${ value.x }, ${ value.y }, ${ value.z })`;
+	return `scale3d(${ value.x ?? 1 }, ${ value.y ?? 1 }, ${ value.z ?? 1 })`;
 } );
