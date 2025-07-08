@@ -23,12 +23,7 @@
 			.elementor-icon-box-wrapper {
 				text-align: end;
 				flex-direction: getValueByDirection(row-reverse, row);
-			}
-
-			.elementor-icon-box-icon {
-				margin-left: var(--icon-box-icon-margin, 15px);
-				margin-right: 0;
-				margin-block: unset;
+				gap: var(--icon-box-icon-margin, 15px);
 			}
 		}
 
@@ -37,26 +32,16 @@
 			.elementor-icon-box-wrapper {
 				text-align: start;
 				flex-direction: getValueByDirection(row, row-reverse);
-			}
-
-			.elementor-icon-box-icon {
-				margin-right: var(--icon-box-icon-margin, 15px);
-				margin-left: 0;
-				margin-block: unset;
+				gap: var(--icon-box-icon-margin, 15px);
 			}
 		}
 
 		&top {
 
 			.elementor-icon-box-wrapper {
-				display: block;
 				text-align: center;
-				flex-direction: unset;
-			}
-
-			.elementor-icon-box-icon {
-				margin-block-end: var(--icon-box-icon-margin, 15px);
-				margin-inline: auto;
+				flex-direction: column;
+				gap: var(--icon-box-icon-margin, 15px);
 			}
 		}
 	}
@@ -65,13 +50,9 @@
 .elementor-widget-icon-box {
 
 	.elementor-icon-box-wrapper {
-		display: block;
 		text-align: center;
-	}
-
-	.elementor-icon-box-icon {
-		margin-block-end: var(--icon-box-icon-margin, 15px);
-		margin-inline: auto;
+		flex-direction: column;
+		gap: var(--icon-box-icon-margin, 15px);
 	}
 
 	@include icon-position('');
@@ -105,8 +86,7 @@
 			&right {
 
 				.elementor-icon-box-icon {
-					display: block;
-					flex: unset;
+					flex-direction: column;
 				}
 			}
 		}
