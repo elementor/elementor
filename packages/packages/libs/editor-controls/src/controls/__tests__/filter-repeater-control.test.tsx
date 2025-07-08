@@ -1,17 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, createMockSingleSizeFilterPropType, renderControl } from 'test-utils';
-import {
-	blurFilterPropTypeUtil,
-	brightnessFilterPropTypeUtil,
-	contrastFilterPropTypeUtil,
-	filterPropTypeUtil,
-	grayscaleFilterPropTypeUtil,
-	hueRotateFilterPropTypeUtil,
-	invertFilterPropTypeUtil,
-	saturateFilterPropTypeUtil,
-	sepiaFilterPropTypeUtil,
-	sizePropTypeUtil,
-} from '@elementor/editor-props';
+import { cssFunctionPropUtil, filterPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { FilterRepeaterControl } from '../filter-repeater-control';
@@ -50,29 +39,37 @@ const propType = createMockPropType( {
 } );
 
 const mockFilter = filterPropTypeUtil.create( [
-	blurFilterPropTypeUtil.create( {
-		blur: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'blur' ),
+		args: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
 	} ),
-	brightnessFilterPropTypeUtil.create( {
-		brightness: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'brightness' ),
+		args: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
 	} ),
-	contrastFilterPropTypeUtil.create( {
-		contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'contrast' ),
+		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
 	} ),
-	grayscaleFilterPropTypeUtil.create( {
-		grayscale: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'grayscale' ),
+		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
 	} ),
-	invertFilterPropTypeUtil.create( {
-		invert: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'invert' ),
+		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
 	} ),
-	sepiaFilterPropTypeUtil.create( {
-		sepia: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'sepia' ),
+		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
 	} ),
-	saturateFilterPropTypeUtil.create( {
-		saturate: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'saturate' ),
+		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
 	} ),
-	hueRotateFilterPropTypeUtil.create( {
-		'hue-rotate': sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+	cssFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'hue-rotate' ),
+		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
 	} ),
 ] );
 
