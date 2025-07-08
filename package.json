@@ -33,6 +33,8 @@
 		"test:playwright:elements-regression:linux": "node ./tests/elements-regression/scripts/run-on-linux.js",
 		"test:playwright:elements-regression:linux:update-snapshots": "npm run test:playwright:elements-regression:linux -- -u",
 		"test:jest": "jest --config='./tests/jest/jest.config.js'",
+		"test:packages": "cd packages && npm run test",
+		"test": "npm run test:jest && npm run test:packages",
 		"scripts": "grunt scripts",
 		"scripts:watch": "grunt watch_scripts",
 		"styles": "grunt styles",
