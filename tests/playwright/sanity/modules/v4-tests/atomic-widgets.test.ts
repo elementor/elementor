@@ -85,7 +85,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					if ( 'e-youtube' === widget.name ) {
 						await editor.isUiStable( editor.page.locator( containerSelector ) );
 					}
-
 					await expect.soft( editor.page.locator( containerSelector ) )
 						.toHaveScreenshot( `${ widget.name }-published.png` );
 				} );
@@ -107,24 +106,24 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await containerInPreview.click();
 					await editor.removeElementWithHandle( containerId );
 
-					// Verify widget is no longer visible in editor
-					const widgetInPreview = editor.getPreviewFrame().locator( widgetSelector );
-					await expect( widgetInPreview ).not.toBeVisible();
+					// Take screenshot of empty editor preview frame after removal
+					await editor.closeNavigatorIfOpen();
+					await expect.soft( editor.getPreviewFrame().locator( '.page-content' ) ).toHaveScreenshot( `Widget-removed-editor.png` );
 				} );
 
 				await test.step( 'Save page and check removed from UI', async () => {
 					await editor.publishPage();
 					await editor.viewPage();
 
-					// Check widget is not visible in frontend
-					await expect( editor.page.locator( widgetSelector ) ).not.toBeVisible();
+					// Take screenshot of empty frontend page after removal
+					await expect.soft( editor.page.locator( 'body' ) ).toHaveScreenshot( `widget-removed-frontend.png` );
 				} );
 
 				await test.step( 'Refresh page and verify widget still absent', async () => {
 					await editor.page.reload();
 
-					// Double-check that the widget is still not present
-					await expect( editor.page.locator( widgetSelector ) ).not.toBeVisible();
+					// Take screenshot of empty frontend page after refresh
+					await expect.soft( editor.page.locator( 'body' ) ).toHaveScreenshot( `widget-removed-after-refresh.png` );
 				} );
 			} );
 		} );
