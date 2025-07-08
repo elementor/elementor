@@ -31,6 +31,8 @@ describe( 'useStylesFields', () => {
 	beforeEach( () => {
 		historyMock.beforeEach();
 
+		jest.useFakeTimers();
+
 		jest.mocked( useElement ).mockReturnValue( {
 			element: {
 				id: 'test-element-id',
@@ -76,6 +78,8 @@ describe( 'useStylesFields', () => {
 
 		// Act.
 		result.current.setValues( { 'test-prop': 'test-value' }, { history: { propDisplayName: 'Test Prop' } } );
+
+		jest.runAllTimers();
 
 		// Assert - Style created.
 		const createArgs = {
@@ -171,6 +175,8 @@ describe( 'useStylesFields', () => {
 		act( () => {
 			result.current.setValues( { 'prop-1': 'updated-value' }, { history: { propDisplayName: 'Prop 1' } } );
 		} );
+
+		jest.runAllTimers();
 
 		// Assert.
 		const historyItem = historyMock.instance.get();
