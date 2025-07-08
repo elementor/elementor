@@ -18,6 +18,21 @@ class Manager {
 	const EFFECT_DISABLE = 'disable';
 	const EFFECT_HIDE = 'hide';
 
+	const OPERATORS = [
+		'lt',
+		'lte',
+		'eq',
+		'ne',
+		'gte',
+		'gt',
+		'exists',
+		'not_exist',
+		'in',
+		'nin',
+		'contains',
+		'ncontains',
+	];
+
 	/**
 	 * @var array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
@@ -64,6 +79,10 @@ class Manager {
 	public function where( array $config ): self {
 		if ( ! isset( $config['operator'] ) || ! isset( $config['path'] ) ) {
 			Utils::safe_throw( 'Term missing mandatory configurations' );
+		}
+
+		if ( ! in_array( $config['operator'], self::OPERATORS, true ) ) {
+			Utils::safe_throw( "Invalid operator: {$config['operator']}." );
 		}
 
 		$term = [
