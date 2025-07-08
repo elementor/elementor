@@ -20,7 +20,7 @@ export const inheritanceTransformer = createTransformer( ( id: string ) => {
 	const css = resolveCssVariable( id, variable );
 
 	return (
-		<Stack direction="row" spacing={ 0.5 } alignItems="center">
+		<Stack direction="row" spacing={ 0.5 } sx={ { paddingInline: '1px' } } alignItems="center">
 			{ showColorIndicator && <ColorIndicator size="inherit" value={ variable.value } /> }
 			<Typography variant="caption" overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis">
 				{ css }
