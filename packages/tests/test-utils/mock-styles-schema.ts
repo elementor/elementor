@@ -1019,7 +1019,7 @@ export const mockStylesSchema = {
 			meta: {},
 			settings: {},
 			prop_types: {
-				...createMockSingleSizeFilterPropType( 'blur', 'radius', [
+				...createMockSingleSizeFilterPropType( 'blur', 'blur', [
 					'px',
 					'em',
 					'rem',
@@ -1029,7 +1029,7 @@ export const mockStylesSchema = {
 					'vmin',
 					'vmax',
 				] ),
-				...createMockSingleSizeFilterPropType( 'brightness', 'amount', [ '%' ] ),
+				...createMockSingleSizeFilterPropType( 'brightness', 'brightness', [ '%' ] ),
 				...createMockSingleSizeFilterPropType( 'contrast', 'contrast', [ '%' ] ),
 				...createMockSingleSizeFilterPropType( 'grayscale', 'grayscale', [ '%' ] ),
 				...createMockSingleSizeFilterPropType( 'invert', 'invert', [ '%' ] ),

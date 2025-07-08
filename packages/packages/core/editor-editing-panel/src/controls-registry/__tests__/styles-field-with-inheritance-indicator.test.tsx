@@ -18,7 +18,7 @@ import { screen } from '@testing-library/react';
 import { ControlLabel } from '../../components/control-label';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesInheritanceChain } from '../../contexts/styles-inheritance-context';
-import { useStylesField } from '../../hooks/use-styles-field';
+import { useStylesFields } from '../../hooks/use-styles-fields';
 import { StylesField } from '../styles-field';
 
 jest.mock( '@elementor/editor-elements' );
@@ -32,7 +32,7 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 	},
 } ) );
 
-jest.mock( '../../hooks/use-styles-field' );
+jest.mock( '../../hooks/use-styles-fields' );
 jest.mock( '../../contexts/classes-prop-context' );
 jest.mock( '../../contexts/style-context' );
 jest.mock( '../../contexts/styles-inheritance-context' );
@@ -192,7 +192,11 @@ describe( 'StylesField with inheritance', () => {
 	] )( 'should handle $state', ( { style, stylesInheritance, expectedLabel } ) => {
 		// Arrange.
 		jest.mocked( useStylesInheritanceChain ).mockReturnValue( stylesInheritance );
-		jest.mocked( useStylesField ).mockReturnValue( { value: style.value, setValue: jest.fn() } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { 'font-size': style.value },
+			setValues: jest.fn(),
+			canEdit: true,
+		} );
 		jest.mocked( useStyle ).mockReturnValue( {
 			id: style.id,
 			provider: createMockStylesProvider( { key: `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }1` } ),
@@ -203,7 +207,7 @@ describe( 'StylesField with inheritance', () => {
 
 		// Act.
 		const { container } = renderWithTheme(
-			<StylesField bind="test" propDisplayName="Label">
+			<StylesField bind="font-size" propDisplayName="Label">
 				<ControlLabel>Label</ControlLabel>
 			</StylesField>
 		);

@@ -282,10 +282,10 @@ describe( 'styles prop resolver', () => {
 			props: {
 				filter: filterPropTypeUtil.create( [
 					blurFilterPropTypeUtil.create( {
-						radius: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
+						blur: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
 					} ),
 					brightnessFilterPropTypeUtil.create( {
-						amount: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
+						brightness: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
 					} ),
 					contrastFilterPropTypeUtil.create( {
 						contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
@@ -316,10 +316,10 @@ describe( 'styles prop resolver', () => {
 			props: {
 				'backdrop-filter': backdropFilterPropTypeUtil.create( [
 					blurFilterPropTypeUtil.create( {
-						radius: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
+						blur: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
 					} ),
 					brightnessFilterPropTypeUtil.create( {
-						amount: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
+						brightness: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
 					} ),
 					contrastFilterPropTypeUtil.create( {
 						contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
