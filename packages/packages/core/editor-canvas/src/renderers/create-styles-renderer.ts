@@ -8,6 +8,7 @@ import { UnknownStyleTypeError } from './errors';
 export type StyleItem = {
 	id: string;
 	value: string;
+	breakpoint: string;
 };
 
 export type StyleRenderer = ReturnType< typeof createStylesRenderer >;
@@ -55,6 +56,7 @@ export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '
 
 			return {
 				id: style.id,
+				breakpoint: style?.variants[ 0 ]?.meta?.breakpoint || 'desktop',
 				value: variantsCss.join( '' ),
 			};
 		} );
