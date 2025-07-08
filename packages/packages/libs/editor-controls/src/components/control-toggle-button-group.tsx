@@ -52,6 +52,7 @@ type Props< TValue > = {
 	items: ToggleButtonGroupItem< TValue | null >[];
 	maxItems?: number;
 	fullWidth?: boolean;
+	placeholder?: TValue;
 } & (
 	| {
 			exclusive?: false;
@@ -75,6 +76,7 @@ export const ControlToggleButtonGroup = < TValue, >( {
 	exclusive = false,
 	fullWidth = false,
 	disabled,
+	placeholder,
 }: Props< TValue > ) => {
 	const shouldSliceItems = exclusive && maxItems !== undefined && items.length > maxItems;
 	const menuItems = shouldSliceItems ? items.slice( maxItems - 1 ) : [];
@@ -96,6 +98,10 @@ export const ControlToggleButtonGroup = < TValue, >( {
 		return `repeat(${ itemsCount }, minmax(0, 25%)) ${ templateColumnsSuffix }`;
 	}, [ menuItems?.length, fixedItems.length ] );
 
+	const shouldShowPlaceholder = exclusive && ( value === null || value === undefined || value === '' );
+
+	const theme = useTheme();
+
 	return (
 		<ControlActions>
 			<StyledToggleButtonGroup
@@ -111,17 +117,43 @@ export const ControlToggleButtonGroup = < TValue, >( {
 					width: `100%`,
 				} }
 			>
-				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => (
-					<ConditionalTooltip
-						key={ buttonValue as string }
-						label={ label }
-						showTooltip={ showTooltip || false }
-					>
-						<ToggleButton value={ buttonValue } aria-label={ label } size={ size } fullWidth={ fullWidth }>
-							<Content size={ size } />
-						</ToggleButton>
-					</ConditionalTooltip>
-				) ) }
+				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
+					const isPlaceholder =
+						shouldShowPlaceholder && placeholder !== undefined && buttonValue === placeholder;
+					return (
+						<ConditionalTooltip
+							key={ buttonValue as string }
+							label={ label }
+							showTooltip={ showTooltip || false }
+						>
+							<ToggleButton
+								value={ buttonValue }
+								aria-label={ label }
+								size={ size }
+								fullWidth={ fullWidth }
+								sx={
+									isPlaceholder
+										? {
+												color: 'text.tertiary',
+												backgroundColor:
+													theme.palette.mode === 'dark'
+														? 'rgba(255,255,255,0.04)'
+														: 'rgba(0,0,0,0.02)',
+												'&:hover': {
+													backgroundColor:
+														theme.palette.mode === 'dark'
+															? 'rgba(255,255,255,0.08)'
+															: 'rgba(0,0,0,0.04)',
+												},
+										  }
+										: undefined
+								}
+							>
+								<Content size={ size } />
+							</ToggleButton>
+						</ConditionalTooltip>
+					);
+				} ) }
 
 				{ menuItems.length && exclusive && (
 					<SplitButtonGroup
