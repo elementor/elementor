@@ -43,7 +43,7 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                 name: ${{ env.ARTIFACT_NAME }}
-                path: .
+                path: elementor
             - name: Install Node.js 20.x
               uses: actions/setup-node@v4
               with:
@@ -74,7 +74,7 @@ jobs:
               uses: actions/download-artifact@v4
               with:
                   name: ${{ env.ARTIFACT_NAME }}
-                  path: ./
+                  path: elementor
             - name: Install Node.js 20.x
               uses: actions/setup-node@v4
               with:
@@ -93,7 +93,7 @@ jobs:
           uses: actions/download-artifact@v4
           with:
             name: ${{ env.ARTIFACT_NAME }}
-            path: ./
+            path: elementor
         - name: Install Node.js 20.x
           uses: actions/setup-node@v4
           with:
