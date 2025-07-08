@@ -19,17 +19,20 @@ class Atomic_Widget_Styles {
 		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->invalidate_cache(
 			[ $document->get_main_post()->ID ]
 		), 20, 2 );
+
+		add_action(
+			'elementor/core/files/clear_cache',
+			fn() => $this->invalidate_cache(),
+		);
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
 		foreach ( $post_ids as $post_id ) {
-			$get_styles = function() use ( $post_id ) {
-				return $this->parse_post_styles( $post_id );
-			};
+			$get_styles = fn() => $this->parse_post_styles( $post_id );
 
 			$style_key = $this->get_style_key( $post_id );
 
-			$styles_manager->register( $style_key, $get_styles, [ $style_key ] );
+			$styles_manager->register( $style_key, $get_styles, [ self::STYLES_KEY, $post_id ] );
 		}
 	}
 
@@ -66,13 +69,17 @@ class Atomic_Widget_Styles {
 		return $element_data['styles'] ?? [];
 	}
 
-	private function invalidate_cache( array $post_ids ) {
+	private function invalidate_cache( ?array $post_ids = null ) {
 		$cache_validity = new Cache_Validity();
 
-		foreach ( $post_ids as $post_id ) {
-			$style_key = $this->get_style_key( $post_id );
+		if( empty( $post_ids ) ) {
+			$cache_validity->invalidate( [ self::STYLES_KEY ] );
 
-			$cache_validity->invalidate( [ $style_key ] );
+			return;
+		}
+
+		foreach ( $post_ids as $post_id ) {
+			$cache_validity->invalidate( [ self::STYLES_KEY, $post_id ] );
 		}
 	}
 

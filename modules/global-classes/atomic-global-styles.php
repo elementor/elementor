@@ -18,6 +18,11 @@ class Atomic_Global_Styles {
 
 		add_action( 'elementor/global_classes/update', fn( string $context ) => $this->invalidate_cache( $context ), 10, 1 );
 
+        add_action(
+            'elementor/core/files/clear_cache',
+            fn() => $this->invalidate_cache(),
+        );
+
 		add_filter('elementor/atomic-widgets/settings/transformers/classes',
 			fn( $value ) => $this->transform_classes_names( $value )
 		);
@@ -40,8 +45,14 @@ class Atomic_Global_Styles {
 		);
 	}
 
-	private function invalidate_cache( string $context ) {
+	private function invalidate_cache( ?string $context = null ) {
 		$cache_validity = new Cache_Validity();
+
+        if( empty( $context ) ) {
+            $cache_validity->invalidate( [ self::STYLES_KEY ] );
+
+            return;
+        }
 
 		$cache_validity->invalidate( [ self::STYLES_KEY, $context ] );
 	}

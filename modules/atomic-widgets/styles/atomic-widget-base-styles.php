@@ -3,11 +3,12 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Base_Styles {
-	const CSS_FILE_KEY = 'base';
+	const STYLES_KEY = 'base';
 
 	public function register_hooks() {
 		add_action(
@@ -16,18 +17,28 @@ class Atomic_Widget_Base_Styles {
 			10,
 			1
 		);
+
+		add_action(
+			'elementor/core/files/clear_cache',
+			fn() => $this->invalidate_cache(),
+		);
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
 		$styles_manager->register(
-			self::CSS_FILE_KEY,
+			self::STYLES_KEY,
 			fn () => $this->get_all_base_styles(),
-			[ self::CSS_FILE_KEY ]
+			[ self::STYLES_KEY ]
 		);
 	}
 
-	public function get_all_base_styles(): array {
-		$elements = Plugin::$instance->elements_manager->get_element_types();
+	private function invalidate_cache() {
+		$cache_validity = new Cache_Validity();
+
+		$cache_validity->invalidate( [ self::STYLES_KEY ] );
+	}
+
+	public function get_all_base_styles(): array {$elements = Plugin::$instance->elements_manager->get_element_types();
 		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
 
 		return Collection::make( $elements )
