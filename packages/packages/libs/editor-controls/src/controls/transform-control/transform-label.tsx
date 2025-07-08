@@ -12,7 +12,7 @@ const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 
 const transformScaleValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
-		.map( ( axis ) => axis?.value )
+		.map( ( axis ) => axis?.value || 1 )
 		.join( ', ' );
 
 export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
