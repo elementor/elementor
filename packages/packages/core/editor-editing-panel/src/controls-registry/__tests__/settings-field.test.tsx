@@ -245,6 +245,8 @@ describe( '<SettingsField />', () => {
 	beforeEach( () => {
 		historyMock.beforeEach();
 
+		jest.useFakeTimers();
+
 		jest.mocked( useElementSettings ).mockReturnValue( {
 			text: {
 				$$type: 'string',
@@ -373,6 +375,8 @@ describe( '<SettingsField />', () => {
 			const newValue = { $$type: 'string', value: 'New Value' };
 
 			fireEvent.change( input, { target: { value: newValue.value } } );
+
+			jest.runAllTimers();
 
 			// Assert - Setting updated and history created.
 			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {

@@ -23,6 +23,8 @@ type Props = {
 	children: React.ReactNode;
 };
 
+const HISTORY_DEBOUNCE_WAIT = 800;
+
 export const SettingsField = ( { bind, children, propDisplayName }: Props ) => {
 	const { element, elementType } = useElement();
 
@@ -104,6 +106,7 @@ function useUndoableUpdateElementProp( {
 				title: getElementLabel( elementId ),
 				// translators: %s is the name of the property that was edited.
 				subtitle: __( '%s edited', 'elementor' ).replace( '%s', propDisplayName ),
+				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
 	}, [ propKey, elementId, propDisplayName ] );
