@@ -2,11 +2,11 @@ import * as React from 'react';
 import { createMockPropType, renderField } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { useStylesField } from '../../../../hooks/use-styles-field';
+import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { FIRST_DEFAULT_VALUE, FlexOrderField, LAST_DEFAULT_VALUE } from '../flex-order-field';
 
 jest.mock( '@elementor/editor-styles' );
-jest.mock( '../../../../hooks/use-styles-field' );
+jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/style-context', () => ( {
 	useStyle: () => ( { meta: null } ),
@@ -43,7 +43,13 @@ describe( '<FlexOrderField />', () => {
 		const value = null;
 		const setValue = jest.fn();
 
-		jest.mocked( useStylesField ).mockReturnValue( { value, setValue, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				order: value,
+			},
+			setValues: setValue,
+			canEdit: true,
+		} );
 
 		// Act.
 		renderFlexOrderField();
@@ -55,16 +61,22 @@ describe( '<FlexOrderField />', () => {
 			fireEvent.click( button );
 
 			// Assert.
-			expect( setValue ).toHaveBeenCalledWith( buttonValues[ index ] );
+			expect( setValue ).toHaveBeenCalledWith(
+				{ order: buttonValues[ index ] },
+				{ history: { propDisplayName: 'Order' } }
+			);
 		} );
 	} );
 
 	it( 'should render the custom input when clicking on custom button', () => {
 		// Arrange.
 		const value = null;
-		const setValue = jest.fn();
 
-		jest.mocked( useStylesField ).mockReturnValue( { value, setValue, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { order: value },
+			setValues: jest.fn(),
+			canEdit: true,
+		} );
 
 		// Act.
 		renderFlexOrderField();
@@ -83,9 +95,13 @@ describe( '<FlexOrderField />', () => {
 	it( 'should mark "first" button as selected for corresponding value', () => {
 		// Arrange.
 		const value = { $$type: 'number', value: FIRST_DEFAULT_VALUE };
-		const setValue = jest.fn();
+		const setValues = jest.fn();
 
-		jest.mocked( useStylesField ).mockReturnValue( { value, setValue, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { order: value },
+			setValues,
+			canEdit: true,
+		} );
 
 		renderFlexOrderField();
 
@@ -98,16 +114,20 @@ describe( '<FlexOrderField />', () => {
 		fireEvent.click( firstButton );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValues ).toHaveBeenCalledWith( { order: null }, { history: { propDisplayName: 'Order' } } );
 		expect( firstButton ).not.toHaveClass( 'Mui-selected' );
 	} );
 
 	it( 'should mark "last" button as selected for corresponding value', () => {
 		// Arrange.
 		const value = { $$type: 'number', value: LAST_DEFAULT_VALUE };
-		const setValue = jest.fn();
+		const setValues = jest.fn();
 
-		jest.mocked( useStylesField ).mockReturnValue( { value, setValue, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { order: value },
+			setValues,
+			canEdit: true,
+		} );
 
 		renderFlexOrderField();
 
@@ -120,17 +140,20 @@ describe( '<FlexOrderField />', () => {
 		fireEvent.click( firstButton );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValues ).toHaveBeenCalledWith( { order: null }, { history: { propDisplayName: 'Order' } } );
 		expect( firstButton ).not.toHaveClass( 'Mui-selected' );
 	} );
 
 	it( 'should mark "custom" button as selected for corresponding value', () => {
 		// Arrange.
 		const value = { $$type: 'number', value: 3 };
-		const setValue = jest.fn();
+		const setValues = jest.fn();
 
-		jest.mocked( useStylesField ).mockReturnValue( { value, setValue, canEdit: true } );
-
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { order: value },
+			setValues,
+			canEdit: true,
+		} );
 		renderFlexOrderField();
 
 		const firstButton = screen.getByLabelText( 'Custom' );
@@ -142,7 +165,7 @@ describe( '<FlexOrderField />', () => {
 		fireEvent.click( firstButton );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValues ).toHaveBeenCalledWith( { order: null }, { history: { propDisplayName: 'Order' } } );
 		expect( firstButton ).not.toHaveClass( 'Mui-selected' );
 	} );
 } );

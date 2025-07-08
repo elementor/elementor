@@ -5,12 +5,12 @@ import { getStylesSchema } from '@elementor/editor-styles';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { useStylesField } from '../../hooks/use-styles-field';
+import { useStylesFields } from '../../hooks/use-styles-fields';
 import { StylesField } from '../styles-field';
 
 jest.mock( '@elementor/editor-styles' );
 jest.mock( '@elementor/editor-v1-adapters' );
-jest.mock( '../../hooks/use-styles-field' );
+jest.mock( '../../hooks/use-styles-fields' );
 jest.mock( '../../contexts/style-context', () => ( {
 	useStyle: jest.fn().mockReturnValue( { canEdit: true } ),
 } ) );
@@ -73,7 +73,7 @@ describe( '<StylesField />', () => {
 		fireEvent.change( input, { target: { value: '20px' } } );
 
 		// Assert.
-		expect( mockSetValue ).toHaveBeenCalledWith( '20px' );
+		expect( mockSetValue ).toHaveBeenCalledWith( { padding: '20px' }, { history: { propDisplayName: 'Padding' } } );
 	} );
 
 	describe( 'placeholders', () => {
@@ -131,9 +131,9 @@ describe( '<StylesField />', () => {
 export function mockStyles( styles: Record< string, string > ) {
 	const setValue = jest.fn();
 
-	jest.mocked( useStylesField ).mockImplementation( ( propName ) => ( {
-		value: styles[ propName ],
-		setValue,
+	jest.mocked( useStylesFields ).mockImplementation( () => ( {
+		values: styles,
+		setValues: setValue,
 		canEdit: true,
 	} ) );
 
