@@ -4,7 +4,7 @@ import { isValidFileType } from '../utils/file-validation';
 
 const useDropZone = ( { onFileSelect, onError, filetypes, isLoading, onButtonClick, onFileChoose } ) => {
 	const [ isDragOver, setIsDragOver ] = useState( false );
-	const [ dragCounter, setDragCounter ] = useState( 0 );
+	const [ , setDragCounter ] = useState( 0 );
 	const fileInputRef = useRef( null );
 	const fileInputId = useId();
 
@@ -23,11 +23,13 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading, onButtonCli
 		e.preventDefault();
 		e.stopPropagation();
 
-		setDragCounter( ( prev ) => prev - 1 );
-
-		if ( dragCounter <= 1 ) {
-			setIsDragOver( false );
-		}
+		setDragCounter( ( prev ) => {
+			const newCounter = prev - 1;
+			if ( newCounter <= 0 ) {
+				setIsDragOver( false );
+			}
+			return newCounter;
+		} );
 	};
 
 	const handleDragOver = ( e ) => {
@@ -46,6 +48,10 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading, onButtonCli
 			return;
 		}
 
+		if ( ! e.dataTransfer.files || e.dataTransfer.files.length === 0 ) {
+			return;
+		}
+
 		const file = e.dataTransfer.files[ 0 ];
 
 		if ( file && isValidFileType( file.type, file.name, filetypes ) ) {
@@ -59,6 +65,10 @@ const useDropZone = ( { onFileSelect, onError, filetypes, isLoading, onButtonCli
 	};
 
 	const handleFileInputChange = ( e ) => {
+		if ( ! e.target.files || e.target.files.length === 0 ) {
+			return;
+		}
+
 		const file = e.target.files[ 0 ];
 		if ( ! file ) {
 			return;
