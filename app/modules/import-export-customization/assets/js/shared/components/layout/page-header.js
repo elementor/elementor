@@ -1,8 +1,19 @@
-import { Button, Box, Typography, Stack, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Link } from '@elementor/ui';
+import { Button, Box, Typography, Stack, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Link, styled } from '@elementor/ui';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { XIcon } from '../icons';
+
+const StyledElementorIcon = styled( Box )( ( { theme } ) => ( {
+	width: '1.75rem',
+	height: '1.75rem',
+	lineHeight: '1.75rem',
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+	backgroundColor: theme.palette.text.primary,
+	borderRadius: '50%',
+} ) );
 
 export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 	const [ isHelpModalOpen, setIsHelpModalOpen ] = useState( false );
@@ -22,17 +33,20 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 	return (
 		<>
 			<Stack direction="row" spacing={ 2 } alignItems="center">
-				<Box
-					component="i"
-					sx={ {
-						fontSize: 24,
-						color: 'primary.main',
-					} }
-					className="eicon-elementor"
-				/>
+				<StyledElementorIcon>
+					<Box
+						component="i"
+						sx={ {
+							fontSize: '0.80rem',
+							color: 'secondary.contrastText',
+						} }
+						className="eicon-elementor"
+					/>
+				</StyledElementorIcon>
 				<Typography
 					variant="h6"
 					component="h1"
+					color="text.primary"
 					sx={ {
 						fontWeight: 600,
 					} }
@@ -46,7 +60,7 @@ export default function PageHeader( { title = __( 'Export', 'elementor' ) } ) {
 					onClick={ handleHelpClick }
 					aria-label={ __( 'Help', 'elementor' ) }
 				>
-					<Box component="i" className="eicon-help-o" />
+					<Box component="i" className="eicon-info-circle" />
 				</IconButton>
 				<IconButton
 					onClick={ handleClose }
