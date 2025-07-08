@@ -106,7 +106,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await containerInPreview.click();
 					await editor.removeElementWithHandle( containerId );
 
-					// Take screenshot of empty editor preview frame after removal
 					await editor.closeNavigatorIfOpen();
 					await expect.soft( editor.getPreviewFrame().locator( EditorSelectors.pageContent ) ).toHaveScreenshot( 'widget-removed-editor.png' );
 				} );
@@ -115,14 +114,12 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await editor.publishPage();
 					await editor.viewPage();
 
-					// Take screenshot of empty frontend page after removal
 					await expect.soft( editor.page.locator( 'body' ) ).toHaveScreenshot( 'widget-removed-frontend.png' );
 				} );
 
 				await test.step( 'Refresh page and verify widget still absent', async () => {
 					await editor.page.reload();
 
-					// Take screenshot of empty frontend page after refresh
 					await expect.soft( editor.page.locator( 'body' ) ).toHaveScreenshot( 'widget-removed-after-refresh.png' );
 				} );
 			} );
