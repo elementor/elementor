@@ -3,7 +3,6 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
 
 class Global_Classes {
 	private Collection $items;
