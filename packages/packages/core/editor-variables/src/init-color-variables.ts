@@ -11,6 +11,7 @@ import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type
 import { registerRepeaterInjections } from './repeater-injections';
 import { variableTransformer } from './transformers/variable-transformer';
 import { hasAssignedColorVariable } from './utils';
+import { inheritanceTransformer } from './transformers/inheritance-transformer';
 
 const { registerPopoverAction } = controlActionsMenu;
 
@@ -26,7 +27,7 @@ export function initColorVariables() {
 	} );
 
 	styleTransformersRegistry.register( colorVariablePropTypeUtil.key, variableTransformer );
-	stylesInheritanceTransformersRegistry.register( colorVariablePropTypeUtil.key, variableTransformer );
+	stylesInheritanceTransformersRegistry.register( colorVariablePropTypeUtil.key, inheritanceTransformer );
 
 	registerRepeaterInjections();
 }
