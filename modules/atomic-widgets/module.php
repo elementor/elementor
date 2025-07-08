@@ -70,6 +70,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Move_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -113,6 +114,9 @@ class Module extends BaseModule {
 
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
+
+			Atomic_Styles_Manager::instance()->register_hooks();
+
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
 
