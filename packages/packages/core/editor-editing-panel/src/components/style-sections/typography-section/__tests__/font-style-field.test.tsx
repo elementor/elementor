@@ -3,11 +3,11 @@ import { createMockPropType, renderControl, renderField } from 'test-utils';
 import { ControlActionsProvider } from '@elementor/editor-controls';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { useStylesField } from '../../../../hooks/use-styles-field';
+import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { FontStyleField } from '../font-style-field';
 
 jest.mock( '@elementor/editor-styles' );
-jest.mock( '../../../../hooks/use-styles-field' );
+jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
 } ) );
@@ -26,13 +26,18 @@ describe( '<FontStyleField />', () => {
 		[ 'Normal', 'Italic' ],
 	] )( 'should toggle between %s and %s when clicked', ( initialValue, expectedValue ) => {
 		// Arrange.
-		const setValue = jest.fn();
-		const value = {
-			$$type: 'string',
-			value: initialValue.toLowerCase(),
-		};
+		const setValues = jest.fn();
 
-		jest.mocked( useStylesField ).mockReturnValue( { value, setValue, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				'font-style': {
+					$$type: 'string',
+					value: initialValue.toLowerCase(),
+				},
+			},
+			setValues,
+			canEdit: true,
+		} );
 
 		renderFontStyleField();
 
@@ -46,21 +51,31 @@ describe( '<FontStyleField />', () => {
 		fireEvent.click( expectedToggleButton );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( {
-			$$type: 'string',
-			value: expectedValue.toLowerCase(),
-		} );
+		expect( setValues ).toHaveBeenCalledWith(
+			{
+				'font-style': {
+					$$type: 'string',
+					value: expectedValue.toLowerCase(),
+				},
+			},
+			{ history: { propDisplayName: 'Font style' } }
+		);
 	} );
 
 	it.each( [ 'Italic', 'Normal' ] )( 'should pass null on click if `%s` was selected before', ( param ) => {
 		// Arrange.
-		const setValue = jest.fn();
-		const value = {
-			$$type: 'string',
-			value: param.toLowerCase(),
-		};
+		const setValues = jest.fn();
 
-		jest.mocked( useStylesField ).mockReturnValue( { value, setValue, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				'font-style': {
+					$$type: 'string',
+					value: param.toLowerCase(),
+				},
+			},
+			setValues,
+			canEdit: true,
+		} );
 
 		// Act.
 		renderFontStyleField();
@@ -74,7 +89,10 @@ describe( '<FontStyleField />', () => {
 		fireEvent.click( toggleButton );
 
 		// Assert.
-		expect( setValue ).toHaveBeenCalledWith( null );
+		expect( setValues ).toHaveBeenCalledWith(
+			{ 'font-style': null },
+			{ history: { propDisplayName: 'Font style' } }
+		);
 	} );
 
 	it( 'should render font style prop type with plain value', () => {
