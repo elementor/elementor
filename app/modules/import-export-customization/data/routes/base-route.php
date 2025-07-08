@@ -10,7 +10,7 @@ abstract class Base_Route {
 			[
 				'methods' => $this->get_method(),
 				'callback' => fn( $request ) => $this->callback( $request ),
-				'permission_callback' =>  fn() => $this->permission_callback(),
+				'permission_callback' =>  $this->permission_callback(),
 				'args' => $this->get_args(),
 			],
 		] );
