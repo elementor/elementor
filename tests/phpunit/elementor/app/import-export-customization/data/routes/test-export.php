@@ -86,17 +86,17 @@ class Test_Export extends Elementor_Test_Base {
 	public function test_successful_export_with_required_parameters() {
 		// Arrange
 		$this->init_rest_api();
-        $this->act_as_admin();
+		$this->act_as_admin();
 
 		// Act
-		$response = $this->send_export_request([
+		$response = $this->send_export_request( [
 			'include' => ['settings'],
 			'kitInfo' => [
 				'title' => 'Test Kit',
 				'description' => 'Test Kit Description',
 				'source' => 'test'
 			]
-		]);
+		] );
 
 		// Assert
 		$this->assertEquals( 200, $response->get_status() );
@@ -115,14 +115,14 @@ class Test_Export extends Elementor_Test_Base {
 		$this->register_post_type( 'test_post_type', 'Test Post Type' );
 
 		$expected_settings = [
-			'include' => ['templates', 'content', 'settings', 'plugins'],
+			'include' => [ 'templates', 'content', 'settings', 'plugins' ],
 			'kitInfo' => [
 				'title' => 'My Custom Kit',
 				'description' => 'A test kit',
 				'source' => 'custom'
 			],
-			'plugins' => ['elementor', 'elementor-pro'],
-			'selectedCustomPostTypes' => ['test_post_type'],
+			'plugins' => [ 'elementor', 'elementor-pro' ],
+			'selectedCustomPostTypes' => [ 'test_post_type' ],
 			'screenShotBlob' => 'base64_encoded_screenshot'
 		];
 
@@ -150,7 +150,7 @@ class Test_Export extends Elementor_Test_Base {
 			->onlyMethods( ['export_kit'] )
 			->getMock();
 
-		// Return non-existent file
+		// Return a non-existent file
 		$mock_module->expects( $this->once() )
 			->method( 'export_kit' )
 			->willReturn( [
@@ -164,17 +164,17 @@ class Test_Export extends Elementor_Test_Base {
 		$response = $this->send_export_request( [
 			'include' => ['settings'],
 			'kitInfo' => [
-                                'title' => 'Test Kit',
+				'title' => 'Test Kit',
 				'source' => 'test'
 			]
 		] );
 
 		// Assert
 		$this->assertEquals( 500, $response->get_status() );
-        $data = $response->get_data();
+		$data = $response->get_data();
 
-        $this->assertEquals( 'export_error', $data['data']['code'] );
-        $this->assertEquals( 'Could not read the exported file.', $data['data']['message'] );
+		$this->assertEquals( 'export_error', $data['data']['code'] );
+		$this->assertEquals( 'Could not read the exported file.', $data['data']['message'] );
 	}
 
 	public function test_export_error_with_exception() {
