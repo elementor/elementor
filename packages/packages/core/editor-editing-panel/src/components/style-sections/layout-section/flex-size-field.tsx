@@ -104,7 +104,7 @@ export const FlexSizeField = () => {
 			}
 		}
 
-		setValue( newFlexValue );
+		setValue( newFlexValue as FlexPropValue );
 	};
 
 	return (

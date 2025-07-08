@@ -4,17 +4,39 @@ import { ControlActionsProvider } from '@elementor/editor-controls';
 import { flexPropTypeUtil, type FlexPropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { fireEvent, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 
 import { useDirection } from '../../../../hooks/use-direction';
 import { useStylesField } from '../../../../hooks/use-styles-field';
+import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { FlexSizeField } from '../flex-size-field';
 
 jest.mock( '@elementor/editor-styles' );
 jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../hooks/use-styles-field' );
+jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+} ) );
+
+jest.mock( '../../../../contexts/element-context', () => ( {
+	useElement: () => ( {
+		id: 'test-element-id',
+		model: {},
+		settings: {},
+	} ),
+} ) );
+
+jest.mock( '../../../../contexts/style-context', () => ( {
+	useStyle: () => ( {
+		id: null,
+		meta: {},
+		setId: jest.fn(),
+		setMetaState: jest.fn(),
+		canEdit: true,
+	} ),
 } ) );
 
 jest.mock( '@elementor/editor-controls', () => {
@@ -79,6 +101,13 @@ describe( '<FlexSizeField />', () => {
 		} );
 
 		jest.mocked( useStylesField ).mockImplementation( useStylesFieldMock as never );
+		
+		// Add the missing mock for useStylesFields
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { flex: styleFields.flex.value },
+			setValues: jest.fn(),
+			canEdit: true,
+		} );
 	} );
 
 	afterEach( () => {

@@ -212,7 +212,7 @@ describe( 'flexTransformer', () => {
 			const value: Flex = {
 				flexGrow: 1,
 				flexShrink: 1,
-				flexBasis: { size: 100, unit: undefined as string | undefined },
+				flexBasis: { size: 100, unit: '' },
 			};
 
 			// Act.
