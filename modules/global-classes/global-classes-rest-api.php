@@ -27,12 +27,14 @@ class Global_Classes_REST_API {
 		if ( ! $this->repository ) {
 			$this->repository = new Global_Classes_Repository();
 		}
+
 		return $this->repository;
 	}
 
 	private function register_routes() {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
+				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
 				'permission_callback' => fn() => true,
 				'args' => [
@@ -46,9 +48,6 @@ class Global_Classes_REST_API {
 						],
 					],
 				],
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
-				'permission_callback' => fn() => true,
-				'args' => [],
 			],
 		] );
 
@@ -72,6 +71,7 @@ class Global_Classes_REST_API {
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
+				'methods' => 'PUT',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->put( $request ) ),
 				'permission_callback' => fn() => current_user_can( Add_Capabilities::UPDATE_CLASS ),
 				'args' => [
@@ -135,7 +135,9 @@ class Global_Classes_REST_API {
 					'order' => [
 						'required' => true,
 						'type' => 'array',
-						'items' => [ 'type' => 'string' ],
+						'items' => [
+							'type' => 'string',
+						],
 					],
 				],
 			],
@@ -144,10 +146,12 @@ class Global_Classes_REST_API {
 
 	private function all( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
+
 		$classes = $this->get_repository()->context( $context )->all();
+
 		return Response_Builder::make( (object) $classes->get_items()->all() )
-								->set_meta( [ 'order' => $classes->get_order()->all() ] )
-								->build();
+			->set_meta( [ 'order' => $classes->get_order()->all() ] )
+			->build();
 	}
 
 	private function get_usage( \WP_REST_Request $request ) {
@@ -158,42 +162,53 @@ class Global_Classes_REST_API {
 
 	private function put( \WP_REST_Request $request ) {
 		$parser = Global_Classes_Parser::make();
-		$items_result = $parser->parse_items( $request->get_param( 'items' ) );
+
+		$items_result = $parser->parse_items(
+			$request->get_param( 'items' )
+		);
+
 		$items_count = count( $items_result->unwrap() );
 
 		if ( $items_count >= static::MAX_ITEMS ) {
 			return Error_Builder::make( 'global_classes_limit_exceeded' )
-								->set_status( 400 )
-								->set_message( sprintf( __( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ), static::MAX_ITEMS ) )
-								->build();
+				->set_status( 400 )
+				->set_message( sprintf(
+					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
+					static::MAX_ITEMS
+				) )
+				->build();
 		}
 
 		if ( ! $items_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_items' )
-								->set_status( 400 )
-								->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
-								->build();
+				->set_status( 400 )
+				->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
+				->build();
 		}
 
-		$order_result = $parser->parse_order( $request->get_param( 'order' ), $items_result->unwrap() );
+		$order_result = $parser->parse_order(
+			$request->get_param( 'order' ),
+			$items_result->unwrap()
+		);
 
 		if ( ! $order_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_order' )
-								->set_status( 400 )
-								->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
-								->build();
+				->set_status( 400 )
+				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
+				->build();
 		}
 
-		$repository = $this->get_repository()->context( $request->get_param( 'context' ) );
+		$repository = $this->get_repository()
+			->context( $request->get_param( 'context' ) );
 
 		$changes_resolver = Global_Classes_Changes_Resolver::make(
 			$repository,
-			$request->get_param( 'changes' ) ?? []
+			$request->get_param( 'changes' ) ?? [],
 		);
 
 		$repository->put(
 			$changes_resolver->resolve_items( $items_result->unwrap() ),
-			$changes_resolver->resolve_order( $order_result->unwrap() )
+			$changes_resolver->resolve_order( $order_result->unwrap() ),
 		);
 
 		return Response_Builder::make()->no_content()->build();
@@ -204,8 +219,8 @@ class Global_Classes_REST_API {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( 'unexpected_error' )
-								->set_message( __( 'Something went wrong', 'elementor' ) )
-								->build();
+				->set_message( __( 'Something went wrong', 'elementor' ) )
+				->build();
 		}
 		return $response;
 	}
