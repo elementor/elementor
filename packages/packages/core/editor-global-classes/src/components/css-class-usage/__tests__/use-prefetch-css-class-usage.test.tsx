@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { AxiosHeaders } from 'axios';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, renderHook } from '@testing-library/react';
 
@@ -24,6 +25,13 @@ describe( 'usePrefetchCssClassUsage', () => {
 		mockedApi.usage.mockResolvedValue( {
 			data: {
 				data: mockData,
+				meta: {},
+			},
+			status: 200,
+			statusText: 'OK',
+			headers: {},
+			config: {
+				headers: new AxiosHeaders(),
 			},
 		} );
 
