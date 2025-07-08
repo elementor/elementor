@@ -5,19 +5,6 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
-		&left,
-		&right {
-
-			.elementor-icon-box-wrapper {
-				display: flex;
-			}
-
-			.elementor-icon-box-icon {
-				display: inline-flex;
-				flex: 0 0 auto; // Hack for Safari
-			}
-		}
-
 		&right {
 
 			.elementor-icon-box-wrapper {
@@ -50,9 +37,15 @@
 .elementor-widget-icon-box {
 
 	.elementor-icon-box-wrapper {
+		display: flex;
 		text-align: center;
 		flex-direction: column;
 		gap: var(--icon-box-icon-margin, 15px);
+	}
+
+	.elementor-icon-box-icon {
+		display: inline-flex;
+		flex: 0 0 auto; // Hack for Safari
 	}
 
 	@include icon-position('');
