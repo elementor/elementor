@@ -60,7 +60,7 @@ export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
 					<CssClassUsagePopover
 						onClose={ cssClassUsagePopover.close }
 						aria-label="css-class-usage-popover"
-						cssClassID={ id || '0' }
+						cssClassID={ id }
 					/>
 				</Popover>
 			</Box>

@@ -29,7 +29,7 @@ export const CssClassUsagePopover = ( {
 					<Stack flexDirection={ 'row' } gap={ 1 } alignItems={ 'center' }>
 						<Box aria-label={ 'header-title' }>{ __( 'Locator', 'elementor' ) }</Box>
 						<Box>
-							<Chip sx={ { lineHeight: 1 } } size={ 'tiny' } label={ classUsage?.total || 1 } />
+							<Chip sx={ { lineHeight: 1 } } size={ 'tiny' } label={ classUsage.total } />
 						</Box>
 					</Stack>
 				}

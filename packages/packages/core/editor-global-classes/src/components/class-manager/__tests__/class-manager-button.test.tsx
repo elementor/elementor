@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderWithTheme } from 'test-utils';
+import { renderWithQuery } from 'test-utils';
 import {
 	__useActiveDocument as useActiveDocument,
 	__useActiveDocumentActions as useActiveDocumentActions,
@@ -40,7 +40,7 @@ describe( 'ClassManagerButton', () => {
 		} as never );
 
 		// Act.
-		renderWithTheme( <ClassManagerButton /> );
+		renderWithQuery( <ClassManagerButton /> );
 
 		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
 
@@ -64,7 +64,7 @@ describe( 'ClassManagerButton', () => {
 		} as never );
 
 		// Act.
-		renderWithTheme( <ClassManagerButton /> );
+		renderWithQuery( <ClassManagerButton /> );
 
 		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
 
@@ -95,7 +95,7 @@ describe( 'ClassManagerButton', () => {
 			save,
 		} as never );
 
-		renderWithTheme( <ClassManagerButton /> );
+		renderWithQuery( <ClassManagerButton /> );
 
 		// Act.
 		fireEvent.click( screen.getByLabelText( 'Class Manager' ) );
@@ -122,7 +122,7 @@ describe( 'ClassManagerButton', () => {
 		} );
 
 		// Act.
-		const { container } = renderWithTheme( <ClassManagerButton /> );
+		const { container } = renderWithQuery( <ClassManagerButton /> );
 
 		// Assert.
 		expect( container ).toBeEmptyDOMElement();

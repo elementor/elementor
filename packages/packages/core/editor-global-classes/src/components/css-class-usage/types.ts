@@ -2,7 +2,7 @@ export const QUERY_KEY = 'css-classes-usage';
 
 export type CssClassID = string;
 
-export type CssClassUsageContent = {
+type CssClassUsageContent = {
 	elements: string[];
 	pageId: string;
 	total: number;
