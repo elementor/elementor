@@ -9,13 +9,14 @@ import {
 	updateElementSettings,
 	useElementSettings,
 } from '@elementor/editor-elements';
-import { type PropKey, type PropType, type PropValue, shouldApplyEffect } from '@elementor/editor-props';
+import { type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
 import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { createTopLevelOjectType } from './create-top-level-object-type';
+import { getDisableState } from './get-dependency-state';
 
 type Props = {
 	bind: PropKey;
@@ -56,20 +57,6 @@ export const SettingsField = ( { bind, children, propDisplayName }: Props ) => {
 		</PropProvider>
 	);
 };
-
-function getDisableState( propType: PropType, elementValues: PropValue ): boolean | undefined {
-	const disablingDependencies = propType.dependencies?.filter( ( { effect } ) => effect === 'disable' ) || [];
-
-	if ( ! disablingDependencies.length ) {
-		return false;
-	}
-
-	if ( disablingDependencies.length > 1 ) {
-		throw new Error( 'Multiple disabling dependencies are not supported.' );
-	}
-
-	return shouldApplyEffect( disablingDependencies[ 0 ], elementValues );
-}
 
 type UndoableUpdateElementSettingsArgs = {
 	newValue: Record< string, PropValue >;
