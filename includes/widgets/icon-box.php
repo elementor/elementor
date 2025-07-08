@@ -372,7 +372,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-block-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
