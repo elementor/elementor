@@ -102,10 +102,9 @@ describe( '<FlexSizeField />', () => {
 
 		jest.mocked( useStylesField ).mockImplementation( useStylesFieldMock as never );
 		
-		// Add the missing mock for useStylesFields
 		jest.mocked( useStylesFields ).mockReturnValue( {
 			values: { flex: styleFields.flex.value },
-			setValues: jest.fn(),
+			setValues: jest.fn,
 			canEdit: true,
 		} );
 	} );
