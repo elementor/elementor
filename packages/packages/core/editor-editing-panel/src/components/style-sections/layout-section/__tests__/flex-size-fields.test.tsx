@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
 import { ControlActionsProvider } from '@elementor/editor-controls';
-import { flexPropTypeUtil, type FlexPropValue } from '@elementor/editor-props';
+import { type FlexPropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { fireEvent, screen } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
 
 import { useDirection } from '../../../../hooks/use-direction';
 import { useStylesField } from '../../../../hooks/use-styles-field';
@@ -101,7 +99,7 @@ describe( '<FlexSizeField />', () => {
 		} );
 
 		jest.mocked( useStylesField ).mockImplementation( useStylesFieldMock as never );
-		
+
 		jest.mocked( useStylesFields ).mockReturnValue( {
 			values: { flex: styleFields.flex.value },
 			setValues: jest.fn,

@@ -19,8 +19,7 @@ export function useResetStyleValueProps() {
 	const { value, setValue, path } = useBoundProp();
 
 	return {
-		visible:
-			isStyle && value !== null && value !== undefined && path.length <= 2,
+		visible: isStyle && value !== null && value !== undefined && path.length <= 2,
 		title: __( 'Clear', 'elementor' ),
 		icon: BrushBigIcon,
 		onClick: () => setValue( null ),

@@ -47,7 +47,7 @@ const items: ToggleButtonGroupItem< GroupItem >[] = [
 ];
 
 export const FlexSizeField = () => {
-	const { value, setValue, canEdit } = useStylesField<FlexPropValue>( 'flex', {
+	const { value, setValue, canEdit } = useStylesField< FlexPropValue >( 'flex', {
 		history: { propDisplayName: FLEX_SIZE_LABEL },
 	} );
 
@@ -76,33 +76,7 @@ export const FlexSizeField = () => {
 		setActiveGroup( group );
 		setCustomLocked( group === 'custom' );
 
-		let newFlexValue: FlexPropValue | null = null;
-
-		if ( ! group ) {
-			newFlexValue = null;
-		} else if ( group === 'flex-grow' ) {
-			newFlexValue = flexPropTypeUtil.create( {
-				flexGrow: numberPropTypeUtil.create( DEFAULT ),
-				flexShrink: null,
-				flexBasis: null,
-			} );
-		} else if ( group === 'flex-shrink' ) {
-			newFlexValue = flexPropTypeUtil.create( {
-				flexGrow: null,
-				flexShrink: numberPropTypeUtil.create( DEFAULT ),
-				flexBasis: null,
-			} );
-		} else if ( group === 'custom' ) {
-			if ( flexValue ) {
-				newFlexValue = flexValue;
-			} else {
-				newFlexValue = flexPropTypeUtil.create( {
-					flexGrow: null,
-					flexShrink: null,
-					flexBasis: null,
-				} );
-			}
-		}
+		const newFlexValue = createFlexValueForGroup( group, flexValue );
 
 		setValue( newFlexValue as FlexPropValue );
 	};
