@@ -7,9 +7,9 @@ import { TransformFunctionKeys } from './types';
 export const scaleTransformPropTypeUtil = createPropUtils(
 	TransformFunctionKeys.scale,
 	z.strictObject( {
-		x: numberPropTypeUtil.schema.default( 1 ),
-		y: numberPropTypeUtil.schema.default( 1 ),
-		z: numberPropTypeUtil.schema.default( 1 ),
+		x: numberPropTypeUtil.schema.default( { value: 1, $$type: "number" } ),
+		y: numberPropTypeUtil.schema.default( { value: 1, $$type: "number" } ),
+		z: numberPropTypeUtil.schema.default( { value: 1, $$type: "number" } ),
 	} )
 );
 
