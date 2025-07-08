@@ -2,7 +2,6 @@ import '@testing-library/jest-dom';
 
 import * as React from 'react';
 import { createMockPropType, renderField } from 'test-utils';
-import { type PropValue } from '@elementor/editor-props';
 import { type StylesProvider } from '@elementor/editor-styles-repository';
 import { useSessionStorage } from '@elementor/session';
 import { fireEvent, screen } from '@testing-library/react';
@@ -135,146 +134,6 @@ describe( '<PositionSection />', () => {
 		expect( screen.getByText( 'Z-index' ) ).toBeVisible();
 	} );
 
-	describe( 'Dimensions values persistence', () => {
-		beforeEach( () => {
-			jest.mocked( useStyle ).mockReturnValue( {
-				id: 'styleDefId',
-				setId: jest.fn(),
-				meta: { breakpoint: 'mobile', state: null },
-				setMetaState: jest.fn(),
-				provider: {} as StylesProvider,
-			} );
-		} );
-
-		it( 'should save dimension values to history when changing position to static', () => {
-			// Arrange.
-			mockPosition( 'absolute' );
-			mockDimensions( 44 );
-
-			const setHistory = jest.fn();
-			jest.mocked( useSessionStorage ).mockImplementation( () => [ null, setHistory, jest.fn() ] );
-
-			// Act.
-			renderPositionSection();
-
-			const select = screen.getByRole( 'combobox' );
-			fireEvent.mouseDown( select );
-
-			const staticOption = screen.getByText( 'Static' );
-			fireEvent.click( staticOption );
-
-			// Assert.
-			expect( useSessionStorage ).toHaveBeenCalledWith( `styles/styleDefId/mobile/null/dimensions` );
-			expect( setHistory ).toHaveBeenCalledWith( {
-				'inset-block-start': {
-					value: {
-						size: 44,
-						unit: 'px',
-					},
-					$$type: 'size',
-				},
-			} );
-		} );
-
-		it( 'should reset dimension values in the model when changing position to static', () => {
-			// Arrange.
-			mockPosition( 'absolute' );
-
-			const setStylesFields = jest.fn();
-			jest.mocked( useStylesFields ).mockReturnValue( {
-				values: {
-					'inset-block-start': {
-						value: {
-							size: 44,
-							unit: 'px',
-						},
-						$$type: 'size',
-					},
-				},
-				setValues: setStylesFields,
-				canEdit: true,
-			} );
-
-			// Act.
-			renderPositionSection();
-
-			const select = screen.getByRole( 'combobox' );
-			fireEvent.mouseDown( select );
-
-			const staticOption = screen.getByText( 'Static' );
-			fireEvent.click( staticOption );
-
-			// Assert.
-			expect( useStylesFields ).toHaveBeenCalledWith( [
-				'inset-block-start',
-				'inset-block-end',
-				'inset-inline-start',
-				'inset-inline-end',
-			] );
-			expect( setStylesFields ).toHaveBeenCalledWith(
-				{
-					'inset-block-start': undefined,
-					'inset-block-end': undefined,
-					'inset-inline-start': undefined,
-					'inset-inline-end': undefined,
-				},
-				{ history: { propDisplayName: 'Dimensions' } }
-			);
-		} );
-
-		it( `should populate the model's dimension values from history when switching from static to a different position`, () => {
-			// Arrange.
-			mockPosition( 'static' );
-
-			const setStylesFields = jest.fn();
-			jest.mocked( useStylesFields ).mockReturnValue( { values: {}, setValues: setStylesFields, canEdit: true } );
-
-			jest.mocked( useSessionStorage ).mockImplementation( () => [
-				{
-					'inset-inline-start': {
-						value: {
-							size: 54,
-							unit: 'px',
-						},
-						$$type: 'size',
-					},
-				},
-				jest.fn(),
-				jest.fn(),
-			] );
-
-			// Act.
-			renderPositionSection();
-
-			const select = screen.getByRole( 'combobox' );
-			fireEvent.mouseDown( select );
-
-			const absoluteOption = screen.getByText( 'Absolute' );
-			fireEvent.click( absoluteOption );
-
-			// Assert.
-			expect( useSessionStorage ).toHaveBeenCalledWith( `styles/styleDefId/mobile/null/dimensions` );
-			expect( useStylesFields ).toHaveBeenCalledWith( [
-				'inset-block-start',
-				'inset-block-end',
-				'inset-inline-start',
-				'inset-inline-end',
-			] );
-			expect( setStylesFields ).toHaveBeenCalledWith(
-				{
-					'inset-inline-start': {
-						value: {
-							size: 54,
-							unit: 'px',
-						},
-						$$type: 'size',
-					},
-				},
-				{ history: { propDisplayName: 'Dimensions' } }
-			);
-		} );
-	} );
-
 	it.skip( 'should show anchor offset input in all cases', () => {
 		// Arrange.
 		mockPosition( 'absolute' );
@@ -290,38 +149,167 @@ describe( '<PositionSection />', () => {
 	} );
 } );
 
+describe( 'Dimensions values persistence', () => {
+	beforeEach( () => {
+		jest.mocked( useStyle ).mockReturnValue( {
+			id: 'styleDefId',
+			setId: jest.fn(),
+			meta: { breakpoint: 'mobile', state: null },
+			setMetaState: jest.fn(),
+			provider: {} as StylesProvider,
+		} );
+	} );
+
+	it( 'should save dimension values to history when changing position to static', () => {
+		// Arrange.
+		mockPosition( 'absolute' );
+		mockDimensions( 44 );
+
+		const setHistory = jest.fn();
+		jest.mocked( useSessionStorage ).mockImplementation( () => [ null, setHistory, jest.fn() ] );
+
+		// Act.
+		renderPositionSection();
+
+		const select = screen.getByRole( 'combobox' );
+		fireEvent.mouseDown( select );
+
+		const staticOption = screen.getByText( 'Static' );
+		fireEvent.click( staticOption );
+
+		// Assert.
+		expect( useSessionStorage ).toHaveBeenCalledWith( `styles/styleDefId/mobile/null/dimensions` );
+		expect( setHistory ).toHaveBeenCalledWith( {
+			'inset-block-start': {
+				value: {
+					size: 44,
+					unit: 'px',
+				},
+				$$type: 'size',
+			},
+		} );
+	} );
+
+	it( 'should reset dimension values in the model when changing position to static', () => {
+		// Arrange.
+		mockPosition( 'absolute' );
+
+		const setStylesFields = jest.fn();
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				'inset-block-start': {
+					value: {
+						size: 44,
+						unit: 'px',
+					},
+					$$type: 'size',
+				},
+			},
+			setValues: setStylesFields,
+			canEdit: true,
+		} );
+
+		// Act.
+		renderPositionSection();
+
+		const select = screen.getByRole( 'combobox' );
+		fireEvent.mouseDown( select );
+
+		const staticOption = screen.getByText( 'Static' );
+		fireEvent.click( staticOption );
+
+		// Assert.
+		expect( useStylesFields ).toHaveBeenCalledWith( [
+			'inset-block-start',
+			'inset-block-end',
+			'inset-inline-start',
+			'inset-inline-end',
+		] );
+		expect( setStylesFields ).toHaveBeenCalledWith(
+			{
+				'inset-block-start': undefined,
+				'inset-block-end': undefined,
+				'inset-inline-start': undefined,
+				'inset-inline-end': undefined,
+			},
+			{ history: { propDisplayName: 'Dimensions' } }
+		);
+	} );
+
+	it( `should populate the model's positioning values from history when switching from static to a different position`, () => {
+		// Arrange.
+		mockPosition( 'static' );
+
+		const setStylesFields = jest.fn();
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: {
+				position: {
+					$$type: 'string',
+					value: 'static',
+				},
+			},
+			setValues: setStylesFields,
+			canEdit: true,
+		} );
+
+		jest.mocked( useSessionStorage ).mockImplementation( () => [
+			{
+				'inset-inline-start': {
+					value: {
+						size: 54,
+						unit: 'px',
+					},
+					$$type: 'size',
+				},
+			},
+			jest.fn(),
+			jest.fn(),
+		] );
+
+		// Act.
+		renderPositionSection();
+
+		const select = screen.getByRole( 'combobox' );
+		fireEvent.mouseDown( select );
+
+		const absoluteOption = screen.getByText( 'Absolute' );
+		fireEvent.click( absoluteOption );
+
+		// Assert.
+		expect( useSessionStorage ).toHaveBeenCalledWith( 'styles/styleDefId/mobile/null/dimensions' );
+		expect( useStylesFields ).toHaveBeenCalledWith( [
+			'inset-block-start',
+			'inset-block-end',
+			'inset-inline-start',
+			'inset-inline-end',
+		] );
+
+		expect( setStylesFields ).toHaveBeenCalledWith(
+			{
+				'inset-inline-start': {
+					value: {
+						size: 54,
+						unit: 'px',
+					},
+					$$type: 'size',
+				},
+			},
+			{ history: { propDisplayName: 'Dimensions' } }
+		);
+	} );
+} );
+
 // mock functions
 function mockPosition( position: string | null ) {
-	jest.mocked( useStylesField ).mockImplementation( ( propName ) => {
-		let value: PropValue = {
-			$$type: 'string',
-			value: null,
-		};
-
-		switch ( propName ) {
-			case 'position':
-				value = position
-					? {
-							$$type: 'string',
-							value: position,
-					  }
-					: null;
-
-				break;
-
-			case 'z-index':
-				value = {
-					$$type: 'number',
-					value: 0,
-				};
-				break;
-		}
-
-		return {
-			value,
-			setValue: jest.fn(),
-			canEdit: true,
-		};
+	jest.mocked( useStylesField ).mockReturnValue( {
+		value: position
+			? {
+					$$type: 'string',
+					value: position,
+			  }
+			: null,
+		setValue: jest.fn(),
+		canEdit: true,
 	} );
 }
 
