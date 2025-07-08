@@ -89,8 +89,9 @@ class Export extends Base_Route {
 				'description' => 'Kit information',
 				'required' => false,
 				'default' => [
-					'name' => 'Elementor Website Template',
+					'title' => 'Elementor Website Template',
 					'description' => '',
+					'source' => 'local',
 				],
 			],
 			'plugins' => [
