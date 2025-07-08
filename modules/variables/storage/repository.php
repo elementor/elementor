@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Storage;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\Variables\Classes\Variables;
+use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -44,6 +45,29 @@ class Repository {
 		}
 	}
 
+	/**
+	 * @throws DuplicatedLabel
+	 */
+	private function assert_if_variable_label_is_duplicated( array $db_record, array $variable = [] ) {
+		foreach ( $db_record['data'] as $id => $existing_variable ) {
+			if ( isset( $existing_variable['deleted'] ) && $existing_variable['deleted'] ) {
+				continue;
+			}
+
+			if ( isset( $variable['id'] ) && $variable['id'] === $id ) {
+				continue;
+			}
+
+			if ( ! isset( $variable['label'] ) || ! isset( $existing_variable['label'] ) ) {
+				continue;
+			}
+
+			if ( strtolower( $existing_variable['label'] ) === strtolower( $variable['label'] ) ) {
+				throw new DuplicatedLabel( 'Variable label already exists' );
+			}
+		}
+	}
+
 	public function variables(): array {
 		$db_record = $this->load();
 
@@ -69,13 +93,15 @@ class Repository {
 		$list_of_variables = $db_record['data'] ?? [];
 
 		$id = $this->new_id_for( $list_of_variables );
-
-		$list_of_variables[ $id ] = $this->extract_from( $variable, [
+		$new_variable = $this->extract_from( $variable, [
 			'type',
 			'label',
 			'value',
 		] );
 
+		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
+
+		$list_of_variables[ $id ] = $new_variable;
 		$db_record['data'] = $list_of_variables;
 
 		$this->assert_if_variables_limit_reached( $db_record );
@@ -105,11 +131,14 @@ class Repository {
 			throw new RecordNotFound( 'Variable not found' );
 		}
 
-		$list_of_variables[ $id ] = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
+		$updated_variable = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
 			'label',
 			'value',
 		] ) );
 
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
+
+		$list_of_variables[ $id ] = $updated_variable;
 		$db_record['data'] = $list_of_variables;
 
 		$watermark = $this->save( $db_record );
@@ -158,7 +187,7 @@ class Repository {
 	 * @throws RecordNotFound
 	 * @throws FatalError
 	 */
-	public function restore( string $id ) {
+	public function restore( string $id, $overrides = [] ) {
 		$db_record = $this->load();
 
 		$list_of_variables = $db_record['data'] ?? [];
@@ -167,12 +196,23 @@ class Repository {
 			throw new RecordNotFound( 'Variable not found' );
 		}
 
-		$list_of_variables[ $id ] = $this->extract_from( $list_of_variables[ $id ], [
+		$restored_variable = $this->extract_from( $list_of_variables[ $id ], [
 			'label',
 			'value',
 			'type',
 		] );
 
+		if ( array_key_exists( 'label', $overrides ) ) {
+			$restored_variable['label'] = $overrides['label'];
+		}
+
+		if ( array_key_exists( 'value', $overrides ) ) {
+			$restored_variable['value'] = $overrides['value'];
+		}
+
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $restored_variable, [ 'id' => $id ] ) );
+
+		$list_of_variables[ $id ] = $restored_variable;
 		$db_record['data'] = $list_of_variables;
 
 		$this->assert_if_variables_limit_reached( $db_record );
@@ -184,7 +224,7 @@ class Repository {
 		}
 
 		return [
-			'variable' => array_merge( [ 'id' => $id ], $list_of_variables[ $id ] ),
+			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
 			'watermark' => $watermark,
 		];
 	}

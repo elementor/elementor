@@ -5,6 +5,7 @@ namespace Elementor\App\Modules\ImportExport\Runners\Import;
 use Elementor\Plugin;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use Elementor\App\Modules\ImportExport\Utils;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
 
 class Site_Settings extends Import_Runner_Base {
 
@@ -37,6 +38,16 @@ class Site_Settings extends Import_Runner_Base {
 	 * @var array|null
 	 */
 	private ?array $previous_active_theme = null;
+
+	/**
+	 * @var array
+	 */
+	private $previous_experiments = [];
+
+	/**
+	 * @var array
+	 */
+	private $imported_experiments = [];
 
 	public function get_theme_upgrader(): \Theme_Upgrader {
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
@@ -105,6 +116,12 @@ class Site_Settings extends Import_Runner_Base {
 			$result['theme'] = $import_theme_result;
 		}
 
+		$this->import_experiments( $data );
+
+		if ( ! empty( $this->imported_experiments ) ) {
+			$result['experiments'] = $this->imported_experiments;
+		}
+
 		return $result;
 	}
 
@@ -162,6 +179,68 @@ class Site_Settings extends Import_Runner_Base {
 		return $result;
 	}
 
+	private function import_experiments( array $data ) {
+		if ( empty( $data['site_settings']['experiments'] ) ) {
+			return null;
+		}
+
+		$experiments_data = $data['site_settings']['experiments'];
+		$experiments_manager = Plugin::$instance->experiments;
+		$current_features = $experiments_manager->get_features();
+
+		$this->save_previous_experiments_state( $current_features );
+
+		foreach ( $experiments_data as $feature_name => $feature_data ) {
+			if ( ! isset( $current_features[ $feature_name ] ) ) {
+				continue;
+			}
+
+			$current_feature = $current_features[ $feature_name ];
+
+			$current_feature_state = $current_feature['state'];
+			$new_state = $feature_data['state'];
+
+			if ( $current_feature_state === $new_state ) {
+				continue;
+			}
+
+			if ( ! in_array( $new_state, [ ExperimentsManager::STATE_DEFAULT, ExperimentsManager::STATE_ACTIVE, ExperimentsManager::STATE_ACTIVE ], true ) ) {
+				continue;
+			}
+
+			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
+
+			if ( 'default' === $new_state ) {
+				delete_option( $option_key );
+			} else {
+				update_option( $option_key, $new_state );
+			}
+
+			$this->imported_experiments[ $feature_name ] = $feature_data;
+		}
+	}
+
+	private function save_previous_experiments_state( array $current_features ) {
+		$experiments_manager = Plugin::$instance->experiments;
+
+		foreach ( $current_features as $feature_name => $feature ) {
+			if ( ! $feature['mutable'] ) {
+				continue;
+			}
+
+			$option_key = $experiments_manager->get_feature_option_key( $feature_name );
+			$saved_state = get_option( $option_key );
+
+			$this->previous_experiments[ $feature_name ] = [
+				'name' => $feature_name,
+				'title' => $feature['title'],
+				'state' => empty( $saved_state ) ? 'default' : $saved_state,
+				'default' => $feature['default'],
+				'release_status' => $feature['release_status'],
+			];
+		}
+	}
+
 	public function get_import_session_metadata(): array {
 		return [
 			'previous_kit_id' => $this->previous_kit_id,
@@ -170,6 +249,8 @@ class Site_Settings extends Import_Runner_Base {
 			'installed_theme' => $this->installed_theme,
 			'activated_theme' => $this->activated_theme,
 			'previous_active_theme' => $this->previous_active_theme,
+			'previous_experiments' => $this->previous_experiments,
+			'imported_experiments' => $this->imported_experiments,
 		];
 	}
 }
