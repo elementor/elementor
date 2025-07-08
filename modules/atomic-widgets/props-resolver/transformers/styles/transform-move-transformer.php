@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transform_Move_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
-		return 'translate3d(' . $value['x'] . ', ' . $value['y'] . ', ' . $value['z'] . ')';
+		$defaultMove = '0px';
+
+		return sprintf( 'translate3d(%s, %s, %s)', $value['x'] ?? $defaultMove, $value['y'] ?? $defaultMove, $value['z'] ?? $defaultMove );
 	}
 }

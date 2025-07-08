@@ -7,17 +7,25 @@ export const TransformFunctionKeys: Record< string, TransformFunction > = {
 	scale: 'transform-scale',
 };
 
+export const defaultValues = {
+	move: {
+		size: 0,
+		unit: 'px',
+	},
+	scale: 1,
+};
+
 export const initialTransformValue: TransformItemPropValue = {
 	$$type: TransformFunctionKeys.move,
 	value: {
-		x: { $$type: 'size', value: { size: 0, unit: 'px' } },
-		y: { $$type: 'size', value: { size: 0, unit: 'px' } },
-		z: { $$type: 'size', value: { size: 0, unit: 'px' } },
+		x: { $$type: 'size', value: { size: defaultValues.move.size, unit: defaultValues.move.unit as 'px' } },
+		y: { $$type: 'size', value: { size: defaultValues.move.size, unit: defaultValues.move.unit as 'px' } },
+		z: { $$type: 'size', value: { size: defaultValues.move.size, unit: defaultValues.move.unit as 'px' } },
 	},
 };
 
 export const initialScaleValue = scaleTransformPropTypeUtil.create( {
-	x: numberPropTypeUtil.create( 1 ),
-	y: numberPropTypeUtil.create( 1 ),
-	z: numberPropTypeUtil.create( 1 ),
+	x: numberPropTypeUtil.create( defaultValues.scale ),
+	y: numberPropTypeUtil.create( defaultValues.scale ),
+	z: numberPropTypeUtil.create( defaultValues.scale ),
 } );
