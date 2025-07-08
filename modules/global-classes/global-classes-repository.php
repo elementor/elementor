@@ -46,14 +46,6 @@ class Global_Classes_Repository {
 		return Global_Classes::make( $all['items'] ?? [], $all['order'] ?? [] );
 	}
 
-	public function get_by_ids( array $ids ): Global_Classes {
-		$global_classes = $this->all();
-		$items = $global_classes->get_items()->filter( fn( $item, $id ) => in_array( $id, $ids, true ) );
-		$order = $global_classes->get_order()->filter( fn( $id ) => in_array( $id, $ids, true ) );
-
-		return Global_Classes::make( $items->all(), $order->all() );
-	}
-
 	public function put( array $items, array $order ) {
 		$current_value = $this->all()->get();
 

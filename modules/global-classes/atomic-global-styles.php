@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
+use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Cache_Validity;
 
@@ -17,6 +18,12 @@ class Atomic_Global_Styles {
 		);
 
 		add_action( 'elementor/global_classes/update', fn( string $context ) => $this->invalidate_cache( $context ), 10, 1 );
+
+        add_action(
+            'deleted_post',
+            fn( $post_id ) => $this->on_post_delete( $post_id )
+        );
+
 
         add_action(
             'elementor/core/files/clear_cache',
@@ -44,6 +51,14 @@ class Atomic_Global_Styles {
 			[ self::STYLES_KEY, $context ]
 		);
 	}
+
+    private function on_post_delete( $post_id ) {
+        if ( ! Plugin::$instance->kits_manager->is_kit( $post_id ) ) {
+            return;
+        }
+
+        $this->invalidate_cache();
+    }
 
 	private function invalidate_cache( ?string $context = null ) {
 		$cache_validity = new Cache_Validity();

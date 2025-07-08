@@ -12,14 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Cache_Validity extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
-
-
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
-
-
 	}
 
 	public function test_validation_on_root_key() {

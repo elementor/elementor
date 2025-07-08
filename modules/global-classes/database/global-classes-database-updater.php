@@ -7,7 +7,7 @@ use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 class Global_Classes_Database_Updater extends Base_Database_Updater {
 	const DB_VERSION = 1;
-	const OPTION_NAME = 'elementor_global_classes_db_version_111';
+	const OPTION_NAME = 'elementor_global_classes_db_version';
 
 	protected function get_migrations(): array {
 		return [
