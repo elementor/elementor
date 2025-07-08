@@ -23,7 +23,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 	public function test_get_single_valid_dependency() {
 		$manager = Manager::make()
 			->where( [
-				'operator' => 'equals',
+				'operator' => 'eq',
 				'path' => [ 'a' ],
 				'value' => 1,
 			] );
@@ -34,13 +34,13 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 	public function test_get_multiple_valid_dependencies() {
 		$manager = Manager::make()
 			->where( [
-				'operator' => 'equals',
+				'operator' => 'eq',
 				'path' => [ 'a' ],
 				'value' => 1,
 			] )
 			->new_dependency( [ 'relation' => Manager::RELATION_AND, 'effect' => Manager::EFFECT_HIDE ] )
 			->where( [
-				'operator' => 'not_equals',
+				'operator' => 'ne',
 				'path' => [ 'b' ],
 				'value' => 2,
 			] );
@@ -54,10 +54,10 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 
 		Manager::get_source_to_dependents( [
 			'a' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'b' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'b' ] ] )->get(),
 			] ),
 			'b' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'a' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'a' ] ] )->get(),
 			] ),
 		] );
 	}
@@ -68,13 +68,13 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 
 		Manager::get_source_to_dependents( [
 			'a' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'b' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'b' ] ] )->get(),
 			] ),
 			'b' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'c' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'c' ] ] )->get(),
 			] ),
 			'c' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'a' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'a' ] ] )->get(),
 			] ),
 		] );
 	}
@@ -85,7 +85,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 
 		Manager::get_source_to_dependents( [
 			'a' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'a' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'a' ] ] )->get(),
 			] ),
 		] );
 	}
@@ -93,13 +93,13 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 	public function test_get_multiple_independent_groups() {
 		$manager = Manager::make()
 			->where( [
-				'operator' => 'equals',
+				'operator' => 'eq',
 				'path' => [ 'a' ],
 				'value' => 1,
 			] )
 			->new_dependency( [ 'relation' => Manager::RELATION_AND, 'effect' => Manager::EFFECT_HIDE ] )
 			->where( [
-				'operator' => 'equals',
+				'operator' => 'eq',
 				'path' => [ 'b' ],
 				'value' => 2,
 			] );
@@ -110,13 +110,13 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 	public function test_get_valid_complex_nested_dependencies() {
 		$manager = Manager::make()
 			->where( [
-				'operator' => 'equals',
+				'operator' => 'eq',
 				'path' => [ 'a', 'b', 'c' ],
 				'value' => 1,
 			] )
 			->new_dependency( [ 'relation' => Manager::RELATION_AND, 'effect' => Manager::EFFECT_HIDE ] )
 			->where( [
-				'operator' => 'not_equals',
+				'operator' => 'ne',
 				'path' => [ 'd', 'e' ],
 				'value' => 2,
 			] );
@@ -130,10 +130,10 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 
 		Manager::get_source_to_dependents( [
 			'a.b' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'b', 'a' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'b', 'a' ] ] )->get(),
 			] ),
 			'b.a' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'a', 'b' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'a', 'b' ] ] )->get(),
 			] ),
 		] );
 	}
@@ -141,11 +141,11 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 	public function test_get_source_to_dependents_builds_correct_graph() {
 		$schema = [
 			'a' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'b' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'b' ] ] )->get(),
 			] ),
 			'b' => new Mock_Prop_Type(), // No dependencies
 			'c' => new Mock_Prop_Type( [
-				'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'b' ] ] )->get(),
+				'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'b' ] ] )->get(),
 			] ),
 		];
 
@@ -158,7 +158,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 
 	public function test_get_source_to_dependents_with_nested_dependency_term() {
 		$nested_dependency = Manager::make()
-			->where( [ 'operator' => 'equals', 'path' => [ 'c' ] ] )
+			->where( [ 'operator' => 'eq', 'path' => [ 'c' ] ] )
 			->get();
 
 		$schema = [
@@ -166,7 +166,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 				'dependencies' => [
 					[
 						'terms' => [
-							[ 'operator' => 'equals', 'path' => [ 'b' ] ],
+							[ 'operator' => 'eq', 'path' => [ 'b' ] ],
 							$nested_dependency[0],
 						],
 					],
@@ -188,7 +188,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 		$schema = [
 			'list' => new Mock_Array_Prop_Type(
 				new Mock_Prop_Type( [
-					'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'a' ] ] )->get(),
+					'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'a' ] ] )->get(),
 				] )
 			),
 			'a' => new Mock_Prop_Type(),
@@ -205,7 +205,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 		$schema = [
 			'form' => new Mock_Object_Prop_Type( [
 				'header' => new Mock_Prop_Type( [
-					'dependencies' => Manager::make()->where( [ 'operator' => 'equals', 'path' => [ 'form', 'footer' ] ] )->get(),
+					'dependencies' => Manager::make()->where( [ 'operator' => 'eq', 'path' => [ 'form', 'footer' ] ] )->get(),
 				] ),
 				'footer' => new Mock_Prop_Type(),
 			] ),
@@ -244,7 +244,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 	public function test_get_filters_out_empty_dependency_groups() {
 		$manager = Manager::make()
 			->new_dependency( [ 'effect' => Manager::EFFECT_HIDE ] )
-			->where( [ 'operator' => 'equals', 'path' => [ 'a' ] ] );
+			->where( [ 'operator' => 'eq', 'path' => [ 'a' ] ] );
 
 		$this->assertCount( 1, $manager->get() );
 	}
