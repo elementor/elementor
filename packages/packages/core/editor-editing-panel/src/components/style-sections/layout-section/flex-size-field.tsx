@@ -47,14 +47,14 @@ const items: ToggleButtonGroupItem< GroupItem >[] = [
 ];
 
 export const FlexSizeField = () => {
-	const { value, setValue, canEdit } = useStylesField( 'flex', {
+	const { value, setValue, canEdit } = useStylesField<FlexPropValue>( 'flex', {
 		history: { propDisplayName: FLEX_SIZE_LABEL },
 	} );
 
 	const flexValue = value as FlexPropValue | null;
-	const grow = flexValue?.value?.flexGrow?.value || null;
-	const shrink = flexValue?.value?.flexShrink?.value || null;
-	const basis = flexValue?.value?.flexBasis?.value || null;
+	const grow = flexValue?.value?.flexGrow?.value;
+	const shrink = flexValue?.value?.flexShrink?.value;
+	const basis = flexValue?.value?.flexBasis?.value;
 
 	const currentGroup = useMemo( () => getActiveGroup( { grow, shrink, basis } ), [ grow, shrink, basis ] );
 	const [ activeGroup, setActiveGroup ] = useState( currentGroup );
@@ -76,34 +76,7 @@ export const FlexSizeField = () => {
 		setActiveGroup( group );
 		setCustomLocked( group === 'custom' );
 
-		let newFlexValue: FlexPropValue | null = null;
-
-		if ( ! group ) {
-			newFlexValue = null;
-		} else if ( group === 'flex-grow' ) {
-			newFlexValue = flexPropTypeUtil.create( {
-				flexGrow: numberPropTypeUtil.create( DEFAULT ),
-				flexShrink: null,
-				flexBasis: null,
-			} );
-		} else if ( group === 'flex-shrink' ) {
-			newFlexValue = flexPropTypeUtil.create( {
-				flexGrow: null,
-				flexShrink: numberPropTypeUtil.create( DEFAULT ),
-				flexBasis: null,
-			} );
-		} else if ( group === 'custom' ) {
-			if ( flexValue ) {
-				newFlexValue = flexValue;
-			} else {
-				newFlexValue = flexPropTypeUtil.create( {
-					flexGrow: null,
-					flexShrink: null,
-					flexBasis: null,
-				} );
-			}
-		}
-
+		const newFlexValue = createFlexValueForGroup( group, flexValue );
 		setValue( newFlexValue );
 	};
 
@@ -125,6 +98,41 @@ export const FlexSizeField = () => {
 			</SectionContent>
 		</UiProviders>
 	);
+};
+
+const createFlexValueForGroup = ( group: GroupItem | null, flexValue: FlexPropValue | null ): FlexPropValue | null => {
+	if ( ! group ) {
+		return null;
+	}
+
+	if ( group === 'flex-grow' ) {
+		return flexPropTypeUtil.create( {
+			flexGrow: numberPropTypeUtil.create( DEFAULT ),
+			flexShrink: null,
+			flexBasis: null,
+		} );
+	}
+
+	if ( group === 'flex-shrink' ) {
+		return flexPropTypeUtil.create( {
+			flexGrow: null,
+			flexShrink: numberPropTypeUtil.create( DEFAULT ),
+			flexBasis: null,
+		} );
+	}
+
+	if ( group === 'custom' ) {
+		if ( flexValue ) {
+			return flexValue;
+		}
+		return flexPropTypeUtil.create( {
+			flexGrow: null,
+			flexShrink: null,
+			flexBasis: null,
+		} );
+	}
+
+	return null;
 };
 
 const FlexCustomField = () => {

@@ -1,4 +1,4 @@
-import { flexTransformer } from '../flex-transformer';
+import { flexTransformer } from '../transformers/styles/flex-transformer';
 
 type Flex = {
 	flexGrow?: number | null;
@@ -212,7 +212,7 @@ describe( 'flexTransformer', () => {
 			const value: Flex = {
 				flexGrow: 1,
 				flexShrink: 1,
-				flexBasis: { size: 100, unit: undefined as any },
+				flexBasis: { size: 100, unit: undefined as string | undefined },
 			};
 
 			// Act.
@@ -227,7 +227,7 @@ describe( 'flexTransformer', () => {
 			const value: Flex = {
 				flexGrow: 1,
 				flexShrink: 1,
-				flexBasis: { unit: 'px' } as any,
+				flexBasis: { unit: 'px' } as { size: number; unit: string },
 			};
 
 			// Act.
@@ -269,4 +269,4 @@ describe( 'flexTransformer', () => {
 			expect( result ).toBe( '1 2' );
 		} );
 	} );
-} ); 
+} );
