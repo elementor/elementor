@@ -425,9 +425,11 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should return true when any term is met (OR)', () => {
 				const values = {
 					test1: {
+						$$type: 'string',
 						value: 'different',
 					},
 					test2: {
+						$$type: 'number',
 						value: 10,
 					},
 				};
@@ -486,12 +488,15 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should handle nested AND dependencies', () => {
 				const values = {
 					status: {
+						$$type: 'string',
 						value: 'active',
 					},
 					priority: {
+						$$type: 'number',
 						value: 8,
 					},
 					title: {
+						$$type: 'string',
 						value: 'This is an important message',
 					},
 				};
@@ -530,12 +535,15 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should handle nested OR dependencies', () => {
 				const values = {
 					status: {
+						$$type: 'string',
 						value: 'inactive',
 					},
 					priority: {
+						$$type: 'number',
 						value: 8,
 					},
 					title: {
+						$$type: 'string',
 						value: 'This is an urgent message',
 					},
 				};
@@ -574,12 +582,15 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should handle mixed nested dependencies', () => {
 				const values = {
 					user: {
+						$$type: 'object',
 						value: { id: 1, name: 'John' },
 					},
 					role: {
+						$$type: 'string',
 						value: 'user',
 					},
 					permissions: {
+						$$type: 'string',
 						value: 'write',
 					},
 				};
@@ -620,15 +631,19 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should handle deep nested dependencies', () => {
 				const values = {
 					environment: {
+						$$type: 'string',
 						value: 'production',
 					},
 					version: {
+						$$type: 'nubmer',
 						value: 2.1,
 					},
 					feature_flags: {
+						$$type: 'object',
 						value: { new_ui: true },
 					},
 					legacy_mode: {
+						$$type: 'boolean',
 						value: false,
 					},
 				};
@@ -678,12 +693,15 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should handle complex conditional logic', () => {
 				const values = {
 					user_type: {
+						$$type: 'string',
 						value: 'premium',
 					},
 					subscription_days: {
+						$$type: 'number',
 						value: 45,
 					},
 					capabilities: {
+						$$type: 'string',
 						value: 'basic_access',
 					},
 				};
@@ -760,9 +778,11 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should handle single term dependencies', () => {
 				const values = {
 					test: {
+						$$type: 'string',
 						value: 'value',
 					},
 					test2: {
+						$$type: 'number',
 						value: 10,
 					},
 				};
@@ -785,9 +805,11 @@ describe( 'prop-dependency-utils', () => {
 			it( 'should handle single term dependencies that fail', () => {
 				const values = {
 					test: {
+						$$type: 'string',
 						value: 'different',
 					},
 					test2: {
+						$$type: 'number',
 						value: 10,
 					},
 				};
