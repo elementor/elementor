@@ -1,19 +1,16 @@
 import * as React from 'react';
 import { type RefObject, useRef } from 'react';
-import { AspectRatioControl, type ExtendedOption, SizeControl } from '@elementor/editor-controls';
-import type { StringPropValue } from '@elementor/editor-props';
+import { AspectRatioControl, type ExtendedOption, PositionControl, SizeControl } from '@elementor/editor-controls';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField, type StylesFieldProps } from '../../../controls-registry/styles-field';
-import { useStylesField } from '../../../hooks/use-styles-field';
 import { ControlLabel } from '../../control-label';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
 import { StyleTabCollapsibleContent } from '../../style-tab-collapsible-content';
 import { ObjectFitField } from './object-fit-field';
-import { ObjectPositionField } from './object-position-field';
 import { OverflowField } from './overflow-field';
 
 const EXPERIMENT_ID = 'e_v_3_30';
@@ -52,15 +49,8 @@ const CssSizeProps = [
 ];
 
 const ASPECT_RATIO_LABEL = __( 'Aspect Ratio', 'elementor' );
-const OBJECT_FIT_LABEL = __( 'Object fit', 'elementor' );
 
 export const SizeSection = () => {
-	const { value: fitValue } = useStylesField< StringPropValue >( 'object-fit', {
-		history: { propDisplayName: OBJECT_FIT_LABEL },
-	} );
-
-	const isNotFill = fitValue && fitValue?.value !== 'fill';
-
 	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ), useRef( null ) ];
 	const isVersion330Active = isExperimentActive( EXPERIMENT_ID );
 
@@ -87,11 +77,11 @@ export const SizeSection = () => {
 						</StylesField>
 						<PanelDivider />
 						<ObjectFitField />
-						{ isNotFill && (
+						<StylesField bind="object-position" propDisplayName={ __( 'Object position', 'elementor' ) }>
 							<Grid item xs={ 6 }>
-								<ObjectPositionField />
+								<PositionControl />
 							</Grid>
-						) }
+						</StylesField>
 					</Stack>
 				</StyleTabCollapsibleContent>
 			) }

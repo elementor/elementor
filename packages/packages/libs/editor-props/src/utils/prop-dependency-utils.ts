@@ -94,6 +94,6 @@ function getValue( path: string[], elementValues: PropValue ): PropValue | null 
 	}, elementValues );
 }
 
-function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
+export function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
 	return 'relation' in term;
 }
