@@ -26,23 +26,6 @@ const StyledContentStack = styled( Stack, {
 	transition: 'opacity 0.2s ease-in-out',
 } ) );
 
-const StyledUploadIcon = styled( UploadIcon )( ( { theme } ) => ( {
-	fontSize: '40px',
-	color: theme.palette.text.disabled,
-} ) );
-
-const StyledLoadingSpinner = styled( CircularProgress )( ( { theme } ) => ( {
-	color: theme.palette.primary.dark,
-} ) );
-
-const StyledClickToUploadLink = styled( Link )( () => ( {
-	cursor: 'pointer',
-} ) );
-
-const StyledDragDropText = styled( Typography )( ( { theme } ) => ( {
-	marginLeft: theme.spacing( 0.5 ),
-} ) );
-
 const DropZone = ( {
 	onFileSelect,
 	onError = () => {},
@@ -126,34 +109,37 @@ const DropZone = ( {
 				>
 					<Box data-testid="icon-container">
 						{ isLoading ? (
-							<StyledLoadingSpinner
+							<CircularProgress
 								size={ 40 }
 								data-testid="loading-spinner"
+								sx={ { color: 'primary.dark' } }
 							/>
 						) : (
-							<StyledUploadIcon
+							<UploadIcon
 								data-testid="upload-icon"
+								sx={ { fontSize: '40px', color: 'text.disabled' } }
 							/>
 						) }
 					</Box>
 
 					<Stack spacing={ 2 } alignItems="center" textAlign="center" data-testid="text-container">
 						<Box data-testid="main-text">
-							<StyledClickToUploadLink
+							<Link
 								variant="body1"
 								component="span"
 								onClick={ handleUploadClick }
 								data-testid="click-to-upload"
 							>
 								{ __( 'Click to upload', 'elementor' ) }
-							</StyledClickToUploadLink>
-							<StyledDragDropText
+							</Link>
+							<Typography
 								variant="body1"
 								component="span"
 								color="text.primary"
+								sx={ { marginLeft: 0.5 } }
 							>
 								{ __( 'or drag and drop', 'elementor' ) }
-							</StyledDragDropText>
+							</Typography>
 						</Box>
 						<Typography
 							variant="body2"
