@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { type DropShadowFilterPropValue, type PropTypeUtil } from '@elementor/editor-props';
+import { dropShadowFilterPropTypeUtil, type DropShadowFilterPropValue, type PropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -34,36 +34,35 @@ const items = [
 	},
 ];
 
-export const DropShadowItemContent = ( {
-	propType,
+export const DropShadowItemContent = ( {	
 	units,
 	anchorEl,
 }: {
-	propType: PropTypeUtil< 'drop-shadow', DropShadowFilterPropValue[ 'value' ] >;
+	
 	units: Unit[];
 	anchorEl?: HTMLElement | null;
 } ) => {
-	const context = useBoundProp( propType );
+	const context = useBoundProp( dropShadowFilterPropTypeUtil );
 	const rowRefs = [ useRef< HTMLDivElement >( null ), useRef< HTMLDivElement >( null ) ];
 
-	return (
-		<PropProvider { ...context }>
-			{ items.map( ( item ) => (
-				<PopoverGridContainer key={ item.bind } ref={ rowRefs[ item.rowIndex ] ?? null }>
-					<PropKeyProvider bind={ item.bind }>
-						<Grid item xs={ 6 }>
-							<ControlFormLabel>{ item.label }</ControlFormLabel>
-						</Grid>
-						<Grid item xs={ 6 }>
-							{ item.bind === 'color' ? (
-								<ColorControl anchorEl={ anchorEl } />
-							) : (
-								<SizeControl anchorRef={ rowRefs[ item.rowIndex ] } units={ units } defaultUnit="px" />
-							) }
-						</Grid>
-					</PropKeyProvider>
-				</PopoverGridContainer>
-			) ) }
-		</PropProvider>
+	return (		
+			<PropProvider { ...context }>
+				{ items.map( ( item ) => (
+					<PopoverGridContainer key={ item.bind } ref={ rowRefs[ item.rowIndex ] ?? null }>
+						<PropKeyProvider bind={ item.bind }>
+							<Grid item xs={ 6 }>
+								<ControlFormLabel>{ item.label }</ControlFormLabel>
+							</Grid>
+							<Grid item xs={ 6 }>
+								{ item.bind === 'color' ? (
+									<ColorControl anchorEl={ anchorEl } />
+								) : (
+									<SizeControl anchorRef={ rowRefs[ item.rowIndex ] } units={ units } defaultUnit="px" />
+								) }
+							</Grid>
+						</PropKeyProvider>
+					</PopoverGridContainer>
+				) ) }
+			</PropProvider>
 	);
 };
