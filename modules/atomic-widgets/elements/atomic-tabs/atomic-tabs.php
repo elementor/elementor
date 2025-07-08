@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
@@ -15,25 +15,24 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Div_Block extends Atomic_Element_Base {
+class Atomic_Tabs extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-div-block';
+		return 'e-tabs';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-div-block';
+		return 'e-tabs';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Div Block', 'elementor' );
+		return esc_html__( 'Atomic Tabs', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -41,7 +40,7 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	public function get_icon() {
-		return 'eicon-div-block';
+		return 'eicon-tabs';
 	}
 
 	protected static function define_props_schema(): array {
@@ -209,5 +208,19 @@ class Div_Block extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', $attributes );
+	}
+
+	protected function define_default_children() {
+		$heading = [
+			'elType' => 'widget',
+			'settings' => [
+				'title' => String_Prop_Type::generate( 'Tabs Title' ),
+			],
+			'widgetType' => Atomic_Heading::get_element_type(),
+		];
+
+		return [
+			$heading,
+		];
 	}
 }

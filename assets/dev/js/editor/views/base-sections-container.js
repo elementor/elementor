@@ -20,6 +20,10 @@ BaseSectionsContainerView = BaseContainer.extend( {
 			case ELEMENT_TYPES.FLEXBOX:
 				ChildView = require( 'elementor-modules/atomic-widgets/assets/js/editor/div-block-view' );
 				break;
+
+			case ELEMENT_TYPES.TABS:
+				ChildView = require( 'elementor-modules/atomic-widgets/assets/js/editor/tabs-view' );
+				break;
 		}
 
 		return ChildView;

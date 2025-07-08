@@ -377,6 +377,50 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 												],
 											],
 											[
+												'$$type' => 'background-gradient-overlay',
+												'value' => [
+													'type' => [
+														'$$type' => 'string',
+														'value' => 'linear',
+													],
+													'angle' => [
+														'$$type' => 'number',
+														'value' => 45,
+													],
+													'stops' => [
+														'$$type' => 'gradient-color-stop',
+														'value' => [
+															[
+																'$$type' => 'color-stop',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => 'red',
+																	],
+																	'offset' => [
+																		'$$type' => 'number',
+																		'value' => 0,
+																	],
+																],
+															],
+															[
+																'$$type' => 'color-stop',
+																'value' => [
+																	'color' => [
+																		'$$type' => 'color',
+																		'value' => 'rgb(255, 0, 255, 0.3)',
+																	],
+																	'offset' => [
+																		'$$type' => 'number',
+																		'value' => 100,
+																	],
+																],
+															],
+														],
+													],
+												]
+											],
+											[
 												'$$type' => 'background-image-overlay',
 												'value' => [
 													'image' => [

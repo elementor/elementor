@@ -2,6 +2,7 @@ const ELEMENT_TYPES = {
 	SECTION: 'section',
 	CONTAINER: 'container',
 	DIV_BLOCK: 'e-div-block',
+	TABS: 'e-tabs',
 	FLEXBOX: 'e-flexbox',
 };
 
