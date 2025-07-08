@@ -71,7 +71,11 @@ class Style_Schema {
 
 	private function update_union( Union_Prop_Type $union_prop_type ): Union_Prop_Type {
 		$new_union = Union_Prop_Type::make();
-		$new_union->meta( 'dependencies', $union_prop_type->get_meta_item( 'dependencies', [] ) );
+		$dependencies = $union_prop_type->get_meta_item( 'dependencies' );
+
+		if ( ! empty( $dependencies ) ) {
+			$new_union->set_meta_item( 'dependencies', $dependencies );
+		}
 
 		foreach ( $union_prop_type->get_prop_types() as $prop_type ) {
 			$updated = $this->update( $prop_type );
