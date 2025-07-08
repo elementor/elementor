@@ -15,13 +15,21 @@ const transformScaleValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 		.map( ( axis ) => axis.value )
 		.join( ', ' );
 
+const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
+	Object.values( value )
+		.map( ( axis ) => `${ axis?.value.size }${ axis?.value.unit }` )
+		.join( ', ' );
+
 export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
 	const { $$type, value } = props.value;
+
 	switch ( $$type ) {
 		case TransformFunctionKeys.move:
 			return <Label label={ __( 'Move', 'elementor' ) } value={ transformMoveValue( value ) } />;
 		case TransformFunctionKeys.scale:
 			return <Label label={ __( 'Scale', 'elementor' ) } value={ transformScaleValue( value ) } />;
+		case TransformFunctionKeys.rotate:
+			return <Label label={ __( 'Rotate', 'elementor' ) } value={ transformRotateValue( value ) } />;
 		default:
 			return '';
 	}
