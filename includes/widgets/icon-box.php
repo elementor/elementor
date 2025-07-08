@@ -288,7 +288,8 @@ class Widget_Icon_Box extends Widget_Base {
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'align-items: {{VALUE}};',
 				],
 				'condition' => [
-					'position!' => 'top',
+					'selected_icon[value]!' => '',
+					'position' => [ 'left', 'right' ],
 				],
 			]
 		);
