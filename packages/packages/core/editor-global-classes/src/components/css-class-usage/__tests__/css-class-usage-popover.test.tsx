@@ -2,7 +2,8 @@ import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { CssClassUsagePopover } from '../components';
-import { useCssClassUsageByID } from '../hooks/use-css-class-usage-by-id';
+import { useCssClassUsageByID } from '../hooks';
+import { type EnhancedCssClassUsageContent } from '../types';
 
 jest.mock( '../hooks/use-css-class-usage-by-id' );
 
@@ -13,13 +14,12 @@ describe( 'CssClassUsagePopover', () => {
 
 	it( 'should display correct header with title and total count', () => {
 		// Arrange.
-		// @ts-expect-error
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
 			data: {
 				total: 5,
 				content: [],
-			},
+			} as unknown as EnhancedCssClassUsageContent,
 		} );
 
 		// Act.
@@ -32,7 +32,6 @@ describe( 'CssClassUsagePopover', () => {
 
 	it.skip( 'should display default count when total is undefined', () => {
 		// Arrange.
-		// @ts-expect-error
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
 			data: {
@@ -51,7 +50,6 @@ describe( 'CssClassUsagePopover', () => {
 	it( 'should call onClose when close button is clicked', () => {
 		// Arrange.
 		const onClose = jest.fn();
-		// @ts-expect-error
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
 			data: {
@@ -72,7 +70,6 @@ describe( 'CssClassUsagePopover', () => {
 
 	it( 'should render list items with correct data', async () => {
 		// Arrange.
-		// @ts-expect-error
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
 			data: {
@@ -96,7 +93,6 @@ describe( 'CssClassUsagePopover', () => {
 
 	it( 'should render empty list when no content is provided', () => {
 		// Arrange.
-		// @ts-expect-error
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
 			data: {
@@ -114,7 +110,6 @@ describe( 'CssClassUsagePopover', () => {
 
 	it( 'should render menu items with correct structure', () => {
 		// Arrange.
-		// @ts-expect-error
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
 			data: {

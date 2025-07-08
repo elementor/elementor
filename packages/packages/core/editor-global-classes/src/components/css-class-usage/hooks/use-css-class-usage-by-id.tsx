@@ -6,7 +6,7 @@ const EMPTY_CLASS_USAGE: EnhancedCssClassUsageContent = {
 	content: [],
 };
 
-export const useCssClassUsageByID = ( id: string ) => {
+export const useCssClassUsageByID = ( id: string ): { data: EnhancedCssClassUsageContent; isLoading: boolean } => {
 	const { data, ...rest } = useCssClassUsage();
 	const classData = data?.[ id ] ?? EMPTY_CLASS_USAGE;
 	return { ...rest, data: classData };
