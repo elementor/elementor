@@ -19,7 +19,6 @@ const SIZE = 'tiny';
 type Props = {
 	variableId: string;
 	onClose: () => void;
-	onGoBack?: () => void;
 	onSubmit?: () => void;
 };
 

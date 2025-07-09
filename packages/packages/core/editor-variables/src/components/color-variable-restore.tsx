@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { ArrowLeftIcon, BrushIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
+import { BrushIcon } from '@elementor/icons';
+import { Button, CardActions, Divider, FormHelperText } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
@@ -19,11 +19,10 @@ const SIZE = 'tiny';
 type Props = {
 	variableId: string;
 	onClose: () => void;
-	onGoBack?: () => void;
 	onSubmit?: () => void;
 };
 
-export const ColorVariableRestore = ( { variableId, onClose, onGoBack, onSubmit }: Props ) => {
+export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const { setValue: notifyBoundPropChange } = useBoundProp( colorVariablePropTypeUtil );
 
 	const variable = useVariable( variableId );
@@ -64,22 +63,9 @@ export const ColorVariableRestore = ( { variableId, onClose, onGoBack, onSubmit 
 		<PopoverContentRefContextProvider>
 			<PopoverBody height="auto">
 				<PopoverHeader
+					icon={ <BrushIcon fontSize={ SIZE } /> }
 					title={ __( 'Restore variable', 'elementor' ) }
 					onClose={ onClose }
-					icon={
-						<>
-							{ onGoBack && (
-								<IconButton
-									size={ SIZE }
-									aria-label={ __( 'Go Back', 'elementor' ) }
-									onClick={ onGoBack }
-								>
-									<ArrowLeftIcon fontSize={ SIZE } />
-								</IconButton>
-							) }
-							<BrushIcon fontSize={ SIZE } />
-						</>
-					}
 				/>
 
 				<Divider />
