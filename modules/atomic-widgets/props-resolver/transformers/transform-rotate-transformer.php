@@ -11,11 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transform_Rotate_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
+		$default_Rotate = '0deg';
 		return sprintf(
 			'rotateX(%sdeg) rotateY(%sdeg) rotateZ(%sdeg)',
-			$value['x'],
-			$value['y'],
-			$value['z']
+			$value['x'] ?? $default_Rotate,
+			$value['y'] ?? $default_Rotate,
+			$value['z'] ??$default_Rotate
 		);
 	}
 }

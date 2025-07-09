@@ -1,11 +1,16 @@
-import { numberPropTypeUtil, scaleTransformPropTypeUtil, rotateTransformPropTypeUtil, type TransformItemPropValue } from '@elementor/editor-props';
+import {
+	numberPropTypeUtil,
+	rotateTransformPropTypeUtil,
+	scaleTransformPropTypeUtil,
+	type TransformItemPropValue,
+} from '@elementor/editor-props';
 
 export type TransformFunction = 'transform-move' | 'transform-scale' | 'transform-rotate';
 
 export const TransformFunctionKeys: Record< string, TransformFunction > = {
 	move: 'transform-move',
 	scale: 'transform-scale',
-    rotate: 'transform-rotate',
+	rotate: 'transform-rotate',
 };
 
 export const defaultValues = {
@@ -14,6 +19,10 @@ export const defaultValues = {
 		unit: 'px',
 	},
 	scale: 1,
+	rotate: {
+		size: 0,
+		unit: 'deg',
+	},
 };
 
 export const initialTransformValue: TransformItemPropValue = {
@@ -32,9 +41,7 @@ export const initialScaleValue = scaleTransformPropTypeUtil.create( {
 } );
 
 export const initialRotateValue = rotateTransformPropTypeUtil.create( {
-	x: { $$type: 'size', value: { size: 0, unit: 'deg' } },
-	y: { $$type: 'size', value: { size: 0, unit: 'deg' } },
-	z: { $$type: 'size', value: { size: 0, unit: 'deg' } },
+	x: { $$type: 'size', value: { size: defaultValues.rotate.size, unit: defaultValues.rotate.unit as 'deg' } },
+	y: { $$type: 'size', value: { size: defaultValues.rotate.size, unit: defaultValues.rotate.unit as 'deg' } },
+	z: { $$type: 'size', value: { size: defaultValues.rotate.size, unit: defaultValues.rotate.unit as 'deg' } },
 } );
-
-

@@ -19,10 +19,15 @@ const transformScaleValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => axis?.value || defaultValues.scale )
 		.join( ', ' );
-//here fix
+
 const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
-		.map( ( axis ) => `${ axis?.value.size }${ axis?.value.unit }` )
+		.map( ( axis ) => {
+			const size = axis?.value?.size ?? defaultValues.rotate.size;
+			const unit = axis?.value?.unit ?? defaultValues.rotate.unit;
+
+			return `${ size }${ unit }`;
+		} )
 		.join( ', ' );
 
 export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
