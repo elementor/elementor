@@ -62,6 +62,7 @@ export default function ExportComplete() {
 					color="primary"
 					size="small"
 					onClick={ () => window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud' }
+					data-testid="view-in-library-button"
 				>
 					{ __( 'View in Library', 'elementor' ) }
 				</Button>
@@ -71,6 +72,7 @@ export default function ExportComplete() {
 					color="primary"
 					size="small"
 					onClick={ handleDone }
+					data-testid="done-button"
 				>
 					{ __( 'Done', 'elementor' ) }
 				</Button>
@@ -88,7 +90,7 @@ export default function ExportComplete() {
 			footer={ <Footer>{ footerContent }</Footer> }
 		>
 			<CenteredContent hasFooter={ true }>
-				<Stack spacing={ 3 } alignItems="center">
+				<Stack spacing={ 3 } alignItems="center" data-testid="export-complete-content">
 					<ExportCompleteIcon />
 
 					<ExportCompleteHeading isCloudExport={ isCloudExport } />

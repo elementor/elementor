@@ -62,6 +62,7 @@ class Div_Block extends Atomic_Element_Base {
 
 			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
+
 		return $props;
 	}
 
