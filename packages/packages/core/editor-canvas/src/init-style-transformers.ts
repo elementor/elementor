@@ -12,11 +12,13 @@ import { colorStopTransformer } from './transformers/styles/color-stop-transform
 import { createCombineArrayTransformer } from './transformers/styles/create-combine-array-transformer';
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
+import { flexTransformer } from './transformers/styles/flex-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
+import { transformScaleTransformer } from './transformers/styles/transform-scale-transformer';
 import { transformTransformer } from './transformers/styles/transform-transformer';
 
 export function initStyleTransformers() {
@@ -48,10 +50,12 @@ export function initStyleTransformers() {
 		.register( 'object-position', positionTransformer )
 		.register( 'transform-move', transformMoveTransformer )
 		.register( 'transform', transformTransformer )
+		.register( 'transform-scale', transformScaleTransformer )
 		.register(
 			'layout-direction',
 			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )
 		)
+		.register( 'flex', flexTransformer )
 		.register(
 			'border-width',
 			createMultiPropsTransformer(
