@@ -7,7 +7,7 @@ export const ERROR_MESSAGES = {
 	NO_NON_SPECIAL_CHARACTER: __( 'Names have to include at least one non-special character.', 'elementor' ),
 	VARIABLE_LABEL_MAX_LENGTH: __( 'Keep names up to 50 characters.', 'elementor' ),
 	DUPLICATED_LABEL: __( 'This variable name already exists. Please choose a unique name.', 'elementor' ),
-	UNEXPECTED_ERROR: __( 'Unable to save the variable. Please try again.', 'elementor' ),
+	UNEXPECTED_ERROR: __( 'There was a glitch. Try saving your variable again.', 'elementor' ),
 } as const;
 
 export const VARIABLE_LABEL_MAX_LENGTH = 50;
