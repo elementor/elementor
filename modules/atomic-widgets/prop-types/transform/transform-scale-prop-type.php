@@ -17,9 +17,9 @@ class Transform_Scale_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'x' => Number_Prop_Type::make()->default( 1 ),
-			'y' => Number_Prop_Type::make()->default( 1 ),
-			'z' => Number_Prop_Type::make()->default( 1 ),
+			'x' => Number_Prop_Type::make(),
+			'y' => Number_Prop_Type::make(),
+			'z' => Number_Prop_Type::make(),
 		];
 	}
 }

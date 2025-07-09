@@ -11,6 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Transform_Scale_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
-		return 'scale3d(' . $value['x'] . ', ' . $value['y'] . ', ' . $value['z'] . ')';
+		return sprintf( 'scale3d(%s, %s, %s)', $value['x'] ?? 1, $value['y'] ?? 1, $value['z'] ?? 1 );
 	}
 }

@@ -3,18 +3,23 @@ import type { TransformItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { TransformFunctionKeys } from './types';
+import { defaultValues, TransformFunctionKeys } from './types';
 
 const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
-		.map( ( axis ) => `${ axis?.value.size }${ axis?.value.unit }` )
+		.map( ( axis ) => {
+			const size = axis?.value?.size ?? defaultValues.move.size;
+			const unit = axis?.value?.unit ?? defaultValues.move.unit;
+
+			return `${ size }${ unit }`;
+		} )
 		.join( ', ' );
 
 const transformScaleValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
-		.map( ( axis ) => axis?.value || 1 )
+		.map( ( axis ) => axis?.value || defaultValues.scale )
 		.join( ', ' );
-
+//here fix
 const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => `${ axis?.value.size }${ axis?.value.unit }` )
