@@ -56,7 +56,11 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 		return '' === color.trim() || '' === label.trim();
 	};
 
-	const isSubmitDisabled = hasEmptyValue();
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = hasEmptyValue() || hasErrors();
 
 	return (
 		<PopoverBody height="auto">
