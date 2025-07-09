@@ -85,6 +85,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
 	const EXPERIMENT_VERSION_3_31 = 'e_v_3_31';
+	const EXPERIMENT_VERSION_3_32 = 'e_v_3_32';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
@@ -174,6 +175,15 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_VERSION_3_31,
 			'title' => esc_html__( 'Version 3.31', 'elementor' ),
 			'description' => esc_html__( 'Features for version 3.31.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_VERSION_3_32,
+			'title' => esc_html__( 'Version 3.32', 'elementor' ),
+			'description' => esc_html__( 'Features for version 3.32.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
