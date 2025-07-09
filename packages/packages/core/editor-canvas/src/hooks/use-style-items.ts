@@ -1,8 +1,9 @@
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
+import { type BreakpointId, getBreakpoints } from '@elementor/editor-responsive';
 import { type StylesProvider, stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
-import { type StyleItem, type StyleRenderer } from '../renderers/create-styles-renderer';
+import { type RendererStyleDefinition, type StyleItem, type StyleRenderer } from '../renderers/create-styles-renderer';
 import { abortPreviousRuns } from '../utils/abort-previous-runs';
 import { signalizedProcess } from '../utils/signalized-process';
 import { useOnMount } from './use-on-mount';
@@ -52,9 +53,23 @@ export function useStyleItems() {
 		} );
 	} );
 
-	return Object.values( styleItems )
-		.sort( ( { provider: providerA }, { provider: providerB } ) => providerA.priority - providerB.priority )
-		.flatMap( ( { items } ) => items );
+	const breakpointsOrder = getBreakpoints().map( ( breakpoint ) => breakpoint.id );
+
+	return useMemo(
+		() =>
+			Object.values( styleItems )
+				.sort( ( { provider: providerA }, { provider: providerB } ) => providerA.priority - providerB.priority )
+				.flatMap( ( { items } ) => items )
+				.sort( ( { breakpoint: breakpointA }, { breakpoint: breakpointB } ) => {
+					return (
+						breakpointsOrder.indexOf( breakpointA as BreakpointId ) -
+						breakpointsOrder.indexOf( breakpointB as BreakpointId )
+					);
+				} ),
+		// eslint-disable-next-line
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[ styleItems, breakpointsOrder.join( '-' ) ]
+	);
 }
 
 type CreateProviderSubscriberArgs = {
@@ -78,7 +93,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems }: Cr
 					};
 				} );
 
-				return renderStyles( { styles, signal } );
+				return renderStyles( { styles: breakToBreakpoints( styles ), signal } );
 			} )
 			.then( ( items ) => {
 				setStyleItems( ( prev ) => ( {
@@ -88,4 +103,31 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems }: Cr
 			} )
 			.execute()
 	);
+
+	function breakToBreakpoints( styles: RendererStyleDefinition[] ) {
+		return Object.values(
+			styles.reduce(
+				( acc, style ) => {
+					style.variants.forEach( ( variant ) => {
+						const breakpoint = variant.meta.breakpoint || 'desktop';
+
+						if ( ! acc[ style.id ] ) {
+							acc[ style.id ] = {};
+						}
+
+						if ( ! acc[ style.id ][ breakpoint ] ) {
+							acc[ style.id ][ breakpoint ] = {
+								...style,
+								variants: [],
+							};
+						}
+
+						acc[ style.id ][ breakpoint ].variants.push( variant );
+					} );
+					return acc;
+				},
+				{} as Record< string, Record< string, RendererStyleDefinition > >
+			)
+		).flatMap( ( breakpointMap ) => Object.values( breakpointMap ) );
+	}
 }
