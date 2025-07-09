@@ -31,7 +31,7 @@
         {% set merged = merged | merge({ (key): new_value ~ value }) %}
     {%  endfor %}
 
-    <svg {% for key, value in merged %} {{ key }}="{{ value }}" {% endfor %}>
+    <svg{% for key, value in merged %} {{ key }}="{{ value }}"{% endfor %}>
         {{ settings.svg.content|raw }}
     </svg>
 

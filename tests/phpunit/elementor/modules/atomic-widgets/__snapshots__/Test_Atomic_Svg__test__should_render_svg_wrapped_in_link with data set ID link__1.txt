@@ -11,7 +11,7 @@
                     
         
             
-    <svg  xmlns="http://www.w3.org/2000/svg"  class="e-svg-base"  fill="currentColor"  style="width: 100%; height: 100%; overflow: unset;" >
+    <svg xmlns="http://www.w3.org/2000/svg" class="e-svg-base" fill="currentColor" style="width: 100%; height: 100%; overflow: unset;">
         <path d="M0 0h100v100H0z"></path>
     </svg>
 
