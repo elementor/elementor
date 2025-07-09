@@ -63,6 +63,32 @@ describe( 'TransformRepeaterControl', () => {
 						} ),
 					},
 				} ),
+				'transform-rotate': createMockPropType( {
+					kind: 'object',
+					shape: {
+						x: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+						y: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+						z: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+					},
+				} ),
 			},
 		} ),
 	} );
@@ -93,6 +119,7 @@ describe( 'TransformRepeaterControl', () => {
 		// Assert.
 		expect( screen.getByText( 'Move' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Scale' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Rotate' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should switch to Scale tab when clicked', () => {
@@ -114,6 +141,27 @@ describe( 'TransformRepeaterControl', () => {
 		expect( screen.getByText( 'Scale X' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Scale Y' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Scale Z' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should switch to Rotate tab when clicked', () => {
+		// Arrange.
+		const mockTransformValue = createMockTransformValue();
+
+		// Act.
+		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+
+		// Open the first item
+		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( openButton );
+
+		// Click the Rotate tab
+		const rotateTab = screen.getByText( 'Rotate' );
+		fireEvent.click( rotateTab );
+
+		// Assert.
+		expect( screen.getByText( 'Rotate X' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Rotate Y' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Rotate Z' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should add a new transform item when clicking the add button', () => {
