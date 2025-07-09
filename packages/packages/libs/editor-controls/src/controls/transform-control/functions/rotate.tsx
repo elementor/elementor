@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { rotateTransformPropTypeUtil } from '@elementor/editor-props';
-import { Arrow360Icon } from '@elementor/icons';
+import { Arrow360Icon, RotateClockwiseIcon } from '@elementor/icons';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -24,7 +24,7 @@ const rotateAxisControls: { label: string; bindValue: 'x' | 'y' | 'z'; startIcon
 	{
 		label: __( 'Rotate Z', 'elementor' ),
 		bindValue: 'z',
-		startIcon: <Arrow360Icon fontSize={ 'tiny' } />,
+		startIcon: <RotateClockwiseIcon fontSize={ 'tiny' } />,
 	},
 ];
 
