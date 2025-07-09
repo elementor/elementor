@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { numberPropTypeUtil } from '@elementor/editor-props';
-import { TextField } from '@elementor/ui';
+import { InputAdornment, TextField } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
@@ -18,12 +18,14 @@ export const NumberControl = createControl(
 		min = -Number.MAX_VALUE,
 		step = 1,
 		shouldForceInt = false,
+		startIcon,
 	}: {
 		placeholder?: string;
 		max?: number;
 		min?: number;
 		step?: number;
 		shouldForceInt?: boolean;
+		startIcon?: React.ReactNode;
 	} ) => {
 		const { value, setValue, placeholder, disabled } = useBoundProp( numberPropTypeUtil );
 
@@ -52,6 +54,13 @@ export const NumberControl = createControl(
 					onChange={ handleChange }
 					placeholder={ labelPlaceholder ?? ( placeholder ? String( placeholder ) : '' ) }
 					inputProps={ { step } }
+					InputProps={ {
+						startAdornment: startIcon ? (
+							<InputAdornment position="start" disabled={ disabled }>
+								{ startIcon }
+							</InputAdornment>
+						) : undefined,
+					} }
 					onKeyDown={ ( event: KeyboardEvent ) => {
 						if ( RESTRICTED_INPUT_KEYS.includes( event.key ) ) {
 							event.preventDefault();
