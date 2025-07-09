@@ -251,7 +251,7 @@ class Module extends BaseModule {
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
 		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
-		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer( ' ' ) );
+		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
 		$transformers->register( Transform_Prop_Type::get_key(), new Transform_Transformer() );
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),

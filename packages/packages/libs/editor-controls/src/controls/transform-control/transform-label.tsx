@@ -32,7 +32,6 @@ const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 
 export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
 	const { $$type, value } = props.value;
-
 	switch ( $$type ) {
 		case TransformFunctionKeys.move:
 			return <Label label={ __( 'Move', 'elementor' ) } value={ transformMoveValue( value ) } />;

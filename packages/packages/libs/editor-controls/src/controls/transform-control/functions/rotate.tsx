@@ -20,11 +20,7 @@ const rotateAxisControls: { label: string; bindValue: 'x' | 'y' | 'z'; startIcon
 	{
 		label: __( 'Rotate Y', 'elementor' ),
 		bindValue: 'y',
-		startIcon: (
-			<Box sx={ { transform: 'scaleX(-1) rotate(-90deg)' } }>
-				<Arrow360Icon fontSize={ 'tiny' } />
-			</Box>
-		),
+		startIcon: <Arrow360Icon fontSize="tiny" style={ { transform: 'scaleX(-1) rotate(-90deg)' } } />,
 	},
 	{
 		label: __( 'Rotate Z', 'elementor' ),
