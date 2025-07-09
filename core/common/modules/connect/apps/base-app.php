@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
-use Elementor\Api;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Connect\Admin;
 use Elementor\Core\Utils\Collection;
