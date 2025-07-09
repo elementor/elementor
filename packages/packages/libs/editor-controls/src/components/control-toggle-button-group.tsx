@@ -98,7 +98,7 @@ export const ControlToggleButtonGroup = < TValue, >( {
 		return `repeat(${ itemsCount }, minmax(0, 25%)) ${ templateColumnsSuffix }`;
 	}, [ menuItems?.length, fixedItems.length ] );
 
-	const shouldShowPlaceholder = exclusive && ( value === null || value === undefined || value === '' );
+	const shouldShowPlaceholder = value === null || value === undefined || value === '';
 
 	const theme = useTheme();
 
@@ -118,8 +118,21 @@ export const ControlToggleButtonGroup = < TValue, >( {
 				} }
 			>
 				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
+					const placeholderArray =
+						Array.isArray(placeholder) ? placeholder : [placeholder];
+
 					const isPlaceholder =
-						shouldShowPlaceholder && placeholder !== undefined && buttonValue === placeholder;
+						placeholder !== undefined &&
+						(
+							// Exclusive: value is empty, and button matches placeholder
+							(exclusive && shouldShowPlaceholder && buttonValue === placeholder) ||
+							// Non-exclusive: value is empty array, and button is in placeholder array
+							(
+								!exclusive &&
+								Array.isArray(value) && value.length === 0 &&
+								placeholderArray.includes(buttonValue)
+							)
+						);
 					return (
 						<ConditionalTooltip
 							key={ buttonValue as string }
