@@ -15,9 +15,7 @@ jest.mock( '@elementor/editor-controls', () => ( {
 } ) );
 
 jest.mock( '../variable-selection-popover.context', () => ( {
-	usePopoverContentRef: jest.fn( () => ( {
-		current: document.createElement( 'div' ),
-	} ) ),
+	usePopoverContentRef: jest.fn( () => document.createElement( 'div' ) ),
 } ) );
 
 const mockOnClose = jest.fn();
