@@ -7,7 +7,7 @@ import { StylesField } from '../../../controls-registry/styles-field';
 import { EXPERIMENTAL_FEATURES } from '../../../sync/experiments-flags';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
-import { OpacityControlField } from '../layout-section/opacity-control-field';
+import { OpacityControlField } from './opacity-control-field';
 
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
 const FILTER_LABEL = __( 'Filters', 'elementor' );
