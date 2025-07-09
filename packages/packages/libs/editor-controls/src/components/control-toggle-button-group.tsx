@@ -28,7 +28,7 @@ export type ToggleButtonGroupItem< TValue > = {
 
 const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
 	${ ( { justify } ) => `justify-content: ${ justify };` }
-	button:not( :last-of-type ) {
+	button:not(:last-of-type) {
 		border-start-end-radius: 0;
 		border-end-end-radius: 0;
 	}
@@ -52,12 +52,12 @@ type Props< TValue > = {
 	items: ToggleButtonGroupItem< TValue | null >[];
 	maxItems?: number;
 	fullWidth?: boolean;
-	placeholder?: TValue;
+	placeholder?: TValue | TValue[];
 } & (
 	| {
 			exclusive?: false;
-			value: NonExclusiveValue< TValue >;
-			onChange: ( value: NonExclusiveValue< TValue > ) => void;
+			value: string; // non-exclusive: space-separated string
+			onChange: ( value: string ) => void;
 	  }
 	| {
 			exclusive: true;
@@ -82,7 +82,9 @@ export const ControlToggleButtonGroup = < TValue, >( {
 	const menuItems = shouldSliceItems ? items.slice( maxItems - 1 ) : [];
 	const fixedItems = shouldSliceItems ? items.slice( 0, maxItems - 1 ) : items;
 
-	const isRtl = 'rtl' === useTheme().direction;
+	const theme = useTheme();
+	const isRtl = theme.direction === 'rtl';
+
 	const handleChange = (
 		_: React.MouseEvent< HTMLElement >,
 		newValue: typeof exclusive extends true ? ExclusiveValue< TValue > : NonExclusiveValue< TValue >
@@ -94,13 +96,28 @@ export const ControlToggleButtonGroup = < TValue, >( {
 		const isOffLimits = menuItems?.length;
 		const itemsCount = isOffLimits ? fixedItems.length + 1 : fixedItems.length;
 		const templateColumnsSuffix = isOffLimits ? 'auto' : '';
-
 		return `repeat(${ itemsCount }, minmax(0, 25%)) ${ templateColumnsSuffix }`;
 	}, [ menuItems?.length, fixedItems.length ] );
 
-	const shouldShowPlaceholder = value === null || value === undefined || value === '';
+	const shouldShowExclusivePlaceholder = exclusive && ( value === null || value === undefined || value === '' );
 
-	const theme = useTheme();
+	const nonExclusiveSelectedValues =
+		! exclusive && Array.isArray( value )
+			? value
+					.map( ( v ) => ( typeof v === 'string' ? v : '' ) )
+					.join( ' ' )
+					.trim()
+					.split( /\s+/ )
+					.filter( Boolean )
+			: [];
+
+	const shouldShowNonExclusivePlaceholder = ! exclusive && nonExclusiveSelectedValues.length === 0;
+
+	const placeholderArray = Array.isArray( placeholder )
+		? placeholder.flatMap( ( p ) => ( typeof p === 'string' ? p.trim().split( /\s+/ ).filter( Boolean ) : [] ) )
+		: typeof placeholder === 'string'
+		? placeholder.trim().split( /\s+/ ).filter( Boolean )
+		: [];
 
 	return (
 		<ControlActions>
@@ -118,21 +135,11 @@ export const ControlToggleButtonGroup = < TValue, >( {
 				} }
 			>
 				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
-					const placeholderArray =
-						Array.isArray(placeholder) ? placeholder : [placeholder];
-
 					const isPlaceholder =
-						placeholder !== undefined &&
-						(
-							// Exclusive: value is empty, and button matches placeholder
-							(exclusive && shouldShowPlaceholder && buttonValue === placeholder) ||
-							// Non-exclusive: value is empty array, and button is in placeholder array
-							(
-								!exclusive &&
-								Array.isArray(value) && value.length === 0 &&
-								placeholderArray.includes(buttonValue)
-							)
-						);
+						placeholderArray.length > 0 &&
+						( ( shouldShowExclusivePlaceholder && placeholderArray.includes( buttonValue as string ) ) ||
+							( shouldShowNonExclusivePlaceholder && placeholderArray.includes( buttonValue as string ) ) );
+
 					return (
 						<ConditionalTooltip
 							key={ buttonValue as string }
@@ -239,7 +246,7 @@ const SplitButtonGroup = < TValue, >( {
 				aria-pressed={ undefined }
 				onClick={ onMenuToggle }
 				ref={ menuButtonRef }
-				value={ '__chevron-icon-button__' }
+				value="__chevron-icon-button__"
 			>
 				<ChevronDownIcon fontSize={ size } />
 			</ToggleButton>
