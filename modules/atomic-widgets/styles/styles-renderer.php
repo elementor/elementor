@@ -154,22 +154,12 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$query = $this->get_media_query( $this->breakpoints[ $breakpoint_id ] );
+		$size = $this->get_breakpoint_size( $this->breakpoints[ $breakpoint_id ] );
 
-		return $query ? $query . '{' . $css . '}' : $css;
+		return $size ? '@media(' . $size . '){' . $css . '}' : $css;
 	}
 
-	public static function get_media_query( $breakpoint ): ?string {
-		if ( isset( $breakpoint['is_enabled'] ) && ! $breakpoint['is_enabled'] ) {
-			return null;
-		}
-
-		$size = self::get_breakpoint_size( $breakpoint );
-
-		return $size ? '@media(' . $size . ')' : null;
-	}
-
-	private static function get_breakpoint_size( array $breakpoint ): ?string {
+	private function get_breakpoint_size( array $breakpoint ): ?string {
 		$bound = 'min' === $breakpoint['direction'] ? 'min-width' : 'max-width';
 		$width = $breakpoint['value'] . 'px';
 
