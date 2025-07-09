@@ -16,19 +16,15 @@ class Transform_Rotate_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
+		$default = [
+			'size' => 0,
+			'unit' => 'deg',
+		];
+
 		return [
-			'x' => Size_Prop_Type::make()->default( [
-				'size' => 0,
-				'unit' => 'deg',
-			] ),
-			'y' => Size_Prop_Type::make()->default( [
-				'size' => 0,
-				'unit' => 'deg',
-			] ),
-			'z' => Size_Prop_Type::make()->default( [
-				'size' => 0,
-				'unit' => 'deg',
-			] ),
+			'x' => Size_Prop_Type::make()->default( $default ),
+			'y' => Size_Prop_Type::make()->default( $default ),
+			'z' => Size_Prop_Type::make()->default( $default ),
 		];
 	}
 }

@@ -52,7 +52,6 @@ export function initStyleTransformers() {
 		.register( 'transform-scale', transformScaleTransformer )
 		.register( 'transform-rotate', transformRotateTransformer )
 		.register( 'transform', transformTransformer )
-		.register( 'transform-scale', transformScaleTransformer )
 		.register(
 			'layout-direction',
 			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )
