@@ -23,7 +23,7 @@ type Props = {
 	onSubmit?: () => void;
 };
 
-export const FontVariableRestore = ( {	variableId, onClose, onSubmit }: Props ) => {
+export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const { setValue: notifyBoundPropChange } = useBoundProp( fontVariablePropTypeUtil );
 
 	const variable = useVariable( variableId );

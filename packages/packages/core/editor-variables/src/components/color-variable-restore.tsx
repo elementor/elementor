@@ -23,7 +23,7 @@ type Props = {
 	onSubmit?: () => void;
 };
 
-export const ColorVariableRestore = ( { variableId,onClose, onGoBack, onSubmit }: Props ) => {
+export const ColorVariableRestore = ( { variableId, onClose, onGoBack, onSubmit }: Props ) => {
 	const { setValue: notifyBoundPropChange } = useBoundProp( colorVariablePropTypeUtil );
 
 	const variable = useVariable( variableId );
