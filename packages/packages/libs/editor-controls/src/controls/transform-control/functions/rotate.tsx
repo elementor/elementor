@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { rotateTransformPropTypeUtil } from '@elementor/editor-props';
 import { Arrow360Icon } from '@elementor/icons';
-//RotateClockwiseIcon
-import { Box, Grid } from '@elementor/ui';
+import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
