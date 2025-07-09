@@ -655,19 +655,8 @@ class Module extends BaseModule {
 
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		try {
-			if ( $active_kit && method_exists( $active_kit, 'get_tabs' ) ) {
-				$tabs = $active_kit->get_tabs();
-				if ( is_array( $tabs ) ) {
-					foreach ( $tabs as $key => $tab ) {
-						if ( method_exists( $tab, 'get_title' ) ) {
-							$summary_titles['site-settings'][ $key ] = $tab->get_title();
-						}
-					}
-				}
-			}
-		} catch ( \Exception $e ) {
-			Plugin::$instance->logger->get_logger()->error( $e->getMessage() );
+		foreach ( $active_kit->get_tabs() as $key => $tab ) {
+			$summary_titles['site-settings'][ $key ] = $tab->get_title();
 		}
 
 		return $summary_titles;
