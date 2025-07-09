@@ -41,6 +41,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Move_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Flex_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
@@ -56,6 +57,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Gradient_Color_Stop_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
@@ -228,6 +230,7 @@ class Module extends BaseModule {
 		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
 		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
+		$transformers->register( Flex_Prop_Type::get_key(), new Flex_Transformer() );
 		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
