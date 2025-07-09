@@ -42,6 +42,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Tra
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Move_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Svg_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
@@ -69,6 +70,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Move_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Scale_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
@@ -249,6 +251,7 @@ class Module extends BaseModule {
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
 		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
+		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Prop_Type::get_key(), new Transform_Transformer() );
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
