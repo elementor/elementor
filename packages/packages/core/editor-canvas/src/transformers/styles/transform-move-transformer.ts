@@ -6,6 +6,8 @@ type TransformMove = {
 	z: string;
 };
 
+const defaultMove = '0px';
+
 export const transformMoveTransformer = createTransformer( ( value: TransformMove ) => {
-	return `translate3d(${ value.x }, ${ value.y }, ${ value.z })`;
+	return `translate3d(${ value.x ?? defaultMove }, ${ value.y ?? defaultMove }, ${ value.z ?? defaultMove })`;
 } );
