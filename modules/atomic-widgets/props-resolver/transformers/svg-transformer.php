@@ -125,11 +125,11 @@ class Svg_Transformer extends Transformer_Base {
 		$value = null;
 
 		if ( ! empty( $attr[2] ) ) {
-			if ( isset( $attr[4] ) && $attr[4] !== '' ) {
+			if ( isset( $attr[4] ) && '' !== $attr[4] ) {
 				$value = $attr[4];
-			} elseif ( isset( $attr[5] ) && $attr[5] !== '' ) {
+			} elseif ( isset( $attr[5] ) && '' !== $attr[5] ) {
 				$value = $attr[5];
-			} elseif ( isset( $attr[6] ) && $attr[6] !== '' ) {
+			} elseif ( isset( $attr[6] ) && '' !== $attr[6] ) {
 				$value = $attr[6];
 			}
 
@@ -137,7 +137,7 @@ class Svg_Transformer extends Transformer_Base {
 
 			if (
 				strlen( $value ) > 1 &&
-				( $value[0] === '"' || $value[0] === "'" ) &&
+				( '"' === $value[0] || "'" === $value[0] ) &&
 				$value[0] === $value[ strlen( $value ) - 1 ]
 			) {
 				$value = substr( $value, 1, -1 );
