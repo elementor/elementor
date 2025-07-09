@@ -9,10 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Transform_Move_Transformer extends Transformer_Base {
+class Transform_Scale_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
-		$default_move = '0px';
-
-		return sprintf( 'translate3d(%s, %s, %s)', $value['x'] ?? $default_move, $value['y'] ?? $default_move, $value['z'] ?? $default_move );
+		return sprintf( 'scale3d(%s, %s, %s)', $value['x'] ?? 1, $value['y'] ?? 1, $value['z'] ?? 1 );
 	}
 }
