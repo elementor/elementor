@@ -155,7 +155,7 @@ export const StyleTab = () => {
 									name: 'Effects',
 									title: __( 'Effects', 'elementor' ),
 								} }
-								fields={ [ 'box-shadow' ] }
+								fields={ [ 'box-shadow', 'opacity', 'transform', 'filter', 'backdrop-filter' ] }
 							/>
 						</SectionsList>
 					</StyleInheritanceProvider>
