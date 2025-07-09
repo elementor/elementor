@@ -5,6 +5,7 @@ import { apiClient } from './api';
 import { OP_RW, Storage, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
+import { ERROR_MESSAGES } from './utils/validations';
 
 const storage = new Storage();
 
@@ -146,9 +147,9 @@ export const service = {
 			} );
 	},
 
-	restore: ( id: string ) => {
+	restore: ( id: string, label?: string, value?: string ) => {
 		return apiClient
-			.restore( id )
+			.restore( id, label, value )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 
@@ -175,6 +176,10 @@ export const service = {
 					id: variableId,
 					variable: restoredVariable,
 				};
+			} )
+			.catch( ( error ) => {
+				const message = getErrorMessage( error.response );
+				throw message ? new Error( message ) : error;
 			} );
 	},
 };
@@ -188,8 +193,8 @@ const handleWatermark = ( operation: string, newWatermark: number ) => {
 
 const getErrorMessage = ( response: AxiosResponse ) => {
 	if ( response?.data?.code === 'duplicated_label' ) {
-		return __( 'This variable name already exists. Please choose a unique name.', 'elementor' );
+		return ERROR_MESSAGES.DUPLICATED_LABEL;
 	}
 
-	return __( 'There was a glitch. Try saving your variable again.', 'elementor' );
+	return ERROR_MESSAGES.UNEXPECTED_ERROR;
 };
