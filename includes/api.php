@@ -24,8 +24,6 @@ class Api {
 
 	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
 
-	const TRANSIENT_KEY_PREFIX_LIBRARY = 'elementor_remote_library_info_api_data_';
-
 	/**
 	 * API info URL.
 	 *
@@ -191,12 +189,6 @@ class Api {
 	 * @return array The templates' data.
 	 */
 	public static function get_library_data( bool $force_update = false ): array {
-		$library_data = get_transient( self::TRANSIENT_KEY_PREFIX_LIBRARY . ELEMENTOR_VERSION );
-
-		if ( ! $force_update && ! empty( $library_data ) ) {
-			return $library_data;
-		}
-
 		/**
 		 * Filters the body of the request to get library templates data.
 		 *
@@ -227,10 +219,7 @@ class Api {
 
 		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		$library_data = empty( $library_data ) ? [] : $library_data;
-		set_transient( self::TRANSIENT_KEY_PREFIX_LIBRARY . ELEMENTOR_VERSION, $library_data, HOUR_IN_SECONDS );
-
-		return $library_data;
+		return empty( $library_data ) ? [] : $library_data;
 	}
 
 	/**
