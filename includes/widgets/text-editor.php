@@ -316,7 +316,7 @@ class Widget_Text_Editor extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} p' => 'margin-block-end: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
