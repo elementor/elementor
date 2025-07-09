@@ -95,10 +95,10 @@ const ContainerView = BaseElementView.extend( {
 
 		_.extend( behaviors, {
 			// TODO: Remove. It's a temporary solution for the Navigator sortable.
-			Sortable: {
-				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'widget',
-			},
+			// Sortable: {
+			// 	behaviorClass: require( 'elementor-behaviors/sortable' ),
+			// 	elChildType: 'widget',
+			// },
 			Resizable: {
 				behaviorClass: WidgetResizable,
 			},
@@ -562,16 +562,16 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	droppableDestroy() {
-		this.$el.html5Droppable( 'destroy' );
-		this.$el.find( '> .e-con-inner' ).html5Droppable( 'destroy' );
+		// This.$el.html5Droppable( 'destroy' );
+		// this.$el.find( '> .e-con-inner' ).html5Droppable( 'destroy' );
 	},
 
 	droppableInitialize( settings ) {
-		if ( 'boxed' === settings.get( 'content_width' ) ) {
-			this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
-		} else {
-			this.$el.html5Droppable( this.getDroppableOptions() );
-		}
+		// If ( 'boxed' === settings.get( 'content_width' ) ) {
+		// 	this.$el.find( '> .e-con-inner' ).html5Droppable( this.getDroppableOptions() );
+		// } else {
+		// 	this.$el.html5Droppable( this.getDroppableOptions() );
+		// }
 	},
 
 	handleGridEmptyView() {

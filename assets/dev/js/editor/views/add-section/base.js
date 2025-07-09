@@ -170,15 +170,15 @@ class AddSectionBase extends Marionette.ItemView {
 	}
 
 	onRender() {
-		this.$el.html5Droppable( {
-			axis: [ 'vertical' ],
-			groups: [ 'elementor-element' ],
-			placeholder: false,
-			currentElementClass: 'elementor-html5dnd-current-element',
-			hasDraggingOnChildClass: 'elementor-dragging-on-child',
-			// Merge different options if provided by child elements
-			...this.getDroppableOptions(),
-		} );
+		// This.$el.html5Droppable( {
+		// 	axis: [ 'vertical' ],
+		// 	groups: [ 'elementor-element' ],
+		// 	placeholder: false,
+		// 	currentElementClass: 'elementor-html5dnd-current-element',
+		// 	hasDraggingOnChildClass: 'elementor-dragging-on-child',
+		// 	// Merge different options if provided by child elements
+		// 	...this.getDroppableOptions(),
+		// } );
 	}
 
 	getDroppableOptions() {
