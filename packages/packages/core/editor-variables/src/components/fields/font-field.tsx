@@ -28,7 +28,7 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const defaultRef = useRef< HTMLDivElement >( null );
-	const anchorRef = usePopoverContentRef() ?? defaultRef;
+	const anchorRef = usePopoverContentRef() ?? defaultRef.current;
 
 	const fontPopoverState = usePopupState( { variant: 'popover' } );
 
@@ -65,9 +65,9 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 				<Popover
 					disablePortal
 					disableScrollLock
-					anchorEl={ anchorRef.current }
+					anchorEl={ anchorRef }
 					anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-					transformOrigin={ { vertical: 'top', horizontal: -20 } }
+					transformOrigin={ { vertical: 'top', horizontal: -28 } }
 					{ ...bindPopover( fontPopoverState ) }
 				>
 					<FontFamilySelector
