@@ -32,7 +32,7 @@ export default function ImportKit() {
 	const renderContent = () => {
 		if ( error ) {
 			return (
-				<CenteredContent>
+				<CenteredContent data-testid="import-error">
 					<Stack spacing={ 3 } alignItems="center" >
 						<ImportError statusText={ __( 'Uploading failed', 'elementor' ) } />
 					</Stack>
@@ -42,7 +42,7 @@ export default function ImportKit() {
 
 		if ( uploading ) {
 			return (
-				<CenteredContent>
+				<CenteredContent data-testid="import-loader">
 					<CircularProgress size={ 30 } />
 				</CenteredContent>
 			);
@@ -60,16 +60,32 @@ export default function ImportKit() {
 					px: 20,
 				} }
 			>
-				<Typography variant="h4" color="text.primary" sx={ { fontWeight: 700, mb: 3, textAlign: 'left' } }>
+				<Typography
+					variant="h4"
+					color="text.primary"
+					sx={ { fontWeight: 700, mb: 3, textAlign: 'left' } }
+					data-testid="import-title"
+				>
 					{ __( 'Import a website template', 'elementor' ) }
 				</Typography>
-				<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 500, mb: 7, textAlign: 'left' } }>
+				<Typography
+					variant="body1"
+					color="text.secondary"
+					sx={ { fontWeight: 500, mb: 7, textAlign: 'left' } }
+					data-testid="import-description"
+				>
 					{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
-					<Link href="#" sx={ { color: 'info.main', fontWeight: 500, ml: 1, textDecoration: 'none' } }>{ __( 'Learn more', 'elementor' ) }</Link>
+					<Link
+						href="#"
+						sx={ { color: 'info.main', fontWeight: 500, ml: 1, textDecoration: 'none' } }
+						data-testid="import-learn-more-link"
+					>
+						{ __( 'Learn more', 'elementor' ) }
+					</Link>
 				</Typography>
-				<Card sx={ { width: '100%', p: 0, borderRadius: 2, boxShadow: 0, minHeight: 600 } }>
-					<CardContent sx={ { p: 0 } }>
-						<DropZone onFileSelect={ onFileSelect } helperText={ __( 'SVG, PNG, JPG or GIF (max. 3MB)', 'elementor' ) } filetypes={ [ 'image/svg+xml', 'image/png', 'image/jpeg', 'image/gif', 'application/zip' ] } />
+				<Card sx={ { width: '100%', p: 0, borderRadius: 2, boxShadow: 0, minHeight: 600 } } data-testid="import-card">
+					<CardContent sx={ { p: 0 } } data-testid="import-card-content">
+						<DropZone onFileSelect={ onFileSelect } />
 					</CardContent>
 				</Card>
 			</Box>
