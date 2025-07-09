@@ -16,10 +16,9 @@ export function useUploadKit() {
 
 			const response = await fetch( uploadUrl, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-WP-Nonce': window.wpApiSettings?.nonce || '',
-				},
+                                headers: {
+                                        'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+                                },
 				body: formData,
 			} );
 
