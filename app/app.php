@@ -15,6 +15,12 @@ use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 
+use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
+use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
+use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
+use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -290,20 +296,20 @@ class App extends BaseApp {
 	public function __construct() {
 		$this->register_import_export_customization_experiment();
 
-		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
+		$this->add_component( 'site-editor', new SiteEditorModule() );
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
-			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
+			$this->add_component( 'import-export', new ImportExportModule() );
 
 			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
-				$this->add_component( 'import-export-customization', new Modules\ImportExportCustomization\Module() );
+				$this->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
 			}
 
 			// Kit library is depended on import-export
-			$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
+			$this->add_component( 'kit-library', new KitLibraryModule() );
 		}
 
-		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
+		$this->add_component( 'onboarding', new OnboardingModule() );
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );

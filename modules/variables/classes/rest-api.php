@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Exception;
 use WP_Error;
 use WP_REST_Response;
@@ -125,6 +126,18 @@ class Rest_Api {
 					'required' => true,
 					'type' => 'string',
 					'validate_callback' => [ $this, 'is_valid_variable_id' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+				'label' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_label' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
+				'value' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_value' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
@@ -272,6 +285,8 @@ class Rest_Api {
 
 		$result = $this->variables_repository->delete( $id );
 
+		$this->clear_cache();
+
 		return $this->success_response( [
 			'variable' => $result['variable'],
 			'watermark' => $result['watermark'],
@@ -289,7 +304,21 @@ class Rest_Api {
 	private function restore_existing_variable( WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 
-		$result = $this->variables_repository->restore( $id );
+		$overrides = [];
+
+		$label = $request->get_param( 'label' );
+		if ( $label ) {
+			$overrides['label'] = $label;
+		}
+
+		$value = $request->get_param( 'value' );
+		if ( $value ) {
+			$overrides['value'] = $value;
+		}
+
+		$result = $this->variables_repository->restore( $id, $overrides );
+
+		$this->clear_cache();
 
 		return $this->success_response( [
 			'variable' => $result['variable'],
@@ -328,6 +357,14 @@ class Rest_Api {
 				self::HTTP_BAD_REQUEST,
 				'invalid_variable_limit_reached',
 				__( 'Reached the maximum number of variables', 'elementor' )
+			);
+		}
+
+		if ( $e instanceof DuplicatedLabel ) {
+			return $this->prepare_error_response(
+				self::HTTP_BAD_REQUEST,
+				'duplicated_label',
+				__( 'Variable label already exists', 'elementor' )
 			);
 		}
 

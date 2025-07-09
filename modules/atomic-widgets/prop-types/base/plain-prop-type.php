@@ -20,13 +20,15 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 
-	private ?Dependency_Manager $dependency_manager = null;
-
 	/**
 	 * @return static
 	 */
 	public static function make() {
 		return new static();
+	}
+
+	public function get_type(): string {
+		return 'plain';
 	}
 
 	public function validate( $value ): bool {
@@ -53,7 +55,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			'default' => $this->get_default(),
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
-			'dependencies' => $this->dependency_manager ? $this->dependency_manager->get() : [],
+			'dependencies' => $this->get_meta_item( 'dependencies', [] ),
 		];
 	}
 
@@ -64,7 +66,15 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	abstract protected function sanitize_value( $value );
 
 	public function dependencies( Dependency_Manager $manager ): self {
-		$this->dependency_manager = $manager;
+		$dependencies = $manager->get();
+
+		if ( ! empty( $dependencies ) ) {
+			$this->meta( 'dependencies', $dependencies );
+		}
+
+		if ( ! empty( $this->dependencies ) ) {
+			$this->meta( 'dependencies', $this->dependencies );
+		}
 
 		return $this;
 	}
