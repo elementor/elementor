@@ -91,7 +91,11 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 		return color === variable.value && label === variable.label;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValues();
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
 
 	return (
 		<>
