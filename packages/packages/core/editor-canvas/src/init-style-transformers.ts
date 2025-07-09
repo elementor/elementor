@@ -19,6 +19,7 @@ import { sizeTransformer } from './transformers/styles/size-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
 import { transformRotateTransformer } from './transformers/styles/transform-rotate-transformer';
+import { transformSkewTransformer } from './transformers/styles/transform-skew-transformer';
 import { transformScaleTransformer } from './transformers/styles/transform-scale-transformer';
 import { transformTransformer } from './transformers/styles/transform-transformer';
 
@@ -52,6 +53,7 @@ export function initStyleTransformers() {
 		.register( 'transform-move', transformMoveTransformer )
 		.register( 'transform-scale', transformScaleTransformer )
 		.register( 'transform-rotate', transformRotateTransformer )
+		.register( 'transform-skew', transformSkewTransformer )
 		.register( 'transform', transformTransformer )
 		.register(
 			'layout-direction',
