@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { Box } from '@elementor/ui';
 
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
@@ -11,7 +10,7 @@ import { ColorVariablesSelection } from './color-variables-selection';
 import { FontVariableCreation } from './font-variable-creation';
 import { FontVariableEdit } from './font-variable-edit';
 import { FontVariablesSelection } from './font-variables-selection';
-import { PopoverContentRefContext } from './variable-selection-popover.context';
+import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
 const VIEW_LIST = 'list';
 const VIEW_ADD = 'add';
@@ -28,21 +27,18 @@ type Props = {
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const editIdRef = useRef< string >( '' );
-	const anchorRef = useRef< HTMLDivElement >( null );
 
 	return (
-		<PopoverContentRefContext.Provider value={ anchorRef }>
-			<Box ref={ anchorRef }>
-				{ renderStage( {
-					propTypeKey,
-					currentView,
-					selectedVariable,
-					editIdRef,
-					setCurrentView,
-					closePopover,
-				} ) }
-			</Box>
-		</PopoverContentRefContext.Provider>
+		<PopoverContentRefContextProvider>
+			{ renderStage( {
+				propTypeKey,
+				currentView,
+				selectedVariable,
+				editIdRef,
+				setCurrentView,
+				closePopover,
+			} ) }
+		</PopoverContentRefContextProvider>
 	);
 };
 
