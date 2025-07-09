@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { skewTransformPropTypeUtil } from '@elementor/editor-props';
-import { Arrow360Icon } from '@elementor/icons';
+import { ArrowLeftIcon, ArrowRightIcon } from '@elementor/icons';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -14,12 +14,12 @@ const skewAxisControls: { label: string; bindValue: 'x' | 'y' | 'z'; startIcon: 
 	{
 		label: __( 'Skew X', 'elementor' ),
 		bindValue: 'x',
-		startIcon: <Arrow360Icon fontSize={ 'tiny' } />,
+		startIcon: <ArrowRightIcon fontSize={ 'tiny' } />,
 	},
 	{
 		label: __( 'Skew Y', 'elementor' ),
 		bindValue: 'y',
-		startIcon: <Arrow360Icon fontSize="tiny" style={ { transform: 'scaleX(-1) rotate(-90deg)' } } />,
+		startIcon: <ArrowLeftIcon fontSize="tiny" style={ { transform: 'scaleX(-1) rotate(-90deg)' } } />,
 	},
 ];
 
