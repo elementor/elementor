@@ -67,8 +67,8 @@ export const deleteVariable = ( deleteId: string ) => {
 	} );
 };
 
-export const restoreVariable = ( restoreId: string ) => {
-	return service.restore( restoreId ).then( ( { id }: { id: string } ) => {
+export const restoreVariable = ( restoreId: string, label?: string, value?: string ) => {
+	return service.restore( restoreId, label, value ).then( ( { id }: { id: string } ) => {
 		return id;
 	} );
 };
