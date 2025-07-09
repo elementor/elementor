@@ -12,6 +12,7 @@ import { colorStopTransformer } from './transformers/styles/color-stop-transform
 import { createCombineArrayTransformer } from './transformers/styles/create-combine-array-transformer';
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
+import { flexTransformer } from './transformers/styles/flex-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
@@ -54,6 +55,7 @@ export function initStyleTransformers() {
 			'layout-direction',
 			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )
 		)
+		.register( 'flex', flexTransformer )
 		.register(
 			'border-width',
 			createMultiPropsTransformer(
