@@ -1,10 +1,14 @@
-import { Box, Typography, Stack, Checkbox, FormControlLabel, Link } from '@elementor/ui';
+import { useState } from 'react';
+import { Box, Typography, Stack, Checkbox, FormControlLabel, Button } from '@elementor/ui';
 
 import kitContentData from '../../shared/kit-content-data';
 import { useExportContext } from '../context/export-context';
 
+import KitSettingsCustomizationDialog from './kit-settings-customization-dialog';
+
 export default function KitContent() {
 	const { data, dispatch } = useExportContext();
+	const [ dialogOpen, setDialogOpen ] = useState( false );
 
 	const handleCheckboxChange = ( itemType ) => {
 		const isChecked = data.includes.includes( itemType );
@@ -32,12 +36,18 @@ export default function KitContent() {
 								{ item.data.features.open.join( ', ' ) }
 							</Typography>
 						</Box>
-						<Link href="#" sx={ { alignSelf: 'center' } }>
-							{ __( 'Edit', 'elementor' ) }
-						</Link>
+						{ item.type === 'settings' && (
+							<Button onClick={ () => setDialogOpen( true ) } color="secondary" sx={ { alignSelf: 'center' } }>
+								{ __( 'Edit', 'elementor' ) }
+							</Button>
+						) }
 					</Box>
 				</Box>
 			) ) }
+			<KitSettingsCustomizationDialog
+				open={ dialogOpen }
+				handleClose={ () => setDialogOpen( false ) }
+			/>
 		</Stack>
 	);
 }
