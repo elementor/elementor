@@ -1,20 +1,40 @@
 import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
 import { ControlActionsProvider } from '@elementor/editor-controls';
-import { type NumberPropValue, type SizePropValue } from '@elementor/editor-props';
+import { type FlexPropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { useDirection } from '../../../../hooks/use-direction';
+import { useStylesField } from '../../../../hooks/use-styles-field';
 import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { FlexSizeField } from '../flex-size-field';
 
 jest.mock( '@elementor/editor-styles' );
 jest.mock( '../../../../hooks/use-direction' );
+jest.mock( '../../../../hooks/use-styles-field' );
 jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
+} ) );
+
+jest.mock( '../../../../contexts/element-context', () => ( {
+	useElement: () => ( {
+		id: 'test-element-id',
+		model: {},
+		settings: {},
+	} ),
+} ) );
+
+jest.mock( '../../../../contexts/style-context', () => ( {
+	useStyle: () => ( {
+		id: null,
+		meta: {},
+		setId: jest.fn(),
+		setMetaState: jest.fn(),
+		canEdit: true,
+	} ),
 } ) );
 
 jest.mock( '@elementor/editor-controls', () => {
@@ -29,28 +49,17 @@ jest.mock( '@elementor/editor-controls', () => {
 
 describe( '<FlexSizeField />', () => {
 	const styleFields = {
-		'flex-grow': { value: null as NumberPropValue | null },
-		'flex-shrink': { value: null as NumberPropValue | null },
-		'flex-basis': { value: null as SizePropValue | null },
+		flex: { value: null as FlexPropValue | null },
 	};
 
-	const useStylesFieldsMock = ( propNames: string[] ) => {
-		const values = propNames.reduce(
-			( acc, propName ) => {
-				acc[ propName ] = styleFields[ propName as keyof typeof styleFields ]?.value;
-
-				return acc;
+	const useStylesFieldMock = () => {
+		return {
+			value: styleFields.flex.value,
+			setValue: ( newValue: FlexPropValue | null ) => {
+				styleFields.flex.value = newValue;
 			},
-			{} as Record< string, NumberPropValue | SizePropValue | null >
-		);
-
-		const setValues = ( newValues: Record< string, NumberPropValue | SizePropValue | null > ) => {
-			Object.entries( newValues ).forEach( ( [ key, value ] ) => {
-				styleFields[ key as keyof typeof styleFields ].value = value;
-			} );
+			canEdit: true,
 		};
-
-		return { values, setValues, canEdit: true };
 	};
 
 	const renderFlexSizeField = () => {
@@ -65,224 +74,201 @@ describe( '<FlexSizeField />', () => {
 		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: false } );
 
 		jest.mocked( getStylesSchema ).mockReturnValue( {
-			'flex-grow': createMockPropType( { kind: 'plain' } ),
-			'flex-shrink': createMockPropType( { kind: 'plain' } ),
-			'flex-basis': createMockPropType( { kind: 'plain' } ),
+			flex: createMockPropType( {
+				kind: 'object',
+				key: 'flex',
+				shape: {
+					flexGrow: createMockPropType( { kind: 'plain', key: 'number' } ),
+					flexShrink: createMockPropType( { kind: 'plain', key: 'number' } ),
+					flexBasis: createMockPropType( {
+						kind: 'union',
+						prop_types: {
+							size: createMockPropType( {
+								kind: 'object',
+								key: 'size',
+								shape: {
+									size: createMockPropType( { kind: 'plain', key: 'number' } ),
+									unit: createMockPropType( { kind: 'plain', key: 'string' } ),
+								},
+							} ),
+							string: createMockPropType( { kind: 'plain', key: 'string' } ),
+						},
+					} ),
+				},
+			} ),
 		} );
 
-		jest.mocked( useStylesFields ).mockImplementation( useStylesFieldsMock as never );
+		jest.mocked( useStylesField ).mockImplementation( useStylesFieldMock as never );
+
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { flex: styleFields.flex.value },
+			setValues: jest.fn,
+			canEdit: true,
+		} );
 	} );
 
 	afterEach( () => {
-		styleFields[ 'flex-grow' ].value = null;
-		styleFields[ 'flex-shrink' ].value = null;
-		styleFields[ 'flex-basis' ].value = null;
+		styleFields.flex.value = null;
 	} );
 
 	it( 'should not have any toggle button marked as "selected" when no value is set', () => {
-		// Act.
 		renderFlexSizeField();
-
 		const buttons = screen.getAllByRole( 'button' );
-
-		// Assert.
 		buttons.forEach( ( button ) => expect( button ).not.toHaveAttribute( 'aria-pressed', 'true' ) );
 	} );
 
 	it( 'should affect flex-grow prop when "Grow" button is clicked', () => {
-		// Act.
 		renderFlexSizeField();
-
 		const growButton = screen.getByLabelText( 'Grow' );
-
 		fireEvent.click( growButton );
-
-		// Assert.
-		expect( styleFields[ 'flex-grow' ].value?.value ).toBe( 1 );
-		expect( styleFields[ 'flex-shrink' ].value ).toBe( null );
-		expect( styleFields[ 'flex-basis' ].value ).toBe( null );
-
+		expect( styleFields.flex.value?.value ).toEqual( {
+			flexGrow: { $$type: 'number', value: 1 },
+			flexShrink: null,
+			flexBasis: null,
+		} );
 		fireEvent.click( growButton );
-
-		// Assert.
-		expect( styleFields[ 'flex-grow' ].value ).toBe( null );
-		expect( styleFields[ 'flex-shrink' ].value ).toBe( null );
-		expect( styleFields[ 'flex-basis' ].value ).toBe( null );
+		expect( styleFields.flex.value ).toBe( null );
 	} );
 
-	it( 'should mark the "Grow" button as "selected" when flex-grow is 1', () => {
-		// Arrange.
-		styleFields[ 'flex-grow' ].value = { $$type: 'number', value: 1 };
+	it( 'should mark the "Grow" button as "selected" when flexGrow is 1', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: { $$type: 'number', value: 1 },
+				flexShrink: null,
+				flexBasis: null,
+			},
+		};
 
-		// Act.
 		renderFlexSizeField();
-
 		const growButton = screen.getByLabelText( 'Grow' );
-
-		// Assert.
 		expect( growButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
 	it( 'should affect flex-shrink prop when "Shrink" button is clicked', () => {
-		// Act.
 		renderFlexSizeField();
-
 		const shrinkButton = screen.getByLabelText( 'Shrink' );
-
 		fireEvent.click( shrinkButton );
-
-		// Assert.
-		expect( styleFields[ 'flex-grow' ].value ).toBe( null );
-		expect( styleFields[ 'flex-shrink' ].value?.value ).toBe( 1 );
-		expect( styleFields[ 'flex-basis' ].value ).toBe( null );
-
-		// Act.
+		expect( styleFields.flex.value?.value ).toEqual( {
+			flexGrow: null,
+			flexShrink: { $$type: 'number', value: 1 },
+			flexBasis: null,
+		} );
 		fireEvent.click( shrinkButton );
-
-		// Assert.
-		expect( styleFields[ 'flex-grow' ].value ).toBe( null );
-		expect( styleFields[ 'flex-shrink' ].value ).toBe( null );
-		expect( styleFields[ 'flex-basis' ].value ).toBe( null );
+		expect( styleFields.flex.value ).toBe( null );
 	} );
 
-	it( 'should mark the "Shrink" button as "selected" when flex-shrink is 1', () => {
-		// Arrange.
-		styleFields[ 'flex-shrink' ].value = { $$type: 'number', value: 1 };
-
-		// Act.
+	it( 'should mark the "Shrink" button as "selected" when flexShrink is 1', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: null,
+				flexShrink: { $$type: 'number', value: 1 },
+				flexBasis: null,
+			},
+		};
 		renderFlexSizeField();
-
 		const shrinkButton = screen.getByLabelText( 'Shrink' );
-
-		// Assert.
 		expect( shrinkButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
 	it( 'Flex custom button functionality', () => {
-		// Act.
 		renderFlexSizeField();
-
 		const customButton = screen.getByLabelText( 'Custom' );
-
 		fireEvent.click( customButton );
-
 		const basisInputLabel = screen.getByText( 'Basis' );
-
-		// Assert.
-		expect( styleFields[ 'flex-grow' ].value ).toBe( null );
-		expect( styleFields[ 'flex-shrink' ].value ).toBe( null );
-		expect( styleFields[ 'flex-basis' ].value ).toBe( null );
+		expect( styleFields.flex.value?.value ).toEqual( {
+			flexBasis: null,
+			flexGrow: null,
+			flexShrink: null,
+		} );
 		expect( basisInputLabel ).toBeVisible();
-
-		// Act.
 		fireEvent.click( customButton );
-
-		// Assert.
-		expect( styleFields[ 'flex-grow' ].value ).toBe( null );
-		expect( styleFields[ 'flex-shrink' ].value ).toBe( null );
-		expect( styleFields[ 'flex-basis' ].value ).toBe( null );
+		expect( styleFields.flex.value ).toBe( null );
 		expect( basisInputLabel ).not.toBeVisible();
 	} );
 
-	it( 'should mark "Custom" button as "selected" when flex-grow is not 1', () => {
-		// Arrange.
-		styleFields[ 'flex-grow' ].value = { $$type: 'number', value: 2 };
-
-		// Act.
+	it( 'should mark "Custom" button as "selected" when flexGrow is not 1', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: { $$type: 'number', value: 2 },
+				flexShrink: null,
+				flexBasis: null,
+			},
+		};
 		renderFlexSizeField();
-
 		const customButton = screen.getByLabelText( 'Custom' );
-
-		// Assert.
 		expect( customButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'should mark "Custom" button as "selected" when flex-shrink is not 1', () => {
-		// Arrange.
-		styleFields[ 'flex-shrink' ].value = { $$type: 'number', value: 2 };
-
-		// Act.
+	it( 'should mark "Custom" button as "selected" when flexShrink is not 1', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: null,
+				flexShrink: { $$type: 'number', value: 2 },
+				flexBasis: null,
+			},
+		};
 		renderFlexSizeField();
-
 		const customButton = screen.getByLabelText( 'Custom' );
-
-		// Assert.
 		expect( customButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'should mark "Custom" button as "selected" when flex-basis is set', () => {
-		// Arrange.
-		styleFields[ 'flex-basis' ].value = {
-			$$type: 'size',
-			value: { size: 1, unit: 'px' },
+	it( 'should mark "Custom" button as "selected" when flexBasis is set', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: null,
+				flexShrink: null,
+				flexBasis: { $$type: 'size', value: { size: 1, unit: 'px' } },
+			},
 		};
-
-		// Act.
 		renderFlexSizeField();
-
 		const customButton = screen.getByLabelText( 'Custom' );
-
-		// Assert.
 		expect( customButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'should mark "Custom" button as "selected" when both flex-grow and flex-shrink are set', () => {
-		// Arrange.
-		styleFields[ 'flex-grow' ].value = {
-			$$type: 'number',
-			value: 1,
+	it( 'should mark "Custom" button as "selected" when both flexGrow and flexShrink are set', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: { $$type: 'number', value: 1 },
+				flexShrink: { $$type: 'number', value: 1 },
+				flexBasis: null,
+			},
 		};
-		styleFields[ 'flex-shrink' ].value = {
-			$$type: 'number',
-			value: 1,
-		};
-
-		// Act.
 		renderFlexSizeField();
-
 		const customButton = screen.getByLabelText( 'Custom' );
-
-		// Assert.
 		expect( customButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'should mark "Grow" button as "selected" when flex-grow is 1 and flex-shrink is 0', () => {
-		// Arrange.
-		styleFields[ 'flex-grow' ].value = {
-			$$type: 'number',
-			value: 1,
+	it( 'should mark "Grow" button as "selected" when flexGrow is 1 and flexShrink is 0', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: { $$type: 'number', value: 1 },
+				flexShrink: { $$type: 'number', value: 0 },
+				flexBasis: null,
+			},
 		};
-		styleFields[ 'flex-shrink' ].value = {
-			$$type: 'number',
-			value: 0,
-		};
-
-		// Act.
 		renderFlexSizeField();
-
 		const growButton = screen.getByLabelText( 'Grow' );
-
-		// Assert.
 		expect( growButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'should mark "Shrink" button as "selected" when flex-grow is 0 and flex-shrink is 1', () => {
-		// Arrange.
-		styleFields[ 'flex-grow' ].value = {
-			$$type: 'number',
-			value: 0,
+	it( 'should mark "Shrink" button as "selected" when flexGrow is 0 and flexShrink is 1', () => {
+		styleFields.flex.value = {
+			$$type: 'flex',
+			value: {
+				flexGrow: { $$type: 'number', value: 0 },
+				flexShrink: { $$type: 'number', value: 1 },
+				flexBasis: null,
+			},
 		};
-		styleFields[ 'flex-shrink' ].value = {
-			$$type: 'number',
-			value: 1,
-		};
-
-		// Act.
 		renderFlexSizeField();
-
-		const customButton = screen.getByLabelText( 'Shrink' );
-
-		// Assert.
-		expect( customButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		const shrinkButton = screen.getByLabelText( 'Shrink' );
+		expect( shrinkButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 } );
