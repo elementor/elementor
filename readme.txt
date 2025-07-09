@@ -348,6 +348,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.30.2 - 2025-07-09 =
+
+* Fix: Editor failing to load on certain hosting providers due to blocked requests
+
 = 3.30.1 - 2025-07-07 =
 
 * Fix: Focus not applied correctly to chosen property in popovers - Editor V4
