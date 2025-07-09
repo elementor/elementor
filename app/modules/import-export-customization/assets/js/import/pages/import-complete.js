@@ -1,5 +1,6 @@
 import { Box, Typography, Card, CardContent, Button, Link, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import PropTypes from 'prop-types';
 import { BaseLayout, TopBar, PageHeader, Footer } from '../../shared/components';
 
 const Illustration = () => (
@@ -21,18 +22,6 @@ const Illustration = () => (
 );
 
 const ExternalLinkIcon = ( { fontSize = 20 } ) => (
-	// <Box
-	// 	sx={ {
-	// 		width: 25,
-	// 		height: 25,
-	// 		color: 'text.secondary',
-	// 		display: 'flex',
-	// 		alignItems: 'center',
-	// 		justifyContent: 'center',
-	// 	} }
-	// >
-	// 	<i className="eps-icon eicon-editor-external-link" />
-	// </Box>
 	<Box
 		component="i"
 		sx={ { fontFamily: 'eicons', fontSize } }
@@ -41,6 +30,9 @@ const ExternalLinkIcon = ( { fontSize = 20 } ) => (
 	</Box>
 );
 
+ExternalLinkIcon.propTypes = {
+	fontSize: PropTypes.number,
+};
 
 export default function ImportComplete() {
 	const headerContent = (
