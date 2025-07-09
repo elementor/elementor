@@ -2,9 +2,10 @@ import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../../utils/create-prop-utils';
 import { sizePropTypeUtil } from '../size';
+import { TransformFunctionKeys } from './types';
 
 export const moveTransformPropTypeUtil = createPropUtils(
-	'transform-move',
+	TransformFunctionKeys.move,
 	z.strictObject( {
 		x: sizePropTypeUtil.schema.nullable(),
 		y: sizePropTypeUtil.schema.nullable(),
