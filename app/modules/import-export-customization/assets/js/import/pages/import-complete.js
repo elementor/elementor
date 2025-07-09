@@ -53,6 +53,7 @@ export default function ImportComplete() {
 				variant="contained"
 				color="primary"
 				size="small"
+				sx={ { px: 4 } }
 			>
 				{ __( 'Close', 'elementor' ) }
 			</Button>
