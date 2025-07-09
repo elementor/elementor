@@ -4,7 +4,7 @@ import { createPropUtils } from '../../utils/create-prop-utils';
 import { moveTransformPropTypeUtil } from './move-transform';
 import { rotateTransformPropTypeUtil } from './rotate-transform';
 import { scaleTransformPropTypeUtil } from './scale-transform';
-import { skewTransformPropTypeUtil } from '@elementor/editor-props';
+import { skewTransformPropTypeUtil } from './skew-transform';
 
 const filterTypes = z.union( [
 	moveTransformPropTypeUtil.schema,
