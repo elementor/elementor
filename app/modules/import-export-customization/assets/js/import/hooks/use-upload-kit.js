@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { IMPORT_STATUS, useImportContext } from '../context/import-context';
+import { useImportContext } from '../context/import-context';
 
 export function useUploadKit() {
 	const { data, isUploading, dispatch } = useImportContext();
@@ -16,9 +16,9 @@ export function useUploadKit() {
 
 			const response = await fetch( uploadUrl, {
 				method: 'POST',
-                                headers: {
-                                        'X-WP-Nonce': window.wpApiSettings?.nonce || '',
-                                },
+				headers: {
+					'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+				},
 				body: formData,
 			} );
 

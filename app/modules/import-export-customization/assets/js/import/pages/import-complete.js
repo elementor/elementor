@@ -44,7 +44,7 @@ export default function ImportComplete() {
 			<Button
 				variant="outlined"
 				color="secondary"
-				startIcon={<ExternalLinkIcon />}
+				startIcon={ <ExternalLinkIcon /> }
 				size="small"
 			>
 				{ __( 'See it Live', 'elementor' ) }
