@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createMockPropType, renderControl, RenderControlProps } from 'test-utils';
+import { createMockPropType, renderControl, type RenderControlProps } from 'test-utils';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { fireEvent, screen } from '@testing-library/react';
 
@@ -13,7 +13,7 @@ const mockOptions = [
 	{ label: 'Option 3', value: 'value3', renderContent: () => 'Option 3' },
 ];
 
-const renderWithTheme = (ui: React.ReactElement, themeOptions = {}, props: RenderControlProps ) => {
+const renderWithTheme = ( ui: React.ReactElement, themeOptions = {}, props: RenderControlProps ) => {
 	const theme = createTheme( themeOptions );
 	return renderControl( <ThemeProvider theme={ theme }>{ ui }</ThemeProvider>, props );
 };
