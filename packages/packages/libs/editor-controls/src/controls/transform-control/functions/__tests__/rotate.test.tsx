@@ -35,7 +35,7 @@ describe( 'Rotate Transform', () => {
 	it( 'should render rotate controls with proper labels', () => {
 		// Arrange.
 		const mockValue = {
-			x: { $$type: 'number', value: { size: 0, unit: 'deg' } },
+			x: { $$type: 'size', value: { size: 0, unit: 'deg' } },
 			y: { $$type: 'size', value: { size: 0, unit: 'deg' } },
 			z: { $$type: 'size', value: { size: 0, unit: 'deg' } },
 		};
