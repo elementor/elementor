@@ -23,7 +23,7 @@ export function createMockPropType< T extends Partial< PropType > >(
 		default: options.default || null,
 		settings: options.settings || {},
 		meta: options.meta || {},
-		dependencies: options.dependencies || [],
+		dependencies: options.dependencies || null,
 	};
 
 	if ( options.kind === 'array' ) {
