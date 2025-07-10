@@ -24,7 +24,8 @@
 		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
 		"spatie/phpunit-snapshot-assertions": "^4.2",
 		"humbug/php-scoper": "0.17.5",
-		"php-di/php-di": "6.4.0"
+		"php-di/php-di": "6.4.0",
+		"php-parallel-lint/php-parallel-lint": "^1.4"
 	},
 	"scripts": {
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
