@@ -51,4 +51,4 @@ jobs:
       - name: Install Dependencies
         run: npm run prepare-environment:ci
       - name: "Run Jest"
-        run: npm run test:jest
+        run: npm run test
