@@ -68,7 +68,12 @@ export const ClassItem = ( {
 		disableAutoFocus: true,
 	} );
 
-	const isSelected = ( selected || popupState.isOpen ) && ! disabled;
+	const popupState2 = usePopupState( {
+		variant: 'popover',
+		popupId: 'css-class-usage-popover',
+	} );
+
+	const isSelected = ( selected || popupState.isOpen || popupState2.isOpen ) && ! disabled;
 	return (
 		<>
 			<Stack p={ 0 }>

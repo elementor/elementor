@@ -1,190 +1,70 @@
 <?php
 
-namespace Elementor\Modules\Global_Classes\Usage;
+namespace Elementor\Modules\GlobalClasses\Usage;
 
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class Applied_Global_Classes_Usage {
 
-	private array $title_cache = [];
+	/** @var array<string, Css_Class_Usage> */
+	private array $class_usages = array();
 
 	public function get(): array {
-		$total = [];
-		$class_ids = $this->get_all_class_ids();
+		$this->build_class_usages();
 
-		if ( [] === $class_ids ) {
-			return [];
+		$result = array();
+		foreach ( $this->class_usages as $class_id => $usage ) {
+			$result[ $class_id ] = $usage->get_total_usage();
 		}
-
-		Plugin::$instance->db->iterate_elementor_documents(
-			function ( $document, $elements_data ) use ( &$total, $class_ids ) {
-				$counts = $this->count_classes_in_document( $elements_data, $class_ids );
-				$this->merge_class_counts( $counts, $total );
-			}
-		);
-
-		$this->ensure_all_class_ids_present( $class_ids, $total );
-
-		return $total;
-	}
-
-	public function get_detailed_usage( bool $with_page_info = false ): array {
-		$result = [];
-		$page_map = [];
-		$class_ids = $this->get_all_class_ids();
-
-		if ( [] === $class_ids ) {
-			return [];
-		}
-
-		$this->initialize_tracking_maps( $class_ids, $result, $page_map );
-
-		Plugin::$instance->db->iterate_elementor_documents(
-			function ( $document, $elements_data ) use ( &$result, &$page_map, $class_ids, $with_page_info ) {
-				$this->process_document_for_usage( $document, $elements_data, $class_ids, $with_page_info, $result, $page_map );
-			}
-		);
-
-		$this->flatten_element_keys( $result );
 
 		return $result;
 	}
 
-	/**
-	 * @return string[]
-	 */
-	private function get_all_class_ids(): array {
-		return Global_Classes_Repository::make()->all()->get_items()->keys()->all();
-	}
+	public function get_detailed_usage(): array {
+		$this->build_class_usages();
 
-	private function count_classes_in_document( $elements_data, array $class_ids ): array {
-		$counts = [];
-		Plugin::$instance->db->iterate_data(
-			$elements_data,
-			function ( $element_data ) use ( $class_ids, &$counts ) {
-				if ( $this->is_valid_atomic_element( $element_data ) ) {
-					$instance = Atomic_Elements_Utils::get_element_instance( Atomic_Elements_Utils::get_element_type( $element_data ) );
-					$classes = $this->get_applied_global_classes_per_element( $instance->get_props_schema(), $element_data, $class_ids );
-					$this->merge_class_counts( $classes, $counts );
-				}
-			}
-		);
-		return $counts;
-	}
-
-	private function merge_class_counts( array $from, array &$into ): void {
-		foreach ( $from as $id => $count ) {
-			$into[ $id ] ??= 0;
-			$into[ $id ] += $count;
-		}
-	}
-
-	private function ensure_all_class_ids_present( array $ids, array &$target ): void {
-		foreach ( $ids as $id ) {
-			$target[ $id ] ??= 0;
-		}
-	}
-
-	private function initialize_tracking_maps( array $class_ids, array &$result, array &$page_map ): void {
-		foreach ( $class_ids as $id ) {
-			$result[ $id ] = [];
-			$page_map[ $id ] = [];
-		}
-	}
-
-	private function process_document_for_usage( $document, $elements_data, array $class_ids, bool $with_page_info, array &$result, array &$page_map ): void {
-		$page_id = $document->get_main_id();
-		if ( 'elementor_library' === get_post_type( $page_id ) ) {
-			return;
-		}
-
-		$page_title = $with_page_info ? $this->get_page_title( $page_id ) : null;
-
-		Plugin::$instance->db->iterate_data(
-			$elements_data,
-			function ( $element_data ) use ( $class_ids, $page_id, $page_title, $with_page_info, &$result, &$page_map ) {
-				$this->track_element_usage( $element_data, $class_ids, $page_id, $page_title, $with_page_info, $result, $page_map );
-			}
-		);
-	}
-
-	private function track_element_usage( array $element_data, array $class_ids, int $page_id, ?string $page_title, bool $with_page_info, array &$result, array &$page_map ): void {
-		$element_id = $element_data['id'] ?? null;
-		if ( null === $element_id || ! $this->is_valid_atomic_element( $element_data ) ) {
-			return;
-		}
-
-		$instance = Atomic_Elements_Utils::get_element_instance( Atomic_Elements_Utils::get_element_type( $element_data ) );
-		$applied = $this->get_applied_global_classes_per_element( $instance::get_props_schema(), $element_data, $class_ids );
-
-		foreach ( $applied as $class_id => $_ ) {
-			$page_index = $page_map[ $class_id ][ $page_id ] ?? null;
-
-			if ( null === $page_index ) {
-				$page_map[ $class_id ][ $page_id ] = count( $result[ $class_id ] );
-				$entry = [
+		$result = array();
+		foreach ( $this->class_usages as $class_id => $usage ) {
+			$result[ $class_id ] = array();
+			foreach ( $usage->get_pages() as $page_id => $page_data ) {
+				$result[ $class_id ][] = array(
 					'pageId'   => $page_id,
-					'elements' => [ $element_id => true ],
-					'total'    => 1,
-				];
-
-				if ( $with_page_info ) {
-					$entry['title'] = $page_title;
-				}
-
-				$result[ $class_id ][] = $entry;
-			} else {
-				$entry = &$result[ $class_id ][ $page_index ];
-				if ( ! isset( $entry['elements'][ $element_id ] ) ) {
-					$entry['elements'][ $element_id ] = true;
-					++$entry['total'];
-				}
+					'title'    => $page_data['title'],
+					'total'    => $page_data['total'],
+					'elements' => $page_data['elements'],
+				);
 			}
 		}
+
+		return $result;
 	}
 
-	private function get_applied_global_classes_per_element( $schema, $element_data, array $class_ids ): array {
-		return Collection::make( $schema )->reduce(
-			function ( $carry, $prop, $name ) use ( $element_data, $class_ids ) {
-				if ( ! Atomic_Elements_Utils::is_classes_prop( $prop ) ) {
-					return $carry;
+	private function build_class_usages(): void {
+		$this->class_usages = array();
+		$class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
+
+		Plugin::$instance->db->iterate_elementor_documents(
+			function ( $document ) use ( $class_ids ) {
+				$usage = new Document_Usage( $document );
+				$usage->analyze();
+
+				foreach ( $usage->get_usages() as $class_id => $class_usage ) {
+					if ( ! in_array( $class_id, $class_ids, true ) ) {
+						continue;
+					}
+
+					if ( ! isset( $this->class_usages[ $class_id ] ) ) {
+						$this->class_usages[ $class_id ] = $class_usage;
+					} else {
+						$this->class_usages[ $class_id ]->merge( $class_usage );
+					}
 				}
-				$values = $element_data['settings'][ $name ]['value'] ?? [];
-				$ids = array_intersect( $values, $class_ids );
-				foreach ( $ids as $id ) {
-					$carry[ $id ] ??= 0;
-					$carry[ $id ]++;
-				}
-				return $carry;
-			},
-			[]
+			}
 		);
-	}
-
-	private function get_page_title( int $page_id ): string {
-		return $this->title_cache[ $page_id ] ??= get_the_title( $page_id );
-	}
-
-	private function flatten_element_keys( array &$result ): void {
-		foreach ( $result as &$entries ) {
-			foreach ( $entries as &$entry ) {
-				$entry['elements'] = array_keys( $entry['elements'] );
-			}
-		}
-	}
-
-	private function is_valid_atomic_element( array $element_data ): bool {
-		$type = Atomic_Elements_Utils::get_element_type( $element_data );
-		$instance = Atomic_Elements_Utils::get_element_instance( $type );
-		return Atomic_Elements_Utils::is_atomic_element( $instance );
 	}
 }

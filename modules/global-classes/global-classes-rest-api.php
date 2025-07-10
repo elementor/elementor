@@ -2,13 +2,13 @@
 
 namespace Elementor\Modules\GlobalClasses;
 
-use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
+use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class Global_Classes_REST_API {
@@ -222,6 +222,7 @@ class Global_Classes_REST_API {
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();
 		}
+
 		return $response;
 	}
 }
