@@ -67,7 +67,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		}
 	};
 
-	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues, 'disable' );
+	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

@@ -47,7 +47,8 @@ class Div_Block extends Atomic_Element_Base {
 			->where( [
 				'operator' => 'exists',
 				'path' => [ 'link', 'destination' ],
-			] );
+			] )
+		->get();
 
 		$props = [
 			'classes' => Classes_Prop_Type::make()
@@ -55,7 +56,7 @@ class Div_Block extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' )
-				->dependencies( $tag_dependencies ),
+				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Key_Value_Array_Prop_Type::make(),
