@@ -14,7 +14,7 @@ import {
 } from '@elementor/ui';
 
 type TextFieldInnerSelectionProps = {
-	placeholder?: string;
+	placeholder?: PropValue | string;
 	type: string;
 	value: PropValue;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
@@ -68,6 +68,7 @@ type SelectionEndAdornmentProps< T extends string > = {
 	options: T[];
 	onClick: ( value: T ) => void;
 	value: T;
+	placeholder: string | null;
 	alternativeOptionLabels?: { [ key in T ]?: React.ReactNode };
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	disabled?: boolean;
@@ -78,6 +79,7 @@ export const SelectionEndAdornment = < T extends string >( {
 	alternativeOptionLabels = {} as Record< T, React.ReactNode >,
 	onClick,
 	value,
+	placeholder,
 	menuItemsAttributes = {},
 	disabled,
 }: SelectionEndAdornmentProps< T > ) => {
@@ -100,7 +102,7 @@ export const SelectionEndAdornment = < T extends string >( {
 				sx={ { font: 'inherit', minWidth: 'initial', textTransform: 'uppercase' } }
 				{ ...bindTrigger( popupState ) }
 			>
-				{ alternativeOptionLabels[ value ] ?? value }
+				{ placeholder ?? alternativeOptionLabels[ value ] ?? value }
 			</Button>
 
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>

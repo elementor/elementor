@@ -42,7 +42,13 @@ type State = {
 export const SizeControl = createControl( ( props: SizeControlProps ) => {
 	const defaultUnit = props.defaultUnit ?? DEFAULT_UNIT;
 	const { units = [ ...defaultUnits ], placeholder, startIcon, anchorRef } = props;
-	const { value: sizeValue, setValue: setSizeValue, disabled, restoreValue } = useBoundProp( sizePropTypeUtil );
+	const {
+		value: sizeValue,
+		placeholder: sizePlaceholder,
+		setValue: setSizeValue,
+		disabled,
+		restoreValue,
+	} = useBoundProp( sizePropTypeUtil );
 	const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, defaultUnit ) );
 	const activeBreakpoint = useActiveBreakpoint();
 
@@ -147,7 +153,7 @@ export const SizeControl = createControl( ( props: SizeControlProps ) => {
 				size={ controlSize }
 				unit={ controlUnit }
 				units={ [ ...units, ...( extendedOptions || [] ) ] }
-				placeholder={ placeholder }
+				placeholder={ placeholder ?? sizePlaceholder }
 				startIcon={ startIcon }
 				handleSizeChange={ handleSizeChange }
 				handleUnitChange={ handleUnitChange }
