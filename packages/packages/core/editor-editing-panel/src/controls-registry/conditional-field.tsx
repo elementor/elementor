@@ -1,5 +1,5 @@
 import { useBoundProp } from '@elementor/editor-controls';
-import { isDependency, isPropDependencyMet, type PropKey, type PropType } from "@elementor/editor-props";
+import { isDependency, isPropDependencyMet, type PropKey, type PropType } from '@elementor/editor-props';
 
 import { useStylesFields } from '../hooks/use-styles-fields';
 
