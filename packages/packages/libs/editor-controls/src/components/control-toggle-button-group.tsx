@@ -42,6 +42,19 @@ const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
 	}
 `;
 
+const StyledToggleButton = styled( ToggleButton, {
+	shouldForwardProp: ( prop ) => prop !== 'isPlaceholder',
+} )<{ isPlaceholder: boolean }>`
+	${ ( { theme, isPlaceholder } ) => isPlaceholder && `
+		color: ${theme.palette.text.tertiary};
+		background-color: ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)'};
+		
+		&:hover {
+			background-color: ${theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)'};
+		}
+	` }
+`;
+
 type ExclusiveValue< TValue > = TValue;
 type NonExclusiveValue< TValue > = TValue[];
 
@@ -153,37 +166,21 @@ export const ControlToggleButtonGroup = < TValue, >( {
 						placeholderArray.includes( buttonValue as string ) &&
 						( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
 
-					const isDarkMode = theme.palette.mode === 'dark';
-					const darkBackgroundColor = 'rgba(255,255,255,0.04)';
-					const lightBackgroundColor = 'rgba(0,0,0,0.02)';
-					const darkHoverBackgroundColor = 'rgba(255,255,255,0.08)';
-					const lightHoverBackgroundColor = 'rgba(0,0,0,0.04)';
-
-					const placeholderStyles = isPlaceholder
-						? {
-								color: 'text.tertiary',
-								backgroundColor: isDarkMode ? darkBackgroundColor : lightBackgroundColor,
-								'&:hover': {
-									backgroundColor: isDarkMode ? darkHoverBackgroundColor : lightHoverBackgroundColor,
-								},
-						  }
-						: undefined;
-
 					return (
 						<ConditionalTooltip
 							key={ buttonValue as string }
 							label={ label }
 							showTooltip={ showTooltip || false }
 						>
-							<ToggleButton
+							<StyledToggleButton
 								value={ buttonValue }
 								aria-label={ label }
 								size={ size }
 								fullWidth={ fullWidth }
-								sx={ placeholderStyles }
+								isPlaceholder={ isPlaceholder }
 							>
 								<Content size={ size } />
-							</ToggleButton>
+							</StyledToggleButton>
 						</ConditionalTooltip>
 					);
 				} ) }
