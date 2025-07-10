@@ -73,7 +73,6 @@ class Style_Schema {
 				->add_prop_type( Position_Prop_Type::make() )
 				->set_dependencies(
 					Dependency_Manager::make()
-					->new_dependency( [ 'effect' => 'hide' ] )
 					->where( [
 						'operator' => 'eq',
 						'path' => [ 'object-fit' ],
@@ -128,7 +127,6 @@ class Style_Schema {
 			'column-gap' => Size_Prop_Type::make()
 				->set_dependencies(
 					Dependency_Manager::make()
-					->new_dependency( [ 'effect' => 'hide' ] )
 					->where( [
 						'operator' => 'lt',
 						'path' => [ 'column-count' ],
