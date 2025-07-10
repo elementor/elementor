@@ -114,7 +114,7 @@ class Union_Prop_Type implements Prop_Type {
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
-			'dependencies' => $this->get_meta_item( 'dependencies', [] ),
+			'dependencies' => $this->get_dependencies(),
 		];
 	}
 
@@ -125,6 +125,6 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function get_dependencies(): ?array {
-		return $this->dependencies;
+		return empty( $this->dependencies['terms'] ?? [] ) ? null : $this->dependencies;
 	}
 }

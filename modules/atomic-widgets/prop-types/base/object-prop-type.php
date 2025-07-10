@@ -154,6 +154,6 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function get_dependencies(): ?array {
-		return $this->dependencies;
+		return empty( $this->dependencies['terms'] ?? [] ) ? null : $this->dependencies;
 	}
 }
