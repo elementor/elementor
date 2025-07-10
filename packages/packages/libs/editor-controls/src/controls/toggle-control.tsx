@@ -42,12 +42,13 @@ export const ToggleControl = createControl(
 			maxItems,
 			fullWidth,
 			size,
+			placeholder,
 		};
 
 		return exclusive ? (
 			<ControlToggleButtonGroup
 				{ ...toggleButtonGroupProps }
-				value={ value ?? placeholder ?? null }
+				value={ value ?? null }
 				onChange={ setValue }
 				disabled={ disabled }
 				exclusive={ true }
@@ -55,7 +56,7 @@ export const ToggleControl = createControl(
 		) : (
 			<ControlToggleButtonGroup
 				{ ...toggleButtonGroupProps }
-				value={ ( value ?? placeholder )?.split( ' ' ) ?? [] }
+				value={ value?.split( ' ' ) ?? [] }
 				onChange={ handleNonExclusiveToggle }
 				disabled={ disabled }
 				exclusive={ false }
