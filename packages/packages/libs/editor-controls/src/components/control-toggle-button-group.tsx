@@ -28,7 +28,7 @@ export type ToggleButtonGroupItem< TValue > = {
 
 const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
 	${ ( { justify } ) => `justify-content: ${ justify };` }
-	button:not(:last-of-type) {
+	button:not( :last-of-type ) {
 		border-start-end-radius: 0;
 		border-end-end-radius: 0;
 	}
@@ -56,8 +56,8 @@ type Props< TValue > = {
 } & (
 	| {
 			exclusive?: false;
-			value: string; // non-exclusive: space-separated string
-			onChange: ( value: string ) => void;
+			value: NonExclusiveValue< TValue >;
+			onChange: ( value: NonExclusiveValue< TValue > ) => void;
 	  }
 	| {
 			exclusive: true;
@@ -83,7 +83,7 @@ export const ControlToggleButtonGroup = < TValue, >( {
 	const fixedItems = shouldSliceItems ? items.slice( 0, maxItems - 1 ) : items;
 
 	const theme = useTheme();
-	const isRtl = theme.direction === 'rtl';
+	const isRtl = 'rtl' === theme.direction;
 
 	const handleChange = (
 		_: React.MouseEvent< HTMLElement >,
@@ -113,11 +113,24 @@ export const ControlToggleButtonGroup = < TValue, >( {
 
 	const shouldShowNonExclusivePlaceholder = ! exclusive && nonExclusiveSelectedValues.length === 0;
 
-	const placeholderArray = Array.isArray( placeholder )
-		? placeholder.flatMap( ( p ) => ( typeof p === 'string' ? p.trim().split( /\s+/ ).filter( Boolean ) : [] ) )
-		: typeof placeholder === 'string'
-		? placeholder.trim().split( /\s+/ ).filter( Boolean )
-		: [];
+	const getPlaceholderArray = ( placeholderValue: TValue | TValue[] | undefined ): string[] => {
+		if ( Array.isArray( placeholderValue ) ) {
+			return placeholderValue.flatMap( ( p ) => {
+				if ( typeof p === 'string' ) {
+					return p.trim().split( /\s+/ ).filter( Boolean );
+				}
+				return [];
+			} );
+		}
+
+		if ( typeof placeholderValue === 'string' ) {
+			return placeholderValue.trim().split( /\s+/ ).filter( Boolean );
+		}
+
+		return [];
+	};
+
+	const placeholderArray = getPlaceholderArray( placeholder );
 
 	return (
 		<ControlActions>
@@ -138,7 +151,24 @@ export const ControlToggleButtonGroup = < TValue, >( {
 					const isPlaceholder =
 						placeholderArray.length > 0 &&
 						( ( shouldShowExclusivePlaceholder && placeholderArray.includes( buttonValue as string ) ) ||
-							( shouldShowNonExclusivePlaceholder && placeholderArray.includes( buttonValue as string ) ) );
+							( shouldShowNonExclusivePlaceholder &&
+								placeholderArray.includes( buttonValue as string ) ) );
+
+					const isDarkMode = theme.palette.mode === 'dark';
+					const darkBackgroundColor = 'rgba(255,255,255,0.04)';
+					const lightBackgroundColor = 'rgba(0,0,0,0.02)';
+					const darkHoverBackgroundColor = 'rgba(255,255,255,0.08)';
+					const lightHoverBackgroundColor = 'rgba(0,0,0,0.04)';
+
+					const placeholderStyles = isPlaceholder
+						? {
+								color: 'text.tertiary',
+								backgroundColor: isDarkMode ? darkBackgroundColor : lightBackgroundColor,
+								'&:hover': {
+									backgroundColor: isDarkMode ? darkHoverBackgroundColor : lightHoverBackgroundColor,
+								},
+						  }
+						: undefined;
 
 					return (
 						<ConditionalTooltip
@@ -151,23 +181,7 @@ export const ControlToggleButtonGroup = < TValue, >( {
 								aria-label={ label }
 								size={ size }
 								fullWidth={ fullWidth }
-								sx={
-									isPlaceholder
-										? {
-												color: 'text.tertiary',
-												backgroundColor:
-													theme.palette.mode === 'dark'
-														? 'rgba(255,255,255,0.04)'
-														: 'rgba(0,0,0,0.02)',
-												'&:hover': {
-													backgroundColor:
-														theme.palette.mode === 'dark'
-															? 'rgba(255,255,255,0.08)'
-															: 'rgba(0,0,0,0.04)',
-												},
-										  }
-										: undefined
-								}
+								sx={ placeholderStyles }
 							>
 								<Content size={ size } />
 							</ToggleButton>
