@@ -1,7 +1,20 @@
 import * as React from 'react';
 import type { MouseEvent } from 'react';
-import { CurrentLocationIcon } from '@elementor/icons';
-import { bindPopover, bindTrigger, Box, IconButton, Popover, Tooltip, usePopupState } from '@elementor/ui';
+import { CurrentLocationIcon, InfoCircleIcon } from '@elementor/icons';
+import {
+	bindPopover,
+	bindTrigger,
+	Box,
+	Icon,
+	IconButton,
+	Infotip,
+	Popover,
+	Stack,
+	styled,
+	Tooltip,
+	Typography,
+	usePopupState,
+} from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../hooks';
@@ -19,17 +32,33 @@ export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
 		return null;
 	}
 
+	const tooltipText =
+		total === 0 ? (
+			<Infotip>
+				<Stack gap={ 0.5 } flexDirection={ 'row' } py={ 1 } px={ 2 }>
+					<Icon>
+						<InfoCircleIcon fontSize={ 'small' } />
+					</Icon>
+					<Typography variant={ 'body2' }>
+						{ __( 'This class isn’t being used yet.', 'elementor' ) }
+					</Typography>
+				</Stack>
+			</Infotip>
+		) : (
+			`${ __( 'Locator', 'elementor' ) } (${ total })`
+		);
 	return (
 		<>
 			<Box position={ 'relative' }>
-				<Tooltip
-					disableInteractive={ ! total }
-					placement={ 'top' }
-					title={ `${ __( 'Locator', 'elementor' ) } (${ total })` }
-				>
-					<IconButton
+				<Tooltip disableInteractive={ ! total } placement={ 'top' } title={ tooltipText }>
+					<CustomIconButton
+						disabled={ total === 0 }
 						size={ 'tiny' }
 						sx={ {
+							'&.Mui-disabled': {
+								pointerEvents: 'auto',
+								cursor: 'default',
+							},
 							height: '22px',
 							width: '22px',
 						} }
@@ -41,7 +70,7 @@ export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
 						} }
 					>
 						<CurrentLocationIcon fontSize={ 'tiny' } />
-					</IconButton>
+					</CustomIconButton>
 				</Tooltip>
 			</Box>
 			<Box>
@@ -67,3 +96,13 @@ export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
 		</>
 	);
 };
+
+const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
+	'&.Mui-disabled': {
+		pointerEvents: 'auto', // Enable hover
+		'&:hover': {
+			backgroundColor: 'rgba(0, 0, 0, 0.08)', // or any custom hover style
+			color: theme.palette.action.disabled, // optional
+		},
+	},
+} ) );
