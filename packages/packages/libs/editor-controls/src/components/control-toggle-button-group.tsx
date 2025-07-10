@@ -259,7 +259,7 @@ const SplitButtonGroup = < TValue, >( {
 				aria-pressed={ undefined }
 				onClick={ onMenuToggle }
 				ref={ menuButtonRef }
-				value='__chevron-icon-button__'
+				value="__chevron-icon-button__"
 			>
 				<ChevronDownIcon fontSize={ size } />
 			</ToggleButton>
