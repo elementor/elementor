@@ -35,12 +35,6 @@ const importReducer = ( state, { type, payload } ) => {
 				...state,
 				includes: state.includes.filter( ( item ) => item !== payload ),
 			};
-		case 'SET_PLUGINS':
-			return { ...state, plugins: payload };
-		case 'SET_IMPORTED_PLUGINS':
-			return { ...state, importedPlugins: payload };
-		case 'SET_PLUGINS_STATE':
-			return { ...state, pluginsState: payload };
 		case 'RESET_STATE':
 			return { ...initialState };
 		default:
@@ -59,8 +53,7 @@ const initialState = {
 	plugins: [],
 	importedPlugins: [],
 	pluginsState: '',
-	includes: [],
-	isUploading: false,
+	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
 	importStatus: IMPORT_STATUS.PENDING,
 };
 export default function ImportContextProvider( props ) {
@@ -71,6 +64,8 @@ export default function ImportContextProvider( props ) {
 			data,
 			dispatch,
 			isUploading: data.importStatus === IMPORT_STATUS.UPLOADING,
+			isCustomizing: data.importStatus === IMPORT_STATUS.CUSTOMIZING,
+			isProcessing: data.importStatus === IMPORT_STATUS.IMPORTING,
 		} }>
 			{ props.children }
 		</ImportContext.Provider>
