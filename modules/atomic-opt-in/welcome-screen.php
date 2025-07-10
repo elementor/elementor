@@ -64,6 +64,8 @@ class WelcomeScreen {
 			ELEMENTOR_VERSION,
 			true
 		);
+
+		wp_set_script_translations( Module::MODULE_NAME . '-welcome', 'elementor' );
 	}
 
 

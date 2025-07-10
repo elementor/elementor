@@ -3,6 +3,7 @@ export * from './border-radius';
 export * from './border-width';
 export * from './classes';
 export * from './color';
+export * from './flex';
 export * from './image';
 export * from './image-attachment-id';
 export * from './image-src';
