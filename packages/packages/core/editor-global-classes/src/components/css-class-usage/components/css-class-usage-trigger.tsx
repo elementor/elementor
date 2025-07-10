@@ -1,18 +1,16 @@
 import * as React from 'react';
-import { type MouseEvent } from 'react';
-import { CurrentLocationIcon, InfoCircleIcon } from '@elementor/icons';
+import { type MouseEvent, type PropsWithChildren } from 'react';
+import { InfoAlert } from '@elementor/editor-ui';
+import { CurrentLocationIcon } from '@elementor/icons';
 import {
 	bindPopover,
 	bindTrigger,
 	Box,
-	Icon,
 	IconButton,
 	Infotip,
 	Popover,
-	Stack,
 	styled,
 	Tooltip,
-	Typography,
 	usePopupState,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -38,41 +36,26 @@ export const CssClassUsageTrigger = ( {
 		return null;
 	}
 
-	const tooltipText =
-		total === 0 ? (
-			<Infotip>
-				<Stack gap={ 0.5 } flexDirection={ 'row' } py={ 1 } px={ 2 }>
-					<Icon>
-						<InfoCircleIcon fontSize={ 'small' } />
-					</Icon>
-					<Typography variant={ 'body2' }>
-						{ __( 'This class isn’t being used yet.', 'elementor' ) }
-					</Typography>
-				</Stack>
-			</Infotip>
-		) : (
-			`${ __( 'Locator', 'elementor' ) } (${ total })`
-		);
+	const WrapperComponent = total !== 0 ? TooltipWrapper : InfoAlertMessage;
+
 	return (
 		<>
 			<Box position={ 'relative' }>
-				<Tooltip disableInteractive={ ! total } placement={ 'top' } title={ tooltipText }>
-					<span>
-						<CustomIconButton
-							disabled={ total === 0 }
-							size={ 'tiny' }
-							{ ...bindTrigger( cssClassUsagePopover ) }
-							onClick={ ( e: MouseEvent ) => {
-								if ( total !== 0 ) {
-									bindTrigger( cssClassUsagePopover ).onClick( e );
-									onClick( id );
-								}
-							} }
-						>
-							<CurrentLocationIcon fontSize={ 'tiny' } />
-						</CustomIconButton>
-					</span>
-				</Tooltip>
+				<WrapperComponent total={ total }>
+					<CustomIconButton
+						disabled={ total === 0 }
+						size={ 'tiny' }
+						{ ...bindTrigger( cssClassUsagePopover ) }
+						onClick={ ( e: MouseEvent ) => {
+							if ( total !== 0 ) {
+								bindTrigger( cssClassUsagePopover ).onClick( e );
+								onClick( id );
+							}
+						} }
+					>
+						<CurrentLocationIcon fontSize={ 'tiny' } />
+					</CustomIconButton>
+				</WrapperComponent>
 			</Box>
 			<Box>
 				<Popover
@@ -86,7 +69,7 @@ export const CssClassUsageTrigger = ( {
 						horizontal: -20,
 					} }
 					{ ...bindPopover( cssClassUsagePopover ) }
-					onClose={ ( e: MouseEvent ) => {
+					onClose={ () => {
 						bindPopover( cssClassUsagePopover ).onClose();
 						onClick( '' );
 					} }
@@ -113,3 +96,21 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 	height: '22px',
 	width: '22px',
 } ) );
+
+const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number } > ) => (
+	<Tooltip placement={ 'top' } title={ `${ __( 'Locator', 'elementor' ) } (${ total })` }>
+		<span>{ children }</span>
+	</Tooltip>
+);
+
+const InfoAlertMessage = ( { children }: PropsWithChildren ) => (
+	<Infotip
+		content={
+			<InfoAlert sx={ { mt: 1 } }>
+				{ __( 'With your current role, you can use existing classes but can’t modify them.', 'elementor' ) }
+			</InfoAlert>
+		}
+	>
+		{ children }
+	</Infotip>
+);
