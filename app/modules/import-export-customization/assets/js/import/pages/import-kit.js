@@ -23,6 +23,10 @@ export default function ImportKit() {
 	};
 
 	useEffect( () => {
+		dispatch( { type: 'RESET_STATE' } );
+	}, [ dispatch ] );
+
+	useEffect( () => {
 		if ( data.uploadedData ) {
 			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
 			navigate( 'import-customization/content' );
