@@ -1,9 +1,8 @@
 import {
 	extractValue,
-	isDependencyMet,
+	isPropDependencyMet,
 	type PropsSchema,
 	type PropType,
-	type PropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 
@@ -82,7 +81,7 @@ export function updateValues(
 				return newValues;
 			}
 
-			if ( ! isMeetingDependencies( propType, combinedValues ) ) {
+			if ( ! isPropDependencyMet( propType, combinedValues ) ) {
 				return {
 					...newValues,
 					...updateValue( path, null, combinedValues ),
@@ -154,8 +153,4 @@ function updateValue( path: string[], value: Value, values: Values ) {
 	}, newValue );
 
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
-}
-
-export function isMeetingDependencies( propType: PropType, elementValues: PropValue ): boolean {
-	return propType?.dependencies?.terms.length ? isDependencyMet( propType.dependencies, elementValues ) : true;
 }

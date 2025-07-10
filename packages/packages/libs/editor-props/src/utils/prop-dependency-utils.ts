@@ -2,6 +2,7 @@ import {
 	type Dependency,
 	type DependencyTerm,
 	type PropKey,
+	type PropType,
 	type PropValue,
 	type TransformablePropValue,
 } from '../types';
@@ -11,7 +12,11 @@ type ParsedTerm = DependencyTerm;
 
 type Relation = Dependency[ 'relation' ];
 
-export function isDependencyMet( { relation, terms }: Dependency, values: PropValue ): boolean {
+export function isPropDependencyMet( propType: PropType | null, values: PropValue ): boolean {
+	return propType?.dependencies?.terms.length ? isDependencyMet( propType?.dependencies, values ) : true;
+}
+
+function isDependencyMet( { relation, terms }: Dependency, values: PropValue ): boolean {
 	if ( ! terms.length ) {
 		return true;
 	}
