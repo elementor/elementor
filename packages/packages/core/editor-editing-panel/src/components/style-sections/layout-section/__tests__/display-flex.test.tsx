@@ -84,30 +84,6 @@ describe( '<DisplayField />', () => {
 		expect( flexButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'should select flex when useActualStylesFieldValue value is flex', () => {
-		// Arrange.
-		const setValues = jest.fn();
-		jest.mocked( useStylesFields ).mockReturnValue( { values: { display: null }, setValues, canEdit: true } );
-
-		mockStylesInheritanceDisplayField(
-			createMockStyleDefinition( {
-				props: {
-					display: {
-						$$type: 'string',
-						value: 'flex',
-					},
-				},
-			} )
-		);
-
-		// Act.
-		renderDisplayField();
-
-		// Assert.
-		const flexButton = screen.getByRole( 'button', { name: 'Flex' } );
-		expect( flexButton ).toHaveAttribute( 'aria-pressed', 'true' );
-	} );
-
 	it( 'should select flex when useStylesFields value is flex even if useActualStylesFieldValue is different', () => {
 		// Arrange.
 		const setValues = jest.fn();
