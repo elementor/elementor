@@ -56,7 +56,11 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 		return '' === fontFamily.trim() || '' === label.trim();
 	};
 
-	const isSubmitDisabled = hasEmptyValue();
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = hasEmptyValue() || hasErrors();
 
 	return (
 		<PopoverBody height="auto">

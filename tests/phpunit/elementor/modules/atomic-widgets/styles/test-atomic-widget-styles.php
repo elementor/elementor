@@ -244,6 +244,96 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
 	}
 
+	public function test_parse_atomic_widget_styles__append_css_of_styles_with_flex_values() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$post = $this->make_mock_post();
+		$element = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'flex' => Props_Factory::flex(
+									Props_Factory::size( 1 ),
+									Props_Factory::size( 1 ),
+									Props_Factory::size( 0, 'px' )
+								),
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
+
+	public function test_parse_atomic_widget_styles__append_css_of_styles_with_flex_partial_values() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$post = $this->make_mock_post();
+		$element = $this->make_mock_widget([
+			'controls' => [],
+			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style-grow-only',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'flex' => Props_Factory::flex( 2 ),
+							],
+							'meta' => [],
+						],
+					],
+				],
+				[
+					'id' => 'test-style-grow-shrink',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'flex' => Props_Factory::flex( 1, 2 ),
+							],
+							'meta' => [],
+						],
+					],
+				],
+				[
+					'id' => 'test-style-basis-only',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'flex' => Props_Factory::flex( null, null, Props_Factory::size( 100, 'px' ) ),
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+
+		// Act.
+		do_action( 'elementor/element/parse_css', $post, $element );
+
+		// Assert.
+		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+	}
+
 	private function make_mock_post( $elements_data = [] ) {
 		$doc = $this->factory()->documents->publish_and_get( [
 			'meta_input' => [
