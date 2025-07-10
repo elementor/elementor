@@ -150,9 +150,8 @@ export const ControlToggleButtonGroup = < TValue, >( {
 				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
 					const isPlaceholder =
 						placeholderArray.length > 0 &&
-						( ( shouldShowExclusivePlaceholder && placeholderArray.includes( buttonValue as string ) ) ||
-							( shouldShowNonExclusivePlaceholder &&
-								placeholderArray.includes( buttonValue as string ) ) );
+						placeholderArray.includes( buttonValue as string ) &&
+    					( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
 
 					const isDarkMode = theme.palette.mode === 'dark';
 					const darkBackgroundColor = 'rgba(255,255,255,0.04)';
