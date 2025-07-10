@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { createMockPropType, renderControl } from 'test-utils';
+import { createMockPropType, renderControl, type RenderControlProps } from 'test-utils';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { ToggleControl } from '../toggle-control';
@@ -11,6 +12,11 @@ const mockOptions = [
 	{ label: 'Option 2', value: 'value2', renderContent: () => 'Option 2' },
 	{ label: 'Option 3', value: 'value3', renderContent: () => 'Option 3' },
 ];
+
+const renderWithTheme = ( ui: React.ReactElement, themeOptions = {}, props: RenderControlProps ) => {
+	const theme = createTheme( themeOptions );
+	return renderControl( <ThemeProvider theme={ theme }>{ ui }</ThemeProvider>, props );
+};
 
 describe( 'ToggleControl', () => {
 	describe( 'exclusive mode', () => {
@@ -133,6 +139,51 @@ describe( 'ToggleControl', () => {
 				$$type: 'string',
 				value: 'value1',
 			} );
+		} );
+	} );
+
+	describe( 'placeholder styling', () => {
+		it( 'does not apply placeholder style if no placeholder is set', () => {
+			const props = {
+				setValue,
+				value: { $$type: 'string', value: '' },
+				propType,
+			};
+
+			renderWithTheme(
+				<ToggleControl options={ mockOptions } exclusive={ true } />,
+				{ palette: { mode: 'light' } },
+				props
+			);
+
+			const button1 = screen.getByRole( 'button', { name: 'Option 1' } );
+			const button2 = screen.getByRole( 'button', { name: 'Option 2' } );
+			const button3 = screen.getByRole( 'button', { name: 'Option 3' } );
+
+			expect( button1 ).not.toHaveStyle( 'background-color: rgba(0,0,0,0.02)' );
+			expect( button2 ).not.toHaveStyle( 'background-color: rgba(0,0,0,0.02)' );
+			expect( button3 ).not.toHaveStyle( 'background-color: rgba(0,0,0,0.02)' );
+		} );
+
+		it( 'removes placeholder style when a value is selected', () => {
+			const props = {
+				setValue,
+				value: { $$type: 'string', value: 'value1' },
+				propType,
+				placeholder: 'value2',
+			};
+
+			renderWithTheme(
+				<ToggleControl options={ mockOptions } exclusive={ true } />,
+				{ palette: { mode: 'light' } },
+				props
+			);
+
+			const button1 = screen.getByRole( 'button', { name: 'Option 1' } );
+			const button2 = screen.getByRole( 'button', { name: 'Option 2' } );
+
+			expect( button2 ).not.toHaveStyle( 'background-color: rgba(0,0,0,0.02)' );
+			expect( button1 ).toHaveAttribute( 'aria-pressed', 'true' );
 		} );
 	} );
 } );
