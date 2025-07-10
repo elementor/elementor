@@ -5,8 +5,7 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=7.4",
-		"twig/twig": "~3.11.3"
+		"php": ">=7.4"
 	},
 	"autoload": {
 		"classmap": [
@@ -25,7 +24,7 @@
 		"spatie/phpunit-snapshot-assertions": "^4.2",
 		"humbug/php-scoper": "0.17.5",
 		"php-di/php-di": "6.4.0",
-		"php-parallel-lint/php-parallel-lint": "^1.4"
+		"twig/twig": "3.11.3"
 	},
 	"scripts": {
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
