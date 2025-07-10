@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
@@ -60,7 +60,7 @@ export const ClassItem = ( {
 		onSubmit: renameClass,
 		validation: validateLabel,
 	} );
-
+	const [ selectedCssUsage, setSelectedCssUsage ] = useState( '' );
 	const { openDialog } = useDeleteConfirmation();
 
 	const popupState = usePopupState( {
@@ -68,12 +68,8 @@ export const ClassItem = ( {
 		disableAutoFocus: true,
 	} );
 
-	const popupState2 = usePopupState( {
-		variant: 'popover',
-		popupId: 'css-class-usage-popover',
-	} );
+	const isSelected = ( selectedCssUsage === id || selected || popupState.isOpen ) && ! disabled;
 
-	const isSelected = ( selected || popupState.isOpen || popupState2.isOpen ) && ! disabled;
 	return (
 		<>
 			<Stack p={ 0 }>
@@ -110,7 +106,7 @@ export const ClassItem = ( {
 							) }
 						</Indicator>
 						<Box className={ 'class-item-locator' }>
-							<CssClassUsageTrigger id={ id } />
+							<CssClassUsageTrigger id={ id } onClick={ setSelectedCssUsage } />
 						</Box>
 						<Tooltip
 							placement="top"

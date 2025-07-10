@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { MouseEvent } from 'react';
+import { type MouseEvent } from 'react';
 import { CurrentLocationIcon, InfoCircleIcon } from '@elementor/icons';
 import {
 	bindPopover,
@@ -21,7 +21,13 @@ import { useCssClassUsageByID } from '../hooks';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 
-export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
+export const CssClassUsageTrigger = ( {
+	id,
+	onClick,
+}: {
+	id: CssClassID | string;
+	onClick: ( id: CssClassID ) => void;
+} ) => {
 	const {
 		data: { total },
 		isLoading,
@@ -51,26 +57,21 @@ export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
 		<>
 			<Box position={ 'relative' }>
 				<Tooltip disableInteractive={ ! total } placement={ 'top' } title={ tooltipText }>
-					<CustomIconButton
-						disabled={ total === 0 }
-						size={ 'tiny' }
-						sx={ {
-							'&.Mui-disabled': {
-								pointerEvents: 'auto',
-								cursor: 'default',
-							},
-							height: '22px',
-							width: '22px',
-						} }
-						{ ...bindTrigger( cssClassUsagePopover ) }
-						onClick={ ( e: MouseEvent ) => {
-							if ( total !== 0 ) {
-								bindTrigger( cssClassUsagePopover ).onClick( e );
-							}
-						} }
-					>
-						<CurrentLocationIcon fontSize={ 'tiny' } />
-					</CustomIconButton>
+					<span>
+						<CustomIconButton
+							disabled={ total === 0 }
+							size={ 'tiny' }
+							{ ...bindTrigger( cssClassUsagePopover ) }
+							onClick={ ( e: MouseEvent ) => {
+								if ( total !== 0 ) {
+									bindTrigger( cssClassUsagePopover ).onClick( e );
+									onClick( id );
+								}
+							} }
+						>
+							<CurrentLocationIcon fontSize={ 'tiny' } />
+						</CustomIconButton>
+					</span>
 				</Tooltip>
 			</Box>
 			<Box>
@@ -85,6 +86,10 @@ export const CssClassUsageTrigger = ( { id }: { id: CssClassID | string } ) => {
 						horizontal: -20,
 					} }
 					{ ...bindPopover( cssClassUsagePopover ) }
+					onClose={ ( e: MouseEvent ) => {
+						bindPopover( cssClassUsagePopover ).onClose();
+						onClick( '' );
+					} }
 				>
 					<CssClassUsagePopover
 						onClose={ cssClassUsagePopover.close }
@@ -105,4 +110,6 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 			color: theme.palette.action.disabled, // optional
 		},
 	},
+	height: '22px',
+	width: '22px',
 } ) );
