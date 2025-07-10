@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ControlAdornmentsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
-import { type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
+import { type PropKey, type PropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
@@ -9,7 +9,6 @@ import { useStylesFields } from '../hooks/use-styles-fields';
 import { StylesInheritanceIndicator } from '../styles-inheritance/components/styles-inheritance-indicator';
 import { ConditionalField, getDependencies } from './conditional-field';
 import { createTopLevelOjectType } from './create-top-level-object-type';
-import { getDependencyState } from './get-dependency-state';
 
 export type StylesFieldProps = {
 	bind: PropKey;
@@ -28,7 +27,7 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 
 	const { values, setValues, canEdit } = useStylesFields( [ ...depList, bind ] );
 
-	const { [ bind ]: value, ...depValues } = values ?? {};
+	const { [ bind ]: value } = values ?? {};
 
 	const propType = createTopLevelOjectType( { schema: stylesSchema } );
 
@@ -47,14 +46,6 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 		);
 	};
 
-	const isDisabled = ( pt: PropType ) => {
-		if ( ! canEdit ) {
-			return true;
-		}
-
-		return getDependencyState( pt, depValues );
-	};
-
 	return (
 		<ControlAdornmentsProvider
 			items={ [
@@ -69,7 +60,7 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 				value={ { [ bind ]: value } }
 				setValue={ setValue }
 				placeholder={ placeholderValues }
-				isDisabled={ isDisabled }
+				isDisabled={ () => ! canEdit }
 			>
 				<PropKeyProvider bind={ bind }>
 					<ConditionalField>{ children }</ConditionalField>

@@ -17,7 +17,7 @@ import { useElement } from '../contexts/element-context';
 import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import {
 	extractOrderedDependencies,
-	isDependencyEffectActive,
+	isMeetingDependencies,
 	updateValues,
 	type Values,
 } from '../utils/prop-dependency-utils';
@@ -67,7 +67,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		}
 	};
 
-	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues );
+	const isDisabled = ( prop: PropType ) => ! isMeetingDependencies( prop, elementSettingValues );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

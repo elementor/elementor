@@ -74,7 +74,7 @@ class Style_Schema {
 				->set_dependencies(
 					Dependency_Manager::make()
 					->where( [
-						'operator' => 'eq',
+						'operator' => 'ne',
 						'path' => [ 'object-fit' ],
 						'value' => 'fill',
 					] )
@@ -126,14 +126,14 @@ class Style_Schema {
 			'column-count' => Number_Prop_Type::make(),
 			'column-gap' => Size_Prop_Type::make()
 				->set_dependencies(
-					Dependency_Manager::make()
+					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
 					->where( [
-						'operator' => 'lt',
+						'operator' => 'gte',
 						'path' => [ 'column-count' ],
 						'value' => 1,
 					] )
 					->where( [
-						'operator' => 'not_exist',
+						'operator' => 'exists',
 						'path' => [ 'column-count' ],
 					] )
 					->get()

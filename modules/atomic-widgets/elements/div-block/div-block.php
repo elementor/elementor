@@ -45,7 +45,7 @@ class Div_Block extends Atomic_Element_Base {
 	protected static function define_props_schema(): array {
 		$tag_dependencies = Dependency_Manager::make()
 			->where( [
-				'operator' => 'exists',
+				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
 			] )
 		->get();

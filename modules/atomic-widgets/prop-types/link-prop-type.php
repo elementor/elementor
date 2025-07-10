@@ -20,7 +20,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		$target_blank_dependencies = Dependency_Manager::make()
 		->where( [
-			'operator' => 'not_exist',
+			'operator' => 'exists',
 			'path' => [ 'link', 'destination' ],
 		] )
 		->get();
