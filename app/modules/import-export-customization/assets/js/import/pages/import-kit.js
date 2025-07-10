@@ -19,6 +19,7 @@ export default function ImportKit() {
 	);
 
 	const onFileSelect = ( file ) => {
+		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		dispatch( { type: 'SET_FILE', payload: file } );
 	};
 
