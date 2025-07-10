@@ -1,0 +1,104 @@
+name: PR Validation checks
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+
+env:
+    ARTIFACT_NAME: ${{ github.event.pull_request.head.repo.full_name }}-${{ github.event.pull_request.head.ref }}
+
+jobs:
+    install-dependencies:
+        name: Install dependencies
+        runs-on: ubuntu-22.04
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v4
+            - name: Install Node.js 20.x
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+                  cache: 'npm'
+            - name: Install dependencies
+              run: |
+                npm run prepare-environment
+            - name: Upload build artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ env.ARTIFACT_NAME }}
+                path: elementor
+
+    build-plugin:
+        name: Build plugin
+        runs-on: ubuntu-22.04
+        needs: [install-dependencies]
+        steps:
+            - name: Download build artifact
+              uses: actions/download-artifact@v4
+              with:
+                name: ${{ env.ARTIFACT_NAME }}
+                path: elementor
+            - name: Install Node.js 20.x
+              uses: actions/setup-node@v4
+              with:
+                node-version: 20.x
+                cache: 'npm'
+            - name: Build plugin
+              run: |
+                npm run build
+            - name: Upload build artifact
+              id: upload-artifact
+              uses: actions/upload-artifact@v4
+              with:
+                name: ${{ env.ARTIFACT_NAME }}
+                path: ./build
+            - name: Comment the PR with the build artifact
+              uses: peter-evans/create-or-update-comment@v4
+              with:
+                issue-number: ${{ github.event.pull_request.number }}
+                body: |
+                  The build artifact is available at: ${{ steps.upload-artifact.outputs.artifact_url }}
+
+    pr-validation-checks:
+        name: PR Validation checks
+        runs-on: ubuntu-22.04
+        needs: [install-dependencies]
+        steps:
+            - name: Download build artifact
+              uses: actions/download-artifact@v4
+              with:
+                  name: ${{ env.ARTIFACT_NAME }}
+                  path: elementor
+            - name: Install Node.js 20.x
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+                  cache: 'npm'
+            - name: Run tests
+              run: |
+                npm run test
+
+    lint:
+        name: Lint
+        runs-on: ubuntu-22.04
+        needs: [install-dependencies]
+        steps:
+        - name: Download build artifact
+          uses: actions/download-artifact@v4
+          with:
+            name: ${{ env.ARTIFACT_NAME }}
+            path: elementor
+        - name: Install Node.js 20.x
+          uses: actions/setup-node@v4
+          with:
+            node-version: 20.x
+            cache: 'npm'
+        - name: Run lint
+          run: |
+            npm run lint
