@@ -80,6 +80,4 @@ class Manager {
 	public function get(): array {
 		return ! empty( $this->dependencies['terms'] ) ? $this->dependencies : [];
 	}
-
-
 }
