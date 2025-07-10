@@ -1,7 +1,6 @@
 import { mockStylesSchema } from 'test-utils';
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
 import {
-	backdropFilterPropTypeUtil,
 	backgroundColorOverlayPropTypeUtil,
 	backgroundGradientOverlayPropTypeUtil,
 	backgroundImageOverlayPropTypeUtil,
