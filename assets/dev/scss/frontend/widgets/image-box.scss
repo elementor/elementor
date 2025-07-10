@@ -44,7 +44,7 @@
 		display: flex;
 		text-align: center;
 		flex-direction: column;
-		gap: var(--icon-box-icon-margin, 15px);
+		gap: var(--image-box-image-gap, 15px);
 	}
 
 	.elementor-image-box-img {
