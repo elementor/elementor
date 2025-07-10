@@ -41,7 +41,10 @@
 .elementor-widget-image-box {
 
 	.elementor-image-box-wrapper {
+		display: flex;
 		text-align: center;
+		flex-direction: column;
+		gap: var(--icon-box-icon-margin, 15px);
 	}
 
 	.elementor-image-box-img {
