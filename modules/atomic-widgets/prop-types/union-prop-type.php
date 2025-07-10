@@ -123,7 +123,7 @@ class Union_Prop_Type implements Prop_Type {
 		return $this;
 	}
 
-	public function get_dependencies(): array {
+	public function get_dependencies(): ?array {
 		return $this->dependencies ?? [];
 	}
 }

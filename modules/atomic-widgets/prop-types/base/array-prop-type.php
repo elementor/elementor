@@ -115,7 +115,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return $this;
 	}
 
-	public function get_dependencies(): array {
+	public function get_dependencies(): ?array {
 		return $this->dependencies;
 	}
 }
