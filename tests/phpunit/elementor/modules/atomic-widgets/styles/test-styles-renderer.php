@@ -5,6 +5,8 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -1267,6 +1269,86 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		];
 
 		$stylesRenderer = Styles_Renderer::make( [], '.elementor-prefix' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render_atomic_widget_styles__append_css_of_styles_with_flex_values() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex(
+								Props_Factory::size( 1 ),
+								Props_Factory::size( 1 ),
+								Props_Factory::size( 0, 'px' )
+							),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert.
+		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render_atomic_widget_styles__append_css_of_styles_with_flex_partial_values() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style-grow-only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( 2 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+			[
+				'id' => 'test-style-grow-shrink',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( 1, 2 ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+			[
+				'id' => 'test-style-basis-only',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'flex' => Props_Factory::flex( null, null, Props_Factory::size( 100, 'px' ) ),
+						],
+						'meta' => [],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
 
 		// Act.
 		$css = $stylesRenderer->render( $styles );

@@ -6,7 +6,6 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Widget_Base;
-use Elementor\Core\Base\Document;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
@@ -217,121 +216,32 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		do_action('elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [$doc_id]);
 	}
 
-	public function test_cache_invalidation_on_global_cache_clear() {
+	public function test_cache_invalidation_on_global_cache_clear()
+	{
 		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
+		(new Atomic_Widget_Styles())->register_hooks();
 		$doc = $this->factory()->documents->create_and_get();
 		$id = $doc->get_id();
 
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id ] );
+		$cache_validity->validate([Atomic_Widget_Styles::STYLES_KEY, $id]);
 
 		// Assert.
-		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$this->assertTrue($cache_validity->is_valid([Atomic_Widget_Styles::STYLES_KEY, $id]));
 
 		// Act.
-		do_action('elementor/document/after_save', $doc, [] );
+		do_action('elementor/document/after_save', $doc, []);
 
 		// Assert.
-		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$this->assertFalse($cache_validity->is_valid([Atomic_Widget_Styles::STYLES_KEY, $id]));
 
 		// Act.
-		do_action('elementor/core/files/clear_cache' );
+		do_action('elementor/core/files/clear_cache');
 
 		// Assert.
-		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
-	}
-
-	public function test_parse_atomic_widget_styles__append_css_of_styles_with_flex_values() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'flex' => Props_Factory::flex(
-									Props_Factory::size( 1 ),
-									Props_Factory::size( 1 ),
-									Props_Factory::size( 0, 'px' )
-								),
-							],
-							'meta' => [],
-						],
-					],
-				],
-			],
-		]);
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-
-		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
-	}
-
-	public function test_parse_atomic_widget_styles__append_css_of_styles_with_flex_partial_values() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style-grow-only',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'flex' => Props_Factory::flex( 2 ),
-							],
-							'meta' => [],
-						],
-					],
-				],
-				[
-					'id' => 'test-style-grow-shrink',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'flex' => Props_Factory::flex( 1, 2 ),
-							],
-							'meta' => [],
-						],
-					],
-				],
-				[
-					'id' => 'test-style-basis-only',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'flex' => Props_Factory::flex( null, null, Props_Factory::size( 100, 'px' ) ),
-							],
-							'meta' => [],
-						],
-					],
-				],
-			],
-		]);
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-
-		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+		$this->assertFalse($cache_validity->is_valid([Atomic_Widget_Styles::STYLES_KEY]));
 	}
 
 	private function make_mock_post( $elements_data = [] ) {
