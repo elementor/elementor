@@ -61,7 +61,7 @@ function NoVariablesFallback() {
 			</Typography>
 
 			<Typography align="center" variant="caption" maxWidth="180px">
-				{ __( 'With your current permissions, you can only connect and detach variables.', 'elementor' ) }
+				{ __( 'With your current role, you can only connect and detach variables.', 'elementor' ) }
 			</Typography>
 		</>
 	);
