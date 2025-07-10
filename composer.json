@@ -6,7 +6,7 @@
 	"minimum-stability": "stable",
 	"require": {
 		"php": ">=7.4",
-		"twig/twig": "3.11.3"
+		"twig/twig": "~3.11.3"
 	},
 	"autoload": {
 		"classmap": [
