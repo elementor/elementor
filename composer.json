@@ -6,7 +6,8 @@
 	"minimum-stability": "stable",
 	"require": {
 		"php": ">=7.4",
-		"twig/twig": "3.11.3"
+		"twig/twig": "3.11.3",
+		"symfony/deprecation-contracts": "^2.5"
 	},
 	"autoload": {
 		"classmap": [
