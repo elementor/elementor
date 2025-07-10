@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { useRef } from 'react';
+import type { SizePropValue } from '@elementor/editor-props';
 import { PencilIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
 import { type DegreeUnit, type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
-import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
+import { SelectionEndAdornment, TextFieldInnerSelection } from './text-field-inner-selection';
+
+type SizeValue = SizePropValue[ 'value' ];
 
 type SizeInputProps = {
 	unit: Unit | DegreeUnit | ExtendedOption;
 	size: number | string;
-	placeholder?: string;
+	placeholder?: SizeValue | string;
 	startIcon?: React.ReactNode;
 	units: ( Unit | DegreeUnit | ExtendedOption )[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
@@ -41,6 +44,8 @@ export const SizeInput = ( {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
+
+	const { sizePlaceholder, unitPlaceholder } = extractValuesFromPlaceholder( placeholder );
 
 	const handleKeyUp = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		const { key } = event;
@@ -86,6 +91,7 @@ export const SizeInput = ( {
 				options={ units }
 				onClick={ handleUnitChange }
 				value={ unit }
+				placeholder={ unitPlaceholder }
 				alternativeOptionLabels={ {
 					custom: <PencilIcon fontSize="small" />,
 				} }
@@ -105,7 +111,7 @@ export const SizeInput = ( {
 			<Box>
 				<TextFieldInnerSelection
 					disabled={ disabled }
-					placeholder={ placeholder }
+					placeholder={ sizePlaceholder }
 					type={ inputType }
 					value={ inputValue }
 					onChange={ handleSizeChange }
@@ -123,3 +129,17 @@ export const SizeInput = ( {
 		</ControlActions>
 	);
 };
+
+function extractValuesFromPlaceholder( placeholder?: SizeValue | string ) {
+	if ( ! placeholder || typeof placeholder === 'string' ) {
+		return {
+			sizePlaceholder: placeholder ?? null,
+			unitPlaceholder: null,
+		};
+	}
+
+	return {
+		sizePlaceholder: placeholder.size,
+		unitPlaceholder: placeholder.unit,
+	};
+}
