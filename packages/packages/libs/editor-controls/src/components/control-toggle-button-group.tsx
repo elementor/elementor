@@ -151,7 +151,7 @@ export const ControlToggleButtonGroup = < TValue, >( {
 					const isPlaceholder =
 						placeholderArray.length > 0 &&
 						placeholderArray.includes( buttonValue as string ) &&
-    					( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
+						( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
 
 					const isDarkMode = theme.palette.mode === 'dark';
 					const darkBackgroundColor = 'rgba(255,255,255,0.04)';
