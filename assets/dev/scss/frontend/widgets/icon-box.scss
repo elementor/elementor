@@ -52,6 +52,22 @@
 		flex: 0 0 auto; // Hack for Safari
 	}
 
+	.elementor-icon-box-content {
+		width: 100%;
+		flex-grow: 1;
+	}
+
+	.elementor-icon-box-title {
+
+		a {
+			color: inherit;
+		}
+	}
+
+	.elementor-icon-box-description {
+		margin: 0;
+	}
+
 	@include icon-position('');
 
 	@media (min-width: $screen-widescreen-min) {
@@ -87,20 +103,5 @@
 				}
 			}
 		}
-	}
-
-	.elementor-icon-box-title {
-
-		a {
-			color: inherit;
-		}
-	}
-
-	.elementor-icon-box-content {
-		flex-grow: 1;
-	}
-
-	.elementor-icon-box-description {
-		margin: 0;
 	}
 }
