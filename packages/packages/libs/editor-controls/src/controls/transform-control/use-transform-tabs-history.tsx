@@ -68,6 +68,7 @@ export const useTransformTabsHistory = ( {
 				saveToHistory( 'scale', scaleValue );
 				saveToHistory( 'rotate', rotateValue );
 				saveToHistory( 'skew', skewValue );
+				
 				break;
 
 			case TransformFunctionKeys.scale:
@@ -75,6 +76,7 @@ export const useTransformTabsHistory = ( {
 				saveToHistory( 'move', moveValue );
 				saveToHistory( 'rotate', rotateValue );
 				saveToHistory( 'skew', skewValue );
+				
 				break;
 
 			case TransformFunctionKeys.rotate:
@@ -82,6 +84,7 @@ export const useTransformTabsHistory = ( {
 				saveToHistory( 'move', moveValue );
 				saveToHistory( 'scale', scaleValue );
 				saveToHistory( 'skew', skewValue );
+				
 				break;
 
 			case TransformFunctionKeys.skew:
@@ -89,6 +92,7 @@ export const useTransformTabsHistory = ( {
 				saveToHistory( 'move', moveValue );
 				saveToHistory( 'scale', scaleValue );
 				saveToHistory( 'rotate', rotateValue );
+				
 				break;
 		}
 
