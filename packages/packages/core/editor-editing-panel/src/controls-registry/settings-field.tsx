@@ -4,6 +4,7 @@ import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
+	extractDependingOnSelf,
 	getElementLabel,
 	getElementSettings,
 	updateElementSettings,
@@ -34,10 +35,13 @@ const HISTORY_DEBOUNCE_WAIT = 800;
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
 		element: { id: elementId },
-		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
+		elementType: { propsSchema },
 	} = useElement();
 
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
+	const dependingOnSelf = useMemo( () => {
+		return extractDependingOnSelf( propsSchema );
+	}, [ propsSchema ] );
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
@@ -52,12 +56,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 		if ( isVersion331Active ) {
-			const dependents = extractOrderedDependencies(
-				bind,
-				propsSchema,
-				elementSettingValues,
-				dependenciesPerTargetMapping
-			);
+			const dependents = extractOrderedDependencies( bind, propsSchema, elementSettingValues, dependingOnSelf );
 
 			const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues );
 
@@ -67,7 +66,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		}
 	};
 
-	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues, 'disable' );
+	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

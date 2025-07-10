@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Contracts;
 
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -18,5 +16,6 @@ interface Prop_Type extends \JsonSerializable {
 	public function get_meta_item( string $key, $default = null );
 	public function get_settings(): array;
 	public function get_setting( string $key, $default = null );
-	public function dependencies( Dependency_Manager $manager ): self;
+	public function set_dependencies( array $dependencies ): self;
+	public function get_dependencies(): array;
 }

@@ -10,7 +10,7 @@ export { useParentElement } from './hooks/use-parent-element';
 
 // utils
 export { getContainer, selectElement } from './sync/get-container';
-export { getElementSetting, getElementSettings } from './sync/get-element-setting';
+export { getElementSetting, getElementSettings, extractDependingOnSelf } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementLabel } from './sync/get-element-label';
 export { getElements } from './sync/get-elements';

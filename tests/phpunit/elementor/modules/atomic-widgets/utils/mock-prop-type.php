@@ -52,7 +52,7 @@ class Mock_Prop_Type implements Prop_Type {
 		return $default;
 	}
 
-	public function dependencies( Dependency_Manager $manager ): self {
+	public function set_dependencies( Dependency_Manager $manager ): self {
 		return $this;
 	}
 

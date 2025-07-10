@@ -9,6 +9,7 @@ import {
 } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import {
+	extractDependingOnSelf,
 	getElementLabel,
 	getElementSettings,
 	updateElementSettings,
@@ -36,6 +37,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	updateElementSettings: jest.fn(),
 	getElementLabel: jest.fn(),
 	getElementSettings: jest.fn(),
+	extractDependingOnSelf: jest.fn(),
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
@@ -60,7 +62,6 @@ const dependencyTestCases: {
 		desc: 'should disable if eq dependency is met (string)',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'or',
 				terms: [ { path: [ bind ], operator: 'eq', value: 'disable-me' } ],
 			},
@@ -75,9 +76,7 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if eq dependency is met (number)',
-		dependencies: [
-			{ effect: 'disable', relation: 'or', terms: [ { path: [ otherBind ], operator: 'eq', value: 123 } ] },
-		],
+		dependencies: [ { relation: 'or', terms: [ { path: [ otherBind ], operator: 'eq', value: 123 } ] } ],
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 123 },
@@ -90,7 +89,6 @@ const dependencyTestCases: {
 		desc: 'should disable if eq dependency is met (object inner)',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'or',
 				terms: [ { path: [ objBind, 'a' ], operator: 'eq', value: 'bar' } ],
 			},
@@ -107,7 +105,6 @@ const dependencyTestCases: {
 		desc: 'should disable if array contains value',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'or',
 				terms: [ { path: [ arrBind ], operator: 'contains', value: 'foo' } ],
 			},
@@ -122,9 +119,7 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should not disable if dependency is not met',
-		dependencies: [
-			{ effect: 'disable', relation: 'or', terms: [ { path: [ bind ], operator: 'eq', value: 'nope' } ] },
-		],
+		dependencies: [ { relation: 'or', terms: [ { path: [ bind ], operator: 'eq', value: 'nope' } ] } ],
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 0 },
@@ -140,7 +135,6 @@ const dependencyTestCases: {
 		desc: 'should disable if AND of eq and ne is met',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'and',
 				terms: [
 					{ path: [ bind ], operator: 'eq', value: 'foo' },
@@ -160,7 +154,6 @@ const dependencyTestCases: {
 		desc: 'should disable if OR of in and exists is met',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'or',
 				terms: [
 					{ path: [ bind ], operator: 'in', value: [ 'foo', 'bar' ] },
@@ -180,12 +173,11 @@ const dependencyTestCases: {
 		desc: 'should disable if nested AND/OR is met',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'or',
 				terms: [
 					{
 						relation: 'and',
-						effect: 'disable',
+
 						terms: [
 							{ path: [ bind ], operator: 'eq', value: 'foo' },
 							{ path: [ otherBind ], operator: 'gte', value: 100 },
@@ -207,7 +199,6 @@ const dependencyTestCases: {
 		desc: 'should disable if ncontains on array is met',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'or',
 				terms: [ { path: [ arrBind ], operator: 'ncontains', value: 'nope' } ],
 			},
@@ -224,7 +215,6 @@ const dependencyTestCases: {
 		desc: 'should disable if not_exist is met',
 		dependencies: [
 			{
-				effect: 'disable',
 				relation: 'or',
 				terms: [ { path: [ otherBind ], operator: 'not_exist', value: true } ],
 			},
@@ -456,7 +446,7 @@ describe( 'SettingsField dependency logic', () => {
 	describe( 'Dependency extraction', () => {
 		it( 'should extract direct dependencies correctly', () => {
 			// Arrange.
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'control-a': [ 'control-b', 'control-c' ],
 				'control-b': [ 'control-d' ],
 				'control-c': [],
@@ -470,7 +460,7 @@ describe( 'SettingsField dependency logic', () => {
 				'control-d': createMockPropType( { kind: 'plain' } ),
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			const elementSettings = {
@@ -482,6 +472,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -519,13 +510,13 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-control': createMockPropType( { kind: 'plain' } ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'parent-control': [ 'dependent-control' ],
 				'parent-control.child1': [ 'dependent-control' ],
 				'parent-control.child2': [],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 			const elementSettings = {
 				'parent-control': {
@@ -540,6 +531,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -577,21 +569,18 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 				'dependent-control': createMockPropType( {
 					kind: 'union',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+					},
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-control' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 			const elementSettings = {
 				'source-control': { $$type: 'string', value: 'initial-value' },
@@ -600,6 +589,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -631,21 +621,18 @@ describe( 'SettingsField dependency logic', () => {
 				'source-control': createMockPropType( { kind: 'plain' } ),
 				'dependent-control': createMockPropType( {
 					kind: 'plain',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+					},
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-control' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 			const elementSettings = {
 				'source-control': { $$type: 'string', value: 'initial-value' },
@@ -654,6 +641,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -687,27 +675,23 @@ describe( 'SettingsField dependency logic', () => {
 					shape: {
 						child: createMockPropType( {
 							kind: 'plain',
-							dependencies: [
-								{
-									effect: 'disable',
-									relation: 'or',
-									terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
-								},
-							],
+							dependencies: {
+								relation: 'or',
+								terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+							},
 						} ),
 						sibling: createMockPropType( {
 							kind: 'plain',
-							dependencies: [],
 						} ),
 					},
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'nested-object.child' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -720,6 +704,7 @@ describe( 'SettingsField dependency logic', () => {
 					},
 				},
 			} );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -765,19 +750,16 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 				'mid-control': createMockPropType( {
 					kind: 'plain',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [
-								{
-									path: [ 'source-control' ],
-									operator: 'ne',
-									value: 'initial-value-1',
-								},
-							],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [
+							{
+								path: [ 'source-control' ],
+								operator: 'ne',
+								value: 'initial-value-1',
+							},
+						],
+					},
 				} ),
 				'nested-union': createMockPropType( {
 					kind: 'union',
@@ -790,19 +772,16 @@ describe( 'SettingsField dependency logic', () => {
 							shape: {
 								number: createMockPropType( {
 									kind: 'plain',
-									dependencies: [
-										{
-											effect: 'disable',
-											relation: 'or',
-											terms: [
-												{
-													path: [ 'mid-control' ],
-													operator: 'not_exist',
-													value: null,
-												},
-											],
-										},
-									],
+									dependencies: {
+										relation: 'or',
+										terms: [
+											{
+												path: [ 'mid-control' ],
+												operator: 'not_exist',
+												value: null,
+											},
+										],
+									},
 								} ),
 							},
 						} ),
@@ -810,12 +789,12 @@ describe( 'SettingsField dependency logic', () => {
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'mid-control' ],
 				'mid-control': [ 'nested-union.number' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -834,6 +813,7 @@ describe( 'SettingsField dependency logic', () => {
 					},
 				},
 			} );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -874,31 +854,25 @@ describe( 'SettingsField dependency logic', () => {
 				'source-control': createMockPropType( { kind: 'plain' } ),
 				'dependent-1': createMockPropType( {
 					kind: 'plain',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+					},
 				} ),
 				'dependent-2': createMockPropType( {
 					kind: 'plain',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+					},
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-1', 'dependent-2' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -906,6 +880,7 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-1': { $$type: 'string', value: 'value-1' },
 				'dependent-2': { $$type: 'string', value: 'value-2' },
 			} );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -942,32 +917,26 @@ describe( 'SettingsField dependency logic', () => {
 				'control-a': createMockPropType( { kind: 'plain' } ),
 				'control-b': createMockPropType( {
 					kind: 'plain',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [ { path: [ 'control-a' ], operator: 'eq', value: 'trigger-b' } ],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'control-a' ], operator: 'eq', value: 'trigger-b' } ],
+					},
 				} ),
 				'control-c': createMockPropType( {
 					kind: 'plain',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [ { path: [ 'control-b' ], operator: 'eq', value: 'trigger-c' } ],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'control-b' ], operator: 'eq', value: 'trigger-c' } ],
+					},
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'control-a': [ 'control-b' ],
 				'control-b': [ 'control-c' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			jest.mocked( useElementSettings ).mockReturnValue( {
@@ -975,6 +944,7 @@ describe( 'SettingsField dependency logic', () => {
 				'control-b': { $$type: 'string', value: 'initial-b' },
 				'control-c': { $$type: 'string', value: 'initial-c' },
 			} );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -1005,21 +975,18 @@ describe( 'SettingsField dependency logic', () => {
 				'source-control': createMockPropType( { kind: 'plain' } ),
 				'dependent-control': createMockPropType( {
 					kind: 'plain',
-					dependencies: [
-						{
-							effect: 'disable',
-							relation: 'or',
-							terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
-						},
-					],
+					dependencies: {
+						relation: 'or',
+						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+					},
 				} ),
 			};
 
-			const dependenciesPerTargetMapping = {
+			const dependingOnSelf = {
 				'source-control': [ 'dependent-control' ],
 			};
 
-			const elementType = createMockElementType( { propsSchema, dependenciesPerTargetMapping } );
+			const elementType = createMockElementType( { propsSchema } );
 			const element = mockElement();
 
 			const initialDependentValue = { $$type: 'string', value: 'preserved-value' };
@@ -1029,6 +996,7 @@ describe( 'SettingsField dependency logic', () => {
 			};
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
+			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
