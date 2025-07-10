@@ -63,7 +63,11 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 		label,
 		icon: <TextIcon fontSize={ SIZE } />,
 		secondaryText: value,
-		onEdit: () => onEdit?.( key ),
+		onEdit: onEdit
+			? () => {
+					onEdit( key );
+			  }
+			: undefined,
 	} ) );
 
 	const handleSearch = ( search: string ) => {
