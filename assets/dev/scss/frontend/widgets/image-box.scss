@@ -1,80 +1,47 @@
 //
 // Image Box
 //
+
+@mixin image-position($device) {
+	&.elementor#{$device}-position- {
+
+		&right {
+
+			.elementor-image-box-wrapper {
+				text-align: end;
+				flex-direction: getValueByDirection(row-reverse, row);
+				gap: var(--image-box-image-gap, 15px);
+			}
+		}
+
+		&left {
+
+			.elementor-image-box-wrapper {
+				text-align: start;
+				flex-direction: getValueByDirection(row, row-reverse);
+				gap: var(--image-box-image-gap, 15px);
+			}
+		}
+
+		&top {
+
+			.elementor-image-box-wrapper {
+				text-align: center;
+				flex-direction: column;
+				gap: var(--image-box-image-gap, 15px);
+			}
+
+			.elementor-image-box-img {
+				margin: auto;
+			}
+		}
+	}
+}
+
 .elementor-widget-image-box {
 
-	.elementor-image-box-content {
-		width: 100%; // Hack for Chrome in flex mode
-	}
-
-	@media (min-width: $screen-mobile-next) {
-
-		&.elementor-position- {
-
-			&left, &right {
-
-				.elementor-image-box-wrapper {
-					display: flex;
-				}
-			}
-
-			&right {
-
-				.elementor-image-box-wrapper {
-					text-align: end;
-					flex-direction: getValueByDirection(row-reverse, row);
-				}
-			}
-
-			&left {
-
-				.elementor-image-box-wrapper {
-					text-align: start;
-					flex-direction: getValueByDirection(row, row-reverse);
-				}
-			}
-
-			&top {
-
-				.elementor-image-box-img {
-					margin: auto;
-				}
-			}
-		}
-
-		&.elementor-vertical-align- {
-
-			&top {
-
-				.elementor-image-box-wrapper {
-					align-items: flex-start;
-				}
-			}
-
-			&middle {
-
-				.elementor-image-box-wrapper {
-					align-items: center;
-				}
-			}
-
-			&bottom {
-
-				.elementor-image-box-wrapper {
-					align-items: flex-end;
-				}
-			}
-		}
-	}
-
-	@media (max-width: $screen-mobile-max) {
-
-		// TEMP code to override the image spacing
-		.elementor-image-box-img {
-			margin-left: auto !important;
-			margin-right: auto !important;
-			margin-bottom: 15px;
-		}
+	.elementor-image-box-wrapper {
+		text-align: center;
 	}
 
 	.elementor-image-box-img {
@@ -86,6 +53,11 @@
 		}
 	}
 
+	.elementor-image-box-content {
+		width: 100%;
+		flex-grow: 1;
+	}
+
 	.elementor-image-box-title {
 
 		a {
@@ -93,11 +65,48 @@
 		}
 	}
 
-	.elementor-image-box-wrapper {
-		text-align: center;
-	}
-
 	.elementor-image-box-description {
 		margin: 0;
+	}
+
+	@include image-position('');
+
+	@media (min-width: $screen-widescreen-min) {
+		@include image-position(-widescreen);
+	}
+
+	@media (max-width: $screen-laptop-max) {
+		@include image-position(-laptop);
+	}
+
+	@media (max-width: $screen-tablet-extra-max) {
+		@include image-position(-tablet_extra);
+	}
+
+	@media (max-width: $screen-tablet-max) {
+		@include image-position(-tablet);
+	}
+
+	@media (max-width: $screen-mobile-extra-max) {
+		@include image-position(-mobile_extra);
+	}
+
+	@media (max-width: $screen-mobile-max) {
+		@include image-position(-mobile);
+
+		.elementor-image-box-img {
+			margin-inline: auto;
+		}
+
+		&.elementor-position- {
+
+			&left,
+			&right {
+
+				.elementor-image-box-img {
+					flex-direction: column;
+				}
+			}
+		}
 	}
 }
