@@ -41,6 +41,8 @@ const importReducer = ( state, { type, payload } ) => {
 			return { ...state, importedPlugins: payload };
 		case 'SET_PLUGINS_STATE':
 			return { ...state, pluginsState: payload };
+		case 'RESET_STATE':
+			return { ...initialState };
 		default:
 			return state;
 	}
