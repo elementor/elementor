@@ -117,7 +117,7 @@ class Union_Prop_Type implements Prop_Type {
 		];
 	}
 
-	public function set_dependencies( array $dependencies ): self {
+	public function set_dependencies( ?array $dependencies ): self {
 		$this->dependencies = empty( $dependencies ) ? null : $dependencies;
 
 		return $this;

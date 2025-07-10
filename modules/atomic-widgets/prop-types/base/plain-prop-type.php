@@ -66,7 +66,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	abstract protected function sanitize_value( $value );
 
-	public function set_dependencies( array $dependencies ): self {
+	public function set_dependencies( ?array $dependencies ): self {
 		$this->dependencies = empty( $dependencies ) ? null : $dependencies;
 
 		return $this;

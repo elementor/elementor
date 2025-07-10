@@ -109,7 +109,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	abstract protected function define_item_type(): Prop_Type;
 
-	public function set_dependencies( array $dependencies ): self {
+	public function set_dependencies( ?array $dependencies ): self {
 		$this->dependencies = empty( $dependencies ) ? null : $dependencies;
 
 		return $this;

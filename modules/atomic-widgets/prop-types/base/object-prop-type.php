@@ -146,7 +146,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	 */
 	abstract protected function define_shape(): array;
 
-	public function set_dependencies( array $dependencies ): self {
+	public function set_dependencies( ?array $dependencies ): self {
 		$this->dependencies = empty( $dependencies ) ? null : $dependencies;
 
 		return $this;
