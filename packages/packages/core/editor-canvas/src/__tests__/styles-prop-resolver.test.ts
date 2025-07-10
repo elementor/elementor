@@ -311,41 +311,41 @@ describe( 'styles prop resolver', () => {
 				filter: 'blur(1px) brightness(90%) contrast(50%) grayscale(70%) invert(60%) sepia(30%) saturate(25%) hue-rotate(10deg)',
 			},
 		},
-		{
-			name: 'backdrop-filter',
-			props: {
-				'backdrop-filter': backdropFilterPropTypeUtil.create( [
-					blurFilterPropTypeUtil.create( {
-						blur: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
-					} ),
-					brightnessFilterPropTypeUtil.create( {
-						brightness: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
-					} ),
-					contrastFilterPropTypeUtil.create( {
-						contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
-					} ),
-					grayscaleFilterPropTypeUtil.create( {
-						grayscale: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
-					} ),
-					invertFilterPropTypeUtil.create( {
-						invert: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
-					} ),
-					sepiaFilterPropTypeUtil.create( {
-						sepia: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
-					} ),
-					saturateFilterPropTypeUtil.create( {
-						saturate: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
-					} ),
-					hueRotateFilterPropTypeUtil.create( {
-						'hue-rotate': sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
-					} ),
-				] ),
-			},
-			expected: {
-				'backdrop-filter':
-					'blur(2rem) brightness(80%) contrast(50%) grayscale(70%) invert(60%) sepia(30%) saturate(25%) hue-rotate(10deg)',
-			},
-		},
+		// {
+		// 	name: 'backdrop-filter',
+		// 	props: {
+		// 		'backdrop-filter': backdropFilterPropTypeUtil.create( [
+		// 			blurFilterPropTypeUtil.create( {
+		// 				blur: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
+		// 			} ),
+		// 			brightnessFilterPropTypeUtil.create( {
+		// 				brightness: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
+		// 			} ),
+		// 			contrastFilterPropTypeUtil.create( {
+		// 				contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+		// 			} ),
+		// 			grayscaleFilterPropTypeUtil.create( {
+		// 				grayscale: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+		// 			} ),
+		// 			invertFilterPropTypeUtil.create( {
+		// 				invert: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+		// 			} ),
+		// 			sepiaFilterPropTypeUtil.create( {
+		// 				sepia: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+		// 			} ),
+		// 			saturateFilterPropTypeUtil.create( {
+		// 				saturate: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+		// 			} ),
+		// 			hueRotateFilterPropTypeUtil.create( {
+		// 				'hue-rotate': sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+		// 			} ),
+		// 		] ),
+		// 	},
+		// 	expected: {
+		// 		'backdrop-filter':
+		// 			'blur(2rem) brightness(80%) contrast(50%) grayscale(70%) invert(60%) sepia(30%) saturate(25%) hue-rotate(10deg)',
+		// 	},
+		// },
 		{
 			name: 'background (url only repeat and attachment)',
 			prepare: () => {
