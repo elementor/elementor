@@ -2,9 +2,6 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\PropDependencies;
 
-use Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Utils\Mock_Prop_Type;
-use Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Utils\Mock_Object_Prop_Type;
-use Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\Utils\Mock_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -29,6 +26,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 			] );
 
 		$result = $manager->get();
+
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'relation', $result );
 		$this->assertArrayHasKey( 'terms', $result );
@@ -49,6 +47,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 			] );
 
 		$result = $manager->get();
+
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'relation', $result );
 		$this->assertArrayHasKey( 'terms', $result );
@@ -71,6 +70,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 			] );
 
 		$result = $manager->get();
+
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'relation', $result );
 		$this->assertArrayHasKey( 'terms', $result );
@@ -91,19 +91,12 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 			] );
 
 		$result = $manager->get();
+
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'relation', $result );
 		$this->assertArrayHasKey( 'terms', $result );
 		$this->assertCount( 2, $result['terms'] );
 	}
-
-
-
-
-
-
-
-
 
 	public function test_where_throws_on_missing_config() {
 		$this->expectException( \Exception::class );
@@ -117,6 +110,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 			->where( [ 'operator' => 'eq', 'path' => [ 'a' ] ] );
 
 		$result = $manager->get();
+
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'relation', $result );
 		$this->assertArrayHasKey( 'terms', $result );
