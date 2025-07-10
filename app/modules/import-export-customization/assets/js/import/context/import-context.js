@@ -1,4 +1,4 @@
-import { useReducer, useContext } from 'react';
+import { useReducer, useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
 
 export const IMPORT_STATUS = {
@@ -46,7 +46,7 @@ const importReducer = ( state, { type, payload } ) => {
 	}
 };
 
-export const ImportContext = React.createContext();
+export const ImportContext = createContext();
 
 const initialState = {
 	id: null,
