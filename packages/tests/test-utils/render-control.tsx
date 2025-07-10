@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider } from '@elementor/query';
 
 import { renderWithTheme } from './render-with-theme';
 
-type RenderControlProps = Partial< PropProviderProps< PropValue, PropType > > & {
+export type RenderControlProps = Partial< PropProviderProps< PropValue, PropType > > & {
 	bind?: PropKey;
 	controlActions?: ControlActionsItems;
 	propType: PropType;
