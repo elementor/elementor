@@ -54,18 +54,16 @@ const objBind = 'obj';
 
 const dependencyTestCases: {
 	desc: string;
-	dependencies: Dependency[];
+	dependencies: Dependency;
 	values: Record< string, PropValue >;
 	enabled: boolean;
 }[] = [
 	{
 		desc: 'should disable if eq dependency is met (string)',
-		dependencies: [
-			{
-				relation: 'or',
-				terms: [ { path: [ bind ], operator: 'eq', value: 'disable-me' } ],
-			},
-		],
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ bind ], operator: 'eq', value: 'disable-me' } ],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'disable-me' },
 			[ otherBind ]: { $$type: 'number', value: 123 },
@@ -76,7 +74,7 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if eq dependency is met (number)',
-		dependencies: [ { relation: 'or', terms: [ { path: [ otherBind ], operator: 'eq', value: 123 } ] } ],
+		dependencies: { relation: 'or', terms: [ { path: [ otherBind ], operator: 'eq', value: 123 } ] },
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 123 },
@@ -87,12 +85,10 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if eq dependency is met (object inner)',
-		dependencies: [
-			{
-				relation: 'or',
-				terms: [ { path: [ objBind, 'a' ], operator: 'eq', value: 'bar' } ],
-			},
-		],
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ objBind, 'a' ], operator: 'eq', value: 'bar' } ],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 0 },
@@ -103,12 +99,10 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if array contains value',
-		dependencies: [
-			{
-				relation: 'or',
-				terms: [ { path: [ arrBind ], operator: 'contains', value: 'foo' } ],
-			},
-		],
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ arrBind ], operator: 'contains', value: 'foo' } ],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 0 },
@@ -119,7 +113,7 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should not disable if dependency is not met',
-		dependencies: [ { relation: 'or', terms: [ { path: [ bind ], operator: 'eq', value: 'nope' } ] } ],
+		dependencies: { relation: 'or', terms: [ { path: [ bind ], operator: 'eq', value: 'nope' } ] },
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 0 },
@@ -133,15 +127,13 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if AND of eq and ne is met',
-		dependencies: [
-			{
-				relation: 'and',
-				terms: [
-					{ path: [ bind ], operator: 'eq', value: 'foo' },
-					{ path: [ otherBind ], operator: 'ne', value: 0 },
-				],
-			},
-		],
+		dependencies: {
+			relation: 'and',
+			terms: [
+				{ path: [ bind ], operator: 'eq', value: 'foo' },
+				{ path: [ otherBind ], operator: 'ne', value: 0 },
+			],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 123 },
@@ -152,15 +144,13 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if OR of in and exists is met',
-		dependencies: [
-			{
-				relation: 'or',
-				terms: [
-					{ path: [ bind ], operator: 'in', value: [ 'foo', 'bar' ] },
-					{ path: [ otherBind ], operator: 'exists', value: true },
-				],
-			},
-		],
+		dependencies: {
+			relation: 'or',
+			terms: [
+				{ path: [ bind ], operator: 'in', value: [ 'foo', 'bar' ] },
+				{ path: [ otherBind ], operator: 'exists', value: true },
+			],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'baz' },
 			[ otherBind ]: { $$type: 'number', value: 1 },
@@ -171,22 +161,20 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if nested AND/OR is met',
-		dependencies: [
-			{
-				relation: 'or',
-				terms: [
-					{
-						relation: 'and',
+		dependencies: {
+			relation: 'or',
+			terms: [
+				{
+					relation: 'and',
 
-						terms: [
-							{ path: [ bind ], operator: 'eq', value: 'foo' },
-							{ path: [ otherBind ], operator: 'gte', value: 100 },
-						],
-					},
-					{ path: [ arrBind ], operator: 'contains', value: 'baz' },
-				],
-			},
-		],
+					terms: [
+						{ path: [ bind ], operator: 'eq', value: 'foo' },
+						{ path: [ otherBind ], operator: 'gte', value: 100 },
+					],
+				},
+				{ path: [ arrBind ], operator: 'contains', value: 'baz' },
+			],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 150 },
@@ -197,12 +185,10 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if ncontains on array is met',
-		dependencies: [
-			{
-				relation: 'or',
-				terms: [ { path: [ arrBind ], operator: 'ncontains', value: 'nope' } ],
-			},
-		],
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ arrBind ], operator: 'ncontains', value: 'nope' } ],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 0 },
@@ -213,12 +199,10 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should disable if not_exist is met',
-		dependencies: [
-			{
-				relation: 'or',
-				terms: [ { path: [ otherBind ], operator: 'not_exist', value: true } ],
-			},
-		],
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ otherBind ], operator: 'not_exist', value: true } ],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: undefined,
@@ -1045,7 +1029,7 @@ function setup( {
 	values,
 	schemaOverrides = {},
 }: {
-	dependencies: Dependency[];
+	dependencies: Dependency;
 	values: Record< string, PropValue >;
 	schemaOverrides?: Record< string, Partial< PropType > >;
 } ) {
