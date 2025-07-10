@@ -133,13 +133,12 @@ export const SizeInput = ( {
 function extractValuesFromPlaceholder( placeholder?: SizeValue | string ) {
 	if ( ! placeholder || typeof placeholder === 'string' ) {
 		return {
-			sizePlaceholder: placeholder ?? null,
-			unitPlaceholder: null,
+			sizePlaceholder: placeholder,
 		};
 	}
 
 	return {
-		sizePlaceholder: placeholder.size,
+		sizePlaceholder: String( placeholder.size ),
 		unitPlaceholder: placeholder.unit,
 	};
 }

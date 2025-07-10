@@ -68,7 +68,7 @@ type SelectionEndAdornmentProps< T extends string > = {
 	options: T[];
 	onClick: ( value: T ) => void;
 	value: T;
-	placeholder: string | null;
+	placeholder?: string;
 	alternativeOptionLabels?: { [ key in T ]?: React.ReactNode };
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	disabled?: boolean;
