@@ -30,6 +30,10 @@
 				flex-direction: column;
 				gap: var(--icon-box-icon-margin, 15px);
 			}
+
+			.elementor-icon-box-icon {
+				margin-inline: auto;
+			}
 		}
 	}
 }
