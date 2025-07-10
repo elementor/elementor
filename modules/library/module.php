@@ -65,6 +65,8 @@ class Module extends BaseModule {
 				->register_document_type( 'e-flexbox', Documents\Flexbox::get_class_full_name() );
 			Plugin::$instance->documents
 				->register_document_type( 'e-tabs', Documents\Atomic_Tabs::get_class_full_name() );
+			Plugin::$instance->documents
+				->register_document_type( 'e-tabs', Documents\Atomic_Tabs_List::get_class_full_name() );
 		}
 	}
 }

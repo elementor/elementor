@@ -15,10 +15,12 @@ class Module extends elementorModules.editor.utils.Module {
 		const DivBlock = require( './div-block-type' ).default;
 		const FlexBox = require( './flexbox-type' ).default;
 		const Tabs = require( './tabs-type' ).default;
+		const TabsList = require( './tabs-list-type' ).default;
 
 		elementor.elementsManager.registerElementType( new DivBlock() );
 		elementor.elementsManager.registerElementType( new FlexBox() );
 		elementor.elementsManager.registerElementType( new Tabs() );
+		elementor.elementsManager.registerElementType( new TabsList() );
 	}
 }
 

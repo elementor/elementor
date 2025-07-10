@@ -3,6 +3,7 @@ const ELEMENT_TYPES = {
 	CONTAINER: 'container',
 	DIV_BLOCK: 'e-div-block',
 	TABS: 'e-tabs',
+	TABS_LIST: 'e-tabs-list',
 	FLEXBOX: 'e-flexbox',
 };
 

@@ -57,16 +57,21 @@ module.exports = {
 				'e-div-block': null,
 				container: null,
 				'e-flexbox': null,
-				'e-tabs': null,
 			},
 			'e-flexbox': {
 				widget: null,
 				'e-div-block': null,
 				container: null,
 				'e-flexbox': null,
-				'e-tabs': null,
 			},
 			'e-tabs': {
+				widget: null,
+				'e-div-block': null,
+				container: null,
+				'e-flexbox': null,
+				'e-tabs-list': null,
+			},
+			'e-tabs-list': {
 				widget: null,
 				'e-div-block': null,
 				container: null,

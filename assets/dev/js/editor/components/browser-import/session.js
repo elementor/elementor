@@ -107,13 +107,14 @@ export default class Session {
 		return containers.map( ( element ) => {
 			switch ( element.type ) {
 				case 'container':
-				case 'section':
-				case 'column':
-				case 'e-div-block':
-				case 'e-tabs':
-				case 'widget':
-					return this.target.view.createElementFromModel(
-						element.model,
+							case 'section':
+			case 'column':
+			case 'e-div-block':
+			case 'e-tabs':
+			case 'e-tabs-list':
+			case 'widget':
+				return this.target.view.createElementFromModel(
+					element.model,
 						Object.assign( this.options.target, {
 							event: this.options.event,
 							scrollIntoView: 0 === containers.indexOf( element ),

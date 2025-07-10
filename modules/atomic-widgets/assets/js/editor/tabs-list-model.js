@@ -1,6 +1,6 @@
-export default class AtomicTabs extends elementor.modules.elements.models.Element {
+export default class AtomicTabsList extends elementor.modules.elements.models.Element {
 	initialize( attributes, options ) {
-		this.config = elementor.widgetsCache[ 'e-tabs' ];
+		this.config = elementor.widgetsCache[ 'e-tabs-list' ];
 
 		const isNewElementCreate = 0 === this.get( 'elements' ).length &&
 			$e.commands.currentTrace.includes( 'document/elements/create' );
@@ -13,7 +13,7 @@ export default class AtomicTabs extends elementor.modules.elements.models.Elemen
 	}
 
 	/**
-	 * Do not allow section, column or container be placed in the Atomic tabs.
+	 * Do not allow section, column or container be placed in the Atomic tabs list.
 	 *
 	 * @param {*} childModel
 	 */
@@ -31,6 +31,7 @@ export default class AtomicTabs extends elementor.modules.elements.models.Elemen
 			element.id = elementorCommon.helpers.getUniqueId();
 			element.settings = element.settings || {};
 			element.elements = element.elements || [];
+			element.isLocked = true;
 
 			result.push( element );
 		} );
@@ -41,4 +42,4 @@ export default class AtomicTabs extends elementor.modules.elements.models.Elemen
 	onElementCreate() {
 		this.set( 'elements', this.getDefaultChildren() );
 	}
-}
+} 

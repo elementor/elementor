@@ -1,11 +1,10 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs_List;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs_List\Atomic_Tabs_List;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
@@ -21,23 +20,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs extends Atomic_Element_Base {
+class Atomic_Tabs_List extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tabs';
+		return 'e-tabs-list';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs';
+		return 'e-tabs-list';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs', 'elementor' );
+		return esc_html__( 'Atomic Tabs List', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tabs', 'list' ];
 	}
 
 	public function get_icon() {
@@ -55,7 +54,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'ul', 'ol' ] )
 				->default( 'div' )
 				->dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
@@ -98,6 +97,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 					[
 						'value' => 'footer',
 						'label' => 'Footer',
+					],
+					[
+						'value' => 'ul',
+						'label' => 'Unordered List',
+					],
+					[
+						'value' => 'ol',
+						'label' => 'Ordered List',
 					],
 				]),
 			Link_Control::bind_to( 'link' )
@@ -187,6 +194,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$attributes = [
 			'class' => [
 				'e-con',
+				'e-tabs-list',
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
@@ -211,14 +219,17 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 
-	protected function define_default_children() {
-		$heading = [
-			'elType' => 'widget',
-			'widgetType' => Atomic_Tabs_List::get_element_type(),
-		];
-
-		return [
-			$heading,
-		];
-	}
+//	protected function define_default_children() {
+//		$heading = [
+//			'elType' => 'widget',
+//			'settings' => [
+//				'title' => String_Prop_Type::generate( 'Tabs List Title' ),
+//			],
+//			'widgetType' => Atomic_Heading::get_element_type(),
+//		];
+//
+//		return [
+//			$heading,
+//		];
+//	}
 }

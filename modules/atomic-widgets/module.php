@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Slot;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs_List\Atomic_Tabs_List;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
@@ -214,7 +215,7 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
 		$elements_manager->register_element_type( new Atomic_Tabs() );
-		$elements_manager->register_element_type( new Atomic_Tab_Slot() );
+		$elements_manager->register_element_type( new Atomic_Tabs_List() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
