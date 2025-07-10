@@ -12,7 +12,7 @@ export function useUploadKit() {
 			const uploadUrl = `${ baseUrl }/upload`;
 
 			const formData = new FormData();
-			formData.append( 'file', data.file );
+			formData.append( 'e_import_file', data.file );
 
 			const response = await fetch( uploadUrl, {
 				method: 'POST',
@@ -38,6 +38,7 @@ export function useUploadKit() {
 	}
 
 	useEffect( () => {
+		console.log('!_USE_EFFECT_!', data, isUploading);
 		if ( isUploading && data.file ) {
 			uploadKit();
 		}
