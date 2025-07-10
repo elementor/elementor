@@ -497,7 +497,7 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/send-app-promotion/',
+				'url' => 'https://go.elementor.com/Formslearnmore',
 				'new_tab' => true,
 				'type' => 'cta',
 			],
