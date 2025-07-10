@@ -18,7 +18,6 @@ use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Taxonomies;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExportCustomization\Module;
-use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';

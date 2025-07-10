@@ -4,7 +4,7 @@ import { CLASSES_PROP_KEY } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
 import { SessionStorageProvider } from '@elementor/session';
-import { Divider, Stack } from '@elementor/ui';
+import { Box, Divider, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ClassesPropProvider } from '../contexts/classes-prop-context';
@@ -155,9 +155,10 @@ export const StyleTab = () => {
 									name: 'Effects',
 									title: __( 'Effects', 'elementor' ),
 								} }
-								fields={ [ 'box-shadow' ] }
+								fields={ [ 'box-shadow', 'opacity', 'transform', 'filter', 'backdrop-filter' ] }
 							/>
 						</SectionsList>
+						<Box sx={ { height: '150px' } } />
 					</StyleInheritanceProvider>
 				</SessionStorageProvider>
 			</StyleProvider>

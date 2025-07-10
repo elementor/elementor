@@ -78,7 +78,11 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 		return fontFamily === variable.value && label === variable.label;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValue();
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = noValueChanged() || hasEmptyValue() || hasErrors();
 
 	const actions = [];
 

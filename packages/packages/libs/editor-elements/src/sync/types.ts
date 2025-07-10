@@ -51,6 +51,7 @@ export type V1ElementConfig = {
 	atomic?: boolean;
 	atomic_controls?: ControlItem[];
 	atomic_props_schema?: PropsSchema;
+	dependencies_per_target_mapping?: Record< string, string[] >;
 	twig_templates?: Record< string, string >;
 	twig_main_template?: string;
 	base_styles?: Record< string, StyleDefinition >;
