@@ -3,7 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { newUser } from '../checklist/new-user';
 import { expect } from '@playwright/test';
 
-test.describe( 'Atomic button widget sanity tests @v4-tests REMOVE', () => {
+test.describe( 'Atomic button widget sanity tests @v4-tests REMOVE REMOVE', () => {
 	let newTestUser: { id: string; username: string; password: string };
 
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
