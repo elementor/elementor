@@ -6,7 +6,7 @@ import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
-import { type DegreeUnit } from '../../../utils/size-control';
+import { type AngleUnit } from '../../../utils/size-control';
 import { TransformFunctionKeys } from '../types';
 import { AxisRow } from './axis-row';
 
@@ -28,7 +28,7 @@ const rotateAxisControls: { label: string; bindValue: 'x' | 'y' | 'z'; startIcon
 	},
 ];
 
-const rotateUnits: DegreeUnit[] = [ 'deg', 'rad', 'grad', 'turn' ];
+const rotateUnits: AngleUnit[] = [ 'deg', 'rad', 'grad', 'turn' ];
 
 export const Rotate = () => {
 	const context = useBoundProp( rotateTransformPropTypeUtil );
