@@ -2,41 +2,51 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Base_Styles {
+	const STYLES_KEY = 'base';
+
 	public function register_hooks() {
-		add_action( 'elementor/css-file/post/parse', fn( Post_CSS $post ) => $this->inject_elements_base_styles( $post ), 10 );
+		add_action(
+			'elementor/atomic-widgets/styles/register',
+			fn( Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
+			10,
+			1
+		);
+
+		add_action(
+			'elementor/core/files/clear_cache',
+			fn() => $this->invalidate_cache(),
+		);
 	}
 
-	private function inject_elements_base_styles( Post_CSS $post ) {
-		if ( ! Plugin::$instance->kits_manager->is_kit( $post->get_post_id() ) ) {
-			return;
-		}
+	private function register_styles( Atomic_Styles_Manager $styles_manager ) {
+		$styles_manager->register(
+			self::STYLES_KEY,
+			fn () => $this->get_all_base_styles(),
+			[ self::STYLES_KEY ]
+		);
+	}
 
+	private function invalidate_cache() {
+		$cache_validity = new Cache_Validity();
+
+		$cache_validity->invalidate( [ self::STYLES_KEY ] );
+	}
+
+	public function get_all_base_styles(): array {
 		$elements = Plugin::$instance->elements_manager->get_element_types();
 		$widgets = Plugin::$instance->widgets_manager->get_widget_types();
 
-		$base_styles = Collection::make( $elements )
-			->merge( $widgets )
-			->filter( fn( $element ) => Utils::is_atomic( $element ) )
-			->map( fn( $element ) => $element->get_base_styles() )
-			->flatten()
-			->all();
-
-		$css = Styles_Renderer::make(
-			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) use ( &$post ) {
-			if ( 'font-family' !== $key ) {
-				return;
-			}
-
-			$post->add_font( $value );
-		} )->render( $base_styles );
-
-		$post->get_stylesheet()->add_raw_css( $css );
+		return Collection::make( $elements )
+		->merge( $widgets )
+		->filter( fn( $element ) => Utils::is_atomic( $element ) )
+		->map( fn( $element ) => $element->get_base_styles() )
+		->flatten()
+		->all();
 	}
 }

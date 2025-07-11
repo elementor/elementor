@@ -2,37 +2,88 @@
 
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Files\CSS\Post as Post_CSS;
-use Elementor\Element_Base;
+use Elementor\Core\Base\Document;
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
+	const STYLES_KEY = 'local';
+
 	public function register_hooks() {
-		add_action( 'elementor/element/parse_css', fn( Post_CSS $post, Element_Base $element ) => $this->parse_element_style( $post, $element ), 10, 2 );
+		add_action( 'elementor/atomic-widgets/styles/register', function( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
+			$this->register_styles( $styles_manager, $post_ids );
+		}, 30, 2 );
+
+		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->invalidate_cache(
+			[ $document->get_main_post()->ID ]
+		), 20, 2 );
+
+		add_action(
+			'elementor/core/files/clear_cache',
+			fn() => $this->invalidate_cache(),
+		);
 	}
 
-	private function parse_element_style( Post_CSS $post, Element_Base $element ) {
-		if ( ! Utils::is_atomic( $element ) ) {
+	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
+		foreach ( $post_ids as $post_id ) {
+			$get_styles = fn() => $this->parse_post_styles( $post_id );
+
+			$style_key = $this->get_style_key( $post_id );
+
+			$styles_manager->register( $style_key, $get_styles, [ self::STYLES_KEY, $post_id ] );
+		}
+	}
+
+	private function parse_post_styles( $post_id ) {
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+
+		if ( ! $document ) {
+			return [];
+		}
+
+		$elements_data = $document->get_elements_data();
+
+		if ( empty( $elements_data ) ) {
+			return [];
+		}
+
+		$post_styles = [];
+
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( &$post_styles ) {
+			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
+		});
+
+		return $post_styles;
+	}
+
+	private function parse_element_style( array $element_data ) {
+		$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
+		$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
+
+		if ( ! Utils::is_atomic( $element_instance ) ) {
+			return [];
+		}
+
+		return $element_data['styles'] ?? [];
+	}
+
+	private function invalidate_cache( ?array $post_ids = null ) {
+		$cache_validity = new Cache_Validity();
+
+		if ( empty( $post_ids ) ) {
+			$cache_validity->invalidate( [ self::STYLES_KEY ] );
+
 			return;
 		}
 
-		$styles = $element->get_raw_data()['styles'];
-
-		if ( empty( $styles ) ) {
-			return;
+		foreach ( $post_ids as $post_id ) {
+			$cache_validity->invalidate( [ self::STYLES_KEY, $post_id ] );
 		}
+	}
 
-		$css = Styles_Renderer::make(
-			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) use ( &$post ) {
-			if ( 'font-family' !== $key ) {
-				return;
-			}
-
-			$post->add_font( $value );
-		} )->render( $styles );
-
-		$post->get_stylesheet()->add_raw_css( $css );
+	private function get_style_key( $post_id ) {
+		return self::STYLES_KEY . '-' . $post_id;
 	}
 }
