@@ -29,6 +29,15 @@ const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 			return `${ size }${ unit }`;
 		} )
 		.join( ', ' );
+const transformSkewValue = ( value: TransformItemPropValue[ 'value' ] ) =>
+	Object.values( value )
+		.map( ( axis ) => {
+			const size = axis?.value?.size ?? defaultValues.skew.size;
+			const unit = axis?.value?.unit ?? defaultValues.skew.unit;
+
+			return `${ size }${ unit }`;
+		} )
+		.join( ', ' );
 
 export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
 	const { $$type, value } = props.value;
@@ -39,6 +48,8 @@ export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
 			return <Label label={ __( 'Scale', 'elementor' ) } value={ transformScaleValue( value ) } />;
 		case TransformFunctionKeys.rotate:
 			return <Label label={ __( 'Rotate', 'elementor' ) } value={ transformRotateValue( value ) } />;
+		case TransformFunctionKeys.skew:
+			return <Label label={ __( 'Skew', 'elementor' ) } value={ transformSkewValue( value ) } />;
 		default:
 			return '';
 	}
