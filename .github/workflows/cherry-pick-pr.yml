@@ -48,7 +48,7 @@ jobs:
           echo "PR merged: ${{ github.event.pull_request.merged }}"
         shell: bash
 
-      - name: Get branch labels
+      - name: Get branch labels im just a noise
         id: get_labels
         run: |
           LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | grep '^cp_' | paste -sd ',' || echo "")
@@ -104,7 +104,7 @@ jobs:
                     CONFLICT_TRIGGER_INFO="
                   **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
                   fi
-                  
+
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
@@ -156,7 +156,7 @@ jobs:
                 TRIGGER_INFO="
                 **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
               fi
-              
+
               gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
