@@ -25,6 +25,7 @@ export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
 export { PopoverContent } from './components/popover-content';
+export { UnstableTransformRepeaterControl } from './controls/unstable-transform-control/unstable-transform-repeater-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
