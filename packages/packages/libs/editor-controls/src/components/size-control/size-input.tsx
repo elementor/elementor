@@ -10,10 +10,12 @@ import { SelectionEndAdornment, TextFieldInnerSelection } from './text-field-inn
 
 type SizeValue = SizePropValue[ 'value' ];
 
+type Placeholder = string | SizeValue;
+
 type SizeInputProps = {
 	unit: Unit | DegreeUnit | ExtendedOption;
 	size: number | string;
-	placeholder?: SizeValue | string;
+	placeholder?: Placeholder;
 	startIcon?: React.ReactNode;
 	units: ( Unit | DegreeUnit | ExtendedOption )[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
@@ -44,9 +46,12 @@ export const SizeInput = ( {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
-	const unitChanged = useRef( false );
 
-	const { sizePlaceholder, unitPlaceholder } = extractValuesFromPlaceholder( placeholder );
+	const {
+		size: sizePlaceholder,
+		unit: unitPlaceholder,
+		shouldHaveActiveColor,
+	} = resolvePlaceholder( inputValue, unit, placeholder );
 
 	const handleKeyUp = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		const { key } = event;
@@ -76,8 +81,6 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
-	const muteUnitDisplayText = ! ( !! inputValue && !! unitPlaceholder ) || unit === 'auto';
-
 	const inputProps = {
 		...popupAttributes,
 		autoComplete: 'off',
@@ -92,13 +95,10 @@ export const SizeInput = ( {
 			<SelectionEndAdornment
 				disabled={ disabled }
 				options={ units }
-				onClick={ ( value ) => {
-					handleUnitChange( value );
-					unitChanged.current = true;
-				} }
+				onClick={ handleUnitChange }
+				shouldHaveActiveColor={ shouldHaveActiveColor }
+				placeholder={ unitPlaceholder }
 				value={ unit }
-				placeholder={ unitChanged.current ? undefined : unitPlaceholder }
-				shouldMuteDisplayText={ muteUnitDisplayText }
 				alternativeOptionLabels={ {
 					custom: <PencilIcon fontSize="small" />,
 				} }
@@ -137,15 +137,23 @@ export const SizeInput = ( {
 	);
 };
 
-function extractValuesFromPlaceholder( placeholder?: SizeValue | string ) {
+function resolvePlaceholder( size: PropValue, unit: string, placeholder?: Placeholder ) {
+	const hasCustomValue = unit === 'custom' && !! size;
+	const hasAutoUnit = unit === 'auto';
+	const hasSizeValue = !! size;
+
+	const shouldHaveActiveColor = hasSizeValue || hasAutoUnit || hasCustomValue;
+
 	if ( ! placeholder || typeof placeholder === 'string' ) {
 		return {
-			sizePlaceholder: placeholder,
+			size: placeholder,
+			shouldHaveActiveColor,
 		};
 	}
 
 	return {
-		sizePlaceholder: String( placeholder.size ),
-		unitPlaceholder: placeholder.unit,
+		size: String( placeholder.size ),
+		unit: placeholder.unit,
+		shouldHaveActiveColor,
 	};
 }

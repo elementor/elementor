@@ -69,11 +69,11 @@ type SelectionEndAdornmentProps< T extends string > = {
 	options: T[];
 	onClick: ( value: T ) => void;
 	value: T;
-	placeholder?: string;
-	shouldMuteDisplayText: boolean;
 	alternativeOptionLabels?: { [ key in T ]?: React.ReactNode };
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	disabled?: boolean;
+	shouldHaveActiveColor: boolean;
+	placeholder?: string;
 };
 
 export const SelectionEndAdornment = < T extends string >( {
@@ -82,10 +82,12 @@ export const SelectionEndAdornment = < T extends string >( {
 	onClick,
 	value,
 	placeholder,
-	shouldMuteDisplayText,
 	menuItemsAttributes = {},
 	disabled,
+	shouldHaveActiveColor,
+	placeholder,
 }: SelectionEndAdornmentProps< T > ) => {
+	const [ showPlaceholder, setShowPlaceholder ] = React.useState( !! placeholder );
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: useId(),
@@ -94,17 +96,21 @@ export const SelectionEndAdornment = < T extends string >( {
 	const handleMenuItemClick = ( index: number ) => {
 		onClick( options[ index ] );
 		popupState.close();
+
+		if ( showPlaceholder ) {
+			setShowPlaceholder( false );
+		}
 	};
 
 	return (
 		<InputAdornment position="end">
 			<StyledButton
-				isMuted={ shouldMuteDisplayText }
+				isActive={ shouldHaveActiveColor }
 				size="small"
 				disabled={ disabled }
 				{ ...bindTrigger( popupState ) }
 			>
-				{ placeholder ?? alternativeOptionLabels[ value ] ?? value }
+				{ showPlaceholder ? placeholder : alternativeOptionLabels[ value ] ?? value }
 			</StyledButton>
 
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
@@ -123,9 +129,9 @@ export const SelectionEndAdornment = < T extends string >( {
 };
 
 const StyledButton = styled( Button, {
-	shouldForwardProp: ( prop ) => prop !== 'isMuted',
-} )( ( { isMuted, theme } ) => ( {
-	color: isMuted ? theme.palette.text.tertiary : theme.palette.text.primary,
+	shouldForwardProp: ( prop ) => prop !== 'isActive',
+} )( ( { isActive, theme } ) => ( {
+	color: isActive ? theme.palette.text.primary : theme.palette.text.tertiary,
 	font: 'inherit',
 	minWidth: 'initial',
 	textTransform: 'uppercase',
