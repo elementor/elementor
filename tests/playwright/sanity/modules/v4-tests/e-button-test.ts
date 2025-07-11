@@ -53,6 +53,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		await editor.openV2PanelTab( 'general' );
 		await editor.v4Panel.fillField( 0, newText );
 		const button = await editor.getWidget( buttonId );
+		expect( true ).toEqual( false );
 
 		await expect( button ).toHaveText( newText, { timeout: 1000 } );
 	} );
