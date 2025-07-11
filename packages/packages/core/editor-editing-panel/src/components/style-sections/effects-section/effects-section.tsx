@@ -1,5 +1,10 @@
 import * as React from 'react';
-import { BoxShadowRepeaterControl, FilterRepeaterControl, TransformRepeaterControl } from '@elementor/editor-controls';
+import {
+	BoxShadowRepeaterControl,
+	FilterRepeaterControl,
+	TransformRepeaterControl,
+	UnstableTransformRepeaterControl,
+} from '@elementor/editor-controls';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
@@ -16,6 +21,7 @@ const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 
 export const EffectsSection = () => {
 	const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
+	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
 
 	return (
 		<SectionContent>
@@ -32,7 +38,11 @@ export const EffectsSection = () => {
 				<>
 					<PanelDivider />
 					<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-						<TransformRepeaterControl />
+						{ isUnstableRepeaterActive ? (
+							<UnstableTransformRepeaterControl />
+						) : (
+							<TransformRepeaterControl />
+						) }
 					</StylesField>
 					<PanelDivider />
 					<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
