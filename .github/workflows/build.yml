@@ -2,13 +2,6 @@ name: Build
 
 on:
   workflow_dispatch:
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
   workflow_call:
     outputs:
       artifact_name:
@@ -18,7 +11,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
