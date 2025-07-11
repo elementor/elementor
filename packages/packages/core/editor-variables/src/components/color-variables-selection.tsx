@@ -64,7 +64,7 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 		label,
 		icon: <ColorIndicator size="inherit" component="span" value={ value } />,
 		secondaryText: value,
-		onEdit: () => onEdit?.( key ),
+		onEdit: onEdit ? () => onEdit?.( key ) : undefined,
 	} ) );
 
 	const handleSearch = ( search: string ) => {
