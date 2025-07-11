@@ -71,8 +71,30 @@ runs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         
-        # Create and checkout revert branch from parent commit
-        git checkout -b "${REVERT_BRANCH}" "${PARENT_SHA}"
+        # Create and checkout revert branch from the target branch
+        git checkout -b "${REVERT_BRANCH}" "${BRANCH_NAME}"
+        
+        # Check if this is a merge commit
+        PARENT_COUNT=$(git rev-list --count "${COMMIT_SHA}^@" 2>/dev/null || echo "0")
+        
+        # Create the revert commit
+        if [ "$PARENT_COUNT" -gt 1 ]; then
+          # This is a merge commit, use -m 1 to revert to the first parent
+          echo "::notice::Reverting merge commit ${COMMIT_SHA} (${PARENT_COUNT} parents)"
+          if ! git revert --no-edit -m 1 "${COMMIT_SHA}"; then
+            echo "::error::Failed to create revert commit for merge commit. This may be due to conflicts."
+            echo "::error::Please create the revert PR manually."
+            exit 1
+          fi
+        else
+          # Regular commit
+          echo "::notice::Reverting regular commit ${COMMIT_SHA}"
+          if ! git revert --no-edit "${COMMIT_SHA}"; then
+            echo "::error::Failed to create revert commit. This may be due to conflicts."
+            echo "::error::Please create the revert PR manually."
+            exit 1
+          fi
+        fi
         
         # Push the revert branch
         git push origin "${REVERT_BRANCH}"
