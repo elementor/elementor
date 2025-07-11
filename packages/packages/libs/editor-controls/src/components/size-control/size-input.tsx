@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import type { SizePropValue } from '@elementor/editor-props';
+import type { PropValue, SizePropValue } from '@elementor/editor-props';
 import { PencilIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
