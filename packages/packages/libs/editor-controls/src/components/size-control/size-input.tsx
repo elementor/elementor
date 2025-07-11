@@ -44,6 +44,7 @@ export const SizeInput = ( {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
+	const unitChanged = useRef( false );
 
 	const { sizePlaceholder, unitPlaceholder } = extractValuesFromPlaceholder( placeholder );
 
@@ -75,6 +76,8 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
+	const muteUnitDisplayText = ! ( !! inputValue && !! unitPlaceholder ) || unit === 'auto';
+
 	const inputProps = {
 		...popupAttributes,
 		autoComplete: 'off',
@@ -89,9 +92,13 @@ export const SizeInput = ( {
 			<SelectionEndAdornment
 				disabled={ disabled }
 				options={ units }
-				onClick={ handleUnitChange }
+				onClick={ ( value ) => {
+					handleUnitChange( value );
+					unitChanged.current = true;
+				} }
 				value={ unit }
-				placeholder={ unitPlaceholder }
+				placeholder={ unitChanged.current ? undefined : unitPlaceholder }
+				shouldMuteDisplayText={ muteUnitDisplayText }
 				alternativeOptionLabels={ {
 					custom: <PencilIcon fontSize="small" />,
 				} }

@@ -8,6 +8,7 @@ import {
 	Button,
 	InputAdornment,
 	Menu,
+	styled,
 	TextField,
 	type TextFieldProps,
 	usePopupState,
@@ -69,6 +70,7 @@ type SelectionEndAdornmentProps< T extends string > = {
 	onClick: ( value: T ) => void;
 	value: T;
 	placeholder?: string;
+	shouldMuteDisplayText: boolean;
 	alternativeOptionLabels?: { [ key in T ]?: React.ReactNode };
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	disabled?: boolean;
@@ -80,6 +82,7 @@ export const SelectionEndAdornment = < T extends string >( {
 	onClick,
 	value,
 	placeholder,
+	shouldMuteDisplayText,
 	menuItemsAttributes = {},
 	disabled,
 }: SelectionEndAdornmentProps< T > ) => {
@@ -95,15 +98,14 @@ export const SelectionEndAdornment = < T extends string >( {
 
 	return (
 		<InputAdornment position="end">
-			<Button
+			<StyledButton
+				isMuted={ shouldMuteDisplayText }
 				size="small"
-				color="secondary"
 				disabled={ disabled }
-				sx={ { font: 'inherit', minWidth: 'initial', textTransform: 'uppercase' } }
 				{ ...bindTrigger( popupState ) }
 			>
 				{ placeholder ?? alternativeOptionLabels[ value ] ?? value }
-			</Button>
+			</StyledButton>
 
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
 				{ options.map( ( option, index ) => (
@@ -119,3 +121,12 @@ export const SelectionEndAdornment = < T extends string >( {
 		</InputAdornment>
 	);
 };
+
+const StyledButton = styled( Button, {
+	shouldForwardProp: ( prop ) => prop !== 'isMuted',
+} )( ( { isMuted, theme } ) => ( {
+	color: isMuted ? theme.palette.text.tertiary : theme.palette.text.primary,
+	font: 'inherit',
+	minWidth: 'initial',
+	textTransform: 'uppercase',
+} ) );
