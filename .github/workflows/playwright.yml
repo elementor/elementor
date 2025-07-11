@@ -196,6 +196,7 @@ jobs:
           BRANCH_NAME: ${{ github.ref_name }}
           WORKFLOW_NAME: "Playwright"
           WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ALLOW_WORKFLOW_CHANGES: 'true'
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         uses: ./.github/workflows/post-to-slack

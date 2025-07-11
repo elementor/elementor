@@ -17,6 +17,10 @@ inputs:
   WORKFLOW_RUN_URL:
     required: true
     description: 'URL to the failed workflow run'
+  ALLOW_WORKFLOW_CHANGES:
+    required: false
+    description: 'Allow creating revert PRs for commits that modify workflow files'
+    default: 'false'
 
 runs:
   using: "composite"
@@ -40,10 +44,16 @@ runs:
         WORKFLOW_CHANGES=$(git diff --name-only "${PARENT_SHA}" "${COMMIT_SHA}" | grep "^\.github/workflows/" || echo "")
         
         if [ -n "$WORKFLOW_CHANGES" ]; then
-          echo "::warning::Cannot create revert PR: Commit contains workflow changes that require 'workflows' permission"
-          echo "::warning::Workflow files changed: $WORKFLOW_CHANGES"
-          echo "::warning::Please create revert PR manually or grant 'workflows' permission to GitHub Actions"
-          exit 0
+          if [ "${{ inputs.ALLOW_WORKFLOW_CHANGES }}" != "true" ]; then
+            echo "::warning::Cannot create revert PR: Commit contains workflow changes that require 'workflows' permission"
+            echo "::warning::Workflow files changed: $WORKFLOW_CHANGES"
+            echo "::warning::Please create revert PR manually or grant 'workflows' permission to GitHub Actions"
+            echo "::warning::Or set ALLOW_WORKFLOW_CHANGES to 'true' to bypass this check"
+            exit 0
+          else
+            echo "::notice::Commit contains workflow changes: $WORKFLOW_CHANGES"
+            echo "::notice::Proceeding with revert PR creation (ALLOW_WORKFLOW_CHANGES=true)"
+          fi
         fi
         
         # Create revert branch name
