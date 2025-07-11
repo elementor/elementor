@@ -10,7 +10,7 @@ import { type DegreeUnit } from '../../../utils/size-control';
 import { TransformFunctionKeys } from '../types';
 import { AxisRow } from './axis-row';
 
-const skewAxisControls: { label: string; bindValue: 'x' | 'y' | 'z'; startIcon: React.ReactNode }[] = [
+const skewAxisControls: { label: string; bindValue: 'x' | 'y'; startIcon: React.ReactNode }[] = [
 	{
 		label: __( 'Skew X', 'elementor' ),
 		bindValue: 'x',
