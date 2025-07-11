@@ -1,8 +1,8 @@
-import { useExportContext } from '../context/export-context';
+import { useImportContext } from '../context/import-context';
 import { KitContent } from '../../shared/components';
 
-export default function ExportKitContent() {
-	const { data, dispatch } = useExportContext();
+export default function ImportKitContent() {
+	const { data, dispatch } = useImportContext();
 
 	const handleCheckboxChange = ( itemType ) => {
 		const isChecked = data.includes.includes( itemType );

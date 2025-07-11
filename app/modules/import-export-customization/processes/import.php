@@ -388,6 +388,7 @@ class Import {
 		return [
 			'status' => 'success',
 			'runner' => $runner_name,
+			'imported_data' => $this->imported_data,
 		];
 	}
 

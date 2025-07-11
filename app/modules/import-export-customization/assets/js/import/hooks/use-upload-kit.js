@@ -38,7 +38,6 @@ export function useUploadKit() {
 	}
 
 	useEffect( () => {
-		console.log('!_USE_EFFECT_!', data, isUploading);
 		if ( isUploading && data.file ) {
 			uploadKit();
 		}
