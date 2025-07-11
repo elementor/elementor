@@ -140,7 +140,8 @@ describe( 'TransformRepeaterControl', () => {
 		// Assert.
 		expect( screen.getByText( 'Scale X' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Scale Y' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Scale Z' ) ).toBeInTheDocument();
+		// Scale Z is hidden in 1st phase since transform 'base' settings are not implemented
+		expect( screen.queryByText( 'Scale Z' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should switch to Rotate tab when clicked', () => {

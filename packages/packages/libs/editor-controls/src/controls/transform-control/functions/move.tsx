@@ -31,11 +31,14 @@ export const Move = () => {
 	const context = useBoundProp( moveTransformPropTypeUtil );
 	const rowRef = useRef< HTMLDivElement >( null );
 
+	// Filter out Z axis control for the 1st phase since transform 'base' settings are not implemented
+	const visibleAxisControls = moveAxisControls.filter( ( control ) => control.bindValue !== 'z' );
+
 	return (
 		<Grid container spacing={ 1.5 }>
 			<PropProvider { ...context }>
 				<PropKeyProvider bind={ TransformFunctionKeys.move }>
-					{ moveAxisControls.map( ( control ) => (
+					{ visibleAxisControls.map( ( control ) => (
 						<AxisRow key={ control.bindValue } { ...control } anchorRef={ rowRef } />
 					) ) }
 				</PropKeyProvider>
