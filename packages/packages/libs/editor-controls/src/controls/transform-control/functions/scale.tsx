@@ -31,11 +31,14 @@ export const Scale = () => {
 	const context = useBoundProp( scaleTransformPropTypeUtil );
 	const rowRef = useRef< HTMLDivElement >( null );
 
+	// Filter out Z axis control for the 1st phase since transform 'base' settings are not implemented
+	const visibleAxisControls = scaleAxisControls.filter( ( control ) => control.bindValue !== 'z' );
+
 	return (
 		<Grid container spacing={ 1.5 }>
 			<PropProvider { ...context }>
 				<PropKeyProvider bind={ TransformFunctionKeys.scale }>
-					{ scaleAxisControls.map( ( control ) => (
+					{ visibleAxisControls.map( ( control ) => (
 						<ScaleAxisRow key={ control.bindValue } { ...control } anchorRef={ rowRef } />
 					) ) }
 				</PropKeyProvider>

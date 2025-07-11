@@ -32,7 +32,7 @@ describe( 'Scale Transform', () => {
 		},
 	} );
 
-	it( 'should render scale controls with proper labels', () => {
+	it( 'should render scale controls with proper labels (Z-axis hidden in 1st phase)', () => {
 		// Arrange.
 		const mockValue = {
 			x: { $$type: 'number', value: 1 },
@@ -46,6 +46,7 @@ describe( 'Scale Transform', () => {
 		// Assert.
 		expect( screen.getByText( 'Scale X' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Scale Y' ) ).toBeInTheDocument();
-		expect( screen.getByText( 'Scale Z' ) ).toBeInTheDocument();
+		// Scale Z is hidden in 1st phase since transform 'base' settings are not implemented
+		expect( screen.queryByText( 'Scale Z' ) ).not.toBeInTheDocument();
 	} );
 } );
