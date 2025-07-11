@@ -36,11 +36,21 @@ runs:
         BRANCH_NAME="${{ inputs.BRANCH_NAME }}"
         WORKFLOW_NAME="${{ inputs.WORKFLOW_NAME }}"
         
+        # Check if the commit contains workflow changes
+        WORKFLOW_CHANGES=$(git diff --name-only "${PARENT_SHA}" "${COMMIT_SHA}" | grep "^\.github/workflows/" || echo "")
+        
+        if [ -n "$WORKFLOW_CHANGES" ]; then
+          echo "::warning::Cannot create revert PR: Commit contains workflow changes that require 'workflows' permission"
+          echo "::warning::Workflow files changed: $WORKFLOW_CHANGES"
+          echo "::warning::Please create revert PR manually or grant 'workflows' permission to GitHub Actions"
+          exit 0
+        fi
+        
         # Create revert branch name
         REVERT_BRANCH="revert-${COMMIT_SHA:0:7}-$(date +%s)"
         
         # Check if a revert PR already exists for this commit
-        EXISTING_PR=$(gh pr list --state open --search "revert ${COMMIT_SHA:0:7}" --json number --jq '.[0].number // empty')
+        EXISTING_PR=$(gh pr list --state open --search "revert ${COMMIT_SHA:0:7}" | head -n 1 | awk '{print $1}' || echo "")
         
         if [ -n "$EXISTING_PR" ]; then
           echo "Revert PR already exists: #$EXISTING_PR"
@@ -76,13 +86,14 @@ runs:
         The 'run-tests' label has been added to trigger tests on this revert PR."
         
         # Create the PR
-        PR_NUMBER=$(gh pr create \
+        PR_URL=$(gh pr create \
           --title "${PR_TITLE}" \
           --body "${PR_BODY}" \
           --base "${BRANCH_NAME}" \
-          --head "${REVERT_BRANCH}" \
-          --json number \
-          --jq '.number')
+          --head "${REVERT_BRANCH}")
+        
+        # Extract PR number from URL
+        PR_NUMBER=$(echo "${PR_URL}" | grep -o '[0-9]*$')
         
         echo "Created revert PR #${PR_NUMBER}"
         
