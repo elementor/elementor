@@ -1,16 +1,21 @@
 import * as React from 'react';
 import { useRef } from 'react';
+import type { PropValue, SizePropValue } from '@elementor/editor-props';
 import { PencilIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
 import { type DegreeUnit, type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
-import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
+import { SelectionEndAdornment, TextFieldInnerSelection } from './text-field-inner-selection';
+
+type SizeValue = SizePropValue[ 'value' ];
+
+type Placeholder = string | SizeValue;
 
 type SizeInputProps = {
 	unit: Unit | DegreeUnit | ExtendedOption;
 	size: number | string;
-	placeholder?: string;
+	placeholder?: Placeholder;
 	startIcon?: React.ReactNode;
 	units: ( Unit | DegreeUnit | ExtendedOption )[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
@@ -41,6 +46,12 @@ export const SizeInput = ( {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
 	const inputValue = ! isUnitExtendedOption( unit ) && Number.isNaN( size ) ? '' : size ?? '';
+
+	const {
+		size: sizePlaceholder,
+		unit: unitPlaceholder,
+		shouldHaveActiveColor,
+	} = resolvePlaceholder( inputValue, unit, placeholder );
 
 	const handleKeyUp = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
 		const { key } = event;
@@ -85,6 +96,8 @@ export const SizeInput = ( {
 				disabled={ disabled }
 				options={ units }
 				onClick={ handleUnitChange }
+				shouldHaveActiveColor={ shouldHaveActiveColor }
+				placeholder={ unitPlaceholder }
 				value={ unit }
 				alternativeOptionLabels={ {
 					custom: <PencilIcon fontSize="small" />,
@@ -105,7 +118,7 @@ export const SizeInput = ( {
 			<Box>
 				<TextFieldInnerSelection
 					disabled={ disabled }
-					placeholder={ placeholder }
+					placeholder={ sizePlaceholder }
 					type={ inputType }
 					value={ inputValue }
 					onChange={ handleSizeChange }
@@ -123,3 +136,24 @@ export const SizeInput = ( {
 		</ControlActions>
 	);
 };
+
+function resolvePlaceholder( size: PropValue, unit: string, placeholder?: Placeholder ) {
+	const hasCustomValue = unit === 'custom' && !! size;
+	const hasAutoUnit = unit === 'auto';
+	const hasSizeValue = !! size;
+
+	const shouldHaveActiveColor = hasSizeValue || hasAutoUnit || hasCustomValue;
+
+	if ( ! placeholder || typeof placeholder === 'string' ) {
+		return {
+			size: placeholder,
+			shouldHaveActiveColor,
+		};
+	}
+
+	return {
+		size: String( placeholder.size ),
+		unit: placeholder.unit,
+		shouldHaveActiveColor,
+	};
+}

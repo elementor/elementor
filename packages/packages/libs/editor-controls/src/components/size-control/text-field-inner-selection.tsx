@@ -8,13 +8,14 @@ import {
 	Button,
 	InputAdornment,
 	Menu,
+	styled,
 	TextField,
 	type TextFieldProps,
 	usePopupState,
 } from '@elementor/ui';
 
 type TextFieldInnerSelectionProps = {
-	placeholder?: string;
+	placeholder?: PropValue | string;
 	type: string;
 	value: PropValue;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
@@ -71,6 +72,8 @@ type SelectionEndAdornmentProps< T extends string > = {
 	alternativeOptionLabels?: { [ key in T ]?: React.ReactNode };
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	disabled?: boolean;
+	shouldHaveActiveColor: boolean;
+	placeholder?: string;
 };
 
 export const SelectionEndAdornment = < T extends string >( {
@@ -78,9 +81,13 @@ export const SelectionEndAdornment = < T extends string >( {
 	alternativeOptionLabels = {} as Record< T, React.ReactNode >,
 	onClick,
 	value,
+	placeholder,
 	menuItemsAttributes = {},
 	disabled,
+	shouldHaveActiveColor,
+	placeholder,
 }: SelectionEndAdornmentProps< T > ) => {
+	const [ showPlaceholder, setShowPlaceholder ] = React.useState( !! placeholder );
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: useId(),
@@ -89,19 +96,22 @@ export const SelectionEndAdornment = < T extends string >( {
 	const handleMenuItemClick = ( index: number ) => {
 		onClick( options[ index ] );
 		popupState.close();
+
+		if ( showPlaceholder ) {
+			setShowPlaceholder( false );
+		}
 	};
 
 	return (
 		<InputAdornment position="end">
-			<Button
+			<StyledButton
+				isActive={ shouldHaveActiveColor }
 				size="small"
-				color="secondary"
 				disabled={ disabled }
-				sx={ { font: 'inherit', minWidth: 'initial', textTransform: 'uppercase' } }
 				{ ...bindTrigger( popupState ) }
 			>
-				{ alternativeOptionLabels[ value ] ?? value }
-			</Button>
+				{ showPlaceholder ? placeholder : alternativeOptionLabels[ value ] ?? value }
+			</StyledButton>
 
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
 				{ options.map( ( option, index ) => (
@@ -117,3 +127,12 @@ export const SelectionEndAdornment = < T extends string >( {
 		</InputAdornment>
 	);
 };
+
+const StyledButton = styled( Button, {
+	shouldForwardProp: ( prop ) => prop !== 'isActive',
+} )( ( { isActive, theme } ) => ( {
+	color: isActive ? theme.palette.text.primary : theme.palette.text.tertiary,
+	font: 'inherit',
+	minWidth: 'initial',
+	textTransform: 'uppercase',
+} ) );
