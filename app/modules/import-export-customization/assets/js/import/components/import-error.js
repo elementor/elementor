@@ -1,11 +1,14 @@
 import { Box, Typography, Stack, Button } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { XIcon } from '../../shared/components/icons';
+import { XIcon } from '../../shared/components';
+import { useImportContext } from '../context/import-context';
 
 const HELP_URL = 'https://go.elementor.com/app-import-download-failed';
 
 export default function ImportError( { statusText } ) {
+	const { dispatch } = useImportContext();
 	const handleTryAgain = () => {
+		dispatch( { type: 'RESET_STATE' } );
 		window.location.href = elementorAppConfig.base_url + '#/import-customization/';
 	};
 

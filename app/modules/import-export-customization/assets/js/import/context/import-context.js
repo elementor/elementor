@@ -51,8 +51,6 @@ const initialState = {
 	importedData: null,
 	source: '',
 	plugins: [],
-	importedPlugins: [],
-	pluginsState: '',
 	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
 	importStatus: IMPORT_STATUS.PENDING,
 };
