@@ -369,7 +369,7 @@ class Widget_Common_Base extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}.elementor-widget' => '--container-widget-width: {{SIZE}}{{UNIT}}; --container-widget-flex-grow: 0; width: var( --container-widget-width, {{SIZE}}{{UNIT}} ); max-width: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [ '_element_width' => 'initial' ],
 			]
