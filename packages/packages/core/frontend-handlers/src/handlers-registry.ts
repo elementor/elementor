@@ -27,3 +27,10 @@ export const unregister = ( { elementType, id }: { elementType: string; id?: str
 		handlers.delete( elementType );
 	}
 };
+
+Object.defineProperty( window, 'initElement', {
+	value: register,
+	writable: false,
+	enumerable: true,
+	configurable: false,
+} );

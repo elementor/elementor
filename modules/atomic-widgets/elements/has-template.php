@@ -23,7 +23,16 @@ trait Has_Template {
 		return $config;
 	}
 
-	protected function render() {
+	protected function build_default_render_context() {
+		return [
+			'id' => $this->get_id(),
+			'type' => $this->get_name(),
+			'settings' => $this->get_atomic_settings(),
+			'base_styles' => $this->get_base_styles_dictionary(),
+		];
+	}
+
+	protected function render( array $additional_context = [] ) {
 		try {
 			$renderer = Template_Renderer::instance();
 
@@ -35,12 +44,8 @@ trait Has_Template {
 				$renderer->register( $name, $path );
 			}
 
-			$context = [
-				'id' => $this->get_id(),
-				'type' => $this->get_name(),
-				'settings' => $this->get_atomic_settings(),
-				'base_styles' => $this->get_base_styles_dictionary(),
-			];
+			$context = $this->build_default_render_context();
+			$context = array_merge( $context, $additional_context );
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $renderer->render( $this->get_main_template(), $context );

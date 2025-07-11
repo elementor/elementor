@@ -27,7 +27,7 @@ class Template_Renderer {
 				'autoescape' => 'name',
 			]
 		);
-
+		Tag_Renderer::init( $this->env );
 		$escaper = $this->env->getRuntime( EscaperRuntime::class );
 
 		$escaper->setEscaper( 'full_url', 'esc_url' );

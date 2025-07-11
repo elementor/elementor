@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Modules\NestedAccordion\Widgets\Nested_Accordion;
 use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\NestedTabs\Widgets\NestedTabs;
+use Elementor\Modules\Sdk\V4\Builder\Elements\Element_Builder;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -117,6 +118,11 @@ class Widgets_Manager {
 		$this->_widget_types = [];
 
 		$this->register_promoted_widgets();
+
+		include ELEMENTOR_PATH . 'includes/widgets/v4/widgets-autoloader.php';
+		\Elementor\V4\Widgets_Autoloader::load();
+
+		do_action( 'elementor/widgets/register-atoms', $this );
 
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
@@ -247,6 +253,10 @@ class Widgets_Manager {
 		);
 
 		return $this->register( $widget );
+	}
+
+	public function widget_builder( $name = '' ): Element_Builder {
+		return new Element_Builder( $name );
 	}
 
 	/**
