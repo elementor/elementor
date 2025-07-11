@@ -48,7 +48,7 @@ jobs:
           echo "PR merged: ${{ github.event.pull_request.merged }}"
         shell: bash
 
-      - name: Get branch labels im just a noise more more
+      - name: Get branch labels im just a noise more more more
         id: get_labels
         run: |
           LABELS=$(jq -r '.[].name' <<< '${{ toJSON(github.event.pull_request.labels) }}' | grep '^cp_' | paste -sd ',' || echo "")
