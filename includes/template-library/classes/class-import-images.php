@@ -111,8 +111,9 @@ class Import_Images {
 		if ( isset( $attachment['tmp_name'] ) ) {
 			// Used when called to import a directly-uploaded file.
 			$filename = $attachment['name'];
-
-			$file_content = Utils::file_get_contents( $attachment['tmp_name'] );
+			if ( is_uploaded_file( $attachment['tmp_name'] ) ) {
+				$file_content = Utils::file_get_contents( $attachment['tmp_name'] );
+			}
 		} else {
 			// Used when attachment information is passed to this method.
 			if ( ! empty( $attachment['id'] ) ) {
