@@ -1,7 +1,5 @@
 export type PropTypeKey = string;
 
-export type DependencyEffect = 'disable' | 'hide';
-
 export type DependencyOperator =
 	| 'lt'
 	| 'lte'
@@ -23,7 +21,6 @@ export type DependencyTerm = {
 };
 
 export type Dependency = {
-	effect: DependencyEffect;
 	relation: 'or' | 'and';
 	terms: ( DependencyTerm | Dependency )[];
 };
@@ -32,7 +29,7 @@ type BasePropType< TValue > = {
 	default?: TValue | null;
 	settings: Record< string, unknown >;
 	meta: Record< string, unknown >;
-	dependencies?: Dependency[];
+	dependencies?: Dependency;
 };
 
 export type PlainPropType = BasePropType< PlainPropValue > & {

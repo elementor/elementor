@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropDependencies;
 
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Utils;
 
@@ -14,9 +13,6 @@ class Manager {
 
 	const RELATION_OR = 'or';
 	const RELATION_AND = 'and';
-
-	const EFFECT_DISABLE = 'disable';
-	const EFFECT_HIDE = 'hide';
 
 	const OPERATORS = [
 		'lt',
@@ -34,9 +30,8 @@ class Manager {
 	];
 
 	/**
-	 * @var array{
+	 * @var ?array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
-	 *         effect: self::EFFECT_DISABLE|self::EFFECT_HIDE,
 	 *         terms: array{
 	 *             operator: string,
 	 *             path: array<string>,
@@ -44,14 +39,16 @@ class Manager {
 	 *         }
 	 *     }
 	 */
-	private array $dependencies;
+	private ?array $dependencies;
 
-	public function __construct() {
-		$this->dependencies = [];
+	public function __construct( string $relation = self::RELATION_OR ) {
+		$this->new( $relation );
+
+		return $this;
 	}
 
-	public static function make(): self {
-		return new self();
+	public static function make( string $relation = self::RELATION_OR ): self {
+		return new self( $relation );
 	}
 
 	/**
@@ -92,53 +89,29 @@ class Manager {
 		];
 
 		if ( empty( $this->dependencies ) ) {
-			$this->new_dependency();
+			$this->new();
 		}
 
-		$last_index = array_key_last( $this->dependencies );
-		$this->dependencies[ $last_index ]['terms'][] = $term;
+		$this->dependencies['terms'][] = $term;
 
 		return $this;
 	}
 
-	/**
-	 * @param $config array{
-	 *     relation?: self::RELATION_OR | self::RELATION_AND,
-	 *     effect?: self::EFFECT_DISABLE | self::EFFECT_HIDE,
-	 * }
-	 * @return self
-	 */
-	public function new_dependency( array $config = [] ) {
-		$new_dependency = [
-			'relation' => $config['relation'] ?? self::RELATION_OR,
-			'effect' => $config['effect'] ?? self::EFFECT_DISABLE,
+	private function new( string $relation = self::RELATION_OR ): self {
+		if ( ! in_array( $relation, [ self::RELATION_OR, self::RELATION_AND ], true ) ) {
+			Utils::safe_throw( "Invalid relation: $relation. Must be one of: " . implode( ', ', [ self::RELATION_OR, self::RELATION_AND ] ) );
+		}
+
+		$this->dependencies = [
+			'relation' => $relation,
 			'terms' => [],
 		];
 
-		if ( ! in_array( $new_dependency['effect'], [ self::EFFECT_DISABLE, self::EFFECT_HIDE ] ) ) {
-			Utils::safe_throw( "Invalid effect: {$new_dependency['effect']}." );
-		}
-
-		if ( ! in_array( $new_dependency['relation'], [ self::RELATION_OR, self::RELATION_AND ] ) ) {
-			Utils::safe_throw( "Invalid relation: {$new_dependency['relation']}." );
-		}
-
-		$existing_dependency_with_effect = Collection::make( $this->dependencies )
-			->find( fn ( $dependency ) => $dependency['effect'] === $new_dependency['effect'] );
-
-		if ( $existing_dependency_with_effect ) {
-			Utils::safe_throw( "Dependency with effect of {$new_dependency['effect']} already exists." );
-		}
-
-		$this->dependencies[] = $new_dependency;
-
 		return $this;
 	}
 
-	public function get(): array {
-		return Collection::make( $this->dependencies )
-			->filter( fn ( $dependency ) => ! empty( $dependency['terms'] ) )
-			->all();
+	public function get(): ?array {
+		return empty( $this->dependencies['terms'] ?? [] ) ? null : $this->dependencies;
 	}
 
 	/**
@@ -149,14 +122,14 @@ class Manager {
 	private static function build_dependency_graph( array $props_schema, ?array $current_path = [], ?array $dependency_graph = [] ): array {
 		foreach ( $props_schema as $prop_name => $prop_type ) {
 			$dependency_graph = self::build_nested_prop_dependency_graph( $prop_name, $prop_type, $current_path, $dependency_graph );
-			$dependencies = $prop_type->get_meta()['dependencies'] ?? [];
+			$dependencies = $prop_type->get_dependencies();
 
-			foreach ( $dependencies as $dependency ) {
-				$terms = $dependency['terms'] ?? [];
+			if ( ! $dependencies ) {
+				continue;
+			}
 
-				foreach ( $terms as $term ) {
-					$dependency_graph = self::process_dependency_term( $term, $current_path, $prop_name, $dependency_graph );
-				}
+			foreach ( $dependencies['terms'] as $term ) {
+				$dependency_graph = self::process_dependency_term( $term, $current_path, $prop_name, $dependency_graph );
 			}
 		}
 

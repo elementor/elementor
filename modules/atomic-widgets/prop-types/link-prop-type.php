@@ -20,9 +20,10 @@ class Link_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		$target_blank_dependencies = Dependency_Manager::make()
 		->where( [
-			'operator' => 'not_exist',
+			'operator' => 'exists',
 			'path' => [ 'link', 'destination' ],
-		] );
+		] )
+		->get();
 
 		return [
 			'destination' => Union_Prop_Type::make()
@@ -32,7 +33,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 			'label' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() ),
 			'isTargetBlank' => Boolean_Prop_Type::make()
-				->dependencies( $target_blank_dependencies ),
+				->set_dependencies( $target_blank_dependencies ),
 		];
 	}
 }

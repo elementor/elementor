@@ -2,6 +2,7 @@ import {
 	type Dependency,
 	type DependencyTerm,
 	type PropKey,
+	type PropType,
 	type PropValue,
 	type TransformablePropValue,
 } from '../types';
@@ -11,16 +12,20 @@ type ParsedTerm = DependencyTerm;
 
 type Relation = Dependency[ 'relation' ];
 
-export function shouldApplyEffect( { relation, terms }: Dependency, values: PropValue ): boolean {
+export function isPropDependencyMet( propType: PropType | null, values: PropValue ): boolean {
+	return propType?.dependencies?.terms.length ? isDependencyMet( propType?.dependencies, values ) : true;
+}
+
+function isDependencyMet( { relation, terms }: Dependency, values: PropValue ): boolean {
 	if ( ! terms.length ) {
-		return false;
+		return true;
 	}
 
 	const method = getRelationMethod( relation );
 
 	return terms[ method ]( ( term: ParsedTerm | Dependency ) =>
 		isDependency( term )
-			? shouldApplyEffect( term, values )
+			? isDependencyMet( term, values )
 			: evaluateTerm( term, extractValue( term.path, values )?.value )
 	);
 }
@@ -74,7 +79,7 @@ export function evaluateTerm( term: DependencyTerm, actualValue: unknown ) {
 			return ( 'exists' === operator ) === evaluation;
 
 		default:
-			return false;
+			return true;
 	}
 }
 
