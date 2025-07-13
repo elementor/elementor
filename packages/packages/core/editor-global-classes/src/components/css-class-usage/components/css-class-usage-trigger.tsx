@@ -98,7 +98,15 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 } ) );
 
 const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number } > ) => (
-	<Tooltip placement={ 'top' } title={ `${ __( 'Locator', 'elementor' ) } (${ total })` }>
+	<Tooltip
+		placement={ 'top' }
+		title={ `${ __( 'Show {{number}} {{locations}}', 'elementor' )
+			.replace( '{{number}}', total.toString() )
+			.replace(
+				'{{locations}}',
+				total === 1 ? __( 'location', 'elementor' ) : __( 'locations', 'elementor' )
+			) }` }
+	>
 		<span>{ children }</span>
 	</Tooltip>
 );
