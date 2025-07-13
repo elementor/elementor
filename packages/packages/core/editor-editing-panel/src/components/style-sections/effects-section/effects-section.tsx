@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BoxShadowRepeaterControl, FilterRepeaterControl, TransformRepeaterControl } from '@elementor/editor-controls';
+import { BoxShadowRepeaterControl, FilterRepeaterControl } from '@elementor/editor-controls';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
