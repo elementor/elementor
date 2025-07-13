@@ -113,6 +113,7 @@ class Import_Images {
 			$filename = $attachment['name'];
 			$file_content = false;
 
+			// security validation in case the tmp_name has been tampered with
 			if ( is_uploaded_file( $attachment['tmp_name'] ) ) {
 				$file_content = Utils::file_get_contents( $attachment['tmp_name'] );
 			}
