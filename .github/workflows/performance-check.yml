@@ -22,7 +22,7 @@ jobs:
 
   compare-v4-to-v3:
     name: Compare V4 to V3
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [build-plugin]
     env:
       PERFORMANCE_SCORE_THRESHOLD: 0.87
