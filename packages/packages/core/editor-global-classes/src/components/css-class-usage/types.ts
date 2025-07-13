@@ -7,6 +7,7 @@ type CssClassUsageContent = {
 	pageId: string;
 	total: number;
 	title: string;
+	type: string;
 };
 
 export type CssClassUsage = Record< CssClassID, CssClassUsageContent[] >;

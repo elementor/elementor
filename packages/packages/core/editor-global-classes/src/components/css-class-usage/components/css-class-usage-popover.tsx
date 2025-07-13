@@ -1,10 +1,17 @@
 import * as React from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList } from '@elementor/editor-ui';
-import { CurrentLocationIcon } from '@elementor/icons';
-import { Box, Chip, Divider, MenuList, Stack, styled } from '@elementor/ui';
+import { CurrentLocationIcon, PageTypeIcon, PopupTemplateIcon, PostTypeIcon } from '@elementor/icons';
+import { Box, Chip, Divider, Icon, MenuList, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../hooks';
+
+const iconMap = {
+	'wp-post': <PostTypeIcon fontSize={ 'inherit' } />,
+	'wp-page': <PageTypeIcon fontSize={ 'inherit' } />,
+	popup: <PopupTemplateIcon fontSize={ 'inherit' } />,
+	header: <PopupTemplateIcon fontSize={ 'inherit' } />,
+};
 
 export const CssClassUsagePopover = ( {
 	cssClassID,
@@ -14,11 +21,12 @@ export const CssClassUsagePopover = ( {
 	cssClassID: string;
 } ) => {
 	const { data: classUsage } = useCssClassUsageByID( cssClassID );
-	const items = classUsage?.content.map( ( { title, elements, pageId } ) => ( {
+	const items = classUsage?.content.map( ( { title, elements, pageId, type } ) => ( {
 		type: 'item' as const,
 		value: pageId,
 		label: title,
 		secondaryText: elements.length.toString(),
+		icon: iconMap[ type ],
 	} ) );
 
 	return (
@@ -50,9 +58,10 @@ export const CssClassUsagePopover = ( {
 									minWidth: 0,
 									display: 'flex',
 									alignItems: 'center',
-									gap: 1,
+									gap: 1.5,
 								} }
 							>
+								<Icon fontSize={ 'small' }>{ item.icon }</Icon>
 								{ item.label }
 							</Box>
 							<Chip size={ 'tiny' } label={ item.secondaryText } />
