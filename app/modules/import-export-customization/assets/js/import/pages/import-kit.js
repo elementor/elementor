@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from '@reach/router';
-import { Box, Typography, Link, Card, CardContent, CircularProgress, Stack } from '@elementor/ui';
+import { Box, Typography, Link, CircularProgress, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../shared/components';
 import DropZone from '../components/drop-zone';
@@ -54,46 +54,45 @@ export default function ImportKit() {
 		}
 
 		return (
-			<Box
+			<Stack
 				data-testid="content-container"
-				display="flex"
-				flexDirection="column"
+				direction="column"
 				alignItems="flex-start"
 				sx={ {
 					pt: 8,
-					width: '100%',
 					px: 20,
+					gap: 7,
 				} }
 			>
-				<Typography
-					variant="h4"
-					color="text.primary"
-					sx={ { fontWeight: 700, mb: 3, textAlign: 'left' } }
-					data-testid="import-title"
-				>
-					{ __( 'Import a website template', 'elementor' ) }
-				</Typography>
-				<Typography
-					variant="body1"
-					color="text.secondary"
-					sx={ { fontWeight: 500, mb: 7, textAlign: 'left' } }
-					data-testid="import-description"
-				>
-					{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
-					<Link
-						href="#"
-						sx={ { color: 'info.main', fontWeight: 500, ml: 1, textDecoration: 'none' } }
-						data-testid="import-learn-more-link"
+				<Stack direction="column" sx={ { gap: 3 } }>
+					<Typography
+						variant="h4"
+						color="text.primary"
+						data-testid="import-title"
 					>
-						{ __( 'Learn more', 'elementor' ) }
-					</Link>
-				</Typography>
-				<Card sx={ { width: '100%', p: 0, borderRadius: 2, boxShadow: 0, minHeight: 600 } } data-testid="import-card">
-					<CardContent sx={ { p: 0 } } data-testid="import-card-content">
+						{ __( 'Import a website template', 'elementor' ) }
+					</Typography>
+					<Typography
+						variant="body1"
+						color="text.secondary"
+						data-testid="import-description"
+					>
+						{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
+						<Link
+							href="#"
+							sx={ { color: 'info.main', ml: 1, textDecoration: 'none' } }
+							data-testid="import-learn-more-link"
+						>
+							{ __( 'Learn more', 'elementor' ) }
+						</Link>
+					</Typography>
+				</Stack>
+				<Stack sx={ { width: '100%', borderRadius: 2, boxShadow: 0 } } data-testid="import-card">
+					<Box sx={ { p: 0 } } data-testid="import-card-content">
 						<DropZone onFileSelect={ onFileSelect } />
-					</CardContent>
-				</Card>
-			</Box>
+					</Box>
+				</Stack>
+			</Stack>
 		);
 	};
 

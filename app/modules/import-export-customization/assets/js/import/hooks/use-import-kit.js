@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useImportContext } from '../context/import-context';
+import { IMPORT_STATUS, useImportContext } from '../context/import-context';
 
 async function request( {
 	data,
@@ -66,6 +66,7 @@ export function useImportKit() {
 			}
 		}
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
+		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.COMPLETED } );
 	};
 	async function importKit() {
 		try {

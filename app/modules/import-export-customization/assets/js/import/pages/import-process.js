@@ -1,5 +1,5 @@
 import { CircularProgress, Stack } from '@elementor/ui';
-import { Redirect, useNavigate } from '@reach/router';
+import { useNavigate } from '@reach/router';
 import { useEffect } from 'react';
 import { BaseLayout, CenteredContent, PageHeader, TopBar } from '../../shared/components';
 import { useImportKit, IMPORT_PROCESSING_STATUS } from '../hooks/use-import-kit';
@@ -22,9 +22,13 @@ export default function ImportProcess() {
 		}
 	}, [ status, error, navigate ] );
 
-	if ( ! isProcessing ) {
-		return <Redirect to="/import-customization/" replace />;
-	}
+	useEffect( () => {
+		if ( IMPORT_PROCESSING_STATUS.DONE === status && ! error ) {
+			navigate( 'import-customization/complete' );
+		} else if ( ! isProcessing ) {
+			navigate( 'import-customization', { replace: true } );
+		}
+	}, [ status, error, navigate, isProcessing ] );
 
 	return (
 		<BaseLayout
