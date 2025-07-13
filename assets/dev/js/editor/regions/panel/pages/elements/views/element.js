@@ -53,22 +53,22 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.ui.element.on( 'click', () => this.addToPage() );
 
-		this.ui.element.html5Draggable( {
-			onDragStart: () => {
-				// Reset the sort cache.
-				elementor.channels.editor.reply( 'element:dragged', null );
-
-				elementor.channels.panelElements
-					.reply( 'element:selected', this )
-					.trigger( 'element:drag:start' );
-			},
-
-			onDragEnd: () => {
-				elementor.channels.panelElements.trigger( 'element:drag:end' );
-			},
-
-			groups: [ 'elementor-element' ],
-		} );
+		// This.ui.element.html5Draggable( {
+		// 	onDragStart: () => {
+		// 		// Reset the sort cache.
+		// 		elementor.channels.editor.reply( 'element:dragged', null );
+		//
+		// 		elementor.channels.panelElements
+		// 			.reply( 'element:selected', this )
+		// 			.trigger( 'element:drag:start' );
+		// 	},
+		//
+		// 	onDragEnd: () => {
+		// 		elementor.channels.panelElements.trigger( 'element:drag:end' );
+		// 	},
+		//
+		// 	groups: [ 'elementor-element' ],
+		// } );
 	},
 
 	onMouseDown() {

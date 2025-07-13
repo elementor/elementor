@@ -8,6 +8,7 @@ use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Elements_Manager;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube\Atomic_Youtube;
+use Elementor\Modules\AtomicWidgets\Elements\AtomicBlock\Atomic_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
 use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
@@ -129,12 +130,28 @@ class Module extends BaseModule {
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/after_register_scripts', fn() => $this->register_frontend_scripts() );
+			add_action( 'elementor/preview/enqueue_scripts', fn() => $this->enqueue_preview_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
+
+			add_filter( 'elementor/document/config', function ( $config ) {
+				$elements_types = [
+					Atomic_Block::get_type(),
+					Atomic_Button::get_type(),
+				];
+
+				foreach ( $elements_types as $type ) {
+					$element = Plugin::$instance->elements_manager->get_element_types( $type );
+
+					$config['widgets'][ $type ] = $element->get_config();
+				}
+
+				return $config;
+			} );
 		}
 	}
 
@@ -205,7 +222,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Image() );
 		$widgets_manager->register( new Atomic_Paragraph() );
 		$widgets_manager->register( new Atomic_Svg() );
-		$widgets_manager->register( new Atomic_Button() );
+//		$widgets_manager->register( new Atomic_Button() );
 		$widgets_manager->register( new Atomic_Youtube() );
 
 		// Register widgets that require version 3.31 experiment
@@ -217,6 +234,8 @@ class Module extends BaseModule {
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
+		$elements_manager->register_element_type( new Atomic_Block() );
+		$elements_manager->register_element_type( new Atomic_Button() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -352,5 +371,32 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
+	}
+
+	public function enqueue_preview_scripts() {
+		$config = ( new Assets_Config_Provider() )
+			->set_path_resolver( fn( $name ) => ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php" )
+			->load( 'utils' )
+			->load( 'editor-v1-adapters' )
+			->load( 'editor-canvas-inner' );
+
+		foreach ( $config->all() as $key => $value ) {
+			if ( ! isset( $value['handle'] ) || ! isset( $value['deps'] ) ) {
+				continue;
+			}
+
+			wp_register_script(
+				$value['handle'],
+				$this->get_js_assets_url( 'packages/editor-canvas-inner/editor-canvas-inner' ),
+				$key === 'editor-v1-adapters' ? [] : $value['deps'],
+				ELEMENTOR_VERSION,
+				true
+			);
+		}
+
+		$c = $config->get( 'editor-canvas-inner' );
+
+		wp_enqueue_script( $c['handle'] );
+		wp_add_inline_script( $c['handle'], 'window.elementorV2.editorCanvasInner.start();' );
 	}
 }

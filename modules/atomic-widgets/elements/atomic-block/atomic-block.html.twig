@@ -1,0 +1,18 @@
+{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+
+{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
+
+{% if settings.link.href %}
+    <a
+        href="{{ settings.link.href }}"
+        target="{{ settings.link.target }}"
+        class="{{ classes }}"
+        {{ id_attribute }}
+    >
+        {{ children | join }}
+    </a>
+{% else %}
+    <{{ settings.tag }} class="{{ classes }}" {{ id_attribute }}>
+        This is a block element.
+    <{{ settings.tag }}/>
+{% endif %}
