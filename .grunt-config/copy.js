@@ -8,6 +8,7 @@ const getBuildFiles = [
 	'!.github/**',
 	'!.run/**',
 	'!.gitignore',
+	'!**/.gitignore',
 	'!.gitmodules',
 	'!.jscsrc',
 	'!karma.conf.js',
@@ -42,6 +43,7 @@ const getBuildFiles = [
 	'!test-results/',
 	'!tmp/**',
 	'!php-scoper/**',
+	'!vendor/**',
 	'!yarn.lock',
 	'!*~',
 	'!commitlint.config.js',
@@ -49,6 +51,9 @@ const getBuildFiles = [
 
 	// Conflict with above rule.
 	'core/files/assets/**',
+	'vendor/autoload.php',
+	'vendor/composer/**',
+	'vendor_prefixed/**'
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
