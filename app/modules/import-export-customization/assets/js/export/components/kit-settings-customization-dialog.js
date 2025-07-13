@@ -72,7 +72,7 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 		const hasEnabledSettings = Object.values( settings ).some( ( value ) => value );
 
 		// Update settings in context
-		dispatch( { 
+		dispatch( {
 			type: 'SET_CUSTOMIZATION',
 			payload: {
 				key: 'settings',
