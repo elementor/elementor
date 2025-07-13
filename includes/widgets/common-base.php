@@ -276,8 +276,7 @@ class Widget_Common_Base extends Widget_Base {
 		];
 
 		return [
-			$mask_selectors['default'] => $rules,
-			$mask_selectors['image'] => $rules,
+			$mask_selectors['default'] . ', ' . $mask_selectors['image'] => $rules,
 		];
 	}
 
