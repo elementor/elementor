@@ -191,7 +191,39 @@ abstract class Base {
 	 * @access public
 	 */
 	public function write() {
-		return file_put_contents( $this->path, $this->content );
+
+		$name = $this->get_name();
+
+		/**
+		 * Write CSS file.
+		 *
+		 * Fires before CSS file is written to filesystem.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 3.7.8
+		 *
+		 * @param \Elementor\Core\Files\Base $this The current file.
+		 */
+		do_action( "elementor/css-file/{$name}/before_write", $this );
+
+		$write = file_put_contents( $this->path, $this->content );
+
+		/**
+		 * Write CSS file.
+		 *
+		 * Fires after CSS file is written to filesystem.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 3.7.8
+		 *
+		 * @param \Elementor\Core\Files\Base $this The current file.
+		 * @param int|false $write The output of file_put_contents.
+		 */
+		do_action( "elementor/css-file/{$name}/after_write", $this, $write );
+
+		return $write;
 	}
 
 	/**
@@ -199,11 +231,40 @@ abstract class Base {
 	 * @access public
 	 */
 	public function delete() {
+
+		$name = $this->get_name();
+
+		/**
+		 * Delete CSS file.
+		 *
+		 * Fires before CSS file is removed.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 3.7.8
+		 *
+		 * @param \Elementor\Core\Files\Base $this The current file.
+		 */
+		do_action( "elementor/css-file/{$name}/before_delete", $this );
+
 		if ( file_exists( $this->path ) ) {
 			unlink( $this->path );
 		}
 
 		$this->delete_meta();
+
+		/**
+		 * Delete CSS file.
+		 *
+		 * Fires after CSS file is removed.
+		 *
+		 * The dynamic portion of the hook name, `$name`, refers to the CSS file name.
+		 *
+		 * @since 3.7.8
+		 *
+		 * @param \Elementor\Core\Files\Base $this The current file.
+		 */
+		do_action( "elementor/css-file/{$name}/after_delete", $this );
 	}
 
 	/**
