@@ -6,6 +6,8 @@ log/
 vendor/
 local-site/
 tmp/
+8888/
+8889/
 
 # build outputs
 build/
@@ -23,6 +25,7 @@ yarn.lock
 # IDE's
 .project/
 .vscode/
+!vscode/extensions.json
 .idea/
 
 # other

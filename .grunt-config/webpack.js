@@ -150,6 +150,7 @@ const entry = {
 const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
+	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
 };
 
 const externals = [
@@ -166,6 +167,8 @@ const externals = [
 		'@elementor/icons': 'elementorV2.icons',
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
+		'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
+		'@elementor/query': 'elementorV2.query',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
 		'@wordpress/core-data': 'wp.coreData',
@@ -363,7 +366,6 @@ const gruntWebpackConfig = {
 	developmentNoWatch: developmentNoWatchConfig,
 	production: webpackProductionConfig,
 	productionWatch: productionWatchConfig,
-	packages: packagesConfigs.dev,
 };
 
 module.exports = gruntWebpackConfig;

@@ -1,8 +1,8 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.5
-Tested up to: 6.7
+Requires at least: 6.6
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -348,49 +348,51 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.28.4 - 2025-04-22 =
+= 3.30.2 - 2025-07-09 =
 
-* Tweak: Added Site Planner as an option in the onboarding wizard
-* Tweak: Changed the default theme to Hello Biz in the onboarding wizard
-* Tweak: Added inline editing support for controls using multiple repeaters
+* Fix: Editor failing to load on certain hosting providers due to blocked requests
 
-= 3.28.3 - 2025-04-01 =
+= 3.30.1 - 2025-07-07 =
 
-* Tweak: Added Isolate object tool to Elementor AI image editing capabilities
-* Fix: Third dropdown in template display conditions not working in Theme Builder ([#30729](https://github.com/elementor/elementor/issues/30729), [#30732](https://github.com/elementor/elementor/issues/30732))
+* Fix: Focus not applied correctly to chosen property in popovers - Editor V4
+* Fix: Font Family popover not loading as expected - Editor V4
+* Fix: Empty list displayed when opening the Class Manager - Editor V4
 
-= 3.28.2 - 2025-03-30 =
+= 3.30.0 - 2025-07-01 =
 
-* New: Generate logo with AI
-* Tweak: Adjusted supported attributes and elements in SVG files ([#29340](https://github.com/elementor/elementor/issues/29340), [#30132](https://github.com/elementor/elementor/issues/30132))
-* Fix: "Create a page" button is not working in Elementor Home
-* Fix: Icons in Button widgets are not vertically aligned when changing the text line-height ([#30606](https://github.com/elementor/elementor/issues/30606))
-
-= 3.28.1 - 2025-03-23 =
-
-* Fix: Font URL is not updating after domain change when "Load Google Fonts Locally" feature is activated
-
-= 3.28.0 - 2025-03-17 =
-
-* New: Added a Clear Files & Data button to the WordPress frontend admin bar for quick and easy cache clearing ([#21642](https://github.com/elementor/elementor/issues/21642))
-* Tweak: Added a note clarifying that the Image Resolution control doesn't support dynamic background images ([#21359](https://github.com/elementor/elementor/issues/21359), [#22055](https://github.com/elementor/elementor/issues/22055))
-* Tweak: Added hover state Box Shadow controls to Button widget ([#4859](https://github.com/elementor/elementor/issues/4859), [#30210](https://github.com/elementor/elementor/issues/30210), [#17509](https://github.com/elementor/elementor/issues/17509))
-* Tweak: Renamed "Regenerate CSS & Data" to "Elementor Cache" in Elementor Tools for better clarity
-* Tweak: Hide Landing Page feature when no landing page posts exist on the site
-* Tweak: Promoted Load Google Fonts Locally feature to Stable status and enabled it by default for all websites
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Accordion widget
-* Tweak: Improved rendering functionality when updating CSS ID control to enhance editing performance in Tabs widget
-* Tweak: Removed unused deprecated methods from `elementorCommon.helpers`
-* Tweak: Optimized style loading for the Text Editor widget by applying styles at the control level ensuring Drop Cap styles load only when enabled
-* Tweak: Updated Drop Cap controls to use CSS logical properties in Text Editor widget
-* Tweak: Updated minimum required WordPress version to 6.5
-* Tweak: Removed Modest Branding control from Video widget
-* Tweak: Promoted Optimized Markup feature to Beta status
-* Tweak: Added link color controls in Text Editor widget
-* Tweak: Applied hover color on focus for keyboard users in the Heading widget
-* Fix: Button icon alignment breaks when Inline Font Icons feature is activated ([#16077](https://github.com/elementor/elementor/issues/16077), [#16511](https://github.com/elementor/elementor/issues/16511), [#17692](https://github.com/elementor/elementor/issues/17692), [#17922](https://github.com/elementor/elementor/issues/17922), [#19253](https://github.com/elementor/elementor/issues/19253), [#19370](https://github.com/elementor/elementor/issues/19370), [#21236](https://github.com/elementor/elementor/issues/21236), [#21844](https://github.com/elementor/elementor/issues/21844), [#28080](https://github.com/elementor/elementor/issues/28080))
-* Fix: Editor fails to load in some edge cases when ACF Term fields are used as Dynamic Tags ([#29160](https://github.com/elementor/elementor/issues/29160))
-* Fix: Improved sanitization of titles to ensure consistent handling for Admin users in the Heading widget
-* Fix: Hover link color transition duration is not being applied in Heading widget
+* New: Added support for setting custom units in size controls - Editor V4 ([#31287](https://github.com/elementor/elementor/issues/31287))
+* New: Added reset control visibility via the floating action bar - Editor V4 ([#31356](https://github.com/elementor/elementor/issues/31356))
+* New: Added JS handler infrastructure for the new elements system - Editor V4
+* New: Introduced modular YouTube element built with new structure and JS handlers – Editor V4
+* New: Added support for context-aware editing memory - Editor V4
+* New: Enabled Smart Unit Typing - allows typing values with units directly - Editor V4
+* New: Added ID control to Settings section under General tab - Editor V4
+* New: Added Anchor Offset control to Position section under Style tab - Editor V4
+* New: Added Display None control to Layout section under Style tab - Editor V4
+* New: Added Object Fit control to Size section under Style tab - Editor V4
+* New: Added Columns control to Typography section under Style tab - Editor V4
+* New: Added Aspect Ratio control to Size section under Style tab - Editor V4
+* New: Added group-level style indicators to show where class-based styles are applied – Editor V4
+* New: Added Indications Popover for visualizing class-based style origins – Editor V4
+* New: Introduced class permissions for non-admin users - Editor V4
+* Tweak: Added title hover and focus color options to Icon Box and Image Box widgets ([#29948](https://github.com/elementor/elementor/issues/29948))
+* Tweak: Added support for registering custom mask shapes ([#19396](https://github.com/elementor/elementor/issues/19396))
+* Tweak: User-defined class names now appear as-is in the final code output in Class Management - Editor V4 ([#31055](https://github.com/elementor/elementor/issues/31055))
+* Tweak: Renamed "Kits" to "Website Template" across the interface
+* Tweak: Added Settings section inside the General tab - Editor V4
+* Tweak: Merged "Editor Top Bar" feature into the core version
+* Tweak: Merged "Load Google Fonts locally" feature into the core version
+* Tweak: Activated "Optimized Markup" feature for new sites
+* Tweak: Promoted "Element Caching" feature to Stable status
+* Tweak: Added new mask shapes
+* Tweak: Replaced select control with a visual choice control in Mask shapes
+* Tweak: Add image `height`, `object-fit`, `object-position`, `box-shadow` in Image Box widget
+* Tweak: Standardized naming convention for items in the editor `app-bar`
+* Tweak: Consolidated control visibility and layout into a single Style tab in Progress Bar widget
+* Tweak: Updated minimum required WordPress version to 6.6
+* Fix: Global CSS transition with higher specificity prevents Container transitions from being applied ([#30460](https://github.com/elementor/elementor/issues/30460))
+* Fix: Global CSS classes are lost when publishing from multiple tabs - Editor V4
+* Fix: Redundant spacing appears below the image in the Image Box widget
+* Fix: Scrolling to anchors no longer works inside the Editor
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

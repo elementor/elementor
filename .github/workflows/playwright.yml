@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -28,8 +28,8 @@ on:
           required: false
 
 concurrency:
-    group: pr-${{ github.event.pull_request.number }}
-    cancel-in-progress: true
+  group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-plugin:
@@ -65,7 +65,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm ci
+          npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -133,7 +133,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm ci
+          npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -169,14 +169,14 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped'
+    if: always() && (needs.Playwright.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
       - name: Checkout source code
-        if: ${{ needs.Playwright.result == 'failure' }}
+        if: ${{ (needs.Playwright.result == 'failure') }}
         uses: actions/checkout@v4
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
@@ -208,5 +208,5 @@ jobs:
               ]
             }
       - name: Check Playwright matrix status
-        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
+        if: ${{ (needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped') || (needs.PlaywrightWithTag.result != 'success' && needs.PlaywrightWithTag.result != 'skipped') }}
         run: exit 1

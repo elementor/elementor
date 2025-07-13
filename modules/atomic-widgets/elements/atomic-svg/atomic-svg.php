@@ -3,19 +3,17 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg;
 
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,41 +43,29 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$props = [
+		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
 			'svg' => Image_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
 			'link' => Link_Prop_Type::make(),
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['cssid'] = String_Prop_Type::make();
-		}
-		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
-		$settings_section_items = [
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
-		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
-				'topDivider' => true,
-			] );
-		}
-
 		return [
 			Section::make()
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
-					Svg_Control::bind_to( 'svg' ),
+					Svg_Control::bind_to( 'svg' )
+						->set_label( __( 'SVG', 'elementor' ) ),
 				] ),
-			Section::make()
-				->set_label( esc_html__( 'Settings', 'elementor' ) )
-				->set_items( $settings_section_items ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) ),
 		];
 	}
 
@@ -129,18 +115,32 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$classes_string = implode( ' ', $classes );
 
-		$cssid_attribute = ! empty( $settings['cssid'] ) ? 'id="' . esc_attr( $settings['cssid'] ) . '"' : '';
+		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
+
+		$attributes_string = '';
+		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
+			$attributes_array = [];
+			foreach ( $settings['attributes'] as $item ) {
+				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
+					$attributes_array[] = esc_attr( $item['key'] ) . '="' . esc_attr( $item['value'] ) . '"';
+				}
+			}
+			$attributes_string = implode( ' ', $attributes_array );
+		}
+
+		$all_attributes = trim( $cssid_attribute . ' ' . $attributes_string );
+
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s" %s>%s</a>',
-				esc_url( $settings['link']['href'] ),
+				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
-				$cssid_attribute,
+				$all_attributes,
 				$svg_html
 			);
 		} else {
-			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $cssid_attribute, $svg_html );
+			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $all_attributes, $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

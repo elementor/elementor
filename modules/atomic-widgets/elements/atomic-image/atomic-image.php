@@ -2,20 +2,17 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Image;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
-use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -53,43 +50,36 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->default_size( 'full' ),
 
 			'link' => Link_Prop_Type::make(),
-		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['cssid'] = String_Prop_Type::make();
-		}
+			'attributes' => Key_Value_Array_Prop_Type::make(),
+		];
 
 		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
-		$content_section = Section::make()
-			->set_label( esc_html__( 'Content', 'elementor' ) )
-			->set_items( [
-				Image_Control::bind_to( 'image' )
-					->set_show_mode( 'media' ),
-			] );
-
-		$settings_section_items = [
-			Image_Control::bind_to( 'image' )
-				->set_show_mode( 'sizes' ),
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
-		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
-				'topDivider' => true,
-			] );
-		}
-
 		return [
-			$content_section,
 			Section::make()
-				->set_label( esc_html__( 'Settings', 'elementor' ) )
-				->set_items( $settings_section_items ),
+				->set_label( esc_html__( 'Content', 'elementor' ) )
+				->set_items( [
+					Image_Control::bind_to( 'image' )
+						->set_label( __( 'Image', 'elementor' ) )
+						->set_show_mode( 'media' ),
+				] ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
+			Image_Control::bind_to( 'image' )
+				->set_label( __( 'Image resolution', 'elementor' ) )
+				->set_show_mode( 'sizes' )
+				->set_meta( [ 'layout' => 'two-columns' ] ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 

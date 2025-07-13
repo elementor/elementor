@@ -1,4 +1,5 @@
 import DivBlockEmptyView from './container/div-block-empty-view';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 const DivBlockView = BaseElementView.extend( {
@@ -39,7 +40,8 @@ const DivBlockView = BaseElementView.extend( {
 	attributes() {
 		const attr = BaseElementView.prototype.attributes.apply( this );
 		const local = {};
-		const cssId = this.model.getSetting( 'cssid' );
+		const cssId = this.model.getSetting( '_cssid' );
+		const customAttributes = this.model.getSetting( 'attributes' )?.value ?? [];
 
 		if ( cssId ) {
 			local.id = cssId.value;
@@ -50,6 +52,15 @@ const DivBlockView = BaseElementView.extend( {
 		if ( href ) {
 			local.href = href;
 		}
+
+		customAttributes.forEach( ( attribute ) => {
+			const key = attribute.value?.key?.value;
+			const value = attribute.value?.value?.value;
+
+			if ( key && value ) {
+				local[ key ] = value;
+			}
+		} );
 
 		return {
 			...attr,
@@ -88,22 +99,47 @@ const DivBlockView = BaseElementView.extend( {
 	renderOnChange( settings ) {
 		const changed = settings.changedAttributes();
 
+		setTimeout( () => {
+			this.updateHandlesPosition();
+		} );
+
 		if ( ! changed ) {
 			return;
 		}
 
 		BaseElementView.prototype.renderOnChange.apply( this, settings );
 
+		if ( changed.attributes ) {
+			const preserveAttrs = [ 'id', 'class', 'href' ];
+			const $elAttrs = this.$el[ 0 ].attributes;
+			for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
+				const attrName = $elAttrs[ i ].name;
+				if ( ! preserveAttrs.includes( attrName ) ) {
+					this.$el.removeAttr( attrName );
+				}
+			}
+
+			const attrs = this.model.getSetting( 'attributes' )?.value || [];
+			attrs.forEach( ( attribute ) => {
+				const key = attribute?.value?.key?.value;
+				const value = attribute?.value?.value?.value;
+				if ( key && value ) {
+					this.$el.attr( key, value );
+				}
+			} );
+
+			return;
+		}
+
 		if ( changed.classes ) {
-			// Rebuild the whole class attribute to remove previous outdated classes
 			this.$el.attr( 'class', this.className() );
 
 			return;
 		}
 
-		if ( changed.cssid ) {
-			if ( changed.cssid.value ) {
-				this.$el.attr( 'id', changed.cssid.value );
+		if ( changed._cssid ) {
+			if ( changed._cssid.value ) {
+				this.$el.attr( 'id', changed._cssid.value );
 			} else {
 				this.$el.removeAttr( 'id' );
 			}
@@ -134,6 +170,7 @@ const DivBlockView = BaseElementView.extend( {
 		// Defer to wait for everything to render.
 		setTimeout( () => {
 			this.droppableInitialize();
+			this.updateHandlesPosition();
 		} );
 	},
 
@@ -236,10 +273,15 @@ const DivBlockView = BaseElementView.extend( {
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggedElement = draggedView?.getContainer().view.el,
 					containerElement = event.currentTarget.parentElement,
-					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] ),
-					targetIndex = elements.indexOf( event.currentTarget );
+					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+
+				let targetIndex = elements.indexOf( event.currentTarget );
 
 				if ( this.isPanelElement( draggedView, draggedElement ) ) {
+					if ( this.draggingOnBottomOrRightSide( side ) && ! this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+						targetIndex++;
+					}
+
 					this.onDrop( event, { at: targetIndex } );
 
 					return;
@@ -249,17 +291,26 @@ const DivBlockView = BaseElementView.extend( {
 					return;
 				}
 
-				const selfIndex = elements.indexOf( draggedElement );
-
-				if ( targetIndex === selfIndex ) {
+				if ( this.emptyViewIsCurrentlyBeingDraggedOver() ) {
+					this.moveDroppedItem( draggedView, 0 );
 					return;
 				}
 
-				const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
-
-				this.moveDroppedItem( draggedView, dropIndex );
+				this.moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement );
 			},
 		};
+	},
+
+	moveExistingElement( side, draggedView, containerElement, elements, targetIndex, draggedElement ) {
+		const selfIndex = elements.indexOf( draggedElement );
+
+		if ( targetIndex === selfIndex ) {
+			return;
+		}
+
+		const dropIndex = this.getDropIndex( containerElement, side, targetIndex, selfIndex );
+
+		this.moveDroppedItem( draggedView, dropIndex );
 	},
 
 	isPanelElement( draggedView, draggedElement ) {
@@ -364,6 +415,10 @@ const DivBlockView = BaseElementView.extend( {
 		return [ 'bottom', 'right' ].includes( side );
 	},
 
+	emptyViewIsCurrentlyBeingDraggedOver() {
+		return this.$el.find( '> .elementor-empty-view > .elementor-first-add.elementor-html5dnd-current-element' ).length > 0;
+	},
+
 	/**
 	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
 	 *
@@ -398,7 +453,13 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	getClasses() {
-		return this.options?.model?.getSetting( 'classes' )?.value || [];
+		const transformer = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry?.get?.( 'classes' );
+
+		if ( ! transformer ) {
+			return [];
+		}
+
+		return transformer( this.options?.model?.getSetting( 'classes' )?.value || [] );
 	},
 
 	getClassString() {
@@ -412,6 +473,28 @@ const DivBlockView = BaseElementView.extend( {
 		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
 
 		return Object.keys( baseStyles ?? {} )[ 0 ] ?? '';
+	},
+
+	isOverflowHidden() {
+		const elementStyles = window.getComputedStyle( this.el );
+		const overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ];
+
+		return overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' );
+	},
+
+	updateHandlesPosition() {
+		const elementType = this.$el.data( 'element_type' );
+		const isElement = getAllElementTypes().includes( elementType );
+
+		if ( ! isElement ) {
+			return;
+		}
+
+		if ( this.isOverflowHidden() ) {
+			this.$el.addClass( 'e-handles-inside' );
+		} else {
+			this.$el.removeClass( 'e-handles-inside' );
+		}
 	},
 } );
 

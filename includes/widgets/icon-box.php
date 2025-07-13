@@ -279,10 +279,17 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'default' => 'top',
-				'toggle' => false,
-				'prefix_class' => 'elementor-vertical-align-',
+				'selectors_dictionary' => [
+					'top' => 'start',
+					'middle' => 'center',
+					'bottom' => 'end',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'align-items: {{VALUE}};',
+				],
 				'condition' => [
-					'position!' => 'top',
+					'selected_icon[value]!' => '',
+					'position' => [ 'left', 'right' ],
 				],
 			]
 		);
@@ -366,7 +373,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-icon-box-title' => 'margin-block-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -843,14 +850,14 @@ class Widget_Icon_Box extends Widget_Base {
 				<?php if ( ! Utils::is_empty( $settings['title_text'] ) ) : ?>
 					<<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?> class="elementor-icon-box-title">
 						<<?php Utils::print_validated_html_tag( $html_tag ); ?> <?php $this->print_render_attribute_string( 'link' ); ?> <?php $this->print_render_attribute_string( 'title_text' ); ?>>
-							<?php $this->print_unescaped_setting( 'title_text' ); ?>
+							<?php echo wp_kses_post( $settings['title_text'] ); ?>
 						</<?php Utils::print_validated_html_tag( $html_tag ); ?>>
 					</<?php Utils::print_validated_html_tag( $settings['title_size'] ); ?>>
 				<?php endif; ?>
 
 				<?php if ( ! Utils::is_empty( $settings['description_text'] ) ) : ?>
 					<p <?php $this->print_render_attribute_string( 'description_text' ); ?>>
-						<?php $this->print_unescaped_setting( 'description_text' ); ?>
+						<?php echo wp_kses_post( $settings['description_text'] ); ?>
 					</p>
 				<?php endif; ?>
 

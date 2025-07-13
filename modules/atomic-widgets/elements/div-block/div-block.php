@@ -2,18 +2,15 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -46,26 +43,33 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$tag_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'exists',
+				'path' => [ 'link', 'destination' ],
+			] );
+
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' ),
-
+				->default( 'div' )
+				->dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
-		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['cssid'] = String_Prop_Type::make();
-		}
+			'attributes' => Key_Value_Array_Prop_Type::make(),
+		];
 
 		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
-		$settings_section_items = [
+		return [];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
 			Select_Control::bind_to( 'tag' )
 				->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
 				->set_options( [
@@ -94,23 +98,11 @@ class Div_Block extends Atomic_Element_Base {
 						'label' => 'Footer',
 					],
 				]),
-
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
-		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( 'cssid' )->set_label( __( 'CSS ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
-				'topDivider' => true,
-			] );
-		}
-
-		return [
-			Section::make()
-				->set_label( __( 'Settings', 'elementor' ) )
-				->set_items( $settings_section_items ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 		];
 	}
 
@@ -183,5 +175,37 @@ class Div_Block extends Atomic_Element_Base {
 			'size' => 30,
 			'unit' => 'px',
 		] );
+	}
+
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+
+		$attributes = [
+			'class' => [
+				'e-con',
+				$base_style_class,
+				...( $settings['classes'] ?? [] ),
+			],
+		];
+
+		if ( ! empty( $settings['_cssid'] ) ) {
+			$attributes['id'] = esc_attr( $settings['_cssid'] );
+		}
+
+		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
+			foreach ( $settings['attributes'] as $item ) {
+				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
+					$attributes[ esc_attr( $item['key'] ) ] = esc_attr( $item['value'] );
+				}
+			}
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = array_merge( $attributes, $settings['link'] );
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 }

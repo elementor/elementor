@@ -37,6 +37,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$settings = $widget->get_atomic_settings();
+		array_pop( $settings ); // remove common settings
 
 		// Assert.
 		$this->assertSame( $args['result'], $settings );
@@ -294,6 +295,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 
 		$schema = [
+			'_cssid' => String_Prop_Type::make(),
+	
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
 				->default( 'value-a' ),
@@ -321,6 +324,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Assert.
 		$keys = [
+			'_cssid', // will automatically be added as a common prop
 			'string_prop',
 			'number_prop',
 			'boolean_prop',
@@ -348,8 +352,10 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
 
+		$test_schema = $widget::get_props_schema();
+		unset( $test_schema['_cssid'] );
 		// Act & Assert.
-		$this->assertSame( $schema, $widget::get_props_schema() );
+		$this->assertSame( $schema, $test_schema );
 	}
 
 	public function test_get_atomic_controls__throws_when_control_is_invalid() {
@@ -450,6 +456,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$controls = $widget->get_atomic_controls();
+		array_pop( $controls ); //remove settings section
 
 		// Assert.
 		$this->assertEquals( $controls_definitions, $controls );
@@ -521,7 +528,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 			's-1234' => [
 				'id' => 's-1234',
 				'type' => 'class',
-				'label' => 'My Class',
+				'label' => 'my-class',
 				'variants' => [
 					[
 						'props' => [
@@ -645,7 +652,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -680,7 +687,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'class',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],
@@ -758,7 +765,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 				's-1234' => [
 					'id' => 's-1234',
 					'type' => 'invalid-type',
-					'label' => 'My Class',
+					'label' => 'my-class',
 					'variants' => [
 						[
 							'props' => [],

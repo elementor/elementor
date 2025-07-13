@@ -138,6 +138,7 @@ class Cloud_Library extends Library {
 				'Content-Type' => 'application/json',
 			],
 			'body' => wp_json_encode( $data ),
+			'timeout' => 120,
 		];
 
 		return $this->http_request( 'POST', 'resources/bulk', $resource, [
@@ -191,6 +192,7 @@ class Cloud_Library extends Library {
 
 		$response = $this->http_request( 'PATCH', $endpoint, $payload, [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+			'timeout' => 120,
 		]);
 
 		if ( is_wp_error( $response ) || empty( $response['preview_url'] ) ) {

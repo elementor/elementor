@@ -48,6 +48,57 @@ test.describe( 'Div Block tests @div-block', () => {
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
 	} );
 
+	test( 'Dragging an element from a container to empty v4 containers renders the element correctly', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const sourceContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const heading = await editor.addWidget( { widgetType: widgets.heading, container: sourceContainer } );
+
+		const flexbox = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		const divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const testDragToEmptyContainer = async ( targetContainer: string ) => {
+			// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( targetContainer ),
+			);
+
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( targetContainer ),
+			);
+
+			const headingEl = await editor.getElementHandle( heading );
+
+			const headingParent = await headingEl.evaluate( ( node ) => {
+				return node.closest( '.elementor-element' ).parentElement?.closest( '.e-con' )?.getAttribute( 'data-id' );
+			} );
+
+			expect( headingParent ).toBe( targetContainer );
+
+			// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( sourceContainer ),
+			);
+
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( sourceContainer ),
+			);
+		};
+
+		await test.step( 'Drag heading to empty flexbox', async () => {
+			await testDragToEmptyContainer( flexbox );
+		} );
+
+		await test.step( 'Drag heading to empty div block', async () => {
+			await testDragToEmptyContainer( divBlock );
+		} );
+	} );
+
 	test( 'Nested Div block with widget', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		// Act.
@@ -121,5 +172,32 @@ test.describe( 'Div Block tests @div-block', () => {
 			// Assert.
 			await expect( secondContainerHandles ).toHaveScreenshot( 'normal-handles.png' );
 		} );
+	} );
+	test( 'Verify that text stroke style do not apply to empty view and frame handle elements', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange.
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
+		await divBlock.waitFor( { state: 'visible' } );
+		const divBlockHandles = divBlock.locator( '.elementor-editor-element-settings' );
+		const divBlockEmptyView = divBlock.locator( '.elementor-empty-view' );
+
+		// Apply text stroke style to div block, no need to go through entire UI, just need to check styles are not passed to empty view and frame handle elements.
+		await divBlock.evaluate( ( el ) => {
+			el.style.stroke = 'red';
+			el.style.strokeWidth = '10px';
+		} );
+
+		await divBlockEmptyView.waitFor();
+
+		await divBlock.hover();
+
+		// Assert.
+		await expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		await expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
+		await expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		await expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
 	} );
 } );

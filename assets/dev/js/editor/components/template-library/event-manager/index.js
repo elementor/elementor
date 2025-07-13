@@ -42,11 +42,12 @@ export class EventManager {
 		} );
 	}
 
-	sendTemplateSavedEvent() {
+	sendTemplateSavedEvent( data ) {
 		return this.sendEvent( EVENTS_MAP.TEMPLATE_SAVED, {
 			location: elementor.editorEvents.config.locations.templatesLibrary.library,
 			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
 			trigger: elementor.editorEvents.config.triggers.click,
+			...data,
 		} );
 	}
 
