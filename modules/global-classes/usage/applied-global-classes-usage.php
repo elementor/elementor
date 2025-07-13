@@ -35,6 +35,7 @@ class Applied_Global_Classes_Usage {
 				$result[ $class_id ][] = array(
 					'pageId'   => $page_id,
 					'title'    => $page_data['title'],
+					'type'     => $page_data['type'] ?? 'unknown',
 					'total'    => $page_data['total'],
 					'elements' => $page_data['elements'],
 				);

@@ -1,5 +1,4 @@
 <?php
-// File: Css_Class_Usage.php
 
 namespace Elementor\Modules\GlobalClasses\Usage;
 
@@ -13,7 +12,15 @@ class Css_Class_Usage {
 		$this->class_id = $class_id;
 	}
 
-	public function track_usage( int $page_id, string $page_title, string $element_id ): void {
+	/**
+	 * Tracks usage of a class in a specific page.
+	 *
+	 * @param int $page_id
+	 * @param string $page_title
+	 * @param string $element_id
+	 * @param string|null $document_type Optional: 'header', 'footer', 'page', etc.
+	 */
+	public function track_usage( int $page_id, string $page_title, string $element_id, ?string $document_type = null ): void {
 		$this->total++;
 
 		if ( ! isset( $this->pages[ $page_id ] ) ) {
@@ -22,6 +29,10 @@ class Css_Class_Usage {
 				'total'    => 0,
 				'elements' => [],
 			];
+
+			if ( $document_type ) {
+				$this->pages[ $page_id ]['type'] = $document_type;
+			}
 		}
 
 		$this->pages[ $page_id ]['total']++;
@@ -44,6 +55,11 @@ class Css_Class_Usage {
 					$this->pages[ $page_id ]['elements'],
 					$data['elements']
 				);
+
+				// Merge type if not already set
+				if ( empty( $this->pages[ $page_id ]['type'] ) && ! empty( $data['type'] ) ) {
+					$this->pages[ $page_id ]['type'] = $data['type'];
+				}
 			}
 		}
 	}
@@ -56,8 +72,8 @@ class Css_Class_Usage {
 		return $this->total;
 	}
 
+
 	public function get_pages(): array {
 		return $this->pages;
 	}
 }
-
