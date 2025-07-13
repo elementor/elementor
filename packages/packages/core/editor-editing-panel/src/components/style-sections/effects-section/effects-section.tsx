@@ -11,7 +11,6 @@ import { OpacityControlField } from './opacity-control-field';
 
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
 const FILTER_LABEL = __( 'Filters', 'elementor' );
-const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 
 export const EffectsSection = () => {
@@ -30,10 +29,6 @@ export const EffectsSection = () => {
 			</StylesField>
 			{ isVersion331Active && (
 				<>
-					<PanelDivider />
-					<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-						<TransformRepeaterControl />
-					</StylesField>
 					<PanelDivider />
 					<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
 						<FilterRepeaterControl />
