@@ -11,15 +11,30 @@ export function useUploadKit() {
 			const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
 			const uploadUrl = `${ baseUrl }/upload`;
 
-			const formData = new FormData();
-			formData.append( 'e_import_file', data.file );
+			let uploadData = null;
+
+			if ( data.file ) {
+				uploadData = new FormData();
+				uploadData.append( 'e_import_file', data.file );
+			}
+
+			if ( data.kitUploadParams ) {
+				const { id, source, fileUrl } = data.kitUploadParams;
+
+				uploadData = JSON.stringify( {
+					referrer: source,
+					source,
+					kit_id: id,
+					file_url: fileUrl,
+				} );
+			}
 
 			const response = await fetch( uploadUrl, {
 				method: 'POST',
 				headers: {
 					'X-WP-Nonce': window.wpApiSettings?.nonce || '',
 				},
-				body: formData,
+				body: uploadData,
 			} );
 
 			const result = await response.json();
@@ -38,7 +53,7 @@ export function useUploadKit() {
 	}
 
 	useEffect( () => {
-		if ( isUploading && data.file ) {
+		if ( isUploading && ( data.file || data.kitUploadParams ) ) {
 			uploadKit();
 		}
 	}, [ isUploading, data.file ] );

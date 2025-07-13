@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 import { Box, Typography, Link, CircularProgress, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
 import { BaseLayout, TopBar, PageHeader, CenteredContent } from '../../shared/components';
 import DropZone from '../components/drop-zone';
 import { IMPORT_STATUS, useImportContext } from '../context/import-context';
@@ -11,6 +12,8 @@ import ImportError from '../components/import-error';
 export default function ImportKit() {
 	const { data, dispatch } = useImportContext();
 	const navigate = useNavigate();
+
+	const { id, referrer, file_url: fileUrl, nonce } = useQueryParams().getAll();
 
 	const { uploading, error } = useUploadKit();
 
@@ -33,6 +36,12 @@ export default function ImportKit() {
 			navigate( 'import-customization/content' );
 		}
 	}, [ data.uploadedData, dispatch, navigate ] );
+
+	useEffect( () => {
+		if ( id || fileUrl ) {
+			dispatch( { type: 'SET_KIT_UPLOAD_PARAMS', payload: { id, source: referrer, fileUrl, nonce } } );
+		}
+	}, [ id, referrer, fileUrl, nonce, dispatch ] );
 
 	const renderContent = () => {
 		if ( error ) {

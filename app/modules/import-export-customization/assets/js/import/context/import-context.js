@@ -13,16 +13,14 @@ const importReducer = ( state, { type, payload } ) => {
 	switch ( type ) {
 		case 'SET_IMPORT_STATUS':
 			return { ...state, importStatus: payload };
-		case 'SET_ID':
-			return { ...state, id: payload };
 		case 'SET_FILE':
 			return { ...state, file: payload };
-		case 'SET_KIT_SOURCE':
-			return { ...state, source: payload };
 		case 'SET_UPLOADED_DATA':
 			return { ...state, uploadedData: payload };
 		case 'SET_IMPORTED_DATA':
 			return { ...state, importedData: payload };
+		case 'SET_KIT_UPLOAD_PARAMS':
+			return { ...state, kitUploadParams: payload };
 		case 'ADD_INCLUDE':
 			return {
 				...state,
@@ -45,11 +43,10 @@ const importReducer = ( state, { type, payload } ) => {
 export const ImportContext = createContext();
 
 const initialState = {
-	id: null,
 	file: null,
 	uploadedData: null,
 	importedData: null,
-	source: '',
+	kitUploadParams: null,
 	plugins: [],
 	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
 	importStatus: IMPORT_STATUS.PENDING,

@@ -65,6 +65,7 @@ export function useImportKit() {
 				setError( e );
 			}
 		}
+
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.COMPLETED } );
 	};
@@ -73,7 +74,8 @@ export function useImportKit() {
 			setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );
 
 			const importData = {
-				id: data.id,
+				id: data.kitUploadParams?.id,
+				referrer: data.kitUploadParams?.referrer,
 				session: data.uploadedData.session,
 				include: data.includes,
 			};
