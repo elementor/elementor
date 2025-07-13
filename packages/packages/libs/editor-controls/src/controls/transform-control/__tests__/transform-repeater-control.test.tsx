@@ -37,6 +37,59 @@ describe( 'TransformRepeaterControl', () => {
 						} ),
 					},
 				} ),
+				'transform-scale': createMockPropType( {
+					kind: 'object',
+					shape: {
+						x: createMockPropType( { kind: 'plain' } ),
+						y: createMockPropType( { kind: 'plain' } ),
+						z: createMockPropType( { kind: 'plain' } ),
+					},
+				} ),
+				'transform-rotate': createMockPropType( {
+					kind: 'object',
+					shape: {
+						x: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+						y: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+						z: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+					},
+				} ),
+				'transform-skew': createMockPropType( {
+					kind: 'object',
+					shape: {
+						x: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+						y: createMockPropType( {
+							kind: 'object',
+							shape: {
+								unit: createMockPropType( { kind: 'plain' } ),
+								size: createMockPropType( { kind: 'plain' } ),
+							},
+						} ),
+					},
+				} ),
 			},
 		} ),
 	} );
@@ -66,6 +119,71 @@ describe( 'TransformRepeaterControl', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Move' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Scale' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Rotate' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Skew' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should switch to Scale tab when clicked', () => {
+		// Arrange.
+		const mockTransformValue = createMockTransformValue();
+
+		// Act.
+		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+
+		// Open the first item
+		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( openButton );
+
+		// Click the Scale tab
+		const scaleTab = screen.getByText( 'Scale' );
+		fireEvent.click( scaleTab );
+
+		// Assert.
+		expect( screen.getByText( 'Scale X' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Scale Y' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Scale Z' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should switch to Rotate tab when clicked', () => {
+		// Arrange.
+		const mockTransformValue = createMockTransformValue();
+
+		// Act.
+		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+
+		// Open the first item
+		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( openButton );
+
+		// Click the Rotate tab
+		const rotateTab = screen.getByText( 'Rotate' );
+		fireEvent.click( rotateTab );
+
+		// Assert.
+		expect( screen.getByText( 'Rotate X' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Rotate Y' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Rotate Z' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should switch to Skew tab when clicked', () => {
+		// Arrange.
+		const mockTransformValue = createMockTransformValue();
+
+		// Act.
+		renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType } );
+
+		// Open the first item
+		const openButton = screen.getByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( openButton );
+
+		// Click the Skew tab
+		const skewTab = screen.getByText( 'Skew' );
+		fireEvent.click( skewTab );
+
+		// Assert.
+		expect( screen.getByText( 'Skew X' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Skew Y' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should add a new transform item when clicking the add button', () => {

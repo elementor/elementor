@@ -1,0 +1,1 @@
+.elementor .test-style-grow-only{flex:2;}.elementor .test-style-grow-shrink{flex:1 2;}.elementor .test-style-basis-only{flex:0 1 100px;}
