@@ -226,10 +226,10 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'border_color',
 			[
-				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'label' => esc_html__( 'Side Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-alert' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-alert' => 'border-inline-start-color: {{VALUE}};',
 				],
 			]
 		);
@@ -237,7 +237,7 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'border_left-width',
 			[
-				'label' => esc_html__( 'Left Border Width', 'elementor' ),
+				'label' => esc_html__( 'Side Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
@@ -249,7 +249,7 @@ class Widget_Alert extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-alert' => 'border-left-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-alert' => 'border-inline-start-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
