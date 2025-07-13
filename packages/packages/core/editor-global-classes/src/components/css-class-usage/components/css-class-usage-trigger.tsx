@@ -105,11 +105,8 @@ const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number
 
 const InfoAlertMessage = ( { children }: PropsWithChildren ) => (
 	<Infotip
-		content={
-			<InfoAlert sx={ { mt: 1 } }>
-				{ __( 'With your current role, you can use existing classes but can’t modify them.', 'elementor' ) }
-			</InfoAlert>
-		}
+		placement={ 'top' }
+		content={ <InfoAlert sx={ { mt: 1 } }>{ __( 'This class isn’t being used yet.', 'elementor' ) }</InfoAlert> }
 	>
 		{ children }
 	</Infotip>
