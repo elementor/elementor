@@ -8,7 +8,7 @@ import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-conte
 import { ControlFormLabel } from '../components/control-form-label';
 import { SectionContent } from '../components/section-content';
 import { createControl } from '../create-control';
-import { type Unit } from '../utils/size-control';
+import { type LengthUnit } from '../utils/size-control';
 import { ColorControl } from './color-control';
 import { SizeControl } from './size-control';
 
@@ -18,7 +18,7 @@ type StrokeProps = {
 	children: React.ReactNode;
 };
 
-const units: Unit[] = [ 'px', 'em', 'rem' ];
+const units: LengthUnit[] = [ 'px', 'em', 'rem' ];
 
 export const StrokeControl = createControl( () => {
 	const propContext = useBoundProp( strokePropTypeUtil );
