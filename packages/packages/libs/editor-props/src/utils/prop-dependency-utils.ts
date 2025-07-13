@@ -12,16 +12,11 @@ type ParsedTerm = DependencyTerm;
 type Relation = Dependency[ 'relation' ];
 
 export function isDependencyMet( dependency: Dependency | undefined, values: PropValue ): boolean {
-	if ( ! dependency ) {
+	if ( ! dependency?.terms.length ) {
 		return true;
 	}
 
 	const { relation, terms } = dependency;
-
-	if ( ! terms.length ) {
-		return true;
-	}
-
 	const method = getRelationMethod( relation );
 
 	return terms[ method ]( ( term: ParsedTerm | Dependency ) =>
