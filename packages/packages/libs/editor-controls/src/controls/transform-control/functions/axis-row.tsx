@@ -1,5 +1,6 @@
 import { type RefObject } from 'react';
 import * as React from 'react';
+import { type AngleUnit } from '@elementor/editor-controls';
 import { Grid } from '@elementor/ui';
 
 import { PropKeyProvider } from '../../../bound-prop-context';
@@ -12,9 +13,10 @@ type TransformAxisRowProps = {
 	bindValue: 'x' | 'y' | 'z';
 	startIcon: React.ReactNode;
 	anchorRef?: RefObject< HTMLDivElement | null >;
+	units?: AngleUnit[];
 };
 
-export const AxisRow = ( { label, bindValue, startIcon, anchorRef }: TransformAxisRowProps ) => {
+export const AxisRow = ( { label, bindValue, startIcon, anchorRef, units }: TransformAxisRowProps ) => {
 	return (
 		<Grid item xs={ 12 }>
 			<PopoverGridContainer ref={ anchorRef }>
@@ -23,7 +25,7 @@ export const AxisRow = ( { label, bindValue, startIcon, anchorRef }: TransformAx
 				</Grid>
 				<Grid item xs={ 6 }>
 					<PropKeyProvider bind={ bindValue }>
-						<SizeControl anchorRef={ anchorRef } startIcon={ startIcon } />
+						<SizeControl anchorRef={ anchorRef } startIcon={ startIcon } units={ units } variant="angle" />
 					</PropKeyProvider>
 				</Grid>
 			</PopoverGridContainer>
