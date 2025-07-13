@@ -64,6 +64,7 @@ export default function ImportContextProvider( props ) {
 			isUploading: data.importStatus === IMPORT_STATUS.UPLOADING,
 			isCustomizing: data.importStatus === IMPORT_STATUS.CUSTOMIZING,
 			isProcessing: data.importStatus === IMPORT_STATUS.IMPORTING,
+			isCompleted: data.importStatus === IMPORT_STATUS.COMPLETED,
 		} }>
 			{ props.children }
 		</ImportContext.Provider>
