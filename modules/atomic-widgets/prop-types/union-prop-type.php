@@ -125,6 +125,6 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function get_dependencies(): ?array {
-		return empty( $this->dependencies['terms'] ?? [] ) ? null : $this->dependencies;
+		return $this->dependencies;
 	}
 }

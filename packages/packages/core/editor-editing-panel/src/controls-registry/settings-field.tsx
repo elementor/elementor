@@ -9,7 +9,7 @@ import {
 	updateElementSettings,
 	useElementSettings,
 } from '@elementor/editor-elements';
-import { isPropDependencyMet, type PropKey, type Props, type PropType, type PropValue } from '@elementor/editor-props';
+import { isDependencyMet, type PropKey, type Props, type PropType, type PropValue } from '@elementor/editor-props';
 import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
@@ -62,7 +62,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		}
 	};
 
-	const isDisabled = ( prop: PropType ) => ! isPropDependencyMet( prop, elementSettingValues );
+	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

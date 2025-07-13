@@ -5,9 +5,9 @@ import { getStylesSchema } from '@elementor/editor-styles';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { useStylesInheritanceChain } from '../contexts/styles-inheritance-context';
-import { useStylesFields } from '../hooks/use-styles-fields';
+import { useStylesField } from '../hooks/use-styles-field';
 import { StylesInheritanceIndicator } from '../styles-inheritance/components/styles-inheritance-indicator';
-import { ConditionalField, getDependencies } from './conditional-field';
+import { ConditionalField } from './conditional-field';
 import { createTopLevelOjectType } from './create-top-level-object-type';
 
 export type StylesFieldProps = {
@@ -19,15 +19,12 @@ export type StylesFieldProps = {
 
 export const StylesField = ( { bind, placeholder, propDisplayName, children }: StylesFieldProps ) => {
 	const stylesSchema = getStylesSchema();
-	const depList = getDependencies( stylesSchema[ bind ] );
 
 	const isVersion331Active = isExperimentActive( 'e_v_3_31' );
 
 	const stylesInheritanceChain = useStylesInheritanceChain( [ bind ] );
 
-	const { values, setValues, canEdit } = useStylesFields( [ ...depList, bind ] );
-
-	const { [ bind ]: value } = values ?? {};
+	const { value, canEdit, ...fields } = useStylesField( bind, { history: { propDisplayName } } );
 
 	const propType = createTopLevelOjectType( { schema: stylesSchema } );
 
@@ -38,12 +35,7 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 	};
 
 	const setValue = ( newValue: Record< string, PropValue > ) => {
-		setValues(
-			{ [ bind ]: newValue[ bind ] },
-			{
-				history: { propDisplayName },
-			}
-		);
+		fields.setValue( newValue[ bind ] );
 	};
 
 	return (

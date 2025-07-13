@@ -1,5 +1,5 @@
 import { useBoundProp } from '@elementor/editor-controls';
-import { isDependency, isPropDependencyMet, type PropKey, type PropType } from '@elementor/editor-props';
+import { isDependency, isDependencyMet, type PropKey, type PropType } from '@elementor/editor-props';
 
 import { useStylesFields } from '../hooks/use-styles-fields';
 
@@ -12,7 +12,7 @@ export const ConditionalField: React.FC< {
 
 	const { values: depValues } = useStylesFields( depList );
 
-	const isHidden = ! isPropDependencyMet( propType, depValues );
+	const isHidden = ! isDependencyMet( propType?.dependencies, depValues );
 
 	return isHidden ? null : children;
 };

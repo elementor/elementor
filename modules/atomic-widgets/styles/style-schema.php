@@ -126,15 +126,11 @@ class Style_Schema {
 			'column-count' => Number_Prop_Type::make(),
 			'column-gap' => Size_Prop_Type::make()
 				->set_dependencies(
-					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+					Dependency_Manager::make()
 					->where( [
 						'operator' => 'gte',
 						'path' => [ 'column-count' ],
 						'value' => 1,
-					] )
-					->where( [
-						'operator' => 'exists',
-						'path' => [ 'column-count' ],
 					] )
 					->get()
 				),

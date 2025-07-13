@@ -1,6 +1,6 @@
 import {
 	extractValue,
-	isPropDependencyMet,
+	isDependencyMet,
 	type PropsSchema,
 	type PropType,
 	type TransformablePropValue,
@@ -81,7 +81,7 @@ export function updateValues(
 				return newValues;
 			}
 
-			if ( ! isPropDependencyMet( propType, combinedValues ) ) {
+			if ( ! isDependencyMet( propType?.dependencies, combinedValues ) ) {
 				return {
 					...newValues,
 					...updateValue( path, null, combinedValues ),

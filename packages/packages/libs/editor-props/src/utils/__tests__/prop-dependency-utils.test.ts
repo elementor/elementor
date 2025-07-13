@@ -1,5 +1,5 @@
-import { type Dependency, type DependencyTerm, type PropType, type PropValue } from '../../types';
-import { evaluateTerm, isPropDependencyMet } from '../prop-dependency-utils';
+import { type Dependency, type DependencyTerm, type PropValue } from '../../types';
+import { evaluateTerm, isDependencyMet } from '../prop-dependency-utils';
 
 type TestCase = DependencyTerm & {
 	description: string;
@@ -354,7 +354,7 @@ describe( 'prop-dependency-utils', () => {
 					terms: [],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, {} ) ).toBe( true );
+				expect( isDependencyMet( dependency, {} ) ).toBe( true );
 			} );
 
 			it( 'should return true when all terms are met (AND)', () => {
@@ -385,7 +385,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should return false when any term is not met (AND)', () => {
@@ -416,7 +416,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ) ).toBe( false );
 			} );
 
 			it( 'should return true when any term is met (OR)', () => {
@@ -446,7 +446,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should return false when no terms are met (OR)', () => {
@@ -475,7 +475,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ) ).toBe( false );
 			} );
 		} );
 
@@ -522,7 +522,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle nested OR dependencies', () => {
@@ -567,7 +567,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle mixed nested dependencies', () => {
@@ -612,7 +612,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 		} );
 
@@ -673,7 +673,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle complex conditional logic', () => {
@@ -728,7 +728,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 		} );
 
@@ -754,7 +754,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				} as unknown as Dependency;
 
-				expect( () => isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toThrow();
+				expect( () => isDependencyMet( dependency, values ) ).toThrow();
 			} );
 
 			it( 'should handle single term dependencies', () => {
@@ -780,7 +780,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle single term dependencies that fail', () => {
@@ -806,7 +806,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( isPropDependencyMet( { dependencies: dependency } as PropType, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ) ).toBe( false );
 			} );
 		} );
 	} );
