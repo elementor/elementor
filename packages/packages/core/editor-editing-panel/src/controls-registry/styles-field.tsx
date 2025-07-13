@@ -9,7 +9,7 @@ import { useStylesFields } from '../hooks/use-styles-fields';
 import { StylesInheritanceIndicator } from '../styles-inheritance/components/styles-inheritance-indicator';
 import { ConditionalField, getDependencies } from './conditional-field';
 import { createTopLevelOjectType } from './create-top-level-object-type';
-import { getDisableState } from './get-dependency-state';
+import { getDependencyState } from './get-dependency-state';
 
 export type StylesFieldProps = {
 	bind: PropKey;
@@ -52,7 +52,7 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 			return true;
 		}
 
-		return getDisableState( pt, depValues );
+		return getDependencyState( pt, depValues );
 	};
 
 	return (

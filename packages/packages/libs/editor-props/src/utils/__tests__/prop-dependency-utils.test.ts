@@ -350,7 +350,6 @@ describe( 'prop-dependency-utils', () => {
 		describe( 'simple dependencies', () => {
 			it( 'should return false when no terms are provided', () => {
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [],
 				};
@@ -371,7 +370,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -403,7 +401,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -434,7 +431,6 @@ describe( 'prop-dependency-utils', () => {
 					},
 				};
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
@@ -464,7 +460,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
@@ -502,7 +497,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -511,7 +505,6 @@ describe( 'prop-dependency-utils', () => {
 							value: 'active',
 						},
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -549,7 +542,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
@@ -558,7 +550,6 @@ describe( 'prop-dependency-utils', () => {
 							value: 'active',
 						},
 						{
-							effect: 'disable',
 							relation: 'or',
 							terms: [
 								{
@@ -596,7 +587,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -605,7 +595,6 @@ describe( 'prop-dependency-utils', () => {
 							value: null,
 						},
 						{
-							effect: 'disable',
 							relation: 'or',
 							terms: [
 								{
@@ -649,7 +638,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -658,7 +646,6 @@ describe( 'prop-dependency-utils', () => {
 							value: 'production',
 						},
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -667,7 +654,6 @@ describe( 'prop-dependency-utils', () => {
 									value: 2.0,
 								},
 								{
-									effect: 'disable',
 									relation: 'or',
 									terms: [
 										{
@@ -707,11 +693,9 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -727,7 +711,6 @@ describe( 'prop-dependency-utils', () => {
 							],
 						},
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -761,7 +744,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency = {
-					effect: 'disable',
 					relation: 'xor',
 					terms: [
 						{
@@ -788,7 +770,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -815,7 +796,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{

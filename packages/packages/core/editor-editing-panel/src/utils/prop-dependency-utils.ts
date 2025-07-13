@@ -1,5 +1,4 @@
 import {
-	type DependencyEffect,
 	extractValue,
 	type PropsSchema,
 	type PropType,
@@ -83,7 +82,7 @@ export function updateValues(
 				return newValues;
 			}
 
-			if ( isDependencyEffectActive( propType, combinedValues, 'disable' ) ) {
+			if ( isDependencyEffectActive( propType, combinedValues ) ) {
 				return {
 					...newValues,
 					...updateValue( path, null, combinedValues ),
@@ -157,20 +156,6 @@ function updateValue( path: string[], value: Value, values: Values ) {
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
 }
 
-export function isDependencyEffectActive(
-	propType: PropType,
-	elementValues: PropValue,
-	effect: DependencyEffect
-): boolean | undefined {
-	const dependencies = propType?.dependencies?.filter( ( dependency ) => effect === dependency.effect ) || [];
-
-	if ( ! dependencies.length ) {
-		return false;
-	}
-
-	if ( dependencies.length > 1 ) {
-		throw new Error( 'Multiple disabling dependencies are not supported.' );
-	}
-
-	return shouldApplyEffect( dependencies[ 0 ], elementValues );
+export function isDependencyEffectActive( propType: PropType, elementValues: PropValue ): boolean | undefined {
+	return propType.dependencies?.terms.length ? shouldApplyEffect( propType.dependencies, elementValues ) : false;
 }
