@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
-import { PopoverBody, PopoverHeader, PopoverMenuList } from '@elementor/editor-ui';
+import { PopoverBody, PopoverHeader, PopoverMenuList, type VirtualizedItem } from '@elementor/editor-ui';
 import {
 	CurrentLocationIcon,
 	ExternalLinkIcon,
@@ -10,17 +10,34 @@ import {
 	PopupTemplateIcon,
 	PostTypeIcon,
 } from '@elementor/icons';
-import { Box, Chip, Divider, Icon, IconButton, MenuList, Stack, styled } from '@elementor/ui';
+import { Box, Chip, Divider, Icon, IconButton, MenuList, Stack, styled, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../hooks';
 
-const iconMap: Record< string, React.ReactElement > = {
-	'wp-post': <PostTypeIcon fontSize={ 'inherit' } />,
-	'wp-page': <PageTypeIcon fontSize={ 'inherit' } />,
-	popup: <PopupTemplateIcon fontSize={ 'inherit' } />,
-	header: <HeaderTemplateIcon fontSize={ 'inherit' } />,
-	footer: <FooterTemplateIcon fontSize={ 'inherit' } />,
+type VirtualItem = VirtualizedItem< 'item', string > & { docType: keyof typeof iconMapper };
+
+const iconMapper: Record< string, { label: string; icon: React.ReactElement } > = {
+	'wp-post': {
+		label: __( 'Post', 'elementor' ),
+		icon: <PostTypeIcon fontSize={ 'inherit' } />,
+	},
+	'wp-page': {
+		label: __( 'Page', 'elementor' ),
+		icon: <PageTypeIcon fontSize={ 'inherit' } />,
+	},
+	popup: {
+		label: __( 'Popup', 'elementor' ),
+		icon: <PopupTemplateIcon fontSize={ 'inherit' } />,
+	},
+	header: {
+		label: __( 'Header', 'elementor' ),
+		icon: <HeaderTemplateIcon fontSize={ 'inherit' } />,
+	},
+	footer: {
+		label: __( 'Footer', 'elementor' ),
+		icon: <FooterTemplateIcon fontSize={ 'inherit' } />,
+	},
 };
 
 export const CssClassUsagePopover = ( {
@@ -33,13 +50,17 @@ export const CssClassUsagePopover = ( {
 	const { data: classUsage } = useCssClassUsageByID( cssClassID );
 	const onNavigate = useNavigateToDocument( { openNewTab: true } );
 
-	const items = classUsage?.content.map( ( { title, elements, pageId, type } ) => ( {
-		type: 'item' as const,
-		value: pageId,
-		label: title,
-		secondaryText: elements.length.toString(),
-		icon: iconMap[ type ],
-	} ) );
+	const items: VirtualItem[] =
+		classUsage?.content.map(
+			( { title, elements, pageId, type } ) =>
+				( {
+					type: 'item',
+					value: pageId,
+					label: title,
+					secondaryText: elements.length.toString(),
+					docType: type,
+				} ) as VirtualItem
+		) ?? [];
 
 	return (
 		<>
@@ -73,7 +94,14 @@ export const CssClassUsagePopover = ( {
 									gap: 1.5,
 								} }
 							>
-								<Icon fontSize={ 'small' }>{ item.icon }</Icon>
+								<Tooltip
+									title={ iconMapper[ item.docType as keyof typeof iconMapper ].label }
+									placement="top"
+								>
+									<Icon fontSize={ 'small' }>
+										{ iconMapper[ item.docType as keyof typeof iconMapper ].icon }
+									</Icon>
+								</Tooltip>
 								{ item.label }
 							</Box>
 							<Stack gap={ 0.5 } direction={ 'row' } alignItems={ 'center' }>
