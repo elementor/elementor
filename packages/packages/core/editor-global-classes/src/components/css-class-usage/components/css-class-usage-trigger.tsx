@@ -66,7 +66,7 @@ export const CssClassUsageTrigger = ( {
 					} }
 					transformOrigin={ {
 						vertical: 'top',
-						horizontal: -20,
+						horizontal: -5,
 					} }
 					{ ...bindPopover( cssClassUsagePopover ) }
 					onClose={ () => {
