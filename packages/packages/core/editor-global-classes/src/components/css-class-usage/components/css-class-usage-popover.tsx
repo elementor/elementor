@@ -1,16 +1,26 @@
 import * as React from 'react';
+import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
 import { PopoverBody, PopoverHeader, PopoverMenuList } from '@elementor/editor-ui';
-import { CurrentLocationIcon, PageTypeIcon, PopupTemplateIcon, PostTypeIcon } from '@elementor/icons';
-import { Box, Chip, Divider, Icon, MenuList, Stack, styled } from '@elementor/ui';
+import {
+	CurrentLocationIcon,
+	ExternalLinkIcon,
+	FooterTemplateIcon,
+	HeaderTemplateIcon,
+	PageTypeIcon,
+	PopupTemplateIcon,
+	PostTypeIcon,
+} from '@elementor/icons';
+import { Box, Chip, Divider, Icon, IconButton, MenuList, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../hooks';
 
-const iconMap = {
+const iconMap: Record< string, React.ReactElement > = {
 	'wp-post': <PostTypeIcon fontSize={ 'inherit' } />,
 	'wp-page': <PageTypeIcon fontSize={ 'inherit' } />,
 	popup: <PopupTemplateIcon fontSize={ 'inherit' } />,
-	header: <PopupTemplateIcon fontSize={ 'inherit' } />,
+	header: <HeaderTemplateIcon fontSize={ 'inherit' } />,
+	footer: <FooterTemplateIcon fontSize={ 'inherit' } />,
 };
 
 export const CssClassUsagePopover = ( {
@@ -21,6 +31,8 @@ export const CssClassUsagePopover = ( {
 	cssClassID: string;
 } ) => {
 	const { data: classUsage } = useCssClassUsageByID( cssClassID );
+	const onNavigate = useNavigateToDocument( { openNewTab: true } );
+
 	const items = classUsage?.content.map( ( { title, elements, pageId, type } ) => ( {
 		type: 'item' as const,
 		value: pageId,
@@ -64,7 +76,12 @@ export const CssClassUsagePopover = ( {
 								<Icon fontSize={ 'small' }>{ item.icon }</Icon>
 								{ item.label }
 							</Box>
-							<Chip size={ 'tiny' } label={ item.secondaryText } />
+							<Stack gap={ 0.5 } direction={ 'row' } alignItems={ 'center' }>
+								<IconButton size={ 'tiny' } onClick={ () => onNavigate( +item.value ) }>
+									<ExternalLinkIcon fontSize={ 'tiny' } />
+								</IconButton>
+								<Chip size={ 'tiny' } label={ item.secondaryText } />
+							</Stack>
 						</>
 					) }
 				/>
