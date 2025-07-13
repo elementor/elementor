@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { type DropShadowFilterPropValue, type PropTypeUtil } from '@elementor/editor-props';
+import { dropShadowFilterPropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import { ControlFormLabel } from '../../components/control-form-label';
 import { PopoverGridContainer } from '../../components/popover-grid-container';
-import { type Unit } from '../../utils/size-control';
+import { type LengthUnit } from '../../utils/size-control';
 import { ColorControl } from '../color-control';
 import { SizeControl } from '../size-control';
 
@@ -35,15 +35,13 @@ const items = [
 ];
 
 export const DropShadowItemContent = ( {
-	propType,
 	units,
 	anchorEl,
 }: {
-	propType: PropTypeUtil< 'drop-shadow', DropShadowFilterPropValue[ 'value' ] >;
-	units: Unit[];
+	units: LengthUnit[];
 	anchorEl?: HTMLElement | null;
 } ) => {
-	const context = useBoundProp( propType );
+	const context = useBoundProp( dropShadowFilterPropTypeUtil );
 	const rowRefs = [ useRef< HTMLDivElement >( null ), useRef< HTMLDivElement >( null ) ];
 
 	return (
