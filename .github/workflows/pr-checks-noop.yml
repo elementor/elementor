@@ -9,6 +9,7 @@ on:
       - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+
 jobs:
   build-plugin:
     name: Build plugin
