@@ -6,9 +6,21 @@ export const sizePropTypeUtil = createPropUtils(
 	'size',
 	z
 		.strictObject( {
-			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh', 'deg', 'rad', 'grad', 'turn' ] ),
+			unit: z.enum( [ 'px', 'em', 'rem', '%', 'vw', 'vh' ] ),
 			size: z.number(),
 		} )
+		.or(
+			z.strictObject( {
+				unit: z.enum( [ 'deg', 'rad', 'grad', 'turn' ] ),
+				size: z.number(),
+			} )
+		)
+		.or(
+			z.strictObject( {
+				unit: z.enum( [ 's', 'ms' ] ),
+				size: z.number(),
+			} )
+		)
 		.or(
 			z.strictObject( {
 				unit: z.literal( 'auto' ),
