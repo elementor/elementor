@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
 import {
-	cssFunctionPropUtil,
+	cssFilterFunctionPropUtil,
 	type FilterItemPropValue,
 	filterPropTypeUtil,
 	type PropKey,
@@ -17,11 +17,11 @@ import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
 import { type CollectionPropUtil, Repeater } from '../components/repeater';
 import { createControl } from '../create-control';
-import { type LengthUnit, lengthUnits, Unit } from '../utils/size-control';
+import { type LengthUnit, lengthUnits, type Unit } from '../utils/size-control';
 import { DropShadowItemContent } from './filter-control/drop-shadow-item-content';
 import { DropShadowItemLabel } from './filter-control/drop-shadow-item-label';
-import { SizeControl, type SizeControlProps } from './size-control';
 import { SelectControl } from './select-control';
+import { SizeControl, type SizeControlProps } from './size-control';
 
 type FilterType = FilterItemPropValue[ 'value' ][ 'func' ];
 
@@ -31,7 +31,6 @@ type FilterItemConfig = {
 	defaultValue: FilterItemPropValue;
 	name: string;
 	valueName: string;
-	// propType: PropTypeUtil< FilterValue, FilterValue >;
 	units?: Exclude< SizePropValue[ 'value' ][ 'unit' ], 'custom' | 'auto' >[];
 	sizeVariant?: SizeControlProps[ 'variant' ];
 };
@@ -39,7 +38,7 @@ type FilterItemConfig = {
 const filterConfig: Record< string, FilterItemConfig > = {
 	blur: {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'blur' },
 				args: { $$type: 'size', value: { size: 0, unit: 'px' } },
@@ -51,7 +50,7 @@ const filterConfig: Record< string, FilterItemConfig > = {
 	},
 	brightness: {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'brightness' },
 				args: { $$type: 'size', value: { size: 100, unit: '%' } },
@@ -63,7 +62,7 @@ const filterConfig: Record< string, FilterItemConfig > = {
 	},
 	contrast: {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'contrast' },
 				args: { $$type: 'size', value: { size: 100, unit: '%' } },
@@ -75,7 +74,7 @@ const filterConfig: Record< string, FilterItemConfig > = {
 	},
 	'hue-rotate': {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'hue-rotate' },
 				args: { $$type: 'size', value: { size: 0, unit: 'deg' } },
@@ -87,7 +86,7 @@ const filterConfig: Record< string, FilterItemConfig > = {
 	},
 	saturate: {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'saturate' },
 				args: { $$type: 'size', value: { size: 100, unit: '%' } },
@@ -95,12 +94,11 @@ const filterConfig: Record< string, FilterItemConfig > = {
 		},
 		name: __( 'Saturate', 'elementor' ),
 		valueName: __( 'Amount', 'elementor' ),
-		// propType: saturateFilterPropTypeUtil,
 		units: [ '%' ],
 	},
 	grayscale: {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'grayscale' },
 				args: { $$type: 'size', value: { size: 0, unit: '%' } },
@@ -112,7 +110,7 @@ const filterConfig: Record< string, FilterItemConfig > = {
 	},
 	invert: {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'invert' },
 				args: { $$type: 'size', value: { size: 0, unit: '%' } },
@@ -124,7 +122,7 @@ const filterConfig: Record< string, FilterItemConfig > = {
 	},
 	sepia: {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'sepia' },
 				args: { $$type: 'size', value: { size: 0, unit: '%' } },
@@ -136,7 +134,7 @@ const filterConfig: Record< string, FilterItemConfig > = {
 	},
 	'drop-shadow': {
 		defaultValue: {
-			$$type: 'css-func',
+			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'drop-shadow' },
 				args: {
@@ -202,7 +200,7 @@ const ItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
 const SingleSizeItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
 	const { func, args } = value.value;
 	const defaultUnit =
-		( filterConfig[ func.value ?? '' ].defaultValue.value.args as SizePropValue ).value.unit ?? defaultUnits[ 0 ];
+		( filterConfig[ func.value ?? '' ].defaultValue.value.args as SizePropValue ).value.unit ?? lengthUnits[ 0 ];
 	const { unit, size } = ( args as SizePropValue ).value ?? { unit: defaultUnit, size: 0 };
 
 	const label = (
@@ -240,7 +238,7 @@ const ItemContent = ( {
 };
 
 const PropContent = ( { item, anchorEl }: { item: FilterItemPropValue; anchorEl?: HTMLElement | null } ) => {
-	const propContext = useBoundProp( cssFunctionPropUtil );
+	const propContext = useBoundProp( cssFilterFunctionPropUtil );
 	const [ value, setValue ] = useState( item.value );
 	const handleChange = ( val: string | null ) => {
 		const newValue = { ...filterConfig[ val ?? '' ].defaultValue.value };

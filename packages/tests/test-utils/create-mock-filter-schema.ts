@@ -2,9 +2,9 @@ import { type TransformablePropType } from '@elementor/editor-props';
 
 export function createMockSingleSizeFilterPropType() {
 	return {
-		'css-func': {
+		'css-filter-func': {
 			kind: 'object',
-			key: 'css-func',
+			key: 'css-filter-func',
 			default: null,
 			meta: {},
 			settings: {},

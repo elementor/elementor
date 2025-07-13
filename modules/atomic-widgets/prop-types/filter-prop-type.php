@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Css_Func_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Css_Filter_Func_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,6 +17,6 @@ class Filter_Prop_Type extends Array_Prop_Type {
 	}
 
 	protected function define_item_type(): Prop_Type {
-		return Css_Func_Prop_Type::make();
+		return Css_Filter_Func_Prop_Type::make();
 	}
 }

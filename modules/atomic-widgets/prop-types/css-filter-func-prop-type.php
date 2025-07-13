@@ -11,10 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Css_Func_Prop_Type extends Object_Prop_Type {
+class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 
 	public static function get_key(): string {
-		return 'css-func';
+		return 'css-filter-func';
 	}
 
 	protected function validate_value( $value ): bool {

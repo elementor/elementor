@@ -1,6 +1,11 @@
 import * as React from 'react';
 import { createMockPropType, createMockSingleSizeFilterPropType, renderControl } from 'test-utils';
-import { cssFunctionPropUtil, filterPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import {
+	cssFilterFunctionPropUtil,
+	filterPropTypeUtil,
+	sizePropTypeUtil,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { FilterRepeaterControl } from '../filter-repeater-control';
@@ -23,35 +28,35 @@ const propType = createMockPropType( {
 } );
 
 const mockFilter = filterPropTypeUtil.create( [
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'blur' ),
 		args: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
 	} ),
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'brightness' ),
 		args: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
 	} ),
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'contrast' ),
 		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
 	} ),
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'grayscale' ),
 		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
 	} ),
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'invert' ),
 		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
 	} ),
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'sepia' ),
 		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
 	} ),
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'saturate' ),
 		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
 	} ),
-	cssFunctionPropUtil.create( {
+	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'hue-rotate' ),
 		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
 	} ),

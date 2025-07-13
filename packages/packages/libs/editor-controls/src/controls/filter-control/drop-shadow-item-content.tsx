@@ -34,7 +34,13 @@ const items = [
 	},
 ];
 
-export const DropShadowItemContent = ( { units, anchorEl }: { units: LengthUnit[]; anchorEl?: HTMLElement | null } ) => {
+export const DropShadowItemContent = ( {
+	units,
+	anchorEl,
+}: {
+	units: LengthUnit[];
+	anchorEl?: HTMLElement | null;
+} ) => {
 	const context = useBoundProp( dropShadowFilterPropTypeUtil );
 	const rowRefs = [ useRef< HTMLDivElement >( null ), useRef< HTMLDivElement >( null ) ];
 
