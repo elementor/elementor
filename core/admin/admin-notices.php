@@ -452,7 +452,7 @@ class Admin_Notices extends Module {
 			}
 		}
 
-		return 'form';
+		return esc_html__( 'form', 'elementor' );
 	}
 
 	private function notice_send_app_promotion() {
