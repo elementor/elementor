@@ -36,8 +36,12 @@ class Document_Usage {
 	public function analyze(): void {
 		$page_id       = $this->document->get_main_id();
 		$page_title    = get_the_title( $page_id );
-		$document_type = $this->document->get_type() ?: ( get_post_type( $page_id ) ?? 'unknown' );
 		$class_ids     = $this->get_all_global_class_ids();
+
+		$document_type = $this->document->get_type();
+		if ( empty( $document_type ) ) {
+			$document_type = get_post_type( $page_id ) ?? 'unknown';
+		}
 
 		if ( empty( $this->elements_data ) ) {
 			return;
