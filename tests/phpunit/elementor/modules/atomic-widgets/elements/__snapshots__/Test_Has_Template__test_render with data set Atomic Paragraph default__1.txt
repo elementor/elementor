@@ -1,4 +1,4 @@
-						        <p class="e-paragraph-base"  >
-                            Type your paragraph here
-                    </p>
+						<p class="e-paragraph-base"  >
+										Type your paragraph here
+						</p>
 		
