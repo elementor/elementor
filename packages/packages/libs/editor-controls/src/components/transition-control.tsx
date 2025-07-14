@@ -1,35 +1,32 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
-import { TextIcon } from '@elementor/icons';
+import { SettingsIcon } from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { enqueueFont } from '../controls/font-family-control/enqueue-font';
-import { type FontCategory } from '../controls/font-family-control/font-family-control';
-import { type FontListItem, useFilteredFontFamilies } from '../hooks/use-filtered-font-families';
+import { type TransitionListItem, useFilteredTransitionProperties } from '../hooks/use-filtered-transition-properties';
+import { type TransitionCategory, transitionProperties } from './transition-properties-data';
 
 const SIZE = 'tiny';
 
-type FontFamilySelectorProps = {
-	fontFamilies: FontCategory[];
-	fontFamily: string | null;
-	onFontFamilyChange: ( fontFamily: string ) => void;
+type TransitionSelectorProps = {
+	selectedProperty: string | null;
+	onPropertyChange: ( property: string ) => void;
 	onClose: () => void;
 	sectionWidth: number;
 };
 
-export const FontFamilySelector = ( {
-	fontFamilies,
-	fontFamily,
-	onFontFamilyChange,
+export const TransitionSelector = ( {
+	selectedProperty,
+	onPropertyChange,
 	onClose,
 	sectionWidth,
-}: FontFamilySelectorProps ) => {
+}: TransitionSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
-	const filteredFontFamilies = useFilteredFontFamilies( fontFamilies, searchValue );
+	const filteredProperties = useFilteredTransitionProperties( transitionProperties, searchValue );
 
 	const handleSearch = ( value: string ) => {
 		setSearchValue( value );
@@ -43,25 +40,25 @@ export const FontFamilySelector = ( {
 	return (
 		<PopoverBody width={ sectionWidth }>
 			<PopoverHeader
-				title={ __( 'Font family', 'elementor' ) }
+				title={ __( 'Transition Properties', 'elementor' ) }
 				onClose={ handleClose }
-				icon={ <TextIcon fontSize={ SIZE } /> }
+				icon={ <SettingsIcon fontSize={ SIZE } /> }
 			/>
 
 			<PopoverSearch
 				value={ searchValue }
 				onSearch={ handleSearch }
-				placeholder={ __( 'Search', 'elementor' ) }
+				placeholder={ __( 'Search properties', 'elementor' ) }
 			/>
 
 			<Divider />
 
-			{ filteredFontFamilies.length > 0 ? (
-				<FontList
-					fontListItems={ filteredFontFamilies }
-					setFontFamily={ onFontFamilyChange }
+			{ filteredProperties.length > 0 ? (
+				<TransitionPropertyList
+					items={ filteredProperties }
+					setProperty={ onPropertyChange }
 					handleClose={ handleClose }
-					fontFamily={ fontFamily }
+					selectedProperty={ selectedProperty }
 				/>
 			) : (
 				<Stack
@@ -72,10 +69,10 @@ export const FontFamilySelector = ( {
 					gap={ 1.5 }
 					overflow={ 'hidden' }
 				>
-					<TextIcon fontSize="large" />
+					<SettingsIcon fontSize="large" />
 					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
 						<Typography align="center" variant="subtitle2" color="text.secondary">
-							{ __( 'Sorry, nothing matched', 'elementor' ) }
+							{ __( 'No properties found', 'elementor' ) }
 						</Typography>
 						<Typography
 							variant="subtitle2"
@@ -90,7 +87,7 @@ export const FontFamilySelector = ( {
 							<span style={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }>
 								{ searchValue }
 							</span>
-							<span>&rdquo;.</span>
+							<span>&rdquo;</span>
 						</Typography>
 					</Box>
 					<Typography
@@ -99,7 +96,7 @@ export const FontFamilySelector = ( {
 						color="text.secondary"
 						sx={ { display: 'flex', flexDirection: 'column' } }
 					>
-						{ __( 'Try something else.', 'elementor' ) }
+						{ __( 'Try a different search term.', 'elementor' ) }
 						<Link
 							color="secondary"
 							variant="caption"
@@ -115,34 +112,43 @@ export const FontFamilySelector = ( {
 	);
 };
 
-type FontListProps = {
-	fontListItems: FontListItem[];
-	setFontFamily: ( fontFamily: string ) => void;
+type TransitionPropertyListProps = {
+	items: TransitionListItem[];
+	setProperty: ( property: string ) => void;
 	handleClose: () => void;
-	fontFamily: string | null;
+	selectedProperty: string | null;
 };
 
-const FontList = ( { fontListItems, setFontFamily, handleClose, fontFamily }: FontListProps ) => {
-	const selectedItem = fontListItems.find( ( item ) => item.value === fontFamily );
+const TransitionPropertyList = ( {
+	items,
+	setProperty,
+	handleClose,
+	selectedProperty,
+}: TransitionPropertyListProps ) => {
+	const selectedItem = items.find( ( item ) => item.value === selectedProperty && item.type === 'property' );
 
 	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
-		getVirtualIndexes().forEach( ( index ) => {
-			const item = fontListItems[ index ];
-			if ( item && item.type === 'font' ) {
-				enqueueFont( item.value );
-			}
-		} );
+		// No need to enqueue fonts for transition properties
+		// This is just for consistency with the existing API
 	}, 100 );
 
 	return (
 		<PopoverMenuList
-			items={ fontListItems }
+			items={ items }
 			selectedValue={ selectedItem?.value }
 			onChange={ debouncedVirtualizeChange }
-			onSelect={ setFontFamily }
+			onSelect={ ( value ) => {
+				const item = items.find( ( i ) => i.value === value );
+				if ( item && item.type === 'property' ) {
+					setProperty( value );
+				}
+			} }
 			onClose={ handleClose }
-			itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
-			data-testid="font-list"
+			itemStyle={ ( item ) => ( {
+				fontWeight: item.type === 'category' ? 'bold' : 'normal',
+				color: item.type === 'category' ? 'text.primary' : 'text.secondary',
+			} ) }
+			data-testid="transition-property-list"
 		/>
 	);
 };
