@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Version Compatibility Adapter
- * 
+ *
  * Handles conversion from manifest format v2.0 to v2.1
  * Main change: site-settings changed from array of tab keys to object with boolean values
  */
@@ -18,7 +18,7 @@ class Customization_Adapter extends Base_Adapter {
 
 	/**
 	 * Check if compatibility is needed based on manifest version
-	 * 
+	 *
 	 * @param array $manifest_data
 	 * @param array $meta
 	 * @return bool
@@ -31,7 +31,7 @@ class Customization_Adapter extends Base_Adapter {
 
 	/**
 	 * Adapt the manifest from old format to new format
-	 * 
+	 *
 	 * @param array $manifest_data
 	 * @return array
 	 */
@@ -40,9 +40,9 @@ class Customization_Adapter extends Base_Adapter {
 		if ( isset( $manifest_data['site-settings'] ) && is_array( $manifest_data['site-settings'] ) ) {
 			// Old format: array of tab keys
 			// New format: object with boolean values for each setting type
-			
+
 			$old_site_settings = $manifest_data['site-settings'];
-			
+
 			// Initialize new format with all settings as false
 			$new_site_settings = [
 				'theme' => false,
@@ -52,7 +52,7 @@ class Customization_Adapter extends Base_Adapter {
 				'generalSettings' => false,
 				'experiments' => false,
 			];
-			
+
 			// Map old tab keys to new setting types
 			$tab_mapping = [
 				'settings-global-colors' => 'globalColors',
@@ -60,7 +60,7 @@ class Customization_Adapter extends Base_Adapter {
 				'theme-style-typography' => 'themeStyleSettings',
 				'settings-general' => 'generalSettings',
 			];
-			
+
 			// If we have tab keys, assume all were exported (true)
 			if ( ! empty( $old_site_settings ) ) {
 				// In the old format, if site-settings was included, all settings were exported
@@ -73,13 +73,13 @@ class Customization_Adapter extends Base_Adapter {
 					'experiments' => true,
 				];
 			}
-			
+
 			$manifest_data['site-settings'] = $new_site_settings;
 		}
-		
+
 		// Update version to current
 		$manifest_data['version'] = Module::FORMAT_VERSION;
-		
+
 		return $manifest_data;
 	}
-} 
+}

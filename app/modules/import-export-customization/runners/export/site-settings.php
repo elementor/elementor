@@ -83,7 +83,7 @@ class Site_Settings extends Export_Runner_Base {
 			}
 		}
 
-		if( ! $customization['globalColors'] ) {
+		if ( ! $customization['globalColors'] ) {
 			$kit_data = $this->remove_global_colors( $kit_data );
 		}
 
@@ -164,7 +164,7 @@ class Site_Settings extends Export_Runner_Base {
 	}
 
 	private function remove_global_colors( $kit_data ) {
-		$color_keys = ['system_colors', 'custom_colors'];
+		$color_keys = [ 'system_colors', 'custom_colors' ];
 
 		foreach ( $kit_data['settings'] as $key => $value ) {
 			if ( ! in_array( $key, $color_keys ) ) {
@@ -176,7 +176,7 @@ class Site_Settings extends Export_Runner_Base {
 	}
 
 	private function remove_global_fonts( $kit_data ) {
-		$typography_keys = ['system_typography', 'custom_typography', 'default_generic_fonts'];
+		$typography_keys = [ 'system_typography', 'custom_typography', 'default_generic_fonts' ];
 
 		foreach ( $kit_data['settings'] as $key => $value ) {
 			if ( ! in_array( $key, $typography_keys ) ) {
@@ -193,7 +193,7 @@ class Site_Settings extends Export_Runner_Base {
 			'/^h[1-6]_/',
 			'/^button_/',
 			'/^link_/',
-			'/^form_field_/'
+			'/^form_field_/',
 		];
 
 		foreach ( $kit_data['settings'] as $key => $value ) {
@@ -221,7 +221,7 @@ class Site_Settings extends Export_Runner_Base {
 			'viewport_md',
 			'viewport_lg',
 			'page_title_selector',
-			'activeItemIndex'
+			'activeItemIndex',
 		];
 
 		foreach ( $kit_data['settings'] as $key => $value ) {

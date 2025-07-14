@@ -106,19 +106,19 @@ class Export extends Base_Route {
 				'default' => null,
 				'properties' => [
 					'settings' => [
-						'type' => ['object', 'null'],
+						'type' => [ 'object', 'null' ],
 						'description' => 'Site settings customization',
 					],
 					'templates' => [
-						'type' => ['object', 'null'],
+						'type' => [ 'object', 'null' ],
 						'description' => 'Templates customization',
 					],
 					'content' => [
-						'type' => ['object', 'null'],
+						'type' => [ 'object', 'null' ],
 						'description' => 'Content customization',
 					],
 					'plugins' => [
-						'type' => ['object', 'null'],
+						'type' => [ 'object', 'null' ],
 						'description' => 'Plugins customization',
 					],
 				],
