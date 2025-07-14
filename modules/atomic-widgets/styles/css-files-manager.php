@@ -8,24 +8,43 @@ class CSS_Files_Manager {
 	// Read and write permissions for the owner
 	const PERMISSIONS = 0644;
 
-	public function get( string $handle, callable $get_css ): Style_File {
-		// TODO: Check if the file is cached and return it if so.
+	public function get( string $handle, string $media, callable $get_css, bool $is_valid_cache ): ?Style_File {
+		$filesystem = $this->get_filesystem();
+		$path = $this->get_path( $handle );
+
+		if ( $is_valid_cache ) {
+			if ( ! $filesystem->exists( $path ) ) {
+				return null;
+			}
+
+			// Return the existing file
+			return Style_File::create(
+				$this->sanitize_handle( $handle ),
+				$this->get_filesystem_path( $this->get_path( $handle ) ),
+				$this->get_url( $handle ),
+				$media,
+			);
+		}
+
 		$css = $get_css();
 
-		$path = $this->get_path( $handle );
+		if ( empty( $css ) ) {
+			return null;
+		}
+
 		$filesystem_path = $this->get_filesystem_path( $path );
 
-		$filesystem = $this->get_filesystem();
-		$is_created = $filesystem->put_contents( $filesystem_path, $css['content'], self::PERMISSIONS );
+		$is_created = $filesystem->put_contents( $filesystem_path, $css, self::PERMISSIONS );
 
 		if ( false === $is_created ) {
-			throw new \Exception( 'Could not write the file' );
+			return null;
 		}
 
 		return Style_File::create(
 			$this->sanitize_handle( $handle ),
 			$filesystem_path,
-			$this->get_url( $handle )
+			$this->get_url( $handle ),
+			$media
 		);
 	}
 
