@@ -12,7 +12,7 @@ import { Box, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlLabel } from '../components/control-label';
+import { ControlFormLabel } from '../components/control-form-label';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
 import { type CollectionPropUtil, Repeater } from '../components/repeater';
@@ -249,7 +249,7 @@ const PropContent = ( { item, anchorEl }: { item: FilterItemPropValue; anchorEl?
 			<PopoverContent p={ 1.5 }>
 				<PopoverGridContainer>
 					<Grid item xs={ 6 }>
-						<ControlLabel>{ __( 'Filter', 'elementor' ) }</ControlLabel>
+						<ControlFormLabel>{ __( 'Filter', 'elementor' ) }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
 						<PropKeyProvider bind="func">
@@ -290,7 +290,7 @@ const SingleSizeItemContent = ( { filterType }: { filterType: string } ) => {
 	return (
 		<PopoverGridContainer ref={ rowRef }>
 			<Grid item xs={ 6 }>
-				<ControlLabel>{ valueName }</ControlLabel>
+				<ControlFormLabel>{ valueName }</ControlFormLabel>
 			</Grid>
 			<Grid item xs={ 6 }>
 				<SizeControl anchorRef={ rowRef } units={ units as LengthUnit[] } defaultUnit={ defaultUnit as Unit } />
