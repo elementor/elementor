@@ -10,10 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Mock_Prop_Type implements Prop_Type {
-	private $meta;
+	private ?array $dependencies = null;
 
-	public function __construct( array $meta = [] ) {
-		$this->meta = $meta;
+	public static function make( ?Prop_Type $item_type = null ) {
+		return new static();
 	}
 
 	public function get_type(): string {
@@ -37,11 +37,11 @@ class Mock_Prop_Type implements Prop_Type {
 	}
 
 	public function get_meta(): array {
-		return $this->meta;
+		return [];
 	}
 
 	public function get_meta_item( string $key, $default = null ) {
-		return $this->meta[ $key ] ?? $default;
+		return null;
 	}
 
 	public function get_settings(): array {
@@ -52,8 +52,14 @@ class Mock_Prop_Type implements Prop_Type {
 		return $default;
 	}
 
-	public function dependencies( Dependency_Manager $manager ): self {
+	public function set_dependencies( ?array $dependencies ): self {
+		$this->dependencies = empty( $dependencies ) ? null : $dependencies;
+
 		return $this;
+	}
+
+	public function get_dependencies(): ?array {
+		return $this->dependencies;
 	}
 
 	#[\ReturnTypeWillChange]
