@@ -1,16 +1,22 @@
 import * as React from 'react';
 import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
-import { PopoverBody, PopoverHeader, PopoverMenuList, type VirtualizedItem } from '@elementor/editor-ui';
+import {
+	EllipsisWithTooltip,
+	PopoverBody,
+	PopoverHeader,
+	PopoverMenuList,
+	type VirtualizedItem,
+} from '@elementor/editor-ui';
 import {
 	CurrentLocationIcon,
 	ExternalLinkIcon,
 	FooterTemplateIcon,
 	HeaderTemplateIcon,
-	PageTypeIcon,
+	PagesIcon,
 	PopupTemplateIcon,
 	PostTypeIcon,
 } from '@elementor/icons';
-import { Box, Chip, Divider, Icon, IconButton, MenuList, Stack, styled, Tooltip } from '@elementor/ui';
+import { Box, Button, Chip, Divider, Icon, MenuList, Stack, styled, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../hooks';
@@ -25,7 +31,7 @@ const iconMapper: Record< string, { label: string; icon: React.ReactElement } > 
 	},
 	[ ContentType.Page ]: {
 		label: __( 'Page', 'elementor' ),
-		icon: <PageTypeIcon fontSize={ 'inherit' } />,
+		icon: <PagesIcon fontSize={ 'inherit' } />,
 	},
 	[ ContentType.Popup ]: {
 		label: __( 'Popup', 'elementor' ),
@@ -85,17 +91,13 @@ export const CssClassUsagePopover = ( {
 					onClose={ () => {} }
 					menuListTemplate={ StyledCssClassUsageItem }
 					menuItemContentTemplate={ ( item ) => (
-						<>
-							<Box
-								onClick={ () => onNavigate( +item.value ) }
-								sx={ {
-									flex: 1,
-									minWidth: 0,
-									display: 'flex',
-									alignItems: 'center',
-									gap: 1.5,
-								} }
-							>
+						<Stack
+							direction={ 'row' }
+							flex={ 1 }
+							justifyContent={ 'space-between' }
+							onClick={ () => onNavigate( +item.value ) }
+						>
+							<Stack alignItems={ 'center' } direction={ 'row' } gap={ 0.5 }>
 								<Tooltip
 									title={ iconMapper[ item.docType as keyof typeof ContentType ].label }
 									placement="top"
@@ -104,15 +106,22 @@ export const CssClassUsagePopover = ( {
 										{ iconMapper[ item.docType as keyof typeof ContentType ].icon }
 									</Icon>
 								</Tooltip>
-								{ item.label }
-							</Box>
-							<Stack gap={ 0.5 } direction={ 'row' } alignItems={ 'center' }>
-								<Tooltip placement={ 'top' } title={ __( 'Open in a new tab', 'elementor' ) }>
-									<ExternalLinkIcon fontSize={ 'tiny' } />
-								</Tooltip>
-								<Chip size={ 'tiny' } label={ item.secondaryText } />
+								<EllipsisWithTooltip
+									title={ item.label }
+									as={ Typography }
+									variant="caption"
+									maxWidth={ '173px' }
+								/>
+								<ExternalLinkIcon fontSize={ 'tiny' } className={ 'hover-only-icon' } />
 							</Stack>
-						</>
+							<Chip
+								sx={ {
+									ml: 'auto',
+								} }
+								size={ 'tiny' }
+								label={ item.secondaryText }
+							/>
+						</Stack>
 					) }
 				/>
 			</PopoverBody>
@@ -122,6 +131,7 @@ export const CssClassUsagePopover = ( {
 
 const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 	'& > li': {
+		cursor: 'pointer',
 		height: 32,
 		width: '100%',
 		display: 'flex',
@@ -136,8 +146,14 @@ const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 		top: 0,
 		left: 0,
 		opacity: 1,
-		'&:hover, &:focus': {
+		'.hover-only-icon': {
+			opacity: 0,
+		},
+		'&:hover': {
 			backgroundColor: theme.palette.action.hover,
+			'.hover-only-icon': {
+				opacity: 1,
+			},
 		},
 	},
 	width: '100%',
