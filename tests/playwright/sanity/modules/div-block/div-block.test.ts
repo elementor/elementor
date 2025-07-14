@@ -29,10 +29,6 @@ test.describe( 'Div Block tests @div-block', () => {
 		expect( true ).toEqual( false );
 	} );
 
-	test( 'fail', async () => {
-		expect( true ).toEqual( false );
-	} );
-
 	test( 'Sort items in a Div Block using DnD', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
