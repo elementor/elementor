@@ -63,7 +63,7 @@ export const TextFieldInnerSelection = forwardRef(
 				onKeyUp={ shouldBlockInput ? undefined : onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
-				placeholder={ placeholder ?? boundPropPlaceholder?.size }
+				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ inputProps }
 			/>
 		);

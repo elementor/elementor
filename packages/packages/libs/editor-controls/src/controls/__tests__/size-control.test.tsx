@@ -583,7 +583,6 @@ describe( 'SizeControl', () => {
 				setValue,
 				value: mockSizeProp(),
 				bind: 'select',
-				disabled: true,
 				propType,
 				placeholder: {
 					$$type: 'size',
