@@ -54,7 +54,7 @@ export default function ImportKit() {
 			);
 		}
 
-		if ( uploading ) {
+		if ( uploading || referrer ) {
 			return (
 				<CenteredContent data-testid="import-loader">
 					<CircularProgress size={ 30 } />
