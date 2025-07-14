@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
