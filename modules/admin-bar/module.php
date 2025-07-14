@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Module extends BaseApp {hh
+class Module extends BaseApp {
 	/**
 	 * @var Document[]
 	 */

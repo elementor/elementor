@@ -43,7 +43,7 @@ export const FontFamilySelector = ( {
 	return (
 		<PopoverBody width={ sectionWidth }>
 			<PopoverHeader
-				title={ __( 'Font Family', 'elementor' ) }
+				title={ __( 'Transition types', 'elementor' ) }
 				onClose={ handleClose }
 				icon={ <TextIcon fontSize={ SIZE } /> }
 			/>
