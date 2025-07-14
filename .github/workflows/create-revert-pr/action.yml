@@ -61,6 +61,7 @@ runs:
         PARENT_SHA=$(git rev-parse "${COMMIT_SHA}^")
         COMMIT_MESSAGE=$(git log --format=%B -n 1 "${COMMIT_SHA}")
         COMMIT_AUTHOR=$(git log --format='%an' -n 1 "${COMMIT_SHA}")
+        COMMIT_AUTHOR_EMAIL=$(git log --format='%ae' -n 1 "${COMMIT_SHA}")
         BRANCH_NAME="${{ inputs.BRANCH_NAME }}"
         WORKFLOW_NAME="${{ inputs.WORKFLOW_NAME }}"
         
@@ -97,9 +98,10 @@ runs:
           exit 0
         fi
         
-        # Configure git
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
+        # Configure git to use original commit author (helps with CLA compliance)
+        echo "Using original commit author for revert: ${COMMIT_AUTHOR} <${COMMIT_AUTHOR_EMAIL}>"
+        git config user.name "${COMMIT_AUTHOR}"
+        git config user.email "${COMMIT_AUTHOR_EMAIL}"
         
         # Create and checkout revert branch from the current branch (main/version branch)
         git checkout -b "${REVERT_BRANCH}" "${BRANCH_NAME}"
