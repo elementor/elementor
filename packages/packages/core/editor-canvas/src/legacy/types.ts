@@ -70,6 +70,7 @@ type JQueryElement = {
 	find: ( selector: string ) => JQueryElement;
 	html: ( html: string ) => void;
 	get: ( index: number ) => HTMLElement;
+	append: ( html: string ) => void;
 };
 
 type BackboneModel< Model extends object > = {

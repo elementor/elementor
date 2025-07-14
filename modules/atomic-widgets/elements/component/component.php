@@ -29,7 +29,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Component extends Atomic_Widget_Base {
 	// use Has_Template;
 
+	private $elements_data;
+
 	const LINK_BASE_STYLE_KEY = 'link-base';
+
+	public function __construct( $data = [], $args = null, $post_id = "307" ) {
+		parent::__construct( $data, $args );
+
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+		$elements_data = $document->get_elements_data();
+
+		$this->elements_data = $elements_data;
+		Plugin::$instance->frontend->get_builder_content_for_display( $post_id ); 
+	}
+
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
+
+		$config['elements_data'] = $this->elements_data[0]['elements'][0]['elements'];
+
+		// $config['elements_data'] = $this->elements_data[0]['elements'];
+		$config['elements_data'] = $this->elements_data;
+
+		return $config;
+	}
 
 	public static function get_element_type(): string {
 		return 'e-component';
@@ -103,6 +126,7 @@ class Component extends Atomic_Widget_Base {
 
 
         $image_id = "414a53c";
+		$test_heading_id = "83b7d1b";
         $name_id = "87d3ef6";
         $title_id = "c8cb872";
         $button1_id = "1dd6d5c";
@@ -116,6 +140,7 @@ class Component extends Atomic_Widget_Base {
 
         if ( $name ) {
             $overrides[$name_id] = ['title' => $name];
+			$overrides[$test_heading_id] = ['title' => $name];
         }
 
         if ( $title ) {
