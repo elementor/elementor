@@ -25,6 +25,10 @@ test.describe( 'Div Block tests @div-block', () => {
 		await page.close();
 	} );
 
+	test( 'fail', async () => {
+		expect( true ).toEqual( false );
+	} );
+
 	test( 'Sort items in a Div Block using DnD', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
