@@ -106,9 +106,11 @@ export const CssClassUsagePopover = ( {
 								{ item.label }
 							</Box>
 							<Stack gap={ 0.5 } direction={ 'row' } alignItems={ 'center' }>
-								<IconButton size={ 'tiny' } onClick={ () => onNavigate( +item.value ) }>
-									<ExternalLinkIcon fontSize={ 'tiny' } />
-								</IconButton>
+								<Tooltip placement={ 'top' } title={ __( 'Open in a new tab', 'elementor' ) }>
+									<IconButton size={ 'tiny' } onClick={ () => onNavigate( +item.value ) }>
+										<ExternalLinkIcon fontSize={ 'tiny' } />
+									</IconButton>
+								</Tooltip>
 								<Chip size={ 'tiny' } label={ item.secondaryText } />
 							</Stack>
 						</>

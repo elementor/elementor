@@ -39,7 +39,7 @@ describe( 'CssClassUsageTrigger', () => {
 		// Act.
 		render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
 
-		const iconButton = screen.getByRole( 'button', { name: /locator \(2\)/i } );
+		const iconButton = screen.getByRole( 'button', { name: /Show \(2\) locations/i } );
 		expect( iconButton ).toBeInTheDocument();
 
 		fireEvent.click( iconButton );

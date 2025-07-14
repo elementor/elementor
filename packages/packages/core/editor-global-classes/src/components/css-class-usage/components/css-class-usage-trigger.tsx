@@ -116,6 +116,6 @@ const InfoAlertMessage = ( { children }: PropsWithChildren ) => (
 		placement={ 'top' }
 		content={ <InfoAlert sx={ { mt: 1 } }>{ __( 'This class isn’t being used yet.', 'elementor' ) }</InfoAlert> }
 	>
-		{ children }
+		<span>{ children }</span>
 	</Infotip>
 );
