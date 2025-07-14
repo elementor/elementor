@@ -187,7 +187,9 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Create revert PR on push failure
+        id: create_revert_pr
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
+        continue-on-error: true
         uses: ./.github/workflows/create-revert-pr
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -210,7 +212,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) && steps.create_revert_pr.outputs.status == 'created') && format('\n\nYou can review revert of this commit here: [PR #{0}]({1})', steps.create_revert_pr.outputs.pr_number, steps.create_revert_pr.outputs.pr_url) || '' }}"
                   }
                 },
                 {
@@ -220,7 +222,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User : <${{ github.actor }}>"
+                    "text": "Github User: <${{ github.actor }}>"
                   }
                 }
               ]
