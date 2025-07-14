@@ -9,7 +9,6 @@ import { SelectionEndAdornment, TextFieldInnerSelection } from './text-field-inn
 
 type SizeInputProps = {
 	unit: Unit | DegreeUnit | ExtendedOption;
-	originalUnit?: Unit | DegreeUnit | ExtendedOption;
 	size: number | string;
 	placeholder?: string;
 	startIcon?: React.ReactNode;
