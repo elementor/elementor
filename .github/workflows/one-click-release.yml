@@ -6,19 +6,19 @@ on:
       channel:
         required: true
         type: choice
-        description: Select a channel. For cloud, use main branch only!
+        description: Select a channel.
         options:
-          - ga
           - beta
-          - cloud
+          - ga
       custom_core_executed:
         type: boolean
         description: 'Was the Custom Core process executed and completed successful?'
         required: true
-      pre_release:
+      dry_run:
         type: boolean
-        description: 'Pre-release?'
+        description: 'Run in dry-run mode (no actual release will be created)'
         required: false
+        default: true
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -73,7 +73,6 @@ jobs:
           POSTFIX: ''
           OVERRIDE_PACKAGE_VERSION: true
       - name: Update Readme.txt
-        if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
         with:
           README_TXT_PATH: $GITHUB_WORKSPACE/readme.txt
@@ -112,10 +111,19 @@ jobs:
           files: |
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
-          prerelease: ${{ github.event.inputs.pre_release }}
+          prerelease: ${{ github.event.inputs.dry_run }}
+          draft: ${{ github.event.inputs.dry_run }}
           body_path: ${{ env.CHANGELOG_FILE }}
+      - name: Validate Build Files
+        if: github.repository_owner == 'elementor'
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+        run: |
+            bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
       - name: Publish to WordPress.org SVN
-        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -123,10 +131,9 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
-        if: env.CHANNEL == 'beta' # Only for beta releases
+        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
         uses: ./.github/workflows/release-dev-from-beta
         with:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
@@ -134,10 +141,10 @@ jobs:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          PRE_RELEASE: ${{ github.event.inputs.pre_release }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
       - name: Post To Slack Created Release
-        if: github.event.inputs.pre_release == 'false'
+        if: github.event.inputs.dry_run == 'false'
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
