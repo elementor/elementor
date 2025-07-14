@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
 import { SettingsIcon } from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { type TransitionListItem, useFilteredTransitionProperties } from '../hooks/use-filtered-transition-properties';
-import { type TransitionCategory, transitionProperties } from './transition-properties-data';
+import { transitionProperties } from './transition-properties-data';
 
 const SIZE = 'tiny';
 
@@ -127,16 +126,10 @@ const TransitionPropertyList = ( {
 }: TransitionPropertyListProps ) => {
 	const selectedItem = items.find( ( item ) => item.value === selectedProperty && item.type === 'property' );
 
-	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
-		// No need to enqueue fonts for transition properties
-		// This is just for consistency with the existing API
-	}, 100 );
-
 	return (
 		<PopoverMenuList
 			items={ items }
 			selectedValue={ selectedItem?.value }
-			onChange={ debouncedVirtualizeChange }
 			onSelect={ ( value ) => {
 				const item = items.find( ( i ) => i.value === value );
 				if ( item && item.type === 'property' ) {
@@ -151,12 +144,4 @@ const TransitionPropertyList = ( {
 			data-testid="transition-property-list"
 		/>
 	);
-};
-
-const useDebounce = < TArgs extends unknown[] >( fn: ( ...args: TArgs ) => void, delay: number ) => {
-	const [ debouncedFn ] = useState( () => debounce( fn, delay ) );
-
-	useEffect( () => () => debouncedFn.cancel(), [ debouncedFn ] );
-
-	return debouncedFn;
 };
