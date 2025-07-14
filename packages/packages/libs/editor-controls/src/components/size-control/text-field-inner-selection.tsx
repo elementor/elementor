@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { forwardRef, useId } from 'react';
-import { type PropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
 import {
 	bindMenu,
@@ -14,8 +14,11 @@ import {
 	usePopupState,
 } from '@elementor/ui';
 
+import { useBoundProp } from '../../bound-prop-context';
+import { DEFAULT_UNIT } from '../../utils/size-control';
+
 type TextFieldInnerSelectionProps = {
-	placeholder?: PropValue | string;
+	placeholder?: string;
 	type: string;
 	value: PropValue;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
@@ -45,6 +48,8 @@ export const TextFieldInnerSelection = forwardRef(
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
+		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
+
 		return (
 			<TextField
 				ref={ ref }
@@ -58,7 +63,7 @@ export const TextFieldInnerSelection = forwardRef(
 				onKeyUp={ shouldBlockInput ? undefined : onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
-				placeholder={ placeholder }
+				placeholder={ placeholder ?? boundPropPlaceholder?.size }
 				InputProps={ inputProps }
 			/>
 		);
@@ -72,8 +77,6 @@ type SelectionEndAdornmentProps< T extends string > = {
 	alternativeOptionLabels?: { [ key in T ]?: React.ReactNode };
 	menuItemsAttributes?: { [ key in T ]?: Record< string, unknown > };
 	disabled?: boolean;
-	shouldHaveActiveColor: boolean;
-	placeholder?: string;
 };
 
 export const SelectionEndAdornment = < T extends string >( {
@@ -81,13 +84,9 @@ export const SelectionEndAdornment = < T extends string >( {
 	alternativeOptionLabels = {} as Record< T, React.ReactNode >,
 	onClick,
 	value,
-	placeholder,
 	menuItemsAttributes = {},
 	disabled,
-	shouldHaveActiveColor,
-	placeholder,
 }: SelectionEndAdornmentProps< T > ) => {
-	const [ showPlaceholder, setShowPlaceholder ] = React.useState( !! placeholder );
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: useId(),
@@ -96,11 +95,9 @@ export const SelectionEndAdornment = < T extends string >( {
 	const handleMenuItemClick = ( index: number ) => {
 		onClick( options[ index ] );
 		popupState.close();
-
-		if ( showPlaceholder ) {
-			setShowPlaceholder( false );
-		}
 	};
+
+	const { placeholder, shouldHaveActiveColor } = useUnitPlaceholder( value );
 
 	return (
 		<InputAdornment position="end">
@@ -110,7 +107,7 @@ export const SelectionEndAdornment = < T extends string >( {
 				disabled={ disabled }
 				{ ...bindTrigger( popupState ) }
 			>
-				{ showPlaceholder ? placeholder : alternativeOptionLabels[ value ] ?? value }
+				{ placeholder ?? alternativeOptionLabels[ value ] ?? value }
 			</StyledButton>
 
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
@@ -136,3 +133,29 @@ const StyledButton = styled( Button, {
 	minWidth: 'initial',
 	textTransform: 'uppercase',
 } ) );
+
+function useUnitPlaceholder( value: string ) {
+	const { value: sizeValue, placeholder } = useBoundProp( sizePropTypeUtil );
+	const size = sizeValue?.size;
+
+	const hasCustomValue = value === 'custom' && !! size;
+	const hasAutoUnit = value === 'auto';
+	const hasSizeValue = !! size;
+
+	const shouldHaveActiveColor = hasSizeValue || hasAutoUnit || hasCustomValue;
+
+	if ( ! placeholder ) {
+		return {
+			placeholder: null,
+			shouldHaveActiveColor,
+		};
+	}
+
+	const hasUnitValue = ! sizeValue?.unit;
+	const showPlaceholder = hasUnitValue && value === DEFAULT_UNIT;
+
+	return {
+		placeholder: showPlaceholder ? placeholder.unit : undefined,
+		shouldHaveActiveColor,
+	};
+}

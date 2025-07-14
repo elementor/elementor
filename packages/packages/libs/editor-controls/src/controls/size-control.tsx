@@ -11,15 +11,14 @@ import { createControl } from '../create-control';
 import { useSizeExtendedOptions } from '../hooks/use-size-extended-options';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
 import {
+	DEFAULT_SIZE,
+	DEFAULT_UNIT,
 	defaultUnits,
 	type DegreeUnit,
 	type ExtendedOption,
 	isUnitExtendedOption,
 	type Unit,
 } from '../utils/size-control';
-
-const DEFAULT_UNIT = 'px';
-const DEFAULT_SIZE = NaN;
 
 type SizeValue = SizePropValue[ 'value' ];
 
@@ -41,14 +40,8 @@ type State = {
 
 export const SizeControl = createControl( ( props: SizeControlProps ) => {
 	const defaultUnit = props.defaultUnit ?? DEFAULT_UNIT;
-	const { units = [ ...defaultUnits ], placeholder: propPlaceholder, startIcon, anchorRef } = props;
-	const {
-		value: sizeValue,
-		setValue: setSizeValue,
-		disabled,
-		restoreValue,
-		placeholder: boundPropPlaceholder,
-	} = useBoundProp( sizePropTypeUtil );
+	const { units = [ ...defaultUnits ], placeholder, startIcon, anchorRef } = props;
+	const { value: sizeValue, setValue: setSizeValue, disabled, restoreValue } = useBoundProp( sizePropTypeUtil );
 	const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, defaultUnit ) );
 	const activeBreakpoint = useActiveBreakpoint();
 
@@ -153,7 +146,7 @@ export const SizeControl = createControl( ( props: SizeControlProps ) => {
 				size={ controlSize }
 				unit={ controlUnit }
 				units={ [ ...units, ...( extendedOptions || [] ) ] }
-				placeholder={ propPlaceholder ?? boundPropPlaceholder }
+				placeholder={ placeholder }
 				startIcon={ startIcon }
 				handleSizeChange={ handleSizeChange }
 				handleUnitChange={ handleUnitChange }
