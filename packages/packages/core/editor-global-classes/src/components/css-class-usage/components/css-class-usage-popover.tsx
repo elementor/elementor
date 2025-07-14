@@ -87,6 +87,7 @@ export const CssClassUsagePopover = ( {
 					menuItemContentTemplate={ ( item ) => (
 						<>
 							<Box
+								onClick={ () => onNavigate( +item.value ) }
 								sx={ {
 									flex: 1,
 									minWidth: 0,
@@ -107,9 +108,7 @@ export const CssClassUsagePopover = ( {
 							</Box>
 							<Stack gap={ 0.5 } direction={ 'row' } alignItems={ 'center' }>
 								<Tooltip placement={ 'top' } title={ __( 'Open in a new tab', 'elementor' ) }>
-									<IconButton size={ 'tiny' } onClick={ () => onNavigate( +item.value ) }>
-										<ExternalLinkIcon fontSize={ 'tiny' } />
-									</IconButton>
+									<ExternalLinkIcon fontSize={ 'tiny' } />
 								</Tooltip>
 								<Chip size={ 'tiny' } label={ item.secondaryText } />
 							</Stack>
@@ -137,6 +136,9 @@ const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 		top: 0,
 		left: 0,
 		opacity: 1,
+		'&:hover, &:focus': {
+			backgroundColor: theme.palette.action.hover,
+		},
 	},
 	width: '100%',
 	position: 'relative',
