@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { __useNavigateToDocument as useNavigateToDocument } from '@elementor/editor-documents';
+import { __useOpenDocumentInNewTab as useOpenDocumentInNewTab } from '@elementor/editor-documents';
 import {
 	EllipsisWithTooltip,
 	PopoverBody,
@@ -16,32 +16,32 @@ import {
 	PopupTemplateIcon,
 	PostTypeIcon,
 } from '@elementor/icons';
-import { Box, Button, Chip, Divider, Icon, MenuList, Stack, styled, Tooltip, Typography } from '@elementor/ui';
+import { Box, Chip, Divider, Icon, MenuList, Stack, styled, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../hooks';
-import { ContentType } from '../types';
+import { type ContentType } from '../types';
 
-type VirtualItem = VirtualizedItem< 'item', string > & { docType: keyof typeof ContentType };
+type VirtualItem = VirtualizedItem< 'item', string > & { docType: ContentType };
 
-const iconMapper: Record< string, { label: string; icon: React.ReactElement } > = {
-	[ ContentType.Post ]: {
+const iconMapper: Record< ContentType, { label: string; icon: React.ReactElement } > = {
+	'wp-post': {
 		label: __( 'Post', 'elementor' ),
 		icon: <PostTypeIcon fontSize={ 'inherit' } />,
 	},
-	[ ContentType.Page ]: {
+	'wp-page': {
 		label: __( 'Page', 'elementor' ),
 		icon: <PagesIcon fontSize={ 'inherit' } />,
 	},
-	[ ContentType.Popup ]: {
+	popup: {
 		label: __( 'Popup', 'elementor' ),
 		icon: <PopupTemplateIcon fontSize={ 'inherit' } />,
 	},
-	[ ContentType.Header ]: {
+	header: {
 		label: __( 'Header', 'elementor' ),
 		icon: <HeaderTemplateIcon fontSize={ 'inherit' } />,
 	},
-	[ ContentType.Footer ]: {
+	footer: {
 		label: __( 'Footer', 'elementor' ),
 		icon: <FooterTemplateIcon fontSize={ 'inherit' } />,
 	},
@@ -55,7 +55,7 @@ export const CssClassUsagePopover = ( {
 	cssClassID: string;
 } ) => {
 	const { data: classUsage } = useCssClassUsageByID( cssClassID );
-	const onNavigate = useNavigateToDocument( { openNewTab: true } );
+	const onNavigate = useOpenDocumentInNewTab();
 
 	const items: VirtualItem[] =
 		classUsage?.content.map(
@@ -86,25 +86,15 @@ export const CssClassUsagePopover = ( {
 			<Divider />
 			<PopoverBody width={ 300 }>
 				<PopoverMenuList
-					onSelect={ () => {} }
+					onSelect={ ( value ) => onNavigate( +value ) }
 					items={ items }
 					onClose={ () => {} }
 					menuListTemplate={ StyledCssClassUsageItem }
 					menuItemContentTemplate={ ( item ) => (
-						<Stack
-							direction={ 'row' }
-							flex={ 1 }
-							justifyContent={ 'space-between' }
-							onClick={ () => onNavigate( +item.value ) }
-						>
+						<Stack minWidth={ 0 } direction={ 'row' } flex={ 1 } justifyContent={ 'space-between' }>
 							<Stack alignItems={ 'center' } direction={ 'row' } gap={ 0.5 }>
-								<Tooltip
-									title={ iconMapper[ item.docType as keyof typeof ContentType ].label }
-									placement="top"
-								>
-									<Icon fontSize={ 'small' }>
-										{ iconMapper[ item.docType as keyof typeof ContentType ].icon }
-									</Icon>
+								<Tooltip title={ iconMapper[ item.docType as ContentType ].label } placement="top">
+									<Icon fontSize={ 'small' }>{ iconMapper[ item.docType as ContentType ].icon }</Icon>
 								</Tooltip>
 								<EllipsisWithTooltip
 									title={ item.label }
