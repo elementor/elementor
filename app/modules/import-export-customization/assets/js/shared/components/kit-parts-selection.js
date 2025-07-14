@@ -12,6 +12,7 @@ export default function KitPartsSelection({ data, onCheckboxChange, onEditClicke
 							<FormControlLabel
 								control={
 									<Checkbox
+										color="info"
 										checked={ data.includes.includes( item.type ) }
 										onChange={ () => onCheckboxChange( item.type ) }
 										sx={ { py: 0 } }
@@ -24,6 +25,8 @@ export default function KitPartsSelection({ data, onCheckboxChange, onEditClicke
 							</Typography>
 						</Box>
 						<Button
+							color="info"
+							variant="text"
 							onClick={ () => {
 								if ( onEditClicked ) {
 									onEditClicked( item.type );
