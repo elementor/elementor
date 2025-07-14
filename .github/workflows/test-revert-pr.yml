@@ -1,0 +1,176 @@
+name: Test Revert PR Functionality
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_scenario:
+        description: 'Test scenario to run'
+        required: true
+        type: choice
+        options:
+          - 'test-revert-creation'
+          - 'test-duplicate-prevention'
+          - 'test-action-only'
+        default: 'test-revert-creation'
+      target_branch:
+        description: 'Branch to test against (should be a test branch)'
+        required: true
+        default: 'test-revert-functionality'
+      simulate_commit:
+        description: 'Commit SHA to simulate (leave empty to use current)'
+        required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  create-test-commit:
+    name: Create Test Commit
+    runs-on: ubuntu-22.04
+    if: ${{ inputs.test_scenario == 'test-revert-creation' }}
+    outputs:
+      test_commit_sha: ${{ steps.create_commit.outputs.commit_sha }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create test branch if not exists
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if branch exists
+          if git show-ref --verify --quiet refs/remotes/origin/${{ inputs.target_branch }}; then
+            echo "Branch ${{ inputs.target_branch }} exists, checking out"
+            git checkout ${{ inputs.target_branch }}
+          else
+            echo "Creating new branch ${{ inputs.target_branch }}"
+            git checkout -b ${{ inputs.target_branch }}
+            git push -u origin ${{ inputs.target_branch }}
+          fi
+      
+      - name: Create test commit
+        id: create_commit
+        run: |
+          # Create a test file with timestamp
+          echo "Test commit for revert PR functionality - $(date)" > test-revert-file.txt
+          git add test-revert-file.txt
+          git commit -m "Test commit: Add test file for revert PR testing
+
+          This commit is created to test the automatic revert PR functionality.
+          It should be reverted automatically when the test workflow fails."
+          
+          COMMIT_SHA=$(git rev-parse HEAD)
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          echo "Created test commit: $COMMIT_SHA"
+          
+          git push origin ${{ inputs.target_branch }}
+
+  test-revert-action:
+    name: Test Revert Action
+    runs-on: ubuntu-22.04
+    needs: [create-test-commit]
+    if: always() && (inputs.test_scenario == 'test-revert-creation' || inputs.test_scenario == 'test-action-only')
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Determine commit SHA
+        id: get_commit
+        run: |
+          if [ -n "${{ inputs.simulate_commit }}" ]; then
+            COMMIT_SHA="${{ inputs.simulate_commit }}"
+          elif [ -n "${{ needs.create-test-commit.outputs.test_commit_sha }}" ]; then
+            COMMIT_SHA="${{ needs.create-test-commit.outputs.test_commit_sha }}"
+          else
+            COMMIT_SHA=$(git rev-parse HEAD)
+          fi
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          echo "Using commit SHA: $COMMIT_SHA"
+      
+      - name: Test revert PR creation
+        uses: ./.github/workflows/create-revert-pr
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ steps.get_commit.outputs.commit_sha }}
+          BRANCH_NAME: ${{ inputs.target_branch }}
+          WORKFLOW_NAME: "Test Revert PR Functionality"
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  test-duplicate-prevention:
+    name: Test Duplicate Prevention
+    runs-on: ubuntu-22.04
+    if: ${{ inputs.test_scenario == 'test-duplicate-prevention' }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_branch }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Get latest commit
+        id: get_commit
+        run: |
+          COMMIT_SHA=$(git rev-parse HEAD)
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+          echo "Using commit SHA: $COMMIT_SHA"
+      
+      - name: First revert PR creation
+        uses: ./.github/workflows/create-revert-pr
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ steps.get_commit.outputs.commit_sha }}
+          BRANCH_NAME: ${{ inputs.target_branch }}
+          WORKFLOW_NAME: "Test Duplicate Prevention - First"
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      
+      - name: Second revert PR creation (should be prevented)
+        uses: ./.github/workflows/create-revert-pr
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ steps.get_commit.outputs.commit_sha }}
+          BRANCH_NAME: ${{ inputs.target_branch }}
+          WORKFLOW_NAME: "Test Duplicate Prevention - Second"
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  cleanup:
+    name: Cleanup Test Data
+    runs-on: ubuntu-22.04
+    needs: [test-revert-action, test-duplicate-prevention]
+    if: always() && inputs.test_scenario == 'test-revert-creation'
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Remove test file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          if git show-ref --verify --quiet refs/remotes/origin/${{ inputs.target_branch }}; then
+            git checkout ${{ inputs.target_branch }}
+            
+            if [ -f test-revert-file.txt ]; then
+              git rm test-revert-file.txt
+              git commit -m "Cleanup: Remove test file after revert PR testing"
+              git push origin ${{ inputs.target_branch }}
+              echo "Cleaned up test file"
+            else
+              echo "Test file not found, nothing to cleanup"
+            fi
+          else
+            echo "Test branch not found, nothing to cleanup"
+          fi 
