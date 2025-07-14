@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { type TransitionCategory } from '../components/transition-properties-data';
 
 export type TransitionListItem = {
@@ -40,9 +41,10 @@ export const useFilteredTransitionProperties = (
 		const filteredItems: TransitionListItem[] = [];
 
 		categories.forEach( ( category ) => {
-			const matchingProperties = category.properties.filter( ( property ) =>
-				property.label.toLowerCase().includes( searchLower ) ||
-				property.value.toLowerCase().includes( searchLower )
+			const matchingProperties = category.properties.filter(
+				( property ) =>
+					property.label.toLowerCase().includes( searchLower ) ||
+					property.value.toLowerCase().includes( searchLower )
 			);
 
 			if ( matchingProperties.length > 0 ) {
@@ -65,4 +67,4 @@ export const useFilteredTransitionProperties = (
 
 		return filteredItems;
 	}, [ categories, searchTerm ] );
-}; 
+};
