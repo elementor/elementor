@@ -20,6 +20,12 @@ import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
 export const StylesInheritanceIndicator = () => {
 	const { path, propType } = useBoundProp();
 
+	const skipControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ]; 
+
+	if ( path.some( pathItem => skipControls.includes( pathItem ) ) ) {
+		return null;
+	}
+
 	const isUsingNestedProps = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 );
 
 	const finalPath = isUsingNestedProps ? path : path.slice( 0, 1 );
