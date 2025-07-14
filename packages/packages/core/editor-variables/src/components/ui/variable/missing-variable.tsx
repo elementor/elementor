@@ -10,21 +10,19 @@ import { MissingTag } from '../tags/missing-tag';
 export const MissingVariable = () => {
 	const { setValue } = useBoundProp();
 
-	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
-	const toggleInfotip = () => setShowInfotip( ( prev ) => ! prev );
-	const closeInfotip = () => setShowInfotip( false );
+	const [ infotipVisible, setInfotipVisible ] = useState< boolean >( false );
+	const toggleInfotip = () => setInfotipVisible( ( prev ) => ! prev );
+	const closeInfotip = () => setInfotipVisible( false );
 
-	const clearValue = () => {
-		setValue( null );
-	};
+	const clearValue = () => setValue( null );
 
 	return (
 		<>
-			{ showInfotip && <Backdrop open onClick={ closeInfotip } invisible /> }
+			{ infotipVisible && <Backdrop open onClick={ closeInfotip } invisible /> }
 			<Infotip
 				color="warning"
 				placement="right-start"
-				open={ showInfotip }
+				open={ infotipVisible }
 				disableHoverListener
 				onClose={ closeInfotip }
 				content={ <MissingVariableAlert onClose={ closeInfotip } onClear={ clearValue } /> }
