@@ -16,6 +16,7 @@ module.exports = Marionette.CompositeView.extend( {
 	},
 
 	initialize() {
+		// here
 		this.collection = this.model.get( 'elements' );
 	},
 

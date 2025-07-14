@@ -2,6 +2,7 @@ import DivBlockEmptyView from './container/div-block-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
+
 const DivBlockView = BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
 
@@ -462,6 +463,7 @@ const DivBlockView = BaseElementView.extend( {
 		return transformer( this.options?.model?.getSetting( 'classes' )?.value || [] );
 	},
 
+	//here
 	getClassString() {
 		const classes = this.getClasses();
 		const base = this.getBaseClass();
@@ -469,6 +471,7 @@ const DivBlockView = BaseElementView.extend( {
 		return [ base, ...classes ].join( ' ' );
 	},
 
+	//here
 	getBaseClass() {
 		const baseStyles = elementor.helpers.getAtomicWidgetBaseStyles( this.options?.model );
 

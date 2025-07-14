@@ -46,9 +46,9 @@ class Component extends Atomic_Widget_Base {
 	public function get_initial_config() {
 		$config = parent::get_initial_config();
 
-		$config['elements_data'] = $this->elements_data[0]['elements'][0]['elements'];
+		// $config['elements_data'] = $this->elements_data[0]['elements'][0]['elements'];
 
-		// $config['elements_data'] = $this->elements_data[0]['elements'];
+		$config['elements_data'] = $this->elements_data[0]['elements'];
 		$config['elements_data'] = $this->elements_data;
 
 		return $config;

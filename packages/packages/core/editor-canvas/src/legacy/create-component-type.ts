@@ -78,49 +78,51 @@ function createComponentViewClassDeclaration( {
 			this.#beforeRenderTemplate();
 
             const componentSettings = this.model.get( 'settings' ).toJSON();
-			const promises = elements_data.map( async ( childElement ) => {
-                
-                // Handle div-block and flexbox containers
-                if ( childElement.elType === 'e-div-block' || childElement.elType === 'e-flexbox' || childElement.elType === 'container') {
-                    // If it's a container element, render its children
-                    if ( childElement.elements && childElement.elements.length > 0 ) {
-                        const childPromises = childElement.elements.map( async ( nestedElement ) => {
-                            // Recursively render nested elements
-                            return this._renderChildElement( nestedElement, componentSettings );
-                        } );
-                        
-                        const renderedChildren = await Promise.all( childPromises );
 
-                        let classes = '';
-                        if (childElement.elType === 'e-div-block' || childElement.elType === 'e-flexbox') {
-                            classes += childElement.settings.classes?.value?.join(' ');
-                        }
-                        
-                        return `<div class="${classes}">${renderedChildren.join('')}</div>`;
-                    }
-                    
-                    // Empty container
-                    return `<div class="e-con ${childElement.elType === 'e-flexbox' ? 'e-flex' : ''}"></div>`;
-                }
-
-                if ( childElement.elType !== 'widget' ) {
-                    return '';
-                }
-                
-                return this._renderChildElement( childElement, componentSettings );
-			} );
-
-			const renderedElements = await Promise.all( promises );
-			this.$el.html( '<div class="e-component">' + renderedElements.join( '' ) + '</div>' );
+			const renderedElements = await this.renderContainer( elements_data[0], componentSettings );
+			this.$el.html( '<div class="e-component">' + renderedElements + '</div>' );
 
 			this.#afterRenderTemplate();
 		}
 
-		async _renderChildElement( childElement: any, componentSettings: any ) {
-            console.log( childElement.widgetType );
-            const childElementConfig = config[ childElement.widgetType ];
+		async renderContainer( containerElement: any, componentSettings: any ) {
 
-            if ( !childElementConfig || !childElementConfig.atomic_props_schema ) {
+            let renderedElements = '';
+
+            if ( containerElement.elements.length ) {
+                renderedElements = (await Promise.all( containerElement.elements.map( async ( nestedElement: any ) => {
+                        switch (nestedElement.elType) {
+                        case 'e-div-block':
+                        case 'e-flexbox':
+                        case 'container':
+                            return this.renderContainer( nestedElement, componentSettings );
+                        case 'widget':
+                            return this.renderWidget( nestedElement, componentSettings );
+                        default:
+                            return '';
+                    }
+                } ) )).join('');            
+            }
+            
+            let classes = 'elementor-element elementor-element-edit-mode e-con ';
+            if (containerElement.elType === 'e-div-block' || containerElement.elType === 'e-flexbox') {
+                classes += containerElement.settings.classes?.value?.join(' ');
+                if (containerElement.elType === 'e-flexbox') {
+                    classes += ' e-flexbox-base';
+                } else {
+                    classes += ' e-div-block-base';
+                }
+            } else if (containerElement.elType === 'container') {
+                classes += containerElement.settings.classes?.value?.join(' ');
+            }
+            
+            return `<div class="${classes}">${renderedElements}</div>`;
+        }
+
+		async renderWidget( childElement: any, componentSettings: any ) {
+            const widgetConfig = config[ childElement.widgetType ];
+
+            if ( !widgetConfig || !widgetConfig.atomic_props_schema ) {
                 console.log( 'no config', childElement.widgetType );
                 return '';
             }
@@ -141,11 +143,12 @@ function createComponentViewClassDeclaration( {
             if (childElement.id === title_id && componentSettings.title) {
                 props.title = componentSettings.title;
             }
+            // End of overrides
 
             console.log( childElement.widgetType, props );
             const propsResolver = createPropsResolver( {
                 transformers: settingsTransformersRegistry,
-                schema: childElementConfig.atomic_props_schema,
+                schema: widgetConfig.atomic_props_schema,
             } );
 
             const resolvedSettings = await propsResolver( {
@@ -157,12 +160,12 @@ function createComponentViewClassDeclaration( {
                 id: childElement.id,
                 type: childElement.widgetType,
                 settings: resolvedSettings,
-                base_styles: childElementConfig.base_styles_dictionary,
+                base_styles: widgetConfig.base_styles_dictionary,
             };
 
             console.log( context );
 
-            const templateKey = childElementConfig.twig_main_template!;
+            const templateKey = widgetConfig.twig_main_template!;
             const html = await renderer.render( templateKey, context );
 
             console.log( childElement.widgetType, html );
