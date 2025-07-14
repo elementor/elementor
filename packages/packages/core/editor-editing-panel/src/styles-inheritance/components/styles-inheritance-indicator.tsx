@@ -28,11 +28,7 @@ export const StylesInheritanceIndicator = () => {
 
 	const inheritanceChain = useStylesInheritanceChain( finalPath );
 
-	if ( ! path || path.some( ( pathItem ) => skipControls.includes( pathItem ) ) ) {
-		return null;
-	}
-
-	if ( ! inheritanceChain.length ) {
+	if ( ! path || path.some( ( pathItem ) => skipControls.includes( pathItem ) ) || ! inheritanceChain.length ) {
 		return null;
 	}
 
