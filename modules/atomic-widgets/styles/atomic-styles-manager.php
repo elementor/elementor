@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-const FONTS_KEY_PREFIX = 'elementor_atomic_styles_fonts-';
-
 class Atomic_Styles_Manager {
 	private static ?self $instance = null;
 
@@ -78,10 +76,34 @@ class Atomic_Styles_Manager {
 			])
 			->all();
 
+		$this->before_render( $styles_by_key );
+
+		$this->render( $styles_by_key );
+
+		$this->after_render( $styles_by_key );
+	}
+
+	private function before_render( array $styles_by_key ) {
+		$this->fonts = [];
+
+		foreach ( $styles_by_key as $style_key => $style_params ) {
+			$cache_keys = $style_params['cache_keys'];
+
+			// This cache validity check is of the general style, and used to reset dependencies that can only be evaluated
+			// upon the style rendering flow (i.e. when cache is invalid).
+			// (the corresponding css files cache validity includes also the file's breakpoint in the cache keys array)
+			if ( ! $this->cache_validity->is_valid( $cache_keys ) ) {
+				Style_Fonts::make( $style_key )->clear();
+			}
+
+			// We should validate it after this iteration
+			$this->cache_validity->validate( $cache_keys );
+		}
+	}
+
+	private function render( array $styles_by_key ) {
 		$group_by_breakpoint_memo = new Memo();
 		$breakpoints = $this->get_breakpoints();
-
-		$this->initialize_styles( $styles_by_key );
 
 		foreach ( $breakpoints as $breakpoint_key ) {
 			foreach ( $styles_by_key as $style_key => $style_params ) {
@@ -115,83 +137,22 @@ class Atomic_Styles_Manager {
 					[],
 					$style_file->get_media()
 				);
-
-				$this->add_fonts_to_enqueue( $style_key );
 			}
 		}
-
-		$this->enqueue_fonts();
-	}
-
-	private function initialize_styles( array $styles_by_key ) {
-		$this->fonts = [];
-
-		foreach ( $styles_by_key as $style_key => $style_params ) {
-			$cache_keys = $style_params['cache_keys'];
-
-			// This cache validity check is of the general style, and used to reset dependencies that can only be evaluated
-			// upon the style rendering flow (i.e. not when cached).
-			// (the corresponding css files cache validity includes also the file's breakpoint in the cache keys array)
-			if ( ! $this->cache_validity->is_valid( $cache_keys ) ) {
-				$this->initialize_style( $style_key );
-			}
-
-			// We should validate it after this iteration
-			$this->cache_validity->validate( $cache_keys );
-		}
-	}
-
-	private function initialize_style( string $style_key ) {
-		$this->reset_fonts( $style_key );
 	}
 
 	private function render_css( array $styles, string $style_key ) {
+		$style_fonts = Style_Fonts::make( $style_key );
+
 		return Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) use ( $style_key ) {
+		)->on_prop_transform( function( $key, $value ) use ( $style_fonts ) {
 			if ( 'font-family' !== $key ) {
 				return;
 			}
 
-			$this->associate_font_to_style_key( $value, $style_key );
+			$style_fonts->add( $value );
 		} )->render( $styles );
-	}
-
-	private function associate_font_to_style_key( string $font, string $style_key ) {
-		$style_fonts = $this->get_fonts( $style_key );
-
-		if ( ! in_array( $font, $style_fonts, true ) ) {
-			$style_fonts[] = $font;
-
-			$this->update_fonts( $style_key, $style_fonts );
-		}
-	}
-
-	private function add_fonts_to_enqueue( string $style_key ) {
-		$style_fonts = $this->get_fonts( $style_key );
-
-		$this->fonts = array_unique( array_merge( $this->fonts, array_values( $style_fonts ) ) );
-	}
-
-	private function enqueue_fonts() {
-		foreach ( $this->fonts as $font ) {
-			Plugin::instance()->frontend->enqueue_font( $font );
-		}
-	}
-
-	private function get_fonts( string $style_key ): array {
-		$style_fonts_key = FONTS_KEY_PREFIX . $style_key;
-		return get_option( $style_fonts_key, [] );
-	}
-
-	private function update_fonts( string $style_key, array $fonts ) {
-		$style_fonts_key = FONTS_KEY_PREFIX . $style_key;
-		update_option( $style_fonts_key, $fonts );
-	}
-
-	private function reset_fonts( string $style_key ) {
-		$style_fonts_key = FONTS_KEY_PREFIX . $style_key;
-		update_option( $style_fonts_key, [] );
 	}
 
 	private function get_breakpoint_media( string $breakpoint_key ): ?string {
@@ -234,5 +195,30 @@ class Atomic_Styles_Manager {
 			->reverse()
 			->prepend( self::DEFAULT_BREAKPOINT )
 			->all();
+	}
+
+	private function after_render( array $styles_by_key ) {
+		foreach ( $styles_by_key as $style_key => $style_params ) {
+			$this->add_fonts_to_enqueue( $style_key );
+		}
+
+		$this->enqueue_fonts();
+	}
+
+	private function add_fonts_to_enqueue( string $style_key ) {
+		$style_fonts = Style_Fonts::make( $style_key );
+
+		$this->fonts = array_unique(
+			array_merge(
+				$this->fonts,
+				array_values( $style_fonts->get() )
+			)
+		);
+	}
+
+	private function enqueue_fonts() {
+		foreach ( $this->fonts as $font ) {
+			Plugin::instance()->frontend->enqueue_font( $font );
+		}
 	}
 }
