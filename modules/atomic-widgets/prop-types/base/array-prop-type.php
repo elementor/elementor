@@ -23,7 +23,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	protected Prop_Type $item_type;
 
-	private array $dependencies = [];
+	private ?array $dependencies = null;
 
 	public function __construct() {
 		$this->item_type = $this->define_item_type();
