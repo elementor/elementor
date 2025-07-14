@@ -97,12 +97,12 @@ export const SelectionEndAdornment = < T extends string >( {
 		popupState.close();
 	};
 
-	const { placeholder, shouldHaveActiveColor } = useUnitPlaceholder( value );
+	const { placeholder, showPrimaryColor } = useUnitPlaceholder( value );
 
 	return (
 		<InputAdornment position="end">
 			<StyledButton
-				isActive={ shouldHaveActiveColor }
+				isPrimaryColor={ showPrimaryColor }
 				size="small"
 				disabled={ disabled }
 				{ ...bindTrigger( popupState ) }
@@ -125,37 +125,36 @@ export const SelectionEndAdornment = < T extends string >( {
 	);
 };
 
-const StyledButton = styled( Button, {
-	shouldForwardProp: ( prop ) => prop !== 'isActive',
-} )( ( { isActive, theme } ) => ( {
-	color: isActive ? theme.palette.text.primary : theme.palette.text.tertiary,
-	font: 'inherit',
-	minWidth: 'initial',
-	textTransform: 'uppercase',
-} ) );
-
 function useUnitPlaceholder( value: string ) {
-	const { value: sizeValue, placeholder } = useBoundProp( sizePropTypeUtil );
-	const size = sizeValue?.size;
+	const { value: externalValue, placeholder } = useBoundProp( sizePropTypeUtil );
+	const size = externalValue?.size;
+	const unit = externalValue?.unit;
 
-	const hasCustomValue = value === 'custom' && !! size;
-	const hasAutoUnit = value === 'auto';
-	const hasSizeValue = !! size;
-
-	const shouldHaveActiveColor = hasSizeValue || hasAutoUnit || hasCustomValue;
+	const isCustomUnitWithSize = value === 'custom' && Boolean( size );
+	const isAutoUnit = value === 'auto';
+	const showPrimaryColor = isAutoUnit || isCustomUnitWithSize || Boolean( size );
 
 	if ( ! placeholder ) {
 		return {
 			placeholder: null,
-			shouldHaveActiveColor,
+			showPrimaryColor,
 		};
 	}
 
-	const hasUnitValue = ! sizeValue?.unit;
-	const showPlaceholder = hasUnitValue && value === DEFAULT_UNIT;
+	const isMissingUnit = ! unit;
+	const showPlaceholder = isMissingUnit && value === DEFAULT_UNIT;
 
 	return {
 		placeholder: showPlaceholder ? placeholder.unit : undefined,
-		shouldHaveActiveColor,
+		showPrimaryColor,
 	};
 }
+
+const StyledButton = styled( Button, {
+	shouldForwardProp: ( prop ) => prop !== 'isPrimaryColor',
+} )( ( { isPrimaryColor, theme } ) => ( {
+	color: isPrimaryColor ? theme.palette.text.primary : theme.palette.text.tertiary,
+	font: 'inherit',
+	minWidth: 'initial',
+	textTransform: 'uppercase',
+} ) );
