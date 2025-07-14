@@ -15,7 +15,7 @@ describe( 'CssClassUsageTrigger', () => {
 		} );
 
 		// Act.
-		render( <CssClassUsageTrigger id="css-id" /> );
+		render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
 
 		fireEvent.click( screen.getByRole( 'button' ) );
 
@@ -30,14 +30,14 @@ describe( 'CssClassUsageTrigger', () => {
 			data: {
 				total: 2,
 				content: [
-					{ pageId: 'page1', total: 1, elements: [ 'el-1' ], title: 'Title1' },
-					{ pageId: 'page2', total: 1, elements: [ 'el-2' ], title: 'Title2' },
+					{ pageId: 'page1', total: 1, elements: [ 'el-1' ], title: 'Title1', type: 'Page' },
+					{ pageId: 'page2', total: 1, elements: [ 'el-2' ], title: 'Title2', type: 'Page' },
 				],
 			},
 		} );
 
 		// Act.
-		render( <CssClassUsageTrigger id="css-id" /> );
+		render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
 
 		const iconButton = screen.getByRole( 'button', { name: /locator \(2\)/i } );
 		expect( iconButton ).toBeInTheDocument();

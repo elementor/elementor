@@ -14,27 +14,28 @@ import { Box, Chip, Divider, Icon, IconButton, MenuList, Stack, styled, Tooltip 
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../hooks';
+import { ContentType } from '../types';
 
-type VirtualItem = VirtualizedItem< 'item', string > & { docType: keyof typeof iconMapper };
+type VirtualItem = VirtualizedItem< 'item', string > & { docType: keyof typeof ContentType };
 
 const iconMapper: Record< string, { label: string; icon: React.ReactElement } > = {
-	'wp-post': {
+	[ ContentType.Post ]: {
 		label: __( 'Post', 'elementor' ),
 		icon: <PostTypeIcon fontSize={ 'inherit' } />,
 	},
-	'wp-page': {
+	[ ContentType.Page ]: {
 		label: __( 'Page', 'elementor' ),
 		icon: <PageTypeIcon fontSize={ 'inherit' } />,
 	},
-	popup: {
+	[ ContentType.Popup ]: {
 		label: __( 'Popup', 'elementor' ),
 		icon: <PopupTemplateIcon fontSize={ 'inherit' } />,
 	},
-	header: {
+	[ ContentType.Header ]: {
 		label: __( 'Header', 'elementor' ),
 		icon: <HeaderTemplateIcon fontSize={ 'inherit' } />,
 	},
-	footer: {
+	[ ContentType.Footer ]: {
 		label: __( 'Footer', 'elementor' ),
 		icon: <FooterTemplateIcon fontSize={ 'inherit' } />,
 	},
@@ -77,7 +78,7 @@ export const CssClassUsagePopover = ( {
 				onClose={ onClose }
 			/>
 			<Divider />
-			<PopoverBody width={ 344 }>
+			<PopoverBody width={ 300 }>
 				<PopoverMenuList
 					onSelect={ () => {} }
 					items={ items }
@@ -95,11 +96,11 @@ export const CssClassUsagePopover = ( {
 								} }
 							>
 								<Tooltip
-									title={ iconMapper[ item.docType as keyof typeof iconMapper ].label }
+									title={ iconMapper[ item.docType as keyof typeof ContentType ].label }
 									placement="top"
 								>
 									<Icon fontSize={ 'small' }>
-										{ iconMapper[ item.docType as keyof typeof iconMapper ].icon }
+										{ iconMapper[ item.docType as keyof typeof ContentType ].icon }
 									</Icon>
 								</Tooltip>
 								{ item.label }

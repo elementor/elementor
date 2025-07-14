@@ -75,8 +75,8 @@ describe( 'CssClassUsagePopover', () => {
 			data: {
 				total: 3,
 				content: [
-					{ title: 'Page One', elements: [ 'el1', 'el2' ], pageId: 'page1', total: 2 },
-					{ title: 'Page Two', elements: [ 'el3' ], pageId: 'page2', total: 1 },
+					{ title: 'Page One', elements: [ 'el1', 'el2' ], pageId: 'page1', total: 2, type: 'Post' },
+					{ title: 'Page Two', elements: [ 'el3' ], pageId: 'page2', total: 1, type: 'Post' },
 				],
 			},
 		} );
@@ -114,7 +114,9 @@ describe( 'CssClassUsagePopover', () => {
 			isLoading: false,
 			data: {
 				total: 1,
-				content: [ { title: 'Test Page', elements: [ 'el1', 'el2' ], pageId: 'page1', total: 2 } ],
+				content: [
+					{ title: 'Test Page', elements: [ 'el1', 'el2' ], pageId: 'page1', total: 2, type: 'Page' },
+				],
 			},
 		} );
 
