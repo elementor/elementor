@@ -1,7 +1,7 @@
 import { useImportContext } from '../context/import-context';
-import { KitContent } from '../../shared/components';
+import { KitPartsSelection } from '../../shared/components';
 
-export default function ImportKitContent() {
+export default function ImportKitPartsSelection() {
 	const { data, dispatch } = useImportContext();
 
 	const handleCheckboxChange = ( itemType ) => {
@@ -11,7 +11,7 @@ export default function ImportKitContent() {
 	};
 
 	return (
-		<KitContent
+		<KitPartsSelection
 			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
 		/>

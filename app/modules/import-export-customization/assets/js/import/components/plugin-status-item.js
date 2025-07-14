@@ -9,10 +9,9 @@ export default function PluginStatusItem( { name, status } ) {
 			alignItems="center"
 			px={ 3 }
 			py={ 2 }
-			data-testid="plugin-status-item"
 		>
 			<Checkbox checked disabled sx={ { mr: 2 } } />
-			<Typography variant="body1" color="text.primary">
+			<Typography variant="body1">
 				{ name } { status }
 			</Typography>
 		</Box>

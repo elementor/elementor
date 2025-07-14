@@ -69,6 +69,7 @@ export function useImportKit() {
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.COMPLETED } );
 	};
+
 	async function importKit() {
 		try {
 			setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );

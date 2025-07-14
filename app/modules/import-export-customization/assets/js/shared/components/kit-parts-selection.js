@@ -1,8 +1,8 @@
-import { Box, Typography, Stack, Checkbox, FormControlLabel, Link } from '@elementor/ui';
+import { Box, Typography, Stack, Checkbox, FormControlLabel, Button } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import kitContentData from '../kit-content-data';
 
-export default function KitContent( { data, onCheckboxChange, onEditClicked } ) {
+export default function KitPartsSelection({ data, onCheckboxChange, onEditClicked } ) {
 	return (
 		<Stack spacing={ 2 }>
 			{ kitContentData.map( ( item ) => (
@@ -23,17 +23,16 @@ export default function KitContent( { data, onCheckboxChange, onEditClicked } ) 
 								{ item.data.features.open.join( ', ' ) }
 							</Typography>
 						</Box>
-						<Link
+						<Button
 							onClick={ () => {
 								if ( onEditClicked ) {
 									onEditClicked( item.type );
 								}
 							} }
-							href="#"
 							sx={ { alignSelf: 'center' } }
 						>
 							{ __( 'Edit', 'elementor' ) }
-						</Link>
+						</Button>
 					</Box>
 				</Box>
 			) ) }
@@ -41,7 +40,7 @@ export default function KitContent( { data, onCheckboxChange, onEditClicked } ) 
 	);
 }
 
-KitContent.propTypes = {
+KitPartsSelection.propTypes = {
 	data: PropTypes.object.isRequired,
 	onCheckboxChange: PropTypes.func.isRequired,
 	onEditClicked: PropTypes.func,

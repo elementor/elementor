@@ -3,9 +3,9 @@ import { Box, Typography, Stack, Checkbox, FormControlLabel, Button } from '@ele
 
 import kitContentData from '../../shared/kit-content-data';
 import { useExportContext } from '../context/export-context';
-import { KitContent } from '../../shared/components';
+import { KitPartsSelection } from '../../shared/components';
 
-export default function ExportKitContent() {
+export default function ExportKitPartsSelection() {
 	const { data, dispatch } = useExportContext();
 	const [ activeDialog, setActiveDialog ] = useState( null );
 
@@ -16,7 +16,7 @@ export default function ExportKitContent() {
 	};
 
 	return (
-		<KitContent
+		<KitPartsSelection
 			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
 		/>

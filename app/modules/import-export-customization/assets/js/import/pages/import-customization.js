@@ -3,7 +3,7 @@ import { Button, Stack, Typography } from '@elementor/ui';
 import { useNavigate } from '@reach/router';
 import { __ } from '@wordpress/i18n';
 import { BaseLayout, PageHeader, TopBar, Footer } from '../../shared/components';
-import ImportKitContent from '../components/kit-content';
+import ImportKitContent from '../components/import-kit-parts-selection';
 import { IMPORT_STATUS, useImportContext } from '../context/import-context';
 
 const headerContent = (
@@ -53,14 +53,14 @@ export default function ImportCustomization() {
 		>
 			<Stack spacing={ 4 } sx={ { mt: 4, mx: 'auto' } } >
 				<Stack spacing={ 2 }>
-					<Typography variant="h4" color="text.primary" >
+					<Typography variant="h4" >
 						{ __( 'Select which parts you want to apply', 'elementor' ) }
 					</Typography>
 					<Stack>
-						<Typography variant="subtitle2" color="text.secondary" >
+						<Typography variant="subtitle2" >
 							{ __( 'These are the templates, content and site settings that come with your website templates.', 'elementor' ) }
 						</Typography>
-						<Typography variant="subtitle2" color="text.secondary" >
+						<Typography variant="subtitle2" >
 							{ __( 'All items are already selected by default. Uncheck the ones you don\'t want.', 'elementor' ) }
 						</Typography>
 					</Stack>
