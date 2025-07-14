@@ -125,11 +125,16 @@ class Test_Export extends Elementor_Test_Base {
 
 		// Assert
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit_tabs = $kit->get_tabs();
-		unset( $kit_tabs['settings-site-identity'] );
-		$expected_manifest_site_settings = array_keys( $kit_tabs );
+		$expected_manifest_site_settings = [
+			'theme' => true,
+			'globalColors' => true,
+			'globalFonts' => true,
+			'themeStyleSettings' => true,
+			'generalSettings' => true,
+			'experiments' => true,
+		];
 
-		$this->assertEqualSets( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
+		$this->assertEquals( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
 
 		$kit_data = $kit->get_export_data();
 		$kit_data['theme'] = $mocked_theme;
@@ -138,6 +143,97 @@ class Test_Export extends Elementor_Test_Base {
 		$kit_data['experiments'] = $experiments;
 
 		$this->assertEquals( $kit_data, $site_settings_file );
+
+		// Cleanups
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
+	}
+
+	public function test_run__export_site_settings_with_customization() {
+		// Arrange
+		$this->act_as_admin();
+
+		$custom_colors = [
+			'_id' => '0fba91c',
+			'title' => 'Light Orange',
+			'color' => '#FAB89F',
+		];
+		$site_settings['custom_colors'] = $custom_colors;
+
+		Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
+
+		// Mock theme export
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( ['export_theme'] )
+			->getMock();
+
+		$site_settings_runner->method('export_theme')
+			->willReturn( [
+				'name'      => 'My Custom Theme',
+				'theme_uri' => 'https://example.com/my-custom-theme',
+				'version'   => '1.2.3',
+				'slug'      => 'my-custom-theme',
+			] );
+
+		// Set up customization - only export theme, globalColors, and experiments
+		$customization = [
+			'settings' => [
+				'theme' => true,
+				'globalColors' => true,
+				'globalFonts' => false,
+				'themeStyleSettings' => false,
+				'generalSettings' => false,
+				'experiments' => true,
+			],
+		];
+
+		$export = new Export( [
+			'include' => ['settings'],
+			'customization' => $customization,
+		] );
+		$export->register( $site_settings_runner );
+
+		// Act
+		$result = $export->run();
+
+		// Assert
+		// Check manifest contains only the enabled customizations
+		$expected_manifest = [
+			'theme' => true,
+			'globalColors' => true,
+			'globalFonts' => false,
+			'themeStyleSettings' => false,
+			'generalSettings' => false,
+			'experiments' => true,
+		];
+		$this->assertEquals( $expected_manifest, $result['manifest']['site-settings'] );
+
+		// Check the exported data
+		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
+		$site_settings_file = ImportExportCustomizationUtils::read_json_file( $extracted_zip_path . 'site-settings' );
+
+		// Should have theme data
+		$this->assertArrayHasKey( 'theme', $site_settings_file );
+		$this->assertEquals( 'My Custom Theme', $site_settings_file['theme']['name'] );
+
+		// Should have experiments data
+		$this->assertArrayHasKey( 'experiments', $site_settings_file );
+
+		// Should have color data (globalColors = true)
+		$this->assertArrayHasKey( 'settings', $site_settings_file );
+		$this->assertArrayHasKey( 'custom_colors', $site_settings_file['settings'] );
+		$this->assertArrayHasKey( 'system_colors', $site_settings_file['settings'] );
+
+		// Should NOT have typography data (globalFonts = false)
+		$this->assertArrayNotHasKey( 'system_typography', $site_settings_file['settings'] );
+		$this->assertArrayNotHasKey( 'custom_typography', $site_settings_file['settings'] );
+
+		// Should NOT have theme style data (themeStyleSettings = false)
+		foreach ( $site_settings_file['settings'] as $key => $value ) {
+			$this->assertFalse( 
+				preg_match( '/^(body_|h[1-6]_|button_|link_|form_field_)/', $key ),
+				"Found theme style setting that should have been filtered out: {$key}"
+			);
+		}
 
 		// Cleanups
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
@@ -262,10 +358,8 @@ class Test_Export extends Elementor_Test_Base {
 
 		// Act
 		$result = $export->run();
-		$selected_custom_post_types = $export->get_settings_selected_custom_post_types();
 
 		// Assert
-		$this->assertEquals( [ 'tests' ], $selected_custom_post_types );
 		$this->assertArrayHasKey( 'tests', $result['manifest']['wp-content'] );
 		$this->assertEquals( 'Tests', $result['manifest']['custom-post-type-title']['tests']['label'] );
 		$this->assertEmpty( $result['manifest']['wp-content']['nav_menu_item'] );

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport\Data\Routes;
+namespace Elementor\Tests\Phpunit\Elementor\App\ImportExportCustomization\Data\Routes;
 
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\Plugin;

@@ -38,19 +38,11 @@ class Export {
 	private $settings_kit_info;
 
 	/**
-	 * Selected plugins to export.
-	 * Contains the plugins essential data for export. (e.g: name, path, version, etc.)
+	 * Customization settings for selective export.
 	 *
 	 * @var array
 	 */
-	private $settings_selected_plugins;
-
-	/**
-	 * Selected custom post types to export.
-	 *
-	 * @var array
-	 */
-	private $settings_selected_custom_post_types;
+	private $settings_customization;
 
 	/**
 	 * The output data of the export process.
@@ -70,8 +62,7 @@ class Export {
 	public function __construct( $settings = [] ) {
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
-		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
-		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
+		$this->settings_customization = isset( $settings['customization'] ) ? $settings['customization'] : null;
 	}
 
 	/**
@@ -111,8 +102,7 @@ class Export {
 
 		$data = [
 			'include' => $this->settings_include,
-			'selected_plugins' => $this->settings_selected_plugins,
-			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
+			'customization' => $this->settings_customization,
 		];
 
 		foreach ( $this->runners as $runner ) {
@@ -145,12 +135,8 @@ class Export {
 			$this->settings_kit_info( $this->get_default_settings_kit_info() );
 		}
 
-		if ( ! is_array( $this->get_settings_selected_custom_post_types() ) && in_array( 'content', $this->settings_include, true ) ) {
-			$this->settings_selected_custom_post_types( $this->get_default_settings_custom_post_types() );
-		}
-
-		if ( ! is_array( $this->get_settings_selected_plugins() ) && in_array( 'plugins', $this->settings_include, true ) ) {
-			$this->settings_selected_plugins( $this->get_default_settings_selected_plugins() );
+		if ( ! is_array( $this->get_settings_customization() ) ) {
+			$this->settings_customization( $this->get_default_settings_customization() );
 		}
 	}
 
@@ -170,20 +156,12 @@ class Export {
 		return $this->settings_kit_info;
 	}
 
-	public function settings_selected_custom_post_types( $selected_custom_post_types ) {
-		$this->settings_selected_custom_post_types = $selected_custom_post_types;
+	public function settings_customization( $customization ) {
+		$this->settings_customization = $customization;
 	}
 
-	public function get_settings_selected_custom_post_types() {
-		return $this->settings_selected_custom_post_types;
-	}
-
-	public function settings_selected_plugins( $plugins ) {
-		$this->settings_selected_plugins = $plugins;
-	}
-
-	public function get_settings_selected_plugins() {
-		return $this->settings_selected_plugins;
+	public function get_settings_customization() {
+		return $this->settings_customization;
 	}
 
 	/**
@@ -208,21 +186,10 @@ class Export {
 	}
 
 	/**
-	 * Get the default settings of the plugins that should be exported.
-	 *
-	 * @return array{name: string, plugin:string, pluginUri: string, version: string}
+	 * Get the default settings of the customization that should be exported.
 	 */
-	private function get_default_settings_selected_plugins() {
-		$installed_plugins = Plugin::$instance->wp->get_plugins();
-
-		return $installed_plugins->map( function ( $item, $key ) {
-			return [
-				'name' => $item['Name'],
-				'plugin' => $key,
-				'pluginUri' => $item['PluginURI'],
-				'version' => $item['Version'],
-			];
-		} )->all();
+	private function get_default_settings_customization() {
+		return [];
 	}
 
 	/**

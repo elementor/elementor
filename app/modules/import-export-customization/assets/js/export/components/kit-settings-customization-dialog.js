@@ -19,23 +19,18 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 
 	const initialState = data.includes.includes( 'settings' );
 
-	// Initialize settings state based on saved customization or includes state
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
 			return data.customization.settings;
 		}
 
 		return {
+			theme: initialState,
 			globalColors: initialState,
 			globalFonts: initialState,
 			themeStyleSettings: initialState,
-			settings: initialState,
-			siteConditions: initialState,
+			generalSettings: initialState,
 			experiments: initialState,
-			customFonts: initialState,
-			customIcons: initialState,
-			customCode: initialState,
-			pageTransitions: initialState,
 		};
 	} );
 
@@ -45,16 +40,12 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 				setSettings( data.customization.settings );
 			} else {
 				setSettings( {
+					theme: initialState,
 					globalColors: initialState,
 					globalFonts: initialState,
 					themeStyleSettings: initialState,
-					settings: initialState,
-					siteConditions: initialState,
+					generalSettings: initialState,
 					experiments: initialState,
-					customFonts: initialState,
-					customIcons: initialState,
-					customCode: initialState,
-					pageTransitions: initialState,
 				} );
 			}
 		}
@@ -68,10 +59,8 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 	};
 
 	const handleSaveChanges = () => {
-		// Check if any setting is enabled
 		const hasEnabledSettings = Object.values( settings ).some( ( value ) => value );
 
-		// Update settings in context
 		dispatch( {
 			type: 'SET_CUSTOMIZATION',
 			payload: {
@@ -80,7 +69,6 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 			},
 		} );
 
-		// Add or remove from includes based on whether any setting is enabled
 		if ( hasEnabledSettings ) {
 			dispatch( { type: 'ADD_INCLUDE', payload: 'settings' } );
 		} else {
@@ -161,6 +149,12 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 			<DialogContent dividers sx={ { p: 3 } }>
 				<Stack spacing={ 0 }>
 					<SettingSection
+						title={ __( 'Theme', 'elementor' ) }
+						description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
+						settingKey="theme"
+					/>
+
+					<SettingSection
 						title={ __( 'Site settings', 'elementor' ) }
 						hasToggle={ false }
 					>
@@ -183,43 +177,13 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 					<SettingSection
 						title={ __( 'Settings', 'elementor' ) }
 						description={ __( 'Include site identity, background, layout, Lightbox, page transitions, and custom CSS', 'elementor' ) }
-						settingKey="settings"
-					/>
-
-					<SettingSection
-						title={ __( 'Site Conditions', 'elementor' ) }
-						settingKey="siteConditions"
+						settingKey="generalSettings"
 					/>
 
 					<SettingSection
 						title={ __( 'Experiments', 'elementor' ) }
 						description={ __( 'This will apply all experiments that are still active during import', 'elementor' ) }
 						settingKey="experiments"
-					/>
-
-					<SettingSection
-						title={ __( 'Custom files', 'elementor' ) }
-						hasToggle={ false }
-					>
-						<Stack spacing={ 0 }>
-							<SubSetting
-								label={ __( 'Custom fonts', 'elementor' ) }
-								settingKey="customFonts"
-							/>
-							<SubSetting
-								label={ __( 'Custom icons', 'elementor' ) }
-								settingKey="customIcons"
-							/>
-							<SubSetting
-								label={ __( 'Custom code', 'elementor' ) }
-								settingKey="customCode"
-							/>
-						</Stack>
-					</SettingSection>
-
-					<SettingSection
-						title={ __( 'Page transitions & Pre-loader', 'elementor' ) }
-						settingKey="pageTransitions"
 					/>
 				</Stack>
 			</DialogContent>
