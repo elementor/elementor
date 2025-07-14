@@ -1,15 +1,15 @@
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 
 export const usePermissions = () => {
-	const { canUser: userCan } = useCurrentUserCapabilities();
+	const { canUser } = useCurrentUserCapabilities();
 
 	return {
-		canAssign: () => userCan( 'edit_posts' ),
-		canUnlink: () => userCan( 'edit_posts' ),
-		canAdd: () => userCan( 'manage_options' ),
-		canDelete: () => userCan( 'manage_options' ),
-		canEdit: () => userCan( 'manage_options' ),
-		canRestore: () => userCan( 'manage_options' ),
-		canManageSettings: () => userCan( 'manage_options' ),
+		canAssign: () => canUser( 'edit_posts' ),
+		canUnlink: () => canUser( 'edit_posts' ),
+		canAdd: () => canUser( 'manage_options' ),
+		canDelete: () => canUser( 'manage_options' ),
+		canEdit: () => canUser( 'manage_options' ),
+		canRestore: () => canUser( 'manage_options' ),
+		canManageSettings: () => canUser( 'manage_options' ),
 	};
 };
