@@ -11,10 +11,10 @@ import { createControl } from '../create-control';
 import { useSizeExtendedOptions } from '../hooks/use-size-extended-options';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
 import {
-	DEFAULT_SIZE,
-	DEFAULT_UNIT,
 	type AngleUnit,
 	angleUnits,
+	DEFAULT_SIZE,
+	DEFAULT_UNIT,
 	type ExtendedOption,
 	isUnitExtendedOption,
 	type LengthUnit,
