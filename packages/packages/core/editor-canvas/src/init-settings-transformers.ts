@@ -1,4 +1,5 @@
 import { settingsTransformersRegistry } from './settings-transformers-registry';
+import { attributesTransformer } from './transformers/settings/attributes-transformer';
 import { createClassesTransformer } from './transformers/settings/classes-transformer';
 import { linkTransformer } from './transformers/settings/link-transformer';
 import { imageSrcTransformer } from './transformers/shared/image-src-transformer';
@@ -11,5 +12,6 @@ export function initSettingsTransformers() {
 		.register( 'link', linkTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'image-src', imageSrcTransformer )
+		.register( 'key-value-array', attributesTransformer )
 		.registerFallback( plainTransformer );
 }
