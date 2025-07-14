@@ -155,8 +155,8 @@ class Global_Classes_REST_API {
 	}
 
 	private function get_usage( \WP_REST_Request $request ) {
-		$with_page_info = filter_var( $request->get_param( 'with_page_info' ), FILTER_VALIDATE_BOOLEAN );
-                $classes_usage = ( new Applied_Global_Classes_Usage() )->get_detailed_usage();
+		$classes_usage = ( new Applied_Global_Classes_Usage() )->get_detailed_usage();
+
 		return Response_Builder::make( (object) $classes_usage )->build();
 	}
 
