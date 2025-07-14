@@ -2,9 +2,9 @@ import { Box, Typography, Stack, Checkbox, FormControlLabel, Button } from '@ele
 import PropTypes from 'prop-types';
 import kitContentData from '../kit-content-data';
 
-export default function KitPartsSelection({ data, onCheckboxChange, onEditClicked } ) {
+export default function KitPartsSelection( { data, onCheckboxChange, onEditClicked, testId } ) {
 	return (
-		<Stack spacing={ 2 }>
+		<Stack spacing={ 2 } data-testid={ testId }>
 			{ kitContentData.map( ( item ) => (
 				<Box key={ item.type } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 					<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
@@ -47,4 +47,5 @@ KitPartsSelection.propTypes = {
 	data: PropTypes.object.isRequired,
 	onCheckboxChange: PropTypes.func.isRequired,
 	onEditClicked: PropTypes.func,
+	testId: PropTypes.string,
 };

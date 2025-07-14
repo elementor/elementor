@@ -14,6 +14,7 @@ export default function ImportKitPartsSelection() {
 		<KitPartsSelection
 			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
+			testId="import-kit-parts-content"
 		/>
 	);
 }

@@ -21,6 +21,7 @@ export default function ImportCustomization() {
 				color="secondary"
 				size="small"
 				onClick={ () => dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.PENDING } ) }
+				data-testid="import-back-button"
 			>
 				{ __( 'Back', 'elementor' ) }
 			</Button>
@@ -32,6 +33,7 @@ export default function ImportCustomization() {
 					dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.IMPORTING } );
 					navigate( 'import-customization/process' );
 				} }
+				data-testid="import-apply-button"
 			>
 				{ __( 'Import and apply', 'elementor' ) }
 			</Button>
