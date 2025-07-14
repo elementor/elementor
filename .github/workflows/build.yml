@@ -58,13 +58,6 @@ jobs:
           node-version: 20.x
           cache: 'npm'
 
-      # Using PHP 7.4 to make sure the build will bundle the polyfills for PHP >= 8.0
-      - name: Install PHP 7.4
-        id: setup-php
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
-
       - name: Set ENV variables
         run: |
           DATE_VERSION=$(date '+%Y%m%d.%H%M')
@@ -76,6 +69,9 @@ jobs:
           echo "DATE_VERSION=$DATE_VERSION" >> $GITHUB_ENV
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        uses: ./.github/workflows/install-dependencies
 
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
