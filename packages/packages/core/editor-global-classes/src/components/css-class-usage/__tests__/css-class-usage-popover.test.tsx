@@ -120,7 +120,7 @@ describe( 'CssClassUsagePopover', () => {
 			data: {
 				total: 1,
 				content: [
-					{ title: 'Test Page', elements: [ 'el1', 'el2' ], pageId: 'page1', total: 2, type: 'page' },
+					{ title: 'Test Page', elements: [ 'el1', 'el2' ], pageId: 'page1', total: 2, type: 'wp-page' },
 				],
 			},
 		} );
