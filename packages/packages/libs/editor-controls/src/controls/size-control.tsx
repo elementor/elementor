@@ -13,6 +13,8 @@ import { useSyncExternalState } from '../hooks/use-sync-external-state';
 import {
 	type AngleUnit,
 	angleUnits,
+	DEFAULT_SIZE,
+	DEFAULT_UNIT,
 	type ExtendedOption,
 	isUnitExtendedOption,
 	type LengthUnit,
@@ -21,9 +23,6 @@ import {
 	timeUnits,
 	type Unit,
 } from '../utils/size-control';
-
-const DEFAULT_UNIT = 'px';
-const DEFAULT_SIZE = NaN;
 
 type SizeValue = SizePropValue[ 'value' ];
 
