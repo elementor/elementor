@@ -55,6 +55,8 @@ type ViewProps = {
 };
 
 type Handlers = {
+	onClose: () => void;
+	onGoBack?: () => void;
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 };
@@ -62,17 +64,13 @@ type Handlers = {
 function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
 
-	const handleSubmitOnEdit = () => {
-		if ( props?.selectedVariable?.key === props.editId ) {
-			props.closePopover();
-		} else {
-			props.setCurrentView( VIEW_LIST );
-		}
-	};
-
 	const handlers: Handlers = {
-		onAdd: undefined,
-		onEdit: undefined,
+		onClose: () => {
+			props.closePopover();
+		},
+		onGoBack: () => {
+			props.setCurrentView( VIEW_LIST );
+		},
 	};
 
 	if ( userPermissions.canAdd() ) {
@@ -88,11 +86,19 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		};
 	}
 
+	const handleSubmitOnEdit = () => {
+		if ( props?.selectedVariable?.key === props.editId ) {
+			handlers.onClose();
+		} else {
+			handlers.onGoBack?.();
+		}
+	};
+
 	if ( fontVariablePropTypeUtil.key === props.propTypeKey ) {
 		if ( VIEW_LIST === props.currentView ) {
 			return (
 				<FontVariablesSelection
-					closePopover={ props.closePopover }
+					closePopover={ handlers.onClose }
 					onAdd={ handlers.onAdd }
 					onEdit={ handlers.onEdit }
 				/>
@@ -100,20 +106,15 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		}
 
 		if ( VIEW_ADD === props.currentView ) {
-			return (
-				<FontVariableCreation
-					onGoBack={ () => props.setCurrentView( VIEW_LIST ) }
-					onClose={ props.closePopover }
-				/>
-			);
+			return <FontVariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
 		}
 
 		if ( VIEW_EDIT === props.currentView ) {
 			return (
 				<FontVariableEdit
 					editId={ props.editId }
-					onGoBack={ () => props.setCurrentView( VIEW_LIST ) }
-					onClose={ props.closePopover }
+					onGoBack={ handlers.onGoBack }
+					onClose={ handlers.onClose }
 					onSubmit={ handleSubmitOnEdit }
 				/>
 			);
@@ -124,7 +125,7 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		if ( VIEW_LIST === props.currentView ) {
 			return (
 				<ColorVariablesSelection
-					closePopover={ props.closePopover }
+					closePopover={ handlers.onClose }
 					onAdd={ handlers.onAdd }
 					onEdit={ handlers.onEdit }
 				/>
@@ -132,20 +133,15 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		}
 
 		if ( VIEW_ADD === props.currentView ) {
-			return (
-				<ColorVariableCreation
-					onGoBack={ () => props.setCurrentView( VIEW_LIST ) }
-					onClose={ props.closePopover }
-				/>
-			);
+			return <ColorVariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
 		}
 
 		if ( VIEW_EDIT === props.currentView ) {
 			return (
 				<ColorVariableEdit
 					editId={ props.editId }
-					onGoBack={ () => props.setCurrentView( VIEW_LIST ) }
-					onClose={ props.closePopover }
+					onGoBack={ handlers.onGoBack }
+					onClose={ handlers.onClose }
 					onSubmit={ handleSubmitOnEdit }
 				/>
 			);
