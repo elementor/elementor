@@ -15,6 +15,7 @@ type TransitionSelectorProps = {
 	onPropertyChange: ( property: string ) => void;
 	onClose: () => void;
 	sectionWidth: number;
+	isProLicenseActive: boolean;
 };
 
 export const TransitionSelector = ( {
@@ -22,10 +23,11 @@ export const TransitionSelector = ( {
 	onPropertyChange,
 	onClose,
 	sectionWidth,
+	isProLicenseActive,
 }: TransitionSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
-	const filteredProperties = useFilteredTransitionProperties( transitionProperties, searchValue );
+	const filteredProperties = useFilteredTransitionProperties( transitionProperties, searchValue, isProLicenseActive );
 
 	const handleSearch = ( value: string ) => {
 		setSearchValue( value );

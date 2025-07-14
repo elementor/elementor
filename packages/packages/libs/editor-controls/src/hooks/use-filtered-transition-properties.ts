@@ -11,37 +11,51 @@ export type TransitionListItem = {
 
 export const useFilteredTransitionProperties = (
 	categories: TransitionCategory[],
-	searchTerm: string
+	searchTerm: string,
+	isProLicenseActive: boolean
 ): TransitionListItem[] => {
 	return useMemo( () => {
-		if ( ! searchTerm ) {
-			// Return all items organized by category
-			return categories.reduce( ( acc: TransitionListItem[], category ) => {
-				acc.push( {
-					label: category.label,
-					value: category.label,
-					type: 'category',
-				} );
+		const filterPropertiesByLicense = ( category: TransitionCategory ) => {
+			return category.properties.filter( ( property ) => {
+				const isAccessible = property.type === 'free' || isProLicenseActive;
+				return isAccessible;
+			} );
+		};
 
-				category.properties.forEach( ( property ) => {
+		if ( ! searchTerm ) {
+			// Return all items organized by category, filtered by license
+			return categories.reduce( ( acc: TransitionListItem[], category ) => {
+				const accessibleProperties = filterPropertiesByLicense( category );
+
+				if ( accessibleProperties.length > 0 ) {
 					acc.push( {
-						label: property.label,
-						value: property.value,
-						type: 'property',
-						category: category.label,
+						label: category.label,
+						value: category.label,
+						type: 'category',
 					} );
-				} );
+
+					accessibleProperties.forEach( ( property ) => {
+						acc.push( {
+							label: property.label,
+							value: property.value,
+							type: 'property',
+							category: category.label,
+						} );
+					} );
+				}
 
 				return acc;
 			}, [] );
 		}
 
-		// Filter properties based on search term
+		// Filter properties based on search term and license
 		const searchLower = searchTerm.toLowerCase();
 		const filteredItems: TransitionListItem[] = [];
 
 		categories.forEach( ( category ) => {
-			const matchingProperties = category.properties.filter(
+			const accessibleProperties = filterPropertiesByLicense( category );
+
+			const matchingProperties = accessibleProperties.filter(
 				( property ) =>
 					property.label.toLowerCase().includes( searchLower ) ||
 					property.value.toLowerCase().includes( searchLower )
@@ -66,5 +80,5 @@ export const useFilteredTransitionProperties = (
 		} );
 
 		return filteredItems;
-	}, [ categories, searchTerm ] );
+	}, [ categories, searchTerm, isProLicenseActive ] );
 };

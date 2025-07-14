@@ -63,6 +63,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					onFontFamilyChange={ setFontFamily }
 					onClose={ popoverState.close }
 					sectionWidth={ sectionWidth }
+					isProLicenseActive={ true }
 				/>
 			</Popover>
 		</>
