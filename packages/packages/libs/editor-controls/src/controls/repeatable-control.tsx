@@ -23,6 +23,7 @@ type RepeatableControlProps = {
 	initialValues?: object;
 	patternLabel?: string;
 	placeholder?: string;
+	propKey?: string;
 };
 
 const PLACEHOLDER_REGEX = /\$\{([^}]+)\}/g;
@@ -36,6 +37,7 @@ export const RepeatableControl = createControl(
 		initialValues,
 		patternLabel,
 		placeholder,
+		propKey,
 	}: RepeatableControlProps ) => {
 		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
 
@@ -44,8 +46,8 @@ export const RepeatableControl = createControl(
 		}
 
 		const childArrayPropTypeUtil = useMemo(
-			() => createArrayPropUtils( childPropTypeUtil.key, childPropTypeUtil.schema ),
-			[ childPropTypeUtil.key, childPropTypeUtil.schema ]
+			() => createArrayPropUtils( childPropTypeUtil.key, childPropTypeUtil.schema, propKey ),
+			[ childPropTypeUtil.key, childPropTypeUtil.schema, propKey ]
 		);
 
 		const contextValue = useMemo(
