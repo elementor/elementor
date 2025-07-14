@@ -7,7 +7,7 @@ export const useCssClassUsage = (): UseQueryResult< EnhancedCssClassUsage > => {
 	return useQuery( {
 		queryKey: [ QUERY_KEY ],
 		queryFn: fetchCssClassUsage,
-		refetchOnMount: true,
+		refetchOnMount: false,
 		refetchOnWindowFocus: true,
 	} );
 };
