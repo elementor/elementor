@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const NoVariables = ( { icon, title, onAdd }: Props ) => {
-	const userPermissions = usePermissions();
+	const canAdd = usePermissions().canAdd();
 
 	return (
 		<Stack
@@ -24,16 +24,37 @@ export const NoVariables = ( { icon, title, onAdd }: Props ) => {
 		>
 			{ icon }
 
-			{ userPermissions.canAdd() ? (
-				<CreateYourVariable title={ title } onAdd={ onAdd } />
+			{ canAdd ? (
+				<>
+					<NoVariablesContent
+						title={ title || __( 'Create your first variable', 'elementor' ) }
+						message={ __(
+							'Variables are saved attributes that you can apply anywhere on your site.',
+							'elementor'
+						) }
+					/>
+					{ onAdd && (
+						<Button variant="outlined" color="secondary" size="small" onClick={ onAdd }>
+							{ __( 'Create a variable', 'elementor' ) }
+						</Button>
+					) }
+				</>
 			) : (
-				<NoVariablesFallback />
+				<NoVariablesContent
+					title={ __( 'There are no variables', 'elementor' ) }
+					message={ __( 'With your current role, you can only connect and detach variables.', 'elementor' ) }
+				/>
 			) }
 		</Stack>
 	);
 };
 
-function CreateYourVariable( { title, onAdd }: Omit< Props, 'icon' > ) {
+type NoVariablesContentProps = {
+	title: string;
+	message: string;
+};
+
+function NoVariablesContent( { title, message }: NoVariablesContentProps ) {
 	return (
 		<>
 			<Typography align="center" variant="subtitle2">
@@ -41,27 +62,7 @@ function CreateYourVariable( { title, onAdd }: Omit< Props, 'icon' > ) {
 			</Typography>
 
 			<Typography align="center" variant="caption" maxWidth="180px">
-				{ __( 'Variables are saved attributes that you can apply anywhere on your site.', 'elementor' ) }
-			</Typography>
-
-			{ onAdd && (
-				<Button variant="outlined" color="secondary" size="small" onClick={ onAdd }>
-					{ __( 'Create a variable', 'elementor' ) }
-				</Button>
-			) }
-		</>
-	);
-}
-
-function NoVariablesFallback() {
-	return (
-		<>
-			<Typography align="center" variant="subtitle2">
-				{ __( 'There are no variables', 'elementor' ) }
-			</Typography>
-
-			<Typography align="center" variant="caption" maxWidth="180px">
-				{ __( 'With your current role, you can only connect and detach variables.', 'elementor' ) }
+				{ message }
 			</Typography>
 		</>
 	);
