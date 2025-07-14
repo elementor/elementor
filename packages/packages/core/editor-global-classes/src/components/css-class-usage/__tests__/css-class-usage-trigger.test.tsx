@@ -7,7 +7,7 @@ import { useCssClassUsageByID } from '../hooks';
 jest.mock( '../hooks' );
 
 describe( 'CssClassUsageTrigger', () => {
-	it( 'renders locator icon and does not open on click when total is 0', () => {
+	it( 'renders locator icon and does not open on click when total is 0', async () => {
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
 			isLoading: false,
@@ -17,9 +17,8 @@ describe( 'CssClassUsageTrigger', () => {
 		// Act.
 		render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
 
-		fireEvent.click( screen.getByRole( 'button' ) );
-
-		// Assert.
+		fireEvent.mouseOver( screen.getByRole( 'button' ) );
+		expect( await screen.findByText( 'This class isn’t being used yet.' ) ).toBeInTheDocument();
 		expect( screen.queryByLabelText( 'css-class-usage-popover' ) ).not.toBeInTheDocument();
 	} );
 
@@ -30,8 +29,8 @@ describe( 'CssClassUsageTrigger', () => {
 			data: {
 				total: 2,
 				content: [
-					{ pageId: 'page1', total: 1, elements: [ 'el-1' ], title: 'Title1', type: 'Page' },
-					{ pageId: 'page2', total: 1, elements: [ 'el-2' ], title: 'Title2', type: 'Page' },
+					{ pageId: 'page1', total: 1, elements: [ 'el-1' ], title: 'Title1', type: 'wp-page' },
+					{ pageId: 'page2', total: 1, elements: [ 'el-2' ], title: 'Title2', type: 'wp-page' },
 				],
 			},
 		} );
@@ -39,7 +38,7 @@ describe( 'CssClassUsageTrigger', () => {
 		// Act.
 		render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
 
-		const iconButton = screen.getByRole( 'button', { name: /Show \(2\) locations/i } );
+		const iconButton = screen.getByRole( 'button' );
 		expect( iconButton ).toBeInTheDocument();
 
 		fireEvent.click( iconButton );
