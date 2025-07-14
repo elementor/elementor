@@ -20,6 +20,11 @@ type Props = {
 	fallbackPropTypeUtil: PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
 };
 
+type Handlers = {
+	onUnlink?: () => void;
+	onRestore?: () => void;
+};
+
 export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropTypeUtil }: Props ) => {
 	const { setValue } = useBoundProp();
 
@@ -29,10 +34,6 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 	const toggleInfotip = () => setShowInfotip( ( prev ) => ! prev );
 	const closeInfotip = () => setShowInfotip( false );
 
-	const unlinkVariable = () => {
-		setValue( fallbackPropTypeUtil.create( variable.value ) );
-	};
-
 	const deletedChipAnchorRef = useRef< HTMLDivElement >( null );
 
 	const popupId = useId();
@@ -41,24 +42,32 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 		popupId: `elementor-variables-restore-${ popupId }`,
 	} );
 
-	const handleRestore = userPermissions.canRestore()
-		? () => {
-				if ( ! variable.key ) {
-					return;
-				}
+	const handlers: Handlers = {};
 
-				restoreVariable( variable.key )
-					.then( ( key ) => {
-						setValue( variablePropTypeUtil.create( key ) );
-						closeInfotip();
-					} )
-					.catch( () => {
-						closeInfotip();
-						popupState.setAnchorEl( deletedChipAnchorRef.current );
-						popupState.open();
-					} );
-		  }
-		: undefined;
+	if ( userPermissions.canUnlink() ) {
+		handlers.onUnlink = () => {
+			setValue( fallbackPropTypeUtil.create( variable.value ) );
+		};
+	}
+
+	if ( userPermissions.canRestore() ) {
+		handlers.onRestore = () => {
+			if ( ! variable.key ) {
+				return;
+			}
+
+			restoreVariable( variable.key )
+				.then( ( key ) => {
+					setValue( variablePropTypeUtil.create( key ) );
+					closeInfotip();
+				} )
+				.catch( () => {
+					closeInfotip();
+					popupState.setAnchorEl( deletedChipAnchorRef.current );
+					popupState.open();
+				} );
+		};
+	}
 
 	const handleRestoreWithOverrides = () => {
 		popupState.close();
@@ -77,8 +86,8 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 					content={
 						<DeletedVariableAlert
 							onClose={ closeInfotip }
-							onUnlink={ unlinkVariable }
-							onRestore={ handleRestore }
+							onUnlink={ handlers.onUnlink }
+							onRestore={ handlers.onRestore }
 							label={ variable.label }
 						/>
 					}
