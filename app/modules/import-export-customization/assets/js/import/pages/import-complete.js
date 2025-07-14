@@ -46,6 +46,7 @@ export default function ImportComplete() {
 				color="secondary"
 				startIcon={ <ExternalLinkIcon /> }
 				size="small"
+				data-testid="see-it-live-button"
 			>
 				{ __( 'See it Live', 'elementor' ) }
 			</Button>
@@ -54,6 +55,7 @@ export default function ImportComplete() {
 				color="primary"
 				size="small"
 				sx={ { px: 4 } }
+				data-testid="close-button"
 			>
 				{ __( 'Close', 'elementor' ) }
 			</Button>

@@ -31,7 +31,7 @@ export default function ImportError( { statusText } ) {
 				<XIcon sx={ { fontSize: '24px' } } />
 			</Box>
 
-			<Typography variant="h5" component="h2">
+			<Typography variant="h5" component="h2" data-testid="import-error" >
 				{ statusText }
 			</Typography>
 
