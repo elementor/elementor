@@ -55,13 +55,13 @@ export function useFloatingActionsPopover() {
 	const triggerProps = bindTrigger( popupState );
 	const popoverProps = bindPopover( popupState );
 
-	const onClick = ( e: React.SyntheticEvent ) => {
-		popupState.open( e );
+	const onClick = ( e: React.MouseEvent ) => {
+		triggerProps.onClick( e );
 		setOpen( true );
 	};
 
 	const onClose = () => {
-		popupState.close();
+		popoverProps.onClose();
 		setOpen( false );
 	};
 
