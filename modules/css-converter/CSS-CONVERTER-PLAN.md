@@ -5,6 +5,7 @@
 - The API will create or update a page/post, inserting the correct widgets with mapped styling.
 - Input: JSON structure with `elements` (tag, css, children), `postId`, `postType`, `parentContainerId`.
 - Output: Elementor widgets on a page, styled according to atomic schema.
+- **The API must provide clear, machine-readable documentation (e.g., OpenAPI/Swagger or similar), so it can be easily accessed and integrated by MCPs and other clients.**
 
 ## 2. Supported Tags (MVP)
 - `div`, `header`, `section`, `article`, `aside`, `footer` → `e-flexbox` widget (with `tag` prop)
@@ -50,8 +51,13 @@
 3. **Map CSS properties** to schema props if supported; otherwise, fallback to HTML widget.
 4. **Validate and sanitize** props using the schema.
 5. **Create/update Elementor page/post** with the widgets and styles.
+6. **Expose API documentation** endpoint (e.g., `/api/docs`) for easy integration by MCPs and other clients.
 
-## 7. References
+## 7. Security
+- **MVP:** Require a hardcoded API key for all requests (e.g., via header `X-API-Key`).
+- **Note:** This is a temporary solution. The PRD must reference that the authentication mechanism will need to be updated in the future for production use (e.g., OAuth, JWT, or user-based keys).
+
+## 8. References
 - **PHP:**
   - `plugins/elementor/modules/atomic-widgets/styles/style-schema.php`
   - Widget files: `elements/flexbox/flexbox.php`, `elements/atomic-paragraph/atomic-paragraph.php`, etc.
@@ -61,10 +67,12 @@
   - `editor-canvas/src/renderers/create-props-resolver.ts` (props resolver)
   - `editor-canvas/src/style-commands/utils.ts` (schema access)
 
-## 8. Rationale
+## 9. Rationale
 - **Avoid hardcoding:** Ensures maintainability and future-proofing.
 - **Consistency:** Keeps PHP and JS/TS logic in sync.
 - **Extensibility:** New properties and widgets are supported automatically via schema.
+- **Documentation:** Ensures the API is easily discoverable and usable by MCPs and other clients.
+- **Security:** Even for MVP, some access control is required; future-proofing for more robust authentication.
 
 ---
 
