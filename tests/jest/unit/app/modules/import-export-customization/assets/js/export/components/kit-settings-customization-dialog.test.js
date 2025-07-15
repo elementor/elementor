@@ -322,7 +322,7 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 			const siteSettingsSection = screen.getByText( 'Site settings' );
 
 			expect( siteSettingsSection ).toBeTruthy();
-			
+
 			// Check that sub-settings have toggles
 			const globalColorsText = screen.getByText( 'Global colors' );
 			const globalColorsParent = globalColorsText.closest( 'div' ).parentElement;

@@ -11,6 +11,7 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 	 * @return {Function} A React component that renders the mock dialog
 	 */
 	const createMockDialog = ( type ) => {
+		// eslint-disable-next-line react/prop-types
 		const MockDialog = ( { open, handleClose } ) => {
 			if ( ! open ) {
 				return null;
@@ -285,7 +286,7 @@ describe( 'KitContent Component', () => {
 
 		it( 'should open dialog when Edit button is clicked', () => {
 			render( <KitContent /> );
-	
+
 			const settingsEditButton = screen.getByText( 'Edit', {
 				selector: '[data-type="settings"]',
 			} );
@@ -392,6 +393,7 @@ describe( 'KitContent Component', () => {
 		it( 'should support future dialog types with generic factory', () => {
 			// Demonstrating how easy it is to add new dialog types
 			const mockCreateDialog = ( type ) => {
+				// eslint-disable-next-line react/prop-types
 				const MockDialog = ( { open, handleClose } ) => {
 					if ( ! open ) {
 						return null;
