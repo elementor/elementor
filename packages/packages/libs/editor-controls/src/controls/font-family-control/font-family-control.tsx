@@ -40,11 +40,11 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					sx={
 						isShowingPlaceholder
 							? {
-								'& .MuiTag-label': {
-									color: ( theme ) => theme.palette.text.tertiary,
-								},
-								textTransform: 'capitalize',
-							}
+									'& .MuiTag-label': {
+										color: ( theme ) => theme.palette.text.tertiary,
+									},
+									textTransform: 'capitalize',
+							  }
 							: undefined
 					}
 				/>
