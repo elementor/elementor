@@ -86,7 +86,7 @@ else
 fi
 if [ -f "package.json" ]; then
     echo "Updating package.json to next version..."
-    execOrLog "jq --arg v '$DEV_VERSION' '.version = \$v' package.json > package.json.tmp && mv package.json.tmp package.json"
+    execOrLog "jq --arg v \"$DEV_VERSION\" '.version = \$v' package.json > package.json.tmp && mv package.json.tmp package.json"
     execOrLog "npm i"
 else
     echo "package.json not found!"
