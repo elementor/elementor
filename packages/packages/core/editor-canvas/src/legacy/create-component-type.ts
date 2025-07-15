@@ -119,56 +119,57 @@ function createComponentViewClassDeclaration( {
             return `<div class="${classes}">${renderedElements}</div>`;
         }
 
-		async renderWidget( childElement: any, componentSettings: any ) {
-            const widgetConfig = config[ childElement.widgetType ];
+		async renderWidget( widget: any, componentSettings: any ) {
+            const widgetConfig = config[ widget.widgetType ];
 
             if ( !widgetConfig || !widgetConfig.atomic_props_schema ) {
-                console.log( 'no config', childElement.widgetType );
+                console.log( 'no config', widget.widgetType );
                 return '';
             }
 
-            const props = { ...childElement.settings };
+            const widgetProps = { ...widget.settings };
 
             // Overrides - hardcoded check for POC
             const image_id = "414a53c";
             const name_id = "87d3ef6";
             const title_id = "c8cb872";
             
-            if (childElement.id === name_id && componentSettings.name) {
-                props.title = componentSettings.name;
+            if (widget.id === name_id && componentSettings.name) {
+                widgetProps.title = componentSettings.name;
             }
-            if (childElement.id === image_id && componentSettings['profile-image']) {
-                props.image = componentSettings['profile-image'];
+            if (widget.id === image_id && componentSettings['profile-image']) {
+                widgetProps.image = componentSettings['profile-image'];
             }
-            if (childElement.id === title_id && componentSettings.title) {
-                props.title = componentSettings.title;
+            if (widget.id === title_id && componentSettings.title) {
+                widgetProps.title = componentSettings.title;
             }
             // End of overrides
 
-            console.log( childElement.widgetType, props );
+            console.log( widget.widgetType, widgetProps );
             const propsResolver = createPropsResolver( {
                 transformers: settingsTransformersRegistry,
                 schema: widgetConfig.atomic_props_schema,
             } );
 
             const resolvedSettings = await propsResolver( {
-                props,
+                props: widgetProps,
+                
             } );
 
             // Same as the Backend.
-            const context = {
-                id: childElement.id,
-                type: childElement.widgetType,
+            const twigContext = {
+                id: widget.id,
+                type: widget.widgetType,
                 settings: resolvedSettings,
                 base_styles: widgetConfig.base_styles_dictionary,
             };
 
-            console.log( context );
+            console.log( twigContext );
 
             const templateKey = widgetConfig.twig_main_template!;
-            const html = await renderer.render( templateKey, context );
+            const html = await renderer.render( templateKey, twigContext );
 
-            console.log( childElement.widgetType, html );
+            console.log( widget.widgetType, html );
             return html;
         }
 

@@ -100,6 +100,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getChildView( model ) {
+		///// hmmm
 		const elementType = model.get( 'widgetType' ) || model.get( 'elType' ),
 			elementTypeClass = elementor.elementsManager.getElementTypeClass( elementType );
 

@@ -48,7 +48,7 @@ class Component extends Atomic_Widget_Base {
 
 		// $config['elements_data'] = $this->elements_data[0]['elements'][0]['elements'];
 
-		$config['elements_data'] = $this->elements_data[0]['elements'];
+		// $config['elements_data'] = $this->elements_data[0]['elements'];
 		$config['elements_data'] = $this->elements_data;
 
 		return $config;
