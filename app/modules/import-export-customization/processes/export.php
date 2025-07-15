@@ -163,7 +163,7 @@ class Export {
 		}
 
 		if ( ! is_array( $this->get_settings_customization() ) ) {
-			$this->settings_customization($this->get_default_settings_customization());
+			$this->settings_customization( $this->get_default_settings_customization() );
 		}
 	}
 

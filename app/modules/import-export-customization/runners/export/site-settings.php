@@ -166,8 +166,8 @@ class Site_Settings extends Export_Runner_Base {
 	private function remove_global_colors( $kit_data ) {
 		$color_keys = [ 'system_colors', 'custom_colors' ];
 
-		foreach ( $kit_data['settings'] as $key => $value ) {
-			if ( ! in_array( $key, $color_keys ) ) {
+		foreach ( $color_keys as $key ) {
+			if ( isset( $kit_data['settings'][ $key ] ) ) {
 				unset( $kit_data['settings'][ $key ] );
 			}
 		}
@@ -178,8 +178,8 @@ class Site_Settings extends Export_Runner_Base {
 	private function remove_global_fonts( $kit_data ) {
 		$typography_keys = [ 'system_typography', 'custom_typography', 'default_generic_fonts' ];
 
-		foreach ( $kit_data['settings'] as $key => $value ) {
-			if ( ! in_array( $key, $typography_keys ) ) {
+		foreach ( $typography_keys as $key ) {
+			if ( isset( $kit_data['settings'][ $key ] ) ) {
 				unset( $kit_data['settings'][ $key ] );
 			}
 		}
@@ -197,15 +197,11 @@ class Site_Settings extends Export_Runner_Base {
 		];
 
 		foreach ( $kit_data['settings'] as $key => $value ) {
-			$keep = false;
 			foreach ( $theme_style_patterns as $pattern ) {
 				if ( preg_match( $pattern, $key ) ) {
-					$keep = true;
+					unset( $kit_data['settings'][ $key ] );
 					break;
 				}
-			}
-			if ( ! $keep ) {
-				unset( $kit_data['settings'][ $key ] );
 			}
 		}
 
@@ -224,8 +220,8 @@ class Site_Settings extends Export_Runner_Base {
 			'activeItemIndex',
 		];
 
-		foreach ( $kit_data['settings'] as $key => $value ) {
-			if ( ! in_array( $key, $settings_keys ) ) {
+		foreach ( $settings_keys as $key ) {
+			if ( isset( $kit_data['settings'][ $key ] ) ) {
 				unset( $kit_data['settings'][ $key ] );
 			}
 		}

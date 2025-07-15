@@ -83,11 +83,9 @@ class Test_Export extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$custom_colors = [
-			[
-				'_id' => '0fba91c',
-				'title' => 'Light Orange',
-				'color' => '#FAB89F',
-			]
+			'_id' => '0fba91c',
+			'title' => 'Light Orange',
+			'color' => '#FAB89F',
 		];
 		$site_settings['custom_colors'] = $custom_colors;
 
@@ -163,33 +161,20 @@ class Test_Export extends Elementor_Test_Base {
 		];
 		$site_settings['custom_colors'] = $custom_colors;
 
-		$mocked_theme = [
-			'name'      => 'My Custom Theme',
-			'theme_uri' => 'https://example.com/my-custom-theme',
-			'version'   => '1.2.3',
-			'slug'      => 'my-custom-theme',
-		];
-		$experiments = [];
-
-		foreach ( Plugin::$instance->experiments->get_features() as $feature_name => $feature ) {
-			$experiments[ $feature_name ] = [
-				'name' => $feature_name,
-				'title' => $feature['title'],
-				'state' => $feature['state'],
-				'default' => $feature['default'],
-				'release_status' => $feature['release_status'],
-			];
-		}
-
 		Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
 
-		// used mock as default theme doesn't have URI
+		// Mock theme export
 		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
 			->onlyMethods( ['export_theme'] )
 			->getMock();
 
 		$site_settings_runner->method('export_theme')
-			->willReturn( $mocked_theme );
+			->willReturn( [
+				'name'      => 'My Custom Theme',
+				'theme_uri' => 'https://example.com/my-custom-theme',
+				'version'   => '1.2.3',
+				'slug'      => 'my-custom-theme',
+			] );
 
 		// Set up customization - only export theme, globalColors, and experiments
 		$customization = [

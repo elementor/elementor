@@ -2,10 +2,10 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\App\ImportExportCustomization\Compatibility;
 
-use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization_Adapter;
+use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
 use ElementorEditorTesting\Elementor_Test_Base;
 
-class Test_Customization_Adapter extends Elementor_Test_Base {
+class Test_Customization extends Elementor_Test_Base {
 
 	public function test_is_compatibility_needed__returns_true_for_old_version() {
 		$manifest_data = [
@@ -13,7 +13,7 @@ class Test_Customization_Adapter extends Elementor_Test_Base {
 			'site-settings' => [ 'settings-global-colors', 'settings-general' ],
 		];
 
-		$this->assertTrue( Customization_Adapter::is_compatibility_needed( $manifest_data, [] ) );
+		$this->assertTrue( Customization::is_compatibility_needed( $manifest_data, [] ) );
 	}
 
 	public function test_is_compatibility_needed__returns_true_for_missing_version() {
@@ -21,7 +21,7 @@ class Test_Customization_Adapter extends Elementor_Test_Base {
 			'site-settings' => [ 'settings-global-colors', 'settings-general' ],
 		];
 
-		$this->assertTrue( Customization_Adapter::is_compatibility_needed( $manifest_data, [] ) );
+		$this->assertTrue( Customization::is_compatibility_needed( $manifest_data, [] ) );
 	}
 
 	public function test_is_compatibility_needed__returns_false_for_current_version() {
@@ -37,7 +37,7 @@ class Test_Customization_Adapter extends Elementor_Test_Base {
 			],
 		];
 
-		$this->assertFalse( Customization_Adapter::is_compatibility_needed( $manifest_data, [] ) );
+		$this->assertFalse( Customization::is_compatibility_needed( $manifest_data, [] ) );
 	}
 
 	public function test_adapt_manifest__converts_old_format_to_new_format() {
@@ -48,7 +48,7 @@ class Test_Customization_Adapter extends Elementor_Test_Base {
 			'other-data' => 'should-remain',
 		];
 
-		$adapter = new Customization_Adapter();
+		$adapter = new Customization();
 		$result = $adapter->adapt_manifest( $manifest_data );
 
 		// Check version was updated
@@ -76,7 +76,7 @@ class Test_Customization_Adapter extends Elementor_Test_Base {
 			'site-settings' => [],
 		];
 
-		$adapter = new Customization_Adapter();
+		$adapter = new Customization();
 		$result = $adapter->adapt_manifest( $manifest_data );
 
 		// Check site-settings are all false when empty
@@ -105,10 +105,10 @@ class Test_Customization_Adapter extends Elementor_Test_Base {
 			],
 		];
 
-		$adapter = new Customization_Adapter();
+		$adapter = new Customization();
 		$result = $adapter->adapt_manifest( $manifest_data );
 
 		// Should remain unchanged
 		$this->assertEquals( $manifest_data, $result );
 	}
-} 
+}
