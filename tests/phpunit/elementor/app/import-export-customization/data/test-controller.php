@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport\Data;
+namespace Elementor\Tests\Phpunit\Elementor\App\ImportExportCustomization\Data;
 
 use Elementor\App\Modules\ImportExportCustomization\Data\Controller;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -39,12 +39,12 @@ class Test_Controller extends Elementor_Test_Base {
 		// Restore global filters if REST API was initialized
 		if ( $this->rest_api_initialized ) {
 			global $wp_filter;
-			
+
 			// Restore the backed up filters
 			if ( ! empty( $this->filters_backup ) ) {
 				$wp_filter = $this->filters_backup;
 			}
-			
+
 			$this->rest_api_initialized = false;
 			$this->filters_backup = [];
 		}
@@ -58,10 +58,10 @@ class Test_Controller extends Elementor_Test_Base {
 	private function init_rest_api() {
 		if ( ! $this->rest_api_initialized ) {
 			global $wp_filter;
-			
+
 			// Backup current filters state
 			$this->filters_backup = $wp_filter;
-			
+
 			do_action( 'rest_api_init' );
 			$this->rest_api_initialized = true;
 		}
@@ -90,7 +90,7 @@ class Test_Controller extends Elementor_Test_Base {
 
 		// Act - Initialize REST API with proper cleanup
 		$this->init_rest_api();
-		
+
 		// Get all registered routes
 		$routes = rest_get_server()->get_routes();
 
