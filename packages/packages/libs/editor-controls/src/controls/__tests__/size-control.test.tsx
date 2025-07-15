@@ -524,4 +524,115 @@ describe( 'SizeControl', () => {
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'turn' } } );
 		} );
 	} );
+
+	describe( 'Placeholder', () => {
+		it( 'should prioritize prop placeholder over context placeholder', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 100,
+						unit: '%',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <SizeControl placeholder="Mixed Values" />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+
+			// Assert.
+			expect( sizeInput ).toHaveAttribute( 'placeholder', 'Mixed Values' );
+		} );
+
+		it( 'should use the context placeholder if the prop placeholder is not provided', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 20,
+						unit: 'em',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <SizeControl />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			// Assert.
+			expect( sizeInput ).toHaveAttribute( 'placeholder', '20' );
+			expect( unitButton ).toHaveTextContent( 'em' );
+		} );
+
+		it( 'should not show placeholder if value is provided', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp( {
+					size: 149,
+					unit: 'vh',
+				} ),
+				bind: 'select',
+				disabled: true,
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 200,
+						unit: '%',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <SizeControl />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			// Assert.
+			expect( sizeInput ).toHaveDisplayValue( '149' );
+			expect( unitButton ).toHaveTextContent( 'vh' );
+		} );
+
+		it( 'should show no placeholder when neither prop nor bound prop placeholder is provided', () => {
+			// Arrange
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				disabled: true,
+				propType,
+			};
+
+			// Act
+			renderControl( <SizeControl />, props );
+
+			// Assert
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			expect( sizeInput ).not.toHaveAttribute( 'placeholder' );
+			expect( unitButton ).toHaveTextContent( 'px' );
+		} );
+	} );
 } );
