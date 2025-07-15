@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { type TransitionCategory, transitionProperties } from '../components/transition-properties-data';
+import { type TransitionCategory, transitionProperties } from '../components/transitions/properties-data';
 
 export type TransitionListItem = {
 	label: string;

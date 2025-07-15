@@ -23,7 +23,7 @@ export { SwitchControl } from './controls/switch-control';
 export { RepeatableControl } from './controls/repeatable-control';
 export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
-export { TransitionSelector } from './components/transition-selector-control';
+export { TransitionSelector } from './components/transitions/selector-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
 export { PopoverContent } from './components/popover-content';
 

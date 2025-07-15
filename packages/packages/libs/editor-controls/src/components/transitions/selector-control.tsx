@@ -5,8 +5,8 @@ import { SettingsIcon } from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useFilteredTransitionProperties } from '../hooks/use-filtered-transition-properties';
-import { TransitionPropertyList } from './transition-property-list';
+import { useFilteredTransitionProperties } from '../../hooks/use-filtered-transition-properties';
+import { TransitionPropertyList } from './properties-list';
 
 const SIZE = 'tiny';
 

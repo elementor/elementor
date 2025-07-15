@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMemo } from 'react';
 import { PopoverMenuList } from '@elementor/editor-ui';
 
-import { type TransitionListItem } from '../hooks/use-filtered-transition-properties';
+import { type TransitionListItem } from '../../hooks/use-filtered-transition-properties';
 
 type TransitionPropertyListProps = {
 	items: TransitionListItem[];
