@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { PopoverMenuList } from '@elementor/editor-ui';
 
 import { type TransitionListItem } from '../hooks/use-filtered-transition-properties';
@@ -16,7 +17,9 @@ export const TransitionPropertyList = ( {
 	handleClose,
 	selectedProperty,
 }: TransitionPropertyListProps ) => {
-	const selectedItem = items.find( ( item ) => item.value === selectedProperty && item.type === 'property' );
+	const selectedItem = useMemo( () => {
+		return items.find( ( item ) => item.value === selectedProperty && item.type === 'property' );
+	}, [ items, selectedProperty ] );
 
 	return (
 		<PopoverMenuList
