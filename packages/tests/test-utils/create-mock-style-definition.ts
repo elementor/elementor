@@ -1,11 +1,11 @@
 import { type Props } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 import {
-	CustomCss,
+	type CustomCss,
 	type StyleDefinition,
 	type StyleDefinitionID,
-	type StyleDefinitionState
-} from "@elementor/editor-styles";
+	type StyleDefinitionState,
+} from '@elementor/editor-styles';
 
 type Options = {
 	props?: Props;
