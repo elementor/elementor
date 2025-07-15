@@ -23,7 +23,6 @@ export const useFilteredTransitionProperties = (
 		};
 
 		if ( ! searchTerm ) {
-			// Return all items organized by category, filtered by license
 			return categories.reduce( ( acc: TransitionListItem[], category ) => {
 				const accessibleProperties = filterPropertiesByLicense( category );
 
@@ -48,7 +47,6 @@ export const useFilteredTransitionProperties = (
 			}, [] );
 		}
 
-		// Filter properties based on search term and license
 		const searchLower = searchTerm.toLowerCase();
 		const filteredItems: TransitionListItem[] = [];
 
