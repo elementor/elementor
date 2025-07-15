@@ -212,6 +212,28 @@ describe( 'Export Context', () => {
 
 			expect( result.current.data.includes ).toEqual( [ 'content', 'templates', 'settings', 'plugins' ] );
 		} );
+
+		it( 'should clear customization when removing include item', async () => {
+			const { result } = renderHook( () => useExportContext(), {
+				wrapper: createWrapper(),
+			} );
+
+			await waitFor( () => {
+				result.current.dispatch( {
+					type: 'SET_CUSTOMIZATION',
+					payload: { key: 'content', value: { selectedPosts: [ 1, 2, 3 ] } },
+				} );
+			} );
+
+			expect( result.current.data.customization.content ).toEqual( { selectedPosts: [ 1, 2, 3 ] } );
+
+			await waitFor( () => {
+				result.current.dispatch( { type: 'REMOVE_INCLUDE', payload: 'content' } );
+			} );
+
+			expect( result.current.data.includes ).toEqual( [ 'templates', 'settings', 'plugins' ] );
+			expect( result.current.data.customization.content ).toBeNull();
+		} );
 	} );
 
 	describe( 'Export Data Management', () => {
