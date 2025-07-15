@@ -94,9 +94,7 @@ export const CssClassUsagePopover = ( {
 						<Stack flexDirection={ 'row' } flex={ 1 } alignItems={ 'center' }>
 							<Box display={ 'flex' } sx={ { pr: 1 } }>
 								<Tooltip title={ iconMapper[ item.docType as ContentType ].label } placement="top">
-									<Icon co fontSize={ 'small' }>
-										{ iconMapper[ item.docType as ContentType ].icon }
-									</Icon>
+									<Icon fontSize={ 'small' }>{ iconMapper[ item.docType as ContentType ].icon }</Icon>
 								</Tooltip>
 							</Box>
 							<Box sx={ { pr: 0.5, maxWidth: '173px' } } display={ 'flex' }>

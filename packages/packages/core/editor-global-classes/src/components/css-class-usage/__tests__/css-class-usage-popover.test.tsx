@@ -19,14 +19,13 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	PopoverMenuList: jest.fn(),
 } ) );
 
-jest.mocked( PopoverMenuList ).mockImplementation( ( { items, onSelect } ) => {
+jest.mocked( PopoverMenuList ).mockImplementation( ( { items, menuItemContentTemplate, onSelect } ) => {
 	return (
 		<ul role="listbox">
 			{ items.map( ( item ) => (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events
 				<li key={ item.value } role="option" onClick={ () => onSelect( item.value.toString() ) }>
-					<div>{ item.label }</div>
-					<div>{ item.secondaryText }</div>
+					<span> { menuItemContentTemplate ? menuItemContentTemplate( item ) : null }</span>
 				</li>
 			) ) }
 		</ul>
