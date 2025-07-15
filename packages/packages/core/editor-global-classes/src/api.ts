@@ -1,7 +1,7 @@
 import { type StyleDefinition, type StyleDefinitionID, type StyleDefinitionsMap } from '@elementor/editor-styles';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type CssClassUsage } from './components/css-class-usage';
+import { type CssClassUsage } from './components/css-class-usage/types';
 import { type GlobalClasses } from './store';
 
 const RESOURCE_URL = '/global-classes';

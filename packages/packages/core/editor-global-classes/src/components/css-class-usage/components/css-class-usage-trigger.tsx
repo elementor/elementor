@@ -15,7 +15,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useCssClassUsageByID } from '../hooks';
+import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 

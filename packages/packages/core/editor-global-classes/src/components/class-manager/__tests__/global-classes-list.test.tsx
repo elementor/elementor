@@ -19,7 +19,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 
 jest.mock( '@elementor/editor-styles-repository' );
 
-jest.mock( '../../css-class-usage/hooks/use-css-class-usage', () => ( {
+jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 	useCssClassUsage: jest.fn().mockReturnValue( {
 		data: {}, // or whatever shape your hook expects
 		isLoading: false,

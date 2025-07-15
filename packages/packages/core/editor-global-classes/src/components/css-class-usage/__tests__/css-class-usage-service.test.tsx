@@ -3,9 +3,9 @@ import { AxiosHeaders } from 'axios';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { act, renderHook } from '@testing-library/react';
 
+import { fetchCssClassUsage } from '../../../../service/css-class-usage-service';
 import { apiClient } from '../../../api';
-import { usePrefetchCssClassUsage } from '../hooks';
-import { fetchCssClassUsage } from '../service/css-class-usage-service';
+import { usePrefetchCssClassUsage } from '../../../hooks/use-prefetch-css-class-usage';
 import { transformData } from '../utils';
 
 // Mocks
@@ -49,12 +49,12 @@ describe( 'CSS Class Usage API and Hook Integration', () => {
 	} );
 
 	describe( 'usePrefetchCssClassUsage', () => {
-		const wrapper = ( { children }: { children: React.ReactNode } ) => (
-			<QueryClientProvider client={ new QueryClient() }>{ children }</QueryClientProvider>
-		);
-
 		it( 'should prefetch usage data and cache it', async () => {
-			( apiClient.usage as jest.Mock ).mockResolvedValue( {
+			const wrapper = ( { children }: { children: React.ReactNode } ) => (
+				<QueryClientProvider client={ new QueryClient() }>{ children }</QueryClientProvider>
+			);
+
+			jest.mocked( apiClient.usage ).mockResolvedValue( {
 				data: {
 					data: mockData,
 					meta: {},

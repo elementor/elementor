@@ -19,10 +19,10 @@ import {
 import { Box, Chip, Divider, Icon, MenuList, Stack, styled, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useCssClassUsageByID } from '../hooks';
+import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { type ContentType } from '../types';
 
-type VirtualItem = VirtualizedItem< 'item', string > & { docType: ContentType };
+type CssClassUsageRecord = VirtualizedItem< 'item', string > & { docType: ContentType };
 
 const iconMapper: Record< ContentType, { label: string; icon: React.ReactElement } > = {
 	'wp-post': {
@@ -57,7 +57,7 @@ export const CssClassUsagePopover = ( {
 	const { data: classUsage } = useCssClassUsageByID( cssClassID );
 	const onNavigate = useOpenDocumentInNewTab();
 
-	const items: VirtualItem[] =
+	const cssClassUsageRecords: CssClassUsageRecord[] =
 		classUsage?.content.map(
 			( { title, elements, pageId, type } ) =>
 				( {
@@ -66,7 +66,7 @@ export const CssClassUsagePopover = ( {
 					label: title,
 					secondaryText: elements.length.toString(),
 					docType: type,
-				} ) as VirtualItem
+				} ) as CssClassUsageRecord
 		) ?? [];
 
 	return (
@@ -87,19 +87,29 @@ export const CssClassUsagePopover = ( {
 			<PopoverBody width={ 300 }>
 				<PopoverMenuList
 					onSelect={ ( value ) => onNavigate( +value ) }
-					items={ items }
+					items={ cssClassUsageRecords }
 					onClose={ () => {} }
 					menuListTemplate={ StyledCssClassUsageItem }
-					menuItemContentTemplate={ ( item ) => (
+					menuItemContentTemplate={ ( cssClassUsageRecord ) => (
 						<Stack flexDirection={ 'row' } flex={ 1 } alignItems={ 'center' }>
 							<Box display={ 'flex' } sx={ { pr: 1 } }>
-								<Tooltip title={ iconMapper[ item.docType as ContentType ].label } placement="top">
-									<Icon fontSize={ 'small' }>{ iconMapper[ item.docType as ContentType ].icon }</Icon>
+								<Tooltip
+									title={
+										iconMapper?.[ cssClassUsageRecord.docType as ContentType ]?.label ??
+										cssClassUsageRecord.docType
+									}
+									placement="top"
+								>
+									<Icon fontSize={ 'small' }>
+										{ iconMapper?.[ cssClassUsageRecord.docType as ContentType ]?.icon || (
+											<PagesIcon fontSize={ 'inherit' } />
+										) }
+									</Icon>
 								</Tooltip>
 							</Box>
 							<Box sx={ { pr: 0.5, maxWidth: '173px' } } display={ 'flex' }>
 								<EllipsisWithTooltip
-									title={ item.label }
+									title={ cssClassUsageRecord.label }
 									as={ Typography }
 									variant="caption"
 									maxWidth="173px"
@@ -114,7 +124,7 @@ export const CssClassUsagePopover = ( {
 									ml: 'auto',
 								} }
 								size={ 'tiny' }
-								label={ item.secondaryText }
+								label={ cssClassUsageRecord.secondaryText }
 							/>
 						</Stack>
 					) }

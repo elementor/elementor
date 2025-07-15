@@ -1,4 +1,4 @@
-import { type EnhancedCssClassUsageContent } from '../types';
+import { type EnhancedCssClassUsageContent } from '../components/css-class-usage/types';
 import { useCssClassUsage } from './use-css-class-usage';
 
 const EMPTY_CLASS_USAGE: EnhancedCssClassUsageContent = {

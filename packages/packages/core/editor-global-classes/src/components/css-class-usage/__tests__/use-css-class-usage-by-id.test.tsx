@@ -2,10 +2,10 @@ import * as React from 'react';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { useCssClassUsageByID } from '../hooks';
-import { fetchCssClassUsage } from '../service/css-class-usage-service';
+import { fetchCssClassUsage } from '../../../../service/css-class-usage-service';
+import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 
-jest.mock( '../service/css-class-usage-service' );
+jest.mock( '../../../../service/css-class-usage-service' );
 const mockedFetchCssClassUsage = fetchCssClassUsage as jest.Mock;
 
 const wrapper = ( { children }: { children: React.ReactNode } ) => (
@@ -18,7 +18,7 @@ describe( 'useCssClassUsageByID', () => {
 	} );
 
 	it( 'returns usage data for a valid ID', async () => {
-		mockedFetchCssClassUsage.mockResolvedValue( {
+		jest.mocked( fetchCssClassUsage ).mockResolvedValue( {
 			'css-id': {
 				total: 3,
 				content: [ { pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1' } ],

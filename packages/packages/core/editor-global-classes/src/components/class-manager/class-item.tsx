@@ -22,7 +22,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { CssClassUsageTrigger } from '../css-class-usage';
+import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
 
@@ -161,7 +161,7 @@ export const ClassItem = ( {
 
 //  Experimental start
 
-const StyledListItemButtonV2 = styled( ListItemButton, {
+const StyledListItemButton = styled( ListItemButton, {
 	shouldForwardProp: ( prop: string ) => ! [ 'showActions', 'showSortIndicator' ].includes( prop ),
 } )< ListItemButtonProps & { showActions: boolean; showSortIndicator: boolean } >(
 	( { showActions, showSortIndicator } ) => `
@@ -190,31 +190,6 @@ const StyledListItemButtonV2 = styled( ListItemButton, {
     }
   `
 );
-
-const StyledListItemButtonV1 = styled( ListItemButton, {
-	shouldForwardProp: ( prop: string ) => ! [ 'showActions', 'showSortIndicator' ].includes( prop ),
-} )< ListItemButtonProps & { showActions: boolean; showSortIndicator: boolean } >(
-	( { showActions } ) => `
-	min-height: 36px;
-	&.visible-class-item {
-		box-shadow: none !important;
-	}
-	.class-item-more-actions, .class-item-sortable-trigger {
-		visibility: ${ showActions ? 'visible' : 'hidden' };
-	}
-	.class-item-sortable-trigger {
-		visibility: ${ showActions ? 'visible' : 'hidden' };
-	}
-	&:hover&:not(:disabled) {
-		.class-item-more-actions, .class-item-sortable-trigger  {
-			visibility: visible;
-		}
-	}
-`
-);
-//  Experimental start
-
-const StyledListItemButton = isVersion311IsActive ? StyledListItemButtonV2 : StyledListItemButtonV1;
 
 const Indicator = styled( Box, {
 	shouldForwardProp: ( prop: string ) => ! [ 'isActive', 'isError' ].includes( prop ),

@@ -13,7 +13,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useCssClassUsageByID } from '../css-class-usage';
+import { useCssClassUsageByID } from '../../hooks/use-css-class-usage-by-id';
 import { deleteClass } from './delete-class';
 
 type DeleteConfirmationDialogProps = Pick< StyleDefinition, 'id' | 'label' >;

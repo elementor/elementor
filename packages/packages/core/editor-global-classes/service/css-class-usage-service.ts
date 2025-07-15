@@ -1,6 +1,6 @@
-import { apiClient } from '../../../api';
-import { type EnhancedCssClassUsage } from '../types';
-import { transformData } from '../utils';
+import { apiClient } from '../src/api';
+import { type EnhancedCssClassUsage } from '../src/components/css-class-usage';
+import { transformData } from '../src/components/css-class-usage/utils';
 
 export const fetchCssClassUsage = async (): Promise< EnhancedCssClassUsage > => {
 	const response = await apiClient.usage();

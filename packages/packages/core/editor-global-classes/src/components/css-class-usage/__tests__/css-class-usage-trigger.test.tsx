@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { CssClassUsageTrigger } from '../components';
-import { useCssClassUsageByID } from '../hooks';
 
 jest.mock( '../hooks' );
 

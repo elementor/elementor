@@ -4,11 +4,11 @@ import { PopoverMenuList } from '@elementor/editor-ui';
 import { MenuList } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { CssClassUsagePopover } from '../components';
-import { useCssClassUsageByID } from '../hooks';
 import { type EnhancedCssClassUsageContent } from '../types';
 
-jest.mock( '../hooks/use-css-class-usage-by-id' );
+jest.mock( '../../../hooks/use-css-class-usage-by-id' );
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	__useOpenDocumentInNewTab: jest.fn(),

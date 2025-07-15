@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryResult } from '@elementor/query';
 
-import { fetchCssClassUsage } from '../service/css-class-usage-service';
-import { type EnhancedCssClassUsage, QUERY_KEY } from '../types';
+import { fetchCssClassUsage } from '../../service/css-class-usage-service';
+import { type EnhancedCssClassUsage, QUERY_KEY } from '../components/css-class-usage/types';
 
 export const useCssClassUsage = (): UseQueryResult< EnhancedCssClassUsage > => {
 	return useQuery( {
