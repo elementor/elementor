@@ -53,7 +53,7 @@ class Global_Classes_REST_API {
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, [
 			[
-				'callback' => fn( ) => $this->route_wrapper( fn() => $this->get_usage( ) ),
+				'callback' => fn() => $this->route_wrapper( fn() => $this->get_usage() ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'context' => [
