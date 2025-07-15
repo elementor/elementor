@@ -670,7 +670,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 	public function test_get_usage__with_page_info_true() {
 		$this->act_as_admin();
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes-usage' );
-		$request->set_param( 'with_page_info', 'true' );
 		$response = rest_do_request( $request );
 		$this->assertSame( 200, $response->get_status() );
 		$this->assertArrayHasKey( 'data', $response->get_data() );

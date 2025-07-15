@@ -53,7 +53,7 @@ class Global_Classes_REST_API {
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE_USAGE, [
 			[
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_usage( $request ) ),
+				'callback' => fn( ) => $this->route_wrapper( fn() => $this->get_usage( ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'context' => [
@@ -154,7 +154,7 @@ class Global_Classes_REST_API {
 			->build();
 	}
 
-	private function get_usage( \WP_REST_Request $request ) {
+	private function get_usage() {
 		$classes_usage = ( new Applied_Global_Classes_Usage() )->get_detailed_usage();
 
 		return Response_Builder::make( (object) $classes_usage )->build();
