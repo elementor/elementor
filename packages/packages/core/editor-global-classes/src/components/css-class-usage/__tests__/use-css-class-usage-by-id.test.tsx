@@ -6,7 +6,7 @@ import { fetchCssClassUsage } from '../../../../service/css-class-usage-service'
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 
 jest.mock( '../../../../service/css-class-usage-service' );
-const mockedFetchCssClassUsage = fetchCssClassUsage as jest.Mock;
+const mockedFetchCssClassUsage = jest.mocked( fetchCssClassUsage );
 
 const wrapper = ( { children }: { children: React.ReactNode } ) => (
 	<QueryClientProvider client={ new QueryClient() }>{ children }</QueryClientProvider>

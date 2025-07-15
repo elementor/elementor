@@ -39,8 +39,8 @@ describe( 'CSS Class Usage API and Hook Integration', () => {
 			const fakeRawData = { data: { some: 'raw' } };
 			const fakeTransformed = { 'css-id': { total: 1, content: [] } };
 
-			( apiClient.usage as jest.Mock ).mockResolvedValue( { data: fakeRawData } );
-			( transformData as jest.Mock ).mockReturnValue( fakeTransformed );
+			jest.mocked( apiClient.usage as jest.Mock ).mockResolvedValue( { data: fakeRawData } );
+			jest.mocked( transformData ).mockReturnValue( fakeTransformed );
 
 			const result = await fetchCssClassUsage();
 
