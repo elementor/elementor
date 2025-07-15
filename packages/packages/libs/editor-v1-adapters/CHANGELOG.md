@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/utils@1.50.0
+
 ## 0.12.1
 
 ### Patch Changes

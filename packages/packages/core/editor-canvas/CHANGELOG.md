@@ -1,5 +1,29 @@
 # @elementor/editor-canvas
 
+## 1.50.0
+
+### Minor Changes
+
+- 91c12ca: Adds contrast, gray-scale, invert, sepia and saturate css filters
+
+### Patch Changes
+
+- c26ffed: Fixes drop shadow filter not appearing in frontend and preview. Consolidates logic for single size filters.
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+  - @elementor/editor-props@1.50.0
+  - @elementor/editor@1.50.0
+  - @elementor/editor-notifications@1.50.0
+  - @elementor/editor-styles-repository@1.50.0
+  - @elementor/editor-elements@1.50.0
+  - @elementor/editor-responsive@1.50.0
+  - @elementor/editor-styles@1.50.0
+  - @elementor/editor-v1-adapters@1.50.0
+  - @elementor/twing@1.50.0
+  - @elementor/utils@1.50.0
+  - @elementor/wp-media@1.50.0
+
 ## 0.27.0
 
 ### Minor Changes

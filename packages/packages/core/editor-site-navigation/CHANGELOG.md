@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/editor-app-bar@1.50.0
+- @elementor/editor-documents@1.50.0
+- @elementor/editor-panels@1.50.0
+- @elementor/editor-v1-adapters@1.50.0
+- @elementor/env@1.50.0
+- @elementor/query@1.50.0
+
 ## 0.37.0
 
 ### Minor Changes

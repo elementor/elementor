@@ -1,7 +1,7 @@
 {
   "name": "@elementor/http-client",
   "description": "Provides a simple way to make HTTP requests",
-  "version": "0.3.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,7 +40,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/env": "*",
+    "@elementor/env": "3.30.0",
     "axios": "^1.9.0"
   },
   "devDependencies": {

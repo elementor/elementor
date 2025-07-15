@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-styles-repository",
   "description": "Elementor Editor Styles Repository",
-  "version": "0.10.6",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -33,13 +33,13 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-current-user": "*",
-    "@elementor/editor-elements": "*",
-    "@elementor/editor-props": "*",
-    "@elementor/editor-styles": "*",
-    "@elementor/editor-v1-adapters": "*",
-    "@elementor/schema": "*",
-    "@elementor/utils": "*",
+    "@elementor/editor-current-user": "3.30.0",
+    "@elementor/editor-elements": "3.30.0",
+    "@elementor/editor-props": "3.30.0",
+    "@elementor/editor-styles": "3.30.0",
+    "@elementor/editor-v1-adapters": "3.30.0",
+    "@elementor/schema": "3.30.0",
+    "@elementor/utils": "3.30.0",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {

@@ -1,5 +1,20 @@
 # @elementor/editor-styles-repository
 
+## 1.50.0
+
+### Patch Changes
+
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+  - @elementor/editor-props@1.50.0
+  - @elementor/editor-current-user@1.50.0
+  - @elementor/editor-elements@1.50.0
+  - @elementor/editor-styles@1.50.0
+  - @elementor/editor-v1-adapters@1.50.0
+  - @elementor/schema@1.50.0
+  - @elementor/utils@1.50.0
+
 ## 0.10.6
 
 ### Patch Changes

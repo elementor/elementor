@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-responsive",
-  "version": "0.13.6",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,7 +39,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-v1-adapters": "*",
+    "@elementor/editor-v1-adapters": "3.30.0",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {

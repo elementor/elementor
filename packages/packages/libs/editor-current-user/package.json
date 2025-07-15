@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-current-user",
   "description": "Elementor Editor Current User",
-  "version": "0.6.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -36,9 +36,9 @@
     "react": "^18.3.1"
   },
   "dependencies": {
-    "@elementor/editor-v1-adapters": "*",
-    "@elementor/http-client": "*",
-    "@elementor/query": "*"
+    "@elementor/editor-v1-adapters": "3.30.0",
+    "@elementor/http-client": "3.30.0",
+    "@elementor/query": "3.30.0"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

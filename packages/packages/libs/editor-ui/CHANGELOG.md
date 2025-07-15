@@ -1,5 +1,12 @@
 # @elementor/editor-ui
 
+## 1.50.0
+
+### Patch Changes
+
+- 91c12ca: Automatically scroll to the selected popover item
+  - @elementor/editor-v1-adapters@1.50.0
+
 ## 0.14.1
 
 ### Patch Changes

@@ -1,5 +1,38 @@
 # Change Log
 
+## 1.50.0
+
+### Minor Changes
+
+- 91c12ca: reset functionality added to flex order filed
+
+### Patch Changes
+
+- Updated dependencies [91c12ca]
+- Updated dependencies [c26ffed]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+  - @elementor/editor-controls@1.50.0
+  - @elementor/editor-canvas@1.50.0
+  - @elementor/editor-ui@1.50.0
+  - @elementor/editor-props@1.50.0
+  - @elementor/editor@1.50.0
+  - @elementor/editor-documents@1.50.0
+  - @elementor/editor-panels@1.50.0
+  - @elementor/editor-styles-repository@1.50.0
+  - @elementor/editor-elements@1.50.0
+  - @elementor/editor-responsive@1.50.0
+  - @elementor/editor-styles@1.50.0
+  - @elementor/editor-v1-adapters@1.50.0
+  - @elementor/locations@1.50.0
+  - @elementor/menus@1.50.0
+  - @elementor/schema@1.50.0
+  - @elementor/session@1.50.0
+  - @elementor/utils@1.50.0
+  - @elementor/wp-media@1.50.0
+
 ## 1.49.0
 
 ### Minor Changes

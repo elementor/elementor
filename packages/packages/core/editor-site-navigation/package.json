@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-site-navigation",
-  "version": "0.37.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,13 +39,13 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-app-bar": "*",
-    "@elementor/editor-documents": "*",
-    "@elementor/editor-panels": "*",
-    "@elementor/editor-v1-adapters": "*",
-    "@elementor/env": "*",
+    "@elementor/editor-app-bar": "3.30.0",
+    "@elementor/editor-documents": "3.30.0",
+    "@elementor/editor-panels": "3.30.0",
+    "@elementor/editor-v1-adapters": "3.30.0",
+    "@elementor/env": "3.30.0",
     "@elementor/icons": "1.46.0",
-    "@elementor/query": "*",
+    "@elementor/query": "3.30.0",
     "@elementor/ui": "1.36.0",
     "@wordpress/api-fetch": "^6.42.0",
     "@wordpress/i18n": "^5.13.0"

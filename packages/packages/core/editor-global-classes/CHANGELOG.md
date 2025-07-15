@@ -1,5 +1,29 @@
 # @elementor/editor-global-classes
 
+## 1.50.0
+
+### Patch Changes
+
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+  - @elementor/editor-ui@1.50.0
+  - @elementor/editor-editing-panel@1.50.0
+  - @elementor/editor-props@1.50.0
+  - @elementor/editor@1.50.0
+  - @elementor/editor-documents@1.50.0
+  - @elementor/editor-panels@1.50.0
+  - @elementor/editor-styles-repository@1.50.0
+  - @elementor/editor-current-user@1.50.0
+  - @elementor/editor-styles@1.50.0
+  - @elementor/editor-v1-adapters@1.50.0
+  - @elementor/http-client@1.50.0
+  - @elementor/query@1.50.0
+  - @elementor/store@1.50.0
+  - @elementor/utils@1.50.0
+
 ## 0.22.1
 
 ### Patch Changes

@@ -1,5 +1,33 @@
 # @elementor/editor-variables
 
+## 1.50.0
+
+### Minor Changes
+
+- 91c12ca: Fix font variable not rendering on the canvas
+- 91c12ca: Created an alert popover for deleted variables
+- 91c12ca: Update the text on the delete variable dialog.
+
+### Patch Changes
+
+- Updated dependencies [91c12ca]
+- Updated dependencies [c26ffed]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+  - @elementor/editor-controls@1.50.0
+  - @elementor/editor-canvas@1.50.0
+  - @elementor/editor-ui@1.50.0
+  - @elementor/editor-editing-panel@1.50.0
+  - @elementor/editor-props@1.50.0
+  - @elementor/editor@1.50.0
+  - @elementor/editor-current-user@1.50.0
+  - @elementor/editor-v1-adapters@1.50.0
+  - @elementor/http-client@1.50.0
+  - @elementor/schema@1.50.0
+
 ## 0.17.0
 
 ### Minor Changes

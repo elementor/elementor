@@ -1,7 +1,7 @@
 {
   "name": "@elementor/schema",
   "description": "Schema validation with static type inference using Zod",
-  "version": "0.1.2",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",

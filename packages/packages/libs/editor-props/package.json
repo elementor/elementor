@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-props",
   "description": "This package contains the props model for the Elementor editor",
-  "version": "0.17.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,7 +40,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/schema": "*"
+    "@elementor/schema": "3.30.0"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

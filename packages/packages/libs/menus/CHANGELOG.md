@@ -1,5 +1,11 @@
 # @elementor/menus
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/locations@1.50.0
+
 ## 0.1.5
 
 ### Patch Changes

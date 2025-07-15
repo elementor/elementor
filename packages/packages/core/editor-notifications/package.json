@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-notifications",
   "description": "Notifications manager for the Elementor editor",
-  "version": "1.4.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,8 +40,8 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor": "*",
-    "@elementor/store": "*",
+    "@elementor/editor": "3.30.0",
+    "@elementor/store": "3.30.0",
     "@elementor/ui": "1.36.0",
     "notistack": "^3.0.2"
   },

@@ -1,5 +1,34 @@
 # @elementor/editor-controls
 
+## 1.50.0
+
+### Minor Changes
+
+- 91c12ca: Display a placeholder value inside the color control.
+- 91c12ca: Adds contrast, gray-scale, invert, sepia and saturate css filters
+- 91c12ca: Updated size control to support degree units
+
+### Patch Changes
+
+- c26ffed: Fixes drop shadow filter not appearing in frontend and preview. Consolidates logic for single size filters.
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+- Updated dependencies [91c12ca]
+  - @elementor/editor-ui@1.50.0
+  - @elementor/editor-props@1.50.0
+  - @elementor/editor-current-user@1.50.0
+  - @elementor/editor-elements@1.50.0
+  - @elementor/editor-responsive@1.50.0
+  - @elementor/editor-v1-adapters@1.50.0
+  - @elementor/env@1.50.0
+  - @elementor/http-client@1.50.0
+  - @elementor/locations@1.50.0
+  - @elementor/query@1.50.0
+  - @elementor/session@1.50.0
+  - @elementor/utils@1.50.0
+  - @elementor/wp-media@1.50.0
+
 ## 1.4.0
 
 ### Minor Changes

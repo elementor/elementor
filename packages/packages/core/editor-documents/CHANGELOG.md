@@ -1,5 +1,14 @@
 # Change Log
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/editor@1.50.0
+- @elementor/editor-v1-adapters@1.50.0
+- @elementor/store@1.50.0
+- @elementor/utils@1.50.0
+
 ## 0.13.9
 
 ### Patch Changes

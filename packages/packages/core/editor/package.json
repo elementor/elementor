@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor",
   "description": "The main application for Elementor's editor",
-  "version": "0.21.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,11 +40,11 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-current-user": "*",
-    "@elementor/editor-v1-adapters": "*",
-    "@elementor/locations": "*",
-    "@elementor/query": "*",
-    "@elementor/store": "*",
+    "@elementor/editor-current-user": "3.30.0",
+    "@elementor/editor-v1-adapters": "3.30.0",
+    "@elementor/locations": "3.30.0",
+    "@elementor/query": "3.30.0",
+    "@elementor/store": "3.30.0",
     "@elementor/ui": "1.36.0"
   },
   "peerDependencies": {

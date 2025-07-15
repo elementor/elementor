@@ -1,5 +1,7 @@
 # @elementor/session
 
+## 1.50.0
+
 ## 0.1.0
 
 ### Minor Changes

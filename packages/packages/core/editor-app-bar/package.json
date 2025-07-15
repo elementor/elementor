@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-app-bar",
   "description": "App Bar extension for @elementor/editor",
-  "version": "0.32.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,13 +40,13 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor": "*",
-    "@elementor/editor-documents": "*",
-    "@elementor/editor-responsive": "*",
-    "@elementor/editor-v1-adapters": "*",
+    "@elementor/editor": "3.30.0",
+    "@elementor/editor-documents": "3.30.0",
+    "@elementor/editor-responsive": "3.30.0",
+    "@elementor/editor-v1-adapters": "3.30.0",
     "@elementor/icons": "1.46.0",
-    "@elementor/locations": "*",
-    "@elementor/menus": "*",
+    "@elementor/locations": "3.30.0",
+    "@elementor/menus": "3.30.0",
     "@elementor/ui": "1.36.0",
     "@wordpress/i18n": "^5.13.0"
   },

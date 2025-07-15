@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/query@1.50.0
+- @elementor/utils@1.50.0
+
 ## 0.6.1
 
 ### Patch Changes

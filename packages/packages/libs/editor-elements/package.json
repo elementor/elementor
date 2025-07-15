@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-elements",
   "description": "This package contains the elements model for the Elementor editor",
-  "version": "0.9.1",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,10 +40,10 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-props": "*",
-    "@elementor/editor-styles": "*",
-    "@elementor/editor-v1-adapters": "*",
-    "@elementor/utils": "*"
+    "@elementor/editor-props": "3.30.0",
+    "@elementor/editor-styles": "3.30.0",
+    "@elementor/editor-v1-adapters": "3.30.0",
+    "@elementor/utils": "3.30.0"
   },
   "peerDependencies": {
     "react": "^18.3.1"

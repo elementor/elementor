@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-panels",
-  "version": "0.17.0",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,10 +39,10 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor": "*",
-    "@elementor/editor-v1-adapters": "*",
-    "@elementor/locations": "*",
-    "@elementor/store": "*",
+    "@elementor/editor": "3.30.0",
+    "@elementor/editor-v1-adapters": "3.30.0",
+    "@elementor/locations": "3.30.0",
+    "@elementor/store": "3.30.0",
     "@elementor/ui": "1.36.0"
   },
   "peerDependencies": {

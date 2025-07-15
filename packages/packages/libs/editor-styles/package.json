@@ -1,7 +1,7 @@
 {
   "name": "@elementor/editor-styles",
   "description": "This package contains the styles model for the Elementor editor",
-  "version": "0.6.13",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,8 +40,8 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-props": "*",
-    "@elementor/editor-responsive": "*"
+    "@elementor/editor-props": "3.30.0",
+    "@elementor/editor-responsive": "3.30.0"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

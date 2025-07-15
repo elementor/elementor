@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/editor@1.50.0
+- @elementor/editor-documents@1.50.0
+- @elementor/editor-responsive@1.50.0
+- @elementor/editor-v1-adapters@1.50.0
+- @elementor/locations@1.50.0
+- @elementor/menus@1.50.0
+
 ## 0.32.0
 
 ### Minor Changes

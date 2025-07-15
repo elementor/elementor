@@ -1,7 +1,7 @@
 {
   "name": "@elementor/wp-media",
   "description": "An adapter for WordPress' media utils",
-  "version": "0.6.1",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,8 +40,8 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/query": "*",
-    "@elementor/utils": "*"
+    "@elementor/query": "3.30.0",
+    "@elementor/utils": "3.30.0"
   },
   "peerDependencies": {
     "react": "^18.3.1"

@@ -1,5 +1,13 @@
 # @elementor/editor-current-user
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/editor-v1-adapters@1.50.0
+- @elementor/http-client@1.50.0
+- @elementor/query@1.50.0
+
 ## 0.6.0
 
 ### Minor Changes

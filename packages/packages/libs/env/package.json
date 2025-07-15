@@ -1,7 +1,7 @@
 {
   "name": "@elementor/env",
   "description": "Manage runtime environment variables in a type-safe way",
-  "version": "0.3.5",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",

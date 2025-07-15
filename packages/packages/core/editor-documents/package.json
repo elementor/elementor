@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-documents",
-  "version": "0.13.9",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,10 +39,10 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor": "*",
-    "@elementor/editor-v1-adapters": "*",
-    "@elementor/store": "*",
-    "@elementor/utils": "*",
+    "@elementor/editor": "3.30.0",
+    "@elementor/editor-v1-adapters": "3.30.0",
+    "@elementor/store": "3.30.0",
+    "@elementor/utils": "3.30.0",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {

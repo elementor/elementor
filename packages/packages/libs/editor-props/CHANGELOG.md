@@ -1,5 +1,17 @@
 # @elementor/editor-props
 
+## 1.50.0
+
+### Minor Changes
+
+- 91c12ca: Adds contrast, gray-scale, invert, sepia and saturate css filters
+- 91c12ca: Updated size control to support degree units
+
+### Patch Changes
+
+- 91c12ca: Update dependencies SDK to skip invalid values.
+  - @elementor/schema@1.50.0
+
 ## 0.17.0
 
 ### Minor Changes

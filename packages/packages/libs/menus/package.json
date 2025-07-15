@@ -1,7 +1,7 @@
 {
   "name": "@elementor/menus",
   "description": "Add a menus registration mechanism for you React application",
-  "version": "0.1.5",
+  "version": "3.30.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,7 +40,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/locations": "*"
+    "@elementor/locations": "3.30.0"
   },
   "peerDependencies": {
     "react": "^18.3.1"

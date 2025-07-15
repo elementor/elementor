@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.50.0
+
+### Patch Changes
+
+- @elementor/editor@1.50.0
+- @elementor/store@1.50.0
+
 ## 1.4.0
 
 ### Minor Changes
