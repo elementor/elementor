@@ -45,6 +45,21 @@ class Export {
 	private $settings_customization;
 
 	/**
+	 * Selected plugins to export.
+	 * Contains the plugins essential data for export. (e.g: name, path, version, etc.)
+	 *
+	 * @var array
+	 */
+	private $settings_selected_plugins;
+
+	/**
+	 * Selected custom post types to export.
+	 *
+	 * @var array
+	 */
+	private $settings_selected_custom_post_types;
+
+	/**
 	 * The output data of the export process.
 	 * Will be written into the manifest.json file.
 	 *
@@ -63,6 +78,8 @@ class Export {
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
 		$this->settings_customization = isset( $settings['customization'] ) ? $settings['customization'] : null;
+		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
+		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
 	}
 
 	/**
@@ -103,6 +120,8 @@ class Export {
 		$data = [
 			'include' => $this->settings_include,
 			'customization' => $this->settings_customization,
+			'plugins' => $this->settings_selected_plugins,
+			'selectedCustomPostTypes' => $this->settings_selected_custom_post_types,
 		];
 
 		foreach ( $this->runners as $runner ) {
@@ -138,6 +157,14 @@ class Export {
 		if ( ! is_array( $this->get_settings_customization() ) ) {
 			$this->settings_customization( $this->get_default_settings_customization() );
 		}
+
+		if ( ! is_array( $this->get_settings_selected_plugins() ) ) {
+			$this->settings_selected_plugins( $this->get_default_settings_selected_plugins() );
+		}
+
+		if ( ! is_array( $this->get_settings_selected_custom_post_types() ) ) {
+			$this->settings_selected_custom_post_types( $this->get_default_settings_selected_custom_post_types() );
+		}
 	}
 
 	public function settings_include( $include ) {
@@ -162,6 +189,22 @@ class Export {
 
 	public function get_settings_customization() {
 		return $this->settings_customization;
+	}
+
+	public function settings_selected_plugins( $selected_plugins ) {
+		$this->settings_selected_plugins = $selected_plugins;
+	}
+
+	public function get_settings_selected_plugins() {
+		return $this->settings_selected_plugins;
+	}
+
+	public function settings_selected_custom_post_types( $selected_custom_post_types ) {
+		$this->settings_selected_custom_post_types = $selected_custom_post_types;
+	}
+
+	public function get_settings_selected_custom_post_types() {
+		return $this->settings_selected_custom_post_types;
 	}
 
 	/**
@@ -192,13 +235,31 @@ class Export {
 		return [];
 	}
 
+		/**
+	 * Get the default settings of the plugins that should be exported.
+	 *
+	 * @return array{name: string, plugin:string, pluginUri: string, version: string}
+	 */
+	private function get_default_settings_selected_plugins() {
+		$installed_plugins = Plugin::$instance->wp->get_plugins();
+
+		return $installed_plugins->map( function ( $item, $key ) {
+			return [
+				'name' => $item['Name'],
+				'plugin' => $key,
+				'pluginUri' => $item['PluginURI'],
+				'version' => $item['Version'],
+			];
+		} )->all();
+	}
+
 	/**
 	 * Get the default settings of all the custom post types that should be exported.
 	 * Should be all the custom post types that are not built in to WordPress and not part of Elementor.
 	 *
 	 * @return array
 	 */
-	private function get_default_settings_custom_post_types() {
+	private function get_default_settings_selected_custom_post_types() {
 		return Utils::get_registered_cpt_names();
 	}
 

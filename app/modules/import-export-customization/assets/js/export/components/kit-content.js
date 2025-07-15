@@ -6,12 +6,7 @@ import { useExportContext } from '../context/export-context';
 
 export default function KitContent() {
 	const { data, dispatch } = useExportContext();
-	const [ dialogOpenItems, setDialogOpenItems ] = useState( () => {
-		return kitContentData.reduce( ( acc, item ) => {
-			acc[ item.type ] = false;
-			return acc;
-		}, {} );
-	} );
+	const [ activeDialog, setActiveDialog ] = useState( null );
 
 	const handleCheckboxChange = ( itemType ) => {
 		const isChecked = data.includes.includes( itemType );
@@ -41,12 +36,12 @@ export default function KitContent() {
 									{ item.data.features.open.join( ', ' ) }
 								</Typography>
 							</Box>
-							<Button onClick={ item.dialog && ( () => setDialogOpenItems( { ...dialogOpenItems, [ item.type ]: true } ) ) } data-type={ item.type } color="secondary" sx={ { alignSelf: 'center' } }>
+							<Button onClick={ item.dialog && ( () => setActiveDialog( item.type ) ) } data-type={ item.type } color="secondary" sx={ { alignSelf: 'center' } }>
 								{ __( 'Edit', 'elementor' ) }
 							</Button>
 						</Box>
 					</Box>
-					{ item.dialog && <item.dialog open={ dialogOpenItems[ item.type ] } handleClose={ () => setDialogOpenItems( { ...dialogOpenItems, [ item.type ]: false } ) } /> }
+					{ item.dialog && <item.dialog open={ activeDialog === item.type } handleClose={ () => setActiveDialog( null ) } /> }
 				</>
 			) ) }
 		</Stack>

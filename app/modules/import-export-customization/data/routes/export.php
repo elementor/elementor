@@ -27,6 +27,8 @@ class Export extends Base_Route {
 				'kitInfo' => $request->get_param( 'kitInfo' ),
 				'screenShotBlob' => $request->get_param( 'screenShotBlob' ),
 				'customization' => $request->get_param( 'customization' ),
+				'plugins' => $request->get_param( 'plugins' ),
+				'selectedCustomPostTypes' => $request->get_param( 'selectedCustomPostTypes' ),
 			];
 
 			$settings = array_filter( $settings );
@@ -122,6 +124,18 @@ class Export extends Base_Route {
 						'description' => 'Plugins customization',
 					],
 				],
+			],
+			'plugins' => [
+				'type' => 'array',
+				'description' => 'Selected plugins to export',
+				'required' => false,
+				'default' => [],
+			],
+			'selectedCustomPostTypes' => [
+				'type' => 'array',
+				'description' => 'Selected custom post types',
+				'required' => false,
+				'default' => [],
 			],
 		];
 	}

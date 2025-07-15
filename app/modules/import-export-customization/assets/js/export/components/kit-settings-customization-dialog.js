@@ -147,7 +147,7 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 			</DialogHeader>
 
 			<DialogContent dividers sx={ { p: 3 } }>
-				<Stack spacing={ 0 }>
+				<Stack>
 					<SettingSection
 						title={ __( 'Theme', 'elementor' ) }
 						description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
@@ -158,7 +158,7 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 						title={ __( 'Site settings', 'elementor' ) }
 						hasToggle={ false }
 					>
-						<Stack spacing={ 0 }>
+						<Stack>
 							<SubSetting
 								label={ __( 'Global colors', 'elementor' ) }
 								settingKey="globalColors"

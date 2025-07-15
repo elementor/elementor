@@ -4,7 +4,7 @@ namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 use Elementor\Plugin;
 
 class Site_Settings extends Export_Runner_Base {
-	const allowed_settings = [
+	const ALLOWED_SETTINGS = [
 		'theme',
 		'globalColors',
 		'globalFonts',
@@ -60,7 +60,7 @@ class Site_Settings extends Export_Runner_Base {
 			$kit_data['experiments'] = $experiments_data;
 		}
 
-		$manifest_data['site-settings'] = array_fill_keys( self::allowed_settings, true );
+		$manifest_data['site-settings'] = array_fill_keys( self::ALLOWED_SETTINGS, true );
 
 		return [
 			'files' => [
@@ -78,7 +78,7 @@ class Site_Settings extends Export_Runner_Base {
 		$kit_data = $kit->get_export_data();
 
 		foreach ( $customization as $key => $value ) {
-			if ( ! in_array( $key, self::allowed_settings ) ) {
+			if ( ! in_array( $key, self::ALLOWED_SETTINGS ) ) {
 				unset( $customization[ $key ] );
 			}
 		}

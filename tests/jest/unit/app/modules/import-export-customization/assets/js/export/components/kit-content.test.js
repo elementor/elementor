@@ -1,8 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { render, screen, fireEvent } from '@testing-library/react';
 import KitContent from 'elementor/app/modules/import-export-customization/assets/js/export/components/kit-content';
 
-// Mock the kit content data with dialog components
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => {
 	/**
 	 * Generic dialog component factory
@@ -28,7 +28,11 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 			);
 		};
 
-		// Set display name for better debugging
+		MockDialog.propTypes = {
+			open: PropTypes.bool.isRequired,
+			handleClose: PropTypes.func.isRequired,
+		};
+
 		MockDialog.displayName = `Mock${ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }Dialog`;
 
 		return MockDialog;
@@ -89,7 +93,6 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 	];
 } );
 
-// Mock the export context
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context', () => ( {
 	useExportContext: jest.fn(),
 } ) );
@@ -98,7 +101,6 @@ global.__ = jest.fn( ( text ) => text );
 
 import { useExportContext } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
 
-// Helper function to get checkbox by data-type attribute
 const getCheckboxByType = ( type ) => {
 	const container = document.querySelector( `[data-type="${ type }"]` );
 	return container ? container.querySelector( 'input[type="checkbox"]' ) : null;
@@ -214,11 +216,11 @@ describe( 'KitContent Component', () => {
 
 			render( <KitContent /> );
 
-			const checkboxes = screen.getAllByRole( 'checkbox' );
-
-			checkboxes.forEach( ( checkbox ) => {
-				expect( checkbox.checked ).toBe( false );
-			} );
+			// Use data-type attributes instead of iterating through checkboxes array
+			expect( getCheckboxByType( 'content' ).checked ).toBe( false );
+			expect( getCheckboxByType( 'templates' ).checked ).toBe( false );
+			expect( getCheckboxByType( 'settings' ).checked ).toBe( false );
+			expect( getCheckboxByType( 'plugins' ).checked ).toBe( false );
 		} );
 
 		it( 'should handle all items included', () => {
@@ -231,11 +233,11 @@ describe( 'KitContent Component', () => {
 
 			render( <KitContent /> );
 
-			const checkboxes = screen.getAllByRole( 'checkbox' );
-
-			checkboxes.forEach( ( checkbox ) => {
-				expect( checkbox.checked ).toBe( true );
-			} );
+			// Use data-type attributes instead of iterating through checkboxes array
+			expect( getCheckboxByType( 'content' ).checked ).toBe( true );
+			expect( getCheckboxByType( 'templates' ).checked ).toBe( true );
+			expect( getCheckboxByType( 'settings' ).checked ).toBe( true );
+			expect( getCheckboxByType( 'plugins' ).checked ).toBe( true );
 		} );
 	} );
 
@@ -243,7 +245,6 @@ describe( 'KitContent Component', () => {
 		it( 'should dispatch ADD_INCLUDE when unchecked item is clicked', () => {
 			render( <KitContent /> );
 
-			// Get plugins checkbox by data-type
 			const pluginsContainer = document.querySelector( '[data-type="plugins"]' );
 			const pluginsCheckbox = pluginsContainer.querySelector( 'input[type="checkbox"]' );
 
@@ -273,14 +274,12 @@ describe( 'KitContent Component', () => {
 		it( 'should handle multiple checkbox interactions', () => {
 			render( <KitContent /> );
 
-			// Click plugins to add it
 			fireEvent.click( getCheckboxByType( 'plugins' ) );
 			expect( mockDispatch ).toHaveBeenCalledWith( {
 				type: 'ADD_INCLUDE',
 				payload: 'plugins',
 			} );
 
-			// Click content to remove it
 			fireEvent.click( getCheckboxByType( 'content' ) );
 			expect( mockDispatch ).toHaveBeenCalledWith( {
 				type: 'REMOVE_INCLUDE',
@@ -292,11 +291,7 @@ describe( 'KitContent Component', () => {
 
 		it( 'should open dialog when Edit button is clicked', () => {
 			render( <KitContent /> );
-
-			// Test each edit button opens its corresponding dialog
-			const buttonTypes = [ 'content', 'templates', 'settings', 'plugins' ];
-
-			// Test with settings button as an example
+	
 			const settingsEditButton = screen.getByText( 'Edit', {
 				selector: '[data-type="settings"]',
 			} );
@@ -305,7 +300,6 @@ describe( 'KitContent Component', () => {
 			const dialogState = screen.getByTestId( 'dialog-open-state' );
 			expect( dialogState.textContent ).toBe( 'open' );
 
-			// Verify correct dialog type
 			const dialogType = screen.getByTestId( 'dialog-type' );
 			expect( dialogType.textContent ).toBe( 'settings' );
 		} );
@@ -314,9 +308,8 @@ describe( 'KitContent Component', () => {
 			render( <KitContent /> );
 
 			const editButtons = screen.getAllByText( 'Edit' );
-			expect( editButtons ).toHaveLength( 4 ); // Content, templates, settings, plugins
+			expect( editButtons ).toHaveLength( 4 );
 
-			// Test clicking each edit button by data-type
 			const buttonTypes = [ 'content', 'templates', 'settings', 'plugins' ];
 
 			buttonTypes.forEach( ( type ) => {
@@ -325,19 +318,15 @@ describe( 'KitContent Component', () => {
 				} );
 				fireEvent.click( button );
 
-				// All buttons now open dialogs
 				const dialogState = screen.getByTestId( 'dialog-open-state' );
 				expect( dialogState.textContent ).toBe( 'open' );
 
-				// Verify the dialog type
 				const dialogType = screen.getByTestId( 'dialog-type' );
 				expect( dialogType.textContent ).toBe( type );
 
-				// Close the dialog for next iteration
 				const closeButton = screen.getByTestId( 'dialog-close-button' );
 				fireEvent.click( closeButton );
 
-				// Verify dialog is closed
 				const closedDialog = screen.queryByTestId( 'dialog-open-state' );
 				expect( closedDialog ).toBeNull();
 			} );
@@ -346,7 +335,6 @@ describe( 'KitContent Component', () => {
 		it( 'should close dialog when handleClose is called', () => {
 			render( <KitContent /> );
 
-			// Open dialog first
 			const settingsEditButton = screen.getByText( 'Edit', {
 				selector: '[data-type="settings"]',
 			} );
@@ -355,11 +343,9 @@ describe( 'KitContent Component', () => {
 			let dialogState = screen.getByTestId( 'dialog-open-state' );
 			expect( dialogState.textContent ).toBe( 'open' );
 
-			// Close dialog
 			const closeButton = screen.getByTestId( 'dialog-close-button' );
 			fireEvent.click( closeButton );
 
-			// Dialog should not be rendered when closed
 			dialogState = screen.queryByTestId( 'dialog-open-state' );
 			expect( dialogState ).toBeNull();
 		} );
@@ -378,12 +364,11 @@ describe( 'KitContent Component', () => {
 
 			render( <KitContent /> );
 
-			const checkboxes = screen.getAllByRole( 'checkbox' );
-
-			expect( checkboxes[ 0 ].checked ).toBe( true ); // Content
-			expect( checkboxes[ 1 ].checked ).toBe( false ); // Templates
-			expect( checkboxes[ 2 ].checked ).toBe( true ); // Settings
-			expect( checkboxes[ 3 ].checked ).toBe( false ); // Plugins
+			// Use data-type attributes instead of array indexes
+			expect( getCheckboxByType( 'content' ).checked ).toBe( true );
+			expect( getCheckboxByType( 'templates' ).checked ).toBe( false );
+			expect( getCheckboxByType( 'settings' ).checked ).toBe( true );
+			expect( getCheckboxByType( 'plugins' ).checked ).toBe( false );
 		} );
 
 		it( 'should handle context data changes', () => {
@@ -427,6 +412,13 @@ describe( 'KitContent Component', () => {
 						</div>
 					);
 				};
+
+				// Add PropTypes validation
+				MockDialog.propTypes = {
+					open: PropTypes.bool.isRequired,
+					handleClose: PropTypes.func.isRequired,
+				};
+
 				return MockDialog;
 			};
 
