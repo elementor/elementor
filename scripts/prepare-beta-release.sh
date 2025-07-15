@@ -60,65 +60,38 @@ execOrLog() {
 }
 
 # 1. Branch logic
-DO_DEV_BUMP=false
-if [ "$CURRENT_BRANCH" = "main" ]; then
-  # Only create the release branch if on main
-  execOrLog "git fetch origin main"
-  if git show-ref --verify --quiet refs/heads/"$BRANCH_NAME"; then
-    echo "Branch $BRANCH_NAME already exists locally."
-    execOrLog "git checkout $BRANCH_NAME"
-  else
+# Only create the release branch if not exists
+execOrLog "git fetch origin main"
+if git show-ref --verify --quiet refs/heads/origin/"$BRANCH_NAME"; then
+    echo "Branch $BRANCH_NAME already exists remotely."
+    exit 0
+else
     execOrLog "git checkout -b $BRANCH_NAME origin/main"
     execOrLog "git push origin $BRANCH_NAME"
     echo "Created and pushed branch $BRANCH_NAME from main."
     execOrLog "git checkout main"
-    DO_DEV_BUMP=true
-  fi
-else
-  # On a release branch, do not create or checkout any branch, just continue
-  echo "On release branch $CURRENT_BRANCH, will not create or checkout any branch."
 fi
 
-# 2. Dev bump logic (only if just created release branch from main)
-if [ "$CURRENT_BRANCH" = "main" ] && [ "$DO_DEV_BUMP" = true ]; then
-  DEV_VERSION="$NEXT_VERSION"
-  DEV_BRANCH="version-$DEV_VERSION-to-main"
-  execOrLog "git checkout -b $DEV_BRANCH main"
-  if [ -f "elementor.php" ]; then
+# 2. Dev bump logic
+DEV_VERSION="$NEXT_VERSION"
+DEV_BRANCH="version-$DEV_VERSION-to-main"
+execOrLog "git checkout -b $DEV_BRANCH main"
+if [ -f "elementor.php" ]; then
     echo "Updating elementor.php to next version..."
     execOrLog "sed -i '' -E 's/(\* Version: )[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?/\1$DEV_VERSION/' elementor.php"
     execOrLog "sed -i '' -E 's/(define\( 'ELEMENTOR_VERSION', ')[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?'\)/\1$DEV_VERSION'\)/' elementor.php"
-  else
+else
     echo "elementor.php not found!"
     exit 1
-  fi
-  if [ -f "package.json" ]; then
+fi
+if [ -f "package.json" ]; then
     echo "Updating package.json to next version..."
     execOrLog "jq --arg v '$DEV_VERSION' '.version = \$v' package.json > package.json.tmp && mv package.json.tmp package.json"
-  else
+    execOrLog "npm i"
+else
     echo "package.json not found!"
     exit 1
-  fi
-  echo "Version bump complete. Please open a PR from $DEV_BRANCH to main."
-  exit 0
 fi
-
-# If on a release branch or just switching to it, update files for the release version
-if [ -f "elementor.php" ]; then
-  echo "Updating elementor.php..."
-  execOrLog "sed -i '' -E 's/(\* Version: )[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?/\1$NEXT_VERSION/' elementor.php"
-  execOrLog "sed -i '' -E 's/(define\( 'ELEMENTOR_VERSION', ')[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?'\)/\1$NEXT_VERSION'\)/' elementor.php"
-else
-  echo "elementor.php not found!"
-  exit 1
-fi
-
-if [ -f "package.json" ]; then
-  echo "Updating package.json..."
-  execOrLog "jq --arg v '$NEXT_VERSION' '.version = \$v' package.json > package.json.tmp && mv package.json.tmp package.json"
-else
-  echo "package.json not found!"
-  exit 1
-fi
+echo "Version bump complete. Please open a PR from $DEV_BRANCH to main."
 
 echo "Done! Please review the changes and commit them."
