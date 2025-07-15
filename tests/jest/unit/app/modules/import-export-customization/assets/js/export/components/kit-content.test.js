@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { render, screen, fireEvent } from '@testing-library/react';
 import KitContent from 'elementor/app/modules/import-export-customization/assets/js/export/components/kit-content';
 
@@ -26,11 +25,6 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 					</button>
 				</div>
 			);
-		};
-
-		MockDialog.propTypes = {
-			open: PropTypes.bool.isRequired,
-			handleClose: PropTypes.func.isRequired,
 		};
 
 		MockDialog.displayName = `Mock${ type.charAt( 0 ).toUpperCase() + type.slice( 1 ) }Dialog`;
@@ -411,12 +405,6 @@ describe( 'KitContent Component', () => {
 							</button>
 						</div>
 					);
-				};
-
-				// Add PropTypes validation
-				MockDialog.propTypes = {
-					open: PropTypes.bool.isRequired,
-					handleClose: PropTypes.func.isRequired,
 				};
 
 				return MockDialog;

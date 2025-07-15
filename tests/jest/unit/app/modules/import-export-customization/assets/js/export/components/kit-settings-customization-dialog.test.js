@@ -53,12 +53,10 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 		it( 'should render all settings sections', () => {
 			render( <KitSettingsCustomizationDialog open={ true } handleClose={ mockHandleClose } /> );
 
+			expect( screen.getByText( 'Theme' ) ).toBeTruthy();
 			expect( screen.getByText( 'Site settings' ) ).toBeTruthy();
 			expect( screen.getByText( 'Settings' ) ).toBeTruthy();
-			expect( screen.getByText( 'Site Conditions' ) ).toBeTruthy();
 			expect( screen.getByText( 'Experiments' ) ).toBeTruthy();
-			expect( screen.getByText( 'Custom files' ) ).toBeTruthy();
-			expect( screen.getByText( 'Page transitions & Pre-loader' ) ).toBeTruthy();
 		} );
 
 		it( 'should render sub-settings under Site settings', () => {
@@ -69,12 +67,12 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 			expect( screen.getByText( 'Theme style settings' ) ).toBeTruthy();
 		} );
 
-		it( 'should render sub-settings under Custom files', () => {
+		it( 'should render section descriptions correctly', () => {
 			render( <KitSettingsCustomizationDialog open={ true } handleClose={ mockHandleClose } /> );
 
-			expect( screen.getByText( 'Custom fonts' ) ).toBeTruthy();
-			expect( screen.getByText( 'Custom icons' ) ).toBeTruthy();
-			expect( screen.getByText( 'Custom code' ) ).toBeTruthy();
+			expect( screen.getByText( 'Only public WordPress themes are supported' ) ).toBeTruthy();
+			expect( screen.getByText( 'Include site identity, background, layout, Lightbox, page transitions, and custom CSS' ) ).toBeTruthy();
+			expect( screen.getByText( 'This will apply all experiments that are still active during import' ) ).toBeTruthy();
 		} );
 	} );
 
@@ -119,7 +117,7 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 							globalColors: false,
 							globalFonts: true,
 							themeStyleSettings: false,
-							settings: true,
+							generalSettings: true,
 							experiments: true,
 						},
 					},
@@ -278,7 +276,7 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 							globalColors: false,
 							globalFonts: true,
 							themeStyleSettings: false,
-							settings: true,
+							generalSettings: true,
 							experiments: true,
 						},
 					},
@@ -317,22 +315,37 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 	} );
 
 	describe( 'Settings Sections Behavior', () => {
-		it( 'should render sections without main toggles correctly', () => {
+		it( 'should render Site settings section without main toggle correctly', () => {
 			render( <KitSettingsCustomizationDialog open={ true } handleClose={ mockHandleClose } /> );
 
-			// Site settings and Custom files sections don't have main toggles
+			// Site settings section doesn't have a main toggle
 			const siteSettingsSection = screen.getByText( 'Site settings' );
-			const customFilesSection = screen.getByText( 'Custom files' );
 
 			expect( siteSettingsSection ).toBeTruthy();
-			expect( customFilesSection ).toBeTruthy();
+			
+			// Check that sub-settings have toggles
+			const globalColorsText = screen.getByText( 'Global colors' );
+			const globalColorsParent = globalColorsText.closest( 'div' ).parentElement;
+			const globalColorsSwitch = globalColorsParent.querySelector( 'input[type="checkbox"]' );
+			expect( globalColorsSwitch ).toBeTruthy();
 		} );
 
-		it( 'should render sections with descriptions correctly', () => {
+		it( 'should render Theme section with toggle and description', () => {
 			render( <KitSettingsCustomizationDialog open={ true } handleClose={ mockHandleClose } /> );
 
-			expect( screen.getByText( 'Include site identity, background, layout, Lightbox, page transitions, and custom CSS' ) ).toBeTruthy();
-			expect( screen.getByText( 'This will apply all experiments that are still active during import' ) ).toBeTruthy();
+			const themeSection = screen.getByText( 'Theme' );
+			const themeDescription = screen.getByText( 'Only public WordPress themes are supported' );
+
+			expect( themeSection ).toBeTruthy();
+			expect( themeDescription ).toBeTruthy();
+		} );
+
+		it( 'should have exactly 6 toggle switches', () => {
+			render( <KitSettingsCustomizationDialog open={ true } handleClose={ mockHandleClose } /> );
+
+			const switches = screen.getAllByRole( 'checkbox' );
+			// 1 for Theme, 3 for Site settings sub-items, 1 for Settings, 1 for Experiments
+			expect( switches.length ).toBe( 6 );
 		} );
 	} );
 

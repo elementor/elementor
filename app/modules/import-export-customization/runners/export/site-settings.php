@@ -121,12 +121,12 @@ class Site_Settings extends Export_Runner_Base {
 				'data' => $kit_data,
 			],
 			'manifest' => [
-				'site-settings' => $customization,
+				[ 'site-settings' => $customization ],
 			],
 		];
 	}
 
-	private function export_theme() {
+	public function export_theme() {
 		$theme = wp_get_theme();
 
 		if ( empty( $theme ) || empty( $theme->get( 'ThemeURI' ) ) ) {

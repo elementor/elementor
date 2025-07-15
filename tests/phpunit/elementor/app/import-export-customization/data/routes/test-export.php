@@ -122,6 +122,12 @@ class Test_Export extends Elementor_Test_Base {
 				'source' => 'custom'
 			],
 			'plugins' => [ 'elementor', 'elementor-pro' ],
+			'customization' => [
+				'settings' => null,
+				'content' => null,
+				'templates' => null,
+				'plugins' => null,
+			],
 			'selectedCustomPostTypes' => [ 'test_post_type' ],
 			'screenShotBlob' => 'base64_encoded_screenshot'
 		];
