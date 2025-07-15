@@ -15,18 +15,22 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '10px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: null, state: 'hover' },
 					props: { 'font-size': '20px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: 'tablet', state: null },
 					props: { 'font-size': '30px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: 'mobile', state: 'focus' },
 					props: { 'font-size': '40px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -40,6 +44,7 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '50px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -79,6 +84,7 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '24px' },
+					custom_css: null,
 				},
 			],
 		};

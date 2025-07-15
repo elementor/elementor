@@ -22,6 +22,7 @@ describe( 'createElementStyle', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { testProp: 'testValue' },
+					custom_css: null,
 				},
 			],
 		};
@@ -87,6 +88,7 @@ describe( 'createElementStyle', () => {
 						props: {
 							testProp: 'testValue',
 						},
+						custom_css: null,
 					},
 				],
 			},

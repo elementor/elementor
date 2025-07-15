@@ -82,6 +82,7 @@ describe( 'resetStyles', () => {
 			elementId: 'test-container',
 			label: ELEMENTS_STYLES_RESERVED_LABEL,
 			classesProp: 'classes',
+			custom_css: null,
 			meta: {
 				breakpoint: null,
 				state: null,
@@ -96,6 +97,7 @@ describe( 'resetStyles', () => {
 						breakpoint: null,
 						state: 'hover',
 					},
+					custom_css: null,
 					props: {
 						a: 1,
 						b: 2,

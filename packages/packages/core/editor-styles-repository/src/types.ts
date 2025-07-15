@@ -1,5 +1,5 @@
 import type { Props } from '@elementor/editor-props';
-import type { CustomCss, StyleDefinition, StyleDefinitionID, StyleDefinitionVariant } from "@elementor/editor-styles";
+import type { CustomCss, StyleDefinition, StyleDefinitionID, StyleDefinitionVariant } from '@elementor/editor-styles';
 
 type MakeOptional< T, K extends keyof T > = Omit< T, K > & Partial< T >;
 

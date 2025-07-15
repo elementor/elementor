@@ -26,6 +26,7 @@ describe( 'updateElementStyle', () => {
 						propToRemove: 'value',
 						anotherPropToRemove: 'value',
 					},
+					custom_css: null,
 				},
 			],
 		};
@@ -72,6 +73,7 @@ describe( 'updateElementStyle', () => {
 		expect( updatedStyle.variants ).toStrictEqual( [
 			{
 				meta: { breakpoint: 'desktop', state: 'hover' },
+				custom_css: null,
 				props: {
 					existingProp: 'updated-value',
 					newProp: 'new-value',
@@ -97,6 +99,7 @@ describe( 'updateElementStyle', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { existingProp: 'initial-value' },
+					custom_css: null,
 				},
 			],
 		};
@@ -160,6 +163,7 @@ describe( 'updateElementStyle', () => {
 				{
 					meta: { breakpoint: 'desktop', state: 'hover' },
 					props: { existingProp: 'initial-value' },
+					custom_css: null,
 				},
 			],
 		};
@@ -198,10 +202,12 @@ describe( 'updateElementStyle', () => {
 			{
 				meta: { breakpoint: 'desktop', state: 'hover' },
 				props: { existingProp: 'initial-value' },
+				custom_css: null,
 			},
 			{
 				meta: { breakpoint: 'tablet', state: null },
 				props: { newProp: 'new-value' },
+				custom_css: null,
 			},
 		] );
 	} );
@@ -216,10 +222,12 @@ describe( 'updateElementStyle', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { existingProp: 'initial-value' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: 'tablet', state: 'hover' },
 					props: { existingProp: 'initial-value' },
+					custom_css: null,
 				},
 			],
 		};
@@ -258,6 +266,7 @@ describe( 'updateElementStyle', () => {
 			{
 				meta: { breakpoint: 'tablet', state: 'hover' },
 				props: { existingProp: 'initial-value' },
+				custom_css: null,
 			},
 		] );
 
@@ -283,6 +292,7 @@ describe( 'updateElementStyle', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { existingProp: 'initial-value' },
+					custom_css: null,
 				},
 			],
 		};
@@ -295,6 +305,7 @@ describe( 'updateElementStyle', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { existingProp: 'initial-value' },
+					custom_css: null,
 				},
 			],
 		};

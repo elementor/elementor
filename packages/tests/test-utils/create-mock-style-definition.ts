@@ -1,6 +1,11 @@
 import { type Props } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
-import { type StyleDefinition, type StyleDefinitionID, type StyleDefinitionState } from '@elementor/editor-styles';
+import {
+	CustomCss,
+	type StyleDefinition,
+	type StyleDefinitionID,
+	type StyleDefinitionState
+} from "@elementor/editor-styles";
 
 type Options = {
 	props?: Props;
@@ -29,6 +34,7 @@ export function createMockStyleDefinition( {
 			{
 				meta,
 				props,
+				custom_css: null,
 			},
 		],
 	};
@@ -41,6 +47,7 @@ type OptionsWithVariants = Omit< Options, 'props' | 'meta' > & {
 			state: string | null;
 		};
 		props: Props;
+		custom_css: CustomCss | null;
 	}[];
 };
 
@@ -54,6 +61,7 @@ export function createMockStyleDefinitionWithVariants( {
 				state: null,
 			},
 			props: {},
+			custom_css: null,
 		},
 	],
 }: OptionsWithVariants ): StyleDefinition {
@@ -61,7 +69,7 @@ export function createMockStyleDefinitionWithVariants( {
 		id: id ?? generateId( 's-' ),
 		type: 'class',
 		label: label ?? 'Style Label',
-		variants,
+		variants: variants.map( ( v ) => ( { ...v, custom_css: null } ) ),
 	} as StyleDefinition;
 }
 

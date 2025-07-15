@@ -136,18 +136,20 @@ describe( 'useStylesFields', () => {
 					label: 'test-class',
 					variants: [
 						{
+							meta: { breakpoint: null, state: null },
 							props: {
 								'prop-1': 'value1-normal',
 								'prop-2': 'value2-normal',
 							},
-							meta: { breakpoint: null, state: null },
+							custom_css: null,
 						},
 						{
+							meta: { breakpoint: null, state: 'hover' },
 							props: {
 								'prop-1': 'value1-hover',
 								'prop-2': 'value2-hover',
 							},
-							meta: { breakpoint: null, state: 'hover' },
+							custom_css: null,
 						},
 					],
 				},
