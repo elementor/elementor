@@ -109,6 +109,14 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 		</Box>
 	);
 
+	SettingSection.propTypes = {
+		title: PropTypes.string.isRequired,
+		description: PropTypes.string,
+		children: PropTypes.node,
+		hasToggle: PropTypes.bool,
+		settingKey: PropTypes.string,
+	};
+
 	const SubSetting = ( { label, settingKey } ) => (
 		<Box sx={ {
 			display: 'flex',
@@ -127,6 +135,11 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 			/>
 		</Box>
 	);
+
+	SubSetting.propTypes = {
+		label: PropTypes.string.isRequired,
+		settingKey: PropTypes.string.isRequired,
+	};
 
 	return (
 		<Dialog

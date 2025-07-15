@@ -58,7 +58,7 @@ function exportReducer( state, { type, payload } ) {
 				// Clear customization when removing from includes
 				customization: {
 					...state.customization,
-					[payload]: null,
+					[ payload ]: null,
 				},
 			};
 		case 'SET_CUSTOMIZATION':
@@ -66,7 +66,7 @@ function exportReducer( state, { type, payload } ) {
 				...state,
 				customization: {
 					...state.customization,
-					[payload.key]: payload.value,
+					[ payload.key ]: payload.value,
 				},
 			};
 		default:
