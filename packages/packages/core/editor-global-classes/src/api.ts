@@ -6,6 +6,7 @@ import { type GlobalClasses } from './store';
 
 const RESOURCE_URL = '/global-classes';
 const BASE_URL = 'elementor/v1';
+const RESOURCE_USAGE_URL = `${ RESOURCE_URL }-usage`;
 
 type GlobalClassesUsageResponse = HttpResponse< CssClassUsage >;
 
@@ -27,12 +28,7 @@ type UpdatePayload = GlobalClasses & {
 export type ApiContext = 'preview' | 'frontend';
 
 export const apiClient = {
-	usage: () =>
-		httpService().get< GlobalClassesUsageResponse >( `${ BASE_URL }${ RESOURCE_URL }-usage`, {
-			params: {
-				with_page_info: true,
-			},
-		} ),
+	usage: () => httpService().get< GlobalClassesUsageResponse >( `${ BASE_URL }${ RESOURCE_USAGE_URL }` ),
 
 	all: ( context: ApiContext = 'preview' ) =>
 		httpService().get< GlobalClassesGetAllResponse >( `${ BASE_URL }${ RESOURCE_URL }`, {
