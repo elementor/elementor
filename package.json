@@ -9,6 +9,7 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
+                "release-beta": "chmod +x ./scripts/prepare-beta-release.sh && ./scripts/prepare-beta-release.sh",
 		"start": "npm run composer:no-dev && npm run build:packages && npm run styles && npm run scripts",
 		"watch": "npm run build:tools && npm run composer:no-dev && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\" \"cd packages && npm run dev\"",
 		"build": "npm run build:packages && npm run composer:no-dev && grunt build",
