@@ -91,19 +91,26 @@ export const CssClassUsagePopover = ( {
 					onClose={ () => {} }
 					menuListTemplate={ StyledCssClassUsageItem }
 					menuItemContentTemplate={ ( item ) => (
-						<Stack minWidth={ 0 } direction={ 'row' } flex={ 1 } justifyContent={ 'space-between' }>
-							<Stack alignItems={ 'center' } direction={ 'row' } gap={ 0.5 }>
+						<Stack flexDirection={ 'row' } flex={ 1 } alignItems={ 'center' }>
+							<Box display={ 'flex' } sx={ { pr: 1 } }>
 								<Tooltip title={ iconMapper[ item.docType as ContentType ].label } placement="top">
-									<Icon fontSize={ 'small' }>{ iconMapper[ item.docType as ContentType ].icon }</Icon>
+									<Icon co fontSize={ 'small' }>
+										{ iconMapper[ item.docType as ContentType ].icon }
+									</Icon>
 								</Tooltip>
+							</Box>
+							<Box sx={ { pr: 0.5, maxWidth: '173px' } } display={ 'flex' }>
 								<EllipsisWithTooltip
 									title={ item.label }
 									as={ Typography }
 									variant="caption"
-									maxWidth={ '173px' }
+									maxWidth="173px"
+									sx={ {
+										lineHeight: 1,
+									} }
 								/>
-								<ExternalLinkIcon fontSize={ 'tiny' } className={ 'hover-only-icon' } />
-							</Stack>
+							</Box>
+							<ExternalLinkIcon className={ 'hover-only-icon' } fontSize={ 'tiny' } />
 							<Chip
 								sx={ {
 									ml: 'auto',
@@ -121,11 +128,10 @@ export const CssClassUsagePopover = ( {
 
 const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 	'& > li': {
+		display: 'flex',
 		cursor: 'pointer',
 		height: 32,
 		width: '100%',
-		display: 'flex',
-		alignItems: 'center',
 	},
 	'& > [role="option"]': {
 		...theme.typography.caption,
@@ -137,11 +143,14 @@ const StyledCssClassUsageItem = styled( MenuList )( ( { theme } ) => ( {
 		left: 0,
 		opacity: 1,
 		'.hover-only-icon': {
+			color: theme.palette.text.disabled,
 			opacity: 0,
 		},
 		'&:hover': {
+			borderRadius: theme.spacing( 0.5 ),
 			backgroundColor: theme.palette.action.hover,
 			'.hover-only-icon': {
+				color: theme.palette.text.disabled,
 				opacity: 1,
 			},
 		},

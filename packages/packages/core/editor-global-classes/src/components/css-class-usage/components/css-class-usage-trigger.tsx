@@ -89,7 +89,6 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 	'&.Mui-disabled': {
 		pointerEvents: 'auto', // Enable hover
 		'&:hover': {
-			backgroundColor: 'rgba(0, 0, 0, 0.08)', // or any custom hover style
 			color: theme.palette.action.disabled, // optional
 		},
 	},
@@ -114,6 +113,7 @@ const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number
 const InfoAlertMessage = ( { children }: PropsWithChildren ) => (
 	<Infotip
 		placement={ 'top' }
+		color={ 'secondary' }
 		content={ <InfoAlert sx={ { mt: 1 } }>{ __( 'This class isn’t being used yet.', 'elementor' ) }</InfoAlert> }
 	>
 		<span>{ children }</span>
