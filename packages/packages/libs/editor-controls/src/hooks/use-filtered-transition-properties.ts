@@ -17,7 +17,7 @@ export const useFilteredTransitionProperties = (
 	return useMemo( () => {
 		const filterPropertiesByLicense = ( category: TransitionCategory ) => {
 			return category.properties.filter( ( property ) => {
-				const isAccessible = property.type === 'free' || isProLicenseActive;
+				const isAccessible = property.license === 'free' || isProLicenseActive;
 				return isAccessible;
 			} );
 		};
