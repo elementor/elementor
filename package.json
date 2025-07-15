@@ -42,7 +42,9 @@
 		"styles:watch": "grunt watch_styles",
 		"lint": "eslint . && cd packages && npm run lint",
 		"setup:testing": "bash scripts/setup-testing.sh",
-		"restart:testing": "bash scripts/setup-testing.sh --restart"
+		"restart:testing": "bash scripts/setup-testing.sh --restart",
+		"packages:version": "cd packages && npm run version",
+		"packages:release": "cd packages && npm run release"
 	},
 	"engines": {
 		"node": ">=20.19.0",

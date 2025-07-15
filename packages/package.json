@@ -17,7 +17,6 @@
     "check-unused": "knip",
     "spell-check": "cspell . --quiet",
     "format": "eslint . --fix",
-    "changelog": "changeset",
     "release": "npm run build && changeset publish",
     "version": "changeset version",
     "docs": "typedoc --options ./typedoc/typedoc.config.js"

@@ -162,7 +162,8 @@ jobs:
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: cd packages && npm run release -- --type ${{ github.event.inputs.release_packages_type }}
+          version: npm run packages:version
+          publish: npm run packages:release
           commit: 'chore(release): publish'
           title: 'chore(release): publish'
           setupGitUser: false
