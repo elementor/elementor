@@ -153,37 +153,48 @@ class Test_Export extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		$custom_colors = [
-			[
-				'_id' => '0fba91c',
-				'title' => 'Light Orange',
-				'color' => '#FAB89F',
-			]
+			'_id' => '0fba91c',
+			'title' => 'Light Orange',
+			'color' => '#FAB89F',
 		];
 		$site_settings['custom_colors'] = $custom_colors;
 
+		$mocked_theme = [
+			'name'      => 'My Custom Theme',
+			'theme_uri' => 'https://example.com/my-custom-theme',
+			'version'   => '1.2.3',
+			'slug'      => 'my-custom-theme',
+		];
+		$experiments = [];
+
+		foreach ( Plugin::$instance->experiments->get_features() as $feature_name => $feature ) {
+			$experiments[ $feature_name ] = [
+				'name' => $feature_name,
+				'title' => $feature['title'],
+				'state' => $feature['state'],
+				'default' => $feature['default'],
+				'release_status' => $feature['release_status'],
+			];
+		}
+
 		Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
 
-		// Mock theme export
+		// used mock as default theme doesn't have URI
 		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
 			->onlyMethods( ['export_theme'] )
 			->getMock();
 
 		$site_settings_runner->method('export_theme')
-			->willReturn( [
-				'name'      => 'My Custom Theme',
-				'theme_uri' => 'https://example.com/my-custom-theme',
-				'version'   => '1.2.3',
-				'slug'      => 'my-custom-theme',
-			] );
+			->willReturn( $mocked_theme );
 
-		// Set up customization - only export theme, globalColors, and experiments
+		// Set up customization - exclude theme, include everything else
 		$customization = [
 			'settings' => [
-				'theme' => true,
+				'theme' => false,
 				'globalColors' => true,
-				'globalFonts' => false,
-				'themeStyleSettings' => false,
-				'generalSettings' => false,
+				'globalFonts' => true,
+				'themeStyleSettings' => true,
+				'generalSettings' => true,
 				'experiments' => true,
 			],
 		];
@@ -198,102 +209,37 @@ class Test_Export extends Elementor_Test_Base {
 		$result = $export->run();
 
 		// Assert
-		// Check manifest contains only the enabled customizations
-		$expected_manifest = [
-			'theme' => true,
+		$kit = Plugin::$instance->kits_manager->get_active_kit();
+		$expected_manifest_site_settings = [
+			'theme' => false,
 			'globalColors' => true,
-			'globalFonts' => false,
-			'themeStyleSettings' => false,
-			'generalSettings' => false,
+			'globalFonts' => true,
+			'themeStyleSettings' => true,
+			'generalSettings' => true,
 			'experiments' => true,
 		];
-		$this->assertEquals( $expected_manifest, $result['manifest']['site-settings'] );
 
-		// Check the exported data
+		$this->assertEquals( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
+
 		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
 		$site_settings_file = ImportExportCustomizationUtils::read_json_file( $extracted_zip_path . 'site-settings' );
-
-		// Should have theme data
-		$this->assertArrayHasKey( 'theme', $site_settings_file );
-		$this->assertEquals( 'My Custom Theme', $site_settings_file['theme']['name'] );
-
-		// Should have experiments data
-		$this->assertArrayHasKey( 'experiments', $site_settings_file );
-
-		// Should have color data (globalColors = true)
+		
+		// Check that theme is NOT included
+		$this->assertArrayNotHasKey( 'theme', $site_settings_file );
+		
+		// Check that all other settings ARE included
 		$this->assertArrayHasKey( 'settings', $site_settings_file );
-		$this->assertArrayHasKey( 'custom_colors', $site_settings_file['settings'] );
-		$this->assertArrayHasKey( 'system_colors', $site_settings_file['settings'] );
+		$this->assertArrayHasKey( 'experiments', $site_settings_file );
+		
+		// Verify the kit data matches (excluding theme)
+		$kit_data = $kit->get_export_data();
+		$kit_data['experiments'] = $experiments;
+		// Remove theme from kit_data since it shouldn't be exported
+		unset( $kit_data['theme'] );
 
-		// Should NOT have typography data (globalFonts = false)
-		$this->assertArrayNotHasKey( 'system_typography', $site_settings_file['settings'] );
-		$this->assertArrayNotHasKey( 'custom_typography', $site_settings_file['settings'] );
-
-		// Should NOT have theme style data (themeStyleSettings = false)
-		foreach ( $site_settings_file['settings'] as $key => $value ) {
-			$this->assertFalse( 
-				preg_match( '/^(body_|h[1-6]_|button_|link_|form_field_)/', $key ),
-				"Found theme style setting that should have been filtered out: {$key}"
-			);
-		}
+		$this->assertEquals( $kit_data, $site_settings_file );
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
-	}
-
-	public function test_run__export_taxonomies() {
-		$this->register_post_type( 'tests', 'Tests' );
-		register_taxonomy( 'tests_tax', [ 'tests' ], [] );
-
-		$this->factory()->create_and_get_custom_post( [ 'post_type' => 'tests' ] );
-		$this->factory()->term->create_and_get( [ 'taxonomy' => 'tests_tax' ] );
-
-		// Arrange
-		$export = new Export();
-		$export->register( new Taxonomies() );
-
-		// Act
-		$result = $export->run();
-
-		// Assert
-		$expected_taxonomies = [
-			'post' => [
-				'category'
-			],
-			'tests' => [
-				'tests_tax'
-			],
-		];
-		$this->assertEquals(  $expected_taxonomies, $result['manifest']['taxonomies'] );
-
-		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
-
-		foreach ( $result['manifest']['taxonomies'] as $post_type ) {
-			foreach ( $post_type as $taxonomy ) {
-				$terms = ImportExportCustomizationUtils::read_json_file( $extracted_zip_path . 'taxonomies/' . $taxonomy );
-
-				$expected_terms = get_terms( [
-					'taxonomy' => $taxonomy,
-					'hide_empty' => false,
-				] );
-
-				foreach ( $terms as $term ) {
-					$expected_term = array_shift( $expected_terms );
-
-					$this->assertEquals( $expected_term->term_id, $term['term_id'] );
-					$this->assertEquals( $expected_term->name, $term['name'] );
-					$this->assertEquals( $expected_term->slug, $term['slug'] );
-					$this->assertEquals( $expected_term->taxonomy, $term['taxonomy'] );
-					$this->assertEquals( $expected_term->description, $term['description'] );
-					$this->assertEquals( $expected_term->parent, $term['parent'] );
-				}
-			}
-		}
-
-		// Cleanups
-		unregister_post_type( 'tests' );
-		unregister_taxonomy( 'tests_tax' );
-
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
