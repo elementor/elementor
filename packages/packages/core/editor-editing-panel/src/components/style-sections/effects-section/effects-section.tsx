@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
-	TransformRepeaterControl,
 	TransitionsRepeaterControl,
 } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
@@ -14,22 +13,16 @@ import { OpacityControlField } from './opacity-control-field';
 
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
 const FILTER_LABEL = __( 'Filters', 'elementor' );
-const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
-
 	return (
 		<SectionContent>
 			<OpacityControlField />
 			<PanelDivider />
 			<StylesField bind="box-shadow" propDisplayName={ BOX_SHADOW_LABEL }>
 				<BoxShadowRepeaterControl />
-			</StylesField>
-			<PanelDivider />
-			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl />
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
@@ -39,7 +32,6 @@ export const EffectsSection = () => {
 			<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
 				<FilterRepeaterControl filterPropName="backdrop-filter" />
 			</StylesField>
-			<PanelDivider />
 			<StylesField bind="transitions" propDisplayName={ TRANSITIONS_LABEL }>
 				<TransitionsRepeaterControl />
 			</StylesField>
