@@ -39,4 +39,4 @@ export const TransitionPropertyList = ( {
 			data-testid="transition-property-list"
 		/>
 	);
-}; 
+};
