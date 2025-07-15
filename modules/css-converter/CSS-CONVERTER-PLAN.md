@@ -31,7 +31,15 @@
   - Map CSS to the correct prop structure.
   - Validate and sanitize props before saving.
 
-### 5.2. Transformation Mechanisms
+### 5.2. CSS Property Conversion via Strategy Pattern
+- **Each CSS property is handled by its own converter class** in `css-converters/` (namespace: `Elementor\Modules\CssConverter\CssConverters`).
+- All converters implement `CssPropertyConverterInterface`.
+- A registry (`CssPropertyConverterRegistry`) maps property names to converter instances.
+- The main mapping function parses the CSS string, looks up the converter for each property, and delegates conversion.
+- **Extensibility:** To add support for a new CSS property, create a new converter class and register it in the registry.
+- This approach follows the Strategy pattern for maintainability and future-proofing.
+
+### 5.3. Transformation Mechanisms
 - **Transformers Registry:**
   - Editor uses a registry of transformers (see `editor-canvas/src/init-style-transformers.ts`).
   - Each property type (e.g., `background`, `color`, `flex`) has a transformer for converting schema values to CSS.
@@ -41,14 +49,14 @@
   - Mirror transformation logic in PHP, or expose shared utilities if possible.
   - Use `Props_Parser` for schema validation in PHP.
 
-### 5.3. Extensibility
-- By referencing the schema and using transformers, the API will automatically support new properties and widgets as they are added.
+### 5.4. Extensibility
+- By referencing the schema and using property converters, the API will automatically support new properties and widgets as they are added.
 - No need to update mapping logic for every schema change.
 
 ## 6. Implementation Steps
 1. **Determine widget type** for each tag (e.g., `div` → `e-flexbox`).
 2. **Retrieve schema** for the widget type.
-3. **Map CSS properties** to schema props if supported; otherwise, fallback to HTML widget.
+3. **Map CSS properties** to schema props using the converter registry; otherwise, fallback to HTML widget.
 4. **Validate and sanitize** props using the schema.
 5. **Create/update Elementor page/post** with the widgets and styles.
 6. **Expose API documentation** endpoint (e.g., `/api/docs`) for easy integration by MCPs and other clients.
@@ -62,6 +70,7 @@
   - `plugins/elementor/modules/atomic-widgets/styles/style-schema.php`
   - Widget files: `elements/flexbox/flexbox.php`, `elements/atomic-paragraph/atomic-paragraph.php`, etc.
   - `Props_Parser` for schema validation.
+  - `css-converters/` for property conversion logic.
 - **JS/TS:**
   - `editor-canvas/src/init-style-transformers.ts` (transformer registry)
   - `editor-canvas/src/renderers/create-props-resolver.ts` (props resolver)
@@ -70,7 +79,7 @@
 ## 9. Rationale
 - **Avoid hardcoding:** Ensures maintainability and future-proofing.
 - **Consistency:** Keeps PHP and JS/TS logic in sync.
-- **Extensibility:** New properties and widgets are supported automatically via schema.
+- **Extensibility:** New properties and widgets are supported automatically via schema and converter classes.
 - **Documentation:** Ensures the API is easily discoverable and usable by MCPs and other clients.
 - **Security:** Even for MVP, some access control is required; future-proofing for more robust authentication.
 

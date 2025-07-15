@@ -5,9 +5,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use Elementor\Modules\CssConverter\CssConverters\CssPropertyConverterRegistry;
+
 function elementor_css_converter_map_css_to_props($tag, $css, $schema) {
     $props = [];
-    // Parse CSS string for background-color and color
     $cssProps = [];
     foreach (explode(';', $css) as $declaration) {
         $parts = explode(':', $declaration, 2);
@@ -17,15 +18,13 @@ function elementor_css_converter_map_css_to_props($tag, $css, $schema) {
             $cssProps[$key] = $value;
         }
     }
-    // Map background-color
-    if (isset($cssProps['background-color']) && isset($schema['background'])) {
-        $props['background'] = [
-            'color' => $cssProps['background-color'],
-        ];
-    }
-    // Map color
-    if (isset($cssProps['color']) && isset($schema['color'])) {
-        $props['color'] = $cssProps['color'];
+    $registry = new CssPropertyConverterRegistry();
+    foreach ($cssProps as $property => $value) {
+        $converter = $registry->getConverter($property);
+        if ($converter) {
+            $converted = $converter->convert($value, $schema);
+            $props = array_merge($props, $converted);
+        }
     }
     return $props;
 } 
