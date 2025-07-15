@@ -1,10 +1,8 @@
 import {
-	type DependencyEffect,
 	extractValue,
+	isDependencyMet,
 	type PropsSchema,
 	type PropType,
-	type PropValue,
-	shouldApplyEffect,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 
@@ -83,7 +81,7 @@ export function updateValues(
 				return newValues;
 			}
 
-			if ( isDependencyEffectActive( propType, combinedValues, 'disable' ) ) {
+			if ( ! isDependencyMet( propType?.dependencies, combinedValues ) ) {
 				return {
 					...newValues,
 					...updateValue( path, null, combinedValues ),
@@ -155,22 +153,4 @@ function updateValue( path: string[], value: Value, values: Values ) {
 	}, newValue );
 
 	return { [ topPropKey ]: newValue[ topPropKey ] ?? null };
-}
-
-export function isDependencyEffectActive(
-	propType: PropType,
-	elementValues: PropValue,
-	effect: DependencyEffect
-): boolean | undefined {
-	const dependencies = propType?.dependencies?.filter( ( dependency ) => effect === dependency.effect ) || [];
-
-	if ( ! dependencies.length ) {
-		return false;
-	}
-
-	if ( dependencies.length > 1 ) {
-		throw new Error( 'Multiple disabling dependencies are not supported.' );
-	}
-
-	return shouldApplyEffect( dependencies[ 0 ], elementValues );
 }
