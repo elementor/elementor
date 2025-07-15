@@ -111,16 +111,17 @@ class Styles_Renderer {
 	}
 
 	private function variant_to_css_string( string $base_selector, array $variant ): string {
-		$css = $this->props_to_css_string( $variant['props'] );
+		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
+		$custom_css = isset( $variant['custom_css']['raw'] ) ? $variant['custom_css']['raw'] : '';
 
-		if ( ! $css ) {
+		if ( ! $css && ! $custom_css ) {
 			return '';
 		}
 
 		$state = isset( $variant['meta']['state'] ) ? ':' . $variant['meta']['state'] : '';
 		$selector = $base_selector . $state;
 
-		$style_declaration = $selector . '{' . $css . '}';
+		$style_declaration = $selector . '{' . $css . $custom_css . '}';
 
 		if ( isset( $variant['meta']['breakpoint'] ) ) {
 			$style_declaration = $this->wrap_with_media_query( $variant['meta']['breakpoint'], $style_declaration );

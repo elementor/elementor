@@ -75,8 +75,10 @@ class Style_Parser {
 			}
 
 			$meta_result = $this->validate_meta( $variant['meta'] );
+			$custom_css_result = $this->validate_custom_css( $variant['custom_css'] );
 
 			$result->errors()->merge( $meta_result->errors(), 'meta' );
+			$result->errors()->merge( $custom_css_result->errors(), 'custom_css' );
 
 			if ( $meta_result->is_valid() ) {
 				$variant_result = $props_parser->validate( $variant['props'] );
@@ -180,6 +182,26 @@ class Style_Parser {
 		return $result;
 	}
 
+	private function validate_custom_css( ?array $custom_css = null ): Parse_Result {
+		$result = Parse_Result::make();
+
+		if ( ! isset( $custom_css['raw'] ) ) {
+			return $result;
+		}
+
+		if ( ! is_array( $custom_css ) ) {
+			$result->errors()->add( 'custom_css', 'invalid_type' );
+
+			return $result;
+		}
+
+		if ( ! is_string( $custom_css['raw'] ) ) {
+			$result->errors()->add( 'custom_css', 'missing_or_invalid_value' );
+		}
+
+		return $result;
+	}
+
 	private function sanitize_meta( $meta ) {
 		if ( ! is_array( $meta ) ) {
 			return [];
@@ -190,6 +212,16 @@ class Style_Parser {
 		}
 
 		return $meta;
+	}
+
+	private function sanitize_custom_css( ?array $custom_css = null ) {
+		if ( ! isset( $custom_css['raw'] ) ) {
+			return null;
+		}
+
+		$custom_css['raw'] = sanitize_text_field( $custom_css['raw'] );
+
+		return $custom_css;
 	}
 
 	/**
@@ -211,6 +243,7 @@ class Style_Parser {
 			foreach ( $style['variants'] as $variant_index => $variant ) {
 				$style['variants'][ $variant_index ]['props'] = $props_parser->sanitize( $variant['props'] )->unwrap();
 				$style['variants'][ $variant_index ]['meta'] = $this->sanitize_meta( $variant['meta'] );
+				$style['variants'][ $variant_index ]['custom_css'] = $this->sanitize_custom_css( $variant['custom_css'] );
 			}
 		}
 
