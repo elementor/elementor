@@ -19,6 +19,7 @@
     "format": "eslint . --fix",
     "changelog": "changeset",
     "release": "npm run build && changeset publish",
+    "version": "changeset version",
     "docs": "typedoc --options ./typedoc/typedoc.config.js"
   },
   "workspaces": [
@@ -27,6 +28,7 @@
     "packages/tools/*"
   ],
   "devDependencies": {
+    "@changesets/cli": "^2.27.10",
     "@swc/core": "^1.10.1",
     "@swc/jest": "^0.2.37",
     "@tanstack/eslint-plugin-query": "^5.56.1",

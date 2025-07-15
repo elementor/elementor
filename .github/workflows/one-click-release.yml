@@ -19,6 +19,15 @@ on:
         description: 'Run in dry-run mode (no actual release will be created)'
         required: false
         default: true
+      release_packages_type:
+        type: choice
+        description: 'Select a release type.'
+        required: true
+        options:
+          - none
+          - patch
+          - minor
+          - major
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -41,6 +50,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{inputs.branch}}
+      - name: Config git user
+        run: |
+          git config --global user.name "${{ secrets.MAINTAIN_USERNAME }}"
+          git config --global user.email "${{ secrets.MAINTAIN_EMAIL }}"
       - name: Get Configuration
         id: configuration
         uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
@@ -143,6 +156,20 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+
+      - name: Create release PR or publish
+        if: github.event.inputs.dry_run == 'false' && github.event.inputs.release_packages_type != 'none'
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: cd packages && npm run release -- --type ${{ github.event.inputs.release_packages_type }}
+          commit: 'chore(release): publish'
+          title: 'chore(release): publish'
+          setupGitUser: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+
       - name: Post To Slack Created Release
         if: github.event.inputs.dry_run == 'false'
         uses : ./.github/workflows/post-to-slack
