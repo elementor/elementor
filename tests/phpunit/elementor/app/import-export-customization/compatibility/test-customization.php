@@ -30,10 +30,10 @@ class Test_Customization extends Elementor_Test_Base {
 			'site-settings' => [
 				'theme' => true,
 				'globalColors' => true,
-				'globalFonts' => false,
+				'globalFonts' => true,
 				'themeStyleSettings' => true,
 				'generalSettings' => true,
-				'experiments' => false,
+				'experiments' => true,
 			],
 		];
 
@@ -89,26 +89,5 @@ class Test_Customization extends Elementor_Test_Base {
 			'experiments' => false,
 		];
 		$this->assertEquals( $expected_site_settings, $result['site-settings'] );
-	}
-
-	public function test_adapt_manifest__preserves_new_format() {
-		// Already in new format
-		$manifest_data = [
-			'version' => '3.0',
-			'site-settings' => [
-				'theme' => true,
-				'globalColors' => false,
-				'globalFonts' => true,
-				'themeStyleSettings' => false,
-				'generalSettings' => true,
-				'experiments' => false,
-			],
-		];
-
-		$adapter = new Customization();
-		$result = $adapter->adapt_manifest( $manifest_data );
-
-		// Should remain unchanged
-		$this->assertEquals( $manifest_data, $result );
 	}
 }

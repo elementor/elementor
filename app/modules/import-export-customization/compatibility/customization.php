@@ -9,9 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Version Compatibility Adapter
- *
- * Handles conversion from manifest format v2.0 to v2.1
+ * Handles conversion from manifest format v2.0 to v3.0
  * Main change: site-settings changed from array of tab keys to object with boolean values
  */
 class Customization extends Base_Adapter {
