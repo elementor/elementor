@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import {
+	type CreateOptions,
 	cssFilterFunctionPropUtil,
 	type FilterItemPropValue,
 	filterPropTypeUtil,
@@ -226,26 +227,38 @@ const ItemContent = ( {
 	collectionPropUtil?: CollectionPropUtil< FilterItemPropValue >;
 	anchorEl?: HTMLElement | null;
 } ) => {
-	const { value: filterValues } = useBoundProp( collectionPropUtil ?? filterPropTypeUtil );
+	const { value: filterValues = [] } = useBoundProp( collectionPropUtil ?? filterPropTypeUtil );
 	const itemIndex = parseInt( bind, 10 );
 	const item = filterValues?.[ itemIndex ];
-
-	return (
+	return item ? (
 		<PropKeyProvider bind={ bind }>
 			<PropContent item={ item } anchorEl={ anchorEl } />
 		</PropKeyProvider>
-	);
+	) : null;
 };
 
 const PropContent = ( { item, anchorEl }: { item: FilterItemPropValue; anchorEl?: HTMLElement | null } ) => {
 	const propContext = useBoundProp( cssFilterFunctionPropUtil );
-	const [ value, setValue ] = useState( item.value );
-	const handleChange = ( val: string | null ) => {
-		const newValue = { ...filterConfig[ val ?? '' ].defaultValue.value };
-		setValue( structuredClone( newValue ) );
+
+	const handleValueChange = (
+		changedValue: FilterItemPropValue[ 'value' ],
+		options?: CreateOptions,
+		meta?: { bind?: PropKey }
+	) => {
+		let newValue = structuredClone( changedValue );
+		const newFuncName = newValue?.func.value ?? '';
+		if ( meta?.bind === 'func' ) {
+			newValue = structuredClone( filterConfig[ newFuncName ].defaultValue.value );
+		}
+
+		if ( ! newValue.args ) {
+			return;
+		}
+		propContext.setValue( newValue );
 	};
+
 	return (
-		<PropProvider { ...propContext } value={ value }>
+		<PropProvider { ...propContext } setValue={ handleValueChange }>
 			<PopoverContent p={ 1.5 }>
 				<PopoverGridContainer>
 					<Grid item xs={ 6 }>
@@ -258,7 +271,6 @@ const PropContent = ( { item, anchorEl }: { item: FilterItemPropValue; anchorEl?
 									label: filterConfig[ filterKey ].name,
 									value: filterKey,
 								} ) ) }
-								onChange={ handleChange }
 							/>
 						</PropKeyProvider>
 					</Grid>
