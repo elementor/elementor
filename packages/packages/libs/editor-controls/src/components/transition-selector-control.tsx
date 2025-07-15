@@ -6,7 +6,6 @@ import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type TransitionListItem, useFilteredTransitionProperties } from '../hooks/use-filtered-transition-properties';
-import { transitionProperties } from './transition-properties-data';
 
 const SIZE = 'tiny';
 
@@ -27,7 +26,7 @@ export const TransitionSelector = ( {
 }: TransitionSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
-	const filteredProperties = useFilteredTransitionProperties( transitionProperties, searchValue, isProLicenseActive );
+	const filteredProperties = useFilteredTransitionProperties( searchValue, isProLicenseActive );
 
 	const handleSearch = ( value: string ) => {
 		setSearchValue( value );

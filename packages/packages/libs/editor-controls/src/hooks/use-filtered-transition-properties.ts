@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { type TransitionCategory } from '../components/transition-properties-data';
+import { type TransitionCategory, transitionProperties } from '../components/transition-properties-data';
 
 export type TransitionListItem = {
 	label: string;
@@ -10,7 +10,6 @@ export type TransitionListItem = {
 };
 
 export const useFilteredTransitionProperties = (
-	categories: TransitionCategory[],
 	searchTerm: string,
 	isProLicenseActive: boolean
 ): TransitionListItem[] => {
@@ -23,7 +22,7 @@ export const useFilteredTransitionProperties = (
 		};
 
 		if ( ! searchTerm ) {
-			return categories.reduce( ( acc: TransitionListItem[], category ) => {
+			return transitionProperties.reduce( ( acc: TransitionListItem[], category ) => {
 				const accessibleProperties = filterPropertiesByLicense( category );
 
 				if ( accessibleProperties.length > 0 ) {
@@ -50,7 +49,7 @@ export const useFilteredTransitionProperties = (
 		const searchLower = searchTerm.toLowerCase();
 		const filteredItems: TransitionListItem[] = [];
 
-		categories.forEach( ( category ) => {
+		transitionProperties.forEach( ( category ) => {
 			const accessibleProperties = filterPropertiesByLicense( category );
 
 			const matchingProperties = accessibleProperties.filter(
@@ -78,5 +77,5 @@ export const useFilteredTransitionProperties = (
 		} );
 
 		return filteredItems;
-	}, [ categories, searchTerm, isProLicenseActive ] );
+	}, [ searchTerm, isProLicenseActive ] );
 };
