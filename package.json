@@ -9,14 +9,15 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-		"start": "composer install && npm run build:packages && npm run styles && npm run scripts",
-		"watch": "npm run build:tools && composer install && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\" \"cd packages && npm run dev\"",
-		"build": "npm run build:packages && composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload && grunt build",
+		"start": "npm run composer:no-dev && npm run build:packages && npm run styles && npm run scripts",
+		"watch": "npm run build:tools && npm run composer:no-dev && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\" \"cd packages && npm run dev\"",
+		"build": "npm run build:packages && npm run composer:no-dev && grunt build",
 		"build:packages": "cd packages && npm run build",
 		"build:tools": "cd packages && npm run build:tools",
 		"build:ci": "cd packages && npm run build && cd .. && npx grunt webpack:production",
 		"prepare-environment": "npm ci && composer install && cd packages && npm ci",
 		"prepare-environment:ci": "npm ci && cd packages && npm ci",
+		"composer:no-dev": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload",
 		"reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm ci && cd packages && npm ci",
 		"hard-reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm i && cd packages && npm i",
 		"test:setup:playwright:mac": "npm run build && npm run start-local-server && npm run test:setup:playwright && npx playwright install chromium",
@@ -130,7 +131,7 @@
 		"write": "^2.0.0"
 	},
 	"dependencies": {
-		"@elementor/icons": "1.46.0",
+		"@elementor/icons": "1.47.0",
 		"@elementor/ui": "1.36.0",
 		"@reach/router": "1.3.4",
 		"@reduxjs/toolkit": "^1.8.3",
