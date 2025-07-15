@@ -21,7 +21,7 @@ on:
         default: true
       release_packages_type:
         type: choice
-        description: 'Select a release type.'
+        description: 'Select a release type (major.minor.patch) or none for not releasing packages.'
         required: true
         options:
           - none
