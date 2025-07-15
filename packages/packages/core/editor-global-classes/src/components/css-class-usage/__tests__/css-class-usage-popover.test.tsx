@@ -19,13 +19,14 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	PopoverMenuList: jest.fn(),
 } ) );
 
-jest.mocked( PopoverMenuList ).mockImplementation( ( { items, menuItemContentTemplate, onSelect } ) => {
+jest.mocked( PopoverMenuList ).mockImplementation( ( { items, onSelect } ) => {
 	return (
 		<ul role="listbox">
 			{ items.map( ( item ) => (
 				// eslint-disable-next-line jsx-a11y/click-events-have-key-events
-				<li key={ item.value } role="option" onClick={ () => onSelect( item.value ) }>
-					{ menuItemContentTemplate ? menuItemContentTemplate( item ) : null }
+				<li key={ item.value } role="option" onClick={ () => onSelect( item.value.toString() ) }>
+					<div>{ item.label }</div>
+					<div>{ item.secondaryText }</div>
 				</li>
 			) ) }
 		</ul>
@@ -87,7 +88,6 @@ describe( 'CssClassUsagePopover', () => {
 
 		// Act.
 		render( <CssClassUsagePopover cssClassID="test-class" onClose={ () => {} } /> );
-
 		// Assert.
 		expect( screen.getByText( 'Page One' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Page Two' ) ).toBeInTheDocument();
