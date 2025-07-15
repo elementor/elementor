@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
+import { PopoverBody, PopoverHeader, PopoverSearch } from '@elementor/editor-ui';
 import { SettingsIcon } from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type TransitionListItem, useFilteredTransitionProperties } from '../hooks/use-filtered-transition-properties';
+import { TransitionPropertyList } from './transition-property-list';
 
 const SIZE = 'tiny';
 
@@ -109,40 +110,5 @@ export const TransitionSelector = ( {
 				</Stack>
 			) }
 		</PopoverBody>
-	);
-};
-
-type TransitionPropertyListProps = {
-	items: TransitionListItem[];
-	setProperty: ( property: string ) => void;
-	handleClose: () => void;
-	selectedProperty: string | null;
-};
-
-const TransitionPropertyList = ( {
-	items,
-	setProperty,
-	handleClose,
-	selectedProperty,
-}: TransitionPropertyListProps ) => {
-	const selectedItem = items.find( ( item ) => item.value === selectedProperty && item.type === 'property' );
-
-	return (
-		<PopoverMenuList
-			items={ items }
-			selectedValue={ selectedItem?.value }
-			onSelect={ ( value ) => {
-				const item = items.find( ( i ) => i.value === value );
-				if ( item && item.type === 'property' ) {
-					setProperty( value );
-				}
-			} }
-			onClose={ handleClose }
-			itemStyle={ ( item ) => ( {
-				fontWeight: item.type === 'category' ? 'bold' : 'normal',
-				color: item.type === 'category' ? 'text.primary' : 'text.secondary',
-			} ) }
-			data-testid="transition-property-list"
-		/>
 	);
 };
