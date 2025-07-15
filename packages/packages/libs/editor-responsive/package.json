@@ -39,7 +39,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-v1-adapters": "0.12.1",
+    "@elementor/editor-v1-adapters": "*",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {

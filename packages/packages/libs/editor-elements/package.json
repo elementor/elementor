@@ -40,10 +40,10 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-props": "0.17.0",
-    "@elementor/editor-styles": "0.6.13",
-    "@elementor/editor-v1-adapters": "0.12.1",
-    "@elementor/utils": "0.5.0"
+    "@elementor/editor-props": "*",
+    "@elementor/editor-styles": "*",
+    "@elementor/editor-v1-adapters": "*",
+    "@elementor/utils": "*"
   },
   "peerDependencies": {
     "react": "^18.3.1"

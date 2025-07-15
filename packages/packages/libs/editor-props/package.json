@@ -40,7 +40,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/schema": "0.1.2"
+    "@elementor/schema": "*"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

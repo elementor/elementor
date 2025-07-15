@@ -36,9 +36,9 @@
     "react": "^18.3.1"
   },
   "dependencies": {
-    "@elementor/editor-v1-adapters": "0.12.1",
-    "@elementor/http-client": "0.3.0",
-    "@elementor/query": "0.2.4"
+    "@elementor/editor-v1-adapters": "*",
+    "@elementor/http-client": "*",
+    "@elementor/query": "*"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

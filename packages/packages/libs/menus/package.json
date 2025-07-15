@@ -40,7 +40,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/locations": "0.8.0"
+    "@elementor/locations": "*"
   },
   "peerDependencies": {
     "react": "^18.3.1"
