@@ -1,9 +1,10 @@
 import { createMockElement } from 'test-utils';
+import { createElementStyle, type V1ElementModelProps } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { getContainer } from '../../sync/get-container';
-import { updateElementSettings } from '../../sync/update-element-settings';
+import { updateElementSettings, type UpdateElementSettingsArgs } from '../../sync/update-element-settings';
 import { ELEMENT_STYLE_CHANGE_EVENT } from '../consts';
 import { updateElementStyle } from '../update-element-style';
 
@@ -352,6 +353,59 @@ describe( 'updateElementStyle', () => {
 
 		expect( element.model.get( 'styles' ) ).toStrictEqual( {
 			[ existingStyle2.id ]: existingStyle2,
+		} );
+	} );
+
+	it( 'should keep custom_css for valid CSS', () => {
+		// Arrange.
+		const element = createMockElement( {
+			model: {
+				id: 'test-element-id',
+				styles: {},
+			},
+			settings: {},
+		} );
+
+		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+			return elementId === 'test-element-id' ? element : null;
+		} );
+		jest.mocked( updateElementSettings ).mockImplementation( ( { props }: UpdateElementSettingsArgs ) => {
+			Object.keys( props ).forEach( ( key ) =>
+				element.model.set( key as keyof V1ElementModelProps, props[ key ] as never )
+			);
+		} );
+
+		const createdId = createElementStyle( {
+			elementId: 'test-element-id',
+			meta: { breakpoint: null, state: null },
+			label: 'Test Style',
+			classesProp: 'classes',
+			props: {},
+			custom_css: { raw: 'color: red;' },
+		} );
+
+		updateElementStyle( {
+			elementId: 'test-element-id',
+			styleId: createdId,
+			meta: { breakpoint: null, state: null },
+			props: {},
+			custom_css: { raw: 'color: yellow;' },
+		} );
+
+		// Assert.
+		expect( element.model.get( 'styles' ) ).toStrictEqual( {
+			[ createdId ]: {
+				id: createdId,
+				label: 'Test Style',
+				type: 'class',
+				variants: [
+					{
+						custom_css: { raw: 'color: yellow;' },
+						meta: { breakpoint: null, state: null },
+						props: {},
+					},
+				],
+			},
 		} );
 	} );
 } );

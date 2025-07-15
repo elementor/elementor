@@ -186,5 +186,5 @@ function getCurrentCustomCss( style: StyleDefinition | null, meta: StyleDefiniti
 }
 
 function sanitize( raw: string ) {
-	return stringPropTypeUtil.schema.safeParse( stringPropTypeUtil.create( raw ) ).data?.value ?? '';
+	return stringPropTypeUtil.schema.safeParse( stringPropTypeUtil.create( raw ) ).data?.value?.trim() ?? '';
 }

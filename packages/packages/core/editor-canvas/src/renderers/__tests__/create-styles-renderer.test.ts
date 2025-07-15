@@ -110,3 +110,61 @@ describe( 'renderStyles', () => {
 		] );
 	} );
 } );
+
+describe( 'custom_css rendering', () => {
+	it( 'should not render custom_css if raw is empty', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [ { meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: '' } } ],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should not render custom_css if raw is whitespace', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [ { meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: '   \n\t' } } ],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should render custom_css if raw is valid CSS', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{ meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: 'body { color: red; }' } },
+			],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).toContain( 'body { color: red; }' );
+	} );
+} );
