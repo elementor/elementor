@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { CssClassUsageTrigger } from '../components';
 
-jest.mock( '../hooks' );
+jest.mock( '../../../hooks/use-css-class-usage-by-id' );
 
 describe( 'CssClassUsageTrigger', () => {
 	it( 'renders locator icon and does not open on click when total is 0', async () => {

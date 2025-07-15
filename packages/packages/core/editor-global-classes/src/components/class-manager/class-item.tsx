@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -25,8 +23,6 @@ import { __ } from '@wordpress/i18n';
 import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
-
-const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 type ClassItemProps = React.PropsWithChildren< {
 	id: string;

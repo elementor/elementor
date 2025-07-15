@@ -6,9 +6,11 @@ import { act, renderHook } from '@testing-library/react';
 import { fetchCssClassUsage } from '../../../../service/css-class-usage-service';
 import { apiClient } from '../../../api';
 import { usePrefetchCssClassUsage } from '../../../hooks/use-prefetch-css-class-usage';
+import { type CssClassUsage } from '../types';
 import { transformData } from '../utils';
 
 // Mocks
+
 jest.mock( '../../../api', () => ( {
 	apiClient: {
 		usage: jest.fn(),
@@ -22,8 +24,8 @@ jest.mock( '../utils', () => ( {
 // Shared constants
 const mockData = {
 	'css-abc': [
-		{ pageId: 'page1', elements: [ 'el-1' ], total: 1, title: 'Title1' },
-		{ pageId: 'page2', elements: [ 'el-2' ], total: 1, title: 'Title2' },
+		{ pageId: 'page1', elements: [ 'el-1' ], total: 1, title: 'Title1', type: 'wp-page' },
+		{ pageId: 'page2', elements: [ 'el-2' ], total: 1, title: 'Title2', type: 'wp-page' },
 	],
 };
 
@@ -56,7 +58,7 @@ describe( 'CSS Class Usage API and Hook Integration', () => {
 
 			jest.mocked( apiClient.usage ).mockResolvedValue( {
 				data: {
-					data: mockData,
+					data: mockData as CssClassUsage, // Mocked data
 					meta: {},
 				},
 				status: 200,

@@ -21,7 +21,9 @@ describe( 'useCssClassUsageByID', () => {
 		jest.mocked( fetchCssClassUsage ).mockResolvedValue( {
 			'css-id': {
 				total: 3,
-				content: [ { pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1' } ],
+				content: [
+					{ pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1', type: 'wp-page' },
+				],
 			},
 		} );
 
@@ -31,7 +33,9 @@ describe( 'useCssClassUsageByID', () => {
 
 		expect( result.current.data ).toEqual( {
 			total: 3,
-			content: [ { pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1' } ],
+			content: [
+				{ pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1', type: 'wp-page' },
+			],
 		} );
 	} );
 
