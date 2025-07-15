@@ -33,13 +33,13 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-current-user": "0.6.0",
-    "@elementor/editor-elements": "0.9.1",
-    "@elementor/editor-props": "0.17.0",
-    "@elementor/editor-styles": "0.6.13",
-    "@elementor/editor-v1-adapters": "0.12.1",
-    "@elementor/schema": "0.1.2",
-    "@elementor/utils": "0.5.0",
+    "@elementor/editor-current-user": "*",
+    "@elementor/editor-elements": "*",
+    "@elementor/editor-props": "*",
+    "@elementor/editor-styles": "*",
+    "@elementor/editor-v1-adapters": "*",
+    "@elementor/schema": "*",
+    "@elementor/utils": "*",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {

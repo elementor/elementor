@@ -40,8 +40,8 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-props": "0.17.0",
-    "@elementor/editor-responsive": "0.13.6"
+    "@elementor/editor-props": "*",
+    "@elementor/editor-responsive": "*"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

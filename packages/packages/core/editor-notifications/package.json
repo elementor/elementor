@@ -40,8 +40,8 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor": "0.21.0",
-    "@elementor/store": "0.9.0",
+    "@elementor/editor": "*",
+    "@elementor/store": "*",
     "@elementor/ui": "1.36.0",
     "notistack": "^3.0.2"
   },

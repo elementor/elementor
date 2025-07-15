@@ -40,8 +40,8 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/query": "0.2.4",
-    "@elementor/utils": "0.5.0"
+    "@elementor/query": "*",
+    "@elementor/utils": "*"
   },
   "peerDependencies": {
     "react": "^18.3.1"

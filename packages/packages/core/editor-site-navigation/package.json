@@ -39,13 +39,13 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/editor-app-bar": "0.32.0",
-    "@elementor/editor-documents": "0.13.9",
-    "@elementor/editor-panels": "0.17.0",
-    "@elementor/editor-v1-adapters": "0.12.1",
-    "@elementor/env": "0.3.5",
+    "@elementor/editor-app-bar": "*",
+    "@elementor/editor-documents": "*",
+    "@elementor/editor-panels": "*",
+    "@elementor/editor-v1-adapters": "*",
+    "@elementor/env": "*",
     "@elementor/icons": "1.46.0",
-    "@elementor/query": "0.2.4",
+    "@elementor/query": "*",
     "@elementor/ui": "1.36.0",
     "@wordpress/api-fetch": "^6.42.0",
     "@wordpress/i18n": "^5.13.0"
