@@ -25,10 +25,6 @@ test.describe( 'Div Block tests @div-block', () => {
 		await page.close();
 	} );
 
-	test( 'fail', () => {
-		expect( false ).toEqual( true );
-	} );
-
 	test( 'Sort items in a Div Block using DnD', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage(),
@@ -59,7 +55,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		const sourceContainer = await editor.addElement( { elType: 'container' }, 'document' );
 		const heading = await editor.addWidget( { widgetType: widgets.heading, container: sourceContainer } );
 
-		const flexbox = await editor.addElement( { elType: 'e-flexboxl' }, 'document' );
+		const flexbox = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
 		const divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		const testDragToEmptyContainer = async ( targetContainer: string ) => {

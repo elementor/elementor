@@ -44,7 +44,6 @@ runs:
       run: |
         set -e
         
-        # Function to handle errors
         handle_error() {
           echo "::error::Failed to create revert PR: $1"
           echo "status=error" >> $GITHUB_OUTPUT
@@ -53,7 +52,6 @@ runs:
           exit 1
         }
         
-        # Set trap for error handling
         trap 'handle_error "Unexpected error occurred"' ERR
         
         # Get commit information
@@ -103,7 +101,7 @@ runs:
         git config user.name "${COMMIT_AUTHOR}"
         git config user.email "${COMMIT_AUTHOR_EMAIL}"
         
-        # Create and checkout revert branch from the current branch (main/version branch)
+        # Create and checkout revert branch from the current branch
         git checkout -b "${REVERT_BRANCH}" "${BRANCH_NAME}"
         
         # Create the actual revert commit
