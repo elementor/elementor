@@ -4,7 +4,7 @@ import { ChevronDownIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { TransitionSelector } from '../../components/transition-control';
+import { FontFamilySelector } from '../../components/font-family-selector';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 
@@ -40,11 +40,11 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					sx={
 						isShowingPlaceholder
 							? {
-									'& .MuiTag-label': {
-										color: ( theme ) => theme.palette.text.tertiary,
-									},
-									textTransform: 'capitalize',
-							  }
+								'& .MuiTag-label': {
+									color: ( theme ) => theme.palette.text.tertiary,
+								},
+								textTransform: 'capitalize',
+							}
 							: undefined
 					}
 				/>
@@ -57,13 +57,12 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				sx={ { my: 1.5 } }
 				{ ...bindPopover( popoverState ) }
 			>
-				<TransitionSelector
+				<FontFamilySelector
 					fontFamilies={ fontFamilies }
 					fontFamily={ fontFamily }
 					onFontFamilyChange={ setFontFamily }
 					onClose={ popoverState.close }
 					sectionWidth={ sectionWidth }
-					isProLicenseActive={ true }
 				/>
 			</Popover>
 		</>
