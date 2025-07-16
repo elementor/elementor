@@ -94,6 +94,7 @@ class Module extends BaseModule {
 		'editor-props', // TODO: Need to be registered and not enqueued.
 		'editor-styles', // TODO: Need to be registered and not enqueued.
 		'editor-styles-repository',
+		'editor-styles-migration',
 	];
 
 	public function get_name() {
