@@ -185,7 +185,7 @@ class Style_Parser {
 	private function validate_custom_css( array $variant ): Parse_Result {
 		$result = Parse_Result::make();
 
-		if ( ! isset( $variant['custom_css'] ) ) {
+		if ( empty( $variant['custom_css']['raw'] ) ) {
 			return $result;
 		}
 
@@ -193,11 +193,8 @@ class Style_Parser {
 
 		if ( ! is_string( $custom_css ) ) {
 			$result->errors()->add( 'custom_css', 'invalid_type' );
-			return $result;
-		}
 
-		if ( isset( $custom_css['raw'] ) && empty( $custom_css['raw'] ) ) {
-			$custom_css = null;
+			return $result;
 		}
 
 		return $result;
@@ -216,10 +213,13 @@ class Style_Parser {
 	}
 
 	private function sanitize_custom_css( array $variant ) {
-		if ( ! isset( $variant['custom_css'] ) ) {
-			return '';
+		if ( empty( $variant['custom_css']['raw'] ) ) {
+			return null;
 		}
-		return sanitize_text_field( $variant['custom_css'] );
+
+		$custom_css = sanitize_text_field( $variant['custom_css']['raw'] );
+
+		return empty( $custom_css['raw'] ) ? null : $custom_css;
 	}
 
 	/**
