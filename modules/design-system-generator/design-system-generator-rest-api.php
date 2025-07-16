@@ -30,18 +30,28 @@ class Design_System_Generator_REST_API {
 			],
 		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/posts', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/variables-suggestions', [
 			[
 				'methods' => 'GET',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->load_all_posts( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_variables_suggestions() ),
 				'permission_callback' => fn() => true,
 				'args' => [],
 			],
 		] );
 	}
 
-	public function load_all_posts() {
-		return ( new Load_Posts_Meta() )->load();
+	public function get_variables_suggestions() {
+		$all_posts = ( new Load_Posts_Meta() )->load();
+
+		$variables_extractor = new Variables_Suggestions_Extractor( $all_posts );
+		$suggestions = $variables_extractor->extract();
+
+		return new \WP_REST_Response(
+			[
+				'variables_suggestions' => $suggestions,
+			],
+			200
+		);
 	}
 
 	private function load_all_colors( \WP_REST_Request $request ) {

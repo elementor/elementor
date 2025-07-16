@@ -1,0 +1,706 @@
+{
+    "colors": {
+        "#FFFFFF": {
+            "totalOccurrences": 34,
+            "properties": {
+                "title_color": {
+                    "totalOccurrences": 8,
+                    "elements": {
+                        "heading": 5,
+                        "icon-box": 3
+                    }
+                },
+                "text_color": {
+                    "totalOccurrences": 5,
+                    "elements": {
+                        "text-editor": 5
+                    }
+                },
+                "background_color": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "button": 3
+                    }
+                },
+                "hover_color": {
+                    "totalOccurrences": 4,
+                    "elements": {
+                        "button": 4
+                    }
+                },
+                "color": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "button": 1,
+                        "form": 1,
+                        "image-box": 1
+                    }
+                },
+                "label_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "field_text_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "field_border_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "button_background_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "previous_button_background_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "previous_button_text_color_hover": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "description_color": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "icon-box": 3
+                    }
+                },
+                "button_text_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                },
+                "button_hover_border_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                }
+            },
+            "global_title": "Primary",
+            "value": "#FFFFFF"
+        },
+        "#000000": {
+            "totalOccurrences": 23,
+            "properties": {
+                "button_text_color": {
+                    "totalOccurrences": 4,
+                    "elements": {
+                        "button": 3,
+                        "form": 1
+                    }
+                },
+                "button_background_hover_color": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "button": 3
+                    }
+                },
+                "button_hover_border_color": {
+                    "totalOccurrences": 4,
+                    "elements": {
+                        "button": 3,
+                        "form": 1
+                    }
+                },
+                "border_color": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "button": 3
+                    }
+                },
+                "color": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "icon": 3
+                    }
+                },
+                "background-color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                },
+                "border-color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                },
+                "button_border_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "previous_button_text_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "previous_button_border_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "button_hover_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                }
+            },
+            "global_title": "Accent",
+            "value": "#000000"
+        },
+        "#FFFFFF00": {
+            "totalOccurrences": 3,
+            "properties": {
+                "field_background_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                },
+                "background_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                },
+                "border_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                }
+            },
+            "global_title": "Full Transparency ",
+            "value": "#FFFFFF00"
+        },
+        "#FFD639": {
+            "totalOccurrences": 1,
+            "properties": {
+                "button_background_hover_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                }
+            },
+            "global_title": "Yellow Element",
+            "value": "#FFD639"
+        },
+        "#FF7989": {
+            "totalOccurrences": 1,
+            "properties": {
+                "border_color": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "global_title": "Pink Element",
+            "value": "#FF7989"
+        }
+    },
+    "font_families": {
+        "Karla": {
+            "totalOccurrences": 18,
+            "properties": {
+                "typography_font_family": {
+                    "totalOccurrences": 18,
+                    "elements": {
+                        "text-editor": 5,
+                        "button": 5,
+                        "form": 2,
+                        "icon-box": 6
+                    }
+                }
+            },
+            "global_title": "Text",
+            "value": "Karla"
+        },
+        "Pridi": {
+            "totalOccurrences": 5,
+            "properties": {
+                "typography_font_family": {
+                    "totalOccurrences": 5,
+                    "elements": {
+                        "heading": 5
+                    }
+                }
+            },
+            "global_title": "Hero Main Title \/ Menu Links",
+            "value": "Pridi"
+        },
+        "Protest Guerrilla": {
+            "totalOccurrences": 1,
+            "properties": {
+                "typography_font_family": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "heading": 1
+                    }
+                }
+            },
+            "value": "Protest Guerrilla"
+        }
+    },
+    "font_sizes": {
+        "16px": {
+            "totalOccurrences": 9,
+            "properties": {
+                "typography_font_size": {
+                    "totalOccurrences": 9,
+                    "elements": {
+                        "text-editor": 5,
+                        "form": 1,
+                        "icon-box": 3
+                    }
+                }
+            },
+            "global_title": "Text",
+            "value": "16px"
+        },
+        "14px": {
+            "totalOccurrences": 6,
+            "properties": {
+                "typography_font_size": {
+                    "totalOccurrences": 6,
+                    "elements": {
+                        "button": 5,
+                        "form": 1
+                    }
+                }
+            },
+            "global_title": "Accent",
+            "value": "14px"
+        },
+        "74px": {
+            "totalOccurrences": 5,
+            "properties": {
+                "typography_font_size": {
+                    "totalOccurrences": 5,
+                    "elements": {
+                        "heading": 5
+                    }
+                }
+            },
+            "global_title": "Hero Main Title \/ Menu Links",
+            "value": "74px"
+        },
+        "24px": {
+            "totalOccurrences": 3,
+            "properties": {
+                "typography_font_size": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "icon-box": 3
+                    }
+                }
+            },
+            "global_title": "Secondary",
+            "value": "24px"
+        },
+        "34px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "typography_font_size": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "heading": 1
+                    }
+                }
+            },
+            "value": "34px"
+        }
+    },
+    "spacing": {
+        "4%": {
+            "totalOccurrences": 14,
+            "properties": {
+                "padding_tablet": {
+                    "totalOccurrences": 13,
+                    "elements": {
+                        "section": 13
+                    }
+                },
+                "padding": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "4%"
+        },
+        "10px": {
+            "totalOccurrences": 12,
+            "properties": {
+                "flex_gap": {
+                    "totalOccurrences": 8,
+                    "elements": {
+                        "section": 8
+                    }
+                },
+                "_margin": {
+                    "totalOccurrences": 4,
+                    "elements": {
+                        "icon": 3,
+                        "image-box": 1
+                    }
+                }
+            },
+            "value": "10px"
+        },
+        "6%": {
+            "totalOccurrences": 10,
+            "properties": {
+                "padding_mobile": {
+                    "totalOccurrences": 10,
+                    "elements": {
+                        "section": 10
+                    }
+                }
+            },
+            "value": "6%"
+        },
+        "8%": {
+            "totalOccurrences": 8,
+            "properties": {
+                "padding": {
+                    "totalOccurrences": 8,
+                    "elements": {
+                        "section": 8
+                    }
+                }
+            },
+            "value": "8%"
+        },
+        "16px": {
+            "totalOccurrences": 6,
+            "properties": {
+                "text_padding": {
+                    "totalOccurrences": 6,
+                    "elements": {
+                        "button": 6
+                    }
+                }
+            },
+            "value": "16px"
+        },
+        "80px": {
+            "totalOccurrences": 6,
+            "properties": {
+                "text_padding": {
+                    "totalOccurrences": 6,
+                    "elements": {
+                        "button": 6
+                    }
+                }
+            },
+            "value": "80px"
+        },
+        "10%": {
+            "totalOccurrences": 4,
+            "properties": {
+                "padding_mobile": {
+                    "totalOccurrences": 4,
+                    "elements": {
+                        "section": 4
+                    }
+                }
+            },
+            "value": "10%"
+        },
+        "20px": {
+            "totalOccurrences": 4,
+            "properties": {
+                "_padding": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "text-editor": 3
+                    }
+                },
+                "_padding_tablet": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                }
+            },
+            "value": "20px"
+        },
+        "-22px": {
+            "totalOccurrences": 4,
+            "properties": {
+                "_margin_mobile": {
+                    "totalOccurrences": 4,
+                    "elements": {
+                        "icon": 3,
+                        "image-box": 1
+                    }
+                }
+            },
+            "value": "-22px"
+        },
+        "16%": {
+            "totalOccurrences": 3,
+            "properties": {
+                "padding_tablet": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "section": 3
+                    }
+                }
+            },
+            "value": "16%"
+        },
+        "-100px": {
+            "totalOccurrences": 3,
+            "properties": {
+                "margin_mobile": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "section": 3
+                    }
+                }
+            },
+            "value": "-100px"
+        },
+        "5px": {
+            "totalOccurrences": 3,
+            "properties": {
+                "_padding_tablet": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "button": 3
+                    }
+                }
+            },
+            "value": "5px"
+        },
+        "-40px": {
+            "totalOccurrences": 3,
+            "properties": {
+                "_margin_tablet": {
+                    "totalOccurrences": 3,
+                    "elements": {
+                        "icon": 3
+                    }
+                }
+            },
+            "value": "-40px"
+        },
+        "-200px": {
+            "totalOccurrences": 2,
+            "properties": {
+                "margin_tablet": {
+                    "totalOccurrences": 2,
+                    "elements": {
+                        "section": 2
+                    }
+                }
+            },
+            "value": "-200px"
+        },
+        "35%": {
+            "totalOccurrences": 2,
+            "properties": {
+                "padding_mobile": {
+                    "totalOccurrences": 2,
+                    "elements": {
+                        "section": 2
+                    }
+                }
+            },
+            "value": "35%"
+        },
+        "90px": {
+            "totalOccurrences": 2,
+            "properties": {
+                "button_text_padding": {
+                    "totalOccurrences": 2,
+                    "elements": {
+                        "form": 2
+                    }
+                }
+            },
+            "value": "90px"
+        },
+        "50px": {
+            "totalOccurrences": 2,
+            "properties": {
+                "flex_gap": {
+                    "totalOccurrences": 2,
+                    "elements": {
+                        "section": 2
+                    }
+                }
+            },
+            "value": "50px"
+        },
+        "-135px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "margin_tablet": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "-135px"
+        },
+        "100px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "margin": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "100px"
+        },
+        "30%": {
+            "totalOccurrences": 1,
+            "properties": {
+                "padding_tablet": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "30%"
+        },
+        "40%": {
+            "totalOccurrences": 1,
+            "properties": {
+                "_padding": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "text-editor": 1
+                    }
+                }
+            },
+            "value": "40%"
+        },
+        "12px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "button_text_padding": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                }
+            },
+            "value": "12px"
+        },
+        "11px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "button_text_padding": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "form": 1
+                    }
+                }
+            },
+            "value": "11px"
+        },
+        "30px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "flex_gap_tablet": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "30px"
+        },
+        "60px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "flex_gap_mobile": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "60px"
+        },
+        "56px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "padding_mobile": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "56px"
+        },
+        "15%": {
+            "totalOccurrences": 1,
+            "properties": {
+                "padding_mobile": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "section": 1
+                    }
+                }
+            },
+            "value": "15%"
+        },
+        "2px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "text_padding": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                }
+            },
+            "value": "2px"
+        },
+        "40px": {
+            "totalOccurrences": 1,
+            "properties": {
+                "_padding": {
+                    "totalOccurrences": 1,
+                    "elements": {
+                        "button": 1
+                    }
+                }
+            },
+            "value": "40px"
+        }
+    }
+}

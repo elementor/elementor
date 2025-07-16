@@ -15,5 +15,5 @@ export function usePosts() {
 const RESOURCE_URL = '/design-system-generator';
 
 export const apiClient = {
-	getPosts: () => httpService().get( 'elementor/v1' + RESOURCE_URL + '/posts' ),
+	getPosts: () => httpService().get( 'elementor/v1' + RESOURCE_URL + '/variables-suggestions' ),
 };

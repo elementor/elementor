@@ -31,12 +31,7 @@ class Load_Posts_Meta {
 				continue;
 			}
 
-			$posts[] = [
-				'post_type' => $post->post_type,
-				'post_id' => $post->ID,
-				'meta_value' => $meta_value,
-				'parsed_meta_value' => $this->parse_meta_value( $meta_value ),
-			];
+			$posts[] = [$this->parse_meta_value( $meta_value )][0][0];
 		}
 		return $posts;
 	}
