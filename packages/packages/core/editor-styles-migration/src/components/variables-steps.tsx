@@ -18,9 +18,10 @@ export const VariablesSteps = () => {
 	};
 
 	return (
-		<Stack>
-			<Stack>
-
+		<Stack sx={{ flexGrow: 1, padding: '20px', height: '100%' }}>
+			<Stack direction="row" sx={{ flexGrow: 1 }}>
+                <Stack sx={{ flexBasis: '50%', borderRight: '1px solid gray' }}></Stack>
+                <Stack sx={{ flexBasis: '50%' }}></Stack>
             </Stack>
 			<Stack direction="row" alignItems="center">
 				<Button onClick={ handlePrevious } color="secondary">

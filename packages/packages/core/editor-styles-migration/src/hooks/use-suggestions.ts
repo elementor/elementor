@@ -1,6 +1,12 @@
 import { useQuery } from '@elementor/query';
+import { usePosts } from './use-posts';
 
 export const useSuggestions = () => {
+
+    const { data: posts } = usePosts();
+
+    console.log({ posts });
+
 	return useQuery( {
 		queryKey: [ 'styles-migration-suggestions' ],
 		queryFn: mockApi,

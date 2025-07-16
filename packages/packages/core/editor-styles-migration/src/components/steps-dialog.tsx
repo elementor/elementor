@@ -21,8 +21,8 @@ export const StepsDialog = () => {
 	};
 
 	return (
-		<Dialog fullScreen open={ open } onClose={ handleClose }>
-			<DialogContent dividers>
+		<Dialog fullWidth maxWidth="lg" open={ open } onClose={ handleClose }>
+			<DialogContent dividers sx={ { height: '600px', display: 'flex', flexDirection: 'column' } }>
 				<Provider>
 					<DialogTabs />
 				</Provider>
@@ -61,20 +61,20 @@ const DialogTabs = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< TabValue >( 'variables' );
 
 	return (
-		<Box sx={ { width: '100%' } }>
-			<Stack sx={ { borderBottom: 1, borderColor: 'divider' } }>
+		<Stack sx={ { width: '100%', height: '100%' } }>
+			<Stack direction="row" justifyContent="center" sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: '200px', margin: 'auto' } }>
 				<Tabs { ...getTabsProps() }>
 					<Tab label="Variables" { ...getTabProps( 'variables' ) } />
 					<Tab label="Classes" { ...getTabProps( 'classes' ) } />
 				</Tabs>
 			</Stack>
-			<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) }>
+			<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) } sx={ { flexGrow: 1 } }>
 				<VariablesSteps />
 			</TabPanel>
-			<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) }>
+			<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) } sx={ { flexGrow: 1 } }>
 				<ClassesSteps />
 			</TabPanel>
-		</Box>
+		</Stack>
 	);
 };
 
