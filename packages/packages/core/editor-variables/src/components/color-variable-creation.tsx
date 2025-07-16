@@ -11,6 +11,8 @@ import { createVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { ColorField } from './fields/color-field';
 import { LabelField } from './fields/label-field';
+import { trackVariableEvent } from '../utils/tracking';
+
 
 const SIZE = 'tiny';
 
@@ -20,7 +22,7 @@ type Props = {
 };
 
 export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
-	const { setValue: setVariable } = useBoundProp( colorVariablePropTypeUtil );
+	const { setValue: setVariable, path } = useBoundProp( colorVariablePropTypeUtil );
 
 	const [ color, setColor ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
@@ -38,6 +40,12 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 	};
 
 	const handleCreate = () => {
+		trackVariableEvent( {
+			varType: 'color',
+			path: path.join( '.' ),
+			action: 'create',
+		} );
+
 		createVariable( {
 			value: color,
 			label,

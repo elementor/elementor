@@ -15,6 +15,7 @@ const eventsConfig = {
 		templatesLibrary: {
 			library: 'Templates Library',
 		},
+		variables: 'Variables Panel',
 	},
 
 	secondaryLocations: {
@@ -71,6 +72,7 @@ const eventsConfig = {
 			morePopup: 'Context Menu',
 			quotaBar: 'Quota Bar',
 		},
+		variablesPopover: 'Variables Popover',
 	},
 
 	elements: {
@@ -129,6 +131,12 @@ const eventsConfig = {
 				checklistHide: 'checklist_userpreferences_toggle_hide',
 			},
 		},
+		variables: {
+            open: 'variables_popover_open',
+            create: 'variables_create',
+            connect: 'variables_connect',
+            save: 'variables_save',
+        },
 	},
 };
 
