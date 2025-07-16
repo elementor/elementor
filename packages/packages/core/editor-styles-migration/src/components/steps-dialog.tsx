@@ -6,9 +6,10 @@ import {
 	__useDispatch as useDispatch,
 	__useSelector as useSelector,
 } from '@elementor/store';
-import { Box, DialogHeader, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
+import { Box, DialogHeader, Stack, Tab, TabPanel, Tabs, Typography, useTabs } from '@elementor/ui';
 import Dialog from '@elementor/ui/Dialog';
 import DialogContent from '@elementor/ui/DialogContent';
+import { ColorFilterIcon, AIIcon, ColorSwatchIcon } from '@elementor/icons';
 
 import { type Suggestions, useSuggestions } from '../hooks/use-suggestions';
 import { ClassesSteps } from './classes-steps';
@@ -84,8 +85,19 @@ const DialogTabs = () => {
 				sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: '200px', margin: 'auto' } }
 			>
 				<Tabs { ...getTabsProps() }>
-					<Tab label="Variables" { ...getTabProps( 'variables' ) } />
-					<Tab label="Classes" { ...getTabProps( 'classes' ) } />
+					<Tab label={
+						<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+							<ColorFilterIcon fontSize="small" />
+							<Typography variant="body2">Variables</Typography>
+						</Box>
+					} { ...getTabProps( 'variables' ) } />
+
+					<Tab label={
+						<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+							<ColorSwatchIcon fontSize="small" />
+							<Typography variant="body2">Classes</Typography>
+						</Box>
+					} { ...getTabProps( 'classes' ) } />
 				</Tabs>
 			</DialogHeader>
 			<DialogContent
