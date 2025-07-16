@@ -1,5 +1,5 @@
 import { type Dependency, type DependencyTerm, type PropValue } from '../../types';
-import { evaluateTerm, shouldApplyEffect } from '../prop-dependency-utils';
+import { evaluateTerm, isDependencyMet } from '../prop-dependency-utils';
 
 type TestCase = DependencyTerm & {
 	description: string;
@@ -334,28 +334,27 @@ describe( 'prop-dependency-utils', () => {
 		} );
 
 		describe( 'unknown operators', () => {
-			it( 'should return false for unknown operators', () => {
+			it( 'should return true for unknown operators', () => {
 				const term: DependencyTerm = {
 					operator: 'unknown' as never,
 					path: [ 'test' ],
 					value: 'test',
 				};
 
-				expect( evaluateTerm( term, 'test' ) ).toBe( false );
+				expect( evaluateTerm( term, 'test' ) ).toBe( true );
 			} );
 		} );
 	} );
 
 	describe( 'shouldApplyEffect', () => {
 		describe( 'simple dependencies', () => {
-			it( 'should return false when no terms are provided', () => {
+			it( 'should return true when no terms are provided', () => {
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [],
 				};
 
-				expect( shouldApplyEffect( dependency, {} ) ).toBe( false );
+				expect( isDependencyMet( dependency, {} ) ).toBe( true );
 			} );
 
 			it( 'should return true when all terms are met (AND)', () => {
@@ -371,7 +370,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -387,7 +385,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should return false when any term is not met (AND)', () => {
@@ -403,7 +401,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -419,7 +416,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ) ).toBe( false );
 			} );
 
 			it( 'should return true when any term is met (OR)', () => {
@@ -434,7 +431,6 @@ describe( 'prop-dependency-utils', () => {
 					},
 				};
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
@@ -450,7 +446,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should return false when no terms are met (OR)', () => {
@@ -464,7 +460,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
@@ -480,7 +475,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ) ).toBe( false );
 			} );
 		} );
 
@@ -502,7 +497,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -511,7 +505,6 @@ describe( 'prop-dependency-utils', () => {
 							value: 'active',
 						},
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -529,7 +522,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle nested OR dependencies', () => {
@@ -549,7 +542,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
@@ -558,7 +550,6 @@ describe( 'prop-dependency-utils', () => {
 							value: 'active',
 						},
 						{
-							effect: 'disable',
 							relation: 'or',
 							terms: [
 								{
@@ -576,7 +567,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle mixed nested dependencies', () => {
@@ -596,7 +587,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -605,7 +595,6 @@ describe( 'prop-dependency-utils', () => {
 							value: null,
 						},
 						{
-							effect: 'disable',
 							relation: 'or',
 							terms: [
 								{
@@ -623,7 +612,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 		} );
 
@@ -649,7 +638,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -658,7 +646,6 @@ describe( 'prop-dependency-utils', () => {
 							value: 'production',
 						},
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -667,7 +654,6 @@ describe( 'prop-dependency-utils', () => {
 									value: 2.0,
 								},
 								{
-									effect: 'disable',
 									relation: 'or',
 									terms: [
 										{
@@ -687,7 +673,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle complex conditional logic', () => {
@@ -707,11 +693,9 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'or',
 					terms: [
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -727,7 +711,6 @@ describe( 'prop-dependency-utils', () => {
 							],
 						},
 						{
-							effect: 'disable',
 							relation: 'and',
 							terms: [
 								{
@@ -745,7 +728,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 		} );
 
@@ -761,7 +744,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency = {
-					effect: 'disable',
 					relation: 'xor',
 					terms: [
 						{
@@ -772,7 +754,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				} as unknown as Dependency;
 
-				expect( () => shouldApplyEffect( dependency, values ) ).toThrow();
+				expect( () => isDependencyMet( dependency, values ) ).toThrow();
 			} );
 
 			it( 'should handle single term dependencies', () => {
@@ -788,7 +770,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -799,7 +780,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( true );
+				expect( isDependencyMet( dependency, values ) ).toBe( true );
 			} );
 
 			it( 'should handle single term dependencies that fail', () => {
@@ -815,7 +796,6 @@ describe( 'prop-dependency-utils', () => {
 				};
 
 				const dependency: Dependency = {
-					effect: 'disable',
 					relation: 'and',
 					terms: [
 						{
@@ -826,7 +806,7 @@ describe( 'prop-dependency-utils', () => {
 					],
 				};
 
-				expect( shouldApplyEffect( dependency, values ) ).toBe( false );
+				expect( isDependencyMet( dependency, values ) ).toBe( false );
 			} );
 		} );
 	} );

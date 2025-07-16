@@ -12,11 +12,15 @@ import { colorStopTransformer } from './transformers/styles/color-stop-transform
 import { createCombineArrayTransformer } from './transformers/styles/create-combine-array-transformer';
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
+import { flexTransformer } from './transformers/styles/flex-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
+import { transformRotateTransformer } from './transformers/styles/transform-rotate-transformer';
+import { transformScaleTransformer } from './transformers/styles/transform-scale-transformer';
+import { transformSkewTransformer } from './transformers/styles/transform-skew-transformer';
 import { transformTransformer } from './transformers/styles/transform-transformer';
 
 export function initStyleTransformers() {
@@ -47,11 +51,15 @@ export function initStyleTransformers() {
 		.register( 'image', imageTransformer )
 		.register( 'object-position', positionTransformer )
 		.register( 'transform-move', transformMoveTransformer )
+		.register( 'transform-scale', transformScaleTransformer )
+		.register( 'transform-rotate', transformRotateTransformer )
+		.register( 'transform-skew', transformSkewTransformer )
 		.register( 'transform', transformTransformer )
 		.register(
 			'layout-direction',
 			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )
 		)
+		.register( 'flex', flexTransformer )
 		.register(
 			'border-width',
 			createMultiPropsTransformer(

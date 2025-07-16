@@ -7,6 +7,7 @@ import { ArrowLeftIcon, TextIcon, TrashIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { FontField } from './fields/font-field';
@@ -31,6 +32,8 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 	if ( ! variable ) {
 		throw new Error( `Global font variable "${ editId }" not found` );
 	}
+
+	const userPermissions = usePermissions();
 
 	const [ fontFamily, setFontFamily ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
@@ -78,20 +81,26 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 		return fontFamily === variable.value && label === variable.label;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValue();
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = noValueChanged() || hasEmptyValue() || hasErrors();
 
 	const actions = [];
 
-	actions.push(
-		<IconButton
-			key="delete"
-			size={ SIZE }
-			aria-label={ __( 'Delete', 'elementor' ) }
-			onClick={ handleDeleteConfirmation }
-		>
-			<TrashIcon fontSize={ SIZE } />
-		</IconButton>
-	);
+	if ( userPermissions.canDelete() ) {
+		actions.push(
+			<IconButton
+				key="delete"
+				size={ SIZE }
+				aria-label={ __( 'Delete', 'elementor' ) }
+				onClick={ handleDeleteConfirmation }
+			>
+				<TrashIcon fontSize={ SIZE } />
+			</IconButton>
+		);
+	}
 
 	return (
 		<>

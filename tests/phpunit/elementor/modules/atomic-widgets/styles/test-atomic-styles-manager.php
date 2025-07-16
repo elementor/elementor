@@ -24,8 +24,8 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 
 		// Mock the filesystem
-		$this->filesystemMock = $this->createMock(WP_Filesystem_Base::class);
-		$this->filesystemMock->method('abspath')->willReturn(ABSPATH);
+		$this->filesystemMock = $this->createMock( WP_Filesystem_Base::class );
+		$this->filesystemMock->method( 'abspath' )->willReturn( ABSPATH );
 
 		global $wp_filesystem;
 		$wp_filesystem = $this->filesystemMock;
@@ -100,7 +100,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 							'breakpoint' => 'tablet',
 						],
 						'props' => [
-							'color' =>  'yellow',
+							'color' => 'yellow',
 						],
 					],
 				],
@@ -117,7 +117,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			return $this->get_test_style_defs();
 		};
 
-		$this->filesystemMock->method('put_contents')->willReturn(true);
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
 
 		$invoked_count = $this->exactly( 2 );
 		$this->filesystemMock->expects( $invoked_count )
@@ -161,7 +161,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			return $this->get_additional_test_style_defs();
 		};
 
-		$this->filesystemMock->method('put_contents')->willReturn(true);
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
 
 		$invoked_count = $this->exactly( 4 );
 		$this->filesystemMock->expects( $invoked_count )
@@ -205,31 +205,31 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$this->assertArrayHasKey( $this->test_additional_style_key . '-desktop', $wp_styles->registered );
 	}
 
-    public function test_enqueue__calls_get_styles_once_for_each_key_with_multiple_breakpoints() {
-        // Arrange.
-        $styles_manager = new Atomic_Styles_Manager();
-        $styles_manager->register_hooks();
+	public function test_enqueue__calls_get_styles_once_for_each_key_with_multiple_breakpoints() {
+		// Arrange.
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
 
-        $call_count = 0;
-        $get_style_defs = function() use ( &$call_count ) {
-            $call_count++;
-            return $this->get_test_style_defs();
-        };
+		$call_count = 0;
+		$get_style_defs = function() use ( &$call_count ) {
+			++$call_count;
+			return $this->get_test_style_defs();
+		};
 
-        $this->filesystemMock->method('put_contents')->willReturn(true);
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
 
-        add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
-            $styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
-        }, 20, 1 );
+		add_action( 'elementor/atomic-widgets/styles/register', function( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+		}, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
 
-        // Act.
-        do_action( 'elementor/frontend/after_enqueue_post_styles' );
+		// Act.
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
-        // Assert.
-        $this->assertEquals( 1, $call_count );
-    }
+		// Assert.
+		$this->assertEquals( 1, $call_count );
+	}
 
 	public function test_enqueue__not_enqueues_styles_when_no_post_ids() {
 		// Arrange.
@@ -259,7 +259,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$call_count = 0;
 
 		$get_style_defs = function() use ( &$call_count ) {
-			$call_count++;
+			++$call_count;
 
 			return $this->get_test_style_defs();
 		};

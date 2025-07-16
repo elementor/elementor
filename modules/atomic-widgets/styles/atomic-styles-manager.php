@@ -29,6 +29,8 @@ class Atomic_Styles_Manager {
 
 	const DEFAULT_BREAKPOINT = 'desktop';
 
+	private array $fonts = [];
+
 	public function __construct() {
 		$this->css_files_manager = new CSS_Files_Manager();
 		$this->cache_validity = new Cache_Validity();
@@ -74,8 +76,35 @@ class Atomic_Styles_Manager {
 			])
 			->all();
 
+		$this->before_render( $styles_by_key );
+
+		$this->render( $styles_by_key );
+
+		$this->after_render( $styles_by_key );
+	}
+
+	private function before_render( array $styles_by_key ) {
+		$this->fonts = [];
+
+		foreach ( $styles_by_key as $style_key => $style_params ) {
+			$cache_keys = $style_params['cache_keys'];
+
+			// This cache validity check is of the general style, and used to reset dependencies that can only be evaluated
+			// upon the style rendering flow (i.e. when cache is invalid).
+			// (the corresponding css files cache validity includes also the file's breakpoint in the cache keys array)
+			if ( ! $this->cache_validity->is_valid( $cache_keys ) ) {
+				Style_Fonts::make( $style_key )->clear();
+			}
+
+			// We should validate it after this iteration
+			$this->cache_validity->validate( $cache_keys );
+		}
+	}
+
+	private function render( array $styles_by_key ) {
 		$group_by_breakpoint_memo = new Memo();
 		$breakpoints = $this->get_breakpoints();
+
 		foreach ( $breakpoints as $breakpoint_key ) {
 			foreach ( $styles_by_key as $style_key => $style_params ) {
 				$cache_keys = $style_params['cache_keys'];
@@ -112,18 +141,18 @@ class Atomic_Styles_Manager {
 		}
 	}
 
-	private function render_css( array $styles ) {
-		$css = Styles_Renderer::make(
+	private function render_css( array $styles, string $style_key ) {
+		$style_fonts = Style_Fonts::make( $style_key );
+
+		return Styles_Renderer::make(
 			Plugin::$instance->breakpoints->get_breakpoints_config()
-		)->on_prop_transform( function( $key, $value ) {
+		)->on_prop_transform( function( $key, $value ) use ( $style_fonts ) {
 			if ( 'font-family' !== $key ) {
 				return;
 			}
 
-			Plugin::instance()->frontend->enqueue_font( $value );
+			$style_fonts->add( $value );
 		} )->render( $styles );
-
-		return $css;
 	}
 
 	private function get_breakpoint_media( string $breakpoint_key ): ?string {
@@ -132,12 +161,12 @@ class Atomic_Styles_Manager {
 		return $breakpoint_config ? Styles_Renderer::get_media_query( $breakpoint_config ) : 'all';
 	}
 
-	private function render_css_by_breakpoints( $get_styles, $style_key, $breakpoint_key, $group_by_breakpoint_memo ) {
-		$cache_key = $style_key . '-' . $breakpoint_key;
-		$get_grouped_styles = $group_by_breakpoint_memo->memoize( $cache_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
+	private function render_css_by_breakpoints( callable $get_styles, string $style_key, string $breakpoint_key, Memo $group_by_breakpoint_memo ) {
+		$memo_key = $style_key . '-' . $breakpoint_key;
+		$get_grouped_styles = $group_by_breakpoint_memo->memoize( $memo_key, fn() => $this->group_by_breakpoint( $get_styles() ) );
 		$grouped_styles = $get_grouped_styles();
 
-		return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [] );
+		return $this->render_css( $grouped_styles[ $breakpoint_key ] ?? [], $style_key );
 	}
 
 	private function group_by_breakpoint( $styles ) {
@@ -166,5 +195,30 @@ class Atomic_Styles_Manager {
 			->reverse()
 			->prepend( self::DEFAULT_BREAKPOINT )
 			->all();
+	}
+
+	private function after_render( array $styles_by_key ) {
+		foreach ( $styles_by_key as $style_key => $style_params ) {
+			$this->add_fonts_to_enqueue( $style_key );
+		}
+
+		$this->enqueue_fonts();
+	}
+
+	private function add_fonts_to_enqueue( string $style_key ) {
+		$style_fonts = Style_Fonts::make( $style_key );
+
+		$this->fonts = array_unique(
+			array_merge(
+				$this->fonts,
+				array_values( $style_fonts->get() )
+			)
+		);
+	}
+
+	private function enqueue_fonts() {
+		foreach ( $this->fonts as $font ) {
+			Plugin::instance()->frontend->enqueue_font( $font );
+		}
 	}
 }
