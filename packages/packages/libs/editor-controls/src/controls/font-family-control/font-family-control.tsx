@@ -2,12 +2,14 @@ import * as React from 'react';
 import { stringPropTypeUtil } from '@elementor/editor-props';
 import { ChevronDownIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
 import { type Category } from '../../components/item-selector';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
+import { enqueueFont } from './enqueue-font';
 
 export type FontCategory = {
 	label: string;
@@ -71,8 +73,9 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					onItemChange={ setFontFamily }
 					onClose={ popoverState.close }
 					sectionWidth={ sectionWidth }
-					title={ 'Font Family' }
-					useCustomFont={ true }
+					title={ __( 'Font Family', 'elementor' ) }
+					itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
+					enqueueFont={ enqueueFont }
 				/>
 			</Popover>
 		</>

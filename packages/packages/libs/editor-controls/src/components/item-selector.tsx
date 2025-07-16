@@ -6,7 +6,6 @@ import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { enqueueFont } from '../controls/font-family-control/enqueue-font';
 import { type SelectableItem, useFilteredItemsList } from '../hooks/use-filtered-items-list';
 
 const SIZE = 'tiny';
@@ -23,8 +22,8 @@ type ItemSelectorProps = {
 	onClose: () => void;
 	sectionWidth: number;
 	title: string;
-	// iconName: Icons;
-	useCustomFont?: boolean;
+	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
+	enqueueFont?: ( fontName: string ) => void;
 };
 
 export const ItemSelector = ( {
@@ -34,8 +33,8 @@ export const ItemSelector = ( {
 	onClose,
 	sectionWidth,
 	title,
-	// iconName,
-	useCustomFont = false,
+	itemStyle = () => ( {} ),
+	enqueueFont = () => {},
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -50,8 +49,7 @@ export const ItemSelector = ( {
 		onClose();
 	};
 
-	const tempIconName = 'TextIcon';
-	const IconComponent = Icons[ tempIconName ];
+	const IconComponent = Icons.TextIcon;
 
 	return (
 		<PopoverBody width={ sectionWidth }>
@@ -70,7 +68,8 @@ export const ItemSelector = ( {
 					setSelectedItem={ onItemChange }
 					handleClose={ handleClose }
 					selectedItem={ selectedItem }
-					useCustomFont={ useCustomFont }
+					itemStyle={ itemStyle }
+					enqueueFont={ enqueueFont }
 				/>
 			) : (
 				<Stack
@@ -125,7 +124,8 @@ type ItemListProps = {
 	setSelectedItem: ( item: string ) => void;
 	handleClose: () => void;
 	selectedItem: string | null;
-	useCustomFont?: boolean;
+	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
+	enqueueFont?: ( fontName: string ) => void;
 };
 
 const ItemList = ( {
@@ -133,7 +133,8 @@ const ItemList = ( {
 	setSelectedItem,
 	handleClose,
 	selectedItem,
-	useCustomFont = false,
+	itemStyle = () => ( {} ),
+	enqueueFont = () => {},
 }: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
@@ -146,15 +147,7 @@ const ItemList = ( {
 		} );
 	}, 100 );
 
-	const itemStyleFn = useCallback(
-		( item: SelectableItem ): React.CSSProperties => {
-			if ( useCustomFont ) {
-				return { fontFamily: item.value };
-			}
-			return {};
-		},
-		[ useCustomFont ]
-	);
+	const memoizedItemStyle = useCallback( ( item: SelectableItem ) => itemStyle( item ), [ itemStyle ] );
 
 	return (
 		<PopoverMenuList
@@ -163,7 +156,7 @@ const ItemList = ( {
 			onChange={ debouncedVirtualizeChange }
 			onSelect={ setSelectedItem }
 			onClose={ handleClose }
-			itemStyle={ itemStyleFn }
+			itemStyle={ memoizedItemStyle }
 			data-testid="item-list"
 		/>
 	);
