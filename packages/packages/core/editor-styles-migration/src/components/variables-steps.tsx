@@ -1,21 +1,36 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariables, type Variable } from '@elementor/editor-variables';
-import { Alert, Button, CircularProgress, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Switch, ToggleButton, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
-import { VariableSuggestion, type VariableType } from '../hooks/use-suggestions';
+import { BrushIcon, CurrentLocationIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
+import {
+	Alert,
+	Button,
+	CircularProgress,
+	DialogActions,
+	Infotip,
+	Paper,
+	Stack,
+	Step,
+	StepLabel,
+	Stepper,
+	Switch,
+	Typography,
+	UnstableColorIndicator,
+	UnstableTag,
+} from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+
+import { type VariableSuggestion, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
 
-import { __ } from '@wordpress/i18n';
-import { CurrentLocationIcon } from '@elementor/icons';
-
-const roles = [__('primary', 'elementor'), __('secondary', 'elementor'), __('tertiary', 'elementor')];
+const roles = [ __( 'primary', 'elementor' ), __( 'secondary', 'elementor' ), __( 'tertiary', 'elementor' ) ];
 
 export const VariablesSteps = () => {
 	const { variables = {}, isLoading } = useStylesMigrationContext();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ selectedVariables, setSelectedVariables ] = useState< Record< string, boolean > >( {} );
 
-	if( isLoading ){
+	if ( isLoading ) {
 		return <CircularProgress />;
 	}
 
@@ -47,44 +62,57 @@ export const VariablesSteps = () => {
 		createVariables( variablesToCreate );
 	}
 
-    const list = step?.list.slice(0, 4);
+	const list = step?.list.slice( 0, 4 );
+
+	const Icon = getIcon( step.key as VariableType );
 
 	return (
 		<Stack sx={ { flexGrow: 1 } }>
-            <Stack alignItems="center" sx={ { pt: 4 } }>
-            <Typography variant="h5">
-                { getLabel( step.key as VariableType ) }
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-                {`${list.length} variables detected from your website`}
-            </Typography>
-            </Stack>
-				<Stack gap={2} sx={ { flexBasis: '100%', flexGrow: 1, p: 4, pt: 3 } }>
-					{ list.slice(0, 4).map( ( variable, index ) => (
-						<Paper
-							key={ index }
-                            variant="outlined"
-							sx={ { p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'} }
-						>
-							<Stack direction="row" alignItems="center" justifyContent="start" gap={ 2 }>
-								<VariablePreview variable={ variable } type={ step.key as VariableType } />
-								<VariableExplanation variable={ variable } />
-							</Stack>
-							<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
-								<VariableUsage variable={ variable } type={ step.key as VariableType } role={ roles[index] } />
-								<Switch
-									onClick={ () => {
-										setSelectedVariables( ( prev ) => ( {
-											...prev,
-											[ variable.value ]: ! prev[ variable.value ],
-										} ) );
-									} }
-									checked={ selectedVariables[ variable.value ] ?? false }
-								/>
-							</Stack>
-						</Paper>
-					) ) }
+			<Stack alignItems="center" sx={ { pt: 4 } }>
+				<Stack direction="row" gap={ 0.5 } alignItems="center">
+					<Icon fontSize="medium" />
+					<Typography variant="h5">{ getLabel( step.key as VariableType ) }</Typography>
 				</Stack>
+				<Typography variant="body1" color="text.secondary">
+					{ `${ list.length } variables detected from your website` }
+				</Typography>
+			</Stack>
+			<Stack gap={ 2 } sx={ { flexBasis: '100%', flexGrow: 1, p: 4, pt: 3 } }>
+				{ list.slice( 0, 4 ).map( ( variable, index ) => (
+					<Paper
+						key={ index }
+						variant="outlined"
+						sx={ {
+							p: 2,
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							alignItems: 'center',
+						} }
+					>
+						<Stack direction="row" alignItems="center" justifyContent="start" gap={ 2 }>
+							<VariablePreview variable={ variable } type={ step.key as VariableType } />
+							<VariableExplanation variable={ variable } />
+						</Stack>
+						<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
+							<VariableUsage
+								variable={ variable }
+								type={ step.key as VariableType }
+								role={ roles[ index ] }
+							/>
+							<Switch
+								onClick={ () => {
+									setSelectedVariables( ( prev ) => ( {
+										...prev,
+										[ variable.value ]: ! prev[ variable.value ],
+									} ) );
+								} }
+								checked={ selectedVariables[ variable.value ] ?? false }
+							/>
+						</Stack>
+					</Paper>
+				) ) }
+			</Stack>
 			<DialogActions sx={ { justifyContent: 'space-between' } }>
 				<Stepper activeStep={ currentStep } sx={ { width: '450px' } }>
 					{ steps.map( ( { key }, index ) => {
@@ -101,9 +129,14 @@ export const VariablesSteps = () => {
 					} ) }
 				</Stepper>
 				<Stack direction="row" spacing={ 2 }>
-					<Button color="secondary" onClick={() => {
-                        setCurrentStep( (prev) =>  prev < steps.length - 1 ? prev + 1 : prev );
-                    }}>Skip</Button>
+					<Button
+						color="secondary"
+						onClick={ () => {
+							setCurrentStep( ( prev ) => ( prev < steps.length - 1 ? prev + 1 : prev ) );
+						} }
+					>
+						Skip
+					</Button>
 					<Button onClick={ handleCreate } variant="contained" color="primary">
 						Apply styles
 					</Button>
@@ -121,6 +154,14 @@ function getLabel( type: VariableType ) {
 	}[ type ];
 }
 
+function getIcon( type: VariableType ) {
+	return {
+		color: BrushIcon,
+		font: TextIcon,
+		size: ExpandDiagonalIcon,
+	}[ type ];
+}
+
 function getType( type: VariableType ) {
 	return {
 		color: 'global-color-variable',
@@ -135,43 +176,80 @@ function generateId( prefix: string = '' ): string {
 
 function VariablePreview( { variable, type }: { variable: VariableSuggestion; type: VariableType } ) {
 	if ( type === 'color' ) {
-		return <UnstableColorIndicator value={ variable.value } size="small"/>;
+		return <UnstableColorIndicator value={ variable.value } size="small" />;
 	}
 
-	if(type === 'font') {
-		return <Paper color="secondary" sx={{ p: 2, fontSize: '16px' }}><span style={{fontFamily: variable.value}}>{ __('Example Text', 'elementor') }</span></Paper>;
+	if ( type === 'font' ) {
+		return (
+			<Paper color="secondary" sx={ { p: 2, fontSize: '16px' } }>
+				<span style={ { fontFamily: variable.value } }>{ __( 'Example Text', 'elementor' ) }</span>
+			</Paper>
+		);
 	}
 
 	return <span>{ variable.label }</span>;
 }
 
 function VariableExplanation( { variable }: { variable: VariableSuggestion } ) {
-	return <Stack direction="column" gap={ 1 }>
-		<Typography variant="subtitle1">{ variable.label }</Typography>
-		<Typography variant="caption" color="text.secondary">{ variable.value }</Typography>
-	</Stack>;
+	return (
+		<Stack direction="column" gap={ 1 }>
+			<Typography variant="subtitle1">{ variable.label }</Typography>
+			<Typography variant="caption" color="text.secondary">
+				{ variable.value }
+			</Typography>
+		</Stack>
+	);
 }
 
-function VariableUsage( { variable, type, role }: { variable: VariableSuggestion, type: VariableType, role: string | null } ) {
-	return <Infotip 
-			anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-			content={ <VariableUsedAt  variable={variable} type={type} role={role} /> }
+function VariableUsage( {
+	variable,
+	type,
+	role,
+}: {
+	variable: VariableSuggestion;
+	type: VariableType;
+	role: string | null;
+} ) {
+	return (
+		<Infotip
+			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
+			content={ <VariableUsedAt variable={ variable } type={ type } role={ role } /> }
 		>
-		<UnstableTag label={
-			variable.usages.total + ' ' + __('Uses', 'elementor')
-		} startIcon={<CurrentLocationIcon />} />
-	</Infotip>;
+			<UnstableTag
+				label={ variable.usages.total + ' ' + __( 'Uses', 'elementor' ) }
+				startIcon={ <CurrentLocationIcon /> }
+			/>
+		</Infotip>
+	);
 }
 
-function VariableUsedAt( { variable, type, role }: { variable: VariableSuggestion, type: VariableType, role: string | null } ) {
-	return <Stack direction="column" gap={ 1 } sx={{ p: 2 }}>
-		<Typography variant="subtitle1">{ __('%s appears in:', 'elementor').replace('%s', variable.value) }</Typography>
-		{variable.usages.byType.map(usage => (
-			<Stack direction="row" gap={ 1 } key={usage.elementType}>
-				<UnstableTag label={ usage.count } />
-				<Typography variant="subtitle1">{ usage.elementType }</Typography>
-			</Stack>
-		))}
-		{role && <Alert color="promotion" sx={{ mt: 2 }}>{ __('This is likely a %s %d', 'elementor').replace('%s', role ?? '').replace('%d', type) }</Alert>}
-	</Stack>;
+function VariableUsedAt( {
+	variable,
+	type,
+	role,
+}: {
+	variable: VariableSuggestion;
+	type: VariableType;
+	role: string | null;
+} ) {
+	return (
+		<Stack direction="column" gap={ 1 } sx={ { p: 2 } }>
+			<Typography variant="subtitle1">
+				{ __( '%s appears in:', 'elementor' ).replace( '%s', variable.value ) }
+			</Typography>
+			{ variable.usages.byType.map( ( usage ) => (
+				<Stack direction="row" gap={ 1 } key={ usage.elementType }>
+					<UnstableTag label={ usage.count } />
+					<Typography variant="subtitle1">{ usage.elementType }</Typography>
+				</Stack>
+			) ) }
+			{ role && (
+				<Alert color="promotion" sx={ { mt: 2 } }>
+					{ __( 'This is likely a %s %d', 'elementor' )
+						.replace( '%s', role ?? '' )
+						.replace( '%d', type ) }
+				</Alert>
+			) }
+		</Stack>
+	);
 }

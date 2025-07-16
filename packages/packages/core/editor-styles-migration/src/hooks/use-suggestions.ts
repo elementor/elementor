@@ -44,7 +44,7 @@ function getRandomLabel( type: VariableType ): string {
 }
 
 function mapToVariables( mock: any ) {
-	let payload = {
+	const payload = {
 		color: [],
 		font: [],
 		size: [],
@@ -53,13 +53,11 @@ function mapToVariables( mock: any ) {
 	if ( mock.colors ) {
 		payload.color = Object.entries( mock.colors ).map( ( [ key, meta ] ) => {
 			return {
-				label: ( meta?.global?.title ?? '').toLowerCase().split(' ').join('-'),
+				label: ( meta?.global?.title ?? '' ).toLowerCase().split( ' ' ).join( '-' ),
 				value: meta?.global?.value ?? '',
 				usages: {
 					total: meta?.totalOccurrences ?? 0,
-					byType: [
-						{ count: meta?.totalOccurrences ?? 0, elementType: 'widget' },
-					],
+					byType: [ { count: meta?.totalOccurrences ?? 0, elementType: 'widget' } ],
 				},
 			};
 		} );

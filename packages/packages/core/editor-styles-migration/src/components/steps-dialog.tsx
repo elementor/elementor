@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createContext, useContext } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { AIIcon, ColorFilterIcon, ColorSwatchIcon } from '@elementor/icons';
 import {
 	__createSlice as createSlice,
 	__useDispatch as useDispatch,
@@ -9,7 +10,6 @@ import {
 import { Box, DialogHeader, Stack, Tab, TabPanel, Tabs, Typography, useTabs } from '@elementor/ui';
 import Dialog from '@elementor/ui/Dialog';
 import DialogContent from '@elementor/ui/DialogContent';
-import { ColorFilterIcon, AIIcon, ColorSwatchIcon } from '@elementor/icons';
 
 import { type Suggestions, useSuggestions } from '../hooks/use-suggestions';
 import { ClassesSteps } from './classes-steps';
@@ -62,11 +62,16 @@ type TabValue = 'variables' | 'classes';
 const DialogTabs = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< TabValue >( 'variables' );
 
-
 	return (
 		<Stack sx={ { width: '100%', height: '100%' } }>
-			<Box display="flex" alignItems="center" gap={ 1 } sx={ { position: 'absolute', left: '14px', top: '14px' } }>
-				<AIIcon />{ 'DS Migrator' }
+			<Box
+				display="flex"
+				alignItems="center"
+				gap={ 1 }
+				sx={ { position: 'absolute', left: '14px', top: '14px' } }
+			>
+				<AIIcon />
+				{ 'DS Migrator' }
 			</Box>
 			<DialogHeader
 				logo={ () => <></> }
@@ -75,19 +80,26 @@ const DialogTabs = () => {
 				sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: 'fit-content', margin: 'auto' } }
 			>
 				<Tabs { ...getTabsProps() }>
-					<Tab label={
-						<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
-							<ColorFilterIcon fontSize="small" />
-							<Typography variant="body2">Variables</Typography>
-						</Box>
-					} { ...getTabProps( 'variables' ) } />
+					<Tab
+						label={
+							<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+								<ColorFilterIcon fontSize="small" />
+								<Typography variant="body2">Variables</Typography>
+							</Box>
+						}
+						{ ...getTabProps( 'variables' ) }
+					/>
 
-					<Tab label={
-						<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
-							<ColorSwatchIcon fontSize="small" />
-							<Typography variant="body2">Classes</Typography>
-						</Box>
-					} { ...getTabProps( 'classes' ) } />
+					<Tab
+						label={
+							<Box sx={ { display: 'flex', alignItems: 'center', gap: 1 } }>
+								<ColorSwatchIcon fontSize="small" />
+								<Typography variant="body2">Classes</Typography>
+							</Box>
+						}
+						{ ...getTabProps( 'classes' ) }
+						disabled
+					/>
 				</Tabs>
 			</DialogHeader>
 
