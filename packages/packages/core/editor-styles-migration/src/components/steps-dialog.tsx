@@ -78,6 +78,9 @@ const DialogTabs = () => {
 
 	return (
 		<Stack sx={ { width: '100%', height: '100%' } }>
+			<Box display="flex" alignItems="center" gap={ 1 } sx={ { position: 'absolute', left: '14px', top: '14px' } }>
+				<AIIcon />{ 'DS Migrator' }
+			</Box>
 			<DialogHeader
 				logo={ () => <></> }
 				direction="row"
@@ -100,6 +103,7 @@ const DialogTabs = () => {
 					} { ...getTabProps( 'classes' ) } />
 				</Tabs>
 			</DialogHeader>
+
 			<DialogContent
 				dividers
 				sx={ { height: '600px', display: 'flex', flexDirection: 'column', flexGrow: 1, p: 0 } }
