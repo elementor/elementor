@@ -24,7 +24,7 @@ export const StepsDialog = () => {
 
 	return (
 		<ThemeProvider>
-			<Dialog fullWidth maxWidth="lg" open={ open } onClose={ handleClose }>
+			<Dialog fullWidth maxWidth="md" open={ open } onClose={ handleClose }>
 				<Provider>
 					<DialogTabs />
 				</Provider>
@@ -71,7 +71,7 @@ const DialogTabs = () => {
 				sx={ { position: 'absolute', left: '14px', top: '12px' } }
 			>
 				<AIIcon />
-				{ 'DS Migrator' }
+				{ 'DS Generator' }
 			</Box>
 
 			<DialogHeader

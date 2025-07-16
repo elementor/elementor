@@ -4,9 +4,11 @@ import { createVariables, type Variable } from '@elementor/editor-variables';
 import { AIIcon, BrushIcon, CurrentLocationIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
 import {
 	Alert,
+	Box,
 	Button,
 	CircularProgress,
 	DialogActions,
+	Chip,
 	Infotip,
 	Paper,
 	Stack,
@@ -36,7 +38,7 @@ export const VariablesSteps = () => {
 	const [ selectedVariables, setSelectedVariables ] = useState< Record< string, boolean > >( {} );
 
 	if ( isLoading ) {
-		return <CircularProgress />;
+		return <Box sx={ { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' } }><CircularProgress /></Box>;
 	}
 
 	const steps = Object.entries( variables as Suggestions[ 'variables' ] ).map( ( [ key, list ] ) => {
@@ -209,7 +211,7 @@ function VariablePreview( { variable, type }: { variable: VariableSuggestion; ty
 
 	if ( type === 'size' ) {
 		return (
-			<Paper color="secondary" sx={ { p: 2 } } elevation={ 0 }>
+			<Paper color="secondary" sx={ { p: 2, width: "120px", height: "106px", display: "flex", justifyContent: "center", alignItems: "center" } } elevation={ 0 }>
 				<span style={ { fontSize: variable.value } }>{ __( 'Aa', 'elementor' ) }</span>
 			</Paper>
 		);
@@ -243,9 +245,10 @@ function VariableUsage( {
 			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
 			content={ <VariableUsedAt variable={ variable } type={ type } role={ role } /> }
 		>
-			<UnstableTag
+			<Chip
 				label={ variable.usages.total + ' ' + __( 'Uses', 'elementor' ) }
-				startIcon={ <CurrentLocationIcon /> }
+				icon={ <CurrentLocationIcon /> }
+				size="tiny"
 			/>
 		</Infotip>
 	);

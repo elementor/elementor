@@ -10,6 +10,7 @@
                 "icon-box": 6,
                 "image-box": 1
             },
+            "value_as_object": "Primary",
             "label": "color-primary",
             "value": "#FFFFFF"
         },
@@ -20,6 +21,7 @@
                 "icon": 3,
                 "form": 6
             },
+            "value_as_object": "Accent",
             "label": "color-accent",
             "value": "#000000"
         },
@@ -29,6 +31,7 @@
                 "form": 1,
                 "button": 2
             },
+            "value_as_object": "Full Transparency ",
             "label": "color-transparent",
             "value": "#FFFFFF00"
         },
@@ -37,7 +40,8 @@
             "elements": {
                 "form": 1
             },
-            "label": "color-button-hover-warning",
+            "value_as_object": "Yellow Element",
+            "label": "color-accent-yellow",
             "value": "#FFD639"
         },
         {
@@ -45,7 +49,8 @@
             "elements": {
                 "container": 1
             },
-            "label": "color-border-accent",
+            "value_as_object": "Pink Element",
+            "label": "color-accent-pink",
             "value": "#FF7989"
         }
     ],
@@ -58,6 +63,7 @@
                 "form": 2,
                 "icon-box": 6
             },
+            "value_as_object": "Text",
             "label": "font-body",
             "value": "Karla"
         },
@@ -66,6 +72,7 @@
             "elements": {
                 "heading": 5
             },
+            "value_as_object": "Hero Main Title \/ Menu Links",
             "label": "font-heading",
             "value": "Pridi"
         },
@@ -80,11 +87,55 @@
     ],
     "font_sizes": [
         {
+            "totalOccurrences": 5,
+            "elements": {
+                "heading": 5
+            },
+            "value_as_object": {
+                "unit": "px",
+                "size": "74",
+                "sizes": []
+            },
+            "label": "text-display",
+            "value": "74px"
+        },
+        {
+            "totalOccurrences": 1,
+            "elements": {
+                "heading": 1
+            },
+            "value_as_object": {
+                "unit": "px",
+                "size": 34,
+                "sizes": []
+            },
+            "label": "text-2xl",
+            "value": "34px"
+        },
+        {
+            "totalOccurrences": 3,
+            "elements": {
+                "icon-box": 3
+            },
+            "value_as_object": {
+                "unit": "px",
+                "size": "24",
+                "sizes": []
+            },
+            "label": "text-lg",
+            "value": "24px"
+        },
+        {
             "totalOccurrences": 9,
             "elements": {
                 "text-editor": 5,
                 "form": 1,
                 "icon-box": 3
+            },
+            "value_as_object": {
+                "unit": "px",
+                "size": "16",
+                "sizes": []
             },
             "label": "text-base",
             "value": "16px"
@@ -95,32 +146,13 @@
                 "button": 5,
                 "form": 1
             },
+            "value_as_object": {
+                "unit": "px",
+                "size": "14",
+                "sizes": []
+            },
             "label": "text-sm",
             "value": "14px"
-        },
-        {
-            "totalOccurrences": 5,
-            "elements": {
-                "heading": 5
-            },
-            "label": "text-display",
-            "value": "74px"
-        },
-        {
-            "totalOccurrences": 3,
-            "elements": {
-                "icon-box": 3
-            },
-            "label": "text-lg",
-            "value": "24px"
-        },
-        {
-            "totalOccurrences": 1,
-            "elements": {
-                "heading": 1
-            },
-            "label": "text-2xl",
-            "value": "34px"
         }
     ],
     "spacing": [

@@ -229,7 +229,7 @@ Return ONLY a JSON array with this exact structure for each font family:
                 return $labels;
             }
             
-            throw new \Exception('Unexpected response format from Claude API');
+            // throw new \Exception('Unexpected response format from Claude API');
         } catch (\Exception $e) {
             error_log("\nError getting font family labels from Claude: " . $e->getMessage());
             error_log("\nStack trace: " . $e->getTraceAsString());
@@ -310,6 +310,11 @@ Return ONLY a JSON array with this exact structure for each font family:
             });
             $result[$type] = $sorted;
         }
+
+        // font size should be sorted by size value from largest to smallest
+        usort($result['font_sizes'], function($a, $b) { 
+            return $b['value_as_object']['size'] - $a['value_as_object']['size']; 
+        });
 
         
         return $result;
@@ -397,7 +402,7 @@ Return ONLY a JSON array with this exact structure for each font family:
 
     public function handle_font_size($font_size, $property, $element, $global_title = null) {
         $font_size_as_string = $font_size['size'] . $font_size['unit'];
-        $this->record_entity($this->font_sizes, $font_size_as_string, $property, $element, $global_title);
+        $this->record_entity($this->font_sizes, $font_size_as_string, $property, $element, $font_size, $global_title);
     }
 
     public function handle_spacing($spacing, $property, $element, $global_title = null) {
@@ -420,7 +425,7 @@ Return ONLY a JSON array with this exact structure for each font family:
         }
     }
 
-    public function record_entity(&$array, $entity, $property, $element, $global_title = null) {
+    public function record_entity(&$array, $entity, $property, $element, $value_as_object=null, $global_title = null) {
         if (!isset($entity) || !is_string($entity)) {
             return;
         }
@@ -432,6 +437,9 @@ Return ONLY a JSON array with this exact structure for each font family:
                 'properties' => [],
                 'elements' => [],
             ];
+            if ($value_as_object) {
+                $array[$entity]['value_as_object'] = $value_as_object; // for font family and font size
+            }
             if ($global_title) {
                 $array[$entity]['global_title'] = $global_title;
             }

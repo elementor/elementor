@@ -1,7 +1,7 @@
 import { useQuery } from '@elementor/query';
 
 import { enqueueFont } from '../enqueue-font';
-import { usePosts } from './use-posts';
+import { apiClient, usePosts } from './use-posts';
 
 export const useSuggestions = () => {
 	const { data: posts } = usePosts();
@@ -10,7 +10,7 @@ export const useSuggestions = () => {
 
 	return useQuery( {
 		queryKey: [ 'styles-migration-suggestions' ],
-		queryFn: mockApi,
+		queryFn: getSuggestions,
 	} );
 };
 
@@ -128,6 +128,18 @@ const fontEnqueue = ( value: string ): void => {
 		// This prevents font enqueueing failures from breaking variable updates
 	}
 };
+
+async function getSuggestions() {
+	const response = await apiClient.getSuggestions();
+    const variables = mapToVariables( response.data.variables_suggestions );
+
+    variables.font.forEach( ( font ) => {
+        console.log( 'font', font );
+        fontEnqueue( font?.value );
+    } );
+
+	return {variables};
+}
 
 function mockApi(): Promise< Suggestions > {
 	return new Promise( ( resolve ) => {
