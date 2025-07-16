@@ -57,7 +57,7 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 	};
 
 	return (
-		<Grid container gap={ 0.75 } alignItems="center" ref={ defaultRef }>
+		<Grid container gap={ 0.75 } alignItems="center">
 			<Grid item xs={ 12 }>
 				<FormLabel size="tiny">{ __( 'Value', 'elementor' ) }</FormLabel>
 			</Grid>
