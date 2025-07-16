@@ -21,13 +21,10 @@ export const TextFieldPopover = ( props: Props ) => {
 			requestAnimationFrame( () => {
 				if ( inputRef.current ) {
 					inputRef.current.focus();
-					inputRef.current.select();
 				}
 			} );
 		}
 	}, [ popupState.isOpen ] );
-
-
 
 	return (
 		<Popover
@@ -48,7 +45,6 @@ export const TextFieldPopover = ( props: Props ) => {
 				restoreValue();
 				popupState.close();
 			} }
-
 		>
 			<TextField
 				value={ value }
