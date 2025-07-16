@@ -216,7 +216,7 @@ function VariablePreview( { variable, type }: { variable: VariableSuggestion; ty
 
 function VariableExplanation( { variable }: { variable: VariableSuggestion } ) {
 	return (
-		<Stack direction="column" gap={ 1 }>
+		<Stack direction="column" gap={ 0.5 }>
 			<Typography variant="subtitle1">{ variable.label }</Typography>
 			<Typography variant="caption" color="text.secondary">
 				{ variable.value }
