@@ -300,9 +300,9 @@ function sortListByDimensions(list: VariableSuggestion[]){
 		el.appendChild(box);
 	});
 
-	// sort the list by the width of the boxes
+	// sort the list by the height of the boxes
 	const sortedList = Array.from(el.children).sort((a, b) => {
-		return (b as HTMLElement).offsetWidth - (a as HTMLElement).offsetWidth;
+		return (b as HTMLElement).offsetHeight - (a as HTMLElement).offsetHeight;
 	});
 
 	document.body.removeChild(el);
