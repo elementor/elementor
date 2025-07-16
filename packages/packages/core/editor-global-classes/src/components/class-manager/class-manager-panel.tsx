@@ -32,6 +32,9 @@ import { __ } from '@wordpress/i18n';
 import { useDirtyState } from '../../hooks/use-dirty-state';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
+import { CheckedFilters } from '../filter-and-sort/checked-filters';
+import { FilterAndSortProvider } from '../filter-and-sort/context';
+import { CssClassFilter } from '../filter-and-sort/css-class-filter';
 import { ClassManagerIntroduction } from './class-manager-introduction';
 import { ClassManagerSearch } from './class-manager-search';
 import { hasDeletedItems, onDelete } from './delete-class';
@@ -116,14 +119,29 @@ export function ClassManagerPanel() {
 						} }
 					>
 						{ isVersion311IsActive && (
-							<>
-								<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
+							<FilterAndSortProvider>
+								<Stack
+									direction="row"
+									justifyContent="spaceBetween"
+									gap={ 0.5 }
+									sx={ 6 }
+									px={ 2 }
+									pb={ 1 }
+								>
+									<Box sx={ { flexGrow: 1 } }>
+										<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
+									</Box>
+
+									<CssClassFilter />
+								</Stack>
+
+								<CheckedFilters />
 								<Divider
 									sx={ {
 										borderWidth: '1px 0 0 0',
 									} }
 								/>
-							</>
+							</FilterAndSortProvider>
 						) }
 
 						<Box
