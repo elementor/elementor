@@ -9,8 +9,7 @@ export type CanvasExtendedWindow = Window & {
 	};
 };
 
-export const enqueueFont: EnqueueFont = ( fontFamily, context = 'preview' ) => {
+export const enqueueFont: EnqueueFont = ( fontFamily, context = 'editor' ) => {
 	const extendedWindow = window as unknown as CanvasExtendedWindow;
-
 	return extendedWindow.elementor?.helpers?.enqueueFont?.( fontFamily, context ) ?? null;
 };
