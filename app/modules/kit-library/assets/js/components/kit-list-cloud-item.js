@@ -147,11 +147,11 @@ const KitListCloudItem = ( props ) => {
 								icon="eicon-library-download"
 								onClick={ () => {
 									eventTracking( 'kit-library/cloud-import' );
-									const queryString = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
-										? `referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
-										: `referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;
+									const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
+										? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
+										: `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;
 
-									navigate( `import?${ queryString }`, { replace: true } );
+									navigate( url, { replace: true } );
 								} }
 							/>
 						</Grid>

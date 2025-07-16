@@ -67,10 +67,12 @@ export default function ImportKit() {
 				data-testid="content-container"
 				direction="column"
 				alignItems="flex-start"
+				justifyContent="center"
 				sx={ {
 					pt: 8,
-					px: 20,
 					gap: 7,
+					maxWidth: 1080,
+					mx: 'auto',
 				} }
 			>
 				<Stack direction="column" sx={ { gap: 3 } }>
@@ -96,7 +98,7 @@ export default function ImportKit() {
 						</Link>
 					</Typography>
 				</Stack>
-				<Stack sx={ { width: '100%', borderRadius: 2, boxShadow: 0 } } data-testid="import-card">
+				<Stack sx={ { width: '100%' } } data-testid="import-card">
 					<Box sx={ { p: 0 } } data-testid="import-card-content">
 						<DropZone onFileSelect={ onFileSelect } />
 					</Box>
