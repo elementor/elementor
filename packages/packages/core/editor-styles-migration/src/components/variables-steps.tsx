@@ -25,6 +25,9 @@ import { useDialog, useStylesMigrationContext } from './steps-dialog';
 
 const roles = [ __( 'primary', 'elementor' ), __( 'secondary', 'elementor' ), __( 'tertiary', 'elementor' ) ];
 
+
+const FOOTER_HEIGHT = '70px';
+
 export const VariablesSteps = () => {
 	const { variables = {}, isLoading } = useStylesMigrationContext();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
@@ -70,12 +73,12 @@ export const VariablesSteps = () => {
         setOpen( false );
 	}
 
-	const list = step?.list.slice( 0, 4 );
+	const list = step?.list;;
 
 	const Icon = getIcon( step.key as VariableType );
 
 	return (
-		<Stack sx={ { flexGrow: 1 } }>
+		<Stack sx={ { flexGrow: 1, paddingBottom: '100px' } }>
 			<Stack alignItems="center" sx={ { pt: 4 } }>
 				<Stack direction="row" gap={ 0.5 } alignItems="center">
 					<Icon fontSize="medium" />
@@ -86,7 +89,7 @@ export const VariablesSteps = () => {
 				</Typography>
 			</Stack>
 			<Stack gap={ 2 } sx={ { flexBasis: '100%', flexGrow: 1, p: 4, pt: 3 } }>
-				{ list.slice( 0, 4 ).map( ( variable, index ) => (
+				{ list.map( ( variable, index ) => (
 					<Paper
 						key={ index }
 						variant="outlined"
@@ -121,7 +124,7 @@ export const VariablesSteps = () => {
 					</Paper>
 				) ) }
 			</Stack>
-			<DialogActions sx={ { justifyContent: 'space-between' } }>
+			<DialogActions sx={ { backgroundColor: 'background.paper',justifyContent: 'space-between', position: 'absolute', bottom: 0, height: FOOTER_HEIGHT, width: '100%' } }>
 				<Stepper activeStep={ currentStep } sx={ { width: '450px' } }>
 					{ steps.map( ( { key }, index ) => {
 						const stepProps: { completed?: boolean } = {};

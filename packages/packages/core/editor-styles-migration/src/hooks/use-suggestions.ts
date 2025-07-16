@@ -2,7 +2,6 @@ import { useQuery } from '@elementor/query';
 
 import { enqueueFont } from '../enqueue-font';
 import { usePosts } from './use-posts';
-import { ObjectFitField } from '../../../editor-editing-panel/src/components/style-sections/size-section/object-fit-field';
 
 export const useSuggestions = () => {
 	const { data: posts } = usePosts();
