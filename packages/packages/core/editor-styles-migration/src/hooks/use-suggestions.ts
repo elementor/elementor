@@ -40,69 +40,53 @@ function getRandomLabel( type: VariableType ): string {
 	return `${ type }-${ Math.random().toString( 36 ).substring( 2, 7 ) }`;
 }
 
+function mapToVariables( mock: any ) {
+	let payload = {
+		color: [],
+		font: [],
+		size: [],
+	};
+
+	if ( mock.colors ) {
+		payload.color = Object.entries( mock.colors ).map( ( [ key, meta ] ) => {
+			return {
+				label: ( meta?.global?.title ?? '').toLowerCase().split(' ').join('-'),
+				value: meta?.global?.value ?? '',
+				usages: {
+					total: meta?.totalOccurrences ?? 0,
+					byType: [
+						{ count: meta?.totalOccurrences ?? 0, elementType: 'widget' },
+					],
+				},
+			};
+		} );
+	}
+
+	console.log( ' ai-2-vars-classes', payload );
+
+	return payload;
+}
+
+function mapToClasses( mock: any ) {
+	return [
+		{
+			label: 'custom-class',
+			usages: [
+				{ elementType: 'section', count: 4 },
+				{ elementType: 'column', count: 2 },
+			],
+		},
+	];
+}
+
 function mockApi(): Promise< Suggestions > {
 	return new Promise( ( resolve ) => {
 		setTimeout( () => {
 			resolve( {
-				variables: {
-					color: [
-						{
-							label: getRandomLabel( 'color' ),
-							value: '#ff5733',
-							usages: [
-								{ elementType: 'button', count: 5 },
-								{ elementType: 'text', count: 3 },
-							],
-						},
-						{
-							label: getRandomLabel( 'color' ),
-							value: '#33c1ff',
-							usages: [
-								{ elementType: 'button', count: 2 },
-								{ elementType: 'text', count: 4 },
-							],
-						},
-					],
-					font: [
-						{
-							label: getRandomLabel( 'font' ),
-							value: 'Arial, sans-serif',
-							usages: [
-								{ elementType: 'heading', count: 10 },
-								{ elementType: 'text', count: 2 },
-							],
-						},
-					],
-					size: [
-						{
-							label: getRandomLabel( 'size' ),
-							value: '16px',
-							usages: [
-								{ elementType: 'text', count: 8 },
-								{ elementType: 'button', count: 3 },
-							],
-						},
-						{
-							label: getRandomLabel( 'size' ),
-							value: '24px',
-							usages: [
-								{ elementType: 'heading', count: 6 },
-								{ elementType: 'text', count: 1 },
-							],
-						},
-					],
-				},
-				classes: [
-					{
-						label: 'custom-class',
-						usages: [
-							{ elementType: 'section', count: 4 },
-							{ elementType: 'column', count: 2 },
-						],
-					},
-				],
+				variables: mapToVariables( mock ),
+				classes: mapToClasses( mock ),
 			} );
-		}, 1000 );
+		}, 0 );
 	} );
 }
 
