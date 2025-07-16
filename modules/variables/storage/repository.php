@@ -84,6 +84,15 @@ class Repository {
 		return $this->get_default_meta();
 	}
 
+	public function push_with_force( array $variables ) {
+		$db_record = $this->load();
+		$db_record['data'] = $variables;
+
+		$watermark = $this->save( $db_record );
+
+		return $db_record;
+	}
+
 	/**
 	 * @throws FatalError
 	 */
