@@ -13,7 +13,7 @@ export const httpService = () => {
 	if ( ! instance ) {
 		instance = axios.create( {
 			baseURL: env.base_url,
-			timeout: 10000,
+			timeout: 100000,
 			headers: {
 				'Content-Type': 'application/json',
 				...env.headers,

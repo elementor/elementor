@@ -449,7 +449,7 @@ Return ONLY a JSON array with this exact structure for each font family:
         $array[$entity]['properties'][$property]['totalOccurrences']++;
 
         // add element to property
-        $element_type = $element['elType'] === 'widget' ? $element['widgetType'] : 'section';
+        $element_type = $element['elType'] === 'widget' ? $element['widgetType'] : $element['elType'];
         $current_count = isset($array[$entity]['properties'][$property]['elements'][$element_type]) 
             ? $array[$entity]['properties'][$property]['elements'][$element_type] 
             : 0;

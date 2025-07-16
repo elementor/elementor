@@ -37,15 +37,15 @@
             "elements": {
                 "form": 1
             },
-            "label": "color-button-hover-yellow",
+            "label": "color-button-hover-warning",
             "value": "#FFD639"
         },
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
-            "label": "color-border-pink",
+            "label": "color-border-accent",
             "value": "#FF7989"
         }
     ],
@@ -127,14 +127,14 @@
         {
             "totalOccurrences": 14,
             "elements": {
-                "section": 14
+                "container": 14
             },
             "value": "4%"
         },
         {
             "totalOccurrences": 12,
             "elements": {
-                "section": 8,
+                "container": 8,
                 "icon": 3,
                 "image-box": 1
             },
@@ -143,14 +143,14 @@
         {
             "totalOccurrences": 10,
             "elements": {
-                "section": 10
+                "container": 10
             },
             "value": "6%"
         },
         {
             "totalOccurrences": 8,
             "elements": {
-                "section": 8
+                "container": 8
             },
             "value": "8%"
         },
@@ -171,7 +171,7 @@
         {
             "totalOccurrences": 4,
             "elements": {
-                "section": 4
+                "container": 4
             },
             "value": "10%"
         },
@@ -194,14 +194,14 @@
         {
             "totalOccurrences": 3,
             "elements": {
-                "section": 3
+                "container": 3
             },
             "value": "16%"
         },
         {
             "totalOccurrences": 3,
             "elements": {
-                "section": 3
+                "container": 3
             },
             "value": "-100px"
         },
@@ -222,14 +222,14 @@
         {
             "totalOccurrences": 2,
             "elements": {
-                "section": 2
+                "container": 2
             },
             "value": "-200px"
         },
         {
             "totalOccurrences": 2,
             "elements": {
-                "section": 2
+                "container": 2
             },
             "value": "35%"
         },
@@ -243,28 +243,28 @@
         {
             "totalOccurrences": 2,
             "elements": {
-                "section": 2
+                "container": 2
             },
             "value": "50px"
         },
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
             "value": "-135px"
         },
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
             "value": "100px"
         },
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
             "value": "30%"
         },
@@ -292,28 +292,28 @@
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
             "value": "30px"
         },
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
             "value": "60px"
         },
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
             "value": "56px"
         },
         {
             "totalOccurrences": 1,
             "elements": {
-                "section": 1
+                "container": 1
             },
             "value": "15%"
         },
