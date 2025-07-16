@@ -68,7 +68,7 @@ const DialogTabs = () => {
 				display="flex"
 				alignItems="center"
 				gap={ 1 }
-				sx={ { position: 'absolute', left: '14px', top: '14px' } }
+				sx={ { position: 'absolute', left: '14px', top: '12px' } }
 			>
 				<AIIcon />
 				{ 'DS Migrator' }
