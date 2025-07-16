@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { createVariable, createVariables, type Variable } from '@elementor/editor-variables';
-import { Button, Checkbox, Stack, UnstableColorIndicator } from '@elementor/ui';
+import { createVariables, type Variable } from '@elementor/editor-variables';
+import { Alert, Button, Checkbox, Infotip, Paper, Stack, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
 
 import { VariableSuggestion, type Suggestions, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
 import { __ } from '@wordpress/i18n';
+import { CurrentLocationIcon } from '@elementor/icons';
 
 export const VariablesSteps = () => {
 	const { variables = {} as Suggestions[ 'variables' ] } = useStylesMigrationContext();
@@ -55,7 +56,7 @@ export const VariablesSteps = () => {
 	return (
 		<Stack sx={ { flexGrow: 1, padding: '20px', height: '100%' } }>
 			<Stack direction="row" sx={ { flexGrow: 1 } }>
-				<Stack sx={ { flexBasis: '50%', borderRight: '1px solid gray' } }>
+				<Stack sx={ { flexBasis: '100%' } }>
 					{ step?.list.map( ( variable, index ) => (
 						<Stack
 							key={ index }
@@ -64,20 +65,25 @@ export const VariablesSteps = () => {
 							justifyContent="space-between"
 							sx={ { padding: '10px', borderBottom: '1px solid gray' } }
 						>
-							<VariablePreview variable={ variable } type={ step.key as VariableType } />
-							<Checkbox
-								onClick={ () => {
-									setSelectedVariables( ( prev ) => ( {
-										...prev,
-										[ variable.value ]: ! prev[ variable.value ],
-									} ) );
-								} }
-								checked={ selectedVariables[ variable.value ] ?? false }
-							/>
+							<Stack direction="row" alignItems="center" justifyContent="start" gap={ 2 }>
+								<VariablePreview variable={ variable } type={ step.key as VariableType } />
+								<VariableExplanation variable={ variable } />
+							</Stack>
+							<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
+								<VariableUsage variable={ variable } />
+								<Checkbox
+									onClick={ () => {
+										setSelectedVariables( ( prev ) => ( {
+											...prev,
+											[ variable.value ]: ! prev[ variable.value ],
+										} ) );
+									} }
+									checked={ selectedVariables[ variable.value ] ?? false }
+								/>
+							</Stack>
 						</Stack>
 					) ) }
 				</Stack>
-				<Stack sx={ { flexBasis: '50%' } }></Stack>
 			</Stack>
 			<Stack direction="row" alignItems="center">
 				<Button onClick={ handleCreate } variant="contained" color="primary">
@@ -112,8 +118,39 @@ function VariablePreview( { variable, type }: { variable: VariableSuggestion; ty
 	}
 
 	if(type === 'font') {
-		return <span style={{fontFamily: variable.value}}>{ __('Example Text', 'elementor') }</span>;
+		return <Paper color="secondary" sx={{ p: 2, fontSize: '16px' }}><span style={{fontFamily: variable.value}}>{ __('Example Text', 'elementor') }</span></Paper>;
 	}
 
 	return <span>{ variable.label }</span>;
+}
+
+function VariableExplanation( { variable }: { variable: VariableSuggestion } ) {
+	return <Stack direction="column" gap={ 1 }>
+		<Typography variant="subtitle1">{ variable.label }</Typography>
+		<Typography variant="caption" color="text.secondary">{ variable.value }</Typography>
+	</Stack>;
+}
+
+function VariableUsage( { variable }: { variable: VariableSuggestion } ) {
+	return <Infotip 
+			anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+			content={ <VariableUsedAt  variable={variable} /> }
+		>
+		<UnstableTag label={
+			variable.usages.total + ' ' + __('Uses', 'elementor')
+		} startIcon={<CurrentLocationIcon />} />
+	</Infotip>;
+}
+
+function VariableUsedAt( { variable, role }: { variable: VariableSuggestion, role: string | null } ) {
+	return <Stack direction="column" gap={ 1 } sx={{ p: 2 }}>
+		<Typography variant="subtitle1">{ __('%s appears in:', 'elementor').replace('%s', variable.value) }</Typography>
+		{variable.usages.byType.map(usage => (
+			<Stack direction="row" gap={ 1 } key={usage.elementType}>
+				<UnstableTag label={ usage.count } />
+				<Typography variant="subtitle1">{ usage.elementType }</Typography>
+			</Stack>
+		))}
+		<Alert color="promotion" sx={{ mt: 2 }}>{ __('This variable is used in the following roles:', 'elementor') }</Alert>
+	</Stack>;
 }

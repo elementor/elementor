@@ -21,7 +21,10 @@ type Usage = {
 export type VariableSuggestion = {
 	label: string;
 	value: string;
-	usages: Usage[];
+	usages: {
+		total: number;
+		byType: Usage[];
+	};
 };
 
 type ClassSuggestion = {
