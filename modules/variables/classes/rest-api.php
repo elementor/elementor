@@ -12,6 +12,7 @@ use WP_REST_Server;
 use Elementor\Plugin;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
@@ -176,6 +177,7 @@ class Rest_Api {
 		return in_array( $type, [
 			Color_Variable_Prop_Type::get_key(),
 			Font_Variable_Prop_Type::get_key(),
+			Size_Variable_Prop_Type::get_key(),
 		], true );
 	}
 

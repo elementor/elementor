@@ -17,7 +17,7 @@ import { DeletedTag } from '../tags/deleted-tag';
 type Props = {
 	variable: Variable;
 	variablePropTypeUtil: PropTypeUtil< string, string >;
-	fallbackPropTypeUtil: PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
+	fallbackPropTypeUtil: unknown;
 };
 
 type Handlers = {

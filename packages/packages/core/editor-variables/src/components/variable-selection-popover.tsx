@@ -4,10 +4,14 @@ import { useState } from 'react';
 import { usePermissions } from '../hooks/use-permissions';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { sizeVariablePropTypeUtil } from '../prop-types/size-variable-prop-type';
 import { type Variable } from '../types';
 import { ColorVariableCreation } from './color-variable-creation';
 import { ColorVariableEdit } from './color-variable-edit';
 import { ColorVariablesSelection } from './color-variables-selection';
+import { SizeVariableCreation } from './size-variable-creation';
+import { SizeVariableEdit } from './size-variable-edit';
+import { SizeVariablesSelection } from './size-variables-selection';
 import { FontVariableCreation } from './font-variable-creation';
 import { FontVariableEdit } from './font-variable-edit';
 import { FontVariablesSelection } from './font-variables-selection';
@@ -93,6 +97,33 @@ function RenderView( props: ViewProps ): React.ReactNode {
 			handlers.onGoBack?.();
 		}
 	};
+
+	if ( sizeVariablePropTypeUtil.key === props.propTypeKey ) {
+		if ( VIEW_LIST === props.currentView ) {
+			return (
+				<SizeVariablesSelection
+					closePopover={ handlers.onClose }
+					onAdd={ handlers.onAdd }
+					onEdit={ handlers.onEdit }
+				/>
+			);
+		}
+
+		if ( VIEW_ADD === props.currentView ) {
+			return <SizeVariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
+		}
+
+		if ( VIEW_EDIT === props.currentView ) {
+			return (
+				<SizeVariableEdit
+					editId={ props.editId }
+					onGoBack={ handlers.onGoBack }
+					onClose={ handlers.onClose }
+					onSubmit={ handleSubmitOnEdit }
+				/>
+			);
+		}
+	}
 
 	if ( fontVariablePropTypeUtil.key === props.propTypeKey ) {
 		if ( VIEW_LIST === props.currentView ) {
