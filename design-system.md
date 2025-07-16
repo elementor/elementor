@@ -5,14 +5,14 @@
 {
 	"posts": [
 		{
-			post_type: "post",
-			post_id: 5,
-			meta_value: { ... },
+			"post_type": "post",
+			"post_id": 5,
+			"meta_value": {}
 		},
 		{
-			post_type: "post",
-			post_id: 5,
-			meta_value: { elements },
+			"post_type": "post",
+			"post_id": 6,
+			"meta_value": {}
 		}
 	]
 }
