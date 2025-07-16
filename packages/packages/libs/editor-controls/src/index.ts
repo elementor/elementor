@@ -13,6 +13,7 @@ export { NumberControl } from './controls/number-control';
 export { EqualUnequalSizesControl } from './controls/equal-unequal-sizes-control';
 export { LinkedDimensionsControl } from './controls/linked-dimensions-control';
 export { FontFamilyControl } from './controls/font-family-control/font-family-control';
+export { ItemSelector } from './components/item-selector';
 export { UrlControl } from './controls/url-control';
 export { LinkControl } from './controls/link-control';
 export { GapControl } from './controls/gap-control';

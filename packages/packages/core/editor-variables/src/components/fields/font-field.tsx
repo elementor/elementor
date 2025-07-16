@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { FontFamilySelector } from '@elementor/editor-controls';
+import { ItemSelector } from '@elementor/editor-controls';
 import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
 import { ChevronDownIcon } from '@elementor/icons';
 import {
@@ -35,6 +35,14 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 	const fontFamilies = useFontFamilies();
 	const sectionWidth = useSectionWidth();
 
+	// מיפוי נתונים לקטגוריות לפי הפורמט ש-ItemSelector מצפה לו
+	const categories = React.useMemo( () => {
+		return fontFamilies.map( ( { label, fonts } ) => ( {
+			label,
+			items: fonts,
+		} ) );
+	}, [ fontFamilies ] );
+
 	const handleChange = ( newValue: string ) => {
 		setFontFamily( newValue );
 
@@ -50,7 +58,7 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 	};
 
 	return (
-		<Grid container gap={ 0.75 } alignItems="center">
+		<Grid container gap={ 0.75 } alignItems="center" ref={ defaultRef }>
 			<Grid item xs={ 12 }>
 				<FormLabel size="tiny">{ __( 'Value', 'elementor' ) }</FormLabel>
 			</Grid>
@@ -70,12 +78,13 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 					transformOrigin={ { vertical: 'top', horizontal: -28 } }
 					{ ...bindPopover( fontPopoverState ) }
 				>
-					<FontFamilySelector
-						fontFamilies={ fontFamilies }
-						fontFamily={ fontFamily }
-						onFontFamilyChange={ handleFontFamilyChange }
+					<ItemSelector
+						itemsList={ categories }
+						selectedItem={ fontFamily }
+						onItemChange={ handleFontFamilyChange }
 						onClose={ fontPopoverState.close }
 						sectionWidth={ sectionWidth }
+						title={ __( 'Font Family', 'elementor' ) }
 					/>
 				</Popover>
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
