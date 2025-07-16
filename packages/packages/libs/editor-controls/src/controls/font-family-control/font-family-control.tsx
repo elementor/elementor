@@ -5,6 +5,7 @@ import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@
 
 import { useBoundProp } from '../../bound-prop-context';
 import { FontFamilySelector } from '../../components/font-family-selector';
+import { transitionProperties } from '../../components/transitions/properties-data';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 
@@ -26,6 +27,11 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 	const popoverState = usePopupState( { variant: 'popover' } );
 
 	const isShowingPlaceholder = ! fontFamily && placeholder;
+
+	const categoriesWithFontsStyle = transitionProperties.map( ( category ) => ( {
+		label: category.label,
+		font: category.properties.map( ( prop ) => prop.label ),
+	} ) );
 
 	return (
 		<>
@@ -58,11 +64,12 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				{ ...bindPopover( popoverState ) }
 			>
 				<FontFamilySelector
-					fontFamilies={ fontFamilies }
+					fontFamilies={ categoriesWithFontsStyle }
 					fontFamily={ fontFamily }
 					onFontFamilyChange={ setFontFamily }
 					onClose={ popoverState.close }
 					sectionWidth={ sectionWidth }
+					title={ 'Font Family' }
 				/>
 			</Popover>
 		</>

@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
-import { TextIcon } from '@elementor/icons';
+import * as Icons from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { enqueueFont } from '../controls/font-family-control/enqueue-font';
-import { type FontCategory } from '../controls/font-family-control/font-family-control';
 import { type FontListItem, useFilteredFontFamilies } from '../hooks/use-filtered-font-families';
 
 const SIZE = 'tiny';
+
+export type FontCategory = {
+	label: string;
+	fonts: string[];
+};
 
 type FontFamilySelectorProps = {
 	fontFamilies: FontCategory[];
@@ -18,6 +22,8 @@ type FontFamilySelectorProps = {
 	onFontFamilyChange: ( fontFamily: string ) => void;
 	onClose: () => void;
 	sectionWidth: number;
+	title: string;
+	// iconName: string;
 };
 
 export const FontFamilySelector = ( {
@@ -26,6 +32,7 @@ export const FontFamilySelector = ( {
 	onFontFamilyChange,
 	onClose,
 	sectionWidth,
+	title, // iconName,
 }: FontFamilySelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -39,15 +46,11 @@ export const FontFamilySelector = ( {
 		setSearchValue( '' );
 		onClose();
 	};
-
+	const iconNameTemp = 'TextIcon';
+	const IconComponent = Icons[ iconNameTemp ];
 	return (
 		<PopoverBody width={ sectionWidth }>
-			<PopoverHeader
-				title={ __( 'Font Family', 'elementor' ) }
-				onClose={ handleClose }
-				icon={ <TextIcon fontSize={ SIZE } /> }
-			/>
-
+			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize={ SIZE } /> } />
 			<PopoverSearch
 				value={ searchValue }
 				onSearch={ handleSearch }
@@ -72,7 +75,7 @@ export const FontFamilySelector = ( {
 					gap={ 1.5 }
 					overflow={ 'hidden' }
 				>
-					<TextIcon fontSize="large" />
+					<Icons.TextIcon fontSize="large" />
 					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
 						<Typography align="center" variant="subtitle2" color="text.secondary">
 							{ __( 'Sorry, nothing matched', 'elementor' ) }
