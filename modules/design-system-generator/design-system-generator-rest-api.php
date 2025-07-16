@@ -20,14 +20,6 @@ class Design_System_Generator_REST_API {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
 
-	private function get_repository() {
-		if ( ! $this->repository ) {
-			$this->repository = new Global_Classes_Repository();
-		}
-
-		return $this->repository;
-	}
-
 	private function register_routes() {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
