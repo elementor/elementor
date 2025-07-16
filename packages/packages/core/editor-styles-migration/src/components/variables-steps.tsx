@@ -82,7 +82,7 @@ export const VariablesSteps = () => {
 					) ) }
 				</Stack>
 			</Stack>
-			<DialogActions sx={ { justifyContent:  'space-between' } }>
+			<DialogActions sx={ { justifyContent: 'space-between' } }>
 				<Stepper activeStep={ currentStep } sx={ { width: '450px' } }>
 					{ steps.map( ( { key }, index ) => {
 						const stepProps: { completed?: boolean } = {};
@@ -97,14 +97,14 @@ export const VariablesSteps = () => {
 						);
 					} ) }
 				</Stepper>
-                <Stack direction="row" spacing={ 2 }>
-                    <Button color="secondary">
-						Skip
-					</Button>
+				<Stack direction="row" spacing={ 2 }>
+					<Button color="secondary" onClick={() => {
+                        setCurrentStep( (prev) =>  prev < steps.length - 1 ? prev + 1 : prev );
+                    }}>Skip</Button>
 					<Button onClick={ handleCreate } variant="contained" color="primary">
 						Apply styles
 					</Button>
-                </Stack>
+				</Stack>
 			</DialogActions>
 		</Stack>
 	);
@@ -131,8 +131,8 @@ function generateId( prefix: string = '' ): string {
 }
 
 function VariablePreview( { variable, type }: { variable: VariableSuggestion; type: VariableType } ) {
-	if(type === 'color') {
-		return <UnstableColorIndicator value={variable.value} />
+	if ( type === 'color' ) {
+		return <UnstableColorIndicator value={ variable.value } />;
 	}
 
 	if(type === 'font') {
