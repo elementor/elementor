@@ -189,9 +189,7 @@ class Style_Parser {
 			return $result;
 		}
 
-		$custom_css = $variant['custom_css'];
-
-		if ( ! is_string( $custom_css ) ) {
+		if ( ! is_string( $variant['custom_css'] ) ) {
 			$result->errors()->add( 'custom_css', 'invalid_type' );
 
 			return $result;
@@ -217,7 +215,7 @@ class Style_Parser {
 			return null;
 		}
 
-		$custom_css = sanitize_text_field( $variant['custom_css']['raw'] );
+		$custom_css = [ 'raw' => sanitize_text_field( $variant['custom_css']['raw'] ) ];
 
 		return empty( $custom_css['raw'] ) ? null : $custom_css;
 	}
