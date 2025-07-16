@@ -196,6 +196,10 @@ class Style_Parser {
 			return $result;
 		}
 
+		if ( isset( $custom_css['raw'] ) && empty( $custom_css['raw'] ) ) {
+			$custom_css = null;
+		}
+
 		return $result;
 	}
 
