@@ -314,7 +314,7 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 			render( <KitSettingsCustomizationDialog
 				data={ mockData }
 				open={ true }
-				handleClose={ mockHandleClose }
+				handleClose={ customHandleClose }
 				handleSaveChanges={ mockHandleSaveChanges }
 			/> );
 
