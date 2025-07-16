@@ -109,6 +109,8 @@ const VariablesStepsView = ({ variables }: { variables: Suggestions[ 'variables'
 
 	const Icon = getIcon( step.key as VariableType );
 
+	const totalSelectedInStep = getSelectedVariablesForStep().length;
+
 	return (
 		<Stack sx={ { flexGrow: 1, paddingBottom: '100px' } }>
 			<Stack alignItems="center" sx={ { pt: 4 } }>
@@ -180,8 +182,8 @@ const VariablesStepsView = ({ variables }: { variables: Suggestions[ 'variables'
 					>
 						Skip
 					</Button>
-					<Button onClick={ handleCreate } variant="contained" color="primary" loading={submitting}>
-						Apply {getSelectedVariablesForStep().length} {getLabel( step.key as VariableType )}
+					<Button disabled={totalSelectedInStep === 0} onClick={ handleCreate } variant="contained" color="primary" loading={submitting}>
+						Apply {totalSelectedInStep} {(totalSelectedInStep > 1 ? getPluralLabel( step.key as VariableType ) : getLabel( step.key as VariableType )).toLowerCase()}
 					</Button>
 				</Stack>
 			</DialogActions>
@@ -194,6 +196,14 @@ function getLabel( type: VariableType ) {
 		color: __( 'Color', 'elementor' ),
 		font: __( 'Font', 'elementor' ),
 		size: __( 'Size', 'elementor' ),
+	}[ type ];
+}
+
+function getPluralLabel( type: VariableType ) {
+	return {
+		color: __( 'Colors', 'elementor' ),
+		font: __( 'Fonts', 'elementor' ),
+		size: __( 'Sizes', 'elementor' ),
 	}[ type ];
 }
 
