@@ -124,7 +124,7 @@ export const VariablesSteps = () => {
 					</Paper>
 				) ) }
 			</Stack>
-			<DialogActions sx={ { backgroundColor: 'background.paper',justifyContent: 'space-between', position: 'absolute', bottom: 0, height: FOOTER_HEIGHT, width: '100%' } }>
+			<DialogActions sx={ { borderTop: '1px solid', borderColor: 'divider' , backgroundColor: 'background.paper',justifyContent: 'space-between', position: 'absolute', bottom: 0, height: FOOTER_HEIGHT, width: '100%' } }>
 				<Stepper activeStep={ currentStep } sx={ { width: '450px' } }>
 					{ steps.map( ( { key }, index ) => {
 						const stepProps: { completed?: boolean } = {};
