@@ -158,7 +158,7 @@ function getLabel( type: VariableType ) {
 	return {
 		color: __( 'Colors', 'elementor' ),
 		font: __( 'Font family', 'elementor' ),
-		size: __( 'Spacing', 'elementor' ),
+		size: __( 'Font size', 'elementor' ),
 	}[ type ];
 }
 
@@ -189,8 +189,16 @@ function VariablePreview( { variable, type }: { variable: VariableSuggestion; ty
 
 	if ( type === 'font' ) {
 		return (
-			<Paper color="secondary" sx={ { p: 2, fontSize: '16px' } }>
+			<Paper color="secondary" sx={ { p: 2, fontSize: '16px' } } elevation={ 0 }>
 				<span style={ { fontFamily: variable.value } }>{ __( 'Example Text', 'elementor' ) }</span>
+			</Paper>
+		);
+	}
+
+	if ( type === 'size' ) {
+		return (
+			<Paper color="secondary" sx={ { p: 2 } } elevation={ 0 }>
+				<span style={ { fontSize: variable.value } }>{ __( 'Aa', 'elementor' ) }</span>
 			</Paper>
 		);
 	}
