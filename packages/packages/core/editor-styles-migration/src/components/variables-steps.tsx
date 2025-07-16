@@ -8,6 +8,8 @@ import { useStylesMigrationContext } from './steps-dialog';
 import { __ } from '@wordpress/i18n';
 import { CurrentLocationIcon } from '@elementor/icons';
 
+const roles = [__('primary', 'elementor'), __('secondary', 'elementor'), __('tertiary', 'elementor')];
+
 export const VariablesSteps = () => {
 	const { variables = {} as Suggestions[ 'variables' ] } = useStylesMigrationContext();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
@@ -70,7 +72,7 @@ export const VariablesSteps = () => {
 								<VariableExplanation variable={ variable } />
 							</Stack>
 							<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
-								<VariableUsage variable={ variable } />
+								<VariableUsage variable={ variable } type={ step.key as VariableType } role={ roles[index] } />
 								<Checkbox
 									onClick={ () => {
 										setSelectedVariables( ( prev ) => ( {
@@ -131,10 +133,10 @@ function VariableExplanation( { variable }: { variable: VariableSuggestion } ) {
 	</Stack>;
 }
 
-function VariableUsage( { variable }: { variable: VariableSuggestion } ) {
+function VariableUsage( { variable, type, role }: { variable: VariableSuggestion, type: VariableType, role: string | null } ) {
 	return <Infotip 
 			anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-			content={ <VariableUsedAt  variable={variable} /> }
+			content={ <VariableUsedAt  variable={variable} type={type} role={role} /> }
 		>
 		<UnstableTag label={
 			variable.usages.total + ' ' + __('Uses', 'elementor')
@@ -142,7 +144,7 @@ function VariableUsage( { variable }: { variable: VariableSuggestion } ) {
 	</Infotip>;
 }
 
-function VariableUsedAt( { variable, role }: { variable: VariableSuggestion, role: string | null } ) {
+function VariableUsedAt( { variable, type, role }: { variable: VariableSuggestion, type: VariableType, role: string | null } ) {
 	return <Stack direction="column" gap={ 1 } sx={{ p: 2 }}>
 		<Typography variant="subtitle1">{ __('%s appears in:', 'elementor').replace('%s', variable.value) }</Typography>
 		{variable.usages.byType.map(usage => (
@@ -151,6 +153,6 @@ function VariableUsedAt( { variable, role }: { variable: VariableSuggestion, rol
 				<Typography variant="subtitle1">{ usage.elementType }</Typography>
 			</Stack>
 		))}
-		<Alert color="promotion" sx={{ mt: 2 }}>{ __('This variable is used in the following roles:', 'elementor') }</Alert>
+		{role && <Alert color="promotion" sx={{ mt: 2 }}>{ __('This is likely a %s %d', 'elementor').replace('%s', role ?? '').replace('%d', type) }</Alert>}
 	</Stack>;
 }
