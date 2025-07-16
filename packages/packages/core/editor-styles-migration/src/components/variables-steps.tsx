@@ -20,7 +20,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type VariableSuggestion, type VariableType } from '../hooks/use-suggestions';
+import { Suggestions, type VariableSuggestion, type VariableType } from '../hooks/use-suggestions';
 import { useDialog, useStylesMigrationContext } from './steps-dialog';
 
 const roles = [ __( 'primary', 'elementor' ), __( 'secondary', 'elementor' ), __( 'tertiary', 'elementor' ) ];
@@ -78,7 +78,13 @@ export const VariablesSteps = () => {
         setOpen( false );
 	}
 
-	const list = step?.list;;
+	let list = step?.list;
+
+	console.log(step)
+
+	if(step.key === 'size'){
+		list = sortListByDimensions(list);
+	}	
 
 	const Icon = getIcon( step.key as VariableType );
 
@@ -276,4 +282,32 @@ function VariableUsedAt( {
 			) }
 		</Stack>
 	);
+}
+
+function sortListByDimensions(list: VariableSuggestion[]){
+	const el = document.createElement('div');
+	el.style.overflow = 'hidden';
+	el.style.width = '0px';
+	el.style.height = '0px';
+
+	document.body.appendChild(el);
+
+	list.forEach((variable, index) => {
+		const box = document.createElement('span');
+		box.style.fontSize = variable.value;
+		box.setAttribute('data-index', String(index));
+		box.innerHTML = 'Mm';
+		el.appendChild(box);
+	});
+
+	// sort the list by the width of the boxes
+	const sortedList = Array.from(el.children).sort((a, b) => {
+		return (b as HTMLElement).offsetWidth - (a as HTMLElement).offsetWidth;
+	});
+
+	document.body.removeChild(el);
+
+	return sortedList.map((box) => {
+		return list[box.getAttribute('data-index')];
+	});
 }
