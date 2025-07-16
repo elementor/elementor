@@ -27,12 +27,12 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 	const popoverState = usePopupState( { variant: 'popover' } );
 	const isShowingPlaceholder = ! fontFamily && placeholder;
 
-	function mapFontCategoriesToCategories( fontCategories: FontCategory[] ): Category[] {
-		return fontCategories.map( ( { label, fonts } ) => ( {
+	const categories = React.useMemo< Category[] >( () => {
+		return fontFamilies.map( ( { label, fonts } ) => ( {
 			label,
 			items: fonts,
 		} ) );
-	}
+	}, [ fontFamilies ] );
 
 	return (
 		<>
@@ -56,6 +56,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					}
 				/>
 			</ControlActions>
+
 			<Popover
 				disablePortal
 				disableScrollLock
@@ -65,7 +66,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				{ ...bindPopover( popoverState ) }
 			>
 				<ItemSelector
-					itemsList={ mapFontCategoriesToCategories( fontFamilies ) }
+					itemsList={ categories }
 					selectedItem={ fontFamily }
 					onItemChange={ setFontFamily }
 					onClose={ popoverState.close }
