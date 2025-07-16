@@ -25,10 +25,16 @@ class Load_Posts_Meta {
 		$posts = [];
 
 		foreach ( $query->posts as $post ) {
+			$meta_value = $this->asArray( \get_post_meta( $post->ID, '_elementor_data', true ) );
+
+			if ( empty( $meta_value ) ) {
+				continue;
+			}
+
 			$posts[] = [
 				'post_type' => $post->post_type,
 				'post_id' => $post->ID,
-				'meta_value' => $this->asArray( \get_post_meta( $post->ID, '_elementor_data', true ) ),
+				'meta_value' => $meta_value,
 			];
 		}
 		return $posts;
