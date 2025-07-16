@@ -1,19 +1,24 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariables, type Variable } from '@elementor/editor-variables';
-import { Alert, Button, Checkbox, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
+import { Alert, Button, Checkbox, CircularProgress, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Switch, ToggleButton, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
 import { VariableSuggestion, type Suggestions, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
 
 import { __ } from '@wordpress/i18n';
 import { CurrentLocationIcon } from '@elementor/icons';
+import { Spinner } from '@wordpress/components';
 
 const roles = [__('primary', 'elementor'), __('secondary', 'elementor'), __('tertiary', 'elementor')];
 
 export const VariablesSteps = () => {
-	const { variables = {} as Suggestions[ 'variables' ] } = useStylesMigrationContext();
+	const { variables = {}, isLoading } = useStylesMigrationContext();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ selectedVariables, setSelectedVariables ] = useState< Record< string, boolean > >( {} );
+
+	if( isLoading ){
+		return <CircularProgress />;
+	}
 
 	const steps = Object.entries( variables ).map( ( [ key, list ] ) => {
 		return {
@@ -61,7 +66,7 @@ export const VariablesSteps = () => {
 							</Stack>
 							<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
 								<VariableUsage variable={ variable } type={ step.key as VariableType } role={ roles[index] } />
-								<Checkbox
+								<Switch
 									onClick={ () => {
 										setSelectedVariables( ( prev ) => ( {
 											...prev,
