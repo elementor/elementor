@@ -40,6 +40,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
+  	"@elementor/editor-panels" : "0.17.0",
     "@elementor/editor": "0.21.0",
     "@elementor/editor-documents": "0.13.9",
     "@elementor/editor-responsive": "0.13.6",
