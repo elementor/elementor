@@ -80,8 +80,6 @@ export const VariablesSteps = () => {
 
 	let list = step?.list;
 
-	console.log(step)
-
 	if(step.key === 'size'){
 		list = sortListByDimensions(list);
 	}	
