@@ -42,15 +42,14 @@ For each color you'll see:
 - Current global title (if exists)
 
 Generate semantic names following these patterns:
-- Primary/Secondary/Accent: For main brand colors
+- Primary/Secondary/Tertiary/Accent: For main brand colors
 - Background/Surface variants
 - Text/Typography variants
 - Border/Stroke variants
 - Interactive states (hover, active)
-- Use format: color-[semantic-meaning] (e.g., color-primary, color-text-dark)
+- Use format: [Semantic-Meaning]-color (e.g., Primary-color, Text-color)
 
 Rules:
-- Use kebab-case
 - Consider usage frequency and context
 - Use existing global titles as reference
 - Maintain consistent color naming across the system
@@ -63,7 +62,7 @@ Return ONLY a JSON array with this exact structure for each color:
   {
     \"value\": \"#FFFFFF\",
     \"occurrences\": 48,
-    \"label\": \"color-primary\"
+    \"label\": \"Primary-color\"
   }
 ]";
 
@@ -123,9 +122,9 @@ For each font size you'll see:
 - Current global title (if exists)
 
 Generate semantic names following these patterns:
-- Scale based: text-xs through text-2xl
-- Special cases: text-display, text-heading, text-body
-- Use format: text-[size] or text-[purpose]
+- For headings: Primary-heading, Secondary-heading
+- Scale others: text-lg, text-md, text-sm, text-xs
+- Use format: [Semantic-Meaning]-text-[size] (e.g., Primary-text-lg, Secondary-text-md)
 - Consider relative size compared to other values
 
 Rules:
@@ -186,8 +185,9 @@ For each font family you'll see:
 - Current global title (if exists)
 
 Generate semantic names following these patterns:
-- Purpose based: font-heading, font-body, font-display
-- Use format: font-[purpose]
+- Purpose based: Primary-font, Secondary-font, Text-font
+- Text-font is for text elements, Primary-font is for headings, Secondary-font is for subtitles
+- Use format: [Semantic-Meaning]-font (e.g., Primary-font, Text-font)
 - Consider most common usage
 
 Rules:
@@ -204,7 +204,7 @@ Return ONLY a JSON array with this exact structure for each font family:
   {
     \"value\": \"Karla\",
     \"occurrences\": 52,
-    \"label\": \"font-body\"
+    \"label\": \"Text-font\"
   }
 ]";
 
@@ -284,6 +284,17 @@ Return ONLY a JSON array with this exact structure for each font family:
         }
       
         $result = $this->get_sorted_result();
+
+        // push item to the start of the array
+        array_unshift($result['colors'], [
+            'label' => 'Primary-background',
+            'value' => '#E7243B',
+            'totalOccurrences' => 1,
+            'elements' => [
+                'site' => 1
+            ],
+        ]);
+
         $this->save_to_json_file($result);
         return $result;
     }

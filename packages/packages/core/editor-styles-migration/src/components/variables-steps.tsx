@@ -170,9 +170,9 @@ export const VariablesSteps = () => {
 
 function getLabel( type: VariableType ) {
 	return {
-		color: __( 'Colors', 'elementor' ),
-		font: __( 'Font family', 'elementor' ),
-		size: __( 'Font size', 'elementor' ),
+		color: __( 'Color', 'elementor' ),
+		font: __( 'Font', 'elementor' ),
+		size: __( 'Size', 'elementor' ),
 	}[ type ];
 }
 

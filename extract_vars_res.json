@@ -1,6 +1,14 @@
 {
     "colors": [
         {
+            "label": "Primary-background",
+            "value": "#E7243B",
+            "totalOccurrences": 1,
+            "elements": {
+                "site": 1
+            }
+        },
+        {
             "totalOccurrences": 34,
             "elements": {
                 "heading": 5,
@@ -11,7 +19,7 @@
                 "image-box": 1
             },
             "value_as_object": "Primary",
-            "label": "color-primary",
+            "label": "Primary-color",
             "value": "#FFFFFF"
         },
         {
@@ -22,7 +30,7 @@
                 "form": 6
             },
             "value_as_object": "Accent",
-            "label": "color-accent",
+            "label": "Accent-color",
             "value": "#000000"
         },
         {
@@ -32,7 +40,7 @@
                 "button": 2
             },
             "value_as_object": "Full Transparency ",
-            "label": "color-transparent",
+            "label": "Transparent-color",
             "value": "#FFFFFF00"
         },
         {
@@ -41,7 +49,7 @@
                 "form": 1
             },
             "value_as_object": "Yellow Element",
-            "label": "color-accent-yellow",
+            "label": "Warning-color",
             "value": "#FFD639"
         },
         {
@@ -50,7 +58,7 @@
                 "container": 1
             },
             "value_as_object": "Pink Element",
-            "label": "color-accent-pink",
+            "label": "Error-color",
             "value": "#FF7989"
         }
     ],
@@ -64,7 +72,6 @@
                 "icon-box": 6
             },
             "value_as_object": "Text",
-            "label": "font-body",
             "value": "Karla"
         },
         {
@@ -73,7 +80,6 @@
                 "heading": 5
             },
             "value_as_object": "Hero Main Title \/ Menu Links",
-            "label": "font-heading",
             "value": "Pridi"
         },
         {
@@ -81,7 +87,6 @@
             "elements": {
                 "heading": 1
             },
-            "label": "font-display",
             "value": "Protest Guerrilla"
         }
     ],
@@ -96,7 +101,6 @@
                 "size": "74",
                 "sizes": []
             },
-            "label": "text-display",
             "value": "74px"
         },
         {
@@ -109,7 +113,6 @@
                 "size": 34,
                 "sizes": []
             },
-            "label": "text-2xl",
             "value": "34px"
         },
         {
@@ -122,7 +125,6 @@
                 "size": "24",
                 "sizes": []
             },
-            "label": "text-lg",
             "value": "24px"
         },
         {
@@ -137,7 +139,6 @@
                 "size": "16",
                 "sizes": []
             },
-            "label": "text-base",
             "value": "16px"
         },
         {
@@ -151,7 +152,6 @@
                 "size": "14",
                 "sizes": []
             },
-            "label": "text-sm",
             "value": "14px"
         }
     ],
