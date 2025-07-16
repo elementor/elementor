@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
-import * as Icons from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { type SelectableItem, useFilteredItemsList } from '../hooks/use-filtered-items-list';
-
-const SIZE = 'tiny';
 
 export type Category = {
 	label: string;
@@ -22,6 +19,8 @@ type ItemSelectorProps = {
 	onClose: () => void;
 	sectionWidth: number;
 	title: string;
+	smallIcon?: React.ReactNode;
+	largeIcon?: React.ReactNode;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	enqueueFont?: ( fontName: string ) => void;
 };
@@ -33,6 +32,8 @@ export const ItemSelector = ( {
 	onClose,
 	sectionWidth,
 	title,
+	smallIcon,
+	largeIcon,
 	itemStyle = () => ( {} ),
 	enqueueFont = () => {},
 }: ItemSelectorProps ) => {
@@ -49,11 +50,9 @@ export const ItemSelector = ( {
 		onClose();
 	};
 
-	const IconComponent = Icons.TextIcon;
-
 	return (
 		<PopoverBody width={ sectionWidth }>
-			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize={ SIZE } /> } />
+			<PopoverHeader title={ title } onClose={ handleClose } icon={ smallIcon } />
 			<PopoverSearch
 				value={ searchValue }
 				onSearch={ handleSearch }
@@ -80,7 +79,7 @@ export const ItemSelector = ( {
 					gap={ 1.5 }
 					overflow="hidden"
 				>
-					<Icons.TextIcon fontSize="large" />
+					{ largeIcon }
 					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
 						<Typography align="center" variant="subtitle2" color="text.secondary">
 							{ __( 'Sorry, nothing matched', 'elementor' ) }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { stringPropTypeUtil } from '@elementor/editor-props';
-import { ChevronDownIcon } from '@elementor/icons';
+import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -21,8 +21,6 @@ type FontFamilyControlProps = {
 	sectionWidth: number;
 };
 
-const SIZE = 'tiny';
-
 export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }: FontFamilyControlProps ) => {
 	const { value: fontFamily, setValue: setFontFamily, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 
@@ -42,7 +40,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				<UnstableTag
 					variant="outlined"
 					label={ fontFamily || placeholder }
-					endIcon={ <ChevronDownIcon fontSize={ SIZE } /> }
+					endIcon={ <ChevronDownIcon fontSize="tiny" /> }
 					{ ...bindTrigger( popoverState ) }
 					fullWidth
 					disabled={ disabled }
@@ -76,6 +74,8 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					title={ __( 'Font Family', 'elementor' ) }
 					itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
 					enqueueFont={ enqueueFont }
+					smallIcon={ <TextIcon fontSize="tiny" /> }
+					largeIcon={ <TextIcon fontSize="large" /> }
 				/>
 			</Popover>
 		</>
