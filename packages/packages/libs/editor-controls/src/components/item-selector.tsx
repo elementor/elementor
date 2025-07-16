@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList, PopoverSearch } from '@elementor/editor-ui';
 import * as Icons from '@elementor/icons';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
@@ -23,6 +23,7 @@ type ItemSelectorProps = {
 	onClose: () => void;
 	sectionWidth: number;
 	title: string;
+	// iconName: Icons;
 	useCustomFont?: boolean;
 };
 
@@ -33,6 +34,8 @@ export const ItemSelector = ( {
 	onClose,
 	sectionWidth,
 	title,
+	// iconName,
+	useCustomFont = false,
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -47,8 +50,8 @@ export const ItemSelector = ( {
 		onClose();
 	};
 
-	const iconNameTemp = 'TextIcon';
-	const IconComponent = Icons[ iconNameTemp ];
+	const tempIconName = 'TextIcon';
+	const IconComponent = Icons[ tempIconName ];
 
 	return (
 		<PopoverBody width={ sectionWidth }>
@@ -67,6 +70,7 @@ export const ItemSelector = ( {
 					setSelectedItem={ onItemChange }
 					handleClose={ handleClose }
 					selectedItem={ selectedItem }
+					useCustomFont={ useCustomFont }
 				/>
 			) : (
 				<Stack
@@ -121,9 +125,16 @@ type ItemListProps = {
 	setSelectedItem: ( item: string ) => void;
 	handleClose: () => void;
 	selectedItem: string | null;
+	useCustomFont?: boolean;
 };
 
-const ItemList = ( { itemListItems, setSelectedItem, handleClose, selectedItem }: ItemListProps ) => {
+const ItemList = ( {
+	itemListItems,
+	setSelectedItem,
+	handleClose,
+	selectedItem,
+	useCustomFont = false,
+}: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
 	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
@@ -135,6 +146,16 @@ const ItemList = ( { itemListItems, setSelectedItem, handleClose, selectedItem }
 		} );
 	}, 100 );
 
+	const itemStyleFn = useCallback(
+		( item: SelectableItem ): React.CSSProperties => {
+			if ( useCustomFont ) {
+				return { fontFamily: item.value };
+			}
+			return {};
+		},
+		[ useCustomFont ]
+	);
+
 	return (
 		<PopoverMenuList
 			items={ itemListItems }
@@ -142,7 +163,7 @@ const ItemList = ( { itemListItems, setSelectedItem, handleClose, selectedItem }
 			onChange={ debouncedVirtualizeChange }
 			onSelect={ setSelectedItem }
 			onClose={ handleClose }
-			itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
+			itemStyle={ itemStyleFn }
 			data-testid="item-list"
 		/>
 	);

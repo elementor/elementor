@@ -5,7 +5,7 @@ import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
-import { transitionProperties } from '../../components/transitions/properties-data';
+import { type Category } from '../../components/item-selector';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
 
@@ -27,11 +27,12 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 	const popoverState = usePopupState( { variant: 'popover' } );
 	const isShowingPlaceholder = ! fontFamily && placeholder;
 
-	// התאמה לממשק של ItemSelector (שמות גנריים)
-	const itemsList = transitionProperties.map( ( category ) => ( {
-		label: category.label,
-		items: category.properties.map( ( prop ) => prop.label ),
-	} ) );
+	function mapFontCategoriesToCategories( fontCategories: FontCategory[] ): Category[] {
+		return fontCategories.map( ( { label, fonts } ) => ( {
+			label,
+			items: fonts,
+		} ) );
+	}
 
 	return (
 		<>
@@ -64,12 +65,13 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				{ ...bindPopover( popoverState ) }
 			>
 				<ItemSelector
-					itemsList={ itemsList }
+					itemsList={ mapFontCategoriesToCategories( fontFamilies ) }
 					selectedItem={ fontFamily }
 					onItemChange={ setFontFamily }
 					onClose={ popoverState.close }
 					sectionWidth={ sectionWidth }
 					title={ 'Font Family' }
+					useCustomFont={ true }
 				/>
 			</Popover>
 		</>

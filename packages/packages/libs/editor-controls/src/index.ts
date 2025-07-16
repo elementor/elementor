@@ -30,7 +30,6 @@ export { PopoverContent } from './components/popover-content';
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
-export { FontFamilySelector } from './components/item-selector';
 
 // types
 export type { ControlComponent } from './create-control';

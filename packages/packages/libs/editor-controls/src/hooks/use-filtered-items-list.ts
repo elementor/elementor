@@ -1,14 +1,11 @@
-export type ItemCategory = {
-	label: string;
-	items: string[];
-};
+import { type Category } from '../components/item-selector';
 
 export type SelectableItem = {
 	type: 'item' | 'category';
 	value: string;
 };
 
-export const useFilteredItemsList = ( itemsList: ItemCategory[], searchValue: string ) => {
+export const useFilteredItemsList = ( itemsList: Category[], searchValue: string ) => {
 	return itemsList.reduce< SelectableItem[] >( ( acc, category ) => {
 		const filteredItems = category.items.filter( ( item ) =>
 			item.toLowerCase().includes( searchValue.toLowerCase() )
