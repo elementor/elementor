@@ -72,7 +72,7 @@ const DialogTabs = () => {
 				logo={ () => <></> }
 				direction="row"
 				justifyContent="center"
-				sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: '200px', margin: 'auto' } }
+				sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: 'fit-content', margin: 'auto' } }
 			>
 				<Tabs { ...getTabsProps() }>
 					<Tab label={
