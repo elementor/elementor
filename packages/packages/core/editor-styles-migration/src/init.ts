@@ -5,6 +5,7 @@ import { __registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { slice, StepsDialog, useDialog } from './components/steps-dialog';
+import { apiClient } from './api';
 
 export function init() {
 	__registerSlice( slice );
@@ -29,6 +30,14 @@ function useStylesMigration() {
 		title: __( 'Styles Migration', 'elementor' ),
 		onClick: () => {
 			setOpen( true );
+
+			console.log( '** Styles Migration clicked', {
+				document,
+			} );
+
+			apiClient.all().then( ( response ) => {
+				console.log( '** Styles Migration response', response );
+			} );
 		},
 	};
 }

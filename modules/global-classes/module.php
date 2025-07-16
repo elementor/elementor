@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\GlobalClasses\Database\Global_Classes_Database_Updater;
 use Elementor\Modules\GlobalClasses\ImportExport\Import_Export;
 use Elementor\Modules\GlobalClasses\Usage\Global_Classes_Usage;
+use Elementor\Modules\Design_System_Generator\Design_System_Generator_REST_API;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,6 +46,7 @@ class Module extends BaseModule {
 			( new Global_Classes_Cleanup() )->register_hooks();
 			( new Import_Export() )->register_hooks();
 			( new Global_Classes_Database_Updater() )->register();
+			( new Design_System_Generator_REST_API() )->register_hooks();
 		}
 	}
 
