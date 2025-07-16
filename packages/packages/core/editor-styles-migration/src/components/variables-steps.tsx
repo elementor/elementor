@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariables, type Variable } from '@elementor/editor-variables';
-import { BrushIcon, CurrentLocationIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
+import { AIIcon, BrushIcon, CurrentLocationIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
 import {
 	Alert,
 	Button,
@@ -258,17 +258,17 @@ function VariableUsedAt( {
 } ) {
 	return (
 		<Stack direction="column" gap={ 1 } sx={ { p: 2 } }>
-			<Typography variant="subtitle1">
+			<Typography variant="subtitle2" sx={{ mb: 1 }}>
 				{ __( '%s appears in:', 'elementor' ).replace( '%s', variable.value ) }
 			</Typography>
 			{ variable.usages.byType.map( ( usage ) => (
 				<Stack direction="row" gap={ 1 } key={ usage.elementType }>
 					<UnstableTag label={ usage.count } />
-					<Typography variant="subtitle1">{ usage.elementType }</Typography>
+					<Typography variant="caption">{ usage.elementType }</Typography>
 				</Stack>
 			) ) }
 			{ role && (
-				<Alert color="promotion" sx={ { mt: 2 } }>
+				<Alert color="accent" sx={ { mt: 2 } } icon={ <AIIcon fontSize="small" /> }>
 					{ __( 'This is likely a %s %d', 'elementor' )
 						.replace( '%s', role ?? '' )
 						.replace( '%d', type ) }
