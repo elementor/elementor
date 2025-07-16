@@ -62,19 +62,6 @@ type TabValue = 'variables' | 'classes';
 const DialogTabs = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< TabValue >( 'variables' );
 
-	console.log( 'DialogTabs rendered', getTabPanelProps( 'variables' ), getTabPanelProps( 'classes' ) );
-
-	const variablesPanelStyles = {
-		flexGrow: 1,
-		p: 0,
-		...( getTabPanelProps( 'variables' ).hidden === false && { display: 'flex' } ),
-	};
-
-	const classesPanelStyles = {
-		flexGrow: 1,
-		p: 0,
-		...( getTabPanelProps( 'classes' ).hidden === false && { display: 'flex' } ),
-	};
 
 	return (
 		<Stack sx={ { width: '100%', height: '100%' } }>

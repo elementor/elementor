@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariables, type Variable } from '@elementor/editor-variables';
-import { Alert, Button, Card, Checkbox, CircularProgress, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Switch, ToggleButton, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
-import { VariableSuggestion, type Suggestions, type VariableType } from '../hooks/use-suggestions';
+import { Alert, Button, CircularProgress, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Switch, ToggleButton, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
+import { VariableSuggestion, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
 
 import { __ } from '@wordpress/i18n';
 import { CurrentLocationIcon } from '@elementor/icons';
-import { Spinner } from '@wordpress/components';
 
 const roles = [__('primary', 'elementor'), __('secondary', 'elementor'), __('tertiary', 'elementor')];
 
@@ -48,40 +47,44 @@ export const VariablesSteps = () => {
 		createVariables( variablesToCreate );
 	}
 
+    const list = step?.list.slice(0, 4);
+
 	return (
 		<Stack sx={ { flexGrow: 1 } }>
-			<Stack direction="row" sx={ { flexGrow: 1 } }>
-				<Stack sx={ { flexBasis: '100%' } }>
-					{ step?.list.map( ( variable, index ) => (
-						<Card>
-							<Stack
-								key={ index }
-								direction="row"
-								alignItems="center"
-								justifyContent="space-between"
-								sx={ { padding: '10px', borderBottom: '1px solid gray' } }
-							>
-								<Stack direction="row" alignItems="center" justifyContent="start" gap={ 2 }>
-									<VariablePreview variable={ variable } type={ step.key as VariableType } />
-									<VariableExplanation variable={ variable } />
-								</Stack>
-								<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
-									<VariableUsage variable={ variable } type={ step.key as VariableType } role={ roles[index] } />
-									<Switch
-										onClick={ () => {
-											setSelectedVariables( ( prev ) => ( {
-												...prev,
-												[ variable.value ]: ! prev[ variable.value ],
-											} ) );
-										} }
-										checked={ selectedVariables[ variable.value ] ?? false }
-									/>
-								</Stack>
+            <Stack alignItems="center" sx={ { pt: 4 } }>
+            <Typography variant="h5">
+                { getLabel( step.key as VariableType ) }
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+                {`${list.length} variables detected from your website`}
+            </Typography>
+            </Stack>
+				<Stack gap={2} sx={ { flexBasis: '100%', flexGrow: 1, p: 4, pt: 3 } }>
+					{ list.slice(0, 4).map( ( variable, index ) => (
+						<Paper
+							key={ index }
+                            variant="outlined"
+							sx={ { p: 2, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'} }
+						>
+							<Stack direction="row" alignItems="center" justifyContent="start" gap={ 2 }>
+								<VariablePreview variable={ variable } type={ step.key as VariableType } />
+								<VariableExplanation variable={ variable } />
 							</Stack>
-						</Card>
+							<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
+								<VariableUsage variable={ variable } type={ step.key as VariableType } role={ roles[index] } />
+								<Switch
+									onClick={ () => {
+										setSelectedVariables( ( prev ) => ( {
+											...prev,
+											[ variable.value ]: ! prev[ variable.value ],
+										} ) );
+									} }
+									checked={ selectedVariables[ variable.value ] ?? false }
+								/>
+							</Stack>
+						</Paper>
 					) ) }
 				</Stack>
-			</Stack>
 			<DialogActions sx={ { justifyContent: 'space-between' } }>
 				<Stepper activeStep={ currentStep } sx={ { width: '450px' } }>
 					{ steps.map( ( { key }, index ) => {
@@ -132,7 +135,7 @@ function generateId( prefix: string = '' ): string {
 
 function VariablePreview( { variable, type }: { variable: VariableSuggestion; type: VariableType } ) {
 	if ( type === 'color' ) {
-		return <UnstableColorIndicator value={ variable.value } />;
+		return <UnstableColorIndicator value={ variable.value } size="small"/>;
 	}
 
 	if(type === 'font') {
