@@ -5,13 +5,23 @@ import {
 	__useDispatch as useDispatch,
 	__useSelector as useSelector,
 } from '@elementor/store';
-import { Box, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
+import {
+	Box,
+	DialogHeader,
+	Stack,
+	Tab,
+	TabPanel,
+	Tabs,
+	useTabs,
+} from '@elementor/ui';
 import Dialog from '@elementor/ui/Dialog';
 import DialogContent from '@elementor/ui/DialogContent';
 
 import { type Suggestions, useSuggestions } from '../hooks/use-suggestions';
 import { ClassesSteps } from './classes-steps';
 import { VariablesSteps } from './variables-steps';
+import { ThemeProvider } from '@elementor/editor-ui';
+
 
 export const StepsDialog = () => {
 	const { open, setOpen } = useDialog();
@@ -21,13 +31,13 @@ export const StepsDialog = () => {
 	};
 
 	return (
-		<Dialog fullWidth maxWidth="lg" open={ open } onClose={ handleClose }>
-			<DialogContent dividers sx={ { height: '600px', display: 'flex', flexDirection: 'column' } }>
+		<ThemeProvider>
+			<Dialog fullWidth maxWidth="lg" open={ open } onClose={ handleClose }>
 				<Provider>
 					<DialogTabs />
 				</Provider>
-			</DialogContent>
-		</Dialog>
+			</Dialog>
+		</ThemeProvider>
 	);
 };
 
@@ -62,7 +72,8 @@ const DialogTabs = () => {
 
 	return (
 		<Stack sx={ { width: '100%', height: '100%' } }>
-			<Stack
+			<DialogHeader
+				logo={ () => <></> }
 				direction="row"
 				justifyContent="center"
 				sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: '200px', margin: 'auto' } }
@@ -71,13 +82,15 @@ const DialogTabs = () => {
 					<Tab label="Variables" { ...getTabProps( 'variables' ) } />
 					<Tab label="Classes" { ...getTabProps( 'classes' ) } />
 				</Tabs>
-			</Stack>
-			<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) } sx={ { flexGrow: 1 } }>
-				<VariablesSteps />
-			</TabPanel>
-			<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) } sx={ { flexGrow: 1 } }>
-				<ClassesSteps />
-			</TabPanel>
+			</DialogHeader>
+			<DialogContent dividers sx={ { height: '600px', display: 'flex', flexDirection: 'column', flexGrow: 1, p: 0 } }>
+				<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) } sx={ { flexGrow: 1, p: 0 } }>
+					<VariablesSteps />
+				</TabPanel>
+				<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) } sx={ { flexGrow: 1, p: 0 } }>
+					<ClassesSteps />
+				</TabPanel>
+			</DialogContent>
 		</Stack>
 	);
 };

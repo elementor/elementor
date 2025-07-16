@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariables, type Variable } from '@elementor/editor-variables';
-import { Alert, Button, Checkbox, Infotip, Paper, Stack, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
-
+import { Alert, Button, Checkbox, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
 import { VariableSuggestion, type Suggestions, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
+
 import { __ } from '@wordpress/i18n';
 import { CurrentLocationIcon } from '@elementor/icons';
 
@@ -43,20 +43,8 @@ export const VariablesSteps = () => {
 		createVariables( variablesToCreate );
 	}
 
-	const handleNext = () => {
-		if ( currentStep < steps.length - 1 ) {
-			setCurrentStep( currentStep + 1 );
-		}
-	};
-
-	const handlePrevious = () => {
-		if ( currentStep > 0 ) {
-			setCurrentStep( currentStep - 1 );
-		}
-	};
-
 	return (
-		<Stack sx={ { flexGrow: 1, padding: '20px', height: '100%' } }>
+		<Stack sx={ { flexGrow: 1 } }>
 			<Stack direction="row" sx={ { flexGrow: 1 } }>
 				<Stack sx={ { flexBasis: '100%' } }>
 					{ step?.list.map( ( variable, index ) => (
@@ -87,20 +75,41 @@ export const VariablesSteps = () => {
 					) ) }
 				</Stack>
 			</Stack>
-			<Stack direction="row" alignItems="center">
-				<Button onClick={ handleCreate } variant="contained" color="primary">
-					Create
-				</Button>
-				<Button onClick={ handlePrevious } color="secondary">
-					Previous
-				</Button>
-				<Button onClick={ handleNext } variant="contained">
-					Next
-				</Button>
-			</Stack>
+			<DialogActions sx={ { justifyContent:  'space-between' } }>
+				<Stepper activeStep={ currentStep } sx={ { width: '450px' } }>
+					{ steps.map( ( { key }, index ) => {
+						const stepProps: { completed?: boolean } = {};
+						const labelProps: {
+							optional?: React.ReactNode;
+						} = {};
+
+						return (
+							<Step key={ index } { ...stepProps } onClick={ () => setCurrentStep( index ) }>
+								<StepLabel { ...labelProps }>{ getLabel( key as VariableType ) }</StepLabel>
+							</Step>
+						);
+					} ) }
+				</Stepper>
+                <Stack direction="row" spacing={ 2 }>
+                    <Button color="secondary">
+						Skip
+					</Button>
+					<Button onClick={ handleCreate } variant="contained" color="primary">
+						Apply styles
+					</Button>
+                </Stack>
+			</DialogActions>
 		</Stack>
 	);
 };
+
+function getLabel( type: VariableType ) {
+	return {
+		color: __( 'Colors', 'elementor' ),
+		font: __( 'Font family', 'elementor' ),
+		size: __( 'Spacing', 'elementor' ),
+	}[ type ];
+}
 
 function getType( type: VariableType ) {
 	return {
