@@ -12,8 +12,6 @@ import {
 	Tab,
 	TabPanel,
 	Tabs,
-	ThemeProvider,
-	type ThemeProviderProps,
 	useTabs,
 } from '@elementor/ui';
 import Dialog from '@elementor/ui/Dialog';
@@ -22,8 +20,8 @@ import DialogContent from '@elementor/ui/DialogContent';
 import { type Suggestions, useSuggestions } from '../hooks/use-suggestions';
 import { ClassesSteps } from './classes-steps';
 import { VariablesSteps } from './variables-steps';
+import { ThemeProvider } from '@elementor/editor-ui';
 
-const PALLETTE: ThemeProviderProps[ 'palette' ] = 'unstable';
 
 export const StepsDialog = () => {
 	const { open, setOpen } = useDialog();
@@ -33,7 +31,7 @@ export const StepsDialog = () => {
 	};
 
 	return (
-		<ThemeProvider palette={ PALLETTE }>
+		<ThemeProvider>
 			<Dialog fullWidth maxWidth="lg" open={ open } onClose={ handleClose }>
 				<Provider>
 					<DialogTabs />
@@ -85,11 +83,11 @@ const DialogTabs = () => {
 					<Tab label="Classes" { ...getTabProps( 'classes' ) } />
 				</Tabs>
 			</DialogHeader>
-			<DialogContent dividers sx={ { height: '600px', display: 'flex', flexDirection: 'column', flexGrow: 1 } }>
-				<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) } sx={ { flexGrow: 1 } }>
+			<DialogContent dividers sx={ { height: '600px', display: 'flex', flexDirection: 'column', flexGrow: 1, p: 0 } }>
+				<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) } sx={ { flexGrow: 1, p: 0 } }>
 					<VariablesSteps />
 				</TabPanel>
-				<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) } sx={ { flexGrow: 1 } }>
+				<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) } sx={ { flexGrow: 1, p: 0 } }>
 					<ClassesSteps />
 				</TabPanel>
 			</DialogContent>

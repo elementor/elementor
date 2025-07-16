@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariables, type Variable } from '@elementor/editor-variables';
-import { Checkbox, DialogActions, Stack, Step, StepLabel, Stepper, UnstableColorIndicator } from '@elementor/ui';
+import { Button, Checkbox, DialogActions, Stack, Step, StepLabel, Stepper, UnstableColorIndicator } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type Suggestions, type VariableSuggestion, type VariableType } from '../hooks/use-suggestions';
@@ -41,7 +41,7 @@ export const VariablesSteps = () => {
 	}
 
 	return (
-		<Stack sx={ { flexGrow: 1, height: '100%' } }>
+		<Stack sx={ { flexGrow: 1 } }>
 			<Stack sx={ { flexGrow: 1 } }>
 				{ step?.list.map( ( variable, index ) => (
 					<Stack
@@ -64,7 +64,7 @@ export const VariablesSteps = () => {
 					</Stack>
 				) ) }
 			</Stack>
-			<DialogActions>
+			<DialogActions sx={ { justifyContent:  'space-between' } }>
 				<Stepper activeStep={ currentStep } sx={ { width: '450px' } }>
 					{ steps.map( ( { key }, index ) => {
 						const stepProps: { completed?: boolean } = {};
@@ -79,6 +79,14 @@ export const VariablesSteps = () => {
 						);
 					} ) }
 				</Stepper>
+                <Stack direction="row" spacing={ 2 }>
+                    <Button color="secondary">
+						Skip
+					</Button>
+					<Button onClick={ handleCreate } variant="contained" color="primary">
+						Apply styles
+					</Button>
+                </Stack>
 			</DialogActions>
 		</Stack>
 	);
