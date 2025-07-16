@@ -60,6 +60,9 @@ class Load_Posts_Meta {
 						$parsed_element['settings'][ $this->transform_keys( $setting_key ) ] = $setting_value;
 					}
 				}
+				else {
+					$parsed_element[$key] = $value;
+				}
 			}
 
 			return $parsed_element;

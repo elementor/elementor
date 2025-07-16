@@ -46,12 +46,10 @@ class Design_System_Generator_REST_API {
 
 	private function load_all_colors( \WP_REST_Request $request ) {
 		$colors_data = Plugin::$instance->data_manager_v2->run('globals/colors');
-		$size_data = Plugin::$instance->data_manager_v2->run('globals/sizes');
 
 		return new \WP_REST_Response(
 			[
 				'colors' => $colors_data,
-				'sizes' => $size_data,
 			],
 			200
 		);

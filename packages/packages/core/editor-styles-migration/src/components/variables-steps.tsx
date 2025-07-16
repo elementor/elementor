@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariables, type Variable } from '@elementor/editor-variables';
-import { Alert, Button, Checkbox, CircularProgress, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Switch, ToggleButton, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
+import { Alert, Button, Card, Checkbox, CircularProgress, DialogActions, Infotip, Paper, Stack, Step, StepLabel, Stepper, Switch, ToggleButton, Typography, UnstableColorIndicator, UnstableTag } from '@elementor/ui';
 import { VariableSuggestion, type Suggestions, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
 
@@ -53,30 +53,32 @@ export const VariablesSteps = () => {
 			<Stack direction="row" sx={ { flexGrow: 1 } }>
 				<Stack sx={ { flexBasis: '100%' } }>
 					{ step?.list.map( ( variable, index ) => (
-						<Stack
-							key={ index }
-							direction="row"
-							alignItems="center"
-							justifyContent="space-between"
-							sx={ { padding: '10px', borderBottom: '1px solid gray' } }
-						>
-							<Stack direction="row" alignItems="center" justifyContent="start" gap={ 2 }>
-								<VariablePreview variable={ variable } type={ step.key as VariableType } />
-								<VariableExplanation variable={ variable } />
+						<Card>
+							<Stack
+								key={ index }
+								direction="row"
+								alignItems="center"
+								justifyContent="space-between"
+								sx={ { padding: '10px', borderBottom: '1px solid gray' } }
+							>
+								<Stack direction="row" alignItems="center" justifyContent="start" gap={ 2 }>
+									<VariablePreview variable={ variable } type={ step.key as VariableType } />
+									<VariableExplanation variable={ variable } />
+								</Stack>
+								<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
+									<VariableUsage variable={ variable } type={ step.key as VariableType } role={ roles[index] } />
+									<Switch
+										onClick={ () => {
+											setSelectedVariables( ( prev ) => ( {
+												...prev,
+												[ variable.value ]: ! prev[ variable.value ],
+											} ) );
+										} }
+										checked={ selectedVariables[ variable.value ] ?? false }
+									/>
+								</Stack>
 							</Stack>
-							<Stack direction="row" alignItems="center" justifyContent="end" gap={ 2 }>
-								<VariableUsage variable={ variable } type={ step.key as VariableType } role={ roles[index] } />
-								<Switch
-									onClick={ () => {
-										setSelectedVariables( ( prev ) => ( {
-											...prev,
-											[ variable.value ]: ! prev[ variable.value ],
-										} ) );
-									} }
-									checked={ selectedVariables[ variable.value ] ?? false }
-								/>
-							</Stack>
-						</Stack>
+						</Card>
 					) ) }
 				</Stack>
 			</Stack>
