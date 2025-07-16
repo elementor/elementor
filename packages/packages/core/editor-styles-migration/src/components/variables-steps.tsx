@@ -31,24 +31,45 @@ const roles = [ __( 'primary', 'elementor' ), __( 'secondary', 'elementor' ), __
 const FOOTER_HEIGHT = '70px';
 
 export const VariablesSteps = () => {
-	const { variables = {}, isLoading } = useStylesMigrationContext();
-	const [ currentStep, setCurrentStep ] = useState( 0 );
-    const  {setOpen}  =  useDialog();
-    const [submitting, setSubmitting] = useState( false );
-	const [ selectedVariables, setSelectedVariables ] = useState< Record< string, boolean > >( {} );
+	const { variables, isLoading } = useStylesMigrationContext();
 
 	if ( isLoading ) {
 		return <Box sx={ { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', width: '100%' } }><CircularProgress /></Box>;
 	}
 
-	const steps = Object.entries( variables as Suggestions[ 'variables' ] ).map( ( [ key, list ] ) => {
+	return <VariablesStepsView variables={variables} />;
+}
+
+const VariablesStepsView = ({ variables }: { variables: Suggestions[ 'variables' ] }) => {
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+    const  {setOpen}  =  useDialog();
+    const [submitting, setSubmitting] = useState( false );
+
+	const getAllSelectedVariables = () => {
+		const selectedVariables:Record< string, boolean > = {};
+
+		Object.entries(variables).forEach(([key, list]) => {
+			list.forEach(({value}) => {
+				selectedVariables[value] = true;
+			});
+		});
+		return selectedVariables;
+	};
+
+	const [ selectedVariables, setSelectedVariables ] = useState< Record< string, boolean > >( getAllSelectedVariables() );
+
+	const steps = Object.entries( variables ).map( ( [ key, list ] ) => {
 		return {
 			key,
 			list,
 		};
 	} );
-
+	
 	const step = steps[ currentStep ];
+
+	const getSelectedVariablesForStep = () => {
+		return steps[currentStep].list.filter(({value}) => selectedVariables[value]);
+	}
 
 	async function handleCreate() {
         setSubmitting( true );
@@ -160,7 +181,7 @@ export const VariablesSteps = () => {
 						Skip
 					</Button>
 					<Button onClick={ handleCreate } variant="contained" color="primary" loading={submitting}>
-						Apply styles
+						Apply {getSelectedVariablesForStep().length} {getLabel( step.key as VariableType )}
 					</Button>
 				</Stack>
 			</DialogActions>
