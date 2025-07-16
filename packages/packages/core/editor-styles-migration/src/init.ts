@@ -1,9 +1,19 @@
+import { injectIntoTop } from '@elementor/editor';
 import { utilitiesMenu } from '@elementor/editor-app-bar';
-import { __useActiveDocument } from '@elementor/editor-documents';
 import { AIIcon } from '@elementor/icons';
+import { __registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
+import { slice, StepsDialog, useDialog } from './components/steps-dialog';
+
 export function init() {
+	__registerSlice( slice );
+
+	injectIntoTop( {
+		id: 'styles-migration',
+		component: StepsDialog,
+	} );
+
 	utilitiesMenu.registerAction( {
 		id: 'styles-migration-button',
 		priority: 10,
@@ -12,15 +22,13 @@ export function init() {
 }
 
 function useStylesMigration() {
-	const document = __useActiveDocument();
+	const { setOpen, open } = useDialog();
 
 	return {
 		icon: AIIcon,
 		title: __( 'Styles Migration', 'elementor' ),
 		onClick: () => {
-			console.log( '** Styles Migration clicked', {
-				document,
-			} );
+			setOpen( true );
 		},
 	};
 }

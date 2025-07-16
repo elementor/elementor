@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "@elementor/editor": "0.21.0",
+    "@elementor/editor-app-bar": "0.32.0",
     "@elementor/editor-current-user": "0.6.0",
     "@elementor/editor-documents": "0.13.9",
     "@elementor/editor-editing-panel": "1.49.0",
