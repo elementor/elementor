@@ -49,25 +49,30 @@ export const VariablesSteps = () => {
 	const step = steps[ currentStep ];
 
 	async function handleCreate() {
-		const filteredList = step?.list.filter( ( variable ) => {
-			return selectedVariables[ variable.value ] ?? false;
-		} );
-
-
         setSubmitting( true );
+        const filteredList = steps.map(step => {
+            return {
+                key: step.key,
+                list: step.list.filter( variable => selectedVariables[ variable.value ] ),
+            }
+        })
+
 		const variablesToCreate: Record< string, Variable > = filteredList.reduce(
-			( acc, variable ) => {
-				acc[ generateId( variable.value ) ] = {
-					type: getType( step.key as VariableType ),
-					label: variable.label,
-					value: variable.value,
-				};
-				return acc;
+			( acc, {list, key} ) => {
+				list.forEach( ( variable ) => {
+                    const id = generateId( getType( key as VariableType ) );
+                    acc[ id ] = {
+                        type: getType( key as VariableType ),
+                        value: variable.value,
+                        label: variable.label,
+                    };
+                } );
+                return acc;
 			},
 			{} as Record< string, Variable >
 		);
 
-		await  createVariables( variablesToCreate );
+		await createVariables( variablesToCreate );
 
         setSubmitting( false );
         setOpen( false );
@@ -148,7 +153,7 @@ export const VariablesSteps = () => {
 					>
 						Skip
 					</Button>
-					<Button onClick={ handleCreate } variant="contained" color="primary">
+					<Button onClick={ handleCreate } variant="contained" color="primary" loading={submitting}>
 						Apply styles
 					</Button>
 				</Stack>
