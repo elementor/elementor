@@ -35,8 +35,12 @@ function useStylesMigration() {
 				document,
 			} );
 
-			apiClient.all().then( ( response ) => {
-				console.log( '** Styles Migration response', response );
+			apiClient.colors().then( ( response ) => {
+				console.log( '** Styles Migration colors response', response );
+			} );
+
+			apiClient.posts().then( ( response ) => {
+				console.log( '** Styles Migration posts response', response );
 			} );
 		},
 	};

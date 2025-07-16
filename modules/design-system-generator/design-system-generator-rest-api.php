@@ -21,10 +21,10 @@ class Design_System_Generator_REST_API {
 	}
 
 	private function register_routes() {
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/colors', [
 			[
 				'methods' => 'GET',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->load_all_colors( $request ) ),
 				'permission_callback' => fn() => true,
 				'args' => [],
 			],
@@ -33,7 +33,7 @@ class Design_System_Generator_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/posts', [
 			[
 				'methods' => 'GET',
-				'callback' => [ $this, 'load_all_posts' ],
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->load_all_posts( $request ) ),
 				'permission_callback' => fn() => true,
 				'args' => [],
 			],
@@ -44,7 +44,7 @@ class Design_System_Generator_REST_API {
 		return ( new Load_Posts_Meta() )->load();
 	}
 
-	private function all( \WP_REST_Request $request ) {
+	private function load_all_colors( \WP_REST_Request $request ) {
 		$colors_data = Plugin::$instance->data_manager_v2->run('globals/colors');
 		$size_data = Plugin::$instance->data_manager_v2->run('globals/sizes');
 
