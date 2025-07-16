@@ -189,7 +189,7 @@ class Style_Parser {
 			return $result;
 		}
 
-		if ( ! is_string( $variant['custom_css'] ) ) {
+		if ( ! is_string( $variant['custom_css']['raw'] ) ) {
 			$result->errors()->add( 'custom_css', 'invalid_type' );
 
 			return $result;

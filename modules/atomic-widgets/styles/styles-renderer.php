@@ -112,7 +112,7 @@ class Styles_Renderer {
 
 	private function variant_to_css_string( string $base_selector, array $variant ): string {
 		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
-		$custom_css = isset( $variant['custom_css'] ) ? $variant['custom_css'] : '';
+		$custom_css = isset( $variant['custom_css']['raw'] ) ? $variant['custom_css']['raw'] : '';
 
 		if ( ! $css && ! $custom_css ) {
 			return '';
