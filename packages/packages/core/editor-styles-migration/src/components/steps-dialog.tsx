@@ -1,20 +1,17 @@
 import * as React from 'react';
-import { EditIcon, ExpandDiagonalIcon, SearchIcon } from '@elementor/icons';
+import { createContext, useContext } from 'react';
 import {
 	__createSlice as createSlice,
 	__useDispatch as useDispatch,
 	__useSelector as useSelector,
 } from '@elementor/store';
-import Button from '@elementor/ui/Button';
-import Chip from '@elementor/ui/Chip';
+import { Box, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import Dialog from '@elementor/ui/Dialog';
-import DialogActions from '@elementor/ui/DialogActions';
 import DialogContent from '@elementor/ui/DialogContent';
-import DialogContentText from '@elementor/ui/DialogContentText';
-import DialogHeader from '@elementor/ui/DialogHeader';
-import DialogHeaderGroup from '@elementor/ui/DialogHeaderGroup';
-import DialogTitle from '@elementor/ui/DialogTitle';
-import IconButton from '@elementor/ui/IconButton';
+
+import { Suggestions, useSuggestions } from '../hooks/use-suggestions';
+import { ClassesSteps } from './classes-steps';
+import { VariablesSteps } from './variables-steps';
 
 export const StepsDialog = () => {
 	const { open, setOpen } = useDialog();
@@ -23,29 +20,61 @@ export const StepsDialog = () => {
 		setOpen( false );
 	};
 
-	const handleNext = () => {
-		// Logic for next step goes here
-	};
-
-	const handlePrevious = () => {
-		// Logic for previous step goes here
-	};
-
 	return (
 		<Dialog fullScreen open={ open } onClose={ handleClose }>
-			<DialogHeader onClose={ () => setOpen( false ) }></DialogHeader>
 			<DialogContent dividers>
-				<DialogContentText>YO</DialogContentText>
+				<Provider>
+					<DialogTabs />
+				</Provider>
 			</DialogContent>
-			<DialogActions>
-				<Button onClick={ handlePrevious } color="secondary">
-					Previous
-				</Button>
-				<Button onClick={ handleNext } variant="contained">
-					Next
-				</Button>
-			</DialogActions>
 		</Dialog>
+	);
+};
+
+const context = createContext< null | {
+    isLoading: boolean;
+    variables: Suggestions['variables'];
+    classes: Suggestions['classes'];
+}>( null );
+
+export const useStylesMigrationContext = () => {
+	const stylesMigrationContext =  useContext( context );
+
+    if ( !stylesMigrationContext ) {
+        throw new Error( 'useStylesMigrationContext must be used within a Provider' );
+    }
+
+    return stylesMigrationContext;
+};
+
+export const Provider = ( { children }: React.PropsWithChildren ) => {
+	const { isLoading, data } = useSuggestions();
+
+	const { variables = {} as Suggestions['variables'], classes = [] } = data || {};
+
+	return <context.Provider value={ { isLoading, variables, classes } }>{ children }</context.Provider>;
+};
+
+type TabValue = 'variables' | 'classes';
+
+const DialogTabs = () => {
+	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< TabValue >( 'variables' );
+
+	return (
+		<Box sx={ { width: '100%' } }>
+			<Stack sx={ { borderBottom: 1, borderColor: 'divider' } }>
+				<Tabs { ...getTabsProps() }>
+					<Tab label="Variables" { ...getTabProps( 'variables' ) } />
+					<Tab label="Classes" { ...getTabProps( 'classes' ) } />
+				</Tabs>
+			</Stack>
+			<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) }>
+				<VariablesSteps />
+			</TabPanel>
+			<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) }>
+				<ClassesSteps />
+			</TabPanel>
+		</Box>
 	);
 };
 

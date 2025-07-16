@@ -9,8 +9,8 @@ import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { sizeVariablePropTypeUtil } from '../prop-types/size-variable-prop-type';
-import { SizeField } from './fields/size-field';
 import { LabelField } from './fields/label-field';
+import { SizeField } from './fields/size-field';
 
 const SIZE = 'tiny';
 

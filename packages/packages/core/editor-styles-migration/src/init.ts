@@ -1,6 +1,6 @@
 import { injectIntoTop } from '@elementor/editor';
 import { utilitiesMenu } from '@elementor/editor-app-bar';
-import { AIIcon } from '@elementor/icons';
+import { Icon } from './ui/icon';
 import { __registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
@@ -26,7 +26,7 @@ function useStylesMigration() {
 	const { setOpen, open } = useDialog();
 
 	return {
-		icon: AIIcon,
+		icon: Icon,
 		title: __( 'Styles Migration', 'elementor' ),
 		onClick: () => {
 			setOpen( true );

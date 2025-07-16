@@ -10,8 +10,8 @@ import { __ } from '@wordpress/i18n';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { sizeVariablePropTypeUtil } from '../prop-types/size-variable-prop-type';
-import { SizeField } from './fields/size-field';
 import { LabelField } from './fields/label-field';
+import { SizeField } from './fields/size-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 
 const SIZE = 'tiny';

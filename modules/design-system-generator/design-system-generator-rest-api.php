@@ -12,7 +12,7 @@ class Design_System_Generator_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'design-system-generator';
 
-	const MAX_ITEMS = 50;
+	const MAX_ITEMS = 500;
 
 	private $repository = null;
 
@@ -29,6 +29,19 @@ class Design_System_Generator_REST_API {
 				'args' => [],
 			],
 		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/posts', [
+			[
+				'methods' => 'GET',
+				'callback' => [ $this, 'load_all_posts' ],
+				'permission_callback' => fn() => true,
+				'args' => [],
+			],
+		] );
+	}
+
+	public function load_all_posts() {
+		return ( new Load_Posts_Meta() )->load();
 	}
 
 	private function all( \WP_REST_Request $request ) {
