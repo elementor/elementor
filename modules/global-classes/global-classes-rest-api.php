@@ -14,7 +14,7 @@ class Global_Classes_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
 
-	const MAX_ITEMS = 50;
+	const MAX_ITEMS = PHP_INT_MAX;
 
 	private $repository = null;
 

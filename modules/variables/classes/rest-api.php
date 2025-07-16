@@ -32,7 +32,7 @@ class Rest_Api {
 	const HTTP_SERVER_ERROR = 500;
 
 	const MAX_ID_LENGTH = 64;
-	const MAX_LABEL_LENGTH = 50;
+	const MAX_LABEL_LENGTH = 1024;
 	const MAX_VALUE_LENGTH = 512;
 
 	private Variables_Repository $variables_repository;

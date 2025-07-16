@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Repository {
-	const TOTAL_VARIABLES_COUNT = 100;
+	const TOTAL_VARIABLES_COUNT = PHP_INT_MAX;
 
 	const FORMAT_VERSION_V1 = 1;
 	const VARIABLES_META_KEY = '_elementor_global_variables';
