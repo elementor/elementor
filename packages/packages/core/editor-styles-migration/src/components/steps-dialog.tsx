@@ -73,6 +73,7 @@ const DialogTabs = () => {
 				<AIIcon />
 				{ 'DS Migrator' }
 			</Box>
+
 			<DialogHeader
 				logo={ () => <></> }
 				direction="row"
