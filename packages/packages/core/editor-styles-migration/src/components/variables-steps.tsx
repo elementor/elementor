@@ -21,13 +21,15 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { type VariableSuggestion, type VariableType } from '../hooks/use-suggestions';
-import { useStylesMigrationContext } from './steps-dialog';
+import { useDialog, useStylesMigrationContext } from './steps-dialog';
 
 const roles = [ __( 'primary', 'elementor' ), __( 'secondary', 'elementor' ), __( 'tertiary', 'elementor' ) ];
 
 export const VariablesSteps = () => {
 	const { variables = {}, isLoading } = useStylesMigrationContext();
 	const [ currentStep, setCurrentStep ] = useState( 0 );
+    const  {setOpen}  =  useDialog();
+    const [submitting, setSubmitting] = useState( false );
 	const [ selectedVariables, setSelectedVariables ] = useState< Record< string, boolean > >( {} );
 
 	if ( isLoading ) {
@@ -43,10 +45,13 @@ export const VariablesSteps = () => {
 
 	const step = steps[ currentStep ];
 
-	function handleCreate() {
+	async function handleCreate() {
 		const filteredList = step?.list.filter( ( variable ) => {
 			return selectedVariables[ variable.value ] ?? false;
 		} );
+
+
+        setSubmitting( true );
 		const variablesToCreate: Record< string, Variable > = filteredList.reduce(
 			( acc, variable ) => {
 				acc[ generateId( variable.value ) ] = {
@@ -59,7 +64,10 @@ export const VariablesSteps = () => {
 			{} as Record< string, Variable >
 		);
 
-		createVariables( variablesToCreate );
+		await  createVariables( variablesToCreate );
+
+        setSubmitting( false );
+        setOpen( false );
 	}
 
 	const list = step?.list.slice( 0, 4 );
