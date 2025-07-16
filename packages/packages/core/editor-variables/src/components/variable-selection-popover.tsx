@@ -9,12 +9,12 @@ import { type Variable } from '../types';
 import { ColorVariableCreation } from './color-variable-creation';
 import { ColorVariableEdit } from './color-variable-edit';
 import { ColorVariablesSelection } from './color-variables-selection';
-import { SizeVariableCreation } from './size-variable-creation';
-import { SizeVariableEdit } from './size-variable-edit';
-import { SizeVariablesSelection } from './size-variables-selection';
 import { FontVariableCreation } from './font-variable-creation';
 import { FontVariableEdit } from './font-variable-edit';
 import { FontVariablesSelection } from './font-variables-selection';
+import { SizeVariableCreation } from './size-variable-creation';
+import { SizeVariableEdit } from './size-variable-edit';
+import { SizeVariablesSelection } from './size-variables-selection';
 import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
 const VIEW_LIST = 'list';

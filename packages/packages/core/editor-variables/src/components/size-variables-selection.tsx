@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader, PopoverMenuList, PopoverSearch, type VirtualizedItem } from '@elementor/editor-ui';
-import { BrushIcon, ColorFilterIcon, PlusIcon, SettingsIcon, ExpandDiagonalIcon } from '@elementor/icons';
+import { ColorFilterIcon, ExpandDiagonalIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 

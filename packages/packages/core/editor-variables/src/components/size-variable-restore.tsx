@@ -10,8 +10,8 @@ import { __ } from '@wordpress/i18n';
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
 import { sizeVariablePropTypeUtil } from '../prop-types/size-variable-prop-type';
 import { ERROR_MESSAGES } from '../utils/validations';
-import { SizeField } from './fields/size-field';
 import { LabelField } from './fields/label-field';
+import { SizeField } from './fields/size-field';
 import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
 const SIZE = 'tiny';

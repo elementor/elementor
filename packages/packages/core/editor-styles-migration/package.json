@@ -48,6 +48,7 @@
     "@elementor/editor-props": "0.17.0",
     "@elementor/editor-styles": "0.6.13",
     "@elementor/editor-styles-repository": "0.10.6",
+    "@elementor/editor-variables": "0.17.0",
     "@elementor/editor-ui": "0.14.1",
     "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/http-client": "0.3.0",
