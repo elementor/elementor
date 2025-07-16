@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { createVariable, createVariables, type Variable } from '@elementor/editor-variables';
-import { Button, Checkbox, Stack } from '@elementor/ui';
+import { Button, Checkbox, Stack, UnstableColorIndicator } from '@elementor/ui';
 
-import { type Suggestions, type VariableType } from '../hooks/use-suggestions';
+import { VariableSuggestion, type Suggestions, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
+import { __ } from '@wordpress/i18n';
 
 export const VariablesSteps = () => {
 	const { variables = {} as Suggestions[ 'variables' ] } = useStylesMigrationContext();
@@ -63,7 +64,7 @@ export const VariablesSteps = () => {
 							justifyContent="space-between"
 							sx={ { padding: '10px', borderBottom: '1px solid gray' } }
 						>
-							<span>{ variable.label }</span>
+							<VariablePreview variable={ variable } type={ step.key as VariableType } />
 							<Checkbox
 								onClick={ () => {
 									setSelectedVariables( ( prev ) => ( {
@@ -82,7 +83,6 @@ export const VariablesSteps = () => {
 				<Button onClick={ handleCreate } variant="contained" color="primary">
 					Create
 				</Button>
-
 				<Button onClick={ handlePrevious } color="secondary">
 					Previous
 				</Button>
@@ -104,4 +104,16 @@ function getType( type: VariableType ) {
 
 function generateId( prefix: string = '' ): string {
 	return `${ prefix }${ Math.random().toString( 36 ).substring( 2, 9 ) }`;
+}
+
+function VariablePreview( { variable, type }: { variable: VariableSuggestion; type: VariableType } ) {
+	if(type === 'color') {
+		return <UnstableColorIndicator value={variable.value} />
+	}
+
+	if(type === 'font') {
+		return <span style={{fontFamily: variable.value}}>{ __('Example Text', 'elementor') }</span>;
+	}
+
+	return <span>{ variable.label }</span>;
 }

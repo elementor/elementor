@@ -18,7 +18,7 @@ type Usage = {
 	count: number;
 };
 
-type VariableSuggestion = {
+export type VariableSuggestion = {
 	label: string;
 	value: string;
 	usages: Usage[];
