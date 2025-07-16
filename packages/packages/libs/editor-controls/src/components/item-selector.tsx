@@ -7,36 +7,36 @@ import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { enqueueFont } from '../controls/font-family-control/enqueue-font';
-import { type FontListItem, useFilteredFontFamilies } from '../hooks/use-filtered-font-families';
+import { type SelectableItem, useFilteredItemsList } from '../hooks/use-filtered-items-list';
 
 const SIZE = 'tiny';
 
-export type FontCategory = {
+export type Category = {
 	label: string;
-	fonts: string[];
+	items: string[];
 };
 
-type FontFamilySelectorProps = {
-	fontFamilies: FontCategory[];
-	fontFamily: string | null;
-	onFontFamilyChange: ( fontFamily: string ) => void;
+type ItemSelectorProps = {
+	itemsList: Category[];
+	selectedItem: string | null;
+	onItemChange: ( item: string ) => void;
 	onClose: () => void;
 	sectionWidth: number;
 	title: string;
-	// iconName: string;
+	useCustomFont?: boolean;
 };
 
-export const FontFamilySelector = ( {
-	fontFamilies,
-	fontFamily,
-	onFontFamilyChange,
+export const ItemSelector = ( {
+	itemsList,
+	selectedItem,
+	onItemChange,
 	onClose,
 	sectionWidth,
-	title, // iconName,
-}: FontFamilySelectorProps ) => {
+	title,
+}: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
-	const filteredFontFamilies = useFilteredFontFamilies( fontFamilies, searchValue );
+	const filteredItemsList = useFilteredItemsList( itemsList, searchValue );
 
 	const handleSearch = ( value: string ) => {
 		setSearchValue( value );
@@ -46,8 +46,10 @@ export const FontFamilySelector = ( {
 		setSearchValue( '' );
 		onClose();
 	};
+
 	const iconNameTemp = 'TextIcon';
 	const IconComponent = Icons[ iconNameTemp ];
+
 	return (
 		<PopoverBody width={ sectionWidth }>
 			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize={ SIZE } /> } />
@@ -59,12 +61,12 @@ export const FontFamilySelector = ( {
 
 			<Divider />
 
-			{ filteredFontFamilies.length > 0 ? (
-				<FontList
-					fontListItems={ filteredFontFamilies }
-					setFontFamily={ onFontFamilyChange }
+			{ filteredItemsList.length > 0 ? (
+				<ItemList
+					itemListItems={ filteredItemsList }
+					setSelectedItem={ onItemChange }
 					handleClose={ handleClose }
-					fontFamily={ fontFamily }
+					selectedItem={ selectedItem }
 				/>
 			) : (
 				<Stack
@@ -73,7 +75,7 @@ export const FontFamilySelector = ( {
 					height="100%"
 					p={ 2.5 }
 					gap={ 1.5 }
-					overflow={ 'hidden' }
+					overflow="hidden"
 				>
 					<Icons.TextIcon fontSize="large" />
 					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
@@ -83,11 +85,7 @@ export const FontFamilySelector = ( {
 						<Typography
 							variant="subtitle2"
 							color="text.secondary"
-							sx={ {
-								display: 'flex',
-								width: '100%',
-								justifyContent: 'center',
-							} }
+							sx={ { display: 'flex', width: '100%', justifyContent: 'center' } }
 						>
 							<span>&ldquo;</span>
 							<span style={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }>
@@ -118,20 +116,20 @@ export const FontFamilySelector = ( {
 	);
 };
 
-type FontListProps = {
-	fontListItems: FontListItem[];
-	setFontFamily: ( fontFamily: string ) => void;
+type ItemListProps = {
+	itemListItems: SelectableItem[];
+	setSelectedItem: ( item: string ) => void;
 	handleClose: () => void;
-	fontFamily: string | null;
+	selectedItem: string | null;
 };
 
-const FontList = ( { fontListItems, setFontFamily, handleClose, fontFamily }: FontListProps ) => {
-	const selectedItem = fontListItems.find( ( item ) => item.value === fontFamily );
+const ItemList = ( { itemListItems, setSelectedItem, handleClose, selectedItem }: ItemListProps ) => {
+	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
 	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
 		getVirtualIndexes().forEach( ( index ) => {
-			const item = fontListItems[ index ];
-			if ( item && item.type === 'font' ) {
+			const item = itemListItems[ index ];
+			if ( item && item.type === 'item' ) {
 				enqueueFont( item.value );
 			}
 		} );
@@ -139,21 +137,19 @@ const FontList = ( { fontListItems, setFontFamily, handleClose, fontFamily }: Fo
 
 	return (
 		<PopoverMenuList
-			items={ fontListItems }
-			selectedValue={ selectedItem?.value }
+			items={ itemListItems }
+			selectedValue={ selectedItemFound?.value }
 			onChange={ debouncedVirtualizeChange }
-			onSelect={ setFontFamily }
+			onSelect={ setSelectedItem }
 			onClose={ handleClose }
 			itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
-			data-testid="font-list"
+			data-testid="item-list"
 		/>
 	);
 };
 
 const useDebounce = < TArgs extends unknown[] >( fn: ( ...args: TArgs ) => void, delay: number ) => {
 	const [ debouncedFn ] = useState( () => debounce( fn, delay ) );
-
 	useEffect( () => () => debouncedFn.cancel(), [ debouncedFn ] );
-
 	return debouncedFn;
 };

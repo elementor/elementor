@@ -4,7 +4,7 @@ import { ChevronDownIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { FontFamilySelector } from '../../components/font-family-selector';
+import { ItemSelector } from '../../components/item-selector';
 import { transitionProperties } from '../../components/transitions/properties-data';
 import ControlActions from '../../control-actions/control-actions';
 import { createControl } from '../../create-control';
@@ -25,12 +25,12 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 	const { value: fontFamily, setValue: setFontFamily, disabled, placeholder } = useBoundProp( stringPropTypeUtil );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
-
 	const isShowingPlaceholder = ! fontFamily && placeholder;
 
-	const categoriesWithFontsStyle = transitionProperties.map( ( category ) => ( {
+	// התאמה לממשק של ItemSelector (שמות גנריים)
+	const itemsList = transitionProperties.map( ( category ) => ( {
 		label: category.label,
-		font: category.properties.map( ( prop ) => prop.label ),
+		items: category.properties.map( ( prop ) => prop.label ),
 	} ) );
 
 	return (
@@ -63,10 +63,10 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				sx={ { my: 1.5 } }
 				{ ...bindPopover( popoverState ) }
 			>
-				<FontFamilySelector
-					fontFamilies={ categoriesWithFontsStyle }
-					fontFamily={ fontFamily }
-					onFontFamilyChange={ setFontFamily }
+				<ItemSelector
+					itemsList={ itemsList }
+					selectedItem={ fontFamily }
+					onItemChange={ setFontFamily }
 					onClose={ popoverState.close }
 					sectionWidth={ sectionWidth }
 					title={ 'Font Family' }
