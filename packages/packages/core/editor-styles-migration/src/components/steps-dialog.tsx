@@ -1,27 +1,18 @@
 import * as React from 'react';
 import { createContext, useContext } from 'react';
+import { ThemeProvider } from '@elementor/editor-ui';
 import {
 	__createSlice as createSlice,
 	__useDispatch as useDispatch,
 	__useSelector as useSelector,
 } from '@elementor/store';
-import {
-	Box,
-	DialogHeader,
-	Stack,
-	Tab,
-	TabPanel,
-	Tabs,
-	useTabs,
-} from '@elementor/ui';
+import { Box, DialogHeader, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import Dialog from '@elementor/ui/Dialog';
 import DialogContent from '@elementor/ui/DialogContent';
 
 import { type Suggestions, useSuggestions } from '../hooks/use-suggestions';
 import { ClassesSteps } from './classes-steps';
 import { VariablesSteps } from './variables-steps';
-import { ThemeProvider } from '@elementor/editor-ui';
-
 
 export const StepsDialog = () => {
 	const { open, setOpen } = useDialog();
@@ -70,6 +61,20 @@ type TabValue = 'variables' | 'classes';
 const DialogTabs = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTabs< TabValue >( 'variables' );
 
+	console.log( 'DialogTabs rendered', getTabPanelProps( 'variables' ), getTabPanelProps( 'classes' ) );
+
+	const variablesPanelStyles = {
+		flexGrow: 1,
+		p: 0,
+		...( getTabPanelProps( 'variables' ).hidden === false && { display: 'flex' } ),
+	};
+
+	const classesPanelStyles = {
+		flexGrow: 1,
+		p: 0,
+		...( getTabPanelProps( 'classes' ).hidden === false && { display: 'flex' } ),
+	};
+
 	return (
 		<Stack sx={ { width: '100%', height: '100%' } }>
 			<DialogHeader
@@ -83,11 +88,30 @@ const DialogTabs = () => {
 					<Tab label="Classes" { ...getTabProps( 'classes' ) } />
 				</Tabs>
 			</DialogHeader>
-			<DialogContent dividers sx={ { height: '600px', display: 'flex', flexDirection: 'column', flexGrow: 1, p: 0 } }>
-				<TabPanel size={ 'small' } { ...getTabPanelProps( 'variables' ) } sx={ { flexGrow: 1, p: 0 } }>
+			<DialogContent
+				dividers
+				sx={ { height: '600px', display: 'flex', flexDirection: 'column', flexGrow: 1, p: 0 } }
+			>
+				<TabPanel
+					size={ 'small' }
+					{ ...getTabPanelProps( 'variables' ) }
+					sx={ {
+						flexGrow: 1,
+						p: 0,
+						...( getTabPanelProps( 'variables' ).hidden === false && { display: 'flex' } ),
+					} }
+				>
 					<VariablesSteps />
 				</TabPanel>
-				<TabPanel size={ 'small' } { ...getTabPanelProps( 'classes' ) } sx={ { flexGrow: 1, p: 0 } }>
+				<TabPanel
+					size={ 'small' }
+					{ ...getTabPanelProps( 'classes' ) }
+					sx={ {
+						flexGrow: 1,
+						p: 0,
+						...( getTabPanelProps( 'classes' ).hidden === false && { display: 'flex' } ),
+					} }
+				>
 					<ClassesSteps />
 				</TabPanel>
 			</DialogContent>
