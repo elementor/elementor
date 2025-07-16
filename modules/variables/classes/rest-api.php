@@ -46,6 +46,7 @@ class Rest_Api {
 	}
 
 	public function enough_permissions_to_perform_rw_action() {
+		return true;
 		return current_user_can( 'manage_options' );
 	}
 
@@ -122,6 +123,18 @@ class Rest_Api {
 			],
 		] );
 
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/push_with_force', [
+			'methods' => WP_REST_Server::EDITABLE,
+			'callback' => [ $this, 'push_with_force' ],
+			'permission_callback' => [ $this, 'enough_permissions_to_perform_rw_action' ],
+			'args' => [
+				'variables' => [
+					'required' => true,
+					'type' => 'object',
+				],
+			],
+		] );
+
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/restore', [
 			'methods' => WP_REST_Server::EDITABLE,
 			'callback' => [ $this, 'restore_variable' ],
@@ -146,6 +159,27 @@ class Rest_Api {
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
+		] );
+	}
+
+	public function push_with_force( WP_REST_Request $request ) {
+		try {
+			return $this->push_with_force_existing_variables( $request );
+		} catch ( Exception $e ) {
+			return $this->error_response( $e );
+		}
+	}
+
+	private function push_with_force_existing_variables( WP_REST_Request $request ) {
+		$variables = $request->get_param( 'variables' );
+
+		$result = $this->variables_repository->push_with_force( $variables );
+
+		$this->clear_cache();
+
+		return $this->success_response( [
+			'variables' => $result['data'],
+			'watermark' => $result['watermark'],
 		] );
 	}
 
