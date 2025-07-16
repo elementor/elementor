@@ -1,5 +1,6 @@
 import { useQuery } from '@elementor/query';
 
+import { enqueueFont } from '../enqueue-font';
 import { usePosts } from './use-posts';
 
 export const useSuggestions = () => {
@@ -50,6 +51,19 @@ function mapToVariables( mock: any ) {
 		size: [],
 	};
 
+	if ( mock.font_families ) {
+		payload.font = Object.entries( mock.font_families ).map( ( [ key, meta ] ) => {
+			return {
+				label: ( meta?.label ?? '' ).toLowerCase().split( ' ' ).join( '-' ),
+				value: meta?.value ?? '',
+				usages: {
+					total: meta?.totalOccurrences ?? 0,
+					byType: [ { count: meta?.totalOccurrences ?? 0, elementType: 'widget' } ],
+				},
+			};
+		} );
+	}
+
 	if ( mock.colors ) {
 		payload.color = Object.entries( mock.colors ).map( ( [ key, meta ] ) => {
 			return {
@@ -80,9 +94,30 @@ function mapToClasses( mock: any ) {
 	];
 }
 
+const fontEnqueue = ( value: string ): void => {
+	if ( ! value ) {
+		return;
+	}
+
+	try {
+		enqueueFont( value );
+	} catch {
+		// This prevents font enqueueing failures from breaking variable updates
+	}
+};
+
 function mockApi(): Promise< Suggestions > {
 	return new Promise( ( resolve ) => {
 		setTimeout( () => {
+			const variables = mapToVariables( mock );
+
+			console.log( 'fonts', variables.font );
+
+			variables.font.forEach( ( font ) => {
+				console.log( 'font', font );
+				fontEnqueue( font?.value );
+			} );
+
 			resolve( {
 				variables: mapToVariables( mock ),
 				classes: mapToClasses( mock ),
@@ -92,6 +127,42 @@ function mockApi(): Promise< Suggestions > {
 }
 
 const mock = {
+	font_families: {
+		Karla: {
+			totalOccurrences: 52,
+			properties: {
+				typography_font_family: {
+					totalOccurrences: 52,
+					elements: {
+						'text-editor': 7,
+						button: 4,
+						'image-box': 12,
+						'icon-box': 8,
+						heading: 8,
+						'call-to-action': 10,
+						posts: 3,
+					},
+				},
+			},
+			global_title: 'Text',
+			value: 'Roboto',
+			label: 'font-body',
+		},
+		Pridi: {
+			totalOccurrences: 5,
+			properties: {
+				typography_font_family: {
+					totalOccurrences: 5,
+					elements: {
+						heading: 5,
+					},
+				},
+			},
+			global_title: 'Hero Main Title / Menu Links',
+			value: 'Aclonica',
+			label: 'font-heading',
+		},
+	},
 	colors: {
 		'#FFFFFF': {
 			totalOccurrences: 48,
