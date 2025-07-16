@@ -20,7 +20,7 @@ export const VariablesSteps = () => {
 		return <CircularProgress />;
 	}
 
-	const steps = Object.entries( variables ).map( ( [ key, list ] ) => {
+	const steps = Object.entries( variables as Suggestions[ 'variables' ] ).map( ( [ key, list ] ) => {
 		return {
 			key,
 			list,
