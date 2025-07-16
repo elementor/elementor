@@ -12,6 +12,18 @@ export const apiClient = {
 	list: () => {
 		return httpService().get( BASE_PATH + '/list' );
 	},
+	replace: (
+		variables: Record<
+			string,
+			{
+				type: string;
+				label: string;
+				value: string;
+			}
+		>
+	) => {
+		return httpService().post( BASE_PATH + '/push_with_force', { variables } );
+	},
 
 	create: ( type: string, label: string, value: string ) => {
 		return httpService().post( BASE_PATH + '/create', {

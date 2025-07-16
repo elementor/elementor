@@ -12,9 +12,7 @@ export const ClassesSteps = () => {
 
 	return (
 		<Stack>
-			<Stack>
-				
-			</Stack>
+			<Stack></Stack>
 			<Stack direction="row" alignItems="center">
 				<Button onClick={ handlePrevious } color="secondary">
 					Previous

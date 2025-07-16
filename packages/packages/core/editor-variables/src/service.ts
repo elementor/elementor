@@ -41,6 +41,37 @@ export const service = {
 			} );
 	},
 
+	replace: ( variables: Record< string, Variable > ) => {
+		return apiClient
+			.replace( variables )
+			.then( ( response ) => {
+				console.log( 'Replace response', response );
+				const { success, data: payload } = response.data;
+				console.log( 'Replace response', response );
+
+				if ( ! success ) {
+					throw new Error( 'Unexpected response from server' );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { variables, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				storage.fill( variables, watermark );
+
+				styleVariablesRepository.update( variables );
+
+				return variables;
+			} )
+			.catch( ( error ) => {
+				const message = getErrorMessage( error.response );
+				throw message ? new Error( message ) : error;
+			} );
+	},
+
 	create: ( { type, label, value }: Variable ) => {
 		return apiClient
 			.create( type, label, value )

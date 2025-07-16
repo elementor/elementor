@@ -55,6 +55,12 @@ export const createVariable = ( newVariable: Variable ): Promise< string > => {
 	} );
 };
 
+export const createVariables = ( variables: Record< string, Variable > ): Promise< string[] > => {
+	return service.replace( variables ).then( ( response ) => {
+		return response;
+	} );
+};
+
 export const updateVariable = ( updateId: string, { value, label }: { value: string; label: string } ) => {
 	return service.update( updateId, { value, label } ).then( ( { id }: { id: string } ) => {
 		return id;

@@ -9,7 +9,7 @@ import { Box, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import Dialog from '@elementor/ui/Dialog';
 import DialogContent from '@elementor/ui/DialogContent';
 
-import { Suggestions, useSuggestions } from '../hooks/use-suggestions';
+import { type Suggestions, useSuggestions } from '../hooks/use-suggestions';
 import { ClassesSteps } from './classes-steps';
 import { VariablesSteps } from './variables-steps';
 
@@ -32,25 +32,25 @@ export const StepsDialog = () => {
 };
 
 const context = createContext< null | {
-    isLoading: boolean;
-    variables: Suggestions['variables'];
-    classes: Suggestions['classes'];
-}>( null );
+	isLoading: boolean;
+	variables: Suggestions[ 'variables' ];
+	classes: Suggestions[ 'classes' ];
+} >( null );
 
 export const useStylesMigrationContext = () => {
-	const stylesMigrationContext =  useContext( context );
+	const stylesMigrationContext = useContext( context );
 
-    if ( !stylesMigrationContext ) {
-        throw new Error( 'useStylesMigrationContext must be used within a Provider' );
-    }
+	if ( ! stylesMigrationContext ) {
+		throw new Error( 'useStylesMigrationContext must be used within a Provider' );
+	}
 
-    return stylesMigrationContext;
+	return stylesMigrationContext;
 };
 
 export const Provider = ( { children }: React.PropsWithChildren ) => {
 	const { isLoading, data } = useSuggestions();
 
-	const { variables = {} as Suggestions['variables'], classes = [] } = data || {};
+	const { variables = {} as Suggestions[ 'variables' ], classes = [] } = data || {};
 
 	return <context.Provider value={ { isLoading, variables, classes } }>{ children }</context.Provider>;
 };
@@ -62,7 +62,11 @@ const DialogTabs = () => {
 
 	return (
 		<Stack sx={ { width: '100%', height: '100%' } }>
-			<Stack direction="row" justifyContent="center" sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: '200px', margin: 'auto' } }>
+			<Stack
+				direction="row"
+				justifyContent="center"
+				sx={ { borderBottom: 1, borderColor: 'divider', maxWidth: '200px', margin: 'auto' } }
+			>
 				<Tabs { ...getTabsProps() }>
 					<Tab label="Variables" { ...getTabProps( 'variables' ) } />
 					<Tab label="Classes" { ...getTabProps( 'classes' ) } />

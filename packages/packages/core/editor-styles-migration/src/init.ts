@@ -1,11 +1,11 @@
 import { injectIntoTop } from '@elementor/editor';
 import { utilitiesMenu } from '@elementor/editor-app-bar';
-import { Icon } from './ui/icon';
 import { __registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { slice, StepsDialog, useDialog } from './components/steps-dialog';
 import { apiClient } from './api';
+import { slice, StepsDialog, useDialog } from './components/steps-dialog';
+import { Icon } from './ui/icon';
 
 export function init() {
 	__registerSlice( slice );
@@ -23,17 +23,13 @@ export function init() {
 }
 
 function useStylesMigration() {
-	const { setOpen, open } = useDialog();
+	const { setOpen } = useDialog();
 
 	return {
 		icon: Icon,
 		title: __( 'Styles Migration', 'elementor' ),
 		onClick: () => {
 			setOpen( true );
-
-			console.log( '** Styles Migration clicked', {
-				document,
-			} );
 
 			apiClient.colors().then( ( response ) => {
 				console.log( '** Styles Migration colors response', response );

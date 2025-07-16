@@ -1,29 +1,88 @@
 import * as React from 'react';
-import { createVariable } from '@elementor/editor-variables';
-import { Button, Stack } from '@elementor/ui';
+import { useState } from 'react';
+import { createVariable, createVariables, type Variable } from '@elementor/editor-variables';
+import { Button, Checkbox, Stack } from '@elementor/ui';
+
+import { type Suggestions, type VariableType } from '../hooks/use-suggestions';
 import { useStylesMigrationContext } from './steps-dialog';
 
 export const VariablesSteps = () => {
-    const { variables } = useStylesMigrationContext();
+	const { variables = {} as Suggestions[ 'variables' ] } = useStylesMigrationContext();
+	const [ currentStep, setCurrentStep ] = useState( 0 );
+	const [ selectedVariables, setSelectedVariables ] = useState< Record< string, boolean > >( {} );
 
-    console.log({variables})
+	const steps = Object.entries( variables ).map( ( [ key, list ] ) => {
+		return {
+			key,
+			list,
+		};
+	} );
 
+	const step = steps[ currentStep ];
+
+	function handleCreate() {
+		const filteredList = step?.list.filter( ( variable ) => {
+			return selectedVariables[ variable.value ] ?? false;
+		} );
+		const variablesToCreate: Record< string, Variable > = filteredList.reduce(
+			( acc, variable ) => {
+				acc[ generateId( variable.value ) ] = {
+					type: getType( step.key as VariableType ),
+					label: variable.label,
+					value: variable.value,
+				};
+				return acc;
+			},
+			{} as Record< string, Variable >
+		);
+
+		createVariables( variablesToCreate );
+	}
 
 	const handleNext = () => {
-		// Logic for next step goes here
+		if ( currentStep < steps.length - 1 ) {
+			setCurrentStep( currentStep + 1 );
+		}
 	};
 
 	const handlePrevious = () => {
-		// Logic for previous step goes here
+		if ( currentStep > 0 ) {
+			setCurrentStep( currentStep - 1 );
+		}
 	};
 
 	return (
-		<Stack sx={{ flexGrow: 1, padding: '20px', height: '100%' }}>
-			<Stack direction="row" sx={{ flexGrow: 1 }}>
-                <Stack sx={{ flexBasis: '50%', borderRight: '1px solid gray' }}></Stack>
-                <Stack sx={{ flexBasis: '50%' }}></Stack>
-            </Stack>
+		<Stack sx={ { flexGrow: 1, padding: '20px', height: '100%' } }>
+			<Stack direction="row" sx={ { flexGrow: 1 } }>
+				<Stack sx={ { flexBasis: '50%', borderRight: '1px solid gray' } }>
+					{ step?.list.map( ( variable, index ) => (
+						<Stack
+							key={ index }
+							direction="row"
+							alignItems="center"
+							justifyContent="space-between"
+							sx={ { padding: '10px', borderBottom: '1px solid gray' } }
+						>
+							<span>{ variable.label }</span>
+							<Checkbox
+								onClick={ () => {
+									setSelectedVariables( ( prev ) => ( {
+										...prev,
+										[ variable.value ]: ! prev[ variable.value ],
+									} ) );
+								} }
+								checked={ selectedVariables[ variable.value ] ?? false }
+							/>
+						</Stack>
+					) ) }
+				</Stack>
+				<Stack sx={ { flexBasis: '50%' } }></Stack>
+			</Stack>
 			<Stack direction="row" alignItems="center">
+				<Button onClick={ handleCreate } variant="contained" color="primary">
+					Create
+				</Button>
+
 				<Button onClick={ handlePrevious } color="secondary">
 					Previous
 				</Button>
@@ -34,3 +93,15 @@ export const VariablesSteps = () => {
 		</Stack>
 	);
 };
+
+function getType( type: VariableType ) {
+	return {
+		color: 'global-color-variable',
+		font: 'global-font-variable',
+		size: 'global-size-variable',
+	}[ type ];
+}
+
+function generateId( prefix: string = '' ): string {
+	return `${ prefix }${ Math.random().toString( 36 ).substring( 2, 9 ) }`;
+}

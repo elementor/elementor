@@ -11,7 +11,7 @@ import { AssignedTag, SIZE } from '../tags/assigned-tag';
 
 type Props = {
 	variablePropTypeUtil: PropTypeUtil< string, string >;
-	fallbackPropTypeUtil: unknown;// PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
+	fallbackPropTypeUtil: unknown; // PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
 	additionalStartIcon?: React.ReactNode;
 	variable: Variable;
 };
