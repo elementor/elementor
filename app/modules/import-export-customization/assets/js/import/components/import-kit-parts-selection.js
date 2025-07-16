@@ -10,10 +10,15 @@ export default function ImportKitPartsSelection() {
 		dispatch( { type: actionType, payload: itemType } );
 	};
 
+	const handleSaveCustomization = () => {
+
+	};
+
 	return (
 		<KitPartsSelection
 			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
+			handleSaveCustomization={ handleSaveCustomization }
 			testId="import-kit-parts-content"
 		/>
 	);

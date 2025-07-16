@@ -32,7 +32,7 @@ describe( 'ImportCustomization Page', () => {
 			isCustomizing,
 			isProcessing,
 			dispatch: mockDispatch,
-			data: { includes: [] },
+			data: { includes: [], customization: {} },
 		} );
 	}
 

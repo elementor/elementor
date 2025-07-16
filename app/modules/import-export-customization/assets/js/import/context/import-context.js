@@ -50,6 +50,12 @@ const initialState = {
 	plugins: [],
 	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
 	importStatus: IMPORT_STATUS.PENDING,
+	customization: {
+		settings: null,
+		templates: null,
+		content: null,
+		plugins: null,
+	},
 };
 export default function ImportContextProvider( props ) {
 	const [ data, dispatch ] = useReducer( importReducer, initialState );
