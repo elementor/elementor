@@ -89,16 +89,11 @@ Return ONLY a JSON array with this exact structure for each color:
                 error_log("WARNING: .env file not found!");
             }
 
-            error_log("\nCreating Claude API instance...");
             $claude = new \Elementor\Modules\Design_System_Generator\Claude_API();
             
-            error_log("\nGenerating prompt...");
             $prompt = $this->generate_colors_prompt($colors_data);
-            error_log("\nPrompt: " . $prompt);
             
-            error_log("\nSending message to Claude...");
             $response = $claude->send_message($prompt);
-            error_log("\nClaude response: " . json_encode($response));
             
             // Extract the JSON response from Claude's message
             if (isset($response['content'][0]['text'])) {
@@ -107,7 +102,6 @@ Return ONLY a JSON array with this exact structure for each color:
                 $text = str_replace('```json', '', $text);
                 $text = str_replace('```', '', $text);
                 $labels = json_decode(trim($text), true);
-                error_log("\nParsed labels: " . json_encode($labels));
                 return $labels;
             }
             
@@ -158,16 +152,11 @@ Return ONLY a JSON array with this exact structure for each font size:
 
     private function get_font_size_labels($font_sizes_data) {
         try {
-            error_log("\nCreating Claude API instance...");
             $claude = new \Elementor\Modules\Design_System_Generator\Claude_API();
             
-            error_log("\nGenerating prompt...");
             $prompt = $this->generate_font_sizes_prompt($font_sizes_data);
-            error_log("\nPrompt: " . $prompt);
             
-            error_log("\nSending message to Claude...");
             $response = $claude->send_message($prompt);
-            error_log("\nClaude response: " . json_encode($response));
             
             // Extract the JSON response from Claude's message
             if (isset($response['content'][0]['text'])) {
@@ -176,7 +165,6 @@ Return ONLY a JSON array with this exact structure for each font size:
                 $text = str_replace('```json', '', $text);
                 $text = str_replace('```', '', $text);
                 $labels = json_decode(trim($text), true);
-                error_log("\nParsed labels: " . json_encode($labels));
                 return $labels;
             }
             
@@ -225,16 +213,11 @@ Return ONLY a JSON array with this exact structure for each font family:
 
     private function get_font_family_labels($font_families_data) {
         try {
-            error_log("\nCreating Claude API instance...");
             $claude = new \Elementor\Modules\Design_System_Generator\Claude_API();
             
-            error_log("\nGenerating prompt...");
             $prompt = $this->generate_font_families_prompt($font_families_data);
-            error_log("\nPrompt: " . $prompt);
             
-            error_log("\nSending message to Claude...");
             $response = $claude->send_message($prompt);
-            error_log("\nClaude response: " . json_encode($response));
             
             // Extract the JSON response from Claude's message
             if (isset($response['content'][0]['text'])) {
@@ -243,7 +226,6 @@ Return ONLY a JSON array with this exact structure for each font family:
                 $text = str_replace('```json', '', $text);
                 $text = str_replace('```', '', $text);
                 $labels = json_decode(trim($text), true);
-                error_log("\nParsed labels: " . json_encode($labels));
                 return $labels;
             }
             
@@ -261,48 +243,47 @@ Return ONLY a JSON array with this exact structure for each font family:
         $this->font_sizes = [];
         $this->spacing = [];
 
-        error_log(json_encode($this->elements, JSON_PRETTY_PRINT));
         $this->loop_through_elements($this->elements);
 
-        $result = $this->get_sorted_result();
-
-        // // Get color labels from Claude
-        // $color_labels = $this->get_color_labels($result['colors']);
-
-        // // Merge labels with existing color data
-        // if ($color_labels) {
-        //     foreach ($color_labels as $label_data) {
-        //         if (isset($result['colors'][$label_data['value']])) {
-        //             $result['colors'][$label_data['value']]['label'] = $label_data['label'];
-        //         }
-        //     }
-        // }
-
-        // // Get font size labels from Claude
-        // $font_size_labels = $this->get_font_size_labels($result['font_sizes']);
-
-        // // Merge labels with existing font size data
-        // if ($font_size_labels) {
-        //     foreach ($font_size_labels as $label_data) {
-        //         if (isset($result['font_sizes'][$label_data['value']])) {
-        //             $result['font_sizes'][$label_data['value']]['label'] = $label_data['label'];
-        //         }
-        //     }
-        // }
-
-        // // Get font family labels from Claude
-        // $font_family_labels = $this->get_font_family_labels($result['font_families']);
-
-        // // Merge labels with existing font family data
-        // if ($font_family_labels) {
-        //     foreach ($font_family_labels as $label_data) {
-        //         if (isset($result['font_families'][$label_data['value']])) {
-        //             $result['font_families'][$label_data['value']]['label'] = $label_data['label'];
-        //         }
-        //     }
-        // }
-      
         
+
+        // Get color labels from Claude
+        $color_labels = $this->get_color_labels($this->colors);
+
+        // Merge labels with existing color data
+        if ($color_labels) {
+            foreach ($color_labels as $label_data) {
+                if (isset($this->colors[$label_data['value']])) {
+                    $this->colors[$label_data['value']]['label'] = $label_data['label'];
+                }
+            }
+        }
+
+        // Get font size labels from Claude
+        $font_size_labels = $this->get_font_size_labels($this->font_sizes);
+
+        // Merge labels with existing font size data
+        if ($font_size_labels) {
+            foreach ($font_size_labels as $label_data) {
+                if (isset($this->font_sizes[$label_data['value']])) {
+                    $this->font_sizes[$label_data['value']]['label'] = $label_data['label'];
+                }
+            }
+        }
+
+        // Get font family labels from Claude
+        $font_family_labels = $this->get_font_family_labels($this->font_families);
+
+        // Merge labels with existing font family data
+        if ($font_family_labels) {
+            foreach ($font_family_labels as $label_data) {
+                if (isset($this->font_families[$label_data['value']])) {
+                    $this->font_families[$label_data['value']]['label'] = $label_data['label'];
+                }
+            }
+        }
+      
+        $result = $this->get_sorted_result();
         $this->save_to_json_file($result);
         return $result;
     }
@@ -320,14 +301,17 @@ Return ONLY a JSON array with this exact structure for each font family:
             $sorted = [];
             foreach ($result[$type] as $key => $value) {
                 $value['value'] = $key;
-                $sorted[$key] = $value;
+                unset($value['properties']); // Remove properties as they're not needed in final result
+                unset($value['global_title']); // Remove properties as they're not needed in final result
+                $sorted[] = $value;
             }
-            uasort($sorted, function($a, $b) { 
+            usort($sorted, function($a, $b) { 
                 return $b['totalOccurrences'] - $a['totalOccurrences']; 
             });
             $result[$type] = $sorted;
         }
 
+        
         return $result;
     }
     
@@ -339,11 +323,8 @@ Return ONLY a JSON array with this exact structure for each font family:
         $json_data = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         
         if (file_put_contents($file_path, $json_data)) {
-            // error_log("Design System data saved to: $file_path");
-            echo "\n<!-- File saved to: $file_path -->";
             return $file_path;
         } else {
-            error_log("Failed to save design system data to file: $file_path");
             return false;
         }
     }
@@ -412,11 +393,6 @@ Return ONLY a JSON array with this exact structure for each font family:
 
     public function handle_font_family($font_family, $property, $element, $global_title = null) {
         $this->record_entity($this->font_families, $font_family, $property, $element, $global_title);
-        
-            // error_log('Font family: ' . json_encode([$font_family, $property, $element['id']], JSON_PRETTY_PRINT));
-            // error_log('Font family res: ' . json_encode($this->font_families, JSON_PRETTY_PRINT));
-
-
     }
 
     public function handle_font_size($font_size, $property, $element, $global_title = null) {
@@ -454,6 +430,7 @@ Return ONLY a JSON array with this exact structure for each font family:
             $array[$entity] = [
                 'totalOccurrences' => 0,
                 'properties' => [],
+                'elements' => [],
             ];
             if ($global_title) {
                 $array[$entity]['global_title'] = $global_title;
@@ -477,6 +454,13 @@ Return ONLY a JSON array with this exact structure for each font family:
             ? $array[$entity]['properties'][$property]['elements'][$element_type] 
             : 0;
         $array[$entity]['properties'][$property]['elements'][$element_type] = $current_count + 1;
+
+
+        // add element count to entity
+        if (!isset($array[$entity]['elements'][$element_type])) {
+            $array[$entity]['elements'][$element_type] = 0;
+        }
+        $array[$entity]['elements'][$element_type]++;
     }
 }
 
