@@ -298,7 +298,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 				[
 					'props' => [ 'color' => 'red' ],
 					'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
-					'custom_css' => 'background: yellow;',
+					'custom_css' => [ 'raw' => 'background: yellow;' ],
 				],
 			],
 		];
@@ -311,7 +311,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayHasKey( 'custom_css', $parsed['variants'][0] );
-		$this->assertEquals( 'background: yellow;', $parsed['variants'][0]['custom_css'] );
+		$this->assertEquals( 'background: yellow;', $parsed['variants'][0]['custom_css']['raw'] );
 	}
 
 	public function test_parse_style_with_custom_css_multiple_rules() {
@@ -324,7 +324,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 				[
 					'props' => [ 'color' => 'red' ],
 					'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
-					'custom_css' => 'background: yellow; color: red;',
+					'custom_css' => [ 'raw' => 'background: yellow; color: red;' ],
 				],
 			],
 		];
@@ -337,7 +337,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertArrayHasKey( 'custom_css', $parsed['variants'][0] );
-		$this->assertStringContainsString( 'background: yellow;', $parsed['variants'][0]['custom_css'] );
-		$this->assertStringContainsString( 'color: red;', $parsed['variants'][0]['custom_css'] );
+		$this->assertStringContainsString( 'background: yellow;', $parsed['variants'][0]['custom_css']['raw'] );
+		$this->assertStringContainsString( 'color: red;', $parsed['variants'][0]['custom_css']['raw'] );
 	}
 }
