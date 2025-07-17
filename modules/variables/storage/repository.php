@@ -86,9 +86,25 @@ class Repository {
 
 	public function push_with_force( array $variables ) {
 		$db_record = $this->load();
-		$db_record['data'] = $variables;
 
-		$watermark = $this->save( $db_record );
+		$list_of_variables = [];
+		foreach ( $variables as $id => $variable ) {
+			$payload = $this->extract_from( $variable, [
+				'type',
+				'label',
+				'value',
+			] );
+
+			if ( empty( $payload['label'] ) ) {
+				$payload['label'] = $id;
+			}
+
+			$list_of_variables[ $id ] = $payload;
+		}
+
+		$db_record['data'] = $list_of_variables;
+
+		$this->save( $db_record );
 
 		return $db_record;
 	}
