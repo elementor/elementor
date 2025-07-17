@@ -6,6 +6,7 @@ import { List, Stack, styled, Typography, type TypographyProps } from '@elemento
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
+import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
 import { ClassItem } from './class-item';
@@ -23,6 +24,9 @@ type GlobalClassesListProps = {
 export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalClassesListProps ) => {
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
+	const { empty = [], onThisPage = [], unused = [] } = useFilters();
+
+	const list = [ empty, onThisPage, unused ].flat();
 
 	const [ classesOrder, reorderClasses ] = useReorder();
 
@@ -42,6 +46,10 @@ export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalCl
 			  )
 			: cssClasses;
 	}, [ searchValue, cssClasses, lowercaseLabels ] );
+
+	const filteredByCategory = useMemo( () => {
+		return list.length ? filteredClasses.filter( ( cssClass ) => list.includes( cssClass.id ) ) : filteredClasses;
+	}, [ filteredClasses, list ] );
 
 	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
@@ -72,7 +80,7 @@ export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalCl
 			) : (
 				<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
 					<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-						{ filteredClasses?.map( ( { id, label } ) => {
+						{ filteredByCategory?.map( ( { id, label } ) => {
 							return (
 								<SortableItem key={ id } id={ id }>
 									{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (

@@ -36,7 +36,7 @@ export const CssClassUsageTrigger = ( {
 		return null;
 	}
 
-	const WrapperComponent = total !== 0 ? TooltipWrapper : InfoAlertMessage;
+	const WrapperComponent = +total !== 0 ? TooltipWrapper : InfoAlertMessage;
 
 	return (
 		<>
@@ -100,7 +100,7 @@ const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number
 	<Tooltip
 		placement={ 'top' }
 		title={ `${ __( 'Show {{number}} {{locations}}', 'elementor' )
-			.replace( '{{number}}', total.toString() )
+			.replace( '{{number}}', total?.toString() ?? '0' )
 			.replace(
 				'{{locations}}',
 				total === 1 ? __( 'location', 'elementor' ) : __( 'locations', 'elementor' )

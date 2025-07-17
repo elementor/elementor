@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -11,7 +10,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { changeEditMode, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
@@ -32,9 +31,9 @@ import { __ } from '@wordpress/i18n';
 import { useDirtyState } from '../../hooks/use-dirty-state';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
-import { CheckedFilters } from '../filter-and-sort/checked-filters';
+import { ActiveFilters } from '../filter-and-sort/components/checked-filters';
 import { FilterAndSortProvider } from '../filter-and-sort/context';
-import { CssClassFilter } from '../filter-and-sort/css-class-filter';
+import { CssClassFilter } from '../filter-and-sort/components/css-class-filter';
 import { ClassManagerIntroduction } from './class-manager-introduction';
 import { ClassManagerSearch } from './class-manager-search';
 import { hasDeletedItems, onDelete } from './delete-class';
@@ -42,8 +41,6 @@ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
 import { SaveChangesDialog, useDialog } from './save-changes-dialog';
-
-const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 const id = 'global-classes-manager';
 
@@ -118,45 +115,37 @@ export function ClassManagerPanel() {
 							height: '100%',
 						} }
 					>
-						{ isVersion311IsActive && (
-							<FilterAndSortProvider>
-								<Stack
-									direction="row"
-									justifyContent="spaceBetween"
-									gap={ 0.5 }
-									sx={ 6 }
-									px={ 2 }
-									pb={ 1 }
-								>
-									<Box sx={ { flexGrow: 1 } }>
-										<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
-									</Box>
-
-									<CssClassFilter />
-								</Stack>
-
-								<CheckedFilters />
+						<FilterAndSortProvider>
+							<>
+								<Box px={ 2 } pb={ 1 }>
+									<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
+										<Box sx={ { flexGrow: 1 } }>
+											<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
+										</Box>
+										<CssClassFilter />
+									</Stack>
+									<ActiveFilters />
+								</Box>
 								<Divider
 									sx={ {
 										borderWidth: '1px 0 0 0',
 									} }
 								/>
-							</FilterAndSortProvider>
-						) }
-
-						<Box
-							px={ 2 }
-							sx={ {
-								flexGrow: 1,
-								overflowY: 'auto',
-							} }
-						>
-							<GlobalClassesList
-								disabled={ isPublishing }
-								searchValue={ debouncedValue }
-								onSearch={ handleChange }
-							/>
-						</Box>
+								<Box
+									px={ 2 }
+									sx={ {
+										flexGrow: 1,
+										overflowY: 'auto',
+									} }
+								>
+									<GlobalClassesList
+										disabled={ isPublishing }
+										searchValue={ debouncedValue }
+										onSearch={ handleChange }
+									/>
+								</Box>
+							</>
+						</FilterAndSortProvider>
 					</PanelBody>
 
 					<PanelFooter>
