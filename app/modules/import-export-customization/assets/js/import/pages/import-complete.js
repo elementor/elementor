@@ -96,52 +96,57 @@ export default function ImportComplete() {
 						{ __( 'You\'ve imported and applied the following to your site:', 'elementor' ) }
 					</Typography>
 				</Stack>
-				<Card sx={ { borderRadius: 2, boxShadow: 0, border: '1px solid', borderColor: 'elevation.outlined' } }>
-					<CardContent >
+				<Stack
+					spacing={ 1 }
+					sx={ {
+						borderRadius: 2,
+						boxShadow: 0,
+						border: '1px solid',
+						borderColor: 'elevation.outlined',
+						p: 2,
+					} }
+				>
+					<Box>
+						<Typography variant="subtitle1" color="text.primary" sx={ { fontWeight: 500 } }>
+							{ __( 'This website templates includes:', 'elementor' ) }
+						</Typography>
+					</Box>
+					<Stack spacing={ 2 } sx={ { pt: 1 } } >
 						<Box>
-							<Box sx={ { py: 2 } }>
-								<Typography variant="subtitle1" color="text.primary" sx={ { fontWeight: 500 } }>
-									{ __( 'This website templates includes:', 'elementor' ) }
+							<Stack direction="row" alignItems="center" spacing={ 1 }>
+								<Typography variant="body2" color="text.primary" >
+									{ __( 'Site settings', 'elementor' ) }
 								</Typography>
-							</Box>
-							<Stack spacing={ 2 }>
-								<Box>
-									<Stack direction="row" alignItems="center" spacing={ 1 }>
-										<Typography variant="body2" color="text.primary" >
-											{ __( 'Site settings', 'elementor' ) }
-										</Typography>
-										<ExternalLinkIcon />
-									</Stack>
-									<Typography variant="caption" color="text.secondary">
-										{ __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ) }
-									</Typography>
-								</Box>
-								<Box>
-									<Stack direction="row" alignItems="center" spacing={ 1 }>
-										<Typography variant="body2" color="text.primary" >
-											{ __( 'Content', 'elementor' ) }
-										</Typography>
-										<ExternalLinkIcon />
-									</Stack>
-									<Typography variant="caption" color="text.secondary" >
-										{ __( '5 Posts | 12 Pages | 39 Products | 15 Navigation Menu Items', 'elementor' ) }
-									</Typography>
-								</Box>
-								<Box>
-									<Stack direction="row" alignItems="center" spacing={ 1 }>
-										<Typography variant="body2" color="text.primary">
-											{ __( 'Plugins', 'elementor' ) }
-										</Typography>
-										<ExternalLinkIcon />
-									</Stack>
-									<Typography variant="caption" color="text.secondary">
-										{ __( 'WooCommerce | Variation Swatches for WooCommerce | Ally - Web Accessibility & Usability | Advanced Custom Fields 4o', 'elementor' ) }
-									</Typography>
-								</Box>
+								<ExternalLinkIcon />
 							</Stack>
+							<Typography variant="caption" color="text.secondary">
+								{ __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ) }
+							</Typography>
 						</Box>
-					</CardContent>
-				</Card>
+						<Box>
+							<Stack direction="row" alignItems="center" spacing={ 1 }>
+								<Typography variant="body2" color="text.primary" >
+									{ __( 'Content', 'elementor' ) }
+								</Typography>
+								<ExternalLinkIcon />
+							</Stack>
+							<Typography variant="caption" color="text.secondary" >
+								{ __( '5 Posts | 12 Pages | 39 Products | 15 Navigation Menu Items', 'elementor' ) }
+							</Typography>
+						</Box>
+						<Box>
+							<Stack direction="row" alignItems="center" spacing={ 1 }>
+								<Typography variant="body2" color="text.primary">
+									{ __( 'Plugins', 'elementor' ) }
+								</Typography>
+								<ExternalLinkIcon />
+							</Stack>
+							<Typography variant="caption" color="text.secondary">
+								{ __( 'WooCommerce | Variation Swatches for WooCommerce | Ally - Web Accessibility & Usability | Advanced Custom Fields 4o', 'elementor' ) }
+							</Typography>
+						</Box>
+					</Stack>
+				</Stack>
 				<Box mt={ 2 }>
 					<Stack direction="row" justifyContent="center" alignItems="center" spacing={ 3 }>
 						<Typography variant="body2" color="text.secondary">

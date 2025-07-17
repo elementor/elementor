@@ -17,12 +17,13 @@ async function request( {
 		body: JSON.stringify( data ),
 	} );
 
+	const result = await response.json();
 	if ( ! response.ok ) {
 		const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
 		throw new Error( errorMessage );
 	}
 
-	return response.json();
+	return result;
 }
 
 export const IMPORT_PROCESSING_STATUS = {
@@ -56,9 +57,10 @@ export function useImportKit() {
 					path: 'import-runner',
 				} );
 
+
 				setRunnersState( ( prevState ) => ( {
 					...prevState,
-					[ runner ]: result.data.imported_data[ runner ],
+					[ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ],
 				} ) );
 			} catch ( e ) {
 				stopIterations = e;

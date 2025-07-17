@@ -40,6 +40,7 @@ export default function ImportKit() {
 	useEffect( () => {
 		if ( id || fileUrl ) {
 			dispatch( { type: 'SET_KIT_UPLOAD_PARAMS', payload: { id, source: referrer, fileUrl, nonce } } );
+			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		}
 	}, [ id, referrer, fileUrl, nonce, dispatch ] );
 

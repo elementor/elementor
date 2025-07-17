@@ -33,6 +33,7 @@ export function useUploadKit() {
 				method: 'POST',
 				headers: {
 					'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+					...( 'string' === typeof uploadData ? { 'Content-Type': 'application/json' } : null ),
 				},
 				body: uploadData,
 			} );
@@ -55,8 +56,10 @@ export function useUploadKit() {
 	useEffect( () => {
 		if ( isUploading && ( data.file || data.kitUploadParams ) ) {
 			uploadKit();
+		} else {
+			setError( null );
 		}
-	}, [ isUploading, data.file ] );
+	}, [ isUploading, data.file, data.kitUploadParams ] );
 
 	return {
 		uploading,
