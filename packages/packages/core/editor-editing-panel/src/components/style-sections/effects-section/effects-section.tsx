@@ -16,7 +16,6 @@ const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 
 export const EffectsSection = () => {
 	const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
-	console.log( 'isVersion331Active', isVersion331Active );
 	return (
 		<SectionContent>
 			{ isVersion331Active && (
