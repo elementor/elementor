@@ -1,30 +1,29 @@
-import { type FontCategory } from '@elementor/editor-controls';
+import { type Category } from '../../components/item-selector';
+import { useFilteredItemsList } from '../use-filtered-items-list';
 
-import { useFilteredFontFamilies } from '../use-filtered-font-families';
-
-describe( 'useFilteredFontFamilies', () => {
-	it( 'should return an array of all font families by the search field', () => {
+describe( 'useFilteredItemsList', () => {
+	it( 'should return an array of filtered items by the search field', () => {
 		// Arrange.
-		const fonts: FontCategory[] = [
+		const categories: Category[] = [
 			{
 				label: 'System',
-				fonts: [ 'Font1', 'Font2' ],
+				items: [ 'Font1', 'Font2' ],
 			},
 			{
 				label: 'Google',
-				fonts: [ 'Font3', 'Font4' ],
+				items: [ 'Font3', 'Font4' ],
 			},
 		];
 
 		const searchValue = '1';
 
 		// Act.
-		const result = useFilteredFontFamilies( fonts, searchValue );
+		const result = useFilteredItemsList( categories, searchValue );
 
 		// Assert.
 		const expected = [
 			{ type: 'category', value: 'System' },
-			{ type: 'font', value: 'Font1' },
+			{ type: 'item', value: 'Font1' },
 		];
 		expect( result ).toStrictEqual( expected );
 	} );
