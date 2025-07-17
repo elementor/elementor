@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Box, Popover } from '@elementor/ui';
-import IntrinsicAttributes = React.JSX.IntrinsicAttributes;
+import { Box, Popover, type PopoverProps } from '@elementor/ui';
 
 type AddItemPopoverProps = {
 	anchorRef: HTMLElement | null;
 	setAnchorEl: ( el: HTMLElement | null ) => void;
-	popoverProps: IntrinsicAttributes & AddItemPopoverProps;
+	popoverProps: Partial< PopoverProps >;
 };
 
 export const AddItemPopover = ( { anchorRef, setAnchorEl, popoverProps }: AddItemPopoverProps ) => {
@@ -19,8 +18,8 @@ export const AddItemPopover = ( { anchorRef, setAnchorEl, popoverProps }: AddIte
 				},
 			} }
 			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-			{ ...popoverProps }
 			anchorEl={ anchorRef }
+			{ ...popoverProps }
 		>
 			<Box>blablabla</Box>
 		</Popover>

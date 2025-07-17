@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { bindPopover, usePopupState } from '@elementor/ui';
+import { bindPopover, type PopoverProps,usePopupState } from '@elementor/ui';
 
 export const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
 	const [ ref, setRef ] = useState< HTMLElement | null >( null );
 
 	const popoverState = usePopupState( { variant: 'popover' } );
 
-	const popoverProps = bindPopover( popoverState );
+	const popoverProps: Partial< PopoverProps > = bindPopover( popoverState );
 
 	useEffect( () => {
 		if ( openOnMount && ref ) {
