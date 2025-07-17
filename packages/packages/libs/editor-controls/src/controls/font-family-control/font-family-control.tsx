@@ -73,9 +73,8 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 					sectionWidth={ sectionWidth }
 					title={ __( 'Font Family', 'elementor' ) }
 					itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
-					enqueueFont={ enqueueFont }
-					smallIcon={ <TextIcon fontSize="tiny" /> }
-					largeIcon={ <TextIcon fontSize="large" /> }
+					onDebounce={ enqueueFont }
+					icon={ TextIcon as React.ElementType< { fontSize: string } > }
 				/>
 			</Popover>
 		</>

@@ -19,10 +19,9 @@ type ItemSelectorProps = {
 	onClose: () => void;
 	sectionWidth: number;
 	title: string;
-	smallIcon?: React.ReactNode;
-	largeIcon?: React.ReactNode;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
-	enqueueFont?: ( fontName: string ) => void;
+	onDebounce?: ( fontName: string ) => void;
+	icon: React.ElementType< { fontSize: string } >;
 };
 
 export const ItemSelector = ( {
@@ -32,14 +31,15 @@ export const ItemSelector = ( {
 	onClose,
 	sectionWidth,
 	title,
-	smallIcon,
-	largeIcon,
 	itemStyle = () => ( {} ),
-	enqueueFont = () => {},
+	onDebounce = () => {},
+	icon,
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const filteredItemsList = useFilteredItemsList( itemsList, searchValue );
+
+	const IconComponent = icon;
 
 	const handleSearch = ( value: string ) => {
 		setSearchValue( value );
@@ -52,7 +52,7 @@ export const ItemSelector = ( {
 
 	return (
 		<PopoverBody width={ sectionWidth }>
-			<PopoverHeader title={ title } onClose={ handleClose } icon={ smallIcon } />
+			<PopoverHeader title={ title } onClose={ handleClose } icon={ <IconComponent fontSize="tiny" /> } />
 			<PopoverSearch
 				value={ searchValue }
 				onSearch={ handleSearch }
@@ -68,7 +68,7 @@ export const ItemSelector = ( {
 					handleClose={ handleClose }
 					selectedItem={ selectedItem }
 					itemStyle={ itemStyle }
-					enqueueFont={ enqueueFont }
+					onDebounce={ onDebounce }
 				/>
 			) : (
 				<Stack
@@ -79,7 +79,7 @@ export const ItemSelector = ( {
 					gap={ 1.5 }
 					overflow="hidden"
 				>
-					{ largeIcon }
+					<IconComponent fontSize="large" />
 					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
 						<Typography align="center" variant="subtitle2" color="text.secondary">
 							{ __( 'Sorry, nothing matched', 'elementor' ) }
@@ -124,7 +124,7 @@ type ItemListProps = {
 	handleClose: () => void;
 	selectedItem: string | null;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
-	enqueueFont?: ( fontName: string ) => void;
+	onDebounce?: ( fontName: string ) => void;
 };
 
 const ItemList = ( {
@@ -133,7 +133,7 @@ const ItemList = ( {
 	handleClose,
 	selectedItem,
 	itemStyle = () => ( {} ),
-	enqueueFont = () => {},
+	onDebounce = () => {},
 }: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
@@ -141,7 +141,7 @@ const ItemList = ( {
 		getVirtualIndexes().forEach( ( index ) => {
 			const item = itemListItems[ index ];
 			if ( item && item.type === 'item' ) {
-				enqueueFont( item.value );
+				onDebounce( item.value );
 			}
 		} );
 	}, 100 );
