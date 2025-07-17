@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
-import { usePopupState } from '@elementor/ui';
+import { bindPopover, Popover, TextField, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import { SizeInput } from '../components/size-control/size-input';
