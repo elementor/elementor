@@ -1,4 +1,4 @@
-import { Box, Typography, Card, CardContent, Button, Link, Stack } from '@elementor/ui';
+import { Box, Typography, Button, Link, Stack } from '@elementor/ui';
 import { useNavigate } from '@reach/router';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
@@ -18,7 +18,7 @@ const Illustration = () => (
 	>
 		<img
 			src={ elementorAppConfig.assets_url + 'images/kit-is-live.svg' }
-			alt="Kit is live illustration"
+			alt={ __( 'Kit is live illustration', 'elementor' ) }
 		/>
 	</Box>
 );
