@@ -20,10 +20,6 @@ export const EffectsSection = () => {
 		<SectionContent>
 			{ isVersion331Active && (
 				<>
-					<PanelDivider />
-					<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-						<TransformRepeaterControl />
-					</StylesField>
 					<OpacityControlField />
 					<PanelDivider />
 				</>
@@ -33,6 +29,10 @@ export const EffectsSection = () => {
 			</StylesField>
 			{ isVersion331Active && (
 				<>
+					<PanelDivider />
+					<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
+						<TransformRepeaterControl />
+					</StylesField>
 					<PanelDivider />
 					<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
 						<FilterRepeaterControl />
