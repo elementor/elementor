@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BoxShadowRepeaterControl, FilterRepeaterControl } from '@elementor/editor-controls';
+import { BoxShadowRepeaterControl, FilterRepeaterControl, TransformRepeaterControl } from '@elementor/editor-controls';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
@@ -11,15 +11,20 @@ import { OpacityControlField } from './opacity-control-field';
 
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
 const FILTER_LABEL = __( 'Filters', 'elementor' );
+const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 
 export const EffectsSection = () => {
 	const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
-
+	console.log( 'isVersion331Active', isVersion331Active );
 	return (
 		<SectionContent>
 			{ isVersion331Active && (
 				<>
+					<PanelDivider />
+					<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
+						<TransformRepeaterControl />
+					</StylesField>
 					<OpacityControlField />
 					<PanelDivider />
 				</>
