@@ -196,7 +196,28 @@ trait Has_Atomic_Base {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
 
+		// Get settings overrides from component instance
+		$all_overrides = apply_filters( 'elementor/atomic-widgets/get_overrides', [] );
+		$overrides = $all_overrides[$this->get_id()] ?? null;
+
+		// Apply overrides if they exist
+		if ( $overrides ) {
+			$props = $this->apply_overrides_to_props( $props, $overrides );
+		}
+
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	private function apply_overrides_to_props( array $props, array $overrides ): array {
+		foreach ( $overrides as $prop_name => $override_data ) {
+			if ( ! isset( $override_data) ) {
+				continue;
+			}
+
+			$props[ $prop_name ] = $override_data;
+		}
+
+		return $props;
 	}
 
 	private function parse_editor_settings( array $data ): array {

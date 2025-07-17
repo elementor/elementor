@@ -5,6 +5,7 @@ import { createDomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
 import { canBeTemplated, createTemplatedElementType } from './create-templated-element-type';
 import type { LegacyWindow } from './types';
+import { Component, createComponentType } from './create-component-type';
 
 export function initLegacyViews() {
 	__privateListenTo( v1ReadyEvent(), () => {
@@ -18,9 +19,15 @@ export function initLegacyViews() {
 				return;
 			}
 
-			const ElementType = canBeTemplated( element )
-				? createTemplatedElementType( { type, renderer, element } )
-				: createElementType( type );
+			let ElementType;
+
+			if ( type === 'e-component' ) {
+				ElementType = createComponentType( { type, renderer, element: element as Component, config } );
+			} else {
+				ElementType = canBeTemplated( element )
+					? createTemplatedElementType( { type, renderer, element } )
+					: createElementType( type );
+			}
 
 			legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
 		} );
