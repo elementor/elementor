@@ -22,21 +22,44 @@ inputs:
     description: 'Allow creating revert PRs for commits that modify workflow files'
     default: 'false'
 
+outputs:
+  pr_number:
+    description: 'The number of the created revert PR'
+    value: ${{ steps.create_revert_pr.outputs.pr_number }}
+  pr_url:
+    description: 'The URL of the created revert PR'
+    value: ${{ steps.create_revert_pr.outputs.pr_url }}
+  status:
+    description: 'Status of the revert PR creation (created, exists, skipped, error)'
+    value: ${{ steps.create_revert_pr.outputs.status }}
+
 runs:
   using: "composite"
   steps:
     - name: Create revert PR
+      id: create_revert_pr
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
       run: |
         set -e
         
+        handle_error() {
+          echo "::error::Failed to create revert PR: $1"
+          echo "status=error" >> $GITHUB_OUTPUT
+          echo "pr_number=" >> $GITHUB_OUTPUT
+          echo "pr_url=" >> $GITHUB_OUTPUT
+          exit 1
+        }
+        
+        trap 'handle_error "Unexpected error occurred"' ERR
+        
         # Get commit information
         COMMIT_SHA="${{ inputs.COMMIT_SHA }}"
         PARENT_SHA=$(git rev-parse "${COMMIT_SHA}^")
         COMMIT_MESSAGE=$(git log --format=%B -n 1 "${COMMIT_SHA}")
         COMMIT_AUTHOR=$(git log --format='%an' -n 1 "${COMMIT_SHA}")
+        COMMIT_AUTHOR_EMAIL=$(git log --format='%ae' -n 1 "${COMMIT_SHA}")
         BRANCH_NAME="${{ inputs.BRANCH_NAME }}"
         WORKFLOW_NAME="${{ inputs.WORKFLOW_NAME }}"
         
@@ -49,6 +72,9 @@ runs:
             echo "::warning::Workflow files changed: $WORKFLOW_CHANGES"
             echo "::warning::Please create revert PR manually or grant 'workflows' permission to GitHub Actions"
             echo "::warning::Or set ALLOW_WORKFLOW_CHANGES to 'true' to bypass this check"
+            echo "status=skipped" >> $GITHUB_OUTPUT
+            echo "pr_number=" >> $GITHUB_OUTPUT
+            echo "pr_url=" >> $GITHUB_OUTPUT
             exit 0
           else
             echo "::notice::Commit contains workflow changes: $WORKFLOW_CHANGES"
@@ -64,15 +90,22 @@ runs:
         
         if [ -n "$EXISTING_PR" ]; then
           echo "Revert PR already exists: #$EXISTING_PR"
+          echo "status=exists" >> $GITHUB_OUTPUT
+          echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
+          echo "pr_url=https://github.com/${{ github.repository }}/pull/$EXISTING_PR" >> $GITHUB_OUTPUT
           exit 0
         fi
         
-        # Configure git
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
+        # Configure git to use original commit author (helps with CLA compliance)
+        echo "Using original commit author for revert: ${COMMIT_AUTHOR} <${COMMIT_AUTHOR_EMAIL}>"
+        git config user.name "${COMMIT_AUTHOR}"
+        git config user.email "${COMMIT_AUTHOR_EMAIL}"
         
-        # Create and checkout revert branch from parent commit
-        git checkout -b "${REVERT_BRANCH}" "${PARENT_SHA}"
+        # Create and checkout revert branch from the current branch
+        git checkout -b "${REVERT_BRANCH}" "${BRANCH_NAME}"
+        
+        # Create the actual revert commit
+        git revert --no-edit "${COMMIT_SHA}"
         
         # Push the revert branch
         git push origin "${REVERT_BRANCH}"
@@ -81,7 +114,7 @@ runs:
         PR_TITLE="Revert \"$(echo "${COMMIT_MESSAGE}" | head -n1)\""
         PR_BODY="This PR automatically reverts commit ${COMMIT_SHA} due to ${WORKFLOW_NAME} test failures.
 
-        **Original commit:** ${COMMIT_SHA}
+        **Reverted commit:** ${COMMIT_SHA}
         **Original author:** ${COMMIT_AUTHOR}
         **Branch:** ${BRANCH_NAME}
         **Failed workflow:** ${{ inputs.WORKFLOW_RUN_URL }}
@@ -91,7 +124,7 @@ runs:
         ${COMMIT_MESSAGE}
         \`\`\`
 
-        This revert was created automatically because the ${WORKFLOW_NAME} tests failed after the original commit was pushed to ${BRANCH_NAME}.
+        This revert commit was created automatically using \`git revert\` because the ${WORKFLOW_NAME} tests failed after the original commit was pushed to ${BRANCH_NAME}.
         
         The 'run-tests' label has been added to trigger tests on this revert PR."
         
@@ -111,4 +144,9 @@ runs:
         gh pr edit "${PR_NUMBER}" --add-label "run-tests"
         
         echo "Added 'run-tests' label to PR #${PR_NUMBER}"
-        echo "::notice::Created revert PR #${PR_NUMBER} for commit ${COMMIT_SHA}" 
+        echo "::notice::Created revert PR #${PR_NUMBER} for commit ${COMMIT_SHA}"
+        
+        # Set outputs
+        echo "status=created" >> $GITHUB_OUTPUT
+        echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+        echo "pr_url=${PR_URL}" >> $GITHUB_OUTPUT 
