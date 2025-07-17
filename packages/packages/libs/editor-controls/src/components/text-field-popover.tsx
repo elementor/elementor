@@ -14,10 +14,8 @@ export const TextFieldPopover = ( props: Props ) => {
 	const { popupState, restoreValue, anchorRef, value, onChange } = props;
 	const inputRef = useRef< HTMLInputElement >( null );
 
-	// Focus the input when the popover opens
 	useEffect( () => {
 		if ( popupState.isOpen ) {
-			// Use requestAnimationFrame to ensure the popover is fully rendered
 			requestAnimationFrame( () => {
 				if ( inputRef.current ) {
 					inputRef.current.focus();
