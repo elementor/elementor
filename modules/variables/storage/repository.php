@@ -95,7 +95,7 @@ class Repository {
 				'value',
 			] );
 
-			if ( empty( $payload['label'] ) ) {
+			if ( empty( trim( $payload['label'] ) ) ) {
 				$payload['label'] = $id;
 			}
 
