@@ -64,10 +64,12 @@ describe( 'pasteStyles', () => {
 					{
 						meta: { breakpoint: null, state: null },
 						props: { a: 0, b: 1, c: 2 },
+						custom_css: null,
 					},
 					{
 						meta: { breakpoint: null, state: 'hover' },
 						props: { a: 1, b: 2 },
+						custom_css: null,
 					},
 				],
 			} ),
@@ -84,10 +86,12 @@ describe( 'pasteStyles', () => {
 							{
 								meta: { breakpoint: null, state: null },
 								props: { a: 1, c: 2 },
+								custom_css: null,
 							},
 							{
 								meta: { breakpoint: 'tablet', state: 'hover' },
 								props: { a: 3, b: 4 },
+								custom_css: null,
 							},
 						],
 					} ),
@@ -106,6 +110,7 @@ describe( 'pasteStyles', () => {
 				breakpoint: null,
 				state: null,
 			},
+			custom_css: null,
 			props: {
 				a: 1,
 				c: 2,
@@ -119,6 +124,7 @@ describe( 'pasteStyles', () => {
 				breakpoint: 'tablet',
 				state: 'hover',
 			},
+			custom_css: null,
 			props: {
 				a: 3,
 				b: 4,
@@ -138,6 +144,7 @@ describe( 'pasteStyles', () => {
 				breakpoint: null,
 				state: null,
 			},
+			custom_css: null,
 			props: {
 				a: 0,
 				b: 1,
@@ -147,6 +154,7 @@ describe( 'pasteStyles', () => {
 				{
 					meta: { breakpoint: null, state: 'hover' },
 					props: { a: 1, b: 2 },
+					custom_css: null,
 				},
 			],
 		} );
@@ -178,10 +186,12 @@ describe( 'pasteStyles', () => {
 							{
 								meta: { breakpoint: null, state: null },
 								props: { a: 0, b: 1 },
+								custom_css: null,
 							},
 							{
 								meta: { breakpoint: null, state: 'hover' },
 								props: { a: 1, b: 2 },
+								custom_css: null,
 							},
 						],
 					} ),
@@ -205,12 +215,14 @@ describe( 'pasteStyles', () => {
 				a: 0,
 				b: 1,
 			},
+			custom_css: null,
 			additionalVariants: [
 				{
 					meta: {
 						breakpoint: null,
 						state: 'hover',
 					},
+					custom_css: null,
 					props: {
 						a: 1,
 						b: 2,
@@ -250,10 +262,12 @@ describe( 'pasteStyles', () => {
 							{
 								meta: { breakpoint: null, state: null },
 								props: { a: 1, c: 2 },
+								custom_css: null,
 							},
 							{
 								meta: { breakpoint: 'tablet', state: 'hover' },
 								props: { a: 3, b: 4 },
+								custom_css: null,
 							},
 						],
 					} ),
@@ -286,10 +300,12 @@ describe( 'pasteStyles', () => {
 					{
 						meta: { breakpoint: null, state: null },
 						props: { a: 0, b: 1 },
+						custom_css: null,
 					},
 					{
 						meta: { breakpoint: null, state: 'hover' },
 						props: { a: 1, b: 2 },
+						custom_css: null,
 					},
 				],
 			} ),
@@ -306,6 +322,7 @@ describe( 'pasteStyles', () => {
 							{
 								meta: { breakpoint: null, state: null },
 								props: { a: 1, c: 2 },
+								custom_css: null,
 							},
 						],
 					} ),
@@ -315,6 +332,7 @@ describe( 'pasteStyles', () => {
 							{
 								meta: { breakpoint: null, state: null },
 								props: { a: 3, c: 4 },
+								custom_css: null,
 							},
 						],
 					} ),
@@ -330,6 +348,7 @@ describe( 'pasteStyles', () => {
 							{
 								meta: { breakpoint: null, state: null },
 								props: { a: 4, c: 5 },
+								custom_css: null,
 							},
 						],
 					} ),
@@ -352,6 +371,7 @@ describe( 'pasteStyles', () => {
 				a: 1,
 				c: 2,
 			},
+			custom_css: null,
 		} );
 
 		expect( updateElementStyle ).toHaveBeenCalledTimes( 1 );
@@ -418,10 +438,12 @@ describe( 'pasteStyles', () => {
 								{
 									meta: { breakpoint: null, state: null },
 									props: { a: 0, b: 1 },
+									custom_css: null,
 								},
 								{
 									meta: { breakpoint: null, state: 'hover' },
 									props: { a: 1, b: 2 },
+									custom_css: null,
 								},
 							],
 						} ),
@@ -442,10 +464,12 @@ describe( 'pasteStyles', () => {
 							{
 								meta: { breakpoint: null, state: null },
 								props: { a: 0, b: 1 },
+								custom_css: null,
 							},
 							{
 								meta: { breakpoint: null, state: 'hover' },
 								props: { a: 1, b: 2 },
+								custom_css: null,
 							},
 						],
 					} ),
@@ -471,6 +495,7 @@ describe( 'pasteStyles', () => {
 				a: 0,
 				b: 1,
 			},
+			custom_css: null,
 			additionalVariants: [
 				{
 					meta: {
@@ -481,6 +506,7 @@ describe( 'pasteStyles', () => {
 						a: 1,
 						b: 2,
 					},
+					custom_css: null,
 				},
 			],
 		} );
@@ -496,6 +522,7 @@ describe( 'pasteStyles', () => {
 				a: 0,
 				b: 1,
 			},
+			custom_css: null,
 		} );
 
 		expect( updateElementStyle ).toHaveBeenCalledWith( {
@@ -509,6 +536,7 @@ describe( 'pasteStyles', () => {
 				a: 0,
 				b: 1,
 			},
+			custom_css: null,
 		} );
 
 		expect( createElementStyle ).toHaveBeenCalledTimes( 1 );
@@ -533,12 +561,14 @@ describe( 'pasteStyles', () => {
 				a: 0,
 				b: 1,
 			},
+			custom_css: null,
 			additionalVariants: [
 				{
 					meta: {
 						breakpoint: null,
 						state: 'hover',
 					},
+					custom_css: null,
 					props: {
 						a: 1,
 						b: 2,

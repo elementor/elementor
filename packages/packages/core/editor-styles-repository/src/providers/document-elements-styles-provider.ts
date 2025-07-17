@@ -62,6 +62,20 @@ export const documentElementsStylesProvider = createStylesProvider( {
 				props: args.props,
 			} );
 		},
+
+		updateCustomCss: ( args, meta = {} ) => {
+			if ( ! isValidElementsMeta( meta ) ) {
+				throw new InvalidElementsStyleProviderMetaError( { context: { meta } } );
+			}
+
+			updateElementStyle( {
+				elementId: meta.elementId,
+				styleId: args.id,
+				meta: args.meta,
+				custom_css: args.custom_css.raw ? args.custom_css : null,
+				props: {},
+			} );
+		},
 	},
 } );
 

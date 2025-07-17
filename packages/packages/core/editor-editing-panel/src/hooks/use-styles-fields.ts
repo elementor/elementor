@@ -14,7 +14,7 @@ import { StyleNotFoundUnderProviderError, StylesProviderCannotUpdatePropsError }
 import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { useStylesRerender } from './use-styles-rerender';
 
-const HISTORY_DEBOUNCE_WAIT = 800;
+export const HISTORY_DEBOUNCE_WAIT = 800;
 
 export function useStylesFields< T extends Props >( propNames: ( keyof T & string )[] ) {
 	const {
@@ -138,49 +138,9 @@ function useUndoableUpdateStyle( {
 				},
 			},
 			{
-				title: ( { provider, styleId } ) => {
-					if ( isVersion331Active ) {
-						let title: string;
-
-						const isLocal = isLocalStyle( provider, styleId );
-
-						if ( isLocal ) {
-							title = localStyleHistoryTitlesV331.title( { elementId } );
-						} else {
-							// If the provider was nullish, `isLocalStyle` would return true.
-							provider = provider as StylesProvider;
-
-							title = defaultHistoryTitlesV331.title( { provider } );
-						}
-
-						return title;
-					}
-					return historyTitlesV330.title( { elementId } );
-				},
-				subtitle: ( { provider, styleId, propDisplayName } ) => {
-					if ( isVersion331Active ) {
-						let subtitle: string;
-
-						const isLocal = isLocalStyle( provider, styleId );
-
-						if ( isLocal ) {
-							subtitle = localStyleHistoryTitlesV331.subtitle( { propDisplayName } );
-						} else {
-							// If the provider or styleId were nullish, `isLocalStyle` would return true.
-							provider = provider as StylesProvider;
-							styleId = styleId as StyleDefinition[ 'id' ];
-
-							subtitle = defaultHistoryTitlesV331.subtitle( {
-								provider,
-								styleId,
-								elementId,
-								propDisplayName,
-							} );
-						}
-						return subtitle;
-					}
-					return historyTitlesV330.subtitle;
-				},
+				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId, isVersion331Active } ),
+				subtitle: ( { provider, styleId, propDisplayName } ) =>
+					getSubtitle( { provider, styleId, elementId, isVersion331Active, propDisplayName } ),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
@@ -291,3 +251,57 @@ function capitalize( str: string ) {
 
 const isLocalStyle = ( provider: StylesProvider | null, styleId: StyleDefinition[ 'id' ] | null ) =>
 	! provider || ! styleId || isElementsStylesProvider( provider.getKey() );
+
+type GetTitle = {
+	provider: StylesProvider | null;
+	styleId: string | null;
+	isVersion331Active: boolean;
+	elementId: string;
+};
+
+type GetSubtitle = GetTitle & { propDisplayName: string };
+
+export const getTitle = ( { provider, styleId, isVersion331Active, elementId }: GetTitle ) => {
+	if ( isVersion331Active ) {
+		let title: string;
+
+		const isLocal = isLocalStyle( provider, styleId );
+
+		if ( isLocal ) {
+			title = localStyleHistoryTitlesV331.title( { elementId } );
+		} else {
+			// If the provider was nullish, `isLocalStyle` would return true.
+			provider = provider as StylesProvider;
+
+			title = defaultHistoryTitlesV331.title( { provider } );
+		}
+
+		return title;
+	}
+	return historyTitlesV330.title( { elementId } );
+};
+
+export const getSubtitle = ( { provider, styleId, propDisplayName, isVersion331Active, elementId }: GetSubtitle ) => {
+	if ( isVersion331Active ) {
+		let subtitle: string;
+
+		const isLocal = isLocalStyle( provider, styleId );
+
+		if ( isLocal ) {
+			subtitle = localStyleHistoryTitlesV331.subtitle( { propDisplayName } );
+		} else {
+			// If the provider or styleId were nullish, `isLocalStyle` would return true.
+			provider = provider as StylesProvider;
+			styleId = styleId as StyleDefinition[ 'id' ];
+
+			subtitle = defaultHistoryTitlesV331.subtitle( {
+				provider,
+				styleId,
+				elementId,
+				propDisplayName,
+			} );
+		}
+		return subtitle;
+	}
+	return historyTitlesV330.subtitle;
+};

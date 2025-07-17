@@ -46,10 +46,12 @@ describe( 'resetStyles', () => {
 					{
 						meta: { breakpoint: null, state: null },
 						props: { a: 0, b: 1 },
+						custom_css: null,
 					},
 					{
 						meta: { breakpoint: null, state: 'hover' },
 						props: { a: 1, b: 2 },
+						custom_css: null,
 					},
 				],
 			} ),
@@ -82,6 +84,7 @@ describe( 'resetStyles', () => {
 			elementId: 'test-container',
 			label: ELEMENTS_STYLES_RESERVED_LABEL,
 			classesProp: 'classes',
+			custom_css: null,
 			meta: {
 				breakpoint: null,
 				state: null,
@@ -96,6 +99,7 @@ describe( 'resetStyles', () => {
 						breakpoint: null,
 						state: 'hover',
 					},
+					custom_css: null,
 					props: {
 						a: 1,
 						b: 2,

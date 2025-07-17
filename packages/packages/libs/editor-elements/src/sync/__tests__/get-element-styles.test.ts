@@ -15,7 +15,13 @@ describe( 'getElementStyles', () => {
 			[ id ]: {
 				id,
 				label: '',
-				variants: [ { props: { padding: '10px' }, meta: { breakpoint: 'desktop', state: 'hover' } as const } ],
+				variants: [
+					{
+						props: { padding: '10px' },
+						meta: { breakpoint: 'desktop', state: 'hover' } as const,
+						custom_css: null,
+					},
+				],
 				type: 'class' as const,
 			},
 		};

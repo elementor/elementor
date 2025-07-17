@@ -172,12 +172,14 @@ describe( 'useStyleItems', () => {
 							props: {
 								padding: '10px',
 							},
+							custom_css: null,
 						},
 						{
 							meta: { breakpoint: 'mobile', state: 'hover' },
 							props: {
 								padding: '20px',
 							},
+							custom_css: null,
 						},
 					],
 				} ),

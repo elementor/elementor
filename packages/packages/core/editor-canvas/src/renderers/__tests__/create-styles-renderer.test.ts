@@ -15,18 +15,22 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '10px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: null, state: 'hover' },
 					props: { 'font-size': '20px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: 'tablet', state: null },
 					props: { 'font-size': '30px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: 'mobile', state: 'focus' },
 					props: { 'font-size': '40px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -40,6 +44,7 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '50px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -79,6 +84,7 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '24px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -102,5 +108,63 @@ describe( 'renderStyles', () => {
 				value: '.elementor-prefix .test{font-size:24px;}',
 			},
 		] );
+	} );
+} );
+
+describe( 'custom_css rendering', () => {
+	it( 'should not render custom_css if raw is empty', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [ { meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: '' } } ],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should not render custom_css if raw is whitespace', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [ { meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: '   \n\t' } } ],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should render custom_css if raw is valid CSS', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{ meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: 'body { color: red; }' } },
+			],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).toContain( 'body { color: red; }' );
 	} );
 } );

@@ -18,6 +18,7 @@ export type CreateElementStyleArgs = {
 	label: string;
 	meta: StyleDefinitionVariant[ 'meta' ];
 	props: StyleDefinitionVariant[ 'props' ];
+	custom_css?: StyleDefinitionVariant[ 'custom_css' ];
 	additionalVariants?: StyleDefinitionVariant[];
 };
 
@@ -28,6 +29,7 @@ export function createElementStyle( {
 	label,
 	meta,
 	props,
+	custom_css: customCss = null,
 	additionalVariants = [],
 }: CreateElementStyleArgs ): string {
 	let id = styleId;
@@ -35,7 +37,7 @@ export function createElementStyle( {
 	mutateElementStyles( elementId, ( styles ) => {
 		id ??= generateId( `e-${ elementId }-`, Object.keys( styles ) );
 
-		const variants = [ { meta, props }, ...additionalVariants ];
+		const variants = [ { meta, props, custom_css: customCss }, ...additionalVariants ];
 
 		styles[ id ] = {
 			id,

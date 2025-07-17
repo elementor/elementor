@@ -27,6 +27,7 @@ const desktopNormalProp1 = createMockStyleDefinitionWithVariants( {
 		{
 			meta: desktopNormal,
 			props: { prop1: '1' },
+			custom_css: null,
 		},
 	],
 } );
@@ -36,6 +37,7 @@ const tabletNormalProp2 = createMockStyleDefinitionWithVariants( {
 		{
 			meta: tabletNormal,
 			props: { prop2: '2' },
+			custom_css: null,
 		},
 	],
 } );
@@ -45,6 +47,7 @@ const mobileNormalProp3 = createMockStyleDefinitionWithVariants( {
 		{
 			meta: mobileNormal,
 			props: { prop3: '3' },
+			custom_css: null,
 		},
 	],
 } );
@@ -92,6 +95,7 @@ const desktopNormalProp1Override = createMockStyleDefinitionWithVariants( {
 		{
 			meta: desktopNormal,
 			props: { prop1: '4' },
+			custom_css: null,
 		},
 	],
 } );
@@ -118,10 +122,12 @@ const desktopNormalHoverProp1 = createMockStyleDefinitionWithVariants( {
 		{
 			meta: desktopNormal,
 			props: { prop1: '5' },
+			custom_css: null,
 		},
 		{
 			meta: desktopHover,
 			props: { prop1: '6' },
+			custom_css: null,
 		},
 	],
 } );
@@ -131,6 +137,7 @@ const mobileNormalProp1 = createMockStyleDefinitionWithVariants( {
 		{
 			meta: mobileNormal,
 			props: { prop1: '7' },
+			custom_css: null,
 		},
 	],
 } );
@@ -140,6 +147,7 @@ const desktopHoverProp1 = createMockStyleDefinitionWithVariants( {
 		{
 			meta: desktopHover,
 			props: { prop1: '8' },
+			custom_css: null,
 		},
 	],
 } );
@@ -202,6 +210,7 @@ const desktopNormalEmpty = createMockStyleDefinitionWithVariants( {
 		{
 			meta: desktopNormal,
 			props: { prop1: null, prop2: [ undefined, null, '', { a: null, b: undefined } ] },
+			custom_css: null,
 		},
 	],
 } );
@@ -211,6 +220,7 @@ const mobileNormalEmpty = createMockStyleDefinitionWithVariants( {
 		{
 			meta: mobileNormal,
 			props: { prop1: { a: null, b: undefined, c: '', d: [ { e: null } ] } },
+			custom_css: null,
 		},
 	],
 } );
