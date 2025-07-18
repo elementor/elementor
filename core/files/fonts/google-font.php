@@ -28,12 +28,12 @@ class Google_Font {
 
 	private static array $folders = [];
 
-	public static function enqueue( string $font_name, string $font_type = self::TYPE_DEFAULT ): bool {
+	public static function enqueue( string $font_name, string $font_type = self::TYPE_DEFAULT, $force_enqueue_from_cdn = false ): bool {
 		if ( static::enqueue_style( $font_name ) ) {
 			return true;
 		}
 
-		if ( ! static::fetch_font_data( $font_name, $font_type ) ) {
+		if ( $force_enqueue_from_cdn || ! static::fetch_font_data( $font_name, $font_type ) ) {
 			static::enqueue_from_cdn( $font_name, $font_type );
 			return false;
 		}
