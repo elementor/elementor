@@ -6,11 +6,11 @@ export const generateScreenshot = () => {
 		iframe.height = '1000';
 
 		const messageHandler = ( event ) => {
-                        if ( 'kit-screenshot-done' === event.data.name ) {
-                                window.removeEventListener( 'message', messageHandler );
-                                document.body.removeChild( iframe );
-                                resolve( event.data.imageUrl || null );
-                        }
+			if ( 'kit-screenshot-done' === event.data.name ) {
+				window.removeEventListener( 'message', messageHandler );
+				document.body.removeChild( iframe );
+				resolve( event.data.imageUrl || null );
+			}
 		};
 
 		window.addEventListener( 'message', messageHandler );

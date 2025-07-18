@@ -42,17 +42,26 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 	public function test_admin_user__has__enough_permissions_to_perform_action() {
 		$this->act_as_admin();
-		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_action() );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_rw_action() );
+	}
+
+	public function test_author_user__has__enough_permissions_to_perform_actions() {
+		$this->act_as( 'author' );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
 	}
 
 	public function test_editor_user__has__enough_permissions_to_perform_action() {
 		$this->act_as_editor();
-		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_action() );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
 	}
 
 	public function test_subscriber_user__does_not_have__enough_permissions_to_perform_action() {
 		$this->act_as_subscriber();
-		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
 	}
 
 	public function test_create_variable__with_valid_data() {
@@ -259,6 +268,111 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
 		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
+	}
+
+	public function test_restore_variable__with_overrides() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'id-a01' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'primary-text-color',
+						'value' => '#404040',
+						'deleted' => true,
+						'deleted_at' => '2021-01-01 00:00:00',
+					],
+					'id-a02' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'primary-text-color',
+						'value' => '#202020',
+					],
+				],
+				'watermark' => 5,
+			] );
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
+		$request->set_body_params( [
+			'id' => 'id-a01',
+			'label' => 'main-text-color',
+			'value' => '#202020',
+		] );
+
+		$response = $this->rest_api->restore_variable( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 6, $response_data['data']['watermark'], 'Watermark validation failed' );
+
+		$this->assertEquals( 'main-text-color', $response_data['data']['variable']['label'] );
+		$this->assertEquals( '#202020', $response_data['data']['variable']['value'] );
+		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
+	}
+
+	public function test_restore_variable__with_overrides_and_duplicated_label__results_in_bad_request() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'id-a01' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'primary-text-color',
+						'value' => '#404040',
+						'deleted' => true,
+						'deleted_at' => '2021-01-01 00:00:00',
+					],
+					'id-a02' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'primary-text-color',
+						'value' => '#404040',
+					],
+					'id-a03' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'main-text-color',
+						'value' => '#404040',
+					],
+				],
+				'watermark' => 5,
+			] );
+
+		$this->kit
+			->expects( $this->never() )
+			->method( 'update_json_meta' );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
+		$request->set_body_params( [
+			'id' => 'id-a01',
+			'label' => 'main-text-color',
+			'value' => '#202020',
+		] );
+
+		$response = $this->rest_api->restore_variable( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'duplicated_label', $response_data['code'] );
 	}
 
 	public function test_get_variables() {
