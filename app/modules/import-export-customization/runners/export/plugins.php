@@ -19,7 +19,7 @@ class Plugins extends Export_Runner_Base {
 	public function export( array $data ) {
 		$customization = $data['customization']['plugins'] ?? null;
 
-		$plugins = $customization 
+		$plugins = $customization
 			? array_intersect_key( $data['selected_plugins'], $customization )
 			: $data['selected_plugins'];
 
