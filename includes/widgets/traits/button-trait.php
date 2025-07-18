@@ -187,7 +187,7 @@ trait Button_Trait {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => array_merge(
 					$args['section_condition'],
@@ -303,7 +303,7 @@ trait Button_Trait {
 				],
 				'default' => $args['content_alignment_default'],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'justify-content: {{VALUE}};',
+					'{{WRAPPER}} .elementor-button-content-wrapper' => 'justify-content: {{VALUE}};',
 				],
 				'condition' => array_merge( $args['section_condition'], [ 'align' => 'justify' ] ),
 			]
@@ -558,6 +558,10 @@ trait Button_Trait {
 		if ( ! empty( $settings['hover_animation'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
+
+		if ( $optimized_markup ) {
+			$instance->add_render_attribute( 'button', 'class', 'elementor-button-content-wrapper' );
+		}
 		?>
 		<?php if ( ! $optimized_markup ) : ?>
 		<div <?php $instance->print_render_attribute_string( 'wrapper' ); ?>>
@@ -611,6 +615,10 @@ trait Button_Trait {
 			view.addRenderAttribute( 'button', 'class', 'elementor-animation-' + settings.hover_animation );
 		}
 
+		if ( optimized_markup ) {
+			view.addRenderAttribute( 'button', 'class', 'elementor-button-content-wrapper' );
+		}
+
 		view.addRenderAttribute( 'icon', 'class', 'elementor-button-icon' );
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
 		view.addInlineEditingAttributes( 'text', 'none' );
@@ -621,7 +629,9 @@ trait Button_Trait {
 		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
 		<# } #>
 			<a {{{ view.getRenderAttributeString( 'button' ) }}}>
+				<# if ( ! optimized_markup ) { #>
 				<span class="elementor-button-content-wrapper">
+				<# } #>
 					<# if ( settings.icon || settings.selected_icon ) { #>
 					<span {{{ view.getRenderAttributeString( 'icon' ) }}}>
 						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
@@ -634,7 +644,9 @@ trait Button_Trait {
 					<# if ( settings.text ) { #>
 					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{ settings.text }}</span>
 					<# } #>
+				<# if ( ! optimized_markup ) { #>
 				</span>
+				<# } #>
 			</a>
 		<# if ( ! optimized_markup ) { #>
 		</div>
@@ -663,6 +675,12 @@ trait Button_Trait {
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+
+		if ( ! $optimized_markup ) {
+			$instance->add_render_attribute( 'content-wrapper', 'class', 'elementor-button-content-wrapper' );
+		}
+
 		$instance->add_render_attribute( [
 			'content-wrapper' => [
 				'class' => 'elementor-button-content-wrapper',
@@ -678,7 +696,10 @@ trait Button_Trait {
 		// TODO: replace the protected with public
 		// $instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
+		<?php if ( ! $optimized_markup ) : ?>
 		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
+		<?php endif; ?>
+
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'icon' ); ?>>
 				<?php if ( $is_new || $migrated ) :
@@ -691,7 +712,10 @@ trait Button_Trait {
 			<?php if ( ! empty( $settings['text'] ) ) : ?>
 			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php echo wp_kses_post( $settings['text'] ); ?></span>
 			<?php endif; ?>
+
+		<?php if ( ! $optimized_markup ) : ?>
 		</span>
+		<?php endif; ?>
 		<?php
 	}
 
