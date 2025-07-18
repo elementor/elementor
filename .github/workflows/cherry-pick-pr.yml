@@ -142,8 +142,8 @@ jobs:
 
             # Push (force push to handle existing branches)
             if ! git push --force-with-lease origin "$BRANCH"; then
-              echo "::warning:: Failed to push branch $BRANCH"
-              continue
+              echo "::error:: Failed to push branch $BRANCH"
+              exit 1
             fi
 
             # Create PR via gh CLI (token already in env: GH_TOKEN)
