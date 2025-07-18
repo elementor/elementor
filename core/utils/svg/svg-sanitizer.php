@@ -183,7 +183,7 @@ class Svg_Sanitizer {
 
 		$tag_name = $element->tagName; // phpcs:ignore -- php DomDocument
 
-                if ( ! in_array( strtolower( $tag_name ),  $allowed_tags ) ) {
+		if ( ! in_array( strtolower( $tag_name ), $allowed_tags ) ) {
 			$this->remove_element( $element );
 			return false;
 		}
