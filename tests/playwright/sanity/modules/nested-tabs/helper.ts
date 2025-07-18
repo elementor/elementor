@@ -1,6 +1,5 @@
 import { type Page, type Frame, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import _path from 'path';
 
 export const locators = {
