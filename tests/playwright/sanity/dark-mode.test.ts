@@ -5,9 +5,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 test( 'navigator empty placeholder should be in dark mode', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-	await wpAdmin.setExperiments( {
-		container: true,
-	} );
+	await wpAdmin.setExperiments( { container: true } );
 
 	const editor = await wpAdmin.openNewPage();
 
