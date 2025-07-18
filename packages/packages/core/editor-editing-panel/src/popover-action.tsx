@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { type ComponentType, type ElementType as ReactElementType, useId } from 'react';
-import { bindPopover, bindToggle, IconButton, Popover, Tooltip, usePopupState } from '@elementor/ui';
+import { type ComponentType, type ElementType as ReactElementType } from 'react';
+import { useFloatingActionsBar } from '@elementor/editor-controls';
+import { bindPopover, bindTrigger, IconButton, Popover, Tooltip, usePopupState } from '@elementor/ui';
 
 const SIZE = 'tiny';
 
@@ -11,17 +12,8 @@ export type PopoverActionProps = {
 	content: ComponentType< { close: () => void } >;
 };
 
-export default function PopoverAction( {
-	title,
-	visible = true,
-	icon: Icon,
-	content: PopoverContent,
-}: PopoverActionProps ) {
-	const id = useId();
-	const popupState = usePopupState( {
-		variant: 'popover',
-		popupId: `elementor-popover-action-${ id }`,
-	} );
+export function PopoverAction( { title, visible = true, icon: Icon, content: PopoverContent }: PopoverActionProps ) {
+	const { popupState, triggerProps, popoverProps } = useFloatingActionsPopover();
 
 	if ( ! visible ) {
 		return null;
@@ -30,7 +22,7 @@ export default function PopoverAction( {
 	return (
 		<>
 			<Tooltip placement="top" title={ title }>
-				<IconButton aria-label={ title } key={ id } size={ SIZE } { ...bindToggle( popupState ) }>
+				<IconButton aria-label={ title } size={ SIZE } { ...triggerProps }>
 					<Icon fontSize={ SIZE } />
 				</IconButton>
 			</Tooltip>
@@ -48,10 +40,39 @@ export default function PopoverAction( {
 				PaperProps={ {
 					sx: { my: 2.5 },
 				} }
-				{ ...bindPopover( popupState ) }
+				{ ...popoverProps }
 			>
 				<PopoverContent close={ popupState.close } />
 			</Popover>
 		</>
 	);
+}
+
+export function useFloatingActionsPopover() {
+	const { setOpen } = useFloatingActionsBar();
+	const popupState = usePopupState( { variant: 'popover' } );
+
+	const triggerProps = bindTrigger( popupState );
+	const popoverProps = bindPopover( popupState );
+
+	const onClick = ( e: React.MouseEvent ) => {
+		triggerProps.onClick( e );
+		setOpen( true );
+	};
+
+	const onClose = () => {
+		popoverProps.onClose();
+		setOpen( false );
+	};
+
+	const close = () => {
+		popupState.close();
+		setOpen( false );
+	};
+
+	return {
+		popupState: { ...popupState, close },
+		triggerProps: { ...triggerProps, onClick },
+		popoverProps: { ...popoverProps, onClose },
+	};
 }

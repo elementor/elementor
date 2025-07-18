@@ -53,7 +53,7 @@
     "@elementor/icons": "1.46.0",
     "@elementor/query": "0.2.4",
     "@elementor/store": "0.9.0",
-    "@elementor/ui": "1.36.0",
+    "@elementor/ui": "1.36.2",
     "@elementor/utils": "0.5.0",
     "@wordpress/i18n": "^5.13.0"
   },

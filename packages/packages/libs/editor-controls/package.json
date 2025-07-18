@@ -52,7 +52,7 @@
     "@elementor/locations": "0.8.0",
     "@elementor/query": "0.2.4",
     "@elementor/session": "0.1.0",
-    "@elementor/ui": "1.36.0",
+    "@elementor/ui": "1.36.2",
     "@elementor/utils": "0.5.0",
     "@elementor/wp-media": "0.6.1",
     "@wordpress/i18n": "^5.13.0"
