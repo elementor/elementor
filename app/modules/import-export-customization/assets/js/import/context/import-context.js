@@ -75,7 +75,7 @@ export default function ImportContextProvider( props ) {
 }
 
 ImportContextProvider.propTypes = {
-	children: PropTypes.object.isRequired,
+        children: PropTypes.node.isRequired,
 };
 
 export function useImportContext() {
