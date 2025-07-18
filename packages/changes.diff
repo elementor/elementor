@@ -1,0 +1,109 @@
+diff --git a/packages/packages/core/editor-global-classes/service/css-class-usage-service.ts b/packages/packages/core/editor-global-classes/service/css-class-usage-service.ts
+index 357ebaefff..68332b906c 100644
+--- a/packages/packages/core/editor-global-classes/service/css-class-usage-service.ts
++++ b/packages/packages/core/editor-global-classes/service/css-class-usage-service.ts
+@@ -1,5 +1,5 @@
+ import { apiClient } from '../src/api';
+-import { type EnhancedCssClassUsage } from '../src/components/css-class-usage';
++import type { EnhancedCssClassUsage } from '../src/components/css-class-usage/types';
+ import { transformData } from '../src/components/css-class-usage/utils';
+ 
+ export const fetchCssClassUsage = async (): Promise< EnhancedCssClassUsage > => {
+diff --git a/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx b/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx
+index 62e5c1846d..869315888d 100644
+--- a/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx
++++ b/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx
+@@ -1,9 +1,7 @@
+ import * as React from 'react';
+ import { useRef, useState } from 'react';
+-import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
+ import { validateStyleLabel } from '@elementor/editor-styles-repository';
+ import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
+-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+ import { DotsVerticalIcon } from '@elementor/icons';
+ import {
+ 	bindMenu,
+@@ -26,8 +24,6 @@ import { CssClassUsageTrigger } from '../css-class-usage/components';
+ import { useDeleteConfirmation } from './delete-confirmation-dialog';
+ import { SortableTrigger, type SortableTriggerProps } from './sortable';
+ 
+-const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
+-
+ type ClassItemProps = React.PropsWithChildren< {
+ 	id: string;
+ 	label: string;
+diff --git a/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-service.test.tsx b/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-service.test.tsx
+index efed5735aa..18885d5377 100644
+--- a/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-service.test.tsx
++++ b/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-service.test.tsx
+@@ -6,9 +6,11 @@ import { act, renderHook } from '@testing-library/react';
+ import { fetchCssClassUsage } from '../../../../service/css-class-usage-service';
+ import { apiClient } from '../../../api';
+ import { usePrefetchCssClassUsage } from '../../../hooks/use-prefetch-css-class-usage';
++import { type CssClassUsage } from '../types';
+ import { transformData } from '../utils';
+ 
+ // Mocks
++
+ jest.mock( '../../../api', () => ( {
+ 	apiClient: {
+ 		usage: jest.fn(),
+@@ -22,8 +24,8 @@ jest.mock( '../utils', () => ( {
+ // Shared constants
+ const mockData = {
+ 	'css-abc': [
+-		{ pageId: 'page1', elements: [ 'el-1' ], total: 1, title: 'Title1' },
+-		{ pageId: 'page2', elements: [ 'el-2' ], total: 1, title: 'Title2' },
++		{ pageId: 'page1', elements: [ 'el-1' ], total: 1, title: 'Title1', type: 'wp-page' },
++		{ pageId: 'page2', elements: [ 'el-2' ], total: 1, title: 'Title2', type: 'wp-page' },
+ 	],
+ };
+ 
+@@ -56,7 +58,7 @@ describe( 'CSS Class Usage API and Hook Integration', () => {
+ 
+ 			jest.mocked( apiClient.usage ).mockResolvedValue( {
+ 				data: {
+-					data: mockData,
++					data: mockData as CssClassUsage, // Mocked data
+ 					meta: {},
+ 				},
+ 				status: 200,
+diff --git a/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-trigger.test.tsx b/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-trigger.test.tsx
+index 4f4d098332..4463f68856 100644
+--- a/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-trigger.test.tsx
++++ b/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/css-class-usage-trigger.test.tsx
+@@ -4,7 +4,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+ import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
+ import { CssClassUsageTrigger } from '../components';
+ 
+-jest.mock( '../hooks' );
++jest.mock( '../../../hooks/use-css-class-usage-by-id' );
+ 
+ describe( 'CssClassUsageTrigger', () => {
+ 	it( 'renders locator icon and does not open on click when total is 0', async () => {
+diff --git a/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/use-css-class-usage-by-id.test.tsx b/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/use-css-class-usage-by-id.test.tsx
+index ab361ba356..3081e62b9e 100644
+--- a/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/use-css-class-usage-by-id.test.tsx
++++ b/packages/packages/core/editor-global-classes/src/components/css-class-usage/__tests__/use-css-class-usage-by-id.test.tsx
+@@ -21,7 +21,9 @@ describe( 'useCssClassUsageByID', () => {
+ 		jest.mocked( fetchCssClassUsage ).mockResolvedValue( {
+ 			'css-id': {
+ 				total: 3,
+-				content: [ { pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1' } ],
++				content: [
++					{ pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1', type: 'wp-page' },
++				],
+ 			},
+ 		} );
+ 
+@@ -31,7 +33,9 @@ describe( 'useCssClassUsageByID', () => {
+ 
+ 		expect( result.current.data ).toEqual( {
+ 			total: 3,
+-			content: [ { pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1' } ],
++			content: [
++				{ pageId: 'p1', total: 3, elements: [ 'el-1', 'el-2', 'el-3' ], title: 'Page 1', type: 'wp-page' },
++			],
+ 		} );
+ 	} );
+ 
