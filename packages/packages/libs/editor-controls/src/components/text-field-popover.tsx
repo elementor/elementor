@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useRef } from 'react';
+import { type RefObject } from 'react';
 import { bindPopover, Popover, type PopupState, TextField } from '@elementor/ui';
 
 type Props = {
@@ -12,17 +12,6 @@ type Props = {
 
 export const TextFieldPopover = ( props: Props ) => {
 	const { popupState, restoreValue, anchorRef, value, onChange } = props;
-	const inputRef = useRef< HTMLInputElement >( null );
-
-	useEffect( () => {
-		if ( popupState.isOpen ) {
-			requestAnimationFrame( () => {
-				if ( inputRef.current ) {
-					inputRef.current.focus();
-				}
-			} );
-		}
-	}, [ popupState.isOpen ] );
 
 	return (
 		<Popover
@@ -51,7 +40,7 @@ export const TextFieldPopover = ( props: Props ) => {
 				type="text"
 				fullWidth
 				inputProps={ {
-					ref: inputRef,
+					autoFocus: true,
 				} }
 			/>
 		</Popover>
