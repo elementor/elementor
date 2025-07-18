@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import ImportProcess from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-process';
 
 const mockUseImportContext = jest.fn();
@@ -71,7 +71,9 @@ describe( 'ImportProcess Page', () => {
 		// Act
 		render( <ImportProcess /> );
 		// Assert
-		expect( mockNavigate ).toHaveBeenCalledWith( '/import-customization/complete' );
+		waitFor( () => {
+			expect( mockNavigate ).toHaveBeenCalledWith( '/import-customization/complete' );
+		} );
 	} );
 
 	it( 'navigates to import-customization/complete when status is DONE and no error (second useEffect)', () => {

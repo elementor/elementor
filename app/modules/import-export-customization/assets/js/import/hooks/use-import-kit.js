@@ -57,7 +57,6 @@ export function useImportKit() {
 					path: 'import-runner',
 				} );
 
-
 				setRunnersState( ( prevState ) => ( {
 					...prevState,
 					[ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ],
