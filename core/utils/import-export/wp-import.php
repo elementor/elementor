@@ -31,6 +31,10 @@ if ( ! class_exists( 'WP_Importer' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_import_cleanup' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/import.php';
+}
+
 class WP_Import extends \WP_Importer {
 	const DEFAULT_BUMP_REQUEST_TIMEOUT = 60;
 	const DEFAULT_ALLOW_CREATE_USERS = true;
