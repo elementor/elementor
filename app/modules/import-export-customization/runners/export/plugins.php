@@ -17,11 +17,15 @@ class Plugins extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$manifest_data['plugins'] = $data['selected_plugins'];
+		$customization = $data['customization']['plugins'] ?? null;
+
+		$plugins = $customization 
+			? array_intersect_key( $data['selected_plugins'], $customization )
+			: $data['selected_plugins'];
 
 		return [
 			'manifest' => [
-				$manifest_data,
+				[ 'plugins' => $plugins ],
 			],
 			'files' => [],
 		];
