@@ -25,13 +25,13 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 				continue;
 			}
 
-			test( `Reverse columns:${ testDevice } - Custom breakpoints:Off`, async ( { page, apiRequests }, testInfo ) => {
+			test( `Reverse columns: ${ testDevice } - Custom breakpoints: Off`, async ( { page, apiRequests }, testInfo ) => {
 				const reverseColumns = new ReverseColumns( page, testInfo, apiRequests );
 				await reverseColumns.testReverseColumnsOneActivated( testDevice );
 			} );
 		}
 
-		test( 'Reverse columns:All - Custom breakpoints:Off ', async ( { page, apiRequests }, testInfo ) => {
+		test( 'Reverse columns: All - Custom breakpoints: Off', async ( { page, apiRequests }, testInfo ) => {
 			const reverseColumns = new ReverseColumns( page, testInfo, apiRequests );
 			await reverseColumns.testReverseColumnsAllActivated();
 		} );
@@ -62,13 +62,13 @@ test.describe( 'Reverse Columns tests @reverse-columns', () => {
 				continue;
 			}
 
-			test( `Reverse columns:${ testDevice } - Custom breakpoints:On`, async ( { page, apiRequests }, testInfo ) => {
+			test( `Reverse columns: ${ testDevice } - Custom breakpoints: On`, async ( { page, apiRequests }, testInfo ) => {
 				const reverseColumns = new ReverseColumns( page, testInfo, apiRequests );
 				await reverseColumns.testReverseColumnsOneActivated( testDevice, true );
 			} );
 		}
 
-		test( 'Reverse columns:All - Custom breakpoints:On', async ( { page, apiRequests }, testInfo ) => {
+		test( 'Reverse columns: All - Custom breakpoints: On', async ( { page, apiRequests }, testInfo ) => {
 			const reverseColumns = new ReverseColumns( page, testInfo, apiRequests );
 			await reverseColumns.testReverseColumnsAllActivated( true );
 		} );

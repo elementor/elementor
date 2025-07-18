@@ -22,7 +22,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 
 	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser, apiRequests }, testInfo ) => {
 		let url;
-		await test.step( 'experiment Inline Font Icons off', async () => {
+		await test.step( 'Inline Font Icons: Off', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( { e_font_icon_svg: 'inactive' } );
@@ -46,7 +46,7 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			url = page.url();
 		} );
 
-		await test.step( 'experiment Inline Font Icons on (default)', async () => {
+		await test.step( 'Inline Font Icons: On', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 			await wpAdmin.setExperiments( { e_font_icon_svg: 'active' } );

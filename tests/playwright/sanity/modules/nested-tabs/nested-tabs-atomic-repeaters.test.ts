@@ -106,7 +106,6 @@ test.describe( 'Nested Tabs @nested-atomic-repeaters', () => {
 	test( 'Test Nested Tabs with Inner Nested Tabs', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
