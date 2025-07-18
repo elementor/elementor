@@ -151,7 +151,7 @@ export default function ImportComplete() {
 					<Stack direction="row" justifyContent="center" alignItems="center" spacing={ 3 }>
 						<Typography variant="body2" color="text.secondary">
 							{ __( 'Build sites faster with Website Templates.', 'elementor' ) }
-							<Link href="#" sx={ { color: 'info.main', ml: 1, textDecoration: 'none' } }>{ __( 'Show me how', 'elementor' ) }</Link>
+							<Link href="https://go.elementor.com/app-what-are-kits" sx={ { color: 'info.main', ml: 1, textDecoration: 'none' } }>{ __( 'Show me how', 'elementor' ) }</Link>
 						</Typography>
 					</Stack>
 				</Box>
