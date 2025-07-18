@@ -14,7 +14,6 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
 	{ pluginName: 'wunderwp', installSource: 'api' },
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
-	{ pluginName: 'addons-for-elementor', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api', hasInstallationPage: true },
 	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
