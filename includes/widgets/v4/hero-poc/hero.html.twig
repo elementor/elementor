@@ -1,0 +1,23 @@
+{% set CLASS_NAME = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
+{% set char_count = settings.title | length %}
+{% set subtitle_length = settings.subtitle | length %}
+{% set h2_size = 100 / (char_count - 6) %}
+{% set subtitle_size = 300 / (subtitle_length) %}
+<div is="v4-hero" id="{{ id }}" {{ e_attrs }} class="{{ CLASS_NAME }} elementor-element" style="background-image: url({{ settings.image.src }})">
+    <div class="wrapper" style="font-size: 1cqi;">
+    <h2 style="font-size: {{ h2_size }}cqi;">{{ settings.title }}</h2>
+    <p char-count="{{ subtitle_length }}" style="font-size: {{ subtitle_size }}cqw;">{{ settings.subtitle }}</p>
+    </div>
+    <slot></slot>
+    {% if settings.show_cta %}
+    <div class="cta-wrapper">
+    {% if settings.link.href %}
+        <a href="{{ settings.link.href }}" target="{{ settings.link.target }}">
+    {% endif %}
+    <button>{{ settings.cta }}</button>
+    {% if settings.link.href %}
+        </a>
+    {% endif %}
+    </div>
+    {% endif %}
+</div>

@@ -1,0 +1,87 @@
+div[is="v4-hero"] {
+    container-type: inline-size;
+    container-name: hero;
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    & * {
+        transition: 0.8s ease-in-out;
+    }
+    & .wrapper {
+        text-align: center;
+        box-sizing: border-box;
+        background-color: black;
+        color: white;
+        padding: 2rem 2rem 1rem 2rem;
+        mix-blend-mode: multiply;
+    }
+    &:hover .wrapper {
+        color: black;
+        background-color: yellow;
+    }
+
+    & p {
+        position: relative;
+        top: 0;
+        justify-content: flex-start;
+        background-color: white;
+        color: black;
+        display: flex;
+        align-items: flex-start;
+        height: 8rem;
+        padding: 0rem 2rem;
+        font-weight: 900;
+        margin: 0;
+        box-sizing: content-box;
+        min-height: 40vh;
+    }
+    &:hover p {
+        color: black;
+        top: -4rem;
+        backdrop-filter: blur(14px);
+        transition: 0.6s ease-in-out, top 1.6s ease-in-out;
+        margin-top: 8rem;
+        min-height: calc(40vh - 8rem);
+        background-color: var(--hero-color, red);
+    }
+
+    & h2 {
+        margin: 0;
+        font-weight: 900;
+        text-align: center;
+        line-height: 1.3ch;
+    }
+
+    & .cta-wrapper {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 0.5em 0 1.5em 0;
+        background-color: black;
+    }
+
+    transform: perspective(250px) rotateX(0deg) rotateY(0deg);
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+    transition: 250ms ease-in-out;
+    transition-delay: 0.15s;
+    &:hover {
+        overflow: visible;
+        transition-delay: 0s;
+        transition: 0.8s ease-out;
+    }
+    min-height: 25vh;
+    
+    & button {
+        border: none;
+        background: transparent;
+        font-size: 1.5rem;
+        color: white;
+        cursor: pointer;
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}

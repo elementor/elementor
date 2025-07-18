@@ -48,6 +48,10 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 		return $this;
 	}
 
+	public function get_meta() {
+		return $this->meta;
+	}
+
 	public function jsonSerialize(): array {
 		return [
 			'type' => 'control',

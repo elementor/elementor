@@ -23,11 +23,12 @@ class Template_Renderer {
 		$this->env = new Environment(
 			$this->loader,
 			[
-				'debug' => Utils::is_elementor_debug(),
+				'debug' => false, //Utils::is_elementor_debug(),
 				'autoescape' => 'name',
+				'use_yield' => false,
 			]
 		);
-
+		Tag_Renderer::init( $this->env );
 		$escaper = $this->env->getRuntime( EscaperRuntime::class );
 
 		$escaper->setEscaper( 'full_url', 'esc_url' );

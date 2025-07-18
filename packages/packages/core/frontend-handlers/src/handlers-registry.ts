@@ -27,3 +27,10 @@ export const unregister = ( { elementType, id }: { elementType: string; id?: str
 		handlers.delete( elementType );
 	}
 };
+
+Object.defineProperty( window, 'initElement', {
+	value: (id: string, callback: Handler) => register({ elementType: id, id, callback }),
+	writable: false,
+	enumerable: true,
+	configurable: false,
+} );

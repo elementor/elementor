@@ -30,6 +30,7 @@
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
 		"test": "phpunit",
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
+		"format-last-commit": "git diff --name-only --oneline HEAD~1 | grep -E '.*\\.php$' | xargs -I {} vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml {}",
 		"coverage": "composer run coverage:test && composer run coverage:check",
 		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
 		"coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
