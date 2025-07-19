@@ -12,11 +12,8 @@ import {
 } from '@elementor/ui';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useExportContext } from '../context/export-context';
 
-export default function KitSettingsCustomizationDialog( { open, handleClose } ) {
-	const { data, dispatch } = useExportContext();
-
+export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'settings' );
 
 	const [ settings, setSettings ] = useState( () => {
@@ -56,26 +53,6 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
 		} ) );
-	};
-
-	const handleSaveChanges = () => {
-		const hasEnabledSettings = Object.values( settings ).some( ( value ) => value );
-
-		dispatch( {
-			type: 'SET_CUSTOMIZATION',
-			payload: {
-				key: 'settings',
-				value: settings,
-			},
-		} );
-
-		if ( hasEnabledSettings ) {
-			dispatch( { type: 'ADD_INCLUDE', payload: 'settings' } );
-		} else {
-			dispatch( { type: 'REMOVE_INCLUDE', payload: 'settings' } );
-		}
-
-		handleClose();
 	};
 
 	const SettingSection = ( { title, description, children, hasToggle = true, settingKey } ) => (
@@ -209,7 +186,10 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 					{ __( 'Cancel', 'elementor' ) }
 				</Button>
 				<Button
-					onClick={ handleSaveChanges }
+					onClick={ () => {
+						handleSaveChanges( 'settings', settings );
+						handleClose();
+					} }
 					variant="contained"
 					color="primary"
 				>
@@ -223,4 +203,6 @@ export default function KitSettingsCustomizationDialog( { open, handleClose } ) 
 KitSettingsCustomizationDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
+	handleSaveChanges: PropTypes.func.isRequired,
+	data: PropTypes.object.isRequired,
 };
