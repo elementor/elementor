@@ -372,6 +372,14 @@ class Manager extends Base_Object {
 			'release_status' => self::RELEASE_STATUS_STABLE,
 			'default' => self::STATE_ACTIVE,
 		] );
+
+		$this->add_feature( [
+			'name' => 'e_swiper_11',
+			'title' => esc_html__( 'Swiper 11', 'elementor' ),
+			'description' => esc_html__( 'Use the latest Swiper.js for enhanced carousels and sliders capabilities. Upgrade from Swiper 8.4.5 to Swiper 11.2.10.', 'elementor' ),
+			'release_status' => self::RELEASE_STATUS_BETA,
+			'default' => self::STATE_ACTIVE,
+		] );
 	}
 
 	/**
