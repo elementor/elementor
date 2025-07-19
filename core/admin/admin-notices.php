@@ -475,6 +475,11 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		// Only show after 60 days from installation
+		if ( time() < $this->get_install_time() + ( 60 * DAY_IN_SECONDS ) ) {
+			return false;
+		}
+
 		if ( ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
