@@ -2,7 +2,6 @@ import * as React from 'react';
 import { ControlAdornmentsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { type PropKey, type PropType, type PropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { useStylesInheritanceChain } from '../contexts/styles-inheritance-context';
 import { useStylesFields } from '../hooks/use-styles-fields';
@@ -18,11 +17,9 @@ export type StylesFieldProps = {
 	propDisplayName: string;
 };
 
-export const StylesField = ( { bind, placeholder, propDisplayName, children }: StylesFieldProps ) => {
+export const StylesField = ( { bind, propDisplayName, children }: StylesFieldProps ) => {
 	const stylesSchema = getStylesSchema();
 	const depList = getDependencies( stylesSchema[ bind ] );
-
-	const isVersion331Active = isExperimentActive( 'e_v_3_31' );
 
 	const stylesInheritanceChain = useStylesInheritanceChain( [ bind ] );
 
@@ -35,7 +32,7 @@ export const StylesField = ( { bind, placeholder, propDisplayName, children }: S
 	const [ actualValue ] = stylesInheritanceChain;
 
 	const placeholderValues = {
-		[ bind ]: isVersion331Active ? actualValue?.value : placeholder,
+		[ bind ]: actualValue?.value,
 	};
 
 	const setValue = ( newValue: Record< string, PropValue > ) => {

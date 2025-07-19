@@ -27,7 +27,6 @@ import { __ } from '@wordpress/i18n';
 
 import { mockElement } from '../../__tests__/utils';
 import { ElementProvider } from '../../contexts/element-context';
-import { EXPERIMENTAL_FEATURES } from '../../sync/experiments-flags';
 import { SettingsField } from '../settings-field';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -344,12 +343,6 @@ describe( '<SettingsField />', () => {
 	} );
 
 	describe( 'Settings history', () => {
-		beforeEach( () => {
-			jest.mocked( isExperimentActive ).mockImplementation( ( feature ) => {
-				return feature === EXPERIMENTAL_FEATURES.V_3_31;
-			} );
-		} );
-
 		it( 'should support undo/redo for setting update', () => {
 			// Arrange.
 			const element = mockElement( { id: '1' } );

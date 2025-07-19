@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { type PropTypeUtil } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
 
 import { restoreVariable } from '../../../hooks/use-prop-variables';
@@ -13,8 +12,6 @@ import { ColorVariableRestore } from '../../color-variable-restore';
 import { FontVariableRestore } from '../../font-variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
 import { DeletedTag } from '../tags/deleted-tag';
-
-const isV331Active = isExperimentActive( 'e_v_3_31' );
 
 type Props = {
 	variable: Variable;
@@ -76,7 +73,7 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 						<DeletedVariableAlert
 							onClose={ closeInfotip }
 							onUnlink={ unlinkVariable }
-							onRestore={ isV331Active ? handleRestore : undefined }
+							onRestore={ handleRestore }
 							label={ variable.label }
 						/>
 					}

@@ -89,7 +89,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const EXPERIMENT_VERSION_3_31 = 'e_v_3_31';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
 	const PACKAGES = [
@@ -165,15 +164,6 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_VERSION_3_31,
-			'title' => esc_html__( 'Version 3.31', 'elementor' ),
-			'description' => esc_html__( 'Features for version 3.31.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
 	}
 
 	private function add_packages( $packages ) {
@@ -197,11 +187,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
 		$widgets_manager->register( new Atomic_Youtube() );
-
-		// Register widgets that require version 3.31 experiment
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_VERSION_3_31 ) ) {
-			$widgets_manager->register( new Atomic_Divider() );
-		}
+		$widgets_manager->register( new Atomic_Divider() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {

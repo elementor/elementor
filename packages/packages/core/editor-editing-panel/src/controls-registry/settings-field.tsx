@@ -10,11 +10,10 @@ import {
 	useElementSettings,
 } from '@elementor/editor-elements';
 import { type PropKey, type Props, type PropType, type PropValue } from '@elementor/editor-props';
-import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
+import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import {
 	extractOrderedDependencies,
 	isDependencyEffectActive,
@@ -49,22 +48,16 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	} );
 
 	const setValue = ( newValue: Values ) => {
-		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
+		const dependents = extractOrderedDependencies(
+			bind,
+			propsSchema,
+			elementSettingValues,
+			dependenciesPerTargetMapping
+		);
 
-		if ( isVersion331Active ) {
-			const dependents = extractOrderedDependencies(
-				bind,
-				propsSchema,
-				elementSettingValues,
-				dependenciesPerTargetMapping
-			);
+		const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues );
 
-			const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues );
-
-			undoableUpdateElementProp( settings );
-		} else {
-			updateElementSettings( { id: elementId, props: newValue } );
-		}
+		undoableUpdateElementProp( settings );
 	};
 
 	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues, 'disable' );

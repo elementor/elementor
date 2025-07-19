@@ -3,13 +3,11 @@ import { type ComponentProps } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { isEmpty, type PropType } from '@elementor/editor-props';
 import { ELEMENTS_BASE_STYLES_PROVIDER_KEY } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { StyleIndicator } from '../../components/style-indicator';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesInheritanceChain } from '../../contexts/styles-inheritance-context';
-import { EXPERIMENTAL_FEATURES } from '../../sync/experiments-flags';
 import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
 import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
@@ -44,10 +42,7 @@ const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
 
 	const [ actualStyle ] = inheritanceChain;
 
-	if (
-		! isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 ) &&
-		actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY
-	) {
+	if ( actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY ) {
 		return null;
 	}
 
