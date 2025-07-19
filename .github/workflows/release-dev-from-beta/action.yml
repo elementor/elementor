@@ -17,8 +17,8 @@ inputs:
   SVN_USERNAME:
     description: 'The username for the SVN.'
     required: true
-  PRE_RELEASE:
-    description: 'flag to indicate if the release is pre-release.'
+  DRY_RUN:
+    description: 'flag to indicate if the release is dry-run (pre-release).'
     required: true
   PACKAGE_VERSION:
     description: 'The version of the package.'
@@ -73,20 +73,15 @@ runs:
         tag_name: ${{ env.DEV_RELEASE_NAME }}
         files: ${{ env.DEV_BUILD_ZIP_FILE_PATH }}
         body_path: ${{ env.CHANGELOG_FILE }}
-        prerelease: ${{ inputs.PRE_RELEASE }}
+        prerelease: ${{ inputs.DRY_RUN }}
+        draft: ${{ inputs.DRY_RUN }}
     - name: Publish to WordPress.org SVN
-      if: inputs.PRE_RELEASE == 'false'
+      if: inputs.DRY_RUN == 'false' && inputs.REPOSITORY_OWNER == 'elementor'
       shell: bash
       env:
         PLUGIN_VERSION: ${{ env.DEV_RELEASE_NAME }}
         SVN_PASSWORD: ${{ inputs.SVN_PASSWORD }}
         SVN_USERNAME: ${{ inputs.SVN_USERNAME }}
       run: |
-            if [[ ${{ inputs.PRE_RELEASE }} == "true" ]]; then
-              exit 1
-            fi
-
-            if [[ ${{ inputs.REPOSITORY_OWNER }} == "elementor" ]]; then
-              bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
-            fi
+          bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
 

@@ -97,6 +97,7 @@ describe( 'renderStyles', () => {
 		// Assert.
 		expect( result ).toEqual( [
 			{
+				breakpoint: 'desktop',
 				id: 'test',
 				value: '.elementor-prefix .test{font-size:24px;}',
 			},

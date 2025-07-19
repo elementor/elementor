@@ -11,165 +11,217 @@ import { createControl } from '../create-control';
 import { useSizeExtendedOptions } from '../hooks/use-size-extended-options';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
 import {
-	defaultUnits,
-	type DegreeUnit,
+	type AngleUnit,
+	angleUnits,
+	DEFAULT_SIZE,
+	DEFAULT_UNIT,
 	type ExtendedOption,
 	isUnitExtendedOption,
+	type LengthUnit,
+	lengthUnits,
+	type TimeUnit,
+	timeUnits,
 	type Unit,
 } from '../utils/size-control';
 
-const DEFAULT_UNIT = 'px';
-const DEFAULT_SIZE = NaN;
-
 type SizeValue = SizePropValue[ 'value' ];
 
-type SizeControlProps = {
+type SizeVariant = 'length' | 'angle' | 'time';
+
+type UnitProps< T extends readonly Unit[] > = {
+	units?: T;
+	defaultUnit?: T[ number ];
+};
+
+type BaseSizeControlProps = {
 	placeholder?: string;
 	startIcon?: React.ReactNode;
-	units?: ( Unit | DegreeUnit )[];
 	extendedOptions?: ExtendedOption[];
 	disableCustom?: boolean;
 	anchorRef?: RefObject< HTMLDivElement | null >;
-	defaultUnit?: Unit | DegreeUnit;
 };
+
+type LengthSizeControlProps = BaseSizeControlProps &
+	UnitProps< LengthUnit[] > & {
+		variant: 'length';
+	};
+
+type AngleSizeControlProps = BaseSizeControlProps &
+	UnitProps< AngleUnit[] > & {
+		variant: 'angle';
+	};
+
+type TimeSizeControlProps = BaseSizeControlProps &
+	UnitProps< TimeUnit[] > & {
+		variant: 'time';
+	};
+
+export type SizeControlProps = LengthSizeControlProps | AngleSizeControlProps | TimeSizeControlProps;
 
 type State = {
 	numeric: number;
 	custom: string;
-	unit: Unit | DegreeUnit | ExtendedOption;
+	unit: Unit | ExtendedOption;
 };
 
-export const SizeControl = createControl( ( props: SizeControlProps ) => {
-	const defaultUnit = props.defaultUnit ?? DEFAULT_UNIT;
-	const { units = [ ...defaultUnits ], placeholder, startIcon, anchorRef } = props;
-	const { value: sizeValue, setValue: setSizeValue, disabled, restoreValue } = useBoundProp( sizePropTypeUtil );
-	const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, defaultUnit ) );
-	const activeBreakpoint = useActiveBreakpoint();
+const defaultSelectedUnit: Record< SizeControlProps[ 'variant' ], Unit > = {
+	length: 'px',
+	angle: 'deg',
+	time: 'ms',
+} as const;
 
-	const extendedOptions = useSizeExtendedOptions( props.extendedOptions || [], props.disableCustom ?? false );
-	const popupState = usePopupState( { variant: 'popover' } );
+const defaultUnits: Record< SizeControlProps[ 'variant' ], Unit[] > = {
+	length: [ ...lengthUnits ] as LengthUnit[],
+	angle: [ ...angleUnits ] as AngleUnit[],
+	time: [ ...timeUnits ] as TimeUnit[],
+} as const;
 
-	const [ state, setState ] = useSyncExternalState( {
-		external: internalState,
-		setExternal: ( newState: State | null ) => setSizeValue( extractValueFromState( newState ) ),
-		persistWhen: ( newState ) => {
-			if ( ! newState?.unit ) {
-				return false;
+export const SizeControl = createControl(
+	( {
+		variant = 'length' as SizeControlProps[ 'variant' ],
+		defaultUnit,
+		units,
+		placeholder,
+		startIcon,
+		anchorRef,
+		extendedOptions,
+		disableCustom,
+	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
+		const actualDefaultUnit = defaultUnit ?? defaultSelectedUnit[ variant ];
+		const actualUnits = units ?? [ ...defaultUnits[ variant ] ];
+		const { value: sizeValue, setValue: setSizeValue, disabled, restoreValue } = useBoundProp( sizePropTypeUtil );
+		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
+		const activeBreakpoint = useActiveBreakpoint();
+
+		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
+		const popupState = usePopupState( { variant: 'popover' } );
+
+		const [ state, setState ] = useSyncExternalState( {
+			external: internalState,
+			setExternal: ( newState: State | null ) => setSizeValue( extractValueFromState( newState ) ),
+			persistWhen: ( newState ) => {
+				if ( ! newState?.unit ) {
+					return false;
+				}
+
+				if ( isUnitExtendedOption( newState.unit ) ) {
+					return newState.unit === 'auto' ? true : !! newState.custom;
+				}
+
+				return !! newState?.numeric || newState?.numeric === 0;
+			},
+			fallback: ( newState ) => ( {
+				unit: newState?.unit ?? actualDefaultUnit,
+				numeric: newState?.numeric ?? DEFAULT_SIZE,
+				custom: newState?.custom ?? '',
+			} ),
+		} );
+
+		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
+			extractValueFromState( state ) || {};
+
+		const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
+			if ( newUnit === 'custom' ) {
+				popupState.open( anchorRef?.current );
 			}
 
-			if ( isUnitExtendedOption( newState.unit ) ) {
-				return newState.unit === 'auto' ? true : !! newState.custom;
-			}
-
-			return !! newState?.numeric || newState?.numeric === 0;
-		},
-		fallback: ( newState ) => ( {
-			unit: newState?.unit ?? defaultUnit,
-			numeric: newState?.numeric ?? DEFAULT_SIZE,
-			custom: newState?.custom ?? '',
-		} ),
-	} );
-
-	const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = defaultUnit } = extractValueFromState( state ) || {};
-
-	const handleUnitChange = ( newUnit: Unit | DegreeUnit | ExtendedOption ) => {
-		if ( newUnit === 'custom' ) {
-			popupState.open( anchorRef?.current );
-		}
-
-		setState( ( prev ) => ( { ...prev, unit: newUnit } ) );
-	};
-
-	const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-		const { value: size } = event.target;
-
-		if ( controlUnit === 'auto' ) {
-			setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );
-
-			return;
-		}
-
-		setState( ( prev ) => ( {
-			...prev,
-			[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
-			unit: controlUnit,
-		} ) );
-	};
-
-	const onInputFocus = ( event: React.FocusEvent< HTMLInputElement > ) => {
-		if ( isUnitExtendedOption( state.unit ) ) {
-			( event.target as HTMLElement )?.blur();
-		}
-	};
-
-	const onInputClick = ( event: React.MouseEvent ) => {
-		if ( ( event.target as HTMLElement ).closest( 'input' ) && 'custom' === state.unit ) {
-			popupState.open( anchorRef?.current );
-		}
-	};
-
-	useEffect( () => {
-		const newState = createStateFromSizeProp( sizeValue, state.unit === 'custom' ? state.unit : defaultUnit );
-		const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
-		const mergedStates = {
-			...state,
-			unit: newState.unit ?? state.unit,
-			[ currentUnitType ]: newState[ currentUnitType ],
+			setState( ( prev ) => ( { ...prev, unit: newUnit } ) );
 		};
 
-		if ( mergedStates.unit !== 'auto' && areStatesEqual( state, mergedStates ) ) {
-			return;
-		}
+		const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+			const { value: size } = event.target;
 
-		if ( state.unit === newState.unit ) {
-			setInternalState( mergedStates );
+			if ( controlUnit === 'auto' ) {
+				setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );
 
-			return;
-		}
+				return;
+			}
 
-		setState( newState );
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ sizeValue ] );
+			setState( ( prev ) => ( {
+				...prev,
+				[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
+				unit: controlUnit,
+			} ) );
+		};
 
-	useEffect( () => {
-		const newState = createStateFromSizeProp( sizeValue, defaultUnit );
+		const onInputFocus = ( event: React.FocusEvent< HTMLInputElement > ) => {
+			if ( isUnitExtendedOption( state.unit ) ) {
+				( event.target as HTMLElement )?.blur();
+			}
+		};
 
-		if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
+		const onInputClick = ( event: React.MouseEvent ) => {
+			if ( ( event.target as HTMLElement ).closest( 'input' ) && 'custom' === state.unit ) {
+				popupState.open( anchorRef?.current );
+			}
+		};
+
+		useEffect( () => {
+			const newState = createStateFromSizeProp(
+				sizeValue,
+				state.unit === 'custom' ? state.unit : actualDefaultUnit
+			);
+			const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
+			const mergedStates = {
+				...state,
+				unit: newState.unit ?? state.unit,
+				[ currentUnitType ]: newState[ currentUnitType ],
+			};
+
+			if ( mergedStates.unit !== 'auto' && areStatesEqual( state, mergedStates ) ) {
+				return;
+			}
+
+			if ( state.unit === newState.unit ) {
+				setInternalState( mergedStates );
+
+				return;
+			}
+
 			setState( newState );
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ activeBreakpoint ] );
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ sizeValue ] );
 
-	return (
-		<>
-			<SizeInput
-				disabled={ disabled }
-				size={ controlSize }
-				unit={ controlUnit }
-				units={ [ ...units, ...( extendedOptions || [] ) ] }
-				placeholder={ placeholder }
-				startIcon={ startIcon }
-				handleSizeChange={ handleSizeChange }
-				handleUnitChange={ handleUnitChange }
-				onBlur={ restoreValue }
-				onFocus={ onInputFocus }
-				onClick={ onInputClick }
-				popupState={ popupState }
-			/>
-			{ anchorRef?.current && (
-				<TextFieldPopover
+		useEffect( () => {
+			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit );
+
+			if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
+				setState( newState );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [ activeBreakpoint ] );
+
+		return (
+			<>
+				<SizeInput
+					disabled={ disabled }
+					size={ controlSize }
+					unit={ controlUnit }
+					units={ [ ...actualUnits, ...( actualExtendedOptions || [] ) ] }
+					placeholder={ placeholder }
+					startIcon={ startIcon }
+					handleSizeChange={ handleSizeChange }
+					handleUnitChange={ handleUnitChange }
+					onBlur={ restoreValue }
+					onFocus={ onInputFocus }
+					onClick={ onInputClick }
 					popupState={ popupState }
-					anchorRef={ anchorRef }
-					restoreValue={ restoreValue }
-					value={ controlSize as string }
-					onChange={ handleSizeChange }
 				/>
-			) }
-		</>
-	);
-} );
+				{ anchorRef?.current && (
+					<TextFieldPopover
+						popupState={ popupState }
+						anchorRef={ anchorRef }
+						restoreValue={ restoreValue }
+						value={ controlSize as string }
+						onChange={ handleSizeChange }
+					/>
+				) }
+			</>
+		);
+	}
+);
 
-function formatSize< TSize extends string | number >( size: TSize, unit: Unit | DegreeUnit | ExtendedOption ): TSize {
+function formatSize< TSize extends string | number >( size: TSize, unit: Unit | ExtendedOption ): TSize {
 	if ( isUnitExtendedOption( unit ) ) {
 		return unit === 'auto' ? ( '' as TSize ) : ( String( size ?? '' ) as TSize );
 	}
@@ -177,10 +229,7 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 	return size || size === 0 ? ( Number( size ) as TSize ) : ( NaN as TSize );
 }
 
-function createStateFromSizeProp(
-	sizeValue: SizeValue | null,
-	defaultUnit: Unit | DegreeUnit | ExtendedOption
-): State {
+function createStateFromSizeProp( sizeValue: SizeValue | null, defaultUnit: Unit | ExtendedOption ): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
 	const size = sizeValue?.size ?? '';
 

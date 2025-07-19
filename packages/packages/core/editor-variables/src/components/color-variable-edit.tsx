@@ -7,6 +7,7 @@ import { ArrowLeftIcon, BrushIcon, TrashIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { ColorField } from './fields/color-field';
@@ -31,6 +32,8 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 	if ( ! variable ) {
 		throw new Error( `Global color variable not found` );
 	}
+
+	const userPermissions = usePermissions();
 
 	const [ color, setColor ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
@@ -72,16 +75,18 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 
 	const actions = [];
 
-	actions.push(
-		<IconButton
-			key="delete"
-			size={ SIZE }
-			aria-label={ __( 'Delete', 'elementor' ) }
-			onClick={ handleDeleteConfirmation }
-		>
-			<TrashIcon fontSize={ SIZE } />
-		</IconButton>
-	);
+	if ( userPermissions.canDelete() ) {
+		actions.push(
+			<IconButton
+				key="delete"
+				size={ SIZE }
+				aria-label={ __( 'Delete', 'elementor' ) }
+				onClick={ handleDeleteConfirmation }
+			>
+				<TrashIcon fontSize={ SIZE } />
+			</IconButton>
+		);
+	}
 
 	const hasEmptyValues = () => {
 		return ! color.trim() || ! label.trim();
@@ -91,7 +96,11 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 		return color === variable.value && label === variable.label;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValues();
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
 
 	return (
 		<>

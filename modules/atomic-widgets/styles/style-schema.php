@@ -21,6 +21,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -70,14 +71,18 @@ class Style_Schema {
 			'object-position' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make()->enum( Position_Prop_Type::get_position_enum_values() ) )
 				->add_prop_type( Position_Prop_Type::make() )
-				->dependencies(
-					Dependency_Manager::make()
-					->new_dependency( [ 'effect' => 'hide' ] )
+				->set_dependencies(
+					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
 					->where( [
-						'operator' => 'eq',
+						'operator' => 'ne',
 						'path' => [ 'object-fit' ],
 						'value' => 'fill',
 					] )
+					->where( [
+						'operator' => 'exists',
+						'path' => [ 'object-fit' ],
+					] )
+					->get()
 				),
 		];
 	}
@@ -124,18 +129,14 @@ class Style_Schema {
 			'word-spacing' => Size_Prop_Type::make(),
 			'column-count' => Number_Prop_Type::make(),
 			'column-gap' => Size_Prop_Type::make()
-				->dependencies(
+				->set_dependencies(
 					Dependency_Manager::make()
-					->new_dependency( [ 'effect' => 'hide' ] )
 					->where( [
-						'operator' => 'lt',
+						'operator' => 'gte',
 						'path' => [ 'column-count' ],
 						'value' => 1,
 					] )
-					->where( [
-						'operator' => 'not_exist',
-						'path' => [ 'column-count' ],
-					] )
+					->get()
 				),
 			'line-height' => Size_Prop_Type::make(),
 			'text-align' => String_Prop_Type::make()->enum( [
@@ -259,9 +260,7 @@ class Style_Schema {
 				'nowrap',
 				'wrap-reverse',
 			] ),
-			'flex-grow' => Number_Prop_Type::make(),
-			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Size_Prop_Type::make(),
+			'flex' => Flex_Prop_Type::make(),
 		];
 	}
 

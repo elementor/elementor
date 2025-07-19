@@ -1,14 +1,17 @@
 name: Build
 
 on:
-  workflow_dispatch:
+  pull_request:
+    branches:
+      - 'main'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
       - '.github/config.json'
-      - 'bin/**'
       - '.gitignore'
       - 'docs/**'
+  workflow_dispatch:
   workflow_call:
     outputs:
       artifact_name:
@@ -18,7 +21,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -35,64 +38,84 @@ jobs:
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
+
       - name: Check if this is only a changelog PR
         id: changelog_diff_files
         uses: technote-space/get-diff-action@v6
         with:
-          # PATTERNS are:
-          # Everything: **/*
-          # Everything in directories starting with a period: .*/**/*
-          # Not readme.txt: !readme.txt
-          # Not changelog.txt: !changelog.txt
           PATTERNS: |
             **/*
             .*/**/*
             !readme.txt
             !changelog.txt
 
-      - name: Prevent git tag versioning
-        shell: bash
-        run: npm config set git-tag-version false
-
-      - name: Install Dependencies
-        if: github.event_name != 'pull_request' || steps.changelog_diff_files.outputs.diff == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests')
-
-        uses: ./.github/workflows/install-dependencies
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
 
       - name: Set ENV variables
-        shell: bash
         run: |
           DATE_VERSION=$(date '+%Y%m%d.%H%M')
-          VERSION=$(cat package.json \
-              | grep version \
-              | head -1 \
-              | awk -F: '{ print $2 }' \
-              | sed 's/[",]//g' \
-              | tr -d '[[:space:]]')
+          VERSION=$(node -p "require('./package.json').version")
 
           PACKAGE_VERSION=${VERSION}-${DATE_VERSION}
           PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}"
 
+          echo "DATE_VERSION=$DATE_VERSION" >> $GITHUB_ENV
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
           echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
 
+      - name: Install dependencies
+        uses: ./.github/workflows/install-dependencies
+
       - name: Build plugin
-        if: github.event_name != 'pull_request' || steps.changelog_diff_files.outputs.diff == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests')
         uses: ./.github/workflows/build-plugin
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
 
       - uses: actions/upload-artifact@v4
-        if: github.event_name != 'pull_request' || steps.changelog_diff_files.outputs.diff == 'true' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+        id: upload-artifact
         with:
           name: ${{ env.PLUGIN_FOLDER_FILENAME }}
           path: elementor
+          if-no-files-found: error
+          compression-level: 9
+          retention-days: 3
+
+      - name: Find existing comment on PR
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v3
+        id: find
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Elementor Build'
+      
+      - name: Comment build info on PR
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## Elementor Build
+            Last updated at: ${{ env.DATE_VERSION }}
+            Version: ${{ env.PACKAGE_VERSION }}
+
+            ✅ Elementor build is ready for download.
+
+            You can download the latest build from the link below:
+
+            🔗 [${{ env.PLUGIN_ZIP_FILENAME }}](https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }})
+
+            The build is available for 3 days.
+
+          edit-mode: replace
