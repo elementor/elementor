@@ -471,7 +471,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
 			return false;
 		}
 
@@ -574,7 +574,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
 			return false;
 		}
 
@@ -643,6 +643,15 @@ class Admin_Notices extends Module {
 
 	private function is_elementor_page(): bool {
 		return 0 === strpos( $this->current_screen_id, 'elementor_page' );
+	}
+
+	/**
+	 * Check if current screen is a main Elementor admin screen.
+	 * 
+	 * @return bool Whether the current screen is a main Elementor admin screen.
+	 */
+	private function is_elementor_admin_screen(): bool {
+		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true );
 	}
 
 	private function get_plugin_cta_data( $plugin_slug, $plugin_file_path ) {
