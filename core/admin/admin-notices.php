@@ -429,24 +429,33 @@ class Admin_Notices extends Module {
 		return class_exists( 'WooCommerce' );
 	}
 
+	/**
+	 * Get the name of the installed form plugin.
+	 *
+	 * @return string Form plugin name or 'form' if not specifically identified.
+	 */
 	private function get_installed_form_plugin_name() {
-		$form_plugins = [
+		// Define form plugins constants to name mapper
+		$form_plugins_constants_to_name_mapper = [
 			'WPFORMS_VERSION' => 'WPForms',
 			'WPCF7_VERSION' => 'Contact Form 7',
 		];
-
-		$form_plugin_classes = [
-			'\GFCommon' => 'Gravity Forms',
-			'\Ninja_Forms' => 'Ninja Forms',
-		];
-
-		foreach ( $form_plugins as $constant => $name ) {
+		
+		// Try to get name by constant
+		foreach ( $form_plugins_constants_to_name_mapper as $constant => $name ) {
 			if ( defined( $constant ) ) {
 				return $name;
 			}
 		}
-
-		foreach ( $form_plugin_classes as $class => $name ) {
+		
+		// Define form plugins classes to name mapper
+		$form_plugins_classes_to_name_mapper = [
+			'\GFCommon' => 'Gravity Forms',
+			'\Ninja_Forms' => 'Ninja Forms',
+		];
+		
+		// Try to get name by class
+		foreach ( $form_plugins_classes_to_name_mapper as $class => $name ) {
 			if ( class_exists( $class ) ) {
 				return $name;
 			}
@@ -471,7 +480,7 @@ class Admin_Notices extends Module {
 		}
 
 		$plugin_file_path = 'send/send-app.php';
-		$plugin_slug = 'send';
+		$plugin_slug = 'send-app';
 
 		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
 		if ( empty( $cta_data ) ) {
