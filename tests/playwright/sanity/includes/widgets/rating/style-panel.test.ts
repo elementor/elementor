@@ -11,7 +11,7 @@ iconExperimentStates.forEach( ( iconExperimentState ) => {
 			const context = await browser.newContext();
 			const page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { container: 'active', e_font_icon_svg: iconExperimentState } );
+			await wpAdmin.setExperiments( { container: 'active', e_font_icon_svg: 'active' === iconExperimentState } );
 			await page.close();
 		} );
 
