@@ -422,7 +422,7 @@ class Admin_Notices extends Module {
 	}
 
 	private function site_has_forms_plugins() {
-		return $this->get_installed_form_plugin_name() !== esc_html__( 'form', 'elementor' );
+		return defined( 'WPFORMS_VERSION' ) || defined( 'WPCF7_VERSION' ) || defined( 'FLUENTFORM_VERSION' ) || class_exists( '\GFCommon' ) || class_exists( '\Ninja_Forms' ) || function_exists( 'load_formidable_forms' ) || did_action( 'metform/after_load' ) || defined( 'FORMINATOR_PLUGIN_BASENAME' );
 	}
 
 	private function site_has_woocommerce() {
@@ -461,26 +461,27 @@ class Admin_Notices extends Module {
 			}
 		}
 
-		return esc_html__( 'form', 'elementor' );
+		return false;
 	}
 
 	private function notice_send_app_promotion() {
 		$notice_id = 'send_app_promotion';
 
-		if ( ! $this->site_has_forms_plugins() ) {
-			return false;
-		}
-
 		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
 			return false;
 		}
 
-		// Only show after 60 days from installation
 		if ( time() < $this->get_install_time() + ( 60 * DAY_IN_SECONDS ) ) {
 			return false;
 		}
 
 		if ( ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$form_plugin_name = $this->get_installed_form_plugin_name();
+
+		if ( ! $form_plugin_name ) {
 			return false;
 		}
 
@@ -492,7 +493,6 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$form_plugin_name = $this->get_installed_form_plugin_name();
 		$title = sprintf(
 			/* translators: %s: Form plugin name */
 			esc_html__( 'Turn %s leads into loyal shoppers', 'elementor' ),
