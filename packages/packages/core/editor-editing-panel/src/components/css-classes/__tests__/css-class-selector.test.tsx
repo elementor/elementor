@@ -23,7 +23,6 @@ import {
 	useUserStylesCapability,
 	validateStyleLabel,
 } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
@@ -1092,10 +1091,6 @@ describe( '<CssClassSelector />', () => {
 		beforeEach( () => {
 			jest.mocked( getElementLabel ).mockImplementation( ( id ) => {
 				return id === 'mock-element' ? 'Mock Element' : '';
-			} );
-
-			jest.mocked( isExperimentActive ).mockImplementation( ( experimentName: string ) => {
-				return experimentName === 'e_v_3_30';
 			} );
 		} );
 

@@ -89,7 +89,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
 	const EXPERIMENT_VERSION_3_31 = 'e_v_3_31';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 
@@ -162,15 +161,6 @@ class Module extends BaseModule {
 			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
 			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
 			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_VERSION_3_30,
-			'title' => esc_html__( 'Version 3.30', 'elementor' ),
-			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
