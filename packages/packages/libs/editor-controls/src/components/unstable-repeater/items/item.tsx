@@ -8,8 +8,8 @@ import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
 import { ItemIcon } from './item-icon';
 import { ItemLabel } from './item-label';
-import { AddItemPopover } from "./add-item-popover";
-import { usePopover } from "./use-popover";
+import { AddItemPopover } from './add-item-popover';
+import { usePopover } from './use-popover';
 
 type AnchorEl = HTMLElement | null;
 
