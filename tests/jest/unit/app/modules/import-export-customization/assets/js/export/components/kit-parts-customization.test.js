@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import KitContent from 'elementor/app/modules/import-export-customization/assets/js/export/components/kit-content';
+import ExportKitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-parts-selection';
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => {
 	/**
@@ -96,12 +96,12 @@ global.__ = jest.fn( ( text ) => text );
 
 import { useExportContext } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
 
-const getCheckboxByType = ( type ) => {
-	const container = document.querySelector( `[data-type="${ type }"]` );
-	return container ? container.querySelector( 'input[type="checkbox"]' ) : null;
+const getCheckboxByType = ( container, type ) => {
+	const checkboxContainer = container.querySelector( `[data-type="${ type }"]` );
+	return checkboxContainer ? checkboxContainer.querySelector( 'input[type="checkbox"]' ) : null;
 };
 
-describe( 'KitContent Component', () => {
+describe( 'ExportKitPartsSelection Component', () => {
 	let mockDispatch;
 
 	beforeEach( () => {
@@ -121,7 +121,7 @@ describe( 'KitContent Component', () => {
 
 	describe( 'Component Rendering', () => {
 		it( 'should render all kit content items', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			expect( screen.getByText( 'Content' ) ).toBeTruthy();
 			expect( screen.getByText( 'Templates' ) ).toBeTruthy();
@@ -139,7 +139,7 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should render item descriptions with features', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			expect( screen.getByText( 'Elementor Pages, Landing Pages' ) ).toBeTruthy();
 			expect( screen.getByText( 'Saved Templates, Headers' ) ).toBeTruthy();
@@ -148,14 +148,14 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should render checkboxes for each item', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			const checkboxes = screen.getAllByRole( 'checkbox' );
 			expect( checkboxes ).toHaveLength( 4 );
 		} );
 
 		it( 'should render Edit buttons for all items', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			const editButtons = screen.getAllByText( 'Edit' );
 			expect( editButtons ).toHaveLength( 4 );
@@ -172,12 +172,12 @@ describe( 'KitContent Component', () => {
 
 	describe( 'Checkbox State Management', () => {
 		it( 'should show checked state for items in includes array', () => {
-			render( <KitContent /> );
+			const { container } = render( <ExportKitPartsSelection /> );
 
-			const contentCheckbox = getCheckboxByType( 'content' );
-			const templatesCheckbox = getCheckboxByType( 'templates' );
-			const settingsCheckbox = getCheckboxByType( 'settings' );
-			const pluginsCheckbox = getCheckboxByType( 'plugins' );
+			const contentCheckbox = getCheckboxByType( container, 'content' );
+			const templatesCheckbox = getCheckboxByType( container, 'templates' );
+			const settingsCheckbox = getCheckboxByType( container, 'settings' );
+			const pluginsCheckbox = getCheckboxByType( container, 'plugins' );
 
 			expect( contentCheckbox.checked ).toBe( true );
 			expect( templatesCheckbox.checked ).toBe( true );
@@ -193,12 +193,17 @@ describe( 'KitContent Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			render( <KitContent /> );
+			const { container } = render( <ExportKitPartsSelection /> );
 
-			expect( getCheckboxByType( 'content' ).checked ).toBe( true );
-			expect( getCheckboxByType( 'templates' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'settings' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'plugins' ).checked ).toBe( false );
+			const contentCheckbox = getCheckboxByType( container, 'content' );
+			const templatesCheckbox = getCheckboxByType( container, 'templates' );
+			const settingsCheckbox = getCheckboxByType( container, 'settings' );
+			const pluginsCheckbox = getCheckboxByType( container, 'plugins' );
+
+			expect( contentCheckbox.checked ).toBe( true );
+			expect( templatesCheckbox.checked ).toBe( false );
+			expect( settingsCheckbox.checked ).toBe( false );
+			expect( pluginsCheckbox.checked ).toBe( false );
 		} );
 
 		it( 'should handle empty includes array', () => {
@@ -209,13 +214,18 @@ describe( 'KitContent Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			render( <KitContent /> );
+			const { container } = render( <ExportKitPartsSelection /> );
 
 			// Use data-type attributes instead of iterating through checkboxes array
-			expect( getCheckboxByType( 'content' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'templates' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'settings' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'plugins' ).checked ).toBe( false );
+			const contentCheckbox = getCheckboxByType( container, 'content' );
+			const templatesCheckbox = getCheckboxByType( container, 'templates' );
+			const settingsCheckbox = getCheckboxByType( container, 'settings' );
+			const pluginsCheckbox = getCheckboxByType( container, 'plugins' );
+
+			expect( contentCheckbox.checked ).toBe( false );
+			expect( templatesCheckbox.checked ).toBe( false );
+			expect( settingsCheckbox.checked ).toBe( false );
+			expect( pluginsCheckbox.checked ).toBe( false );
 		} );
 
 		it( 'should handle all items included', () => {
@@ -226,19 +236,24 @@ describe( 'KitContent Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			render( <KitContent /> );
+			const { container } = render( <ExportKitPartsSelection /> );
 
 			// Use data-type attributes instead of iterating through checkboxes array
-			expect( getCheckboxByType( 'content' ).checked ).toBe( true );
-			expect( getCheckboxByType( 'templates' ).checked ).toBe( true );
-			expect( getCheckboxByType( 'settings' ).checked ).toBe( true );
-			expect( getCheckboxByType( 'plugins' ).checked ).toBe( true );
+			const contentCheckbox = getCheckboxByType( container, 'content' );
+			const templatesCheckbox = getCheckboxByType( container, 'templates' );
+			const settingsCheckbox = getCheckboxByType( container, 'settings' );
+			const pluginsCheckbox = getCheckboxByType( container, 'plugins' );
+
+			expect( contentCheckbox.checked ).toBe( true );
+			expect( templatesCheckbox.checked ).toBe( true );
+			expect( settingsCheckbox.checked ).toBe( true );
+			expect( pluginsCheckbox.checked ).toBe( true );
 		} );
 	} );
 
 	describe( 'User Interactions', () => {
 		it( 'should dispatch ADD_INCLUDE when unchecked item is clicked', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			const pluginsContainer = document.querySelector( '[data-type="plugins"]' );
 			const pluginsCheckbox = pluginsContainer.querySelector( 'input[type="checkbox"]' );
@@ -252,7 +267,7 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should dispatch REMOVE_INCLUDE when checked item is clicked', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			// Get content checkbox by data-type
 			const contentContainer = document.querySelector( '[data-type="content"]' );
@@ -267,15 +282,15 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should handle multiple checkbox interactions', () => {
-			render( <KitContent /> );
+			const { container } = render( <ExportKitPartsSelection /> );
 
-			fireEvent.click( getCheckboxByType( 'plugins' ) );
+			fireEvent.click( getCheckboxByType( container, 'plugins' ) );
 			expect( mockDispatch ).toHaveBeenCalledWith( {
 				type: 'ADD_INCLUDE',
 				payload: 'plugins',
 			} );
 
-			fireEvent.click( getCheckboxByType( 'content' ) );
+			fireEvent.click( getCheckboxByType( container, 'content' ) );
 			expect( mockDispatch ).toHaveBeenCalledWith( {
 				type: 'REMOVE_INCLUDE',
 				payload: 'content',
@@ -285,7 +300,7 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should open dialog when Edit button is clicked', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			const settingsEditButton = screen.getByText( 'Edit', {
 				selector: '[data-type="settings"]',
@@ -300,7 +315,7 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should handle all edit buttons correctly', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			const editButtons = screen.getAllByText( 'Edit' );
 			expect( editButtons ).toHaveLength( 4 );
@@ -328,7 +343,7 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should close dialog when handleClose is called', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			const settingsEditButton = screen.getByText( 'Edit', {
 				selector: '[data-type="settings"]',
@@ -357,20 +372,20 @@ describe( 'KitContent Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			render( <KitContent /> );
+			const { container } = render( <ExportKitPartsSelection /> );
 
 			// Use data-type attributes instead of array indexes
-			expect( getCheckboxByType( 'content' ).checked ).toBe( true );
-			expect( getCheckboxByType( 'templates' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'settings' ).checked ).toBe( true );
-			expect( getCheckboxByType( 'plugins' ).checked ).toBe( false );
+			expect( getCheckboxByType( container, 'content' ).checked ).toBe( true );
+			expect( getCheckboxByType( container, 'templates' ).checked ).toBe( false );
+			expect( getCheckboxByType( container, 'settings' ).checked ).toBe( true );
+			expect( getCheckboxByType( container, 'plugins' ).checked ).toBe( false );
 		} );
 
 		it( 'should handle context data changes', () => {
-			const { rerender } = render( <KitContent /> );
+			const { rerender, container } = render( <ExportKitPartsSelection /> );
 
 			// Initially content is checked
-			expect( getCheckboxByType( 'content' ).checked ).toBe( true );
+			expect( getCheckboxByType( container, 'content' ).checked ).toBe( true );
 
 			// Update context data
 			useExportContext.mockReturnValue( {
@@ -380,12 +395,12 @@ describe( 'KitContent Component', () => {
 				dispatch: mockDispatch,
 			} );
 
-			rerender( <KitContent /> );
+			rerender( <ExportKitPartsSelection /> );
 
-			expect( getCheckboxByType( 'content' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'templates' ).checked ).toBe( true );
-			expect( getCheckboxByType( 'settings' ).checked ).toBe( false );
-			expect( getCheckboxByType( 'plugins' ).checked ).toBe( true );
+			expect( getCheckboxByType( container, 'content' ).checked ).toBe( false );
+			expect( getCheckboxByType( container, 'templates' ).checked ).toBe( true );
+			expect( getCheckboxByType( container, 'settings' ).checked ).toBe( false );
+			expect( getCheckboxByType( container, 'plugins' ).checked ).toBe( true );
 		} );
 	} );
 
@@ -425,7 +440,7 @@ describe( 'KitContent Component', () => {
 			rerender( <NewDialog open={ false } handleClose={ mockHandleClose } /> );
 		} );
 		it( 'should have dialog closed by default', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			// Dialog should not be rendered when closed
 			const dialogState = screen.queryByTestId( 'dialog-open-state' );
@@ -433,7 +448,7 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should maintain dialog state independently', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			// Open dialog
 			const settingsEditButton = screen.getByText( 'Edit', {
@@ -452,7 +467,7 @@ describe( 'KitContent Component', () => {
 		} );
 
 		it( 'should render correct dialog component for each type', () => {
-			render( <KitContent /> );
+			render( <ExportKitPartsSelection /> );
 
 			const types = [ 'content', 'templates', 'settings', 'plugins' ];
 

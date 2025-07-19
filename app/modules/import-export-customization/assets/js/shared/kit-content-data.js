@@ -1,5 +1,4 @@
-import KitSettingsCustomizationDialog
-	from '../export/components/kit-settings-customization-dialog';
+import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
 
 const kitContentData = [
 	{
