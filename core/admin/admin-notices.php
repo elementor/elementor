@@ -650,18 +650,10 @@ class Admin_Notices extends Module {
 		return 0 === strpos( $this->current_screen_id, 'elementor_page' );
 	}
 
-	/**
-	 * Check if current screen is a main Elementor admin screen.
-	 * @return bool Whether the current screen is a main Elementor admin screen.
-	 */
 	private function is_elementor_admin_screen(): bool {
 		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true );
 	}
 
-	/**
-	 * Check if current screen is an Elementor admin screen including system info.
-	 * @return bool Whether the current screen is an Elementor admin screen including system info.
-	 */
 	private function is_elementor_admin_screen_with_system_info(): bool {
 		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true );
 	}
