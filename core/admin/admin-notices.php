@@ -422,7 +422,7 @@ class Admin_Notices extends Module {
 	}
 
 	private function site_has_forms_plugins() {
-		return defined( 'WPFORMS_VERSION' ) || defined( 'WPCF7_VERSION' ) || defined( 'FLUENTFORM_VERSION' ) || class_exists( '\GFCommon' ) || class_exists( '\Ninja_Forms' ) || function_exists( 'load_formidable_forms' ) || did_action( 'metform/after_load' ) || defined( 'FORMINATOR_PLUGIN_BASENAME' );
+		return $this->get_installed_form_plugin_name() !== esc_html__( 'form', 'elementor' );
 	}
 
 	private function site_has_woocommerce() {
@@ -440,20 +440,20 @@ class Admin_Notices extends Module {
 			'WPFORMS_VERSION' => 'WPForms',
 			'WPCF7_VERSION' => 'Contact Form 7',
 		];
-		
+
 		// Try to get name by constant
 		foreach ( $form_plugins_constants_to_name_mapper as $constant => $name ) {
 			if ( defined( $constant ) ) {
 				return $name;
 			}
 		}
-		
+
 		// Define form plugins classes to name mapper
 		$form_plugins_classes_to_name_mapper = [
 			'\GFCommon' => 'Gravity Forms',
 			'\Ninja_Forms' => 'Ninja Forms',
 		];
-		
+
 		// Try to get name by class
 		foreach ( $form_plugins_classes_to_name_mapper as $class => $name ) {
 			if ( class_exists( $class ) ) {
@@ -647,16 +647,14 @@ class Admin_Notices extends Module {
 
 	/**
 	 * Check if current screen is a main Elementor admin screen.
-	 * 
 	 * @return bool Whether the current screen is a main Elementor admin screen.
 	 */
 	private function is_elementor_admin_screen(): bool {
 		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true );
 	}
-	
+
 	/**
 	 * Check if current screen is an Elementor admin screen including system info.
-	 * 
 	 * @return bool Whether the current screen is an Elementor admin screen including system info.
 	 */
 	private function is_elementor_admin_screen_with_system_info(): bool {
