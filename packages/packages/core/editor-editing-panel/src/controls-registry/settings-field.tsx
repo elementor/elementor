@@ -9,17 +9,12 @@ import {
 	updateElementSettings,
 	useElementSettings,
 } from '@elementor/editor-elements';
-import { type PropKey, type Props, type PropType, type PropValue } from '@elementor/editor-props';
+import { isDependencyMet, type PropKey, type Props, type PropType, type PropValue } from '@elementor/editor-props';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import {
-	extractOrderedDependencies,
-	isDependencyEffectActive,
-	updateValues,
-	type Values,
-} from '../utils/prop-dependency-utils';
+import { extractOrderedDependencies, updateValues, type Values } from '../utils/prop-dependency-utils';
 import { createTopLevelOjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
@@ -60,7 +55,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		undoableUpdateElementProp( settings );
 	};
 
-	const isDisabled = ( prop: PropType ) => isDependencyEffectActive( prop, elementSettingValues, 'disable' );
+	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

@@ -45,6 +45,8 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Move_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Flex_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
@@ -76,6 +78,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Scale_Prop_Typ
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Skew_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -117,6 +120,9 @@ class Module extends BaseModule {
 
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
+
+			Atomic_Styles_Manager::instance()->register_hooks();
+
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
 
@@ -202,6 +208,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
+		$transformers->register( Key_Value_Array_Prop_Type::get_key(), new Attributes_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {

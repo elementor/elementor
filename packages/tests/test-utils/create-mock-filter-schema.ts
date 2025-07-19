@@ -1,15 +1,34 @@
 import { type TransformablePropType } from '@elementor/editor-props';
 
-export function createMockSingleSizeFilterPropType( name: string, propName: string, units: string[] ) {
+export function createMockSingleSizeFilterPropType() {
 	return {
-		[ name ]: {
+		'css-filter-func': {
 			kind: 'object',
-			key: name,
+			key: 'css-filter-func',
 			default: null,
 			meta: {},
 			settings: {},
 			shape: {
-				[ propName ]: {
+				func: {
+					kind: 'plain',
+					key: 'string',
+					default: null,
+					meta: {},
+					settings: {
+						required: true,
+						enum: [
+							'blur',
+							'brightness',
+							'contrast',
+							'grayscale',
+							'invert',
+							'sepia',
+							'saturate',
+							'hue-rotate',
+						],
+					},
+				},
+				args: {
 					kind: 'object',
 					key: 'size',
 					default: null,
@@ -29,7 +48,20 @@ export function createMockSingleSizeFilterPropType( name: string, propName: stri
 							default: null,
 							meta: {},
 							settings: {
-								enum: units,
+								enum: [
+									'px',
+									'em',
+									'rem',
+									'%',
+									'vh',
+									'vw',
+									'vmin',
+									'vmax',
+									'deg',
+									'rad',
+									'grad',
+									'turn',
+								],
 								required: true,
 							},
 						},
