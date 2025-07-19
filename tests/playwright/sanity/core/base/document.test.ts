@@ -3,12 +3,18 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Document tests', async () => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
+		await page.close();
+	} );
+
 	test( 'Converting Gutenberg page to sections columns',
 		async ( { page, apiRequests }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( {
-				container: false,
-			} );
+			await wpAdmin.setExperiments( { container: false } );
 
 			await wpAdmin.openNewWordpressPage();
 			await addElement( wpAdmin, 'list' );
@@ -26,9 +32,7 @@ test.describe( 'Document tests', async () => {
 	test( 'converting gutenberg page to container',
 		async ( { page, apiRequests }, testInfo ) => {
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( {
-				container: true,
-			} );
+			await wpAdmin.setExperiments( { container: true } );
 
 			await wpAdmin.openNewWordpressPage();
 			await addElement( wpAdmin, 'list' );
