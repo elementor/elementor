@@ -27,7 +27,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 	const popoverState = usePopupState( { variant: 'popover' } );
 	const isShowingPlaceholder = ! fontFamily && placeholder;
 
-	const categories = React.useMemo< Category[] >( () => {
+	const mapFontSubs = React.useMemo< Category[] >( () => {
 		return fontFamilies.map( ( { label, fonts } ) => ( {
 			label,
 			items: fonts,
@@ -66,7 +66,7 @@ export const FontFamilyControl = createControl( ( { fontFamilies, sectionWidth }
 				{ ...bindPopover( popoverState ) }
 			>
 				<ItemSelector
-					itemsList={ categories }
+					itemsList={ mapFontSubs }
 					selectedItem={ fontFamily }
 					onItemChange={ setFontFamily }
 					onClose={ popoverState.close }

@@ -35,7 +35,7 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 	const fontFamilies = useFontFamilies();
 	const sectionWidth = useSectionWidth();
 
-	const categories = React.useMemo( () => {
+	const mapFontSubs = React.useMemo( () => {
 		return fontFamilies.map( ( { label, fonts } ) => ( {
 			label,
 			items: fonts,
@@ -78,7 +78,7 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 					{ ...bindPopover( fontPopoverState ) }
 				>
 					<ItemSelector
-						itemsList={ categories }
+						itemsList={ mapFontSubs }
 						selectedItem={ fontFamily }
 						onItemChange={ handleFontFamilyChange }
 						onClose={ fontPopoverState.close }
