@@ -435,6 +435,14 @@ class Admin_Notices extends Module {
 	 * @return string Form plugin name or 'form' if not specifically identified.
 	 */
 	private function get_installed_form_plugin_name() {
+		// Use static variable to cache the result
+		static $detected_form_plugin = null;
+		
+		// Return cached result if already detected
+		if ( null !== $detected_form_plugin ) {
+			return $detected_form_plugin;
+		}
+		
 		// Define form plugins constants to name mapper
 		$form_plugins_constants_to_name_mapper = [
 			'WPFORMS_VERSION' => 'WPForms',
@@ -444,7 +452,8 @@ class Admin_Notices extends Module {
 		// Try to get name by constant
 		foreach ( $form_plugins_constants_to_name_mapper as $constant => $name ) {
 			if ( defined( $constant ) ) {
-				return $name;
+				$detected_form_plugin = $name;
+				return $detected_form_plugin;
 			}
 		}
 
@@ -457,11 +466,14 @@ class Admin_Notices extends Module {
 		// Try to get name by class
 		foreach ( $form_plugins_classes_to_name_mapper as $class => $name ) {
 			if ( class_exists( $class ) ) {
-				return $name;
+				$detected_form_plugin = $name;
+				return $detected_form_plugin;
 			}
 		}
 
-		return false;
+		// No form plugin detected
+		$detected_form_plugin = false;
+		return $detected_form_plugin;
 	}
 
 	private function notice_send_app_promotion() {
