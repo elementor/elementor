@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import { afterAll, beforeAll } from './helper';
 import _path from 'path';
 
 const iconExperimentStates = [ 'inactive', 'active' ];
@@ -8,19 +9,11 @@ const iconExperimentStates = [ 'inactive', 'active' ];
 iconExperimentStates.forEach( ( iconExperimentState ) => {
 	test.describe( `Rating style panel - Icon Experiment: ${ iconExperimentState } @rating`, () => {
 		test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { container: 'active', e_font_icon_svg: 'active' === iconExperimentState } );
-			await page.close();
+			await beforeAll( browser, apiRequests, testInfo, iconExperimentState );
 		} );
 
 		test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-			const context = await browser.newContext();
-			const page = await context.newPage();
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.resetExperiments();
-			await page.close();
+			await afterAll( browser, apiRequests, testInfo );
 		} );
 
 		test( `Styling test - Icon Experiment: ${ iconExperimentState }`, async ( { page, apiRequests }, testInfo ) => {

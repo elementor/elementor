@@ -2,13 +2,15 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { viewportSize } from '../../../enums/viewport-sizes';
-import { editTab, clickTabByPosition, selectDropdownContainer, locators, templatePath } from './helper';
+import { editTab, clickTabByPosition, setupExperiments, selectDropdownContainer, locators, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
+		await wpAdmin.resetExperiments();
+		await setupExperiments( wpAdmin );
+
 		await page.close();
 	} );
 
@@ -17,6 +19,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
+
 		await page.close();
 	} );
 

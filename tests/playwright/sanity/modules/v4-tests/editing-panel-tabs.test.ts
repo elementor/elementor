@@ -12,6 +12,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	type SectionType = 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border';
 
 	const atomicWidget = { name: 'e-heading', title: 'Heading' };
+	const experimentName = 'e_atomic_elements';
 	const panelSelector = '#elementor-panel-inner';
 
 	const sections: SectionType[] = [
@@ -29,7 +30,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
+		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );

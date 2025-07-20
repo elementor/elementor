@@ -5,11 +5,14 @@ import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
 
 test.describe( 'Elementor regression tests with templates for CORE - V4', () => {
+	const experimentName = 'e_atomic_elements';
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
+		await wpAdmin.setExperiments( {
+			[ experimentName ]: 'active',
+		} );
 		await page.close();
 	} );
 

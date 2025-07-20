@@ -1,13 +1,15 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { setTabItemColor, setTabBorderColor, templatePath } from './helper';
+import { setupExperiments, setTabItemColor, setTabBorderColor, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
+		await wpAdmin.resetExperiments();
+		await setupExperiments( wpAdmin );
+
 		await page.close();
 	} );
 
@@ -16,6 +18,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
+
 		await page.close();
 	} );
 

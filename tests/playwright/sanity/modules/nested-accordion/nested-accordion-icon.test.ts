@@ -8,7 +8,12 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
+
+		await wpAdmin.setExperiments( {
+			container: 'active',
+			'nested-elements': 'active',
+		} );
+
 		await page.close();
 	} );
 
@@ -16,16 +21,23 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
+		await wpAdmin.setExperiments( {
+			'nested-elements': 'inactive',
+			container: 'inactive',
+			e_font_icon_svg: 'default',
+		} );
+
 		await page.close();
 	} );
 
 	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser, apiRequests }, testInfo ) => {
 		let url;
-		await test.step( 'Inline Font Icons: Off', async () => {
+		await test.step( 'experiment Inline Font Icons off', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { e_font_icon_svg: 'inactive' } );
+			await wpAdmin.setExperiments( {
+				e_font_icon_svg: 'inactive',
+			} );
 			const editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -46,10 +58,12 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			url = page.url();
 		} );
 
-		await test.step( 'Inline Font Icons: On', async () => {
+		await test.step( 'experiment Inline Font Icons on (default)', async () => {
 			const page = await browser.newPage(),
 				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdmin.setExperiments( { e_font_icon_svg: 'active' } );
+			await wpAdmin.setExperiments( {
+				e_font_icon_svg: 'active',
+			} );
 			const editor = await wpAdmin.openNewPage();
 
 			// Assert

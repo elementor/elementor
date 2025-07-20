@@ -10,6 +10,7 @@ test.describe( `Plugin tester tests: sections @plugin_tester_section`, () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await wpAdmin.setExperiments( { container: 'inactive', e_optimized_markup: 'active' } );
+
 		await page.close();
 	} );
 
