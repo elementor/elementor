@@ -6,23 +6,23 @@ import { type FilterKey } from '../components/filter-and-sort/types';
 import { useCssClassUsage } from './use-css-class-usage';
 import { useAllCssClassesIDs, useEmptyCssClass } from './use-empty-css-class';
 
-type FilteredCssClassUsage = Record< FilterKey, string[] >;
+type FilteredCssClassUsage = Record<FilterKey, string[]>;
 
-const findCssClassKeysByPageID = ( data: EnhancedCssClassUsage, pageId: number ) => {
+const findCssClassKeysByPageID = (data: EnhancedCssClassUsage, pageId: number) => {
 	const result: string[] = [];
-	for ( const key in data ) {
-		data[ key ].content.forEach( ( content: CssClassUsageContent ) => {
-			if ( +content.pageId === pageId ) {
-				result.push( key );
+	for (const key in data) {
+		data[key].content.forEach((content: CssClassUsageContent) => {
+			if (+content.pageId === pageId) {
+				result.push(key);
 			}
-		} );
+		});
 	}
 	return result;
 };
 
-const getUnusedClasses = ( usedCssClass: string[], potentialUnused: string[] ): string[] => {
-	const set = new Set( usedCssClass );
-	return potentialUnused.filter( ( cssClass: string ) => ! set.has( cssClass ) );
+const getUnusedClasses = (usedCssClass: string[], potentialUnused: string[]): string[] => {
+	const set = new Set(usedCssClass);
+	return potentialUnused.filter((cssClass: string) => !set.has(cssClass));
 };
 
 const EMPTY_FILTERED_CSS_CLASS_RESPONSE: FilteredCssClassUsage = {
@@ -37,24 +37,24 @@ export const useFilteredCssClassUsage = (): FilteredCssClassUsage => {
 	const { data, isLoading } = useCssClassUsage();
 	const listOfCssClasses = useAllCssClassesIDs();
 
-	const emptyCssClassesIDs = useMemo( () => emptyCssClasses.map( ( { id } ) => id ), [ emptyCssClasses ] );
+	const emptyCssClassesIDs = useMemo(() => emptyCssClasses.map(({ id }) => id), [emptyCssClasses]);
 
-	const onThisPage = useMemo( () => {
-		if ( ! data || ! document ) {
+	const onThisPage = useMemo(() => {
+		if (!data || !document) {
 			return [];
 		}
-		return findCssClassKeysByPageID( data, document.id );
-	}, [ data, document ] );
+		return findCssClassKeysByPageID(data, document.id);
+	}, [data, document]);
 
-	const unused = useMemo( () => {
-		if ( ! data ) {
+	const unused = useMemo(() => {
+		if (!data) {
 			return [];
 		}
 
-		return getUnusedClasses( Object.keys( data ), listOfCssClasses );
-	}, [ data, listOfCssClasses ] );
+		return getUnusedClasses(Object.keys(data), listOfCssClasses);
+	}, [data, listOfCssClasses]);
 
-	if ( isLoading || ! data || ! document ) {
+	if (isLoading || !data || !document) {
 		return EMPTY_FILTERED_CSS_CLASS_RESPONSE;
 	}
 

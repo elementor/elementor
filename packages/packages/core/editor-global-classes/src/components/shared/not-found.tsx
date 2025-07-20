@@ -9,7 +9,7 @@ type CssClassNotFoundedProps = {
 	onClear: () => void;
 };
 
-export const CssClassNotFound = ({ onClear, searchValue }: CssClassNotFoundedProps) => (
+export const NotFound = ({ onClear, searchValue, mainText, sceontdryText, icon: Icon }: CssClassNotFoundedProps) => (
 	<Stack
 		color={'text.secondary'}
 		pt={5}
@@ -19,10 +19,10 @@ export const CssClassNotFound = ({ onClear, searchValue }: CssClassNotFoundedPro
 		maxWidth={'170px'}
 		justifySelf={'center'}
 	>
-		<FlippedColorSwatchIcon color={'inherit'} fontSize="large" />
+		<Icon color={'inherit'} fontSize="large" />
 		<Box>
 			<Typography align="center" variant="subtitle2" color="inherit">
-				{__('Sorry, nothing matched', 'elementor')}
+				{mainText}
 			</Typography>
 			<Typography
 				variant="subtitle2"
@@ -47,7 +47,7 @@ export const CssClassNotFound = ({ onClear, searchValue }: CssClassNotFoundedPro
 			</Typography>
 		</Box>
 		<Typography align="center" variant="caption" color="inherit">
-			{__('Try something else.', 'elementor')}
+			{sceontdryText}
 			<Link color="secondary" variant="caption" component="button" onClick={onClear}>
 				{__('Clear & try again', 'elementor')}
 			</Link>

@@ -18,130 +18,136 @@ import { SortableItem, SortableProvider } from './sortable';
 type GlobalClassesListProps = {
 	disabled?: boolean;
 	searchValue: string;
-	onSearch: ( searchValue: string ) => void;
+	onSearch: (searchValue: string) => void;
 };
 
-export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ({ disabled, searchValue, onSearch }: GlobalClassesListProps) => {
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
-	const { empty = [], onThisPage = [], unused = [] } = useFilters();
+	const filters = useFilters();
 
-	const list = [ empty, onThisPage, unused ].flat();
-
-	const [ classesOrder, reorderClasses ] = useReorder();
+	const [classesOrder, reorderClasses] = useReorder();
 
 	const lowercaseLabels = useMemo(
 		() =>
-			cssClasses.map( ( cssClass ) => ( {
+			cssClasses.map((cssClass) => ({
 				...cssClass,
 				lowerLabel: cssClass.label.toLowerCase(),
-			} ) ),
-		[ cssClasses ]
+			})),
+		[cssClasses]
 	);
 
-	const filteredClasses = useMemo( () => {
+	const filteredClasses = useMemo(() => {
 		return searchValue.length > 1
-			? lowercaseLabels.filter( ( cssClass ) =>
-					cssClass.lowerLabel.toLowerCase().includes( searchValue.toLowerCase() )
+			? lowercaseLabels.filter((cssClass) =>
+					cssClass.lowerLabel.toLowerCase().includes(searchValue.toLowerCase())
 			  )
 			: cssClasses;
-	}, [ searchValue, cssClasses, lowercaseLabels ] );
+	}, [searchValue, cssClasses, lowercaseLabels]);
 
-	const filteredByCategory = useMemo( () => {
-		return list.length ? filteredClasses.filter( ( cssClass ) => list.includes( cssClass.id ) ) : filteredClasses;
-	}, [ filteredClasses, list ] );
+	const filteredByCategory = useMemo(() => {
+		return filters ? filteredClasses.filter((cssClass) => filters.includes(cssClass.id)) : filteredClasses;
+	}, [filteredClasses, filters]);
 
-	useEffect( () => {
-		const handler = ( event: KeyboardEvent ) => {
-			if ( event.key === 'z' && ( event.ctrlKey || event.metaKey ) ) {
+	useEffect(() => {
+		const handler = (event: KeyboardEvent) => {
+			if (event.key === 'z' && (event.ctrlKey || event.metaKey)) {
 				event.stopImmediatePropagation();
 				event.preventDefault();
-				if ( event.shiftKey ) {
-					dispatch( slice.actions.redo() );
+				if (event.shiftKey) {
+					dispatch(slice.actions.redo());
 					return;
 				}
-				dispatch( slice.actions.undo() );
+				dispatch(slice.actions.undo());
 			}
 		};
-		window.addEventListener( 'keydown', handler, {
+		window.addEventListener('keydown', handler, {
 			capture: true,
-		} );
-		return () => window.removeEventListener( 'keydown', handler );
-	}, [ dispatch ] );
+		});
+		return () => window.removeEventListener('keydown', handler);
+	}, [dispatch]);
 
-	if ( ! cssClasses?.length ) {
+	if (!cssClasses?.length) {
 		return <EmptyState />;
 	}
 
 	return (
 		<DeleteConfirmationProvider>
-			{ filteredClasses.length <= 0 && searchValue.length > 1 ? (
-				<CssClassNotFound onClear={ () => onSearch( '' ) } searchValue={ searchValue } />
+			{filteredClasses.length <= 0 && searchValue.length > 1 ? (
+				<CssClassNotFound onClear={() => onSearch('')} searchValue={searchValue} />
 			) : (
-				<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-					<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-						{ filteredByCategory?.map( ( { id, label } ) => {
+				<List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+					{filters && (
+						<Typography variant="subtitle2" color="text.primary">
+							{__('We found ${number} classes:', 'elementor').replace(
+								'${number}',
+								filters.length.toString()
+							)}
+						</Typography>
+					)}
+					<SortableProvider value={classesOrder} onChange={reorderClasses}>
+						{filteredByCategory?.map(({ id, label }) => {
 							return (
-								<SortableItem key={ id } id={ id }>
-									{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
+								<SortableItem key={id} id={id}>
+									{({ isDragged, isDragPlaceholder, triggerProps, triggerStyle }) => (
 										<ClassItem
-											isSearchActive={ searchValue.length < 2 }
-											id={ id }
-											label={ label }
-											renameClass={ ( newLabel: string ) => {
+											isSearchActive={searchValue.length < 2}
+											id={id}
+											label={label}
+											renameClass={(newLabel: string) => {
 												dispatch(
-													slice.actions.update( {
+													slice.actions.update({
 														style: {
 															id,
 															label: newLabel,
 														},
-													} )
+													})
 												);
-											} }
-											selected={ isDragged }
-											disabled={ disabled || isDragPlaceholder }
-											sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+											}}
+											selected={isDragged}
+											disabled={disabled || isDragPlaceholder}
+											sortableTriggerProps={{ ...triggerProps, style: triggerStyle }}
 										/>
-									) }
+									)}
 								</SortableItem>
 							);
-						} ) }
+						})}
 					</SortableProvider>
 				</List>
-			) }
+			)}
 		</DeleteConfirmationProvider>
 	);
 };
 
 const EmptyState = () => (
-	<Stack alignItems="center" gap={ 1.5 } pt={ 10 } px={ 0.5 } maxWidth="260px" margin="auto">
+	<Stack alignItems="center" gap={1.5} pt={10} px={0.5} maxWidth="260px" margin="auto">
 		<FlippedColorSwatchIcon fontSize="large" />
 		<StyledHeader variant="subtitle2" component="h2" color="text.secondary">
-			{ __( 'There are no global classes yet.', 'elementor' ) }
+			{__('There are no global classes yet.', 'elementor')}
 		</StyledHeader>
 		<Typography align="center" variant="caption" color="text.secondary">
-			{ __(
+			{__(
 				'CSS classes created in the editor panel will appear here. Once they are available, you can arrange their hierarchy, rename them, or delete them as needed.',
 				'elementor'
-			) }
+			)}
 		</Typography>
 	</Stack>
 );
 
 // Override panel reset styles.
-const StyledHeader = styled( Typography )< TypographyProps >( ( { theme, variant } ) => ( {
+const StyledHeader = styled(Typography)<TypographyProps>(({ theme, variant }) => ({
 	'&.MuiTypography-root': {
-		...( theme.typography[ variant as keyof typeof theme.typography ] as React.CSSProperties ),
+		...(theme.typography[variant as keyof typeof theme.typography] as React.CSSProperties),
 	},
-} ) );
+}));
 
 const useReorder = () => {
 	const dispatch = useDispatch();
 	const order = useClassesOrder();
 
-	const reorder = ( newIds: StyleDefinitionID[] ) => {
-		dispatch( slice.actions.setOrder( newIds ) );
+	const reorder = (newIds: StyleDefinitionID[]) => {
+		dispatch(slice.actions.setOrder(newIds));
 	};
 
-	return [ order, reorder ] as const;
+	return [order, reorder] as const;
 };

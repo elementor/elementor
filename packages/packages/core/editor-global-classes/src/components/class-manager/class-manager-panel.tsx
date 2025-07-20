@@ -48,27 +48,27 @@ const id = 'global-classes-manager';
 // The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
 // will force them to be disabled. We can't use the `preview` edit mode in this case since it'll force
 // the panel to be closed.
-export const { panel, usePanelActions } = createPanel( {
+export const { panel, usePanelActions } = createPanel({
 	id,
 	component: ClassManagerPanel,
-	allowedEditModes: [ 'edit', id ],
+	allowedEditModes: ['edit', id],
 	onOpen: () => {
-		changeEditMode( id );
+		changeEditMode(id);
 
 		blockPanelInteractions();
 	},
 	onClose: () => {
-		changeEditMode( 'edit' );
+		changeEditMode('edit');
 
 		unblockPanelInteractions();
 	},
-} );
+});
 
 export function ClassManagerPanel() {
-	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
+	const { debouncedValue, inputValue, handleChange } = useDebounceState({
 		delay: 300,
 		initialValue: '',
-	} );
+	});
 
 	const isDirty = useDirtyState();
 
@@ -78,7 +78,7 @@ export function ClassManagerPanel() {
 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
 
 	const resetAndClosePanel = () => {
-		dispatch( slice.actions.resetToInitialState( { context: 'frontend' } ) );
+		dispatch(slice.actions.resetToInitialState({ context: 'frontend' }));
 		closeSaveChangesDialog();
 	};
 
@@ -86,62 +86,62 @@ export function ClassManagerPanel() {
 
 	return (
 		<ThemeProvider>
-			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
+			<ErrorBoundary fallback={<ErrorBoundaryFallback />}>
 				<Panel>
 					<PanelHeader>
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+						<Stack p={1} pl={2} width="100%" direction="row" alignItems="center">
+							<PanelHeaderTitle sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
 								<FlippedColorSwatchIcon fontSize="inherit" />
-								{ __( 'Class Manager', 'elementor' ) }
+								{__('Class Manager', 'elementor')}
 							</PanelHeaderTitle>
 							<CloseButton
-								sx={ { marginLeft: 'auto' } }
-								disabled={ isPublishing }
-								onClose={ () => {
-									if ( isDirty ) {
+								sx={{ marginLeft: 'auto' }}
+								disabled={isPublishing}
+								onClose={() => {
+									if (isDirty) {
 										openSaveChangesDialog();
 										return;
 									}
 
 									closePanel();
-								} }
+								}}
 							/>
 						</Stack>
 					</PanelHeader>
 					<PanelBody
-						sx={ {
+						sx={{
 							display: 'flex',
 							flexDirection: 'column',
 							height: '100%',
-						} }
+						}}
 					>
 						<FilterAndSortProvider>
 							<>
-								<Box px={ 2 } pb={ 1 }>
-									<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
-										<Box sx={ { flexGrow: 1 } }>
-											<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
+								<Box px={2} pb={1}>
+									<Stack direction="row" justifyContent="spaceBetween" gap={0.5} sx={{ pb: 0.5 }}>
+										<Box sx={{ flexGrow: 1 }}>
+											<ClassManagerSearch searchValue={inputValue} onChange={handleChange} />
 										</Box>
 										<CssClassFilter />
 									</Stack>
 									<ActiveFilters />
 								</Box>
 								<Divider
-									sx={ {
+									sx={{
 										borderWidth: '1px 0 0 0',
-									} }
+									}}
 								/>
 								<Box
-									px={ 2 }
-									sx={ {
+									px={2}
+									sx={{
 										flexGrow: 1,
 										overflowY: 'auto',
-									} }
+									}}
 								>
 									<GlobalClassesList
-										disabled={ isPublishing }
-										searchValue={ debouncedValue }
-										onSearch={ handleChange }
+										disabled={isPublishing}
+										searchValue={debouncedValue}
+										onSearch={handleChange}
 									/>
 								</Box>
 							</>
@@ -154,65 +154,63 @@ export function ClassManagerPanel() {
 							size="small"
 							color="global"
 							variant="contained"
-							onClick={ publish }
-							disabled={ ! isDirty }
-							loading={ isPublishing }
+							onClick={publish}
+							disabled={!isDirty}
+							loading={isPublishing}
 						>
-							{ __( 'Save changes', 'elementor' ) }
+							{__('Save changes', 'elementor')}
 						</Button>
 					</PanelFooter>
 				</Panel>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
-			{ isSaveChangesDialogOpen && (
+			{isSaveChangesDialogOpen && (
 				<SaveChangesDialog>
-					<DialogHeader onClose={ closeSaveChangesDialog } logo={ false }>
-						<SaveChangesDialog.Title>
-							{ __( 'You have unsaved changes', 'elementor' ) }
-						</SaveChangesDialog.Title>
+					<DialogHeader onClose={closeSaveChangesDialog} logo={false}>
+						<SaveChangesDialog.Title>{__('You have unsaved changes', 'elementor')}</SaveChangesDialog.Title>
 					</DialogHeader>
 					<SaveChangesDialog.Content>
 						<SaveChangesDialog.ContentText>
-							{ __( 'You have unsaved changes in the Class Manager.', 'elementor' ) }
+							{__('You have unsaved changes in the Class Manager.', 'elementor')}
 						</SaveChangesDialog.ContentText>
 						<SaveChangesDialog.ContentText>
-							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
+							{__('To avoid losing your updates, save your changes before leaving.', 'elementor')}
 						</SaveChangesDialog.ContentText>
 					</SaveChangesDialog.Content>
 					<SaveChangesDialog.Actions
-						actions={ {
+						actions={{
 							discard: {
-								label: __( 'Discard', 'elementor' ),
+								label: __('Discard', 'elementor'),
 								action: () => {
 									resetAndClosePanel();
 								},
 							},
 							confirm: {
-								label: __( 'Save & Continue', 'elementor' ),
+								label: __('Save & Continue', 'elementor'),
 								action: async () => {
 									await publish();
 									closeSaveChangesDialog();
 									closePanel();
 								},
 							},
-						} }
+						}}
 					/>
 				</SaveChangesDialog>
-			) }
+			)}
 		</ThemeProvider>
 	);
 }
 
-const CloseButton = ( { onClose, ...props }: IconButtonProps & { onClose: () => void } ) => (
-	<IconButton size="small" color="secondary" onClick={ onClose } aria-label="Close" { ...props }>
+const CloseButton = ({ onClose, ...props }: IconButtonProps & { onClose: () => void }) => (
+	<IconButton size="small" color="secondary" onClick={onClose} aria-label="Close" {...props}>
 		<XIcon fontSize="small" />
 	</IconButton>
 );
 
 const ErrorBoundaryFallback = () => (
-	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>
-		<Alert severity="error" sx={ { mb: 2, maxWidth: 400, textAlign: 'center' } }>
-			<strong>{ __( 'Something went wrong', 'elementor' ) }</strong>
+	<Box role="alert" sx={{ minHeight: '100%', p: 2 }}>
+		<Alert severity="error" sx={{ mb: 2, maxWidth: 400, textAlign: 'center' }}>
+			<strong>{__('Something went wrong', 'elementor')}</strong>
 		</Alert>
 	</Box>
 );
@@ -220,30 +218,30 @@ const ErrorBoundaryFallback = () => (
 const usePreventUnload = () => {
 	const isDirty = useDirtyState();
 
-	useEffect( () => {
-		const handleBeforeUnload = ( event: BeforeUnloadEvent ) => {
-			if ( isDirty ) {
+	useEffect(() => {
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			if (isDirty) {
 				event.preventDefault();
 			}
 		};
 
-		window.addEventListener( 'beforeunload', handleBeforeUnload );
+		window.addEventListener('beforeunload', handleBeforeUnload);
 
 		return () => {
-			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+			window.removeEventListener('beforeunload', handleBeforeUnload);
 		};
-	}, [ isDirty ] );
+	}, [isDirty]);
 };
 
 const usePublish = () => {
-	return useMutation( {
-		mutationFn: () => saveGlobalClasses( { context: 'frontend' } ),
+	return useMutation({
+		mutationFn: () => saveGlobalClasses({ context: 'frontend' }),
 		onSuccess: async () => {
-			setDocumentModifiedStatus( false );
+			setDocumentModifiedStatus(false);
 
-			if ( hasDeletedItems() ) {
+			if (hasDeletedItems()) {
 				await onDelete();
 			}
 		},
-	} );
+	});
 };
