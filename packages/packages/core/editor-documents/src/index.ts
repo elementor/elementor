@@ -5,6 +5,7 @@ export {
 	useNavigateToDocument as __useNavigateToDocument,
 	useHostDocument as __useHostDocument,
 	useActiveDocumentActions as __useActiveDocumentActions,
+	useOpenDocumentInNewTab as __useOpenDocumentInNewTab,
 } from './hooks';
 
 export { slice } from './store';
