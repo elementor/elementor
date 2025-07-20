@@ -62,7 +62,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	protected function define_atomic_controls(): array {
 		$settings_section_items = [
-			Link_Control::bind_to( 'link' ),
+			Link_Control::bind_to( 'link' )->set_label( __( 'Link', 'elementor' ) ),
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {

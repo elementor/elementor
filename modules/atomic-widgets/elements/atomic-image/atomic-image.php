@@ -75,7 +75,7 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->set_show_mode( 'sizes' ),
 			Link_Control::bind_to( 'link' )->set_meta( [
 				'topDivider' => true,
-			] ),
+			] )->set_label( __( 'Link', 'elementor' ) ),
 		];
 
 		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
