@@ -9,8 +9,6 @@ import { ClearIconButton } from './clear-icon-button';
 import { FilterList } from './filter-list';
 
 export const CssClassFilter = () => {
-	const { onReset } = useFilterAndSortContext();
-
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,

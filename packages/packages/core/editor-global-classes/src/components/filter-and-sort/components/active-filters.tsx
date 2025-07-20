@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { ClearIcon } from '@elementor/icons';
-import { Chip, IconButton, Stack } from '@elementor/ui';
+import { Chip, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useFilterAndSortContext } from '../context';
@@ -8,7 +7,7 @@ import { ClearIconButton } from './clear-icon-button';
 import { checkBoxItems } from './filter-list';
 
 export const ActiveFilters = () => {
-	const { checked, setChecked, onReset } = useFilterAndSortContext();
+	const { checked, setChecked } = useFilterAndSortContext();
 
 	const handleRemoveFilter = React.useCallback(
 		( filterKey: keyof typeof checked ) => {
