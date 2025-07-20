@@ -13,6 +13,7 @@ export { NumberControl } from './controls/number-control';
 export { EqualUnequalSizesControl } from './controls/equal-unequal-sizes-control';
 export { LinkedDimensionsControl } from './controls/linked-dimensions-control';
 export { FontFamilyControl } from './controls/font-family-control/font-family-control';
+export { ItemSelector } from './components/item-selector';
 export { UrlControl } from './controls/url-control';
 export { LinkControl } from './controls/link-control';
 export { GapControl } from './controls/gap-control';
@@ -26,11 +27,11 @@ export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
 export { TransitionsRepeaterControl } from './controls/transitions-repeater-control';
 export { PopoverContent } from './components/popover-content';
+export { enqueueFont } from './controls/font-family-control/enqueue-font';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
-export { FontFamilySelector } from './components/font-family-selector';
 
 // types
 export type { ControlComponent } from './create-control';
@@ -46,6 +47,7 @@ export type { FontCategory } from './controls/font-family-control/font-family-co
 // providers
 export { createControlReplacementsRegistry, ControlReplacementsProvider } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
+export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';

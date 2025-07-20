@@ -14,6 +14,12 @@ const initialState = {
 	exportedData: null,
 	exportStatus: EXPORT_STATUS.PENDING,
 	plugins: [],
+	customization: {
+		settings: null,
+		templates: null,
+		content: null,
+		plugins: null,
+	},
 	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
 	kitInfo: {
 		title: null,
@@ -49,6 +55,19 @@ function exportReducer( state, { type, payload } ) {
 			return {
 				...state,
 				includes: state.includes.filter( ( item ) => item !== payload ),
+				// Clear customization when removing from includes
+				customization: {
+					...state.customization,
+					[ payload ]: null,
+				},
+			};
+		case 'SET_CUSTOMIZATION':
+			return {
+				...state,
+				customization: {
+					...state.customization,
+					[ payload.key ]: payload.value,
+				},
 			};
 		default:
 			return state;

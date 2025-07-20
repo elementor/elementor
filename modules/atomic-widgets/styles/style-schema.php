@@ -73,11 +73,15 @@ class Style_Schema {
 				->add_prop_type( String_Prop_Type::make()->enum( Position_Prop_Type::get_position_enum_values() ) )
 				->add_prop_type( Position_Prop_Type::make() )
 				->set_dependencies(
-					Dependency_Manager::make()
+					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
 					->where( [
 						'operator' => 'ne',
 						'path' => [ 'object-fit' ],
 						'value' => 'fill',
+					] )
+					->where( [
+						'operator' => 'exists',
+						'path' => [ 'object-fit' ],
 					] )
 					->get()
 				),

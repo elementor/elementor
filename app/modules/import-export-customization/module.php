@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Responsible for initializing Elementor App functionality
  */
 class Module extends BaseModule {
-	const FORMAT_VERSION = '2.0';
+	const FORMAT_VERSION = '3.0';
 
 	const REFERRER_KIT_LIBRARY = 'kit-library';
 
