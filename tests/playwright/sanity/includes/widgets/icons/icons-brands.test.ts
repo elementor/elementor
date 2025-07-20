@@ -10,7 +10,14 @@ test.describe( 'Icons (FA Brands)', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await wpAdmin.setExperiments( { container: 'active' } );
+		await page.close();
+	} );
 
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
@@ -22,9 +29,7 @@ test.describe( 'Icons (FA Brands)', () => {
 			const iconsType = 'icons-brands';
 
 			// Act.
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: status,
-			} );
+			await wpAdmin.setExperiments( { e_font_icon_svg: status } );
 
 			await wpAdmin.openNewPage();
 			await editor.closeNavigatorIfOpen();
