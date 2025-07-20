@@ -147,7 +147,7 @@ class Styles_Renderer {
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
-		return ! empty( $custom_css['raw'] ) ? Utils::encode_string( $custom_css['raw'], '' ) . '\n' : '';
+		return ! empty( $custom_css['raw'] ) ? Utils::decode_string( $custom_css['raw'], '' ) . '\n' : '';
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
