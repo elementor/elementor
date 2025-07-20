@@ -46,7 +46,7 @@
     "@elementor/env": "0.3.5",
     "@elementor/icons": "1.46.0",
     "@elementor/query": "0.2.4",
-    "@elementor/ui": "1.36.0",
+    "@elementor/ui": "1.36.2",
     "@wordpress/api-fetch": "^6.42.0",
     "@wordpress/i18n": "^5.13.0"
   },
