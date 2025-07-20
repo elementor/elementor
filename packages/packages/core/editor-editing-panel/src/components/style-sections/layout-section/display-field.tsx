@@ -29,31 +29,27 @@ const displayFieldItems: ToggleButtonGroupItem< Displays >[] = [
 		label: __( 'Inline-block', 'elementor' ),
 		showTooltip: true,
 	},
-];
-
-export const DisplayField = () => {
-	const items = [ ...displayFieldItems ];
-
-	items.push( {
+	{
 		value: 'none',
 		renderContent: () => __( 'None', 'elementor' ),
 		label: __( 'None', 'elementor' ),
 		showTooltip: true,
-	} );
-
-	items.push( {
+	},
+	{
 		value: 'inline-flex',
 		renderContent: () => __( 'In-flx', 'elementor' ),
 		label: __( 'Inline-flex', 'elementor' ),
 		showTooltip: true,
-	} );
+	},
+];
 
+export const DisplayField = () => {
 	const placeholder = useDisplayPlaceholderValue();
 
 	return (
 		<StylesField bind="display" propDisplayName={ DISPLAY_LABEL } placeholder={ placeholder }>
 			<StylesFieldLayout label={ DISPLAY_LABEL } direction="column">
-				<ToggleControl options={ items } maxItems={ 4 } fullWidth={ true } />
+				<ToggleControl options={ displayFieldItems } maxItems={ 4 } fullWidth={ true } />
 			</StylesFieldLayout>
 		</StylesField>
 	);

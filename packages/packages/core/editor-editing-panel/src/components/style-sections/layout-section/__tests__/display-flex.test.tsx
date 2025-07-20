@@ -13,7 +13,7 @@ import { getStylesSchema, type StyleDefinition } from '@elementor/editor-styles'
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 
 import { mockElement } from '../../../../__tests__/utils';
 import { ClassesPropProvider } from '../../../../contexts/classes-prop-context';
@@ -35,6 +35,7 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 	},
 } ) );
 jest.mock( '@elementor/editor-responsive' );
+jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	...jest.requireActual( '../../../../contexts/styles-inheritance-context' ),
 	useStylesInheritanceChain: jest.fn(),
@@ -103,7 +104,6 @@ describe( '<DisplayField />', () => {
 				},
 			} )
 		);
-
 		// Act.
 		renderDisplayField();
 
@@ -123,7 +123,7 @@ describe( '<DisplayField />', () => {
 		renderDisplayField();
 
 		// Assert.
-		[ 'Block', 'Flex', 'Inline-block', 'Inline-flex' ].forEach( ( label ) => {
+		[ 'Block', 'Flex', 'Inline-block', 'None' ].forEach( ( label ) => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );

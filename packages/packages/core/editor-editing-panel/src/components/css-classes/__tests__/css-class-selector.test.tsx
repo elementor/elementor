@@ -46,10 +46,6 @@ jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn().mockReturnValue( false ),
-} ) );
 
 // MUI use the useId hook behind the scenes, and it breaks the tests.
 let mockId = 0;
@@ -252,7 +248,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b', 'provider-2-a' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 	} );
 
@@ -281,7 +277,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'provider-1-a' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 	} );
 
@@ -305,7 +301,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 
 		expect( setActive ).toHaveBeenCalledWith( 'local' );
@@ -423,7 +419,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b', 'new-class-id' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 
 		await waitFor( () => expect( setActive ).toHaveBeenCalledWith( 'new-class-id' ) );
@@ -459,7 +455,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b', 'new-class-id' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 
 		await waitFor( () => expect( setActive ).toHaveBeenCalledWith( 'new-class-id' ) );
@@ -838,7 +834,7 @@ describe( '<CssClassSelector />', () => {
 				props: {
 					'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
 				},
-				withHistory: true,
+				withHistory: false,
 			} );
 		} );
 

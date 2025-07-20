@@ -21,7 +21,6 @@ import {
 	type PropValue,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
@@ -38,10 +37,6 @@ jest.mock( '@elementor/editor-elements', () => ( {
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
-} ) );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn(),
 } ) );
 
 const bind = 'text';
@@ -311,6 +306,7 @@ describe( '<SettingsField />', () => {
 		expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
 			id: element.id,
 			props: { [ bind ]: newValue },
+			withHistory: false,
 		} );
 	} );
 
@@ -407,10 +403,6 @@ describe( 'SettingsField dependency logic', () => {
 
 	beforeEach( () => {
 		historyMock.beforeEach();
-
-		jest.mocked( isExperimentActive ).mockImplementation( () => {
-			return true;
-		} );
 	} );
 
 	afterEach( () => {
