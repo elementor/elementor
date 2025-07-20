@@ -435,21 +435,17 @@ class Admin_Notices extends Module {
 	 * @return string Form plugin name or 'form' if not specifically identified.
 	 */
 	private function get_installed_form_plugin_name() {
-		// Use static variable to cache the result
 		static $detected_form_plugin = null;
-		
-		// Return cached result if already detected
+
 		if ( null !== $detected_form_plugin ) {
 			return $detected_form_plugin;
 		}
-		
-		// Define form plugins constants to name mapper
+
 		$form_plugins_constants_to_name_mapper = [
 			'WPFORMS_VERSION' => 'WPForms',
 			'WPCF7_VERSION' => 'Contact Form 7',
 		];
 
-		// Try to get name by constant
 		foreach ( $form_plugins_constants_to_name_mapper as $constant => $name ) {
 			if ( defined( $constant ) ) {
 				$detected_form_plugin = $name;
@@ -457,13 +453,11 @@ class Admin_Notices extends Module {
 			}
 		}
 
-		// Define form plugins classes to name mapper
 		$form_plugins_classes_to_name_mapper = [
 			'\GFCommon' => 'Gravity Forms',
 			'\Ninja_Forms' => 'Ninja Forms',
 		];
 
-		// Try to get name by class
 		foreach ( $form_plugins_classes_to_name_mapper as $class => $name ) {
 			if ( class_exists( $class ) ) {
 				$detected_form_plugin = $name;
@@ -471,7 +465,6 @@ class Admin_Notices extends Module {
 			}
 		}
 
-		// No form plugin detected
 		$detected_form_plugin = false;
 		return $detected_form_plugin;
 	}
