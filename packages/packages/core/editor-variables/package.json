@@ -50,7 +50,7 @@
     "@elementor/http-client": "0.3.0",
     "@elementor/icons": "1.46.0",
     "@elementor/schema": "0.1.2",
-    "@elementor/ui": "1.36.0",
+    "@elementor/ui": "1.36.2",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
