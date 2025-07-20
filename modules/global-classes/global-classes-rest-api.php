@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Global_Classes_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'global-classes';
-	const API_BASE_USAGE = self::API_BASE . '-usage';
+
 	const MAX_ITEMS = 50;
 
 	private $repository = null;

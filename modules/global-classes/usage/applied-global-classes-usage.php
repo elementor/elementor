@@ -68,7 +68,7 @@ class Applied_Global_Classes_Usage {
 
 			$filtered_pages = array_filter(
 				$pages,
-				fn( $page_data ) => ! in_array( $page_data['type'] ?? 'unknown', $this->excluded_types, true )
+				fn( $page_data ) => ! in_array( $page_data['type'], $this->excluded_types, true )
 			);
 
 			if ( empty( $filtered_pages ) ) {
@@ -79,7 +79,7 @@ class Applied_Global_Classes_Usage {
 				$result[ $class_id ][] = [
 					'pageId'   => $page_id,
 					'title'    => $page_data['title'],
-					'type'     => $page_data['type'] ?? 'unknown',
+					'type'     => $page_data['type'],
 					'total'    => $page_data['total'],
 					'elements' => $page_data['elements'],
 				];
