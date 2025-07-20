@@ -4,7 +4,7 @@ import { CloseButton, Stack, Typography } from '@elementor/ui';
 const SIZE = 'tiny';
 
 type PopoverHeaderProps = {
-	title: string;
+	title: React.ReactNode;
 	onClose: () => void;
 	icon?: React.ReactNode;
 	actions?: React.ReactNode[];
