@@ -15,10 +15,6 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 			e_atomic_elements: 'active',
 		} );
 
-		await wpAdmin.setExperiments( {
-			e_v_3_30: 'active',
-		} );
-
 		newTestUser = await apiRequests.createNewUser( request, newUser );
 		await page.close();
 	} );
