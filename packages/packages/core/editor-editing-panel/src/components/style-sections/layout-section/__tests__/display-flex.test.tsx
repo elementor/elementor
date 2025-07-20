@@ -13,7 +13,7 @@ import { getStylesSchema, type StyleDefinition } from '@elementor/editor-styles'
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 import { mockElement } from '../../../../__tests__/utils';
 import { ClassesPropProvider } from '../../../../contexts/classes-prop-context';
