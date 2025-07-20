@@ -37,31 +37,29 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 	} = useFilteredVariables( searchValue, colorVariablePropTypeUtil.key );
 
 	const handleSetColorVariable = ( key: string ) => {
+		setVariable( key );
 		trackVariableEvent( {
 			varType: 'color',
 			controlPath: path.join( '.' ),
 			action: 'connect',
 		} );
-		setVariable( key );
 		closePopover();
+	};
+
+	const onAddAndTrack = () => {
+		onAdd?.();
+		trackVariableEvent( {
+			varType: 'color',
+			controlPath: path.join( '.' ),
+			action: 'add',
+		} );
 	};
 
 	const actions = [];
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton
-				key="add"
-				size={ SIZE }
-				onClick={ () => {
-					trackVariableEvent( {
-						varType: 'color',
-						controlPath: path.join( '.' ),
-						action: 'add',
-					} );
-					onAdd();
-				} }
-			>
+			<IconButton key="add" size={ SIZE } onClick={ onAddAndTrack }>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
 		);

@@ -8,15 +8,15 @@ export const trackVariableEvent = ( { varType, controlPath, action }: VariableEv
 	const extendedWindow = window as unknown as Window & {
 		elementor?: {
 			editorEvents?: {
-				dispatchEvent: ( name: string, data: Record< string, string > ) => void;
+				dispatchEvent: ( name: string, data: Record< string, unknown > ) => void;
 				config?: {
-					locations: Record< string, string >;
-					secondaryLocations: Record< string, string >;
+					locations: Record< string, unknown >;
+					secondaryLocations: Record< string, unknown >;
 					names: {
-						variables?: Record< string, string >;
+						variables?: Record< string, unknown >;
 					};
-					triggers: Record< string, string >;
-					elements: Record< string, string >;
+					triggers: Record< string, unknown >;
+					elements: Record< string, unknown >;
 				};
 			};
 		};

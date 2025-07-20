@@ -36,31 +36,29 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 	} = useFilteredVariables( searchValue, fontVariablePropTypeUtil.key );
 
 	const handleSetVariable = ( key: string ) => {
+		setVariable( key );
 		trackVariableEvent( {
 			varType: 'font',
 			controlPath: path.join( '.' ),
 			action: 'connect',
 		} );
-		setVariable( key );
 		closePopover();
+	};
+
+	const onAddAndTrack = () => {
+		onAdd?.();
+		trackVariableEvent( {
+			varType: 'font',
+			controlPath: path.join( '.' ),
+			action: 'add',
+		} );
 	};
 
 	const actions = [];
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton
-				key="add"
-				size={ SIZE }
-				onClick={ () => {
-					trackVariableEvent( {
-						varType: 'font',
-						controlPath: path.join( '.' ),
-						action: 'add',
-					} );
-					onAdd();
-				} }
-			>
+			<IconButton key="add" size={ SIZE } onClick={ onAddAndTrack }>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
 		);

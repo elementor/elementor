@@ -38,13 +38,7 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 		onClose();
 	};
 
-	const handleCreate = () => {
-		trackVariableEvent( {
-			varType: 'color',
-			controlPath: path.join( '.' ),
-			action: 'save',
-		} );
-
+	const handleCreateAndTrack = () => {
 		createVariable( {
 			value: color,
 			label,
@@ -57,6 +51,11 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 			.catch( ( error ) => {
 				setErrorMessage( error.message );
 			} );
+		trackVariableEvent( {
+			varType: 'color',
+			controlPath: path.join( '.' ),
+			action: 'save',
+		} );
 	};
 
 	const hasEmptyValue = () => {
@@ -108,7 +107,7 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreate }>
+				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
