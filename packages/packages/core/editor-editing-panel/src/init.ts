@@ -1,13 +1,12 @@
 import { injectIntoLogic } from '@elementor/editor';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
-import { blockCommand, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { blockCommand } from '@elementor/editor-v1-adapters';
 
 import { EditingPanelHooks } from './components/editing-panel-hooks';
 import { init as initDynamics } from './dynamics/init';
 import { panel } from './panel';
 import { initResetStyleProps } from './reset-style-props';
 import { init as initStylesInheritance } from './styles-inheritance/init';
-import { EXPERIMENTAL_FEATURES } from './sync/experiments-flags';
 import { isAtomicWidgetSelected } from './sync/is-atomic-widget-selected';
 
 export function init() {
@@ -25,9 +24,7 @@ export function init() {
 	// TODO: Move it from here once we have styles-inheritance package.
 	initStylesInheritance();
 
-	if ( isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 ) ) {
-		initResetStyleProps();
-	}
+	initResetStyleProps();
 }
 
 const blockV1Panel = () => {

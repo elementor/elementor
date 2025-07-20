@@ -134,10 +134,7 @@ export const slice = createSlice( {
 				variant.props = mergeProps( variant.props, payload.props );
 				variant.custom_css = customCss;
 
-				if ( Object.keys( variant.props ).length === 0 && ! variant.custom_css?.raw ) {
-					// If the props object is empty after merging, we remove the variant.
-					style.variants = style.variants.filter( ( v ) => v !== variant );
-				}
+				style.variants = getNonEmptyVariants( style );
 			} else {
 				style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
 			}
@@ -187,6 +184,12 @@ export const slice = createSlice( {
 		},
 	},
 } );
+
+const getNonEmptyVariants = ( style: StyleDefinition ) => {
+	return style.variants.filter(
+		( { props, custom_css: customCSs }: StyleDefinitionVariant ) => Object.keys( props ).length || customCSs?.raw
+	);
+};
 
 // Selectors
 export const selectData = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].data;

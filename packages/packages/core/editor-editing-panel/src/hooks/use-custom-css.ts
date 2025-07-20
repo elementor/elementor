@@ -8,13 +8,12 @@ import {
 	type StyleDefinitionVariant,
 } from '@elementor/editor-styles';
 import { ELEMENTS_STYLES_RESERVED_LABEL, type StylesProvider } from '@elementor/editor-styles-repository';
-import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
+import { undoable } from '@elementor/editor-v1-adapters';
 
 import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useStyle } from '../contexts/style-context';
 import { StylesProviderCannotUpdatePropsError } from '../errors';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './use-styles-fields';
 import { useStylesRerender } from './use-styles-rerender';
 
@@ -24,7 +23,6 @@ export const useCustomCss = () => {
 	} = useElement();
 	const { id: styleId, meta, provider } = useStyle();
 	const style = provider?.actions.get( styleId, { elementId } );
-
 	const undoableUpdateStyle = useUndoableUpdateCustomCss( { elementId, meta } );
 
 	useStylesRerender();
@@ -88,8 +86,6 @@ export function useUndoableUpdateCustomCss( {
 	const classesProp = useClassesProp();
 
 	return useMemo( () => {
-		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
-
 		const meta = { breakpoint, state };
 
 		const createStyleArgs = { elementId, classesProp, meta, label: ELEMENTS_STYLES_RESERVED_LABEL };
@@ -120,16 +116,14 @@ export function useUndoableUpdateCustomCss( {
 				},
 			},
 			{
-				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId, isVersion331Active } ),
+				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId } ),
 				subtitle: ( { provider, styleId, propDisplayName } ) =>
-					getSubtitle( { provider, styleId, elementId, isVersion331Active, propDisplayName } ),
+					getSubtitle( { provider, styleId, elementId, propDisplayName } ),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
 
 		function shouldCreateNewLocalStyle( payload: UndoableUpdateStylePayload ) {
-			// If styleId and provider are nullish, it means that it's a local style that haven't been created yet.
-			// Local styles are created only when the user starts editing a style.
 			return ! payload.styleId && ! payload.provider;
 		}
 

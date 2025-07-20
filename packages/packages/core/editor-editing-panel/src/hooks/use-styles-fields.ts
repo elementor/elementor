@@ -4,14 +4,13 @@ import type { Props } from '@elementor/editor-props';
 import { getVariantByMeta, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { isElementsStylesProvider, type StylesProvider } from '@elementor/editor-styles-repository';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
-import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
+import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useStyle } from '../contexts/style-context';
 import { StyleNotFoundUnderProviderError, StylesProviderCannotUpdatePropsError } from '../errors';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { useStylesRerender } from './use-styles-rerender';
 
 export const HISTORY_DEBOUNCE_WAIT = 800;
@@ -106,8 +105,6 @@ function useUndoableUpdateStyle( {
 	const classesProp = useClassesProp();
 
 	return useMemo( () => {
-		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
-
 		const meta = { breakpoint, state };
 
 		const createStyleArgs = { elementId, classesProp, meta, label: ELEMENTS_STYLES_RESERVED_LABEL };
@@ -138,16 +135,14 @@ function useUndoableUpdateStyle( {
 				},
 			},
 			{
-				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId, isVersion331Active } ),
+				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId } ),
 				subtitle: ( { provider, styleId, propDisplayName } ) =>
-					getSubtitle( { provider, styleId, elementId, isVersion331Active, propDisplayName } ),
+					getSubtitle( { provider, styleId, elementId, propDisplayName } ),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
 
 		function shouldCreateNewLocalStyle( payload: UndoableUpdateStylePayload ) {
-			// If styleId and provider are nullish, it means that it's a local style that haven't been created yet.
-			// Local styles are created only when the user starts editing a style.
 			return ! payload.styleId && ! payload.provider;
 		}
 
@@ -197,28 +192,23 @@ function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVa
 	return structuredClone( props );
 }
 
-const historyTitlesV330 = {
-	title: ( { elementId }: { elementId: ElementID } ) => getElementLabel( elementId ),
-	subtitle: __( 'Style edited', 'elementor' ),
-};
-
-type DefaultHistoryTitleV331Args = {
+type DefaultHistoryTitleArgs = {
 	provider: StylesProvider;
 };
 
-type DefaultHistorySubtitleV331Args = {
+type DefaultHistorySubtitleArgs = {
 	provider: StylesProvider;
 	styleId: StyleDefinition[ 'id' ];
 	elementId: ElementID;
 	propDisplayName: string;
 };
 
-const defaultHistoryTitlesV331 = {
-	title: ( { provider }: DefaultHistoryTitleV331Args ) => {
+const defaultHistoryTitles = {
+	title: ( { provider }: DefaultHistoryTitleArgs ) => {
 		const providerLabel = provider.labels?.singular;
 		return providerLabel ? capitalize( providerLabel ) : __( 'Style', 'elementor' );
 	},
-	subtitle: ( { provider, styleId, elementId, propDisplayName }: DefaultHistorySubtitleV331Args ) => {
+	subtitle: ( { provider, styleId, elementId, propDisplayName }: DefaultHistorySubtitleArgs ) => {
 		const styleLabel = provider.actions.get( styleId, { elementId } )?.label;
 
 		if ( ! styleLabel ) {
@@ -230,17 +220,17 @@ const defaultHistoryTitlesV331 = {
 	},
 };
 
-type LocalStyleHistoryTitleV331Args = {
+type LocalStyleHistoryTitleArgs = {
 	elementId: ElementID;
 };
 
-type LocalStyleHistorySubtitleV331Args = {
+type LocalStyleHistorySubtitleArgs = {
 	propDisplayName: string;
 };
 
-const localStyleHistoryTitlesV331 = {
-	title: ( { elementId }: LocalStyleHistoryTitleV331Args ) => getElementLabel( elementId ),
-	subtitle: ( { propDisplayName }: LocalStyleHistorySubtitleV331Args ) =>
+const localStyleHistoryTitles = {
+	title: ( { elementId }: LocalStyleHistoryTitleArgs ) => getElementLabel( elementId ),
+	subtitle: ( { propDisplayName }: LocalStyleHistorySubtitleArgs ) =>
 		// translators: %s is the name of the style property being edited
 		__( `%s edited`, 'elementor' ).replace( '%s', propDisplayName ),
 };
@@ -255,53 +245,32 @@ const isLocalStyle = ( provider: StylesProvider | null, styleId: StyleDefinition
 type GetTitle = {
 	provider: StylesProvider | null;
 	styleId: string | null;
-	isVersion331Active: boolean;
 	elementId: string;
 };
 
 type GetSubtitle = GetTitle & { propDisplayName: string };
 
-export const getTitle = ( { provider, styleId, isVersion331Active, elementId }: GetTitle ) => {
-	if ( isVersion331Active ) {
-		let title: string;
+export const getTitle = ( { provider, styleId, elementId }: GetTitle ) => {
+	const isLocal = isLocalStyle( provider, styleId );
 
-		const isLocal = isLocalStyle( provider, styleId );
-
-		if ( isLocal ) {
-			title = localStyleHistoryTitlesV331.title( { elementId } );
-		} else {
-			// If the provider was nullish, `isLocalStyle` would return true.
-			provider = provider as StylesProvider;
-
-			title = defaultHistoryTitlesV331.title( { provider } );
-		}
-
-		return title;
+	if ( isLocal ) {
+		return localStyleHistoryTitles.title( { elementId } );
 	}
-	return historyTitlesV330.title( { elementId } );
+
+	return defaultHistoryTitles.title( { provider: provider as StylesProvider } );
 };
 
-export const getSubtitle = ( { provider, styleId, propDisplayName, isVersion331Active, elementId }: GetSubtitle ) => {
-	if ( isVersion331Active ) {
-		let subtitle: string;
+export const getSubtitle = ( { provider, styleId, propDisplayName, elementId }: GetSubtitle ) => {
+	const isLocal = isLocalStyle( provider, styleId );
 
-		const isLocal = isLocalStyle( provider, styleId );
-
-		if ( isLocal ) {
-			subtitle = localStyleHistoryTitlesV331.subtitle( { propDisplayName } );
-		} else {
-			// If the provider or styleId were nullish, `isLocalStyle` would return true.
-			provider = provider as StylesProvider;
-			styleId = styleId as StyleDefinition[ 'id' ];
-
-			subtitle = defaultHistoryTitlesV331.subtitle( {
-				provider,
-				styleId,
-				elementId,
-				propDisplayName,
-			} );
-		}
-		return subtitle;
+	if ( isLocal ) {
+		return localStyleHistoryTitles.subtitle( { propDisplayName } );
 	}
-	return historyTitlesV330.subtitle;
+
+	return defaultHistoryTitles.subtitle( {
+		provider: provider as StylesProvider,
+		styleId: styleId as StyleDefinition[ 'id' ],
+		elementId,
+		propDisplayName,
+	} );
 };

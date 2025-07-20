@@ -1,6 +1,5 @@
 import { generateId } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import {
 	__dispatch as dispatch,
 	__getState as getState,
@@ -30,10 +29,6 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		all: () => selectOrderedClasses( getState() ),
 		get: ( id ) => selectClass( getState(), id ),
 		resolveCssName: ( id: string ) => {
-			if ( ! isExperimentActive( 'e_v_3_30' ) ) {
-				return id;
-			}
-
 			return selectClass( getState(), id )?.label ?? id;
 		},
 		create: ( label ) => {
