@@ -3,19 +3,13 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, deleteItemFromRepeater, addItemFromRepeater } from './helper';
 import _path from 'path';
-import { setupExperiments } from '../nested-tabs/helper';
 import AxeBuilder from '@axe-core/playwright';
 
-test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
+test.describe( 'Nested Accordion tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: 'inactive',
-			'nested-elements': 'inactive',
-		} );
-
+		await wpAdmin.setExperiments( { container: 'inactive', 'nested-elements': 'inactive' } );
 		await page.close();
 	} );
 
@@ -23,15 +17,11 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'active',
-			container: 'active',
-		} );
-
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
-	test( 'Nested-accordion should not appear in widgets panel', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Nested Accordion widget should not appear in widgets panel', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
@@ -40,7 +30,7 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 			accordionWrapper = frame.locator( '.elementor-accordion' ).first(),
 			toggleWrapper = frame.locator( '.elementor-toggle' ).first();
 
-		await test.step( 'Check that Toggle and Accordion widgets appear when nested accordion experiment is off', async () => {
+		await test.step( 'Check that Toggle and Accordion widgets appear when Nested Accordion widget does not appear', async () => {
 			// Act
 			await editor.addWidget( { widgetType: 'accordion', container } );
 			await editor.addWidget( { widgetType: 'toggle', container } );
@@ -52,13 +42,11 @@ test.describe( 'Nested Accordion experiment inactive @nested-accordion', () => {
 	} );
 } );
 
-test.describe( 'Nested Accordion experiment is active @nested-accordion', () => {
+test.describe( 'Nested Accordion tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await setupExperiments( wpAdmin, {} );
-
+		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
 		await page.close();
 	} );
 
@@ -66,11 +54,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-		} );
-
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
@@ -88,7 +72,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 		let nestedAccordionID,
 			nestedAccordion;
 
-		await test.step( 'Check that Toggle widget does not appear when nested accordion experiment is on', async () => {
+		await test.step( 'Check that Toggle widget does not appear when Nested Accordion widget appears', async () => {
 			// Act
 			await editor.closeNavigatorIfOpen();
 			await editor.openElementsPanel();
@@ -100,7 +84,7 @@ test.describe( 'Nested Accordion experiment is active @nested-accordion', () => 
 			await expect.soft( toggleWidgetInPanel ).toBeHidden();
 		} );
 
-		await test.step( 'Check that Nested accordion replaces old accordion widget', async () => {
+		await test.step( 'Check that the Nested Accordion widget replaces the old Accordion widget', async () => {
 			// Act
 			nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			nestedAccordion = await editor.selectElement( nestedAccordionID );
