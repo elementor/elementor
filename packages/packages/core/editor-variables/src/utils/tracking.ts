@@ -10,12 +10,12 @@ export const trackVariableEvent = ( { varType, controlPath, action }: VariableEv
 			editorEvents?: {
 				dispatchEvent: ( name: string, data: Record< string, string > ) => void;
 				config?: {
-					locations?: Record< string, string >;
-					secondaryLocations?: Record< string, string >;
+					locations: Record< string, string >;
+					secondaryLocations: Record< string, string >;
 					names: {
 						variables?: Record< string, string >;
 					};
-					triggers?: Record< string, string >;
+					triggers: Record< string, string >;
 					elements?: Record< string, string >;
 				};
 			};
