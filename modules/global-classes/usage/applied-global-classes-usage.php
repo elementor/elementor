@@ -5,22 +5,22 @@ namespace Elementor\Modules\GlobalClasses\Usage;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 
-if (! defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 /**
  * Collects and exposes usage data for all global CSS classes across Elementor documents.
  */
-class Applied_Global_Classes_Usage
-{
+class Applied_Global_Classes_Usage {
+
 
 	/**
 	 * Document types that should be excluded from usage reporting.
 	 *
 	 * @var string[]
 	 */
-	private array $excluded_types = ['e-flexbox', 'template'];
+	private array $excluded_types = [ 'e-flexbox', 'template' ];
 
 	/**
 	 * Tracks usage for each global class.
@@ -34,14 +34,13 @@ class Applied_Global_Classes_Usage
 	 *
 	 * @return array<string, int>
 	 */
-	public function get(): array
-	{
+	public function get(): array {
 		$this->build_class_usages();
 
 		$result = [];
-		foreach ($this->class_usages as $class_id => $usage) {
-			if ($usage->get_total_usage() > 0) {
-				$result[$class_id] = $usage->get_total_usage();
+		foreach ( $this->class_usages as $class_id => $usage ) {
+			if ( $usage->get_total_usage() > 0 ) {
+				$result[ $class_id ] = $usage->get_total_usage();
 			}
 		}
 
@@ -60,26 +59,25 @@ class Applied_Global_Classes_Usage
 	 *     elements: string[]
 	 * }>
 	 */
-	public function get_detailed_usage(): array
-	{
+	public function get_detailed_usage(): array {
 		$this->build_class_usages();
 
 		$result = [];
 
-		foreach ($this->class_usages as $class_id => $usage) {
+		foreach ( $this->class_usages as $class_id => $usage ) {
 			$pages = $usage->get_pages();
 
 			$filtered_pages = array_filter(
 				$pages,
-				fn($page_data) => ! in_array($page_data['type'], $this->excluded_types, true)
+				fn( $page_data ) => ! in_array( $page_data['type'], $this->excluded_types, true )
 			);
 
-			if (empty($filtered_pages)) {
+			if ( empty( $filtered_pages ) ) {
 				continue;
 			}
 
-			foreach ($filtered_pages as $page_id => $page_data) {
-				$result[$class_id][] = [
+			foreach ( $filtered_pages as $page_id => $page_data ) {
+				$result[ $class_id ][] = [
 					'pageId'   => $page_id,
 					'title'    => $page_data['title'],
 					'type'     => $page_data['type'],
@@ -98,8 +96,7 @@ class Applied_Global_Classes_Usage
 	 * This method initializes and aggregates class usage from all relevant documents,
 	 * merging duplicate class IDs found in multiple pages.
 	 */
-	private function build_class_usages(): void
-	{
+	private function build_class_usages(): void {
 		$this->class_usages = [];
 
 		$class_ids = Global_Classes_Repository::make()
@@ -109,19 +106,19 @@ class Applied_Global_Classes_Usage
 			->all();
 
 		Plugin::$instance->db->iterate_elementor_documents(
-			function ($document) use ($class_ids) {
-				$usage = new Document_Usage($document);
+			function ( $document ) use ( $class_ids ) {
+				$usage = new Document_Usage( $document );
 				$usage->analyze();
 
-				foreach ($usage->get_usages() as $class_id => $class_usage) {
-					if (! in_array($class_id, $class_ids, true)) {
+				foreach ( $usage->get_usages() as $class_id => $class_usage ) {
+					if ( ! in_array( $class_id, $class_ids, true ) ) {
 						continue;
 					}
 
-					if (! isset($this->class_usages[$class_id])) {
-						$this->class_usages[$class_id] = $class_usage;
+					if ( ! isset( $this->class_usages[ $class_id ] ) ) {
+						$this->class_usages[ $class_id ] = $class_usage;
 					} else {
-						$this->class_usages[$class_id]->merge($class_usage);
+						$this->class_usages[ $class_id ]->merge( $class_usage );
 					}
 				}
 			}
