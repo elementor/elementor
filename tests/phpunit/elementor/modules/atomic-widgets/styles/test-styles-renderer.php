@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
+use Elementor\Utils;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -1367,7 +1368,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'color' => 'red',
 						],
 						'meta' => [ 'state' => 'hover' ],
-						'custom_css' => [ 'raw' => 'background: yellow;' ],
+						'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow;' ) ],
 					],
 				],
 			],
@@ -1395,7 +1396,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 							'font-size' => '16px',
 						],
 						'meta' => [ 'state' => 'hover' ],
-						'custom_css' => [ 'raw' => 'background: yellow; color: red;' ],
+						'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow; color: red;' ) ],
 					],
 				],
 			],
