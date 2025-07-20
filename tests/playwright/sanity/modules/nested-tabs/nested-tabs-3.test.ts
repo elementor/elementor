@@ -5,21 +5,6 @@ import { viewportSize } from '../../../enums/viewport-sizes';
 import { editTab, clickTabByPosition, selectDropdownContainer, locators, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
-
 	test( 'Verify that the tab sizes don\'t shrink when adding a widget in the content section.', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
