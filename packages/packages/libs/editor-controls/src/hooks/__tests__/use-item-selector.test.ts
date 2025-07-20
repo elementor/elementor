@@ -3,6 +3,17 @@ import { render, screen } from '@testing-library/react';
 
 import { type Category, ItemSelector } from '../../components/item-selector';
 
+// Mock PopoverMenuList to trigger onChange
+const mockOnChange = jest.fn();
+jest.mock( '@elementor/editor-ui', () => ( {
+	...jest.requireActual( '@elementor/editor-ui' ),
+	PopoverMenuList: ( props: { onChange: typeof mockOnChange } ) => {
+		// Store the onChange function so we can call it in tests
+		mockOnChange.mockImplementation( props.onChange );
+		return React.createElement( 'ul', { role: 'listbox', 'data-testid': 'item-list' } );
+	},
+} ) );
+
 const MockIcon = ( { fontSize }: { fontSize: string } ) => React.createElement( 'div', { 'data-fontsize': fontSize } );
 
 describe( 'ItemSelector', () => {
@@ -25,6 +36,10 @@ describe( 'ItemSelector', () => {
 		icon: MockIcon,
 	};
 
+	beforeEach( () => {
+		mockOnChange.mockClear();
+	} );
+
 	it( 'should render the item-select component', () => {
 		// Act.
 		render( React.createElement( ItemSelector, defaultProps ) );
@@ -35,7 +50,7 @@ describe( 'ItemSelector', () => {
 		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should call onDebounce when debouncing', () => {
+	it( 'should call onDebounce when debouncing', async () => {
 		// Arrange.
 		jest.useFakeTimers();
 		const onDebounce = jest.fn();
@@ -46,11 +61,14 @@ describe( 'ItemSelector', () => {
 
 		// Act.
 		render( React.createElement( ItemSelector, propsWithDebounce ) );
+
+		const mockGetVirtualIndexes = () => [ 1 ];
+		mockOnChange( { getVirtualIndexes: mockGetVirtualIndexes } );
+
 		jest.advanceTimersByTime( 100 );
 
 		// Assert.
-		expect( screen.getByRole( 'listbox' ) ).toBeInTheDocument();
-		expect( onDebounce ).toBeDefined();
+		expect( onDebounce ).toHaveBeenCalledWith( 'Font1' );
 
 		// Cleanup
 		jest.useRealTimers();
