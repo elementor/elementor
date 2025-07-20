@@ -19,6 +19,20 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 
 jest.mock( '@elementor/editor-styles-repository' );
 
+jest.mock( '../../../hooks/use-css-class-usage', () => ( {
+	useCssClassUsage: jest.fn().mockReturnValue( {
+		data: {}, // or whatever shape your hook expects
+		isLoading: false,
+	} ),
+	useCssClassUsageByID: jest.fn().mockReturnValue( {
+		isLoading: false,
+		data: {
+			total: 1,
+			content: [ { title: 'Test Page', elements: [ 'el1' ], pageId: '123', total: 1, type: 'Page' } ],
+		},
+	} ),
+} ) );
+
 describe( 'GlobalClassesList', () => {
 	let store: ReturnType< typeof createStore >;
 
