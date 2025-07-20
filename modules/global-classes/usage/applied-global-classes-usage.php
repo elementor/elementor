@@ -1,92 +1,127 @@
 <?php
 
-namespace Elementor\Modules\Global_Classes\Usage;
+namespace Elementor\Modules\GlobalClasses\Usage;
 
-use Elementor\Core\Base\Document;
-use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Collects and exposes usage data for all global CSS classes across Elementor documents.
+ */
 class Applied_Global_Classes_Usage {
+
+
 	/**
-	 * Get data about how global classes are applied across Elementor elements.
+	 * Document types that should be excluded from usage reporting.
 	 *
-	 * @return array<string, int> Statistics about applied global classes per global class
+	 * @var string[]
 	 */
-	public function get() {
-		$total_count_per_class_id = [];
-		$global_class_ids = Global_Classes_Repository::make()->all()->get_items()->keys()->all();
+	private array $excluded_types = [ 'e-flexbox', 'template' ];
 
-		if ( empty( $global_class_ids ) ) {
-			return [];
+	/**
+	 * Tracks usage for each global class.
+	 *
+	 * @var array<string, Css_Class_Usage>
+	 */
+	private array $class_usages = [];
+
+	/**
+	 * Returns the total usage count per class ID (excluding template-only classes).
+	 *
+	 * @return array<string, int>
+	 */
+	public function get(): array {
+		$this->build_class_usages();
+
+		$result = [];
+		foreach ( $this->class_usages as $class_id => $usage ) {
+			if ( $usage->get_total_usage() > 0 ) {
+				$result[ $class_id ] = $usage->get_total_usage();
+			}
 		}
 
-		Plugin::$instance->db->iterate_elementor_documents( function( $document, $elements_data ) use ( &$total_count_per_class_id, $global_class_ids ) {
-			$count_per_global_class = $this->get_classes_count_per_class( $elements_data, $global_class_ids );
+		return $result;
+	}
 
-			$total_count_per_class_id = Collection::make( $count_per_global_class )->reduce( function( $carry, $count, $class_id ) {
-				$carry[ $class_id ] ??= 0;
-				$carry[ $class_id ] += $count;
+	/**
+	 * Returns detailed usage information per class ID.
+	 * Each class ID maps to a list of document usages (excluding excluded types).
+	 *
+	 * @return array<string, array{
+	 *     pageId: int,
+	 *     title: string,
+	 *     type: string,
+	 *     total: int,
+	 *     elements: string[]
+	 * }>
+	 */
+	public function get_detailed_usage(): array {
+		$this->build_class_usages();
 
-				return $carry;
-			}, $total_count_per_class_id );
-		});
+		$result = [];
 
-		foreach ( $global_class_ids as $global_class_id ) {
-			$total_count_per_class_id[ $global_class_id ] ??= 0;
+		foreach ( $this->class_usages as $class_id => $usage ) {
+			$pages = $usage->get_pages();
+
+			$filtered_pages = array_filter(
+				$pages,
+				fn( $page_data ) => ! in_array( $page_data['type'], $this->excluded_types, true )
+			);
+
+			if ( empty( $filtered_pages ) ) {
+				continue;
+			}
+
+			foreach ( $filtered_pages as $page_id => $page_data ) {
+				$result[ $class_id ][] = [
+					'pageId'   => $page_id,
+					'title'    => $page_data['title'],
+					'type'     => $page_data['type'],
+					'total'    => $page_data['total'],
+					'elements' => $page_data['elements'],
+				];
+			}
 		}
 
-		return $total_count_per_class_id;
+		return $result;
 	}
 
-	private function get_classes_count_per_class( $elements_data, $global_class_ids ) {
-		$count_per_class = [];
+	/**
+	 * Builds the internal usage map from all Elementor documents.
+	 *
+	 * This method initializes and aggregates class usage from all relevant documents,
+	 * merging duplicate class IDs found in multiple pages.
+	 */
+	private function build_class_usages(): void {
+		$this->class_usages = [];
 
-		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $global_class_ids, &$count_per_class ) {
-			$element_type = Atomic_Elements_Utils::get_element_type( $element_data );
-			$element_instance = Atomic_Elements_Utils::get_element_instance( $element_type );
+		$class_ids = Global_Classes_Repository::make()
+			->all()
+			->get_items()
+			->keys()
+			->all();
 
-			if ( ! Atomic_Elements_Utils::is_atomic_element( $element_instance ) ) {
-				return;
+		Plugin::$instance->db->iterate_elementor_documents(
+			function ( $document ) use ( $class_ids ) {
+				$usage = new Document_Usage( $document );
+				$usage->analyze();
+
+				foreach ( $usage->get_usages() as $class_id => $class_usage ) {
+					if ( ! in_array( $class_id, $class_ids, true ) ) {
+						continue;
+					}
+
+					if ( ! isset( $this->class_usages[ $class_id ] ) ) {
+						$this->class_usages[ $class_id ] = $class_usage;
+					} else {
+						$this->class_usages[ $class_id ]->merge( $class_usage );
+					}
+				}
 			}
-
-			/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
-			$applied_classes_per_element = $this->get_applied_global_classes_per_element( $element_instance->get_props_schema(), $element_data, $global_class_ids );
-
-			foreach ( $applied_classes_per_element as $global_class_id => $count ) {
-				$count_per_class[ $global_class_id ] ??= 0;
-				$count_per_class[ $global_class_id ] += $count;
-			}
-		});
-
-		return $count_per_class;
-	}
-
-	private function get_applied_global_classes_per_element( $atomic_props_schema, $atomic_element_data, $global_class_ids ) {
-		return Collection::make( $atomic_props_schema )->reduce( function( $carry, $prop_value, $prop_name ) use ( $atomic_element_data, $global_class_ids ) {
-			if ( ! Atomic_Elements_Utils::is_classes_prop( $prop_value ) ) {
-				return $carry;
-			}
-
-			$prop_applied_global_class_ids = $this->get_applied_global_classes( $atomic_element_data['settings'][ $prop_name ]['value'] ?? [], $global_class_ids );
-
-			foreach ( $prop_applied_global_class_ids as $global_class_id ) {
-				$carry[ $global_class_id ] ??= 0;
-				$carry[ $global_class_id ] += 1;
-			}
-
-			return $carry;
-		}, [] );
-	}
-
-	private function get_applied_global_classes( $prop, $global_class_ids ) {
-		return array_intersect( $prop, $global_class_ids );
+		);
 	}
 }
