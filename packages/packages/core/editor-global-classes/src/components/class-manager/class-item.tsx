@@ -20,7 +20,6 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-
 import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
