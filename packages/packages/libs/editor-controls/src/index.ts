@@ -45,6 +45,7 @@ export type { FontCategory } from './controls/font-family-control/font-family-co
 // providers
 export { createControlReplacementsRegistry, ControlReplacementsProvider } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
+export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';

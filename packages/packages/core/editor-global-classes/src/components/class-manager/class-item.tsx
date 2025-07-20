@@ -153,10 +153,13 @@ export const ClassItem = ( {
 	);
 };
 
+<<<<<<< HEAD
 // Custom styles for sortable list item, until the component is available in the UI package.
 
 //  Experimental start
 
+=======
+>>>>>>> main
 const StyledListItemButton = styled( ListItemButton, {
 	shouldForwardProp: ( prop: string ) => ! [ 'showActions', 'showSortIndicator' ].includes( prop ),
 } )< ListItemButtonProps & { showActions: boolean; showSortIndicator: boolean } >(
