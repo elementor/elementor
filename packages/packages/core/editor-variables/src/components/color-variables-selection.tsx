@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { type ExtendedVirtualizedItem } from '../types';
+import { trackVariableEvent } from '../utils/tracking';
 import { ColorIndicator } from './ui/color-indicator';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
@@ -26,7 +27,7 @@ type Props = {
 };
 
 export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { value: variable, setValue: setVariable } = useBoundProp( colorVariablePropTypeUtil );
+	const { value: variable, setValue: setVariable, path } = useBoundProp( colorVariablePropTypeUtil );
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const {
@@ -36,6 +37,11 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 	} = useFilteredVariables( searchValue, colorVariablePropTypeUtil.key );
 
 	const handleSetColorVariable = ( key: string ) => {
+		trackVariableEvent( {
+			varType: 'color',
+			controlPath: path.join( '.' ),
+			action: 'connect',
+		} );
 		setVariable( key );
 		closePopover();
 	};
@@ -44,7 +50,18 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton key="add" size={ SIZE } onClick={ onAdd }>
+			<IconButton
+				key="add"
+				size={ SIZE }
+				onClick={ () => {
+					trackVariableEvent( {
+						varType: 'color',
+						controlPath: path.join( '.' ),
+						action: 'add',
+					} );
+					onAdd();
+				} }
+			>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
 		);

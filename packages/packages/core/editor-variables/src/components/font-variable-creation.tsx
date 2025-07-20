@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { trackVariableEvent } from '../utils/tracking';
 import { FontField } from './fields/font-field';
 import { LabelField } from './fields/label-field';
 
@@ -20,7 +21,7 @@ type Props = {
 };
 
 export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
-	const { setValue: setVariable } = useBoundProp( fontVariablePropTypeUtil );
+	const { setValue: setVariable, path } = useBoundProp( fontVariablePropTypeUtil );
 
 	const [ fontFamily, setFontFamily ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
@@ -38,6 +39,12 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 	};
 
 	const handleCreate = () => {
+		trackVariableEvent( {
+			varType: 'font',
+			controlPath: path.join( '.' ),
+			action: 'save',
+		} );
+
 		createVariable( {
 			value: fontFamily,
 			label,

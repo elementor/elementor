@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { type ExtendedVirtualizedItem } from '../types';
+import { trackVariableEvent } from '../utils/tracking';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
 import { NoVariables } from './ui/no-variables';
@@ -25,7 +26,7 @@ type Props = {
 };
 
 export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { value: variable, setValue: setVariable } = useBoundProp( fontVariablePropTypeUtil );
+	const { value: variable, setValue: setVariable, path } = useBoundProp( fontVariablePropTypeUtil );
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const {
@@ -35,6 +36,11 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 	} = useFilteredVariables( searchValue, fontVariablePropTypeUtil.key );
 
 	const handleSetVariable = ( key: string ) => {
+		trackVariableEvent( {
+			varType: 'font',
+			controlPath: path.join( '.' ),
+			action: 'connect',
+		} );
 		setVariable( key );
 		closePopover();
 	};
@@ -43,7 +49,18 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton key="add" size={ SIZE } onClick={ onAdd }>
+			<IconButton
+				key="add"
+				size={ SIZE }
+				onClick={ () => {
+					trackVariableEvent( {
+						varType: 'font',
+						controlPath: path.join( '.' ),
+						action: 'add',
+					} );
+					onAdd();
+				} }
+			>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
 		);

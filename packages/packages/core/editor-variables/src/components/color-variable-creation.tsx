@@ -9,10 +9,9 @@ import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
+import { trackVariableEvent } from '../utils/tracking';
 import { ColorField } from './fields/color-field';
 import { LabelField } from './fields/label-field';
-import { trackVariableEvent } from '../utils/tracking';
-
 
 const SIZE = 'tiny';
 
@@ -42,8 +41,8 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const handleCreate = () => {
 		trackVariableEvent( {
 			varType: 'color',
-			path: path.join( '.' ),
-			action: 'create',
+			controlPath: path.join( '.' ),
+			action: 'save',
 		} );
 
 		createVariable( {

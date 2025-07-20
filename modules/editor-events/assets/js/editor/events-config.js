@@ -132,10 +132,10 @@ const eventsConfig = {
 			},
 		},
 		variables: {
-            open: 'variables_popover_open',
-            create: 'variables_create',
-            connect: 'variables_connect',
-            save: 'variables_save',
+            open: 'open_variables_popover',
+            add: 'add_new_variable',
+            connect: 'connect_variable',
+            save: 'save_new_variable',
         },
 	},
 };
