@@ -63,6 +63,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 				->set_items( [
 					Textarea_Control::bind_to( 'paragraph' )
 						->set_label( __( 'Paragraph', 'elementor' ) )
+						->set_rows( 0 )
+						->set_min_rows( 5 )
 						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) ),
 				] ),
 		];
