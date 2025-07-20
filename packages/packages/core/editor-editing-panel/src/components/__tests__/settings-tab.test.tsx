@@ -62,6 +62,13 @@ describe( '<SettingsTab />', () => {
 			elementType,
 		} );
 
+		jest.mocked( useDefaultPanelSettings ).mockReturnValue( {
+			defaultSectionsExpanded: {
+				settings: [],
+			},
+			defaultTab: 'settings',
+		} );
+
 		// Act.
 		renderWithTheme( <SettingsTab /> );
 
