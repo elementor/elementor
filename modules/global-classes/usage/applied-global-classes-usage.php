@@ -79,7 +79,7 @@ class Applied_Global_Classes_Usage {
 				$result[ $class_id ][] = [
 					'pageId'   => $page_id,
 					'title'    => $page_data['title'],
-					'type'     => $page_data['type'] ,
+					'type'     => $page_data['type'],
 					'total'    => $page_data['total'],
 					'elements' => $page_data['elements'],
 				];
