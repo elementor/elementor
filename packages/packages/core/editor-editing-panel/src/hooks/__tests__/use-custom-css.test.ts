@@ -1,7 +1,6 @@
 import { act } from 'react';
 import { createMockStylesProvider, mockHistoryManager } from 'test-utils';
 import { createElementStyle } from '@elementor/editor-elements';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { encodeString } from '@elementor/utils';
 import { renderHook } from '@testing-library/react';
 
@@ -10,13 +9,13 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { useCustomCss } from '../use-custom-css';
 
-jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../contexts/element-context' );
 jest.mock( '../../contexts/style-context' );
 jest.mock( '../../contexts/classes-prop-context' );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn().mockReturnValue( false ),
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	getElementLabel: jest.fn(),
+	createElementStyle: jest.fn(),
 } ) );
 
 describe( 'useCustomCss', () => {
@@ -29,9 +28,6 @@ describe( 'useCustomCss', () => {
 			element: { id: 'test-element-id', type: 'test' },
 			elementType: { key: 'test', controls: [], title: 'Test', propsSchema: {} },
 		} );
-		jest.mocked( isExperimentActive ).mockImplementation(
-			( experimentName: string ) => experimentName === 'e_v_3_31'
-		);
 	} );
 
 	afterEach( () => {

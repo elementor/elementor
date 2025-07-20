@@ -949,7 +949,7 @@ class Utils {
 
 	public static function decode_string( string $string, string $fallback = '' ) {
 		try {
-			return base64_decode( $string, true ) ?: $fallback;
+			return base64_decode( $string, true ) ?? $fallback;
 		} catch ( Exception $e ) {
 			return $fallback;
 		}
