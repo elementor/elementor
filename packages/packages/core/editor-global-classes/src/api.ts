@@ -6,7 +6,7 @@ import { type GlobalClasses } from './store';
 
 const RESOURCE_URL = '/global-classes';
 const BASE_URL = 'elementor/v1';
-const RESOURCE_USAGE_URL = `${ RESOURCE_URL }-usage`;
+const RESOURCE_USAGE_URL = `${ RESOURCE_URL }/usage`;
 
 type GlobalClassesUsageResponse = HttpResponse< CssClassUsage >;
 
