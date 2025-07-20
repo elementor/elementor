@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
-import { createElementStyle, deleteElementStyle, type ElementID, getElementLabel } from '@elementor/editor-elements';
+import {
+	createElementStyle,
+	deleteElementStyle,
+	type ElementID,
+	getElementLabel,
+	shouldCreateNewLocalStyle,
+} from '@elementor/editor-elements';
 import type { Props } from '@elementor/editor-props';
 import { getVariantByMeta, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { isElementsStylesProvider, type StylesProvider } from '@elementor/editor-styles-repository';
@@ -21,7 +27,7 @@ export function useStylesFields< T extends Props >( propNames: ( keyof T & strin
 	} = useElement();
 	const { id: styleId, meta, provider, canEdit } = useStyle();
 
-	const undoableUpdateStyle = useUndoableUpdateStyle( { elementId, meta } );
+	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
 
 	useStylesRerender();
 
@@ -95,7 +101,7 @@ type CreateStyleReturn = {
 type UndoableUpdateStylePayload = UpdateStyleArgs | CreateStyleArgs;
 type UndoableUpdateStyleReturn = UpdateStyleReturn | CreateStyleReturn;
 
-function useUndoableUpdateStyle( {
+function useUndoableActions( {
 	elementId,
 	meta: { breakpoint, state },
 }: {
@@ -112,26 +118,26 @@ function useUndoableUpdateStyle( {
 		return undoable(
 			{
 				do: ( payload: UndoableUpdateStylePayload ): UndoableUpdateStyleReturn => {
-					if ( shouldCreateNewLocalStyle( payload ) ) {
-						return createLocalStyle( payload as CreateStyleArgs );
+					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
+						return create( payload as CreateStyleArgs );
 					}
-					return updateStyleProps( payload as UpdateStyleArgs );
+					return update( payload as UpdateStyleArgs );
 				},
 				undo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle( payload );
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
 
 					if ( wasLocalStyleCreated ) {
-						return undoCreateLocalStyle( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+						return undoCreate( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
 					}
-					return undoUpdateStyleProps( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
+					return undo( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
 				},
 				redo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle( payload );
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
 
 					if ( wasLocalStyleCreated ) {
-						return createLocalStyle( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+						return create( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
 					}
-					return updateStyleProps( payload as UpdateStyleArgs );
+					return update( payload as UpdateStyleArgs );
 				},
 			},
 			{
@@ -142,21 +148,17 @@ function useUndoableUpdateStyle( {
 			}
 		);
 
-		function shouldCreateNewLocalStyle( payload: UndoableUpdateStylePayload ) {
-			return ! payload.styleId && ! payload.provider;
-		}
-
-		function createLocalStyle( { props }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
+		function create( { props }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
 			const createdStyle = createElementStyle( { ...createStyleArgs, props, styleId: redoArgs?.createdStyleId } );
 
 			return { createdStyleId: createdStyle };
 		}
 
-		function undoCreateLocalStyle( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
+		function undoCreate( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
 			deleteElementStyle( elementId, createdStyleId );
 		}
 
-		function updateStyleProps( { provider, styleId, props }: UpdateStyleArgs ): UpdateStyleReturn {
+		function update( { provider, styleId, props }: UpdateStyleArgs ): UpdateStyleReturn {
 			if ( ! provider.actions.updateProps ) {
 				throw new StylesProviderCannotUpdatePropsError( {
 					context: { providerKey: provider.getKey() },
@@ -171,10 +173,7 @@ function useUndoableUpdateStyle( {
 			return { styleId, provider, prevProps };
 		}
 
-		function undoUpdateStyleProps(
-			_: UndoableUpdateStylePayload,
-			{ styleId, provider, prevProps }: UpdateStyleReturn
-		) {
+		function undo( _: UndoableUpdateStylePayload, { styleId, provider, prevProps }: UpdateStyleReturn ) {
 			provider.actions.updateProps?.( { id: styleId, meta, props: prevProps }, { elementId } );
 		}
 	}, [ elementId, breakpoint, state, classesProp ] );

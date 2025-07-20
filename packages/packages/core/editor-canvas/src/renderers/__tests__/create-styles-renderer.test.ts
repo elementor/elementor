@@ -1,5 +1,6 @@
 /* eslint-disable testing-library/render-result-naming-convention */
 import type { BreakpointsMap } from '@elementor/editor-responsive';
+import { encodeString } from '@elementor/utils';
 
 import { createStylesRenderer, type RendererStyleDefinition } from '../create-styles-renderer';
 
@@ -137,7 +138,9 @@ describe( 'custom_css rendering', () => {
 			type: 'class',
 			cssName: 'test',
 			label: 'Test',
-			variants: [ { meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: '   \n\t' } } ],
+			variants: [
+				{ meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: encodeString( '   \n\t' ) } },
+			],
 		};
 
 		// Act.
@@ -148,7 +151,7 @@ describe( 'custom_css rendering', () => {
 		expect( result[ 0 ].value ).not.toContain( '{;}' );
 	} );
 
-	it( 'should render custom_css if raw is valid CSS', async () => {
+	it( 'should not render custom_css if raw is invalid encoded string', async () => {
 		// Arrange.
 		const styleDef: RendererStyleDefinition = {
 			id: 'test',
@@ -156,7 +159,31 @@ describe( 'custom_css rendering', () => {
 			cssName: 'test',
 			label: 'Test',
 			variants: [
-				{ meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: 'body { color: red; }' } },
+				{ meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: 'I cannot be decoded' } },
+			],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should render custom_css if raw is not empty', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{
+					meta: { breakpoint: null, state: null },
+					props: {},
+					custom_css: { raw: encodeString( 'body { color: red; }' ) },
+				},
 			],
 		};
 

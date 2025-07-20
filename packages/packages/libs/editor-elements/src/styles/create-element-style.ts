@@ -72,3 +72,9 @@ function addStyleToClassesProp( elementId: ElementID, classesProp: string, style
 		withHistory: false,
 	} );
 }
+
+export function shouldCreateNewLocalStyle< T >(
+	payload: { styleId: StyleDefinition[ 'id' ] | null; provider: T | null } | null
+) {
+	return ! payload?.styleId && ! payload?.provider;
+}

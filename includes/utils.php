@@ -1,6 +1,7 @@
 <?php
 namespace Elementor;
 
+use Automattic\Jetpack\IdentityCrisis\Exception;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Collection;
 
@@ -944,5 +945,21 @@ class Utils {
 
 	public static function is_custom_kit_applied() {
 		return (bool) Plugin::$instance->kits_manager->get_previous_id();
+	}
+
+	public static function decode_string( string $string, string $fallback = '' ) {
+		try {
+			return base64_decode( $string, true ) ?: $fallback;
+		} catch ( Exception $e ) {
+			return $fallback;
+		}
+	}
+
+	public static function encode_string( string $string, string $fallback = '' ): string {
+		try {
+			return base64_decode( $string, true );
+		} catch ( \Exception $e ) {
+			return $fallback;
+		}
 	}
 }

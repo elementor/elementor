@@ -6,9 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 class Style_Parser {
 	const VALID_TYPES = [
@@ -196,6 +196,10 @@ class Style_Parser {
 			return $result;
 		}
 
+		if ( null === Utils::decode_string( $variant['custom_css']['raw'], null ) ) {
+			$result->errors()->add( 'custom_css', 'decode_error' );
+		}
+
 		return $result;
 	}
 
@@ -216,7 +220,9 @@ class Style_Parser {
 			return null;
 		}
 
-		$custom_css = [ 'raw' => sanitize_text_field( $variant['custom_css']['raw'] ) ];
+		$custom_css = Utils::decode_string( $variant['custom_css']['raw'] );
+		$custom_css = sanitize_text_field( $custom_css );
+		$custom_css = [ 'raw' => Utils::encode_string( $custom_css ) ];
 
 		return empty( $custom_css['raw'] ) ? null : $custom_css;
 	}

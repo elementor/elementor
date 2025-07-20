@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 
 class Styles_Renderer {
@@ -112,7 +113,7 @@ class Styles_Renderer {
 
 	private function variant_to_css_string( string $base_selector, array $variant ): string {
 		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
-		$custom_css = isset( $variant['custom_css']['raw'] ) ? $variant['custom_css']['raw'] : '';
+		$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
 
 		if ( ! $css && ! $custom_css ) {
 			return '';
@@ -143,6 +144,10 @@ class Styles_Renderer {
 				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );
+	}
+
+	private function custom_css_to_css_string( ?array $custom_css ): string {
+		return ! empty( $custom_css['raw'] ) ? Utils::encode_string( $custom_css['raw'], '' ) . '\n'  : '';
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {

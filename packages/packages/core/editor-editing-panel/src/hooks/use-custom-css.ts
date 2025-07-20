@@ -1,5 +1,10 @@
 import { useMemo } from 'react';
-import { createElementStyle, deleteElementStyle, type ElementID } from '@elementor/editor-elements';
+import {
+	createElementStyle,
+	deleteElementStyle,
+	type ElementID,
+	shouldCreateNewLocalStyle,
+} from '@elementor/editor-elements';
 import { stringPropTypeUtil } from '@elementor/editor-props';
 import {
 	type CustomCss,
@@ -9,6 +14,7 @@ import {
 } from '@elementor/editor-styles';
 import { ELEMENTS_STYLES_RESERVED_LABEL, type StylesProvider } from '@elementor/editor-styles-repository';
 import { undoable } from '@elementor/editor-v1-adapters';
+import { decodeString, encodeString } from '@elementor/utils';
 
 import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
@@ -23,18 +29,17 @@ export const useCustomCss = () => {
 	} = useElement();
 	const { id: styleId, meta, provider } = useStyle();
 	const style = provider?.actions.get( styleId, { elementId } );
-	const undoableUpdateStyle = useUndoableUpdateCustomCss( { elementId, meta } );
+	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
 
 	useStylesRerender();
 
 	const variant = style ? getVariantByMeta( style, meta ) : null;
-	const customCss = variant?.custom_css?.raw ? variant?.custom_css : null;
 
 	const setCustomCss = (
 		raw: string,
 		{ history: { propDisplayName } }: { history: { propDisplayName: string } }
 	) => {
-		const newValue = { raw: sanitize( raw ) };
+		const newValue = { raw: encodeString( sanitize( raw ) ) };
 
 		if ( ! styleId ) {
 			undoableUpdateStyle( { styleId: null, provider: null, customCss: newValue, propDisplayName } );
@@ -42,6 +47,8 @@ export const useCustomCss = () => {
 			undoableUpdateStyle( { styleId, provider, customCss: newValue, propDisplayName } );
 		}
 	};
+
+	const customCss = variant?.custom_css?.raw ? { raw: decodeString( variant.custom_css.raw ) } : null;
 
 	return {
 		customCss,
@@ -76,7 +83,7 @@ type CreateStyleReturn = {
 type UndoableUpdateStylePayload = UpdateStyleArgs | CreateStyleArgs;
 type UndoableUpdateStyleReturn = UpdateStyleReturn | CreateStyleReturn;
 
-export function useUndoableUpdateCustomCss( {
+function useUndoableActions( {
 	elementId,
 	meta: { breakpoint, state },
 }: {
@@ -93,26 +100,26 @@ export function useUndoableUpdateCustomCss( {
 		return undoable(
 			{
 				do: ( payload: UndoableUpdateStylePayload ): UndoableUpdateStyleReturn => {
-					if ( shouldCreateNewLocalStyle( payload ) ) {
-						return createLocalStyle( payload as CreateStyleArgs );
+					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
+						return create( payload as CreateStyleArgs );
 					}
-					return updateStyleCustomCss( payload as UpdateStyleArgs );
+					return update( payload as UpdateStyleArgs );
 				},
 				undo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle( payload );
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
 
 					if ( wasLocalStyleCreated ) {
-						return undoCreateLocalStyle( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+						return undoCreate( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
 					}
-					return undoUpdateStyleCustomCss( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
+					return undoUpdate( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
 				},
 				redo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
-					const wasLocalStyleCreated = shouldCreateNewLocalStyle( payload );
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
 
 					if ( wasLocalStyleCreated ) {
-						return createLocalStyle( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+						return create( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
 					}
-					return updateStyleCustomCss( payload as UpdateStyleArgs );
+					return update( payload as UpdateStyleArgs );
 				},
 			},
 			{
@@ -123,11 +130,7 @@ export function useUndoableUpdateCustomCss( {
 			}
 		);
 
-		function shouldCreateNewLocalStyle( payload: UndoableUpdateStylePayload ) {
-			return ! payload.styleId && ! payload.provider;
-		}
-
-		function createLocalStyle( { customCss }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
+		function create( { customCss }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
 			const createdStyle = createElementStyle( {
 				...createStyleArgs,
 				props: {},
@@ -138,11 +141,11 @@ export function useUndoableUpdateCustomCss( {
 			return { createdStyleId: createdStyle };
 		}
 
-		function undoCreateLocalStyle( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
+		function undoCreate( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
 			deleteElementStyle( elementId, createdStyleId );
 		}
 
-		function updateStyleCustomCss( { provider, styleId, customCss }: UpdateStyleArgs ): UpdateStyleReturn {
+		function update( { provider, styleId, customCss }: UpdateStyleArgs ): UpdateStyleReturn {
 			if ( ! provider.actions.updateCustomCss ) {
 				throw new StylesProviderCannotUpdatePropsError( {
 					context: { providerKey: provider.getKey() },
@@ -157,10 +160,7 @@ export function useUndoableUpdateCustomCss( {
 			return { styleId, provider, prevCustomCss };
 		}
 
-		function undoUpdateStyleCustomCss(
-			_: UndoableUpdateStylePayload,
-			{ styleId, provider, prevCustomCss }: UpdateStyleReturn
-		) {
+		function undoUpdate( _: UndoableUpdateStylePayload, { styleId, provider, prevCustomCss }: UpdateStyleReturn ) {
 			provider.actions.updateCustomCss?.(
 				{ id: styleId, meta, custom_css: prevCustomCss ?? { raw: '' } },
 				{ elementId }

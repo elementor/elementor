@@ -2,6 +2,7 @@ import { act } from 'react';
 import { createMockStylesProvider, mockHistoryManager } from 'test-utils';
 import { createElementStyle } from '@elementor/editor-elements';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { encodeString } from '@elementor/utils';
 import { renderHook } from '@testing-library/react';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
@@ -49,7 +50,7 @@ describe( 'useCustomCss', () => {
 					{
 						meta: { breakpoint: null, state: null },
 						props: {},
-						custom_css: { raw: '.foo { color: red; }' },
+						custom_css: { raw: encodeString( '.foo { color: red; }' ) },
 					},
 				],
 			},
@@ -126,7 +127,7 @@ describe( 'useCustomCss', () => {
 			props: {},
 			label: 'local',
 			classesProp: 'test-classes-prop',
-			custom_css: { raw: '.bar { color: blue; }' },
+			custom_css: { raw: encodeString( '.bar { color: blue; }' ) },
 			styleId: undefined,
 		} );
 	} );
@@ -192,9 +193,12 @@ describe( 'useCustomCss', () => {
 
 		jest.runAllTimers();
 
-		expect( updateCustomCss ).toHaveBeenCalledWith( expect.objectContaining( { custom_css: { raw: 'new' } } ), {
-			elementId: 'test-element-id',
-		} );
+		expect( updateCustomCss ).toHaveBeenCalledWith(
+			expect.objectContaining( { custom_css: { raw: encodeString( 'new' ) } } ),
+			{
+				elementId: 'test-element-id',
+			}
+		);
 
 		act( () => {
 			historyMock.instance.undo();
