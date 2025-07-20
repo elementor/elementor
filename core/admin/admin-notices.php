@@ -429,11 +429,6 @@ class Admin_Notices extends Module {
 		return class_exists( 'WooCommerce' );
 	}
 
-	/**
-	 * Get the name of the installed form plugin.
-	 *
-	 * @return string Form plugin name or 'form' if not specifically identified.
-	 */
 	private function get_installed_form_plugin_name() {
 		static $detected_form_plugin = null;
 
