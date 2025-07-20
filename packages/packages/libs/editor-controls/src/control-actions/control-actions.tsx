@@ -1,22 +1,9 @@
 import * as React from 'react';
-import { type PropsWithChildren, type ReactElement } from 'react';
-import { styled, UnstableFloatingActionBar } from '@elementor/ui';
+import { type PropsWithChildren } from 'react';
 
 import { useBoundProp } from '../bound-prop-context';
+import { FloatingActionsBar } from '../components/floating-bar';
 import { useControlActions } from './control-actions-context';
-
-// CSS hack to hide empty floating bars.
-const FloatingBarContainer = styled( 'span' )`
-	display: contents;
-
-	.MuiFloatingActionBar-popper:has( .MuiFloatingActionBar-actions:empty ) {
-		display: none;
-	}
-
-	.MuiFloatingActionBar-popper {
-		z-index: 1000;
-	}
-`;
 
 type ControlActionsProps = PropsWithChildren< object >;
 
@@ -30,9 +17,5 @@ export default function ControlActions( { children }: ControlActionsProps ) {
 
 	const menuItems = items.map( ( { MenuItem, id } ) => <MenuItem key={ id } /> );
 
-	return (
-		<FloatingBarContainer>
-			<UnstableFloatingActionBar actions={ menuItems }>{ children as ReactElement }</UnstableFloatingActionBar>
-		</FloatingBarContainer>
-	);
+	return <FloatingActionsBar actions={ menuItems }>{ children }</FloatingActionsBar>;
 }
