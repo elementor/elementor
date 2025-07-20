@@ -22,13 +22,11 @@ import {
 	type PropValue,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
 import { mockElement } from '../../__tests__/utils';
 import { ElementProvider } from '../../contexts/element-context';
-import { EXPERIMENTAL_FEATURES } from '../../sync/experiments-flags';
 import { SettingsField } from '../settings-field';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -41,10 +39,6 @@ jest.mock( '@elementor/editor-elements', () => ( {
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
-} ) );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn(),
 } ) );
 
 const bind = 'text';
@@ -64,6 +58,11 @@ const dependencyTestCases: {
 			relation: 'or',
 			terms: [ { path: [ bind ], operator: 'eq', value: 'disable-me' } ],
 		},
+		desc: 'should disable if ne dependency is met (string)',
+		dependencies: {
+			relation: 'or',
+			terms: [ { path: [ bind ], operator: 'ne', value: 'disable-me' } ],
+		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'disable-me' },
 			[ otherBind ]: { $$type: 'number', value: 123 },
@@ -73,8 +72,8 @@ const dependencyTestCases: {
 		enabled: false,
 	},
 	{
-		desc: 'should disable if eq dependency is met (number)',
-		dependencies: { relation: 'or', terms: [ { path: [ otherBind ], operator: 'eq', value: 123 } ] },
+		desc: 'should disable if ne dependency is met (number)',
+		dependencies: { relation: 'or', terms: [ { path: [ otherBind ], operator: 'ne', value: 123 } ] },
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 123 },
@@ -84,10 +83,10 @@ const dependencyTestCases: {
 		enabled: false,
 	},
 	{
-		desc: 'should disable if eq dependency is met (object inner)',
+		desc: 'should disable if ne dependency is met (object inner)',
 		dependencies: {
 			relation: 'or',
-			terms: [ { path: [ objBind, 'a' ], operator: 'eq', value: 'bar' } ],
+			terms: [ { path: [ objBind, 'a' ], operator: 'ne', value: 'bar' } ],
 		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
@@ -98,10 +97,10 @@ const dependencyTestCases: {
 		enabled: false,
 	},
 	{
-		desc: 'should disable if array contains value',
+		desc: 'should disable if array does not contains value',
 		dependencies: {
 			relation: 'or',
-			terms: [ { path: [ arrBind ], operator: 'contains', value: 'foo' } ],
+			terms: [ { path: [ arrBind ], operator: 'ncontains', value: 'foo' } ],
 		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
@@ -113,7 +112,7 @@ const dependencyTestCases: {
 	},
 	{
 		desc: 'should not disable if dependency is not met',
-		dependencies: { relation: 'or', terms: [ { path: [ bind ], operator: 'eq', value: 'nope' } ] },
+		dependencies: { relation: 'or', terms: [ { path: [ bind ], operator: 'ne', value: 'nope' } ] },
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
 			[ otherBind ]: { $$type: 'number', value: 0 },
@@ -126,12 +125,12 @@ const dependencyTestCases: {
 		enabled: true,
 	},
 	{
-		desc: 'should disable if AND of eq and ne is met',
+		desc: 'should disable if OR of eq and ne is met',
 		dependencies: {
-			relation: 'and',
+			relation: 'or',
 			terms: [
-				{ path: [ bind ], operator: 'eq', value: 'foo' },
-				{ path: [ otherBind ], operator: 'ne', value: 0 },
+				{ path: [ bind ], operator: 'ne', value: 'foo' },
+				{ path: [ otherBind ], operator: 'eq', value: 0 },
 			],
 		},
 		values: {
@@ -143,12 +142,12 @@ const dependencyTestCases: {
 		enabled: false,
 	},
 	{
-		desc: 'should disable if OR of in and exists is met',
+		desc: 'should disable if And of nin and not_exist is met',
 		dependencies: {
-			relation: 'or',
+			relation: 'and',
 			terms: [
-				{ path: [ bind ], operator: 'in', value: [ 'foo', 'bar' ] },
-				{ path: [ otherBind ], operator: 'exists', value: true },
+				{ path: [ bind ], operator: 'nin', value: [ 'foo', 'bar' ] },
+				{ path: [ otherBind ], operator: 'not_exist', value: true },
 			],
 		},
 		values: {
@@ -162,17 +161,17 @@ const dependencyTestCases: {
 	{
 		desc: 'should disable if nested AND/OR is met',
 		dependencies: {
-			relation: 'or',
+			relation: 'and',
 			terms: [
 				{
-					relation: 'and',
+					relation: 'or',
 
 					terms: [
-						{ path: [ bind ], operator: 'eq', value: 'foo' },
-						{ path: [ otherBind ], operator: 'gte', value: 100 },
+						{ path: [ bind ], operator: 'ne', value: 'foo' },
+						{ path: [ otherBind ], operator: 'lt', value: 100 },
 					],
 				},
-				{ path: [ arrBind ], operator: 'contains', value: 'baz' },
+				{ path: [ arrBind ], operator: 'ncontains', value: 'baz' },
 			],
 		},
 		values: {
@@ -184,10 +183,10 @@ const dependencyTestCases: {
 		enabled: false,
 	},
 	{
-		desc: 'should disable if ncontains on array is met',
+		desc: 'should disable if contains on array is met',
 		dependencies: {
 			relation: 'or',
-			terms: [ { path: [ arrBind ], operator: 'ncontains', value: 'nope' } ],
+			terms: [ { path: [ arrBind ], operator: 'contains', value: 'nope' } ],
 		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
@@ -198,10 +197,10 @@ const dependencyTestCases: {
 		enabled: false,
 	},
 	{
-		desc: 'should disable if not_exist is met',
+		desc: 'should disable if exists is met',
 		dependencies: {
 			relation: 'or',
-			terms: [ { path: [ otherBind ], operator: 'not_exist', value: true } ],
+			terms: [ { path: [ otherBind ], operator: 'exists', value: true } ],
 		},
 		values: {
 			[ bind ]: { $$type: 'string', value: 'foo' },
@@ -314,16 +313,11 @@ describe( '<SettingsField />', () => {
 		expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
 			id: element.id,
 			props: { [ bind ]: newValue },
+			withHistory: false,
 		} );
 	} );
 
 	describe( 'Settings history', () => {
-		beforeEach( () => {
-			jest.mocked( isExperimentActive ).mockImplementation( ( feature ) => {
-				return feature === EXPERIMENTAL_FEATURES.V_3_31;
-			} );
-		} );
-
 		it( 'should support undo/redo for setting update', () => {
 			// Arrange.
 			const element = mockElement( { id: '1' } );
@@ -416,10 +410,6 @@ describe( 'SettingsField dependency logic', () => {
 
 	beforeEach( () => {
 		historyMock.beforeEach();
-
-		jest.mocked( isExperimentActive ).mockImplementation( () => {
-			return true;
-		} );
 	} );
 
 	afterEach( () => {
@@ -555,7 +545,7 @@ describe( 'SettingsField dependency logic', () => {
 					kind: 'union',
 					dependencies: {
 						relation: 'or',
-						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						terms: [ { path: [ 'source-control' ], operator: 'ne', value: 'disable-trigger' } ],
 					},
 				} ),
 			};
@@ -607,7 +597,7 @@ describe( 'SettingsField dependency logic', () => {
 					kind: 'plain',
 					dependencies: {
 						relation: 'or',
-						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						terms: [ { path: [ 'source-control' ], operator: 'ne', value: 'disable-trigger' } ],
 					},
 				} ),
 			};
@@ -661,7 +651,7 @@ describe( 'SettingsField dependency logic', () => {
 							kind: 'plain',
 							dependencies: {
 								relation: 'or',
-								terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+								terms: [ { path: [ 'source-control' ], operator: 'ne', value: 'disable-trigger' } ],
 							},
 						} ),
 						sibling: createMockPropType( {
@@ -739,7 +729,7 @@ describe( 'SettingsField dependency logic', () => {
 						terms: [
 							{
 								path: [ 'source-control' ],
-								operator: 'ne',
+								operator: 'eq',
 								value: 'initial-value-1',
 							},
 						],
@@ -761,7 +751,7 @@ describe( 'SettingsField dependency logic', () => {
 										terms: [
 											{
 												path: [ 'mid-control' ],
-												operator: 'not_exist',
+												operator: 'exists',
 												value: null,
 											},
 										],
@@ -840,14 +830,14 @@ describe( 'SettingsField dependency logic', () => {
 					kind: 'plain',
 					dependencies: {
 						relation: 'or',
-						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						terms: [ { path: [ 'source-control' ], operator: 'ne', value: 'disable-trigger' } ],
 					},
 				} ),
 				'dependent-2': createMockPropType( {
 					kind: 'plain',
 					dependencies: {
 						relation: 'or',
-						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						terms: [ { path: [ 'source-control' ], operator: 'ne', value: 'disable-trigger' } ],
 					},
 				} ),
 			};
@@ -903,14 +893,14 @@ describe( 'SettingsField dependency logic', () => {
 					kind: 'plain',
 					dependencies: {
 						relation: 'or',
-						terms: [ { path: [ 'control-a' ], operator: 'eq', value: 'trigger-b' } ],
+						terms: [ { path: [ 'control-a' ], operator: 'ne', value: 'trigger-b' } ],
 					},
 				} ),
 				'control-c': createMockPropType( {
 					kind: 'plain',
 					dependencies: {
 						relation: 'or',
-						terms: [ { path: [ 'control-b' ], operator: 'eq', value: 'trigger-c' } ],
+						terms: [ { path: [ 'control-b' ], operator: 'ne', value: 'trigger-c' } ],
 					},
 				} ),
 			};
@@ -961,7 +951,7 @@ describe( 'SettingsField dependency logic', () => {
 					kind: 'plain',
 					dependencies: {
 						relation: 'or',
-						terms: [ { path: [ 'source-control' ], operator: 'eq', value: 'disable-trigger' } ],
+						terms: [ { path: [ 'source-control' ], operator: 'ne', value: 'disable-trigger' } ],
 					},
 				} ),
 			};

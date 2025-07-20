@@ -56,7 +56,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 			'default' => $this->get_default(),
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
-			'dependencies' => $this->dependencies,
+			'dependencies' => $this->get_dependencies(),
 		];
 	}
 

@@ -18,6 +18,7 @@ class Union_Prop_Type implements Prop_Type {
 	use Concerns\Has_Required_Setting;
 
 	protected $default = null;
+
 	private ?array $dependencies = null;
 
 	/** @var Array<string, Transformable_Prop_Type> */
@@ -113,7 +114,7 @@ class Union_Prop_Type implements Prop_Type {
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
-			'dependencies' => $this->get_meta_item( 'dependencies', [] ),
+			'dependencies' => $this->get_dependencies(),
 		];
 	}
 
@@ -124,6 +125,6 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public function get_dependencies(): ?array {
-		return $this->dependencies ?? [];
+		return $this->dependencies;
 	}
 }

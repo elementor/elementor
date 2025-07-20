@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropDependencies;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,25 +29,21 @@ class Manager {
 	];
 
 	/**
-	 * @var array{
+	 * @var ?array{
 	 *         relation: self::RELATION_OR|self::RELATION_AND,
 	 *         terms: array{
 	 *             operator: string,
 	 *             path: array<string>,
 	 *             value?: mixed,
-	 *         }|array{
-	 *             relation: self::RELATION_OR|self::RELATION_AND,
-	 *             terms: array<mixed>,
 	 *         }
 	 *     }
 	 */
-	private array $dependencies;
+	private ?array $dependencies;
 
 	public function __construct( string $relation = self::RELATION_OR ) {
-		$this->dependencies = [
-			'relation' => $relation,
-			'terms' => [],
-		];
+		$this->new( $relation );
+
+		return $this;
 	}
 
 	public static function make( string $relation = self::RELATION_OR ): self {
@@ -73,6 +68,25 @@ class Manager {
 		];
 
 		$this->dependencies['terms'][] = $term;
+
+		if ( empty( $this->dependencies ) ) {
+			$this->new();
+		}
+
+		$this->dependencies['terms'][] = $term;
+
+		return $this;
+	}
+
+	private function new( string $relation = self::RELATION_OR ): self {
+		if ( ! in_array( $relation, [ self::RELATION_OR, self::RELATION_AND ], true ) ) {
+			Utils::safe_throw( "Invalid relation: $relation. Must be one of: " . implode( ', ', [ self::RELATION_OR, self::RELATION_AND ] ) );
+		}
+
+		$this->dependencies = [
+			'relation' => $relation,
+			'terms' => [],
+		];
 
 		return $this;
 	}

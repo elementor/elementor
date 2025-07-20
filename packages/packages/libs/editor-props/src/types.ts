@@ -1,7 +1,5 @@
 export type PropTypeKey = string;
 
-export type DependencyEffect = 'disable' | 'hide';
-
 export type DependencyOperator =
 	| 'lt'
 	| 'lte'

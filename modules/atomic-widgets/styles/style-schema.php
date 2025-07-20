@@ -72,11 +72,15 @@ class Style_Schema {
 				->add_prop_type( String_Prop_Type::make()->enum( Position_Prop_Type::get_position_enum_values() ) )
 				->add_prop_type( Position_Prop_Type::make() )
 				->set_dependencies(
-					Dependency_Manager::make()
+					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
 					->where( [
 						'operator' => 'ne',
 						'path' => [ 'object-fit' ],
 						'value' => 'fill',
+					] )
+					->where( [
+						'operator' => 'exists',
+						'path' => [ 'object-fit' ],
 					] )
 					->get()
 				),
@@ -126,15 +130,11 @@ class Style_Schema {
 			'column-count' => Number_Prop_Type::make(),
 			'column-gap' => Size_Prop_Type::make()
 				->set_dependencies(
-					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+					Dependency_Manager::make()
 					->where( [
 						'operator' => 'gte',
 						'path' => [ 'column-count' ],
 						'value' => 1,
-					] )
-					->where( [
-						'operator' => 'exists',
-						'path' => [ 'column-count' ],
 					] )
 					->get()
 				),

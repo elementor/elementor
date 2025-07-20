@@ -22,7 +22,8 @@ class Link_Prop_Type extends Object_Prop_Type {
 		->where( [
 			'operator' => 'exists',
 			'path' => [ 'link', 'destination' ],
-		] )->get();
+		] )
+		->get();
 
 		return [
 			'destination' => Union_Prop_Type::make()

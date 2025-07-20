@@ -28,6 +28,8 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	 */
 	protected array $shape;
 
+	protected ?array $dependencies = null;
+
 	public function __construct() {
 		$this->shape = $this->define_shape();
 	}
@@ -137,7 +139,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
 			'shape' => (object) $this->get_shape(),
-			'dependencies' => $this->get_meta_item( 'dependencies', [] ),
+			'dependencies' => $this->get_dependencies(),
 		];
 	}
 

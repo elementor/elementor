@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { type PropsWithChildren, type ReactNode, useId, useRef } from 'react';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
 import { SectionRefContext } from '../contexts/section-context';
 import { useStateByElement } from '../hooks/use-state-by-element';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { CollapseIcon } from './collapse-icon';
 import { type CollapsibleValue, getCollapsibleValue } from './collapsible-content';
 
@@ -27,8 +25,6 @@ export function Section( { title, children, defaultExpanded = false, titleEnd }:
 	const labelId = `label-${ id }`;
 	const contentId = `content-${ id }`;
 
-	const isUsingTitleEnd = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 );
-
 	return (
 		<>
 			<ListItemButton
@@ -43,7 +39,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd }:
 						secondaryTypographyProps={ { color: 'text.primary', variant: 'caption', fontWeight: 'bold' } }
 						sx={ { flexGrow: 0, flexShrink: 1, marginInlineEnd: 1 } }
 					/>
-					{ isUsingTitleEnd ? getCollapsibleValue( titleEnd, isOpen ) : null }
+					{ getCollapsibleValue( titleEnd, isOpen ) }
 				</Stack>
 				<CollapseIcon open={ isOpen } color="secondary" fontSize="tiny" />
 			</ListItemButton>

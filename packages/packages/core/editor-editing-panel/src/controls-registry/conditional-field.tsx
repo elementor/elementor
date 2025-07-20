@@ -1,8 +1,7 @@
 import { useBoundProp } from '@elementor/editor-controls';
-import { isDependency, type PropKey, type PropType } from '@elementor/editor-props';
+import { isDependency, isDependencyMet, type PropKey, type PropType } from '@elementor/editor-props';
 
 import { useStylesFields } from '../hooks/use-styles-fields';
-import { getDependencyState } from './get-dependency-state';
 
 export const ConditionalField: React.FC< {
 	children: React.ReactNode;
@@ -13,13 +12,15 @@ export const ConditionalField: React.FC< {
 
 	const { values: depValues } = useStylesFields( depList );
 
-	const isHidden = getDependencyState( propType, depValues );
+	const isHidden = ! isDependencyMet( propType?.dependencies, depValues );
 
 	return isHidden ? null : children;
 };
 
 export function getDependencies( propType?: PropType ): PropKey[] {
-	return propType?.dependencies
-		? propType.dependencies.terms.flatMap( ( term ) => ( ! isDependency( term ) ? term.path : [] ) )
-		: [];
+	if ( ! propType?.dependencies?.terms.length ) {
+		return [];
+	}
+
+	return propType.dependencies.terms.flatMap( ( term ) => ( ! isDependency( term ) ? term.path : [] ) );
 }

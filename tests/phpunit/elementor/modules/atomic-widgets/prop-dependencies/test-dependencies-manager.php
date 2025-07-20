@@ -46,15 +46,8 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 				'value' => 2,
 			] );
 
-		$result = $manager->get();
-
-		$this->assertIsArray( $result );
-		$this->assertArrayHasKey( 'relation', $result );
-		$this->assertArrayHasKey( 'terms', $result );
-		$this->assertCount( 2, $result['terms'] );
+		$this->assertCount( 2, $manager->get()['terms'] );
 	}
-
-
 
 	public function test_get_multiple_independent_groups() {
 		$manager = Manager::make( Manager::RELATION_AND )
@@ -74,7 +67,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 		$this->assertIsArray( $result );
 		$this->assertArrayHasKey( 'relation', $result );
 		$this->assertArrayHasKey( 'terms', $result );
-		$this->assertCount( 2, $result['terms'] );
+		$this->assertCount( 2, $manager->get()['terms'] );
 	}
 
 	public function test_get_valid_complex_nested_dependencies() {
@@ -90,12 +83,7 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 				'value' => 2,
 			] );
 
-		$result = $manager->get();
-
-		$this->assertIsArray( $result );
-		$this->assertArrayHasKey( 'relation', $result );
-		$this->assertArrayHasKey( 'terms', $result );
-		$this->assertCount( 2, $result['terms'] );
+		$this->assertCount( 2, $manager->get()['terms'] );
 	}
 
 	public function test_where_throws_on_missing_config() {
@@ -103,6 +91,13 @@ class Test_Dependencies_Manager extends Elementor_Test_Base {
 		$this->expectExceptionMessage( 'Term missing mandatory configurations' );
 
 		Manager::make()->where( [ 'value' => 1 ] );
+	}
+
+	public function test_new_dependency_throws_on_invalid_relation() {
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Invalid relation: invalid_relation' );
+
+		Manager::make( 'invalid_relation' );
 	}
 
 	public function test_get_filters_out_empty_dependency_groups() {

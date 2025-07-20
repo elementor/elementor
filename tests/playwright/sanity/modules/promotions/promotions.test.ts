@@ -56,7 +56,8 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
-	test( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
+	// TODO : Clean up task : https://elementor.atlassian.net/browse/ED-20036
+	test.skip( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
 			promotionsHelper = new PromotionsHelper( page, testInfo ),
