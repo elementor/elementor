@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useMemo, useRef } from 'react';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Box, MenuList, MenuSubheader, styled } from '@elementor/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
@@ -27,8 +26,6 @@ export type PopoverMenuListProps< T, V extends string > = {
 	menuItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	noResultsComponent?: React.ReactNode;
 };
-
-const isVersion330Active = isExperimentActive( 'e_v_3_30' );
 
 export const ITEM_HEIGHT = 32;
 const LIST_ITEMS_BUFFER = 6;
@@ -138,9 +135,7 @@ export const PopoverMenuList = < T, V extends string >( {
 								<MenuSubheader
 									key={ virtualRow.key }
 									style={ shouldStick ? {} : menuSubHeaderAbsoluteStyling( virtualRow.start ) }
-									sx={
-										isVersion330Active ? { fontWeight: '400', color: 'text.tertiary' } : undefined
-									}
+									sx={ { fontWeight: '400', color: 'text.tertiary' } }
 								>
 									{ item.label || item.value }
 								</MenuSubheader>
