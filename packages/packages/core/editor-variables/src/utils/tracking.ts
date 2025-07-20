@@ -28,7 +28,6 @@ export const trackVariableEvent = ( { varType, controlPath, action }: VariableEv
 	}
 
 	const name = config.names.variables[ action ];
-    
 	extendedWindow.elementor?.editorEvents?.dispatchEvent( name, {
 		location: config.locations.variables,
 		secondaryLocation: config.secondaryLocations.variablesPopover,
