@@ -21,7 +21,11 @@ class Transition_Transformer extends Transformer_Base {
 		}
 
 		$property = $transition['selection'];
-		$duration = $transition['size'] ?? '0.3s';
+		$duration = $transition['size'];
+
+		if ( $transition['selection'] === 'all properties' ) {
+			$property = 'all';
+		}
 
 		return trim( "{$property} {$duration}" );
 	}

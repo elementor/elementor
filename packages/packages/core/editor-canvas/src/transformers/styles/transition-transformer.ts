@@ -18,5 +18,9 @@ const mapToTransitionString = ( value: TransitionValue ): string => {
 		return '';
 	}
 
+	if ( value.selection === 'all properties' ) {
+		return `all ${ value.size }`;
+	}
+
 	return `${ value.selection } ${ value.size }`;
 };

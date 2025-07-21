@@ -6,21 +6,21 @@ import { RepeatableControl } from './repeatable-control';
 import { SelectControl } from './select-control';
 import { SelectionSizeControl } from './selection-size-control';
 
-const TRANSITION_PROPERTIES = [ { label: 'Filter', value: 'filter' } ];
+const TRANSITION_PROPERTIES = [ { label: 'All Properties', value: 'all properties' } ];
 
 const DURATION_CONFIG = {
 	variant: 'time',
 	units: [ 's', 'ms' ],
-	defaultUnit: 's',
+	defaultUnit: 'ms',
 };
 
 const INITIAL_VALUES = {
-	selection: { $$type: 'string', value: 'filter' },
-	size: { $$type: 'size', value: { size: 0, unit: 's' } },
+	selection: { $$type: 'string', value: 'all properties' },
+	size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
 };
 
 const SELECTION_SIZE_PROPS = {
-	selectionLabel: 'Property',
+	selectionLabel: 'Type',
 	sizeLabel: 'Duration',
 	selectionConfig: {
 		component: SelectControl,
@@ -29,7 +29,7 @@ const SELECTION_SIZE_PROPS = {
 		},
 	},
 	sizeConfigMap: {
-		filter: DURATION_CONFIG,
+		...TRANSITION_PROPERTIES.reduce( ( acc, prop ) => ( { ...acc, [ prop.value ]: DURATION_CONFIG } ), {} ),
 	},
 };
 
@@ -43,10 +43,10 @@ export const TransitionRepeaterControl = createControl( () => {
 	return (
 		<RepeatableControl
 			label="Transitions"
-			repeaterLabel="Add Transition"
-			patternLabel="${value.selection.value} (${value.size.value.size}${value.size.value.unit})"
+			repeaterLabel="Transitions"
+			patternLabel="${value.selection.value}: ${value.size.value.size}${value.size.value.unit}"
 			placeholder="Empty Transition"
-			showDuplicate={ true }
+			showDuplicate={ false }
 			showToggle={ true }
 			initialValues={ INITIAL_VALUES }
 			childControlConfig={ CHILD_CONTROL_CONFIG }

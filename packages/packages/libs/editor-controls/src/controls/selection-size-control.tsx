@@ -33,7 +33,7 @@ export const SelectionSizeControl = createControl(
 		return (
 			<PropProvider value={ value } setValue={ setValue } propType={ propType }>
 				<Grid container spacing={ 1.5 } ref={ rowRef }>
-					<Grid item xs={ 6 }>
+					<Grid item xs={ 6 } sx={ { display: 'flex', alignItems: 'center' } }>
 						<ControlFormLabel>{ selectionLabel }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
@@ -43,7 +43,7 @@ export const SelectionSizeControl = createControl(
 					</Grid>
 					{ currentSizeConfig && (
 						<>
-							<Grid item xs={ 6 }>
+							<Grid item xs={ 6 } sx={ { display: 'flex', alignItems: 'center' } }>
 								<ControlFormLabel>{ sizeLabel }</ControlFormLabel>
 							</Grid>
 							<Grid item xs={ 6 }>
