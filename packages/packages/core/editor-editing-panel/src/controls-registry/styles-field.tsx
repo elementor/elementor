@@ -8,6 +8,7 @@ import { useStylesField } from '../hooks/use-styles-field';
 import { StylesInheritanceIndicator } from '../styles-inheritance/components/styles-inheritance-indicator';
 import { ConditionalField } from './conditional-field';
 import { createTopLevelOjectType } from './create-top-level-object-type';
+import { getDependencyState } from './get-dependency-state';
 
 export type StylesFieldProps = {
 	bind: PropKey;

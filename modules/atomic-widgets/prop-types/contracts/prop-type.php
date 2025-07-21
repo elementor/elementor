@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Contracts;
 
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
