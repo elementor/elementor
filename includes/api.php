@@ -219,7 +219,7 @@ class Api {
 
 		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		return empty( $library_data ) ? [] : $library_data;
+		return $library_data['library'] ?? [];
 	}
 
 	/**
