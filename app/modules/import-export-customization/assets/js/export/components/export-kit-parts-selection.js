@@ -7,12 +7,12 @@ export default function ExportKitPartsSelection() {
 
 	const handleCheckboxChange = ( itemType ) => {
 		const isChecked = data.includes.includes( itemType );
-		const kitItem = kitContentData.find( item => item.type === itemType );
-		
+		const kitItem = kitContentData.find( ( item ) => item.type === itemType );
+
 		if ( isChecked && kitItem?.required ) {
 			return;
 		}
-		
+
 		const actionType = isChecked ? 'REMOVE_INCLUDE' : 'ADD_INCLUDE';
 		dispatch( { type: actionType, payload: itemType } );
 	};

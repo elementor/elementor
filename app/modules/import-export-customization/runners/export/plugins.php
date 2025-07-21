@@ -2,6 +2,8 @@
 
 namespace Elementor\App\Modules\ImportExportCustomization\Runners\Export;
 
+use Elementor\Core\Utils\Collection;
+
 class Plugins extends Export_Runner_Base {
 
 	public static function get_name(): string {
@@ -20,8 +22,13 @@ class Plugins extends Export_Runner_Base {
 		$customization = $data['customization']['plugins'] ?? null;
 
 		if ( $customization ) {
-			$selected_plugin_keys = array_keys( array_filter( $customization ) );
-			$plugins = array_intersect_key( $data['selected_plugins'], array_flip( $selected_plugin_keys ) );
+			$enabled_plugin_keys = Collection::make( $customization )->filter()->keys();
+			
+			$plugins = Collection::make( $data['selected_plugins'] )
+				->filter( function( $plugin_data, $plugin_key ) use ( $enabled_plugin_keys ) {
+					return $enabled_plugin_keys->contains( $plugin_key );
+				} )
+				->all();
 		} else {
 			$plugins = $data['selected_plugins'];
 		}
