@@ -1,0 +1,52 @@
+name: Cleanup Revert PRs
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Close old revert PRs (older than 72h)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+
+          NOW=$(date +%s)
+
+          echo "Fetching open PRs with title starting with 'Revert'"
+          gh pr list --state open --limit 100 --json number,title,createdAt,headRefName \
+            --jq '.[] | select(.title | startswith("Revert")) | {number, title, createdAt, headRefName}' > prs.json
+
+          if [ ! -s prs.json ]; then
+            echo "No revert PRs found to clean up"
+            exit 0
+          fi
+
+          cat prs.json | jq -c '.' | while read -r pr; do
+            NUMBER=$(echo "$pr" | jq -r '.number')
+            CREATED_AT=$(echo "$pr" | jq -r '.createdAt')
+            BRANCH=$(echo "$pr" | jq -r '.headRefName')
+            TITLE=$(echo "$pr" | jq -r '.title')
+
+            CREATED_TS=$(date --date="$CREATED_AT" +%s)
+            AGE_HOURS=$(( (NOW - CREATED_TS) / 3600 ))
+
+            if [ "$AGE_HOURS" -ge 72 ]; then
+              echo "🗑 Closing PR #$NUMBER: '$TITLE' (age: ${AGE_HOURS}h) and deleting branch '$BRANCH'"
+              gh pr close "$NUMBER" --delete-branch --comment "Automatically closed after ${AGE_HOURS} hours of inactivity"
+            else
+              echo "⏭ PR #$NUMBER is only ${AGE_HOURS}h old — skipping"
+            fi
+          done
