@@ -28,6 +28,7 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
+		'send_app_promotion',
 		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
@@ -92,7 +93,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
+		if ( ! $this->is_elementor_admin_screen_with_system_info() ) {
 			return false;
 		}
 
@@ -168,7 +169,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true ) ) {
+		if ( ! $this->is_elementor_admin_screen_with_system_info() ) {
 			return false;
 		}
 
@@ -428,6 +429,99 @@ class Admin_Notices extends Module {
 		return class_exists( 'WooCommerce' );
 	}
 
+	private function get_installed_form_plugin_name() {
+		static $detected_form_plugin = null;
+
+		if ( null !== $detected_form_plugin ) {
+			return $detected_form_plugin;
+		}
+
+		$form_plugins_constants_to_name_mapper = [
+			'WPFORMS_VERSION' => 'WPForms',
+			'WPCF7_VERSION' => 'Contact Form 7',
+		];
+
+		foreach ( $form_plugins_constants_to_name_mapper as $constant => $name ) {
+			if ( defined( $constant ) ) {
+				$detected_form_plugin = $name;
+				return $detected_form_plugin;
+			}
+		}
+
+		$form_plugins_classes_to_name_mapper = [
+			'\GFCommon' => 'Gravity Forms',
+			'\Ninja_Forms' => 'Ninja Forms',
+		];
+
+		foreach ( $form_plugins_classes_to_name_mapper as $class => $name ) {
+			if ( class_exists( $class ) ) {
+				$detected_form_plugin = $name;
+				return $detected_form_plugin;
+			}
+		}
+
+		$detected_form_plugin = false;
+		return $detected_form_plugin;
+	}
+
+	private function notice_send_app_promotion() {
+		$notice_id = 'send_app_promotion';
+
+		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
+			return false;
+		}
+
+		if ( time() < $this->get_install_time() + ( 60 * DAY_IN_SECONDS ) ) {
+			return false;
+		}
+
+		if ( ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		$form_plugin_name = $this->get_installed_form_plugin_name();
+
+		if ( ! $form_plugin_name ) {
+			return false;
+		}
+
+		$plugin_file_path = 'send/send-app.php';
+		$plugin_slug = 'send-app';
+
+		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
+		if ( empty( $cta_data ) ) {
+			return false;
+		}
+
+		$title = sprintf(
+			/* translators: %s: Form plugin name */
+			esc_html__( 'Turn %s leads into loyal shoppers', 'elementor' ),
+			$form_plugin_name
+		);
+
+		$options = [
+			'title' => $title,
+			'description' => esc_html__( 'Collecting leads is just the beginning. With Send by Elementor, you can manage contacts, launch automations, and turn form submissions into sales.', 'elementor' ),
+			'id' => $notice_id,
+			'type' => 'cta',
+			'button' => [
+				'text' => $cta_data['text'],
+				'url' => $cta_data['url'],
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/Formslearnmore',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
 	private function notice_ally_pages_promotion() {
 		global $pagenow;
 		$notice_id = 'ally_pages_promotion';
@@ -485,7 +579,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! $this->is_elementor_page() && ! in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true ) ) {
+		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
 			return false;
 		}
 
@@ -554,6 +648,14 @@ class Admin_Notices extends Module {
 
 	private function is_elementor_page(): bool {
 		return 0 === strpos( $this->current_screen_id, 'elementor_page' );
+	}
+
+	private function is_elementor_admin_screen(): bool {
+		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true );
+	}
+
+	private function is_elementor_admin_screen_with_system_info(): bool {
+		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true );
 	}
 
 	private function get_plugin_cta_data( $plugin_slug, $plugin_file_path ) {
