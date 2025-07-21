@@ -4,6 +4,11 @@ import { encodeString } from '@elementor/utils';
 
 import { createStylesRenderer, type RendererStyleDefinition } from '../create-styles-renderer';
 
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+	isExperimentActive: jest.fn().mockReturnValue( true ),
+} ) );
+
 describe( 'renderStyles', () => {
 	it( 'should render styles', async () => {
 		// Arrange.
@@ -171,7 +176,7 @@ describe( 'custom_css rendering', () => {
 		expect( result[ 0 ].value ).not.toContain( '{;}' );
 	} );
 
-	it( 'should render custom_css if raw is not empty', async () => {
+	it( 'should render custom_css if raw is valid base64 encoded string', async () => {
 		// Arrange.
 		const styleDef: RendererStyleDefinition = {
 			id: 'test',

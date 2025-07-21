@@ -201,7 +201,7 @@ describe( 'createElementStyle', () => {
 		} ).toThrow( 'Element not found.' );
 	} );
 
-	it( 'should treat custom_css', () => {
+	it( 'should save custom_css to model', () => {
 		// Arrange.
 		const element = createMockElement( {
 			model: {

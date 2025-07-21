@@ -6,6 +6,7 @@ import {
 	type StyleDefinitionState,
 	type StyleDefinitionType,
 } from '@elementor/editor-styles';
+import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { decodeString } from '@elementor/utils';
 
 import { type PropsResolver } from './create-props-resolver';
@@ -129,7 +130,7 @@ async function propsToCss( { props, resolve, signal }: PropsToCssArgs ) {
 }
 
 function customCssToString( customCss: CustomCss | null ): string {
-	if ( ! customCss?.raw ) {
+	if ( ! isExperimentActive( EXPERIMENTAL_FEATURES.CUSTOM_CSS ) || ! customCss?.raw ) {
 		return '';
 	}
 

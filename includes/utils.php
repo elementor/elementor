@@ -947,7 +947,7 @@ class Utils {
 		return (bool) Plugin::$instance->kits_manager->get_previous_id();
 	}
 
-	public static function decode_string( string $string, string $fallback = '' ) {
+	public static function decode_string( string $string, ?string $fallback = '' ) {
 		try {
 			return base64_decode( $string, true ) ?? $fallback;
 		} catch ( Exception $e ) {
@@ -955,9 +955,9 @@ class Utils {
 		}
 	}
 
-	public static function encode_string( string $string, string $fallback = '' ): string {
+	public static function encode_string( string $string, ?string $fallback = '' ): string {
 		try {
-			return base64_decode( $string, true );
+			return base64_encode( $string, true );
 		} catch ( \Exception $e ) {
 			return $fallback;
 		}

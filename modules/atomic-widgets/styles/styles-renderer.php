@@ -3,6 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 
@@ -147,7 +149,11 @@ class Styles_Renderer {
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
-		return ! empty( $custom_css['raw'] ) ? Utils::decode_string( $custom_css['raw'], '' ) . '\n' : '';
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_CUSTOM_CSS );
+
+		return $is_feature_active && ! empty( $custom_css['raw'] )
+			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
+			: '';
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {

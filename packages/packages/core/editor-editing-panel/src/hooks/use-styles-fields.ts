@@ -241,15 +241,15 @@ function capitalize( str: string ) {
 const isLocalStyle = ( provider: StylesProvider | null, styleId: StyleDefinition[ 'id' ] | null ) =>
 	! provider || ! styleId || isElementsStylesProvider( provider.getKey() );
 
-type GetTitle = {
+type TitleOptions = {
 	provider: StylesProvider | null;
 	styleId: string | null;
 	elementId: string;
 };
 
-type GetSubtitle = GetTitle & { propDisplayName: string };
+type SubtitleOptions = TitleOptions & { propDisplayName: string };
 
-export const getTitle = ( { provider, styleId, elementId }: GetTitle ) => {
+export const getTitle = ( { provider, styleId, elementId }: TitleOptions ) => {
 	const isLocal = isLocalStyle( provider, styleId );
 
 	if ( isLocal ) {
@@ -259,7 +259,7 @@ export const getTitle = ( { provider, styleId, elementId }: GetTitle ) => {
 	return defaultHistoryTitles.title( { provider: provider as StylesProvider } );
 };
 
-export const getSubtitle = ( { provider, styleId, propDisplayName, elementId }: GetSubtitle ) => {
+export const getSubtitle = ( { provider, styleId, propDisplayName, elementId }: SubtitleOptions ) => {
 	const isLocal = isLocalStyle( provider, styleId );
 
 	if ( isLocal ) {

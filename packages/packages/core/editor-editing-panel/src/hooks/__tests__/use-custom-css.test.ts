@@ -151,7 +151,7 @@ describe( 'useCustomCss', () => {
 		expect( createElementStyle ).toHaveBeenCalledWith( expect.objectContaining( { custom_css: { raw: '' } } ) );
 	} );
 
-	it( 'should support undo/redo of customCss changes', () => {
+	it( 'should support undo and redo of customCss changes', () => {
 		// Arrange.
 		const mockProvider = createMockStylesProvider( {}, [
 			{

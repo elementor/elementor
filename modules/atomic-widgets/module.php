@@ -93,6 +93,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
+	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -126,13 +127,13 @@ class Module extends BaseModule {
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
 
-			add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-			add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
-			add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-			add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
-			add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
-			add_action( 'elementor/frontend/after_register_scripts', fn() => $this->register_frontend_scripts() );
+			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+			add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -162,14 +163,23 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 		] );
 
-		Plugin::$instance->experiments->add_feature([
+		Plugin::$instance->experiments->add_feature( [
 			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
 			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
 			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
+		] );
+
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_CUSTOM_CSS,
+			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
+			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 	}
 
 	private function add_packages( $packages ) {
@@ -240,19 +250,19 @@ class Module extends BaseModule {
 		$transformers->register( Transform_Prop_Type::get_key(), new Transform_Transformer() );
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn( $_, $key ) => "border-{$key}-radius" )
+			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
 		);
 		$transformers->register(
 			Border_Width_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $_, $key ) => "border-{$key}-width" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $_, $key ) => "border-{$key}-width" )
 		);
 		$transformers->register(
 			Layout_Direction_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'column', 'row' ], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
+			new Multi_Props_Transformer( [ 'column', 'row' ], fn ( $prop_key, $key ) => "{$key}-{$prop_key}" )
 		);
 		$transformers->register(
 			Dimensions_Prop_Type::get_key(),
-			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
 	}
 
@@ -282,6 +292,7 @@ class Module extends BaseModule {
 
 		return $title;
 	}
+
 	/**
 	 * Enqueue the module scripts.
 	 *
@@ -299,7 +310,7 @@ class Module extends BaseModule {
 
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
-			<span class="elementor-panel-heading-category-chip">
+		<span class="elementor-panel-heading-category-chip">
 				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
@@ -308,7 +319,7 @@ class Module extends BaseModule {
 
 	private function register_frontend_scripts() {
 		$assets_config_provider = ( new Assets_Config_Provider() )
-			->set_path_resolver( function( $name ) {
+			->set_path_resolver( function ( $name ) {
 				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
 			} );
 
