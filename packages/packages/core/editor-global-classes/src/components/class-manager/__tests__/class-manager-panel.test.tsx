@@ -384,14 +384,15 @@ describe( 'ClassManagerPanel', () => {
 			expect( renameButton ).not.toBeInTheDocument();
 		} );
 
-		const editableField = await screen.findByRole( 'textbox' );
+		const textboxes = await screen.findAllByRole( 'textbox' );
+		const editableField = textboxes.find( ( el ) => el.getAttribute( 'contenteditable' ) === 'true' );
 
 		expect( editableField ).toBeInTheDocument();
 
 		// Act.
-		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
+		fireEvent.input( editableField as Element, { target: { innerText: 'New-Class-Name' } } );
 
-		fireEvent.keyDown( editableField, { key: 'Enter' } );
+		fireEvent.keyDown( editableField as Element, { key: 'Enter' } );
 
 		// Assert.
 		await waitFor( () => {
