@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 export default function useKitPlugins( { open, data } ) {
 	const initialState = data?.includes?.includes( 'plugins' ) || false;
-	
+
 	const [ plugins, setPlugins ] = useState( {} );
 	const [ pluginsList, setPluginsList ] = useState( {} );
 	const [ isLoading, setIsLoading ] = useState( false );
@@ -29,12 +29,12 @@ export default function useKitPlugins( { open, data } ) {
 				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
 				throw new Error( errorMessage );
 			}
-			
+
 			if ( result.data ) {
 				setPluginsList( result.data );
-				
+
 				let initialPluginsState = {};
-				
+
 				if ( data?.customization?.plugins ) {
 					initialPluginsState = data.customization.plugins;
 				} else {
@@ -42,13 +42,13 @@ export default function useKitPlugins( { open, data } ) {
 						initialPluginsState[ pluginKey ] = initialState;
 					} );
 				}
-				
+
 				requiredPlugins.forEach( ( pluginKey ) => {
 					if ( initialPluginsState.hasOwnProperty( pluginKey ) ) {
 						initialPluginsState[ pluginKey ] = true;
 					}
 				} );
-				
+
 				setPlugins( initialPluginsState );
 			}
 		} catch ( error ) {
@@ -100,9 +100,7 @@ export default function useKitPlugins( { open, data } ) {
 	const getSelectedPlugins = useCallback( () => {
 		const selectedPlugins = {};
 		Object.entries( plugins ).forEach( ( [ pluginKey, isSelected ] ) => {
-			if ( isSelected ) {
-				selectedPlugins[ pluginKey ] = true;
-			}
+			selectedPlugins[ pluginKey ] = isSelected;
 		} );
 		return selectedPlugins;
 	}, [ plugins ] );

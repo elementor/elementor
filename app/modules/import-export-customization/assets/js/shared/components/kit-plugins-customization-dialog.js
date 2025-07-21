@@ -73,7 +73,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 
 	const SubSetting = ( { label, settingKey, version, pluginUri } ) => {
 		const isRequired = isRequiredPlugin( settingKey );
-		
+
 		return (
 			<Box sx={ { py: 1.5, opacity: isRequired ? 0.6 : 1 } }>
 				<FormControlLabel
@@ -87,10 +87,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 							disabled={ isRequired }
 						/>
 					}
-					label={ 
+					label={
 						<Typography variant="body1" sx={ { fontWeight: 400, color: isRequired ? 'text.disabled' : 'inherit' } }>
 							{ label }
-						</Typography> 
+						</Typography>
 					}
 				/>
 				{ version && (
@@ -111,7 +111,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 								{ __( 'Version', 'elementor' ) } { version }
 								<SvgIcon
 									viewBox="0 0 18 18"
-									sx={ { 
+									sx={ {
 										fontSize: 16,
 										color: 'info.light',
 									} }

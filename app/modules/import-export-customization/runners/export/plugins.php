@@ -19,9 +19,12 @@ class Plugins extends Export_Runner_Base {
 	public function export( array $data ) {
 		$customization = $data['customization']['plugins'] ?? null;
 
-		$plugins = $customization
-			? array_intersect_key( $data['selected_plugins'], $customization )
-			: $data['selected_plugins'];
+		if ( $customization ) {
+			$selected_plugin_keys = array_keys( array_filter( $customization ) );
+			$plugins = array_intersect_key( $data['selected_plugins'], array_flip( $selected_plugin_keys ) );
+		} else {
+			$plugins = $data['selected_plugins'];
+		}
 
 		return [
 			'manifest' => [
