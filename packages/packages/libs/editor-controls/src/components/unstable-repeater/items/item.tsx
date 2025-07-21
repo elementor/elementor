@@ -6,29 +6,29 @@ import { __ } from '@wordpress/i18n';
 import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
-import { ItemIcon } from './item-icon';
-import { ItemLabel } from './item-label';
+import { type ItemProps } from '../types';
 import { AddItemPopover } from './add-item-popover';
 import { usePopover } from './use-popover';
 
 type AnchorEl = HTMLElement | null;
 
-export const Item = () => {
+export const Item = < T, >( { Label, Icon, Content, key, value }: ItemProps< T > ) => {
 	const [ anchorEl, setAnchorEl ] = useState< AnchorEl >( null );
 	const { popoverState, popoverProps, ref, setRef } = usePopover( true, () => {} );
 
 	return (
 		<>
 			<UnstableTag
+				key={ key }
 				disabled={ false }
-				label={ <ItemLabel /> }
+				label={ <Label value={ value as T } /> }
 				showActionsOnHover
 				fullWidth
 				ref={ setRef }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
 				{ ...bindTrigger( popoverState ) }
-				startIcon={ <ItemIcon /> }
+				startIcon={ <Icon value={ value as T } /> }
 				actions={
 					<>
 						<DuplicateItemAction />

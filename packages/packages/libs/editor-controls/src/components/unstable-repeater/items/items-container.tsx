@@ -1,29 +1,26 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { ItemsDataContextProvider, useDataContext } from "../context/items-data-context";
-import { Item } from "./item";
+import { ItemsDataContextProvider, useDataContext } from '../context/items-data-context';
 
-type ItemsContainerProps = {
+type ItemsContainerProps< T > = {
 	children: React.ReactNode;
-	initialValue?: Record< string, unknown >;
+	initial: T;
 };
 
-export const ItemsContainer = ( { children, initialValue }: ItemsContainerProps ) => {
-	// const { value, setValue } = usePropContext();
-
+export const ItemsContainer = < T, >( { children, initial }: ItemsContainerProps< T > ) => {
 	return (
-		<ItemsDataContextProvider>
-			<ItemsList itemTemplate={ children } />
+		<ItemsDataContextProvider< T > initial={ initial }>
+			<ItemsList itemTemplate={ children as React.ReactElement< { value: T } > } />
 		</ItemsDataContextProvider>
 	);
 };
 
-type ItemsListProps = {
-	itemTemplate?: React.ReactNode;
+type ItemsListProps< T > = {
+	itemTemplate?: React.ReactElement< { value: T } >;
 };
 
-const ItemsList = ( { itemTemplate }: ItemsListProps ) => {
-	const { values } = useDataContext();
+const ItemsList = < T, >( { itemTemplate }: ItemsListProps< T > ) => {
+	const { values } = useDataContext< T >();
 
 	if ( ! itemTemplate ) {
 		return null;
@@ -31,9 +28,9 @@ const ItemsList = ( { itemTemplate }: ItemsListProps ) => {
 
 	return (
 		<>
-			{ values.map( ( value, index ) => (
-				<Item key={ index } />
-			) ) }
+			{ values?.map( ( value, index ) =>
+				React.isValidElement( itemTemplate ) ? React.cloneElement( itemTemplate, { key: index, value } ) : null
+			) }
 		</>
 	);
 };
