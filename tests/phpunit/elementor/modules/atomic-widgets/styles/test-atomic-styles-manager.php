@@ -5,6 +5,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Plugin;
+use Elementor\Utils;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_Filesystem_Base;
 
@@ -298,7 +299,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 				[
 					'props' => [ 'color' => 'red' ],
 					'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
-					'custom_css' => [ 'raw' => 'background: yellow;' ],
+					'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow;' ) ],
 				],
 			],
 		];
@@ -324,7 +325,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 				[
 					'props' => [ 'color' => 'red' ],
 					'meta' => [ 'breakpoint' => 'desktop', 'state' => null ],
-					'custom_css' => [ 'raw' => 'background: yellow; color: red;' ],
+					'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow; color: red;' ) ],
 				],
 			],
 		];
@@ -334,6 +335,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		// Act
 		$result = $parser->parse( $style );
 		$parsed = $result->unwrap();
+		var_dump($parsed);
 
 		// Assert
 		$this->assertArrayHasKey( 'custom_css', $parsed['variants'][0] );
