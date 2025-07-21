@@ -43,9 +43,7 @@ export const LabelField = ( { value, error, onChange }: LabelFieldProps ) => {
 		setErrorMessage( errorMsg );
 		setNoticeMessage( errorMsg ? '' : hintMsg );
 
-		const label = isLabelEqual( newValue, error?.value ) || errorMsg ? '' : newValue;
-
-		onChange( label );
+		onChange( isLabelEqual( newValue, error?.value ) || errorMsg ? '' : newValue );
 	};
 
 	const id = useId();
@@ -55,7 +53,7 @@ export const LabelField = ( { value, error, onChange }: LabelFieldProps ) => {
 		errorMsg = error.message;
 	}
 
-	let noticeMsg = errorMsg ? '' : noticeMessage;
+	const noticeMsg = errorMsg ? '' : noticeMessage;
 
 	return (
 		<Grid container gap={ 0.75 } alignItems="center">
