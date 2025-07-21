@@ -490,7 +490,16 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( this.isOverflowHidden() ) {
+		const isFirstContainerInCanvas = () => {
+			const collection = this.model.collection;
+			return collection?.at?.( 0 ) === this.model;
+		};
+
+		const isHeaderPresent = () => {
+			return !! document.querySelector( '.elementor-location-header' );
+		};
+
+		if ( ( isFirstContainerInCanvas() && ! isHeaderPresent() ) || this.isOverflowHidden() ) {
 			this.$el.addClass( 'e-handles-inside' );
 		} else {
 			this.$el.removeClass( 'e-handles-inside' );
