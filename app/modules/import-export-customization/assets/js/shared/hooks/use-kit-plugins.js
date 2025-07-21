@@ -51,7 +51,7 @@ export default function useKitPlugins( { open, data } ) {
 
 				setPlugins( initialPluginsState );
 			}
-		} catch ( error ) {
+		} catch {
 			setPluginsList( {} );
 			setPlugins( {} );
 		} finally {
