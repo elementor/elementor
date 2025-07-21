@@ -13,6 +13,7 @@ use Elementor\Tools;
 use Elementor\Utils as ElementorUtils;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\App\Modules\ImportExportCustomization\Data\Controller;
+use Elementor\Core\Settings\Manager as SettingsManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Responsible for initializing Elementor App functionality
  */
 class Module extends BaseModule {
-	const FORMAT_VERSION = '2.0';
+	const FORMAT_VERSION = '3.0';
 
 	const REFERRER_KIT_LIBRARY = 'kit-library';
 
@@ -594,7 +595,14 @@ class Module extends BaseModule {
 			'lastImportedSession' => $this->revert->get_last_import_session(),
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 			'restApiBaseUrl' => Controller::get_base_url(),
+			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 		];
+	}
+
+	private function get_elementor_ui_theme_preference() {
+		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
+
+		return $editor_preferences->get_model()->get_settings( 'ui_theme' );
 	}
 
 	/**
@@ -647,19 +655,8 @@ class Module extends BaseModule {
 
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
-		try {
-			if ( $active_kit && method_exists( $active_kit, 'get_tabs' ) ) {
-				$tabs = $active_kit->get_tabs();
-				if ( is_array( $tabs ) ) {
-					foreach ( $tabs as $key => $tab ) {
-						if ( method_exists( $tab, 'get_title' ) ) {
-							$summary_titles['site-settings'][ $key ] = $tab->get_title();
-						}
-					}
-				}
-			}
-		} catch ( \Exception $e ) {
-			Plugin::$instance->logger->get_logger()->error( $e->getMessage() );
+		foreach ( $active_kit->get_tabs() as $key => $tab ) {
+			$summary_titles['site-settings'][ $key ] = $tab->get_title();
 		}
 
 		return $summary_titles;

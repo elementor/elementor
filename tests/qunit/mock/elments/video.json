@@ -7284,18 +7284,6 @@
 				"id": ""
 			}
 		},
-		"_mask_notice": {
-			"type": "hidden",
-			"tab": "advanced",
-			"section": "_section_masking",
-			"raw": "Need More Shapes?<br>Explore additional Premium Shape packs and use them in your site. <a target=\"_blank\" href=\"https://go.elementor.com/mask-control\">Learn More</a>",
-			"content_classes": "elementor-panel-alert elementor-panel-alert-info",
-			"condition": {
-				"_mask_switch!": ""
-			},
-			"name": "_mask_notice",
-			"default": ""
-		},
 		"_mask_size_widescreen": {
 			"type": "select",
 			"tab": "advanced",

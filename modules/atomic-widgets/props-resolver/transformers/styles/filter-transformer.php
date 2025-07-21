@@ -16,47 +16,17 @@ class Filter_Transformer extends Transformer_Base {
 	}
 
 	private function map_to_filter_string( $filter ): string {
-		if ( isset( $filter['radius'] ) ) {
-			return 'blur(' . $filter['radius'] . ')';
-		}
+		$func = $filter['func'];
+		$args = $filter['args'];
 
-		if ( isset( $filter['amount'] ) ) {
-			return 'brightness(' . $filter['amount'] . ')';
-		}
-
-		if ( isset( $filter['contrast'] ) ) {
-			return 'contrast(' . $filter['contrast'] . ')';
-		}
-
-		if ( isset( $filter['grayscale'] ) ) {
-			return 'grayscale(' . $filter['grayscale'] . ')';
-		}
-
-		if ( isset( $filter['invert'] ) ) {
-			return 'invert(' . $filter['invert'] . ')';
-		}
-
-		if ( isset( $filter['saturate'] ) ) {
-			return 'saturate(' . $filter['saturate'] . ')';
-		}
-
-		if ( isset( $filter['sepia'] ) ) {
-			return 'sepia(' . $filter['sepia'] . ')';
-		}
-
-		if ( isset( $filter['hue-rotate'] ) ) {
-			return 'hue-rotate(' . $filter['hue-rotate'] . ')';
-		}
-
-		if ( 'drop-shadow' === $filter['$$type'] ) {
-			$x_axis = $filter['xAxis'] ?? '0px';
-			$y_axis = $filter['yAxis'] ?? '0px';
-			$blur   = $filter['blur'] ?? '0px';
-			$color  = $filter['color'] ?? 'transparent';
-
+		if ( 'drop-shadow' === $func ) {
+			$x_axis = $args['xAxis'] ?? '0px';
+			$y_axis = $args['yAxis'] ?? '0px';
+			$blur   = $args['blur'] ?? '10px';
+			$color  = $args['color'] ?? 'transparent';
 			return "drop-shadow({$x_axis} {$y_axis} {$blur} {$color})";
 		}
 
-		return '';
+		return $func . '(' . $args . ')';
 	}
 }

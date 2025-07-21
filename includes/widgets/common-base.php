@@ -276,8 +276,7 @@ class Widget_Common_Base extends Widget_Base {
 		];
 
 		return [
-			$mask_selectors['default'] => $rules,
-			$mask_selectors['image'] => $rules,
+			$mask_selectors['default'] . ', ' . $mask_selectors['image'] => $rules,
 		];
 	}
 
@@ -1126,24 +1125,6 @@ class Widget_Common_Base extends Widget_Base {
 				'condition' => [
 					'_mask_switch!' => '',
 					'_mask_shape' => 'custom',
-				],
-			]
-		);
-
-		$this->add_control(
-			'_mask_notice',
-			[
-				'type' => Controls_Manager::HIDDEN,
-				'raw' => esc_html__( 'Need More Shapes?', 'elementor' ) .
-						'<br>' .
-						sprintf(
-							'%1$s <a target="_blank" href="https://go.elementor.com/mask-control">%2$s</a>',
-							esc_html__( 'Explore additional Premium Shape packs and use them in your site.', 'elementor' ),
-							esc_html__( 'Learn more', 'elementor' ),
-						),
-				'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
-				'condition' => [
-					'_mask_switch!' => '',
 				],
 			]
 		);
