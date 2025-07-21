@@ -339,6 +339,6 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		// Assert
 		$this->assertArrayHasKey( 'custom_css', $parsed['variants'][0] );
 		$this->assertStringContainsString( 'background: yellow;', Utils::decode_string( $parsed['variants'][0]['custom_css']['raw'] ) );
-		$this->assertStringContainsString( 'color: red;', $parsed['variants'][0]['custom_css']['raw'] );
+		$this->assertStringContainsString( 'color: red;', Utils::decode_string( $parsed['variants'][0]['custom_css']['raw'] ) );
 	}
 }
