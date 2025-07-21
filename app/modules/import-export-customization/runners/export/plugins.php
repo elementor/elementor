@@ -23,7 +23,7 @@ class Plugins extends Export_Runner_Base {
 
 		if ( $customization ) {
 			$enabled_plugin_keys = Collection::make( $customization )->filter()->keys();
-			
+
 			$plugins = Collection::make( $data['selected_plugins'] )
 				->filter( function( $plugin_data, $plugin_key ) use ( $enabled_plugin_keys ) {
 					return $enabled_plugin_keys->contains( $plugin_key );
