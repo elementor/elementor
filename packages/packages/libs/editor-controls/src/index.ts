@@ -25,7 +25,7 @@ export { RepeatableControl } from './controls/repeatable-control';
 export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
-export { TransitionsRepeaterControl } from './controls/transitions-repeater-control';
+export { TransitionRepeaterControl } from './controls/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 

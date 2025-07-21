@@ -4,8 +4,7 @@ import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlLabel } from '../components/control-label';
-import { PopoverGridContainer } from '../components/popover-grid-container';
+import { ControlFormLabel } from '../components/control-form-label';
 import { createControl } from '../create-control';
 import { SizeControl, type SizeControlProps } from './size-control';
 
@@ -33,33 +32,33 @@ export const SelectionSizeControl = createControl(
 
 		return (
 			<PropProvider value={ value } setValue={ setValue } propType={ propType }>
-				<PopoverGridContainer>
+				<Grid container spacing={ 1.5 } ref={ rowRef }>
 					<Grid item xs={ 6 }>
-						<ControlLabel>{ selectionLabel }</ControlLabel>
+						<ControlFormLabel>{ selectionLabel }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
 						<PropKeyProvider bind="selection">
 							<SelectionComponent { ...selectionConfig.props } />
 						</PropKeyProvider>
 					</Grid>
-				</PopoverGridContainer>
-				{ currentSizeConfig && (
-					<PopoverGridContainer ref={ rowRef }>
-						<Grid item xs={ 6 }>
-							<ControlLabel>{ sizeLabel }</ControlLabel>
-						</Grid>
-						<Grid item xs={ 6 }>
-							<PropKeyProvider bind="size">
-								<SizeControl
-									anchorRef={ rowRef }
-									variant={ currentSizeConfig.variant }
-									units={ currentSizeConfig.units }
-									defaultUnit={ currentSizeConfig.defaultUnit }
-								/>
-							</PropKeyProvider>
-						</Grid>
-					</PopoverGridContainer>
-				) }
+					{ currentSizeConfig && (
+						<>
+							<Grid item xs={ 6 }>
+								<ControlFormLabel>{ sizeLabel }</ControlFormLabel>
+							</Grid>
+							<Grid item xs={ 6 }>
+								<PropKeyProvider bind="size">
+									<SizeControl
+										anchorRef={ rowRef }
+										variant={ currentSizeConfig.variant }
+										units={ currentSizeConfig.units }
+										defaultUnit={ currentSizeConfig.defaultUnit }
+									/>
+								</PropKeyProvider>
+							</Grid>
+						</>
+					) }
+				</Grid>
 			</PropProvider>
 		);
 	}

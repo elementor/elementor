@@ -1,9 +1,6 @@
 import * as React from 'react';
-import {
-	BoxShadowRepeaterControl,
-	FilterRepeaterControl,
-	TransitionsRepeaterControl,
-} from '@elementor/editor-controls';
+import { BoxShadowRepeaterControl, FilterRepeaterControl, TransitionRepeaterControl } from '@elementor/editor-controls';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
@@ -17,6 +14,8 @@ const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
+	const shouldShowTransition = isExperimentActive( 'atomic_widgets_should_use_transition' );
+
 	return (
 		<SectionContent>
 			<OpacityControlField />
@@ -32,9 +31,12 @@ export const EffectsSection = () => {
 			<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
 				<FilterRepeaterControl filterPropName="backdrop-filter" />
 			</StylesField>
-			<StylesField bind="transitions" propDisplayName={ TRANSITIONS_LABEL }>
-				<TransitionsRepeaterControl />
-			</StylesField>
+			<PanelDivider />
+			{ shouldShowTransition && (
+				<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
+					<TransitionRepeaterControl />
+				</StylesField>
+			) }
 		</SectionContent>
 	);
 };
