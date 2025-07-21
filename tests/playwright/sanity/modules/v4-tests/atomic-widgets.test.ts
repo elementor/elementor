@@ -77,7 +77,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
 
-					if ( 'e-youtube' === widget.name ) {
+					if ('e-youtube' === widget.name) {
 						await editor.isUiStable( editor.page.locator( containerSelector ) );
 					}
 					await expect.soft( editor.page.locator( containerSelector ) )
@@ -118,6 +118,47 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await expect.soft( editor.page.locator( 'body' ) ).toHaveScreenshot( 'widget-removed-after-refresh.png' );
 				} );
 			} );
+
+			test( 'Heading widget link functionality', async () => {
+				let containerId: string;
+				let widgetId: string;
+				let widgetSelector: string;
+
+				await test.step( 'Add heading widget with link', async () => {
+					editor = await wpAdmin.openNewPage();
+					containerId = await editor.addElement( { elType: 'container' }, 'document' );
+					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
+					widgetSelector = editor.getWidgetSelector( widgetId );
+
+					// Open the link section and set the link
+					await editor.openSection( 'section_title_link' );
+					await editor.setTextControlValue( 'link', 'https://www.elementor.com' );
+				} );
+
+				await test.step( 'Validate link in editor', async () => {
+					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-link-editor.png` );
+
+					// Check if the heading is wrapped in a link
+					const linkElement = editor.getPreviewFrame().locator( widgetSelector + ' a.elementor-heading-title' );
+					await expect( linkElement ).toBeVisible();
+					await expect( linkElement ).toHaveAttribute( 'href', 'https://www.elementor.com' );
+					await expect( linkElement ).toHaveText( 'Test Heading' );
+				} );
+
+				await test.step( 'Validate link in frontend', async () => {
+					await editor.publishAndViewPage();
+
+					const headingElement = editor.page.locator( widgetSelector + ' .elementor-heading-title' );
+					await expect( headingElement ).toBeVisible();
+
+					// Check if the heading is wrapped in a link on frontend
+					const linkElement = editor.page.locator( widgetSelector + ' a.elementor-heading-title' );
+					await expect( linkElement ).toBeVisible();
+					await expect( linkElement ).toHaveAttribute( 'href', 'https://www.elementor.com' );
+					await expect( linkElement ).toHaveText( 'Test Heading' );
+				} );
+
+			} );
 		} );
 	} );
-} );
+});
