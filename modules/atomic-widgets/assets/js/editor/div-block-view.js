@@ -499,8 +499,31 @@ const DivBlockView = BaseElementView.extend( {
 			return !! document.querySelector( '.elementor-location-header' );
 		};
 
-		if ( ( isFirstContainerInCanvas() && ! isHeaderPresent() ) || this.isOverflowHidden() ) {
+		const isSectionScrollSnapEnabled = () => {
+			return elementor.settings?.page?.model?.attributes?.scroll_snap;
+		};
+
+		const isOverflowHidden = () => {
+			return 'hidden' === this.$el.css( 'overflow' );
+		};
+
+		const offset = this.$el.offset()?.top ?? 0;
+		const $handlesElement = this.$el.find( '> .elementor-element-overlay > .elementor-editor-section-settings' );
+		if ( isSectionScrollSnapEnabled() ) {
 			this.$el.addClass( 'e-handles-inside' );
+			return;
+		}
+
+		if ( ! isOverflowHidden() && ! isFirstContainerInCanvas() && ! isHeaderPresent() ) {
+			this.$el.removeClass( 'e-handles-inside' );
+			return;
+		}
+
+		if ( offset < 25 ) {
+			this.$el.addClass( 'e-handles-inside' );
+			if ( $handlesElement.length ) {
+				$handlesElement.css( 'top', offset < -5 ? -offset : '' );
+			}
 		} else {
 			this.$el.removeClass( 'e-handles-inside' );
 		}
