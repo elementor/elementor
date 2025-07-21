@@ -9,9 +9,9 @@ import { __ } from '@wordpress/i18n';
 
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
-import { ERROR_MESSAGES } from '../utils/validations';
+import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { FontField } from './fields/font-field';
-import { LabelField } from './fields/label-field';
+import { LabelField, useLabelError } from './fields/label-field';
 import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
 const SIZE = 'tiny';
@@ -30,9 +30,14 @@ export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) 
 		throw new Error( `Global font variable "${ variableId }" not found` );
 	}
 
-	const [ errorMessage, setErrorMessage ] = useState( ERROR_MESSAGES.DUPLICATED_LABEL );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ fontFamily, setFontFamily ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
+
+	const { error: labelServerError, setError: setLabelServerError } = useLabelError( {
+		value: variable.label,
+		message: ERROR_MESSAGES.DUPLICATED_LABEL,
+	} );
 
 	const handleUpdate = () => {
 		restoreVariable( variableId, label, fontFamily )
@@ -41,7 +46,17 @@ export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) 
 				onSubmit?.();
 			} )
 			.catch( ( error ) => {
-				setErrorMessage( error.message );
+				const mappedError = mapServerError( error );
+				if ( mappedError && 'label' === mappedError.field ) {
+					setLabel( '' );
+					setLabelServerError( {
+						value: label,
+						message: mappedError.message,
+					} );
+					return;
+				}
+
+				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
 			} );
 	};
 
@@ -73,6 +88,7 @@ export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) 
 				<PopoverContent p={ 2 }>
 					<LabelField
 						value={ label }
+						error={ labelServerError }
 						onChange={ ( value ) => {
 							setLabel( value );
 							setErrorMessage( '' );

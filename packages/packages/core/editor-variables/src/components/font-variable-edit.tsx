@@ -10,8 +10,9 @@ import { __ } from '@wordpress/i18n';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { FontField } from './fields/font-field';
-import { LabelField } from './fields/label-field';
+import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 
 const SIZE = 'tiny';
@@ -27,6 +28,8 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( fontVariablePropTypeUtil );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+
+	const { error: labelServerError, setError: setLabelServerError } = useLabelError();
 
 	const variable = useVariable( editId );
 	if ( ! variable ) {
@@ -48,7 +51,17 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 				onSubmit?.();
 			} )
 			.catch( ( error ) => {
-				setErrorMessage( error.message );
+				const mappedError = mapServerError( error );
+				if ( mappedError && 'label' === mappedError.field ) {
+					setLabel( '' );
+					setLabelServerError( {
+						value: label,
+						message: mappedError.message,
+					} );
+					return;
+				}
+
+				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
 			} );
 	};
 
@@ -130,6 +143,7 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 				<PopoverContent p={ 2 }>
 					<LabelField
 						value={ label }
+						error={ labelServerError }
 						onChange={ ( value ) => {
 							setLabel( value );
 							setErrorMessage( '' );
