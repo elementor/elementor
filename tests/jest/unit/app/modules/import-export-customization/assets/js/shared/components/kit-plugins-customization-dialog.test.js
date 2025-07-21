@@ -168,7 +168,6 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				/>
 			);
 
-			// Contact Form 7 has no pluginUri, so it should not be a link
 			const cf7VersionText = screen.getByText( /Version 5\.8\.2/ );
 			expect( cf7VersionText.closest( 'a' ) ).toBeFalsy();
 		} );
@@ -343,13 +342,11 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 			const cf7Checkbox = screen.getByLabelText( 'Contact Form 7' );
 			const elementorCheckbox = screen.getByLabelText( 'Elementor' );
 
-			// Check initial states
 			expect( allPluginsCheckbox.checked ).toBe( false );
 			expect( acfCheckbox.checked ).toBe( false );
 			expect( cf7Checkbox.checked ).toBe( false );
-			expect( elementorCheckbox.checked ).toBe( true ); // Required plugin stays checked
+			expect( elementorCheckbox.checked ).toBe( true );
 
-			// Verify that "All plugins" checkbox is rendered and clickable
 			expect( allPluginsCheckbox ).toBeTruthy();
 			expect( allPluginsCheckbox.disabled ).toBe( false );
 		} );
@@ -492,7 +489,6 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				/>
 			);
 
-			// Should render without error but with no individual plugin checkboxes
 			expect( screen.getByText( 'All plugins' ) ).toBeTruthy();
 			expect( screen.queryByText( 'Elementor' ) ).toBeFalsy();
 		} );
