@@ -14,9 +14,13 @@ import {
 	Link,
 	SvgIcon,
 } from '@elementor/ui';
-import React from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
+
+const REQUIRED_PLUGINS = [
+	'elementor/elementor.php',
+];
 
 const ExternalLinkIcon = ( props ) => {
 	return (
@@ -39,17 +43,84 @@ const ExternalLinkIcon = ( props ) => {
 };
 
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const {
-		plugins,
-		pluginsList,
-		isLoading,
-		isRequiredPlugin,
-		handleToggleChange,
-		handleSelectAll,
-		getSelectedPlugins,
-		isAllSelected,
-		isIndeterminate,
-	} = useKitPlugins( { open, data } );
+	const { pluginsList, isLoading } = useKitPlugins( { open } );
+	const [ plugins, setPlugins ] = useState( {} );
+
+	const initialState = data?.includes?.includes( 'plugins' ) || false;
+
+	useEffect( () => {
+		if ( 0 === Object.keys( pluginsList ).length ) {
+			return;
+		}
+
+		let initialPluginsState = {};
+
+		if ( data?.customization?.plugins ) {
+			initialPluginsState = data.customization.plugins;
+		} else {
+			Object.keys( pluginsList ).forEach( ( pluginKey ) => {
+				initialPluginsState[ pluginKey ] = initialState;
+			} );
+		}
+
+		REQUIRED_PLUGINS.forEach( ( pluginKey ) => {
+			if ( initialPluginsState.hasOwnProperty( pluginKey ) ) {
+				initialPluginsState[ pluginKey ] = true;
+			}
+		} );
+
+		setPlugins( initialPluginsState );
+	}, [ pluginsList, data?.customization?.plugins, initialState ] );
+
+	const isRequiredPlugin = useCallback( ( pluginKey ) => {
+		return REQUIRED_PLUGINS.includes( pluginKey );
+	}, [] );
+
+	const nonRequiredPlugins = useMemo( () => {
+		return Object.keys( plugins ).filter( ( pluginKey ) => ! isRequiredPlugin( pluginKey ) );
+	}, [ plugins, isRequiredPlugin ] );
+
+	const isAllSelected = useMemo( () => {
+		return nonRequiredPlugins.length > 0 && nonRequiredPlugins.every( ( pluginKey ) => plugins[ pluginKey ] );
+	}, [ nonRequiredPlugins, plugins ] );
+
+	const isIndeterminate = useMemo( () => {
+		return nonRequiredPlugins.some( ( pluginKey ) => plugins[ pluginKey ] ) && ! isAllSelected;
+	}, [ nonRequiredPlugins, plugins, isAllSelected ] );
+
+	const handleToggleChange = useCallback( ( settingKey ) => {
+		if ( isRequiredPlugin( settingKey ) ) {
+			return;
+		}
+		setPlugins( ( prev ) => ( {
+			...prev,
+			[ settingKey ]: ! prev[ settingKey ],
+		} ) );
+	}, [ isRequiredPlugin ] );
+
+	const handleSelectAll = useCallback( () => {
+		const allNonRequiredSelected = nonRequiredPlugins.every( ( pluginKey ) => plugins[ pluginKey ] );
+		const newState = { ...plugins };
+		nonRequiredPlugins.forEach( ( pluginKey ) => {
+			newState[ pluginKey ] = ! allNonRequiredSelected;
+		} );
+
+		REQUIRED_PLUGINS.forEach( ( pluginKey ) => {
+			if ( newState.hasOwnProperty( pluginKey ) ) {
+				newState[ pluginKey ] = true;
+			}
+		} );
+
+		setPlugins( newState );
+	}, [ plugins, nonRequiredPlugins ] );
+
+	const getPluginsSelection = useCallback( () => {
+		const selectedPlugins = {};
+		Object.entries( plugins ).forEach( ( [ pluginKey, isSelected ] ) => {
+			selectedPlugins[ pluginKey ] = isSelected;
+		} );
+		return selectedPlugins;
+	}, [ plugins ] );
 
 	const SettingSection = ( { title, description, children, settingKey } ) => (
 		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
@@ -204,7 +275,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 				</Button>
 				<Button
 					onClick={ () => {
-						handleSaveChanges( 'plugins', getSelectedPlugins() );
+						handleSaveChanges( 'plugins', getPluginsSelection() );
 						handleClose();
 					} }
 					variant="contained"
