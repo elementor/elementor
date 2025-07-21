@@ -178,6 +178,7 @@ describe( 'custom_css rendering', () => {
 
 	it( 'should render custom_css if raw is valid base64 encoded string', async () => {
 		// Arrange.
+		const css = 'transition: 100s; \n .inner-selector { color: red; }';
 		const styleDef: RendererStyleDefinition = {
 			id: 'test',
 			type: 'class',
@@ -187,7 +188,7 @@ describe( 'custom_css rendering', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: {},
-					custom_css: { raw: encodeString( 'body { color: red; }' ) },
+					custom_css: { raw: encodeString( css ) },
 				},
 			],
 		};
@@ -197,6 +198,6 @@ describe( 'custom_css rendering', () => {
 		const result = await renderStyles( { styles: [ styleDef ] } );
 
 		// Assert.
-		expect( result[ 0 ].value ).toContain( 'body { color: red; }' );
+		expect( result[ 0 ].value ).toContain( css );
 	} );
 } );
