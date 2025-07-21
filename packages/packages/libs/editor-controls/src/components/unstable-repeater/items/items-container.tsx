@@ -1,6 +1,6 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { ItemsDataContextProvider, useDataContext } from '../context/items-data-context';
+import { ItemsDataContextProvider, useDataContext } from "../context/items-data-context";
 import { Item } from "./item";
 
 type ItemsContainerProps = {
@@ -23,12 +23,9 @@ type ItemsListProps = {
 };
 
 const ItemsList = ( { itemTemplate }: ItemsListProps ) => {
-	// const { values } = useDataContext();
-	const values = [ { text: 'Hello world' }, { text: 'Another item' } ];
+	const { values } = useDataContext();
 
-	const ItemTemplateComponent = itemTemplate;
-
-	if ( ! ItemTemplateComponent ) {
+	if ( ! itemTemplate ) {
 		return null;
 	}
 

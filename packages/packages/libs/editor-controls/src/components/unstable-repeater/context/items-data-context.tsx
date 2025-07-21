@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { createContext, useState } from 'react';
+import { createContext, useCallback, useEffect, useState } from 'react';
+
+import { useRepeaterContext } from './repeater-context';
 
 type ItemsDataContextType = {
 	values: Record< string, unknown >[];
@@ -21,8 +23,33 @@ export const useDataContext = () => {
 	};
 };
 
+const initial = {
+	text: '',
+};
+
 export const ItemsDataContextProvider = ( { children }: { children: React.ReactNode } ) => {
 	const [ values, setValues ] = useState< Record< string, unknown >[] >( [] );
+	const [ uniqueKeys, setUniqueKeys ] = useState( values.map( ( _, index ) => index ) );
+	const { isOpen, setIsOpen } = useRepeaterContext();
+
+	const generateNextKey = ( source: number[] ) => {
+		return 1 + Math.max( 0, ...source );
+	};
+
+	const addRepeaterItem = useCallback( () => {
+		const newItem = structuredClone( initial );
+		const newKey = generateNextKey( uniqueKeys );
+
+		setValues( [ ...values, newItem ] );
+		setUniqueKeys( [ ...uniqueKeys, newKey ] );
+	}, [ uniqueKeys, values ] );
+
+	useEffect( () => {
+		if ( isOpen ) {
+			addRepeaterItem();
+			setIsOpen( false );
+		}
+	}, [ addRepeaterItem, isOpen, setIsOpen ] );
 
 	return <ItemsDataContext.Provider value={ { values, setValues } }>{ children }</ItemsDataContext.Provider>;
 };
