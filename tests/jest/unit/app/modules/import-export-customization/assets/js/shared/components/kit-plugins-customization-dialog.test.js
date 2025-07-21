@@ -55,7 +55,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( screen.getByText( 'Edit plugins' ) ).toBeTruthy();
@@ -70,7 +70,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( screen.queryByText( 'Edit plugins' ) ).toBeFalsy();
@@ -83,7 +83,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( screen.getByText( 'Plugin name and version' ) ).toBeTruthy();
@@ -103,7 +103,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( screen.getByRole( 'progressbar' ) ).toBeTruthy();
@@ -116,7 +116,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( screen.queryByRole( 'progressbar' ) ).toBeFalsy();
@@ -134,7 +134,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const saveButton = screen.getByText( 'Save changes' );
@@ -150,7 +150,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( screen.getByText( 'Elementor' ) ).toBeTruthy();
@@ -165,7 +165,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const cf7VersionText = screen.getByText( /Version 5\.8\.2/ );
@@ -181,12 +181,12 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const checkboxes = screen.getAllByRole( 'checkbox' );
 
-            checkboxes.forEach( ( checkbox ) => {
+			checkboxes.forEach( ( checkbox ) => {
 				expect( checkbox.checked ).toBe( true );
 			} );
 		} );
@@ -209,7 +209,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ dataWithCustomization }
-				/>
+				/>,
 			);
 
 			const elementorCheckbox = screen.getByLabelText( 'Elementor' );
@@ -230,7 +230,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const elementorCheckbox = screen.getByLabelText( 'Elementor' );
@@ -252,7 +252,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ dataWithoutPlugins }
-				/>
+				/>,
 			);
 
 			const elementorCheckbox = screen.getByLabelText( 'Elementor' );
@@ -268,7 +268,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const allPluginsCheckbox = screen.getByLabelText( 'All plugins' );
@@ -282,7 +282,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const allPluginsCheckbox = screen.getByLabelText( 'All plugins' );
@@ -307,7 +307,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ dataWithPartialSelection }
-				/>
+				/>,
 			);
 
 			const allPluginsCheckbox = screen.getByLabelText( 'All plugins' );
@@ -316,7 +316,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 
 			expect( acfCheckbox.checked ).toBe( false );
 			expect( cf7Checkbox.checked ).toBe( true );
-			
+
 			expect( allPluginsCheckbox.checked ).toBe( false );
 		} );
 
@@ -334,7 +334,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ dataWithoutPlugins }
-				/>
+				/>,
 			);
 
 			const allPluginsCheckbox = screen.getByLabelText( 'All plugins' );
@@ -360,7 +360,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const acfCheckbox = screen.getByLabelText( 'Advanced Custom Fields' );
@@ -380,14 +380,14 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const elementorCheckbox = screen.getByLabelText( 'Elementor' );
 			const initialState = elementorCheckbox.checked;
 
 			fireEvent.click( elementorCheckbox );
-			
+
 			expect( elementorCheckbox.checked ).toBe( initialState );
 		} );
 	} );
@@ -400,7 +400,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const cancelButton = screen.getByText( 'Cancel' );
@@ -416,7 +416,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const saveButton = screen.getByText( 'Save changes' );
@@ -428,7 +428,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'elementor/elementor.php': true,
 					'advanced-custom-fields/acf.php': true,
 					'contact-form-7/wp-contact-form-7.php': true,
-				}
+				},
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -440,7 +440,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			const acfCheckbox = screen.getByLabelText( 'Advanced Custom Fields' );
@@ -455,7 +455,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'elementor/elementor.php': true,
 					'advanced-custom-fields/acf.php': false,
 					'contact-form-7/wp-contact-form-7.php': true,
-				}
+				},
 			);
 		} );
 	} );
@@ -468,7 +468,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( useKitPlugins ).toHaveBeenCalledWith( { open: true } );
@@ -486,7 +486,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
 					data={ mockData }
-				/>
+				/>,
 			);
 
 			expect( screen.getByText( 'All plugins' ) ).toBeTruthy();
