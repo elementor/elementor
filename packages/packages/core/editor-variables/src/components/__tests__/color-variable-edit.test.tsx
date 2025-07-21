@@ -11,6 +11,7 @@ const propType = createMockPropType( { kind: 'object' } );
 jest.mock( '../../hooks/use-prop-variables', () => ( {
 	useVariable: jest.fn(),
 	deleteVariable: jest.fn(),
+	updateVariable: jest.fn(),
 } ) );
 
 jest.mock( '../../hooks/use-permissions', () => {
@@ -37,6 +38,7 @@ describe( 'ColorVariableEdit', () => {
 	beforeEach( () => {
 		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
 		( usePropVariablesModule.deleteVariable as jest.Mock ).mockResolvedValue( mockVariable.key );
+		( usePropVariablesModule.updateVariable as jest.Mock ).mockResolvedValue( mockVariable.key );
 	} );
 
 	it( 'should delete a variable after confirmation', async () => {
@@ -108,5 +110,72 @@ describe( 'ColorVariableEdit', () => {
 				value: 'e-gv-75930',
 			} );
 		} );
+	} );
+
+	it( 'should show field-level error when server returns duplicated_label error', async () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: {
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-123',
+			},
+			bind: 'color',
+			propType,
+		};
+
+		// Mock API response with duplicated label error
+		const apiErrorResponse = {
+			response: {
+				data: {
+					code: 'duplicated_label',
+				},
+			},
+		};
+
+		( usePropVariablesModule.updateVariable as jest.Mock ).mockRejectedValue( apiErrorResponse );
+
+		// Act.
+		renderControl(
+			<ColorVariableEdit editId="test-variable-id" onClose={ jest.fn() } onSubmit={ jest.fn() } />,
+			props
+		);
+
+		// Change the label to enable the save button
+		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
+		fireEvent.change( labelField, { target: { value: 'new-label' } } );
+
+		// Wait for the state to update
+		await waitFor( () => {
+			expect( labelField ).toHaveValue( 'new-label' );
+		} );
+
+		// Verify save button is enabled initially
+		const saveButton = screen.getByRole( 'button', { name: /save/i } );
+		expect( saveButton ).not.toBeDisabled();
+
+		// Trigger the API call by clicking save
+		fireEvent.click( saveButton );
+
+		// Assert that the API was called with correct parameters
+		await waitFor( () => {
+			expect( usePropVariablesModule.updateVariable ).toHaveBeenCalledWith( 'test-variable-id', {
+				value: '#911f1f',
+				label: 'new-label',
+			} );
+		} );
+
+		// Verify that the error response is handled correctly:
+		// 1. Error message is displayed
+		await waitFor( () => {
+			expect( screen.getByText( 'This variable name already exists. Please choose a unique name.' ) ).toBeInTheDocument();
+		} );
+
+		// 2. Input field has error highlight
+		expect( labelField ).toHaveAttribute( 'aria-invalid', 'true' );
+
+		// 3. Save button is disabled due to error
+		expect( saveButton ).toBeDisabled();
 	} );
 } );
