@@ -8,11 +8,10 @@ import {
 	stringPropTypeUtil,
 	urlPropTypeUtil,
 } from '@elementor/editor-props';
-import { InfoTipCard } from '@elementor/editor-ui';
 import { type HttpResponse, httpService } from '@elementor/http-client';
-import { AlertTriangleIcon, MinusIcon, PlusIcon } from '@elementor/icons';
+import { InfoCircleFilledIcon, MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
-import { Box, Collapse, Grid, IconButton, Infotip, Stack } from '@elementor/ui';
+import { Alert, AlertAction, AlertTitle, Box, Collapse, Grid, IconButton, Infotip, Link, Stack } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
@@ -275,20 +274,34 @@ const ConditionalInfoTip: React.FC< ConditionalInfoTipType > = ( { linkInLinkRes
 		}
 	};
 
+	const content = (
+		<Alert severity="secondary" icon={ <InfoCircleFilledIcon /> }>
+			<Box sx={ { display: 'flex', flexDirection: 'column', gap: 1 } }>
+				<AlertTitle>{ __( 'Nested links', 'elementor' ) }</AlertTitle>
+				<Box>
+					{ INFOTIP_CONTENT[ reason ?? 'descendant' ] }&nbsp;
+					<Link href={ learnMoreButton.href } target="_blank" color="info.main" sx={ { display: 'inline' } }>
+						{ learnMoreButton.label }
+					</Link>
+				</Box>
+				<AlertAction
+					sx={ { width: 'fit-content' } }
+					variant="contained"
+					color="secondary"
+					onClick={ handleTakeMeClick }
+				>
+					{ __( 'Take me there', 'elementor' ) }
+				</AlertAction>
+			</Box>
+		</Alert>
+	);
+
 	return shouldRestrict && isVisible ? (
 		<Infotip
 			placement="right"
-			content={
-				<InfoTipCard
-					content={ INFOTIP_CONTENT[ reason ] }
-					svgIcon={ <AlertTriangleIcon /> }
-					learnMoreButton={ learnMoreButton }
-					ctaButton={ {
-						label: __( 'Take me there', 'elementor' ),
-						onClick: handleTakeMeClick,
-					} }
-				/>
-			}
+			content={ content }
+			color="secondary"
+			slotProps={ { popper: { sx: { width: 300 } } } }
 		>
 			<Box>{ children }</Box>
 		</Infotip>
@@ -298,18 +311,9 @@ const ConditionalInfoTip: React.FC< ConditionalInfoTipType > = ( { linkInLinkRes
 };
 
 const INFOTIP_CONTENT = {
-	descendant: (
-		<>
-			{ __( 'To add a link to this container,', 'elementor' ) }
-			<br />
-			{ __( 'first remove the link from the elements inside of it.', 'elementor' ) }
-		</>
+	descendant: __(
+		'To add a link to this element, first remove the link from the elements inside of it.',
+		'elementor'
 	),
-	ancestor: (
-		<>
-			{ __( 'To add a link to this element,', 'elementor' ) }
-			<br />
-			{ __( 'first remove the link from its parent container.', 'elementor' ) }
-		</>
-	),
+	ancestor: __( 'To add a link to this element, first remove the link from its parent container.', 'elementor' ),
 };
