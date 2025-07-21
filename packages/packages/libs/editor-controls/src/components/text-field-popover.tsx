@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type RefObject, useEffect, useRef } from 'react';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { TextIcon } from '@elementor/icons';
+import { MathFunctionIcon } from '@elementor/icons';
 import { bindPopover, Popover, type PopupState, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -13,7 +13,7 @@ type Props = {
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 };
 
-const SIZE = 'tiny';
+const SIZE = 'medium';
 
 export const TextFieldPopover = ( props: Props ) => {
 	const { popupState, restoreValue, anchorRef, value, onChange } = props;
@@ -53,7 +53,7 @@ export const TextFieldPopover = ( props: Props ) => {
 			<PopoverHeader
 				title={ __( 'CSS function', 'elementor' ) }
 				onClose={ handleClose }
-				icon={ <TextIcon fontSize={ SIZE } /> }
+				icon={ <MathFunctionIcon fontSize={ SIZE } /> }
 			/>
 			<TextField
 				value={ value }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { PencilIcon } from '@elementor/icons';
+import { MathFunctionIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
@@ -87,7 +87,7 @@ export const SizeInput = ( {
 				onClick={ handleUnitChange }
 				value={ unit }
 				alternativeOptionLabels={ {
-					custom: <PencilIcon fontSize="small" />,
+					custom: <MathFunctionIcon fontSize="medium" />,
 				} }
 				menuItemsAttributes={
 					units.includes( 'custom' )
