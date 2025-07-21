@@ -8,7 +8,6 @@ test.describe( 'Tabs widget tests', () => {
 	test( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
@@ -17,8 +16,6 @@ test.describe( 'Tabs widget tests', () => {
 		// Assert.
 		await expect( editor.page.locator( '.elementor-control-alert.elementor-panel-alert.elementor-panel-alert-info' ) )
 			.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
-
-		await wpAdmin.resetExperiments();
 	} );
 
 	test( 'Tabs widget sanity test', async ( { page, apiRequests }, testInfo ) => {
