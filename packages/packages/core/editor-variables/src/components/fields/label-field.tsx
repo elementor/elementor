@@ -18,14 +18,14 @@ export const useLabelError = ( initialError?: LabelErrorProps ) => {
 	const [ error, setError ] = useState< LabelErrorProps >( initialError ?? { value: '', message: '' } );
 
 	return {
-		error,
-		setError,
+		labelFieldError: error,
+		setLabelFieldError: setError,
 	};
 };
 
 type LabelFieldProps = {
 	value: string;
-	error: LabelErrorProps;
+	error?: LabelErrorProps;
 	onChange: ( value: string ) => void;
 };
 
@@ -43,13 +43,13 @@ export const LabelField = ( { value, error, onChange }: LabelFieldProps ) => {
 		setErrorMessage( errorMsg );
 		setNoticeMessage( errorMsg ? '' : hintMsg );
 
-		onChange( isLabelEqual( newValue, error?.value ) || errorMsg ? '' : newValue );
+		onChange( isLabelEqual( newValue, error?.value ?? '' ) || errorMsg ? '' : newValue );
 	};
 
 	const id = useId();
 
 	let errorMsg = errorMessage;
-	if ( isLabelEqual( label, error?.value ) && error?.message ) {
+	if ( isLabelEqual( label, error?.value ?? '' ) && error?.message ) {
 		errorMsg = error.message;
 	}
 

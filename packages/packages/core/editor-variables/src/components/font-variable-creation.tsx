@@ -28,7 +28,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
-	const { error: labelServerError, setError: setLabelServerError } = useLabelError();
+	const { labelFieldError, setLabelFieldError } = useLabelError();
 
 	const resetFields = () => {
 		setFontFamily( '' );
@@ -55,7 +55,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 				const mappedError = mapServerError( error );
 				if ( mappedError && 'label' === mappedError.field ) {
 					setLabel( '' );
-					setLabelServerError( {
+					setLabelFieldError( {
 						value: label,
 						message: mappedError.message,
 					} );
@@ -104,7 +104,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			<PopoverContent p={ 2 }>
 				<LabelField
 					value={ label }
-					error={ labelServerError }
+					error={ labelFieldError }
 					onChange={ ( value ) => {
 						setLabel( value );
 						setErrorMessage( '' );

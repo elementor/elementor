@@ -34,7 +34,7 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 	const [ label, setLabel ] = useState( variable.label );
 	const [ color, setColor ] = useState( variable.value );
 
-	const { error: labelServerError, setError: setLabelServerError } = useLabelError( {
+	const { labelFieldError, setLabelFieldError } = useLabelError( {
 		value: variable.label,
 		message: ERROR_MESSAGES.DUPLICATED_LABEL,
 	} );
@@ -49,7 +49,7 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 				const mappedError = mapServerError( error );
 				if ( mappedError && 'label' === mappedError.field ) {
 					setLabel( '' );
-					setLabelServerError( {
+					setLabelFieldError( {
 						value: label,
 						message: mappedError.message,
 					} );
@@ -88,7 +88,7 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 				<PopoverContent p={ 2 }>
 					<LabelField
 						value={ label }
-						error={ labelServerError }
+						error={ labelFieldError }
 						onChange={ ( value ) => {
 							setLabel( value );
 							setErrorMessage( '' );

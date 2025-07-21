@@ -29,7 +29,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
-	const { error: labelServerError, setError: setLabelServerError } = useLabelError();
+	const { labelFieldError, setLabelFieldError } = useLabelError();
 
 	const variable = useVariable( editId );
 	if ( ! variable ) {
@@ -54,7 +54,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 				const mappedError = mapServerError( error );
 				if ( mappedError && 'label' === mappedError.field ) {
 					setLabel( '' );
-					setLabelServerError( {
+					setLabelFieldError( {
 						value: label,
 						message: mappedError.message,
 					} );
@@ -143,7 +143,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 				<PopoverContent p={ 2 }>
 					<LabelField
 						value={ label }
-						error={ labelServerError }
+						error={ labelFieldError }
 						onChange={ ( value ) => {
 							setLabel( value );
 							setErrorMessage( '' );
