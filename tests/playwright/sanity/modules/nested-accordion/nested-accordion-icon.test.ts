@@ -4,14 +4,6 @@ import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
 import { expect } from '@playwright/test';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
-		await page.close();
-	} );
-
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
