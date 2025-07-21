@@ -955,11 +955,7 @@ class Utils {
 		}
 	}
 
-	public static function encode_string( string $string, ?string $fallback = '' ): string {
-		try {
-			return base64_encode( $string, true );
-		} catch ( \Exception $e ) {
-			return $fallback;
-		}
+	public static function encode_string( string $string ): string {
+		return base64_encode( $string );
 	}
 }
