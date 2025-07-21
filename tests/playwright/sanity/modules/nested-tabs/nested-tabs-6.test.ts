@@ -8,7 +8,7 @@ test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () =>
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active', e_font_icon_svg: 'active' } );
+		await wpAdmin.setExperiments( { e_font_icon_svg: 'active' } );
 		await page.close();
 	} );
 
