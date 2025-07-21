@@ -153,7 +153,7 @@ describe( 'ColorVariableEdit', () => {
 
 		// Verify save button is enabled initially
 		const saveButton = screen.getByRole( 'button', { name: /save/i } );
-		expect( saveButton ).not.toBeDisabled();
+		expect( saveButton ).toBeEnabled();
 
 		// Trigger the API call by clicking save
 		fireEvent.click( saveButton );
@@ -169,7 +169,9 @@ describe( 'ColorVariableEdit', () => {
 		// Verify that the error response is handled correctly:
 		// 1. Error message is displayed
 		await waitFor( () => {
-			expect( screen.getByText( 'This variable name already exists. Please choose a unique name.' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'This variable name already exists. Please choose a unique name.' )
+			).toBeInTheDocument();
 		} );
 
 		// 2. Input field has error highlight
