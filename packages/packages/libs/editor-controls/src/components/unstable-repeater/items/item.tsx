@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
+import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { DisableItemAction } from '../actions/disable-item-action';
@@ -37,7 +37,9 @@ export const Item = < T, >( { Label, Icon, Content, key, value }: ItemProps< T >
 					</>
 				}
 			/>
-			<AddItemPopover anchorRef={ ref } setAnchorEl={ setAnchorEl } popoverProps={ popoverProps } />
+			<AddItemPopover anchorRef={ ref } setAnchorEl={ setAnchorEl } popoverProps={ popoverProps }>
+				<Content anchorEl={ anchorEl } bind={ '' } value={ value as T } />
+			</AddItemPopover>
 		</>
 	);
 };

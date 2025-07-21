@@ -18,7 +18,7 @@ import { TransformLabel } from '../transform-control/transform-label';
 import { initialTransformValue } from '../transform-control/types';
 
 export const UnstableTransformRepeaterControl = createControl( () => {
-	const { propType, value: transformValues, setValue, disabled } = useBoundProp( transformPropTypeUtil );
+	const { propType, value: transformValues, setValue } = useBoundProp( transformPropTypeUtil );
 
 	return (
 		<PropProvider propType={ propType } value={ transformValues } setValue={ setValue }>

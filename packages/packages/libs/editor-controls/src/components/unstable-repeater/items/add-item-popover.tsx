@@ -5,9 +5,10 @@ type AddItemPopoverProps = {
 	anchorRef: HTMLElement | null;
 	setAnchorEl: ( el: HTMLElement | null ) => void;
 	popoverProps: Partial< PopoverProps >;
+	children?: React.ReactNode;
 };
 
-export const AddItemPopover = ( { anchorRef, setAnchorEl, popoverProps }: AddItemPopoverProps ) => {
+export const AddItemPopover = ( { children, anchorRef, setAnchorEl, popoverProps }: AddItemPopoverProps ) => {
 	return (
 		<Popover
 			disablePortal
@@ -21,7 +22,7 @@ export const AddItemPopover = ( { anchorRef, setAnchorEl, popoverProps }: AddIte
 			anchorEl={ anchorRef }
 			{ ...popoverProps }
 		>
-			<Box>blablabla</Box>
+			<Box>{ children }</Box>
 		</Popover>
 	);
 };
