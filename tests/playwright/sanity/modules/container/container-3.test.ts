@@ -5,22 +5,6 @@ import EditorPage from '../../../pages/editor-page';
 import ContextMenu from '../../../pages/widgets/context-menu';
 
 test.describe( 'Container tests #3 @container', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: true, 'nested-elements': true } );
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
-
 	test( 'Widget display inside container flex wrap', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
