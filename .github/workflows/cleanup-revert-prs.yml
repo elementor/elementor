@@ -34,7 +34,7 @@ jobs:
             exit 0
           fi
 
-          cat prs.json | jq -c '.' | while read -r pr; do
+          while read -r pr; do
             NUMBER=$(echo "$pr" | jq -r '.number')
             CREATED_AT=$(echo "$pr" | jq -r '.createdAt')
             BRANCH=$(echo "$pr" | jq -r '.headRefName')
@@ -52,4 +52,4 @@ jobs:
             else
               echo "⏭ PR #$NUMBER is only ${AGE_HOURS}h old — skipping"
             fi
-          done
+          done < <(jq -c '.' prs.json)
