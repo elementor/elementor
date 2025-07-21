@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { SearchIcon, XIcon } from '@elementor/icons';
 import { Box, IconButton, InputAdornment, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-
-const isVersion330Active = isExperimentActive( 'e_v_3_30' );
 
 const SIZE = 'tiny';
 
@@ -28,18 +25,8 @@ export const PopoverSearch = ( { value, onSearch, placeholder }: Props ) => {
 		onSearch( event.target.value );
 	};
 
-	const padding = isVersion330Active
-		? {
-				px: 2,
-				pb: 1.5,
-		  }
-		: {
-				px: 1.5,
-				pb: 1,
-		  };
-
 	return (
-		<Box { ...padding }>
+		<Box sx={ { px: 2, pb: 1.5 } }>
 			<TextField
 				// eslint-disable-next-line jsx-a11y/no-autofocus
 				autoFocus
