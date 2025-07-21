@@ -117,18 +117,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
 
-		$attributes_string = '';
-		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
-			$attributes_array = [];
-			foreach ( $settings['attributes'] as $item ) {
-				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
-					$attributes_array[] = esc_attr( $item['key'] ) . '="' . esc_attr( $item['value'] ) . '"';
-				}
-			}
-			$attributes_string = implode( ' ', $attributes_array );
-		}
-
-		$all_attributes = trim( $cssid_attribute . ' ' . $attributes_string );
+		$all_attributes = trim( $cssid_attribute . ' ' . $settings['attributes'] );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(

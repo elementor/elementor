@@ -104,7 +104,7 @@ jobs:
                     CONFLICT_TRIGGER_INFO="
                   **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
                   fi
-                  
+
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
@@ -156,7 +156,7 @@ jobs:
                 TRIGGER_INFO="
                 **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
               fi
-              
+
               gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \

@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { type ExtendedVirtualizedItem } from '../types';
+import { trackVariableEvent } from '../utils/tracking';
 import { ColorIndicator } from './ui/color-indicator';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
@@ -26,7 +27,7 @@ type Props = {
 };
 
 export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { value: variable, setValue: setVariable } = useBoundProp( colorVariablePropTypeUtil );
+	const { value: variable, setValue: setVariable, path } = useBoundProp( colorVariablePropTypeUtil );
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const {
@@ -37,14 +38,28 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 
 	const handleSetColorVariable = ( key: string ) => {
 		setVariable( key );
+		trackVariableEvent( {
+			varType: 'color',
+			controlPath: path.join( '.' ),
+			action: 'connect',
+		} );
 		closePopover();
+	};
+
+	const onAddAndTrack = () => {
+		onAdd?.();
+		trackVariableEvent( {
+			varType: 'color',
+			controlPath: path.join( '.' ),
+			action: 'add',
+		} );
 	};
 
 	const actions = [];
 
 	if ( onAdd ) {
 		actions.push(
-			<IconButton key="add" size={ SIZE } onClick={ onAdd }>
+			<IconButton key="add" size={ SIZE } onClick={ onAddAndTrack }>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
 		);
@@ -64,7 +79,7 @@ export const ColorVariablesSelection = ( { closePopover, onAdd, onEdit, onSettin
 		label,
 		icon: <ColorIndicator size="inherit" component="span" value={ value } />,
 		secondaryText: value,
-		onEdit: () => onEdit?.( key ),
+		onEdit: onEdit ? () => onEdit?.( key ) : undefined,
 	} ) );
 
 	const handleSearch = ( search: string ) => {

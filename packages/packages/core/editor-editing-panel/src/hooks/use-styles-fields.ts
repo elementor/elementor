@@ -4,14 +4,13 @@ import type { Props } from '@elementor/editor-props';
 import { getVariantByMeta, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { isElementsStylesProvider, type StylesProvider } from '@elementor/editor-styles-repository';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
-import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
+import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useStyle } from '../contexts/style-context';
 import { StyleNotFoundUnderProviderError, StylesProviderCannotUpdatePropsError } from '../errors';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { useStylesRerender } from './use-styles-rerender';
 
 const HISTORY_DEBOUNCE_WAIT = 800;
@@ -106,8 +105,6 @@ function useUndoableUpdateStyle( {
 	const classesProp = useClassesProp();
 
 	return useMemo( () => {
-		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
-
 		const meta = { breakpoint, state };
 
 		const createStyleArgs = { elementId, classesProp, meta, label: ELEMENTS_STYLES_RESERVED_LABEL };
@@ -139,47 +136,41 @@ function useUndoableUpdateStyle( {
 			},
 			{
 				title: ( { provider, styleId } ) => {
-					if ( isVersion331Active ) {
-						let title: string;
+					let title: string;
 
-						const isLocal = isLocalStyle( provider, styleId );
+					const isLocal = isLocalStyle( provider, styleId );
 
-						if ( isLocal ) {
-							title = localStyleHistoryTitlesV331.title( { elementId } );
-						} else {
-							// If the provider was nullish, `isLocalStyle` would return true.
-							provider = provider as StylesProvider;
+					if ( isLocal ) {
+						title = localStyleHistoryTitlesV331.title( { elementId } );
+					} else {
+						// If the provider was nullish, `isLocalStyle` would return true.
+						provider = provider as StylesProvider;
 
-							title = defaultHistoryTitlesV331.title( { provider } );
-						}
-
-						return title;
+						title = defaultHistoryTitlesV331.title( { provider } );
 					}
-					return historyTitlesV330.title( { elementId } );
+
+					return title;
 				},
 				subtitle: ( { provider, styleId, propDisplayName } ) => {
-					if ( isVersion331Active ) {
-						let subtitle: string;
+					let subtitle: string;
 
-						const isLocal = isLocalStyle( provider, styleId );
+					const isLocal = isLocalStyle( provider, styleId );
 
-						if ( isLocal ) {
-							subtitle = localStyleHistoryTitlesV331.subtitle( { propDisplayName } );
-						} else {
-							// If the provider or styleId were nullish, `isLocalStyle` would return true.
-							provider = provider as StylesProvider;
-							styleId = styleId as StyleDefinition[ 'id' ];
+					if ( isLocal ) {
+						subtitle = localStyleHistoryTitlesV331.subtitle( { propDisplayName } );
+					} else {
+						// If the provider or styleId were nullish, `isLocalStyle` would return true.
+						provider = provider as StylesProvider;
+						styleId = styleId as StyleDefinition[ 'id' ];
 
-							subtitle = defaultHistoryTitlesV331.subtitle( {
-								provider,
-								styleId,
-								elementId,
-								propDisplayName,
-							} );
-						}
-						return subtitle;
+						subtitle = defaultHistoryTitlesV331.subtitle( {
+							provider,
+							styleId,
+							elementId,
+							propDisplayName,
+						} );
 					}
-					return historyTitlesV330.subtitle;
+					return subtitle;
 				},
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
@@ -236,11 +227,6 @@ function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVa
 
 	return structuredClone( props );
 }
-
-const historyTitlesV330 = {
-	title: ( { elementId }: { elementId: ElementID } ) => getElementLabel( elementId ),
-	subtitle: __( 'Style edited', 'elementor' ),
-};
 
 type DefaultHistoryTitleV331Args = {
 	provider: StylesProvider;
