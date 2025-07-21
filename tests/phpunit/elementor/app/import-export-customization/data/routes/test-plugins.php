@@ -282,4 +282,4 @@ class Test_Plugins extends Elementor_Test_Base {
 
 		return rest_do_request( $request );
 	}
-} 
+}
