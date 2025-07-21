@@ -471,10 +471,6 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( time() < $this->get_install_time() + ( 60 * DAY_IN_SECONDS ) ) {
-			return false;
-		}
-
 		if ( ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
@@ -483,6 +479,13 @@ class Admin_Notices extends Module {
 
 		if ( ! $form_plugin_name ) {
 			return false;
+		}
+
+		$site_mailer_file_path = 'site-mailer/site-mailer.php';
+		if ( !$this->is_plugin_installed( $site_mailer_file_path ) ) {
+			if ( time() < $this->get_install_time() + ( 60 * DAY_IN_SECONDS ) ) {
+				return false;
+			}
 		}
 
 		$plugin_file_path = 'send/send-app.php';
