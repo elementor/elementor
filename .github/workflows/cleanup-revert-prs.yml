@@ -45,7 +45,10 @@ jobs:
 
             if [ "$AGE_HOURS" -ge 72 ]; then
               echo "Closing PR #$NUMBER: '$TITLE' (age: ${AGE_HOURS}h) and deleting branch '$BRANCH'"
-              gh pr close "$NUMBER" --delete-branch --comment "Automatically closed after ${AGE_HOURS} hours of inactivity"
+              if ! gh pr close "$NUMBER" --delete-branch --comment "Automatically closed after ${AGE_HOURS} hours of inactivity"; then
+                echo "Failed to close PR #$NUMBER"
+                continue
+              fi
             else
               echo "⏭ PR #$NUMBER is only ${AGE_HOURS}h old — skipping"
             fi
