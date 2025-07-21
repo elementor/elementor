@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Automattic\Jetpack\IdentityCrisis\Exception;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Core\Utils\Collection;
 
@@ -950,7 +949,7 @@ class Utils {
 	public static function decode_string( string $string, ?string $fallback = '' ) {
 		try {
 			return base64_decode( $string, true ) ?? $fallback;
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			return $fallback;
 		}
 	}
