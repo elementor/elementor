@@ -481,7 +481,10 @@ const DivBlockView = BaseElementView.extend( {
 
 		return overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' );
 	},
-
+	isFirstContainerInCanvas() {
+		const collection = this.model.collection;
+		return collection?.at?.( 0 ) === this.model;
+	},
 	updateHandlesPosition() {
 		const elementType = this.$el.data( 'element_type' );
 		const isElement = getAllElementTypes().includes( elementType );
@@ -490,26 +493,15 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		const isFirstContainerInCanvas = () => {
-			const collection = this.model.collection;
-			return collection?.at?.( 0 ) === this.model;
-		};
-
-		if ( isOverflowHidden() ) {
+		if ( this.isOverflowHidden() ) {
 			this.$el.addClass( 'e-handles-inside' );
 		}
-
-		const offset = this.$el.offset()?.top ?? 0;
-
-		if ( ! isOverflowHidden() && ! isFirstContainerInCanvas() ) {
-			this.$el.removeClass( 'e-handles-inside' );
-			return;
+		if ( this.isFirstContainerInCanvas() ) {
+			this.$el.addClass( 'e-handles-inside' );
 		}
-
+		const offset = this.$el.offset()?.top ?? 0;
 		if ( offset < 25 ) {
 			this.$el.addClass( 'e-handles-inside' );
-		} else {
-			this.$el.removeClass( 'e-handles-inside' );
 		}
 	},
 } );
