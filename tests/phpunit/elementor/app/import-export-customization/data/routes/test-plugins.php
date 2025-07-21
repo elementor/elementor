@@ -95,6 +95,36 @@ class Test_Plugins extends Elementor_Test_Base {
 		$this->init_rest_api();
 		$this->act_as_admin();
 
+		// Mock plugin data to ensure we have consistent test data
+		$mock_wp = $this->getMockBuilder( \stdClass::class )
+			->addMethods( ['get_plugins'] )
+			->getMock();
+
+		$mock_collection = $this->getMockBuilder( \stdClass::class )
+			->addMethods( ['map', 'all'] )
+			->getMock();
+
+		$mock_collection->expects( $this->once() )
+			->method( 'map' )
+			->willReturnSelf();
+
+		$mock_collection->expects( $this->once() )
+			->method( 'all' )
+			->willReturn( [
+				[
+					'name' => 'Test Plugin',
+					'plugin' => 'test-plugin/test-plugin.php',
+					'pluginUri' => 'https://example.com/test-plugin',
+					'version' => '1.0.0'
+				]
+			] );
+
+		$mock_wp->expects( $this->once() )
+			->method( 'get_plugins' )
+			->willReturn( $mock_collection );
+
+		Plugin::$instance->wp = $mock_wp;
+
 		// Act
 		$response = $this->send_plugins_request();
 
@@ -103,18 +133,25 @@ class Test_Plugins extends Elementor_Test_Base {
 		$data = $response->get_data();
 		$plugins = $data['data'];
 
-		if ( ! empty( $plugins ) ) {
-			$first_plugin = $plugins[0];
+		$this->assertNotEmpty( $plugins );
+		$this->assertCount( 1, $plugins );
 
-			$this->assertArrayHasKey( 'name', $first_plugin );
-			$this->assertArrayHasKey( 'plugin', $first_plugin );
-			$this->assertArrayHasKey( 'pluginUri', $first_plugin );
-			$this->assertArrayHasKey( 'version', $first_plugin );
+		$first_plugin = $plugins[0];
 
-			$this->assertIsString( $first_plugin['name'] );
-			$this->assertIsString( $first_plugin['plugin'] );
-			$this->assertIsString( $first_plugin['version'] );
-		}
+		$this->assertArrayHasKey( 'name', $first_plugin );
+		$this->assertArrayHasKey( 'plugin', $first_plugin );
+		$this->assertArrayHasKey( 'pluginUri', $first_plugin );
+		$this->assertArrayHasKey( 'version', $first_plugin );
+
+		$this->assertIsString( $first_plugin['name'] );
+		$this->assertIsString( $first_plugin['plugin'] );
+		$this->assertIsString( $first_plugin['pluginUri'] );
+		$this->assertIsString( $first_plugin['version'] );
+
+		$this->assertEquals( 'Test Plugin', $first_plugin['name'] );
+		$this->assertEquals( 'test-plugin/test-plugin.php', $first_plugin['plugin'] );
+		$this->assertEquals( 'https://example.com/test-plugin', $first_plugin['pluginUri'] );
+		$this->assertEquals( '1.0.0', $first_plugin['version'] );
 	}
 
 	public function test_returns_all_installed_plugins() {
