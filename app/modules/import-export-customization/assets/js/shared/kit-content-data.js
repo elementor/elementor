@@ -1,3 +1,5 @@
+import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
+
 const kitContentData = [
 	{
 		type: 'content',
@@ -15,6 +17,7 @@ const kitContentData = [
 				],
 			},
 		},
+		dialog: null,
 	},
 	{
 		type: 'templates',
@@ -35,6 +38,7 @@ const kitContentData = [
 				],
 			},
 		},
+		dialog: null,
 	},
 	{
 		type: 'settings',
@@ -54,6 +58,7 @@ const kitContentData = [
 				],
 			},
 		},
+		dialog: KitSettingsCustomizationDialog,
 	},
 	{
 		type: 'plugins',
@@ -65,6 +70,7 @@ const kitContentData = [
 				],
 			},
 		},
+		dialog: null,
 	},
 ];
 

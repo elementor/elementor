@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Tests\Phpunit\Elementor\App\ImportExport\Data\Routes;
+namespace Elementor\Tests\Phpunit\Elementor\App\ImportExportCustomization\Data\Routes;
 
 use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
 use Elementor\Plugin;
@@ -122,6 +122,12 @@ class Test_Export extends Elementor_Test_Base {
 				'source' => 'custom'
 			],
 			'plugins' => [ 'elementor', 'elementor-pro' ],
+			'customization' => [
+				'settings' => null,
+				'content' => null,
+				'templates' => null,
+				'plugins' => null,
+			],
 			'selectedCustomPostTypes' => [ 'test_post_type' ],
 			'screenShotBlob' => 'base64_encoded_screenshot'
 		];

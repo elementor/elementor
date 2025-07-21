@@ -67,7 +67,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		global $wp_rest_server;
 
 		$wp_rest_server = new \WP_REST_Server();
-		
+
 		$role = get_role( 'administrator' );
 		$role->add_cap( Add_Capabilities::UPDATE_CLASS  );
 
@@ -658,6 +658,37 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( $initial, $classes );
 	}
 
+	public function test_get_usage__returns_usage_data() {
+		$this->act_as_admin();
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayHasKey( 'data', $response->get_data() );
+		$this->assertIsObject( $response->get_data()['data'] );
+	}
+
+	public function test_get_usage__with_page_info_true() {
+		$this->act_as_admin();
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayHasKey( 'data', $response->get_data() );
+	}
+
+	public function test_get_usage__fails_without_capabilities() {
+		$this->act_as_editor();
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function test_register_routes__endpoints_exist() {
+		global $wp_rest_server;
+		$routes = $wp_rest_server->get_routes();
+		$this->assertArrayHasKey( '/elementor/v1/global-classes', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/global-classes/usage', $routes );
+	}
+
 	private function create_global_class( string $id, ?string $color = null, ?string $label = null ) {
 		return [
 			'id' => $id,
@@ -679,4 +710,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			],
 		];
 	}
+
+
 }
