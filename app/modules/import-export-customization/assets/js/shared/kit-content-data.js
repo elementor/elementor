@@ -19,6 +19,7 @@ const kitContentData = [
 			},
 		},
 		dialog: null,
+		required: false,
 	},
 	{
 		type: 'templates',
@@ -40,6 +41,7 @@ const kitContentData = [
 			},
 		},
 		dialog: null,
+		required: false,
 	},
 	{
 		type: 'settings',
@@ -60,6 +62,7 @@ const kitContentData = [
 			},
 		},
 		dialog: KitSettingsCustomizationDialog,
+		required: false,
 	},
 	{
 		type: 'plugins',
@@ -72,6 +75,7 @@ const kitContentData = [
 			},
 		},
 		dialog: KitPluginsCustomizationDialog,
+		required: true,
 	},
 ];
 

@@ -52,11 +52,12 @@ export default function useKitPlugins( { open, data } ) {
 				setPlugins( initialPluginsState );
 			}
 		} catch ( error ) {
-			console.error( 'Error fetching plugins:', error );
+			setPluginsList( {} );
+			setPlugins( {} );
 		} finally {
 			setIsLoading( false );
 		}
-	}, [ data?.includes, data?.customization, initialState ] );
+	}, [ data.includes, data.customization, initialState ] );
 
 	useEffect( () => {
 		if ( open ) {
@@ -72,7 +73,6 @@ export default function useKitPlugins( { open, data } ) {
 		if ( isRequiredPlugin( settingKey ) ) {
 			return;
 		}
-		
 		setPlugins( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
@@ -82,7 +82,6 @@ export default function useKitPlugins( { open, data } ) {
 	const handleSelectAll = useCallback( () => {
 		const nonRequiredPlugins = Object.keys( plugins ).filter( ( pluginKey ) => ! isRequiredPlugin( pluginKey ) );
 		const allNonRequiredSelected = nonRequiredPlugins.every( ( pluginKey ) => plugins[ pluginKey ] );
-		
 		const newState = { ...plugins };
 		nonRequiredPlugins.forEach( ( pluginKey ) => {
 			newState[ pluginKey ] = ! allNonRequiredSelected;
@@ -93,7 +92,7 @@ export default function useKitPlugins( { open, data } ) {
 				newState[ pluginKey ] = true;
 			}
 		} );
-		
+
 		setPlugins( newState );
 	}, [ plugins, isRequiredPlugin ] );
 
