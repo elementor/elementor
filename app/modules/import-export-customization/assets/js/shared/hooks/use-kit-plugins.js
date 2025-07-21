@@ -14,8 +14,7 @@ export default function useKitPlugins( { open, data } ) {
 	const fetchPlugins = useCallback( async () => {
 		setIsLoading( true );
 		try {
-			const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
-			const requestUrl = `${ baseUrl }/plugins`;
+			const requestUrl = `${ elementorCommon.config.urls.rest }wp/v2/plugins/`;
 			const response = await fetch( requestUrl, {
 				method: 'GET',
 				headers: {
@@ -26,31 +25,45 @@ export default function useKitPlugins( { open, data } ) {
 
 			const result = await response.json();
 			if ( ! response.ok ) {
-				const errorMessage = result?.data?.message || `HTTP error! with the following code: ${ result?.data?.code }`;
+				const errorMessage = result?.message || `HTTP error! Status: ${ response.status }`;
 				throw new Error( errorMessage );
 			}
 
-			if ( result.data ) {
-				setPluginsList( result.data );
-
-				let initialPluginsState = {};
-
-				if ( data?.customization?.plugins ) {
-					initialPluginsState = data.customization.plugins;
-				} else {
-					Object.keys( result.data ).forEach( ( pluginKey ) => {
-						initialPluginsState[ pluginKey ] = initialState;
-					} );
-				}
-
-				requiredPlugins.forEach( ( pluginKey ) => {
-					if ( initialPluginsState.hasOwnProperty( pluginKey ) ) {
-						initialPluginsState[ pluginKey ] = true;
-					}
-				} );
-
-				setPlugins( initialPluginsState );
+			if ( ! Array.isArray( result ) ) {
+				return;
 			}
+
+			const pluginsObject = {};
+			result.forEach( ( plugin ) => {
+				const pluginKey = plugin.plugin.endsWith( '.php' ) ? plugin.plugin : plugin.plugin + '.php';
+				
+				pluginsObject[ pluginKey ] = {
+					name: plugin.name,
+					plugin: pluginKey,
+					pluginUri: plugin.plugin_uri,
+					version: plugin.version,
+				};
+			} );
+
+			setPluginsList( pluginsObject );
+
+			let initialPluginsState = {};
+
+			if ( data?.customization?.plugins ) {
+				initialPluginsState = data.customization.plugins;
+			} else {
+				Object.keys( pluginsObject ).forEach( ( pluginKey ) => {
+					initialPluginsState[ pluginKey ] = initialState;
+				} );
+			}
+
+			requiredPlugins.forEach( ( pluginKey ) => {
+				if ( initialPluginsState.hasOwnProperty( pluginKey ) ) {
+					initialPluginsState[ pluginKey ] = true;
+				}
+			} );
+
+			setPlugins( initialPluginsState );
 		} catch {
 			setPluginsList( {} );
 			setPlugins( {} );
