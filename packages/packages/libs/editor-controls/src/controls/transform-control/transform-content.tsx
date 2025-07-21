@@ -41,6 +41,11 @@ const Content = () => {
 					<Tabs
 						size="small"
 						variant="fullWidth"
+						sx={ {
+							'& .MuiTab-root': {
+								minWidth: '62px',
+							},
+						} }
 						{ ...getTabsProps() }
 						aria-label={ __( 'Transform', 'elementor' ) }
 					>
