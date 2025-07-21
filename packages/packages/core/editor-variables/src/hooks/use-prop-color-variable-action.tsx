@@ -6,9 +6,10 @@ import { __ } from '@wordpress/i18n';
 import { VariableSelectionPopover } from '../components/variable-selection-popover';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { supportsColorVariables } from '../utils';
+import { trackVariableEvent } from '../utils/tracking';
 
 export const usePropColorVariableAction = (): PopoverActionProps => {
-	const { propType } = useBoundProp();
+	const { propType, path } = useBoundProp();
 
 	const visible = !! propType && supportsColorVariables( propType );
 
@@ -17,6 +18,12 @@ export const usePropColorVariableAction = (): PopoverActionProps => {
 		icon: ColorFilterIcon,
 		title: __( 'Variables', 'elementor' ),
 		content: ( { close: closePopover } ) => {
+			trackVariableEvent( {
+				varType: 'color',
+				controlPath: path.join( '.' ),
+				action: 'open',
+			} );
+
 			return (
 				<VariableSelectionPopover closePopover={ closePopover } propTypeKey={ colorVariablePropTypeUtil.key } />
 			);
