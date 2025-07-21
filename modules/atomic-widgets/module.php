@@ -177,7 +177,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
 			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
 	}
