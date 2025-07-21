@@ -20,40 +20,27 @@ const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 
 export const EffectsSection = () => {
-	const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
 
 	return (
 		<SectionContent>
-			{ isVersion331Active && (
-				<>
-					<OpacityControlField />
-					<PanelDivider />
-				</>
-			) }
+			<OpacityControlField />
+			<PanelDivider />
 			<StylesField bind="box-shadow" propDisplayName={ BOX_SHADOW_LABEL }>
 				<BoxShadowRepeaterControl />
 			</StylesField>
-			{ isVersion331Active && (
-				<>
-					<PanelDivider />
-					<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-						{ isUnstableRepeaterActive ? (
-							<UnstableTransformRepeaterControl />
-						) : (
-							<TransformRepeaterControl />
-						) }
-					</StylesField>
-					<PanelDivider />
-					<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
-						<FilterRepeaterControl />
-					</StylesField>
-					<PanelDivider />
-					<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
-						<FilterRepeaterControl filterPropName="backdrop-filter" />
-					</StylesField>
-				</>
-			) }
+			<PanelDivider />
+			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
+				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
+			</StylesField>
+			<PanelDivider />
+			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
+				<FilterRepeaterControl />
+			</StylesField>
+			<PanelDivider />
+			<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
+				<FilterRepeaterControl filterPropName="backdrop-filter" />
+			</StylesField>
 		</SectionContent>
 	);
 };

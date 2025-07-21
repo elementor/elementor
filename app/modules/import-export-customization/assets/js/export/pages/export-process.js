@@ -8,12 +8,12 @@ import ExportError from '../components/export-error';
 
 export default function ExportProcess() {
 	const { data, dispatch, isExporting, isPending } = useExportContext();
-	const { kitInfo, includes, plugins } = data;
+	const { kitInfo, includes, customization } = data;
 
 	const { status, STATUS_PROCESSING, STATUS_ERROR } = useExportKit( {
 		includes,
 		kitInfo,
-		plugins,
+		customization,
 		isExporting,
 		dispatch,
 	} );

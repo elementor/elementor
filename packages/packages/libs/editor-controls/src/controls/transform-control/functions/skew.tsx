@@ -6,7 +6,7 @@ import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
-import { type DegreeUnit } from '../../../utils/size-control';
+import { type AngleUnit } from '../../../utils/size-control';
 import { TransformFunctionKeys } from '../types';
 import { AxisRow } from './axis-row';
 
@@ -23,7 +23,7 @@ const skewAxisControls: { label: string; bindValue: 'x' | 'y'; startIcon: React.
 	},
 ];
 
-const skewUnits: DegreeUnit[] = [ 'deg', 'rad', 'grad', 'turn' ];
+const skewUnits: AngleUnit[] = [ 'deg', 'rad', 'grad', 'turn' ];
 
 export const Skew = () => {
 	const context = useBoundProp( skewTransformPropTypeUtil );

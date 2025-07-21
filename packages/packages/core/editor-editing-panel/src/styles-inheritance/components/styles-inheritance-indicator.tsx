@@ -3,34 +3,28 @@ import { type ComponentProps } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { isEmpty, type PropType } from '@elementor/editor-props';
 import { ELEMENTS_BASE_STYLES_PROVIDER_KEY } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { StyleIndicator } from '../../components/style-indicator';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesInheritanceChain } from '../../contexts/styles-inheritance-context';
-import { EXPERIMENTAL_FEATURES } from '../../sync/experiments-flags';
 import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
-import { isUsingIndicatorPopover } from '../consts';
 import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
 
+const skipControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ];
+
 export const StylesInheritanceIndicator = () => {
 	const { path, propType } = useBoundProp();
 
-	const isUsingNestedProps = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 );
+	const inheritanceChain = useStylesInheritanceChain( path );
 
-	const finalPath = isUsingNestedProps ? path : path.slice( 0, 1 );
-
-	const inheritanceChain = useStylesInheritanceChain( finalPath );
-
-	if ( ! inheritanceChain.length ) {
+	if ( ! path || path.some( ( pathItem ) => skipControls.includes( pathItem ) ) || ! inheritanceChain.length ) {
 		return null;
 	}
 
-	return <Indicator inheritanceChain={ inheritanceChain } path={ finalPath } propType={ propType } />;
+	return <Indicator inheritanceChain={ inheritanceChain } path={ path } propType={ propType } />;
 };
 
 type IndicatorProps = {
@@ -50,10 +44,7 @@ const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
 
 	const [ actualStyle ] = inheritanceChain;
 
-	if (
-		! isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 ) &&
-		actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY
-	) {
+	if ( actualStyle.provider === ELEMENTS_BASE_STYLES_PROVIDER_KEY ) {
 		return null;
 	}
 
@@ -68,14 +59,6 @@ const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
 				: undefined,
 		isOverridden: hasValue && ! isFinalValue ? true : undefined,
 	};
-
-	if ( ! isUsingIndicatorPopover() ) {
-		return (
-			<Tooltip title={ __( 'Style origin', 'elementor' ) } placement="top">
-				<StyleIndicator { ...styleIndicatorProps } aria-label={ label } />
-			</Tooltip>
-		);
-	}
 
 	return (
 		<StylesInheritanceInfotip
