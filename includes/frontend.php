@@ -1004,16 +1004,17 @@ class Frontend extends App {
 			return;
 		}
 
-		// Print used fonts
+		$force_enqueue_from_cdn = Plugin::$instance->preview->is_preview_mode();
+
 		if ( ! empty( $google_fonts['google'] ) ) {
 			foreach ( $google_fonts['google'] as $current_font ) {
-				Google_Font::enqueue( $current_font );
+				Google_Font::enqueue( $current_font, Google_Font::TYPE_DEFAULT, $force_enqueue_from_cdn );
 			}
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
 			foreach ( $google_fonts['early'] as $current_font ) {
-				Google_Font::enqueue( $current_font, Google_Font::TYPE_EARLYACCESS );
+				Google_Font::enqueue( $current_font, Google_Font::TYPE_EARLYACCESS, $force_enqueue_from_cdn );
 			}
 		}
 	}
