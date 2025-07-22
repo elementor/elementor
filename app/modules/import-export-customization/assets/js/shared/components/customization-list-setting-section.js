@@ -35,7 +35,7 @@ export function ListSettingSection( {
 						<Checkbox
 							color="info"
 							checked={ settings.length === items.length }
-							indeterminate={ settings.length && ( settings.length !== items.length ) }
+							indeterminate={ settings.length > 0 && ( settings.length !== items.length ) }
 							onChange={ ( e, checked ) => {
 								if ( checked ) {
 									onSettingChange( items.map( ( { value } ) => value ) );
