@@ -268,7 +268,7 @@ class Source_Remote extends Source_Base {
 			return [];
 		}
 
-		set_transient( $templates_data_cache_key, $templates_data, HOUR_IN_SECONDS );
+		set_transient( $templates_data_cache_key, $templates_data, 12 * HOUR_IN_SECONDS );
 
 		return $templates_data;
 	}
