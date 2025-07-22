@@ -1,4 +1,5 @@
 import { Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
