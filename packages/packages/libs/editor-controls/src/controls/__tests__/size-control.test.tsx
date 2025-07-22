@@ -634,5 +634,34 @@ describe( 'SizeControl', () => {
 			expect( sizeInput ).not.toHaveAttribute( 'placeholder' );
 			expect( unitButton ).toHaveTextContent( 'px' );
 		} );
+
+		it( 'should keep the placeholder unit when value got changed', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				bind: 'select',
+				disabled: true,
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 200,
+						unit: '%',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <SizeControl />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			fireEvent.change( sizeInput, { target: { value: '123' } } );
+			const unitButton = screen.getByRole( 'button' );
+
+			// Assert.
+			expect( sizeInput ).toHaveDisplayValue( '123' );
+			expect( unitButton ).toHaveTextContent( '%' );
+		} );
 	} );
 } );
