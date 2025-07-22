@@ -103,6 +103,7 @@ export function KitContentCustomizationDialog( {
 
 						<SettingSection
 							checked={ settings.menus }
+							description={ __( 'Group your content by type, topic, or any structure you choose.', 'elementor' ) }
 							title={ __( 'Taxonomies', 'elementor' ) }
 							settingKey="taxonomies"
 							hasToggle={ false }
