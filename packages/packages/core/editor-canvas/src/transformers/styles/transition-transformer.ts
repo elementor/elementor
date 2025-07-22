@@ -5,6 +5,8 @@ type TransitionValue = {
 	size: string;
 };
 
+const ALL_PROPERTIES = { text: 'all properties', css: 'all' };
+
 export const transitionTransformer = createTransformer( ( transitionValues: TransitionValue[] ) => {
 	if ( transitionValues?.length < 1 ) {
 		return null;
@@ -18,8 +20,8 @@ const mapToTransitionString = ( value: TransitionValue ): string => {
 		return '';
 	}
 
-	if ( value.selection === 'all properties' ) {
-		return `all ${ value.size }`;
+	if ( value.selection === ALL_PROPERTIES.text ) {
+		return `${ ALL_PROPERTIES.css } ${ value.size }`;
 	}
 
 	return `${ value.selection } ${ value.size }`;
