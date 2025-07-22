@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Stack, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { KitCustomizationDialog } from './kit-customization-dialog';
