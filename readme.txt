@@ -348,52 +348,51 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.29.2 - 2025-06-04 =
+= 3.30.2 - 2025-07-09 =
 
-* Fix: Missing responsive resize handles in responsive mode preventing manual preview adjustments
-* Fix: Style sections expanded by default instead of remaining collapsed - Editor V4
-* Fix: Publish button not triggered when applying a class - Editor V4
+* Fix: Editor failing to load on certain hosting providers due to blocked requests
 
-= 3.29.1 - 2025-05-28 =
+= 3.30.1 - 2025-07-07 =
 
-* Tweak: Disabled the ability to use elements caching shortcode via the interface
-* Security Fix: Improved code security enforcement in Shortcode widget
-* Fix: Information modals are not showing as expected in the Editor - Editor V4
-* Fix: Error on the frontend when background overlay is set to hidden - Editor V4
-* Fix: Editor load issue when a widget does not register the "Advanced" tab
+* Fix: Focus not applied correctly to chosen property in popovers - Editor V4
+* Fix: Font Family popover not loading as expected - Editor V4
+* Fix: Empty list displayed when opening the Class Manager - Editor V4
 
-= 3.29.0 - 2025-05-19 =
+= 3.30.0 - 2025-07-01 =
 
-* New: Introduced the first Alpha release of the next-generation Editor - a faster, modular, CSS-based infrastructure available as an opt-in experience - Editor V4
-* New: Combine familiar and new Editor elements for a seamless editing experience - Editor V4
-* New: Introduced cleaner code and fewer div wrappers for faster performance and a lighter editing experience - Editor V4
-* New: Gain full responsive control - adjust every style property individually for each device, without limitations - Editor V4
-* New: Introduced Classes - a reusable styling system that brings consistency, modularity, and CSS-based workflows to your designs - Editor V4
-* New: Introduced Class Manager - centrally manage, rename, reorder, and delete Classes across your site - Editor V4
-* New: Introduced States - define hover, focus, and active styles for Classes to create dynamic, interactive designs - Editor V4
-* New: Introduced Local Class - a fixed, non-removable class with highest styling priority, ensuring unique styling for each element - Editor V4
-* New: Introduced Class Indicators - color-coded visual cues that show where styles originate, inherit, or conflict - Editor V4
-* New: Introduced a unified Style Tab - a consistent, CSS-based styling system shared across all elements, streamlining design workflows - Editor V4
-* New: Introduced Style Repeaters - create and manage multiple background and box shadow layers with full control over their order and visibility - Editor V4
-* New: Introduced Actions Floating Bar - a cleaner, context-aware toolbar that appears on hover, starting with Dynamic Tags support - Editor V4
-* New: Introduced Link Control - add and customize links across elements with clean HTML, while preventing nested links - Editor V4
-* New: Introduced Logical Properties - styling adapts automatically to different writing directions for global language support - Editor V4
-* New: Added DIV Block element - a container element for structuring layouts with customizable display options - Editor V4
-* New: Added Flexbox element - a layout element for precise alignment and distribution - Editor V4
-* New: Added Heading element - a standalone heading element with flexible styling - Editor V4
-* New: Added Paragraph element - a simple, dedicated text element for paragraphs - Editor V4
-* New: Added Image element - a modular image element with clean markup and consistent styling - Editor V4
-* New: Added Button element - a customizable button element for modular design - Editor V4
-* New: Added SVG element - a lightweight element for adding scalable vector graphics - Editor V4
-* Tweak: Added `AVIF` image format support to Lightbox ([#28256](https://github.com/elementor/elementor/issues/28256), [#25175](https://github.com/elementor/elementor/issues/25175), [#28169](https://github.com/elementor/elementor/issues/28169), [#29624](https://github.com/elementor/elementor/issues/29624))
-* Tweak: Renamed "My Templates" to "Templates" in the Templates Library
-* Tweak: Marked local templates as "Site Templates" to distinguish them from Cloud Templates
-* Tweak: Excluded Shape Dividers from the accessibility tree
-* Tweak: Improved accessibility with `role` attributes in the Social Icons widget
-* Tweak: Added Display Title control to the Progress Bar widget to enhance accessibility
-* Fix: Strings are not translating properly in the Global Style Guide ([#23237](https://github.com/elementor/elementor/issues/23237))
-* Fix: Mask shape URLs use double slashes instead of single slashes ([#17534](https://github.com/elementor/elementor/issues/17534))
-* Fix: Common scripts are loaded late when using the Theme Builder
-* Fix: 'New Prompt' Button does not work in Generate Code AI feature
+* New: Added support for setting custom units in size controls - Editor V4 ([#31287](https://github.com/elementor/elementor/issues/31287))
+* New: Added reset control visibility via the floating action bar - Editor V4 ([#31356](https://github.com/elementor/elementor/issues/31356))
+* New: Added JS handler infrastructure for the new elements system - Editor V4
+* New: Introduced modular YouTube element built with new structure and JS handlers – Editor V4
+* New: Added support for context-aware editing memory - Editor V4
+* New: Enabled Smart Unit Typing - allows typing values with units directly - Editor V4
+* New: Added ID control to Settings section under General tab - Editor V4
+* New: Added Anchor Offset control to Position section under Style tab - Editor V4
+* New: Added Display None control to Layout section under Style tab - Editor V4
+* New: Added Object Fit control to Size section under Style tab - Editor V4
+* New: Added Columns control to Typography section under Style tab - Editor V4
+* New: Added Aspect Ratio control to Size section under Style tab - Editor V4
+* New: Added group-level style indicators to show where class-based styles are applied – Editor V4
+* New: Added Indications Popover for visualizing class-based style origins – Editor V4
+* New: Introduced class permissions for non-admin users - Editor V4
+* Tweak: Added title hover and focus color options to Icon Box and Image Box widgets ([#29948](https://github.com/elementor/elementor/issues/29948))
+* Tweak: Added support for registering custom mask shapes ([#19396](https://github.com/elementor/elementor/issues/19396))
+* Tweak: User-defined class names now appear as-is in the final code output in Class Management - Editor V4 ([#31055](https://github.com/elementor/elementor/issues/31055))
+* Tweak: Renamed "Kits" to "Website Template" across the interface
+* Tweak: Added Settings section inside the General tab - Editor V4
+* Tweak: Merged "Editor Top Bar" feature into the core version
+* Tweak: Merged "Load Google Fonts locally" feature into the core version
+* Tweak: Activated "Optimized Markup" feature for new sites
+* Tweak: Promoted "Element Caching" feature to Stable status
+* Tweak: Added new mask shapes
+* Tweak: Replaced select control with a visual choice control in Mask shapes
+* Tweak: Add image `height`, `object-fit`, `object-position`, `box-shadow` in Image Box widget
+* Tweak: Standardized naming convention for items in the editor `app-bar`
+* Tweak: Consolidated control visibility and layout into a single Style tab in Progress Bar widget
+* Tweak: Updated minimum required WordPress version to 6.6
+* Fix: Global CSS transition with higher specificity prevents Container transitions from being applied ([#30460](https://github.com/elementor/elementor/issues/30460))
+* Fix: Global CSS classes are lost when publishing from multiple tabs - Editor V4
+* Fix: Redundant spacing appears below the image in the Image Box widget
+* Fix: Scrolling to anchors no longer works inside the Editor
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)

@@ -60,6 +60,8 @@ class OptInPage {
 			'elementorSettingsEditor4OptIn',
 			$this->prepare_data()
 		);
+
+		wp_set_script_translations( Module::MODULE_NAME, 'elementor' );
 	}
 
 	private function prepare_data() {

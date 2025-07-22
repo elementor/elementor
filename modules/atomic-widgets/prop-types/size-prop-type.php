@@ -9,9 +9,16 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
+const LENGTH_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ];
+const ANGLE_UNITS = [ 'deg', 'rad', 'grad', 'turn' ];
+const TIME_UNITS = [ 's', 'ms' ];
+const EXTENDED_UNITS = [ 'auto', 'custom' ];
 
 class Size_Prop_Type extends Object_Prop_Type {
-	const SUPPORTED_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax', 'auto', 'custom' ];
+
+	public static function get_supported_units(): array {
+		return array_merge( LENGTH_UNITS, ANGLE_UNITS, TIME_UNITS, EXTENDED_UNITS );
+	}
 
 	public static function get_key(): string {
 		return 'size';
@@ -22,7 +29,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 			! array_key_exists( 'size', $value ) ||
 			! array_key_exists( 'unit', $value ) ||
 			empty( $value['unit'] ) ||
-			! in_array( $value['unit'], static::SUPPORTED_UNITS, true )
+			! in_array( $value['unit'], static::get_supported_units(), true )
 		) {
 			return false;
 		}
@@ -60,7 +67,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'unit' => String_Prop_Type::make()->enum( self::SUPPORTED_UNITS )
+			'unit' => String_Prop_Type::make()->enum( static::get_supported_units() )
 				->required(),
 			'size' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make() )
