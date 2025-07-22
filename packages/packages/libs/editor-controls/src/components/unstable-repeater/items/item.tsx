@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../../../locations';
 import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
@@ -12,23 +13,31 @@ import { usePopover } from './use-popover';
 
 type AnchorEl = HTMLElement | null;
 
-export const Item = < T, >( { Label, Icon, Content, key, value }: ItemProps< T > ) => {
+export const Item = < T, >( { Label, Icon, Content, key, value, index, openOnMount }: ItemProps< T > ) => {
 	const [ anchorEl, setAnchorEl ] = useState< AnchorEl >( null );
-	const { popoverState, popoverProps, ref, setRef } = usePopover( true, () => {} );
+	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount as boolean, () => {} );
 
 	return (
 		<>
 			<UnstableTag
 				key={ key }
 				disabled={ false }
-				label={ <Label value={ value as T } /> }
+				label={
+					<RepeaterItemLabelSlot value={ value }>
+						<Label value={ value as T } />
+					</RepeaterItemLabelSlot>
+				}
 				showActionsOnHover
 				fullWidth
 				ref={ setRef }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
 				{ ...bindTrigger( popoverState ) }
-				startIcon={ <Icon value={ value as T } /> }
+				startIcon={
+					<RepeaterItemIconSlot value={ value }>
+						<Icon value={ value as T } />
+					</RepeaterItemIconSlot>
+				}
 				actions={
 					<>
 						<DuplicateItemAction />
@@ -38,7 +47,7 @@ export const Item = < T, >( { Label, Icon, Content, key, value }: ItemProps< T >
 				}
 			/>
 			<AddItemPopover anchorRef={ ref } setAnchorEl={ setAnchorEl } popoverProps={ popoverProps }>
-				<Content anchorEl={ anchorEl } bind={ '' } value={ value as T } />
+				<Content anchorEl={ anchorEl } bind={ String( index ) } value={ value as T } />
 			</AddItemPopover>
 		</>
 	);
