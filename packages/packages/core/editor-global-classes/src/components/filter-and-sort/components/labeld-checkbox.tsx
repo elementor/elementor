@@ -8,12 +8,12 @@ type LabeledCheckboxProps = {
 	checked: boolean;
 };
 
-export const LabeledCheckbox = ({ label, suffix, onClick, checked }: LabeledCheckboxProps) => (
-	<MenuItem onClick={onClick}>
-		<Stack direction="row" alignItems="center" gap={0.5} flex={1}>
+export const LabeledCheckbox = ( { label, suffix, onClick, checked }: LabeledCheckboxProps ) => (
+	<MenuItem onClick={ onClick }>
+		<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 }>
 			<Checkbox
-				checked={checked}
-				sx={{
+				checked={ checked }
+				sx={ {
 					padding: 0,
 					color: 'text.tertiary',
 					'&:hover': {
@@ -25,12 +25,12 @@ export const LabeledCheckbox = ({ label, suffix, onClick, checked }: LabeledChec
 					'&.Mui-checked': {
 						color: 'text.tertiary',
 					},
-				}}
+				} }
 			/>
-			<Typography variant="caption" sx={{ color: 'text.secondary' }}>
-				{label}
+			<Typography variant="caption" sx={ { color: 'text.secondary' } }>
+				{ label }
 			</Typography>
-			{suffix}
+			{ suffix }
 		</Stack>
 	</MenuItem>
 );
