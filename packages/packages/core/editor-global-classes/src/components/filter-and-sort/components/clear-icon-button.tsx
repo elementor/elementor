@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClearIcon } from '@elementor/icons';
+import { BrushBigIcon } from '@elementor/icons';
 import { IconButton, type SxProps, type Theme, Tooltip } from '@elementor/ui';
 
 import { useFilterAndSortContext } from '../context';
@@ -11,7 +11,7 @@ export const ClearIconButton = ( { tooltipText, sxStyle }: ClearIconButtonProps 
 	return (
 		<Tooltip title={ tooltipText } placement="top">
 			<IconButton key={ 'clear-filters' } size="tiny" onClick={ onReset } sx={ sxStyle }>
-				<ClearIcon fontSize="tiny" />
+				<BrushBigIcon fontSize="tiny" />
 			</IconButton>
 		</Tooltip>
 	);
