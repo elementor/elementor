@@ -5,7 +5,7 @@ import {
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
 } from '@elementor/editor-controls';
-import { EXPERIMENTAL_FEATURES, isExperimentActive } from "@elementor/editor-v1-adapters";
+import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
