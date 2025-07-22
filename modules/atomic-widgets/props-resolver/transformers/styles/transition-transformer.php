@@ -35,10 +35,6 @@ class Transition_Transformer extends Transformer_Base {
 			return self::EMPTY_STRING;
 		}
 
-		if ( empty( $transition['selection'] ) || empty( $transition['size'] ) ) {
-			return self::EMPTY_STRING;
-		}
-
 		$property = $transition['selection'];
 		$duration = $transition['size'];
 
