@@ -69,8 +69,8 @@ export default class extends elementorModules.Module {
 		this.elements.$freeBadge.text( 'Free' );
 		this.elements.$freeBadge.css( {
 			'border-radius': 'var(--e-a-border-radius)',
-    		'background-color': 'var(--e-a-btn-bg)',
-    		'color': 'var(--e-a-btn-color-invert)',
+    			'background-color': 'var(--e-a-btn-bg)',
+    			'color': 'var(--e-a-btn-color-invert)',
 			'padding': '3px',
 		} );
 		this.elements.$titleBadge.after( this.elements.$freeBadge );
