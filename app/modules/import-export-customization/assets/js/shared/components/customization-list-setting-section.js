@@ -86,7 +86,7 @@ export function ListSettingSection( {
 					color="info"
 					onClick={ () => setShowMore( ! showMore ) }
 				>
-					{ __( 'Show more', 'elementor' ) }
+					{ showMore ? __( 'Show less', 'elementor' ) : __( 'Show more', 'elementor' ) }
 				</Button>
 			) }
 		</Box>
@@ -106,5 +106,5 @@ ListSettingSection.propTypes = {
 			value: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
 		} ),
 	),
-	settings: PropTypes.arrayOf( PropTypes.oneOf( [ PropTypes.string, PropTypes.number ] ) ),
+	settings: PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ) ),
 };
