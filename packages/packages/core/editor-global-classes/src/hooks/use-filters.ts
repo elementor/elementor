@@ -9,16 +9,16 @@ export const useFilters = () => {
 	const allFilters = useFilteredCssClassUsage();
 
 	// Collect only the active filter keys
-	const activeKeys = Object.keys(checked).filter((key) => checked[key]) as FilterKey[];
+	const activeKeys = Object.keys( checked ).filter( ( key ) => checked[ key as FilterKey ] ) as FilterKey[];
 
-	const intersection = useMemo(() => {
-		if (activeKeys.length === 0) return null;
+	return useMemo( () => {
+		if ( activeKeys.length === 0 ) {
+			return null;
+		}
 
 		// Start with the values of the first active filter
 		return activeKeys
-			.map((key) => allFilters[key] || [])
-			.reduce((acc, arr) => acc.filter((val) => arr.includes(val)));
-	}, [activeKeys, allFilters]);
-
-	return intersection;
+			.map( ( key ) => allFilters[ key ] || [] )
+			.reduce( ( acc, arr ) => acc.filter( ( val ) => arr.includes( val ) ) );
+	}, [ activeKeys, allFilters ] );
 };
