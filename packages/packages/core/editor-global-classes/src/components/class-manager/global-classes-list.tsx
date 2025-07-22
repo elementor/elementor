@@ -1,29 +1,53 @@
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
-import { type StyleDefinitionID } from '@elementor/editor-styles';
+import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
+import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
+import { useFilterAndSortContext } from '../filter-and-sort/context';
+import { useSearchContext } from '../search-css-class/context';
+import { getNotFoundConfig, type NotFoundType } from '../shared/not-found/config';
 import { ClassItem } from './class-item';
-import { CssClassNotFound } from './class-manager-class-not-found';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { SortableItem, SortableProvider } from './sortable';
 
-type GlobalClassesListProps = {
-	disabled?: boolean;
-	searchValue: string;
-	onSearch: ( searchValue: string ) => void;
+const getNotFoundType = (
+	searchValue: string,
+	filters: string[] | null | undefined,
+	filteredClasses: StyleDefinition[]
+): NotFoundType | undefined => {
+	const searchNotFound = filteredClasses.length <= 0 && searchValue.length > 1;
+	const filterNotFound = filters && filters.length === 0;
+	const filterAndSearchNotFound = searchNotFound && filterNotFound;
+
+	if ( filterAndSearchNotFound ) {
+		return 'filterAndSearch';
+	}
+	if ( searchNotFound ) {
+		return 'search';
+	}
+	if ( filterNotFound ) {
+		return 'filter';
+	}
+	return undefined;
 };
 
-export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalClassesListProps ) => {
+type GlobalClassesListProps = {
+	disabled?: boolean;
+};
+
+export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
+	const { debouncedValue: searchValue, onClearSearch } = useSearchContext();
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
-
+	const filters = useFilters();
+	const { onReset } = useFilterAndSortContext();
 	const [ classesOrder, reorderClasses ] = useReorder();
 
 	const lowercaseLabels = useMemo(
@@ -42,6 +66,10 @@ export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalCl
 			  )
 			: cssClasses;
 	}, [ searchValue, cssClasses, lowercaseLabels ] );
+
+	const filteredByCategory = useMemo( () => {
+		return filters ? filteredClasses.filter( ( cssClass ) => filters.includes( cssClass.id ) ) : filteredClasses;
+	}, [ filteredClasses, filters ] );
 
 	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
@@ -65,42 +93,55 @@ export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalCl
 		return <EmptyState />;
 	}
 
+	const shouldShowNotFound = getNotFoundConfig( {
+		onClearFilter: onReset,
+		onClearSearch,
+		searchValue,
+		notFoundType: getNotFoundType( searchValue, filters, filteredClasses ),
+	} );
+
+	if ( shouldShowNotFound !== null ) {
+		return shouldShowNotFound;
+	}
 	return (
 		<DeleteConfirmationProvider>
-			{ filteredClasses.length <= 0 && searchValue.length > 1 ? (
-				<CssClassNotFound onClear={ () => onSearch( '' ) } searchValue={ searchValue } />
-			) : (
-				<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-					<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-						{ filteredClasses?.map( ( { id, label } ) => {
-							return (
-								<SortableItem key={ id } id={ id }>
-									{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
-										<ClassItem
-											isSearchActive={ searchValue.length < 2 }
-											id={ id }
-											label={ label }
-											renameClass={ ( newLabel: string ) => {
-												dispatch(
-													slice.actions.update( {
-														style: {
-															id,
-															label: newLabel,
-														},
-													} )
-												);
-											} }
-											selected={ isDragged }
-											disabled={ disabled || isDragPlaceholder }
-											sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-										/>
-									) }
-								</SortableItem>
-							);
-						} ) }
-					</SortableProvider>
-				</List>
-			) }
+			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
+				{ filters && (
+					<Typography variant="subtitle2" color="text.primary">
+						{ __( 'We found ${number} classes:', 'elementor' ).replace(
+							'${number}',
+							filters.length.toString()
+						) }
+					</Typography>
+				) }
+				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
+					{ filteredByCategory?.map( ( { id, label } ) => {
+						return (
+							<SortableItem key={ id } id={ id }>
+								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
+									<ClassItem
+										id={ id }
+										label={ label }
+										renameClass={ ( newLabel: string ) => {
+											dispatch(
+												slice.actions.update( {
+													style: {
+														id,
+														label: newLabel,
+													},
+												} )
+											);
+										} }
+										selected={ isDragged }
+										disabled={ disabled || isDragPlaceholder }
+										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+									/>
+								) }
+							</SortableItem>
+						);
+					} ) }
+				</SortableProvider>
+			</List>
 		</DeleteConfirmationProvider>
 	);
 };
