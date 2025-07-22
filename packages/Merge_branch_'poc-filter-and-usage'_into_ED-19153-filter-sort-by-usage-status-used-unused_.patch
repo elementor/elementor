@@ -1,0 +1,1356 @@
+Subject: [PATCH] Merge branch 'poc-filter-and-usage' into ED-19153-filter-sort-by-usage-status-used-unused
+Merge branch 'main' into ED-19153-filter-sort-by-usage-status-used-unused
+update icon
+Merge branch 'main' into poc-filter-and-usage
+Refactor LabeledCheckbox and add NotFound config module.
+Refactor Class Manager for improved search and filter.
+---
+Index: modules/global-classes/global-classes-rest-api.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/modules/global-classes/global-classes-rest-api.php b/modules/global-classes/global-classes-rest-api.php
+--- a/modules/global-classes/global-classes-rest-api.php	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/modules/global-classes/global-classes-rest-api.php	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -14,7 +14,7 @@
+ class Global_Classes_REST_API {
+ 	const API_NAMESPACE = 'elementor/v1';
+ 	const API_BASE = 'global-classes';
+-
++	const API_BASE_USAGE = self::API_BASE . '/usage';
+ 	const MAX_ITEMS = 50;
+ 
+ 	private $repository = null;
+Index: packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx b/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx
+--- a/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/components/class-manager/class-item.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -21,6 +21,7 @@
+ import { __ } from '@wordpress/i18n';
+ 
+ import { CssClassUsageTrigger } from '../css-class-usage/components';
++import { useSearchContext } from '../search-css-class/context';
+ import { useDeleteConfirmation } from './delete-confirmation-dialog';
+ import { SortableTrigger, type SortableTriggerProps } from './sortable';
+ 
+@@ -31,20 +32,11 @@
+ 	selected?: boolean;
+ 	disabled?: boolean;
+ 	sortableTriggerProps: SortableTriggerProps;
+-	isSearchActive: boolean;
+ } >;
+ 
+-export const ClassItem = ( {
+-	id,
+-	label,
+-	renameClass,
+-	selected,
+-	disabled,
+-	sortableTriggerProps,
+-	isSearchActive,
+-}: ClassItemProps ) => {
++export const ClassItem = ( { id, label, renameClass, selected, disabled, sortableTriggerProps }: ClassItemProps ) => {
+ 	const itemRef = useRef< HTMLElement >( null );
+-
++	const { isSearchActive } = useSearchContext();
+ 	const {
+ 		ref: editableRef,
+ 		openEditMode,
+Index: packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-panel.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-panel.tsx b/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-panel.tsx
+--- a/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-panel.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-panel.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -25,7 +25,6 @@
+ 	type IconButtonProps,
+ 	Stack,
+ } from '@elementor/ui';
+-import { useDebounceState } from '@elementor/utils';
+ import { __ } from '@wordpress/i18n';
+ 
+ import { useDirtyState } from '../../hooks/use-dirty-state';
+@@ -33,9 +32,9 @@
+ import { slice } from '../../store';
+ import { ActiveFilters } from '../filter-and-sort/components/active-filters';
+ import { CssClassFilter } from '../filter-and-sort/components/css-class-filter';
+-import { FilterAndSortProvider } from '../filter-and-sort/context';
++import { ClassManagerSearch } from '../search-css-class/components/class-manager-search';
++import { SearchAndFilterProvider } from '../shared/search-and-filter-provider';
+ import { ClassManagerIntroduction } from './class-manager-introduction';
+-import { ClassManagerSearch } from './class-manager-search';
+ import { hasDeletedItems, onDelete } from './delete-class';
+ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
+ import { GlobalClassesList } from './global-classes-list';
+@@ -48,28 +47,23 @@
+ // The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
+ // will force them to be disabled. We can't use the `preview` edit mode in this case since it'll force
+ // the panel to be closed.
+-export const { panel, usePanelActions } = createPanel({
++export const { panel, usePanelActions } = createPanel( {
+ 	id,
+ 	component: ClassManagerPanel,
+-	allowedEditModes: ['edit', id],
++	allowedEditModes: [ 'edit', id ],
+ 	onOpen: () => {
+-		changeEditMode(id);
++		changeEditMode( id );
+ 
+ 		blockPanelInteractions();
+ 	},
+ 	onClose: () => {
+-		changeEditMode('edit');
++		changeEditMode( 'edit' );
+ 
+ 		unblockPanelInteractions();
+ 	},
+-});
++} );
+ 
+ export function ClassManagerPanel() {
+-	const { debouncedValue, inputValue, handleChange } = useDebounceState({
+-		delay: 300,
+-		initialValue: '',
+-	});
+-
+ 	const isDirty = useDirtyState();
+ 
+ 	const { close: closePanel } = usePanelActions();
+@@ -78,7 +72,7 @@
+ 	const { mutateAsync: publish, isPending: isPublishing } = usePublish();
+ 
+ 	const resetAndClosePanel = () => {
+-		dispatch(slice.actions.resetToInitialState({ context: 'frontend' }));
++		dispatch( slice.actions.resetToInitialState( { context: 'frontend' } ) );
+ 		closeSaveChangesDialog();
+ 	};
+ 
+@@ -86,66 +80,62 @@
+ 
+ 	return (
+ 		<ThemeProvider>
+-			<ErrorBoundary fallback={<ErrorBoundaryFallback />}>
++			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
+ 				<Panel>
+ 					<PanelHeader>
+-						<Stack p={1} pl={2} width="100%" direction="row" alignItems="center">
+-							<PanelHeaderTitle sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
++						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
++							<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+ 								<FlippedColorSwatchIcon fontSize="inherit" />
+-								{__('Class Manager', 'elementor')}
++								{ __( 'Class Manager', 'elementor' ) }
+ 							</PanelHeaderTitle>
+ 							<CloseButton
+-								sx={{ marginLeft: 'auto' }}
+-								disabled={isPublishing}
+-								onClose={() => {
+-									if (isDirty) {
++								sx={ { marginLeft: 'auto' } }
++								disabled={ isPublishing }
++								onClose={ () => {
++									if ( isDirty ) {
+ 										openSaveChangesDialog();
+ 										return;
+ 									}
+ 
+ 									closePanel();
+-								}}
++								} }
+ 							/>
+ 						</Stack>
+ 					</PanelHeader>
+ 					<PanelBody
+-						sx={{
++						sx={ {
+ 							display: 'flex',
+ 							flexDirection: 'column',
+ 							height: '100%',
+-						}}
++						} }
+ 					>
+-						<FilterAndSortProvider>
++						<SearchAndFilterProvider>
+ 							<>
+-								<Box px={2} pb={1}>
+-									<Stack direction="row" justifyContent="spaceBetween" gap={0.5} sx={{ pb: 0.5 }}>
+-										<Box sx={{ flexGrow: 1 }}>
+-											<ClassManagerSearch searchValue={inputValue} onChange={handleChange} />
++								<Box px={ 2 } pb={ 1 }>
++									<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
++										<Box sx={ { flexGrow: 1 } }>
++											<ClassManagerSearch />
+ 										</Box>
+ 										<CssClassFilter />
+ 									</Stack>
+ 									<ActiveFilters />
+ 								</Box>
+ 								<Divider
+-									sx={{
++									sx={ {
+ 										borderWidth: '1px 0 0 0',
+-									}}
++									} }
+ 								/>
+ 								<Box
+-									px={2}
+-									sx={{
++									px={ 2 }
++									sx={ {
+ 										flexGrow: 1,
+ 										overflowY: 'auto',
+-									}}
++									} }
+ 								>
+-									<GlobalClassesList
+-										disabled={isPublishing}
+-										searchValue={debouncedValue}
+-										onSearch={handleChange}
+-									/>
++									<GlobalClassesList disabled={ isPublishing } />
+ 								</Box>
+ 							</>
+-						</FilterAndSortProvider>
++						</SearchAndFilterProvider>
+ 					</PanelBody>
+ 
+ 					<PanelFooter>
+@@ -154,63 +144,65 @@
+ 							size="small"
+ 							color="global"
+ 							variant="contained"
+-							onClick={publish}
+-							disabled={!isDirty}
+-							loading={isPublishing}
++							onClick={ publish }
++							disabled={ ! isDirty }
++							loading={ isPublishing }
+ 						>
+-							{__('Save changes', 'elementor')}
++							{ __( 'Save changes', 'elementor' ) }
+ 						</Button>
+ 					</PanelFooter>
+ 				</Panel>
+ 			</ErrorBoundary>
+ 			<ClassManagerIntroduction />
+-			{isSaveChangesDialogOpen && (
++			{ isSaveChangesDialogOpen && (
+ 				<SaveChangesDialog>
+-					<DialogHeader onClose={closeSaveChangesDialog} logo={false}>
+-						<SaveChangesDialog.Title>{__('You have unsaved changes', 'elementor')}</SaveChangesDialog.Title>
++					<DialogHeader onClose={ closeSaveChangesDialog } logo={ false }>
++						<SaveChangesDialog.Title>
++							{ __( 'You have unsaved changes', 'elementor' ) }
++						</SaveChangesDialog.Title>
+ 					</DialogHeader>
+ 					<SaveChangesDialog.Content>
+ 						<SaveChangesDialog.ContentText>
+-							{__('You have unsaved changes in the Class Manager.', 'elementor')}
++							{ __( 'You have unsaved changes in the Class Manager.', 'elementor' ) }
+ 						</SaveChangesDialog.ContentText>
+ 						<SaveChangesDialog.ContentText>
+-							{__('To avoid losing your updates, save your changes before leaving.', 'elementor')}
++							{ __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' ) }
+ 						</SaveChangesDialog.ContentText>
+ 					</SaveChangesDialog.Content>
+ 					<SaveChangesDialog.Actions
+-						actions={{
++						actions={ {
+ 							discard: {
+-								label: __('Discard', 'elementor'),
++								label: __( 'Discard', 'elementor' ),
+ 								action: () => {
+ 									resetAndClosePanel();
+ 								},
+ 							},
+ 							confirm: {
+-								label: __('Save & Continue', 'elementor'),
++								label: __( 'Save & Continue', 'elementor' ),
+ 								action: async () => {
+ 									await publish();
+ 									closeSaveChangesDialog();
+ 									closePanel();
+ 								},
+ 							},
+-						}}
++						} }
+ 					/>
+ 				</SaveChangesDialog>
+-			)}
++			) }
+ 		</ThemeProvider>
+ 	);
+ }
+ 
+-const CloseButton = ({ onClose, ...props }: IconButtonProps & { onClose: () => void }) => (
+-	<IconButton size="small" color="secondary" onClick={onClose} aria-label="Close" {...props}>
++const CloseButton = ( { onClose, ...props }: IconButtonProps & { onClose: () => void } ) => (
++	<IconButton size="small" color="secondary" onClick={ onClose } aria-label="Close" { ...props }>
+ 		<XIcon fontSize="small" />
+ 	</IconButton>
+ );
+ 
+ const ErrorBoundaryFallback = () => (
+-	<Box role="alert" sx={{ minHeight: '100%', p: 2 }}>
+-		<Alert severity="error" sx={{ mb: 2, maxWidth: 400, textAlign: 'center' }}>
+-			<strong>{__('Something went wrong', 'elementor')}</strong>
++	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>
++		<Alert severity="error" sx={ { mb: 2, maxWidth: 400, textAlign: 'center' } }>
++			<strong>{ __( 'Something went wrong', 'elementor' ) }</strong>
+ 		</Alert>
+ 	</Box>
+ );
+@@ -218,30 +210,30 @@
+ const usePreventUnload = () => {
+ 	const isDirty = useDirtyState();
+ 
+-	useEffect(() => {
+-		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+-			if (isDirty) {
++	useEffect( () => {
++		const handleBeforeUnload = ( event: BeforeUnloadEvent ) => {
++			if ( isDirty ) {
+ 				event.preventDefault();
+ 			}
+ 		};
+ 
+-		window.addEventListener('beforeunload', handleBeforeUnload);
++		window.addEventListener( 'beforeunload', handleBeforeUnload );
+ 
+ 		return () => {
+-			window.removeEventListener('beforeunload', handleBeforeUnload);
++			window.removeEventListener( 'beforeunload', handleBeforeUnload );
+ 		};
+-	}, [isDirty]);
++	}, [ isDirty ] );
+ };
+ 
+ const usePublish = () => {
+-	return useMutation({
+-		mutationFn: () => saveGlobalClasses({ context: 'frontend' }),
++	return useMutation( {
++		mutationFn: () => saveGlobalClasses( { context: 'frontend' } ),
+ 		onSuccess: async () => {
+-			setDocumentModifiedStatus(false);
++			setDocumentModifiedStatus( false );
+ 
+-			if (hasDeletedItems()) {
++			if ( hasDeletedItems() ) {
+ 				await onDelete();
+ 			}
+ 		},
+-	});
++	} );
+ };
+Index: packages/packages/core/editor-global-classes/src/components/class-manager/global-classes-list.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/class-manager/global-classes-list.tsx b/packages/packages/core/editor-global-classes/src/components/class-manager/global-classes-list.tsx
+--- a/packages/packages/core/editor-global-classes/src/components/class-manager/global-classes-list.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/components/class-manager/global-classes-list.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -1,6 +1,6 @@
+ import * as React from 'react';
+ import { useEffect, useMemo } from 'react';
+-import { type StyleDefinitionID } from '@elementor/editor-styles';
++import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
+ import { __useDispatch as useDispatch } from '@elementor/store';
+ import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
+ import { __ } from '@wordpress/i18n';
+@@ -9,145 +9,172 @@
+ import { useFilters } from '../../hooks/use-filters';
+ import { useOrderedClasses } from '../../hooks/use-ordered-classes';
+ import { slice } from '../../store';
++import { useFilterAndSortContext } from '../filter-and-sort/context';
++import { useSearchContext } from '../search-css-class/context';
++import { getNotFoundConfig, type NotFoundType } from '../shared/not-found/config';
+ import { ClassItem } from './class-item';
+-import { CssClassNotFound } from './class-manager-class-not-found';
+ import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
+ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
+ import { SortableItem, SortableProvider } from './sortable';
+ 
++const getNotFoundType = (
++	searchValue: string,
++	filters: string[] | null | undefined,
++	filteredClasses: StyleDefinition[]
++): NotFoundType | undefined => {
++	const searchNotFound = filteredClasses.length <= 0 && searchValue.length > 1;
++	const filterNotFound = filters && filters.length === 0;
++	const filterAndSearchNotFound = searchNotFound && filterNotFound;
++
++	if ( filterAndSearchNotFound ) {
++		return 'filterAndSearch';
++	}
++	if ( searchNotFound ) {
++		return 'search';
++	}
++	if ( filterNotFound ) {
++		return 'filter';
++	}
++	return undefined;
++};
++
+ type GlobalClassesListProps = {
+ 	disabled?: boolean;
+-	searchValue: string;
+-	onSearch: (searchValue: string) => void;
+ };
+ 
+-export const GlobalClassesList = ({ disabled, searchValue, onSearch }: GlobalClassesListProps) => {
++export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
++	const { debouncedValue: searchValue, onClearSearch } = useSearchContext();
+ 	const cssClasses = useOrderedClasses();
+ 	const dispatch = useDispatch();
+ 	const filters = useFilters();
+-
+-	const [classesOrder, reorderClasses] = useReorder();
++	const { onReset } = useFilterAndSortContext();
++	const [ classesOrder, reorderClasses ] = useReorder();
+ 
+ 	const lowercaseLabels = useMemo(
+ 		() =>
+-			cssClasses.map((cssClass) => ({
++			cssClasses.map( ( cssClass ) => ( {
+ 				...cssClass,
+ 				lowerLabel: cssClass.label.toLowerCase(),
+-			})),
+-		[cssClasses]
++			} ) ),
++		[ cssClasses ]
+ 	);
+ 
+-	const filteredClasses = useMemo(() => {
++	const filteredClasses = useMemo( () => {
+ 		return searchValue.length > 1
+-			? lowercaseLabels.filter((cssClass) =>
+-					cssClass.lowerLabel.toLowerCase().includes(searchValue.toLowerCase())
++			? lowercaseLabels.filter( ( cssClass ) =>
++					cssClass.lowerLabel.toLowerCase().includes( searchValue.toLowerCase() )
+ 			  )
+ 			: cssClasses;
+-	}, [searchValue, cssClasses, lowercaseLabels]);
++	}, [ searchValue, cssClasses, lowercaseLabels ] );
+ 
+-	const filteredByCategory = useMemo(() => {
+-		return filters ? filteredClasses.filter((cssClass) => filters.includes(cssClass.id)) : filteredClasses;
+-	}, [filteredClasses, filters]);
++	const filteredByCategory = useMemo( () => {
++		return filters ? filteredClasses.filter( ( cssClass ) => filters.includes( cssClass.id ) ) : filteredClasses;
++	}, [ filteredClasses, filters ] );
+ 
+-	useEffect(() => {
+-		const handler = (event: KeyboardEvent) => {
+-			if (event.key === 'z' && (event.ctrlKey || event.metaKey)) {
++	useEffect( () => {
++		const handler = ( event: KeyboardEvent ) => {
++			if ( event.key === 'z' && ( event.ctrlKey || event.metaKey ) ) {
+ 				event.stopImmediatePropagation();
+ 				event.preventDefault();
+-				if (event.shiftKey) {
+-					dispatch(slice.actions.redo());
++				if ( event.shiftKey ) {
++					dispatch( slice.actions.redo() );
+ 					return;
+ 				}
+-				dispatch(slice.actions.undo());
++				dispatch( slice.actions.undo() );
+ 			}
+ 		};
+-		window.addEventListener('keydown', handler, {
++		window.addEventListener( 'keydown', handler, {
+ 			capture: true,
+-		});
+-		return () => window.removeEventListener('keydown', handler);
+-	}, [dispatch]);
++		} );
++		return () => window.removeEventListener( 'keydown', handler );
++	}, [ dispatch ] );
+ 
+-	if (!cssClasses?.length) {
++	if ( ! cssClasses?.length ) {
+ 		return <EmptyState />;
+ 	}
+ 
++	const shouldShowNotFound = getNotFoundConfig( {
++		onClearFilter: onReset,
++		onClearSearch,
++		searchValue,
++		notFoundType: getNotFoundType( searchValue, filters, filteredClasses ),
++	} );
++
++	if ( shouldShowNotFound !== null ) {
++		return shouldShowNotFound;
++	}
+ 	return (
+ 		<DeleteConfirmationProvider>
+-			{filteredClasses.length <= 0 && searchValue.length > 1 ? (
+-				<CssClassNotFound onClear={() => onSearch('')} searchValue={searchValue} />
+-			) : (
+-				<List sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+-					{filters && (
+-						<Typography variant="subtitle2" color="text.primary">
+-							{__('We found ${number} classes:', 'elementor').replace(
+-								'${number}',
+-								filters.length.toString()
+-							)}
+-						</Typography>
+-					)}
+-					<SortableProvider value={classesOrder} onChange={reorderClasses}>
+-						{filteredByCategory?.map(({ id, label }) => {
+-							return (
+-								<SortableItem key={id} id={id}>
+-									{({ isDragged, isDragPlaceholder, triggerProps, triggerStyle }) => (
+-										<ClassItem
+-											isSearchActive={searchValue.length < 2}
+-											id={id}
+-											label={label}
+-											renameClass={(newLabel: string) => {
+-												dispatch(
+-													slice.actions.update({
+-														style: {
+-															id,
+-															label: newLabel,
+-														},
+-													})
+-												);
+-											}}
+-											selected={isDragged}
+-											disabled={disabled || isDragPlaceholder}
+-											sortableTriggerProps={{ ...triggerProps, style: triggerStyle }}
+-										/>
+-									)}
+-								</SortableItem>
+-							);
+-						})}
+-					</SortableProvider>
+-				</List>
+-			)}
++			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
++				{ filters && (
++					<Typography variant="subtitle2" color="text.primary">
++						{ __( 'We found ${number} classes:', 'elementor' ).replace(
++							'${number}',
++							filters.length.toString()
++						) }
++					</Typography>
++				) }
++				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
++					{ filteredByCategory?.map( ( { id, label } ) => {
++						return (
++							<SortableItem key={ id } id={ id }>
++								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
++									<ClassItem
++										id={ id }
++										label={ label }
++										renameClass={ ( newLabel: string ) => {
++											dispatch(
++												slice.actions.update( {
++													style: {
++														id,
++														label: newLabel,
++													},
++												} )
++											);
++										} }
++										selected={ isDragged }
++										disabled={ disabled || isDragPlaceholder }
++										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
++									/>
++								) }
++							</SortableItem>
++						);
++					} ) }
++				</SortableProvider>
++			</List>
+ 		</DeleteConfirmationProvider>
+ 	);
+ };
+ 
+ const EmptyState = () => (
+-	<Stack alignItems="center" gap={1.5} pt={10} px={0.5} maxWidth="260px" margin="auto">
++	<Stack alignItems="center" gap={ 1.5 } pt={ 10 } px={ 0.5 } maxWidth="260px" margin="auto">
+ 		<FlippedColorSwatchIcon fontSize="large" />
+ 		<StyledHeader variant="subtitle2" component="h2" color="text.secondary">
+-			{__('There are no global classes yet.', 'elementor')}
++			{ __( 'There are no global classes yet.', 'elementor' ) }
+ 		</StyledHeader>
+ 		<Typography align="center" variant="caption" color="text.secondary">
+-			{__(
++			{ __(
+ 				'CSS classes created in the editor panel will appear here. Once they are available, you can arrange their hierarchy, rename them, or delete them as needed.',
+ 				'elementor'
+-			)}
++			) }
+ 		</Typography>
+ 	</Stack>
+ );
+ 
+ // Override panel reset styles.
+-const StyledHeader = styled(Typography)<TypographyProps>(({ theme, variant }) => ({
++const StyledHeader = styled( Typography )< TypographyProps >( ( { theme, variant } ) => ( {
+ 	'&.MuiTypography-root': {
+-		...(theme.typography[variant as keyof typeof theme.typography] as React.CSSProperties),
++		...( theme.typography[ variant as keyof typeof theme.typography ] as React.CSSProperties ),
+ 	},
+-}));
++} ) );
+ 
+ const useReorder = () => {
+ 	const dispatch = useDispatch();
+ 	const order = useClassesOrder();
+ 
+-	const reorder = (newIds: StyleDefinitionID[]) => {
+-		dispatch(slice.actions.setOrder(newIds));
++	const reorder = ( newIds: StyleDefinitionID[] ) => {
++		dispatch( slice.actions.setOrder( newIds ) );
+ 	};
+ 
+-	return [order, reorder] as const;
++	return [ order, reorder ] as const;
+ };
+Index: packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/active-filters.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/active-filters.tsx b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/active-filters.tsx
+--- a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/active-filters.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/active-filters.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -9,36 +9,33 @@
+ export const ActiveFilters = () => {
+ 	const { checked, setChecked } = useFilterAndSortContext();
+ 
+-	const handleRemoveFilter = React.useCallback(
+-		(filterKey: keyof typeof checked) => {
+-			setChecked((prev) => ({ ...prev, [filterKey]: false }));
+-		},
+-		[setChecked]
+-	);
++	const handleRemoveFilter = ( filterKey: keyof typeof checked ) => {
++		setChecked( ( prev ) => ( { ...prev, [ filterKey ]: false } ) );
++	};
+ 
+-	const showClearIcon = Object.values(checked).some((value) => value);
++	const showClearIcon = Object.values( checked ).some( ( value ) => value );
+ 
+ 	return (
+ 		<Stack direction="row" alignItems="center" justifyContent="space-between">
+-			<Stack direction="row" gap={0.5} alignItems="center" flexWrap="wrap">
+-				{Object.entries(checked).map(
+-					([key, value]) =>
++			<Stack direction="row" gap={ 0.5 } alignItems="center" flexWrap="wrap">
++				{ Object.entries( checked ).map(
++					( [ key, value ] ) =>
+ 						value && (
+ 							<Chip
+ 								size="tiny"
+-								key={key}
+-								label={checkBoxItems.find((item) => item.value === key)?.label}
+-								onDelete={handleRemoveFilter}
++								key={ key }
++								label={ checkBoxItems.find( ( item ) => item.value === key )?.label }
++								onDelete={ () => handleRemoveFilter( key as keyof typeof checked ) }
+ 							/>
+ 						)
+-				)}
++				) }
+ 			</Stack>
+-			{showClearIcon && (
++			{ showClearIcon && (
+ 				<ClearIconButton
+-					tooltipText={__('Clear Filters', 'elementor')}
+-					sxStyle={{ margin: '0 0 auto auto', p: 0 }}
++					tooltipText={ __( 'Clear Filters', 'elementor' ) }
++					sxStyle={ { margin: '0 0 auto auto', p: 0 } }
+ 				/>
+-			)}
++			) }
+ 		</Stack>
+ 	);
+ };
+Index: packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/clear-icon-button.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/clear-icon-button.tsx b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/clear-icon-button.tsx
+--- a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/clear-icon-button.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/clear-icon-button.tsx	(revision 3def7da67c33f17d09e5b734108f6895237ca5d2)
+@@ -1,17 +1,17 @@
+ import * as React from 'react';
+-import { ClearIcon } from '@elementor/icons';
++import { BrushBigIcon } from '@elementor/icons';
+ import { IconButton, type SxProps, type Theme, Tooltip } from '@elementor/ui';
+ 
+ import { useFilterAndSortContext } from '../context';
+ 
+-type ClearIconButtonProps = { tooltipText: React.ReactNode; sxStyle?: SxProps<Theme> };
++type ClearIconButtonProps = { tooltipText: React.ReactNode; sxStyle?: SxProps< Theme > };
+ 
+-export const ClearIconButton = ({ tooltipText, sxStyle }: ClearIconButtonProps) => {
++export const ClearIconButton = ( { tooltipText, sxStyle }: ClearIconButtonProps ) => {
+ 	const { onReset } = useFilterAndSortContext();
+ 	return (
+-		<Tooltip title={tooltipText} placement="top">
+-			<IconButton key={'clear-filters'} size="tiny" onClick={onReset} sx={sxStyle}>
+-				<ClearIcon fontSize="tiny" />
++		<Tooltip title={ tooltipText } placement="top">
++			<IconButton key={ 'clear-filters' } size="tiny" onClick={ onReset } sx={ sxStyle }>
++				<BrushBigIcon fontSize="tiny" />
+ 			</IconButton>
+ 		</Tooltip>
+ 	);
+Index: packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/css-class-filter.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/css-class-filter.tsx b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/css-class-filter.tsx
+--- a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/css-class-filter.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/css-class-filter.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -8,39 +8,41 @@
+ import { FilterList } from './filter-list';
+ 
+ export const CssClassFilter = () => {
+-	const popupState = usePopupState({
++	const popupState = usePopupState( {
+ 		variant: 'popover',
+ 		disableAutoFocus: true,
+-	});
++	} );
+ 
+ 	return (
+ 		<>
+-			<Tooltip title={__('Filters', 'elementor')} placement="top">
+-				<ToggleButton value="filter" size="small" {...bindToggle(popupState)}>
++			<Tooltip title={ __( 'Filters', 'elementor' ) } placement="top">
++				<ToggleButton value="filter" size="small" { ...bindToggle( popupState ) }>
+ 					<FilterIcon fontSize="inherit" />
+ 				</ToggleButton>
+ 			</Tooltip>
+ 			<Popover
+-				sx={{
++				sx={ {
+ 					maxWidth: '344px',
+-				}}
+-				anchorOrigin={{
++				} }
++				anchorOrigin={ {
+ 					vertical: 'top',
+ 					horizontal: 'right',
+-				}}
+-				transformOrigin={{
++				} }
++				transformOrigin={ {
+ 					vertical: 'top',
+ 					horizontal: -21,
+-				}}
+-				{...bindPopover(popupState)}
++				} }
++				{ ...bindPopover( popupState ) }
+ 			>
+ 				<PopoverHeader
+-					actions={[<ClearIconButton key="clear-all-button" tooltipText={__('Clear all', 'elementor')} />]}
+-					onClose={popupState.close}
+-					title={__('Filters', 'elementor')}
+-					icon={<FilterIcon />}
++					actions={ [
++						<ClearIconButton key="clear-all-button" tooltipText={ __( 'Clear all', 'elementor' ) } />,
++					] }
++					onClose={ popupState.close }
++					title={ __( 'Filters', 'elementor' ) }
++					icon={ <FilterIcon /> }
+ 				/>
+-				<PopoverBody width={344} height={'auto'}>
++				<PopoverBody width={ 344 } height={ 'auto' }>
+ 					<FilterList />
+ 				</PopoverBody>
+ 			</Popover>
+Index: packages/packages/core/editor-global-classes/src/components/search-css-class/components/class-manager-search.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/search-css-class/components/class-manager-search.tsx b/packages/packages/core/editor-global-classes/src/components/search-css-class/components/class-manager-search.tsx
+new file mode 100644
+--- /dev/null	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
++++ b/packages/packages/core/editor-global-classes/src/components/search-css-class/components/class-manager-search.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -0,0 +1,31 @@
++import * as React from 'react';
++import { SearchIcon } from '@elementor/icons';
++import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
++import { __ } from '@wordpress/i18n';
++
++import { useSearchContext } from '../context';
++
++export const ClassManagerSearch = () => {
++	const { inputValue, handleChange } = useSearchContext();
++	return (
++		<Stack direction="row" gap={ 0.5 } sx={ { width: '100%' } }>
++			<Box sx={ { flexGrow: 1 } }>
++				<TextField
++					role={ 'search' }
++					fullWidth
++					size={ 'tiny' }
++					value={ inputValue }
++					placeholder={ __( 'Search', 'elementor' ) }
++					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
++					InputProps={ {
++						startAdornment: (
++							<InputAdornment position="start">
++								<SearchIcon fontSize={ 'tiny' } />
++							</InputAdornment>
++						),
++					} }
++				/>
++			</Box>
++		</Stack>
++	);
++};
+Index: packages/packages/core/editor-global-classes/src/components/search-css-class/context.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/search-css-class/context.tsx b/packages/packages/core/editor-global-classes/src/components/search-css-class/context.tsx
+new file mode 100644
+--- /dev/null	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
++++ b/packages/packages/core/editor-global-classes/src/components/search-css-class/context.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -0,0 +1,46 @@
++import * as React from 'react';
++import { createContext, type ReactElement, useCallback, useContext } from 'react';
++import { useDebounceState } from '@elementor/utils';
++
++type SearchContextType = {
++	debouncedValue: string;
++	inputValue: string;
++	handleChange: ( value: string ) => void;
++	onClearSearch: () => void;
++	isSearchActive: boolean;
++};
++
++const SearchContext = createContext< SearchContextType | undefined >( undefined );
++
++export const SearchContextProvider = ( { children }: { children: ReactElement } ) => {
++	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
++		delay: 300,
++		initialValue: '',
++	} );
++
++	const onClearSearch = useCallback( () => {
++		handleChange( '' );
++	}, [ handleChange ] );
++
++	return (
++		<SearchContext.Provider
++			value={ {
++				debouncedValue,
++				inputValue,
++				handleChange,
++				onClearSearch,
++				isSearchActive: inputValue.length < 2,
++			} }
++		>
++			{ children }
++		</SearchContext.Provider>
++	);
++};
++
++export const useSearchContext = () => {
++	const context = useContext( SearchContext );
++	if ( ! context ) {
++		throw new Error( 'useSearchContext must be used within a SearchContextProvider' );
++	}
++	return context;
++};
+Index: packages/packages/core/editor-global-classes/src/components/shared/not-found/not-found.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/shared/not-found/not-found.tsx b/packages/packages/core/editor-global-classes/src/components/shared/not-found/not-found.tsx
+new file mode 100644
+--- /dev/null	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
++++ b/packages/packages/core/editor-global-classes/src/components/shared/not-found/not-found.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -0,0 +1,60 @@
++import * as React from 'react';
++import { type FC } from 'react';
++import { Box, Link, Stack, Typography } from '@elementor/ui';
++import { __ } from '@wordpress/i18n';
++
++type NotFoundProps = {
++	searchValue?: string;
++	onClear: () => void;
++	mainText: string;
++	sceneryText: string;
++	icon: React.ReactElement;
++};
++
++export const NotFound: FC< NotFoundProps > = ( { onClear, searchValue, mainText, sceneryText, icon } ) => (
++	<Stack
++		color={ 'text.secondary' }
++		pt={ 5 }
++		alignItems="center"
++		gap={ 1 }
++		overflow={ 'hidden' }
++		maxWidth={ '170px' }
++		justifySelf={ 'center' }
++	>
++		{ icon }
++		<Box>
++			<Typography align="center" variant="subtitle2" color="inherit">
++				{ mainText }
++			</Typography>
++			{ searchValue && (
++				<Typography
++					variant="subtitle2"
++					color="inherit"
++					sx={ {
++						display: 'flex',
++						width: '100%',
++						justifyContent: 'center',
++					} }
++				>
++					<span>&ldquo;</span>
++					<span
++						style={ {
++							maxWidth: '80%',
++							overflow: 'hidden',
++							textOverflow: 'ellipsis',
++						} }
++					>
++						{ searchValue }
++					</span>
++					<span>&rdquo;.</span>
++				</Typography>
++			) }
++		</Box>
++		<Typography align="center" variant="caption" color="inherit">
++			{ sceneryText }
++			<Link color="secondary" variant="caption" component="button" onClick={ onClear }>
++				{ __( 'Clear & try again', 'elementor' ) }
++			</Link>
++		</Typography>
++	</Stack>
++);
+Index: packages/packages/core/editor-global-classes/src/components/shared/search-and-filter-provider.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/shared/search-and-filter-provider.tsx b/packages/packages/core/editor-global-classes/src/components/shared/search-and-filter-provider.tsx
+new file mode 100644
+--- /dev/null	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
++++ b/packages/packages/core/editor-global-classes/src/components/shared/search-and-filter-provider.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -0,0 +1,17 @@
++import * as React from 'react';
++import { type FC } from 'react';
++
++import { FilterAndSortProvider } from '../filter-and-sort/context';
++import { SearchContextProvider } from '../search-css-class/context';
++
++type SearchAndFilterProviderProps = {
++	children: React.ReactElement;
++};
++
++export const SearchAndFilterProvider: FC< SearchAndFilterProviderProps > = ( { children } ) => {
++	return (
++		<SearchContextProvider>
++			<FilterAndSortProvider>{ children }</FilterAndSortProvider>
++		</SearchContextProvider>
++	);
++};
+Index: packages/packages/core/editor-global-classes/src/hooks/use-filtered-css-class-usage.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/hooks/use-filtered-css-class-usage.tsx b/packages/packages/core/editor-global-classes/src/hooks/use-filtered-css-class-usage.tsx
+--- a/packages/packages/core/editor-global-classes/src/hooks/use-filtered-css-class-usage.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/hooks/use-filtered-css-class-usage.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -6,23 +6,23 @@
+ import { useCssClassUsage } from './use-css-class-usage';
+ import { useAllCssClassesIDs, useEmptyCssClass } from './use-empty-css-class';
+ 
+-type FilteredCssClassUsage = Record<FilterKey, string[]>;
++type FilteredCssClassUsage = Record< FilterKey, string[] >;
+ 
+-const findCssClassKeysByPageID = (data: EnhancedCssClassUsage, pageId: number) => {
++const findCssClassKeysByPageID = ( data: EnhancedCssClassUsage, pageId: number ) => {
+ 	const result: string[] = [];
+-	for (const key in data) {
+-		data[key].content.forEach((content: CssClassUsageContent) => {
+-			if (+content.pageId === pageId) {
+-				result.push(key);
++	for ( const key in data ) {
++		data[ key ].content.forEach( ( content: CssClassUsageContent ) => {
++			if ( +content.pageId === pageId ) {
++				result.push( key );
+ 			}
+-		});
++		} );
+ 	}
+ 	return result;
+ };
+ 
+-const getUnusedClasses = (usedCssClass: string[], potentialUnused: string[]): string[] => {
+-	const set = new Set(usedCssClass);
+-	return potentialUnused.filter((cssClass: string) => !set.has(cssClass));
++const getUnusedClasses = ( usedCssClass: string[], potentialUnused: string[] ): string[] => {
++	const set = new Set( usedCssClass );
++	return potentialUnused.filter( ( cssClass: string ) => ! set.has( cssClass ) );
+ };
+ 
+ const EMPTY_FILTERED_CSS_CLASS_RESPONSE: FilteredCssClassUsage = {
+@@ -37,24 +37,24 @@
+ 	const { data, isLoading } = useCssClassUsage();
+ 	const listOfCssClasses = useAllCssClassesIDs();
+ 
+-	const emptyCssClassesIDs = useMemo(() => emptyCssClasses.map(({ id }) => id), [emptyCssClasses]);
++	const emptyCssClassesIDs = useMemo( () => emptyCssClasses.map( ( { id } ) => id ), [ emptyCssClasses ] );
+ 
+-	const onThisPage = useMemo(() => {
+-		if (!data || !document) {
++	const onThisPage = useMemo( () => {
++		if ( ! data || ! document ) {
+ 			return [];
+ 		}
+-		return findCssClassKeysByPageID(data, document.id);
+-	}, [data, document]);
++		return findCssClassKeysByPageID( data, document.id );
++	}, [ data, document ] );
+ 
+-	const unused = useMemo(() => {
+-		if (!data) {
++	const unused = useMemo( () => {
++		if ( ! data ) {
+ 			return [];
+ 		}
+ 
+-		return getUnusedClasses(Object.keys(data), listOfCssClasses);
+-	}, [data, listOfCssClasses]);
++		return getUnusedClasses( Object.keys( data ), listOfCssClasses );
++	}, [ data, listOfCssClasses ] );
+ 
+-	if (isLoading || !data || !document) {
++	if ( isLoading || ! data || ! document ) {
+ 		return EMPTY_FILTERED_CSS_CLASS_RESPONSE;
+ 	}
+ 
+Index: packages/packages/core/editor-global-classes/src/hooks/use-filters.ts
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/hooks/use-filters.ts b/packages/packages/core/editor-global-classes/src/hooks/use-filters.ts
+--- a/packages/packages/core/editor-global-classes/src/hooks/use-filters.ts	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ b/packages/packages/core/editor-global-classes/src/hooks/use-filters.ts	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
+@@ -9,16 +9,16 @@
+ 	const allFilters = useFilteredCssClassUsage();
+ 
+ 	// Collect only the active filter keys
+-	const activeKeys = Object.keys(checked).filter((key) => checked[key]) as FilterKey[];
++	const activeKeys = Object.keys( checked ).filter( ( key ) => checked[ key as FilterKey ] ) as FilterKey[];
+ 
+-	const intersection = useMemo(() => {
+-		if (activeKeys.length === 0) return null;
++	return useMemo( () => {
++		if ( activeKeys.length === 0 ) {
++			return null;
++		}
+ 
+ 		// Start with the values of the first active filter
+ 		return activeKeys
+-			.map((key) => allFilters[key] || [])
+-			.reduce((acc, arr) => acc.filter((val) => arr.includes(val)));
+-	}, [activeKeys, allFilters]);
+-
+-	return intersection;
++			.map( ( key ) => allFilters[ key ] || [] )
++			.reduce( ( acc, arr ) => acc.filter( ( val ) => arr.includes( val ) ) );
++	}, [ activeKeys, allFilters ] );
+ };
+Index: packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/labeld-checkbox.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/labeld-checkbox.tsx b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/labeld-checkbox.tsx
+--- a/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/labeld-checkbox.tsx	(revision 632b3d0c61bb9026778fdd3d0430d71c714770a4)
++++ b/packages/packages/core/editor-global-classes/src/components/filter-and-sort/components/labeld-checkbox.tsx	(revision 58d55d0f87f39016e90958eb69e98c6bafddb138)
+@@ -8,12 +8,12 @@
+ 	checked: boolean;
+ };
+ 
+-export const LabeledCheckbox = ({ label, suffix, onClick, checked }: LabeledCheckboxProps) => (
+-	<MenuItem onClick={onClick}>
+-		<Stack direction="row" alignItems="center" gap={0.5} flex={1}>
++export const LabeledCheckbox = ( { label, suffix, onClick, checked }: LabeledCheckboxProps ) => (
++	<MenuItem onClick={ onClick }>
++		<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 }>
+ 			<Checkbox
+-				checked={checked}
+-				sx={{
++				checked={ checked }
++				sx={ {
+ 					padding: 0,
+ 					color: 'text.tertiary',
+ 					'&:hover': {
+@@ -25,12 +25,12 @@
+ 					'&.Mui-checked': {
+ 						color: 'text.tertiary',
+ 					},
+-				}}
++				} }
+ 			/>
+-			<Typography variant="caption" sx={{ color: 'text.secondary' }}>
+-				{label}
++			<Typography variant="caption" sx={ { color: 'text.secondary' } }>
++				{ label }
+ 			</Typography>
+-			{suffix}
++			{ suffix }
+ 		</Stack>
+ 	</MenuItem>
+ );
+Index: packages/packages/core/editor-global-classes/src/components/shared/not-found/config.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/shared/not-found/config.tsx b/packages/packages/core/editor-global-classes/src/components/shared/not-found/config.tsx
+new file mode 100644
+--- /dev/null	(revision 58d55d0f87f39016e90958eb69e98c6bafddb138)
++++ b/packages/packages/core/editor-global-classes/src/components/shared/not-found/config.tsx	(revision 58d55d0f87f39016e90958eb69e98c6bafddb138)
+@@ -0,0 +1,58 @@
++import * as React from 'react';
++import { ColorSwatchIcon, PhotoIcon } from '@elementor/icons';
++import { __ } from '@wordpress/i18n';
++
++import { NotFound } from './not-found';
++
++export type NotFoundType = 'filter' | 'search' | 'filterAndSearch';
++
++const config = {
++	filterAndSearch: {
++		mainText: __( 'Sorry, nothing matched.', 'elementor' ),
++		sceneryText: __( 'Try something else.', 'elementor' ),
++		icon: <PhotoIcon color="inherit" fontSize="large" />,
++	},
++	search: {
++		mainText: __( 'Sorry, nothing matched', 'elementor' ),
++		sceneryText: __( 'Clear your input and try something else.', 'elementor' ),
++		icon: <PhotoIcon color="inherit" fontSize="large" />,
++	},
++	filter: {
++		mainText: __( 'Sorry, nothing matched that search.', 'elementor' ),
++		sceneryText: __( 'Clear the filters and try something else.', 'elementor' ),
++		icon: <ColorSwatchIcon color="inherit" fontSize="large" />,
++	},
++};
++
++type GetNotFoundConfigProps = {
++	onClearSearch: () => void;
++	onClearFilter: () => void;
++	searchValue: string;
++	notFoundType: NotFoundType | undefined;
++};
++
++export const getNotFoundConfig = ( {
++	onClearSearch,
++	onClearFilter,
++	searchValue,
++	notFoundType,
++}: GetNotFoundConfigProps ): React.ReactElement | null => {
++	switch ( notFoundType ) {
++		case 'filter':
++			return <NotFound { ...config.filter } onClear={ onClearFilter } />;
++		case 'search':
++			return <NotFound { ...config.search } searchValue={ searchValue } onClear={ onClearSearch } />;
++		case 'filterAndSearch':
++			return (
++				<NotFound
++					{ ...config.filterAndSearch }
++					onClear={ () => {
++						onClearFilter();
++						onClearSearch();
++					} }
++				/>
++			);
++		default:
++			return null;
++	}
++};
+Index: packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-class-not-found.tsx
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-class-not-found.tsx b/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-class-not-found.tsx
+deleted file mode 100644
+--- a/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-class-not-found.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ /dev/null	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
+@@ -1,56 +0,0 @@
+-import * as React from 'react';
+-import { Box, Link, Stack, Typography } from '@elementor/ui';
+-import { __ } from '@wordpress/i18n';
+-
+-import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
+-
+-type CssClassNotFoundedProps = {
+-	searchValue: string;
+-	onClear: () => void;
+-};
+-
+-export const CssClassNotFound = ({ onClear, searchValue }: CssClassNotFoundedProps) => (
+-	<Stack
+-		color={'text.secondary'}
+-		pt={5}
+-		alignItems="center"
+-		gap={1}
+-		overflow={'hidden'}
+-		maxWidth={'170px'}
+-		justifySelf={'center'}
+-	>
+-		<FlippedColorSwatchIcon color={'inherit'} fontSize="large" />
+-		<Box>
+-			<Typography align="center" variant="subtitle2" color="inherit">
+-				{__('Sorry, nothing matched', 'elementor')}
+-			</Typography>
+-			<Typography
+-				variant="subtitle2"
+-				color="inherit"
+-				sx={{
+-					display: 'flex',
+-					width: '100%',
+-					justifyContent: 'center',
+-				}}
+-			>
+-				<span>&ldquo;</span>
+-				<span
+-					style={{
+-						maxWidth: '80%',
+-						overflow: 'hidden',
+-						textOverflow: 'ellipsis',
+-					}}
+-				>
+-					{searchValue}
+-				</span>
+-				<span>&rdquo;.</span>
+-			</Typography>
+-		</Box>
+-		<Typography align="center" variant="caption" color="inherit">
+-			{__('Try something else.', 'elementor')}
+-			<Link color="secondary" variant="caption" component="button" onClick={onClear}>
+-				{__('Clear & try again', 'elementor')}
+-			</Link>
+-		</Typography>
+-	</Stack>
+-);
+Index: packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-search.tsx
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-search.tsx b/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-search.tsx
+deleted file mode 100644
+--- a/packages/packages/core/editor-global-classes/src/components/class-manager/class-manager-search.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ /dev/null	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
+@@ -1,31 +0,0 @@
+-import * as React from 'react';
+-import { SearchIcon } from '@elementor/icons';
+-import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
+-import { __ } from '@wordpress/i18n';
+-
+-type ClassMangerSearchProps = {
+-	searchValue: string;
+-	onChange: ( value: string ) => void;
+-};
+-
+-export const ClassManagerSearch = ( { searchValue, onChange }: ClassMangerSearchProps ) => (
+-	<Stack direction="row" gap={ 0.5 } sx={ { width: '100%' } }>
+-		<Box sx={ { flexGrow: 1 } }>
+-			<TextField
+-				role={ 'search' }
+-				fullWidth
+-				size={ 'tiny' }
+-				value={ searchValue }
+-				placeholder={ __( 'Search', 'elementor' ) }
+-				onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => onChange( e.target.value ) }
+-				InputProps={ {
+-					startAdornment: (
+-						<InputAdornment position="start">
+-							<SearchIcon fontSize={ 'tiny' } />
+-						</InputAdornment>
+-					),
+-				} }
+-			/>
+-		</Box>
+-	</Stack>
+-);
+Index: packages/packages/core/editor-global-classes/src/components/shared/not-found.tsx
+===================================================================
+diff --git a/packages/packages/core/editor-global-classes/src/components/shared/not-found.tsx b/packages/packages/core/editor-global-classes/src/components/shared/not-found.tsx
+deleted file mode 100644
+--- a/packages/packages/core/editor-global-classes/src/components/shared/not-found.tsx	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
++++ /dev/null	(revision add13f2c5e19c8bcb2ad73dac732b055e0797253)
+@@ -1,56 +0,0 @@
+-import * as React from 'react';
+-import { Box, Link, Stack, Typography } from '@elementor/ui';
+-import { __ } from '@wordpress/i18n';
+-
+-import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
+-
+-type CssClassNotFoundedProps = {
+-	searchValue: string;
+-	onClear: () => void;
+-};
+-
+-export const NotFound = ({ onClear, searchValue, mainText, sceontdryText, icon: Icon }: CssClassNotFoundedProps) => (
+-	<Stack
+-		color={'text.secondary'}
+-		pt={5}
+-		alignItems="center"
+-		gap={1}
+-		overflow={'hidden'}
+-		maxWidth={'170px'}
+-		justifySelf={'center'}
+-	>
+-		<Icon color={'inherit'} fontSize="large" />
+-		<Box>
+-			<Typography align="center" variant="subtitle2" color="inherit">
+-				{mainText}
+-			</Typography>
+-			<Typography
+-				variant="subtitle2"
+-				color="inherit"
+-				sx={{
+-					display: 'flex',
+-					width: '100%',
+-					justifyContent: 'center',
+-				}}
+-			>
+-				<span>&ldquo;</span>
+-				<span
+-					style={{
+-						maxWidth: '80%',
+-						overflow: 'hidden',
+-						textOverflow: 'ellipsis',
+-					}}
+-				>
+-					{searchValue}
+-				</span>
+-				<span>&rdquo;.</span>
+-			</Typography>
+-		</Box>
+-		<Typography align="center" variant="caption" color="inherit">
+-			{sceontdryText}
+-			<Link color="secondary" variant="caption" component="button" onClick={onClear}>
+-				{__('Clear & try again', 'elementor')}
+-			</Link>
+-		</Typography>
+-	</Stack>
+-);
