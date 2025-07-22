@@ -7,7 +7,6 @@ type Updater< T > = ( prev?: T ) => T;
 export type CreateOptions = {
 	base?: unknown;
 	disabled?: boolean;
-	overrideKey?: string;
 };
 
 export type PropTypeUtil< TKey extends string, TValue extends PropValue > = ReturnType<
@@ -55,7 +54,7 @@ export function createPropUtils< TKey extends string, TValue extends PropValue >
 
 		if ( ! base ) {
 			return {
-				$$type: ( createOptions?.overrideKey as TKey ) || key,
+				$$type: key,
 				value: fn(),
 				...( disabled && { disabled } ),
 			};
@@ -66,7 +65,7 @@ export function createPropUtils< TKey extends string, TValue extends PropValue >
 		}
 
 		return {
-			$$type: ( createOptions?.overrideKey as TKey ) || key,
+			$$type: key,
 			value: fn( base.value ),
 			...( disabled && { disabled } ),
 		};
