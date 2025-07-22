@@ -187,7 +187,7 @@ export const slice = createSlice( {
 
 const getNonEmptyVariants = ( style: StyleDefinition ) => {
 	return style.variants.filter(
-		( { props, custom_css: customCSs }: StyleDefinitionVariant ) => Object.keys( props ).length || customCSs?.raw
+		( { props, custom_css: customCss }: StyleDefinitionVariant ) => Object.keys( props ).length || customCss?.raw
 	);
 };
 
