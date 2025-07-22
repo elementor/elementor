@@ -20,7 +20,7 @@ export function KitContentCustomizationDialog( {
 	const initialState = data.includes.includes( 'content' );
 	const { isLoading: isPagesLoading, pageOptions } = usePages( { skipLoading: ! open } );
 	const { isLoading: isTaxonomiesLoading, taxonomyOptions } = useTaxonomies( { skipLoading: ! open, exclude: [ 'nav_menu' ] } );
-	const { customPostTypes } = useCustomPostTypes();
+	const { customPostTypes } = useCustomPostTypes( { include: [ 'post' ] } );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.content ) {

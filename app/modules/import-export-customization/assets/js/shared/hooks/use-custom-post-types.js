@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react';
-export function useCustomPostTypes() {
+export function useCustomPostTypes( { include = [] } = {}) {
 	const [ customPostTypes, setCustomPostTypes ] = useState( [] );
 
 	useEffect( () => {
-		const cpt = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.content.customPostTypes;
+		const cpt = Object.assign( {}, elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.content?.customPostTypes || {} );
 
-		if ( cpt ) {
+		if ( include.length ) {
+			Object.entries( elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.content || {} ).forEach( ( [ postType, post ] ) => {
+				if ( include.includes( postType ) ) {
+					cpt[ postType ] = post;
+				}
+			} );
+		}
+
+		if ( Object.keys( cpt ).length ) {
 			setCustomPostTypes( Object.entries( cpt ).map( ( [ postType, post ] ) => ( {
 				value: postType,
 				label: post.single,

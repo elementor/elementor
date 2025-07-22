@@ -19,10 +19,22 @@ class Taxonomies extends Export_Runner_Base {
 	public function export( array $data ) {
 		$customization = $data['customization']['content'] ?? [];
 		$include_menus = $customization['menus'] ?? true;
-		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types( $include_menus );
-		$selected_custom_post_types = $data['selected_custom_post_types'] ?? [];
+		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
+		$exclude_post_types = [];
 
-		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
+		if ( ! $include_menus ) {
+			$exclude_post_types[] = 'nav_menu_item';
+		}
+
+		if ( is_array( $selected_custom_post_types ) && ! in_array( 'post', $selected_custom_post_types, true ) ) {
+			$exclude_post_types[] = 'post';
+		}
+
+		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types( $exclude_post_types );
+
+		$post_types = is_array( $selected_custom_post_types )
+			? array_merge( $wp_builtin_post_types, $selected_custom_post_types )
+			: $wp_builtin_post_types;
 
 		$export = $this->export_taxonomies( $post_types, $customization );
 

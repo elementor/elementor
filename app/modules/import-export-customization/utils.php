@@ -67,11 +67,11 @@ class Utils {
 		} );
 	}
 
-	public static function get_builtin_wp_post_types( $include_nav_menu = true ) {
-		$builtin_wp_post_types = [ 'post', 'page' ];
+	public static function get_builtin_wp_post_types( $exclude = [] ) {
+		$builtin_wp_post_types = [ 'post', 'page', 'nav_menu_item' ];
 
-		if ( $include_nav_menu ) {
-			$builtin_wp_post_types[] = 'nav_menu_item';
+		if ( ! empty( $exclude ) ) {
+			return array_diff( $builtin_wp_post_types, $exclude );
 		}
 
 		return $builtin_wp_post_types;

@@ -21,7 +21,17 @@ class Wp_Content extends Export_Runner_Base {
 	public function export( array $data ) {
 		$customization = $data['customization']['content'] ?? null;
 		$include_menus = $customization['menus'] ?? true;
-		$post_types = ImportExportUtils::get_builtin_wp_post_types( $include_menus );
+		$exclude_post_types = [];
+
+		if ( ! $include_menus) {
+			$exclude_post_types[] = 'nav_menu_item';
+		}
+
+		if ( isset( $data['selected_custom_post_types'] ) && ! in_array( 'post',  $data['selected_custom_post_types'], true ) ) {
+			$exclude_post_types[] = 'post';
+		}
+
+		$post_types = ImportExportUtils::get_builtin_wp_post_types( $exclude_post_types );
 		$custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 
 		$files = [];
@@ -38,6 +48,10 @@ class Wp_Content extends Export_Runner_Base {
 		}
 
 		foreach ( $custom_post_types as $post_type ) {
+			// handled in the previous loop
+			if ( 'post' === $post_type ) {
+				continue;
+			}
 			$export = $this->export_wp_post_type( $post_type, $customization );
 
 			if ( ! empty( $export['file'] ) ) {
