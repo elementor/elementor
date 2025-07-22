@@ -122,3 +122,5 @@ jobs:
             The build is available for 3 days.
 
           edit-mode: replace
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
