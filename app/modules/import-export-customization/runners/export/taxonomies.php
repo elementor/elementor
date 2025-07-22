@@ -48,8 +48,7 @@ class Taxonomies extends Export_Runner_Base {
 			$taxonomy_post_types = get_taxonomy( $taxonomy )->object_type;
 			$intersected_post_types = array_intersect( $taxonomy_post_types, $post_types );
 
-			// todo: if empty check if it exists in $selected_taxonomies
-			$should_export = $selected_taxonomies === null
+			$should_export = null === $selected_taxonomies
 				? ! empty( $intersected_post_types )
 				: in_array( $taxonomy, $selected_taxonomies, true );
 

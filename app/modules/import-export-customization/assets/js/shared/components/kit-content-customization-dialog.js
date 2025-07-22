@@ -8,7 +8,7 @@ import { SubSetting } from './customization-sub-setting';
 import { usePages } from '../hooks/use-pages';
 import { useCustomPostTypes } from '../hooks/use-custom-post-types';
 import { useTaxonomies } from '../hooks/use-taxonomies';
-import {CenteredContent} from "./layout";
+import { CenteredContent } from './layout';
 
 export function KitContentCustomizationDialog( {
 	open,
@@ -115,12 +115,13 @@ export function KitContentCustomizationDialog( {
 										key={ taxonomy.value }
 										label={ taxonomy.label }
 										settingKey="taxonomies"
-										checked={ settings.taxonomies.includes( taxonomy.value )}
+										checked={ settings.taxonomies.includes( taxonomy.value ) }
 										onSettingChange={ ( key, isChecked ) => {
 											setSettings( ( prevState ) => {
 												const selectedTaxonomies = isChecked
 													? [ ...prevState.taxonomies, taxonomy.value ]
-													: prevState.taxonomies.filter( ( value ) => value !== taxonomy.value )
+													: prevState.taxonomies.filter( ( value ) => value !== taxonomy.value );
+
 												return {
 													...prevState,
 													taxonomies: selectedTaxonomies,
@@ -128,7 +129,7 @@ export function KitContentCustomizationDialog( {
 											} );
 										} }
 									/>
-								)
+								);
 							} ) }
 						</SettingSection>
 					</Stack>
