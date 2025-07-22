@@ -100,6 +100,19 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		if ( elementor.config.integrationWidgets ) {
+			jQuery.each( elementor.config.integrationWidgets, ( index, widget ) => {
+				elementsCollection.unshift( {
+					name: widget.name,
+					title: widget.title,
+					icon: widget.icon,
+					categories: JSON.parse( widget.categories ),
+					editable: false,
+					integration: true,
+				} );
+			} );
+		} 
+
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
 				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],

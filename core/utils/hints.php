@@ -383,6 +383,53 @@ class Hints {
 		return $plugin;
 	}
 
+	public static function is_plugin_connected( $option_prefix ): bool {
+		return ! empty( get_option( $option_prefix . '_access_token' ) );
+	}
+
+	public static function get_ally_action_data(): array {
+		$plugin_slug = 'pojo-accessibility';
+		$is_installed = self::is_plugin_installed( $plugin_slug );
+		$is_active = self::is_plugin_active( $plugin_slug );
+		$is_connected = self::is_plugin_connected( 'ea11y' );
+
+		$data = [
+			'title' => __( 'Ally web accessibility', 'elementor' ),
+		];
+
+		if ( ! $is_installed) {
+			$data['content'] = __( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' );
+			$data['action_button'] = [
+				'text' => __( 'install Now', 'elementor' ),
+				'url' => self::get_plugin_action_url( $plugin_slug ),
+				'classes' => [ 'elementor-button' ],
+			];
+		} else if ( ! $is_active ) {
+			$data['content'] = __( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' );
+			$data['action_button'] = [
+				'text' => __( 'Activate', 'elementor' ),
+				'url' => self::get_plugin_action_url( $plugin_slug ),
+				'classes' => [ 'elementor-button' ],
+			];
+		} else if ( ! $is_connected ) {
+			$data['content'] = __( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' );
+			$data['action_button'] = [
+				'text' => __( 'Connect', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=accessibility-settings' ),
+				'classes' => [ 'elementor-button' ],
+			];
+		} else {
+			$data['content'] = __( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' );
+			$data['action_button'] = [
+				'text' => __( 'Customize', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=accessibility-settings' ),
+				'classes' => [ 'elementor-button' ],
+			];
+		}
+
+		return $data;
+	}
+
 	/**
 	 * Get_notice_allowed_html
 	 *

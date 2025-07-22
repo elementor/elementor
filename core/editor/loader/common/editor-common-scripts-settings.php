@@ -15,6 +15,7 @@ use Elementor\Shapes;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -99,6 +100,9 @@ class Editor_Common_Scripts_Settings {
 			],
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
+				'integration' => [
+					'ally-accessibility' => Hints::get_ally_action_data(),
+				],
 			],
 			'editor_events' => EditorEventsModule::get_editor_events_config(),
 			'promotions' => [
@@ -117,6 +121,18 @@ class Editor_Common_Scripts_Settings {
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
+		}
+
+		if ( current_user_can( 'manage_options' ) && ! Utils::has_pro() ) {
+			$client_env['integrationWidgets'] = array_merge(
+				( isset( $client_env['integrationWidgets'] ) && is_array( $client_env['integrationWidgets'] ) ?
+				$client_env['integrationWidgets'] :
+				[] ), [ [
+				'categories' => '[ "general" ]',
+				'icon' => 'eicon-accessibility',
+				'name' => 'ally-accessibility',
+				'title' => __( 'Ally accessibility', 'elementor' ),
+			] ] );
 		}
 
 		static::bc_move_document_filters();

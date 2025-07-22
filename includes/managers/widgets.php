@@ -112,7 +112,6 @@ class Widgets_Manager {
 			'sidebar',
 			'read-more',
 			'rating',
-			'ally',
 		];
 
 		$this->_widget_types = [];
