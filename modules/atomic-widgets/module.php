@@ -39,6 +39,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Skew_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Transformer;
@@ -78,6 +79,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Scale_Prop_Typ
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Skew_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -92,9 +94,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
-	const EXPERIMENT_VERSION_3_30 = 'e_v_3_30';
-	const EXPERIMENT_VERSION_3_31 = 'e_v_3_31';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
+	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
+	const EXPERIMENT_UNSTABLE_REPEATER = 'e_unstable_repeater';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -174,18 +176,18 @@ class Module extends BaseModule {
 		]);
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_VERSION_3_30,
-			'title' => esc_html__( 'Version 3.30', 'elementor' ),
-			'description' => esc_html__( 'Features for version 3.30.', 'elementor' ),
+			'name' => self::TRANSITION_EXPERIMENT,
+			'title' => esc_html__( 'Use transition', 'elementor' ),
+			'description' => esc_html__( 'Use transition.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_VERSION_3_31,
-			'title' => esc_html__( 'Version 3.31', 'elementor' ),
-			'description' => esc_html__( 'Features for version 3.31.', 'elementor' ),
+			'name' => self::EXPERIMENT_UNSTABLE_REPEATER,
+			'title' => esc_html__( 'Unstable Repeater', 'elementor' ),
+			'description' => esc_html__( 'Unstable Repeater for Transform control.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -213,11 +215,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Svg() );
 		$widgets_manager->register( new Atomic_Button() );
 		$widgets_manager->register( new Atomic_Youtube() );
-
-		// Register widgets that require version 3.31 experiment
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_VERSION_3_31 ) ) {
-			$widgets_manager->register( new Atomic_Divider() );
-		}
+		$widgets_manager->register( new Atomic_Divider() );
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -254,6 +252,7 @@ class Module extends BaseModule {
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
 		$transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
 		$transformers->register( Backdrop_Filter_Prop_Type::get_key(), new Filter_Transformer() );
+		$transformers->register( Transition_Prop_Type::get_key(), new Transition_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
