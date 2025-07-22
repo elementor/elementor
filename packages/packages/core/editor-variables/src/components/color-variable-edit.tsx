@@ -14,10 +14,9 @@ import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-typ
 import { ColorField } from './fields/color-field';
 import { LabelField } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
-import { EditConfirmationDialog } from './ui/edit-confirmation-dialog';
+import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 
 const SIZE = 'tiny';
-const EDIT_CONFIRMATION_DIALOG_NAME = 'e-variables-edit-confirmation-dialog';
 
 type Props = {
 	editId: string;
@@ -28,7 +27,7 @@ type Props = {
 
 export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( colorVariablePropTypeUtil );
-	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_NAME );
+	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ editConfirmation, setEditConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );

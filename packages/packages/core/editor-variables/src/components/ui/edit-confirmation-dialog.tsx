@@ -14,6 +14,8 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+export const EDIT_CONFIRMATION_DIALOG_ID = 'edit-confirmation-dialog';
+
 export const EditConfirmationDialog = ( {
 	closeDialog,
 	onConfirm,
