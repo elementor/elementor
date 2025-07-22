@@ -173,10 +173,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 			) }
 
 			{ editConfirmation && (
-				<EditConfirmationDialog
-					closeDialog={ closeEditDialog() }
-					onConfirm={ handleSaveVariable }
-				/>
+				<EditConfirmationDialog closeDialog={ closeEditDialog() } onConfirm={ handleSaveVariable } />
 			) }
 		</>
 	);

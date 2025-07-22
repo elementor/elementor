@@ -57,19 +57,17 @@ export const EditConfirmationDialog = ( {
 	}
 
 	return (
-		<Dialog 
-			open 
-			onClose={ handleClose } 
-			aria-labelledby={ TITLE_ID } 
-			maxWidth="xs"
-		>
+		<Dialog open onClose={ handleClose } aria-labelledby={ TITLE_ID } maxWidth="xs">
 			<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 }>
-				<AlertTriangleFilledIcon color="secondary"/>
+				<AlertTriangleFilledIcon color="secondary" />
 				{ __( 'Changes to variables go live right away.', 'elementor' ) }
 			</DialogTitle>
 			<DialogContent>
 				<DialogContentText variant="body2" color="textPrimary">
-					{ __( "Don't worry - all other changes you make will wait until you publish your site.", 'elementor' ) }
+					{ __(
+						"Don't worry - all other changes you make will wait until you publish your site.",
+						'elementor'
+					) }
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions sx={ { justifyContent: 'space-between', alignItems: 'center' } }>
@@ -77,13 +75,13 @@ export const EditConfirmationDialog = ( {
 					control={
 						<Checkbox
 							checked={ dontShowAgain }
-							onChange={ ( event: React.ChangeEvent<HTMLInputElement> ) => setDontShowAgain( event.target.checked ) }
+							onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
+								setDontShowAgain( event.target.checked )
+							}
 							size="small"
 						/>
 					}
-					label={
-						<Typography variant="body2">{ __( "Don't show me again", 'elementor' ) }</Typography>
-					}
+					label={ <Typography variant="body2">{ __( "Don't show me again", 'elementor' ) }</Typography> }
 				/>
 				<div>
 					<Button color="secondary" onClick={ handleNotNow }>
@@ -96,4 +94,4 @@ export const EditConfirmationDialog = ( {
 			</DialogActions>
 		</Dialog>
 	);
-}; 
+};
