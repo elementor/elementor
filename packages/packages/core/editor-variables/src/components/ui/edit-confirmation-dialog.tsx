@@ -34,10 +34,6 @@ export const EditConfirmationDialog = ( {
 		}
 	}, [ isMessageSuppressed, onConfirm ] );
 
-	const handleClose = () => {
-		closeDialog();
-	};
-
 	const handleSave = () => {
 		if ( dontShowAgain ) {
 			suppressMessage();
@@ -45,19 +41,12 @@ export const EditConfirmationDialog = ( {
 		onConfirm?.();
 	};
 
-	const handleNotNow = () => {
-		if ( dontShowAgain ) {
-			suppressMessage();
-		}
-		closeDialog();
-	};
-
 	if ( isMessageSuppressed ) {
 		return null;
 	}
 
 	return (
-		<Dialog open onClose={ handleClose } aria-labelledby={ TITLE_ID } maxWidth="xs">
+		<Dialog open onClose={ closeDialog } aria-labelledby={ TITLE_ID } maxWidth="xs">
 			<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 }>
 				<AlertTriangleFilledIcon color="secondary" />
 				{ __( 'Changes to variables go live right away.', 'elementor' ) }
@@ -84,7 +73,7 @@ export const EditConfirmationDialog = ( {
 					label={ <Typography variant="body2">{ __( "Don't show me again", 'elementor' ) }</Typography> }
 				/>
 				<div>
-					<Button color="secondary" onClick={ handleNotNow }>
+					<Button color="secondary" onClick={ closeDialog }>
 						{ __( 'Not now', 'elementor' ) }
 					</Button>
 					<Button variant="contained" color="secondary" onClick={ handleSave } sx={ { ml: 1 } }>
