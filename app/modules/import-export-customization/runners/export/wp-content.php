@@ -19,7 +19,8 @@ class Wp_Content extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$include_menus = $data['customization']['content']['menus'] ?? true;
+		$customization = $data['customization']['content'] ?? null;
+		$include_menus = $customization['menus'] ?? true;
 		$post_types = ImportExportUtils::get_builtin_wp_post_types( $include_menus );
 		$custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 
@@ -27,14 +28,22 @@ class Wp_Content extends Export_Runner_Base {
 		$manifest_data = [];
 
 		foreach ( $post_types as $post_type ) {
-			$export = $this->export_wp_post_type( $post_type );
-			$files[] = $export['file'];
+			$export = $this->export_wp_post_type( $post_type, $customization );
+
+			if ( ! empty( $export['file'] ) ) {
+				$files[] = $export['file'];
+			}
+
 			$manifest_data['wp-content'][ $post_type ] = $export['manifest_data'];
 		}
 
 		foreach ( $custom_post_types as $post_type ) {
-			$export = $this->export_wp_post_type( $post_type );
-			$files[] = $export['file'];
+			$export = $this->export_wp_post_type( $post_type, $customization );
+
+			if ( ! empty( $export['file'] ) ) {
+				$files[] = $export['file'];
+			}
+
 			$manifest_data['wp-content'][ $post_type ] = $export['manifest_data'];
 
 			$post_type_object = get_post_type_object( $post_type );
@@ -53,8 +62,17 @@ class Wp_Content extends Export_Runner_Base {
 		];
 	}
 
-	private function export_wp_post_type( $post_type ) {
-		$wp_exporter = new WP_Exporter( [
+	private function export_wp_post_type( $post_type, $customization ) {
+		$selected_pages = $customization['pages'] ?? null;
+
+		if ( null !== $selected_pages && empty( $selected_pages ) ) {
+			return [
+				'file' => [],
+				'manifest_data' => [],
+			];
+		}
+
+		$exporter_args = [
 			'content' => $post_type,
 			'status' => 'publish',
 			'limit' => 20,
@@ -65,7 +83,13 @@ class Wp_Content extends Export_Runner_Base {
 				],
 			],
 			'include_post_featured_image_as_attachment' => true,
-		] );
+		];
+
+		if ( ! empty( $selected_pages ) ) {
+			$exporter_args['include'] = $selected_pages;
+		}
+
+		$wp_exporter = new WP_Exporter( $exporter_args );
 
 		$export_result = $wp_exporter->run();
 
