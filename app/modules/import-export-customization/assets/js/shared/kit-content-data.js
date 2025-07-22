@@ -1,5 +1,5 @@
-import KitSettingsCustomizationDialog
-	from '../export/components/kit-settings-customization-dialog';
+import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
+import { KitPluginsCustomizationDialog } from './components/kit-plugins-customization-dialog';
 
 const kitContentData = [
 	{
@@ -19,6 +19,7 @@ const kitContentData = [
 			},
 		},
 		dialog: null,
+		required: false,
 	},
 	{
 		type: 'templates',
@@ -40,6 +41,7 @@ const kitContentData = [
 			},
 		},
 		dialog: null,
+		required: false,
 	},
 	{
 		type: 'settings',
@@ -60,6 +62,7 @@ const kitContentData = [
 			},
 		},
 		dialog: KitSettingsCustomizationDialog,
+		required: false,
 	},
 	{
 		type: 'plugins',
@@ -71,7 +74,8 @@ const kitContentData = [
 				],
 			},
 		},
-		dialog: null,
+		dialog: KitPluginsCustomizationDialog,
+		required: true,
 	},
 ];
 
