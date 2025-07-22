@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
-import { useSuppressedMessage } from '@elementor/editor-current-user';
+import { useState } from 'react';
 import { AlertTriangleFilledIcon } from '@elementor/icons';
 import {
 	Button,
@@ -15,39 +14,27 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const MESSAGE_KEY = 'edit-confirmation-dialog';
-const TITLE_ID = 'edit-confirmation-dialog';
-
 export const EditConfirmationDialog = ( {
 	closeDialog,
 	onConfirm,
+	onSuppressMessage,
 }: {
 	closeDialog: () => void;
 	onConfirm?: () => void;
+	onSuppressMessage?: () => void;
 } ) => {
-	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( MESSAGE_KEY );
 	const [ dontShowAgain, setDontShowAgain ] = useState( false );
-
-	useEffect( () => {
-		if ( isMessageSuppressed ) {
-			onConfirm?.();
-		}
-	}, [ isMessageSuppressed, onConfirm ] );
 
 	const handleSave = () => {
 		if ( dontShowAgain ) {
-			suppressMessage();
+			onSuppressMessage?.();
 		}
 		onConfirm?.();
 	};
 
-	if ( isMessageSuppressed ) {
-		return null;
-	}
-
 	return (
-		<Dialog open onClose={ closeDialog } aria-labelledby={ TITLE_ID } maxWidth="xs">
-			<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 }>
+		<Dialog open onClose={ closeDialog } maxWidth="xs">
+			<DialogTitle display="flex" alignItems="center" gap={ 1 }>
 				<AlertTriangleFilledIcon color="secondary" />
 				{ __( 'Changes to variables go live right away.', 'elementor' ) }
 			</DialogTitle>

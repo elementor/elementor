@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, TextIcon, TrashIcon } from '@elementor/icons';
@@ -16,6 +17,7 @@ import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 
 const SIZE = 'tiny';
+const EDIT_CONFIRMATION_DIALOG_NAME = 'e-variables-edit-confirmation-dialog';
 
 type Props = {
 	editId: string;
@@ -26,6 +28,7 @@ type Props = {
 
 export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( fontVariablePropTypeUtil );
+	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_NAME );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ editConfirmation, setEditConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
@@ -41,7 +44,11 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 	const [ label, setLabel ] = useState( variable.label );
 
 	const handleUpdate = () => {
-		setEditConfirmation( true );
+		if ( isMessageSuppressed ) {
+			handleSaveVariable();
+		} else {
+			setEditConfirmation( true );
+		}
 	};
 
 	const handleSaveVariable = () => {
@@ -172,8 +179,12 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 				/>
 			) }
 
-			{ editConfirmation && (
-				<EditConfirmationDialog closeDialog={ closeEditDialog() } onConfirm={ handleSaveVariable } />
+			{ editConfirmation && ! isMessageSuppressed && (
+				<EditConfirmationDialog
+					closeDialog={ closeEditDialog() }
+					onConfirm={ handleSaveVariable }
+					onSuppressMessage={ suppressMessage }
+				/>
 			) }
 		</>
 	);
