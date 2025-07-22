@@ -11,19 +11,6 @@ import { type ItemProps } from '../types';
 import { UnstableRepeater } from '../unstable-repeater';
 
 describe( 'UnstableRepeater', () => {
-	const createItemSettings = < T extends Record< string, unknown > = Record< string, unknown > >(
-		overrides: Partial< ItemProps< T > > = {}
-	): ItemProps< T > => ( {
-		Icon: ( { value } ) => (
-			<span>Item Icon - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>
-		),
-		Label: ( { value } ) => (
-			<span>Item label - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>
-		),
-		Content: ( { bind } ) => <span>Content - { bind }</span>,
-		...overrides,
-	} );
-
 	const defaultInitialValues = {
 		$$type: 'example',
 		value: 'Hello World',
@@ -49,8 +36,7 @@ describe( 'UnstableRepeater', () => {
 		// Assert.
 		expect( screen.getByText( 'Test Repeater' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
-		expect( screen.queryByText( /Item Icon/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByText( /Item label/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should render the unstable repeater with initial items', () => {
@@ -85,6 +71,9 @@ describe( 'UnstableRepeater', () => {
 		expect( screen.getByText( 'Item label - First Item' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Item Icon - Second Item' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Item label - Second Item' ) ).toBeInTheDocument();
+
+		const openItemButtons = screen.getAllByRole( 'button', { name: 'Open item' } );
+		expect( openItemButtons ).toHaveLength( 2 );
 	} );
 
 	it( 'should add a new item when the add button is clicked', () => {
@@ -195,6 +184,7 @@ describe( 'UnstableRepeater', () => {
 		// Assert.
 		expect( screen.queryByText( 'Test Repeater' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Add item' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should handle items with different value types', () => {
@@ -237,4 +227,13 @@ describe( 'UnstableRepeater', () => {
 		expect( screen.getByText( 'Icon-42' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Custom Item' ) ).toBeInTheDocument();
 	} );
+} );
+
+const createItemSettings = < T extends Record< string, unknown > = Record< string, unknown > >(
+	overrides: Partial< ItemProps< T > > = {}
+): ItemProps< T > => ( {
+	Icon: ( { value } ) => <span>Item Icon - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>,
+	Label: ( { value } ) => <span>Item label - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>,
+	Content: ( { bind } ) => <span>Content - { bind }</span>,
+	...overrides,
 } );

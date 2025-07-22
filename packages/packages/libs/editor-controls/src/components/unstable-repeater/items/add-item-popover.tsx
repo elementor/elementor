@@ -15,7 +15,7 @@ export const AddItemPopover = ( { children, anchorRef, setAnchorEl, popoverProps
 			slotProps={ {
 				paper: {
 					ref: setAnchorEl,
-					sx: { mt: 0.5, width: anchorRef?.getBoundingClientRect().width },
+					sx: { mt: 0.5, width: anchorRef?.offsetWidth },
 				},
 			} }
 			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
