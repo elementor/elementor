@@ -48,7 +48,7 @@ class Api {
 	 */
 	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
-	private static $api_library_info_url = 'https://my.elementor.com/api/v1/library-info/';
+	private static $api_library_info_url = 'https://my.elementor.com/api/v1/templates/info/';
 
 	private static function get_info_data( $force_update = false, $additinal_status = false ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
@@ -219,7 +219,7 @@ class Api {
 
 		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		return $library_data['library'] ?? [];
+		return empty( $library_data ) ? [] : $library_data;
 	}
 
 	/**
