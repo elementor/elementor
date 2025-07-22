@@ -1,4 +1,5 @@
 import { Box, Typography, Switch } from '@elementor/ui';
+import PropTypes from 'prop-types';
 
 export const SettingSection = ( {
 	checked = false,
@@ -16,15 +17,16 @@ export const SettingSection = ( {
 					{ title }
 				</Typography>
 				{ description && (
-					<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
+					<Typography data-testid={ `${ settingKey }-description` } variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
 						{ description }
 					</Typography>
 				) }
 			</Box>
 			{ hasToggle && (
 				<Switch
+					data-testid={ `${ settingKey }-switch` }
 					checked={ checked }
-					onChange={ ( e, isChecked ) => onSettingChange( settingKey, isChecked ) }
+					onChange={ ( e, isChecked ) => onSettingChange && onSettingChange( settingKey, isChecked ) }
 					color="info"
 					size="medium"
 					sx={ { alignSelf: 'center' } }
