@@ -1,6 +1,8 @@
 name: Build
 
 on:
+  pull_request_target:
+    types: [opened, synchronize]
   pull_request:
     branches:
       - 'main'
@@ -30,6 +32,9 @@ on:
       - '.gitignore'
       - 'docs/**'
 
+permissions:
+      pull-requests: write
+
 jobs:
   build-plugin:
     name: Build plugin
@@ -38,8 +43,6 @@ jobs:
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
-    permissions:
-      pull-requests: write
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
