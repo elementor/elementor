@@ -7,13 +7,16 @@ import { Header } from '../header/header';
 import { Label } from '../header/label';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
+import { type ItemProps } from '../types';
 import { UnstableRepeater } from '../unstable-repeater';
 
 describe( 'UnstableRepeater', () => {
-	const createItemSettings = ( overrides: Partial< any > = {} ) => ( {
-		Icon: ( { value }: { value: { value: string } } ) => <span>Item Icon - { value.value }</span>,
-		Label: ( { value }: { value: { value: string } } ) => <span>Item label - { value.value }</span>,
-		Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+	const createItemSettings = < T extends { value?: unknown } >(
+		overrides: Partial< ItemProps< T > > = {}
+	): ItemProps< T > => ( {
+		Icon: ( { value } ) => <span>Item Icon - { value?.value as string }</span>,
+		Label: ( { value } ) => <span>Item label - { value?.value as string }</span>,
+		Content: ( { bind } ) => <span>Content - { bind }</span>,
 		...overrides,
 	} );
 
@@ -165,7 +168,6 @@ describe( 'UnstableRepeater', () => {
 		);
 
 		const openItemButtons = screen.getAllByRole( 'button', { name: 'Open item' } );
-		
 		// Open the second item (index 1)
 		fireEvent.click( openItemButtons[ 1 ] );
 
