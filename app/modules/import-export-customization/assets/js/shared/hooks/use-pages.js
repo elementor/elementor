@@ -17,7 +17,15 @@ export function usePages( { skipLoading = false } = {} ) {
 			let allPages = [];
 
 			while ( hasMorePages || 1 === currentPage ) {
-				const response = await fetch( `/wp-json/wp/v2/pages?page=${ currentPage }&per_page=100&_embed` );
+				const requestUrl = `${ elementorCommon.config.urls.rest }wp/v2/pages?page=${ currentPage }&per_page=100&_embed`;
+
+				const response = await fetch( requestUrl, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': window.wpApiSettings?.nonce || '',
+					},
+				} );
 
 				if ( ! response.ok ) {
 					throw new Error( `HTTP error! status: ${ response.status }` );

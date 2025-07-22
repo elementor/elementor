@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
 const fetchTaxonomies = async () => {
-	const baseUrl = elementorAppConfig[ 'import-export-customization' ].restApiBaseUrl;
+	const requestUrl = `${ elementorCommon.config.urls.rest }wp/v2/taxonomies`;
 
-	const response = await fetch( `${ baseUrl }/taxonomies`, {
+	const response = await fetch( requestUrl, {
 		headers: {
 			'Content-Type': 'application/json',
 			'X-WP-Nonce': window.wpApiSettings?.nonce || '',
@@ -17,10 +17,10 @@ const fetchTaxonomies = async () => {
 		throw new Error( errorMessage );
 	}
 
-	return result.data;
+	return Object.values( result );
 };
 
-export function useTaxonomies( { skipLoading = false } = {} ) {
+export function useTaxonomies( { skipLoading = false, exclude = [] } = {} ) {
 	const [ taxonomies, setTaxonomies ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( null );
@@ -31,7 +31,12 @@ export function useTaxonomies( { skipLoading = false } = {} ) {
 			setError( null );
 
 			const data = await fetchTaxonomies();
-			setTaxonomies( data );
+
+			setTaxonomies(
+				exclude.length
+					? data.filter( ( taxonomy ) => ! exclude.includes( taxonomy.slug ) )
+					: data,
+			);
 		} catch ( err ) {
 			setError( err.message );
 		} finally {
@@ -44,7 +49,7 @@ export function useTaxonomies( { skipLoading = false } = {} ) {
 	}, [ fetchAllTaxonomies ] );
 
 	const taxonomyOptions = useMemo( () => {
-		return taxonomies.map( ( taxonomy ) => ( { value: taxonomy.name, label: taxonomy.label } ) );
+		return taxonomies.map( ( taxonomy ) => ( { value: taxonomy.slug, label: taxonomy.name } ) );
 	}, [ taxonomies ] );
 
 	useEffect( () => {

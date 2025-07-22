@@ -8,6 +8,7 @@ import { SubSetting } from './customization-sub-setting';
 import { usePages } from '../hooks/use-pages';
 import { useCustomPostTypes } from '../hooks/use-custom-post-types';
 import { useTaxonomies } from '../hooks/use-taxonomies';
+import {CenteredContent} from "./layout";
 
 export function KitContentCustomizationDialog( {
 	open,
@@ -17,7 +18,7 @@ export function KitContentCustomizationDialog( {
 } ) {
 	const initialState = data.includes.includes( 'content' );
 	const { isLoading: isPagesLoading, pageOptions } = usePages( { skipLoading: ! open } );
-	const { isLoading: isTaxonomiesLoading, taxonomyOptions } = useTaxonomies( { skipLoading: ! open } );
+	const { isLoading: isTaxonomiesLoading, taxonomyOptions } = useTaxonomies( { skipLoading: ! open, exclude: [ 'nav_menu' ] } );
 	const { customPostTypes } = useCustomPostTypes();
 
 	const [ settings, setSettings ] = useState( () => {
@@ -68,7 +69,11 @@ export function KitContentCustomizationDialog( {
 			handleSaveChanges={ () => handleSaveChanges( 'content', settings ) }
 		>
 			{ isLoading
-				? <CircularProgress size={ 30 } />
+				? (
+					<CenteredContent>
+						<CircularProgress size={ 30 } />
+					</CenteredContent>
+				)
 				: (
 					<Stack>
 						<ListSettingSection
@@ -106,7 +111,7 @@ export function KitContentCustomizationDialog( {
 							{ taxonomyOptions.map( ( taxonomy ) => {
 								return (
 									<SubSetting
-										key={ taxonomy.slug }
+										key={ taxonomy.value }
 										label={ taxonomy.label }
 										settingKey="taxonomies"
 										checked={ settings.taxonomies.includes( taxonomy.value )}
