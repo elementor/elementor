@@ -1,18 +1,17 @@
-import * as React from 'react';
 import { useState } from 'react';
+import * as React from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
+import type { PropTypeUtil } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { TextIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
-import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { ERROR_MESSAGES } from '../utils/validations';
-import { FontField } from './fields/font-field';
+import { getVariable } from '../variable-registry';
 import { LabelField } from './fields/label-field';
-import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
 const SIZE = 'tiny';
 
@@ -20,22 +19,37 @@ type Props = {
 	variableId: string;
 	onClose: () => void;
 	onSubmit?: () => void;
+	propTypeUtil: PropTypeUtil< string, string >;
 };
 
-export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
-	const { setValue: notifyBoundPropChange } = useBoundProp( fontVariablePropTypeUtil );
-
+export const VariableRestore = ( { variableId, onClose, onSubmit, propTypeUtil }: Props ) => {
+	const { setValue: notifyBoundPropChange } = useBoundProp( propTypeUtil );
 	const variable = useVariable( variableId );
+
+	const { icon: VariableIcon, valueField: ValueField } = getVariable( propTypeUtil.key );
+
 	if ( ! variable ) {
-		throw new Error( `Global font variable "${ variableId }" not found` );
+		throw new Error( `Global variable not found` );
 	}
 
 	const [ errorMessage, setErrorMessage ] = useState( ERROR_MESSAGES.DUPLICATED_LABEL );
-	const [ fontFamily, setFontFamily ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
+	const [ value, setValue ] = useState( variable.value );
 
-	const handleUpdate = () => {
-		restoreVariable( variableId, label, fontFamily )
+	const hasEmptyValues = () => {
+		return ! value.trim() || ! label.trim();
+	};
+
+	const noValueChanged = () => {
+		return value === variable.value && label === variable.label;
+	};
+
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const handleRestore = () => {
+		restoreVariable( variableId, label, value )
 			.then( () => {
 				notifyBoundPropChange( variableId );
 				onSubmit?.();
@@ -45,25 +59,13 @@ export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) 
 			} );
 	};
 
-	const hasEmptyValue = () => {
-		return ! fontFamily.trim() || ! label.trim();
-	};
-
-	const noValueChanged = () => {
-		return fontFamily === variable.value && label === variable.label;
-	};
-
-	const hasErrors = () => {
-		return !! errorMessage;
-	};
-
-	const isSubmitDisabled = noValueChanged() || hasEmptyValue() || hasErrors();
+	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
 
 	return (
 		<PopoverContentRefContextProvider>
 			<PopoverBody height="auto">
 				<PopoverHeader
-					icon={ <TextIcon fontSize={ SIZE } /> }
+					icon={ <VariableIcon fontSize={ SIZE } /> }
 					title={ __( 'Restore variable', 'elementor' ) }
 					onClose={ onClose }
 				/>
@@ -73,15 +75,15 @@ export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) 
 				<PopoverContent p={ 2 }>
 					<LabelField
 						value={ label }
-						onChange={ ( value ) => {
-							setLabel( value );
+						onChange={ ( newValue ) => {
+							setLabel( newValue );
 							setErrorMessage( '' );
 						} }
 					/>
-					<FontField
-						value={ fontFamily }
-						onChange={ ( value ) => {
-							setFontFamily( value );
+					<ValueField
+						value={ value }
+						onChange={ ( newValue ) => {
+							setValue( newValue );
 							setErrorMessage( '' );
 						} }
 					/>
@@ -90,7 +92,7 @@ export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) 
 				</PopoverContent>
 
 				<CardActions sx={ { pt: 0.5, pb: 1 } }>
-					<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleUpdate }>
+					<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleRestore }>
 						{ __( 'Restore', 'elementor' ) }
 					</Button>
 				</CardActions>

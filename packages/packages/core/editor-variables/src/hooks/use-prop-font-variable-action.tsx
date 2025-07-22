@@ -24,9 +24,7 @@ export const usePropFontVariableAction = (): PopoverActionProps => {
 				action: 'open',
 			} );
 
-			return (
-				<VariableSelectionPopover closePopover={ closePopover } propTypeKey={ fontVariablePropTypeUtil.key } />
-			);
+			return <VariableSelectionPopover closePopover={ closePopover } propTypeUtil={ fontVariablePropTypeUtil } />;
 		},
 	};
 };

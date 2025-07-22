@@ -2,15 +2,15 @@ import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
+import { type PropTypeUtil } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { ArrowLeftIcon, TextIcon } from '@elementor/icons';
+import { ArrowLeftIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
-import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { trackVariableEvent } from '../utils/tracking';
-import { FontField } from './fields/font-field';
+import { getVariable } from '../variable-registry';
 import { LabelField } from './fields/label-field';
 
 const SIZE = 'tiny';
@@ -18,17 +18,19 @@ const SIZE = 'tiny';
 type Props = {
 	onGoBack?: () => void;
 	onClose: () => void;
+	propTypeUtil: PropTypeUtil< string, string >;
 };
 
-export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
-	const { setValue: setVariable, path } = useBoundProp( fontVariablePropTypeUtil );
+export const VariableCreation = ( { onGoBack, onClose, propTypeUtil }: Props ) => {
+	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
+	const { icon: VariableIcon, valueField: ValueField, variableType } = getVariable( propTypeUtil.key );
 
-	const [ fontFamily, setFontFamily ] = useState( '' );
+	const [ value, setValue ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const resetFields = () => {
-		setFontFamily( '' );
+		setValue( '' );
 		setLabel( '' );
 		setErrorMessage( '' );
 	};
@@ -38,11 +40,21 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 		onClose();
 	};
 
+	const hasEmptyValue = () => {
+		return '' === value.trim() || '' === label.trim();
+	};
+
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = hasEmptyValue() || hasErrors();
+
 	const handleCreateAndTrack = () => {
 		createVariable( {
-			value: fontFamily,
+			value,
 			label,
-			type: fontVariablePropTypeUtil.key,
+			type: propTypeUtil.key,
 		} )
 			.then( ( key ) => {
 				setVariable( key );
@@ -51,22 +63,13 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			.catch( ( error ) => {
 				setErrorMessage( error.message );
 			} );
+
 		trackVariableEvent( {
-			varType: 'font',
+			varType: variableType,
 			controlPath: path.join( '.' ),
 			action: 'save',
 		} );
 	};
-
-	const hasEmptyValue = () => {
-		return '' === fontFamily.trim() || '' === label.trim();
-	};
-
-	const hasErrors = () => {
-		return !! errorMessage;
-	};
-
-	const isSubmitDisabled = hasEmptyValue() || hasErrors();
 
 	return (
 		<PopoverBody height="auto">
@@ -78,7 +81,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 								<ArrowLeftIcon fontSize={ SIZE } />
 							</IconButton>
 						) }
-						<TextIcon fontSize={ SIZE } />
+						<VariableIcon fontSize={ SIZE } />
 					</>
 				}
 				title={ __( 'Create variable', 'elementor' ) }
@@ -90,15 +93,15 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			<PopoverContent p={ 2 }>
 				<LabelField
 					value={ label }
-					onChange={ ( value ) => {
-						setLabel( value );
+					onChange={ ( newValue ) => {
+						setLabel( newValue );
 						setErrorMessage( '' );
 					} }
 				/>
-				<FontField
-					value={ fontFamily }
-					onChange={ ( value ) => {
-						setFontFamily( value );
+				<ValueField
+					value={ value }
+					onChange={ ( newValue ) => {
+						setValue( newValue );
 						setErrorMessage( '' );
 					} }
 				/>
