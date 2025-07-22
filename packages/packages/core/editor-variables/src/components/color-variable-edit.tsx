@@ -13,6 +13,7 @@ import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-typ
 import { ColorField } from './fields/color-field';
 import { LabelField } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
+import { EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 
 const SIZE = 'tiny';
 
@@ -26,6 +27,7 @@ type Props = {
 export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( colorVariablePropTypeUtil );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
+	const [ editConfirmation, setEditConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const variable = useVariable( editId );
@@ -39,6 +41,10 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 	const [ label, setLabel ] = useState( variable.label );
 
 	const handleUpdate = () => {
+		setEditConfirmation( true );
+	};
+
+	const handleSaveVariable = () => {
 		updateVariable( editId, {
 			value: color,
 			label,
@@ -71,6 +77,10 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 
 	const closeDeleteDialog = () => () => {
 		setDeleteConfirmation( false );
+	};
+
+	const closeEditDialog = () => () => {
+		setEditConfirmation( false );
 	};
 
 	const actions = [];
@@ -159,6 +169,13 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 					label={ label }
 					onConfirm={ handleDelete }
 					closeDialog={ closeDeleteDialog() }
+				/>
+			) }
+
+			{ editConfirmation && (
+				<EditConfirmationDialog
+					closeDialog={ closeEditDialog() }
+					onConfirm={ handleSaveVariable }
 				/>
 			) }
 		</>
