@@ -25,7 +25,7 @@ export const usePropColorVariableAction = (): PopoverActionProps => {
 			} );
 
 			return (
-				<VariableSelectionPopover closePopover={ closePopover } propTypeKey={ colorVariablePropTypeUtil.key } />
+				<VariableSelectionPopover closePopover={ closePopover } propTypeUtil={ colorVariablePropTypeUtil } />
 			);
 		},
 	};

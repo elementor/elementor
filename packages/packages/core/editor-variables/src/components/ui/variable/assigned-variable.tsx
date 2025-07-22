@@ -62,7 +62,7 @@ export const AssignedVariable = ( {
 				<VariableSelectionPopover
 					selectedVariable={ variable }
 					closePopover={ popupState.close }
-					propTypeKey={ variablePropTypeUtil.key }
+					propTypeUtil={ variablePropTypeUtil }
 				/>
 			</Popover>
 		</Box>

@@ -6,11 +6,8 @@ import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@el
 
 import { usePermissions } from '../../../hooks/use-permissions';
 import { restoreVariable } from '../../../hooks/use-prop-variables';
-import { colorVariablePropTypeUtil } from '../../../prop-types/color-variable-prop-type';
-import { fontVariablePropTypeUtil } from '../../../prop-types/font-variable-prop-type';
 import { type Variable } from '../../../types';
-import { ColorVariableRestore } from '../../color-variable-restore';
-import { FontVariableRestore } from '../../font-variable-restore';
+import { VariableRestore } from '../../variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
 import { DeletedTag } from '../tags/deleted-tag';
 
@@ -114,21 +111,12 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 					} }
 					{ ...bindPopover( popupState ) }
 				>
-					{ fontVariablePropTypeUtil.key === variablePropTypeUtil.key && (
-						<FontVariableRestore
-							variableId={ variable.key ?? '' }
-							onClose={ popupState.close }
-							onSubmit={ handleRestoreWithOverrides }
-						/>
-					) }
-
-					{ colorVariablePropTypeUtil.key === variablePropTypeUtil.key && (
-						<ColorVariableRestore
-							variableId={ variable.key ?? '' }
-							onClose={ popupState.close }
-							onSubmit={ handleRestoreWithOverrides }
-						/>
-					) }
+					<VariableRestore
+						variableId={ variable.key ?? '' }
+						onClose={ popupState.close }
+						onSubmit={ handleRestoreWithOverrides }
+						propTypeUtil={ variablePropTypeUtil }
+					/>
 				</Popover>
 			</Box>
 		</>

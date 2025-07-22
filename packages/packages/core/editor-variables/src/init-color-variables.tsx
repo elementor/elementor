@@ -1,10 +1,14 @@
+import * as React from 'react';
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
 import {
 	controlActionsMenu,
 	registerControlReplacement,
 	stylesInheritanceTransformersRegistry,
 } from '@elementor/editor-editing-panel';
+import { BrushIcon } from '@elementor/icons';
 
+import { ColorField } from './components/fields/color-field';
+import { ColorIndicator } from './components/ui/color-indicator';
 import { ColorVariableControl } from './controls/color-variable-control';
 import { usePropColorVariableAction } from './hooks/use-prop-color-variable-action';
 import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
@@ -12,6 +16,7 @@ import { registerRepeaterInjections } from './repeater-injections';
 import { inheritanceTransformer } from './transformers/inheritance-transformer';
 import { variableTransformer } from './transformers/variable-transformer';
 import { hasAssignedColorVariable } from './utils';
+import { registerVariable } from './variable-registry';
 
 const { registerPopoverAction } = controlActionsMenu;
 
@@ -24,6 +29,14 @@ export function initColorVariables() {
 	registerPopoverAction( {
 		id: 'color-variables',
 		useProps: usePropColorVariableAction,
+	} );
+
+	registerVariable( {
+		valueField: ColorField,
+		icon: BrushIcon,
+		propType: colorVariablePropTypeUtil,
+		variableType: 'color',
+		listIcon: ( { value } ) => <ColorIndicator size="inherit" component="span" value={ value } />,
 	} );
 
 	styleTransformersRegistry.register( colorVariablePropTypeUtil.key, variableTransformer );
