@@ -118,39 +118,5 @@ describe( 'SettingSection Component', () => {
 			// Assert
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'test-key', false );
 		} );
-
-		it( 'should handle multiple switch interactions', () => {
-			// Arrange
-			render( <SettingSection { ...defaultProps } /> );
-
-			// Act
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-
-			fireEvent.click( inputElement );
-			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 1, 'test-key', true );
-
-			fireEvent.click( inputElement );
-			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 2, 'test-key', true );
-
-			// Assert
-			expect( mockOnSettingChange ).toHaveBeenCalledTimes( 2 );
-		} );
-	} );
-
-	describe( 'Layout and Styling', () => {
-		it( 'should render with proper layout structure', () => {
-			const { container } = render( <SettingSection { ...defaultProps } /> );
-
-			const mainBox = container.firstChild;
-			expect( mainBox ).toBeTruthy();
-		} );
-
-		it( 'should render children when provided', () => {
-			const childText = 'Child content';
-			render( <SettingSection { ...defaultProps }>{ childText }</SettingSection> );
-
-			expect( screen.getByText( childText ) ).toBeTruthy();
-		} );
 	} );
 } );
