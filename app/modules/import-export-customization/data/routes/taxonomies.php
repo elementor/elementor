@@ -21,9 +21,8 @@ class Taxonomies extends Base_Route {
 
 	protected function callback( $request ): \WP_REST_Response {
 		try {
-
 			$elementor_post_types = ImportExportUtils::get_elementor_post_types();
-			$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
+			$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types( false );
 			$post_types = array_merge( $elementor_post_types, $wp_builtin_post_types );
 
 			$custom_post_types = ImportExportUtils::get_registered_cpt_names();

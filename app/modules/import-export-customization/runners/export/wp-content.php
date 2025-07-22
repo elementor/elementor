@@ -19,7 +19,8 @@ class Wp_Content extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$post_types = ImportExportUtils::get_builtin_wp_post_types();
+		$include_menus = $data['customization']['content']['menus'] ?? true;
+		$post_types = ImportExportUtils::get_builtin_wp_post_types( $include_menus );
 		$custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
 
 		$files = [];
