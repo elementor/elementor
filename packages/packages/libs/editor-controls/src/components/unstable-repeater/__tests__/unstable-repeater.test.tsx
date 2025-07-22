@@ -11,11 +11,15 @@ import { type ItemProps } from '../types';
 import { UnstableRepeater } from '../unstable-repeater';
 
 describe( 'UnstableRepeater', () => {
-	const createItemSettings = < T extends { value?: unknown } >(
+	const createItemSettings = < T extends Record< string, unknown > = Record< string, unknown > >(
 		overrides: Partial< ItemProps< T > > = {}
 	): ItemProps< T > => ( {
-		Icon: ( { value } ) => <span>Item Icon - { value?.value as string }</span>,
-		Label: ( { value } ) => <span>Item label - { value?.value as string }</span>,
+		Icon: ( { value } ) => (
+			<span>Item Icon - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>
+		),
+		Label: ( { value } ) => (
+			<span>Item label - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>
+		),
 		Content: ( { bind } ) => <span>Content - { bind }</span>,
 		...overrides,
 	} );
@@ -195,9 +199,9 @@ describe( 'UnstableRepeater', () => {
 
 	it( 'should handle items with different value types', () => {
 		// Arrange.
-		const customItemSettings = createItemSettings( {
-			Icon: ( { value }: { value: { title: string; id: number } } ) => <span>Icon-{ value.id }</span>,
-			Label: ( { value }: { value: { title: string; id: number } } ) => <span>{ value.title }</span>,
+		const customItemSettings = createItemSettings< { title: string; id: number } >( {
+			Icon: ( { value } ) => <span>Icon-{ value.id }</span>,
+			Label: ( { value } ) => <span>{ value.title }</span>,
 		} );
 
 		const customInitialValues = {
