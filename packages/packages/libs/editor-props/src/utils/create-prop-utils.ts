@@ -90,7 +90,8 @@ export function createPropUtils< TKey extends string, TValue extends PropValue >
 
 export function createArrayPropUtils< TKey extends string, TValue extends PropValue >(
 	key: TKey,
-	valueSchema: ZodType< TValue >
+	valueSchema: ZodType< TValue >,
+	overrideKey?: string
 ) {
-	return createPropUtils( `${ key }-array`, z.array( valueSchema ) );
+	return createPropUtils( overrideKey || `${ key }-array`, z.array( valueSchema ) );
 }

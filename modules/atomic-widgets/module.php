@@ -39,6 +39,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Skew_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Transformer;
@@ -78,6 +79,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Scale_Prop_Typ
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Skew_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -93,6 +95,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
+	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -170,6 +173,15 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::TRANSITION_EXPERIMENT,
+			'title' => esc_html__( 'Use transition', 'elementor' ),
+			'description' => esc_html__( 'Use transition.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
 	}
 
 	private function add_packages( $packages ) {
@@ -230,6 +242,7 @@ class Module extends BaseModule {
 		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
 		$transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
 		$transformers->register( Backdrop_Filter_Prop_Type::get_key(), new Filter_Transformer() );
+		$transformers->register( Transition_Prop_Type::get_key(), new Transition_Transformer() );
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
