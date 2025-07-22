@@ -87,11 +87,16 @@ export const SizeControl = createControl(
 		extendedOptions,
 		disableCustom,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
-		const { value: sizeValue, setValue: setSizeValue, disabled, restoreValue, placeholder: externalPlaceholder } = useBoundProp( sizePropTypeUtil );
+		const {
+			value: sizeValue,
+			setValue: setSizeValue,
+			disabled,
+			restoreValue,
+			placeholder: externalPlaceholder,
+		} = useBoundProp( sizePropTypeUtil );
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
-		const actualDefaultSize = externalPlaceholder?.size ?? DEFAULT_SIZE;
 		const actualUnits = units ?? [ ...defaultUnits[ variant ] ];
-		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit, actualDefaultSize ) );
+		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
 		const activeBreakpoint = useActiveBreakpoint();
 
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
@@ -113,12 +118,12 @@ export const SizeControl = createControl(
 			},
 			fallback: ( newState ) => ( {
 				unit: newState?.unit ?? actualDefaultUnit,
-				numeric: newState?.numeric ?? Number( actualDefaultSize ) ?? DEFAULT_SIZE,
+				numeric: newState?.numeric ?? DEFAULT_SIZE,
 				custom: newState?.custom ?? '',
 			} ),
 		} );
 
-		const { size: controlSize = actualDefaultSize, unit: controlUnit = actualDefaultUnit } =
+		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
 			extractValueFromState( state ) || {};
 
 		const handleUnitChange = ( newUnit: Unit | ExtendedOption ) => {
@@ -230,7 +235,11 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 	return size || size === 0 ? ( Number( size ) as TSize ) : ( NaN as TSize );
 }
 
-function createStateFromSizeProp( sizeValue: SizeValue | null, defaultUnit: Unit | ExtendedOption, defaultSize: string | number = '' ): State {
+function createStateFromSizeProp(
+	sizeValue: SizeValue | null,
+	defaultUnit: Unit | ExtendedOption,
+	defaultSize: string | number = ''
+): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
 	const size = sizeValue?.size ?? defaultSize;
 
