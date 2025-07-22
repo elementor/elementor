@@ -1,0 +1,40 @@
+import { Typography, Input, Box } from '@elementor/ui';
+
+import { useExportContext } from '../context/export-context';
+
+export default function KitInfo() {
+	const { data, dispatch } = useExportContext();
+
+	const { templateName, description } = {
+		templateName: data.kitInfo.title || '',
+		description: data.kitInfo.description || '',
+	};
+
+	return (
+		<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
+			<Typography variant="caption" component="label" color="text.secondary">
+				{ __( 'Website template name', 'elementor' ) } *
+			</Typography>
+			<Input
+				fullWidth
+				required
+				value={ templateName }
+				onChange={ ( e ) => dispatch( { type: 'SET_KIT_TITLE', payload: e.target.value || '' } ) }
+				placeholder={ __( 'Type name here...', 'elementor' ) }
+				inputProps={ { maxLength: 75 } }
+				sx={ { mb: 2 } }
+			/>
+
+			<Typography variant="caption" component="label" color="text.secondary">
+				{ __( 'Description (Optional)', 'elementor' ) }
+			</Typography>
+			<Input
+				fullWidth
+				multiline
+				value={ description }
+				onChange={ ( e ) => dispatch( { type: 'SET_KIT_DESCRIPTION', payload: e.target.value || '' } ) }
+				placeholder={ __( 'Type description here...', 'elementor' ) }
+			/>
+		</Box>
+	);
+}

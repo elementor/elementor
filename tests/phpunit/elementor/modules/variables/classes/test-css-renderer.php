@@ -47,12 +47,12 @@ class Test_CSS_Renderer extends TestCase {
 		$this->repository->method( 'variables' )
 			->willReturn( [
 				'gf-045' => [
-					'label' => 'Main: Montserrat',
+					'label' => 'primary-font',
 					'value' => 'Montserrat',
 					'type' => Font_Variable_Prop_Type::get_key(),
 				],
 				'gr-roboto' => [
-					'label' => 'Global Roboto',
+					'label' => 'secondary-font',
 					'value' => 'Roboto',
 					'type' => Font_Variable_Prop_Type::get_key(),
 				],
@@ -62,7 +62,7 @@ class Test_CSS_Renderer extends TestCase {
 		$raw_css = $this->css_renderer()->raw_css();
 
 		// Assert.
-		$this->assertEquals(':root { --gf-045:Montserrat; --gr-roboto:Roboto; }', $raw_css );
+		$this->assertEquals(':root { --primary-font:Montserrat; --secondary-font:Roboto; }', $raw_css );
 	}
 
 	public function test_list_of_variables__generates_entries_for_root_pseudo_element() {
@@ -70,13 +70,13 @@ class Test_CSS_Renderer extends TestCase {
 		$this->repository->method( 'variables' )
 			->willReturn( [
 				'a-01' => [
-					'label' => 'Black',
+					'label' => 'color-black',
 					'value' => '#000',
 					'type' => Color_Variable_Prop_Type::get_key(),
 				],
 				'a-02' => [
-					'label' => 'Border Width',
-					'value' => '6px',
+					'label' => 'color-white',
+					'value' => '#fff',
 					'type' => Color_Variable_Prop_Type::get_key(),
 				],
 			] );
@@ -85,7 +85,32 @@ class Test_CSS_Renderer extends TestCase {
 		$raw_css = $this->css_renderer()->raw_css();
 
 		// Assert.
-		$this->assertEquals(':root { --a-01:#000; --a-02:6px; }', $raw_css );
+		$this->assertEquals(':root { --color-black:#000; --color-white:#fff; }', $raw_css );
+	}
+
+	public function list_of_variables_with_deleted_entries__will_print_ids_instead_of_labels() {
+		// Arrange.
+		$this->repository->method( 'variables' )
+			->willReturn( [
+				'a-01' => [
+					'label' => 'color-black',
+					'value' => '#000',
+					'type' => Color_Variable_Prop_Type::get_key(),
+				],
+				'a-02' => [
+					'label' => 'color-black',
+					'value' => '#000',
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'deleted' => true,
+					'deleted_at' => '2025-01-01 00:00:00',
+				],
+			] );
+
+		// Act.
+		$raw_css = $this->css_renderer()->raw_css();
+
+		// Assert.
+		$this->assertEquals(':root { --color-black:#000; --a-02:#000; }', $raw_css );
 	}
 
 	public function test_list_of_variables__will_sanitize_the_input() {
@@ -101,14 +126,16 @@ class Test_CSS_Renderer extends TestCase {
 					'label' => 'a-height',
 					'value' => '2rem',
 					'type' => Color_Variable_Prop_Type::get_key(),
+					'deleted' => true,
+					'deleted_at' => '2025-01-01 00:00:00',
 				],
-				'a-01' => [
+				'a-02' => [
 					'label' => 'Font 1',
 					'value' => '<style>color: red;</style>',
 					'type' => Font_Variable_Prop_Type::get_key(),
 				],
-				'<script>alert("font here")</script>' => [
-					'label' => 'Font 3',
+				'a-03' => [
+					'label' => '<script>alert("font 3")</script>',
 					'value' => '2rem',
 					'type' => Font_Variable_Prop_Type::get_key(),
 				],

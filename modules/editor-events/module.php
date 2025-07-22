@@ -24,6 +24,7 @@ class Module extends BaseModule {
 	public static function get_editor_events_config() {
 		$can_send_events = defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) &&
 			Tracker::is_allow_track() &&
+			! Tracker::has_terms_changed( '2025-07-07' ) &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
 		$settings = [

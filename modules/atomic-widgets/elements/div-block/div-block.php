@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -44,9 +45,10 @@ class Div_Block extends Atomic_Element_Base {
 	protected static function define_props_schema(): array {
 		$tag_dependencies = Dependency_Manager::make()
 			->where( [
-				'operator' => 'exists',
+				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
-			] );
+			] )
+		->get();
 
 		$props = [
 			'classes' => Classes_Prop_Type::make()
@@ -54,9 +56,12 @@ class Div_Block extends Atomic_Element_Base {
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
 				->default( 'div' )
-				->dependencies( $tag_dependencies ),
+				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
+
+			'attributes' => Key_Value_Array_Prop_Type::make(),
 		];
+
 		return $props;
 	}
 
@@ -119,7 +124,8 @@ class Div_Block extends Atomic_Element_Base {
 
 	public function before_render() {
 		?>
-		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' );
+		$this->print_custom_attributes(); ?>>
 		<?php
 	}
 
@@ -127,6 +133,14 @@ class Div_Block extends Atomic_Element_Base {
 		?>
 		</<?php $this->print_html_tag(); ?>>
 		<?php
+	}
+
+	private function print_custom_attributes() {
+		$settings = $this->get_atomic_settings();
+		$attributes = $settings['attributes'];
+		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
+			echo ' ' . esc_attr( $attributes );
+		}
 	}
 
 	/**

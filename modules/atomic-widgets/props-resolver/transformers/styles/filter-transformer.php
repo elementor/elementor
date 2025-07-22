@@ -16,14 +16,17 @@ class Filter_Transformer extends Transformer_Base {
 	}
 
 	private function map_to_filter_string( $filter ): string {
-		if ( isset( $filter['radius'] ) ) {
-			return 'blur(' . $filter['radius'] . ')';
+		$func = $filter['func'];
+		$args = $filter['args'];
+
+		if ( 'drop-shadow' === $func ) {
+			$x_axis = $args['xAxis'] ?? '0px';
+			$y_axis = $args['yAxis'] ?? '0px';
+			$blur   = $args['blur'] ?? '10px';
+			$color  = $args['color'] ?? 'transparent';
+			return "drop-shadow({$x_axis} {$y_axis} {$blur} {$color})";
 		}
 
-		if ( isset( $filter['amount'] ) ) {
-			return 'brightness(' . $filter['amount'] . ')';
-		}
-
-		return '';
+		return $func . '(' . $args . ')';
 	}
 }

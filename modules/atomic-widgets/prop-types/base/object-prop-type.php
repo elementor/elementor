@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -26,8 +27,14 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	 */
 	protected array $shape;
 
+	protected ?array $dependencies = null;
+
 	public function __construct() {
 		$this->shape = $this->define_shape();
+	}
+
+	public function get_type(): string {
+		return 'object';
 	}
 
 	public function get_default() {
@@ -131,6 +138,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			'meta' => (object) $this->get_meta(),
 			'settings' => (object) $this->get_settings(),
 			'shape' => (object) $this->get_shape(),
+			'dependencies' => $this->get_dependencies(),
 		];
 	}
 
@@ -138,4 +146,14 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	 * @return array<Prop_Type>
 	 */
 	abstract protected function define_shape(): array;
+
+	public function set_dependencies( ?array $dependencies ): self {
+		$this->dependencies = empty( $dependencies ) ? null : $dependencies;
+
+		return $this;
+	}
+
+	public function get_dependencies(): ?array {
+		return $this->dependencies;
+	}
 }
