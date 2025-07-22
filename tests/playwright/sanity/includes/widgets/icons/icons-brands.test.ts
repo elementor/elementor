@@ -5,14 +5,6 @@ import EditorPage from '../../../../pages/editor-page';
 import _path from 'path';
 
 test.describe( 'Icons (FA Brands)', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { container: 'active' } );
-		await page.close();
-	} );
-
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
