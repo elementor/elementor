@@ -74,7 +74,7 @@ export const EditConfirmationDialog = ( {
 				/>
 				<div>
 					<Button color="secondary" onClick={ closeDialog }>
-						{ __( 'Not now', 'elementor' ) }
+						{ __( 'Keep editing', 'elementor' ) }
 					</Button>
 					<Button variant="contained" color="secondary" onClick={ handleSave } sx={ { ml: 1 } }>
 						{ __( 'Save', 'elementor' ) }
