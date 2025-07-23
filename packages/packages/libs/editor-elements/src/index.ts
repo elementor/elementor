@@ -20,7 +20,11 @@ export { getWidgetsCache } from './sync/get-widgets-cache';
 export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
 
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
-export { createElementStyle, type CreateElementStyleArgs } from './styles/create-element-style';
+export {
+	createElementStyle,
+	shouldCreateNewLocalStyle,
+	type CreateElementStyleArgs,
+} from './styles/create-element-style';
 export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update-element-style';
 export { deleteElementStyle } from './styles/delete-element-style';
 export {
