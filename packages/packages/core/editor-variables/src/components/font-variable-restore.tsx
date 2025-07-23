@@ -30,6 +30,7 @@ export const FontVariableRestore = ( { variableId, onClose, onSubmit }: Props ) 
 		throw new Error( `Global font variable "${ variableId }" not found` );
 	}
 
+
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ fontFamily, setFontFamily ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
