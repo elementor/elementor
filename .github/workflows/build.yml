@@ -3,7 +3,6 @@ name: Build
 on:
   pull_request_target:
     types: [opened, synchronize]
-  pull_request:
     branches:
       - 'main'
       - '3.[0-9][0-9]'
