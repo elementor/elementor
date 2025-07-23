@@ -706,6 +706,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 							'value' => $color ?? 'red',
 						],
 					],
+					'custom_css' => null,
 				],
 			],
 		];
