@@ -1,4 +1,4 @@
-name: Playwright
+name: Playwright - this change has to be reverted
 
 on:
   pull_request:
