@@ -1,6 +1,13 @@
 import type { Props } from '@elementor/editor-props';
 import { type Breakpoint, type BreakpointsMap } from '@elementor/editor-responsive';
-import { type StyleDefinition, type StyleDefinitionState, type StyleDefinitionType } from '@elementor/editor-styles';
+import {
+	type CustomCss,
+	type StyleDefinition,
+	type StyleDefinitionState,
+	type StyleDefinitionType,
+} from '@elementor/editor-styles';
+import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { decodeString } from '@elementor/utils';
 
 import { type PropsResolver } from './create-props-resolver';
 import { UnknownStyleTypeError } from './errors';
@@ -43,13 +50,14 @@ export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '
 		const stylesCssPromises = styles.map( async ( style ) => {
 			const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
 				const css = await propsToCss( { props: variant.props, resolve, signal } );
+				const customCss = customCssToString( variant.custom_css );
 
 				return createStyleWrapper()
 					.for( style.cssName, style.type )
 					.withPrefix( selectorPrefix )
 					.withState( variant.meta.state )
 					.withMediaQuery( variant.meta.breakpoint ? breakpoints[ variant.meta.breakpoint ] : null )
-					.wrap( css );
+					.wrap( css + customCss );
 			} );
 
 			const variantsCss = await Promise.all( variantCssPromises );
@@ -119,4 +127,18 @@ async function propsToCss( { props, resolve, signal }: PropsToCssArgs ) {
 			return acc;
 		}, [] )
 		.join( '' );
+}
+
+function customCssToString( customCss: CustomCss | null ): string {
+	if ( ! isExperimentActive( EXPERIMENTAL_FEATURES.CUSTOM_CSS ) || ! customCss?.raw ) {
+		return '';
+	}
+
+	const decoded = decodeString( customCss.raw );
+
+	if ( ! decoded.trim() ) {
+		return '';
+	}
+
+	return decoded + '\n';
 }

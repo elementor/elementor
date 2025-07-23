@@ -1,4 +1,5 @@
 import { createMockElement } from 'test-utils';
+import { type UpdateElementSettingsArgs, type V1ElementModelProps } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
@@ -22,6 +23,7 @@ describe( 'createElementStyle', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { testProp: 'testValue' },
+					custom_css: null,
 				},
 			],
 		};
@@ -87,6 +89,7 @@ describe( 'createElementStyle', () => {
 						props: {
 							testProp: 'testValue',
 						},
+						custom_css: null,
 					},
 				],
 			},
@@ -196,5 +199,55 @@ describe( 'createElementStyle', () => {
 				},
 			} );
 		} ).toThrow( 'Element not found.' );
+	} );
+
+	it( 'should save custom_css to model', () => {
+		// Arrange.
+		const element = createMockElement( {
+			model: {
+				id: 'test-element-id',
+				styles: {},
+			},
+			settings: {},
+		} );
+
+		jest.mocked( getContainer ).mockImplementation( ( elementId ) => {
+			return elementId === 'test-element-id' ? element : null;
+		} );
+		jest.mocked( updateElementSettings ).mockImplementation( ( { props }: UpdateElementSettingsArgs ) => {
+			Object.keys( props ).forEach( ( key ) =>
+				element.model.set( key as keyof V1ElementModelProps, props[ key ] as never )
+			);
+		} );
+
+		// Act.
+		const createdId = createElementStyle( {
+			elementId: 'test-element-id',
+			meta: { breakpoint: null, state: null },
+			label: 'Test Style',
+			classesProp: 'classes',
+			props: {
+				testProp: 'testValue',
+			},
+			custom_css: { raw: 'color: red;' },
+		} );
+
+		// Assert.
+		expect( element.model.get( 'styles' ) ).toStrictEqual( {
+			[ createdId ]: {
+				id: createdId,
+				label: 'Test Style',
+				type: 'class',
+				variants: [
+					{
+						custom_css: { raw: 'color: red;' },
+						meta: { breakpoint: null, state: null },
+						props: {
+							testProp: 'testValue',
+						},
+					},
+				],
+			},
+		} );
 	} );
 } );
