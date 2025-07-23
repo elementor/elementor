@@ -4,8 +4,9 @@ import {
 	FilterRepeaterControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
+	UnstableTransformRepeaterControl,
 } from '@elementor/editor-controls';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
@@ -20,7 +21,9 @@ const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
-	const shouldShowTransition = isExperimentActive( 'atomic_widgets_should_use_transition' );
+	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
+
+	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
 
 	return (
 		<SectionContent>
@@ -31,7 +34,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl />
+				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
