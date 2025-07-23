@@ -125,6 +125,7 @@ jobs:
         if: github.event_name == 'pull_request' && !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/create-or-update-comment@v4
         with:
+          issue-number: ${{ github.event.pull_request.number }}
           body: |
             ## Elementor Build
             Last updated at: ${{ env.DATE_VERSION }}
