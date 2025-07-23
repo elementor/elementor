@@ -1,24 +1,22 @@
 import * as React from 'react';
 import { SearchIcon } from '@elementor/icons';
-import { Box, Grid, InputAdornment, Stack, TextField } from '@elementor/ui';
+import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-type ClassMangerSearchProps = {
-	searchValue: string;
-	onChange: ( value: string ) => void;
-};
+import { useSearchContext } from '../context';
 
-export const ClassManagerSearch = ( { searchValue, onChange }: ClassMangerSearchProps ) => (
-	<Grid item xs={ 6 } px={ 2 } pb={ 1 }>
+export const ClassManagerSearch = () => {
+	const { inputValue, handleChange } = useSearchContext();
+	return (
 		<Stack direction="row" gap={ 0.5 } sx={ { width: '100%' } }>
 			<Box sx={ { flexGrow: 1 } }>
 				<TextField
 					role={ 'search' }
 					fullWidth
 					size={ 'tiny' }
-					value={ searchValue }
+					value={ inputValue }
 					placeholder={ __( 'Search', 'elementor' ) }
-					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => onChange( e.target.value ) }
+					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
 					InputProps={ {
 						startAdornment: (
 							<InputAdornment position="start">
@@ -29,5 +27,5 @@ export const ClassManagerSearch = ( { searchValue, onChange }: ClassMangerSearch
 				/>
 			</Box>
 		</Stack>
-	</Grid>
-);
+	);
+};

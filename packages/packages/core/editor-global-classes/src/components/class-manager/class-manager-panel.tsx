@@ -25,14 +25,16 @@ import {
 	type IconButtonProps,
 	Stack,
 } from '@elementor/ui';
-import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useDirtyState } from '../../hooks/use-dirty-state';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
+import { ActiveFilters } from '../filter-and-sort/components/active-filters';
+import { CssClassFilter } from '../filter-and-sort/components/css-class-filter';
+import { ClassManagerSearch } from '../search-css-class/components/class-manager-search';
+import { SearchAndFilterProvider } from '../shared/search-and-filter-provider';
 import { ClassManagerIntroduction } from './class-manager-introduction';
-import { ClassManagerSearch } from './class-manager-search';
 import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
@@ -62,11 +64,6 @@ export const { panel, usePanelActions } = createPanel( {
 } );
 
 export function ClassManagerPanel() {
-	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
-		delay: 300,
-		initialValue: '',
-	} );
-
 	const isDirty = useDirtyState();
 
 	const { close: closePanel } = usePanelActions();
@@ -112,26 +109,33 @@ export function ClassManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
-						<Divider
-							sx={ {
-								borderWidth: '1px 0 0 0',
-							} }
-						/>
-
-						<Box
-							px={ 2 }
-							sx={ {
-								flexGrow: 1,
-								overflowY: 'auto',
-							} }
-						>
-							<GlobalClassesList
-								disabled={ isPublishing }
-								searchValue={ debouncedValue }
-								onSearch={ handleChange }
-							/>
-						</Box>
+						<SearchAndFilterProvider>
+							<>
+								<Box px={ 2 } pb={ 1 }>
+									<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
+										<Box sx={ { flexGrow: 1 } }>
+											<ClassManagerSearch />
+										</Box>
+										<CssClassFilter />
+									</Stack>
+									<ActiveFilters />
+								</Box>
+								<Divider
+									sx={ {
+										borderWidth: '1px 0 0 0',
+									} }
+								/>
+								<Box
+									px={ 2 }
+									sx={ {
+										flexGrow: 1,
+										overflowY: 'auto',
+									} }
+								>
+									<GlobalClassesList disabled={ isPublishing } />
+								</Box>
+							</>
+						</SearchAndFilterProvider>
 					</PanelBody>
 
 					<PanelFooter>
