@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PopoverBody, PopoverHeader } from '@elementor/editor-ui';
 import { FilterIcon } from '@elementor/icons';
-import { bindPopover, bindToggle, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
+import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ClearIconButton } from './clear-icon-button';
@@ -42,7 +42,12 @@ export const CssClassFilter = () => {
 					title={ __( 'Filters', 'elementor' ) }
 					icon={ <FilterIcon /> }
 				/>
-				<PopoverBody width={ 344 } height={ 'auto' }>
+				<Divider
+					sx={ {
+						borderWidth: '1px 0 0 0',
+					} }
+				/>
+				<PopoverBody width={ 344 } height={ 125 }>
 					<FilterList />
 				</PopoverBody>
 			</Popover>

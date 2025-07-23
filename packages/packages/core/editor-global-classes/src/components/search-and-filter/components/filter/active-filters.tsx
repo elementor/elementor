@@ -2,30 +2,32 @@ import * as React from 'react';
 import { Chip, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useFilterAndSortContext } from '../context';
+import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { checkBoxItems } from './filter-list';
 
 export const ActiveFilters = () => {
-	const { checked, setChecked } = useFilterAndSortContext();
+	const {
+		filters: { filters, setFilters },
+	} = useSearchAndFilters();
 
-	const handleRemoveFilter = ( filterKey: keyof typeof checked ) => {
-		setChecked( ( prev ) => ( { ...prev, [ filterKey ]: false } ) );
+	const handleRemoveFilter = ( filterKey: keyof typeof filters ) => {
+		setFilters( ( prev ) => ( { ...prev, [ filterKey ]: false } ) );
 	};
 
-	const showClearIcon = Object.values( checked ).some( ( value ) => value );
+	const showClearIcon = Object.values( filters ).some( ( value ) => value );
 
 	return (
 		<Stack direction="row" alignItems="center" justifyContent="space-between">
 			<Stack direction="row" gap={ 0.5 } alignItems="center" flexWrap="wrap">
-				{ Object.entries( checked ).map(
+				{ Object.entries( filters ).map(
 					( [ key, value ] ) =>
 						value && (
 							<Chip
 								size="tiny"
 								key={ key }
 								label={ checkBoxItems.find( ( item ) => item.value === key )?.label }
-								onDelete={ () => handleRemoveFilter( key as keyof typeof checked ) }
+								onDelete={ () => handleRemoveFilter( key as keyof typeof filters ) }
 							/>
 						)
 				) }
@@ -33,7 +35,7 @@ export const ActiveFilters = () => {
 			{ showClearIcon && (
 				<ClearIconButton
 					tooltipText={ __( 'Clear Filters', 'elementor' ) }
-					sxStyle={ { margin: '0 0 auto auto', p: 0 } }
+					sxStyle={ { margin: '0 0 auto auto' } }
 				/>
 			) }
 		</Stack>

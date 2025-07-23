@@ -36,7 +36,6 @@ export const CssClassUsageTrigger = ( {
 		return null;
 	}
 
-
 	const WrapperComponent = total !== 0 ? TooltipWrapper : InfoAlertMessage;
 
 	return (
@@ -60,14 +59,13 @@ export const CssClassUsageTrigger = ( {
 			</Box>
 			<Box>
 				<Popover
-					sx={ { ml: 6 } }
 					anchorOrigin={ {
 						vertical: 'center',
 						horizontal: 'right',
 					} }
 					transformOrigin={ {
-						vertical: 'top',
-						horizontal: -5,
+						vertical: 15,
+						horizontal: -50,
 					} }
 					{ ...bindPopover( cssClassUsagePopover ) }
 					onClose={ () => {

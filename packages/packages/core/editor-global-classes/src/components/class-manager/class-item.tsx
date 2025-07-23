@@ -21,7 +21,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { CssClassUsageTrigger } from '../css-class-usage/components';
-import { useSearchContext } from '../search-css-class/context';
+import { useSearchAndFilters } from '../search-and-filter/context';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
 
@@ -36,7 +36,9 @@ type ClassItemProps = React.PropsWithChildren< {
 
 export const ClassItem = ( { id, label, renameClass, selected, disabled, sortableTriggerProps }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
-	const { isSearchActive } = useSearchContext();
+	const {
+		search: { isSearchActive },
+	} = useSearchAndFilters();
 	const {
 		ref: editableRef,
 		openEditMode,

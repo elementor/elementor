@@ -9,8 +9,7 @@ import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
-import { useFilterAndSortContext } from '../filter-and-sort/context';
-import { useSearchContext } from '../search-css-class/context';
+import { useSearchAndFilters } from '../search-and-filter/context';
 import { getNotFoundConfig, type NotFoundType } from '../shared/not-found/config';
 import { ClassItem } from './class-item';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
@@ -43,11 +42,13 @@ type GlobalClassesListProps = {
 };
 
 export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
-	const { debouncedValue: searchValue, onClearSearch } = useSearchContext();
+	const {
+		filters: { onClearFilter },
+		search: { debouncedValue: searchValue, onClearSearch },
+	} = useSearchAndFilters();
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
 	const filters = useFilters();
-	const { onReset } = useFilterAndSortContext();
 	const [ classesOrder, reorderClasses ] = useReorder();
 
 	const lowercaseLabels = useMemo(
@@ -94,7 +95,7 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 	}
 
 	const shouldShowNotFound = getNotFoundConfig( {
-		onClearFilter: onReset,
+		onClearFilter,
 		onClearSearch,
 		searchValue,
 		notFoundType: getNotFoundType( searchValue, filters, filteredClasses ),
@@ -103,6 +104,7 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 	if ( shouldShowNotFound !== null ) {
 		return shouldShowNotFound;
 	}
+
 	return (
 		<DeleteConfirmationProvider>
 			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>

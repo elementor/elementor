@@ -1,0 +1,76 @@
+import * as React from 'react';
+import { createContext, type ReactElement, useCallback, useContext } from 'react';
+import { useDebounceState } from '@elementor/utils';
+
+import { type CheckedFilters } from './types';
+
+type SearchContextType = {
+	debouncedValue: string;
+	inputValue: string;
+	handleChange: ( value: string ) => void;
+	onClearSearch: () => void;
+	isSearchActive: boolean;
+};
+type FilterAndSortContextType = {
+	filters: CheckedFilters;
+	setFilters: React.Dispatch< React.SetStateAction< CheckedFilters > >;
+	onClearFilter: () => void;
+};
+
+export type SearchAndFilterContextType = {
+	search: SearchContextType;
+	filters: FilterAndSortContextType;
+};
+
+const SearchAndFilterContext = createContext< SearchAndFilterContextType | undefined >( undefined );
+
+const INIT_CHECKED_FILTERS: CheckedFilters = {
+	empty: false,
+	onThisPage: false,
+	unused: false,
+};
+
+export const SearchAndFilterProvider = ( { children }: { children: ReactElement } ) => {
+	const [ filters, setFilters ] = React.useState< CheckedFilters >( INIT_CHECKED_FILTERS );
+	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
+		delay: 300,
+		initialValue: '',
+	} );
+
+	const onClearSearch = useCallback( () => {
+		handleChange( '' );
+	}, [ handleChange ] );
+
+	const onClearFilter = React.useCallback( () => {
+		setFilters( INIT_CHECKED_FILTERS );
+	}, [] );
+
+	return (
+		<SearchAndFilterContext.Provider
+			value={ {
+				search: {
+					debouncedValue,
+					inputValue,
+					handleChange,
+					onClearSearch,
+					isSearchActive: inputValue.length < 2,
+				},
+				filters: {
+					filters,
+					setFilters,
+					onClearFilter,
+				},
+			} }
+		>
+			{ children }
+		</SearchAndFilterContext.Provider>
+	);
+};
+
+export const useSearchAndFilters = () => {
+	const context = useContext( SearchAndFilterContext );
+	if ( ! context ) {
+		throw new Error( 'useSearchContext must be used within a SearchContextProvider' );
+	}
+	return context;
+};

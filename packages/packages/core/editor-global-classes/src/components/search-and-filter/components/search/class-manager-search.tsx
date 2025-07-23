@@ -3,10 +3,13 @@ import { SearchIcon } from '@elementor/icons';
 import { Box, InputAdornment, Stack, TextField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useSearchContext } from '../context';
+import { useSearchAndFilters } from '../../context';
 
 export const ClassManagerSearch = () => {
-	const { inputValue, handleChange } = useSearchContext();
+	const {
+		search: { inputValue, handleChange },
+	} = useSearchAndFilters();
+
 	return (
 		<Stack direction="row" gap={ 0.5 } sx={ { width: '100%' } }>
 			<Box sx={ { flexGrow: 1 } }>
