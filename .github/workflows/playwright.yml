@@ -5,8 +5,8 @@ on:
     types: [ labeled, synchronize, opened, reopened ]
   push:
     branches:
-      - 'main'
-      - '3.[0-9][0-9]'
+      - 'maindsdsds'
+      - '3.*'
     paths-ignore:
       - '**.md'
       - '**.txt'
