@@ -1,22 +1,14 @@
-import {
-	Dialog,
-	DialogHeader,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Button,
-	Box,
-	Typography,
-	Switch,
-	Stack,
-} from '@elementor/ui';
+import { Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { SettingSection } from './customization-setting-section';
+import { KitCustomizationDialog } from './kit-customization-dialog';
 
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'templates' );
 
-	const [ settings, setSettings ] = useState( () => {
+	const [ templates, setTemplates ] = useState( () => {
 		if ( data.customization.templates ) {
 			return data.customization.templates;
 		}
@@ -29,9 +21,9 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 	useEffect( () => {
 		if ( open ) {
 			if ( data.customization.templates ) {
-				setSettings( data.customization.templates );
+				setTemplates( data.customization.templates );
 			} else {
-				setSettings( {
+				setTemplates( {
 					siteTemplates: initialState,
 				} );
 			}
@@ -39,116 +31,29 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 	}, [ open, data.customization.templates, initialState ] );
 
 	const handleToggleChange = ( settingKey ) => {
-		setSettings( ( prev ) => ( {
+		setTemplates( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
 		} ) );
 	};
 
-	const SettingSection = ( { title, description, children, hasToggle = true, settingKey } ) => (
-		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
-			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-				<Box>
-					<Typography variant="body1" sx={ { fontWeight: 500 } }>
-						{ title }
-					</Typography>
-					{ description && (
-						<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
-							{ description }
-						</Typography>
-					) }
-				</Box>
-				{ hasToggle && (
-					<Switch
-						checked={ settings[ settingKey ] }
-						onChange={ () => handleToggleChange( settingKey ) }
-						color="info"
-						size="medium"
-						sx={ { alignSelf: 'center' } }
-					/>
-				) }
-			</Box>
-			{ children && (
-				<Box sx={ { mt: 2 } }>
-					{ children }
-				</Box>
-			) }
-		</Box>
-	);
-
-	SettingSection.propTypes = {
-		title: PropTypes.string.isRequired,
-		description: PropTypes.string,
-		children: PropTypes.node,
-		hasToggle: PropTypes.bool,
-		settingKey: PropTypes.string,
-	};
-
-	const SubSetting = ( { label, settingKey } ) => (
-		<Box sx={ {
-			display: 'flex',
-			justifyContent: 'space-between',
-			alignItems: 'center',
-			py: 1.5,
-		} }>
-			<Typography variant="body1" sx={ { fontWeight: 400 } }>
-				{ label }
-			</Typography>
-			<Switch
-				checked={ settings[ settingKey ] }
-				onChange={ () => handleToggleChange( settingKey ) }
-				color="info"
-				size="medium"
-			/>
-		</Box>
-	);
-
-	SubSetting.propTypes = {
-		label: PropTypes.string.isRequired,
-		settingKey: PropTypes.string.isRequired,
-	};
-
 	return (
-		<Dialog
+		<KitCustomizationDialog
 			open={ open }
-			onClose={ handleClose }
-			maxWidth="md"
-			fullWidth
+			title={ __( 'Edit templates', 'elementor' ) }
+			handleClose={ handleClose }
+			handleSaveChanges={ () => handleSaveChanges( 'templates', templates ) }
+			minHeight="auto"
 		>
-			<DialogHeader onClose={ handleClose }>
-				<DialogTitle>
-					{ __( 'Edit templates', 'elementor' ) }
-				</DialogTitle>
-			</DialogHeader>
-
-			<DialogContent dividers sx={ { p: 3 } }>
-				<Stack>
-					<SettingSection
-						title={ __( 'Site templates', 'elementor' ) }
-						settingKey="siteTemplates"
-					/>
-				</Stack>
-			</DialogContent>
-
-			<DialogActions>
-				<Button
-					onClick={ handleClose }
-					color="secondary"
-				>
-					{ __( 'Cancel', 'elementor' ) }
-				</Button>
-				<Button
-					onClick={ () => {
-						handleSaveChanges( 'templates', settings );
-						handleClose();
-					} }
-					variant="contained"
-					color="primary"
-				>
-					{ __( 'Save changes', 'elementor' ) }
-				</Button>
-			</DialogActions>
-		</Dialog>
+			<Stack>
+				<SettingSection
+					checked={ templates.siteTemplates }
+					title={ __( 'Site templates', 'elementor' ) }
+					settingKey="siteTemplates"
+					onSettingChange={ handleToggleChange }
+				/>
+			</Stack>
+		</KitCustomizationDialog>
 	);
 }
 

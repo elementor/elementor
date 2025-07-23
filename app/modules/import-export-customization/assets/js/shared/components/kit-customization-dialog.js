@@ -16,6 +16,7 @@ export function KitCustomizationDialog( {
 	handleSaveChanges,
 	children,
 	saveDisabled = false,
+	minHeight = '600px',
 } ) {
 	return (
 		<Dialog
@@ -25,7 +26,7 @@ export function KitCustomizationDialog( {
 			fullWidth
 			PaperProps={ {
 				sx: {
-					minHeight: '600px',
+					minHeight: minHeight,
 				},
 			} }
 		>
