@@ -12,6 +12,30 @@ export const ERROR_MESSAGES = {
 
 export const VARIABLE_LABEL_MAX_LENGTH = 50;
 
+type ErrorResponse = {
+	response?: {
+		data?: {
+			code?: string;
+		};
+	};
+};
+
+export type MappedError = {
+	field: string;
+	message: string;
+};
+
+export const mapServerError = ( error: ErrorResponse ): MappedError | undefined => {
+	if ( error?.response?.data?.code === 'duplicated_label' ) {
+		return {
+			field: 'label',
+			message: ERROR_MESSAGES.DUPLICATED_LABEL,
+		};
+	}
+
+	return undefined;
+};
+
 export const validateLabel = ( name: string ): string => {
 	if ( ! name.trim() ) {
 		return ERROR_MESSAGES.MISSING_VARIABLE_NAME;

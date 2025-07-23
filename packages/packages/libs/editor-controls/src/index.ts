@@ -28,6 +28,7 @@ export { TransformRepeaterControl } from './controls/transform-control/transform
 export { TransitionRepeaterControl } from './controls/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
+export { UnstableTransformRepeaterControl } from './controls/unstable-transform-control/unstable-transform-repeater-control';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';

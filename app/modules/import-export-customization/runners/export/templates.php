@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
+use Elementor\Modules\Library\Documents\Library_Document;
 
 class Templates extends Export_Runner_Base {
 
@@ -22,8 +23,46 @@ class Templates extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
+		$customization = $data['customization']['templates'] ?? null;
+
+		if ( $customization ) {
+			return $this->export_customization( $data, $customization );
+		}
+
+		return $this->export_all( $data );
+	}
+
+	private function export_all( array $data ) {
 		$template_types = array_values( Source_Local::get_template_types() );
 
+		return $this->export_templates_by_types( $template_types );
+	}
+
+	private function export_customization( array $data, $customization ) {
+		$template_types = [];
+
+		if ( isset( $customization['siteTemplates'] ) && $customization['siteTemplates'] ) {
+			$template_types = array_keys( Plugin::$instance->documents->get_document_types( [
+				'is_editable' => true,
+				'show_in_library' => true,
+				'export_group' => Library_Document::EXPORT_GROUP,
+			] ) );
+		}
+
+		$template_types_to_add = apply_filters( 'elementor/import-export-customization/export/template_types', [], $data, $customization );
+		$template_types = array_merge( $template_types, $template_types_to_add );
+
+		if ( empty( $template_types ) ) {
+			return [
+				'files' => [],
+				'manifest' => [],
+			];
+		}
+
+		return $this->export_templates_by_types( $template_types );
+	}
+
+	private function export_templates_by_types( array $template_types ) {
 		$query_args = [
 			'post_type' => Source_Local::CPT,
 			'post_status' => 'publish',
