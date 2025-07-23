@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, BrushIcon, TrashIcon } from '@elementor/icons';
@@ -13,6 +14,7 @@ import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-typ
 import { ColorField } from './fields/color-field';
 import { LabelField } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
+import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 
 const SIZE = 'tiny';
 
@@ -25,7 +27,9 @@ type Props = {
 
 export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
 	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( colorVariablePropTypeUtil );
+	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
+	const [ editConfirmation, setEditConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const variable = useVariable( editId );
@@ -39,6 +43,14 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 	const [ label, setLabel ] = useState( variable.label );
 
 	const handleUpdate = () => {
+		if ( isMessageSuppressed ) {
+			handleSaveVariable();
+		} else {
+			setEditConfirmation( true );
+		}
+	};
+
+	const handleSaveVariable = () => {
 		updateVariable( editId, {
 			value: color,
 			label,
@@ -71,6 +83,10 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 
 	const closeDeleteDialog = () => () => {
 		setDeleteConfirmation( false );
+	};
+
+	const closeEditDialog = () => () => {
+		setEditConfirmation( false );
 	};
 
 	const actions = [];
@@ -159,6 +175,14 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 					label={ label }
 					onConfirm={ handleDelete }
 					closeDialog={ closeDeleteDialog() }
+				/>
+			) }
+
+			{ editConfirmation && ! isMessageSuppressed && (
+				<EditConfirmationDialog
+					closeDialog={ closeEditDialog() }
+					onConfirm={ handleSaveVariable }
+					onSuppressMessage={ suppressMessage }
 				/>
 			) }
 		</>
