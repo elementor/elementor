@@ -19,5 +19,5 @@ export default window.elementorModules = {
 
 	importExport: {
 		templateRegistry,
-	}
+	},
 };
