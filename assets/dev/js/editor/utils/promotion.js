@@ -65,16 +65,13 @@ export default class extends elementorModules.Module {
 
 	hideProTag() {
 		this.elements.$titleBadge.css( 'display', 'none' );
-		this.elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
-		this.elements.$freeBadge.text( 'Free' );
-		this.elements.$freeBadge.css( {
-			'border-radius': 'var(--e-a-border-radius)',
-    			'background-color': 'var(--e-a-btn-bg)',
-    			'color': 'var(--e-a-btn-color-invert)',
-			'padding': '3px',
-		} );
-		this.elements.$titleBadge.after( this.elements.$freeBadge );
-		this.elements.$header.css( 'justify-content', 'space-between' );
+		if ( ! this.elements.$freeBadgeContainer ) {
+			this.elements.$freeBadgeContainer = jQuery( '<div>', { class: 'e-free-badge-container' } );
+			this.elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
+			this.elements.$freeBadge.text( 'Free' );
+			this.elements.$freeBadgeContainer.append( this.elements.$freeBadge );
+			this.elements.$titleBadge.after( this.elements.$freeBadgeContainer );
+		}
 		const $actionButton = this.dialog.getElements( 'action' );
 		$actionButton.removeClass( 'go-pro' );
 		$actionButton.css( 'background-color', 'var(--e-a-btn-bg-info)' );
@@ -82,7 +79,8 @@ export default class extends elementorModules.Module {
 
 	resetProTag() {
 		this.elements.$titleBadge.css( 'display', 'inline-block' );
-		this.elements.$freeBadge.remove();
+		this.elements.$freeBadgeContainer.remove();
+		this.elements.$freeBadgeContainer = null;
 		this.dialog.getElements( 'action' ).addClass( 'go-pro' );
 	}
 
