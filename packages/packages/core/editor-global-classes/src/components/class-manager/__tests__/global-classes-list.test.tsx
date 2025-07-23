@@ -10,6 +10,9 @@ import {
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { slice } from '../../../store';
+import { useFilterAndSortContext } from '../../filter-and-sort/context';
+import { useSearchContext } from '../../search-css-class/context';
+import { SearchAndFilterProvider } from '../../shared/search-and-filter-provider';
 import { GlobalClassesList } from '../global-classes-list';
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
@@ -17,7 +20,11 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	blockCommand: jest.fn(),
 } ) );
 
+jest.mock( '../../search-css-class/context' );
+jest.mock( '../../filter-and-sort/context' );
+
 jest.mock( '@elementor/editor-styles-repository' );
+const wrapper = ( children: React.ReactElement ) => <SearchAndFilterProvider>{ children }</SearchAndFilterProvider>;
 
 jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 	useCssClassUsage: jest.fn().mockReturnValue( {
@@ -42,9 +49,26 @@ describe( 'GlobalClassesList', () => {
 		registerSlice( slice );
 
 		store = createStore();
+		jest.mocked( useSearchContext ).mockReturnValue( {
+			inputValue: '',
+			debouncedValue: '',
+			handleChange: jest.fn(),
+			onClearSearch: jest.fn(),
+			isSearchActive: false,
+		} );
+
+		jest.mocked( useFilterAndSortContext ).mockReturnValue( {
+			onReset: jest.fn(),
+			setChecked: jest.fn(),
+			checked: {
+				empty: false,
+				onThisPage: false,
+				unused: false,
+			},
+		} );
 	} );
 
-	it( 'should render the list of classes with its order', () => {
+	it( 'should render the list of classes with its order', async () => {
 		// Arrange.
 		mockClasses( [
 			{ id: 'class-1', label: 'Class 1' },
@@ -52,13 +76,13 @@ describe( 'GlobalClassesList', () => {
 		] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
+		renderWithStore( wrapper( <GlobalClassesList /> ), store );
 
 		// Assert.
-		const [ firstClass, secondClass ] = screen.getAllByRole( 'listitem' );
+		const [ firstClass, secondClass ] = await screen.findAllByRole( 'listitem' );
+		console.log( { firstClass, secondClass } );
 
 		expect( within( firstClass ).getByText( 'Class 1' ) ).toBeInTheDocument();
-
 		expect( within( secondClass ).getByText( 'Class 2' ) ).toBeInTheDocument();
 	} );
 
@@ -67,7 +91,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
+		renderWithStore( <GlobalClassesList />, store );
 
 		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Class 1' } ) );
 
@@ -97,7 +121,7 @@ describe( 'GlobalClassesList', () => {
 		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: false, errorMessage: 'Test Error' } );
 
 		// Act.
-		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
+		renderWithStore( <GlobalClassesList />, store );
 
 		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Class-1' } ) );
 
@@ -122,7 +146,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
+		renderWithStore( <GlobalClassesList />, store );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
@@ -160,7 +184,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
+		renderWithStore( <GlobalClassesList />, store );
 
 		// Assert.
 		expect( screen.getByText( 'There are no global classes yet.' ) ).toBeInTheDocument();
@@ -174,7 +198,7 @@ describe( 'GlobalClassesList', () => {
 		] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
+		renderWithStore( <GlobalClassesList />, store );
 
 		const [ firstClass ] = screen.getAllByRole( 'listitem' );
 
@@ -202,7 +226,7 @@ describe( 'GlobalClassesList', () => {
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		// Act.
-		renderWithStore( <GlobalClassesList searchValue={ '' } onSearch={ jest.fn() } />, store );
+		renderWithStore( <GlobalClassesList />, store );
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
 
@@ -229,7 +253,7 @@ describe( 'GlobalClassesList', () => {
 			{ id: 'class-2', label: 'Footer' },
 		] );
 
-		renderWithStore( <GlobalClassesList onSearch={ jest.fn() } searchValue={ 'foo' } />, store );
+		renderWithStore( <GlobalClassesList />, store );
 
 		expect( screen.queryByText( 'Header' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
