@@ -490,15 +490,27 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( this.isOverflowHidden() ) {
-			this.$el.addClass( 'e-handles-inside' );
+		let shouldPlaceInside = this.isOverflowHidden();
+
+		// Only check for top-level elements that might hit the viewport edge
+		if ( this.isTopLevelElement() && this.isAtViewportTop() ) {
+			shouldPlaceInside = true;
 		}
 
-		const offset = this.$el.offset()?.top ?? 0;
+		this.$el.toggleClass( 'e-handles-inside', shouldPlaceInside );
+	},
 
-		if ( offset < 25 ) {
-			this.$el.addClass( 'e-handles-inside' );
-		}
+	isTopLevelElement() {
+		return this.container.parent && 'document' === this.container.parent.id;
+	},
+
+	isAtViewportTop() {
+		// Check if this element is actually at the top of the visible area
+		// where handles would overlap with browser/editor UI
+		const elementRect = this.el.getBoundingClientRect();
+		const HANDLE_HEIGHT = 30; // Approximate handle height
+
+		return elementRect.top < HANDLE_HEIGHT;
 	},
 } );
 
