@@ -20,6 +20,7 @@ type SizeInputProps = {
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
 	disabled?: boolean;
+	isPopoverOpen?: boolean;
 };
 
 const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+', '-' ];
@@ -37,6 +38,7 @@ export const SizeInput = ( {
 	unit,
 	popupState,
 	disabled,
+	isPopoverOpen = false,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -117,6 +119,7 @@ export const SizeInput = ( {
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
 					shouldBlockInput={ isUnitExtendedOption( unit ) }
+					isPopoverOpen={ isPopoverOpen && unit === 'custom' }
 					inputProps={ inputProps }
 				/>
 			</Box>

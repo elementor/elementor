@@ -2,15 +2,11 @@ import * as React from 'react';
 import { type RefObject, useEffect, useState } from 'react';
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
-import { MathFunctionIcon } from '@elementor/icons';
-import { Box, InputAdornment, usePopupState } from '@elementor/ui';
+import { usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
-import { EmptyFocusableInput } from '../components/size-control/empty-focusable-input';
 import { SizeInput } from '../components/size-control/size-input';
-import { SelectionEndAdornment } from '../components/size-control/text-field-inner-selection';
 import { TextFieldPopover } from '../components/text-field-popover';
-import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { useSizeExtendedOptions } from '../hooks/use-size-extended-options';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
@@ -205,68 +201,21 @@ export const SizeControl = createControl(
 
 		return (
 			<>
-				{ isUnitExtendedOption( controlUnit ) ? (
-					<ControlActions>
-						<Box>
-							<EmptyFocusableInput
-								disabled={ disabled }
-								placeholder={ placeholder }
-								onFocus={ onInputFocus }
-								onBlur={ restoreValue }
-								onClick={ onInputClick }
-								isPopoverOpen={ popupState.isOpen && controlUnit === 'custom' }
-								value={ controlUnit === 'custom' ? state.custom : '' }
-								InputProps={ {
-									startAdornment: startIcon ? (
-										<InputAdornment position="start" disabled={ disabled }>
-											{ startIcon }
-										</InputAdornment>
-									) : undefined,
-									endAdornment: (
-										<SelectionEndAdornment
-											disabled={ disabled }
-											options={ [ ...actualUnits, ...( actualExtendedOptions || [] ) ] }
-											onClick={ handleUnitChange }
-											value={ controlUnit }
-											alternativeOptionLabels={ {
-												custom: <MathFunctionIcon fontSize="tiny" />,
-											} }
-											menuItemsAttributes={
-												[ ...actualUnits, ...( actualExtendedOptions || [] ) ].includes(
-													'custom'
-												)
-													? {
-															custom: {
-																'aria-controls': popupState.isOpen
-																	? popupState.popupId
-																	: undefined,
-																'aria-haspopup': true,
-															},
-													  }
-													: undefined
-											}
-										/>
-									),
-								} }
-							/>
-						</Box>
-					</ControlActions>
-				) : (
-					<SizeInput
-						disabled={ disabled }
-						size={ controlSize }
-						unit={ controlUnit }
-						units={ [ ...actualUnits, ...( actualExtendedOptions || [] ) ] }
-						placeholder={ placeholder }
-						startIcon={ startIcon }
-						handleSizeChange={ handleSizeChange }
-						handleUnitChange={ handleUnitChange }
-						onBlur={ restoreValue }
-						onFocus={ onInputFocus }
-						onClick={ onInputClick }
-						popupState={ popupState }
-					/>
-				) }
+				<SizeInput
+					disabled={ disabled }
+					size={ isUnitExtendedOption( controlUnit ) && controlUnit === 'custom' ? state.custom : controlSize }
+					unit={ controlUnit }
+					units={ [ ...actualUnits, ...( actualExtendedOptions || [] ) ] }
+					placeholder={ placeholder }
+					startIcon={ startIcon }
+					handleSizeChange={ handleSizeChange }
+					handleUnitChange={ handleUnitChange }
+					onBlur={ restoreValue }
+					onFocus={ onInputFocus }
+					onClick={ onInputClick }
+					popupState={ popupState }
+					isPopoverOpen={ popupState.isOpen && controlUnit === 'custom' }
+				/>
 				{ anchorRef?.current && (
 					<TextFieldPopover
 						popupState={ popupState }
