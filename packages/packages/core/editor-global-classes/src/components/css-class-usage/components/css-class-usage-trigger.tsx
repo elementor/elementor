@@ -36,6 +36,7 @@ export const CssClassUsageTrigger = ( {
 		return null;
 	}
 
+
 	const WrapperComponent = total !== 0 ? TooltipWrapper : InfoAlertMessage;
 
 	return (

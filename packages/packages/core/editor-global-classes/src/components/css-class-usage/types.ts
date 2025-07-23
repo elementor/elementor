@@ -2,9 +2,9 @@ export const QUERY_KEY = 'css-classes-usage';
 
 export type CssClassID = string;
 
-export type ContentType = 'header' | 'footer' | 'wp-page' | 'wp-post' | 'popup';
+export type ContentType = 'header' | 'footer' | 'wp-page' | 'wp-post' | 'popup' | string;
 
-type CssClassUsageContent = {
+export type CssClassUsageContent = {
 	elements: string[];
 	pageId: string;
 	total: number;
@@ -12,8 +12,8 @@ type CssClassUsageContent = {
 	type: ContentType;
 };
 
-export type CssClassUsage = Record< CssClassID, CssClassUsageContent[] >;
+export type CssClassUsage = Record< CssClassID, Array< CssClassUsageContent > >;
 
-export type EnhancedCssClassUsageContent = { content: CssClassUsageContent[]; total: number };
+export type EnhancedCssClassUsageContent = { content: Array< CssClassUsageContent >; total: number };
 
 export type EnhancedCssClassUsage = Record< CssClassID, EnhancedCssClassUsageContent >;

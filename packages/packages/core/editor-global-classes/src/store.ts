@@ -200,3 +200,7 @@ export const selectOrderedClasses = createSelector( selectGlobalClasses, selectO
 
 export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
 	state[ SLICE_NAME ].data.items[ id ] ?? null;
+
+export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
+	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
+);
