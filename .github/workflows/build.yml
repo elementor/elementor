@@ -92,7 +92,7 @@ jobs:
           retention-days: 3
 
       - name: Find existing comment on PR (Elementor repo)
-        if: github.event_name == 'pull_request' && startsWith( github.repository, 'elementor/' )
+        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/find-comment@v3
         id: find
         with:
@@ -101,7 +101,7 @@ jobs:
           body-includes: 'Elementor Build'
       
       - name: Comment build info on PR (Elementor repo)
-        if: github.event_name == 'pull_request' && startsWith( github.repository, 'elementor/' )
+        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
@@ -122,7 +122,7 @@ jobs:
           edit-mode: replace
 
       - name: Comment build info on PR (non-Elementor repo)
-        if: github.event_name == 'pull_request' && !startsWith( github.repository, 'elementor/' )
+        if: github.event_name == 'pull_request' && !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/create-or-update-comment@v4
         with:
           body: |
