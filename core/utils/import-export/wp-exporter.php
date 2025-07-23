@@ -104,7 +104,7 @@ class WP_Exporter {
 		if ( ! empty( $this->args['include'] ) ) {
 			$include_ids = array_map( 'absint', $this->args['include'] );
 			$include_placeholders = implode( ',', array_fill( 0, count( $include_ids ), '%d' ) );
-			$where .= $this->wpdb->prepare( " AND {$this->wpdb->posts}.ID IN ($include_placeholders)", $include_ids );
+			$where .= $this->wpdb->prepare( " AND {$this->wpdb->posts}.ID IN ($include_placeholders)", $include_ids ); // phpcs:ignore
 		}
 
 		if ( ! empty( $this->args['meta_query'] ) ) {
