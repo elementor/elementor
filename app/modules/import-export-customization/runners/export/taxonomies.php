@@ -17,11 +17,26 @@ class Taxonomies extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
-		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];
-		$post_types = array_merge( $wp_builtin_post_types, $selected_custom_post_types );
+		$customization = $data['customization']['content'] ?? [];
+		$include_menus = $customization['menus'] ?? true;
+		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
+		$exclude_post_types = [];
 
-		$export = $this->export_taxonomies( $post_types );
+		if ( ! $include_menus ) {
+			$exclude_post_types[] = 'nav_menu_item';
+		}
+
+		if ( is_array( $selected_custom_post_types ) && ! in_array( 'post', $selected_custom_post_types, true ) ) {
+			$exclude_post_types[] = 'post';
+		}
+
+		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types( $exclude_post_types );
+
+		$post_types = is_array( $selected_custom_post_types )
+			? array_merge( $wp_builtin_post_types, $selected_custom_post_types )
+			: $wp_builtin_post_types;
+
+		$export = $this->export_taxonomies( $post_types, $customization );
 
 		$manifest_data['taxonomies'] = $export['manifest'];
 
@@ -33,17 +48,23 @@ class Taxonomies extends Export_Runner_Base {
 		];
 	}
 
-	private function export_taxonomies( array $post_types ) {
+	private function export_taxonomies( array $post_types, array $customization ) {
 		$files = [];
 		$manifest = [];
 
 		$taxonomies = get_taxonomies();
 
+		$selected_taxonomies = $customization['taxonomies'] ?? null;
+
 		foreach ( $taxonomies as $taxonomy ) {
 			$taxonomy_post_types = get_taxonomy( $taxonomy )->object_type;
 			$intersected_post_types = array_intersect( $taxonomy_post_types, $post_types );
 
-			if ( empty( $intersected_post_types ) ) {
+			$should_export = null === $selected_taxonomies
+				? ! empty( $intersected_post_types )
+				: in_array( $taxonomy, $selected_taxonomies, true );
+
+			if ( ! $should_export ) {
 				continue;
 			}
 

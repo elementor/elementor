@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type ReactNode } from 'react';
-import { Box, Button, Card, CardActions, CardContent, SvgIcon, Typography } from '@elementor/ui';
+import { Box, Button, Card, CardActions, CardContent, Link, SvgIcon, Typography } from '@elementor/ui';
 
 type InfoTipCardProps = {
 	content: ReactNode;
@@ -23,22 +23,31 @@ export const InfoTipCard = ( { content, svgIcon, learnMoreButton, ctaButton }: I
 					<SvgIcon fontSize="tiny" sx={ { mr: 0.5 } }>
 						{ svgIcon }
 					</SvgIcon>
-					<Typography variant="body2">{ content }</Typography>
+					<Typography variant="body2">
+						{ content }
+						{ learnMoreButton && (
+							<>
+								&nbsp;
+								<Link color="info.main" href={ learnMoreButton.href } target="_blank">
+									{ learnMoreButton.label }
+								</Link>
+							</>
+						) }
+					</Typography>
 				</Box>
 			</CardContent>
 
-			{ ( ctaButton || learnMoreButton ) && (
-				<CardActions>
-					{ learnMoreButton && (
-						<Button size="small" color="warning" href={ learnMoreButton.href } target="_blank">
-							{ learnMoreButton.label }
-						</Button>
-					) }
-					{ ctaButton && (
-						<Button size="small" color="warning" variant="contained" onClick={ ctaButton.onClick }>
-							{ ctaButton.label }
-						</Button>
-					) }
+			{ ctaButton && (
+				<CardActions sx={ { justifyContent: 'flex-start' } }>
+					<Button
+						size="small"
+						color="secondary"
+						variant="contained"
+						onClick={ ctaButton.onClick }
+						sx={ { marginInlineStart: '1rem' } }
+					>
+						{ ctaButton.label }
+					</Button>
 				</CardActions>
 			) }
 		</Card>
