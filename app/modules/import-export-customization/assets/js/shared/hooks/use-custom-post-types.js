@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-export function useCustomPostTypes( { include = [] } = {}) {
+export function useCustomPostTypes( { include = [] } = {} ) {
 	const [ customPostTypes, setCustomPostTypes ] = useState( [] );
 
 	useEffect( () => {
