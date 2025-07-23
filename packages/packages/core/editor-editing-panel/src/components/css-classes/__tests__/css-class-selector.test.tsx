@@ -66,6 +66,7 @@ const providerLocalMockStyle = createMockStyleDefinitionWithVariants( {
 			props: {
 				'text-align': 'left',
 			},
+			custom_css: null,
 		},
 		{
 			meta: {
@@ -75,6 +76,7 @@ const providerLocalMockStyle = createMockStyleDefinitionWithVariants( {
 			props: {
 				'text-align': 'right',
 			},
+			custom_css: null,
 		},
 	],
 } );
