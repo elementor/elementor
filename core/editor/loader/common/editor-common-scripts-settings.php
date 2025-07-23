@@ -132,6 +132,15 @@ class Editor_Common_Scripts_Settings {
 				'icon' => 'eicon-accessibility',
 				'name' => 'ally-accessibility',
 				'title' => __( 'Ally accessibility', 'elementor' ),
+				'keywords' => [
+					'Accessibility',
+					'Usability',
+					'Inclusive',
+					'Statement',
+					'WCAG',
+					'Ally',
+					'Complaince',
+				],
 			] ] );
 		}
 

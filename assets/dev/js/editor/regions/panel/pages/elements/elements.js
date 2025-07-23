@@ -109,6 +109,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					categories: JSON.parse( widget.categories ),
 					editable: false,
 					integration: true,
+					keywords: widget.keywords || [],
 				} );
 			} );
 		} 
