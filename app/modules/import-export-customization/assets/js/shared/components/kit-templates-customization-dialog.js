@@ -31,7 +31,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			if ( data.customization.templates ) {
 				setTemplates( data.customization.templates );
 			} else {
-				setTemplates( templateRegistry.getState(data.includes, data.customization, initialState ) );
+				setTemplates( templateRegistry.getState( data.includes, data.customization, initialState ) );
 			}
 		}
 	}, [ open, data.customization.templates, initialState ] );

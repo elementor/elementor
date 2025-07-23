@@ -5,7 +5,7 @@ class TemplateRegistry {
 
     register( templateType ) {
         if ( ! templateType.key || ! templateType.title ) {
-            throw new Error(' Template type must have key and title' );
+            throw new Error( 'Template type must have key and title' );
         }
 
         this.templateTypes.set( templateType.key, {
