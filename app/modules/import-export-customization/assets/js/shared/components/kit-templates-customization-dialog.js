@@ -5,7 +5,17 @@ import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 
+const templateRegistry = window.elementorModules.importExport.templateRegistry;
+
+templateRegistry.register( {
+    key: 'siteTemplates',
+    title: __( 'Site templates', 'elementor' ),
+    order: 0,
+    useParentDefault: true
+} );
+
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
+	const templateTypes = templateRegistry.getAll();
 	const initialState = data.includes.includes( 'templates' );
 
 	const [ templates, setTemplates ] = useState( () => {
@@ -13,9 +23,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			return data.customization.templates;
 		}
 
-		return {
-			siteTemplates: initialState,
-		};
+		return templateRegistry.getState( data.includes, data.customization, initialState );
 	} );
 
 	useEffect( () => {
@@ -23,9 +31,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			if ( data.customization.templates ) {
 				setTemplates( data.customization.templates );
 			} else {
-				setTemplates( {
-					siteTemplates: initialState,
-				} );
+				setTemplates( templateRegistry.getState(data.includes, data.customization, initialState ) );
 			}
 		}
 	}, [ open, data.customization.templates, initialState ] );
@@ -37,6 +43,31 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 		} ) );
 	};
 
+	const renderTemplateSection = ( templateType ) => {
+        if ( templateType.component ) {
+            const CustomComponent = templateType.component;
+            return (
+                <CustomComponent
+                    key={ templateType.key }
+                    checked={ templates[ templateType.key ] }
+                    onSettingChange={ handleToggleChange }
+                    data={ data }
+                />
+            );
+        }
+
+        return (
+            <SettingSection
+                key={ templateType.key }
+                checked={ templates[ templateType.key ] }
+                title={ templateType.title }
+                description={ templateType.description }
+                settingKey={ templateType.key }
+                onSettingChange={ handleToggleChange }
+            />
+        );
+    };
+
 	return (
 		<KitCustomizationDialog
 			open={ open }
@@ -46,13 +77,8 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			minHeight="auto"
 		>
 			<Stack>
-				<SettingSection
-					checked={ templates.siteTemplates }
-					title={ __( 'Site templates', 'elementor' ) }
-					settingKey="siteTemplates"
-					onSettingChange={ handleToggleChange }
-				/>
-			</Stack>
+                { templateTypes.map( renderTemplateSection ) }
+            </Stack>
 		</KitCustomizationDialog>
 	);
 }
