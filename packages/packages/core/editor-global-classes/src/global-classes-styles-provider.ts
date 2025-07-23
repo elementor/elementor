@@ -73,5 +73,15 @@ export const globalClassesStylesProvider = createStylesProvider( {
 				} )
 			);
 		},
+		updateCustomCss: ( args ) => {
+			dispatch(
+				slice.actions.updateProps( {
+					id: args.id,
+					meta: args.meta,
+					custom_css: args.custom_css,
+					props: {},
+				} )
+			);
+		},
 	},
 } );

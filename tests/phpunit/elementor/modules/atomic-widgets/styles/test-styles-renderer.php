@@ -6,6 +6,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
+use Elementor\Utils;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -344,7 +345,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_nested_background_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
 			$images = $this->mock_images();
 
@@ -656,6 +657,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 		$this->assertNotEmpty( $css, 'CSS should not be empty' );
 		$this->assertMatchesSnapshot( $css );
 	}
+
 	public function test_render__style_with_background_color_transformers() {
 		// Arrange.
 		$styles = [
@@ -694,7 +696,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_overlay_transformers() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
 			$images = $this->mock_images();
 
@@ -744,11 +746,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => [
 														'$$type' => 'background-image-size-scale',
-														'value'  => [
+														'value' => [
 															// Missing 'height'
-															'width'  => [
+															'width' => [
 																'$$type' => 'size',
-																'value'  => [
+																'value' => [
 																	'size' => 140,
 																	'unit' => 'px',
 																],
@@ -782,7 +784,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_image_transformers_without_image() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function() {
+		add_filter( 'wp_get_attachment_image_src', function () {
 			return [
 				'https://example.com/image.jpg',
 				100,
@@ -833,7 +835,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_background_with_fields_of_similar_valus() {
 		// Arrange.
-		add_filter( 'wp_get_attachment_image_src', function( ...$args ) {
+		add_filter( 'wp_get_attachment_image_src', function ( ...$args ) {
 			$resolution = $args[2];
 			$images = $this->mock_images();
 
@@ -877,11 +879,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => [
 														'$$type' => 'background-image-size-scale',
-														'value'  => [
+														'value' => [
 															// Missing 'height'
-															'width'  => [
+															'width' => [
 																'$$type' => 'size',
-																'value'  => [
+																'value' => [
 																	'size' => 140,
 																	'unit' => 'px',
 																],
@@ -915,11 +917,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => [
 														'$$type' => 'background-image-size-scale',
-														'value'  => [
+														'value' => [
 															// Missing 'height'
-															'width'  => [
+															'width' => [
 																'$$type' => 'size',
-																'value'  => [
+																'value' => [
 																	'size' => 140,
 																	'unit' => 'px',
 																],
@@ -954,11 +956,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 													],
 													'size' => [
 														'$$type' => 'background-image-size-scale',
-														'value'  => [
+														'value' => [
 															// Missing 'height'
-															'width'  => [
+															'width' => [
 																'$$type' => 'size',
-																'value'  => [
+																'value' => [
 																	'size' => 150,
 																	'unit' => 'px',
 																],
@@ -1160,7 +1162,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 	public function test_render__style_with_thrown_exceptions_in_transformer() {
 		// Arrange.
-		add_action('elementor/atomic-widgets/styles/transformers/register', function( $registry ) {
+		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
 			$faulty_transformer = new class() extends Transformer_Base {
 				public function transform( $value, $key ): string {
 					throw new \Exception( 'Faulty transformer' );
@@ -1168,7 +1170,7 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 			};
 
 			$registry->register( Number_Prop_Type::get_key(), $faulty_transformer );
-		});
+		} );
 
 		$styles = [
 			[
@@ -1352,6 +1354,63 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $css );
+	}
+
+	public function test_render__style_variant_with_custom_css() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'color' => 'red',
+						],
+						'meta' => [ 'state' => 'hover' ],
+						'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow;' ) ],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert: Should contain both the prop and the custom_css.
+		$this->assertStringContainsString( 'color:red;', $css );
+		$this->assertStringContainsString( 'background: yellow;', $css );
+	}
+
+	public function test_render__style_variant_with_custom_css_multiple_rules() {
+		// Arrange.
+		$styles = [
+			[
+				'id' => 'test-style',
+				'type' => 'class',
+				'variants' => [
+					[
+						'props' => [
+							'font-size' => '16px',
+						],
+						'meta' => [ 'state' => 'hover' ],
+						'custom_css' => [ 'raw' => Utils::encode_string( 'background: yellow; color: red;' ) ],
+					],
+				],
+			],
+		];
+
+		$stylesRenderer = Styles_Renderer::make( [], '' );
+
+		// Act.
+		$css = $stylesRenderer->render( $styles );
+
+		// Assert
+		$this->assertStringContainsString( 'font-size:16px;', $css );
+		$this->assertStringContainsString( 'background: yellow;', $css );
+		$this->assertStringContainsString( 'color: red;', $css );
 	}
 
 	private function mock_images() {
