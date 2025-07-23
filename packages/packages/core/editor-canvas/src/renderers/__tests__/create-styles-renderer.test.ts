@@ -1,7 +1,13 @@
 /* eslint-disable testing-library/render-result-naming-convention */
 import type { BreakpointsMap } from '@elementor/editor-responsive';
+import { encodeString } from '@elementor/utils';
 
 import { createStylesRenderer, type RendererStyleDefinition } from '../create-styles-renderer';
+
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	...jest.requireActual( '@elementor/editor-v1-adapters' ),
+	isExperimentActive: jest.fn().mockReturnValue( true ),
+} ) );
 
 describe( 'renderStyles', () => {
 	it( 'should render styles', async () => {
@@ -15,18 +21,22 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '10px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: null, state: 'hover' },
 					props: { 'font-size': '20px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: 'tablet', state: null },
 					props: { 'font-size': '30px' },
+					custom_css: null,
 				},
 				{
 					meta: { breakpoint: 'mobile', state: 'focus' },
 					props: { 'font-size': '40px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -40,6 +50,7 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '50px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -79,6 +90,7 @@ describe( 'renderStyles', () => {
 				{
 					meta: { breakpoint: null, state: null },
 					props: { 'font-size': '24px' },
+					custom_css: null,
 				},
 			],
 		};
@@ -102,5 +114,90 @@ describe( 'renderStyles', () => {
 				value: '.elementor-prefix .test{font-size:24px;}',
 			},
 		] );
+	} );
+} );
+
+describe( 'custom_css rendering', () => {
+	it( 'should not render custom_css if raw is empty', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [ { meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: '' } } ],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should not render custom_css if raw is whitespace', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{ meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: encodeString( '   \n\t' ) } },
+			],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should not render custom_css if raw is invalid encoded string', async () => {
+		// Arrange.
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{ meta: { breakpoint: null, state: null }, props: {}, custom_css: { raw: 'I cannot be decoded' } },
+			],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).not.toContain( '{;}' );
+	} );
+
+	it( 'should render custom_css if raw is valid base64 encoded string', async () => {
+		// Arrange.
+		const css = 'transition: 100s; \n .inner-selector { color: red; }';
+		const styleDef: RendererStyleDefinition = {
+			id: 'test',
+			type: 'class',
+			cssName: 'test',
+			label: 'Test',
+			variants: [
+				{
+					meta: { breakpoint: null, state: null },
+					props: {},
+					custom_css: { raw: encodeString( css ) },
+				},
+			],
+		};
+
+		// Act.
+		const renderStyles = createStylesRenderer( { breakpoints: {} as BreakpointsMap, resolve: async () => ( {} ) } );
+		const result = await renderStyles( { styles: [ styleDef ] } );
+
+		// Assert.
+		expect( result[ 0 ].value ).toContain( css );
 	} );
 } );
