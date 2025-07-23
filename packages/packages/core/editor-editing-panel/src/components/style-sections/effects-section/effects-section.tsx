@@ -10,7 +10,6 @@ import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
-import { EXPERIMENTAL_FEATURES } from '../../../sync/experiments-flags';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
 import { OpacityControlField } from './opacity-control-field';

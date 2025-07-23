@@ -124,6 +124,7 @@ export const slice = createSlice( {
 			if ( ! style ) {
 				throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
 			}
+
 			localHistory.next( state.data );
 
 			const variant = getVariantByMeta( style, payload.meta );
