@@ -45,6 +45,7 @@ abstract class Library_Document extends Document {
 		$properties['show_in_library'] = true;
 		$properties['register_type'] = true;
 		$properties['cpt'] = [ Source_Local::CPT ];
+		$properties['export_group'] = 'site-templates';
 
 		return $properties;
 	}

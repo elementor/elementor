@@ -22,7 +22,13 @@ class Templates extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$template_types = array_values( Source_Local::get_template_types() );
+		$template_types = array_keys( Plugin::$instance->documents->get_document_types( [
+			'is_editable' => true,
+			'show_in_library' => true,
+			'export_group' => 'site-templates',
+		] ) );
+
+		$template_types = apply_filters( 'elementor/import-export-customization/export/template_types', $template_types );
 
 		$query_args = [
 			'post_type' => Source_Local::CPT,
