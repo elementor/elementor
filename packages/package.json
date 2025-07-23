@@ -17,8 +17,12 @@
     "check-unused": "knip",
     "spell-check": "cspell . --quiet",
     "format": "eslint . --fix",
-    "release": "npm run build && changeset publish",
-    "version": "changeset version",
+    "version": "node scripts/version-manager.js set",
+    "version:list": "node scripts/version-manager.js list",
+    "version:validate": "node scripts/version-manager.js validate",
+    "version:bump": "node scripts/version-manager.js bump",
+    "version:set": "node scripts/version-manager.js set",
+    "release": "npm run build && node scripts/version-manager.js publish",
     "docs": "typedoc --options ./typedoc/typedoc.config.js"
   },
   "workspaces": [
@@ -27,7 +31,6 @@
     "packages/tools/*"
   ],
   "devDependencies": {
-    "@changesets/cli": "^2.27.10",
     "@swc/core": "^1.10.1",
     "@swc/jest": "^0.2.37",
     "@tanstack/eslint-plugin-query": "^5.56.1",

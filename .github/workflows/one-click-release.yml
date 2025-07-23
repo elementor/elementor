@@ -19,15 +19,6 @@ on:
         description: 'Run in dry-run mode (no actual release will be created)'
         required: false
         default: true
-      release_packages_type:
-        type: choice
-        description: 'Select a release type (major.minor.patch) or none for not releasing packages.'
-        required: true
-        options:
-          - none
-          - patch
-          - minor
-          - major
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -158,18 +149,14 @@ jobs:
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
       - name: Create release PR or publish
-        if: github.event.inputs.dry_run == 'false' && github.event.inputs.release_packages_type != 'none'
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          version: npm run packages:version
-          publish: npm run packages:release
-          commit: 'chore(release): publish'
-          title: 'chore(release): publish'
-          setupGitUser: false
+        id: release-packages
+        run: |
+          # Assuming the version is already bumped in the creation of the release branch
+          npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
 
       - name: Post To Slack Created Release
         if: github.event.inputs.dry_run == 'false'
