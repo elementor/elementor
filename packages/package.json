@@ -17,12 +17,12 @@
     "check-unused": "knip",
     "spell-check": "cspell . --quiet",
     "format": "eslint . --fix",
-    "version": "node scripts/version-manager.js set",
-    "version:list": "node scripts/version-manager.js list",
-    "version:validate": "node scripts/version-manager.js validate",
-    "version:bump": "node scripts/version-manager.js bump",
-    "version:set": "node scripts/version-manager.js set",
-    "release": "npm run build && node scripts/version-manager.js publish",
+    "version": "node scripts/version-manager/index.js set",
+    "version:list": "node scripts/version-manager/index.js list",
+    "version:validate": "node scripts/version-manager/index.js validate",
+    "version:bump": "node scripts/version-manager/index.js bump",
+    "version:set": "node scripts/version-manager/index.js set",
+    "release": "npm run build && node scripts/version-manager/index.js publish",
     "docs": "typedoc --options ./typedoc/typedoc.config.js"
   },
   "workspaces": [

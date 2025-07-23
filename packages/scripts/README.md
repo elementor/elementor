@@ -2,6 +2,24 @@
 
 A comprehensive tool for managing versions and publishing packages in the Elementor monorepo.
 
+## Architecture
+
+The version manager is organized into a modular structure for better maintainability:
+
+```
+scripts/version-manager/
+├── index.js              # Main entry point
+├── cli.js                # CLI interface and argument parsing
+├── constants.js          # Constants and configuration
+├── logger.js             # Logging utilities
+├── package-discovery.js  # Package discovery and filtering
+├── version-utils.js      # Version manipulation utilities
+├── version-operations.js # Version setting and bumping operations
+├── validation.js         # Package validation logic
+├── publishing.js         # Publishing functionality
+└── listing.js           # Package listing and display
+```
+
 ## Features
 
 - **Version Management**: Set, bump, and validate package versions across the workspace
@@ -18,29 +36,30 @@ A comprehensive tool for managing versions and publishing packages in the Elemen
 Set an exact version for all packages:
 
 ```bash
-node scripts/version-manager.js set <version> [options]
+node scripts/version-manager/index.js set <version> [options]
 ```
 
 Examples:
 ```bash
 # Set all packages to version 3.31.0
-node scripts/version-manager.js set 3.31.0
+node scripts/version-manager/index.js set 3.31.0
 
 # Set with pre-release tag
-node scripts/version-manager.js set 3.31.0 --tag beta.1
+node scripts/version-manager/index.js set 3.31.0 --tag beta.1
 
 # Dry run to see what would change
-node scripts/version-manager.js set 3.31.0 --dry-run
+node scripts/version-manager/index.js set 3.31.0 --dry-run
 
 # Set only specific packages
-node scripts/version-manager.js set 3.31.0 --packages "packages/core/*"
+node scripts/version-manager/index.js set 3.31.0 --packages "packages/core/*"
+```
 ```
 
 #### Bump Version
 Increment version using semantic versioning:
 
 ```bash
-node scripts/version-manager.js bump <type> [options]
+node scripts/version-manager/index.js bump <type> [options]
 ```
 
 Types: `patch`, `minor`, `major`
@@ -48,39 +67,39 @@ Types: `patch`, `minor`, `major`
 Examples:
 ```bash
 # Bump patch version
-node scripts/version-manager.js bump patch
+node scripts/version-manager/index.js bump patch
 
 # Bump minor version with release candidate tag
-node scripts/version-manager.js bump minor --tag rc.1
+node scripts/version-manager/index.js bump minor --tag rc.1
 
 # Bump from specific base version
-node scripts/version-manager.js bump patch --base-version 3.30.0
+node scripts/version-manager/index.js bump patch --base-version 3.30.0
 ```
 
 #### List Packages
 List all packages and their versions:
 
 ```bash
-node scripts/version-manager.js list [options]
+node scripts/version-manager/index.js list [options]
 ```
 
 Examples:
 ```bash
 # List all packages
-node scripts/version-manager.js list
+node scripts/version-manager/index.js list
 
 # List only publishable packages
-node scripts/version-manager.js list --publishable
+node scripts/version-manager/index.js list --publishable
 
 # List specific packages
-node scripts/version-manager.js list --packages "packages/libs/*"
+node scripts/version-manager/index.js list --packages "packages/libs/*"
 ```
 
 #### Validate Versions
 Check that all packages have consistent versioning:
 
 ```bash
-node scripts/version-manager.js validate [options]
+node scripts/version-manager/index.js validate [options]
 ```
 
 ### Publishing
@@ -89,7 +108,7 @@ node scripts/version-manager.js validate [options]
 Publish packages to npm (only non-private packages):
 
 ```bash
-node scripts/version-manager.js publish [options]
+node scripts/version-manager/index.js publish [options]
 ```
 
 **Important**: Only packages with `"private": false` in their `package.json` will be published.
@@ -97,22 +116,22 @@ node scripts/version-manager.js publish [options]
 Examples:
 ```bash
 # Publish all packages (with confirmation)
-node scripts/version-manager.js publish
+node scripts/version-manager/index.js publish
 
 # Publish without confirmation
-node scripts/version-manager.js publish --yes
+node scripts/version-manager/index.js publish --yes
 
 # Dry run to see what would be published
-node scripts/version-manager.js publish --dry-run
+node scripts/version-manager/index.js publish --dry-run
 
 # Publish specific packages
-node scripts/version-manager.js publish --packages "packages/libs/*"
+node scripts/version-manager/index.js publish --packages "packages/libs/*"
 
 # Publish with specific access level
-node scripts/version-manager.js publish --access public
+node scripts/version-manager/index.js publish --access public
 
 # Publish with two-factor authentication
-node scripts/version-manager.js publish --otp <token>
+node scripts/version-manager/index.js publish --otp <token>
 ```
 
 ## Publishing Validation
@@ -200,34 +219,34 @@ To keep a package private, set:
 
 2. **Bump versions**:
    ```bash
-   node scripts/version-manager.js bump patch
+   node scripts/version-manager/index.js bump patch
    ```
 
 3. **Validate**:
    ```bash
-   node scripts/version-manager.js validate
+   node scripts/version-manager/index.js validate
    ```
 
 4. **Preview publishing**:
    ```bash
-   node scripts/version-manager.js publish --dry-run
+   node scripts/version-manager/index.js publish --dry-run
    ```
 
 5. **Publish**:
    ```bash
-   node scripts/version-manager.js publish --yes
+   node scripts/version-manager/index.js publish --yes
    ```
 
 ### Pre-release Process
 
 1. **Set pre-release version**:
    ```bash
-   node scripts/version-manager.js set 3.31.0 --tag beta.1
+   node scripts/version-manager/index.js set 3.31.0 --tag beta.1
    ```
 
 2. **Publish pre-release**:
    ```bash
-   node scripts/version-manager.js publish --tag beta --yes
+   node scripts/version-manager/index.js publish --tag beta --yes
    ```
 
 ## Integration with npm Scripts
@@ -237,12 +256,12 @@ The version manager integrates with existing npm scripts:
 ```json
 {
   "scripts": {
-    "version": "node scripts/version-manager.js set",
-    "version:list": "node scripts/version-manager.js list",
-    "version:validate": "node scripts/version-manager.js validate",
-    "version:bump": "node scripts/version-manager.js bump",
-    "version:set": "node scripts/version-manager.js set",
-    "release": "npm run build && node scripts/version-manager.js publish"
+    "version": "node scripts/version-manager/index.js set",
+    "version:list": "node scripts/version-manager/index.js list",
+    "version:validate": "node scripts/version-manager/index.js validate",
+    "version:bump": "node scripts/version-manager/index.js bump",
+    "version:set": "node scripts/version-manager/index.js set",
+    "release": "npm run build && node scripts/version-manager/index.js publish"
   }
 }
 ```
@@ -277,5 +296,5 @@ The script provides clear error messages and exits with appropriate codes:
 For detailed debugging, you can add console.log statements or use Node.js debugger:
 
 ```bash
-node --inspect scripts/version-manager.js publish --dry-run
+node --inspect scripts/version-manager/index.js publish --dry-run
 ``` 
