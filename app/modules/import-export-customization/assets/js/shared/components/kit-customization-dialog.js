@@ -70,4 +70,5 @@ KitCustomizationDialog.propTypes = {
 	children: PropTypes.node.isRequired,
 	title: PropTypes.string.isRequired,
 	saveDisabled: PropTypes.bool,
+	minHeight: PropTypes.string,
 };
