@@ -31,6 +31,7 @@ class WP_Exporter {
 		'offset' => 0,
 		'limit' => -1,
 		'meta_query' => [], // If specified `meta_key` then will include all post(s) that have this meta_key.
+		'include' => [], // Array of post IDs to include in the export.
 	];
 
 	/**
@@ -98,6 +99,12 @@ class WP_Exporter {
 		$limit = '';
 		if ( -1 !== (int) $this->args['limit'] ) {
 			$limit = 'LIMIT ' . (int) $this->args['limit'] . ' OFFSET ' . (int) $this->args['offset'];
+		}
+
+		if ( ! empty( $this->args['include'] ) ) {
+			$include_ids = array_map( 'absint', $this->args['include'] );
+			$include_placeholders = implode( ',', array_fill( 0, count( $include_ids ), '%d' ) );
+			$where .= $this->wpdb->prepare( " AND {$this->wpdb->posts}.ID IN ($include_placeholders)", $include_ids ); // phpcs:ignore
 		}
 
 		if ( ! empty( $this->args['meta_query'] ) ) {

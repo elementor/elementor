@@ -46,6 +46,7 @@ class ç extends Elementor_Test_Base {
 								'value' => 'block',
 							],
 						],
+						'custom_css' => null,
 					],
 				],
 			],

@@ -81,6 +81,7 @@ class Test_Export_Runner extends Elementor_Test_Base {
 								],
 							],
 						],
+						'custom_css' => null,
 					],
 				],
 			],

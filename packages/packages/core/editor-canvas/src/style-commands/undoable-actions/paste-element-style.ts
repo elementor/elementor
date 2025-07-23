@@ -40,12 +40,13 @@ export const undoablePasteElementStyle = () =>
 					};
 
 					if ( styleId ) {
-						newStyle.variants.forEach( ( { meta, props } ) => {
+						newStyle.variants.forEach( ( { meta, props, custom_css: customCss } ) => {
 							updateElementStyle( {
 								elementId,
 								styleId,
 								meta,
 								props,
+								custom_css: customCss,
 							} );
 						} );
 					} else {
