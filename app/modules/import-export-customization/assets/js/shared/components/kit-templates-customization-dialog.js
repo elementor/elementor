@@ -5,17 +5,28 @@ import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 
-const templateRegistry = window.elementorModules.importExport.templateRegistry;
+const getTemplateRegistry = () => {
+    return window.elementorModules?.importExport?.templateRegistry;
+};
 
-templateRegistry.register( {
-    key: 'siteTemplates',
-    title: __( 'Site templates', 'elementor' ),
-    order: 0,
-    useParentDefault: true
-} );
+const initializeTemplateRegistry = () => {
+    const templateRegistry = getTemplateRegistry();
+
+    if ( templateRegistry ) {
+        templateRegistry.register({
+            key: 'siteTemplates',
+            title: __( 'Site templates', 'elementor' ),
+            order: 0,
+            useParentDefault: true
+        } );
+    }
+
+    return templateRegistry;
+};
 
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const templateTypes = templateRegistry.getAll();
+	const templateRegistry = initializeTemplateRegistry();
+	const templateTypes = templateRegistry?.getAll() || [];
 	const initialState = data.includes.includes( 'templates' );
 
 	const [ templates, setTemplates ] = useState( () => {
@@ -23,7 +34,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			return data.customization.templates;
 		}
 
-		return templateRegistry.getState( data.includes, data.customization, initialState );
+		return templateRegistry?.getState( data.includes, data.customization, initialState ) || {};
 	} );
 
 	useEffect( () => {
@@ -31,7 +42,8 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			if ( data.customization.templates ) {
 				setTemplates( data.customization.templates );
 			} else {
-				setTemplates( templateRegistry.getState( data.includes, data.customization, initialState ) );
+				const currentRegistry = getTemplateRegistry();
+				setTemplates( currentRegistry?.getState( data.includes, data.customization, initialState ) || {} );
 			}
 		}
 	}, [ open, data.customization.templates, initialState ] );
@@ -50,6 +62,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
                 <CustomComponent
                     key={ templateType.key }
                     checked={ templates[ templateType.key ] }
+					settingKey={ templateType.key }
                     onSettingChange={ handleToggleChange }
                     data={ data }
                 />
