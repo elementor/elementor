@@ -52,10 +52,7 @@ describe( 'ColorVariableRestore', () => {
 		( usePropVariablesModule.restoreVariable as jest.Mock ).mockRejectedValue( apiErrorResponse );
 
 		// Act.
-		renderControl(
-			<ColorVariableRestore variableId="e-gv-4test" onClose={ jest.fn() } />,
-			props
-		);
+		renderControl( <ColorVariableRestore variableId="e-gv-4test" onClose={ jest.fn() } />, props );
 
 		// Change the label to enable the save button
 		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
@@ -86,5 +83,4 @@ describe( 'ColorVariableRestore', () => {
 		// 3. Save button is disabled due to error
 		expect( saveButton ).toBeDisabled();
 	} );
-
 } );
