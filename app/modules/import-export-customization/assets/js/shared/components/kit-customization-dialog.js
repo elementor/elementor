@@ -26,7 +26,7 @@ export function KitCustomizationDialog( {
 			fullWidth
 			PaperProps={ {
 				sx: {
-					minHeight: minHeight,
+					minHeight,
 				},
 			} }
 		>

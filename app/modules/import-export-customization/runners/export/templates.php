@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
+use Elementor\Modules\Library\Documents\Library_Document;
 
 class Templates extends Export_Runner_Base {
 
@@ -44,7 +45,7 @@ class Templates extends Export_Runner_Base {
 			$template_types = array_keys( Plugin::$instance->documents->get_document_types( [
 				'is_editable' => true,
 				'show_in_library' => true,
-				'export_group' => 'site-templates',
+				'export_group' => Library_Document::EXPORT_GROUP,
 			] ) );
 		}
 
