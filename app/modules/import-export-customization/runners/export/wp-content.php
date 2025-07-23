@@ -23,11 +23,11 @@ class Wp_Content extends Export_Runner_Base {
 		$include_menus = $customization['menus'] ?? true;
 		$exclude_post_types = [];
 
-		if ( ! $include_menus) {
+		if ( ! $include_menus ) {
 			$exclude_post_types[] = 'nav_menu_item';
 		}
 
-		if ( isset( $data['selected_custom_post_types'] ) && ! in_array( 'post',  $data['selected_custom_post_types'], true ) ) {
+		if ( isset( $data['selected_custom_post_types'] ) && ! in_array( 'post', $data['selected_custom_post_types'], true ) ) {
 			$exclude_post_types[] = 'post';
 		}
 
