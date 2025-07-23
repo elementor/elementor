@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BrushBigIcon, ClearIcon } from '@elementor/icons';
+import { BrushBigIcon } from '@elementor/icons';
 import { IconButton, type SxProps, type Theme, Tooltip } from '@elementor/ui';
 
 import { useFilterAndSortContext } from '../context';
