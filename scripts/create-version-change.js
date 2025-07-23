@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 const readline = require('readline');
+const { cwd } = require('process');
 
 // Create readline interface for user input
 const rl = readline.createInterface({
@@ -36,10 +37,15 @@ function execOrLog(command, dryRun = false) {
 }
 
 // Helper function to update version in file using regex
-function updateVersionInFile(filePath, version, patterns) {
+function updateVersionInFile(filePath, version, patterns, dryRun) {
   if (!fs.existsSync(filePath)) {
     console.error(`${filePath} not found!`);
     process.exit(1);
+  }
+
+  if (dryRun) {
+    console.log(`DRY RUN: Updating ${filePath} to version ${version}`);
+    return;
   }
 
   let content = fs.readFileSync(filePath, 'utf8');
@@ -53,9 +59,14 @@ function updateVersionInFile(filePath, version, patterns) {
 }
 
 // Helper function to update package.json version
-function updatePackageJsonVersion(filePath, version) {
+function updatePackageJsonVersion(filePath, version, dryRun) {
   if (!fs.existsSync(filePath)) {
     console.error(`${filePath} not found!`);
+    return;
+  }
+
+  if (dryRun) {
+    console.log(`DRY RUN: Updating ${filePath} to version ${version}`);
     return;
   }
 
@@ -157,6 +168,8 @@ async function main() {
     const versionToUse = nextVersion;
 
     // 1. Branch logic (skip if --skip-branches flag is set)
+    const devBranch = `version-${versionToUse}-to-main`;
+
     if (!skipBranches) {
       // Only create the release branch if not exists
       execOrLog('git fetch origin main', dryRun);
@@ -173,9 +186,6 @@ async function main() {
         console.log(`Created and pushed branch ${branchName} from main.`);
         execOrLog('git checkout main', dryRun);
       }
-
-      // 2. Dev bump logic
-      const devBranch = `version-${versionToUse}-to-main`;
       
       execOrLog(`git checkout -b ${devBranch} main`, dryRun);
     } else {
@@ -191,10 +201,10 @@ async function main() {
           replacement: (version) => `$1${version}`
         },
         {
-          regex: /(define\( 'ELEMENTOR_VERSION', ')[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?'\)/,
-          replacement: (version) => `$1${version}'`
+          regex: /(define\( 'ELEMENTOR_VERSION', ')[0-9]+\.[0-9]+\.[0-9]+(-[a-z0-9]+)?'( \);)/,
+          replacement: (version) => `$1${version}'$3`
         }
-      ]);
+      ], dryRun);
     } else {
       console.error('elementor.php not found!');
       process.exit(1);
@@ -203,7 +213,7 @@ async function main() {
     // Update main package.json
     if (fs.existsSync('package.json')) {
       console.log('Updating package.json to next version...');
-      updatePackageJsonVersion('package.json', versionToUse);
+      updatePackageJsonVersion('package.json', versionToUse, dryRun);
       execOrLog('npm i', dryRun);
     } else {
       console.error('package.json not found!');
@@ -211,7 +221,7 @@ async function main() {
     }
 
     // Update package.json files in packages folder
-    const packagesDir = path.join(__dirname, '..', 'packages');
+    const packagesDir = path.join(cwd(), 'packages');
     if (fs.existsSync(packagesDir)) {
       console.log('Updating package.json files in packages folder...');
       const packages = fs.readdirSync(packagesDir, { withFileTypes: true })
@@ -221,7 +231,7 @@ async function main() {
       packages.forEach(packageName => {
         const packageJsonPath = path.join(packagesDir, packageName, 'package.json');
         if (fs.existsSync(packageJsonPath)) {
-          updatePackageJsonVersion(packageJsonPath, versionToUse);
+          updatePackageJsonVersion(packageJsonPath, versionToUse, dryRun);
         }
       });
     }
