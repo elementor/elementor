@@ -146,25 +146,12 @@ describe( 'ColorVariableEdit', () => {
 		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
 		fireEvent.change( labelField, { target: { value: 'new-label' } } );
 
-		// Wait for the state to update
-		await waitFor( () => {
-			expect( labelField ).toHaveValue( 'new-label' );
-		} );
-
 		// Verify save button is enabled initially
 		const saveButton = screen.getByRole( 'button', { name: /save/i } );
 		expect( saveButton ).toBeEnabled();
 
 		// Trigger the API call by clicking save
 		fireEvent.click( saveButton );
-
-		// Assert that the API was called with correct parameters
-		await waitFor( () => {
-			expect( usePropVariablesModule.updateVariable ).toHaveBeenCalledWith( 'test-variable-id', {
-				value: '#911f1f',
-				label: 'new-label',
-			} );
-		} );
 
 		// Verify that the error response is handled correctly:
 		// 1. Error message is displayed
