@@ -112,7 +112,8 @@ describe( 'ColorVariableEdit', () => {
 		} );
 	} );
 
-	it( '(flaky?) should show field-level error when server returns duplicated_label error', async () => {
+	// TODO: Pay attention to this test. There is a potential to be flaky.
+	it( '~ should show field-level error when server returns duplicated_label error', async () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const props = {
