@@ -477,7 +477,6 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				includes: [ 'templates' ],
 				customization: {
 					templates: {
-						// Only partial data - should still work
 						siteTemplates: false,
 					},
 				},
@@ -520,7 +519,6 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			let siteTemplatesSwitch = screen.getByRole( 'checkbox' );
 			expect( siteTemplatesSwitch.checked ).toBe( true );
 
-			// Update data with different customization
 			const updatedData = {
 				includes: [ 'templates' ],
 				customization: {
