@@ -6,26 +6,25 @@ import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 
 const getTemplateRegistry = () => {
-    return window.elementorModules?.importExport?.templateRegistry;
+	return window.elementorModules?.importExport?.templateRegistry;
 };
 
-const initializeTemplateRegistry = () => {
-    const templateRegistry = getTemplateRegistry();
+const templateRegistry = ( () => {
+	const registry = getTemplateRegistry();
 
-    if ( templateRegistry ) {
-        templateRegistry.register({
-            key: 'siteTemplates',
-            title: __( 'Site templates', 'elementor' ),
-            order: 0,
-            useParentDefault: true
-        } );
-    }
+	if ( registry ) {
+		registry.register( {
+			key: 'siteTemplates',
+			title: __( 'Site templates', 'elementor' ),
+			order: 0,
+			useParentDefault: true,
+		} );
+	}
 
-    return templateRegistry;
-};
+	return registry;
+} )();
 
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const templateRegistry = initializeTemplateRegistry();
 	const templateTypes = templateRegistry?.getAll() || [];
 	const initialState = data.includes.includes( 'templates' );
 
@@ -42,8 +41,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			if ( data.customization.templates ) {
 				setTemplates( data.customization.templates );
 			} else {
-				const currentRegistry = getTemplateRegistry();
-				setTemplates( currentRegistry?.getState( data.includes, data.customization, initialState ) || {} );
+				setTemplates( templateRegistry?.getState( data.includes, data.customization, initialState ) || {} );
 			}
 		}
 	}, [ open, data.customization.templates, initialState ] );
@@ -56,30 +54,30 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 	};
 
 	const renderTemplateSection = ( templateType ) => {
-        if ( templateType.component ) {
-            const CustomComponent = templateType.component;
-            return (
-                <CustomComponent
-                    key={ templateType.key }
-                    checked={ templates[ templateType.key ] }
+		if ( templateType.component ) {
+			const CustomComponent = templateType.component;
+			return (
+				<CustomComponent
+					key={ templateType.key }
+					checked={ templates[ templateType.key ] }
 					settingKey={ templateType.key }
-                    onSettingChange={ handleToggleChange }
-                    data={ data }
-                />
-            );
-        }
+					onSettingChange={ handleToggleChange }
+					data={ data }
+				/>
+			);
+		}
 
-        return (
-            <SettingSection
-                key={ templateType.key }
-                checked={ templates[ templateType.key ] }
-                title={ templateType.title }
-                description={ templateType.description }
-                settingKey={ templateType.key }
-                onSettingChange={ handleToggleChange }
-            />
-        );
-    };
+		return (
+			<SettingSection
+				key={ templateType.key }
+				checked={ templates[ templateType.key ] }
+				title={ templateType.title }
+				description={ templateType.description }
+				settingKey={ templateType.key }
+				onSettingChange={ handleToggleChange }
+			/>
+		);
+	};
 
 	return (
 		<KitCustomizationDialog
@@ -90,8 +88,8 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			minHeight="auto"
 		>
 			<Stack>
-                { templateTypes.map( renderTemplateSection ) }
-            </Stack>
+				{ templateTypes.map( renderTemplateSection ) }
+			</Stack>
 		</KitCustomizationDialog>
 	);
 }
