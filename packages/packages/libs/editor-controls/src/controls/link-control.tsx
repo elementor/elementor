@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { type PropsWithChildren, useMemo, useState } from 'react';
-import { getLinkInLinkRestriction, type LinkInLinkRestriction, selectElement } from '@elementor/editor-elements';
+import { useMemo, useState } from 'react';
+import { getLinkInLinkRestriction } from '@elementor/editor-elements';
 import {
 	linkPropTypeUtil,
 	type LinkPropValue,
@@ -8,11 +8,10 @@ import {
 	stringPropTypeUtil,
 	urlPropTypeUtil,
 } from '@elementor/editor-props';
-import { InfoTipCard } from '@elementor/editor-ui';
 import { type HttpResponse, httpService } from '@elementor/http-client';
-import { AlertTriangleIcon, MinusIcon, PlusIcon } from '@elementor/icons';
+import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
-import { Box, Collapse, Grid, IconButton, Infotip, Stack } from '@elementor/ui';
+import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
@@ -25,6 +24,7 @@ import {
 	isCategorizedOptionPool,
 } from '../components/autocomplete';
 import { ControlFormLabel } from '../components/control-form-label';
+import { RestrictedLinkInfotip } from '../components/restricted-link-infotip';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
@@ -51,10 +51,6 @@ type LinkSessionValue = {
 type Response = HttpResponse< { value: FlatOption[] | CategorizedOption[] } >;
 
 const SIZE = 'tiny';
-const learnMoreButton = {
-	label: __( 'Learn More', 'elementor' ),
-	href: 'https://go.elementor.com/element-link-inside-link-infotip',
-};
 
 export const LinkControl = createControl( ( props: Props ) => {
 	const { value, path, setValue, ...propContext } = useBoundProp( linkPropTypeUtil );
@@ -166,14 +162,14 @@ export const LinkControl = createControl( ( props: Props ) => {
 					} }
 				>
 					<ControlFormLabel>{ label }</ControlFormLabel>
-					<ConditionalInfoTip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
+					<RestrictedLinkInfotip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
 						<ToggleIconControl
 							disabled={ shouldDisableAddingLink }
 							active={ isActive }
 							onIconClick={ onEnabledChange }
 							label={ __( 'Toggle link', 'elementor' ) }
 						/>
-					</ConditionalInfoTip>
+					</RestrictedLinkInfotip>
 				</Stack>
 				<Collapse in={ isActive } timeout="auto" unmountOnExit>
 					<Stack gap={ 1.5 }>
@@ -260,56 +256,3 @@ function generateFirstLoadedOption( unionValue: LinkPropValue[ 'value' ] | null 
 		  ]
 		: [];
 }
-
-interface ConditionalInfoTipType extends PropsWithChildren {
-	linkInLinkRestriction: LinkInLinkRestriction;
-	isVisible: boolean;
-}
-
-const ConditionalInfoTip: React.FC< ConditionalInfoTipType > = ( { linkInLinkRestriction, isVisible, children } ) => {
-	const { shouldRestrict, reason, elementId } = linkInLinkRestriction;
-
-	const handleTakeMeClick = () => {
-		if ( elementId ) {
-			selectElement( elementId );
-		}
-	};
-
-	return shouldRestrict && isVisible ? (
-		<Infotip
-			placement="right"
-			content={
-				<InfoTipCard
-					content={ INFOTIP_CONTENT[ reason ] }
-					svgIcon={ <AlertTriangleIcon /> }
-					learnMoreButton={ learnMoreButton }
-					ctaButton={ {
-						label: __( 'Take me there', 'elementor' ),
-						onClick: handleTakeMeClick,
-					} }
-				/>
-			}
-		>
-			<Box>{ children }</Box>
-		</Infotip>
-	) : (
-		<>{ children }</>
-	);
-};
-
-const INFOTIP_CONTENT = {
-	descendant: (
-		<>
-			{ __( 'To add a link to this container,', 'elementor' ) }
-			<br />
-			{ __( 'first remove the link from the elements inside of it.', 'elementor' ) }
-		</>
-	),
-	ancestor: (
-		<>
-			{ __( 'To add a link to this element,', 'elementor' ) }
-			<br />
-			{ __( 'first remove the link from its parent container.', 'elementor' ) }
-		</>
-	),
-};
