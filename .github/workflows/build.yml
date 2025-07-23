@@ -45,6 +45,14 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
       - name: Check if this is only a changelog PR
         id: changelog_diff_files
         uses: technote-space/get-diff-action@v6
