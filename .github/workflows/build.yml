@@ -91,8 +91,8 @@ jobs:
           compression-level: 9
           retention-days: 3
 
-      - name: Find existing comment on PR
-        if: github.event_name == 'pull_request'
+      - name: Find existing comment on PR (Elementor repo)
+        if: github.event_name == 'pull_request' && startsWith( github.repository, 'elementor/' )
         uses: peter-evans/find-comment@v3
         id: find
         with:
@@ -100,8 +100,8 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: 'Elementor Build'
       
-      - name: Comment build info on PR
-        if: github.event_name == 'pull_request'
+      - name: Comment build info on PR (Elementor repo)
+        if: github.event_name == 'pull_request' && startsWith( github.repository, 'elementor/' )
         uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
@@ -120,5 +120,20 @@ jobs:
             The build is available for 3 days.
 
           edit-mode: replace
-        env:
-          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+
+      - name: Comment build info on PR (non-Elementor repo)
+        if: github.event_name == 'pull_request' && !startsWith( github.repository, 'elementor/' )
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          body: |
+            ## Elementor Build
+            Last updated at: ${{ env.DATE_VERSION }}
+            Version: ${{ env.PACKAGE_VERSION }}
+
+            ✅ Elementor build is ready for download.
+
+            You can download the latest build from the link below:
+
+            🔗 [${{ env.PLUGIN_ZIP_FILENAME }}](https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }})
+
+            The build is available for 3 days.
