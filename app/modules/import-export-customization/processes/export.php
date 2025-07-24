@@ -236,18 +236,14 @@ class Export {
 	private function get_default_settings_selected_plugins() {
 		$installed_plugins = Plugin::$instance->wp->get_plugins();
 
-		$result = [];
-		foreach ( $installed_plugins->all() as $key => $item ) {
-			$plugin_key = str_replace( '.php', '', $key ); // Inconsistency between get_plugins() and WP Rest API's key format.
-
-			$result[ $plugin_key ] = [
+		return $installed_plugins->map( function ( $item, $key ) {
+			return [
 				'name' => $item['Name'],
-				'plugin' => $plugin_key,
+				'plugin' => $key,
 				'pluginUri' => $item['PluginURI'],
 				'version' => $item['Version'],
 			];
-		}
-		return $result;
+		} )->all();
 	}
 
 	private function get_default_settings_customization() {

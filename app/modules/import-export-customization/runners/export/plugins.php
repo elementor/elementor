@@ -35,7 +35,7 @@ class Plugins extends Export_Runner_Base {
 
 		return [
 			'manifest' => [
-				[ 'plugins' => array_values( $plugins ) ],
+				[ 'plugins' => $plugins ],
 			],
 			'files' => [],
 		];
