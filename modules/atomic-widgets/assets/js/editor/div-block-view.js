@@ -492,7 +492,7 @@ const DivBlockView = BaseElementView.extend( {
 
 		let shouldPlaceInside = this.isOverflowHidden();
 
-		if ( this.isTopLevelElement() && this.isFirstElementInStructure() ) {
+		if ( ! shouldPlaceInside && this.isTopLevelElement() && this.isFirstElementInStructure() ) {
 			shouldPlaceInside = true;
 		}
 
