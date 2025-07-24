@@ -6,10 +6,17 @@ import kitContentData from '../kit-content-data';
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
 
+	const isImportContext = data.hasOwnProperty( 'uploadedData' );
+
 	return (
 		<Stack spacing={ 2 } data-testid={ testId }>
-			{ kitContentData.map( ( item ) => (
-				<Fragment key={ item.type }>
+			{ kitContentData.map( ( item ) => {
+				const isChecked = isImportContext
+					? data.uploadedData.manifest.hasOwnProperty( item.type )
+					: data.includes.includes( item.type );
+
+				return (
+					<Fragment key={ item.type }>
 					<Box key={ item.type } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 						<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
 							<Box sx={ { flex: 1 } }>
@@ -17,9 +24,9 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 									control={
 										<Checkbox
 											color="info"
-											checked={ data.includes.includes( item.type ) }
+											checked={ isChecked }
 											onChange={ () => onCheckboxChange( item.type ) }
-											disabled={ item.required && data.includes.includes( item.type ) }
+											disabled={ item.required && isChecked }
 											sx={ { py: 0 } }
 											data-testid={ `KitContentDataSelection-${ item.type }` }
 											data-type={ item.type }
@@ -55,7 +62,8 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 						/>
 					) }
 				</Fragment>
-			) ) }
+				);
+			} ) }
 		</Stack>
 	);
 }

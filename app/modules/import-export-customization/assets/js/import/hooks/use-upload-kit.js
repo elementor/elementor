@@ -45,6 +45,9 @@ export function useUploadKit() {
 				throw new Error( errorMessage );
 			}
 
+			if ( result?.data?.manifest?.hasOwnProperty( 'plugins' ) ) {
+				dispatch( { type: 'ADD_INCLUDE', payload: 'plugins' } );
+			}
 			dispatch( { type: 'SET_UPLOADED_DATA', payload: result.data } );
 		} catch ( e ) {
 			setError( e );

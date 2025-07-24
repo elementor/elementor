@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
 
 const REQUIRED_PLUGINS = [
-	'elementor/elementor.php',
+	'elementor/elementor',
 ];
 
 const ExternalLinkIcon = ( props ) => {
@@ -43,10 +43,26 @@ const ExternalLinkIcon = ( props ) => {
 };
 
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const { pluginsList, isLoading } = useKitPlugins( { open } );
+	const isImportContext = data.hasOwnProperty( 'uploadedData' );
+	
+	const { pluginsList: hookPluginsList, isLoading: hookIsLoading } = useKitPlugins( { open: open && !isImportContext } );
+	
+	const pluginsList = useMemo( () => {
+		if ( isImportContext ) {
+			return ( data.uploadedData.manifest.plugins || [] ).reduce( ( acc, plugin ) => {
+				acc[ plugin.plugin ] = plugin;
+				return acc;
+			}, {} );
+		}
+		return hookPluginsList;
+	}, [ isImportContext, data.uploadedData?.manifest?.plugins, hookPluginsList ] );
+	const isLoading = isImportContext ? false : hookIsLoading;
+	
 	const [ plugins, setPlugins ] = useState( {} );
 
-	const initialState = data?.includes?.includes( 'plugins' ) || false;
+	const initialState = isImportContext
+		? data.uploadedData.manifest.hasOwnProperty( 'plugins' )
+		: data?.includes?.includes( 'plugins' ) || false;
 
 	useEffect( () => {
 		if ( 0 === Object.keys( pluginsList ).length ) {
