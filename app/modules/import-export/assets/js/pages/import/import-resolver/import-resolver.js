@@ -25,7 +25,6 @@ export default function ImportResolver() {
 		navigate = useNavigate(),
 		conflicts = importContext.data?.uploadedData?.conflicts || {},
 		{ referrer, currentPage } = sharedContext.data || {},
-		{ return_to: returnToParam } = useQueryParams().getAll(),
 		eventTracking = ( command, sitePart = null ) => {
 			if ( 'kit-library' === referrer ) {
 				appsEventTrackingDispatch(
@@ -57,9 +56,6 @@ export default function ImportResolver() {
 					onClick={ () => {
 						eventTracking( 'kit-library/approve-selection' );
 						let url = importContext.data.plugins.length ? 'import/plugins-activation' : 'import/process';
-						if ( 'import/process' === url && returnToParam ) {
-							url += '?return_to=' + returnToParam;
-						}
 						importContext.dispatch( { type: 'SET_IS_RESOLVED', payload: true } );
 						navigate( url );
 					} }
