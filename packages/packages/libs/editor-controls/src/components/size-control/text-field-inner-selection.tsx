@@ -15,7 +15,7 @@ import {
 } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { DEFAULT_UNIT } from '../../utils/size-control';
+import { DEFAULT_UNIT, type ExtendedOption, type Unit } from '../../utils/size-control';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -31,6 +31,7 @@ type TextFieldInnerSelectionProps = {
 	};
 	disabled?: boolean;
 	isPopoverOpen?: boolean;
+	unit?: Unit | ExtendedOption;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -47,6 +48,7 @@ export const TextFieldInnerSelection = forwardRef(
 			inputProps,
 			disabled,
 			isPopoverOpen = false,
+			unit,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
@@ -55,24 +57,24 @@ export const TextFieldInnerSelection = forwardRef(
 		return (
 			<TextField
 				ref={ ref }
-				sx={ { 
-					input: { 
+				sx={ {
+					input: {
 						cursor: shouldBlockInput ? 'default' : undefined,
 						caretColor: shouldBlockInput ? 'transparent' : undefined,
 					},
-					// Custom focus border - show when focused OR when popover is open
+					// Custom focus border - show when focused OR when custom popover is open
 					'& .MuiOutlinedInput-root': {
 						'&.Mui-focused fieldset': {
 							borderColor: 'primary.main',
 							borderWidth: '2px',
 						},
-						// Force focus styling when popover is open
-						...(isPopoverOpen && {
+						// Force focus styling when custom unit popover is open
+						...( isPopoverOpen && {
 							'& fieldset': {
 								borderColor: 'primary.main !important',
 								borderWidth: '2px !important',
 							},
-						}),
+						} ),
 					},
 				} }
 				size="tiny"

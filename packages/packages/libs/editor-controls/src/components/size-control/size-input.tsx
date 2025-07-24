@@ -119,7 +119,8 @@ export const SizeInput = ( {
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
 					shouldBlockInput={ isUnitExtendedOption( unit ) }
-					isPopoverOpen={ isPopoverOpen && unit === 'custom' }
+					isPopoverOpen={ isPopoverOpen }
+					unit={ unit }
 					inputProps={ inputProps }
 				/>
 			</Box>

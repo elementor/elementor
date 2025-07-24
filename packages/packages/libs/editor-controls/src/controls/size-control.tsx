@@ -214,7 +214,7 @@ export const SizeControl = createControl(
 					onFocus={ onInputFocus }
 					onClick={ onInputClick }
 					popupState={ popupState }
-					isPopoverOpen={ popupState.isOpen && controlUnit === 'custom' }
+					isPopoverOpen={ popupState.isOpen }
 				/>
 				{ anchorRef?.current && (
 					<TextFieldPopover
