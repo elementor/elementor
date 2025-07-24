@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Admin\Admin_Notices;
 
 class Hints {
 
@@ -397,18 +398,27 @@ class Hints {
 			'title' => __( 'Ally web accessibility', 'elementor' ),
 		];
 
+		$campaign_data = [
+			'name' => 'elementor_ea11y_campaign',
+			'campaign' => 'acc-usability-widget-plg-ally',
+			'source' => 'editor-ally-widget',
+			'medium' => 'editor',
+		];
+
 		if ( ! $is_installed) {
+			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
 			$data['content'] = __( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' );
 			$data['action_button'] = [
 				'text' => __( 'install Now', 'elementor' ),
-				'url' => self::get_plugin_action_url( $plugin_slug ),
+				'url' => $url,
 				'classes' => [ 'elementor-button' ],
 			];
 		} else if ( ! $is_active ) {
+			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
 			$data['content'] = __( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' );
 			$data['action_button'] = [
 				'text' => __( 'Activate', 'elementor' ),
-				'url' => self::get_plugin_action_url( $plugin_slug ),
+				'url' => $url,
 				'classes' => [ 'elementor-button' ],
 			];
 		} else if ( ! $is_connected ) {
