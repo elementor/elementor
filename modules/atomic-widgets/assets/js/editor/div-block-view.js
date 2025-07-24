@@ -492,8 +492,12 @@ const DivBlockView = BaseElementView.extend( {
 
 		if ( this.isOverflowHidden() ) {
 			this.$el.addClass( 'e-handles-inside' );
-		} else {
-			this.$el.removeClass( 'e-handles-inside' );
+		}
+
+		const offset = this.$el.offset()?.top ?? 0;
+
+		if ( offset < 25 ) {
+			this.$el.addClass( 'e-handles-inside' );
 		}
 	},
 } );
