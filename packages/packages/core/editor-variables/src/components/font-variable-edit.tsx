@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { styleVariablesRepository } from '../style-variables-repository';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { FontField } from './fields/font-field';
 import { LabelField, useLabelError } from './fields/label-field';
@@ -83,6 +84,21 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 			onSubmit?.();
 		} );
 	};
+
+	useEffect( () => {
+		styleVariablesRepository.update( {
+			[ editId ]: {
+				...variable,
+				value: fontFamily,
+			},
+		} );
+
+		return () => {
+			styleVariablesRepository.update( {
+				[ editId ]: { ...variable },
+			} );
+		};
+	}, [ editId, fontFamily, variable ] );
 
 	const maybeTriggerBoundPropChange = () => {
 		if ( editId === assignedValue ) {
