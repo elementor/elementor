@@ -1,6 +1,7 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "cacheDir": "../.turbo",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
