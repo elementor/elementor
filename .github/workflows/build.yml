@@ -30,6 +30,9 @@ on:
       - '.gitignore'
       - 'docs/**'
 
+permissions:
+      pull-requests: write
+
 jobs:
   build-plugin:
     name: Build plugin
@@ -38,11 +41,17 @@ jobs:
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
-    permissions:
-      pull-requests: write
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Check if this is only a changelog PR
         id: changelog_diff_files
@@ -90,8 +99,8 @@ jobs:
           compression-level: 9
           retention-days: 3
 
-      - name: Find existing comment on PR
-        if: github.event_name == 'pull_request'
+      - name: Find existing comment on PR (Elementor repo)
+        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/find-comment@v3
         id: find
         with:
@@ -99,8 +108,8 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: 'Elementor Build'
       
-      - name: Comment build info on PR
-        if: github.event_name == 'pull_request'
+      - name: Comment build info on PR (Elementor repo)
+        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/create-or-update-comment@v4
         with:
           comment-id: ${{ steps.find.outputs.comment-id }}
@@ -119,3 +128,15 @@ jobs:
             The build is available for 3 days.
 
           edit-mode: replace
+
+      - name: Print artifact info once PR is non Elementor repo
+        if: github.event_name == 'pull_request' && !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+        run: |
+          echo "Artifact info:"
+          echo "  Name: ${{ env.PLUGIN_FOLDER_FILENAME }}"
+          echo "  Path: elementor"
+          echo "  Size: $(du -sh elementor | cut -f1)"
+          echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ env.RUN_ID }}/artifacts/${{ env.ARTIFACT_ID }}"
+        env:
+          RUN_ID: ${{ github.run_id }}
+          ARTIFACT_ID: ${{ steps.upload-artifact.outputs.artifact-id }}
