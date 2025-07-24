@@ -10,5 +10,5 @@ export { useFontFamilies } from './components/style-sections/typography-section/
 export { PopoverBody } from './components/popover-body';
 export { useSectionWidth } from './contexts/section-context';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
-
+export { injectIntoCssClassPromote } from './components/css-classes/css-class-promote';
 export { init } from './init';

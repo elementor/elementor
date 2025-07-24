@@ -51,6 +51,7 @@ export function createStylesProvider( {
 			delete: actions.delete,
 			update: actions.update,
 			updateProps: actions.updateProps,
+			promote: actions.promote,
 		},
 	};
 }

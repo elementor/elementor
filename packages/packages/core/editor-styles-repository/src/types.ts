@@ -33,10 +33,10 @@ export type StylesProvider = {
 		all: ( meta?: Meta ) => StyleDefinition[];
 		get: ( id: StyleDefinitionID, meta?: Meta ) => StyleDefinition | null;
 		resolveCssName: ( id: StyleDefinitionID ) => string;
-		create?: ( label: StyleDefinition[ 'label' ] ) => StyleDefinitionID;
+		create?: (label: StyleDefinition['label'], variants?: StyleDefinitionVariant[]) => StyleDefinitionID;
 		delete?: ( id: StyleDefinitionID ) => void;
 		update?: ( data: UpdateActionPayload ) => void;
-		updateProps?: ( args: UpdatePropsActionPayload, meta?: Meta ) => void;
+		updateProps?: (args: UpdatePropsActionPayload, meta?: Meta) => void;
 	};
 	capabilities?: UserCapabilities;
 };
