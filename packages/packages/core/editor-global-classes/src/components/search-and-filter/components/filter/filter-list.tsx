@@ -7,7 +7,7 @@ import { useSearchAndFilters } from '../../context';
 import { type FilterKey } from '../../types';
 import { LabeledCheckbox } from './labeld-checkbox';
 
-export type CheckBoxItem = {
+type CheckBoxItem = {
 	label: string;
 	value: FilterKey;
 };

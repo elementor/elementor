@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createMockDocument, renderWithStore } from 'test-utils';
 import { getCurrentDocument } from '@elementor/editor-documents';
+import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore as createStore, __registerSlice as registerSlice } from '@elementor/store';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { useFilteredCssClassUsage } from '../../../../../hooks/use-filtered-css-class-usage';

@@ -19,13 +19,7 @@ import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 
-export const CssClassUsageTrigger = ( {
-	id,
-	onClick,
-}: {
-	id: CssClassID | string;
-	onClick: ( id: CssClassID ) => void;
-} ) => {
+export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick: ( id: CssClassID ) => void } ) => {
 	const {
 		data: { total },
 		isLoading,
