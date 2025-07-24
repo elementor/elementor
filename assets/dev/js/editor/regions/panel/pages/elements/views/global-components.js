@@ -1,18 +1,11 @@
-const PanelElementsElementView = require( '../views/element' );
+const PanelElementsElementsView = require('./elements');
 
-module.exports = Marionette.CompositeView.extend({
-    template: '#tmpl-elementor-panel-global-components',
-    childView: PanelElementsElementView,
-    childViewContainer: '.elementor-panel-global-components-list',
+module.exports = PanelElementsElementsView.extend({
+    // template: '#tmpl-elementor-panel-global-components',
+    
+    // id: 'elementor-panel-global-components',
+    
 
-    initialize() {
-        this.collection = new Backbone.Collection([{
-            title: elementor.translate('Profile Card Component'),
-            elType: 'widget',
-            name: 'e-component',
-            icon: 'eicon-user-circle-o',
-            categories: ['basic'],
-            keywords: ['component', 'profile', 'card']
-        }]);
-    }
+
+    
 }); 

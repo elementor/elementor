@@ -110,5 +110,5 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="elementor-panel-global-components-title">
         <?php echo esc_html__( 'Global Components', 'elementor' ); ?>
     </div>
-    <div class="elementor-panel-global-components-list elementor-responsive-panel"></div>
+    <div class="elementor-panel-global-components-list"></div>
 </script>

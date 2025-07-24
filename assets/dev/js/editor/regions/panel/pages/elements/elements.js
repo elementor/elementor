@@ -63,6 +63,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			globalComponents: {
 				region: this.globalComponents,
 				view: PanelElementsGlobalComponentsView,
+				options: { collection: this.elementsCollection },
 			},
 		};
 
