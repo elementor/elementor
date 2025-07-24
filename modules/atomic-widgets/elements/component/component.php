@@ -29,17 +29,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Component extends Atomic_Widget_Base {
 	// use Has_Template;
 
+	private $post_id;
 	private $elements_data;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
-	public function __construct( $data = [], $args = null, $post_id = "307" ) {
+	public function __construct( $data = [], $args = null, $post_id = "348" ) {
 		parent::__construct( $data, $args );
 
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 		$elements_data = $document->get_elements_data();
 
 		$this->elements_data = $elements_data;
+		$this->post_id = $post_id;
 		Plugin::$instance->frontend->get_builder_content_for_display( $post_id ); 
 	}
 
@@ -109,7 +111,7 @@ class Component extends Atomic_Widget_Base {
 
 	protected function render() {
         echo '<div class="e-component">';
-		$this->render_component_with_overrides( '307' );
+		$this->render_component_with_overrides( $this->post_id );
         echo '</div>';
     }
 
@@ -121,16 +123,12 @@ class Component extends Atomic_Widget_Base {
 
 		$name = $settings['name'] ?? '';
 		$title = $settings['title'] ?? '';
-		$button_text_1 = $settings['button-text-1'] ?? '';
-		$button_text_2 = $settings['button-text-2'] ?? '';
 
 
-        $image_id = "414a53c";
-		$test_heading_id = "83b7d1b";
-        $name_id = "87d3ef6";
-        $title_id = "c8cb872";
-        $button1_id = "1dd6d5c";
-        $button2_id = "584127e";
+        $image_id = "257ba86";
+        $name_id = "ff6b63f";
+        $title_id = "8284376";
+ 
 
         $overrides = [];
 
@@ -140,19 +138,10 @@ class Component extends Atomic_Widget_Base {
 
         if ( $name ) {
             $overrides[$name_id] = ['title' => $name];
-			$overrides[$test_heading_id] = ['title' => $name];
         }
 
         if ( $title ) {
             $overrides[$title_id] = ['title' => $title];
-        }
-
-        if ( $button_text_1 ) {
-            $overrides[$button1_id] = ['text' => $button_text_1];
-        }
-
-        if ( $button_text_2 ) {
-            $overrides[$button2_id] = ['text' => $button_text_2];
         }
 		
 		if ( ! empty( $overrides ) ) {

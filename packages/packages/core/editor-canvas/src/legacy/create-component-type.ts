@@ -130,9 +130,12 @@ function createComponentViewClassDeclaration( {
             const widgetProps = { ...widget.settings };
 
             // Overrides - hardcoded check for POC
-            const image_id = "414a53c";
-            const name_id = "87d3ef6";
-            const title_id = "c8cb872";
+            // const image_id = "414a53c";
+            // const name_id = "87d3ef6";
+            // const title_id = "c8cb872";
+            const image_id = "257ba86";
+            const name_id = "ff6b63f";
+            const title_id = "8284376";
             
             if (widget.id === name_id && componentSettings.name) {
                 widgetProps.title = componentSettings.name;
