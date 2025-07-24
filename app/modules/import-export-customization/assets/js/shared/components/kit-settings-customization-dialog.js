@@ -8,7 +8,7 @@ import { KitCustomizationDialog } from './kit-customization-dialog';
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'settings' );
-	const unselectedValues = useRef( data.analytics.customization?.content || [] );
+        const unselectedValues = useRef( data.analytics.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
