@@ -79,7 +79,7 @@ class Export {
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
 		$this->settings_customization = isset( $settings['customization'] ) ? $settings['customization'] : null;
 		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
-		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
+		$this->settings_selected_custom_post_types = isset( $settings['customization']['content']['customPostTypes'] ) ? $settings['customization']['content']['customPostTypes'] : null;
 	}
 
 	/**
