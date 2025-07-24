@@ -2,7 +2,7 @@ export const QUERY_KEY = 'css-classes-usage';
 
 export type CssClassID = string;
 
-export type ContentType = 'header' | 'footer' | 'wp-page' | 'wp-post' | 'popup' | string;
+export type ContentType = 'header' | 'footer' | 'wp-page' | 'wp-post' | 'popup';
 
 export type CssClassUsageContent = {
 	elements: string[];
