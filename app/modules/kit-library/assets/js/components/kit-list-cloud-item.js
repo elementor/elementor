@@ -104,6 +104,9 @@ const KitListCloudItem = ( props ) => {
 
 	const handleDelete = () => {
 		setIsPopoverOpen( false );
+
+		$e.components.get( 'elementor-app-events' ).sendKitCloudLibraryDelete( props.model.id );
+
 		eventTracking( 'kit-library/cloud-delete' );
 		props.onDelete();
 	};
@@ -147,6 +150,10 @@ const KitListCloudItem = ( props ) => {
 								icon="eicon-library-download"
 								onClick={ () => {
 									eventTracking( 'kit-library/cloud-import' );
+
+									const eventTracker = $e.components.get( 'elementor-app-events' );
+									eventTracker.sendKitCloudLibraryApply( props.model.id );
+
 									const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
 										? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
 										: `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;

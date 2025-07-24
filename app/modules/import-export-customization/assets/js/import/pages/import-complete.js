@@ -68,6 +68,11 @@ export default function ImportComplete() {
 		}
 	}, [ isCompleted, navigate ] );
 
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitImportSummary );
+	}, [] );
+
 	return (
 		<BaseLayout
 			topBar={ <TopBar>{ headerContent }</TopBar> }

@@ -18,12 +18,16 @@ export default function ImportProcess() {
 	const navigate = useNavigate();
 
 	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
+				eventTracker.sendKitImportStatus();
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
 			}
+		} else {
+			eventTracker.sendKitImportStatus( error );
 		}
 	}, [ status, error, navigate, isProcessing ] );
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Box } from '@elementor/ui';
 
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../shared/components';
@@ -12,6 +13,11 @@ export default function ExportKit() {
 	const headerContent = (
 		<PageHeader title={ __( 'Export', 'elementor' ) } />
 	);
+
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitExportCustomization );
+	}, [] );
 
 	return (
 		<BaseLayout

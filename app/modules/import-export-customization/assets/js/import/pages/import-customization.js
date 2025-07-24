@@ -14,6 +14,11 @@ export default function ImportCustomization() {
 	const { isCustomizing, dispatch, isProcessing } = useImportContext();
 	const navigate = useNavigate();
 
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitImportUploadBox );
+	}, [] );
+
 	const footerContent = (
 		<Stack direction="row" spacing={ 1 }>
 			<Button

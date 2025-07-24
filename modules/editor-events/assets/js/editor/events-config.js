@@ -6,6 +6,7 @@ const eventsConfig = {
 		dropdownClick: 'Click Dropdown',
 		editorLoaded: 'Editor Loaded',
 		visible: 'Visible',
+		pageLoaded: 'Page Loaded',
 	},
 
 	locations: {
@@ -14,6 +15,12 @@ const eventsConfig = {
 		elementorEditor: 'Elementor Editor',
 		templatesLibrary: {
 			library: 'Templates Library',
+		},
+		app: {
+			import: 'Import Kit',
+			export: 'Export Kit',
+			kitLibrary: 'Kit Library',
+			cloudKitLibrary: 'Cloud Kit Library',
 		},
 		variables: 'Variables Panel',
 	},
@@ -71,6 +78,18 @@ const eventsConfig = {
 			cloudTabUpgrade: 'Cloud Tab - Upgrade',
 			morePopup: 'Context Menu',
 			quotaBar: 'Quota Bar',
+		},
+		kitLibrary: {
+			cloudKitLibrary: 'kits_cloud_library',
+			cloudKitLibraryConnect: 'kits_cloud_library_connect',
+			cloudKitLibraryUpgrade: 'kits_cloud_library_upgrade',
+			kitExportCustomization: 'kit_export_customization',
+			kitExport: 'kit_export',
+			kitExportCustomizationEdit: 'kit_export_customization_edit',
+			kitExportSummary: 'kit_export_summary',
+			kitImportUploadBox: 'kit_import_upload_box',
+			kitImportCustomization: 'kit_import_customization',
+			kitImportSummary: 'kit_import_summary',
 		},
 		variablesPopover: 'Variables Popover',
 	},

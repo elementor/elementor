@@ -42,6 +42,11 @@ export default function ConnectScreen( {
 		} );
 	}, [ onConnectSuccess, onConnectError ] );
 
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.cloudKitLibraryConnect );
+	}, [] );
+
 	return (
 		<Layout
 			sidebar={

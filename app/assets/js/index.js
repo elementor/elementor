@@ -1,5 +1,6 @@
 import ReactUtils from 'elementor-utils/react';
 import App from './app';
+import { Events } from './event-track/apps-event-tracking';
 import ImportExport from '../../modules/import-export/assets/js/module';
 import ImportExportCustomization from '../../modules/import-export-customization/assets/js/module';
 import KitLibrary from '../../modules/kit-library/assets/js/module';
@@ -26,3 +27,7 @@ ReactUtils.render( (
 		</AppProvider>
 	</AppWrapper>
 ), document.getElementById( 'e-app' ) );
+
+window.addEventListener( 'load', () => {
+	$e.components.register( new Events() );
+} );

@@ -14,7 +14,7 @@ import {
 	Link,
 	SvgIcon,
 } from '@elementor/ui';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
 
@@ -45,6 +45,7 @@ const ExternalLinkIcon = ( props ) => {
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const { pluginsList, isLoading } = useKitPlugins( { open } );
 	const [ plugins, setPlugins ] = useState( {} );
+	const unselectedValues = useRef( data.analytics.customization?.plugins || [] );
 
 	const initialState = data?.includes?.includes( 'plugins' ) || false;
 
@@ -88,17 +89,21 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		return nonRequiredPlugins.some( ( pluginKey ) => plugins[ pluginKey ] ) && ! isAllSelected;
 	}, [ nonRequiredPlugins, plugins, isAllSelected ] );
 
-	const handleToggleChange = useCallback( ( settingKey ) => {
+	const handleToggleChange = useCallback( ( settingKey, isChecked ) => {
 		if ( isRequiredPlugin( settingKey ) ) {
 			return;
 		}
+		unselectedValues.current = isChecked
+			? unselectedValues.current.filter( ( val ) => settingKey !== val )
+			: [ ...unselectedValues.current, settingKey ];
+
 		setPlugins( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
 		} ) );
 	}, [ isRequiredPlugin ] );
 
-	const handleSelectAll = useCallback( () => {
+	const handleSelectAll = useCallback( ( e, isChecked ) => {
 		const allNonRequiredSelected = nonRequiredPlugins.every( ( pluginKey ) => plugins[ pluginKey ] );
 		const newState = { ...plugins };
 		nonRequiredPlugins.forEach( ( pluginKey ) => {
@@ -111,6 +116,11 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			}
 		} );
 
+		unselectedValues.current = isChecked
+			? unselectedValues.current.filter( ( value ) => ! Object.keys( newState ).includes( value ))
+			: [ 'plugins', ...nonRequiredPlugins ],
+
+
 		setPlugins( newState );
 	}, [ plugins, nonRequiredPlugins ] );
 
@@ -121,6 +131,11 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 		} );
 		return selectedPlugins;
 	}, [ plugins ] );
+
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+	}, [] );
 
 	const SettingSection = ( { title, description, children, settingKey } ) => (
 		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>

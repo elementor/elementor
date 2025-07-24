@@ -44,6 +44,11 @@ export default function ImportKit() {
 		}
 	}, [ id, referrer, fileUrl, nonce, dispatch ] );
 
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitImportUploadBox );
+	}, [] );
+
 	const renderContent = () => {
 		if ( error ) {
 			return (

@@ -44,6 +44,11 @@ export default function ExportComplete() {
 		}
 	}, [ exportedData, kitInfo.source, downloadFile ] );
 
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitExportSummary );
+	}, [] );
+
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;
 	};

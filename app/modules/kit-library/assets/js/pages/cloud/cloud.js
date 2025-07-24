@@ -84,6 +84,11 @@ export default function Cloud( {
 		}
 	}, [ isConnecting, isCheckingEligibility, isLoading, setConnecting ] );
 
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.cloudKitLibrary );
+	}, [] );
+
 	if ( ! isConnected ) {
 		return (
 			<ConnectScreen

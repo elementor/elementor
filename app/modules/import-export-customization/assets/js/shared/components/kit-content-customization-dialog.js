@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Stack, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -18,9 +18,10 @@ export function KitContentCustomizationDialog( {
 	data,
 } ) {
 	const initialState = data.includes.includes( 'content' );
-	const { isLoading: isPagesLoading, pageOptions } = usePages( { skipLoading: ! open } );
-	const { isLoading: isTaxonomiesLoading, taxonomyOptions } = useTaxonomies( { skipLoading: ! open, exclude: [ 'nav_menu' ] } );
+	const { isLoading: isPagesLoading, pageOptions, isLoaded: isPagesLoaded } = usePages( { skipLoading: ! open } );
+	const { isLoading: isTaxonomiesLoading, taxonomyOptions, isLoaded: isTaxonomiesLoaded } = useTaxonomies( { skipLoading: ! open, exclude: [ 'nav_menu' ] } );
 	const { customPostTypes } = useCustomPostTypes( { include: [ 'post' ] } );
+	const unselectedValues = useRef( data.analytics.customization?.content || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.content ) {
@@ -36,22 +37,36 @@ export function KitContentCustomizationDialog( {
 	} );
 
 	useEffect( () => {
-		if ( ! isPagesLoading ) {
-			setSettings( ( prevSettings ) => ( { ...prevSettings, pages: pageOptions.map( ( { value } ) => value ) } ) );
+		if ( isPagesLoaded ) {
+			setSettings( ( prevSettings ) => ( {
+				...prevSettings,
+				pages: data.customization.content?.pages || pageOptions.map( ( { value } ) => value ),
+			} ) );
 		}
-	}, [ isPagesLoading, pageOptions ] );
+	}, [ isPagesLoaded, pageOptions, data.customization.content?.pages ] );
 
 	useEffect( () => {
-		if ( ! isTaxonomiesLoading ) {
-			setSettings( ( prevSettings ) => ( { ...prevSettings, taxonomies: taxonomyOptions.map( ( { value } ) => value ) } ) );
+		if ( isTaxonomiesLoaded ) {
+			setSettings( ( prevSettings ) => ( {
+				...prevSettings,
+				taxonomies: data.customization.content?.taxonomies || taxonomyOptions.map( ( { value } ) => value ),
+			} ) );
 		}
-	}, [ isTaxonomiesLoading, taxonomyOptions ] );
+	}, [ isTaxonomiesLoaded, taxonomyOptions, data.customization.content?.taxonomies ] );
 
 	useEffect( () => {
 		if ( customPostTypes ) {
-			setSettings( ( prevSettings ) => ( { ...prevSettings, customPostTypes: customPostTypes.map( ( { value } ) => value ) } ) );
+			setSettings( ( prevSettings ) => ( {
+				...prevSettings,
+				customPostTypes: data.customization.content?.customPostTypes || customPostTypes.map( ( { value } ) => value ),
+			} ) );
 		}
-	}, [ customPostTypes ] );
+	}, [ customPostTypes, data.customization.content?.customPostTypes ] );
+
+	useEffect( () => {
+		const eventTracker = $e.components.get( 'elementor-app-events' );
+		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+	}, [] );
 
 	const handleSettingsChange = ( settingKey, payload ) => {
 		setSettings( ( prev ) => ( {
@@ -67,7 +82,7 @@ export function KitContentCustomizationDialog( {
 			open={ open }
 			title={ __( 'Edit content', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'content', settings ) }
+			handleSaveChanges={ () => handleSaveChanges( 'content', settings, unselectedValues.current ) }
 		>
 			{ isLoading
 				? (
@@ -78,9 +93,18 @@ export function KitContentCustomizationDialog( {
 				: (
 					<Stack>
 						<ListSettingSection
-							settingKey="content"
+							settingKey="pages"
 							title={ __( 'Site pages', 'elementor' ) }
-							onSettingChange={ ( selectedPages ) => handleSettingsChange( 'pages', selectedPages ) }
+							onSettingChange={ ( selectedPages, isGroupControl ) => {
+								if ( isGroupControl ) {
+									const isAllselected = selectedPages.length === settings.pages.length;
+									unselectedValues.current = isAllselected
+										? unselectedValues.current = unselectedValues.current.filter( ( val ) => 'pages' !== val )
+										: [ ...unselectedValues.current, 'pages' ];
+								}
+
+								handleSettingsChange( 'pages', selectedPages );
+							} }
 							settings={ settings.pages }
 							items={ pageOptions }
 							loading={ isLoading }
@@ -89,26 +113,45 @@ export function KitContentCustomizationDialog( {
 							checked={ settings.menus }
 							title={ __( 'Menus', 'elementor' ) }
 							settingKey="menus"
-							onSettingChange={ handleSettingsChange }
+							onSettingChange={ ( key, isChecked ) => {
+								unselectedValues.current = isChecked
+									? unselectedValues.filter( ( value ) => value !== key )
+									: [ ...unselectedValues.current, key ];
+
+								handleSettingsChange( key, isChecked );
+							} }
 						/>
 
 						{ customPostTypes.length > 0 && (
 							<ListSettingSection
 								settingKey="customPostTypes"
 								title={ __( 'Custom post types', 'elementor' ) }
-								onSettingChange={ ( selectedCustomPostTypes ) => handleSettingsChange( 'customPostTypes', selectedCustomPostTypes ) }
+								onSettingChange={ ( selectedCustomPostTypes, isGroupControl ) => {
+									const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
+
+									if ( isGroupControl ) {
+										const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
+										unselectedValues.current = isAllChecked
+											? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
+											: [ ...filteredUnselectedValues, 'customPostTypes' ];
+									} else {
+										unselectedValues.current = [
+											...filteredUnselectedValues,
+											...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
+										];
+									}
+									handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
+								} }
 								settings={ settings.customPostTypes }
 								items={ customPostTypes }
 							/>
 						) }
 
 						<SettingSection
-							checked={ settings.menus }
 							description={ __( 'Group your content by type, topic, or any structure you choose.', 'elementor' ) }
 							title={ __( 'Taxonomies', 'elementor' ) }
 							settingKey="taxonomies"
 							hasToggle={ false }
-
 						>
 							{ taxonomyOptions.map( ( taxonomy ) => {
 								return (
@@ -118,6 +161,10 @@ export function KitContentCustomizationDialog( {
 										settingKey="taxonomies"
 										checked={ settings.taxonomies.includes( taxonomy.value ) }
 										onSettingChange={ ( key, isChecked ) => {
+											unselectedValues.current = isChecked
+												? unselectedValues.current.filter( ( val ) => taxonomy.value !== val )
+												: [ ...unselectedValues.current, taxonomy.value ];
+
 											setSettings( ( prevState ) => {
 												const selectedTaxonomies = isChecked
 													? [ ...prevState.taxonomies, taxonomy.value ]

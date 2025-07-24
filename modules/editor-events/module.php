@@ -36,6 +36,7 @@ class Module extends BaseModule {
 			'site_language' => get_locale(),
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
 			'subscription_id' => self::get_subscription_id(),
+			'subscription' => self::get_subscription(),
 			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
 		];
 
@@ -54,22 +55,22 @@ class Module extends BaseModule {
 	}
 
 	private static function get_subscription_id() {
+		$subscription = self::get_subscription();
+
+		return $subscription['subscription_id'] ?? null;
+	}
+
+	private static function get_subscription() {
 		if ( ! Utils::has_pro() ) {
 
 			return null;
 		}
 
 		$license_data = get_option( '_elementor_pro_license_v2_data' );
-		if ( isset( $license_data['value'] ) ) {
-			$license_info = json_decode( $license_data['value'], true );
-
-			if ( isset( $license_info['subscription_id'] ) ) {
-				$subscription_id = $license_info['subscription_id'];
-
-				return $subscription_id;
-			}
+		if ( ! isset( $license_data['value'] ) ) {
+			return null;
 		}
 
-		return null;
+		return json_decode( $license_data['value'], true );
 	}
 }
