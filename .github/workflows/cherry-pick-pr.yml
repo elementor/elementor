@@ -76,9 +76,7 @@ jobs:
           IFS=',' read -ra BRANCHES <<< "${{ steps.get_labels.outputs.filtered_labels_csv }}"
           for lbl in "${BRANCHES[@]}"; do
             TARGET=${lbl#cp_}
-            # Extract only digits from target branch for pattern compliance
             NUMERIC_TARGET=$(echo "$TARGET" | sed 's/[^0-9]//g')
-            # Create branch name matching pattern: ^\p{L}[\p{L}\p{Digit}_]{1,255}-\p{Digit}{1,255}$
             BRANCH="cp${PR_NUMBER}-${NUMERIC_TARGET}"
 
             # Create branch
