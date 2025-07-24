@@ -115,7 +115,7 @@ export function KitContentCustomizationDialog( {
 							settingKey="menus"
 							onSettingChange={ ( key, isChecked ) => {
 								unselectedValues.current = isChecked
-									? unselectedValues.filter( ( value ) => value !== key )
+                                                                        ? unselectedValues.current.filter( ( value ) => value !== key )
 									: [ ...unselectedValues.current, key ];
 
 								handleSettingsChange( key, isChecked );
