@@ -82,8 +82,7 @@ class Component extends Atomic_Widget_Base {
         ];
     }
 
-    protected function define_atomic_controls(): array
-    {
+    protected function define_atomic_controls(): array {
         return [
             Section::make()
                 ->set_label( esc_html__( 'Content', 'elementor' ) )
@@ -166,8 +165,6 @@ class Component extends Atomic_Widget_Base {
             // Render without overrides
             echo Plugin::$instance->frontend->get_builder_content_for_display( $document_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         }
-
-        Plugin::$instance->documents->switch_to_document( $document );
     }
 
     public function get_data_for_save() {
