@@ -15,7 +15,7 @@ import {
 } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { DEFAULT_UNIT } from '../../utils/size-control';
+import { DEFAULT_UNIT, type ExtendedOption, type Unit } from '../../utils/size-control';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -30,6 +30,8 @@ type TextFieldInnerSelectionProps = {
 		endAdornment: React.JSX.Element;
 	};
 	disabled?: boolean;
+	isPopoverOpen?: boolean;
+	unit?: Unit | ExtendedOption;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -45,6 +47,8 @@ export const TextFieldInnerSelection = forwardRef(
 			shouldBlockInput = false,
 			inputProps,
 			disabled,
+			isPopoverOpen = false,
+			unit,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
@@ -53,7 +57,26 @@ export const TextFieldInnerSelection = forwardRef(
 		return (
 			<TextField
 				ref={ ref }
-				sx={ { input: { cursor: shouldBlockInput ? 'default !important' : undefined } } }
+				sx={ {
+					input: {
+						cursor: shouldBlockInput ? 'default' : undefined,
+						caretColor: shouldBlockInput ? 'transparent' : undefined,
+					},
+					// Custom focus border - show when focused OR when custom popover is open
+					'& .MuiOutlinedInput-root': {
+						'&.Mui-focused fieldset': {
+							borderColor: 'primary.main',
+							borderWidth: '2px',
+						},
+						// Force focus styling when custom unit popover is open
+						...( isPopoverOpen && {
+							'& fieldset': {
+								borderColor: 'primary.main !important',
+								borderWidth: '2px !important',
+							},
+						} ),
+					},
+				} }
 				size="tiny"
 				fullWidth
 				type={ shouldBlockInput ? undefined : type }
@@ -63,6 +86,8 @@ export const TextFieldInnerSelection = forwardRef(
 				onKeyUp={ shouldBlockInput ? undefined : onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
+				autoComplete={ shouldBlockInput ? 'off' : undefined }
+				readOnly={ shouldBlockInput }
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ inputProps }
 			/>
