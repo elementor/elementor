@@ -11,7 +11,10 @@ export const useFilters = () => {
 	const allFilters = useFilteredCssClassUsage();
 
 	// Collect only the active filter keys
-	const activeKeys = Object.keys( filters ).filter( ( key ) => filters[ key as FilterKey ] ) as FilterKey[];
+        const activeKeys = useMemo(
+          () => Object.keys( filters ).filter( ( key ) => filters[ key as FilterKey ] ) as FilterKey[],
+          [ filters ]
+        );
 
 	return useMemo( () => {
 		if ( activeKeys.length === 0 ) {
