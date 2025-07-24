@@ -1,4 +1,4 @@
-name: Cherry Pick Merged PR - testing
+name: Cherry Pick Merged PR
 
 on:
   pull_request_target:
