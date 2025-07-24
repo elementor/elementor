@@ -116,9 +116,9 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			}
 		} );
 
-		unselectedValues.current = isChecked
-			? unselectedValues.current.filter( ( value ) => ! Object.keys( newState ).includes( value ))
-			: [ 'plugins', ...nonRequiredPlugins ],
+                unselectedValues.current = isChecked
+                        ? unselectedValues.current.filter( ( value ) => ! Object.keys( newState ).includes( value ))
+                        : [ 'plugins', ...nonRequiredPlugins ];
 
 
 		setPlugins( newState );
