@@ -492,8 +492,7 @@ const DivBlockView = BaseElementView.extend( {
 
 		let shouldPlaceInside = this.isOverflowHidden();
 
-		// Only check for top-level elements that might hit the viewport edge
-		if ( this.isTopLevelElement() && this.isAtViewportTop() ) {
+		if ( this.isTopLevelElement() && this.isFirstElementInStructure() ) {
 			shouldPlaceInside = true;
 		}
 
@@ -504,13 +503,8 @@ const DivBlockView = BaseElementView.extend( {
 		return this.container.parent && 'document' === this.container.parent.id;
 	},
 
-	isAtViewportTop() {
-		// Check if this element is actually at the top of the visible area
-		// where handles would overlap with browser/editor UI
-		const elementRect = this.el.getBoundingClientRect();
-		const HANDLE_HEIGHT = 30; // Approximate handle height
-
-		return elementRect.top < HANDLE_HEIGHT;
+	isFirstElementInStructure() {
+		return 0 === this.model.collection.indexOf( this.model );
 	},
 } );
 
