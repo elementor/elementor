@@ -5,12 +5,31 @@ import { __ } from '@wordpress/i18n';
 
 import { labelHint, validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
 
+function isLabelEqual( a: string, b: string ) {
+	return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+type LabelErrorProps = {
+	value: string;
+	message: string;
+};
+
+export const useLabelError = ( initialError?: LabelErrorProps ) => {
+	const [ error, setError ] = useState< LabelErrorProps >( initialError ?? { value: '', message: '' } );
+
+	return {
+		labelFieldError: error,
+		setLabelFieldError: setError,
+	};
+};
+
 type LabelFieldProps = {
 	value: string;
+	error?: LabelErrorProps;
 	onChange: ( value: string ) => void;
 };
 
-export const LabelField = ( { value, onChange }: LabelFieldProps ) => {
+export const LabelField = ( { value, error, onChange }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ noticeMessage, setNoticeMessage ] = useState( () => labelHint( value ) );
@@ -24,10 +43,17 @@ export const LabelField = ( { value, onChange }: LabelFieldProps ) => {
 		setErrorMessage( errorMsg );
 		setNoticeMessage( errorMsg ? '' : hintMsg );
 
-		onChange( errorMsg ? '' : newValue );
+		onChange( isLabelEqual( newValue, error?.value ?? '' ) || errorMsg ? '' : newValue );
 	};
 
 	const id = useId();
+
+	let errorMsg = errorMessage;
+	if ( isLabelEqual( label, error?.value ?? '' ) && error?.message ) {
+		errorMsg = error.message;
+	}
+
+	const noticeMsg = errorMsg ? '' : noticeMessage;
 
 	return (
 		<Grid container gap={ 0.75 } alignItems="center">
@@ -42,12 +68,12 @@ export const LabelField = ( { value, onChange }: LabelFieldProps ) => {
 					size="tiny"
 					fullWidth
 					value={ label }
-					error={ !! errorMessage }
+					error={ !! errorMsg }
 					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
 					inputProps={ { maxLength: VARIABLE_LABEL_MAX_LENGTH } }
 				/>
-				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
-				{ noticeMessage && <FormHelperText>{ noticeMessage }</FormHelperText> }
+				{ errorMsg && <FormHelperText error>{ errorMsg }</FormHelperText> }
+				{ noticeMsg && <FormHelperText>{ noticeMsg }</FormHelperText> }
 			</Grid>
 		</Grid>
 	);
