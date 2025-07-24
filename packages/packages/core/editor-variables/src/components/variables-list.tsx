@@ -31,7 +31,7 @@ export const VariablesList = ( { closePopover, onAdd, onEdit, onSettings, propTy
 	const { value: variable, setValue: setVariable, path } = useBoundProp( propTypeUtil );
 	const [ searchValue, setSearchValue ] = useState( '' );
 
-	const { icon: VariableIcon, listIcon: ListIcon, variableType } = getVariable( propTypeUtil.key );
+	const { icon: VariableIcon, startIcon, variableType } = getVariable( propTypeUtil.key );
 
 	const {
 		list: variables,
@@ -76,11 +76,13 @@ export const VariablesList = ( { closePopover, onAdd, onEdit, onSettings, propTy
 		);
 	}
 
+	const StartIcon = startIcon || ( () => <VariableIcon fontSize={ SIZE } /> );
+
 	const items: ExtendedVirtualizedItem[] = variables.map( ( { value, label, key } ) => ( {
 		type: 'item' as const,
 		value: key,
 		label,
-		icon: <ListIcon value={ value } />,
+		icon: <StartIcon value={ value } />,
 		secondaryText: value,
 		onEdit: onEdit ? () => onEdit?.( key ) : undefined,
 	} ) );

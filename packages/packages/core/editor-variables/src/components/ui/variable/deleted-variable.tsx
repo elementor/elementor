@@ -10,11 +10,11 @@ import { type Variable } from '../../../types';
 import { VariableRestore } from '../../variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
 import { DeletedTag } from '../tags/deleted-tag';
+import { getVariable } from "../../../variable-registry";
 
 type Props = {
 	variable: Variable;
 	variablePropTypeUtil: PropTypeUtil< string, string >;
-	fallbackPropTypeUtil: PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
 };
 
 type Handlers = {
@@ -22,8 +22,10 @@ type Handlers = {
 	onRestore?: () => void;
 };
 
-export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropTypeUtil }: Props ) => {
+export const DeletedVariable = ( { variable, variablePropTypeUtil }: Props ) => {
 	const { setValue } = useBoundProp();
+
+	const { fallbackPropTypeUtil } = getVariable( variablePropTypeUtil.key );
 
 	const userPermissions = usePermissions();
 

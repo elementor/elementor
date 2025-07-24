@@ -8,10 +8,10 @@ import { bindPopover, bindTrigger, Box, Popover, usePopupState } from '@elemento
 import { type Variable } from '../../../types';
 import { VariableSelectionPopover } from '../../variable-selection-popover';
 import { AssignedTag, SIZE } from '../tags/assigned-tag';
+import { getVariable } from '../../../variable-registry';
 
 type Props = {
 	variablePropTypeUtil: PropTypeUtil< string, string >;
-	fallbackPropTypeUtil: PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
 	additionalStartIcon?: React.ReactNode;
 	variable: Variable;
 };
@@ -19,11 +19,11 @@ type Props = {
 export const AssignedVariable = ( {
 	variable,
 	variablePropTypeUtil,
-	fallbackPropTypeUtil,
 	additionalStartIcon,
 }: Props ) => {
 	const { setValue } = useBoundProp();
 	const anchorRef = useRef< HTMLDivElement >( null );
+	const { fallbackPropTypeUtil } = getVariable( variablePropTypeUtil.key );
 
 	const popupId = useId();
 	const popupState = usePopupState( {
