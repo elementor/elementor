@@ -75,7 +75,7 @@ export class Events extends ComponentBase {
 
 	dispatchEvent( eventName, payload ) {
 		if ( ! elementorAppConfig.events_config.can_send_events ) {
-			// return;
+			return;
 		}
 
 		const eventData = {
@@ -90,8 +90,7 @@ export class Events extends ComponentBase {
 			...payload,
 		};
 
-
-		// mixpanel.track( eventName, eventData );
+		mixpanel.track( eventName, eventData );
 	}
 
 	sendPageViewsWebsiteTemplates( page ) {
