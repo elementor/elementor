@@ -18,6 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-elements-search-area"></div>
 	<div id="elementor-panel-elements-notice-area"></div>
 	<div id="elementor-panel-elements-wrapper"></div>
+	<div id="elementor-panel-global" class="elementor-panel-global">
+		<div id="elementor-panel-global-widgets"></div>
+		<div id="elementor-panel-global-components">test</div>
+	</div>
 </script>
 
 <script type="text/template" id="tmpl-elementor-panel-categories">
@@ -93,11 +97,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</button>
 </script>
 
-<script type="text/template" id="tmpl-elementor-panel-global">
-	<div class="elementor-nerd-box">
-		<img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" loading="lazy" alt="<?php echo esc_attr__( 'Elementor', 'elementor' ); ?>" />
-		<div class="elementor-nerd-box-title"><?php echo esc_html__( 'Meet Our Global Widget', 'elementor' ); ?></div>
-		<div class="elementor-nerd-box-message"><?php echo esc_html__( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
-		<a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-global/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
-	</div>
+<script type="text/template" id="tmpl-elementor-panel-global-widgets">
+    <div class="elementor-nerd-box">
+        <img class="elementor-nerd-box-icon" src="<?php echo ELEMENTOR_ASSETS_URL . 'images/information.svg'; ?>" loading="lazy" alt="<?php echo esc_attr__( 'Elementor', 'elementor' ); ?>" />
+        <div class="elementor-nerd-box-title"><?php echo esc_html__( 'Meet Our Global Widget', 'elementor' ); ?></div>
+        <div class="elementor-nerd-box-message"><?php echo esc_html__( 'With this feature, you can save a widget as global, then add it to multiple areas. All areas will be editable from one single place.', 'elementor' ); ?></div>
+        <a class="elementor-button go-pro" target="_blank" href="https://go.elementor.com/pro-global/"><?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?></a>
+    </div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-panel-global-components">
+    <div class="elementor-panel-global-components-title">
+        <?php echo esc_html__( 'Global Components', 'elementor' ); ?>
+    </div>
+    <div class="elementor-panel-global-components-list elementor-responsive-panel"></div>
 </script>

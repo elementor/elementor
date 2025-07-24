@@ -3,7 +3,8 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
 	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsSearchView = require( './views/search' ),
-	PanelElementsGlobalView = require( './views/global' ),
+	PanelElementsGlobalWidgetsView = require( './views/global-widgets' ),
+	PanelElementsGlobalComponentsView = require( './views/global-components' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -19,6 +20,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		elements: '#elementor-panel-elements-wrapper',
 		search: '#elementor-panel-elements-search-area',
 		notice: '#elementor-panel-elements-notice-area',
+		globalWidgets: '#elementor-panel-global-widgets',
+		globalComponents: '#elementor-panel-global-components',
 	},
 
 	regionViews: {},
@@ -53,17 +56,17 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				region: this.search,
 				view: PanelElementsSearchView,
 			},
-			global: {
-				region: this.elements,
-				view: PanelElementsGlobalView,
+			globalWidgets: {
+				region: this.globalWidgets,
+				view: PanelElementsGlobalWidgetsView,
+			},
+			globalComponents: {
+				region: this.globalComponents,
+				view: PanelElementsGlobalComponentsView,
 			},
 		};
 
-		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews, {
-			notice: this.notice,
-			elements: this.elements,
-			search: this.search,
-		} );
+		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews );
 	},
 
 	initElementsCollection() {
@@ -214,10 +217,16 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
-		var viewDetails = this.regionViews[ viewName ],
-			options = viewDetails.options || {};
+		const viewDetails = this.regionViews[ viewName ];
 
-		viewDetails.region.show( new viewDetails.view( options ) );
+		// Show/hide global container based on the view
+		if ( 'globalWidgets' === viewName || 'globalComponents' === viewName ) {
+			jQuery( '#elementor-panel-global' ).addClass( 'elementor-active' );
+		} else {
+			jQuery( '#elementor-panel-global' ).removeClass( 'elementor-active' );
+		}
+
+		viewDetails.region.show( new viewDetails.view( viewDetails.options || {} ) );
 	},
 
 	clearSearchInput() {

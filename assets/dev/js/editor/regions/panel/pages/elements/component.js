@@ -17,6 +17,13 @@ export default class Component extends ComponentBase {
 	}
 
 	renderTab( tab, args = {} ) {
+		if ( 'global' === tab ) {
+			const page = this.manager.setPage( 'elements', null, args );
+			page.showView( 'globalWidgets' );
+			page.showView( 'globalComponents' );
+			return;
+		}
+
 		this.manager.setPage( 'elements', null, args ).showView( tab );
 	}
 

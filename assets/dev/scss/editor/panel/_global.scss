@@ -94,12 +94,47 @@
 	}
 }
 
-#elementor-panel-global {
+.elementor-panel-global {
+    display: none;
+    height: 100%;
+    
+    &.elementor-active {
+        display: block;
+    }
 
-	.elementor-nerd-box {
+    .elementor-panel-global-components-title {
+        padding: 20px;
+        font-weight: 500;
+        font-size: 14px;
+    }
 
-		.elementor-nerd-box-icon {
-			margin-block-start: 20px;
-		}
-	}
+    .elementor-panel-global-components-list {
+        padding: 0 15px;
+    }
+
+    #elementor-panel-global-widgets,
+    #elementor-panel-global-components {
+        padding: 20px;
+        
+        .elementor-nerd-box {
+            text-align: center;
+            padding: 20px;
+            
+            .elementor-nerd-box-icon {
+                margin-bottom: 20px;
+            }
+            
+            .elementor-nerd-box-title {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 10px;
+            }
+            
+            .elementor-nerd-box-message {
+                font-size: 13px;
+                line-height: 1.4;
+                margin-bottom: 20px;
+            }
+        }
+    }
 }
