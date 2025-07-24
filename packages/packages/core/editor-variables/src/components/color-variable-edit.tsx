@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
+import { styleVariablesRepository } from '../style-variables-repository';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { ColorField } from './fields/color-field';
 import { LabelField, useLabelError } from './fields/label-field';
@@ -44,6 +45,21 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 
 	const [ color, setColor ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
+
+	useEffect( () => {
+		styleVariablesRepository.update( {
+			[ editId ]: {
+				...variable,
+				value: color,
+			},
+		} );
+
+		return () => {
+			styleVariablesRepository.update( {
+				[ editId ]: { ...variable },
+			} );
+		};
+	}, [ editId, color, variable ] );
 
 	const handleUpdate = () => {
 		if ( isMessageSuppressed ) {
