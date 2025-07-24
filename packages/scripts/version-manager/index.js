@@ -1,16 +1,14 @@
 #!/usr/bin/env node
 
-const { showHelp, handleCommands } = require('./cli');
+const program = require('./cli');
 
 async function main() {
-  const args = process.argv.slice(2);
-  
-  if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
-    showHelp();
-    return;
+  try {
+    await program.parseAsync();
+  } catch (error) {
+    console.error(error);
+    process.exit(1);
   }
-
-  await handleCommands(args);
 }
 
 // Run the script

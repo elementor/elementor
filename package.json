@@ -78,6 +78,7 @@
     "babel-jest": "^29.7.0",
     "babel-loader": "^9.2.1",
     "chalk": "^5.3.0",
+    "commander": "^14.0.0",
     "cross-env": "^7.0.3",
     "cssnano": "^7.0.6",
     "dotenv": "^16.4.7",
