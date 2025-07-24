@@ -2,13 +2,11 @@ import PromotionBehavior from './behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		if ( ! elementor.config?.promotionWidgets
-			|| ! elementor.config.promotionWidgets.length
-			|| ! elementor.config.integrationWidgets
-			|| ! elementor.config.integrationWidgets.length
-		) {
-			return;
-		}
+                if ( ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length )
+                  && ( ! elementor.config?.integrationWidgets || ! elementor.config.integrationWidgets.length )
+                ) {
+                  return;
+                }
 
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );
