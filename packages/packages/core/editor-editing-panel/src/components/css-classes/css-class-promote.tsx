@@ -1,40 +1,44 @@
 import * as React from 'react';
-import { createLocation } from '@elementor/locations';
-import { useStyle } from '../../contexts/style-context';
 import { deleteElementStyle, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
-import { useClassesProp } from '../../contexts/classes-prop-context';
-import { classesPropTypeUtil, ClassesPropValue } from '@elementor/editor-props';
-import { StyleDefinition } from '@elementor/editor-styles';
-import { useElement } from '../../contexts/element-context';
+import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
+import { type StyleDefinition } from '@elementor/editor-styles';
+import { createLocation } from '@elementor/locations';
 
-export const { Slot: CssClassPromoteSlot, inject: injectIntoCssClassPromote } = createLocation<any>();
+import { useClassesProp } from '../../contexts/classes-prop-context';
+import { useElement } from '../../contexts/element-context';
+import { useStyle } from '../../contexts/style-context';
+
+export const { Slot: CssClassPromoteSlot, inject: injectIntoCssClassPromote } = createLocation< {
+	styleDef: StyleDefinition;
+	successCallback: ( newId: string ) => void;
+} >();
 
 type OwnProps = {
 	styleDef: StyleDefinition;
-}
+};
 
 /**
  * Promote a local class to a global class injection point
- * @component
+ * @param props
  */
-export const CssClassPromote = (props: OwnProps) => {
+export const CssClassPromote = ( props: OwnProps ) => {
 	const { element } = useElement();
 	const elementId = element.id;
 	const currentClassesProp = useClassesProp();
 	const { setId: setActiveId } = useStyle();
 
-	const successCallback = (newId: string) => {
-		onPromoteSuccess({
+	const successCallback = ( newId: string ) => {
+		onPromoteSuccess( {
 			newId,
 			elementId,
 			classesProp: currentClassesProp,
 			styleDef: props.styleDef,
-		});
-		setActiveId(newId);
-	}
+		} );
+		setActiveId( newId );
+	};
 
-	return <CssClassPromoteSlot styleDef={props.styleDef} successCallback={successCallback} />;
-}
+	return <CssClassPromoteSlot styleDef={ props.styleDef } successCallback={ successCallback } />;
+};
 
 type OnPromoteSuccessOpts = {
 	newId: string;
@@ -42,13 +46,13 @@ type OnPromoteSuccessOpts = {
 	classesProp: string;
 	styleDef: StyleDefinition;
 };
-const onPromoteSuccess = (opts: OnPromoteSuccessOpts) => {
+const onPromoteSuccess = ( opts: OnPromoteSuccessOpts ) => {
 	const { newId, elementId, classesProp } = opts;
-	deleteElementStyle(elementId, opts.styleDef.id);
-	const currentUsedClasses = getElementSetting<ClassesPropValue>(elementId, classesProp) || { value: [] };
-	updateElementSettings({
+	deleteElementStyle( elementId, opts.styleDef.id );
+	const currentUsedClasses = getElementSetting< ClassesPropValue >( elementId, classesProp ) || { value: [] };
+	updateElementSettings( {
 		id: elementId,
-		props: { [classesProp]: classesPropTypeUtil.create([newId, ...currentUsedClasses.value]) },
+		props: { [ classesProp ]: classesPropTypeUtil.create( [ newId, ...currentUsedClasses.value ] ) },
 		withHistory: false,
-	});
-}
+	} );
+};

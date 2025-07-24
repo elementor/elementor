@@ -3,7 +3,7 @@ import {
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
-	type StyleDefinitionVariant
+	type StyleDefinitionVariant,
 } from '@elementor/editor-styles';
 import { type UpdateActionPayload } from '@elementor/editor-styles-repository';
 import {
@@ -75,7 +75,7 @@ export const slice = createSlice( {
 			state.isDirty = true;
 		},
 
-		delete(state, { payload }: PayloadAction<StyleDefinitionID>) {
+		delete( state, { payload }: PayloadAction< StyleDefinitionID > ) {
 			localHistory.next( state.data );
 			state.data.items = Object.fromEntries(
 				Object.entries( state.data.items ).filter( ( [ id ] ) => id !== payload )
