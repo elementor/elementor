@@ -49,8 +49,10 @@ describe( 'ActiveFilters', () => {
 
 		render( <ActiveFilters /> );
 
-		const [ chip ] = await screen.findAllByRole( 'button', { name: 'Unused' } );
-		fireEvent.click( chip );
+		// eslint-disable-next-line testing-library/no-test-id-queries
+		const deleteIcon = screen.getByTestId( 'CancelIcon' );
+
+		fireEvent.click( deleteIcon );
 
 		expect( mockSetFilters ).toHaveBeenCalled();
 	} );
