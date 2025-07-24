@@ -9,9 +9,9 @@ import { __ } from '@wordpress/i18n';
 
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
-import { ERROR_MESSAGES } from '../utils/validations';
+import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { ColorField } from './fields/color-field';
-import { LabelField } from './fields/label-field';
+import { LabelField, useLabelError } from './fields/label-field';
 import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
 const SIZE = 'tiny';
@@ -30,9 +30,14 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 		throw new Error( `Global color variable not found` );
 	}
 
-	const [ errorMessage, setErrorMessage ] = useState( ERROR_MESSAGES.DUPLICATED_LABEL );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ label, setLabel ] = useState( variable.label );
 	const [ color, setColor ] = useState( variable.value );
+
+	const { labelFieldError, setLabelFieldError } = useLabelError( {
+		value: variable.label,
+		message: ERROR_MESSAGES.DUPLICATED_LABEL,
+	} );
 
 	const handleRestore = () => {
 		restoreVariable( variableId, label, color )
@@ -41,7 +46,17 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 				onSubmit?.();
 			} )
 			.catch( ( error ) => {
-				setErrorMessage( error.message );
+				const mappedError = mapServerError( error );
+				if ( mappedError && 'label' === mappedError.field ) {
+					setLabel( '' );
+					setLabelFieldError( {
+						value: label,
+						message: mappedError.message,
+					} );
+					return;
+				}
+
+				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
 			} );
 	};
 
@@ -73,6 +88,7 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 				<PopoverContent p={ 2 }>
 					<LabelField
 						value={ label }
+						error={ labelFieldError }
 						onChange={ ( value ) => {
 							setLabel( value );
 							setErrorMessage( '' );

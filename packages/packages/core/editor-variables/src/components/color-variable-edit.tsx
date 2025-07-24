@@ -11,8 +11,9 @@ import { __ } from '@wordpress/i18n';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
+import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { ColorField } from './fields/color-field';
-import { LabelField } from './fields/label-field';
+import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
 
@@ -31,6 +32,8 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ editConfirmation, setEditConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+
+	const { labelFieldError, setLabelFieldError } = useLabelError();
 
 	const variable = useVariable( editId );
 	if ( ! variable ) {
@@ -60,7 +63,17 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 				onSubmit?.();
 			} )
 			.catch( ( error ) => {
-				setErrorMessage( error.message );
+				const mappedError = mapServerError( error );
+				if ( mappedError && 'label' === mappedError.field ) {
+					setLabel( '' );
+					setLabelFieldError( {
+						value: label,
+						message: mappedError.message,
+					} );
+					return;
+				}
+
+				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
 			} );
 	};
 
@@ -146,6 +159,7 @@ export const ColorVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Prop
 				<PopoverContent p={ 2 }>
 					<LabelField
 						value={ label }
+						error={ labelFieldError }
 						onChange={ ( value ) => {
 							setLabel( value );
 							setErrorMessage( '' );
