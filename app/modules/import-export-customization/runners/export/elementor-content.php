@@ -24,13 +24,14 @@ class Elementor_Content extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
+		$customization = $data['customization']['content'] ?? null;
 		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
 
 		$files = [];
 		$manifest = [];
 
 		foreach ( $elementor_post_types as $post_type ) {
-			$export = $this->export_elementor_post_type( $post_type );
+			$export = $this->export_elementor_post_type( $post_type, $customization );
 			$files = array_merge( $files, $export['files'] );
 
 			$manifest[ $post_type ] = $export['manifest_data'];
@@ -46,7 +47,19 @@ class Elementor_Content extends Export_Runner_Base {
 		];
 	}
 
-	private function export_elementor_post_type( $post_type ) {
+	private function export_elementor_post_type( $post_type, $customization ) {
+		$selected_pages = $customization['pages'] ?? null;
+
+		$manifest_data = [];
+		$files = [];
+
+		if ( is_array( $selected_pages ) && empty( $selected_pages ) ) {
+			return [
+				'files' => $files,
+				'manifest_data' => $manifest_data,
+			];
+		}
+
 		$query_args = [
 			'post_type' => $post_type,
 			'post_status' => 'publish',
@@ -68,6 +81,10 @@ class Elementor_Content extends Export_Runner_Base {
 			],
 		];
 
+		if ( ! is_null( $selected_pages ) && ! empty( $selected_pages ) ) {
+			$query_args['post__in'] = $selected_pages;
+		}
+
 		$query = new \WP_Query( $query_args );
 
 		if ( empty( $query ) ) {
@@ -78,9 +95,6 @@ class Elementor_Content extends Export_Runner_Base {
 		}
 
 		$post_type_taxonomies = $this->get_post_type_taxonomies( $post_type );
-
-		$manifest_data = [];
-		$files = [];
 
 		foreach ( $query->posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );

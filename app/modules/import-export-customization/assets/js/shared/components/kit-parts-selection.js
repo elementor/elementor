@@ -19,12 +19,18 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 											color="info"
 											checked={ data.includes.includes( item.type ) }
 											onChange={ () => onCheckboxChange( item.type ) }
+											disabled={ item.required && data.includes.includes( item.type ) }
 											sx={ { py: 0 } }
 											data-testid={ `KitContentDataSelection-${ item.type }` }
 											data-type={ item.type }
 										/>
 									}
-									label={ <Typography variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }
+									label={ <Typography color="text.primary" variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }
+									sx={ {
+										'& .MuiFormControlLabel-label.Mui-disabled': {
+											color: 'text.primary',
+										},
+									} }
 								/>
 								<Typography variant="body2" color="text.secondary" sx={ { mt: 1, ml: 4 } }>
 									{ item.data.features.open.join( ', ' ) }

@@ -87,9 +87,15 @@ export const SizeControl = createControl(
 		extendedOptions,
 		disableCustom,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
-		const actualDefaultUnit = defaultUnit ?? defaultSelectedUnit[ variant ];
+		const {
+			value: sizeValue,
+			setValue: setSizeValue,
+			disabled,
+			restoreValue,
+			placeholder: externalPlaceholder,
+		} = useBoundProp( sizePropTypeUtil );
+		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
 		const actualUnits = units ?? [ ...defaultUnits[ variant ] ];
-		const { value: sizeValue, setValue: setSizeValue, disabled, restoreValue } = useBoundProp( sizePropTypeUtil );
 		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
 		const activeBreakpoint = useActiveBreakpoint();
 
@@ -229,9 +235,13 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 	return size || size === 0 ? ( Number( size ) as TSize ) : ( NaN as TSize );
 }
 
-function createStateFromSizeProp( sizeValue: SizeValue | null, defaultUnit: Unit | ExtendedOption ): State {
+function createStateFromSizeProp(
+	sizeValue: SizeValue | null,
+	defaultUnit: Unit | ExtendedOption,
+	defaultSize: string | number = ''
+): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
-	const size = sizeValue?.size ?? '';
+	const size = sizeValue?.size ?? defaultSize;
 
 	return {
 		numeric:
