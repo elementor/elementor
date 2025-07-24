@@ -13,7 +13,7 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useKit, { KIT_SOURCE_MAP } from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
-import isValidRedirectUrl from '../../../shared/utils/is-valid-redirect-url';
+import safeRedirect from '../../../shared/utils/redirect';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -146,10 +146,10 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( isResolvedData && 'apply-all' === importContext.data.actionType ) ) {
 			if ( importedData ) { // After kit upload.
-				if ( returnTo && isValidRedirectUrl( decodeURIComponent( returnTo ) ) ) {
-					window.location.href = decodeURIComponent( returnTo );
+				if ( returnTo && safeRedirect( returnTo ) ) {
 					return;
 				}
+
 				navigate( '/import/complete' );
 			} else if ( 'apply-all' === importContext.data.actionType ) { // Forcing apply-all kit content.
 				if ( kitState.data?.manifest?.plugins || importContext.data.uploadedData?.manifest.plugins ) {

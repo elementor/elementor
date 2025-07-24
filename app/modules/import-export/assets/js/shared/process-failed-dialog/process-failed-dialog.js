@@ -7,7 +7,7 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import { KIT_SOURCE_MAP } from '../../hooks/use-kit';
-import isValidRedirectUrl from '../utils/is-valid-redirect-url';
+import safeRedirect from '../utils/redirect';
 import { SharedContext } from '../../context/shared-context/shared-context-provider';
 
 const messagesContent = {
@@ -105,8 +105,7 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		},
 		handleOnDismiss = ( event ) => {
 			const isLoadingKitFromCloud = KIT_SOURCE_MAP.CLOUD === source;
-			if ( returnTo && isValidRedirectUrl( decodeURIComponent( returnTo ) ) ) {
-				window.location.href = decodeURIComponent( returnTo );
+			if ( returnTo && safeRedirect( returnTo ) ) {
 				return;
 			}
 			if ( 'general' === error && onDismiss ) {
