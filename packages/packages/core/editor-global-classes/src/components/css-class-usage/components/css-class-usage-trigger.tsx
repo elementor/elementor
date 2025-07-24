@@ -91,6 +91,7 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 
 const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number } > ) => (
 	<Tooltip
+		disableInteractive
 		placement={ 'top' }
 		title={ `${ __( 'Show {{number}} {{locations}}', 'elementor' )
 			.replace( '{{number}}', total.toString() )
@@ -105,6 +106,7 @@ const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number
 
 const InfoAlertMessage = ( { children }: PropsWithChildren ) => (
 	<Infotip
+		disableInteractive
 		placement={ 'top' }
 		color={ 'secondary' }
 		content={ <InfoAlert sx={ { mt: 1 } }>{ __( 'This class isn’t being used yet.', 'elementor' ) }</InfoAlert> }

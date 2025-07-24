@@ -11,7 +11,7 @@ export const ClearIconButton = ( { tooltipText, sxStyle }: ClearIconButtonProps 
 		filters: { onClearFilter },
 	} = useSearchAndFilters();
 	return (
-		<Tooltip title={ tooltipText } placement="top">
+		<Tooltip title={ tooltipText } placement="top" disableInteractive>
 			<IconButton size="tiny" onClick={ onClearFilter } sx={ sxStyle }>
 				<BrushBigIcon fontSize="tiny" />
 			</IconButton>
