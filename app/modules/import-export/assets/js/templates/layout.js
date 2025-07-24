@@ -69,7 +69,7 @@ export default function Layout( props ) {
 		onClose = () => {
 			eventTracking( 'kit-library/close', 'app_header', null, 'click' );
 			if ( returnTo && safeRedirect( returnTo ) ) {
-				return;
+				// Do nothing as the redirect is handled by the safeRedirect function.
 			} else if ( 'kit-library' === sharedContext.data.referrer || 'kit-library' === referrer ) {
 				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-app#/kit-library';
 			} else {
