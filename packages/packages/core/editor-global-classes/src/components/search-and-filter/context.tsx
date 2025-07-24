@@ -53,7 +53,7 @@ export const SearchAndFilterProvider = ( { children }: { children: ReactElement 
 					inputValue,
 					handleChange,
 					onClearSearch,
-                                        isSearchActive: inputValue.length >= 2,
+					isSearchActive: inputValue.length >= 2,
 				},
 				filters: {
 					filters,
