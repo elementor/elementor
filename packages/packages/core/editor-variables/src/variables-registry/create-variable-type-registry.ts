@@ -49,8 +49,13 @@ export function createVariableTypeRegistry() {
 		return variableTypes[ key ];
 	};
 
+	const hasVariableType = ( key: string ) => {
+		return key in variableTypes;
+	};
+
 	return {
 		registerVariableType,
 		getVariableType,
+		hasVariableType,
 	};
 }

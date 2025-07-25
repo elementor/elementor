@@ -113,5 +113,20 @@ describe( 'createVariableTypeRegistry', () => {
 			// Assert.
 			expect( result ).toBeUndefined();
 		} );
+
+		it( 'should return true if a variable type exists and false otherwise', () => {
+			// Arrange.
+			registry.registerVariableType( {
+				icon: BrushIcon,
+				valueField: ColorField,
+				variableType: 'color',
+				propTypeUtil: createMockPropTypeUtil( 'existing-key' ),
+				fallbackPropTypeUtil: createMockPropTypeUtil( 'fallback-key' ),
+			} );
+
+			// Assert.
+			expect( registry.hasVariableType( 'existing-key' ) ).toBe( true );
+			expect( registry.hasVariableType( 'non-existent-key' ) ).toBe( false );
+		} );
 	} );
 } );
