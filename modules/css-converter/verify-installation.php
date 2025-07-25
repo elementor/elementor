@@ -13,6 +13,8 @@
 
 namespace Elementor\Modules\CssConverter;
 
+use Elementor\Modules\CssConverter\Parsers\CssParser;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	// Allow direct execution for testing
 	define( 'ABSPATH', dirname( dirname( dirname( __DIR__ ) ) ) . '/' );
@@ -84,7 +86,6 @@ try {
 // Check 5: Basic functionality test
 echo "5. Testing basic CSS parsing...\n";
 try {
-	use Elementor\Modules\CssConverter\Parsers\CssParser;
 	
 	$parser = new CssParser();
 	$test_css = ".test { color: red; background: blue; }";

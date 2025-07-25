@@ -122,7 +122,7 @@ class CssParser {
 						'name' => $class_name,
 						'selector' => $selector_string,
 						'rules' => $this->extract_rules_from_block( $css_node ),
-						'original_block' => $css_node->render(),
+						'original_block' => $css_node->render(\Sabberworm\CSS\OutputFormat::create()),
 					];
 				}
 			}
@@ -149,6 +149,7 @@ class CssParser {
 								'name' => $property,
 								'value' => $value,
 								'scope' => $selector_string,
+								'original_block' => $css_node->render(\Sabberworm\CSS\OutputFormat::create()),
 							];
 						}
 					}
@@ -178,16 +179,16 @@ class CssParser {
 			}
 			
 			if ( $has_unsupported_selector ) {
-				$unsupported[] = $css_node->render();
+				$unsupported[] = $css_node->render(\Sabberworm\CSS\OutputFormat::create());
 			}
 		}
 
 		if ( $css_node instanceof \Sabberworm\CSS\CSSList\AtRuleBlockList ) {
-			$unsupported[] = $css_node->render();
+			$unsupported[] = $css_node->render(\Sabberworm\CSS\OutputFormat::create());
 		}
 
 		if ( $css_node instanceof \Sabberworm\CSS\Property\AtRule ) {
-			$unsupported[] = $css_node->render();
+			$unsupported[] = $css_node->render(\Sabberworm\CSS\OutputFormat::create());
 		}
 
 		if ( method_exists( $css_node, 'getContents' ) ) {
@@ -217,11 +218,12 @@ class CssParser {
 			$property = $rule->getRule();
 			$value = (string) $rule->getValue();
 			$is_important = $rule->getIsImportant();
+			$raw = $rule->render(\Sabberworm\CSS\OutputFormat::create());
 			
 			$rules[ $property ] = [
 				'value' => $value,
 				'important' => $is_important,
-				'raw' => $rule->render(),
+				'raw' => $raw,
 			];
 		}
 		return $rules;
