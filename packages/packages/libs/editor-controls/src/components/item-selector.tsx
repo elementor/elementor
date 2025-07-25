@@ -20,7 +20,7 @@ type ItemSelectorProps = {
 	sectionWidth: number;
 	title: string;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
-	onDebounce?: ( fontName: string ) => void;
+	onDebounce?: ( name: string ) => void;
 	icon: React.ElementType< { fontSize: string } >;
 };
 
@@ -124,7 +124,7 @@ type ItemListProps = {
 	handleClose: () => void;
 	selectedItem: string | null;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
-	onDebounce?: ( fontName: string ) => void;
+	onDebounce?: ( name: string ) => void;
 };
 
 const ItemList = ( {

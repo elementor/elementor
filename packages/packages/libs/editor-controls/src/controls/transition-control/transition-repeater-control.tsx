@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 
-import { createControl } from '../create-control';
-import { RepeatableControl } from './repeatable-control';
-import { SelectControl } from './select-control';
+import { createControl } from '../../create-control';
+import { RepeatableControl } from '../repeatable-control';
+import { transitionProperties } from './data';
 import { SelectionSizeControl } from './selection-size-control';
-
-const TRANSITION_PROPERTIES = [ { label: 'All Properties', value: 'all properties' } ];
+import { TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
 	variant: 'time',
@@ -15,7 +14,13 @@ const DURATION_CONFIG = {
 };
 
 const INITIAL_VALUES = {
-	selection: { $$type: 'string', value: 'all properties' },
+	selection: {
+		$$type: 'key-value',
+		value: {
+			key: { value: 'all', $$type: 'string' },
+			value: { value: 'All properties', $$type: 'string' },
+		},
+	},
 	size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
 };
 
@@ -23,13 +28,20 @@ const SELECTION_SIZE_PROPS = {
 	selectionLabel: 'Type',
 	sizeLabel: 'Duration',
 	selectionConfig: {
-		component: SelectControl,
-		props: {
-			options: TRANSITION_PROPERTIES,
-		},
+		component: TransitionSelector,
+		props: {},
 	},
 	sizeConfigMap: {
-		...TRANSITION_PROPERTIES.reduce( ( acc, prop ) => ( { ...acc, [ prop.value ]: DURATION_CONFIG } ), {} ),
+		// Create size config for all transition properties
+		...transitionProperties.reduce(
+			( acc, category ) => {
+				category.properties.forEach( ( property ) => {
+					acc[ property.value ] = DURATION_CONFIG;
+				} );
+				return acc;
+			},
+			{} as Record< string, typeof DURATION_CONFIG >
+		),
 	},
 };
 
@@ -44,7 +56,7 @@ export const TransitionRepeaterControl = createControl( () => {
 		<RepeatableControl
 			label="Transitions"
 			repeaterLabel="Transitions"
-			patternLabel="${value.selection.value}: ${value.size.value.size}${value.size.value.unit}"
+			patternLabel="${value.selection.value.value.value}: ${value.size.value.size}${value.size.value.unit}"
 			placeholder="Empty Transition"
 			showDuplicate={ false }
 			showToggle={ true }
