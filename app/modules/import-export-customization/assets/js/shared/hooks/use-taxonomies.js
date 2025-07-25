@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 const fetchTaxonomies = async () => {
 	const requestUrl = `${ elementorCommon.config.urls.rest }wp/v2/taxonomies`;
@@ -24,8 +24,13 @@ export function useTaxonomies( { skipLoading = false, exclude = [] } = {} ) {
 	const [ taxonomies, setTaxonomies ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( null );
+	const isLoaded = useRef( null );
 
 	const fetchAllTaxonomies = useCallback( async () => {
+		if ( isLoaded.current ) {
+			return;
+		}
+
 		try {
 			setIsLoading( true );
 			setError( null );
@@ -37,6 +42,7 @@ export function useTaxonomies( { skipLoading = false, exclude = [] } = {} ) {
 					? data.filter( ( taxonomy ) => ! exclude.includes( taxonomy.slug ) )
 					: data,
 			);
+			isLoaded.current = true;
 		} catch ( err ) {
 			setError( err.message );
 		} finally {
@@ -64,5 +70,6 @@ export function useTaxonomies( { skipLoading = false, exclude = [] } = {} ) {
 		error,
 		refreshTaxonomies,
 		taxonomyOptions,
+		isLoaded: isLoaded.current,
 	};
 }

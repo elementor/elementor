@@ -28,7 +28,7 @@ import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
-import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
+
 import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
 import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
 import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
@@ -457,8 +457,6 @@ export default class EditorBase extends Marionette.Application {
 		this.browserImport = new BrowserImport();
 
 		this.introductionTooltips = new IntroductionTooltipsManager();
-
-		this.editorEvents = new EditorEvents();
 
 		this.documents = $e.components.register( new EditorDocuments() );
 

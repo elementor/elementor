@@ -7,6 +7,7 @@ import ExportCompleteSummary from '../components/export-complete-summary';
 import ExportCompleteIcon from '../components/export-complete-icon';
 import ExportCompleteHeading from '../components/export-complete-heading';
 import ExportCompleteDownloadLink from '../components/export-complete-download-link';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 
@@ -43,6 +44,10 @@ export default function ExportComplete() {
 			downloadFile();
 		}
 	}, [ exportedData, kitInfo.source, downloadFile ] );
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportSummary );
+	}, [] );
 
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;

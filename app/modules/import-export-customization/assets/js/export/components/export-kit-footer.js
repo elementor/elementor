@@ -4,11 +4,12 @@ import { Button, Stack, CircularProgress } from '@elementor/ui';
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from '../../shared/hooks/use-connect-state';
 import { useExportContext, EXPORT_STATUS } from '../context/export-context';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
 	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
-	const { dispatch, isTemplateNameValid } = useExportContext();
+	const { dispatch, isTemplateNameValid, data } = useExportContext();
 
 	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
@@ -58,18 +59,35 @@ export default function ExportKitFooter() {
 	}, [ isConnecting, isCheckingEligibility, setConnecting ] );
 
 	const handleUpgradeClick = () => {
+		AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomization );
 		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+	};
+
+	const sendExportKitCustomizationEvent = () => {
+		const { includes, analytics, kitInfo, customization } = data;
+
+		AppsEventTracking.sendExportKitCustomization( {
+			kit_export_content: includes.includes( 'content' ),
+			kit_export_templates: includes.includes( 'templates' ),
+			kit_export_settings: includes.includes( 'settings' ),
+			kit_export_plugins: includes.includes( 'plugins' ),
+			kit_export_deselected: analytics.customization,
+			kit_decription: Boolean( kitInfo.description ),
+			...( customization.content?.pages ? { kit_pages_count: customization.content?.pages.length } : null ),
+		} );
 	};
 
 	const handleUploadClick = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
+		sendExportKitCustomizationEvent();
 		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
 	const handleExportAsZip = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
+		sendExportKitCustomizationEvent();
 		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
