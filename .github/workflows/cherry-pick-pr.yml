@@ -151,6 +151,9 @@ jobs:
               echo "Cherry-pick successful"
             fi
 
+            # Create empty commit to trigger workflows
+            git commit --allow-empty -m "Trigger workflows for cherry-pick PR"
+
             # Push (force push to handle existing branches)
             if ! git push --force-with-lease origin "$BRANCH"; then
               echo "::warning:: Failed to push branch $BRANCH"
