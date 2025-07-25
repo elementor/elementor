@@ -1,13 +1,13 @@
 import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../utils/create-prop-utils';
+import { keyValuePropTypeUtil } from './key-value';
 import { sizePropTypeUtil } from './size';
-import { stringPropTypeUtil } from './string';
 
 export const selectionSizePropTypeUtil = createPropUtils(
 	'selection-size',
 	z.strictObject( {
-		selection: stringPropTypeUtil.schema,
+		selection: keyValuePropTypeUtil.schema,
 		size: sizePropTypeUtil.schema,
 	} )
 );

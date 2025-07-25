@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { stringPropTypeUtil } from '@elementor/editor-props';
+import { keyValuePropTypeUtil } from '@elementor/editor-props';
 import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -14,44 +14,33 @@ const TRANSITION_ITEMS_LIST = transitionProperties.map( ( category ) => ( {
 	items: category.properties.map( ( property ) => property.label ),
 } ) );
 
-const getTransitionPropertyValue = ( label: string ) => {
+const toTransitionSelectorValue = ( label: string ) => {
 	for ( const category of transitionProperties ) {
 		const property = category.properties.find( ( prop ) => prop.label === label );
 		if ( property ) {
-			return property.value;
+			return { key: property.value, value: property.label };
 		}
 	}
 
 	return null;
 };
 
-const getTransitionPropertyLabel = ( value: string | null ) => {
-	if ( ! value ) {
-		return '';
-	}
-
-	for ( const category of transitionProperties ) {
-		const property = category.properties.find( ( prop ) => prop.value === value );
-		if ( property ) {
-			return property.label;
-		}
-	}
-	return value;
-};
-
 export const TransitionSelector = () => {
-	const { value, setValue } = useBoundProp( stringPropTypeUtil );
+	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
+	const { value: transitionLabel, key: transitionValue } = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const popoverState = usePopupState( { variant: 'popover' } );
 
 	const handleTransitionPropertyChange = ( newLabel: string ) => {
-		const newValue = getTransitionPropertyValue( newLabel );
+		const newValue = toTransitionSelectorValue( newLabel );
+
+		if ( ! newValue ) {
+			return;
+		}
 
 		setValue( newValue );
 		popoverState.close();
 	};
-
-	const displayLabel = getTransitionPropertyLabel( value );
 
 	const getAnchorPosition = () => {
 		if ( ! defaultRef.current ) {
@@ -69,7 +58,7 @@ export const TransitionSelector = () => {
 		<div ref={ defaultRef }>
 			<UnstableTag
 				variant="outlined"
-				label={ displayLabel || __( 'Select Property', 'elementor' ) }
+				label={ transitionLabel }
 				endIcon={ <ChevronDownIcon fontSize="tiny" /> }
 				{ ...bindTrigger( popoverState ) }
 				fullWidth
@@ -85,7 +74,7 @@ export const TransitionSelector = () => {
 			>
 				<ItemSelector
 					itemsList={ TRANSITION_ITEMS_LIST }
-					selectedItem={ value }
+					selectedItem={ transitionValue }
 					onItemChange={ handleTransitionPropertyChange }
 					onClose={ popoverState.close }
 					sectionWidth={ 268 }

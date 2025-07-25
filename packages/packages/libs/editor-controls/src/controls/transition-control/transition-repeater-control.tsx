@@ -14,7 +14,7 @@ const DURATION_CONFIG = {
 };
 
 const INITIAL_VALUES = {
-	selection: { $$type: 'string', value: 'all' },
+	selection: { $$type: 'key-value', value: { key: 'all', value: 'All properties' } },
 	size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
 };
 
@@ -50,7 +50,7 @@ export const TransitionRepeaterControl = createControl( () => {
 		<RepeatableControl
 			label="Transitions"
 			repeaterLabel="Transitions"
-			patternLabel="${value.selection.value}: ${value.size.value.size}${value.size.value.unit}"
+			patternLabel="${value.selection.value.value}: ${value.size.value.size}${value.size.value.unit}"
 			placeholder="Empty Transition"
 			showDuplicate={ false }
 			showToggle={ true }
