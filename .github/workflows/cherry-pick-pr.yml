@@ -106,9 +106,6 @@ jobs:
               # Remove the type from PR_TITLE for the description part
               DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
 
-              # Convert to sentence-case but preserve JIRA keys in original case
-              DESCRIPTION_LOWER=$(echo "$DESCRIPTION" | sed 's/.*/\L&/' | sed -E 's/(\[[a-z]+-[0-9]+\])/\U\1/g')
-
               # Push the conflict branch
               if git push --force-with-lease origin "$BRANCH:$CONFLICT_BRANCH"; then
                 # Create draft PR with conflict information
@@ -122,7 +119,7 @@ jobs:
                   gh pr create \
                     --base "$TARGET" \
                     --head "$CONFLICT_BRANCH" \
-                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts ${DESCRIPTION_LOWER}" \
+                    --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} with conflicts ${DESCRIPTION}" \
                     --body "⚠️ **Manual Resolution Required**
 
                   This cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch has conflicts that need manual resolution.
@@ -166,11 +163,8 @@ jobs:
               TYPE="Internal:"
             fi
 
-            # Remove the type from PR_TITLE for the description part
+                        # Remove the type from PR_TITLE for the description part
             DESCRIPTION=$(echo "$PR_TITLE" | sed 's/^[A-Za-z]*: *//')
-
-            # Convert to sentence-case but preserve JIRA keys in original case
-            DESCRIPTION_LOWER=$(echo "$DESCRIPTION" | sed 's/.*/\L&/' | sed -E 's/(\[[a-z]+-[0-9]+\])/\U\1/g')
 
             # Create PR via gh CLI (token already in env: GH_TOKEN)
             # Check if PR already exists
@@ -186,7 +180,7 @@ jobs:
               gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
-                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} ${DESCRIPTION_LOWER}" \
+                --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} ${DESCRIPTION}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}
