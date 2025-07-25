@@ -42,9 +42,9 @@ class Plugins extends Import_Runner_Base {
 
 			$plugins = Collection::make( $data['selected_plugins'] )
 				->filter( function( $plugin_data, $plugin_key ) use ( $enabled_plugin_keys ) {
-					return $enabled_plugin_keys->contains( $plugin_key );
+					return $enabled_plugin_keys->contains( $plugin_data['plugin'] );
 				} )
-				->all();
+				->values();
 		} else {
 			$plugins = $data['selected_plugins'];
 		}
