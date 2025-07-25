@@ -1,3 +1,3 @@
 import { createVariableTypeRegistry } from './create-variable-type-registry';
 
-export const { registerVariableType, getVariableType } = createVariableTypeRegistry();
+export const { registerVariableType, getVariableType, hasVariableType } = createVariableTypeRegistry();

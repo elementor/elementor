@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { type PropTypeUtil } from '@elementor/editor-props';
+import { type PropTypeKey } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
 
 import { usePermissions } from '../../../hooks/use-permissions';
@@ -9,6 +9,7 @@ import { restoreVariable } from '../../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../../../prop-types/font-variable-prop-type';
 import { type Variable } from '../../../types';
+import { getVariableType } from '../../../variables-registry/variable-type-registry';
 import { ColorVariableRestore } from '../../color-variable-restore';
 import { FontVariableRestore } from '../../font-variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
@@ -16,8 +17,7 @@ import { DeletedTag } from '../tags/deleted-tag';
 
 type Props = {
 	variable: Variable;
-	variablePropTypeUtil: PropTypeUtil< string, string >;
-	fallbackPropTypeUtil: PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
+	propTypeKey: PropTypeKey;
 };
 
 type Handlers = {
@@ -25,7 +25,9 @@ type Handlers = {
 	onRestore?: () => void;
 };
 
-export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropTypeUtil }: Props ) => {
+export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
+	const { fallbackPropTypeUtil, propTypeUtil } = getVariableType( propTypeKey );
+
 	const { setValue } = useBoundProp();
 
 	const userPermissions = usePermissions();
@@ -58,7 +60,7 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 
 			restoreVariable( variable.key )
 				.then( ( key ) => {
-					setValue( variablePropTypeUtil.create( key ) );
+					setValue( propTypeUtil.create( key ) );
 					closeInfotip();
 				} )
 				.catch( () => {
@@ -114,7 +116,7 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 					} }
 					{ ...bindPopover( popupState ) }
 				>
-					{ fontVariablePropTypeUtil.key === variablePropTypeUtil.key && (
+					{ fontVariablePropTypeUtil.key === propTypeUtil.key && (
 						<FontVariableRestore
 							variableId={ variable.key ?? '' }
 							onClose={ popupState.close }
@@ -122,7 +124,7 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 						/>
 					) }
 
-					{ colorVariablePropTypeUtil.key === variablePropTypeUtil.key && (
+					{ colorVariablePropTypeUtil.key === propTypeUtil.key && (
 						<ColorVariableRestore
 							variableId={ variable.key ?? '' }
 							onClose={ popupState.close }
