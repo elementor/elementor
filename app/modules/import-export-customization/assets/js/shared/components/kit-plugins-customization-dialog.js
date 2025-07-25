@@ -43,20 +43,23 @@ const ExternalLinkIcon = ( props ) => {
 };
 
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const isImportContext = data.hasOwnProperty( 'uploadedData' );
+	const isImport = data.hasOwnProperty( 'uploadedData' );
 	
-	const { pluginsList: hookPluginsList, isLoading: hookIsLoading } = useKitPlugins( { open: open && !isImportContext } );
+	const { pluginsList: fetchedPluginsList, isLoading: fetchIsLoading } = useKitPlugins( { open: open && ! isImport } );
 	
 	const pluginsList = useMemo( () => {
-		if ( isImportContext ) {
+		if ( isImport ) {
 			return ( data.uploadedData.manifest.plugins || [] ).reduce( ( acc, plugin ) => {
 				acc[ plugin.plugin ] = plugin;
+
 				return acc;
 			}, {} );
 		}
-		return hookPluginsList;
-	}, [ isImportContext, data.uploadedData?.manifest?.plugins, hookPluginsList ] );
-	const isLoading = isImportContext ? false : hookIsLoading;
+
+		return fetchedPluginsList;
+	}, [ isImport, data?.uploadedData?.manifest?.plugins, fetchedPluginsList ] );
+
+	const isLoading = isImport ? false : fetchIsLoading;
 	
 	const [ plugins, setPlugins ] = useState( {} );
 
