@@ -18,11 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/elementor/elementor-packages.git",
+    "url": "git+https://github.com/elementor/elementor.git",
     "directory": "packages/tools/externalize-wordpress-assets-webpack-plugin"
   },
   "bugs": {
-    "url": "https://github.com/elementor/elementor-packages/issues"
+    "url": "https://github.com/elementor/elementor/issues"
   },
   "publishConfig": {
     "access": "public"

@@ -10,3 +10,4 @@ tests/qunit/setup/tinymce.js
 packages/**/*
 eslint-local-rules.js
 .eslintrc.js
+scripts/**

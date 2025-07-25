@@ -18,11 +18,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/elementor/elementor-packages.git",
+    "url": "git+https://github.com/elementor/elementor.git",
     "directory": "packages/libs/store"
   },
   "bugs": {
-    "url": "https://github.com/elementor/elementor-packages/issues"
+    "url": "https://github.com/elementor/elementor/issues"
   },
   "publishConfig": {
     "access": "public"
