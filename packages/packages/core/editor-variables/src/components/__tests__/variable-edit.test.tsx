@@ -1,17 +1,28 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { colorPropTypeUtil, PropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
-import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
-import { FontVariableEdit } from '../font-variable-edit';
+import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+import { getVariableType } from '../../variables-registry/variable-type-registry';
+import { VariableEdit } from '../variable-edit';
+import { fontVariablePropTypeUtil } from "../../prop-types/font-variable-prop-type";
 
 const propType = createMockPropType( { kind: 'object' } );
 
 jest.mock( '../../hooks/use-prop-variables', () => ( {
 	useVariable: jest.fn(),
 	deleteVariable: jest.fn(),
+	updateVariable: jest.fn(),
 } ) );
+
+jest.mock( '../../variables-registry/variable-type-registry', () => ( {
+	getVariableType: jest.fn(),
+} ) );
+
+const mockGetVariableType = jest.mocked( getVariableType );
 
 jest.mock( '../../hooks/use-permissions', () => {
 	return {
@@ -27,37 +38,50 @@ jest.mock( '../../hooks/use-permissions', () => {
 	};
 } );
 
-describe( 'FontVariableEdit', () => {
+describe( 'ColorVariableEdit', () => {
 	const mockVariable = {
-		key: 'e-gv-789',
-		label: 'Main: Roboto',
-		value: 'Roboto',
-		type: fontVariablePropTypeUtil.key,
+		key: 'e-gv-123',
+		label: 'Primary Background Color',
+		value: '#911f1f',
 	};
 
 	beforeEach( () => {
 		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
 		( usePropVariablesModule.deleteVariable as jest.Mock ).mockResolvedValue( mockVariable.key );
+		( usePropVariablesModule.updateVariable as jest.Mock ).mockResolvedValue( mockVariable.key );
 	} );
 
-	it( 'should delete a font variable after confirmation', async () => {
+	it( 'should delete a variable after confirmation', async () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const onDeleted = jest.fn();
 
+		mockGetVariableType.mockReturnValue( {
+			icon: TextIcon,
+			valueField: jest.fn(),
+			variableType: 'color',
+			propTypeUtil: colorVariablePropTypeUtil,
+			fallbackPropTypeUtil: colorPropTypeUtil,
+		} );
+
 		const props = {
 			setValue,
 			value: {
-				$$type: fontVariablePropTypeUtil.key,
+				$$type: colorVariablePropTypeUtil.key,
 				value: 'e-gv-123',
 			},
-			bind: 'font-family',
+			bind: 'color',
 			propType,
 		};
 
 		// Act.
 		renderControl(
-			<FontVariableEdit editId="test-variable-id" onClose={ jest.fn() } onSubmit={ onDeleted } />,
+			<VariableEdit
+				propTypeKey={ colorVariablePropTypeUtil.key }
+				editId="test-variable-id"
+				onClose={ jest.fn() }
+				onSubmit={ onDeleted }
+			/>,
 			props
 		);
 
@@ -85,13 +109,24 @@ describe( 'FontVariableEdit', () => {
 			setValue,
 			value: {
 				$$type: fontVariablePropTypeUtil.key,
-				value: 'e-gv-1122',
+				value: 'e-gv-75930',
 			},
-			bind: 'font-family',
+			bind: 'font',
 			propType,
 		};
 
-		renderControl( <FontVariableEdit editId="e-gv-1122" onClose={ jest.fn() } />, props );
+		mockGetVariableType.mockReturnValue( {
+			icon: TextIcon,
+			valueField: jest.fn(),
+			variableType: 'font',
+			propTypeUtil: fontVariablePropTypeUtil,
+			fallbackPropTypeUtil: stringPropTypeUtil,
+		} );
+
+		renderControl(
+			<VariableEdit editId="e-gv-75930" onClose={ jest.fn() } propTypeKey={ colorVariablePropTypeUtil.key } />,
+			props
+		);
 
 		const deleteButton = screen.getByRole( 'button', { name: /delete/i } );
 		fireEvent.click( deleteButton );
@@ -106,7 +141,7 @@ describe( 'FontVariableEdit', () => {
 		await waitFor( () => {
 			expect( setValue ).toHaveBeenCalledWith( {
 				$$type: fontVariablePropTypeUtil.key,
-				value: 'e-gv-1122',
+				value: 'e-gv-75930',
 			} );
 		} );
 	} );

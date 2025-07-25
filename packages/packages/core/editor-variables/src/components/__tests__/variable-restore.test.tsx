@@ -4,7 +4,10 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
-import { ColorVariableRestore } from '../color-variable-restore';
+import { VariableRestore } from '../variable-restore';
+import { getVariableType } from "../../variables-registry/variable-type-registry";
+import { TextIcon } from "@elementor/icons";
+import { colorPropTypeUtil } from "@elementor/editor-props";
 
 const propType = createMockPropType( { kind: 'object' } );
 
@@ -12,6 +15,12 @@ jest.mock( '../../hooks/use-prop-variables', () => ( {
 	useVariable: jest.fn(),
 	restoreVariable: jest.fn(),
 } ) );
+
+jest.mock( '../../variables-registry/variable-type-registry', () => ( {
+	getVariableType: jest.fn(),
+} ) );
+
+const mockGetVariableType = jest.mocked( getVariableType );
 
 describe( 'ColorVariableRestore', () => {
 	const mockVariable = {
@@ -40,6 +49,14 @@ describe( 'ColorVariableRestore', () => {
 			propType,
 		};
 
+		mockGetVariableType.mockReturnValue( {
+			icon: TextIcon,
+			valueField: jest.fn(),
+			variableType: 'color',
+			propTypeUtil: colorVariablePropTypeUtil,
+			fallbackPropTypeUtil: colorPropTypeUtil,
+		} );
+
 		// Mock API response with duplicated label error
 		const apiErrorResponse = {
 			response: {
@@ -52,7 +69,14 @@ describe( 'ColorVariableRestore', () => {
 		( usePropVariablesModule.restoreVariable as jest.Mock ).mockRejectedValue( apiErrorResponse );
 
 		// Act.
-		renderControl( <ColorVariableRestore variableId="e-gv-4test" onClose={ jest.fn() } />, props );
+		renderControl(
+			<VariableRestore
+				variableId="e-gv-4test"
+				onClose={ jest.fn() }
+				propTypeKey={ colorVariablePropTypeUtil.key }
+			/>,
+			props
+		);
 
 		// Change the label to enable the save button
 		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
