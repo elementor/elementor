@@ -3,7 +3,6 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
-import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -170,7 +169,6 @@ test.describe( 'Div Block tests @div-block', () => {
 			await expect( secondContainerHandles ).toHaveScreenshot( 'normal-handles.png' );
 		} );
 	} );
-
 	test( 'Verify that text stroke style do not apply to empty view and frame handle elements', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -203,8 +201,9 @@ test.describe( 'Div Block tests @div-block', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const container = editor.getPreviewFrame().locator( `[data-id="${ containerId }"]` );
+		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		await editor.addElement( { elType: 'e-div-block' }, flexboxId );
+		const flexBox = editor.getPreviewFrame().locator( `[data-id="${flexboxId }"]` );
 
 		await test.step( 'Perform drag and drop from panel to iframe', async () => {
 			await editor.openElementsPanel();
@@ -215,7 +214,7 @@ test.describe( 'Div Block tests @div-block', () => {
 			await expect( headingWidget ).toBeVisible();
 
 			const sourceBox = await headingWidget.boundingBox();
-			const targetBox = await container.boundingBox();
+			const targetBox = await flexBox.boundingBox();
 
 			if ( sourceBox && targetBox ) {
 				const sourceX = sourceBox.x + ( sourceBox.width / 2 );
@@ -237,7 +236,7 @@ test.describe( 'Div Block tests @div-block', () => {
 				await page.mouse.up();
 
 				await editor.getPreviewFrame().waitForSelector( '[data-widget_type="e-heading.default"]', { timeout: 5000 } );
-				const headingInContainer = container.locator( '[data-widget_type="e-heading.default"]' );
+				const headingInContainer = flexBox.locator( '[data-widget_type="e-heading.default"]' );
 				await expect( headingInContainer ).toBeVisible();
 			}
 		} );
