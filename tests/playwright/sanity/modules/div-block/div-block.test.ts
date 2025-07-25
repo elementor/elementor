@@ -3,6 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
