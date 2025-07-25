@@ -2,15 +2,14 @@ import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
+import { type PropTypeKey } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { BrushIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
-import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
-import { ColorField } from './fields/color-field';
+import { getVariableType } from '../variables-registry/variable-type-registry';
 import { LabelField, useLabelError } from './fields/label-field';
 import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
@@ -20,19 +19,23 @@ type Props = {
 	variableId: string;
 	onClose: () => void;
 	onSubmit?: () => void;
+	propTypeKey: PropTypeKey;
 };
 
-export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
-	const { setValue: notifyBoundPropChange } = useBoundProp( colorVariablePropTypeUtil );
+export const VariableRestore = ( { variableId, onClose, onSubmit, propTypeKey }: Props ) => {
+	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = getVariableType( propTypeKey );
+
+	const { setValue: notifyBoundPropChange } = useBoundProp( propTypeUtil );
 
 	const variable = useVariable( variableId );
+
 	if ( ! variable ) {
-		throw new Error( `Global color variable not found` );
+		throw new Error( `Global ${ variableType } variable not found` );
 	}
 
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ label, setLabel ] = useState( variable.label );
-	const [ color, setColor ] = useState( variable.value );
+	const [ value, setValue ] = useState( variable.value );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError( {
 		value: variable.label,
@@ -40,7 +43,7 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 	} );
 
 	const handleRestore = () => {
-		restoreVariable( variableId, label, color )
+		restoreVariable( variableId, label, value )
 			.then( () => {
 				notifyBoundPropChange( variableId );
 				onSubmit?.();
@@ -61,11 +64,11 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 	};
 
 	const hasEmptyValues = () => {
-		return ! color.trim() || ! label.trim();
+		return ! value.trim() || ! label.trim();
 	};
 
 	const noValueChanged = () => {
-		return color === variable.value && label === variable.label;
+		return value === variable.value && label === variable.label;
 	};
 
 	const hasErrors = () => {
@@ -78,7 +81,7 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 		<PopoverContentRefContextProvider>
 			<PopoverBody height="auto">
 				<PopoverHeader
-					icon={ <BrushIcon fontSize={ SIZE } /> }
+					icon={ <VariableIcon fontSize={ SIZE } /> }
 					title={ __( 'Restore variable', 'elementor' ) }
 					onClose={ onClose }
 				/>
@@ -89,15 +92,15 @@ export const ColorVariableRestore = ( { variableId, onClose, onSubmit }: Props )
 					<LabelField
 						value={ label }
 						error={ labelFieldError }
-						onChange={ ( value ) => {
-							setLabel( value );
+						onChange={ ( newValue ) => {
+							setLabel( newValue );
 							setErrorMessage( '' );
 						} }
 					/>
-					<ColorField
-						value={ color }
-						onChange={ ( value ) => {
-							setColor( value );
+					<ValueField
+						value={ value }
+						onChange={ ( newValue ) => {
+							setValue( newValue );
 							setErrorMessage( '' );
 						} }
 					/>
