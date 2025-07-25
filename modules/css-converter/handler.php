@@ -5,11 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/autoloader.php';
 require_once __DIR__ . '/schema-mapping.php';
 require_once __DIR__ . '/widget-creation.php';
 require_once __DIR__ . '/widgets/FlexboxWidgetHandler.php';
 require_once __DIR__ . '/widgets/ParagraphWidgetHandler.php';
 require_once __DIR__ . '/widgets/HtmlWidgetHandler.php';
+
+// Initialize CSS parser dependencies
+CSS_Converter_Autoloader::register();
 
 class CssConverterHandler {
     private $widgetHandlers;
