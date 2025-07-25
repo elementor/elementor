@@ -21,6 +21,16 @@ const importReducer = ( state, { type, payload } ) => {
 			return { ...state, importedData: payload };
 		case 'SET_KIT_UPLOAD_PARAMS':
 			return { ...state, kitUploadParams: payload };
+		case 'SET_RUNNERS_STATE':
+			return { ...state, runnersState: payload };
+		case 'UPDATE_RUNNERS_STATE':
+			return { 
+				...state, 
+				runnersState: { 
+					...state.runnersState, 
+					...payload 
+				} 
+			};
 		case 'ADD_INCLUDE':
 			return {
 				...state,
@@ -32,9 +42,22 @@ const importReducer = ( state, { type, payload } ) => {
 			return {
 				...state,
 				includes: state.includes.filter( ( item ) => item !== payload ),
+				// Clear customization when removing from includes
+				customization: {
+					...state.customization,
+					[ payload ]: null,
+				},
 			};
 		case 'RESET_STATE':
 			return { ...initialState };
+		case 'SET_CUSTOMIZATION':
+			return {
+				...state,
+				customization: {
+					...state.customization,
+					[ payload.key ]: payload.value,
+				},
+			};
 		default:
 			return state;
 	}
@@ -48,8 +71,9 @@ const initialState = {
 	importedData: null,
 	kitUploadParams: null,
 	plugins: [],
-	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
+	includes: [ 'plugins' ],
 	importStatus: IMPORT_STATUS.PENDING,
+	runnersState: {},
 	customization: {
 		settings: null,
 		templates: null,
@@ -64,6 +88,7 @@ export default function ImportContextProvider( props ) {
 		<ImportContext.Provider value={ {
 			data,
 			dispatch,
+			runnersState: data.runnersState,
 			isUploading: data.importStatus === IMPORT_STATUS.UPLOADING,
 			isCustomizing: data.importStatus === IMPORT_STATUS.CUSTOMIZING,
 			isProcessing: data.importStatus === IMPORT_STATUS.IMPORTING,
