@@ -18,7 +18,10 @@ const toTransitionSelectorValue = ( label: string ) => {
 	for ( const category of transitionProperties ) {
 		const property = category.properties.find( ( prop ) => prop.label === label );
 		if ( property ) {
-			return { key: property.value, value: property.label };
+			return {
+				key: { value: property.value, $$type: 'string' },
+				value: { value: property.label, $$type: 'string' },
+			};
 		}
 	}
 
@@ -27,7 +30,10 @@ const toTransitionSelectorValue = ( label: string ) => {
 
 export const TransitionSelector = () => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
-	const { value: transitionLabel, key: transitionValue } = value;
+	const {
+		value: { value: transitionLabel },
+		key: { value: transitionValue },
+	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const popoverState = usePopupState( { variant: 'popover' } );
 

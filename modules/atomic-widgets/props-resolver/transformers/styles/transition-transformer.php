@@ -28,13 +28,13 @@ class Transition_Transformer extends Transformer_Base {
 			return self::EMPTY_STRING;
 		}
 
-		$property = $transition['selection'];
+		$selection = $transition['selection'];
 		$size = $transition['size'];
 
-		if ( empty( $property['key'] ) ) {
+		if ( empty( $selection['key'] ) ) {
 			return self::EMPTY_STRING;
 		}
 
-		return trim( "{$property['key']} {$size}" );
+		return trim( "{$selection['key']} {$size}" );
 	}
 }

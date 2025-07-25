@@ -27,7 +27,7 @@ export const SelectionSizeControl = createControl(
 		const { value, setValue, propType } = useBoundProp( selectionSizePropTypeUtil );
 		const rowRef = useRef< HTMLDivElement >( null );
 
-		const currentSizeConfig = sizeConfigMap[ value?.selection?.value.key || '' ];
+		const currentSizeConfig = sizeConfigMap[ value?.selection?.value.key.value || '' ];
 		const SelectionComponent = selectionConfig.component;
 
 		return (
