@@ -10,7 +10,6 @@ const ExternalLinkIcon = () => (
 );
 
 export default function ExportCompleteSummary( { kitInfo, includes, exportedData } ) {
-	console.log( exportedData );
 	return (
 		<Box sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5, textAlign: 'start' } } data-testid="export-complete-summary">
 			<Typography variant="h6" component="h3" gutterBottom>
