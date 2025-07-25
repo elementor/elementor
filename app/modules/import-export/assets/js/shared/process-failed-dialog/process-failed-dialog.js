@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Dialog from 'elementor-app/ui/dialog/dialog';
@@ -7,6 +7,8 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import { KIT_SOURCE_MAP } from '../../hooks/use-kit';
+import safeRedirect from '../utils/redirect';
+import { SharedContext } from '../../context/shared-context/shared-context-provider';
 
 const messagesContent = {
 	general: {
@@ -81,6 +83,8 @@ const messagesContent = {
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
 	const action = useAction(),
+		sharedContext = useContext( SharedContext ),
+		{ returnTo } = sharedContext.data || {},
 		navigate = useNavigate(),
 		{ referrer, source } = useQueryParams().getAll(),
 		error = 'string' === typeof errorType && messagesContent[ errorType ] ? errorType : 'general',
@@ -101,7 +105,9 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		},
 		handleOnDismiss = ( event ) => {
 			const isLoadingKitFromCloud = KIT_SOURCE_MAP.CLOUD === source;
-
+			if ( returnTo && safeRedirect( returnTo ) ) {
+				return;
+			}
 			if ( 'general' === error && onDismiss ) {
 				onDismiss();
 			} else if ( 'kit-library' === referrer ) {
