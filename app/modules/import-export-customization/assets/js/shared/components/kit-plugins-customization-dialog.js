@@ -17,6 +17,7 @@ import {
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 const REQUIRED_PLUGINS = [
 	'elementor/elementor.php',
@@ -116,10 +117,9 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 			}
 		} );
 
-                unselectedValues.current = isChecked
-                        ? unselectedValues.current.filter( ( value ) => ! Object.keys( newState ).includes( value ))
-                        : [ 'plugins', ...nonRequiredPlugins ];
-
+		unselectedValues.current = isChecked
+			? unselectedValues.current.filter( ( value ) => ! Object.keys( newState ).includes( value ) )
+			: [ 'plugins', ...nonRequiredPlugins ];
 
 		setPlugins( newState );
 	}, [ plugins, nonRequiredPlugins ] );
@@ -133,8 +133,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 	}, [ plugins ] );
 
 	useEffect( () => {
-		const eventTracker = $e.components.get( 'elementor-app-events' );
-		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
 	const SettingSection = ( { title, description, children, settingKey } ) => (

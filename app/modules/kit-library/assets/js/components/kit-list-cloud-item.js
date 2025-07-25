@@ -15,7 +15,7 @@ import {
 	Button,
 	Popover,
 } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { AppsEventTracking, appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-kit';
 
 import './kit-list-item.scss';
@@ -105,7 +105,7 @@ const KitListCloudItem = ( props ) => {
 	const handleDelete = () => {
 		setIsPopoverOpen( false );
 
-		$e.components.get( 'elementor-app-events' ).sendKitCloudLibraryDelete( props.model.id );
+		AppsEventTracking.sendKitCloudLibraryDelete( props.model.id );
 
 		eventTracking( 'kit-library/cloud-delete' );
 		props.onDelete();
@@ -151,8 +151,7 @@ const KitListCloudItem = ( props ) => {
 								onClick={ () => {
 									eventTracking( 'kit-library/cloud-import' );
 
-									const eventTracker = $e.components.get( 'elementor-app-events' );
-									eventTracker.sendKitCloudLibraryApply( props.model.id );
+									AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
 
 									const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
 										? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`

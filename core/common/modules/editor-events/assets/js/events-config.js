@@ -36,7 +36,7 @@ const eventsConfig = {
 		wordpress: 'WordPress Section',
 		categories: 'Widgets Tab',
 		global: 'Globals Tab',
-		'whats-new': 'What’s New',
+		'whats-new': 'What\'s New',
 		'document-settings': 'Document Settings icon',
 		'preview-page': 'Preview Page',
 		'publish-button': 'Publish Button',
@@ -151,12 +151,12 @@ const eventsConfig = {
 			},
 		},
 		variables: {
-            open: 'open_variables_popover',
-            add: 'add_new_variable',
-            connect: 'connect_variable',
-            save: 'save_new_variable',
-        },
+			open: 'open_variables_popover',
+			add: 'add_new_variable',
+			connect: 'connect_variable',
+			save: 'save_new_variable',
+		},
 	},
 };
 
-export default eventsConfig;
+export default eventsConfig; 

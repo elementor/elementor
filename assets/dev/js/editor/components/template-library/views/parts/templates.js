@@ -421,8 +421,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( 'cloud' === activeSource ) {
 			const isFolderView = elementor.templates.getFilter( 'parentId' );
 			const location = isFolderView
-				? elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabFolder
-				: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab;
+				? elementorCommon.editorEvents.config.secondaryLocations.templateLibrary.cloudTabFolder
+				: elementorCommon.editorEvents.config.secondaryLocations.templateLibrary.cloudTab;
 
 			elementor.templates.eventManager.sendPageViewEvent( { location } );
 
@@ -431,7 +431,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		if ( 'local' === activeSource ) {
 			elementor.templates.eventManager.sendPageViewEvent( {
-				location: elementor.editorEvents.config.secondaryLocations.templateLibrary.siteTab,
+				location: elementorCommon.editorEvents.config.secondaryLocations.templateLibrary.siteTab,
 			} );
 		}
 	},
@@ -649,7 +649,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
 
 		elementor.templates.eventManager.sendUpgradeClickedEvent( {
-			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.quotaBar,
+			secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.templateLibrary.quotaBar,
 			upgrade_position: `quota bar ${ value ? value + '%' : '' }`,
 		} );
 	},

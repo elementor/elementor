@@ -4,6 +4,7 @@ import { Button, Stack, CircularProgress } from '@elementor/ui';
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from '../../shared/hooks/use-connect-state';
 import { useExportContext, EXPORT_STATUS } from '../context/export-context';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
@@ -58,16 +59,14 @@ export default function ExportKitFooter() {
 	}, [ isConnecting, isCheckingEligibility, setConnecting ] );
 
 	const handleUpgradeClick = () => {
-		const eventTracker = $e.components.get( 'elementor-app-events' );
-		eventTracker?.sendUpgradeClickedEvent( eventTracker.config.secondaryLocations.kitLibrary.kitExportCustomization );
+		AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomization );
 		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
 	};
 
 	const sendExportKitCustomizationEvent = () => {
-		const eventTracker = $e.components.get( 'elementor-app-events' );
 		const { includes, analytics, kitInfo, customization } = data;
 
-		eventTracker?.sendExportKitCustomization( {
+		AppsEventTracking.sendExportKitCustomization( {
 			kit_export_content: includes.includes( 'content' ),
 			kit_export_templates: includes.includes( 'templates' ),
 			kit_export_settings: includes.includes( 'settings' ),

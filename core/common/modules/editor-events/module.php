@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\EditorEvents;
+namespace Elementor\Core\Common\Modules\EditorEvents;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
@@ -73,4 +73,4 @@ class Module extends BaseModule {
 
 		return json_decode( $license_data['value'], true );
 	}
-}
+} 

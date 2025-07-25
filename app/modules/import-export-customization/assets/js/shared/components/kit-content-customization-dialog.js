@@ -10,6 +10,7 @@ import { usePages } from '../hooks/use-pages';
 import { useCustomPostTypes } from '../hooks/use-custom-post-types';
 import { useTaxonomies } from '../hooks/use-taxonomies';
 import { CenteredContent } from './layout';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export function KitContentCustomizationDialog( {
 	open,
@@ -64,8 +65,7 @@ export function KitContentCustomizationDialog( {
 	}, [ customPostTypes, data.customization.content?.customPostTypes ] );
 
 	useEffect( () => {
-		const eventTracker = $e.components.get( 'elementor-app-events' );
-		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
 	const handleSettingsChange = ( settingKey, payload ) => {
@@ -115,7 +115,7 @@ export function KitContentCustomizationDialog( {
 							settingKey="menus"
 							onSettingChange={ ( key, isChecked ) => {
 								unselectedValues.current = isChecked
-                                                                        ? unselectedValues.current.filter( ( value ) => value !== key )
+                                    ? unselectedValues.current.filter( ( value ) => value !== key )
 									: [ ...unselectedValues.current, key ];
 
 								handleSettingsChange( key, isChecked );

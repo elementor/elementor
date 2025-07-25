@@ -5,6 +5,7 @@ import Content from '../../../../../../assets/js/layout/content';
 import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function UpgradeScreen( {
 	menuItems,
@@ -16,8 +17,7 @@ export default function UpgradeScreen( {
 	const url = hasSubscription ? 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/' : 'https://go.elementor.com/go-pro-cloud-website-templates-library/';
 
 	useEffect( () => {
-		const eventTracker = $e.components.get( 'elementor-app-events' );
-		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.cloudKitLibraryUpgrade );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.cloudKitLibraryUpgrade );
 	}, [] );
 
 	return (
@@ -52,8 +52,7 @@ export default function UpgradeScreen( {
 							text={ __( 'Upgrade now', 'elementor' ) }
 							url={ url }
 							onClick={ () => {
-								const eventTracker = $e.components.get( 'elementor-app-events' );
-								eventTracker.sendKitsCloudUpgradeClicked( eventTracker.config.secondaryLocations.kitLibrary.cloudKitLibrary );
+								AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.cloudKitLibrary );
 							} }
 							target="_blank"
 							className="e-kit-library__upgrade-button"

@@ -46,13 +46,13 @@ export function addMixpanelTrackingChecklistSteps( name, action, element = 'butt
 	const eventName = `checklist_steps_${ action }_${ name }`;
 
 	return (
-		elementor.editorEvents.dispatchEvent(
+		elementorCommon.editorEvents.dispatchEvent(
 			eventName,
 			{
-				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistSteps,
-				trigger: elementor.editorEvents.config.triggers.click,
-				element: elementor.editorEvents.config.elements[ element ],
+				location: elementorCommon.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.checklistSteps,
+				trigger: elementorCommon.editorEvents.config.triggers.click,
+				element: elementorCommon.editorEvents.config.elements[ element ],
 				...documentMetaData,
 			},
 		)
@@ -63,13 +63,13 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 	const documentMetaData = getDocumentMetaDataMixpanel();
 
 	return (
-		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.elementorEditor.checklist[ name ],
+		elementorCommon.editorEvents.dispatchEvent(
+			elementorCommon.editorEvents.config.names.elementorEditor.checklist[ name ],
 			{
-				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.checklistHeader,
-				trigger: elementor.editorEvents.config.triggers.click,
-				element: elementor.editorEvents.config.elements.buttonIcon,
+				location: elementorCommon.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.checklistHeader,
+				trigger: elementorCommon.editorEvents.config.triggers.click,
+				element: elementorCommon.editorEvents.config.elements.buttonIcon,
 				...documentMetaData,
 			},
 		)
@@ -81,13 +81,13 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 	const name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
 
 	return (
-		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.topBar[ name ],
+		elementorCommon.editorEvents.dispatchEvent(
+			elementorCommon.editorEvents.config.names.topBar[ name ],
 			{
-				location: elementor.editorEvents.config.locations.topBar,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
-				trigger: elementor.editorEvents.config.triggers.toggleClick,
-				element: elementor.editorEvents.config.elements.buttonIcon,
+				location: elementorCommon.editorEvents.config.locations.topBar,
+				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.launchpad,
+				trigger: elementorCommon.editorEvents.config.triggers.toggleClick,
+				element: elementorCommon.editorEvents.config.elements.buttonIcon,
 				...documentMetaData,
 			},
 		)
@@ -98,13 +98,13 @@ export function dispatchChecklistOpenEvent() {
 	const documentMetaData = getDocumentMetaDataMixpanel();
 
 	return (
-		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.elementorEditor.checklist.checklistFirstPopup,
+		elementorCommon.editorEvents.dispatchEvent(
+			elementorCommon.editorEvents.config.names.elementorEditor.checklist.checklistFirstPopup,
 			{
-				location: elementor.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations.launchpad,
-				trigger: elementor.editorEvents.config.triggers.editorLoaded,
-				element: elementor.editorEvents.config.elements.launchpadChecklist,
+				location: elementorCommon.editorEvents.config.locations.elementorEditor,
+				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.launchpad,
+				trigger: elementorCommon.editorEvents.config.triggers.editorLoaded,
+				element: elementorCommon.editorEvents.config.elements.launchpadChecklist,
 				...documentMetaData,
 			},
 		)

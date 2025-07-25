@@ -5,7 +5,6 @@ use Elementor\App\AdminMenuItems\Theme_Builder_Menu_Item;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\WebCli\Module as WebCLIModule;
-use Elementor\Modules\EditorEvents\Module as Editor_Events;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Plugin;
@@ -121,7 +120,6 @@ class App extends BaseApp {
 				'elementor/site-editor/promotion',
 				'upgrade_url'
 			),
-			'events_config' => Editor_Events::get_editor_events_config(),
 		];
 	}
 

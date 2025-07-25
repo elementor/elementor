@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'templates' );
@@ -32,8 +33,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 	}, [ open, data.customization.templates, initialState ] );
 
 	useEffect( () => {
-		const eventTracker = $e.components.get( 'elementor-app-events' );
-		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
 	const handleToggleChange = ( settingKey, isChecked ) => {

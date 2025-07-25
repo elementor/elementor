@@ -5,6 +5,7 @@ import Content from '../../../../../../assets/js/layout/content';
 import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ConnectScreen( {
 	onConnectSuccess,
@@ -43,8 +44,7 @@ export default function ConnectScreen( {
 	}, [ onConnectSuccess, onConnectError ] );
 
 	useEffect( () => {
-		const eventTracker = $e.components.get( 'elementor-app-events' );
-		eventTracker?.sendPageViewsWebsiteTemplates( eventTracker.config.secondaryLocations.kitLibrary.cloudKitLibraryConnect );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.cloudKitLibraryConnect );
 	}, [] );
 
 	return (
