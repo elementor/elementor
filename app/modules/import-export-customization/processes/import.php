@@ -303,7 +303,7 @@ class Import {
 		if ( empty( $this->runners ) ) {
 			throw new \Exception( 'Couldn’t execute the import process because no import runners have been specified. Try again by specifying import runners.' );
 		}
-		
+
 		$data = [
 			'session_id' => $this->session_id,
 			'include' => $this->settings_include,
