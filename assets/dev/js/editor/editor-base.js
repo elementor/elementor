@@ -671,6 +671,14 @@ export default class EditorBase extends Marionette.Application {
 		return targetElement;
 	}
 
+	initSidebar() {
+		this.addRegions( { panel: require( 'elementor-regions/sidebar/sidebar' ) } );
+
+		window.dispatchEvent( new CustomEvent( 'elementor/sidebar/init' ) );
+
+		this.trigger( 'sidebar:init' );
+	}
+
 	initPanel() {
 		this.addRegions( { panel: require( 'elementor-regions/panel/panel' ) } );
 
@@ -1277,6 +1285,13 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	onFirstPreviewLoaded() {
+		const isTopBarActive = elementorCommon.config.experimentalFeatures.editor_v2;
+		const isSidebarPanelsActive = elementorCommon.config.experimentalFeatures.editor_side_panel;
+
+		if ( isTopBarActive && isSidebarPanelsActive ) {
+			this.initSidebar();
+		}
+
 		this.initPanel();
 
 		this.previewLoadedOnce = true;
