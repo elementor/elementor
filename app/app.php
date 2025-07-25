@@ -287,7 +287,7 @@ class App extends BaseApp {
 			'name' => 'import-export-customization',
 			'title' => esc_html__( 'Import/Export Customization', 'elementor' ),
 			'description' => esc_html__( 'Enable advanced customization options for import/export functionality.', 'elementor' ),
-			'hidden' => false,
+			'hidden' => true,
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 			'default' => ExperimentsManager::STATE_INACTIVE,
 		] );

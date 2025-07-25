@@ -1,16 +1,6 @@
 {% if settings.title is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-	{% set attributes = '' %}
-	{% if settings.attributes is defined and settings.attributes is iterable %}
-		{% set attributes %}
-			{% for item in settings.attributes %}
-				{% if item.key is not empty and item.value is not empty %}
-					{{- item.key | e('html_attr') }}="{{ item.value | e('html_attr') }}"{% if not loop.last %} {% endif %}
-				{% endif %}
-			{% endfor %}
-		{% endset %}
-	{% endif %}
-	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }} {{ attributes }}>
+	<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }} {{ settings.attributes }}>
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
 			{{ settings.title }}

@@ -11,10 +11,6 @@ test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		e_atomic_elements: 'active',
 	} );
 
-	await wpAdmin.setExperiments( {
-		e_v_3_30: 'active',
-	} );
-
 	await page.close();
 } );
 

@@ -490,11 +490,21 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		if ( this.isOverflowHidden() ) {
-			this.$el.addClass( 'e-handles-inside' );
-		} else {
-			this.$el.removeClass( 'e-handles-inside' );
+		let shouldPlaceInside = this.isOverflowHidden();
+
+		if ( ! shouldPlaceInside && this.isTopLevelElement() && this.isFirstElementInStructure() ) {
+			shouldPlaceInside = true;
 		}
+
+		this.$el.toggleClass( 'e-handles-inside', shouldPlaceInside );
+	},
+
+	isTopLevelElement() {
+		return this.container.parent && 'document' === this.container.parent.id;
+	},
+
+	isFirstElementInStructure() {
+		return 0 === this.model.collection.indexOf( this.model );
 	},
 } );
 

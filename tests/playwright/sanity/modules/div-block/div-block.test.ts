@@ -6,16 +6,11 @@ import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Div Block tests @div-block', () => {
-	const experimentName = 'e_atomic_elements';
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			[ experimentName ]: 'active',
-		} );
-
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 		await page.close();
 	} );
 
@@ -183,7 +178,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
-		await divBlock.waitFor();
+		await divBlock.waitFor( { state: 'visible' } );
 		const divBlockHandles = divBlock.locator( '.elementor-editor-element-settings' );
 		const divBlockEmptyView = divBlock.locator( '.elementor-empty-view' );
 
@@ -198,10 +193,10 @@ test.describe( 'Div Block tests @div-block', () => {
 		await divBlock.hover();
 
 		// Assert.
-		expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
-		expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
-		expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
-		expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
+		await expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		await expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
+		await expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		await expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
 	} );
 
 	test( 'Drag and drop from elements panel to container', async ( { page, apiRequests }, testInfo ) => {

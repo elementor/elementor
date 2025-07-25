@@ -41,9 +41,8 @@ class Hooks {
 	}
 
 	private function register_styles_transformers() {
-		Variables::init( $this->variables_repository() );
-
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
+			Variables::init( $this->variables_repository() );
 			( new Style_Transformers() )->append_to( $registry );
 		} );
 

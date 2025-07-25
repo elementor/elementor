@@ -5,6 +5,7 @@ namespace Elementor\App\Modules\ImportExportCustomization\Processes;
 use Elementor\App\Modules\ImportExportCustomization\Compatibility\Base_Adapter;
 use Elementor\App\Modules\ImportExportCustomization\Compatibility\Envato;
 use Elementor\App\Modules\ImportExportCustomization\Compatibility\Kit_Library;
+use Elementor\App\Modules\ImportExportCustomization\Compatibility\Customization;
 use Elementor\App\Modules\ImportExportCustomization\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
@@ -18,7 +19,6 @@ use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Taxonomies;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExportCustomization\Module;
-use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
@@ -389,6 +389,7 @@ class Import {
 		return [
 			'status' => 'success',
 			'runner' => $runner_name,
+			'imported_data' => $this->imported_data,
 		];
 	}
 
@@ -631,7 +632,7 @@ class Import {
 		$this->adapters = [];
 
 		/** @var Base_Adapter[] $adapter_types */
-		$adapter_types = [ Envato::class, Kit_Library::class ];
+		$adapter_types = [ Customization::class, Envato::class, Kit_Library::class ];
 
 		foreach ( $adapter_types as $adapter_type ) {
 			if ( $adapter_type::is_compatibility_needed( $manifest_data, [ 'referrer' => $this->get_settings_referrer() ] ) ) {

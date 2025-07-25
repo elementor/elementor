@@ -7,9 +7,11 @@ const EditorSelectors = {
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
 	pageTitle: '.entry-title >> nth=0',
+	pageContent: '.page-content',
 	pageHeader: '.page-header',
 	toast: '#elementor-toast',
 	addNewSection: '#elementor-add-new-section',
+	removeContainer: '.elementor-editor-element-setting.elementor-editor-element-remove',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',

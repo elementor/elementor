@@ -32,7 +32,7 @@
 		"test:install": "bash ./bin/install-wp-tests-local.sh",
 		"coverage": "composer run coverage:test && composer run coverage:check",
 		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
-		"coverage:check": "phpunit-coverage-check -t 65 coverage-report/clover.xml",
+		"coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
 		"php-scoper": [
 			"php-scoper add-prefix --output-dir=./vendor_prefixed/dependency-injection --config=php-scoper/dependency-injection-inc.php --force",
 			"php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"

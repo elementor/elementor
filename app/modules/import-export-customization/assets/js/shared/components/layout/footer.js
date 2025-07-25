@@ -1,18 +1,16 @@
-import { Paper } from '@elementor/ui';
+import { Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 export default function Footer( props ) {
 	const {
 		children,
 		sx = {},
-		elevation = 1,
 		...rest
 	} = props;
 
 	return (
-		<Paper
+		<Box
 			component="footer"
-			elevation={ elevation }
 			sx={ {
 				mt: 'auto',
 				py: 2,
@@ -27,12 +25,11 @@ export default function Footer( props ) {
 			{ ...rest }
 		>
 			{ children }
-		</Paper>
+		</Box>
 	);
 }
 
 Footer.propTypes = {
 	children: PropTypes.node,
 	sx: PropTypes.object,
-	elevation: PropTypes.number,
 };

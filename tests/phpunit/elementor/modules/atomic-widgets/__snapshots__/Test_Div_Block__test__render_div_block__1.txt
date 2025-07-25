@@ -1,6 +1,6 @@
 		<div class="elementor-element elementor-element-e8e55a1 e-con e-div-block-base" data-id="e8e55a1" data-element_type="e-div-block">
-								        <p class="e-paragraph-base"  >
-                            Type your paragraph here
-                    </p>
+								<p class="e-paragraph-base"  >
+										Type your paragraph here
+						</p>
 				</div>
 		

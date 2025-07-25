@@ -6,13 +6,19 @@ export default function ApplyKitDialog( props ) {
 	const navigate = useNavigate();
 
 	const startImportProcess = useCallback( ( applyAll = false ) => {
-		let url = '/import/process' +
-			`?id=${ props.id }` +
-			`&file_url=${ encodeURIComponent( props.downloadLink ) }` +
-			`&nonce=${ props.nonce }&referrer=kit-library`;
+		let url = '';
 
-		if ( applyAll ) {
-			url += '&action_type=apply-all';
+		if ( elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ] ) {
+			url = `import-customization?referrer=kit-library&id=${ props.id }&file_url=${ encodeURIComponent( props.downloadLink ) }`;
+		} else {
+			url = '/import/process' +
+				`?id=${ props.id }` +
+				`&file_url=${ encodeURIComponent( props.downloadLink ) }` +
+				`&nonce=${ props.nonce }&referrer=kit-library`;
+
+			if ( applyAll ) {
+				url += '&action_type=apply-all';
+			}
 		}
 
 		navigate( url );

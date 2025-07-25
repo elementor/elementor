@@ -1,9 +1,9 @@
-import { Typography, Link } from '@elementor/ui';
+import { Typography, Link, Box } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
 export default function ExportCompleteHeading( { isCloudExport } ) {
 	return (
-		<>
+		<Box data-testid="export-complete-heading">
 			<Typography variant="h4" component="h2" gutterBottom>
 				{ isCloudExport
 					? __( 'Your website template is now saved to the library!', 'elementor' )
@@ -27,7 +27,7 @@ export default function ExportCompleteHeading( { isCloudExport } ) {
 					: __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' )
 				}
 			</Typography>
-		</>
+		</Box>
 	);
 }
 
