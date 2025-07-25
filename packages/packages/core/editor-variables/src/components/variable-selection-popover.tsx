@@ -1,17 +1,13 @@
 import * as React from 'react';
 import { useState } from 'react';
+import type { PropTypeKey } from '@elementor/editor-props';
 
 import { usePermissions } from '../hooks/use-permissions';
-import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
-import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { type Variable } from '../types';
-import { ColorVariableCreation } from './color-variable-creation';
-import { ColorVariableEdit } from './color-variable-edit';
-import { ColorVariablesSelection } from './color-variables-selection';
-import { FontVariableCreation } from './font-variable-creation';
-import { FontVariableEdit } from './font-variable-edit';
-import { FontVariablesSelection } from './font-variables-selection';
+import { VariableCreation } from './variable-creation';
+import { VariableEdit } from './variable-edit';
 import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
+import { VariablesSelection } from './variables-selection';
 
 const VIEW_LIST = 'list';
 const VIEW_ADD = 'add';
@@ -21,8 +17,8 @@ type View = typeof VIEW_LIST | typeof VIEW_ADD | typeof VIEW_EDIT;
 
 type Props = {
 	closePopover: () => void;
-	propTypeKey: string;
 	selectedVariable?: Variable;
+	propTypeKey: PropTypeKey;
 };
 
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
@@ -94,58 +90,37 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		}
 	};
 
-	if ( fontVariablePropTypeUtil.key === props.propTypeKey ) {
-		if ( VIEW_LIST === props.currentView ) {
-			return (
-				<FontVariablesSelection
-					closePopover={ handlers.onClose }
-					onAdd={ handlers.onAdd }
-					onEdit={ handlers.onEdit }
-				/>
-			);
-		}
-
-		if ( VIEW_ADD === props.currentView ) {
-			return <FontVariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
-		}
-
-		if ( VIEW_EDIT === props.currentView ) {
-			return (
-				<FontVariableEdit
-					editId={ props.editId }
-					onGoBack={ handlers.onGoBack }
-					onClose={ handlers.onClose }
-					onSubmit={ handleSubmitOnEdit }
-				/>
-			);
-		}
+	if ( VIEW_LIST === props.currentView ) {
+		return (
+			<VariablesSelection
+				closePopover={ handlers.onClose }
+				onAdd={ handlers.onAdd }
+				onEdit={ handlers.onEdit }
+				propTypeKey={ props.propTypeKey }
+			/>
+		);
 	}
 
-	if ( colorVariablePropTypeUtil.key === props.propTypeKey ) {
-		if ( VIEW_LIST === props.currentView ) {
-			return (
-				<ColorVariablesSelection
-					closePopover={ handlers.onClose }
-					onAdd={ handlers.onAdd }
-					onEdit={ handlers.onEdit }
-				/>
-			);
-		}
+	if ( VIEW_ADD === props.currentView ) {
+		return (
+			<VariableCreation
+				onGoBack={ handlers.onGoBack }
+				onClose={ handlers.onClose }
+				propTypeKey={ props.propTypeKey }
+			/>
+		);
+	}
 
-		if ( VIEW_ADD === props.currentView ) {
-			return <ColorVariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
-		}
-
-		if ( VIEW_EDIT === props.currentView ) {
-			return (
-				<ColorVariableEdit
-					editId={ props.editId }
-					onGoBack={ handlers.onGoBack }
-					onClose={ handlers.onClose }
-					onSubmit={ handleSubmitOnEdit }
-				/>
-			);
-		}
+	if ( VIEW_EDIT === props.currentView ) {
+		return (
+			<VariableEdit
+				editId={ props.editId }
+				onGoBack={ handlers.onGoBack }
+				onClose={ handlers.onClose }
+				onSubmit={ handleSubmitOnEdit }
+				propTypeKey={ props.propTypeKey }
+			/>
+		);
 	}
 
 	return null;
