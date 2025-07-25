@@ -38,8 +38,8 @@ jest.mock( '../../components/variable-selection-popover', () => ( {
 } ) );
 
 const mockUseBoundProp = jest.mocked( useBoundProp );
-const mockGetVariableType = jest.mocked( getVariableType );
 const mockTrackVariableEvent = jest.mocked( trackVariableEvent );
+const mockGetVariableType = getVariableType as jest.Mock;
 
 const createMockPropTypeUtil = ( key: string ): PropTypeUtil< string, string > =>
 	( { key } ) as PropTypeUtil< string, string >;
