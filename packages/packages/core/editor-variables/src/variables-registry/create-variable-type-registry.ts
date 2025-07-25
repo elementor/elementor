@@ -45,7 +45,7 @@ export function createVariableTypeRegistry() {
 		};
 	};
 
-	const getVariableType = ( key: string ) => {
+	const getVariableType = ( key: string ): VariableTypeOptions | undefined => {
 		return variableTypes[ key ];
 	};
 
