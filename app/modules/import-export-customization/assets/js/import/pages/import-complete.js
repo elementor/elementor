@@ -31,6 +31,10 @@ const ExternalLinkIcon = () => (
 	/>
 );
 
+const handleDone = () => {
+	window.top.location = elementorAppConfig.admin_url;
+};
+
 export default function ImportComplete() {
 	const { data, isCompleted, runnersState } = useImportContext();
 	const navigate = useNavigate();
@@ -56,6 +60,7 @@ export default function ImportComplete() {
 				size="small"
 				sx={ { px: 4 } }
 				data-testid="close-button"
+				onClick={ handleDone }
 			>
 				{ __( 'Close', 'elementor' ) }
 			</Button>
