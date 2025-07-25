@@ -103,7 +103,7 @@ describe( 'createVariableTypeRegistry', () => {
 
 			expect( registeredType2 ).toBeDefined();
 			expect( registeredType2?.variableType ).toBe( 'type-3' );
-			expect( registeredType2?.startIcon ).toBe( <MockStartIcon /> );
+			expect( registeredType2?.startIcon ).toBe( StartIcon );
 		} );
 
 		it( 'should return undefined for non-existent variable type', () => {
