@@ -193,7 +193,7 @@ describe( 'usePropVariableAction', () => {
 			expect( mockGetVariableType ).toHaveBeenCalledWith( 'another-type' );
 		} );
 
-		it( 'should not tract if the action is invisible', () => {
+		it( 'should not track if the action is invisible', () => {
 			// Arrange
 			const mockPropType = createMockPropType( {
 				kind: 'union',
