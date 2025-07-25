@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Redirect } from '@reach/router';
+import { Redirect, useNavigate } from '@reach/router';
 import { Button, Stack } from '@elementor/ui';
 import { BaseLayout, TopBar, Footer, PageHeader, CenteredContent } from '../../shared/components';
 import { useExportContext } from '../context/export-context';
@@ -11,6 +11,7 @@ import ExportCompleteDownloadLink from '../components/export-complete-download-l
 const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 
 export default function ExportComplete() {
+	const navigate = useNavigate();
 	const { data, isCompleted } = useExportContext();
 	const { exportedData, kitInfo } = data;
 	const downloadLink = useRef( null );
@@ -61,7 +62,7 @@ export default function ExportComplete() {
 					variant="contained"
 					color="primary"
 					size="small"
-					onClick={ () => window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud' }
+					onClick={ () => navigate( '/kit-library/cloud' ) }
 					data-testid="view-in-library-button"
 				>
 					{ __( 'View in Library', 'elementor' ) }
