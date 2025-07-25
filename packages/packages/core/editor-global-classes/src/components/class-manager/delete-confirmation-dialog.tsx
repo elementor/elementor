@@ -90,7 +90,14 @@ const DeleteConfirmationDialog = ( { label, id }: DeleteConfirmationDialogProps 
 				<Button color="secondary" onClick={ closeDialog }>
 					{ __( 'Not now', 'elementor' ) }
 				</Button>
-				<Button variant="contained" color="error" onClick={ onConfirm }>
+
+				<Button
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus
+					variant="contained"
+					color="error"
+					onClick={ onConfirm }
+				>
 					{ __( 'Delete', 'elementor' ) }
 				</Button>
 			</DialogActions>

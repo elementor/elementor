@@ -94,6 +94,7 @@ export const CssClassUsagePopover = ( {
 						<Stack flexDirection={ 'row' } flex={ 1 } alignItems={ 'center' }>
 							<Box display={ 'flex' } sx={ { pr: 1 } }>
 								<Tooltip
+									disableInteractive
 									title={
 										iconMapper?.[ cssClassUsageRecord.docType as ContentType ]?.label ??
 										cssClassUsageRecord.docType
