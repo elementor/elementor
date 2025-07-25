@@ -98,6 +98,7 @@ export default function ExportComplete() {
 					<ExportCompleteSummary
 						kitInfo={ kitInfo }
 						includes={ data.includes }
+						exportedData={ exportedData }
 					/>
 
 					{ ! isCloudExport && (

@@ -116,7 +116,7 @@ export default function ImportComplete() {
 							{ __( 'This website templates includes:', 'elementor' ) }
 						</Typography>
 					</Box>
-					<Stack spacing={ 2 } sx={ { pt: 1 } } >
+					<Stack spacing={ 2 } sx={ { pt: 1, maxWidth: '1075px' } } >
 						{ data.includes.includes('settings') && (
 							<Box>
 								<Stack direction="row" alignItems="center" spacing={ 1 }>
