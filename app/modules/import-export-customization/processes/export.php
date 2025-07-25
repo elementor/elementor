@@ -38,6 +38,13 @@ class Export {
 	private $settings_kit_info;
 
 	/**
+	 * Customization settings for selective export.
+	 *
+	 * @var array
+	 */
+	private $settings_customization;
+
+	/**
 	 * Selected plugins to export.
 	 * Contains the plugins essential data for export. (e.g: name, path, version, etc.)
 	 *
@@ -70,6 +77,7 @@ class Export {
 	public function __construct( $settings = [] ) {
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
+		$this->settings_customization = isset( $settings['customization'] ) ? $settings['customization'] : null;
 		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
 		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
 	}
@@ -111,6 +119,7 @@ class Export {
 
 		$data = [
 			'include' => $this->settings_include,
+			'customization' => $this->settings_customization,
 			'selected_plugins' => $this->settings_selected_plugins,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
@@ -152,6 +161,10 @@ class Export {
 		if ( ! is_array( $this->get_settings_selected_plugins() ) && in_array( 'plugins', $this->settings_include, true ) ) {
 			$this->settings_selected_plugins( $this->get_default_settings_selected_plugins() );
 		}
+
+		if ( ! is_array( $this->get_settings_customization() ) ) {
+			$this->settings_customization( $this->get_default_settings_customization() );
+		}
 	}
 
 	public function settings_include( $include ) {
@@ -168,6 +181,14 @@ class Export {
 
 	private function get_settings_kit_info() {
 		return $this->settings_kit_info;
+	}
+
+	public function settings_customization( $customization ) {
+		$this->settings_customization = $customization;
+	}
+
+	public function get_settings_customization() {
+		return $this->settings_customization;
 	}
 
 	public function settings_selected_custom_post_types( $selected_custom_post_types ) {
@@ -223,6 +244,15 @@ class Export {
 				'version' => $item['Version'],
 			];
 		} )->all();
+	}
+
+	private function get_default_settings_customization() {
+		return [
+			'settings' => null,
+			'templates' => null,
+			'content' => null,
+			'plugins' => null,
+		];
 	}
 
 	/**

@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useRef } from 'react';
-import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
+import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -22,10 +20,9 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
-
-const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 type ClassItemProps = React.PropsWithChildren< {
 	id: string;
@@ -59,7 +56,7 @@ export const ClassItem = ( {
 		onSubmit: renameClass,
 		validation: validateLabel,
 	} );
-
+	const [ selectedCssUsage, setSelectedCssUsage ] = useState( '' );
 	const { openDialog } = useDeleteConfirmation();
 
 	const popupState = usePopupState( {
@@ -67,7 +64,8 @@ export const ClassItem = ( {
 		disableAutoFocus: true,
 	} );
 
-	const isSelected = ( selected || popupState.isOpen ) && ! disabled;
+	const isSelected = ( selectedCssUsage === id || selected || popupState.isOpen ) && ! disabled;
+
 	return (
 		<>
 			<Stack p={ 0 }>
@@ -103,6 +101,9 @@ export const ClassItem = ( {
 								<EllipsisWithTooltip title={ label } as={ Typography } variant="caption" />
 							) }
 						</Indicator>
+						<Box className={ 'class-item-locator' }>
+							<CssClassUsageTrigger id={ id } onClick={ setSelectedCssUsage } />
+						</Box>
 						<Tooltip
 							placement="top"
 							className={ 'class-item-more-actions' }
@@ -152,55 +153,35 @@ export const ClassItem = ( {
 	);
 };
 
-// Custom styles for sortable list item, until the component is available in the UI package.
-
-//  Experimental start
-
-const StyledListItemButtonV2 = styled( ListItemButton, {
+const StyledListItemButton = styled( ListItemButton, {
 	shouldForwardProp: ( prop: string ) => ! [ 'showActions', 'showSortIndicator' ].includes( prop ),
 } )< ListItemButtonProps & { showActions: boolean; showSortIndicator: boolean } >(
-	( { showActions, showSortIndicator } ) =>
-		`
-	min-height: 36px;
+	( { showActions, showSortIndicator } ) => `
+    min-height: 36px;
 
-	&.visible-class-item {
-		box-shadow: none !important;
-	}
-	.class-item-sortable-trigger {
-		visibility: ${ showSortIndicator && showActions ? 'visible' : 'hidden' };
-	}
-	&:hover&:not(:disabled) {
-		.class-item-sortable-trigger  {
-			visibility: ${ showSortIndicator ? 'visible' : 'hidden' };
-		}
-	}
-`
+    &.visible-class-item {
+      box-shadow: none !important;
+    }
+
+    .class-item-locator {
+      visibility: hidden;
+    }
+
+    .class-item-sortable-trigger {
+      visibility: ${ showSortIndicator && showActions ? 'visible' : 'hidden' };
+    }
+
+    &:hover:not(:disabled) {
+      .class-item-locator {
+        visibility: visible;
+      }
+
+      .class-item-sortable-trigger {
+        visibility: ${ showSortIndicator ? 'visible' : 'hidden' };
+      }
+    }
+  `
 );
-
-const StyledListItemButtonV1 = styled( ListItemButton, {
-	shouldForwardProp: ( prop: string ) => ! [ 'showActions', 'showSortIndicator' ].includes( prop ),
-} )< ListItemButtonProps & { showActions: boolean; showSortIndicator: boolean } >(
-	( { showActions } ) => `
-	min-height: 36px;
-	&.visible-class-item {
-		box-shadow: none !important;
-	}
-	.class-item-more-actions, .class-item-sortable-trigger {
-		visibility: ${ showActions ? 'visible' : 'hidden' };
-	}
-	.class-item-sortable-trigger {
-		visibility: ${ showActions ? 'visible' : 'hidden' };
-	}
-	&:hover&:not(:disabled) {
-		.class-item-more-actions, .class-item-sortable-trigger  {
-			visibility: visible;
-		}
-	}
-`
-);
-//  Experimental start
-
-const StyledListItemButton = isVersion311IsActive ? StyledListItemButtonV2 : StyledListItemButtonV1;
 
 const Indicator = styled( Box, {
 	shouldForwardProp: ( prop: string ) => ! [ 'isActive', 'isError' ].includes( prop ),

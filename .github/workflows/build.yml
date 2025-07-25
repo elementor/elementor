@@ -38,6 +38,9 @@ jobs:
     outputs:
       artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
       changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
+    permissions:
+      pull-requests: write
+      issues: write
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4

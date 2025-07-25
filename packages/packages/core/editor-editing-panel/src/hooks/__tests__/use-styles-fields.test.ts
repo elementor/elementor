@@ -6,7 +6,6 @@ import {
 	deleteElementStyle,
 	getElementLabel,
 } from '@elementor/editor-elements';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
@@ -48,10 +47,6 @@ describe( 'useStylesFields', () => {
 
 		jest.mocked( getElementLabel ).mockImplementation( ( id ) => {
 			return id === 'test-element-id' ? 'Test Element' : '';
-		} );
-
-		jest.mocked( isExperimentActive ).mockImplementation( ( experimentName: string ) => {
-			return experimentName === 'e_v_3_31';
 		} );
 	} );
 

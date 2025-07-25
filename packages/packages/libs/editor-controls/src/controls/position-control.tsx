@@ -1,8 +1,6 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import { positionPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { LetterXIcon, LetterYIcon } from '@elementor/icons';
 import { Grid, Select, type SelectChangeEvent } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -33,29 +31,19 @@ const positionOptions = [
 	{ label: __( 'Bottom center', 'elementor' ), value: 'bottom center' },
 	{ label: __( 'Bottom left', 'elementor' ), value: 'bottom left' },
 	{ label: __( 'Bottom right', 'elementor' ), value: 'bottom right' },
+	{ label: __( 'Custom', 'elementor' ), value: 'custom' },
 ];
 
 export const PositionControl = () => {
 	const positionContext = useBoundProp( positionPropTypeUtil );
 	const stringPropContext = useBoundProp( stringPropTypeUtil );
 
-	const isVersion331Active = isExperimentActive( 'e_v_3_31' );
-	const isCustom = !! positionContext.value && isVersion331Active;
-
-	const availablePositionOptions = useMemo( () => {
-		const options = [ ...positionOptions ];
-
-		if ( isVersion331Active ) {
-			options.push( { label: __( 'Custom', 'elementor' ), value: 'custom' } );
-		}
-
-		return options;
-	}, [ isVersion331Active ] );
+	const isCustom = !! positionContext.value;
 
 	const handlePositionChange = ( event: SelectChangeEvent< Positions > ) => {
 		const value = event.target.value || null;
 
-		if ( value === 'custom' && isVersion331Active ) {
+		if ( value === 'custom' ) {
 			positionContext.setValue( { x: null, y: null } );
 		} else {
 			stringPropContext.setValue( value );
@@ -77,7 +65,7 @@ export const PositionControl = () => {
 							onChange={ handlePositionChange }
 							fullWidth
 						>
-							{ availablePositionOptions.map( ( { label, value } ) => (
+							{ positionOptions.map( ( { label, value } ) => (
 								<MenuListItem key={ value } value={ value ?? '' }>
 									{ label }
 								</MenuListItem>

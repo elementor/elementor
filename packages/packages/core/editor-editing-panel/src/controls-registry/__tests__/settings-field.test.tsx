@@ -21,13 +21,11 @@ import {
 	type PropValue,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
 import { mockElement } from '../../__tests__/utils';
 import { ElementProvider } from '../../contexts/element-context';
-import { EXPERIMENTAL_FEATURES } from '../../sync/experiments-flags';
 import { SettingsField } from '../settings-field';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -39,10 +37,6 @@ jest.mock( '@elementor/editor-elements', () => ( {
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
-} ) );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn(),
 } ) );
 
 const bind = 'text';
@@ -312,16 +306,11 @@ describe( '<SettingsField />', () => {
 		expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
 			id: element.id,
 			props: { [ bind ]: newValue },
+			withHistory: false,
 		} );
 	} );
 
 	describe( 'Settings history', () => {
-		beforeEach( () => {
-			jest.mocked( isExperimentActive ).mockImplementation( ( feature ) => {
-				return feature === EXPERIMENTAL_FEATURES.V_3_31;
-			} );
-		} );
-
 		it( 'should support undo/redo for setting update', () => {
 			// Arrange.
 			const element = mockElement( { id: '1' } );
@@ -414,10 +403,6 @@ describe( 'SettingsField dependency logic', () => {
 
 	beforeEach( () => {
 		historyMock.beforeEach();
-
-		jest.mocked( isExperimentActive ).mockImplementation( () => {
-			return true;
-		} );
 	} );
 
 	afterEach( () => {

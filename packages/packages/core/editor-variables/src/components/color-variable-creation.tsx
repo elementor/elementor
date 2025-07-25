@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
+import { trackVariableEvent } from '../utils/tracking';
 import { ColorField } from './fields/color-field';
 import { LabelField } from './fields/label-field';
 
@@ -20,7 +21,7 @@ type Props = {
 };
 
 export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
-	const { setValue: setVariable } = useBoundProp( colorVariablePropTypeUtil );
+	const { setValue: setVariable, path } = useBoundProp( colorVariablePropTypeUtil );
 
 	const [ color, setColor ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
@@ -37,7 +38,7 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 		onClose();
 	};
 
-	const handleCreate = () => {
+	const handleCreateAndTrack = () => {
 		createVariable( {
 			value: color,
 			label,
@@ -50,6 +51,11 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 			.catch( ( error ) => {
 				setErrorMessage( error.message );
 			} );
+		trackVariableEvent( {
+			varType: 'color',
+			controlPath: path.join( '.' ),
+			action: 'save',
+		} );
 	};
 
 	const hasEmptyValue = () => {
@@ -101,7 +107,7 @@ export const ColorVariableCreation = ( { onGoBack, onClose }: Props ) => {
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreate }>
+				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>

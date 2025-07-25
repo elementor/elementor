@@ -18,5 +18,9 @@ const mapToFilterFunctionString = ( value: FilterValue ): string => {
 		return `drop-shadow(${ xAxis || '0px' } ${ yAxis || '0px' } ${ blur || '10px' } ${ color || 'transparent' })`;
 	}
 
+	if ( ! value.func || ! value.args ) {
+		return '';
+	}
+
 	return `${ value.func }(${ value.args })`;
 };

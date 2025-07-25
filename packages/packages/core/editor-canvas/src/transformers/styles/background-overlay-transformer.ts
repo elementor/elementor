@@ -1,5 +1,3 @@
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
-
 import { createTransformer } from '../create-transformer';
 import { type BackgroundImageTransformed } from './background-image-overlay-transformer';
 
@@ -42,8 +40,6 @@ export const backgroundOverlayTransformer = createTransformer(
 );
 
 function normalizeOverlayValues( overlays: BackgroundOverlay ): BackgroundImageTransformed[] {
-	const isVersion330Active = isExperimentActive( 'e_v_3_30' );
-
 	const mappedValues = overlays.map( ( item ) => {
 		if ( typeof item === 'string' ) {
 			return {
@@ -58,10 +54,6 @@ function normalizeOverlayValues( overlays: BackgroundOverlay ): BackgroundImageT
 		return item;
 	} );
 
-	if ( ! isVersion330Active ) {
-		return mappedValues;
-	}
-
 	return mappedValues.filter( ( item ) => item && !! item.src );
 }
 
@@ -71,11 +63,10 @@ function getValuesString(
 	defaultValue: string,
 	preventUnification: boolean = false
 ) {
-	const isVersion330Active = isExperimentActive( 'e_v_3_30' );
 	const isEmpty = items.filter( ( item ) => item?.[ prop ] ).length === 0;
 
 	if ( isEmpty ) {
-		return isVersion330Active ? defaultValue : null;
+		return defaultValue;
 	}
 
 	const formattedValues = items.map( ( item ) => item[ prop ] ?? defaultValue );

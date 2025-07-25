@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Plugin;
 
 class Style_Parser {
@@ -49,7 +50,7 @@ class Style_Parser {
 
 		if ( ! isset( $style['label'] ) || ! is_string( $style['label'] ) ) {
 			$result->errors()->add( 'label', 'missing_or_invalid' );
-		} elseif ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+		} elseif ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
 			$label_validation = $this->validate_style_label( $style['label'] );
 
 			if ( ! $label_validation['is_valid'] ) {
