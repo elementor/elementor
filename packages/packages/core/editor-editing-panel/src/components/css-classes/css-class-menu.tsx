@@ -10,7 +10,9 @@ import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/ty
 import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
 import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
+import { CssClassPromote } from './css-class-promote';
 import { useUnapplyClass } from './use-apply-and-unapply-class';
+import { useCanPromoteLocalClass } from './use-can-promote-local-class';
 
 type State = {
 	key: StyleDefinitionStateWithNormal;
@@ -32,6 +34,7 @@ type CssClassMenuProps = {
 
 export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps ) {
 	const { provider } = useCssClass();
+	const { canPromote, styleDef } = useCanPromoteLocalClass();
 
 	const handleKeyDown = ( e: React.KeyboardEvent< HTMLElement > ) => {
 		e.stopPropagation();
@@ -62,6 +65,7 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 			{ STATES.map( ( state ) => {
 				return <StateMenuItem key={ state.key } state={ state.value } closeMenu={ popupState.close } />;
 			} ) }
+			{ canPromote && styleDef && <CssClassPromote styleDef={ styleDef } /> }
 		</Menu>
 	);
 }
