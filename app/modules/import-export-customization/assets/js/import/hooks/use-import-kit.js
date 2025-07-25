@@ -55,7 +55,7 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 					path: 'import-runner',
 				} );
 
-				dispatch( { type: 'UPDATE_RUNNERS_STATE', payload: { [ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ] } } );
+				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ] } } );
 			} catch ( e ) {
 				stopIterations = e;
 				setError( e );
