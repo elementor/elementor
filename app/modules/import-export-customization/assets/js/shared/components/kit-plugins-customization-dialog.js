@@ -60,9 +60,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 	
 	const [ plugins, setPlugins ] = useState( {} );
 
-	const initialState = isImportContext
-		? data.uploadedData.manifest.hasOwnProperty( 'plugins' )
-		: data?.includes?.includes( 'plugins' ) || false;
+	const initialState = data?.includes?.includes( 'plugins' ) || false;
 
 	useEffect( () => {
 		if ( 0 === Object.keys( pluginsList ).length ) {
