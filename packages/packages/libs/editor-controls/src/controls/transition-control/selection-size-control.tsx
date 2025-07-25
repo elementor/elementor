@@ -3,10 +3,10 @@ import { useRef } from 'react';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlFormLabel } from '../components/control-form-label';
-import { createControl } from '../create-control';
-import { SizeControl, type SizeControlProps } from './size-control';
+import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
+import { ControlFormLabel } from '../../components/control-form-label';
+import { createControl } from '../../create-control';
+import { SizeControl, type SizeControlProps } from '../size-control';
 
 type SelectionComponentConfig = {
 	component: React.ComponentType< Record< string, unknown > >;

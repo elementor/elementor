@@ -3,8 +3,8 @@ import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 
 import { createControl } from '../../create-control';
 import { RepeatableControl } from '../repeatable-control';
-import { SelectionSizeControl } from '../selection-size-control';
 import { transitionProperties } from './data';
+import { SelectionSizeControl } from './selection-size-control';
 import { TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
