@@ -4,6 +4,7 @@ import { colorPropTypeUtil } from '@elementor/editor-props';
 import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
+import { VariableTypeProvider } from '../../context/variable-type-context';
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
@@ -19,7 +20,7 @@ jest.mock( '@elementor/editor-controls', () => ( {
 	useBoundProp: jest.fn(),
 } ) );
 
-jest.mock( '../variable-selection-popover.context', () => ( {
+jest.mock( '../../context/variable-selection-popover.context', () => ( {
 	usePopoverContentRef: jest.fn( () => document.createElement( 'div' ) ),
 } ) );
 
@@ -60,7 +61,11 @@ beforeEach( () => {
 } );
 
 const renderComponent = ( props = { propTypeKey: colorVariablePropTypeUtil.key } ) => {
-	return renderWithTheme( <VariableCreation { ...baseProps } { ...props } /> );
+	return renderWithTheme(
+		<VariableTypeProvider propTypeKey={ props.propTypeKey }>
+			<VariableCreation { ...baseProps } { ...props } />
+		</VariableTypeProvider>
+	);
 };
 
 it( 'should successfully change name with valid input', async () => {

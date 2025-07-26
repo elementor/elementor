@@ -2,11 +2,12 @@ import * as React from 'react';
 import { useState } from 'react';
 import type { PropTypeKey } from '@elementor/editor-props';
 
+import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
+import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { type Variable } from '../types';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
-import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 import { VariablesSelection } from './variables-selection';
 
 const VIEW_LIST = 'list';
@@ -26,17 +27,19 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 	const [ editId, setEditId ] = useState< string >( '' );
 
 	return (
-		<PopoverContentRefContextProvider>
-			{ RenderView( {
-				propTypeKey,
-				currentView,
-				selectedVariable,
-				editId,
-				setEditId,
-				setCurrentView,
-				closePopover,
-			} ) }
-		</PopoverContentRefContextProvider>
+		<VariableTypeProvider propTypeKey={ propTypeKey }>
+			<PopoverContentRefContextProvider>
+				{ RenderView( {
+					propTypeKey,
+					currentView,
+					selectedVariable,
+					editId,
+					setEditId,
+					setCurrentView,
+					closePopover,
+				} ) }
+			</PopoverContentRefContextProvider>
+		</VariableTypeProvider>
 	);
 };
 
@@ -92,23 +95,12 @@ function RenderView( props: ViewProps ): React.ReactNode {
 
 	if ( VIEW_LIST === props.currentView ) {
 		return (
-			<VariablesSelection
-				closePopover={ handlers.onClose }
-				onAdd={ handlers.onAdd }
-				onEdit={ handlers.onEdit }
-				propTypeKey={ props.propTypeKey }
-			/>
+			<VariablesSelection closePopover={ handlers.onClose } onAdd={ handlers.onAdd } onEdit={ handlers.onEdit } />
 		);
 	}
 
 	if ( VIEW_ADD === props.currentView ) {
-		return (
-			<VariableCreation
-				onGoBack={ handlers.onGoBack }
-				onClose={ handlers.onClose }
-				propTypeKey={ props.propTypeKey }
-			/>
-		);
+		return <VariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
 	}
 
 	if ( VIEW_EDIT === props.currentView ) {
@@ -118,7 +110,6 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onGoBack={ handlers.onGoBack }
 				onClose={ handlers.onClose }
 				onSubmit={ handleSubmitOnEdit }
-				propTypeKey={ props.propTypeKey }
 			/>
 		);
 	}

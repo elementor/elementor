@@ -2,16 +2,15 @@ import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
-import type { PropTypeKey } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useVariableType } from '../context/variable-type-context';
 import { createVariable } from '../hooks/use-prop-variables';
 import { trackVariableEvent } from '../utils/tracking';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
-import { getVariableType } from '../variables-registry/variable-type-registry';
 import { LabelField, useLabelError } from './fields/label-field';
 
 const SIZE = 'tiny';
@@ -19,11 +18,10 @@ const SIZE = 'tiny';
 type Props = {
 	onGoBack?: () => void;
 	onClose: () => void;
-	propTypeKey: PropTypeKey;
 };
 
-export const VariableCreation = ( { onGoBack, onClose, propTypeKey }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = getVariableType( propTypeKey );
+export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
+	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
 	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
 
