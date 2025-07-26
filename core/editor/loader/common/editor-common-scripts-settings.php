@@ -127,21 +127,24 @@ class Editor_Common_Scripts_Settings {
 			$client_env['integrationWidgets'] = array_merge(
 				( isset( $client_env['integrationWidgets'] ) && is_array( $client_env['integrationWidgets'] ) ?
 				$client_env['integrationWidgets'] :
-				[] ), [ [
-				'categories' => '[ "general" ]',
-				'icon' => 'eicon-accessibility',
-				'name' => 'ally-accessibility',
-				'title' => __( 'Ally accessibility', 'elementor' ),
-				'keywords' => [
-					'Accessibility',
-					'Usability',
-					'Inclusive',
-					'Statement',
-					'WCAG',
-					'Ally',
-					'Complaince',
+				[] ), [
+					[
+						'categories' => '[ "general" ]',
+						'icon' => 'eicon-accessibility',
+						'name' => 'ally-accessibility',
+						'title' => __( 'Ally accessibility', 'elementor' ),
+						'keywords' => [
+							'Accessibility',
+							'Usability',
+							'Inclusive',
+							'Statement',
+							'WCAG',
+							'Ally',
+							'Complaince',
+						],
+					],
 				],
-			] ] );
+			);
 		}
 
 		static::bc_move_document_filters();
