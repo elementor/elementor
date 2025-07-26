@@ -1,6 +1,11 @@
 import { type ForwardRefExoticComponent, type JSX, type RefAttributes } from 'react';
-import { type PropTypeUtil } from '@elementor/editor-props';
+import { PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
+import { stylesInheritanceTransformersRegistry } from "@elementor/editor-editing-panel";
+import { fontVariablePropTypeUtil } from "../prop-types/font-variable-prop-type";
+import { styleTransformersRegistry } from "@elementor/editor-canvas";
+import { variableTransformer } from "../transformers/variable-transformer";
+import { inheritanceTransformer } from "../transformers/inheritance-transformer";
 
 type ValueFieldProps = {
 	value: string;
@@ -43,6 +48,17 @@ export function createVariableTypeRegistry() {
 			variableType,
 			fallbackPropTypeUtil,
 		};
+
+		registerTransformer( propTypeUtil.key );
+		registerInheritanceTransformer( propTypeUtil.key );
+	};
+
+	const registerTransformer = ( key: PropTypeKey ) => {
+		styleTransformersRegistry.register( key, variableTransformer );
+	};
+
+	const registerInheritanceTransformer = ( key: PropTypeKey ) => {
+		stylesInheritanceTransformersRegistry.register( key, inheritanceTransformer );
 	};
 
 	const getVariableType = ( key: string ) => {
