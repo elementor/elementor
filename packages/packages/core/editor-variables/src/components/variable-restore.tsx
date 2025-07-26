@@ -2,16 +2,15 @@ import * as React from 'react';
 import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
-import { type PropTypeKey } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { Button, CardActions, Divider, FormHelperText } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
+import { useVariableType } from '../context/variable-type-context';
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
-import { getVariableType } from '../variables-registry/variable-type-registry';
 import { LabelField, useLabelError } from './fields/label-field';
-import { PopoverContentRefContextProvider } from './variable-selection-popover.context';
 
 const SIZE = 'tiny';
 
@@ -19,11 +18,10 @@ type Props = {
 	variableId: string;
 	onClose: () => void;
 	onSubmit?: () => void;
-	propTypeKey: PropTypeKey;
 };
 
-export const VariableRestore = ( { variableId, onClose, onSubmit, propTypeKey }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = getVariableType( propTypeKey );
+export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
+	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
 	const { setValue: notifyBoundPropChange } = useBoundProp( propTypeUtil );
 

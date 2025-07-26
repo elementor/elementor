@@ -26,7 +26,7 @@ jest.mock( '../../utils/tracking', () => ( {
 	trackVariableEvent: jest.fn(),
 } ) );
 
-jest.mock( '../../components/variable-selection-popover', () => ( {
+jest.mock( '../../components/popover', () => ( {
 	VariableSelectionPopover: jest.fn( ( { closePopover, propTypeKey } ) => (
 		<div data-testid="variable-selection-popover">
 			<div data-testid="prop-type-key">{ propTypeKey }</div>

@@ -7,10 +7,10 @@ import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
+import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { type ExtendedVirtualizedItem } from '../types';
 import { trackVariableEvent } from '../utils/tracking';
-import { getVariableType } from '../variables-registry/variable-type-registry';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
 import { NoVariables } from './ui/no-variables';
@@ -23,11 +23,10 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
-	propTypeKey: string;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, propTypeKey }: Props ) => {
-	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = getVariableType( propTypeKey );
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useBoundProp( propTypeUtil );
 	const [ searchValue, setSearchValue ] = useState( '' );

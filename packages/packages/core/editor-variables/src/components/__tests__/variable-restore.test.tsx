@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { colorPropTypeUtil } from '@elementor/editor-props';
+import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { VariableRestore } from '../variable-restore';
-import { getVariableType } from "../../variables-registry/variable-type-registry";
-import { TextIcon } from "@elementor/icons";
-import { colorPropTypeUtil } from "@elementor/editor-props";
 
 const propType = createMockPropType( { kind: 'object' } );
 
@@ -69,14 +69,7 @@ describe( 'ColorVariableRestore', () => {
 		( usePropVariablesModule.restoreVariable as jest.Mock ).mockRejectedValue( apiErrorResponse );
 
 		// Act.
-		renderControl(
-			<VariableRestore
-				variableId="e-gv-4test"
-				onClose={ jest.fn() }
-				propTypeKey={ colorVariablePropTypeUtil.key }
-			/>,
-			props
-		);
+		renderControl( <VariableRestore variableId="e-gv-4test" onClose={ jest.fn() } />, props );
 
 		// Change the label to enable the save button
 		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
