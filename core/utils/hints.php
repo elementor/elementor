@@ -405,7 +405,7 @@ class Hints {
 			'medium' => 'editor',
 		];
 
-		if ( ! $is_installed) {
+		if ( ! $is_installed ) {
 			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
 			$data['content'] = __( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' );
 			$data['action_button'] = [
