@@ -281,7 +281,7 @@
 	}
 }
 
-.e-div-block-base, .e-flexbox-base {
+.e-div-block-base, .e-flexbox-base .e-tabs-base {
 	&:has( .elementor-empty-view ) {
 		min-height: 120px;
 	}

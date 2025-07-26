@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements\Div_Block;
+namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs_List;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
@@ -15,50 +15,48 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Widgets_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Div_Block extends Atomic_Element_Base {
+class Atomic_Tabs_List extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-div-block';
+		return 'e-tabs-list';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-div-block';
+		return 'e-tabs-list';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Div Block', 'elementor' );
+		return esc_html__( 'Atomic Tabs List', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tabs', 'list' ];
 	}
 
 	public function get_icon() {
-		return 'eicon-div-block';
+		return 'eicon-tabs';
 	}
 
 	protected static function define_props_schema(): array {
 		$tag_dependencies = Dependency_Manager::make()
 			->where( [
-				'operator' => 'not_exist',
+				'operator' => 'exists',
 				'path' => [ 'link', 'destination' ],
-			] )
-		->get();
+			] );
 
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'ul', 'ol' ] )
 				->default( 'div' )
-				->set_dependencies( $tag_dependencies ),
+				->dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Key_Value_Array_Prop_Type::make(),
@@ -100,6 +98,14 @@ class Div_Block extends Atomic_Element_Base {
 						'value' => 'footer',
 						'label' => 'Footer',
 					],
+					[
+						'value' => 'ul',
+						'label' => 'Unordered List',
+					],
+					[
+						'value' => 'ol',
+						'label' => 'Ordered List',
+					],
 				]),
 			Link_Control::bind_to( 'link' )
 				->set_label( __( 'Link', 'elementor' ) )
@@ -126,8 +132,7 @@ class Div_Block extends Atomic_Element_Base {
 
 	public function before_render() {
 		?>
-		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' );
-		$this->print_custom_attributes(); ?>>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' ); ?>>
 		<?php
 	}
 
@@ -135,14 +140,6 @@ class Div_Block extends Atomic_Element_Base {
 		?>
 		</<?php $this->print_html_tag(); ?>>
 		<?php
-	}
-
-	private function print_custom_attributes() {
-		$settings = $this->get_atomic_settings();
-		$attributes = $settings['attributes'];
-		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
-			echo ' ' . esc_attr( $attributes );
-		}
 	}
 
 	/**
@@ -197,6 +194,7 @@ class Div_Block extends Atomic_Element_Base {
 		$attributes = [
 			'class' => [
 				'e-con',
+				'e-tabs-list',
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
@@ -206,10 +204,32 @@ class Div_Block extends Atomic_Element_Base {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
+		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
+			foreach ( $settings['attributes'] as $item ) {
+				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
+					$attributes[ esc_attr( $item['key'] ) ] = esc_attr( $item['value'] );
+				}
+			}
+		}
+
 		if ( ! empty( $settings['link']['href'] ) ) {
 			$attributes = array_merge( $attributes, $settings['link'] );
 		}
 
 		$this->add_render_attribute( '_wrapper', $attributes );
 	}
+
+//	protected function define_default_children() {
+//		$heading = [
+//			'elType' => 'widget',
+//			'settings' => [
+//				'title' => String_Prop_Type::generate( 'Tabs List Title' ),
+//			],
+//			'widgetType' => Atomic_Heading::get_element_type(),
+//		];
+//
+//		return [
+//			$heading,
+//		];
+//	}
 }
