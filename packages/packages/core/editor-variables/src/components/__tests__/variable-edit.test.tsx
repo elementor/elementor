@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { colorPropTypeUtil, PropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { colorPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { VariableEdit } from '../variable-edit';
-import { fontVariablePropTypeUtil } from "../../prop-types/font-variable-prop-type";
 
 const propType = createMockPropType( { kind: 'object' } );
 
