@@ -4,6 +4,7 @@ import { colorPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
+import { VariableTypeProvider } from '../../context/variable-type-context';
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
@@ -75,7 +76,12 @@ describe( 'ColorVariableEdit', () => {
 		};
 
 		// Act.
-		renderControl( <VariableEdit editId="test-variable-id" onClose={ jest.fn() } onSubmit={ onDeleted } />, props );
+		renderControl(
+			<VariableTypeProvider propTypeKey={ colorVariablePropTypeUtil.key }>
+				<VariableEdit editId="test-variable-id" onClose={ jest.fn() } onSubmit={ onDeleted } />
+			</VariableTypeProvider>,
+			props
+		);
 
 		const deleteButton = screen.getByRole( 'button', { name: /delete/i } );
 		fireEvent.click( deleteButton );
@@ -115,7 +121,12 @@ describe( 'ColorVariableEdit', () => {
 			fallbackPropTypeUtil: stringPropTypeUtil,
 		} );
 
-		renderControl( <VariableEdit editId="e-gv-75930" onClose={ jest.fn() } />, props );
+		renderControl(
+			<VariableTypeProvider propTypeKey={ fontVariablePropTypeUtil.key }>
+				<VariableEdit editId="e-gv-75930" onClose={ jest.fn() } />
+			</VariableTypeProvider>,
+			props
+		);
 
 		const deleteButton = screen.getByRole( 'button', { name: /delete/i } );
 		fireEvent.click( deleteButton );

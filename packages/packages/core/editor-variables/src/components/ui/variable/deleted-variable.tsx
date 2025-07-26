@@ -117,7 +117,6 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 						variableId={ variable.key ?? '' }
 						onClose={ popupState.close }
 						onSubmit={ handleRestoreWithOverrides }
-						propTypeKey={ propTypeUtil.key }
 					/>
 				</Popover>
 			</Box>
