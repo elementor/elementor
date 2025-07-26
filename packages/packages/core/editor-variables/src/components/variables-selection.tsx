@@ -3,14 +3,14 @@ import { useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader, PopoverMenuList, PopoverSearch, type VirtualizedItem } from '@elementor/editor-ui';
-import { ColorFilterIcon, PlusIcon, SettingsIcon, TextIcon } from '@elementor/icons';
+import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useFilteredVariables } from '../hooks/use-prop-variables';
-import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { type ExtendedVirtualizedItem } from '../types';
 import { trackVariableEvent } from '../utils/tracking';
+import { getVariableType } from '../variables-registry/variable-type-registry';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
 import { NoVariables } from './ui/no-variables';
@@ -23,22 +23,25 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
+	propTypeKey: string;
 };
 
-export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { value: variable, setValue: setVariable, path } = useBoundProp( fontVariablePropTypeUtil );
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, propTypeKey }: Props ) => {
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = getVariableType( propTypeKey );
+
+	const { value: variable, setValue: setVariable, path } = useBoundProp( propTypeUtil );
 	const [ searchValue, setSearchValue ] = useState( '' );
 
 	const {
 		list: variables,
 		hasMatches: hasSearchResults,
 		isSourceNotEmpty: hasVariables,
-	} = useFilteredVariables( searchValue, fontVariablePropTypeUtil.key );
+	} = useFilteredVariables( searchValue, propTypeUtil.key );
 
 	const handleSetVariable = ( key: string ) => {
 		setVariable( key );
 		trackVariableEvent( {
-			varType: 'font',
+			varType: variableType,
 			controlPath: path.join( '.' ),
 			action: 'connect',
 		} );
@@ -48,7 +51,7 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 	const onAddAndTrack = () => {
 		onAdd?.();
 		trackVariableEvent( {
-			varType: 'font',
+			varType: variableType,
 			controlPath: path.join( '.' ),
 			action: 'add',
 		} );
@@ -72,11 +75,13 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 		);
 	}
 
+	const StartIcon = startIcon || ( () => <VariableIcon fontSize={ SIZE } /> );
+
 	const items: ExtendedVirtualizedItem[] = variables.map( ( { value, label, key } ) => ( {
 		type: 'item' as const,
 		value: key,
 		label,
-		icon: <TextIcon fontSize={ SIZE } />,
+		icon: <StartIcon value={ value } />,
 		secondaryText: value,
 		onEdit: onEdit ? () => onEdit?.( key ) : undefined,
 	} ) );
@@ -89,12 +94,18 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 		setSearchValue( '' );
 	};
 
+	const noVariableTitle = sprintf(
+		/* translators: %s: Variable Type. */
+		__( 'Create your first %s variable', 'elementor' ),
+		variableType
+	);
+
 	return (
 		<PopoverBody>
 			<PopoverHeader
 				title={ __( 'Variables', 'elementor' ) }
-				onClose={ closePopover }
 				icon={ <ColorFilterIcon fontSize={ SIZE } /> }
+				onClose={ closePopover }
 				actions={ actions }
 			/>
 
@@ -114,7 +125,7 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 					onSelect={ handleSetVariable }
 					onClose={ () => {} }
 					selectedValue={ variable }
-					data-testid="font-variables-list"
+					data-testid={ `${ variableType }-variables-list` }
 					menuListTemplate={ VariablesStyledMenuList }
 					menuItemContentTemplate={ ( item: VirtualizedItem< 'item', string > ) => (
 						<MenuItemContent item={ item } />
@@ -126,16 +137,12 @@ export const FontVariablesSelection = ( { closePopover, onAdd, onEdit, onSetting
 				<NoSearchResults
 					searchValue={ searchValue }
 					onClear={ handleClearSearch }
-					icon={ <TextIcon fontSize="large" /> }
+					icon={ <VariableIcon fontSize="large" /> }
 				/>
 			) }
 
 			{ ! hasVariables && (
-				<NoVariables
-					title={ __( 'Create your first font variable', 'elementor' ) }
-					icon={ <TextIcon fontSize="large" /> }
-					onAdd={ onAdd }
-				/>
+				<NoVariables title={ noVariableTitle } icon={ <VariableIcon fontSize="large" /> } onAdd={ onAdd } />
 			) }
 		</PopoverBody>
 	);
