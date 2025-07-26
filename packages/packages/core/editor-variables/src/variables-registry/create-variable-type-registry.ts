@@ -1,11 +1,11 @@
 import { type ForwardRefExoticComponent, type JSX, type RefAttributes } from 'react';
-import { PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
+import { styleTransformersRegistry } from '@elementor/editor-canvas';
+import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
+import { type PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
-import { stylesInheritanceTransformersRegistry } from "@elementor/editor-editing-panel";
-import { fontVariablePropTypeUtil } from "../prop-types/font-variable-prop-type";
-import { styleTransformersRegistry } from "@elementor/editor-canvas";
-import { variableTransformer } from "../transformers/variable-transformer";
-import { inheritanceTransformer } from "../transformers/inheritance-transformer";
+
+import { inheritanceTransformer } from '../transformers/inheritance-transformer';
+import { variableTransformer } from '../transformers/variable-transformer';
 
 type ValueFieldProps = {
 	value: string;
