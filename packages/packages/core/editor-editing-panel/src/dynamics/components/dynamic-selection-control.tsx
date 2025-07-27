@@ -169,7 +169,7 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 };
 
 const Control = ( { control }: { control: Control[ 'value' ] } ) => {
-	if ( ! controlsRegistry.getControl( control.type as ControlType ) ) {
+	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
 		return null;
 	}
 

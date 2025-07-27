@@ -24,7 +24,7 @@ type ControlProps< T extends ControlType > = AnyPropertyRequired< ComponentProps
 	  };
 
 export const Control = < T extends ControlType >( { props, type }: ControlProps< T > ) => {
-	const ControlByType = controlsRegistry.getControl( type );
+	const ControlByType = controlsRegistry.get( type );
 	const { element } = useElement();
 
 	if ( ! ControlByType ) {

@@ -57,11 +57,11 @@ class ControlsRegistry {
 		this.controlsRegistry = controlsRegistry;
 	}
 
-	getControl( type: ControlType ) {
+	get( type: ControlType ): ControlComponent {
 		return this.controlsRegistry[ type ]?.component;
 	}
 
-	getDefaultLayout( type: ControlType ) {
+	getLayout( type: ControlType ) {
 		return this.controlsRegistry[ type ].layout;
 	}
 
@@ -69,11 +69,11 @@ class ControlsRegistry {
 		return this.controlsRegistry[ type ]?.propTypeUtil;
 	}
 
-	getControlTypes() {
+	registry(): ControlRegistry {
 		return this.controlsRegistry;
 	}
 
-	registerControl(
+	register(
 		type: string,
 		component: ControlComponent,
 		layout: ControlLayout,
@@ -86,7 +86,7 @@ class ControlsRegistry {
 		this.controlsRegistry[ type ] = { component, layout, propTypeUtil };
 	}
 
-	unregisterControl( type: string ) {
+	unregister( type: string ) {
 		if ( ! this.controlsRegistry[ type ] ) {
 			throw new ControlTypeNotRegisteredError( { context: { controlType: type } } );
 		}

@@ -30,7 +30,7 @@ const elementProviderProps = {
 
 describe( '<Control />', () => {
 	beforeAll( () => {
-		controlsRegistry.registerControl(
+		controlsRegistry.register(
 			'test-text',
 			( ( { placeholder }: { placeholder: string } ) => (
 				<input type="text" placeholder={ placeholder } />
@@ -40,7 +40,7 @@ describe( '<Control />', () => {
 	} );
 
 	afterAll( () => {
-		controlsRegistry.unregisterControl( 'test-text' );
+		controlsRegistry.unregister( 'test-text' );
 	} );
 
 	it( 'should render control component', () => {

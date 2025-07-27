@@ -55,11 +55,11 @@ export const SettingsTab = () => {
 };
 
 const Control = ( { control }: { control: Control[ 'value' ] } ) => {
-	if ( ! controlsRegistry.getControl( control.type as ControlType ) ) {
+	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
 		return null;
 	}
 
-	const layout = control.meta?.layout || controlsRegistry.getDefaultLayout( control.type as ControlType );
+	const layout = control.meta?.layout || controlsRegistry.getLayout( control.type as ControlType );
 	const controlProps = populateChildControlProps( control.props );
 	if ( layout === 'custom' ) {
 		controlProps.label = control.label;
@@ -78,7 +78,7 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 
 function populateChildControlProps( props: Record< string, unknown > ) {
 	if ( props.childControlType ) {
-		const childComponent = controlsRegistry.getControl( props.childControlType as ControlType );
+		const childComponent = controlsRegistry.get( props.childControlType as ControlType );
 		const childPropType = controlsRegistry.getPropTypeUtil( props.childControlType as ControlType );
 		props = {
 			...props,
