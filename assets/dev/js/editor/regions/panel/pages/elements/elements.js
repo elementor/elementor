@@ -27,12 +27,24 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	categoriesCollection: null,
 
+	globalCategoriesCollection: null,
+
+	isComponentsActive: false,
+
 	initialize() {
 		this.listenTo( elementor.channels.panelElements, 'element:selected', this.destroy );
 
 		this.initElementsCollection();
 
 		this.initCategoriesCollection();
+
+		this.initGlobalCategoriesCollection();
+
+		this.isComponentsActive = true; // elementor.experiments.isActive( 'global-categories' );
+
+		if ( this.isComponentsActive ) {
+			initGlobalWidgetsHooks();
+		}
 
 		this.initRegionViews();
 	},
@@ -64,6 +76,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			elements: this.elements,
 			search: this.search,
 		} );
+
+		if ( this.isComponentsActive ) {
+			this.regionViews.global = {
+				region: this.elements,
+				view: PanelElementsCategoriesView,
+				options: { collection: this.globalCategoriesCollection },
+			};
+		}
 	},
 
 	initElementsCollection() {
@@ -171,6 +191,12 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		this.categoriesCollection = categoriesCollection;
+	},
+
+	initGlobalCategoriesCollection() {
+		var globalCategoriesCollection = new PanelElementsCategoriesCollection();
+
+		this.globalCategoriesCollection = elementor.hooks.applyFilters( 'panel/elements/globalCategoriesCollection', globalCategoriesCollection );
 	},
 
 	shouldAddWidget( widget ) {

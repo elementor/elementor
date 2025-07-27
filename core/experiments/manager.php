@@ -410,6 +410,14 @@ class Manager extends Base_Object {
 	 * @access private
 	 */
 	private function init_features() {
+		// $this->add_feature( [
+		// 	'name' => 'global-categories',
+		// 	'title' => esc_html__( 'Global Categories', 'elementor' ),
+		// 	'description' => esc_html__( 'Organize global widgets and components in categories, similar to the Elements panel.', 'elementor' ),
+		// 	'release_status' => self::RELEASE_STATUS_ALPHA,
+		// 	'default' => self::STATE_INACTIVE,
+		// ] );
+
 		$this->features = [];
 
 		$this->add_default_features();
