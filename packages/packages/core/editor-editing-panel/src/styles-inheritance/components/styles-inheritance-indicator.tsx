@@ -13,7 +13,7 @@ import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
 
-const skipControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ];
+const skipControls = [ 'box-shadow', 'filter', 'backdrop-filter', 'transform' ];
 
 export const StylesInheritanceIndicator = () => {
 	const { path, propType } = useBoundProp();
