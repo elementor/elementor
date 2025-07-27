@@ -407,31 +407,31 @@ class Hints {
 
 		if ( ! $is_installed ) {
 			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
-			$data['content'] = esc_html( __( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' ) );
+			$data['content'] = esc_html__( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' );
 			$data['action_button'] = [
-				'text' => esc_html( __( 'install Now', 'elementor' ) ),
+				'text' => esc_html__( 'install Now', 'elementor' ),
 				'url' => $url,
 				'classes' => [ 'elementor-button' ],
 			];
 		} else if ( ! $is_active ) {
 			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
-			$data['content'] = esc_html( __( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' ) );
+			$data['content'] = esc_html__( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' );
 			$data['action_button'] = [
-				'text' => esc_html( __( 'Activate', 'elementor' ) ),
+				'text' => esc_html__( 'Activate', 'elementor' ),
 				'url' => $url,
 				'classes' => [ 'elementor-button' ],
 			];
 		} else if ( ! $is_connected ) {
-			$data['content'] = esc_html( __( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ) );
+			$data['content'] = esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' );
 			$data['action_button'] = [
-				'text' => esc_html( __( 'Connect', 'elementor' ) ),
+				'text' => esc_html__( 'Connect', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=accessibility-settings' ),
 				'classes' => [ 'elementor-button' ],
 			];
 		} else {
-			$data['content'] = esc_html( __( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ) );
+			$data['content'] = esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' );
 			$data['action_button'] = [
-				'text' => esc_html( __( 'Customize', 'elementor' ) ),
+				'text' => esc_html__( 'Customize', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=accessibility-settings#design' ),
 				'classes' => [ 'elementor-button' ],
 			];

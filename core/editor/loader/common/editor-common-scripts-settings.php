@@ -132,7 +132,7 @@ class Editor_Common_Scripts_Settings {
 						'categories' => '[ "general" ]',
 						'icon' => 'eicon-accessibility',
 						'name' => 'ally-accessibility',
-						'title' => esc_html( __( 'Ally Accessibility', 'elementor' ) ),
+						'title' => esc_html__( 'Ally Accessibility', 'elementor' ),
 						'keywords' => [
 							'Accessibility',
 							'Usability',
