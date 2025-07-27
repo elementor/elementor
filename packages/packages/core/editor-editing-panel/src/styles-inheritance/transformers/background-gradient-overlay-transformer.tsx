@@ -17,7 +17,7 @@ type Gradient = {
 };
 
 export const backgroundGradientOverlayTransformer = createTransformer( ( value: Gradient ) => (
-	<Stack direction="row" gap={ 10 }>
+	<Stack direction="row" gap={ 1 } alignItems="center">
 		<ItemIconGradient value={ value } />
 		<ItemLabelGradient value={ value } />
 	</Stack>
@@ -31,10 +31,10 @@ const ItemIconGradient = ( { value }: { value: Gradient } ) => {
 
 const ItemLabelGradient = ( { value }: { value: Gradient } ) => {
 	if ( value.type === 'linear' ) {
-		return <span>{ __( 'Linear Gradient', 'elementor' ) }</span>;
+		return <span>{ __( 'Linear gradient', 'elementor' ) }</span>;
 	}
 
-	return <span>{ __( 'Radial Gradient', 'elementor' ) }</span>;
+	return <span>{ __( 'Radial gradient', 'elementor' ) }</span>;
 };
 
 const getGradientValue = ( gradient: Gradient ) => {
