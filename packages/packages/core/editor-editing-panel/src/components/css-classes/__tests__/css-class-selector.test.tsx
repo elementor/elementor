@@ -47,6 +47,13 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
+jest.mock( '../use-can-convert-local-class-to-global', () => ( {
+	useCanConvertLocalClassToGlobal: jest.fn( () => ( {
+		canPromote: false,
+		styleDef: null,
+	} ) ),
+} ) );
+
 // MUI use the useId hook behind the scenes, and it breaks the tests.
 let mockId = 0;
 jest.mock( 'react', () => ( {
