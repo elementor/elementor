@@ -60,7 +60,7 @@ export const TextFieldInnerSelection = forwardRef(
 		return (
 			<TextField
 				ref={ ref }
-				sx={ { input: { cursor: undefined } } }
+				sx={ { input: { cursor: readOnlyState ? 'default !important' : undefined } } }
 				size="tiny"
 				fullWidth
 				type={ type }
