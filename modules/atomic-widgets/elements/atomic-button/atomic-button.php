@@ -63,9 +63,13 @@ class Atomic_Button extends Atomic_Widget_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
 					Text_Control::bind_to( 'text' )
-						->set_label( __( 'Button text', 'elementor' ) )
-						->set_placeholder( __( 'Type your button text here', 'elementor' ) ),
+						->set_placeholder( __( 'Type your button text here', 'elementor' ) )
+						->set_label( __( 'Button text', 'elementor' ) ),
 				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
 		];
 	}
 
@@ -73,6 +77,9 @@ class Atomic_Button extends Atomic_Widget_Base {
 		return [
 			Link_Control::bind_to( 'link' )
 				->set_label( __( 'Link', 'elementor' ) ),
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
