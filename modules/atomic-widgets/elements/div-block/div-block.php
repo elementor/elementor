@@ -210,4 +210,22 @@ class Div_Block extends Atomic_Element_Base {
 
 		$this->add_render_attribute( '_wrapper', $attributes );
 	}
+
+	protected function define_default_children() {
+		$heading = [
+			'elType' => 'widget',
+			'widgetType' => Atomic_Heading::get_element_type(),
+			'settings' => [
+				'title' => String_Prop_Type::generate( 'defi' )
+			],
+			'behaviors' => [
+				'drag_within' => true,
+			],
+		];
+
+
+		return [
+			$heading,
+		];
+	}
 }

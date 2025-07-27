@@ -272,8 +272,17 @@ const DivBlockView = BaseElementView.extend( {
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggedElement = draggedView?.getContainer().view.el,
-					containerElement = event.currentTarget.parentElement,
-					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+					containerElement = event.currentTarget.parentElement;
+
+				const restrictions = draggedView?.getContainer()?.model?.get( 'restrictions' );
+				console.log( 'scope', restrictions?.scope, 'id', this.model.get( 'id' ) );
+
+				if ( !! restrictions && !! restrictions.scope && restrictions.scope !== this.model.get( 'id' ) ) {
+					// If the dragged element has restrictions that prevent it from being dropped, do nothing.
+					console.log( 'blocked by James' );
+					return;
+				}
+				const elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
 
 				let targetIndex = elements.indexOf( event.currentTarget );
 

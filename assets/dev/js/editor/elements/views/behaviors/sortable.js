@@ -197,6 +197,7 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	startSort( event, ui ) {
+		console.log( 'startSort', event, ui );
 		event.stopPropagation();
 
 		const container = elementor.getContainer( ui.item.attr( 'data-id' ) );
@@ -211,6 +212,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	// On sorting element
 	updateSort( ui, newIndex ) {
+		console.log( 'updateSort', ui, newIndex );
+		// jQuery( ui.sender ).sortable( 'cancel' );
+		return;
 		if ( undefined === newIndex ) {
 			newIndex = ui.item.index();
 		}
@@ -225,8 +229,12 @@ SortableBehavior = Marionette.Behavior.extend( {
 
 	// On receiving element from another container
 	receiveSort( event, ui, newIndex ) {
+		return;
 		event.stopPropagation();
 
+		console.log( 'receiveSort', event, ui, newIndex );
+
+		console.log( '$$$', model );
 		if ( this.view.isCollectionFilled() ) {
 			jQuery( ui.sender ).sortable( 'cancel' );
 
@@ -257,6 +265,8 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortStart( event, ui ) {
+		console.log( 'onSortStart', event, ui );
+		return;
 		if ( 'column' === this.options.elChildType ) {
 			var uiData = ui.item.data( 'sortableItem' ),
 				uiItems = uiData.items,
@@ -276,7 +286,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortOver( event ) {
+		console.log( 'onSortOver', event );
 		event.stopPropagation();
+		return;
 
 		var model = elementor.channels.data.request( 'dragging:model' );
 
@@ -291,8 +303,9 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortOut( event ) {
+		console.log( 'onSortOut', event );
 		event.stopPropagation();
-
+		return;
 		jQuery( event.target )
 			.removeClass( 'elementor-draggable-over' )
 			.removeAttr( 'data-dragged-element data-dragged-is-inner' );
@@ -301,10 +314,14 @@ SortableBehavior = Marionette.Behavior.extend( {
 	},
 
 	onSortReceive( event, ui ) {
+		console.log( 'onSortReceive', event, ui );
+		return;
 		this.receiveSort( event, ui, this.getSortedElementNewIndex( ui.item ) );
 	},
 
 	onSortUpdate( event, ui ) {
+		return;
+		console.log( 'onSortUpdate', event, ui );
 		event.stopPropagation();
 
 		if ( this.getChildViewContainer()[ 0 ] !== ui.item.parent()[ 0 ] ) {
