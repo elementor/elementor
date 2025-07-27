@@ -5,26 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { type FilterKey, useFilteredCssClassUsage } from '../../../../hooks/use-filtered-css-class-usage';
 import { type CheckedFilters, useSearchAndFilters } from '../../context';
 
-type CheckBoxItem = {
-	label: string;
-	value: FilterKey;
-};
-
-export const checkBoxItems: CheckBoxItem[] = [
-	{
-		label: __( 'Unused', 'elementor' ),
-		value: 'unused',
-	},
-	{
-		label: __( 'Empty', 'elementor' ),
-		value: 'empty',
-	},
-	{
-		label: __( 'On this page', 'elementor' ),
-		value: 'onThisPage',
-	},
-];
-
 export const FilterList = () => {
 	const {
 		filters: { filters, setFilters },
@@ -53,7 +33,7 @@ export const FilterList = () => {
 				suffix={ <Chip size={ 'small' } sx={ { ml: 'auto' } } label={ filteredCssClass.empty.length || 0 } /> }
 			/>
 			<LabeledCheckbox
-				label={ __( 'Unused', 'elementor' ) }
+				label={ __( 'On this page', 'elementor' ) }
 				onClick={ () => handleOnClick( 'onThisPage' ) }
 				checked={ filters.onThisPage || false }
 				suffix={
