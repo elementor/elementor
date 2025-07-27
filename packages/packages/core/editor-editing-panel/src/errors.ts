@@ -6,6 +6,16 @@ export const ControlTypeNotFoundError = createError< { controlType: string } >( 
 	message: 'Control type not found.',
 } );
 
+export const ControlTypeAlreadyRegisteredError = createError< { controlType: string } >( {
+	code: 'control_type_already_registered',
+	message: 'Control type is already registered.',
+} );
+
+export const ControlTypeNotRegisteredError = createError< { controlType: string } >( {
+	code: 'control_type_not_registered',
+	message: 'Control type is not registered.',
+} );
+
 export const StylesProviderNotFoundError = createError< { styleId: StyleDefinitionID } >( {
 	code: 'provider_not_found',
 	message: 'Styles provider not found.',
