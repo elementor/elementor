@@ -1,3 +1,4 @@
+import { type ControlComponent, TextControl } from '@elementor/editor-controls';
 import {
 	booleanPropTypeUtil,
 	imagePropTypeUtil,
@@ -8,6 +9,7 @@ import {
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
+import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../../errors';
 import { controlsRegistry, type ControlType } from '../controls-registry';
 
 describe( 'Controls Registry', () => {
@@ -30,6 +32,108 @@ describe( 'Controls Registry', () => {
 			Object.entries( expectedPropTypeUtils ).forEach( ( [ controlType, expectedPropTypeUtil ] ) => {
 				expect( controlsRegistry.getPropTypeUtil( controlType as ControlType ) ).toBe( expectedPropTypeUtil );
 			} );
+		} );
+	} );
+
+	describe( 'Singleton Behavior', () => {
+		it( 'should return the same instance', () => {
+			const instance1 = controlsRegistry;
+			const instance2 = controlsRegistry;
+
+			expect( instance1 ).toBe( instance2 );
+		} );
+	} );
+
+	describe( 'Control Registration', () => {
+		const testControlType = 'test-custom-control';
+		const testComponent = TextControl as ControlComponent;
+
+		afterEach( () => {
+			try {
+				controlsRegistry.unregisterControl( testControlType );
+			} catch {}
+		} );
+
+		it( 'should register a new control type', () => {
+			// Act
+			controlsRegistry.registerControl( testControlType, testComponent, 'full', stringPropTypeUtil );
+
+			// Assert
+			expect( controlsRegistry.getControl( testControlType as ControlType ) ).toBe( testComponent );
+			expect( controlsRegistry.getDefaultLayout( testControlType as ControlType ) ).toBe( 'full' );
+			expect( controlsRegistry.getPropTypeUtil( testControlType as ControlType ) ).toBe( stringPropTypeUtil );
+		} );
+
+		it( 'should register a control without propTypeUtil', () => {
+			// Act
+			controlsRegistry.registerControl( testControlType, testComponent, 'two-columns' );
+
+			// Assert
+			expect( controlsRegistry.getControl( testControlType as ControlType ) ).toBe( testComponent );
+			expect( controlsRegistry.getDefaultLayout( testControlType as ControlType ) ).toBe( 'two-columns' );
+			expect( controlsRegistry.getPropTypeUtil( testControlType as ControlType ) ).toBeUndefined();
+		} );
+
+		it( 'should throw error when registering existing control type', () => {
+			// Arrange
+			controlsRegistry.registerControl( testControlType, testComponent, 'full' );
+
+			// Act & Assert
+			expect( () => {
+				controlsRegistry.registerControl( testControlType, testComponent, 'full' );
+			} ).toThrow( ControlTypeAlreadyRegisteredError );
+		} );
+
+		it( 'should throw error when registering built-in control type', () => {
+			// Act & Assert
+			expect( () => {
+				controlsRegistry.registerControl( 'text', testComponent, 'full' );
+			} ).toThrow( ControlTypeAlreadyRegisteredError );
+		} );
+	} );
+
+	describe( 'Control Unregistration', () => {
+		const testControlType = 'test-unregister-control';
+		const testComponent = TextControl as ControlComponent;
+
+		beforeEach( () => {
+			try {
+				controlsRegistry.registerControl( testControlType, testComponent, 'full' );
+			} catch {}
+		} );
+
+		afterEach( () => {
+			try {
+				controlsRegistry.unregisterControl( testControlType );
+			} catch {}
+		} );
+
+		it( 'should unregister existing control type', () => {
+			// Act
+			controlsRegistry.unregisterControl( testControlType );
+
+			// Assert
+			expect( controlsRegistry.getControl( testControlType as ControlType ) ).toBeUndefined();
+		} );
+
+		it( 'should throw error when unregistering non-existent control type', () => {
+			// Arrange
+			const nonExistentType = 'non-existent-control';
+
+			// Act & Assert
+			expect( () => {
+				controlsRegistry.unregisterControl( nonExistentType );
+			} ).toThrow( ControlTypeNotRegisteredError );
+		} );
+
+		it( 'should throw error when unregistering already removed control type', () => {
+			// Arrange
+			controlsRegistry.unregisterControl( testControlType );
+
+			// Act & Assert
+			expect( () => {
+				controlsRegistry.unregisterControl( testControlType );
+			} ).toThrow( ControlTypeNotRegisteredError );
 		} );
 	} );
 } );

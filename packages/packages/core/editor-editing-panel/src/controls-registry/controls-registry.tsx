@@ -24,6 +24,8 @@ import {
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
+import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
+
 type ControlRegistry = Record<
 	string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,18 +52,18 @@ export type ControlTypes = {
 	[ key in ControlType ]: ( typeof controlTypes )[ key ][ 'component' ];
 };
 
-class ControlsRegistryManager {
-	private static instance: ControlsRegistryManager;
+class ControlsRegistry {
+	private static instance: ControlsRegistry;
 
 	private constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
 		this.controlsRegistry = controlsRegistry;
 	}
 
-	static getInstance(): ControlsRegistryManager {
-		if ( ! ControlsRegistryManager.instance ) {
-			ControlsRegistryManager.instance = new ControlsRegistryManager();
+	static getInstance(): ControlsRegistry {
+		if ( ! ControlsRegistry.instance ) {
+			ControlsRegistry.instance = new ControlsRegistry();
 		}
-		return ControlsRegistryManager.instance;
+		return ControlsRegistry.instance;
 	}
 
 	getControl( type: ControlType ) {
@@ -81,19 +83,25 @@ class ControlsRegistryManager {
 	}
 
 	registerControl(
-		type: ControlType,
+		type: string,
 		component: ControlComponent,
 		layout: ControlLayout,
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		propTypeUtil?: PropTypeUtil< string, any >
 	) {
+		if ( this.controlsRegistry[ type ] ) {
+			throw new ControlTypeAlreadyRegisteredError( { context: { controlType: type } } );
+		}
 		this.controlsRegistry[ type ] = { component, layout, propTypeUtil };
 	}
 
-	unregisterControl( type: ControlType ) {
+	unregisterControl( type: string ) {
+		if ( ! this.controlsRegistry[ type ] ) {
+			throw new ControlTypeNotRegisteredError( { context: { controlType: type } } );
+		}
 		// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
 		delete this.controlsRegistry[ type ];
 	}
 }
 
-export const controlsRegistry = ControlsRegistryManager.getInstance();
+export const controlsRegistry = ControlsRegistry.getInstance();

@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 
 import { ElementProvider } from '../../contexts/element-context';
 import { Control } from '../control';
-import { controlsRegistry } from '../controls-registry';
+import { controlsRegistry, ControlType } from '../controls-registry';
 
 jest.mock( '@elementor/editor-controls' );
 
@@ -31,7 +31,7 @@ const elementProviderProps = {
 describe( '<Control />', () => {
 	beforeAll( () => {
 		controlsRegistry.registerControl(
-			'text',
+			'test-text',
 			( ( { placeholder }: { placeholder: string } ) => (
 				<input type="text" placeholder={ placeholder } />
 			) ) as ControlComponent,
@@ -40,14 +40,14 @@ describe( '<Control />', () => {
 	} );
 
 	afterAll( () => {
-		controlsRegistry.unregisterControl( 'text' );
+		controlsRegistry.unregisterControl( 'test-text' );
 	} );
 
 	it( 'should render control component', () => {
 		// Act.
 		renderWithTheme(
 			<ElementProvider { ...elementProviderProps }>
-				<Control type="text" />
+				<Control type={("test-text" as ControlType)} props={ {} } />
 			</ElementProvider>
 		);
 
@@ -60,7 +60,7 @@ describe( '<Control />', () => {
 		renderWithTheme(
 			<ElementProvider { ...elementProviderProps }>
 				<Control
-					type="text"
+					type={("test-text" as ControlType)}
 					props={ {
 						placeholder: 'type here',
 					} }
