@@ -116,7 +116,7 @@ export const SizeInput = ( {
 					} }
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
-					shouldBlockInput={ isUnitExtendedOption( unit ) }
+					readOnlyState={ isUnitExtendedOption( unit ) }
 					inputProps={ inputProps }
 				/>
 			</Box>
