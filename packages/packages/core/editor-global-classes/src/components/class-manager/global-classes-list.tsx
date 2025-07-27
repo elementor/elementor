@@ -50,27 +50,7 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 	const dispatch = useDispatch();
 	const filters = useFilters();
 	const [ classesOrder, reorderClasses ] = useReorder();
-
-	const lowercaseLabels = useMemo(
-		() =>
-			cssClasses.map( ( cssClass ) => ( {
-				...cssClass,
-				lowerLabel: cssClass.label.toLowerCase(),
-			} ) ),
-		[ cssClasses ]
-	);
-
-	const filteredClasses = useMemo( () => {
-		return searchValue.length > 1
-			? lowercaseLabels.filter( ( cssClass ) =>
-					cssClass.lowerLabel.toLowerCase().includes( searchValue.toLowerCase() )
-			  )
-			: cssClasses;
-	}, [ searchValue, cssClasses, lowercaseLabels ] );
-
-	const filteredByCategory = useMemo( () => {
-		return filters ? filteredClasses.filter( ( cssClass ) => filters.includes( cssClass.id ) ) : filteredClasses;
-	}, [ filteredClasses, filters ] );
+	const filteredCssClasses = useFilteredCssClasses();
 
 	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
@@ -98,7 +78,7 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 		onClearFilter,
 		onClearSearch,
 		searchValue,
-		notFoundType: getNotFoundType( searchValue, filters, filteredClasses ),
+		notFoundType: getNotFoundType( searchValue, filters, filteredCssClasses ),
 	} );
 
 	if ( shouldShowNotFound !== null ) {
@@ -110,14 +90,12 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
 				{ filters && (
 					<Typography variant="subtitle2" color="text.primary">
-						{ __( 'We found ${number} classes:', 'elementor' ).replace(
-							'${number}',
-							filters.length.toString()
-						) }
+						{ /* translators: %s: Number of classes. */ }
+						{ __( 'We found "%s" classes:', 'elementor' ).replace( '%s', filters.length.toString() ) }
 					</Typography>
 				) }
 				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-					{ filteredByCategory?.map( ( { id, label } ) => {
+					{ filteredCssClasses?.map( ( { id, label } ) => {
 						return (
 							<SortableItem key={ id } id={ id }>
 								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
@@ -179,4 +157,35 @@ const useReorder = () => {
 	};
 
 	return [ order, reorder ] as const;
+};
+
+const useFilteredCssClasses = (): StyleDefinition[] => {
+	const cssClasses = useOrderedClasses();
+	const {
+		search: { debouncedValue: searchValue },
+	} = useSearchAndFilters();
+	const filters = useFilters();
+
+	const lowercaseLabels = useMemo(
+		() =>
+			cssClasses.map( ( cssClass ) => ( {
+				...cssClass,
+				lowerLabel: cssClass.label.toLowerCase(),
+			} ) ),
+		[ cssClasses ]
+	);
+
+	const filteredClasses = useMemo( () => {
+		if ( searchValue.length > 1 ) {
+			return lowercaseLabels.filter( ( cssClass ) => cssClass.lowerLabel.includes( searchValue.toLowerCase() ) );
+		}
+		return cssClasses;
+	}, [ searchValue, cssClasses, lowercaseLabels ] );
+
+	return useMemo( () => {
+		if ( filters && filters.length > 0 ) {
+			return filteredClasses.filter( ( cssClass ) => filters.includes( cssClass.id ) );
+		}
+		return filteredClasses;
+	}, [ filteredClasses, filters ] );
 };
