@@ -111,10 +111,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					integration: true,
 					keywords: widget.keywords || [],
 				}, {
-					at: elementsCollection.findIndex({widgetType: "image-carousel"}) + 1,
+					// Inject after the image-carousel widget.
+					at: elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1,
 				} );
 			} );
-		} 
+		}
 
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
