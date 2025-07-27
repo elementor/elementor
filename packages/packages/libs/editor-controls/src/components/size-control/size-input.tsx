@@ -15,11 +15,12 @@ type SizeInputProps = {
 	units: ( Unit | ExtendedOption )[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
-	onClick?: ( event: React.MouseEvent< HTMLInputElement > ) => void;
+	onClick?: ( event: React.MouseEvent< HTMLElement > ) => void;
 	handleUnitChange: ( unit: Unit | ExtendedOption ) => void;
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
 	disabled?: boolean;
+	isPopoverOpen?: boolean;
 };
 
 const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+', '-' ];
@@ -37,6 +38,7 @@ export const SizeInput = ( {
 	unit,
 	popupState,
 	disabled,
+	isPopoverOpen,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -118,6 +120,9 @@ export const SizeInput = ( {
 					onBlur={ onBlur }
 					shouldBlockInput={ isUnitExtendedOption( unit ) }
 					inputProps={ inputProps }
+					unit={ unit }
+					onClick={ onClick }
+					isPopoverOpen={ isPopoverOpen }
 				/>
 			</Box>
 		</ControlActions>

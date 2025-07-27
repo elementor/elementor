@@ -15,7 +15,8 @@ import {
 } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { DEFAULT_UNIT } from '../../utils/size-control';
+import { DEFAULT_UNIT, type ExtendedOption, type Unit } from '../../utils/size-control';
+import { NonEditableInput } from './empty-field-inner-selection';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -25,11 +26,14 @@ type TextFieldInnerSelectionProps = {
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
+	onClick?: ( event: React.MouseEvent< HTMLElement > ) => void;
 	shouldBlockInput?: boolean;
 	inputProps: TextFieldProps[ 'InputProps' ] & {
-		endAdornment: React.JSX.Element;
+		endAdornment: React.ReactNode;
 	};
 	disabled?: boolean;
+	isPopoverOpen?: boolean;
+	unit?: Unit | ExtendedOption;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -42,13 +46,30 @@ export const TextFieldInnerSelection = forwardRef(
 			onBlur,
 			onKeyDown,
 			onKeyUp,
+			onClick,
 			shouldBlockInput = false,
 			inputProps,
 			disabled,
+			isPopoverOpen = false,
+			unit,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
+
+		if ( unit === 'custom' || unit === 'auto' ) {
+			return (
+				<NonEditableInput
+					ref={ ref as React.LegacyRef< HTMLDivElement > }
+					value={ value }
+					onClick={ onClick }
+					disabled={ disabled }
+					isPopoverOpen={ isPopoverOpen }
+					unit={ unit }
+					inputProps={ inputProps }
+				/>
+			);
+		}
 
 		return (
 			<TextField
