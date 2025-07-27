@@ -2,7 +2,7 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { useCssClass } from './css-class-context';
 
-export const useCanPromoteLocalClass = () => {
+export const useCanConvertLocalClassToGlobal = () => {
 	const { element } = useElement();
 	const { label } = useCssClass();
 	const { provider, id, meta } = useStyle();

@@ -12,7 +12,7 @@ type OwnProps = {
 	styleDef: StyleDefinition;
 };
 
-export const PromoteLocalClassToGlobalClass = ( props: OwnProps ) => {
+export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 	const localStyleData = props.styleDef;
 
 	const handlePromote = () => {

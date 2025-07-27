@@ -3,12 +3,13 @@ import { deleteElementStyle, getElementSetting, updateElementSettings } from '@e
 import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { createLocation } from '@elementor/locations';
+import { useSessionStorage } from '@elementor/session';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 
-export const { Slot: CssClassPromoteSlot, inject: injectIntoCssClassPromote } = createLocation< {
+export const { Slot: CssClassConvertSlot, inject: injectIntoCssClassConvert } = createLocation< {
 	styleDef: StyleDefinition;
 	successCallback: ( newId: string ) => void;
 } >();
@@ -22,11 +23,12 @@ type OwnProps = {
  * Promote a local class to a global class injection point
  * @param props
  */
-export const CssClassPromote = ( props: OwnProps ) => {
+export const CssClassConvert = ( props: OwnProps ) => {
 	const { element } = useElement();
 	const elementId = element.id;
 	const currentClassesProp = useClassesProp();
 	const { setId: setActiveId } = useStyle();
+	const [ _, saveValue ] = useSessionStorage( `last-converted-class-generated-name` );
 
 	const successCallback = ( newId: string ) => {
 		onPromoteSuccess( {
@@ -35,11 +37,12 @@ export const CssClassPromote = ( props: OwnProps ) => {
 			classesProp: currentClassesProp,
 			styleDef: props.styleDef,
 		} );
+		saveValue( newId );
 		setActiveId( newId );
 		props.closeMenu();
 	};
 
-	return <CssClassPromoteSlot styleDef={ props.styleDef } successCallback={ successCallback } />;
+	return <CssClassConvertSlot styleDef={ props.styleDef } successCallback={ successCallback } />;
 };
 
 type OnPromoteSuccessOpts = {

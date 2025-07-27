@@ -1,7 +1,7 @@
 import { injectIntoLogic } from '@elementor/editor';
 import {
 	injectIntoClassSelectorActions,
-	injectIntoCssClassPromote,
+	injectIntoCssClassConvert,
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
@@ -11,8 +11,8 @@ import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
 import { panel } from './components/class-manager/class-manager-panel';
+import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { PopulateStore } from './components/populate-store';
-import { PromoteLocalClassToGlobalClass } from './components/promote-local-class-to-global-class';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
 import { slice } from './store';
 import { syncWithDocumentSave } from './sync-with-document-save';
@@ -28,9 +28,9 @@ export function init() {
 		component: PopulateStore,
 	} );
 
-	injectIntoCssClassPromote( {
-		id: 'global-classes-promote-class',
-		component: PromoteLocalClassToGlobalClass,
+	injectIntoCssClassConvert( {
+		id: 'global-classes-convert-from-local-class',
+		component: ConvertLocalClassToGlobalClass,
 	} );
 
 	injectIntoClassSelectorActions( {
