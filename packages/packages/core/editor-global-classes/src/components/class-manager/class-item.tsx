@@ -37,7 +37,7 @@ type ClassItemProps = React.PropsWithChildren< {
 export const ClassItem = ( { id, label, renameClass, selected, disabled, sortableTriggerProps }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 	const {
-		search: { isSearchActive },
+		search: { inputValue },
 	} = useSearchAndFilters();
 	const {
 		ref: editableRef,
@@ -74,7 +74,7 @@ export const ClassItem = ( { id, label, renameClass, selected, disabled, sortabl
 						ref={ itemRef }
 						dense
 						disableGutters
-						showSortIndicator={ isSearchActive }
+						showSortIndicator={ inputValue.length >= 2 }
 						showActions={ isSelected || isEditing }
 						shape="rounded"
 						onDoubleClick={ openEditMode }

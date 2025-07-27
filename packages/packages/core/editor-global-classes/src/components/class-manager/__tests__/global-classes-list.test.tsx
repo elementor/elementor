@@ -43,7 +43,6 @@ const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 		debouncedValue: '',
 		handleChange: jest.fn(),
 		onClearSearch: jest.fn(),
-		isSearchActive: false,
 	},
 	filters: {
 		filters: { empty: false, onThisPage: false, unused: false },
@@ -433,7 +432,6 @@ describe( 'GlobalClassesList', () => {
 				debouncedValue: 'head',
 				handleChange: jest.fn(),
 				onClearSearch: jest.fn(),
-				isSearchActive: true,
 			},
 			filters: {
 				...mockUseSearchAndFiltersProps.filters,
@@ -492,7 +490,6 @@ describe( 'GlobalClassesList', () => {
 				debouncedValue: 'nonexistent',
 				handleChange: jest.fn(),
 				onClearSearch: jest.fn(),
-				isSearchActive: true,
 			},
 			filters: {
 				...mockUseSearchAndFiltersProps.filters,

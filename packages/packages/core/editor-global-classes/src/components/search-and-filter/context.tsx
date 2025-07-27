@@ -9,7 +9,6 @@ type SearchContextType = {
 	inputValue: string;
 	handleChange: ( value: string ) => void;
 	onClearSearch: () => void;
-	isSearchActive: boolean;
 };
 type FilterAndSortContextType = {
 	filters: CheckedFilters;
@@ -53,7 +52,6 @@ export const SearchAndFilterProvider = ( { children }: React.PropsWithChildren )
 					inputValue,
 					handleChange,
 					onClearSearch,
-					isSearchActive: inputValue.length >= 2,
 				},
 				filters: {
 					filters,
