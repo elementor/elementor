@@ -102,7 +102,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		if ( elementor.config.integrationWidgets ) {
 			jQuery.each( elementor.config.integrationWidgets, ( index, widget ) => {
-				elementsCollection.unshift( {
+				elementsCollection.add( {
 					name: widget.name,
 					title: widget.title,
 					icon: widget.icon,
@@ -110,6 +110,8 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					editable: false,
 					integration: true,
 					keywords: widget.keywords || [],
+				}, {
+					at: elementsCollection.findIndex({widgetType: "image-carousel"}) + 1,
 				} );
 			} );
 		} 

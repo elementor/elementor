@@ -432,7 +432,7 @@ class Hints {
 			$data['content'] = __( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' );
 			$data['action_button'] = [
 				'text' => __( 'Customize', 'elementor' ),
-				'url' => admin_url( 'admin.php?page=accessibility-settings' ),
+				'url' => admin_url( 'admin.php?page=accessibility-settings#design' ),
 				'classes' => [ 'elementor-button' ],
 			];
 		}
