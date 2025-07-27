@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { stylesRepository, useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
 import { bindMenu, Divider, Menu, MenuSubheader, type PopupState, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import * as React from 'react';
 
 import { useStyle } from '../../contexts/style-context';
 import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/types';
@@ -57,6 +57,14 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 			// Workaround for focus-visible issue.
 			disableAutoFocusItem
 		>
+			{ canPromote && styleDef && (
+				<>
+					<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
+						{ __( 'Actions', 'elementor' ) }
+					</MenuSubheader>
+					<CssClassPromote styleDef={ styleDef } closeMenu={ popupState.close } />
+				</>
+			) }
 			{ /* It has to be an array since MUI menu doesn't accept a Fragment as a child, and wrapping the items with an HTML element disrupts keyboard navigation */ }
 			{ getMenuItemsByProvider( { provider, closeMenu: popupState.close, fixed } ) }
 			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
@@ -65,7 +73,6 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 			{ STATES.map( ( state ) => {
 				return <StateMenuItem key={ state.key } state={ state.value } closeMenu={ popupState.close } />;
 			} ) }
-			{ canPromote && styleDef && <CssClassPromote styleDef={ styleDef } /> }
 		</Menu>
 	);
 }

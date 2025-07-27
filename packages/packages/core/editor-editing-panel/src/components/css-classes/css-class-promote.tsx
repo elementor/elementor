@@ -15,6 +15,7 @@ export const { Slot: CssClassPromoteSlot, inject: injectIntoCssClassPromote } = 
 
 type OwnProps = {
 	styleDef: StyleDefinition;
+	closeMenu: () => void;
 };
 
 /**
@@ -35,6 +36,7 @@ export const CssClassPromote = ( props: OwnProps ) => {
 			styleDef: props.styleDef,
 		} );
 		setActiveId( newId );
+		props.closeMenu();
 	};
 
 	return <CssClassPromoteSlot styleDef={ props.styleDef } successCallback={ successCallback } />;
