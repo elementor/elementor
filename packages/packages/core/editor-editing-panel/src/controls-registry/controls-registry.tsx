@@ -53,17 +53,8 @@ export type ControlTypes = {
 };
 
 class ControlsRegistry {
-	private static instance: ControlsRegistry;
-
-	private constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
+	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
 		this.controlsRegistry = controlsRegistry;
-	}
-
-	static getInstance(): ControlsRegistry {
-		if ( ! ControlsRegistry.instance ) {
-			ControlsRegistry.instance = new ControlsRegistry();
-		}
-		return ControlsRegistry.instance;
 	}
 
 	getControl( type: ControlType ) {
@@ -104,4 +95,4 @@ class ControlsRegistry {
 	}
 }
 
-export const controlsRegistry = ControlsRegistry.getInstance();
+export const controlsRegistry = new ControlsRegistry();
