@@ -151,7 +151,7 @@ export const SizeControl = createControl(
 		};
 
 		const onInputClick = ( event: React.MouseEvent ) => {
-			if ( ( event.target as HTMLElement ).closest( 'input' ) && 'custom' === state.unit ) {
+			if ( state.unit === 'custom' ) {
 				popupState.open( anchorRef?.current );
 			}
 		};
@@ -207,7 +207,7 @@ export const SizeControl = createControl(
 					onBlur={ restoreValue }
 					onClick={ onInputClick }
 					popupState={ popupState }
-					isPopoverOpen={ popupState.isOpen }
+					isPopoverOpen={ popupState.isOpen && controlUnit === 'custom' }
 				/>
 				{ anchorRef?.current && (
 					<TextFieldPopover

@@ -15,7 +15,7 @@ type SizeInputProps = {
 	units: ( Unit | ExtendedOption )[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
-	onClick?: ( event: React.MouseEvent< HTMLInputElement > ) => void;
+	onClick?: ( event: React.MouseEvent< HTMLElement > ) => void;
 	handleUnitChange: ( unit: Unit | ExtendedOption ) => void;
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
@@ -118,6 +118,7 @@ export const SizeInput = ( {
 					} }
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
+					onClick={ onClick }
 					shouldBlockInput={ isUnitExtendedOption( unit ) }
 					isPopoverOpen={ isPopoverOpen }
 					unit={ unit }

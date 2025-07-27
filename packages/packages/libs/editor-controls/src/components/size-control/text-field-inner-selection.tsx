@@ -16,6 +16,7 @@ import {
 
 import { useBoundProp } from '../../bound-prop-context';
 import { DEFAULT_UNIT, type ExtendedOption, type Unit } from '../../utils/size-control';
+import { UnitDisplayInput } from './unit-display-input';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -25,15 +26,15 @@ type TextFieldInnerSelectionProps = {
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
+	onClick?: ( event: React.MouseEvent< HTMLElement > ) => void;
 	shouldBlockInput?: boolean;
 	inputProps: TextFieldProps[ 'InputProps' ] & {
-		endAdornment: React.JSX.Element;
+		endAdornment: React.ReactNode;
 	};
 	disabled?: boolean;
 	isPopoverOpen?: boolean;
 	unit?: Unit | ExtendedOption;
 };
-
 export const TextFieldInnerSelection = forwardRef(
 	(
 		{
@@ -44,6 +45,7 @@ export const TextFieldInnerSelection = forwardRef(
 			onBlur,
 			onKeyDown,
 			onKeyUp,
+			onClick,
 			shouldBlockInput = false,
 			inputProps,
 			disabled,
@@ -54,29 +56,23 @@ export const TextFieldInnerSelection = forwardRef(
 	) => {
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
 
+		if ( unit === 'custom' || unit === 'auto' ) {
+			return (
+				<UnitDisplayInput
+					ref={ ref as React.LegacyRef< HTMLDivElement > }
+					value={ value }
+					onClick={ onClick }
+					disabled={ disabled }
+					isPopoverOpen={ isPopoverOpen }
+					unit={ unit }
+					inputProps={ inputProps }
+				/>
+			);
+		}
 		return (
 			<TextField
 				ref={ ref }
-				sx={ {
-					input: {
-						cursor: shouldBlockInput ? 'default' : undefined,
-						caretColor: shouldBlockInput ? 'transparent' : undefined,
-					},
-					// Custom focus border - show when focused OR when custom popover is open
-					'& .MuiOutlinedInput-root': {
-						'&.Mui-focused fieldset': {
-							borderColor: 'primary.main',
-							borderWidth: '2px',
-						},
-						// Force focus styling when custom unit popover is open
-						...( isPopoverOpen && {
-							'& fieldset': {
-								borderColor: 'primary.main !important',
-								borderWidth: '2px !important',
-							},
-						} ),
-					},
-				} }
+				sx={ { input: { cursor: shouldBlockInput ? 'default !important' : undefined } } }
 				size="tiny"
 				fullWidth
 				type={ shouldBlockInput ? undefined : type }
@@ -86,8 +82,6 @@ export const TextFieldInnerSelection = forwardRef(
 				onKeyUp={ shouldBlockInput ? undefined : onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
-				autoComplete={ shouldBlockInput ? 'off' : undefined }
-				readOnly={ shouldBlockInput }
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ inputProps }
 			/>
