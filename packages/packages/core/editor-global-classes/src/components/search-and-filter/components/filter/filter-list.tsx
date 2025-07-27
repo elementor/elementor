@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Chip, MenuList } from '@elementor/ui';
+import { Checkbox, Chip, MenuItem, MenuList, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useFilteredCssClassUsage } from '../../../../hooks/use-filtered-css-class-usage';
 import { useSearchAndFilters } from '../../context';
 import { type FilterKey } from '../../types';
-import { LabeledCheckbox } from './labeld-checkbox';
 
 type CheckBoxItem = {
 	label: string;
@@ -53,3 +52,37 @@ export const FilterList = () => {
 		</MenuList>
 	);
 };
+
+type LabeledCheckboxProps = {
+	label: string;
+	suffix?: React.ReactNode;
+	onClick: () => void;
+	checked: boolean;
+};
+
+const LabeledCheckbox = ( { label, suffix, onClick, checked }: LabeledCheckboxProps ) => (
+	<MenuItem onClick={ onClick }>
+		<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 }>
+			<Checkbox
+				checked={ checked }
+				sx={ {
+					padding: 0,
+					color: 'text.tertiary',
+					'&:hover': {
+						backgroundColor: 'transparent',
+					},
+					'&.Mui-checked:hover': {
+						backgroundColor: 'transparent',
+					},
+					'&.Mui-checked': {
+						color: 'text.tertiary',
+					},
+				} }
+			/>
+			<Typography variant="caption" sx={ { color: 'text.secondary' } }>
+				{ label }
+			</Typography>
+			{ suffix }
+		</Stack>
+	</MenuItem>
+);

@@ -11,9 +11,12 @@ export const ActiveFilters = () => {
 		filters: { filters, setFilters },
 	} = useSearchAndFilters();
 
-	const handleRemoveFilter = ( filterKey: keyof typeof filters ) => {
-		setFilters( ( prev ) => ( { ...prev, [ filterKey ]: false } ) );
-	};
+	const handleRemoveFilter = React.useCallback(
+		( filterKey: keyof typeof filters ) => {
+			setFilters( ( prev ) => ( { ...prev, [ filterKey ]: false } ) );
+		},
+		[ setFilters ]
+	);
 
 	const showClearIcon = Object.values( filters ).some( ( value ) => value );
 
@@ -35,7 +38,7 @@ export const ActiveFilters = () => {
 			{ showClearIcon && (
 				<ClearIconButton
 					tooltipText={ __( 'Clear Filters', 'elementor' ) }
-					sxStyle={ { margin: '0 0 auto auto' } }
+					sx={ { margin: '0 0 auto auto' } }
 				/>
 			) }
 		</Stack>

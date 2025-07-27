@@ -10,20 +10,22 @@ export const useFilters = () => {
 	} = useSearchAndFilters();
 	const allFilters = useFilteredCssClassUsage();
 
-	// Collect only the active filter keys
-	const activeKeys = useMemo(
-		() => Object.keys( filters ).filter( ( key ) => filters[ key as FilterKey ] ) as FilterKey[],
-		[ filters ]
-	);
-
 	return useMemo( () => {
-		if ( activeKeys.length === 0 ) {
+		const activeEntries = Object.entries( filters ).filter( ( [ , isActive ] ) => isActive ) as [
+			FilterKey,
+			true,
+		][];
+
+		if ( activeEntries.length === 0 ) {
 			return null;
 		}
 
-		// Start with the values of the first active filter
-		return activeKeys
-			.map( ( key ) => allFilters[ key ] || [] )
-			.reduce( ( acc, arr ) => acc.filter( ( val ) => arr.includes( val ) ) );
-	}, [ activeKeys, allFilters ] );
+		return activeEntries.reduce< string[] >( ( acc, [ key ], index ) => {
+			const current = allFilters[ key ] || [];
+			if ( index === 0 ) {
+				return current;
+			}
+			return acc.filter( ( val ) => current.includes( val ) );
+		}, [] );
+	}, [ filters, allFilters ] );
 };
