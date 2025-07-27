@@ -120,11 +120,7 @@ export function ClassManagerPanel() {
 									</Stack>
 									<ActiveFilters />
 								</Box>
-								<Divider
-									sx={ {
-										borderWidth: '1px 0 0 0',
-									} }
-								/>
+								<Divider />
 								<Box
 									px={ 2 }
 									sx={ {
