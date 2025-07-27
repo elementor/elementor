@@ -5,20 +5,19 @@ import { colorPropTypeUtil } from '@elementor/editor-props';
 import { ColorIndicator } from '../components/ui/color-indicator';
 import { AssignedVariable } from '../components/ui/variable/assigned-variable';
 import { DeletedVariable } from '../components/ui/variable/deleted-variable';
+import { MissingVariable } from '../components/ui/variable/missing-variable';
 import { useVariable } from '../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 
 export const ColorVariableControl = () => {
 	const { value: variableValue } = useBoundProp( colorVariablePropTypeUtil );
-	const assignedVariable = useVariable( variableValue );
 
+	const assignedVariable = useVariable( variableValue );
 	if ( ! assignedVariable ) {
-		throw new Error( `Global color variable ${ variableValue } not found` );
+		return <MissingVariable />;
 	}
 
-	const isVariableDeleted = assignedVariable?.deleted;
-
-	if ( isVariableDeleted ) {
+	if ( assignedVariable?.deleted ) {
 		return (
 			<DeletedVariable
 				variable={ assignedVariable }

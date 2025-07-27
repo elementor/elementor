@@ -18,7 +18,7 @@ describe( 'FontVariableControl', () => {
 
 	const mockVariable = {
 		key: 'e-gv-789',
-		label: 'Main: Roboto',
+		label: 'main-roboto',
 		value: 'Roboto',
 		type: fontVariablePropTypeUtil.key,
 	};
@@ -28,7 +28,7 @@ describe( 'FontVariableControl', () => {
 			mockVariable,
 			{
 				key: 'e-gv-112',
-				label: 'Secondary: Monospace',
+				label: 'secondary-monospace',
 				value: 'Monospace',
 			},
 		],
@@ -69,10 +69,10 @@ describe( 'FontVariableControl', () => {
 
 		// Assert
 		expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-789' );
-		expect( screen.getByText( 'Main: Roboto' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'main-roboto' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should unlink the font variable make style to remain', () => {
+	it.skip( 'should unlink the font variable make style to remain', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const props = {
@@ -103,6 +103,35 @@ describe( 'FontVariableControl', () => {
 		expect( screen.getByText( 'Roboto' ) ).toBeInTheDocument();
 	} );
 
+	it( 'should unlink the font variable make style to remain', () => {
+		// Arrange
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: {
+				$$type: fontVariablePropTypeUtil.key,
+				value: 'e-gv-789',
+			},
+			bind: 'font-family',
+			propType,
+		};
+
+		// Act
+		renderControl( <FontVariableControl />, props );
+
+		const variableButton = screen.getByRole( 'button' );
+		fireEvent.click( variableButton );
+
+		const unlinkButton = screen.getByLabelText( 'Unlink' );
+		fireEvent.click( unlinkButton );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'string',
+			value: 'Roboto',
+		} );
+	} );
+
 	it( 'should render with a deleted variable', () => {
 		// Arrange
 		const setValue = jest.fn();
@@ -127,7 +156,28 @@ describe( 'FontVariableControl', () => {
 		renderControl( <FontVariableControl />, props );
 
 		// Assert
-		expect( screen.getByText( 'Main: Roboto' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'main-roboto' ) ).toBeInTheDocument();
 		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render with a missing variable', () => {
+		// Arrange
+		const props = {
+			setValue: jest.fn(),
+			value: {
+				$$type: fontVariablePropTypeUtil.key,
+				value: 'e-gv-missing',
+			},
+			bind: 'font-family',
+			propType,
+		};
+
+		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( null );
+
+		// Act
+		renderControl( <FontVariableControl />, props );
+
+		// Assert
+		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
 	} );
 } );

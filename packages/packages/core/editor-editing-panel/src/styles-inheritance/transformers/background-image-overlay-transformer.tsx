@@ -16,7 +16,7 @@ type Image = {
 };
 
 export const backgroundImageOverlayTransformer = createTransformer( ( value: Image ) => (
-	<Stack direction="row" gap={ 10 }>
+	<Stack direction="row" gap={ 1 } alignItems="center">
 		<ItemIconImage value={ value } />
 		<ItemLabelImage value={ value } />
 	</Stack>
@@ -33,6 +33,7 @@ const ItemIconImage = ( { value }: { value: Image } ) => {
 				width: '1em',
 				borderRadius: `${ theme.shape.borderRadius / 2 }px`,
 				outline: `1px solid ${ theme.palette.action.disabled }`,
+				flexShrink: 0,
 			} ) }
 		/>
 	);

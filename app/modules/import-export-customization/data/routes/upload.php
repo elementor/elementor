@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
 use Elementor\Plugin;
+use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,6 +17,10 @@ class Upload extends Base_Route {
 		return \WP_REST_Server::CREATABLE;
 	}
 
+	/**
+	 * @param $request \WP_REST_Request
+	 * @return \WP_REST_Response
+	 */
 	protected function callback( $request ): \WP_REST_Response {
 		try {
 			$file_url = $request->get_param( 'file_url' );

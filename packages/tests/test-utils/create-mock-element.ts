@@ -30,9 +30,9 @@ export function createMockElement( {
 			get: ( key ) => {
 				return model[ key ];
 			},
-			set: ( key, value ) => {
+			set: jest.fn().mockImplementation( ( key: keyof typeof model, value ) => {
 				model[ key ] = value;
-			},
+			} ),
 			toJSON: () => model,
 		},
 		settings: {
@@ -54,11 +54,13 @@ export function createMockElementType( {
 	title = '',
 	controls = [],
 	propsSchema = {},
+	dependenciesPerTargetMapping = {},
 }: Partial< ElementType > = {} ) {
 	return {
 		key,
 		title,
 		controls,
 		propsSchema,
+		dependenciesPerTargetMapping,
 	} as ElementType;
 }

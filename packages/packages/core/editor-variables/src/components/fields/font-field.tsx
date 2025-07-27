@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { FontFamilySelector } from '@elementor/editor-controls';
+import { enqueueFont, ItemSelector } from '@elementor/editor-controls';
 import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
-import { ChevronDownIcon } from '@elementor/icons';
+import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import {
 	bindPopover,
 	bindTrigger,
@@ -28,12 +28,19 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const defaultRef = useRef< HTMLDivElement >( null );
-	const anchorRef = usePopoverContentRef() ?? defaultRef;
+	const anchorRef = usePopoverContentRef() ?? defaultRef.current;
 
 	const fontPopoverState = usePopupState( { variant: 'popover' } );
 
 	const fontFamilies = useFontFamilies();
 	const sectionWidth = useSectionWidth();
+
+	const mapFontSubs = React.useMemo( () => {
+		return fontFamilies.map( ( { label, fonts } ) => ( {
+			label,
+			items: fonts,
+		} ) );
+	}, [ fontFamilies ] );
 
 	const handleChange = ( newValue: string ) => {
 		setFontFamily( newValue );
@@ -65,17 +72,21 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 				<Popover
 					disablePortal
 					disableScrollLock
-					anchorEl={ anchorRef.current }
+					anchorEl={ anchorRef }
 					anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-					transformOrigin={ { vertical: 'top', horizontal: -20 } }
+					transformOrigin={ { vertical: 'top', horizontal: -28 } }
 					{ ...bindPopover( fontPopoverState ) }
 				>
-					<FontFamilySelector
-						fontFamilies={ fontFamilies }
-						fontFamily={ fontFamily }
-						onFontFamilyChange={ handleFontFamilyChange }
+					<ItemSelector
+						itemsList={ mapFontSubs }
+						selectedItem={ fontFamily }
+						onItemChange={ handleFontFamilyChange }
 						onClose={ fontPopoverState.close }
 						sectionWidth={ sectionWidth }
+						title={ __( 'Font Family', 'elementor' ) }
+						itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
+						onDebounce={ enqueueFont }
+						icon={ TextIcon as React.ElementType< { fontSize: string } > }
 					/>
 				</Popover>
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }

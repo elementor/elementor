@@ -11,7 +11,22 @@ const propType = createMockPropType( { kind: 'object' } );
 jest.mock( '../../hooks/use-prop-variables', () => ( {
 	useVariable: jest.fn(),
 	deleteVariable: jest.fn(),
+	updateVariable: jest.fn(),
 } ) );
+
+jest.mock( '../../hooks/use-permissions', () => {
+	return {
+		usePermissions: () => {
+			return {
+				canAdd: jest.fn().mockReturnValue( true ),
+				canDelete: jest.fn().mockReturnValue( true ),
+				canEdit: jest.fn().mockReturnValue( true ),
+				canRestore: jest.fn().mockReturnValue( true ),
+				canManageSettings: jest.fn().mockReturnValue( true ),
+			};
+		},
+	};
+} );
 
 describe( 'ColorVariableEdit', () => {
 	const mockVariable = {
@@ -23,6 +38,7 @@ describe( 'ColorVariableEdit', () => {
 	beforeEach( () => {
 		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
 		( usePropVariablesModule.deleteVariable as jest.Mock ).mockResolvedValue( mockVariable.key );
+		( usePropVariablesModule.updateVariable as jest.Mock ).mockResolvedValue( mockVariable.key );
 	} );
 
 	it( 'should delete a variable after confirmation', async () => {

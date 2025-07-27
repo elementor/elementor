@@ -1,8 +1,17 @@
-import { type z } from '@elementor/schema';
+import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../../utils/create-prop-utils';
-import { unknownChildrenSchema } from '../utils';
+import { colorPropTypeUtil } from '../color';
+import { sizePropTypeUtil } from '../size';
 
-export const dropShadowFilterPropTypeUtil = createPropUtils( 'drop-shadow', unknownChildrenSchema );
+export const dropShadowFilterPropTypeUtil = createPropUtils(
+	'drop-shadow',
+	z.object( {
+		xAxis: sizePropTypeUtil.schema,
+		yAxis: sizePropTypeUtil.schema,
+		blur: sizePropTypeUtil.schema,
+		color: colorPropTypeUtil.schema,
+	} )
+);
 
 export type DropShadowFilterPropValue = z.infer< typeof dropShadowFilterPropTypeUtil.schema >;

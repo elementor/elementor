@@ -97,14 +97,12 @@ describe( 'useExportKit Hook', () => {
 						'X-WP-Nonce': 'wp-nonce',
 					},
 					body: JSON.stringify( {
-						include: mockIncludes,
 						kitInfo: {
 							title: 'My Kit',
 							description: 'Kit description',
 							source: 'file',
 						},
-						plugins: [],
-						selectedCustomPostTypes: [],
+						include: mockIncludes,
 					} ),
 				},
 			);

@@ -3,10 +3,12 @@
 exports[`renderStyles should render styles 1`] = `
 [
   {
+    "breakpoint": "desktop",
     "id": "test",
     "value": ".test{font-size:10px;}.test:hover{font-size:20px;}@media(max-width:992px){.test{font-size:30px;}}@media(max-width:768px){.test:focus{font-size:40px;}}",
   },
   {
+    "breakpoint": "desktop",
     "id": "test-2",
     "value": ".custom-name{font-size:50px;}",
   },

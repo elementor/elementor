@@ -18,7 +18,7 @@ describe( 'ColorVariableControl', () => {
 
 	const mockVariable = {
 		key: 'e-gv-123',
-		label: 'Primary Background Color',
+		label: 'primary-background-color',
 		value: '#911f1f',
 	};
 
@@ -27,7 +27,7 @@ describe( 'ColorVariableControl', () => {
 			mockVariable,
 			{
 				key: 'e-gv-456',
-				label: 'Secondary',
+				label: 'secondary-color',
 				value: '#00ff00',
 			},
 		],
@@ -68,10 +68,10 @@ describe( 'ColorVariableControl', () => {
 
 		// Assert
 		expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-123' );
-		expect( screen.getByText( 'Primary Background Color' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should unlink the color variable make style to remain', () => {
+	it.skip( 'should unlink the color variable make style to remain', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const props = {
@@ -102,6 +102,35 @@ describe( 'ColorVariableControl', () => {
 		expect( screen.getByText( '#911f1f' ) ).toBeInTheDocument();
 	} );
 
+	it( 'should unlink the color variable make style to remain', () => {
+		// Arrange
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			value: {
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-123',
+			},
+			bind: 'color',
+			propType,
+		};
+
+		// Act
+		renderControl( <ColorVariableControl />, props );
+
+		const variableButton = screen.getByRole( 'button' );
+		fireEvent.click( variableButton );
+
+		const unlinkButton = screen.getByLabelText( 'Unlink' );
+		fireEvent.click( unlinkButton );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'color',
+			value: '#911f1f',
+		} );
+	} );
+
 	it( 'should render with a deleted variable', () => {
 		// Arrange
 		const setValue = jest.fn();
@@ -126,7 +155,28 @@ describe( 'ColorVariableControl', () => {
 		renderControl( <ColorVariableControl />, props );
 
 		// Assert
-		expect( screen.getByText( 'Primary Background Color' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
 		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render with a missing variable', () => {
+		// Arrange
+		const props = {
+			setValue: jest.fn(),
+			value: {
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-missing',
+			},
+			bind: 'color',
+			propType,
+		};
+
+		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( null );
+
+		// Act
+		renderControl( <ColorVariableControl />, props );
+
+		// Assert
+		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
 	} );
 } );

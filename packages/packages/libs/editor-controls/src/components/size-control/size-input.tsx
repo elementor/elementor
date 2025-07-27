@@ -1,22 +1,22 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { PencilIcon } from '@elementor/icons';
+import { MathFunctionIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
-import { type DegreeUnit, type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
+import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
 type SizeInputProps = {
-	unit: Unit | DegreeUnit | ExtendedOption;
+	unit: Unit | ExtendedOption;
 	size: number | string;
 	placeholder?: string;
 	startIcon?: React.ReactNode;
-	units: ( Unit | DegreeUnit | ExtendedOption )[];
+	units: ( Unit | ExtendedOption )[];
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onClick?: ( event: React.MouseEvent< HTMLInputElement > ) => void;
-	handleUnitChange: ( unit: Unit | DegreeUnit | ExtendedOption ) => void;
+	handleUnitChange: ( unit: Unit | ExtendedOption ) => void;
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
 	disabled?: boolean;
@@ -87,7 +87,7 @@ export const SizeInput = ( {
 				onClick={ handleUnitChange }
 				value={ unit }
 				alternativeOptionLabels={ {
-					custom: <PencilIcon fontSize="small" />,
+					custom: <MathFunctionIcon fontSize="tiny" />,
 				} }
 				menuItemsAttributes={
 					units.includes( 'custom' )

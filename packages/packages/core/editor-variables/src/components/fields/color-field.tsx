@@ -16,7 +16,7 @@ export const ColorField = ( { value, onChange }: ColorFieldProps ) => {
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const defaultRef = useRef< HTMLDivElement >( null );
-	const anchorRef = usePopoverContentRef() ?? defaultRef;
+	const anchorRef = usePopoverContentRef() ?? defaultRef.current;
 
 	const handleChange = ( newValue: string ) => {
 		setColor( newValue );
@@ -41,7 +41,7 @@ export const ColorField = ( { value, onChange }: ColorFieldProps ) => {
 					error={ errorMessage ?? undefined }
 					slotProps={ {
 						colorPicker: {
-							anchorEl: anchorRef.current,
+							anchorEl: anchorRef,
 							anchorOrigin: { vertical: 'top', horizontal: 'right' },
 							transformOrigin: { vertical: 'top', horizontal: -10 },
 						},

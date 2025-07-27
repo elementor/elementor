@@ -6,6 +6,7 @@ import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
+import { TransformFunctionKeys } from '../types';
 import { AxisRow } from './axis-row';
 
 const moveAxisControls: { label: string; bindValue: 'x' | 'y' | 'z'; startIcon: React.ReactNode }[] = [
@@ -33,7 +34,7 @@ export const Move = () => {
 	return (
 		<Grid container spacing={ 1.5 }>
 			<PropProvider { ...context }>
-				<PropKeyProvider bind={ 'transform-move' }>
+				<PropKeyProvider bind={ TransformFunctionKeys.move }>
 					{ moveAxisControls.map( ( control ) => (
 						<AxisRow key={ control.bindValue } { ...control } anchorRef={ rowRef } />
 					) ) }

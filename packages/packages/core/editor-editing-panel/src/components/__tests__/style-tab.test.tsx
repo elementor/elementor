@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/react';
 
 import { useElement } from '../../contexts/element-context';
 import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
+import { StyleTab } from '../style-tab';
 import { StyleTabSection } from '../style-tab-section';
 
 jest.mock( '../../contexts/element-context' );
@@ -49,5 +50,13 @@ describe( 'style-tab', () => {
 				expect( collapsableContent ).toBeNull();
 			}
 		} );
+	} );
+
+	it( 'Should include 150px bottom spacing', () => {
+		const styleTabSource = StyleTab.toString();
+
+		expect( styleTabSource ).toContain( 'Box' );
+		expect( styleTabSource ).toContain( '150px' );
+		expect( styleTabSource ).toContain( 'height' );
 	} );
 } );

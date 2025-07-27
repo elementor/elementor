@@ -1,18 +1,25 @@
 import { useMemo } from 'react';
-import { createElementStyle, deleteElementStyle, type ElementID, getElementLabel } from '@elementor/editor-elements';
+import {
+	createElementStyle,
+	deleteElementStyle,
+	type ElementID,
+	getElementLabel,
+	shouldCreateNewLocalStyle,
+} from '@elementor/editor-elements';
 import type { Props } from '@elementor/editor-props';
 import { getVariantByMeta, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { isElementsStylesProvider, type StylesProvider } from '@elementor/editor-styles-repository';
 import { ELEMENTS_STYLES_RESERVED_LABEL } from '@elementor/editor-styles-repository';
-import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
+import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesProp } from '../contexts/classes-prop-context';
 import { useElement } from '../contexts/element-context';
 import { useStyle } from '../contexts/style-context';
 import { StyleNotFoundUnderProviderError, StylesProviderCannotUpdatePropsError } from '../errors';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { useStylesRerender } from './use-styles-rerender';
+
+export const HISTORY_DEBOUNCE_WAIT = 800;
 
 export function useStylesFields< T extends Props >( propNames: ( keyof T & string )[] ) {
 	const {
@@ -20,18 +27,17 @@ export function useStylesFields< T extends Props >( propNames: ( keyof T & strin
 	} = useElement();
 	const { id: styleId, meta, provider, canEdit } = useStyle();
 
-	const undoableUpdateStyle = useUndoableUpdateStyle( { elementId, meta } );
-	const undoableCreateElementStyle = useUndoableCreateElementStyle( { elementId, meta } );
+	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
 
 	useStylesRerender();
 
 	const values = getProps< T >( { elementId, styleId, provider, meta, propNames } );
 
 	const setValues = ( props: T, { history: { propDisplayName } }: { history: { propDisplayName: string } } ) => {
-		if ( styleId === null ) {
-			undoableCreateElementStyle( { props, propDisplayName } );
+		if ( ! styleId ) {
+			undoableUpdateStyle( { styleId: null, provider: null, props, propDisplayName } );
 		} else {
-			undoableUpdateStyle( { provider, styleId, props, propDisplayName } );
+			undoableUpdateStyle( { styleId, provider, props, propDisplayName } );
 		}
 	};
 
@@ -68,14 +74,36 @@ function getProps< T extends Props >( { styleId, elementId, provider, meta, prop
 	) as NullableValues< T >;
 }
 
-type UndoableCreateElementStyleArgs = {
+type UpdateStyleArgs = {
+	styleId: StyleDefinition[ 'id' ];
+	provider: StylesProvider;
 	props: Props;
 	propDisplayName: string;
 };
 
-function useUndoableCreateElementStyle( {
+type CreateStyleArgs = {
+	styleId: null;
+	provider: null;
+	props: Props;
+	propDisplayName: string;
+};
+
+type UpdateStyleReturn = {
+	styleId: StyleDefinition[ 'id' ];
+	provider: StylesProvider;
+	prevProps: Props;
+};
+
+type CreateStyleReturn = {
+	createdStyleId: StyleDefinition[ 'id' ];
+};
+
+type UndoableUpdateStylePayload = UpdateStyleArgs | CreateStyleArgs;
+type UndoableUpdateStyleReturn = UpdateStyleReturn | CreateStyleReturn;
+
+function useUndoableActions( {
 	elementId,
-	meta,
+	meta: { breakpoint, state },
 }: {
 	elementId: ElementID;
 	meta: StyleDefinitionVariant[ 'meta' ];
@@ -83,108 +111,72 @@ function useUndoableCreateElementStyle( {
 	const classesProp = useClassesProp();
 
 	return useMemo( () => {
-		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
+		const meta = { breakpoint, state };
 
 		const createStyleArgs = { elementId, classesProp, meta, label: ELEMENTS_STYLES_RESERVED_LABEL };
 
 		return undoable(
 			{
-				do: ( { props }: UndoableCreateElementStyleArgs ) => {
-					return createElementStyle( { ...createStyleArgs, props } );
+				do: ( payload: UndoableUpdateStylePayload ): UndoableUpdateStyleReturn => {
+					if ( shouldCreateNewLocalStyle< StylesProvider >( payload ) ) {
+						return create( payload as CreateStyleArgs );
+					}
+					return update( payload as UpdateStyleArgs );
 				},
+				undo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
 
-				undo: ( _, styleId ) => {
-					deleteElementStyle( elementId, styleId );
+					if ( wasLocalStyleCreated ) {
+						return undoCreate( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+					}
+					return undo( payload as UpdateStyleArgs, doReturn as UpdateStyleReturn );
 				},
+				redo: ( payload: UndoableUpdateStylePayload, doReturn: UndoableUpdateStyleReturn ) => {
+					const wasLocalStyleCreated = shouldCreateNewLocalStyle< StylesProvider >( payload );
 
-				redo: ( { props }, styleId ) => {
-					return createElementStyle( { ...createStyleArgs, props, styleId } );
+					if ( wasLocalStyleCreated ) {
+						return create( payload as CreateStyleArgs, doReturn as CreateStyleReturn );
+					}
+					return update( payload as UpdateStyleArgs );
 				},
 			},
 			{
-				title: () => {
-					if ( isVersion331Active ) {
-						return localStyleHistoryTitlesV331.title( { elementId } );
-					}
-					return historyTitlesV330.title( { elementId } );
-				},
-				subtitle: ( { propDisplayName } ) => {
-					if ( isVersion331Active ) {
-						return localStyleHistoryTitlesV331.subtitle( { propDisplayName } );
-					}
-					return historyTitlesV330.subtitle;
-				},
+				title: ( { provider, styleId } ) => getTitle( { provider, styleId, elementId } ),
+				subtitle: ( { provider, styleId, propDisplayName } ) =>
+					getSubtitle( { provider, styleId, elementId, propDisplayName } ),
+				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		);
-	}, [ classesProp, elementId, meta ] );
-}
 
-type UndoableUpdateStyleArgs = {
-	styleId: StyleDefinition[ 'id' ];
-	provider: StylesProvider;
-	props: Props;
-	propDisplayName: string;
-};
+		function create( { props }: CreateStyleArgs, redoArgs?: CreateStyleReturn ): CreateStyleReturn {
+			const createdStyle = createElementStyle( { ...createStyleArgs, props, styleId: redoArgs?.createdStyleId } );
 
-function useUndoableUpdateStyle( {
-	elementId,
-	meta,
-}: {
-	elementId: ElementID;
+			return { createdStyleId: createdStyle };
+		}
 
-	meta: StyleDefinitionVariant[ 'meta' ];
-} ) {
-	return useMemo( () => {
-		const isVersion331Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
+		function undoCreate( _: UndoableUpdateStylePayload, { createdStyleId }: CreateStyleReturn ) {
+			deleteElementStyle( elementId, createdStyleId );
+		}
 
-		return undoable(
-			{
-				do: ( { provider, styleId, props }: UndoableUpdateStyleArgs ) => {
-					if ( ! provider.actions.updateProps ) {
-						throw new StylesProviderCannotUpdatePropsError( {
-							context: { providerKey: provider.getKey() },
-						} );
-					}
-
-					const style = provider.actions.get( styleId, { elementId } );
-
-					const prevProps = getCurrentProps( style, meta );
-
-					provider.actions.updateProps( { id: styleId, meta, props }, { elementId } );
-
-					return prevProps;
-				},
-
-				undo: ( { provider, styleId }, prevProps ) => {
-					provider.actions.updateProps?.( { id: styleId, meta, props: prevProps }, { elementId } );
-				},
-			},
-			{
-				title: ( { provider } ) => {
-					if ( isVersion331Active ) {
-						const isLocal = isElementsStylesProvider( provider.getKey() );
-
-						if ( isLocal ) {
-							return localStyleHistoryTitlesV331.title( { elementId } );
-						}
-						return defaultHistoryTitlesV331.title( { provider } );
-					}
-					return historyTitlesV330.title( { elementId } );
-				},
-				subtitle: ( { provider, styleId, propDisplayName } ) => {
-					if ( isVersion331Active ) {
-						const isLocal = isElementsStylesProvider( provider.getKey() );
-
-						if ( isLocal ) {
-							return localStyleHistoryTitlesV331.subtitle( { propDisplayName } );
-						}
-						return defaultHistoryTitlesV331.subtitle( { provider, styleId, elementId, propDisplayName } );
-					}
-					return historyTitlesV330.subtitle;
-				},
+		function update( { provider, styleId, props }: UpdateStyleArgs ): UpdateStyleReturn {
+			if ( ! provider.actions.updateProps ) {
+				throw new StylesProviderCannotUpdatePropsError( {
+					context: { providerKey: provider.getKey() },
+				} );
 			}
-		);
-	}, [ elementId, meta ] );
+
+			const style = provider.actions.get( styleId, { elementId } );
+			const prevProps = getCurrentProps( style, meta );
+
+			provider.actions.updateProps( { id: styleId, meta, props }, { elementId } );
+
+			return { styleId, provider, prevProps };
+		}
+
+		function undo( _: UndoableUpdateStylePayload, { styleId, provider, prevProps }: UpdateStyleReturn ) {
+			provider.actions.updateProps?.( { id: styleId, meta, props: prevProps }, { elementId } );
+		}
+	}, [ elementId, breakpoint, state, classesProp ] );
 }
 
 function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVariant[ 'meta' ] ) {
@@ -199,28 +191,23 @@ function getCurrentProps( style: StyleDefinition | null, meta: StyleDefinitionVa
 	return structuredClone( props );
 }
 
-const historyTitlesV330 = {
-	title: ( { elementId }: { elementId: ElementID } ) => getElementLabel( elementId ),
-	subtitle: __( 'Style edited', 'elementor' ),
-};
-
-type DefaultHistoryTitleV331Args = {
+type DefaultHistoryTitleArgs = {
 	provider: StylesProvider;
 };
 
-type DefaultHistorySubtitleV331Args = {
+type DefaultHistorySubtitleArgs = {
 	provider: StylesProvider;
 	styleId: StyleDefinition[ 'id' ];
 	elementId: ElementID;
 	propDisplayName: string;
 };
 
-const defaultHistoryTitlesV331 = {
-	title: ( { provider }: DefaultHistoryTitleV331Args ) => {
+const defaultHistoryTitles = {
+	title: ( { provider }: DefaultHistoryTitleArgs ) => {
 		const providerLabel = provider.labels?.singular;
 		return providerLabel ? capitalize( providerLabel ) : __( 'Style', 'elementor' );
 	},
-	subtitle: ( { provider, styleId, elementId, propDisplayName }: DefaultHistorySubtitleV331Args ) => {
+	subtitle: ( { provider, styleId, elementId, propDisplayName }: DefaultHistorySubtitleArgs ) => {
 		const styleLabel = provider.actions.get( styleId, { elementId } )?.label;
 
 		if ( ! styleLabel ) {
@@ -232,17 +219,17 @@ const defaultHistoryTitlesV331 = {
 	},
 };
 
-type LocalStyleHistoryTitleV331Args = {
+type LocalStyleHistoryTitleArgs = {
 	elementId: ElementID;
 };
 
-type LocalStyleHistorySubtitleV331Args = {
+type LocalStyleHistorySubtitleArgs = {
 	propDisplayName: string;
 };
 
-const localStyleHistoryTitlesV331 = {
-	title: ( { elementId }: LocalStyleHistoryTitleV331Args ) => getElementLabel( elementId ),
-	subtitle: ( { propDisplayName }: LocalStyleHistorySubtitleV331Args ) =>
+const localStyleHistoryTitles = {
+	title: ( { elementId }: LocalStyleHistoryTitleArgs ) => getElementLabel( elementId ),
+	subtitle: ( { propDisplayName }: LocalStyleHistorySubtitleArgs ) =>
 		// translators: %s is the name of the style property being edited
 		__( `%s edited`, 'elementor' ).replace( '%s', propDisplayName ),
 };
@@ -250,3 +237,39 @@ const localStyleHistoryTitlesV331 = {
 function capitalize( str: string ) {
 	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 }
+
+const isLocalStyle = ( provider: StylesProvider | null, styleId: StyleDefinition[ 'id' ] | null ) =>
+	! provider || ! styleId || isElementsStylesProvider( provider.getKey() );
+
+type TitleOptions = {
+	provider: StylesProvider | null;
+	styleId: string | null;
+	elementId: string;
+};
+
+type SubtitleOptions = TitleOptions & { propDisplayName: string };
+
+export const getTitle = ( { provider, styleId, elementId }: TitleOptions ) => {
+	const isLocal = isLocalStyle( provider, styleId );
+
+	if ( isLocal ) {
+		return localStyleHistoryTitles.title( { elementId } );
+	}
+
+	return defaultHistoryTitles.title( { provider: provider as StylesProvider } );
+};
+
+export const getSubtitle = ( { provider, styleId, propDisplayName, elementId }: SubtitleOptions ) => {
+	const isLocal = isLocalStyle( provider, styleId );
+
+	if ( isLocal ) {
+		return localStyleHistoryTitles.subtitle( { propDisplayName } );
+	}
+
+	return defaultHistoryTitles.subtitle( {
+		provider: provider as StylesProvider,
+		styleId: styleId as StyleDefinition[ 'id' ],
+		elementId,
+		propDisplayName,
+	} );
+};

@@ -9,8 +9,10 @@ import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { trackVariableEvent } from '../utils/tracking';
+import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { FontField } from './fields/font-field';
-import { LabelField } from './fields/label-field';
+import { LabelField, useLabelError } from './fields/label-field';
 
 const SIZE = 'tiny';
 
@@ -20,11 +22,13 @@ type Props = {
 };
 
 export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
-	const { setValue: setVariable } = useBoundProp( fontVariablePropTypeUtil );
+	const { setValue: setVariable, path } = useBoundProp( fontVariablePropTypeUtil );
 
 	const [ fontFamily, setFontFamily ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+
+	const { labelFieldError, setLabelFieldError } = useLabelError();
 
 	const resetFields = () => {
 		setFontFamily( '' );
@@ -37,7 +41,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 		onClose();
 	};
 
-	const handleCreate = () => {
+	const handleCreateAndTrack = () => {
 		createVariable( {
 			value: fontFamily,
 			label,
@@ -48,15 +52,35 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 				closePopover();
 			} )
 			.catch( ( error ) => {
-				setErrorMessage( error.message );
+				const mappedError = mapServerError( error );
+				if ( mappedError && 'label' === mappedError.field ) {
+					setLabel( '' );
+					setLabelFieldError( {
+						value: label,
+						message: mappedError.message,
+					} );
+					return;
+				}
+
+				setErrorMessage( ERROR_MESSAGES.UNEXPECTED_ERROR );
 			} );
+
+		trackVariableEvent( {
+			varType: 'font',
+			controlPath: path.join( '.' ),
+			action: 'save',
+		} );
 	};
 
 	const hasEmptyValue = () => {
 		return '' === fontFamily.trim() || '' === label.trim();
 	};
 
-	const isSubmitDisabled = hasEmptyValue();
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = hasEmptyValue() || hasErrors();
 
 	return (
 		<PopoverBody height="auto">
@@ -80,6 +104,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			<PopoverContent p={ 2 }>
 				<LabelField
 					value={ label }
+					error={ labelFieldError }
 					onChange={ ( value ) => {
 						setLabel( value );
 						setErrorMessage( '' );
@@ -97,7 +122,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreate }>
+				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>

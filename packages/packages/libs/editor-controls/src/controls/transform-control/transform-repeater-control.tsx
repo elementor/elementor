@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type TransformItemPropValue, transformPropTypeUtil } from '@elementor/editor-props';
+import { transformPropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 import { PropProvider, useBoundProp } from '../../bound-prop-context';
@@ -8,15 +8,7 @@ import { createControl } from '../../create-control';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
-
-const initialTransformValue: TransformItemPropValue = {
-	$$type: 'transform-move',
-	value: {
-		x: { $$type: 'size', value: { size: 0, unit: 'px' } },
-		y: { $$type: 'size', value: { size: 0, unit: 'px' } },
-		z: { $$type: 'size', value: { size: 0, unit: 'px' } },
-	},
-};
+import { initialTransformValue } from './types';
 
 export const TransformRepeaterControl = createControl( () => {
 	const { propType, value: transformValues, setValue, disabled } = useBoundProp( transformPropTypeUtil );

@@ -3,11 +3,11 @@ import { createMockPropType, renderField } from 'test-utils';
 import { screen } from '@testing-library/react';
 
 import { useDirection } from '../../../../hooks/use-direction';
-import { useStylesField } from '../../../../hooks/use-styles-field';
+import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { FlexDirectionField } from '../flex-direction-field';
 
 jest.mock( '@elementor/editor-styles' );
-jest.mock( '../../../../hooks/use-styles-field' );
+jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
@@ -24,7 +24,11 @@ describe( '<FlexDirectionField/>', () => {
 	it( 'Flex direction items should switch direction in rtl', () => {
 		// Arrange.
 		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: true } );
-		jest.mocked( useStylesField ).mockReturnValue( { value: 'row', setValue: jest.fn, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { 'flex-direction': 'row' },
+			setValues: jest.fn,
+			canEdit: true,
+		} );
 
 		renderFlexDirectionField();
 
@@ -42,7 +46,11 @@ describe( '<FlexDirectionField/>', () => {
 	it( 'Flex direction items should not switch direction in ltr', () => {
 		// Arrange.
 		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: false } );
-		jest.mocked( useStylesField ).mockReturnValue( { value: 'row', setValue: jest.fn, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { 'flex-direction': 'row' },
+			setValues: jest.fn,
+			canEdit: true,
+		} );
 
 		renderFlexDirectionField();
 

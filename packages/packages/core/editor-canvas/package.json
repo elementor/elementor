@@ -46,7 +46,7 @@
     "@elementor/editor-styles-repository": "0.10.6",
     "@elementor/editor-v1-adapters": "0.12.1",
     "@elementor/twing": "0.0.2",
-    "@elementor/ui": "1.36.0",
+    "@elementor/ui": "1.36.2",
     "@elementor/utils": "0.5.0",
     "@elementor/wp-media": "0.6.1",
     "@floating-ui/react": "^0.27.5",

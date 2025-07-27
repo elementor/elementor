@@ -24,6 +24,8 @@ import {
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
+import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
+
 type ControlRegistry = Record<
 	string,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,8 +52,47 @@ export type ControlTypes = {
 	[ key in ControlType ]: ( typeof controlTypes )[ key ][ 'component' ];
 };
 
-export const getControl = ( type: ControlType ) => controlTypes[ type ]?.component;
+class ControlsRegistry {
+	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
+		this.controlsRegistry = controlsRegistry;
+	}
 
-export const getDefaultLayout = ( type: ControlType ) => controlTypes[ type ].layout;
+	get( type: ControlType ): ControlComponent {
+		return this.controlsRegistry[ type ]?.component;
+	}
 
-export const getPropTypeUtil = ( type: ControlType ) => controlTypes[ type ]?.propTypeUtil;
+	getLayout( type: ControlType ) {
+		return this.controlsRegistry[ type ]?.layout;
+	}
+
+	getPropTypeUtil( type: ControlType ) {
+		return this.controlsRegistry[ type ]?.propTypeUtil;
+	}
+
+	registry(): ControlRegistry {
+		return this.controlsRegistry;
+	}
+
+	register(
+		type: string,
+		component: ControlComponent,
+		layout: ControlLayout,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		propTypeUtil?: PropTypeUtil< string, any >
+	) {
+		if ( this.controlsRegistry[ type ] ) {
+			throw new ControlTypeAlreadyRegisteredError( { context: { controlType: type } } );
+		}
+		this.controlsRegistry[ type ] = { component, layout, propTypeUtil };
+	}
+
+	unregister( type: string ) {
+		if ( ! this.controlsRegistry[ type ] ) {
+			throw new ControlTypeNotRegisteredError( { context: { controlType: type } } );
+		}
+		// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+		delete this.controlsRegistry[ type ];
+	}
+}
+
+export const controlsRegistry = new ControlsRegistry();

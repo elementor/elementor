@@ -1,4 +1,6 @@
-import { getHistoryManager } from './get-history-manager';
+import { debounce } from '@elementor/utils';
+
+import { getHistoryManager, type HistoryItem } from './get-history-manager';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Payload = Record< string, any > | undefined;
@@ -14,6 +16,7 @@ type Actions< TPayload extends Payload, TDoReturn, TUndoReturn > = {
 type Options< TPayload extends Payload, TDoReturn > = {
 	title: string | LabelGenerator< TPayload, TDoReturn >;
 	subtitle?: string | LabelGenerator< TPayload, TDoReturn >;
+	debounce?: { wait: number };
 };
 
 // Action WITHOUT a payload.
@@ -34,15 +37,15 @@ export function undoable< TPayload extends Payload, TDoReturn, TUndoReturn >(
 ): ( payload?: Payload ) => TDoReturn {
 	actions.redo ??= actions.do;
 
+	const _addHistoryItem = options.debounce ? debounce( addHistoryItem, options.debounce.wait ) : addHistoryItem;
+
 	return ( payload ) => {
 		const _payload = payload as TPayload;
 		const _actions = actions as Required< Actions< TPayload, TDoReturn, TUndoReturn > >;
 
-		const history = getHistoryManager();
-
 		let result = _actions.do( _payload );
 
-		history.addItem( {
+		_addHistoryItem( {
 			title: normalizeToGenerator( options.title )( _payload, result ),
 			subTitle: normalizeToGenerator( options.subtitle )( _payload, result ),
 			type: '',
@@ -65,4 +68,9 @@ function normalizeToGenerator< TPayload extends Payload, TDoReturn >(
 	value: string | undefined | LabelGenerator< TPayload, TDoReturn >
 ) {
 	return typeof value === 'function' ? value : () => value ?? '';
+}
+
+function addHistoryItem( item: HistoryItem ) {
+	const history = getHistoryManager();
+	history.addItem( item );
 }

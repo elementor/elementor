@@ -5,30 +5,12 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
-		&left,
-		&right {
-
-			.elementor-icon-box-wrapper {
-				display: flex;
-			}
-
-			.elementor-icon-box-icon {
-				display: inline-flex;
-				flex: 0 0 auto; // Hack for Safari
-			}
-		}
-
 		&right {
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
 				flex-direction: getValueByDirection(row-reverse, row);
-			}
-
-			.elementor-icon-box-icon {
-				margin-left: var(--icon-box-icon-margin, 15px);
-				margin-right: 0;
-				margin-bottom: unset;
+				gap: var(--icon-box-icon-margin, 15px);
 			}
 		}
 
@@ -37,27 +19,20 @@
 			.elementor-icon-box-wrapper {
 				text-align: start;
 				flex-direction: getValueByDirection(row, row-reverse);
-			}
-
-			.elementor-icon-box-icon {
-				margin-right: var(--icon-box-icon-margin, 15px);
-				margin-left: 0;
-				margin-bottom: unset;
+				gap: var(--icon-box-icon-margin, 15px);
 			}
 		}
 
 		&top {
 
 			.elementor-icon-box-wrapper {
-				display: block;
 				text-align: center;
-				flex-direction: unset;
+				flex-direction: column;
+				gap: var(--icon-box-icon-margin, 15px);
 			}
 
 			.elementor-icon-box-icon {
-				margin-bottom: var(--icon-box-icon-margin, 15px);
-				margin-right: auto;
-				margin-left: auto;
+				margin-inline: auto;
 			}
 		}
 	}
@@ -66,14 +41,31 @@
 .elementor-widget-icon-box {
 
 	.elementor-icon-box-wrapper {
-		display: block;
+		display: flex;
 		text-align: center;
+		flex-direction: column;
+		gap: var(--icon-box-icon-margin, 15px);
 	}
 
 	.elementor-icon-box-icon {
-		margin-bottom: var(--icon-box-icon-margin, 15px);
-		margin-right: auto;
-		margin-left: auto;
+		display: inline-flex;
+		flex: 0 0 auto; // Hack for Safari
+	}
+
+	.elementor-icon-box-content {
+		width: 100%;
+		flex-grow: 1;
+	}
+
+	.elementor-icon-box-title {
+
+		a {
+			color: inherit;
+		}
+	}
+
+	.elementor-icon-box-description {
+		margin: 0;
 	}
 
 	@include icon-position('');
@@ -107,25 +99,9 @@
 			&right {
 
 				.elementor-icon-box-icon {
-					display: block;
-					flex: unset;
+					flex-direction: column;
 				}
 			}
 		}
-	}
-
-	.elementor-icon-box-title {
-
-		a {
-			color: inherit;
-		}
-	}
-
-	.elementor-icon-box-content {
-		flex-grow: 1;
-	}
-
-	.elementor-icon-box-description {
-		margin: 0;
 	}
 }

@@ -5,7 +5,7 @@ import { EXPORT_STATUS } from '../context/export-context';
 const STATUS_PROCESSING = 'processing';
 const STATUS_ERROR = 'error';
 
-export const useExportKit = ( { includes, kitInfo, plugins, isExporting, dispatch } ) => {
+export const useExportKit = ( { includes, kitInfo, customization, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
 
 	const exportKit = useCallback( async () => {
@@ -13,14 +13,13 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExporting, dispatc
 			setStatus( STATUS_PROCESSING );
 
 			const exportData = {
-				include: includes,
 				kitInfo: {
 					title: kitInfo.title?.trim() || null,
 					description: kitInfo.description?.trim() || null,
 					source: kitInfo.source,
 				},
-				plugins: plugins || [],
-				selectedCustomPostTypes: [],
+				include: includes,
+				customization,
 			};
 
 			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.[ 'cloud-library' ];
@@ -75,7 +74,7 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExporting, dispatc
 		} catch ( error ) {
 			setStatus( STATUS_ERROR );
 		}
-	}, [ includes, kitInfo, plugins, dispatch ] );
+	}, [ includes, kitInfo, customization, dispatch ] );
 
 	useEffect( () => {
 		if ( isExporting ) {

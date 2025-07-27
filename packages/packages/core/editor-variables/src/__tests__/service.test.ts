@@ -330,7 +330,7 @@ describe( 'service', () => {
 			const result = await service.restore( 'variable-3' );
 
 			// Assert.
-			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3' );
+			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', undefined, undefined );
 
 			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
 				'elementor-global-variables',

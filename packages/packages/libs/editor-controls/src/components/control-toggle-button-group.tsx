@@ -42,6 +42,21 @@ const StyledToggleButtonGroup = styled( ToggleButtonGroup )`
 	}
 `;
 
+const StyledToggleButton = styled( ToggleButton, {
+	shouldForwardProp: ( prop ) => prop !== 'isPlaceholder',
+} )< { isPlaceholder: boolean } >`
+	${ ( { theme, isPlaceholder } ) =>
+		isPlaceholder &&
+		`
+		color: ${ theme.palette.text.tertiary };
+		background-color: ${ theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)' };
+		
+		&:hover {
+			background-color: ${ theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)' };
+		}
+	` }
+`;
+
 type ExclusiveValue< TValue > = TValue;
 type NonExclusiveValue< TValue > = TValue[];
 
@@ -52,6 +67,7 @@ type Props< TValue > = {
 	items: ToggleButtonGroupItem< TValue | null >[];
 	maxItems?: number;
 	fullWidth?: boolean;
+	placeholder?: TValue | TValue[];
 } & (
 	| {
 			exclusive?: false;
@@ -75,12 +91,15 @@ export const ControlToggleButtonGroup = < TValue, >( {
 	exclusive = false,
 	fullWidth = false,
 	disabled,
+	placeholder,
 }: Props< TValue > ) => {
 	const shouldSliceItems = exclusive && maxItems !== undefined && items.length > maxItems;
 	const menuItems = shouldSliceItems ? items.slice( maxItems - 1 ) : [];
 	const fixedItems = shouldSliceItems ? items.slice( 0, maxItems - 1 ) : items;
 
-	const isRtl = 'rtl' === useTheme().direction;
+	const theme = useTheme();
+	const isRtl = 'rtl' === theme.direction;
+
 	const handleChange = (
 		_: React.MouseEvent< HTMLElement >,
 		newValue: typeof exclusive extends true ? ExclusiveValue< TValue > : NonExclusiveValue< TValue >
@@ -92,9 +111,41 @@ export const ControlToggleButtonGroup = < TValue, >( {
 		const isOffLimits = menuItems?.length;
 		const itemsCount = isOffLimits ? fixedItems.length + 1 : fixedItems.length;
 		const templateColumnsSuffix = isOffLimits ? 'auto' : '';
-
 		return `repeat(${ itemsCount }, minmax(0, 25%)) ${ templateColumnsSuffix }`;
 	}, [ menuItems?.length, fixedItems.length ] );
+
+	const shouldShowExclusivePlaceholder = exclusive && ( value === null || value === undefined || value === '' );
+
+	const nonExclusiveSelectedValues =
+		! exclusive && Array.isArray( value )
+			? value
+					.map( ( v ) => ( typeof v === 'string' ? v : '' ) )
+					.join( ' ' )
+					.trim()
+					.split( /\s+/ )
+					.filter( Boolean )
+			: [];
+
+	const shouldShowNonExclusivePlaceholder = ! exclusive && nonExclusiveSelectedValues.length === 0;
+
+	const getPlaceholderArray = ( placeholderValue: TValue | TValue[] | undefined ): string[] => {
+		if ( Array.isArray( placeholderValue ) ) {
+			return placeholderValue.flatMap( ( p ) => {
+				if ( typeof p === 'string' ) {
+					return p.trim().split( /\s+/ ).filter( Boolean );
+				}
+				return [];
+			} );
+		}
+
+		if ( typeof placeholderValue === 'string' ) {
+			return placeholderValue.trim().split( /\s+/ ).filter( Boolean );
+		}
+
+		return [];
+	};
+
+	const placeholderArray = getPlaceholderArray( placeholder );
 
 	return (
 		<ControlActions>
@@ -111,17 +162,30 @@ export const ControlToggleButtonGroup = < TValue, >( {
 					width: `100%`,
 				} }
 			>
-				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => (
-					<ConditionalTooltip
-						key={ buttonValue as string }
-						label={ label }
-						showTooltip={ showTooltip || false }
-					>
-						<ToggleButton value={ buttonValue } aria-label={ label } size={ size } fullWidth={ fullWidth }>
-							<Content size={ size } />
-						</ToggleButton>
-					</ConditionalTooltip>
-				) ) }
+				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
+					const isPlaceholder =
+						placeholderArray.length > 0 &&
+						placeholderArray.includes( buttonValue as string ) &&
+						( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
+
+					return (
+						<ConditionalTooltip
+							key={ buttonValue as string }
+							label={ label }
+							showTooltip={ showTooltip || false }
+						>
+							<StyledToggleButton
+								value={ buttonValue }
+								aria-label={ label }
+								size={ size }
+								fullWidth={ fullWidth }
+								isPlaceholder={ isPlaceholder }
+							>
+								<Content size={ size } />
+							</StyledToggleButton>
+						</ConditionalTooltip>
+					);
+				} ) }
 
 				{ menuItems.length && exclusive && (
 					<SplitButtonGroup
@@ -194,7 +258,7 @@ const SplitButtonGroup = < TValue, >( {
 				aria-pressed={ undefined }
 				onClick={ onMenuToggle }
 				ref={ menuButtonRef }
-				value={ '__chevron-icon-button__' }
+				value="__chevron-icon-button__"
 			>
 				<ChevronDownIcon fontSize={ size } />
 			</ToggleButton>

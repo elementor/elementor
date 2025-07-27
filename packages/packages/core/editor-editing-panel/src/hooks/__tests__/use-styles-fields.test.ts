@@ -6,7 +6,6 @@ import {
 	deleteElementStyle,
 	getElementLabel,
 } from '@elementor/editor-elements';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
@@ -14,13 +13,14 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesFields } from '../use-styles-fields';
 
-jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../contexts/element-context' );
 jest.mock( '../../contexts/style-context' );
 jest.mock( '../../contexts/classes-prop-context' );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn().mockReturnValue( false ),
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	deleteElementStyle: jest.fn(),
+	getElementLabel: jest.fn(),
+	createElementStyle: jest.fn(),
 } ) );
 
 type StyleValue = ReturnType< typeof useStyle >;
@@ -30,6 +30,8 @@ describe( 'useStylesFields', () => {
 
 	beforeEach( () => {
 		historyMock.beforeEach();
+
+		jest.useFakeTimers();
 
 		jest.mocked( useElement ).mockReturnValue( {
 			element: {
@@ -46,10 +48,6 @@ describe( 'useStylesFields', () => {
 
 		jest.mocked( getElementLabel ).mockImplementation( ( id ) => {
 			return id === 'test-element-id' ? 'Test Element' : '';
-		} );
-
-		jest.mocked( isExperimentActive ).mockImplementation( ( experimentName: string ) => {
-			return experimentName === 'e_v_3_31';
 		} );
 	} );
 
@@ -76,6 +74,8 @@ describe( 'useStylesFields', () => {
 
 		// Act.
 		result.current.setValues( { 'test-prop': 'test-value' }, { history: { propDisplayName: 'Test Prop' } } );
+
+		jest.runAllTimers();
 
 		// Assert - Style created.
 		const createArgs = {
@@ -132,18 +132,20 @@ describe( 'useStylesFields', () => {
 					label: 'test-class',
 					variants: [
 						{
+							meta: { breakpoint: null, state: null },
 							props: {
 								'prop-1': 'value1-normal',
 								'prop-2': 'value2-normal',
 							},
-							meta: { breakpoint: null, state: null },
+							custom_css: null,
 						},
 						{
+							meta: { breakpoint: null, state: 'hover' },
 							props: {
 								'prop-1': 'value1-hover',
 								'prop-2': 'value2-hover',
 							},
-							meta: { breakpoint: null, state: 'hover' },
+							custom_css: null,
 						},
 					],
 				},
@@ -171,6 +173,8 @@ describe( 'useStylesFields', () => {
 		act( () => {
 			result.current.setValues( { 'prop-1': 'updated-value' }, { history: { propDisplayName: 'Prop 1' } } );
 		} );
+
+		jest.runAllTimers();
 
 		// Assert.
 		const historyItem = historyMock.instance.get();

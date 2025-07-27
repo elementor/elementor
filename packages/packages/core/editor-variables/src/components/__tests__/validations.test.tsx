@@ -15,9 +15,11 @@ jest.mock( '@elementor/editor-controls', () => ( {
 } ) );
 
 jest.mock( '../variable-selection-popover.context', () => ( {
-	usePopoverContentRef: jest.fn( () => ( {
-		current: document.createElement( 'div' ),
-	} ) ),
+	usePopoverContentRef: jest.fn( () => document.createElement( 'div' ) ),
+} ) );
+
+jest.mock( '../../utils/tracking', () => ( {
+	trackVariableEvent: jest.fn(),
 } ) );
 
 const mockOnClose = jest.fn();
@@ -36,6 +38,7 @@ beforeEach( () => {
 	jest.mocked( usePropVariablesModule.createVariable ).mockImplementation( mockCreateVariable );
 	jest.mocked( require( '@elementor/editor-controls' ).useBoundProp ).mockReturnValue( {
 		setValue: mockSetVariable,
+		path: [ 'settings', 'color' ],
 	} );
 } );
 

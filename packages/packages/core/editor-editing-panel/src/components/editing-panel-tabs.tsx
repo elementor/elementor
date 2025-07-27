@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Fragment } from 'react';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -8,7 +7,6 @@ import { useElement } from '../contexts/element-context';
 import { ScrollProvider } from '../contexts/scroll-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
 
@@ -27,9 +25,7 @@ export const EditingPanelTabs = () => {
 
 const PanelTabContent = () => {
 	const editorDefaults = useDefaultPanelSettings();
-	const defaultComponentTab = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 )
-		? ( editorDefaults.defaultTab as TabValue )
-		: 'settings';
+	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
 
 	const [ currentTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( currentTab );

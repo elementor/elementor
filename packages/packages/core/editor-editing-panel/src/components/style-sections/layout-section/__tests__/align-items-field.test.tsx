@@ -3,11 +3,11 @@ import { createMockPropType, renderField } from 'test-utils';
 import { screen } from '@testing-library/react';
 
 import { useDirection } from '../../../../hooks/use-direction';
-import { useStylesField } from '../../../../hooks/use-styles-field';
+import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { AlignItemsField } from '../align-items-field';
 
 jest.mock( '@elementor/editor-styles' );
-jest.mock( '../../../../hooks/use-styles-field' );
+jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
@@ -34,7 +34,11 @@ describe( '<AlignItemsField />', () => {
 	it( 'align items should switch order in RTL', () => {
 		// Arrange.
 		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: true } );
-		jest.mocked( useStylesField ).mockReturnValue( { value: 'row', setValue: jest.fn, canEdit: true } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { 'align-items': 'row' },
+			setValues: jest.fn,
+			canEdit: true,
+		} );
 
 		// Act.
 		renderAlignItemsField();

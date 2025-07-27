@@ -11,6 +11,7 @@ export type ElementType = {
 	key: string;
 	controls: ControlItem[];
 	propsSchema: PropsSchema;
+	dependenciesPerTargetMapping?: Record< string, string[] >;
 	title: string;
 };
 

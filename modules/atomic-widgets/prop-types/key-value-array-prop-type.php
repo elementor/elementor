@@ -3,7 +3,6 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

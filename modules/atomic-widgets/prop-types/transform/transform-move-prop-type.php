@@ -17,9 +17,18 @@ class Transform_Move_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		return [
-			'x' => Size_Prop_Type::make()->default( 0 ),
-			'y' => Size_Prop_Type::make()->default( 0 ),
-			'z' => Size_Prop_Type::make()->default( 0 ),
+			'x' => Size_Prop_Type::make()->default( [
+				'size' => 0,
+				'unit' => 'px',
+			] ),
+			'y' => Size_Prop_Type::make()->default( [
+				'size' => 0,
+				'unit' => 'px',
+			] ),
+			'z' => Size_Prop_Type::make()->default( [
+				'size' => 0,
+				'unit' => 'px',
+			] ),
 		];
 	}
 }

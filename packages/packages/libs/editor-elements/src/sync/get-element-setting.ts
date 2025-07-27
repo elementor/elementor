@@ -3,7 +3,13 @@ import { getContainer } from './get-container';
 
 export const getElementSetting = < TValue >( elementId: ElementID, settingKey: string ): TValue | null => {
 	const container = getContainer( elementId );
-	const value = container?.settings?.get( settingKey ) as TValue;
 
-	return value ?? null;
+	return ( container?.settings?.get( settingKey ) as TValue ) ?? null;
+};
+
+export const getElementSettings = < TValue >(
+	elementId: ElementID,
+	settingKey: string[]
+): Record< string, TValue | null > => {
+	return Object.fromEntries( settingKey.map( ( key ) => [ key, getElementSetting( elementId, key ) ] ) );
 };

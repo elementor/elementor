@@ -4,20 +4,19 @@ import { stringPropTypeUtil } from '@elementor/editor-props';
 
 import { AssignedVariable } from '../components/ui/variable/assigned-variable';
 import { DeletedVariable } from '../components/ui/variable/deleted-variable';
+import { MissingVariable } from '../components/ui/variable/missing-variable';
 import { useVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 
 export const FontVariableControl = () => {
 	const { value: variableValue } = useBoundProp( fontVariablePropTypeUtil );
-	const assignedVariable = useVariable( variableValue );
 
+	const assignedVariable = useVariable( variableValue );
 	if ( ! assignedVariable ) {
-		throw new Error( `Global font variable ${ variableValue } not found` );
+		return <MissingVariable />;
 	}
 
-	const isVariableDeleted = assignedVariable?.deleted;
-
-	if ( isVariableDeleted ) {
+	if ( assignedVariable?.deleted ) {
 		return (
 			<DeletedVariable
 				variable={ assignedVariable }

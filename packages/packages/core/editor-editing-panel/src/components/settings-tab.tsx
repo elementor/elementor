@@ -1,22 +1,15 @@
 import * as React from 'react';
 import { ControlFormLabel } from '@elementor/editor-controls';
 import { type Control } from '@elementor/editor-elements';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { SessionStorageProvider } from '@elementor/session';
 import { Divider } from '@elementor/ui';
 
 import { useElement } from '../contexts/element-context';
 import { Control as BaseControl } from '../controls-registry/control';
 import { ControlTypeContainer } from '../controls-registry/control-type-container';
-import {
-	type ControlType,
-	getControl,
-	getDefaultLayout,
-	getPropTypeUtil,
-} from '../controls-registry/controls-registry';
+import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
 import { SettingsField } from '../controls-registry/settings-field';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
-import { EXPERIMENTAL_FEATURES } from '../sync/experiments-flags';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
 
@@ -25,9 +18,7 @@ export const SettingsTab = () => {
 	const settingsDefault = useDefaultPanelSettings();
 
 	const isDefaultExpanded = ( sectionId: string ) =>
-		isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 )
-			? settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId )
-			: true;
+		settingsDefault.defaultSectionsExpanded.settings?.includes( sectionId );
 
 	return (
 		<SessionStorageProvider prefix={ element.id }>
@@ -64,11 +55,11 @@ export const SettingsTab = () => {
 };
 
 const Control = ( { control }: { control: Control[ 'value' ] } ) => {
-	if ( ! getControl( control.type as ControlType ) ) {
+	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
 		return null;
 	}
 
-	const layout = control.meta?.layout || getDefaultLayout( control.type as ControlType );
+	const layout = control.meta?.layout || controlsRegistry.getLayout( control.type as ControlType );
 	const controlProps = populateChildControlProps( control.props );
 	if ( layout === 'custom' ) {
 		controlProps.label = control.label;
@@ -87,8 +78,8 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 
 function populateChildControlProps( props: Record< string, unknown > ) {
 	if ( props.childControlType ) {
-		const childComponent = getControl( props.childControlType as ControlType );
-		const childPropType = getPropTypeUtil( props.childControlType as ControlType );
+		const childComponent = controlsRegistry.get( props.childControlType as ControlType );
+		const childPropType = controlsRegistry.getPropTypeUtil( props.childControlType as ControlType );
 		props = {
 			...props,
 			childControlConfig: {

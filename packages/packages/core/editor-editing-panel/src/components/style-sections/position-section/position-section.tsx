@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { type StringPropValue } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { useSessionStorage } from '@elementor/session';
 import { __ } from '@wordpress/i18n';
 
@@ -44,7 +43,6 @@ export const PositionSection = () => {
 	] );
 
 	const [ dimensionsValuesFromHistory, updateDimensionsHistory, clearDimensionsHistory ] = usePersistDimensions();
-	const isCssIdFeatureActive = isExperimentActive( 'e_v_3_30' );
 
 	const onPositionChange = ( newPosition: string | null, previousPosition: string | null | undefined ) => {
 		const meta = { history: { propDisplayName: DIMENSIONS_LABEL } };
@@ -82,12 +80,8 @@ export const PositionSection = () => {
 				</>
 			) : null }
 
-			{ isCssIdFeatureActive && (
-				<>
-					<PanelDivider />
-					<OffsetField />
-				</>
-			) }
+			<PanelDivider />
+			<OffsetField />
 		</SectionContent>
 	);
 };

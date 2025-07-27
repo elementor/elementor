@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { type RefObject, useRef } from 'react';
 import { dimensionsPropTypeUtil, type PropKey, sizePropTypeUtil } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from '@elementor/icons';
 import { Grid, Stack, ToggleButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -34,8 +33,6 @@ export const LinkedDimensionsControl = createControl(
 		} = useBoundProp( dimensionsPropTypeUtil );
 
 		const isLinked = ! dimensionsValue && ! sizeValue ? true : !! sizeValue;
-
-		const isUsingNestedProps = isExperimentActive( 'e_v_3_30' );
 
 		const onLinkToggle = () => {
 			if ( ! isLinked ) {
@@ -71,11 +68,7 @@ export const LinkedDimensionsControl = createControl(
 				isDisabled={ () => disabled }
 			>
 				<Stack direction="row" gap={ 2 } flexWrap="nowrap">
-					{ isUsingNestedProps ? (
-						<ControlFormLabel>{ label }</ControlFormLabel>
-					) : (
-						<ControlLabel>{ label }</ControlLabel>
-					) }
+					<ControlFormLabel>{ label }</ControlFormLabel>
 					<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
 						<ToggleButton
 							aria-label={ isLinked ? unlinkedLabel : linkedLabel }
@@ -141,12 +134,6 @@ const Control = ( {
 };
 
 const Label = ( { label, bind }: { label: string; bind: PropKey } ) => {
-	const isUsingNestedProps = isExperimentActive( 'e_v_3_30' );
-
-	if ( ! isUsingNestedProps ) {
-		return <ControlFormLabel>{ label }</ControlFormLabel>;
-	}
-
 	return (
 		<PropKeyProvider bind={ bind }>
 			<ControlLabel>{ label }</ControlLabel>

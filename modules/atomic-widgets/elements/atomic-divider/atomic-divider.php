@@ -11,6 +11,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -53,11 +55,20 @@ class Atomic_Divider extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		return [];
+		return [
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
+		];
 	}
 
 	protected function get_settings_controls(): array {
-		return [];
+		return [
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
+		];
 	}
 
 	protected function define_base_styles(): array {

@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -26,6 +26,11 @@ on:
         tag:
           description: 'Provide @tag or a keyword'
           required: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
 
 concurrency:
   group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
@@ -178,6 +183,35 @@ jobs:
       - name: Checkout source code
         if: ${{ (needs.Playwright.result == 'failure') }}
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create revert PR on push failure
+        id: create_revert_pr
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
+        continue-on-error: true
+        uses: ./.github/workflows/create-revert-pr
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ github.sha }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          WORKFLOW_NAME: "Playwright"
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ALLOW_WORKFLOW_CHANGES: 'true'
+      - name: Generate revert message
+        id: revert_message
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
+        run: |
+          BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
+            REVERT_MESSAGE="
+
+          You can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
+            echo "message=${BASE_MESSAGE}${REVERT_MESSAGE}" >> $GITHUB_OUTPUT
+          else
+            echo "message=${BASE_MESSAGE}" >> $GITHUB_OUTPUT
+          fi
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         uses: ./.github/workflows/post-to-slack
@@ -186,13 +220,13 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "Elementor Core: Playwright - ${{github.event_name}} has failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "text": "${{ steps.revert_message.outputs.message }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Elementor Core: Playwright - ${{github.event_name}} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    "text": "${{ steps.revert_message.outputs.message }}"
                   }
                 },
                 {
@@ -202,7 +236,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "Github User : <${{ github.actor }}>"
+                    "text": "Github User: <${{ github.actor }}>"
                   }
                 }
               ]

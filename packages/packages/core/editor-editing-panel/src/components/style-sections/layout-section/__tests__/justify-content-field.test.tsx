@@ -3,16 +3,17 @@ import { createMockPropType, renderField } from 'test-utils';
 import { screen } from '@testing-library/react';
 
 import { useDirection } from '../../../../hooks/use-direction';
-import { useStylesField } from '../../../../hooks/use-styles-field';
+import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { JustifyContentField } from '../justify-content-field';
 
 jest.mock( '@elementor/editor-styles' );
-jest.mock( '../../../../hooks/use-styles-field' );
+jest.mock( '../../../../hooks/use-styles-fields' );
 jest.mock( '../../../../hooks/use-direction' );
 jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/style-context', () => ( {
 	useStyle: () => ( { meta: null } ),
 } ) );
+
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
 } ) );
@@ -21,7 +22,11 @@ describe( '<JustifyContentField />', () => {
 	it( 'should switch order in RTL', () => {
 		// Arrange.
 		jest.mocked( useDirection ).mockReturnValue( { isUiRtl: false, isSiteRtl: true } );
-		jest.mocked( useStylesField ).mockReturnValue( { canEdit: true, value: 'row', setValue: jest.fn } );
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			canEdit: true,
+			values: { 'justify-content': 'row' },
+			setValues: jest.fn,
+		} );
 
 		// Act.
 		renderField( <JustifyContentField />, {
