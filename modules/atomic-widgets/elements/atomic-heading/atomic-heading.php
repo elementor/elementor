@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -65,19 +66,22 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_items( [
 				Textarea_Control::bind_to( 'title' )
-					->set_label( __( 'Title', 'elementor' ) )
-					->set_placeholder( __( 'Type your title here', 'elementor' ) ),
+				->set_placeholder( __( 'Type your title here', 'elementor' ) )
+					->set_label( __( 'Title', 'elementor' ) ),
 			] );
 
 		return [
 			$content_section,
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
 		];
 	}
 
 	protected function get_settings_controls(): array {
 		return [
 			Select_Control::bind_to( 'tag' )
-				->set_label( esc_html__( 'Tag', 'elementor' ) )
 				->set_options([
 					[
 						'value' => 'h1',
@@ -103,12 +107,16 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'value' => 'h6',
 						'label' => 'H6',
 					],
-				]),
+				])
+				->set_label( __( 'Tag', 'elementor' ) ),
 			Link_Control::bind_to( 'link' )
 				->set_label( __( 'Link', 'elementor' ) )
 				->set_meta( [
 					'topDivider' => true,
 				] ),
+			Text_Control::bind_to( '_cssid' )
+			->set_label( __( 'ID', 'elementor' ) )
+			->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
