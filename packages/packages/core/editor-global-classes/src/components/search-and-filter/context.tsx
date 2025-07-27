@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, type ReactElement, useCallback, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { useDebounceState } from '@elementor/utils';
 
 import { type CheckedFilters } from './types';
@@ -30,20 +30,20 @@ const INIT_CHECKED_FILTERS: CheckedFilters = {
 	unused: false,
 };
 
-export const SearchAndFilterProvider = ( { children }: { children: ReactElement } ) => {
+export const SearchAndFilterProvider = ( { children }: React.PropsWithChildren ) => {
 	const [ filters, setFilters ] = React.useState< CheckedFilters >( INIT_CHECKED_FILTERS );
 	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
 		delay: 300,
 		initialValue: '',
 	} );
 
-	const onClearSearch = useCallback( () => {
+	const onClearSearch = () => {
 		handleChange( '' );
-	}, [ handleChange ] );
+	};
 
-	const onClearFilter = React.useCallback( () => {
+	const onClearFilter = () => {
 		setFilters( INIT_CHECKED_FILTERS );
-	}, [] );
+	};
 
 	return (
 		<SearchAndFilterContext.Provider
