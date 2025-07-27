@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 
 import { useSearchAndFilters } from '../components/search-and-filter/context';
-import { type FilterKey } from '../components/search-and-filter/types';
-import { useFilteredCssClassUsage } from './use-filtered-css-class-usage';
+import { type FilterKey, useFilteredCssClassUsage } from './use-filtered-css-class-usage';
 
 export const useFilters = () => {
 	const {

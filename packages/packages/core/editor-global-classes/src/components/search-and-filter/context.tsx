@@ -2,7 +2,11 @@ import * as React from 'react';
 import { createContext, useContext } from 'react';
 import { useDebounceState } from '@elementor/utils';
 
-import { type CheckedFilters } from './types';
+export type CheckedFilters = {
+	empty: boolean;
+	onThisPage: boolean;
+	unused: boolean;
+};
 
 type SearchContextType = {
 	debouncedValue: string;
