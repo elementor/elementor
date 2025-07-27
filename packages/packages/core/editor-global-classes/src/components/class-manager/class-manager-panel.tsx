@@ -110,27 +110,25 @@ export function ClassManagerPanel() {
 						} }
 					>
 						<SearchAndFilterProvider>
-							<>
-								<Box px={ 2 } pb={ 1 }>
-									<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
-										<Box sx={ { flexGrow: 1 } }>
-											<ClassManagerSearch />
-										</Box>
-										<CssClassFilter />
-									</Stack>
-									<ActiveFilters />
-								</Box>
-								<Divider />
-								<Box
-									px={ 2 }
-									sx={ {
-										flexGrow: 1,
-										overflowY: 'auto',
-									} }
-								>
-									<GlobalClassesList disabled={ isPublishing } />
-								</Box>
-							</>
+							<Box px={ 2 } pb={ 1 }>
+								<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
+									<Box sx={ { flexGrow: 1 } }>
+										<ClassManagerSearch />
+									</Box>
+									<CssClassFilter />
+								</Stack>
+								<ActiveFilters />
+							</Box>
+							<Divider />
+							<Box
+								px={ 2 }
+								sx={ {
+									flexGrow: 1,
+									overflowY: 'auto',
+								} }
+							>
+								<GlobalClassesList disabled={ isPublishing } />
+							</Box>
 						</SearchAndFilterProvider>
 					</PanelBody>
 
