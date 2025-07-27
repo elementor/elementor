@@ -23,7 +23,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PopoverBody } from '../../components/popover-body';
 import { Control as BaseControl } from '../../controls-registry/control';
-import { ControlsRegistryManager, type ControlType } from '../../controls-registry/controls-registry';
+import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { DynamicControl } from '../dynamic-control';
 import { useDynamicTag } from '../hooks/use-dynamic-tag';
@@ -32,7 +32,6 @@ import { dynamicPropTypeUtil } from '../utils';
 import { DynamicSelection } from './dynamic-selection';
 
 const SIZE = 'tiny';
-const controlsRegistry = new ControlsRegistryManager();
 
 export const DynamicSelectionControl = () => {
 	const { setValue: setAnyValue } = useBoundProp();

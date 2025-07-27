@@ -8,9 +8,7 @@ import {
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
-import { ControlsRegistryManager, type ControlType } from '../controls-registry';
-
-const controlsRegistry = new ControlsRegistryManager();
+import { controlsRegistry, type ControlType } from '../controls-registry';
 
 describe( 'Controls Registry', () => {
 	describe( 'Registry Integrity', () => {

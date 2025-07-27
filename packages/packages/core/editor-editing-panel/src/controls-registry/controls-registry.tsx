@@ -50,7 +50,7 @@ export type ControlTypes = {
 	[ key in ControlType ]: ( typeof controlTypes )[ key ][ 'component' ];
 };
 
-export class ControlsRegistryManager {
+class ControlsRegistryManager {
 	private static instance: ControlsRegistryManager;
 
 	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {

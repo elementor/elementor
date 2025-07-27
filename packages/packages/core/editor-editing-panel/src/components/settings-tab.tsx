@@ -7,13 +7,11 @@ import { Divider } from '@elementor/ui';
 import { useElement } from '../contexts/element-context';
 import { Control as BaseControl } from '../controls-registry/control';
 import { ControlTypeContainer } from '../controls-registry/control-type-container';
-import { ControlsRegistryManager, type ControlType } from '../controls-registry/controls-registry';
+import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
 import { SettingsField } from '../controls-registry/settings-field';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
-
-const controlsRegistry = new ControlsRegistryManager();
 
 export const SettingsTab = () => {
 	const { elementType, element } = useElement();
