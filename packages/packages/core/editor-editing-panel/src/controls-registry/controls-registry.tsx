@@ -53,7 +53,7 @@ export type ControlTypes = {
 class ControlsRegistryManager {
 	private static instance: ControlsRegistryManager;
 
-	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
+	private constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
 		this.controlsRegistry = controlsRegistry;
 	}
 
