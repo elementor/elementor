@@ -3,7 +3,27 @@ import { Checkbox, Chip, MenuItem, MenuList, Stack, Typography } from '@elemento
 import { __ } from '@wordpress/i18n';
 
 import { type FilterKey, useFilteredCssClassUsage } from '../../../../hooks/use-filtered-css-class-usage';
-import { type CheckedFilters, useSearchAndFilters } from '../../context';
+import { useSearchAndFilters } from '../../context';
+
+type CheckBoxItem = {
+	label: string;
+	value: FilterKey;
+};
+
+export const checkBoxItems: CheckBoxItem[] = [
+	{
+		label: __( 'Unused', 'elementor' ),
+		value: 'unused',
+	},
+	{
+		label: __( 'Empty', 'elementor' ),
+		value: 'empty',
+	},
+	{
+		label: __( 'On this page', 'elementor' ),
+		value: 'onThisPage',
+	},
+];
 
 export const FilterList = () => {
 	const {
@@ -12,34 +32,22 @@ export const FilterList = () => {
 	const filteredCssClass = useFilteredCssClassUsage();
 
 	const handleOnClick = ( value: FilterKey ) => {
-		setFilters( ( prev ) => ( {
-			...prev,
-			[ value as keyof CheckedFilters ]: ! prev[ value as keyof CheckedFilters ],
-		} ) );
+		setFilters( ( prev ) => ( { ...prev, [ value ]: ! prev[ value ] } ) );
 	};
 
 	return (
 		<MenuList>
-			<LabeledCheckbox
-				label={ __( 'Unused', 'elementor' ) }
-				onClick={ () => handleOnClick( 'unused' ) }
-				checked={ filters.unused || false }
-				suffix={ <Chip size={ 'small' } sx={ { ml: 'auto' } } label={ filteredCssClass.unused.length || 0 } /> }
-			/>
-			<LabeledCheckbox
-				label={ __( 'Empty', 'elementor' ) }
-				onClick={ () => handleOnClick( 'empty' ) }
-				checked={ filters.empty || false }
-				suffix={ <Chip size={ 'small' } sx={ { ml: 'auto' } } label={ filteredCssClass.empty.length || 0 } /> }
-			/>
-			<LabeledCheckbox
-				label={ __( 'On this page', 'elementor' ) }
-				onClick={ () => handleOnClick( 'onThisPage' ) }
-				checked={ filters.onThisPage || false }
-				suffix={
-					<Chip size={ 'small' } sx={ { ml: 'auto' } } label={ filteredCssClass.onThisPage.length || 0 } />
-				}
-			/>
+			{ checkBoxItems.map( ( { label, value }: CheckBoxItem ) => (
+				<LabeledCheckbox
+					suffix={
+						<Chip size={ 'small' } sx={ { ml: 'auto' } } label={ filteredCssClass[ value ].length || 0 } />
+					}
+					key={ label }
+					label={ label }
+					onClick={ () => handleOnClick( value ) }
+					checked={ filters[ value ] || false }
+				/>
+			) ) }
 		</MenuList>
 	);
 };
