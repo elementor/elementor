@@ -118,6 +118,7 @@ export const SizeInput = ( {
 					onBlur={ onBlur }
 					readOnlyState={ isUnitExtendedOption( unit ) }
 					inputProps={ inputProps }
+					isPopoverOpen={ popupState.isOpen }
 				/>
 			</Box>
 		</ControlActions>
