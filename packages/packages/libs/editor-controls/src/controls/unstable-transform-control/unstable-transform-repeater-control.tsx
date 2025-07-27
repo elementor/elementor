@@ -3,14 +3,7 @@ import { transformPropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 import { PropProvider, useBoundProp } from '../../bound-prop-context';
-import {
-	AddItemAction,
-	Header,
-	Item,
-	ItemsContainer,
-	Label,
-	UnstableRepeater,
-} from '../../components/unstable-repeater';
+import { AddItemAction, Header, Item, ItemsContainer, UnstableRepeater } from '../../components/unstable-repeater';
 import { createControl } from '../../create-control';
 import { TransformContent } from '../transform-control/transform-content';
 import { TransformIcon } from '../transform-control/transform-icon';
@@ -22,9 +15,8 @@ export const UnstableTransformRepeaterControl = createControl( () => {
 
 	return (
 		<PropProvider propType={ propType } value={ transformValues } setValue={ setValue }>
-			<UnstableRepeater>
-				<Header>
-					<Label>{ __( 'Transform', 'elementor' ) }</Label>
+			<UnstableRepeater initial={ initialTransformValue } propTypeUtil={ transformPropTypeUtil }>
+				<Header label={ __( 'Transform', 'elementor' ) }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer

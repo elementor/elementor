@@ -4,7 +4,6 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { AddItemAction } from '../actions/add-item-action';
 import { Header } from '../header/header';
-import { Label } from '../header/label';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
 import { type ItemProps } from '../types';
@@ -23,8 +22,7 @@ describe( 'UnstableRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater>
-				<Header>
-					<Label>Test Repeater</Label>
+				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer initial={ defaultInitialValues } values={ [] } setValues={ setValues }>
@@ -56,8 +54,7 @@ describe( 'UnstableRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater>
-				<Header>
-					<Label>Test Repeater</Label>
+				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
@@ -89,8 +86,7 @@ describe( 'UnstableRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater>
-				<Header>
-					<Label>Test Repeater</Label>
+				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
@@ -125,8 +121,7 @@ describe( 'UnstableRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater>
-				<Header>
-					<Label>Test Repeater</Label>
+				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
@@ -150,8 +145,7 @@ describe( 'UnstableRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater>
-				<Header>
-					<Label>Test Repeater</Label>
+				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
@@ -213,8 +207,7 @@ describe( 'UnstableRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater>
-				<Header>
-					<Label>Custom Repeater</Label>
+				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer initial={ customInitialValues } values={ values } setValues={ setValues }>

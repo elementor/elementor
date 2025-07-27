@@ -9,10 +9,20 @@ const SIZE = 'tiny';
 const disabled = false;
 
 export const AddItemAction = () => {
-	const { setIsOpen } = useRepeaterContext();
+	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem } = useRepeaterContext();
 
 	const addRepeaterItem = () => {
-		setIsOpen( true );
+		const newItem = structuredClone( initial );
+		const newKey = generateNextKey( uniqueKeys );
+
+		setItems( [ ...items, newItem ] );
+		setUniqueKeys( [ ...uniqueKeys, newKey ] );
+
+		setOpenItem( newKey );
+	};
+
+	const generateNextKey = ( source: number[] ) => {
+		return 1 + Math.max( 0, ...source );
 	};
 
 	return (

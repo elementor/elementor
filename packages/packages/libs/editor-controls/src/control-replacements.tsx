@@ -47,3 +47,21 @@ export const createControlReplacementsRegistry = () => {
 
 	return { registerControlReplacement, getControlReplacements };
 };
+
+export const SlotChildren = ( { children, whitelist = [] }: { children: React.ReactNode; whitelist?: React.FC[] } ) => {
+	if ( ! whitelist.length ) {
+		return children;
+	}
+
+	const filtered = React.Children.toArray( children ).filter(
+		( child ) => React.isValidElement( child ) && whitelist.includes( child.type as React.FC )
+	);
+
+	return (
+		<>
+			{ filtered.map( ( child, index ) => (
+				<React.Fragment key={ index }>{ child }</React.Fragment>
+			) ) }
+		</>
+	);
+};
