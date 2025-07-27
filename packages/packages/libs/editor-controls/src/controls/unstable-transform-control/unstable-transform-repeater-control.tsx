@@ -4,6 +4,10 @@ import { __ } from '@wordpress/i18n';
 
 import { PropProvider, useBoundProp } from '../../bound-prop-context';
 import { AddItemAction, Header, Item, ItemsContainer, UnstableRepeater } from '../../components/unstable-repeater';
+import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../../components/unstable-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
+import { ItemActionsContainer } from '../../components/unstable-repeater/items/item-actions-container';
 import { createControl } from '../../create-control';
 import { TransformContent } from '../transform-control/transform-content';
 import { TransformIcon } from '../transform-control/transform-icon';
@@ -19,6 +23,11 @@ export const UnstableTransformRepeaterControl = createControl( () => {
 				<Header label={ __( 'Transform', 'elementor' ) }>
 					<AddItemAction />
 				</Header>
+				<ItemActionsContainer>
+					<DuplicateItemAction />
+					<DisableItemAction />
+					<RemoveItemAction />
+				</ItemActionsContainer>
 				<ItemsContainer
 					initial={ initialTransformValue }
 					values={ transformValues ?? [] }

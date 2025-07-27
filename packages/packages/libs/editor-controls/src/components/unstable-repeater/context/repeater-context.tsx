@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useMemo, useState } from 'react';
-import { type ArrayPropValue, type PropTypeUtil, type PropValue } from '@elementor/editor-props';
-import { createLocation, createReplaceableLocation } from '@elementor/locations';
+import { type PropTypeUtil, type PropValue } from '@elementor/editor-props';
+import { createLocation, type createReplaceableLocation } from '@elementor/locations';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
@@ -10,21 +10,7 @@ type Slot< T extends object = object > =
 	| ReturnType< typeof createReplaceableLocation< T > >[ 'Slot' ]
 	| ReturnType< typeof createLocation< T > >[ 'Slot' ];
 
-type Items< T extends PropValue > = {
-	$$type: string;
-	value: T[];
-};
-
-type ItemActionProps< T extends PropValue = PropValue > = {
-	openItem: number;
-	isOpen: boolean;
-	uniqueKeys: number[];
-	setUniqueKeys: ( keys: number[] ) => void;
-	setItems: ( setter: T[] | SetterFunc ) => void;
-	itemKey: number;
-};
-
-type RepeaterContextType< T extends PropValue = PropValue > = {
+type RepeaterContextType< T extends PropValue > = {
 	isOpen: boolean;
 	openItem: number;
 	setOpenItem: ( key: number ) => void;
@@ -36,16 +22,16 @@ type RepeaterContextType< T extends PropValue = PropValue > = {
 	config: {
 		headerItems: {
 			Slot: Slot< { value: PropValue } >;
-			inject: ( component: React.ComponentType< { value: PropValue } > ) => void;
+			inject: ( component: React.ComponentType< { value: PropValue } >, actionName: string ) => void;
 		};
 		itemActions: {
-			Slot: Slot< ItemActionProps< T > >;
-			inject: ( component: React.ComponentType< ItemActionProps< T > > ) => void;
+			Slot: Slot< { index: number } >;
+			inject: ( component: React.ComponentType< { index: number } >, actionName: string ) => void;
 		};
 	};
 };
 
-const RepeaterContext = createContext< RepeaterContextType | null >( null );
+const RepeaterContext = createContext< RepeaterContextType< PropValue > | null >( null );
 
 const EMPTY_OPEN_ITEM = -1;
 
@@ -69,7 +55,7 @@ export const useRepeaterContext = () => {
 	};
 };
 
-export const RepeaterContextProvider = < T extends PropValue >( {
+export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 	children,
 	initial,
 	propTypeUtil,
@@ -97,7 +83,7 @@ export const RepeaterContextProvider = < T extends PropValue >( {
 				setOpenItem,
 				config,
 				items: items ?? [],
-				setItems,
+				setItems: setItems as ( items: PropValue[] ) => void,
 				initial,
 				uniqueKeys,
 				setUniqueKeys,
@@ -108,22 +94,24 @@ export const RepeaterContextProvider = < T extends PropValue >( {
 	);
 };
 
-function getConfiguredSlots(): RepeaterContextType[ 'config' ] {
+function getConfiguredSlots() {
 	const headerActions = createLocation< { value: PropValue } >();
-	const itemActions = createLocation< ItemActionProps >();
-	const itemIcon = createReplaceableLocation< { value: PropValue } >();
+	const itemActions = createLocation< { index: number } >();
 
-	const injectHeaderItems = ( component: React.ComponentType< { value: PropValue } > ) => {
+	const injectHeaderItems = ( component: React.ComponentType< { value: PropValue } >, actionName: string ) => {
 		headerActions.inject( {
-			id: 'repeater-header-items',
+			id: 'repeater-header-items-' + actionName,
 			component,
 		} );
 	};
 
-	const injectItemActions = ( component: React.ComponentType< ItemActionProps > ) => {
+	const injectItemActions = ( component: React.ComponentType< { index: number } >, actionName: string ) => {
 		itemActions.inject( {
-			id: 'repeater-items-actions',
+			id: 'repeater-items-actions-' + actionName,
 			component,
+			options: {
+				overwrite: false,
+			},
 		} );
 	};
 

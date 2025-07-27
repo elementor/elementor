@@ -6,12 +6,17 @@ import { __ } from '@wordpress/i18n';
 import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
-const disabled = false;
 
-export const AddItemAction = () => {
+export const AddItemAction = ( {
+	disabled = false,
+	tooltip: Tooltip = React.Fragment,
+}: {
+	disabled?: boolean;
+	tooltip?: React.JSXElementConstructor< React.PropsWithChildren< unknown > >;
+} ) => {
 	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem } = useRepeaterContext();
 
-	const addRepeaterItem = () => {
+	const onClick = () => {
 		const newItem = structuredClone( initial );
 		const newKey = generateNextKey( uniqueKeys );
 
@@ -26,14 +31,16 @@ export const AddItemAction = () => {
 	};
 
 	return (
-		<IconButton
-			size={ SIZE }
-			sx={ { ml: 'auto' } }
-			disabled={ disabled }
-			onClick={ addRepeaterItem }
-			aria-label={ __( 'Add item', 'elementor' ) }
-		>
-			<PlusIcon fontSize={ SIZE } />
-		</IconButton>
+		<Tooltip>
+			<IconButton
+				size={ SIZE }
+				sx={ { ml: 'auto' } }
+				disabled={ disabled }
+				onClick={ onClick }
+				aria-label={ __( 'Add item', 'elementor' ) }
+			>
+				<PlusIcon fontSize={ SIZE } />
+			</IconButton>
+		</Tooltip>
 	);
 };

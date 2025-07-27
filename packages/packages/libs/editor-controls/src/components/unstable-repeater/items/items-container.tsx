@@ -1,30 +1,26 @@
 import * as React from 'react';
+import { type PropValue } from '@elementor/editor-props';
 
-import { ItemsDataContextProvider, useDataContext } from '../context/items-data-context';
-import { useRepeaterContext } from "../context/repeater-context";
+import { useRepeaterContext } from '../context/repeater-context';
+import { type ItemProps } from '../types';
 
-type ItemsContainerProps< T > = {
-	children: React.ReactNode;
+type ItemsContainerProps< T > = React.PropsWithChildren< {
 	initial: T;
 	values: T[];
 	setValues: ( newValue: T[] ) => void;
+} >;
+
+export const ItemsContainer = < T extends PropValue >( { children }: ItemsContainerProps< T > ) => {
+	return <ItemsList itemTemplate={ children } />;
 };
 
-export const ItemsContainer = < T, >( { children }: ItemsContainerProps< T > ) => {
-	return (
-		// <ItemsDataContextProvider< T > initial={ initial } values={ values } setValues={ setValues }>
-			<ItemsList itemTemplate={ children as React.ReactElement< ItemProps< T > > } />
-		// </ItemsDataContextProvider>
-	);
+// type ItemProps< T > = { value: T; index: number; openOnMount: boolean };
+
+type ItemsListProps = {
+	itemTemplate?: React.ReactNode;
 };
 
-type ItemProps< T > = { value: T; index: number; openOnMount: boolean };
-
-type ItemsListProps< T > = {
-	itemTemplate?: React.ReactElement< ItemProps< T > >;
-};
-
-const ItemsList = < T, >( { itemTemplate }: ItemsListProps< T > ) => {
+const ItemsList = < T, >( { itemTemplate }: ItemsListProps ) => {
 	const { items, uniqueKeys, openItem } = useRepeaterContext();
 
 	if ( ! itemTemplate ) {
@@ -40,7 +36,7 @@ const ItemsList = < T, >( { itemTemplate }: ItemsListProps< T > ) => {
 					return null;
 				}
 
-				return React.isValidElement( itemTemplate )
+				return React.isValidElement< ItemProps< T > >( itemTemplate )
 					? React.cloneElement( itemTemplate, {
 							key,
 							value,

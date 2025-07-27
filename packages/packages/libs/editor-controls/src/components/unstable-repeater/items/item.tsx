@@ -30,7 +30,6 @@ export const Item = < T extends PropValue >( {
 		config: {
 			itemActions: { Slot: ActionsSlot },
 		},
-		...context
 	} = useRepeaterContext();
 
 	return (
@@ -54,13 +53,7 @@ export const Item = < T extends PropValue >( {
 						<Icon value={ value as T } />
 					</RepeaterItemIconSlot>
 				}
-				actions={
-					<ActionsSlot { ...context } itemKey={ Number( key ) ?? -1 }>
-						<DuplicateItemAction />
-						<DisableItemAction />
-						<RemoveItemAction />
-					</ActionsSlot>
-				}
+				actions={ <ActionsSlot index={ index ?? -1 } /> }
 			/>
 			<EditItemPopover anchorRef={ ref } setAnchorEl={ setAnchorEl } popoverProps={ popoverProps }>
 				<Content anchorEl={ anchorEl } bind={ String( index ) } value={ value as T } />
