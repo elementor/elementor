@@ -8,7 +8,9 @@ import {
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 
-import { type ControlType, getPropTypeUtil } from '../controls-registry';
+import { ControlsRegistryManager, type ControlType } from '../controls-registry';
+
+const controlsRegistry = new ControlsRegistryManager();
 
 describe( 'Controls Registry', () => {
 	describe( 'Registry Integrity', () => {
@@ -28,7 +30,7 @@ describe( 'Controls Registry', () => {
 
 		it( 'should have correct propTypeUtil for each control type', () => {
 			Object.entries( expectedPropTypeUtils ).forEach( ( [ controlType, expectedPropTypeUtil ] ) => {
-				expect( getPropTypeUtil( controlType as ControlType ) ).toBe( expectedPropTypeUtil );
+				expect( controlsRegistry.getPropTypeUtil( controlType as ControlType ) ).toBe( expectedPropTypeUtil );
 			} );
 		} );
 	} );

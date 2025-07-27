@@ -50,8 +50,50 @@ export type ControlTypes = {
 	[ key in ControlType ]: ( typeof controlTypes )[ key ][ 'component' ];
 };
 
-export const getControl = ( type: ControlType ) => controlTypes[ type ]?.component;
+export class ControlsRegistryManager {
+	private static instance: ControlsRegistryManager;
 
-export const getDefaultLayout = ( type: ControlType ) => controlTypes[ type ].layout;
+	constructor( private readonly controlsRegistry: ControlRegistry = controlTypes ) {
+		this.controlsRegistry = controlsRegistry;
+	}
 
-export const getPropTypeUtil = ( type: ControlType ) => controlTypes[ type ]?.propTypeUtil;
+	static getInstance(): ControlsRegistryManager {
+		if ( ! ControlsRegistryManager.instance ) {
+			ControlsRegistryManager.instance = new ControlsRegistryManager();
+		}
+		return ControlsRegistryManager.instance;
+	}
+
+	getControl( type: ControlType ) {
+		return this.controlsRegistry[ type ]?.component;
+	}
+
+	getDefaultLayout( type: ControlType ) {
+		return this.controlsRegistry[ type ].layout;
+	}
+
+	getPropTypeUtil( type: ControlType ) {
+		return this.controlsRegistry[ type ]?.propTypeUtil;
+	}
+
+	getControlTypes() {
+		return this.controlsRegistry;
+	}
+
+	registerControl(
+		type: ControlType,
+		component: ControlComponent,
+		layout: ControlLayout,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		propTypeUtil?: PropTypeUtil< string, any >
+	) {
+		this.controlsRegistry[ type ] = { component, layout, propTypeUtil };
+	}
+
+	unregisterControl( type: ControlType ) {
+		// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+		delete this.controlsRegistry[ type ];
+	}
+}
+
+export const controlsRegistry = ControlsRegistryManager.getInstance();
