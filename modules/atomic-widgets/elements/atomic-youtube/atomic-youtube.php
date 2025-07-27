@@ -72,8 +72,8 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 				->set_label( __( 'Content', 'elementor' ) )
 				->set_items( [
 					Text_Control::bind_to( 'source' )
-						->set_label( esc_html__( 'YouTube URL', 'elementor' ) )
-						->set_placeholder( esc_html__( 'Type or paste your URL', 'elementor' ) ),
+						->set_placeholder( esc_html__( 'Type or paste your URL', 'elementor' ) )
+						->set_label( esc_html__( 'YouTube URL', 'elementor' ) ),
 
 					Text_Control::bind_to( 'start' )->set_label( esc_html__( 'Start time', 'elementor' ) ),
 					Text_Control::bind_to( 'end' )->set_label( esc_html__( 'End time', 'elementor' ) ),
@@ -86,11 +86,19 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 					Switch_Control::bind_to( 'privacy_mode' )->set_label( esc_html__( 'Privacy mode', 'elementor' ) ),
 					Switch_Control::bind_to( 'rel' )->set_label( esc_html__( 'Related videos', 'elementor' ) ),
 				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
 		];
 	}
 
 	protected function get_settings_controls(): array {
-		return [];
+		return [
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
+		];
 	}
 
 	protected function define_base_styles(): array {

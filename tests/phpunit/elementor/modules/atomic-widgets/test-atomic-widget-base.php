@@ -456,7 +456,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$controls = $widget->get_atomic_controls();
-		array_pop( $controls ); //remove settings section
 
 		// Assert.
 		$this->assertEquals( $controls_definitions, $controls );
