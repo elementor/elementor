@@ -3,7 +3,7 @@ import type { ComponentProps } from 'react';
 
 import { useElement } from '../contexts/element-context';
 import { ControlTypeNotFoundError } from '../errors';
-import { type ControlType, type ControlTypes, getControl } from './controls-registry';
+import { controlsRegistry, type ControlType, type ControlTypes } from './controls-registry';
 
 type IsRequired< T, K extends keyof T > = object extends Pick< T, K > ? false : true;
 
@@ -24,7 +24,7 @@ type ControlProps< T extends ControlType > = AnyPropertyRequired< ComponentProps
 	  };
 
 export const Control = < T extends ControlType >( { props, type }: ControlProps< T > ) => {
-	const ControlByType = getControl( type );
+	const ControlByType = controlsRegistry.get( type );
 	const { element } = useElement();
 
 	if ( ! ControlByType ) {
