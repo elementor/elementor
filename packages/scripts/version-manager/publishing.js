@@ -5,9 +5,6 @@ const { validatePackageForPublishing } = require('./validation');
 const { log, logError, logSuccess, logInfo, logWarning } = require('./logger');
 const { colors } = require('./constants');
 
-/**
- * Check if package is already published at current version
- */
 async function isPackagePublished(pkg) {
   try {
     const result = execSync(`npm view ${pkg.name} version`, { 
@@ -18,14 +15,10 @@ async function isPackagePublished(pkg) {
     const publishedVersion = result.trim();
     return publishedVersion === pkg.currentVersion;
   } catch (error) {
-    // Package doesn't exist or other error - assume not published
     return false;
   }
 }
 
-/**
- * Publish packages to npm
- */
 async function publishPackages(options = {}) {
   const packages = await getPublishablePackages(options.packages);
   
@@ -34,9 +27,8 @@ async function publishPackages(options = {}) {
     return;
   }
 
-  logInfo(`Found ${packages.length} publishable packages:\n`);
+  logInfo(`Found ${packages.length} publishable packages:`);
 
-  // Validate all packages first
   const validationResults = [];
   for (const pkg of packages) {
     const validation = validatePackageForPublishing(pkg);
@@ -53,22 +45,19 @@ async function publishPackages(options = {}) {
     }
   }
 
-  // Check for critical errors
   const packagesWithErrors = validationResults.filter(result => result.validation.errors.length > 0);
   if (packagesWithErrors.length > 0) {
-    logError(`\n❌ Cannot publish: ${packagesWithErrors.length} packages have errors`);
+    logError(`Cannot publish: ${packagesWithErrors.length} packages have errors`);
     process.exit(1);
   }
 
-  // Show what will be published
-  logInfo(`\n📦 Packages to publish:`);
+  logInfo(`📦 Packages to publish:`);
   packages.forEach(pkg => {
     const relativePath = pkg.path.replace(process.cwd(), '').replace(/^\/+/, '');
-    console.log(`  ${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.green}${pkg.currentVersion}${colors.reset} ${colors.yellow}(${relativePath})${colors.reset}`);
+    logInfo(`  ${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.green}${pkg.currentVersion}${colors.reset} ${colors.yellow}(${relativePath})${colors.reset}`);
   });
 
-  // Check for already published packages
-  logInfo(`\n🔍 Checking if packages are already published...`);
+  logInfo(`🔍 Checking if packages are already published...`);
   const alreadyPublished = [];
   for (const pkg of packages) {
     const isPublished = await isPackagePublished(pkg);
@@ -83,22 +72,17 @@ async function publishPackages(options = {}) {
     return;
   }
 
-  // Confirm publishing
   if (!options.yes && !options.dryRun) {
     const unpublishedCount = packages.length - alreadyPublished.length;
-    logInfo(`\n🚀 Ready to publish ${unpublishedCount} packages to npm`);
-    
-    // In a real implementation, you might want to prompt for confirmation here
-    // For now, we'll proceed with the publishing
+    logInfo(`🚀 Ready to publish ${unpublishedCount} packages to npm`);
   }
 
   if (options.dryRun) {
-    logWarning('\n📋 Dry run - no packages will be published');
+    logWarning('📋 Dry run - no packages will be published');
     return;
   }
 
-  // Publish packages
-  logInfo(`\n🚀 Publishing packages to npm...`);
+  logInfo(`🚀 Publishing packages to npm...`);
   const publishedPackages = [];
   const failedPackages = [];
 
@@ -136,8 +120,7 @@ async function publishPackages(options = {}) {
     }
   }
 
-  // Summary
-  logInfo(`\n📊 Publishing Summary:`);
+  logInfo(`📊 Publishing Summary:`);
   logSuccess(`  ✅ Successfully published: ${publishedPackages.length} packages`);
   if (failedPackages.length > 0) {
     logError(`  ❌ Failed to publish: ${failedPackages.length} packages`);
@@ -145,7 +128,7 @@ async function publishPackages(options = {}) {
   }
 
   if (publishedPackages.length > 0) {
-    logSuccess(`\n🎉 All packages published successfully!`);
+    logSuccess(`🎉 All packages published successfully!`);
   }
 }
 

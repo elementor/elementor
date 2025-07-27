@@ -4,23 +4,17 @@ const { applyTag, getHighestVersion, incrementVersion } = require('./version-uti
 const { log, logError, logSuccess, logInfo, logWarning } = require('./logger');
 const { colors, DEPENDENCY_TYPES } = require('./constants');
 
-/**
- * Show what changes would be made (dry run)
- */
 function showChanges(packages, newVersion) {
-  logWarning('\n📋 Dry run - no changes will be made:\n');
+  logWarning('📋 Dry run - no changes will be made:');
   
   packages.forEach(pkg => {
     const relativePath = pkg.path.replace(process.cwd(), '').replace(/^\/+/, '');
-    console.log(`${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.red}${pkg.currentVersion}${colors.reset} → ${colors.green}${newVersion}${colors.reset} ${colors.yellow}(${relativePath})${colors.reset}`);
+    logInfo(`${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.red}${pkg.currentVersion}${colors.reset} → ${colors.green}${newVersion}${colors.reset} ${colors.yellow}(${relativePath})${colors.reset}`);
   });
   
-  logWarning(`\nWould update ${packages.length} packages to version ${newVersion}`);
+  logWarning(`Would update ${packages.length} packages to version ${newVersion}`);
 }
 
-/**
- * Update dependencies that reference other workspace packages
- */
 async function updateDependencies(pkgData, newVersion) {
   const workspacePackages = await getPackages();
   const workspaceNames = new Set(workspacePackages.map(pkg => pkg.name));
@@ -29,7 +23,6 @@ async function updateDependencies(pkgData, newVersion) {
     if (pkgData[depType]) {
       for (const [depName, depVersion] of Object.entries(pkgData[depType])) {
         if (workspaceNames.has(depName) && typeof depVersion === 'string') {
-          // Update workspace dependency to match the new version
           pkgData[depType][depName] = newVersion;
         }
       }
@@ -37,9 +30,6 @@ async function updateDependencies(pkgData, newVersion) {
   }
 }
 
-/**
- * Update all packages to the new version
- */
 async function updatePackages(packages, newVersion) {
   for (const pkg of packages) {
     try {
@@ -48,7 +38,6 @@ async function updatePackages(packages, newVersion) {
       
       pkgData.version = newVersion;
       
-      // Update dependencies that reference other workspace packages
       await updateDependencies(pkgData, newVersion);
       
       const updatedContent = JSON.stringify(pkgData, null, 2) + '\n';
@@ -61,9 +50,6 @@ async function updatePackages(packages, newVersion) {
   }
 }
 
-/**
- * Set exact version for all packages
- */
 async function setVersion(version, options = {}) {
   const packages = await getPackages(options.packages);
   const finalVersion = applyTag(version, options.tag);
@@ -79,9 +65,6 @@ async function setVersion(version, options = {}) {
   logSuccess(`✅ Successfully updated ${packages.length} packages to version ${finalVersion}`);
 }
 
-/**
- * Bump version using semver
- */
 async function bumpVersion(type, options = {}) {
   const packages = await getPackages(options.packages);
   
@@ -89,7 +72,6 @@ async function bumpVersion(type, options = {}) {
     throw new Error('No packages found to update');
   }
 
-  // Use base version or get the highest version from packages
   const baseVersion = options.baseVersion || getHighestVersion(packages);
   const bumpedVersion = incrementVersion(baseVersion, type);
   const finalVersion = applyTag(bumpedVersion, options.tag);

@@ -2,17 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const { WORKSPACE_PATTERNS } = require('./constants');
+const { logWarning } = require('./logger');
 
-/**
- * Get all packages matching the pattern
- */
 async function getPackages(pattern) {
-  // If we're in the packages directory, adjust the pattern
   const isInPackagesDir = process.cwd().endsWith('packages');
   const basePattern = isInPackagesDir ? 'packages/{core,libs,tools}/*/package.json' : `packages/packages/{${WORKSPACE_PATTERNS.join(',')}}/package.json`;
   const searchPattern = pattern || basePattern;
   
-  // Ensure the pattern ends with /package.json if it doesn't already
   const finalPattern = searchPattern.endsWith('/package.json') ? searchPattern : `${searchPattern}/package.json`;
   
   const packageFiles = glob.sync(finalPattern, { cwd: process.cwd() });
@@ -43,16 +39,13 @@ async function getPackages(pattern) {
         });
       }
     } catch (error) {
-      // Warning will be logged by the calling function
+      logWarning(`Error parsing package.json: ${error.message}`);
     }
   }
 
   return packages.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/**
- * Get only publishable packages (private: false)
- */
 async function getPublishablePackages(pattern) {
   const allPackages = await getPackages(pattern);
   return allPackages.filter(pkg => !pkg.private);

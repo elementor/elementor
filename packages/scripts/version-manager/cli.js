@@ -1,16 +1,13 @@
 const { Command } = require('commander');
 const { logError } = require('./logger');
 
-// Create a new Commander program instance
 const program = new Command();
 
-// Configure program metadata
 program
   .name('version-manager')
   .description('Manage versions across packages in a monorepo')
   .version(require('../../../package.json').version);
 
-// Common options for all commands
 const addCommonOptions = (command) => {
   return command
     .option('--tag <suffix>', 'Add version suffix (e.g., beta, rc, alpha)')
@@ -19,7 +16,6 @@ const addCommonOptions = (command) => {
     .option('--yes', 'Assume "yes" to prompts and confirmations');
 };
 
-// Set version command
 program
   .command('set')
   .description('Set exact version for all packages')
@@ -37,9 +33,6 @@ program
     }
   });
 
-addCommonOptions(program.commands[0]);
-
-// Bump version command
 program
   .command('bump')
   .description('Bump version using semver')
@@ -58,9 +51,6 @@ program
     }
   });
 
-addCommonOptions(program.commands[1]);
-
-// List packages command
 program
   .command('list')
   .description('List all packages and their current versions')
@@ -83,9 +73,6 @@ program
     }
   });
 
-addCommonOptions(program.commands[2]);
-
-// Validate versions command
 program
   .command('validate')
   .description('Validate that all packages have consistent versioning')
@@ -102,9 +89,6 @@ program
     }
   });
 
-addCommonOptions(program.commands[3]);
-
-// Publish packages command
 program
   .command('publish')
   .description('Publish packages to npm (only non-private packages)')
@@ -123,9 +107,6 @@ program
     }
   });
 
-addCommonOptions(program.commands[4]);
-
-// Add examples
 program.addHelpText('after', `
 Examples:
   $ version-manager set 3.31.0
@@ -142,4 +123,8 @@ Examples:
   $ version-manager publish --packages "packages/libs/*"
 `);
 
-module.exports = program; 
+program.commands.forEach((command) => {
+  addCommonOptions(command);
+});
+
+module.exports = program;

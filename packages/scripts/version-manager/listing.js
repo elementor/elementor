@@ -3,9 +3,6 @@ const { validateVersions } = require('./validation');
 const { logError, logSuccess, logInfo, logWarning } = require('./logger');
 const { colors } = require('./constants');
 
-/**
- * List all packages and their versions
- */
 async function listPackages(options = {}) {
   const packages = await getPackages(options.packages);
   
@@ -14,18 +11,15 @@ async function listPackages(options = {}) {
     return;
   }
 
-  logInfo(`Found ${packages.length} packages:\n`);
+  logInfo(`Found ${packages.length} packages:`);
   
   packages.forEach(pkg => {
     const relativePath = pkg.path.replace(process.cwd(), '').replace(/^\/+/, '');
     const privateStatus = pkg.private ? `${colors.red}[private]${colors.reset}` : `${colors.green}[public]${colors.reset}`;
-    console.log(`${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.green}${pkg.currentVersion}${colors.reset} ${privateStatus} ${colors.yellow}(${relativePath})${colors.reset}`);
+    logInfo(`${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.green}${pkg.currentVersion}${colors.reset} ${privateStatus} ${colors.yellow}(${relativePath})${colors.reset}`);
   });
 }
 
-/**
- * List only publishable packages
- */
 async function listPublishablePackages(options = {}) {
   const packages = await getPublishablePackages(options.packages);
   
@@ -34,17 +28,14 @@ async function listPublishablePackages(options = {}) {
     return;
   }
 
-  logInfo(`Found ${packages.length} publishable packages:\n`);
+  logInfo(`Found ${packages.length} publishable packages:`);
   
   packages.forEach(pkg => {
     const relativePath = pkg.path.replace(process.cwd(), '').replace(/^\/+/, '');
-    console.log(`${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.green}${pkg.currentVersion}${colors.reset} ${colors.yellow}(${relativePath})${colors.reset}`);
+    logInfo(`${colors.cyan}${pkg.name.padEnd(30)}${colors.reset} ${colors.green}${pkg.currentVersion}${colors.reset} ${colors.yellow}(${relativePath})${colors.reset}`);
   });
 }
 
-/**
- * Validate that all packages have consistent versioning
- */
 async function validateVersionsCommand(options = {}) {
   const packages = await getPackages(options.packages);
   
@@ -60,7 +51,7 @@ async function validateVersionsCommand(options = {}) {
   } else {
     logError(`❌ ${result.message}:`);
     result.packagesWithVersions.forEach(({ version, count }) => {
-      console.log(`  ${colors.yellow}${version}${colors.reset}: ${count} packages`);
+      logInfo(`  ${colors.yellow}${version}${colors.reset}: ${count} packages`);
     });
   }
 }
