@@ -68,7 +68,7 @@ export const ClassManagerButton = () => {
 									await saveDocument();
 									closeSaveChangesDialog();
 									openPanel();
-									await prefetchClassesUsage();
+									prefetchClassesUsage();
 								},
 							},
 						} }
