@@ -9,33 +9,12 @@ import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
+import { getNotFoundType, NotFound } from '../not-found/not-found';
 import { useSearchAndFilters } from '../search-and-filter/context';
-import { getNotFoundConfig, type NotFoundType } from '../shared/not-found/config';
 import { ClassItem } from './class-item';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { SortableItem, SortableProvider } from './sortable';
-
-const getNotFoundType = (
-	searchValue: string,
-	filters: string[] | null | undefined,
-	filteredClasses: StyleDefinition[]
-): NotFoundType | undefined => {
-	const searchNotFound = filteredClasses.length <= 0 && searchValue.length > 1;
-	const filterNotFound = filters && filters.length === 0;
-	const filterAndSearchNotFound = searchNotFound && filterNotFound;
-
-	if ( filterAndSearchNotFound ) {
-		return 'filterAndSearch';
-	}
-	if ( searchNotFound ) {
-		return 'search';
-	}
-	if ( filterNotFound ) {
-		return 'filter';
-	}
-	return undefined;
-};
 
 type GlobalClassesListProps = {
 	disabled?: boolean;
@@ -43,8 +22,7 @@ type GlobalClassesListProps = {
 
 export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 	const {
-		filters: { onClearFilter },
-		search: { debouncedValue: searchValue, onClearSearch },
+		search: { debouncedValue: searchValue },
 	} = useSearchAndFilters();
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
@@ -74,24 +52,24 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 		return <EmptyState />;
 	}
 
-	const shouldShowNotFound = getNotFoundConfig( {
-		onClearFilter,
-		onClearSearch,
-		searchValue,
-		notFoundType: getNotFoundType( searchValue, filters, filteredCssClasses ),
-	} );
+	const notFoundType = getNotFoundType( searchValue, filters, filteredCssClasses );
 
-	if ( shouldShowNotFound !== null ) {
-		return shouldShowNotFound;
+	if ( notFoundType ) {
+		return <NotFound notFoundType={ notFoundType } />;
 	}
+
+	/* translators: %s: Number of classes. */
+	const foundClassesText = __( 'We found %s classes:', 'elementor' ).replace(
+		'%s',
+		filters?.length?.toString() || '0'
+	);
 
 	return (
 		<DeleteConfirmationProvider>
 			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
 				{ filters && (
 					<Typography variant="subtitle2" color="text.primary">
-						{ /* translators: %s: Number of classes. */ }
-						{ __( 'We found "%s" classes:', 'elementor' ).replace( '%s', filters.length.toString() ) }
+						{ foundClassesText }
 					</Typography>
 				) }
 				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>

@@ -38,6 +38,10 @@ export const FilterList = () => {
 
 	return (
 		<MenuList>
+			{ /*<LabeledCheckbox label={  } onClick={  } checked={  } suffix={  }></LabeledCheckbox>*/ }
+			{ /*<LabeledCheckbox label={  } onClick={  } checked={  } suffix={  }></LabeledCheckbox>*/ }
+			{ /*<LabeledCheckbox label={  } onClick={  } checked={  } suffix={  }></LabeledCheckbox>*/ }
+
 			{ checkBoxItems.map( ( { label, value }: CheckBoxItem ) => (
 				<LabeledCheckbox
 					suffix={
