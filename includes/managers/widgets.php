@@ -120,6 +120,7 @@ class Widgets_Manager {
 
 		$this->register_promoted_widgets();
 
+
 		foreach ( $build_widgets_filename as $widget_filename ) {
 			include ELEMENTOR_PATH . 'includes/widgets/' . $widget_filename . '.php';
 

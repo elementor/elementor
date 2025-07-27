@@ -5,6 +5,7 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalWidgetsView = require( './views/global-widgets' ),
 	PanelElementsGlobalComponentsView = require( './views/global-components' ),
+	PanelElementsElementModel = require( './models/element' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -28,12 +29,15 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	elementsCollection: null,
 
+	globalComponentsCollection: null,
+
 	categoriesCollection: null,
 
 	initialize() {
 		this.listenTo( elementor.channels.panelElements, 'element:selected', this.destroy );
 
 		this.initElementsCollection();
+		this.initGlobalComponentsCollection();
 
 		this.initCategoriesCollection();
 
@@ -63,7 +67,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			globalComponents: {
 				region: this.globalComponents,
 				view: PanelElementsGlobalComponentsView,
-				options: { collection: this.elementsCollection },
+				options: { collection: this.globalComponentsCollection },
 			},
 		};
 
@@ -119,6 +123,42 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		}
 
 		this.elementsCollection = elementsCollection;
+	},
+
+	initGlobalComponentsCollection() {
+		const globalComponentsCollection = new PanelElementsElementsCollection();
+
+		// const globalWidgets = elementorPro.config.widget_templates;
+		const globalWidgets = {
+			"383": {
+				"elType": "widget",
+				"title": "global-button-1",
+				"widgetType": "button"
+			}
+		}
+		Object.entries( globalWidgets ).forEach( ( [ id, data ] ) => {
+			// elementorPro.modules.globalWidget.addGlobalWidget( id, data );
+
+			// this.addTemplateToCache( id );
+
+			const templateData = Object.assign( {}, data, {
+				id,
+				categories: [],
+				icon: elementor.widgetsCache[ data.widgetType ].icon,
+				widgetType: data.widgetType,
+				custom: {
+					templateID: id,
+				},
+			} );
+	
+			const elementModel = new PanelElementsElementModel( templateData );
+	
+			elementModel.set( 'id', id );
+	
+			globalComponentsCollection.add(elementModel);
+		} );
+
+		this.globalComponentsCollection = globalComponentsCollection;
 	},
 
 	getCollectionItem( item ) {
