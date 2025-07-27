@@ -62,7 +62,7 @@ class ControlsRegistry {
 	}
 
 	getLayout( type: ControlType ) {
-		return this.controlsRegistry[ type ].layout;
+		return this.controlsRegistry[ type ]?.layout;
 	}
 
 	getPropTypeUtil( type: ControlType ) {
