@@ -16,7 +16,7 @@ wp theme activate hello-elementor
 # Remove Akismet as it is pre-installed in the Docker image (ignore errors if not found)
 wp plugin uninstall akismet --deactivate || echo "Akismet plugin not found or already removed"
 
-# Set rewrite structure (remove WP_CLI_CONFIG_PATH which causes issues)
+# Set rewrite structure
 wp rewrite structure '/%postname%/' --hard
 
 # Remove the Guttenberg welcome guide popup (ignore errors if already set)
