@@ -17,6 +17,7 @@ export const ValueComponent = ( { index, value }: Props ) => {
 				overflow: 'hidden',
 				textOverflow: 'ellipsis',
 				whiteSpace: 'nowrap',
+				pl: 2.5,
 			} }
 		>
 			{ value }

@@ -183,11 +183,12 @@ const shouldShowPlaceholder = ( pattern: string, data: Record< string, unknown >
 
 const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
 	const { placeholder, patternLabel } = useRepeatableControlContext();
-
-	const label = shouldShowPlaceholder( patternLabel, value ) ? placeholder : interpolate( patternLabel, value );
+	const showPlaceholder = shouldShowPlaceholder( patternLabel, value );
+	const label = showPlaceholder ? placeholder : interpolate( patternLabel, value );
+	const color = showPlaceholder ? 'text.tertiary' : 'text.primary';
 
 	return (
-		<Box component="span" color="text.tertiary">
+		<Box component="span" color={ color }>
 			{ label }
 		</Box>
 	);
