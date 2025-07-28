@@ -64,6 +64,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			} else if ( isExportToCloud ) {
 				const exportedData = {
 					kit: result.data.kit,
+					manifest: result.data.manifest,
 				};
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
