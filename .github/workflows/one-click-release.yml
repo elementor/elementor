@@ -162,11 +162,20 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
           
-      - name: Create release PR or publish
+      - name: Publish packages (and tag version)
         id: release-packages
         run: |
-          # Assuming the version is already bumped in the creation of the release branch
-          npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          if [ "${{ env.CHANNEL }}" == "ga" ]; then
+            # Assuming the version is already bumped in the creation of the release branch
+            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          else
+            if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
+              LATEST_BETA_TAG=$(gh tag list --limit 1 --pattern "${{ env.PACKAGE_VERSION }}-beta-") || "${{ env.PACKAGE_VERSION }}-beta-0"
+              npm run packages:version set ${{ env.PACKAGE_VERSION }} --tag `beta-${LATEST_BETA_TAG}`
+              gh tag create ${{ env.PACKAGE_VERSION }}-beta-${LATEST_BETA_TAG} --annotate "Beta ${{ env.PACKAGE_VERSION }}" --message "Beta ${{ env.PACKAGE_VERSION }}"
+            fi
+            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
