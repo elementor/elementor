@@ -2,8 +2,6 @@ import { Box, Typography, Stack } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import SummarySection from './summary-section';
 
-
-
 export default function ExportCompleteSummary( { kitInfo, includes, exportedData } ) {
 	const sectionsTitlesMap = {
 		settings: {
@@ -36,14 +34,14 @@ export default function ExportCompleteSummary( { kitInfo, includes, exportedData
 				{ __( 'This website template includes:', 'elementor' ) }
 			</Typography>
 			<Stack spacing={ 2 } sx={ { pt: 1, maxWidth: '1075px' } } >
-				{ includes.map( ( section ) => 
+				{ includes.map( ( section ) =>
 					sectionsTitlesMap[ section ] ? (
 						<SummarySection
 							key={ section }
 							title={ sectionsTitlesMap[ section ].title }
 							subTitle={ sectionsTitlesMap[ section ].subTitle }
 						/>
-					) : null
+					) : null,
 				) }
 			</Stack>
 		</Box>

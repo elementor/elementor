@@ -28,4 +28,4 @@ export default function SummarySection( { title, subTitle } ) {
 SummarySection.propTypes = {
 	title: PropTypes.string.isRequired,
 	subTitle: PropTypes.string.isRequired,
-}; 
+};
