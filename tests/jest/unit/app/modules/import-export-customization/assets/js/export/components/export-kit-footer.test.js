@@ -44,9 +44,6 @@ describe( 'ExportKitFooter Component', () => {
 		};
 		global.elementorAppConfig = mockElementorAppConfig;
 
-		delete window.location;
-		window.location = { href: '' };
-
 		global.jQuery = jest.fn( () => ( {
 			elementorConnect: jest.fn(),
 		} ) );
