@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
-	type ElementID,
 	buildInverseDependencyGraph,
+	type ElementID,
 	getElementLabel,
 	getElementSettings,
 	updateElementSettings,
