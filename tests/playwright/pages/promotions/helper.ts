@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import Content from '../elementor-panel-tabs/content';
-import EditorSelectors from '../../selectors/editor-selectors';
 
 export default class promotionsHelper extends Content {
 	/**
