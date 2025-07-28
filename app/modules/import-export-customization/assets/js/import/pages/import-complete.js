@@ -117,7 +117,7 @@ export default function ImportComplete() {
 						</Typography>
 					</Box>
 					<Stack spacing={ 2 } sx={ { pt: 1, maxWidth: '1075px' } } >
-						{ data.includes.includes('settings') && (
+						{ data.includes.includes( 'settings' ) && (
 							<Box>
 								<Stack direction="row" alignItems="center" spacing={ 1 }>
 									<Typography variant="body2" color="text.primary" >
@@ -130,7 +130,7 @@ export default function ImportComplete() {
 								</Typography>
 							</Box>
 						) }
-						{ data.includes.includes('content') && (
+						{ data.includes.includes( 'content' ) && (
 							<Box>
 								<Stack direction="row" alignItems="center" spacing={ 1 }>
 									<Typography variant="body2" color="text.primary" >
@@ -143,7 +143,7 @@ export default function ImportComplete() {
 								</Typography>
 							</Box>
 						) }
-						{ data.includes.includes('plugins') && (
+						{ data.includes.includes( 'plugins' ) && (
 							<Box>
 								<Stack direction="row" alignItems="center" spacing={ 1 }>
 									<Typography variant="body2" color="text.primary">
@@ -152,7 +152,7 @@ export default function ImportComplete() {
 									<ExternalLinkIcon />
 								</Stack>
 								<Typography variant="caption" color="text.secondary">
-									{ runnersState.plugins ? runnersState.plugins.join(' | ') : __( 'No plugins imported', 'elementor' ) }
+									{ runnersState.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' ) }
 								</Typography>
 							</Box>
 						) }

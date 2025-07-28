@@ -26,7 +26,7 @@ export default function ExportCompleteSummary( { kitInfo, includes, exportedData
 				{ __( 'This website template includes:', 'elementor' ) }
 			</Typography>
 			<Stack spacing={ 2 } sx={ { pt: 1, maxWidth: '1075px' } } >
-				{ includes.includes('settings') && (
+				{ includes.includes( 'settings' ) && (
 					<Box>
 						<Stack direction="row" alignItems="center" spacing={ 1 }>
 							<Typography variant="body2" color="text.primary" >
@@ -39,7 +39,7 @@ export default function ExportCompleteSummary( { kitInfo, includes, exportedData
 						</Typography>
 					</Box>
 				) }
-				{ includes.includes('content') && (
+				{ includes.includes( 'content' ) && (
 					<Box>
 						<Stack direction="row" alignItems="center" spacing={ 1 }>
 							<Typography variant="body2" color="text.primary" >
@@ -52,7 +52,7 @@ export default function ExportCompleteSummary( { kitInfo, includes, exportedData
 						</Typography>
 					</Box>
 				) }
-				{ includes.includes('plugins') && (
+				{ includes.includes( 'plugins' ) && (
 					<Box>
 						<Stack direction="row" alignItems="center" spacing={ 1 }>
 							<Typography variant="body2" color="text.primary">
@@ -76,4 +76,11 @@ ExportCompleteSummary.propTypes = {
 		description: PropTypes.string,
 	} ).isRequired,
 	includes: PropTypes.arrayOf( PropTypes.string ).isRequired,
+	exportedData: PropTypes.shape( {
+		manifest: PropTypes.shape( {
+			plugins: PropTypes.arrayOf( PropTypes.shape( {
+				name: PropTypes.string,
+			} ) ),
+		} ),
+	} ),
 };

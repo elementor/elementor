@@ -10,7 +10,7 @@ export function PluginActivation( { plugins } ) {
 			{ data.uploadedData?.manifest?.plugins
 				?.filter( ( plugin ) => {
 					if ( data?.customization?.plugins ) {
-						return data.customization.plugins[ plugin.plugin ] === true;
+						return true === data.customization.plugins[ plugin.plugin ];
 					}
 
 					return true;

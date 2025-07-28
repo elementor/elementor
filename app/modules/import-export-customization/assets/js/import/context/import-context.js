@@ -22,12 +22,12 @@ const importReducer = ( state, { type, payload } ) => {
 		case 'SET_KIT_UPLOAD_PARAMS':
 			return { ...state, kitUploadParams: payload };
 		case 'SET_RUNNERS_STATE':
-			return { 
-				...state, 
-				runnersState: { 
-					...state.runnersState, 
-					...payload 
-				} 
+			return {
+				...state,
+				runnersState: {
+					...state.runnersState,
+					...payload,
+				},
 			};
 		case 'ADD_INCLUDE':
 			return {
