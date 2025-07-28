@@ -19,6 +19,11 @@ on:
         description: 'Run in dry-run mode (no actual release will be created)'
         required: false
         default: true
+      is_patch:
+        type: boolean
+        description: 'Is this a patch release? (If true then the channel must be ga)'
+        required: false
+        default: false
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -148,6 +153,15 @@ jobs:
           DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
+      - name: Create patch version
+        id: create-patch-version
+        if: github.event.inputs.is_patch == 'true' && env.CHANNEL == 'ga'
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/create-patch-version.sh"
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+          
       - name: Create release PR or publish
         id: release-packages
         run: |
