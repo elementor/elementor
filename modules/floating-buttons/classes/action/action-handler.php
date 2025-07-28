@@ -85,5 +85,7 @@ class Action_Handler {
 		}
 
 		$conditions['floating_buttons'][ $post_id ] = [ 'include/general' ];
+
+		update_option( self::CONDITIONS_CACHE_META_KEY, $conditions );
 	}
 }
