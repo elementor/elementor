@@ -43,6 +43,7 @@ const ExternalLinkIcon = ( props ) => {
 };
 
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
+	console.log( data );
 	const isImport = data.hasOwnProperty( 'uploadedData' );
 
 	const { pluginsList: fetchedPluginsList, isLoading: fetchIsLoading } = useKitPlugins( { open: open && ! isImport } );

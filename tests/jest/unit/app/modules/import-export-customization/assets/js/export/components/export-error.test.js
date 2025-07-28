@@ -15,6 +15,8 @@ describe( 'ExportError Component', () => {
 	let mockWindowOpen;
 
 	beforeEach( () => {
+		jest.clearAllMocks();
+		
 		mockElementorAppConfig = {
 			base_url: 'https://example.com',
 		};
@@ -22,12 +24,6 @@ describe( 'ExportError Component', () => {
 
 		mockWindowOpen = jest.fn();
 		global.window.open = mockWindowOpen;
-
-		mockDispatch.mockClear();
-	} );
-
-	afterEach( () => {
-		jest.clearAllMocks();
 	} );
 
 	describe( 'Basic Rendering', () => {
