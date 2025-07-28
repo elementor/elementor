@@ -129,15 +129,12 @@ describe( 'ExportComplete Component', () => {
 		it( 'should handle View in Library button click', () => {
 			mockExportContext.data.kitInfo.source = 'cloud';
 
-			delete window.location;
-			window.location = { href: '' };
-
 			render( <ExportComplete /> );
 
 			const viewLibraryButton = screen.getByTestId( 'view-in-library-button' );
 			fireEvent.click( viewLibraryButton );
 
-			expect( window.location.href ).toBe( 'https://example.com/elementor#/kit-library/cloud' );
+			expect( mockNavigate ).toHaveBeenCalledWith( '/kit-library/cloud' );
 		} );
 
 		it( 'should show download link for file export', () => {

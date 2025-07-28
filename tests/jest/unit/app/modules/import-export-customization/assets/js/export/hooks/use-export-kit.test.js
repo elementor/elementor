@@ -124,8 +124,6 @@ describe( 'useExportKit Hook', () => {
 				type: 'SET_EXPORT_STATUS',
 				payload: EXPORT_STATUS.COMPLETED,
 			} );
-
-			expect( window.location.href ).toBe( 'https://example.com#/export-customization/complete' );
 		} );
 	} );
 
