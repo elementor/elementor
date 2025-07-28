@@ -40,4 +40,12 @@ abstract class Post_Local_Cache extends Post {
 
 		return $document ? $document->get_elements_data() : [];
 	}
+
+	public function enqueue() {
+		if ( ! $this->get_post_id_for_data() ) {
+			return;
+		}
+
+		parent::enqueue();
+	}
 }
