@@ -2,9 +2,7 @@ import PromotionBehavior from './behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		if ( ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length ) &&
-			( ! elementor.config?.integrationWidgets || ! elementor.config.integrationWidgets.length )
-		) {
+		if ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length ) {
 			return;
 		}
 
@@ -13,11 +11,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 			const isProWidget = elementor.config.promotionWidgets.find( ( item ) => widgetType === item.name );
 
 			if ( isProWidget ) {
-				return require( './widget/view' ).default;
-			}
-
-			const isIntegrationWidget = elementor.config?.integrationWidgets.find( ( item ) => widgetType === item.name );
-			if ( isIntegrationWidget ) {
 				return require( './widget/view' ).default;
 			}
 
