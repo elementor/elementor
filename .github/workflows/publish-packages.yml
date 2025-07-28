@@ -32,7 +32,7 @@ jobs:
         id: get-version
         working-directory: packages
         run: |
-          CURRENT_VERSION=$(node scripts/version-manager/index.js list --publishable | grep -E "@elementor/" | head -1 | awk '{print $2}')
+          CURRENT_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor")
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
           echo "Current version: $CURRENT_VERSION"
 
