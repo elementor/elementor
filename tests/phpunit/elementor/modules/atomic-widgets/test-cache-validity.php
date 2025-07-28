@@ -120,4 +120,53 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 			'Other nested items should remain valid.'
 		);
 	}
+
+	public function test_meta_data_is_stored_and_cleaned_responsively() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+
+		$this->assertNull(
+			$cache_validity->get_meta(['test']),
+			'Meta data should be null if not set.'
+		);
+
+		// Act.
+		$cache_validity->validate(['test'], ['meta' => 'data']);
+
+		// Assert.
+		$this->assertEquals(
+			$cache_validity->get_meta(['test']),
+			['meta' => 'data'],
+			'Meta data should be stored.'
+		);
+
+		// Act.
+		$cache_validity->invalidate(['test']);
+
+		// Assert.
+		$this->assertNull(
+			$cache_validity->get_meta(['test']),
+			'Meta data should be cleaned.'
+		);
+	}
+
+	public function test_meta_data_is_stored_and_cleaned_responsively_for_nested_keys() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate(['test', 'nested'], ['meta' => 'data']);
+
+		// Assert.
+		$this->assertEquals(
+			$cache_validity->get_meta(['test', 'nested']),
+			['meta' => 'data'],
+			'Meta data should be stored.'
+		);
+
+		$this->assertNull(
+			$cache_validity->get_meta(['test']),
+			'Meta data should be empty.'
+		);
+	}
 }

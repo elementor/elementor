@@ -46,6 +46,11 @@ class Atomic_Styles_Manager {
 
 	public function register_hooks() {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
+
+		add_action( 'elementor/atomic-styles/related-posts', function( array $post_ids ) {
+			$this->post_ids = array_unique( array_merge( $this->post_ids, $post_ids ) );
+		} );
+
 		add_action( 'elementor/post/render', function( $post_id ) {
 			$this->post_ids[] = $post_id;
 		} );
