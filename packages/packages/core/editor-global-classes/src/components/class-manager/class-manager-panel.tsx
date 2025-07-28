@@ -18,6 +18,7 @@ import {
 	Alert,
 	Box,
 	Button,
+	Chip,
 	DialogHeader,
 	Divider,
 	ErrorBoundary,
@@ -27,7 +28,9 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useDirtyState } from '../../hooks/use-dirty-state';
+import { useFilters } from '../../hooks/use-filters';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
 import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
@@ -40,7 +43,6 @@ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
 import { SaveChangesDialog, useDialog } from './save-changes-dialog';
-import { TotalCssClassCounter } from './total-css-class-counter';
 
 const id = 'global-classes-manager';
 
@@ -233,4 +235,16 @@ const usePublish = () => {
 			}
 		},
 	} );
+};
+
+const TotalCssClassCounter = () => {
+	const filters = useFilters();
+	const cssClasses = useClassesOrder();
+
+	return (
+		<Chip
+			size={ 'small' }
+			label={ filters ? `${ filters.length } / ${ cssClasses?.length }` : cssClasses?.length }
+		/>
+	);
 };
