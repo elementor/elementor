@@ -19,8 +19,6 @@ export const AddItemAction = ( {
 	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem } = useRepeaterContext();
 	const shouldShowTooltip = tooltip && tooltipContent;
 
-	const TooltipComponent = shouldShowTooltip ? Tooltip : React.Fragment;
-
 	const onClick = () => {
 		const newItem = structuredClone( initial );
 		const newKey = generateNextKey( uniqueKeys );
@@ -36,7 +34,7 @@ export const AddItemAction = ( {
 	};
 
 	return (
-		<TooltipComponent title={ tooltipContent }>
+		<ConditionalToolTip content={ tooltipContent } shouldShowTooltip={ !! shouldShowTooltip }>
 			<IconButton
 				size={ SIZE }
 				sx={ { ml: 'auto' } }
@@ -46,6 +44,17 @@ export const AddItemAction = ( {
 			>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
-		</TooltipComponent>
+		</ConditionalToolTip>
 	);
+};
+
+const ConditionalToolTip = ( {
+	children,
+	content,
+	shouldShowTooltip,
+}: React.PropsWithChildren< {
+	content: React.ReactNode;
+	shouldShowTooltip: boolean;
+} > ) => {
+	return shouldShowTooltip ? <Tooltip title={ content }>{ children }</Tooltip> : children;
 };
