@@ -26,19 +26,22 @@ const Action = ( { index }: { index: number } ) => {
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 
 	const onClick = () => {
-		setItems(
-			items.map( ( value, pos ) => {
-				if ( pos === index ) {
-					value.disabled = ! value.disabled;
-				}
+		const newItems = [ ...items ];
 
-				if ( ! value.disabled ) {
-					delete value.disabled;
-				}
+		const self = newItems[ index ];
 
-				return value;
-			} )
-		);
+		if ( ! self ) {
+			return;
+		}
+
+		self.disabled = ! self.disabled;
+
+		if ( ! self.disabled ) {
+			delete self.disabled;
+		}
+
+		newItems.splice( index, 1, self );
+		setItems( newItems );
 	};
 
 	return (
