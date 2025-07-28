@@ -12,6 +12,7 @@ use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
 use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
+use Elementor\Modules\FloatingButtons\Classes\Action\Action_Handler;
 use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
@@ -171,8 +172,14 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'admin_init', function () {
-			$action = filter_input( INPUT_GET, 'action' );
-			$menu_args = $this->get_contact_menu_args();
+			$action = sanitize_text_field( filter_input( INPUT_GET, 'action' ) );
+
+			if ( $action ) {
+				$menu_args = $this->get_contact_menu_args();
+				$action_handler = new Action_Handler( $action , $menu_args );
+				$action_handler->process_action();
+
+			}
 
 			switch ( $action ) {
 				case 'remove_from_entire_site':
