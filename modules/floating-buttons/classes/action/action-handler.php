@@ -1,14 +1,13 @@
 <?php
 
-
 namespace Elementor\Modules\FloatingButtons\Classes\Action;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
 use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Modules\FloatingButtons\Module;
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
 
 class Action_Handler {
 
