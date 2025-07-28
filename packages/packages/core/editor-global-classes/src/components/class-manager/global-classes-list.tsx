@@ -9,11 +9,11 @@ import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
-import { getNotFoundType, NotFound } from '../not-found/not-found';
 import { useSearchAndFilters } from '../search-and-filter/context';
 import { ClassItem } from './class-item';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
+import { getNotFoundType, NotFound } from './not-found';
 import { SortableItem, SortableProvider } from './sortable';
 
 type GlobalClassesListProps = {
