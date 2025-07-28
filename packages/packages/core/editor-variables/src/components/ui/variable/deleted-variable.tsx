@@ -4,14 +4,12 @@ import { useBoundProp } from '@elementor/editor-controls';
 import { type PropTypeKey } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
 
+import { VariableTypeProvider } from '../../../context/variable-type-context';
 import { usePermissions } from '../../../hooks/use-permissions';
 import { restoreVariable } from '../../../hooks/use-prop-variables';
-import { colorVariablePropTypeUtil } from '../../../prop-types/color-variable-prop-type';
-import { fontVariablePropTypeUtil } from '../../../prop-types/font-variable-prop-type';
 import { type Variable } from '../../../types';
 import { getVariableType } from '../../../variables-registry/variable-type-registry';
-import { ColorVariableRestore } from '../../color-variable-restore';
-import { FontVariableRestore } from '../../font-variable-restore';
+import { VariableRestore } from '../../variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
 import { DeletedTag } from '../tags/deleted-tag';
 
@@ -116,21 +114,13 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 					} }
 					{ ...bindPopover( popupState ) }
 				>
-					{ fontVariablePropTypeUtil.key === propTypeUtil.key && (
-						<FontVariableRestore
+					<VariableTypeProvider propTypeKey={ propTypeKey }>
+						<VariableRestore
 							variableId={ variable.key ?? '' }
 							onClose={ popupState.close }
 							onSubmit={ handleRestoreWithOverrides }
 						/>
-					) }
-
-					{ colorVariablePropTypeUtil.key === propTypeUtil.key && (
-						<ColorVariableRestore
-							variableId={ variable.key ?? '' }
-							onClose={ popupState.close }
-							onSubmit={ handleRestoreWithOverrides }
-						/>
-					) }
+					</VariableTypeProvider>
 				</Popover>
 			</Box>
 		</>
