@@ -4,14 +4,6 @@ const sass = {
 	options: {
 		implementation: sassImplementation,
 		sourceMap: true,
-		logger: {
-			warn(message) {
-				// suppress all warnings
-			},
-			debug(message) {
-				// suppress all debug logs
-			}
-		}
 	},
 	dist: {
 		files: [
