@@ -10,9 +10,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );
-			const isProWidget = elementor.config?.promotionWidgets?.length
-				? elementor.config.promotionWidgets.find( ( item ) => widgetType === item.name )
-				: false;
+                        const isProWidget = elementor.config?.promotionWidgets?.find( ( item ) => widgetType === item.name );
 
 			if ( isProWidget ) {
 				return require( './widget/view' ).default;
