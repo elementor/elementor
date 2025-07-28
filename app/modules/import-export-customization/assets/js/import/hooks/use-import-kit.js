@@ -32,11 +32,10 @@ export const IMPORT_PROCESSING_STATUS = {
 	DONE: 'DONE',
 };
 
-export function useImportKit() {
-	const { data, isProcessing, dispatch } = useImportContext();
-	const { includes, customization } = data;
+export function useImportKit( { data, includes, customization, isProcessing, dispatch } ) {
 	const [ status, setImportStatus ] = useState( IMPORT_PROCESSING_STATUS.PENDING );
 	const [ error, setError ] = useState( null );
+	const [ runnersState, setRunnersState ] = useState( {} );
 
 	const runImportRunners = async () => {
 		setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );

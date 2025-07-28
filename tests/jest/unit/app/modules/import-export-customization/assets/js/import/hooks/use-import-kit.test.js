@@ -58,7 +58,6 @@ describe( 'useImportKit Hook', () => {
 		// Assert
 		expect( result.current.status ).toBe( IMPORT_PROCESSING_STATUS.PENDING );
 		expect( result.current.error ).toBe( null );
-		expect( result.current.runnersState ).toEqual( {} );
 	} );
 
 	it( 'should call importKit and dispatch SET_IMPORTED_DATA on success', async () => {
@@ -156,9 +155,9 @@ describe( 'useImportKit Hook', () => {
 		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
-			expect( result.current.runnersState.plugin1 ).toBe( 'ok' );
-			expect( result.current.runnersState.plugin2 ).toBe( 'ok' );
 			expect( result.current.status ).toBe( IMPORT_PROCESSING_STATUS.DONE );
+			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_RUNNERS_STATE', payload: { plugin1: 'ok' } } );
+			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_RUNNERS_STATE', payload: { plugin2: 'ok' } } );
 			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_IMPORT_STATUS', payload: 'COMPLETED' } );
 		} );
 	} );

@@ -2,6 +2,14 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ExportError from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-error';
 
+const mockDispatch = jest.fn();
+
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context', () => ( {
+	useExportContext: () => ( {
+		dispatch: mockDispatch,
+	} ),
+} ) );
+
 describe( 'ExportError Component', () => {
 	let mockElementorAppConfig;
 	let mockWindowOpen;
@@ -12,11 +20,10 @@ describe( 'ExportError Component', () => {
 		};
 		global.elementorAppConfig = mockElementorAppConfig;
 
-		delete window.location;
-		window.location = { href: '' };
-
 		mockWindowOpen = jest.fn();
 		global.window.open = mockWindowOpen;
+
+		mockDispatch.mockClear();
 	} );
 
 	afterEach( () => {
@@ -59,7 +66,7 @@ describe( 'ExportError Component', () => {
 			expect( tryAgainButton ).toBeTruthy();
 
 			fireEvent.click( tryAgainButton );
-			expect( window.location.href ).toBe( 'https://example.com#/export-customization/' );
+			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'RESET_STATE' } );
 		} );
 
 		it( 'should handle Learn More button click', () => {
