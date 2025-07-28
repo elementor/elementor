@@ -176,7 +176,7 @@ class Module extends BaseModule {
 
 			if ( $action ) {
 				$menu_args = $this->get_contact_menu_args();
-				$action_handler = new Action_Handler( $action , $menu_args );
+				$action_handler = new Action_Handler( $action, $menu_args );
 				$action_handler->process_action();
 
 			}

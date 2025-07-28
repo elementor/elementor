@@ -18,11 +18,11 @@ class Action_Handler {
 	protected array $menu_args;
 
 	public function __construct( string $action, array $menu_args ) {
-		$this->action = $action;
+		$this->action    = $action;
 		$this->menu_args = $menu_args;
 	}
 
-	public function process_action(  ) {
+	public function process_action() {
 		switch ( $this->action ) {
 			case 'remove_from_entire_site':
 				$post_id = filter_input( INPUT_GET, 'post', FILTER_VALIDATE_INT );
@@ -37,14 +37,14 @@ class Action_Handler {
 				check_admin_referer( 'set_as_entire_site_' . $post_id );
 
 				$posts = get_posts( [
-					'post_type' => Module::CPT_FLOATING_BUTTONS,
-					'posts_per_page' => -1,
-					'post_status' => 'publish',
-					'fields' => 'ids',
-					'no_found_rows' => true,
+					'post_type'              => Module::CPT_FLOATING_BUTTONS,
+					'posts_per_page'         => - 1,
+					'post_status'            => 'publish',
+					'fields'                 => 'ids',
+					'no_found_rows'          => true,
 					'update_post_term_cache' => false,
 					'update_post_meta_cache' => false,
-					'meta_query' => Floating_Buttons::get_meta_query_for_floating_buttons(
+					'meta_query'             => Floating_Buttons::get_meta_query_for_floating_buttons(
 						Floating_Buttons::get_floating_element_type( $post_id )
 					),
 				] );
@@ -67,23 +67,23 @@ class Action_Handler {
 	private function remove_from_conditions_cache( $post_id ): void {
 		$conditions = get_option( self::CONDITIONS_CACHE_META_KEY, [] );
 
-		if ( isset( $conditions[ 'floating_buttons' ][ $post_id ] ) ) {
-			unset( $conditions[ 'floating_buttons' ][ $post_id ] );
+		if ( isset( $conditions['floating_buttons'][ $post_id ] ) ) {
+			unset( $conditions['floating_buttons'][ $post_id ] );
 
-			if ( empty( $conditions[ 'floating_buttons' ] ) ) {
-				unset( $conditions[ 'floating_buttons' ] );
+			if ( empty( $conditions['floating_buttons'] ) ) {
+				unset( $conditions['floating_buttons'] );
 			}
 
 			update_option( self::CONDITIONS_CACHE_META_KEY, $conditions );
 		}
 	}
 
-	private function add_to_conditions_cache( $post_id ): void  {
+	private function add_to_conditions_cache( $post_id ): void {
 		$conditions = get_option( self::CONDITIONS_CACHE_META_KEY, [] );
-		if ( ! isset( $conditions[ 'floating_buttons' ] ) ) {
-			$conditions[ 'floating_buttons' ] = [];
+		if ( ! isset( $conditions['floating_buttons'] ) ) {
+			$conditions['floating_buttons'] = [];
 		}
 
-		$conditions[ 'floating_buttons' ][$post_id] = [ 'include/general' ];
+		$conditions['floating_buttons'][ $post_id ] = [ 'include/general' ];
 	}
 }
