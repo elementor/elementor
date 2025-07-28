@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { renderWithTheme } from 'test-utils';
+import { createMockPropType, renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
+import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { AddItemAction } from '../actions/add-item-action';
 import { Header } from '../header/header';
 import { Item } from '../items/item';
@@ -9,23 +10,50 @@ import { ItemsContainer } from '../items/items-container';
 import { type ItemProps } from '../types';
 import { UnstableRepeater } from '../unstable-repeater';
 
+jest.mock( '../../../bound-prop-context/use-bound-prop' );
+
+const defaultInitialValues = {
+	$$type: 'example',
+	value: 'Hello World',
+};
+
+const defaultProps = {
+	initial: defaultInitialValues,
+	propTypeUtil: createMockPropType( { kind: 'array' } ),
+};
+
+const globalUseBoundPropArgs = {
+	bind: '',
+	propType: createMockPropType.prototype,
+	path: [],
+	restoreValue: jest.fn(),
+};
+
 describe( 'UnstableRepeater', () => {
-	const defaultInitialValues = {
-		$$type: 'example',
-		value: 'Hello World',
-	};
+	beforeEach( () => {
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
+	} );
 
 	it( 'should render the unstable repeater with no items', () => {
 		// Arrange.
-		const setValues = jest.fn();
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: jest.fn(),
+			...globalUseBoundPropArgs,
+		} );
 
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater>
+			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer initial={ defaultInitialValues } values={ [] } setValues={ setValues }>
+				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
 			</UnstableRepeater>
@@ -51,13 +79,19 @@ describe( 'UnstableRepeater', () => {
 			},
 		];
 
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater>
+			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
+				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
 			</UnstableRepeater>
@@ -83,13 +117,19 @@ describe( 'UnstableRepeater', () => {
 			},
 		];
 
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater>
+			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
+				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
 			</UnstableRepeater>
@@ -118,13 +158,19 @@ describe( 'UnstableRepeater', () => {
 			},
 		];
 
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater>
+			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
+				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
 			</UnstableRepeater>
@@ -142,13 +188,19 @@ describe( 'UnstableRepeater', () => {
 		const setValues = jest.fn();
 		const values = Array( 3 ).fill( defaultInitialValues );
 
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater>
+			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer initial={ defaultInitialValues } values={ values } setValues={ setValues }>
+				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
 			</UnstableRepeater>
@@ -166,10 +218,16 @@ describe( 'UnstableRepeater', () => {
 		// Arrange.
 		const setValues = jest.fn();
 
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater>
-				<ItemsContainer initial={ defaultInitialValues } values={ [] } setValues={ setValues }>
+			<UnstableRepeater { ...defaultProps }>
+				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
 			</UnstableRepeater>
@@ -204,13 +262,19 @@ describe( 'UnstableRepeater', () => {
 
 		const setValues = jest.fn();
 
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
 		// Act.
 		renderWithTheme(
-			<UnstableRepeater>
+			<UnstableRepeater { ...defaultProps } initial={ customInitialValues }>
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer initial={ customInitialValues } values={ values } setValues={ setValues }>
+				<ItemsContainer>
 					<Item { ...customItemSettings } />
 				</ItemsContainer>
 			</UnstableRepeater>

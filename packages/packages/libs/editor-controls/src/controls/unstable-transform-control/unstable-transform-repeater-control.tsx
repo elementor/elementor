@@ -23,11 +23,6 @@ export const UnstableTransformRepeaterControl = createControl( () => {
 				<Header label={ __( 'Transform', 'elementor' ) }>
 					<AddItemAction />
 				</Header>
-				<ItemActionsContainer>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
-				</ItemActionsContainer>
 				<ItemsContainer
 					initial={ initialTransformValue }
 					values={ transformValues ?? [] }
@@ -35,6 +30,10 @@ export const UnstableTransformRepeaterControl = createControl( () => {
 				>
 					<Item Icon={ TransformIcon } Label={ TransformLabel } Content={ TransformContent } />
 				</ItemsContainer>
+				<ItemActionsContainer>
+					<DisableItemAction />
+					<RemoveItemAction />
+				</ItemActionsContainer>
 			</UnstableRepeater>
 		</PropProvider>
 	);

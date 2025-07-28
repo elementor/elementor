@@ -54,35 +54,33 @@ export const SlotChildren = ( {
 	sorted = false,
 }: {
 	children: React.ReactNode;
-	whitelist?: React.FC[];
+	whitelist: React.FC[];
 	sorted?: boolean;
 } ) => {
-	if ( ! whitelist.length ) {
-		return children;
-	}
-
-	const filtered = React.Children.toArray( children ).filter(
-		( child ) => React.isValidElement( child ) && whitelist.includes( child.type as React.FC )
+	const filtered = (
+		! whitelist.length
+			? React.Children.toArray( children )
+			: React.Children.toArray( children ).filter(
+					( child ) => React.isValidElement( child ) && whitelist.includes( child.type as React.FC )
+			  )
 	) as React.ReactElement[];
 
 	if ( sorted ) {
-		filtered.sort( ( a, b ) => {
-			const aIndex = whitelist.indexOf( a.type as React.FC );
-			const bIndex = whitelist.indexOf( b.type as React.FC );
-
-			if ( aIndex === -1 || bIndex === -1 ) {
-				return 0;
-			}
-
-			return aIndex - bIndex;
-		} );
+		sort( filtered, whitelist );
 	}
 
-	return (
-		<>
-			{ filtered.map( ( child, index ) => (
-				<React.Fragment key={ index }>{ child }</React.Fragment>
-			) ) }
-		</>
-	);
+	return filtered.map( ( child, index ) => <React.Fragment key={ index }>{ child }</React.Fragment> );
+};
+
+const sort = ( childrenArray: React.ReactElement[], whitelist: unknown[] ) => {
+	childrenArray.sort( ( a, b ) => {
+		const aIndex = whitelist.indexOf( a.type );
+		const bIndex = whitelist.indexOf( b.type );
+
+		if ( aIndex === -1 || bIndex === -1 ) {
+			return 0;
+		}
+
+		return aIndex - bIndex;
+	} );
 };

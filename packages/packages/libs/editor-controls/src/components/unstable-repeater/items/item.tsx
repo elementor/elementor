@@ -5,9 +5,6 @@ import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../../../locations';
-import { DisableItemAction } from '../actions/disable-item-action';
-import { DuplicateItemAction } from '../actions/duplicate-item-action';
-import { RemoveItemAction } from '../actions/remove-item-action';
 import { useRepeaterContext } from '../context/repeater-context';
 import { type ItemProps } from '../types';
 import { EditItemPopover } from './edit-item-popover';

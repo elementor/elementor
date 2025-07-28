@@ -1,21 +1,24 @@
 import * as React from 'react';
 import { createContext, useMemo, useState } from 'react';
 import { type PropTypeUtil, type PropValue } from '@elementor/editor-props';
-import { createLocation, type createReplaceableLocation } from '@elementor/locations';
+import { createLocation } from '@elementor/locations';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
+import { type Item } from '../types';
 
 type Slot< T extends object = object > =
-	| ReturnType< typeof createReplaceableLocation< T > >[ 'Slot' ]
+	| ReturnType< typeof createLocation< T > >[ 'Slot' ]
 	| ReturnType< typeof createLocation< T > >[ 'Slot' ];
+
+type SetterFn< T extends PropValue > = ( prevItems: T[] ) => T[];
 
 type RepeaterContextType< T extends PropValue > = {
 	isOpen: boolean;
 	openItem: number;
 	setOpenItem: ( key: number ) => void;
-	items: T[];
-	setItems: ( items: T[] ) => void;
+	items: Item< T >[];
+	setItems: ( items: T[] | SetterFn< T > ) => void;
 	initial: T;
 	uniqueKeys: number[];
 	setUniqueKeys: ( keys: number[] ) => void;
@@ -29,6 +32,7 @@ type RepeaterContextType< T extends PropValue > = {
 			inject: ( component: React.ComponentType< { index: number } >, actionName: string ) => void;
 		};
 	};
+	isSortable: boolean;
 };
 
 const RepeaterContext = createContext< RepeaterContextType< PropValue > | null >( null );
@@ -52,6 +56,7 @@ export const useRepeaterContext = () => {
 		uniqueKeys: context.uniqueKeys,
 		setUniqueKeys: context.setUniqueKeys,
 		initial: context.initial,
+		isSortable: context.isSortable,
 	};
 };
 
@@ -59,7 +64,8 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 	children,
 	initial,
 	propTypeUtil,
-}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] > } > ) => {
+	isSortable = true,
+}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable: boolean } > ) => {
 	const config = useMemo( () => getConfiguredSlots(), [] );
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
@@ -82,11 +88,12 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 				openItem,
 				setOpenItem,
 				config,
-				items: items ?? [],
-				setItems: setItems as ( items: PropValue[] ) => void,
+				items: ( items ?? [] ) as Item< T >[],
+				setItems: setItems as ( items: PropValue[] | SetterFn< PropValue > ) => void,
 				initial,
 				uniqueKeys,
 				setUniqueKeys,
+				isSortable,
 			} }
 		>
 			{ children }
@@ -102,6 +109,7 @@ function getConfiguredSlots() {
 		headerActions.inject( {
 			id: 'repeater-header-items-' + actionName,
 			component,
+			options: { overwrite: true },
 		} );
 	};
 
@@ -109,9 +117,7 @@ function getConfiguredSlots() {
 		itemActions.inject( {
 			id: 'repeater-items-actions-' + actionName,
 			component,
-			options: {
-				overwrite: false,
-			},
+			options: { overwrite: true },
 		} );
 	};
 

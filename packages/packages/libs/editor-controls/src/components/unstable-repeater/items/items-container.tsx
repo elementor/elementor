@@ -1,34 +1,38 @@
 import * as React from 'react';
 import { type PropValue } from '@elementor/editor-props';
 
+import { SortableItem, SortableProvider } from '../../sortable';
 import { useRepeaterContext } from '../context/repeater-context';
 import { type ItemProps } from '../types';
 
-type ItemsContainerProps< T > = React.PropsWithChildren< {
-	initial: T;
-	values: T[];
-	setValues: ( newValue: T[] ) => void;
-} >;
-
-export const ItemsContainer = < T extends PropValue >( { children }: ItemsContainerProps< T > ) => {
+export const ItemsContainer = < T extends PropValue >( { children }: { children: React.ReactNode } ) => {
 	return <ItemsList itemTemplate={ children } />;
 };
-
-// type ItemProps< T > = { value: T; index: number; openOnMount: boolean };
 
 type ItemsListProps = {
 	itemTemplate?: React.ReactNode;
 };
 
-const ItemsList = < T, >( { itemTemplate }: ItemsListProps ) => {
-	const { items, uniqueKeys, openItem } = useRepeaterContext();
+const ItemsList = < T extends PropValue >( { itemTemplate }: ItemsListProps ) => {
+	const { items, setItems, uniqueKeys, setUniqueKeys, openItem, isSortable } = useRepeaterContext();
 
 	if ( ! itemTemplate ) {
 		return null;
 	}
 
+	const onChangeOrder = ( reorderedKeys: number[] ) => {
+		setUniqueKeys( reorderedKeys );
+		setItems( ( prevItems ) =>
+			reorderedKeys.map( ( key ) => {
+				const index = uniqueKeys.indexOf( key );
+
+				return prevItems[ index ];
+			} )
+		);
+	};
+
 	return (
-		<>
+		<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
 			{ uniqueKeys?.map( ( key: number, index: number ) => {
 				const value = items?.[ index ] as T;
 
@@ -36,15 +40,19 @@ const ItemsList = < T, >( { itemTemplate }: ItemsListProps ) => {
 					return null;
 				}
 
-				return React.isValidElement< ItemProps< T > >( itemTemplate )
-					? React.cloneElement( itemTemplate, {
-							key,
-							value,
-							index,
-							openOnMount: key === openItem,
-					  } )
-					: null;
+				return (
+					<SortableItem id={ key } key={ `sortable-${ key }` } disabled={ ! isSortable }>
+						{ React.isValidElement< ItemProps< T > >( itemTemplate )
+							? React.cloneElement( itemTemplate, {
+									key,
+									value,
+									index,
+									openOnMount: key === openItem,
+							  } )
+							: null }
+					</SortableItem>
+				);
 			} ) }
-		</>
+		</SortableProvider>
 	);
 };

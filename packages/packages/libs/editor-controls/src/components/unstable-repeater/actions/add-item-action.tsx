@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PlusIcon } from '@elementor/icons';
-import { IconButton } from '@elementor/ui';
+import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
@@ -9,12 +9,15 @@ const SIZE = 'tiny';
 
 export const AddItemAction = ( {
 	disabled = false,
-	tooltip: Tooltip = React.Fragment,
+	tooltip = false,
+	tooltipContent = null,
 }: {
 	disabled?: boolean;
-	tooltip?: React.JSXElementConstructor< React.PropsWithChildren< unknown > >;
+	tooltip?: boolean;
+	tooltipContent?: React.ReactNode;
 } ) => {
 	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem } = useRepeaterContext();
+	const shouldShowTooltip = tooltip && tooltipContent;
 
 	const onClick = () => {
 		const newItem = structuredClone( initial );
@@ -31,7 +34,7 @@ export const AddItemAction = ( {
 	};
 
 	return (
-		<Tooltip>
+		<Tooltip title={ tooltipContent } open={ shouldShowTooltip ? undefined : false }>
 			<IconButton
 				size={ SIZE }
 				sx={ { ml: 'auto' } }

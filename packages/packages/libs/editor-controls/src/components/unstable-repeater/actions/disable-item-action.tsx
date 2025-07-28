@@ -19,14 +19,27 @@ export const DisableItemAction = () => {
 	return null;
 };
 
-const Action = () => {
-	const propDisabled = false;
+const Action = ( { index }: { index: number } ) => {
+	const { items, setItems } = useRepeaterContext();
+	const propDisabled = items[ index ]?.disabled ?? false;
+
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
-	const toggleDisableItem = () => {};
+
+	const onClick = () => {
+		setItems(
+			items.map( ( value, pos ) => {
+				if ( pos === index ) {
+					value.disabled = ! value.disabled;
+				}
+
+				return value;
+			} )
+		);
+	};
 
 	return (
 		<Tooltip title={ toggleLabel } placement="top">
-			<IconButton size={ SIZE } onClick={ toggleDisableItem } aria-label={ toggleLabel }>
+			<IconButton size={ SIZE } onClick={ onClick } aria-label={ toggleLabel }>
 				{ propDisabled ? <EyeOffIcon fontSize={ SIZE } /> : <EyeIcon fontSize={ SIZE } /> }
 			</IconButton>
 		</Tooltip>
