@@ -14,8 +14,8 @@ const toTransitionSelectorValue = ( label: string ) => {
 		const property = category.properties.find( ( prop ) => prop.label === label );
 		if ( property ) {
 			return {
-				key: { value: property.value, $$type: 'string' },
-				value: { value: property.label, $$type: 'string' },
+				key: { value: property.label, $$type: 'string' },
+				value: { value: property.value, $$type: 'string' },
 			};
 		}
 	}
@@ -26,8 +26,8 @@ const toTransitionSelectorValue = ( label: string ) => {
 export const TransitionSelector = () => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
-		value: { value: transitionLabel },
-		key: { value: transitionValue },
+		value: { value: transitionValue },
+		key: { value: transitionLabel },
 	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const popoverState = usePopupState( { variant: 'popover' } );

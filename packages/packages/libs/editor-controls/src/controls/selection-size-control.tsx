@@ -30,7 +30,7 @@ export const SelectionSizeControl = createControl(
 		const currentSizeConfig = useMemo( () => {
 			switch ( value.selection.$$type ) {
 				case 'key-value':
-					return sizeConfigMap[ value?.selection?.value.key.value || '' ];
+					return sizeConfigMap[ value?.selection?.value.value.value || '' ];
 				case 'string':
 					return sizeConfigMap[ value?.selection?.value || '' ];
 				default:

@@ -44,8 +44,8 @@ describe( 'TransitionRepeaterControl', () => {
 						selection: {
 							$$type: 'key-value',
 							value: {
-								key: { $$type: 'string', value: 'all' },
-								value: { $$type: 'string', value: 'All properties' },
+								key: { $$type: 'string', value: 'All properties' },
+								value: { $$type: 'string', value: 'all' },
 							},
 						},
 						size: { $$type: 'size', value: { size: 200, unit: 'ms' } },

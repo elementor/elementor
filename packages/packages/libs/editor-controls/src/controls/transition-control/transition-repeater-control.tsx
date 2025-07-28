@@ -44,7 +44,7 @@ export const TransitionRepeaterControl = createControl( () => {
 		<RepeatableControl
 			label="Transitions"
 			repeaterLabel="Transitions"
-			patternLabel="${value.selection.value.value.value}: ${value.size.value.size}${value.size.value.unit}"
+			patternLabel="${value.selection.value.key.value}: ${value.size.value.size}${value.size.value.unit}"
 			placeholder="Empty Transition"
 			showDuplicate={ false }
 			showToggle={ true }
