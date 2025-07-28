@@ -72,6 +72,7 @@ export const SizeInput = ( {
 
 	const inputProps = {
 		...popupAttributes,
+		readOnly: isUnitExtendedOption( unit ),
 		autoComplete: 'off',
 		onClick,
 		onFocus,
@@ -116,8 +117,8 @@ export const SizeInput = ( {
 					} }
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
-					shouldBlockInput={ isUnitExtendedOption( unit ) }
 					inputProps={ inputProps }
+					isPopoverOpen={ popupState.isOpen }
 				/>
 			</Box>
 		</ControlActions>
