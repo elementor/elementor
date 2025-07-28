@@ -2,6 +2,13 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ExportComplete from 'elementor/app/modules/import-export-customization/assets/js/export/pages/export-complete';
 
+const mockNavigate = jest.fn();
+
+// Mock useNavigate from @reach/router
+jest.mock( '@reach/router', () => ( {
+	useNavigate: () => mockNavigate,
+} ) );
+
 let mockExportContext = {
 	data: {
 		exportedData: {
@@ -70,6 +77,8 @@ describe( 'ExportComplete Component', () => {
 			value: { location: '' },
 			writable: true,
 		} );
+
+		mockNavigate.mockClear();
 	} );
 
 	afterEach( () => {

@@ -46,8 +46,15 @@ describe( 'useImportKit Hook', () => {
 	it( 'should have correct initial state', () => {
 		// Arrange
 		setupContext();
+		const hookParams = {
+			data: {},
+			includes: [],
+			customization: {},
+			isProcessing: false,
+			dispatch: mockDispatch,
+		};
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		expect( result.current.status ).toBe( IMPORT_PROCESSING_STATUS.PENDING );
 		expect( result.current.error ).toBe( null );
@@ -59,17 +66,25 @@ describe( 'useImportKit Hook', () => {
 		const kitUploadParams = { id: 1, referrer: 'test' };
 		const uploadedData = { session: 'abc' };
 		const includes = [ 'content' ];
+		const data = { kitUploadParams, uploadedData, includes };
 		setupContext( {
 			isProcessing: true,
-			data: { kitUploadParams, uploadedData, includes },
+			data,
 		} );
+		const hookParams = {
+			data,
+			includes,
+			customization: {},
+			isProcessing: true,
+			dispatch: mockDispatch,
+		};
 		const mockResponseData = { data: { imported: true } };
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
 			json: jest.fn().mockResolvedValue( mockResponseData ),
 		} );
 		// Act
-		renderHook( () => useImportKit() );
+		renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
 			expect( mockFetch ).toHaveBeenCalledWith(
@@ -88,13 +103,21 @@ describe( 'useImportKit Hook', () => {
 		const kitUploadParams = { id: 1, referrer: 'test' };
 		const uploadedData = { session: 'abc' };
 		const includes = [ 'content' ];
+		const data = { kitUploadParams, uploadedData, includes };
 		setupContext( {
 			isProcessing: true,
-			data: { kitUploadParams, uploadedData, includes },
+			data,
 		} );
+		const hookParams = {
+			data,
+			includes,
+			customization: {},
+			isProcessing: true,
+			dispatch: mockDispatch,
+		};
 		mockFetch.mockRejectedValueOnce( new Error( 'Import error' ) );
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
 			expect( result.current.error ).toBeInstanceOf( Error );
@@ -106,10 +129,19 @@ describe( 'useImportKit Hook', () => {
 	it( 'should run import runners and update runnersState', async () => {
 		// Arrange
 		const importedData = { session: 'abc', runners: [ 'plugin1', 'plugin2' ] };
+		const includes = [ 'content' ];
+		const data = { importedData, includes };
 		setupContext( {
 			isProcessing: true,
-			data: { importedData, includes: [ 'content' ] },
+			data,
 		} );
+		const hookParams = {
+			data,
+			includes,
+			customization: {},
+			isProcessing: true,
+			dispatch: mockDispatch,
+		};
 		// First runner
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
@@ -121,7 +153,7 @@ describe( 'useImportKit Hook', () => {
 			json: jest.fn().mockResolvedValue( { data: { imported_data: { plugin2: 'ok' } } } ),
 		} );
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
 			expect( result.current.runnersState.plugin1 ).toBe( 'ok' );
@@ -134,14 +166,23 @@ describe( 'useImportKit Hook', () => {
 	it( 'should set error and stop runners on runner error', async () => {
 		// Arrange
 		const importedData = { session: 'abc', runners: [ 'plugin1', 'plugin2' ] };
+		const includes = [ 'content' ];
+		const data = { importedData, includes };
 		setupContext( {
 			isProcessing: true,
-			data: { importedData, includes: [ 'content' ] },
+			data,
 		} );
+		const hookParams = {
+			data,
+			includes,
+			customization: {},
+			isProcessing: true,
+			dispatch: mockDispatch,
+		};
 		// First runner fails
 		mockFetch.mockRejectedValueOnce( new Error( 'Runner error' ) );
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
 			expect( result.current.error ).toBeInstanceOf( Error );

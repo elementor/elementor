@@ -26,7 +26,15 @@ describe( 'ImportComplete Page', () => {
 	} );
 
 	function setup( { isCompleted = true } = {} ) {
-		mockUseImportContext.mockReturnValue( { isCompleted } );
+		mockUseImportContext.mockReturnValue( { 
+			isCompleted,
+			data: {
+				includes: [ 'settings', 'content', 'plugins' ],
+			},
+			runnersState: {
+				plugins: [ 'WooCommerce', 'Advanced Custom Fields' ],
+			},
+		} );
 	}
 
 	it( 'renders the main success message and sections when completed', () => {
