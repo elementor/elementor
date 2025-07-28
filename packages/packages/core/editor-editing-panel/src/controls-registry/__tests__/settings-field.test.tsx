@@ -53,11 +53,6 @@ const dependencyTestCases: {
 	enabled: boolean;
 }[] = [
 	{
-		desc: 'should disable if eq dependency is met (string)',
-		dependencies: {
-			relation: 'or',
-			terms: [ { path: [ bind ], operator: 'eq', value: 'disable-me' } ],
-		},
 		desc: 'should disable if ne dependency is met (string)',
 		dependencies: {
 			relation: 'or',

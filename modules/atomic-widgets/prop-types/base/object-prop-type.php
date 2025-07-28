@@ -21,8 +21,6 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
 
-	private ?array $dependencies = null;
-
 	/**
 	 * @var array<Prop_Type>
 	 */
