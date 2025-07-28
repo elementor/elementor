@@ -33,7 +33,7 @@ calculate_new_version() {
     log_info "Current packages version: $CURRENT_PACKAGES_VERSION"
     
     log_info "Calculating new patch version using @version-manager..."
-    NEW_VERSION=$(node scripts/version-manager/index.js bump patch --dry-run | grep -E "Would update.*packages to version" | sed -n 's/.*to version \([^ ]*\).*/\1/p' || echo "")
+    NEW_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor" release-type patch || echo "")
     
     if [[ -z "$NEW_VERSION" ]]; then
         log_error "Could not calculate new patch version using @version-manager"

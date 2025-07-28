@@ -111,13 +111,14 @@ program
   .command('get-version')
   .description('Get version of packages matching the regex pattern with clean output')
   .argument('<pattern>', 'Regex pattern to match package names')
+  .option('--release-type <type>', 'Calculate new version by release type (patch, minor, major)')
   .hook('preAction', async () => {
     const { getPackageVersion } = await import('./listing.js');
     program.getPackageVersion = getPackageVersion;
   })
-  .action(async (pattern) => {
+  .action(async (pattern, options) => {
     try {
-      const version = await program.getPackageVersion(pattern);
+      const version = await program.getPackageVersion(pattern, options.releaseType);
       if (version) {
         process.stdout.write(version);
       } else {
@@ -146,6 +147,8 @@ Examples:
   $ version-manager get-version "@elementor/editor-controls"
   $ version-manager get-version "editor-.*"
   $ version-manager get-version "@elementor/.*"
+  $ version-manager get-version "@elementor/editor-controls" --release-type patch
+  $ version-manager get-version "editor-.*" --release-type minor
 `);
 
 program.commands.forEach((command) => {

@@ -98,8 +98,11 @@ node scripts/version-manager/index.js list --packages "packages/libs/*"
 Get version of a package matching a regex pattern with clean output (useful for scripts):
 
 ```bash
-node scripts/version-manager/index.js get-version <pattern>
+node scripts/version-manager/index.js get-version <pattern> [options]
 ```
+
+Options:
+- `--release-type <type>`: Calculate new version by release type (patch, minor, major)
 
 Examples:
 ```bash
@@ -109,12 +112,19 @@ node scripts/version-manager/index.js get-version "@elementor/editor-controls"
 # Get version of first package matching pattern
 node scripts/version-manager/index.js get-version "editor-.*"
 
+# Get next patch version of a package
+node scripts/version-manager/index.js get-version "@elementor/editor-controls" --release-type patch
+
+# Get next minor version of first matching package
+node scripts/version-manager/index.js get-version "editor-.*" --release-type minor
+
 # Use in scripts
 VERSION=$(node scripts/version-manager/index.js get-version "@elementor/.*")
+NEXT_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/.*" --release-type patch)
 ```
 
 The command outputs only the version number without any formatting, making it ideal for use in scripts. It returns:
-- The version number if a match is found
+- The version number if a match is found (incremented if --release-type is specified)
 - Empty string if no match is found
 - Exit code 1 if no match is found or an error occurs
 

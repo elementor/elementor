@@ -2,13 +2,19 @@ const { getPackages, getPublishablePackages } = require('./package-discovery');
 const { validateVersions } = require('./validation');
 const { logError, logSuccess, logInfo, logWarning } = require('./logger');
 const { colors } = require('./constants');
+const { incrementVersion } = require('./version-utils');
 
-async function getPackageVersion(pattern) {
+async function getPackageVersion(pattern, releaseType) {
   const packages = await getPackages();
   const regex = new RegExp(pattern);
   const matchingPackage = packages.find(p => regex.test(p.name));
   
-  return matchingPackage ? matchingPackage.currentVersion : '';
+  if (!matchingPackage) {
+    return '';
+  }
+
+  const version = matchingPackage.currentVersion;
+  return releaseType ? incrementVersion(version, releaseType) : version;
 }
 
 async function listPackages(options = {}) {
