@@ -2,4 +2,3 @@ node_modules/
 packages/**/dist/
 docs/**
 !.github/
-scripts/**
