@@ -16,8 +16,13 @@ export const CssClassFilter = () => {
 	return (
 		<>
 			<Tooltip title={ __( 'Filters', 'elementor' ) } placement="top">
-				<ToggleButton value="filter" size="small" { ...bindToggle( popupState ) }>
-					<FilterIcon fontSize="inherit" />
+				<ToggleButton
+					value="filter"
+					size={ 'tiny' }
+					selected={ popupState.isOpen }
+					{ ...bindToggle( popupState ) }
+				>
+					<FilterIcon fontSize="tiny" />
 				</ToggleButton>
 			</Tooltip>
 			<Popover
@@ -36,7 +41,11 @@ export const CssClassFilter = () => {
 			>
 				<PopoverHeader
 					actions={ [
-						<ClearIconButton key="clear-all-button" tooltipText={ __( 'Clear all', 'elementor' ) } />,
+						<ClearIconButton
+							key="clear-all-button"
+							tooltipText={ __( 'Clear all', 'elementor' ) }
+							disabled={ false }
+						/>,
 					] }
 					onClose={ popupState.close }
 					title={ __( 'Filters', 'elementor' ) }

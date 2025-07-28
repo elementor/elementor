@@ -91,11 +91,15 @@ export const NotFoundLayout: FC< NotFoundLayoutProps > = ( { onClear, searchValu
 		alignItems="center"
 		gap={ 1 }
 		overflow={ 'hidden' }
-		maxWidth={ '170px' }
+		// maxWidth={ '170px' }
 		justifySelf={ 'center' }
 	>
 		{ icon }
-		<Box>
+		<Box
+			sx={ {
+				width: '100%',
+			} }
+		>
 			<Typography align="center" variant="subtitle2" color="inherit">
 				{ mainText }
 			</Typography>
@@ -125,6 +129,8 @@ export const NotFoundLayout: FC< NotFoundLayoutProps > = ( { onClear, searchValu
 		</Box>
 		<Typography align="center" variant="caption" color="inherit">
 			{ sceneryText }
+		</Typography>
+		<Typography align="center" variant="caption" color="inherit">
 			<Link color="secondary" variant="caption" component="button" onClick={ onClear }>
 				{ __( 'Clear & try again', 'elementor' ) }
 			</Link>

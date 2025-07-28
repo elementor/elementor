@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { useFilters } from '../../../../../hooks/use-filters';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
 import { ActiveFilters } from '../active-filters';
 import { mockOnClearFilter, mockSetFilters, setupMocks } from './test-utils';
 
 jest.mock( '../../../context' );
+jest.mock( '../../../../../hooks/use-filters' );
 
 describe( 'ActiveFilters', () => {
 	beforeEach( () => {
@@ -58,6 +60,7 @@ describe( 'ActiveFilters', () => {
 	} );
 
 	it( 'should show clear all button when filters are active', () => {
+		jest.mocked( useFilters ).mockReturnValue( [ 'empty' ] );
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
 			search: {} as SearchAndFilterContextType[ 'search' ],
 			filters: {

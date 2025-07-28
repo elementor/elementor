@@ -27,6 +27,15 @@ export const ActiveFilters = () => {
 					( [ key, value ] ) =>
 						value && (
 							<Chip
+								sx={ {
+									'& .MuiChip-deleteIcon': {
+										display: 'none',
+										transition: 'opacity 0.2s',
+									},
+									'&:hover .MuiChip-deleteIcon': {
+										display: 'block',
+									},
+								} }
 								size="tiny"
 								key={ key }
 								label={ checkBoxItems.find( ( item ) => item.value === key )?.label }
