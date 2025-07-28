@@ -91,7 +91,6 @@ export const NotFoundLayout: FC< NotFoundLayoutProps > = ( { onClear, searchValu
 		alignItems="center"
 		gap={ 1 }
 		overflow={ 'hidden' }
-		// maxWidth={ '170px' }
 		justifySelf={ 'center' }
 	>
 		{ icon }
