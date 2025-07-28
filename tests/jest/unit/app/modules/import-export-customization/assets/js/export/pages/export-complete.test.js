@@ -4,7 +4,6 @@ import ExportComplete from 'elementor/app/modules/import-export-customization/as
 
 const mockNavigate = jest.fn();
 
-// Mock useNavigate from @reach/router
 jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );

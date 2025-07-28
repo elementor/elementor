@@ -26,7 +26,7 @@ describe( 'ImportComplete Page', () => {
 	} );
 
 	function setup( { isCompleted = true } = {} ) {
-		mockUseImportContext.mockReturnValue( { 
+		mockUseImportContext.mockReturnValue( {
 			isCompleted,
 			data: {
 				includes: [ 'settings', 'content', 'plugins' ],

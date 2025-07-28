@@ -33,7 +33,6 @@ describe( 'ExportKitFooter Component', () => {
 	let mockSetConnecting;
 
 	beforeEach( () => {
-		// Mock useNavigate
 		useNavigate.mockReturnValue( mockNavigate );
 
 		mockElementorAppConfig = {

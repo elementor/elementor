@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IMPORT_STATUS, useImportContext } from '../context/import-context';
+import { IMPORT_STATUS } from '../context/import-context';
 
 async function request( {
 	data,
@@ -35,7 +35,6 @@ export const IMPORT_PROCESSING_STATUS = {
 export function useImportKit( { data, includes, customization, isProcessing, dispatch } ) {
 	const [ status, setImportStatus ] = useState( IMPORT_PROCESSING_STATUS.PENDING );
 	const [ error, setError ] = useState( null );
-	const [ runnersState, setRunnersState ] = useState( {} );
 
 	const runImportRunners = async () => {
 		setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );

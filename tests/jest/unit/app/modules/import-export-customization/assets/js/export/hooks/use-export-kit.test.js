@@ -10,7 +10,6 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/u
 	generateScreenshot: jest.fn(),
 } ) );
 
-// Mock useNavigate from @reach/router
 jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );

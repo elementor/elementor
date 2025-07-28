@@ -43,16 +43,21 @@ describe( 'useImportKit Hook', () => {
 		} );
 	}
 
-	it( 'should have correct initial state', () => {
-		// Arrange
-		setupContext();
-		const hookParams = {
+	function createHookParams( overrides = {} ) {
+		return {
 			data: {},
 			includes: [],
 			customization: {},
 			isProcessing: false,
 			dispatch: mockDispatch,
+			...overrides,
 		};
+	}
+
+	it( 'should have correct initial state', () => {
+		// Arrange
+		setupContext();
+		const hookParams = createHookParams();
 		// Act
 		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
@@ -70,13 +75,11 @@ describe( 'useImportKit Hook', () => {
 			isProcessing: true,
 			data,
 		} );
-		const hookParams = {
+		const hookParams = createHookParams( {
 			data,
 			includes,
-			customization: {},
 			isProcessing: true,
-			dispatch: mockDispatch,
-		};
+		} );
 		const mockResponseData = { data: { imported: true } };
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
@@ -107,13 +110,11 @@ describe( 'useImportKit Hook', () => {
 			isProcessing: true,
 			data,
 		} );
-		const hookParams = {
+		const hookParams = createHookParams( {
 			data,
 			includes,
-			customization: {},
 			isProcessing: true,
-			dispatch: mockDispatch,
-		};
+		} );
 		mockFetch.mockRejectedValueOnce( new Error( 'Import error' ) );
 		// Act
 		const { result } = renderHook( () => useImportKit( hookParams ) );
@@ -134,13 +135,11 @@ describe( 'useImportKit Hook', () => {
 			isProcessing: true,
 			data,
 		} );
-		const hookParams = {
+		const hookParams = createHookParams( {
 			data,
 			includes,
-			customization: {},
 			isProcessing: true,
-			dispatch: mockDispatch,
-		};
+		} );
 		// First runner
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
@@ -171,13 +170,11 @@ describe( 'useImportKit Hook', () => {
 			isProcessing: true,
 			data,
 		} );
-		const hookParams = {
+		const hookParams = createHookParams( {
 			data,
 			includes,
-			customization: {},
 			isProcessing: true,
-			dispatch: mockDispatch,
-		};
+		} );
 		// First runner fails
 		mockFetch.mockRejectedValueOnce( new Error( 'Runner error' ) );
 		// Act

@@ -41,7 +41,7 @@ describe( 'ImportProcess Page', () => {
 		error = null,
 		runnersState = {},
 	} = {} ) {
-		mockUseImportContext.mockReturnValue( { 
+		mockUseImportContext.mockReturnValue( {
 			isProcessing,
 			data: {
 				includes: [ 'settings', 'content', 'plugins' ],
