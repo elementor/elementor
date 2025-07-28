@@ -88,6 +88,7 @@ class Module extends BaseModule
 
 	public function localize_settings($settings)
 	{
+		error_log('localize_settings: ' . print_r($this->get_component_documents_mock(), true));
 		$settings['components'] = $this->get_component_documents_mock();
 
 		return $settings;

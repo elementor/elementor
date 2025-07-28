@@ -4,6 +4,7 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalView = require( './views/global' ),
+	ElementModel = require( './models/element' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -41,10 +42,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		this.initGlobalCategoriesCollection();
 
 		this.isComponentsActive = true; // elementor.experiments.isActive( 'global-categories' );
-
-		if ( this.isComponentsActive ) {
-			initGlobalWidgetsHooks();
-		}
 
 		this.initRegionViews();
 	},
@@ -195,6 +192,23 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	initGlobalCategoriesCollection() {
 		var globalCategoriesCollection = new PanelElementsCategoriesCollection();
+
+		const components = elementor.config.components.map( ( component ) => {
+			return new ElementModel( {
+				name: component.name,
+				title: component.title,
+				icon: 'eicon-library-grid',
+			} );
+		} );
+
+		globalCategoriesCollection.add( {
+			name: 'components',
+			title: 'Components',
+			icon: 'eicon-global',
+			hideIfEmpty: true,
+			defaultActive: true,
+			items: components,
+		} );
 
 		this.globalCategoriesCollection = elementor.hooks.applyFilters( 'panel/elements/globalCategoriesCollection', globalCategoriesCollection );
 	},

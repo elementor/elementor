@@ -40,7 +40,7 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 
 	apply( args ) {
 		const { model, options = {}, containers = [ args.container ] } = args;
-
+//
 		let result = [];
 
 		containers.forEach( ( container ) => {
