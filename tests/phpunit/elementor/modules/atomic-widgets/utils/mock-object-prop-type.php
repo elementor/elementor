@@ -9,8 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Mock_Object_Prop_Type extends Mock_Prop_Type {
 	private $shape;
 
-	public function __construct( array $shape, array $meta = [] ) {
-		parent::__construct( $meta );
+	public function __construct( array $shape ) {
 		$this->shape = $shape;
 	}
 

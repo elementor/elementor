@@ -8,10 +8,7 @@ test.describe( 'Tabs widget tests', () => {
 	test( 'Ensure the old tabs widget is telling deprecation warning message', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-		} );
+		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
@@ -21,10 +18,7 @@ test.describe( 'Tabs widget tests', () => {
 		await expect( editor.page.locator( '.elementor-control-alert.elementor-panel-alert.elementor-panel-alert-info' ) )
 			.toContainText( 'You are currently editing a Tabs Widget in its old version.' );
 
-		await wpAdmin.setExperiments( {
-			container: 'inactive',
-			'nested-elements': 'inactive',
-		} );
+		await wpAdmin.resetExperiments();
 	} );
 
 	test( 'Tabs widget sanity test', async ( { page, apiRequests }, testInfo ) => {
@@ -34,6 +28,8 @@ test.describe( 'Tabs widget tests', () => {
 		const tabText = 'Super tab content test';
 		const newTabTitle = 'Super test tab';
 		const defaultText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.';
+
+		await wpAdmin.setExperiments( { container: 'inactive', 'nested-elements': 'inactive' } );
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
@@ -50,5 +46,7 @@ test.describe( 'Tabs widget tests', () => {
 		await expect( page.getByText( defaultText ).first() ).toBeVisible();
 		await page.getByRole( 'tab', { name: newTabTitle } ).click();
 		await expect( page.getByText( 'Super tab content test' ) ).toBeVisible();
+
+		await wpAdmin.resetExperiments();
 	} );
 } );

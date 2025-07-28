@@ -9,10 +9,7 @@ test.describe( 'Container tests #3 @container', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: true,
-			'nested-elements': true,
-		} );
+		await wpAdmin.setExperiments( { container: true, 'nested-elements': true } );
 		await page.close();
 	} );
 

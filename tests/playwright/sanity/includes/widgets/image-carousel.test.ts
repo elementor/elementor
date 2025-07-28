@@ -76,9 +76,7 @@ test.describe( 'Image carousel tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = new EditorPage( page, testInfo );
 
-		await wpAdmin.setExperiments( {
-			additional_custom_breakpoints: true,
-		} );
+		await wpAdmin.setExperiments( { additional_custom_breakpoints: true } );
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 
@@ -114,9 +112,8 @@ test.describe( 'Image carousel tests', () => {
 		await editor.setSliderControlValue( 'image_spacing_custom_tablet', '10' );
 		await editor.togglePreviewMode();
 		await expect( editor.getPreviewFrame().locator( '.swiper-slide-active' ).first() ).toHaveCSS( 'margin-right', '10px' );
-		await wpAdmin.setExperiments( {
-			additional_custom_breakpoints: 'inactive',
-		} );
+
+		await wpAdmin.resetExperiments();
 	} );
 
 	test( 'Accessibility test', async ( { page, apiRequests }, testInfo ) => {

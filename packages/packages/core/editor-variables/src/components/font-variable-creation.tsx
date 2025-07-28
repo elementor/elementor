@@ -9,6 +9,7 @@ import { __ } from '@wordpress/i18n';
 
 import { createVariable } from '../hooks/use-prop-variables';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { trackVariableEvent } from '../utils/tracking';
 import { FontField } from './fields/font-field';
 import { LabelField } from './fields/label-field';
 
@@ -20,7 +21,7 @@ type Props = {
 };
 
 export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
-	const { setValue: setVariable } = useBoundProp( fontVariablePropTypeUtil );
+	const { setValue: setVariable, path } = useBoundProp( fontVariablePropTypeUtil );
 
 	const [ fontFamily, setFontFamily ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
@@ -37,7 +38,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 		onClose();
 	};
 
-	const handleCreate = () => {
+	const handleCreateAndTrack = () => {
 		createVariable( {
 			value: fontFamily,
 			label,
@@ -50,6 +51,11 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			.catch( ( error ) => {
 				setErrorMessage( error.message );
 			} );
+		trackVariableEvent( {
+			varType: 'font',
+			controlPath: path.join( '.' ),
+			action: 'save',
+		} );
 	};
 
 	const hasEmptyValue = () => {
@@ -101,7 +107,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			</PopoverContent>
 
 			<CardActions sx={ { pt: 0.5, pb: 1 } }>
-				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreate }>
+				<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleCreateAndTrack }>
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>

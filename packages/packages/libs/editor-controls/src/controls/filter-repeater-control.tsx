@@ -1,127 +1,163 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import {
-	blurFilterPropTypeUtil,
-	brightnessFilterPropTypeUtil,
-	contrastFilterPropTypeUtil,
-	dropShadowFilterPropTypeUtil,
+	type CreateOptions,
+	cssFilterFunctionPropUtil,
 	type FilterItemPropValue,
 	filterPropTypeUtil,
-	grayscaleFilterPropTypeUtil,
-	hueRotateFilterPropTypeUtil,
-	invertFilterPropTypeUtil,
 	type PropKey,
-	type PropTypeUtil,
-	saturateFilterPropTypeUtil,
-	sepiaFilterPropTypeUtil,
 	type SizePropValue,
 } from '@elementor/editor-props';
 import { backdropFilterPropTypeUtil } from '@elementor/editor-props';
-import { MenuListItem } from '@elementor/editor-ui';
-import { Box, Grid, Select, type SelectChangeEvent } from '@elementor/ui';
+import { Box, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlLabel } from '../components/control-label';
+import { ControlFormLabel } from '../components/control-form-label';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
 import { type CollectionPropUtil, Repeater } from '../components/repeater';
 import { createControl } from '../create-control';
-import { defaultUnits, type Unit } from '../utils/size-control';
+import { type LengthUnit, lengthUnits, type Unit } from '../utils/size-control';
 import { DropShadowItemContent } from './filter-control/drop-shadow-item-content';
 import { DropShadowItemLabel } from './filter-control/drop-shadow-item-label';
-import { SizeControl } from './size-control';
+import { SelectControl } from './select-control';
+import { SizeControl, type SizeControlProps } from './size-control';
 
-type FilterType = FilterItemPropValue[ '$$type' ];
-type FilterValue = FilterItemPropValue[ 'value' ];
+type FilterType = FilterItemPropValue[ 'value' ][ 'func' ];
 
-const DEFAULT_FILTER_KEY: FilterType = 'blur';
+const DEFAULT_FILTER = 'blur';
 
 type FilterItemConfig = {
-	defaultValue: FilterValue;
+	defaultValue: FilterItemPropValue;
 	name: string;
 	valueName: string;
-	propType: PropTypeUtil< FilterValue, FilterValue >;
 	units?: Exclude< SizePropValue[ 'value' ][ 'unit' ], 'custom' | 'auto' >[];
+	sizeVariant?: SizeControlProps[ 'variant' ];
 };
 
-const filterConfig: Record< FilterType, FilterItemConfig > = {
+const filterConfig: Record< string, FilterItemConfig > = {
 	blur: {
-		defaultValue: { $$type: 'blur', blur: { $$type: 'size', value: { size: 0, unit: 'px' } } },
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'blur' },
+				args: { $$type: 'size', value: { size: 0, unit: 'px' } },
+			},
+		},
 		name: __( 'Blur', 'elementor' ),
 		valueName: __( 'Radius', 'elementor' ),
-		propType: blurFilterPropTypeUtil,
-		units: defaultUnits.filter( ( unit ) => unit !== '%' ),
+		units: lengthUnits.filter( ( unit ) => unit !== '%' ),
+	},
+	brightness: {
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'brightness' },
+				args: { $$type: 'size', value: { size: 100, unit: '%' } },
+			},
+		},
+		name: __( 'Brightness', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		units: [ '%' ],
+	},
+	contrast: {
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'contrast' },
+				args: { $$type: 'size', value: { size: 100, unit: '%' } },
+			},
+		},
+		name: __( 'Contrast', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		units: [ '%' ],
+	},
+	'hue-rotate': {
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'hue-rotate' },
+				args: { $$type: 'size', value: { size: 0, unit: 'deg' } },
+			},
+		},
+		name: __( 'Hue Rotate', 'elementor' ),
+		valueName: __( 'Angle', 'elementor' ),
+		units: [ 'deg', 'rad', 'grad', 'turn' ],
+	},
+	saturate: {
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'saturate' },
+				args: { $$type: 'size', value: { size: 100, unit: '%' } },
+			},
+		},
+		name: __( 'Saturate', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		units: [ '%' ],
+	},
+	grayscale: {
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'grayscale' },
+				args: { $$type: 'size', value: { size: 0, unit: '%' } },
+			},
+		},
+		name: __( 'Grayscale', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		units: [ '%' ],
+	},
+	invert: {
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'invert' },
+				args: { $$type: 'size', value: { size: 0, unit: '%' } },
+			},
+		},
+		name: __( 'Invert', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		units: [ '%' ],
+	},
+	sepia: {
+		defaultValue: {
+			$$type: 'css-filter-func',
+			value: {
+				func: { $$type: 'string', value: 'sepia' },
+				args: { $$type: 'size', value: { size: 0, unit: '%' } },
+			},
+		},
+		name: __( 'Sepia', 'elementor' ),
+		valueName: __( 'Amount', 'elementor' ),
+		units: [ '%' ],
 	},
 	'drop-shadow': {
 		defaultValue: {
-			$$type: 'drop-shadow',
+			$$type: 'css-filter-func',
 			value: {
-				xAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
-				yAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
-				blur: { $$type: 'size', value: { size: 10, unit: 'px' } },
-				color: { $$type: 'color', value: 'rgba(0, 0, 0, 1)' },
+				func: { $$type: 'string', value: 'drop-shadow' },
+				args: {
+					$$type: 'drop-shadow',
+					value: {
+						xAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
+						yAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
+						blur: { $$type: 'size', value: { size: 10, unit: 'px' } },
+						color: { $$type: 'color', value: 'rgba(0, 0, 0, 1)' },
+					},
+				},
 			},
 		},
 		name: __( 'Drop shadow', 'elementor' ),
 		valueName: __( 'Drop-shadow', 'elementor' ),
-		propType: dropShadowFilterPropTypeUtil,
-		units: defaultUnits.filter( ( unit ) => unit !== '%' ),
-	},
-	brightness: {
-		defaultValue: { $$type: 'brightness', brightness: { $$type: 'size', value: { size: 100, unit: '%' } } },
-		name: __( 'Brightness', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		propType: brightnessFilterPropTypeUtil,
-		units: [ '%' ],
-	},
-	contrast: {
-		defaultValue: { $$type: 'contrast', contrast: { $$type: 'size', value: { size: 100, unit: '%' } } },
-		name: __( 'Contrast', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		propType: contrastFilterPropTypeUtil,
-		units: [ '%' ],
-	},
-	'hue-rotate': {
-		defaultValue: { $$type: 'hue-rotate', 'hue-rotate': { $$type: 'size', value: { size: 0, unit: 'deg' } } },
-		name: __( 'Hue Rotate', 'elementor' ),
-		valueName: __( 'Angle', 'elementor' ),
-		propType: hueRotateFilterPropTypeUtil,
-		units: [ 'deg', 'rad', 'grad', 'turn' ],
-	},
-	saturate: {
-		defaultValue: { $$type: 'saturate', saturate: { $$type: 'size', value: { size: 100, unit: '%' } } },
-		name: __( 'Saturate', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		propType: saturateFilterPropTypeUtil,
-		units: [ '%' ],
-	},
-	grayscale: {
-		defaultValue: { $$type: 'grayscale', grayscale: { $$type: 'size', value: { size: 0, unit: '%' } } },
-		name: __( 'Grayscale', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		propType: grayscaleFilterPropTypeUtil,
-		units: [ '%' ],
-	},
-	invert: {
-		defaultValue: { $$type: 'invert', invert: { $$type: 'size', value: { size: 0, unit: '%' } } },
-		name: __( 'Invert', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		propType: invertFilterPropTypeUtil,
-		units: [ '%' ],
-	},
-	sepia: {
-		defaultValue: { $$type: 'sepia', sepia: { $$type: 'size', value: { size: 0, unit: '%' } } },
-		name: __( 'Sepia', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		propType: sepiaFilterPropTypeUtil,
-		units: [ '%' ],
+		units: lengthUnits.filter( ( unit ) => unit !== '%' ),
 	},
 };
 
-const filterKeys = Object.keys( filterConfig ) as FilterType[];
+const filterKeys = Object.keys( filterConfig );
 
-const isSingleSize = ( key: FilterType ): boolean => {
+const isSingleSize = ( key: string ): boolean => {
 	return ! [ 'drop-shadow' ].includes( key );
 };
 
@@ -145,10 +181,7 @@ export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter
 					Icon: ItemIcon,
 					Label: ItemLabel,
 					Content: ItemContent,
-					initialValues: {
-						$$type: DEFAULT_FILTER_KEY,
-						value: filterConfig[ DEFAULT_FILTER_KEY ].defaultValue,
-					} as FilterItemPropValue,
+					initialValues: filterConfig[ DEFAULT_FILTER ].defaultValue,
 				} }
 			/>
 		</PropProvider>
@@ -158,7 +191,7 @@ export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter
 const ItemIcon = () => <></>;
 
 const ItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
-	return isSingleSize( value.$$type ) ? (
+	return isSingleSize( value.value.func.value ?? '' ) ? (
 		<SingleSizeItemLabel value={ value } />
 	) : (
 		<DropShadowItemLabel value={ value } />
@@ -166,14 +199,14 @@ const ItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
 };
 
 const SingleSizeItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
-	const { $$type, value: sizeValue } = value;
-	const { $$type: key } = filterConfig[ $$type ].defaultValue;
-	const defaultUnit = filterConfig[ $$type ].defaultValue[ key ].value.unit;
-	const { unit, size } = sizeValue[ key ]?.value ?? { unit: defaultUnit, size: 0 };
+	const { func, args } = value.value;
+	const defaultUnit =
+		( filterConfig[ func.value ?? '' ].defaultValue.value.args as SizePropValue ).value.unit ?? lengthUnits[ 0 ];
+	const { unit, size } = ( args as SizePropValue ).value ?? { unit: defaultUnit, size: 0 };
 
 	const label = (
 		<Box component="span" style={ { textTransform: 'capitalize' } }>
-			{ value.$$type }:
+			{ func.value ?? '' }:
 		</Box>
 	);
 
@@ -194,80 +227,86 @@ const ItemContent = ( {
 	collectionPropUtil?: CollectionPropUtil< FilterItemPropValue >;
 	anchorEl?: HTMLElement | null;
 } ) => {
-	const { value: filterValues, setValue } = useBoundProp( collectionPropUtil ?? filterPropTypeUtil );
+	const { value: filterValues = [] } = useBoundProp( collectionPropUtil ?? filterPropTypeUtil );
 	const itemIndex = parseInt( bind, 10 );
 	const item = filterValues?.[ itemIndex ];
+	return item ? (
+		<PropKeyProvider bind={ bind }>
+			<PropContent item={ item } anchorEl={ anchorEl } />
+		</PropKeyProvider>
+	) : null;
+};
 
-	const handleChange = ( e: SelectChangeEvent< string > ) => {
-		const newFilterValues = [ ...filterValues ];
-		const filterType = e.target.value as FilterType;
+const PropContent = ( { item, anchorEl }: { item: FilterItemPropValue; anchorEl?: HTMLElement | null } ) => {
+	const propContext = useBoundProp( cssFilterFunctionPropUtil );
 
-		newFilterValues[ itemIndex ] = {
-			$$type: filterType,
-			value: { ...filterConfig[ filterType ].defaultValue },
-		} as FilterItemPropValue;
+	const handleValueChange = (
+		changedValue: FilterItemPropValue[ 'value' ],
+		options?: CreateOptions,
+		meta?: { bind?: PropKey }
+	) => {
+		let newValue = structuredClone( changedValue );
+		const newFuncName = newValue?.func.value ?? '';
+		if ( meta?.bind === 'func' ) {
+			newValue = structuredClone( filterConfig[ newFuncName ].defaultValue.value );
+		}
 
-		setValue( newFilterValues );
+		if ( ! newValue.args ) {
+			return;
+		}
+		propContext.setValue( newValue );
 	};
 
 	return (
-		<PropKeyProvider bind={ bind }>
+		<PropProvider { ...propContext } setValue={ handleValueChange }>
 			<PopoverContent p={ 1.5 }>
 				<PopoverGridContainer>
 					<Grid item xs={ 6 }>
-						<ControlLabel>{ __( 'Filter', 'elementor' ) }</ControlLabel>
+						<ControlFormLabel>{ __( 'Filter', 'elementor' ) }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
-						<Select
-							sx={ { overflow: 'hidden' } }
-							size="tiny"
-							value={ item?.$$type ?? DEFAULT_FILTER_KEY }
-							onChange={ handleChange }
-							fullWidth
-						>
-							{ filterKeys.map( ( filterKey ) => (
-								<MenuListItem key={ filterKey } value={ filterKey }>
-									{ filterConfig[ filterKey ].name }
-								</MenuListItem>
-							) ) }
-						</Select>
+						<PropKeyProvider bind="func">
+							<SelectControl
+								options={ filterKeys.map( ( filterKey ) => ( {
+									label: filterConfig[ filterKey ].name,
+									value: filterKey,
+								} ) ) }
+							/>
+						</PropKeyProvider>
 					</Grid>
 				</PopoverGridContainer>
-				<Content filterType={ item?.$$type } anchorEl={ anchorEl } />
+				<PropKeyProvider bind="args">
+					<Content filterType={ item?.value.func } anchorEl={ anchorEl } />
+				</PropKeyProvider>
 			</PopoverContent>
-		</PropKeyProvider>
+		</PropProvider>
 	);
 };
 
 const Content = ( { filterType, anchorEl }: { filterType: FilterType; anchorEl?: HTMLElement | null } ) => {
-	const { propType, units = [] } = filterConfig[ filterType ];
+	const filterName = filterType?.value || DEFAULT_FILTER;
+	const filterItemConfig = filterConfig[ filterName ];
+	const { units = [] } = filterItemConfig;
 
-	return isSingleSize( filterType ) ? (
-		<SingleSizeItemContent filterType={ filterType } />
+	return isSingleSize( filterName ) ? (
+		<SingleSizeItemContent filterType={ filterName } />
 	) : (
-		<DropShadowItemContent propType={ propType } units={ units as Unit[] } anchorEl={ anchorEl } />
+		<DropShadowItemContent units={ units as LengthUnit[] } anchorEl={ anchorEl } />
 	);
 };
 
-const SingleSizeItemContent = ( { filterType }: { filterType: FilterType } ) => {
-	const { propType, valueName, defaultValue, units } = filterConfig[ filterType ];
-	const { $$type } = defaultValue;
-	const context = useBoundProp( propType );
+const SingleSizeItemContent = ( { filterType }: { filterType: string } ) => {
+	const { valueName, defaultValue, units } = filterConfig[ filterType ];
 	const rowRef = useRef< HTMLDivElement >( null );
-	const defaultUnit = defaultValue[ $$type ].value.unit;
-
+	const defaultUnit = ( defaultValue.value.args as SizePropValue ).value.unit;
 	return (
-		<PropProvider { ...context }>
-			<PropKeyProvider bind={ $$type }>
-				<PopoverGridContainer ref={ rowRef }>
-					<Grid item xs={ 6 }>
-						<ControlLabel>{ valueName }</ControlLabel>
-					</Grid>
-					<Grid item xs={ 6 }>
-						<SizeControl anchorRef={ rowRef } units={ units } defaultUnit={ defaultUnit } />
-					</Grid>
-				</PopoverGridContainer>
-			</PropKeyProvider>
-		</PropProvider>
+		<PopoverGridContainer ref={ rowRef }>
+			<Grid item xs={ 6 }>
+				<ControlFormLabel>{ valueName }</ControlFormLabel>
+			</Grid>
+			<Grid item xs={ 6 }>
+				<SizeControl anchorRef={ rowRef } units={ units as LengthUnit[] } defaultUnit={ defaultUnit as Unit } />
+			</Grid>
+		</PopoverGridContainer>
 	);
 };

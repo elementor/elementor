@@ -47,7 +47,7 @@
     "@elementor/icons": "1.46.0",
     "@elementor/locations": "0.8.0",
     "@elementor/menus": "0.1.5",
-    "@elementor/ui": "1.36.0",
+    "@elementor/ui": "1.36.2",
     "@wordpress/i18n": "^5.13.0"
   },
   "devDependencies": {

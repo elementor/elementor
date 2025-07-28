@@ -13,6 +13,20 @@ jest.mock( '../../hooks/use-prop-variables', () => ( {
 	deleteVariable: jest.fn(),
 } ) );
 
+jest.mock( '../../hooks/use-permissions', () => {
+	return {
+		usePermissions: () => {
+			return {
+				canAdd: jest.fn().mockReturnValue( true ),
+				canDelete: jest.fn().mockReturnValue( true ),
+				canEdit: jest.fn().mockReturnValue( true ),
+				canRestore: jest.fn().mockReturnValue( true ),
+				canManageSettings: jest.fn().mockReturnValue( true ),
+			};
+		},
+	};
+} );
+
 describe( 'FontVariableEdit', () => {
 	const mockVariable = {
 		key: 'e-gv-789',

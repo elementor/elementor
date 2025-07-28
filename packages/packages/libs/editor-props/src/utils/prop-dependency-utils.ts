@@ -11,16 +11,17 @@ type ParsedTerm = DependencyTerm;
 
 type Relation = Dependency[ 'relation' ];
 
-export function shouldApplyEffect( { relation, terms }: Dependency, values: PropValue ): boolean {
-	if ( ! terms.length ) {
-		return false;
+export function isDependencyMet( dependency: Dependency | undefined, values: PropValue ): boolean {
+	if ( ! dependency?.terms.length ) {
+		return true;
 	}
 
+	const { relation, terms } = dependency;
 	const method = getRelationMethod( relation );
 
 	return terms[ method ]( ( term: ParsedTerm | Dependency ) =>
 		isDependency( term )
-			? shouldApplyEffect( term, values )
+			? isDependencyMet( term, values )
 			: evaluateTerm( term, extractValue( term.path, values )?.value )
 	);
 }
@@ -74,7 +75,7 @@ export function evaluateTerm( term: DependencyTerm, actualValue: unknown ) {
 			return ( 'exists' === operator ) === evaluation;
 
 		default:
-			return false;
+			return true;
 	}
 }
 

@@ -158,4 +158,25 @@ describe( 'ColorVariableControl', () => {
 		expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
 		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
 	} );
+
+	it( 'should render with a missing variable', () => {
+		// Arrange
+		const props = {
+			setValue: jest.fn(),
+			value: {
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-missing',
+			},
+			bind: 'color',
+			propType,
+		};
+
+		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( null );
+
+		// Act
+		renderControl( <ColorVariableControl />, props );
+
+		// Assert
+		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
+	} );
 } );

@@ -166,7 +166,7 @@ const MockControl = () => {
 		<input
 			type="text"
 			aria-label={ bind }
-			value={ value }
+			value={ value ?? '' }
 			onChange={ handleChange }
 			placeholder={ placeholder ? String( placeholder ) : '' }
 		/>

@@ -7,12 +7,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-		} );
-
+		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
 		await page.close();
 	} );
 
@@ -20,11 +15,7 @@ test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-		} );
-
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 

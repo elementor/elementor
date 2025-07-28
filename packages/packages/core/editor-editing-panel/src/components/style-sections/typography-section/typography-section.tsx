@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
@@ -21,8 +20,6 @@ import { TransformField } from './transform-field';
 import { WordSpacingField } from './word-spacing-field';
 
 export const TypographySection = () => {
-	const isVersion330Active = isExperimentActive( 'e_v_3_30' );
-
 	return (
 		<SectionContent>
 			<FontFamilyField />
@@ -48,12 +45,8 @@ export const TypographySection = () => {
 					<LineHeightField />
 					<LetterSpacingField />
 					<WordSpacingField />
-					{ isVersion330Active && (
-						<>
-							<ColumnCountField />
-							<ColumnGapField />
-						</>
-					) }
+					<ColumnCountField />
+					<ColumnGapField />
 					<PanelDivider />
 					<TextDecorationField />
 					<TransformField />

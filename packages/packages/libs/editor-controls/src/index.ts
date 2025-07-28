@@ -13,6 +13,7 @@ export { NumberControl } from './controls/number-control';
 export { EqualUnequalSizesControl } from './controls/equal-unequal-sizes-control';
 export { LinkedDimensionsControl } from './controls/linked-dimensions-control';
 export { FontFamilyControl } from './controls/font-family-control/font-family-control';
+export { ItemSelector } from './components/item-selector';
 export { UrlControl } from './controls/url-control';
 export { LinkControl } from './controls/link-control';
 export { GapControl } from './controls/gap-control';
@@ -25,11 +26,11 @@ export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
 export { PopoverContent } from './components/popover-content';
+export { enqueueFont } from './controls/font-family-control/enqueue-font';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
-export { FontFamilySelector } from './components/font-family-selector';
 
 // types
 export type { ControlComponent } from './create-control';
@@ -38,13 +39,14 @@ export type { EqualUnequalItems } from './controls/equal-unequal-sizes-control';
 export type { ControlActionsItems } from './control-actions/control-actions-context';
 export type { PropProviderProps } from './bound-prop-context';
 export type { SetValue } from './bound-prop-context/prop-context';
-export type { ExtendedOption, Unit } from './utils/size-control';
+export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
 export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
 
 // providers
 export { createControlReplacementsRegistry, ControlReplacementsProvider } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
+export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';

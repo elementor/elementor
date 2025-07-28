@@ -159,4 +159,25 @@ describe( 'FontVariableControl', () => {
 		expect( screen.getByText( 'main-roboto' ) ).toBeInTheDocument();
 		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
 	} );
+
+	it( 'should render with a missing variable', () => {
+		// Arrange
+		const props = {
+			setValue: jest.fn(),
+			value: {
+				$$type: fontVariablePropTypeUtil.key,
+				value: 'e-gv-missing',
+			},
+			bind: 'font-family',
+			propType,
+		};
+
+		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( null );
+
+		// Act
+		renderControl( <FontVariableControl />, props );
+
+		// Assert
+		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
+	} );
 } );

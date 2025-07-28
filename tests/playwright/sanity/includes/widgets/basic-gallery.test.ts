@@ -81,3 +81,4 @@ async function assertLightboxStyling( editor: EditorPage, context: Page | Frame,
 	await expect( context.locator( '.elementor-lightbox' ) )
 		.toHaveScreenshot( `gallery-lightbox-swiper${ suffix }.png` );
 }
+// This will intentionally break the test for revert PR testing

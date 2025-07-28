@@ -1,5 +1,3 @@
-export { EXPERIMENTAL_FEATURES } from './sync/experiments-flags';
-
 export { useBoundProp } from '@elementor/editor-controls';
 export type { PopoverActionProps } from './popover-action';
 export { registerControlReplacement } from './control-replacement';

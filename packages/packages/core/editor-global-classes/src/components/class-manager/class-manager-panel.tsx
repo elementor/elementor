@@ -1,7 +1,6 @@
-import { useEffect } from 'react';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import { EXPERIMENTAL_FEATURES } from '@elementor/editor-editing-panel';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -11,7 +10,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { changeEditMode, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
@@ -39,8 +38,6 @@ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
 import { SaveChangesDialog, useDialog } from './save-changes-dialog';
-
-const isVersion311IsActive = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_31 );
 
 const id = 'global-classes-manager';
 
@@ -115,16 +112,12 @@ export function ClassManagerPanel() {
 							height: '100%',
 						} }
 					>
-						{ isVersion311IsActive && (
-							<>
-								<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
-								<Divider
-									sx={ {
-										borderWidth: '1px 0 0 0',
-									} }
-								/>
-							</>
-						) }
+						<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
+						<Divider
+							sx={ {
+								borderWidth: '1px 0 0 0',
+							} }
+						/>
 
 						<Box
 							px={ 2 }

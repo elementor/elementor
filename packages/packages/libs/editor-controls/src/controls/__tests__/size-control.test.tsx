@@ -6,7 +6,7 @@ import { type SizePropValue } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { type DegreeUnit, type Unit } from '../../utils/size-control';
+import { type AngleUnit, type LengthUnit } from '../../utils/size-control';
 import { SizeControl } from '../size-control';
 
 const mockSizeProp = ( value?: SizePropValue[ 'value' ] ) => ( {
@@ -14,9 +14,8 @@ const mockSizeProp = ( value?: SizePropValue[ 'value' ] ) => ( {
 	value: { unit: '', size: 0, ...value },
 } );
 
-const mockUnits = (): Unit[] => [ 'px', 'rem', '%', 'em' ];
-const mockDegreeUnits = (): DegreeUnit[] => [ 'deg', 'rad', 'grad', 'turn' ];
-const mockAllUnits = (): ( Unit | DegreeUnit )[] => [ ...mockUnits(), ...mockDegreeUnits() ];
+const mockLengthUnits = (): LengthUnit[] => [ 'px', 'rem', '%', 'em' ];
+const mockAngleUnits = (): AngleUnit[] => [ 'deg', 'rad', 'grad', 'turn' ];
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mocked( isExperimentActive ).mockReturnValue( true );
@@ -39,7 +38,7 @@ describe( 'SizeControl', () => {
 	it( 'should render the size control with its props', () => {
 		// Arrange.
 		const setValue = jest.fn();
-		const units = mockUnits();
+		const units = mockLengthUnits();
 
 		const props = { setValue, value: mockSizeProp(), bind: 'select', propType };
 
@@ -68,7 +67,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -95,7 +94,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -121,7 +120,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -144,7 +143,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -169,7 +168,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -237,7 +236,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -279,7 +278,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -316,7 +315,7 @@ describe( 'SizeControl', () => {
 		// Act.
 		renderControl(
 			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockUnits() } />
+				<SizeControl units={ mockLengthUnits() } />
 			</ControlActionsProvider>,
 			props
 		);
@@ -359,7 +358,7 @@ describe( 'SizeControl', () => {
 
 		// Act.
 		renderControl(
-			<SizeControl units={ mockUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
+			<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
 			props
 		);
 
@@ -396,7 +395,7 @@ describe( 'SizeControl', () => {
 
 		// Act.
 		renderControl(
-			<SizeControl units={ mockUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
+			<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
 			props
 		);
 
@@ -424,7 +423,7 @@ describe( 'SizeControl', () => {
 			const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
 
 			// Act.
-			renderControl( <SizeControl units={ mockUnits() } disableCustom />, props );
+			renderControl( <SizeControl units={ mockLengthUnits() } disableCustom />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
@@ -445,7 +444,7 @@ describe( 'SizeControl', () => {
 			const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
 
 			// Act.
-			renderControl( <SizeControl units={ mockUnits() } extendedOptions={ [ 'auto' ] } />, props );
+			renderControl( <SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
@@ -469,7 +468,7 @@ describe( 'SizeControl', () => {
 
 			// Act.
 			renderControl(
-				<SizeControl units={ mockUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
+				<SizeControl units={ mockLengthUnits() } extendedOptions={ [ 'auto' ] } anchorRef={ anchorEl } />,
 				props
 			);
 
@@ -489,7 +488,7 @@ describe( 'SizeControl', () => {
 			const props = { setValue, value: mockSizeProp(), bind: 'select', propType };
 
 			// Act.
-			renderControl( <SizeControl units={ mockUnits() } defaultUnit="rem" />, props );
+			renderControl( <SizeControl units={ mockLengthUnits() } defaultUnit="rem" />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
@@ -501,37 +500,14 @@ describe( 'SizeControl', () => {
 		} );
 	} );
 
-	describe( 'Degree Units Support', () => {
-		it( 'should support mixed size and degree units', () => {
-			// Arrange.
-			const setValue = jest.fn();
-			const allUnits = mockAllUnits();
-
-			const props = { setValue, value: mockSizeProp(), bind: 'select', propType };
-
-			// Act.
-			renderControl( <SizeControl units={ allUnits } disableCustom />, props );
-
-			const selectInput = screen.getByRole( 'button' );
-
-			fireEvent.click( selectInput );
-
-			// Assert.
-			const menuItems = screen.getAllByRole( 'menuitem' );
-			expect( menuItems ).toHaveLength( allUnits.length );
-
-			allUnits.forEach( ( unit, index ) => {
-				expect( menuItems[ index ] ).toHaveTextContent( unit.toUpperCase() );
-			} );
-		} );
-
-		it( 'should handle degree unit keyboard shortcuts', () => {
+	describe( 'Angle Units Support', () => {
+		it( 'should handle angle unit keyboard shortcuts', () => {
 			// Arrange.
 			const setValue = jest.fn();
 			const props = { setValue, value: mockSizeProp( { size: 45, unit: 'deg' } ), bind: 'select', propType };
 
 			// Act.
-			renderControl( <SizeControl units={ mockDegreeUnits() } disableCustom />, props );
+			renderControl( <SizeControl variant="angle" units={ mockAngleUnits() } disableCustom />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
@@ -546,6 +522,117 @@ describe( 'SizeControl', () => {
 
 			fireEvent.keyUp( sizeInput, { key: 't' } );
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 45, unit: 'turn' } } );
+		} );
+	} );
+
+	describe( 'Placeholder', () => {
+		it( 'should prioritize prop placeholder over context placeholder', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 100,
+						unit: '%',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <SizeControl placeholder="Mixed Values" />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+
+			// Assert.
+			expect( sizeInput ).toHaveAttribute( 'placeholder', 'Mixed Values' );
+		} );
+
+		it( 'should use the context placeholder if the prop placeholder is not provided', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 20,
+						unit: 'em',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <SizeControl />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			// Assert.
+			expect( sizeInput ).toHaveAttribute( 'placeholder', '20' );
+			expect( unitButton ).toHaveTextContent( 'em' );
+		} );
+
+		it( 'should not show placeholder if value is provided', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp( {
+					size: 149,
+					unit: 'vh',
+				} ),
+				bind: 'select',
+				disabled: true,
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: {
+						size: 200,
+						unit: '%',
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <SizeControl />, props );
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			// Assert.
+			expect( sizeInput ).toHaveDisplayValue( '149' );
+			expect( unitButton ).toHaveTextContent( 'vh' );
+		} );
+
+		it( 'should show no placeholder when neither prop nor bound prop placeholder is provided', () => {
+			// Arrange
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: mockSizeProp(),
+				bind: 'select',
+				disabled: true,
+				propType,
+			};
+
+			// Act
+			renderControl( <SizeControl />, props );
+
+			// Assert
+
+			const sizeInput = screen.getByRole( 'spinbutton' );
+			const unitButton = screen.getByRole( 'button' );
+
+			expect( sizeInput ).not.toHaveAttribute( 'placeholder' );
+			expect( unitButton ).toHaveTextContent( 'px' );
 		} );
 	} );
 } );

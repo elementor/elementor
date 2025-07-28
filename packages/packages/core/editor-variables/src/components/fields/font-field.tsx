@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
-import { FontFamilySelector } from '@elementor/editor-controls';
+import { enqueueFont, ItemSelector } from '@elementor/editor-controls';
 import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
-import { ChevronDownIcon } from '@elementor/icons';
+import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import {
 	bindPopover,
 	bindTrigger,
@@ -34,6 +34,13 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 
 	const fontFamilies = useFontFamilies();
 	const sectionWidth = useSectionWidth();
+
+	const mapFontSubs = React.useMemo( () => {
+		return fontFamilies.map( ( { label, fonts } ) => ( {
+			label,
+			items: fonts,
+		} ) );
+	}, [ fontFamilies ] );
 
 	const handleChange = ( newValue: string ) => {
 		setFontFamily( newValue );
@@ -70,12 +77,16 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 					transformOrigin={ { vertical: 'top', horizontal: -28 } }
 					{ ...bindPopover( fontPopoverState ) }
 				>
-					<FontFamilySelector
-						fontFamilies={ fontFamilies }
-						fontFamily={ fontFamily }
-						onFontFamilyChange={ handleFontFamilyChange }
+					<ItemSelector
+						itemsList={ mapFontSubs }
+						selectedItem={ fontFamily }
+						onItemChange={ handleFontFamilyChange }
 						onClose={ fontPopoverState.close }
 						sectionWidth={ sectionWidth }
+						title={ __( 'Font Family', 'elementor' ) }
+						itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
+						onDebounce={ enqueueFont }
+						icon={ TextIcon as React.ElementType< { fontSize: string } > }
 					/>
 				</Popover>
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
