@@ -12,6 +12,17 @@ export type TransitionCategory = {
 	properties: TransitionProperty[];
 };
 
+export const initialTransitionValue = {
+	selection: {
+		$$type: 'key-value',
+		value: {
+			key: { value: 'all', $$type: 'string' },
+			value: { value: 'All properties', $$type: 'string' },
+		},
+	},
+	size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+};
+
 export const transitionProperties: TransitionCategory[] = [
 	{
 		label: 'Common',
@@ -115,3 +126,8 @@ export const transitionProperties: TransitionCategory[] = [
 		],
 	},
 ];
+
+export const transitionsItemsList = transitionProperties.map( ( category ) => ( {
+	label: category.label,
+	items: category.properties.map( ( property ) => property.label ),
+} ) );

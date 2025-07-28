@@ -2,17 +2,12 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { keyValuePropTypeUtil } from '@elementor/editor-props';
 import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
-import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
+import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
-import { transitionProperties } from './data';
-
-const TRANSITION_ITEMS_LIST = transitionProperties.map( ( category ) => ( {
-	label: category.label,
-	items: category.properties.map( ( property ) => property.label ),
-} ) );
+import { transitionProperties, transitionsItemsList } from './data';
 
 const toTransitionSelectorValue = ( label: string ) => {
 	for ( const category of transitionProperties ) {
@@ -61,7 +56,7 @@ export const TransitionSelector = () => {
 	};
 
 	return (
-		<div ref={ defaultRef }>
+		<Box ref={ defaultRef }>
 			<UnstableTag
 				variant="outlined"
 				label={ transitionLabel }
@@ -79,7 +74,7 @@ export const TransitionSelector = () => {
 				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
 			>
 				<ItemSelector
-					itemsList={ TRANSITION_ITEMS_LIST }
+					itemsList={ transitionsItemsList }
 					selectedItem={ transitionValue }
 					onItemChange={ handleTransitionPropertyChange }
 					onClose={ popoverState.close }
@@ -88,6 +83,6 @@ export const TransitionSelector = () => {
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
 				/>
 			</Popover>
-		</div>
+		</Box>
 	);
 };

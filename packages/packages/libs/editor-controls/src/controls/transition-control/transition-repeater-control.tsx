@@ -3,25 +3,14 @@ import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 
 import { createControl } from '../../create-control';
 import { RepeatableControl } from '../repeatable-control';
-import { transitionProperties } from './data';
-import { SelectionSizeControl } from './selection-size-control';
+import { SelectionSizeControl } from '../selection-size-control';
+import { initialTransitionValue, transitionProperties } from './data';
 import { TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
 	variant: 'time',
 	units: [ 's', 'ms' ],
 	defaultUnit: 'ms',
-};
-
-const INITIAL_VALUES = {
-	selection: {
-		$$type: 'key-value',
-		value: {
-			key: { value: 'all', $$type: 'string' },
-			value: { value: 'All properties', $$type: 'string' },
-		},
-	},
-	size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
 };
 
 const SELECTION_SIZE_PROPS = {
@@ -32,7 +21,6 @@ const SELECTION_SIZE_PROPS = {
 		props: {},
 	},
 	sizeConfigMap: {
-		// Create size config for all transition properties
 		...transitionProperties.reduce(
 			( acc, category ) => {
 				category.properties.forEach( ( property ) => {
@@ -60,7 +48,7 @@ export const TransitionRepeaterControl = createControl( () => {
 			placeholder="Empty Transition"
 			showDuplicate={ false }
 			showToggle={ true }
-			initialValues={ INITIAL_VALUES }
+			initialValues={ initialTransitionValue }
 			childControlConfig={ CHILD_CONTROL_CONFIG }
 			propKey="transition"
 		/>

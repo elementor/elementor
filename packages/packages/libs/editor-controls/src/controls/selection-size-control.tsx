@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
-import { ControlFormLabel } from '../../components/control-form-label';
-import { createControl } from '../../create-control';
-import { SizeControl, type SizeControlProps } from '../size-control';
+import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
+import { ControlFormLabel } from '../components/control-form-label';
+import { createControl } from '../create-control';
+import { SizeControl, type SizeControlProps } from './size-control';
 
 type SelectionComponentConfig = {
 	component: React.ComponentType< Record< string, unknown > >;
@@ -27,7 +27,16 @@ export const SelectionSizeControl = createControl(
 		const { value, setValue, propType } = useBoundProp( selectionSizePropTypeUtil );
 		const rowRef = useRef< HTMLDivElement >( null );
 
-		const currentSizeConfig = sizeConfigMap[ value?.selection?.value.key.value || '' ];
+		const currentSizeConfig = useMemo( () => {
+			switch ( value.selection.$$type ) {
+				case 'key-value':
+					return sizeConfigMap[ value?.selection?.value.key.value || '' ];
+				case 'string':
+					return sizeConfigMap[ value?.selection?.value || '' ];
+				default:
+					return null;
+			}
+		}, [ value, sizeConfigMap ] );
 		const SelectionComponent = selectionConfig.component;
 
 		return (
