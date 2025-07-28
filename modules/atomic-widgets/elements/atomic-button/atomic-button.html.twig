@@ -6,12 +6,12 @@
             href="{{ settings.link.href }}"
             target="{{ settings.link.target }}"
             class="{{ classes }}"
-            {{ id_attribute }} {{ settings.attributes | raw }}
+            {{ id_attribute }} {{ settings.attributes }}
         >
             {{ settings.text }}
         </a>
     {% else %}
-        <button class="{{ classes }}" {{ id_attribute }} {{ settings.attributes | raw }}>
+        <button class="{{ classes }}" {{ id_attribute }} {{ settings.attributes }}>
             {{ settings.text }}
         </button>
     {% endif %}
