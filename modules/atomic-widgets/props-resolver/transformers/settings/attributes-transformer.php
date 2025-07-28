@@ -19,7 +19,8 @@ class Attributes_Transformer extends Transformer_Base {
 			if ( ! isset( $item['key'] ) || '' == $item['key'] || ! isset( $item['value'] ) || '' == $item['value'] ) {
 				return '';
 			}
-			return $item['key'] . '=' . $item['value'];
+			$escaped_value = esc_attr( $item['value'] );
+			return $item['key'] . '=' . $escaped_value;
 		}, $value ) );
 
 		return $result;

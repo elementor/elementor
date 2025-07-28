@@ -4,13 +4,12 @@ import { getElementLabel, getElementSetting, updateElementSettings } from '@elem
 import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
 import { type StyleDefinitionID } from '@elementor/editor-styles';
 import { useGetStylesRepositoryCreateAction } from '@elementor/editor-styles-repository';
-import { isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
+import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
-import { EXPERIMENTAL_FEATURES } from '../../sync/experiments-flags';
 
 type UndoableClassActionPayload = {
 	classId: StyleDefinitionID;
@@ -30,12 +29,10 @@ export function useApplyClass() {
 	const { id: activeId, setId: setActiveId } = useStyle();
 	const { element } = useElement();
 
-	const isVersion330Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 );
-
 	const applyClass = useApply();
 	const unapplyClass = useUnapply();
 
-	const undoableApply = useMemo( () => {
+	return useMemo( () => {
 		return undoable(
 			{
 				do: ( { classId }: UndoableClassActionPayload ) => {
@@ -59,27 +56,16 @@ export function useApplyClass() {
 			}
 		);
 	}, [ activeId, applyClass, element.id, unapplyClass, setActiveId ] );
-
-	const applyWithoutHistory = useCallback(
-		( { classId }: UndoableClassActionPayload ) => {
-			applyClass( classId );
-		},
-		[ applyClass ]
-	);
-
-	return isVersion330Active ? undoableApply : applyWithoutHistory;
 }
 
 export function useUnapplyClass() {
 	const { id: activeId, setId: setActiveId } = useStyle();
 	const { element } = useElement();
 
-	const isVersion330Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 );
-
 	const applyClass = useApply();
 	const unapplyClass = useUnapply();
 
-	const undoableUnapply = useMemo( () => {
+	return useMemo( () => {
 		return undoable(
 			{
 				do: ( { classId }: UndoableClassActionPayload ) => {
@@ -103,21 +89,10 @@ export function useUnapplyClass() {
 			}
 		);
 	}, [ activeId, applyClass, element.id, unapplyClass, setActiveId ] );
-
-	const unapplyWithoutHistory = useCallback(
-		( { classId }: UndoableClassActionPayload ) => {
-			unapplyClass( classId );
-		},
-		[ unapplyClass ]
-	);
-
-	return isVersion330Active ? undoableUnapply : unapplyWithoutHistory;
 }
 
 export function useCreateAndApplyClass() {
 	const { id: activeId, setId: setActiveId } = useStyle();
-
-	const isVersion330Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 );
 
 	const [ provider, createAction ] = useGetStylesRepositoryCreateAction() ?? [ null, null ];
 	const deleteAction = provider?.actions.delete;
@@ -157,25 +132,11 @@ export function useCreateAndApplyClass() {
 		);
 	}, [ activeId, applyClass, createAction, deleteAction, provider, setActiveId, unapplyClass ] );
 
-	const createAndApplyWithoutHistory = useCallback(
-		( { classLabel }: CreateAndApplyClassPayload ) => {
-			if ( ! createAction ) {
-				return;
-			}
-
-			const createdId = createAction( classLabel );
-			applyClass( createdId );
-		},
-		[ applyClass, createAction ]
-	);
-
 	if ( ! provider || ! undoableCreateAndApply ) {
 		return [ null, null ];
 	}
 
-	return isVersion330Active
-		? ( [ provider, undoableCreateAndApply ] as const )
-		: ( [ provider, createAndApplyWithoutHistory ] as const );
+	return [ provider, undoableCreateAndApply ] as const;
 }
 
 function useApply() {
@@ -231,24 +192,20 @@ function useClasses() {
 	const { element } = useElement();
 	const currentClassesProp = useClassesProp();
 
-	const isVersion330Active = isExperimentActive( EXPERIMENTAL_FEATURES.V_3_30 );
-
 	return useMemo( () => {
 		const setClasses = ( ids: StyleDefinitionID[] ) => {
 			updateElementSettings( {
 				id: element.id,
 				props: { [ currentClassesProp ]: classesPropTypeUtil.create( ids ) },
-				withHistory: isVersion330Active ? false : true,
+				withHistory: false,
 			} );
 
-			if ( isVersion330Active ) {
-				setDocumentModifiedStatus( true );
-			}
+			setDocumentModifiedStatus( true );
 		};
 
 		const getAppliedClasses = () =>
 			getElementSetting< ClassesPropValue >( element.id, currentClassesProp )?.value || [];
 
 		return { setClasses, getAppliedClasses };
-	}, [ currentClassesProp, element.id, isVersion330Active ] );
+	}, [ currentClassesProp, element.id ] );
 }

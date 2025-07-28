@@ -3,7 +3,7 @@ import { Box } from '@elementor/ui';
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../shared/components';
 import ExportIntro from '../components/export-intro';
 import ExportKitFooter from '../components/export-kit-footer';
-import KitContent from '../components/kit-content';
+import KitContent from '../components/export-kit-parts-selection';
 import KitInfo from '../components/kit-info';
 
 export default function ExportKit() {

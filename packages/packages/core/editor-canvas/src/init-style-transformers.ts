@@ -22,6 +22,7 @@ import { transformRotateTransformer } from './transformers/styles/transform-rota
 import { transformScaleTransformer } from './transformers/styles/transform-scale-transformer';
 import { transformSkewTransformer } from './transformers/styles/transform-skew-transformer';
 import { transformTransformer } from './transformers/styles/transform-transformer';
+import { transitionTransformer } from './transformers/styles/transition-transformer';
 
 export function initStyleTransformers() {
 	styleTransformersRegistry
@@ -55,6 +56,7 @@ export function initStyleTransformers() {
 		.register( 'transform-rotate', transformRotateTransformer )
 		.register( 'transform-skew', transformSkewTransformer )
 		.register( 'transform', transformTransformer )
+		.register( 'transition', transitionTransformer )
 		.register(
 			'layout-direction',
 			createMultiPropsTransformer( [ 'row', 'column' ], ( { propKey, key } ) => `${ key }-${ propKey }` )

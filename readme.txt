@@ -348,6 +348,14 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.30.3 - 2025-07-22 =
+
+* Tweak: Improved performance of the first-time Editor load
+* Security Fix: Improved code security enforcement in Import process
+* Security Fix: Improved code security enforcement in Text Path widget
+* Security Fix: Improved content sanitization in multiple widgets
+* Fix: Link control label is missing in all elements - Editor V4
+
 = 3.30.2 - 2025-07-09 =
 
 * Fix: Editor failing to load on certain hosting providers due to blocked requests
