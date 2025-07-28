@@ -53,7 +53,6 @@ node scripts/version-manager/index.js set 3.31.0 --dry-run
 # Set only specific packages
 node scripts/version-manager/index.js set 3.31.0 --packages "packages/core/*"
 ```
-```
 
 #### Bump Version
 Increment version using semantic versioning:
@@ -94,6 +93,30 @@ node scripts/version-manager/index.js list --publishable
 # List specific packages
 node scripts/version-manager/index.js list --packages "packages/libs/*"
 ```
+
+#### Get Package Version
+Get version of a package matching a regex pattern with clean output (useful for scripts):
+
+```bash
+node scripts/version-manager/index.js get-version <pattern>
+```
+
+Examples:
+```bash
+# Get version of a specific package
+node scripts/version-manager/index.js get-version "@elementor/editor-controls"
+
+# Get version of first package matching pattern
+node scripts/version-manager/index.js get-version "editor-.*"
+
+# Use in scripts
+VERSION=$(node scripts/version-manager/index.js get-version "@elementor/.*")
+```
+
+The command outputs only the version number without any formatting, making it ideal for use in scripts. It returns:
+- The version number if a match is found
+- Empty string if no match is found
+- Exit code 1 if no match is found or an error occurs
 
 #### Validate Versions
 Check that all packages have consistent versioning:
@@ -261,6 +284,7 @@ The version manager integrates with existing npm scripts:
     "version:validate": "node scripts/version-manager/index.js validate",
     "version:bump": "node scripts/version-manager/index.js bump",
     "version:set": "node scripts/version-manager/index.js set",
+    "version:get": "node scripts/version-manager/index.js get-version",
     "release": "npm run build && node scripts/version-manager/index.js publish"
   }
 }

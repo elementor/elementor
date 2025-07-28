@@ -107,6 +107,28 @@ program
     }
   });
 
+program
+  .command('get-version')
+  .description('Get version of packages matching the regex pattern with clean output')
+  .argument('<pattern>', 'Regex pattern to match package names')
+  .hook('preAction', async () => {
+    const { getPackageVersion } = await import('./listing.js');
+    program.getPackageVersion = getPackageVersion;
+  })
+  .action(async (pattern) => {
+    try {
+      const version = await program.getPackageVersion(pattern);
+      if (version) {
+        process.stdout.write(version);
+      } else {
+        process.exit(1);
+      }
+    } catch (error) {
+      logError(error.message);
+      process.exit(1);
+    }
+  });
+
 program.addHelpText('after', `
 Examples:
   $ version-manager set 3.31.0
@@ -121,6 +143,9 @@ Examples:
   $ version-manager publish --yes
   $ version-manager publish --dry-run
   $ version-manager publish --packages "packages/libs/*"
+  $ version-manager get-version "@elementor/editor-controls"
+  $ version-manager get-version "editor-.*"
+  $ version-manager get-version "@elementor/.*"
 `);
 
 program.commands.forEach((command) => {

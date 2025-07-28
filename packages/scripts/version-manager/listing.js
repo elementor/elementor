@@ -3,6 +3,14 @@ const { validateVersions } = require('./validation');
 const { logError, logSuccess, logInfo, logWarning } = require('./logger');
 const { colors } = require('./constants');
 
+async function getPackageVersion(pattern) {
+  const packages = await getPackages();
+  const regex = new RegExp(pattern);
+  const matchingPackage = packages.find(p => regex.test(p.name));
+  
+  return matchingPackage ? matchingPackage.currentVersion : '';
+}
+
 async function listPackages(options = {}) {
   const packages = await getPackages(options.packages);
   
@@ -59,5 +67,6 @@ async function validateVersionsCommand(options = {}) {
 module.exports = {
   listPackages,
   listPublishablePackages,
-  validateVersionsCommand
+  validateVersionsCommand,
+  getPackageVersion
 }; 

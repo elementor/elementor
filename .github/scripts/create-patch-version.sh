@@ -1,13 +1,11 @@
 #!/bin/bash
 set -e
 
-# Color codes for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Logging functions
 log_info() {
     echo -e "${BLUE}ℹ️  $1${NC}"
 }
@@ -20,15 +18,12 @@ log_error() {
     echo -e "${RED}❌ $1${NC}"
 }
 
-# Get current version from packages and calculate new patch version
 calculate_new_version() {
     log_info "Calculating new patch version..."
     
-    # Navigate to packages directory and use version-manager
     cd packages
     
-    # Get current version from packages using version-manager
-    CURRENT_PACKAGES_VERSION=$(node scripts/version-manager/index.js list --publishable | grep -E "@elementor/" | head -1 | awk '{print $2}' || echo "")
+    CURRENT_PACKAGES_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor")
     
     if [[ -z "$CURRENT_PACKAGES_VERSION" ]]; then
         log_error "Could not determine current packages version"
@@ -37,7 +32,6 @@ calculate_new_version() {
     
     log_info "Current packages version: $CURRENT_PACKAGES_VERSION"
     
-    # Calculate new patch version using version-manager bump command in dry-run mode
     log_info "Calculating new patch version using @version-manager..."
     NEW_VERSION=$(node scripts/version-manager/index.js bump patch --dry-run | grep -E "Would update.*packages to version" | sed -n 's/.*to version \([^ ]*\).*/\1/p' || echo "")
     
@@ -48,11 +42,9 @@ calculate_new_version() {
     
     log_success "New patch version calculated: $NEW_VERSION"
     
-    # Go back to root directory
     cd ..
 }
 
-# Update package versions using version-manager
 update_versions() {
     log_info "Updating package versions..."
     
@@ -65,7 +57,6 @@ update_versions() {
         log_info "Bumping patch version to $NEW_VERSION using @version-manager"
         node scripts/version-manager/index.js bump patch --yes
         
-        # Verify the update was successful
         UPDATED_VERSION=$(node scripts/version-manager/index.js list --publishable | grep -E "@elementor/" | head -1 | awk '{print $2}' || echo "")
         
         if [[ "$UPDATED_VERSION" != "$NEW_VERSION" ]]; then
@@ -79,11 +70,9 @@ update_versions() {
     cd ..
 }
 
-# Create or update pull request
 create_pull_request() {
     log_info "Preparing pull request..."
     
-    # Configure git
     git config --global user.email "github-actions@github.com"
     git config --global user.name "GitHub Actions"
     
@@ -108,16 +97,13 @@ create_pull_request() {
         return
     fi
     
-    # Check if there are any changes
     if git diff --quiet && git diff --cached --quiet; then
         log_info "No changes detected, skipping PR creation"
         return
     fi
     
-    # Create new branch for the version bump
     git checkout -b "$BRANCH_NAME"
     
-    # Stage and commit changes
     git add packages/
     git commit -m "Bump packages version to $NEW_VERSION
 
@@ -126,10 +112,8 @@ create_pull_request() {
 
 [skip ci]"
     
-    # Push the branch
     git push origin "$BRANCH_NAME"
     
-    # Create pull request using GitHub CLI
     gh pr create \
         --title "$PR_TITLE" \
         --body "$PR_BODY" \
@@ -141,7 +125,6 @@ create_pull_request() {
     log_success "Pull request created successfully"
 }
 
-# Update PACKAGE_VERSION environment variable
 update_env_var() {
     log_info "Updating PACKAGE_VERSION environment variable..."
     
@@ -150,13 +133,11 @@ update_env_var() {
         return
     fi
     
-    # Update the GitHub environment variable for subsequent steps
     echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
     
     log_success "PACKAGE_VERSION updated from $PACKAGE_VERSION to $NEW_VERSION"
 }
 
-# Main execution
 main() {
     log_info "🚀 Starting patch version update process..."
     
@@ -173,5 +154,4 @@ main() {
     fi
 }
 
-# Run main function
 main "$@"
