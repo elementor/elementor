@@ -19,6 +19,8 @@ export const AddItemAction = ( {
 	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem } = useRepeaterContext();
 	const shouldShowTooltip = tooltip && tooltipContent;
 
+	const TooltipComponent = shouldShowTooltip ? Tooltip : React.Fragment;
+
 	const onClick = () => {
 		const newItem = structuredClone( initial );
 		const newKey = generateNextKey( uniqueKeys );
@@ -34,7 +36,7 @@ export const AddItemAction = ( {
 	};
 
 	return (
-		<Tooltip title={ tooltipContent } open={ shouldShowTooltip ? undefined : false }>
+		<TooltipComponent title={ tooltipContent }>
 			<IconButton
 				size={ SIZE }
 				sx={ { ml: 'auto' } }
@@ -44,6 +46,6 @@ export const AddItemAction = ( {
 			>
 				<PlusIcon fontSize={ SIZE } />
 			</IconButton>
-		</Tooltip>
+		</TooltipComponent>
 	);
 };
