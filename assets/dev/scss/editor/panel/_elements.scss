@@ -71,6 +71,19 @@
 	}
 }
 
+.e-free-badge-container {
+	flex-grow: 1;
+	margin-inline-start: 10px;
+	margin-inline-end: 10px;
+
+	.e-free-badge {
+		border-radius: var(--e-a-border-radius);
+		background-color: var(--e-a-btn-bg);
+		color: var(--e-a-btn-color-invert);
+		padding: 3px 5px;
+	}
+}
+
 .elementor-panel {
 
 	.elementor-element {
@@ -109,6 +122,10 @@
 			> .eicon-lock {
 				color: var(--e-a-color-accent);
 			}
+
+			> .eicon-plug {
+				color: var(--e-a-color-info);
+			}
 		}
 
 		.icon {
@@ -127,7 +144,7 @@
 			font-size: 12px;
 		}
 
-		> .eicon-lock {
+		> .eicon-lock, .eicon-plug {
 			position: absolute;
 			inset-block-start: 5px;
 			inset-inline-end: 5px;
