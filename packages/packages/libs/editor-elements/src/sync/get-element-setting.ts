@@ -30,13 +30,13 @@ export const getElementSettings = < TValue >(
 	return Object.fromEntries( settingKey.map( ( key ) => [ key, getElementSetting( elementId, key ) ] ) );
 };
 
-export const extractDependingOnSelf = ( schema: PropsSchema ): Record< string, string[] > => {
+export const buildInverseDependencyGraph = ( schema: PropsSchema ): Record< string, string[] > => {
 	if ( ! schema || typeof schema !== 'object' ) {
 		return {};
 	}
 
 	const dependencyGraph = Object.entries( schema ).reduce(
-		( graph, [ propName, propType ] ) => processPropType( propName, propType, [], graph ),
+		( graph, [ propName, propType ] ) => extractDependenciesFromPropType( propName, propType, [], graph ),
 		{} as Record< string, string[] >
 	);
 
@@ -63,6 +63,7 @@ const detectCircularDependencies = (
 	recursionStack.add( propPath );
 
 	const dependencies = dependencyGraph[ propPath ] || [];
+
 	for ( const dependency of dependencies ) {
 		detectCircularDependencies( dependency, dependencyGraph, visited, recursionStack );
 	}
@@ -81,15 +82,16 @@ const ensureNoCircularDependencies = ( dependencyGraph: Record< string, string[]
 	}
 };
 
-const processDependencyTerms = (
+const addDependenciesToGraph = (
 	terms: ( DependencyTerm | Dependency )[],
 	sourcePath: string,
 	dependencyGraph: Record< string, string[] >
 ): Record< string, string[] > => {
 	return terms.reduce( ( graph, term ) => {
 		if ( isTermDependency( term ) ) {
-			return processDependencyTerms( term.terms, sourcePath, graph );
+			return addDependenciesToGraph( term.terms, sourcePath, graph );
 		}
+
 		const targetPath = term.path.join( '.' );
 		const existingDependencies = graph[ targetPath ] || [];
 
@@ -104,7 +106,7 @@ const processDependencyTerms = (
 	}, dependencyGraph );
 };
 
-const processPropType = (
+const extractDependenciesFromPropType = (
 	propName: string,
 	propType: PropType,
 	currentPath: string[],
@@ -117,7 +119,7 @@ const processPropType = (
 	const fullPath = [ ...currentPath, propName ];
 	const sourcePath = fullPath.join( '.' );
 
-	const graphWithDependencies = processDependencyTerms(
+	const graphWithDependencies = addDependenciesToGraph(
 		propType.dependencies?.terms ?? [],
 		sourcePath,
 		dependencyGraph
@@ -126,19 +128,19 @@ const processPropType = (
 	if ( isObjectPropType( propType ) ) {
 		return Object.entries( propType.shape ).reduce(
 			( graph, [ nestedPropName, nestedPropType ] ) =>
-				processPropType( nestedPropName, nestedPropType, fullPath, graph ),
+				extractDependenciesFromPropType( nestedPropName, nestedPropType, fullPath, graph ),
 			graphWithDependencies
 		);
 	}
 
 	if ( isArrayPropType( propType ) ) {
-		return processPropType( propName, propType.item_prop_type, currentPath, graphWithDependencies );
+		return extractDependenciesFromPropType( propName, propType.item_prop_type, currentPath, graphWithDependencies );
 	}
 
 	if ( isUnionPropType( propType ) ) {
 		return Object.entries( propType.prop_types ).reduce(
 			( graph, [ unionPropName, unionPropType ] ) =>
-				processPropType( unionPropName, unionPropType, fullPath, graph ),
+				extractDependenciesFromPropType( unionPropName, unionPropType, fullPath, graph ),
 			graphWithDependencies
 		);
 	}
@@ -163,5 +165,5 @@ const hasDependencies = ( propType: PropType ): boolean => {
 };
 
 const isTermDependency = ( term: DependencyTerm | Dependency ): term is Dependency => {
-	return 'relation' in term;
+	return 'terms' in term || 'relation' in term;
 };

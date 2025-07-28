@@ -4,7 +4,7 @@ import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
-	extractDependingOnSelf,
+	buildInverseDependencyGraph,
 	getElementLabel,
 	getElementSettings,
 	updateElementSettings,
@@ -34,7 +34,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
 	const dependingOnSelf = useMemo( () => {
-		return extractDependingOnSelf( propsSchema );
+		return buildInverseDependencyGraph( propsSchema );
 	}, [ propsSchema ] );
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };

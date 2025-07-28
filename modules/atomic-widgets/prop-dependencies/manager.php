@@ -67,8 +67,6 @@ class Manager {
 			'value' => $config['value'] ?? null,
 		];
 
-		$this->dependencies['terms'][] = $term;
-
 		if ( empty( $this->dependencies ) ) {
 			$this->new();
 		}

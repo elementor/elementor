@@ -9,7 +9,7 @@ import {
 } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import {
-	extractDependingOnSelf,
+	buildInverseDependencyGraph,
 	getElementLabel,
 	getElementSettings,
 	updateElementSettings,
@@ -35,7 +35,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	updateElementSettings: jest.fn(),
 	getElementLabel: jest.fn(),
 	getElementSettings: jest.fn(),
-	extractDependingOnSelf: jest.fn(),
+	buildInverseDependencyGraph: jest.fn(),
 } ) );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
@@ -441,7 +441,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -500,7 +500,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -558,7 +558,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -610,7 +610,7 @@ describe( 'SettingsField dependency logic', () => {
 
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -673,7 +673,7 @@ describe( 'SettingsField dependency logic', () => {
 					},
 				},
 			} );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -782,7 +782,7 @@ describe( 'SettingsField dependency logic', () => {
 					},
 				},
 			} );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -849,7 +849,7 @@ describe( 'SettingsField dependency logic', () => {
 				'dependent-1': { $$type: 'string', value: 'value-1' },
 				'dependent-2': { $$type: 'string', value: 'value-2' },
 			} );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -913,7 +913,7 @@ describe( 'SettingsField dependency logic', () => {
 				'control-b': { $$type: 'string', value: 'initial-b' },
 				'control-c': { $$type: 'string', value: 'initial-c' },
 			} );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
@@ -965,7 +965,7 @@ describe( 'SettingsField dependency logic', () => {
 			};
 			jest.mocked( useElementSettings ).mockReturnValue( elementSettings );
 			jest.mocked( getElementSettings ).mockReturnValue( elementSettings );
-			jest.mocked( extractDependingOnSelf ).mockReturnValue( dependingOnSelf );
+			jest.mocked( buildInverseDependencyGraph ).mockReturnValue( dependingOnSelf );
 
 			// Act.
 			renderWithTheme(
