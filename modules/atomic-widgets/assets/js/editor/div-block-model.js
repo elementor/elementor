@@ -26,26 +26,14 @@ export default class AtomicContainer extends elementor.modules.elements.models.E
 	getDefaultChildren() {
 		const { defaultChildren } = this.config;
 
-		const formatRestrictions = ( restrictions ) => {
-			return Object.entries( restrictions ).reduce( ( acc, [ name, val ] ) => {
-				if ( 'scope' === name && 'parent' === val ) {
-					acc[ name ] = this.id;
-					return acc;
-				}
-				acc[ name ] = val;
-				return acc;
-			}, {} );
-		};
-
 		return defaultChildren.map( ( element ) => {
-			const restrictions = formatRestrictions( element.restrictions || {} );
 			return {
 				elType: element.elType,
 				widgetType: element.widgetType,
 				id: elementorCommon.helpers.getUniqueId(),
 				settings: element.settings || {},
 				elements: element.elements || [],
-				restrictions,
+				restrictions: element.restrictions || [],
 			};
 		} );
 	}

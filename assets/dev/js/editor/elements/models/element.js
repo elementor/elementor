@@ -49,7 +49,6 @@ ElementModel = BaseElementModel.extend( {
 
 		this.initEditSettings();
 
-		console.log( 'ElementModel initialized with options:', options );
 		this.set( 'restrictions', options.restrictions || [] );
 
 		this.on( {

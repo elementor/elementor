@@ -53,6 +53,7 @@ const learnMoreActionProps: Partial< ButtonProps > = {
 };
 
 function blockLinkInLinkPaste( args: PasteArgs ): boolean {
+	console.log( 'blockLinkInLinkPaste$$', args );
 	const { containers = [ args.container ], storageType } = args;
 	const targetElements = containers;
 

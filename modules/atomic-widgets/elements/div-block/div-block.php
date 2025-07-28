@@ -216,10 +216,17 @@ class Div_Block extends Atomic_Element_Base {
 			'elType' => 'widget',
 			'widgetType' => Atomic_Heading::get_element_type(),
 			'settings' => [
-				'title' => String_Prop_Type::generate( 'defi' )
+				'title' => String_Prop_Type::generate( 'default heading' )
 			],
-			'behaviors' => [
-				'drag_within' => true,
+			'styles' => [],
+			'restrictions' => [
+				[
+					'type' => 'parent',
+					'settings' => [
+						'elType' => 'e-div-block',
+						'static' => true,
+					]
+				]
 			],
 		];
 
