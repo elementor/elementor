@@ -16,7 +16,7 @@ describe( 'ExportError Component', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		
+
 		mockElementorAppConfig = {
 			base_url: 'https://example.com',
 		};
