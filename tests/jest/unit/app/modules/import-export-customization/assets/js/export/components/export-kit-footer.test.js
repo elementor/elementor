@@ -8,9 +8,7 @@ jest.mock( 'elementor-app/hooks/use-cloud-kits-eligibility', () => jest.fn() );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state', () => jest.fn() );
 
-jest.mock( '@reach/router', () => ( {
-	useNavigate: () => mockNavigate,
-} ) );
+jest.mock( '@reach/router' );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context', () => ( {
 	useExportContext: jest.fn(),
@@ -24,6 +22,7 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/c
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state';
 import { useExportContext } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
+import { useNavigate } from '@reach/router';
 
 describe( 'ExportKitFooter Component', () => {
 	let mockElementorAppConfig;
@@ -34,6 +33,9 @@ describe( 'ExportKitFooter Component', () => {
 	let mockSetConnecting;
 
 	beforeEach( () => {
+		// Mock useNavigate
+		useNavigate.mockReturnValue( mockNavigate );
+
 		mockElementorAppConfig = {
 			base_url: 'https://example.com/elementor',
 			'cloud-library': {
@@ -78,6 +80,11 @@ describe( 'ExportKitFooter Component', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
 		mockNavigate.mockClear();
+	} );
+
+	afterAll( () => {
+		jest.restoreAllMocks();
+		jest.unmock( '@reach/router' );
 	} );
 
 	describe( 'Button Rendering for Disconnected State', () => {
