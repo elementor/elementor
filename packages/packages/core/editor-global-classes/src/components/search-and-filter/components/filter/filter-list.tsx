@@ -27,21 +27,23 @@ export const FilterList = () => {
 				<LabeledCheckbox
 					label={ filterConfig.unused }
 					checked={ filters.unused }
-					suffix={ <Chip size="small" sx={ { ml: 'auto' } } label={ filteredCssClass.unused.length } /> }
+					suffix={ <Chip size={ 'tiny' } sx={ { ml: 'auto' } } label={ filteredCssClass.unused.length } /> }
 				/>
 			</MenuItem>
 			<MenuItem onClick={ () => handleOnClick( 'empty' ) }>
 				<LabeledCheckbox
 					label={ filterConfig.empty }
 					checked={ filters.empty }
-					suffix={ <Chip size="small" sx={ { ml: 'auto' } } label={ filteredCssClass.empty.length } /> }
+					suffix={ <Chip size={ 'tiny' } sx={ { ml: 'auto' } } label={ filteredCssClass.empty.length } /> }
 				/>
 			</MenuItem>
 			<MenuItem onClick={ () => handleOnClick( 'onThisPage' ) }>
 				<LabeledCheckbox
 					label={ filterConfig.onThisPage }
 					checked={ filters.onThisPage }
-					suffix={ <Chip size="small" sx={ { ml: 'auto' } } label={ filteredCssClass.onThisPage.length } /> }
+					suffix={
+						<Chip size={ 'tiny' } sx={ { ml: 'auto' } } label={ filteredCssClass.onThisPage.length } />
+					}
 				/>
 			</MenuItem>
 		</MenuList>

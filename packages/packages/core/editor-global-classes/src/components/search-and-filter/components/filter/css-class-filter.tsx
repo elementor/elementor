@@ -49,7 +49,7 @@ export const CssClassFilter = () => {
 					] }
 					onClose={ popupState.close }
 					title={ __( 'Filters', 'elementor' ) }
-					icon={ <FilterIcon /> }
+					icon={ <FilterIcon fontSize={ 'tiny' } /> }
 				/>
 				<Divider
 					sx={ {
