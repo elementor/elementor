@@ -58,20 +58,9 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 		return <NotFound notFoundType={ notFoundType } />;
 	}
 
-	/* translators: %s: Number of classes. */
-	const foundClassesText = __( 'We found %s classes:', 'elementor' ).replace(
-		'%s',
-		filters?.length?.toString() || '0'
-	);
-
 	return (
 		<DeleteConfirmationProvider>
 			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-				{ filters && (
-					<Typography variant="subtitle2" color="text.primary">
-						{ foundClassesText }
-					</Typography>
-				) }
 				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
 					{ filteredCssClasses?.map( ( { id, label } ) => {
 						return (

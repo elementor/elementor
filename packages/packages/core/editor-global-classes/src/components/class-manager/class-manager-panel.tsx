@@ -40,6 +40,7 @@ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
 import { SaveChangesDialog, useDialog } from './save-changes-dialog';
+import { TotalCssClassCounter } from './total-css-class-counter';
 
 const id = 'global-classes-manager';
 
@@ -65,7 +66,6 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function ClassManagerPanel() {
 	const isDirty = useDirtyState();
-
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
@@ -82,34 +82,37 @@ export function ClassManagerPanel() {
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
-					<PanelHeader>
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-								<FlippedColorSwatchIcon fontSize="inherit" />
-								{ __( 'Class Manager', 'elementor' ) }
-							</PanelHeaderTitle>
-							<CloseButton
-								sx={ { marginLeft: 'auto' } }
-								disabled={ isPublishing }
-								onClose={ () => {
-									if ( isDirty ) {
-										openSaveChangesDialog();
-										return;
-									}
+					<SearchAndFilterProvider>
+						<PanelHeader>
+							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+								<Stack width="100%" direction="row" gap={ 1 }>
+									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+										<FlippedColorSwatchIcon fontSize="inherit" />
+										{ __( 'Class Manager', 'elementor' ) }
+									</PanelHeaderTitle>
+									<TotalCssClassCounter />
+								</Stack>
+								<CloseButton
+									sx={ { marginLeft: 'auto' } }
+									disabled={ isPublishing }
+									onClose={ () => {
+										if ( isDirty ) {
+											openSaveChangesDialog();
+											return;
+										}
 
-									closePanel();
-								} }
-							/>
-						</Stack>
-					</PanelHeader>
-					<PanelBody
-						sx={ {
-							display: 'flex',
-							flexDirection: 'column',
-							height: '100%',
-						} }
-					>
-						<SearchAndFilterProvider>
+										closePanel();
+									} }
+								/>
+							</Stack>
+						</PanelHeader>
+						<PanelBody
+							sx={ {
+								display: 'flex',
+								flexDirection: 'column',
+								height: '100%',
+							} }
+						>
 							<Box px={ 2 } pb={ 1 }>
 								<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
 									<Box sx={ { flexGrow: 1 } }>
@@ -129,22 +132,22 @@ export function ClassManagerPanel() {
 							>
 								<GlobalClassesList disabled={ isPublishing } />
 							</Box>
-						</SearchAndFilterProvider>
-					</PanelBody>
+						</PanelBody>
 
-					<PanelFooter>
-						<Button
-							fullWidth
-							size="small"
-							color="global"
-							variant="contained"
-							onClick={ publish }
-							disabled={ ! isDirty }
-							loading={ isPublishing }
-						>
-							{ __( 'Save changes', 'elementor' ) }
-						</Button>
-					</PanelFooter>
+						<PanelFooter>
+							<Button
+								fullWidth
+								size="small"
+								color="global"
+								variant="contained"
+								onClick={ publish }
+								disabled={ ! isDirty }
+								loading={ isPublishing }
+							>
+								{ __( 'Save changes', 'elementor' ) }
+							</Button>
+						</PanelFooter>
+					</SearchAndFilterProvider>
 				</Panel>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />

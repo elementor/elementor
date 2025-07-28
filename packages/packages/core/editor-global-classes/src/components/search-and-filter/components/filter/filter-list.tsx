@@ -5,25 +5,11 @@ import { __ } from '@wordpress/i18n';
 import { type FilterKey, useFilteredCssClassUsage } from '../../../../hooks/use-filtered-css-class-usage';
 import { useSearchAndFilters } from '../../context';
 
-type CheckBoxItem = {
-	label: string;
-	value: FilterKey;
+export const filterConfig: Record< FilterKey, string > = {
+	unused: __( 'Unused', 'elementor' ),
+	empty: __( 'Empty', 'elementor' ),
+	onThisPage: __( 'On this page', 'elementor' ),
 };
-
-export const checkBoxItems: CheckBoxItem[] = [
-	{
-		label: __( 'Unused', 'elementor' ),
-		value: 'unused',
-	},
-	{
-		label: __( 'Empty', 'elementor' ),
-		value: 'empty',
-	},
-	{
-		label: __( 'On this page', 'elementor' ),
-		value: 'onThisPage',
-	},
-];
 
 export const FilterList = () => {
 	const {
@@ -37,17 +23,27 @@ export const FilterList = () => {
 
 	return (
 		<MenuList>
-			{ checkBoxItems.map( ( { label, value }: CheckBoxItem ) => (
+			<MenuItem onClick={ () => handleOnClick( 'unused' ) }>
 				<LabeledCheckbox
-					suffix={
-						<Chip size={ 'small' } sx={ { ml: 'auto' } } label={ filteredCssClass[ value ].length || 0 } />
-					}
-					key={ label }
-					label={ label }
-					onClick={ () => handleOnClick( value ) }
-					checked={ filters[ value ] || false }
+					label={ filterConfig.unused }
+					checked={ filters.unused }
+					suffix={ <Chip size="small" sx={ { ml: 'auto' } } label={ filteredCssClass.unused.length } /> }
 				/>
-			) ) }
+			</MenuItem>
+			<MenuItem onClick={ () => handleOnClick( 'empty' ) }>
+				<LabeledCheckbox
+					label={ filterConfig.empty }
+					checked={ filters.empty }
+					suffix={ <Chip size="small" sx={ { ml: 'auto' } } label={ filteredCssClass.empty.length } /> }
+				/>
+			</MenuItem>
+			<MenuItem onClick={ () => handleOnClick( 'onThisPage' ) }>
+				<LabeledCheckbox
+					label={ filterConfig.onThisPage }
+					checked={ filters.onThisPage }
+					suffix={ <Chip size="small" sx={ { ml: 'auto' } } label={ filteredCssClass.onThisPage.length } /> }
+				/>
+			</MenuItem>
 		</MenuList>
 	);
 };
@@ -55,33 +51,30 @@ export const FilterList = () => {
 type LabeledCheckboxProps = {
 	label: string;
 	suffix?: React.ReactNode;
-	onClick: () => void;
 	checked: boolean;
 };
 
-const LabeledCheckbox = ( { label, suffix, onClick, checked }: LabeledCheckboxProps ) => (
-	<MenuItem onClick={ onClick }>
-		<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 }>
-			<Checkbox
-				checked={ checked }
-				sx={ {
-					padding: 0,
+const LabeledCheckbox = ( { label, suffix, checked }: LabeledCheckboxProps ) => (
+	<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 }>
+		<Checkbox
+			checked={ checked }
+			sx={ {
+				padding: 0,
+				color: 'text.tertiary',
+				'&:hover': {
+					backgroundColor: 'transparent',
+				},
+				'&.Mui-checked:hover': {
+					backgroundColor: 'transparent',
+				},
+				'&.Mui-checked': {
 					color: 'text.tertiary',
-					'&:hover': {
-						backgroundColor: 'transparent',
-					},
-					'&.Mui-checked:hover': {
-						backgroundColor: 'transparent',
-					},
-					'&.Mui-checked': {
-						color: 'text.tertiary',
-					},
-				} }
-			/>
-			<Typography variant="caption" sx={ { color: 'text.secondary' } }>
-				{ label }
-			</Typography>
-			{ suffix }
-		</Stack>
-	</MenuItem>
+				},
+			} }
+		/>
+		<Typography variant="caption" sx={ { color: 'text.secondary' } }>
+			{ label }
+		</Typography>
+		{ suffix }
+	</Stack>
 );
