@@ -4,6 +4,7 @@ import { useBoundProp } from '@elementor/editor-controls';
 import { type PropTypeKey } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
 
+import { VariableTypeProvider } from '../../../context/variable-type-context';
 import { usePermissions } from '../../../hooks/use-permissions';
 import { restoreVariable } from '../../../hooks/use-prop-variables';
 import { type Variable } from '../../../types';
@@ -113,12 +114,13 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 					} }
 					{ ...bindPopover( popupState ) }
 				>
-					<VariableRestore
-						variableId={ variable.key ?? '' }
-						onClose={ popupState.close }
-						onSubmit={ handleRestoreWithOverrides }
-						propTypeKey={ propTypeUtil.key }
-					/>
+					<VariableTypeProvider propTypeKey={ propTypeKey }>
+						<VariableRestore
+							variableId={ variable.key ?? '' }
+							onClose={ popupState.close }
+							onSubmit={ handleRestoreWithOverrides }
+						/>
+					</VariableTypeProvider>
 				</Popover>
 			</Box>
 		</>

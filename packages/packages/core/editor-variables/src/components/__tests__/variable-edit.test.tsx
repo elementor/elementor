@@ -4,6 +4,7 @@ import { colorPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
+import { VariableTypeProvider } from '../../context/variable-type-context';
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
@@ -76,12 +77,9 @@ describe( 'ColorVariableEdit', () => {
 
 		// Act.
 		renderControl(
-			<VariableEdit
-				propTypeKey={ colorVariablePropTypeUtil.key }
-				editId="test-variable-id"
-				onClose={ jest.fn() }
-				onSubmit={ onDeleted }
-			/>,
+			<VariableTypeProvider propTypeKey={ colorVariablePropTypeUtil.key }>
+				<VariableEdit editId="test-variable-id" onClose={ jest.fn() } onSubmit={ onDeleted } />
+			</VariableTypeProvider>,
 			props
 		);
 
@@ -124,7 +122,9 @@ describe( 'ColorVariableEdit', () => {
 		} );
 
 		renderControl(
-			<VariableEdit editId="e-gv-75930" onClose={ jest.fn() } propTypeKey={ colorVariablePropTypeUtil.key } />,
+			<VariableTypeProvider propTypeKey={ fontVariablePropTypeUtil.key }>
+				<VariableEdit editId="e-gv-75930" onClose={ jest.fn() } />
+			</VariableTypeProvider>,
 			props
 		);
 
