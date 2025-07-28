@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { PencilIcon } from '@elementor/icons';
+import { MathFunctionIcon } from '@elementor/icons';
 import { Box, InputAdornment, type PopupState } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
@@ -72,6 +72,7 @@ export const SizeInput = ( {
 
 	const inputProps = {
 		...popupAttributes,
+		readOnly: isUnitExtendedOption( unit ),
 		autoComplete: 'off',
 		onClick,
 		onFocus,
@@ -87,7 +88,7 @@ export const SizeInput = ( {
 				onClick={ handleUnitChange }
 				value={ unit }
 				alternativeOptionLabels={ {
-					custom: <PencilIcon fontSize="small" />,
+					custom: <MathFunctionIcon fontSize="tiny" />,
 				} }
 				menuItemsAttributes={
 					units.includes( 'custom' )
@@ -116,8 +117,8 @@ export const SizeInput = ( {
 					} }
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
-					shouldBlockInput={ isUnitExtendedOption( unit ) }
 					inputProps={ inputProps }
+					isPopoverOpen={ popupState.isOpen }
 				/>
 			</Box>
 		</ControlActions>

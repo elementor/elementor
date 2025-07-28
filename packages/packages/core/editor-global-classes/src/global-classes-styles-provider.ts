@@ -1,4 +1,4 @@
-import { generateId } from '@elementor/editor-styles';
+import { generateId, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
@@ -31,7 +31,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		resolveCssName: ( id: string ) => {
 			return selectClass( getState(), id )?.label ?? id;
 		},
-		create: ( label ) => {
+		create: ( label, variants: StyleDefinitionVariant[] = [] ) => {
 			const classes = selectGlobalClasses( getState() );
 
 			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
@@ -48,7 +48,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id,
 					type: 'class',
 					label,
-					variants: [],
+					variants,
 				} )
 			);
 
@@ -70,6 +70,16 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id: args.id,
 					meta: args.meta,
 					props: args.props,
+				} )
+			);
+		},
+		updateCustomCss: ( args ) => {
+			dispatch(
+				slice.actions.updateProps( {
+					id: args.id,
+					meta: args.meta,
+					custom_css: args.custom_css,
+					props: {},
 				} )
 			);
 		},

@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
 import * as React from 'react';
+import { useEffect } from 'react';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createPanel as createPanel,

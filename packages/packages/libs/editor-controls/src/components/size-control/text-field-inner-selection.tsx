@@ -25,11 +25,11 @@ type TextFieldInnerSelectionProps = {
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	shouldBlockInput?: boolean;
 	inputProps: TextFieldProps[ 'InputProps' ] & {
 		endAdornment: React.JSX.Element;
 	};
 	disabled?: boolean;
+	isPopoverOpen?: boolean;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -42,27 +42,32 @@ export const TextFieldInnerSelection = forwardRef(
 			onBlur,
 			onKeyDown,
 			onKeyUp,
-			shouldBlockInput = false,
 			inputProps,
 			disabled,
+			isPopoverOpen,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
 
+		const getCursorStyle = () => ( {
+			input: { cursor: inputProps.readOnly ? 'default !important' : undefined },
+		} );
+
 		return (
 			<TextField
 				ref={ ref }
-				sx={ { input: { cursor: shouldBlockInput ? 'default !important' : undefined } } }
+				sx={ getCursorStyle() }
 				size="tiny"
 				fullWidth
-				type={ shouldBlockInput ? undefined : type }
+				type={ type }
 				value={ value }
-				onChange={ shouldBlockInput ? undefined : onChange }
-				onKeyDown={ shouldBlockInput ? undefined : onKeyDown }
-				onKeyUp={ shouldBlockInput ? undefined : onKeyUp }
+				onChange={ onChange }
+				onKeyDown={ onKeyDown }
+				onKeyUp={ onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
+				focused={ isPopoverOpen ? true : undefined }
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ inputProps }
 			/>

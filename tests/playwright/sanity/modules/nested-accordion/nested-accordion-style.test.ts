@@ -7,13 +7,6 @@ import { displayState } from '../../../enums/display-states';
 import { expectScreenshotToMatchLocator, setBorderAndBackground, setIconColor } from './helper';
 
 test.describe( 'Nested Accordion Style Tests @nested-accordion', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
-		await page.close();
-	} );
-
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();

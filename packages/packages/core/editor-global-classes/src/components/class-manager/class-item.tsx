@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
@@ -20,6 +20,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { CssClassUsageTrigger } from '../css-class-usage/components';
 import { useDeleteConfirmation } from './delete-confirmation-dialog';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
 
@@ -55,7 +56,7 @@ export const ClassItem = ( {
 		onSubmit: renameClass,
 		validation: validateLabel,
 	} );
-
+	const [ selectedCssUsage, setSelectedCssUsage ] = useState( '' );
 	const { openDialog } = useDeleteConfirmation();
 
 	const popupState = usePopupState( {
@@ -63,7 +64,8 @@ export const ClassItem = ( {
 		disableAutoFocus: true,
 	} );
 
-	const isSelected = ( selected || popupState.isOpen ) && ! disabled;
+	const isSelected = ( selectedCssUsage === id || selected || popupState.isOpen ) && ! disabled;
+
 	return (
 		<>
 			<Stack p={ 0 }>
@@ -99,6 +101,9 @@ export const ClassItem = ( {
 								<EllipsisWithTooltip title={ label } as={ Typography } variant="caption" />
 							) }
 						</Indicator>
+						<Box className={ 'class-item-locator' }>
+							<CssClassUsageTrigger id={ id } onClick={ setSelectedCssUsage } />
+						</Box>
 						<Tooltip
 							placement="top"
 							className={ 'class-item-more-actions' }
@@ -151,22 +156,31 @@ export const ClassItem = ( {
 const StyledListItemButton = styled( ListItemButton, {
 	shouldForwardProp: ( prop: string ) => ! [ 'showActions', 'showSortIndicator' ].includes( prop ),
 } )< ListItemButtonProps & { showActions: boolean; showSortIndicator: boolean } >(
-	( { showActions, showSortIndicator } ) =>
-		`
-	min-height: 36px;
+	( { showActions, showSortIndicator } ) => `
+    min-height: 36px;
 
-	&.visible-class-item {
-		box-shadow: none !important;
-	}
-	.class-item-sortable-trigger {
-		visibility: ${ showSortIndicator && showActions ? 'visible' : 'hidden' };
-	}
-	&:hover&:not(:disabled) {
-		.class-item-sortable-trigger  {
-			visibility: ${ showSortIndicator ? 'visible' : 'hidden' };
-		}
-	}
-`
+    &.visible-class-item {
+      box-shadow: none !important;
+    }
+
+    .class-item-locator {
+      visibility: hidden;
+    }
+
+    .class-item-sortable-trigger {
+      visibility: ${ showSortIndicator && showActions ? 'visible' : 'hidden' };
+    }
+
+    &:hover:not(:disabled) {
+      .class-item-locator {
+        visibility: visible;
+      }
+
+      .class-item-sortable-trigger {
+        visibility: ${ showSortIndicator ? 'visible' : 'hidden' };
+      }
+    }
+  `
 );
 
 const Indicator = styled( Box, {
