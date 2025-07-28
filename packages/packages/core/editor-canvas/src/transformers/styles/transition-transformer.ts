@@ -21,5 +21,5 @@ const mapToTransitionString = ( value: TransitionValue ): string => {
 		return '';
 	}
 
-	return `${ value.selection.key } ${ value.size }`;
+	return `${ value.selection.value } ${ value.size }`;
 };

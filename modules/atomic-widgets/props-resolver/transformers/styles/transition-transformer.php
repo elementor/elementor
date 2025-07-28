@@ -31,10 +31,10 @@ class Transition_Transformer extends Transformer_Base {
 		$selection = $transition['selection'];
 		$size = $transition['size'];
 
-		if ( empty( $selection['key'] ) ) {
+		if ( empty( $selection['value'] ) ) {
 			return self::EMPTY_STRING;
 		}
 
-		return trim( "{$selection['key']} {$size}" );
+		return trim( "{$selection['value']} {$size}" );
 	}
 }
