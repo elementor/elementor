@@ -150,12 +150,6 @@ export const SizeControl = createControl(
 			} ) );
 		};
 
-		const onInputFocus = ( event: React.FocusEvent< HTMLInputElement > ) => {
-			if ( isUnitExtendedOption( state.unit ) ) {
-				( event.target as HTMLElement )?.blur();
-			}
-		};
-
 		const onInputClick = ( event: React.MouseEvent ) => {
 			if ( ( event.target as HTMLElement ).closest( 'input' ) && 'custom' === state.unit ) {
 				popupState.open( anchorRef?.current );
@@ -209,7 +203,6 @@ export const SizeControl = createControl(
 					handleSizeChange={ handleSizeChange }
 					handleUnitChange={ handleUnitChange }
 					onBlur={ restoreValue }
-					onFocus={ onInputFocus }
 					onClick={ onInputClick }
 					popupState={ popupState }
 				/>
