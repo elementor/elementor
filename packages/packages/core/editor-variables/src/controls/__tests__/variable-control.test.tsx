@@ -1,35 +1,51 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import type { PropTypeUtil } from '@elementor/editor-props';
+import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen } from '@testing-library/react';
 
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
-import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
-import { FontVariableControl } from '../font-variable-control';
+import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+import { getVariableType } from '../../variables-registry/variable-type-registry';
+import { VariableControl } from '../variable-control';
 
 jest.mock( '../../hooks/use-prop-variables', () => ( {
 	useVariable: jest.fn(),
 	useFilteredVariables: jest.fn(),
 } ) );
 
-const propType = createMockPropType( { kind: 'object' } );
+jest.mock( '../../variables-registry/variable-type-registry', () => ( {
+	getVariableType: jest.fn(),
+} ) );
 
-describe( 'FontVariableControl', () => {
+const propType = createMockPropType( { kind: 'object' } );
+const mockGetVariableType = jest.mocked( getVariableType );
+
+const createMockPropTypeUtil = ( key: string ): PropTypeUtil< string, string > =>
+	( {
+		key,
+		create: jest.fn( ( value: string ) => ( {
+			$$type: key,
+			value,
+		} ) ),
+	} ) as unknown as PropTypeUtil< string, string >;
+
+describe( 'VariableControl', () => {
 	const originalGetBoundingClientRect = globalThis.Element.prototype.getBoundingClientRect;
 
 	const mockVariable = {
-		key: 'e-gv-789',
-		label: 'main-roboto',
-		value: 'Roboto',
-		type: fontVariablePropTypeUtil.key,
+		key: 'e-gv-123',
+		label: 'primary-background-color',
+		value: '#911f1f',
 	};
 
 	const mockVariables = {
 		list: [
 			mockVariable,
 			{
-				key: 'e-gv-112',
-				label: 'secondary-monospace',
-				value: 'Monospace',
+				key: 'e-gv-456',
+				label: 'secondary-color',
+				value: '#00ff00',
 			},
 		],
 		hasMatches: true,
@@ -44,6 +60,14 @@ describe( 'FontVariableControl', () => {
 		// Setup default mock implementations
 		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariable );
 		( usePropVariablesModule.useFilteredVariables as jest.Mock ).mockReturnValue( mockVariables );
+
+		mockGetVariableType.mockReturnValue( {
+			icon: TextIcon,
+			valueField: jest.fn(),
+			variableType: 'type-1',
+			propTypeUtil: createMockPropTypeUtil( 'color-variable' ),
+			fallbackPropTypeUtil: createMockPropTypeUtil( 'fallback-prop-type' ),
+		} );
 	} );
 
 	afterEach( () => {
@@ -57,79 +81,64 @@ describe( 'FontVariableControl', () => {
 		const props = {
 			setValue,
 			value: {
-				$$type: fontVariablePropTypeUtil.key,
-				value: 'e-gv-789',
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-123',
 			},
-			bind: 'font-family',
+			bind: 'color',
 			propType,
 		};
 
 		// Act
-		renderControl( <FontVariableControl />, props );
+		renderControl( <VariableControl />, props );
 
 		// Assert
-		expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-789' );
-		expect( screen.getByText( 'main-roboto' ) ).toBeInTheDocument();
+		expect( usePropVariablesModule.useVariable ).toHaveBeenCalledWith( 'e-gv-123' );
+		expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
 	} );
 
-	it.skip( 'should unlink the font variable make style to remain', () => {
+	it( 'should unlink the variable and make style to remain', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const props = {
 			setValue,
 			value: {
-				$$type: fontVariablePropTypeUtil.key,
-				value: 'e-gv-789',
+				$$type: colorVariablePropTypeUtil.key,
+				value: 'e-gv-123',
 			},
-			bind: 'font-family',
+			bind: 'color',
 			propType,
 		};
 
 		// Act
-		renderControl( <FontVariableControl />, props );
-
-		const variableButton = screen.getByRole( 'button' );
-		fireEvent.click( variableButton );
+		renderControl( <VariableControl />, props );
 
 		const unlinkButton = screen.getByLabelText( 'Unlink' );
 		fireEvent.click( unlinkButton );
 
 		// Assert
 		expect( setValue ).toHaveBeenCalledWith( {
-			$$type: 'string',
-			value: 'Roboto',
+			$$type: 'fallback-prop-type',
+			value: '#911f1f',
 		} );
-
-		expect( screen.getByText( 'Roboto' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should unlink the font variable make style to remain', () => {
+	it( 'should handle undefined value gracefully', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const props = {
 			setValue,
-			value: {
-				$$type: fontVariablePropTypeUtil.key,
-				value: 'e-gv-789',
-			},
-			bind: 'font-family',
+			value: undefined,
+			bind: 'color',
 			propType,
 		};
 
+		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( undefined );
+
 		// Act
-		renderControl( <FontVariableControl />, props );
+		renderControl( <VariableControl />, props );
 
-		const variableButton = screen.getByRole( 'button' );
-		fireEvent.click( variableButton );
-
-		const unlinkButton = screen.getByLabelText( 'Unlink' );
-		fireEvent.click( unlinkButton );
-
-		// Assert
-		expect( setValue ).toHaveBeenCalledWith( {
-			$$type: 'string',
-			value: 'Roboto',
-		} );
+		// Assert - Should show missing variable UI when value is undefined
+		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render with a deleted variable', () => {
@@ -145,18 +154,18 @@ describe( 'FontVariableControl', () => {
 		const props = {
 			setValue,
 			value: {
-				$$type: fontVariablePropTypeUtil.key,
+				$$type: colorVariablePropTypeUtil.key,
 				value: 'e-gv-123',
 			},
-			bind: 'font-family',
+			bind: 'color',
 			propType,
 		};
 
 		// Act
-		renderControl( <FontVariableControl />, props );
+		renderControl( <VariableControl />, props );
 
 		// Assert
-		expect( screen.getByText( 'main-roboto' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
 		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
 	} );
 
@@ -165,17 +174,17 @@ describe( 'FontVariableControl', () => {
 		const props = {
 			setValue: jest.fn(),
 			value: {
-				$$type: fontVariablePropTypeUtil.key,
+				$$type: colorVariablePropTypeUtil.key,
 				value: 'e-gv-missing',
 			},
-			bind: 'font-family',
+			bind: 'color',
 			propType,
 		};
 
 		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( null );
 
 		// Act
-		renderControl( <FontVariableControl />, props );
+		renderControl( <VariableControl />, props );
 
 		// Assert
 		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
