@@ -20,7 +20,7 @@ class Import extends Base_Route {
 
 	protected function callback( $request ): \WP_REST_Response {
 		try {
-			$session = $request->get_param( 'session' );			
+			$session = $request->get_param( 'session' );
 
 			if ( empty( $session ) ) {
 				return Response::error( 'Session ID is required.', 'missing_session_id' );

@@ -508,7 +508,7 @@ class Import {
 
 			case 'plugins':
 				return $this->get_settings_selected_plugins();
-			
+
 			case 'customization':
 				return $this->get_settings_customization();
 

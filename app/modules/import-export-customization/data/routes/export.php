@@ -96,7 +96,7 @@ class Export extends Base_Route {
 				],
 			],
 			'screenShotBlob' => [
-				'type' => ['string', 'null'],
+				'type' => [ 'string', 'null' ],
 				'description' => 'Base64 encoded screenshot for cloud exports',
 				'required' => false,
 				'default' => null,
