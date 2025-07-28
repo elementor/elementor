@@ -19,11 +19,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/elementor/elementor-packages.git",
+    "url": "https://github.com/elementor/elementor.git",
     "directory": "packages/libs/editor-current-user"
   },
   "bugs": {
-    "url": "https://github.com/elementor/elementor-packages/issues"
+    "url": "https://github.com/elementor/elementor/issues"
   },
   "publishConfig": {
     "access": "public"
