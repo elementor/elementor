@@ -9,7 +9,7 @@
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
   "scripts": {
-    "release-beta": "chmod +x ./scripts/prepare-beta-release.sh && ./scripts/prepare-beta-release.sh",
+    "create-release-branch": "node scripts/create-version-change.js",
     "start": "npm run composer:no-dev && npm run build:packages && npm run styles && npm run scripts",
     "watch": "npm run build:tools && npm run composer:no-dev && npx concurrently \"npm run watch:packages\" \"npm run styles:watch\" \"npm run scripts:watch\"",
     "watch:packages": "cd packages && npm run dev",
@@ -44,7 +44,9 @@
     "styles:watch": "grunt watch_styles",
     "lint": "eslint . && cd packages && npm run lint",
     "setup:testing": "bash scripts/setup-testing.sh",
-    "restart:testing": "bash scripts/setup-testing.sh --restart"
+    "restart:testing": "bash scripts/setup-testing.sh --restart",
+    "packages:version": "cd packages && npm run version",
+    "packages:release": "cd packages && npm run release"
   },
   "engines": {
     "node": ">=20.19.0",
@@ -78,6 +80,7 @@
     "babel-loader": "^9.2.1",
     "chalk": "^5.3.0",
     "concurrently": "^9.2.0",
+    "commander": "^14.0.0",
     "cross-env": "^7.0.3",
     "cssnano": "^7.0.6",
     "dotenv": "^16.4.7",
