@@ -4,6 +4,9 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { AddItemAction } from '../actions/add-item-action';
+import { DisableItemAction } from '../actions/disable-item-action';
+import { DuplicateItemAction } from '../actions/duplicate-item-action';
+import { RemoveItemAction } from '../actions/remove-item-action';
 import { Header } from '../header/header';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
@@ -40,7 +43,6 @@ describe( 'UnstableRepeater', () => {
 
 	it( 'should render the unstable repeater with no items', () => {
 		// Arrange.
-
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
 			setValue: jest.fn(),
@@ -53,9 +55,7 @@ describe( 'UnstableRepeater', () => {
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer>
-					<Item { ...createItemSettings() } />
-				</ItemsContainer>
+				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
 		);
 
@@ -91,9 +91,7 @@ describe( 'UnstableRepeater', () => {
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer>
-					<Item { ...createItemSettings() } />
-				</ItemsContainer>
+				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
 		);
 
@@ -129,9 +127,7 @@ describe( 'UnstableRepeater', () => {
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer>
-					<Item { ...createItemSettings() } />
-				</ItemsContainer>
+				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
 		);
 
@@ -170,9 +166,7 @@ describe( 'UnstableRepeater', () => {
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer>
-					<Item { ...createItemSettings() } />
-				</ItemsContainer>
+				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
 		);
 
@@ -200,9 +194,7 @@ describe( 'UnstableRepeater', () => {
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer>
-					<Item { ...createItemSettings() } />
-				</ItemsContainer>
+				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
 		);
 
@@ -227,9 +219,7 @@ describe( 'UnstableRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
-				<ItemsContainer>
-					<Item { ...createItemSettings() } />
-				</ItemsContainer>
+				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
 		);
 
@@ -274,15 +264,273 @@ describe( 'UnstableRepeater', () => {
 				<Header label={ 'Test Repeater' }>
 					<AddItemAction />
 				</Header>
-				<ItemsContainer>
-					<Item { ...customItemSettings } />
-				</ItemsContainer>
+				<ItemsContainer itemTemplate={ <Item { ...customItemSettings } /> } />
 			</UnstableRepeater>
 		);
 
 		// Assert.
 		expect( screen.getByText( 'Icon-42' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Custom Item' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should duplicate an item when the duplicate button is clicked, and add it right after the clicked item', () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: () => <span>Content</span>,
+		};
+
+		const setValues = jest.fn();
+		const values = [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+			{
+				$$type: 'example',
+				value: 'Second item',
+			},
+		];
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
+		// Act.
+		renderWithTheme(
+			<UnstableRepeater { ...defaultProps }>
+				<Header label={ 'Test Repeater' }>
+					<AddItemAction />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
+					<DuplicateItemAction />
+				</ItemsContainer>
+			</UnstableRepeater>
+		);
+
+		// eslint-disable-next-line testing-library/no-node-access
+		const duplicateButton = document.querySelector( 'button[aria-label="Duplicate"]' );
+
+		fireEvent.click( duplicateButton as Element );
+
+		// Assert.
+		expect( setValues ).toHaveBeenCalledWith( [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+			{
+				$$type: 'example',
+				value: 'Second item',
+			},
+		] );
+	} );
+
+	it( 'should remove the item when the remove button is clicked', () => {
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: () => <span>Content</span>,
+		};
+
+		const setValues = jest.fn();
+		const values = [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+			{
+				$$type: 'example',
+				value: 'Second item',
+			},
+		];
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
+		// Act.
+		renderWithTheme(
+			<UnstableRepeater { ...defaultProps }>
+				<Header label={ 'Test Repeater' }>
+					<AddItemAction />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
+					<RemoveItemAction />
+				</ItemsContainer>
+			</UnstableRepeater>
+		);
+
+		// eslint-disable-next-line testing-library/no-node-access
+		const removeButton = document.querySelector( 'button[aria-label="Remove"]' );
+
+		fireEvent.click( removeButton as Element );
+
+		// Assert.
+		expect( setValues ).toHaveBeenCalledWith( [
+			{
+				$$type: 'example',
+				value: 'Second item',
+			},
+		] );
+	} );
+
+	it( 'should disable the item when the disable button is clicked', () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: () => <span>Content</span>,
+		};
+
+		const initialValues = {
+			$$type: 'example',
+			value: 'Hello World',
+		};
+
+		const setValues = jest.fn();
+		const values = [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+		];
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
+		// Act.
+		renderWithTheme(
+			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
+				<Header label={ 'Repeater' }>
+					<AddItemAction />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
+					<DisableItemAction />
+				</ItemsContainer>
+			</UnstableRepeater>
+		);
+
+		// eslint-disable-next-line testing-library/no-node-access
+		const disableButton = document.querySelector( 'button[aria-label="Hide"]' );
+
+		fireEvent.click( disableButton as Element );
+
+		// Assert.
+		expect( setValues ).toHaveBeenCalledWith( [
+			{
+				$$type: 'example',
+				value: 'First item',
+				disabled: true,
+			},
+		] );
+	} );
+
+	it( 'should remove the disabled property when the enable button is clicked', () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: () => <span>Content</span>,
+		};
+
+		const initialValues = {
+			$$type: 'example',
+			value: 'First item',
+			disabled: true,
+		};
+
+		const setValues = jest.fn();
+		const values = [ initialValues ];
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: values,
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
+		// Act.
+		renderWithTheme(
+			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
+				<Header label={ 'Repeater' }>
+					<AddItemAction />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
+					<DisableItemAction />
+				</ItemsContainer>
+			</UnstableRepeater>
+		);
+
+		// eslint-disable-next-line testing-library/no-node-access
+		const enableButton = document.querySelector( 'button[aria-label="Show"]' );
+
+		fireEvent.click( enableButton as Element );
+
+		// Assert.
+		expect( setValues ).toHaveBeenCalledWith( [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+		] );
+	} );
+
+	it( 'should open the first repeater item popover', () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
+		};
+
+		const initialValues = {
+			$$type: 'example',
+			value: 'First item',
+			disabled: true,
+		};
+
+		const setValues = jest.fn();
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: [],
+			setValue: setValues,
+			...globalUseBoundPropArgs,
+		} );
+
+		// Act.
+		renderWithTheme(
+			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
+				<Header label={ 'Repeater' }>
+					<AddItemAction />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> } />
+			</UnstableRepeater>
+		);
+
+		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+
+		fireEvent.click( addButton );
+
+		// Assert.
+		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+
+		// Act.
+		fireEvent.click( addButton );
+
+		// Assert.
+		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 	} );
 } );
 

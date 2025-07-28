@@ -32,6 +32,10 @@ const Action = ( { index }: { index: number } ) => {
 					value.disabled = ! value.disabled;
 				}
 
+				if ( ! value.disabled ) {
+					delete value.disabled;
+				}
+
 				return value;
 			} )
 		);

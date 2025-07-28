@@ -65,7 +65,7 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 	initial,
 	propTypeUtil,
 	isSortable = true,
-}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable: boolean } > ) => {
+}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable?: boolean } > ) => {
 	const config = useMemo( () => getConfiguredSlots(), [] );
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
