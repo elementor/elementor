@@ -2,9 +2,15 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ExportKitFooter from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-footer';
 
+const mockNavigate = jest.fn();
+
 jest.mock( 'elementor-app/hooks/use-cloud-kits-eligibility', () => jest.fn() );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state', () => jest.fn() );
+
+jest.mock( '@reach/router', () => ( {
+	useNavigate: () => mockNavigate,
+} ) );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context', () => ( {
 	useExportContext: jest.fn(),
@@ -71,6 +77,7 @@ describe( 'ExportKitFooter Component', () => {
 
 	afterEach( () => {
 		jest.clearAllMocks();
+		mockNavigate.mockClear();
 	} );
 
 	describe( 'Button Rendering for Disconnected State', () => {
