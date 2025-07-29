@@ -155,12 +155,12 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate(['test', 'nested'], ['meta' => 'data']);
+		$cache_validity->validate(['test', 'nested'], ['foo' => 'bar']);
 
 		// Assert.
 		$this->assertEquals(
 			$cache_validity->get_meta(['test', 'nested']),
-			['meta' => 'data'],
+			['foo' => 'bar'],
 			'Meta data should be stored.'
 		);
 

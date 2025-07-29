@@ -37,7 +37,7 @@ class Cache_Validity {
 
 		$state_item = $this->get_nested_item( $state_item, $keys );
 
-		return $state_item ? $state_item['meta'] : null;
+		return isset( $state_item['meta'] ) ? $state_item['meta'] : null;
 	}
 
 	public function invalidate( array $keys ): void {
