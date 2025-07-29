@@ -7,6 +7,10 @@ export const EditorWrapper = styled( 'div' )`
 	position: relative;
 	height: 200px;
 	font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
+
+	.monaco-editor .colorpicker-widget {
+		z-index: 99999999 !important;
+	}
 `;
 
 export const ResizeHandle = styled( 'div' )`

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { constrainedEditor } from 'constrained-editor-plugin';
 import type { editor, MonacoEditor } from 'monaco-types';
+import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
 
@@ -14,11 +15,24 @@ interface CssEditorProps {
 
 export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const theme = useTheme();
+	const activeBreakpoint = useActiveBreakpoint();
 	const [ editorInstance, setEditorInstance ] = React.useState< editor.IStandaloneCodeEditor | null >( null );
 	const [ monacoInstance, setMonacoInstance ] = React.useState< MonacoEditor | null >( null );
 	const [ editorContent, setEditorContent ] = React.useState( `element.style {\n    ${ value }\n}` );
 
 	const resizeRef = React.useRef< HTMLDivElement >( null );
+
+	React.useEffect( () => {
+		const newContent = `element.style {\n    ${ value }\n}`;
+		setEditorContent( newContent );
+
+		if ( editorInstance ) {
+			editorInstance.setValue( newContent );
+			editorInstance.setPosition( { lineNumber: 2, column: 5 } );
+		}
+		// eslint-disable-next-line react-compiler/react-compiler
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ activeBreakpoint, editorInstance ] );
 
 	const handleResizeMove = React.useCallback(
 		( e: MouseEvent ) => {
@@ -127,7 +141,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				height="100%"
 				language="css"
 				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
-				defaultValue={ editorContent }
+				value={ editorContent }
 				onChange={ handleChange }
 				onMount={ handleEditorDidMount }
 				options={ {
@@ -147,6 +161,9 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 					autoIndent: 'full',
 					formatOnType: true,
 					formatOnPaste: true,
+					renderLineHighlight: 'none',
+					hideCursorInOverviewRuler: true,
+					fixedOverflowWidgets: true,
 				} }
 			/>
 			<ResizeHandle onMouseDown={ handleResizeStart } />
