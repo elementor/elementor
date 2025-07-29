@@ -48,4 +48,4 @@ export default class extends elementorModules.Module {
 			},
 		);
 	}
-} 
+}
