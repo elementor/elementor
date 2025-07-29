@@ -16,7 +16,7 @@ export default function ImportCustomization() {
 	const navigate = useNavigate();
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportCustomization );
 	}, [] );
 
 	const footerContent = (

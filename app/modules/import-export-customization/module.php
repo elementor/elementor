@@ -545,6 +545,23 @@ class Module extends BaseModule {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script(
+			'elementor-import-export-admin',
+			$this->get_js_assets_url( 'import-export-admin' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-import-export-admin',
+			'elementorImportExport',
+			[
+				'lastImportedSession' => $this->revert->get_last_import_session(),
+				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
+			]
+		);
+
+		wp_enqueue_script(
 			'import-export-customization-admin',
 			$this->get_js_assets_url( 'import-export-customization-admin' ),
 			[ 'elementor-common' ],
