@@ -7,23 +7,31 @@ export function PluginActivation( { plugins } ) {
 
 	return (
 		<Stack>
-			{ data.uploadedData?.manifest?.plugins?.map( ( plugin ) => {
-				let status = '';
+			{ data.uploadedData?.manifest?.plugins
+				?.filter( ( plugin ) => {
+					if ( data?.customization?.plugins ) {
+						return true === data.customization.plugins[ plugin.plugin ];
+					}
 
-				if ( ! plugins?.length ) {
-					status = 'activating';
-				} else if ( plugins?.includes( plugin.name ) ) {
-					status = 'activated';
-				}
+					return true;
+				} )
+				?.map( ( plugin ) => {
+					let status = '';
 
-				return (
-					<PluginStatusItem
-						key={ plugin.name }
-						name={ plugin.name }
-						status={ status }
-					/>
-				);
-			} ) }
+					if ( ! plugins?.length ) {
+						status = 'activating';
+					} else if ( plugins?.includes( plugin.name ) ) {
+						status = 'activated';
+					}
+
+					return (
+						<PluginStatusItem
+							key={ plugin.name }
+							name={ plugin.name }
+							status={ status }
+						/>
+					);
+				} ) }
 		</Stack>
 	);
 }
