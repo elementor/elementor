@@ -8,8 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
-use Elementor\Modules\Promotions\Controls\Promotion_Control;
-
 /**
  * Elementor heading widget.
  *
