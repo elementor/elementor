@@ -85,7 +85,7 @@ export default function Cloud( {
 	}, [ isConnecting, isCheckingEligibility, isLoading, setConnecting ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.cloudKitLibrary );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibrary );
 	}, [] );
 
 	if ( ! isConnected ) {

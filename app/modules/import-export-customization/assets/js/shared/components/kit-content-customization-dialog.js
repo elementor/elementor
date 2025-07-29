@@ -65,7 +65,24 @@ export function KitContentCustomizationDialog( {
 	}, [ customPostTypes, data.customization.content?.customPostTypes ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		if ( open ) {
+			setSettings( ( prevState ) => {
+				if ( ! data.includes.includes( 'content' ) ) {
+					return {
+						pages: [],
+						menus: false,
+						taxonomies: [],
+						customPostTypes: [],
+					};
+				}
+
+				return prevState;
+			} );
+		}
+	}, [ open, data, setSettings ] );
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
 	const handleSettingsChange = ( settingKey, payload ) => {

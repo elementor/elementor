@@ -17,7 +17,7 @@ export default function UpgradeScreen( {
 	const url = hasSubscription ? 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/' : 'https://go.elementor.com/go-pro-cloud-website-templates-library/';
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.cloudKitLibraryUpgrade );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibraryUpgrade );
 	}, [] );
 
 	return (
@@ -52,7 +52,7 @@ export default function UpgradeScreen( {
 							text={ __( 'Upgrade now', 'elementor' ) }
 							url={ url }
 							onClick={ () => {
-								AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.cloudKitLibrary );
+								AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibrary );
 							} }
 							target="_blank"
 							className="e-kit-library__upgrade-button"

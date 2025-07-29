@@ -14,7 +14,7 @@ module.exports = Marionette.ItemView.extend( {
 
 	onRender() {
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementorCommon.editorEvents.config.secondaryLocations.templateLibrary.cloudTabConnect,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTabConnect,
 		} );
 
 		this.ui.connect.elementorConnect( {

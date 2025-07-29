@@ -44,7 +44,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	}, [ open, data.customization.settings, initialState ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
 	const handleToggleChange = ( settingKey, isChecked ) => {

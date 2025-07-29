@@ -39,12 +39,12 @@ class Admin {
 	}
 
 	sendPageToolsViewedEvent() {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.admin.pluginToolsTab );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.admin.pluginToolsTab );
 	}
 
 	maybeSendImportExportLocationEvent( location ) {
 		if ( 'tab-import-export-kit' === location ) {
-			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.admin.pluginWebsiteTemplatesTab );
+			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.admin.pluginWebsiteTemplatesTab );
 		}
 	}
 

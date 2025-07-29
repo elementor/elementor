@@ -46,7 +46,7 @@ export default function ImportKit() {
 	}, [ id, referrer, fileUrl, nonce, dispatch ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitImportUploadBox );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox );
 	}, [] );
 
 	const renderContent = () => {

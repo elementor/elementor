@@ -133,7 +133,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 	}, [ plugins ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
 	const SettingSection = ( { title, description, children, settingKey } ) => (

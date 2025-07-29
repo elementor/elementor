@@ -46,13 +46,13 @@ export function addMixpanelTrackingChecklistSteps( name, action, element = 'butt
 	const eventName = `checklist_steps_${ action }_${ name }`;
 
 	return (
-		elementorCommon.editorEvents.dispatchEvent(
+		elementorCommon.eventsManager.dispatchEvent(
 			eventName,
 			{
-				location: elementorCommon.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.checklistSteps,
-				trigger: elementorCommon.editorEvents.config.triggers.click,
-				element: elementorCommon.editorEvents.config.elements[ element ],
+				location: elementorCommon.eventsManager.config.locations.elementorEditor,
+				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.checklistSteps,
+				trigger: elementorCommon.eventsManager.config.triggers.click,
+				element: elementorCommon.eventsManager.config.elements[ element ],
 				...documentMetaData,
 			},
 		)
@@ -63,13 +63,13 @@ export function addMixpanelTrackingChecklistHeader( name ) {
 	const documentMetaData = getDocumentMetaDataMixpanel();
 
 	return (
-		elementorCommon.editorEvents.dispatchEvent(
-			elementorCommon.editorEvents.config.names.elementorEditor.checklist[ name ],
+		elementorCommon.eventsManager.dispatchEvent(
+			elementorCommon.eventsManager.config.names.elementorEditor.checklist[ name ],
 			{
-				location: elementorCommon.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.checklistHeader,
-				trigger: elementorCommon.editorEvents.config.triggers.click,
-				element: elementorCommon.editorEvents.config.elements.buttonIcon,
+				location: elementorCommon.eventsManager.config.locations.elementorEditor,
+				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.checklistHeader,
+				trigger: elementorCommon.eventsManager.config.triggers.click,
+				element: elementorCommon.eventsManager.config.elements.buttonIcon,
 				...documentMetaData,
 			},
 		)
@@ -81,13 +81,13 @@ export function addMixpanelTrackingChecklistTopBar( togglePopupState ) {
 	const name = ! togglePopupState ? 'launchpadOn' : 'launchpadOff';
 
 	return (
-		elementorCommon.editorEvents.dispatchEvent(
-			elementorCommon.editorEvents.config.names.topBar[ name ],
+		elementorCommon.eventsManager.dispatchEvent(
+			elementorCommon.eventsManager.config.names.topBar[ name ],
 			{
-				location: elementorCommon.editorEvents.config.locations.topBar,
-				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.launchpad,
-				trigger: elementorCommon.editorEvents.config.triggers.toggleClick,
-				element: elementorCommon.editorEvents.config.elements.buttonIcon,
+				location: elementorCommon.eventsManager.config.locations.topBar,
+				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.launchpad,
+				trigger: elementorCommon.eventsManager.config.triggers.toggleClick,
+				element: elementorCommon.eventsManager.config.elements.buttonIcon,
 				...documentMetaData,
 			},
 		)
@@ -98,13 +98,13 @@ export function dispatchChecklistOpenEvent() {
 	const documentMetaData = getDocumentMetaDataMixpanel();
 
 	return (
-		elementorCommon.editorEvents.dispatchEvent(
-			elementorCommon.editorEvents.config.names.elementorEditor.checklist.checklistFirstPopup,
+		elementorCommon.eventsManager.dispatchEvent(
+			elementorCommon.eventsManager.config.names.elementorEditor.checklist.checklistFirstPopup,
 			{
-				location: elementorCommon.editorEvents.config.locations.elementorEditor,
-				secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.launchpad,
-				trigger: elementorCommon.editorEvents.config.triggers.editorLoaded,
-				element: elementorCommon.editorEvents.config.elements.launchpadChecklist,
+				location: elementorCommon.eventsManager.config.locations.elementorEditor,
+				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.launchpad,
+				trigger: elementorCommon.eventsManager.config.triggers.editorLoaded,
+				element: elementorCommon.eventsManager.config.elements.launchpadChecklist,
 				...documentMetaData,
 			},
 		)

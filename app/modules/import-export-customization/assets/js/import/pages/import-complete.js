@@ -70,7 +70,7 @@ export default function ImportComplete() {
 	}, [ isCompleted, navigate ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitImportSummary );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary );
 	}, [] );
 
 	return (

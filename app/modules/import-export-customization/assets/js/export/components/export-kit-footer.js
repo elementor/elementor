@@ -9,7 +9,7 @@ import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking
 export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
 	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
-	const { dispatch, isTemplateNameValid, data } = useExportContext();
+	const { dispatch, isTemplateNameValid } = useExportContext();
 
 	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
@@ -59,7 +59,7 @@ export default function ExportKitFooter() {
 	}, [ isConnecting, isCheckingEligibility, setConnecting ] );
 
 	const handleUpgradeClick = () => {
-		AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomization );
+		AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomization );
 		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
 	};
 

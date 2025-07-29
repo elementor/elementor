@@ -70,13 +70,13 @@ export default class extends BaseManager {
 		const documentType = elementor.getPreviewContainer().document.config.type;
 
 		return (
-			elementorCommon.editorEvents.dispatchEvent(
-				elementorCommon.editorEvents.config.names.elementorEditor.userPreferences[ name ],
+			elementorCommon.eventsManager.dispatchEvent(
+				elementorCommon.eventsManager.config.names.elementorEditor.userPreferences[ name ],
 				{
-					location: elementorCommon.editorEvents.config.locations.elementorEditor,
-					secondaryLocation: elementorCommon.editorEvents.config.secondaryLocations.userPreferences,
-					trigger: elementorCommon.editorEvents.config.triggers.toggleClick,
-					element: elementorCommon.editorEvents.config.elements.toggle,
+					location: elementorCommon.eventsManager.config.locations.elementorEditor,
+					secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.userPreferences,
+					trigger: elementorCommon.eventsManager.config.triggers.toggleClick,
+					element: elementorCommon.eventsManager.config.elements.toggle,
 					postId,
 					postTitle,
 					postTypeTitle,

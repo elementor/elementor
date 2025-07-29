@@ -44,7 +44,7 @@ export default function ConnectScreen( {
 	}, [ onConnectSuccess, onConnectError ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.cloudKitLibraryConnect );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibraryConnect );
 	}, [] );
 
 	return (

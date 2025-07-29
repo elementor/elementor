@@ -46,7 +46,7 @@ export default function ExportComplete() {
 	}, [ exportedData, kitInfo.source, downloadFile ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportSummary );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportSummary );
 	}, [] );
 
 	useEffect( () => {

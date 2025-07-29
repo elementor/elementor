@@ -33,7 +33,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 	}, [ open, data.customization.templates, initialState ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
 	const handleToggleChange = ( settingKey, isChecked ) => {

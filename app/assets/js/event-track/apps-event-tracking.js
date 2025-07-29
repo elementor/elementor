@@ -48,7 +48,7 @@ export const appsEventTrackingDispatch = ( command, eventParams ) => {
 
 export class AppsEventTracking {
 	static dispatchEvent( eventName, payload ) {
-		return elementorCommon.editorEvents.dispatchEvent( eventName, payload );
+		return elementorCommon.eventsManager.dispatchEvent( eventName, payload );
 	}
 
 	static sendPageViewsWebsiteTemplates( page ) {
