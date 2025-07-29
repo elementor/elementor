@@ -244,7 +244,7 @@ function createStateFromSizeProp(
 			! isUnitExtendedOption( unit ) && ! isNaN( Number( size ) ) && ( size || size === 0 )
 				? Number( size )
 				: DEFAULT_SIZE,
-		custom: unit === 'custom' ? String( size ) : ( preserveCustomValue || '' ),
+		custom: unit === 'custom' ? String( size ) : preserveCustomValue || '',
 		unit,
 	};
 }
