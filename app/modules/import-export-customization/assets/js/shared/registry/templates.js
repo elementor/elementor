@@ -13,7 +13,7 @@ class TemplateRegistry {
             title: templateType.title,
             description: templateType.description || '',
             useParentDefault: templateType.useParentDefault !== false,
-            getDefaultValue: templateType.getDefaultValue || null,
+            getInitialState: templateType.getInitialState || null,
             component: templateType.component || null,
             order: templateType.order || 10,
             isAvailable: templateType.isAvailable || ( () => true ),
@@ -40,17 +40,14 @@ class TemplateRegistry {
                 return;
             }
 
-            if ( templateType.getDefaultValue ) {
-                state[ templateType.key ] = templateType.getDefaultValue( includes, parentInitialState );
+            if ( templateType.getInitialState ) {
+                state[ templateType.key ] = templateType.getInitialState( includes, parentInitialState );
                 return;
             }
 
-            if ( templateType.useParentDefault ) {
-                state[ templateType.key ] = parentInitialState;
-                return;
-            }
-
-            state[ templateType.key ] = false;
+            // Default: simple object with enabled property
+            const enabled = templateType.useParentDefault ? parentInitialState : false;
+            state[ templateType.key ] = { enabled };
         } );
 
         return state;
