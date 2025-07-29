@@ -36,14 +36,6 @@ export const EffectsSection = () => {
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
 				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
 			</StylesField>
-			<PanelDivider />
-			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
-				<FilterRepeaterControl />
-			</StylesField>
-			<PanelDivider />
-			<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
-				<FilterRepeaterControl filterPropName="backdrop-filter" />
-			</StylesField>
 			{ shouldShowTransition && (
 				<>
 					<PanelDivider />
@@ -52,6 +44,14 @@ export const EffectsSection = () => {
 					</StylesField>
 				</>
 			) }
+			<PanelDivider />
+			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
+				<FilterRepeaterControl />
+			</StylesField>
+			<PanelDivider />
+			<StylesField bind="backdrop-filter" propDisplayName={ BACKDROP_FILTER_LABEL }>
+				<FilterRepeaterControl filterPropName="backdrop-filter" />
+			</StylesField>
 		</SectionContent>
 	);
 };
