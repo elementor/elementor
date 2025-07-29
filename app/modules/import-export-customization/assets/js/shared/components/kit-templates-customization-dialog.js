@@ -5,7 +5,27 @@ import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 
+const getTemplateRegistry = () => {
+	return window.elementorModules?.importExport?.templateRegistry;
+};
+
+const templateRegistry = ( () => {
+	const registry = getTemplateRegistry();
+
+	if ( registry ) {
+		registry.register( {
+			key: 'siteTemplates',
+			title: __( 'Site templates', 'elementor' ),
+			order: 0,
+			// Uses default object state: { enabled: parentInitialState }
+		} );
+	}
+
+	return registry;
+} )();
+
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
+	const templateTypes = templateRegistry?.getAll() || [];
 	const initialState = data.includes.includes( 'templates' );
 
 	const [ templates, setTemplates ] = useState( () => {
@@ -13,9 +33,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			return data.customization.templates;
 		}
 
-		return {
-			siteTemplates: initialState,
-		};
+		return templateRegistry?.getState( data.includes, data.customization, initialState ) || {};
 	} );
 
 	useEffect( () => {
@@ -23,18 +41,61 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			if ( data.customization.templates ) {
 				setTemplates( data.customization.templates );
 			} else {
-				setTemplates( {
-					siteTemplates: initialState,
-				} );
+				setTemplates( templateRegistry?.getState( data.includes, data.customization, initialState ) || {} );
 			}
 		}
 	}, [ open, data.customization.templates, initialState ] );
 
-	const handleToggleChange = ( settingKey ) => {
+	const handleStateChange = ( settingKey, newState, mergeMode = false ) => {
+		setTemplates( ( prev ) => {
+			if ( mergeMode ) {
+				return {
+					...prev,
+					[ settingKey ]: { ...prev[ settingKey ], ...newState },
+				};
+			}
+
+			return {
+				...prev,
+				[ settingKey ]: newState,
+			};
+		} );
+	};
+
+	const handleToggleEnabled = ( settingKey ) => {
 		setTemplates( ( prev ) => ( {
 			...prev,
-			[ settingKey ]: ! prev[ settingKey ],
+			[ settingKey ]: {
+				...prev[ settingKey ],
+				enabled: ! prev[ settingKey ]?.enabled,
+			},
 		} ) );
+	};
+
+	const renderTemplateSection = ( templateType ) => {
+		if ( templateType.component ) {
+			const CustomComponent = templateType.component;
+			return (
+				<CustomComponent
+					key={ templateType.key }
+					state={ templates[ templateType.key ] }
+					settingKey={ templateType.key }
+					onStateChange={ handleStateChange }
+					data={ data }
+				/>
+			);
+		}
+
+		return (
+			<SettingSection
+				key={ templateType.key }
+				checked={ templates[ templateType.key ]?.enabled || false }
+				title={ templateType.title }
+				description={ templateType.description }
+				settingKey={ templateType.key }
+				onSettingChange={ handleToggleEnabled }
+			/>
+		);
 	};
 
 	return (
@@ -46,12 +107,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			minHeight="auto"
 		>
 			<Stack>
-				<SettingSection
-					checked={ templates.siteTemplates }
-					title={ __( 'Site templates', 'elementor' ) }
-					settingKey="siteTemplates"
-					onSettingChange={ handleToggleChange }
-				/>
+				{ templateTypes.map( renderTemplateSection ) }
 			</Stack>
 		</KitCustomizationDialog>
 	);
