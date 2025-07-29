@@ -26,7 +26,7 @@ class Cache_Validity {
 		return $state_item ? $state_item['state'] : false;
 	}
 
-	public function get_meta( array $keys ): mixed {
+	public function get_meta( array $keys ) {
 		$root = array_shift( $keys );
 
 		$state_item = get_option( CACHE_KEY_PREFIX . $root, null );
