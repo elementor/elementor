@@ -433,3 +433,18 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 		}
 	});
 } 
+
+if (php_sapi_name() === 'cli' && (!defined('WP_CLI') || !WP_CLI)) {
+    try {
+        echo "Running CssParserTest...\n";
+        $test = new \Elementor\Modules\CssConverter\Tests\CssParserTest();
+        $success = $test->run_all_tests();
+        if (!$success) {
+            exit(1);
+        }
+    } catch (\Throwable $e) {
+        echo "Test runner error: " . $e->getMessage() . "\n";
+        echo $e->getTraceAsString() . "\n";
+        exit(1);
+    }
+} 
