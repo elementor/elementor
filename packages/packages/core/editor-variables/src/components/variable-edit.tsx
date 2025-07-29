@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useVariableType } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
-import { styleVariablesRepository } from '../style-variables-repository';
+import { styleVariablesRepository } from '../style-repository/style-variables-repository';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';

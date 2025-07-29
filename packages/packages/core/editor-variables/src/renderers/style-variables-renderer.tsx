@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import { Portal } from '@elementor/ui';
 
-import { styleVariablesRepository } from '../style-variables-repository';
+import { styleVariablesRepository } from '../style-repository/style-variables-repository';
 import { getCanvasIframeDocument } from '../sync/get-canvas-iframe-document';
 import { type StyleVariables, type Variable } from '../types';
 

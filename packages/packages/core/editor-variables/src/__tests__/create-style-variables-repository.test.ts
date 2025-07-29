@@ -1,4 +1,4 @@
-import { createStyleVariablesRepository } from '../create-style-variables-repository';
+import { createStyleVariablesRepository } from '../style-repository/create-style-variables-repository';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import * as enqueueModule from '../sync/enqueue-font';

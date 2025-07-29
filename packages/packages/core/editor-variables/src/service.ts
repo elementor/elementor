@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
 import { OP_RW, Storage, type TVariablesList } from './storage';
-import { styleVariablesRepository } from './style-variables-repository';
+import { styleVariablesRepository } from './style-repository/style-variables-repository';
 import { type Variable } from './types';
 
 const storage = new Storage();
