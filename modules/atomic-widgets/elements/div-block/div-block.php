@@ -220,16 +220,16 @@ class Div_Block extends Atomic_Element_Base {
 			'settings' => [
 				'title' => String_Prop_Type::generate( 'default heading' )
 			],
-			'styles' => [],
-			'restrictions' => [
-				[
-					'type' => 'parent',
-					'settings' => [
-						'elType' => 'e-div-block',
-						'static' => true,
-					]
-				]
-			],
+			'isLocked' => true,
+//			'restrictions' => [
+//				[
+//					'type' => 'parent',
+//					'settings' => [
+//						'elType' => 'e-div-block',
+//						'static' => true,
+//					]
+//				]
+//			],
 		];
 
 

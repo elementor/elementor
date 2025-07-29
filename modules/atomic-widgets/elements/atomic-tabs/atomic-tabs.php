@@ -56,8 +56,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' )
-				->dependencies( $tag_dependencies ),
+				->default( 'div' ),
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Key_Value_Array_Prop_Type::make(),
