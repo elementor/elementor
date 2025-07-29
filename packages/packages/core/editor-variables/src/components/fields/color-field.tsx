@@ -3,8 +3,8 @@ import { useRef, useState } from 'react';
 import { FormHelperText, FormLabel, Grid, UnstableColorField } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { usePopoverContentRef } from '../../context/variable-selection-popover.context';
 import { validateValue } from '../../utils/validations';
-import { usePopoverContentRef } from '../variable-selection-popover.context';
 
 type ColorFieldProps = {
 	value: string;

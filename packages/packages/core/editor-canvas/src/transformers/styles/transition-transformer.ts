@@ -1,11 +1,12 @@
 import { createTransformer } from '../create-transformer';
 
 type TransitionValue = {
-	selection: string;
+	selection: {
+		key: string;
+		value: string;
+	};
 	size: string;
 };
-
-const ALL_PROPERTIES = { text: 'all properties', css: 'all' };
 
 export const transitionTransformer = createTransformer( ( transitionValues: TransitionValue[] ) => {
 	if ( transitionValues?.length < 1 ) {
@@ -20,9 +21,5 @@ const mapToTransitionString = ( value: TransitionValue ): string => {
 		return '';
 	}
 
-	if ( value.selection === ALL_PROPERTIES.text ) {
-		return `${ ALL_PROPERTIES.css } ${ value.size }`;
-	}
-
-	return `${ value.selection } ${ value.size }`;
+	return `${ value.selection.value } ${ value.size }`;
 };
