@@ -18,7 +18,7 @@ const propType = createMockPropType( {
 } );
 
 describe( 'FiltersRepeaterControl with editor-variables', () => {
-	it( 'should render filters repeater with global color variable', () => {
+	it( 'should render backdrop filters repeater with global color variable', () => {
 		// Arrange.
 		const setValue = jest.fn();
 
