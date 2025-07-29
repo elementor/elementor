@@ -7,6 +7,8 @@ const EVENTS_MAP = {
 	KIT_IMPORT_STATUS: 'kit_import_status',
 	KIT_CLOUD_LIBRARY_APPLY: 'kit_cloud_library_apply',
 	KIT_CLOUD_LIBRARY_DELETE: 'kit_cloud_library_delete',
+	IMPORT_EXPORT_ADMIN_ACTION: 'ie_admin_action',
+	KIT_IMPORT_UPLOAD_FILE: 'kit_import_upload_file',
 };
 
 export const appsEventTrackingDispatch = ( command, eventParams ) => {
@@ -90,6 +92,19 @@ export class AppsEventTracking {
 	static sendKitCloudLibraryDelete() {
 		return this.dispatchEvent( EVENTS_MAP.KIT_CLOUD_LIBRARY_DELETE, {
 			trigger: eventsConfig.triggers.click,
+		} );
+	}
+
+	static sendImportExportAdminAction( actionType ) {
+		return this.dispatchEvent( EVENTS_MAP.IMPORT_EXPORT_ADMIN_ACTION, {
+			trigger: eventsConfig.triggers.click,
+			action_type: actionType,
+		} );
+	}
+
+	static sendKitImportUploadFile( status ) {
+		return this.dispatchEvent( EVENTS_MAP.KIT_IMPORT_UPLOAD_FILE, {
+			kit_import_upload_file_status: status,
 		} );
 	}
 }

@@ -63,31 +63,15 @@ export default function ExportKitFooter() {
 		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
 	};
 
-	const sendExportKitCustomizationEvent = () => {
-		const { includes, analytics, kitInfo, customization } = data;
-
-		AppsEventTracking.sendExportKitCustomization( {
-			kit_export_content: includes.includes( 'content' ),
-			kit_export_templates: includes.includes( 'templates' ),
-			kit_export_settings: includes.includes( 'settings' ),
-			kit_export_plugins: includes.includes( 'plugins' ),
-			kit_export_deselected: analytics.customization,
-			kit_decription: Boolean( kitInfo.description ),
-			...( customization.content?.pages ? { kit_pages_count: customization.content?.pages.length } : null ),
-		} );
-	};
-
 	const handleUploadClick = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-		sendExportKitCustomizationEvent();
 		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
 	const handleExportAsZip = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-		sendExportKitCustomizationEvent();
 		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 

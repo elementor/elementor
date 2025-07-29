@@ -289,7 +289,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 				</Button>
 				<Button
 					onClick={ () => {
-						handleSaveChanges( 'plugins', getPluginsSelection() );
+						handleSaveChanges( 'plugins', getPluginsSelection(), unselectedValues.current );
 						handleClose();
 					} }
 					variant="contained"

@@ -13,7 +13,7 @@ const INVALID_FILENAME_CHARS = /[<>:"/\\|?*]/g;
 
 export default function ExportComplete() {
 	const { data, isCompleted } = useExportContext();
-	const { exportedData, kitInfo } = data;
+	const { exportedData, kitInfo, includes, analytics } = data;
 	const downloadLink = useRef( null );
 
 	const downloadFile = ( event ) => {
@@ -48,6 +48,42 @@ export default function ExportComplete() {
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.editorEvents.config.secondaryLocations.kitLibrary.kitExportSummary );
 	}, [] );
+
+	useEffect( () => {
+		let pages = '';
+
+		if ( includes.includes( 'pages' ) ) {
+			pages = analytics.customization.content?.includes( 'pages' ) ? 'partial' : 'all';
+		}
+
+		let postTypes = '';
+
+		if ( includes.includes( 'pages' ) ) {
+			postTypes = analytics.customization.content?.includes( 'customPostTypes' ) ? 'partial' : 'all';
+		}
+
+		let plugins = '';
+
+		if ( includes.includes( 'plugins' ) ) {
+			plugins = analytics.customization.plugins?.length ? 'partial' : 'all';
+		}
+
+		AppsEventTracking.sendExportKitCustomization( {
+			kit_export_content: includes.includes( 'content' ),
+			kit_export_templates: includes.includes( 'templates' ),
+			kit_export_settings: includes.includes( 'settings' ),
+			kit_export_plugins: includes.includes( 'plugins' ),
+			kit_export_deselected: analytics.customization,
+			kit_decription: Boolean( kitInfo.description ),
+			kit_page_count: Object.values( exportedData.manifest.content.page ).length,
+			kit_post_type_count: Object.keys( exportedData.manifest.content.page )
+				.filter( ( key ) => ! elementorAppConfig.builtinWpPostTypes.includes( key ) ).length,
+			kit_post_count: Object.values( exportedData.manifest.content.post ).length,
+			pages,
+			postTypes,
+			plugins,
+		} );
+	}, [ includes, exportedData, analytics.customization, kitInfo.description ] );
 
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;

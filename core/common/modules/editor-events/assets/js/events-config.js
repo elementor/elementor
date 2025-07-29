@@ -23,6 +23,7 @@ const eventsConfig = {
 			cloudKitLibrary: 'Cloud Kit Library',
 		},
 		variables: 'Variables Panel',
+		admin: 'WP admin',
 	},
 
 	secondaryLocations: {
@@ -92,6 +93,10 @@ const eventsConfig = {
 			kitImportSummary: 'kit_import_summary',
 		},
 		variablesPopover: 'Variables Popover',
+		admin: {
+			pluginToolsTab: 'plugin_tools_tab',
+			pluginWebsiteTemplatesTab: 'plugin_website_templates_tab',
+		},
 	},
 
 	elements: {
@@ -159,4 +164,4 @@ const eventsConfig = {
 	},
 };
 
-export default eventsConfig; 
+export default eventsConfig;

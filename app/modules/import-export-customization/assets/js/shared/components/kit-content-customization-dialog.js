@@ -115,7 +115,7 @@ export function KitContentCustomizationDialog( {
 							settingKey="menus"
 							onSettingChange={ ( key, isChecked ) => {
 								unselectedValues.current = isChecked
-                                    ? unselectedValues.current.filter( ( value ) => value !== key )
+									? unselectedValues.current.filter( ( value ) => value !== key )
 									: [ ...unselectedValues.current, key ];
 
 								handleSettingsChange( key, isChecked );
@@ -138,6 +138,7 @@ export function KitContentCustomizationDialog( {
 										unselectedValues.current = [
 											...filteredUnselectedValues,
 											...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
+											'customPostTypes',
 										];
 									}
 									handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
