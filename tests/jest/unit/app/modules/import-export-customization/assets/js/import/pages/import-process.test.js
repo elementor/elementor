@@ -41,7 +41,15 @@ describe( 'ImportProcess Page', () => {
 		error = null,
 		runnersState = {},
 	} = {} ) {
-		mockUseImportContext.mockReturnValue( { isProcessing } );
+		mockUseImportContext.mockReturnValue( {
+			isProcessing,
+			data: {
+				includes: [ 'settings', 'content', 'plugins' ],
+				customization: {},
+			},
+			dispatch: jest.fn(),
+			runnersState,
+		} );
 		mockUseImportKit.mockReturnValue( { status, error, runnersState } );
 	}
 
