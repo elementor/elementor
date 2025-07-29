@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Editor } from '@monaco-editor/react';
-import { useTheme } from '@elementor/ui';
-import type { editor } from 'monaco-editor';
-// @ts-ignore
 import { constrainedEditor } from 'constrained-editor-plugin';
+import type { editor, MonacoEditor } from 'monaco-types';
+import { useTheme } from '@elementor/ui';
+import { Editor } from '@monaco-editor/react';
 
 import { validateCssLine } from '../utils/css-validation';
 import { EditorWrapper, ResizeHandle } from './css-editor.styles';
@@ -16,39 +15,47 @@ interface CssEditorProps {
 export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const theme = useTheme();
 	const [ editorInstance, setEditorInstance ] = React.useState< editor.IStandaloneCodeEditor | null >( null );
-	const [ monacoInstance, setMonacoInstance ] = React.useState< typeof import('monaco-editor') | null >( null );
+	const [ monacoInstance, setMonacoInstance ] = React.useState< MonacoEditor | null >( null );
 	const [ editorContent, setEditorContent ] = React.useState( `element.style {\n    ${ value }\n}` );
 
 	const resizeRef = React.useRef< HTMLDivElement >( null );
 
-	const handleResizeMove = React.useCallback( ( e: MouseEvent ) => {
-		if ( ! resizeRef.current ) return;
+	const handleResizeMove = React.useCallback(
+		( e: MouseEvent ) => {
+			if ( ! resizeRef.current ) {
+				return;
+			}
 
-		const containerRect = resizeRef.current.getBoundingClientRect();
-		const newHeight = Math.max( 100, e.clientY - containerRect.top );
+			const containerRect = resizeRef.current.getBoundingClientRect();
+			const newHeight = Math.max( 100, e.clientY - containerRect.top );
 
-		resizeRef.current.style.height = `${ newHeight }px`;
+			resizeRef.current.style.height = `${ newHeight }px`;
 
-		if ( editorInstance ) {
-			editorInstance.layout();
-		}
-	}, [ editorInstance ] );
+			if ( editorInstance ) {
+				editorInstance.layout();
+			}
+		},
+		[ editorInstance ]
+	);
 
 	const handleResizeEnd = React.useCallback( () => {
 		document.removeEventListener( 'mousemove', handleResizeMove );
 		document.removeEventListener( 'mouseup', handleResizeEnd );
 	}, [ handleResizeMove ] );
 
-	const handleResizeStart = React.useCallback( ( e: React.MouseEvent ) => {
-		e.preventDefault();
-		e.stopPropagation();
+	const handleResizeStart = React.useCallback(
+		( e: React.MouseEvent ) => {
+			e.preventDefault();
+			e.stopPropagation();
 
-		document.removeEventListener( 'mousemove', handleResizeMove );
-		document.removeEventListener( 'mouseup', handleResizeEnd );
+			document.removeEventListener( 'mousemove', handleResizeMove );
+			document.removeEventListener( 'mouseup', handleResizeEnd );
 
-		document.addEventListener( 'mousemove', handleResizeMove );
-		document.addEventListener( 'mouseup', handleResizeEnd );
-	}, [ handleResizeMove, handleResizeEnd ] );
+			document.addEventListener( 'mousemove', handleResizeMove );
+			document.addEventListener( 'mouseup', handleResizeEnd );
+		},
+		[ handleResizeMove, handleResizeEnd ]
+	);
 
 	React.useEffect( () => {
 		return () => {
@@ -57,14 +64,13 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		};
 	}, [ handleResizeMove, handleResizeEnd ] );
 
-	const handleEditorDidMount = ( editor: editor.IStandaloneCodeEditor, monaco: typeof import('monaco-editor') ) => {
+	const handleEditorDidMount = ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		setEditorInstance( editor );
 		setMonacoInstance( monaco );
 
 		const model = editor.getModel();
 		if ( model ) {
 			const totalLines = model.getLineCount();
-			const lastLineLength = model.getLineContent( totalLines ).length;
 
 			const constrainedInstance = constrainedEditor( monaco );
 
@@ -76,7 +82,6 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				},
 			] );
 
-			// Position cursor in the editable area
 			editor.setPosition( { lineNumber: 2, column: 5 } );
 		}
 
@@ -88,7 +93,11 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		setEditorContent( newValue );
 
 		const lines = newValue.split( '\n' );
-		if ( lines.length >= 2 && lines[ 0 ].trim().startsWith( 'element.style' ) && lines[ lines.length - 1 ].trim() === '}' ) {
+		if (
+			lines.length >= 2 &&
+			lines[ 0 ].trim().startsWith( 'element.style' ) &&
+			lines[ lines.length - 1 ].trim() === '}'
+		) {
 			const cssContent = lines.slice( 1, -1 ).join( '\n' );
 			onChange( cssContent );
 

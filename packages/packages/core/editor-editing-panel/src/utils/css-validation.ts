@@ -15,7 +15,10 @@ export const validateCssLine = ( lineContent: string, lineNumber: number ): Vali
 			startColumn: 1,
 			endLineNumber: lineNumber,
 			endColumn: lineContent.length + 1,
-			message: __( 'The use of @media is not permitted. Instead, switch to the desired breakpoint and add your custom code there.', 'elementor' ),
+			message: __(
+				'The use of @media is not permitted. Instead, switch to the desired breakpoint and add your custom code there.',
+				'elementor'
+			),
 			severity: 8,
 		} );
 		return { hasError: true, markers };
@@ -28,7 +31,10 @@ export const validateCssLine = ( lineContent: string, lineNumber: number ): Vali
 			startColumn: 1,
 			endLineNumber: lineNumber,
 			endColumn: lineContent.length + 1,
-			message: __( 'The use of pseudo-states is not permitted. Instead, switch to the desired pseudo state and add your custom code there.', 'elementor' ),
+			message: __(
+				'The use of pseudo-states is not permitted. Instead, switch to the desired pseudo state and add your custom code there.',
+				'elementor'
+			),
 			severity: 8,
 		} );
 		return { hasError: true, markers };

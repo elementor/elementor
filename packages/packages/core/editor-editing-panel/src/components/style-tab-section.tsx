@@ -1,12 +1,12 @@
 import * as React from 'react';
 
-import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
-import { useCustomCss } from '../hooks/use-custom-css';
 import { useStyle } from '../contexts/style-context';
+import { useCustomCss } from '../hooks/use-custom-css';
+import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { getStylesProviderThemeColor } from '../utils/get-styles-provider-color';
 import { Section } from './section';
 import { StyleIndicator } from './style-indicator';
 import { getStylesInheritanceIndicators } from './style-tab-collapsible-content';
-import { getStylesProviderThemeColor } from '../utils/get-styles-provider-color';
 
 type Section = {
 	component: () => React.JSX.Element;
@@ -34,9 +34,7 @@ export const StyleTabSection = ( { section, fields = [] }: Props ) => {
 
 		const hasValue = Boolean( customCss?.raw?.trim() );
 		return hasValue ? (
-			<StyleIndicator
-				getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined }
-			/>
+			<StyleIndicator getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined } />
 		) : null;
 	};
 

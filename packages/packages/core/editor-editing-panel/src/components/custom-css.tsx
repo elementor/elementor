@@ -13,10 +13,7 @@ export const CustomCss = () => {
 
 	return (
 		<SectionContent>
-			<CssEditor
-				value={ customCss?.raw || '' }
-				onChange={ handleChange }
-			/>
+			<CssEditor value={ customCss?.raw || '' } onChange={ handleChange } />
 		</SectionContent>
 	);
 };
