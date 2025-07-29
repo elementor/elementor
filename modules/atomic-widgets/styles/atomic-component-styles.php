@@ -47,10 +47,12 @@ class Atomic_Component_Styles {
 	}
 
 	private function add_post_ids_to_styles_manager( array $post_ids ) {
-		do_action( 'elementor/atomic-styles/related-posts', $post_ids );
+		foreach ( $post_ids as $post_id ) {
+			do_action( 'elementor/post/render', $post_id );
+		}
 	}
 
-	private function get_components_from_post( string $post_id ) {
+	private function get_components_from_post( string $post_id ): array {
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		if ( ! $document ) {
