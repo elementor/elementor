@@ -569,7 +569,7 @@ class Group_Control_Background extends Group_Control_Base {
 							],
 						],
 					],
-				]
+				],
 			],
 		];
 
@@ -613,7 +613,7 @@ class Group_Control_Background extends Group_Control_Base {
 									],
 								],
 							],
-						]
+						],
 					],
 					[
 						'name' => 'clip',
@@ -664,7 +664,7 @@ class Group_Control_Background extends Group_Control_Base {
 									],
 								],
 							],
-						]
+						],
 					],
 					[
 						'name' => 'clip',
