@@ -112,18 +112,12 @@ const extractDependenciesFromPropType = (
 	currentPath: string[],
 	dependencyGraph: Record< string, string[] >
 ): Record< string, string[] > => {
-	if ( ! hasDependencies( propType ) ) {
-		return dependencyGraph;
-	}
-
 	const fullPath = [ ...currentPath, propName ];
 	const sourcePath = fullPath.join( '.' );
 
-	const graphWithDependencies = addDependenciesToGraph(
-		propType.dependencies?.terms ?? [],
-		sourcePath,
-		dependencyGraph
-	);
+	const graphWithDependencies = hasDependencies( propType )
+		? addDependenciesToGraph( propType.dependencies?.terms ?? [], sourcePath, dependencyGraph )
+		: dependencyGraph;
 
 	if ( isObjectPropType( propType ) ) {
 		return Object.entries( propType.shape ).reduce(
