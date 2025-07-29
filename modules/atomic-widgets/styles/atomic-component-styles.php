@@ -12,6 +12,9 @@ use Elementor\Modules\AtomicWidgets\Cache_Validity;
 // Component JSON (to be added to a document data - replace the post_id with the actual post_id):
 // {"id":"a1d2cb6","elType":"widget","settings":{"post_id":{"$$type":"string","value":"180"}},"name":{"$$type":"string","value":"This is an overridden name"},"title":{"$$type":"string","value":"This is an overridden title"},"elements":[],"widgetType":"e-component","styles":[],"editor_settings":[],"version":"0.0"}
 
+/**
+ * Atomic Component Styles
+ */
 class Atomic_Component_Styles {
 	const CACHE_KEY_PREFIX = 'atomic-component-styles-related-posts';
 
