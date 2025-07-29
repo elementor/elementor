@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { Box } from '@elementor/ui';
-
+import { useExportContext } from '../context/export-context';
 import { BaseLayout, TopBar, Footer, PageHeader } from '../../shared/components';
 import ExportIntro from '../components/export-intro';
 import ExportKitFooter from '../components/export-kit-footer';
@@ -7,6 +8,12 @@ import KitContent from '../components/export-kit-parts-selection';
 import KitInfo from '../components/kit-info';
 
 export default function ExportKit() {
+	const { dispatch } = useExportContext();
+
+	useEffect( () => {
+		dispatch( { type: 'RESET_STATE' } );
+	}, [ dispatch ] );
+
 	const footerContent = <ExportKitFooter />;
 
 	const headerContent = (
