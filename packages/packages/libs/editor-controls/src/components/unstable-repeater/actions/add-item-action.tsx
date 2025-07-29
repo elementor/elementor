@@ -16,7 +16,7 @@ export const AddItemAction = ( {
 	tooltip?: boolean;
 	tooltipContent?: React.ReactNode;
 } ) => {
-	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem } = useRepeaterContext();
+	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem, generateNextKey } = useRepeaterContext();
 	const shouldShowTooltip = tooltip && tooltipContent;
 
 	const onClick = () => {
@@ -27,10 +27,6 @@ export const AddItemAction = ( {
 		setUniqueKeys( [ ...uniqueKeys, newKey ] );
 
 		setOpenItem( newKey );
-	};
-
-	const generateNextKey = ( source: number[] ) => {
-		return 1 + Math.max( 0, ...source );
 	};
 
 	return (

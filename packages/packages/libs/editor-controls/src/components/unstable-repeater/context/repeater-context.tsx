@@ -33,6 +33,7 @@ type RepeaterContextType< T extends PropValue > = {
 		};
 	};
 	isSortable: boolean;
+	generateNextKey: ( source: number[] ) => number;
 };
 
 const RepeaterContext = createContext< RepeaterContextType< PropValue > | null >( null );
@@ -57,6 +58,7 @@ export const useRepeaterContext = () => {
 		setUniqueKeys: context.setUniqueKeys,
 		initial: context.initial,
 		isSortable: context.isSortable,
+		generateNextKey: context.generateNextKey,
 	};
 };
 
@@ -94,6 +96,7 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 				uniqueKeys,
 				setUniqueKeys,
 				isSortable,
+				generateNextKey,
 			} }
 		>
 			{ children }
@@ -126,3 +129,7 @@ function getConfiguredSlots() {
 		itemActions: { Slot: itemActions.Slot, inject: injectItemActions },
 	};
 }
+
+const generateNextKey = ( source: number[] ) => {
+	return 1 + Math.max( 0, ...source );
+};
