@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Includes\Widgets\Traits\Button_Trait;
-use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
