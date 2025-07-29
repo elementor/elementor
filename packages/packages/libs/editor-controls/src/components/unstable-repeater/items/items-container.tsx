@@ -14,21 +14,14 @@ export const ItemsContainer = < T extends PropValue >( {
 	itemTemplate,
 	children,
 }: React.PropsWithChildren< { itemTemplate: React.ReactNode } > ) => {
-	const { items, setItems, uniqueKeys, setUniqueKeys, openItem, isSortable } = useRepeaterContext();
+	const { items, uniqueKeys, openItem, isSortable, sortItemsByKeys } = useRepeaterContext();
 
 	if ( ! itemTemplate ) {
 		return null;
 	}
 
-	const onChangeOrder = ( reorderedKeys: number[] ) => {
-		setUniqueKeys( reorderedKeys );
-		setItems( ( prevItems ) =>
-			reorderedKeys.map( ( key ) => {
-				const index = uniqueKeys.indexOf( key );
-
-				return prevItems[ index ];
-			} )
-		);
+	const onChangeOrder = ( newOrder: number[] ) => {
+		sortItemsByKeys( newOrder );
 	};
 
 	return (

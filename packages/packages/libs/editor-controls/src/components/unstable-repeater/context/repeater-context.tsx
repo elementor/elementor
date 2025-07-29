@@ -34,6 +34,7 @@ type RepeaterContextType< T extends PropValue > = {
 	};
 	isSortable: boolean;
 	generateNextKey: ( source: number[] ) => number;
+	sortItemsByKeys: ( newKeysOrder: number[] ) => void;
 };
 
 const RepeaterContext = createContext< RepeaterContextType< PropValue > | null >( null );
@@ -59,6 +60,7 @@ export const useRepeaterContext = () => {
 		initial: context.initial,
 		isSortable: context.isSortable,
 		generateNextKey: context.generateNextKey,
+		sortItemsByKeys: context.sortItemsByKeys,
 	};
 };
 
@@ -83,6 +85,17 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 
 	const isOpen = openItem !== EMPTY_OPEN_ITEM;
 
+	const sortItemsByKeys = ( keysOrder: number[] ) => {
+		setUniqueKeys( keysOrder );
+		setItems( ( prevItems ) =>
+			keysOrder.map( ( key ) => {
+				const index = uniqueKeys.indexOf( key );
+
+				return prevItems[ index ];
+			} )
+		);
+	};
+
 	return (
 		<RepeaterContext.Provider
 			value={ {
@@ -97,6 +110,7 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 				setUniqueKeys,
 				isSortable,
 				generateNextKey,
+				sortItemsByKeys,
 			} }
 		>
 			{ children }
