@@ -14,8 +14,15 @@ const headerContent = (
 );
 
 export default function ImportProcess() {
-	const { isProcessing } = useImportContext();
-	const { status, error, runnersState } = useImportKit();
+	const { data, dispatch, isProcessing, runnersState } = useImportContext();
+	const { includes, customization } = data;
+	const { status, error } = useImportKit( {
+		data,
+		includes,
+		customization,
+		isProcessing,
+		dispatch,
+	} );
 	const navigate = useNavigate();
 
 	useEffect( () => {

@@ -1057,8 +1057,11 @@ class Test_Styles_Renderer extends Elementor_Test_Base {
 										],
 									],
 									'inline-end' => [
-										'$$type' => 'string',
-										'value' => 'auto',
+										'$$type' => 'size',
+										'value' => [
+											'size' => '',
+											'unit' => 'auto',
+										],
 									],
 								],
 							],

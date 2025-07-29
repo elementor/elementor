@@ -19,13 +19,7 @@ import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 
-export const CssClassUsageTrigger = ( {
-	id,
-	onClick,
-}: {
-	id: CssClassID | string;
-	onClick: ( id: CssClassID ) => void;
-} ) => {
+export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick: ( id: CssClassID ) => void } ) => {
 	const {
 		data: { total },
 		isLoading,
@@ -59,14 +53,13 @@ export const CssClassUsageTrigger = ( {
 			</Box>
 			<Box>
 				<Popover
-					sx={ { ml: 6 } }
 					anchorOrigin={ {
 						vertical: 'center',
 						horizontal: 'right',
 					} }
 					transformOrigin={ {
-						vertical: 'top',
-						horizontal: -5,
+						vertical: 15,
+						horizontal: -50,
 					} }
 					{ ...bindPopover( cssClassUsagePopover ) }
 					onClose={ () => {
@@ -98,6 +91,7 @@ const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
 
 const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number } > ) => (
 	<Tooltip
+		disableInteractive
 		placement={ 'top' }
 		title={ `${ __( 'Show {{number}} {{locations}}', 'elementor' )
 			.replace( '{{number}}', total.toString() )
@@ -112,6 +106,7 @@ const TooltipWrapper = ( { children, total }: PropsWithChildren< { total: number
 
 const InfoAlertMessage = ( { children }: PropsWithChildren ) => (
 	<Infotip
+		disableInteractive
 		placement={ 'top' }
 		color={ 'secondary' }
 		content={ <InfoAlert sx={ { mt: 1 } }>{ __( 'This class isn’t being used yet.', 'elementor' ) }</InfoAlert> }
