@@ -10,6 +10,9 @@ export const ClearIconButton = ( { tooltipText, sx, disabled }: ClearIconButtonP
 	const {
 		filters: { onClearFilter, filters },
 	} = useSearchAndFilters();
+
+	const showIcon = disabled || ! Object.values( filters ).some( ( value ) => value );
+
 	return (
 		<Tooltip title={ tooltipText } placement="top" disableInteractive>
 			<Box>
@@ -17,8 +20,7 @@ export const ClearIconButton = ( { tooltipText, sx, disabled }: ClearIconButtonP
 					aria-label={ tooltipText }
 					size="tiny"
 					onClick={ onClearFilter }
-					sx={ sx }
-					disabled={ disabled || ! Object.values( filters ).some( ( value ) => value ) }
+					sx={ { ...sx, opacity: showIcon ? 0 : 1 } }
 				>
 					<BrushBigIcon fontSize="tiny" />
 				</CustomIconButton>
