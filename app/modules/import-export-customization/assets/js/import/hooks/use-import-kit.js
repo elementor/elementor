@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { IMPORT_STATUS, useImportContext } from '../context/import-context';
+import { IMPORT_STATUS } from '../context/import-context';
 
 async function request( {
 	data,
@@ -32,11 +32,9 @@ export const IMPORT_PROCESSING_STATUS = {
 	DONE: 'DONE',
 };
 
-export function useImportKit() {
+export function useImportKit( { data, includes, customization, isProcessing, dispatch } ) {
 	const [ status, setImportStatus ] = useState( IMPORT_PROCESSING_STATUS.PENDING );
 	const [ error, setError ] = useState( null );
-	const { data, isProcessing, dispatch } = useImportContext();
-	const [ runnersState, setRunnersState ] = useState( {} );
 
 	const runImportRunners = async () => {
 		setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );
@@ -57,10 +55,7 @@ export function useImportKit() {
 					path: 'import-runner',
 				} );
 
-				setRunnersState( ( prevState ) => ( {
-					...prevState,
-					[ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ],
-				} ) );
+				dispatch( { type: 'SET_RUNNERS_STATE', payload: { [ runner ]: result.data.imported_data?.[ runner ] || result.data[ runner ] } } );
 			} catch ( e ) {
 				stopIterations = e;
 				setError( e );
@@ -79,7 +74,8 @@ export function useImportKit() {
 				id: data.kitUploadParams?.id,
 				referrer: data.kitUploadParams?.referrer,
 				session: data.uploadedData.session,
-				include: data.includes,
+				include: includes,
+				customization,
 			};
 
 			const result = await request( {
@@ -109,6 +105,5 @@ export function useImportKit() {
 	return {
 		status,
 		error,
-		runnersState,
 	};
 }
