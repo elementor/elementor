@@ -5,6 +5,10 @@ module.exports = {
 	transform: {
 		'^.+\\.(t|j)sx?$': '@swc/jest',
 	},
+	transformIgnorePatterns: [
+		'node_modules/(?!(constrained-editor-plugin)/)',
+	],
+	extensionsToTreatAsEsm: ['.ts', '.tsx'],
 	moduleNameMapper: {
 		'^@elementor/(?!ui|icons|design-tokens)(.*)$': [
 			'<rootDir>/packages/core/$1/src',
