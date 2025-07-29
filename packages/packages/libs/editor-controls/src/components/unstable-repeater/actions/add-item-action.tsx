@@ -16,18 +16,10 @@ export const AddItemAction = ( {
 	tooltip?: boolean;
 	tooltipContent?: React.ReactNode;
 } ) => {
-	const { initial, uniqueKeys, setUniqueKeys, items, setItems, setOpenItem, generateNextKey } = useRepeaterContext();
+	const { addItem } = useRepeaterContext();
 	const shouldShowTooltip = tooltip && tooltipContent;
 
-	const onClick = () => {
-		const newItem = structuredClone( initial );
-		const newKey = generateNextKey( uniqueKeys );
-
-		setItems( [ ...items, newItem ] );
-		setUniqueKeys( [ ...uniqueKeys, newKey ] );
-
-		setOpenItem( newKey );
-	};
+	const onClick = () => addItem();
 
 	return (
 		<ConditionalToolTip content={ tooltipContent } shouldShowTooltip={ !! shouldShowTooltip }>

@@ -20,20 +20,10 @@ export const RemoveItemAction = () => {
 };
 
 const Action = ( { index }: { index: number } ) => {
-	const { items, setItems, uniqueKeys, setUniqueKeys } = useRepeaterContext();
+	const { removeItem } = useRepeaterContext();
 	const removeLabel = __( 'Remove', 'elementor' );
 
-	const onClick = () => {
-		const self = items?.[ index ];
-
-		if ( ! self ) {
-			return;
-		}
-
-		setItems( items.filter( ( _, itemIndex ) => itemIndex !== index ) );
-		setUniqueKeys( uniqueKeys.slice( 0, -1 ) );
-	};
-
+	const onClick = () => removeItem( index );
 	return (
 		<Tooltip title={ removeLabel } placement="top">
 			<IconButton size={ SIZE } onClick={ onClick } aria-label={ removeLabel }>

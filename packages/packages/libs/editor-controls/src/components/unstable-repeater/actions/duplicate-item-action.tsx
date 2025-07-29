@@ -20,24 +20,13 @@ export const DuplicateItemAction = () => {
 };
 
 const Action = ( { index }: { index: number } ) => {
-	const { items, setItems, uniqueKeys, setUniqueKeys } = useRepeaterContext();
+	const { items, addItem } = useRepeaterContext();
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 
 	const onClick = () => {
-		const self = items?.[ index ];
+		const newItem = structuredClone( items[ index ] );
 
-		if ( ! self ) {
-			return;
-		}
-
-		const newItem = structuredClone( self );
-		const newItems = [ ...items ];
-		const newKey = uniqueKeys.length;
-
-		newItems.splice( index + 1, 0, newItem );
-
-		setItems( newItems );
-		setUniqueKeys( [ ...uniqueKeys, newKey ] );
+		addItem( newItem, index + 1 );
 	};
 
 	return (

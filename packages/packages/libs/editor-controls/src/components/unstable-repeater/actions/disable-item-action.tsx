@@ -20,28 +20,16 @@ export const DisableItemAction = () => {
 };
 
 const Action = ( { index }: { index: number } ) => {
-	const { items, setItems } = useRepeaterContext();
+	const { items, updateItem } = useRepeaterContext();
 	const propDisabled = items[ index ]?.disabled ?? false;
 
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 
 	const onClick = () => {
-		const newItems = [ ...items ];
-
-		const self = newItems[ index ];
-
-		if ( ! self ) {
-			return;
-		}
+		const self = structuredClone( items[ index ] );
 
 		self.disabled = ! self.disabled;
-
-		if ( ! self.disabled ) {
-			delete self.disabled;
-		}
-
-		newItems.splice( index, 1, self );
-		setItems( newItems );
+		updateItem( self, index );
 	};
 
 	return (
