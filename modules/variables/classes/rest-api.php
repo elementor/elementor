@@ -173,10 +173,12 @@ class Rest_Api {
 	}
 
 	public function is_valid_variable_type( $type ) {
-		return in_array( $type, [
+		$allowed_types = apply_filters( 'elementor/variables/allowed_variable_types', [
 			Color_Variable_Prop_Type::get_key(),
 			Font_Variable_Prop_Type::get_key(),
-		], true );
+		] );
+
+		return in_array( $type, $allowed_types, true );
 	}
 
 	public function is_valid_variable_label( $label ) {
