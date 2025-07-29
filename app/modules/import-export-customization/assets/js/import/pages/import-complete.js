@@ -31,8 +31,12 @@ const ExternalLinkIcon = () => (
 	/>
 );
 
+const handleDone = () => {
+	window.top.location = elementorAppConfig.admin_url;
+};
+
 export default function ImportComplete() {
-	const { isCompleted } = useImportContext();
+	const { data, isCompleted, runnersState } = useImportContext();
 	const navigate = useNavigate();
 
 	const headerContent = (
@@ -56,6 +60,7 @@ export default function ImportComplete() {
 				size="small"
 				sx={ { px: 4 } }
 				data-testid="close-button"
+				onClick={ handleDone }
 			>
 				{ __( 'Close', 'elementor' ) }
 			</Button>
@@ -111,40 +116,46 @@ export default function ImportComplete() {
 							{ __( 'This website templates includes:', 'elementor' ) }
 						</Typography>
 					</Box>
-					<Stack spacing={ 2 } sx={ { pt: 1 } } >
-						<Box>
-							<Stack direction="row" alignItems="center" spacing={ 1 }>
-								<Typography variant="body2" color="text.primary" >
-									{ __( 'Site settings', 'elementor' ) }
+					<Stack spacing={ 2 } sx={ { pt: 1, maxWidth: '1075px' } } >
+						{ data.includes.includes( 'settings' ) && (
+							<Box>
+								<Stack direction="row" alignItems="center" spacing={ 1 }>
+									<Typography variant="body2" color="text.primary" >
+										{ __( 'Site settings', 'elementor' ) }
+									</Typography>
+									<ExternalLinkIcon />
+								</Stack>
+								<Typography variant="caption" color="text.secondary">
+									{ __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ) }
 								</Typography>
-								<ExternalLinkIcon />
-							</Stack>
-							<Typography variant="caption" color="text.secondary">
-								{ __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ) }
-							</Typography>
-						</Box>
-						<Box>
-							<Stack direction="row" alignItems="center" spacing={ 1 }>
-								<Typography variant="body2" color="text.primary" >
-									{ __( 'Content', 'elementor' ) }
+							</Box>
+						) }
+						{ data.includes.includes( 'content' ) && (
+							<Box>
+								<Stack direction="row" alignItems="center" spacing={ 1 }>
+									<Typography variant="body2" color="text.primary" >
+										{ __( 'Content', 'elementor' ) }
+									</Typography>
+									<ExternalLinkIcon />
+								</Stack>
+								<Typography variant="caption" color="text.secondary" >
+									{ __( '5 Posts | 12 Pages | 39 Products | 15 Navigation Menu Items', 'elementor' ) }
 								</Typography>
-								<ExternalLinkIcon />
-							</Stack>
-							<Typography variant="caption" color="text.secondary" >
-								{ __( '5 Posts | 12 Pages | 39 Products | 15 Navigation Menu Items', 'elementor' ) }
-							</Typography>
-						</Box>
-						<Box>
-							<Stack direction="row" alignItems="center" spacing={ 1 }>
-								<Typography variant="body2" color="text.primary">
-									{ __( 'Plugins', 'elementor' ) }
+							</Box>
+						) }
+						{ data.includes.includes( 'plugins' ) && (
+							<Box>
+								<Stack direction="row" alignItems="center" spacing={ 1 }>
+									<Typography variant="body2" color="text.primary">
+										{ __( 'Plugins', 'elementor' ) }
+									</Typography>
+									<ExternalLinkIcon />
+								</Stack>
+								<Typography variant="caption" color="text.secondary">
+									{ runnersState.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' ) }
 								</Typography>
-								<ExternalLinkIcon />
-							</Stack>
-							<Typography variant="caption" color="text.secondary">
-								{ __( 'WooCommerce | Variation Swatches for WooCommerce | Ally - Web Accessibility & Usability | Advanced Custom Fields 4o', 'elementor' ) }
-							</Typography>
-						</Box>
+							</Box>
+						) }
 					</Stack>
 				</Stack>
 				<Box mt={ 2 }>
