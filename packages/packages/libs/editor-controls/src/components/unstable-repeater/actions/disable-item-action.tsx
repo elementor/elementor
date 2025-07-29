@@ -29,6 +29,11 @@ const Action = ( { index }: { index: number } ) => {
 		const self = structuredClone( items[ index ] );
 
 		self.disabled = ! self.disabled;
+
+		if ( ! self.disabled ) {
+			delete self.disabled;
+		}
+
 		updateItem( self, index );
 	};
 
