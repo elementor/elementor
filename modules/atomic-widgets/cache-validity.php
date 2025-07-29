@@ -62,7 +62,7 @@ class Cache_Validity {
 		update_option( CACHE_KEY_PREFIX . $root, $state_item );
 	}
 
-	public function validate( array $keys, mixed $meta = null ): void {
+	public function validate( array $keys, $meta = null ): void {
 		$root = array_shift( $keys );
 
 		$state_item = get_option( CACHE_KEY_PREFIX . $root, [
