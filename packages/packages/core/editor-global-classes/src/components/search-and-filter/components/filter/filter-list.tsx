@@ -59,16 +59,11 @@ type LabeledCheckboxProps = {
 const LabeledCheckbox = ( { label, suffix, checked }: LabeledCheckboxProps ) => (
 	<Stack direction="row" alignItems="center" gap={ 0.5 } flex={ 1 }>
 		<Checkbox
+			size={ 'small' }
 			checked={ checked }
 			sx={ {
 				padding: 0,
 				color: 'text.tertiary',
-				'&:hover': {
-					backgroundColor: 'transparent',
-				},
-				'&.Mui-checked:hover': {
-					backgroundColor: 'transparent',
-				},
 				'&.Mui-checked': {
 					color: 'text.tertiary',
 				},
