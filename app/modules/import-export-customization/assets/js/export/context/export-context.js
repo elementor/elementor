@@ -82,7 +82,7 @@ function exportReducer( state, { type, payload } ) {
 				...state,
 				analytics: {
 					customization: {
-						...state.analytics.customization,
+						...state.analytics?.customization,
 						[ payload.key ]: payload.value,
 					},
 				},

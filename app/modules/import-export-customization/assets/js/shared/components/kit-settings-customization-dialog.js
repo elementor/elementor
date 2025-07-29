@@ -9,7 +9,7 @@ import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'settings' );
-	const unselectedValues = useRef( data.analytics.customization?.settings || [] );
+	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {

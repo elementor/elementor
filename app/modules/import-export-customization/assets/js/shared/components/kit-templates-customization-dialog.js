@@ -8,7 +8,7 @@ import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking
 
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'templates' );
-	const unselectedValues = useRef( data.analytics.customization?.templates || [] );
+	const unselectedValues = useRef( data.analytics?.customization?.templates || [] );
 
 	const [ templates, setTemplates ] = useState( () => {
 		if ( data.customization.templates ) {

@@ -51,23 +51,23 @@ export default function ExportComplete() {
 	}, [] );
 
 	useEffect( () => {
-		if ( exportedData ) {
+		if ( exportedData.manifest ) {
 			let pages = '';
 
 			if ( includes.includes( 'pages' ) ) {
-				pages = analytics.customization.content?.includes( 'pages' ) ? 'partial' : 'all';
+				pages = analytics?.customization?.content?.includes( 'pages' ) ? 'partial' : 'all';
 			}
 
 			let postTypes = '';
 
 			if ( includes.includes( 'postTypes' ) ) {
-				postTypes = analytics.customization.content?.includes( 'customPostTypes' ) ? 'partial' : 'all';
+				postTypes = analytics?.customization.content?.includes( 'customPostTypes' ) ? 'partial' : 'all';
 			}
 
 			let plugins = '';
 
 			if ( includes.includes( 'plugins' ) ) {
-				plugins = analytics.customization.plugins?.length ? 'partial' : 'all';
+				plugins = analytics?.customization?.plugins?.length ? 'partial' : 'all';
 			}
 
 			AppsEventTracking.sendExportKitCustomization( {
@@ -75,7 +75,7 @@ export default function ExportComplete() {
 				kit_export_templates: includes.includes( 'templates' ),
 				kit_export_settings: includes.includes( 'settings' ),
 				kit_export_plugins: includes.includes( 'plugins' ),
-				kit_export_deselected: analytics.customization,
+				kit_export_deselected: analytics?.customization,
 				kit_description: Boolean( kitInfo.description ),
 				kit_page_count: Object.values( exportedData.manifest.content.page ).length,
 				kit_post_type_count: Object.keys( exportedData.manifest.content.page )
@@ -86,7 +86,7 @@ export default function ExportComplete() {
 				plugins,
 			} );
 		}
-	}, [ includes, exportedData, analytics.customization, kitInfo.description ] );
+	}, [ includes, exportedData.manifest, analytics?.customization, kitInfo.description ] );
 
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;

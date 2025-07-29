@@ -63,7 +63,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 	const isLoading = isImport ? false : fetchIsLoading;
 
 	const [ plugins, setPlugins ] = useState( {} );
-	const unselectedValues = useRef( data.analytics.customization?.plugins || [] );
+	const unselectedValues = useRef( data.analytics?.customization?.plugins || [] );
 
 	const initialState = data?.includes?.includes( 'plugins' ) || false;
 

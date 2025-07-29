@@ -22,7 +22,7 @@ export function KitContentCustomizationDialog( {
 	const { isLoading: isPagesLoading, pageOptions, isLoaded: isPagesLoaded } = usePages( { skipLoading: ! open } );
 	const { isLoading: isTaxonomiesLoading, taxonomyOptions, isLoaded: isTaxonomiesLoaded } = useTaxonomies( { skipLoading: ! open, exclude: [ 'nav_menu' ] } );
 	const { customPostTypes } = useCustomPostTypes( { include: [ 'post' ] } );
-	const unselectedValues = useRef( data.analytics.customization?.content || [] );
+	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.content ) {
