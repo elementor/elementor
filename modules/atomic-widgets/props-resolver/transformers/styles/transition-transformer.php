@@ -10,9 +10,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Transition_Transformer extends Transformer_Base {
-
-	const ALL_PROPERTIES_VALUE = 'all properties';
-	const CSS_ALL_KEYWORD = 'all';
 	const EMPTY_STRING = '';
 
 	public function transform( $transitions, Props_Resolver_Context $context ) {
@@ -27,21 +24,17 @@ class Transition_Transformer extends Transformer_Base {
 	}
 
 	private function map_to_transition_string( $transition ): string {
-		if ( ! is_array( $transition ) ) {
+		if ( empty( $transition['selection'] ) || empty( $transition['size'] ) ) {
 			return self::EMPTY_STRING;
 		}
 
-		if ( ! isset( $transition['selection'] ) || ! isset( $transition['size'] ) ) {
+		$selection = $transition['selection'];
+		$size = $transition['size'];
+
+		if ( empty( $selection['value'] ) ) {
 			return self::EMPTY_STRING;
 		}
 
-		$property = $transition['selection'];
-		$duration = $transition['size'];
-
-		if ( self::ALL_PROPERTIES_VALUE === $property ) {
-			$property = self::CSS_ALL_KEYWORD;
-		}
-
-		return trim( "{$property} {$duration}" );
+		return trim( "{$selection['value']} {$size}" );
 	}
 }
