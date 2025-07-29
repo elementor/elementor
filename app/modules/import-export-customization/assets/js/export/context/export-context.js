@@ -69,6 +69,8 @@ function exportReducer( state, { type, payload } ) {
 					[ payload.key ]: payload.value,
 				},
 			};
+		case 'RESET_STATE':
+			return { ...initialState };
 		default:
 			return state;
 	}
