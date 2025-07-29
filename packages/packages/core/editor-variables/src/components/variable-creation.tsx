@@ -3,15 +3,14 @@ import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { ArrowLeftIcon, TextIcon } from '@elementor/icons';
+import { ArrowLeftIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useVariableType } from '../context/variable-type-context';
 import { createVariable } from '../hooks/use-prop-variables';
-import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { trackVariableEvent } from '../utils/tracking';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
-import { FontField } from './fields/font-field';
 import { LabelField, useLabelError } from './fields/label-field';
 
 const SIZE = 'tiny';
@@ -21,17 +20,19 @@ type Props = {
 	onClose: () => void;
 };
 
-export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
-	const { setValue: setVariable, path } = useBoundProp( fontVariablePropTypeUtil );
+export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
+	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
-	const [ fontFamily, setFontFamily ] = useState( '' );
+	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
+
+	const [ value, setValue ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 
 	const resetFields = () => {
-		setFontFamily( '' );
+		setValue( '' );
 		setLabel( '' );
 		setErrorMessage( '' );
 	};
@@ -43,9 +44,9 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 
 	const handleCreateAndTrack = () => {
 		createVariable( {
-			value: fontFamily,
+			value,
 			label,
-			type: fontVariablePropTypeUtil.key,
+			type: propTypeUtil.key,
 		} )
 			.then( ( key ) => {
 				setVariable( key );
@@ -66,14 +67,14 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 			} );
 
 		trackVariableEvent( {
-			varType: 'font',
+			varType: variableType,
 			controlPath: path.join( '.' ),
 			action: 'save',
 		} );
 	};
 
 	const hasEmptyValue = () => {
-		return '' === fontFamily.trim() || '' === label.trim();
+		return '' === value.trim() || '' === label.trim();
 	};
 
 	const hasErrors = () => {
@@ -92,7 +93,7 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 								<ArrowLeftIcon fontSize={ SIZE } />
 							</IconButton>
 						) }
-						<TextIcon fontSize={ SIZE } />
+						<VariableIcon fontSize={ SIZE } />
 					</>
 				}
 				title={ __( 'Create variable', 'elementor' ) }
@@ -105,15 +106,15 @@ export const FontVariableCreation = ( { onClose, onGoBack }: Props ) => {
 				<LabelField
 					value={ label }
 					error={ labelFieldError }
-					onChange={ ( value ) => {
-						setLabel( value );
+					onChange={ ( newValue ) => {
+						setLabel( newValue );
 						setErrorMessage( '' );
 					} }
 				/>
-				<FontField
-					value={ fontFamily }
-					onChange={ ( value ) => {
-						setFontFamily( value );
+				<ValueField
+					value={ value }
+					onChange={ ( newValue ) => {
+						setValue( newValue );
 						setErrorMessage( '' );
 					} }
 				/>
