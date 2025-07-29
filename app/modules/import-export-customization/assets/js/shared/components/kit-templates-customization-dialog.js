@@ -54,7 +54,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 					[ settingKey ]: { ...prev[ settingKey ], ...newState },
 				};
 			}
-			
+
 			return {
 				...prev,
 				[ settingKey ]: newState,
@@ -65,9 +65,9 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 	const handleToggleEnabled = ( settingKey ) => {
 		setTemplates( ( prev ) => ( {
 			...prev,
-			[ settingKey ]: { 
-				...prev[ settingKey ], 
-				enabled: !prev[ settingKey ]?.enabled 
+			[ settingKey ]: {
+				...prev[ settingKey ],
+				enabled: ! prev[ settingKey ]?.enabled,
 			},
 		} ) );
 	};
