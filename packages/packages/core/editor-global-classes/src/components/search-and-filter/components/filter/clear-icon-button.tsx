@@ -4,24 +4,17 @@ import { Box, IconButton, styled, type SxProps, type Theme, Tooltip } from '@ele
 
 import { useSearchAndFilters } from '../../context';
 
-type ClearIconButtonProps = { tooltipText: React.ReactNode; sx?: SxProps< Theme >; disabled?: boolean };
+type ClearIconButtonProps = { tooltipText: React.ReactNode; sx?: SxProps< Theme > };
 
-export const ClearIconButton = ( { tooltipText, sx, disabled }: ClearIconButtonProps ) => {
+export const ClearIconButton = ( { tooltipText, sx }: ClearIconButtonProps ) => {
 	const {
-		filters: { onClearFilter, filters },
+		filters: { onClearFilter },
 	} = useSearchAndFilters();
-
-	const showIcon = disabled || ! Object.values( filters ).some( ( value ) => value );
 
 	return (
 		<Tooltip title={ tooltipText } placement="top" disableInteractive>
 			<Box>
-				<CustomIconButton
-					aria-label={ tooltipText }
-					size="tiny"
-					onClick={ onClearFilter }
-					sx={ { ...sx, opacity: showIcon ? 0 : 1 } }
-				>
+				<CustomIconButton aria-label={ tooltipText } size="tiny" onClick={ onClearFilter } sx={ sx }>
 					<BrushBigIcon fontSize="tiny" />
 				</CustomIconButton>
 			</Box>
