@@ -2,7 +2,7 @@ import { type PropKey, type PropTypeUtil } from '@elementor/editor-props';
 
 export type CollectionPropUtil< T > = PropTypeUtil< PropKey, T[] >;
 
-type Item< T > = {
+export type Item< T > = {
 	disabled?: boolean;
 } & T;
 
