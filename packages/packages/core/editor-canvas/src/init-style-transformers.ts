@@ -23,6 +23,7 @@ import { transformScaleTransformer } from './transformers/styles/transform-scale
 import { transformSkewTransformer } from './transformers/styles/transform-skew-transformer';
 import { transformTransformer } from './transformers/styles/transform-transformer';
 import { transitionTransformer } from './transformers/styles/transition-transformer';
+import { transformOriginTransformer } from "./transformers/styles/transform-origin-transformer";
 
 export function initStyleTransformers() {
 	styleTransformersRegistry
@@ -51,6 +52,7 @@ export function initStyleTransformers() {
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'object-position', positionTransformer )
+		.register( 'transform-origin', transformOriginTransformer )
 		.register( 'transform-move', transformMoveTransformer )
 		.register( 'transform-scale', transformScaleTransformer )
 		.register( 'transform-rotate', transformRotateTransformer )
