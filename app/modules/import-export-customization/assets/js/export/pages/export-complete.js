@@ -74,7 +74,7 @@ export default function ExportComplete() {
 			kit_export_settings: includes.includes( 'settings' ),
 			kit_export_plugins: includes.includes( 'plugins' ),
 			kit_export_deselected: analytics.customization,
-			kit_decription: Boolean( kitInfo.description ),
+			kit_description: Boolean( kitInfo.description ),
 			kit_page_count: Object.values( exportedData.manifest.content.page ).length,
 			kit_post_type_count: Object.keys( exportedData.manifest.content.page )
 				.filter( ( key ) => ! elementorAppConfig.builtinWpPostTypes.includes( key ) ).length,
