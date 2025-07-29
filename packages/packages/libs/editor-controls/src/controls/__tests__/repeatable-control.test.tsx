@@ -13,6 +13,8 @@ jest.mock( '../../bound-prop-context', () => ( {
 
 import { useBoundProp } from '../../bound-prop-context';
 const mockUseBoundProp = useBoundProp as jest.MockedFunction< typeof useBoundProp >;
+const TEXT_PRIMARY_COLOR = 'rgb(12, 13, 14)';
+const TEXT_TERTIARY_COLOR = 'rgb(105, 114, 125)';
 
 const stringPropType = createMockPropType( { kind: 'object' } );
 
@@ -207,7 +209,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'Empty item' ) ).toBeInTheDocument();
+			const placeholderElement = screen.getByText( 'Empty item' );
+			expect( placeholderElement ).toBeInTheDocument();
+			expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
 		} );
 
 		it( 'should show placeholder when pattern has placeholders but data has empty string', () => {
@@ -240,7 +244,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'Empty item' ) ).toBeInTheDocument();
+			const placeholderElement = screen.getByText( 'Empty item' );
+			expect( placeholderElement ).toBeInTheDocument();
+			expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
 		} );
 
 		it( 'should show placeholder when pattern has placeholders but data has whitespace-only string', () => {
@@ -273,7 +279,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'Empty item' ) ).toBeInTheDocument();
+			const placeholderElement = screen.getByText( 'Empty item' );
+			expect( placeholderElement ).toBeInTheDocument();
+			expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
 		} );
 
 		it( 'should show interpolated pattern when data has valid values', () => {
@@ -306,7 +314,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'Item: Hello World' ) ).toBeInTheDocument();
+			const labelElement = screen.getByText( 'Item: Hello World' );
+			expect( labelElement ).toBeInTheDocument();
+			expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
 		} );
 
 		it( 'should show interpolated pattern when no placeholders are present', () => {
@@ -339,7 +349,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'Static Label' ) ).toBeInTheDocument();
+			const labelElement = screen.getByText( 'Static Label' );
+			expect( labelElement ).toBeInTheDocument();
+			expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
 		} );
 
 		it( 'should show interpolated pattern when nested object properties exist', () => {
@@ -373,7 +385,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'User: John Doe - john@example.com' ) ).toBeInTheDocument();
+			const labelElement = screen.getByText( 'User: John Doe - john@example.com' );
+			expect( labelElement ).toBeInTheDocument();
+			expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
 		} );
 
 		it( 'should show placeholder when nested object properties are missing', () => {
@@ -407,7 +421,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'No user data' ) ).toBeInTheDocument();
+			const placeholderElement = screen.getByText( 'No user data' );
+			expect( placeholderElement ).toBeInTheDocument();
+			expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
 		} );
 
 		it( 'should show interpolated pattern when some values are considered empty but others are not', () => {
@@ -441,7 +457,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'Title: My Title - Description:' ) ).toBeInTheDocument();
+			const labelElement = screen.getByText( 'Title: My Title - Description:' );
+			expect( labelElement ).toBeInTheDocument();
+			expect( labelElement ).toHaveStyle( { color: TEXT_PRIMARY_COLOR } );
 		} );
 
 		it( 'should show placeholder when all pattern values are empty', () => {
@@ -475,7 +493,9 @@ describe( '<RepeatableControl />', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'All empty' ) ).toBeInTheDocument();
+			const placeholderElement = screen.getByText( 'All empty' );
+			expect( placeholderElement ).toBeInTheDocument();
+			expect( placeholderElement ).toHaveStyle( { color: TEXT_TERTIARY_COLOR } );
 		} );
 	} );
 } );

@@ -84,7 +84,7 @@ export const LinkedDimensionsControl = createControl(
 					</Tooltip>
 				</Stack>
 
-				{ getCssMarginProps( isSiteRtl ).map( ( row, index ) => (
+				{ getCssDimensionProps( isSiteRtl ).map( ( row, index ) => (
 					<Stack direction="row" gap={ 2 } flexWrap="nowrap" key={ index } ref={ gridRowRefs[ index ] }>
 						{ row.map( ( { icon, ...props } ) => (
 							<Grid container gap={ 0.75 } alignItems="center" key={ props.bind }>
@@ -141,7 +141,7 @@ const Label = ( { label, bind }: { label: string; bind: PropKey } ) => {
 	);
 };
 
-function getCssMarginProps( isSiteRtl: boolean ) {
+function getCssDimensionProps( isSiteRtl: boolean ) {
 	return [
 		[
 			{
