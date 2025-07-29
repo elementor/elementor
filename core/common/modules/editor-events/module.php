@@ -73,4 +73,4 @@ class Module extends BaseModule {
 
 		return json_decode( $license_data['value'], true );
 	}
-} 
+}
