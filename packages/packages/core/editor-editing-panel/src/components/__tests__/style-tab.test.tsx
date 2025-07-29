@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react';
 
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
-import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
 import { useCustomCss } from '../../hooks/use-custom-css';
+import { useDefaultPanelSettings } from '../../hooks/use-default-panel-settings';
 import { StyleTab } from '../style-tab';
 import { StyleTabSection } from '../style-tab-section';
 
