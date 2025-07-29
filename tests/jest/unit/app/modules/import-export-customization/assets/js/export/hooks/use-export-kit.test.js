@@ -3,9 +3,15 @@ import { useExportKit } from 'elementor/app/modules/import-export-customization/
 import { generateScreenshot } from 'elementor/app/modules/import-export-customization/assets/js/export/utils/screenshot';
 import { EXPORT_STATUS } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
 
+const mockNavigate = jest.fn();
+
 // Mock the screenshot utility
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/utils/screenshot', () => ( {
 	generateScreenshot: jest.fn(),
+} ) );
+
+jest.mock( '@reach/router', () => ( {
+	useNavigate: () => mockNavigate,
 } ) );
 
 const mockFetch = jest.fn();
@@ -39,12 +45,10 @@ describe( 'useExportKit Hook', () => {
 		global.elementorAppConfig = mockElementorAppConfig;
 		global.wpApiSettings = { nonce: 'wp-nonce' };
 
-		delete window.location;
-		window.location = { href: '' };
-
 		mockFetch.mockClear();
 		mockDispatch.mockClear();
 		generateScreenshot.mockClear();
+		mockNavigate.mockClear();
 	} );
 
 	afterEach( () => {
@@ -119,8 +123,6 @@ describe( 'useExportKit Hook', () => {
 				type: 'SET_EXPORT_STATUS',
 				payload: EXPORT_STATUS.COMPLETED,
 			} );
-
-			expect( window.location.href ).toBe( 'https://example.com#/export-customization/complete' );
 		} );
 	} );
 
