@@ -4,16 +4,15 @@ import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { ArrowLeftIcon, TextIcon, TrashIcon } from '@elementor/icons';
+import { ArrowLeftIcon, TrashIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useVariableType } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
-import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 import { styleVariablesRepository } from '../style-variables-repository';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
-import { FontField } from './fields/font-field';
 import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
@@ -27,24 +26,41 @@ type Props = {
 	onSubmit?: () => void;
 };
 
-export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
-	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( fontVariablePropTypeUtil );
+export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
+	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+
+	const { setValue: notifyBoundPropChange, value: assignedValue } = useBoundProp( propTypeUtil );
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( EDIT_CONFIRMATION_DIALOG_ID );
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ editConfirmation, setEditConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
-
 	const variable = useVariable( editId );
+
 	if ( ! variable ) {
-		throw new Error( `Global font variable "${ editId }" not found` );
+		throw new Error( `Global ${ variableType } variable not found` );
 	}
 
 	const userPermissions = usePermissions();
 
-	const [ fontFamily, setFontFamily ] = useState( variable.value );
+	const [ value, setValue ] = useState( variable.value );
 	const [ label, setLabel ] = useState( variable.label );
+
+	useEffect( () => {
+		styleVariablesRepository.update( {
+			[ editId ]: {
+				...variable,
+				value,
+			},
+		} );
+
+		return () => {
+			styleVariablesRepository.update( {
+				[ editId ]: { ...variable },
+			} );
+		};
+	}, [ editId, value, variable ] );
 
 	const handleUpdate = () => {
 		if ( isMessageSuppressed ) {
@@ -56,7 +72,7 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 
 	const handleSaveVariable = () => {
 		updateVariable( editId, {
-			value: fontFamily,
+			value,
 			label,
 		} )
 			.then( () => {
@@ -85,21 +101,6 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 		} );
 	};
 
-	useEffect( () => {
-		styleVariablesRepository.update( {
-			[ editId ]: {
-				...variable,
-				value: fontFamily,
-			},
-		} );
-
-		return () => {
-			styleVariablesRepository.update( {
-				[ editId ]: { ...variable },
-			} );
-		};
-	}, [ editId, fontFamily, variable ] );
-
 	const maybeTriggerBoundPropChange = () => {
 		if ( editId === assignedValue ) {
 			notifyBoundPropChange( editId );
@@ -118,20 +119,6 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 		setEditConfirmation( false );
 	};
 
-	const hasEmptyValue = () => {
-		return ! fontFamily.trim() || ! label.trim();
-	};
-
-	const noValueChanged = () => {
-		return fontFamily === variable.value && label === variable.label;
-	};
-
-	const hasErrors = () => {
-		return !! errorMessage;
-	};
-
-	const isSubmitDisabled = noValueChanged() || hasEmptyValue() || hasErrors();
-
 	const actions = [];
 
 	if ( userPermissions.canDelete() ) {
@@ -147,10 +134,26 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 		);
 	}
 
+	const hasEmptyValues = () => {
+		return ! value.trim() || ! label.trim();
+	};
+
+	const noValueChanged = () => {
+		return value === variable.value && label === variable.label;
+	};
+
+	const hasErrors = () => {
+		return !! errorMessage;
+	};
+
+	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
+
 	return (
 		<>
 			<PopoverBody height="auto">
 				<PopoverHeader
+					title={ __( 'Edit variable', 'elementor' ) }
+					onClose={ onClose }
 					icon={
 						<>
 							{ onGoBack && (
@@ -162,11 +165,9 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 									<ArrowLeftIcon fontSize={ SIZE } />
 								</IconButton>
 							) }
-							<TextIcon fontSize={ SIZE } />
+							<VariableIcon fontSize={ SIZE } />
 						</>
 					}
-					title={ __( 'Edit variable', 'elementor' ) }
-					onClose={ onClose }
 					actions={ actions }
 				/>
 
@@ -176,15 +177,15 @@ export const FontVariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props
 					<LabelField
 						value={ label }
 						error={ labelFieldError }
-						onChange={ ( value ) => {
-							setLabel( value );
+						onChange={ ( newValue ) => {
+							setLabel( newValue );
 							setErrorMessage( '' );
 						} }
 					/>
-					<FontField
-						value={ fontFamily }
-						onChange={ ( value ) => {
-							setFontFamily( value );
+					<ValueField
+						value={ value }
+						onChange={ ( newValue ) => {
+							setValue( newValue );
 							setErrorMessage( '' );
 						} }
 					/>
