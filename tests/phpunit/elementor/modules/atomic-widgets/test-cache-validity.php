@@ -22,15 +22,15 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 	 * Clear all WordPress options used by Cache_Validity class.
 	 */
 	private function clear_cache_validity_options(): void {
-		// global $wpdb;
+		global $wpdb;
 		
 		// Delete all options that start with the cache key prefix
-		// $wpdb->query(
-		// 	$wpdb->prepare(
-		// 		"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-		// 		'elementor_atomic_cache_validity-%'
-		// 	)
-		// );
+		$wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+				'elementor_atomic_cache_validity-%'
+			)
+		);
 		
 		// Clear the object cache to ensure options are truly cleared
 		wp_cache_flush();
