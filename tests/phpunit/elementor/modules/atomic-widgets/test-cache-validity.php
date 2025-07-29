@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Cache_Validity extends Elementor_Test_Base {
 	
-	public function setUp(): void {
-		parent::setUp();
+	public function tear_down() {
+		parent::tear_down();
 		
 		// Clear any cached data from previous tests to ensure test isolation
 		$this->clear_cache_validity_options();
