@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { Button, Stack, CircularProgress } from '@elementor/ui';
+import { useNavigate } from '@reach/router';
 
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from '../../shared/hooks/use-connect-state';
@@ -7,8 +8,9 @@ import { useExportContext, EXPORT_STATUS } from '../context/export-context';
 
 export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
+	const navigate = useNavigate();
 	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
-	const { dispatch, isTemplateNameValid } = useExportContext();
+	const { dispatch, isTemplateNameValid, isExporting } = useExportContext();
 
 	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
@@ -43,11 +45,10 @@ export default function ExportKitFooter() {
 		}
 
 		if ( ! isCloudKitsEligible ) {
-			window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+			navigate( '/kit-library/cloud' );
 		} else {
 			dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-			window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 		}
 	}, [ isConnecting, isCheckingEligibility, isCloudKitsEligible, dispatch ] );
 
@@ -57,20 +58,24 @@ export default function ExportKitFooter() {
 		}
 	}, [ isConnecting, isCheckingEligibility, setConnecting ] );
 
+	useEffect( () => {
+		if ( isExporting ) {
+			navigate( '/export-customization/process' );
+		}
+	}, [ isExporting, navigate ] );
+
 	const handleUpgradeClick = () => {
-		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+		navigate( '/kit-library/cloud' );
 	};
 
 	const handleUploadClick = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
 	const handleExportAsZip = () => {
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
 	const renderSaveToLibraryButton = () => {
