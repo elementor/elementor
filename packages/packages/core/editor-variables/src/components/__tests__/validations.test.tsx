@@ -1,9 +1,15 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { colorPropTypeUtil } from '@elementor/editor-props';
+import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
+import { VariableTypeProvider } from '../../context/variable-type-context';
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
-import { ColorVariableCreation } from '../color-variable-creation';
+import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+import { getVariableType } from '../../variables-registry/variable-type-registry';
+import { ColorField } from '../fields/color-field';
+import { VariableCreation } from '../variable-creation';
 
 jest.mock( '../../hooks/use-prop-variables', () => ( {
 	createVariable: jest.fn(),
@@ -14,8 +20,12 @@ jest.mock( '@elementor/editor-controls', () => ( {
 	useBoundProp: jest.fn(),
 } ) );
 
-jest.mock( '../variable-selection-popover.context', () => ( {
+jest.mock( '../../context/variable-selection-popover.context', () => ( {
 	usePopoverContentRef: jest.fn( () => document.createElement( 'div' ) ),
+} ) );
+
+jest.mock( '../../variables-registry/variable-type-registry', () => ( {
+	getVariableType: jest.fn(),
 } ) );
 
 jest.mock( '../../utils/tracking', () => ( {
@@ -25,6 +35,7 @@ jest.mock( '../../utils/tracking', () => ( {
 const mockOnClose = jest.fn();
 const mockSetVariable = jest.fn();
 const mockCreateVariable = jest.fn();
+const mockGetVariableType = jest.mocked( getVariableType );
 
 const baseProps = {
 	onClose: mockOnClose,
@@ -40,10 +51,21 @@ beforeEach( () => {
 		setValue: mockSetVariable,
 		path: [ 'settings', 'color' ],
 	} );
+	mockGetVariableType.mockReturnValue( {
+		icon: TextIcon,
+		valueField: ColorField,
+		variableType: 'color',
+		propTypeUtil: colorVariablePropTypeUtil,
+		fallbackPropTypeUtil: colorPropTypeUtil,
+	} );
 } );
 
-const renderComponent = ( props = {} ) => {
-	return renderWithTheme( <ColorVariableCreation { ...baseProps } { ...props } /> );
+const renderComponent = ( props = { propTypeKey: colorVariablePropTypeUtil.key } ) => {
+	return renderWithTheme(
+		<VariableTypeProvider propTypeKey={ props.propTypeKey }>
+			<VariableCreation { ...baseProps } { ...props } />
+		</VariableTypeProvider>
+	);
 };
 
 it( 'should successfully change name with valid input', async () => {
