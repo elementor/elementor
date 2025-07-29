@@ -1,0 +1,64 @@
+name: Publish Packages with Build Number
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/**'  # Only trigger on changes to packages directory
+
+jobs:
+  publish-packages:
+    if: startsWith( github.repository, 'elementor/' )
+    name: Publish Packages
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+            node-version: 20.x
+            cache: 'npm'
+
+      - name: Install Dependencies
+        run: |
+          cd packages
+          npm ci
+
+      - name: Get Current Version
+        id: get-version
+        working-directory: packages
+        run: |
+          CURRENT_VERSION=$(node scripts/version-manager/index.js get-version "@elementor/editor")
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT_VERSION"
+
+      - name: Set Version with Build Tag
+        working-directory: packages
+        run: |
+          VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ github.run_number }}"
+          echo "Setting version to: $VERSION_WITH_TAG"
+          node scripts/version-manager/index.js set "${{ steps.get-version.outputs.current_version }}" --tag "${{ github.run_number }}"
+
+      - name: Build Packages
+        working-directory: packages
+        run: npm run build
+
+      - name: Publish Packages
+        working-directory: packages
+        run: |
+          # Publish with the build number tag
+          node scripts/version-manager/index.js publish --tag build --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Create Git Tag
+        run: |
+          VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ steps.build-tag.outputs.build_number }}"
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git tag -a "v$VERSION_WITH_TAG" -m "Release $VERSION_WITH_TAG"
+          git push origin "v$VERSION_WITH_TAG"
