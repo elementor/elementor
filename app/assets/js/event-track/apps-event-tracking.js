@@ -1,4 +1,4 @@
-import eventsConfig from '../../../../core/common/modules/editor-events/assets/js/events-config';
+import eventsConfig from '../../../../core/common/modules/events-manager/assets/js/events-config';
 
 const EVENTS_MAP = {
 	PAGE_VIEWS_WEBSITE_TEMPLATES: 'page_views_website_templates',

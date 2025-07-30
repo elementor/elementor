@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { KitSettingsCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-settings-customization-dialog';
-import eventsConfig from 'elementor/core/common/modules/editor-events/assets/js/events-config';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 // Mock the export context
 

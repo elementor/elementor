@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ImportCustomization from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-customization';
-import eventsConfig from 'elementor/core/common/modules/editor-events/assets/js/events-config';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 const mockDispatch = jest.fn();
 const mockNavigate = jest.fn();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Core\Common\Modules\EditorEvents;
+namespace Elementor\Core\Common\Modules\EventsManager;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Connect\Apps\Base_App;
@@ -18,7 +18,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'editor_events';
 
 	public function get_name() {
-		return 'editor-events';
+		return 'events-manager';
 	}
 
 	public static function get_editor_events_config() {

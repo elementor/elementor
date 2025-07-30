@@ -6,7 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Finder\Module as Finder;
 use Elementor\Core\Common\Modules\Connect\Module as Connect;
 use Elementor\Core\Common\Modules\EventTracker\Module as Event_Tracker;
-use Elementor\Core\Common\Modules\EditorEvents\Module as Editor_Events;
+use Elementor\Core\Common\Modules\EventsManager\Module as Editor_Events;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
@@ -71,7 +71,7 @@ class App extends BaseApp {
 
 		$this->add_component( 'event-tracker', new Event_Tracker() );
 
-		$this->add_component( 'editor-events', new Editor_Events() );
+		$this->add_component( 'events-manager', new Editor_Events() );
 	}
 
 	/**

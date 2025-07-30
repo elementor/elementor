@@ -4,7 +4,7 @@ import { KitPluginsCustomizationDialog } from 'elementor/app/modules/import-expo
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins' );
 import useKitPlugins from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins';
-import eventsConfig from 'elementor/core/common/modules/editor-events/assets/js/events-config';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 global.__ = jest.fn( ( text ) => text );
 

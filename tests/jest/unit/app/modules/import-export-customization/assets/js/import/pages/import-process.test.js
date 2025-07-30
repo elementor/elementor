@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import ImportProcess from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-process';
-import eventsConfig from 'elementor/core/common/modules/editor-events/assets/js/events-config';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 const mockUseImportContext = jest.fn();
 const mockUseImportKit = jest.fn();
