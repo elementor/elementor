@@ -4,14 +4,20 @@ import { FilterIcon } from '@elementor/icons';
 import { bindPopover, bindToggle, Divider, Popover, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useSearchAndFilters } from '../../context';
 import { ClearIconButton } from './clear-icon-button';
 import { FilterList } from './filter-list';
 
 export const CssClassFilter = () => {
+	const {
+		filters: { filters },
+	} = useSearchAndFilters();
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,
 	} );
+
+	const showCleanIcon = Object.values( filters ).some( ( value ) => value );
 
 	return (
 		<>
@@ -40,13 +46,16 @@ export const CssClassFilter = () => {
 				{ ...bindPopover( popupState ) }
 			>
 				<PopoverHeader
-					actions={ [
-						<ClearIconButton
-							key="clear-all-button"
-							tooltipText={ __( 'Clear all', 'elementor' ) }
-							disabled={ false }
-						/>,
-					] }
+					actions={
+						showCleanIcon
+							? [
+									<ClearIconButton
+										key="clear-all-button"
+										tooltipText={ __( 'Clear all', 'elementor' ) }
+									/>,
+							  ]
+							: []
+					}
 					onClose={ popupState.close }
 					title={ __( 'Filters', 'elementor' ) }
 					icon={ <FilterIcon fontSize={ 'tiny' } /> }

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from '@reach/router';
 import { generateScreenshot } from '../utils/screenshot';
 import { EXPORT_STATUS } from '../context/export-context';
 
@@ -7,6 +8,7 @@ const STATUS_ERROR = 'error';
 
 export const useExportKit = ( { includes, kitInfo, customization, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
+	const navigate = useNavigate();
 
 	const exportKit = useCallback( async () => {
 		try {
@@ -62,6 +64,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			} else if ( isExportToCloud ) {
 				const exportedData = {
 					kit: result.data.kit,
+					manifest: result.data.manifest,
 				};
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
@@ -70,11 +73,11 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 			}
 
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
-			window.location.href = elementorAppConfig.base_url + '#/export-customization/complete';
+			navigate( '/export-customization/complete' );
 		} catch ( error ) {
 			setStatus( STATUS_ERROR );
 		}
-	}, [ includes, kitInfo, customization, dispatch ] );
+	}, [ includes, kitInfo, customization, dispatch, navigate ] );
 
 	useEffect( () => {
 		if ( isExporting ) {
