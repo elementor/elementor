@@ -45,7 +45,7 @@ describe( 'CssClassUsageTrigger', () => {
 
 		// Assert.
 		await waitFor( () => {
-			expect( screen.getByRole( 'presentation' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'presenששtation' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

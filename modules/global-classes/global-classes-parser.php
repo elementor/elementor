@@ -19,14 +19,12 @@ class Global_Classes_Parser {
 		$result = Parse_Result::make();
 
 		if ( ! isset( $data['items'] ) ) {
-			$result->errors()->add( 'items', 'missing' );
-
+			$result->errors()->add( 'items', Global_Classes_Errors::ITEMS_MISSING );
 			return $result;
 		}
 
 		if ( ! isset( $data['order'] ) ) {
-			$result->errors()->add( 'order', 'missing' );
-
+			$result->errors()->add( 'order', Global_Classes_Errors::ORDER_MISSING );
 			return $result;
 		}
 
@@ -34,14 +32,12 @@ class Global_Classes_Parser {
 		$order = $data['order'];
 
 		if ( ! is_array( $items ) ) {
-			$result->errors()->add( 'items', 'invalid' );
-
+			$result->errors()->add( 'items', Global_Classes_Errors::ITEMS_INVALID );
 			return $result;
 		}
 
 		if ( ! is_array( $order ) ) {
-			$result->errors()->add( 'order', 'invalid' );
-
+			$result->errors()->add( 'order', Global_Classes_Errors::ORDER_INVALID );
 			return $result;
 		}
 
@@ -85,15 +81,13 @@ class Global_Classes_Parser {
 			$sanitized_item = $item_result->unwrap();
 
 			if ( $item_id !== $sanitized_item['id'] ) {
-				$result->errors()->add( "$item_id.id", 'mismatching_value' );
-
+				$result->errors()->add( "$item_id.id", Global_Classes_Errors::ITEM_ID_MISMATCH );
 				continue;
 			}
 
 			if ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
 				if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
-					$result->errors()->add( "$item_id.id", 'duplicated_class_label' );
-
+					$result->errors()->add( "$item_id", Global_Classes_Errors::DUPLICATED_LABEL );
 					continue;
 				}
 			}
@@ -111,16 +105,16 @@ class Global_Classes_Parser {
 		$items = Collection::make( $items );
 
 		$order = Collection::make( $order )
-			->filter( fn( $item ) => is_string( $item ) )
-			->unique();
+		                   ->filter( fn( $item ) => is_string( $item ) )
+		                   ->unique();
 
 		$existing_ids = $items->keys();
 
 		$excess_ids = $order->diff( $existing_ids );
 		$missing_ids = $existing_ids->diff( $order );
 
-		$excess_ids->each( fn( $id ) => $result->errors()->add( $id, 'excess' ) );
-		$missing_ids->each( fn( $id ) => $result->errors()->add( $id, 'missing' ) );
+		$excess_ids->each( fn( $id ) => $result->errors()->add( $id, Global_Classes_Errors::ORDER_EXCESS_ID ) );
+		$missing_ids->each( fn( $id ) => $result->errors()->add( $id, Global_Classes_Errors::ORDER_MISSING_ID ) );
 
 		return $result->is_valid()
 			? $result->wrap( $order->values() )

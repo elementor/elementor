@@ -1,3 +1,5 @@
+import * as React from 'react';
+import { openDialog } from '@elementor/editor-global-dialog';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient, type ApiContext } from './api';
@@ -9,22 +11,27 @@ type Options = {
 
 export async function saveGlobalClasses( { context }: Options ) {
 	const state = selectData( getState() );
-
-	if ( context === 'preview' ) {
-		await apiClient.saveDraft( {
-			items: state.items,
-			order: state.order,
-			changes: calculateChanges( state, selectPreviewInitialData( getState() ) ),
-		} );
-	} else {
-		await apiClient.publish( {
+	const apiAction = context === 'preview' ? apiClient.saveDraft : apiClient.publish;
+	try {
+		await apiAction( {
 			items: state.items,
 			order: state.order,
 			changes: calculateChanges( state, selectFrontendInitialData( getState() ) ),
 		} );
-	}
+	} catch ( e ) {
+		const result = await openDialog( {
+			title: 'Confirm Delete',
+			dialogType: 'error',
+			content: <div>SUPPPPPPPPPPPPPP</div>,
+			actions: [
+				{ text: 'Cancel', type: 'secondary', value: 'C' },
+				{ text: 'Delete', type: 'primary', value: 'D' },
+			],
+		} );
+		console.log( { result } );
 
-	dispatch( slice.actions.reset( { context } ) );
+		console.error( 'ERROR', { e } );
+	}
 }
 
 function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {
