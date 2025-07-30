@@ -43,7 +43,7 @@ class Hooks {
 				return Style_Schema::create_union_with_variable_type( $prop_type, Color_Variable_Prop_Type::class );
 			}
 
-			if ( $prop_type instanceof String_Prop_Type && $key === 'font-family' ) {
+			if ( $prop_type instanceof String_Prop_Type && 'font-family' === $key ) {
 				return Style_Schema::create_union_with_variable_type( $prop_type, Font_Variable_Prop_Type::class );
 			}
 
