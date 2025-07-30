@@ -161,13 +161,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
 			checkbox.checked = isChecked;
 			const templateId = checkbox.dataset.template_id;
+			const type = checkbox.dataset.type;
 			const parentDiv = checkbox.closest( '.elementor-template-library-template' );
 
 			if ( isChecked ) {
-				elementor.templates.addBulkSelectionItem( templateId );
+				elementor.templates.addBulkSelectionItem( templateId, type );
 				parentDiv?.classList.add( 'bulk-selected-item' );
 			} else {
-				elementor.templates.removeBulkSelectionItem( templateId );
+				elementor.templates.removeBulkSelectionItem( templateId, type );
 				parentDiv?.classList.remove( 'bulk-selected-item' );
 			}
 		} );
