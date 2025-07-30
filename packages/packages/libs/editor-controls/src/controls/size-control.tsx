@@ -165,7 +165,9 @@ export const SizeControl = createControl(
 		useEffect( () => {
 			const newState = createStateFromSizeProp(
 				sizeValue,
-				state.unit === 'custom' ? state.unit : actualDefaultUnit
+				state.unit === 'custom' ? state.unit : actualDefaultUnit,
+				'',
+				state.custom
 			);
 			const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
 			const mergedStates = {
@@ -189,7 +191,7 @@ export const SizeControl = createControl(
 		}, [ sizeValue ] );
 
 		useEffect( () => {
-			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit );
+			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit, '', state.custom );
 
 			if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
 				setState( newState );
@@ -238,7 +240,8 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 function createStateFromSizeProp(
 	sizeValue: SizeValue | null,
 	defaultUnit: Unit | ExtendedOption,
-	defaultSize: string | number = ''
+	defaultSize: string | number = '',
+	customState: string = ''
 ): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
 	const size = sizeValue?.size ?? defaultSize;
@@ -248,7 +251,7 @@ function createStateFromSizeProp(
 			! isUnitExtendedOption( unit ) && ! isNaN( Number( size ) ) && ( size || size === 0 )
 				? Number( size )
 				: DEFAULT_SIZE,
-		custom: unit === 'custom' ? String( size ) : '',
+		custom: unit === 'custom' ? String( size ) : customState,
 		unit,
 	};
 }
