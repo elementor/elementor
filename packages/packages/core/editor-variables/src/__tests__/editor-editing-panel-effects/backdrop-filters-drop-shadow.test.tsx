@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { screen } from '@testing-library/react';
+import { FilterRepeaterControl } from '@elementor/editor-controls';
 import {
+	backdropFilterPropTypeUtil,
 	cssFilterFunctionPropUtil,
 	dropShadowFilterPropTypeUtil,
-	backdropFilterPropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
-import { FilterRepeaterControl } from '@elementor/editor-controls';
+import { screen } from '@testing-library/react';
 
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 
