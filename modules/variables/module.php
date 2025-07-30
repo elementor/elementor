@@ -61,7 +61,7 @@ class Module extends BaseModule {
 	}
 
 
-	public function get_variables_registry(): Variable_Types_Registry {
+	public function get_variable_types_registry(): Variable_Types_Registry {
 		return $this->variable_types_registry;
 	}
 }

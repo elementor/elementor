@@ -171,7 +171,7 @@ class Rest_Api {
 	}
 
 	public function is_valid_variable_type( $type ) {
-		$allowed_types = array_keys( Variables_Module::instance()->get_variables_registry()->all() );
+		$allowed_types = array_keys( Variables_Module::instance()->get_variable_types_registry()->all() );
 
 		return in_array( $type, $allowed_types, true );
 	}
