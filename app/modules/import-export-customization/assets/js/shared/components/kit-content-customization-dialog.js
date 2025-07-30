@@ -112,13 +112,11 @@ export function KitContentCustomizationDialog( {
 						<ListSettingSection
 							settingKey="pages"
 							title={ __( 'Site pages', 'elementor' ) }
-							onSettingChange={ ( selectedPages, isGroupControl ) => {
-								if ( isGroupControl ) {
-									const isAllselected = selectedPages.length === settings.pages.length;
-									unselectedValues.current = isAllselected
-										? unselectedValues.current = unselectedValues.current.filter( ( val ) => 'pages' !== val )
-										: [ ...unselectedValues.current, 'pages' ];
-								}
+							onSettingChange={ ( selectedPages ) => {
+								const isAllselected = selectedPages.length === pageOptions.length;
+								unselectedValues.current = isAllselected
+									? unselectedValues.current = unselectedValues.current.filter( ( val ) => 'pages' !== val )
+									: [ ...unselectedValues.current, 'pages' ];
 
 								handleSettingsChange( 'pages', selectedPages );
 							} }
@@ -143,21 +141,17 @@ export function KitContentCustomizationDialog( {
 							<ListSettingSection
 								settingKey="customPostTypes"
 								title={ __( 'Custom post types', 'elementor' ) }
-								onSettingChange={ ( selectedCustomPostTypes, isGroupControl ) => {
+								onSettingChange={ ( selectedCustomPostTypes ) => {
 									const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
+									const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
 
-									if ( isGroupControl ) {
-										const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
-										unselectedValues.current = isAllChecked
-											? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
-											: [ ...filteredUnselectedValues, 'customPostTypes' ];
-									} else {
-										unselectedValues.current = [
+									unselectedValues.current = isAllChecked
+										? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
+										: [
 											...filteredUnselectedValues,
 											...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
 											'customPostTypes',
 										];
-									}
 									handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
 								} }
 								settings={ settings.customPostTypes }
