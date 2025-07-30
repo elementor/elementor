@@ -66,12 +66,15 @@ export default function RecentlyEdited() {
 					const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 					if ( config ) {
-						extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.documentNameDropdown, {
-							location: config.locations.topBar,
-							secondaryLocation: config.secondaryLocations.documentNameDropdown,
-							trigger: config.triggers.dropdownClick,
-							element: config.elements.dropdown,
-						} );
+						extendedWindow.elementorCommon.eventsManager.dispatchEvent(
+							config.names.topBar.documentNameDropdown,
+							{
+								location: config.locations.topBar,
+								secondaryLocation: config.secondaryLocations.documentNameDropdown,
+								trigger: config.triggers.dropdownClick,
+								element: config.elements.dropdown,
+							}
+						);
 					}
 
 					buttonProps.onClick( e );

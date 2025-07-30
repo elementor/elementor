@@ -7,8 +7,8 @@ class Admin {
 		if ( 'elementor-tools' === urlParams.get( 'page' ) ) {
 			this.sendPageToolsViewedEvent();
 
-			navigation.addEventListener( 'navigate', ( event ) => {
-				const location = new URL( event.destination.url ).hash.slice( 1 );
+			elementorAdmin.elements.$settingsTabs.on( 'focus', () => {
+				const location = window.location.hash.slice( 1 );
 
 				this.maybeSendImportExportLocationEvent( location );
 			} );
