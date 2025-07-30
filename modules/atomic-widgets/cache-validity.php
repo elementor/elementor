@@ -56,6 +56,7 @@ class Cache_Validity {
 		}
 
 		$current_item['state'] = false;
+		$current_item['meta'] = null;
 
 		$this->invalidate_nested_items( $current_item );
 
