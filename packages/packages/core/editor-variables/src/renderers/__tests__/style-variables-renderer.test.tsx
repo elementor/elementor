@@ -2,7 +2,7 @@ import * as React from 'react';
 import { __privateUseListenTo as useListenTo } from '@elementor/editor-v1-adapters';
 import { render, screen } from '@testing-library/react';
 
-import { styleVariablesRepository } from '../../style-variables-repository';
+import { styleVariablesRepository } from '../../style-repository/style-variables-repository';
 import { StyleVariablesRenderer } from '../style-variables-renderer';
 
 // Mock dependencies
@@ -17,7 +17,7 @@ jest.mock( '@elementor/ui', () => ( {
 	Portal: jest.fn( ( { children } ) => <div data-testid="portal">{ children }</div> ),
 } ) );
 
-jest.mock( '../../style-variables-repository', () => ( {
+jest.mock( '../../style-repository/style-variables-repository', () => ( {
 	styleVariablesRepository: {
 		subscribe: jest.fn( () => unsubscribeMock ),
 	},

@@ -16,7 +16,7 @@ type Props = {
 };
 
 export const AssignedVariable = ( { variable, propTypeKey }: Props ) => {
-	const { fallbackPropTypeUtil, startIcon, propTypeUtil } = getVariableType( propTypeKey );
+	const { fallbackPropTypeUtil, startIcon, propTypeUtil, beforeUnlink } = getVariableType( propTypeKey );
 	const { setValue } = useBoundProp();
 	const anchorRef = useRef< HTMLDivElement >( null );
 
@@ -27,7 +27,10 @@ export const AssignedVariable = ( { variable, propTypeKey }: Props ) => {
 	} );
 
 	const unlinkVariable = () => {
-		const fallbackValue = fallbackPropTypeUtil.create( variable.value );
+		const fallbackValue = fallbackPropTypeUtil.create(
+			beforeUnlink ? beforeUnlink( variable.value ) : variable.value
+		);
+
 		setValue( fallbackValue );
 	};
 

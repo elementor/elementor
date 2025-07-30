@@ -2,6 +2,10 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
@@ -27,7 +31,8 @@ class Hooks {
 			->filter_for_style_schema()
 			->register_css_renderer()
 			->register_fonts()
-			->register_api_endpoints();
+			->register_api_endpoints()
+			->enhance_prop_types();
 
 		return $this;
 	}
@@ -47,6 +52,20 @@ class Hooks {
 		} );
 
 		return $this;
+	}
+
+	private function enhance_prop_types() {
+		add_filter( 'elementor/variables/enhance_prop_type', function( $prop_type, $key ) {
+			if ( $prop_type instanceof Color_Prop_Type ) {
+				return Style_Schema::create_union_with_variable_type( $prop_type, Color_Variable_Prop_Type::class );
+			}
+
+			if ( $prop_type instanceof String_Prop_Type && $key === 'font-family' ) {
+				return Style_Schema::create_union_with_variable_type( $prop_type, Font_Variable_Prop_Type::class );
+			}
+
+			return $prop_type;
+		}, 10, 2 );
 	}
 
 	private function filter_for_style_schema() {

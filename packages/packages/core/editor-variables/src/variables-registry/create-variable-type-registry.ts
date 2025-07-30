@@ -12,7 +12,10 @@ type ValueFieldProps = {
 	onChange: ( value: string ) => void;
 };
 
-type FallbackPropTypeUtil = PropTypeUtil< string, string > | PropTypeUtil< string, string | null >;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyType = any;
+
+type FallbackPropTypeUtil = PropTypeUtil< string, AnyType >;
 
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
@@ -21,6 +24,7 @@ type VariableTypeOptions = {
 	variableType: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
+	beforeUnlink?: ( value: string ) => AnyType;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -34,6 +38,7 @@ export function createVariableTypeRegistry() {
 		valueField,
 		propTypeUtil,
 		variableType,
+		beforeUnlink,
 		fallbackPropTypeUtil,
 	}: VariableTypeOptions ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
@@ -44,6 +49,7 @@ export function createVariableTypeRegistry() {
 			icon,
 			startIcon,
 			valueField,
+			beforeUnlink,
 			propTypeUtil,
 			variableType,
 			fallbackPropTypeUtil,

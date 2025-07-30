@@ -1,6 +1,6 @@
-import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
-import { enqueueFont } from './sync/enqueue-font';
-import { type StyleVariables, type Variable } from './types';
+import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
+import { enqueueFont } from '../sync/enqueue-font';
+import { type StyleVariables, type Variable } from '../types';
 
 type VariablesChangeCallback = ( variables: StyleVariables ) => void;
 type Variables = Record< string, Variable >;
