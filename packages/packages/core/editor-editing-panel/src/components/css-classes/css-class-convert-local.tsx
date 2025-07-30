@@ -10,13 +10,15 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 
 export const { Slot: CssClassConvertSlot, inject: injectIntoCssClassConvert } = createLocation< {
-	styleDef: StyleDefinition;
+	styleDef: StyleDefinition | null;
 	successCallback: ( newId: string ) => void;
+	canConvert?: boolean;
 } >();
 
 type OwnProps = {
-	styleDef: StyleDefinition;
+	styleDef: StyleDefinition | null;
 	closeMenu: () => void;
+	canConvert: boolean;
 };
 
 /**
@@ -35,14 +37,22 @@ export const CssClassConvert = ( props: OwnProps ) => {
 			newId,
 			elementId,
 			classesProp: currentClassesProp,
-			styleDef: props.styleDef,
+			// at this point styleDef is always set, otherwise the menu would not appear
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			styleDef: props.styleDef!,
 		} );
 		saveValue( newId );
 		setActiveId( newId );
 		props.closeMenu();
 	};
 
-	return <CssClassConvertSlot styleDef={ props.styleDef } successCallback={ successCallback } />;
+	return (
+		<CssClassConvertSlot
+			canConvert={ !! props.canConvert }
+			styleDef={ props.styleDef }
+			successCallback={ successCallback }
+		/>
+	);
 };
 
 type OnPromoteSuccessOpts = {

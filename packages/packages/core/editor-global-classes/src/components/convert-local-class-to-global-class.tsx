@@ -10,13 +10,14 @@ import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 type OwnProps = {
 	successCallback: ( _: string ) => void;
 	styleDef: StyleDefinition;
+	canConvert: boolean;
 };
 
 export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 	const localStyleData = props.styleDef;
 
 	const handlePromote = () => {
-		const classNamePrefix = `local-copy-`;
+		const classNamePrefix = `converted-class-`;
 		let i = 1;
 		let isValid = false;
 		let newClassName = ``;
@@ -35,6 +36,7 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 	return (
 		<>
 			<MenuListItem
+				disabled={ ! props.canConvert }
 				onClick={ handlePromote }
 				dense
 				sx={ {
