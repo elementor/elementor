@@ -21,15 +21,6 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		remove_all_actions( 'elementor/post/render' );
 	}
 
-	public function tearDown(): void {
-		parent::tearDown();
-
-		remove_action( 'elementor/post/render', [ $this, 'track_post_render' ], 5 );
-
-		$this->hook_call_count = 0;
-		$this->rendered_post_ids = [];
-	}
-
 	/**
 	 * Setup test hooks to track elementor/post/render calls
 	 */
@@ -124,8 +115,6 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 	 */
 	public function test_atomic_component_styles_triggers_hooks_for_unique_component_ids() {
 		// Arrange
-		$this->skipWithoutAtomic();
-
 		$atomic_component_styles = new Atomic_Component_Styles();
 		$atomic_component_styles->register_hooks();
 
@@ -147,8 +136,6 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 	 */
 	public function test_atomic_component_styles_deduplicates_identical_component_ids() {
 		// Arrange
-		$this->skipWithoutAtomic();
-
 		$atomic_component_styles = new Atomic_Component_Styles();
 		$atomic_component_styles->register_hooks();
 
@@ -176,14 +163,5 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 
 		$atomic_component_styles = new Atomic_Component_Styles();
 		$this->assertInstanceOf( Atomic_Component_Styles::class, $atomic_component_styles, 'Should be able to instantiate Atomic_Component_Styles' );
-	}
-
-	/**
-	 * Skip test if Atomic Widgets is not available
-	 */
-	private function skipWithoutAtomic() {
-		if ( ! class_exists( 'Elementor\\Modules\\AtomicWidgets\\Styles\\Atomic_Component_Styles' ) ) {
-			$this->markTestSkipped( 'Atomic Widgets module not active or Atomic_Component_Styles class not found' );
-		}
 	}
 }
