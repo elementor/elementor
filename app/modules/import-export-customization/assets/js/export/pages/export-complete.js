@@ -61,7 +61,7 @@ export default function ExportComplete() {
 			let postTypes = '';
 
 			if ( includes.includes( 'postTypes' ) ) {
-				postTypes = analytics?.customization.content?.includes( 'customPostTypes' ) ? 'partial' : 'all';
+				postTypes = analytics?.customization?.content?.includes( 'customPostTypes' ) ? 'partial' : 'all';
 			}
 
 			let plugins = '';
@@ -77,10 +77,10 @@ export default function ExportComplete() {
 				kit_export_plugins: includes.includes( 'plugins' ),
 				kit_export_deselected: analytics?.customization,
 				kit_description: Boolean( kitInfo.description ),
-				kit_page_count: Object.values( exportedData.manifest.content.page ).length,
-				kit_post_type_count: Object.keys( exportedData.manifest.content.page )
-					.filter( ( key ) => ! elementorAppConfig.builtinWpPostTypes.includes( key ) ).length,
-				kit_post_count: Object.values( exportedData.manifest.content.post ).length,
+				kit_page_count: exportedData?.manifest?.content?.page ? Object.values( exportedData?.manifest?.content?.page ).length : 0,
+				kit_post_type_count: exportedData?.manifest?.content ? Object.keys( exportedData?.manifest?.content )
+					.filter( ( key ) => ! elementorAppConfig?.builtinWpPostTypes?.includes( key ) ).length : 0,
+				kit_post_count: exportedData?.manifest?.content?.post ? Object.values( exportedData?.manifest?.content?.post ).length : 0,
 				pages,
 				postTypes,
 				plugins,
