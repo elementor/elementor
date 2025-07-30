@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
+use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'e-variables';
 	const EXPERIMENT_NAME = 'e_variables';
+
+	private Variable_Types_Registry $variable_types_registry;
 
 	public function get_name() {
 		return self::MODULE_NAME;
@@ -42,10 +45,23 @@ class Module extends BaseModule {
 		}
 
 		$this->hooks()->register();
+
+		add_action( 'init', [ $this, 'init_variable_types_registry' ] );
 	}
 
 	private function is_experiment_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME )
 			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
+	}
+
+	public function init_variable_types_registry(): void {
+		$this->variable_types_registry = new Variable_Types_Registry();
+
+		do_action( 'elementor/variables/register', $this->variable_types_registry );
+	}
+
+
+	public function get_variable_types_registry(): Variable_Types_Registry {
+		return $this->variable_types_registry;
 	}
 }
