@@ -26,8 +26,10 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		
 		// Delete all options that start with the cache key prefix
 		$wpdb->query(
-			"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
-			'elementor_atomic_cache_validity-%'
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+				'elementor_atomic_cache_validity-%'
+			)
 		);
 		
 		// Clear the object cache to ensure options are truly cleared
