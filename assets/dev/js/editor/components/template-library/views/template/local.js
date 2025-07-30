@@ -182,10 +182,10 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		event.stopPropagation();
 
 		if ( event?.target?.checked ) {
-			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id );
+			elementor.templates.addBulkSelectionItem( event.target.dataset.template_id, event.target.dataset.type );
 			this.$el.addClass( 'bulk-selected-item' );
 		} else {
-			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id );
+			elementor.templates.removeBulkSelectionItem( event.target.dataset.template_id, event.target.dataset.type );
 			this.$el.removeClass( 'bulk-selected-item' );
 		}
 
