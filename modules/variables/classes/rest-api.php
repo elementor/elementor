@@ -2,19 +2,17 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Exception;
 use WP_Error;
 use WP_REST_Response;
 use WP_REST_Request;
 use WP_REST_Server;
-
 use Elementor\Plugin;
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
+use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -173,10 +171,9 @@ class Rest_Api {
 	}
 
 	public function is_valid_variable_type( $type ) {
-		return in_array( $type, [
-			Color_Variable_Prop_Type::get_key(),
-			Font_Variable_Prop_Type::get_key(),
-		], true );
+		$allowed_types = array_keys( Variables_Module::instance()->get_variable_types_registry()->all() );
+
+		return in_array( $type, $allowed_types, true );
 	}
 
 	public function is_valid_variable_label( $label ) {
