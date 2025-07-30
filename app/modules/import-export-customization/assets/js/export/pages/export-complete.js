@@ -86,7 +86,7 @@ export default function ExportComplete() {
 				plugins,
 			} );
 		}
-	}, [ includes, exportedData.manifest, analytics?.customization, kitInfo.description ] );
+	}, [ includes, exportedData?.manifest, analytics?.customization, kitInfo.description ] );
 
 	const handleDone = () => {
 		window.top.location = elementorAppConfig.admin_url;
