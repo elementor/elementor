@@ -12,4 +12,4 @@ export const transformOriginPropTypeUtil = createPropUtils(
 	} )
 );
 
-export type TransformOriginPropValue = z.infer< typeof transformOriginPropTypeUtil.schema >; 
+export type TransformOriginPropValue = z.infer< typeof transformOriginPropTypeUtil.schema >;

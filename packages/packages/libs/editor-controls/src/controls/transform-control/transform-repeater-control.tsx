@@ -10,7 +10,7 @@ import { createControl } from '../../create-control';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
-import { TransformOriginControl } from './transform-origin-control';
+import { TransformBaseControl } from './transform-base-control';
 import { initialTransformValue } from './types';
 
 export const TransformRepeaterControl = createControl( () => {
@@ -50,7 +50,7 @@ export const TransformRepeaterControl = createControl( () => {
 				>
 					{ __( 'Base Transform', 'elementor' ) }
 				</Button>
-				<TransformOriginControl popupState={ popupState } anchorRef={ buttonRef } />
+				<TransformBaseControl popupState={ popupState } anchorRef={ buttonRef } />
 			</Stack>
 		</PropProvider>
 	);
