@@ -15,53 +15,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Style_Schema {
-	private array $processing_identifiers = [];
-
 	public function augment( array $schema ): array {
-		$this->processing_identifiers = [];
-
 		foreach ( $schema as $key => $prop_type ) {
-			$schema[ $key ] = $this->update( $prop_type, $key );
+			$schema[ $key ] = $this->update( $prop_type );
+		}
+
+		if ( isset( $schema['font-family'] ) ) {
+			$schema['font-family'] = $this->update_font_family( $schema['font-family'] );
 		}
 
 		return $schema;
 	}
 
-	private function update( $prop_type, $key = null ) {
-		$prop_type_id = $this->get_prop_type_identifier( $prop_type, $key );
-
-		if ( in_array( $prop_type_id, $this->processing_identifiers, true ) ) {
-			return $prop_type;
+	private function update( $prop_type ) {
+		if ( $prop_type instanceof Color_Prop_Type ) {
+			return $this->update_color( $prop_type );
 		}
 
-		$this->processing_identifiers[] = $prop_type_id;
-
-		$enhanced = apply_filters( 'elementor/variables/enhance_prop_type', $prop_type, $key );
-
-		$prop_type = $enhanced ?? $prop_type;
-		$result = $prop_type;
-
 		if ( $prop_type instanceof Union_Prop_Type ) {
-			$result = $this->update_union( $prop_type );
+			return $this->update_union( $prop_type );
 		}
 
 		if ( $prop_type instanceof Object_Prop_Type ) {
-			$result = $this->update_object( $prop_type );
+			return $this->update_object( $prop_type );
 		}
 
 		if ( $prop_type instanceof Array_Prop_Type ) {
-			$result = $this->update_array( $prop_type );
+			return $this->update_array( $prop_type );
 		}
 
-		array_pop( $this->processing_identifiers );
-
-		return $result;
+		return $prop_type;
 	}
 
-	private function get_prop_type_identifier( $prop_type, $key = null ): string {
-		$id = get_class( $prop_type ) . ':' . spl_object_hash( $prop_type );
+	private function update_font_family( String_Prop_Type $prop_type ): Union_Prop_Type {
+		return Union_Prop_Type::create_from( $prop_type )
+			->add_prop_type( Font_Variable_Prop_Type::make() );
+	}
 
-		return $key ? "$id:$key" : $id;
+	private function update_color( Color_Prop_Type $color_prop_type ): Union_Prop_Type {
+		return Union_Prop_Type::create_from( $color_prop_type )
+			->add_prop_type( Color_Variable_Prop_Type::make() );
 	}
 
 	private function update_array( Array_Prop_Type $array_prop_type ): Array_Prop_Type {
@@ -96,19 +89,5 @@ class Style_Schema {
 		}
 
 		return $new_union;
-	}
-
-
-	public static function create_union_with_variable_type( $original, string $variable_class ) {
-		if ( ! class_exists( $variable_class ) ) {
-			throw new \InvalidArgumentException( esc_html( "Class $variable_class does not exist." ) );
-		}
-
-		if ( ! method_exists( $variable_class, 'make' ) ) {
-			throw new \RuntimeException( esc_html( "Class $variable_class does not have a static make() method." ) );
-		}
-
-		return Union_Prop_Type::create_from( $original )
-			->add_prop_type( $variable_class::make() );
 	}
 }

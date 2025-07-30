@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Plugin;
@@ -15,6 +16,7 @@ use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -32,23 +34,18 @@ class Hooks {
 			->register_css_renderer()
 			->register_fonts()
 			->register_api_endpoints()
-			->enhance_prop_types();
+			->register_variable_types();
 
 		return $this;
 	}
 
-	private function enhance_prop_types() {
-		add_filter( 'elementor/variables/enhance_prop_type', function( $prop_type, $key ) {
-			if ( $prop_type instanceof Color_Prop_Type ) {
-				return Style_Schema::create_union_with_variable_type( $prop_type, Color_Variable_Prop_Type::class );
-			}
+	private function register_variable_types() {
+		add_action( 'elementor/variables/register', function ( Variable_Types_Registry $registry ) {
+			$registry->register( Color_Variable_Prop_Type::get_key(), new Color_Variable_Prop_Type() );
+			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
+		} );
 
-			if ( $prop_type instanceof String_Prop_Type && 'font-family' === $key ) {
-				return Style_Schema::create_union_with_variable_type( $prop_type, Font_Variable_Prop_Type::class );
-			}
-
-			return $prop_type;
-		}, 10, 2 );
+		return $this;
 	}
 
 	private function register_packages() {
