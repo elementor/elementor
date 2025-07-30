@@ -228,7 +228,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.restoreRemovedItems = function() {
-		this.onUndoDelete( 1 < lastDeletedItems.size);
+		this.onUndoDelete( 1 < lastDeletedItems.size );
 	};
 
 	this.getSourceSelection = function() {
@@ -1219,18 +1219,18 @@ const TemplateLibraryManager = function() {
 
 	this.getUniqueBulkSelectionItemsTypesEventLabel = function() {
 		const types = [ ...new Set( bulkSelectedItemsTypes ) ];
-		
+
 		const hasFolders = types.includes( 'folder' );
-		const hasTemplates = types.some( type => type !== 'folder' );
-		
+		const hasTemplates = types.some( ( type ) => type !== 'folder' );
+
 		if ( hasFolders && hasTemplates ) {
 			return 'both';
 		}
-		
+
 		if ( hasFolders ) {
 			return 'folder';
 		}
-		
+
 		return 'template';
 	};
 
@@ -1273,7 +1273,7 @@ const TemplateLibraryManager = function() {
 
 						self.layout.updateViewCollection( self.filterTemplates() );
 
-						let tempBulkSelectedItemsTypes = bulkSelectedItemsTypes;
+						const tempBulkSelectedItemsTypes = bulkSelectedItemsTypes;
 
 						self.clearBulkSelectionItems();
 
