@@ -27,19 +27,19 @@ export const StyleTabSection = ( { section, fields = [] }: Props ) => {
 	const { customCss } = useCustomCss();
 	const { provider } = useStyle();
 
-        const getCssIndicator = React.useCallback(
-          ( isOpen: boolean ) => {
-            if ( name !== 'Custom CSS' || isOpen ) {
-              return null;
-            }
+	const getCssIndicator = React.useCallback(
+		( isOpen: boolean ) => {
+			if ( name !== 'Custom CSS' || isOpen ) {
+				return null;
+			}
 
-            const hasValue = Boolean( customCss?.raw?.trim() );
-            return hasValue ? (
-              <StyleIndicator getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined } />
-            ) : null;
-          },
-          [ name, customCss?.raw, provider ]
-        );
+			const hasValue = Boolean( customCss?.raw?.trim() );
+			return hasValue ? (
+				<StyleIndicator getColor={ provider ? getStylesProviderThemeColor( provider.getKey() ) : undefined } />
+			) : null;
+		},
+		[ name, customCss?.raw, provider ]
+	);
 
 	const titleEnd = name === 'Custom CSS' ? getCssIndicator : getStylesInheritanceIndicators( fields );
 
