@@ -9,6 +9,8 @@ import { StyleVariablesRenderer } from './renderers/style-variables-renderer';
 import { registerRepeaterInjections } from './repeater-injections';
 import { service as variablesService } from './service';
 import { hasVariableType } from './variables-registry/variable-type-registry';
+import { __registerPanel as registerPanel } from '@elementor/editor-panels';
+import { panel } from './components/variables-manager/variables-manager-panel';
 
 const { registerPopoverAction } = controlActionsMenu;
 
@@ -32,6 +34,8 @@ export function init() {
 		id: 'canvas-style-variables-render',
 		component: StyleVariablesRenderer,
 	} );
+
+	registerPanel( panel );
 }
 
 function hasAssignedVariable( propValue: PropValue ) {

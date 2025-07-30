@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'e-variables';
 	const EXPERIMENT_NAME = 'e_variables';
+	const EXPERIMENT_SETTINGS_NAME = 'e_variables_settings';
 
 	public function get_name() {
 		return self::MODULE_NAME;
@@ -29,19 +30,31 @@ class Module extends BaseModule {
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 		];
 	}
-
+	
 	private function hooks() {
 		return new Hooks();
 	}
-
+	
 	public function __construct() {
 		parent::__construct();
-
+		
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
-
+		$this->register_features();
+		
 		$this->hooks()->register();
+	}
+
+	private function register_features() {
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_SETTINGS_NAME,
+			'title' => esc_html__( 'Variables Settings', 'elementor' ),
+			'description' => esc_html__( 'Enable variables settings. (For this feature to work - Variables must be active)', 'elementor' ),
+			'hidden' => true,
+			'default' => ExperimentsManager::STATE_INACTIVE,
+			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+		]);
 	}
 
 	private function is_experiment_active(): bool {

@@ -9,12 +9,15 @@ import { type Variable } from '../types';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
 import { VariablesSelection } from './variables-selection';
+import { usePanelActions } from './variables-manager/variables-manager-panel';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 const VIEW_LIST = 'list';
 const VIEW_ADD = 'add';
 const VIEW_EDIT = 'edit';
+const VIEW_SETTINGS = 'settings';
 
-type View = typeof VIEW_LIST | typeof VIEW_ADD | typeof VIEW_EDIT;
+type View = typeof VIEW_LIST | typeof VIEW_ADD | typeof VIEW_EDIT | typeof VIEW_SETTINGS;
 
 type Props = {
 	closePopover: () => void;
@@ -25,6 +28,10 @@ type Props = {
 export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedVariable }: Props ) => {
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
+	const { open } = usePanelActions();
+	const onSettingsAvailable = isExperimentActive( 'e_variables_settings' ) ? () => {
+		open();
+	} : undefined;
 
 	return (
 		<VariableTypeProvider propTypeKey={ propTypeKey }>
@@ -37,6 +44,7 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 					setEditId,
 					setCurrentView,
 					closePopover,
+					onSettings: onSettingsAvailable
 				} ) }
 			</PopoverContentRefContextProvider>
 		</VariableTypeProvider>
@@ -51,6 +59,7 @@ type ViewProps = {
 	setEditId: ( id: string ) => void;
 	setCurrentView: ( stage: View ) => void;
 	closePopover: () => void;
+	onSettings?: () => void;
 };
 
 type Handlers = {
@@ -58,6 +67,7 @@ type Handlers = {
 	onGoBack?: () => void;
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
+	onSettings?: () => void;
 };
 
 function RenderView( props: ViewProps ): React.ReactNode {
@@ -85,6 +95,13 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		};
 	}
 
+	if ( userPermissions.canManageSettings() && props.onSettings ) {
+		handlers.onSettings = () => {
+			props.onSettings?.();
+			props.closePopover();
+		};
+	}
+
 	const handleSubmitOnEdit = () => {
 		if ( props?.selectedVariable?.key === props.editId ) {
 			handlers.onClose();
@@ -95,7 +112,7 @@ function RenderView( props: ViewProps ): React.ReactNode {
 
 	if ( VIEW_LIST === props.currentView ) {
 		return (
-			<VariablesSelection closePopover={ handlers.onClose } onAdd={ handlers.onAdd } onEdit={ handlers.onEdit } />
+			<VariablesSelection closePopover={ handlers.onClose } onAdd={ handlers.onAdd } onEdit={ handlers.onEdit } onSettings={ handlers.onSettings } />
 		);
 	}
 
