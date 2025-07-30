@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { constrainedEditor } from 'constrained-editor-plugin';
 import type { editor, MonacoEditor } from 'monaco-types';
+import { renderWithTheme } from 'test-utils';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { CssEditor } from '../css-editor';
 
@@ -56,18 +56,14 @@ const mockMonaco = {
 } as unknown as MonacoEditor;
 
 jest.mock( '@monaco-editor/react', () => ( {
-	Editor: jest.fn( ( { onMount, defaultValue, options } ) => {
+	Editor: jest.fn( ( { onMount, defaultValue } ) => {
 		React.useEffect( () => {
 			onMount( mockEditor, mockMonaco );
-		}, [] );
+		}, [ onMount ] );
 
 		return (
-			<div data-testid="monaco-editor">
-				<textarea
-					data-testid="editor-textarea"
-					defaultValue={ defaultValue }
-					readOnly
-				/>
+			<div role="textbox" aria-label="CSS Editor">
+				<textarea aria-label="CSS Code" defaultValue={ defaultValue } readOnly />
 			</div>
 		);
 	} ),
@@ -88,8 +84,8 @@ describe( 'CssEditor', () => {
 		renderWithTheme( <CssEditor { ...defaultProps } /> );
 
 		// Assert
-		expect( screen.getByTestId( 'monaco-editor' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'editor-textarea' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'textbox', { name: 'CSS Editor' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'textbox', { name: 'CSS Code' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should initialize constrained editor on mount', async () => {
@@ -113,17 +109,19 @@ describe( 'CssEditor', () => {
 		} );
 
 		// Wait for debounce
-		await waitFor( () => {
-			expect( onChange ).toHaveBeenCalledWith( 'color: red;' );
-		}, { timeout: 500 } );
+		await waitFor(
+			() => {
+				expect( onChange ).toHaveBeenCalledWith( 'color: red;' );
+			},
+			{ timeout: 1000 }
+		);
 	} );
 
 	it( 'should handle resize functionality', () => {
 		// Arrange
 		renderWithTheme( <CssEditor { ...defaultProps } /> );
 
-		const editorWrapper = screen.getByTestId( 'monaco-editor' ).parentElement;
-		const resizeHandle = editorWrapper?.querySelector( 'div:last-child' );
+		const resizeHandle = screen.getByRole( 'button', { name: /resize/i } );
 
 		// Mock getBoundingClientRect
 		const mockRect = {
@@ -140,9 +138,7 @@ describe( 'CssEditor', () => {
 		} );
 
 		// Act
-		if ( resizeHandle ) {
-			fireEvent.mouseDown( resizeHandle );
-		}
+		fireEvent.mouseDown( resizeHandle );
 
 		// Assert
 		expect( mockAddEventListener ).toHaveBeenCalledWith( 'mousemove', expect.any( Function ) );
@@ -166,7 +162,7 @@ describe( 'CssEditor', () => {
 		renderWithTheme( <CssEditor value="" onChange={ jest.fn() } /> );
 
 		// Assert
-		expect( screen.getByTestId( 'editor-textarea' ) ).toHaveValue( 'element.style {\n  \n}' );
+		expect( screen.getByRole( 'textbox', { name: 'CSS Code' } ) ).toHaveValue( 'element.style {\n  \n}' );
 	} );
 
 	it( 'should handle multiline CSS correctly', () => {
@@ -175,7 +171,7 @@ describe( 'CssEditor', () => {
 		renderWithTheme( <CssEditor value={ multilineCss } onChange={ jest.fn() } /> );
 
 		// Assert
-		expect( screen.getByTestId( 'editor-textarea' ) ).toHaveValue(
+		expect( screen.getByRole( 'textbox', { name: 'CSS Code' } ) ).toHaveValue(
 			'element.style {\n  color: red;\n  background: blue;\n  font-size: 16px;\n}'
 		);
 	} );

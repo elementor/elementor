@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { constrainedEditor } from 'constrained-editor-plugin';
 import type { editor, MonacoEditor } from 'monaco-types';
+import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
 
@@ -21,6 +22,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const constrainedRef = React.useRef< ReturnType< typeof constrainedEditor > | null >( null );
 	const resizeRef = React.useRef< HTMLDivElement >( null );
 	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
+	const activeBreakpoint = useActiveBreakpoint();
 
 	const handleResizeMove = React.useCallback( ( e: MouseEvent ) => {
 		if ( ! resizeRef.current ) {
@@ -102,6 +104,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	return (
 		<EditorWrapper ref={ resizeRef }>
 			<Editor
+				key={ activeBreakpoint }
 				height="100%"
 				language="css"
 				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
@@ -119,7 +122,11 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 					fixedOverflowWidgets: true,
 				} }
 			/>
-			<ResizeHandle onMouseDown={ handleResizeStart } />
+			<ResizeHandle
+				onMouseDown={ handleResizeStart }
+				aria-label="Resize editor height"
+				title="Drag to resize editor height"
+			/>
 		</EditorWrapper>
 	);
 };

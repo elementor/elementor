@@ -13,7 +13,7 @@ export const EditorWrapper = styled( 'div' )`
 	}
 `;
 
-export const ResizeHandle = styled( 'div' )`
+export const ResizeHandle = styled( 'button' )`
 	position: absolute;
 	bottom: 0;
 	left: 0;
@@ -21,6 +21,8 @@ export const ResizeHandle = styled( 'div' )`
 	height: 6px;
 	cursor: ns-resize;
 	background: transparent;
+	border: none;
+	padding: 0;
 
 	&:hover {
 		background: rgba( 0, 0, 0, 0.05 );
