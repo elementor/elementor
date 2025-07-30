@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
@@ -27,7 +30,17 @@ class Hooks {
 			->filter_for_style_schema()
 			->register_css_renderer()
 			->register_fonts()
-			->register_api_endpoints();
+			->register_api_endpoints()
+			->register_variable_types();
+
+		return $this;
+	}
+
+	private function register_variable_types() {
+		add_action( 'elementor/variables/register', function ( Variable_Types_Registry $registry ) {
+			$registry->register( Color_Variable_Prop_Type::get_key(), new Color_Variable_Prop_Type() );
+			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
+		} );
 
 		return $this;
 	}
