@@ -101,14 +101,14 @@ class Style_Schema {
 
 	public static function create_union_with_variable_type( $original, string $variable_class ) {
 		if ( ! class_exists( $variable_class ) ) {
-			throw new \InvalidArgumentException( "Class $variable_class does not exist." );
+			throw new \InvalidArgumentException( esc_html( "Class $variable_class does not exist." ) );
 		}
 
 		if ( ! method_exists( $variable_class, 'make' ) ) {
-			throw new \RuntimeException( "Class $variable_class does not have a static make() method." );
+			throw new \RuntimeException( esc_html( "Class $variable_class does not have a static make() method." ) );
 		}
 
 		return Union_Prop_Type::create_from( $original )
-		    ->add_prop_type( $variable_class::make() );
+			->add_prop_type( $variable_class::make() );
 	}
 }
