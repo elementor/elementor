@@ -2,6 +2,12 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ExportComplete from 'elementor/app/modules/import-export-customization/assets/js/export/pages/export-complete';
 
+const mockNavigate = jest.fn();
+
+jest.mock( '@reach/router', () => ( {
+	useNavigate: () => mockNavigate,
+} ) );
+
 let mockExportContext = {
 	data: {
 		exportedData: {
@@ -70,6 +76,8 @@ describe( 'ExportComplete Component', () => {
 			value: { location: '' },
 			writable: true,
 		} );
+
+		mockNavigate.mockClear();
 	} );
 
 	afterEach( () => {
@@ -120,15 +128,12 @@ describe( 'ExportComplete Component', () => {
 		it( 'should handle View in Library button click', () => {
 			mockExportContext.data.kitInfo.source = 'cloud';
 
-			delete window.location;
-			window.location = { href: '' };
-
 			render( <ExportComplete /> );
 
 			const viewLibraryButton = screen.getByTestId( 'view-in-library-button' );
 			fireEvent.click( viewLibraryButton );
 
-			expect( window.location.href ).toBe( 'https://example.com/elementor#/kit-library/cloud' );
+			expect( mockNavigate ).toHaveBeenCalledWith( '/kit-library/cloud' );
 		} );
 
 		it( 'should show download link for file export', () => {

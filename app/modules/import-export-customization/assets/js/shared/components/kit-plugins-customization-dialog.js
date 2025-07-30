@@ -19,7 +19,7 @@ import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
 
 const REQUIRED_PLUGINS = [
-	'elementor/elementor.php',
+	'elementor/elementor',
 ];
 
 const ExternalLinkIcon = ( props ) => {
@@ -43,7 +43,24 @@ const ExternalLinkIcon = ( props ) => {
 };
 
 export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const { pluginsList, isLoading } = useKitPlugins( { open } );
+	const isImport = data.hasOwnProperty( 'uploadedData' );
+
+	const { pluginsList: fetchedPluginsList, isLoading: fetchIsLoading } = useKitPlugins( { open: open && ! isImport } );
+
+	const pluginsList = useMemo( () => {
+		if ( isImport ) {
+			return ( data.uploadedData.manifest.plugins || [] ).reduce( ( acc, plugin ) => {
+				acc[ plugin.plugin ] = plugin;
+
+				return acc;
+			}, {} );
+		}
+
+		return fetchedPluginsList;
+	}, [ isImport, data?.uploadedData?.manifest?.plugins, fetchedPluginsList ] );
+
+	const isLoading = isImport ? false : fetchIsLoading;
+
 	const [ plugins, setPlugins ] = useState( {} );
 
 	const initialState = data?.includes?.includes( 'plugins' ) || false;
