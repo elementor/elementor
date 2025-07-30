@@ -45,7 +45,8 @@ class Module extends BaseModule {
 		}
 
 		$this->hooks()->register();
-		$this->init_variable_types_registry();
+
+		add_action( 'init', [ $this, 'init_variable_types_registry' ] );
 	}
 
 	private function is_experiment_active(): bool {
@@ -53,7 +54,7 @@ class Module extends BaseModule {
 			&& Plugin::$instance->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME );
 	}
 
-	private function init_variable_types_registry(): void {
+	public function init_variable_types_registry(): void {
 		$this->variable_types_registry = new Variable_Types_Registry();
 
 		do_action( 'elementor/variables/register', $this->variable_types_registry );
