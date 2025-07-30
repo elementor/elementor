@@ -6,7 +6,7 @@ import {
 	BackgroundRepeaterLabel,
 	BoxShadowRepeaterColorIndicator,
 } from './components/variables-repeater-item-slot';
-import { hasAssignedColorVariable } from './utils';
+import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
 
 export function registerRepeaterInjections() {
 	injectIntoRepeaterItemIcon( {
@@ -33,3 +33,7 @@ export function registerRepeaterInjections() {
 		},
 	} );
 }
+
+const hasAssignedColorVariable = ( propValue: PropValue ): boolean => {
+	return !! colorVariablePropTypeUtil.isValid( propValue );
+};
