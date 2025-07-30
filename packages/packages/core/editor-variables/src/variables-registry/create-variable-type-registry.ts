@@ -1,7 +1,7 @@
 import { type ForwardRefExoticComponent, type JSX, type RefAttributes } from 'react';
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
-import { type PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
+import { type createPropUtils, type PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
 
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
@@ -12,7 +12,7 @@ type ValueFieldProps = {
 	onChange: ( value: string ) => void;
 };
 
-type FallbackPropTypeUtil = PropTypeUtil< string, string > | PropTypeUtil< string, string | null >;
+type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
