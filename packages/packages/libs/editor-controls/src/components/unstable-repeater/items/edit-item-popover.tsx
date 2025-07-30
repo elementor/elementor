@@ -8,7 +8,7 @@ type AddItemPopoverProps = {
 	children?: React.ReactNode;
 };
 
-export const AddItemPopover = ( { children, anchorRef, setAnchorEl, popoverProps }: AddItemPopoverProps ) => {
+export const EditItemPopover = ( { children, anchorRef, setAnchorEl, popoverProps }: AddItemPopoverProps ) => {
 	return (
 		<Popover
 			disablePortal
