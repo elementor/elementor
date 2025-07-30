@@ -12,7 +12,8 @@ type ValueFieldProps = {
 	onChange: ( value: string ) => void;
 };
 
-type FallbackPropTypeUtil = PropTypeUtil< string, string > | PropTypeUtil< string, string | null >;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type FallbackPropTypeUtil = PropTypeUtil< string, string > | PropTypeUtil< string, any >;
 
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
