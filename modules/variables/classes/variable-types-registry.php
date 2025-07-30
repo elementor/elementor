@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Variable_Types_Registry {
-	private array $types;
+	private array $types = [];
 
 	public function register( string $key, Transformable_Prop_Type $prop_type ): void {
 		if ( isset( $this->types[ $key ] ) ) {
@@ -21,7 +21,7 @@ class Variable_Types_Registry {
 	}
 
 	public function get( $key ) {
-		return $this->types[ $key ];
+		return $this->types[ $key ] ?? null;
 	}
 
 	public function all(): array {
