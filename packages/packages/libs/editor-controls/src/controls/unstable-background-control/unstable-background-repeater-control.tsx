@@ -21,7 +21,7 @@ export const UnstableBackgroundRepeaterControl = createControl( () => {
 	return (
 		<PropProvider propType={ propType } value={ backgroundValues } setValue={ setValue }>
 			<UnstableRepeater initial={ getInitialBackgroundOverlay() } propTypeUtil={ backgroundOverlayPropTypeUtil }>
-				<Header label={ __( 'Transform', 'elementor' ) }>
+				<Header label={ __( 'Overlay', 'elementor' ) }>
 					<AddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } Content={ ItemContent } /> }>

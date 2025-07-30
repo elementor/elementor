@@ -8,7 +8,6 @@ import {
 	type BackgroundOverlayPropValue,
 	colorPropTypeUtil,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { initEnv } from '@elementor/env';
 import { type Attachment, useWpMediaAttachment } from '@elementor/wp-media';
 import { fireEvent, screen } from '@testing-library/react';
@@ -19,11 +18,11 @@ import {
 	initialBackgroundColorOverlay,
 	ItemContent,
 } from '../background-control/background-overlay/background-overlay-repeater-control';
+import { UnstableBackgroundRepeaterControl } from '../unstable-background-control/unstable-background-repeater-control';
 import { createMockGradientOverlay, gradientPropType } from './background-gradient-color-control.test';
 
 jest.mock( '../image-media-control' );
 jest.mock( '@elementor/wp-media' );
-jest.mock( '@elementor/editor-v1-adapters' );
 
 const stubBackgroundColorOverlay = ( color: string ): BackgroundOverlayItemPropValue => {
 	return backgroundColorOverlayPropTypeUtil.create( {
@@ -182,10 +181,11 @@ const createMockData = (
 	value,
 } );
 
-describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
-	'BackgroundControl with repeater experiment $experiment',
-	( { experiment } ) => {
-		jest.mocked( isExperimentActive ).mockReturnValue( experiment === 'active' );
+describe.each( [ { desc: 'old repeater' }, { desc: 'new repeater' } ] )(
+	'BackgroundControl with $desc',
+	( { desc } ) => {
+		const Component =
+			desc === 'new repeater' ? UnstableBackgroundRepeaterControl : BackgroundOverlayRepeaterControl;
 
 		describe( 'Control', () => {
 			beforeEach( () => {
@@ -214,7 +214,7 @@ describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
 				};
 
 				// Act.
-				renderControl( <BackgroundOverlayRepeaterControl />, props );
+				renderControl( <Component />, props );
 
 				// Assert.
 				expect( screen.getByText( 'Overlay' ) ).toBeInTheDocument();
@@ -232,7 +232,7 @@ describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
 				};
 
 				// Act.
-				renderControl( <BackgroundOverlayRepeaterControl />, props );
+				renderControl( <Component />, props );
 
 				const [ colorRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
 				fireEvent.click( colorRepeaterItem );
@@ -253,7 +253,7 @@ describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
 				};
 
 				// Act.
-				renderControl( <BackgroundOverlayRepeaterControl />, props );
+				renderControl( <Component />, props );
 
 				const [ imageRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
 				fireEvent.click( imageRepeaterItem );
@@ -285,7 +285,7 @@ describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
 				} as never );
 
 				// Act.
-				renderControl( <BackgroundOverlayRepeaterControl />, props );
+				renderControl( <Component />, props );
 
 				// Assert.
 				expect( screen.getByText( imageTitle ) ).toBeInTheDocument();
@@ -312,7 +312,7 @@ describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
 				} as never );
 
 				// Act.
-				renderControl( <BackgroundOverlayRepeaterControl />, props );
+				renderControl( <Component />, props );
 
 				// Assert.
 				expect( screen.getByText( 'dummy_image.jpg' ) ).toBeInTheDocument();
@@ -337,7 +337,7 @@ describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
 				} as never );
 
 				// Act.
-				renderControl( <BackgroundOverlayRepeaterControl />, props );
+				renderControl( <Component />, props );
 
 				// Assert.
 				expect( screen.queryByText( 'jpg' ) ).not.toBeInTheDocument();
@@ -364,7 +364,7 @@ describe.each( [ { experiment: 'inactive' }, { experiment: 'active' } ] )(
 				} as never );
 
 				// Act.
-				renderControl( <BackgroundOverlayRepeaterControl />, props );
+				renderControl( <Component />, props );
 
 				// Assert.
 				expect( screen.getByText( 'svg_image.svg' ) ).toBeInTheDocument();
