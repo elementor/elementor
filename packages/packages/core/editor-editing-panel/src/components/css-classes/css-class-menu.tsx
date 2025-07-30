@@ -10,9 +10,8 @@ import { type StyleDefinitionStateWithNormal } from '../../styles-inheritance/ty
 import { getTempStylesProviderThemeColor } from '../../utils/get-styles-provider-color';
 import { StyleIndicator } from '../style-indicator';
 import { useCssClass } from './css-class-context';
-import { CssClassConvert } from './css-class-convert-local';
+import { LocalClassSubMenu } from './local-class-sub-menu';
 import { useUnapplyClass } from './use-apply-and-unapply-class';
-import { useCanConvertLocalClassToGlobal } from './use-can-convert-local-class-to-global';
 
 type State = {
 	key: StyleDefinitionStateWithNormal;
@@ -33,8 +32,8 @@ type CssClassMenuProps = {
 };
 
 export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps ) {
-	const { provider } = useCssClass();
-	const { canPromote, styleDef } = useCanConvertLocalClassToGlobal();
+	const { provider, label } = useCssClass();
+	const isLocalStyle = label.toLowerCase() === 'local';
 
 	const handleKeyDown = ( e: React.KeyboardEvent< HTMLElement > ) => {
 		e.stopPropagation();
@@ -57,14 +56,7 @@ export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps
 			// Workaround for focus-visible issue.
 			disableAutoFocusItem
 		>
-			{ canPromote && styleDef && (
-				<>
-					<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
-						{ __( 'Actions', 'elementor' ) }
-					</MenuSubheader>
-					<CssClassConvert styleDef={ styleDef } closeMenu={ popupState.close } />
-				</>
-			) }
+			{ isLocalStyle && <LocalClassSubMenu popupState={ popupState } /> }
 			{ /* It has to be an array since MUI menu doesn't accept a Fragment as a child, and wrapping the items with an HTML element disrupts keyboard navigation */ }
 			{ getMenuItemsByProvider( { provider, closeMenu: popupState.close, fixed } ) }
 			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>

@@ -15,6 +15,8 @@ export const useCanConvertLocalClassToGlobal = () => {
 
 	return {
 		canPromote,
+		isLocalStylesProvider,
+		id,
 		styleDef: styleDef || null,
 	};
 };
