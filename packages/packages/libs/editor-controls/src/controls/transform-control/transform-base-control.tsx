@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { type RefObject, useRef } from 'react';
-
+import { transformOriginPropTypeUtil } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { bindPopover, Divider, Grid, Popover, type PopupState, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-
+import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import { ControlFormLabel } from '../../components/control-form-label';
 import { type TransformOriginUnit, transformOriginUnits } from '../../utils/size-control';
 import { SizeControl } from '../size-control';
+import { ControlLabel } from "../../components/control-label";
 
 type Props = {
 	popupState: PopupState;
@@ -18,26 +19,27 @@ type Props = {
 const originControls = [
 	{
 		label: __( 'Origin X', 'elementor' ),
-		bindValue: 'x' as const,
+		bindValue: 'x',
 		units: [ ...transformOriginUnits ] as TransformOriginUnit[],
-		defaultUnit: '%' as TransformOriginUnit,
+		// defaultUnit: 'px' as TransformOriginUnit,
 	},
 	{
 		label: __( 'Origin Y', 'elementor' ),
-		bindValue: 'y' as const,
+		bindValue: 'y',
 		units: [ ...transformOriginUnits ] as TransformOriginUnit[],
-		defaultUnit: '%' as TransformOriginUnit,
+		// defaultUnit: 'px' as TransformOriginUnit,
 	},
 	{
 		label: __( 'Origin Z', 'elementor' ),
-		bindValue: 'z' as const,
+		bindValue: 'z',
 		units: [ ...transformOriginUnits ] as TransformOriginUnit[],
-		defaultUnit: 'px' as TransformOriginUnit,
+		// defaultUnit: 'px' as TransformOriginUnit,
 	},
 ];
 
-export const TransformOriginControl = ( props: Props ) => {
+export const TransformBaseControl = ( props: Props ) => {
 	const { popupState, anchorRef } = props;
+	const context = useBoundProp( transformOriginPropTypeUtil );
 	const rowRef = useRef< HTMLDivElement >( null );
 
 	const handleClose = () => {
@@ -50,7 +52,6 @@ export const TransformOriginControl = ( props: Props ) => {
 			slotProps={ {
 				paper: {
 					sx: {
-						p: 1.5,
 						width: anchorRef.current?.offsetWidth + 'px',
 					},
 				},
@@ -66,26 +67,32 @@ export const TransformOriginControl = ( props: Props ) => {
 
 			<Stack direction="column" spacing={ 1.5 }>
 				<ControlFormLabel>{ __( 'Transform', 'elementor' ) }</ControlFormLabel>
-				<Grid container spacing={ 1.5 } ref={ rowRef }>
-					{ originControls.map( ( control ) => (
-						<Grid item xs={ 12 } key={ control.bindValue }>
-							<Grid container spacing={ 1 } alignItems="center">
-								<Grid item xs={ 6 }>
-									<ControlFormLabel>{ control.label }</ControlFormLabel>
+				<PropProvider { ...context }>
+					<PropKeyProvider bind={ 'transform-origin' }>
+						<Grid container spacing={ 1.5 } ref={ rowRef }>
+							{ originControls.map( ( control ) => (
+								<Grid item xs={ 12 } key={ control.bindValue }>
+									<Grid container spacing={ 1 } alignItems="center">
+										<Grid item xs={ 6 }>
+											<ControlLabel>{ control.label }</ControlLabel>
+										</Grid>
+										<Grid item xs={ 6 } sx={ { pr: 1.5 } }>
+											<PropKeyProvider bind={ control.bindValue }>
+												<SizeControl
+													variant="length"
+													units={ control.units }
+													// defaultUnit={ control.defaultUnit }
+													anchorRef={ rowRef }
+													disableCustom={ true }
+												/>
+											</PropKeyProvider>
+										</Grid>
+									</Grid>
 								</Grid>
-								<Grid item xs={ 6 } sx={ { pr: 1.5 } }>
-									<SizeControl
-										variant="length"
-										units={ control.units }
-										defaultUnit={ control.defaultUnit }
-										anchorRef={ rowRef }
-										disableCustom={ true }
-									/>
-								</Grid>
-							</Grid>
+							) ) }
 						</Grid>
-					) ) }
-				</Grid>
+					</PropKeyProvider>
+				</PropProvider>
 			</Stack>
 		</Popover>
 	);
