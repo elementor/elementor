@@ -14,7 +14,7 @@ class Variable_Types_Registry {
 
 	public function register( string $key, Transformable_Prop_Type $prop_type ): void {
 		if ( isset( $this->types[ $key ] ) ) {
-			throw new InvalidArgumentException( "Key '{$key}' is already registered." );
+			throw new InvalidArgumentException( esc_html( "Key '{$key}' is already registered." ) );
 		}
 
 		$this->types[ $key ] = $prop_type;
