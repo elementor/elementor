@@ -1,8 +1,8 @@
 import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../../utils/create-prop-utils';
-import { colorPropTypeUtil } from '../color';
 import { sizePropTypeUtil } from '../size';
+import { unknownChildrenSchema } from '../utils';
 
 export const dropShadowFilterPropTypeUtil = createPropUtils(
 	'drop-shadow',
@@ -10,7 +10,7 @@ export const dropShadowFilterPropTypeUtil = createPropUtils(
 		xAxis: sizePropTypeUtil.schema,
 		yAxis: sizePropTypeUtil.schema,
 		blur: sizePropTypeUtil.schema,
-		color: colorPropTypeUtil.schema,
+		color: unknownChildrenSchema,
 	} )
 );
 
