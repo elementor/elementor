@@ -138,7 +138,7 @@ const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
 	);
 };
 
-const ItemIcon = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+export const ItemIcon = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemIconImage value={ value as BackgroundImageOverlay } />;
@@ -186,7 +186,7 @@ const ItemIconGradient = ( { value }: { value: BackgroundOverlayItemPropValue } 
 	return <StyledUnstableColorIndicator size="inherit" component="span" value={ gradient } />;
 };
 
-const ItemLabel = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+export const ItemLabel = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemLabelImage value={ value as BackgroundImageOverlay } />;
