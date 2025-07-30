@@ -1,5 +1,6 @@
 var BaseContainer = require( 'elementor-views/base-container' ),
-	BaseSectionsContainerView;
+	BaseSectionsContainerView,
+	{ ELEMENT_TYPES, getAllElementTypes } = require( 'elementor-editor/utils/element-types' );
 
 BaseSectionsContainerView = BaseContainer.extend( {
 	getChildView( model ) {
@@ -7,15 +8,16 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		const elType = model.get( 'elType' );
 
 		switch ( elType ) {
-			case 'section':
+			case ELEMENT_TYPES.SECTION:
 				ChildView = require( 'elementor-elements/views/section' );
 				break;
 
-			case 'container':
+			case ELEMENT_TYPES.CONTAINER:
 				ChildView = require( 'elementor-elements/views/container' );
 				break;
 
-			case 'div-block':
+			case ELEMENT_TYPES.DIV_BLOCK:
+			case ELEMENT_TYPES.FLEXBOX:
 				ChildView = require( 'elementor-modules/atomic-widgets/assets/js/editor/div-block-view' );
 				break;
 		}
@@ -27,7 +29,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'section',
+				elChildType: ELEMENT_TYPES.SECTION,
 			},
 		};
 
@@ -42,7 +44,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	getChildType() {
-		return [ 'section', 'container', 'div-block' ];
+		return getAllElementTypes();
 	},
 
 	initialize() {

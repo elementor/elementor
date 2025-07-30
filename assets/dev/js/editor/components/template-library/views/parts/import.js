@@ -11,6 +11,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 	ui: {
 		uploadForm: '#elementor-template-library-import-form',
 		fileInput: '#elementor-template-library-import-form-input',
+		icon: '.elementor-template-library-blank-icon i',
 	},
 
 	events: {
@@ -41,16 +42,37 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 
 	async importTemplate( fileName, fileData ) {
 		const layout = elementor.templates.layout;
+		const activeSource = elementor.templates.getFilter( 'source' );
 
 		this.options = {
 			data: {
 				fileName,
 				fileData,
+				source: activeSource,
 			},
 			success: ( successData ) => {
+				elementor.templates.clearLastRemovedItems();
 				elementor.templates.getTemplatesCollection().add( successData );
+				elementor.templates.setToastConfig( {
+					show: true,
+					options: {
+						/* Translators: 1: Number of templates */
+						message: sprintf( __( 'You successfully imported %1$d template(s).', 'elementor' ), successData.length ),
+						position: {
+							my: 'right bottom',
+							at: 'right-10 bottom-10',
+							of: '#elementor-template-library-modal .dialog-lightbox-widget-content',
+						},
+					},
+				} );
 
 				$e.route( 'library/templates/my-templates' );
+				elementor.templates.triggerQuotaUpdate();
+				elementor.templates.eventManager.sendTemplateImportEvent( {
+					library_type: activeSource,
+					file_type: fileName.split( '.' ).pop(),
+					template_count: successData.length,
+				} );
 			},
 			error: ( errorData ) => {
 				elementor.templates.showErrorDialog( errorData );
@@ -89,6 +111,20 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 			'dragleave drop': this.onFormDragLeave.bind( this ),
 			drop: this.onFormDrop.bind( this ),
 		} );
+
+		this.resolveIcon();
+
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.importModal,
+		} );
+	},
+
+	resolveIcon() {
+		const activeSource = elementor.templates.getFilter( 'source' ) || 'local';
+
+		const className = 'local' === activeSource ? 'eicon-library-upload' : 'eicon-library-import';
+
+		this.ui.icon.removeClass().addClass( className );
 	},
 
 	onFormActions( event ) {

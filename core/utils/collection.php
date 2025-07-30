@@ -167,6 +167,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return $result;
 	}
 
+	public function reverse() {
+		return new static( array_reverse( $this->items ) );
+	}
+
 	/**
 	 * @param callable $callback
 	 *
@@ -271,13 +275,13 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * Get specific item from the collection.
 	 *
 	 * @param      $key
-	 * @param null $default
+	 * @param null $fallback
 	 *
 	 * @return mixed|null
 	 */
-	public function get( $key, $default = null ) {
+	public function get( $key, $fallback = null ) {
 		if ( ! array_key_exists( $key, $this->items ) ) {
-			return $default;
+			return $fallback;
 		}
 
 		return $this->items[ $key ];
@@ -286,13 +290,13 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Get the first item.
 	 *
-	 * @param null $default
+	 * @param null $fallback
 	 *
 	 * @return mixed|null
 	 */
-	public function first( $default = null ) {
+	public function first( $fallback = null ) {
 		if ( $this->is_empty() ) {
-			return $default;
+			return $fallback;
 		}
 
 		foreach ( $this->items as $item ) {
@@ -304,18 +308,18 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * Find an element from the items.
 	 *
 	 * @param callable $callback
-	 * @param null     $default
+	 * @param null     $fallback
 	 *
 	 * @return mixed|null
 	 */
-	public function find( callable $callback, $default = null ) {
+	public function find( callable $callback, $fallback = null ) {
 		foreach ( $this->all() as $key => $item ) {
 			if ( $callback( $item, $key ) ) {
 				return $item;
 			}
 		}
 
-		return $default;
+		return $fallback;
 	}
 
 	/**
@@ -399,11 +403,8 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		} );
 	}
 
-	/**
-	 * @return array
-	 */
 	public function keys() {
-		return array_keys( $this->items );
+		return new static( array_keys( $this->items ) );
 	}
 
 	/**
@@ -541,12 +542,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * @param      $item
 	 * @param      $key
-	 * @param null $default
+	 * @param null $fallback
 	 *
 	 * @return mixed|null
 	 */
-	private function get_item_value( $item, $key, $default = null ) {
-		$value = $default;
+	private function get_item_value( $item, $key, $fallback = null ) {
+		$value = $fallback;
 
 		if ( is_object( $item ) && isset( $item->{$key} ) ) {
 			$value = $item->{$key};

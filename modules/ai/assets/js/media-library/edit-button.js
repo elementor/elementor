@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { RequestIdsProvider } from '../editor/context/requests-ids';
-import styled from 'styled-components';
 import { __ } from '@wordpress/i18n';
 import { getImageId, isImageFile } from './utils';
 import { AIMediaEditApp } from './components';
+import { styled } from '@elementor/ui';
 
-const Icon = styled.i`
+const Icon = styled( 'i' )`
 	color: var(--e-a-color-primary-bold);
 	padding-inline-end: 0.5em;
 	cursor: pointer;
 `;
 
-const StyledButton = styled.a`
+const StyledButton = styled( 'a' )`
 	font: inherit;
 	display: inline-block;
 	font-size: 13px;

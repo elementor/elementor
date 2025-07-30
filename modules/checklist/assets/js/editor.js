@@ -1,10 +1,10 @@
-import { editorV2 } from './editor-v-2';
+import { editorAppBarLink } from './editor-app-bar-link';
 import Component from './component';
 import { USER_PROGRESS } from './utils/consts';
 import { fetchUserProgress, toggleChecklistPopup, dispatchChecklistOpenEvent } from './utils/functions';
 
 $e.components.register( new Component() );
-editorV2();
+editorAppBarLink();
 
 elementorCommon.elements.$window.on( 'elementor:loaded', elementorLoaded );
 

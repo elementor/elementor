@@ -14,6 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 
+	const OPTION_UNIQUE_ID = '_elementor_element_cache_unique_id';
+
 	public function get_name() {
 		return 'element-cache';
 	}
@@ -26,6 +28,8 @@ class Module extends BaseModule {
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) ) {
 			return;
 		}
+
+		add_filter( 'elementor/element_cache/unique_id', [ $this, 'get_unique_id' ] );
 
 		$this->add_advanced_tab_actions();
 
@@ -42,14 +46,21 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Element Caching', 'elementor' ),
 			'tag' => esc_html__( 'Performance', 'elementor' ),
 			'description' => esc_html__( 'Elements caching reduces loading times by serving up a copy of an element instead of rendering it fresh every time the page is loaded. When active, Elementor will determine which elements can benefit from static loading - but you can override this.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-			'new_site' => [
-				'default_active' => true,
-				'minimum_installation_version' => '3.23.0',
-			],
+			'release_status' => ExperimentsManager::RELEASE_STATUS_STABLE,
+			'default' => ExperimentsManager::STATE_ACTIVE,
 			'generator_tag' => true,
 		];
+	}
+
+	public function get_unique_id() {
+		$unique_id = get_option( static::OPTION_UNIQUE_ID );
+
+		if ( ! $unique_id ) {
+			$unique_id = md5( uniqid( wp_generate_password() ) );
+			update_option( static::OPTION_UNIQUE_ID, $unique_id );
+		}
+
+		return $unique_id;
 	}
 
 	private function register_shortcode() {
@@ -58,13 +69,15 @@ class Module extends BaseModule {
 				return '';
 			}
 
+			if ( empty( $atts['k'] ) || $atts['k'] !== $this->get_unique_id() ) {
+				return '';
+			}
+
 			$widget_data = json_decode( base64_decode( $atts['data'] ), true );
 
 			if ( empty( $widget_data ) || ! is_array( $widget_data ) ) {
 				return '';
 			}
-
-			$widget_data['settings']['isShortcode'] = true;
 
 			ob_start();
 

@@ -2,24 +2,25 @@ const EditorSelectors = {
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
 	widget: '[data-element_type="widget"]',
 	container: '[data-element_type="container"]',
+	eflexbox: '[data-element_type="e-flexbox"]',
 	item: '.elementor-repeater-row-item-title',
 	plusIcon: '.eicon-plus-circle',
 	siteTitle: '.site-title >> nth=0',
 	pageTitle: '.entry-title >> nth=0',
+	pageContent: '.page-content',
 	pageHeader: '.page-header',
 	toast: '#elementor-toast',
 	addNewSection: '#elementor-add-new-section',
+	removeContainer: '.elementor-editor-element-setting.elementor-editor-element-remove',
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
 		},
-		menu: {
-			wrapper: '#elementor-panel-page-menu',
-			footerButton: '#elementor-panel-header-menu-button i',
-		},
 		elements: {
 			wrapper: '#elementor-panel-page-elements',
+			v4elements: '#elementor-panel-category-v4-elements',
 			footerButton: '#elementor-panel-header-add-button i',
+			elementorPanel: '#elementor-panel',
 		},
 		pageSettings: {
 			wrapper: '#elementor-panel-page-settings',
@@ -37,10 +38,6 @@ const EditorSelectors = {
 		userPreferences: {
 			wrapper: '#elementor-panel-editorPreferences-settings-controls',
 		},
-		footerTools: {
-			wrapper: '#elementor-panel-footer',
-			updateButton: '#elementor-panel-saver-button-publish-label',
-		},
 		navigator: {
 			wrapper: '#elementor-navigator',
 			footer: '#elementor-navigator__footer',
@@ -48,6 +45,7 @@ const EditorSelectors = {
 			footerButton: '#elementor-panel-footer-navigator i',
 		},
 		promotionCard: '[data-testid="e-promotion-card"]',
+		popoverCard: '[data-testid="e-popover-card"]',
 	},
 	refreshPopup: {
 		reloadButton: '#elementor-save-kit-refresh-page .dialog-button.dialog-ok.dialog-alert-ok',

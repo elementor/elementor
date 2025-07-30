@@ -37,6 +37,8 @@ class Module extends BaseModule {
 
 	const REFERRER_LOCAL = 'local';
 
+	const REFERRER_CLOUD = 'cloud';
+
 	const PLUGIN_PERMISSIONS_ERROR_KEY = 'plugin-installation-permissions-error';
 
 	const KIT_LIBRARY_ERROR_KEY = 'invalid-kit-library-zip-error';
@@ -55,6 +57,8 @@ class Module extends BaseModule {
 
 	const META_KEY_ELEMENTOR_EDIT_MODE = '_elementor_edit_mode';
 	const IMPORT_PLUGINS_ACTION = 'import-plugins';
+	const EXPORT_SOURCE_CLOUD = 'cloud';
+	const EXPORT_SOURCE_FILE = 'file';
 
 	/**
 	 * Assigning the export process to a property, so we can use the process from outside the class.
@@ -113,10 +117,10 @@ class Module extends BaseModule {
 	 */
 	public function register_settings_tab( Tools $tools ) {
 		$tools->add_tab( 'import-export-kit', [
-			'label' => esc_html__( 'Import / Export Kit', 'elementor' ),
+			'label' => esc_html__( 'Website Templates', 'elementor' ),
 			'sections' => [
 				'intro' => [
-					'label' => esc_html__( 'Template Kits', 'elementor' ),
+					'label' => esc_html__( 'Website Templates', 'elementor' ),
 					'callback' => function() {
 						$this->render_import_export_tab_content();
 					},
@@ -130,41 +134,31 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
-		$intro_text_link = sprintf( '<a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%s</a>', esc_html__( 'Learn more', 'elementor' ) );
-
-		$intro_text = sprintf(
-			/* translators: 1: New line break, 2: Learn more link. */
-			__( 'Design sites faster with a template kit that contains some or all components of a complete site, like templates, content & site settings.%1$sYou can import a kit and apply it to your site, or export the elements from this site to be used anywhere else. %2$s', 'elementor' ),
-			'<br>',
-			$intro_text_link
-		);
-
 		$content_data = [
 			'export' => [
-				'title' => esc_html__( 'Export a Template Kit', 'elementor' ),
+				'title' => esc_html__( 'Export this website', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
-					'text' => esc_html__( 'Start Export', 'elementor' ),
+					'text' => esc_html__( 'Export', 'elementor' ),
 				],
-				'description' => esc_html__( 'Bundle your whole site - or just some of its elements - to be used for another website.', 'elementor' ),
-				'link' => [
-					'url' => 'https://go.elementor.com/wp-dash-import-export-export-flow/',
-					'text' => esc_html__( 'Learn More', 'elementor' ),
-				],
+				'description' => esc_html__( 'You can download this website as a .zip file, or upload it to the library.', 'elementor' ),
 			],
 			'import' => [
-				'title' => esc_html__( 'Import a Template Kit', 'elementor' ),
+				'title' => esc_html__( 'Import website templates', 'elementor' ),
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
-					'text' => esc_html__( 'Start Import', 'elementor' ),
+					'text' => esc_html__( 'Import', 'elementor' ),
 				],
-				'description' => esc_html__( 'Apply the design and settings of another site to this one.', 'elementor' ),
-				'link' => [
-					'url' => 'https://go.elementor.com/wp-dash-import-export-import-flow/',
-					'text' => esc_html__( 'Learn More', 'elementor' ),
-				],
+				'description' => esc_html__( 'You can import design and settings from a .zip file or choose from the library.', 'elementor' ),
 			],
 		];
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
+			$content_data['import']['button_secondary'] = [
+				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+				'text' => esc_html__( 'Import from library', 'elementor' ),
+			];
+		}
 
 		$last_imported_kit = $this->revert->get_last_import_session();
 		$penultimate_imported_kit = $this->revert->get_penultimate_import_session();
@@ -197,21 +191,20 @@ class Module extends BaseModule {
 		?>
 
 		<div class="tab-import-export-kit__content">
-			<p class="tab-import-export-kit__info"><?php ElementorUtils::print_unescaped_internal_string( $intro_text ); ?></p>
+			<p class="tab-import-export-kit__info">
+				<?php
+				printf(
+					'%1$s <a href="https://go.elementor.com/wp-dash-import-export-general/" target="_blank">%2$s</a>',
+					esc_html__( 'Here’s where you can export this website as a .zip file, upload it to the cloud, or start the process of applying an existing template to your site.', 'elementor' ),
+					esc_html__( 'Learn more', 'elementor' ),
+				);
+				?>
+			</p>
 
 			<div class="tab-import-export-kit__wrapper">
-				<?php foreach ( $content_data as $data ) { ?>
-					<div class="tab-import-export-kit__container">
-						<div class="tab-import-export-kit__box">
-							<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-							<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-								<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-							</a>
-						</div>
-						<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-					</div>
-				<?php } ?>
+				<?php foreach ( $content_data as $data ) {
+					$this->print_item_content( $data );
+				} ?>
 			</div>
 
 			<?php
@@ -225,19 +218,57 @@ class Module extends BaseModule {
 				?>
 				<div class="tab-import-export-kit__revert">
 					<h2>
-						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove the most recent Kit', 'elementor' ) ); ?>
+						<?php echo esc_html__( 'Remove the most recent Website Template', 'elementor' ); ?>
 					</h2>
 					<p class="tab-import-export-kit__info">
 						<?php ElementorUtils::print_unescaped_internal_string( $revert_text ); ?>
 					</p>
 					<?php $this->render_last_kit_thumbnail( $last_imported_kit ); ?>
 					<a <?php ElementorUtils::print_html_attributes( $link_attributes ); ?> >
-						<?php ElementorUtils::print_unescaped_internal_string( esc_html__( 'Remove Kit', 'elementor' ) ); ?>
+						<?php echo esc_html__( 'Remove Website Template', 'elementor' ); ?>
 					</a>
 				</div>
 			<?php } ?>
 		</div>
 		<?php
+	}
+
+	private function print_item_content( $data ) {
+		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
+
+		if ( $is_cloud_kits_feature_active ) { ?>
+			<div class="tab-import-export-kit__container">
+				<div class="tab-import-export-kit__box">
+					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+				</div>
+				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+
+				<?php if ( ! empty( $data['link'] ) ) : ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+				<?php endif; ?>
+				<div class="tab-import-export-kit__box action-buttons">
+					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
+						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
+						</a>
+					<?php endif; ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+					</a>
+				</div>
+			</div>
+		<?php } else { ?>
+			<div class="tab-import-export-kit__container">
+				<div class="tab-import-export-kit__box">
+					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+					</a>
+				</div>
+				<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+			</div>
+		<?php }
 	}
 
 	private function get_revert_href(): string {
@@ -301,13 +332,17 @@ class Module extends BaseModule {
 	 *
 	 * @param string $file Path to the file.
 	 * @param string $referrer Referrer of the file 'local' or 'kit-library'.
+	 * @param string $kit_id
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function upload_kit( $file, $referrer ) {
+	public function upload_kit( $file, $referrer, $kit_id = null ) {
 		$this->ensure_writing_permissions();
 
-		$this->import = new Import( $file, [ 'referrer' => $referrer ] );
+		$this->import = new Import( $file, [
+			'referrer' => $referrer,
+			'id' => $kit_id,
+		] );
 
 		return [
 			'session' => $this->import->get_session_id(),
@@ -454,6 +489,18 @@ class Module extends BaseModule {
 			add_filter( 'woocommerce_create_pages', [ $this, 'empty_pages' ], 10, 0 );
 		}
 		// TODO ^^^
+
+		add_filter( 'elementor/import/kit/result', function( $result ) {
+			if ( ! empty( $result['file_url'] ) ) {
+				return [
+					'file_name' => $this->get_remote_kit_zip( $result['file_url'] ),
+					'referrer' => static::REFERRER_KIT_LIBRARY,
+					'file_url' => $result['file_url'],
+				];
+			}
+
+			return $result;
+		} );
 	}
 
 	/**
@@ -581,8 +628,13 @@ class Module extends BaseModule {
 			? wp_unslash( $_POST['e_import_file'] )
 			: '';
 
-		// Import from kit library
-		if ( ! empty( $file_url ) ) {
+		// PHPCS - Already validated in caller function
+		$kit_id = ElementorUtils::get_super_global_value( $_POST, 'kit_id' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$source = ElementorUtils::get_super_global_value( $_POST, 'source' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+		$is_import_from_library = ! empty( $file_url );
+
+		if ( $is_import_from_library ) {
 			if (
 				! wp_verify_nonce( ElementorUtils::get_super_global_value( $_POST, 'e_kit_library_nonce' ), 'kit-library-import' )
 			) {
@@ -593,41 +645,38 @@ class Module extends BaseModule {
 				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			}
 
-			$remote_zip_request = wp_safe_remote_get( $file_url );
-
-			if ( is_wp_error( $remote_zip_request ) ) {
-				Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			}
-
-			if ( 200 !== $remote_zip_request['response']['code'] ) {
-				Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
-				throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-			}
-
-			$file_name = Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
-			$referrer = static::REFERRER_KIT_LIBRARY;
+			$import_result = apply_filters( 'elementor/import/kit/result', [ 'file_url' => $file_url ] );
+		} else if ( ! empty( $source ) ) {
+			$import_result = apply_filters( 'elementor/import/kit/result/' . $source, [
+				'kit_id' => $kit_id,
+				'source' => $source,
+			] );
 		} else {
-			// PHPCS - Already validated in caller function.
-			$file_name = ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'];
-			$referrer = static::REFERRER_LOCAL;
+			$import_result = [
+				'file_name' => ElementorUtils::get_super_global_value( $_FILES, 'e_import_file' )['tmp_name'],
+				'referrer' => static::REFERRER_LOCAL,
+			];
 		}
 
 		Plugin::$instance->logger->get_logger()->info( 'Uploading Kit: ', [
 			'meta' => [
-				'kit_id' => ElementorUtils::get_super_global_value( $_POST, 'kit_id' ),
-				'referrer' => $referrer,
+				'kit_id' => $kit_id,
+				'referrer' => $import_result['referrer'],
 			],
 		] );
 
-		$uploaded_kit = $this->upload_kit( $file_name, $referrer );
+		if ( is_wp_error( $import_result ) ) {
+			wp_send_json_error( $import_result->get_error_message() );
+		}
+
+		$uploaded_kit = $this->upload_kit( $import_result['file_name'], $import_result['referrer'], $kit_id );
 
 		$session_dir = $uploaded_kit['session'];
 		$manifest = $uploaded_kit['manifest'];
 		$conflicts = $uploaded_kit['conflicts'];
 
-		if ( ! empty( $file_url ) ) {
-			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
+		if ( $is_import_from_library || ! empty( $source ) ) {
+			Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $import_result['file_name'] ) );
 		}
 
 		if ( isset( $manifest['plugins'] ) && ! current_user_can( 'install_plugins' ) ) {
@@ -637,7 +686,12 @@ class Module extends BaseModule {
 		$result = [
 			'session' => $session_dir,
 			'manifest' => $manifest,
+			'file_url' => $import_result['file_url'],
 		];
+
+		if ( ! empty( $import_result['kit'] ) ) {
+			$result['uploaded_kit'] = $import_result['kit'];
+		}
 
 		if ( ! empty( $conflicts ) ) {
 			$result['conflicts'] = $conflicts;
@@ -648,6 +702,22 @@ class Module extends BaseModule {
 		}
 
 		wp_send_json_success( $result );
+	}
+
+	protected function get_remote_kit_zip( $url ) {
+		$remote_zip_request = wp_safe_remote_get( $url );
+
+		if ( is_wp_error( $remote_zip_request ) ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
+			throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		if ( 200 !== $remote_zip_request['response']['code'] ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
+			throw new \Error( static::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
 	}
 
 	/**
@@ -706,6 +776,8 @@ class Module extends BaseModule {
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
 		$settings = json_decode( ElementorUtils::get_super_global_value( $_POST, 'data' ), true ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$source = $settings['kitInfo']['source'];
+
 		$export = $this->export_kit( $settings );
 
 		$file_name = $export['file_name'];
@@ -717,10 +789,21 @@ class Module extends BaseModule {
 
 		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $file_name ) );
 
-		$result = [
-			'manifest' => $export['manifest'],
-			'file' => base64_encode( $file ),
-		];
+		$result = apply_filters(
+			'elementor/export/kit/export-result',
+			[
+				'manifest' => $export['manifest'],
+				'file' => base64_encode( $file ),
+			],
+			$source,
+			$export,
+			$settings,
+			$file,
+		);
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error( $result );
+		}
 
 		wp_send_json_success( $result );
 	}
@@ -743,6 +826,7 @@ class Module extends BaseModule {
 			'tools_url' => Tools::get_url(),
 			'importSessions' => Revert::get_import_sessions(),
 			'lastImportedSession' => $this->revert->get_last_import_session(),
+			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 		];
 	}
 

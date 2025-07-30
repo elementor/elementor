@@ -8,6 +8,11 @@ const shuffleImages = ( images ) => {
 		.map( ( [ , image ] ) => image );
 };
 
+const checkImageTypeIgnoreStyle = ( imageType, selectedType ) => {
+	const [ imageTypeFilter ] = imageType.split( '/' );
+	return imageTypeFilter === selectedType;
+};
+
 const useSuggestedImages = ( { selectedType } ) => {
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ data, setImagesState ] = useState( { images: [] } );
@@ -20,7 +25,7 @@ const useSuggestedImages = ( { selectedType } ) => {
 			return shuffledImages;
 		}
 
-		const categoryImages = shuffledImages.filter( ( { imageType } ) => imageType.includes( selectedType ) );
+		const categoryImages = shuffledImages.filter( ( { imageType } ) => checkImageTypeIgnoreStyle( imageType, selectedType ) );
 
 		// Some categories don't have images, so we TEMPORARILY fallback to the shuffled images.
 		return categoryImages.length ? categoryImages : shuffledImages;

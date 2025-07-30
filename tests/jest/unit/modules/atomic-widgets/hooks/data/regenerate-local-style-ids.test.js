@@ -1,7 +1,7 @@
 import { createContainer, addChildToContainer, setGlobalContainers } from '../../utils/container';
 
 describe( 'Regenerate local style IDs', () => {
-	let createHook;
+	let duplicateHook;
 
 	let uniqueId = 0;
 
@@ -14,7 +14,7 @@ describe( 'Regenerate local style IDs', () => {
 
 		global.elementor = {
 			widgetsCache: {
-				'a-heading': {
+				'e-heading': {
 					atomic_props_schema: {
 						classes: {
 							kind: 'plain',
@@ -23,7 +23,7 @@ describe( 'Regenerate local style IDs', () => {
 						},
 					},
 				},
-				'div-block': {
+				'e-div-block': {
 					atomic_props_schema: {
 						classes: {
 							kind: 'plain',
@@ -47,9 +47,9 @@ describe( 'Regenerate local style IDs', () => {
 			},
 		};
 
-		const CreateElementHook = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/create-element' ) ).default;
+		const { DuplicateElement } = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/hooks/data/regenerate-local-style-ids/duplicate-element' ) );
 
-		createHook = new CreateElementHook();
+		duplicateHook = new DuplicateElement();
 	} );
 
 	afterAll( async () => {
@@ -83,8 +83,8 @@ describe( 'Regenerate local style IDs', () => {
 		};
 
 		const container = createContainer( {
-			widgetType: 'div-block',
-			elType: 'div-block',
+			widgetType: 'e-div-block',
+			elType: 'e-div-block',
 			id: 'widget1',
 			styles: initialContainerStyle,
 			settings: {
@@ -93,7 +93,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const styledElement = createContainer( {
-			widgetType: 'a-heading',
+			widgetType: 'e-heading',
 			elType: 'widget',
 			id: 'widget2',
 			styles: initialStyle,
@@ -104,7 +104,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const nestedStyledElement = createContainer( {
-			widgetType: 'a-heading',
+			widgetType: 'e-heading',
 			elType: 'widget',
 			id: 'widget3',
 			styles: initialNestedStyle,
@@ -114,7 +114,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const duplicatedStyledElement = createContainer( {
-			widgetType: 'a-heading',
+			widgetType: 'e-heading',
 			elType: 'widget',
 			id: 'widget4',
 			styles: initialStyle,
@@ -125,7 +125,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const duplicatedNestedStyledElement = createContainer( {
-			widgetType: 'a-heading',
+			widgetType: 'e-heading',
 			elType: 'widget',
 			id: 'widget5',
 			styles: initialNestedStyle,
@@ -143,7 +143,7 @@ describe( 'Regenerate local style IDs', () => {
 		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		createHook.apply( {}, [ duplicatedStyledElement ] );
+		duplicateHook.apply( {}, [ duplicatedStyledElement ] );
 
 		// Assert
 		expect( container.model.get( 'styles' ) ).toEqual( initialContainerStyle );
@@ -152,27 +152,27 @@ describe( 'Regenerate local style IDs', () => {
 
 		expect( nestedStyledElement.model.get( 'styles' ) ).toEqual( initialNestedStyle );
 
-		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
-			...createMockStyle( 'e-widget4-1' ),
-			...createMockStyle( 'e-widget4-2' ),
-		} );
-
 		expect( duplicatedNestedStyledElement.model.get( 'styles' ) ).toEqual( {
-			...createMockStyle( 'e-widget5-3' ),
+			...createMockStyle( 'e-widget5-1' ),
 		} );
 
-		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
-			container: duplicatedStyledElement,
-			settings: {
-				classes1: createMockClassPropValue( 'e-widget4-1' ),
-				classes2: createMockClassPropValue( 'e-widget4-2' ),
-			},
+		expect( duplicatedStyledElement.model.get( 'styles' ) ).toEqual( {
+			...createMockStyle( 'e-widget4-2' ),
+			...createMockStyle( 'e-widget4-3' ),
 		} );
 
 		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
 			container: duplicatedNestedStyledElement,
 			settings: {
-				classes: createMockClassPropValue( 'e-widget5-3' ),
+				classes: createMockClassPropValue( 'e-widget5-1' ),
+			},
+		} );
+
+		expect( setSettingsCommand ).toBeCalledWith( 'document/elements/set-settings', {
+			container: duplicatedStyledElement,
+			settings: {
+				classes1: createMockClassPropValue( 'e-widget4-2' ),
+				classes2: createMockClassPropValue( 'e-widget4-3' ),
 			},
 		} );
 	} );
@@ -180,8 +180,8 @@ describe( 'Regenerate local style IDs', () => {
 	it( 'should not do anything if no styled elements are duplicated on create', async () => {
 		// Arrange
 		const container = createContainer( {
-			widgetType: 'div-block',
-			elType: 'div-block',
+			widgetType: 'e-div-block',
+			elType: 'e-div-block',
 			id: '123',
 			styles: {},
 			settings: {
@@ -193,7 +193,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const nonStyledElement = createContainer( {
-			widgetType: 'a-heading',
+			widgetType: 'e-heading',
 			elType: 'widget',
 			id: '456',
 			styles: {},
@@ -206,7 +206,7 @@ describe( 'Regenerate local style IDs', () => {
 		} );
 
 		const duplicatedNonStyledElement = createContainer( {
-			widgetType: 'a-heading',
+			widgetType: 'e-heading',
 			elType: 'widget',
 			id: '567',
 			styles: {},
@@ -225,7 +225,7 @@ describe( 'Regenerate local style IDs', () => {
 		const setSettingsCommand = jest.spyOn( global.$e, 'internal' );
 
 		// Act
-		createHook.apply( {}, [ duplicatedNonStyledElement ] );
+		duplicateHook.apply( {}, [ duplicatedNonStyledElement ] );
 
 		// Assert
 		expect( setSettingsCommand ).not.toBeCalled();

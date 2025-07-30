@@ -56,4 +56,37 @@ class Test_String_Prop_Type extends Elementor_Test_Base {
 		// Assert.
 		$this->assertFalse( $result );
 	}
+
+	public function test_sanitize__sanitizes_html() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [ '$$type' => 'string', 'value' => '<script>alert("XSS")</script>' ] );
+
+		// Assert.
+		$this->assertEquals( '', $result['value'] );
+	}
+
+	public function test_sanitize_sanitizes_url_encoded_string() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [ '$$type' => 'string', 'value' => '%3Cscript%3Ealert%28%22XSS%22%29%3C%2Fscript%3E' ] );
+
+		// Assert.
+		$this->assertEquals( 'scriptalertXSSscript', $result['value'] );
+	}
+
+	public function test_sanitize__sanitizes_string_and_keeps_whitespaces() {
+		// Arrange.
+		$prop_type = String_Prop_Type::make();
+
+		// Act.
+		$result = $prop_type->sanitize( [ '$$type' => 'string', 'value' => '   sani<script>test</script>   ' ] );
+
+		// Assert.
+		$this->assertEquals( '   sani   ', $result['value'] );
+	}
 }

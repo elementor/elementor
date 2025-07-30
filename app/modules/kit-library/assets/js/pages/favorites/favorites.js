@@ -1,6 +1,7 @@
 import Index from '../index/index';
 import ErrorScreen from '../../components/error-screen';
 import { useNavigate } from '@reach/router';
+import PropTypes from 'prop-types';
 
 export default function Favorites( props ) {
 	const navigate = useNavigate();
@@ -8,7 +9,7 @@ export default function Favorites( props ) {
 	const indexNotResultsFavorites = <ErrorScreen
 		// eslint-disable-next-line @wordpress/i18n-ellipsis
 		title={ __( 'No favorites here yet...', 'elementor' ) }
-		description={ __( 'Use the heart icon to save kits that inspire you. You\'ll be able to find them here.', 'elementor' ) }
+		description={ __( 'Use the heart icon to save Website Templates that inspire you. You\'ll be able to find them here.', 'elementor' ) }
 		button={ {
 			text: __( 'Continue browsing.', 'elementor' ),
 			action: () => navigate( '/kit-library' ),

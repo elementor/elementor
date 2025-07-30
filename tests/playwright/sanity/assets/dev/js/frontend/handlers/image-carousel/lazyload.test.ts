@@ -7,7 +7,7 @@ test( 'Image Carousel widget sanity test lazyload', async ( { page, apiRequests 
 		editor = await wpAdmin.openNewPage();
 	const images = [ 'elementor1.png', 'elementor2.png', 'elementor3.png', 'elementor4.png' ];
 
-	await editor.addWidget( 'image-carousel' );
+	await editor.addWidget( { widgetType: 'image-carousel' } );
 	await editor.openPanelTab( 'content' );
 	await editor.addImagesToGalleryControl( { images } );
 	await editor.setSelectControlValue( 'slides_to_show', '1' );

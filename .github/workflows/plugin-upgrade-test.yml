@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -37,7 +37,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: |
-          npm ci
+          npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:

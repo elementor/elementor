@@ -1,13 +1,24 @@
+
+$eps-text-field-border-color: tints(300);
+$eps-text-field-dark-border-color: dark-tints(700);
+$eps-text-field-focus-border-color: tints(600);
+$eps-text-field-focus-dark-border-color: dark-tints(300);
+
 $eps-text-field-color: tints(600);
 $eps-text-field-dark-color: dark-tints(200);
 $eps-text-field-background-color: transparent;
 $eps-text-field-dark-background-color: transparent;
-$eps-text-field-outlined-border-color: tints(300);
-$eps-text-field-outlined-dark-border-color: dark-tints(700);
-$eps-text-field-outlined-focus-border-color: tints(600);
-$eps-text-field-outlined-focus-dark-border-color: dark-tints(300);
+$eps-text-field-outlined-border-color: $eps-text-field-border-color;
+$eps-text-field-outlined-dark-border-color: $eps-text-field-dark-border-color;
+$eps-text-field-outlined-focus-border-color: $eps-text-field-focus-border-color;
+$eps-text-field-outlined-focus-dark-border-color: $eps-text-field-focus-dark-border-color;
 $eps-text-field-placeholder-color: tints(500);
 $eps-text-field-placeholder-dark-color: dark-tints(300);
+
+$eps-text-field-standard-border-color: $eps-text-field-border-color;
+$eps-text-field-standard-dark-border-color: $eps-text-field-dark-border-color;
+$eps-text-field-standard-focus-border-color: tints(600);
+$eps-text-field-standard-focus-dark-border-color: $eps-text-field-focus-dark-border-color;
 
 @mixin font-style {
 	font-family: $eps-font-family;
@@ -24,6 +35,9 @@ $root: eps-text-field;
 	--eps-text-field-placeholder-color: #{$eps-text-field-placeholder-color};
 	--eps-text-field-outlined-border-color: #{$eps-text-field-outlined-border-color};
 	--eps-text-field-outlined-focus-border-color: #{$eps-text-field-outlined-focus-border-color};
+	--eps-text-field-standard-border-color: #{$eps-text-field-standard-border-color};
+	--eps-text-field-standard-focus-border-color: #{$eps-text-field-standard-focus-border-color};
+	--border: #{$eps-border-width $eps-border-style var(--eps-text-field-outlined-border-color)};
 
 	width: 100%;
 	color: var(--eps-text-field-color);
@@ -35,11 +49,21 @@ $root: eps-text-field;
 
 	&--outlined {
 		border-radius: $eps-radius;
-		border: $eps-border-width $eps-border-style var(--eps-text-field-outlined-border-color);
+		border: var(--border);
 		padding: spacing(10);
 
 		&:focus {
 			border-color: var(--eps-text-field-outlined-focus-border-color);
+		}
+	}
+
+	&--standard {
+		padding-top: spacing(10);
+		padding-bottom: spacing(10);
+		border-bottom: var(--border);
+
+		&:focus {
+			border-color: var(--eps-text-field-standard-focus-border-color);
 		}
 	}
 
@@ -63,6 +87,14 @@ $root: eps-text-field;
 
 		&:focus {
 			border-color: var(--eps-text-field-outlined-focus-border-color);
+		}
+	}
+
+	&--standard {
+		border-color: var(--eps-text-field-standard-border-color);
+
+		&:focus {
+			border-color: var(--eps-text-field-standard-focus-border-color);
 		}
 	}
 }

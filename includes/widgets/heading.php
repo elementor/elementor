@@ -8,8 +8,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
-use Elementor\Modules\Promotions\Controls\Promotion_Control;
-
 /**
  * Elementor heading widget.
  *
@@ -140,6 +138,27 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 	}
 
 	/**
+	 * Get widget upsale data.
+	 *
+	 * Retrieve the widget promotion data.
+	 *
+	 * @since 3.18.0
+	 * @access protected
+	 *
+	 * @return array Widget promotion data.
+	 */
+	protected function get_upsale_data() {
+		return [
+			'condition' => ! Utils::has_pro(),
+			'image' => esc_url( ELEMENTOR_ASSETS_URL . 'images/go-pro.svg' ),
+			'image_alt' => esc_attr__( 'Upgrade', 'elementor' ),
+			'description' => esc_html__( 'Create captivating headings that rotate with the Animated Headline Widget.', 'elementor' ),
+			'upgrade_url' => esc_url( 'https://go.elementor.com/go-pro-heading-widget/' ),
+			'upgrade_text' => esc_html__( 'Upgrade Now', 'elementor' ),
+		];
+	}
+
+	/**
 	 * Register heading widget controls.
 	 *
 	 * Adds different input fields to allow the user to change and customize the widget settings.
@@ -224,16 +243,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'default' => 'h2',
 			]
 		);
-
-		if ( ! Utils::has_pro() ) {
-			$this->add_control(
-				Utils::ANIMATED_HEADLINE . '_promotion',
-				[
-					'label' => esc_html__( 'Animated Headline widget', 'elementor' ),
-					'type' => Promotion_Control::TYPE,
-				]
-			);
-		}
 
 		$this->end_controls_section();
 
@@ -389,7 +398,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'unit' => 's',
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-heading-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-heading-title a' => 'transition-duration: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -426,7 +435,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		$this->add_inline_editing_attributes( 'title' );
 
-		$title = $this->should_sanitize( $settings ) ? wp_kses_post( $settings['title'] ) : $settings['title'];
+		$title = wp_kses_post( $settings['title'] );
 
 		if ( ! empty( $settings['link']['url'] ) ) {
 			$this->add_link_attributes( 'url', $settings['link'] );
@@ -473,14 +482,5 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		print( title_html );
 		#>
 		<?php
-	}
-
-	/**
-	 * Check if the content should be sanitized. Sanitizing should be applied for non-admin users in the editor and for shortcodes.
-	 *
-	 * @return bool
-	 */
-	private function should_sanitize( array $settings ): bool {
-		return ( is_admin() && ! current_user_can( 'manage_options' ) ) || ! empty( $settings['isShortcode'] );
 	}
 }

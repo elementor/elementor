@@ -48,14 +48,12 @@ const KitListItem = ( props ) => {
 			</CardHeader>
 			<CardBody>
 				<CardImage alt={ props.model.title } src={ props.model.thumbnailUrl || '' }>
-					{
-						<Badge
-							variant="sm"
-							className={ `e-kit-library__kit-item-subscription-plan-badge ${ subscriptionPlan.isPromoted ? 'promoted' : '' }` }
-						>
-							{ subscriptionPlan.label }
-						</Badge>
-					}
+					<Badge
+						variant="sm"
+						className={ `e-kit-library__kit-item-subscription-plan-badge ${ subscriptionPlan.isPromoted ? 'promoted' : '' }` }
+					>
+						{ subscriptionPlan.label }
+					</Badge>
 					<CardOverlay>
 						<Grid container direction="column" className="e-kit-library__kit-item-overlay">
 							<Button

@@ -5,7 +5,7 @@ module.exports = elementorModules.Module.extend( {
 			position: {
 				my: 'center bottom',
 				at: 'center bottom-10',
-				of: '#elementor-panel-content-wrapper',
+				of: '#elementor-panel-inner',
 				autoRefresh: true,
 			},
 			hide: {
@@ -71,8 +71,14 @@ module.exports = elementorModules.Module.extend( {
 
 		toast.getElements( 'buttonsWrapper' ).empty();
 
-		if ( ! this.isPositionValid( options?.position ) ) {
+		const isPositionValid = this.isPositionValid( options?.position );
+
+		if ( ! isPositionValid ) {
 			this.positionToWindow();
+		}
+
+		if ( options?.position && isPositionValid ) {
+			toast.setSettings( 'position', options.position );
 		}
 
 		if ( options.buttons ) {

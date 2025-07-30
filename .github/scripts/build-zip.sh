@@ -7,8 +7,11 @@ if [[ -z "$PACKAGE_VERSION" ]]; then
 fi
 
 PLUGIN_ZIP_FILENAME="elementor-${PACKAGE_VERSION}.zip"
-npx grunt build
+npm run build
 mv build elementor
+
+# Make sure not to upload the .zip file to the artifact!
 zip -r $PLUGIN_ZIP_FILENAME elementor
+
 echo "PLUGIN_ZIP_FILENAME=${PLUGIN_ZIP_FILENAME}" >> $GITHUB_ENV
 echo "PLUGIN_ZIP_PATH=./elementor/**/*" >> $GITHUB_ENV

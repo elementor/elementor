@@ -12,6 +12,7 @@ use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,8 +32,8 @@ class Module extends BaseModule {
 
 	private function register_admin_menu( MainMenu $menu ) {
 		$menu->add_submenu( [
-			'page_title' => esc_html__( 'Kit Library', 'elementor' ),
-			'menu_title' => '<span id="e-admin-menu__kit-library">' . esc_html__( 'Kit Library', 'elementor' ) . '</span>',
+			'page_title' => esc_html__( 'Website Templates', 'elementor' ),
+			'menu_title' => '<span id="e-admin-menu__kit-library">' . esc_html__( 'Website Templates', 'elementor' ) . '</span>',
 			'menu_slug' => Plugin::$instance->app->get_base_url() . '#/kit-library',
 			'index' => 40,
 		] );
@@ -99,6 +100,12 @@ class Module extends BaseModule {
 		Plugin::$instance->data_manager_v2->register_controller( new Kits_Controller() );
 		Plugin::$instance->data_manager_v2->register_controller( new Taxonomies_Controller() );
 
+		$this->register_actions();
+
+		do_action( 'elementor/kit_library/registered', $this );
+	}
+
+	public function register_actions() {
 		// Assigning this action here since the repository is being loaded by demand.
 		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
 
@@ -113,5 +120,56 @@ class Module extends BaseModule {
 		add_action( 'elementor/init', function () {
 			$this->set_kit_library_settings();
 		}, 12 /** After the initiation of the connect kit library */ );
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
+			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
+		}
+	}
+
+	public function handle_kit_screenshot_generation() {
+		$is_kit_preview = ElementorUtils::get_super_global_value( $_GET, 'kit_thumbnail' );
+		$nonce = ElementorUtils::get_super_global_value( $_GET, 'nonce' );
+
+		if ( $is_kit_preview ) {
+			if ( ! wp_verify_nonce( $nonce, 'kit_thumbnail' ) ) {
+				wp_die( esc_html__( 'Not Authorized', 'elementor' ), esc_html__( 'Error', 'elementor' ), 403 );
+			}
+
+			$suffix = ( ElementorUtils::is_script_debug() || ElementorUtils::is_elementor_tests() ) ? '' : '.min';
+
+			show_admin_bar( false );
+
+			wp_enqueue_script(
+				'dom-to-image',
+				ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
+				[],
+				'2.6.0',
+				true
+			);
+
+			wp_enqueue_script(
+				'html2canvas',
+				ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
+				[],
+				'1.4.1',
+				true
+			);
+
+			wp_enqueue_script(
+				'cloud-library-screenshot',
+				ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
+				[ 'dom-to-image', 'html2canvas', 'elementor-common', 'elementor-common-modules' ],
+				ELEMENTOR_VERSION,
+				true
+			);
+
+			$config = [
+				'home_url' => home_url(),
+				'kit_id' => uniqid(),
+				'selector' => 'body',
+			];
+
+			wp_add_inline_script( 'cloud-library-screenshot', 'var ElementorScreenshotConfig = ' . wp_json_encode( $config ) . ';' );
+		}
 	}
 }

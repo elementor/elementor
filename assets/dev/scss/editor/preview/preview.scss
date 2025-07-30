@@ -1,8 +1,6 @@
 @import "../../helpers/variables";
 @import "../../helpers/mixins";
-@import "../../helpers/direction";
 @import "../../global/global";
-@import "../../direction/theme-light";
 
 @import "../units";
 @import "../breakpoints";
@@ -218,8 +216,8 @@ html.elementor-html {
 
 	> .elementor-element-overlay {
 		position: absolute;
-		top: 0;
-		@include end(0);
+		inset-block-start: 0;
+		inset-inline-end: 0;
 		letter-spacing: 0; // Hack for front-end style themes
 		z-index: $element-overlay;
 		pointer-events: none;
@@ -241,6 +239,11 @@ html.elementor-html {
 			display: block;
 			text-align: center;
 			padding: 10px 0;
+		}
+
+		&[data-atomic] .elementor-widget-empty-icon {
+			background-color: rgb(243, 243, 244);
+			width: 100%;
 		}
 	}
 
@@ -423,6 +426,14 @@ html.elementor-html {
 .elementor-widget-placeholder {
 	height: $widget-placeholder-size;
 	animation-name: placeholder-widget;
+
+	&.is-logical {
+		margin-top: var(--e-placeholder-margin-top);
+		margin-bottom: var(--e-placeholder-margin-bottom);
+		margin-inline-start: var(--e-placeholder-margin-inline-start);
+		width: var(--e-placeholder-width);
+		min-width: 200px;
+	}
 }
 
 .elementor-draggable-over:not([data-dragged-element="section"]):not([data-dragged-is-inner="true"]) > .elementor-empty-view > .elementor-first-add,
@@ -523,6 +534,10 @@ html.elementor-html {
 	&.elementor-edit-hidden {
 		display: none;
 	}
+}
+
+.e-youtube-base iframe {
+	pointer-events: none;
 }
 
 @import "section";

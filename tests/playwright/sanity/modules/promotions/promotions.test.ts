@@ -5,8 +5,7 @@ import PromotionsHelper from '../../../pages/promotions/helper';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Promotion tests @promotions', () => {
-	// Unskip task: ED-18233
-	test.skip( 'Menu Items Promotions - screenshots', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Menu Items Promotions - screenshots', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			promotionContainer = '.e-feature-promotion';
 
@@ -35,7 +34,7 @@ test.describe( 'Promotion tests @promotions', () => {
 			promotionsHelper = new PromotionsHelper( page, testInfo ),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( 'heading', container );
+		await editor.addWidget( { widgetType: 'heading', container } );
 
 		await editor.openPanelTab( 'advanced' );
 		await editor.openSection( 'section_effects' );
@@ -57,48 +56,11 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
-	test( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
-			editor = await wpAdmin.openNewPage(),
-			promotionsHelper = new PromotionsHelper( page, testInfo ),
-			container = await editor.addElement( { elType: 'container' }, 'document' );
-
-		await test.step( 'Free to Pro - react animated headline modal visible', async () => {
-			await editor.addWidget( 'heading', container );
-			await editor.openPanelTab( 'content' );
-			await promotionsHelper.modalPromotionModalVisibilityTest( 'animated_headline_promotion' );
-		} );
-
-		await test.step( 'Free to Pro - react video playlist modal visible', async () => {
-			await editor.addWidget( 'video', container );
-			await editor.openPanelTab( 'content' );
-			await promotionsHelper.modalPromotionModalVisibilityTest( 'video_playlist_promotion' );
-		} );
-
-		await test.step( 'Free to Pro - react cta button modal visible', async () => {
-			await editor.addWidget( 'button', container );
-			await editor.openPanelTab( 'content' );
-			await promotionsHelper.modalPromotionModalVisibilityTest( 'cta_promotion' );
-		} );
-
-		await test.step( 'Free to Pro - react image carousel modal visible', async () => {
-			await editor.addWidget( 'image-carousel', container );
-			await editor.openPanelTab( 'content' );
-			await promotionsHelper.modalPromotionModalVisibilityTest( 'image_carousel_promotion' );
-		} );
-
-		await test.step( 'Free to Pro - react testimonial modal visible', async () => {
-			await editor.addWidget( 'testimonial', container );
-			await editor.openPanelTab( 'content' );
-			await promotionsHelper.modalPromotionModalVisibilityTest( 'testimonial_widget_promotion' );
-		} );
-	} );
-
 	test( 'Context Menu Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
 			editor = await wpAdmin.openNewPage(),
-			heading = await editor.addWidget( 'heading' );
+			heading = await editor.addWidget( { widgetType: 'heading' } );
 
 		// Act.
 		await editor.getPreviewFrame().locator( `.elementor-element-${ heading }` ).click( { button: 'right' } );
@@ -157,12 +119,9 @@ test.describe( 'Promotion tests @promotions', () => {
 		await expect.soft( promoContainer ).toHaveScreenshot( `navigator-footer-dark.png` );
 	} );
 
-	test( 'Promotions - Sticky Free to Pro - Editor- Top Bar Off', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Promotions - Sticky Free to Pro - Main panel', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			editor_v2: false,
-		} );
 		const wrapperContainer = '#elementor-panel-inner',
 			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
 
@@ -173,26 +132,7 @@ test.describe( 'Promotion tests @promotions', () => {
 		await promoContainer.waitFor();
 
 		// Assert.
-		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky.png` );
-	} );
-
-	test( 'Promotions - Sticky Free to Pro - Top Bar On', async ( { page, apiRequests }, testInfo ) => {
-		// Arrange.
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			editor_v2: true,
-		} );
-		const wrapperContainer = '#elementor-panel-inner',
-			promotionContainer = '#elementor-panel-get-pro-elements-sticky';
-
-		// Act.
-		await wpAdmin.openNewPage();
-		const parentContainer = page.locator( wrapperContainer );
-		const promoContainer = page.locator( promotionContainer );
-		await promoContainer.waitFor();
-
-		// Assert.
-		await expect.soft( parentContainer ).toHaveScreenshot( `go-pro-sticky-top-bar.png` );
+		await expect.soft( parentContainer ).toHaveScreenshot( `elements-panel-promotion.png` );
 	} );
 
 	test( 'Promotion text behavior on resizing the structure panel', async ( { page, apiRequests }, testInfo ) => {

@@ -13,6 +13,10 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
+		elementor.templates.eventManager.sendPageViewEvent( {
+			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabConnect,
+		} );
+
 		this.ui.connect.elementorConnect( {
 			parseUrl: ( url ) => url.replace( '%%template_type%%', this.model.get( 'type' ) ),
 			success: () => {

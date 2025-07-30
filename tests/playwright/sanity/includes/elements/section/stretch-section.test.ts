@@ -41,7 +41,7 @@ async function testStretchedSection( page: Page, editor: EditorPage, direction: 
 	await editor.openPanelTab( 'layout' );
 	await editor.setSelectControlValue( 'layout', 'boxed' );
 
-	const spacerID = await editor.addWidget( 'spacer', sectionID, true );
+	const spacerID = await editor.addWidget( { widgetType: 'spacer', container: sectionID, isContainerASection: true } );
 	await editor.selectElement( spacerID );
 	await editor.setSliderControlValue( 'space', '200' );
 	await editor.openPanelTab( 'advanced' );

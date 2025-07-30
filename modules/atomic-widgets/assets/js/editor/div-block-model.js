@@ -7,6 +7,6 @@ export default class AtomicContainer extends elementor.modules.elements.models.E
 	isValidChild( childModel ) {
 		const elType = childModel.get( 'elType' );
 
-		return 'section' !== elType && 'column' !== elType && 'container' !== elType;
+		return 'section' !== elType && 'column' !== elType;
 	}
 }

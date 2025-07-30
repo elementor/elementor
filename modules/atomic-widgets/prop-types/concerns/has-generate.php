@@ -9,11 +9,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 trait Has_Generate {
-	public static function generate( $value ) {
-		return [
+	public static function generate( $value, $disable = false ): array {
+		$value = [
 			'$$type' => static::get_key(),
 			'value' => $value,
 		];
+
+		if ( $disable ) {
+			$value['disabled'] = true;
+		}
+
+		return $value;
 	}
 
 	abstract public static function get_key(): string;

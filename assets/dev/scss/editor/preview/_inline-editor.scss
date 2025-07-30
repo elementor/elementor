@@ -59,7 +59,7 @@
 			&:before {
 				content: '';
 				position: absolute;
-				@include start(0);
+				inset-inline-start: 0;
 				height: 60%;
 				width: 1px;
 				background-color: $editor-darker;

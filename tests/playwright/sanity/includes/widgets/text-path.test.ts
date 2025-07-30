@@ -14,7 +14,7 @@ test( 'Custom path type', async ( { page, apiRequests }, testInfo ) => {
 	await editor.closeNavigatorIfOpen();
 
 	// Act.
-	await editor.addWidget( 'text-path' );
+	await editor.addWidget( { widgetType: 'text-path' } );
 	await editor.setSelectControlValue( 'path', 'custom' );
 	await page.locator( '.elementor-control-custom_path .eicon-plus-circle' ).click();
 	await editor.uploadSVG();

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles;
 
+use Elementor\Modules\AtomicWidgets\PropsResolver\Multi_Props;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -9,10 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Background_Transformer extends Transformer_Base {
-	public function transform( $value, $key ) {
-		$overlay = $value['background-overlay'] ?? '';
-		$color = $value['color'] ?? '';
+	public function transform( $value, Props_Resolver_Context $context ) {
+		$overlay = $value['background-overlay'] ?? [];
+		$color = $value['color'] ?? null;
 
-		return trim( "$overlay $color" );
+		return Multi_Props::generate( array_merge( $overlay, [
+			'background-color' => $color,
+		] ) );
 	}
 }

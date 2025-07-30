@@ -11,5 +11,8 @@
   "legacy-javascript": [ "error", { "maxLength": 0 } ],
   "render-blocking-resources": [ "error", { "maxLength": 11 } ],
   "uses-long-cache-ttl": [ "warn", { "maxLength": 26 } ],
+  "lcp-lazy-loaded": "off",
+  "non-composited-animations": [ "error", { "maxLength": 0 } ],
+  "prioritize-lcp-image": "off",
   "csp-xss": [ "warn", { "minScore": 0 }]
 }

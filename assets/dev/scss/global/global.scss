@@ -2,6 +2,15 @@
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
 
+:root {
+	--direction-multiplier: 1; // LTR = 1, RTL = -1
+}
+
+html[dir="rtl"],
+body.rtl {
+	--direction-multiplier: -1;
+}
+
 .elementor-hidden {
 	display: none;
 }

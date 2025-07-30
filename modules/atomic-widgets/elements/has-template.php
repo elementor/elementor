@@ -13,6 +13,16 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @mixin Has_Atomic_Base
  */
 trait Has_Template {
+
+	public function get_initial_config() {
+		$config = parent::get_initial_config();
+
+		$config['twig_main_template'] = $this->get_main_template();
+		$config['twig_templates'] = $this->get_templates_contents();
+
+		return $config;
+	}
+
 	protected function render() {
 		try {
 			$renderer = Template_Renderer::instance();
@@ -39,6 +49,13 @@ trait Has_Template {
 				throw $e;
 			}
 		}
+	}
+
+	protected function get_templates_contents() {
+		return array_map(
+			fn ( $path ) => Utils::file_get_contents( $path ),
+			$this->get_templates()
+		);
 	}
 
 	protected function get_main_template() {

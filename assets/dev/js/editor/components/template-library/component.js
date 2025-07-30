@@ -1,6 +1,7 @@
 import ComponentModalBase from 'elementor-api/modules/component-modal-base';
 import * as commands from './commands/';
 import * as commandsData from './commands-data/';
+import { SAVE_CONTEXTS } from './constants';
 
 const TemplateLibraryLayoutView = require( 'elementor-templates/views/library-layout' );
 
@@ -13,6 +14,12 @@ export default class Component extends ComponentModalBase {
 
 		// Remove whole component cache data.
 		$e.data.deleteCache( this, 'library' );
+
+		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
+			elementor.channels.templates.on( 'quota:update', ( { force } = {} ) => {
+				$e.components.get( 'cloud-library' ).utils.setQuotaConfig( force );
+			} );
+		}
 	}
 
 	getNamespace() {
@@ -20,7 +27,7 @@ export default class Component extends ComponentModalBase {
 	}
 
 	defaultTabs() {
-		const tabs = {
+		return {
 			'templates/blocks': {
 				title: __( 'Blocks', 'elementor' ),
 				getFilter: () => ( {
@@ -37,23 +44,13 @@ export default class Component extends ComponentModalBase {
 				},
 			},
 			'templates/my-templates': {
-				title: __( 'My Templates', 'elementor' ),
-				filter: {
-					source: 'local',
-				},
+				title: __( 'Templates', 'elementor' ),
+				getFilter: () => ( {
+					source: elementor.templates.getSourceSelection() ?? 'local',
+					view: elementor.templates.getViewSelection() ?? 'list',
+				} ),
 			},
 		};
-
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			tabs[ 'templates/cloud-library' ] = {
-				title: __( 'Cloud Library', 'elementor' ),
-				filter: {
-					source: 'cloud',
-				},
-			};
-		}
-
-		return tabs;
 	}
 
 	defaultRoutes() {
@@ -62,7 +59,7 @@ export default class Component extends ComponentModalBase {
 				this.manager.layout.showImportView();
 			},
 			'save-template': ( args ) => {
-				this.manager.layout.showSaveTemplateView( args.model );
+				this.manager.layout.showSaveTemplateView( args.model, args.context ?? SAVE_CONTEXTS.SAVE );
 			},
 			preview: ( args ) => {
 				this.manager.layout.showPreviewView( args.model );
@@ -118,6 +115,8 @@ export default class Component extends ComponentModalBase {
 		const currentTab = this.tabs[ tab ];
 		const filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
 
+		this.currentTab = tab;
+
 		this.manager.setScreen( filter );
 	}
 
@@ -164,6 +163,11 @@ export default class Component extends ComponentModalBase {
 				model: callbackParams.model,
 				data,
 				options: callbackParams.importOptions,
+				onAfter: () => {
+					this.manager.eventManager.sendTemplateInsertedEvent( {
+						library_type: callbackParams.model.get( 'source' ) ?? 'local',
+					} );
+				},
 			} );
 		} );
 	}
@@ -226,6 +230,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: true,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: 'apply',
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 
@@ -233,6 +243,12 @@ export default class Component extends ComponentModalBase {
 					$e.run( 'library/insert-template', {
 						model,
 						withPageSettings: false,
+						onAfter: () => {
+							elementor.templates.eventManager.sendInsertApplySettingsEvent( {
+								apply_modal_result: `don't apply`,
+								library_type: model.get( 'source' ),
+							} );
+						},
 					} );
 				};
 

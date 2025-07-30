@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -225,6 +226,11 @@ class Element_Column extends Element_Base {
 			]
 		);
 
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+		$space_between_widgets = $optimized_markup
+			? '--kit-widget-spacing: {{VALUE}}px'
+			: 'margin-bottom: {{VALUE}}px';
+
 		$this->add_responsive_control(
 			'space_between_widgets',
 			[
@@ -232,7 +238,7 @@ class Element_Column extends Element_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => 20,
 				'selectors' => [
-					'{{WRAPPER}} > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => 'margin-bottom: {{VALUE}}px', // Need the full path for exclude the inner section.
+					'{{WRAPPER}} > .elementor-widget-wrap > .elementor-widget:not(.elementor-widget__width-auto):not(.elementor-widget__width-initial):not(:last-child):not(.elementor-absolute)' => $space_between_widgets, // Need the full path for exclude the inner section.
 				],
 			]
 		);

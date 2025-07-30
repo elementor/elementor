@@ -30,6 +30,8 @@ export class ResetSettings extends $e.modules.editor.document.CommandHistoryBase
 				defaultValues[ controlName ] = control.default;
 			} );
 
+			defaultValues.__globals__ = {};
+
 			$e.run( 'document/elements/settings', {
 				container,
 				options,

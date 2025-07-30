@@ -19,7 +19,7 @@ export default function ProgressBar() {
 	if ( ! elementorAppConfig.onboarding.helloActivated ) {
 		progressBarItemsConfig.push( {
 			id: 'hello',
-			title: __( 'Hello Theme', 'elementor' ),
+			title: __( 'Hello Biz Theme', 'elementor' ),
 			route: 'hello',
 		} );
 	}

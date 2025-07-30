@@ -56,8 +56,16 @@ class Test_Import extends Elementor_Test_Base {
 		$import = new Import( $session );
 		$manifest = $import->get_manifest();
 
+		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
+			->getMock();
+
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( [ 'get_theme_upgrader'] )
+			->getMock();
+		$site_settings_runner->method( 'get_theme_upgrader' )->willReturn( $theme_upgrader_mock );
+
 		$import->register( new Plugins( $plugins_manager_mock ) );
-		$import->register( new Site_Settings() );
+		$import->register( $site_settings_runner );
 		$import->register( new Taxonomies() );
 		$import->register( new Templates() );
 		$import->register( new Elementor_Content() );
@@ -173,7 +181,7 @@ class Test_Import extends Elementor_Test_Base {
 					'name' => 'Elementor',
 					'plugin' => 'elementor/elementor',
 					'pluginUri' => 'https://elementor.com/?utm_source=wp-plugins&#038;utm_campaign=plugin-uri&#038;utm_medium=wp-dash',
-		            'version' => '3.6.5',
+					'version' => '3.6.5',
 				],
 			],
 		];
@@ -196,6 +204,8 @@ class Test_Import extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
+		$previous_active_theme = wp_get_theme();
+
 		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
 		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 
@@ -203,28 +213,55 @@ class Test_Import extends Elementor_Test_Base {
 			'include' => [ 'settings' ],
 		];
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
-		$import->register( new Site_Settings() );
 
 		$extracted_directory_path = $import->get_extracted_directory_path();
 		$site_settings = ImportExportUtils::read_json_file( $extracted_directory_path . 'site-settings' );
 		$expected_custom_colors = $site_settings['settings']['custom_colors'];
 		$expected_custom_typography =  $site_settings['settings']['custom_typography'];
+		$expected_theme =  $site_settings['theme'];
+
+		$theme_upgrader_mock = $this->getMockBuilder( \Theme_Upgrader::class )
+			->onlyMethods( [ 'install' ] )
+			->getMock();
+
+		$theme_upgrader_mock
+			->expects( $this->once() )
+			->method( 'install' )
+			->with( "https://downloads.wordpress.org/theme/{$expected_theme['slug']}.{$expected_theme['version']}.zip" )
+			->willReturn( true );
+
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( [ 'get_theme_upgrader' ] )
+			->getMock();
+		$site_settings_runner->method( 'get_theme_upgrader' )->willReturn( $theme_upgrader_mock );
+
+		$import->register( $site_settings_runner );
 
 		// Act
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 1, $result );
+		$this->assertCount( 2, $result );
 		$this->assertTrue( $result['site-settings'] );
+		$this->assertCount( 1, $result['theme']['succeed'] );
 
 		$expected_runners = [
 			'site-settings' => [
 				'previous_kit_id' => $previous_kit_id,
 				'active_kit_id' => $active_kit_id,
 				'imported_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
+				'installed_theme' => $expected_theme['slug'],
+				'activated_theme' => null,
+				'previous_active_theme' => [
+					'slug' => $previous_active_theme->get_stylesheet(),
+					'version' => $previous_active_theme->get( 'Version' ),
+				],
+				'previous_experiments' => [],
+				'imported_experiments' => [],
 			],
 		];
 		$import_sessions_options = get_option( Module::OPTION_KEY_ELEMENTOR_IMPORT_SESSIONS );
+
 		$this->assertEquals( $expected_runners, array_pop( $import_sessions_options )['runners'] );
 
 		$new_active_kit = Plugin::$instance->kits_manager->get_active_kit();

@@ -109,6 +109,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$.post( ajaxurl, {
 					action: 'elementor_set_admin_notice_viewed',
 					notice_id: $wrapperElm.data( 'notice_id' ),
+					_wpnonce: $wrapperElm.data( 'nonce' ),
 				} );
 
 				$wrapperElm.fadeTo( 100, 0, function() {
@@ -411,6 +412,10 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			const canImport = elementorAdminConfig.user.is_administrator || ( elementorAdminConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
 
 			if ( ! canImport || ! elementorCommon.elements.$body.hasClass( 'post-type-elementor_library' ) ) {
+				return;
+			}
+
+			if ( 0 === this.elements.$importNowButton.length ) {
 				return;
 			}
 

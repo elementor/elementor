@@ -6,9 +6,7 @@ test.describe( 'Device mode', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
 		await wpAdmin.resetExperiments();
-
 		await page.close();
 	} );
 
@@ -17,7 +15,7 @@ test.describe( 'Device mode', () => {
 			editor = await wpAdmin.openNewPage(),
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
-		await editor.addWidget( 'heading', container );
+		await editor.addWidget( { widgetType: 'heading', container } );
 		await editor.publishAndViewPage();
 		await page.waitForSelector( '.e-con' );
 

@@ -2,9 +2,11 @@
 
 namespace Elementor\Core\Isolation;
 
+use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Plugin;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter_Module;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Utils;
 
 class Elementor_Adapter implements Elementor_Adapter_Interface {
 
@@ -44,5 +46,9 @@ class Elementor_Adapter implements Elementor_Adapter_Interface {
 
 	public function get_template_type( $template_id ): string {
 		return Source_Local::get_template_type( $template_id );
+	}
+
+	public function get_tier(): string {
+		return Utils::has_pro() ? ConnectModule::ACCESS_TIER_PRO_LEGACY : ConnectModule::ACCESS_TIER_FREE;
 	}
 }

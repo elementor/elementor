@@ -11,6 +11,7 @@ function isClassesProp( prop ) {
 
 /**
  * Update the style id of the container.
+ *
  * @param {Container} container
  */
 function updateStyleId( container ) {
@@ -27,9 +28,7 @@ function updateStyleId( container ) {
 
 	Object.entries( originalStyles ).forEach( ( [ originalStyleId, style ] ) => {
 		const newStyleId = getRandomStyleId( container, newStyles );
-
 		newStyles[ newStyleId ] = structuredClone( { ...style, id: newStyleId } );
-
 		changedIds[ originalStyleId ] = newStyleId;
 	} );
 
@@ -50,8 +49,13 @@ function updateStyleId( container ) {
 	container.model.set( 'styles', newStyles );
 }
 
+function updateElementsStyleIdsInsideOut( styledElements ) {
+	styledElements?.reverse().forEach( updateStyleId );
+}
+
 /**
  * Get a container - iterate over its children, find all styled atomic widgets and update their style ids
+ *
  * @param {Container} container
  */
 export function regenerateLocalStyleIds( container ) {
@@ -59,5 +63,5 @@ export function regenerateLocalStyleIds( container ) {
 
 	const styledElements = allElements.filter( ( element ) => Object.keys( element.model.get( 'styles' ) ?? {} ).length > 0 );
 
-	styledElements?.forEach( updateStyleId );
+	updateElementsStyleIdsInsideOut( styledElements );
 }

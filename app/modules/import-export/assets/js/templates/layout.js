@@ -9,12 +9,13 @@ import { SharedContext } from '../context/shared-context/shared-context-provider
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
+import safeRedirect from '../shared/utils/redirect';
 
 export default function Layout( props ) {
 	const [ showInfoModal, setShowInfoModal ] = useState( false ),
 		{ referrer } = useQueryParams().getAll(),
 		sharedContext = useContext( SharedContext ),
-		{ currentPage } = sharedContext.data,
+		{ currentPage, returnTo } = sharedContext.data,
 		eventTracking = ( command, elementPosition = null, element = null, eventType = 'click', modalType = null ) => {
 			if ( 'kit-library' === sharedContext.data.referrer || referrer ) {
 				appsEventTrackingDispatch(
@@ -67,7 +68,13 @@ export default function Layout( props ) {
 		},
 		onClose = () => {
 			eventTracking( 'kit-library/close', 'app_header', null, 'click' );
-			window.top.location = elementorAppConfig.admin_url;
+			if ( returnTo && safeRedirect( returnTo ) ) {
+				// Do nothing as the redirect is handled by the safeRedirect function.
+			} else if ( 'kit-library' === sharedContext.data.referrer || 'kit-library' === referrer ) {
+				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-app#/kit-library';
+			} else {
+				window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools#tab-import-export-kit';
+			}
 		},
 		config = {
 			title: 'import' === props.type ? __( 'Import', 'elementor' ) : __( 'Export', 'elementor' ),

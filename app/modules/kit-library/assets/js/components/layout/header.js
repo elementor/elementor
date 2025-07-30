@@ -25,7 +25,7 @@ export default function Header( props ) {
 				onClick={ () => eventTracking( 'kit-library/logo' ) }
 			>
 				<i className="eps-app__logo eicon-elementor" />
-				<h1 className="eps-app__title">{ __( 'Kit Library', 'elementor' ) }</h1>
+				<h1 className="eps-app__title">{ __( 'Website Templates', 'elementor' ) }</h1>
 			</a> }
 			{ props.centerColumn || <span /> }
 			{ props.endColumn || <div style={ { flex: 1 } }>

@@ -125,9 +125,12 @@ class Modules_Manager {
 			'editor-events',
 			'atomic-widgets',
 			'global-classes',
+			'variables',
 			'wc-product-editor',
 			'checklist',
 			'cloud-library',
+			'cloud-kit-library',
+			'atomic-opt-in',
 		];
 	}
 

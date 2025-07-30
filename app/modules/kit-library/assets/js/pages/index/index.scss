@@ -35,5 +35,50 @@ $e-kit-library-sticky-search-z-index: 2;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+
+		&.e-kit-library__connect-container {
+			justify-content: center;
+			align-items: center;
+		}
+	}
+
+	&__connect-button {
+		background-color: var(--e-a-btn-bg-primary);
+		color: var(--e-a-btn-color);
+		border-radius: 4px;
+		padding: 8px;
+	
+		&:hover {
+			opacity: 0.8;
+		}
+	}
+
+	&__upgrade-button {
+		background-color: var(--e-a-color-accent);
+		color: var(--e-a-color-txt-invert);
+		border-radius: 4px;
+		padding: 8px;
+	
+		&:hover {
+			opacity: 0.8;
+		}
+	}
+	
+	.eicon-library-cloud-connect,
+	.eicon-library-subscription-upgrade {
+		font-size: 65px;
+	}
+
+	.connect-badge {
+		color: $e-pink-900;
+		margin-inline-start: 10px;
+	}
+
+	.upgrade-badge {
+		color: $e-accent;
+		border: 1px solid $e-accent;
+		border-radius: 10px;
+		padding: 2px 6px;
+		margin-inline-start: 10px;
 	}
 }

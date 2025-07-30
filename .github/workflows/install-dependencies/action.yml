@@ -4,9 +4,14 @@ description: 'A composite action to install npm packages and Composer dependenci
 runs:
     using: 'composite'
     steps:
+      # Using PHP 7.4 to make sure it'll bundle the polyfills for PHP >= 8.0
+      - name: Setup PHP 7.4
+        id: setup-php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+
       - shell: bash
         run: |
-            npm ci
-            composer install --optimize-autoloader --prefer-dist  # Reason for running this is so that have opportunity to execute composer scripts
-            composer install --no-scripts --no-dev # Now we want the final `composer install` for the build with flags `--no-dev` that will strip off the dev dependencies from vendor folder added by the command above
-            composer dump-autoload
+            npm run prepare-environment:ci
+            npm run composer:no-dev

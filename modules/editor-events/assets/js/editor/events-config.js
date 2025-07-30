@@ -5,12 +5,17 @@ const eventsConfig = {
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
 		editorLoaded: 'Editor Loaded',
+		visible: 'Visible',
 	},
 
 	locations: {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
 		elementorEditor: 'Elementor Editor',
+		templatesLibrary: {
+			library: 'Templates Library',
+		},
+		variables: 'Variables Panel',
 	},
 
 	secondaryLocations: {
@@ -42,6 +47,32 @@ const eventsConfig = {
 		checklistHeader: 'Checklist Header',
 		checklistSteps: 'Checklist Steps',
 		userPreferences: 'User Preferences',
+		contextMenu: 'Context Menu',
+		templateLibrary: {
+			saveModal: 'Save to Modal',
+			moveModal: 'Move to Modal',
+			bulkMoveModal: 'Bulk Move to Modal',
+			copyModal: 'Copy to Modal',
+			bulkCopyModal: 'Bulk Copy to Modal',
+			saveModalSelectFolder: 'Save to Modal - select folder',
+			saveModalSelectConnect: 'Save to Modal - connect',
+			saveModalSelectUpgrade: 'Save to Modal - upgrade',
+			importModal: 'Import Modal',
+			newFolderModal: 'New Folder Modal',
+			deleteDialog: 'Delete Dialog',
+			deleteFolderDialog: 'Delete Folder Dialog',
+			renameDialog: 'Rename Dialog',
+			createFolderDialog: 'Create Folder Dialog',
+			applySettingsDialog: 'Apply Settings Dialog',
+			cloudTab: 'Cloud Tab',
+			siteTab: 'Site Tab',
+			cloudTabFolder: 'Cloud Tab - Folder',
+			cloudTabConnect: 'Cloud Tab - Connect',
+			cloudTabUpgrade: 'Cloud Tab - Upgrade',
+			morePopup: 'Context Menu',
+			quotaBar: 'Quota Bar',
+		},
+		variablesPopover: 'Variables Popover',
 	},
 
 	elements: {
@@ -100,6 +131,12 @@ const eventsConfig = {
 				checklistHide: 'checklist_userpreferences_toggle_hide',
 			},
 		},
+		variables: {
+            open: 'open_variables_popover',
+            add: 'add_new_variable',
+            connect: 'connect_variable',
+            save: 'save_new_variable',
+        },
 	},
 };
 

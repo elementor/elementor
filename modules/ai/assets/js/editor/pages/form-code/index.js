@@ -103,7 +103,14 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 			.replace( /selector/g, selector ); // Replace `selector` with the actual selector
 	};
 
+	const isElementorEditor = () => {
+		return window.elementorFrontend;
+	};
+
 	const insertStyleTag = ( cssCode ) => {
+		if ( ! isElementorEditor() ) {
+			return;
+		}
 		const style = document.createElement( 'style' );
 		style.id = styleTagId.current;
 		style.appendChild( document.createTextNode( cssCode ) );
@@ -111,6 +118,9 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	};
 
 	const removeStyleTag = () => {
+		if ( ! isElementorEditor() ) {
+			return;
+		}
 		const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
 		if ( styleTag ) {
 			styleTag.remove();

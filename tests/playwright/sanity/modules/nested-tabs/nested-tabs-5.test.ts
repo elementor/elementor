@@ -1,27 +1,9 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { setupExperiments, setTabItemColor, setTabBorderColor, templatePath } from './helper';
+import { setTabItemColor, setTabBorderColor, templatePath } from './helper';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await setupExperiments( wpAdmin );
-
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-
-		await page.close();
-	} );
-
 	test( 'Verify the correct working of the title alignment', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
@@ -123,7 +105,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		// Act.
@@ -164,7 +146,7 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			container = await editor.addElement( { elType: 'container' }, 'document' );
 
 		// Add widgets.
-		await editor.addWidget( 'nested-tabs', container );
+		await editor.addWidget( { widgetType: 'nested-tabs', container } );
 		await editor.getPreviewFrame().waitForSelector( '.e-n-tab-title[aria-selected="true"]' );
 
 		await editor.openPanelTab( 'style' );

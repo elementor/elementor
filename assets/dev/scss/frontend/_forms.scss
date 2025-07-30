@@ -78,9 +78,9 @@
 			font-family: 'eicons';
 			font-size: 15px;
 			position: absolute;
-			top: 50%;
+			inset-block-start: 50%;
+			inset-inline-end: 10px;
 			transform: translateY(-50%);
-			@include end(10px);
 			pointer-events: none;
 			text-shadow: 0 0 3px rgba(0,0,0,0.3);//To show when the border color is lighter (#12053)
 		}

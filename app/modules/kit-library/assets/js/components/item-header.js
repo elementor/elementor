@@ -34,7 +34,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 		if ( type === TYPE_CONNECT ) {
 			return {
 				id: 'connect',
-				text: __( 'Apply Kit', 'elementor' ), // The label is Apply kit but the this is connect button
+				text: __( 'Apply', 'elementor' ), // The label is Apply kit but the this is connect button
 				hideText: false,
 				variant: 'contained',
 				color: 'primary',
@@ -63,7 +63,7 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 
 		return {
 			id: 'apply',
-			text: __( 'Apply Kit', 'elementor' ),
+			text: __( 'Apply', 'elementor' ),
 			className: 'e-kit-library__apply-button',
 			icon: isApplyLoading ? 'eicon-loading eicon-animation-spin' : '',
 			hideText: false,

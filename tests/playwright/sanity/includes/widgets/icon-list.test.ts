@@ -9,7 +9,7 @@ test.describe( 'Icon List', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		// Act.
-		await editor.addWidget( 'icon-list' );
+		await editor.addWidget( { widgetType: 'icon-list' } );
 		await editor.openPanelTab( 'style' );
 		await editor.openSection( 'section_icon_style' );
 		await editor.setChooseControlValue( 'icon_self_vertical_align', 'eicon-v-align-top' );

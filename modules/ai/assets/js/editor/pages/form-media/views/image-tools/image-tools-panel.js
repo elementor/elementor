@@ -1,4 +1,4 @@
-import { Box, Button, Typography, SvgIcon, styled } from '@elementor/ui';
+import { Box, Button, Typography, SvgIcon, styled, Chip as ChipBase } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 import ExpandIcon from '../../../../icons/expand-icon';
@@ -8,8 +8,10 @@ import EnlargerIcon from '../../../../icons/enlarger-icon';
 import RemoveBackgroundIcon from '../../../../icons/remove-bg';
 import ReplaceBackgroundIcon from '../../../../icons/replace-bg';
 import Cleanup from '../../../../icons/cleanup-icon';
+import IsolateObjectIcon from '../../../../icons/isolate-object-icon';
 import { LOCATIONS } from '../../constants';
 import { useLocation } from '../../context/location-context';
+import useIntroduction from '../../../../hooks/use-introduction';
 
 const TeaserDrawing = () => (
 	<SvgIcon viewBox="0 0 184 80" sx={ { width: 184, height: 80 } }>
@@ -45,8 +47,19 @@ const ToolsTeaserContainer = styled( Box )( ( { theme } ) => ( {
 	padding: theme.spacing( 4, 0, 1 ),
 } ) );
 
+const StyledChip = styled( ChipBase )( () => ( {
+	position: 'absolute',
+	top: 8,
+	right: 8,
+	'& .MuiChip-label': {
+		fontSize: '0.75rem',
+		fontWeight: 'normal',
+	},
+} ) );
+
 const ImageToolsPanel = () => {
 	const { navigate } = useLocation();
+	const { isViewed: isIsolateViewed, markAsViewed: markIsolateAsViewed } = useIntroduction( 'e-ai-image-isolate-tool' );
 
 	const tools = [
 		{
@@ -84,11 +97,25 @@ const ImageToolsPanel = () => {
 			Icon: Cleanup,
 			onClick: () => navigate( LOCATIONS.CLEANUP ),
 		},
+		{
+			label: __( 'Isolate object', 'elementor' ),
+			Icon: IsolateObjectIcon,
+			ChipParam: ! isIsolateViewed ? <StyledChip
+				label="New"
+				color="info"
+				variant="standard"
+				size="tiny"
+			/> : null,
+			onClick: () => {
+				markIsolateAsViewed();
+				navigate( LOCATIONS.ISOLATE_OBJECT );
+			},
+		},
 	];
 	return (
 		<ImageToolsContainer>
 			<Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gap={ 1 } justifyContent="center">
-				{ tools.map( ( { label, Icon, onClick } ) => (
+				{ tools.map( ( { label, Icon, ChipParam, onClick } ) => (
 					<Button
 						onClick={ onClick }
 						key={ label }
@@ -102,6 +129,7 @@ const ImageToolsPanel = () => {
 							borderRadius: '4px',
 						} }
 					>
+						{ ChipParam }
 						<Box
 							display="flex"
 							justifyContent="center"

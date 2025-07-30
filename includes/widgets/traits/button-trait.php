@@ -213,7 +213,8 @@ trait Button_Trait {
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'description' => sprintf(
-					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
+					/* translators: 1: `<code>` opening tag, 2: `</code>` closing tag. */
+					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
 					'<code>',
 					'</code>'
 				),
@@ -631,7 +632,7 @@ trait Button_Trait {
 					</span>
 					<# } #>
 					<# if ( settings.text ) { #>
-					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
+					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{ settings.text }}</span>
 					<# } #>
 				</span>
 			</a>
@@ -688,7 +689,7 @@ trait Button_Trait {
 			</span>
 			<?php endif; ?>
 			<?php if ( ! empty( $settings['text'] ) ) : ?>
-			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
+			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php echo wp_kses_post( $settings['text'] ); ?></span>
 			<?php endif; ?>
 		</span>
 		<?php

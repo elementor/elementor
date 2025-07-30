@@ -6,6 +6,8 @@ log/
 vendor/
 local-site/
 tmp/
+8888/
+8889/
 
 # build outputs
 build/
@@ -16,6 +18,7 @@ assets/lib/swiper/css/swiper*.css
 *.map
 /templates/
 /hello-elementor/
+.turbo/
 
 # build tools lock
 yarn.lock
@@ -23,6 +26,7 @@ yarn.lock
 # IDE's
 .project/
 .vscode/
+!vscode/extensions.json
 .idea/
 
 # other

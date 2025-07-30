@@ -38,7 +38,7 @@ test.describe( 'AI @ai', () => {
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Open the modal with default value from the control', async () => {
-			await editor.addWidget( 'heading' );
+			await editor.addWidget( { widgetType: 'heading' } );
 
 			await page.click( '.e-ai-button' );
 
@@ -83,7 +83,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Open the modal with non-default value from the control', async () => {
-			await editor.addWidget( 'heading' );
+			await editor.addWidget( { widgetType: 'heading' } );
 			await editor.setTextareaControlValue( 'title', 'Hello World' );
 
 			await page.click( '.e-ai-button' );

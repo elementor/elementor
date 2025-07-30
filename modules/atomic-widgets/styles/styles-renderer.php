@@ -3,7 +3,10 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Plugin;
+use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 
 class Styles_Renderer {
 	const DEFAULT_SELECTOR_PREFIX = '.elementor';
@@ -12,6 +15,8 @@ class Styles_Renderer {
 	 * @var array<string, array{direction: 'min' | 'max', value: int, is_enabled: boolean}>
 	 */
 	private array $breakpoints;
+
+	private $on_prop_transform;
 
 	private string $selector_prefix;
 
@@ -35,6 +40,7 @@ class Styles_Renderer {
 	 *   array<int, array{
 	 *     id: string,
 	 *     type: string,
+	 *     cssName: string | null,
 	 *     variants: array<int, array{
 	 *         props: array<string, mixed>,
 	 *         meta: array<string, mixed>
@@ -54,6 +60,12 @@ class Styles_Renderer {
 		}
 
 		return implode( '', $css_style );
+	}
+
+	public function on_prop_transform( callable $callback ): self {
+		$this->on_prop_transform = $callback;
+
+		return $this;
 	}
 
 	private function style_definition_to_css_string( array $style ): string {
@@ -88,11 +100,11 @@ class Styles_Renderer {
 			$style_def['id']
 		) {
 			$type = $map[ $style_def['type'] ];
-			$id = $style_def['id'];
+			$name = $style_def['cssName'] ?? $style_def['id'];
 
 			$selector_parts = array_filter( [
 				$this->selector_prefix,
-				"{$type}{$id}",
+				"{$type}{$name}",
 			] );
 
 			return implode( ' ', $selector_parts );
@@ -102,16 +114,17 @@ class Styles_Renderer {
 	}
 
 	private function variant_to_css_string( string $base_selector, array $variant ): string {
-		$css = $this->props_to_css_string( $variant['props'] );
+		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
+		$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
 
-		if ( ! $css ) {
+		if ( ! $css && ! $custom_css ) {
 			return '';
 		}
 
 		$state = isset( $variant['meta']['state'] ) ? ':' . $variant['meta']['state'] : '';
 		$selector = $base_selector . $state;
 
-		$style_declaration = $selector . '{' . $css . '}';
+		$style_declaration = $selector . '{' . $css . $custom_css . '}';
 
 		if ( isset( $variant['meta']['breakpoint'] ) ) {
 			$style_declaration = $this->wrap_with_media_query( $variant['meta']['breakpoint'], $style_declaration );
@@ -123,12 +136,24 @@ class Styles_Renderer {
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();
 
-		return Collection::make( Props_Resolver::for_styles()->resolve( $schema, $props ) )
+		return Collection::make( Render_Props_Resolver::for_styles()->resolve( $schema, $props ) )
 			->filter()
 			->map( function ( $value, $prop ) {
+				if ( $this->on_prop_transform ) {
+					call_user_func( $this->on_prop_transform, $prop, $value );
+				}
+
 				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );
+	}
+
+	private function custom_css_to_css_string( ?array $custom_css ): string {
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_CUSTOM_CSS );
+
+		return $is_feature_active && ! empty( $custom_css['raw'] )
+			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
+			: '';
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
@@ -141,12 +166,22 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$size = $this->get_breakpoint_size( $this->breakpoints[ $breakpoint_id ] );
+		$query = $this->get_media_query( $this->breakpoints[ $breakpoint_id ] );
 
-		return $size ? '@media(' . $size . '){' . $css . '}' : $css;
+		return $query ? $query . '{' . $css . '}' : $css;
 	}
 
-	private function get_breakpoint_size( array $breakpoint ): ?string {
+	public static function get_media_query( $breakpoint ): ?string {
+		if ( isset( $breakpoint['is_enabled'] ) && ! $breakpoint['is_enabled'] ) {
+			return null;
+		}
+
+		$size = self::get_breakpoint_size( $breakpoint );
+
+		return $size ? '@media(' . $size . ')' : null;
+	}
+
+	private static function get_breakpoint_size( array $breakpoint ): ?string {
 		$bound = 'min' === $breakpoint['direction'] ? 'min-width' : 'max-width';
 		$width = $breakpoint['value'] . 'px';
 

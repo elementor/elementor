@@ -26,5 +26,5 @@ trait Has_Default {
 		return $this->default;
 	}
 
-	abstract public static function generate( $value );
+	abstract public static function generate( $value, $disable = false ): array;
 }
