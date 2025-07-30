@@ -33,7 +33,11 @@ class Atomic_Component_Styles {
 			$components = $this->get_components_from_post( $post_id );
 			$component_ids = array_unique(
 				array_map(
-					fn( $component ) => $component['settings']['component_id']['value'], $components
+					fn( $component ) => $component['settings']['component_id']['value'],
+					array_filter(
+						$components,
+						fn ( $component ) => isset( $component['settings']['component_id']['value'] ),
+					)
 				)
 			);
 
