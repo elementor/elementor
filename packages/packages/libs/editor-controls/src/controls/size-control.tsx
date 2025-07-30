@@ -234,7 +234,7 @@ function createStateFromSizeProp(
 	sizeValue: SizeValue | null,
 	defaultUnit: Unit | ExtendedOption,
 	defaultSize: string | number = '',
-	preserveCustomValue?: string
+	customState: string = ''
 ): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
 	const size = sizeValue?.size ?? defaultSize;
@@ -244,7 +244,7 @@ function createStateFromSizeProp(
 			! isUnitExtendedOption( unit ) && ! isNaN( Number( size ) ) && ( size || size === 0 )
 				? Number( size )
 				: DEFAULT_SIZE,
-		custom: unit === 'custom' ? String( size ) : preserveCustomValue || '',
+		custom: unit === 'custom' ? String( size ) : customState,
 		unit,
 	};
 }
