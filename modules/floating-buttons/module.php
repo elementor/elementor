@@ -172,7 +172,6 @@ class Module extends BaseModule {
 
 		add_action( 'admin_init', function () {
 			$action = filter_input( INPUT_GET, 'action' );
-
 			$menu_args = $this->get_contact_menu_args();
 
 			switch ( $action ) {
