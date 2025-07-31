@@ -11,6 +11,7 @@ import { BackgroundOverlayRepeaterControl } from './background-overlay/backgroun
 
 export const BackgroundControl = createControl( () => {
 	const propContext = useBoundProp( backgroundPropTypeUtil );
+
 	const colorLabel = __( 'Color', 'elementor' );
 
 	return (
