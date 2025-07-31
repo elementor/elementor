@@ -7,10 +7,6 @@ on:
         description: 'Branch to update screenshots on'
         required: true
         type: string
-      run_id:
-        description: 'Playwright workflow run ID with failed screenshots'
-        required: true
-        type: string
 
 jobs:
   update-screenshots:
@@ -26,32 +22,19 @@ jobs:
         with:
           node-version: '20.x'
           
-      - name: Download test results
-        uses: actions/download-artifact@v4
-        with:
-          name: playwright-test-results-elements-regression
-          run-id: ${{ github.event.inputs.run_id }}
-          path: test-results
+      - name: Install dependencies
+        run: npm ci
           
-      - name: Update screenshots
-        run: |
-          # Create screenshots directory if it doesn't exist
-          mkdir -p tests/elements-regression/screenshots
-          
-          # Copy actual screenshots to replace linux screenshots
-          find test-results -name "*-actual.png" | while read actual; do
-            linux_file="tests/elements-regression/screenshots/$(basename "$actual" -actual.png)-linux.png"
-            echo "Updating $linux_file"
-            cp "$actual" "$linux_file"
-          done
-          
+      - name: Run tests to update screenshots
+        run: npm run test:playwright:elements-regression:linux -- -u
+        
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
           branch: update-screenshots/${{ github.event.inputs.branch }}
           title: 'Update screenshots on ${{ github.event.inputs.branch }}'
           body: |
-            This PR updates the screenshot references based on the failed test results from workflow run #${{ github.event.inputs.run_id }}.
+            This PR updates the screenshot references based on the latest test run.
             
             Please review the changes carefully before merging.
             
