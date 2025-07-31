@@ -1,25 +1,23 @@
 import type { editor, MonacoEditor } from 'monaco-types';
 import { __ } from '@wordpress/i18n';
 
-import { unwrapValue } from './css-utils';
-
 const forbiddenPatterns = [
 	{
-		regex: /:hover/g,
+		pattern: ':hover',
 		message: __(
 			'The use of pseudo-states is not permitted. Instead, switch to the desired pseudo state and add your custom code there.',
 			'elementor'
 		),
 	},
 	{
-		regex: /:active/g,
+		pattern: ':active',
 		message: __(
 			'The use of pseudo-states is not permitted. Instead, switch to the desired pseudo state and add your custom code there.',
 			'elementor'
 		),
 	},
 	{
-		regex: /@media/g,
+		pattern: '@media',
 		message: __(
 			'The use of @media is not permitted. Instead, switch to the desired breakpoint and add your custom code there.',
 			'elementor'
@@ -33,28 +31,24 @@ export function validateCustomCSS( editor: editor.IStandaloneCodeEditor, monaco:
 		return true;
 	}
 
-	const innerText = unwrapValue( model.getValue() );
 	const customMarkers: editor.IMarkerData[] = [];
-	const headerOffset = model.getLineContent( 1 ).length + 1;
 
 	forbiddenPatterns.forEach( ( rule ) => {
-		let match: RegExpExecArray | null;
-		while ( ( match = rule.regex.exec( innerText ) ) !== null ) {
-			const startPos = model.getPositionAt( match.index + headerOffset );
-			const endPos = model.getPositionAt( match.index + match[ 0 ].length + headerOffset );
-
+		const matches = model.findMatches( rule.pattern, true, false, true, null, true );
+		matches.forEach( ( match ) => {
 			customMarkers.push( {
 				severity: monaco.MarkerSeverity.Error,
 				message: rule.message,
-				startLineNumber: startPos.lineNumber,
-				startColumn: startPos.column,
-				endLineNumber: endPos.lineNumber,
-				endColumn: endPos.column,
+				startLineNumber: match.range.startLineNumber,
+				startColumn: match.range.startColumn,
+				endLineNumber: match.range.endLineNumber,
+				endColumn: match.range.endColumn,
+				source: 'custom-css-rules',
 			} );
-		}
+		} );
 	} );
 
-	monaco.editor.setModelMarkers( model, 'custom-css-linter', customMarkers );
+	monaco.editor.setModelMarkers( model, 'custom-css-rules', customMarkers );
 	return customMarkers.length === 0;
 }
 

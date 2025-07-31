@@ -6,7 +6,6 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { CssEditor } from '../css-editor';
 
-// Mock the constrained editor plugin
 jest.mock( 'constrained-editor-plugin', () => ( {
 	constrainedEditor: jest.fn( () => ( {
 		initializeIn: jest.fn(),
@@ -14,7 +13,6 @@ jest.mock( 'constrained-editor-plugin', () => ( {
 	} ) ),
 } ) );
 
-// Mock document methods
 const mockAddEventListener = jest.fn();
 const mockRemoveEventListener = jest.fn();
 
@@ -28,7 +26,6 @@ Object.defineProperty( document, 'removeEventListener', {
 	writable: true,
 } );
 
-// Mock Monaco Editor
 const mockEditor = {
 	getModel: jest.fn( () => ( {
 		getValue: jest.fn( () => 'element.style {\n  color: red;\n}' ),
@@ -39,7 +36,6 @@ const mockEditor = {
 		uri: { toString: () => 'test-uri' },
 	} ) ),
 	onDidChangeModelContent: jest.fn( ( callback ) => {
-		// Simulate content change
 		setTimeout( () => callback(), 100 );
 	} ),
 	layout: jest.fn(),
@@ -103,12 +99,11 @@ describe( 'CssEditor', () => {
 		const onChange = jest.fn();
 		renderWithTheme( <CssEditor value="color: blue;" onChange={ onChange } /> );
 
-		// Act - simulate content change
+		// Act
 		await waitFor( () => {
 			expect( mockEditor.onDidChangeModelContent ).toHaveBeenCalled();
 		} );
 
-		// Wait for debounce
 		await waitFor(
 			() => {
 				expect( onChange ).toHaveBeenCalledWith( 'color: red;' );
@@ -123,7 +118,6 @@ describe( 'CssEditor', () => {
 
 		const resizeHandle = screen.getByRole( 'button', { name: /resize/i } );
 
-		// Mock getBoundingClientRect
 		const mockRect = {
 			top: 100,
 			left: 0,

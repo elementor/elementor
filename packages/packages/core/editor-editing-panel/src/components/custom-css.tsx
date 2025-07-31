@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { CssEditor } from '@elementor/editor-controls';
 
 import { useCustomCss } from '../hooks/use-custom-css';
-import { CssEditor } from './css-code-editor/css-editor';
 import { SectionContent } from './section-content';
 
 export const CustomCss = () => {
