@@ -1,7 +1,6 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ImportKit from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-kit';
-import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 const mockDispatch = jest.fn();
 const mockNavigate = jest.fn();
@@ -27,22 +26,11 @@ jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );
 
-const mockSendPageViewsWebsiteTemplates = jest.fn();
-jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
-	AppsEventTracking: {
-		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
-	},
-} ) );
-
 describe( 'ImportKit Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		global.elementorAppConfig = { base_url: 'http://localhost' };
-		global.elementorCommon = {
-			eventsManager: {
-				config: eventsConfig,
-			},
-		};
+		global.elementorCommon = {};
 	} );
 
 	afterEach( () => {
@@ -62,15 +50,13 @@ describe( 'ImportKit Page', () => {
 		mockUseUploadKit.mockReturnValue( { uploading, error } );
 	}
 
-	it( 'renders loader when uploading', async () => {
+	it( 'renders loader when uploading', () => {
 		// Arrange
 		setup( { uploading: true } );
 		// Act
 		render( <ImportKit /> );
 		// Assert
 		expect( screen.getByRole( 'progressbar' ) ).toBeTruthy();
-
-		await waitFor( () => expect( mockSendPageViewsWebsiteTemplates ).toHaveBeenCalledWith( 'kit_import_upload_box' ) );
 	} );
 
 	it( 'renders ImportError when error is present', () => {

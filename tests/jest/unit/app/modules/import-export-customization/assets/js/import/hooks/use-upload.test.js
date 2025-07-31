@@ -9,13 +9,6 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/c
 	useImportContext: () => mockUseImportContext(),
 } ) );
 
-const mockSendKitImportUploadFile = jest.fn();
-jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
-	AppsEventTracking: {
-		sendKitImportUploadFile: ( ...args ) => mockSendKitImportUploadFile( ...args ),
-	},
-} ) );
-
 describe( 'useUploadKit Hook', () => {
 	let mockFetch;
 	let mockElementorAppConfig;
@@ -72,7 +65,6 @@ describe( 'useUploadKit Hook', () => {
 			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_UPLOADED_DATA', payload: { uploaded: true, id: 123 } } );
 			expect( result.current.uploading ).toBe( false );
 			expect( result.current.error ).toBe( null );
-			expect( mockSendKitImportUploadFile ).toHaveBeenCalledWith( 'Success' );
 		} );
 	} );
 
@@ -93,7 +85,6 @@ describe( 'useUploadKit Hook', () => {
 			expect( result.current.error ).toBeInstanceOf( Error );
 			expect( result.current.error.message ).toBe( 'Upload failed' );
 			expect( result.current.uploading ).toBe( false );
-			expect( mockSendKitImportUploadFile ).toHaveBeenCalledWith( 'Upload failed' );
 		} );
 	} );
 
@@ -110,7 +101,6 @@ describe( 'useUploadKit Hook', () => {
 			expect( result.current.error ).toBeInstanceOf( Error );
 			expect( result.current.error.message ).toBe( 'Network error' );
 			expect( result.current.uploading ).toBe( false );
-			expect( mockSendKitImportUploadFile ).toHaveBeenCalledWith( 'Network error' );
 		} );
 	} );
 

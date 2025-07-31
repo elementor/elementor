@@ -14,10 +14,10 @@ export function useToggleButtonProps(): ToggleActionProps {
 		icon: PagesIcon,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
+			const config = extendedWindow?.elementor?.editorEvents?.config;
 
 			if ( config ) {
-				extendedWindow.elementorCommon.eventsManager.dispatchEvent( 'top_bar_pages', {
+				extendedWindow.elementor.editorEvents.dispatchEvent( 'top_bar_pages', {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.elementorLogo,
 					trigger: config.triggers.click,

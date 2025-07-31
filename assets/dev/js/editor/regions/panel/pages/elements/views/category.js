@@ -64,13 +64,13 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	onTitleClick() {
 		this.toggle();
 
-		elementorCommon.eventsManager.dispatchEvent(
-			elementorCommon.eventsManager.config.names[ this.model.get( 'name' ) ]?.v1,
+		elementor.editorEvents.dispatchEvent(
+			elementor.editorEvents.config.names[ this.model.get( 'name' ) ]?.v1,
 			{
-				location: elementorCommon.eventsManager.config.locations.widgetPanel,
-				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ this.model.get( 'name' ) ],
-				trigger: elementorCommon.eventsManager.config.triggers.accordionClick,
-				element: elementorCommon.eventsManager.config.elements.accordionSection,
+				location: elementor.editorEvents.config.locations.widgetPanel,
+				secondaryLocation: elementor.editorEvents.config.secondaryLocations[ this.model.get( 'name' ) ],
+				trigger: elementor.editorEvents.config.triggers.accordionClick,
+				element: elementor.editorEvents.config.elements.accordionSection,
 			},
 		);
 	},

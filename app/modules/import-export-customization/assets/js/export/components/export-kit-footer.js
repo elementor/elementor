@@ -5,7 +5,6 @@ import { useNavigate } from '@reach/router';
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from '../../shared/hooks/use-connect-state';
 import { useExportContext, EXPORT_STATUS } from '../context/export-context';
-import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
@@ -66,7 +65,6 @@ export default function ExportKitFooter() {
 	}, [ isExporting, navigate ] );
 
 	const handleUpgradeClick = () => {
-		AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomization );
 		navigate( '/kit-library/cloud' );
 	};
 

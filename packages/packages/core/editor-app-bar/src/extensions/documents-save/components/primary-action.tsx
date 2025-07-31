@@ -50,18 +50,15 @@ export default function PrimaryAction() {
 				<Button
 					onClick={ () => {
 						const extendedWindow = window as unknown as ExtendedWindow;
-						const config = extendedWindow?.elementorCommon?.eventsManager?.config;
+						const config = extendedWindow?.elementor?.editorEvents?.config;
 
 						if ( config ) {
-							extendedWindow.elementorCommon.eventsManager.dispatchEvent(
-								config.names.topBar.publishButton,
-								{
-									location: config.locations.topBar,
-									secondaryLocation: config.secondaryLocations[ 'publish-button' ],
-									trigger: config.triggers.click,
-									element: config.elements.mainCta,
-								}
-							);
+							extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.publishButton, {
+								location: config.locations.topBar,
+								secondaryLocation: config.secondaryLocations[ 'publish-button' ],
+								trigger: config.triggers.click,
+								element: config.elements.mainCta,
+							} );
 						}
 
 						if ( ! document.isSaving ) {

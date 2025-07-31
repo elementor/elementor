@@ -30,13 +30,13 @@ export const editorAppBarLink = () => {
 				title: __( "What's New", 'elementor' ),
 				icon: () => <IconWithBadge invisible={ isRead } />,
 				onClick: () => {
-					elementorCommon.eventsManager.dispatchEvent(
-						elementorCommon.eventsManager.config.names.topBar.whatsNew,
+					elementor.editorEvents.dispatchEvent(
+						elementor.editorEvents.config.names.topBar.whatsNew,
 						{
-							location: elementorCommon.eventsManager.config.locations.topBar,
-							secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ 'whats-new' ],
-							trigger: elementorCommon.eventsManager.config.triggers.click,
-							element: elementorCommon.eventsManager.config.elements.buttonIcon,
+							location: elementor.editorEvents.config.locations.topBar,
+							secondaryLocation: elementor.editorEvents.config.secondaryLocations[ 'whats-new' ],
+							trigger: elementor.editorEvents.config.triggers.click,
+							element: elementor.editorEvents.config.elements.buttonIcon,
 						},
 					);
 
