@@ -115,7 +115,7 @@ TemplateLibraryImportView = Marionette.ItemView.extend( {
 		this.resolveIcon();
 
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.importModal,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.importModal,
 		} );
 	},
 
