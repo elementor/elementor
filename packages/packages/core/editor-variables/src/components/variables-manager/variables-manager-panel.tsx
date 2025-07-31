@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -13,9 +13,9 @@ import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { FilterIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useDirtyState } from '../../../../editor-global-classes/src/hooks/use-dirty-state';
 
 const id = 'variables-manager';
+
 export const { panel, usePanelActions } = createPanel( {
 	id,
 	component: VariablesManagerPanel,
@@ -30,8 +30,9 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
+	const [ isDirty ] = useState( false );
 
-	usePreventUnload();
+	usePreventUnload( isDirty );
 
 	return (
 		<ThemeProvider>
@@ -73,7 +74,7 @@ export function VariablesManagerPanel() {
 					</PanelBody>
 
 					<PanelFooter>
-						<Button fullWidth size="small" color="global" variant="contained">
+						<Button fullWidth size="small" color="global" variant="contained" disabled={ ! isDirty }>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
 					</PanelFooter>
@@ -97,9 +98,7 @@ const ErrorBoundaryFallback = () => (
 	</Box>
 );
 
-const usePreventUnload = () => {
-	const isDirty = useDirtyState();
-
+const usePreventUnload = ( isDirty: boolean ) => {
 	useEffect( () => {
 		const handleBeforeUnload = ( event: BeforeUnloadEvent ) => {
 			if ( isDirty ) {
