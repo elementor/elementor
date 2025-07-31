@@ -10,17 +10,19 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 
 export const { Slot: CssClassConvertSlot, inject: injectIntoCssClassConvert } = createLocation< {
-	styleDef: StyleDefinition;
+	styleDef: StyleDefinition | null;
 	successCallback: ( newId: string ) => void;
+	canConvert: boolean;
 } >();
 
 type OwnProps = {
-	styleDef: StyleDefinition;
+	styleDef: StyleDefinition | null;
 	closeMenu: () => void;
+	canConvert: boolean;
 };
 
 /**
- * Promote a local class to a global class injection point
+ * Convert a local class to a global class injection point
  * @param props
  */
 export const CssClassConvert = ( props: OwnProps ) => {
@@ -31,27 +33,39 @@ export const CssClassConvert = ( props: OwnProps ) => {
 	const [ , saveValue ] = useSessionStorage( `last-converted-class-generated-name` );
 
 	const successCallback = ( newId: string ) => {
-		onPromoteSuccess( {
+		if ( ! props.styleDef ) {
+			throw new Error( 'Style definition is required for converting local class to global class.' );
+		}
+
+		onConvert( {
 			newId,
 			elementId,
 			classesProp: currentClassesProp,
 			styleDef: props.styleDef,
 		} );
+
 		saveValue( newId );
 		setActiveId( newId );
 		props.closeMenu();
 	};
 
-	return <CssClassConvertSlot styleDef={ props.styleDef } successCallback={ successCallback } />;
+	return (
+		<CssClassConvertSlot
+			canConvert={ !! props.canConvert }
+			styleDef={ props.styleDef }
+			successCallback={ successCallback }
+		/>
+	);
 };
 
-type OnPromoteSuccessOpts = {
+type OnConvertOptions = {
 	newId: string;
 	elementId: string;
 	classesProp: string;
 	styleDef: StyleDefinition;
 };
-const onPromoteSuccess = ( opts: OnPromoteSuccessOpts ) => {
+
+const onConvert = ( opts: OnConvertOptions ) => {
 	const { newId, elementId, classesProp } = opts;
 	deleteElementStyle( elementId, opts.styleDef.id );
 	const currentUsedClasses = getElementSetting< ClassesPropValue >( elementId, classesProp ) || { value: [] };
