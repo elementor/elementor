@@ -6,8 +6,8 @@ type VariableEventData = {
 
 export const trackVariableEvent = ( { varType, controlPath, action }: VariableEventData ) => {
 	const extendedWindow = window as unknown as Window & {
-		elementor?: {
-			editorEvents?: {
+		elementorCommon?: {
+			eventsManager?: {
 				dispatchEvent: ( name: string, data: Record< string, string > ) => void;
 				config?: {
 					locations: Record< string, string >;
@@ -22,13 +22,13 @@ export const trackVariableEvent = ( { varType, controlPath, action }: VariableEv
 		};
 	};
 
-	const config = extendedWindow?.elementor?.editorEvents?.config;
+	const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 	if ( ! config?.names?.variables?.[ action ] ) {
 		return;
 	}
 
 	const name = config.names.variables[ action ];
-	extendedWindow.elementor?.editorEvents?.dispatchEvent( name, {
+	extendedWindow.elementorCommon?.eventsManager?.dispatchEvent( name, {
 		location: config.locations.variables,
 		secondaryLocation: config.secondaryLocations.variablesPopover,
 		trigger: config.triggers.click,
