@@ -34,7 +34,7 @@ type RepeaterContextType< T extends PropValue > = {
 	};
 	isSortable: boolean;
 	generateNextKey: ( source: number[] ) => number;
-	addItem: ( config?: { item?: T, index?: number } ) => void;
+	addItem: ( config?: { item?: T; index?: number } ) => void;
 	updateItem: ( item: T, index: number ) => void;
 	removeItem: ( index: number ) => void;
 	sortItemsByKeys: ( newKeysOrder: number[] ) => void;
@@ -92,7 +92,7 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 	const isOpen = openItem !== EMPTY_OPEN_ITEM;
 
 	const sortItemsByKeys = ( keysOrder: number[] ) => {
-		setUniqueKeys( keysOrder );
+		setUniqueKeys( [ ...uniqueKeys ] );
 		setItems( ( prevItems ) =>
 			keysOrder.map( ( key ) => {
 				const index = uniqueKeys.indexOf( key );
@@ -102,22 +102,21 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 		);
 	};
 
-	const addItem = ( config?: { item?: T, index?: number } ) => {
-		const item = config?.item ?? initial;
-		const index = config?.index ?? items.length;
+	const addItem = ( props?: { item?: T; index?: number } ) => {
+		const item = props?.item ?? initial;
+		const index = props?.index ?? items.length;
 		const newItems = [ ...items ];
-		const newKey = generateNextKey( uniqueKeys );
 
-		setUniqueKeys( [ ...uniqueKeys, newKey ] );
 		newItems.splice( index, 0, item );
 		setItems( newItems );
+		setUniqueKeys( newItems.map( ( _, i ) => i ) );
 
 		setOpenItem( index );
 	};
 
 	const removeItem = ( index: number ) => {
 		setItems( ( prevItems ) => prevItems.filter( ( _, pos ) => pos !== index ) );
-		setUniqueKeys( ( prevKeys ) => prevKeys.filter( ( _, pos ) => pos !== index ) );
+		setUniqueKeys( ( prevKeys ) => prevKeys.slice( 0, -1 ) );
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {
@@ -139,7 +138,7 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 				isSortable,
 				generateNextKey,
 				sortItemsByKeys,
-				addItem: addItem as ( config?: { item?: PropValue, index?: number } ) => void,
+				addItem: addItem as ( config?: { item?: PropValue; index?: number } ) => void,
 				updateItem: updateItem as ( item: PropValue, index: number ) => void,
 				removeItem,
 			} }
