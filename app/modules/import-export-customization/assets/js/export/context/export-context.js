@@ -26,6 +26,14 @@ const initialState = {
 		description: null,
 		source: null,
 	},
+	analytics: {
+		customization: {
+			settings: null,
+			templates: null,
+			content: null,
+			plugins: null,
+		},
+	},
 };
 
 function exportReducer( state, { type, payload } ) {
@@ -67,6 +75,16 @@ function exportReducer( state, { type, payload } ) {
 				customization: {
 					...state.customization,
 					[ payload.key ]: payload.value,
+				},
+			};
+		case 'SET_DATA_FOR_ANALYTICS':
+			return {
+				...state,
+				analytics: {
+					customization: {
+						...state.analytics?.customization,
+						[ payload.key ]: payload.value,
+					},
 				},
 			};
 		case 'RESET_STATE':
