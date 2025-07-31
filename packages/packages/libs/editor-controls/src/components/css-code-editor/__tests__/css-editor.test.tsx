@@ -58,8 +58,8 @@ const mockMonaco = {
 		PageDown: 8,
 		Tab: 9,
 		Escape: 10,
-		KeyA: 11, // Example of a key that should be blocked
-		Enter: 12, // Example of a key that should be blocked
+		KeyA: 11,
+		Enter: 12,
 	},
 	editor: {
 		setModelMarkers: jest.fn(),
