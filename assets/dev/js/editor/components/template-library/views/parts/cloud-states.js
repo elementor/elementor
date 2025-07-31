@@ -66,7 +66,7 @@ module.exports = Marionette.ItemView.extend( {
 		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'e-hidden-disabled' );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabUpgrade,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTabUpgrade,
 		} );
 	},
 
@@ -104,8 +104,8 @@ module.exports = Marionette.ItemView.extend( {
 
 	onButtonClick() {
 		elementor.templates.eventManager.sendUpgradeClickedEvent( {
-			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
-			upgradePosition: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab,
+			secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTab,
+			upgradePosition: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTab,
 		} );
 	},
 
