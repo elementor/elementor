@@ -16,10 +16,10 @@ export function init() {
 				target: '_blank',
 				onClick: () => {
 					const extendedWindow = window as unknown as ExtendedWindow;
-					const config = extendedWindow?.elementor?.editorEvents?.config;
+					const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 					if ( config ) {
-						extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.help, {
+						extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.help, {
 							location: config.locations.topBar,
 							secondaryLocation: config.secondaryLocations.help,
 							trigger: config.triggers.click,
