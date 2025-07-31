@@ -56,10 +56,10 @@
     "@elementor/utils": "0.5.0",
     "@elementor/wp-media": "0.6.1",
     "@wordpress/i18n": "^5.13.0",
-    "@monaco-editor/react": "^4.7.0",
-	  "monaco-types": "^0.1.0"
+    "@monaco-editor/react": "^4.7.0"
   },
   "devDependencies": {
+		"monaco-types": "^0.1.0",
     "tsup": "^8.3.5"
   },
   "peerDependencies": {

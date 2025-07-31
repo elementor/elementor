@@ -1,19 +1,18 @@
-import { styled } from '@elementor/ui';
+import { Box, Button, styled } from '@elementor/ui';
 
-export const EditorWrapper = styled( 'div' )`
+export const EditorWrapper = styled( Box )`
 	border: 1px solid var( --e-a-border-color );
 	border-radius: 8px;
 	padding: 10px 12px;
 	position: relative;
 	height: 200px;
-	font-family: Roboto, Arial, Helvetica, Verdana, sans-serif;
 
 	.monaco-editor .colorpicker-widget {
 		z-index: 99999999 !important;
 	}
 `;
 
-export const ResizeHandle = styled( 'button' )`
+export const ResizeHandle = styled( Button )`
 	position: absolute;
 	bottom: 0;
 	left: 0;

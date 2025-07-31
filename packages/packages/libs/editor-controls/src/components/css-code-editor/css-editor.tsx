@@ -4,60 +4,33 @@ import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
 
-import { EditorWrapper, ResizeHandle } from './css-editor.styles';
-import { unwrapValue, wrapInitialValue } from './css-utils';
+import { EditorWrapper } from './css-editor.styles';
 import { validateCustomCSS, validateEditorErrors } from './css-validation';
+import { ResizeHandleComponent } from './resize-handle';
 
-interface CssEditorProps {
-	value: string;
-	onChange: ( value: string ) => void;
-}
+const setVisualContent = ( value: string ): string => {
+	const trimmed = value.trim();
+	return `element.style {\n${ trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n' }}`;
+};
 
-export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
-	const theme = useTheme();
+const getActual = ( value: string ): string => {
+	const lines = value.split( '\n' );
+	if ( lines.length < 2 ) {
+		return '';
+	}
+	return lines
+		.slice( 1, -1 )
+		.map( ( line ) => line.replace( /^ {2}/, '' ) )
+		.join( '\n' );
+};
 
-	const editorRef = React.useRef< editor.IStandaloneCodeEditor | null >( null );
-	const monacoRef = React.useRef< MonacoEditor | null >( null );
-	const resizeRef = React.useRef< HTMLDivElement >( null );
-	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
-	const activeBreakpoint = useActiveBreakpoint();
-
-	const handleResizeMove = React.useCallback( ( e: MouseEvent ) => {
-		if ( ! resizeRef.current ) {
-			return;
-		}
-		const containerRect = resizeRef.current.getBoundingClientRect();
-		const newHeight = Math.max( 100, e.clientY - containerRect.top );
-		resizeRef.current.style.height = `${ newHeight }px`;
-		editorRef.current?.layout();
-	}, [] );
-
-	const handleResizeEnd = React.useCallback( () => {
-		document.removeEventListener( 'mousemove', handleResizeMove );
-		document.removeEventListener( 'mouseup', handleResizeEnd );
-	}, [ handleResizeMove ] );
-
-	const handleResizeStart = React.useCallback(
-		( e: React.MouseEvent ) => {
-			e.preventDefault();
-			e.stopPropagation();
-			document.addEventListener( 'mousemove', handleResizeMove );
-			document.addEventListener( 'mouseup', handleResizeEnd );
-		},
-		[ handleResizeMove, handleResizeEnd ]
-	);
-
-	React.useEffect( () => {
-		return () => {
-			document.removeEventListener( 'mousemove', handleResizeMove );
-			document.removeEventListener( 'mouseup', handleResizeEnd );
-			if ( debounceTimer.current ) {
-				clearTimeout( debounceTimer.current );
-			}
-		};
-	}, [ handleResizeMove, handleResizeEnd ] );
-
-	const handleEditorDidMount = ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
+const createEditorDidMountHandler = (
+	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
+	monacoRef: React.MutableRefObject< MonacoEditor | null >,
+	debounceTimer: React.MutableRefObject< NodeJS.Timeout | null >,
+	onChange: ( value: string ) => void
+) => {
+	return ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		editorRef.current = editor;
 		monacoRef.current = monaco;
 
@@ -98,33 +71,75 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 		editor.onDidChangeModelContent( () => {
 			const code = editor.getModel()?.getValue() ?? '';
-			const userContent = unwrapValue( code );
+			const userContent = getActual( code );
 
 			validateCustomCSS( editor, monaco );
 
-			if ( debounceTimer.current ) {
-				clearTimeout( debounceTimer.current );
+			const currentTimer = debounceTimer.current;
+			if ( currentTimer ) {
+				clearTimeout( currentTimer );
 			}
-			debounceTimer.current = setTimeout( () => {
+
+			const newTimer = setTimeout( () => {
 				if ( ! editorRef.current || ! monacoRef.current ) {
 					return;
 				}
+
 				const hasNoErrors = validateEditorErrors( editorRef.current, monacoRef.current );
+
 				if ( hasNoErrors ) {
 					onChange( userContent );
 				}
 			}, 500 );
+
+			debounceTimer.current = newTimer;
 		} );
 	};
+};
+
+interface CssEditorProps {
+	value: string;
+	onChange: ( value: string ) => void;
+}
+
+export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
+	const theme = useTheme();
+	const containerRef = React.useRef< HTMLDivElement >( null );
+	const editorRef = React.useRef< editor.IStandaloneCodeEditor | null >( null );
+	const monacoRef = React.useRef< MonacoEditor | null >( null );
+	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
+	const activeBreakpoint = useActiveBreakpoint();
+
+	const handleResize = React.useCallback( () => {
+		editorRef.current?.layout();
+	}, [] );
+
+	const handleHeightChange = React.useCallback( ( height: number ) => {
+		if ( containerRef.current ) {
+			containerRef.current.style.height = `${ height }px`;
+		}
+	}, [] );
+
+	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, debounceTimer, onChange );
+
+	React.useEffect( () => {
+		const timerRef = debounceTimer;
+		return () => {
+			const timer = timerRef.current;
+			if ( timer ) {
+				clearTimeout( timer );
+			}
+		};
+	}, [] );
 
 	return (
-		<EditorWrapper ref={ resizeRef }>
+		<EditorWrapper ref={ containerRef }>
 			<Editor
 				key={ activeBreakpoint }
 				height="100%"
 				language="css"
 				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
-				defaultValue={ wrapInitialValue( value ) }
+				defaultValue={ setVisualContent( value ) }
 				onMount={ handleEditorDidMount }
 				options={ {
 					lineNumbers: 'off',
@@ -138,10 +153,10 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 					fixedOverflowWidgets: true,
 				} }
 			/>
-			<ResizeHandle
-				onMouseDown={ handleResizeStart }
-				aria-label="Resize editor height"
-				title="Drag to resize editor height"
+			<ResizeHandleComponent
+				onResize={ handleResize }
+				containerRef={ containerRef }
+				onHeightChange={ handleHeightChange }
 			/>
 		</EditorWrapper>
 	);
