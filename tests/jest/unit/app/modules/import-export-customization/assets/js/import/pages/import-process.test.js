@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import ImportProcess from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-process';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 const mockUseImportContext = jest.fn();
 const mockUseImportKit = jest.fn();
@@ -23,11 +24,22 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/c
 	PluginActivation: () => <div data-testid="plugin-activation" />,
 } ) );
 
+const mockSendKitImportStatus = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendKitImportStatus: ( ...args ) => mockSendKitImportStatus( ...args ),
+	},
+} ) );
+
 describe( 'ImportProcess Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		global.elementorAppConfig = { base_url: 'http://localhost' };
-		global.elementorCommon = {};
+		global.elementorCommon = {
+			eventsManager: {
+				config: eventsConfig,
+			},
+		};
 	} );
 
 	afterEach( () => {
