@@ -33,14 +33,17 @@ export const CssClassConvert = ( props: OwnProps ) => {
 	const [ , saveValue ] = useSessionStorage( `last-converted-class-generated-name` );
 
 	const successCallback = ( newId: string ) => {
+		if ( ! props.styleDef ) {
+			throw new Error( 'Style definition is required for converting local class to global class.' );
+		}
+
 		onPromoteSuccess( {
 			newId,
 			elementId,
 			classesProp: currentClassesProp,
-			// at this point styleDef is always set, otherwise the menu would not appear
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			styleDef: props.styleDef!,
+			styleDef: props.styleDef,
 		} );
+		
 		saveValue( newId );
 		setActiveId( newId );
 		props.closeMenu();

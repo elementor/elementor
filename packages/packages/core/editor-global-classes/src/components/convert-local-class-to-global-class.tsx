@@ -17,16 +17,8 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 	const localStyleData = props.styleDef;
 
 	const handlePromote = () => {
-		const classNamePrefix = `converted-class-`;
-		let i = 1;
-		let isValid = false;
-		let newClassName = ``;
-		while ( ! isValid ) {
-			newClassName = `${ classNamePrefix }${ i }`;
-			const validation = validateStyleLabel( newClassName, 'create' );
-			isValid = validation.isValid;
-			i++;
-		}
+		const newClassName = createClassName( `converted-class-` );
+
 		const newId = globalClassesStylesProvider.actions.create?.( newClassName, localStyleData.variants );
 		if ( newId ) {
 			props.successCallback( newId );
@@ -53,3 +45,14 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 		</>
 	);
 };
+
+function createClassName( prefix: string ): string {
+	let i = 1;
+	let newClassName = `${ prefix }${ i }`;
+
+	while ( ! validateStyleLabel( newClassName, 'create' ).isValid ) {
+		newClassName = `${ prefix }${ ++i }`;
+	}
+
+	return newClassName;
+}
