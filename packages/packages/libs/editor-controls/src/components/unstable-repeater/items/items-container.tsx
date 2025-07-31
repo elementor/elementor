@@ -8,7 +8,6 @@ import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
 import { useRepeaterContext } from '../context/repeater-context';
 import { type ItemProps } from '../types';
-import { ItemActionSlot } from './item-action-slot';
 
 export const ItemsContainer = < T extends PropValue >( {
 	itemTemplate,
@@ -26,10 +25,7 @@ export const ItemsContainer = < T extends PropValue >( {
 
 	return (
 		<>
-			<SlotChildren
-				whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction, ItemActionSlot ] }
-				sorted
-			>
+			<SlotChildren whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction ] } sorted>
 				{ children }
 			</SlotChildren>
 			<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
