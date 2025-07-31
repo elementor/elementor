@@ -1,0 +1,17 @@
+{
+    "name": "elementor/css-converter",
+    "description": "CSS to Elementor Global Classes converter module",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "php": ">=7.4",
+        "sabberworm/php-css-parser": "^8.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Elementor\\Modules\\CssConverter\\": ""
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+} 

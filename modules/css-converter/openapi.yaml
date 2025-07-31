@@ -1,0 +1,153 @@
+openapi: 3.1.0
+info:
+  title: Elementor CSS Converter API
+  version: 1.0.0
+  description: |
+    API for converting HTML tags and CSS to Elementor atomic widgets (v2). Requires an API key for access.
+servers:
+  - url: /wp-json/elementor/v2
+security:
+  - ApiKeyAuth: []
+paths:
+  /css-converter:
+    post:
+      summary: Convert HTML tags and CSS to Elementor atomic widgets
+      description: |
+        Accepts a JSON payload describing elements, CSS, and target post/page. Returns the mapped widget structure or error.
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CssConverterRequest'
+      responses:
+        '200':
+          description: Conversion result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CssConverterResponse'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized (missing or invalid API key)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /css-converter/docs:
+    get:
+      summary: Get API documentation
+      description: Returns OpenAPI/Swagger documentation for this API.
+      responses:
+        '200':
+          description: API documentation (if implemented)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  openapi:
+                    type: string
+                  info:
+                    type: object
+                  paths:
+                    type: object
+        '501':
+          description: Not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    CssConverterRequest:
+      type: object
+      properties:
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementInput'
+        postId:
+          type: integer
+          nullable: true
+        postType:
+          type: string
+          default: page
+        parentContainerId:
+          type: string
+          nullable: true
+      required:
+        - elements
+    ElementInput:
+      type: object
+      properties:
+        tag:
+          type: string
+        css:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementInput'
+      required:
+        - tag
+        - css
+    CssConverterResponse:
+      type: object
+      properties:
+        created:
+          type: boolean
+        elements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementOutput'
+        postId:
+          type: integer
+          nullable: true
+        postType:
+          type: string
+        parentContainerId:
+          type: string
+          nullable: true
+    ElementOutput:
+      type: object
+      properties:
+        tag:
+          type: string
+        widget:
+          type: string
+        props:
+          type: object
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ElementOutput'
+        html:
+          type: object
+          properties:
+            css:
+              type: string
+            children:
+              type: array
+              items:
+                $ref: '#/components/schemas/ElementOutput'
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string
+          nullable: true 
