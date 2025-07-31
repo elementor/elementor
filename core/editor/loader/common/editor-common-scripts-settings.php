@@ -86,15 +86,6 @@ class Editor_Common_Scripts_Settings {
 					] ),
 					'my_elementor_url' => 'https://go.elementor.com/wp-dash-top-bar-account/',
 				],
-				'connect_url' => Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' )->get_admin_url( 'authorize', [
-					'utm_source' => 'editor-app',
-					'utm_campaign' => 'connect-account',
-					'utm_medium' => 'wp-dash',
-					'utm_term' => '1.0.0',
-					'utm_content' => 'cta-link',
-					'source' => 'generic',
-					'mode' => 'popup',
-				] ),
 			],
 			'preview' => [
 				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',

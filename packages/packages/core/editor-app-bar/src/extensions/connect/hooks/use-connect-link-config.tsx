@@ -15,7 +15,7 @@ export default function useConnectLinkConfig() {
 				target: '_blank',
 		  }
 		: {
-				title: __( 'Connect & Activate', 'elementor' ),
+				title: __( 'Connect my account', 'elementor' ),
 				href: extendedWindow?.elementor?.config.user.top_bar.connect_url,
 				icon: UserIcon,
 				target: '_blank',
