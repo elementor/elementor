@@ -18,7 +18,7 @@ export default function Account() {
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
-			text: __( 'Skip', 'elementor' ),
+			text: __( 'Skip setup', 'elementor' ),
 		};
 	}
 
@@ -40,8 +40,12 @@ export default function Account() {
 		};
 	} else {
 		pageTexts = elementorAppConfig.onboarding.experiment ? {
-			firstLine: __( 'Once you connect your Elementor account, you can choose from dozens of professional templates and manage your site with the My Elementor dashboard.', 'elementor' ),
-			listItems: [],
+			firstLine: <>{ __( 'To get the most of Elementor, we\'ll connect your account.', 'elementor' ) }  <br /> { __( 'Then you can:', 'elementor' ) }</>,
+			listItems: [
+				__( 'Access dozens of professionally designed templates', 'elementor' ),
+				__( 'Manage all your sites from the My Elementor dashboard', 'elementor' ),
+				__( 'Unlock tools that streamline your workflow and site setup', 'elementor' ),
+			],
 		} : {
 			firstLine: __( 'To get the most out of Elementor, we’ll connect your account.', 'elementor' ) +
 			' ' + __( 'Then you can:', 'elementor' ),
@@ -77,7 +81,7 @@ export default function Account() {
 			navigate( 'onboarding/' + nextStep );
 		};
 	} else {
-		actionButton.text = __( 'Create my account', 'elementor' );
+		actionButton.text = __( 'Start setup', 'elementor' );
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
@@ -180,7 +184,7 @@ export default function Account() {
 				! state.isLibraryConnected && (
 					<div className="e-onboarding__footnote">
 						<p>
-							{ __( 'Already have one?', 'elementor' ) + ' ' }
+							{ __( 'Already have an account?', 'elementor' ) + ' ' }
 							<a
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
@@ -194,7 +198,7 @@ export default function Account() {
 									} );
 								} }
 							>
-								{ __( 'Connect your account', 'elementor' ) }
+								{ __( 'Click here to connect', 'elementor' ) }
 							</a>
 						</p>
 						<Connect
