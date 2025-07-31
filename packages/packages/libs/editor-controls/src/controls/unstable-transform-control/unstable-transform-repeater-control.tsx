@@ -5,7 +5,7 @@ import { Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropProvider, useBoundProp } from '../../bound-prop-context';
-import { AddItemAction, Header, Item, ItemsContainer, UnstableRepeater } from '../../components/unstable-repeater';
+import { TooltipedAddItemAction, Header, Item, ItemsContainer, UnstableRepeater } from '../../components/unstable-repeater';
 import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
 import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
 import { createControl } from '../../create-control';
@@ -36,7 +36,7 @@ export const UnstableTransformRepeaterControl = createControl( () => {
 				propTypeUtil={ transformPropTypeUtil }
 			>
 				<Header label={ __( 'Transform', 'elementor' ) }>
-					<AddItemAction
+					<TooltipedAddItemAction
 						disabled={ shouldDisableAddItem }
 						content={ ToolTip }
 						enableTooltip={ shouldDisableAddItem }

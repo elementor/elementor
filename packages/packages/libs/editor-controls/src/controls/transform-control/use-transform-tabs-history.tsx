@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import {
 	moveTransformPropTypeUtil,
 	type MoveTransformPropValue,
@@ -8,12 +8,12 @@ import {
 	type ScaleTransformPropValue,
 	skewTransformPropTypeUtil,
 	type SkewTransformPropValue,
-	type TransformablePropValue,
 	type TransformItemPropValue,
 } from '@elementor/editor-props';
 import { useTabs } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
+import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
 import { type TransformFunction, TransformFunctionKeys } from './types';
 
 type InitialTransformValues = {
@@ -25,12 +25,15 @@ type InitialTransformValues = {
 
 export const useTransformTabsHistory = (
 	{ move: initialMove, scale: initialScale, rotate: initialRotate, skew: initialSkew }: InitialTransformValues,
-	data?: { items: TransformablePropValue< string >[]; index: number }
+	itemIndex: number
 ) => {
 	const { value: moveValue, setValue: setMoveValue } = useBoundProp( moveTransformPropTypeUtil );
 	const { value: scaleValue, setValue: setScaleValue } = useBoundProp( scaleTransformPropTypeUtil );
 	const { value: rotateValue, setValue: setRotateValue } = useBoundProp( rotateTransformPropTypeUtil );
 	const { value: skewValue, setValue: setSkewValue } = useBoundProp( skewTransformPropTypeUtil );
+
+	const { items } = useRepeaterContext();
+	const activeTransformKeys = useMemo( () => items.map( ( item ) => item.$$type ), [ items ] );
 
 	const getCurrentTransformType = (): TransformFunction => {
 		switch ( true ) {
@@ -99,13 +102,7 @@ export const useTransformTabsHistory = (
 	};
 
 	const isTabDisabled = ( tabKey: TransformFunction ) => {
-		if ( ! data ) {
-			return undefined;
-		}
-
-		const activeTransformKeys = data.items.map( ( item ) => item.$$type );
-
-		return !! activeTransformKeys.find( ( key, pos ) => tabKey === key && pos !== data.index );
+		return !! activeTransformKeys.find( ( key, pos ) => tabKey === key && pos !== itemIndex );
 	};
 
 	return {

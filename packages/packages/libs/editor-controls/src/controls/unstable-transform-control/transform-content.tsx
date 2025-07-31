@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider } from '../../bound-prop-context';
 import { PopoverContent } from '../../components/popover-content';
-import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
 import { Move } from '../transform-control/functions/move';
 import { Rotate } from '../transform-control/functions/rotate';
 import { Scale } from '../transform-control/functions/scale';
@@ -28,8 +27,6 @@ export const TransformContent = ( { bind }: { anchorEl?: HTMLElement | null; bin
 };
 
 const Content = ( { index }: { index: number } ) => {
-	const { items } = useRepeaterContext();
-
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory(
 		{
 			move: initialTransformValue.value,
@@ -37,7 +34,7 @@ const Content = ( { index }: { index: number } ) => {
 			rotate: initialRotateValue.value,
 			skew: initialSkewValue.value,
 		},
-		{ items, index }
+		index
 	);
 
 	return (

@@ -21,18 +21,21 @@ import { useTransformTabsHistory } from './use-transform-tabs-history';
 export const TransformContent = ( { bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
 	return (
 		<PropKeyProvider bind={ bind }>
-			<Content />
+			<Content index={ Number( bind ) }/>
 		</PropKeyProvider>
 	);
 };
 
-const Content = () => {
-	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory( {
-		move: initialTransformValue.value,
-		scale: initialScaleValue.value,
-		rotate: initialRotateValue.value,
-		skew: initialSkewValue.value,
-	} );
+const Content = ( { index }: { index: number } ) => {
+	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory(
+		{
+			move: initialTransformValue.value,
+			scale: initialScaleValue.value,
+			rotate: initialRotateValue.value,
+			skew: initialSkewValue.value,
+		},
+		index
+	);
 
 	return (
 		<PopoverContent>

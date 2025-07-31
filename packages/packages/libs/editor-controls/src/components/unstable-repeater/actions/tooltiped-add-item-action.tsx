@@ -7,7 +7,7 @@ import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
-export const AddItemAction = ( {
+export const TooltipedAddItemAction = ( {
 	disabled = false,
 	content,
 	enableTooltip = false,

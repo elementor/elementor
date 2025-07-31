@@ -23,8 +23,6 @@ const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
 
-	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
-
 	return (
 		<SectionContent>
 			<OpacityControlField />
@@ -34,7 +32,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
+				<TransformRepeaterControl />
 			</StylesField>
 			{ shouldShowTransition && (
 				<>

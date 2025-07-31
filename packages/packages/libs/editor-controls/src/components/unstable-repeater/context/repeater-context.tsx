@@ -20,8 +20,6 @@ type RepeaterContextType< T extends RepeatablePropValue > = {
 	items: Item< T >[];
 	setItems: ( items: T[] | SetterFn< T > ) => void;
 	initial: T;
-	uniqueKeys: number[];
-	setUniqueKeys: ( keys: number[] ) => void;
 	config: {
 		headerItems: {
 			Slot: Slot< { value: T } >;
@@ -32,12 +30,9 @@ type RepeaterContextType< T extends RepeatablePropValue > = {
 			inject: ( component: React.ComponentType< { index: number } >, actionName: string ) => void;
 		};
 	};
-	isSortable: boolean;
-	generateNextKey: ( source: number[] ) => number;
 	addItem: ( item?: T, index?: number ) => void;
 	updateItem: ( item: T, index: number ) => void;
 	removeItem: ( index: number ) => void;
-	sortItemsByKeys: ( newKeysOrder: number[] ) => void;
 };
 
 const RepeaterContext = createContext< RepeaterContextType< RepeatablePropValue > | null >( null );
@@ -58,12 +53,7 @@ export const useRepeaterContext = () => {
 		items: context.items,
 		setItems: context.setItems,
 		config: context.config,
-		uniqueKeys: context.uniqueKeys,
-		setUniqueKeys: context.setUniqueKeys,
 		initial: context.initial,
-		isSortable: context.isSortable,
-		generateNextKey: context.generateNextKey,
-		sortItemsByKeys: context.sortItemsByKeys,
 		addItem: context.addItem,
 		updateItem: context.updateItem,
 		removeItem: context.removeItem,
@@ -74,7 +64,6 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
-	isSortable = true,
 }: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable?: boolean } > ) => {
 	const config = useMemo( () => getConfiguredSlots(), [] );
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
@@ -87,25 +76,12 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	} );
 
 	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
-	const [ uniqueKeys, setUniqueKeys ] = useState( items?.map( ( _, index ) => index ) ?? [] );
 
 	const isOpen = openItem !== EMPTY_OPEN_ITEM;
 
-	const sortItemsByKeys = ( keysOrder: number[] ) => {
-		setUniqueKeys( keysOrder );
-		setItems( ( prevItems ) =>
-			keysOrder.map( ( key ) => {
-				const index = uniqueKeys.indexOf( key );
-
-				return prevItems[ index ];
-			} )
-		);
-	};
-
 	const addItem = ( item: T = initial, index: number = -1 ) => {
-		const newKey = generateNextKey( uniqueKeys );
+		const newKey = items.length;
 
-		setUniqueKeys( [ ...uniqueKeys, newKey ] );
 		if ( index === -1 ) {
 			setItems( [ ...items, item ] );
 		} else {
@@ -120,7 +96,6 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 
 	const removeItem = ( index: number ) => {
 		setItems( ( prevItems ) => prevItems.filter( ( _, pos ) => pos !== index ) );
-		setUniqueKeys( ( prevKeys ) => prevKeys.filter( ( _, pos ) => pos !== index ) );
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {
@@ -137,11 +112,6 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				items: ( items ?? [] ) as Item< T >[],
 				setItems: setItems as ( items: RepeatablePropValue[] | SetterFn< RepeatablePropValue > ) => void,
 				initial,
-				uniqueKeys,
-				setUniqueKeys,
-				isSortable,
-				generateNextKey,
-				sortItemsByKeys,
 				addItem: addItem as ( item?: RepeatablePropValue, index?: number ) => void,
 				updateItem: updateItem as ( item: RepeatablePropValue, index: number ) => void,
 				removeItem,
@@ -180,7 +150,3 @@ function getConfiguredSlots() {
 		itemActions: { Slot: itemActions.Slot, inject: injectItemActions },
 	};
 }
-
-const generateNextKey = ( source: number[] ) => {
-	return 1 + Math.max( 0, ...source );
-};
