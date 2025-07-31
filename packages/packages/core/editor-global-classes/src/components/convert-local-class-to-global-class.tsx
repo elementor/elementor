@@ -9,23 +9,20 @@ import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 
 type OwnProps = {
 	successCallback: ( _: string ) => void;
-	styleDef: StyleDefinition;
+	styleDef: StyleDefinition | null;
+	canConvert: boolean;
 };
 
 export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 	const localStyleData = props.styleDef;
 
-	const handlePromote = () => {
-		const classNamePrefix = `local-copy-`;
-		let i = 1;
-		let isValid = false;
-		let newClassName = ``;
-		while ( ! isValid ) {
-			newClassName = `${ classNamePrefix }${ i }`;
-			const validation = validateStyleLabel( newClassName, 'create' );
-			isValid = validation.isValid;
-			i++;
+	const handleConversion = () => {
+		const newClassName = createClassName( `converted-class-` );
+
+		if ( ! localStyleData ) {
+			throw new Error( 'Style definition is required for converting local class to global class.' );
 		}
+
 		const newId = globalClassesStylesProvider.actions.create?.( newClassName, localStyleData.variants );
 		if ( newId ) {
 			props.successCallback( newId );
@@ -35,7 +32,8 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 	return (
 		<>
 			<MenuListItem
-				onClick={ handlePromote }
+				disabled={ ! props.canConvert }
+				onClick={ handleConversion }
 				dense
 				sx={ {
 					'&.Mui-focusVisible': {
@@ -51,3 +49,14 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 		</>
 	);
 };
+
+function createClassName( prefix: string ): string {
+	let i = 1;
+	let newClassName = `${ prefix }${ i }`;
+
+	while ( ! validateStyleLabel( newClassName, 'create' ).isValid ) {
+		newClassName = `${ prefix }${ ++i }`;
+	}
+
+	return newClassName;
+}
