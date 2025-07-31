@@ -15,9 +15,8 @@ import { isExperimentActive } from '@elementor/editor-v1-adapters';
 const VIEW_LIST = 'list';
 const VIEW_ADD = 'add';
 const VIEW_EDIT = 'edit';
-const VIEW_SETTINGS = 'settings';
 
-type View = typeof VIEW_LIST | typeof VIEW_ADD | typeof VIEW_EDIT | typeof VIEW_SETTINGS;
+type View = typeof VIEW_LIST | typeof VIEW_ADD | typeof VIEW_EDIT;
 
 type Props = {
 	closePopover: () => void;
