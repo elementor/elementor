@@ -45,13 +45,6 @@ module.exports = {
 					},
 				},
 			},
-			container: {
-				widget: null,
-				container: null,
-				'e-div-block': null,
-				'e-flexbox': null,
-				'e-tabs': null,
-			},
 		},
 	},
 
