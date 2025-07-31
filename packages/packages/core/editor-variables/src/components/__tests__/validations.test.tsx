@@ -82,7 +82,6 @@ const renderComponent = ( props = { propTypeKey: colorVariablePropTypeUtil.key }
 it( 'should successfully change name with valid input', async () => {
 	// Arrange.
 	mockCreateVariable.mockResolvedValue( 'variable-key-123' );
-	mockUseInitialValue.mockReturnValue( '' );
 
 	renderComponent();
 
@@ -114,6 +113,7 @@ it( 'should successfully change name with valid input', async () => {
 it( 'should show error message when name validation fails', async () => {
 	// Arrange.
 	renderComponent();
+
 	const nameInput = screen.getAllByRole( 'textbox' )[ 0 ];
 
 	// Act.
@@ -127,6 +127,7 @@ it( 'should show error message when name validation fails', async () => {
 it( 'should disable create button when name validation fails', () => {
 	// Arrange.
 	renderComponent();
+
 	const nameInput = screen.getAllByRole( 'textbox' )[ 0 ];
 	const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
 
@@ -142,6 +143,7 @@ it( 'should disable create button when name validation fails', () => {
 it( 'should disable create button when value validation fails', () => {
 	// Arrange.
 	renderComponent();
+
 	const nameInput = screen.getAllByRole( 'textbox' )[ 0 ];
 	const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
 
