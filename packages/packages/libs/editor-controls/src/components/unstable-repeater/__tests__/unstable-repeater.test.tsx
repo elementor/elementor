@@ -10,7 +10,7 @@ import { RemoveItemAction } from '../actions/remove-item-action';
 import { Header } from '../header/header';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
-import { type ItemProps } from '../types';
+import { type ItemProps, type RepeatablePropValue } from '../types';
 import { UnstableRepeater } from '../unstable-repeater';
 
 jest.mock( '../../../bound-prop-context/use-bound-prop' );
@@ -231,13 +231,19 @@ describe( 'UnstableRepeater', () => {
 
 	it( 'should handle items with different value types', () => {
 		// Arrange.
-		const customItemSettings = createItemSettings< { title: string; id: number } >( {
+		const customItemSettings = createItemSettings< {
+			title: string;
+			id: number;
+			$$type: 'custom';
+			value: 'custom-value';
+		} >( {
 			Icon: ( { value } ) => <span>Icon-{ value.id }</span>,
 			Label: ( { value } ) => <span>{ value.title }</span>,
 		} );
 
 		const customInitialValues = {
 			$$type: 'custom',
+			value: null,
 			title: 'Default Title',
 			id: 0,
 		};
@@ -534,11 +540,11 @@ describe( 'UnstableRepeater', () => {
 	} );
 } );
 
-const createItemSettings = < T extends Record< string, unknown > = Record< string, unknown > >(
+const createItemSettings = < T extends RepeatablePropValue = RepeatablePropValue >(
 	overrides: Partial< ItemProps< T > > = {}
 ): ItemProps< T > => ( {
-	Icon: ( { value } ) => <span>Item Icon - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>,
-	Label: ( { value } ) => <span>Item label - { String( ( value as Record< string, unknown > )?.value || '' ) }</span>,
+	Icon: ( { value } ) => <span>Item Icon - { String( ( value as T )?.value || '' ) }</span>,
+	Label: ( { value } ) => <span>Item label - { String( ( value as T )?.value || '' ) }</span>,
 	Content: ( { bind } ) => <span>Content - { bind }</span>,
 	...overrides,
 } );

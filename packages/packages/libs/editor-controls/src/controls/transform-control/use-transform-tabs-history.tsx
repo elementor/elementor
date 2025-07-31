@@ -8,6 +8,7 @@ import {
 	type ScaleTransformPropValue,
 	skewTransformPropTypeUtil,
 	type SkewTransformPropValue,
+	type TransformablePropValue,
 	type TransformItemPropValue,
 } from '@elementor/editor-props';
 import { useTabs } from '@elementor/ui';
@@ -22,12 +23,10 @@ type InitialTransformValues = {
 	skew: TransformItemPropValue[ 'value' ];
 };
 
-export const useTransformTabsHistory = ( {
-	move: initialMove,
-	scale: initialScale,
-	rotate: initialRotate,
-	skew: initialSkew,
-}: InitialTransformValues ) => {
+export const useTransformTabsHistory = (
+	{ move: initialMove, scale: initialScale, rotate: initialRotate, skew: initialSkew }: InitialTransformValues,
+	data?: { items: TransformablePropValue< string >[]; index: number }
+) => {
 	const { value: moveValue, setValue: setMoveValue } = useBoundProp( moveTransformPropTypeUtil );
 	const { value: scaleValue, setValue: setScaleValue } = useBoundProp( scaleTransformPropTypeUtil );
 	const { value: rotateValue, setValue: setRotateValue } = useBoundProp( rotateTransformPropTypeUtil );
@@ -99,8 +98,21 @@ export const useTransformTabsHistory = ( {
 		return getTabsProps().onChange( e, tabName );
 	};
 
+	const isTabDisabled = ( tabKey: TransformFunction ) => {
+		if ( ! data ) {
+			return undefined;
+		}
+
+		const activeTransformKeys = data.items.map( ( item ) => item.$$type );
+
+		return !! activeTransformKeys.find( ( key, pos ) => tabKey === key && pos !== data.index );
+	};
+
 	return {
-		getTabProps,
+		getTabProps: ( value: TransformFunction ) => ( {
+			...getTabProps( value ),
+			disabled: isTabDisabled( value ),
+		} ),
 		getTabPanelProps,
 		getTabsProps: () => ( { ...getTabsProps(), onChange: onTabChange } ),
 	};

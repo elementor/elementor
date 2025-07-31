@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { type PropValue } from '@elementor/editor-props';
 import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../../../locations';
 import { useRepeaterContext } from '../context/repeater-context';
-import { type ItemProps } from '../types';
+import { type ItemProps, type RepeatablePropValue } from '../types';
 import { EditItemPopover } from './edit-item-popover';
 import { usePopover } from './use-popover';
 
 type AnchorEl = HTMLElement | null;
 
-export const Item = < T extends PropValue >( {
+export const Item = < T extends RepeatablePropValue >( {
 	Label,
 	Icon,
 	Content,

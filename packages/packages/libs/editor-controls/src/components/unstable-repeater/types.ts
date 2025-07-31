@@ -1,10 +1,12 @@
-import { type PropKey, type PropTypeUtil } from '@elementor/editor-props';
+import { type PropKey, type PropTypeUtil, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 
 export type CollectionPropUtil< T > = PropTypeUtil< PropKey, T[] >;
 
 export type Item< T > = {
 	disabled?: boolean;
 } & T;
+
+export type RepeatablePropValue = TransformablePropValue< PropKey, PropValue >;
 
 type RepeaterItemContentProps< T > = {
 	anchorEl: HTMLElement | null;

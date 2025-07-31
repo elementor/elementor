@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { transformPropTypeUtil } from '@elementor/editor-props';
+import { InfoCircleFilledIcon } from '@elementor/icons';
+import { Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropProvider, useBoundProp } from '../../bound-prop-context';
@@ -7,19 +9,38 @@ import { AddItemAction, Header, Item, ItemsContainer, UnstableRepeater } from '.
 import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
 import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
 import { createControl } from '../../create-control';
-import { TransformContent } from '../transform-control/transform-content';
 import { TransformIcon } from '../transform-control/transform-icon';
 import { TransformLabel } from '../transform-control/transform-label';
-import { initialTransformValue } from '../transform-control/types';
+import {
+	initialRotateValue,
+	initialScaleValue,
+	initialSkewValue,
+	initialTransformValue,
+} from '../transform-control/types';
+import { TransformContent } from './transform-content';
 
 export const UnstableTransformRepeaterControl = createControl( () => {
 	const { propType, value: transformValues, setValue } = useBoundProp( transformPropTypeUtil );
+	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
+
+	const getInitialValue = () => {
+		return availableValues.find( ( value ) => ! transformValues?.some( ( item ) => item.$$type === value.$$type ) );
+	};
+
+	const shouldDisableAddItem = ! getInitialValue();
 
 	return (
 		<PropProvider propType={ propType } value={ transformValues } setValue={ setValue }>
-			<UnstableRepeater initial={ initialTransformValue } propTypeUtil={ transformPropTypeUtil }>
+			<UnstableRepeater
+				initial={ getInitialValue() ?? initialTransformValue }
+				propTypeUtil={ transformPropTypeUtil }
+			>
 				<Header label={ __( 'Transform', 'elementor' ) }>
-					<AddItemAction />
+					<AddItemAction
+						disabled={ shouldDisableAddItem }
+						content={ ToolTip }
+						enableTooltip={ shouldDisableAddItem }
+					/>
 				</Header>
 				<ItemsContainer
 					itemTemplate={
@@ -33,3 +54,12 @@ export const UnstableTransformRepeaterControl = createControl( () => {
 		</PropProvider>
 	);
 } );
+
+const ToolTip = (
+	<>
+		<InfoCircleFilledIcon sx={ { color: 'secondary.main' } } />
+		<Typography variant="body2" color="text.secondary" fontSize="14px">
+			{ __( 'You can use each kind of transform only once per element.', 'elementor' ) }
+		</Typography>
+	</>
+);

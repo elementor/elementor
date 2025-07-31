@@ -1,13 +1,14 @@
 import * as React from 'react';
-import { type PropTypeUtil, type PropValue } from '@elementor/editor-props';
+import { type PropTypeUtil } from '@elementor/editor-props';
 
 import { SlotChildren } from '../../control-replacements';
 import { SectionContent } from '../section-content';
 import { RepeaterContextProvider } from './context/repeater-context';
 import { Header } from './header/header';
 import { ItemsContainer } from './items/items-container';
+import { type RepeatablePropValue } from './types';
 
-export const UnstableRepeater = < T extends PropValue >( {
+export const UnstableRepeater = < T extends RepeatablePropValue >( {
 	children,
 	initial,
 	propTypeUtil,

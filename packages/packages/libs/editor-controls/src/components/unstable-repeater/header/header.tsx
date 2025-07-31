@@ -6,6 +6,7 @@ import { ControlAdornments } from '../../../control-adornments/control-adornment
 import { SlotChildren } from '../../../control-replacements';
 import { AddItemAction } from '../actions/add-item-action';
 import { useRepeaterContext } from '../context/repeater-context';
+import { type RepeatablePropValue } from '../types';
 import { HeaderItemsSlot } from './header-items-slot';
 
 export const Header = ( { label, children }: React.PropsWithChildren< { label: string } > ) => {
@@ -14,7 +15,7 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			headerItems: { Slot: ActionsSlot },
 		},
 	} = useRepeaterContext();
-	const { value } = useBoundProp();
+	const { value } = useBoundProp< RepeatablePropValue >();
 
 	return (
 		<Stack direction="row" justifyContent="start" alignItems="center" gap={ 1 } sx={ { marginInlineEnd: -0.75 } }>

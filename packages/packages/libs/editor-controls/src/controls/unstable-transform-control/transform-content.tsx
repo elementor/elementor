@@ -1,0 +1,79 @@
+import * as React from 'react';
+import { type PropKey } from '@elementor/editor-props';
+import { Box, Tab, TabPanel, Tabs } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+
+import { PropKeyProvider } from '../../bound-prop-context';
+import { PopoverContent } from '../../components/popover-content';
+import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
+import { Move } from '../transform-control/functions/move';
+import { Rotate } from '../transform-control/functions/rotate';
+import { Scale } from '../transform-control/functions/scale';
+import { Skew } from '../transform-control/functions/skew';
+import {
+	initialRotateValue,
+	initialScaleValue,
+	initialSkewValue,
+	initialTransformValue,
+	TransformFunctionKeys,
+} from '../transform-control/types';
+import { useTransformTabsHistory } from '../transform-control/use-transform-tabs-history';
+
+export const TransformContent = ( { bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
+	return (
+		<PropKeyProvider bind={ bind }>
+			<Content index={ Number( bind ) } />
+		</PropKeyProvider>
+	);
+};
+
+const Content = ( { index }: { index: number } ) => {
+	const { items } = useRepeaterContext();
+
+	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory(
+		{
+			move: initialTransformValue.value,
+			scale: initialScaleValue.value,
+			rotate: initialRotateValue.value,
+			skew: initialSkewValue.value,
+		},
+		{ items, index }
+	);
+
+	return (
+		<PopoverContent>
+			<Box sx={ { width: '100%' } }>
+				<Box sx={ { borderBottom: 1, borderColor: 'divider' } }>
+					<Tabs
+						size="small"
+						variant="fullWidth"
+						sx={ {
+							'& .MuiTab-root': {
+								minWidth: '62px',
+							},
+						} }
+						{ ...getTabsProps() }
+						aria-label={ __( 'Transform', 'elementor' ) }
+					>
+						<Tab label={ __( 'Move', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.move ) } />
+						<Tab label={ __( 'Scale', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.scale ) } />
+						<Tab label={ __( 'Rotate', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.rotate ) } />
+						<Tab label={ __( 'Skew', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.skew ) } />
+					</Tabs>
+				</Box>
+				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.move ) }>
+					<Move />
+				</TabPanel>
+				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.scale ) }>
+					<Scale />
+				</TabPanel>
+				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.rotate ) }>
+					<Rotate />
+				</TabPanel>
+				<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( TransformFunctionKeys.skew ) }>
+					<Skew />
+				</TabPanel>
+			</Box>
+		</PopoverContent>
+	);
+};
