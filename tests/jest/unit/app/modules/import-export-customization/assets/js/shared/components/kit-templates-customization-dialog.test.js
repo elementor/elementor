@@ -1,9 +1,17 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { KitTemplatesCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-templates-customization-dialog';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 // Mock the __ function for translations
 global.__ = jest.fn( ( text ) => text );
+
+const mockSendPageViewsWebsiteTemplates = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
+	},
+} ) );
 
 describe( 'KitTemplatesCustomizationDialog Component', () => {
 	const mockHandleClose = jest.fn();
@@ -17,6 +25,12 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 	};
 
 	beforeEach( () => {
+		global.elementorCommon = {
+			eventsManager: {
+				config: eventsConfig,
+			},
+		};
+
 		jest.clearAllMocks();
 	} );
 
@@ -304,6 +318,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				{
 					siteTemplates: true,
 				},
+				[],
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -329,6 +344,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				{
 					siteTemplates: false,
 				},
+				[ 'siteTemplates' ],
 			);
 		} );
 
@@ -360,6 +376,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				{
 					siteTemplates: true,
 				},
+				[],
 			);
 		} );
 	} );
@@ -403,6 +420,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				{
 					siteTemplates: true,
 				},
+				[],
 			);
 		} );
 

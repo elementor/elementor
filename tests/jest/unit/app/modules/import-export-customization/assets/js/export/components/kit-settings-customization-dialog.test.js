@@ -1,11 +1,19 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { KitSettingsCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-settings-customization-dialog';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 // Mock the export context
 
 // Mock the __ function for translations
 global.__ = jest.fn( ( text ) => text );
+
+const mockSendPageViewsWebsiteTemplates = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
+	},
+} ) );
 
 describe( 'KitSettingsCustomizationDialog Component', () => {
 	const mockHandleClose = jest.fn();
@@ -19,6 +27,12 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+
+		global.elementorCommon = {
+			eventsManager: {
+				config: eventsConfig,
+			},
+		};
 	} );
 
 	describe( 'Dialog Rendering', () => {
@@ -251,6 +265,37 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 					theme: true,
 					themeStyleSettings: true,
 				},
+				[],
+			);
+
+			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should dispatch customization awith unselected values', () => {
+			render( <KitSettingsCustomizationDialog
+				data={ mockData }
+				open={ true }
+				handleClose={ mockHandleClose }
+				handleSaveChanges={ mockHandleSaveChanges }
+			/> );
+
+			const themeSwitch = within( screen.getByTestId( 'theme-switch' ) ).getByRole( 'checkbox' );
+			fireEvent.click( themeSwitch );
+
+			const saveButton = screen.getByText( 'Save changes' );
+			fireEvent.click( saveButton );
+
+			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
+				'settings',
+				{
+					experiments: true,
+					generalSettings: true,
+					globalColors: true,
+					globalFonts: true,
+					theme: false,
+					themeStyleSettings: true,
+				},
+				[ 'theme' ],
 			);
 
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );

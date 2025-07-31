@@ -17,15 +17,18 @@ export function init() {
 				icon: WordpressIcon,
 				onClick: () => {
 					const extendedWindow = window as unknown as ExtendedWindow;
-					const config = extendedWindow?.elementor?.editorEvents?.config;
+					const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 					if ( config ) {
-						extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.exitToWordpress, {
-							location: config.locations.topBar,
-							secondaryLocation: config.secondaryLocations.elementorLogo,
-							trigger: config.triggers.click,
-							element: config.elements.link,
-						} );
+						extendedWindow.elementorCommon.eventsManager.dispatchEvent(
+							config.names.topBar.exitToWordpress,
+							{
+								location: config.locations.topBar,
+								secondaryLocation: config.secondaryLocations.elementorLogo,
+								trigger: config.triggers.click,
+								element: config.elements.link,
+							}
+						);
 					}
 				},
 			};
