@@ -12,7 +12,7 @@ import { useStyle } from '../../contexts/style-context';
 export const { Slot: CssClassConvertSlot, inject: injectIntoCssClassConvert } = createLocation< {
 	styleDef: StyleDefinition | null;
 	successCallback: ( newId: string ) => void;
-	canConvert?: boolean;
+	canConvert: boolean;
 } >();
 
 type OwnProps = {
