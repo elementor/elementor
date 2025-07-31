@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
-import { stylesRepository, useUserStylesCapability } from '@elementor/editor-styles-repository';
+import { isElementsStylesProvider, stylesRepository, useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { MenuItemInfotip, MenuListItem } from '@elementor/editor-ui';
 import { bindMenu, Divider, Menu, MenuSubheader, type PopupState, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -32,8 +32,8 @@ type CssClassMenuProps = {
 };
 
 export function CssClassMenu( { popupState, anchorEl, fixed }: CssClassMenuProps ) {
-	const { provider, label } = useCssClass();
-	const isLocalStyle = label.toLowerCase() === 'local';
+	const { provider } = useCssClass();
+	const isLocalStyle = provider ? isElementsStylesProvider( provider ) : true
 
 	const handleKeyDown = ( e: React.KeyboardEvent< HTMLElement > ) => {
 		e.stopPropagation();

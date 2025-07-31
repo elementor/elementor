@@ -16,7 +16,7 @@ type OwnProps = {
 export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 	const localStyleData = props.styleDef;
 
-	const handlePromote = () => {
+	const handleConversion = () => {
 		const newClassName = createClassName( `converted-class-` );
 
 		const newId = globalClassesStylesProvider.actions.create?.( newClassName, localStyleData.variants );
@@ -29,7 +29,7 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 		<>
 			<MenuListItem
 				disabled={ ! props.canConvert }
-				onClick={ handlePromote }
+				onClick={ handleConversion }
 				dense
 				sx={ {
 					'&.Mui-focusVisible': {
