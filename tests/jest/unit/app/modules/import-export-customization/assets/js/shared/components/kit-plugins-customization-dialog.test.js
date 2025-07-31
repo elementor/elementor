@@ -4,8 +4,18 @@ import { KitPluginsCustomizationDialog } from 'elementor/app/modules/import-expo
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins' );
 import useKitPlugins from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 global.__ = jest.fn( ( text ) => text );
+
+const mockSendKitImportUploadFile = jest.fn();
+const mockSendPageViewsWebsiteTemplates = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendKitImportUploadFile: ( ...args ) => mockSendKitImportUploadFile( ...args ),
+		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
+	},
+} ) );
 
 describe( 'KitPluginsCustomizationDialog Component', () => {
 	const mockHandleClose = jest.fn();
@@ -45,6 +55,12 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 			pluginsList: mockPluginsList,
 			isLoading: false,
 		} );
+
+		global.elementorCommon = {
+			eventsManager: {
+				config: eventsConfig,
+			},
+		};
 	} );
 
 	describe( 'Dialog Rendering', () => {
@@ -429,6 +445,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'advanced-custom-fields/acf': true,
 					'contact-form-7/wp-contact-form-7': true,
 				},
+				[],
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -456,6 +473,7 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 					'advanced-custom-fields/acf': false,
 					'contact-form-7/wp-contact-form-7': true,
 				},
+				[ 'advanced-custom-fields/acf' ],
 			);
 		} );
 	} );
