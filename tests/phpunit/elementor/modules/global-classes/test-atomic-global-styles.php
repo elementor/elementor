@@ -160,7 +160,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$this->assertEquals( [ 'g-only-frontend', 'both', 'preview' ], $result );
 	}
 
-	public function test_cache_invalidation_on_update() {
+	public function test_cache_invalidation_on_frontend_update() {
 		// Arrange.
 		$global_classes = new Atomic_Global_Styles();
 		$global_classes->register_hooks();
@@ -191,7 +191,45 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$this->assertFalse( $cache_validity->is_valid(
 			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ]
 		) );
+
+		$this->assertFalse( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ]
+		) );
+	}
+
+	public function test_cache_invalidation_on_preview_update() {
+		// Arrange.
+		$global_classes = new Atomic_Global_Styles();
+		$global_classes->register_hooks();
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ] );
+		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ] );
+
+		// Assert.
 		$this->assertTrue( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ]
+		) );
+		$this->assertTrue( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ]
+		) );
+
+		// Act.
+		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_PREVIEW, [
+			'items' => [],
+			'order' => [],
+		], [
+			'items' => [],
+			'order' => [],
+		] );
+
+		// Assert.
+		$this->assertTrue( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ]
+		) );
+
+		$this->assertFalse( $cache_validity->is_valid(
 			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ]
 		) );
 	}
