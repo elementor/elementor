@@ -33,11 +33,11 @@ class Module extends BaseModule {
 			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
 		];
 	}
-	
+
 	private function hooks() {
 		return new Hooks();
 	}
-	
+
 	public function __construct() {
 		parent::__construct();
 		
