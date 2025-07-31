@@ -9,7 +9,7 @@ import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 
 type OwnProps = {
 	successCallback: ( _: string ) => void;
-	styleDef: StyleDefinition;
+	styleDef: StyleDefinition | null;
 	canConvert: boolean;
 };
 
@@ -18,6 +18,10 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 
 	const handleConversion = () => {
 		const newClassName = createClassName( `converted-class-` );
+
+		if ( ! localStyleData ) {
+			throw new Error( 'Style definition is required for converting local class to global class.' );
+		}
 
 		const newId = globalClassesStylesProvider.actions.create?.( newClassName, localStyleData.variants );
 		if ( newId ) {

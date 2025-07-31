@@ -43,7 +43,7 @@ export const CssClassConvert = ( props: OwnProps ) => {
 			classesProp: currentClassesProp,
 			styleDef: props.styleDef,
 		} );
-		
+
 		saveValue( newId );
 		setActiveId( newId );
 		props.closeMenu();
