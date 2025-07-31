@@ -13,7 +13,11 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
 import { PopoverContent } from '../../../components/popover-content';
-import { Repeater } from '../../../components/repeater';
+import { AddItemAction, Header, ItemsContainer, UnstableRepeater } from '../../../components/unstable-repeater';
+import { DisableItemAction } from '../../../components/unstable-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../../../components/unstable-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../../../components/unstable-repeater/actions/remove-item-action';
+import { Item } from '../../../components/unstable-repeater/items/item';
 import { createControl } from '../../../create-control';
 import { env } from '../../../env';
 import { ColorControl } from '../../color-control';
@@ -71,23 +75,20 @@ const backgroundResolutionOptions = [
 ];
 
 export const BackgroundOverlayRepeaterControl = createControl( () => {
-	const { propType, value: overlayValues, setValue, disabled } = useBoundProp( backgroundOverlayPropTypeUtil );
+	const { propType, value: backgroundValues, setValue } = useBoundProp( backgroundOverlayPropTypeUtil );
 
 	return (
-		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue } isDisabled={ () => disabled }>
-			<Repeater
-				openOnAdd
-				disabled={ disabled }
-				values={ overlayValues ?? [] }
-				setValues={ setValue }
-				label={ __( 'Overlay', 'elementor' ) }
-				itemSettings={ {
-					Icon: ItemIcon,
-					Label: ItemLabel,
-					Content: ItemContent,
-					initialValues: getInitialBackgroundOverlay(),
-				} }
-			/>
+		<PropProvider propType={ propType } value={ backgroundValues } setValue={ setValue }>
+			<UnstableRepeater initial={ getInitialBackgroundOverlay() } propTypeUtil={ backgroundOverlayPropTypeUtil }>
+				<Header label={ __( 'Overlay', 'elementor' ) }>
+					<AddItemAction />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } Content={ ItemContent } /> }>
+					<DuplicateItemAction />
+					<DisableItemAction />
+					<RemoveItemAction />
+				</ItemsContainer>
+			</UnstableRepeater>
 		</PropProvider>
 	);
 } );

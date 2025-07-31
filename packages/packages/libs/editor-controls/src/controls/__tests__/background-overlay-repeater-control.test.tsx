@@ -18,7 +18,6 @@ import {
 	initialBackgroundColorOverlay,
 	ItemContent,
 } from '../background-control/background-overlay/background-overlay-repeater-control';
-import { UnstableBackgroundRepeaterControl } from '../unstable-background-control/unstable-background-repeater-control';
 import { createMockGradientOverlay, gradientPropType } from './background-gradient-color-control.test';
 
 jest.mock( '../image-media-control' );
@@ -181,371 +180,353 @@ const createMockData = (
 	value,
 } );
 
-describe.each( [ { desc: 'old repeater' }, { desc: 'new repeater' } ] )(
-	'BackgroundControl with $desc',
-	( { desc } ) => {
-		const Component =
-			desc === 'new repeater' ? UnstableBackgroundRepeaterControl : BackgroundOverlayRepeaterControl;
-
-		describe( 'Control', () => {
-			beforeEach( () => {
-				initEnv( {
-					'@elementor/editor-controls': {
-						background_placeholder_image: 'https://test-site/wp-content/uploads/bg-test.jpg',
-					},
-				} );
-
-				jest.mocked( useWpMediaAttachment ).mockReturnValue( {
-					data: {
-						url: 'https://test-site/wp-content/uploads/bg-test.jpg',
-						id: 807,
-						title: 'bg-test',
-					} as Attachment,
-				} as never );
-			} );
-
-			it( 'should render Background overlay repeater', () => {
-				// Arrange.
-				const props = {
-					value: createMockData(),
-					setValue: jest.fn(),
-					bind: 'background-overlay',
-					propType,
-				};
-
-				// Act.
-				renderControl( <Component />, props );
-
-				// Assert.
-				expect( screen.getByText( 'Overlay' ) ).toBeInTheDocument();
-				expect( screen.getByText( 'rgba(255, 0, 0, 0.2)' ) ).toBeInTheDocument();
-				expect( screen.getByText( '#F54359' ) ).toBeInTheDocument();
-			} );
-
-			it( 'should display popup content with nested values', async () => {
-				// Arrange.
-				const props = {
-					value: createMockData(),
-					setValue: jest.fn(),
-					bind: 'background-overlay',
-					propType,
-				};
-
-				// Act.
-				renderControl( <Component />, props );
-
-				const [ colorRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
-				fireEvent.click( colorRepeaterItem );
-
-				// Assert.
-				expect( screen.getByText( 'Color' ) ).toHaveAttribute( 'aria-selected', 'true' );
-				expect( screen.getByText( 'rgba(255, 0, 0, 0.2)' ) ).toBeVisible();
-			} );
-
-			it( 'should display popup content with image tab', async () => {
-				// Arrange.
-				const backgroundImageMockValue = createMockImageOverlay();
-				const props = {
-					value: createMockData( [ backgroundImageMockValue ] ),
-					setValue: jest.fn(),
-					bind: 'background-overlay',
-					propType,
-				};
-
-				// Act.
-				renderControl( <Component />, props );
-
-				const [ imageRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
-				fireEvent.click( imageRepeaterItem );
-
-				// Assert.
-				expect( screen.queryAllByText( 'Image' ).at( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
-				expect( screen.getByLabelText( 'Repeat-x' ) ).toHaveAttribute( 'aria-pressed', 'true' );
-				expect( screen.getByLabelText( 'Fixed' ) ).toHaveAttribute( 'aria-pressed', 'true' );
-				expect( screen.getByDisplayValue( 'full' ) ).toBeInTheDocument();
-			} );
-
-			it( 'should display attachment title on item label image component (excluding attachment subtype)', async () => {
-				// Arrange.
-				const backgroundImageMockValue = createMockImageOverlay();
-
-				const props = {
-					value: createMockData( [ backgroundImageMockValue ] ),
-					setValue: jest.fn(),
-					bind: 'background-overlay',
-					propType,
-				};
-				const imageTitle = 'Elementor Logo';
-
-				jest.mocked( useWpMediaAttachment ).mockReturnValue( {
-					data: {
-						title: imageTitle,
-						url: 'https://test-site/wp-content/uploads/bg-test.jpg',
-					},
-				} as never );
-
-				// Act.
-				renderControl( <Component />, props );
-
-				// Assert.
-				expect( screen.getByText( imageTitle ) ).toBeInTheDocument();
-			} );
-
-			it( 'should display attachment title and file type on item label image component (label + subtype)', async () => {
-				// Arrange.
-				const backgroundImageMockValue = createMockImageOverlay();
-
-				const props = {
-					value: createMockData( [ backgroundImageMockValue ] ),
-					setValue: jest.fn(),
-					bind: 'background-overlay',
-					propType,
-				};
-
-				jest.mocked( useWpMediaAttachment ).mockReturnValue( {
-					data: {
-						title: 'dummy_image',
-						subtype: 'jpg',
-						filename: 'dummy_image.jpg',
-						url: 'https://test-site/wp-content/uploads/bg-test.jpg',
-					},
-				} as never );
-
-				// Act.
-				renderControl( <Component />, props );
-
-				// Assert.
-				expect( screen.getByText( 'dummy_image.jpg' ) ).toBeInTheDocument();
-			} );
-
-			it( 'should not display image label (excluding attachment title)', async () => {
-				// Arrange.
-				const backgroundImageMockValue = createMockImageOverlay();
-
-				const props = {
-					value: createMockData( [ backgroundImageMockValue ] ),
-					setValue: jest.fn(),
-					bind: 'background-overlay',
-					propType,
-				};
-
-				jest.mocked( useWpMediaAttachment ).mockReturnValue( {
-					data: {
-						subtype: 'jpg',
-						url: 'https://test-site/wp-content/uploads/bg-test.jpg',
-					},
-				} as never );
-
-				// Act.
-				renderControl( <Component />, props );
-
-				// Assert.
-				expect( screen.queryByText( 'jpg' ) ).not.toBeInTheDocument();
-			} );
-
-			it( 'should display SVG correct title and file type on item label component (label + subtype)', async () => {
-				// Arrange.
-				const backgroundImageMockValue = createMockImageOverlay();
-
-				const props = {
-					value: createMockData( [ backgroundImageMockValue ] ),
-					setValue: jest.fn(),
-					bind: 'background-overlay',
-					propType,
-				};
-
-				jest.mocked( useWpMediaAttachment ).mockReturnValue( {
-					data: {
-						title: 'svg_image',
-						subtype: 'svg+xml',
-						filename: 'svg_image.svg',
-						url: 'https://test-site/wp-content/uploads/test.svg',
-					},
-				} as never );
-
-				// Act.
-				renderControl( <Component />, props );
-
-				// Assert.
-				expect( screen.getByText( 'svg_image.svg' ) ).toBeInTheDocument();
-			} );
+describe( 'BackgroundControl', () => {
+	beforeEach( () => {
+		initEnv( {
+			'@elementor/editor-controls': {
+				background_placeholder_image: 'https://test-site/wp-content/uploads/bg-test.jpg',
+			},
 		} );
 
-		describe( 'ItemContent', () => {
-			beforeEach( () => {
-				initEnv( {
-					'@elementor/editor-controls': {
-						background_placeholder_image: 'https://test-site/wp-content/uploads/bg-test.jpg',
-					},
-				} );
-			} );
+		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+			data: {
+				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
+				id: 807,
+				title: 'bg-test',
+			} as Attachment,
+		} as never );
+	} );
 
-			it( 'should set the default color when switching from image to color tab', async () => {
-				// Arrange.
-				const setValue = jest.fn();
-				const backgroundImageMockValue = createMockImageOverlay();
+	it( 'should render Background overlay repeater', () => {
+		// Arrange.
+		const props = { value: createMockData(), setValue: jest.fn(), bind: 'background-overlay', propType };
 
-				const props = {
-					setValue,
-					propType: propType.item_prop_type,
-					value: backgroundImageMockValue,
-					bind: 'background-overlay',
-				};
+		// Act.
+		renderControl( <BackgroundOverlayRepeaterControl />, props );
 
-				// Act.
-				renderControl( <ItemContent { ...props } />, props );
+		// Assert.
+		expect( screen.getByText( 'Overlay' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'rgba(255, 0, 0, 0.2)' ) ).toBeInTheDocument();
+		expect( screen.getByText( '#F54359' ) ).toBeInTheDocument();
+	} );
 
-				const colorTab = screen.getByText( 'Color' );
-				fireEvent.click( colorTab );
+	it( 'should display popup content with nested values', async () => {
+		// Arrange.
+		const props = { value: createMockData(), setValue: jest.fn(), bind: 'background-overlay', propType };
 
-				// Assert.
-				expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
-			} );
+		// Act.
+		renderControl( <BackgroundOverlayRepeaterControl />, props );
 
-			it( 'should set default image when switching from color to image tab', async () => {
-				// Arrange.
-				const setValue = jest.fn();
-				const props = {
-					setValue,
-					propType: propType.item_prop_type,
-					bind: 'background-overlay',
-					value: stubBackgroundColorOverlay( 'rgba(255, 0, 0, 0.2)' ),
-				};
+		const [ colorRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( colorRepeaterItem );
 
-				// Act.
-				renderControl( <ItemContent { ...props } />, props );
+		// Assert.
+		expect( screen.getByText( 'Color' ) ).toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.getByText( 'rgba(255, 0, 0, 0.2)' ) ).toBeVisible();
+	} );
 
-				const imageTab = screen.getByText( 'Image' );
-				fireEvent.click( imageTab );
+	it( 'should display popup content with image tab', async () => {
+		// Arrange.
+		const backgroundImageMockValue = createMockImageOverlay();
+		const props = {
+			value: createMockData( [ backgroundImageMockValue ] ),
+			setValue: jest.fn(),
+			bind: 'background-overlay',
+			propType,
+		};
 
-				// Assert.
-				expect( setValue ).toHaveBeenCalledWith( getInitialBackgroundOverlay() );
-			} );
+		// Act.
+		renderControl( <BackgroundOverlayRepeaterControl />, props );
 
-			it( 'should set default gradient when switching from color to gradient tab', async () => {
-				// Arrange.
-				const setValue = jest.fn();
-				const props = {
-					setValue,
-					propType: propType.item_prop_type,
-					bind: 'background-overlay',
-					value: stubBackgroundColorOverlay( 'rgba(0, 0, 0)' ),
-				};
+		const [ imageRepeaterItem ] = screen.getAllByRole( 'button', { name: 'Open item' } );
+		fireEvent.click( imageRepeaterItem );
 
-				// Act.
-				renderControl( <ItemContent { ...props } />, props );
+		// Assert.
+		expect( screen.queryAllByText( 'Image' ).at( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.getByLabelText( 'Repeat-x' ) ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByLabelText( 'Fixed' ) ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByDisplayValue( 'full' ) ).toBeInTheDocument();
+	} );
 
-				const gradientTab = screen.getByText( 'Gradient' );
-				fireEvent.click( gradientTab );
+	it( 'should display attachment title on item label image component (excluding attachment subtype)', async () => {
+		// Arrange.
+		const backgroundImageMockValue = createMockImageOverlay();
 
-				// Assert.
-				expect( setValue ).toHaveBeenCalledWith( {
-					$$type: 'background-gradient-overlay',
-					value: {
-						type: { $$type: 'string', value: 'linear' },
-						angle: { $$type: 'number', value: 180 },
-						stops: {
-							$$type: 'gradient-color-stop',
-							value: [
-								{
-									$$type: 'color-stop',
-									value: {
-										color: { $$type: 'color', value: 'rgb(0,0,0)' },
-										offset: { $$type: 'number', value: 0 },
-									},
-								},
-								{
-									$$type: 'color-stop',
-									value: {
-										color: { $$type: 'color', value: 'rgb(255,255,255)' },
-										offset: { $$type: 'number', value: 100 },
-									},
-								},
-							],
+		const props = {
+			value: createMockData( [ backgroundImageMockValue ] ),
+			setValue: jest.fn(),
+			bind: 'background-overlay',
+			propType,
+		};
+		const imageTitle = 'Elementor Logo';
+
+		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+			data: {
+				title: imageTitle,
+				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
+			},
+		} as never );
+
+		// Act.
+		renderControl( <BackgroundOverlayRepeaterControl />, props );
+
+		// Assert.
+		expect( screen.getByText( imageTitle ) ).toBeInTheDocument();
+	} );
+
+	it( 'should display attachment title and file type on item label image component (label + subtype)', async () => {
+		// Arrange.
+		const backgroundImageMockValue = createMockImageOverlay();
+
+		const props = {
+			value: createMockData( [ backgroundImageMockValue ] ),
+			setValue: jest.fn(),
+			bind: 'background-overlay',
+			propType,
+		};
+
+		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+			data: {
+				title: 'dummy_image',
+				subtype: 'jpg',
+				filename: 'dummy_image.jpg',
+				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
+			},
+		} as never );
+
+		// Act.
+		renderControl( <BackgroundOverlayRepeaterControl />, props );
+
+		// Assert.
+		expect( screen.getByText( 'dummy_image.jpg' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should not display image label (excluding attachment title)', async () => {
+		// Arrange.
+		const backgroundImageMockValue = createMockImageOverlay();
+
+		const props = {
+			value: createMockData( [ backgroundImageMockValue ] ),
+			setValue: jest.fn(),
+			bind: 'background-overlay',
+			propType,
+		};
+
+		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+			data: {
+				subtype: 'jpg',
+				url: 'https://test-site/wp-content/uploads/bg-test.jpg',
+			},
+		} as never );
+
+		// Act.
+		renderControl( <BackgroundOverlayRepeaterControl />, props );
+
+		// Assert.
+		expect( screen.queryByText( 'jpg' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should display SVG correct title and file type on item label component (label + subtype)', async () => {
+		// Arrange.
+		const backgroundImageMockValue = createMockImageOverlay();
+
+		const props = {
+			value: createMockData( [ backgroundImageMockValue ] ),
+			setValue: jest.fn(),
+			bind: 'background-overlay',
+			propType,
+		};
+
+		jest.mocked( useWpMediaAttachment ).mockReturnValue( {
+			data: {
+				title: 'svg_image',
+				subtype: 'svg+xml',
+				filename: 'svg_image.svg',
+				url: 'https://test-site/wp-content/uploads/test.svg',
+			},
+		} as never );
+
+		// Act.
+		renderControl( <BackgroundOverlayRepeaterControl />, props );
+
+		// Assert.
+		expect( screen.getByText( 'svg_image.svg' ) ).toBeInTheDocument();
+	} );
+} );
+
+describe( 'ItemContent', () => {
+	beforeEach( () => {
+		initEnv( {
+			'@elementor/editor-controls': {
+				background_placeholder_image: 'https://test-site/wp-content/uploads/bg-test.jpg',
+			},
+		} );
+	} );
+
+	it( 'should set the default color when switching from image to color tab', async () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const backgroundImageMockValue = createMockImageOverlay();
+
+		const props = {
+			setValue,
+			propType: propType.item_prop_type,
+			value: backgroundImageMockValue,
+			bind: 'background-overlay',
+		};
+
+		// Act.
+		renderControl( <ItemContent { ...props } />, props );
+
+		const colorTab = screen.getByText( 'Color' );
+		fireEvent.click( colorTab );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
+	} );
+
+	it( 'should set default image when switching from color to image tab', async () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			propType: propType.item_prop_type,
+			bind: 'background-overlay',
+			value: stubBackgroundColorOverlay( 'rgba(255, 0, 0, 0.2)' ),
+		};
+
+		// Act.
+		renderControl( <ItemContent { ...props } />, props );
+
+		const imageTab = screen.getByText( 'Image' );
+		fireEvent.click( imageTab );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( getInitialBackgroundOverlay() );
+	} );
+
+	it( 'should set default gradient when switching from color to gradient tab', async () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const props = {
+			setValue,
+			propType: propType.item_prop_type,
+			bind: 'background-overlay',
+			value: stubBackgroundColorOverlay( 'rgba(0, 0, 0)' ),
+		};
+
+		// Act.
+		renderControl( <ItemContent { ...props } />, props );
+
+		const gradientTab = screen.getByText( 'Gradient' );
+		fireEvent.click( gradientTab );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'background-gradient-overlay',
+			value: {
+				type: { $$type: 'string', value: 'linear' },
+				angle: { $$type: 'number', value: 180 },
+				stops: {
+					$$type: 'gradient-color-stop',
+					value: [
+						{
+							$$type: 'color-stop',
+							value: {
+								color: { $$type: 'color', value: 'rgb(0,0,0)' },
+								offset: { $$type: 'number', value: 0 },
+							},
 						},
-					},
-				} );
-
-				expect( screen.queryAllByText( 'Gradient' ).at( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
-				expect( screen.getByText( 'Angle' ) ).toBeInTheDocument();
-				expect( screen.getByText( 'Stop' ) ).toBeInTheDocument();
-			} );
-
-			it( 'should save the color and image value history when switching between tabs', () => {
-				// Arrange.
-				const setValue = jest.fn();
-				const imageValue = createMockImageOverlay();
-
-				const props = {
-					setValue,
-					bind: 'background-overlay',
-					value: imageValue,
-					propType: propType.item_prop_type,
-				};
-
-				// Act.
-				const { rerender } = renderControl( <ItemContent { ...props } />, props );
-
-				// Arrange.
-				const colorTab = screen.getByText( 'Color' );
-				fireEvent.click( colorTab );
-
-				// Assert.
-				expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
-
-				// Arrange.
-				setValue.mockClear();
-
-				// Act.
-				rerender( <ItemContent { ...props } />, {
-					value: stubBackgroundColorOverlay( '#F54359' ),
-				} );
-
-				const imageTab = screen.getByText( 'Image' );
-				fireEvent.click( imageTab );
-
-				// Assert.
-				expect( setValue ).toHaveBeenCalledWith( imageValue );
-			} );
-
-			it( 'should save the gradient value history when switching between tabs', () => {
-				// Arrange.
-				const setValue = jest.fn();
-				const gradientValue = createMockGradientOverlay();
-
-				const props = {
-					setValue,
-					bind: 'background-overlay',
-					value: gradientValue,
-					propType: propType.item_prop_type,
-				};
-
-				// Act.
-				const { rerender } = renderControl( <ItemContent { ...props } />, props );
-
-				const colorTab = screen.getByText( 'Color', { selector: 'button' } );
-
-				fireEvent.click( colorTab );
-
-				// Assert.
-				expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
-
-				setValue.mockClear();
-
-				// Act.
-				rerender( <ItemContent { ...props } />, {
-					value: stubBackgroundColorOverlay( '#F54359' ),
-				} );
-
-				const imageTab = screen.getByText( 'Image' );
-				fireEvent.click( imageTab );
-
-				const gradientTab = screen.getByText( 'Gradient' );
-				fireEvent.click( gradientTab );
-
-				// Assert.
-				expect( setValue ).toHaveBeenCalledWith( gradientValue );
-			} );
+						{
+							$$type: 'color-stop',
+							value: {
+								color: { $$type: 'color', value: 'rgb(255,255,255)' },
+								offset: { $$type: 'number', value: 100 },
+							},
+						},
+					],
+				},
+			},
 		} );
-	}
-);
+
+		expect( screen.queryAllByText( 'Gradient' ).at( 0 ) ).toHaveAttribute( 'aria-selected', 'true' );
+		expect( screen.getByText( 'Angle' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Stop' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should save the color and image value history when switching between tabs', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const imageValue = createMockImageOverlay();
+
+		const props = {
+			setValue,
+			bind: 'background-overlay',
+			value: imageValue,
+			propType: propType.item_prop_type,
+		};
+
+		// Act.
+		const { rerender } = renderControl( <ItemContent { ...props } />, props );
+
+		// Arrange.
+		const colorTab = screen.getByText( 'Color' );
+		fireEvent.click( colorTab );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
+
+		// Arrange.
+		setValue.mockClear();
+
+		// Act.
+		rerender( <ItemContent { ...props } />, {
+			value: stubBackgroundColorOverlay( '#F54359' ),
+		} );
+
+		const imageTab = screen.getByText( 'Image' );
+		fireEvent.click( imageTab );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( imageValue );
+	} );
+
+	it( 'should save the gradient value history when switching between tabs', () => {
+		// Arrange.
+		const setValue = jest.fn();
+		const gradientValue = createMockGradientOverlay();
+
+		const props = {
+			setValue,
+			bind: 'background-overlay',
+			value: gradientValue,
+			propType: propType.item_prop_type,
+		};
+
+		// Act.
+		const { rerender } = renderControl( <ItemContent { ...props } />, props );
+
+		const colorTab = screen.getByText( 'Color', { selector: 'button' } );
+
+		fireEvent.click( colorTab );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( initialBackgroundColorOverlay );
+
+		setValue.mockClear();
+
+		// Act.
+		rerender( <ItemContent { ...props } />, {
+			value: stubBackgroundColorOverlay( '#F54359' ),
+		} );
+
+		const imageTab = screen.getByText( 'Image' );
+		fireEvent.click( imageTab );
+
+		const gradientTab = screen.getByText( 'Gradient' );
+		fireEvent.click( gradientTab );
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( gradientValue );
+	} );
+} );
