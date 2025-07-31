@@ -1,6 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ImportCustomization from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-customization';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 const mockDispatch = jest.fn();
 const mockNavigate = jest.fn();
@@ -15,11 +16,23 @@ jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );
 
+const mockSendPageViewsWebsiteTemplates = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
+	},
+} ) );
+
 describe( 'ImportCustomization Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		jest.resetAllMocks();
 		global.elementorAppConfig = { base_url: 'http://localhost' };
-		global.elementorCommon = {};
+		global.elementorCommon = {
+			eventsManager: {
+				config: eventsConfig,
+			},
+		};
 	} );
 
 	afterEach( () => {
@@ -36,7 +49,7 @@ describe( 'ImportCustomization Page', () => {
 		} );
 	}
 
-	it( 'renders main content and ImportKitContent', () => {
+	it( 'renders main content and ImportKitContent', async () => {
 		// Arrange
 		setup();
 		// Act
@@ -45,6 +58,8 @@ describe( 'ImportCustomization Page', () => {
 		expect( screen.getByText( 'Select which parts you want to apply' ) ).toBeTruthy();
 		expect( screen.getByText( /These are the templates/ ) ).toBeTruthy();
 		expect( screen.getByTestId( 'import-kit-parts-content' ) ).toBeTruthy();
+
+		await waitFor( () => expect( mockSendPageViewsWebsiteTemplates ).toHaveBeenCalledWith( 'kit_import_customization' ) );
 	} );
 
 	it( 'dispatches SET_IMPORT_STATUS PENDING when Back is clicked', () => {

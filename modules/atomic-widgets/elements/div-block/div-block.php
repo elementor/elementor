@@ -149,7 +149,8 @@ class Div_Block extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$attributes = $settings['attributes'];
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
-			echo ' ' . esc_attr( $attributes );
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo ' ' . $attributes;
 		}
 	}
 

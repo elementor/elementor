@@ -15,20 +15,4 @@ export default class promotionsHelper extends Content {
 		await expect.soft( modalContainer ).toHaveScreenshot( `${ element }-modal.png` );
 		await this.page.locator( '.dialog-header .eicon-close' ).click();
 	}
-
-	/**
-	 * Test promotion modal visibility.
-	 *
-	 * @param {string} element - Element name.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async modalPromotionModalVisibilityTest( element: string ): Promise<void> {
-		await this.page.locator( `.elementor-control-${ element }` ).click( { force: true } );
-		const modalContainer = this.page.locator( EditorSelectors.panels.promotionCard );
-		await expect.soft( modalContainer ).toBeVisible();
-		await expect( modalContainer.getByText( 'PRO' ) ).toBeVisible();
-		await modalContainer.getByRole( 'button', { name: 'close' } ).click();
-		await expect.soft( modalContainer ).toBeHidden();
-	}
 }

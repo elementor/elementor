@@ -49,7 +49,7 @@ jest.mock( '@elementor/editor-documents', () => ( {
 
 jest.mock( '../use-can-convert-local-class-to-global', () => ( {
 	useCanConvertLocalClassToGlobal: jest.fn( () => ( {
-		canPromote: false,
+		canConvert: false,
 		styleDef: null,
 	} ) ),
 } ) );
