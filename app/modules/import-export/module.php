@@ -140,6 +140,7 @@ class Module extends BaseModule {
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
 					'text' => esc_html__( 'Export', 'elementor' ),
+					'id' => 'elementor-import-export__export',
 				],
 				'description' => esc_html__( 'You can download this website as a .zip file, or upload it to the library.', 'elementor' ),
 			],
@@ -148,6 +149,7 @@ class Module extends BaseModule {
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => esc_html__( 'Import', 'elementor' ),
+					'id' => 'elementor-import-export__import',
 				],
 				'description' => esc_html__( 'You can import design and settings from a .zip file or choose from the library.', 'elementor' ),
 			],
@@ -157,6 +159,7 @@ class Module extends BaseModule {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
 				'text' => esc_html__( 'Import from library', 'elementor' ),
+				'id' => 'elementor-import-export__import_from_library',
 			];
 		}
 
@@ -252,7 +255,7 @@ class Module extends BaseModule {
 							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
 						</a>
 					<?php endif; ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+					<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
 						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 					</a>
 				</div>
