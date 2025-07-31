@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { constrainedEditor } from 'constrained-editor-plugin';
 import type { editor, MonacoEditor } from 'monaco-types';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
@@ -19,7 +18,6 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 	const editorRef = React.useRef< editor.IStandaloneCodeEditor | null >( null );
 	const monacoRef = React.useRef< MonacoEditor | null >( null );
-	const constrainedRef = React.useRef< ReturnType< typeof constrainedEditor > | null >( null );
 	const resizeRef = React.useRef< HTMLDivElement >( null );
 	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
 	const activeBreakpoint = useActiveBreakpoint();
@@ -63,19 +61,37 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		editorRef.current = editor;
 		monacoRef.current = monaco;
 
-		const constrained = constrainedEditor( monaco );
-		constrainedRef.current = constrained;
-
 		const model = editor.getModel();
 		if ( model ) {
-			const lineCount = Math.max( model.getLineCount(), 3 );
-			const lastEditableLine = lineCount - 1;
-			const lastColumn = model.getLineMaxColumn( lastEditableLine );
+			editor.onKeyDown( ( e ) => {
+				const position = editor.getPosition();
+				if ( ! position ) {
+					return;
+				}
 
-			constrained.initializeIn( editor );
-			constrained.addRestrictionsTo( model, [
-				{ range: [ 2, 1, lastEditableLine, lastColumn ], allowMultiline: true },
-			] );
+				const totalLines = model.getLineCount();
+				const isInProtectedRange = position.lineNumber === 1 || position.lineNumber === totalLines;
+
+				if ( isInProtectedRange ) {
+					const allowedKeys = [
+						monaco.KeyCode.UpArrow,
+						monaco.KeyCode.DownArrow,
+						monaco.KeyCode.LeftArrow,
+						monaco.KeyCode.RightArrow,
+						monaco.KeyCode.Home,
+						monaco.KeyCode.End,
+						monaco.KeyCode.PageUp,
+						monaco.KeyCode.PageDown,
+						monaco.KeyCode.Tab,
+						monaco.KeyCode.Escape,
+					];
+
+					if ( ! allowedKeys.includes( e.keyCode ) ) {
+						e.preventDefault();
+						e.stopPropagation();
+					}
+				}
+			} );
 		}
 
 		validateCustomCSS( editor, monaco );

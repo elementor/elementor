@@ -1,17 +1,9 @@
 import * as React from 'react';
-import { constrainedEditor } from 'constrained-editor-plugin';
 import type { editor, MonacoEditor } from 'monaco-types';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { CssEditor } from '../css-editor';
-
-jest.mock( 'constrained-editor-plugin', () => ( {
-	constrainedEditor: jest.fn( () => ( {
-		initializeIn: jest.fn(),
-		addRestrictionsTo: jest.fn(),
-	} ) ),
-} ) );
 
 const mockAddEventListener = jest.fn();
 const mockRemoveEventListener = jest.fn();
@@ -26,6 +18,11 @@ Object.defineProperty( document, 'removeEventListener', {
 	writable: true,
 } );
 
+const mockOnKeyDown = jest.fn();
+const mockGetPosition = jest.fn( () => ( { lineNumber: 2, column: 1 } ) ) as jest.MockedFunction<
+	() => { lineNumber: number; column: number } | null
+>;
+
 const mockEditor = {
 	getModel: jest.fn( () => ( {
 		getValue: jest.fn( () => 'element.style {\n  color: red;\n}' ),
@@ -33,17 +30,36 @@ const mockEditor = {
 		getLineMaxColumn: jest.fn( () => 10 ),
 		getPositionAt: jest.fn( () => ( { lineNumber: 2, column: 1 } ) ),
 		getLineContent: jest.fn( () => 'element.style {' ),
+		findMatches: jest.fn( () => [] ),
 		uri: { toString: () => 'test-uri' },
 	} ) ),
 	onDidChangeModelContent: jest.fn( ( callback ) => {
 		setTimeout( () => callback(), 100 );
 	} ),
+	onKeyDown: jest.fn( ( callback ) => {
+		mockOnKeyDown.mockImplementation( callback );
+	} ),
+	getPosition: mockGetPosition,
 	layout: jest.fn(),
 } as unknown as editor.IStandaloneCodeEditor;
 
 const mockMonaco = {
 	MarkerSeverity: {
 		Error: 8,
+	},
+	KeyCode: {
+		UpArrow: 1,
+		DownArrow: 2,
+		LeftArrow: 3,
+		RightArrow: 4,
+		Home: 5,
+		End: 6,
+		PageUp: 7,
+		PageDown: 8,
+		Tab: 9,
+		Escape: 10,
+		KeyA: 11, // Example of a key that should be blocked
+		Enter: 12, // Example of a key that should be blocked
 	},
 	editor: {
 		setModelMarkers: jest.fn(),
@@ -73,6 +89,7 @@ describe( 'CssEditor', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockGetPosition.mockReturnValue( { lineNumber: 2, column: 1 } );
 	} );
 
 	it( 'should render the editor with correct props', () => {
@@ -84,14 +101,90 @@ describe( 'CssEditor', () => {
 		expect( screen.getByRole( 'textbox', { name: 'CSS Code' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'should initialize constrained editor on mount', async () => {
+	it( 'should set up key handling on mount', async () => {
 		// Act
 		renderWithTheme( <CssEditor { ...defaultProps } /> );
 
 		// Assert
 		await waitFor( () => {
-			expect( constrainedEditor ).toHaveBeenCalledWith( mockMonaco );
+			expect( mockEditor.onKeyDown ).toHaveBeenCalled();
 		} );
+	} );
+
+	it( 'should allow navigation keys on protected lines', () => {
+		// Arrange
+		renderWithTheme( <CssEditor { ...defaultProps } /> );
+		mockGetPosition.mockReturnValue( { lineNumber: 1, column: 1 } );
+
+		const mockEvent = {
+			keyCode: mockMonaco.KeyCode.UpArrow,
+			preventDefault: jest.fn(),
+			stopPropagation: jest.fn(),
+		};
+
+		// Act
+		mockOnKeyDown( mockEvent );
+
+		// Assert
+		expect( mockEvent.preventDefault ).not.toHaveBeenCalled();
+		expect( mockEvent.stopPropagation ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should block editing keys on protected lines', () => {
+		// Arrange
+		renderWithTheme( <CssEditor { ...defaultProps } /> );
+		mockGetPosition.mockReturnValue( { lineNumber: 1, column: 1 } );
+
+		const mockEvent = {
+			keyCode: mockMonaco.KeyCode.KeyA,
+			preventDefault: jest.fn(),
+			stopPropagation: jest.fn(),
+		};
+
+		// Act
+		mockOnKeyDown( mockEvent );
+
+		// Assert
+		expect( mockEvent.preventDefault ).toHaveBeenCalled();
+		expect( mockEvent.stopPropagation ).toHaveBeenCalled();
+	} );
+
+	it( 'should allow all keys on non-protected lines', () => {
+		// Arrange
+		renderWithTheme( <CssEditor { ...defaultProps } /> );
+		mockGetPosition.mockReturnValue( { lineNumber: 2, column: 1 } );
+
+		const mockEvent = {
+			keyCode: mockMonaco.KeyCode.KeyA,
+			preventDefault: jest.fn(),
+			stopPropagation: jest.fn(),
+		};
+
+		// Act
+		mockOnKeyDown( mockEvent );
+
+		// Assert
+		expect( mockEvent.preventDefault ).not.toHaveBeenCalled();
+		expect( mockEvent.stopPropagation ).not.toHaveBeenCalled();
+	} );
+
+	it( 'should handle null position gracefully', () => {
+		// Arrange
+		renderWithTheme( <CssEditor { ...defaultProps } /> );
+		mockGetPosition.mockReturnValue( null );
+
+		const mockEvent = {
+			keyCode: mockMonaco.KeyCode.KeyA,
+			preventDefault: jest.fn(),
+			stopPropagation: jest.fn(),
+		};
+
+		// Act
+		mockOnKeyDown( mockEvent );
+
+		// Assert
+		expect( mockEvent.preventDefault ).not.toHaveBeenCalled();
+		expect( mockEvent.stopPropagation ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should call onChange with unwrapped value when content changes', async () => {
