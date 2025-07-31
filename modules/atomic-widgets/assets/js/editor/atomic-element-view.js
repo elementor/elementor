@@ -249,7 +249,7 @@ const AtomicElementView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/e-div-block/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elements/atomic-element/behaviors', behaviors, this );
 	},
 
 	/**
