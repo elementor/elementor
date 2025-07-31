@@ -9,32 +9,29 @@ import { __ } from '@wordpress/i18n';
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import { ControlFormLabel } from '../../components/control-form-label';
 import { ControlLabel } from '../../components/control-label';
-// import { type TransformOriginUnit, transformOriginUnits } from '../../utils/size-control';
 import { SizeControl } from '../size-control';
 
 type Props = {
 	popupState: PopupState;
 	anchorRef: RefObject< HTMLElement | null >;
 };
+const transformOriginUnits = [ 'px', '%', 'em', 'rem' ] as ( 'px' | '%' | 'em' | 'rem' )[];
 
 const baseControlsFields = [
 	{
 		label: __( 'Origin X', 'elementor' ),
 		bindValue: 'x',
-		// units: [ ...transformOriginUnits ] as TransformOriginUnit[],
-		// defaultUnit: 'px' as TransformOriginUnit,
+		units: transformOriginUnits,
 	},
 	{
 		label: __( 'Origin Y', 'elementor' ),
 		bindValue: 'y',
-		// units: [ ...transformOriginUnits ] as TransformOriginUnit[],
-		// defaultUnit: 'px' as TransformOriginUnit,
+		units: transformOriginUnits,
 	},
 	{
 		label: __( 'Origin Z', 'elementor' ),
 		bindValue: 'z',
-		// units: [ ...transformOriginUnits ] as TransformOriginUnit[],
-		// defaultUnit: 'px' as TransformOriginUnit,
+		units: transformOriginUnits.filter( ( unit ) => unit !== '%' ),
 	},
 ];
 
@@ -58,8 +55,6 @@ export const TransformBaseControl = ( props: Props ) => {
 				},
 			} }
 			{ ...bindPopover( popupState ) }
-			// anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } }
-			// transformOrigin={ { vertical: 'top', horizontal: 'center' } }
 			onClose={ handleClose }
 		>
 			<PopoverHeader
@@ -72,31 +67,32 @@ export const TransformBaseControl = ( props: Props ) => {
 
 			<Stack direction="column" spacing={ 1.5 }>
 				<ControlFormLabel sx={ { pt: 1.5, pl: 1.5 } }>{ __( 'Transform', 'elementor' ) }</ControlFormLabel>
-				<PropProvider { ...context }>
-					<PropKeyProvider bind={ 'transform-origin' }>
-						<Grid container spacing={ 1.5 } ref={ rowRef }>
-							{ baseControlsFields.map( ( control ) => (
-								<Grid item xs={ 12 } key={ control.bindValue }>
-									<Grid container spacing={ 1 } alignItems="center">
-										<Grid item xs={ 6 }>
-											<ControlLabel>{ control.label }</ControlLabel>
-										</Grid>
-										<Grid item xs={ 6 } sx={ { pr: 3 } }>
-											<PropKeyProvider bind={ control.bindValue }>
-												<SizeControl
-													variant="length"
-													// units={ control.units }
-													anchorRef={ rowRef }
-													disableCustom={ true }
-												/>
-											</PropKeyProvider>
-										</Grid>
-									</Grid>
+				{ /* <PropProvider { ...context }> */ }
+				{ /* 	<PropKeyProvider bind={ 'transform-origin' }> */ }
+				<Grid container spacing={ 1.5 } ref={ rowRef }>
+					{ baseControlsFields.map( ( control ) => (
+						<Grid item xs={ 12 } key={ control.bindValue }>
+							<Grid container spacing={ 1 } alignItems="center">
+								<Grid item xs={ 6 }>
+									<ControlLabel>{ control.label }</ControlLabel>
 								</Grid>
-							) ) }
+								<Grid item xs={ 6 } sx={ { pr: 3 } }>
+									{ /* <PropKeyProvider bind={ control.bindValue }> */ }
+									<SizeControl
+										variant="length"
+										units={ control.units }
+										anchorRef={ rowRef }
+										disableCustom={ true }
+									/>
+									{ /* </PropKeyProvider> */ }
+								</Grid>
+							</Grid>
 						</Grid>
-					</PropKeyProvider>
-				</PropProvider>
+					) ) }
+					<Divider sx={ { py: 3 } } />
+				</Grid>
+				{ /* </PropKeyProvider> */ }
+				{ /* </PropProvider> */ }
 			</Stack>
 		</Popover>
 	);

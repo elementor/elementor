@@ -13,6 +13,6 @@ class Transform_Origin_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): string {
 		$default_origin = '0px';
 
-		return sprintf( '%s, %s, %s', $value['x'] ?? $default_origin, $value['y'] ?? $default_origin, $value['z'] ?? $default_origin );
+		return sprintf( '%s %s %s', $value['x'] ?? $default_origin, $value['y'] ?? $default_origin, $value['z'] ?? $default_origin );
 	}
 }
