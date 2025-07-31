@@ -81,7 +81,7 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 		<PropProvider propType={ propType } value={ backgroundValues } setValue={ setValue }>
 			<UnstableRepeater initial={ getInitialBackgroundOverlay() } propTypeUtil={ backgroundOverlayPropTypeUtil }>
 				<Header label={ __( 'Overlay', 'elementor' ) }>
-					<AddItemAction />
+					<AddItemAction newItemIndex={ 0 } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } Content={ ItemContent } /> }>
 					<DuplicateItemAction />

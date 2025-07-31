@@ -26,7 +26,7 @@ const Action = ( { index }: { index: number } ) => {
 	const onClick = () => {
 		const newItem = structuredClone( items[ index ] );
 
-		addItem( newItem, index + 1 );
+		addItem( { item: newItem, index: index + 1 } );
 	};
 
 	return (

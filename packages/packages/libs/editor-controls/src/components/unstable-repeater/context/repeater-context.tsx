@@ -34,7 +34,7 @@ type RepeaterContextType< T extends PropValue > = {
 	};
 	isSortable: boolean;
 	generateNextKey: ( source: number[] ) => number;
-	addItem: ( item?: T, index?: number ) => void;
+	addItem: ( config?: { item?: T, index?: number } ) => void;
 	updateItem: ( item: T, index: number ) => void;
 	removeItem: ( index: number ) => void;
 	sortItemsByKeys: ( newKeysOrder: number[] ) => void;
@@ -102,20 +102,17 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 		);
 	};
 
-	const addItem = ( item: T = initial, index: number = -1 ) => {
+	const addItem = ( config?: { item?: T, index?: number } ) => {
+		const item = config?.item ?? initial;
+		const index = config?.index ?? items.length;
+		const newItems = [ ...items ];
 		const newKey = generateNextKey( uniqueKeys );
 
 		setUniqueKeys( [ ...uniqueKeys, newKey ] );
-		if ( index === -1 ) {
-			setItems( [ ...items, item ] );
-		} else {
-			const newItems = [ ...items ];
+		newItems.splice( index, 0, item );
+		setItems( newItems );
 
-			newItems.splice( index, 0, item );
-			setItems( newItems );
-		}
-
-		setOpenItem( newKey );
+		setOpenItem( index );
 	};
 
 	const removeItem = ( index: number ) => {
@@ -142,7 +139,7 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 				isSortable,
 				generateNextKey,
 				sortItemsByKeys,
-				addItem: addItem as ( item?: PropValue, index?: number ) => void,
+				addItem: addItem as ( config?: { item?: PropValue, index?: number } ) => void,
 				updateItem: updateItem as ( item: PropValue, index: number ) => void,
 				removeItem,
 			} }
