@@ -24,8 +24,8 @@ jobs:
             cache: 'npm'
 
       - name: Install Dependencies
+        working-directory: packages
         run: |
-          cd packages
           npm ci
 
       - name: Get Current Version
@@ -53,7 +53,7 @@ jobs:
           # Publish with the build number tag
           node scripts/version-manager/index.js publish --tag build --yes
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
 
       - name: Create Git Tag
         run: |
