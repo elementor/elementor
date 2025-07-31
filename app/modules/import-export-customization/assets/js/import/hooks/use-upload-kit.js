@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useImportContext } from '../context/import-context';
+import { AppsEventTracking } from '../../../../../../assets/js/event-track/apps-event-tracking';
 
 export function useUploadKit() {
 	const { data, isUploading, dispatch } = useImportContext();
@@ -45,9 +46,13 @@ export function useUploadKit() {
 				throw new Error( errorMessage );
 			}
 
+			if ( data.file ) {
+				AppsEventTracking.sendKitImportUploadFile( 'Success' );
+			}
 			dispatch( { type: 'SET_UPLOADED_DATA', payload: result.data } );
 		} catch ( e ) {
 			setError( e );
+			AppsEventTracking.sendKitImportUploadFile( e.message );
 		} finally {
 			setUploading( false );
 		}
