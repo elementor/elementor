@@ -30,7 +30,7 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
-	const [ isDirty ] = useState( false );
+	const isDirty = false;
 
 	usePreventUnload( isDirty );
 
