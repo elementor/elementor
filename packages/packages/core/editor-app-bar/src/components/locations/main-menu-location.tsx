@@ -20,10 +20,10 @@ export default function MainMenuLocation() {
 
 	const onToolbarClick: React.MouseEventHandler = ( e ) => {
 		const extendedWindow = window as unknown as ExtendedWindow;
-		const config = extendedWindow?.elementor?.editorEvents?.config;
+		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 		if ( config ) {
-			extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.elementorLogoDropdown, {
+			extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.elementorLogoDropdown, {
 				location: config.locations.topBar,
 				secondaryLocation: config.secondaryLocations.elementorLogo,
 				trigger: config.triggers.dropdownClick,

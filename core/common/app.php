@@ -6,6 +6,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Finder\Module as Finder;
 use Elementor\Core\Common\Modules\Connect\Module as Connect;
 use Elementor\Core\Common\Modules\EventTracker\Module as Event_Tracker;
+use Elementor\Core\Common\Modules\EventsManager\Module as Editor_Events;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Icons_Manager;
@@ -69,6 +70,8 @@ class App extends BaseApp {
 		$this->add_component( 'connect', new Connect() );
 
 		$this->add_component( 'event-tracker', new Event_Tracker() );
+
+		$this->add_component( 'events-manager', new Editor_Events() );
 	}
 
 	/**
@@ -265,6 +268,7 @@ class App extends BaseApp {
 			'filesUpload' => [
 				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			],
+			'editor_events' => Editor_Events::get_editor_events_config(),
 		];
 
 		/**
