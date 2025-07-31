@@ -62,7 +62,7 @@ class Atomic_Global_Styles {
 	private function invalidate_cache( ?string $context = null ) {
 		$cache_validity = new Cache_Validity();
 
-		if ( empty( $context ) ) {
+		if ( empty( $context ) || $context === Global_Classes_Repository::CONTEXT_FRONTEND ) {
 			$cache_validity->invalidate( [ self::STYLES_KEY ] );
 
 			return;
