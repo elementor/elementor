@@ -139,7 +139,7 @@ const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
 	);
 };
 
-export const ItemIcon = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+const ItemIcon = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemIconImage value={ value as BackgroundImageOverlay } />;
