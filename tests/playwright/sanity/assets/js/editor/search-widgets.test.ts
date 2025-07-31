@@ -29,5 +29,6 @@ test( 'Hidden widgets should not be shown in search result', async ( { page, api
 
 	// Assert - the widget should not be shown in search result.
 	const widgetsInSearchResult = page.locator( '#elementor-panel-elements .elementor-element-wrapper .elementor-element' );
-	expect( widgetsInSearchResult ).toHaveCount( 0 );
+	const count = await widgetsInSearchResult.count();
+	expect( count ).toBe( 0 );
 } );
