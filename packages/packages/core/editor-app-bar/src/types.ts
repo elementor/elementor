@@ -12,6 +12,10 @@ export type ExtendedWindow = Window & {
 				};
 			};
 		};
+		elementorAdminTopBarConfig: {
+			is_user_connected: boolean;
+			connect_url: string;
+		};
 	};
 };
 
