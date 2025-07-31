@@ -26,7 +26,8 @@ const TemplateLibraryManager = function() {
 		filterTerms = {},
 		isLoading = false,
 		total = 0,
-		toastConfig = { show: false, options: {} };
+		toastConfig = { show: false, options: {} },
+		bulkSelectedItemsTypes = [];
 
 	const registerDefaultTemplateTypes = function() {
 		var data = self.getDefaultTemplateTypeData();
@@ -217,16 +218,17 @@ const TemplateLibraryManager = function() {
 	this.selectAllTemplates = function() {
 		document.querySelectorAll( '.elementor-template-library-template[data-template_id]' ).forEach( ( element ) => {
 			const templateId = element.getAttribute( 'data-template_id' );
+			const type = element.getAttribute( 'data-type' );
 
 			element.classList.add( 'bulk-selected-item' );
-			this.addBulkSelectionItem( templateId );
+			this.addBulkSelectionItem( templateId, type );
 		} );
 
 		this.layout.handleBulkActionBar();
 	};
 
 	this.restoreRemovedItems = function() {
-		this.onUndoDelete();
+		this.onUndoDelete( 1 < lastDeletedItems.size );
 	};
 
 	this.getSourceSelection = function() {
@@ -1192,20 +1194,44 @@ const TemplateLibraryManager = function() {
 			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
-	this.addBulkSelectionItem = function( templateId ) {
+	this.addBulkSelectionItem = function( templateId, type = 'template' ) {
+		bulkSelectedItemsTypes.push( type );
 		bulkSelectedItems.add( parseInt( templateId ) );
 	};
 
-	this.removeBulkSelectionItem = function( templateId ) {
+	this.removeBulkSelectionItem = function( templateId, type = 'template' ) {
+		const index = bulkSelectedItemsTypes.findIndex( ( item ) => item === type );
+		if ( index !== -1 ) {
+			bulkSelectedItemsTypes.splice( index, 1 );
+		}
+
 		bulkSelectedItems.delete( parseInt( templateId ) );
 	};
 
 	this.clearBulkSelectionItems = function() {
 		bulkSelectedItems.clear();
+		bulkSelectedItemsTypes = [];
 	};
 
 	this.getBulkSelectionItems = function() {
 		return bulkSelectedItems;
+	};
+
+	this.getUniqueBulkSelectionItemsTypesEventLabel = function() {
+		const types = [ ...new Set( bulkSelectedItemsTypes ) ];
+
+		const hasFolders = types.includes( 'folder' );
+		const hasTemplates = types.some( ( type ) => type !== 'folder' );
+
+		if ( hasFolders && hasTemplates ) {
+			return 'both';
+		}
+
+		if ( hasFolders ) {
+			return 'folder';
+		}
+
+		return 'template';
 	};
 
 	this.onBulkDeleteClick = function() {
@@ -1247,7 +1273,11 @@ const TemplateLibraryManager = function() {
 
 						self.layout.updateViewCollection( self.filterTemplates() );
 
+						const tempBulkSelectedItemsTypes = bulkSelectedItemsTypes;
+
 						self.clearBulkSelectionItems();
+
+						bulkSelectedItemsTypes = tempBulkSelectedItemsTypes;
 
 						self.eventManager.sendBulkActionsSuccessEvent( {
 							library_type: source,
@@ -1260,7 +1290,7 @@ const TemplateLibraryManager = function() {
 								name: 'undo_bulk_delete',
 								text: __( 'Undo', 'elementor' ),
 								callback: () => {
-									this.onUndoDelete( isBulk );
+									this.onUndoDelete( 1 < templateIds.length );
 								},
 							},
 						] : null;
@@ -1300,7 +1330,7 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.onUndoDelete = function( isBulk ) {
+	this.onUndoDelete = function( isBulk = false ) {
 		return new Promise( ( resolve ) => {
 			isLoading = true;
 
@@ -1326,6 +1356,8 @@ const TemplateLibraryManager = function() {
 
 					this.triggerQuotaUpdate();
 
+					bulkSelectedItemsTypes = [];
+
 					resolve();
 				},
 				error: ( error ) => {
@@ -1343,6 +1375,7 @@ const TemplateLibraryManager = function() {
 
 			self.eventManager.sendDeletionUndoEvent( {
 				is_bulk: isBulk,
+				item_type: this.getUniqueBulkSelectionItemsTypesEventLabel(),
 			} );
 		} );
 	};
