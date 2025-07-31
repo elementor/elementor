@@ -131,6 +131,7 @@ class Modules_Manager {
 			'cloud-library',
 			'cloud-kit-library',
 			'atomic-opt-in',
+			'components',
 		];
 	}
 

@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div id="elementor-panel-elements-navigation" class="elementor-panel-navigation">
 		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="categories"><?php echo esc_html__( 'Elements', 'elementor' ); ?></button>
 		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="global"><?php echo esc_html__( 'Globals', 'elementor' ); ?></button>
+		<button class="elementor-component-tab elementor-panel-navigation-tab" data-tab="components"><?php echo esc_html__( 'Components', 'elementor' ); ?></button>
 	</div>
 	<# } #>
 	<div id="elementor-panel-elements-search-area"></div>

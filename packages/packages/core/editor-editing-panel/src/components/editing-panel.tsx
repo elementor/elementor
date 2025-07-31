@@ -17,6 +17,7 @@ import { EditingPanelTabs } from './editing-panel-tabs';
 const { useMenuItems } = controlActionsMenu;
 
 export const EditingPanel = () => {
+	//
 	const { element, elementType } = useSelectedElement();
 	const controlReplacements = getControlReplacements();
 	const menuItems = useMenuItems().default;

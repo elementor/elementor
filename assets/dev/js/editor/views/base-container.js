@@ -95,6 +95,7 @@ module.exports = Marionette.CompositeView.extend( {
 			newModel.trigger( 'request:edit', { scrollIntoView: options.scrollIntoView } );
 		}
 
+		// breakpoint
 		return newView;
 	},
 
@@ -118,6 +119,7 @@ module.exports = Marionette.CompositeView.extend( {
 			model.isInner = true;
 		}
 
+		//here
 		if ( model?.isPreset ?? false ) {
 			model.settings = model.preset_settings;
 		}

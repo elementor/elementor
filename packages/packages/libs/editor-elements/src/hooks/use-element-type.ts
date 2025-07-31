@@ -14,6 +14,7 @@ export function useElementType( type?: string ) {
 			const widgetsCache = getWidgetsCache();
 			const elementType = widgetsCache?.[ type ];
 
+			//
 			if ( ! elementType?.atomic_controls ) {
 				return null;
 			}

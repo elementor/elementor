@@ -1,9 +1,11 @@
 var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsCollection = require( './collections/elements' ),
 	PanelElementsCategoriesView = require( './views/categories' ),
-	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
+	PanelElementsElementsView =
+		elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalView = require( './views/global' ),
+	PanelElementsComponentsView = require( './views/components' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -27,12 +29,20 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	categoriesCollection: null,
 
+	componentsCollection: null,
+
 	initialize() {
-		this.listenTo( elementor.channels.panelElements, 'element:selected', this.destroy );
+		this.listenTo(
+			elementor.channels.panelElements,
+			'element:selected',
+			this.destroy,
+		);
 
 		this.initElementsCollection();
 
 		this.initCategoriesCollection();
+
+		this.initComponentsCollection();
 
 		this.initRegionViews();
 	},
@@ -57,30 +67,49 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 				region: this.elements,
 				view: PanelElementsGlobalView,
 			},
+			components: {
+				region: this.elements,
+				view: PanelElementsComponentsView,
+				options: { collection: this.componentsCollection },
+			},
 		};
 
-		this.regionViews = elementor.hooks.applyFilters( 'panel/elements/regionViews', regionViews, {
-			notice: this.notice,
-			elements: this.elements,
-			search: this.search,
-		} );
+		this.regionViews = elementor.hooks.applyFilters(
+			'panel/elements/regionViews',
+			regionViews,
+			{
+				notice: this.notice,
+				elements: this.elements,
+				search: this.search,
+			},
+		);
 	},
 
 	initElementsCollection() {
 		const elementsCollection = new PanelElementsElementsCollection();
 
 		// Deprecated widget handling.
-		Object.entries( elementor.widgetsCache ).forEach( ( [ widgetName, widgetData ] ) => {
-			if ( widgetData.deprecation && elementor.widgetsCache[ widgetData.deprecation.replacement ] ) {
-				// Hide the old version.
-				elementor.widgetsCache[ widgetName ].show_in_panel = false;
-			}
-		} );
+		Object.entries( elementor.widgetsCache ).forEach(
+			( [ widgetName, widgetData ] ) => {
+				if (
+					widgetData.deprecation &&
+					elementor.widgetsCache[ widgetData.deprecation.replacement ]
+				) {
+					// Hide the old version.
+					elementor.widgetsCache[ widgetName ].show_in_panel = false;
+				}
+			},
+		);
 
 		// TODO: Change the array from server syntax, and no need each loop for initialize
 		_.each( elementor.widgetsCache, ( widget ) => {
-			if ( elementor.config.document.panel.widgets_settings[ widget.widget_type ] ) {
-				widget = _.extend( widget, elementor.config.document.panel.widgets_settings[ widget.widget_type ] );
+			if (
+				elementor.config.document.panel.widgets_settings[ widget.widget_type ]
+			) {
+				widget = _.extend(
+					widget,
+					elementor.config.document.panel.widgets_settings[ widget.widget_type ],
+				);
 			}
 
 			if ( ! this.shouldAddWidget( widget ) ) {
@@ -102,24 +131,30 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		if ( elementor.config.integrationWidgets ) {
 			jQuery.each( elementor.config.integrationWidgets, ( index, widget ) => {
-				elementsCollection.add( {
-					name: widget.name,
-					title: widget.title,
-					icon: widget.icon,
-					categories: JSON.parse( widget.categories ),
-					editable: false,
-					integration: true,
-					keywords: widget.keywords || [],
-				}, {
-					// Inject after the image-carousel widget.
-					at: elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1,
-				} );
+				elementsCollection.add(
+					{
+						name: widget.name,
+						title: widget.title,
+						icon: widget.icon,
+						categories: JSON.parse( widget.categories ),
+						editable: false,
+						integration: true,
+						keywords: widget.keywords || [],
+					},
+					{
+						// Inject after the image-carousel widget.
+						at:
+							elementsCollection.findIndex( { widgetType: 'image-carousel' } ) +
+							1,
+					},
+				);
 			} );
 		}
 
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
-				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
+				const originalWidget =
+						elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
 					replacements = widget.replacements,
 					presetWidget = this.deepMerge( originalWidget, replacements );
 
@@ -141,10 +176,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			categories: item.categories,
 			keywords: item.keywords,
 			icon: item.icon,
-			widgetType: item.widget_type,
+			widgetType: item.widget_type || item.widgetType,
 			custom: item.custom,
 			editable: item.editable,
 			hideOnSearch: item.hide_on_search,
+			component_id: item.component_id,
+			isPreset: Boolean( item.component_id ),
+			preset_settings: {
+				component_id: {
+					$$type: 'number',
+					value: item.component_id,
+				},
+				component_title: {
+					$$type: 'string',
+					value: item.title,
+				},
+			},
 		};
 	},
 
@@ -163,37 +210,55 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 		var categoriesCollection = new PanelElementsCategoriesCollection();
 
-		_.each( elementor.config.document.panel.elements_categories, function( categoryConfig, categoryName ) {
-			// Set defaults.
-			if ( 'undefined' === typeof categoryConfig.active ) {
-				categoryConfig.active = true;
-			}
+		_.each(
+			elementor.config.document.panel.elements_categories,
+			function( categoryConfig, categoryName ) {
+				// Set defaults.
+				if ( 'undefined' === typeof categoryConfig.active ) {
+					categoryConfig.active = true;
+				}
 
-			if ( 'undefined' === typeof categoryConfig.icon ) {
-				categoryConfig.icon = 'font';
-			}
+				if ( 'undefined' === typeof categoryConfig.icon ) {
+					categoryConfig.icon = 'font';
+				}
 
-			categoriesCollection.add( {
-				name: categoryName,
-				title: categoryConfig.title,
-				icon: categoryConfig.icon,
-				defaultActive: categoryConfig.active,
-				sort: categoryConfig.sort,
-				hideIfEmpty: undefined !== categoryConfig.hideIfEmpty
-					? categoryConfig.hideIfEmpty
-					: true,
-				items: categories[ categoryName ],
-				promotion: categoryConfig.promotion ?? null,
-			} );
-		} );
+				categoriesCollection.add( {
+					name: categoryName,
+					title: categoryConfig.title,
+					icon: categoryConfig.icon,
+					defaultActive: categoryConfig.active,
+					sort: categoryConfig.sort,
+					hideIfEmpty:
+						undefined !== categoryConfig.hideIfEmpty
+							? categoryConfig.hideIfEmpty
+							: true,
+					items: categories[ categoryName ],
+					promotion: categoryConfig.promotion ?? null,
+				} );
+			},
+		);
 
 		this.categoriesCollection = categoriesCollection;
 	},
 
-	shouldAddWidget( widget ) {
-		const isContainerActive = elementorCommon.config.experimentalFeatures.container;
+	initComponentsCollection() {
+		const componentsCollection = new PanelElementsElementsCollection();
 
-		return widget.show_in_panel && ( 'inner-section' !== widget.name || ! isContainerActive );
+		elementor.config.components.forEach( ( component ) => {
+			componentsCollection.add( this.getCollectionItem( component ) );
+		} );
+
+		this.componentsCollection = componentsCollection;
+	},
+
+	shouldAddWidget( widget ) {
+		const isContainerActive =
+			elementorCommon.config.experimentalFeatures.container;
+
+		return (
+			widget.show_in_panel &&
+			( 'inner-section' !== widget.name || ! isContainerActive )
+		);
 	},
 
 	deepMerge( originalObj, replacementObj ) {
@@ -211,13 +276,12 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			return;
 		}
 
-		const isMergeableObject = (
+		const isMergeableObject =
 			'object' === typeof replacementObj[ key ] &&
 			null !== replacementObj[ key ] &&
 			originalObj.hasOwnProperty( key ) &&
 			'object' === typeof originalObj[ key ] &&
-			null !== originalObj[ key ]
-		);
+			null !== originalObj[ key ];
 
 		if ( isMergeableObject ) {
 			mergedObj[ key ] = this.deepMerge( originalObj[ key ], replacementObj[ key ] );
@@ -253,7 +317,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 	},
 
 	focusSearch() {
-		if ( ! elementor.userCan( 'design' ) || ! this.search /* Default panel is not elements */ || ! this.search.currentView /* On global elements empty */ ) {
+		if (
+			! elementor.userCan( 'design' ) ||
+			! this.search /* Default panel is not elements */ ||
+			! this.search.currentView /* On global elements empty */
+		) {
 			return;
 		}
 

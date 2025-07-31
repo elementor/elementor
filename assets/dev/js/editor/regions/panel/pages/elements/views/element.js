@@ -169,6 +169,8 @@ module.exports = Marionette.ItemView.extend( {
 			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
 		}
 
+		console.log(this.model.toJSON());
+		
 		$e.run( 'preview/drop', {
 			container,
 			options: {
