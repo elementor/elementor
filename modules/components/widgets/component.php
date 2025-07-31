@@ -109,6 +109,13 @@ class Component extends Atomic_Widget_Base
 
 		$post_id = $this->get_settings('component_id')['value'] ?? $this->component_id;
 
+		$draft_id = Plugin::$instance->documents->get_doc_or_auto_save($post_id)->get_post()->ID;
+
+		if ($draft_id) {
+			$post_id = $draft_id;
+		}
+
+
 		// error_log('this->component_id: ' . $this->component_id);
 		// error_log('get_settings( component_id )[value]: ' . $this->get_settings('component_id')['value']);
 
