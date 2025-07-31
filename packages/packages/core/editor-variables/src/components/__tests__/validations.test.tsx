@@ -6,6 +6,7 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { VariableTypeProvider } from '../../context/variable-type-context';
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
+import * as useInitialValueModule from '../../hooks/use-initial-value';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { ColorField } from '../fields/color-field';
@@ -13,6 +14,10 @@ import { VariableCreation } from '../variable-creation';
 
 jest.mock( '../../hooks/use-prop-variables', () => ( {
 	createVariable: jest.fn(),
+} ) );
+
+jest.mock( '../../hooks/use-initial-value', () => ( {
+	useInitialValue: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-controls', () => ( {
@@ -36,6 +41,7 @@ const mockOnClose = jest.fn();
 const mockSetVariable = jest.fn();
 const mockCreateVariable = jest.fn();
 const mockGetVariableType = jest.mocked( getVariableType );
+const mockUseInitialValue = jest.fn();
 
 const baseProps = {
 	onClose: mockOnClose,
@@ -47,10 +53,15 @@ afterEach( () => {
 
 beforeEach( () => {
 	jest.mocked( usePropVariablesModule.createVariable ).mockImplementation( mockCreateVariable );
+	jest.mocked( useInitialValueModule.useInitialValue ).mockImplementation( mockUseInitialValue );
+
 	jest.mocked( require( '@elementor/editor-controls' ).useBoundProp ).mockReturnValue( {
 		setValue: mockSetVariable,
 		path: [ 'settings', 'color' ],
 	} );
+
+	mockUseInitialValue.mockReturnValue( '' );
+
 	mockGetVariableType.mockReturnValue( {
 		icon: TextIcon,
 		valueField: ColorField,
@@ -71,7 +82,10 @@ const renderComponent = ( props = { propTypeKey: colorVariablePropTypeUtil.key }
 it( 'should successfully change name with valid input', async () => {
 	// Arrange.
 	mockCreateVariable.mockResolvedValue( 'variable-key-123' );
+	mockUseInitialValue.mockReturnValue( '' );
+
 	renderComponent();
+
 	const nameInput = screen.getAllByRole( 'textbox' )[ 0 ];
 	const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
 
