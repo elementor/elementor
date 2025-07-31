@@ -17,7 +17,7 @@ export default function ExportKitPartsSelection() {
 		dispatch( { type: actionType, payload: itemType } );
 	};
 
-	const handleSaveCustomization = ( key, payload ) => {
+	const handleSaveCustomization = ( key, payload, excludedValues ) => {
 		const hasEnabledPart = Object.values( payload ).some( ( value ) => value );
 
 		dispatch( {
@@ -25,6 +25,14 @@ export default function ExportKitPartsSelection() {
 			payload: {
 				key,
 				value: payload,
+			},
+		} );
+
+		dispatch( {
+			type: 'SET_DATA_FOR_ANALYTICS',
+			payload: {
+				key,
+				value: excludedValues,
 			},
 		} );
 

@@ -138,6 +138,7 @@ class Module extends BaseModule {
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/export',
 					'text' => esc_html__( 'Export', 'elementor' ),
+					'id' => 'elementor-import-export__export',
 				],
 				'description' => esc_html__( 'You can download this website as a .zip file, or upload it to the library.', 'elementor' ),
 			],
@@ -146,6 +147,7 @@ class Module extends BaseModule {
 				'button' => [
 					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
+					'id' => 'elementor-import-export__import',
 				],
 				'description' => esc_html__( 'You can import design and settings from a .zip file or choose from the library.', 'elementor' ),
 			],
@@ -155,6 +157,7 @@ class Module extends BaseModule {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
 				'text' => esc_html__( 'Open the Library', 'elementor' ),
+				'id' => 'elementor-import-export__import_from_library',
 			];
 		}
 
@@ -246,11 +249,11 @@ class Module extends BaseModule {
 				<?php endif; ?>
 				<div class="tab-import-export-kit__box action-buttons">
 					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+						<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button_secondary']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
 							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
 						</a>
 					<?php endif; ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+					<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['secondary']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
 						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
 					</a>
 				</div>
@@ -556,6 +559,14 @@ class Module extends BaseModule {
 				'lastImportedSession' => $this->revert->get_last_import_session(),
 				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
 			]
+		);
+
+		wp_enqueue_script(
+			'import-export-customization-admin',
+			$this->get_js_assets_url( 'import-export-customization-admin' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
 		);
 	}
 
