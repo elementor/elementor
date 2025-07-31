@@ -15,10 +15,10 @@ export default function useActionProps(): ToggleActionProps {
 		icon: StructureIcon,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const config = extendedWindow?.elementor?.editorEvents?.config;
+			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 			if ( config ) {
-				extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.structure, {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.structure, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.structure,
 					trigger: config.triggers.toggleClick,
