@@ -178,7 +178,7 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
 
       - name: Post To Slack Created Release
