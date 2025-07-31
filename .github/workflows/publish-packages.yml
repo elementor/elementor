@@ -53,7 +53,7 @@ jobs:
           # Publish with the build number tag
           node scripts/version-manager/index.js publish --tag build --yes
         env:
-          NPM_TOKEN: ${{ secrets.NPMJS_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
 
       - name: Create Git Tag
         run: |
