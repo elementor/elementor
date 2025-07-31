@@ -10,13 +10,13 @@ export default function useConnectLinkConfig() {
 	return isUserConnected
 		? {
 				title: __( 'My Elementor', 'elementor' ),
-				href: 'https://go.elementor.com/wp-dash-top-bar-account/',
+				href: extendedWindow?.elementor?.config.user.top_bar.my_elementor_url,
 				icon: UserIcon,
 				target: '_blank',
 		  }
 		: {
 				title: __( 'Connect & Activate', 'elementor' ),
-				href: extendedWindow?.elementor?.config.user.connect_url,
+				href: extendedWindow?.elementor?.config.user.top_bar.connect_url,
 				icon: UserIcon,
 				target: '_blank',
 		  };

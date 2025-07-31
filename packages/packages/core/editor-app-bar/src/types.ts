@@ -17,7 +17,10 @@ export type ExtendedWindow = Window & {
 				is_connected: boolean;
 			};
 			user: {
-				connect_url: string;
+				top_bar: {
+					my_elementor_url: string;
+					connect_url: string;
+				};
 			};
 		};
 	};
