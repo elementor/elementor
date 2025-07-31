@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { BaseLayout, TopBar, PageHeader, Footer } from '../../shared/components';
 import { useImportContext } from '../context/import-context';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 const Illustration = () => (
 	<Box
@@ -72,6 +73,10 @@ export default function ImportComplete() {
 			navigate( '/import-customization', { replace: true } );
 		}
 	}, [ isCompleted, navigate ] );
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary );
+	}, [] );
 
 	return (
 		<BaseLayout

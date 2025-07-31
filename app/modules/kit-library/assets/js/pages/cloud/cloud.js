@@ -11,7 +11,7 @@ import useMenuItems from '../../hooks/use-menu-items';
 import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { AppsEventTracking, appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import ConnectScreen from './connect-screen';
@@ -83,6 +83,10 @@ export default function Cloud( {
 			setConnecting( false );
 		}
 	}, [ isConnecting, isCheckingEligibility, isLoading, setConnecting ] );
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibrary );
+	}, [] );
 
 	if ( ! isConnected ) {
 		return (
