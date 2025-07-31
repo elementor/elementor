@@ -10,13 +10,14 @@ type OwnProps = {
 };
 
 export const LocalClassSubMenu = ( props: OwnProps ) => {
-	const { canPromote, styleDef } = useCanConvertLocalClassToGlobal();
+	const { canConvert, styleDef } = useCanConvertLocalClassToGlobal();
+
 	return (
 		<>
 			<MenuSubheader sx={ { typography: 'caption', color: 'text.secondary', pb: 0.5, pt: 1 } }>
 				{ __( 'Local Class', 'elementor' ) }
 			</MenuSubheader>
-			<CssClassConvert canConvert={ canPromote } styleDef={ styleDef } closeMenu={ props.popupState.close } />
+			<CssClassConvert canConvert={ canConvert } styleDef={ styleDef } closeMenu={ props.popupState.close } />
 		</>
 	);
 };

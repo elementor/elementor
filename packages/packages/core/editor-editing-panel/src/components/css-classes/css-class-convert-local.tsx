@@ -22,7 +22,7 @@ type OwnProps = {
 };
 
 /**
- * Promote a local class to a global class injection point
+ * Convert a local class to a global class injection point
  * @param props
  */
 export const CssClassConvert = ( props: OwnProps ) => {
@@ -37,7 +37,7 @@ export const CssClassConvert = ( props: OwnProps ) => {
 			throw new Error( 'Style definition is required for converting local class to global class.' );
 		}
 
-		onPromoteSuccess( {
+		onConvert( {
 			newId,
 			elementId,
 			classesProp: currentClassesProp,
@@ -58,13 +58,14 @@ export const CssClassConvert = ( props: OwnProps ) => {
 	);
 };
 
-type OnPromoteSuccessOpts = {
+type OnConvertOptions = {
 	newId: string;
 	elementId: string;
 	classesProp: string;
 	styleDef: StyleDefinition;
 };
-const onPromoteSuccess = ( opts: OnPromoteSuccessOpts ) => {
+
+const onConvert = ( opts: OnConvertOptions ) => {
 	const { newId, elementId, classesProp } = opts;
 	deleteElementStyle( elementId, opts.styleDef.id );
 	const currentUsedClasses = getElementSetting< ClassesPropValue >( elementId, classesProp ) || { value: [] };
