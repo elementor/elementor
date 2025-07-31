@@ -348,8 +348,6 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-<<<<<<< HEAD
-=======
 = 3.30.4 - 2025-07-30 =
 
 * Tweak: Improved redirection functionality during the website template import process
@@ -362,7 +360,6 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 * Security Fix: Improved content sanitization in multiple widgets
 * Fix: Link control label is missing in all elements - Editor V4
 
->>>>>>> e31fc3fc41 (Internal: Changelog for v3.30.4 (#32066))
 = 3.30.2 - 2025-07-09 =
 
 * Fix: Editor failing to load on certain hosting providers due to blocked requests
