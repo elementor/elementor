@@ -40,12 +40,12 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-		
+
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
 		$this->register_features();
-		
+
 		$this->hooks()->register();
 
 		add_action( 'init', [ $this, 'init_variable_types_registry' ] );
