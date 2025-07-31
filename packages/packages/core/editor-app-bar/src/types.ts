@@ -12,9 +12,13 @@ export type ExtendedWindow = Window & {
 				};
 			};
 		};
-		elementorAdminTopBarConfig: {
-			is_user_connected: boolean;
-			connect_url: string;
+		config: {
+			library_connect: {
+				is_connected: boolean;
+			};
+			user: {
+				connect_url: string;
+			};
 		};
 	};
 };
