@@ -2,8 +2,8 @@ import AtomicElementEmptyView from './container/atomic-element-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
-const AtomicElementView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
+const createAtomicElementView = ( type ) => BaseElementView.extend( {
+	template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
 	emptyView: AtomicElementEmptyView,
 
@@ -249,7 +249,7 @@ const AtomicElementView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/atomic-element/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( `elements/${ type }/behaviors`, behaviors, this );
 	},
 
 	/**
@@ -518,4 +518,4 @@ const AtomicElementView = BaseElementView.extend( {
 	},
 } );
 
-module.exports = AtomicElementView;
+module.exports = createAtomicElementView;
