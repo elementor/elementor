@@ -348,6 +348,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.30.4 - 2025-07-30 =
+
+* Tweak: Improved redirection functionality during the website template import process
+
 = 3.30.3 - 2025-07-22 =
 
 * Tweak: Improved performance of the first-time Editor load
