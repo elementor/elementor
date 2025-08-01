@@ -25,5 +25,8 @@
 @media (prefers-reduced-motion: reduce) {
 	.animated {
 		animation: none;
+		animation-name: none !important;
+		animation-delay: 0 !important;
+		animation-duration: 0 !important;
 	}
 }
