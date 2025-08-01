@@ -5,19 +5,46 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
-const LENGTH_UNITS = [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax' ];
-const ANGLE_UNITS = [ 'deg', 'rad', 'grad', 'turn' ];
-const TIME_UNITS = [ 's', 'ms' ];
-const EXTENDED_UNITS = [ 'auto', 'custom' ];
 
 class Size_Prop_Type extends Object_Prop_Type {
 
 	public static function get_supported_units(): array {
-		return array_merge( LENGTH_UNITS, ANGLE_UNITS, TIME_UNITS, EXTENDED_UNITS );
+		return Size_Constants::all_supported_units();
+	}
+
+	public function units( $units = 'all' ) {
+		if ( 'all' === $units ) {
+			$units = Size_Constants::all_units();
+		}
+
+		if( is_array( $units ) ) {
+			$supported_units = static::get_supported_units();
+
+			foreach ( $units as $unit ) {
+				if ( ! is_string( $unit ) || ! in_array( $unit, $supported_units, true ) ) {
+					Utils::safe_throw( 'All units must be supported units.' );
+				}
+			}
+		}
+
+		$this->settings['available_units'] = $units;
+
+		return $this;
+	}
+
+	public function get_settings(): array {
+		if ( ! array_key_exists( 'available_units', $this->settings ) ) {
+			$this->units();
+		}
+
+		return parent::get_settings();
 	}
 
 	public static function get_key(): string {
@@ -35,13 +62,13 @@ class Size_Prop_Type extends Object_Prop_Type {
 		}
 
 		switch ( $value['unit'] ) {
-			case 'custom':
+			case Size_Constants::UNIT_CUSTOM:
 				return null !== $value['size'];
-			case 'auto':
+			case Size_Constants::UNIT_AUTO:
 				return ! $value['size'];
 			default:
 				return (
-					! in_array( $value['unit'], [ 'auto', 'custom' ], true ) &&
+					! in_array( $value['unit'], [ Size_Constants::UNIT_AUTO, Size_Constants::UNIT_CUSTOM ], true ) &&
 					( ! empty( $value['size'] ) || 0 === $value['size'] ) &&
 					is_numeric( $value['size'] )
 				);
@@ -51,7 +78,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 	public function sanitize_value( $value ) {
 		$unit = sanitize_text_field( $value['unit'] );
 
-		if ( ! in_array( $value['unit'], [ 'auto', 'custom' ] ) ) {
+		if ( ! in_array( $value['unit'], [ Size_Constants::UNIT_AUTO, Size_Constants::UNIT_CUSTOM ] ) ) {
 			return [
 				// The + operator cast the $value['size'] to numeric (either int or float - depends on the value)
 				'size' => +$value['size'],
@@ -60,7 +87,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 		}
 
 		return [
-			'size' => 'auto' === $value['unit'] ? '' : sanitize_text_field( $value['size'] ),
+			'size' => Size_Constants::UNIT_AUTO === $value['unit'] ? '' : sanitize_text_field( $value['size'] ),
 			'unit' => $unit,
 		];
 	}
