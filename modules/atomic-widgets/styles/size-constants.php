@@ -8,11 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Size_Constants {
 	const UNIT_PX = 'px';
+	const UNIT_PERCENT = '%';
 	const UNIT_EM = 'em';
 	const UNIT_REM = 'rem';
 	const UNIT_VW = 'vw';
 	const UNIT_VH = 'vh';
-	const UNIT_PERCENT = '%';
 	const UNIT_AUTO = 'auto';
 	const UNIT_CUSTOM = 'custom';
 
@@ -21,7 +21,8 @@ class Size_Constants {
 		self::UNIT_EM,
 		self::UNIT_REM,
 		self::UNIT_VW,
-		self::UNIT_VH
+		self::UNIT_VH,
+		self::UNIT_CUSTOM,
 	];
 
 	const TIME_UNITS = [ 's', 'ms' ];
@@ -31,7 +32,7 @@ class Size_Constants {
 
 	public static function all_supported_units(): array {
 		return array_merge(
-			self::all_units(),
+			self::all(),
 			self::ANGLE_UNITS,
 			self::TIME_UNITS,
 			self::EXTENDED_UNITS,
@@ -39,48 +40,65 @@ class Size_Constants {
 		);
 	}
 
-	public static function all_units(): array {
+	public static function all(): array {
 		return [
 			...self::COMMON_UNITS,
 			self::UNIT_PERCENT,
 			self::UNIT_AUTO,
-			self::UNIT_CUSTOM
 		];
 	}
 
-	public static function typography_units(): array {
+	private static function units_without_auto(): array {
+		return [ ...self::COMMON_UNITS, self::UNIT_PERCENT ];
+	}
+
+	public static function layout() {
+		return self::units_without_auto();
+	}
+
+	public static function spacing(): array {
+		return self::units_without_auto();
+	}
+
+	public static function position(): array {
+		return self::units_without_auto();
+	}
+
+	public static function anchor_offset() {
+		return self::COMMON_UNITS;
+	}
+
+	public static function typography(): array {
+		return self::units_without_auto();
+	}
+
+	public static function stroke_width() {
 		return [
-			...self::COMMON_UNITS,
-			self::UNIT_PERCENT,
-			self::UNIT_CUSTOM
+			self::UNIT_PX,
+			self::UNIT_EM,
+			self::UNIT_REM,
+			self::UNIT_CUSTOM,
 		];
 	}
 
-	public static function spacing_units(): array {
-		return [
-			...self::COMMON_UNITS,
-			self::UNIT_PERCENT,
-			self::UNIT_CUSTOM
-		];
+	public static function border(): array {
+		return self::units_without_auto();
 	}
 
-	public static function border_units(): array {
-		return [
-			...self::COMMON_UNITS,
-			self::UNIT_PERCENT,
-			self::UNIT_CUSTOM
-		];
-	}
 
-	public static function get_position_units(): array {
-		return [ ...self::COMMON_UNITS, self::UNIT_CUSTOM ];
-	}
-
-	public static function effect_units(): array {
+	public static function opacity(): array {
 		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
 	}
 
-	public static function opacity_units(): array {
-		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
+	public static function box_shadow(): array {
+		return self::units_without_auto();
+	}
+
+	public static function transform(): array {
+		return [ ...self::ANGLE_UNITS, self::COMMON_UNITS ];
+	}
+
+	public static function filters() {
+		return self::COMMON_UNITS;
 	}
 }
