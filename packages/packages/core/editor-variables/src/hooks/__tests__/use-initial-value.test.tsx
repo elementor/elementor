@@ -117,7 +117,7 @@ describe( 'useInitialValue for non-empty values', () => {
 			stubBoundPropValue( {
 				propType: colorPropTypeUtil,
 				value: {
-					$$type: 'color',
+					$$type: colorPropTypeUtil.key,
 					value: '#000000',
 				},
 			} )
@@ -140,7 +140,7 @@ describe( 'useInitialValue for non-empty values', () => {
 			stubBoundPropValue( {
 				propType: stringPropTypeUtil,
 				value: {
-					$$type: 'font',
+					$$type: stringPropTypeUtil.key,
 					value: 'Arial',
 				},
 			} )
@@ -165,7 +165,7 @@ describe( 'useInitialValue for empty values', () => {
 			stubBoundPropValue( {
 				propType: colorPropTypeUtil,
 				value: {
-					$$type: 'color',
+					$$type: colorPropTypeUtil.key,
 					value: '',
 				},
 			} )
@@ -188,7 +188,7 @@ describe( 'useInitialValue for empty values', () => {
 			stubBoundPropValue( {
 				propType: stringPropTypeUtil,
 				value: {
-					$$type: 'font',
+					$$type: stringPropTypeUtil.key,
 					value: '',
 				},
 			} )
@@ -199,6 +199,26 @@ describe( 'useInitialValue for empty values', () => {
 		// Act.
 		const { result } = renderHook( () => {
 			return useInitialValue( fontVariablePropTypeUtil );
+		} );
+
+		// Assert.
+		expect( result.current ).toBe( '' );
+	} );
+
+	it( 'should return empty for unset (null) value', () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue(
+			stubBoundPropValue( {
+				propType: colorPropTypeUtil,
+				value: null,
+			} )
+		);
+
+		jest.mocked( useVariable ).mockReturnValue( null );
+
+		// Act.
+		const { result } = renderHook( () => {
+			return useInitialValue( colorVariablePropTypeUtil );
 		} );
 
 		// Assert.
