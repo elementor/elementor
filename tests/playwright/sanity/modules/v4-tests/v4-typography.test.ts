@@ -14,6 +14,7 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 		system: 'Arial',
 		systemAlt: 'Times New Roman',
 		google: 'Roboto',
+		trebuchet: 'Trebuchet MS',
 	};
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -93,18 +94,12 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 			}
 
 			// Test font family control functionality
-			const fontFamilyButton = page.locator( 'div.MuiGrid-container' ).filter( {
-				has: page.locator( 'label', { hasText: 'Font family' } ),
-			} ).locator( '[role="button"]' );
+			await editor.v4Panel.setFontFamily( FONT_FAMILIES.trebuchet, 'system' );
 
-			if ( await fontFamilyButton.isVisible() ) {
-				try {
-					await editor.v4Panel.setFontFamily( FONT_FAMILIES.system, 'system' );
-					await expect( page.locator( 'label', { hasText: 'Font family' } ) ).toBeVisible();
-				} catch ( error ) {
-					await expect( page.locator( 'label', { hasText: 'Font family' } ) ).toBeVisible();
-				}
-			}
+			// Verify that font was applied
+			const frame = page.frameLocator( 'iframe[title="Preview"]' );
+			const headingElement = frame.locator( 'h2' );
+			await expect( headingElement ).toHaveCSS( 'font-family', /Trebuchet MS/ );
 		} );
 
 		test( 'Typography section opens and closes correctly', async () => {

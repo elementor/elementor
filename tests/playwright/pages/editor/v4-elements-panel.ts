@@ -1,5 +1,5 @@
 import BasePage from '../base-page';
-import type { Page, TestInfo } from '@playwright/test';
+import { type Page, type TestInfo } from '@playwright/test';
 
 interface TypographyOptions {
 	fontFamily?: string;
@@ -165,22 +165,20 @@ export default class v4Panel extends BasePage {
 			has: this.page.locator( 'label', { hasText: 'Font family' } ),
 		} ).locator( '[role="button"]' );
 
-		if ( await fontFamilyButton.isVisible() ) {
-			await fontFamilyButton.click();
-			await this.page.waitForSelector( 'text="System Fonts", text="Google Fonts"', { timeout: 5000 } );
+		await fontFamilyButton.click();
 
-			if ( 'google' === fontType ) {
-				await this.page.getByText( 'Google Fonts' ).click();
-				await this.page.waitForTimeout( 2000 );
-			} else {
-				await this.page.getByText( 'System Fonts' ).click();
-			}
+		// Wait for the popup to be visible
+		await this.page.waitForSelector( '.MuiPopover-paper', { state: 'visible' } );
 
-			const fontOption = this.page.locator( `text="${ fontName }"` ).first();
-			if ( await fontOption.isVisible() ) {
-				await fontOption.click();
-			}
+		if ( 'google' === fontType ) {
+			await this.page.locator( '.MuiListSubheader-root', { hasText: 'Google Fonts' } ).click();
+			await this.page.waitForTimeout( 2000 );
+		} else {
+			await this.page.locator( '.MuiListSubheader-root', { hasText: 'System' } ).click();
 		}
+
+		const fontOption = this.page.locator( '[role="option"]', { hasText: fontName } ).first();
+		await fontOption.click();
 	}
 
 	async setTextAlignment( alignment: 'left' | 'center' | 'right' | 'justify' ): Promise<void> {
