@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
+import { useBoundProp } from '@elementor/editor-controls';
 import { type PropKey } from '@elementor/editor-props';
 
+import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
 import { type Variable } from '../types';
 
@@ -18,7 +20,13 @@ export const useVariable = ( key: string ) => {
 };
 
 export const useFilteredVariables = ( searchValue: string, propTypeKey: string ) => {
-	const variables = usePropVariables( propTypeKey );
+	let variables = usePropVariables( propTypeKey );
+	const { propType } = useBoundProp();
+	const { listFilter } = useVariableType();
+
+	if ( listFilter ) {
+		variables = listFilter( variables, propType );
+	}
 
 	const filteredVariables = variables.filter( ( { label } ) => {
 		return label.toLowerCase().includes( searchValue.toLowerCase() );
