@@ -122,7 +122,6 @@ class Modules_Manager {
 			'link-in-bio',
 			'floating-buttons',
 			'content-sanitizer',
-			'editor-events',
 			'atomic-widgets',
 			'global-classes',
 			'variables',

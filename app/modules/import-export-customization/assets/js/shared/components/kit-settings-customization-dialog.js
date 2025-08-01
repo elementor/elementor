@@ -1,13 +1,15 @@
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { SubSetting } from './customization-sub-setting';
 import { KitCustomizationDialog } from './kit-customization-dialog';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'settings' );
+	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
@@ -41,7 +43,15 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		}
 	}, [ open, data.customization.settings, initialState ] );
 
-	const handleToggleChange = ( settingKey ) => {
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+	}, [] );
+
+	const handleToggleChange = ( settingKey, isChecked ) => {
+		unselectedValues.current = isChecked
+			? unselectedValues.current.filter( ( val ) => settingKey !== val )
+			: [ ...unselectedValues.current, settingKey ];
+
 		setSettings( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
@@ -53,7 +63,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			open={ open }
 			title={ __( 'Edit settings & configurations', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'settings', settings ) }
+			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, unselectedValues.current ) }
 		>
 			<Stack>
 				<SettingSection
@@ -67,7 +77,6 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 				<SettingSection
 					title={ __( 'Site settings', 'elementor' ) }
 					hasToggle={ false }
-					onSettingChange={ handleToggleChange }
 				>
 					<Stack>
 						<SubSetting

@@ -114,7 +114,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		this.ui.morePopup.show();
 
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.morePopup,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.morePopup,
 		} );
 	},
 
