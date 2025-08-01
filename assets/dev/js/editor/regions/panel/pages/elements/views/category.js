@@ -37,6 +37,8 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		}
 
 		this.collection = new PanelElementsElementsCollection( items );
+		console.log( 'category initialize. collection:', this.collection );
+		console.log( 'category initialize. items:', items );
 	},
 
 	behaviors() {

@@ -47,6 +47,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	onRender() {
+		// console.log( 'onRender', this.model );
 		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
 		}
