@@ -35,10 +35,7 @@ describe( 'useInitialValue for assigned variables', () => {
 		jest.mocked( useBoundProp ).mockReturnValue(
 			stubBoundPropValue( {
 				propType: colorVariablePropTypeUtil,
-				value: {
-					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-a01',
-				},
+				value: colorVariablePropTypeUtil.create( 'e-gv-a01' ),
 			} )
 		);
 
@@ -63,10 +60,7 @@ describe( 'useInitialValue for assigned variables', () => {
 		jest.mocked( useBoundProp ).mockReturnValue(
 			stubBoundPropValue( {
 				propType: fontVariablePropTypeUtil,
-				value: {
-					$$type: fontVariablePropTypeUtil.key,
-					value: 'e-gv-a02',
-				},
+				value: fontVariablePropTypeUtil.create( 'e-gv-a02' ),
 			} )
 		);
 
@@ -91,10 +85,7 @@ describe( 'useInitialValue for assigned variables', () => {
 		jest.mocked( useBoundProp ).mockReturnValue(
 			stubBoundPropValue( {
 				propType: colorVariablePropTypeUtil,
-				value: {
-					$$type: colorVariablePropTypeUtil.key,
-					value: 'e-gv-a01',
-				},
+				value: colorVariablePropTypeUtil.create( 'e-gv-a01' ),
 			} )
 		);
 
@@ -116,10 +107,7 @@ describe( 'useInitialValue for non-empty values', () => {
 		jest.mocked( useBoundProp ).mockReturnValue(
 			stubBoundPropValue( {
 				propType: colorPropTypeUtil,
-				value: {
-					$$type: colorPropTypeUtil.key,
-					value: '#000000',
-				},
+				value: colorPropTypeUtil.create( '#000000' ),
 			} )
 		);
 
@@ -139,10 +127,7 @@ describe( 'useInitialValue for non-empty values', () => {
 		jest.mocked( useBoundProp ).mockReturnValue(
 			stubBoundPropValue( {
 				propType: stringPropTypeUtil,
-				value: {
-					$$type: stringPropTypeUtil.key,
-					value: 'Arial',
-				},
+				value: stringPropTypeUtil.create( 'Arial' ),
 			} )
 		);
 
@@ -164,10 +149,7 @@ describe( 'useInitialValue for empty values', () => {
 		jest.mocked( useBoundProp ).mockReturnValue(
 			stubBoundPropValue( {
 				propType: colorPropTypeUtil,
-				value: {
-					$$type: colorPropTypeUtil.key,
-					value: '',
-				},
+				value: colorPropTypeUtil.create( '' ),
 			} )
 		);
 
@@ -187,10 +169,7 @@ describe( 'useInitialValue for empty values', () => {
 		jest.mocked( useBoundProp ).mockReturnValue(
 			stubBoundPropValue( {
 				propType: stringPropTypeUtil,
-				value: {
-					$$type: stringPropTypeUtil.key,
-					value: '',
-				},
+				value: stringPropTypeUtil.create( '' ),
 			} )
 		);
 
