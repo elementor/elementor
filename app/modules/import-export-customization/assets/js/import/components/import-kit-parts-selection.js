@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useImportContext } from '../context/import-context';
 import { KitPartsSelection } from '../../shared/components';
 import kitContentData from '../../shared/kit-content-data';
@@ -34,6 +35,26 @@ export default function ImportKitPartsSelection() {
 			dispatch( { type: 'REMOVE_INCLUDE', payload: key } );
 		}
 	};
+
+	useEffect( () => {
+		if ( data.uploadedData ) {
+			const includes = [];
+
+			if ( data.uploadedData?.manifest?.[ 'site-settings' ] ) {
+				includes.push( 'settings' );
+			}
+
+			if ( data.uploadedData?.manifest?.templates ) {
+				includes.push( 'templates' );
+			}
+
+			if ( data.uploadedData?.manifest?.content ) {
+				includes.push( 'content' );
+			}
+
+			dispatch( { type: 'ADD_INCLUDES', payload: includes } );
+		}
+	}, [ data.uploadedData, dispatch ] );
 
 	return (
 		<KitPartsSelection

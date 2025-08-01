@@ -36,6 +36,11 @@ const importReducer = ( state, { type, payload } ) => {
 					? state.includes
 					: [ ...state.includes, payload ],
 			};
+		case 'ADD_INCLUDES':
+			return {
+				...state,
+				includes: Array.from( new Set( [ ...state.includes, ...payload ] ) ),
+			};
 		case 'REMOVE_INCLUDE':
 			return {
 				...state,
@@ -98,7 +103,7 @@ export default function ImportContextProvider( props ) {
 }
 
 ImportContextProvider.propTypes = {
-        children: PropTypes.node.isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 export function useImportContext() {
