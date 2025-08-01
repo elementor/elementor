@@ -52,6 +52,50 @@ describe( 'SubSetting Component', () => {
 		} );
 	} );
 
+	describe( 'Disabled State Functionality', () => {
+		it( 'should render switch as enabled when disabled prop is false', () => {
+			render( <SubSetting { ...defaultProps } disabled={ false } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( false );
+		} );
+
+		it( 'should render switch as disabled when disabled prop is true', () => {
+			render( <SubSetting { ...defaultProps } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+
+		it( 'should default to enabled when disabled prop is not provided', () => {
+			render( <SubSetting { ...defaultProps } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( false );
+		} );
+
+		it( 'should maintain checked state when disabled', () => {
+			render( <SubSetting { ...defaultProps } checked={ true } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.checked ).toBe( true );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+
+		it( 'should maintain unchecked state when disabled', () => {
+			render( <SubSetting { ...defaultProps } checked={ false } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.checked ).toBe( false );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+	} );
+
 	describe( 'User Interactions', () => {
 		it( 'should call onSettingChange with settingKey and true when switch is turned on', () => {
 			// Arrange
@@ -77,6 +121,25 @@ describe( 'SubSetting Component', () => {
 
 			// Assert
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'test-sub-key', false );
+		} );
+
+		it( 'should handle multiple interactions correctly when enabled', () => {
+			// Arrange
+			render( <SubSetting { ...defaultProps } /> );
+
+			// Act
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+
+			// First click - turn on
+			fireEvent.click( inputElement );
+			// Second click - turn off
+			fireEvent.click( inputElement );
+
+			// Assert
+			expect( mockOnSettingChange ).toHaveBeenCalledTimes( 2 );
+			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 1, 'test-sub-key', true );
+			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 2, 'test-sub-key', false );
 		} );
 	} );
 } );

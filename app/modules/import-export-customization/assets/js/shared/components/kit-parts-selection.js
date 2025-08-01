@@ -6,6 +6,17 @@ import kitContentData from '../kit-content-data';
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
 
+	const isImport = data.hasOwnProperty( 'uploadedData' );
+
+	const isDisabled = ( item ) => {
+		if ( isImport ) {
+			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
+			return ! data?.uploadedData?.manifest?.[ manifestKey ];
+		}
+
+		return item.required && data.includes.includes( item.type );
+	};
+
 	return (
 		<Stack spacing={ 2 } data-testid={ testId }>
 			{ kitContentData.map( ( item ) => (
@@ -19,7 +30,8 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 											color="info"
 											checked={ data.includes.includes( item.type ) }
 											onChange={ () => onCheckboxChange( item.type ) }
-											disabled={ item.required && data.includes.includes( item.type ) }
+											disabled={ isDisabled( item ) }
+											indeterminate={ isImport && isDisabled( item ) }
 											sx={ { py: 0 } }
 											data-testid={ `KitContentDataSelection-${ item.type }` }
 											data-type={ item.type }
@@ -41,6 +53,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								onClick={ () => setActiveDialog( item.type ) }
 								sx={ { alignSelf: 'center' } }
 								data-type={ item.type }
+								disabled={ isDisabled( item ) }
 							>
 								{ __( 'Edit', 'elementor' ) }
 							</Button>
