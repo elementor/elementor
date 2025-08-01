@@ -75,6 +75,9 @@ async function publishPackages(options = {}) {
   if (!options.yes && !options.dryRun) {
     const unpublishedCount = packages.length - alreadyPublished.length;
     logInfo(`🚀 Ready to publish ${unpublishedCount} packages to npm`);
+    if (process.env.NPM_TOKEN) {
+      exeSync('npm config set //registry.npmjs.org/:_authToken \"${process.env.NPM_TOKEN}\"');
+    }
   }
 
   if (options.dryRun) {
