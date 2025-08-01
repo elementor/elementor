@@ -51,7 +51,7 @@ export function useUploadKit() {
 			}
 			dispatch( { type: 'SET_UPLOADED_DATA', payload: result.data } );
 
-			if ( 0 < Object.keys( result.data.manifest.templates ).length ) {
+			if ( 0 < Object.keys( result.data.manifest?.templates || {} ).length ) {
 				dispatch( { type: 'ADD_INCLUDE', payload: 'templates' } );
 			}
 		} catch ( e ) {

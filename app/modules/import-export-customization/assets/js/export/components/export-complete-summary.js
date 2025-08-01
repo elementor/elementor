@@ -102,6 +102,7 @@ ExportCompleteSummary.propTypes = {
 			plugins: PropTypes.arrayOf( PropTypes.shape( {
 				name: PropTypes.string,
 			} ) ),
+			templates: PropTypes.object,
 		} ),
 	} ),
 };
