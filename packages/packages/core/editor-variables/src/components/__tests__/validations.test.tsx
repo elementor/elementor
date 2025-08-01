@@ -5,8 +5,8 @@ import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { VariableTypeProvider } from '../../context/variable-type-context';
-import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import * as useInitialValueModule from '../../hooks/use-initial-value';
+import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { ColorField } from '../fields/color-field';
