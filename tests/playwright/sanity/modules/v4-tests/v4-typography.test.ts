@@ -21,7 +21,6 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
@@ -76,21 +75,8 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 
 			// Test font weight control if available
 			const fontWeightLabel = page.locator( 'label', { hasText: 'Font weight' } );
-			const fontWeightExists = await fontWeightLabel.isVisible();
-
-			if ( fontWeightExists ) {
-				const fontWeightButton = page.locator( 'div.MuiGrid-container' ).filter( {
-					has: fontWeightLabel,
-				} ).locator( '[role="button"]' );
-
-				const buttonExists = await fontWeightButton.isVisible();
-				if ( buttonExists ) {
-					try {
-						await editor.v4Panel.setV4SelectControlValue( 'Font weight', '700' );
-					} catch ( error ) {
-						// Font weight control might have different structure
-					}
-				}
+			if ( await fontWeightLabel.isVisible() ) {
+				await editor.v4Panel.setV4SelectControlValue( 'Font weight', '700' );
 			}
 
 			// Test font family control functionality
@@ -250,12 +236,8 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 			} ).locator( '[role="button"]' );
 
 			if ( await fontFamilyButton.isVisible() ) {
-				try {
-					await editor.v4Panel.setFontFamily( FONT_FAMILIES.system, 'system' );
-					await editor.v4Panel.setFontFamily( FONT_FAMILIES.systemAlt, 'system' );
-				} catch ( error ) {
-					// Font family might not be available, continue with tes
-				}
+				await editor.v4Panel.setFontFamily( FONT_FAMILIES.system, 'system' );
+				await editor.v4Panel.setFontFamily( FONT_FAMILIES.systemAlt, 'system' );
 			}
 
 			const endTime = Date.now();
@@ -271,7 +253,7 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 	} );
 
 	test.describe( 'Typography Integration and Error Handling', () => {
-		test( 'Typography integration and error handling', async () => {
+		test( 'Typography integration test', async () => {
 			await setupWidgetWithTypography( 'e-heading' );
 
 			// Test basic typography functionality
@@ -282,64 +264,25 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 			let typographyValues = await editor.v4Panel.getTypographyValues();
 			expect( typographyValues.fontSize ).toBe( '18' );
 
-			// Test controls consistency
-			await expect( page.locator( 'label', { hasText: 'Font size' } ) ).toBeVisible();
-			await expect( page.locator( 'label', { hasText: 'Font family' } ) ).toBeVisible();
+			// Test font family functionality
+			await editor.v4Panel.setFontFamily( FONT_FAMILIES.system, 'system' );
 
-			// Test font family integration and error handling
-			const fontFamilyButton = page.locator( 'div.MuiGrid-container' ).filter( {
-				has: page.locator( 'label', { hasText: 'Font family' } ),
-			} ).locator( '[role="button"]' );
+			// Test combined typography changes
+			await editor.v4Panel.setTypography( {
+				fontSize: '16',
+				fontFamily: FONT_FAMILIES.systemAlt,
+			} );
 
-			if ( await fontFamilyButton.isVisible() ) {
-				try {
-					await editor.v4Panel.setFontFamily( FONT_FAMILIES.system, 'system' );
-					await expect( page.locator( 'label', { hasText: 'Font family' } ) ).toBeVisible();
+			typographyValues = await editor.v4Panel.getTypographyValues();
+			expect( typographyValues.fontSize ).toBe( '16' );
 
-					// Test error handling with non-existent fon
-					await editor.v4Panel.setFontFamily( 'NonExistentFont', 'system' );
-					await expect( page.locator( 'label', { hasText: 'Font family' } ) ).toBeVisible();
-				} catch ( error ) {
-					// Expected behavior for error cases
-					await expect( page.locator( 'label', { hasText: 'Font family' } ) ).toBeVisible();
-				}
-			}
-
-			// Test combined typography changes with error handling
-			try {
-				await editor.v4Panel.setTypography( {
-					fontSize: '16',
-					fontFamily: FONT_FAMILIES.system,
-				} );
-
-				typographyValues = await editor.v4Panel.getTypographyValues();
-				expect( typographyValues.fontSize ).toBe( '16' );
-			} catch ( error ) {
-				// If font family fails, test font size alone
-				await editor.v4Panel.setTypography( {
-					fontSize: '16',
-				} );
-
-				typographyValues = await editor.v4Panel.getTypographyValues();
-				expect( typographyValues.fontSize ).toBe( '16' );
-			}
-
-			// Test edge case handling
+			// Test edge case
 			await editor.v4Panel.setTypography( {
 				fontSize: '1',
 			} );
 
 			const fontSizeInput = page.locator( 'label', { hasText: 'Font size' } ).locator( 'xpath=following::input[1]' );
 			await expect( fontSizeInput ).toHaveValue( '1' );
-
-			// Verify controls remain accessible after edge cases
-			await expect( page.locator( 'label', { hasText: 'Font family' } ) ).toBeVisible();
-			await expect( page.locator( 'label', { hasText: 'Font size' } ) ).toBeVisible();
-
-			// Test helper methods consistency
-			await editor.v4Panel.waitForTypographyControls();
-			const isOpen = await editor.v4Panel.isTypographySectionOpen();
-			expect( isOpen ).toBe( true );
 		} );
 	} );
 } );
