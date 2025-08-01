@@ -38,18 +38,15 @@ export default function SettingsButton() {
 					disabled={ isBlocked }
 					onChange={ () => {
 						const extendedWindow = window as unknown as ExtendedWindow;
-						const config = extendedWindow?.elementorCommon?.eventsManager?.config;
+						const config = extendedWindow?.elementor?.editorEvents?.config;
 
 						if ( config ) {
-							extendedWindow.elementorCommon.eventsManager.dispatchEvent(
-								config.names.topBar.documentSettings,
-								{
-									location: config.locations.topBar,
-									secondaryLocation: config.secondaryLocations[ 'document-settings' ],
-									trigger: config.triggers.click,
-									element: config.elements.buttonIcon,
-								}
-							);
+							extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.documentSettings, {
+								location: config.locations.topBar,
+								secondaryLocation: config.secondaryLocations[ 'document-settings' ],
+								trigger: config.triggers.click,
+								element: config.elements.buttonIcon,
+							} );
 						}
 
 						openRoute( 'panel/page-settings/settings' );

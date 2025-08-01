@@ -1,6 +1,6 @@
 export type ExtendedWindow = Window & {
-	elementorCommon: {
-		eventsManager: {
+	elementor: {
+		editorEvents: {
 			dispatchEvent: ( name: string, data: Record< string, string > ) => void;
 			config: {
 				locations: Record< string, string >;

@@ -1,7 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ImportComplete from 'elementor/app/modules/import-export-customization/assets/js/import/pages/import-complete';
-import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 const mockUseImportContext = jest.fn();
 const mockNavigate = jest.fn();
@@ -14,21 +13,11 @@ jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );
 
-const mockSendPageViewsWebsiteTemplates = jest.fn();
-jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
-	AppsEventTracking: {
-		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
-	},
-} ) );
 describe( 'ImportComplete Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		global.elementorAppConfig = { assets_url: 'http://localhost/assets/' };
-		global.elementorCommon = {
-			eventsManager: {
-				config: eventsConfig,
-			},
-		};
+		global.elementorCommon = {};
 	} );
 
 	afterEach( () => {

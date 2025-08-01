@@ -8,7 +8,6 @@ import DropZone from '../components/drop-zone';
 import { IMPORT_STATUS, useImportContext } from '../context/import-context';
 import { useUploadKit } from '../hooks/use-upload-kit';
 import ImportError from '../components/import-error';
-import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ImportKit() {
 	const { data, dispatch } = useImportContext();
@@ -44,10 +43,6 @@ export default function ImportKit() {
 			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.UPLOADING } );
 		}
 	}, [ id, referrer, fileUrl, nonce, dispatch ] );
-
-	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox );
-	}, [] );
 
 	const renderContent = () => {
 		if ( error ) {
