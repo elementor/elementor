@@ -33,8 +33,6 @@ const ExternalLinkIcon = () => (
 	/>
 );
 
-
-
 const handleDone = () => {
 	window.top.location = elementorAppConfig.admin_url;
 };
