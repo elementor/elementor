@@ -10,6 +10,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Cache_Validity extends Elementor_Test_Base {
+	
+	public function tear_down() {
+		parent::tear_down();
+		
+		// Clear any cached data from previous tests to ensure test isolation
+		$this->clear_cache_validity_options();
+	}
+	
+	/**
+	 * Clear all WordPress options used by Cache_Validity class.
+	 */
+	private function clear_cache_validity_options(): void {
+		// Use WordPress delete_option function which is safer than direct SQL
+		// and handles cases where tables might not exist yet
+		$cache_validity = new Cache_Validity();
+		
+		global $wpdb;
+		
+		// Only attempt to clear if the options table exists
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->options}'" ) === $wpdb->options ) {
+			$options = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
+					'elementor_atomic_cache_validity-%'
+				)
+			);
+			
+			// Delete each option individually using WordPress functions
+			foreach ( $options as $option_name ) {
+				delete_option( $option_name );
+			}
+		}
+		
+		// Clear the object cache to ensure options are truly cleared
+		wp_cache_flush();
+	}
+
 	public function test_validation_on_root_key() {
 		// Arrange.
 		$cache_validity = new Cache_Validity();
@@ -118,6 +155,55 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$this->assertTrue(
 			$cache_validity->is_valid(['test', 'depth1_2', 'depth2_1']),
 			'Other nested items should remain valid.'
+		);
+	}
+
+	public function test_meta_data_is_stored_and_cleaned_responsively() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+
+		$this->assertNull(
+			$cache_validity->get_meta(['test']),
+			'Meta data should be null if not set.'
+		);
+
+		// Act.
+		$cache_validity->validate(['test'], ['meta' => 'data']);
+
+		// Assert.
+		$this->assertEquals(
+			$cache_validity->get_meta(['test']),
+			['meta' => 'data'],
+			'Meta data should be stored.'
+		);
+
+		// Act.
+		$cache_validity->invalidate(['test']);
+
+		// Assert.
+		$this->assertNull(
+			$cache_validity->get_meta(['test']),
+			'Meta data should be cleaned.'
+		);
+	}
+
+	public function test_meta_data_is_stored_and_cleaned_responsively_for_nested_keys() {
+		// Arrange.
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate(['test', 'nested'], ['foo' => 'bar']);
+
+		// Assert.
+		$this->assertEquals(
+			$cache_validity->get_meta(['test', 'nested']),
+			['foo' => 'bar'],
+			'Meta data should be stored.'
+		);
+
+		$this->assertNull(
+			$cache_validity->get_meta(['test']),
+			'Meta data should be empty.'
 		);
 	}
 }
