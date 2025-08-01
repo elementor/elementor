@@ -85,6 +85,29 @@ describe( 'useInitialValue for assigned variables', () => {
 		// Assert.
 		expect( result.current ).toBe( 'Arial' );
 	} );
+
+	it( 'should return empty for missing (non-existing) variable', () => {
+		// Arrange.
+		jest.mocked( useBoundProp ).mockReturnValue(
+			stubBoundPropValue( {
+				propType: colorVariablePropTypeUtil,
+				value: {
+					$$type: colorVariablePropTypeUtil.key,
+					value: 'e-gv-a01',
+				},
+			} )
+		);
+
+		jest.mocked( useVariable ).mockReturnValue( null );
+
+		// Act.
+		const { result } = renderHook( () => {
+			return useInitialValue( colorVariablePropTypeUtil );
+		} );
+
+		// Assert.
+		expect( result.current ).toBe( '' );
+	} );
 } );
 
 describe( 'useInitialValue for non-empty values', () => {
