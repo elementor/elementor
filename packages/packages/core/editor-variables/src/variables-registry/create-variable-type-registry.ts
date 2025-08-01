@@ -38,6 +38,7 @@ export function createVariableTypeRegistry() {
 	const registerVariableType = ( {
 		icon,
 		startIcon,
+		listFilter,
 		valueField,
 		propTypeUtil,
 		variableType,
@@ -50,6 +51,7 @@ export function createVariableTypeRegistry() {
 		variableTypes[ propTypeUtil.key ] = {
 			icon,
 			startIcon,
+			listFilter,
 			valueField,
 			propTypeUtil,
 			variableType,
