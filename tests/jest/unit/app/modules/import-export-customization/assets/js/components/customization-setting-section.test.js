@@ -204,7 +204,7 @@ describe( 'SettingSection Component', () => {
 			// Act
 			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
 			const inputElement = switchElement.querySelector( 'input' );
-			
+
 			// First click - turn on
 			fireEvent.click( inputElement );
 			// Second click - turn off
@@ -228,19 +228,19 @@ describe( 'SettingSection Component', () => {
 	describe( 'Props Validation', () => {
 		it( 'should handle missing onSettingChange gracefully', () => {
 			const { onSettingChange, ...propsWithoutHandler } = defaultProps;
-			
+
 			render( <SettingSection { ...propsWithoutHandler } /> );
 
 			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
 			const inputElement = switchElement.querySelector( 'input' );
-			
+
 			// Should not throw error when clicked without handler
 			expect( () => fireEvent.click( inputElement ) ).not.toThrow();
 		} );
 
 		it( 'should handle missing title gracefully', () => {
 			const { title, ...propsWithoutTitle } = defaultProps;
-			
+
 			expect( () => {
 				render( <SettingSection { ...propsWithoutTitle } /> );
 			} ).toThrow();
@@ -248,7 +248,7 @@ describe( 'SettingSection Component', () => {
 
 		it( 'should handle missing settingKey gracefully', () => {
 			const { settingKey, ...propsWithoutKey } = defaultProps;
-			
+
 			expect( () => {
 				render( <SettingSection { ...propsWithoutKey } /> );
 			} ).toThrow();
@@ -258,7 +258,7 @@ describe( 'SettingSection Component', () => {
 	describe( 'Edge Cases', () => {
 		it( 'should handle very long titles', () => {
 			const longTitle = 'This is a very long title that might cause layout issues in the UI and should be handled gracefully by the component';
-			
+
 			render( <SettingSection { ...defaultProps } title={ longTitle } /> );
 
 			expect( screen.getByText( longTitle ) ).toBeTruthy();
@@ -266,7 +266,7 @@ describe( 'SettingSection Component', () => {
 
 		it( 'should handle very long descriptions', () => {
 			const longDescription = 'This is a very long description that might cause layout issues in the UI and should be handled gracefully by the component. It contains multiple sentences and should still render properly.';
-			
+
 			render( <SettingSection { ...defaultProps } description={ longDescription } /> );
 
 			const descriptionEl = screen.getByTestId( `${ defaultProps.settingKey }-description` );
@@ -275,7 +275,7 @@ describe( 'SettingSection Component', () => {
 
 		it( 'should handle special characters in settingKey', () => {
 			const specialKey = 'test-setting-key-with-special-chars-123!@#';
-			
+
 			render( <SettingSection { ...defaultProps } settingKey={ specialKey } /> );
 
 			const switchElement = screen.getByTestId( `${ specialKey }-switch` );
@@ -285,14 +285,14 @@ describe( 'SettingSection Component', () => {
 		it( 'should handle empty title', () => {
 			render( <SettingSection { ...defaultProps } title="" /> );
 
-			expect( screen.getByText( "" ) ).toBeTruthy();
+			expect( screen.getByText( '' ) ).toBeTruthy();
 		} );
 
 		it( 'should handle empty description', () => {
 			render( <SettingSection { ...defaultProps } description="" /> );
 
 			const descriptionEl = screen.getByTestId( `${ defaultProps.settingKey }-description` );
-			expect( descriptionEl.textContent ).toBe( "" );
+			expect( descriptionEl.textContent ).toBe( '' );
 		} );
 
 		it( 'should handle complex children content', () => {
@@ -302,7 +302,7 @@ describe( 'SettingSection Component', () => {
 					<button>Child button</button>
 				</div>
 			);
-			
+
 			render( <SettingSection { ...defaultProps }>{ complexChild }</SettingSection> );
 
 			expect( screen.getByText( 'Nested content' ) ).toBeTruthy();

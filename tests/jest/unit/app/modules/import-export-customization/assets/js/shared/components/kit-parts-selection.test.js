@@ -490,8 +490,8 @@ describe( 'KitPartsSelection Component', () => {
 			};
 			render( <KitPartsSelection { ...props } /> );
 			const editButtons = screen.getAllByText( 'Edit' );
-			const settingsEditButton = editButtons.find( button =>
-				button.getAttribute( 'data-type' ) === 'settings'
+			const settingsEditButton = editButtons.find( ( button ) =>
+				'settings' === button.getAttribute( 'data-type' ),
 			);
 
 			// Act & Assert

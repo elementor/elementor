@@ -123,7 +123,6 @@ describe( 'SubSetting Component', () => {
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'test-sub-key', false );
 		} );
 
-
 		it( 'should handle multiple interactions correctly when enabled', () => {
 			// Arrange
 			render( <SubSetting { ...defaultProps } /> );
