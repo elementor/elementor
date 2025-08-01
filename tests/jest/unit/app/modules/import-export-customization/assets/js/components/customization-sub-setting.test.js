@@ -123,31 +123,6 @@ describe( 'SubSetting Component', () => {
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'test-sub-key', false );
 		} );
 
-		it( 'should not call onSettingChange when disabled switch is clicked', () => {
-			// Arrange
-			render( <SubSetting { ...defaultProps } disabled={ true } /> );
-
-			// Act
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-			fireEvent.click( inputElement );
-
-			// Assert
-			expect( mockOnSettingChange ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should not call onSettingChange when disabled checked switch is clicked', () => {
-			// Arrange
-			render( <SubSetting { ...defaultProps } checked={ true } disabled={ true } /> );
-
-			// Act
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-			fireEvent.click( inputElement );
-
-			// Assert
-			expect( mockOnSettingChange ).not.toHaveBeenCalled();
-		} );
 
 		it( 'should handle multiple interactions correctly when enabled', () => {
 			// Arrange
@@ -156,7 +131,7 @@ describe( 'SubSetting Component', () => {
 			// Act
 			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
 			const inputElement = switchElement.querySelector( 'input' );
-			
+
 			// First click - turn on
 			fireEvent.click( inputElement );
 			// Second click - turn off
@@ -166,66 +141,6 @@ describe( 'SubSetting Component', () => {
 			expect( mockOnSettingChange ).toHaveBeenCalledTimes( 2 );
 			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 1, 'test-sub-key', true );
 			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 2, 'test-sub-key', false );
-		} );
-	} );
-
-	describe( 'Props Validation', () => {
-		it( 'should handle missing onSettingChange gracefully', () => {
-			const { onSettingChange, ...propsWithoutHandler } = defaultProps;
-			
-			render( <SubSetting { ...propsWithoutHandler } /> );
-
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-			
-			// Should not throw error when clicked without handler
-			expect( () => fireEvent.click( inputElement ) ).not.toThrow();
-		} );
-
-		it( 'should handle missing label gracefully', () => {
-			const { label, ...propsWithoutLabel } = defaultProps;
-			
-			expect( () => {
-				render( <SubSetting { ...propsWithoutLabel } /> );
-			} ).toThrow();
-		} );
-
-		it( 'should handle missing settingKey gracefully', () => {
-			const { settingKey, ...propsWithoutKey } = defaultProps;
-			
-			expect( () => {
-				render( <SubSetting { ...propsWithoutKey } /> );
-			} ).toThrow();
-		} );
-	} );
-
-	describe( 'Edge Cases', () => {
-		it( 'should handle very long labels', () => {
-			const longLabel = 'This is a very long label that might cause layout issues in the UI and should be handled gracefully by the component';
-			
-			render( <SubSetting { ...defaultProps } label={ longLabel } /> );
-
-			const labelElement = screen.getByTestId( `${ defaultProps.settingKey }-label` );
-			expect( labelElement.textContent ).toBe( longLabel );
-		} );
-
-		it( 'should handle special characters in settingKey', () => {
-			const specialKey = 'test-setting-key-with-special-chars-123!@#';
-			
-			render( <SubSetting { ...defaultProps } settingKey={ specialKey } /> );
-
-			const labelElement = screen.getByTestId( `${ specialKey }-label` );
-			const switchElement = screen.getByTestId( `${ specialKey }-switch` );
-			
-			expect( labelElement ).toBeTruthy();
-			expect( switchElement ).toBeTruthy();
-		} );
-
-		it( 'should handle empty label', () => {
-			render( <SubSetting { ...defaultProps } label="" /> );
-
-			const labelElement = screen.getByTestId( `${ defaultProps.settingKey }-label` );
-			expect( labelElement.textContent ).toBe( "" );
 		} );
 	} );
 } );

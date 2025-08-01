@@ -114,7 +114,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
 					settingKey="theme"
 					onSettingChange={ handleToggleChange }
-					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ].theme }
+					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
 				/>
 
 				<SettingSection
@@ -127,21 +127,21 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 							settingKey="globalColors"
 							onSettingChange={ handleToggleChange }
 							checked={ settings.globalColors }
-							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ].globalColors }
+							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.globalColors }
 						/>
 						<SubSetting
 							label={ __( 'Global fonts', 'elementor' ) }
 							settingKey="globalFonts"
 							onSettingChange={ handleToggleChange }
 							checked={ settings.globalFonts }
-							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ].globalFonts }
+							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.globalFonts }
 						/>
 						<SubSetting
 							label={ __( 'Theme style settings', 'elementor' ) }
 							settingKey="themeStyleSettings"
 							onSettingChange={ handleToggleChange }
 							checked={ settings.themeStyleSettings }
-							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ].themeStyleSettings }
+							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.themeStyleSettings }
 						/>
 					</Stack>
 				</SettingSection>
@@ -152,7 +152,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					settingKey="generalSettings"
 					onSettingChange={ handleToggleChange }
 					checked={ settings.generalSettings }
-					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ].generalSettings }
+					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.generalSettings }
 				/>
 
 				<SettingSection
@@ -161,7 +161,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					settingKey="experiments"
 					onSettingChange={ handleToggleChange }
 					checked={ settings.experiments }
-					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ].experiments }
+					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.experiments }
 				/>
 			</Stack>
 		</KitCustomizationDialog>
