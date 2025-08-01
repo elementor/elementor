@@ -1,7 +1,8 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
-import { IMAGE_PROMPT_CATEGORIES } from './pages/form-media/constants';
+import { IMAGE_PROMPT_CATEGORIES, LOCATIONS } from './pages/form-media/constants';
 import ReactUtils from 'elementor-utils/react';
+import React from 'react';
 import LayoutAppWrapper from './layout-app-wrapper';
 import { AiGetStartedConnect } from './ai-get-started-connect';
 import { getUiConfig } from './utils/editor-integration';
@@ -9,6 +10,7 @@ import { getRemoteFrontendConfig } from './api';
 import { getUniqueId } from './context/requests-ids';
 import ApplyAiTitlesNavigatorBehavior from './integration/navigator/apply-ai-titles-to-navigator-behaviour';
 import { addAiPromotionForSiteLogo } from './utils/ai-promotion';
+
 setTimeout( async () => {
 	if ( '1' !== window.ElementorAiConfig?.is_get_started ) {
 		return;
@@ -44,6 +46,9 @@ export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
+
+		// Listen for AI modal events from remote integration
+		window.addEventListener( 'elementor:ai:show-modal', this.handleAIModalEvent.bind( this ) );
 
 		$e.routes.on( 'run:after', ( component, route ) => {
 			if ( 'panel/global/settings-site-identity' === route ) {
@@ -156,7 +161,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 					controlView: view,
 					additionalOptions: {
 						defaultValue: view.options.model.get( 'default' ),
-						defaultImageType: aiOptions?.category || IMAGE_PROMPT_CATEGORIES[ 1 ].key,
+						defaultImageType: aiOptions?.category || Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
 					},
 					context: this.getContextData( view, controlType ),
 				};
@@ -250,5 +255,63 @@ export default class Module extends elementorModules.editor.utils.Module {
 		return mediaTypes.length &&
 			mediaTypes.includes( 'image' ) &&
 			! controlType.includes( 'media-preview' );
+	}
+
+	handleAIModalEvent( event ) {
+		const { modalType, location, imageId, imageUrl, context, ...additionalParams } = event.detail;
+
+		const targetLocation = location || modalType;
+		this.showAIModal( {
+			modalType,
+			location: targetLocation,
+			imageId,
+			imageUrl,
+			context,
+			...additionalParams,
+		} );
+	}
+
+	async showAIModal( { modalType, location, imageId, imageUrl, context, ...additionalParams } ) {
+		const aiBehavior = new AiBehavior( {
+			type: 'media',
+			controlType: 'media',
+			onCloseCallback: () => {
+				window.dispatchEvent( new CustomEvent( 'elementor:ai:modal-closed', {
+					detail: {
+						modalType,
+						location,
+						success: false,
+					},
+				} ) );
+			},
+			getControlValue: () => {
+				if ( imageId || imageUrl ) {
+					return {
+						id: imageId ? parseInt( imageId, 10 ) : '',
+						url: imageUrl || '',
+						source: imageId ? 'id' : 'url',
+					};
+				}
+			},
+			setControlValue: ( image ) => {
+				window.dispatchEvent( new CustomEvent( 'elementor:ai:modal-closed', {
+					detail: {
+						modalType,
+						location,
+						success: true,
+						...image,
+					},
+				} ) );
+			},
+			additionalOptions: {
+				defaultImageType: Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
+				location: LOCATIONS[ location?.toUpperCase()?.replace( '-', '_' ) ] || location,
+				...additionalParams,
+			},
+		} );
+
+		aiBehavior.onAiButtonClick( {
+			stopPropagation: () => {},
+		} );
 	}
 }

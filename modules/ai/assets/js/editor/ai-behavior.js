@@ -82,9 +82,12 @@ export default class AiBehavior extends Marionette.Behavior {
 		const onClose = () => {
 			this.handleClose();
 			rootElement.remove();
+			if ( this.onCloseCallback ) {
+				this.onCloseCallback();
+			}
 		};
 
-		if ( 'post_featured_image' === this.options.context.controlName ) {
+		if ( 'post_featured_image' === this.getOption( 'context' )?.controlName ) {
 			const FEATURED_IMAGE_RATIO = '4:3';
 			return (
 				<AIMediaGenerateApp
