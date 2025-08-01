@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { type ReactElement, useState } from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 import { stylesRepository, useUserStylesCapability, validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, useEditable } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
+import { useSessionStorage } from '@elementor/session';
 import {
 	type AutocompleteRenderGetTagProps,
 	bindTrigger,
@@ -49,6 +50,10 @@ export function CssClassItem( props: CssClassItemProps ) {
 
 	const { userCan } = useUserStylesCapability();
 
+	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
+		`last-converted-class-generated-name`
+	);
+
 	const {
 		ref,
 		isEditing,
@@ -68,6 +73,15 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const allowRename = Boolean( providerActions?.update ) && userCan( provider ?? '' )?.update;
 
 	const isShowingState = isActive && meta.state;
+
+	useEffect( () => {
+		if ( convertedFromLocalId && id === convertedFromLocalId ) {
+			clearConvertedFromLocalId();
+			openEditMode();
+		}
+		// eslint-disable-next-line react-compiler/react-compiler
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ id ] );
 
 	return (
 		<ThemeProvider palette="default">

@@ -296,7 +296,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		$schema = [
 			'_cssid' => String_Prop_Type::make(),
-	
+
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
 				->default( 'value-a' ),
@@ -456,7 +456,6 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Act.
 		$controls = $widget->get_atomic_controls();
-		array_pop( $controls ); //remove settings section
 
 		// Assert.
 		$this->assertEquals( $controls_definitions, $controls );
@@ -541,6 +540,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 							'breakpoint' => 'desktop',
 							'state' => null,
 						],
+						'custom_css' => null,
 					],
 				],
 			]

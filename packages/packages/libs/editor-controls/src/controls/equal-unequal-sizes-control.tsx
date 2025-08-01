@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { type ReactNode, type RefObject, useId, useRef } from 'react';
 import { type PropKey, type PropTypeUtil, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { bindPopover, bindToggle, Grid, Popover, Stack, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -99,7 +98,7 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 		return splitEqualValue() ?? null;
 	};
 
-	const isShowingGeneralIndicator = ! isExperimentActive( 'e_v_3_30' ) || ! popupState.isOpen;
+	const isShowingGeneralIndicator = ! popupState.isOpen;
 
 	const isMixed = !! multiSizeValue;
 
@@ -173,18 +172,12 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 }
 
 const MultiSizeValueControl = ( { item, rowRef }: { item: Item; rowRef: RefObject< HTMLDivElement > } ) => {
-	const isUsingNestedProps = isExperimentActive( 'e_v_3_30' );
-
 	return (
 		<PropKeyProvider bind={ item.bind }>
 			<Grid item xs={ 6 }>
 				<Grid container gap={ 0.75 } alignItems="center">
 					<Grid item xs={ 12 }>
-						{ isUsingNestedProps ? (
-							<ControlLabel>{ item.label }</ControlLabel>
-						) : (
-							<ControlFormLabel>{ item.label }</ControlFormLabel>
-						) }
+						<ControlLabel>{ item.label }</ControlLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
 						<SizeControl startIcon={ item.icon } anchorRef={ rowRef } />

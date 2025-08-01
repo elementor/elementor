@@ -230,5 +230,6 @@ function createMockStyleVariant( meta: StyleDefinitionVariant[ 'meta' ] ) {
 	return {
 		props: {},
 		meta,
+		custom_css: null,
 	};
 }

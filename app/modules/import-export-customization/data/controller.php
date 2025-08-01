@@ -3,6 +3,9 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data;
 
 use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Export;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Upload;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Import;
+use Elementor\App\Modules\ImportExportCustomization\Data\Routes\Import_Runner;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,5 +25,8 @@ class Controller {
 
 	private static function register_routes() {
 		( new Export() )->register_route( self::API_NAMESPACE, self::API_BASE );
+		( new Upload() )->register_route( self::API_NAMESPACE, self::API_BASE );
+		( new Import() )->register_route( self::API_NAMESPACE, self::API_BASE );
+		( new Import_Runner() )->register_route( self::API_NAMESPACE, self::API_BASE );
 	}
 }

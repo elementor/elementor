@@ -9,34 +9,26 @@ import {
 	backgroundImageSizeScalePropTypeUtil,
 	backgroundOverlayPropTypeUtil,
 	backgroundPropTypeUtil,
-	blurFilterPropTypeUtil,
 	borderRadiusPropTypeUtil,
 	borderWidthPropTypeUtil,
 	boxShadowPropTypeUtil,
-	brightnessFilterPropTypeUtil,
 	colorPropTypeUtil,
 	colorStopPropTypeUtil,
-	contrastFilterPropTypeUtil,
+	cssFilterFunctionPropUtil,
 	dimensionsPropTypeUtil,
 	filterPropTypeUtil,
 	gradientColorStopPropTypeUtil,
-	grayscaleFilterPropTypeUtil,
-	hueRotateFilterPropTypeUtil,
 	imageAttachmentIdPropType,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
-	invertFilterPropTypeUtil,
 	layoutDirectionPropTypeUtil,
 	numberPropTypeUtil,
 	type Props,
-	saturateFilterPropTypeUtil,
-	sepiaFilterPropTypeUtil,
 	shadowPropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
 	strokePropTypeUtil,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { getMediaAttachment } from '@elementor/wp-media';
 
 import { initStyleTransformers } from '../init-style-transformers';
@@ -54,6 +46,76 @@ type Payload = {
 	props: Props;
 	expected: Record< string, unknown >;
 };
+
+const filters = filterPropTypeUtil.create( [
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'blur' ),
+		args: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'brightness' ),
+		args: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'contrast' ),
+		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'grayscale' ),
+		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'invert' ),
+		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'sepia' ),
+		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'saturate' ),
+		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'hue-rotate' ),
+		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+	} ),
+] );
+
+const backDropFilters = backdropFilterPropTypeUtil.create( [
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'blur' ),
+		args: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'brightness' ),
+		args: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'contrast' ),
+		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'grayscale' ),
+		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'invert' ),
+		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'sepia' ),
+		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'saturate' ),
+		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
+	} ),
+	cssFilterFunctionPropUtil.create( {
+		func: stringPropTypeUtil.create( 'hue-rotate' ),
+		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
+	} ),
+] );
 
 describe( 'styles prop resolver', () => {
 	it.each< Payload >( [
@@ -184,7 +246,7 @@ describe( 'styles prop resolver', () => {
 			},
 		},
 		{
-			name: 'background (only image url)',
+			name: 'background (image url and default values)',
 			props: {
 				background: backgroundPropTypeUtil.create( {
 					'background-overlay': backgroundOverlayPropTypeUtil.create( [
@@ -202,12 +264,15 @@ describe( 'styles prop resolver', () => {
 			},
 			expected: {
 				'background-image': 'url(https://localhost.test/test-image.png)',
+				'background-repeat': 'repeat',
+				'background-attachment': 'scroll',
+				'background-size': 'auto auto',
+				'background-position': '0% 0%',
 			},
 		},
 		{
 			name: 'background (full)',
 			prepare: () => {
-				jest.mocked( isExperimentActive ).mockReturnValue( true );
 				jest.mocked( getMediaAttachment ).mockImplementation(
 					( args ) => Promise.resolve( mockAttachmentData( args.id ) ) as never
 				);
@@ -280,32 +345,7 @@ describe( 'styles prop resolver', () => {
 		{
 			name: 'filter',
 			props: {
-				filter: filterPropTypeUtil.create( [
-					blurFilterPropTypeUtil.create( {
-						blur: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
-					} ),
-					brightnessFilterPropTypeUtil.create( {
-						brightness: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
-					} ),
-					contrastFilterPropTypeUtil.create( {
-						contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
-					} ),
-					grayscaleFilterPropTypeUtil.create( {
-						grayscale: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
-					} ),
-					invertFilterPropTypeUtil.create( {
-						invert: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
-					} ),
-					sepiaFilterPropTypeUtil.create( {
-						sepia: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
-					} ),
-					saturateFilterPropTypeUtil.create( {
-						saturate: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
-					} ),
-					hueRotateFilterPropTypeUtil.create( {
-						'hue-rotate': sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
-					} ),
-				] ),
+				filter: filters,
 			},
 			expected: {
 				filter: 'blur(1px) brightness(90%) contrast(50%) grayscale(70%) invert(60%) sepia(30%) saturate(25%) hue-rotate(10deg)',
@@ -314,32 +354,7 @@ describe( 'styles prop resolver', () => {
 		{
 			name: 'backdrop-filter',
 			props: {
-				'backdrop-filter': backdropFilterPropTypeUtil.create( [
-					blurFilterPropTypeUtil.create( {
-						blur: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
-					} ),
-					brightnessFilterPropTypeUtil.create( {
-						brightness: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
-					} ),
-					contrastFilterPropTypeUtil.create( {
-						contrast: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
-					} ),
-					grayscaleFilterPropTypeUtil.create( {
-						grayscale: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
-					} ),
-					invertFilterPropTypeUtil.create( {
-						invert: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
-					} ),
-					sepiaFilterPropTypeUtil.create( {
-						sepia: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
-					} ),
-					saturateFilterPropTypeUtil.create( {
-						saturate: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
-					} ),
-					hueRotateFilterPropTypeUtil.create( {
-						'hue-rotate': sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
-					} ),
-				] ),
+				'backdrop-filter': backDropFilters,
 			},
 			expected: {
 				'backdrop-filter':

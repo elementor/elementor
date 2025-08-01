@@ -23,7 +23,6 @@ import {
 	useUserStylesCapability,
 	validateStyleLabel,
 } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
@@ -47,9 +46,12 @@ jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn().mockReturnValue( false ),
+
+jest.mock( '../use-can-convert-local-class-to-global', () => ( {
+	useCanConvertLocalClassToGlobal: jest.fn( () => ( {
+		canConvert: false,
+		styleDef: null,
+	} ) ),
 } ) );
 
 // MUI use the useId hook behind the scenes, and it breaks the tests.
@@ -71,6 +73,7 @@ const providerLocalMockStyle = createMockStyleDefinitionWithVariants( {
 			props: {
 				'text-align': 'left',
 			},
+			custom_css: null,
 		},
 		{
 			meta: {
@@ -80,6 +83,7 @@ const providerLocalMockStyle = createMockStyleDefinitionWithVariants( {
 			props: {
 				'text-align': 'right',
 			},
+			custom_css: null,
 		},
 	],
 } );
@@ -253,7 +257,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b', 'provider-2-a' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 	} );
 
@@ -282,7 +286,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'provider-1-a' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 	} );
 
@@ -306,7 +310,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 
 		expect( setActive ).toHaveBeenCalledWith( 'local' );
@@ -424,7 +428,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b', 'new-class-id' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 
 		await waitFor( () => expect( setActive ).toHaveBeenCalledWith( 'new-class-id' ) );
@@ -460,7 +464,7 @@ describe( '<CssClassSelector />', () => {
 			props: {
 				'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-b', 'new-class-id' ] },
 			},
-			withHistory: true,
+			withHistory: false,
 		} );
 
 		await waitFor( () => expect( setActive ).toHaveBeenCalledWith( 'new-class-id' ) );
@@ -839,7 +843,7 @@ describe( '<CssClassSelector />', () => {
 				props: {
 					'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
 				},
-				withHistory: true,
+				withHistory: false,
 			} );
 		} );
 
@@ -1092,10 +1096,6 @@ describe( '<CssClassSelector />', () => {
 		beforeEach( () => {
 			jest.mocked( getElementLabel ).mockImplementation( ( id ) => {
 				return id === 'mock-element' ? 'Mock Element' : '';
-			} );
-
-			jest.mocked( isExperimentActive ).mockImplementation( ( experimentName: string ) => {
-				return experimentName === 'e_v_3_30';
 			} );
 		} );
 

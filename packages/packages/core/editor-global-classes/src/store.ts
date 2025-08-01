@@ -1,5 +1,6 @@
 import { mergeProps, type Props } from '@elementor/editor-props';
 import {
+	type CustomCss,
 	getVariantByMeta,
 	type StyleDefinition,
 	type StyleDefinitionID,
@@ -111,26 +112,32 @@ export const slice = createSlice( {
 			state,
 			{
 				payload,
-			}: PayloadAction< { id: StyleDefinitionID; meta: StyleDefinitionVariant[ 'meta' ]; props: Props } >
+			}: PayloadAction< {
+				id: StyleDefinitionID;
+				meta: StyleDefinitionVariant[ 'meta' ];
+				props: Props;
+				custom_css?: CustomCss | null;
+			} >
 		) {
 			const style = state.data.items[ payload.id ];
 
 			if ( ! style ) {
 				throw new GlobalClassNotFoundError( { context: { styleId: payload.id } } );
 			}
+
 			localHistory.next( state.data );
 
 			const variant = getVariantByMeta( style, payload.meta );
+			let customCss = ( 'custom_css' in payload ? payload.custom_css : variant?.custom_css ) ?? null;
+			customCss = customCss?.raw ? customCss : null;
 
 			if ( variant ) {
 				variant.props = mergeProps( variant.props, payload.props );
+				variant.custom_css = customCss;
 
-				if ( Object.keys( variant.props ).length === 0 ) {
-					// If the props object is empty after merging, we remove the variant.
-					style.variants = style.variants.filter( ( v ) => v !== variant );
-				}
+				style.variants = getNonEmptyVariants( style );
 			} else {
-				style.variants.push( { meta: payload.meta, props: payload.props } );
+				style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
 			}
 
 			state.isDirty = true;
@@ -179,6 +186,12 @@ export const slice = createSlice( {
 	},
 } );
 
+const getNonEmptyVariants = ( style: StyleDefinition ) => {
+	return style.variants.filter(
+		( { props, custom_css: customCss }: StyleDefinitionVariant ) => Object.keys( props ).length || customCss?.raw
+	);
+};
+
 // Selectors
 export const selectData = ( state: SliceState< typeof slice > ) => state[ SLICE_NAME ].data;
 
@@ -200,3 +213,7 @@ export const selectOrderedClasses = createSelector( selectGlobalClasses, selectO
 
 export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
 	state[ SLICE_NAME ].data.items[ id ] ?? null;
+
+export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
+	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )
+);

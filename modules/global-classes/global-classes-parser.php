@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -89,7 +90,7 @@ class Global_Classes_Parser {
 				continue;
 			}
 
-			if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
+			if ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
 				if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
 					$result->errors()->add( "$item_id.id", 'duplicated_class_label' );
 

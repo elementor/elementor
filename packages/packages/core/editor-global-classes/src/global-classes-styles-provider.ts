@@ -1,6 +1,5 @@
-import { generateId } from '@elementor/editor-styles';
+import { generateId, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import {
 	__dispatch as dispatch,
 	__getState as getState,
@@ -30,13 +29,9 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		all: () => selectOrderedClasses( getState() ),
 		get: ( id ) => selectClass( getState(), id ),
 		resolveCssName: ( id: string ) => {
-			if ( ! isExperimentActive( 'e_v_3_30' ) ) {
-				return id;
-			}
-
 			return selectClass( getState(), id )?.label ?? id;
 		},
-		create: ( label ) => {
+		create: ( label, variants: StyleDefinitionVariant[] = [] ) => {
 			const classes = selectGlobalClasses( getState() );
 
 			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
@@ -53,7 +48,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id,
 					type: 'class',
 					label,
-					variants: [],
+					variants,
 				} )
 			);
 
@@ -75,6 +70,16 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id: args.id,
 					meta: args.meta,
 					props: args.props,
+				} )
+			);
+		},
+		updateCustomCss: ( args ) => {
+			dispatch(
+				slice.actions.updateProps( {
+					id: args.id,
+					meta: args.meta,
+					custom_css: args.custom_css,
+					props: {},
 				} )
 			);
 		},

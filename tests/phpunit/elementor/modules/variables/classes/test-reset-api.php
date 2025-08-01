@@ -42,17 +42,26 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 	public function test_admin_user__has__enough_permissions_to_perform_action() {
 		$this->act_as_admin();
-		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_action() );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_rw_action() );
+	}
+
+	public function test_author_user__has__enough_permissions_to_perform_actions() {
+		$this->act_as( 'author' );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
 	}
 
 	public function test_editor_user__has__enough_permissions_to_perform_action() {
 		$this->act_as_editor();
-		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_action() );
+		$this->assertTrue( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
 	}
 
 	public function test_subscriber_user__does_not_have__enough_permissions_to_perform_action() {
 		$this->act_as_subscriber();
-		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_ro_action() );
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
 	}
 
 	public function test_create_variable__with_valid_data() {

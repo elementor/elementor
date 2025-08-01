@@ -16,16 +16,14 @@
 	.elementor-icon-list-items.elementor-inline-items {
 		display: flex;
 		flex-wrap: wrap;	
-		margin-right: -8px;
-		margin-left: -8px;
+		margin-inline: -8px;
 
 		.elementor-inline-item {
 			word-break: break-word;
 		}
 
 		.elementor-icon-list-item {
-			margin-right: 8px;
-			margin-left: 8px;
+			margin-inline: 8px;
 
 			&:after {
 				width: auto;
@@ -33,10 +31,8 @@
 				inset-inline-start: auto;
 				inset-inline-end: -8px;
 				height: 100%;
-				border-top: 0;
-				border-bottom: 0;
-				border-right: 0;
-				border-left-width: 1px;
+				border-width: 0;
+				border-inline-start-width: 1px;
 				border-style: solid;
 			}
 		}
@@ -55,7 +51,7 @@
 
 		&:after {
 			position: absolute;
-			bottom: 0;
+			inset-block-end: 0;
 			width: 100%;
 		}
 
@@ -74,7 +70,7 @@
 	.elementor-icon-list-icon {
 		display: flex;
 		position: relative;
-		top: var(--icon-vertical-offset, initial);
+		inset-block-start: var(--icon-vertical-offset, initial);
 
 		svg {
 			width: $e-icon-list-svg-icon-size;
