@@ -3,6 +3,7 @@
  * The code should be moved to the appropriate packages.
  */
 
+import { init as initConnect } from './connect';
 import { init as initDocumentsIndicator } from './documents-indicator';
 import { init as initDocumentsPreview } from './documents-preview';
 import { init as initDocumentsSave } from './documents-save';
@@ -33,4 +34,5 @@ export function init() {
 	initThemeBuilder();
 	initUserPreferences();
 	initWordpress();
+	initConnect();
 }

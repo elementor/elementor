@@ -14,6 +14,7 @@ export function init() {
 				href: 'https://go.elementor.com/editor-top-bar-learn/',
 				icon: HelpIcon,
 				target: '_blank',
+				showExternalLinkIcon: true,
 				onClick: () => {
 					const extendedWindow = window as unknown as ExtendedWindow;
 					const config = extendedWindow?.elementorCommon?.eventsManager?.config;
