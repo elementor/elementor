@@ -52,12 +52,10 @@ export const SlotChildren = ( {
 	children,
 	whitelist = [],
 	sorted = false,
-	props = {},
 }: {
 	children: React.ReactNode;
 	whitelist: React.FC[];
 	sorted?: boolean;
-	props?: Record< string, unknown >;
 } ) => {
 	const filtered = (
 		! whitelist.length
@@ -71,9 +69,7 @@ export const SlotChildren = ( {
 		sort( filtered, whitelist );
 	}
 
-	return filtered.map( ( child, index ) => (
-		<React.Fragment key={ index }>{ React.cloneElement( child, props ) }</React.Fragment>
-	) );
+	return filtered.map( ( child, index ) => <React.Fragment key={ index }>{ child }</React.Fragment> );
 };
 
 const sort = ( childrenArray: React.ReactElement[], whitelist: unknown[] ) => {

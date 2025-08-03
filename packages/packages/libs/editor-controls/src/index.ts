@@ -54,12 +54,7 @@ export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-contex
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
 
-export {
-	injectIntoRepeaterItemIcon,
-	injectIntoRepeaterItemLabel,
-	injectIntoRepeaterHeaderActions,
-	injectIntoRepeaterItemActions,
-} from './components/unstable-repeater/locations';
+export { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from './locations';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

@@ -5,9 +5,15 @@ import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { ControlAdornments } from '../../../control-adornments/control-adornments';
 import { SlotChildren } from '../../../control-replacements';
 import { AddItemAction } from '../actions/add-item-action';
-import { RepeaterHeaderActionsSlot } from '../locations';
+import { useRepeaterContext } from '../context/repeater-context';
+import { HeaderItemsSlot } from './header-items-slot';
 
 export const Header = ( { label, children }: React.PropsWithChildren< { label: string } > ) => {
+	const {
+		config: {
+			headerItems: { Slot: ActionsSlot },
+		},
+	} = useRepeaterContext();
 	const { value } = useBoundProp();
 
 	return (
@@ -15,8 +21,8 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			<Typography component="label" variant="caption" color="text.secondary">
 				{ label }
 			</Typography>
-			<RepeaterHeaderActionsSlot value={ value } />
-			<SlotChildren whitelist={ [ AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
+			<SlotChildren whitelist={ [ HeaderItemsSlot, AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
+			<ActionsSlot value={ value } />
 			<ControlAdornments />
 		</Stack>
 	);

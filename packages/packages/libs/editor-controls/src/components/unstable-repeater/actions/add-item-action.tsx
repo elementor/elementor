@@ -11,17 +11,15 @@ export const AddItemAction = ( {
 	disabled = false,
 	tooltip = false,
 	tooltipContent = null,
-	newItemIndex,
 }: {
 	disabled?: boolean;
 	tooltip?: boolean;
 	tooltipContent?: React.ReactNode;
-	newItemIndex?: number;
 } ) => {
 	const { addItem } = useRepeaterContext();
 	const shouldShowTooltip = tooltip && tooltipContent;
 
-	const onClick = () => addItem( { index: newItemIndex } );
+	const onClick = () => addItem();
 
 	return (
 		<ConditionalToolTip content={ tooltipContent } shouldShowTooltip={ !! shouldShowTooltip }>
