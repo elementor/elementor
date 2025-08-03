@@ -12,7 +12,6 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'the-plus-addons-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'stratum', installSource: 'api' },
 	{ pluginName: 'bdthemes-prime-slider-lite', installSource: 'api' },
-	{ pluginName: 'wunderwp', installSource: 'api' },
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api', hasInstallationPage: true },
