@@ -1,11 +1,9 @@
-import * as React from 'react';
-import { closeDialog, openDialog } from '@elementor/editor-global-dialog';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
-import { Button } from '@elementor/ui';
 
-import { API_ERROR_CODES, apiClient, type ApiContext } from './api';
-import { DuplicatLabelDialog } from './components/class-manager/duplicate-label-dialog';
+import { apiClient, type ApiContext } from './api';
+
 import { type GlobalClasses, selectData, selectFrontendInitialData, selectPreviewInitialData, slice } from './store';
+import { showErrorDialog } from './components/error-dialog-controler';
 
 type Options = {
 	context: ApiContext;
@@ -21,15 +19,8 @@ export async function saveGlobalClasses( { context }: Options ) {
 			order: state.order,
 			changes: calculateChanges( state, currentContext( getState() ) ),
 		} );
-	} catch ( e: { response: { data: { data: { message: string; code: string; mata: any } } } } ) {
-		const { code, data } = e.response.data;
-
-		if ( code === API_ERROR_CODES.DUPLICATED_LABEL ) {
-			openDialog( {
-				title: 'ERROR',
-				component: <DuplicatLabelDialog id={ data.meta.key } />,
-			} );
-		}
+	} catch (e) {
+		showErrorDialog(e);
 	}
 
 	dispatch( slice.actions.reset( { context } ) );
