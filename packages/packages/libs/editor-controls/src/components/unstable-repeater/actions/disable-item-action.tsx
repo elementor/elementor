@@ -3,22 +3,16 @@ import { EyeIcon, EyeOffIcon } from '@elementor/icons';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { injectIntoRepeaterItemActions } from '../../../locations';
 import { useRepeaterContext } from '../context/repeater-context';
-
 const SIZE = 'tiny';
 
-export const DisableItemAction = () => {
-	injectIntoRepeaterItemActions( {
-		component: Action,
-		id: 'repeater-item-disable-action',
-	} );
-
-	return null;
-};
-
-const Action = ( { index }: { index: number } ) => {
+export const DisableItemAction = ( { index = -1 }: { index?: number } ) => {
 	const { items, updateItem } = useRepeaterContext();
+
+	if ( index === -1 ) {
+		return null;
+	}
+
 	const propDisabled = items[ index ]?.disabled ?? false;
 
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );

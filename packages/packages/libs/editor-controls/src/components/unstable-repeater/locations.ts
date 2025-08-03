@@ -16,5 +16,4 @@ export const { Slot: RepeaterHeaderActionsSlot, inject: injectIntoRepeaterHeader
 
 export const { Slot: RepeaterItemActionsSlot, inject: injectIntoRepeaterItemActions } = createLocation< {
 	index: number;
-	bind: string;
 } >();

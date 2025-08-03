@@ -1,10 +1,6 @@
 import * as React from 'react';
 
-import { SlotChildren } from '../../../control-replacements';
 import { SortableItem, SortableProvider } from '../../sortable';
-import { DisableItemAction } from '../actions/disable-item-action';
-import { DuplicateItemAction } from '../actions/duplicate-item-action';
-import { RemoveItemAction } from '../actions/remove-item-action';
 import { useRepeaterContext } from '../context/repeater-context';
 import { type Item, type ItemProps, type RepeatablePropValue } from '../types';
 
@@ -32,9 +28,6 @@ export const ItemsContainer = ( {
 
 	return (
 		<>
-			<SlotChildren whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction ] } sorted>
-				{ children }
-			</SlotChildren>
 			<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
 				{ uniqueKeys?.map( ( key: number, index: number ) => {
 					const value = items?.[ index ] as Item< RepeatablePropValue >;
@@ -45,12 +38,13 @@ export const ItemsContainer = ( {
 
 					return (
 						<SortableItem id={ key } key={ `sortable-${ key }` } disabled={ ! isSortable }>
-							{ React.isValidElement< ItemProps< Item< RepeatablePropValue > > >( itemTemplate )
+							{ React.isValidElement< React.PropsWithChildren< ItemProps< T > > >( itemTemplate )
 								? React.cloneElement( itemTemplate, {
 										key: index,
 										value,
 										index,
-										openOnMount: index === openItem,
+										openOnMount: key === openItem,
+										children,
 								  } )
 								: null }
 						</SortableItem>
