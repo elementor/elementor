@@ -4,7 +4,6 @@ import { renderHook } from '@testing-library/react';
 
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
-import { hasVariableType } from '../../variables-registry/variable-type-registry';
 import { useInitialValue } from '../use-initial-value';
 import { useVariable } from '../use-prop-variables';
 
@@ -16,10 +15,8 @@ jest.mock( '@elementor/editor-controls', () => ( {
 
 jest.mock( '../../variables-registry/variable-type-registry', () => ( {
 	hasVariableType: jest.fn().mockImplementation( ( type: string ) => {
-		return type in {
-			[ colorVariablePropTypeUtil.key ]: true,
-			[ fontVariablePropTypeUtil.key ]: true,
-		};
+		const variableTypes = [ colorVariablePropTypeUtil, fontVariablePropTypeUtil ];
+		return variableTypes.some( ( variableType ) => variableType.key === type );
 	} ),
 } ) );
 
