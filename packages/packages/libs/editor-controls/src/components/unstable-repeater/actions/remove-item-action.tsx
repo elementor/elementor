@@ -3,13 +3,17 @@ import { XIcon } from '@elementor/icons';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { injectIntoRepeaterItemActions } from '../../../locations';
 import { useRepeaterContext } from '../context/repeater-context';
+import { injectIntoRepeaterItemActions } from '../locations';
 
 const SIZE = 'tiny';
 
 export const RemoveItemAction = () => {
-	injectIntoRepeaterItemActions( Action, 'remove' );
+	injectIntoRepeaterItemActions( {
+		component: Action,
+		id: 'repeater-item-remove-action',
+		options: { overwrite: true },
+	} );
 
 	return null;
 };

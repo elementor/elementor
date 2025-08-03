@@ -187,7 +187,7 @@ const ItemIconGradient = ( { value }: { value: BackgroundOverlayItemPropValue } 
 	return <StyledUnstableColorIndicator size="inherit" component="span" value={ gradient } />;
 };
 
-export const ItemLabel = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+const ItemLabel = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemLabelImage value={ value as BackgroundImageOverlay } />;

@@ -3,19 +3,31 @@ import { CopyIcon } from '@elementor/icons';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { injectIntoRepeaterItemActions } from '../../../locations';
+import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
+import { isDuplicationProhibited } from '../../../utils/repeater-control';
 import { useRepeaterContext } from '../context/repeater-context';
+import { injectIntoRepeaterItemActions } from '../locations';
 
 const SIZE = 'tiny';
 
 export const DuplicateItemAction = () => {
-	injectIntoRepeaterItemActions( Action, 'duplicate' );
+	injectIntoRepeaterItemActions( {
+		component: Action,
+		id: 'repeater-item-duplicate-action',
+		options: { overwrite: true },
+	} );
 
 	return null;
 };
 
 const Action = ( { index }: { index: number } ) => {
 	const { items, addItem } = useRepeaterContext();
+	const { bind } = useBoundProp();
+
+	if ( isDuplicationProhibited( bind ) ) {
+		return null;
+	}
+
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 
 	const onClick = () => {

@@ -4,7 +4,7 @@ import { type PropValue } from '@elementor/editor-props';
 import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../../../locations';
+import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
 import { type ItemProps } from '../types';
 import { EditItemPopover } from './edit-item-popover';
 import { usePopover } from './use-popover';

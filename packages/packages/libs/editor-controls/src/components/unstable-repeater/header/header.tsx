@@ -4,8 +4,8 @@ import { Stack, Typography } from '@elementor/ui';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { ControlAdornments } from '../../../control-adornments/control-adornments';
 import { SlotChildren } from '../../../control-replacements';
-import { RepeaterHeaderActionsSlot } from '../../../locations';
 import { AddItemAction } from '../actions/add-item-action';
+import { RepeaterHeaderActionsSlot } from '../locations';
 
 export const Header = ( { label, children }: React.PropsWithChildren< { label: string } > ) => {
 	const { value } = useBoundProp();
