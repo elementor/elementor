@@ -5,36 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-/**
- * User Data API
- *
- * Provides a simple REST API endpoint for current user data
- * to replace the blocked WordPress wp/v2/users/me endpoint.
- *
- * @since 1.0.0
- */
 class User_Data {
     const API_NAMESPACE = 'elementor/v1';
     const API_BASE = '/user-data/current-user';
 
-	/**
-	 * Initialize the API
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 */
 	public static function init() {
 		add_action( 'rest_api_init', [ __CLASS__, 'register_routes' ] );
 	}
 
-	/**
-	 * Register REST API routes
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 */
 	public static function register_routes() {
 		register_rest_route( self::API_NAMESPACE, self::API_BASE, [
 			[
@@ -68,11 +46,6 @@ class User_Data {
 
 	/**
 	 * Check permissions for the endpoint
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 *
 	 * @param \WP_REST_Request $request The request object.
 	 * @return bool|\WP_Error Whether the user has permission.
 	 */
@@ -86,11 +59,6 @@ class User_Data {
 
 	/**
 	 * Get current user data
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 *
 	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response|\WP_Error Response object or error.
 	 */
@@ -125,11 +93,6 @@ class User_Data {
 
 	/**
 	 * Update current user data
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 * @static
-	 *
 	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response|\WP_Error Response object or error.
 	 */
