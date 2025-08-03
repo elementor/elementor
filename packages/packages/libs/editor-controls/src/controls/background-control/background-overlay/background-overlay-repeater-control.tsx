@@ -77,10 +77,10 @@ const backgroundResolutionOptions = [
 ];
 
 export const BackgroundOverlayRepeaterControl = createControl( () => {
-	const { propType, value: backgroundValues, setValue } = useBoundProp( backgroundOverlayPropTypeUtil );
+	const { propType, value: overlayValues, setValue } = useBoundProp( backgroundOverlayPropTypeUtil );
 
 	return (
-		<PropProvider propType={ propType } value={ backgroundValues } setValue={ setValue }>
+		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue }>
 			<UnstableRepeater
 				initial={ getInitialBackgroundOverlay() as RepeatablePropValue }
 				propTypeUtil={ backgroundOverlayPropTypeUtil as PropTypeUtil< string, RepeatablePropValue[] > }

@@ -9,6 +9,11 @@ const SIZE = 'tiny';
 
 export const DuplicateItemAction = ( { index = -1 }: { index?: number } ) => {
 	const { items, addItem } = useRepeaterContext();
+
+	if ( index === -1 ) {
+		return null;
+	}
+
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 
 	const onClick = () => {

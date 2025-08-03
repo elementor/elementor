@@ -26,7 +26,6 @@ export const Item = < T extends RepeatablePropValue >( {
 }: React.PropsWithChildren< ItemProps< T > > ) => {
 	const [ anchorEl, setAnchorEl ] = useState< AnchorEl >( null );
 	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount as boolean, () => {} );
-	const { bind } = useBoundProp();
 
 	return (
 		<>
@@ -52,6 +51,7 @@ export const Item = < T extends RepeatablePropValue >( {
 				actions={
 					<>
 						<RepeaterItemActionsSlot index={ index ?? -1 } />
+
 						<SlotChildren
 							whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction ] as React.FC[] }
 							props={ { index } }
