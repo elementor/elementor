@@ -13,27 +13,38 @@ import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
 
-const skipControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ];
+// Rename skipControls to disabledControls to better reflect its new purpose
+const disabledControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ];
 
 export const StylesInheritanceIndicator = () => {
 	const { path, propType } = useBoundProp();
-
 	const inheritanceChain = useStylesInheritanceChain( path );
 
-	if ( ! path || path.some( ( pathItem ) => skipControls.includes( pathItem ) ) || ! inheritanceChain.length ) {
+	// Remove the skip check and only check for path and inheritanceChain
+	if ( !path || !inheritanceChain.length ) {
 		return null;
 	}
 
-	return <Indicator inheritanceChain={ inheritanceChain } path={ path } propType={ propType } />;
+	// Pass isDisabled flag to Indicator
+	const isDisabled = path.some((pathItem) => disabledControls.includes(pathItem));
+
+	return <Indicator 
+		inheritanceChain={inheritanceChain} 
+		path={path} 
+		propType={propType} 
+		isDisabled={isDisabled} 
+	/>;
 };
 
+// Update IndicatorProps type
 type IndicatorProps = {
 	inheritanceChain: SnapshotPropValue[];
 	path: string[];
 	propType: PropType;
+	isDisabled?: boolean;
 };
 
-const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
+const Indicator = ({ inheritanceChain, path, propType, isDisabled }: IndicatorProps) => {
 	const { id: currentStyleId, provider: currentStyleProvider, meta: currentStyleMeta } = useStyle();
 
 	const currentItem = currentStyleId
@@ -62,12 +73,18 @@ const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
 
 	return (
 		<StylesInheritanceInfotip
-			inheritanceChain={ inheritanceChain }
-			path={ path }
-			propType={ propType }
-			label={ label }
+			inheritanceChain={inheritanceChain}
+			path={path}
+			propType={propType}
+			label={label}
+			// Pass isDisabled to infotip to disable hover/click events
+			isDisabled={isDisabled}
 		>
-			<StyleIndicator { ...styleIndicatorProps } />
+			<StyleIndicator 
+				{...styleIndicatorProps} 
+				// Add disabled visual state if needed
+				isDisabled={isDisabled}
+			/>
 		</StylesInheritanceInfotip>
 	);
 };
