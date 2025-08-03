@@ -1,7 +1,7 @@
 import { UserIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
-import type { ExtendedWindow } from '../../../types';
+import { type ExtendedWindow } from '../../../types';
 
 export default function useConnectLinkConfig() {
 	const extendedWindow = window as unknown as ExtendedWindow;
