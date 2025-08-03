@@ -376,7 +376,7 @@ const TemplateLibraryManager = function() {
 			},
 			onShow: () => {
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.renameDialog,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.renameDialog,
 				} );
 				$inputArea.trigger( 'focus' );
 			},
@@ -509,7 +509,7 @@ const TemplateLibraryManager = function() {
 				inputArea.focus();
 
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.newFolderModal,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.newFolderModal,
 				} );
 			},
 		} );
@@ -572,7 +572,7 @@ const TemplateLibraryManager = function() {
 			},
 			onShow: () => {
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteFolderDialog,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.deleteFolderDialog,
 				} );
 			},
 		} );
@@ -616,7 +616,7 @@ const TemplateLibraryManager = function() {
 				options.onSuccess?.( response );
 
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteFolderDialog,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.deleteFolderDialog,
 				} );
 
 				elementor.templates.eventManager.sendItemDeletedEvent( {
@@ -792,7 +792,7 @@ const TemplateLibraryManager = function() {
 				},
 				onShow: () => {
 					elementor.templates.eventManager.sendPageViewEvent( {
-						location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteDialog,
+						location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.deleteDialog,
 					} );
 				},
 			} );

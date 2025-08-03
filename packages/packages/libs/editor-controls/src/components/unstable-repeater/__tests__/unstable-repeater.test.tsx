@@ -3,10 +3,10 @@ import { createMockPropType, renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
-import { TooltipedAddItemAction } from '../actions/tooltiped-add-item-action';
 import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
+import { TooltipAddItemAction } from '../actions/tooltip-add-item-action';
 import { Header } from '../header/header';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
@@ -53,7 +53,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
@@ -89,7 +89,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
@@ -125,7 +125,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
@@ -164,7 +164,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
@@ -192,7 +192,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 			</UnstableRepeater>
@@ -268,7 +268,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ customInitialValues }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...customItemSettings } /> } />
 			</UnstableRepeater>
@@ -309,7 +309,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DuplicateItemAction />
@@ -368,7 +368,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<RemoveItemAction />
@@ -421,7 +421,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
@@ -471,7 +471,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
@@ -493,7 +493,7 @@ describe( 'UnstableRepeater', () => {
 		] );
 	} );
 
-	it( 'should open the first repeater item popover', () => {
+	it( 'should open the added repeater item popover', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
@@ -519,7 +519,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipedAddItemAction />
+					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> } />
 			</UnstableRepeater>

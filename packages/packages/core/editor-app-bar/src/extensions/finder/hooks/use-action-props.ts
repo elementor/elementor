@@ -10,10 +10,10 @@ export default function useActionProps() {
 		icon: SearchIcon,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const config = extendedWindow?.elementor?.editorEvents?.config;
+			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 			if ( config ) {
-				extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.finder, {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.finder, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.finder,
 					trigger: config.triggers.toggleClick,

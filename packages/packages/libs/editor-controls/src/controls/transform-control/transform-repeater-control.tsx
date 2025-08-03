@@ -5,14 +5,20 @@ import { Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropProvider, useBoundProp } from '../../bound-prop-context';
+import {
+	Header,
+	Item,
+	ItemsContainer,
+	TooltipAddItemAction,
+	UnstableRepeater,
+} from '../../components/unstable-repeater';
+import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
+import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
 import { createControl } from '../../create-control';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
-import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from "./types";
-import { TooltipedAddItemAction, Header, Item, ItemsContainer, UnstableRepeater } from "../../components/unstable-repeater";
-import { DisableItemAction } from "../../components/unstable-repeater/actions/disable-item-action";
-import { RemoveItemAction } from "../../components/unstable-repeater/actions/remove-item-action";
+import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './types';
 
 export const TransformRepeaterControl = createControl( () => {
 	const { propType, value: transformValues, setValue } = useBoundProp( transformPropTypeUtil );
@@ -31,9 +37,9 @@ export const TransformRepeaterControl = createControl( () => {
 				propTypeUtil={ transformPropTypeUtil }
 			>
 				<Header label={ __( 'Transform', 'elementor' ) }>
-					<TooltipedAddItemAction
+					<TooltipAddItemAction
 						disabled={ shouldDisableAddItem }
-						content={ ToolTip }
+						tooltipContent={ ToolTip }
 						enableTooltip={ shouldDisableAddItem }
 					/>
 				</Header>

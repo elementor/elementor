@@ -7,21 +7,23 @@ import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
-export const TooltipedAddItemAction = ( {
+export const TooltipAddItemAction = ( {
 	disabled = false,
-	content,
 	enableTooltip = false,
+	tooltipContent = null,
+	newItemIndex,
 }: {
 	disabled?: boolean;
 	enableTooltip?: boolean;
-	content?: React.ReactNode;
+	tooltipContent?: React.ReactNode;
+	newItemIndex?: number;
 } ) => {
 	const { addItem } = useRepeaterContext();
 
-	const onClick = () => addItem();
+	const onClick = () => addItem( { index: newItemIndex } );
 
 	return (
-		<ConditionalToolTip content={ content } enable={ enableTooltip }>
+		<ConditionalToolTip content={ tooltipContent } enable={ enableTooltip }>
 			<Box sx={ { ml: 'auto' } }>
 				<IconButton
 					size={ SIZE }

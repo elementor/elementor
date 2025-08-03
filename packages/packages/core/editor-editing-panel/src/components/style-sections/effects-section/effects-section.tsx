@@ -4,7 +4,6 @@ import {
 	FilterRepeaterControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
-	UnstableTransformRepeaterControl,
 } from '@elementor/editor-controls';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';

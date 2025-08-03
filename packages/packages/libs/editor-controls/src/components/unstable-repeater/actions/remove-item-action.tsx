@@ -3,18 +3,16 @@ import { XIcon } from '@elementor/icons';
 import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { injectIntoRepeaterItemActions } from '../../../locations';
 import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
 export const RemoveItemAction = () => {
-	const {
-		config: {
-			itemActions: { inject },
-		},
-	} = useRepeaterContext();
-
-	inject( Action, 'remove' );
+	injectIntoRepeaterItemActions( {
+		component: Action,
+		id: 'repeater-item-remove-action',
+	} );
 
 	return null;
 };

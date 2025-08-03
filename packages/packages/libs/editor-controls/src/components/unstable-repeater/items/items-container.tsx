@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useMemo } from 'react';
-import { type PropValue } from '@elementor/editor-props';
 
 import { SlotChildren } from '../../../control-replacements';
 import { SortableItem, SortableProvider } from '../../sortable';
@@ -8,42 +6,38 @@ import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
 import { useRepeaterContext } from '../context/repeater-context';
-import { type ItemProps } from '../types';
-import { ItemActionSlot } from './item-action-slot';
+import { type Item, type ItemProps, type RepeatablePropValue } from '../types';
 
-export const ItemsContainer = < T extends PropValue >( {
+export const ItemsContainer = ( {
 	itemTemplate,
 	isSortable = true,
 	children,
 }: React.PropsWithChildren< { itemTemplate: React.ReactNode; isSortable?: boolean } > ) => {
-	const { items, setItems, openItem } = useRepeaterContext();
-	const indexes = useMemo( () => items.map( ( _, index ) => index ), [ items ] );
+	const { items, setItems, uniqueKeys, setUniqueKeys, openItem } = useRepeaterContext();
 
 	if ( ! itemTemplate ) {
 		return null;
 	}
 
-	const onChangeOrder = ( newOrder: number[] ) => {
+	const onChangeOrder = ( newKeys: number[] ) => {
+		setUniqueKeys( newKeys );
 		setItems( ( prevItems ) =>
-			newOrder.map( ( key ) => {
-				const index = indexes.indexOf( key );
+			newKeys.map( ( key ) => {
+				const index = uniqueKeys.indexOf( key );
 
-				return prevItems[ index ];
+				return prevItems[ index ] as Item< RepeatablePropValue >;
 			} )
 		);
 	};
 
 	return (
 		<>
-			<SlotChildren
-				whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction, ItemActionSlot ] }
-				sorted
-			>
+			<SlotChildren whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction ] } sorted>
 				{ children }
 			</SlotChildren>
-			<SortableProvider value={ indexes } onChange={ onChangeOrder }>
-				{ indexes?.map( ( key: number, index: number ) => {
-					const value = items?.[ index ] as T;
+			<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
+				{ uniqueKeys?.map( ( key: number, index: number ) => {
+					const value = items?.[ index ] as Item< RepeatablePropValue >;
 
 					if ( ! value ) {
 						return null;
@@ -51,12 +45,12 @@ export const ItemsContainer = < T extends PropValue >( {
 
 					return (
 						<SortableItem id={ key } key={ `sortable-${ key }` } disabled={ ! isSortable }>
-							{ React.isValidElement< ItemProps< T > >( itemTemplate )
+							{ React.isValidElement< ItemProps< Item< RepeatablePropValue > > >( itemTemplate )
 								? React.cloneElement( itemTemplate, {
-										key,
+										key: index,
 										value,
 										index,
-										openOnMount: key === openItem,
+										openOnMount: index === openItem,
 								  } )
 								: null }
 						</SortableItem>
