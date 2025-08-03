@@ -1,42 +1,32 @@
+import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@elementor/ui';
+import { Dialog, DialogContent, DialogTitle } from '@elementor/ui';
 
-import { close, resolveDialog, SLICE_NAME } from '../slice';
-import { type DialogData } from '../types';
+import { subscribe } from '../event-bus';
+import { type DialogContent as DialogContentType, EVENT_TYPE } from '../notifier';
 
 export const GlobalDialog = () => {
-	const dispatch = useDispatch();
-	const dialog = useSelector(
-		( state: { [ SLICE_NAME ]: { activeDialog: DialogData | null } } ) => state[ SLICE_NAME ]?.activeDialog
-	);
+	const [ content, setContent ] = useState< DialogContentType | null >( null );
 
-	if ( ! dialog ) {
+	useEffect( () => {
+		const unsubOpen = subscribe< DialogContentType >( EVENT_TYPE.OPEN, setContent );
+		const unsubClose = subscribe( EVENT_TYPE.CLOSE, () => setContent( null ) );
+		return () => {
+			unsubOpen();
+			unsubClose();
+		};
+	}, [] );
+
+	if ( ! content ) {
 		return null;
 	}
 
-	const { title, content, actions = [] } = dialog;
-
-	const handleClose = () => dispatch( close() );
-
 	return (
 		<ThemeProvider>
-			<Dialog open id={ 'global-dialog' } onClose={ handleClose }>
-				<DialogTitle>{ title }</DialogTitle>
-				<DialogContent>{ content }</DialogContent>
-				<DialogActions>
-					{ actions.map( ( { text, type = 'primary', value }, index ) => (
-						<Button
-							key={ index }
-							variant={ type === 'primary' ? 'contained' : 'text' }
-							color="secondary"
-							onClick={ () => resolveDialog( value ) }
-						>
-							{ text }
-						</Button>
-					) ) }
-				</DialogActions>
+			<Dialog open onClose={ () => setContent( null ) }>
+				<DialogTitle>{ content.title }</DialogTitle>
+				<DialogContent>{ content.component }</DialogContent>
 			</Dialog>
 		</ThemeProvider>
 	);

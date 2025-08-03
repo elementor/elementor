@@ -1,4 +1,3 @@
-export * from './types';
-export * from './slice';
 export * from './components/global-dialog';
+export { openDialog, closeDialog } from './notifier';
 export { init } from './init';

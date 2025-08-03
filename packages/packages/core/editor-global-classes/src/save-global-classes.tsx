@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { openDialog } from '@elementor/editor-global-dialog';
+import { closeDialog, openDialog } from '@elementor/editor-global-dialog';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
+import { Button } from '@elementor/ui';
 
-import { apiClient, type ApiContext } from './api';
+import { API_ERROR_CODES, apiClient, type ApiContext } from './api';
+import { DuplicatLabelDialog } from './components/class-manager/duplicate-label-dialog';
 import { type GlobalClasses, selectData, selectFrontendInitialData, selectPreviewInitialData, slice } from './store';
 
 type Options = {
@@ -12,26 +14,25 @@ type Options = {
 export async function saveGlobalClasses( { context }: Options ) {
 	const state = selectData( getState() );
 	const apiAction = context === 'preview' ? apiClient.saveDraft : apiClient.publish;
+	const currentContext = context === 'preview' ? selectPreviewInitialData : selectFrontendInitialData;
 	try {
 		await apiAction( {
 			items: state.items,
 			order: state.order,
-			changes: calculateChanges( state, selectFrontendInitialData( getState() ) ),
+			changes: calculateChanges( state, currentContext( getState() ) ),
 		} );
-	} catch ( e ) {
-		const result = await openDialog( {
-			title: 'Confirm Delete',
-			dialogType: 'error',
-			content: <div>SUPPPPPPPPPPPPPP</div>,
-			actions: [
-				{ text: 'Cancel', type: 'secondary', value: 'C' },
-				{ text: 'Delete', type: 'primary', value: 'D' },
-			],
-		} );
-		console.log( { result } );
+	} catch ( e: { response: { data: { data: { message: string; code: string; mata: any } } } } ) {
+		const { code, data } = e.response.data;
 
-		console.error( 'ERROR', { e } );
+		if ( code === API_ERROR_CODES.DUPLICATED_LABEL ) {
+			openDialog( {
+				title: 'ERROR',
+				component: <DuplicatLabelDialog id={ data.meta.key } />,
+			} );
+		}
 	}
+
+	dispatch( slice.actions.reset( { context } ) );
 }
 
 function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {
