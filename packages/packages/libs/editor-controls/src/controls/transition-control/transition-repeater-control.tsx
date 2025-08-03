@@ -13,31 +13,35 @@ const DURATION_CONFIG = {
 	defaultUnit: 'ms',
 };
 
-const SELECTION_SIZE_PROPS = {
-	selectionLabel: 'Type',
-	sizeLabel: 'Duration',
-	selectionConfig: {
-		component: TransitionSelector,
-		props: {},
-	},
-	sizeConfigMap: {
-		...transitionProperties.reduce(
-			( acc, category ) => {
-				category.properties.forEach( ( property ) => {
-					acc[ property.value ] = DURATION_CONFIG;
-				} );
-				return acc;
-			},
-			{} as Record< string, typeof DURATION_CONFIG >
-		),
-	},
-};
+const getSelectionSizeProps = () => {
+	return {
+		selectionLabel: 'Type',
+		sizeLabel: 'Duration',
+		selectionConfig: {
+			component: TransitionSelector,
+			props: {},
+		},
+		sizeConfigMap: {
+			...transitionProperties.reduce(
+				( acc, category ) => {
+					category.properties.forEach( ( property ) => {
+						acc[ property.value ] = DURATION_CONFIG;
+					} );
+					return acc;
+				},
+				{} as Record< string, typeof DURATION_CONFIG >
+			),
+		},
+	};
+}
 
-const CHILD_CONTROL_CONFIG = {
-	propTypeUtil: selectionSizePropTypeUtil,
-	component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
-	props: SELECTION_SIZE_PROPS,
-};
+function getChildControlConfig() {
+	return {
+		propTypeUtil: selectionSizePropTypeUtil,
+		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
+		props: getSelectionSizeProps(),
+	};
+}
 
 export const TransitionRepeaterControl = createControl( () => {
 	return (
@@ -49,7 +53,7 @@ export const TransitionRepeaterControl = createControl( () => {
 			showDuplicate={ false }
 			showToggle={ true }
 			initialValues={ initialTransitionValue }
-			childControlConfig={ CHILD_CONTROL_CONFIG }
+			childControlConfig={ getChildControlConfig() }
 			propKey="transition"
 		/>
 	);
