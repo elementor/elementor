@@ -4,6 +4,10 @@ import { type PropValue } from '@elementor/editor-props';
 import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { SlotChildren } from '../../../control-replacements';
+import { DisableItemAction } from '../actions/disable-item-action';
+import { DuplicateItemAction } from '../actions/duplicate-item-action';
+import { RemoveItemAction } from '../actions/remove-item-action';
 import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
 import { type ItemProps } from '../types';
 import { EditItemPopover } from './edit-item-popover';
@@ -19,7 +23,8 @@ export const Item = < T extends PropValue >( {
 	value,
 	index,
 	openOnMount,
-}: ItemProps< T > ) => {
+	children,
+}: React.PropsWithChildren< ItemProps< T > > ) => {
 	const [ anchorEl, setAnchorEl ] = useState< AnchorEl >( null );
 	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount as boolean, () => {} );
 
@@ -44,7 +49,19 @@ export const Item = < T extends PropValue >( {
 						<Icon value={ value as T } />
 					</RepeaterItemIconSlot>
 				}
-				actions={ <RepeaterItemActionsSlot index={ index ?? -1 } /> }
+				actions={
+					<>
+						<RepeaterItemActionsSlot index={ index ?? -1 } />
+
+						<SlotChildren
+							whitelist={ [ DuplicateItemAction, DisableItemAction, RemoveItemAction ] as React.FC[] }
+							props={ { index } }
+							sorted
+						>
+							{ children }
+						</SlotChildren>
+					</>
+				}
 			/>
 			<EditItemPopover anchorRef={ ref } setAnchorEl={ setAnchorEl } popoverProps={ popoverProps }>
 				<Content anchorEl={ anchorEl } bind={ String( index ) } value={ value as T } />
