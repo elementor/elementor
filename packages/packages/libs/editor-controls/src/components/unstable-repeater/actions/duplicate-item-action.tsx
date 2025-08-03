@@ -4,21 +4,12 @@ import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
-import { useBoundProp } from '@elementor/editor-editing-panel';
 
 const SIZE = 'tiny';
 
 export const DuplicateItemAction = ( { index = -1 }: { index?: number } ) => {
 	const { items, addItem } = useRepeaterContext();
-
-	if ( index === -1 ) {
-		return null;
-	}
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
-
-	if ( bind === 'transform' ) {
-		return null;
-	}
 
 	const onClick = () => {
 		const newItem = structuredClone( items[ index ] );

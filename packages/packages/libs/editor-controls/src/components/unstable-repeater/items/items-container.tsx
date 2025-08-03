@@ -4,7 +4,7 @@ import { SortableItem, SortableProvider } from '../../sortable';
 import { useRepeaterContext } from '../context/repeater-context';
 import { type Item, type ItemProps, type RepeatablePropValue } from '../types';
 
-export const ItemsContainer = ( {
+export const ItemsContainer = < T extends RepeatablePropValue >( {
 	itemTemplate,
 	isSortable = true,
 	children,
@@ -41,7 +41,7 @@ export const ItemsContainer = ( {
 							{ React.isValidElement< React.PropsWithChildren< ItemProps< T > > >( itemTemplate )
 								? React.cloneElement( itemTemplate, {
 										key: index,
-										value,
+										value: value as Item< T >,
 										index,
 										openOnMount: key === openItem,
 										children,
