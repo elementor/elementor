@@ -82,8 +82,9 @@ export default class AiBehavior extends Marionette.Behavior {
 		const onClose = () => {
 			this.handleClose();
 			rootElement.remove();
-			if ( this.onCloseCallback ) {
-				this.onCloseCallback();
+			const onCloseCallback = this.getOption( 'onCloseCallback' );
+			if ( onCloseCallback ) {
+				onCloseCallback();
 			}
 		};
 

@@ -20,24 +20,30 @@ const StyledElementorLogo = styled( ElementorLogo )( ( { theme } ) => ( {
 } ) );
 
 const DialogHeader = ( props ) => {
+	const { hideAiBetaLogo, onClose, children } = props;
+
 	return (
 		<AppBar sx={ { fontWeight: 'normal' } } color="transparent" position="relative">
 			<Toolbar variant="dense">
-				<StyledElementorLogo sx={ { mr: 1 } } />
+				{ ! hideAiBetaLogo && (
+					<>
+						<StyledElementorLogo sx={ { mr: 1 } } />
 
-				<Typography component="span" variant="subtitle2" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
-					{ __( 'AI', 'elementor' ) }
-				</Typography>
+						<Typography component="span" variant="subtitle2" sx={ { fontWeight: 'bold', textTransform: 'uppercase' } }>
+							{ __( 'AI', 'elementor' ) }
+						</Typography>
 
-				<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
+						<Chip label={ __( 'Beta', 'elementor' ) } color="default" size="small" sx={ { ml: 1 } } />
+					</>
+				) }
 
-				<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { ml: 'auto' } }>
-					{ props.children }
+				<Stack direction="row" spacing={ 1 } alignItems="center" sx={ { ml: hideAiBetaLogo ? 0 : 'auto' } }>
+					{ children }
 
 					<IconButton
 						size="small"
 						aria-label="close"
-						onClick={ props.onClose }
+						onClick={ onClose }
 						sx={ { '&.MuiButtonBase-root': { mr: -1 } } }
 					>
 						<XIcon />
@@ -50,6 +56,7 @@ const DialogHeader = ( props ) => {
 
 DialogHeader.propTypes = {
 	onClose: PropTypes.func.isRequired,
+	hideAiBetaLogo: PropTypes.bool,
 	children: PropTypes.oneOfType( [
 		PropTypes.arrayOf( PropTypes.node ),
 		PropTypes.node,

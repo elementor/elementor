@@ -267,20 +267,20 @@ export default class Module extends elementorModules.editor.utils.Module {
 			imageId,
 			imageUrl,
 			context,
+			isExternalTrigger: true,
 			...additionalParams,
 		} );
 	}
 
-	async showAIModal( { modalType, location, imageId, imageUrl, context, ...additionalParams } ) {
+	async showAIModal( { modalType, location, imageId, imageUrl, context, isExternalTrigger, ...additionalParams } ) {
 		const aiBehavior = new AiBehavior( {
 			type: 'media',
 			controlType: 'media',
 			onCloseCallback: () => {
 				window.dispatchEvent( new CustomEvent( 'elementor:ai:modal-closed', {
 					detail: {
-						modalType,
-						location,
 						success: false,
+						error: 'User closed the modal manually without selecting an image',
 					},
 				} ) );
 			},
@@ -306,6 +306,10 @@ export default class Module extends elementorModules.editor.utils.Module {
 			additionalOptions: {
 				defaultImageType: Object.keys( IMAGE_PROMPT_CATEGORIES )[ 1 ],
 				location: LOCATIONS[ location?.toUpperCase()?.replace( '-', '_' ) ] || location,
+				isExternalTrigger,
+				hideBackButton: isExternalTrigger,
+				withoutHistory: isExternalTrigger,
+				hideAiBetaLogo: isExternalTrigger,
 				...additionalParams,
 			},
 		} );
