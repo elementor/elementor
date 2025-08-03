@@ -13,19 +13,16 @@ import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
 
-// Rename skipControls to disabledControls to better reflect its new purpose
 const disabledControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ];
 
 export const StylesInheritanceIndicator = () => {
 	const { path, propType } = useBoundProp();
 	const inheritanceChain = useStylesInheritanceChain( path );
 
-	// Remove the skip check and only check for path and inheritanceChain
 	if ( !path || !inheritanceChain.length ) {
 		return null;
 	}
 
-	// Pass isDisabled flag to Indicator
 	const isDisabled = path.some((pathItem) => disabledControls.includes(pathItem));
 
 	return <Indicator 
@@ -36,7 +33,6 @@ export const StylesInheritanceIndicator = () => {
 	/>;
 };
 
-// Update IndicatorProps type
 type IndicatorProps = {
 	inheritanceChain: SnapshotPropValue[];
 	path: string[];
@@ -77,14 +73,9 @@ const Indicator = ({ inheritanceChain, path, propType, isDisabled }: IndicatorPr
 			path={path}
 			propType={propType}
 			label={label}
-			// Pass isDisabled to infotip to disable hover/click events
 			isDisabled={isDisabled}
 		>
-			<StyleIndicator 
-				{...styleIndicatorProps} 
-				// Add disabled visual state if needed
-				isDisabled={isDisabled}
-			/>
+			<StyleIndicator {...styleIndicatorProps} />
 		</StylesInheritanceInfotip>
 	);
 };

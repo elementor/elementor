@@ -38,7 +38,6 @@ type Props = {
 export const StylesInheritanceInfotip = ({ inheritanceChain, propType, path, label, children, isDisabled }: Props) => {
 	const [showInfotip, setShowInfotip] = useState<boolean>(false);
 	
-	// If disabled, don't allow any state changes
 	const toggleInfotip = () => {
 		if (isDisabled) {
 			return;
@@ -110,7 +109,6 @@ export const StylesInheritanceInfotip = ({ inheritanceChain, propType, path, lab
 									display="flex"
 									gap={ 0.5 }
 									role="listitem"
-									/* translators: %s: Label of the inheritance item */
 									aria-label={ __( 'Inheritance item: %s', 'elementor' ).replace(
 										'%s',
 										item.displayLabel
@@ -131,7 +129,6 @@ export const StylesInheritanceInfotip = ({ inheritanceChain, propType, path, lab
 		</ClickAwayListener>
 	);
 
-	// If disabled, just render the children without any wrapper
 	if (isDisabled) {
 		return <Box sx={{ display: 'inline-flex' }}>{children}</Box>;
 	}
@@ -160,7 +157,7 @@ function TooltipOrInfotip({
 	showInfotip,
 	onClose,
 	infotipContent,
-	isDisabled,  // Add this prop
+	isDisabled,
 }: {
 	children: React.ReactNode;
 	showInfotip: boolean;
@@ -172,7 +169,6 @@ function TooltipOrInfotip({
 	const isSiteRtl = direction === 'rtl';
 	const forceInfotipAlignLeft = isSiteRtl ? 9999999 : -9999999;
 
-	// If disabled, return children without any tooltip/infotip wrapper
 	if (isDisabled) {
 		return <Box sx={{ display: 'inline-flex' }}>{children}</Box>;
 	}
@@ -216,7 +212,6 @@ function TooltipOrInfotip({
 		);
 	}
 
-	// Only render Tooltip if not disabled
 	return (
 		<Tooltip title={__('Style origin', 'elementor')} placement="top">
 			{children}
