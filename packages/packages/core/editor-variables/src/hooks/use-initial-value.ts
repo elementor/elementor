@@ -1,19 +1,17 @@
 import { useBoundProp } from '@elementor/editor-controls';
-import { type createPropUtils } from '@elementor/editor-props';
 
+import { hasVariableType } from '../variables-registry/variable-type-registry';
 import { useVariable } from './use-prop-variables';
-
-type PropTypeUtil = ReturnType< typeof createPropUtils >;
 
 type PropValue = {
 	$$type: string;
 	value: string;
 };
 
-export const useInitialValue = ( propTypeUtil: PropTypeUtil ) => {
+export const useInitialValue = () => {
 	const { value: initial }: { value: PropValue } = useBoundProp();
 
-	const hasAssignedVariable = initial?.$$type === propTypeUtil.key && initial?.value;
+	const hasAssignedVariable = hasVariableType( initial?.$$type ) && Boolean( initial?.value );
 	const variable = useVariable( hasAssignedVariable ? initial.value : '' );
 
 	if ( hasAssignedVariable ) {

@@ -26,7 +26,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
 
-	const initialValue = useInitialValue( propTypeUtil );
+	const initialValue = useInitialValue();
 
 	const [ value, setValue ] = useState( initialValue );
 	const [ label, setLabel ] = useState( '' );

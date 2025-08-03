@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
+import { hasVariableType } from '../../variables-registry/variable-type-registry';
 import { useInitialValue } from '../use-initial-value';
 import { useVariable } from '../use-prop-variables';
 
@@ -11,6 +12,15 @@ type PropTypeUtil = ReturnType< typeof createPropUtils >;
 
 jest.mock( '@elementor/editor-controls', () => ( {
 	useBoundProp: jest.fn(),
+} ) );
+
+jest.mock( '../../variables-registry/variable-type-registry', () => ( {
+	hasVariableType: jest.fn().mockImplementation( ( type: string ) => {
+		return type in {
+			[ colorVariablePropTypeUtil.key ]: true,
+			[ fontVariablePropTypeUtil.key ]: true,
+		};
+	} ),
 } ) );
 
 jest.mock( '../use-prop-variables', () => ( {
@@ -48,7 +58,7 @@ describe( 'useInitialValue for assigned variables', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( colorVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
@@ -73,7 +83,7 @@ describe( 'useInitialValue for assigned variables', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( fontVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
@@ -93,7 +103,7 @@ describe( 'useInitialValue for assigned variables', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( colorVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
@@ -115,7 +125,7 @@ describe( 'useInitialValue for non-empty values', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( colorVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
@@ -135,7 +145,7 @@ describe( 'useInitialValue for non-empty values', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( fontVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
@@ -157,7 +167,7 @@ describe( 'useInitialValue for empty values', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( colorVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
@@ -177,7 +187,7 @@ describe( 'useInitialValue for empty values', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( fontVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
@@ -197,7 +207,7 @@ describe( 'useInitialValue for empty values', () => {
 
 		// Act.
 		const { result } = renderHook( () => {
-			return useInitialValue( colorVariablePropTypeUtil );
+			return useInitialValue();
 		} );
 
 		// Assert.
