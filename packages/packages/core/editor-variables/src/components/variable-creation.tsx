@@ -8,6 +8,7 @@ import { Button, CardActions, Divider, FormHelperText, IconButton } from '@eleme
 import { __ } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
+import { useInitialValue } from '../hooks/use-initial-value';
 import { createVariable } from '../hooks/use-prop-variables';
 import { trackVariableEvent } from '../utils/tracking';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
@@ -25,7 +26,9 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
 
-	const [ value, setValue ] = useState( '' );
+	const initialValue = useInitialValue();
+
+	const [ value, setValue ] = useState( initialValue );
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
