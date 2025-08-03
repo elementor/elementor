@@ -13,6 +13,7 @@ import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { FilterIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import { VariablesManagerList } from './variables-manager-list';
 
 const id = 'variables-manager';
 
@@ -69,7 +70,7 @@ export function VariablesManagerPanel() {
 								overflowY: 'auto',
 							} }
 						>
-							List
+							<VariablesManagerList />
 						</Box>
 					</PanelBody>
 

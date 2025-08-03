@@ -4,8 +4,14 @@ import { type PropKey } from '@elementor/editor-props';
 import { service } from '../service';
 import { type Variable } from '../types';
 
-export const useVariable = ( key: string ) => {
+export const useVariables = () => {
 	const variables = service.variables();
+
+	return variables;
+};
+
+export const useVariable = ( key: string ) => {
+	const variables = useVariables();
 
 	if ( ! variables?.[ key ] ) {
 		return null;
