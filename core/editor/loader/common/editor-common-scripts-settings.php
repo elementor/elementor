@@ -7,7 +7,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Apps\Module as AppsModule;
-use Elementor\Modules\EditorEvents\Module as EditorEventsModule;
+use Elementor\Core\Common\Modules\EventsManager\Module as EditorEventsModule;
 use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
