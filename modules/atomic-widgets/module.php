@@ -48,6 +48,8 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Flex_Trans
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Entrance_Animation_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Entrance_Animation_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
@@ -144,7 +146,20 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
+
+			// Add entrance animations CSS
+			add_action('wp_enqueue_scripts', [$this, 'enqueue_entrance_animations']);
+			add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_entrance_animations']);
 		}
+	}
+
+	public function enqueue_entrance_animations(): void {
+		wp_enqueue_style(
+			'elementor-entrance-animations',
+			plugins_url('assets/css/entrance-animations.css', __FILE__),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public static function get_experimental_data() {
@@ -227,6 +242,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Button() );
 		$widgets_manager->register( new Atomic_Youtube() );
 		$widgets_manager->register( new Atomic_Divider() );
+
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -288,6 +304,9 @@ class Module extends BaseModule {
 			Dimensions_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
+		
+		// Add entrance animation transformer
+		$transformers->register( Entrance_Animation_Prop_Type::get_key(), new Entrance_Animation_Transformer() );
 	}
 
 	public function register_import_transformers( Transformers_Registry $transformers ) {
