@@ -53,7 +53,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	} );
 
 	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
-	const [ uniqueKeys, setUniqueKeys ] = useState< number[] >( items?.map( ( _, index ) => index ) ?? [] );
+	const [ uniqueKeys, setUniqueKeys ] = useState( items?.map( ( _, index ) => index ) ?? [] );
 
 	const isOpen = openItem !== EMPTY_OPEN_ITEM;
 

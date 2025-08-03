@@ -30,7 +30,7 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 		<>
 			<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
 				{ uniqueKeys?.map( ( key: number, index: number ) => {
-					const value = items?.[ index ] as Item< RepeatablePropValue >;
+					const value = items?.[ index ] as Item< T >;
 
 					if ( ! value ) {
 						return null;
@@ -41,7 +41,7 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 							{ React.isValidElement< React.PropsWithChildren< ItemProps< T > > >( itemTemplate )
 								? React.cloneElement( itemTemplate, {
 										key: index,
-										value: value as Item< T >,
+										value,
 										index,
 										openOnMount: key === openItem,
 										children,
