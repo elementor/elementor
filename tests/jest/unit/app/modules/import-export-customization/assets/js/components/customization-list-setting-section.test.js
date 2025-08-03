@@ -123,7 +123,7 @@ describe( 'ListSettingSection Component', () => {
 			const allCheckbox = screen.getByRole( 'checkbox', { name: /all test settings/i } );
 			fireEvent.click( allCheckbox );
 
-			expect( mockOnSettingChange ).toHaveBeenCalledWith( mockItems.map( ( item ) => item.value ) );
+			expect( mockOnSettingChange ).toHaveBeenCalledWith( mockItems.map( ( item ) => item.value ), true );
 		} );
 
 		it( 'should call onSettingChange with empty array when "All" checkbox is unchecked', () => {
@@ -133,7 +133,7 @@ describe( 'ListSettingSection Component', () => {
 			const allCheckbox = screen.getByRole( 'checkbox', { name: /all test settings/i } );
 			fireEvent.click( allCheckbox );
 
-			expect( mockOnSettingChange ).toHaveBeenCalledWith( [] );
+			expect( mockOnSettingChange ).toHaveBeenCalledWith( [], true );
 		} );
 
 		it( 'should call onSettingChange with added item when individual checkbox is checked', () => {

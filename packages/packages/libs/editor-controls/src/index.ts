@@ -29,6 +29,7 @@ export { TransitionRepeaterControl } from './controls/transition-control/transit
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { UnstableTransformRepeaterControl } from './controls/unstable-transform-control/unstable-transform-repeater-control';
+export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
@@ -53,7 +54,12 @@ export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-contex
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
 
-export { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from './locations';
+export {
+	injectIntoRepeaterItemIcon,
+	injectIntoRepeaterItemLabel,
+	injectIntoRepeaterHeaderActions,
+	injectIntoRepeaterItemActions,
+} from './components/unstable-repeater/locations';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

@@ -10,10 +10,10 @@ export default function useActionProps(): ActionProps {
 		title: __( 'Keyboard Shortcuts', 'elementor' ),
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const config = extendedWindow?.elementor?.editorEvents?.config;
+			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 			if ( config ) {
-				extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.keyboardShortcuts, {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.keyboardShortcuts, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.elementorLogo,
 					trigger: config.triggers.click,

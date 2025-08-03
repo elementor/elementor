@@ -15,10 +15,10 @@ export default function useActionProps() {
 		icon: PlusIcon,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const config = extendedWindow?.elementor?.editorEvents?.config;
+			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 			if ( config ) {
-				extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.widgetPanel, {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.widgetPanel, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations[ 'widget-panel' ],
 					trigger: config.triggers.toggleClick,

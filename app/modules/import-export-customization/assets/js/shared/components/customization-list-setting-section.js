@@ -38,9 +38,9 @@ export function ListSettingSection( {
 							indeterminate={ settings.length > 0 && ( settings.length !== items.length ) }
 							onChange={ ( e, checked ) => {
 								if ( checked ) {
-									onSettingChange( items.map( ( { value } ) => value ) );
+									onSettingChange( items.map( ( { value } ) => value ), true );
 								} else {
-									onSettingChange( [] );
+									onSettingChange( [], true );
 								}
 							} }
 							sx={ { p: 0 } }
