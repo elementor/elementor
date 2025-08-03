@@ -12,17 +12,6 @@ export type ExtendedWindow = Window & {
 				};
 			};
 		};
-		config: {
-			library_connect: {
-				is_connected: boolean;
-			};
-			user: {
-				top_bar: {
-					my_elementor_url: string;
-					connect_url: string;
-				};
-			};
-		};
 	};
 };
 
