@@ -38,7 +38,7 @@
 #elementor-panel-elements-search-area {
 	background-color: var(--e-a-bg-default);
 	position: sticky;
-	top: 0;
+	inset-block-start: 0;
 	padding: 15px;
 	z-index: $first-layer;
 }
