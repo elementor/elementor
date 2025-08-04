@@ -6,9 +6,6 @@ on:
       - main
     paths:
       - 'packages/**'
-  pull_request:
-    branches:
-      - main
 
 jobs:
   publish-packages:
