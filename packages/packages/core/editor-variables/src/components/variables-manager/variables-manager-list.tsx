@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createElement, useState } from 'react';
 import { DotsVerticalIcon, GridDotsIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -6,6 +7,8 @@ import {
 	IconButton,
 	Menu,
 	MenuItem,
+	type SvgIconProps,
+	type SxProps,
 	Table,
 	TableBody,
 	TableCell,
@@ -16,15 +19,22 @@ import {
 	type UnstableSortableItemRenderProps,
 	UnstableSortableProvider,
 	usePopupState,
-	SxProps,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariables } from '../../hooks/use-prop-variables';
-import { useState, createElement } from 'react';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 
-export const VariablesManagerList = () => {
+type Props = {
+	menuActions: {
+		name: string;
+		icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & React.RefAttributes< SVGSVGElement > >;
+		color: string;
+		onClick: () => void;
+	}[];
+};
+
+export const VariablesManagerList = ( { menuActions }: Props ) => {
 	const variables = useVariables();
 
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
@@ -124,7 +134,10 @@ export const VariablesManagerList = () => {
 											<TableCell sx={ tableCellSX }>
 												{ createElement( row.icon, { fontSize: 'inherit' } ) } { row.name }
 											</TableCell>
-											<TableCell sx={ tableCellSX }>{ row.startIcon && row.startIcon( { value: row.value } ) }{ row.value }</TableCell>
+											<TableCell sx={ tableCellSX }>
+												{ row.startIcon && row.startIcon( { value: row.value } ) }
+												{ row.value }
+											</TableCell>
 											<TableCell align="right" padding="none" sx={ { width: 10 } }>
 												<IconButton
 													{ ...bindTrigger( rowOptionsState ) }
@@ -143,7 +156,19 @@ export const VariablesManagerList = () => {
 													open={ rowOptionsState.isOpen }
 													onClose={ rowOptionsState.close }
 												>
-													<MenuItem>Option 1</MenuItem>
+													{ menuActions.map( ( action ) => (
+														<MenuItem
+															key={ action.name }
+															onClick={ action.onClick }
+															sx={ { color: action.color } }
+														>
+															{ action.icon &&
+																createElement( action.icon, {
+																	fontSize: 'inherit',
+																} ) }{ ' ' }
+															{ action.name }
+														</MenuItem>
+													) ) }
 												</Menu>
 											</TableCell>
 										</TableRow>

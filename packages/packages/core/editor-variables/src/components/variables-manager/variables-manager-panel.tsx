@@ -10,7 +10,7 @@ import {
 } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { FilterIcon, XIcon } from '@elementor/icons';
+import { FilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { VariablesManagerList } from './variables-manager-list';
@@ -34,6 +34,15 @@ export function VariablesManagerPanel() {
 	const isDirty = false;
 
 	usePreventUnload( isDirty );
+
+	const menuActions = [
+		{
+			name: __( 'Delete', 'elementor' ),
+			icon: TrashIcon,
+			color: 'error.main',
+			onClick: () => {},
+		},
+	];
 
 	return (
 		<ThemeProvider>
@@ -70,7 +79,7 @@ export function VariablesManagerPanel() {
 								overflowY: 'auto',
 							} }
 						>
-							<VariablesManagerList />
+							<VariablesManagerList menuActions={ menuActions } />
 						</Box>
 					</PanelBody>
 
