@@ -6,14 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-const CACHE_KEY_PREFIX = 'elementor_atomic_cache_validity-';
 
 class Cache_Validity {
+	const CACHE_KEY_PREFIX = 'elementor_atomic_cache_validity-';
 
 	public function is_valid( array $keys ): bool {
 		$root = array_shift( $keys );
 
-		$state_item = get_option( CACHE_KEY_PREFIX . $root, null );
+		$state_item = get_option( self::CACHE_KEY_PREFIX . $root, null );
 
 		if ( ! empty( $keys ) ) {
 			if ( ! $state_item ) {
@@ -29,7 +29,7 @@ class Cache_Validity {
 	public function get_meta( array $keys ) {
 		$root = array_shift( $keys );
 
-		$state_item = get_option( CACHE_KEY_PREFIX . $root, null );
+		$state_item = get_option( self::CACHE_KEY_PREFIX . $root, null );
 
 		if ( ! $state_item ) {
 			return null;
@@ -43,7 +43,7 @@ class Cache_Validity {
 	public function invalidate( array $keys ): void {
 		$root = array_shift( $keys );
 
-		$state_item = get_option( CACHE_KEY_PREFIX . $root, [
+		$state_item = get_option( self::CACHE_KEY_PREFIX . $root, [
 			'state' => false,
 			'meta' => null,
 			'children' => [],
@@ -60,13 +60,13 @@ class Cache_Validity {
 
 		$this->invalidate_nested_items( $current_item );
 
-		update_option( CACHE_KEY_PREFIX . $root, $state_item );
+		update_option( self::CACHE_KEY_PREFIX . $root, $state_item );
 	}
 
 	public function validate( array $keys, $meta = null ): void {
 		$root = array_shift( $keys );
 
-		$state_item = get_option( CACHE_KEY_PREFIX . $root, [
+		$state_item = get_option( self::CACHE_KEY_PREFIX . $root, [
 			'state' => false,
 			'children' => [],
 		] );
@@ -80,7 +80,7 @@ class Cache_Validity {
 		$current_item['state'] = true;
 		$current_item['meta'] = $meta;
 
-		update_option( CACHE_KEY_PREFIX . $root, $state_item );
+		update_option( self::CACHE_KEY_PREFIX . $root, $state_item );
 	}
 
 

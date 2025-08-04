@@ -20,7 +20,7 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		$this->rendered_post_ids = [];
 
 		remove_all_actions( 'elementor/post/render' );
-        
+
 		add_action( 'elementor/post/render', [ $this, 'track_post_render' ], 5, 1 );
 	}
 
@@ -29,25 +29,25 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		$this->rendered_post_ids[] = $post_id;
 	}
 
-    private function make_mock_post_with_elements( $elements_data ) {
+	private function make_mock_post_with_elements( $elements_data ) {
 		$document = $this->factory()->documents->create_and_get( [
 			'post_title' => 'Test E-Component Post',
 			'post_status' => 'publish',
 		] );
 
-        $test_elements_data = [
-            [
-                'id' => 'test-section-1',
-                'elType' => 'section',
-                'elements' => [
-                    [
-                        'id' => 'test-post',
-                        'elType' => 'container',
-                        'elements' => $elements_data
-                    ]
-                ]
-            ]
-        ];
+		$test_elements_data = [
+			[
+				'id' => 'test-section-1',
+				'elType' => 'section',
+				'elements' => [
+					[
+						'id' => 'test-post',
+						'elType' => 'container',
+						'elements' => $elements_data,
+					],
+				],
+			],
+		];
 
 		$document->update_json_meta( '_elementor_data', $test_elements_data );
 
@@ -63,55 +63,55 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		$atomic_component_styles->register_hooks();
 
 		$post_id = $this->make_mock_post_with_elements([
-            // Not an e-component widget
-            [
-                'id' => 'e-some-widget-1',
-                'elType' => 'widget',
-                'widgetType' => 'e-some-widget',
-                'settings' => [
-                    'component_id' => [
-                        '$$type' => 'string',
-                        'value' => '50'
-                    ]
-                ]
-            ],
-            // First e-component widget with component-id "180"
-            [
-                'id' => 'e-component-1',
-                'elType' => 'widget',
-                'widgetType' => 'e-component',
-                'settings' => [
-                    'component_id' => [
-                        '$$type' => 'string',
-                        'value' => '180'
-                    ]
-                ]
-            ],
-            // Second e-component widget with same component-id "180" (should not trigger duplicate)
-            [
-                'id' => 'e-component-2',
-                'elType' => 'widget', 
-                'widgetType' => 'e-component',
-                'settings' => [
-                    'component_id' => [
-                        '$$type' => 'string',
-                        'value' => '180'
-                    ]
-                ]
-            ],
-            // Third e-component widget with different component-id "250"
-            [
-                'id' => 'e-component-3',
-                'elType' => 'widget',
-                'widgetType' => 'e-component', 
-                'settings' => [
-                    'component_id' => [
-                        '$$type' => 'string',
-                        'value' => '250'
-                    ]
-                ]
-            ]
-        ])->get_main_id();
+			// Not an e-component widget
+			[
+				'id' => 'e-some-widget-1',
+				'elType' => 'widget',
+				'widgetType' => 'e-some-widget',
+				'settings' => [
+					'component_id' => [
+						'$$type' => 'string',
+						'value' => '50',
+					],
+				],
+			],
+			// First e-component widget with component-id "180"
+			[
+				'id' => 'e-component-1',
+				'elType' => 'widget',
+				'widgetType' => 'e-component',
+				'settings' => [
+					'component_id' => [
+						'$$type' => 'string',
+						'value' => '180',
+					],
+				],
+			],
+			// Second e-component widget with same component-id "180" (should not trigger duplicate)
+			[
+				'id' => 'e-component-2',
+				'elType' => 'widget',
+				'widgetType' => 'e-component',
+				'settings' => [
+					'component_id' => [
+						'$$type' => 'string',
+						'value' => '180',
+					],
+				],
+			],
+			// Third e-component widget with different component-id "250"
+			[
+				'id' => 'e-component-3',
+				'elType' => 'widget',
+				'widgetType' => 'e-component',
+				'settings' => [
+					'component_id' => [
+						'$$type' => 'string',
+						'value' => '250',
+					],
+				],
+			],
+		])->get_main_id();
 
 		// Act
 		do_action( 'elementor/post/render', $post_id );
@@ -132,18 +132,18 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		$atomic_component_styles->register_hooks();
 
 		$post_id = $this->make_mock_post_with_elements([
-            [
-                'id' => 'e-some-widget-1',
-                'elType' => 'widget',
-                'widgetType' => 'e-component',
-                'settings' => [
-                    'post_id' => [
-                        '$$type' => 'string',
-                        'value' => '180'
-                    ]
-                ]
-            ]
-        ])->get_main_id();
+			[
+				'id' => 'e-some-widget-1',
+				'elType' => 'widget',
+				'widgetType' => 'e-component',
+				'settings' => [
+					'post_id' => [
+						'$$type' => 'string',
+						'value' => '180',
+					],
+				],
+			],
+		])->get_main_id();
 
 		// Act
 		do_action( 'elementor/post/render', $post_id );
@@ -155,71 +155,71 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		$this->assertEquals( $expected_post_ids, $this->rendered_post_ids, 'Should render original post only' );
 	}
 
-    public function test_cache_validity_upon_post_update() {
-        // Arrange
-        $atomic_component_styles = new Atomic_Component_Styles();
-        $atomic_component_styles->register_hooks();
+	public function test_cache_validity_upon_post_update() {
+		// Arrange
+		$atomic_component_styles = new Atomic_Component_Styles();
+		$atomic_component_styles->register_hooks();
 
-        $post = $this->make_mock_post_with_elements([
-            [
-                'id' => 'e-component-1',
-                'elType' => 'widget',
-                'widgetType' => 'e-component',
-                'settings' => [
-                    'component_id' => [
-                        '$$type' => 'string',
-                        'value' => '180'
-                    ]
-                ]
-            ]
-        ]);
+		$post = $this->make_mock_post_with_elements([
+			[
+				'id' => 'e-component-1',
+				'elType' => 'widget',
+				'widgetType' => 'e-component',
+				'settings' => [
+					'component_id' => [
+						'$$type' => 'string',
+						'value' => '180',
+					],
+				],
+			],
+		]);
 
-        $post_id = $post->get_main_id();
-        $component_id = '180';
-        $expected_post_ids = [ $post_id, $component_id ];
-        
-        // Act
-        do_action( 'elementor/post/render', $post_id );
+		$post_id = $post->get_main_id();
+		$component_id = '180';
+		$expected_post_ids = [ $post_id, $component_id ];
 
-        $cache_validity = new Cache_Validity();
-        
-        // Assert
-        $this->assertTrue(
-            $cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ), 
-            'Post-level cache should be valid' 
-        );
-        $this->assertTrue( 
-            $cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ], 
-            'Component-level cache should be valid' ) 
-        );
+		// Act
+		do_action( 'elementor/post/render', $post_id );
 
-        $this->assertEquals( 
-            $expected_post_ids, 
-            $this->rendered_post_ids, 
-            'Should render original post only' 
-        );
-        $this->assertEquals( 
-            [ $component_id ], 
-            $cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
-            'Post-level cache meta should contain the included component ID (1st level only)'
-         );
-        $this->assertEquals( 
-            [], 
-            $cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ] ),
-            'Component-level cache meta should be empty'
-         );
+		$cache_validity = new Cache_Validity();
 
-        // Act
-        do_action( 'elementor/document/after_save', $post, [] );
+		// Assert
+		$this->assertTrue(
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
+			'Post-level cache should be valid'
+		);
+		$this->assertTrue(
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ],
+			'Component-level cache should be valid' )
+		);
 
-        // Assert
-        $this->assertFalse( 
-            $cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
-            'After saving changes cache should be invalidated'
-         );
-        $this->assertTrue( 
-            $cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ] ),
-            'Component-level cache should remain valid, as no change occurred'
-         );
-    }
+		$this->assertEquals(
+			$expected_post_ids,
+			$this->rendered_post_ids,
+			'Should render original post only'
+		);
+		$this->assertEquals(
+			[ $component_id ],
+			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
+			'Post-level cache meta should contain the included component ID (1st level only)'
+		);
+		$this->assertEquals(
+			[],
+			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ] ),
+			'Component-level cache meta should be empty'
+		);
+
+		// Act
+		do_action( 'elementor/document/after_save', $post, [] );
+
+		// Assert
+		$this->assertFalse(
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
+			'After saving changes cache should be invalidated'
+		);
+		$this->assertTrue(
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ] ),
+			'Component-level cache should remain valid, as no change occurred'
+		);
+	}
 }
