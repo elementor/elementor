@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Size_Prop_Type extends Object_Prop_Type {
 
 	public static function get_supported_units(): array {
-		return Size_Constants::all_supported_units();
+		return apply_filters( 'elementor/atomic-widgets/size/units', Size_Constants::all_supported_units() );
 	}
 
-	public function units( $units = 'all' ): static {
+	public function units( $units = 'all' ) {
 		if ( 'all' === $units ) {
 			$units = Size_Constants::all();
 		}
