@@ -34,8 +34,7 @@ export const useTransformTabsHistory = ( {
 	const { value: rotateValue, setValue: setRotateValue } = useBoundProp( rotateTransformPropTypeUtil );
 	const { value: skewValue, setValue: setSkewValue } = useBoundProp( skewTransformPropTypeUtil );
 
-	const { openItemKey, items, uniqueKeys } = useRepeaterContext();
-	const itemIndex = uniqueKeys.indexOf( openItemKey );
+	const { openItemIndex, items } = useRepeaterContext();
 
 	const getCurrentTransformType = (): TransformFunction => {
 		switch ( true ) {
@@ -104,7 +103,7 @@ export const useTransformTabsHistory = ( {
 	};
 
 	const isTabDisabled = ( tabKey: TransformFunction ) => {
-		return !! items.find( ( { $$type: key }, pos ) => tabKey === key && pos !== itemIndex );
+		return !! items.find( ( { $$type: key }, pos ) => tabKey === key && pos !== openItemIndex );
 	};
 
 	return {

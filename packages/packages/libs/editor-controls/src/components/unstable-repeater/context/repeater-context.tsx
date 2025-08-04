@@ -13,8 +13,8 @@ type AddItem< T > = { item?: T; index?: number };
 
 type RepeaterContextType< T extends RepeatablePropValue > = {
 	isOpen: boolean;
-	openItemKey: number;
-	setOpenItemKey: ( key: number ) => void;
+	openItemIndex: number;
+	setOpenItemIndex: ( key: number ) => void;
 	items: Item< T >[];
 	setItems: ( items: T[] | SetterFn< T[] > ) => void;
 	uniqueKeys: number[];
@@ -57,28 +57,28 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		persistWhen: () => true,
 	} );
 
-	const [ openItemKey, setOpenItemKey ] = useState( EMPTY_OPEN_ITEM );
+	const [ openItemIndex, setOpenItemIndex ] = useState( EMPTY_OPEN_ITEM );
 	const [ uniqueKeys, setUniqueKeys ] = useState( items?.map( ( _, index ) => index ) ?? [] );
 	const [ rowRef, setRowRef ] = useState< HTMLElement | null >( null );
 
-	const isOpen = openItemKey !== EMPTY_OPEN_ITEM;
+	const isOpen = openItemIndex !== EMPTY_OPEN_ITEM;
 	const popoverState = usePopupState( { variant: 'popover' } );
 	const popoverProps: Partial< PopoverProps > = bindPopover( popoverState );
 
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? initial;
-		const index = config?.index ?? items.length;
+		const newIndex = config?.index ?? items.length;
 		const newItems = [ ...items ];
 		const newUniqueKeys = [ ...uniqueKeys ];
 		const newKey = generateNextKey( newUniqueKeys );
 
-		newItems.splice( index, 0, item );
-		newUniqueKeys.splice( index, 0, newKey );
+		newItems.splice( newIndex, 0, item );
+		newUniqueKeys.splice( newIndex, 0, newKey );
 
 		setItems( newItems );
 		setUniqueKeys( newUniqueKeys );
 
-		setOpenItemKey( newKey );
+		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
 	};
 
@@ -95,8 +95,8 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		<RepeaterContext.Provider
 			value={ {
 				isOpen,
-				openItemKey,
-				setOpenItemKey,
+				openItemIndex,
+				setOpenItemIndex,
 				items: ( items ?? [] ) as Item< T >[],
 				setItems: setItems as ( items: RepeatablePropValue[] | SetterFn< RepeatablePropValue[] > ) => void,
 				uniqueKeys,

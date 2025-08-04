@@ -9,15 +9,13 @@ type EditItemPopoverProps = {
 };
 
 export const EditItemPopover = ( { children }: EditItemPopoverProps ) => {
-	const { popoverProps, openItemKey, isOpen, uniqueKeys, rowRef, setOpenItemKey, setRowRef, items } =
-		useRepeaterContext();
-	const index = uniqueKeys.indexOf( openItemKey );
+	const { popoverProps, openItemIndex, isOpen, rowRef, setOpenItemIndex, setRowRef, items } = useRepeaterContext();
 
-	if ( ! isOpen || ! rowRef || index === -1 ) {
+	if ( ! isOpen || ! rowRef || openItemIndex === EMPTY_OPEN_ITEM ) {
 		return null;
 	}
 
-	const bind = items[ index ].$$type;
+	const bind = items[ openItemIndex ].$$type;
 
 	return (
 		<Popover
@@ -32,13 +30,13 @@ export const EditItemPopover = ( { children }: EditItemPopoverProps ) => {
 			anchorEl={ rowRef }
 			onClose={ () => {
 				setRowRef( null );
-				setOpenItemKey( EMPTY_OPEN_ITEM );
+				setOpenItemIndex( EMPTY_OPEN_ITEM );
 			} }
 		>
-			<PropKeyProvider bind={ String( index ) }>
+			<PropKeyProvider bind={ String( openItemIndex ) }>
 				<Box>
 					{ React.isValidElement< { bind: string; index: number } >( children ) &&
-						React.cloneElement( children, { bind, index } ) }
+						React.cloneElement( children, { bind, index: openItemIndex } ) }
 				</Box>
 			</PropKeyProvider>
 		</Popover>

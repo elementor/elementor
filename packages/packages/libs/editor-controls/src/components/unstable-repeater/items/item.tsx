@@ -17,7 +17,7 @@ export const Item = < T extends RepeatablePropValue >( {
 	index = -1,
 	children,
 }: React.PropsWithChildren< ItemProps< T > > ) => {
-	const { popoverState, setRowRef, openItemKey, setOpenItemKey, uniqueKeys } = useRepeaterContext();
+	const { popoverState, setRowRef, openItemIndex, setOpenItemIndex, uniqueKeys } = useRepeaterContext();
 	const triggerProps = bindTrigger( popoverState );
 	const key = uniqueKeys[ index ] ?? -1;
 
@@ -33,13 +33,13 @@ export const Item = < T extends RepeatablePropValue >( {
 				}
 				showActionsOnHover
 				fullWidth
-				ref={ ( ref ) => ref && openItemKey === key && setRowRef( ref ) }
+				ref={ ( ref ) => ref && openItemIndex === index && setRowRef( ref ) }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
 				{ ...triggerProps }
 				onClick={ ( ev ) => {
 					triggerProps.onClick( ev );
-					setOpenItemKey( uniqueKeys[ index ] );
+					setOpenItemIndex( index );
 				} }
 				startIcon={
 					<RepeaterItemIconSlot value={ value }>
