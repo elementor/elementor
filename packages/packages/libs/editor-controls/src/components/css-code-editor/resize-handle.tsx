@@ -2,11 +2,11 @@ import * as React from 'react';
 
 import { ResizeHandle } from './css-editor.styles';
 
-interface ResizeHandleProps {
+type ResizeHandleProps = {
 	onResize: ( height: number ) => void;
 	containerRef: React.RefObject< HTMLDivElement >;
 	onHeightChange?: ( height: number ) => void;
-}
+};
 
 export const ResizeHandleComponent = ( { onResize, containerRef, onHeightChange }: ResizeHandleProps ) => {
 	const handleResizeMove = React.useCallback(

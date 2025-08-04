@@ -25,7 +25,7 @@ const forbiddenPatterns = [
 	},
 ];
 
-export function validateCustomCSS( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ): boolean {
+export function setCustomSyntaxRules( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ): boolean {
 	const model = editor.getModel();
 	if ( ! model ) {
 		return true;
@@ -52,7 +52,7 @@ export function validateCustomCSS( editor: editor.IStandaloneCodeEditor, monaco:
 	return customMarkers.length === 0;
 }
 
-export function validateEditorErrors( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ): boolean {
+export function validate( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ): boolean {
 	const model = editor.getModel();
 	if ( ! model ) {
 		return true;

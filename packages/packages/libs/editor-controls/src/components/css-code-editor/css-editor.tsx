@@ -5,8 +5,13 @@ import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
 
 import { EditorWrapper } from './css-editor.styles';
-import { validateCustomCSS, validateEditorErrors } from './css-validation';
+import { setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';
+
+type CssEditorProps = {
+	value: string;
+	onChange: ( value: string ) => void;
+};
 
 const setVisualContent = ( value: string ): string => {
 	const trimmed = value.trim();
@@ -24,6 +29,43 @@ const getActual = ( value: string ): string => {
 		.join( '\n' );
 };
 
+const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
+	const model = editor.getModel();
+	if ( ! model ) {
+		return;
+	}
+
+	editor.onKeyDown( ( e ) => {
+		const position = editor.getPosition();
+		if ( ! position ) {
+			return;
+		}
+
+		const totalLines = model.getLineCount();
+		const isInProtectedRange = position.lineNumber === 1 || position.lineNumber === totalLines;
+
+		if ( isInProtectedRange ) {
+			const allowedKeys = [
+				monaco.KeyCode.UpArrow,
+				monaco.KeyCode.DownArrow,
+				monaco.KeyCode.LeftArrow,
+				monaco.KeyCode.RightArrow,
+				monaco.KeyCode.Home,
+				monaco.KeyCode.End,
+				monaco.KeyCode.PageUp,
+				monaco.KeyCode.PageDown,
+				monaco.KeyCode.Tab,
+				monaco.KeyCode.Escape,
+			];
+
+			if ( ! allowedKeys.includes( e.keyCode ) ) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		}
+	} );
+};
+
 const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
 	monacoRef: React.MutableRefObject< MonacoEditor | null >,
@@ -34,46 +76,15 @@ const createEditorDidMountHandler = (
 		editorRef.current = editor;
 		monacoRef.current = monaco;
 
-		const model = editor.getModel();
-		if ( model ) {
-			editor.onKeyDown( ( e ) => {
-				const position = editor.getPosition();
-				if ( ! position ) {
-					return;
-				}
+		preventChangeOnVisualContent( editor, monaco );
 
-				const totalLines = model.getLineCount();
-				const isInProtectedRange = position.lineNumber === 1 || position.lineNumber === totalLines;
-
-				if ( isInProtectedRange ) {
-					const allowedKeys = [
-						monaco.KeyCode.UpArrow,
-						monaco.KeyCode.DownArrow,
-						monaco.KeyCode.LeftArrow,
-						monaco.KeyCode.RightArrow,
-						monaco.KeyCode.Home,
-						monaco.KeyCode.End,
-						monaco.KeyCode.PageUp,
-						monaco.KeyCode.PageDown,
-						monaco.KeyCode.Tab,
-						monaco.KeyCode.Escape,
-					];
-
-					if ( ! allowedKeys.includes( e.keyCode ) ) {
-						e.preventDefault();
-						e.stopPropagation();
-					}
-				}
-			} );
-		}
-
-		validateCustomCSS( editor, monaco );
+		setCustomSyntaxRules( editor, monaco );
 
 		editor.onDidChangeModelContent( () => {
 			const code = editor.getModel()?.getValue() ?? '';
 			const userContent = getActual( code );
 
-			validateCustomCSS( editor, monaco );
+			setCustomSyntaxRules( editor, monaco );
 
 			const currentTimer = debounceTimer.current;
 			if ( currentTimer ) {
@@ -85,7 +96,7 @@ const createEditorDidMountHandler = (
 					return;
 				}
 
-				const hasNoErrors = validateEditorErrors( editorRef.current, monacoRef.current );
+				const hasNoErrors = validate( editorRef.current, monacoRef.current );
 
 				if ( hasNoErrors ) {
 					onChange( userContent );
@@ -96,11 +107,6 @@ const createEditorDidMountHandler = (
 		} );
 	};
 };
-
-interface CssEditorProps {
-	value: string;
-	onChange: ( value: string ) => void;
-}
 
 export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const theme = useTheme();
