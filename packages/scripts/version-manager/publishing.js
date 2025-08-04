@@ -1,9 +1,9 @@
-const fs = require('fs');
 const { execSync } = require('child_process');
 const { getPublishablePackages } = require('./package-discovery');
 const { validatePackageForPublishing } = require('./validation');
 const { log, logError, logSuccess, logInfo, logWarning } = require('./logger');
 const { colors } = require('./constants');
+const { NPM_TOKEN } = process.env;
 
 async function isPackagePublished(pkg) {
   try {
@@ -75,9 +75,6 @@ async function publishPackages(options = {}) {
   if (!options.yes && !options.dryRun) {
     const unpublishedCount = packages.length - alreadyPublished.length;
     logInfo(`🚀 Ready to publish ${unpublishedCount} packages to npm`);
-    if (process.env.NPM_TOKEN) {
-      exeSync(`npm config set //registry.npmjs.org/:_authToken \"${process.env.NPM_TOKEN}\"`);
-    }
   }
 
   if (options.dryRun) {
