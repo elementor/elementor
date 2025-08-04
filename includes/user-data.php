@@ -145,4 +145,3 @@ class User_Data {
 		return $sanitized_messages;
 	}
 }
-
