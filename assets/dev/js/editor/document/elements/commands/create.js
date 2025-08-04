@@ -46,6 +46,7 @@ export class Create extends $e.modules.editor.document.CommandHistoryBase {
 		containers.forEach( ( container ) => {
 			container = container.lookup();
 
+			// circular?
 			const createdContainer = container.view.addElement( model, options ).getContainer();
 
 			result.push( createdContainer );

@@ -515,6 +515,7 @@ class Source_Local extends Source_Base {
 			return new \WP_Error( 'invalid_template_type', esc_html__( 'Invalid template type.', 'elementor' ) );
 		}
 
+		//here
 		$document = Plugin::$instance->documents->create(
 			$template_data['type'],
 			[

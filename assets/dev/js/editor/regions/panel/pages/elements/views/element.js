@@ -3,6 +3,12 @@ import ContextMenu from 'elementor-behaviors/context-menu';
 module.exports = Marionette.ItemView.extend( {
 	template: '#tmpl-elementor-element-library-element',
 
+	initialize() {
+		if ( this.model.attributes?.custom?.isPreset ?? false ) {
+			this.model.set( 'settings', this.model.get( 'custom' ).preset_settings );
+		}
+	},
+
 	className() {
 		let className = 'elementor-element-wrapper';
 

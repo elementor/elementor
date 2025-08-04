@@ -278,6 +278,7 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
+		//here
 		const elementType = this.getElementType();
 		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
 			return;

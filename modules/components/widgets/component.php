@@ -22,6 +22,7 @@ use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if (!defined('ABSPATH')) {
 	exit; // Exit if accessed directly.
@@ -103,17 +104,25 @@ class Component extends Atomic_Widget_Base
 
 	protected function render()
 	{
-		if ( null === $this->get_settings( 'component_title' ) ) {
+		if ( null === $this->get_settings( 'component_id' ) ) {
 			return;
 		}
 
-		$post_id = $this->get_settings('component_id')['value'] ?? $this->component_id;
+		$post_id = $this->get_settings('component_id')['value'];
 
-		$draft_id = Plugin::$instance->documents->get_doc_or_auto_save($post_id)->get_post()->ID;
+		// show draft if in editor canvas or in preview
+		if (Plugin::$instance->editor->is_edit_mode() || is_preview()){
+			// ignoring author
+			$draft = Utils::get_post_autosave( $post_id );
 
-		if ($draft_id) {
-			$post_id = $draft_id;
+			if ( $draft ) {
+				$post_id = $draft->ID;
+			}
+			// by author
+			// $draft_id = Plugin::$instance->documents->get_doc_or_auto_save($post_id)->get_post()->ID;
 		}
+
+		
 
 
 		// error_log('this->component_id: ' . $this->component_id);
@@ -121,7 +130,7 @@ class Component extends Atomic_Widget_Base
 
 		// error_log('post id: ' . $post_id);
 		echo '<div class="e-component">';
-		echo Plugin::$instance->frontend->get_builder_content_for_display($post_id);
+		echo Plugin::$instance->frontend->get_builder_content($post_id);
 		echo '</div>';
 	}
 

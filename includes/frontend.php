@@ -1098,6 +1098,7 @@ class Frontend extends App {
 			return '';
 		}
 
+		error_log('getting doc for frontend');
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		if ( ! $document || ! $document->is_built_with_elementor() ) {
@@ -1151,6 +1152,7 @@ class Frontend extends App {
 		ob_start();
 
 		// Handle JS and Customizer requests, with CSS inline.
+		// if ( is_customize_preview() || wp_doing_ajax() || true ) {
 		if ( is_customize_preview() || wp_doing_ajax() ) {
 			$with_css = true;
 		}
@@ -1233,6 +1235,7 @@ class Frontend extends App {
 
 		// Set edit mode as false, so don't render settings and etc. use the $is_edit_mode to indicate if we need the CSS inline
 		$is_edit_mode = $editor->is_edit_mode();
+		// $editor->set_edit_mode( false );
 		$editor->set_edit_mode( false );
 
 		$with_css = $with_css ? true : $is_edit_mode;

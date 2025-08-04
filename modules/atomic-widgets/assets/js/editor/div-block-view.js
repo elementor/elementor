@@ -213,6 +213,14 @@ const DivBlockView = BaseElementView.extend( {
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
+				{
+					name: 'save-as-component',
+					title: __( 'Save as a component', 'elementor' ),
+					shortcut: '',
+					// shortcut: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>` : '',
+					callback: this.saveAsComponent.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				},
 			],
 		} );
 
@@ -221,6 +229,12 @@ const DivBlockView = BaseElementView.extend( {
 
 	saveAsTemplate() {
 		$e.route( 'library/save-template', {
+			model: this.model,
+		} );
+	},
+
+	saveAsComponent() {
+		$e.route( 'library/save-component', {
 			model: this.model,
 		} );
 	},
@@ -403,7 +417,7 @@ const DivBlockView = BaseElementView.extend( {
 
 			editTools.remove = {
 				/* Translators: %s: Element Name. */
-				title: sprintf( __( 'Delete %s', 'elementor' ), elementData.title ),
+				title: sprintf( __( 'Delete test %s', 'elementor' ), elementData.title ),
 				icon: 'close',
 			};
 		}

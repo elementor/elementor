@@ -1123,10 +1123,12 @@ abstract class Document extends Controls_Stack {
 			}
 		}
 
-		if ( Plugin::$instance->editor->is_edit_mode() ) {
+		if ( Plugin::$instance->editor->is_edit_mode() || true ) {
+		// if ( Plugin::$instance->editor->is_edit_mode() ) {
 			if ( empty( $elements ) && empty( $autosave_elements ) ) {
 				// Convert to Elementor.
 				$elements = $this->convert_to_elementor();
+				error_log('doc:' . $this->get_id() . 'is_autosave: ' . $this->is_autosave());
 				if ( $this->is_autosave() ) {
 					Plugin::$instance->db->copy_elementor_meta( $this->post->post_parent, $this->post->ID );
 				}

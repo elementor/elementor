@@ -688,6 +688,7 @@ const TemplateLibraryManager = function() {
 
 		const ajaxParams = _.extend( defaultAjaxParams, templateType.ajaxParams );
 
+		//
 		elementorCommon.ajax.addRequest( this.getSaveAjaxAction( data.save_context ), ajaxParams );
 	};
 

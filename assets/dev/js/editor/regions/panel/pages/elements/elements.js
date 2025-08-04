@@ -177,19 +177,22 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			keywords: item.keywords,
 			icon: item.icon,
 			widgetType: item.widget_type || item.widgetType,
-			custom: item.custom,
+			// custom: item.custom,
 			editable: item.editable,
 			hideOnSearch: item.hide_on_search,
 			component_id: item.component_id,
-			isPreset: Boolean( item.component_id ),
-			preset_settings: {
+			
+			custom: {
+				isPreset: Boolean( item.component_id ),
+				preset_settings: {
 				component_id: {
-					$$type: 'number',
+						$$type: 'number',
 					value: item.component_id,
 				},
 				component_title: {
-					$$type: 'string',
-					value: item.title,
+						$$type: 'string',
+						value: item.title,
+					},
 				},
 			},
 		};

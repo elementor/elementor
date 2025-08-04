@@ -58,6 +58,7 @@ const WidgetView = BaseWidget.extend( {
 	},
 
 	render() {
+		//
 		if ( this.model.isRemoteRequestActive() ) {
 			this.handleEmptyWidget();
 

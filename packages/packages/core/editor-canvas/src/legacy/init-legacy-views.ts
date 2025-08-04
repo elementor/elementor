@@ -22,6 +22,7 @@ export function initLegacyViews() {
 				? createTemplatedElementType( { type, renderer, element } )
 				: createElementType( type );
 
+				//add component?
 			legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
 		} );
 	} );
