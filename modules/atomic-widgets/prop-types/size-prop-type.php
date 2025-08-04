@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Utils;
 
@@ -19,17 +18,15 @@ class Size_Prop_Type extends Object_Prop_Type {
 		return Size_Constants::all_supported_units();
 	}
 
-	public function units( $units = 'all' ) {
+	public function units( $units = 'all' ): static {
 		if ( 'all' === $units ) {
 			$units = Size_Constants::all();
 		}
 
 		if ( is_array( $units ) ) {
-			$supported_units = static::get_supported_units();
-
 			foreach ( $units as $unit ) {
-				if ( ! is_string( $unit ) || ! in_array( $unit, $supported_units, true ) ) {
-					Utils::safe_throw( 'All units must be supported units.' );
+				if ( ! is_string( $unit ) ) {
+					Utils::safe_throw( 'All units must be must be strings.' );
 				}
 			}
 		}
