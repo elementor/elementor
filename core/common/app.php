@@ -72,7 +72,9 @@ class App extends BaseApp {
 
 		Plugin::$instance->experiments->add_feature( Events_Manager::get_experimental_data() );
 
-		$this->add_component( 'events-manager', new Events_Manager() );
+		if ( Plugin::$instance->experiments->is_feature_active( Events_Manager::EXPERIMENT_NAME ) ) {
+			$this->add_component( 'events-manager', new Events_Manager() );
+		}
 	}
 
 	/**
