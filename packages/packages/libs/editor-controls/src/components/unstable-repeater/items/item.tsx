@@ -21,6 +21,11 @@ export const Item = < T extends RepeatablePropValue >( {
 	const triggerProps = bindTrigger( popoverState );
 	const key = uniqueKeys[ index ] ?? -1;
 
+	const onClick = ( ev: React.MouseEvent ) => {
+		triggerProps.onClick( ev );
+		setOpenItemIndex( index );
+	};
+
 	return (
 		<>
 			<UnstableTag
@@ -37,10 +42,7 @@ export const Item = < T extends RepeatablePropValue >( {
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
 				{ ...triggerProps }
-				onClick={ ( ev ) => {
-					triggerProps.onClick( ev );
-					setOpenItemIndex( index );
-				} }
+				onClick={ onClick }
 				startIcon={
 					<RepeaterItemIconSlot value={ value }>
 						<Icon value={ value as T } />
