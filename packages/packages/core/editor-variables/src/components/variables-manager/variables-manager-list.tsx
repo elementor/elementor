@@ -25,13 +25,15 @@ import { __ } from '@wordpress/i18n';
 import { useVariables } from '../../hooks/use-prop-variables';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 
+type VariableManagerMenuAction = {
+	name: string;
+	icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & React.RefAttributes< SVGSVGElement > >;
+	color: string;
+	onClick: () => void;
+};
+
 type Props = {
-	menuActions: {
-		name: string;
-		icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & React.RefAttributes< SVGSVGElement > >;
-		color: string;
-		onClick: () => void;
-	}[];
+	menuActions: VariableManagerMenuAction[];
 };
 
 export const VariablesManagerList = ( { menuActions }: Props ) => {
