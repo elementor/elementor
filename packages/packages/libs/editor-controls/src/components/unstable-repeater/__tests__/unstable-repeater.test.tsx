@@ -487,7 +487,7 @@ describe( 'UnstableRepeater', () => {
 		] );
 	} );
 
-	it( 'should open the first repeater item popover', () => {
+	it( 'should open the added repeater item popover', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
