@@ -16,45 +16,56 @@ import {
 	type UnstableSortableItemRenderProps,
 	UnstableSortableProvider,
 	usePopupState,
+	SxProps,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariables } from '../../hooks/use-prop-variables';
-import { useState } from 'react';
+import { useState, createElement } from 'react';
+import { getVariableType } from '../../variables-registry/variable-type-registry';
 
 export const VariablesManagerList = () => {
 	const variables = useVariables();
-	const variablesArray =  [ ...Object.entries( variables ) ];
-	const [ ids, setIds ] = useState< string[] >( variablesArray.map( ( [ key ] ) => key ) );
-	const rows = variablesArray.map( ( [ key, variable ] ) => ( {
-		id: key,
-		name: variable.label,
-		value: variable.value,
-		type: variable.type,
+
+	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
+	const rows = ids.map( ( id ) => ( {
+		id,
+		name: variables[ id ].label,
+		value: variables[ id ].value,
+		type: variables[ id ].type,
+		icon: getVariableType( variables[ id ].type ).icon,
+		startIcon: getVariableType( variables[ id ].type ).startIcon,
 	} ) );
+
 	const rowOptionsState = usePopupState( {
 		variant: 'popover',
 	} );
+	const tableSX: SxProps = {
+		minWidth: 300,
+	};
+	const tableCellSX: SxProps = {
+		padding: '6px',
+	};
 
 	return (
 		<TableContainer>
-			<Table aria-label="sortable table">
+			<Table sx={ tableSX } aria-label="sortable table">
 				<TableHead>
 					<TableRow>
-						<TableCell padding="none" sx={ { width: 30 } } />
-						<TableCell>{ __( 'Name', 'elementor' ) }</TableCell>
-						<TableCell align="right">{ __( 'Value', 'elementor' ) }</TableCell>
-						<TableCell padding="none" sx={ { width: 50 } } />
+						<TableCell padding="none" sx={ { width: 10 } } />
+						<TableCell sx={ tableCellSX }>{ __( 'Name', 'elementor' ) }</TableCell>
+						<TableCell sx={ tableCellSX }>{ __( 'Value', 'elementor' ) }</TableCell>
+						<TableCell padding="none" sx={ { width: 10 } } />
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					<UnstableSortableProvider
-						value={ rows.map( ( row ) => row.id ) }
+						value={ ids }
 						onChange={ setIds }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (
-							<Table { ...dragOverlayProps }>
+							<Table sx={ tableSX } { ...dragOverlayProps }>
 								<TableBody>{ dragOverlayChildren }</TableBody>
 							</Table>
 						) }
@@ -100,7 +111,7 @@ export const VariablesManagerList = () => {
 											style={ { ...itemStyle, ...triggerStyle } }
 											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
-											<TableCell padding="none" sx={ { width: 30 } }>
+											<TableCell padding="none" sx={ { width: 10 } }>
 												<IconButton
 													size="small"
 													ref={ setTriggerRef }
@@ -110,11 +121,11 @@ export const VariablesManagerList = () => {
 													<GridDotsIcon fontSize="inherit" />
 												</IconButton>
 											</TableCell>
-											<TableCell component="th" scope="row">
-												{ row.name }
+											<TableCell sx={ tableCellSX }>
+												{ createElement( row.icon, { fontSize: 'inherit' } ) } { row.name }
 											</TableCell>
-											<TableCell align="right">{ row.value }</TableCell>
-											<TableCell align="right" padding="none" sx={ { width: 50 } }>
+											<TableCell sx={ tableCellSX }>{ row.startIcon && row.startIcon( { value: row.value } ) }{ row.value }</TableCell>
+											<TableCell align="right" padding="none" sx={ { width: 10 } }>
 												<IconButton
 													{ ...bindTrigger( rowOptionsState ) }
 													disabled={ isSorting }
