@@ -119,4 +119,4 @@ class User_Data {
 
 		return self::get_current_user( $request );
 	}
-} 
+}
