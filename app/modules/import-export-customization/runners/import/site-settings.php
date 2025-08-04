@@ -188,7 +188,11 @@ class Site_Settings extends Import_Runner_Base {
 
 		$this->imported_kit_id = (int) $new_kit;
 
-		$result['site-settings'] = (bool) $new_kit;
+		$result['site-settings'][ 'imported_kit_id' ] = $this->imported_kit_id;
+
+		foreach ( $new_site_settings as $key => $value ) {
+			$result['site-settings'][ $key ] = $value;
+		}
 
 		if ( $manifest_settings['theme'] ?? false ) {
 			$import_theme_result = $this->import_theme( $data );
