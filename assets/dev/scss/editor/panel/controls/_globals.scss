@@ -107,7 +107,7 @@
 				content: '\e90e'; // eicon-check
 				position: absolute;
 				transform: translateY(-50%);
-				top: 50%;
+				inset-block-start: 50%;
 				inset-inline-start: 13px;
 			}
 		}
