@@ -1,5 +1,5 @@
 import { type PropValue } from '@elementor/editor-props';
-import { createReplaceableLocation } from '@elementor/locations';
+import { createLocation, createReplaceableLocation } from '@elementor/locations';
 
 // Repeaters
 export const { Slot: RepeaterItemIconSlot, inject: injectIntoRepeaterItemIcon } = createReplaceableLocation< {
@@ -8,4 +8,12 @@ export const { Slot: RepeaterItemIconSlot, inject: injectIntoRepeaterItemIcon } 
 
 export const { Slot: RepeaterItemLabelSlot, inject: injectIntoRepeaterItemLabel } = createReplaceableLocation< {
 	value: PropValue;
+} >();
+
+export const { Slot: RepeaterHeaderActionsSlot, inject: injectIntoRepeaterHeaderActions } = createLocation< {
+	value: PropValue;
+} >();
+
+export const { Slot: RepeaterItemActionsSlot, inject: injectIntoRepeaterItemActions } = createLocation< {
+	index: number;
 } >();
