@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { type PropKey } from '@elementor/editor-props';
 import { Box, Tab, TabPanel, Tabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider } from '../../bound-prop-context';
 import { PopoverContent } from '../../components/popover-content';
+import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
 import { Move } from './functions/move';
 import { Rotate } from './functions/rotate';
 import { Scale } from './functions/scale';
@@ -18,24 +17,13 @@ import {
 } from './types';
 import { useTransformTabsHistory } from './use-transform-tabs-history';
 
-export const TransformContent = ( { bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content index={ Number( bind ) }/>
-		</PropKeyProvider>
-	);
-};
-
-const Content = ( { index }: { index: number } ) => {
-	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory(
-		{
-			move: initialTransformValue.value,
-			scale: initialScaleValue.value,
-			rotate: initialRotateValue.value,
-			skew: initialSkewValue.value,
-		},
-		index
-	);
+export const TransformContent = () => {
+	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory( {
+		move: initialTransformValue.value,
+		scale: initialScaleValue.value,
+		rotate: initialRotateValue.value,
+		skew: initialSkewValue.value,
+	} );
 
 	return (
 		<PopoverContent>

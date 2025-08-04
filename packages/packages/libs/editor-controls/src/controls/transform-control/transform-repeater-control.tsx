@@ -14,6 +14,7 @@ import {
 } from '../../components/unstable-repeater';
 import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
 import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
+import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
 import { createControl } from '../../create-control';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
@@ -43,14 +44,13 @@ export const TransformRepeaterControl = createControl( () => {
 						enableTooltip={ shouldDisableAddItem }
 					/>
 				</Header>
-				<ItemsContainer
-					itemTemplate={
-						<Item Icon={ TransformIcon } Label={ TransformLabel } Content={ TransformContent } />
-					}
-				>
+				<ItemsContainer itemTemplate={ <Item Icon={ TransformIcon } Label={ TransformLabel } /> }>
 					<DisableItemAction />
 					<RemoveItemAction />
 				</ItemsContainer>
+				<EditItemPopover>
+					<TransformContent />
+				</EditItemPopover>
 			</UnstableRepeater>
 		</PropProvider>
 	);

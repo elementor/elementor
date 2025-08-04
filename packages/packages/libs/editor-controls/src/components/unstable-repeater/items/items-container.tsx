@@ -9,7 +9,7 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 	isSortable = true,
 	children,
 }: React.PropsWithChildren< { itemTemplate: React.ReactNode; isSortable?: boolean } > ) => {
-	const { items, setItems, uniqueKeys, setUniqueKeys, openItem } = useRepeaterContext();
+	const { items, setItems, uniqueKeys, setUniqueKeys } = useRepeaterContext();
 
 	if ( ! itemTemplate ) {
 		return null;
@@ -40,10 +40,9 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 						<SortableItem id={ key } key={ `sortable-${ key }` } disabled={ ! isSortable }>
 							{ React.isValidElement< React.PropsWithChildren< ItemProps< T > > >( itemTemplate )
 								? React.cloneElement( itemTemplate, {
-										key: index,
+										key,
 										value,
 										index,
-										openOnMount: key === openItem,
 										children,
 								  } )
 								: null }

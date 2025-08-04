@@ -35,6 +35,8 @@ import { BackgroundImageOverlayRepeat } from './background-image-overlay/backgro
 import { BackgroundImageOverlaySize } from './background-image-overlay/background-image-overlay-size';
 import { type BackgroundImageOverlay } from './types';
 import { useBackgroundTabsHistory } from './use-background-tabs-history';
+import { EditItemPopover } from "../../../components/unstable-repeater/items/edit-item-popover";
+import { useRepeaterContext } from "../../../components/unstable-repeater/context/repeater-context";
 
 const DEFAULT_BACKGROUND_COLOR_OVERLAY_COLOR = '#00000033';
 
@@ -88,30 +90,27 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 				<Header label={ __( 'Overlay', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } Content={ ItemContent } /> }>
+				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
 					<DuplicateItemAction />
 					<DisableItemAction />
 					<RemoveItemAction />
 				</ItemsContainer>
+				<EditItemPopover>
+					<ItemContent />
+				</EditItemPopover>
 			</UnstableRepeater>
 		</PropProvider>
 	);
 } );
 
-export const ItemContent = ( { anchorEl = null, bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content anchorEl={ anchorEl } />
-		</PropKeyProvider>
-	);
-};
-
-const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
+export const ItemContent = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useBackgroundTabsHistory( {
 		image: getInitialBackgroundOverlay().value,
 		color: initialBackgroundColorOverlay.value,
 		gradient: initialBackgroundGradientOverlay.value,
 	} );
+
+	const { rowRef } = useRepeaterContext();
 
 	return (
 		<Box sx={ { width: '100%' } }>
@@ -137,7 +136,7 @@ const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
 			</TabPanel>
 			<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( 'color' ) }>
 				<PopoverContent>
-					<ColorOverlayContent anchorEl={ anchorEl } />
+					<ColorOverlayContent anchorEl={ rowRef } />
 				</PopoverContent>
 			</TabPanel>
 		</Box>

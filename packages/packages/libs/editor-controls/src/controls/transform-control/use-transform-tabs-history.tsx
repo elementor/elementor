@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import {
 	moveTransformPropTypeUtil,
 	type MoveTransformPropValue,
@@ -23,17 +23,19 @@ type InitialTransformValues = {
 	skew: TransformItemPropValue[ 'value' ];
 };
 
-export const useTransformTabsHistory = (
-	{ move: initialMove, scale: initialScale, rotate: initialRotate, skew: initialSkew }: InitialTransformValues,
-	itemIndex: number
-) => {
+export const useTransformTabsHistory = ( {
+	move: initialMove,
+	scale: initialScale,
+	rotate: initialRotate,
+	skew: initialSkew,
+}: InitialTransformValues ) => {
 	const { value: moveValue, setValue: setMoveValue } = useBoundProp( moveTransformPropTypeUtil );
 	const { value: scaleValue, setValue: setScaleValue } = useBoundProp( scaleTransformPropTypeUtil );
 	const { value: rotateValue, setValue: setRotateValue } = useBoundProp( rotateTransformPropTypeUtil );
 	const { value: skewValue, setValue: setSkewValue } = useBoundProp( skewTransformPropTypeUtil );
 
-	const { items } = useRepeaterContext();
-	const activeTransformKeys = useMemo( () => items.map( ( item ) => item.$$type ), [ items ] );
+	const { openItemKey, items, uniqueKeys } = useRepeaterContext();
+	const itemIndex = uniqueKeys.indexOf( openItemKey );
 
 	const getCurrentTransformType = (): TransformFunction => {
 		switch ( true ) {
@@ -102,7 +104,7 @@ export const useTransformTabsHistory = (
 	};
 
 	const isTabDisabled = ( tabKey: TransformFunction ) => {
-		return !! activeTransformKeys.find( ( key, pos ) => tabKey === key && pos !== itemIndex );
+		return !! items.find( ( { $$type: key }, pos ) => tabKey === key && pos !== itemIndex );
 	};
 
 	return {

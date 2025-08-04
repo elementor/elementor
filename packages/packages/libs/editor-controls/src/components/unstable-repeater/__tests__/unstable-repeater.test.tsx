@@ -2,18 +2,21 @@ import * as React from 'react';
 import { createMockPropType, renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
+import { usePropContext } from '../../../bound-prop-context';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
 import { TooltipAddItemAction } from '../actions/tooltip-add-item-action';
 import { Header } from '../header/header';
+import { EditItemPopover } from '../items/edit-item-popover';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
 import { type ItemProps, type RepeatablePropValue } from '../types';
 import { UnstableRepeater } from '../unstable-repeater';
 
 jest.mock( '../../../bound-prop-context/use-bound-prop' );
+jest.mock( '../../../bound-prop-context' );
 
 const defaultInitialValues = {
 	$$type: 'example',
@@ -56,6 +59,9 @@ describe( 'UnstableRepeater', () => {
 					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -92,6 +98,9 @@ describe( 'UnstableRepeater', () => {
 					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -128,6 +137,9 @@ describe( 'UnstableRepeater', () => {
 					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -144,7 +156,7 @@ describe( 'UnstableRepeater', () => {
 		] );
 	} );
 
-	it( 'should render item content when item is opened', () => {
+	it( 'should render item content when item is opened', async () => {
 		// Arrange.
 		const setValues = jest.fn();
 		const values = [
@@ -160,6 +172,10 @@ describe( 'UnstableRepeater', () => {
 			...globalUseBoundPropArgs,
 		} );
 
+		jest.mocked( usePropContext ).mockReturnValue( {
+			value: values[ 0 ],
+		} as never );
+
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
@@ -167,6 +183,9 @@ describe( 'UnstableRepeater', () => {
 					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -174,7 +193,7 @@ describe( 'UnstableRepeater', () => {
 		fireEvent.click( openItemButton );
 
 		// Assert.
-		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Content', {}, { timeout: 1000 } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render proper item indexes for multiple items', () => {
@@ -188,6 +207,10 @@ describe( 'UnstableRepeater', () => {
 			...globalUseBoundPropArgs,
 		} );
 
+		jest.mocked( usePropContext ).mockReturnValue( {
+			value: values[ 1 ],
+		} as never );
+
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
@@ -195,11 +218,14 @@ describe( 'UnstableRepeater', () => {
 					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
 		const openItemButtons = screen.getAllByRole( 'button', { name: 'Open item' } );
-		// Open the second item (index 1)
+
 		fireEvent.click( openItemButtons[ 1 ] );
 
 		// Assert.
@@ -220,6 +246,9 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -271,6 +300,9 @@ describe( 'UnstableRepeater', () => {
 					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...customItemSettings } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -284,7 +316,6 @@ describe( 'UnstableRepeater', () => {
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
-			Content: () => <span>Content</span>,
 		};
 
 		const setValues = jest.fn();
@@ -314,6 +345,7 @@ describe( 'UnstableRepeater', () => {
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DuplicateItemAction />
 				</ItemsContainer>
+				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -343,7 +375,6 @@ describe( 'UnstableRepeater', () => {
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
-			Content: () => <span>Content</span>,
 		};
 
 		const setValues = jest.fn();
@@ -373,6 +404,7 @@ describe( 'UnstableRepeater', () => {
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<RemoveItemAction />
 				</ItemsContainer>
+				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -395,7 +427,6 @@ describe( 'UnstableRepeater', () => {
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
-			Content: () => <span>Content</span>,
 		};
 
 		const initialValues = {
@@ -426,6 +457,7 @@ describe( 'UnstableRepeater', () => {
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
 				</ItemsContainer>
+				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -449,7 +481,6 @@ describe( 'UnstableRepeater', () => {
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
-			Content: () => <span>Content</span>,
 		};
 
 		const initialValues = {
@@ -476,6 +507,7 @@ describe( 'UnstableRepeater', () => {
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
 				</ItemsContainer>
+				<EditItemPopover>Content</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -498,7 +530,6 @@ describe( 'UnstableRepeater', () => {
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
 			Label: () => <span>Item label</span>,
-			Content: ( { bind }: { bind: string } ) => <span>Content - { bind }</span>,
 		};
 
 		const initialValues = {
@@ -515,6 +546,10 @@ describe( 'UnstableRepeater', () => {
 			...globalUseBoundPropArgs,
 		} );
 
+		jest.mocked( usePropContext ).mockReturnValue( {
+			value: initialValues,
+		} as never );
+
 		// Act.
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
@@ -522,6 +557,9 @@ describe( 'UnstableRepeater', () => {
 					<TooltipAddItemAction />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> } />
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
 			</UnstableRepeater>
 		);
 
@@ -545,6 +583,9 @@ const createItemSettings = < T extends RepeatablePropValue = RepeatablePropValue
 ): ItemProps< T > => ( {
 	Icon: ( { value } ) => <span>Item Icon - { String( ( value as T )?.value || '' ) }</span>,
 	Label: ( { value } ) => <span>Item label - { String( ( value as T )?.value || '' ) }</span>,
-	Content: ( { bind } ) => <span>Content - { bind }</span>,
 	...overrides,
 } );
+
+const Content = ( { bind = 0 }: { bind?: string | number } ) => {
+	return <span>Content - { bind }</span>;
+};

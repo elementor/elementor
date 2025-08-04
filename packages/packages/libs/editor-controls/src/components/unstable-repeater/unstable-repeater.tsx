@@ -5,6 +5,7 @@ import { SlotChildren } from '../../control-replacements';
 import { SectionContent } from '../section-content';
 import { RepeaterContextProvider } from './context/repeater-context';
 import { Header } from './header/header';
+import { EditItemPopover } from './items/edit-item-popover';
 import { ItemsContainer } from './items/items-container';
 import { type RepeatablePropValue } from './types';
 
@@ -16,7 +17,7 @@ export const UnstableRepeater = < T extends RepeatablePropValue >( {
 	return (
 		<SectionContent>
 			<RepeaterContextProvider initial={ initial } propTypeUtil={ propTypeUtil }>
-				<SlotChildren whitelist={ [ Header, ItemsContainer ] as React.FC[] } sorted>
+				<SlotChildren whitelist={ [ Header, ItemsContainer, EditItemPopover ] as React.FC[] } sorted>
 					{ children }
 				</SlotChildren>
 			</RepeaterContextProvider>
