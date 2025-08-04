@@ -95,7 +95,7 @@ class Size_Constants {
 	}
 
 	public static function transform(): array {
-		return [ ...self::ANGLE_UNITS, self::COMMON_UNITS ];
+		return self::ANGLE_UNITS;
 	}
 
 	public static function filters() {
