@@ -1,10 +1,23 @@
 import * as React from 'react';
-import { Stack } from '@elementor/ui';
+import { Stack, Typography } from '@elementor/ui';
 
-export const Header = ( { children }: { children: React.ReactNode } ) => {
+import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
+import { ControlAdornments } from '../../../control-adornments/control-adornments';
+import { SlotChildren } from '../../../control-replacements';
+import { AddItemAction } from '../actions/add-item-action';
+import { RepeaterHeaderActionsSlot } from '../locations';
+
+export const Header = ( { label, children }: React.PropsWithChildren< { label: string } > ) => {
+	const { value } = useBoundProp();
+
 	return (
 		<Stack direction="row" justifyContent="start" alignItems="center" gap={ 1 } sx={ { marginInlineEnd: -0.75 } }>
-			{ children }
+			<Typography component="label" variant="caption" color="text.secondary">
+				{ label }
+			</Typography>
+			<RepeaterHeaderActionsSlot value={ value } />
+			<SlotChildren whitelist={ [ AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
+			<ControlAdornments />
 		</Stack>
 	);
 };

@@ -1,12 +1,14 @@
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export function KitTemplatesCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const initialState = data.includes.includes( 'templates' );
+	const unselectedValues = useRef( data.analytics?.customization?.templates || [] );
 
 	const [ templates, setTemplates ] = useState( () => {
 		if ( data.customization.templates ) {
@@ -30,7 +32,15 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 		}
 	}, [ open, data.customization.templates, initialState ] );
 
-	const handleToggleChange = ( settingKey ) => {
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+	}, [] );
+
+	const handleToggleChange = ( settingKey, isChecked ) => {
+		unselectedValues.current = isChecked
+			? unselectedValues.current.filter( ( val ) => settingKey !== val )
+			: [ ...unselectedValues.current, settingKey ];
+
 		setTemplates( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
@@ -42,7 +52,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			open={ open }
 			title={ __( 'Edit templates', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => handleSaveChanges( 'templates', templates ) }
+			handleSaveChanges={ () => handleSaveChanges( 'templates', templates, unselectedValues.current ) }
 			minHeight="auto"
 		>
 			<Stack>

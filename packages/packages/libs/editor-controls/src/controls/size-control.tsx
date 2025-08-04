@@ -150,12 +150,6 @@ export const SizeControl = createControl(
 			} ) );
 		};
 
-		const onInputFocus = ( event: React.FocusEvent< HTMLInputElement > ) => {
-			if ( isUnitExtendedOption( state.unit ) ) {
-				( event.target as HTMLElement )?.blur();
-			}
-		};
-
 		const onInputClick = ( event: React.MouseEvent ) => {
 			if ( ( event.target as HTMLElement ).closest( 'input' ) && 'custom' === state.unit ) {
 				popupState.open( anchorRef?.current );
@@ -165,7 +159,9 @@ export const SizeControl = createControl(
 		useEffect( () => {
 			const newState = createStateFromSizeProp(
 				sizeValue,
-				state.unit === 'custom' ? state.unit : actualDefaultUnit
+				state.unit === 'custom' ? state.unit : actualDefaultUnit,
+				'',
+				state.custom
 			);
 			const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
 			const mergedStates = {
@@ -189,7 +185,7 @@ export const SizeControl = createControl(
 		}, [ sizeValue ] );
 
 		useEffect( () => {
-			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit );
+			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit, '', state.custom );
 
 			if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
 				setState( newState );
@@ -209,7 +205,6 @@ export const SizeControl = createControl(
 					handleSizeChange={ handleSizeChange }
 					handleUnitChange={ handleUnitChange }
 					onBlur={ restoreValue }
-					onFocus={ onInputFocus }
 					onClick={ onInputClick }
 					popupState={ popupState }
 				/>
@@ -238,7 +233,8 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 function createStateFromSizeProp(
 	sizeValue: SizeValue | null,
 	defaultUnit: Unit | ExtendedOption,
-	defaultSize: string | number = ''
+	defaultSize: string | number = '',
+	customState: string = ''
 ): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
 	const size = sizeValue?.size ?? defaultSize;
@@ -248,7 +244,7 @@ function createStateFromSizeProp(
 			! isUnitExtendedOption( unit ) && ! isNaN( Number( size ) ) && ( size || size === 0 )
 				? Number( size )
 				: DEFAULT_SIZE,
-		custom: unit === 'custom' ? String( size ) : '',
+		custom: unit === 'custom' ? String( size ) : customState,
 		unit,
 	};
 }
