@@ -1,190 +1,184 @@
 import * as React from 'react';
-import { FloatingPortal } from '@floating-ui/react';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { HeartHandShakeIcon } from '@elementor/icons';
+import {
+	Button,
+	FormLabel,
+	Grid,
+	Popover,
+	Stack,
+	TextField,
+	Typography,
+} from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
-type ComponentFormData = {
-	model: any;
-	content: any[];
+import { apiClient } from '../api';
+import { useEffect, useRef, useState } from 'react';
+
+type ElementData = {
+	id: string;
+	elType: string;
+	widgetType?: string;
+	elements: ElementData[];
+	settings: Record<string, any>;
+	styles: any[];
 };
 
+type SaveAsComponentEventData = {
+	componentContent: ElementData[];
+	anchorPosition: { top: number; left: number };
+};
+
+const FONT_SIZE = 'tiny';
+const OPEN_SAVE_AS_COMPONENT_POPUP_EVENT = 'elementor/editor/open-save-as-component-popup';
+
 export function ComponentCreateForm() {
-	const [isVisible, setIsVisible] = React.useState(false);
-	const [formData, setFormData] = React.useState<ComponentFormData | null>(null);
-	const [isLoading, setIsLoading] = React.useState(false);
-	const [componentName, setComponentName] = React.useState('');
+	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( false );
 
-	// Listen for save component event from the legacy div-block-view
-	React.useEffect(() => {
-		const handleSaveComponentRequested = (event: CustomEvent<ComponentFormData>) => {
-			setFormData(event.detail);
-			setIsVisible(true);
-			// Generate default name with timestamp
-			const currentDate = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
-			setComponentName(`component-test-${currentDate}`);
-		};
+	const [ componentName, setComponentName ] = useState( '' );
+	const [ anchorPosition, setAnchorPosition ] = useState<{ top: number; left: number } | null>( null );
 
-		window.addEventListener('elementor/editor/save-component-requested', handleSaveComponentRequested as EventListener);
+	const componentContent = useRef<ElementData[]>( [] );
+
+	const openModal = ( event: CustomEvent< SaveAsComponentEventData > ) => {
+		componentContent.current = event.detail.componentContent;
+		setComponentName( getComponentDefaultName( event.detail.componentContent ) );
+		setAnchorPosition( event.detail.anchorPosition );
+
+		setIsOpen( true );
+	};
+
+	useEffect( () => {
+		window.addEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openModal as EventListener);
 
 		return () => {
-			window.removeEventListener('elementor/editor/save-component-requested', handleSaveComponentRequested as EventListener);
+			window.removeEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openModal as EventListener);
 		};
-	}, []);
+	}, [] );
 
 	const handleSave = async () => {
-		if (!formData || !componentName.trim()) {
+		if ( ! componentContent.current || ! componentName.trim() ) {
 			return;
 		}
 
-		setIsLoading(true);
+		setIsLoading( true );
 
 		try {
-			const response = await fetch('/wp-json/elementor/v1/components', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-WP-Nonce': (window as any).wpApiSettings?.nonce,
-				},
-				body: JSON.stringify({
-					name: componentName.trim(),
-					content: formData.content,
-				}),
-			});
+			const result = await apiClient.create( {
+				name: componentName.trim(),
+				content: componentContent.current,
+			} );
 
-			if (!response.ok) {
-				const error = await response.json();
-				throw new Error(error.message || 'Failed to save component');
-			}
-
-			const result = await response.json();
-			
 			// Show success message using Elementor's dialog system
-			(window as any).elementorCommon.dialogsManager.createWidget('alert', {
-				message: `Component saved successfully as: ${componentName} (ID: ${result.component_id})`,
-			}).show();
+			( window as any ).elementorCommon.dialogsManager
+				.createWidget( 'alert', {
+					message: `Component saved successfully as: ${ componentName } (ID: ${ result.data.component_id })`,
+				} )
+				.show();
 
-			handleCancel();
-		} catch (error) {
-			console.error('Error saving component:', error);
-			
-			(window as any).elementorCommon.dialogsManager.createWidget('alert', {
-				message: error instanceof Error ? error.message : 'Failed to save component. Please try again.',
-			}).show();
+			resetAndClose();
+		} catch ( error ) {
+			console.error( 'Error saving component:', error );
+
+			const errorMessage = error instanceof Error ? error.message : 'Failed to save component. Please try again.';
+			( window as any ).elementorCommon.dialogsManager
+				.createWidget( 'alert', {
+					message: errorMessage,
+				} )
+				.show();
 		} finally {
-			setIsLoading(false);
+			setIsLoading( false );
 		}
 	};
 
-	const handleCancel = () => {
-		setIsVisible(false);
-		setFormData(null);
-		setComponentName('');
-		setIsLoading(false);
+	const resetAndClose = () => {
+		setIsOpen( false );
+		componentContent.current = [];
+		setComponentName( '' );
+		setAnchorPosition( null );
+		setIsLoading( false );
 	};
 
-	if (!isVisible || !formData) {
+	if ( ! isOpen || ! componentContent.current ) {
 		return null;
 	}
 
 	return (
-		<FloatingPortal>
-			<div
-				style={{
-					position: 'fixed',
-					top: 0,
-					left: 0,
-					right: 0,
-					bottom: 0,
-					backgroundColor: 'rgba(0, 0, 0, 0.5)',
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'center',
-					zIndex: 999999,
-				}}
-				onClick={(e) => {
-					if (e.target === e.currentTarget) {
-						handleCancel();
-					}
-				}}
+		<ThemeProvider>
+			<Popover
+				open={ isOpen }
+				onClose={ resetAndClose }
+				anchorReference="anchorPosition"
+				anchorPosition={ anchorPosition }
+				anchorOrigin={ {
+					vertical: 'top',
+					horizontal: 'left',
+				} }
+				transformOrigin={ {
+					vertical: 'top',
+					horizontal: 'left',
+				} }
+				disablePortal
+				disableScrollLock
 			>
-				<div
-					style={{
-						backgroundColor: 'white',
-						borderRadius: '8px',
-						padding: '24px',
-						minWidth: '400px',
-						maxWidth: '500px',
-						boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
-					}}
-					onClick={(e) => e.stopPropagation()}
-				>
-					<h2 style={{ margin: '0 0 20px 0', fontSize: '20px', fontWeight: '600' }}>
-						Save as Component
-					</h2>
-					
-					<div style={{ marginBottom: '20px' }}>
-						<label 
-							htmlFor="component-name"
-							style={{ 
-								display: 'block', 
-								marginBottom: '8px', 
-								fontWeight: '500',
-								fontSize: '14px'
-							}}
+				<Stack alignItems="start" width="268px">
+					<Stack direction="row" alignItems="center" sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%', padding: 1, } }>
+						<HeartHandShakeIcon fontSize={ FONT_SIZE } />
+						<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500' } }>
+							{ __( 'Save as a component', 'elementor' ) }
+						</Typography>
+					</Stack>
+					<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
+						<Grid item xs={ 12 }>
+							<FormLabel htmlFor={ 'component-name' } size="tiny">
+								{ __( 'Name', 'elementor' ) }
+							</FormLabel>
+						</Grid>
+						<Grid item xs={ 12 }>
+							<TextField
+								id={ 'component-name' }
+								size={ FONT_SIZE }
+								fullWidth
+								value={ componentName }
+								onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
+									setComponentName( e.target.value )
+								}
+								inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
+							/>
+						</Grid>
+					</Grid>
+					<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1.5 } px={ 1 }>
+						<Button
+							onClick={ resetAndClose }
+							disabled={ isLoading }
+							color="secondary"
+							variant="text"
+							size="small"
 						>
-							Component Name:
-						</label>
-						<input
-							id="component-name"
-							type="text"
-							value={componentName}
-							onChange={(e) => setComponentName(e.target.value)}
-							placeholder="Enter component name..."
-							disabled={isLoading}
-							style={{
-								width: '100%',
-								padding: '10px 12px',
-								border: '1px solid #ddd',
-								borderRadius: '4px',
-								fontSize: '14px',
-								boxSizing: 'border-box',
-							}}
-						/>
-					</div>
-
-					<div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-						<button
-							type="button"
-							onClick={handleCancel}
-							disabled={isLoading}
-							style={{
-								padding: '10px 20px',
-								border: '1px solid #ddd',
-								borderRadius: '4px',
-								backgroundColor: 'white',
-								cursor: isLoading ? 'not-allowed' : 'pointer',
-								fontSize: '14px',
-							}}
+							{ __( 'Cancel', 'elementor' ) }
+						</Button>
+						<Button
+							onClick={ handleSave }
+							disabled={ isLoading || ! componentName.trim() }
+							variant="contained"
+							color="primary"
+							size="small"
 						>
-							Cancel
-						</button>
-						<button
-							type="button"
-							onClick={handleSave}
-							disabled={isLoading || !componentName.trim()}
-							style={{
-								padding: '10px 20px',
-								border: 'none',
-								borderRadius: '4px',
-								backgroundColor: isLoading || !componentName.trim() ? '#ccc' : '#0073aa',
-								color: 'white',
-								cursor: isLoading || !componentName.trim() ? 'not-allowed' : 'pointer',
-								fontSize: '14px',
-							}}
-						>
-							{isLoading ? 'Saving...' : 'Save Component'}
-						</button>
-					</div>
-				</div>
-			</div>
-		</FloatingPortal>
+							{ isLoading ? __( 'Creating...', 'elementor' ) : __( 'Create', 'elementor' ) }
+						</Button>
+					</Stack>
+				</Stack>
+			</Popover>
+		</ThemeProvider>
 	);
-} 
+}
+
+const getComponentDefaultName = ( componentContent: ElementData[] ) => {
+	const container = componentContent[0];
+	const containerType = container.elType === 'widget' ? container.widgetType : container.elType;
+
+	const widgetsCache = ( window as any ).elementor.widgetsCache;
+
+	return containerType ? widgetsCache[ containerType ]?.title : '';
+};
