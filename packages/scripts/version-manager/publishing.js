@@ -3,7 +3,6 @@ const { getPublishablePackages } = require('./package-discovery');
 const { validatePackageForPublishing } = require('./validation');
 const { log, logError, logSuccess, logInfo, logWarning } = require('./logger');
 const { colors } = require('./constants');
-const { NPM_TOKEN } = process.env;
 
 async function isPackagePublished(pkg) {
   try {
