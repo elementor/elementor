@@ -9,7 +9,6 @@ export function init() {
 	mainMenu.registerLink( {
 		id: 'exit-to-wordpress',
 		group: 'exits',
-		priority: 20,
 		useProps: () => {
 			const document = useActiveDocument();
 			return {
