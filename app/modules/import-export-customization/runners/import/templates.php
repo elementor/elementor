@@ -5,6 +5,7 @@ use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
+use Elementor\Modules\Library\Documents\Library_Document;
 
 class Templates extends Import_Runner_Base {
 	private $import_session_id;
@@ -24,6 +25,34 @@ class Templates extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+		$customization = $data['customization']['templates'] ?? null;
+
+		if ( $customization ) {
+			return $this->import_customization( $data, $imported_data, $customization );
+		}
+
+		return $this->import_all( $data, $imported_data );
+	}
+
+	private function import_customization( array $data, array $imported_data, $customization ) {
+		$template_types = [];
+
+		if ( isset( $customization['siteTemplates'] ) && $customization['siteTemplates'] ) {
+			$template_types = array_keys( Plugin::$instance->documents->get_document_types( [
+				'is_editable' => true,
+				'show_in_library' => true,
+				'export_group' => Library_Document::EXPORT_GROUP,
+			] ) );
+		}
+
+		return $this->process_templates_import( $data, $template_types );
+	}
+
+	private function import_all( array $data, array $imported_data ) {
+		return $this->process_templates_import( $data, [] );
+	}
+
+	private function process_templates_import( array $data, array $template_types ) {
 		$this->import_session_id = $data['session_id'];
 
 		$path = $data['extracted_directory_path'] . 'templates/';
@@ -35,11 +64,16 @@ class Templates extends Import_Runner_Base {
 		];
 
 		foreach ( $templates as $id => $template_settings ) {
+			if ( ! empty( $template_types ) && ! in_array( $template_settings['doc_type'], $template_types, true ) ) {
+				continue;
+			}
+
 			try {
 				$template_data = ImportExportUtils::read_json_file( $path . $id );
 				$import = $this->import_template( $id, $template_settings, $template_data );
 
 				$result['templates']['succeed'][ $id ] = $import;
+				$result['templates']['succeed_summary'][ $template_settings['doc_type'] ] = ( $result['templates']['succeed_summary'][ $template_settings['doc_type'] ] ?? 0 ) + 1;
 			} catch ( \Exception $error ) {
 				$result['templates']['failed'][ $id ] = $error->getMessage();
 			}
