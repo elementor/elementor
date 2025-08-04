@@ -20,16 +20,6 @@ class Test_User_Data extends Elementor_Test_Base {
 		do_action( 'rest_api_init' );
 	}
 
-	public function tearDown(): void {
-		parent::tearDown();
-
-		// Clean up user meta
-		$user_id = get_current_user_id();
-		if ( $user_id ) {
-			delete_user_meta( $user_id, User::INTRODUCTION_KEY );
-		}
-	}
-
 	public function test_get_current_user__returns_user_data_when_logged_in() {
 		// Arrange
 		$this->act_as_admin();
@@ -72,7 +62,7 @@ class Test_User_Data extends Elementor_Test_Base {
 		// Act
 		$response = $this->make_get_request();
 
-		// Assert - WordPress handles the 401 automatically when permission_callback returns false
+		// Assert
 		$this->assertSame( 401, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
 	}
@@ -128,7 +118,7 @@ class Test_User_Data extends Elementor_Test_Base {
 		// Act
 		$response = $this->make_patch_request( [ 'suppressedMessages' => 'not-an-array' ] );
 
-		// Assert - WordPress REST API should return validation error
+		// Assert
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 'rest_invalid_param', $response->get_data()['code'] );
 		
@@ -144,7 +134,7 @@ class Test_User_Data extends Elementor_Test_Base {
 		// Act
 		$response = $this->make_patch_request( [ 'suppressedMessages' => [ 'test_message' ] ] );
 
-		// Assert - WordPress handles the 401 automatically when permission_callback returns false
+		// Assert
 		$this->assertSame( 401, $response->get_status() );
 		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
 	}

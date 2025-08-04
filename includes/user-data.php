@@ -17,12 +17,12 @@ class User_Data {
 		register_rest_route( self::API_NAMESPACE, self::API_BASE, [
 			[
 				'methods' => 'GET',
-				'callback' => fn( $request ) => self::get_current_user( $request ),
+				'callback' => fn( $request ) => self::route_wrapper( fn() => self::get_current_user( $request ) ),
 				'permission_callback' => fn() => is_user_logged_in(),
 			],
 			[
 				'methods' => 'PATCH',
-				'callback' => fn( $request ) => self::update_current_user( $request ),
+				'callback' => fn( $request ) => self::route_wrapper( fn() => self::update_current_user( $request ) ),
 				'permission_callback' => fn() => is_user_logged_in(),
 				'args' => [
 					'suppressedMessages' => [
@@ -113,5 +113,15 @@ class User_Data {
 		}
 
 		return $sanitized_messages;
+	}
+
+	private static function route_wrapper( callable $cb ) {
+		try {
+			$response = $cb();
+		} catch ( \Exception $e ) {
+			return new \WP_Error( 'unexpected_error', 'Something went wrong', [ 'status' => 500 ] );
+		}
+
+		return $response;
 	}
 }
