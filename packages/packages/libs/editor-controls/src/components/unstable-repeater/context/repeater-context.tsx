@@ -22,7 +22,7 @@ type RepeaterContextType< T extends RepeatablePropValue > = {
 	popoverProps: Partial< PopoverProps >;
 	popoverState: PopupState;
 	initial: T;
-	addItem: ( config?: AddItem< T > ) => void;
+	addItem: ( ev: React.MouseEvent, config?: AddItem< T > ) => void;
 	updateItem: ( item: T, index: number ) => void;
 	removeItem: ( index: number ) => void;
 	rowRef: HTMLElement | null;
@@ -65,7 +65,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const popoverState = usePopupState( { variant: 'popover' } );
 	const popoverProps: Partial< PopoverProps > = bindPopover( popoverState );
 
-	const addItem = ( config?: AddItem< T > ) => {
+	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? initial;
 		const index = config?.index ?? items.length;
 		const newItems = [ ...items ];
@@ -79,7 +79,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setUniqueKeys( newUniqueKeys );
 
 		setOpenItemKey( newKey );
-		popoverState.open();
+		popoverState.open( rowRef ?? ev );
 	};
 
 	const removeItem = ( index: number ) => {
@@ -105,7 +105,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				popoverState,
 				initial,
 				updateItem: updateItem as ( item: RepeatablePropValue, index: number ) => void,
-				addItem: addItem as ( config?: AddItem< RepeatablePropValue > ) => void,
+				addItem: addItem as ( ev: React.MouseEvent, config?: AddItem< RepeatablePropValue > ) => void,
 				removeItem,
 				rowRef,
 				setRowRef,

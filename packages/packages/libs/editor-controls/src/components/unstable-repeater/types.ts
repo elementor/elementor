@@ -1,4 +1,4 @@
-import { type PropKey, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
+import { type PropKey, type PropTypeUtil, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 
 export type CollectionPropUtil< T > = PropTypeUtil< PropKey, T[] >;
 

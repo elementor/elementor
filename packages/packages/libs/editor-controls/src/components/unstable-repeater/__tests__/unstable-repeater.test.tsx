@@ -117,7 +117,7 @@ describe( 'UnstableRepeater', () => {
 	it( 'should add a new item when the add button is clicked', () => {
 		// Arrange.
 		const setValues = jest.fn();
-		const values = [
+		const value = [
 			{
 				$$type: 'example',
 				value: 'Existing Item',
@@ -125,7 +125,7 @@ describe( 'UnstableRepeater', () => {
 		];
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
-			value: values,
+			value,
 			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );

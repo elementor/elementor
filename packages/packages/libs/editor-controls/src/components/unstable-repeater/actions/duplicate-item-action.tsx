@@ -16,10 +16,10 @@ export const DuplicateItemAction = ( { index = -1 }: { index?: number } ) => {
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 
-	const onClick = () => {
+	const onClick = ( ev: React.MouseEvent ) => {
 		const newItem = structuredClone( items[ index ] );
 
-		addItem( { item: newItem, index: index + 1 } );
+		addItem( ev, { item: newItem, index: index + 1 } );
 	};
 
 	return (
