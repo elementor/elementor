@@ -19,9 +19,11 @@ import {
 	ItemContent,
 } from '../background-control/background-overlay/background-overlay-repeater-control';
 import { createMockGradientOverlay, gradientPropType } from './background-gradient-color-control.test';
+import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
 
 jest.mock( '../image-media-control' );
 jest.mock( '@elementor/wp-media' );
+jest.mock( '../../components/unstable-repeater/context/repeater-context' );
 
 const stubBackgroundColorOverlay = ( color: string ): BackgroundOverlayItemPropValue => {
 	return backgroundColorOverlayPropTypeUtil.create( {
@@ -361,6 +363,8 @@ describe( 'ItemContent', () => {
 				background_placeholder_image: 'https://test-site/wp-content/uploads/bg-test.jpg',
 			},
 		} );
+
+		jest.mocked( useRepeaterContext ).mockReturnValue( { rowRef: document.body } as never );
 	} );
 
 	it( 'should set the default color when switching from image to color tab', async () => {
@@ -376,7 +380,7 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		renderControl( <ItemContent { ...props } />, props );
+		renderControl( <ItemContent />, props );
 
 		const colorTab = screen.getByText( 'Color' );
 		fireEvent.click( colorTab );
@@ -396,7 +400,7 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		renderControl( <ItemContent { ...props } />, props );
+		renderControl( <ItemContent />, props );
 
 		const imageTab = screen.getByText( 'Image' );
 		fireEvent.click( imageTab );
@@ -416,7 +420,7 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		renderControl( <ItemContent { ...props } />, props );
+		renderControl( <ItemContent />, props );
 
 		const gradientTab = screen.getByText( 'Gradient' );
 		fireEvent.click( gradientTab );
@@ -467,7 +471,7 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		const { rerender } = renderControl( <ItemContent { ...props } />, props );
+		const { rerender } = renderControl( <ItemContent />, props );
 
 		// Arrange.
 		const colorTab = screen.getByText( 'Color' );
@@ -480,7 +484,7 @@ describe( 'ItemContent', () => {
 		setValue.mockClear();
 
 		// Act.
-		rerender( <ItemContent { ...props } />, {
+		rerender( <ItemContent />, {
 			value: stubBackgroundColorOverlay( '#F54359' ),
 		} );
 
@@ -504,7 +508,7 @@ describe( 'ItemContent', () => {
 		};
 
 		// Act.
-		const { rerender } = renderControl( <ItemContent { ...props } />, props );
+		const { rerender } = renderControl( <ItemContent />, props );
 
 		const colorTab = screen.getByText( 'Color', { selector: 'button' } );
 
@@ -516,7 +520,7 @@ describe( 'ItemContent', () => {
 		setValue.mockClear();
 
 		// Act.
-		rerender( <ItemContent { ...props } />, {
+		rerender( <ItemContent />, {
 			value: stubBackgroundColorOverlay( '#F54359' ),
 		} );
 
