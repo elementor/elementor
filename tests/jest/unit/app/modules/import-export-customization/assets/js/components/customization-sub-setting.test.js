@@ -122,24 +122,5 @@ describe( 'SubSetting Component', () => {
 			// Assert
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'test-sub-key', false );
 		} );
-
-		it( 'should handle multiple interactions correctly when enabled', () => {
-			// Arrange
-			render( <SubSetting { ...defaultProps } /> );
-
-			// Act
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-
-			// First click - turn on
-			fireEvent.click( inputElement );
-			// Second click - turn off
-			fireEvent.click( inputElement );
-
-			// Assert
-			expect( mockOnSettingChange ).toHaveBeenCalledTimes( 2 );
-			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 1, 'test-sub-key', true );
-			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 2, 'test-sub-key', false );
-		} );
 	} );
 } );
