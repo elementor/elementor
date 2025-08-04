@@ -271,7 +271,7 @@ class App extends BaseApp {
 			'filesUpload' => [
 				'unfilteredFiles' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			],
-			'editor_events' => Editor_Events::get_editor_events_config(),
+			'editor_events' => Events_Manager::get_editor_events_config(),
 		];
 
 		/**
