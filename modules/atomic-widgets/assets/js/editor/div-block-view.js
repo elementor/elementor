@@ -216,7 +216,7 @@ const DivBlockView = BaseElementView.extend( {
 				{
 					name: 'save-component',
 					title: __( 'Save as a component', 'elementor' ),
-					callback: this.saveAsComponent.bind( this ),
+					callback: ( event, contextMenuEvent ) => this.saveAsComponent( event, contextMenuEvent ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			],
@@ -231,20 +231,24 @@ const DivBlockView = BaseElementView.extend( {
 		} );
 	},
 
-	saveAsComponent() {
+	saveAsComponent( event, contextMenuEvent ) {
 		const JSONParams = { remove: [ 'default' ] };
-		const content = [ this.model.toJSON( JSONParams ) ];
+		const componentContent = [ this.model.toJSON( JSONParams ) ];
 
-		// Emit event for the React component to handle
-		const renderedEvent = new CustomEvent( 'elementor/editor/save-component-requested', {
+		const clickEvent = contextMenuEvent.originalEvent;
+		const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
+		const anchorPosition = {
+			left: clickEvent.clientX + iframeRect.left,
+			top: clickEvent.clientY + iframeRect.top,
+		};
+		const renderedEvent = new CustomEvent( 'elementor/editor/open-save-as-component-popup', {
 			detail: {
-				model: this.model,
-				content,
+				componentContent,
+				anchorPosition,
 			},
 		} );
 
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
-
 		window.top.dispatchEvent( renderedEvent );
 	},
 
