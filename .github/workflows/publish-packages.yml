@@ -5,7 +5,10 @@ on:
     branches:
       - main
     paths:
-      - 'packages/**'  # Only trigger on changes to packages directory
+      - 'packages/**'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   publish-packages:
