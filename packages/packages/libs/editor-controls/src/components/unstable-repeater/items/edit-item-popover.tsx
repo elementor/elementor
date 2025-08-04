@@ -3,7 +3,6 @@ import { Box, Popover } from '@elementor/ui';
 
 import { PropKeyProvider } from '../../../bound-prop-context';
 import { EMPTY_OPEN_ITEM, useRepeaterContext } from '../context/repeater-context';
-import { type RepeatablePropValue } from '../types';
 
 type EditItemPopoverProps = {
 	children?: React.ReactNode;
@@ -18,8 +17,7 @@ export const EditItemPopover = ( { children }: EditItemPopoverProps ) => {
 		return null;
 	}
 
-	const value = items[ index ];
-	const bind = value.$$type;
+	const bind = items[ index ].$$type;
 
 	return (
 		<Popover
@@ -30,8 +28,8 @@ export const EditItemPopover = ( { children }: EditItemPopoverProps ) => {
 				},
 			} }
 			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-			anchorEl={ rowRef }
 			{ ...popoverProps }
+			anchorEl={ rowRef }
 			onClose={ () => {
 				setRowRef( null );
 				setOpenItemKey( EMPTY_OPEN_ITEM );
@@ -39,8 +37,8 @@ export const EditItemPopover = ( { children }: EditItemPopoverProps ) => {
 		>
 			<PropKeyProvider bind={ String( index ) }>
 				<Box>
-					{ React.isValidElement< { value: RepeatablePropValue; bind: string; index: number } >( children ) &&
-						React.cloneElement( children, { value, bind, index } ) }
+					{ React.isValidElement< { bind: string; index: number } >( children ) &&
+						React.cloneElement( children, { bind, index } ) }
 				</Box>
 			</PropKeyProvider>
 		</Popover>

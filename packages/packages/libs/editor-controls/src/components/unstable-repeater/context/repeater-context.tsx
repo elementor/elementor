@@ -79,6 +79,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setUniqueKeys( newUniqueKeys );
 
 		setOpenItemKey( newKey );
+		popoverState.open();
 	};
 
 	const removeItem = ( index: number ) => {

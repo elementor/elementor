@@ -19,7 +19,7 @@ import { DisableItemAction } from '../../../components/unstable-repeater/actions
 import { DuplicateItemAction } from '../../../components/unstable-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../../../components/unstable-repeater/actions/remove-item-action';
 import { Item } from '../../../components/unstable-repeater/items/item';
-import type { RepeatablePropValue } from '../../../components/unstable-repeater/types';
+import { CollectionPropUtil, RepeatablePropValue } from "../../../components/unstable-repeater/types";
 import { createControl } from '../../../create-control';
 import { env } from '../../../env';
 import { ColorControl } from '../../color-control';
@@ -85,7 +85,7 @@ export const BackgroundOverlayRepeaterControl = createControl( () => {
 		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue }>
 			<UnstableRepeater
 				initial={ getInitialBackgroundOverlay() as RepeatablePropValue }
-				propTypeUtil={ backgroundOverlayPropTypeUtil as PropTypeUtil< string, RepeatablePropValue[] > }
+				propTypeUtil={ backgroundOverlayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 			>
 				<Header label={ __( 'Overlay', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } />
