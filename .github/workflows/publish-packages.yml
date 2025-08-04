@@ -53,7 +53,7 @@ jobs:
       - name: Publish Packages
         working-directory: packages
         run: |
-          npm config set //registry.npmjs.org/:_authToken \"${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}\"
+          npm config set //registry.npmjs.org/:_auth \"${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}\"
           # Publish with the build number tag
           node scripts/version-manager/index.js publish --tag build --yes
 
