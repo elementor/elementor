@@ -21,7 +21,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 
 	public function units( $units = 'all' ) {
 		if ( 'all' === $units ) {
-			$units = Size_Constants::all_units();
+			$units = Size_Constants::all();
 		}
 
 		if ( is_array( $units ) ) {
