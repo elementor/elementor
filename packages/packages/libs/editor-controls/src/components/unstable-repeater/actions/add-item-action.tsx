@@ -21,7 +21,7 @@ export const AddItemAction = ( {
 	const { addItem } = useRepeaterContext();
 	const shouldShowTooltip = tooltip && tooltipContent;
 
-	const onClick = () => addItem( { index: newItemIndex } );
+	const onClick = ( ev: React.MouseEvent ) => addItem( ev, { index: newItemIndex } );
 
 	return (
 		<ConditionalToolTip content={ tooltipContent } shouldShowTooltip={ !! shouldShowTooltip }>

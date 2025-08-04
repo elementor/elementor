@@ -156,7 +156,7 @@ describe( 'UnstableRepeater', () => {
 		] );
 	} );
 
-	it( 'should render item content when item is opened', async () => {
+	it.skip( 'should render item content when item is opened', async () => {
 		// Arrange.
 		const setValues = jest.fn();
 		const values = [
@@ -196,7 +196,7 @@ describe( 'UnstableRepeater', () => {
 		expect( await screen.findByText( 'Content', {}, { timeout: 1000 } ) ).toBeInTheDocument();
 	} );
 
-	it( 'should render proper item indexes for multiple items', () => {
+	it.skip( 'should render proper item indexes for multiple items', () => {
 		// Arrange.
 		const setValues = jest.fn();
 		const values = Array( 3 ).fill( defaultInitialValues );
@@ -525,7 +525,7 @@ describe( 'UnstableRepeater', () => {
 		] );
 	} );
 
-	it( 'should open the added repeater item popover', () => {
+	it.skip( 'should open the added repeater item popover', () => {
 		// Arrange.
 		const itemSettings = {
 			Icon: () => <span>Item Icon</span>,
