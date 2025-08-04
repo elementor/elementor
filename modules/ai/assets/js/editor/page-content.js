@@ -77,6 +77,7 @@ const PageContent = (
 			sx: {
 				m: 0,
 				maxHeight: 'media' === type ? '95vh' : '76vh',
+				minHeight: '80vh',
 				height: 'auto',
 			},
 		},
