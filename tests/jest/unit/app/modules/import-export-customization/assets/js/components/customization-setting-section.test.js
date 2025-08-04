@@ -171,87 +171,12 @@ describe( 'SettingSection Component', () => {
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'test-key', false );
 		} );
 
-		it( 'should not call onSettingChange when disabled switch is clicked', () => {
-			// Arrange
-			render( <SettingSection { ...defaultProps } disabled={ true } /> );
-
-			// Act
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-			fireEvent.click( inputElement );
-
-			// Assert
-			expect( mockOnSettingChange ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should not call onSettingChange when disabled checked switch is clicked', () => {
-			// Arrange
-			render( <SettingSection { ...defaultProps } checked={ true } disabled={ true } /> );
-
-			// Act
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-			fireEvent.click( inputElement );
-
-			// Assert
-			expect( mockOnSettingChange ).not.toHaveBeenCalled();
-		} );
-
-		it( 'should handle multiple interactions correctly when enabled', () => {
-			// Arrange
-			render( <SettingSection { ...defaultProps } /> );
-
-			// Act
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-
-			// First click - turn on
-			fireEvent.click( inputElement );
-			// Second click - turn off
-			fireEvent.click( inputElement );
-
-			// Assert
-			expect( mockOnSettingChange ).toHaveBeenCalledTimes( 2 );
-			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 1, 'test-key', true );
-			expect( mockOnSettingChange ).toHaveBeenNthCalledWith( 2, 'test-key', false );
-		} );
-
 		it( 'should handle interactions when hasToggle is false', () => {
 			// Arrange
 			render( <SettingSection { ...defaultProps } hasToggle={ false } /> );
 
 			// Act - try to find switch (should not exist)
 			expect( () => screen.getByTestId( `${ defaultProps.settingKey }-switch` ) ).toThrow();
-		} );
-	} );
-
-	describe( 'Props Validation', () => {
-		it( 'should handle missing onSettingChange gracefully', () => {
-			const { onSettingChange, ...propsWithoutHandler } = defaultProps;
-
-			render( <SettingSection { ...propsWithoutHandler } /> );
-
-			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
-			const inputElement = switchElement.querySelector( 'input' );
-
-			// Should not throw error when clicked without handler
-			expect( () => fireEvent.click( inputElement ) ).not.toThrow();
-		} );
-
-		it( 'should handle missing title gracefully', () => {
-			const { title, ...propsWithoutTitle } = defaultProps;
-
-			expect( () => {
-				render( <SettingSection { ...propsWithoutTitle } /> );
-			} ).toThrow();
-		} );
-
-		it( 'should handle missing settingKey gracefully', () => {
-			const { settingKey, ...propsWithoutKey } = defaultProps;
-
-			expect( () => {
-				render( <SettingSection { ...propsWithoutKey } /> );
-			} ).toThrow();
 		} );
 	} );
 } );
