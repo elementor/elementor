@@ -105,7 +105,7 @@
 
 .select2-selection__arrow {
 	height: $control-unit;
-	top: 0;
+	inset-block-start: 0;
 }
 
 .select2-results__option[aria-selected=true] {
