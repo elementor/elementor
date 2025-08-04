@@ -213,6 +213,12 @@ const DivBlockView = BaseElementView.extend( {
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
+				{
+					name: 'save-component',
+					title: __( 'Save as a component', 'elementor' ),
+					callback: this.saveAsComponent.bind( this ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				},
 			],
 		} );
 
@@ -222,6 +228,61 @@ const DivBlockView = BaseElementView.extend( {
 	saveAsTemplate() {
 		$e.route( 'library/save-template', {
 			model: this.model,
+		} );
+	},
+
+	saveAsComponent() {
+		// Generate automatic component name with current date
+		const currentDate = new Date().toISOString().slice( 0, 19 ).replace( /:/g, '-' );
+		const componentName = `component-test-${ currentDate }`;
+
+		const JSONParams = { remove: [ 'default' ] };
+		const content = [ this.model.toJSON( JSONParams ) ];
+
+		// Show loading state
+		const loadingDialog = elementorCommon.dialogsManager.createWidget( 'lightbox', {
+			message: __( 'Saving component...', 'elementor' ),
+			headerMessage: __( 'Please wait', 'elementor' ),
+			strings: {
+				cancel: __( 'Cancel', 'elementor' ),
+			},
+			closeButton: false,
+		} );
+
+		loadingDialog.show();
+
+		// Call the REST API directly
+		fetch( '/wp-json/elementor/v1/components', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-WP-Nonce': wpApiSettings.nonce// elementorCommon.config.nonce,
+				// 'Cookie': document.cookie,
+			},
+			body: JSON.stringify( {
+				name: componentName,
+				content,
+			} ),
+		} )
+		.then( ( response ) => {
+			if ( ! response.ok ) {
+				return response.json().then( ( error ) => Promise.reject( error ) );
+			}
+			return response.json();
+		} )
+		.then( ( data ) => {
+			loadingDialog.hide();
+			const successMessage = __( 'Component saved successfully as:', 'elementor' ) + ` ${ componentName } (ID: ${ data.component_id })`;
+			elementorCommon.dialogsManager.createWidget( 'alert', {
+				message: successMessage,
+			} ).show();
+		} )
+		.catch( ( error ) => {
+			loadingDialog.hide();
+			const errorMessage = error?.message || __( 'Failed to save component. Please try again.', 'elementor' );
+			elementorCommon.dialogsManager.createWidget( 'alert', {
+				message: errorMessage,
+			} ).show();
 		} );
 	},
 
