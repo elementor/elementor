@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const MODULE_NAME = 'e-variables';
 	const EXPERIMENT_NAME = 'e_variables';
+	const EXPERIMENT_SETTINGS_NAME = 'e_variables_settings';
 
 	private Variable_Types_Registry $variable_types_registry;
 
@@ -43,10 +44,22 @@ class Module extends BaseModule {
 		if ( ! $this->is_experiment_active() ) {
 			return;
 		}
+		$this->register_features();
 
 		$this->hooks()->register();
 
 		add_action( 'init', [ $this, 'init_variable_types_registry' ] );
+	}
+
+	private function register_features() {
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_SETTINGS_NAME,
+			'title' => esc_html__( 'Variables Settings', 'elementor' ),
+			'description' => esc_html__( 'Enable variables settings. (For this feature to work - Variables must be active)', 'elementor' ),
+			'hidden' => true,
+			'default' => ExperimentsManager::STATE_INACTIVE,
+			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+		]);
 	}
 
 	private function is_experiment_active(): bool {
