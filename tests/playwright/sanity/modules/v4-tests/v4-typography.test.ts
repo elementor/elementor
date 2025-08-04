@@ -24,10 +24,10 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
-	test.afterAll( async () => {
-		await wpAdmin.resetExperiments();
-		await context.close();
-	} );
+	// test.afterAll( async () => {
+	// 	await wpAdmin.resetExperiments();
+	// 	await context.close();
+	// } );
 
 	test.beforeEach( async () => {
 		editor = await wpAdmin.openNewPage();
@@ -50,7 +50,7 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 		test( 'Typography controls are accessible and functional', async () => {
 			await setupWidgetWithTypography( 'e-heading' );
 
-			// Verify essential typography controls are present and accessible
+			// Verify essential typography controls are present
 			const essentialControls = [
 				'Font family',
 				'Font size',
@@ -61,7 +61,7 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 				await expect( control ).toBeVisible();
 			}
 
-			// Test typography section state managemen
+			// Test typography section state management
 			const isOpenBefore = await editor.v4Panel.isTypographySectionOpen();
 			expect( isOpenBefore ).toBe( true );
 
@@ -86,6 +86,42 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 			const frame = page.frameLocator( 'iframe[title="Preview"]' );
 			const headingElement = frame.locator( 'h2' );
 			await expect( headingElement ).toHaveCSS( 'font-family', /Trebuchet MS/ );
+		} );
+
+		test( 'Text alignment controls work correctly', async () => {
+			await setupWidgetWithTypography( 'e-heading' );
+
+			// Open typography section
+			await editor.openV2Section( 'typography' );
+
+			// Verify text align controls are present
+			const textAlignLabel = page.locator( 'label', { hasText: 'Text align' } );
+			await expect( textAlignLabel ).toBeVisible();
+
+			// Test each alignment option
+			const alignments = [
+				{ button: 'Start', expectedValue: 'start' },
+				{ button: 'Center', expectedValue: 'center' },
+				{ button: 'End', expectedValue: 'end' },
+				{ button: 'Justify', expectedValue: 'justify' },
+			];
+
+			const headingElement = editor.getPreviewFrame().locator( 'h2' );
+
+			for ( const { button, expectedValue } of alignments ) {
+				// Click the alignment button
+				const alignButton = page.locator( `button[aria-label="${ button }"]` );
+				await alignButton.click();
+
+				// Wait for changes to be applied in iframe
+				await page.waitForTimeout( 100 ); // Small delay to ensure changes are applied
+
+				// Verify the alignment was applied
+				await expect( headingElement ).toHaveCSS( 'text-align', expectedValue );
+
+				// Additional verification that the heading is visible and has the correct alignment
+				await expect( headingElement ).toBeVisible();
+			}
 		} );
 
 		test( 'Typography section opens and closes correctly', async () => {
