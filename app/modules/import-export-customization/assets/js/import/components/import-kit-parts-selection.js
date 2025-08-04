@@ -44,7 +44,7 @@ export default function ImportKitPartsSelection() {
 				includes.push( 'settings' );
 			}
 
-			if ( data.uploadedData?.manifest?.templates ) {
+			if ( 0 < Object.keys( data.uploadedData?.manifest?.templates || {} ).length ) {
 				includes.push( 'templates' );
 			}
 
