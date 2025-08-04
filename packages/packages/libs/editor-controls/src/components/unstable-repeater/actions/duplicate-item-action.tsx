@@ -7,26 +7,19 @@ import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
-export const DuplicateItemAction = () => {
-	const {
-		config: {
-			itemActions: { inject },
-		},
-	} = useRepeaterContext();
-
-	inject( Action, 'duplicate' );
-
-	return null;
-};
-
-const Action = ( { index }: { index: number } ) => {
+export const DuplicateItemAction = ( { index = -1 }: { index?: number } ) => {
 	const { items, addItem } = useRepeaterContext();
+
+	if ( index === -1 ) {
+		return null;
+	}
+
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
 
 	const onClick = () => {
 		const newItem = structuredClone( items[ index ] );
 
-		addItem( newItem, index + 1 );
+		addItem( { item: newItem, index: index + 1 } );
 	};
 
 	return (
