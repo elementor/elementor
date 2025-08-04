@@ -255,4 +255,50 @@ class Test_User_Data extends Elementor_Test_Base {
 		$this->assertSame( 401, $response->get_status() );
 		$this->assertSame( 'rest_not_logged_in', $response->get_data()['code'] );
 	}
+
+	public function test_sanitize_suppressed_messages__sanitizes_array_properly() {
+		// Arrange
+		$input_array = [
+			'clean_message',
+			'<script>alert("xss")</script>',
+			'message with spaces  ',
+			123, // Non-string should be filtered out
+			null, // Non-string should be filtered out
+			'normal_message',
+		];
+
+		// Act
+		$result = User_Data::sanitize_suppressed_messages( $input_array, new \WP_REST_Request(), 'suppressedMessages' );
+
+		// Assert
+		$expected = [
+			'clean_message',
+			// Script tags get completely removed by sanitize_text_field, resulting in empty string which is filtered out
+			'message with spaces', // Trailing spaces should be trimmed
+			'normal_message',
+		];
+		
+		$this->assertSame( $expected, $result );
+		$this->assertCount( 3, $result ); // Non-string items and empty strings after sanitization are filtered out
+	}
+
+	public function test_sanitize_suppressed_messages__returns_null_for_non_array() {
+		// Arrange & Act
+		$result1 = User_Data::sanitize_suppressed_messages( 'not-an-array', new \WP_REST_Request(), 'suppressedMessages' );
+		$result2 = User_Data::sanitize_suppressed_messages( 123, new \WP_REST_Request(), 'suppressedMessages' );
+		$result3 = User_Data::sanitize_suppressed_messages( null, new \WP_REST_Request(), 'suppressedMessages' );
+
+		// Assert
+		$this->assertNull( $result1 );
+		$this->assertNull( $result2 );
+		$this->assertNull( $result3 );
+	}
+
+	public function test_sanitize_suppressed_messages__handles_empty_array() {
+		// Arrange & Act
+		$result = User_Data::sanitize_suppressed_messages( [], new \WP_REST_Request(), 'suppressedMessages' );
+
+		// Assert
+		$this->assertSame( [], $result );
+	}
 } 

@@ -35,9 +35,7 @@ class User_Data {
 						'validate_callback' => function( $param, $request, $key ) {
 							return is_array( $param );
 						},
-						'sanitize_callback' => function( $param, $request, $key ) {
-							return is_array( $param ) ? $param : null;
-						},
+						'sanitize_callback' => [ __CLASS__, 'sanitize_suppressed_messages' ],
 					],
 				],
 			],
@@ -119,4 +117,32 @@ class User_Data {
 
 		return self::get_current_user( $request );
 	}
+
+	/**
+	 * Sanitize suppressed messages array.
+	 *
+	 * @param array $param The parameter value.
+	 * @param \WP_REST_Request $request The request object.
+	 * @param string $key The parameter key.
+	 * @return array|null The sanitized array or null.
+	 */
+	public static function sanitize_suppressed_messages( $param, $request, $key ) {
+		if ( ! is_array( $param ) ) {
+			return null;
+		}
+
+		$sanitized_messages = [];
+		foreach ( $param as $message ) {
+			if ( is_string( $message ) ) {
+				$sanitized_message = sanitize_text_field( $message );
+
+				if ( ! empty( $sanitized_message ) ) {
+					$sanitized_messages[] = $sanitized_message;
+				}
+			}
+		}
+
+		return $sanitized_messages;
+	}
 }
+
