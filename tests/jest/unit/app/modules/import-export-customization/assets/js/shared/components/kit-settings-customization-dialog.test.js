@@ -625,7 +625,7 @@ describe( 'KitSettingsCustomizationDialog Component', () => {
 					generalSettings: true,
 					experiments: false,
 				},
-				[ 'globalColors', 'themeStyleSettings', 'experiments' ],
+				[ ],
 			);
 		} );
 	} );
