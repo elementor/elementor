@@ -10,20 +10,20 @@ class User_Data {
 	const API_BASE = '/user-data/current-user';
 
 	public static function init() {
-		add_action( 'rest_api_init', [ __CLASS__, 'register_routes' ] );
+		add_action( 'rest_api_init', fn() => self::register_routes() );
 	}
 
-	public static function register_routes() {
+	private static function register_routes() {
 		register_rest_route( self::API_NAMESPACE, self::API_BASE, [
 			[
-				'methods' => \WP_REST_Server::READABLE,
-				'callback' => [ __CLASS__, 'get_current_user' ],
-				'permission_callback' => [ __CLASS__, 'check_permissions' ],
+				'methods' => 'GET',
+				'callback' => fn( $request ) => self::get_current_user( $request ),
+				'permission_callback' => fn() => is_user_logged_in(),
 			],
 			[
-				'methods' => \WP_REST_Server::EDITABLE,
-				'callback' => [ __CLASS__, 'update_current_user' ],
-				'permission_callback' => [ __CLASS__, 'check_permissions' ],
+				'methods' => 'PATCH',
+				'callback' => fn( $request ) => self::update_current_user( $request ),
+				'permission_callback' => fn() => is_user_logged_in(),
 				'args' => [
 					'suppressedMessages' => [
 						'required' => false,
@@ -35,7 +35,7 @@ class User_Data {
 						'validate_callback' => function( $param, $request, $key ) {
 							return is_array( $param );
 						},
-						'sanitize_callback' => [ __CLASS__, 'sanitize_suppressed_messages' ],
+						'sanitize_callback' => fn( $param, $request, $key ) => self::sanitize_suppressed_messages( $param, $request, $key ),
 					],
 				],
 			],
@@ -43,32 +43,10 @@ class User_Data {
 	}
 
 	/**
-	 * Check permissions for the endpoint
-	 *
-	 * @param \WP_REST_Request $request The request object.
-	 * @return bool|\WP_Error Whether the user has permission.
-	 */
-	public static function check_permissions( $request ) {
-		if ( ! is_user_logged_in() ) {
-			return new \WP_Error( 'rest_not_logged_in', 'You are not currently logged in.', [ 'status' => 401 ] );
-		}
-
-		return true;
-	}
-
-	/**
-	 * Get current user data
-	 *
 	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response|\WP_Error Response object or error.
 	 */
 	public static function get_current_user( $request ) {
-		$user_id = get_current_user_id();
-
-		if ( ! $user_id ) {
-			return new \WP_Error( 'rest_not_logged_in', 'You are not currently logged in.', [ 'status' => 401 ] );
-		}
-
 		$current_user = wp_get_current_user();
 		$introduction_meta = User::get_introduction_meta();
 
@@ -92,17 +70,11 @@ class User_Data {
 	}
 
 	/**
-	 * Update current user data
-	 *
 	 * @param \WP_REST_Request $request The request object.
 	 * @return \WP_REST_Response|\WP_Error Response object or error.
 	 */
 	public static function update_current_user( $request ) {
 		$user_id = get_current_user_id();
-
-		if ( ! $user_id ) {
-			return new \WP_Error( 'rest_not_logged_in', 'You are not currently logged in.', [ 'status' => 401 ] );
-		}
 
 		$suppressed_messages = $request->get_param( 'suppressedMessages' );
 
@@ -119,8 +91,6 @@ class User_Data {
 	}
 
 	/**
-	 * Sanitize suppressed messages array.
-	 *
 	 * @param array $param The parameter value.
 	 * @param \WP_REST_Request $request The request object.
 	 * @param string $key The parameter key.

@@ -72,8 +72,9 @@ class Test_User_Data extends Elementor_Test_Base {
 		// Act
 		$response = $this->make_get_request();
 
-		// Assert
-		$this->assert_unauthorized_response( $response );
+		// Assert - WordPress handles the 401 automatically when permission_callback returns false
+		$this->assertSame( 401, $response->get_status() );
+		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
 	}
 
 	public function test_update_current_user__updates_suppressed_messages() {
@@ -143,31 +144,9 @@ class Test_User_Data extends Elementor_Test_Base {
 		// Act
 		$response = $this->make_patch_request( [ 'suppressedMessages' => [ 'test_message' ] ] );
 
-		// Assert
-		$this->assert_unauthorized_response( $response );
-	}
-
-	public function test_check_permissions__returns_true_when_logged_in() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$result = User_Data::check_permissions( new \WP_REST_Request() );
-
-		// Assert
-		$this->assertTrue( $result );
-	}
-
-	public function test_check_permissions__returns_wp_error_when_not_logged_in() {
-		// Arrange
-		wp_set_current_user( 0 );
-
-		// Act
-		$result = User_Data::check_permissions( new \WP_REST_Request() );
-
-		// Assert
-		$this->assertInstanceOf( \WP_Error::class, $result );
-		$this->assertSame( 'rest_not_logged_in', $result->get_error_code() );
+		// Assert - WordPress handles the 401 automatically when permission_callback returns false
+		$this->assertSame( 401, $response->get_status() );
+		$this->assertSame( 'rest_forbidden', $response->get_data()['code'] );
 	}
 
 	public function test_register_routes__endpoint_exists() {
@@ -184,14 +163,14 @@ class Test_User_Data extends Elementor_Test_Base {
 		// Check GET method
 		$get_method = $route[0];
 		$this->assertTrue( isset( $get_method['methods']['GET'] ) );
-		$this->assertSame( [ 'Elementor\User_Data', 'get_current_user' ], $get_method['callback'] );
-		$this->assertSame( [ 'Elementor\User_Data', 'check_permissions' ], $get_method['permission_callback'] );
+		$this->assertInstanceOf( \Closure::class, $get_method['callback'] );
+		$this->assertInstanceOf( \Closure::class, $get_method['permission_callback'] );
 		
 		// Check PATCH method
 		$patch_method = $route[1];
-		$this->assertTrue( isset( $patch_method['methods']['POST'] ) || isset( $patch_method['methods']['PATCH'] ) );
-		$this->assertSame( [ 'Elementor\User_Data', 'update_current_user' ], $patch_method['callback'] );
-		$this->assertSame( [ 'Elementor\User_Data', 'check_permissions' ], $patch_method['permission_callback'] );
+		$this->assertTrue( isset( $patch_method['methods']['PATCH'] ) );
+		$this->assertInstanceOf( \Closure::class, $patch_method['callback'] );
+		$this->assertInstanceOf( \Closure::class, $patch_method['permission_callback'] );
 		
 		// Check PATCH method args
 		$this->assertArrayHasKey( 'suppressedMessages', $patch_method['args'] );
@@ -249,11 +228,6 @@ class Test_User_Data extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'PATCH', '/elementor/v1/user-data/current-user' );
 		$request->set_body_params( $params );
 		return rest_do_request( $request );
-	}
-
-	private function assert_unauthorized_response( $response ) {
-		$this->assertSame( 401, $response->get_status() );
-		$this->assertSame( 'rest_not_logged_in', $response->get_data()['code'] );
 	}
 
 	public function test_sanitize_suppressed_messages__sanitizes_array_properly() {
