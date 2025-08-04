@@ -11,6 +11,17 @@ import GoodToGo from './pages/good-to-go';
 import InstallPro from './pages/upload-and-install-pro';
 import ChooseFeatures from './pages/choose-features';
 
+const safeDispatchEvent = ( eventName, eventData ) => {
+	try {
+		if ( ! elementorCommon?.eventsManager?.dispatchEvent ) {
+			return;
+		}
+		elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
+	} catch ( error ) {
+		// Silently fail - don't let tracking break the user experience
+	}
+};
+
 export default function App() {
 	// Send an AJAX request to update the database option which makes sure the Onboarding process only runs once,
 	// for new Elementor sites.
@@ -24,6 +35,20 @@ export default function App() {
 		}
 
 		if ( ! elementorAppConfig.onboarding.onboardingAlreadyRan ) {
+			safeDispatchEvent(
+				'onboarding_started',
+				{
+					location: elementorCommon.eventsManager?.config?.locations?.elementorEditor || 'elementor_editor',
+					secondaryLocation: elementorCommon.eventsManager?.config?.secondaryLocations?.userPreferences || 'user_preferences',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
+					element: 'onboarding_wizard',
+					onboarding_version: elementorAppConfig.onboarding?.onboardingVersion || '1.0.0',
+					is_library_connected: elementorAppConfig.onboarding?.isLibraryConnected || false,
+					hello_theme_installed: elementorAppConfig.onboarding?.helloInstalled || false,
+					hello_theme_activated: elementorAppConfig.onboarding?.helloActivated || false,
+				},
+			);
+
 			const formData = new FormData();
 
 			formData.append( '_nonce', elementorCommon.config.ajax.nonce );
