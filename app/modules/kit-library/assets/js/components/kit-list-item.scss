@@ -83,9 +83,9 @@ $root: e-kit-library__kit-item;
 		min-width: 0;
 		padding: 12px 0;
 		position: absolute;
-		top: 25px;
-		left: 100%;
-		transform: translateX(-100%);
+		inset-block-start: 25px;
+		inset-inline-start: 100%;
+		transform: translateX(calc(-100% * var(--direction-multiplier)));
 
 		&-item {
 			display: flex;
