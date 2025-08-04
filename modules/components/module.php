@@ -4,6 +4,7 @@ namespace Elementor\Modules\Components;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\Components\Styles\Component_Styles;
+use Elementor\Modules\Components\Documents\Component as Component_Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -21,6 +22,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		$this->register_hooks();
+		$this->register_document_type();
 	}
 
 	public static function get_experimental_data() {
@@ -34,10 +36,22 @@ class Module extends BaseModule {
 		];
 	}
 
+	private function register_document_type()
+    {
+        add_action('elementor/documents/register', function ($documents_manager) {
+            $documents_manager->register_document_type(
+                Component_Document::get_type(),
+                Component_Document::get_class_full_name()
+            );
+        });
+    }
+
 	private function register_hooks() {
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 
 		( new Component_Styles() )->register_hooks();
+		( new Components_REST_API() )->register_hooks();
+
 	}
 
 	private function add_packages( $packages ) {
