@@ -15,7 +15,6 @@ import {
 	TransformFunctionKeys,
 } from './types';
 import { useTransformTabsHistory } from './use-transform-tabs-history';
-import { useRepeaterContext } from "../../components/unstable-repeater/context/repeater-context";
 
 export const TransformContent = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory( {
@@ -24,10 +23,6 @@ export const TransformContent = () => {
 		rotate: initialRotateValue.value,
 		skew: initialSkewValue.value,
 	} );
-
-	const { items, openItemKey, uniqueKeys } = useRepeaterContext();
-	const index = uniqueKeys.indexOf( openItemKey );
-	const value = items[ index ]?.$$type;
 
 	return (
 		<PopoverContent>
@@ -42,7 +37,6 @@ export const TransformContent = () => {
 							},
 						} }
 						{ ...getTabsProps() }
-						defaultValue={ value ?? undefined }
 						aria-label={ __( 'Transform', 'elementor' ) }
 					>
 						<Tab label={ __( 'Move', 'elementor' ) } { ...getTabProps( TransformFunctionKeys.move ) } />

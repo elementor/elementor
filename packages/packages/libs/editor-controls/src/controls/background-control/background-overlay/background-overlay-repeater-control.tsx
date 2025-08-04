@@ -5,8 +5,6 @@ import {
 	type BackgroundOverlayItemPropValue,
 	backgroundOverlayPropTypeUtil,
 	colorPropTypeUtil,
-	type PropKey,
-	type PropTypeUtil,
 } from '@elementor/editor-props';
 import { Box, CardMedia, styled, Tab, TabPanel, Tabs, type Theme, UnstableColorIndicator } from '@elementor/ui';
 import { useWpMediaAttachment } from '@elementor/wp-media';
@@ -18,8 +16,10 @@ import { Header, ItemsContainer, TooltipAddItemAction, UnstableRepeater } from '
 import { DisableItemAction } from '../../../components/unstable-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../../../components/unstable-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../../../components/unstable-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../../../components/unstable-repeater/context/repeater-context';
+import { EditItemPopover } from '../../../components/unstable-repeater/items/edit-item-popover';
 import { Item } from '../../../components/unstable-repeater/items/item';
-import { CollectionPropUtil, RepeatablePropValue } from "../../../components/unstable-repeater/types";
+import { type CollectionPropUtil, type RepeatablePropValue } from '../../../components/unstable-repeater/types';
 import { createControl } from '../../../create-control';
 import { env } from '../../../env';
 import { ColorControl } from '../../color-control';
@@ -35,8 +35,6 @@ import { BackgroundImageOverlayRepeat } from './background-image-overlay/backgro
 import { BackgroundImageOverlaySize } from './background-image-overlay/background-image-overlay-size';
 import { type BackgroundImageOverlay } from './types';
 import { useBackgroundTabsHistory } from './use-background-tabs-history';
-import { EditItemPopover } from "../../../components/unstable-repeater/items/edit-item-popover";
-import { useRepeaterContext } from "../../../components/unstable-repeater/context/repeater-context";
 
 const DEFAULT_BACKGROUND_COLOR_OVERLAY_COLOR = '#00000033';
 
