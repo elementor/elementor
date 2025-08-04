@@ -19,5 +19,19 @@ export default class ImportExportCustomization {
 		for ( const route of this.routes ) {
 			router.addRoute( route );
 		}
+
+		this.registerImportExportTemplate();
+	}
+
+	registerImportExportTemplate() {
+		if ( ! elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ) {
+			return;
+		}
+
+		elementorModules?.importExport?.templateRegistry.register( {
+			key: 'siteTemplates',
+			title: 'Site Templates',
+			order: 0,
+		} );
 	}
 }
