@@ -139,7 +139,7 @@ class Style_Schema {
 					] )
 					->get()
 				),
-			'line-height' => Size_Prop_Type::make()->units( Size_Constants::typography() ), // Check
+			'line-height' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
 				'center',
