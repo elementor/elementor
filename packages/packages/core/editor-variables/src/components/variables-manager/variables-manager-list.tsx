@@ -1,25 +1,43 @@
 import * as React from 'react';
-import { UnstableSortableProvider, UnstableSortableItem } from '@elementor/ui/unstable';
-import { IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, usePopupState, Menu, MenuItem, bindTrigger, bindMenu } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
-import { useVariables } from '../../hooks/use-prop-variables';
 import { DotsVerticalIcon, GridDotsIcon } from '@elementor/icons';
-import { SortableItemRenderProps } from '@elementor/ui/unstable/components/SortableItem';
+import {
+	bindMenu,
+	bindTrigger,
+	IconButton,
+	Menu,
+	MenuItem,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	UnstableSortableItem,
+	type UnstableSortableItemRenderProps,
+	UnstableSortableProvider,
+	usePopupState,
+} from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+
+import { useVariables } from '../../hooks/use-prop-variables';
+import { useState } from 'react';
 
 export const VariablesManagerList = () => {
-    const variables = useVariables();
-    const rows = [...Object.entries( variables )].map( ( [ key, variable ] ) => ({
-        id: key,
-        name: variable.label,
-        value: variable.value,
-        type: variable.type,
-    }));
-    const rowOptionsState = usePopupState( {
+	const variables = useVariables();
+	const variablesArray =  [ ...Object.entries( variables ) ];
+	const [ ids, setIds ] = useState< string[] >( variablesArray.map( ( [ key ] ) => key ) );
+	const rows = variablesArray.map( ( [ key, variable ] ) => ( {
+		id: key,
+		name: variable.label,
+		value: variable.value,
+		type: variable.type,
+	} ) );
+	const rowOptionsState = usePopupState( {
 		variant: 'popover',
 	} );
 
-    return (
-        <TableContainer>
+	return (
+		<TableContainer>
 			<Table aria-label="sortable table">
 				<TableHead>
 					<TableRow>
@@ -32,7 +50,7 @@ export const VariablesManagerList = () => {
 				<TableBody>
 					<UnstableSortableProvider
 						value={ rows.map( ( row ) => row.id ) }
-						onChange={ () => {} }
+						onChange={ setIds }
 						variant="static"
 						restrictAxis
 						dragOverlay={ ( { children: dragOverlayChildren, ...dragOverlayProps } ) => (
@@ -57,7 +75,7 @@ export const VariablesManagerList = () => {
 									isDragOverlay,
 									isSorting,
 									index,
-								}: SortableItemRenderProps ) => {
+								}: UnstableSortableItemRenderProps ) => {
 									const showIndicationBefore = showDropIndication && dropPosition === 'before';
 									const showIndicationAfter = showDropIndication && dropPosition === 'after';
 
@@ -126,5 +144,5 @@ export const VariablesManagerList = () => {
 				</TableBody>
 			</Table>
 		</TableContainer>
-    );
+	);
 };
