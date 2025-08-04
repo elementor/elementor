@@ -1,10 +1,13 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
-	TransformRepeaterControl,
+	injectIntoRepeaterHeaderActions,
+	TransformBaseControl,
 	TransitionRepeaterControl,
 	UnstableTransformRepeaterControl,
+	useBoundProp,
 } from '@elementor/editor-controls';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -22,9 +25,11 @@ const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
-
-	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
-
+	const contentRef = useRef< HTMLDivElement >( null );
+	injectIntoRepeaterHeaderActions( {
+		id: 'tra-origin',
+		component: () => <TransformOriginControl ref={ contentRef } />,
+	} );
 	return (
 		<SectionContent>
 			<OpacityControlField />
@@ -34,7 +39,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
+				<UnstableTransformRepeaterControl />
 			</StylesField>
 			{ shouldShowTransition && (
 				<>
@@ -53,5 +58,17 @@ export const EffectsSection = () => {
 				<FilterRepeaterControl filterPropName="backdrop-filter" />
 			</StylesField>
 		</SectionContent>
+	);
+};
+
+const TransformOriginControl = ( { ref }: { ref: React.RefObject< HTMLDivElement > } ) => {
+	const { bind } = useBoundProp();
+	if ( bind !== 'transform' ) {
+		return null;
+	}
+	return (
+		<StylesField bind={ 'transform-origin' } propDisplayName={ 'transform-origin' }>
+			<TransformBaseControl ref={ ref } />
+		</StylesField>
 	);
 };

@@ -27,7 +27,6 @@ export const AddItemAction = ( {
 		<ConditionalToolTip content={ tooltipContent } shouldShowTooltip={ !! shouldShowTooltip }>
 			<IconButton
 				size={ SIZE }
-				sx={ { ml: 'auto' } }
 				disabled={ disabled }
 				onClick={ onClick }
 				aria-label={ __( 'Add item', 'elementor' ) }

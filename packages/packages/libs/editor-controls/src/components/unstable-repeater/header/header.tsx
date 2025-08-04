@@ -15,6 +15,7 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			<Typography component="label" variant="caption" color="text.secondary">
 				{ label }
 			</Typography>
+			<span style={ { marginInlineStart: 'auto' } }></span>
 			<RepeaterHeaderActionsSlot value={ value } />
 			<SlotChildren whitelist={ [ AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
 			<ControlAdornments />
