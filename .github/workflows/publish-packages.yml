@@ -25,6 +25,7 @@ jobs:
         with:
             node-version: 20.x
             cache: 'npm'
+            registry-url: 'https://registry.npmjs.org/'
 
       - name: Install Dependencies
         working-directory: packages
@@ -53,9 +54,10 @@ jobs:
       - name: Publish Packages
         working-directory: packages
         run: |
-          npm config set //registry.npmjs.org/:_auth \"${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}\"
           # Publish with the build number tag
           node scripts/version-manager/index.js publish --tag build --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
 
       - name: Create Git Tag
         run: |
