@@ -94,10 +94,7 @@
 	&:after {
 		content: '';
 		position: absolute;
-		top: 10px;
-		bottom: 10px;
-		right: 10px;
-		left: 10px;
+		inset: 10px;
 	}
 
 	&:before {
@@ -113,7 +110,7 @@
 	position: absolute;
 	display: none;
 	pointer-events: none;
-	top: 50%;
+	inset-block-start: 50%;
 	transform: translateY(-50%);
 	color: #fff;
 	font-size: 10px;
