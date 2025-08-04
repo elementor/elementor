@@ -11,7 +11,7 @@ $e-kit-library-sticky-search-z-index: 2;
 	&__index-layout-heading {
 		padding: spacing(30) spacing(44);
 		position: sticky;
-		top: -1px;
+		inset-block-start: -1px;
 		width: 100%;
 		z-index: $e-kit-library-sticky-search-z-index;
 		background-color: var(--app-background-color);
