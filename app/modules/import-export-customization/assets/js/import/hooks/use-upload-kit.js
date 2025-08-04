@@ -50,6 +50,10 @@ export function useUploadKit() {
 				AppsEventTracking.sendKitImportUploadFile( 'Success' );
 			}
 			dispatch( { type: 'SET_UPLOADED_DATA', payload: result.data } );
+
+			if ( 0 < Object.keys( result.data.manifest?.templates || {} ).length ) {
+				dispatch( { type: 'ADD_INCLUDE', payload: 'templates' } );
+			}
 		} catch ( e ) {
 			setError( e );
 			AppsEventTracking.sendKitImportUploadFile( e.message );
