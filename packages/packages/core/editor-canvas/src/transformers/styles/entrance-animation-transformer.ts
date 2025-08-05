@@ -26,33 +26,33 @@ const durationValues = {
 	fast: 0.5,
 };
 
-export const entranceAnimationTransformer = createTransformer<EntranceAnimation>( ( value ) => {
-	// If no value or empty animation, return null (matches PHP logic)
-	if ( ! value?.value?.animation?.value ) {
-		return null;
-	}
+export const entranceAnimationTransformer = createTransformer<EntranceAnimation>((value) => {
+    console.log('Entrance Animation Transformer called with:', value);
 
-	// Get duration mapping (matches PHP logic)
-	const animation = value?.value?.animation?.value ?? '';
-	const duration = value?.value?.duration?.value ?? 'normal';
-	const delay = value?.value?.delay?.value ?? 0;
+    // Handle flattened structure
+    const animation = value?.animation || '';
+    const duration = value?.duration || 'normal';
+    const delay = value?.delay || 0;
 
-	// Convert duration to seconds (matches PHP logic)
-	const durationSeconds = durationValues[ duration ] ?? 1.0;
+    if (!animation) {
+        return null;
+    }
 
-	// Generate CSS animation properties (matches PHP logic)
-	const cssProperties: Record<string, string> = {
-		'animation-name': animation,
-		'animation-duration': `${ durationSeconds }s`,
-		'animation-fill-mode': 'both',
-		'animation-timing-function': 'ease-in-out',
-	};
+    // Convert duration to seconds
+    const durationSeconds = durationValues[duration] ?? 1.0;
 
-	// Add delay if specified (matches PHP logic)
-	if ( delay > 0 ) {
-		cssProperties[ 'animation-delay' ] = `${ delay }s`;
-	}
+    // Generate CSS properties
+    const cssProperties: Record<string, string> = {
+        'animation-name': animation,
+        'animation-duration': `${durationSeconds}s`,
+        'animation-fill-mode': 'forwards',
+        'animation-timing-function': 'ease-in-out',
+    };
 
-	// Return multi-props object
-	return createMultiPropsValue( cssProperties );
-} ); 
+    if (delay > 0) {
+        cssProperties['animation-delay'] = `${delay}s`;
+    }
+
+    console.log('Generated CSS properties:', cssProperties);
+    return createMultiPropsValue(cssProperties);
+}); 

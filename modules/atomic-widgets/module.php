@@ -154,12 +154,24 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_entrance_animations(): void {
+		// First load the full Animate.css library
+		wp_enqueue_style(
+			'animate-css',
+			'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css',
+			[],
+			'4.1.1'
+		);
+
+		// Then load Elementor's custom animations
+		$css_file = plugins_url('assets/css/entrance-animations.css', __FILE__);
+		error_log('Entrance Animation - Enqueuing CSS file: ' . $css_file);
 		wp_enqueue_style(
 			'elementor-entrance-animations',
-			plugins_url('assets/css/entrance-animations.css', __FILE__),
-			[],
+			$css_file,
+			['animate-css'], // Make it dependent on animate-css to ensure proper loading order
 			ELEMENTOR_VERSION
 		);
+		error_log('Entrance Animation - CSS file enqueued');
 	}
 
 	public static function get_experimental_data() {
@@ -304,7 +316,7 @@ class Module extends BaseModule {
 			Dimensions_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
-		
+
 		// Add entrance animation transformer
 		$transformers->register( Entrance_Animation_Prop_Type::get_key(), new Entrance_Animation_Transformer() );
 	}
