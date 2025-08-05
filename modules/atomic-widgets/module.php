@@ -80,6 +80,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Skew_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Component_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -97,6 +98,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
+	const EXPERIMENT_COMPONENTS = 'e_atomic_components';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -122,6 +124,9 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
+			if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_COMPONENTS ) ) {
+				( new Atomic_Component_Styles() )->register_hooks();
+			}
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
 
@@ -188,6 +193,15 @@ class Module extends BaseModule {
 			'name' => self::TRANSITION_EXPERIMENT,
 			'title' => esc_html__( 'Use transition', 'elementor' ),
 			'description' => esc_html__( 'Use transition.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_COMPONENTS,
+			'title' => esc_html__( 'Atomic Components', 'elementor' ),
+			'description' => esc_html__( 'Unstable Atomic Component widget.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
