@@ -5,9 +5,12 @@ import { COMPONENTS_PROVIDER_KEY, componentsStylesProvider } from './components-
 import { slice } from './store';
 import { injectIntoLogic } from '@elementor/editor';
 import { PopulateStore } from './components/populate-store';
+import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 
 export function init() {
-    console.log('init editor components', slice, componentsStylesProvider );
+	if ( ! isExperimentActive( EXPERIMENTAL_FEATURES.COMPONENTS ) ) {
+		return;
+	}
 
 	injectIntoLogic( {
 		id: 'components-styles-populate-store',

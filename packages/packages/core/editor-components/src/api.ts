@@ -1,14 +1,5 @@
-import { type StyleDefinition, type StyleDefinitionID, type StyleDefinitionsMap } from '@elementor/editor-styles';
-import { type HttpResponse, httpService } from '@elementor/http-client';
-
-import { type ComponentsStyles } from './store';
-import { collapseTextChangeRangesAcrossMultipleVersions } from 'typescript';
-
-const BASE_URL = 'elementor/v1';
-const RESOURCE_URL = '/components';
-const ALL_STYLES_URL = `${ RESOURCE_URL }/styles`;
-const COMPONENT_STYLES_URL = `${ RESOURCE_URL }/styles/:styleId`;
-
+import { type StyleDefinitionsMap } from '@elementor/editor-styles';
+import { type HttpResponse } from '@elementor/http-client';
 
 export type ComponentsStylesGetAllResponse = HttpResponse<
 	StyleDefinitionsMap
