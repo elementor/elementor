@@ -4,13 +4,7 @@ import { type PropKey } from '@elementor/editor-props';
 
 import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
-import { type Variable } from '../types';
-
-type NormalizedVariable = {
-	key: string;
-	label: string;
-	value: string;
-};
+import { type NormalizedVariable, type Variable } from '../types';
 
 export const useVariable = ( key: string ) => {
 	const variables = service.variables();

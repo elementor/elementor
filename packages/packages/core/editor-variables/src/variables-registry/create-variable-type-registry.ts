@@ -6,16 +6,11 @@ import { type SvgIconProps } from '@elementor/ui';
 
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
+import { type NormalizedVariable } from '../types';
 
 type ValueFieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
-};
-
-type Variable = {
-	key: string;
-	label: string;
-	value: string;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
@@ -27,7 +22,7 @@ type VariableTypeOptions = {
 	variableType: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
-	selectionFilter?: ( variables: Variable[], propType: PropType ) => Variable[];
+	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
