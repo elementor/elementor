@@ -24,7 +24,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useVariables } from '../../hooks/use-prop-variables';
+import { getVariables } from '../../hooks/use-prop-variables';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 
 type VariableManagerMenuAction = {
@@ -39,18 +39,17 @@ type Props = {
 };
 
 export const VariablesManagerList = ( { menuActions }: Props ) => {
-	const variables = useVariables(false);
+	const variables = getVariables( false );
 
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
-	const rows = ids
-		.map( ( id ) => ( {
-			id,
-			name: variables[ id ].label,
-			value: variables[ id ].value,
-			type: variables[ id ].type,
-			icon: getVariableType( variables[ id ].type ).icon,
-			startIcon: getVariableType( variables[ id ].type ).startIcon,
-		} ) );
+	const rows = ids.map( ( id ) => ( {
+		id,
+		name: variables[ id ].label,
+		value: variables[ id ].value,
+		type: variables[ id ].type,
+		icon: getVariableType( variables[ id ].type ).icon,
+		startIcon: getVariableType( variables[ id ].type ).startIcon,
+	} ) );
 
 	const rowOptionsState = usePopupState( {
 		variant: 'popover',

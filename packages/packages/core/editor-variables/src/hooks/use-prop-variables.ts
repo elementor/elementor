@@ -4,7 +4,7 @@ import { type PropKey } from '@elementor/editor-props';
 import { service } from '../service';
 import { type Variable } from '../types';
 
-export const useVariables = ( includeDeleted = true ) => {
+export const getVariables = ( includeDeleted = true ) => {
 	const variables = service.variables();
 
 	if ( includeDeleted ) {
@@ -15,7 +15,7 @@ export const useVariables = ( includeDeleted = true ) => {
 };
 
 export const useVariable = ( key: string ) => {
-	const variables = useVariables();
+	const variables = getVariables();
 
 	if ( ! variables?.[ key ] ) {
 		return null;
@@ -45,13 +45,11 @@ const usePropVariables = ( propKey: PropKey ) => {
 	return useMemo( () => normalizeVariables( propKey ), [ propKey ] );
 };
 
-const isNotDeleted = ( { deleted }: { deleted?: boolean } ) => ! deleted;
-
 const normalizeVariables = ( propKey: string ) => {
-	const variables = service.variables();
+	const variables = getVariables( false );
 
 	return Object.entries( variables )
-		.filter( ( [ , variable ] ) => variable.type === propKey && isNotDeleted( variable ) )
+		.filter( ( [ , variable ] ) => variable.type === propKey )
 		.map( ( [ key, { label, value } ] ) => ( {
 			key,
 			label,
