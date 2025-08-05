@@ -39,11 +39,10 @@ type Props = {
 };
 
 export const VariablesManagerList = ( { menuActions }: Props ) => {
-	const variables = useVariables();
+	const variables = useVariables(false);
 
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
 	const rows = ids
-		.filter( ( id ) => ! variables[ id ].deleted )
 		.map( ( id ) => ( {
 			id,
 			name: variables[ id ].label,

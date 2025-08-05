@@ -4,8 +4,14 @@ import { type PropKey } from '@elementor/editor-props';
 import { service } from '../service';
 import { type Variable } from '../types';
 
-export const useVariables = () => {
-	return service.variables();
+export const useVariables = ( includeDeleted = true ) => {
+	const variables = service.variables();
+
+	if ( includeDeleted ) {
+		return variables;
+	}
+
+	return Object.fromEntries( Object.entries( variables ).filter( ( [ , variable ] ) => ! variable.deleted ) );
 };
 
 export const useVariable = ( key: string ) => {
