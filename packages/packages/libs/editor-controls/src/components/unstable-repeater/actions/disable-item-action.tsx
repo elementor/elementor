@@ -13,12 +13,12 @@ export const DisableItemAction = ( { index = -1 }: { index?: number } ) => {
 		return null;
 	}
 
-	const propDisabled = items[ index ]?.disabled ?? false;
+	const propDisabled = items[ index ]?.item?.disabled ?? false;
 
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 
 	const onClick = () => {
-		const self = structuredClone( items[ index ] );
+		const self = structuredClone( items[ index ].item );
 
 		self.disabled = ! self.disabled;
 

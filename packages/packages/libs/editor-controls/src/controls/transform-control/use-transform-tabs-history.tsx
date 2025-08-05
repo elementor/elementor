@@ -103,7 +103,7 @@ export const useTransformTabsHistory = ( {
 	};
 
 	const isTabDisabled = ( tabKey: TransformFunction ) => {
-		return !! items.find( ( { $$type: key }, pos ) => tabKey === key && pos !== openItemIndex );
+		return !! items.find( ( { item: { $$type: key } }, pos ) => tabKey === key && pos !== openItemIndex );
 	};
 
 	return {

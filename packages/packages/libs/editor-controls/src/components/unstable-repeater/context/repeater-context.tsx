@@ -11,14 +11,14 @@ type SetterFn< T > = ( prevItems: T ) => T;
 
 type AddItem< T > = { item?: T; index?: number };
 
+type ItemWithKey< T > = { key: number; item: T };
+
 type RepeaterContextType< T extends RepeatablePropValue > = {
 	isOpen: boolean;
 	openItemIndex: number;
 	setOpenItemIndex: ( key: number ) => void;
-	items: Item< T >[];
-	setItems: ( items: T[] | SetterFn< T[] > ) => void;
-	uniqueKeys: number[];
-	setUniqueKeys: ( keys: number[] | SetterFn< number[] > ) => void;
+	items: ItemWithKey< Item< T > >[];
+	setItems: ( items: ItemWithKey< T >[] ) => void;
 	popoverProps: Partial< PopoverProps >;
 	popoverState: PopupState;
 	initial: T;
@@ -57,8 +57,17 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		persistWhen: () => true,
 	} );
 
+	const itemWithKeysState = useState< ItemWithKey< T >[] >(
+		items?.map( ( item, index ) => ( { key: index, item } ) ) ?? []
+	);
+
+	const itemsWithKeys = itemWithKeysState[ 0 ];
+	const setItemsWithKeys = ( newItems: ItemWithKey< T >[] ) => {
+		itemWithKeysState[ 1 ]( newItems as ItemWithKey< T >[] );
+		setItems( newItems.map( ( { item } ) => item as T ) );
+	};
+
 	const [ openItemIndex, setOpenItemIndex ] = useState( EMPTY_OPEN_ITEM );
-	const [ uniqueKeys, setUniqueKeys ] = useState( items?.map( ( _, index ) => index ) ?? [] );
 	const [ rowRef, setRowRef ] = useState< HTMLElement | null >( null );
 
 	const isOpen = openItemIndex !== EMPTY_OPEN_ITEM;
@@ -68,27 +77,27 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? initial;
 		const newIndex = config?.index ?? items.length;
-		const newItems = [ ...items ];
-		const newUniqueKeys = [ ...uniqueKeys ];
-		const newKey = generateNextKey( newUniqueKeys );
+		const newItems = [ ...itemsWithKeys ];
 
-		newItems.splice( newIndex, 0, item );
-		newUniqueKeys.splice( newIndex, 0, newKey );
-
-		setItems( newItems );
-		setUniqueKeys( newUniqueKeys );
+		newItems.splice( newIndex, 0, { item, key: generateNextKey( itemsWithKeys.map( ( { key } ) => key ) ) } );
+		setItemsWithKeys( newItems );
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
 	};
 
 	const removeItem = ( index: number ) => {
-		setItems( ( prevItems ) => prevItems.filter( ( _, pos ) => pos !== index ) );
-		setUniqueKeys( ( prevKeys ) => prevKeys.filter( ( _, pos ) => pos !== index ) );
+		setItemsWithKeys( itemsWithKeys.filter( ( _, pos ) => pos !== index ) );
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {
 		setItems( ( prevItems ) => prevItems.map( ( item, pos ) => ( pos === index ? updatedItem : item ) ) );
+		setItemsWithKeys(
+			itemsWithKeys.map( ( itemWithKey, pos ) => ( {
+				...itemWithKey,
+				item: pos === index ? updatedItem : itemWithKey.item,
+			} ) )
+		);
 	};
 
 	return (
@@ -97,10 +106,8 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				isOpen,
 				openItemIndex,
 				setOpenItemIndex,
-				items: ( items ?? [] ) as Item< T >[],
-				setItems: setItems as ( items: RepeatablePropValue[] | SetterFn< RepeatablePropValue[] > ) => void,
-				uniqueKeys,
-				setUniqueKeys,
+				items: ( itemsWithKeys ?? [] ) as ItemWithKey< Item< T > >[],
+				setItems: setItemsWithKeys as ( items: ItemWithKey< RepeatablePropValue >[] ) => void,
 				popoverProps,
 				popoverState,
 				initial,

@@ -11,7 +11,7 @@ export const EditItemPopover = ( { children }: { children: React.ReactNode } ) =
 		return null;
 	}
 
-	const bind = items[ openItemIndex ].$$type;
+	const bind = items[ openItemIndex ].item.$$type;
 
 	const onClose = ( ev: React.MouseEvent, reason: 'backdropClick' | 'escapeKeyDown' ) => {
 		popoverProps.onClose?.( ev, reason );

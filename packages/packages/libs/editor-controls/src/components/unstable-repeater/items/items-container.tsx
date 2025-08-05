@@ -9,28 +9,28 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 	isSortable = true,
 	children,
 }: React.PropsWithChildren< { itemTemplate: React.ReactNode; isSortable?: boolean } > ) => {
-	const { items, setItems, uniqueKeys, setUniqueKeys } = useRepeaterContext();
+	const { items, setItems } = useRepeaterContext();
+	const keys = items.map( ( { key } ) => key );
 
 	if ( ! itemTemplate ) {
 		return null;
 	}
 
 	const onChangeOrder = ( newKeys: number[] ) => {
-		setUniqueKeys( newKeys );
-		setItems( ( prevItems ) =>
+		setItems(
 			newKeys.map( ( key ) => {
-				const index = uniqueKeys.indexOf( key );
+				const index = items.findIndex( ( item ) => item.key === key );
 
-				return prevItems[ index ] as Item< RepeatablePropValue >;
+				return items[ index ];
 			} )
 		);
 	};
 
 	return (
 		<>
-			<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
-				{ uniqueKeys?.map( ( key: number, index: number ) => {
-					const value = items?.[ index ] as Item< T >;
+			<SortableProvider value={ keys } onChange={ onChangeOrder }>
+				{ keys?.map( ( key: number, index: number ) => {
+					const value = items?.[ index ]?.item as Item< T >;
 
 					if ( ! value ) {
 						return null;

@@ -17,9 +17,9 @@ export const Item = < T extends RepeatablePropValue >( {
 	index = -1,
 	children,
 }: React.PropsWithChildren< ItemProps< T > > ) => {
-	const { popoverState, setRowRef, openItemIndex, setOpenItemIndex, uniqueKeys } = useRepeaterContext();
+	const { items, popoverState, setRowRef, openItemIndex, setOpenItemIndex } = useRepeaterContext();
 	const triggerProps = bindTrigger( popoverState );
-	const key = uniqueKeys[ index ] ?? -1;
+	const key = items[ index ].key ?? -1;
 
 	const onClick = ( ev: React.MouseEvent ) => {
 		triggerProps.onClick( ev );
