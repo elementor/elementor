@@ -458,6 +458,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.introductionTooltips = new IntroductionTooltipsManager();
 
+		this.editorEvents = elementorCommon.eventsManager;
+
 		this.documents = $e.components.register( new EditorDocuments() );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
