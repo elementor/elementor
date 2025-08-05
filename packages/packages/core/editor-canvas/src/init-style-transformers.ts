@@ -18,12 +18,12 @@ import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
+import { transformOriginTransformer } from './transformers/styles/transform-origin-transformer';
 import { transformRotateTransformer } from './transformers/styles/transform-rotate-transformer';
 import { transformScaleTransformer } from './transformers/styles/transform-scale-transformer';
 import { transformSkewTransformer } from './transformers/styles/transform-skew-transformer';
 import { transformTransformer } from './transformers/styles/transform-transformer';
 import { transitionTransformer } from './transformers/styles/transition-transformer';
-import { transformOriginTransformer } from "./transformers/styles/transform-origin-transformer";
 
 export function initStyleTransformers() {
 	styleTransformersRegistry

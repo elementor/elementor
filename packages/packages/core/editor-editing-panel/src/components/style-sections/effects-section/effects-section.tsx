@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
+	TransformRepeaterControl,
 	TransitionRepeaterControl,
 	UnstableTransformRepeaterControl,
 } from '@elementor/editor-controls';
@@ -18,10 +19,10 @@ const FILTER_LABEL = __( 'Filters', 'elementor' );
 const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
-const TRANSFORM_ORIGIN_LABEL = __( 'Transform origin', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
+	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
 
 	return (
 		<SectionContent>
@@ -32,7 +33,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<UnstableTransformRepeaterControl />
+				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
 			</StylesField>
 			{ shouldShowTransition && (
 				<>

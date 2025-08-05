@@ -32,7 +32,7 @@ const baseControlsFields = [
 	},
 ];
 
-export const TransformBaseControl = ( { anchorRef }: { anchorRef: React.RefObject< HTMLDivElement | null > } ) => {
+export const TransformOriginControl = ( { anchorRef }: { anchorRef: React.RefObject< HTMLDivElement | null > } ) => {
 	const rowRef = useRef< HTMLDivElement >( null );
 	const popupState = usePopupState( { variant: 'popover' } );
 	const popupProps = bindPopover( {
