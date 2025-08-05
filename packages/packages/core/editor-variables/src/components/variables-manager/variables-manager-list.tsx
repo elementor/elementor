@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createElement, useState } from 'react';
+import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { DotsVerticalIcon, GridDotsIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -7,6 +8,7 @@ import {
 	IconButton,
 	Menu,
 	MenuItem,
+	Stack,
 	type SvgIconProps,
 	type SxProps,
 	Table,
@@ -40,14 +42,16 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 	const variables = useVariables();
 
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
-	const rows = ids.filter( ( id ) => ! variables[ id ].deleted ).map( ( id ) => ( {
-		id,
-		name: variables[ id ].label,
-		value: variables[ id ].value,
-		type: variables[ id ].type,
-		icon: getVariableType( variables[ id ].type ).icon,
-		startIcon: getVariableType( variables[ id ].type ).startIcon,
-	} ) );
+	const rows = ids
+		.filter( ( id ) => ! variables[ id ].deleted )
+		.map( ( id ) => ( {
+			id,
+			name: variables[ id ].label,
+			value: variables[ id ].value,
+			type: variables[ id ].type,
+			icon: getVariableType( variables[ id ].type ).icon,
+			startIcon: getVariableType( variables[ id ].type ).startIcon,
+		} ) );
 
 	const rowOptionsState = usePopupState( {
 		variant: 'popover',
@@ -57,6 +61,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 	};
 	const tableCellSX: SxProps = {
 		padding: '6px',
+		maxWidth: 100,
 	};
 
 	return (
@@ -140,11 +145,20 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 												</IconButton>
 											</TableCell>
 											<TableCell sx={ tableCellSX }>
-												{ createElement( row.icon, { fontSize: 'inherit' } ) } { row.name }
+												<Stack direction="row" alignItems="center" gap={ 1 }>
+													{ createElement( row.icon, { fontSize: 'inherit' } ) }
+													<EllipsisWithTooltip title={ row.name }>
+														{ row.name }
+													</EllipsisWithTooltip>
+												</Stack>
 											</TableCell>
 											<TableCell sx={ tableCellSX }>
-												{ row.startIcon && row.startIcon( { value: row.value } ) }
-												{ row.value }
+												<Stack direction="row" alignItems="center" gap={ 1 }>
+													{ row.startIcon && row.startIcon( { value: row.value } ) }
+													<EllipsisWithTooltip title={ row.value }>
+														{ row.value }
+													</EllipsisWithTooltip>
+												</Stack>
 											</TableCell>
 											<TableCell align="right" padding="none" sx={ { width: 10 } }>
 												<IconButton
