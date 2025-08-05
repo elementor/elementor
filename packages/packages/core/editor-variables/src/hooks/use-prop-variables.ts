@@ -47,25 +47,18 @@ const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {
 	return useMemo( () => normalizeVariables( propKey ), [ propKey ] );
 };
 
-const isNotDeleted = ( { deleted }: { deleted?: boolean } ): boolean => ! deleted;
+const isNotDeleted = ( { deleted }: { deleted?: boolean } ) => ! deleted;
 
 const normalizeVariables = ( propKey: string ): NormalizedVariable[] => {
 	const variables = service.variables();
 
 	return Object.entries( variables )
 		.filter( ( [ , variable ] ) => variable.type === propKey && isNotDeleted( variable ) )
-		.map(
-			( [ key, { label, value } ] ): NormalizedVariable => ( {
-				key,
-				label,
-				value,
-			} )
-		);
-};
-
-type VariableUpdateData = {
-	value: string;
-	label: string;
+		.map( ( [ key, { label, value } ] ) => ( {
+			key,
+			label,
+			value,
+		} ) );
 };
 
 const extractId = ( { id }: { id: string } ): string => id;
@@ -74,8 +67,11 @@ export const createVariable = ( newVariable: Variable ): Promise< string > => {
 	return service.create( newVariable ).then( extractId );
 };
 
-export const updateVariable = ( updateId: string, updateData: VariableUpdateData ): Promise< string > => {
-	return service.update( updateId, updateData ).then( extractId );
+export const updateVariable = (
+	updateId: string,
+	{ value, label }: { value: string; label: string }
+): Promise< string > => {
+	return service.update( updateId, { value, label } ).then( extractId );
 };
 
 export const deleteVariable = ( deleteId: string ): Promise< string > => {
