@@ -30,17 +30,17 @@ class Utils {
 		return $id;
 	}
 
-	public static function foreach_post_element( string $post_id, callable $iterate_callback ) {
+	public static function foreach_post_element( string $post_id, callable $iterate_callback ): void {
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
 
 		if ( ! $document ) {
-			return [];
+			return;
 		}
 
 		$elements_data = $document->get_elements_data();
 
 		if ( empty( $elements_data ) ) {
-			return [];
+			return;
 		}
 
 		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $iterate_callback ) {
