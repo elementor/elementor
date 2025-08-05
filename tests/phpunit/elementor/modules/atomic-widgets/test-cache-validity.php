@@ -9,42 +9,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+const ROOT_KEY = 'test';
+
 class Test_Cache_Validity extends Elementor_Test_Base {
-	
+
 	public function tear_down() {
 		parent::tear_down();
-		
+
 		// Clear any cached data from previous tests to ensure test isolation
 		$this->clear_cache_validity_options();
 	}
-	
+
 	/**
 	 * Clear all WordPress options used by Cache_Validity class.
 	 */
 	private function clear_cache_validity_options(): void {
-		// Use WordPress delete_option function which is safer than direct SQL
-		// and handles cases where tables might not exist yet
-		$cache_validity = new Cache_Validity();
-		
-		global $wpdb;
-		
-		// Only attempt to clear if the options table exists
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$wpdb->options}'" ) === $wpdb->options ) {
-			$options = $wpdb->get_col(
-				$wpdb->prepare(
-					"SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE %s",
-					'elementor_atomic_cache_validity-%'
-				)
-			);
-			
-			// Delete each option individually using WordPress functions
-			foreach ( $options as $option_name ) {
-				delete_option( $option_name );
-			}
-		}
-		
-		// Clear the object cache to ensure options are truly cleared
-		wp_cache_flush();
+		delete_option( Cache_Validity::CACHE_KEY_PREFIX . ROOT_KEY );
 	}
 
 	public function test_validation_on_root_key() {
@@ -53,25 +33,25 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertFalse(
-			$cache_validity->is_valid(['test']),
+			$cache_validity->is_valid( [ ROOT_KEY ] ),
 			'Cache state should be false if not defined.'
 		);
 
 		// Act.
-		$cache_validity->validate(['test']);
+		$cache_validity->validate( [ ROOT_KEY ] );
 
 		// Assert.
 		$this->assertTrue(
-			$cache_validity->is_valid(['test']),
+			$cache_validity->is_valid( [ ROOT_KEY ] ),
 			'Cache state should be true after validation.'
 		);
 
 		// Act.
-		$cache_validity->invalidate(['test']);
+		$cache_validity->invalidate( [ ROOT_KEY ] );
 
 		// Assert.
 		$this->assertFalse(
-			$cache_validity->is_valid(['test']),
+			$cache_validity->is_valid( [ ROOT_KEY ] ),
 			'Cache state should be false after invalidation.'
 		);
 	}
@@ -82,7 +62,7 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertFalse(
-			$cache_validity->is_valid(['non-existing']),
+			$cache_validity->is_valid( [ 'non-existing' ] ),
 			'Cache state should be false for non-existing items.'
 		);
 	}
@@ -93,34 +73,34 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertFalse(
-			$cache_validity->is_valid(['test']),
+			$cache_validity->is_valid( [ ROOT_KEY ] ),
 			'Cache state should be false if not defined.'
 		);
 
 		$this->assertFalse(
-			$cache_validity->is_valid(['test', 'nested']),
+			$cache_validity->is_valid( [ ROOT_KEY, 'nested' ] ),
 			'Cache state should be false if not defined.'
 		);
 
 		// Act.
-		$cache_validity->validate(['test', 'nested']);
+		$cache_validity->validate( [ ROOT_KEY, 'nested' ] );
 
 		// Assert.
 		$this->assertTrue(
-			$cache_validity->is_valid(['test', 'nested']),
+			$cache_validity->is_valid( [ ROOT_KEY, 'nested' ] ),
 			'Cache state should be true after validation.'
 		);
 		$this->assertFalse(
-			$cache_validity->is_valid(['test']),
+			$cache_validity->is_valid( [ ROOT_KEY ] ),
 			'Root cache state should remain false as long as it was not validated.'
 		);
 
 		// Act.
-		$cache_validity->invalidate(['test', 'nested']);
+		$cache_validity->invalidate( [ ROOT_KEY, 'nested' ] );
 
 		// Assert.
 		$this->assertFalse(
-			$cache_validity->is_valid(['test', 'nested']),
+			$cache_validity->is_valid( [ ROOT_KEY, 'nested' ] ),
 			'Cache state should be false after invalidation.'
 		);
 	}
@@ -130,30 +110,30 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate(['test']);
-		$cache_validity->validate(['test', 'depth1_1']);
-		$cache_validity->validate(['test', 'depth1_1', 'depth2_1']);
-		$cache_validity->validate(['test', 'depth1_1', 'depth2_2']);
-		$cache_validity->validate(['test', 'depth1_2']);
-		$cache_validity->validate(['test', 'depth1_2', 'depth2_1']);
+		$cache_validity->validate( [ ROOT_KEY ] );
+		$cache_validity->validate( [ ROOT_KEY, 'depth1_1' ] );
+		$cache_validity->validate( [ ROOT_KEY, 'depth1_1', 'depth2_1' ] );
+		$cache_validity->validate( [ ROOT_KEY, 'depth1_1', 'depth2_2' ] );
+		$cache_validity->validate( [ ROOT_KEY, 'depth1_2' ] );
+		$cache_validity->validate( [ ROOT_KEY, 'depth1_2', 'depth2_1' ] );
 
-		$cache_validity->invalidate(['test', 'depth1_1']);
+		$cache_validity->invalidate( [ ROOT_KEY, 'depth1_1' ] );
 
 		// Assert.
 		$this->assertFalse(
-			$cache_validity->is_valid(['test', 'depth1_1', 'depth2_1']),
+			$cache_validity->is_valid( [ ROOT_KEY, 'depth1_1', 'depth2_1' ] ),
 			'Nested items should be invalidated too.'
 		);
 		$this->assertFalse(
-			$cache_validity->is_valid(['test', 'depth1_1', 'depth2_2']),
+			$cache_validity->is_valid( [ ROOT_KEY, 'depth1_1', 'depth2_2' ] ),
 			'Nested items should be invalidated too.'
 		);
 		$this->assertTrue(
-			$cache_validity->is_valid(['test', 'depth1_2']),
+			$cache_validity->is_valid( [ ROOT_KEY, 'depth1_2' ] ),
 			'Other nested items should remain valid.'
 		);
 		$this->assertTrue(
-			$cache_validity->is_valid(['test', 'depth1_2', 'depth2_1']),
+			$cache_validity->is_valid( [ ROOT_KEY, 'depth1_2', 'depth2_1' ] ),
 			'Other nested items should remain valid.'
 		);
 	}
@@ -163,26 +143,26 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity = new Cache_Validity();
 
 		$this->assertNull(
-			$cache_validity->get_meta(['test']),
+			$cache_validity->get_meta( [ ROOT_KEY ] ),
 			'Meta data should be null if not set.'
 		);
 
 		// Act.
-		$cache_validity->validate(['test'], ['meta' => 'data']);
+		$cache_validity->validate( [ ROOT_KEY ], [ 'foo' => 'bar' ] );
 
 		// Assert.
 		$this->assertEquals(
-			$cache_validity->get_meta(['test']),
-			['meta' => 'data'],
+			$cache_validity->get_meta( [ ROOT_KEY ] ),
+			[ 'foo' => 'bar' ],
 			'Meta data should be stored.'
 		);
 
 		// Act.
-		$cache_validity->invalidate(['test']);
+		$cache_validity->invalidate( [ ROOT_KEY ] );
 
 		// Assert.
 		$this->assertNull(
-			$cache_validity->get_meta(['test']),
+			$cache_validity->get_meta( [ ROOT_KEY ] ),
 			'Meta data should be cleaned.'
 		);
 	}
@@ -192,17 +172,17 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate(['test', 'nested'], ['foo' => 'bar']);
+		$cache_validity->validate( [ ROOT_KEY, 'nested' ], [ 'foo' => 'bar' ] );
 
 		// Assert.
 		$this->assertEquals(
-			$cache_validity->get_meta(['test', 'nested']),
-			['foo' => 'bar'],
+			$cache_validity->get_meta( [ ROOT_KEY, 'nested' ] ),
+			[ 'foo' => 'bar' ],
 			'Meta data should be stored.'
 		);
 
 		$this->assertNull(
-			$cache_validity->get_meta(['test']),
+			$cache_validity->get_meta( [ ROOT_KEY ] ),
 			'Meta data should be empty.'
 		);
 	}

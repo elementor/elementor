@@ -7,20 +7,13 @@ import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
-export const RemoveItemAction = () => {
-	const {
-		config: {
-			itemActions: { inject },
-		},
-	} = useRepeaterContext();
-
-	inject( Action, 'remove' );
-
-	return null;
-};
-
-const Action = ( { index }: { index: number } ) => {
+export const RemoveItemAction = ( { index = -1 }: { index?: number } ) => {
 	const { removeItem } = useRepeaterContext();
+
+	if ( index === -1 ) {
+		return null;
+	}
+
 	const removeLabel = __( 'Remove', 'elementor' );
 
 	const onClick = () => removeItem( index );

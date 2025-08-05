@@ -51,7 +51,7 @@ $root: e-app-import-export-wizard-step;
 	&__notice {
 		display: block;
 		position: sticky;
-		top: 100%; /* Will prevent text overlapping when window height is too short. */
+		inset-block-start: 100%; /* Will prevent text overlapping when window height is too short. */
 		color: var(--e-app-import-export-wizard-step-block-end-text-color);
 		font-style: italic;
 		margin-block-end: 0;
