@@ -14,7 +14,7 @@
 	<exclude-pattern>node_modules/</exclude-pattern>
 	<exclude-pattern>includes/libraries/</exclude-pattern>
 	<exclude-pattern>assets/js/packages/</exclude-pattern>
-
+	<exclude-pattern>tests/*.php</exclude-pattern>
 
 	<rule ref="Generic.Arrays.DisallowLongArraySyntax" />
 
