@@ -753,7 +753,6 @@ class Plugin {
 		$this->admin_menu_manager->register_actions();
 
 		User::init();
-		User_Data::init();
 		Api::init();
 		Tracker::init();
 

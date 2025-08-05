@@ -2,15 +2,15 @@ import { httpService } from '@elementor/http-client';
 
 import { type User } from './types';
 
-const RESOURCE_URL = 'elementor/v1/user-data/current-user';
+const RESOURCE_URL = '/users/me';
 
 type GetUserPayload = {
-	params?: { context?: 'edit' };
+	params: { context?: 'edit' };
 };
 
 type UserModel = {
-	suppressedMessages: string[];
-	capabilities: string[];
+	elementor_introduction: Record< string, boolean >;
+	capabilities: Partial< Record< string, true > >;
 };
 
 const getUserPayload: GetUserPayload = { params: { context: 'edit' } };
@@ -18,14 +18,32 @@ const getUserPayload: GetUserPayload = { params: { context: 'edit' } };
 export const apiClient = {
 	get: () =>
 		httpService()
-			.get< UserModel >( RESOURCE_URL, getUserPayload )
+			.get< UserModel >( 'wp/v2' + RESOURCE_URL, getUserPayload )
 			.then( ( res ) => {
-				const { capabilities = [], suppressedMessages = [] } = res.data;
-
-				return { capabilities, suppressedMessages };
+				return responseToUser( res.data );
 			} ),
 	update: ( data: Partial< User > ) =>
-		httpService().patch< Partial< UserModel > >( RESOURCE_URL, {
-			suppressedMessages: data.suppressedMessages,
-		} ),
+		httpService().patch< Partial< UserModel > >( 'wp/v2' + RESOURCE_URL, userToRequest( data ) ),
+};
+
+const responseToUser = ( response: UserModel ): User => {
+	return {
+		suppressedMessages: Object.entries( response.elementor_introduction )
+			.filter( ( [ , value ] ) => value )
+			.map( ( [ message ] ) => message ),
+		capabilities: Object.keys( response.capabilities ),
+	};
+};
+
+const userToRequest = ( user: Partial< User > ): Partial< UserModel > => {
+	return {
+		elementor_introduction: user.suppressedMessages?.reduce(
+			( acc, message ) => {
+				acc[ message ] = true;
+
+				return acc;
+			},
+			{} as Record< string, boolean >
+		),
+	};
 };
