@@ -16,14 +16,18 @@ export type ExtendedWindow = Window & {
 			library_connect: {
 				is_connected: boolean;
 			};
+		};
+	};
+	elementor: {
+		config: {
 			user: {
 				top_bar: {
 					my_elementor_url: string;
 					connect_url: string;
 				};
-			};
-		};
-	};
+			}
+		}
+	}
 };
 
 export type { Props as ActionProps } from './components/actions/action';

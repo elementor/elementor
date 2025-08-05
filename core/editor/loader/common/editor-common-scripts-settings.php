@@ -75,7 +75,7 @@ class Editor_Common_Scripts_Settings {
 				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),
 				'top_bar' => [
-					'connect_url' => Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' )->get_admin_url( 'authorize', [
+					'connect_url' => Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' )->get_admin_url( 'authorize', [
 						'utm_source' => 'editor-app',
 						'utm_campaign' => 'connect-account',
 						'utm_medium' => 'wp-dash',
