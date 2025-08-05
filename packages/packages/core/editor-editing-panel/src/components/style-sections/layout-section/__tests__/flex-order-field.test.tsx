@@ -168,4 +168,25 @@ describe( '<FlexOrderField />', () => {
 		expect( setValues ).toHaveBeenCalledWith( { order: null }, { history: { propDisplayName: 'Order' } } );
 		expect( firstButton ).not.toHaveClass( 'Mui-selected' );
 	} );
+
+	it( 'should handle order value of 0 correctly (custom mode active and field visible)', () => {
+		// Arrange.
+		const value = { $$type: 'number', value: 0 };
+
+		jest.mocked( useStylesFields ).mockReturnValue( {
+			values: { order: value },
+			setValues: jest.fn(),
+			canEdit: true,
+		} );
+
+		// Act.
+		renderFlexOrderField();
+
+		const customButton = screen.getByLabelText( 'Custom' );
+		const customControlLabel = screen.getByText( 'Custom order' );
+
+		// Assert.
+		expect( customButton ).toHaveClass( 'Mui-selected' );
+		expect( customControlLabel ).toBeVisible();
+	} );
 } );
