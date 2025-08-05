@@ -58,7 +58,7 @@ class Atomic_Component_Styles {
 	private function get_components_from_post( string $post_id ): array {
 		$components = [];
 
-		Utils::foreach_post_element( $post_id, function( $element_data ) use ( &$components ) {
+		Utils::traverse_post_elements( $post_id, function( $element_data ) use ( &$components ) {
 			if ( isset( $element_data['widgetType'] ) && 'e-component' === $element_data['widgetType'] ) {
 				$components[] = $element_data;
 			}
