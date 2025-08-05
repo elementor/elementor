@@ -7,6 +7,7 @@ import { useImportKit, IMPORT_PROCESSING_STATUS } from '../hooks/use-import-kit'
 import ImportError from '../components/import-error';
 import { useImportContext } from '../context/import-context';
 import { PluginActivation } from '../components/plugin-activation';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 const headerContent = (
 	<PageHeader title={ __( 'Import', 'elementor' ) } />
@@ -27,10 +28,13 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
+				AppsEventTracking.sendKitImportStatus();
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
 			}
+		} else {
+			AppsEventTracking.sendKitImportStatus( error );
 		}
 	}, [ status, error, navigate, isProcessing ] );
 

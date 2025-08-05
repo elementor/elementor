@@ -1,9 +1,11 @@
 import { Box, Typography, Button, Link, Stack } from '@elementor/ui';
 import { useNavigate } from '@reach/router';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { BaseLayout, TopBar, PageHeader, Footer } from '../../shared/components';
 import { useImportContext } from '../context/import-context';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import SummarySection from '../../shared/components/summary-section';
 
 const Illustration = () => (
 	<Box
@@ -39,6 +41,53 @@ export default function ImportComplete() {
 	const { data, isCompleted, runnersState } = useImportContext();
 	const navigate = useNavigate();
 
+	const getTemplatesSummary = useCallback( () => {
+		const templatesSummary = runnersState.templates?.succeed_summary;
+
+		if ( ! templatesSummary ) {
+			return __( 'No templates imported', 'elementor' );
+		}
+
+		const summaryTitles = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.templates || {};
+
+		const summaryParts = Object.entries( templatesSummary )
+			.map( ( [ docType, count ] ) => {
+				const label = summaryTitles[ docType ];
+				if ( ! label ) {
+					return null;
+				}
+
+				const title = count > 1 ? label.plural : label.single;
+				return `${ count } ${ title }`;
+			} )
+			.filter( ( part ) => part );
+
+		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates imported', 'elementor' );
+	}, [ runnersState.templates?.succeed_summary ] );
+
+	const getPluginsSummary = useCallback( () => {
+		return runnersState.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
+	}, [ runnersState.plugins ] );
+
+	const sectionsTitlesMap = useMemo( () => ( {
+		settings: {
+			title: __( 'Site settings', 'elementor' ),
+			subTitle: __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ),
+		},
+		content: {
+			title: __( 'Content', 'elementor' ),
+			subTitle: __( '5 Posts | 12 Pages | 39 Products | 15 Navigation Menu Items', 'elementor' ),
+		},
+		plugins: {
+			title: __( 'Plugins', 'elementor' ),
+			subTitle: getPluginsSummary(),
+		},
+		templates: {
+			title: __( 'Templates', 'elementor' ),
+			subTitle: getTemplatesSummary(),
+		},
+	} ), [ getPluginsSummary, getTemplatesSummary ] );
+
 	const headerContent = (
 		<PageHeader title={ __( 'Import', 'elementor' ) } />
 	);
@@ -72,6 +121,10 @@ export default function ImportComplete() {
 			navigate( '/import-customization', { replace: true } );
 		}
 	}, [ isCompleted, navigate ] );
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary );
+	}, [] );
 
 	return (
 		<BaseLayout
@@ -117,44 +170,14 @@ export default function ImportComplete() {
 						</Typography>
 					</Box>
 					<Stack spacing={ 2 } sx={ { pt: 1, maxWidth: '1075px' } } >
-						{ data.includes.includes( 'settings' ) && (
-							<Box>
-								<Stack direction="row" alignItems="center" spacing={ 1 }>
-									<Typography variant="body2" color="text.primary" >
-										{ __( 'Site settings', 'elementor' ) }
-									</Typography>
-									<ExternalLinkIcon />
-								</Stack>
-								<Typography variant="caption" color="text.secondary">
-									{ __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ) }
-								</Typography>
-							</Box>
-						) }
-						{ data.includes.includes( 'content' ) && (
-							<Box>
-								<Stack direction="row" alignItems="center" spacing={ 1 }>
-									<Typography variant="body2" color="text.primary" >
-										{ __( 'Content', 'elementor' ) }
-									</Typography>
-									<ExternalLinkIcon />
-								</Stack>
-								<Typography variant="caption" color="text.secondary" >
-									{ __( '5 Posts | 12 Pages | 39 Products | 15 Navigation Menu Items', 'elementor' ) }
-								</Typography>
-							</Box>
-						) }
-						{ data.includes.includes( 'plugins' ) && (
-							<Box>
-								<Stack direction="row" alignItems="center" spacing={ 1 }>
-									<Typography variant="body2" color="text.primary">
-										{ __( 'Plugins', 'elementor' ) }
-									</Typography>
-									<ExternalLinkIcon />
-								</Stack>
-								<Typography variant="caption" color="text.secondary">
-									{ runnersState.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' ) }
-								</Typography>
-							</Box>
+						{ data.includes.map( ( section ) =>
+							sectionsTitlesMap[ section ] ? (
+								<SummarySection
+									key={ section }
+									title={ sectionsTitlesMap[ section ].title }
+									subTitle={ sectionsTitlesMap[ section ].subTitle }
+								/>
+							) : null,
 						) }
 					</Stack>
 				</Stack>

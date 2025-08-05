@@ -11,10 +11,12 @@ export const useCanConvertLocalClassToGlobal = () => {
 	const isLocalStylesProvider = provider && isElementsStylesProvider( provider?.getKey() );
 	const variants = styleDef?.variants || [];
 
-	const canPromote = !! ( isLocalStylesProvider && variants.length );
+	const canConvert = !! ( isLocalStylesProvider && variants.length );
 
 	return {
-		canPromote,
+		canConvert,
+		isLocalStylesProvider,
+		id,
 		styleDef: styleDef || null,
 	};
 };
