@@ -11,21 +11,42 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 	const unselectedValues = useRef( data.analytics?.customization?.templates || [] );
 	const templateRegistry = elementorModules?.importExport?.templateRegistry;
 	const templateTypes = templateRegistry?.getAll() || [];
+	const isImport = data.hasOwnProperty( 'uploadedData' );
 
 	const [ templates, setTemplates ] = useState( () => {
 		if ( data.customization.templates ) {
 			return data.customization.templates;
 		}
 
-		return templateRegistry?.getState( data.includes, data.customization, initialState ) || {};
+		return templateRegistry?.getState( data, initialState ) || {};
 	} );
+
+	const hasTemplatesForExportGroup = ( exportGroup ) => {
+		if ( ! isImport || ! data.uploadedData?.manifest?.templates ) {
+			return false;
+		}
+
+		const uploadedTemplates = data.uploadedData.manifest.templates;
+		const exportGroups = elementorAppConfig?.['import-export-customization']?.exportGroups || {};
+
+		for ( const templateId in uploadedTemplates ) {
+			const template = uploadedTemplates[ templateId ];
+			const templateExportGroup = exportGroups[ template.doc_type ];
+			
+			if ( templateExportGroup === exportGroup ) {
+				return true;
+			}
+		}
+
+		return false;
+	};
 
 	useEffect( () => {
 		if ( open ) {
 			if ( data.customization.templates ) {
 				setTemplates( data.customization.templates );
 			} else {
-				setTemplates( templateRegistry?.getState( data.includes, data.customization, initialState ) || {} );
+				setTemplates( templateRegistry?.getState( data, initialState ) || {} );
 			}
 		}
 	}, [ open, data.customization.templates, initialState ] );
@@ -67,6 +88,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 				<CustomComponent
 					key={ templateType.key }
 					state={ templates[ templateType.key ] }
+					disabled={ isImport && ! templates[ templateType.key ]?.enabled && ! hasTemplatesForExportGroup( templateType.exportGroup ) }
 					settingKey={ templateType.key }
 					onStateChange={ handleStateChange }
 					data={ data }
@@ -78,6 +100,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			<SettingSection
 				key={ templateType.key }
 				checked={ templates[ templateType.key ]?.enabled || false }
+				disabled={ isImport && ! templates[ templateType.key ]?.enabled && ! hasTemplatesForExportGroup( templateType.exportGroup ) }
 				title={ templateType.title }
 				description={ templateType.description }
 				settingKey={ templateType.key }

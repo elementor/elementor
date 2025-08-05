@@ -31,17 +31,17 @@ class TemplateRegistry {
         return this.templateTypes.get( key );
     }
 
-    getState( includes, customization, parentInitialState ) {
+    getState( data, parentInitialState ) {
         const state = {};
 
         this.getAll().forEach( ( templateType ) => {
-            if ( customization?.templates?.[ templateType.key ] !== undefined ) {
-                state[ templateType.key ] = customization.templates[ templateType.key ];
+            if ( data?.customization?.templates?.[ templateType.key ] !== undefined ) {
+                state[ templateType.key ] = data.customization.templates[ templateType.key ];
                 return;
             }
 
             if ( templateType.getInitialState ) {
-                state[ templateType.key ] = templateType.getInitialState( includes, parentInitialState );
+                state[ templateType.key ] = templateType.getInitialState( data, parentInitialState );
                 return;
             }
 
