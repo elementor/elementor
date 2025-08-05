@@ -129,6 +129,12 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 													ref={ setTriggerRef }
 													{ ...triggerProps }
 													disabled={ isSorting }
+													sx={ {
+														opacity: 0,
+														'&:hover': {
+															opacity: 1,
+														},
+													} }
 												>
 													<GridDotsIcon fontSize="inherit" />
 												</IconButton>

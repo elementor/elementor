@@ -5,9 +5,7 @@ import { service } from '../service';
 import { type Variable } from '../types';
 
 export const useVariables = () => {
-	const variables = service.variables();
-
-	return variables;
+	return service.variables();
 };
 
 export const useVariable = ( key: string ) => {
