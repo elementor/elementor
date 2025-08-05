@@ -29,12 +29,8 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 	return (
 		<>
 			<SortableProvider value={ keys } onChange={ onChangeOrder }>
-				{ keys?.map( ( key: number, index: number ) => {
-					const value = items?.[ index ]?.item as Item< T >;
-
-					if ( ! value ) {
-						return null;
-					}
+				{ keys.map( ( key: number, index: number ) => {
+					const value = items[ index ].item as Item< T >;
 
 					return (
 						<SortableItem id={ key } key={ `sortable-${ key }` } disabled={ ! isSortable }>

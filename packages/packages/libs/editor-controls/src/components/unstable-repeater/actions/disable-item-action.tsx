@@ -13,7 +13,7 @@ export const DisableItemAction = ( { index = -1 }: { index?: number } ) => {
 		return null;
 	}
 
-	const propDisabled = items[ index ]?.item?.disabled ?? false;
+	const propDisabled = items[ index ].item.disabled ?? false;
 
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 

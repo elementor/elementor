@@ -75,13 +75,9 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? initial;
 		const newIndex = config?.index ?? items.length;
+		const newKey = generateNextKey( itemsWithKeys.map( ( { key } ) => key ) );
 
-		setItemsWithKeys(
-			itemsWithKeys.toSpliced( newIndex, 0, {
-				item,
-				key: generateNextKey( itemsWithKeys.map( ( { key } ) => key ) ),
-			} )
-		);
+		setItemsWithKeys( itemsWithKeys.toSpliced( newIndex, 0, { item, key: newKey } ) );
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
@@ -92,13 +88,9 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {
-		setItems( ( prevItems ) => prevItems.map( ( item, pos ) => ( pos === index ? updatedItem : item ) ) );
-		setItemsWithKeys(
-			itemsWithKeys.map( ( itemWithKey, pos ) => ( {
-				...itemWithKey,
-				item: pos === index ? updatedItem : itemWithKey.item,
-			} ) )
-		);
+		const item = itemsWithKeys[ index ];
+
+		setItemsWithKeys( itemsWithKeys.toSpliced( index, 1, { ...item, item: updatedItem } ) );
 	};
 
 	return (
@@ -107,12 +99,12 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				isOpen,
 				openItemIndex,
 				setOpenItemIndex,
-				items: ( itemsWithKeys ?? [] ) as ItemWithKey< Item< T > >[],
-				setItems: setItemsWithKeys as ( items: ItemWithKey< RepeatablePropValue >[] ) => void,
+				items: ( itemsWithKeys ?? [] ) as RepeaterContextType< T >[ 'items' ],
+				setItems: setItemsWithKeys as RepeaterContextType< RepeatablePropValue >[ 'setItems' ],
 				popoverState,
 				initial,
-				updateItem: updateItem as ( item: RepeatablePropValue, index: number ) => void,
-				addItem: addItem as ( ev: React.MouseEvent, config?: AddItem< RepeatablePropValue > ) => void,
+				updateItem: updateItem as RepeaterContextType< RepeatablePropValue >[ 'updateItem' ],
+				addItem: addItem as RepeaterContextType< RepeatablePropValue >[ 'addItem' ],
 				removeItem,
 				rowRef,
 				setRowRef,

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { bindPopover, Box, Popover, type PopoverProps } from '@elementor/ui';
+import { bindPopover, Box, Popover } from '@elementor/ui';
 
 import { PropKeyProvider } from '../../../bound-prop-context';
 import { EMPTY_OPEN_ITEM, useRepeaterContext } from '../context/repeater-context';
 
 export const EditItemPopover = ( { children }: { children: React.ReactNode } ) => {
 	const { popoverState, openItemIndex, isOpen, rowRef, setOpenItemIndex, setRowRef, items } = useRepeaterContext();
-	const popoverProps: Partial< PopoverProps > = bindPopover( popoverState );
+	const popoverProps = bindPopover( popoverState );
 
 	if ( ! isOpen || ! rowRef ) {
 		return null;
@@ -14,8 +14,8 @@ export const EditItemPopover = ( { children }: { children: React.ReactNode } ) =
 
 	const bind = items[ openItemIndex ].item.$$type;
 
-	const onClose = ( ev: React.MouseEvent, reason: 'backdropClick' | 'escapeKeyDown' ) => {
-		popoverProps.onClose?.( ev, reason );
+	const onClose = () => {
+		popoverProps.onClose?.();
 		setRowRef( null );
 		setOpenItemIndex( EMPTY_OPEN_ITEM );
 	};

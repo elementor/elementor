@@ -193,7 +193,7 @@ describe( 'UnstableRepeater', () => {
 		fireEvent.click( openItemButton );
 
 		// Assert.
-		expect( await screen.findByText( 'Content', {}, { timeout: 1000 } ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content - 0' ) ).toBeInTheDocument();
 	} );
 
 	it.skip( 'should render proper item indexes for multiple items', () => {
