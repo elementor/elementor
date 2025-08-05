@@ -180,7 +180,7 @@ class Style_Schema {
 	private static function get_spacing_props() {
 		return [
 			'padding' => Union_Prop_Type::make()
-				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Dimensions_Prop_Type::make_with_units( Size_Constants::spacing() ) )
 				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::spacing() ) ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
@@ -321,4 +321,6 @@ class Style_Schema {
 			'order' => Number_Prop_Type::make(),
 		];
 	}
+
+
 }
