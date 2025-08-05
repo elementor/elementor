@@ -1,14 +1,20 @@
 import { type StyleDefinitionsMap } from '@elementor/editor-styles';
 import { type HttpResponse } from '@elementor/http-client';
 
-export type ComponentsStylesGetAllResponse = HttpResponse<
-	StyleDefinitionsMap
->;
+export type ComponentsStylesGetAllResponse = HttpResponse< StyleDefinitionsMap >;
 
-export type ApiContext = 'preview' | 'frontend';
+// TODO - add context to the API
+/**
+ * type ApiContext = 'preview' | 'frontend';
+ * export const apiClient = {
+ *   all: ( context: ApiContext = 'preview' ): ...
+ *   ...
+ * }
+ */
 
 export const apiClient = {
-	all: ( context: ApiContext = 'preview' ): Promise<ComponentsStylesGetAllResponse> => new Promise( async ( resolve ) => {
+	all: (): Promise< ComponentsStylesGetAllResponse > =>
+		new Promise( async ( resolve ) => {
 			resolve( {
 				data: {
 					'atomic-component-mock-style-123': {
@@ -19,7 +25,7 @@ export const apiClient = {
 							{
 								meta: {
 									breakpoint: 'desktop',
-									state: null
+									state: null,
 								},
 								props: {
 									color: {
@@ -29,11 +35,11 @@ export const apiClient = {
 									'font-weight': {
 										$$type: 'string',
 										value: '700',
-									}
+									},
 								},
 								custom_css: null,
-							}
-						]
+							},
+						],
 					},
 				},
 				meta: {},

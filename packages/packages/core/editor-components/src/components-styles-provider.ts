@@ -1,15 +1,9 @@
-import { generateId, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
-import {
-	__dispatch as dispatch,
-	__getState as getState,
-	__subscribeWithSelector as subscribeWithSelector,
-} from '@elementor/store';
-import { __ } from '@wordpress/i18n';
+import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
 
-import { selectClass, selectClasses, slice, type ComponentsStylesState } from './store';
+import { type ComponentsStylesState, selectClass, selectClasses } from './store';
 
-export const COMPONENTS_PROVIDER_KEY = 'components-styles';
+const COMPONENTS_PROVIDER_KEY = 'components-styles';
 
 export const componentsStylesProvider = createStylesProvider( {
 	key: COMPONENTS_PROVIDER_KEY,

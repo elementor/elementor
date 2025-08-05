@@ -41,8 +41,14 @@
   },
   "dependencies": {
     "@elementor/store": "3.32.0",
+    "@elementor/editor": "3.32.0",
     "@elementor/editor-styles-repository": "3.32.0",
-    "@elementor/http-client": "3.32.0"
+    "@elementor/http-client": "3.32.0",
+    "@elementor/editor-v1-adapters": "3.32.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

@@ -1,15 +1,10 @@
-import {
-	type StyleDefinition,
-	type StyleDefinitionID,
-	type StyleDefinitionVariant,
-} from '@elementor/editor-styles';
+import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import {
 	__createSelector as createSelector,
 	__createSlice as createSlice,
 	type PayloadAction,
 	type SliceState,
 } from '@elementor/store';
-
 
 export type ComponentsStyles = Record< StyleDefinitionID, StyleDefinition >;
 
@@ -58,9 +53,7 @@ export const selectData = ( state: StateWithComponentsStyles ) => state[ SLICE_N
 
 export const selectInitialData = ( state: StateWithComponentsStyles ) => state[ SLICE_NAME ].initialData;
 
-export const selectClasses = createSelector( selectData, ( items ) =>
-	Object.values( items )
-);
+export const selectClasses = createSelector( selectData, ( items ) => Object.values( items ) );
 
 export const selectClass = ( state: StateWithComponentsStyles, id: StyleDefinitionID ) =>
 	state[ SLICE_NAME ].data[ id ] ?? null;

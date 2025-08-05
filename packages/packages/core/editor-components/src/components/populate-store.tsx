@@ -10,7 +10,6 @@ export function PopulateStore() {
 	useEffect( () => {
 		Promise.all( [ apiClient.all( 'preview' ), apiClient.all( 'frontend' ) ] ).then(
 			( [ previewRes = {}, frontendRes = {} ] ) => {
-
 				dispatch(
 					slice.actions.load( {
 						preview: previewRes.data ?? {},
