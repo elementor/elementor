@@ -53,8 +53,8 @@ export const TextFieldInnerSelection = forwardRef(
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
 
 		const getCursorStyle = () => ( {
-		input: { cursor: inputProps.readOnly ? 'default !important' : undefined },
-	} );
+			input: { cursor: inputProps.readOnly ? 'default !important' : undefined },
+		} );
 
 		return (
 			<TextField
