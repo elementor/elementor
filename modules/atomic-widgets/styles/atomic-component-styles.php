@@ -11,7 +11,7 @@ use Elementor\Modules\AtomicWidgets\Utils;
  * Atomic Component styles fetching for render
  */
 class Atomic_Component_Styles {
-	const CACHE_KEY_PREFIX = 'atomic-component-styles-related-posts';
+	const CACHE_ROOT_KEY = 'atomic-component-styles-related-posts';
 
 	public function register_hooks() {
 		add_action( 'elementor/post/render', fn( $post_id ) => $this->render_post( $post_id ) );
@@ -29,8 +29,8 @@ class Atomic_Component_Styles {
 	private function render_post( string $post_id ) {
 		$cache_validity = new Cache_Validity();
 
-		if ( $cache_validity->is_valid( [ self::CACHE_KEY_PREFIX, $post_id ] ) ) {
-			$related_posts = $cache_validity->get_meta( [ self::CACHE_KEY_PREFIX, $post_id ] );
+		if ( $cache_validity->is_valid( [ self::CACHE_ROOT_KEY, $post_id ] ) ) {
+			$related_posts = $cache_validity->get_meta( [ self::CACHE_ROOT_KEY, $post_id ] );
 
 			$this->declare_components_rendered( $related_posts );
 
@@ -44,7 +44,7 @@ class Atomic_Component_Styles {
 			->unique()
 			->all();
 
-		$cache_validity->validate( [ self::CACHE_KEY_PREFIX, $post_id ], $component_ids );
+		$cache_validity->validate( [ self::CACHE_ROOT_KEY, $post_id ], $component_ids );
 
 		$this->declare_components_rendered( $component_ids );
 	}
@@ -71,13 +71,13 @@ class Atomic_Component_Styles {
 		$cache_validity = new Cache_Validity();
 
 		if ( empty( $post_ids ) ) {
-			$cache_validity->invalidate( [ self::CACHE_KEY_PREFIX ] );
+			$cache_validity->invalidate( [ self::CACHE_ROOT_KEY ] );
 
 			return;
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$cache_validity->invalidate( [ self::CACHE_KEY_PREFIX, $post_id ] );
+			$cache_validity->invalidate( [ self::CACHE_ROOT_KEY, $post_id ] );
 		}
 	}
 }

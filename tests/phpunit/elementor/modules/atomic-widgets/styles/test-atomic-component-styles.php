@@ -185,11 +185,11 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertTrue(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
 			'Post-level cache should be valid'
 		);
 		$this->assertTrue(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ],
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $component_id ],
 			'Component-level cache should be valid' )
 		);
 
@@ -200,12 +200,12 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		);
 		$this->assertEquals(
 			[ $component_id ],
-			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
+			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
 			'Post-level cache meta should contain the included component ID (1st level only)'
 		);
 		$this->assertEquals(
 			[],
-			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ] ),
+			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $component_id ] ),
 			'Component-level cache meta should be empty'
 		);
 
@@ -214,11 +214,11 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $post_id ] ),
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
 			'After saving changes cache should be invalidated'
 		);
 		$this->assertTrue(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_KEY_PREFIX, $component_id ] ),
+			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $component_id ] ),
 			'Component-level cache should remain valid, as no change occurred'
 		);
 	}
