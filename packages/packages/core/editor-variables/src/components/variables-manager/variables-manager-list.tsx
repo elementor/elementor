@@ -40,7 +40,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 	const variables = useVariables();
 
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
-	const rows = ids.map( ( id ) => ( {
+	const rows = ids.filter( ( id ) => ! variables[ id ].deleted ).map( ( id ) => ( {
 		id,
 		name: variables[ id ].label,
 		value: variables[ id ].value,
