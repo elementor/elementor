@@ -30,9 +30,9 @@ class Atomic_Component_Styles {
 		$cache_validity = new Cache_Validity();
 
 		if ( $cache_validity->is_valid( [ self::CACHE_ROOT_KEY, $post_id ] ) ) {
-			$related_posts = $cache_validity->get_meta( [ self::CACHE_ROOT_KEY, $post_id ] );
+			$component_ids = $cache_validity->get_meta( [ self::CACHE_ROOT_KEY, $post_id ] );
 
-			$this->declare_components_rendered( $related_posts );
+			$this->declare_components_rendered( $component_ids );
 
 			return;
 		}
