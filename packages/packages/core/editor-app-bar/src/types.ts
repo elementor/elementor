@@ -25,9 +25,9 @@ export type ExtendedWindow = Window & {
 					my_elementor_url: string;
 					connect_url: string;
 				};
-			}
-		}
-	}
+			};
+		};
+	};
 };
 
 export type { Props as ActionProps } from './components/actions/action';
