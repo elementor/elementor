@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { type RefObject, useRef } from 'react';
-import { transformOriginPropTypeUtil } from '@elementor/editor-props';
+import { useRef } from 'react';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { AdjustmentsIcon } from '@elementor/icons';
-import { bindPopover, Button, Divider, Grid, Popover, type PopupState, Stack, usePopupState } from '@elementor/ui';
+import { AdjustmentsIcon, PlusIcon } from '@elementor/icons';
+import { bindPopover, Button, Divider, Grid, IconButton, Popover, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
@@ -11,10 +10,6 @@ import { ControlFormLabel } from '../../components/control-form-label';
 import { ControlLabel } from '../../components/control-label';
 import { SizeControl } from '../size-control';
 
-// type Props = {
-// 	popupState: PopupState;
-// 	anchorRef: RefObject< HTMLElement | null >;
-// };
 const transformOriginUnits = [ 'px', '%', 'em', 'rem' ] as ( 'px' | '%' | 'em' | 'rem' )[];
 
 const baseControlsFields = [
@@ -35,13 +30,11 @@ const baseControlsFields = [
 	},
 ];
 
-export const TransformBaseControl = ( { ref }: { ref: React.RefObject< HTMLDivElement > } ) => {
-	// const context = useBoundProp( transformOriginPropTypeUtil );
-	// const rowRef = useRef< HTMLDivElement >( null );
+export const TransformBaseControl = ( { ref }: { ref: React.Ref< HTMLDivElement > } ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const popupState = usePopupState( { variant: 'popover' } );
-
+	console.log( ref );
 	const handleOpenBaseTransform = () => {
 		if ( buttonRef.current ) {
 			popupState.open( buttonRef.current );
@@ -54,9 +47,14 @@ export const TransformBaseControl = ( { ref }: { ref: React.RefObject< HTMLDivEl
 
 	return (
 		<>
-			<Button ref={ buttonRef } variant="outlined" size="small" onClick={ handleOpenBaseTransform }>
-				{ __( 'Base Transform', 'elementor' ) }
-			</Button>
+			<IconButton
+				size={ 'tiny' }
+				ref={ buttonRef }
+				onClick={ handleOpenBaseTransform }
+				aria-label={ __( 'Add item', 'elementor' ) }
+			>
+				<AdjustmentsIcon fontSize={ 'tiny' } />
+			</IconButton>
 			<Popover
 				disablePortal
 				slotProps={ {
@@ -87,14 +85,14 @@ export const TransformBaseControl = ( { ref }: { ref: React.RefObject< HTMLDivEl
 										<ControlLabel>{ control.label }</ControlLabel>
 									</Grid>
 									<Grid item xs={ 6 } sx={ { pr: 3 } }>
-										<PropKeyProvider bind={ control.bindValue }>
-											<SizeControl
-												variant="length"
-												units={ control.units }
-												anchorRef={ ref }
-												disableCustom={ true }
-											/>
-										</PropKeyProvider>
+										{ /* <PropKeyProvider bind={ control.bindValue }> */ }
+										<SizeControl
+											variant="length"
+											units={ control.units }
+											// anchorRef={ ref }
+											disableCustom={ true }
+										/>
+										{ /* </PropKeyProvider> */ }
 									</Grid>
 								</Grid>
 							</Grid>

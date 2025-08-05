@@ -22,14 +22,17 @@ const FILTER_LABEL = __( 'Filters', 'elementor' );
 const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
+const TRANSFORM_ORIGIN_LABEL = __( 'Transform origin', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
 	const contentRef = useRef< HTMLDivElement >( null );
+
 	injectIntoRepeaterHeaderActions( {
-		id: 'tra-origin',
+		id: 'transform-origin',
 		component: () => <TransformOriginControl ref={ contentRef } />,
 	} );
+
 	return (
 		<SectionContent>
 			<OpacityControlField />
@@ -62,12 +65,13 @@ export const EffectsSection = () => {
 };
 
 const TransformOriginControl = ( { ref }: { ref: React.RefObject< HTMLDivElement > } ) => {
+	console.log(ref);
 	const { bind } = useBoundProp();
 	if ( bind !== 'transform' ) {
 		return null;
 	}
 	return (
-		<StylesField bind={ 'transform-origin' } propDisplayName={ 'transform-origin' }>
+		<StylesField bind={ 'transform-origin' } propDisplayName={ TRANSFORM_ORIGIN_LABEL }>
 			<TransformBaseControl ref={ ref } />
 		</StylesField>
 	);
