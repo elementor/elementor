@@ -4,6 +4,7 @@ import { Stack, Typography } from '@elementor/ui';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { ControlAdornments } from '../../../control-adornments/control-adornments';
 import { SlotChildren } from '../../../control-replacements';
+import { TransformOriginControl } from '../../../controls/transform-control/transform-origin-control';
 import { AddItemAction } from '../actions/add-item-action';
 import { RepeaterHeaderActionsSlot } from '../locations';
 
@@ -17,7 +18,9 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			</Typography>
 			<Spacer />
 			<RepeaterHeaderActionsSlot value={ value } />
-			<SlotChildren whitelist={ [ AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
+			<SlotChildren whitelist={ [ TransformOriginControl, AddItemAction ] as React.FC[] } sorted>
+				{ children }
+			</SlotChildren>
 			<ControlAdornments />
 		</Stack>
 	);

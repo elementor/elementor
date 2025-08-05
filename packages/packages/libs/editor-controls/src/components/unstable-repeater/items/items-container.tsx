@@ -9,10 +9,10 @@ import { type ItemProps } from '../types';
 export const ItemsContainer = < T extends PropValue >( {
 	itemTemplate,
 	children,
-	setContainerEl,
+	setTransformOriginPopoverAnchorRef,
 }: React.PropsWithChildren< {
 	itemTemplate: React.ReactNode;
-	setContainerEl?: ( ref?: HTMLDivElement ) => void;
+	setTransformOriginPopoverAnchorRef?: ( ref?: HTMLDivElement ) => void;
 } > ) => {
 	const { items, uniqueKeys, openItem, isSortable, sortItemsByKeys } = useRepeaterContext();
 
@@ -27,7 +27,7 @@ export const ItemsContainer = < T extends PropValue >( {
 	return (
 		<Box
 			sx={ { width: '100%', height: '100%', p: 0, m: 0 } }
-			ref={ ( ref?: HTMLDivElement ) => setContainerEl?.( ref ) }
+			ref={ ( ref?: HTMLDivElement ) => setTransformOriginPopoverAnchorRef?.( ref ) }
 		>
 			<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
 				{ uniqueKeys?.map( ( key: number, index: number ) => {

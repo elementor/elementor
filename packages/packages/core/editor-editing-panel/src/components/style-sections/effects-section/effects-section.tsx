@@ -1,10 +1,15 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
+	injectIntoRepeaterHeaderActions,
+	PropProvider,
+	TransformOriginControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
 	UnstableTransformRepeaterControl,
+	useBoundProp,
 } from '@elementor/editor-controls';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -19,10 +24,21 @@ const FILTER_LABEL = __( 'Filters', 'elementor' );
 const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
+const TRANSFORM_ORIGIN_LABEL = __( 'Transform origin', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
 	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
+
+	const transformOriginPopoverAnchorRef = useRef< HTMLDivElement | null >( null );
+	const setTransformOriginPopoverAnchorRef = ( ref?: HTMLDivElement ) =>
+		( transformOriginPopoverAnchorRef.current = ref ?? null );
+
+	injectIntoRepeaterHeaderActions( {
+		id: 'transform-origin-control-trigger',
+		component: () => <TransformOrigin containerRef={ transformOriginPopoverAnchorRef } />,
+		options: { overwrite: true },
+	} );
 
 	return (
 		<SectionContent>
@@ -33,7 +49,13 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
+				{ isUnstableRepeaterActive ? (
+					<UnstableTransformRepeaterControl
+						setTransformOriginPopoverAnchorRef={ setTransformOriginPopoverAnchorRef }
+					/>
+				) : (
+					<TransformRepeaterControl />
+				) }
 			</StylesField>
 			{ shouldShowTransition && (
 				<>
@@ -53,4 +75,16 @@ export const EffectsSection = () => {
 			</StylesField>
 		</SectionContent>
 	);
+};
+
+const TransformOrigin = ( { containerRef }: { containerRef: React.RefObject< HTMLDivElement > } ) => {
+	const context = useBoundProp();
+
+	return context.bind === 'transform' ? (
+		<PropProvider { ...context }>
+			<StylesField bind={ 'transform-origin' } propDisplayName={ TRANSFORM_ORIGIN_LABEL }>
+				<TransformOriginControl anchorRef={ containerRef } />
+			</StylesField>{ ' ' }
+		</PropProvider>
+	) : null;
 };
