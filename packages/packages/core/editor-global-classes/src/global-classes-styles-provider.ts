@@ -1,4 +1,4 @@
-import { generateId, type StyleDefinitionVariant } from '@elementor/editor-styles';
+import { generateId, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
@@ -9,11 +9,36 @@ import { __ } from '@wordpress/i18n';
 
 import { getCapabilities } from './capabilities';
 import { GlobalClassLabelAlreadyExistsError } from './errors';
-import { selectClass, selectGlobalClasses, selectOrderedClasses, slice, type StateWithGlobalClasses } from './store';
+import {
+	selectClass,
+	selectData,
+	selectGlobalClasses,
+	selectOrderedClasses,
+	slice,
+	type StateWithGlobalClasses,
+} from './store';
 
 const MAX_CLASSES = 50;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
+
+const createSubscribeWithStates = () => {
+	return (
+		cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
+	) => {
+		let previousState = selectData( getState() );
+
+		return subscribeWithSelector(
+			( state: StateWithGlobalClasses ) => state.globalClasses,
+			( currentState ) => {
+				cb( previousState.items, currentState.data.items );
+				previousState = currentState.data;
+			}
+		);
+	};
+};
+
+const subscribeWithStates = createSubscribeWithStates();
 
 export const globalClassesStylesProvider = createStylesProvider( {
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
@@ -23,7 +48,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		singular: __( 'class', 'elementor' ),
 		plural: __( 'classes', 'elementor' ),
 	},
-	subscribe: ( cb ) => subscribeWithSelector( ( state: StateWithGlobalClasses ) => state.globalClasses, cb ),
+	subscribe: ( cb ) => subscribeWithStates( cb ),
 	capabilities: getCapabilities(),
 	actions: {
 		all: () => selectOrderedClasses( getState() ),

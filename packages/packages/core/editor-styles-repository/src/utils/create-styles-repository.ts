@@ -1,3 +1,5 @@
+import { type StyleDefinition } from '@elementor/editor-styles';
+
 import { type Meta, type StylesProvider } from '../types';
 
 export const createStylesRepository = () => {
@@ -15,7 +17,9 @@ export const createStylesRepository = () => {
 		return getProviders().flatMap( ( provider ) => provider.actions.all( meta ) );
 	};
 
-	const subscribe = ( cb: () => void ) => {
+	const subscribe = (
+		cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
+	) => {
 		const unsubscribes = providers.map( ( provider ) => {
 			return provider.subscribe( cb );
 		} );
