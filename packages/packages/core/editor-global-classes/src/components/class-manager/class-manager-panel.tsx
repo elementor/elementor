@@ -222,14 +222,17 @@ const usePreventUnload = () => {
 };
 
 const usePublish = () => {
-	return useMutation( {
-		mutationFn: () => saveGlobalClasses( { context: 'frontend' } ),
+	return useMutation({
+		mutationFn: () => saveGlobalClasses({ context: 'frontend' }),
 		onSuccess: async () => {
-			setDocumentModifiedStatus( false );
+			setDocumentModifiedStatus(false);
 
-			if ( hasDeletedItems() ) {
+			if (hasDeletedItems()) {
 				await onDelete();
 			}
 		},
+		onError: () => {
+			console.log('error');
+		}
 	} );
 };

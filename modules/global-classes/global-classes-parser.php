@@ -32,16 +32,16 @@ class Global_Classes_Parser {
 		$order = $data['order'];
 
 		if ( ! is_array( $items ) ) {
-			$result->errors()->add( 'items', Global_Classes_Errors::ITEMS_INVALID );
+			$result->errors()->add( 'items', Global_Classes_Errors::INVALID_ITEMS );
 			return $result;
 		}
 
 		if ( ! is_array( $order ) ) {
-			$result->errors()->add( 'order', Global_Classes_Errors::ORDER_INVALID );
+			$result->errors()->add( 'order', Global_Classes_Errors::INVALID_ORDER );
 			return $result;
 		}
 
-		$items_result = $this->parse_items( $items );
+		$items_result = $this->parse_items( $items, [] );
 
 		if ( ! $items_result->is_valid() ) {
 			$result->errors()->merge( $items_result->errors(), 'items' );

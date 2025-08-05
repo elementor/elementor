@@ -1,15 +1,27 @@
 import { openDialog } from "@elementor/editor-global-dialog";
 import * as React from "react";
 import { API_ERROR_CODES } from "../api";
-import { DuplicatLabelDialog } from "./class-manager/duplicate-label-dialog";
+import { DuplicateLabelDialog } from "./class-manager/duplicate-label-dialog";
 
-export const showErrorDialog = (e: { response: { data: { data: { message: string; code: string; mata: any } } } }) => {
-	const { code, data } = e.response.data;
+export type ErrorDialogData = {
+        message: string;
+  code: typeof API_ERROR_CODES | string;
+  data: {
+    status: number;
+    meta: {
+      key: string; // The duplicated label
+      duplicated_label: string;
+    }
+        }
+}
 
+export const showErrorDialog = (data: ErrorDialogData) => {
+  
+	const { code,data:{meta} } = data;
 	if ( code === API_ERROR_CODES.DUPLICATED_LABEL ) {
-		openDialog( {
-			title: 'ERROR',
-			component: <DuplicatLabelDialog id={ data.meta.key } />,
-		} );
+		 openDialog( {
+		 	title: 'ERROR',
+		 	component: <DuplicateLabelDialog id={ meta.key } />,
+		 } );
 	}
 };

@@ -32,6 +32,11 @@ type GlobalClassesState = {
 	isDirty: boolean;
 };
 
+type UpdateStyleAndResetDirty = {
+	id: StyleDefinitionID;
+	label: string;
+};
+
 const localHistory = SnapshotHistory.get< GlobalClasses >( 'global-classes' );
 
 const initialState: GlobalClassesState = {
@@ -105,9 +110,19 @@ export const slice = createSlice( {
 
 			state.data.items[ payload.style.id ] = mergedData;
 
+			// Ensure the style ID is in the order array
+			if ( ! state.data.order.includes( payload.style.id ) ) {
+				state.data.order.unshift( payload.style.id );
+			}
+
 			state.isDirty = true;
 		},
+		updateStyleAndResetDirty( state, { payload }: PayloadAction< UpdateStyleAndResetDirty > ) {
+			const { id, label } = payload;
+			state.data.items[ id ].label = label;
 
+			state.isDirty = false;
+		},
 		updateProps(
 			state,
 			{
@@ -140,6 +155,11 @@ export const slice = createSlice( {
 				style.variants.push( { meta: payload.meta, props: payload.props, custom_css: customCss } );
 			}
 
+			// Ensure the style ID is in the order array
+			if ( ! state.data.order.includes( payload.id ) ) {
+				state.data.order.unshift( payload.id );
+			}
+
 			state.isDirty = true;
 		},
 
@@ -167,12 +187,6 @@ export const slice = createSlice( {
 			}
 		},
 
-		resetToInitialState( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
-			localHistory.reset();
-			state.data = state.initialData[ context ];
-			state.isDirty = false;
-		},
-
 		redo( state ) {
 			const data = localHistory.next();
 			if ( localHistory.isLast() ) {
@@ -182,6 +196,12 @@ export const slice = createSlice( {
 				state.data = data;
 				state.isDirty = true;
 			}
+		},
+
+		resetToInitialState( state, { payload: { context } }: PayloadAction< { context: ApiContext } > ) {
+			localHistory.reset();
+			state.data = state.initialData[ context ];
+			state.isDirty = false;
 		},
 	},
 } );
