@@ -26,7 +26,7 @@ class Size_Prop_Type extends Object_Prop_Type {
 		if ( is_array( $units ) ) {
 			foreach ( $units as $unit ) {
 				if ( ! is_string( $unit ) ) {
-					Utils::safe_throw( 'All units must be must be strings.' );
+					Utils::safe_throw( 'All units must be strings.' );
 				}
 			}
 		}
