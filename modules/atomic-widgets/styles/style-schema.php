@@ -321,6 +321,4 @@ class Style_Schema {
 			'order' => Number_Prop_Type::make(),
 		];
 	}
-
-
 }

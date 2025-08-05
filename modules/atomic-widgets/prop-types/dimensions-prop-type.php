@@ -24,7 +24,7 @@ class Dimensions_Prop_Type extends Object_Prop_Type {
 
 	private static function create_shape_with_units( $units = null ) {
 		$size_prop_type = Size_Prop_Type::make();
-		
+
 		if ( null !== $units ) {
 			$size_prop_type->units( $units );
 		}
