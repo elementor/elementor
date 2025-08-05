@@ -58,10 +58,10 @@ export const FlexOrderField = () => {
 		history: { propDisplayName: ORDER_LABEL },
 	} );
 
-	const [ groupControlValue, setGroupControlValue ] = useState( getGroupControlValue( order?.value || null ) );
+	const [ groupControlValue, setGroupControlValue ] = useState( getGroupControlValue( order?.value ?? null ) );
 
 	useEffect( () => {
-		const newGroupControlValue = getGroupControlValue( order?.value || null );
+		const newGroupControlValue = getGroupControlValue( order?.value ?? null );
 		setGroupControlValue( newGroupControlValue );
 	}, [ order?.value ] );
 

@@ -37,23 +37,11 @@ class Atomic_Widget_Styles {
 	}
 
 	private function parse_post_styles( $post_id ) {
-		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
-
-		if ( ! $document ) {
-			return [];
-		}
-
-		$elements_data = $document->get_elements_data();
-
-		if ( empty( $elements_data ) ) {
-			return [];
-		}
-
 		$post_styles = [];
 
-		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( &$post_styles ) {
+		Utils::traverse_post_elements( $post_id, function( $element_data ) use ( &$post_styles ) {
 			$post_styles = array_merge( $post_styles, $this->parse_element_style( $element_data ) );
-		});
+		} );
 
 		return $post_styles;
 	}
