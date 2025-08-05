@@ -40,8 +40,8 @@ const useVariableSelectionFilter = ( variables: NormalizedVariable[] ): Normaliz
 };
 
 const filterVariablesBySearchValue = ( variables: NormalizedVariable[], searchValue: string ): NormalizedVariable[] => {
-        const lowerSearchValue = searchValue.toLowerCase();
-        return variables.filter( ( { label } ) => label.toLowerCase().includes( lowerSearchValue ) );
+	const lowerSearchValue = searchValue.toLowerCase();
+	return variables.filter( ( { label } ) => label.toLowerCase().includes( lowerSearchValue ) );
 };
 
 const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {
