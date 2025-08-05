@@ -15,11 +15,25 @@ class Dimensions_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
+		return static::create_shape_with_units();
+	}
+
+	public static function make_with_units( $units = null ) {
+		return static::make()->set_shape( static::create_shape_with_units( $units ) );
+	}
+
+	private static function create_shape_with_units( $units = null ) {
+		$size_prop_type = Size_Prop_Type::make();
+
+		if ( null !== $units ) {
+			$size_prop_type->units( $units );
+		}
+
 		return [
-			'block-start' => Size_Prop_Type::make(),
-			'inline-end' => Size_Prop_Type::make(),
-			'block-end' => Size_Prop_Type::make(),
-			'inline-start' => Size_Prop_Type::make(),
+			'block-start' => clone $size_prop_type,
+			'inline-end' => clone $size_prop_type,
+			'block-end' => clone $size_prop_type,
+			'inline-start' => clone $size_prop_type,
 		];
 	}
 }
