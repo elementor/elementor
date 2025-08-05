@@ -16,10 +16,10 @@ import { DisableItemAction } from '../../components/unstable-repeater/actions/di
 import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
 import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
 import { createControl } from '../../create-control';
+import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
-import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './types';
 
 export const TransformRepeaterControl = createControl( () => {
 	const { propType, value: transformValues, setValue } = useBoundProp( transformPropTypeUtil );

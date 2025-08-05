@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Box, Popover } from '@elementor/ui';
+import { bindPopover, Box, Popover, type PopoverProps } from '@elementor/ui';
 
 import { PropKeyProvider } from '../../../bound-prop-context';
 import { EMPTY_OPEN_ITEM, useRepeaterContext } from '../context/repeater-context';
 
 export const EditItemPopover = ( { children }: { children: React.ReactNode } ) => {
-	const { popoverProps, openItemIndex, isOpen, rowRef, setOpenItemIndex, setRowRef, items } = useRepeaterContext();
+	const { popoverState, openItemIndex, isOpen, rowRef, setOpenItemIndex, setRowRef, items } = useRepeaterContext();
+	const popoverProps: Partial< PopoverProps > = bindPopover( popoverState );
 
 	if ( ! isOpen || ! rowRef ) {
 		return null;

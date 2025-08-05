@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useState } from 'react';
 import { type PropTypeUtil } from '@elementor/editor-props';
-import { bindPopover, type PopoverProps, type PopupState, usePopupState } from '@elementor/ui';
+import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
@@ -19,7 +19,6 @@ type RepeaterContextType< T extends RepeatablePropValue > = {
 	setOpenItemIndex: ( key: number ) => void;
 	items: ItemWithKey< Item< T > >[];
 	setItems: ( items: ItemWithKey< T >[] ) => void;
-	popoverProps: Partial< PopoverProps >;
 	popoverState: PopupState;
 	initial: T;
 	addItem: ( ev: React.MouseEvent, config?: AddItem< T > ) => void;
@@ -70,17 +69,19 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const [ openItemIndex, setOpenItemIndex ] = useState( EMPTY_OPEN_ITEM );
 	const [ rowRef, setRowRef ] = useState< HTMLElement | null >( null );
 
-	const isOpen = openItemIndex !== EMPTY_OPEN_ITEM;
+	const isOpen = openItemIndex < 0;
 	const popoverState = usePopupState( { variant: 'popover' } );
-	const popoverProps: Partial< PopoverProps > = bindPopover( popoverState );
 
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? initial;
 		const newIndex = config?.index ?? items.length;
-		const newItems = [ ...itemsWithKeys ];
 
-		newItems.splice( newIndex, 0, { item, key: generateNextKey( itemsWithKeys.map( ( { key } ) => key ) ) } );
-		setItemsWithKeys( newItems );
+		setItemsWithKeys(
+			itemsWithKeys.toSpliced( newIndex, 0, {
+				item,
+				key: generateNextKey( itemsWithKeys.map( ( { key } ) => key ) ),
+			} )
+		);
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
@@ -108,7 +109,6 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				setOpenItemIndex,
 				items: ( itemsWithKeys ?? [] ) as ItemWithKey< Item< T > >[],
 				setItems: setItemsWithKeys as ( items: ItemWithKey< RepeatablePropValue >[] ) => void,
-				popoverProps,
 				popoverState,
 				initial,
 				updateItem: updateItem as ( item: RepeatablePropValue, index: number ) => void,

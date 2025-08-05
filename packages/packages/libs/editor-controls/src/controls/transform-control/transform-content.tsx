@@ -13,7 +13,7 @@ import {
 	initialSkewValue,
 	initialTransformValue,
 	TransformFunctionKeys,
-} from './types';
+} from './initial-values';
 import { useTransformTabsHistory } from './use-transform-tabs-history';
 
 export const TransformContent = () => {
