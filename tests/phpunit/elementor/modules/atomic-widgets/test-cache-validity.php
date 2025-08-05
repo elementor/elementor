@@ -148,12 +148,12 @@ class Test_Cache_Validity extends Elementor_Test_Base {
 		);
 
 		// Act.
-		$cache_validity->validate( [ ROOT_KEY ], [ 'meta' => 'data' ] );
+		$cache_validity->validate( [ ROOT_KEY ], [ 'foo' => 'bar' ] );
 
 		// Assert.
 		$this->assertEquals(
 			$cache_validity->get_meta( [ ROOT_KEY ] ),
-			[ 'meta' => 'data' ],
+			[ 'foo' => 'bar' ],
 			'Meta data should be stored.'
 		);
 
