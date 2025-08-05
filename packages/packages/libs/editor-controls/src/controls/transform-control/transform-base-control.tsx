@@ -1,14 +1,16 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { AdjustmentsIcon, PlusIcon } from '@elementor/icons';
-import { bindPopover, Button, Divider, Grid, IconButton, Popover, Stack, usePopupState } from '@elementor/ui';
+import { AdjustmentsIcon } from '@elementor/icons';
+import { bindPopover, bindTrigger, Divider, Grid, IconButton, Popover, Stack, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import { ControlFormLabel } from '../../components/control-form-label';
 import { ControlLabel } from '../../components/control-label';
 import { SizeControl } from '../size-control';
+
+const SIZE = 'tiny';
 
 const transformOriginUnits = [ 'px', '%', 'em', 'rem' ] as ( 'px' | '%' | 'em' | 'rem' )[];
 
@@ -30,73 +32,68 @@ const baseControlsFields = [
 	},
 ];
 
-export const TransformBaseControl = ( { ref }: { ref: React.Ref< HTMLDivElement > } ) => {
-	const buttonRef = useRef< HTMLButtonElement >( null );
-
+export const TransformBaseControl = ( { anchorRef }: { anchorRef: React.RefObject< HTMLDivElement | null > } ) => {
+	const rowRef = useRef< HTMLDivElement >( null );
 	const popupState = usePopupState( { variant: 'popover' } );
-	console.log( ref );
-	const handleOpenBaseTransform = () => {
-		if ( buttonRef.current ) {
-			popupState.open( buttonRef.current );
-		}
-	};
+	const popupProps = bindPopover( {
+		...popupState,
+		anchorEl: anchorRef.current ?? undefined,
+	} );
 
-	const handleClose = () => {
-		popupState.close();
-	};
+	const transformOriginContext = useBoundProp();
 
 	return (
 		<>
 			<IconButton
-				size={ 'tiny' }
-				ref={ buttonRef }
-				onClick={ handleOpenBaseTransform }
-				aria-label={ __( 'Add item', 'elementor' ) }
+				size={ SIZE }
+				aria-label={ __( 'Base Transform', 'elementor' ) }
+				{ ...bindTrigger( popupState ) }
 			>
-				<AdjustmentsIcon fontSize={ 'tiny' } />
+				<AdjustmentsIcon fontSize={ SIZE } />
 			</IconButton>
 			<Popover
 				disablePortal
 				slotProps={ {
 					paper: {
 						sx: {
-							// width: anchorRef.current?.offsetWidth + 'px',
+							width: anchorRef.current?.offsetWidth + 'px',
 						},
 					},
 				} }
-				{ ...bindPopover( popupState ) }
-				onClose={ handleClose }
+				{ ...popupProps }
 			>
 				<PopoverHeader
 					title={ __( 'Base Transform', 'elementor' ) }
-					onClose={ handleClose }
-					icon={ <AdjustmentsIcon fontSize={ 'tiny' } /> }
+					onClose={ popupState.close }
+					icon={ <AdjustmentsIcon fontSize={ SIZE } /> }
 				/>
 
 				<Divider />
 
 				<Stack direction="column" spacing={ 1.5 }>
 					<ControlFormLabel sx={ { pt: 1.5, pl: 1.5 } }>{ __( 'Transform', 'elementor' ) }</ControlFormLabel>
-					<Grid container spacing={ 1.5 } ref={ ref }>
-						{ baseControlsFields.map( ( control ) => (
-							<Grid item xs={ 12 } key={ control.bindValue }>
-								<Grid container spacing={ 1 } alignItems="center">
-									<Grid item xs={ 6 }>
-										<ControlLabel>{ control.label }</ControlLabel>
+					<Grid container spacing={ 1.5 } ref={ rowRef }>
+						<PropProvider { ...transformOriginContext }>
+							{ baseControlsFields.map( ( control ) => (
+								<PropKeyProvider bind={ control.bindValue } key={ control.bindValue }>
+									<Grid item xs={ 12 }>
+										<Grid container spacing={ 1 } alignItems="center">
+											<Grid item xs={ 6 }>
+												<ControlLabel>{ control.label }</ControlLabel>
+											</Grid>
+											<Grid item xs={ 6 } sx={ { pr: 3 } }>
+												<SizeControl
+													variant="length"
+													units={ control.units }
+													anchorRef={ rowRef }
+													disableCustom
+												/>
+											</Grid>
+										</Grid>
 									</Grid>
-									<Grid item xs={ 6 } sx={ { pr: 3 } }>
-										{ /* <PropKeyProvider bind={ control.bindValue }> */ }
-										<SizeControl
-											variant="length"
-											units={ control.units }
-											// anchorRef={ ref }
-											disableCustom={ true }
-										/>
-										{ /* </PropKeyProvider> */ }
-									</Grid>
-								</Grid>
-							</Grid>
-						) ) }
+								</PropKeyProvider>
+							) ) }
+						</PropProvider>
 						<Divider sx={ { py: 3 } } />
 					</Grid>
 				</Stack>

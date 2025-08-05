@@ -9,10 +9,10 @@ type SectionContentProps = PropsWithChildren< {
 	};
 } >;
 
-export const SectionContent: FC< SectionContentProps > = React.forwardRef( ( { gap = 2, sx, children }, ref ) => {
+export const SectionContent: FC< SectionContentProps > = ( { gap = 2, sx, children } ) => {
 	return (
-		<Stack gap={ gap } sx={ { ...sx } } ref={ ref }>
+		<Stack gap={ gap } sx={ { ...sx } }>
 			{ children }
 		</Stack>
 	);
-} );
+};

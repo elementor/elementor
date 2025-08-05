@@ -15,10 +15,12 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			<Typography component="label" variant="caption" color="text.secondary">
 				{ label }
 			</Typography>
-			<span style={ { marginInlineStart: 'auto' } }></span>
+			<Spacer />
 			<RepeaterHeaderActionsSlot value={ value } />
 			<SlotChildren whitelist={ [ AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
 			<ControlAdornments />
 		</Stack>
 	);
 };
+
+const Spacer = () => <span style={ { marginInlineStart: 'auto' } }></span>;
