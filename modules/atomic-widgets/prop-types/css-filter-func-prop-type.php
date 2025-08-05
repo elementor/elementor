@@ -29,14 +29,15 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 				->default( 'blur' )
 				->required(),
 			'args' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::filters() )
+				->add_prop_type( Size_Prop_Type::make()
+					->units( Size_Constants::filters() )
 					->default( [
 						'value' => [
 							'unit' => 'px',
 							'value' => 0,
 						],
 					] )
-				->required() )
+					->required() )
 				->add_prop_type( Drop_Shadow_Filter_Prop_Type::make() )
 				->required(),
 		];
