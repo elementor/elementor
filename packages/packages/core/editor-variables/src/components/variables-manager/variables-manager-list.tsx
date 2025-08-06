@@ -61,17 +61,17 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 	const tableCellSX: SxProps = {
 		padding: '6px 16px',
 		maxWidth: 150,
-		fontSize: '12px'
+		fontSize: '12px',
 	};
 	const tableHeadCellSX: SxProps = {
 		...tableCellSX,
 		color: 'text.primary',
 		fontWeight: 500,
-		fontSize: '14px'
+		fontSize: '14px',
 	};
 
 	return (
-		<TableContainer sx={{ overflow: 'initial' }}>
+		<TableContainer sx={ { overflow: 'initial' } }>
 			<Table sx={ tableSX } aria-label="sortable table">
 				<TableHead>
 					<TableRow>
