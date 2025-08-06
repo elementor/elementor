@@ -1,9 +1,3 @@
-/**
- * Creates a standard getInitialState function for template registry
- * @param {string} exportGroup - The export group to check for ('theme-builder', 'global-widget', 'site-templates', etc.)
- * @param {Object} additionalProps - Additional properties to include in return object
- * @return {Function} getInitialState function
- */
 export function createGetInitialState( exportGroup, additionalProps = {} ) {
 	return ( data, parentInitialState ) => {
 		let isEnabled = parentInitialState;
