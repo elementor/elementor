@@ -4,7 +4,6 @@ import {
 	FilterRepeaterControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
-	UnstableTransformRepeaterControl,
 } from '@elementor/editor-controls';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
@@ -24,7 +23,6 @@ const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
-	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
 	const { element } = useSelectedElement();
 
 	return (
@@ -36,7 +34,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
+				<TransformRepeaterControl />
 			</StylesField>
 			{ shouldShowTransition && (
 				<>
