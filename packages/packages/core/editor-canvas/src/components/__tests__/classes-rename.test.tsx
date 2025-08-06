@@ -49,7 +49,7 @@ interface StylesMap {
 describe( 'ClassesRename', () => {
 	const mockGetV1DocumentsManager = jest.mocked( getV1DocumentsManager );
 	const { stylesRepository } = jest.requireMock( '@elementor/editor-styles-repository' );
-	const mockSubscribe = jest.mocked( stylesRepository.subscribe );
+	const mockSubscribe = jest.mocked( stylesRepository.subscribe ).mockReturnValue( jest.fn() );
 
 	const triggerStylesChange = ( previousStyles: StylesMap, currentStyles: StylesMap ) => {
 		const subscriptionCallback = mockSubscribe.mock.calls[ mockSubscribe.mock.calls.length - 1 ][ 0 ];
