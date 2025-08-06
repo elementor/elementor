@@ -9,6 +9,7 @@ export const SettingSection = ( {
 	settingKey,
 	onSettingChange,
 	hasToggle = true,
+	disabled = false,
 } ) => (
 	<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 		<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
@@ -30,6 +31,7 @@ export const SettingSection = ( {
 					color="info"
 					size="medium"
 					sx={ { alignSelf: 'center' } }
+					disabled={ disabled }
 				/>
 			) }
 		</Box>
@@ -47,6 +49,7 @@ SettingSection.propTypes = {
 	children: PropTypes.node,
 	hasToggle: PropTypes.bool,
 	checked: PropTypes.bool,
+	disabled: PropTypes.bool,
 	settingKey: PropTypes.string,
 	onSettingChange: PropTypes.func,
 };

@@ -17,7 +17,7 @@ test.describe( 'General Settings', () => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdmin.gotoDashboard();
+		await wpAdmin.openWordPressDashboard();
 		await validateGettingStartedLinkCount( wpAdmin, 0 );
 		await validateGettingStartedPage( wpAdmin );
 	} );
