@@ -19,6 +19,9 @@ export type ExtendedWindow = Window & {
 		};
 	};
 	elementor: {
+		helpers: {
+			hasPro: () => boolean;
+		};
 		config: {
 			user: {
 				top_bar: {
@@ -26,6 +29,16 @@ export type ExtendedWindow = Window & {
 					connect_url: string;
 				};
 			};
+		};
+	};
+	elementorPro: {
+		config: {
+			isActive: boolean;
+		};
+	};
+	jQuery: {
+		fn?: {
+			elementorConnect?: ( selector: string ) => any;
 		};
 	};
 };

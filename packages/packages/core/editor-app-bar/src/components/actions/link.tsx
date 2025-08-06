@@ -12,6 +12,7 @@ export type Props = {
 	visible?: boolean;
 	target?: string;
 	showExternalLinkIcon?: boolean;
+	onClick?: ( event: React.MouseEvent<HTMLElement> ) => void;
 };
 
 export default function Link( { icon: Icon, title, visible = true, showExternalLinkIcon = false, ...props }: Props ) {
