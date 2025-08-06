@@ -27,12 +27,12 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 		}
 
 		const uploadedTemplates = data.uploadedData.manifest.templates;
-		const exportGroups = elementorAppConfig?.['import-export-customization']?.exportGroups || {};
+		const exportGroups = elementorAppConfig?.[ 'import-export-customization' ]?.exportGroups || {};
 
 		for ( const templateId in uploadedTemplates ) {
 			const template = uploadedTemplates[ templateId ];
 			const templateExportGroup = exportGroups[ template.doc_type ];
-			
+
 			if ( templateExportGroup === exportGroup ) {
 				return true;
 			}
@@ -118,7 +118,7 @@ export function KitTemplatesCustomizationDialog( { open, handleClose, handleSave
 			minHeight="auto"
 		>
 			<Stack>
-			{ templateTypes.map( renderTemplateSection ) }
+				{ templateTypes.map( renderTemplateSection ) }
 			</Stack>
 		</KitCustomizationDialog>
 	);
