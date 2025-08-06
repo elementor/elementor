@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
 import { type AngleUnit } from '../../../utils/size-control';
-import { TransformFunctionKeys } from '../types';
+import { TransformFunctionKeys } from '../initial-values';
 import { AxisRow } from './axis-row';
 
 const skewAxisControls: { label: string; bindValue: 'x' | 'y'; startIcon: React.ReactNode }[] = [

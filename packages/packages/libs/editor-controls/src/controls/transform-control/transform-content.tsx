@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { type PropKey } from '@elementor/editor-props';
 import { Box, Tab, TabPanel, Tabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider } from '../../bound-prop-context';
 import { PopoverContent } from '../../components/popover-content';
 import { Move } from './functions/move';
 import { Rotate } from './functions/rotate';
@@ -15,18 +13,10 @@ import {
 	initialSkewValue,
 	initialTransformValue,
 	TransformFunctionKeys,
-} from './types';
+} from './initial-values';
 import { useTransformTabsHistory } from './use-transform-tabs-history';
 
-export const TransformContent = ( { bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content />
-		</PropKeyProvider>
-	);
-};
-
-const Content = () => {
+export const TransformContent = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useTransformTabsHistory( {
 		move: initialTransformValue.value,
 		scale: initialScaleValue.value,
