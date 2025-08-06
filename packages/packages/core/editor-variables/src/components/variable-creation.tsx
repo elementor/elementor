@@ -12,6 +12,7 @@ import { createVariable } from '../hooks/use-prop-variables';
 import { trackVariableEvent } from '../utils/tracking';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
+import { FormField } from './ui/form-field';
 
 const SIZE = 'tiny';
 
@@ -28,6 +29,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const [ value, setValue ] = useState( '' );
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ valueFieldError, setValueFieldError ] = useState( '' );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 
@@ -35,6 +37,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 		setValue( '' );
 		setLabel( '' );
 		setErrorMessage( '' );
+		setValueFieldError( '' );
 	};
 
 	const closePopover = () => {
@@ -111,13 +114,17 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						setErrorMessage( '' );
 					} }
 				/>
-				<ValueField
-					value={ value }
-					onChange={ ( newValue ) => {
-						setValue( newValue );
-						setErrorMessage( '' );
-					} }
-				/>
+				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+					<ValueField
+						value={ value }
+						onChange={ ( newValue ) => {
+							setValue( newValue );
+							setErrorMessage( '' );
+							setValueFieldError( '' );
+						} }
+						onValidationChange={ setValueFieldError }
+					/>
+				</FormField>
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>
