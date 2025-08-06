@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes\Transform;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,14 +17,15 @@ class Transform_Skew_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
+		$units = Size_Constants::transform();
 		$default = [
 			'size' => 0,
 			'unit' => 'deg',
 		];
 
 		return [
-			'x' => Size_Prop_Type::make()->default( $default ),
-			'y' => Size_Prop_Type::make()->default( $default ),
+			'x' => Size_Prop_Type::make()->default( $default )->units( $units ),
+			'y' => Size_Prop_Type::make()->default( $default )->units( $units ),
 		];
 	}
 }

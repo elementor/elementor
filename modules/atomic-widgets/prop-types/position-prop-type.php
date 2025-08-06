@@ -16,9 +16,11 @@ class Position_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
+		$units = Size_Constants::position();
+
 		return [
-			'x' => Size_Prop_Type::make()->units( Size_Constants::position() ),
-			'y' => Size_Prop_Type::make()->units( Size_Constants::position() ),
+			'x' => Size_Prop_Type::make()->units( $units ),
+			'y' => Size_Prop_Type::make()->units( $units ),
 		];
 	}
 
