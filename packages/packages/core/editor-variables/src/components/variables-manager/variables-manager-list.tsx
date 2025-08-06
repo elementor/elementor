@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createElement, useState } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
-import { DotsVerticalIcon, GridDotsIcon } from '@elementor/icons';
+import { DotsVerticalIcon, GripVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
@@ -55,22 +55,30 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 		variant: 'popover',
 	} );
 	const tableSX: SxProps = {
-		minWidth: 300,
+		minWidth: 250,
+		width: '98%',
 	};
 	const tableCellSX: SxProps = {
-		padding: '6px',
-		maxWidth: 100,
+		padding: '6px 16px',
+		maxWidth: 150,
+		fontSize: '12px'
+	};
+	const tableHeadCellSX: SxProps = {
+		...tableCellSX,
+		color: 'text.primary',
+		fontWeight: 500,
+		fontSize: '14px'
 	};
 
 	return (
-		<TableContainer>
+		<TableContainer sx={{ overflow: 'initial' }}>
 			<Table sx={ tableSX } aria-label="sortable table">
 				<TableHead>
 					<TableRow>
-						<TableCell padding="none" sx={ { width: 10 } } />
-						<TableCell sx={ tableCellSX }>{ __( 'Name', 'elementor' ) }</TableCell>
-						<TableCell sx={ tableCellSX }>{ __( 'Value', 'elementor' ) }</TableCell>
-						<TableCell padding="none" sx={ { width: 10 } } />
+						<TableCell padding="none" sx={ { width: 10, maxWidth: 10 } } />
+						<TableCell sx={ tableHeadCellSX }>{ __( 'Name', 'elementor' ) }</TableCell>
+						<TableCell sx={ tableHeadCellSX }>{ __( 'Value', 'elementor' ) }</TableCell>
+						<TableCell padding="none" sx={ { width: 10, maxWidth: 10 } } />
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -126,7 +134,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 											style={ { ...itemStyle, ...triggerStyle } }
 											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
-											<TableCell padding="none" sx={ { width: 10 } }>
+											<TableCell padding="none" sx={ { width: 10, maxWidth: 10 } }>
 												<IconButton
 													size="small"
 													ref={ setTriggerRef }
@@ -139,7 +147,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 														},
 													} }
 												>
-													<GridDotsIcon fontSize="inherit" />
+													<GripVerticalIcon fontSize="inherit" />
 												</IconButton>
 											</TableCell>
 											<TableCell sx={ tableCellSX }>
@@ -158,7 +166,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 													</EllipsisWithTooltip>
 												</Stack>
 											</TableCell>
-											<TableCell align="right" padding="none" sx={ { width: 10 } }>
+											<TableCell align="right" padding="none" sx={ { width: 10, maxWidth: 10 } }>
 												<IconButton
 													{ ...bindTrigger( rowOptionsState ) }
 													disabled={ isSorting }

@@ -10,7 +10,7 @@ import {
 } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { FilterIcon, TrashIcon, XIcon } from '@elementor/icons';
+import { TrashIcon, ColorFilterIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -53,8 +53,8 @@ export function VariablesManagerPanel() {
 						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
 							<Stack width="100%" direction="row" gap={ 1 }>
 								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-									<FilterIcon fontSize="inherit" />
-									{ __( 'Variables Manager', 'elementor' ) }
+									<ColorFilterIcon fontSize="inherit" />
+									{ __( 'Variable Manager', 'elementor' ) }
 								</PanelHeaderTitle>
 							</Stack>
 							<CloseButton
