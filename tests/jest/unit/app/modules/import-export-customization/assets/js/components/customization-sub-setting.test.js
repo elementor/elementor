@@ -52,6 +52,50 @@ describe( 'SubSetting Component', () => {
 		} );
 	} );
 
+	describe( 'Disabled State Functionality', () => {
+		it( 'should render switch as enabled when disabled prop is false', () => {
+			render( <SubSetting { ...defaultProps } disabled={ false } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( false );
+		} );
+
+		it( 'should render switch as disabled when disabled prop is true', () => {
+			render( <SubSetting { ...defaultProps } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+
+		it( 'should default to enabled when disabled prop is not provided', () => {
+			render( <SubSetting { ...defaultProps } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( false );
+		} );
+
+		it( 'should maintain checked state when disabled', () => {
+			render( <SubSetting { ...defaultProps } checked={ true } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.checked ).toBe( true );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+
+		it( 'should maintain unchecked state when disabled', () => {
+			render( <SubSetting { ...defaultProps } checked={ false } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.checked ).toBe( false );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+	} );
+
 	describe( 'User Interactions', () => {
 		it( 'should call onSettingChange with settingKey and true when switch is turned on', () => {
 			// Arrange

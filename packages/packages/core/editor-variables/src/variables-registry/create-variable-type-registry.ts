@@ -1,11 +1,12 @@
 import { type ForwardRefExoticComponent, type JSX, type RefAttributes } from 'react';
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
-import { type createPropUtils, type PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
+import { type createPropUtils, type PropType, type PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
 
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
+import { type NormalizedVariable } from '../types';
 
 type ValueFieldProps = {
 	value: string;
@@ -21,6 +22,7 @@ type VariableTypeOptions = {
 	variableType: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
+	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -34,6 +36,7 @@ export function createVariableTypeRegistry() {
 		valueField,
 		propTypeUtil,
 		variableType,
+		selectionFilter,
 		fallbackPropTypeUtil,
 	}: VariableTypeOptions ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
@@ -46,6 +49,7 @@ export function createVariableTypeRegistry() {
 			valueField,
 			propTypeUtil,
 			variableType,
+			selectionFilter,
 			fallbackPropTypeUtil,
 		};
 

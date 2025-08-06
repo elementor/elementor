@@ -1,9 +1,23 @@
+import { useBoundProp } from '@elementor/editor-controls';
 import { renderHook } from '@testing-library/react';
 
+import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { service } from '../service';
 
 jest.mock( '../service' );
+
+jest.mock( '@elementor/editor-controls', () => ( {
+	useBoundProp: jest.fn(),
+} ) );
+
+jest.mock( '../variables-registry/variable-type-registry', () => ( {
+	getVariableType: jest.fn(),
+} ) );
+
+jest.mock( '../context/variable-type-context', () => ( {
+	useVariableType: jest.fn(),
+} ) );
 
 const variablesMockData = {
 	'a-01': {
@@ -42,6 +56,15 @@ describe( 'useFilteredVariables', () => {
 		jest.clearAllMocks();
 
 		jest.mocked( service.variables ).mockReturnValue( variablesMockData );
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			propType: { kind: 'plain' },
+			path: [ 'test' ],
+		} as never );
+
+		jest.mocked( useVariableType ).mockReturnValue( {
+			selectionFilter: undefined,
+		} as never );
 	} );
 
 	it( 'should not include deleted variables in the list', () => {
