@@ -1,6 +1,6 @@
 module.exports = elementorModules.Module.extend( {
 
-	event: null,
+	openMenuEvent: null,
 
 	getDefaultSettings() {
 		return {
@@ -43,15 +43,15 @@ module.exports = elementorModules.Module.extend( {
 		}
 
 		if ( action.callback ) {
-			$item.on( 'click', function( event ) {
-				self.runAction( action, event );
+			$item.on( 'click', function() {
+				self.runAction( action );
 			} );
 			$item.on( 'keyup', function( event ) {
 				const ENTER_KEY = 13,
 					SPACE_KEY = 32;
 
 				if ( ENTER_KEY === event.keyCode || SPACE_KEY === event.keyCode ) {
-					self.runAction( action, event );
+					self.runAction( action );
 				}
 			} );
 		}
@@ -139,12 +139,12 @@ module.exports = elementorModules.Module.extend( {
 		return false !== action.isVisible;
 	},
 
-	runAction( action, event ) {
+	runAction( action ) {
 		if ( ! this.isActionEnabled( action ) || ! this.isActionVisible( action ) ) {
 			return;
 		}
 
-		action.callback( event, this.event );
+		action.callback( this.openMenuEvent );
 
 		this.getModal().hide();
 	},
@@ -180,7 +180,7 @@ module.exports = elementorModules.Module.extend( {
 		var self = this,
 			modal = self.getModal();
 
-		this.event = event;
+		this.openMenuEvent = event;
 
 		modal.setSettings( 'position', {
 			of: event,

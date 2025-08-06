@@ -200,26 +200,37 @@ const DivBlockView = BaseElementView.extend( {
 	 * @return {Object} groups
 	 */
 	getContextMenuGroups() {
-		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
-			transferGroupClipboardIndex = groups.indexOf( _.findWhere( groups, { name: 'clipboard' } ) );
+		const saveActions = [
+			{
+				name: 'save',
+				title: __( 'Save as a template', 'elementor' ),
+				shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+				callback: this.saveAsTemplate.bind( this ),
+				isEnabled: () => ! this.getContainer().isLocked(),
+			},
+		];
+
+		if ( elementorCommon.config.experimentalFeatures?.e_atomic_components ) {
+			saveActions.unshift(			{
+				name: 'save-component',
+				title: __( 'Save as a component', 'elementor' ),
+				shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+				callback: this.saveAsComponent.bind( this ),
+				isEnabled: () => ! this.getContainer().isLocked(),
+			} );
+		}
+
+		var groups = BaseElementView.prototype.getContextMenuGroups.apply(
+				this,
+				arguments,
+			),
+			transferGroupClipboardIndex = groups.indexOf(
+				_.findWhere( groups, { name: 'clipboard' } ),
+			);
 
 		groups.splice( transferGroupClipboardIndex + 1, 0, {
 			name: 'save',
-			actions: [
-				{
-					name: 'save',
-					title: __( 'Save as a template', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
-					callback: this.saveAsTemplate.bind( this ),
-					isEnabled: () => ! this.getContainer().isLocked(),
-				},
-				{
-					name: 'save-component',
-					title: __( 'Save as a component', 'elementor' ),
-					callback: ( event, contextMenuEvent ) => this.saveAsComponent( event, contextMenuEvent ),
-					isEnabled: () => ! this.getContainer().isLocked(),
-				},
-			],
+			actions: saveActions,
 		} );
 
 		return groups;
@@ -231,25 +242,26 @@ const DivBlockView = BaseElementView.extend( {
 		} );
 	},
 
-	saveAsComponent( event, contextMenuEvent ) {
-		const JSONParams = { remove: [ 'default' ] };
-		const componentContent = [ this.model.toJSON( JSONParams ) ];
+	saveAsComponent( openContextMenuEvent ) {
+		const componentContent = [ this.model.toJSON( { remove: [ 'default' ] } ) ];
 
-		const clickEvent = contextMenuEvent.originalEvent;
+		// Calculate the absolute position where the context menu was opened.
+		const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 		const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
 		const anchorPosition = {
-			left: clickEvent.clientX + iframeRect.left,
-			top: clickEvent.clientY + iframeRect.top,
+			left: openMenuOriginalEvent.clientX + iframeRect.left,
+			top: openMenuOriginalEvent.clientY + iframeRect.top,
 		};
-		const renderedEvent = new CustomEvent( 'elementor/editor/open-save-as-component-popup', {
-			detail: {
-				componentContent,
-				anchorPosition,
-			},
-		} );
 
-		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
-		window.top.dispatchEvent( renderedEvent );
+		window.dispatchEvent( new CustomEvent(
+			'elementor/editor/open-save-as-component-popup',
+			{
+				detail: {
+					componentContent,
+					anchorPosition,
+				},
+			},
+		) );
 	},
 
 	isDroppingAllowed() {
