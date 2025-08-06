@@ -1,5 +1,10 @@
 == Changelog ==
 
+= 3.31.1 - 2025-08-06 =
+
+* Tweak: Updated `form-data` package version
+* Fix: Custom order field disappeared when set to 0 or cleared - Editor V4
+
 = 3.31.0 - 2025-08-05 =
 
 * New: Introducing Variables - define reusable color and font values to ensure consistent and scalable design across your site - Editor V4
