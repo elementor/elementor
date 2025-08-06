@@ -37,7 +37,7 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 							'value' => 0,
 						],
 					] )
-					->required() )
+				->required() )
 				->add_prop_type( Drop_Shadow_Filter_Prop_Type::make() )
 				->required(),
 		];
