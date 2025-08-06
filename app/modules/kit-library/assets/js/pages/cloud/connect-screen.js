@@ -6,6 +6,7 @@ import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { TIERS } from 'elementor-utils/tiers';
 
 export default function ConnectScreen( {
 	onConnectSuccess,
@@ -38,7 +39,7 @@ export default function ConnectScreen( {
 				elementorCommon.config.library_connect.is_connected = false;
 				elementorCommon.config.library_connect.current_access_level = 0;
 				elementorCommon.config.library_connect.current_access_tier = '';
-				elementorCommon.config.library_connect.plan_type = 'free';
+				elementorCommon.config.library_connect.plan_type = TIERS.free;
 
 				onConnectError?.();
 			},
