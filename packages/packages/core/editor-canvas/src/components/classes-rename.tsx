@@ -31,11 +31,7 @@ const subscribeToStylesRepository = () => {
 	} );
 };
 
-const renameClass = ( oldClassName: string, newClassName: string | undefined ) => {
-	if ( ! newClassName ) {
-		return;
-	}
-
+const renameClass = ( oldClassName: string, newClassName: string ) => {
 	Object.values< V1Document >( getV1DocumentsManager().documents ).forEach( ( document ) => {
 		const container = document.container as V1Element;
 
