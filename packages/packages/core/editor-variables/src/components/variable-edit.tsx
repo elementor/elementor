@@ -16,6 +16,7 @@ import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
+import { FormField } from './ui/form-field';
 
 const SIZE = 'tiny';
 
@@ -34,6 +35,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	const [ deleteConfirmation, setDeleteConfirmation ] = useState( false );
 	const [ editConfirmation, setEditConfirmation ] = useState( false );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ valueFieldError, setValueFieldError ] = useState( '' );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 	const variable = useVariable( editId );
@@ -182,13 +184,17 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 							setErrorMessage( '' );
 						} }
 					/>
-					<ValueField
-						value={ value }
-						onChange={ ( newValue ) => {
-							setValue( newValue );
-							setErrorMessage( '' );
-						} }
-					/>
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<ValueField
+							value={ value }
+							onChange={ ( newValue ) => {
+								setValue( newValue );
+								setErrorMessage( '' );
+								setValueFieldError( '' );
+							} }
+							onValidationChange={ setValueFieldError }
+						/>
+					</FormField>
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>
