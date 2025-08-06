@@ -17,18 +17,20 @@ class Transform_Move_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
+		$units = Size_Constants::transform();
+
 		return [
-			'x' => Size_Prop_Type::make()->units( Size_Constants::transform() )
+			'x' => Size_Prop_Type::make()->units( $units )
 				->default( [
 					'size' => 0,
 					'unit' => 'px',
 				] ),
-			'y' => Size_Prop_Type::make()->units( Size_Constants::transform() )
+			'y' => Size_Prop_Type::make()->units( $units )
 				->default( [
 					'size' => 0,
 					'unit' => 'px',
 				] ),
-			'z' => Size_Prop_Type::make()->units( Size_Constants::transform() )
+			'z' => Size_Prop_Type::make()->units( $units )
 				->default( [
 					'size' => 0,
 					'unit' => 'px',
