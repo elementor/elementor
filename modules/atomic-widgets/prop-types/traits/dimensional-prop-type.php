@@ -36,7 +36,10 @@ trait Dimensional_Prop_Type {
 	}
 
 	protected function get_default_size(): ?array {
-		return [ 'size' => 0, 'unit' => 'px' ];
+		return [
+			'size' => 0,
+			'unit' => 'px',
+		];
 	}
 
 	protected function get_prop_type(): Prop_Type {
