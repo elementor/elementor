@@ -63,6 +63,7 @@ class Components_Repository {
 			return new \WP_Error( 'insufficient_permissions', __( 'Insufficient permissions', 'elementor' ) );
 		}
 
+
 		$document = Plugin::$instance->documents->create(
 			Component::get_type(),
 			[
@@ -79,6 +80,14 @@ class Components_Repository {
 			'elements' => $content,
 		] );
 
+		error_log('--------------------------------create end--------------------------------');
+		error_log(print_r($document->get_elements_data(), true));
+
+		error_log('--------------------------------get_post_types--------------------------------');
+		error_log(print_r(get_post_types(), true));
 		return $document->get_main_id();
+
+
+		
 	}
 } 

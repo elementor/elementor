@@ -14,6 +14,21 @@ class Component extends Document {
 
 		$properties['cpt'] = [ 'component' ];
 
+		//?
+		$properties['admin_tab_group'] = '';
+		$properties['has_elements'] = true;
+		$properties['is_editable'] = true;
+		$properties['show_in_library'] = false;
+		$properties['show_on_admin_bar'] = false;
+		$properties['show_in_finder'] = false;
+		$properties['register_type'] = true;
+		$properties['support_conditions'] = false;
+		$properties['support_page_layout'] = false;
+
+
+		$properties['support_wp_page_templates'] = true;
+		$properties['support_kit'] = true;
+
 		return $properties;
 	}
 

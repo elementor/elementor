@@ -36,14 +36,30 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_document_type()
-    {
+	private function register_document_type(){
         add_action('elementor/documents/register', function ($documents_manager) {
             $documents_manager->register_document_type(
                 Component_Document::get_type(),
                 Component_Document::get_class_full_name()
             );
         });
+        error_log('--------------------------------register_document_type--------------------------------');
+        register_post_type( Component_Document::get_type(), [
+            'labels' => [
+                'name' => esc_html_x( 'Components', '', 'elementor' ),
+            ],
+            'public' => true,
+            'rewrite' => false,
+            'menu_icon' => 'dashicons-admin-page',
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'show_in_nav_menus' => false,
+            'exclude_from_search' => true,
+            'capability_type' => 'post',
+            'hierarchical' => false,
+            'supports' => [ 'title', 'thumbnail', 'author', 'elementor', 'custom-fields' ],
+            'show_in_rest' => true,
+        ] );
     }
 
 	private function register_hooks() {
