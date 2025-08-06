@@ -50,7 +50,7 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 
 	const pluginsList = useMemo( () => {
 		if ( isImport ) {
-			return ( data.uploadedData.manifest.plugins || [] ).reduce( ( acc, plugin ) => {
+			return ( data?.uploadedData?.manifest?.plugins || [] ).reduce( ( acc, plugin ) => {
 				acc[ plugin.plugin ] = plugin;
 
 				return acc;

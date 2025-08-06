@@ -682,6 +682,9 @@ class Module extends BaseModule {
 			$summary_titles['site-settings'][ $key ] = $tab->get_title();
 		}
 
+		$summary_titles['site-settings']['theme'] = esc_html__( 'Theme', 'elementor' );
+		$summary_titles['site-settings']['experiments'] = esc_html__( 'Experiments', 'elementor' );
+
 		return $summary_titles;
 	}
 
