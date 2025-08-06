@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { type PropTypeKey, type PropValue } from '@elementor/editor-props';
+import { type PropTypeKey } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
 
 import { VariableTypeProvider } from '../../../context/variable-type-context';

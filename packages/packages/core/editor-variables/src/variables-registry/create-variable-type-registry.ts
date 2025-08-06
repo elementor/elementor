@@ -30,7 +30,7 @@ type VariableTypeOptions = {
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
-	valueTransformer: ( value: string ) => PropValue;
+	valueTransformer?: ( value: string ) => PropValue;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
