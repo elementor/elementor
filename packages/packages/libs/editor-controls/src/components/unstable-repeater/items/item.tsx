@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { type PropValue } from '@elementor/editor-props';
 import { bindTrigger, UnstableTag } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -8,25 +6,25 @@ import { SlotChildren } from '../../../control-replacements';
 import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
+import { useRepeaterContext } from '../context/repeater-context';
 import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
-import { type ItemProps } from '../types';
-import { EditItemPopover } from './edit-item-popover';
-import { usePopover } from './use-popover';
+import { type ItemProps, type RepeatablePropValue } from '../types';
 
-type AnchorEl = HTMLElement | null;
-
-export const Item = < T extends PropValue >( {
+export const Item = < T extends RepeatablePropValue >( {
 	Label,
 	Icon,
-	Content,
-	key,
 	value,
-	index,
-	openOnMount,
+	index = -1,
 	children,
 }: React.PropsWithChildren< ItemProps< T > > ) => {
-	const [ anchorEl, setAnchorEl ] = useState< AnchorEl >( null );
-	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount as boolean, () => {} );
+	const { items, popoverState, setRowRef, openItemIndex, setOpenItemIndex } = useRepeaterContext();
+	const triggerProps = bindTrigger( popoverState );
+	const key = items[ index ].key ?? -1;
+
+	const onClick = ( ev: React.MouseEvent ) => {
+		triggerProps.onClick( ev );
+		setOpenItemIndex( index );
+	};
 
 	return (
 		<>
@@ -40,10 +38,11 @@ export const Item = < T extends PropValue >( {
 				}
 				showActionsOnHover
 				fullWidth
-				ref={ setRef }
+				ref={ ( ref ) => ref && openItemIndex === index && setRowRef( ref ) }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
-				{ ...bindTrigger( popoverState ) }
+				{ ...triggerProps }
+				onClick={ onClick }
 				startIcon={
 					<RepeaterItemIconSlot value={ value }>
 						<Icon value={ value as T } />
@@ -63,9 +62,6 @@ export const Item = < T extends PropValue >( {
 					</>
 				}
 			/>
-			<EditItemPopover anchorRef={ ref } setAnchorEl={ setAnchorEl } popoverProps={ popoverProps }>
-				<Content anchorEl={ anchorEl } bind={ String( index ) } value={ value as T } />
-			</EditItemPopover>
 		</>
 	);
 };
