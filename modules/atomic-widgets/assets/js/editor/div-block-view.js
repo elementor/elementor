@@ -213,6 +213,12 @@ const DivBlockView = BaseElementView.extend( {
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
+				{
+					name: 'save-component',
+					title: __( 'Save as a component', 'elementor' ),
+					callback: ( event, contextMenuEvent ) => this.saveAsComponent( event, contextMenuEvent ),
+					isEnabled: () => ! this.getContainer().isLocked(),
+				},
 			],
 		} );
 
@@ -223,6 +229,27 @@ const DivBlockView = BaseElementView.extend( {
 		$e.route( 'library/save-template', {
 			model: this.model,
 		} );
+	},
+
+	saveAsComponent( event, contextMenuEvent ) {
+		const JSONParams = { remove: [ 'default' ] };
+		const componentContent = [ this.model.toJSON( JSONParams ) ];
+
+		const clickEvent = contextMenuEvent.originalEvent;
+		const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
+		const anchorPosition = {
+			left: clickEvent.clientX + iframeRect.left,
+			top: clickEvent.clientY + iframeRect.top,
+		};
+		const renderedEvent = new CustomEvent( 'elementor/editor/open-save-as-component-popup', {
+			detail: {
+				componentContent,
+				anchorPosition,
+			},
+		} );
+
+		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+		window.top.dispatchEvent( renderedEvent );
 	},
 
 	isDroppingAllowed() {
