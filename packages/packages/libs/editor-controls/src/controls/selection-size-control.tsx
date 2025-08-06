@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 
@@ -27,7 +27,16 @@ export const SelectionSizeControl = createControl(
 		const { value, setValue, propType } = useBoundProp( selectionSizePropTypeUtil );
 		const rowRef = useRef< HTMLDivElement >( null );
 
-		const currentSizeConfig = sizeConfigMap[ value?.selection?.value || '' ];
+		const currentSizeConfig = useMemo( () => {
+			switch ( value.selection.$$type ) {
+				case 'key-value':
+					return sizeConfigMap[ value?.selection?.value.value.value || '' ];
+				case 'string':
+					return sizeConfigMap[ value?.selection?.value || '' ];
+				default:
+					return null;
+			}
+		}, [ value, sizeConfigMap ] );
 		const SelectionComponent = selectionConfig.component;
 
 		return (

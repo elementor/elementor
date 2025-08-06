@@ -7,7 +7,7 @@ export type Color = {
 };
 
 export const backgroundColorOverlayTransformer = createTransformer( ( value: Color ) => (
-	<Stack direction="row" gap={ 10 }>
+	<Stack direction="row" gap={ 1 } alignItems="center">
 		<ItemIconColor value={ value } />
 		<ItemLabelColor value={ value } />
 	</Stack>
@@ -23,5 +23,9 @@ const ItemLabelColor = ( { value: { color } }: { value: Color } ) => {
 };
 
 export const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	width: '1em',
+	height: '1em',
 	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
+	outline: `1px solid ${ theme.palette.action.disabled }`,
+	flexShrink: 0,
 } ) );
