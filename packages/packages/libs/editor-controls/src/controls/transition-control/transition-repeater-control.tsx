@@ -16,13 +16,15 @@ const DURATION_CONFIG = {
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
-const getSelectionSizeProps = () => {
+const getSelectionSizeProps = ( recentlyUsedList: string[] ) => {
 	return {
 		selectionLabel: __( 'Type', 'elementor' ),
 		sizeLabel: __( 'Duration', 'elementor' ),
 		selectionConfig: {
 			component: TransitionSelector,
-			props: {},
+			props: {
+				recentlyUsedList,
+			},
 		},
 		sizeConfigMap: {
 			...transitionProperties.reduce(
@@ -38,15 +40,15 @@ const getSelectionSizeProps = () => {
 	};
 };
 
-function getChildControlConfig() {
+function getChildControlConfig( recentlyUsedList: string[] ) {
 	return {
 		propTypeUtil: selectionSizePropTypeUtil,
 		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
-		props: getSelectionSizeProps(),
+		props: getSelectionSizeProps( recentlyUsedList ),
 	};
 }
 
-export const TransitionRepeaterControl = createControl( () => {
+export const TransitionRepeaterControl = createControl( ( props: { recentlyUsedList: string[] } ) => {
 	return (
 		<RepeatableControl
 			label={ __( 'Transitions', 'elementor' ) }
@@ -56,7 +58,7 @@ export const TransitionRepeaterControl = createControl( () => {
 			showDuplicate={ false }
 			showToggle={ true }
 			initialValues={ initialTransitionValue }
-			childControlConfig={ getChildControlConfig() }
+			childControlConfig={ getChildControlConfig( props.recentlyUsedList ) }
 			propKey="transition"
 		/>
 	);
