@@ -3,7 +3,7 @@ import type { TransformItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { defaultValues, TransformFunctionKeys } from './types';
+import { defaultValues, TransformFunctionKeys } from './initial-values';
 
 const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
