@@ -23,6 +23,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Entrance_Animation_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -45,6 +46,7 @@ class Style_Schema {
 			self::get_effects_props(),
 			self::get_layout_props(),
 			self::get_alignment_props(),
+			self::get_entrance_animation_props(),
 		);
 	}
 
@@ -233,6 +235,12 @@ class Style_Schema {
 			'backdrop-filter' => Backdrop_Filter_Prop_Type::make(),
 			'transform' => Transform_Prop_Type::make(),
 			'transition' => Transition_Prop_Type::make(),
+		];
+	}
+
+	private static function get_entrance_animation_props() {
+		return [
+			'entrance-animation' => Entrance_Animation_Prop_Type::make(),
 		];
 	}
 

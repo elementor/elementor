@@ -21,6 +21,7 @@ import { BackgroundSection } from './style-sections/background-section/backgroun
 import { BorderSection } from './style-sections/border-section/border-section';
 import { EffectsSection } from './style-sections/effects-section/effects-section';
 import { LayoutSection } from './style-sections/layout-section/layout-section';
+import { MotionEffectsSection } from './style-sections/motion-effects-section/motion-effects-section';
 import { PositionSection } from './style-sections/position-section/position-section';
 import { SizeSection } from './style-sections/size-section/size-section';
 import { SpacingSection } from './style-sections/spacing-section/spacing-section';
@@ -159,6 +160,14 @@ export const StyleTab = () => {
 									title: __( 'Effects', 'elementor' ),
 								} }
 								fields={ [ 'box-shadow', 'opacity', 'transform', 'filter', 'backdrop-filter' ] }
+							/>
+							<StyleTabSection
+								section={ {
+									component: MotionEffectsSection,
+									name: 'MotionEffects',
+									title: __( 'Motion Effects', 'elementor' ),
+								} }
+								fields={ [ 'entrance-animation', 'transition' ] }
 							/>
 							{ shouldRenderCustomCss && (
 								<StyleTabSection

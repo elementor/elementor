@@ -26,6 +26,7 @@ export * from './background-prop-types/background-image-position-offset';
 export * from './background-prop-types/background-image-size-scale';
 export * from './boolean';
 export * from './color-stop';
+export * from './entrance-animation';
 export * from './gradient-color-stop';
 export * from './key-value';
 export * from './position';
