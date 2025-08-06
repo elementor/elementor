@@ -28,7 +28,7 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 	const [ currentView, setCurrentView ] = useState< View >( VIEW_LIST );
 	const [ editId, setEditId ] = useState< string >( '' );
 	const { open } = usePanelActions();
-	const onSettingsAvailable = isExperimentActive( 'e_variables_settings' )
+	const onSettingsAvailable = isExperimentActive( 'e_variables_manager' )
 		? () => {
 				open();
 		  }
