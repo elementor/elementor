@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 trait Dimensional_Prop_Type {
 	use Has_Default;
+
 	/**
 	 * Defines the shape of the 3D prop type.
 	 *

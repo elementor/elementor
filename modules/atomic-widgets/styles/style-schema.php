@@ -231,7 +231,7 @@ class Style_Schema {
 			'filter' => Filter_Prop_Type::make(),
 			'backdrop-filter' => Backdrop_Filter_Prop_Type::make(),
 			'transform' => Transform_Prop_Type::make(),
-			'transform-origin'=>Transform_Origin_Prop_Type::make(),
+			'transform-origin' => Transform_Origin_Prop_Type::make(),
 			'transition' => Transition_Prop_Type::make(),
 		];
 	}
