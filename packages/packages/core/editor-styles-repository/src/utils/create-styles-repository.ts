@@ -18,7 +18,7 @@ export const createStylesRepository = () => {
 	};
 
 	const subscribe = (
-		cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
+		cb: ( previous?: Record< string, StyleDefinition >, current?: Record< string, StyleDefinition > ) => void
 	) => {
 		const unsubscribes = providers.map( ( provider ) => {
 			return provider.subscribe( cb );
