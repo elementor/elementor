@@ -101,7 +101,7 @@ export default function ItemHeader( props ) {
 					elementorCommon.config.library_connect.is_connected = false;
 					elementorCommon.config.library_connect.current_access_level = 0;
 					elementorCommon.config.library_connect.current_access_tier = TIERS.free;
-					elementorCommon.config.library_connect.plan_type = data.plan_type;
+					elementorCommon.config.library_connect.plan_type = TIERS.free;
 
 					updateSettings( {
 						is_library_connected: false,
