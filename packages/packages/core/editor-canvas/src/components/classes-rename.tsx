@@ -12,12 +12,11 @@ export const ClassesRename = () => {
 	return null;
 };
 
-export const subscribeToStylesRepository = () => {
+const subscribeToStylesRepository = () => {
 	stylesRepository.subscribe( ( previous, current ) => {
 		if ( ! previous || ! current ) {
 			return;
 		}
-
 		const currentIds = Object.keys( current );
 
 		currentIds.forEach( ( id ) => {

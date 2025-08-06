@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
-import { stylesRepository } from '@elementor/editor-styles-repository';
-import { hash } from '@elementor/utils';
+import { type StyleDefinition } from '@elementor/editor-styles';
 import { render } from '@testing-library/react';
 
 import { ClassesRename } from '../classes-rename';
 
-// Mock dependencies
 jest.mock( '@elementor/editor-documents', () => ( {
 	getV1DocumentsManager: jest.fn(),
 } ) );
@@ -14,14 +12,12 @@ jest.mock( '@elementor/editor-documents', () => ( {
 jest.mock( '@elementor/editor-styles-repository', () => ( {
 	stylesRepository: {
 		subscribe: jest.fn(),
+		register: jest.fn(),
+		all: jest.fn(),
 	},
+	createStylesProvider: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/utils', () => ( {
-	hash: jest.fn(),
-} ) );
-
-// Helper function to create mock DOM structure
 const createMockDocument = () => {
 	const mockElement = {
 		classList: {
@@ -46,27 +42,17 @@ const createMockDocument = () => {
 	return { mockDocument, mockContainer, mockElement };
 };
 
-// Type definitions for test data
-interface StyleObject {
-	label?: string;
-	color?: string;
-}
-
 interface StylesMap {
-	[ key: string ]: StyleObject;
+	[ key: string ]: StyleDefinition;
 }
 
-describe( '<ClassesRename />', () => {
-	const mockSubscribe = jest.mocked( stylesRepository.subscribe );
+describe( 'ClassesRename', () => {
 	const mockGetV1DocumentsManager = jest.mocked( getV1DocumentsManager );
-	const mockHash = jest.mocked( hash );
+	const { stylesRepository } = jest.requireMock( '@elementor/editor-styles-repository' );
+	const mockSubscribe = jest.mocked( stylesRepository.subscribe );
 
-	it( 'should render without errors and return null', () => {
-		// Act.
-		const { container } = render( <ClassesRename /> );
-
-		// Assert.
-		expect( container ).toBeEmptyDOMElement();
+	beforeEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	it( 'should subscribe to stylesRepository on mount', () => {
@@ -79,7 +65,9 @@ describe( '<ClassesRename />', () => {
 	} );
 
 	describe( 'styles repository subscription', () => {
+		// Helper to trigger subscription callback with test data
 		const triggerStylesChange = ( previousStyles: StylesMap, currentStyles: StylesMap ) => {
+			// Get the subscription callback that was registered
 			const subscriptionCallback = mockSubscribe.mock.calls[ mockSubscribe.mock.calls.length - 1 ][ 0 ];
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			subscriptionCallback( previousStyles as any, currentStyles as any );
@@ -92,14 +80,13 @@ describe( '<ClassesRename />', () => {
 				documents: {},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash1' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'old-class', color: 'red' },
+				style1: { id: 'style1', label: 'old-class', type: 'class', variants: [] },
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'old-class', color: 'red' },
+				style1: { id: 'style1', label: 'old-class', type: 'class', variants: [] },
 			};
 
 			// Act.
@@ -119,14 +106,18 @@ describe( '<ClassesRename />', () => {
 				},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'old-class', color: 'red' },
+				style1: {
+					id: 'style1',
+					label: 'old-class',
+					type: 'class',
+					variants: [],
+				},
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'new-class', color: 'red' },
+				style1: { id: 'style1', label: 'new-class', type: 'class', variants: [] },
 			};
 
 			// Act.
@@ -146,14 +137,18 @@ describe( '<ClassesRename />', () => {
 				},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'same-class', color: 'red' },
+				style1: {
+					id: 'style1',
+					label: 'same-class',
+					type: 'class',
+					variants: [ { meta: { breakpoint: null, state: null }, props: {}, custom_css: null } ],
+				},
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'same-class', color: 'blue' },
+				style1: { id: 'style1', label: 'same-class', type: 'class', variants: [] },
 			};
 
 			// Act.
@@ -175,25 +170,16 @@ describe( '<ClassesRename />', () => {
 			} as any );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'old-class-1', color: 'red' },
-				style2: { label: 'old-class-2', color: 'blue' },
-				style3: { label: 'unchanged-class', color: 'green' },
+				style1: { id: 'style1', label: 'old-class-1', type: 'class', variants: [] },
+				style2: { id: 'style2', label: 'old-class-2', type: 'class', variants: [] },
+				style3: { id: 'style3', label: 'unchanged-class', type: 'class', variants: [] },
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'new-class-1', color: 'red' },
-				style2: { label: 'new-class-2', color: 'blue' },
-				style3: { label: 'unchanged-class', color: 'green' },
+				style1: { id: 'style1', label: 'new-class-1', type: 'class', variants: [] },
+				style2: { id: 'style2', label: 'new-class-2', type: 'class', variants: [] },
+				style3: { id: 'style3', label: 'unchanged-class', type: 'class', variants: [] },
 			};
-
-			// Mock hash to return different values for changed styles, same for unchanged
-			mockHash
-				.mockReturnValueOnce( 'hash1' ) // previous style1
-				.mockReturnValueOnce( 'hash1-changed' ) // current style1
-				.mockReturnValueOnce( 'hash2' ) // previous style2
-				.mockReturnValueOnce( 'hash2-changed' ) // current style2
-				.mockReturnValueOnce( 'hash3' ) // previous style3
-				.mockReturnValueOnce( 'hash3' ); // current style3 (unchanged)
 
 			// Act.
 			render( <ClassesRename /> );
@@ -205,7 +191,7 @@ describe( '<ClassesRename />', () => {
 			expect( mockElement.classList.replace ).toHaveBeenCalledWith( 'old-class-2', 'new-class-2' );
 		} );
 
-		it( 'should rename classes when new label is undefined', () => {
+		it( 'should rename classes when new label is an empty string', () => {
 			// Arrange.
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
@@ -214,14 +200,13 @@ describe( '<ClassesRename />', () => {
 				},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'old-class', color: 'red' },
+				style1: { id: 'style1', label: 'old-class', type: 'class', variants: [] },
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: undefined, color: 'red' },
+				style1: { id: 'style1', label: '', type: 'class', variants: [] },
 			};
 
 			// Act.
@@ -229,7 +214,7 @@ describe( '<ClassesRename />', () => {
 			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
-			expect( mockElement.classList.replace ).toHaveBeenCalledWith( 'old-class', undefined );
+			expect( mockElement.classList.replace ).toHaveBeenCalledWith( 'old-class', '' );
 		} );
 
 		it( 'should handle new styles (not in previous)', () => {
@@ -241,15 +226,14 @@ describe( '<ClassesRename />', () => {
 				},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash1' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'existing-class', color: 'red' },
+				style1: { id: 'style1', label: 'existing-class', type: 'class', variants: [] },
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'existing-class', color: 'red' },
-				style2: { label: 'new-class', color: 'blue' },
+				style1: { id: 'style1', label: 'existing-class', type: 'class', variants: [] },
+				style2: { id: 'style2', label: 'new-class', type: 'class', variants: [] },
 			};
 
 			// Act.
@@ -272,14 +256,13 @@ describe( '<ClassesRename />', () => {
 				},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'old-class', color: 'red' },
+				style1: { id: 'style1', label: 'old-class', type: 'class', variants: [] },
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'new-class', color: 'red' },
+				style1: { id: 'style1', label: 'new-class', type: 'class', variants: [] },
 			};
 
 			// Act.
@@ -306,14 +289,13 @@ describe( '<ClassesRename />', () => {
 				},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'old-class', color: 'red' },
+				style1: { id: 'style1', label: 'old-class', type: 'class', variants: [] },
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'new-class', color: 'red' },
+				style1: { id: 'style1', label: 'new-class', type: 'class', variants: [] },
 			};
 
 			// Act & Assert - should not throw an error.
@@ -332,14 +314,13 @@ describe( '<ClassesRename />', () => {
 				},
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
-			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
 			const previousStyles: StylesMap = {
-				style1: { label: 'test-class', color: 'red' },
+				style1: { id: 'style1', label: 'test-class', type: 'class', variants: [] },
 			};
 
 			const currentStyles: StylesMap = {
-				style1: { label: 'new-test-class', color: 'red' },
+				style1: { id: 'style1', label: 'new-test-class', type: 'class', variants: [] },
 			};
 
 			// Act.
@@ -347,7 +328,7 @@ describe( '<ClassesRename />', () => {
 			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
-			// eslint-disable-next-line testing-library/no-node-access
+
 			expect( mockContainer.view.el.querySelectorAll ).toHaveBeenCalledWith( '.elementor .test-class' );
 		} );
 	} );

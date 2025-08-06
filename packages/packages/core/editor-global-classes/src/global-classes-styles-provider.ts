@@ -22,20 +22,6 @@ const MAX_CLASSES = 50;
 
 export const GLOBAL_CLASSES_PROVIDER_KEY = 'global-classes';
 
-const subscribeWithStates = (
-	cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
-) => {
-	let previousState = selectData( getState() );
-
-	return subscribeWithSelector(
-		( state: StateWithGlobalClasses ) => state.globalClasses,
-		( currentState ) => {
-			cb( previousState.items, currentState.data.items );
-			previousState = currentState.data;
-		}
-	);
-};
-
 export const globalClassesStylesProvider = createStylesProvider( {
 	key: GLOBAL_CLASSES_PROVIDER_KEY,
 	priority: 30,
@@ -106,3 +92,17 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		},
 	},
 } );
+
+const subscribeWithStates = (
+	cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
+) => {
+	let previousState = selectData( getState() );
+
+	return subscribeWithSelector(
+		( state: StateWithGlobalClasses ) => state.globalClasses,
+		( currentState ) => {
+			cb( previousState.items, currentState.data.items );
+			previousState = currentState.data;
+		}
+	);
+};
