@@ -39,7 +39,7 @@
   "dependencies": {
     "@elementor/editor": "3.32.0",
     "@elementor/editor-notifications": "3.32.0",
-  	"@elementor/editor-documents": "0.13.10",
+	"@elementor/editor-documents": "0.13.10",
     "@elementor/editor-elements": "3.32.0",
     "@elementor/editor-props": "3.32.0",
     "@elementor/editor-responsive": "3.32.0",
