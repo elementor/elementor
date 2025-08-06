@@ -6,10 +6,13 @@ class Error_Builder {
 	private string $message;
 	private int $status;
 	private string $code;
+	private array $meta;
 
 	private function __construct( $code, $status = 500 ) {
 		$this->code = $code;
 		$this->status = $status;
+		$this->message = '';
+		$this->meta = [];
 	}
 
 	public static function make( $code, $status = 500 ) {
@@ -28,7 +31,22 @@ class Error_Builder {
 		return $this;
 	}
 
+	public function set_meta( array $meta ){
+		$this->meta = $meta;
+
+		return $this;
+	}
+
 	public function build() {
-		return new \WP_Error( $this->code, $this->message, [ 'status' => $this->status ] );
+		$response_data = [
+			'code' => $this->code,
+			'message' => $this->message,
+			'data' => [
+				'status' => $this->status,
+				'meta' => $this->meta
+			]
+		];
+		
+		return new \WP_REST_Response( $response_data, $this->status );
 	}
 }
