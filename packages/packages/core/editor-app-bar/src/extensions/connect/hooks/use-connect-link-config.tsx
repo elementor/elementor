@@ -16,18 +16,18 @@ export default function useConnectLinkConfig() {
 		target = '_self';
 	}
 
-	const handleConnectClick = useCallback( ( event: React.MouseEvent<HTMLAnchorElement> ) => {
+	const handleConnectClick = useCallback( ( event: React.MouseEvent<HTMLElement> ) => {
 		event.preventDefault();
 
-		if ( typeof extendedWindow.jQuery !== 'undefined' && extendedWindow.jQuery.fn?.elementorConnect ) {
+		if ( extendedWindow.jQuery && extendedWindow.jQuery.fn?.elementorConnect ) {
 			const connectUrl = extendedWindow?.elementor?.config.user.top_bar.connect_url;
-
-			const $tempButton = extendedWindow.jQuery?.fn?.elementorConnect?.( '<a>' )
-				.attr( 'href', connectUrl )
-				.attr( 'target', '_blank' )
-				.attr( 'rel', 'opener' )
-				.css( 'display', 'none' )
-				.appendTo( 'body' );
+			const $tempButton = ( extendedWindow as any ).jQuery( '<a>' );
+			$tempButton
+				?.attr( 'href', connectUrl )
+				?.attr( 'target', '_blank' )
+				?.attr( 'rel', 'opener' )
+				?.css( 'display', 'none' )
+				?.appendTo( 'body' );
 
 			$tempButton.elementorConnect();
 
