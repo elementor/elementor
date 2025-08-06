@@ -20,6 +20,7 @@ export default class extends elementorModules.Module {
 				mixpanel.people.set_once( {
 					$user_id: userId,
 					$last_login: new Date().toISOString(),
+					$plan_type: elementorCommon.config.library_connect?.plan_type || null,
 				} );
 			}
 		}
