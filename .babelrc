@@ -1,6 +1,0 @@
-{
-	"presets": ["@babel/preset-react"],
-	"plugins": [
-		["@emotion", { "sourceMap": true, "autoLabel": "dev-only", "labelFormat": "[filename]--[local]" }]
-	]
-}
