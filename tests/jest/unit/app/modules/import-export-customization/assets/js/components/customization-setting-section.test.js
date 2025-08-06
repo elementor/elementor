@@ -92,6 +92,58 @@ describe( 'SettingSection Component', () => {
 		} );
 	} );
 
+	describe( 'Disabled State Functionality', () => {
+		it( 'should render switch as enabled when disabled prop is false', () => {
+			render( <SettingSection { ...defaultProps } disabled={ false } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( false );
+		} );
+
+		it( 'should render switch as disabled when disabled prop is true', () => {
+			render( <SettingSection { ...defaultProps } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+
+		it( 'should default to enabled when disabled prop is not provided', () => {
+			render( <SettingSection { ...defaultProps } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.disabled ).toBe( false );
+		} );
+
+		it( 'should maintain checked state when disabled', () => {
+			render( <SettingSection { ...defaultProps } checked={ true } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.checked ).toBe( true );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+
+		it( 'should maintain unchecked state when disabled', () => {
+			render( <SettingSection { ...defaultProps } checked={ false } disabled={ true } /> );
+
+			const switchElement = screen.getByTestId( `${ defaultProps.settingKey }-switch` );
+			const inputElement = switchElement.querySelector( 'input' );
+			expect( inputElement.checked ).toBe( false );
+			expect( inputElement.disabled ).toBe( true );
+		} );
+
+		it( 'should not render switch when hasToggle is false and disabled is true', () => {
+			render( <SettingSection { ...defaultProps } hasToggle={ false } disabled={ true } /> );
+
+			waitFor( () => {
+				expect( () => screen.getByTestId( `${ defaultProps.settingKey }-switch` ) ).toThrow();
+			} );
+		} );
+	} );
+
 	describe( 'User Interactions', () => {
 		it( 'should call onSettingChange with settingKey and true when switch is turned on', () => {
 			// Arrange
@@ -117,6 +169,14 @@ describe( 'SettingSection Component', () => {
 
 			// Assert
 			expect( mockOnSettingChange ).toHaveBeenCalledWith( 'test-key', false );
+		} );
+
+		it( 'should handle interactions when hasToggle is false', () => {
+			// Arrange
+			render( <SettingSection { ...defaultProps } hasToggle={ false } /> );
+
+			// Act - try to find switch (should not exist)
+			expect( () => screen.getByTestId( `${ defaultProps.settingKey }-switch` ) ).toThrow();
 		} );
 	} );
 } );
