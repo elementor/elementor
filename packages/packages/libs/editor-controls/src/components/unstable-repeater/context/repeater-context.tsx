@@ -69,15 +69,17 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const [ openItemIndex, setOpenItemIndex ] = useState( EMPTY_OPEN_ITEM );
 	const [ rowRef, setRowRef ] = useState< HTMLElement | null >( null );
 
-	const isOpen = openItemIndex < 0;
+	const isOpen = openItemIndex !== EMPTY_OPEN_ITEM;
 	const popoverState = usePopupState( { variant: 'popover' } );
 
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? initial;
 		const newIndex = config?.index ?? items.length;
 		const newKey = generateNextKey( itemsWithKeys.map( ( { key } ) => key ) );
+		const newItemsWithKeys = [ ...itemsWithKeys ];
 
-		setItemsWithKeys( itemsWithKeys.toSpliced( newIndex, 0, { item, key: newKey } ) );
+		newItemsWithKeys.splice( newIndex, 0, { item, key: newKey } );
+		setItemsWithKeys( newItemsWithKeys );
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
