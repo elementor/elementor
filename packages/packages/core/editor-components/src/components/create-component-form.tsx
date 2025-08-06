@@ -2,10 +2,12 @@ import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { HeartHandShakeIcon } from '@elementor/icons';
 import {
+	Alert,
 	Button,
 	FormLabel,
 	Grid,
 	Popover,
+	Snackbar,
 	Stack,
 	TextField,
 	Typography,
@@ -29,19 +31,46 @@ type SaveAsComponentEventData = {
 	anchorPosition: { top: number; left: number };
 };
 
-const FONT_SIZE = 'tiny';
-const OPEN_SAVE_AS_COMPONENT_POPUP_EVENT = 'elementor/editor/open-save-as-component-popup';
+type Response = {
+	show: boolean;
+	message: string;
+	type: 'success' | 'error';
+};
 
-export function ComponentCreateForm() {
+const FONT_SIZE = 'tiny';
+const OPEN_SAVE_AS_COMPONENT_POPUP_EVENT = 'elementor/editor/open-save-as-component-form';
+
+export function CreateComponentForm() {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	const [ componentName, setComponentName ] = useState( '' );
 	const [ anchorPosition, setAnchorPosition ] = useState<{ top: number; left: number } | null>( null );
 
+	const [ response, setResponse ] = useState<Response | null>( null );
+
 	const componentContent = useRef<ElementData[]>( [] );
 
-	const openModal = ( event: CustomEvent< SaveAsComponentEventData > ) => {
+	useEffect( () => {
+		window.addEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openPopup as EventListener);
+
+		return () => {
+			window.removeEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openPopup as EventListener);
+		};
+	}, [] );
+
+	const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
+		if ( ! event.detail.componentContent ) {
+			console.error( 'No component content' );
+
+			setResponse( {
+				show: true,
+				message: 'Failed to save component. Please try again.',
+				type: 'error',
+			} );
+			return;
+		};
+
 		componentContent.current = event.detail.componentContent;
 		setComponentName( getComponentDefaultName( event.detail.componentContent ) );
 		setAnchorPosition( event.detail.anchorPosition );
@@ -49,13 +78,13 @@ export function ComponentCreateForm() {
 		setIsOpen( true );
 	};
 
-	useEffect( () => {
-		window.addEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openModal as EventListener);
-
-		return () => {
-			window.removeEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openModal as EventListener);
-		};
-	}, [] );
+	const resetAndClosePopup = () => {
+		setIsOpen( false );
+		componentContent.current = [];
+		setComponentName( '' );
+		setAnchorPosition( null );
+		setIsLoading( false );
+	};
 
 	const handleSave = async () => {
 		if ( ! componentContent.current || ! componentName.trim() ) {
@@ -70,45 +99,32 @@ export function ComponentCreateForm() {
 				content: componentContent.current,
 			} );
 
-			// Show success message using Elementor's dialog system
-			( window as any ).elementorCommon.dialogsManager
-				.createWidget( 'alert', {
-					message: `Component saved successfully as: ${ componentName } (ID: ${ result.data.component_id })`,
-				} )
-				.show();
+			setResponse( {
+				show: true,
+				message: `Component saved successfully as: ${ componentName } (ID: ${ result.data.component_id })`,
+				type: 'success',
+			} );
 
-			resetAndClose();
+			resetAndClosePopup();
 		} catch ( error ) {
 			console.error( 'Error saving component:', error );
 
 			const errorMessage = error instanceof Error ? error.message : 'Failed to save component. Please try again.';
-			( window as any ).elementorCommon.dialogsManager
-				.createWidget( 'alert', {
-					message: errorMessage,
-				} )
-				.show();
+			setResponse( {
+				show: true,
+				message: errorMessage,
+				type: 'error',
+			} );
 		} finally {
 			setIsLoading( false );
 		}
 	};
 
-	const resetAndClose = () => {
-		setIsOpen( false );
-		componentContent.current = [];
-		setComponentName( '' );
-		setAnchorPosition( null );
-		setIsLoading( false );
-	};
-
-	if ( ! isOpen || ! componentContent.current ) {
-		return null;
-	}
-
 	return (
 		<ThemeProvider>
 			<Popover
 				open={ isOpen }
-				onClose={ resetAndClose }
+				onClose={ resetAndClosePopup }
 				anchorReference="anchorPosition"
 				anchorPosition={ anchorPosition }
 				anchorOrigin={ {
@@ -150,7 +166,7 @@ export function ComponentCreateForm() {
 					</Grid>
 					<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1.5 } px={ 1 }>
 						<Button
-							onClick={ resetAndClose }
+							onClick={ resetAndClosePopup }
 							disabled={ isLoading }
 							color="secondary"
 							variant="text"
@@ -170,6 +186,11 @@ export function ComponentCreateForm() {
 					</Stack>
 				</Stack>
 			</Popover>
+			<Snackbar open={ response?.show } onClose={ () => setResponse( null ) }>
+				<Alert onClose={ () => setResponse( null ) } severity={ response?.type } sx={ { width: '100%' } }>
+					{ response?.message }
+				</Alert>
+			</Snackbar>
 		</ThemeProvider>
 	);
 }

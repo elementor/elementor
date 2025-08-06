@@ -2,8 +2,8 @@ import { injectIntoTop } from '@elementor/editor';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { __ } from '@wordpress/i18n';
 
-import { ComponentCreateForm } from './components/component-create-form';
 import { ComponentsTab } from './components/components-tab';
+import { CreateComponentForm } from './components/create-component-form';
 
 export function init() {
 	injectTab( {
@@ -13,7 +13,7 @@ export function init() {
 	} );
 
 	injectIntoTop( {
-		id: 'component-create-form',
-		component: ComponentCreateForm,
+		id: 'create-component-popup',
+		component: CreateComponentForm,
 	} );
 }
