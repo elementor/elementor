@@ -6,6 +6,7 @@ import { BaseLayout, TopBar, PageHeader, Footer } from '../../shared/components'
 import { useImportContext } from '../context/import-context';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import SummarySection from '../../shared/components/summary-section';
+import { buildKitSettingsSummary } from '../../shared/utils/utils';
 
 const Illustration = () => (
 	<Box
@@ -69,10 +70,24 @@ export default function ImportComplete() {
 		return runnersState.plugins ? runnersState.plugins.join( ' | ' ) : __( 'No plugins imported', 'elementor' );
 	}, [ runnersState.plugins ] );
 
+	const getSettings = useCallback( () => {
+		const siteSettings = data.includes.includes( 'settings' )
+			? data?.customization?.settings || data?.uploadedData?.manifest[ 'site-settings' ] || {}
+			: {};
+
+		if ( ! Object.keys( siteSettings ).length || ! Object.keys( runnersState[ 'site-settings' ] || {} ).length ) {
+			return __( 'No settings imported', 'elementor' );
+		}
+
+		const summary = buildKitSettingsSummary( siteSettings );
+
+		return summary.length > 0 ? summary : __( 'No settings imported', 'elementor' );
+	}, [ data, runnersState ] );
+
 	const sectionsTitlesMap = useMemo( () => ( {
 		settings: {
 			title: __( 'Site settings', 'elementor' ),
-			subTitle: __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ),
+			subTitle: getSettings(),
 		},
 		content: {
 			title: __( 'Content', 'elementor' ),
@@ -86,7 +101,7 @@ export default function ImportComplete() {
 			title: __( 'Templates', 'elementor' ),
 			subTitle: getTemplatesSummary(),
 		},
-	} ), [ getPluginsSummary, getTemplatesSummary ] );
+	} ), [ getPluginsSummary, getTemplatesSummary, getSettings ] );
 
 	const headerContent = (
 		<PageHeader title={ __( 'Import', 'elementor' ) } />
