@@ -37,19 +37,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Open a specific post in the elementor editor.
-	 *
-	 * @param {number|string} id - Optional. Post ID. Default is the ID of the current post.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async gotoPostId( id: number|string = this.postId ): Promise<void> {
-		await this.page.goto( `wp-admin/post.php?post=${ id }&action=elementor` );
-		await this.page.waitForLoadState( 'load' );
-		await this.waitForPanelToLoad();
-	}
-
-	/**
 	 * Update image dates in the template data.
 	 *
 	 * @param {JSON} templateData - Template data.
