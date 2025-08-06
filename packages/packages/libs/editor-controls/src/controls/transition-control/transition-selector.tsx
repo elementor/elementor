@@ -23,7 +23,16 @@ const toTransitionSelectorValue = ( label: string ) => {
 	return null;
 };
 
-export const TransitionSelector = () => {
+const findByValue = ( value: string ) => {
+	for ( const category of transitionProperties ) {
+		const property = category.properties.find( ( prop ) => prop.value === value );
+		if ( property ) {
+			return property.label;
+		}
+	}
+};
+
+export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: string[] } ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
 		value: { value: transitionValue },
@@ -31,6 +40,28 @@ export const TransitionSelector = () => {
 	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const popoverState = usePopupState( { variant: 'popover' } );
+
+	const getItemList = () => {
+		const recentItems = recentlyUsedList
+			.map( ( item ) => findByValue( item ) )
+			.filter( ( item ) => !! item ) as string[];
+		const filteredItems = transitionsItemsList.map( ( category ) => {
+			return {
+				...category,
+				items: category.items.filter( ( item ) => ! recentItems.includes( item ) ),
+			};
+		} );
+		if ( recentItems.length === 0 ) {
+			return filteredItems;
+		}
+		return [
+			{
+				label: __( 'Recent', 'elementor' ),
+				items: recentItems,
+			},
+			...filteredItems,
+		];
+	};
 
 	const handleTransitionPropertyChange = ( newLabel: string ) => {
 		const newValue = toTransitionSelectorValue( newLabel );
@@ -74,7 +105,7 @@ export const TransitionSelector = () => {
 				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
 			>
 				<ItemSelector
-					itemsList={ transitionsItemsList }
+					itemsList={ getItemList() }
 					selectedItem={ transitionValue }
 					onItemChange={ handleTransitionPropertyChange }
 					onClose={ popoverState.close }
