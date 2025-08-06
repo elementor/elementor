@@ -6,14 +6,18 @@ import { hash } from '@elementor/utils';
 
 export const ClassesRename = () => {
 	useEffect( () => {
-		subscribeToStylesRepository();
+		const unsubscribe = subscribeToStylesRepository();
+
+		return () => {
+			unsubscribe();
+		};
 	}, [] );
 
 	return null;
 };
 
 const subscribeToStylesRepository = () => {
-	stylesRepository.subscribe( ( previous, current ) => {
+	return stylesRepository.subscribe( ( previous, current ) => {
 		if ( ! previous || ! current ) {
 			return;
 		}
