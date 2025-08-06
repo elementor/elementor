@@ -6,9 +6,10 @@ import {
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
-import { getUserCapabilities, stylesRepository } from '@elementor/editor-styles-repository';
+import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
+import { UPDATE_CLASS_CAPABILITY_KEY } from './capabilities';
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
 import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
@@ -44,12 +45,9 @@ export function init() {
 	} );
 
 	onSetUser( ( user ) => {
-		const userCan = getUserCapabilities( {
-			provider: stylesRepository.getProviderByKey( GLOBAL_CLASSES_PROVIDER_KEY ),
-			capabilities: user?.capabilities,
-		} );
+		const canEdit = user?.capabilities.includes( UPDATE_CLASS_CAPABILITY_KEY );
 
-		if ( userCan?.updateProps ) {
+		if ( canEdit ) {
 			syncWithDocumentSave();
 		}
 	} );
