@@ -155,3 +155,25 @@ it( 'should disable create button when value validation fails', () => {
 	const createButton = screen.getByRole( 'button', { name: 'Create' } );
 	expect( createButton ).toBeDisabled();
 } );
+
+it( 'should prevent form submission when validation fails', async () => {
+	// Arrange
+	mockCreateVariable.mockResolvedValue( 'variable-key-123' );
+	renderComponent();
+
+	const nameInput = screen.getAllByRole( 'textbox' )[ 0 ];
+	const valueInput = screen.getAllByRole( 'textbox' )[ 1 ];
+
+	// Act.
+	fireEvent.change( nameInput, { target: { value: 'valid-name' } } );
+	fireEvent.change( valueInput, { target: { value: '#ff0000' } } ); // Valid first
+	fireEvent.change( valueInput, { target: { value: '' } } ); // Then invalid
+
+	// Assert.
+	await waitFor( () => {
+		// eslint-disable-next-line testing-library/no-node-access
+		const colorFieldContainer = screen.getByDisplayValue( '' ).closest( '[class*="MuiColorField"]' );
+
+		expect( colorFieldContainer ).toHaveAttribute( 'error', 'Add a value to complete your variable.' );
+	} );
+} );

@@ -227,7 +227,9 @@ class Style_Schema {
 	private static function get_effects_props() {
 		return [
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
-			'opacity' => Size_Prop_Type::make()->units( Size_Constants::opacity() ),
+			'opacity' => Size_Prop_Type::make()
+				->units( Size_Constants::opacity() )
+				->default_unit( Size_Constants::UNIT_PERCENT ),
 			'filter' => Filter_Prop_Type::make(),
 			'backdrop-filter' => Backdrop_Filter_Prop_Type::make(),
 			'transform' => Transform_Prop_Type::make(),

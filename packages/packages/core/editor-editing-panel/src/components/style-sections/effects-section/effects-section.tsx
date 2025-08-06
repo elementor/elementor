@@ -4,16 +4,17 @@ import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
 	injectIntoRepeaterHeaderActions,
-	TransformOriginControl,
+	TransformBaseControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
-	UnstableTransformRepeaterControl,
 	useBoundProp,
 } from '@elementor/editor-controls';
+import { useSelectedElement } from '@elementor/editor-elements';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
+import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
 import { OpacityControlField } from './opacity-control-field';
@@ -23,19 +24,19 @@ const FILTER_LABEL = __( 'Filters', 'elementor' );
 const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
-const TRANSFORM_ORIGIN_LABEL = __( 'Transform origin', 'elementor' );
+const TRANSFORM_BASE_LABEL = __( 'Transform base', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
-	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
+	const { element } = useSelectedElement();
 
-	const transformOriginPopoverAnchorRef = useRef< HTMLDivElement | null >( null );
-	const setTransformOriginPopoverAnchorRef = ( ref?: HTMLDivElement ) =>
-		( transformOriginPopoverAnchorRef.current = ref ?? null );
+	const transformBasePopoverAnchorRef = useRef< HTMLDivElement | null >( null );
+	const setTransformBasePopoverAnchorRef = ( ref?: HTMLDivElement ) =>
+		( transformBasePopoverAnchorRef.current = ref ?? null );
 
 	injectIntoRepeaterHeaderActions( {
 		id: 'transform-origin-control-trigger',
-		component: () => <TransformOrigin containerRef={ transformOriginPopoverAnchorRef } />,
+		component: () => <TransformOrigin containerRef={ transformBasePopoverAnchorRef } />,
 		options: { overwrite: true },
 	} );
 
@@ -48,19 +49,13 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				{ isUnstableRepeaterActive ? (
-					<UnstableTransformRepeaterControl
-						setTransformOriginPopoverAnchorRef={ setTransformOriginPopoverAnchorRef }
-					/>
-				) : (
-					<TransformRepeaterControl />
-				) }
+				<TransformRepeaterControl setTransformBasePopoverAnchorRef={ setTransformBasePopoverAnchorRef }/>
 			</StylesField>
 			{ shouldShowTransition && (
 				<>
 					<PanelDivider />
 					<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
-						<TransitionRepeaterControl />
+						<TransitionRepeaterControl recentlyUsedList={ getRecentlyUsedList( element?.id ) } />
 					</StylesField>
 				</>
 			) }
@@ -80,8 +75,8 @@ const TransformOrigin = ( { containerRef }: { containerRef: React.RefObject< HTM
 	const context = useBoundProp();
 
 	return context.bind === 'transform' ? (
-		<StylesField bind={ 'transform-origin' } propDisplayName={ TRANSFORM_ORIGIN_LABEL }>
-			<TransformOriginControl anchorRef={ containerRef } />
+		<StylesField bind="" propDisplayName={ TRANSFORM_BASE_LABEL }>
+			<TransformBaseControl anchorRef={ containerRef } />
 		</StylesField>
 	) : null;
 };

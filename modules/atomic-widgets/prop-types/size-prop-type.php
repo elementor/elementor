@@ -36,6 +36,12 @@ class Size_Prop_Type extends Object_Prop_Type {
 		return $this;
 	}
 
+	public function default_unit( $unit ) {
+		$this->settings['default_unit'] = $unit;
+
+		return $this;
+	}
+
 	public function get_settings(): array {
 		if ( ! array_key_exists( 'available_units', $this->settings ) ) {
 			$this->units();
