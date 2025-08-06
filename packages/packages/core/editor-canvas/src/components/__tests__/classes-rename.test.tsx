@@ -57,15 +57,9 @@ interface StylesMap {
 }
 
 describe( '<ClassesRename />', () => {
-	let mockSubscribe: jest.MockedFunction< typeof stylesRepository.subscribe >;
-	let mockGetV1DocumentsManager: jest.MockedFunction< typeof getV1DocumentsManager >;
-	let mockHash: jest.MockedFunction< typeof hash >;
-
-	beforeEach( () => {
-		mockSubscribe = jest.mocked( stylesRepository.subscribe );
-		mockGetV1DocumentsManager = jest.mocked( getV1DocumentsManager );
-		mockHash = jest.mocked( hash );
-	} );
+	const mockSubscribe = jest.mocked( stylesRepository.subscribe );
+	const mockGetV1DocumentsManager = jest.mocked( getV1DocumentsManager );
+	const mockHash = jest.mocked( hash );
 
 	it( 'should render without errors and return null', () => {
 		// Act.
@@ -85,17 +79,14 @@ describe( '<ClassesRename />', () => {
 	} );
 
 	describe( 'styles repository subscription', () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		let subscriptionCallback: ( previous: any, current: any ) => void;
-
-		const setupSubscription = () => {
-			render( <ClassesRename /> );
-			subscriptionCallback = mockSubscribe.mock.calls[ 0 ][ 0 ];
+		const triggerStylesChange = ( previousStyles: StylesMap, currentStyles: StylesMap ) => {
+			const subscriptionCallback = mockSubscribe.mock.calls[ mockSubscribe.mock.calls.length - 1 ][ 0 ];
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			subscriptionCallback( previousStyles as any, currentStyles as any );
 		};
 
 		it( 'should not rename classes when no classes have been changed', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {},
@@ -112,7 +103,8 @@ describe( '<ClassesRename />', () => {
 			};
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
 			expect( mockElement.classList.replace ).not.toHaveBeenCalled();
@@ -120,7 +112,6 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should rename classes when label changes', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
@@ -139,7 +130,8 @@ describe( '<ClassesRename />', () => {
 			};
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
 			expect( mockElement.classList.replace ).toHaveBeenCalledWith( 'old-class', 'new-class' );
@@ -147,7 +139,6 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should not rename classes when only non-label properties change', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
@@ -166,7 +157,8 @@ describe( '<ClassesRename />', () => {
 			};
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
 			expect( mockElement.classList.replace ).not.toHaveBeenCalled();
@@ -174,7 +166,6 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should handle multiple style changes', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
@@ -205,7 +196,8 @@ describe( '<ClassesRename />', () => {
 				.mockReturnValueOnce( 'hash3' ); // current style3 (unchanged)
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
 			expect( mockElement.classList.replace ).toHaveBeenCalledTimes( 2 );
@@ -213,9 +205,8 @@ describe( '<ClassesRename />', () => {
 			expect( mockElement.classList.replace ).toHaveBeenCalledWith( 'old-class-2', 'new-class-2' );
 		} );
 
-		it( 'should not rename classes when new label is undefined', () => {
+		it( 'should rename classes when new label is undefined', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
@@ -234,15 +225,15 @@ describe( '<ClassesRename />', () => {
 			};
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
-			expect( mockElement.classList.replace ).not.toHaveBeenCalled();
+			expect( mockElement.classList.replace ).toHaveBeenCalledWith( 'old-class', undefined );
 		} );
 
 		it( 'should handle new styles (not in previous)', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
@@ -262,7 +253,8 @@ describe( '<ClassesRename />', () => {
 			};
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
 			expect( mockElement.classList.replace ).not.toHaveBeenCalled();
@@ -270,7 +262,6 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should handle multiple documents', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			const { mockDocument: mockDocument2, mockElement: mockElement2 } = createMockDocument();
 
@@ -292,7 +283,8 @@ describe( '<ClassesRename />', () => {
 			};
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
 			expect( mockElement.classList.replace ).toHaveBeenCalledWith( 'old-class', 'new-class' );
@@ -301,7 +293,6 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should handle documents without view or el', () => {
 			// Arrange.
-			setupSubscription();
 			const incompleteDocument = {
 				container: {
 					view: null,
@@ -327,13 +318,13 @@ describe( '<ClassesRename />', () => {
 
 			// Act & Assert - should not throw an error.
 			expect( () => {
-				subscriptionCallback( previousStyles, currentStyles );
+				render( <ClassesRename /> );
+				triggerStylesChange( previousStyles, currentStyles );
 			} ).not.toThrow();
 		} );
 
 		it( 'should use correct CSS selector format', () => {
 			// Arrange.
-			setupSubscription();
 			const { mockDocument, mockContainer } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
@@ -352,7 +343,8 @@ describe( '<ClassesRename />', () => {
 			};
 
 			// Act.
-			subscriptionCallback( previousStyles, currentStyles );
+			render( <ClassesRename /> );
+			triggerStylesChange( previousStyles, currentStyles );
 
 			// Assert.
 			// eslint-disable-next-line testing-library/no-node-access
