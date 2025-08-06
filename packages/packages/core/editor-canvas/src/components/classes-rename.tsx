@@ -12,22 +12,28 @@ export const ClassesRename = () => {
 	return null;
 };
 
-const subscribeToStylesRepository = () => {
+export const subscribeToStylesRepository = () => {
 	stylesRepository.subscribe( ( previous, current ) => {
+		if ( ! previous || ! current ) {
+			return;
+		}
+
 		const currentIds = Object.keys( current );
 
-		currentIds
-			.filter( ( id ) => {
-				return id in previous && hash( previous[ id ] ) !== hash( current[ id ] );
-			} )
-			.forEach( ( id ) => {
-				const previousStyle = previous[ id ];
-				const currentStyle = current[ id ];
+		currentIds.forEach( ( id ) => {
+			const isStyleChanged = previous[ id ] && hash( previous[ id ] ) !== hash( current[ id ] );
 
-				if ( previousStyle.label !== currentStyle.label ) {
-					renameClass( previousStyle.label, currentStyle.label );
-				}
-			} );
+			if ( ! isStyleChanged ) {
+				return;
+			}
+
+			const previousStyle = previous[ id ];
+			const currentStyle = current[ id ];
+
+			if ( previousStyle.label !== currentStyle.label ) {
+				renameClass( previousStyle.label, currentStyle.label );
+			}
+		} );
 	} );
 };
 
