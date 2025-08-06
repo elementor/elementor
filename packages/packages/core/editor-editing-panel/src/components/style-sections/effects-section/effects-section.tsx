@@ -49,7 +49,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl setTransformBasePopoverAnchorRef={ setTransformBasePopoverAnchorRef }/>
+				<TransformRepeaterControl setTransformBasePopoverAnchorRef={ setTransformBasePopoverAnchorRef } />
 			</StylesField>
 			{ shouldShowTransition && (
 				<>
