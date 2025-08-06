@@ -369,7 +369,7 @@ class Global_Classes_REST_API {
 					),
 					'meta' => [
 						'duplicated_label' => $new_label,
-						'conflicting_item_id' => $item_id
+						'key' => $item_id
 					]
 				];
 			}

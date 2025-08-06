@@ -12,12 +12,12 @@ export type ErrorDialogData = {
       key: string; // The duplicated label
       duplicated_label: string;
     }
-        }
+        } 
 }
 
 export const showErrorDialog = (data: ErrorDialogData) => {
   
-	const { code,data:{meta} } = data;
+	const { code, data : { meta } } = data;
 	if ( code === API_ERROR_CODES.DUPLICATED_LABEL ) {
 		 openDialog( {
 		 	title: 'ERROR',
