@@ -5,7 +5,6 @@ import {
 	type BackgroundOverlayItemPropValue,
 	backgroundOverlayPropTypeUtil,
 	colorPropTypeUtil,
-	type PropKey,
 } from '@elementor/editor-props';
 import { Box, CardMedia, styled, Tab, TabPanel, Tabs, type Theme, UnstableColorIndicator } from '@elementor/ui';
 import { useWpMediaAttachment } from '@elementor/wp-media';
@@ -13,11 +12,14 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
 import { PopoverContent } from '../../../components/popover-content';
-import { AddItemAction, Header, ItemsContainer, UnstableRepeater } from '../../../components/unstable-repeater';
+import { Header, ItemsContainer, TooltipAddItemAction, UnstableRepeater } from '../../../components/unstable-repeater';
 import { DisableItemAction } from '../../../components/unstable-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../../../components/unstable-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../../../components/unstable-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../../../components/unstable-repeater/context/repeater-context';
+import { EditItemPopover } from '../../../components/unstable-repeater/items/edit-item-popover';
 import { Item } from '../../../components/unstable-repeater/items/item';
+import { type CollectionPropUtil, type RepeatablePropValue } from '../../../components/unstable-repeater/types';
 import { createControl } from '../../../create-control';
 import { env } from '../../../env';
 import { ColorControl } from '../../color-control';
@@ -75,38 +77,38 @@ const backgroundResolutionOptions = [
 ];
 
 export const BackgroundOverlayRepeaterControl = createControl( () => {
-	const { propType, value: backgroundValues, setValue } = useBoundProp( backgroundOverlayPropTypeUtil );
+	const { propType, value: overlayValues, setValue } = useBoundProp( backgroundOverlayPropTypeUtil );
 
 	return (
-		<PropProvider propType={ propType } value={ backgroundValues } setValue={ setValue }>
-			<UnstableRepeater initial={ getInitialBackgroundOverlay() } propTypeUtil={ backgroundOverlayPropTypeUtil }>
+		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue }>
+			<UnstableRepeater
+				initial={ getInitialBackgroundOverlay() as RepeatablePropValue }
+				propTypeUtil={ backgroundOverlayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
+			>
 				<Header label={ __( 'Overlay', 'elementor' ) }>
-					<AddItemAction newItemIndex={ 0 } />
+					<TooltipAddItemAction newItemIndex={ 0 } />
 				</Header>
-				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } Content={ ItemContent } /> }>
+				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
 					<DuplicateItemAction />
 					<DisableItemAction />
 					<RemoveItemAction />
 				</ItemsContainer>
+				<EditItemPopover>
+					<ItemContent />
+				</EditItemPopover>
 			</UnstableRepeater>
 		</PropProvider>
 	);
 } );
 
-export const ItemContent = ( { anchorEl = null, bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content anchorEl={ anchorEl } />
-		</PropKeyProvider>
-	);
-};
-
-const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
+export const ItemContent = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useBackgroundTabsHistory( {
 		image: getInitialBackgroundOverlay().value,
 		color: initialBackgroundColorOverlay.value,
 		gradient: initialBackgroundGradientOverlay.value,
 	} );
+
+	const { rowRef } = useRepeaterContext();
 
 	return (
 		<Box sx={ { width: '100%' } }>
@@ -132,21 +134,21 @@ const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
 			</TabPanel>
 			<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( 'color' ) }>
 				<PopoverContent>
-					<ColorOverlayContent anchorEl={ anchorEl } />
+					<ColorOverlayContent anchorEl={ rowRef } />
 				</PopoverContent>
 			</TabPanel>
 		</Box>
 	);
 };
 
-const ItemIcon = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+const ItemIcon = ( { value }: { value: RepeatablePropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemIconImage value={ value as BackgroundImageOverlay } />;
 		case 'background-color-overlay':
-			return <ItemIconColor value={ value } />;
+			return <ItemIconColor value={ value as BackgroundOverlayItemPropValue } />;
 		case 'background-gradient-overlay':
-			return <ItemIconGradient value={ value } />;
+			return <ItemIconGradient value={ value as BackgroundOverlayItemPropValue } />;
 		default:
 			return null;
 	}
@@ -187,14 +189,14 @@ const ItemIconGradient = ( { value }: { value: BackgroundOverlayItemPropValue } 
 	return <StyledUnstableColorIndicator size="inherit" component="span" value={ gradient } />;
 };
 
-const ItemLabel = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+export const ItemLabel = ( { value }: { value: RepeatablePropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemLabelImage value={ value as BackgroundImageOverlay } />;
 		case 'background-color-overlay':
-			return <ItemLabelColor value={ value } />;
+			return <ItemLabelColor value={ value as BackgroundOverlayItemPropValue } />;
 		case 'background-gradient-overlay':
-			return <ItemLabelGradient value={ value } />;
+			return <ItemLabelGradient value={ value as BackgroundOverlayItemPropValue } />;
 		default:
 			return null;
 	}
