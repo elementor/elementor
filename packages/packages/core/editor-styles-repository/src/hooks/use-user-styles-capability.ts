@@ -1,7 +1,7 @@
 import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 
 import { stylesRepository } from '../styles-repository';
-import { type UserCapabilities } from '../types';
+import { type StylesProvider, type UserCapabilities } from '../types';
 
 type UserCan = {
 	[ key in keyof UserCapabilities ]: boolean;
@@ -20,18 +20,28 @@ export const useUserStylesCapability = () => {
 	const userCan = ( providerKey: string ): UserCan => {
 		const provider = stylesRepository.getProviderByKey( providerKey );
 
-		if ( ! provider?.capabilities ) {
-			return DEFAULT_CAPABILITIES;
-		}
-
-		return Object.entries( provider.capabilities ).reduce(
-			( acc, [ key, capability ] ) => ( {
-				...acc,
-				[ key ]: capabilities?.includes( capability ) ?? true,
-			} ),
-			DEFAULT_CAPABILITIES
-		);
+		return getUserCapabilities( { provider, capabilities } );
 	};
 
 	return { userCan };
 };
+
+export function getUserCapabilities( {
+	provider,
+	capabilities,
+}: {
+	provider?: StylesProvider;
+	capabilities?: string[];
+} ): UserCan {
+	if ( ! provider?.capabilities ) {
+		return DEFAULT_CAPABILITIES;
+	}
+
+	return Object.entries( provider.capabilities ).reduce(
+		( acc, [ key, capability ] ) => ( {
+			...acc,
+			[ key ]: capabilities?.includes( capability ) ?? true,
+		} ),
+		DEFAULT_CAPABILITIES
+	);
+}

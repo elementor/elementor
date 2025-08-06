@@ -1,12 +1,12 @@
 import { injectIntoLogic } from '@elementor/editor';
+import { onSetUser } from '@elementor/editor-current-user';
 import {
 	injectIntoClassSelectorActions,
 	injectIntoCssClassConvert,
 	registerStyleProviderToColors,
 } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
-import { stylesRepository } from '@elementor/editor-styles-repository';
-import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import { getUserCapabilities, stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
@@ -43,7 +43,14 @@ export function init() {
 		getThemeColor: ( theme ) => theme.palette.global.dark,
 	} );
 
-	listenTo( v1ReadyEvent(), () => {
-		syncWithDocumentSave();
+	onSetUser( ( user ) => {
+		const userCan = getUserCapabilities( {
+			provider: stylesRepository.getProviderByKey( GLOBAL_CLASSES_PROVIDER_KEY ),
+			capabilities: user?.capabilities,
+		} );
+
+		if ( userCan?.updateProps ) {
+			syncWithDocumentSave();
+		}
 	} );
 }
