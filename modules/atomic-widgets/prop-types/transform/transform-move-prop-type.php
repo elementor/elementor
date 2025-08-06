@@ -20,6 +20,7 @@ class Transform_Move_Prop_Type extends Object_Prop_Type {
 	}
 
 
+
 	protected function get_prop_type(): Prop_Type {
 		return Size_Prop_Type::make()->units( Size_Constants::transform() );
 	}

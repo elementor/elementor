@@ -5,7 +5,6 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes\Transform;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Dimensional_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {

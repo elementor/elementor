@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Transform;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Dimensional_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,7 +13,10 @@ class Transform_Rotate_Prop_Type extends Object_Prop_Type {
 	use Dimensional_Prop_Type;
 
 	protected function get_default_size(): array {
-		return [ 'size' => 0, 'unit' => 'deg' ];
+		return [
+			'size' => 0,
+			'unit' => 'deg',
+		];
 	}
 
 	public static function get_key(): string {

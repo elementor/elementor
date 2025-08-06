@@ -6,10 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Default;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 
 trait Dimensional_Prop_Type {
+	use Has_Default;
 	/**
 	 * Defines the shape of the 3D prop type.
 	 *
