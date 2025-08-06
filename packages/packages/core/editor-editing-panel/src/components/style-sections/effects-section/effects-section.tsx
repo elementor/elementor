@@ -4,7 +4,6 @@ import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
 	injectIntoRepeaterHeaderActions,
-	PropProvider,
 	TransformOriginControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
@@ -81,10 +80,8 @@ const TransformOrigin = ( { containerRef }: { containerRef: React.RefObject< HTM
 	const context = useBoundProp();
 
 	return context.bind === 'transform' ? (
-		<PropProvider { ...context }>
-			<StylesField bind={ 'transform-origin' } propDisplayName={ TRANSFORM_ORIGIN_LABEL }>
-				<TransformOriginControl anchorRef={ containerRef } />
-			</StylesField>{ ' ' }
-		</PropProvider>
+		<StylesField bind={ 'transform-origin' } propDisplayName={ TRANSFORM_ORIGIN_LABEL }>
+			<TransformOriginControl anchorRef={ containerRef } />
+		</StylesField>
 	) : null;
 };

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
+import { sizePropTypeUtil } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { AdjustmentsIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Divider, Grid, IconButton, Popover, Stack, usePopupState } from '@elementor/ui';
@@ -40,8 +41,6 @@ export const TransformOriginControl = ( { anchorRef }: { anchorRef: React.RefObj
 		anchorEl: anchorRef.current ?? undefined,
 	} );
 
-	const transformOriginContext = useBoundProp();
-
 	return (
 		<>
 			<IconButton
@@ -73,31 +72,40 @@ export const TransformOriginControl = ( { anchorRef }: { anchorRef: React.RefObj
 				<Stack direction="column" spacing={ 1.5 }>
 					<ControlFormLabel sx={ { pt: 1.5, pl: 1.5 } }>{ __( 'Transform', 'elementor' ) }</ControlFormLabel>
 					<Grid container spacing={ 1.5 } ref={ rowRef }>
-						<PropProvider { ...transformOriginContext }>
-							{ baseControlsFields.map( ( control ) => (
-								<PropKeyProvider bind={ control.bindValue } key={ control.bindValue }>
-									<Grid item xs={ 12 }>
-										<Grid container spacing={ 1 } alignItems="center">
-											<Grid item xs={ 6 }>
-												<ControlLabel>{ control.label }</ControlLabel>
-											</Grid>
-											<Grid item xs={ 6 } sx={ { pr: 3 } }>
-												<SizeControl
-													variant="length"
-													units={ control.units }
-													anchorRef={ rowRef }
-													disableCustom
-												/>
-											</Grid>
-										</Grid>
-									</Grid>
-								</PropKeyProvider>
-							) ) }
-						</PropProvider>
+						{ baseControlsFields.map( ( control ) => (
+							<ControlFields control={ control } rowRef={ rowRef } key={ control.bindValue } />
+						) ) }
 						<Divider sx={ { py: 3 } } />
 					</Grid>
 				</Stack>
 			</Popover>
 		</>
+	);
+};
+
+const ControlFields = ( {
+	control,
+	rowRef,
+}: {
+	control: ( typeof baseControlsFields )[ number ];
+	rowRef: React.RefObject< HTMLDivElement >;
+} ) => {
+	const context = useBoundProp( sizePropTypeUtil );
+
+	return (
+		<PropProvider { ...context }>
+			<PropKeyProvider bind={ control.bindValue }>
+				<Grid item xs={ 12 }>
+					<Grid container spacing={ 1 } alignItems="center">
+						<Grid item xs={ 6 }>
+							<ControlLabel>{ control.label }</ControlLabel>
+						</Grid>
+						<Grid item xs={ 6 } sx={ { pr: 3 } }>
+							<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } disableCustom />
+						</Grid>
+					</Grid>
+				</Grid>
+			</PropKeyProvider>
+		</PropProvider>
 	);
 };
