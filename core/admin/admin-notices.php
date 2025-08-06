@@ -479,12 +479,6 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		// $form_plugin_name = $this->get_installed_form_plugin_name();
-
-		// if ( ! $form_plugin_name ) {
-		// 	return false;
-		// }
-
 		$plugin_file_path = 'send/send-app.php';
 		$plugin_slug = 'send-app';
 
