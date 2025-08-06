@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { type PropTypeKey } from '@elementor/editor-props';
+import { type PropTypeKey, type PropValue } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
 
 import { VariableTypeProvider } from '../../../context/variable-type-context';
 import { usePermissions } from '../../../hooks/use-permissions';
 import { restoreVariable } from '../../../hooks/use-prop-variables';
 import { type Variable } from '../../../types';
+import { createUnlinkHandler } from '../../../utils/unlink-variable';
 import { getVariableType } from '../../../variables-registry/variable-type-registry';
 import { VariableRestore } from '../../variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
@@ -24,7 +25,7 @@ type Handlers = {
 };
 
 export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
-	const { fallbackPropTypeUtil, propTypeUtil } = getVariableType( propTypeKey );
+	const { propTypeUtil } = getVariableType( propTypeKey );
 
 	const { setValue } = useBoundProp();
 
@@ -45,9 +46,7 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 	const handlers: Handlers = {};
 
 	if ( userPermissions.canUnlink() ) {
-		handlers.onUnlink = () => {
-			setValue( fallbackPropTypeUtil.create( variable.value ) );
-		};
+		handlers.onUnlink = createUnlinkHandler( variable, propTypeKey, setValue );
 	}
 
 	if ( userPermissions.canRestore() ) {
