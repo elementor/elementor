@@ -101,32 +101,39 @@ class User {
 		$post = get_post( $post_id );
 
 		if ( ! $post ) {
+			error_log('--------------------------------post not found--------------------------------');
 			return false;
 		}
 
 		if ( 'trash' === get_post_status( $post->ID ) ) {
+			error_log('--------------------------------post is trash--------------------------------');
 			return false;
 		}
 
 		if ( ! self::is_current_user_can_edit_post_type( $post->post_type ) ) {
+			error_log('--------------------------------post type not editable--------------------------------');
 			return false;
 		}
 
 		$post_type_object = get_post_type_object( $post->post_type );
 
 		if ( ! isset( $post_type_object->cap->edit_post ) ) {
+			error_log('--------------------------------post type object not found--------------------------------');
 			return false;
 		}
 
 		$edit_cap = $post_type_object->cap->edit_post;
 		if ( ! current_user_can( $edit_cap, $post->ID ) ) {
+			error_log('--------------------------------user cannot edit post--------------------------------');
 			return false;
 		}
 
 		if ( intval( get_option( 'page_for_posts' ) ) === $post->ID ) {
+			error_log('--------------------------------post is page for posts--------------------------------');
 			return false;
 		}
 
+		error_log('--------------------------------user can edit post--------------------------------');
 		return true;
 	}
 
@@ -172,6 +179,7 @@ class User {
 		}
 
 		if ( ! Utils::is_post_type_support( $post_type ) ) {
+			error_log('--------------------------------! Utils::is_post_type_support--------------------------------');
 			return false;
 		}
 

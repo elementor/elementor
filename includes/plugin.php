@@ -797,6 +797,8 @@ class Plugin {
 		$cpt_support = get_option( 'elementor_cpt_support', self::ELEMENTOR_DEFAULT_POST_TYPES );
 
 		foreach ( $cpt_support as $cpt_slug ) {
+			error_log('--------------------------------add_post_type_support--------------------------------');
+			error_log($cpt_slug);
 			add_post_type_support( $cpt_slug, 'elementor' );
 		}
 	}

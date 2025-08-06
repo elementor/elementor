@@ -30,8 +30,6 @@ class Module extends BaseModule
 
 		// if ($is_feature_active) {
 			$this->register_document_type();
-			
-			add_filter('elementor/editor/localize_settings', [$this, 'localize_settings']);
 		// }
 	}
 
@@ -61,82 +59,23 @@ class Module extends BaseModule
 				Component::get_class_full_name()
 			);
 		});
-	}
-
-	// public function get_component_documents()
-	// {
-	// 	$args = [
-	// 		'post_type' => Component::get_type(),
-	// 		'post_status' => 'publish',
-	// 		// 'meta_key' => '_elementor_template_type',
-	// 		'meta_value' => 'component',
-	// 		'posts_per_page' => -1,
-	// 	];
-
-	// 	return get_posts($args);
-	// }
-
-	public function get_component_documents_mock(){
-		return [
-			[
-				'component_id' => 461,
-				'title' => 'Profile Card',
-				'elType' => 'widget',
-				'widgetType' => 'e-component',
-				'custom' => [
-						'component_id' => 461,
-				],
+		error_log('--------------------------------register_document_type--------------------------------');
+		register_post_type( Component::get_type(), [
+			'labels' => [
+				'name' => esc_html_x( 'Components', '', 'elementor' ),
 			],
-			[
-				'component_id' => 467,
-				'title' => 'Confirmation Modal',
-				'elType' => 'widget',
-				'widgetType' => 'e-component',
-				'custom' => [
-					'component_id' => 467,
-				],
-			],
-			[
-				'component_id' => 720,
-				'title' => 'Button',
-				'elType' => 'widget',
-				'widgetType' => 'e-component',
-				'custom' => [
-					'component_id' => 720,
-				],
-			],
-		];
-	}
-
-	public function localize_settings($settings)
-	{
-		// error_log('localize_settings: ' . print_r($this->get_component_documents_mock(), true));
-		$settings['components'] = $this->get_component_documents_mock();
-		$settings['doc_types'] = Plugin::$instance->documents->get_document_types();
-
-		return $settings;
-	}
-
-	public function create_component($component_name, $content) {
-		$document = Plugin::$instance->documents->create(
-			Component::get_type(),
-			[
-				'post_title' => $component_name,
-				'post_status' => 'publish',
-			]
-		);
-
-		if ( is_wp_error( $document ) ) {
-			return $document;
-		}
-
-		$document->save( [
-			'elements' => $content,
+			'public' => true,
+			'rewrite' => false,
+			'menu_icon' => 'dashicons-admin-page',
+			'show_ui' => true,
+			'show_in_menu' => true,
+			'show_in_nav_menus' => false,
+			'exclude_from_search' => true,
+			'capability_type' => 'post',
+			'hierarchical' => false,
+			'supports' => [ 'title', 'thumbnail', 'author', 'elementor', 'custom-fields' ],
+			'show_in_rest' => true,
 		] );
-
-		$template_id = $document->get_main_id();
-
-		return $template_id;
 	}
 
 	private function register_rest_api() {

@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Components;
 
-use Elementor\Modules\Components\Documents\Component;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
