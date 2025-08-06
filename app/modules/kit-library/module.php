@@ -73,6 +73,7 @@ class Module extends BaseModule {
 			] ),
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
+			'plan_type' => ConnectModule::ACCESS_TIER_FREE,
 			'app_url' => Plugin::$instance->app->get_base_url() . '#/' . $this->get_name(),
 		] );
 	}
