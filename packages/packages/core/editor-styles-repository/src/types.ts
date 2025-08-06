@@ -30,7 +30,9 @@ export type StylesProvider = {
 	getKey: () => string;
 	priority: number;
 	limit: number;
-	subscribe: ( callback: ( current: Record<string, StyleDefinition>, previous: Record<string, StyleDefinition> ) => void ) => () => void;
+	subscribe: (
+		callback: ( current?: Record< string, StyleDefinition >, previous?: Record< string, StyleDefinition > ) => void
+	) => () => void;
 	labels: {
 		singular: string | null;
 		plural: string | null;

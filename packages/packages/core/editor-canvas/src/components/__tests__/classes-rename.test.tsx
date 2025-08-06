@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { render } from '@testing-library/react';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { hash } from '@elementor/utils';
+import { render } from '@testing-library/react';
 
 import { ClassesRename } from '../classes-rename';
 
@@ -21,6 +21,7 @@ jest.mock( '@elementor/utils', () => ( {
 	hash: jest.fn(),
 } ) );
 
+// Helper function to create mock DOM structure
 const createMockDocument = () => {
 	const mockElement = {
 		classList: {
@@ -45,6 +46,16 @@ const createMockDocument = () => {
 	return { mockDocument, mockContainer, mockElement };
 };
 
+// Type definitions for test data
+interface StyleObject {
+	label?: string;
+	color?: string;
+}
+
+interface StylesMap {
+	[ key: string ]: StyleObject;
+}
+
 describe( '<ClassesRename />', () => {
 	let mockSubscribe: jest.MockedFunction< typeof stylesRepository.subscribe >;
 	let mockGetV1DocumentsManager: jest.MockedFunction< typeof getV1DocumentsManager >;
@@ -61,7 +72,7 @@ describe( '<ClassesRename />', () => {
 		const { container } = render( <ClassesRename /> );
 
 		// Assert.
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 	} );
 
 	it( 'should subscribe to stylesRepository on mount', () => {
@@ -74,26 +85,29 @@ describe( '<ClassesRename />', () => {
 	} );
 
 	describe( 'styles repository subscription', () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		let subscriptionCallback: ( previous: any, current: any ) => void;
 
-		beforeEach( () => {
+		const setupSubscription = () => {
 			render( <ClassesRename /> );
 			subscriptionCallback = mockSubscribe.mock.calls[ 0 ][ 0 ];
-		} );
+		};
 
 		it( 'should not rename classes when no classes have been changed', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash1' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'old-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'old-class', color: 'red' },
 			};
 
@@ -106,19 +120,21 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should rename classes when label changes', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
 					1: mockDocument,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'old-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'new-class', color: 'red' },
 			};
 
@@ -131,19 +147,21 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should not rename classes when only non-label properties change', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
 					1: mockDocument,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'same-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'same-class', color: 'blue' },
 			};
 
@@ -156,20 +174,22 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should handle multiple style changes', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
 					1: mockDocument,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'old-class-1', color: 'red' },
 				style2: { label: 'old-class-2', color: 'blue' },
 				style3: { label: 'unchanged-class', color: 'green' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'new-class-1', color: 'red' },
 				style2: { label: 'new-class-2', color: 'blue' },
 				style3: { label: 'unchanged-class', color: 'green' },
@@ -195,19 +215,21 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should not rename classes when new label is undefined', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
 					1: mockDocument,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'old-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: undefined, color: 'red' },
 			};
 
@@ -220,19 +242,21 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should handle new styles (not in previous)', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
 					1: mockDocument,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash1' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'existing-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'existing-class', color: 'red' },
 				style2: { label: 'new-class', color: 'blue' },
 			};
@@ -246,6 +270,7 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should handle multiple documents', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockDocument, mockElement } = createMockDocument();
 			const { mockDocument: mockDocument2, mockElement: mockElement2 } = createMockDocument();
 
@@ -254,14 +279,15 @@ describe( '<ClassesRename />', () => {
 					1: mockDocument,
 					2: mockDocument2,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'old-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'new-class', color: 'red' },
 			};
 
@@ -275,6 +301,7 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should handle documents without view or el', () => {
 			// Arrange.
+			setupSubscription();
 			const incompleteDocument = {
 				container: {
 					view: null,
@@ -283,16 +310,18 @@ describe( '<ClassesRename />', () => {
 
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
-					1: incompleteDocument,
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					1: incompleteDocument as any,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'old-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'new-class', color: 'red' },
 			};
 
@@ -304,19 +333,21 @@ describe( '<ClassesRename />', () => {
 
 		it( 'should use correct CSS selector format', () => {
 			// Arrange.
+			setupSubscription();
 			const { mockDocument, mockContainer } = createMockDocument();
 			mockGetV1DocumentsManager.mockReturnValue( {
 				documents: {
 					1: mockDocument,
 				},
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			} as any );
 			mockHash.mockReturnValueOnce( 'hash1' ).mockReturnValueOnce( 'hash2' );
 
-			const previousStyles = {
+			const previousStyles: StylesMap = {
 				style1: { label: 'test-class', color: 'red' },
 			};
 
-			const currentStyles = {
+			const currentStyles: StylesMap = {
 				style1: { label: 'new-test-class', color: 'red' },
 			};
 
@@ -324,7 +355,8 @@ describe( '<ClassesRename />', () => {
 			subscriptionCallback( previousStyles, currentStyles );
 
 			// Assert.
+			// eslint-disable-next-line testing-library/no-node-access
 			expect( mockContainer.view.el.querySelectorAll ).toHaveBeenCalledWith( '.elementor .test-class' );
 		} );
 	} );
-} ); 
+} );

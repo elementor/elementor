@@ -1,11 +1,14 @@
-import { StyleDefinition } from '@elementor/editor-styles';
+import { type StyleDefinition } from '@elementor/editor-styles';
+
 import { type StylesProvider, type UserCapabilities } from '../types';
 
 export type CreateStylesProviderOptions = {
 	key: string | ( () => string );
 	priority?: number;
 	limit?: number;
-	subscribe?: ( callback: ( current: Record<string, StyleDefinition>, previous: Record<string, StyleDefinition> ) => void ) => () => void;
+	subscribe?: (
+		callback: ( current?: Record< string, StyleDefinition >, previous?: Record< string, StyleDefinition > ) => void
+	) => () => void;
 	labels?: {
 		singular: string;
 		plural: string;
