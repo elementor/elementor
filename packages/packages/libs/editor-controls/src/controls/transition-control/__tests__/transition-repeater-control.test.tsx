@@ -26,7 +26,7 @@ describe( 'TransitionRepeaterControl', () => {
 		const props = { setValue, value, bind: 'transition', propType };
 
 		// Act
-		renderControl( <TransitionRepeaterControl />, props );
+		renderControl( <TransitionRepeaterControl recentlyUsedList={ [] } />, props );
 
 		// Assert
 		expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe( 'TransitionRepeaterControl', () => {
 		const props = { setValue, value, bind: 'transition', propType };
 
 		// Act
-		renderControl( <TransitionRepeaterControl />, props );
+		renderControl( <TransitionRepeaterControl recentlyUsedList={ [] } />, props );
 		const addButton = screen.getByRole( 'button' );
 		fireEvent.click( addButton );
 
@@ -74,7 +74,7 @@ describe( 'TransitionRepeaterControl', () => {
 		const props = { setValue, value, bind: 'transition', propType };
 
 		// Act
-		renderControl( <TransitionRepeaterControl />, props );
+		renderControl( <TransitionRepeaterControl recentlyUsedList={ [] } />, props );
 
 		// Assert
 		const addButton = screen.getByLabelText( 'Add item' );
