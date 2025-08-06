@@ -11,7 +11,7 @@ import { type NormalizedVariable } from '../types';
 type ValueFieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
-	onValidationChange: ( value: string ) => void;
+        onValidationChange?: ( value: string ) => void;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
