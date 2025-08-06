@@ -8,12 +8,34 @@ import { KitCustomizationDialog } from './kit-customization-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
+	const isImport = data.hasOwnProperty( 'uploadedData' );
+
 	const initialState = data.includes.includes( 'settings' );
 	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
 			return data.customization.settings;
+		}
+
+		if ( isImport ) {
+			const {
+				theme,
+				globalColors,
+				globalFonts,
+				themeStyleSettings,
+				generalSettings,
+				experiments,
+			} = data?.uploadedData?.manifest?.[ 'site-settings' ] || {};
+
+			return {
+				theme,
+				globalColors,
+				globalFonts,
+				themeStyleSettings,
+				generalSettings,
+				experiments,
+			};
 		}
 
 		return {
@@ -31,17 +53,37 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			if ( data.customization.settings ) {
 				setSettings( data.customization.settings );
 			} else {
-				setSettings( {
-					theme: initialState,
-					globalColors: initialState,
-					globalFonts: initialState,
-					themeStyleSettings: initialState,
-					generalSettings: initialState,
-					experiments: initialState,
-				} );
+				const {
+					theme,
+					globalColors,
+					globalFonts,
+					themeStyleSettings,
+					generalSettings,
+					experiments,
+				} = data?.uploadedData?.manifest?.[ 'site-settings' ] || {};
+
+				const state = isImport
+					? {
+						theme,
+						globalColors,
+						globalFonts,
+						themeStyleSettings,
+						generalSettings,
+						experiments,
+					}
+					: {
+						theme: initialState,
+						globalColors: initialState,
+						globalFonts: initialState,
+						themeStyleSettings: initialState,
+						generalSettings: initialState,
+						experiments: initialState,
+					};
+
+				setSettings( state );
 			}
 		}
-	}, [ open, data.customization.settings, initialState ] );
+	}, [ open, data.customization.settings, initialState, isImport, data?.uploadedData ] );
 
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
@@ -72,6 +114,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
 					settingKey="theme"
 					onSettingChange={ handleToggleChange }
+					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
 				/>
 
 				<SettingSection
@@ -84,18 +127,21 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 							settingKey="globalColors"
 							onSettingChange={ handleToggleChange }
 							checked={ settings.globalColors }
+							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.globalColors }
 						/>
 						<SubSetting
 							label={ __( 'Global fonts', 'elementor' ) }
 							settingKey="globalFonts"
 							onSettingChange={ handleToggleChange }
 							checked={ settings.globalFonts }
+							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.globalFonts }
 						/>
 						<SubSetting
 							label={ __( 'Theme style settings', 'elementor' ) }
 							settingKey="themeStyleSettings"
 							onSettingChange={ handleToggleChange }
 							checked={ settings.themeStyleSettings }
+							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.themeStyleSettings }
 						/>
 					</Stack>
 				</SettingSection>
@@ -106,6 +152,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					settingKey="generalSettings"
 					onSettingChange={ handleToggleChange }
 					checked={ settings.generalSettings }
+					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.generalSettings }
 				/>
 
 				<SettingSection
@@ -114,6 +161,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					settingKey="experiments"
 					onSettingChange={ handleToggleChange }
 					checked={ settings.experiments }
+					disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.experiments }
 				/>
 			</Stack>
 		</KitCustomizationDialog>
