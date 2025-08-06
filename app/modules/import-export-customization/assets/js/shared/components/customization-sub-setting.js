@@ -1,7 +1,13 @@
 import { Box, Typography, Switch } from '@elementor/ui';
 import PropTypes from 'prop-types';
 
-export const SubSetting = ( { label, settingKey, onSettingChange, checked = false } ) => (
+export const SubSetting = ( {
+	label,
+	settingKey,
+	onSettingChange,
+	checked = false,
+	disabled = false,
+} ) => (
 	<Box sx={ {
 		display: 'flex',
 		justifyContent: 'space-between',
@@ -14,6 +20,7 @@ export const SubSetting = ( { label, settingKey, onSettingChange, checked = fals
 		<Switch
 			data-testid={ `${ settingKey }-switch` }
 			checked={ checked }
+			disabled={ disabled }
 			onChange={ ( e, isChecked ) => onSettingChange && onSettingChange( settingKey, isChecked ) }
 			color="info"
 			size="medium"
@@ -23,6 +30,7 @@ export const SubSetting = ( { label, settingKey, onSettingChange, checked = fals
 
 SubSetting.propTypes = {
 	checked: PropTypes.bool,
+	disabled: PropTypes.bool,
 	label: PropTypes.string.isRequired,
 	settingKey: PropTypes.string.isRequired,
 	onSettingChange: PropTypes.func,
