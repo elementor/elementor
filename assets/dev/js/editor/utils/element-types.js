@@ -11,7 +11,7 @@ const ELEMENT_TYPES = {
  * @return {string[]} Array of element type strings.
  */
 const getAllElementTypes = () => {
-	return Object.values( ELEMENT_TYPES );
+	return Object.keys( elementor.getConfig().elements );
 };
 
 module.exports = {

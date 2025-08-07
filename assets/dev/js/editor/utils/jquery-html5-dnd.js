@@ -263,7 +263,6 @@
 				isFlexRowContainer: isFlexContainer && isRowDirection,
 				isBlockContainer: [ 'block', 'inline-block' ].includes( containerDisplayStyle ),
 				hasLogicalWrapper,
-				isAtomicContainer: [ 'e-div-block', 'e-flexbox' ].includes( currentElement.dataset.element_type ),
 			};
 		};
 
@@ -349,9 +348,12 @@
 		};
 
 		const insertDefaultPlaceholder = function() {
-			const { placeholderTarget, hasLogicalWrapper, isAtomicContainer } = placeholderContext;
+			const logicalClass = 'e-logical-dnd';
 
-			if ( hasLogicalWrapper || isAtomicContainer ) {
+			const { placeholderTarget, hasLogicalWrapper } = placeholderContext;
+			const hasLogicalClass = currentElement.classList.contains( logicalClass );
+
+			if ( hasLogicalWrapper || hasLogicalClass ) {
 				addLogicalAttributesToPlaceholder();
 			}
 
