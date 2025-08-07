@@ -278,7 +278,8 @@ class Widget_Icon_Box extends Widget_Base {
 						'icon' => 'eicon-v-align-bottom',
 					],
 				],
-				'default' => 'top',
+				'default' => 'start',
+				'mobile_default' => 'center',
 				'selectors_dictionary' => [
 					'top' => 'start',
 					'middle' => 'center',
