@@ -1,22 +1,12 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { getElementLabel, type V1Element } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { StarFilledIcon } from '@elementor/icons';
-import {
-	Alert,
-	Button,
-	FormLabel,
-	Grid,
-	Popover,
-	Snackbar,
-	Stack,
-	TextField,
-	Typography,
-} from '@elementor/ui';
+import { StarIcon } from '@elementor/icons';
+import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ComponentCreateResponse } from '../api';
-import { useEffect, useRef, useState } from 'react';
-import { getElementLabel, V1Element } from '@elementor/editor-elements';
+import { type ComponentCreateResponse } from '../api';
 import { saveElementAsComponent } from '../utils/save-element-as-component';
 
 type SaveAsComponentEventData = {
@@ -38,17 +28,17 @@ export function CreateComponentForm() {
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	const [ componentName, setComponentName ] = useState( '' );
-	const [ anchorPosition, setAnchorPosition ] = useState<{ top: number; left: number } | null>( null );
+	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } | null >( null );
 
-	const [ resultNotification, setResultNotification ] = useState<ResultNotification | null>( null );
+	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
-	const element = useRef<V1Element | null>( null );
+	const element = useRef< V1Element | null >( null );
 
 	useEffect( () => {
-		window.addEventListener(OPEN_SAVE_AS_COMPONENT_FORM_EVENT,openPopup as EventListener);
+		window.addEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
 
 		return () => {
-			window.removeEventListener(OPEN_SAVE_AS_COMPONENT_FORM_EVENT,openPopup as EventListener);
+			window.removeEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
 		};
 	}, [] );
 
@@ -85,8 +75,9 @@ export function CreateComponentForm() {
 
 				resetAndClosePopup();
 			},
-			onError: ( error: any ) => {
-				const errorMessage = error instanceof Error ? error.message : 'Failed to save component. Please try again.';
+			onError: ( error: unknown ) => {
+				const errorMessage =
+					error instanceof Error ? error.message : 'Failed to save component. Please try again.';
 				setResultNotification( {
 					show: true,
 					message: errorMessage,
@@ -107,8 +98,14 @@ export function CreateComponentForm() {
 				anchorPosition={ anchorPosition }
 			>
 				<Stack alignItems="start" width="268px">
-					<Stack direction="row" alignItems="center" py={ 1 } px={ 1.5 } sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }>
-						<StarFilledIcon fontSize={ FONT_SIZE } />
+					<Stack
+						direction="row"
+						alignItems="center"
+						py={ 1 }
+						px={ 1.5 }
+						sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }
+					>
+						<StarIcon fontSize={ FONT_SIZE } />
 						<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500' } }>
 							{ __( 'Save as a component', 'elementor' ) }
 						</Typography>
@@ -149,13 +146,17 @@ export function CreateComponentForm() {
 							color="primary"
 							size="small"
 						>
-							{ isLoading ? __( 'Creating...', 'elementor' ) : __( 'Create', 'elementor' ) }
+							{ isLoading ? __( 'Creating…', 'elementor' ) : __( 'Create', 'elementor' ) }
 						</Button>
 					</Stack>
 				</Stack>
 			</Popover>
 			<Snackbar open={ resultNotification?.show } onClose={ () => setResultNotification( null ) }>
-				<Alert onClose={ () => setResultNotification( null ) } severity={ resultNotification?.type } sx={ { width: '100%' } }>
+				<Alert
+					onClose={ () => setResultNotification( null ) }
+					severity={ resultNotification?.type }
+					sx={ { width: '100%' } }
+				>
 					{ resultNotification?.message }
 				</Alert>
 			</Snackbar>

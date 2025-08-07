@@ -1,34 +1,34 @@
-import { replaceElement, V1Element, V1ElementModelProps } from '@elementor/editor-elements';
-import { apiClient, ComponentCreateResponse } from '../api';
+import { replaceElement, type V1Element } from '@elementor/editor-elements';
 
-export const saveElementAsComponent = async ( 
-    element: V1Element, 
-    componentName: string,
-    options?: {
-        onSuccess?: ( result: ComponentCreateResponse ) => void,
-        onError?: ( error: any ) => void
-    }
+import { apiClient, type ComponentCreateResponse } from '../api';
+
+export const saveElementAsComponent = async (
+	element: V1Element,
+	componentName: string,
+	options?: {
+		onSuccess?: ( result: ComponentCreateResponse ) => void;
+		onError?: ( error: unknown ) => void;
+	}
 ) => {
 	try {
-        const result = await apiClient.create( {
-            name: componentName.trim(),
-            content:  [ element.model.toJSON( { remove: [ 'default' ] } ) ]
-        } );
+		const result = await apiClient.create( {
+			name: componentName.trim(),
+			content: [ element.model.toJSON( { remove: [ 'default' ] } ) ],
+		} );
 
-        replaceElement( element, {
-            elType: 'widget',
-            widgetType: 'e-component',
-            settings: {
-                component_id: {
-                    $$type: 'number',
-                    value: result.data.component_id,
-                },
-            },
-        } );
+		replaceElement( element, {
+			elType: 'widget',
+			widgetType: 'e-component',
+			settings: {
+				component_id: {
+					$$type: 'number',
+					value: result.data.component_id,
+				},
+			},
+		} );
 
-        options?.onSuccess?.( result.data );
-
-    } catch ( error ) {
-        options?.onError?.( error );
-    }
+		options?.onSuccess?.( result.data );
+	} catch ( error ) {
+		options?.onError?.( error );
+	}
 };

@@ -21,7 +21,5 @@ export const httpService = () => {
 		} );
 	}
 
-	console.log(env.headers);
-
 	return instance;
 };
