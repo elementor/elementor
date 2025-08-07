@@ -319,6 +319,7 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'text-align: {{VALUE}};',
+					'{{WRAPPER}} .elementor-icon-box-icon' => 'justify-content: {{VALUE}};',
 				],
 				'separator' => 'after',
 			]
