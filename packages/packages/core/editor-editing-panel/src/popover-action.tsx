@@ -27,7 +27,6 @@ export function PopoverAction( { title, visible = true, icon: Icon, content: Pop
 				</IconButton>
 			</Tooltip>
 			<Popover
-				disablePortal
 				disableScrollLock
 				anchorOrigin={ {
 					vertical: 'bottom',
