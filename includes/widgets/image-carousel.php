@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
-use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
  * Elementor image carousel widget.

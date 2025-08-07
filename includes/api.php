@@ -18,11 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Api {
 
 	/**
-	 * Elementor library option key.
-	 */
-	const LIBRARY_OPTION_KEY = 'elementor_remote_info_library';
-
-	/**
 	 * Elementor feed option key.
 	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
@@ -37,9 +32,9 @@ class Api {
 	 * @access public
 	 * @static
 	 *
-	 * @var string API info URL.
+	 * @var string API info URL. (v2 excludes the Library info)
 	 */
-	public static $api_info_url = 'https://my.elementor.com/api/v1/info/';
+	public static $api_info_url = 'https://my.elementor.com/api/v2/info/';
 
 	/**
 	 * API feedback URL.
@@ -53,12 +48,14 @@ class Api {
 	 */
 	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
+	private static $api_library_info_url = 'https://my.elementor.com/api/v1/templates/info/';
+
 	private static function get_info_data( $force_update = false, $additinal_status = false ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
 
-		if ( $force_update || false === $info_data ) {
+		if ( $force_update || empty( $info_data ) ) {
 			$timeout = ( $force_update ) ? 25 : 8;
 
 			$body_request = [
@@ -98,8 +95,6 @@ class Api {
 			}
 
 			if ( isset( $info_data['library'] ) ) {
-				update_option( self::LIBRARY_OPTION_KEY, $info_data['library'], 'no' );
-
 				unset( $info_data['library'] );
 			}
 
@@ -191,18 +186,40 @@ class Api {
 	 * @param bool $force_update Optional. Whether to force the data update or
 	 *                                     not. Default is false.
 	 *
-	 * @return array The templates data.
+	 * @return array The templates' data.
 	 */
-	public static function get_library_data( $force_update = false ) {
-		self::get_info_data( $force_update );
+	public static function get_library_data( bool $force_update = false ): array {
+		/**
+		 * Filters the body of the request to get library templates data.
+		 *
+		 * @param-out array $body_request The body of the request.
+		 */
+		$body_request = apply_filters( 'elementor/remote/library/templates/request/body', [] );
 
-		$library_data = get_option( self::LIBRARY_OPTION_KEY );
+		$site_key = self::get_site_key();
+		if ( ! empty( $site_key ) ) {
+			$body_request['site_key'] = $site_key;
+		}
 
-		if ( empty( $library_data ) ) {
+		/**
+		 * Filters the URL to get library templates data.
+		 *
+		 * @param-out string $url The URL to get library templates data.
+		 */
+		$url = apply_filters( 'elementor/remote/library/templates/request/url', self::$api_library_info_url );
+
+		$response = wp_remote_get( $url, [
+			'timeout' => 25,
+			'body' => $body_request,
+		] );
+
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 
-		return $library_data;
+		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		return empty( $library_data ) ? [] : $library_data;
 	}
 
 	/**

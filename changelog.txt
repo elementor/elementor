@@ -1,5 +1,49 @@
 == Changelog ==
 
+= 3.31.1 - 2025-08-06 =
+
+* Tweak: Updated `form-data` package version
+* Fix: Custom order field disappeared when set to 0 or cleared - Editor V4
+
+= 3.31.0 - 2025-08-05 =
+
+* New: Introducing Variables - define reusable color and font values to ensure consistent and scalable design across your site - Editor V4
+* New: Introducing Inherited Values - style properties now indicate when values are inherited from Classes or Base styles - Editor V4
+* New: Introducing Filters - add visual effects like blur, brightness, and contrast with full design control - Editor V4
+* New: Introducing Backdrop Filters - apply visual effects behind elements for layered design - Editor V4
+* New: Introducing Divider - a modular layout element for visual separation - Editor V4
+* New: Class Usage Overview – gain insights into class usage directly from the Class Manager - Editor V4
+* New: Class Locator - locate all elements using a specific class across your design - Editor V4
+* Tweak: Removed background videos from the accessibility tree to improve screen reader behavior ([#23880](https://github.com/elementor/elementor/issues/23880))
+* Tweak: Search by Class name - quickly locate existing classes in the Class Manager - Editor V4
+* Tweak: Improved style detection across breakpoints when using Classes - Editor V4
+* Tweak: Added Custom option to Object Position in Size section - Editor V4
+* Tweak: Added ID control in YouTube element - Editor V4
+* Tweak: Added Opacity control - set element transparency - Editor V4
+* Tweak: Display Base Style indication - clearly shows when Base styles are applied to an element - Editor V4
+* Tweak: Improved drag and drop behavior into Flexbox and Div Blocks inside the Canvas - Editor V4
+* Tweak: Replaced select control with a visual choice control in Shape Dividers
+* Tweak: Replaced SASS mixins and functions with native CSS logical properties
+* Tweak: Added support for `lh` and `rlh` CSS units in Typography Line Height control
+* Tweak: Added responsive capabilities to Custom Mask
+* Tweak: Activated "Element Caching" experiment for all sites
+* Tweak: Updated Icon List widget to use CSS logical properties
+* Tweak: Updated Star Rating widget to use CSS logical properties
+* Tweak: Updated Alert widget to use CSS logical properties
+* Tweak: Updated Accordion widget to use CSS logical properties
+* Tweak: Updated Toggle widget to use CSS logical properties
+* Tweak: Updated Icon Box widget to use CSS logical properties
+* Tweak: Updated Menu Anchor widget to use CSS logical properties
+* Tweak: Updated Tabs widget to use CSS logical properties
+* Tweak: Updated Testimonial widget to use CSS logical properties
+* Tweak: Updated Text Editor widget to use CSS logical properties
+* Tweak: Updated Paragraph Spacing in Site Settings Typography to use CSS logical properties
+* Tweak: Optimized CSS output for Masks
+
+= 3.30.4 - 2025-07-30 =
+
+* Tweak: Improved redirection functionality during the website template import process
+
 = 3.30.3 - 2025-07-22 =
 
 * Tweak: Improved performance of the first-time Editor load
