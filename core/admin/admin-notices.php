@@ -872,7 +872,7 @@ class Admin_Notices extends Module {
 		set_transient( sanitize_key( $_GET['plg_campaign_name'] ), $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
-	private static function add_plg_campaign_data( $url, $campaign_data ) {
+	public static function add_plg_campaign_data( $url, $campaign_data ) {
 
 		foreach ( [ 'name', 'campaign' ] as $key ) {
 			if ( empty( $campaign_data[ $key ] ) ) {
