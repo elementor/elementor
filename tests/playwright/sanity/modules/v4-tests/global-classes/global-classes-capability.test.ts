@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
+import { parallelTest as test } from '../../../../parallelTest';
+import WpAdminPage from '../../../../pages/wp-admin-page';
 
 // Extend Window interface to include Elementor globals
 declare global {
@@ -61,7 +61,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 			const adminWpAdmin = new WpAdminPage( adminPage, testInfo, apiRequests );
 
 			// Login as admin and set experiments
-			await adminWpAdmin.login();
+			await adminWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await adminWpAdmin.setExperiments( {
 				e_atomic_elements: 'active',
 				e_classes: 'active', // Enable global classes experiment
@@ -149,7 +149,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 			const cleanupPage = await cleanupContext.newPage();
 			const cleanupWpAdmin = new WpAdminPage( cleanupPage, testInfo, apiRequests );
 
-			await cleanupWpAdmin.login();
+			await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await cleanupWpAdmin.resetExperiments();
 			await cleanupContext.close();
 		} );
@@ -163,7 +163,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 			const adminWpAdmin = new WpAdminPage( adminPage, testInfo, apiRequests );
 
 			// Login as admin and set experiments
-			await adminWpAdmin.login();
+			await adminWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await adminWpAdmin.setExperiments( {
 				e_atomic_elements: 'active',
 				e_classes: 'active',
@@ -222,7 +222,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 			const cleanupPage = await cleanupContext.newPage();
 			const cleanupWpAdmin = new WpAdminPage( cleanupPage, testInfo, apiRequests );
 
-			await cleanupWpAdmin.login();
+			await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await cleanupWpAdmin.resetExperiments();
 			await cleanupContext.close();
 		} );
