@@ -9,7 +9,7 @@
 	"author": "Elementor Team",
 	"homepage": "https://elementor.com/",
 	"scripts": {
-                "release-beta": "chmod +x ./scripts/prepare-beta-release.sh && ./scripts/prepare-beta-release.sh",
+    "release-beta": "chmod +x ./scripts/prepare-beta-release.sh && ./scripts/prepare-beta-release.sh",
 		"start": "npm run composer:no-dev && npm run build:packages && npm run styles && npm run scripts",
 		"watch": "npm run build:tools && npm run composer:no-dev && npx -y concurrently \"npm run styles:watch\" \"npm run scripts:watch\" \"cd packages && npm run dev\"",
 		"build": "npm run build:packages && npm run composer:no-dev && grunt build",
@@ -161,6 +161,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"date-fns": "^3.6.0",
-		"scheduler": "^0.20.0"
+		"scheduler": "^0.20.0",
+    "form-data": "4.0.4"
 	}
 }
