@@ -6,16 +6,16 @@ import { __ } from '@wordpress/i18n';
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
 import { ControlFormLabel } from '../../../components/control-form-label';
 import { ControlLabel } from '../../../components/control-label';
+import { lengthUnits } from '../../../utils/size-control';
 import { SizeControl } from '../../size-control';
 
-const PERSPECTIVE_UNITS = [ 'px', 'em', 'rem', 'vw', 'vh' ] as ( 'px' | 'em' | 'rem' | 'vw' | 'vh' )[];
 const ORIGIN_UNITS = [ 'px', '%', 'em', 'rem' ] as ( 'px' | '%' | 'em' | 'rem' )[];
 
 const CHILDREN_PERSPECTIVE_FIELDS = [
 	{
 		label: __( 'Perspective', 'elementor' ),
 		bindValue: 'perspective',
-		units: PERSPECTIVE_UNITS,
+		units: lengthUnits,
 	},
 	{
 		label: __( 'Origin X', 'elementor' ),
@@ -63,7 +63,12 @@ const ControlFields = ( {
 							<ControlLabel>{ control.label }</ControlLabel>
 						</Grid>
 						<Grid item xs={ 6 } sx={ { pr: 3 } }>
-							<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } disableCustom />
+							<SizeControl
+								variant="length"
+								units={ [ ...control.units ] }
+								anchorRef={ rowRef }
+								disableCustom
+							/>
 						</Grid>
 					</Grid>
 				</Grid>
