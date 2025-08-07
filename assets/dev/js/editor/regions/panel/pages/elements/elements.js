@@ -4,6 +4,7 @@ var PanelElementsCategoriesCollection = require( './collections/categories' ),
 	PanelElementsElementsView = elementor.modules.layouts.panel.pages.elements.views.Elements,
 	PanelElementsSearchView = require( './views/search' ),
 	PanelElementsGlobalView = require( './views/global' ),
+	ElementModel = require( './models/element' ),
 	PanelElementsLayoutView;
 
 PanelElementsLayoutView = Marionette.LayoutView.extend( {
@@ -27,12 +28,20 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 
 	categoriesCollection: null,
 
+	globalCategoriesCollection: null,
+
+	isComponentsActive: false,
+
 	initialize() {
 		this.listenTo( elementor.channels.panelElements, 'element:selected', this.destroy );
 
 		this.initElementsCollection();
 
 		this.initCategoriesCollection();
+
+		this.initGlobalCategoriesCollection();
+
+		this.isComponentsActive = true; // elementor.experiments.isActive( 'global-categories' );
 
 		this.initRegionViews();
 	},
@@ -64,6 +73,14 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			elements: this.elements,
 			search: this.search,
 		} );
+
+		if ( this.isComponentsActive ) {
+			this.regionViews.global = {
+				region: this.elements,
+				view: PanelElementsCategoriesView,
+				options: { collection: this.globalCategoriesCollection },
+			};
+		}
 	},
 
 	initElementsCollection() {
@@ -171,6 +188,29 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		this.categoriesCollection = categoriesCollection;
+	},
+
+	initGlobalCategoriesCollection() {
+		var globalCategoriesCollection = new PanelElementsCategoriesCollection();
+
+		const components = elementor.config.components.map( ( component ) => {
+			return new ElementModel( {
+				name: component.name,
+				title: component.title,
+				icon: 'eicon-library-grid',
+			} );
+		} );
+
+		globalCategoriesCollection.add( {
+			name: 'components',
+			title: 'Components',
+			icon: 'eicon-global',
+			hideIfEmpty: true,
+			defaultActive: true,
+			items: components,
+		} );
+
+		this.globalCategoriesCollection = elementor.hooks.applyFilters( 'panel/elements/globalCategoriesCollection', globalCategoriesCollection );
 	},
 
 	shouldAddWidget( widget ) {
