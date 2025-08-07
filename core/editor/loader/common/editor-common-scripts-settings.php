@@ -146,7 +146,6 @@ class Editor_Common_Scripts_Settings {
 			);
 		}
 
-
 		static::bc_move_document_filters();
 
 		/**
