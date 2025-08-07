@@ -10,9 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Transform_Origin_Transformer extends Transformer_Base {
-	public function transform( $value, Props_Resolver_Context $context ): string {
+	private function get_val( $val ) {
 		$default_origin = '0px';
+		return $val ?? $default_origin;
+	}
 
-		return sprintf( '%s %s %s', $value['x'] ?? $default_origin, $value['y'] ?? $default_origin, $value['z'] ?? $default_origin );
+	public function transform( $value, Props_Resolver_Context $context ): string {
+		return sprintf( '%s %s %s', $this->get_val( $value['x'] ), $this->get_val( $value['y'] ), $this->get_val( $value['z'] ) );
 	}
 }

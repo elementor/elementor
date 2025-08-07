@@ -31,8 +31,6 @@ export const EffectsSection = () => {
 	const { element } = useSelectedElement();
 
 	const transformBasePopoverAnchorRef = useRef< HTMLDivElement | null >( null );
-	const setTransformBasePopoverAnchorRef = ( ref?: HTMLDivElement ) =>
-		( transformBasePopoverAnchorRef.current = ref ?? null );
 
 	injectIntoRepeaterHeaderActions( {
 		id: 'transform-origin-control-trigger',
@@ -49,7 +47,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				<TransformRepeaterControl setTransformBasePopoverAnchorRef={ setTransformBasePopoverAnchorRef } />
+				<TransformRepeaterControl />
 			</StylesField>
 			{ shouldShowTransition && (
 				<>

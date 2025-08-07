@@ -6,8 +6,11 @@ type TransformOrigin = {
 	z: string;
 };
 
-const defaultOrigin = '0px';
+function getVal( val: string ) {
+	const EMPTY_VALUE = '0px';
+	return `${ val ?? EMPTY_VALUE }`;
+}
 
 export const transformOriginTransformer = createTransformer( ( value: TransformOrigin ) => {
-	return `${ value.x ?? defaultOrigin } ${ value.y ?? defaultOrigin } ${ value.z ?? defaultOrigin }`;
+	return `${ getVal( value.x ) } ${ getVal( value.y ) } ${ getVal( value.z ) }`;
 } );
