@@ -63,8 +63,16 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 			} );
 	};
 
-	const hasEmptyValues = () => {
-		return ! value.trim() || ! label.trim();
+	const hasEmptyFields = () => {
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const noValueChanged = () => {
@@ -75,7 +83,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 		return !! errorMessage;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
+	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
 	return (
 		<PopoverContentRefContextProvider>
