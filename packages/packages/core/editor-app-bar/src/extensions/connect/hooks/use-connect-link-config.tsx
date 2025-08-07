@@ -1,6 +1,6 @@
+import { useCallback } from 'react';
 import { UserIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
-import { useCallback } from 'react';
 
 import { type ExtendedWindow } from '../../../types';
 
@@ -16,28 +16,32 @@ export default function useConnectLinkConfig() {
 		target = '_self';
 	}
 
-	const handleConnectClick = useCallback( ( event: React.MouseEvent<HTMLElement> ) => {
-		event.preventDefault();
+	const handleConnectClick = useCallback(
+		( event: React.MouseEvent< HTMLElement > ) => {
+			event.preventDefault();
 
-		if ( extendedWindow.jQuery && extendedWindow.jQuery.fn?.elementorConnect ) {
-			const connectUrl = extendedWindow?.elementor?.config.user.top_bar.connect_url;
-			const $tempButton = ( extendedWindow as any ).jQuery( '<a>' );
-			$tempButton
-				?.attr( 'href', connectUrl )
-				?.attr( 'target', '_blank' )
-				?.attr( 'rel', 'opener' )
-				?.css( 'display', 'none' )
-				?.appendTo( 'body' );
+			if ( extendedWindow.jQuery && extendedWindow.jQuery.fn?.elementorConnect ) {
+				const connectUrl = extendedWindow?.elementor?.config.user.top_bar.connect_url;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const $tempButton = ( extendedWindow as any ).jQuery( '<a>' );
+				$tempButton
+					?.attr( 'href', connectUrl )
+					?.attr( 'target', '_blank' )
+					?.attr( 'rel', 'opener' )
+					?.css( 'display', 'none' )
+					?.appendTo( 'body' );
 
-			$tempButton.elementorConnect();
+				$tempButton.elementorConnect();
 
-			$tempButton[0].click();
+				$tempButton[ 0 ].click();
 
-			setTimeout( () => {
-				$tempButton.remove();
-			}, 1000 );
-		}
-	}, [ extendedWindow ] );
+				setTimeout( () => {
+					$tempButton.remove();
+				}, 1000 );
+			}
+		},
+		[ extendedWindow ]
+	);
 
 	return isUserConnected
 		? {

@@ -38,7 +38,7 @@ export type ExtendedWindow = Window & {
 	};
 	jQuery: {
 		fn?: {
-			elementorConnect?: ( selector: string ) => any;
+			elementorConnect?: ( selector: string ) => never;
 		};
 	};
 };
