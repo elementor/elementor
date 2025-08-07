@@ -80,7 +80,15 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	};
 
 	const hasEmptyValue = () => {
-		return '' === value.trim() || '' === label.trim();
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const hasErrors = () => {
