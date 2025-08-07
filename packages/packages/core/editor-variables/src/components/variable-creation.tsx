@@ -79,15 +79,23 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 		} );
 	};
 
-	const hasEmptyValue = () => {
-		return '' === value.trim() || '' === label.trim();
+	const hasEmptyFields = () => {
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const hasErrors = () => {
 		return !! errorMessage;
 	};
 
-	const isSubmitDisabled = hasEmptyValue() || hasErrors();
+	const isSubmitDisabled = hasEmptyFields() || hasErrors();
 
 	return (
 		<PopoverBody height="auto">
