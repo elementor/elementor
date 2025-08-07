@@ -1,48 +1,36 @@
 import * as React from 'react';
-import { createContext, useMemo, useState } from 'react';
-import { type PropTypeUtil, type PropValue } from '@elementor/editor-props';
-import { createLocation } from '@elementor/locations';
+import { createContext, useState } from 'react';
+import { type PropTypeUtil } from '@elementor/editor-props';
+import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
-import { type Item } from '../types';
+import { type Item, type RepeatablePropValue } from '../types';
 
-type Slot< T extends object = object > =
-	| ReturnType< typeof createLocation< T > >[ 'Slot' ]
-	| ReturnType< typeof createLocation< T > >[ 'Slot' ];
+type SetterFn< T > = ( prevItems: T ) => T;
 
-type SetterFn< T extends PropValue > = ( prevItems: T[] ) => T[];
+type AddItem< T > = { item?: T; index?: number };
 
-type RepeaterContextType< T extends PropValue > = {
+type ItemWithKey< T > = { key: number; item: T };
+
+type RepeaterContextType< T extends RepeatablePropValue > = {
 	isOpen: boolean;
-	openItem: number;
-	setOpenItem: ( key: number ) => void;
-	items: Item< T >[];
-	setItems: ( items: T[] | SetterFn< T > ) => void;
+	openItemIndex: number;
+	setOpenItemIndex: ( key: number ) => void;
+	items: ItemWithKey< Item< T > >[];
+	setItems: ( items: ItemWithKey< T >[] ) => void;
+	popoverState: PopupState;
 	initial: T;
-	uniqueKeys: number[];
-	setUniqueKeys: ( keys: number[] ) => void;
-	config: {
-		headerItems: {
-			Slot: Slot< { value: PropValue } >;
-			inject: ( component: React.ComponentType< { value: PropValue } >, actionName: string ) => void;
-		};
-		itemActions: {
-			Slot: Slot< { index: number } >;
-			inject: ( component: React.ComponentType< { index: number } >, actionName: string ) => void;
-		};
-	};
-	isSortable: boolean;
-	generateNextKey: ( source: number[] ) => number;
-	addItem: ( item?: T, index?: number ) => void;
+	addItem: ( ev: React.MouseEvent, config?: AddItem< T > ) => void;
 	updateItem: ( item: T, index: number ) => void;
 	removeItem: ( index: number ) => void;
-	sortItemsByKeys: ( newKeysOrder: number[] ) => void;
+	rowRef: HTMLElement | null;
+	setRowRef: ( ref: HTMLElement | null | SetterFn< HTMLElement | null > ) => void;
 };
 
-const RepeaterContext = createContext< RepeaterContextType< PropValue > | null >( null );
+const RepeaterContext = createContext< RepeaterContextType< RepeatablePropValue > | null >( null );
 
-const EMPTY_OPEN_ITEM = -1;
+export const EMPTY_OPEN_ITEM = -1;
 
 export const useRepeaterContext = () => {
 	const context = React.useContext( RepeaterContext );
@@ -51,32 +39,14 @@ export const useRepeaterContext = () => {
 		throw new Error( 'useRepeaterContext must be used within a RepeaterContextProvider' );
 	}
 
-	return {
-		isOpen: context.isOpen,
-		openItem: context.openItem,
-		setOpenItem: context.setOpenItem,
-		items: context.items,
-		setItems: context.setItems,
-		config: context.config,
-		uniqueKeys: context.uniqueKeys,
-		setUniqueKeys: context.setUniqueKeys,
-		initial: context.initial,
-		isSortable: context.isSortable,
-		generateNextKey: context.generateNextKey,
-		sortItemsByKeys: context.sortItemsByKeys,
-		addItem: context.addItem,
-		updateItem: context.updateItem,
-		removeItem: context.removeItem,
-	};
+	return context;
 };
 
-export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
+export const RepeaterContextProvider = < T extends RepeatablePropValue = RepeatablePropValue >( {
 	children,
 	initial,
 	propTypeUtil,
-	isSortable = true,
 }: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable?: boolean } > ) => {
-	const config = useMemo( () => getConfiguredSlots(), [] );
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
 	const [ items, setItems ] = useSyncExternalState( {
@@ -86,97 +56,66 @@ export const RepeaterContextProvider = < T extends PropValue = PropValue >( {
 		persistWhen: () => true,
 	} );
 
-	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
-	const [ uniqueKeys, setUniqueKeys ] = useState( items?.map( ( _, index ) => index ) ?? [] );
+	const itemWithKeysState = useState< ItemWithKey< T >[] >(
+		items?.map( ( item, index ) => ( { key: index, item } ) ) ?? []
+	);
 
-	const isOpen = openItem !== EMPTY_OPEN_ITEM;
-
-	const sortItemsByKeys = ( keysOrder: number[] ) => {
-		setUniqueKeys( keysOrder );
-		setItems( ( prevItems ) =>
-			keysOrder.map( ( key ) => {
-				const index = uniqueKeys.indexOf( key );
-
-				return prevItems[ index ];
-			} )
-		);
+	const itemsWithKeys = itemWithKeysState[ 0 ];
+	const setItemsWithKeys = ( newItems: ItemWithKey< T >[] ) => {
+		itemWithKeysState[ 1 ]( newItems as ItemWithKey< T >[] );
+		setItems( newItems.map( ( { item } ) => item as T ) );
 	};
 
-	const addItem = ( item: T = initial, index: number = -1 ) => {
-		const newKey = generateNextKey( uniqueKeys );
+	const [ openItemIndex, setOpenItemIndex ] = useState( EMPTY_OPEN_ITEM );
+	const [ rowRef, setRowRef ] = useState< HTMLElement | null >( null );
 
-		setUniqueKeys( [ ...uniqueKeys, newKey ] );
-		if ( index === -1 ) {
-			setItems( [ ...items, item ] );
-		} else {
-			const newItems = [ ...items ];
+	const isOpen = openItemIndex !== EMPTY_OPEN_ITEM;
+	const popoverState = usePopupState( { variant: 'popover' } );
 
-			newItems.splice( index, 0, item );
-			setItems( newItems );
-		}
+	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
+		const item = config?.item ?? initial;
+		const newIndex = config?.index ?? items.length;
+		const newKey = generateNextKey( itemsWithKeys.map( ( { key } ) => key ) );
+		const newItemsWithKeys = [ ...itemsWithKeys ];
 
-		setOpenItem( newKey );
+		newItemsWithKeys.splice( newIndex, 0, { item, key: newKey } );
+		setItemsWithKeys( newItemsWithKeys );
+
+		setOpenItemIndex( newIndex );
+		popoverState.open( rowRef ?? ev );
 	};
 
 	const removeItem = ( index: number ) => {
-		setItems( ( prevItems ) => prevItems.filter( ( _, pos ) => pos !== index ) );
-		setUniqueKeys( ( prevKeys ) => prevKeys.filter( ( _, pos ) => pos !== index ) );
+		setItemsWithKeys( itemsWithKeys.filter( ( _, pos ) => pos !== index ) );
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {
-		setItems( ( prevItems ) => prevItems.map( ( item, pos ) => ( pos === index ? updatedItem : item ) ) );
+		const item = itemsWithKeys[ index ];
+
+		setItemsWithKeys( itemsWithKeys.toSpliced( index, 1, { ...item, item: updatedItem } ) );
 	};
 
 	return (
 		<RepeaterContext.Provider
 			value={ {
 				isOpen,
-				openItem,
-				setOpenItem,
-				config,
-				items: ( items ?? [] ) as Item< T >[],
-				setItems: setItems as ( items: PropValue[] | SetterFn< PropValue > ) => void,
+				openItemIndex,
+				setOpenItemIndex,
+				items: ( itemsWithKeys ?? [] ) as RepeaterContextType< T >[ 'items' ],
+				setItems: setItemsWithKeys as RepeaterContextType< RepeatablePropValue >[ 'setItems' ],
+				popoverState,
 				initial,
-				uniqueKeys,
-				setUniqueKeys,
-				isSortable,
-				generateNextKey,
-				sortItemsByKeys,
-				addItem: addItem as ( item?: PropValue, index?: number ) => void,
-				updateItem: updateItem as ( item: PropValue, index: number ) => void,
+				updateItem: updateItem as RepeaterContextType< RepeatablePropValue >[ 'updateItem' ],
+				addItem: addItem as RepeaterContextType< RepeatablePropValue >[ 'addItem' ],
 				removeItem,
+				rowRef,
+				setRowRef,
 			} }
 		>
 			{ children }
 		</RepeaterContext.Provider>
 	);
 };
-
-function getConfiguredSlots() {
-	const headerActions = createLocation< { value: PropValue } >();
-	const itemActions = createLocation< { index: number } >();
-
-	const injectHeaderItems = ( component: React.ComponentType< { value: PropValue } >, actionName: string ) => {
-		headerActions.inject( {
-			id: 'repeater-header-items-' + actionName,
-			component,
-			options: { overwrite: true },
-		} );
-	};
-
-	const injectItemActions = ( component: React.ComponentType< { index: number } >, actionName: string ) => {
-		itemActions.inject( {
-			id: 'repeater-items-actions-' + actionName,
-			component,
-			options: { overwrite: true },
-		} );
-	};
-
-	return {
-		headerItems: { Slot: headerActions.Slot, inject: injectHeaderItems },
-		itemActions: { Slot: itemActions.Slot, inject: injectItemActions },
-	};
-}
 
 const generateNextKey = ( source: number[] ) => {
 	return 1 + Math.max( 0, ...source );

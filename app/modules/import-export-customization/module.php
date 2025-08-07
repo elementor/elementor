@@ -130,13 +130,13 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->is_eligible();
+		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
 
 		$content_data = [
 			'export' => [
 				'title' => esc_html__( 'Export this website', 'elementor' ),
 				'button' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/export',
+					'url' => Plugin::$instance->app->get_base_url() . '#/export-customization',
 					'text' => esc_html__( 'Export', 'elementor' ),
 					'id' => 'elementor-import-export__export',
 				],
@@ -145,7 +145,7 @@ class Module extends BaseModule {
 			'import' => [
 				'title' => esc_html__( 'Apply a Website Template', 'elementor' ),
 				'button' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/import',
+					'url' => Plugin::$instance->app->get_base_url() . '#/import-customization',
 					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
 					'id' => 'elementor-import-export__import',
 				],
@@ -156,7 +156,7 @@ class Module extends BaseModule {
 		if ( $is_cloud_kits_available ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
-				'text' => esc_html__( 'Open the Library', 'elementor' ),
+				'text' => esc_html__( 'Import from library', 'elementor' ),
 				'id' => 'elementor-import-export__import_from_library',
 			];
 		}
@@ -669,6 +669,9 @@ class Module extends BaseModule {
 		foreach ( $active_kit->get_tabs() as $key => $tab ) {
 			$summary_titles['site-settings'][ $key ] = $tab->get_title();
 		}
+
+		$summary_titles['site-settings']['theme'] = esc_html__( 'Theme', 'elementor' );
+		$summary_titles['site-settings']['experiments'] = esc_html__( 'Experiments', 'elementor' );
 
 		return $summary_titles;
 	}
