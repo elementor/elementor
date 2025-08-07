@@ -103,7 +103,7 @@ describe( 'syncWithDocumentSave', () => {
 		}
 	);
 
-	it( 'should not sync dirty state if user does not have the capability', () => {
+	it( 'should not sync state if user does not have the capability', () => {
 		// Arrange.
 		jest.mocked( onSetUser ).mockImplementation( ( callback ) => {
 			callback( { capabilities: [] } as never );
