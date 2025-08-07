@@ -28,7 +28,7 @@ export * from './boolean';
 export * from './color-stop';
 export * from './gradient-color-stop';
 export * from './key-value';
-export * from './x-y';
+export * from './position';
 export * from './filter-prop-types/filter';
 export * from './transform-prop-types/transform';
 export * from './transform-prop-types/move-transform';
