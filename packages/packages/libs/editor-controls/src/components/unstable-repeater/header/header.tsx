@@ -16,7 +16,6 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			<Typography component="label" variant="caption" color="text.secondary">
 				{ label }
 			</Typography>
-			<Spacer />
 			<RepeaterHeaderActionsSlot value={ value } />
 			<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
 				{ children }
@@ -25,5 +24,3 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 		</Stack>
 	);
 };
-
-const Spacer = () => <span style={ { marginInlineStart: 'auto' } }></span>;
