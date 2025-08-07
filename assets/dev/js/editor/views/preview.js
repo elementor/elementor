@@ -79,7 +79,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
-		const wrappedElementTypes = [ 'section', 'column' ];
+		const wrappedElementTypes = [ 'section', 'column', 'widget' ];
 
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
