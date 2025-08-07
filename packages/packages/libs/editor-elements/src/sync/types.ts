@@ -35,12 +35,18 @@ export type V1Element = {
 	parent?: V1Element;
 };
 
+export type RestrictionRule = {
+	type: string;
+	settings?: Record< string, unknown >;
+};
+
 export type V1ElementModelProps = {
 	widgetType?: string;
 	elType: string;
 	id: string;
 	styles?: Record< StyleDefinitionID, StyleDefinition >;
 	elements?: V1Model< V1ElementModelProps >[];
+	restrictions?: Array< RestrictionRule >;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;

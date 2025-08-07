@@ -147,6 +147,7 @@ trait Has_Atomic_Base {
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
+		$data['restrictions'] = $data['restrictions'];
 
 		return $data;
 	}
