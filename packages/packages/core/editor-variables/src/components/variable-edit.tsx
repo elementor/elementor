@@ -46,8 +46,8 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	const userPermissions = usePermissions();
 
-	const [ value, setValue ] = useState( variable.value );
-	const [ label, setLabel ] = useState( variable.label );
+	const [ value, setValue ] = useState( () => variable.value );
+	const [ label, setLabel ] = useState( () => variable.label );
 
 	useEffect( () => {
 		styleVariablesRepository.update( {
@@ -136,8 +136,16 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 		);
 	}
 
-	const hasEmptyValues = () => {
-		return ! value.trim() || ! label.trim();
+	const hasEmptyFields = () => {
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const noValueChanged = () => {
@@ -148,7 +156,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 		return !! errorMessage;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
+	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
 	return (
 		<>
