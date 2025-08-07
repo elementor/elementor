@@ -29,6 +29,7 @@ export const saveElementAsComponent = async (
 
 		options?.onSuccess?.( result.data );
 	} catch ( error ) {
+		console.error( error );
 		options?.onError?.( error );
 	}
 };

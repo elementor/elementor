@@ -7,14 +7,15 @@ export const replaceElement = ( currentElement: V1Element, newElement: Omit< V1E
 	const parent = getContainer( currentElement.id )?.parent;
 
 	if ( ! parent ) {
-		throw new Error(
-			`Parent container not found for element with ID: ${ currentElement.id }. Cannot replace element without a valid parent container.`
-		);
+		throw new Error( `Parent not found for element ${ currentElement.id }. Cannot replace element.` );
 	}
 
 	const elementIndex = parent.children?.findIndex( ( child ) => child.id === currentElement.id );
-	addElement( parent, newElement, { at: elementIndex } );
+	if ( elementIndex === undefined || elementIndex === -1 ) {
+		throw new Error( `Element ${ currentElement.id } not found in parent container. Cannot replace element.` );
+	}
 
+	addElement( parent, newElement, { at: elementIndex } );
 	deleteElement( currentElement );
 };
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getElementLabel, type V1Element } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
@@ -21,6 +21,7 @@ type ResultNotification = {
 };
 
 const FONT_SIZE = 'tiny';
+const POPOVER_WIDTH = '268px';
 const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
 export function CreateComponentForm() {
@@ -28,11 +29,19 @@ export function CreateComponentForm() {
 	const [ isLoading, setIsLoading ] = useState( false );
 
 	const [ componentName, setComponentName ] = useState( '' );
-	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } | null >( null );
+	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } >();
 
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
 	const element = useRef< V1Element | null >( null );
+
+	const openPopup = useCallback( ( event: CustomEvent< SaveAsComponentEventData > ) => {
+		element.current = event.detail.element;
+		setComponentName( getElementLabel( event.detail.element.id ) );
+		setAnchorPosition( event.detail.anchorPosition );
+
+		setIsOpen( true );
+	}, [] );
 
 	useEffect( () => {
 		window.addEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
@@ -40,21 +49,13 @@ export function CreateComponentForm() {
 		return () => {
 			window.removeEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
 		};
-	}, [] );
-
-	const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
-		element.current = event.detail.element;
-		setComponentName( getElementLabel( event.detail.element.id ) );
-		setAnchorPosition( event.detail.anchorPosition );
-
-		setIsOpen( true );
-	};
+	}, [ openPopup ] );
 
 	const resetAndClosePopup = () => {
 		setIsOpen( false );
 		element.current = null;
 		setComponentName( '' );
-		setAnchorPosition( null );
+		setAnchorPosition( undefined );
 		setIsLoading( false );
 	};
 
@@ -69,15 +70,17 @@ export function CreateComponentForm() {
 			onSuccess: ( result: ComponentCreateResponse ) => {
 				setResultNotification( {
 					show: true,
-					message: `Component saved successfully as: ${ componentName } (ID: ${ result.component_id })`,
+					// Translators: %1$s: Component name, %2$s: Component ID
+					message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
+						.replace( '%1$s', componentName )
+						.replace( '%2$s', result.component_id.toString() ),
 					type: 'success',
 				} );
 
 				resetAndClosePopup();
 			},
-			onError: ( error: unknown ) => {
-				const errorMessage =
-					error instanceof Error ? error.message : 'Failed to save component. Please try again.';
+			onError: () => {
+				const errorMessage = __( 'Failed to save component. Please try again.', 'elementor' );
 				setResultNotification( {
 					show: true,
 					message: errorMessage,
@@ -97,7 +100,7 @@ export function CreateComponentForm() {
 				anchorReference="anchorPosition"
 				anchorPosition={ anchorPosition }
 			>
-				<Stack alignItems="start" width="268px">
+				<Stack alignItems="start" width={ POPOVER_WIDTH }>
 					<Stack
 						direction="row"
 						alignItems="center"
