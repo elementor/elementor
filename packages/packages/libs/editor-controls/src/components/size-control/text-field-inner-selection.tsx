@@ -30,7 +30,6 @@ type TextFieldInnerSelectionProps = {
 		endAdornment: React.JSX.Element;
 	};
 	disabled?: boolean;
-	isPopoverOpen?: boolean;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -46,7 +45,6 @@ export const TextFieldInnerSelection = forwardRef(
 			shouldBlockInput = false,
 			inputProps,
 			disabled,
-			isPopoverOpen,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
@@ -69,7 +67,6 @@ export const TextFieldInnerSelection = forwardRef(
 				onKeyUp={ shouldBlockInput ? undefined : onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
-				focused={ isPopoverOpen ? true : undefined }
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ inputProps }
 			/>

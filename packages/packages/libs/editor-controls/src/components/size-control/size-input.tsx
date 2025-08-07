@@ -118,7 +118,6 @@ export const SizeInput = ( {
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
 					inputProps={ inputProps }
-					isPopoverOpen={ popupState.isOpen }
 				/>
 			</Box>
 		</ControlActions>
