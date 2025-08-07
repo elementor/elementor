@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { HeartHandShakeIcon } from '@elementor/icons';
+import { StarFilledIcon } from '@elementor/icons';
 import {
 	Alert,
 	Button,
@@ -14,20 +14,13 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { apiClient } from '../api';
+import { ComponentCreateResponse } from '../api';
 import { useEffect, useRef, useState } from 'react';
-
-type ElementData = {
-	id: string;
-	elType: string;
-	widgetType?: string;
-	elements: ElementData[];
-	settings: Record<string, any>;
-	styles: any[];
-};
+import { getElementLabel, V1Element } from '@elementor/editor-elements';
+import { saveElementAsComponent } from '../utils/save-element-as-component';
 
 type SaveAsComponentEventData = {
-	componentContent: ElementData[];
+	element: V1Element;
 	anchorPosition: { top: number; left: number };
 };
 
@@ -49,7 +42,7 @@ export function CreateComponentForm() {
 
 	const [ resultNotification, setResultNotification ] = useState<ResultNotification | null>( null );
 
-	const componentContent = useRef<ElementData[] | null>( null );
+	const element = useRef<V1Element | null>( null );
 
 	useEffect( () => {
 		window.addEventListener(OPEN_SAVE_AS_COMPONENT_FORM_EVENT,openPopup as EventListener);
@@ -60,8 +53,8 @@ export function CreateComponentForm() {
 	}, [] );
 
 	const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
-		componentContent.current = event.detail.componentContent;
-		setComponentName( getComponentDefaultName( event.detail.componentContent ) );
+		element.current = event.detail.element;
+		setComponentName( getElementLabel( event.detail.element.id ) );
 		setAnchorPosition( event.detail.anchorPosition );
 
 		setIsOpen( true );
@@ -69,44 +62,40 @@ export function CreateComponentForm() {
 
 	const resetAndClosePopup = () => {
 		setIsOpen( false );
-		componentContent.current = null;
+		element.current = null;
 		setComponentName( '' );
 		setAnchorPosition( null );
 		setIsLoading( false );
 	};
 
 	const handleSave = async () => {
-		if ( ! componentContent.current || ! componentName.trim() ) {
+		if ( ! element.current || ! componentName.trim() ) {
 			return;
 		}
 
 		setIsLoading( true );
 
-		try {
-			const result = await apiClient.create( {
-				name: componentName.trim(),
-				content: componentContent.current,
-			} );
+		await saveElementAsComponent( element.current, componentName.trim(), {
+			onSuccess: ( result: ComponentCreateResponse ) => {
+				setResultNotification( {
+					show: true,
+					message: `Component saved successfully as: ${ componentName } (ID: ${ result.component_id })`,
+					type: 'success',
+				} );
 
-			setResultNotification( {
-				show: true,
-				message: `Component saved successfully as: ${ componentName } (ID: ${ result.data.component_id })`,
-				type: 'success',
-			} );
+				resetAndClosePopup();
+			},
+			onError: ( error: any ) => {
+				const errorMessage = error instanceof Error ? error.message : 'Failed to save component. Please try again.';
+				setResultNotification( {
+					show: true,
+					message: errorMessage,
+					type: 'error',
+				} );
+			},
+		} );
 
-			resetAndClosePopup();
-		} catch ( error ) {
-			console.error( 'Error saving component:', error );
-
-			const errorMessage = error instanceof Error ? error.message : 'Failed to save component. Please try again.';
-			setResultNotification( {
-				show: true,
-				message: errorMessage,
-				type: 'error',
-			} );
-		} finally {
-			setIsLoading( false );
-		}
+		setIsLoading( false );
 	};
 
 	return (
@@ -118,8 +107,8 @@ export function CreateComponentForm() {
 				anchorPosition={ anchorPosition }
 			>
 				<Stack alignItems="start" width="268px">
-					<Stack direction="row" alignItems="center" sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%', padding: 1, } }>
-						<HeartHandShakeIcon fontSize={ FONT_SIZE } />
+					<Stack direction="row" alignItems="center" py={ 1 } px={ 1.5 } sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }>
+						<StarFilledIcon fontSize={ FONT_SIZE } />
 						<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500' } }>
 							{ __( 'Save as a component', 'elementor' ) }
 						</Typography>
@@ -143,7 +132,7 @@ export function CreateComponentForm() {
 							/>
 						</Grid>
 					</Grid>
-					<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1.5 } px={ 1 }>
+					<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1 } px={ 1.5 }>
 						<Button
 							onClick={ resetAndClosePopup }
 							disabled={ isLoading }
@@ -173,12 +162,3 @@ export function CreateComponentForm() {
 		</ThemeProvider>
 	);
 }
-
-const getComponentDefaultName = ( componentContent: ElementData[] ) => {
-	const container = componentContent[0];
-	const containerType = container.elType === 'widget' ? container.widgetType : container.elType;
-
-	const widgetsCache = ( window as any ).elementor.widgetsCache;
-
-	return containerType ? widgetsCache[ containerType ]?.title : '';
-};
