@@ -54,18 +54,27 @@ test.describe( 'Global Classes Capability Tests', () => {
 	} );
 
 	test( 'User without global classes capability can publish content without errors', async ( { browser, apiRequests }, testInfo ) => {
-		await test.step( 'Login as user without global classes capability', async () => {
+		await test.step( 'Setup experiments as admin and then test as editor', async () => {
+			// First, login as admin to set experiments
+			const adminContext = await browser.newContext( { storageState: undefined } );
+			const adminPage = await adminContext.newPage();
+			const adminWpAdmin = new WpAdminPage( adminPage, testInfo, apiRequests );
+
+			// Login as admin and set experiments
+			await adminWpAdmin.login();
+			await adminWpAdmin.setExperiments( {
+				e_atomic_elements: 'active',
+				e_classes: 'active', // Enable global classes experiment
+			} );
+
+			await adminContext.close();
+
+			// Now login as editor user for the actual test
 			const context = await browser.newContext( { storageState: undefined } );
 			const page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 			await wpAdmin.customLogin( testUser.username, testUser.password );
-
-			// Enable atomic elements experiment for this user session
-			await wpAdmin.setExperiments( {
-				e_atomic_elements: 'active',
-				e_classes: 'active', // Enable global classes experiment
-			} );
 
 			const editor = await wpAdmin.openNewPage( false, false );
 
@@ -133,26 +142,41 @@ test.describe( 'Global Classes Capability Tests', () => {
 				await expect( publishSuccessIndicator ).toBeVisible( { timeout: 10000 } );
 			} );
 
-			// Reset experiments
-			await wpAdmin.resetExperiments();
 			await context.close();
+
+			// Clean up: Reset experiments as admin
+			const cleanupContext = await browser.newContext( { storageState: undefined } );
+			const cleanupPage = await cleanupContext.newPage();
+			const cleanupWpAdmin = new WpAdminPage( cleanupPage, testInfo, apiRequests );
+
+			await cleanupWpAdmin.login();
+			await cleanupWpAdmin.resetExperiments();
+			await cleanupContext.close();
 		} );
 	} );
 
 	test( 'Publishing content with global classes changes requires proper capability', async ( { browser, apiRequests }, testInfo ) => {
 		await test.step( 'Test capability enforcement for global classes operations', async () => {
-			// This test verifies that the capability system properly prevents unauthorized global classes operations
+			// First, login as admin to set experiments
+			const adminContext = await browser.newContext( { storageState: undefined } );
+			const adminPage = await adminContext.newPage();
+			const adminWpAdmin = new WpAdminPage( adminPage, testInfo, apiRequests );
+
+			// Login as admin and set experiments
+			await adminWpAdmin.login();
+			await adminWpAdmin.setExperiments( {
+				e_atomic_elements: 'active',
+				e_classes: 'active',
+			} );
+
+			await adminContext.close();
+
+			// Now test with editor user
 			const context = await browser.newContext( { storageState: undefined } );
 			const page = await context.newPage();
 			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 			await wpAdmin.customLogin( testUser.username, testUser.password );
-
-			// Enable experiments
-			await wpAdmin.setExperiments( {
-				e_atomic_elements: 'active',
-				e_classes: 'active',
-			} );
 
 			const editor = await wpAdmin.openNewPage( false, false );
 
@@ -191,9 +215,40 @@ test.describe( 'Global Classes Capability Tests', () => {
 			expect( globalClassesApiResponse.ok ).toBe( false );
 			expect( [ 401, 403 ] ).toContain( globalClassesApiResponse.status );
 
+			await context.close();
+
+			// Clean up: Reset experiments as admin
+			const cleanupContext = await browser.newContext( { storageState: undefined } );
+			const cleanupPage = await cleanupContext.newPage();
+			const cleanupWpAdmin = new WpAdminPage( cleanupPage, testInfo, apiRequests );
+
+			await cleanupWpAdmin.login();
+			await cleanupWpAdmin.resetExperiments();
+			await cleanupContext.close();
+		} );
+	} );
+
+	test( 'Admin user has global classes capability', async ( { page, apiRequests }, testInfo ) => {
+		await test.step( 'Verify admin user has global classes capability', async () => {
+			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+			// Set experiments as admin
+			await wpAdmin.setExperiments( {
+				e_atomic_elements: 'active',
+				e_classes: 'active',
+			} );
+
+			await wpAdmin.openNewPage( false, false );
+
+			// Verify admin user has global classes capability
+			const userCapabilities = await page.evaluate( () => {
+				return window.elementor?.config?.user?.capabilities || [];
+			} );
+
+			expect( userCapabilities ).toContain( GLOBAL_CLASSES_CAPABILITY );
+
 			// Reset experiments
 			await wpAdmin.resetExperiments();
-			await context.close();
 		} );
 	} );
 } );
