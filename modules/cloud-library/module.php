@@ -7,7 +7,6 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,33 +27,29 @@ class Module extends BaseModule {
 	public function __construct() {
 		parent::__construct();
 
-		$this->register_experiments();
+		$this->register_app();
 
-		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
-			$this->register_app();
+		add_action( 'elementor/init', function () {
+			$this->set_cloud_library_settings();
+		}, 12 /** After the initiation of the connect cloud library */ );
 
-			add_action( 'elementor/init', function () {
-				$this->set_cloud_library_settings();
-			}, 12 /** After the initiation of the connect cloud library */ );
+		add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+			return $this->localize_settings( $settings );
+		}, 11 /** After Elementor Core */ );
 
-			add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
-				return $this->localize_settings( $settings );
-			}, 11 /** After Elementor Core */ );
+		add_filter( 'elementor/render_mode/module', function( $module_name ) {
+			$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-			add_filter( 'elementor/render_mode/module', function( $module_name ) {
-				$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
-
-				if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
-					return 'cloud-library';
-				}
-
-				return $module_name;
-			}, 12);
-
-			if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
-				echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
-				die;
+			if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+				return 'cloud-library';
 			}
+
+			return $module_name;
+		}, 12);
+
+		if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+			echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
+			die;
 		}
 	}
 
@@ -80,16 +75,6 @@ class Module extends BaseModule {
 		$settings['library']['doc_types'] = $this->get_document_types();
 
 		return $settings;
-	}
-
-	private function register_experiments() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Library', 'elementor' ),
-			'description' => esc_html__( 'Cloud Templates and Website Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
-			'default' => ExperimentsManager::STATE_ACTIVE,
-		] );
 	}
 
 	private function register_app() {

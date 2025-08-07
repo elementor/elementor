@@ -130,7 +130,7 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
+		$is_cloud_kits_available = CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
 
 		$content_data = [
 			'export' => [
@@ -235,41 +235,28 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
-
-		if ( $is_cloud_kits_feature_active ) { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-				</div>
-				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-
-				<?php if ( ! empty( $data['link'] ) ) : ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-				<?php endif; ?>
-				<div class="tab-import-export-kit__box action-buttons">
-					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-						<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button_secondary']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
-							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
-						</a>
-					<?php endif; ?>
-					<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['secondary']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
+		?>
+		<div class="tab-import-export-kit__container">
+			<div class="tab-import-export-kit__box">
+				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
 			</div>
-		<?php } else { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
-				<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+			<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+
+			<?php if ( ! empty( $data['link'] ) ) : ?>
 				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+			<?php endif; ?>
+			<div class="tab-import-export-kit__box action-buttons">
+				<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
+					</a>
+				<?php endif; ?>
+				<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+					<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+				</a>
 			</div>
-		<?php }
+		</div>
+		<?php
 	}
 
 	private function get_revert_href(): string {
