@@ -98,8 +98,8 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
-	const EXPERIMENT_UNSTABLE_REPEATER = 'e_unstable_repeater';
 	const EXPERIMENT_COMPONENTS = 'e_atomic_components';
+	const EXPERIMENT_NESTED = 'e_nested_elements';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -197,16 +197,6 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-
-		] );
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_UNSTABLE_REPEATER,
-			'title' => esc_html__( 'Unstable Repeater', 'elementor' ),
-			'description' => esc_html__( 'Unstable Repeater for Transform control.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
 
 		Plugin::$instance->experiments->add_feature([
@@ -217,6 +207,15 @@ class Module extends BaseModule {
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		] );
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_NESTED,
+			'title' => esc_html__( 'Nested Elements', 'elementor' ),
+			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
 	}
 
 	private function add_packages( $packages ) {
