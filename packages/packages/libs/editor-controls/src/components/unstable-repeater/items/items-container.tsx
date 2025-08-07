@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Box } from '@elementor/ui';
 
 import { SortableItem, SortableProvider } from '../../sortable';
 import { useRepeaterContext } from '../context/repeater-context';
@@ -9,10 +8,7 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 	itemTemplate,
 	isSortable = true,
 	children,
-}: React.PropsWithChildren< {
-	itemTemplate: React.ReactNode;
-	isSortable?: boolean;
-} > ) => {
+}: React.PropsWithChildren< { itemTemplate: React.ReactNode; isSortable?: boolean } > ) => {
 	const { items, setItems } = useRepeaterContext();
 	const keys = items.map( ( { key } ) => key );
 
@@ -30,8 +26,8 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 		);
 	};
 
-	return ! items.length ? null : (
-		<Box sx={ { width: '100%', height: '100%', p: 0, m: 0 } }>
+	return (
+		<>
 			<SortableProvider value={ keys } onChange={ onChangeOrder }>
 				{ keys.map( ( key: number, index: number ) => {
 					const value = items[ index ].item as Item< T >;
@@ -50,6 +46,6 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 					);
 				} ) }
 			</SortableProvider>
-		</Box>
+		</>
 	);
 };

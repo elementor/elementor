@@ -6,8 +6,9 @@ type TransformOrigin = {
 	z: string;
 };
 
+const EMPTY_VALUE = '0px';
+
 function getVal( val: string ) {
-	const EMPTY_VALUE = '0px';
 	return `${ val ?? EMPTY_VALUE }`;
 }
 
