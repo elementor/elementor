@@ -7,6 +7,7 @@ use Elementor\Core\Documents_Manager;
 use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
