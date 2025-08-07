@@ -1,4 +1,5 @@
 import { createMockStyleDefinition } from 'test-utils';
+import { onSetUser } from '@elementor/editor-current-user';
 import { __privateRunCommandSync as runCommandSync, registerDataHook } from '@elementor/editor-v1-adapters';
 import {
 	__createStore as createStore,
@@ -8,17 +9,25 @@ import {
 } from '@elementor/store';
 
 import { apiClient } from '../api';
+import { UPDATE_CLASS_CAPABILITY_KEY } from '../capabilities';
 import { selectFrontendInitialData, selectIsDirty, selectPreviewInitialData, slice } from '../store';
 import { syncWithDocumentSave } from '../sync-with-document-save';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '../api' );
+jest.mock( '@elementor/editor-current-user' );
 
 describe( 'syncWithDocumentSave', () => {
 	beforeEach( () => {
 		registerSlice( slice );
 
 		createStore();
+
+		jest.mocked( onSetUser ).mockImplementation( ( callback ) => {
+			callback( { capabilities: [ UPDATE_CLASS_CAPABILITY_KEY ] } as never );
+
+			return () => {};
+		} );
 	} );
 
 	it( 'should sync global classes dirty state with the document dirty state', () => {
@@ -93,6 +102,26 @@ describe( 'syncWithDocumentSave', () => {
 			unsubscribe();
 		}
 	);
+
+	it( 'should not sync dirty state if user does not have the capability', () => {
+		// Arrange.
+		jest.mocked( onSetUser ).mockImplementation( ( callback ) => {
+			callback( { capabilities: [] } as never );
+
+			return () => {};
+		} );
+
+		const unsubscribe = syncWithDocumentSave();
+
+		// Act.
+		dispatch( slice.actions.add( createMockStyleDefinition() ) );
+
+		// Assert.
+		expect( runCommandSync ).not.toHaveBeenCalled();
+
+		// Cleanup.
+		unsubscribe();
+	} );
 } );
 
 function mockRegisterDataHook() {

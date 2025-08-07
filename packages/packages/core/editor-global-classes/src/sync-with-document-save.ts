@@ -1,14 +1,24 @@
+import { onSetUser } from '@elementor/editor-current-user';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
 
+import { UPDATE_CLASS_CAPABILITY_KEY } from './capabilities';
 import { saveGlobalClasses } from './save-global-classes';
 import { selectIsDirty } from './store';
 
 export function syncWithDocumentSave() {
-	const unsubscribe = syncDirtyState();
+	let unsubscribe = () => {};
 
-	bindSaveAction();
+	onSetUser( ( user ) => {
+		const canEdit = user?.capabilities.includes( UPDATE_CLASS_CAPABILITY_KEY );
+
+		if ( canEdit ) {
+			unsubscribe = syncDirtyState();
+
+			bindSaveAction();
+		}
+	} );
 
 	return unsubscribe;
 }

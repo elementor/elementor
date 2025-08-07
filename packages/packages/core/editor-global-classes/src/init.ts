@@ -1,5 +1,4 @@
 import { injectIntoLogic } from '@elementor/editor';
-import { onSetUser } from '@elementor/editor-current-user';
 import {
 	injectIntoClassSelectorActions,
 	injectIntoCssClassConvert,
@@ -9,7 +8,6 @@ import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
-import { UPDATE_CLASS_CAPABILITY_KEY } from './capabilities';
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
 import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
@@ -44,11 +42,5 @@ export function init() {
 		getThemeColor: ( theme ) => theme.palette.global.dark,
 	} );
 
-	onSetUser( ( user ) => {
-		const canEdit = user?.capabilities.includes( UPDATE_CLASS_CAPABILITY_KEY );
-
-		if ( canEdit ) {
-			syncWithDocumentSave();
-		}
-	} );
+	syncWithDocumentSave();
 }
