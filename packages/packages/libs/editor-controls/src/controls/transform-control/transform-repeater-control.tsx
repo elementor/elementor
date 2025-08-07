@@ -22,11 +22,6 @@ import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
 
 export const TransformRepeaterControl = createControl(
-	( {
-		setTransformBasePopoverAnchorRef,
-	}: {
-		setTransformBasePopoverAnchorRef?: ( ref?: HTMLDivElement ) => void;
-	} ) => {
 		const { propType, value: transformValues, setValue } = useBoundProp( transformPropTypeUtil );
 		const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
 
