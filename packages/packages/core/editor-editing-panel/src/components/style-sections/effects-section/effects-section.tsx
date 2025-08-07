@@ -1,13 +1,9 @@
 import * as React from 'react';
-import { useRef } from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
-	injectIntoRepeaterHeaderActions,
-	TransformBaseControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
-	useBoundProp,
 } from '@elementor/editor-controls';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
@@ -24,19 +20,10 @@ const FILTER_LABEL = __( 'Filters', 'elementor' );
 const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
 const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
-const TRANSFORM_BASE_LABEL = __( 'Transform base', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
 	const { element } = useSelectedElement();
-
-	const transformBasePopoverAnchorRef = useRef< HTMLDivElement | null >( null );
-
-	injectIntoRepeaterHeaderActions( {
-		id: 'transform-origin-control-trigger',
-		component: () => <TransformOrigin containerRef={ transformBasePopoverAnchorRef } />,
-		options: { overwrite: true },
-	} );
 
 	return (
 		<SectionContent>
@@ -67,14 +54,4 @@ export const EffectsSection = () => {
 			</StylesField>
 		</SectionContent>
 	);
-};
-
-const TransformOrigin = ( { containerRef }: { containerRef: React.RefObject< HTMLDivElement > } ) => {
-	const context = useBoundProp();
-
-	return context.bind === 'transform' ? (
-		<StylesField bind="" propDisplayName={ TRANSFORM_BASE_LABEL }>
-			<TransformBaseControl anchorRef={ containerRef } />
-		</StylesField>
-	) : null;
 };

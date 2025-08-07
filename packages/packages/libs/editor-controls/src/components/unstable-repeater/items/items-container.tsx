@@ -9,11 +9,9 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 	itemTemplate,
 	isSortable = true,
 	children,
-	setItemsContainerRef,
 }: React.PropsWithChildren< {
 	itemTemplate: React.ReactNode;
 	isSortable?: boolean;
-	setItemsContainerRef?: ( ref?: HTMLDivElement ) => void;
 } > ) => {
 	const { items, setItems } = useRepeaterContext();
 	const keys = items.map( ( { key } ) => key );
@@ -33,10 +31,7 @@ export const ItemsContainer = < T extends RepeatablePropValue >( {
 	};
 
 	return ! items.length ? null : (
-		<Box
-			sx={ { width: '100%', height: '100%', p: 0, m: 0 } }
-			ref={ ( ref?: HTMLDivElement ) => setItemsContainerRef?.( ref ) }
-		>
+		<Box sx={ { width: '100%', height: '100%', p: 0, m: 0 } }>
 			<SortableProvider value={ keys } onChange={ onChangeOrder }>
 				{ keys.map( ( key: number, index: number ) => {
 					const value = items[ index ].item as Item< T >;
