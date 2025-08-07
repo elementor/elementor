@@ -1,3 +1,5 @@
+import { toCanvas } from 'html-to-image';
+
 /* global ElementorScreenshotConfig */
 class Screenshot extends elementorModules.ViewModule {
 	getDefaultSettings() {
@@ -17,9 +19,8 @@ class Screenshot extends elementorModules.ViewModule {
 			render_timeout: 5000, // Wait until all the element will be loaded or 5 sec and then take screenshot.
 			timerLabel: null,
 			timer_label: `${ ElementorScreenshotConfig.post_id } - timer`,
-			image_placeholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=',
+			image_placeholder: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
 			isDebug: elementorCommonConfig.isElementorDebug,
-			isDebugSvg: false,
 			...ElementorScreenshotConfig,
 		};
 	}
@@ -56,24 +57,23 @@ class Screenshot extends elementorModules.ViewModule {
 	 * The main method for this class.
 	 */
 	captureScreenshot() {
-		if ( ! this.elements.$elementor.length && ! this.getSettings( 'kit_id' ) ) {
-			elementorCommon.helpers.consoleWarn(
-				'Screenshots: The content of this page is empty, the module will create a fake conent just for this screenshot.',
-			);
+		// if ( ! this.elements.$elementor.length && ! this.getSettings( 'kit_id' ) ) {
+		// 	elementorCommon.helpers.consoleWarn(
+		// 		'Screenshots: The content of this page is empty, the module will create a fake conent just for this screenshot.',
+		// 	);
 
-			this.createFakeContent();
-		}
+		// 	this.createFakeContent();
+		// }
 
-		this.removeUnnecessaryElements();
-		this.handleIFrames();
-		this.removeFirstSectionMargin();
-		this.handleLinks();
-		this.loadExternalCss();
-		this.loadExternalImages();
+		// this.removeUnnecessaryElements();
+		// this.handleIFrames();
+		// this.removeFirstSectionMargin();
+		// this.handleLinks();
+		// this.loadExternalCss();
+		// this.loadExternalImages();
 
 		return Promise.resolve()
 			.then( this.createImage.bind( this ) )
-			.then( this.createImageElement.bind( this ) )
 			.then( this.cropCanvas.bind( this ) )
 			.then( this.save.bind( this ) )
 			.then( this.screenshotSucceed.bind( this ) )
@@ -188,7 +188,7 @@ class Screenshot extends elementorModules.ViewModule {
 
 		// Some 3rd party plugins inject elements into the dom, so this method removes all
 		// the elements that was injected, to make sure that it capture a screenshot only of the post itself.
-		this.elements.$notElementorElements.remove();
+		// this.elements.$notElementorElements.remove();
 	}
 
 	/**
@@ -207,11 +207,11 @@ class Screenshot extends elementorModules.ViewModule {
 	}
 
 	/**
-	 * Creates a png image.
+	 * Creates a WebP image using html-to-image library.
 	 *
-	 * @return {Promise<unknown>} URI containing image data
+	 * @return {Promise<string>} URI containing image data
 	 */
-	createImage() {
+	async createImage() {
 		const pageLoadedPromise = new Promise( ( resolve ) => {
 			window.addEventListener( 'load', () => {
 				resolve();
@@ -224,105 +224,102 @@ class Screenshot extends elementorModules.ViewModule {
 			}, this.getSettings( 'render_timeout' ) );
 		} );
 
-		return Promise.race( [ pageLoadedPromise, timeOutPromise ] )
-			.then( () => {
-				this.log( 'Start creating screenshot.' );
+		await Promise.race( [ pageLoadedPromise, timeOutPromise ] );
 
-				if ( this.getSettings( 'isDebugSvg' ) ) {
-					domtoimage.toSvg( document.body, {
-						imagePlaceholder: this.getSettings( 'image_placeholder' ),
-					} ).then( ( svg ) => this.download( svg ) );
+		console.log( 'Start creating screenshot with html-to-image.' );
 
-					return Promise.reject( 'Debug SVG.' );
-				}
+		try {
+			// Debug: Check if element exists
+			console.log( 'Elementor selector:', ElementorScreenshotConfig.selector );
+			console.log( 'Elementor element:', this.elements.$elementor );
+			console.log( 'Elementor element length:', this.elements.$elementor.length );
+			
+			// Re-select element if not found (DOM might not be ready during init)
+			let $elementorElement = this.elements.$elementor;
+			if ( ! $elementorElement.length ) {
+				console.log( 'Re-selecting Elementor element...' );
+				$elementorElement = jQuery( ElementorScreenshotConfig.selector );
+				console.log( 'Re-selected element:', $elementorElement );
+				console.log( 'Re-selected element length:', $elementorElement.length );
+			}
+			
+			// Debug: Check what Elementor elements exist in the DOM
+			console.log( 'All Elementor elements in DOM:', jQuery( '[class*="elementor-"]' ) );
+			console.log( 'All elements with "elementor" in class:', jQuery( '[class*="elementor"]' ) );
+			console.log( 'Body children:', jQuery( 'body > *' ) );
+			
+					// Debug: Check the current document context
+		console.log( 'Expected document ID:', ElementorScreenshotConfig.post_id );
+		console.log( 'Template ID:', ElementorScreenshotConfig.template_id );
+		console.log( 'Current page ID from body class:', jQuery( 'body' ).attr( 'class' ).match( /page-id-(\d+)/ )?.[1] || 'not found' );
+		console.log( 'Current browser URL:', window.location.href );
+		console.log( 'Current page title:', document.title );
+			
+			// Fallback: Find the main Elementor container if the specific selector fails
+			if ( ! $elementorElement.length ) {
+				console.log( 'Trying fallback selector...' );
+				// Look for the main Elementor container (not header/footer)
+				$elementorElement = jQuery( 'body > div.elementor:not(.elementor-location-header):not(.elementor-location-footer)' );
+				console.log( 'Fallback element:', $elementorElement );
+				console.log( 'Fallback element length:', $elementorElement.length );
+			}
+			
+			if ( ! $elementorElement.length ) {
+				throw new Error( 'Elementor container not found. Selector: ' + ElementorScreenshotConfig.selector );
+			}
 
-				// TODO: Extract to util function.
-				const isSafari = /^((?!chrome|android).)*safari/i.test( window.userAgent );
-
-				// Safari browser has some problems with the images that dom-to-images
-				// library creates, so in this specific case the screenshot uses html2canvas.
-				// Note that dom-to-image creates more accurate screenshot in "not safari" browsers.
-				if ( isSafari ) {
-					this.log( 'Creating screenshot with "html2canvas"' );
-					return html2canvas( document.body ).then( ( canvas ) => {
-						return canvas.toDataURL( 'image/png' );
-					} );
-				}
-
-				this.log( 'Creating screenshot with "dom-to-image"' );
-				return domtoimage.toPng( document.body, { imagePlaceholder: this.getSettings( 'image_placeholder' ) } )
-					.catch( () => {
-						return html2canvas( document.body ).then( ( canvas ) => canvas.toDataURL( 'image/png' ) );
-					} );
+			const canvas = await toCanvas( $elementorElement[0], {
+				quality: 0.1,
+				imagePlaceholder: this.getSettings( 'image_placeholder' ),
 			} );
-	}
 
-	/**
-	 * Download a uri, use for debugging the svg that created from dom to image libraries.
-	 *
-	 * @param {string} uri
-	 */
-	download( uri ) {
-		const $link = jQuery( '<a/>', {
-			href: uri,
-			download: 'debugSvg.svg',
-			html: 'Download SVG',
-		} );
-
-		elementorCommon.elements.$body.append( $link );
-
-		$link.trigger( 'click' );
-	}
-
-	/**
-	 * Creates fake image element to get the size of the image later on.
-	 *
-	 * @param {string} dataUrl
-	 * @return {Promise<HTMLImageElement>} Image Element
-	 */
-	createImageElement( dataUrl ) {
-		const image = new Image();
-		image.src = dataUrl;
-
-		return new Promise( ( resolve ) => {
-			image.onload = () => resolve( image );
-		} );
+			return canvas.toDataURL( 'image/webp', 0.01 );
+		} catch ( error ) {
+			console.log( 'Screenshot creation failed:', error );
+			throw error;
+		}
 	}
 
 	/**
 	 * Crop the image to requested sizes.
 	 *
-	 * @param {HTMLImageElement} image
-	 * @return {Promise<unknown>} Canvas
+	 * @param {string} dataUrl
+	 * @return {Promise<HTMLCanvasElement>} Canvas
 	 */
-	cropCanvas( image ) {
-		const width = this.getSettings( 'crop.width' );
-		const height = this.getSettings( 'crop.height' );
+	cropCanvas( dataUrl ) {
+		return new Promise( ( resolve ) => {
+			const image = new Image();
+			image.onload = () => {
+				const width = this.getSettings( 'crop.width' );
+				const height = this.getSettings( 'crop.height' );
 
-		const cropCanvas = document.createElement( 'canvas' ),
-			cropContext = cropCanvas.getContext( '2d' ),
-			ratio = width / image.width;
+				const cropCanvas = document.createElement( 'canvas' ),
+					cropContext = cropCanvas.getContext( '2d' ),
+					ratio = width / image.width;
 
-		cropCanvas.width = width;
-		cropCanvas.height = height > image.height ? image.height : height;
+				cropCanvas.width = width;
+				cropCanvas.height = height > image.height ? image.height : height;
 
-		cropContext.drawImage( image, 0, 0, image.width, image.height, 0, 0, image.width * ratio, image.height * ratio );
+				cropContext.drawImage( image, 0, 0, image.width, image.height, 0, 0, image.width * ratio, image.height * ratio );
 
-		return Promise.resolve( cropCanvas );
+				resolve( cropCanvas );
+			};
+			image.src = dataUrl;
+		} );
 	}
 
 	/**
 	 * Send the image to the server.
 	 *
 	 * @param {HTMLCanvasElement} canvas
-	 * @return {Promise<unknown>} Screenshot URL
+	 * @return {Promise<string>} Screenshot URL
 	 */
 	save( canvas ) {
 		const { key, action } = this.getSaveAction();
 
 		const data = {
 			[ key ]: this.getSettings( key ),
-			screenshot: canvas.toDataURL( 'image/png' ),
+			screenshot: canvas.toDataURL( 'image/webp', 0.01 ),
 		};
 
 		return new Promise( ( resolve, reject ) => {
@@ -333,12 +330,12 @@ class Screenshot extends elementorModules.ViewModule {
 			elementorCommon.ajax.addRequest( action, {
 				data,
 				success: ( url ) => {
-					this.log( `Screenshot created: ${ encodeURI( url ) }` );
+					console.log( `Screenshot created: ${ encodeURI( url ) }` );
 
 					resolve( url );
 				},
 				error: () => {
-					this.log( 'Failed to create screenshot.' );
+					console.log( 'Failed to create screenshot.' );
 
 					reject();
 				},
@@ -371,12 +368,12 @@ class Screenshot extends elementorModules.ViewModule {
 				elementorCommon.ajax.addRequest( route, {
 					data,
 					success: () => {
-						this.log( `Marked as failed.` );
+						console.log( `Marked as failed.` );
 
 						resolve();
 					},
 					error: () => {
-						this.log( 'Failed to mark this screenshot as failed.' );
+						console.log( 'Failed to mark this screenshot as failed.' );
 
 						reject();
 					},
@@ -408,7 +405,7 @@ class Screenshot extends elementorModules.ViewModule {
 	 * @param {Error} e
 	 */
 	screenshotFailed( e ) {
-		this.log( e, null );
+		console.log( e, null );
 
 		this.markAsFailed( e )
 			.then( () => this.screenshotDone( false ) );
@@ -435,7 +432,7 @@ class Screenshot extends elementorModules.ViewModule {
 			imageUrl,
 		}, '*' );
 
-		this.log( `Screenshot ${ success ? 'Succeed' : 'Failed' }.`, 'timeEnd' );
+		console.log( `Screenshot ${ success ? 'Succeed' : 'Failed' }.` );
 	}
 
 	/**
@@ -444,7 +441,7 @@ class Screenshot extends elementorModules.ViewModule {
 	 * @param {any}     message
 	 * @param {string?} timerMethod
 	 */
-	log( message, timerMethod = 'timeLog' ) {
+	log( message ) {
 		if ( ! this.getSettings( 'isDebug' ) ) {
 			return;
 		}
@@ -455,11 +452,6 @@ class Screenshot extends elementorModules.ViewModule {
 				? `${ this.getSettings( 'post_id' ) } - ${ message }`
 				: message,
 		);
-
-		if ( timerMethod ) {
-			// eslint-disable-next-line no-console
-			console[ timerMethod ]( this.getSettings( 'timer_label' ) );
-		}
 	}
 
 	getSaveAction() {
