@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type TransformItemPropValue } from '@elementor/editor-props';
 import { ArrowsMaximizeIcon, ExpandIcon, RotateClockwise2Icon, SkewXIcon } from '@elementor/icons';
 
-import { TransformFunctionKeys } from './types';
+import { TransformFunctionKeys } from './initial-values';
 
 export const TransformIcon = ( { value }: { value: TransformItemPropValue } ) => {
 	switch ( value.$$type ) {
