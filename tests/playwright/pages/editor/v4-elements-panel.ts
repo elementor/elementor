@@ -232,4 +232,21 @@ export default class v4Panel extends BasePage {
 	async waitForTypographyControls( timeout: number = 5000 ): Promise<void> {
 		await this.page.waitForSelector( 'label:has-text("Font size"), label:has-text("Font family")', { timeout } );
 	}
+
+	async setTypographyUnit( unit: 'px' | 'em' | 'rem' | 'vw' | 'vh' | '%' | 'custom' ) {
+		// Make sure Typography section is open
+		const typographyButton = this.page.locator( '.MuiButtonBase-root', { hasText: /typography/i } ).first();
+		await typographyButton.click();
+
+		// First click on the current unit button to open the dropdown
+		await this.page.locator( '[data-setting="unit"]' ).click();
+
+		if ( 'custom' === unit ) {
+			// Click on custom unit option
+			await this.page.getByRole( 'menuitem', { name: 'Custom unit' } ).click();
+		} else {
+			// Click on specific unit option
+			await this.page.getByRole( 'menuitem', { name: unit.toUpperCase() } ).click();
+		}
+	}
 }
