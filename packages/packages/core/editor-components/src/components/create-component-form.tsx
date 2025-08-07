@@ -31,14 +31,14 @@ type SaveAsComponentEventData = {
 	anchorPosition: { top: number; left: number };
 };
 
-type Response = {
+type ResultNotification = {
 	show: boolean;
 	message: string;
 	type: 'success' | 'error';
 };
 
 const FONT_SIZE = 'tiny';
-const OPEN_SAVE_AS_COMPONENT_POPUP_EVENT = 'elementor/editor/open-save-as-component-form';
+const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
 export function CreateComponentForm() {
 	const [ isOpen, setIsOpen ] = useState( false );
@@ -47,30 +47,19 @@ export function CreateComponentForm() {
 	const [ componentName, setComponentName ] = useState( '' );
 	const [ anchorPosition, setAnchorPosition ] = useState<{ top: number; left: number } | null>( null );
 
-	const [ response, setResponse ] = useState<Response | null>( null );
+	const [ resultNotification, setResultNotification ] = useState<ResultNotification | null>( null );
 
-	const componentContent = useRef<ElementData[]>( [] );
+	const componentContent = useRef<ElementData[] | null>( null );
 
 	useEffect( () => {
-		window.addEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openPopup as EventListener);
+		window.addEventListener(OPEN_SAVE_AS_COMPONENT_FORM_EVENT,openPopup as EventListener);
 
 		return () => {
-			window.removeEventListener(OPEN_SAVE_AS_COMPONENT_POPUP_EVENT,openPopup as EventListener);
+			window.removeEventListener(OPEN_SAVE_AS_COMPONENT_FORM_EVENT,openPopup as EventListener);
 		};
 	}, [] );
 
 	const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
-		if ( ! event.detail.componentContent ) {
-			console.error( 'No component content' );
-
-			setResponse( {
-				show: true,
-				message: 'Failed to save component. Please try again.',
-				type: 'error',
-			} );
-			return;
-		};
-
 		componentContent.current = event.detail.componentContent;
 		setComponentName( getComponentDefaultName( event.detail.componentContent ) );
 		setAnchorPosition( event.detail.anchorPosition );
@@ -80,7 +69,7 @@ export function CreateComponentForm() {
 
 	const resetAndClosePopup = () => {
 		setIsOpen( false );
-		componentContent.current = [];
+		componentContent.current = null;
 		setComponentName( '' );
 		setAnchorPosition( null );
 		setIsLoading( false );
@@ -99,7 +88,7 @@ export function CreateComponentForm() {
 				content: componentContent.current,
 			} );
 
-			setResponse( {
+			setResultNotification( {
 				show: true,
 				message: `Component saved successfully as: ${ componentName } (ID: ${ result.data.component_id })`,
 				type: 'success',
@@ -110,7 +99,7 @@ export function CreateComponentForm() {
 			console.error( 'Error saving component:', error );
 
 			const errorMessage = error instanceof Error ? error.message : 'Failed to save component. Please try again.';
-			setResponse( {
+			setResultNotification( {
 				show: true,
 				message: errorMessage,
 				type: 'error',
@@ -127,16 +116,6 @@ export function CreateComponentForm() {
 				onClose={ resetAndClosePopup }
 				anchorReference="anchorPosition"
 				anchorPosition={ anchorPosition }
-				anchorOrigin={ {
-					vertical: 'top',
-					horizontal: 'left',
-				} }
-				transformOrigin={ {
-					vertical: 'top',
-					horizontal: 'left',
-				} }
-				disablePortal
-				disableScrollLock
 			>
 				<Stack alignItems="start" width="268px">
 					<Stack direction="row" alignItems="center" sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%', padding: 1, } }>
@@ -186,9 +165,9 @@ export function CreateComponentForm() {
 					</Stack>
 				</Stack>
 			</Popover>
-			<Snackbar open={ response?.show } onClose={ () => setResponse( null ) }>
-				<Alert onClose={ () => setResponse( null ) } severity={ response?.type } sx={ { width: '100%' } }>
-					{ response?.message }
+			<Snackbar open={ resultNotification?.show } onClose={ () => setResultNotification( null ) }>
+				<Alert onClose={ () => setResultNotification( null ) } severity={ resultNotification?.type } sx={ { width: '100%' } }>
+					{ resultNotification?.message }
 				</Alert>
 			</Snackbar>
 		</ThemeProvider>
