@@ -1,6 +1,9 @@
+import { __ } from '@wordpress/i18n';
+
 export type TransitionProperty = {
 	label: string;
 	value: string;
+	unavailable?: boolean;
 };
 
 export type TransitionCategory = {
@@ -13,7 +16,7 @@ export const initialTransitionValue = {
 	selection: {
 		$$type: 'key-value',
 		value: {
-			key: { value: 'All properties', $$type: 'string' },
+			key: { value: __( 'All properties', 'elementor' ), $$type: 'string' },
 			value: { value: 'all', $$type: 'string' },
 		},
 	},
@@ -22,9 +25,9 @@ export const initialTransitionValue = {
 
 export const transitionProperties: TransitionCategory[] = [
 	{
-		label: 'Common',
+		label: __( 'Default', 'elementor' ),
 		type: 'category',
-		properties: [ { label: 'All properties', value: 'all' } ],
+		properties: [ { label: __( 'All properties', 'elementor' ), value: 'all' } ],
 	},
 ];
 

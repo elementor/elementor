@@ -90,9 +90,12 @@ export const ItemSelector = ( {
 							sx={ { display: 'flex', width: '100%', justifyContent: 'center' } }
 						>
 							<span>&ldquo;</span>
-							<span style={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }>
+							<Box
+								component="span"
+								sx={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }
+							>
 								{ searchValue }
-							</span>
+							</Box>
 							<span>&rdquo;.</span>
 						</Typography>
 					</Box>
