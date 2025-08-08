@@ -35,13 +35,13 @@ class Templates extends Export_Runner_Base {
 	private function export_all( array $data ) {
 		$template_types = array_values( Source_Local::get_template_types() );
 
-		return $this->export_templates_by_types( $template_types );
+		return $this->export_templates_by_types( $template_types, $data );
 	}
 
 	private function export_customization( array $data, $customization ) {
 		$template_types = [];
 
-		if ( isset( $customization['siteTemplates'] ) && $customization['siteTemplates'] ) {
+		if ( isset( $customization['siteTemplates']['enabled'] ) && $customization['siteTemplates']['enabled'] ) {
 			$template_types = array_keys( Plugin::$instance->documents->get_document_types( [
 				'is_editable' => true,
 				'show_in_library' => true,
@@ -49,57 +49,61 @@ class Templates extends Export_Runner_Base {
 			] ) );
 		}
 
-		$template_types_to_add = apply_filters( 'elementor/import-export-customization/export/template_types', [], $data, $customization );
-		$template_types = array_merge( $template_types, $template_types_to_add );
-
-		if ( empty( $template_types ) ) {
-			return [
-				'files' => [],
-				'manifest' => [],
-			];
-		}
-
-		return $this->export_templates_by_types( $template_types );
+		return $this->export_templates_by_types( $template_types, $data );
 	}
 
-	private function export_templates_by_types( array $template_types ) {
-		$query_args = [
-			'post_type' => Source_Local::CPT,
-			'post_status' => 'publish',
-			'posts_per_page' => -1,
-			'meta_query' => [
-				[
-					'key' => Document::TYPE_META_KEY,
-					'value' => $template_types,
-				],
-			],
-		];
-
-		$templates_query = new \WP_Query( $query_args );
-
+	private function export_templates_by_types( array $template_types, array $data ) {
 		$templates_manifest_data = [];
 		$files = [];
 
-		foreach ( $templates_query->posts as $template_post ) {
-			$template_id = $template_post->ID;
-
-			$template_document = Plugin::$instance->documents->get( $template_id );
-
-			$templates_manifest_data[ $template_id ] = $template_document->get_export_summary();
-
-			$files[] = [
-				'path' => 'templates/' . $template_id,
-				'data' => $template_document->get_export_data(),
+		if ( ! empty( $template_types ) ) {
+			$query_args = [
+				'post_type' => Source_Local::CPT,
+				'post_status' => 'publish',
+				'posts_per_page' => -1,
+				'meta_query' => [
+					[
+						'key' => Document::TYPE_META_KEY,
+						'value' => $template_types,
+					],
+				],
 			];
+
+			$templates_query = new \WP_Query( $query_args );
+
+			foreach ( $templates_query->posts as $template_post ) {
+				$template_id = $template_post->ID;
+
+				$template_document = Plugin::$instance->documents->get( $template_id );
+
+				$templates_manifest_data[ $template_id ] = $template_document->get_export_summary();
+
+				$files[] = [
+					'path' => 'templates/' . $template_id,
+					'data' => $template_document->get_export_data(),
+				];
+			}
 		}
 
 		$manifest_data['templates'] = $templates_manifest_data;
 
-		return [
+		$export_data = [
 			'files' => $files,
 			'manifest' => [
 				$manifest_data,
 			],
 		];
+
+		/**
+		 * Filter the templates export data to allow adding additional data.
+		 *
+		 * @param array $export_data The export data structure with 'files' and 'manifest' keys.
+		 * @param array $data The full export data.
+		 * @param array|null $customization The customization settings for templates.
+		 */
+		$customization = $data['customization']['templates'] ?? null;
+		$export_data = apply_filters( 'elementor/import-export-customization/export/templates_data', $export_data, $data, $customization );
+
+		return $export_data;
 	}
 }

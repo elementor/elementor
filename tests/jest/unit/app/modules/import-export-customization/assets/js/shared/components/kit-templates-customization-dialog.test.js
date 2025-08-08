@@ -31,7 +31,42 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			},
 		};
 
+		global.elementorModules = {
+			importExport: {
+				templateRegistry: {
+					getAll: jest.fn( () => [
+						{
+							key: 'siteTemplates',
+							title: 'Site templates',
+							description: 'Site template description',
+							exportGroup: 'site-templates',
+							useParentDefault: true,
+						},
+					] ),
+					getState: jest.fn( ( data, initialState ) => {
+						const state = {};
+						const templateTypes = global.elementorModules.importExport.templateRegistry.getAll();
+
+						templateTypes.forEach( ( templateType ) => {
+							if ( data?.customization?.templates?.[ templateType.key ] !== undefined ) {
+								state[ templateType.key ] = data.customization.templates[ templateType.key ];
+								return;
+							}
+
+							state[ templateType.key ] = { enabled: initialState };
+						} );
+
+						return state;
+					} ),
+				},
+			},
+		};
+
 		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		delete global.elementorModules;
 	} );
 
 	describe( 'Dialog Rendering', () => {
@@ -155,7 +190,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				includes: [ 'templates' ],
 				customization: {
 					templates: {
-						siteTemplates: true,
+						siteTemplates: { enabled: true },
 					},
 				},
 			};
@@ -316,7 +351,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: true,
+					siteTemplates: { enabled: true },
 				},
 				[],
 			);
@@ -342,9 +377,9 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: false,
+					siteTemplates: { enabled: false },
 				},
-				[ 'siteTemplates' ],
+				[],
 			);
 		} );
 
@@ -374,7 +409,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: true,
+					siteTemplates: { enabled: true },
 				},
 				[],
 			);
@@ -418,7 +453,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( customHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: true,
+					siteTemplates: { enabled: true },
 				},
 				[],
 			);
@@ -520,7 +555,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				includes: [ 'templates' ],
 				customization: {
 					templates: {
-						siteTemplates: true,
+						siteTemplates: { enabled: true },
 					},
 				},
 			};
@@ -541,7 +576,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				includes: [ 'templates' ],
 				customization: {
 					templates: {
-						siteTemplates: false,
+						siteTemplates: { enabled: false },
 					},
 				},
 			};
