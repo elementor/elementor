@@ -129,7 +129,7 @@ export default function ItemHeader( props ) {
     {
       onSuccess: ( response ) => {
         try {
-          const linkUrl = response?.data?.data?.download_link || response?.data?.download_link || response?.download_link;
+          const linkUrl = response?.data?.data?.download_link;
           if ( ! linkUrl ) {
             setError( { message: __( 'Download link is missing.', 'elementor' ) } );
             return;
