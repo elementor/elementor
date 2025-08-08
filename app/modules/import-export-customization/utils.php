@@ -20,20 +20,28 @@ class Utils {
 		return $file_content ? json_decode( $file_content, true ) : [];
 	}
 
-	public static function map_old_new_post_ids( array $imported_data ) {
+	public static function map_old_new_post_ids( array $imported_data, $customization ) {
 		$result = [];
 
 		$result += $imported_data['templates']['succeed'] ?? [];
 
 		if ( isset( $imported_data['content'] ) ) {
 			foreach ( $imported_data['content'] as $post_type ) {
-				$result += $post_type['succeed'] ?? [];
+				if ( 'page' == $post_type ) {
+					$result += $customization['pages'] ?? ( $post_type['succeed'] ?? [] );
+				} else {
+					$result += $post_type['succeed'] ?? [];
+				}
 			}
 		}
 
 		if ( isset( $imported_data['wp-content'] ) ) {
 			foreach ( $imported_data['wp-content'] as $post_type ) {
-				$result += $post_type['succeed'] ?? [];
+				if ( 'page' == $post_type ) {
+					$result += $customization['pages'] ?? ( $post_type['succeed'] ?? [] );
+				} else {
+					$result += $post_type['succeed'] ?? [];
+				}
 			}
 		}
 
