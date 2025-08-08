@@ -9,8 +9,8 @@ import useAddKitPromotionUTM from '../hooks/use-add-kit-promotion-utm';
 import { Dialog } from '@elementor/app-ui';
 import { useMemo, useState } from 'react';
 import { useSettingsContext } from '../context/settings-context';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 import { isTierAtLeast, TIERS } from 'elementor-utils/tiers';
+import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import './item-header.scss';
 
@@ -83,7 +83,20 @@ function useKitCallToActionButton( model, { apply, isApplyLoading, onConnect, on
 }
 
 export default function ItemHeader( props ) {
-	const { updateSettings } = useSettingsContext();
+  const { updateSettings } = useSettingsContext();
+  const resetConnect = () => {
+    const lc = elementorCommon?.config?.library_connect || {};
+    lc.is_connected = false;
+    lc.current_access_level = 0;
+    lc.current_access_tier = TIERS.free;
+    lc.plan_type = TIERS.free;
+
+    updateSettings( {
+      is_library_connected: false,
+      access_level: 0,
+      access_tier: TIERS.free,
+    } );
+  };
 
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ downloadLinkData, setDownloadLinkData ] = useState( null );
@@ -97,22 +110,11 @@ export default function ItemHeader( props ) {
 		{
 			onSuccess: ( { data } ) => setDownloadLinkData( data ),
 			onError: ( errorResponse ) => {
-				if ( 401 === errorResponse.code ) {
-					elementorCommon.config.library_connect.is_connected = false;
-					elementorCommon.config.library_connect.current_access_level = 0;
-					elementorCommon.config.library_connect.current_access_tier = TIERS.free;
-					elementorCommon.config.library_connect.plan_type = TIERS.free;
-
-					updateSettings( {
-						is_library_connected: false,
-						access_level: 0,
-						access_tier: TIERS.free,
-					} );
-
-					setIsConnectDialogOpen( true );
-
-					return;
-				}
+            if ( 401 === errorResponse.code ) {
+                    resetConnect();
+                    setIsConnectDialogOpen( true );
+                    return;
+                }
 
 				setError( {
 					code: errorResponse.code,
@@ -121,6 +123,44 @@ export default function ItemHeader( props ) {
 			},
 		},
 	);
+
+  const { mutate: fetchDownloadLink, isLoading: isDownloadLoading } = useDownloadLinkMutation(
+    props.model,
+    {
+      onSuccess: ( response ) => {
+        try {
+          const linkUrl = response?.data?.data?.download_link || response?.data?.download_link || response?.download_link;
+          if ( ! linkUrl ) {
+            setError( { message: __( 'Download link is missing.', 'elementor' ) } );
+            return;
+          }
+          const link = document.createElement( 'a' );
+          link.href = linkUrl;
+          link.rel = 'noopener noreferrer';
+          link.style.display = 'none';
+          document.body.appendChild( link );
+          link.click();
+          document.body.removeChild( link );
+        } catch ( e ) {
+          setError( { message: __( 'Something went wrong.', 'elementor' ) } );
+        }
+      },
+      onError: ( errorResponse ) => {
+        const rawStatus = errorResponse?.data?.status ?? errorResponse?.status ?? errorResponse?.code;
+        const statusCode = Number( rawStatus );
+        if ( 401 === statusCode ) {
+          resetConnect();
+          setIsConnectDialogOpen( true );
+          return;
+        }
+
+        setError( {
+          code: statusCode || errorResponse?.code,
+          message: errorResponse?.message || __( 'Something went wrong.', 'elementor' ),
+        } );
+      },
+    }
+  );
 
 	const applyButton = useKitCallToActionButton( props.model, {
 		onConnect: () => setIsConnectDialogOpen( true ),
@@ -139,7 +179,24 @@ export default function ItemHeader( props ) {
 		},
 	} );
 
-	const buttons = useMemo( () => [ applyButton, ...props.buttons ], [ props.buttons, applyButton ] );
+  const downloadButton = {
+		id: 'download',
+		text: __( 'Download Kit', 'elementor' ),
+		hideText: true,
+		icon: 'eicon-file-download',
+    tooltip: __( 'Download Kit', 'elementor' ),
+    color: isDownloadLoading ? 'disabled' : 'secondary',
+		includeHeaderBtnClass: false,
+    onClick: ( e ) => {
+      if ( isDownloadLoading ) {
+        return;
+      }
+
+      fetchDownloadLink( e );
+    }
+	}
+
+	const buttons = useMemo( () => [ downloadButton, applyButton, ...props.buttons ], [ props.buttons, applyButton, downloadButton ] );
 
 	return (
 		<>
