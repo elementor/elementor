@@ -159,7 +159,7 @@ export default function ItemHeader( props ) {
           message: errorResponse?.message || __( 'Something went wrong.', 'elementor' ),
         } );
       },
-    }
+    },
   );
 
 	const applyButton = useKitCallToActionButton( props.model, {
@@ -193,8 +193,8 @@ export default function ItemHeader( props ) {
       }
 
       fetchDownloadLink( e );
-    }
-	}
+    },
+  };
 
 	const buttons = useMemo( () => [ downloadButton, applyButton, ...props.buttons ], [ props.buttons, applyButton, downloadButton ] );
 
