@@ -72,6 +72,7 @@ class Wp_Content extends Import_Runner_Base {
 			'terms_meta' => [
 				static::META_KEY_ELEMENTOR_IMPORT_SESSION_ID => $this->import_session_id,
 			],
+			'include' => 'page' === $post_type ? $customization['pages'] ?? null : null,
 		];
 
 		$file = $path . $post_type . '/' . $post_type . '.xml';
