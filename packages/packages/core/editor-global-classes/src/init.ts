@@ -6,7 +6,6 @@ import {
 } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 
 import { ClassManagerButton } from './components/class-manager/class-manager-button';
@@ -43,7 +42,5 @@ export function init() {
 		getThemeColor: ( theme ) => theme.palette.global.dark,
 	} );
 
-	listenTo( v1ReadyEvent(), () => {
-		syncWithDocumentSave();
-	} );
+	syncWithDocumentSave();
 }
