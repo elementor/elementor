@@ -15,11 +15,9 @@ export default class Component extends ComponentModalBase {
 		// Remove whole component cache data.
 		$e.data.deleteCache( this, 'library' );
 
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			elementor.channels.templates.on( 'quota:update', ( { force } = {} ) => {
-				$e.components.get( 'cloud-library' ).utils.setQuotaConfig( force );
-			} );
-		}
+		elementor.channels.templates.on( 'quota:update', ( { force } = {} ) => {
+			$e.components.get( 'cloud-library' ).utils.setQuotaConfig( force );
+		} );
 	}
 
 	getNamespace() {
@@ -73,13 +71,10 @@ export default class Component extends ComponentModalBase {
 
 				this.manager.layout.showConnectView( args );
 			},
-		};
-
-		if ( elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ) {
-			defaultRoutes[ 'view-folder' ] = ( args ) => {
+			'view-folder': ( args ) => {
 				this.manager.layout.showFolderView( args );
-			};
-		}
+			},
+		};
 
 		return defaultRoutes;
 	}

@@ -833,11 +833,8 @@ class Manager {
 		$sources = [
 			'local',
 			'remote',
+			'cloud',
 		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			$sources[] = 'cloud';
-		}
 
 		foreach ( $sources as $source_filename ) {
 			$class_name = ucwords( $source_filename );

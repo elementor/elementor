@@ -24,10 +24,9 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 				customization,
 			};
 
-			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.[ 'cloud-library' ];
 			const isCloudExport = 'cloud' === kitInfo.source;
 
-			if ( isCloudKitFeatureActive && isCloudExport ) {
+			if ( isCloudExport ) {
 				const screenshot = await generateScreenshot();
 				exportData.screenShotBlob = screenshot;
 			}
