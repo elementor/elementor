@@ -5,7 +5,6 @@ import { AdjustmentsIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Divider, IconButton, Popover, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { ChildrenPerspectiveControl } from './transform-base-controls/children-perspective-control';
 import { TransformOriginControl } from './transform-base-controls/transform-origin-control';
 
 const SIZE = 'tiny';
@@ -45,8 +44,6 @@ export const TransformBaseControl = ( { anchorRef }: { anchorRef: React.RefObjec
 				/>
 				<Divider />
 				<TransformOriginControl rowRef={ rowRef } />
-				<Divider />
-				<ChildrenPerspectiveControl rowRef={ rowRef } />
 			</Popover>
 		</>
 	);
