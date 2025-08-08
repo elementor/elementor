@@ -3,6 +3,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
 import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -195,5 +196,66 @@ test.describe( 'Div Block tests @div-block', () => {
 		await expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
 		await expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
 		await expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
+	} );
+
+	test( 'Drag and drop from elements panel to container', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		await editor.addElement( { elType: 'e-div-block' }, flexboxId );
+		const flexBox = editor.getPreviewFrame().locator( `[data-id="${flexboxId }"]` );
+
+		await test.step( 'Perform drag and drop from panel to iframe', async () => {
+			await editor.openElementsPanel();
+
+			const layout = editor.page.locator( EditorSelectors.panels.elements.v4elements );
+			await expect( layout ).toBeVisible();
+			const headingWidget = layout.locator( '.title', { hasText: 'Heading' } );
+			await expect( headingWidget ).toBeVisible();
+
+			const sourceBox = await headingWidget.boundingBox();
+			const targetBox = await flexBox.boundingBox();
+
+			if ( sourceBox && targetBox ) {
+				const sourceX = sourceBox.x + ( sourceBox.width / 2 );
+				const sourceY = sourceBox.y + ( sourceBox.height / 2 );
+				const targetX = targetBox.x + ( targetBox.width / 2 );
+				const targetY = targetBox.y + ( targetBox.height / 2 );
+
+				await page.mouse.move( sourceX, sourceY );
+				await page.mouse.down();
+
+				const steps = 10;
+				for ( let i = 1; i <= steps; i++ ) {
+					const x = sourceX + ( ( targetX - sourceX ) * ( i / steps ) );
+					const y = sourceY + ( ( targetY - sourceY ) * ( i / steps ) );
+					await page.mouse.move( x, y );
+					await page.waitForTimeout( 50 );
+				}
+
+				await page.mouse.up();
+
+				await editor.getPreviewFrame().waitForSelector( '[data-widget_type="e-heading.default"]', { timeout: 5000 } );
+				const headingInContainer = flexBox.locator( '[data-widget_type="e-heading.default"]' );
+				await expect( headingInContainer ).toBeVisible();
+			}
+		} );
+
+		await test.step( 'Verify editor view', async () => {
+			const headingInContainer = container.locator( '[data-widget_type="e-heading.default"]' );
+			await expect( headingInContainer ).toBeVisible();
+
+			await expect( container ).toHaveScreenshot( 'div-block-drag-drop-editor.png' );
+		} );
+
+		await test.step( 'Verify published page view', async () => {
+			await editor.publishAndViewPage();
+
+			const publishedContainer = page.locator( `[data-id="${ containerId }"]` );
+			await expect( publishedContainer.locator( 'h2' ) ).toBeVisible();
+
+			await expect( publishedContainer ).toHaveScreenshot( 'div-block-drag-drop-published.png' );
+		} );
 	} );
 } );
