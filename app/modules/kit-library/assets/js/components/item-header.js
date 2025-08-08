@@ -130,10 +130,6 @@ export default function ItemHeader( props ) {
       onSuccess: ( response ) => {
         try {
           const linkUrl = response?.data?.data?.download_link;
-          if ( ! linkUrl ) {
-            setError( { message: __( 'Download link is missing.', 'elementor' ) } );
-            return;
-          }
           const link = document.createElement( 'a' );
           link.href = linkUrl;
           link.rel = 'noopener noreferrer';
@@ -146,18 +142,16 @@ export default function ItemHeader( props ) {
         }
       },
       onError: ( errorResponse ) => {
-        const rawStatus = errorResponse?.data?.status ?? errorResponse?.status ?? errorResponse?.code;
-        const statusCode = Number( rawStatus );
-        if ( 401 === statusCode ) {
+        if ( 401 === errorResponse.code ) {
           resetConnect();
           setIsConnectDialogOpen( true );
           return;
         }
 
         setError( {
-          code: statusCode || errorResponse?.code,
-          message: errorResponse?.message || __( 'Something went wrong.', 'elementor' ),
-        } );
+					code: errorResponse.code,
+					message: __( 'Something went wrong.', 'elementor' ),
+				} );
       },
     },
   );
