@@ -101,6 +101,17 @@ export default function ItemHeader( props ) {
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ downloadLinkData, setDownloadLinkData ] = useState( null );
 	const [ error, setError ] = useState( false );
+  const handleKitError = ( errorResponse ) => {
+    if ( 401 === errorResponse.code ) {
+      resetConnect();
+      setIsConnectDialogOpen( true );
+      return;
+    }
+    setError( {
+			code: errorResponse.code,
+			message: __( 'Something went wrong.', 'elementor' )
+		} );
+  };
 	const kitData = {
 		kitName: props.model.title,
 		pageId: props.pageId,
@@ -109,18 +120,7 @@ export default function ItemHeader( props ) {
 		props.model,
 		{
 			onSuccess: ( { data } ) => setDownloadLinkData( data ),
-			onError: ( errorResponse ) => {
-            if ( 401 === errorResponse.code ) {
-                    resetConnect();
-                    setIsConnectDialogOpen( true );
-                    return;
-                }
-
-				setError( {
-					code: errorResponse.code,
-					message: __( 'Something went wrong.', 'elementor' ),
-				} );
-			},
+      onError: handleKitError,
 		},
 	);
 
@@ -141,18 +141,7 @@ export default function ItemHeader( props ) {
           setError( { message: __( 'Something went wrong.', 'elementor' ) } );
         }
       },
-      onError: ( errorResponse ) => {
-        if ( 401 === errorResponse.code ) {
-          resetConnect();
-          setIsConnectDialogOpen( true );
-          return;
-        }
-
-        setError( {
-					code: errorResponse.code,
-					message: __( 'Something went wrong.', 'elementor' ),
-				} );
-      },
+      onError: handleKitError,
     },
   );
 
