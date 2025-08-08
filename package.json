@@ -22,7 +22,7 @@
     "composer:no-dev": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload",
     "reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm ci && cd packages && npm ci",
     "hard-reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm i && cd packages && npm i",
-    "env:setup": "bash scripts/setup-test-environment.sh",
+    "env:setup": "npm run prepare-environment:ci && curl -L --output hello-elementor.zip \"https://downloads.wordpress.org/theme/hello-elementor.zip\" && unzip hello-elementor && npm run start-local-server && npm run test:setup:playwright && npx playwright install chromium",
     "env:setup:with-playwright": "bash scripts/setup-test-environment.sh && npx playwright install chromium",
     "wp-env": "wp-env",
     "test:linux": "node ./run-on-linux.js",

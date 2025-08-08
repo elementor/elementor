@@ -24,10 +24,10 @@ test.describe( 'V4 Typography Tests @v4-tests', () => {
 		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
-	// test.afterAll( async () => {
-	// 	await wpAdmin.resetExperiments();
-	// 	await context.close();
-	// } );
+	test.afterAll( async () => {
+		await wpAdmin.resetExperiments();
+		await context.close();
+	} );
 
 	test.beforeEach( async () => {
 		editor = await wpAdmin.openNewPage();
