@@ -333,7 +333,7 @@ class Cloud_Library extends Library {
 	}
 
 	/**
-	 * @return array|\WP_Error
+	 * @return array|false
 	 */
 	public function get_quota() {
 		if ( ! $this->is_connected() ) {
