@@ -336,6 +336,10 @@ class Cloud_Library extends Library {
 	 * @return array|\WP_Error
 	 */
 	public function get_quota() {
+		if ( ! $this->is_connected() ) {
+			return false;
+		}
+
 		return $this->http_request( 'GET', 'quota', [], [
 			'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
 		] );
