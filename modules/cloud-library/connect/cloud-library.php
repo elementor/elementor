@@ -333,11 +333,11 @@ class Cloud_Library extends Library {
 	}
 
 	/**
-	 * @return array|false
+	 * @return array|\WP_Error
 	 */
 	public function get_quota() {
 		if ( ! $this->is_connected() ) {
-			return false;
+			return new \WP_Error( 'not_connected', esc_html__( 'Not connected', 'elementor' ) );
 		}
 
 		return $this->http_request( 'GET', 'quota', [], [
