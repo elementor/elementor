@@ -279,7 +279,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'default' => 'start',
-				'mobile_default' => 'center',
+				'mobile_default' => 'middle',
 				'selectors_dictionary' => [
 					'top' => 'start',
 					'middle' => 'center',
@@ -320,7 +320,6 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'text-align: {{VALUE}};',
-					'{{WRAPPER}} .elementor-icon-box-icon' => 'justify-content: {{VALUE}};',
 				],
 				'separator' => 'after',
 			]

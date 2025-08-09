@@ -32,7 +32,8 @@
 			}
 
 			.elementor-icon-box-icon {
-				justify-content: center;
+				align-items: unset;
+				text-align: center;
 			}
 		}
 	}
@@ -48,7 +49,7 @@
 	}
 
 	.elementor-icon-box-icon {
-		display: inline-flex;
+		display: inline-block;
 		flex: 0 0 auto; // Hack for Safari
 	}
 
