@@ -29,11 +29,7 @@
 				text-align: center;
 				flex-direction: column;
 				gap: var(--icon-box-icon-margin, 15px);
-			}
-
-			.elementor-icon-box-icon {
-				align-items: unset;
-				text-align: center;
+				align-items: unset !important; // Fix mobile icon alignment bug.
 			}
 		}
 	}
