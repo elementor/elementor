@@ -192,7 +192,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 												<Menu
 													MenuListProps={ {
 														dense: true,
-														sx: { py: 0.5 }
+														sx: { py: 0.5 },
 													} }
 													{ ...bindMenu( rowOptionsState ) }
 													anchorEl={ rowOptionsState.anchorEl }
@@ -206,7 +206,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 													} }
 													open={ rowOptionsState.isOpen }
 													onClose={ rowOptionsState.close }
-																										PaperProps={ {
+													PaperProps={ {
 														elevation: 6,
 														sx: {
 															mt: 0.5,
@@ -215,9 +215,9 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 																minHeight: 36,
 																px: 2,
 																py: 1,
-																gap: 1.5
-															}
-														}
+																gap: 1.5,
+															},
+														},
 													} }
 												>
 													{ menuActions.map( ( action ) => (
