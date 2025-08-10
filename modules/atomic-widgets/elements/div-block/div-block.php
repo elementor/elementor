@@ -206,6 +206,7 @@ class Div_Block extends Atomic_Element_Base {
 		$attributes = [
 			'class' => [
 				'e-con',
+				'e-atomic-element',
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],

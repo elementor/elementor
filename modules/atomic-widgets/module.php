@@ -89,6 +89,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
+use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -131,6 +132,7 @@ class Module extends BaseModule {
 			}
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
+			( new Atomic_Widgets_Library() )->register_hooks();
 
 			Atomic_Styles_Manager::instance()->register_hooks();
 
