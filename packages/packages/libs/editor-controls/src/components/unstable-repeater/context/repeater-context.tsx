@@ -7,6 +7,13 @@ import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { type Item, type RepeatablePropValue } from '../types';
 
+// Global counter to ensure unique keys across all repeater instances
+let globalKeyCounter = 0;
+
+const generateUniqueKey = () => {
+	return ++globalKeyCounter;
+};
+
 type SetterFn< T > = ( prevItems: T ) => T;
 
 type AddItem< T > = { item?: T; index?: number };
@@ -56,24 +63,25 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		persistWhen: () => true,
 	} );
 
-	const itemWithKeysState = useState< ItemWithKey< T >[] >(
-		items?.map( ( item, index ) => ( { key: index, item } ) ) ?? []
-	);
-
-	const itemsWithKeys = itemWithKeysState[ 0 ];
-	const setItemsWithKeys = ( newItems: ItemWithKey< T >[] ) => {
-		itemWithKeysState[ 1 ]( newItems as ItemWithKey< T >[] );
-		setItems( newItems.map( ( { item } ) => item as T ) );
-	};
+	const [ itemsWithKeys, setItemsWithKeys ] = useState< ItemWithKey< T >[] >( () => {
+		return items?.map( ( item ) => ( { key: generateUniqueKey(), item } ) ) ?? [];
+	} );
 
 	React.useEffect( () => {
-		const newItemsWithKeys = items?.map( ( item ) => {
-			const existingItem = itemsWithKeys.find( ( i ) => i.item === item );
-			return existingItem || { key: generateNextKey( itemsWithKeys.map( ( { key } ) => key ) ), item };
-		} ) ?? [];
+		setItemsWithKeys( ( prevItemsWithKeys ) => {
+			const newItemsWithKeys =
+				items?.map( ( item ) => {
+					const existingItem = prevItemsWithKeys.find( ( i ) => i.item === item );
+					return existingItem || { key: generateUniqueKey(), item };
+				} ) ?? [];
 
-		itemWithKeysState[ 1 ]( newItemsWithKeys );
+			return newItemsWithKeys;
+		} );
 	}, [ items ] );
+
+	const handleSetItems = ( newItemsWithKeys: ItemWithKey< T >[] ) => {
+		setItems( newItemsWithKeys.map( ( { item } ) => item ) );
+	};
 
 	const [ openItemIndex, setOpenItemIndex ] = useState( EMPTY_OPEN_ITEM );
 	const [ rowRef, setRowRef ] = useState< HTMLElement | null >( null );
@@ -84,29 +92,22 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
 		const item = config?.item ?? initial;
 		const newIndex = config?.index ?? items.length;
-		const newKey = generateNextKey( itemsWithKeys.map( ( { key } ) => key ) );
-		const newItemsWithKeys = [ ...itemsWithKeys ];
+		const newItems = [ ...items ];
 
-		newItemsWithKeys.splice( newIndex, 0, { item, key: newKey } );
-		setItemsWithKeys( newItemsWithKeys );
+		newItems.splice( newIndex, 0, item );
+		setItems( newItems );
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
 	};
 
 	const removeItem = ( index: number ) => {
-		setItemsWithKeys( itemsWithKeys.filter( ( _, pos ) => pos !== index ) );
+		setItems( items.filter( ( _, pos ) => pos !== index ) );
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {
-		const item = itemsWithKeys[ index ];
-
-		const newItems = [
-			...itemsWithKeys.slice( 0, index ),
-			{ ...item, item: updatedItem },
-			...itemsWithKeys.slice( index + 1 )
-		];
-		setItemsWithKeys( newItems );
+		const newItems = [ ...items.slice( 0, index ), updatedItem, ...items.slice( index + 1 ) ];
+		setItems( newItems );
 	};
 
 	return (
@@ -116,7 +117,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				openItemIndex,
 				setOpenItemIndex,
 				items: ( itemsWithKeys ?? [] ) as RepeaterContextType< T >[ 'items' ],
-				setItems: setItemsWithKeys as RepeaterContextType< RepeatablePropValue >[ 'setItems' ],
+				setItems: handleSetItems as RepeaterContextType< RepeatablePropValue >[ 'setItems' ],
 				popoverState,
 				initial,
 				updateItem: updateItem as RepeaterContextType< RepeatablePropValue >[ 'updateItem' ],
@@ -129,8 +130,4 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 			{ children }
 		</RepeaterContext.Provider>
 	);
-};
-
-const generateNextKey = ( source: number[] ) => {
-	return 1 + Math.max( 0, ...source );
 };
