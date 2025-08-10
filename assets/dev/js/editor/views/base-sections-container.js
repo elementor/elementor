@@ -1,6 +1,6 @@
 var BaseContainer = require( 'elementor-views/base-container' ),
 	BaseSectionsContainerView,
-	{ ELEMENT_TYPES, getAllElementTypes } = require( 'elementor-editor/utils/element-types' );
+	{ getAllElementTypes } = require( 'elementor-editor/utils/element-types' );
 
 BaseSectionsContainerView = BaseContainer.extend( {
 	getChildView( model ) {
@@ -14,10 +14,11 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	behaviors() {
+		const sectionElementType = 'section';
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: ELEMENT_TYPES.SECTION,
+				elChildType: sectionElementType,
 			},
 		};
 
