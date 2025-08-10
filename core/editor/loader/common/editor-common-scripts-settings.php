@@ -31,6 +31,7 @@ class Editor_Common_Scripts_Settings {
 		$kits_manager = Plugin::$instance->kits_manager;
 
 		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
+		$top_bar_connect_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' ) ?? Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
 		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
@@ -74,6 +75,18 @@ class Editor_Common_Scripts_Settings {
 				'introduction' => User::get_introduction_meta(),
 				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),
+				'top_bar' => [
+					'connect_url' => $top_bar_connect_app->get_admin_url( 'authorize', [
+						'utm_source' => 'editor-app',
+						'utm_campaign' => 'connect-account',
+						'utm_medium' => 'wp-dash',
+						'utm_term' => '1.0.0',
+						'utm_content' => 'cta-link',
+						'source' => 'generic',
+						'mode' => 'popup',
+					] ),
+					'my_elementor_url' => 'https://go.elementor.com/wp-dash-top-bar-account/',
+				],
 			],
 			'preview' => [
 				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
