@@ -172,7 +172,7 @@ describe( 'LinkedDimensionsControl', () => {
 			const sizeInputs = screen.getAllByRole( 'spinbutton' );
 
 			expect( toggleButton ).toHaveAttribute( 'aria-pressed', 'true' );
-			sizeInputs.forEach( input => {
+			sizeInputs.forEach( ( input ) => {
 				expect( input ).toHaveAttribute( 'placeholder', '10' );
 			} );
 		} );
@@ -237,7 +237,7 @@ describe( 'LinkedDimensionsControl', () => {
 
 			// Assert.
 			const sizeInputs = screen.getAllByRole( 'spinbutton' );
-			sizeInputs.forEach( input => {
+			sizeInputs.forEach( ( input ) => {
 				expect( input ).toHaveDisplayValue( '20' );
 			} );
 		} );
