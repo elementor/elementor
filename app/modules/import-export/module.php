@@ -483,9 +483,11 @@ class Module extends BaseModule {
 
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 
-		$page_id = Tools::PAGE_ID;
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
+			$page_id = Tools::PAGE_ID;
 
-		add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+			add_action( "elementor/admin/after_create_settings/{$page_id}", [ $this, 'register_settings_tab' ] );
+		}
 
 		// TODO 18/04/2023 : This needs to be moved to the runner itself after https://elementor.atlassian.net/browse/HTS-434 is done.
 		if ( self::IMPORT_PLUGINS_ACTION === ElementorUtils::get_super_global_value( $_SERVER, 'HTTP_X_ELEMENTOR_ACTION' ) ) {
