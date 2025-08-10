@@ -29,7 +29,7 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	getChildType() {
-		const allowedElementTypes = Object.keys( elementor.getConfig().elements ).filter( ( elType ) => elType !== 'section' && elType !== 'column' );
+		const allowedElementTypes = getAllElementTypes().filter( ( elType ) => elType !== 'section' && elType !== 'column' );
 
 		return [
 			...allowedElementTypes,
