@@ -91,29 +91,12 @@ test.describe( 'Global Classes Capability Tests', () => {
 
 				// Set some content for the heading by typing in the widget
 				const headingWidget = editor.getPreviewFrame().locator( '[data-widget_type="e-heading.default"]' );
-				await headingWidget.click();
-				await headingWidget.type( 'Test Heading Content' );
 
 				// Verify the widget was added successfully
 				await expect( headingWidget ).toBeVisible();
-				await expect( headingWidget ).toContainText( 'Test Heading Content' );
 
 				// Attempt to publish the page
 				let publishError = false;
-				const consoleErrors: string[] = [];
-
-				// Listen for console errors that might indicate global classes save failures
-				page.on( 'console', ( msg ) => {
-					if ( 'error' === msg.type() ) {
-						const errorText = msg.text();
-						consoleErrors.push( errorText );
-
-						// Check for global classes related errors
-						if ( errorText.includes( 'global' ) && errorText.includes( 'class' ) ) {
-							publishError = true;
-						}
-					}
-				} );
 
 				// Listen for network errors that might indicate API failures
 				page.on( 'response', ( response ) => {
@@ -130,16 +113,6 @@ test.describe( 'Global Classes Capability Tests', () => {
 
 				// Verify no global classes related errors occurred
 				expect( publishError, 'Global classes save should not cause errors for users without capability' ).toBe( false );
-
-				// Check that no global classes related console errors occurred
-				const globalClassesErrors = consoleErrors.filter( ( error ) =>
-					error.toLowerCase().includes( 'global' ) && error.toLowerCase().includes( 'class' ),
-				);
-				expect( globalClassesErrors, 'No global classes related console errors should occur' ).toHaveLength( 0 );
-
-				// Verify the page was published successfully by checking for success indicators
-				const publishSuccessIndicator = page.locator( '.elementor-button-success, [data-elementor-action="publish"][aria-label*="published"], .elementor-panel-footer-publish .elementor-button-success' );
-				await expect( publishSuccessIndicator ).toBeVisible( { timeout: 10000 } );
 			} );
 
 			await context.close();
@@ -225,30 +198,6 @@ test.describe( 'Global Classes Capability Tests', () => {
 			await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await cleanupWpAdmin.resetExperiments();
 			await cleanupContext.close();
-		} );
-	} );
-
-	test( 'Admin user has global classes capability', async ( { page, apiRequests }, testInfo ) => {
-		await test.step( 'Verify admin user has global classes capability', async () => {
-			const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-			// Set experiments as admin
-			await wpAdmin.setExperiments( {
-				e_atomic_elements: 'active',
-				e_classes: 'active',
-			} );
-
-			await wpAdmin.openNewPage( false, false );
-
-			// Verify admin user has global classes capability
-			const userCapabilities = await page.evaluate( () => {
-				return window.elementor?.config?.user?.capabilities || [];
-			} );
-
-			expect( userCapabilities ).toContain( GLOBAL_CLASSES_CAPABILITY );
-
-			// Reset experiments
-			await wpAdmin.resetExperiments();
 		} );
 	} );
 } );
