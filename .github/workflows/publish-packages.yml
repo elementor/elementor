@@ -38,6 +38,7 @@ jobs:
           echo "Current version: $CURRENT_VERSION"
 
       - name: Set Version with Build Tag
+        id: build-tag
         working-directory: packages
         run: |
           VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ github.run_number }}"
