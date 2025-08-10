@@ -7,13 +7,6 @@ import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { type Item, type RepeatablePropValue } from '../types';
 
-// Global counter to ensure unique keys across all repeater instances
-let globalKeyCounter = 0;
-
-const generateUniqueKey = () => {
-	return ++globalKeyCounter;
-};
-
 type SetterFn< T > = ( prevItems: T ) => T;
 
 type AddItem< T > = { item?: T; index?: number };
@@ -130,4 +123,8 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 			{ children }
 		</RepeaterContext.Provider>
 	);
+};
+
+const generateUniqueKey = () => {
+	return Date.now() + Math.floor( Math.random() * 1000000 );
 };
