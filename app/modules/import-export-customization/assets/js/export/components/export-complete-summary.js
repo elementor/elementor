@@ -1,12 +1,64 @@
 import { Box, Typography, Stack } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import SummarySection from './summary-section';
+import { useMemo, useCallback } from 'react';
+import SummarySection from '../../shared/components/summary-section';
+import { buildKitSettingsSummary } from '../../shared/utils/utils';
 
 export default function ExportCompleteSummary( { kitInfo, includes, exportedData } ) {
-	const sectionsTitlesMap = {
+	const getTemplatesSummary = useCallback( () => {
+		const templates = exportedData?.manifest?.templates;
+
+		if ( ! templates ) {
+			return __( 'No templates exported', 'elementor' );
+		}
+
+		const templatesByType = {};
+
+		Object.values( templates ).forEach( ( template ) => {
+			const docType = template.doc_type;
+			if ( ! templatesByType[ docType ] ) {
+				templatesByType[ docType ] = 0;
+			}
+			templatesByType[ docType ]++;
+		} );
+
+		const summaryTitles = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.templates || {};
+
+		const summaryParts = Object.entries( templatesByType )
+			.map( ( [ docType, count ] ) => {
+				const label = summaryTitles[ docType ];
+				if ( ! label ) {
+					return null;
+				}
+
+				const title = count > 1 ? label.plural : label.single;
+				return `${ count } ${ title }`;
+			} )
+			.filter( ( part ) => part );
+
+		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates exported', 'elementor' );
+	}, [ exportedData?.manifest?.templates ] );
+
+	const getPluginsSummary = useCallback( () => {
+		return exportedData?.manifest?.plugins ? exportedData?.manifest?.plugins.map( ( plugin ) => plugin.name ).join( ' | ' ) : __( 'No plugins exported', 'elementor' );
+	}, [ exportedData?.manifest?.plugins ] );
+
+	const getSettingsSummary = useCallback( () => {
+		const siteSettings = exportedData?.manifest?.[ 'site-settings' ];
+
+		if ( ! siteSettings ) {
+			return __( 'No settings exported', 'elementor' );
+		}
+
+		const summary = buildKitSettingsSummary( siteSettings );
+
+		return summary.length > 0 ? summary : __( 'No settings exported', 'elementor' );
+	}, [ exportedData?.manifest?.[ 'site-settings' ] ] );
+
+	const sectionsTitlesMap = useMemo( () => ( {
 		settings: {
 			title: __( 'Site settings', 'elementor' ),
-			subTitle: __( 'Global Colors | Global Fonts | Typography | Buttons | Images | Form Fields | Previousground | Layout | Lightbox | Page Transitions | Custom CSS', 'elementor' ),
+			subTitle: getSettingsSummary(),
 		},
 		content: {
 			title: __( 'Content', 'elementor' ),
@@ -14,9 +66,13 @@ export default function ExportCompleteSummary( { kitInfo, includes, exportedData
 		},
 		plugins: {
 			title: __( 'Plugins', 'elementor' ),
-			subTitle: exportedData?.manifest?.plugins ? exportedData?.manifest?.plugins.map( ( plugin ) => plugin.name ).join( ' | ' ) : __( 'No plugins exported', 'elementor' ),
+			subTitle: getPluginsSummary(),
 		},
-	};
+		templates: {
+			title: __( 'Templates', 'elementor' ),
+			subTitle: getTemplatesSummary(),
+		},
+	} ), [ getPluginsSummary, getTemplatesSummary, getSettingsSummary ] );
 
 	return (
 		<Box sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5, textAlign: 'start' } } data-testid="export-complete-summary">
@@ -59,6 +115,8 @@ ExportCompleteSummary.propTypes = {
 			plugins: PropTypes.arrayOf( PropTypes.shape( {
 				name: PropTypes.string,
 			} ) ),
+			templates: PropTypes.object,
+			'site-settings': PropTypes.object,
 		} ),
 	} ),
 };
