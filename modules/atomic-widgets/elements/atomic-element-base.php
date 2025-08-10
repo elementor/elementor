@@ -3,9 +3,18 @@
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -52,11 +61,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	/**
-	 * @return array<string, Prop_Type>
-	 */
-	abstract protected static function define_props_schema(): array;
-
-	/**
 	 * Get Element keywords.
 	 *
 	 * Retrieve the element keywords.
@@ -68,5 +72,195 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	public function get_keywords() {
 		return [];
+	}
+
+	/**
+	 * @return array<string, Prop_Type>
+	 */
+	abstract protected static function define_props_schema(): array;
+
+	/**
+	 * Get common props schema for atomic elements with container functionality.
+	 *
+	 * @return array
+	 */
+	protected static function get_common_element_props_schema(): array {
+		$tag_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'not_exist',
+				'path' => [ 'link', 'destination' ],
+			] )
+			->get();
+
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
+				->default( 'div' )
+				->set_dependencies( $tag_dependencies ),
+			'link' => Link_Prop_Type::make(),
+			'attributes' => Key_Value_Array_Prop_Type::make(),
+		];
+	}
+
+	/**
+	 * Get common settings controls for atomic elements with tag selection.
+	 *
+	 * @return array
+	 */
+	protected function get_common_element_settings_controls(): array {
+		return [
+			Select_Control::bind_to( 'tag' )
+				->set_options( [
+					[
+						'value' => 'div',
+						'label' => 'Div',
+					],
+					[
+						'value' => 'header',
+						'label' => 'Header',
+					],
+					[
+						'value' => 'section',
+						'label' => 'Section',
+					],
+					[
+						'value' => 'article',
+						'label' => 'Article',
+					],
+					[
+						'value' => 'aside',
+						'label' => 'Aside',
+					],
+					[
+						'value' => 'footer',
+						'label' => 'Footer',
+					],
+				])
+				->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
+		];
+	}
+
+	/**
+	 * Get the HTML tag for rendering.
+	 *
+	 * @return string
+	 */
+	protected function get_html_tag(): string {
+		$settings = $this->get_atomic_settings();
+
+		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
+	}
+
+	/**
+	 * Print safe HTML tag for the element based on the element settings.
+	 *
+	 * @return void
+	 */
+	protected function print_html_tag() {
+		$html_tag = $this->get_html_tag();
+		Utils::print_validated_html_tag( $html_tag );
+	}
+
+	/**
+	 * Print custom attributes if they exist.
+	 *
+	 * @return void
+	 */
+	protected function print_custom_attributes() {
+		$settings = $this->get_atomic_settings();
+		$attributes = $settings['attributes'];
+		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo ' ' . $attributes;
+		}
+	}
+
+	/**
+	 * Get default child type for container elements.
+	 *
+	 * @param array $element_data
+	 * @return mixed
+	 */
+	protected function _get_default_child_type( array $element_data ) {
+		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+
+		if ( in_array( $element_data['elType'], $el_types, true ) ) {
+			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
+		}
+
+		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+	}
+
+	/**
+	 * Default before render for container elements.
+	 *
+	 * @return void
+	 */
+	public function before_render() {
+		?>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' );
+		$this->print_custom_attributes(); ?>>
+		<?php
+	}
+
+	/**
+	 * Default after render for container elements.
+	 *
+	 * @return void
+	 */
+	public function after_render() {
+		?>
+		</<?php $this->print_html_tag(); ?>>
+		<?php
+	}
+
+	/**
+	 * Default content template - can be overridden by elements that need custom templates.
+	 *
+	 * @return void
+	 */
+	protected function content_template() {
+		?>
+		<?php
+	}
+
+	/**
+	 * Add common render attributes for container elements.
+	 *
+	 * @return void
+	 */
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+		$settings = $this->get_atomic_settings();
+		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+
+		$attributes = [
+			'class' => [
+				'e-con',
+				'e-atomic-element',
+				$base_style_class,
+				...( $settings['classes'] ?? [] ),
+			],
+		];
+
+		if ( ! empty( $settings['_cssid'] ) ) {
+			$attributes['id'] = esc_attr( $settings['_cssid'] );
+		}
+
+		if ( ! empty( $settings['link']['href'] ) ) {
+			$attributes = array_merge( $attributes, $settings['link'] );
+		}
+
+		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 }
