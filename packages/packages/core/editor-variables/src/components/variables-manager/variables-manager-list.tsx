@@ -56,7 +56,6 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 	} );
 	const tableSX: SxProps = {
 		minWidth: 250,
-		width: '98%',
 		tableLayout: 'fixed',
 	};
 	const tableCellSX: SxProps = {
@@ -65,6 +64,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 		fontSize: '12px',
 		cursor: 'initial',
 		typography: 'caption',
+		lineHeight: '23px'
 	};
 	const tableHeadCellSX: SxProps = {
 		...tableCellSX,
@@ -133,6 +133,12 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 														borderBottomColor: 'primary.main',
 													},
 												} ),
+												'&:hover': {
+													backgroundColor: 'action.hover',
+													'& .MuiIconButton-root': {
+														opacity: 1,
+													},
+												},
 											} }
 											style={ { ...itemStyle, ...triggerStyle } }
 											disableDivider={ isDragOverlay || index === rows.length - 1 }
@@ -181,6 +187,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 												<IconButton
 													sx={ {
 														padding: 0,
+														opacity: 0
 													} }
 													{ ...bindTrigger( rowOptionsState ) }
 													disabled={ isSorting }
@@ -192,7 +199,6 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 												<Menu
 													MenuListProps={ {
 														dense: true,
-														sx: { py: 0.5 },
 													} }
 													{ ...bindMenu( rowOptionsState ) }
 													anchorEl={ rowOptionsState.anchorEl }
@@ -206,25 +212,19 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 													} }
 													open={ rowOptionsState.isOpen }
 													onClose={ rowOptionsState.close }
-													PaperProps={ {
-														elevation: 6,
-														sx: {
-															mt: 0.5,
-															boxShadow: 2,
-															'& .MuiMenuItem-root': {
-																minHeight: 36,
-																px: 2,
-																py: 1,
-																gap: 1.5,
-															},
-														},
-													} }
 												>
 													{ menuActions.map( ( action ) => (
 														<MenuItem
 															key={ action.name }
-															onClick={ action.onClick }
-															sx={ { color: action.color, gap: 1, padding: '6px 16px' } }
+															onClick={ () => {
+																action.onClick?.();
+																rowOptionsState.close();
+															} }
+															sx={ {
+																color: action.color,
+																gap: 1,
+																padding: '6px 16px'
+															} }
 														>
 															{ action.icon &&
 																createElement( action.icon, {

@@ -98,8 +98,8 @@ function RenderView( props: ViewProps ): React.ReactNode {
 
 	if ( userPermissions.canManageSettings() && props.onSettings ) {
 		handlers.onSettings = () => {
-			props.onSettings?.();
 			props.closePopover();
+			props.onSettings?.();
 		};
 	}
 
