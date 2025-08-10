@@ -139,6 +139,7 @@ class Module extends BaseModule {
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
 			add_action( 'elementor/atomic-widgets/elements/register', fn( Atomic_Elements_Registry $elements_registry ) => $this->register_elements( $elements_registry ) );
+			
 			( new Atomic_Elements_Registry() )->register_hooks();
 			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
