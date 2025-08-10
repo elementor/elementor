@@ -187,15 +187,14 @@ class Global_Classes_REST_API {
 			})
 			->all();
 
-		// Validate that new items don't have labels that already exist (only when there are changes)
+		// Validate and modify duplicate labels for added items (only when there are changes)
+		$validation_result = null;
 		if ($is_changes) {
 			$validation_result = $this->validate_new_items_labels($request, $existing_items);
-			if (!$validation_result['is_valid']) {
-				return Error_Builder::make(Global_Classes_Errors::DUPLICATED_LABEL)
-					->set_status(400)
-					->set_meta($validation_result['meta'])
-					->set_message($validation_result['message'])
-					->build();
+			
+			// Log if any labels were modified
+			if (!empty($validation_result['meta']['modified_labels'])) {
+				error_log('Elementor Global Classes: Modified duplicate labels: ' . json_encode($validation_result['meta']['modified_labels']));
 			}
 		}
 			
@@ -270,12 +269,48 @@ class Global_Classes_REST_API {
 			$request->get_param( 'changes' ) ?? [],
 		);
 
+		// Final validation check to handle concurrency issues
+		$final_validation = $this->perform_final_validation($request, $items_result->unwrap());
+		if ($final_validation['has_changes']) {
+			// Update the items with final validation results
+			$final_items = $final_validation['items'];
+			$final_validation_result = $final_validation['validation_result'];
+		} else {
+			$final_items = $items_result->unwrap();
+			$final_validation_result = $validation_result;
+		}
+
 		$repository->put(
-			$changes_resolver->resolve_items( $items_result->unwrap() ),
+			$changes_resolver->resolve_items( $final_items ),
 			$changes_resolver->resolve_order( $order_result ? $order_result->unwrap() : [] ),
 		);
 
-		return Response_Builder::make()->no_content()->build();
+		// Return success response with information about changes made
+		$response_data = [
+			'message' => __('Global classes saved successfully.', 'elementor'),
+			'added_count' => count($request->get_param('changes')['added'] ?? []),
+			'modified_count' => count($request->get_param('changes')['modified'] ?? []),
+			'deleted_count' => count($request->get_param('changes')['deleted'] ?? [])
+		];
+
+		// Add information about modified labels if any
+		$response_validation_result = $final_validation_result ?? $validation_result;
+		if ($response_validation_result && !empty($response_validation_result['meta']['modified_labels'])) {
+			$response_data['code'] = Global_Classes_Errors::DUPLICATED_LABEL;
+			$response_data['message'] = $response_validation_result['message'];
+			$response_data['modified_labels'] = $response_validation_result['meta']['modified_labels'];
+			$response_data['duplicate_labels_handled'] = count($response_validation_result['meta']['modified_labels']);
+		}
+
+		return Response_Builder::make($response_data)
+			->set_meta([
+				'total_changes' => array_sum([
+					count($request->get_param('changes')['added'] ?? []),
+					count($request->get_param('changes')['modified'] ?? []),
+					count($request->get_param('changes')['deleted'] ?? [])
+				])
+			])
+			->build();
 	}
 
 	private function route_wrapper( callable $cb ) {
@@ -320,13 +355,6 @@ class Global_Classes_REST_API {
 		return $has_non_empty_arrays;
 	}
 
-	/**
-	 * Validates that new items don't have labels that already exist
-	 *
-	 * @param \WP_REST_Request $request The request object
-	 * @param array $existing_items Array of existing items with their labels
-	 * @return array Validation result with 'is_valid' and 'message' keys
-	 */
 	private function validate_new_items_labels($request, $existing_items) {
 		$changes = $request->get_param('changes') ?? [];
 		$items = $request->get_param('items') ?? [];
@@ -340,13 +368,23 @@ class Global_Classes_REST_API {
 			];
 		}
 		
-		// Get existing labels
+		// Get existing labels from database
 		$existing_labels = array_column($existing_items, 'label');
+		
+		// Get all current labels (including existing and new items)
+		$all_current_labels = [];
+		foreach ($items as $item_id => $item) {
+			$label = $item['label'] ?? '';
+			if (!empty($label)) {
+				$all_current_labels[$item_id] = $label;
+			}
+		}
 		
 		// Get new items that are being added
 		$added_item_ids = $changes['added'] ?? [];
+		$modified_items = [];
+		$modified_labels = [];
 		
-		// Check each new item for duplicate labels
 		foreach ($added_item_ids as $item_id) {
 			if (!isset($items[$item_id])) {
 				continue;
@@ -360,26 +398,214 @@ class Global_Classes_REST_API {
 				continue;
 			}
 			
+			// Check if label already exists in database OR in current request
+			$is_duplicate = false;
+			
+			// Check against existing database labels
 			if (in_array($new_label, $existing_labels, true)) {
-				return [
-					'is_valid' => false,
-					'message' => sprintf(
-						__('A global class with the label "%s" already exists.', 'elementor'),
-						$new_label
-					),
-					'meta' => [
-						'duplicated_label' => $new_label,
-						'key' => $item_id
-					]
-				];
+				$is_duplicate = true;
 			}
+			
+			// Check against other items in the current request
+			foreach ($all_current_labels as $other_item_id => $other_label) {
+				if ($other_item_id !== $item_id && $other_label === $new_label) {
+					$is_duplicate = true;
+					break;
+				}
+			}
+			
+			if ($is_duplicate) {
+				$modified_label = $this->generate_unique_label($new_label, $all_current_labels);
+				
+				$items[$item_id]['label'] = $modified_label;
+				
+				$modified_items[] = $item_id;
+				$modified_labels[] = [
+					'original' => $new_label,
+					'modified' => $modified_label,
+					'item_id' => $item_id
+				];
+				
+				// Update the all_current_labels array to reflect the change
+				$all_current_labels[$item_id] = $modified_label;
+			}
+		}
+		
+		if (!empty($modified_items)) {
+			$request->set_param('items', $items);
 		}
 		
 		return [
 			'is_valid' => true,
-			'message' => '',
-			'meta' => []
+			'message' => empty($modified_labels) ? '' : sprintf(
+				__('Modified %d duplicate labels automatically.', 'elementor'),
+				count($modified_labels)
+			),
+			'meta' => [
+				'modified_labels' => $modified_labels
+			]
 		];
 	}
 
+	/**
+	 * Generates a unique label that respects the 50-character limit
+	 *
+	 * @param string $original_label The original label
+	 * @param array $existing_labels Array of existing labels with item_id as key
+	 * @return string The modified unique label
+	 */
+	private function generate_unique_label($original_label, $existing_labels) {
+		$suffix = '__duplicateLabel';
+		$max_length = 50;
+		
+		// Check if the original label already has a suffix
+		$has_suffix = strpos($original_label, '__duplicateLabel') !== false;
+		
+		if ($has_suffix) {
+			// Extract the base label (remove existing suffix)
+			$base_label = str_replace('__duplicateLabel', '', $original_label);
+			
+			// Find the next available number
+			$counter = 1;
+			$new_label = $base_label . $suffix . $counter;
+			
+			while (strlen($new_label) > $max_length || in_array($new_label, $existing_labels)) {
+				$counter++;
+				$new_label = $base_label . $suffix . $counter;
+				
+				// If still too long, slice the base label
+				if (strlen($new_label) > $max_length) {
+					$available_length = $max_length - strlen($suffix . $counter);
+					$base_label = substr($base_label, 0, $available_length);
+					$new_label = $base_label . $suffix . $counter;
+				}
+			}
+		} else {
+			// Simple case: just add suffix
+			$new_label = $original_label . $suffix;
+			
+			// If too long, slice the original label
+			if (strlen($new_label) > $max_length) {
+				$available_length = $max_length - strlen($suffix);
+				$new_label = substr($original_label, 0, $available_length) . $suffix;
+			}
+			
+			// Check if this label already exists, if so, add a number
+			$counter = 1;
+			$base_label = $new_label;
+			
+			while (in_array($new_label, $existing_labels)) {
+				$new_label = $base_label . $counter;
+				
+				// If too long, slice more from the base
+				if (strlen($new_label) > $max_length) {
+					$available_length = $max_length - strlen($suffix . $counter);
+					$base_label = substr($original_label, 0, $available_length) . $suffix;
+					$new_label = $base_label . $counter;
+				}
+				
+				$counter++;
+			}
+		}
+		
+		return $new_label;
+	}
+
+	/**
+	 * Performs final validation check right before saving to handle concurrency issues
+	 *
+	 * @param \WP_REST_Request $request The request object
+	 * @param array $items Items to be saved
+	 * @return array Result with has_changes, items, and validation_result
+	 */
+	private function perform_final_validation($request, $items) {
+		// Get fresh data from database to check for concurrent changes
+		$fresh_existing_items = $this->get_repository()
+			->context($request->get_param('context'))
+			->all()
+			->get_items()
+			->map(function ($item) {
+				return [
+					'id'    => $item['id'],
+					'label' => $item['label'],
+				];
+			})
+			->all();
+
+		// Get added items from the request
+		$changes = $request->get_param('changes') ?? [];
+		$added_item_ids = $changes['added'] ?? [];
+		
+		$has_changes = false;
+		$modified_items = [];
+		$modified_labels = [];
+
+		// Check each added item against fresh database state
+		foreach ($added_item_ids as $item_id) {
+			if (!isset($items[$item_id])) {
+				continue;
+			}
+
+			$item = $items[$item_id];
+			$original_label = $item['label'] ?? '';
+
+			if (empty($original_label)) {
+				continue;
+			}
+
+			// Check if label exists in fresh database state
+			$existing_labels = array_column($fresh_existing_items, 'label');
+			$is_duplicate = in_array($original_label, $existing_labels, true);
+
+			// Also check against other items in the current request
+			foreach ($items as $other_item_id => $other_item) {
+				if ($other_item_id !== $item_id && ($other_item['label'] ?? '') === $original_label) {
+					$is_duplicate = true;
+					break;
+				}
+			}
+
+			if ($is_duplicate) {
+				$has_changes = true;
+				
+				// Get all current labels (including fresh database and current items)
+				$all_current_labels = array_merge(
+					$existing_labels,
+					array_column($items, 'label')
+				);
+
+				$modified_label = $this->generate_unique_label($original_label, $all_current_labels);
+				
+				$items[$item_id]['label'] = $modified_label;
+				
+				$modified_labels[] = [
+					'original' => $original_label,
+					'modified' => $modified_label,
+					'item_id' => $item_id
+				];
+
+				// Log the concurrency resolution
+				error_log(sprintf(
+					'Elementor Global Classes: Concurrency resolved - "%s" changed to "%s"',
+					$original_label,
+					$modified_label
+				));
+			}
+		}
+
+		return [
+			'has_changes' => $has_changes,
+			'items' => $items,
+			'validation_result' => [
+				'is_valid' => true,
+				'message' => empty($modified_labels) ? '' : sprintf(
+					__('Modified %d duplicate labels automatically.', 'elementor'),
+					count($modified_labels)
+				),
+				'meta' => [
+					'modified_labels' => $modified_labels
+				]
+			]
+		];
+	}
 }

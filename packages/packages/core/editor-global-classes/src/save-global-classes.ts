@@ -1,7 +1,7 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient, type ApiContext } from './api';
-import { type ErrorDialogData, showErrorDialog } from './components/error-dialog-controler';
+import { showErrorDialog } from './components/error-dialog-controler';
 import { type GlobalClasses, selectData, selectFrontendInitialData, selectPreviewInitialData, slice } from './store';
 
 type Options = {
@@ -12,35 +12,23 @@ export async function saveGlobalClasses( { context }: Options ) {
 	const state = selectData( getState() );
 	const apiAction = context === 'preview' ? apiClient.saveDraft : apiClient.publish;
 	const currentContext = context === 'preview' ? selectPreviewInitialData : selectFrontendInitialData;
-	console.log( {
-		selectPreviewInitialData: currentContext( getState() ),
-		selectFrontendInitialData: currentContext( getState() ),
-	} );
 	try {
-		await apiAction( {
+		const response = await apiAction( {
 			items: state.items,
 			order: state.order,
 			changes: calculateChanges( state, currentContext( getState() ) ),
 		} );
-
 		dispatch( slice.actions.reset( { context } ) );
-	} catch ( e: unknown ) {
-		const error = e as { response: { data: ErrorDialogData } };
-		showErrorDialog( error.response.data );
-	}
+		if ( response.data.data ) {
+			showErrorDialog( response.data.data );
+		}
+	} catch ( e: unknown ) {}
 }
 
 function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {
 	const stateIds = Object.keys( state.items );
 	const initialDataIds = Object.keys( initialData.items );
 
-	console.log( {
-		added: stateIds.filter( ( id ) => ! initialDataIds.includes( id ) ),
-		deleted: initialDataIds.filter( ( id ) => ! stateIds.includes( id ) ),
-		modified: stateIds.filter( ( id ) => {
-			return id in initialData.items && hash( state.items[ id ] ) !== hash( initialData.items[ id ] );
-		} ),
-	} );
 	return {
 		added: stateIds.filter( ( id ) => ! initialDataIds.includes( id ) ),
 		deleted: initialDataIds.filter( ( id ) => ! stateIds.includes( id ) ),

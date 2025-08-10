@@ -1,4 +1,4 @@
-import { type ReactElement, type ReactNode } from 'react';
+import { type ReactElement } from 'react';
 
 import { publish } from './event-bus';
 
@@ -8,7 +8,7 @@ export const EVENT_TYPE = {
 };
 
 export type DialogContent = {
-	title: string;
+	title: ReactElement;
 	component: ReactElement;
 };
 

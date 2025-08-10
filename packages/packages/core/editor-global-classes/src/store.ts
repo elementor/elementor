@@ -2,6 +2,7 @@ import { mergeProps, type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
 	getVariantByMeta,
+	type ModifiedLabel,
 	type StyleDefinition,
 	type StyleDefinitionID,
 	type StyleDefinitionVariant,
@@ -116,6 +117,14 @@ export const slice = createSlice( {
 			}
 
 			state.isDirty = true;
+		},
+
+		updateMultiple( state, { payload }: PayloadAction< ModifiedLabel[] > ) {
+			payload.forEach( ( { item_id: id, modified: label } ) => {
+				state.data.items[ id ].label = label;
+			} );
+
+			state.isDirty = false;
 		},
 		updateStyleAndResetDirty( state, { payload }: PayloadAction< UpdateStyleAndResetDirty > ) {
 			const { id, label } = payload;
@@ -233,6 +242,9 @@ export const selectOrderedClasses = createSelector( selectGlobalClasses, selectO
 
 export const selectClass = ( state: SliceState< typeof slice >, id: StyleDefinitionID ) =>
 	state[ SLICE_NAME ].data.items[ id ] ?? null;
+
+export const selectClassesByIDs = ( state: SliceState< typeof slice >, ids: StyleDefinitionID[] ) =>
+	ids.map( ( id ) => state[ SLICE_NAME ].data.items[ id ] );
 
 export const selectEmptyCssClass = createSelector( selectData, ( { items } ) =>
 	Object.values( items ).filter( ( cssClass ) => cssClass.variants.length === 0 )

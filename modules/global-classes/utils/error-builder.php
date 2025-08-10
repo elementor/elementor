@@ -41,9 +41,9 @@ class Error_Builder {
 		$response_data = [
 			'code' => $this->code,
 			'message' => $this->message,
-			'data' => [
+			'data' => (object) [
 				'status' => $this->status,
-				'meta' => $this->meta
+				...$this->meta
 			]
 		];
 		

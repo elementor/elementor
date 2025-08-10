@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
-import { Dialog, DialogContent, DialogTitle } from '@elementor/ui';
+import { Box, Dialog, DialogContent, DialogTitle } from '@elementor/ui';
 
 import { subscribe } from '../event-bus';
 import { type DialogContent as DialogContentType, EVENT_TYPE } from '../notifier';
@@ -24,9 +24,11 @@ export const GlobalDialog = () => {
 
 	return (
 		<ThemeProvider>
-			<Dialog open onClose={ () => setContent( null ) }>
-				<DialogTitle>{ content.title }</DialogTitle>
-				<DialogContent>{ content.component }</DialogContent>
+			<Dialog open onClose={ () => setContent( null ) } maxWidth="sm" fullWidth>
+				<Box>
+					<DialogTitle>{ content.title }</DialogTitle>
+					<DialogContent>{ content.component }</DialogContent>
+				</Box>
 			</Dialog>
 		</ThemeProvider>
 	);
