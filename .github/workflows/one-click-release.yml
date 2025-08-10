@@ -66,6 +66,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
@@ -178,7 +180,7 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
 
       - name: Post To Slack Created Release

@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { execSync } = require('child_process');
 const { getPublishablePackages } = require('./package-discovery');
 const { validatePackageForPublishing } = require('./validation');
@@ -7,10 +6,10 @@ const { colors } = require('./constants');
 
 async function isPackagePublished(pkg) {
   try {
-    const result = execSync(`npm view ${pkg.name} version`, { 
-      encoding: 'utf8', 
+    const result = execSync(`npm view ${pkg.name} version`, {
+      encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
-      cwd: pkg.directory 
+      cwd: pkg.directory
     });
     const publishedVersion = result.trim();
     return publishedVersion === pkg.currentVersion;
@@ -21,7 +20,7 @@ async function isPackagePublished(pkg) {
 
 async function publishPackages(options = {}) {
   const packages = await getPublishablePackages(options.packages);
-  
+
   if (packages.length === 0) {
     logWarning('No publishable packages found');
     return;
@@ -33,7 +32,7 @@ async function publishPackages(options = {}) {
   for (const pkg of packages) {
     const validation = validatePackageForPublishing(pkg);
     validationResults.push({ pkg, validation });
-    
+
     if (validation.errors.length > 0) {
       logError(`❌ ${pkg.name}:`);
       validation.errors.forEach(error => logError(`   ${error}`));
@@ -95,7 +94,7 @@ async function publishPackages(options = {}) {
 
     try {
       log(`  Publishing ${pkg.name}@${pkg.currentVersion}...`, colors.blue);
-      
+
       const publishArgs = ['publish'];
       if (options.tag) {
         publishArgs.push('--tag', options.tag);
@@ -107,7 +106,7 @@ async function publishPackages(options = {}) {
         publishArgs.push('--otp', options.otp);
       }
 
-      execSync(`npm ${publishArgs.join(' ')}`, { 
+      execSync(`npm ${publishArgs.join(' ')}`, {
         cwd: pkg.directory,
         stdio: 'inherit'
       });
@@ -135,4 +134,4 @@ async function publishPackages(options = {}) {
 module.exports = {
   isPackagePublished,
   publishPackages
-}; 
+};

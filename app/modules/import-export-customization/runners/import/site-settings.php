@@ -9,6 +9,15 @@ use Elementor\Core\Experiments\Manager as ExperimentsManager;
 
 class Site_Settings extends Import_Runner_Base {
 
+	const ALLOWED_SETTINGS = [
+		'theme',
+		'globalColors',
+		'globalFonts',
+		'themeStyleSettings',
+		'generalSettings',
+		'experiments',
+	];
+
 	/**
 	 * @var int
 	 */
@@ -74,6 +83,16 @@ class Site_Settings extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+		$customization = $data['customization']['settings'] ?? null;
+
+		if ( $customization ) {
+			return $this->import_with_customization( $data, $imported_data, $customization );
+		}
+
+		return $this->import_with_manifest( $data, $imported_data );
+	}
+
+	private function import_with_customization( array $data, array $imported_data, array $customization ) {
 		$new_site_settings = $data['site_settings']['settings'];
 		$title = $data['manifest']['title'] ?? 'Imported Kit';
 
@@ -90,15 +109,17 @@ class Site_Settings extends Import_Runner_Base {
 			$old_settings = [];
 		}
 
-		if ( ! empty( $old_settings['custom_colors'] ) ) {
+		$new_site_settings = $this->filter_settings_by_customization( $new_site_settings, $customization );
+
+		if ( ( $customization['globalColors'] ?? false ) && ! empty( $old_settings['custom_colors'] ) && ! empty( $new_site_settings['custom_colors'] ) ) {
 			$new_site_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $new_site_settings['custom_colors'] );
 		}
 
-		if ( ! empty( $old_settings['custom_typography'] ) ) {
+		if ( ( $customization['globalFonts'] ?? false ) && ! empty( $old_settings['custom_typography'] ) && ! empty( $new_site_settings['custom_typography'] ) ) {
 			$new_site_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $new_site_settings['custom_typography'] );
 		}
 
-		if ( ! empty( $new_site_settings['space_between_widgets'] ) ) {
+		if ( ( $customization['generalSettings'] ?? false ) && ! empty( $new_site_settings['space_between_widgets'] ) ) {
 			$new_site_settings['space_between_widgets'] = Utils::update_space_between_widgets_values( $new_site_settings['space_between_widgets'] );
 		}
 
@@ -110,19 +131,195 @@ class Site_Settings extends Import_Runner_Base {
 
 		$result['site-settings'] = (bool) $new_kit;
 
-		$import_theme_result = $this->import_theme( $data );
+		if ( $customization['theme'] ?? false ) {
+			$import_theme_result = $this->import_theme( $data );
 
-		if ( ! empty( $import_theme_result ) ) {
-			$result['theme'] = $import_theme_result;
+			if ( ! empty( $import_theme_result ) ) {
+				$result['theme'] = $import_theme_result;
+			}
 		}
 
-		$this->import_experiments( $data );
+		if ( $customization['experiments'] ?? false ) {
+			$this->import_experiments( $data );
 
-		if ( ! empty( $this->imported_experiments ) ) {
-			$result['experiments'] = $this->imported_experiments;
+			if ( ! empty( $this->imported_experiments ) ) {
+				$result['experiments'] = $this->imported_experiments;
+			}
 		}
 
 		return $result;
+	}
+
+	private function import_with_manifest( array $data, array $imported_data ) {
+		$new_site_settings = $data['site_settings']['settings'];
+		$title = $data['manifest']['title'] ?? 'Imported Kit';
+		$manifest_settings = $data['manifest']['site-settings'] ?? [];
+
+		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
+
+		$this->active_kit_id = (int) $active_kit->get_id();
+		$this->previous_kit_id = (int) Plugin::$instance->kits_manager->get_previous_id();
+
+		$result = [];
+
+		$old_settings = $active_kit->get_meta( PageManager::META_KEY );
+
+		if ( ! $old_settings ) {
+			$old_settings = [];
+		}
+
+		$new_site_settings = $this->filter_settings_by_manifest( $new_site_settings, $manifest_settings );
+
+		if ( ( $manifest_settings['globalColors'] ?? false ) && ! empty( $old_settings['custom_colors'] ) && ! empty( $new_site_settings['custom_colors'] ) ) {
+			$new_site_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $new_site_settings['custom_colors'] );
+		}
+
+		if ( ( $manifest_settings['globalFonts'] ?? false ) && ! empty( $old_settings['custom_typography'] ) && ! empty( $new_site_settings['custom_typography'] ) ) {
+			$new_site_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $new_site_settings['custom_typography'] );
+		}
+
+		if ( ( $manifest_settings['generalSettings'] ?? false ) && ! empty( $new_site_settings['space_between_widgets'] ) ) {
+			$new_site_settings['space_between_widgets'] = Utils::update_space_between_widgets_values( $new_site_settings['space_between_widgets'] );
+		}
+
+		$new_site_settings = array_replace_recursive( $old_settings, $new_site_settings );
+
+		$new_kit = Plugin::$instance->kits_manager->create_new_kit( $title, $new_site_settings );
+
+		$this->imported_kit_id = (int) $new_kit;
+
+		$result['site-settings']['imported_kit_id'] = $this->imported_kit_id;
+
+		foreach ( $new_site_settings as $key => $value ) {
+			$result['site-settings'][ $key ] = $value;
+		}
+
+		if ( $manifest_settings['theme'] ?? false ) {
+			$import_theme_result = $this->import_theme( $data );
+
+			if ( ! empty( $import_theme_result ) ) {
+				$result['theme'] = $import_theme_result;
+			}
+		}
+
+		if ( $manifest_settings['experiments'] ?? false ) {
+			$this->import_experiments( $data );
+
+			if ( ! empty( $this->imported_experiments ) ) {
+				$result['experiments'] = $this->imported_experiments;
+			}
+		}
+
+		return $result;
+	}
+
+	private function filter_settings_by_customization( array $settings, array $customization ): array {
+		foreach ( $customization as $key => $value ) {
+			if ( ! in_array( $key, self::ALLOWED_SETTINGS ) ) {
+				continue;
+			}
+
+			if ( ! $value ) {
+				$settings = $this->remove_setting_by_key( $settings, $key );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function filter_settings_by_manifest( array $settings, array $manifest_settings ): array {
+		foreach ( self::ALLOWED_SETTINGS as $setting_key ) {
+			if ( ! ( $manifest_settings[ $setting_key ] ?? false ) ) {
+				$settings = $this->remove_setting_by_key( $settings, $setting_key );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_setting_by_key( array $settings, string $setting_key ): array {
+		switch ( $setting_key ) {
+			case 'globalColors':
+				$settings = $this->remove_global_colors( $settings );
+				break;
+			case 'globalFonts':
+				$settings = $this->remove_global_fonts( $settings );
+				break;
+			case 'themeStyleSettings':
+				$settings = $this->remove_theme_style( $settings );
+				break;
+			case 'generalSettings':
+				$settings = $this->remove_other_settings( $settings );
+				break;
+		}
+
+		return $settings;
+	}
+
+	private function remove_global_colors( array $settings ): array {
+		$color_keys = [ 'system_colors', 'custom_colors' ];
+
+		foreach ( $color_keys as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_global_fonts( array $settings ): array {
+		$typography_keys = [ 'system_typography', 'custom_typography', 'default_generic_fonts' ];
+
+		foreach ( $typography_keys as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_theme_style( array $settings ): array {
+		$theme_style_patterns = [
+			'/^body_/',
+			'/^h[1-6]_/',
+			'/^button_/',
+			'/^link_/',
+			'/^form_field_/',
+		];
+
+		foreach ( $settings as $key => $value ) {
+			foreach ( $theme_style_patterns as $pattern ) {
+				if ( preg_match( $pattern, $key ) ) {
+					unset( $settings[ $key ] );
+					break;
+				}
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_other_settings( array $settings ): array {
+		$settings_keys = [
+			'template',
+			'container_width',
+			'container_padding',
+			'space_between_widgets',
+			'viewport_md',
+			'viewport_lg',
+			'page_title_selector',
+			'activeItemIndex',
+		];
+
+		foreach ( $settings_keys as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
 	}
 
 	protected function install_theme( $slug, $version ) {

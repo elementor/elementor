@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'packages/**'  # Only trigger on changes to packages directory
+      - 'packages/**'
 
 jobs:
   publish-packages:
@@ -22,6 +22,7 @@ jobs:
         with:
             node-version: 20.x
             cache: 'npm'
+            registry-url: 'https://registry.npmjs.org/'
 
       - name: Install Dependencies
         working-directory: packages
@@ -37,6 +38,7 @@ jobs:
           echo "Current version: $CURRENT_VERSION"
 
       - name: Set Version with Build Tag
+        id: build-tag
         working-directory: packages
         run: |
           VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ github.run_number }}"
@@ -53,7 +55,7 @@ jobs:
           # Publish with the build number tag
           node scripts/version-manager/index.js publish --tag build --yes
         env:
-          NPM_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
 
       - name: Create Git Tag
         run: |

@@ -1,15 +1,23 @@
 import { type ForwardRefExoticComponent, type JSX, type RefAttributes } from 'react';
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
-import { type createPropUtils, type PropTypeKey, type PropTypeUtil } from '@elementor/editor-props';
+import {
+	type createPropUtils,
+	type PropType,
+	type PropTypeKey,
+	type PropTypeUtil,
+	type PropValue,
+} from '@elementor/editor-props';
 import { type SvgIconProps } from '@elementor/ui';
 
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
+import { type NormalizedVariable } from '../types';
 
 type ValueFieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
+	onValidationChange?: ( value: string ) => void;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
@@ -17,10 +25,12 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( { value, onChange }: ValueFieldProps ) => JSX.Element;
+	valueField: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
 	variableType: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
+	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
+	valueTransformer?: ( value: string ) => PropValue;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -34,6 +44,8 @@ export function createVariableTypeRegistry() {
 		valueField,
 		propTypeUtil,
 		variableType,
+		selectionFilter,
+		valueTransformer,
 		fallbackPropTypeUtil,
 	}: VariableTypeOptions ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
@@ -46,6 +58,8 @@ export function createVariableTypeRegistry() {
 			valueField,
 			propTypeUtil,
 			variableType,
+			selectionFilter,
+			valueTransformer,
 			fallbackPropTypeUtil,
 		};
 
