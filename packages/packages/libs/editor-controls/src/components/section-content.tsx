@@ -9,7 +9,7 @@ type SectionContentProps = PropsWithChildren< {
 	};
 } >;
 
-export const SectionContent: FC< SectionContentProps > = ( { gap = 2, sx, children } ) => (
+export const SectionContent: FC< SectionContentProps > = ( { gap = 0.5, sx, children } ) => (
 	<Stack gap={ gap } sx={ { ...sx } }>
 		{ children }
 	</Stack>
