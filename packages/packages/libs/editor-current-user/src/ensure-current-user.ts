@@ -1,6 +1,6 @@
 import { getQueryClient } from '@elementor/query';
 
-import { getCurrentUser } from './get-current-user';
+import { apiClient } from './api';
 import { EDITOR_CURRENT_USER_QUERY_KEY } from './use-current-user';
 
 export async function ensureUser() {
@@ -8,7 +8,7 @@ export async function ensureUser() {
 
 	return queryClient.ensureQueryData( {
 		queryKey: [ EDITOR_CURRENT_USER_QUERY_KEY ],
-		queryFn: getCurrentUser,
+		queryFn: apiClient.get,
 		retry: false,
 	} );
 }

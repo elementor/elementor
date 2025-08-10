@@ -1,5 +1,5 @@
 import { createMockStyleDefinition } from 'test-utils';
-import { onSetUser } from '@elementor/editor-current-user';
+import { getCurrentUser } from '@elementor/editor-current-user';
 import { __privateRunCommandSync as runCommandSync, registerDataHook } from '@elementor/editor-v1-adapters';
 import {
 	__createStore as createStore,
@@ -23,11 +23,9 @@ describe( 'syncWithDocumentSave', () => {
 
 		createStore();
 
-		jest.mocked( onSetUser ).mockImplementation( ( callback ) => {
-			callback( { capabilities: [ UPDATE_CLASS_CAPABILITY_KEY ] } as never );
-
-			return () => {};
-		} );
+		jest.mocked( getCurrentUser ).mockReturnValue( {
+			capabilities: [ UPDATE_CLASS_CAPABILITY_KEY ],
+		} as never );
 	} );
 
 	it( 'should sync global classes dirty state with the document dirty state', () => {
@@ -103,23 +101,36 @@ describe( 'syncWithDocumentSave', () => {
 		}
 	);
 
-	it( 'should not sync state if user does not have the capability', () => {
+	it( 'should not save global classes when the user does not have the capability', async () => {
 		// Arrange.
-		jest.mocked( onSetUser ).mockImplementation( ( callback ) => {
-			callback( { capabilities: [] } as never );
+		const triggerHook = mockRegisterDataHook();
 
-			return () => {};
-		} );
+		jest.mocked( getCurrentUser ).mockReturnValue( {
+			capabilities: [],
+		} as never );
 
 		const unsubscribe = syncWithDocumentSave();
 
+		const styleDefinition = createMockStyleDefinition();
+
+		dispatch( slice.actions.add( styleDefinition ) );
+
 		// Act.
-		dispatch( slice.actions.add( createMockStyleDefinition() ) );
+		await triggerHook( 'after', 'document/save/save', { status: 'publish' } );
 
 		// Assert.
-		expect( runCommandSync ).not.toHaveBeenCalled();
+		expect( apiClient.publish ).not.toHaveBeenCalled();
 
-		// Cleanup.
+		expect( selectIsDirty( getState() ) ).toBe( true );
+		expect( selectPreviewInitialData( getState() ) ).toEqual( {
+			items: {},
+			order: [],
+		} );
+		expect( selectFrontendInitialData( getState() ) ).toEqual( {
+			items: {},
+			order: [],
+		} );
+
 		unsubscribe();
 	} );
 } );
