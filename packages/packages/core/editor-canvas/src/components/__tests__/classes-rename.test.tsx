@@ -1,7 +1,7 @@
+import * as React from 'react';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { render } from '@testing-library/react';
-import * as React from 'react';
 
 import { ClassesRename } from '../classes-rename';
 
@@ -127,7 +127,7 @@ describe( 'ClassesRename', () => {
 				id: 'style1',
 				label: 'same-class',
 				type: 'class',
-				variants: [ { meta: { breakpoint: null, state: null }, props: {}} ],
+				variants: [ { meta: { breakpoint: null, state: null }, props: {} } ],
 			},
 		};
 
