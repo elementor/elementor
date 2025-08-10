@@ -23,6 +23,10 @@ class Action_Handler {
 	}
 
 	public function process_action() {
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			return;
+		}
+
 		switch ( $this->action ) {
 			case 'remove_from_entire_site':
 				$this->handle_remove_from_entire_site();
