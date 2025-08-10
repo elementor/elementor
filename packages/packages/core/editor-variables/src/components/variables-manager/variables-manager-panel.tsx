@@ -73,15 +73,7 @@ export function VariablesManagerPanel() {
 						} }
 					>
 						<Divider />
-						<Box
-							px={ 2 }
-							sx={ {
-								flexGrow: 1,
-								overflowY: 'auto',
-							} }
-						>
-							<VariablesManagerList menuActions={ menuActions } />
-						</Box>
+						<VariablesManagerList menuActions={ menuActions } />
 					</PanelBody>
 
 					<PanelFooter>

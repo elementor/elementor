@@ -57,11 +57,14 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 	const tableSX: SxProps = {
 		minWidth: 250,
 		width: '98%',
+		tableLayout: 'fixed',
 	};
 	const tableCellSX: SxProps = {
 		padding: '6px 16px',
 		maxWidth: 150,
 		fontSize: '12px',
+		cursor: 'initial',
+		typography: 'caption',
 	};
 	const tableHeadCellSX: SxProps = {
 		...tableCellSX,
@@ -75,10 +78,10 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 			<Table sx={ tableSX } aria-label="sortable table">
 				<TableHead>
 					<TableRow>
-						<TableCell padding="none" sx={ { width: 10, maxWidth: 10 } } />
+						<TableCell padding="none" sx={ { ...tableHeadCellSX, width: 10, maxWidth: 10, padding: 0 } } />
 						<TableCell sx={ tableHeadCellSX }>{ __( 'Name', 'elementor' ) }</TableCell>
 						<TableCell sx={ tableHeadCellSX }>{ __( 'Value', 'elementor' ) }</TableCell>
-						<TableCell padding="none" sx={ { width: 10, maxWidth: 10 } } />
+						<TableCell padding="none" sx={ { ...tableHeadCellSX, width: 16, maxWidth: 16, padding: 0 } } />
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -134,7 +137,10 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 											style={ { ...itemStyle, ...triggerStyle } }
 											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
-											<TableCell padding="none" sx={ { width: 10, maxWidth: 10 } }>
+											<TableCell
+												padding="none"
+												sx={ { ...tableCellSX, width: 10, maxWidth: 10, padding: 0 } }
+											>
 												<IconButton
 													size="small"
 													ref={ setTriggerRef }
@@ -161,13 +167,21 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 											<TableCell sx={ tableCellSX }>
 												<Stack direction="row" alignItems="center" gap={ 1 }>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
+
 													<EllipsisWithTooltip title={ row.value }>
 														{ row.value }
 													</EllipsisWithTooltip>
 												</Stack>
 											</TableCell>
-											<TableCell align="right" padding="none" sx={ { width: 10, maxWidth: 10 } }>
+											<TableCell
+												align="right"
+												padding="none"
+												sx={ { ...tableCellSX, width: 16, maxWidth: 16, padding: 0 } }
+											>
 												<IconButton
+													sx={ {
+														padding: 0,
+													} }
 													{ ...bindTrigger( rowOptionsState ) }
 													disabled={ isSorting }
 													size="tiny"
@@ -178,17 +192,39 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 												<Menu
 													MenuListProps={ {
 														dense: true,
+														sx: { py: 0.5 }
 													} }
 													{ ...bindMenu( rowOptionsState ) }
 													anchorEl={ rowOptionsState.anchorEl }
+													anchorOrigin={ {
+														vertical: 'bottom',
+														horizontal: 'right',
+													} }
+													transformOrigin={ {
+														vertical: 'top',
+														horizontal: 'right',
+													} }
 													open={ rowOptionsState.isOpen }
 													onClose={ rowOptionsState.close }
+																										PaperProps={ {
+														elevation: 6,
+														sx: {
+															mt: 0.5,
+															boxShadow: 2,
+															'& .MuiMenuItem-root': {
+																minHeight: 36,
+																px: 2,
+																py: 1,
+																gap: 1.5
+															}
+														}
+													} }
 												>
 													{ menuActions.map( ( action ) => (
 														<MenuItem
 															key={ action.name }
 															onClick={ action.onClick }
-															sx={ { color: action.color } }
+															sx={ { color: action.color, gap: 1, padding: '6px 16px' } }
 														>
 															{ action.icon &&
 																createElement( action.icon, {
