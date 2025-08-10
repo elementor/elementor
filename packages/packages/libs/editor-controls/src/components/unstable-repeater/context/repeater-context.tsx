@@ -66,6 +66,15 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setItems( newItems.map( ( { item } ) => item as T ) );
 	};
 
+	React.useEffect( () => {
+		const newItemsWithKeys = items?.map( ( item ) => {
+			const existingItem = itemsWithKeys.find( ( i ) => i.item === item );
+			return existingItem || { key: generateNextKey( itemsWithKeys.map( ( { key } ) => key ) ), item };
+		} ) ?? [];
+
+		itemWithKeysState[ 1 ]( newItemsWithKeys );
+	}, [ items ] );
+
 	const [ openItemIndex, setOpenItemIndex ] = useState( EMPTY_OPEN_ITEM );
 	const [ rowRef, setRowRef ] = useState< HTMLElement | null >( null );
 
@@ -92,7 +101,12 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const updateItem = ( updatedItem: T, index: number ) => {
 		const item = itemsWithKeys[ index ];
 
-		setItemsWithKeys( itemsWithKeys.toSpliced( index, 1, { ...item, item: updatedItem } ) );
+		const newItems = [
+			...itemsWithKeys.slice( 0, index ),
+			{ ...item, item: updatedItem },
+			...itemsWithKeys.slice( index + 1 )
+		];
+		setItemsWithKeys( newItems );
 	};
 
 	return (
