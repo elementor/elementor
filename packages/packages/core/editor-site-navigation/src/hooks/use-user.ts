@@ -7,7 +7,6 @@ const userQueryKey = () => [ 'site-navigation', 'user' ];
 export default function useUser() {
 	return useQuery( {
 		queryKey: userQueryKey(),
-		queryFn: getUser,
-		staleTime: 30 * 60 * 1000,
+		queryFn: () => getUser(),
 	} );
 }
