@@ -20,12 +20,6 @@ export type UpdatePropsActionPayload = {
 	props: Props;
 };
 
-export type UpdateCustomCssActionPayload = {
-	id: StyleDefinitionID;
-	meta: StyleDefinitionVariant[ 'meta' ];
-	custom_css: CustomCss;
-};
-
 export type StylesCollection = Record< StyleDefinitionID, StyleDefinition >;
 
 export type StylesProvider = {
