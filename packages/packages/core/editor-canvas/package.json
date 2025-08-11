@@ -39,6 +39,7 @@
   "dependencies": {
     "@elementor/editor": "0.21.0",
     "@elementor/editor-notifications": "1.4.0",
+    "@elementor/editor-documents": "0.13.10",
     "@elementor/editor-elements": "0.9.1",
     "@elementor/editor-props": "0.17.0",
     "@elementor/editor-responsive": "0.13.6",

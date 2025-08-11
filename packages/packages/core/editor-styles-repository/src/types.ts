@@ -20,11 +20,13 @@ export type UpdatePropsActionPayload = {
 	props: Props;
 };
 
+export type StylesCollection = Record< StyleDefinitionID, StyleDefinition >;
+
 export type StylesProvider = {
 	getKey: () => string;
 	priority: number;
 	limit: number;
-	subscribe: ( callback: () => void ) => () => void;
+	subscribe: ( callback: ( current?: StylesCollection, previous?: StylesCollection ) => void ) => () => void;
 	labels: {
 		singular: string | null;
 		plural: string | null;
