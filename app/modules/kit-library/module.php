@@ -122,9 +122,7 @@ class Module extends BaseModule {
 			$this->set_kit_library_settings();
 		}, 12 /** After the initiation of the connect kit library */ );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
-		}
+		add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 	}
 
 	public function handle_kit_screenshot_generation() {
