@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 class Atomic_Elements_Registry {
 	private $elements = [];
 
-	public function register_hooks(){
+	public function register_hooks() {
 		do_action( 'elementor/atomic-widgets/elements/register', $this );
 		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_elements_config( $settings ) );
 		add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
