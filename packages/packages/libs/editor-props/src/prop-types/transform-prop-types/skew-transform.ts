@@ -1,14 +1,14 @@
 import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../../utils/create-prop-utils';
-import { sizePropTypeUtil } from '../size';
+import { unknownChildrenSchema } from '../utils';
 import { TransformFunctionKeys } from './types';
 
 export const skewTransformPropTypeUtil = createPropUtils(
 	TransformFunctionKeys.skew,
 	z.strictObject( {
-		x: sizePropTypeUtil.schema.nullable(),
-		y: sizePropTypeUtil.schema.nullable(),
+		x: unknownChildrenSchema,
+		y: unknownChildrenSchema,
 	} )
 );
 
