@@ -594,6 +594,7 @@ class Module extends BaseModule {
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 			'restApiBaseUrl' => Controller::get_base_url(),
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
+			'exportGroups' => $this->get_export_groups(),
 		];
 	}
 
@@ -601,6 +602,17 @@ class Module extends BaseModule {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
 
 		return $editor_preferences->get_model()->get_settings( 'ui_theme' );
+	}
+
+	private function get_export_groups() {
+		$export_groups = [];
+		$document_types = Plugin::$instance->documents->get_document_types();
+
+		foreach ( $document_types as $name => $document_type ) {
+			$export_groups[ $name ] = defined( $document_type . '::EXPORT_GROUP' ) ? $document_type::EXPORT_GROUP : '';
+		}
+
+		return $export_groups;
 	}
 
 	/**
