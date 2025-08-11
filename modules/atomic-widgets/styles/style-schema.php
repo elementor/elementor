@@ -24,6 +24,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Entrance_Animation_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Motion_Effects_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,6 +48,7 @@ class Style_Schema {
 			self::get_layout_props(),
 			self::get_alignment_props(),
 			self::get_entrance_animation_props(),
+			self::get_motion_effects_props(),
 		);
 	}
 
@@ -239,6 +241,12 @@ class Style_Schema {
 	private static function get_entrance_animation_props() {
 		return [
 			'entrance-animation' => Entrance_Animation_Prop_Type::make(),
+		];
+	}
+
+	private static function get_motion_effects_props() {
+		return [
+			'motion-effects' => Motion_Effects_Prop_Type::make(),
 		];
 	}
 
