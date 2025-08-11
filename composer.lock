@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5f6b64c11553159b4cf5d6351c4af8f8",
+    "content-hash": "3ffea1d1519930784397c18148b0831c",
     "packages": [],
     "packages-dev": [
         {
@@ -230,16 +230,16 @@
         },
         {
             "name": "elementor/elementor-editor-testing",
-            "version": "v0.0.3",
+            "version": "v0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/elementor/elementor-editor-testing.git",
-                "reference": "a0b00017fedb3d39bda0b1f1728be6ceaf0ed5f0"
+                "reference": "312bd6ea47ceff535c3a7b8cf1d763262407f44b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elementor/elementor-editor-testing/zipball/a0b00017fedb3d39bda0b1f1728be6ceaf0ed5f0",
-                "reference": "a0b00017fedb3d39bda0b1f1728be6ceaf0ed5f0",
+                "url": "https://api.github.com/repos/elementor/elementor-editor-testing/zipball/312bd6ea47ceff535c3a7b8cf1d763262407f44b",
+                "reference": "312bd6ea47ceff535c3a7b8cf1d763262407f44b",
                 "shasum": ""
             },
             "require": {
@@ -265,9 +265,9 @@
             "description": "Elementor editor testing base",
             "support": {
                 "issues": "https://github.com/elementor/elementor-editor-testing/issues",
-                "source": "https://github.com/elementor/elementor-editor-testing/tree/v0.0.3"
+                "source": "https://github.com/elementor/elementor-editor-testing/tree/v0.0.4"
             },
-            "time": "2023-12-03T16:01:32+00:00"
+            "time": "2025-07-09T14:23:58+00:00"
         },
         {
             "name": "fidry/console",
