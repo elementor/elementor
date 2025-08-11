@@ -7,7 +7,6 @@
 /**
  * @typedef {import('./items/item-collection')} ItemCollection
  */
-import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 export default class Session {
 	/**
@@ -106,22 +105,20 @@ export default class Session {
 
 		// eslint-disable-next-line array-callback-return
 		return containers.map( ( element ) => {
-			const allowedElementTypes = [
-				...getAllElementTypes(),
-				'widget',
-			];
-
-			if ( ! allowedElementTypes.includes( element.type ) ) {
-				return undefined;
+			switch ( element.type ) {
+				case 'container':
+				case 'section':
+				case 'column':
+				case 'e-div-block':
+				case 'widget':
+					return this.target.view.createElementFromModel(
+						element.model,
+						Object.assign( this.options.target, {
+							event: this.options.event,
+							scrollIntoView: 0 === containers.indexOf( element ),
+						} ),
+					);
 			}
-
-			return this.target.view.createElementFromModel(
-				element.model,
-				Object.assign( this.options.target, {
-					event: this.options.event,
-					scrollIntoView: 0 === containers.indexOf( element ),
-				} ),
-			);
 		} );
 	}
 }
