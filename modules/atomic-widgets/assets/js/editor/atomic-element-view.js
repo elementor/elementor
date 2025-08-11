@@ -2,7 +2,7 @@ import AtomicElementEmptyView from './container/atomic-element-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
-const createAtomicElementView = ( type ) => BaseElementView.extend( {
+export default ( type ) => BaseElementView.extend( {
 	template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
 	emptyView: AtomicElementEmptyView,
@@ -517,5 +517,3 @@ const createAtomicElementView = ( type ) => BaseElementView.extend( {
 		return 0 === this.model.collection.indexOf( this.model );
 	},
 } );
-
-module.exports = createAtomicElementView;
