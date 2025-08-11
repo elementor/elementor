@@ -314,7 +314,7 @@ const ContainerView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as a template', 'elementor' ),
-					shortcut: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>` : '',
+					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
