@@ -481,9 +481,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.modules.promotionModule = new PromotionModule();
 
-		if ( elementorCommon.config.experimentalFeatures[ 'cloud-library' ] ) {
-			this.modules.cloudLibraryModule = new CloudLibraryModule();
-		}
+		this.modules.cloudLibraryModule = new CloudLibraryModule();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
