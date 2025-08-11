@@ -6,29 +6,29 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Plugin;
 use Elementor\Modules\Components\Styles\Component_Styles;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
-    const EXPERIMENT_NAME = 'e_components';
-    const PACKAGES = [ 'editor-components' ];
+	const EXPERIMENT_NAME = 'e_components';
+	const PACKAGES = [ 'editor-components' ];
 
-    public function get_name() {
-        return 'components';
-    }
+	public function get_name() {
+		return 'components';
+	}
 
-    public function __construct() {
+	public function __construct() {
 		parent::__construct();
 
 		if ( ! self::is_active() ) {
 			return;
 		}
 
-        $this->register_hooks();
-    }
+		$this->register_hooks();
+	}
 
-    public static function get_experimental_data() {
+	public static function get_experimental_data() {
 		return [
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'Components', 'elementor' ),
@@ -39,17 +39,17 @@ class Module extends BaseModule {
 		];
 	}
 
-    public static function is_active(): bool {
+	public static function is_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 	}
 
-    private function register_hooks() {
-        add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+	private function register_hooks() {
+		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 
-        ( new Component_Styles() )->register_hooks();
-    }
+		( new Component_Styles() )->register_hooks();
+	}
 
-    private function add_packages( $packages ) {
+	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
 }
