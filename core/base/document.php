@@ -735,7 +735,7 @@ abstract class Document extends Controls_Stack {
 			}
 
 			Collection::make( Plugin::$instance->elements_manager->get_element_types() )->each( function ( $element, $key ) use ( &$container_config ) {
-				if( $key !== 'container' ) {
+				if ( 'container' !== $key ) {
 					$container_config[ $key ] = $element->get_config();
 				}
 			} );
