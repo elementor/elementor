@@ -39,6 +39,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Skew_Transformer;
@@ -75,6 +76,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Move_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Scale_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
@@ -98,8 +100,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
-	const EXPERIMENT_UNSTABLE_REPEATER = 'e_unstable_repeater';
-	const EXPERIMENT_COMPONENTS = 'e_atomic_components';
+	const EXPERIMENT_NESTED = 'e_nested_elements';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -125,9 +126,6 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
-			if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_COMPONENTS ) ) {
-				( new Atomic_Component_Styles() )->register_hooks();
-			}
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
 
@@ -197,26 +195,16 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-
 		] );
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_UNSTABLE_REPEATER,
-			'title' => esc_html__( 'Unstable Repeater', 'elementor' ),
-			'description' => esc_html__( 'Unstable Repeater for Transform control.', 'elementor' ),
+			'name' => self::EXPERIMENT_NESTED,
+			'title' => esc_html__( 'Nested Elements', 'elementor' ),
+			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_COMPONENTS,
-			'title' => esc_html__( 'Atomic Components', 'elementor' ),
-			'description' => esc_html__( 'Unstable Atomic Component widget.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
+		]);
 	}
 
 	private function add_packages( $packages ) {
@@ -281,6 +269,7 @@ class Module extends BaseModule {
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
+		$transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
 		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
