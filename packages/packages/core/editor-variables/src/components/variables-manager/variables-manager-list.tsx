@@ -1,38 +1,26 @@
 import * as React from 'react';
 import { createElement, useState } from 'react';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
-import { DotsVerticalIcon, GripVerticalIcon } from '@elementor/icons';
+import { GripVerticalIcon } from '@elementor/icons';
 import {
-	bindMenu,
-	bindTrigger,
 	IconButton,
-	Menu,
-	MenuItem,
 	Stack,
-	type SvgIconProps,
 	type SxProps,
 	Table,
 	TableBody,
-	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
 	UnstableSortableItem,
 	type UnstableSortableItemRenderProps,
 	UnstableSortableProvider,
-	usePopupState,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
-
-type VariableManagerMenuAction = {
-	name: string;
-	icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & React.RefAttributes< SVGSVGElement > >;
-	color: string;
-	onClick: () => void;
-};
+import { type VariableManagerMenuAction, VariableMenu } from './variables-manager-menu';
+import { VariableTableCell } from './variables-manager-table-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
@@ -51,37 +39,20 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 		startIcon: getVariableType( variables[ id ].type ).startIcon,
 	} ) );
 
-	const rowOptionsState = usePopupState( {
-		variant: 'popover',
-	} );
 	const tableSX: SxProps = {
 		minWidth: 250,
 		tableLayout: 'fixed',
 	};
-	const tableCellSX: SxProps = {
-		padding: '6px 16px',
-		maxWidth: 150,
-		fontSize: '12px',
-		cursor: 'initial',
-		typography: 'caption',
-		lineHeight: '23px'
-	};
-	const tableHeadCellSX: SxProps = {
-		...tableCellSX,
-		color: 'text.primary',
-		fontWeight: 500,
-		fontSize: '14px',
-	};
 
 	return (
 		<TableContainer sx={ { overflow: 'initial' } }>
-			<Table sx={ tableSX } aria-label="sortable table">
+			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering">
 				<TableHead>
 					<TableRow>
-						<TableCell padding="none" sx={ { ...tableHeadCellSX, width: 10, maxWidth: 10, padding: 0 } } />
-						<TableCell sx={ tableHeadCellSX }>{ __( 'Name', 'elementor' ) }</TableCell>
-						<TableCell sx={ tableHeadCellSX }>{ __( 'Value', 'elementor' ) }</TableCell>
-						<TableCell padding="none" sx={ { ...tableHeadCellSX, width: 16, maxWidth: 16, padding: 0 } } />
+						<VariableTableCell isHeader noPadding width={10} maxWidth={10} />
+						<VariableTableCell isHeader>{ __( 'Name', 'elementor' ) }</VariableTableCell>
+						<VariableTableCell isHeader>{ __( 'Value', 'elementor' ) }</VariableTableCell>
+						<VariableTableCell isHeader noPadding width={16} maxWidth={16} />
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -133,9 +104,9 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 														borderBottomColor: 'primary.main',
 													},
 												} ),
-												'&:hover': {
+												'&:hover, &:has(button[aria-menu-open="true"])': {
 													backgroundColor: 'action.hover',
-													'& .MuiIconButton-root': {
+													'& [role="toolbar"], & [draggable]': {
 														opacity: 1,
 													},
 												},
@@ -143,34 +114,27 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 											style={ { ...itemStyle, ...triggerStyle } }
 											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
-											<TableCell
-												padding="none"
-												sx={ { ...tableCellSX, width: 10, maxWidth: 10, padding: 0 } }
-											>
+											<VariableTableCell noPadding width={10} maxWidth={10}>
 												<IconButton
 													size="small"
 													ref={ setTriggerRef }
 													{ ...triggerProps }
 													disabled={ isSorting }
-													sx={ {
-														opacity: 0,
-														'&:hover': {
-															opacity: 1,
-														},
-													} }
+													draggable
+													sx={{opacity: 0}}
 												>
 													<GripVerticalIcon fontSize="inherit" />
 												</IconButton>
-											</TableCell>
-											<TableCell sx={ tableCellSX }>
+											</VariableTableCell>
+											<VariableTableCell>
 												<Stack direction="row" alignItems="center" gap={ 1 }>
 													{ createElement( row.icon, { fontSize: 'inherit' } ) }
 													<EllipsisWithTooltip title={ row.name }>
 														{ row.name }
 													</EllipsisWithTooltip>
 												</Stack>
-											</TableCell>
-											<TableCell sx={ tableCellSX }>
+											</VariableTableCell>
+											<VariableTableCell>
 												<Stack direction="row" alignItems="center" gap={ 1 }>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 
@@ -178,63 +142,12 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 														{ row.value }
 													</EllipsisWithTooltip>
 												</Stack>
-											</TableCell>
-											<TableCell
-												align="right"
-												padding="none"
-												sx={ { ...tableCellSX, width: 16, maxWidth: 16, padding: 0 } }
-											>
-												<IconButton
-													sx={ {
-														padding: 0,
-														opacity: 0
-													} }
-													{ ...bindTrigger( rowOptionsState ) }
-													disabled={ isSorting }
-													size="tiny"
-												>
-													<DotsVerticalIcon fontSize="tiny" />
-												</IconButton>
-
-												<Menu
-													MenuListProps={ {
-														dense: true,
-													} }
-													{ ...bindMenu( rowOptionsState ) }
-													anchorEl={ rowOptionsState.anchorEl }
-													anchorOrigin={ {
-														vertical: 'bottom',
-														horizontal: 'right',
-													} }
-													transformOrigin={ {
-														vertical: 'top',
-														horizontal: 'right',
-													} }
-													open={ rowOptionsState.isOpen }
-													onClose={ rowOptionsState.close }
-												>
-													{ menuActions.map( ( action ) => (
-														<MenuItem
-															key={ action.name }
-															onClick={ () => {
-																action.onClick?.();
-																rowOptionsState.close();
-															} }
-															sx={ {
-																color: action.color,
-																gap: 1,
-																padding: '6px 16px'
-															} }
-														>
-															{ action.icon &&
-																createElement( action.icon, {
-																	fontSize: 'inherit',
-																} ) }{ ' ' }
-															{ action.name }
-														</MenuItem>
-													) ) }
-												</Menu>
-											</TableCell>
+											</VariableTableCell>
+											<VariableTableCell align="right" noPadding width={16} maxWidth={16}>
+												<Stack role="toolbar" sx={{ opacity: 0 }}>
+												    <VariableMenu menuActions={menuActions} disabled={isSorting} />
+												</Stack>
+											</VariableTableCell>
 										</TableRow>
 									);
 								} }
