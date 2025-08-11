@@ -186,6 +186,4 @@ class Test_Global_Classes_Cleanup extends Elementor_Test_Base {
 
 		return $document->get_main_id();
 	}
-
-
 }
