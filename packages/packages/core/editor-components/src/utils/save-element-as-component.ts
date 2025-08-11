@@ -16,7 +16,7 @@ export const saveElementAsComponent = async (
 			content: [ element.model.toJSON( { remove: [ 'default' ] } ) ],
 		} );
 
-		replaceElement( element, {
+		replaceElement( { currentElement: element, newElement: {
 			elType: 'widget',
 			widgetType: 'e-component',
 			settings: {
@@ -25,7 +25,7 @@ export const saveElementAsComponent = async (
 					value: result.data.component_id,
 				},
 			},
-		} );
+		}, withHistory: false } );
 
 		options?.onSuccess?.( result.data );
 	} catch ( error ) {

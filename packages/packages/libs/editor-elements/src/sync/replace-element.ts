@@ -3,7 +3,13 @@ import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters
 import { getContainer } from './get-container';
 import { type V1Element, type V1ElementModelProps } from './types';
 
-export const replaceElement = ( currentElement: V1Element, newElement: Omit< V1ElementModelProps, 'id' > ) => {
+type ReplaceElementArgs = {
+	currentElement: V1Element;
+	newElement: Omit< V1ElementModelProps, 'id' >;
+	withHistory?: boolean;
+};
+
+export const replaceElement = ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
 	const parent = getContainer( currentElement.id )?.parent;
 
 	if ( ! parent ) {
@@ -15,24 +21,25 @@ export const replaceElement = ( currentElement: V1Element, newElement: Omit< V1E
 		throw new Error( `Element ${ currentElement.id } not found in parent container. Cannot replace element.` );
 	}
 
-	addElement( parent, newElement, { at: elementIndex } );
-	deleteElement( currentElement );
+	addElement( parent, newElement, { at: elementIndex }, withHistory );
+	deleteElement( currentElement, withHistory );
 };
 
 export const addElement = (
 	parent: V1Element | undefined,
 	element: Omit< V1ElementModelProps, 'id' >,
-	options?: { at?: number }
+	options?: { at?: number },
+	withHistory = true
 ) => {
 	runCommand( 'document/elements/create', {
 		container: parent,
 		model: element,
 		options,
-	} );
+	}, { internal: ! withHistory } );
 };
 
-export const deleteElement = ( element: V1Element ) => {
+export const deleteElement = ( element: V1Element, withHistory = true ) => {
 	runCommand( 'document/elements/delete', {
 		container: element,
-	} );
+	}, { internal: ! withHistory } );
 };
