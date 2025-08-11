@@ -15,6 +15,6 @@ export const cssFilterFunctionPropUtil = createPropUtils(
 
 export const filterPropTypeUtil = createPropUtils( 'filter', z.array( cssFilterFunctionPropUtil.schema ) );
 
-export type FilterPropValue = z.infer< typeof filterPropTypeUtil.schema >;
-
 export type FilterItemPropValue = z.infer< typeof cssFilterFunctionPropUtil.schema >;
+
+export type FilterPropValue = z.infer< typeof filterPropTypeUtil.schema >;
