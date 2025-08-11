@@ -41,25 +41,9 @@ class Render_Mode_Preview extends Render_Mode_Base {
 		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
 
 		wp_enqueue_script(
-			'dom-to-image',
-			ELEMENTOR_ASSETS_URL . "/lib/dom-to-image/js/dom-to-image{$suffix}.js",
-			[],
-			'2.6.0',
-			true
-		);
-
-		wp_enqueue_script(
-			'html2canvas',
-			ELEMENTOR_ASSETS_URL . "/lib/html2canvas/js/html2canvas{$suffix}.js",
-			[],
-			'1.4.1',
-			true
-		);
-
-		wp_enqueue_script(
 			'cloud-library-screenshot',
 			ELEMENTOR_ASSETS_URL . "/js/cloud-library-screenshot{$suffix}.js",
-			[ 'dom-to-image', 'html2canvas' ],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
@@ -88,5 +72,14 @@ class Render_Mode_Preview extends Render_Mode_Base {
 		Plugin::$instance->documents->switch_to_document( $document );
 
 		return $document;
+	}
+
+	/**
+	 * Get the document instance.
+	 *
+	 * @return \Elementor\Core\Base\Document
+	 */
+	public function get_document() {
+		return $this->document;
 	}
 }
