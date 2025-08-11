@@ -118,7 +118,12 @@ class Test_Module extends Elementor_Test_Base {
 			$this->assertEquals( $runner_name, $runner_result['runner'] );
 		}
 
-		$this->assertTrue( $last_runner['site-settings'] );
+		$this->assertIsArray( $last_runner['site-settings'] );
+		$this->assertArrayHasKey( 'imported_kit_id', $last_runner['site-settings'] );
+		$this->assertArrayHasKey( 'system_colors', $last_runner['site-settings'] );
+		$this->assertArrayHasKey( 'custom_colors', $last_runner['site-settings'] );
+		$this->assertArrayHasKey( 'system_typography', $last_runner['site-settings'] );
+		$this->assertArrayHasKey( 'custom_typography', $last_runner['site-settings'] );
 		$this->assertCount( 1, $last_runner['content']['post']['succeed'] );
 		$this->assertCount( 1, $last_runner['content']['page']['succeed'] );
 		$this->assertCount( 1, $last_runner['wp-content']['post']['succeed'] );

@@ -4,21 +4,6 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, setTitleTextTag, setTitleIconPosition, setTitleHorizontalAlignment } from './helper';
 
 test.describe( 'Nested Accordion Content Tests @nested-accordion', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { container: 'active', 'nested-elements': 'active' } );
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
-	} );
-
 	test( 'Nested Accordion Title Icon and Text Vertical Alignment', async ( { browser, apiRequests }, testInfo ) => {
 		const page = await browser.newPage(),
 			wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),

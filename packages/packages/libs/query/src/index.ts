@@ -10,8 +10,22 @@ export {
 	type UseQueryResult,
 } from '@tanstack/react-query';
 
+let queryClient: QueryClient | undefined;
+
+export function getQueryClient(): QueryClient {
+	if ( ! queryClient ) {
+		throw new Error( 'Query client is not created yet.' );
+	}
+
+	return queryClient;
+}
+
 export function createQueryClient() {
-	return new QueryClient( {
+	if ( queryClient ) {
+		throw new Error( 'Query client is already created.' );
+	}
+
+	queryClient = new QueryClient( {
 		defaultOptions: {
 			queries: {
 				refetchOnWindowFocus: false,
@@ -19,4 +33,6 @@ export function createQueryClient() {
 			},
 		},
 	} );
+
+	return queryClient;
 }

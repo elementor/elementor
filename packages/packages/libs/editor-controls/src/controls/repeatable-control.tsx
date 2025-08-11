@@ -23,6 +23,7 @@ type RepeatableControlProps = {
 	initialValues?: object;
 	patternLabel?: string;
 	placeholder?: string;
+	propKey?: string;
 };
 
 const PLACEHOLDER_REGEX = /\$\{([^}]+)\}/g;
@@ -36,6 +37,7 @@ export const RepeatableControl = createControl(
 		initialValues,
 		patternLabel,
 		placeholder,
+		propKey,
 	}: RepeatableControlProps ) => {
 		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
 
@@ -44,8 +46,8 @@ export const RepeatableControl = createControl(
 		}
 
 		const childArrayPropTypeUtil = useMemo(
-			() => createArrayPropUtils( childPropTypeUtil.key, childPropTypeUtil.schema ),
-			[ childPropTypeUtil.key, childPropTypeUtil.schema ]
+			() => createArrayPropUtils( childPropTypeUtil.key, childPropTypeUtil.schema, propKey ),
+			[ childPropTypeUtil.key, childPropTypeUtil.schema, propKey ]
 		);
 
 		const contextValue = useMemo(
@@ -181,11 +183,12 @@ const shouldShowPlaceholder = ( pattern: string, data: Record< string, unknown >
 
 const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
 	const { placeholder, patternLabel } = useRepeatableControlContext();
-
-	const label = shouldShowPlaceholder( patternLabel, value ) ? placeholder : interpolate( patternLabel, value );
+	const showPlaceholder = shouldShowPlaceholder( patternLabel, value );
+	const label = showPlaceholder ? placeholder : interpolate( patternLabel, value );
+	const color = showPlaceholder ? 'text.tertiary' : 'text.primary';
 
 	return (
-		<Box component="span" color="text.tertiary">
+		<Box component="span" color={ color }>
 			{ label }
 		</Box>
 	);

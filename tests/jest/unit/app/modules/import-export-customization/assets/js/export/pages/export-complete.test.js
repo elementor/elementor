@@ -1,12 +1,28 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ExportComplete from 'elementor/app/modules/import-export-customization/assets/js/export/pages/export-complete';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
+
+const mockNavigate = jest.fn();
+
+jest.mock( '@reach/router', () => ( {
+	useNavigate: () => mockNavigate,
+} ) );
+
+const mockSendExportKitCustomization = jest.fn();
+const mockSendPageViewsWebsiteTemplates = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendExportKitCustomization: ( ...args ) => mockSendExportKitCustomization( ...args ),
+		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
+	},
+} ) );
 
 let mockExportContext = {
 	data: {
 		exportedData: {
 			file: 'base64encodedfile',
-			manifest: { version: '1.0' },
+			manifest: { version: '1.0', content: {} },
 		},
 		kitInfo: {
 			title: 'My Test Kit',
@@ -32,7 +48,7 @@ describe( 'ExportComplete Component', () => {
 			data: {
 				exportedData: {
 					file: 'base64encodedfile',
-					manifest: { version: '1.0' },
+					manifest: { version: '1.0', content: { page: {}, post: {} } },
 				},
 				kitInfo: {
 					title: 'My Test Kit',
@@ -53,6 +69,9 @@ describe( 'ExportComplete Component', () => {
 			config: {
 				isRTL: false,
 			},
+			eventsManager: {
+				config: eventsConfig,
+			},
 		};
 
 		mockLink = {
@@ -70,6 +89,8 @@ describe( 'ExportComplete Component', () => {
 			value: { location: '' },
 			writable: true,
 		} );
+
+		mockNavigate.mockClear();
 	} );
 
 	afterEach( () => {
@@ -77,7 +98,7 @@ describe( 'ExportComplete Component', () => {
 	} );
 
 	describe( 'Basic Rendering', () => {
-		it( 'should render file export completion page', () => {
+		it( 'should render file export completion page', async () => {
 			render( <ExportComplete /> );
 
 			expect( screen.getByTestId( 'export-complete-icon' ) ).toBeTruthy();
@@ -85,6 +106,7 @@ describe( 'ExportComplete Component', () => {
 			expect( screen.getByTestId( 'export-complete-summary' ) ).toBeTruthy();
 			expect( screen.getByTestId( 'export-complete-download-link' ) ).toBeTruthy();
 			expect( screen.getByTestId( 'done-button' ) ).toBeTruthy();
+			await waitFor( () => expect( mockSendPageViewsWebsiteTemplates ).toHaveBeenCalledWith( 'kit_export_summary' ) );
 		} );
 
 		it( 'should show Done button for file export', () => {
@@ -120,15 +142,12 @@ describe( 'ExportComplete Component', () => {
 		it( 'should handle View in Library button click', () => {
 			mockExportContext.data.kitInfo.source = 'cloud';
 
-			delete window.location;
-			window.location = { href: '' };
-
 			render( <ExportComplete /> );
 
 			const viewLibraryButton = screen.getByTestId( 'view-in-library-button' );
 			fireEvent.click( viewLibraryButton );
 
-			expect( window.location.href ).toBe( 'https://example.com/elementor#/kit-library/cloud' );
+			expect( mockNavigate ).toHaveBeenCalledWith( '/kit-library/cloud' );
 		} );
 
 		it( 'should show download link for file export', () => {

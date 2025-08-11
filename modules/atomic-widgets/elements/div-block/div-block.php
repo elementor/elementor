@@ -13,6 +13,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Widgets_Manager;
@@ -68,13 +70,17 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		return [];
+		return [
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
+		];
 	}
 
 	protected function get_settings_controls(): array {
 		return [
 			Select_Control::bind_to( 'tag' )
-				->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
 				->set_options( [
 					[
 						'value' => 'div',
@@ -100,12 +106,16 @@ class Div_Block extends Atomic_Element_Base {
 						'value' => 'footer',
 						'label' => 'Footer',
 					],
-				]),
+				])
+				->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
 			Link_Control::bind_to( 'link' )
 				->set_label( __( 'Link', 'elementor' ) )
 				->set_meta( [
 					'topDivider' => true,
 				] ),
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
@@ -141,7 +151,8 @@ class Div_Block extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$attributes = $settings['attributes'];
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
-			echo ' ' . esc_attr( $attributes );
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo ' ' . $attributes;
 		}
 	}
 
