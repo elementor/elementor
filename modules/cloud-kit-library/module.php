@@ -27,15 +27,13 @@ class Module extends BaseModule {
 			$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
 		} );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 5 );
-			add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ], 10, 1 );
-			add_filter( 'elementor/import/kit_thumbnail', [ $this, 'handle_import_kit_thumbnail' ], 10, 3 );
+		add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 5 );
+		add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ], 10, 1 );
+		add_filter( 'elementor/import/kit_thumbnail', [ $this, 'handle_import_kit_thumbnail' ], 10, 3 );
 
-			add_action( 'elementor/kit_library/registered', function () {
-				Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
-			} );
-		}
+		add_action( 'elementor/kit_library/registered', function () {
+			Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
+		} );
 	}
 
 	public function handle_import_kit_thumbnail( $thumbnail, $kit_id, $referrer ) {
