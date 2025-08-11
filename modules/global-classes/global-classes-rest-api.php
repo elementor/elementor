@@ -193,8 +193,8 @@ class Global_Classes_REST_API {
 			$validation_result = $this->validate_new_items_labels($request, $existing_items);
 			
 			// Log if any labels were modified
-			if (!empty($validation_result['meta']['modified_labels'])) {
-				error_log('Elementor Global Classes: Modified duplicate labels: ' . json_encode($validation_result['meta']['modified_labels']));
+			if (!empty($validation_result['meta']['modifiedLabels'])) {
+				error_log('Elementor Global Classes: Modified duplicate labels: ' . json_encode($validation_result['meta']['modifiedLabels']));
 			}
 		}
 			
@@ -295,11 +295,11 @@ class Global_Classes_REST_API {
 
 		// Add information about modified labels if any
 		$response_validation_result = $final_validation_result ?? $validation_result;
-		if ($response_validation_result && !empty($response_validation_result['meta']['modified_labels'])) {
+		if ($response_validation_result && !empty($response_validation_result['meta']['modifiedLabels'])) {
 			$response_data['code'] = Global_Classes_Errors::DUPLICATED_LABEL;
 			$response_data['message'] = $response_validation_result['message'];
-			$response_data['modifiedLabels'] = $response_validation_result['meta']['modified_labels'];
-			$response_data['duplicate_labels_handled'] = count($response_validation_result['meta']['modified_labels']);
+			$response_data['modifiedLabels'] = $response_validation_result['meta']['modifiedLabels'];
+			$response_data['duplicate_labels_handled'] = count($response_validation_result['meta']['modifiedLabels']);
 		}
 
 		return Response_Builder::make($response_data)
@@ -383,7 +383,7 @@ class Global_Classes_REST_API {
 		// Get new items that are being added
 		$added_item_ids = $changes['added'] ?? [];
 		$modified_items = [];
-		$modified_labels = [];
+		$modifiedLabels = [];
 		
 		foreach ($added_item_ids as $item_id) {
 			if (!isset($items[$item_id])) {
@@ -420,7 +420,7 @@ class Global_Classes_REST_API {
 				$items[$item_id]['label'] = $modified_label;
 				
 				$modified_items[] = $item_id;
-				$modified_labels[] = [
+				$modifiedLabels[] = [
 					'original' => $new_label,
 					'modified' => $modified_label,
 					'id' => $item_id
@@ -437,12 +437,12 @@ class Global_Classes_REST_API {
 		
 		return [
 			'is_valid' => true,
-			'message' => empty($modified_labels) ? '' : sprintf(
+			'message' => empty($modifiedLabels) ? '' : sprintf(
 				__('Modified %d duplicate labels automatically.', 'elementor'),
-				count($modified_labels)
+				count($modifiedLabels)
 			),
 			'meta' => [
-				'modifiedLabels' => $modified_labels
+				'modifiedLabels' => $modifiedLabels
 			]
 		];
 	}
@@ -537,7 +537,7 @@ class Global_Classes_REST_API {
 		
 		$has_changes = false;
 		$modified_items = [];
-		$modified_labels = [];
+		$modifiedLabels = [];
 
 		// Check each added item against fresh database state
 		foreach ($added_item_ids as $item_id) {
@@ -577,7 +577,7 @@ class Global_Classes_REST_API {
 				
 				$items[$item_id]['label'] = $modified_label;
 				
-				$modified_labels[] = [
+				$modifiedLabels[] = [
 					'original' => $original_label,
 					'modified' => $modified_label,
 					'id' => $item_id
@@ -597,12 +597,12 @@ class Global_Classes_REST_API {
 			'items' => $items,
 			'validation_result' => [
 				'is_valid' => true,
-				'message' => empty($modified_labels) ? '' : sprintf(
+				'message' => empty($modifiedLabels) ? '' : sprintf(
 					__('Modified %d duplicate labels automatically.', 'elementor'),
-					count($modified_labels)
+					count($modifiedLabels)
 				),
 				'meta' => [
-					'modifiedLabels' => $modified_labels
+					'modifiedLabels' => $modifiedLabels
 				]
 			]
 		];

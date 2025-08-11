@@ -120,6 +120,7 @@ export const slice = createSlice( {
 		},
 
 		updateMultiple( state, { payload }: PayloadAction< ModifiedLabel[] > ) {
+			localHistory.next( state.data );
 			payload.forEach( ( { id, modified: label } ) => {
 				state.data.items[ id ].label = label;
 			} );

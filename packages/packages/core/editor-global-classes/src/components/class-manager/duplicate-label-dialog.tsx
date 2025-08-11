@@ -40,26 +40,28 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 						{ __( 'After', 'elementor' ) }
 					</Typography>
 				</StyledBox>
-				<Divider sx={ { pt: 0.5, pb: 0.5 } } />
-				{ modifiedLabels.map( ( { original, modified, id } ) => (
-					<StyledBox key={ id }>
-						<Box sx={ { flex: 1 } }>
-							<EllipsisWithTooltip title={ original }>
-								<Typography variant="body2" sx={ { color: 'text.secondary' } }>
-									{ original }
-								</Typography>
-							</EllipsisWithTooltip>
-						</Box>
-						<Box sx={ { minWidth: '200px' } }>
-							<EllipsisWithTooltip title={ modified }>
-								<Typography variant="body2" sx={ { color: 'text.primary' } }>
-									{ modified }
-								</Typography>
-							</EllipsisWithTooltip>
-						</Box>
-					</StyledBox>
-				) ) }
-				<Box sx={ { pt: 1 } }>
+				<Divider sx={ { mt: 0.5, mb: 0.5 } } />
+				<Stack direction="column" spacing={ 0.5 }>
+					{ modifiedLabels.map( ( { original, modified, id } ) => (
+						<StyledBox key={ id }>
+							<Box sx={ { flex: 1 } }>
+								<EllipsisWithTooltip title={ original }>
+									<Typography variant="body2" sx={ { color: 'text.secondary' } }>
+										{ original }
+									</Typography>
+								</EllipsisWithTooltip>
+							</Box>
+							<Box sx={ { minWidth: '200px' } }>
+								<EllipsisWithTooltip title={ modified }>
+									<Typography variant="body2" sx={ { color: 'text.primary' } }>
+										{ modified }
+									</Typography>
+								</EllipsisWithTooltip>
+							</Box>
+						</StyledBox>
+					) ) }
+				</Stack>
+				<Box sx={ { pt: 2 } }>
 					<Alert severity="info">
 						{ __(
 							`You can quickly find them in Class Manager by searching for that prefix. Your designs are safe - nothing was lost, only renamed to prevent issues.`,
@@ -68,9 +70,11 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 					</Alert>
 				</Box>
 			</Box>
-			<Button color="error" size="medium" onClick={ handleButtonClick }>
-				{ __( 'Search for DUP_', 'elementor' ) }
-			</Button>
+			<Box sx={ { justifyContent: 'flex-end', display: 'flex' } }>
+				<Button variant="contained" color="secondary" onClick={ handleButtonClick }>
+					{ __( 'Open Class Manager', 'elementor' ) }
+				</Button>
+			</Box>
 		</Stack>
 	);
 };

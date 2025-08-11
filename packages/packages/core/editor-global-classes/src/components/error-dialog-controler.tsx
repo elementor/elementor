@@ -37,9 +37,9 @@ export const showErrorDialog = ( data: ErrorDialogProps ) => {
 			title: (
 				<Box display="flex" alignItems="center" gap={ 1 }>
 					<Icon color="secondary">
-						<AlertOctagonFilledIcon />
+						<AlertOctagonFilledIcon fontSize="medium" />
 					</Icon>
-					<Typography variant="subtitle2">
+					<Typography variant="subtitle1">
 						{ __( 'Page published - with class name updates', 'elementor' ) }
 					</Typography>
 				</Box>
