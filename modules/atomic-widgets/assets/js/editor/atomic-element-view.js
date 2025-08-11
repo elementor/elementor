@@ -25,7 +25,9 @@ export default ( type ) => BaseElementView.extend( {
 	},
 
 	getChildType() {
-		const atomicElements = elementor.config.atomic.elements || [];
+		const atomicElements = Object.entries( elementor.config.elements )
+			.filter( ( [ , element ] ) => !! element?.atomic_props_schema )
+			.map( ( [ elType ] ) => elType );
 
 		return [
 			'widget',
@@ -35,7 +37,7 @@ export default ( type ) => BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ this.getClassString() } e-logical-dnd`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ this.getClassString() }`;
 	},
 
 	// TODO: Copied from `views/column.js`.

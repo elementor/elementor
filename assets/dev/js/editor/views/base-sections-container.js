@@ -7,7 +7,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 		const type = elementor.elementsManager.getElementTypeClass( model.get( 'elType' ) );
 
 		if ( ! type ) {
-			throw new Error( `Element type "${ type }" is not registered.` );
+			throw new Error( `Element type "${ model.get( 'elType' ) }" is not registered.` );
 		}
 
 		return type.getView();

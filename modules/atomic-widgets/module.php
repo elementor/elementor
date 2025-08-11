@@ -140,14 +140,13 @@ class Module extends BaseModule {
 
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
-			add_action( 'elementor/atomic-widgets/elements/register', fn( Atomic_Elements_Registry $elements_registry ) => $this->register_elements( $elements_registry ) );
 
-			( new Atomic_Elements_Registry() )->register_hooks();
 			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
+			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 
@@ -249,10 +248,10 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Divider() );
 	}
 
-	private function register_elements( Atomic_Elements_Registry $elements_manager ) {
-		$elements_manager->register_element( new Div_Block() );
-		$elements_manager->register_element( new Flexbox() );
-		$elements_manager->register_element( new Atomic_Tabs() );
+	private function register_elements( Elements_Manager $elements_manager ) {
+		$elements_manager->register_element_type( new Div_Block() );
+		$elements_manager->register_element_type( new Flexbox() );
+		$elements_manager->register_element_type( new Atomic_Tabs() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {

@@ -39,13 +39,13 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerDynamicAtomicTypes() {
-		const atomicElements = elementor?.config?.atomic?.elements || [];
-
-		atomicElements.forEach( ( elementType ) => {
-			const view = createAtomicElementView( elementType );
-			const dynamicType = new DynamicAtomicElementType( elementType, view );
-			elementor.elementsManager.registerElementType( dynamicType );
-		} );
+		Object.entries( elementor.config.elements )
+			.filter( ( [ , element ] ) => !! element?.atomic_props_schema )
+			.forEach( ( [ elementType ] ) => {
+				const view = createAtomicElementView( elementType );
+				const dynamicType = new DynamicAtomicElementType( elementType, view );
+				elementor.elementsManager.registerElementType( dynamicType );
+			} );
 	}
 }
 
