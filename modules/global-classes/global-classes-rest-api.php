@@ -5,6 +5,9 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Modules\GlobalClasses\Utils\Debug_Logger;
+use Elementor\Modules\GlobalClasses\Services\Global_Classes_Validation_Service;
+use Elementor\Modules\GlobalClasses\Services\Global_Classes_Changes_Service;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -161,117 +164,118 @@ class Global_Classes_REST_API {
 	}
 
 	private function put( \WP_REST_Request $request ) {
-
-		$debug_data = [
-			'url' => $request->get_route(),
-			'params' => $request->get_params(),
-			'body' => $request->get_body(),
-			'headers' => $request->get_headers(),
-		];
-
-		// Check if changes arrays are empty
-		$is_changes = $this->check_changes_empty($request);
+		// Log debug information
+		Debug_Logger::log_request_debug( $request );
 
 		$context = $request->get_param( 'context' );
+		$changes = $request->get_param( 'changes' ) ?? [];
+
+		// Initialize services
+		$validation_service = new Global_Classes_Validation_Service();
+		$changes_service = new Global_Classes_Changes_Service();
+
+		// Check if there are actual changes
+		$has_changes = $changes_service->has_changes( $changes );
 
 		$parser = Global_Classes_Parser::make();
 		$existing_items = Global_Classes_Repository::make()
-			->context($context)
+			->context( $context )
 			->all()
 			->get_items()
-			->map(function ($item) {
+			->map( function ( $item ) {
 				return [
-					'id'    => $item['id'],
+					'id' => $item['id'],
 					'label' => $item['label'],
 				];
-			})
+			} )
 			->all();
 
 		// Validate and modify duplicate labels for added items (only when there are changes)
 		$validation_result = null;
-		if ($is_changes) {
-			$validation_result = $this->validate_new_items_labels($request, $existing_items);
-			
-			// Log if any labels were modified
-			if (!empty($validation_result['meta']['modifiedLabels'])) {
-				error_log('Elementor Global Classes: Modified duplicate labels: ' . json_encode($validation_result['meta']['modifiedLabels']));
+		if ( $has_changes ) {
+			$validation_result = $validation_service->validate_new_items_labels(
+				$request->get_param( 'items' ),
+				$existing_items,
+				$changes
+			);
+
+			// Update request items if labels were modified
+			if ( ! empty( $validation_result['items'] ) ) {
+				$request->set_param( 'items', $validation_result['items'] );
 			}
+
+			// Log if any labels were modified
+			Debug_Logger::log_modified_labels( $validation_result['meta']['modifiedLabels'] ?? [] );
 		}
-			
+
 		$items_result = $parser->parse_items(
 			$request->get_param( 'items' ),
 		);
 
-		$items_count = count( $items_result->unwrap() );
-
-		if ( $items_count >= static::MAX_ITEMS ) {
-			return Error_Builder::make( Global_Classes_Errors::ITEMS_LIMIT_EXCEEDED )
-			                    ->set_status( 400 )
-			                    ->set_meta([
-			                    	'current_count' => $items_count,
-			                    	'max_allowed' => static::MAX_ITEMS
-			                    ])
-			                    ->set_message( sprintf(
-				                    __( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
-				                    static::MAX_ITEMS
-			                    ) )
-			                    ->build();
+		// Validate items count
+		$items_count_error = $validation_service->validate_items_count( $items_result->unwrap() );
+		if ( $items_count_error ) {
+			return $items_count_error;
 		}
 
-			if (! $items_result->is_valid()) {
-				$first_error = $items_result->errors()->first_one();
-				$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ITEMS;
+		if ( ! $items_result->is_valid() ) {
+			$first_error = $items_result->errors()->first_one();
+			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ITEMS;
 
-				// Log validation errors
-				error_log('Elementor Global Classes: Invalid items. Errors: ' . $items_result->errors()->to_string());
+			// Log validation errors
+			Debug_Logger::log_validation_errors( 'items', $items_result->errors()->to_string() );
 
-				return Error_Builder::make($code)
-					->set_status(400)
-					->set_meta([
-						'validation_errors' => $items_result->errors()->all(),
-						'required_fields' => ['id', 'variants', 'type', 'label'],
-						'valid_types' => ['class']
-					])
-					->set_message('Invalid items: ' . $items_result->errors()->to_string())
-					->build();
-			}
+			return Error_Builder::make( $code )
+				->set_status( 400 )
+				->set_meta( [
+					'validation_errors' => $items_result->errors()->all(),
+					'required_fields' => [ 'id', 'variants', 'type', 'label' ],
+					'valid_types' => [ 'class' ],
+				] )
+				->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
+				->build();
+		}
 
-			$order_result = $parser->parse_order(
-				$request->get_param('order'),
-				$items_result->unwrap()
-			);
+		$order_result = $parser->parse_order(
+			$request->get_param( 'order' ),
+			$items_result->unwrap()
+		);
 
-			if (! $order_result->is_valid()) {
-				$first_error = $order_result->errors()->first_one();
-				$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ORDER;
+		if ( ! $order_result->is_valid() ) {
+			$first_error = $order_result->errors()->first_one();
+			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ORDER;
 
-				// Log order validation errors
-				error_log('Elementor Global Classes: Invalid order. Errors: ' . $order_result->errors()->to_string());
+			// Log order validation errors
+			Debug_Logger::log_validation_errors( 'order', $order_result->errors()->to_string() );
 
-				return Error_Builder::make($code)
-					->set_status(400)
-					->set_meta([
-						'validation_errors' => $order_result->errors()->all(),
-						'items_count' => count($items_result->unwrap()),
-						'order_count' => count($request->get_param('order') ?? []),
-						'expected_count' => count($items_result->unwrap())
-					])
-					->set_message('Invalid order: ' . $order_result->errors()->to_string())
-					->build();
-			}
-		
+			return Error_Builder::make( $code )
+				->set_status( 400 )
+				->set_meta( [
+					'validation_errors' => $order_result->errors()->all(),
+					'items_count' => count( $items_result->unwrap() ),
+					'order_count' => count( $request->get_param( 'order' ) ?? [] ),
+					'expected_count' => count( $items_result->unwrap() ),
+				] )
+				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
+				->build();
+		}
 
 		$repository = $this->get_repository()
-		                   ->context( $request->get_param( 'context' ) );
+			->context( $request->get_param( 'context' ) );
 
 		$changes_resolver = Global_Classes_Changes_Resolver::make(
 			$repository,
-			$request->get_param( 'changes' ) ?? [],
+			$changes,
 		);
 
 		// Final validation check to handle concurrency issues
-		$final_validation = $this->perform_final_validation($request, $items_result->unwrap());
-		if ($final_validation['has_changes']) {
+		$final_validation = $validation_service->perform_final_validation(
+			$items_result->unwrap(),
+			$existing_items,
+			$changes
+		);
+
+		if ( $final_validation['has_changes'] ) {
 			// Update the items with final validation results
 			$final_items = $final_validation['items'];
 			$final_validation_result = $final_validation['validation_result'];
@@ -285,31 +289,12 @@ class Global_Classes_REST_API {
 			$changes_resolver->resolve_order( $order_result ? $order_result->unwrap() : [] ),
 		);
 
-		// Return success response with information about changes made
-		$response_data = [
-			'message' => __('Global classes saved successfully.', 'elementor'),
-			'added_count' => count($request->get_param('changes')['added'] ?? []),
-			'modified_count' => count($request->get_param('changes')['modified'] ?? []),
-			'deleted_count' => count($request->get_param('changes')['deleted'] ?? [])
-		];
+		// Build response data using the changes service
+		$response_data = $changes_service->build_response_data( $changes, $final_validation_result );
+		$response_meta = $changes_service->build_response_meta( $changes );
 
-		// Add information about modified labels if any
-		$response_validation_result = $final_validation_result ?? $validation_result;
-		if ($response_validation_result && !empty($response_validation_result['meta']['modifiedLabels'])) {
-			$response_data['code'] = Global_Classes_Errors::DUPLICATED_LABEL;
-			$response_data['message'] = $response_validation_result['message'];
-			$response_data['modifiedLabels'] = $response_validation_result['meta']['modifiedLabels'];
-			$response_data['duplicate_labels_handled'] = count($response_validation_result['meta']['modifiedLabels']);
-		}
-
-		return Response_Builder::make($response_data)
-			->set_meta([
-				'total_changes' => array_sum([
-					count($request->get_param('changes')['added'] ?? []),
-					count($request->get_param('changes')['modified'] ?? []),
-					count($request->get_param('changes')['deleted'] ?? [])
-				])
-			])
+		return Response_Builder::make( $response_data )
+			->set_meta( $response_meta )
 			->build();
 	}
 
@@ -318,293 +303,18 @@ class Global_Classes_REST_API {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( Global_Classes_Errors::UNEXPECTED_ERROR )
-			->set_status(500)
-			->set_meta([
-				'exception_class' => get_class($e),
-				'exception_file' => $e->getFile(),
-				'exception_line' => $e->getLine()
-			])
-			->set_message( __( 'Something went wrong', 'elementor' ) )
-			->build();
+				->set_status( 500 )
+				->set_meta( [
+					'exception_class' => get_class( $e ),
+					'exception_file' => $e->getFile(),
+					'exception_line' => $e->getLine(),
+				] )
+				->set_message( __( 'Something went wrong', 'elementor' ) )
+				->build();
 		}
 
 		return $response;
 	}
 
-	private function check_changes_empty($request) {
-		$changes = $request->get_param('changes') ?? [];
-		
-		if (!is_array($changes)) {
-			error_log('Elementor REST API Debug - Changes is not an array: ' . json_encode($changes, JSON_PRETTY_PRINT));
-			return false;
-		}
-		
-		$has_non_empty_arrays = false;
-		
-		foreach ($changes as $key => $value) {
-			if (is_array($value) && !empty($value)) {
-				$has_non_empty_arrays = true;
-				break;
-			}
-		}
-		
-		if (!$has_non_empty_arrays) {
-			error_log('Elementor REST API Debug - All arrays in changes are empty: ' . json_encode($changes, JSON_PRETTY_PRINT));
-		}
-		
-		return $has_non_empty_arrays;
-	}
 
-	private function validate_new_items_labels($request, $existing_items) {
-		$changes = $request->get_param('changes') ?? [];
-		$items = $request->get_param('items') ?? [];
-
-		// If no changes are being made, validation passes
-		if (empty($changes['added'])) {
-			return [
-				'is_valid' => true,
-				'message' => '',
-				'meta' => []
-			];
-		}
-		
-		// Get existing labels from database
-		$existing_labels = array_column($existing_items, 'label');
-		
-		// Get all current labels (including existing and new items)
-		$all_current_labels = [];
-		foreach ($items as $item_id => $item) {
-			$label = $item['label'] ?? '';
-			if (!empty($label)) {
-				$all_current_labels[$item_id] = $label;
-			}
-		}
-		
-		// Get new items that are being added
-		$added_item_ids = $changes['added'] ?? [];
-		$modified_items = [];
-		$modifiedLabels = [];
-		
-		foreach ($added_item_ids as $item_id) {
-			if (!isset($items[$item_id])) {
-				continue;
-			}
-			
-			$new_item = $items[$item_id];
-			$new_label = $new_item['label'] ?? '';
-			
-			// Skip empty labels
-			if (empty($new_label)) {
-				continue;
-			}
-			
-			// Check if label already exists in database OR in current request
-			$is_duplicate = false;
-			
-			// Check against existing database labels
-			if (in_array($new_label, $existing_labels, true)) {
-				$is_duplicate = true;
-			}
-			
-			// Check against other items in the current request
-			foreach ($all_current_labels as $other_item_id => $other_label) {
-				if ($other_item_id !== $item_id && $other_label === $new_label) {
-					$is_duplicate = true;
-					break;
-				}
-			}
-			
-			if ($is_duplicate) {
-				$modified_label = $this->generate_unique_label($new_label, $all_current_labels);
-				
-				$items[$item_id]['label'] = $modified_label;
-				
-				$modified_items[] = $item_id;
-				$modifiedLabels[] = [
-					'original' => $new_label,
-					'modified' => $modified_label,
-					'id' => $item_id
-				];
-				
-				// Update the all_current_labels array to reflect the change
-				$all_current_labels[$item_id] = $modified_label;
-			}
-		}
-		
-		if (!empty($modified_items)) {
-			$request->set_param('items', $items);
-		}
-		
-		return [
-			'is_valid' => true,
-			'message' => empty($modifiedLabels) ? '' : sprintf(
-				__('Modified %d duplicate labels automatically.', 'elementor'),
-				count($modifiedLabels)
-			),
-			'meta' => [
-				'modifiedLabels' => $modifiedLabels
-			]
-		];
-	}
-
-	/**
-	 * Generates a unique label that respects the 50-character limit
-	 *
-	 * @param string $original_label The original label
-	 * @param array $existing_labels Array of existing labels with item_id as key
-	 * @return string The modified unique label
-	 */
-	private function generate_unique_label($original_label, $existing_labels) {
-		$prefix = 'DUP_';
-		$max_length = 50;
-		
-		// Check if the original label already has a prefix
-		$has_prefix = strpos($original_label, 'DUP_') === 0;
-		
-		if ($has_prefix) {
-			// Extract the base label (remove existing prefix)
-			$base_label = str_replace('DUP_', '', $original_label);
-			
-			// Find the next available number
-			$counter = 1;
-			$new_label = $prefix . $base_label . $counter;
-			
-			while (strlen($new_label) > $max_length || in_array($new_label, $existing_labels)) {
-				$counter++;
-				$new_label = $prefix . $base_label . $counter;
-				
-				// If still too long, slice the base label
-				if (strlen($new_label) > $max_length) {
-					$available_length = $max_length - strlen($prefix . $counter);
-					$base_label = substr($base_label, 0, $available_length);
-					$new_label = $prefix . $base_label . $counter;
-				}
-			}
-		} else {
-			// Simple case: just add prefix
-			$new_label = $prefix . $original_label;
-			
-			// If too long, slice the original label
-			if (strlen($new_label) > $max_length) {
-				$available_length = $max_length - strlen($prefix);
-				$new_label = $prefix . substr($original_label, 0, $available_length);
-			}
-			
-			// Check if this label already exists, if so, add a number
-			$counter = 1;
-			$base_label = $new_label;
-			
-			while (in_array($new_label, $existing_labels)) {
-				$new_label = $prefix . substr($original_label, 0, $available_length) . $counter;
-				
-				// If too long, slice more from the base
-				if (strlen($new_label) > $max_length) {
-					$available_length = $max_length - strlen($prefix . $counter);
-					$new_label = $prefix . substr($original_label, 0, $available_length) . $counter;
-				}
-				
-				$counter++;
-			}
-		}
-		
-		return $new_label;
-	}
-
-	/**
-	 * Performs final validation check right before saving to handle concurrency issues
-	 *
-	 * @param \WP_REST_Request $request The request object
-	 * @param array $items Items to be saved
-	 * @return array Result with has_changes, items, and validation_result
-	 */
-	private function perform_final_validation($request, $items) {
-		// Get fresh data from database to check for concurrent changes
-		$fresh_existing_items = $this->get_repository()
-			->context($request->get_param('context'))
-			->all()
-			->get_items()
-			->map(function ($item) {
-				return [
-					'id'    => $item['id'],
-					'label' => $item['label'],
-				];
-			})
-			->all();
-
-		// Get added items from the request
-		$changes = $request->get_param('changes') ?? [];
-		$added_item_ids = $changes['added'] ?? [];
-		
-		$has_changes = false;
-		$modified_items = [];
-		$modifiedLabels = [];
-
-		// Check each added item against fresh database state
-		foreach ($added_item_ids as $item_id) {
-			if (!isset($items[$item_id])) {
-				continue;
-			}
-
-			$item = $items[$item_id];
-			$original_label = $item['label'] ?? '';
-
-			if (empty($original_label)) {
-				continue;
-			}
-
-			// Check if label exists in fresh database state
-			$existing_labels = array_column($fresh_existing_items, 'label');
-			$is_duplicate = in_array($original_label, $existing_labels, true);
-
-			// Also check against other items in the current request
-			foreach ($items as $other_item_id => $other_item) {
-				if ($other_item_id !== $item_id && ($other_item['label'] ?? '') === $original_label) {
-					$is_duplicate = true;
-					break;
-				}
-			}
-
-			if ($is_duplicate) {
-				$has_changes = true;
-				
-				// Get all current labels (including fresh database and current items)
-				$all_current_labels = array_merge(
-					$existing_labels,
-					array_column($items, 'label')
-				);
-
-				$modified_label = $this->generate_unique_label($original_label, $all_current_labels);
-				
-				$items[$item_id]['label'] = $modified_label;
-				
-				$modifiedLabels[] = [
-					'original' => $original_label,
-					'modified' => $modified_label,
-					'id' => $item_id
-				];
-
-				// Log the concurrency resolution
-				error_log(sprintf(
-					'Elementor Global Classes: Concurrency resolved - "%s" changed to "%s"',
-					$original_label,
-					$modified_label
-				));
-			}
-		}
-
-		return [
-			'has_changes' => $has_changes,
-			'items' => $items,
-			'validation_result' => [
-				'is_valid' => true,
-				'message' => empty($modifiedLabels) ? '' : sprintf(
-					__('Modified %d duplicate labels automatically.', 'elementor'),
-					count($modifiedLabels)
-				),
-				'meta' => [
-					'modifiedLabels' => $modifiedLabels
-				]
-			]
-		];
-	}
 }
