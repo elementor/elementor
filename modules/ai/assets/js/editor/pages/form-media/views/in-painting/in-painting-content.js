@@ -74,7 +74,7 @@ const InPaintingContent = ( { editImage, setMask, setIsCanvasChanged, width: can
 
 	return (
 		<Stack alignItems="flex-start" spacing={ 0.5 } flexGrow={ 1 }>
-			<Stack width="100%" direction="row" spacing={ 3 } alignSelf="center" justifyContent="center" sx={ { mb: 2.5 } }>
+			<Stack width="100%" direction="row" spacing={ 3 } alignSelf="center" justifyContent="center" sx={ { marginBottom: '20px !important' } }>
 				<Stack direction="row" gap={ 1 }>
 					<Tooltip title={ __( 'Undo', 'elementor' ) }>
 						<Button variant="outlined" color="secondary" onClick={ () => sketchRef.current.undo() } sx={ { px: 0 } }>
