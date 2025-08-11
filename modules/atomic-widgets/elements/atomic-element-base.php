@@ -6,7 +6,6 @@ use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -21,6 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Atomic_Element_Base extends Element_Base {
+	const BASE_STYLE_KEY = 'base';
 
 	use Has_Atomic_Base;
 

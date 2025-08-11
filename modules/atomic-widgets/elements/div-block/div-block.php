@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Div_Block extends Atomic_Element_Base {
-	const BASE_STYLE_KEY = 'base';
-
 	public static function get_type() {
 		return 'e-div-block';
 	}
