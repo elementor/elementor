@@ -1,16 +1,26 @@
 import * as React from 'react';
+import { closeDialog } from '@elementor/editor-global-dialog';
 import { type ModifiedLabel } from '@elementor/editor-styles';
 import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { __dispatch } from '@elementor/store';
-import { Alert, Box, Divider, Stack, styled, Typography } from '@elementor/ui';
+import { Alert, Box, Button, Divider, Stack, styled, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { slice } from '../../store';
+import { usePanelActions } from './panel-actions';
 
 export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: ModifiedLabel[] } ) => {
+	const { open } = usePanelActions();
+
 	React.useEffect( () => {
 		__dispatch( slice.actions.updateMultiple( modifiedLabels ) );
 	}, [ modifiedLabels ] );
+
+	const handleButtonClick = () => {
+		localStorage.setItem( 'elementor-global-classes-search', 'DUP_' );
+		open();
+		closeDialog();
+	};
 
 	return (
 		<Stack spacing={ 2 } direction="column">
@@ -31,8 +41,7 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 					</Typography>
 				</StyledBox>
 				<Divider sx={ { pt: 0.5, pb: 0.5 } } />
-
-				{ modifiedLabels.map( ( { original, modified, item_id: id } ) => (
+				{ modifiedLabels.map( ( { original, modified, id } ) => (
 					<StyledBox key={ id }>
 						<Box sx={ { flex: 1 } }>
 							<EllipsisWithTooltip title={ original }>
@@ -53,12 +62,15 @@ export const DuplicateLabelDialog = ( { modifiedLabels }: { modifiedLabels: Modi
 				<Box sx={ { pt: 1 } }>
 					<Alert severity="info">
 						{ __(
-							`You can quickly find them in Class Manager by searching for that prefix.Your designs are safe - nothing was lost, only renamed to prevent issues.`,
+							`You can quickly find them in Class Manager by searching for that prefix. Your designs are safe - nothing was lost, only renamed to prevent issues.`,
 							'elementor'
 						) }
 					</Alert>
 				</Box>
 			</Box>
+			<Button color="error" size="medium" onClick={ handleButtonClick }>
+				{ __( 'Search for DUP_', 'elementor' ) }
+			</Button>
 		</Stack>
 	);
 };
@@ -69,14 +81,14 @@ const StyledBox = styled( Box )`
 	gap: 16px;
 	align-items: flex-start;
 
-	> *:first-child {
+	> *:first-of-type {
 		flex: 1;
 		flex-shrink: 1;
 		flex-grow: 1;
 		min-width: 0;
 	}
 
-	> *:last-child {
+	> *:last-of-type {
 		flex-shrink: 0;
 		flex-grow: 0;
 		width: 200px;

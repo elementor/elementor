@@ -298,7 +298,7 @@ class Global_Classes_REST_API {
 		if ($response_validation_result && !empty($response_validation_result['meta']['modified_labels'])) {
 			$response_data['code'] = Global_Classes_Errors::DUPLICATED_LABEL;
 			$response_data['message'] = $response_validation_result['message'];
-			$response_data['modified_labels'] = $response_validation_result['meta']['modified_labels'];
+			$response_data['modifiedLabels'] = $response_validation_result['meta']['modified_labels'];
 			$response_data['duplicate_labels_handled'] = count($response_validation_result['meta']['modified_labels']);
 		}
 
@@ -423,7 +423,7 @@ class Global_Classes_REST_API {
 				$modified_labels[] = [
 					'original' => $new_label,
 					'modified' => $modified_label,
-					'item_id' => $item_id
+					'id' => $item_id
 				];
 				
 				// Update the all_current_labels array to reflect the change
@@ -442,7 +442,7 @@ class Global_Classes_REST_API {
 				count($modified_labels)
 			),
 			'meta' => [
-				'modified_labels' => $modified_labels
+				'modifiedLabels' => $modified_labels
 			]
 		];
 	}
@@ -455,39 +455,39 @@ class Global_Classes_REST_API {
 	 * @return string The modified unique label
 	 */
 	private function generate_unique_label($original_label, $existing_labels) {
-		$suffix = '__duplicateLabel';
+		$prefix = 'DUP_';
 		$max_length = 50;
 		
-		// Check if the original label already has a suffix
-		$has_suffix = strpos($original_label, '__duplicateLabel') !== false;
+		// Check if the original label already has a prefix
+		$has_prefix = strpos($original_label, 'DUP_') === 0;
 		
-		if ($has_suffix) {
-			// Extract the base label (remove existing suffix)
-			$base_label = str_replace('__duplicateLabel', '', $original_label);
+		if ($has_prefix) {
+			// Extract the base label (remove existing prefix)
+			$base_label = str_replace('DUP_', '', $original_label);
 			
 			// Find the next available number
 			$counter = 1;
-			$new_label = $base_label . $suffix . $counter;
+			$new_label = $prefix . $base_label . $counter;
 			
 			while (strlen($new_label) > $max_length || in_array($new_label, $existing_labels)) {
 				$counter++;
-				$new_label = $base_label . $suffix . $counter;
+				$new_label = $prefix . $base_label . $counter;
 				
 				// If still too long, slice the base label
 				if (strlen($new_label) > $max_length) {
-					$available_length = $max_length - strlen($suffix . $counter);
+					$available_length = $max_length - strlen($prefix . $counter);
 					$base_label = substr($base_label, 0, $available_length);
-					$new_label = $base_label . $suffix . $counter;
+					$new_label = $prefix . $base_label . $counter;
 				}
 			}
 		} else {
-			// Simple case: just add suffix
-			$new_label = $original_label . $suffix;
+			// Simple case: just add prefix
+			$new_label = $prefix . $original_label;
 			
 			// If too long, slice the original label
 			if (strlen($new_label) > $max_length) {
-				$available_length = $max_length - strlen($suffix);
-				$new_label = substr($original_label, 0, $available_length) . $suffix;
+				$available_length = $max_length - strlen($prefix);
+				$new_label = $prefix . substr($original_label, 0, $available_length);
 			}
 			
 			// Check if this label already exists, if so, add a number
@@ -495,13 +495,12 @@ class Global_Classes_REST_API {
 			$base_label = $new_label;
 			
 			while (in_array($new_label, $existing_labels)) {
-				$new_label = $base_label . $counter;
+				$new_label = $prefix . substr($original_label, 0, $available_length) . $counter;
 				
 				// If too long, slice more from the base
 				if (strlen($new_label) > $max_length) {
-					$available_length = $max_length - strlen($suffix . $counter);
-					$base_label = substr($original_label, 0, $available_length) . $suffix;
-					$new_label = $base_label . $counter;
+					$available_length = $max_length - strlen($prefix . $counter);
+					$new_label = $prefix . substr($original_label, 0, $available_length) . $counter;
 				}
 				
 				$counter++;
@@ -581,7 +580,7 @@ class Global_Classes_REST_API {
 				$modified_labels[] = [
 					'original' => $original_label,
 					'modified' => $modified_label,
-					'item_id' => $item_id
+					'id' => $item_id
 				];
 
 				// Log the concurrency resolution
@@ -603,7 +602,7 @@ class Global_Classes_REST_API {
 					count($modified_labels)
 				),
 				'meta' => [
-					'modified_labels' => $modified_labels
+					'modifiedLabels' => $modified_labels
 				]
 			]
 		];

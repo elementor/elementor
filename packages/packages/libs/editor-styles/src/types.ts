@@ -42,5 +42,5 @@ export type StyleDefinitionsMap = Record< StyleDefinition[ 'id' ], StyleDefiniti
 export type ModifiedLabel = {
 	original: string;
 	modified: string;
-	item_id: string;
+	id: string;
 };

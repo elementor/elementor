@@ -19,18 +19,18 @@ export type ErrorDialogData = {
 	};
 };
 
-type TempType = {
+type ErrorDialogProps = {
 	code: string;
 	message: string;
-	modified_labels: {
+	modifiedLabels: {
 		original: string;
 		modified: string;
-		item_id: string;
+		id: string;
 	}[];
 };
 
-export const showErrorDialog = ( data: TempType ) => {
-	const { code, modified_labels: modifiedLabels } = data;
+export const showErrorDialog = ( data: ErrorDialogProps ) => {
+	const { code, modifiedLabels } = data;
 
 	if ( code === API_ERROR_CODES.DUPLICATED_LABEL ) {
 		openDialog( {
