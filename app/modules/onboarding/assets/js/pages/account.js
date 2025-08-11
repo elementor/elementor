@@ -26,17 +26,19 @@ export default function Account() {
 		alreadyHaveAccountLinkRef = useRef();
 
 	useEffect( () => {
-		safeDispatchEvent(
-			'view_account_setup',
-			{
-				location: 'plugin onboarding',
-				trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
-				step_number: 1,
-				step_name: 'account_setup',
-				is_library_connected: state?.isLibraryConnected || false,
-			},
-		);
-	}, [] );
+		if ( ! state.isLibraryConnected ) {
+			safeDispatchEvent(
+				'view_account_setup',
+				{
+					location: 'plugin onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
+					step_number: 1,
+					step_name: 'account_setup',
+					is_library_connected: state?.isLibraryConnected || false,
+				},
+			);
+		}
+	}, [ state.isLibraryConnected ] );
 
 	let skipButton;
 
