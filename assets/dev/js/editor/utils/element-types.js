@@ -1,6 +1,6 @@
 /**
  * Returns an array of all available element types.
-	 *
+ *
  * @return {string[]} Array of element type strings.
  */
 const getAllElementTypes = () => {
