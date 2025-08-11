@@ -428,7 +428,7 @@ class Widget_Star_Rating extends Widget_Base {
 			if ( $stars <= $floored_rating ) {
 				$stars_html .= '<i class="elementor-star-full">' . $icon . '</i>';
 			} elseif ( $floored_rating + 1 === $stars && $rating !== $floored_rating ) {
-				$stars_html .= '<i class="elementor-star-' . ( $rating - $floored_rating ) * 10 . '">' . $icon . '</i>';
+				$stars_html .= '<i class="elementor-star-' . round(($rating - $floored_rating) * 10) . '">' . $icon . '</i>';
 			} else {
 				$stars_html .= '<i class="elementor-star-empty">' . $icon . '</i>';
 			}
