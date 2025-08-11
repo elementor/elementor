@@ -1,15 +1,15 @@
 <?php
-namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
+namespace Elementor\Testing\Modules\Components\Styles;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\AtomicWidgets\Cache_Validity;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Component_Styles;
+use Elementor\Modules\Components\Styles\Component_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Test_Atomic_Component_Styles extends Elementor_Test_Base {
+class Test_Component_Styles extends Elementor_Test_Base {
 	private $hook_call_count = 0;
 	private $rendered_post_ids = [];
 
@@ -55,12 +55,12 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 	}
 
 	/**
-	 * Test that Atomic_Component_Styles extracts component IDs and triggers hooks
+	 * Test that Component_Styles extracts component IDs and triggers hooks
 	 */
-	public function test_atomic_component_styles_triggers_hooks_for_unique_component_ids() {
+	public function test_component_styles_triggers_hooks_for_unique_component_ids() {
 		// Arrange
-		$atomic_component_styles = new Atomic_Component_Styles();
-		$atomic_component_styles->register_hooks();
+		$component_styles = new Component_Styles();
+		$component_styles->register_hooks();
 
 		$post_id = $this->make_mock_post_with_elements([
 			// Not an e-component widget
@@ -126,10 +126,10 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 	/**
 	 * Test that component ID deduplication works correctly
 	 */
-	public function test_invalid_atomic_components_in_post() {
+	public function test_invalid_components_in_post() {
 		// Arrange
-		$atomic_component_styles = new Atomic_Component_Styles();
-		$atomic_component_styles->register_hooks();
+		$component_styles = new Component_Styles();
+		$component_styles->register_hooks();
 
 		$post_id = $this->make_mock_post_with_elements([
 			[
@@ -157,8 +157,8 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 
 	public function test_cache_validity_upon_post_update() {
 		// Arrange
-		$atomic_component_styles = new Atomic_Component_Styles();
-		$atomic_component_styles->register_hooks();
+		$component_styles = new Component_Styles();
+		$component_styles->register_hooks();
 
 		$post = $this->make_mock_post_with_elements([
 			[
@@ -185,11 +185,11 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertTrue(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
+			$cache_validity->is_valid( [ Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
 			'Post-level cache should be valid'
 		);
 		$this->assertTrue(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $component_id ],
+			$cache_validity->is_valid( [ Component_Styles::CACHE_ROOT_KEY, $component_id ],
 			'Component-level cache should be valid' )
 		);
 
@@ -200,12 +200,12 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 		);
 		$this->assertEquals(
 			[ $component_id ],
-			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
+			$cache_validity->get_meta( [ Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
 			'Post-level cache meta should contain the included component ID (1st level only)'
 		);
 		$this->assertEquals(
 			[],
-			$cache_validity->get_meta( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $component_id ] ),
+			$cache_validity->get_meta( [ Component_Styles::CACHE_ROOT_KEY, $component_id ] ),
 			'Component-level cache meta should be empty'
 		);
 
@@ -214,11 +214,11 @@ class Test_Atomic_Component_Styles extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertFalse(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
+			$cache_validity->is_valid( [ Component_Styles::CACHE_ROOT_KEY, $post_id ] ),
 			'After saving changes cache should be invalidated'
 		);
 		$this->assertTrue(
-			$cache_validity->is_valid( [ Atomic_Component_Styles::CACHE_ROOT_KEY, $component_id ] ),
+			$cache_validity->is_valid( [ Component_Styles::CACHE_ROOT_KEY, $component_id ] ),
 			'Component-level cache should remain valid, as no change occurred'
 		);
 	}

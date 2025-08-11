@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Styles;
+namespace Elementor\Modules\Components\Styles;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
@@ -8,10 +8,10 @@ use Elementor\Modules\AtomicWidgets\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
 
 /**
- * Atomic Component styles fetching for render
+ * Component styles fetching for render
  */
-class Atomic_Component_Styles {
-	const CACHE_ROOT_KEY = 'atomic-component-styles-related-posts';
+class Component_Styles {
+	const CACHE_ROOT_KEY = 'component-styles-related-posts';
 
 	public function register_hooks() {
 		add_action( 'elementor/post/render', fn( $post_id ) => $this->render_post( $post_id ) );
