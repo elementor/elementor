@@ -3,12 +3,13 @@ import { z } from '@elementor/schema';
 import { createPropUtils } from '../../utils/create-prop-utils';
 import { stringPropTypeUtil } from '../string';
 import { unknownChildrenSchema } from '../utils';
+import { dropShadowFilterPropTypeUtil } from './drop-shadow-filter';
 
 export const cssFilterFunctionPropUtil = createPropUtils(
 	'css-filter-func',
 	z.object( {
 		func: stringPropTypeUtil.schema,
-		args: unknownChildrenSchema,
+		args: z.union( [ unknownChildrenSchema, dropShadowFilterPropTypeUtil.schema ] ),
 	} )
 );
 
