@@ -95,7 +95,11 @@ function useKitCallToActionButton(
 export default function ItemHeader( props ) {
 	const { updateSettings } = useSettingsContext();
 	const resetConnect = () => {
-		const lc = elementorCommon?.config?.library_connect || {};
+		const lc = elementorCommon?.config?.library_connect;
+		if ( ! lc ) {
+			return;
+		}
+
 		lc.is_connected = false;
 		lc.current_access_level = 0;
 		lc.current_access_tier = TIERS.free;
@@ -139,13 +143,8 @@ export default function ItemHeader( props ) {
 			onSuccess: ( response ) => {
 				try {
 					const linkUrl = response?.data?.data?.download_link;
-					const link = document.createElement( 'a' );
-					link.href = linkUrl;
-					link.rel = 'noopener noreferrer';
-					link.style.display = 'none';
-					document.body.appendChild( link );
-					link.click();
-					document.body.removeChild( link );
+					if( linkUrl )
+						window.open(linkUrl, '_blank');
 				} catch ( e ) {
 					setError( { message: __( 'Something went wrong.', 'elementor' ) } );
 				}
