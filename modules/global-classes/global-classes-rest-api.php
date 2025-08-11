@@ -153,9 +153,9 @@ class Global_Classes_REST_API {
 		$classes = $this->get_repository()->context( $context )->all();
 
 		return Response_Builder::make( (object) $classes->get_items()->all() )
-		                       ->set_meta( [ 'order' => $classes->get_order()->all() ] )
-													 ->build();
-													}
+								->set_meta( [ 'order' => $classes->get_order()->all() ] )
+													->build();
+	}
 
 	private function get_usage() {
 		$classes_usage = ( new Applied_Global_Classes_Usage() )->get_detailed_usage();
@@ -315,6 +315,4 @@ class Global_Classes_REST_API {
 
 		return $response;
 	}
-
-
 }

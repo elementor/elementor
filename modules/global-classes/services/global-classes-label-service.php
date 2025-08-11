@@ -34,8 +34,8 @@ class Global_Classes_Label_Service {
 
 			while ( true ) {
 				$new_label_length = strlen( $new_label );
-				if ( $new_label_length > $max_length || in_array( $new_label, $existing_labels ) ) {
-					$counter++;
+				if ( $new_label_length > $max_length || in_array( $new_label, $existing_labels, true ) ) {
+					++$counter;
 					$new_label = $prefix . $base_label . $counter;
 
 					// If still too long, slice the base label
@@ -63,7 +63,7 @@ class Global_Classes_Label_Service {
 			$counter = 1;
 			$base_label = $new_label;
 
-			while ( in_array( $new_label, $existing_labels ) ) {
+			while ( in_array( $new_label, $existing_labels, true ) ) {
 				$new_label = $prefix . substr( $original_label, 0, $available_length ) . $counter;
 
 				// If too long, slice more from the base
@@ -73,11 +73,10 @@ class Global_Classes_Label_Service {
 					$new_label = $prefix . substr( $original_label, 0, $available_length ) . $counter;
 				}
 
-				$counter++;
+				++$counter;
 			}
 		}
 
 		return $new_label;
 	}
-
 }

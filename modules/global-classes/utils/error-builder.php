@@ -31,7 +31,7 @@ class Error_Builder {
 		return $this;
 	}
 
-	public function set_meta( array $meta ){
+	public function set_meta( array $meta ) {
 		$this->meta = $meta;
 
 		return $this;
@@ -43,10 +43,10 @@ class Error_Builder {
 			'message' => $this->message,
 			'data' => (object) [
 				'status' => $this->status,
-				...$this->meta
-			]
+				...$this->meta,
+			],
 		];
-		
+
 		return new \WP_REST_Response( $response_data, $this->status );
 	}
 }
