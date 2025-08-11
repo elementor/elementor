@@ -143,8 +143,9 @@ export default function ItemHeader( props ) {
 			onSuccess: ( response ) => {
 				try {
 					const linkUrl = response?.data?.data?.download_link;
-					if( linkUrl )
-						window.open(linkUrl, '_blank');
+					if ( linkUrl ) {
+						window.open( linkUrl, '_blank' );
+					}
 				} catch ( e ) {
 					setError( { message: __( 'Something went wrong.', 'elementor' ) } );
 				}
