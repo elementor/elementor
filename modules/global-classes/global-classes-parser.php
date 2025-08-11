@@ -105,8 +105,8 @@ class Global_Classes_Parser {
 		$items = Collection::make( $items );
 
 		$order = Collection::make( $order )
-		                   ->filter( fn( $item ) => is_string( $item ) )
-		                   ->unique();
+			->filter( fn( $item ) => is_string( $item ) )
+			->unique();
 
 		$existing_ids = $items->keys();
 

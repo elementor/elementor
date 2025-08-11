@@ -32,15 +32,21 @@ class Global_Classes_Label_Service {
 			$counter = 1;
 			$new_label = $prefix . $base_label . $counter;
 
-			while ( strlen( $new_label ) > $max_length || in_array( $new_label, $existing_labels ) ) {
-				$counter++;
-				$new_label = $prefix . $base_label . $counter;
-
-				// If still too long, slice the base label
-				if ( strlen( $new_label ) > $max_length ) {
-					$available_length = $max_length - strlen( $prefix . $counter );
-					$base_label = substr( $base_label, 0, $available_length );
+			while ( true ) {
+				$new_label_length = strlen( $new_label );
+				if ( $new_label_length > $max_length || in_array( $new_label, $existing_labels ) ) {
+					$counter++;
 					$new_label = $prefix . $base_label . $counter;
+
+					// If still too long, slice the base label
+					$new_label_length = strlen( $new_label );
+					if ( $new_label_length > $max_length ) {
+						$available_length = $max_length - strlen( $prefix . $counter );
+						$base_label = substr( $base_label, 0, $available_length );
+						$new_label = $prefix . $base_label . $counter;
+					}
+				} else {
+					break;
 				}
 			}
 		} else {
@@ -61,7 +67,8 @@ class Global_Classes_Label_Service {
 				$new_label = $prefix . substr( $original_label, 0, $available_length ) . $counter;
 
 				// If too long, slice more from the base
-				if ( strlen( $new_label ) > $max_length ) {
+				$new_label_length = strlen( $new_label );
+				if ( $new_label_length > $max_length ) {
 					$available_length = $max_length - strlen( $prefix . $counter );
 					$new_label = $prefix . substr( $original_label, 0, $available_length ) . $counter;
 				}
@@ -72,4 +79,5 @@ class Global_Classes_Label_Service {
 
 		return $new_label;
 	}
+
 }
