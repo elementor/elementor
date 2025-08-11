@@ -8,7 +8,7 @@ type GetUserPayload = {
 	params?: { context?: 'edit' };
 };
 
-type UserModel = {
+export type UserModel = {
 	suppressedMessages: string[];
 	capabilities: string[];
 };

@@ -24,7 +24,7 @@ export const TooltipAddItemAction = ( {
 
 	return (
 		<ConditionalToolTip content={ tooltipContent } enable={ enableTooltip }>
-			<Box>
+			<Box sx={ { ml: 'auto' } }>
 				<IconButton
 					size={ SIZE }
 					disabled={ disabled }
