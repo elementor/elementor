@@ -49,10 +49,10 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering">
 				<TableHead>
 					<TableRow>
-						<VariableTableCell isHeader noPadding width={10} maxWidth={10} />
+						<VariableTableCell isHeader noPadding width={ 10 } maxWidth={ 10 } />
 						<VariableTableCell isHeader>{ __( 'Name', 'elementor' ) }</VariableTableCell>
 						<VariableTableCell isHeader>{ __( 'Value', 'elementor' ) }</VariableTableCell>
-						<VariableTableCell isHeader noPadding width={16} maxWidth={16} />
+						<VariableTableCell isHeader noPadding width={ 16 } maxWidth={ 16 } />
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -104,7 +104,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 														borderBottomColor: 'primary.main',
 													},
 												} ),
-												'&:hover, &:has(button[aria-menu-open="true"])': {
+												'&:hover, &:has(button[data-menu-open="true"])': {
 													backgroundColor: 'action.hover',
 													'& [role="toolbar"], & [draggable]': {
 														opacity: 1,
@@ -114,14 +114,14 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 											style={ { ...itemStyle, ...triggerStyle } }
 											disableDivider={ isDragOverlay || index === rows.length - 1 }
 										>
-											<VariableTableCell noPadding width={10} maxWidth={10}>
+											<VariableTableCell noPadding width={ 10 } maxWidth={ 10 }>
 												<IconButton
 													size="small"
 													ref={ setTriggerRef }
 													{ ...triggerProps }
 													disabled={ isSorting }
 													draggable
-													sx={{opacity: 0}}
+													sx={ { opacity: 0 } }
 												>
 													<GripVerticalIcon fontSize="inherit" />
 												</IconButton>
@@ -143,9 +143,9 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 													</EllipsisWithTooltip>
 												</Stack>
 											</VariableTableCell>
-											<VariableTableCell align="right" noPadding width={16} maxWidth={16}>
-												<Stack role="toolbar" sx={{ opacity: 0 }}>
-												    <VariableMenu menuActions={menuActions} disabled={isSorting} />
+											<VariableTableCell align="right" noPadding width={ 16 } maxWidth={ 16 }>
+												<Stack role="toolbar" sx={ { opacity: 0 } }>
+													<VariableMenu menuActions={ menuActions } disabled={ isSorting } />
 												</Stack>
 											</VariableTableCell>
 										</TableRow>

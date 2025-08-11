@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TableCell, type SxProps } from '@elementor/ui';
+import { type SxProps, TableCell } from '@elementor/ui';
 
 type VariableTableCellProps = {
 	children?: React.ReactNode;
@@ -10,23 +10,25 @@ type VariableTableCellProps = {
 	noPadding?: boolean;
 };
 
-export const VariableTableCell = ({ children, isHeader, width, maxWidth, align, noPadding }: VariableTableCellProps) => {
+export const VariableTableCell = ( {
+	children,
+	isHeader,
+	width,
+	maxWidth,
+	align,
+	noPadding,
+}: VariableTableCellProps ) => {
 	const baseSx: SxProps = {
 		maxWidth: maxWidth ?? 150,
 		cursor: 'initial',
 		typography: isHeader ? 'subtitle2' : 'caption',
-		...(isHeader && { color: 'text.primary' }),
-		...(width && { width }),
+		...( isHeader && { color: 'text.primary' } ),
+		...( width && { width } ),
 	};
 
 	return (
-		<TableCell
-			size="small"
-			padding={noPadding ? 'none' : undefined}
-			align={align}
-			sx={baseSx}
-		>
-			{children}
+		<TableCell size="small" padding={ noPadding ? 'none' : undefined } align={ align } sx={ baseSx }>
+			{ children }
 		</TableCell>
 	);
 };
