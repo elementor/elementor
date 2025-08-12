@@ -145,8 +145,14 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 													</EllipsisWithTooltip>
 												</Stack>
 											</VariableTableCell>
-											<VariableTableCell align="right" noPadding width={ 16 } maxWidth={ 16 }>
-												<Stack role="toolbar">
+											<VariableTableCell
+												align="right"
+												noPadding
+												width={ 16 }
+												maxWidth={ 16 }
+												sx={ { pr: 1 } }
+											>
+												<Stack role="toolbar" direction="row" justifyContent="flex-end">
 													<VariableMenu menuActions={ menuActions } disabled={ isSorting } />
 												</Stack>
 											</VariableTableCell>

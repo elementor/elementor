@@ -8,6 +8,7 @@ type VariableTableCellProps = {
 	maxWidth?: number;
 	align?: 'left' | 'right' | 'center';
 	noPadding?: boolean;
+	sx?: SxProps;
 };
 
 export const VariableTableCell = ( {
@@ -17,6 +18,7 @@ export const VariableTableCell = ( {
 	maxWidth,
 	align,
 	noPadding,
+	sx,
 }: VariableTableCellProps ) => {
 	const baseSx: SxProps = {
 		maxWidth: maxWidth ?? 150,
@@ -24,6 +26,7 @@ export const VariableTableCell = ( {
 		typography: isHeader ? 'subtitle2' : 'caption',
 		...( isHeader && { color: 'text.primary' } ),
 		...( width && { width } ),
+		...sx,
 	};
 
 	return (
