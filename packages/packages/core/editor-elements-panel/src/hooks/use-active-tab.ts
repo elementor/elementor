@@ -9,7 +9,7 @@ import { E_ROUTE_PREFIX } from '../consts';
 import { getTab } from '../tabs';
 import { getWindow } from '../utils/get-window';
 
-export function useTab() {
+export function useActiveTab() {
 	return useListenTo( [ v1ReadyEvent(), routeOpenEvent( E_ROUTE_PREFIX ), routeCloseEvent( E_ROUTE_PREFIX ) ], () => {
 		const panelRoute = getWindow().$e.routes.getCurrent()?.panel;
 

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { Portal } from '@elementor/ui';
 
-import { useTab } from '../hooks/use-tab';
+import { useActiveTab } from '../hooks/use-active-tab';
 
 const PANEL_WRAPPER_ID = 'elementor-panel-elements-wrapper';
 
 export function TabPanel() {
-	const tab = useTab();
+	const tab = useActiveTab();
 
 	const TabComponent = tab?.component;
 
