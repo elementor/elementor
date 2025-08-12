@@ -115,14 +115,14 @@ export default function ItemHeader( props ) {
 	const [ isConnectDialogOpen, setIsConnectDialogOpen ] = useState( false );
 	const [ downloadLinkData, setDownloadLinkData ] = useState( null );
 	const [ error, setError ] = useState( false );
-	const handleKitError = ( errorResponse ) => {
-		if ( 401 === errorResponse.code ) {
+	const handleKitError = ( { code } ) => {
+		if ( 401 === code ) {
 			resetConnect();
 			setIsConnectDialogOpen( true );
 			return;
 		}
 		setError( {
-			code: errorResponse.code,
+			code,
 			message: __( 'Something went wrong.', 'elementor' ),
 		} );
 	};
