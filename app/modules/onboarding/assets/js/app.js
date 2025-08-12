@@ -3,6 +3,7 @@ import { LocationProvider, Router } from '@reach/router';
 import router from '@elementor/router';
 
 import { ContextProvider } from './context/context';
+import { safeDispatchEvent } from './utils/utils';
 import Account from './pages/account';
 import HelloTheme from './pages/hello-theme';
 import SiteName from './pages/site-name';
@@ -10,17 +11,6 @@ import SiteLogo from './pages/site-logo';
 import GoodToGo from './pages/good-to-go';
 import InstallPro from './pages/upload-and-install-pro';
 import ChooseFeatures from './pages/choose-features';
-
-const safeDispatchEvent = ( eventName, eventData ) => {
-	try {
-		if ( ! elementorCommon?.eventsManager?.dispatchEvent ) {
-			return;
-		}
-		elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
-	} catch ( error ) {
-		// Silently fail - don't let tracking break the user experience
-	}
-};
 
 export default function App() {
 	// Send an AJAX request to update the database option which makes sure the Onboarding process only runs once,
@@ -34,7 +24,7 @@ export default function App() {
 			document.body.classList.remove( darkThemeClassName );
 		}
 
-		if ( ! elementorAppConfig.onboarding.onboardingAlreadyRan ) {
+		if ( ! elementorAppConfig?.onboarding?.onboardingAlreadyRan ) {
 			safeDispatchEvent(
 				'onboarding_started',
 				{

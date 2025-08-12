@@ -4,17 +4,7 @@ import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
-
-const safeDispatchEvent = ( eventName, eventData ) => {
-	try {
-		if ( ! elementorCommon?.eventsManager?.dispatchEvent ) {
-			return;
-		}
-		elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
-	} catch ( error ) {
-		// Silently fail - don't let tracking break the user experience
-	}
-};
+import { safeDispatchEvent } from '../utils/utils';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),

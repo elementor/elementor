@@ -3,17 +3,7 @@ import Grid from 'elementor-app/ui/grid/grid';
 import Layout from '../components/layout/layout';
 import Card from '../components/card';
 import FooterButtons from '../components/layout/footer-buttons';
-
-const safeDispatchEvent = ( eventName, eventData ) => {
-	try {
-		if ( ! elementorCommon?.eventsManager?.dispatchEvent ) {
-			return;
-		}
-		elementorCommon.eventsManager.dispatchEvent( eventName, eventData );
-	} catch ( error ) {
-		// Silently fail - don't let tracking break the user experience
-	}
-};
+import { safeDispatchEvent } from '../utils/utils';
 
 export default function GoodToGo() {
 	const pageId = 'goodToGo',
