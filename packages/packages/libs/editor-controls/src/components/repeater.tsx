@@ -48,6 +48,7 @@ type RepeaterProps< T > = {
 	openOnAdd?: boolean;
 	setValues: ( newValue: T[] ) => void;
 	disabled?: boolean;
+	onAddItem?: () => void;
 	itemSettings: {
 		initialValues: T;
 		Label: React.ComponentType< { value: T } >;
@@ -70,6 +71,7 @@ export const Repeater = < T, >( {
 	addToBottom = false,
 	values: repeaterValues = [],
 	setValues: setRepeaterValues,
+	onAddItem,
 	showDuplicate = true,
 	showToggle = true,
 	isSortable = true,
@@ -91,6 +93,7 @@ export const Repeater = < T, >( {
 	};
 
 	const addRepeaterItem = () => {
+		onAddItem?.();
 		const newItem = structuredClone( itemSettings.initialValues );
 		const newKey = generateNextKey( uniqueKeys );
 

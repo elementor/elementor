@@ -24,6 +24,7 @@ type RepeatableControlProps = {
 	patternLabel?: string;
 	placeholder?: string;
 	propKey?: string;
+	onAddItem?: () => void;
 };
 
 const PLACEHOLDER_REGEX = /\$\{([^}]+)\}/g;
@@ -38,6 +39,7 @@ export const RepeatableControl = createControl(
 		patternLabel,
 		placeholder,
 		propKey,
+		onAddItem,
 	}: RepeatableControlProps ) => {
 		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
 
@@ -70,6 +72,7 @@ export const RepeatableControl = createControl(
 						setValues={ setValue }
 						label={ repeaterLabel }
 						isSortable={ false }
+						onAddItem={ onAddItem }
 						itemSettings={ {
 							Icon: ItemIcon,
 							Label: ItemLabel,

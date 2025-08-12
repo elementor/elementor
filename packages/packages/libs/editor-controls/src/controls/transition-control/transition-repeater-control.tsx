@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ExtendedWindow } from '@elementor/editor-elements';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
@@ -49,6 +50,25 @@ function getChildControlConfig( recentlyUsedList: string[] ) {
 }
 
 export const TransitionRepeaterControl = createControl( ( props: { recentlyUsedList: string[] } ) => {
+	const onAddItem = () => {
+		const extendedWindow = window as unknown as ExtendedWindow;
+		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
+		const selected = extendedWindow.elementor?.selection?.getElements?.() ?? [];
+		const first = selected[ 0 ];
+		const widgetType = first ? first.model.get( 'widgetType' ) || first.model.get( 'elType' ) || null : null;
+
+		const eventName = config?.names?.elementorEditor?.transitions?.clickAddedTransition;
+		if ( config && eventName && extendedWindow.elementorCommon?.eventsManager ) {
+			extendedWindow.elementorCommon.eventsManager.dispatchEvent( eventName, {
+				location: config.locations.styleTabV4,
+				secondaryLocation: config.secondaryLocations.transitionControl,
+				trigger: config.triggers.click,
+				transition_type: initialTransitionValue.selection.value.value.value,
+				widget_type: widgetType,
+			} );
+		}
+	};
+
 	return (
 		<RepeatableControl
 			label={ __( 'Transitions', 'elementor' ) }
@@ -60,6 +80,7 @@ export const TransitionRepeaterControl = createControl( ( props: { recentlyUsedL
 			initialValues={ initialTransitionValue }
 			childControlConfig={ getChildControlConfig( props.recentlyUsedList ) }
 			propKey="transition"
+			onAddItem={ onAddItem }
 		/>
 	);
 } );
