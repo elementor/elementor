@@ -19,8 +19,8 @@ import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
-import { type VariableManagerMenuAction, VariablesManagerEditMenu } from './variables-manager-edit-menu';
-import { VariableTableCell } from './variables-manager-table-cell';
+import { type VariableManagerMenuAction, VariableEditMenu } from './variable-edit-menu';
+import { VariableTableCell } from './variable-table-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
@@ -153,7 +153,7 @@ export const VariablesManagerTable = ( { menuActions }: Props ) => {
 												sx={ { paddingInlineEnd: 1 } }
 											>
 												<Stack role="toolbar" direction="row" justifyContent="flex-end">
-													<VariablesManagerEditMenu
+													<VariableEditMenu
 														menuActions={ menuActions }
 														disabled={ isSorting }
 													/>
