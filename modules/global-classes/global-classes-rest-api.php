@@ -5,7 +5,6 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
-use Elementor\Modules\GlobalClasses\Utils\Debug_Logger;
 use Elementor\Modules\GlobalClasses\Services\Global_Classes_Validation_Service;
 use Elementor\Modules\GlobalClasses\Services\Global_Classes_Changes_Service;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
@@ -165,7 +164,6 @@ class Global_Classes_REST_API {
 
 	private function put( \WP_REST_Request $request ) {
 		// Log debug information
-		Debug_Logger::log_request_debug( $request );
 
 		$context = $request->get_param( 'context' );
 		$changes = $request->get_param( 'changes' ) ?? [];
@@ -205,7 +203,6 @@ class Global_Classes_REST_API {
 			}
 
 			// Log if any labels were modified
-			Debug_Logger::log_modified_labels( $validation_result['meta']['modifiedLabels'] ?? [] );
 		}
 
 		$items_result = $parser->parse_items(
@@ -223,7 +220,6 @@ class Global_Classes_REST_API {
 			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ITEMS;
 
 			// Log validation errors
-			Debug_Logger::log_validation_errors( 'items', $items_result->errors()->to_string() );
 
 			return Error_Builder::make( $code )
 				->set_status( 400 )
@@ -246,7 +242,6 @@ class Global_Classes_REST_API {
 			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ORDER;
 
 			// Log order validation errors
-			Debug_Logger::log_validation_errors( 'order', $order_result->errors()->to_string() );
 
 			return Error_Builder::make( $code )
 				->set_status( 400 )
