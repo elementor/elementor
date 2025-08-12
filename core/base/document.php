@@ -727,21 +727,12 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$container_config = [];
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
-				$container_config['container'] =
-					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
-			}
-
-			Collection::make( Plugin::$instance->elements_manager->get_element_types() )->each( function ( $element, $key ) use ( &$container_config ) {
-				if ( 'container' !== $key ) {
-					$container_config[ $key ] = $element->get_config();
-				}
-			} );
-
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = $container_config + Plugin::$instance->widgets_manager->get_widget_types_config();
+			$config['widgets'] = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
+			->filter( fn ( $_, $key ) => 'container' !== $key || ( 'container' === $key && Plugin::$instance->experiments->is_feature_active( 'container' ) ) )
+			->map( fn ( $element ) => $element->get_config() )
+			->merge( Plugin::$instance->widgets_manager->get_widget_types_config() )
+			->all();
 		}
 
 		$additional_config = [];
