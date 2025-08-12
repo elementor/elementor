@@ -16,7 +16,7 @@ class Entrance_Animation_Transformer extends Transformer_Base {
     public function transform( $value, Props_Resolver_Context $context ) {
         return null;
         // xdebug_break();
-        // var_dump($value);
+        var_dump($value);
         error_log('=== START Entrance Animation Transformer ===');
         error_log('Raw input value: ' . json_encode($value, JSON_PRETTY_PRINT));
         
