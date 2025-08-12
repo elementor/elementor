@@ -4,12 +4,13 @@ import {
 	FilterRepeaterControl,
 	TransformRepeaterControl,
 	TransitionRepeaterControl,
-	UnstableTransformRepeaterControl,
 } from '@elementor/editor-controls';
+import { useSelectedElement } from '@elementor/editor-elements';
 import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { StylesField } from '../../../controls-registry/styles-field';
+import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
 import { PanelDivider } from '../../panel-divider';
 import { SectionContent } from '../../section-content';
 import { OpacityControlField } from './opacity-control-field';
@@ -22,8 +23,7 @@ const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
 	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
-
-	const isUnstableRepeaterActive = isExperimentActive( EXPERIMENTAL_FEATURES.UNSTABLE_REPEATER );
+	const { element } = useSelectedElement();
 
 	return (
 		<SectionContent>
@@ -34,13 +34,13 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
-				{ isUnstableRepeaterActive ? <UnstableTransformRepeaterControl /> : <TransformRepeaterControl /> }
+				<TransformRepeaterControl />
 			</StylesField>
 			{ shouldShowTransition && (
 				<>
 					<PanelDivider />
 					<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
-						<TransitionRepeaterControl />
+						<TransitionRepeaterControl recentlyUsedList={ getRecentlyUsedList( element?.id ) } />
 					</StylesField>
 				</>
 			) }

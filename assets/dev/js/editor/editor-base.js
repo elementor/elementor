@@ -458,6 +458,8 @@ export default class EditorBase extends Marionette.Application {
 
 		this.introductionTooltips = new IntroductionTooltipsManager();
 
+		this.editorEvents = elementorCommon.eventsManager;
+
 		this.documents = $e.components.register( new EditorDocuments() );
 
 		// Adds the Landing Page tab to the Template library modal when editing Landing Pages.
@@ -477,9 +479,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.modules.promotionModule = new PromotionModule();
 
-		if ( elementorCommon.config.experimentalFeatures[ 'cloud-library' ] ) {
-			this.modules.cloudLibraryModule = new CloudLibraryModule();
-		}
+		this.modules.cloudLibraryModule = new CloudLibraryModule();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );

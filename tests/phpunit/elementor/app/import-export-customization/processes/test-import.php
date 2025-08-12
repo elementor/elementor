@@ -77,7 +77,12 @@ class Test_Import extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( [ 'Elementor', 'Elementor Pro' ], $result['plugins']);
 
-		$this->assertTrue( $result['site-settings'] );
+		$this->assertIsArray( $result['site-settings'] );
+		$this->assertArrayHasKey( 'imported_kit_id', $result['site-settings'] );
+		$this->assertArrayHasKey( 'system_colors', $result['site-settings'] );
+		$this->assertArrayHasKey( 'custom_colors', $result['site-settings'] );
+		$this->assertArrayHasKey( 'system_typography', $result['site-settings'] );
+		$this->assertArrayHasKey( 'custom_typography', $result['site-settings'] );
 
 		// Assert that site settings imported without changes.
 		$site_settings = $this->get_site_settings();
@@ -242,7 +247,12 @@ class Test_Import extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertCount( 2, $result );
-		$this->assertTrue( $result['site-settings'] );
+		$this->assertIsArray( $result['site-settings'] );
+		$this->assertArrayHasKey( 'imported_kit_id', $result['site-settings'] );
+		$this->assertArrayHasKey( 'system_colors', $result['site-settings'] );
+		$this->assertArrayHasKey( 'custom_colors', $result['site-settings'] );
+		$this->assertArrayHasKey( 'system_typography', $result['site-settings'] );
+		$this->assertArrayHasKey( 'custom_typography', $result['site-settings'] );
 		$this->assertCount( 1, $result['theme']['succeed'] );
 
 		$expected_runners = [
@@ -424,7 +434,11 @@ class Test_Import extends Elementor_Test_Base {
 
 		$import_settings = [
 			'include' => [ 'content' ],
-			'selectedCustomPostTypes' => [ 'tests' ],
+			'customization' => [
+				'content' => [
+					'customPostTypes' => [ 'post', 'tests' ],
+				],
+			],
 		];
 
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
