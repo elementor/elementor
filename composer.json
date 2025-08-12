@@ -24,8 +24,8 @@
 		"humbug/php-scoper": "^0.18.17",
 		"php-di/php-di": "6.4.0",
 		"twig/twig": "3.11.3",
-		"esi/phpunit-coverage-check": "^2.0.0",
-		"fidry/console": "^0.6.10"
+		"fidry/console": "^0.6.10",
+		"rregeer/phpunit-coverage-check": "^0.3.1"
 	},
 	"scripts": {
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",

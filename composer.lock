@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e898231eeba9ad937c3a43d272aa6c7",
+    "content-hash": "a0867b27a4f0453d6d66284634f3999b",
     "packages": [],
     "packages-dev": [
         {
@@ -195,102 +195,6 @@
                 "source": "https://github.com/elementor/elementor-editor-testing/tree/v0.0.3"
             },
             "time": "2023-12-03T16:01:32+00:00"
-        },
-        {
-            "name": "esi/phpunit-coverage-check",
-            "version": "2.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ericsizemore/phpunit-coverage-check.git",
-                "reference": "0428086b845733eb9d853464911923f78aa6b571"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ericsizemore/phpunit-coverage-check/zipball/0428086b845733eb9d853464911923f78aa6b571",
-                "reference": "0428086b845733eb9d853464911923f78aa6b571",
-                "shasum": ""
-            },
-            "require": {
-                "ext-libxml": "*",
-                "ext-simplexml": "*",
-                "php": "^8.2 <8.5",
-                "symfony/console": "^7.1"
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.65",
-                "phpstan/extension-installer": "^1.4",
-                "phpstan/phpstan": "^2.0",
-                "phpstan/phpstan-deprecation-rules": "^2.0",
-                "phpstan/phpstan-phpunit": "^2.0",
-                "phpstan/phpstan-strict-rules": "^2.0",
-                "phpunit/phpunit": "^11.4"
-            },
-            "bin": [
-                "coverage-check"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Esi\\CoverageCheck\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Eric Sizemore",
-                    "email": "admin@secondversion.com",
-                    "role": "Developer"
-                },
-                {
-                    "name": "Richard Regeer",
-                    "email": "rich2309@gmail.com",
-                    "role": "Original Developer"
-                }
-            ],
-            "description": "Check the code coverage using the clover report of PHPUnit.",
-            "homepage": "https://github.com/ericsizemore/phpunit-coverage-check",
-            "keywords": [
-                "code-coverage",
-                "code-coverage-checker",
-                "coverage",
-                "coverage-report",
-                "phpunit",
-                "test",
-                "testing",
-                "testing-tools",
-                "unit-testing"
-            ],
-            "support": {
-                "docs": "https://github.com/ericsizemore/phpunit-coverage-check",
-                "forum": "https://github.com/ericsizemore/phpunit-coverage-check/discussions",
-                "issues": "https://github.com/ericsizemore/phpunit-coverage-check/issues",
-                "rss": "https://github.com/ericsizemore/phpunit-coverage-check/releases.atom",
-                "security": "https://github.com/ericsizemore/phpunit-coverage-check/security/policy",
-                "source": "https://github.com/ericsizemore/phpunit-coverage-check/tree/master"
-            },
-            "funding": [
-                {
-                    "url": "https://ko-fi.com/ericsizemore",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/ericsizemore",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/esi/phpunit-coverage-check",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2024-12-03T04:33:39+00:00"
         },
         {
             "name": "fidry/console",
@@ -1857,6 +1761,52 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
             "time": "2024-09-11T13:17:53+00:00"
+        },
+        {
+            "name": "rregeer/phpunit-coverage-check",
+            "version": "0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/richardregeer/phpunit-coverage-check.git",
+                "reference": "9618fa74477fbc448c1b0599bef5153d170094bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/richardregeer/phpunit-coverage-check/zipball/9618fa74477fbc448c1b0599bef5153d170094bd",
+                "reference": "9618fa74477fbc448c1b0599bef5153d170094bd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "bin": [
+                "bin/coverage-check"
+            ],
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Richard Regeer",
+                    "email": "rich2309@gmail.com"
+                }
+            ],
+            "description": "Check the code coverage using the clover report of phpunit",
+            "keywords": [
+                "ci",
+                "code coverage",
+                "php",
+                "phpunit",
+                "testing",
+                "unittest"
+            ],
+            "support": {
+                "issues": "https://github.com/richardregeer/phpunit-coverage-check/issues",
+                "source": "https://github.com/richardregeer/phpunit-coverage-check/tree/0.3.1"
+            },
+            "time": "2019-10-14T07:04:13+00:00"
         },
         {
             "name": "sebastian/cli-parser",
