@@ -20,11 +20,12 @@
 		"justinrainbow/json-schema": "^5.2",
 		"phpunit/phpunit": "^9",
 		"yoast/phpunit-polyfills": "^1.0",
-		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
 		"spatie/phpunit-snapshot-assertions": "^4.2",
-		"humbug/php-scoper": "0.17.5",
+		"humbug/php-scoper": "^0.18.17",
 		"php-di/php-di": "6.4.0",
-		"twig/twig": "3.11.3"
+		"twig/twig": "3.11.3",
+		"esi/phpunit-coverage-check": "^2.0.0",
+		"fidry/console": "^0.6.10"
 	},
 	"scripts": {
 		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",

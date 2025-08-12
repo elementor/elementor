@@ -350,7 +350,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Active controls.
 	 */
-	public function get_active_controls( array $controls = null, array $settings = null ) {
+	public function get_active_controls( ?array $controls = null, ?array $settings = null ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		if ( ! $controls ) {
@@ -797,7 +797,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Style controls.
 	 */
-	final public function get_style_controls( array $controls = null, array $settings = null ) {
+	final public function get_style_controls( ?array $controls = null, ?array $settings = null ) {
 		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.0.0' );
 
 		$controls = $this->get_active_controls( $controls, $settings );

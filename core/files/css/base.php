@@ -549,7 +549,7 @@ abstract class Base extends Base_File {
 	 * @param array          $replacements   Replacements.
 	 * @param array          $all_controls   All controls.
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, ?array $all_controls = null ) {
 		if ( ! $all_controls ) {
 			$all_controls = $controls_stack->get_controls();
 		}
@@ -918,7 +918,7 @@ abstract class Base extends Base_File {
 		return $value;
 	}
 
-	final protected function get_active_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final protected function get_active_controls( Controls_Stack $controls_stack, ?array $controls = null, ?array $settings = null ) {
 		if ( ! $controls ) {
 			$controls = $controls_stack->get_controls();
 		}
@@ -946,7 +946,7 @@ abstract class Base extends Base_File {
 		return $active_controls;
 	}
 
-	final public function get_style_controls( Controls_Stack $controls_stack, array $controls = null, array $settings = null ) {
+	final public function get_style_controls( Controls_Stack $controls_stack, ?array $controls = null, ?array $settings = null ) {
 		$controls = $this->get_active_controls( $controls_stack, $controls, $settings );
 
 		$style_controls = [];
