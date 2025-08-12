@@ -15,7 +15,7 @@ import { StyleProvider } from '../contexts/style-context';
 import { StyleInheritanceProvider } from '../contexts/styles-inheritance-context';
 import { useActiveStyleDefId } from '../hooks/use-active-style-def-id';
 import { CssClassSelector } from './css-classes/css-class-selector';
-import { CustomCss } from './custom-css';
+import { CustomCssSection } from './custom-css';
 import { SectionsList } from './sections-list';
 import { BackgroundSection } from './style-sections/background-section/background-section';
 import { BorderSection } from './style-sections/border-section/border-section';
@@ -169,13 +169,14 @@ export const StyleTab = () => {
 								] }
 							/>
 							{ shouldRenderCustomCss && (
-								<StyleTabSection
-									section={ {
-										component: CustomCss,
-										name: 'Custom CSS',
-										title: __( 'Custom CSS', 'elementor' ),
-									} }
-								/>
+								// <StyleTabSection
+								// 	section={ {
+								// 		component: CustomCss,
+								// 		name: 'Custom CSS',
+								// 		title: <> {__( 'Custom CSS', 'elementor' )} <ControlAdornments /></>,
+								// 	} }
+								<CustomCssSection />
+								// />
 							) }
 						</SectionsList>
 						<Box sx={ { height: '150px' } } />

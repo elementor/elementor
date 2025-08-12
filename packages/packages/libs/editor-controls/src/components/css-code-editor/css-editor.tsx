@@ -1,12 +1,15 @@
 import * as React from 'react';
 import type { editor, MonacoEditor } from 'monaco-types';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
-import { useTheme } from '@elementor/ui';
+import { Box, useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
 
 import { EditorWrapper } from './css-editor.styles';
 import { setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';
+
+const CSS_BLOCK_START = 'element.style {';
+const CSS_BLOCK_END = '}';
 
 type CssEditorProps = {
 	value: string;
@@ -15,7 +18,9 @@ type CssEditorProps = {
 
 const setVisualContent = ( value: string ): string => {
 	const trimmed = value.trim();
-	return `element.style {\n${ trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n' }}`;
+	return `${ CSS_BLOCK_START }\n${
+		trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n'
+	}${ CSS_BLOCK_END }`;
 };
 
 const getActual = ( value: string ): string => {
@@ -75,7 +80,6 @@ const createEditorDidMountHandler = (
 	return ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		editorRef.current = editor;
 		monacoRef.current = monaco;
-
 		preventChangeOnVisualContent( editor, monaco );
 
 		setCustomSyntaxRules( editor, monaco );
@@ -108,6 +112,36 @@ const createEditorDidMountHandler = (
 	};
 };
 
+const EditorBlockCover = ( props: { children: React.ReactNode; isEndBlock?: boolean } ) => {
+	const { children, isEndBlock } = props;
+	const theme = useTheme();
+	const posProps = isEndBlock
+		? {
+				bottom: 0,
+		  }
+		: {
+				top: 0,
+		  };
+	return (
+		<Box
+			component="div"
+			sx={ {
+				...posProps,
+				position: 'absolute',
+				left: 0,
+				width: '100%',
+				height: 'fit-content',
+				zIndex: 1,
+				color: theme.palette.text.tertiary,
+				backgroundColor: '#f3f3f4',
+				padding: '2px 10px',
+				lineHeight: 1.5,
+			} }
+		>
+			{ children }
+		</Box>
+	);
+};
 export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const theme = useTheme();
 	const containerRef = React.useRef< HTMLDivElement >( null );
@@ -140,6 +174,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 	return (
 		<EditorWrapper ref={ containerRef }>
+			<EditorBlockCover>{ CSS_BLOCK_START }</EditorBlockCover>
 			<Editor
 				key={ activeBreakpoint }
 				height="100%"
@@ -149,6 +184,8 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				onMount={ handleEditorDidMount }
 				options={ {
 					lineNumbers: 'off',
+					lineHeight: 22,
+					stickyScroll: { enabled: false },
 					folding: false,
 					showFoldingControls: 'never',
 					minimap: { enabled: false },
@@ -159,6 +196,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 					fixedOverflowWidgets: true,
 				} }
 			/>
+			<EditorBlockCover isEndBlock>{ CSS_BLOCK_END }</EditorBlockCover>
 			<ResizeHandleComponent
 				onResize={ handleResize }
 				containerRef={ containerRef }
