@@ -104,7 +104,10 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 														borderBottomColor: 'primary.main',
 													},
 												} ),
-												'&:hover, &:has(button[data-menu-open="true"])': {
+												'& [role="toolbar"], & [draggable]': {
+													opacity: 0,
+												},
+												'&:hover, &:focus-within': {
 													backgroundColor: 'action.hover',
 													'& [role="toolbar"], & [draggable]': {
 														opacity: 1,
@@ -121,7 +124,6 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 													{ ...triggerProps }
 													disabled={ isSorting }
 													draggable
-													sx={ { opacity: 0 } }
 												>
 													<GripVerticalIcon fontSize="inherit" />
 												</IconButton>
@@ -144,7 +146,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 												</Stack>
 											</VariableTableCell>
 											<VariableTableCell align="right" noPadding width={ 16 } maxWidth={ 16 }>
-												<Stack role="toolbar" sx={ { opacity: 0 } }>
+												<Stack role="toolbar">
 													<VariableMenu menuActions={ menuActions } disabled={ isSorting } />
 												</Stack>
 											</VariableTableCell>

@@ -32,6 +32,7 @@ export const VariableMenu = ( { menuActions, disabled }: VariableMenuProps ) => 
 			</IconButton>
 
 			<Menu
+				disablePortal
 				MenuListProps={ {
 					dense: true,
 				} }
