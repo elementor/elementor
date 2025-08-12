@@ -14,7 +14,7 @@ import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { VariablesManagerList } from './variables-manager-list';
+import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
 
@@ -73,7 +73,7 @@ export function VariablesManagerPanel() {
 						} }
 					>
 						<Divider />
-						<VariablesManagerList menuActions={ menuActions } />
+						<VariablesManagerTable menuActions={ menuActions } />
 					</PanelBody>
 
 					<PanelFooter>

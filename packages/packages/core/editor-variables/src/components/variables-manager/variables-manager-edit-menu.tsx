@@ -10,12 +10,12 @@ export type VariableManagerMenuAction = {
 	onClick: () => void;
 };
 
-type VariableMenuProps = {
+type VariablesManagerEditMenuProps = {
 	menuActions: VariableManagerMenuAction[];
 	disabled?: boolean;
 };
 
-export const VariableMenu = ( { menuActions, disabled }: VariableMenuProps ) => {
+export const VariablesManagerEditMenu = ( { menuActions, disabled }: VariablesManagerEditMenuProps ) => {
 	const menuState = usePopupState( {
 		variant: 'popover',
 	} );
