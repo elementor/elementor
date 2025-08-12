@@ -5,20 +5,27 @@ import {
 	v1ReadyEvent,
 } from '@elementor/editor-v1-adapters';
 
-import { E_ROUTE_PREFIX } from '../consts';
+import { LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX } from '../consts';
 import { getTab } from '../tabs';
 import { getWindow } from '../utils/get-window';
 
 export function useActiveTab() {
-	return useListenTo( [ v1ReadyEvent(), routeOpenEvent( E_ROUTE_PREFIX ), routeCloseEvent( E_ROUTE_PREFIX ) ], () => {
-		const panelRoute = getWindow().$e.routes.getCurrent()?.panel;
+	return useListenTo(
+		[
+			v1ReadyEvent(),
+			routeOpenEvent( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ),
+			routeCloseEvent( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ),
+		],
+		() => {
+			const panelRoute = getWindow().$e.routes.getCurrent()?.panel;
 
-		if ( ! panelRoute || ! panelRoute.startsWith( E_ROUTE_PREFIX ) ) {
-			return null;
+			if ( ! panelRoute || ! panelRoute.startsWith( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ) ) {
+				return null;
+			}
+
+			const tab = panelRoute.replace( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX, '' );
+
+			return getTab( tab ) ?? null;
 		}
-
-		const tab = panelRoute.replace( E_ROUTE_PREFIX, '' );
-
-		return getTab( tab ) ?? null;
-	} );
+	);
 }

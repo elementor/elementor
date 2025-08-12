@@ -1,4 +1,4 @@
-import { injectTab, removeTab } from '@elementor/editor-elements-panel';
+import { injectTab } from '@elementor/editor-elements-panel';
 import { __ } from '@wordpress/i18n';
 
 import { ComponentsTab } from './components/components-tab';
@@ -9,6 +9,4 @@ export function init() {
 		label: __( 'Components', 'elementor' ),
 		component: ComponentsTab,
 	} );
-
-	removeTab( 'global' );
 }

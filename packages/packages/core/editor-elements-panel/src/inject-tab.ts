@@ -6,11 +6,11 @@ import {
 	windowEvent,
 } from '@elementor/editor-v1-adapters';
 
-import { E_ROUTE_PREFIX } from './consts';
+import { LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX } from './consts';
 import { registerTab } from './tabs';
 import { createLegacyView } from './utils/create-legacy-view';
 import { createTabNavItem } from './utils/create-tab-nav-item';
-import { getEComponent } from './utils/get-e-component';
+import { getLegacyElementsPanelComponent } from './utils/get-legacy-elements-panel-component';
 import { getWindow } from './utils/get-window';
 
 type Config = {
@@ -24,6 +24,7 @@ export function injectTab( { id, label, component }: Config ) {
 
 	listenTo( v1ReadyEvent(), () => {
 		getWindow().elementor.hooks.addFilter( 'panel/elements/regionViews', ( regions, { elements } ) => {
+			// Creating a empty legacy view that will be replaced by react component.
 			regions[ id ] = { region: elements, view: createLegacyView() };
 
 			return regions;
@@ -31,11 +32,12 @@ export function injectTab( { id, label, component }: Config ) {
 	} );
 
 	listenTo( windowEvent( 'elementor/panel/init' ), () => {
-		getEComponent().addTab( id, { title: label } );
+		// when adding a tab to the legacy elements panel, it will generate new route based on the id.
+		getLegacyElementsPanelComponent().addTab( id, { title: label } );
 	} );
 
-	listenTo( routeOpenEvent( E_ROUTE_PREFIX ), ( e ) => {
-		const route = `${ E_ROUTE_PREFIX }${ id }`;
+	listenTo( routeOpenEvent( LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX ), ( e ) => {
+		const route = `${ LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX }${ id }`;
 
 		createTabNavItem( {
 			id,

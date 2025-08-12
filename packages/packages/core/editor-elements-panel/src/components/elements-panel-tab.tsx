@@ -5,7 +5,7 @@ import { useActiveTab } from '../hooks/use-active-tab';
 
 const PANEL_WRAPPER_ID = 'elementor-panel-elements-wrapper';
 
-export function TabPanel() {
+export function ElementsPanelTab() {
 	const tab = useActiveTab();
 
 	const TabComponent = tab?.component;

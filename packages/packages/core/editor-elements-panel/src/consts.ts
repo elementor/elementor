@@ -1,2 +1,2 @@
-export const E_COMPONENT_NAME = 'panel/elements';
-export const E_ROUTE_PREFIX = `${ E_COMPONENT_NAME }/`;
+export const LEGACY_ELEMENTS_PANEL_COMPONENT_NAME = 'panel/elements';
+export const LEGACY_ELEMENTS_PANEL_ROUTE_PREFIX = `${ LEGACY_ELEMENTS_PANEL_COMPONENT_NAME }/`;

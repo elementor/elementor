@@ -1,10 +1,10 @@
 import { injectIntoTop } from '@elementor/editor';
 
-import { TabPanel } from './components/tab-panel';
+import { ElementsPanelTab } from './components/elements-panel-tab';
 
 export function init() {
 	injectIntoTop( {
 		id: 'editor-elements-panel-tab',
-		component: TabPanel,
+		component: ElementsPanelTab,
 	} );
 }
