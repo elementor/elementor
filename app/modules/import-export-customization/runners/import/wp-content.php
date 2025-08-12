@@ -60,7 +60,7 @@ class Wp_Content extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function import_wp_post_type( $path, $post_type, array $imported_data, array $taxonomies, array $imported_terms, array $customization ) {
+	private function import_wp_post_type( $path, $post_type, array $imported_data, array $taxonomies, array $imported_terms, $customization ) {
 		$args = [
 			'fetch_attachments' => true,
 			'posts' => ImportExportUtils::map_old_new_post_ids( $imported_data, $customization ),

@@ -58,7 +58,7 @@ class Elementor_Content extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms, array $customization ) {
+	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms, $customization ) {
 		$result = [
 			'succeed' => [],
 			'failed' => [],
