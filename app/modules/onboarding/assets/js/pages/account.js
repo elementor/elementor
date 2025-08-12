@@ -1,9 +1,10 @@
-import { useRef, useContext, useState } from 'react';
+import { useRef, useContext, useState, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { safeDispatchEvent } from '../utils/utils';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
@@ -14,11 +15,41 @@ export default function Account() {
 		actionButtonRef = useRef(),
 		alreadyHaveAccountLinkRef = useRef();
 
+	useEffect( () => {
+		if ( ! state.isLibraryConnected ) {
+			safeDispatchEvent(
+				'view_account_setup',
+				{
+					location: 'plugin_onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
+					step_number: 1,
+					step_name: 'account_setup',
+					is_library_connected: state?.isLibraryConnected || false,
+				},
+			);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
 	let skipButton;
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
 			text: __( 'Skip setup', 'elementor' ),
+			action: () => {
+				safeDispatchEvent(
+					'skip_setup',
+					{
+						location: 'plugin_onboarding',
+						trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+						step_number: 1,
+						step_name: 'account_setup',
+					},
+				);
+
+				updateState( getStateObjectToUpdate( state, 'steps', pageId, 'skipped' ) );
+				navigate( 'onboarding/' + nextStep );
+			},
 		};
 	}
 
@@ -85,14 +116,16 @@ export default function Account() {
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
-			elementorCommon.events.dispatchEvent( {
-				event: 'create account',
-				version: '',
-				details: {
-					placement: elementorAppConfig.onboarding.eventPlacement,
-					source: 'cta',
+			safeDispatchEvent(
+				'new_account_connect',
+				{
+					location: 'plugin_onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+					step_number: 1,
+					step_name: 'account_setup',
+					button_text: 'Start setup',
 				},
-			} );
+			);
 		};
 	}
 
@@ -107,6 +140,18 @@ export default function Account() {
 		elementorCommon.config.library_connect.plan_type = data.plan_type;
 
 		updateState( stateToUpdate );
+
+		safeDispatchEvent(
+			'account_connected_success',
+			{
+				location: 'plugin_onboarding',
+				trigger: elementorCommon.eventsManager?.config?.triggers?.success,
+				step_number: 1,
+				step_name: 'account_setup',
+				connection_successful: true,
+				user_tier: data.access_tier,
+			},
+		);
 
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
@@ -190,13 +235,16 @@ export default function Account() {
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
-									elementorCommon.events.dispatchEvent( {
-										event: 'connect account',
-										version: '',
-										details: {
-											placement: elementorAppConfig.onboarding.eventPlacement,
+									safeDispatchEvent(
+										'existing_account_connect',
+										{
+											location: 'plugin_onboarding',
+											trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+											step_number: 1,
+											step_name: 'account_setup',
+											button_text: 'Click here to connect',
 										},
-									} );
+									);
 								} }
 							>
 								{ __( 'Click here to connect', 'elementor' ) }
