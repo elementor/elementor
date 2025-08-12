@@ -13,12 +13,14 @@ export const TextControl = createControl(
 		inputValue,
 		inputDisabled,
 		sx,
+		helperText,
 	}: {
 		placeholder?: string;
 		error?: boolean;
 		inputValue?: string;
 		inputDisabled?: boolean;
 		sx?: SxProps;
+		helperText?: string;
 	} ) => {
 		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
 		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => setValue( event.target.value );
@@ -34,6 +36,7 @@ export const TextControl = createControl(
 					placeholder={ placeholder }
 					error={ error }
 					sx={ sx }
+					helperText={ helperText }
 				/>
 			</ControlActions>
 		);
