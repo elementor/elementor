@@ -22,12 +22,7 @@ export const VariableMenu = ( { menuActions, disabled }: VariableMenuProps ) => 
 
 	return (
 		<>
-			<IconButton
-				{ ...bindTrigger( menuState ) }
-				disabled={ disabled }
-				size="tiny"
-				data-menu-open={ menuState.isOpen }
-			>
+			<IconButton { ...bindTrigger( menuState ) } disabled={ disabled } size="tiny">
 				<DotsVerticalIcon fontSize="tiny" />
 			</IconButton>
 
@@ -59,7 +54,6 @@ export const VariableMenu = ( { menuActions, disabled }: VariableMenuProps ) => 
 						sx={ {
 							color: action.color,
 							gap: 1,
-							padding: '6px 16px',
 						} }
 					>
 						{ action.icon &&

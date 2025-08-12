@@ -150,7 +150,7 @@ export const VariablesManagerList = ( { menuActions }: Props ) => {
 												noPadding
 												width={ 16 }
 												maxWidth={ 16 }
-												sx={ { pr: 1 } }
+												sx={ { paddingInlineEnd: 1 } }
 											>
 												<Stack role="toolbar" direction="row" justifyContent="flex-end">
 													<VariableMenu menuActions={ menuActions } disabled={ isSorting } />
