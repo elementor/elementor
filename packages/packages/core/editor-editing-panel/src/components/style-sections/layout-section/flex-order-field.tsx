@@ -77,6 +77,7 @@ function FlexOrderFieldContent() {
 	} );
 
 	const { placeholder } = useBoundProp();
+	const placeholderValue = placeholder as NumberPropValue;
 
 	const currentGroup = useMemo( () => getGroupControlValue( order?.value ?? null ), [ order ] );
 
@@ -95,7 +96,7 @@ function FlexOrderFieldContent() {
 		}
 	}, [ order ] );
 
-	const groupPlaceholder = getGroupControlValue( placeholder?.value ?? null );
+	const groupPlaceholder = getGroupControlValue( placeholderValue.value );
 
 	const handleToggleButtonChange = ( group: GroupControlItemOption | null ) => {
 		setActiveGroup( group );
@@ -120,7 +121,7 @@ function FlexOrderFieldContent() {
 	};
 
 	const isCustomVisible = CUSTOM === activeGroup || CUSTOM === groupPlaceholder;
-	const orderPlaceholder = ( CUSTOM === groupPlaceholder ) ? String( placeholder?.value ?? null ) : '';
+	const orderPlaceholder = CUSTOM === groupPlaceholder ? String( placeholderValue.value ) : '';
 
 	return (
 		<>
