@@ -41,10 +41,10 @@ class Error_Builder {
 		$response_data = [
 			'code' => $this->code,
 			'message' => $this->message,
-			'data' => (object) [
-				'status' => $this->status,
-				...$this->meta,
-			],
+			'data' => (object) array_merge(
+				[ 'status' => $this->status ],
+				$this->meta
+			),
 		];
 
 		return new \WP_REST_Response( $response_data, $this->status );

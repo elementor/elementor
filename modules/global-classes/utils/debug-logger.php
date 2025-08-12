@@ -10,10 +10,15 @@ class Debug_Logger {
 	/**
 	 * Logs debug information for REST API requests
 	 *
-	 * @param \WP_REST_Request $request The request object
+	 * @param \WP_REST_Request|null $request The request object
 	 * @return void
 	 */
 	public static function log_request_debug( $request ) {
+		if ( null === $request ) {
+			error_log( 'Elementor Global Classes REST API Debug: Request is null' );
+			return;
+		}
+
 		$debug_data = [
 			'url' => $request->get_route(),
 			'params' => $request->get_params(),

@@ -26,7 +26,9 @@ class Global_Classes_Validation_Service {
 			return [
 				'is_valid' => true,
 				'message' => '',
-				'meta' => [],
+				'meta' => [
+					'modifiedLabels' => [],
+				],
 				'items' => $request_items,
 			];
 		}

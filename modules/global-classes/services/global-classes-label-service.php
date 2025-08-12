@@ -26,28 +26,22 @@ class Global_Classes_Label_Service {
 
 		if ( $has_prefix ) {
 			// Extract the base label (remove existing prefix)
-			$base_label = str_replace( $prefix, '', $original_label );
-
+			$base_label = substr( $original_label, strlen( $prefix ) );
+			
 			// Find the next available number
 			$counter = 1;
 			$new_label = $prefix . $base_label . $counter;
 
-			while ( true ) {
-				$new_label_length = strlen( $new_label );
-				if ( $new_label_length > $max_length || in_array( $new_label, $existing_labels, true ) ) {
-					++$counter;
-					$new_label = $prefix . $base_label . $counter;
+			while ( in_array( $new_label, $existing_labels, true ) ) {
+				++$counter;
+				$new_label = $prefix . $base_label . $counter;
+			}
 
-					// If still too long, slice the base label
-					$new_label_length = strlen( $new_label );
-					if ( $new_label_length > $max_length ) {
-						$available_length = $max_length - strlen( $prefix . $counter );
-						$base_label = substr( $base_label, 0, $available_length );
-						$new_label = $prefix . $base_label . $counter;
-					}
-				} else {
-					break;
-				}
+			// If still too long, slice the base label
+			if ( strlen( $new_label ) > $max_length ) {
+				$available_length = $max_length - strlen( $prefix . $counter );
+				$base_label = substr( $base_label, 0, $available_length );
+				$new_label = $prefix . $base_label . $counter;
 			}
 		} else {
 			// Simple case: just add prefix
@@ -61,16 +55,16 @@ class Global_Classes_Label_Service {
 
 			// Check if this label already exists, if so, add a number
 			$counter = 1;
-			$base_label = $new_label;
+			$base_label = substr( $original_label, 0, $available_length ?? strlen( $original_label ) );
 
 			while ( in_array( $new_label, $existing_labels, true ) ) {
-				$new_label = $prefix . substr( $original_label, 0, $available_length ) . $counter;
+				$new_label = $prefix . $base_label . $counter;
 
 				// If too long, slice more from the base
-				$new_label_length = strlen( $new_label );
-				if ( $new_label_length > $max_length ) {
+				if ( strlen( $new_label ) > $max_length ) {
 					$available_length = $max_length - strlen( $prefix . $counter );
-					$new_label = $prefix . substr( $original_label, 0, $available_length ) . $counter;
+					$base_label = substr( $original_label, 0, $available_length );
+					$new_label = $prefix . $base_label . $counter;
 				}
 
 				++$counter;
