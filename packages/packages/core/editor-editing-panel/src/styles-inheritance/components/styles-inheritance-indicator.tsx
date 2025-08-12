@@ -19,18 +19,20 @@ export const StylesInheritanceIndicator = () => {
 	const { path, propType } = useBoundProp();
 	const inheritanceChain = useStylesInheritanceChain( path );
 
-	if ( !path || !inheritanceChain.length ) {
+	if ( ! path || ! inheritanceChain.length ) {
 		return null;
 	}
 
-	const isDisabled = path.some((pathItem) => disabledControls.includes(pathItem));
+	const isDisabled = path.some( ( pathItem ) => disabledControls.includes( pathItem ) );
 
-	return <Indicator 
-		inheritanceChain={inheritanceChain} 
-		path={path} 
-		propType={propType} 
-		isDisabled={isDisabled} 
-	/>;
+	return (
+		<Indicator
+			inheritanceChain={ inheritanceChain }
+			path={ path }
+			propType={ propType }
+			isDisabled={ isDisabled }
+		/>
+	);
 };
 
 type IndicatorProps = {
@@ -40,7 +42,7 @@ type IndicatorProps = {
 	isDisabled?: boolean;
 };
 
-const Indicator = ({ inheritanceChain, path, propType, isDisabled }: IndicatorProps) => {
+const Indicator = ( { inheritanceChain, path, propType, isDisabled }: IndicatorProps ) => {
 	const { id: currentStyleId, provider: currentStyleProvider, meta: currentStyleMeta } = useStyle();
 
 	const currentItem = currentStyleId
@@ -69,13 +71,13 @@ const Indicator = ({ inheritanceChain, path, propType, isDisabled }: IndicatorPr
 
 	return (
 		<StylesInheritanceInfotip
-			inheritanceChain={inheritanceChain}
-			path={path}
-			propType={propType}
-			label={label}
-			isDisabled={isDisabled}
+			inheritanceChain={ inheritanceChain }
+			path={ path }
+			propType={ propType }
+			label={ label }
+			isDisabled={ isDisabled }
 		>
-			<StyleIndicator {...styleIndicatorProps} />
+			<StyleIndicator { ...styleIndicatorProps } />
 		</StylesInheritanceInfotip>
 	);
 };

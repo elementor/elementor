@@ -35,21 +35,28 @@ type Props = {
 	isDisabled?: boolean;
 };
 
-export const StylesInheritanceInfotip = ({ inheritanceChain, propType, path, label, children, isDisabled }: Props) => {
-	const [showInfotip, setShowInfotip] = useState<boolean>(false);
-	
+export const StylesInheritanceInfotip = ( {
+	inheritanceChain,
+	propType,
+	path,
+	label,
+	children,
+	isDisabled,
+}: Props ) => {
+	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
+
 	const toggleInfotip = () => {
-		if (isDisabled) {
+		if ( isDisabled ) {
 			return;
 		}
-		setShowInfotip((prev) => !prev);
+		setShowInfotip( ( prev ) => ! prev );
 	};
-	
+
 	const closeInfotip = () => {
-		if (isDisabled) {
+		if ( isDisabled ) {
 			return;
 		}
-		setShowInfotip(false);
+		setShowInfotip( false );
 	};
 
 	const key = path.join( '.' );
@@ -109,6 +116,7 @@ export const StylesInheritanceInfotip = ({ inheritanceChain, propType, path, lab
 									display="flex"
 									gap={ 0.5 }
 									role="listitem"
+									// translators: %s is the display label of the inheritance item
 									aria-label={ __( 'Inheritance item: %s', 'elementor' ).replace(
 										'%s',
 										item.displayLabel
@@ -129,30 +137,25 @@ export const StylesInheritanceInfotip = ({ inheritanceChain, propType, path, lab
 		</ClickAwayListener>
 	);
 
-	if (isDisabled) {
-		return <Box sx={{ display: 'inline-flex' }}>{children}</Box>;
+	if ( isDisabled ) {
+		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
 	}
 
 	return (
-		<TooltipOrInfotip 
-			showInfotip={showInfotip} 
-			onClose={closeInfotip} 
-			infotipContent={infotipContent}
-			isDisabled={isDisabled}
+		<TooltipOrInfotip
+			showInfotip={ showInfotip }
+			onClose={ closeInfotip }
+			infotipContent={ infotipContent }
+			isDisabled={ isDisabled }
 		>
-			<IconButton 
-				onClick={toggleInfotip} 
-				aria-label={label} 
-				sx={{ my: '-1px' }}
-				disabled={isDisabled}
-			>
-				{children}
+			<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } } disabled={ isDisabled }>
+				{ children }
 			</IconButton>
 		</TooltipOrInfotip>
 	);
 };
 
-function TooltipOrInfotip({
+function TooltipOrInfotip( {
 	children,
 	showInfotip,
 	onClose,
@@ -164,57 +167,57 @@ function TooltipOrInfotip({
 	onClose: () => void;
 	infotipContent: React.ReactNode;
 	isDisabled?: boolean;
-}) {
+} ) {
 	const direction = useDirection();
-	const isSiteRtl = direction === 'rtl';
+	const isSiteRtl = direction.isSiteRtl;
 	const forceInfotipAlignLeft = isSiteRtl ? 9999999 : -9999999;
 
-	if (isDisabled) {
-		return <Box sx={{ display: 'inline-flex' }}>{children}</Box>;
+	if ( isDisabled ) {
+		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
 	}
 
-	if (showInfotip) {
+	if ( showInfotip ) {
 		return (
 			<>
 				<Backdrop
-					open={showInfotip}
-					onClick={onClose}
-					sx={{
+					open={ showInfotip }
+					onClick={ onClose }
+					sx={ {
 						backgroundColor: 'transparent',
-						zIndex: (theme: Theme) => theme.zIndex.modal - 1,
-					}}
+						zIndex: ( theme: Theme ) => theme.zIndex.modal - 1,
+					} }
 				/>
 				<Infotip
 					placement="top"
-					content={infotipContent}
-					open={showInfotip}
-					onClose={onClose}
+					content={ infotipContent }
+					open={ showInfotip }
+					onClose={ onClose }
 					disableHoverListener
-					componentsProps={{
+					componentsProps={ {
 						tooltip: {
 							sx: { mx: 2 },
 						},
-					}}
-					slotProps={{
+					} }
+					slotProps={ {
 						popper: {
 							modifiers: [
 								{
 									name: 'offset',
-									options: { offset: [forceInfotipAlignLeft, 0] },
+									options: { offset: [ forceInfotipAlignLeft, 0 ] },
 								},
 							],
 						},
-					}}
+					} }
 				>
-					{children}
+					{ children }
 				</Infotip>
 			</>
 		);
 	}
 
 	return (
-		<Tooltip title={__('Style origin', 'elementor')} placement="top">
-			{children}
+		<Tooltip title={ __( 'Style origin', 'elementor' ) } placement="top">
+			{ children }
 		</Tooltip>
 	);
 }
