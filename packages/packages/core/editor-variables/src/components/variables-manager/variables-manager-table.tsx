@@ -19,7 +19,7 @@ import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
-import { type VariableManagerMenuAction, VariableEditMenu } from './variable-edit-menu';
+import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
 import { VariableTableCell } from './variable-table-cell';
 
 type Props = {
