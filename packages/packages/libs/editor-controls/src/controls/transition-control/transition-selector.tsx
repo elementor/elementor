@@ -54,12 +54,14 @@ export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: st
 		if ( recentItems.length === 0 ) {
 			return filteredItems;
 		}
+		const [ first, ...rest ] = filteredItems;
 		return [
+			first,
 			{
 				label: __( 'Recently Used', 'elementor' ),
 				items: recentItems,
 			},
-			...filteredItems,
+			...rest,
 		];
 	};
 
