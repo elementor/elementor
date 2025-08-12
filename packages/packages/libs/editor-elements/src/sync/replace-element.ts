@@ -31,15 +31,23 @@ export const addElement = (
 	options?: { at?: number },
 	withHistory = true
 ) => {
-	runCommand( 'document/elements/create', {
-		container: parent,
-		model: element,
-		options,
-	}, { internal: ! withHistory } );
+	runCommand(
+		'document/elements/create',
+		{
+			container: parent,
+			model: element,
+			options,
+		},
+		{ internal: ! withHistory }
+	);
 };
 
 export const deleteElement = ( element: V1Element, withHistory = true ) => {
-	runCommand( 'document/elements/delete', {
-		container: element,
-	}, { internal: ! withHistory } );
+	runCommand(
+		'document/elements/delete',
+		{
+			container: element,
+		},
+		{ internal: ! withHistory }
+	);
 };

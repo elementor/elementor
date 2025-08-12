@@ -11,7 +11,6 @@ type ComponentCreatePayload = {
 
 export type ComponentCreateResponse = {
 	component_id: number;
-	message: string;
 };
 
 export const apiClient = {

@@ -16,16 +16,20 @@ export const saveElementAsComponent = async (
 			content: [ element.model.toJSON( { remove: [ 'default' ] } ) ],
 		} );
 
-		replaceElement( { currentElement: element, newElement: {
-			elType: 'widget',
-			widgetType: 'e-component',
-			settings: {
-				component_id: {
-					$$type: 'number',
-					value: result.data.component_id,
+		replaceElement( {
+			currentElement: element,
+			newElement: {
+				elType: 'widget',
+				widgetType: 'e-component',
+				settings: {
+					component_id: {
+						$$type: 'number',
+						value: result.data.component_id,
+					},
 				},
 			},
-		}, withHistory: false } );
+			withHistory: false,
+		} );
 
 		options?.onSuccess?.( result.data );
 	} catch ( error ) {
