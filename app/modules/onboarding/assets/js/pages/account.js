@@ -39,7 +39,7 @@ export default function Account() {
 				safeDispatchEvent(
 					'skip_setup',
 					{
-						location: 'plugin onboarding',
+						location: 'plugin_onboarding',
 						trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
 						step_number: 1,
 						step_name: 'account_setup',
