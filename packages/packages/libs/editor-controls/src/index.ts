@@ -25,10 +25,10 @@ export { RepeatableControl } from './controls/repeatable-control';
 export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
+export { TransformBaseControl } from './controls/transform-control/transform-base-control';
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
-export { UnstableTransformRepeaterControl } from './controls/unstable-transform-control/unstable-transform-repeater-control';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 
 // entrance animation control
@@ -37,6 +37,7 @@ export { EntranceAnimationControl } from './controls/entrance-animation-control'
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
+export { CssEditor } from './components/css-code-editor/css-editor';
 
 // types
 export type { ControlComponent } from './create-control';
@@ -61,7 +62,12 @@ export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-contex
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
 
-export { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from './locations';
+export {
+	injectIntoRepeaterItemIcon,
+	injectIntoRepeaterItemLabel,
+	injectIntoRepeaterHeaderActions,
+	injectIntoRepeaterItemActions,
+} from './components/unstable-repeater/locations';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

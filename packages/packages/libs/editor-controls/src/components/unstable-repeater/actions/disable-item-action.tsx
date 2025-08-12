@@ -4,29 +4,21 @@ import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
-
 const SIZE = 'tiny';
 
-export const DisableItemAction = () => {
-	const {
-		config: {
-			itemActions: { inject },
-		},
-	} = useRepeaterContext();
-
-	inject( Action, 'disable' );
-
-	return null;
-};
-
-const Action = ( { index }: { index: number } ) => {
+export const DisableItemAction = ( { index = -1 }: { index?: number } ) => {
 	const { items, updateItem } = useRepeaterContext();
-	const propDisabled = items[ index ]?.disabled ?? false;
+
+	if ( index === -1 ) {
+		return null;
+	}
+
+	const propDisabled = items[ index ].item.disabled ?? false;
 
 	const toggleLabel = propDisabled ? __( 'Show', 'elementor' ) : __( 'Hide', 'elementor' );
 
 	const onClick = () => {
-		const self = structuredClone( items[ index ] );
+		const self = structuredClone( items[ index ].item );
 
 		self.disabled = ! self.disabled;
 

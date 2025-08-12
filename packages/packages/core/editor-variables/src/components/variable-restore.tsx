@@ -11,6 +11,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
+import { FormField } from './ui/form-field';
 
 const SIZE = 'tiny';
 
@@ -32,6 +33,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	}
 
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ valueFieldError, setValueFieldError ] = useState( '' );
 	const [ label, setLabel ] = useState( variable.label );
 	const [ value, setValue ] = useState( variable.value );
 
@@ -61,8 +63,16 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 			} );
 	};
 
-	const hasEmptyValues = () => {
-		return ! value.trim() || ! label.trim();
+	const hasEmptyFields = () => {
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const noValueChanged = () => {
@@ -73,7 +83,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 		return !! errorMessage;
 	};
 
-	const isSubmitDisabled = noValueChanged() || hasEmptyValues() || hasErrors();
+	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
 	return (
 		<PopoverContentRefContextProvider>
@@ -95,13 +105,17 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 							setErrorMessage( '' );
 						} }
 					/>
-					<ValueField
-						value={ value }
-						onChange={ ( newValue ) => {
-							setValue( newValue );
-							setErrorMessage( '' );
-						} }
-					/>
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<ValueField
+							value={ value }
+							onChange={ ( newValue ) => {
+								setValue( newValue );
+								setErrorMessage( '' );
+								setValueFieldError( '' );
+							} }
+							onValidationChange={ setValueFieldError }
+						/>
+					</FormField>
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>

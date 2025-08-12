@@ -159,7 +159,14 @@ export const StyleTab = () => {
 									name: 'Effects',
 									title: __( 'Effects', 'elementor' ),
 								} }
-								fields={ [ 'box-shadow', 'opacity', 'transform', 'filter', 'backdrop-filter' ] }
+								fields={ [
+									'box-shadow',
+									'opacity',
+									'transform',
+									'filter',
+									'backdrop-filter',
+									'transform-origin',
+								] }
 							/>
 							<StyleTabSection
 								section={ {
