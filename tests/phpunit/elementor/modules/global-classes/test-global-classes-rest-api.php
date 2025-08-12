@@ -6,7 +6,7 @@ use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
-
+use Elementor\Modules\GlobalClasses\Global_Classes_Errors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -192,8 +192,14 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 
-		$this->assertSame( 204, $response->get_status() );
-		$this->assertNull( $response->get_data() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayHasKey( 'data', $response->get_data() );
+		$this->assertArrayHasKey( 'meta', $response->get_data() );
+		$this->assertEquals( 'Global classes saved successfully.', $response->get_data()['data']['message'] );
+		$this->assertEquals( 1, $response->get_data()['data']['added_count'] );
+		$this->assertEquals( 0, $response->get_data()['data']['modified_count'] );
+		$this->assertEquals( 1, $response->get_data()['data']['deleted_count'] );
+		$this->assertEquals( 2, $response->get_data()['meta']['total_changes'] );
 
 		$this->assertSame( [
 			'items' => [
@@ -253,8 +259,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 
-		$this->assertSame( 204, $response->get_status() );
-		$this->assertNull( $response->get_data() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( 1, $response->get_data()['data']['added_count'] );
+		$this->assertEquals( 1, $response->get_data()['data']['modified_count'] );
+		$this->assertEquals( 1, $response->get_data()['data']['deleted_count'] );
+		$this->assertEquals( 3, $response->get_data()['meta']['total_changes'] );
 
 		$this->assertSame( [
 			'items' => [
@@ -310,8 +319,10 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_PREVIEW );
 
-		$this->assertSame( 204, $response->get_status() );
-		$this->assertNull( $response->get_data() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( 1, $response->get_data()['data']['added_count'] );
+		$this->assertEquals( 0, $response->get_data()['data']['modified_count'] );
+		$this->assertEquals( 1, $response->get_data()['data']['deleted_count'] );
 
 		$this->assertSame( [
 			'items' => [
@@ -431,7 +442,6 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$response = rest_do_request( $request );
 
-
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 'rest_invalid_param', $response->get_data()['code'] );
@@ -490,7 +500,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
+		$this->assertSame( Global_Classes_Errors::INVALID_ORDER, $response->get_data()['code'] );
 	}
 
 	public function test_put_fails_when_max_items_limit_reached() {
@@ -519,7 +529,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'global_classes_limit_exceeded', $response->get_data()['code'] );
+		$this->assertSame( Global_Classes_Errors::ITEMS_LIMIT_EXCEEDED, $response->get_data()['code'] );
+		$this->assertArrayHasKey( 'current_count', $response->get_data()['data'] );
+		$this->assertArrayHasKey( 'max_allowed', $response->get_data()['data'] );
+		$this->assertEquals( 51, $response->get_data()['data']['current_count'] );
+		$this->assertEquals( 50, $response->get_data()['data']['max_allowed'] );
 	}
 
 	public function test_put__fails_when_order_is_missing_ids() {
@@ -549,7 +563,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
+		$this->assertSame( Global_Classes_Errors::INVALID_ORDER, $response->get_data()['code'] );
 	}
 
 	public function test_put__skips_order_duplications() {
@@ -578,8 +592,10 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 
-		$this->assertSame( 204, $response->get_status() );
-		$this->assertNull( $response->get_data() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( 1, $response->get_data()['data']['added_count'] );
+		$this->assertEquals( 0, $response->get_data()['data']['modified_count'] );
+		$this->assertEquals( 0, $response->get_data()['data']['deleted_count'] );
 
 		$this->assertSame( [
 			'items' => [
@@ -616,7 +632,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertSame( 400, $response->get_status() );
-		$this->assertSame( 'invalid_items', $response->get_data()['code'] );
+		$this->assertSame( Global_Classes_Errors::INVALID_ITEMS, $response->get_data()['code'] );
 		$this->assertStringNotContainsString( 'g-1', $response->get_data()['message'] );
 		$this->assertStringContainsString( 'g-222', $response->get_data()['message'] );
 	}
@@ -653,9 +669,59 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert.
 		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
 
-		$this->assertSame( 204, $response->get_status() );
-		$this->assertNull( $response->get_data() );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( 2, $response->get_data()['data']['added_count'] );
+		$this->assertEquals( 0, $response->get_data()['data']['modified_count'] );
+		$this->assertEquals( 0, $response->get_data()['data']['deleted_count'] );
 		$this->assertSame( $initial, $classes );
+	}
+
+	public function test_put__handles_duplicate_labels_automatically() {
+		// Arrange.
+		$this->act_as_admin();
+
+		$existing_class = $this->create_global_class( 'existing', 'red', 'duplicate-label' );
+		$initial = [
+			'items' => [
+				'existing' => $existing_class,
+			],
+			'order' => [ 'existing' ],
+		];
+
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $initial );
+
+		// Act.
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
+
+		$new_class = $this->create_global_class( 'new', 'blue', 'duplicate-label' );
+
+		$payload = [
+			'items' => [
+				'existing' => $existing_class,
+				'new' => $new_class,
+			],
+			'order' => [ 'existing', 'new' ],
+			'changes' => [
+				'added' => [ 'new' ],
+				'deleted' => [],
+				'modified' => [],
+			],
+		];
+
+		$request->set_body_params( $payload );
+
+		$response = rest_do_request( $request );
+
+		// Assert.
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertEquals( 'DUPLICATED_LABEL', $response->get_data()['data']['code'] );
+		$this->assertArrayHasKey( 'modifiedLabels', $response->get_data()['data'] );
+		$this->assertEquals( 1, $response->get_data()['data']['duplicate_labels_handled'] );
+		$this->assertStringContainsString( 'Modified 1 duplicate labels automatically', $response->get_data()['data']['message'] );
+
+		// Check that the label was modified
+		$classes = $this->kit->get_json_meta( Global_Classes_Repository::META_KEY_FRONTEND );
+		$this->assertStringStartsWith( 'DUP_', $classes['items']['new']['label'] );
 	}
 
 	public function test_get_usage__returns_usage_data() {
@@ -711,6 +777,4 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 			],
 		];
 	}
-
-
 }
