@@ -257,6 +257,8 @@ const ImageOverlayContent = () => {
 };
 
 const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	height: '1rem',
+	width: '1rem',
 	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
 } ) );
 
