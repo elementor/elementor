@@ -31,6 +31,9 @@ export const VariableMenu = ( { menuActions, disabled }: VariableMenuProps ) => 
 				MenuListProps={ {
 					dense: true,
 				} }
+				PaperProps={ {
+					elevation: 6,
+				} }
 				{ ...bindMenu( menuState ) }
 				anchorEl={ menuState.anchorEl }
 				anchorOrigin={ {

@@ -23,8 +23,8 @@ export const VariableTableCell = ( {
 	const baseSx: SxProps = {
 		maxWidth: maxWidth ?? 150,
 		cursor: 'initial',
-		typography: isHeader ? 'subtitle2' : 'caption',
-		...( isHeader && { color: 'text.primary' } ),
+		typography: 'caption',
+		...( isHeader && { color: 'text.primary', fontWeight: 'bold' } ),
 		...( width && { width } ),
 		...sx,
 	};
