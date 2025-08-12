@@ -28,7 +28,7 @@ export default function Account() {
 				},
 			);
 		}
-	}, [ state.isLibraryConnected ] );
+	} );
 
 	let skipButton;
 
