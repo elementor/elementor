@@ -2,12 +2,13 @@ import * as React from 'react';
 import { type RefObject, useRef } from 'react';
 import { dimensionsPropTypeUtil, type PropKey, sizePropTypeUtil } from '@elementor/editor-props';
 import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from '@elementor/icons';
-import { Grid, Stack, ToggleButton, Tooltip } from '@elementor/ui';
+import { Grid, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
+import { StyledToggleButton } from '../components/control-toggle-button-group';
 import { createControl } from '../create-control';
 import { type ExtendedOption } from '../utils/size-control';
 import { SizeControl } from './size-control';
@@ -22,18 +23,27 @@ export const LinkedDimensionsControl = createControl(
 		isSiteRtl?: boolean;
 		extendedOptions?: ExtendedOption[];
 	} ) => {
-		const { value: sizeValue, setValue: setSizeValue, disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
+		const {
+			value: sizeValue,
+			setValue: setSizeValue,
+			disabled: sizeDisabled,
+			placeholder: sizePlaceholder,
+		} = useBoundProp( sizePropTypeUtil );
 		const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
 		const {
 			value: dimensionsValue,
 			setValue: setDimensionsValue,
 			propType,
+			placeholder: dimensionsPlaceholder,
 			disabled: dimensionsDisabled,
 		} = useBoundProp( dimensionsPropTypeUtil );
 
-		const isLinked = ! dimensionsValue && ! sizeValue ? true : !! sizeValue;
+		const hasUserValues = !! ( dimensionsValue || sizeValue );
+		const hasPlaceholders = !! ( sizePlaceholder || dimensionsPlaceholder );
 
+		const isLinked =
+			( ! hasUserValues && ! hasPlaceholders ) || ( hasPlaceholders ? !! sizePlaceholder : !! sizeValue );
 		const onLinkToggle = () => {
 			if ( ! isLinked ) {
 				setSizeValue( dimensionsValue[ 'block-start' ]?.value ?? null );
@@ -65,12 +75,13 @@ export const LinkedDimensionsControl = createControl(
 				propType={ propType }
 				value={ dimensionsValue }
 				setValue={ setDimensionsValue }
+				placeholder={ dimensionsPlaceholder }
 				isDisabled={ () => disabled }
 			>
 				<Stack direction="row" gap={ 2 } flexWrap="nowrap">
 					<ControlFormLabel>{ label }</ControlFormLabel>
 					<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
-						<ToggleButton
+						<StyledToggleButton
 							aria-label={ isLinked ? unlinkedLabel : linkedLabel }
 							size={ 'tiny' }
 							value={ 'check' }
@@ -78,9 +89,10 @@ export const LinkedDimensionsControl = createControl(
 							sx={ { marginLeft: 'auto' } }
 							onChange={ onLinkToggle }
 							disabled={ disabled }
+							isPlaceholder={ hasPlaceholders }
 						>
 							<LinkedIcon fontSize={ 'tiny' } />
-						</ToggleButton>
+						</StyledToggleButton>
 					</Tooltip>
 				</Stack>
 

@@ -12,15 +12,21 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 	const { value } = useBoundProp();
 
 	return (
-		<Stack direction="row" justifyContent="start" alignItems="center" gap={ 1 } sx={ { marginInlineEnd: -0.75 } }>
-			<Typography component="label" variant="caption" color="text.secondary">
+		<Stack
+			direction="row"
+			justifyContent="start"
+			alignItems="center"
+			gap={ 1 }
+			sx={ { marginInlineEnd: -0.75, py: 0.25 } }
+		>
+			<Typography component="label" variant="caption" color="text.secondary" sx={ { lineHeight: 1 } }>
 				{ label }
 			</Typography>
+			<ControlAdornments />
 			<RepeaterHeaderActionsSlot value={ value } />
 			<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
 				{ children }
 			</SlotChildren>
-			<ControlAdornments />
 		</Stack>
 	);
 };
