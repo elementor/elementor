@@ -25,19 +25,6 @@ export default function App() {
 		}
 
 		if ( ! elementorAppConfig?.onboarding?.onboardingAlreadyRan ) {
-			safeDispatchEvent(
-				'onboarding_started',
-				{
-					location: 'plugin_onboarding',
-					trigger: 'page_loaded',
-					element: 'onboarding_wizard',
-					onboarding_version: elementorAppConfig.onboarding?.onboardingVersion || '1.0.0',
-					is_library_connected: elementorAppConfig.onboarding?.isLibraryConnected || false,
-					hello_theme_installed: elementorAppConfig.onboarding?.helloInstalled || false,
-					hello_theme_activated: elementorAppConfig.onboarding?.helloActivated || false,
-				},
-			);
-
 			const formData = new FormData();
 
 			formData.append( '_nonce', elementorCommon.config.ajax.nonce );

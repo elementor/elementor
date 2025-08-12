@@ -1,9 +1,7 @@
-import { useEffect } from 'react';
 import Grid from 'elementor-app/ui/grid/grid';
 import Layout from '../components/layout/layout';
 import Card from '../components/card';
 import FooterButtons from '../components/layout/footer-buttons';
-import { safeDispatchEvent } from '../utils/utils';
 
 export default function GoodToGo() {
 	const pageId = 'goodToGo',
@@ -12,21 +10,6 @@ export default function GoodToGo() {
 			href: elementorAppConfig.onboarding.urls.createNewPage,
 		},
 		kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
-
-	useEffect( () => {
-		safeDispatchEvent(
-			'onboarding_completed',
-			{
-				location: 'plugin_onboarding',
-				trigger: 'page_loaded',
-				element: 'onboarding_wizard',
-				onboarding_version: elementorAppConfig.onboarding?.onboardingVersion || '1.0.0',
-				is_library_connected: elementorAppConfig.onboarding?.isLibraryConnected || false,
-				hello_theme_installed: elementorAppConfig.onboarding?.helloInstalled || false,
-				hello_theme_activated: elementorAppConfig.onboarding?.helloActivated || false,
-			},
-		);
-	}, [] );
 
 	return (
 		<Layout pageId={ pageId }>
