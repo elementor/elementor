@@ -28,9 +28,8 @@ export default function App() {
 			safeDispatchEvent(
 				'onboarding_started',
 				{
-					location: elementorCommon.eventsManager?.config?.locations?.elementorEditor || 'elementor_editor',
-					secondaryLocation: elementorCommon.eventsManager?.config?.secondaryLocations?.userPreferences || 'user_preferences',
-					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
+					location: 'plugin_onboarding',
+					trigger: 'page_loaded',
 					element: 'onboarding_wizard',
 					onboarding_version: elementorAppConfig.onboarding?.onboardingVersion || '1.0.0',
 					is_library_connected: elementorAppConfig.onboarding?.isLibraryConnected || false,

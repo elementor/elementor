@@ -7,6 +7,7 @@ const eventsConfig = {
 		editorLoaded: 'Editor Loaded',
 		visible: 'Visible',
 		pageLoaded: 'Page Loaded',
+		success: 'Success',
 	},
 
 	locations: {

@@ -20,7 +20,7 @@ export default function Account() {
 			safeDispatchEvent(
 				'view_account_setup',
 				{
-					location: 'plugin onboarding',
+					location: 'plugin_onboarding',
 					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
 					step_number: 1,
 					step_name: 'account_setup',
@@ -118,7 +118,7 @@ export default function Account() {
 			safeDispatchEvent(
 				'new_account_connect',
 				{
-					location: 'plugin onboarding',
+					location: 'plugin_onboarding',
 					trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
 					step_number: 1,
 					step_name: 'account_setup',
@@ -143,8 +143,8 @@ export default function Account() {
 		safeDispatchEvent(
 			'account_connected_success',
 			{
-				location: 'plugin onboarding',
-				trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
+				location: 'plugin_onboarding',
+				trigger: elementorCommon.eventsManager?.config?.triggers?.success,
 				step_number: 1,
 				step_name: 'account_setup',
 				connection_successful: true,
@@ -237,7 +237,7 @@ export default function Account() {
 									safeDispatchEvent(
 										'existing_account_connect',
 										{
-											location: 'plugin onboarding',
+											location: 'plugin_onboarding',
 											trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
 											step_number: 1,
 											step_name: 'account_setup',
