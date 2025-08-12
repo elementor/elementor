@@ -16,8 +16,8 @@ export function useKitCustomizationCustomPostTypes( { data } ) {
 				value: postType.name,
 				label: postType.label,
 			};
-		} )
-	}, [ isImport, data?.uploadedData, builtInCustomPostTypes ]);
+		} );
+	}, [ isImport, data?.uploadedData, builtInCustomPostTypes ] );
 
 	return {
 		customPostTypes,
