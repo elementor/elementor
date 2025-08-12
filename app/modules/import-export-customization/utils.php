@@ -20,7 +20,7 @@ class Utils {
 		return $file_content ? json_decode( $file_content, true ) : [];
 	}
 
-	public static function map_old_new_post_ids( array $imported_data, $customization ) {
+	public static function map_old_new_post_ids( array $imported_data ) {
 		$result = [];
 
 		$result += $imported_data['templates']['succeed'] ?? [];

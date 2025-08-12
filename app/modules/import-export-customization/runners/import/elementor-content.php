@@ -64,9 +64,11 @@ class Elementor_Content extends Import_Runner_Base {
 			'failed' => [],
 		];
 
-		if ( ! empty( $customization ) && empty( $customization['pages'] ) ) {
+		$selected_pages = $customization['pages'] ?? null;
+
+		if ( 'page' === $post_type && is_array( $selected_pages ) && empty( $selected_pages ) ) {
 			foreach ( $posts_settings as $id => $post_settings ) {
-				$result['failed'][ $id ] = __( 'Skiped', 'elementor' );
+				$result['failed'][ $id ] = __( 'Skipped', 'elementor' );
 			}
 
 			return $result;
@@ -74,8 +76,8 @@ class Elementor_Content extends Import_Runner_Base {
 
 		foreach ( $posts_settings as $id => $post_settings ) {
 			try {
-				if ( ! empty( $customization ) && ! in_array( $id, $customization['pages'] ) ) {
-					$result['failed'][ $id ] = __( 'Skiped', 'elementor' );
+				if ( 'page' === $post_type && is_array( $selected_pages ) && ! in_array( $id, $selected_pages ) ) {
+					$result['failed'][ $id ] = __( 'Skipped', 'elementor' );
 					continue;
 				}
 

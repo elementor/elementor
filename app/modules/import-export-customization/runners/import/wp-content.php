@@ -63,7 +63,7 @@ class Wp_Content extends Import_Runner_Base {
 	private function import_wp_post_type( $path, $post_type, array $imported_data, array $taxonomies, array $imported_terms, $customization ) {
 		$args = [
 			'fetch_attachments' => true,
-			'posts' => ImportExportUtils::map_old_new_post_ids( $imported_data, $customization ),
+			'posts' => ImportExportUtils::map_old_new_post_ids( $imported_data ),
 			'terms' => $imported_terms,
 			'taxonomies' => ! empty( $taxonomies[ $post_type ] ) ? $taxonomies[ $post_type ] : [],
 			'posts_meta' => [
@@ -98,7 +98,7 @@ class Wp_Content extends Import_Runner_Base {
 			$exclude[] = 'nav_menu_item';
 		}
 
-		if ( ! empty( $customization ) && empty( $customization['pages'] ) ) {
+		if ( is_array($customization['pages'] ?? null) && empty( $customization['pages'] ) ) {
 			$exclude[] = 'page';
 		}
 

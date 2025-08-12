@@ -434,7 +434,11 @@ class Test_Import extends Elementor_Test_Base {
 
 		$import_settings = [
 			'include' => [ 'content' ],
-			'selectedCustomPostTypes' => [ 'tests' ],
+			'customization' => [
+				'content' => [
+					'customPostTypes' => [ 'post', 'tests' ],
+				],
+			],
 		];
 
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
@@ -444,14 +448,13 @@ class Test_Import extends Elementor_Test_Base {
 		// Act
 		$result = $import->run();
 
-		var_dump( $result['wp-content']['nav_menu_item']['succeed'] );
 		// Assert
 		$this->assertCount( 1, $result['content']['post']['succeed'] );
 		$this->assertCount( 1, $result['content']['page']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['post']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['page']['succeed'] );
 		$this->assertCount( 1, $result['wp-content']['tests']['succeed'] );
-		$this->assertCount( 7, $result['wp-content']['nav_menu_item']['succeed'] );
+		$this->assertCount( 6, $result['wp-content']['nav_menu_item']['succeed'] );
 		$this->assertFalse( isset( $result['wp-content']['sectests'] ) );
 
 		// Cleanup

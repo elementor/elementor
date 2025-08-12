@@ -759,7 +759,7 @@ class Import {
 	 */
 	private function get_imported_data_replacements(): array {
 		return [
-			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data, $this->settings_customization['content'] ?? null ),
+			'post_ids' => Utils::map_old_new_post_ids( $this->imported_data ),
 			'term_ids' => Utils::map_old_new_term_ids( $this->imported_data ),
 		];
 	}
