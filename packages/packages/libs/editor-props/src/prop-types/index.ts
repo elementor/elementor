@@ -36,6 +36,7 @@ export * from './transform-prop-types/move-transform';
 export * from './transform-prop-types/scale-transform';
 export * from './transform-prop-types/rotate-transform';
 export * from './transform-prop-types/skew-transform';
+export * from './transform-prop-types/transform-origin';
 export * from './filter-prop-types/filter';
 export * from './filter-prop-types/backdrop-filter';
 export * from './filter-prop-types/drop-shadow-filter';

@@ -39,6 +39,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Image_Overlay_Size_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Overlay_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Filter_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Skew_Transformer;
@@ -77,14 +78,17 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Move_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Scale_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Skew_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Component_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Motion_Effects_Transformer;
@@ -102,7 +106,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
-	const EXPERIMENT_UNSTABLE_REPEATER = 'e_unstable_repeater';
+	const EXPERIMENT_NESTED = 'e_nested_elements';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -139,6 +143,7 @@ class Module extends BaseModule {
 		
 			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
@@ -234,17 +239,16 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-
 		] );
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_UNSTABLE_REPEATER,
-			'title' => esc_html__( 'Unstable Repeater', 'elementor' ),
-			'description' => esc_html__( 'Unstable Repeater for Transform control.', 'elementor' ),
+			'name' => self::EXPERIMENT_NESTED,
+			'title' => esc_html__( 'Nested Elements', 'elementor' ),
+			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
+		]);
 	}
 
 	private function add_packages( $packages ) {
@@ -257,6 +261,12 @@ class Module extends BaseModule {
 		}
 
 		$settings['atomic']['styles_schema'] = Style_Schema::get();
+
+		return $settings;
+	}
+
+	private function add_supported_units( $settings ) {
+		$settings['supported_size_units'] = Size_Constants::all_supported_units();
 
 		return $settings;
 	}
@@ -311,6 +321,7 @@ class Module extends BaseModule {
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
+		$transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
 		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );

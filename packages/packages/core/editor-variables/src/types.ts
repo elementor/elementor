@@ -17,3 +17,9 @@ export type ExtendedVirtualizedItem = VirtualizedItem< 'item', string > & {
 	secondaryText: string;
 	onEdit?: () => void;
 };
+
+export type NormalizedVariable = {
+	key: string;
+	label: string;
+	value: string;
+};

@@ -76,6 +76,7 @@ class Library extends Common_App {
 				'base_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_tier' => ConnectModule::ACCESS_TIER_FREE,
+				'plan_type' => ConnectModule::ACCESS_TIER_FREE,
 			],
 		] );
 	}
@@ -154,6 +155,7 @@ class Library extends Common_App {
 		return [
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
+			'plan_type' => ConnectModule::ACCESS_TIER_FREE,
 		];
 	}
 

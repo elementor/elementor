@@ -19,6 +19,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -106,7 +107,7 @@ class Style_Schema {
 			'inset-block-end' => Size_Prop_Type::make(),
 			'inset-inline-start' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
-			'scroll-margin-top' => Size_Prop_Type::make(),
+			'scroll-margin-top' => Size_Prop_Type::make()->units( Size_Constants::anchor_offset() ),
 		];
 	}
 
@@ -128,10 +129,10 @@ class Style_Schema {
 				'bolder',
 				'lighter',
 			] ),
-			'font-size' => Size_Prop_Type::make(),
+			'font-size' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'color' => Color_Prop_Type::make(),
-			'letter-spacing' => Size_Prop_Type::make(),
-			'word-spacing' => Size_Prop_Type::make(),
+			'letter-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
+			'word-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'column-count' => Number_Prop_Type::make(),
 			'column-gap' => Size_Prop_Type::make()
 				->set_dependencies(
@@ -143,7 +144,7 @@ class Style_Schema {
 					] )
 					->get()
 				),
-			'line-height' => Size_Prop_Type::make(),
+			'line-height' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
 				'center',
@@ -184,8 +185,8 @@ class Style_Schema {
 	private static function get_spacing_props() {
 		return [
 			'padding' => Union_Prop_Type::make()
-				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
+				->add_prop_type( Dimensions_Prop_Type::make_with_units( Size_Constants::spacing() ) )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::spacing() ) ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
 				->add_prop_type( Size_Prop_Type::make() ),
@@ -195,10 +196,10 @@ class Style_Schema {
 	private static function get_border_props() {
 		return [
 			'border-radius' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) )
 				->add_prop_type( Border_Radius_Prop_Type::make() ),
 			'border-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) )
 				->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum( [
@@ -230,10 +231,13 @@ class Style_Schema {
 	private static function get_effects_props() {
 		return [
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
-			'opacity' => Size_Prop_Type::make(),
+			'opacity' => Size_Prop_Type::make()
+				->units( Size_Constants::opacity() )
+				->default_unit( Size_Constants::UNIT_PERCENT ),
 			'filter' => Filter_Prop_Type::make(),
 			'backdrop-filter' => Backdrop_Filter_Prop_Type::make(),
 			'transform' => Transform_Prop_Type::make(),
+			'transform-origin' => Transform_Origin_Prop_Type::make(),
 			'transition' => Transition_Prop_Type::make(),
 		];
 	}
@@ -272,7 +276,7 @@ class Style_Schema {
 			] ),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::layout() ) ),
 			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
