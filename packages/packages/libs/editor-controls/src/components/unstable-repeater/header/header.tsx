@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, Typography } from '@elementor/ui';
+import { Box, Stack, Typography } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { ControlAdornments } from '../../../control-adornments/control-adornments';
@@ -24,9 +24,15 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			</Typography>
 			<ControlAdornments />
 			<RepeaterHeaderActionsSlot value={ value } />
+<<<<<<< Updated upstream
 			<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
 				{ children }
 			</SlotChildren>
+=======
+			<Box sx={{ ml: 'auto' }}>
+				<SlotChildren whitelist={ [ AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
+			</Box>
+>>>>>>> Stashed changes
 		</Stack>
 	);
 };
