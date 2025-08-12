@@ -34,7 +34,7 @@ export function injectTab( { id, label, component }: Config ) {
 		getEComponent().addTab( id, { title: label } );
 	} );
 
-	listenTo( routeOpenEvent( 'panel/elements' ), ( e ) => {
+	listenTo( routeOpenEvent( E_ROUTE_PREFIX ), ( e ) => {
 		const route = `${ E_ROUTE_PREFIX }${ id }`;
 
 		createTabNavItem( {
