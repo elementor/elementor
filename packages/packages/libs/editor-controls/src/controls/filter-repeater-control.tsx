@@ -9,7 +9,7 @@ import {
 	type SizePropValue,
 } from '@elementor/editor-props';
 import { backdropFilterPropTypeUtil } from '@elementor/editor-props';
-import { Box, Grid } from '@elementor/ui';
+import { Box, Grid, styled, UnstableColorIndicator } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
@@ -188,7 +188,17 @@ export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter
 	);
 } );
 
-const ItemIcon = () => <></>;
+const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
+} ) );
+
+const ItemIcon = ( { value }: { value: FilterItemPropValue } ) => {
+	return isSingleSize( value.value.func.value ?? '' ) ? (
+		<></>
+	) : (
+		<StyledUnstableColorIndicator size="inherit" component="span" value={ value.value.args.value.color.value } />
+	);
+};
 
 const ItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
 	return isSingleSize( value.value.func.value ?? '' ) ? (
