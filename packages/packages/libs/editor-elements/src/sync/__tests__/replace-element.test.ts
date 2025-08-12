@@ -1,8 +1,8 @@
 import { createMockElement } from 'test-utils';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { addElement, deleteElement, replaceElement } from '../replace-element';
-import { type ExtendedWindow, type V1Element, type V1ElementModelProps } from '../types';
+import { replaceElement } from '../replace-element';
+import { type ExtendedWindow, type V1ElementModelProps } from '../types';
 
 // Mock dependencies
 jest.mock( '@elementor/editor-v1-adapters' );

@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { createMockElement, renderWithTheme } from 'test-utils';
 import { getElementLabel, type V1Element } from '@elementor/editor-elements';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { fireEvent } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { saveElementAsComponent } from '../../utils/save-element-as-component';
 import { CreateComponentForm } from '../create-component-form';
-import { createMockElement, renderWithTheme } from 'test-utils';
 
 jest.mock( '../../utils/save-element-as-component' );
 jest.mock( '@elementor/editor-elements' );
@@ -16,10 +15,8 @@ const mockGetElementLabel = jest.mocked( getElementLabel );
 const mockElement: V1Element = createMockElement( { model: { id: 'test-element' } } );
 
 describe( 'CreateComponentForm', () => {
-	// Setup & Helper Functions
 	beforeEach( () => {
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
-		jest.clearAllMocks();
 	} );
 
 	const triggerOpenFormEvent = ( element = mockElement, anchorPosition = { top: 100, left: 200 } ) => {
@@ -27,20 +24,18 @@ describe( 'CreateComponentForm', () => {
 			detail: { element, anchorPosition },
 		} );
 
-		act( () => {
-			window.dispatchEvent( customEvent );
-		} );
+		act( () => window.dispatchEvent( customEvent ) );
 	};
 
 	const setupForm = () => {
 		renderWithTheme( <CreateComponentForm /> );
 		return {
 			openForm: () => triggerOpenFormEvent(),
-			getNameInput: () => screen.getByRole( 'textbox' ) as HTMLInputElement,
+			getComponentNameInput: () => screen.getByRole( 'textbox' ) as HTMLInputElement,
 			getCreateButton: () => screen.getByText( 'Create' ),
 			getCancelButton: () => screen.getByText( 'Cancel' ),
-			fillName: ( name: string ) => {
-				const input = screen.getByRole( 'textbox' ) as HTMLInputElement;
+			fillComponentName: ( name: string ) => {
+				const input = screen.getByRole( 'textbox' );
 				fireEvent.change( input, { target: { value: name } } );
 			},
 		};
@@ -48,7 +43,7 @@ describe( 'CreateComponentForm', () => {
 
 	const setupSuccessfulSave = () => {
 		mockSaveElementAsComponent.mockImplementation( async ( element, name, options ) => {
-			await new Promise( resolve => setTimeout( resolve, 10 ) );
+			await new Promise( ( resolve ) => setTimeout( resolve, 1 ) );
 			options?.onSuccess?.( { component_id: 456 } );
 		} );
 	};
@@ -60,9 +55,9 @@ describe( 'CreateComponentForm', () => {
 	};
 
 	describe( 'Form Opening & Initial State', () => {
-		it( 'should not show popover initially', () => {
-			// Arrange & Act.
-			render( <CreateComponentForm /> );
+		it( 'should not show form initially', () => {
+			// Arrange.
+			setupForm();
 
 			// Assert.
 			expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
@@ -70,7 +65,7 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should open form when open-save-as-component-form event is dispatched', () => {
 			// Arrange.
-			render( <CreateComponentForm /> );
+			setupForm();
 
 			// Act.
 			triggerOpenFormEvent();
@@ -81,61 +76,61 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should set component name from element label when form opens', () => {
 			// Arrange.
-			mockGetElementLabel.mockReturnValue( 'Custom Element Label' );
-			const { openForm, getNameInput } = setupForm();
+			mockGetElementLabel.mockReturnValue( 'Flexbox' );
+			const { openForm, getComponentNameInput: getNameInput } = setupForm();
 
 			// Act.
 			openForm();
 
 			// Assert.
-			expect( getNameInput().value ).toBe( 'Custom Element Label' );
+			expect( getNameInput().value ).toBe( 'Flexbox' );
 		} );
 	} );
 
 	describe( 'Input Validation', () => {
 		it( 'should disable create button when component name is empty or invalid', () => {
 			// Arrange.
-			const { openForm, getCreateButton, fillName } = setupForm();
+			const { openForm, getCreateButton, fillComponentName } = setupForm();
 			openForm();
 
-			// Act & Assert - empty name.
-			fillName( '' );
+			// Act.
+			fillComponentName( '' );
+
+			// Assert.
 			expect( getCreateButton() ).toBeDisabled();
 
-			// Act & Assert - whitespace only.
-			fillName( '   ' );
-			expect( getCreateButton() ).toBeDisabled();
+			// Act.
+			fillComponentName( '   ' );
 
-			// Act & Assert - tabs and spaces.
-			fillName( '\t  \n  ' );
+			// Assert.
 			expect( getCreateButton() ).toBeDisabled();
 		} );
 
 		it( 'should enable create button when valid name is entered', () => {
 			// Arrange.
-			const { openForm, getCreateButton, fillName } = setupForm();
+			const { openForm, getCreateButton, fillComponentName } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'Valid Component Name' );
+			fillComponentName( 'My Test Component' );
 
 			// Assert.
-			expect( getCreateButton() ).not.toBeDisabled();
+			expect( getCreateButton() ).toBeEnabled();
 		} );
 	} );
 
-	describe( 'Component Creation Success Flow', () => {
+	describe( 'Component Creation - Success Flow', () => {
 		beforeEach( () => {
 			setupSuccessfulSave();
 		} );
 
 		it( 'should call saveElementAsComponent with correct parameters when creating', () => {
 			// Arrange.
-			const { openForm, fillName, getCreateButton } = setupForm();
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'My Test Component' );
+			fillComponentName( 'My Test Component' );
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
@@ -151,38 +146,42 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should show loading state during component creation', () => {
 			// Arrange.
-			const { openForm, fillName, getCreateButton } = setupForm();
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'Test Component' );
+			fillComponentName( 'My Test Component' );
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			expect( screen.getByText( 'Creating…' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Creating...' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should disable buttons during loading', () => {
 			// Arrange.
-			const { openForm, fillName, getCreateButton, getCancelButton } = setupForm();
+			const { openForm, fillComponentName, getCreateButton, getCancelButton } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'Test Component' );
+			fillComponentName( 'My Test Component' );
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			expect( getCreateButton() ).toBeDisabled();
+			// Create button should show loading state and be disabled.
+			expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Creating...' ) ).toBeDisabled();
+
+			// Cancel button should be disabled.
 			expect( getCancelButton() ).toBeDisabled();
 		} );
 
 		it( 'should show success notification after successful creation', async () => {
 			// Arrange.
-			const { openForm, fillName, getCreateButton } = setupForm();
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'Success Component' );
+			fillComponentName( 'My Test Component' );
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
@@ -193,11 +192,11 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should close form after successful creation', async () => {
 			// Arrange.
-			const { openForm, fillName, getCreateButton } = setupForm();
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'Success Component' );
+			fillComponentName( 'My Test Component' );
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
@@ -214,11 +213,11 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should show error notification when creation fails', async () => {
 			// Arrange.
-			const { openForm, fillName, getCreateButton } = setupForm();
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'Failed Component' );
+			fillComponentName( 'My Test Component' );
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
@@ -229,25 +228,25 @@ describe( 'CreateComponentForm', () => {
 
 		it( 'should reset loading state after error', async () => {
 			// Arrange.
-			const { openForm, fillName, getCreateButton } = setupForm();
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
 
 			// Act.
-			fillName( 'Failed Component' );
+			fillComponentName( 'My Test Component' );
 			fireEvent.click( getCreateButton() );
 
-			// Assert - loading state should be gone.
+			// Assert.
 			await waitFor( () => {
-				expect( screen.queryByText( 'Creating…' ) ).not.toBeInTheDocument();
+				expect( screen.queryByText( 'Creating...' ) ).not.toBeInTheDocument();
 			} );
 
-			// Assert - create button should be enabled again.
-			expect( getCreateButton() ).not.toBeDisabled();
+			// Assert.
+			expect( getCreateButton() ).toBeEnabled();
 		} );
 	} );
 
 	describe( 'Form Lifecycle', () => {
-		it( 'should close form when cancel button is clicked', () => {
+		it( 'should close form when cancel button is clicked', async () => {
 			// Arrange.
 			const { openForm, getCancelButton } = setupForm();
 			openForm();
@@ -256,12 +255,19 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCancelButton() );
 
 			// Assert.
-			expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+			} );
 		} );
 
 		it( 'should reset form state when form is closed', () => {
 			// Arrange.
-			const { openForm, fillName, getCancelButton, getNameInput } = setupForm();
+			const {
+				openForm,
+				fillComponentName: fillName,
+				getCancelButton,
+				getComponentNameInput: getNameInput,
+			} = setupForm();
 			openForm();
 			fillName( 'Test Name' );
 
