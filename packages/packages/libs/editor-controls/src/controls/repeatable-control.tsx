@@ -1,12 +1,19 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { createArrayPropUtils, type PropKey } from '@elementor/editor-props';
+import { createArrayPropUtils } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
+import { PropProvider, useBoundProp } from '../bound-prop-context';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { Repeater } from '../components/repeater';
+import { type CollectionPropUtil } from '../components/repeater';
+import { Header, Item, TooltipAddItemAction, UnstableRepeater } from '../components/unstable-repeater';
+import { DisableItemAction } from '../components/unstable-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../components/unstable-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../components/unstable-repeater/actions/remove-item-action';
+import { EditItemPopover } from '../components/unstable-repeater/items/edit-item-popover';
+import { ItemsContainer } from '../components/unstable-repeater/items/items-container';
+import { type RepeatablePropValue } from '../components/unstable-repeater/types';
 import { createControl } from '../create-control';
 import {
 	type ChildControlConfig,
@@ -66,42 +73,37 @@ export const RepeatableControl = createControl(
 		return (
 			<PropProvider propType={ propType } value={ value } setValue={ setValue }>
 				<RepeatableControlContext.Provider value={ contextValue }>
-					<Repeater
-						openOnAdd
-						values={ value ?? [] }
-						setValues={ setValue }
-						label={ repeaterLabel }
-						isSortable={ false }
+					<UnstableRepeater
+						initial={ childPropTypeUtil.create( initialValues || null ) }
+						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 						onAddItem={ onAddItem }
-						itemSettings={ {
-							Icon: ItemIcon,
-							Label: ItemLabel,
-							Content: ItemContent,
-							initialValues: childPropTypeUtil.create( initialValues || null ),
-						} }
-						showDuplicate={ showDuplicate }
-						showToggle={ showToggle }
-					/>
+					>
+						<Header label={ repeaterLabel }>
+							<TooltipAddItemAction newItemIndex={ 0 } />
+						</Header>
+						<ItemsContainer
+							isSortable={ false }
+							itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }
+						>
+							{ showDuplicate && <DuplicateItemAction /> }
+							{ showToggle && <DisableItemAction /> }
+							<RemoveItemAction />
+						</ItemsContainer>
+						<EditItemPopover>
+							<Content />
+						</EditItemPopover>
+					</UnstableRepeater>
 				</RepeatableControlContext.Provider>
 			</PropProvider>
 		);
 	}
 );
 
-const ItemContent = ( { bind }: { bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content />
-		</PropKeyProvider>
-	);
-};
-
 // TODO: Configurable icon probably can be somehow part of the injected control and bubbled up to the repeater
 const ItemIcon = () => <></>;
 
 const Content = () => {
 	const { component: ChildControl, props = {} } = useRepeatableControlContext();
-
 	return (
 		<PopoverContent p={ 1.5 }>
 			<PopoverGridContainer>
