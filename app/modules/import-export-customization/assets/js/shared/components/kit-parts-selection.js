@@ -53,7 +53,6 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								onClick={ () => setActiveDialog( item.type ) }
 								sx={ { alignSelf: 'center' } }
 								data-type={ item.type }
-								disabled={ isDisabled( item ) }
 							>
 								{ __( 'Edit', 'elementor' ) }
 							</Button>
