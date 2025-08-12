@@ -1,9 +1,17 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { KitTemplatesCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-templates-customization-dialog';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 // Mock the __ function for translations
 global.__ = jest.fn( ( text ) => text );
+
+const mockSendPageViewsWebsiteTemplates = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
+	},
+} ) );
 
 describe( 'KitTemplatesCustomizationDialog Component', () => {
 	const mockHandleClose = jest.fn();
@@ -17,7 +25,48 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 	};
 
 	beforeEach( () => {
+		global.elementorCommon = {
+			eventsManager: {
+				config: eventsConfig,
+			},
+		};
+
+		global.elementorModules = {
+			importExport: {
+				templateRegistry: {
+					getAll: jest.fn( () => [
+						{
+							key: 'siteTemplates',
+							title: 'Site templates',
+							description: 'Site template description',
+							exportGroup: 'site-templates',
+							useParentDefault: true,
+						},
+					] ),
+					getState: jest.fn( ( data, initialState ) => {
+						const state = {};
+						const templateTypes = global.elementorModules.importExport.templateRegistry.getAll();
+
+						templateTypes.forEach( ( templateType ) => {
+							if ( data?.customization?.templates?.[ templateType.key ] !== undefined ) {
+								state[ templateType.key ] = data.customization.templates[ templateType.key ];
+								return;
+							}
+
+							state[ templateType.key ] = { enabled: initialState };
+						} );
+
+						return state;
+					} ),
+				},
+			},
+		};
+
 		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		delete global.elementorModules;
 	} );
 
 	describe( 'Dialog Rendering', () => {
@@ -141,7 +190,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				includes: [ 'templates' ],
 				customization: {
 					templates: {
-						siteTemplates: true,
+						siteTemplates: { enabled: true },
 					},
 				},
 			};
@@ -302,8 +351,9 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: true,
+					siteTemplates: { enabled: true },
 				},
+				[],
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
 		} );
@@ -327,8 +377,9 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: false,
+					siteTemplates: { enabled: false },
 				},
+				[],
 			);
 		} );
 
@@ -358,8 +409,9 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: true,
+					siteTemplates: { enabled: true },
 				},
+				[],
 			);
 		} );
 	} );
@@ -401,8 +453,9 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 			expect( customHandleSaveChanges ).toHaveBeenCalledWith(
 				'templates',
 				{
-					siteTemplates: true,
+					siteTemplates: { enabled: true },
 				},
+				[],
 			);
 		} );
 
@@ -502,7 +555,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				includes: [ 'templates' ],
 				customization: {
 					templates: {
-						siteTemplates: true,
+						siteTemplates: { enabled: true },
 					},
 				},
 			};
@@ -523,7 +576,7 @@ describe( 'KitTemplatesCustomizationDialog Component', () => {
 				includes: [ 'templates' ],
 				customization: {
 					templates: {
-						siteTemplates: false,
+						siteTemplates: { enabled: false },
 					},
 				},
 			};

@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { BaseLayout, PageHeader, TopBar, Footer } from '../../shared/components';
 import ImportKitContent from '../components/import-kit-parts-selection';
 import { IMPORT_STATUS, useImportContext } from '../context/import-context';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 const headerContent = (
 	<PageHeader title={ __( 'Import', 'elementor' ) } />
@@ -13,6 +14,10 @@ const headerContent = (
 export default function ImportCustomization() {
 	const { isCustomizing, dispatch, isProcessing } = useImportContext();
 	const navigate = useNavigate();
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportCustomization );
+	}, [] );
 
 	const footerContent = (
 		<Stack direction="row" spacing={ 1 }>

@@ -130,22 +130,24 @@ class Module extends BaseModule {
 	 * Render the import/export tab content.
 	 */
 	private function render_import_export_tab_content() {
-		$is_cloud_kits_available = Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) && CloudKitLibrary::get_app()->is_eligible();
+		$is_cloud_kits_available = CloudKitLibrary::get_app()->check_eligibility()['is_eligible'];
 
 		$content_data = [
 			'export' => [
 				'title' => esc_html__( 'Export this website', 'elementor' ),
 				'button' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/export',
+					'url' => Plugin::$instance->app->get_base_url() . '#/export-customization',
 					'text' => esc_html__( 'Export', 'elementor' ),
+					'id' => 'elementor-import-export__export',
 				],
 				'description' => esc_html__( 'You can download this website as a .zip file, or upload it to the library.', 'elementor' ),
 			],
 			'import' => [
 				'title' => esc_html__( 'Apply a Website Template', 'elementor' ),
 				'button' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/import',
+					'url' => Plugin::$instance->app->get_base_url() . '#/import-customization',
 					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
+					'id' => 'elementor-import-export__import',
 				],
 				'description' => esc_html__( 'You can import design and settings from a .zip file or choose from the library.', 'elementor' ),
 			],
@@ -154,7 +156,8 @@ class Module extends BaseModule {
 		if ( $is_cloud_kits_available ) {
 			$content_data['import']['button_secondary'] = [
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
-				'text' => esc_html__( 'Open the Library', 'elementor' ),
+				'text' => esc_html__( 'Import from library', 'elementor' ),
+				'id' => 'elementor-import-export__import_from_library',
 			];
 		}
 
@@ -232,41 +235,28 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_cloud_kits_feature_active = Plugin::$instance->experiments->is_feature_active( 'cloud-library' );
-
-		if ( $is_cloud_kits_feature_active ) { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-				</div>
-				<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
-
-				<?php if ( ! empty( $data['link'] ) ) : ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
-				<?php endif; ?>
-				<div class="tab-import-export-kit__box action-buttons">
-					<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
-						<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
-							<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
-						</a>
-					<?php endif; ?>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
+		?>
+		<div class="tab-import-export-kit__container">
+			<div class="tab-import-export-kit__box">
+				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
 			</div>
-		<?php } else { ?>
-			<div class="tab-import-export-kit__container">
-				<div class="tab-import-export-kit__box">
-					<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
-					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
-						<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
-					</a>
-				</div>
-				<p><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+			<p class="description"><?php ElementorUtils::print_unescaped_internal_string( $data['description'] ); ?></p>
+
+			<?php if ( ! empty( $data['link'] ) ) : ?>
 				<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['link']['url'] ); ?>" target="_blank"><?php ElementorUtils::print_unescaped_internal_string( $data['link']['text'] ); ?></a>
+			<?php endif; ?>
+			<div class="tab-import-export-kit__box action-buttons">
+				<?php if ( ! empty( $data['button_secondary'] ) ) : ?>
+					<a href="<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['url'] ); ?>" class="elementor-button e-btn-txt e-btn-txt-border">
+						<?php ElementorUtils::print_unescaped_internal_string( $data['button_secondary']['text'] ); ?>
+					</a>
+				<?php endif; ?>
+				<a <?php ElementorUtils::print_html_attributes( [ 'id' => $data['button']['id'] ] ); ?> href="<?php ElementorUtils::print_unescaped_internal_string( $data['button']['url'] ); ?>" class="elementor-button e-primary">
+					<?php ElementorUtils::print_unescaped_internal_string( $data['button']['text'] ); ?>
+				</a>
 			</div>
-		<?php }
+		</div>
+		<?php
 	}
 
 	private function get_revert_href(): string {
@@ -557,6 +547,14 @@ class Module extends BaseModule {
 				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
 			]
 		);
+
+		wp_enqueue_script(
+			'import-export-customization-admin',
+			$this->get_js_assets_url( 'import-export-customization-admin' ),
+			[ 'elementor-common' ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	protected function get_remote_kit_zip( $url ) {
@@ -596,6 +594,7 @@ class Module extends BaseModule {
 			'kitPreviewNonce' => wp_create_nonce( 'kit_thumbnail' ),
 			'restApiBaseUrl' => Controller::get_base_url(),
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
+			'exportGroups' => $this->get_export_groups(),
 		];
 	}
 
@@ -603,6 +602,17 @@ class Module extends BaseModule {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
 
 		return $editor_preferences->get_model()->get_settings( 'ui_theme' );
+	}
+
+	private function get_export_groups() {
+		$export_groups = [];
+		$document_types = Plugin::$instance->documents->get_document_types();
+
+		foreach ( $document_types as $name => $document_type ) {
+			$export_groups[ $name ] = defined( $document_type . '::EXPORT_GROUP' ) ? $document_type::EXPORT_GROUP : '';
+		}
+
+		return $export_groups;
 	}
 
 	/**
@@ -658,6 +668,9 @@ class Module extends BaseModule {
 		foreach ( $active_kit->get_tabs() as $key => $tab ) {
 			$summary_titles['site-settings'][ $key ] = $tab->get_title();
 		}
+
+		$summary_titles['site-settings']['theme'] = esc_html__( 'Theme', 'elementor' );
+		$summary_titles['site-settings']['experiments'] = esc_html__( 'Experiments', 'elementor' );
 
 		return $summary_titles;
 	}
