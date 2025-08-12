@@ -79,6 +79,7 @@ function FlexOrderFieldContent() {
 	const { placeholder } = useBoundProp();
 
 	const currentGroup = useMemo( () => getGroupControlValue( order?.value ?? null ), [ order ] );
+
 	const [ activeGroup, setActiveGroup ] = useState( currentGroup );
 	const [ customLocked, setCustomLocked ] = useState( false );
 
@@ -119,6 +120,7 @@ function FlexOrderFieldContent() {
 	};
 
 	const isCustomVisible = CUSTOM === activeGroup || CUSTOM === groupPlaceholder;
+	const orderPlaceholder = ( CUSTOM === groupPlaceholder ) ? String( placeholder?.value ?? null ) : '';
 
 	return (
 		<>
@@ -142,6 +144,7 @@ function FlexOrderFieldContent() {
 							min={ FIRST_DEFAULT_VALUE + 1 }
 							max={ LAST_DEFAULT_VALUE - 1 }
 							shouldForceInt={ true }
+							placeholder={ orderPlaceholder }
 						/>
 					</Grid>
 				</Grid>
