@@ -27,6 +27,8 @@ class Transform_Skew_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function get_prop_type(): Prop_Type {
-		return Size_Prop_Type::make()->units( Size_Constants::transform() );
+		return Size_Prop_Type::make()
+			->units( Size_Constants::transform() )
+			->default_unit( Size_Constants::UNIT_ANGLE_DEG );
 	}
 }

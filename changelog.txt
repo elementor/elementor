@@ -1,5 +1,14 @@
 == Changelog ==
 
+= 3.31.2 - 2025-08-11 =
+
+* Tweak: Improved permissions functionality in Class Management - Editor V4
+* Fix: Page failed to save on certain hosting providers due to blocked requests – Editor V4 ([#31992](https://github.com/elementor/elementor/issues/31992))
+* Fix: Renaming a class causes it to lose applied styles – Editor V4
+* Fix: Inherited values not working as expected with custom units in responsive modes – Editor V4
+* Fix: Visual Choose control not displaying properly in Firefox for Shape Divider
+* Fix: Icon alignment not working in Icon Box widget
+
 = 3.31.1 - 2025-08-06 =
 
 * Tweak: Updated `form-data` package version
