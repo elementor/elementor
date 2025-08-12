@@ -4,10 +4,11 @@ var BaseContainer = require( 'elementor-views/base-container' ),
 
 BaseSectionsContainerView = BaseContainer.extend( {
 	getChildView( model ) {
-		const type = elementor.elementsManager.getElementTypeClass( model.get( 'elType' ) );
+		const elType = model.get( 'elType' );
+		const type = elementor.elementsManager.getElementTypeClass( elType );
 
 		if ( ! type ) {
-			throw new Error( `Element type "${ model.get( 'elType' ) }" is not registered.` );
+			throw new Error( `Element type "${ elType }" is not registered.` );
 		}
 
 		return type.getView();
