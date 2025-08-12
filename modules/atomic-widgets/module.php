@@ -87,6 +87,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Component_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Plugin;
@@ -102,7 +103,6 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
 	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
-	const EXPERIMENT_COMPONENTS = 'e_atomic_components';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 
 	const PACKAGES = [
@@ -129,9 +129,6 @@ class Module extends BaseModule {
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
 			Dynamic_Tags_Module::instance()->register_hooks();
 
-			if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_COMPONENTS ) ) {
-				( new Atomic_Component_Styles() )->register_hooks();
-			}
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
 			( new Atomic_Widgets_Library() )->register_hooks();
@@ -143,6 +140,7 @@ class Module extends BaseModule {
 
 			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
@@ -206,15 +204,6 @@ class Module extends BaseModule {
 		] );
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_COMPONENTS,
-			'title' => esc_html__( 'Atomic Components', 'elementor' ),
-			'description' => esc_html__( 'Unstable Atomic Component widget.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
-		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_NESTED,
 			'title' => esc_html__( 'Nested Elements', 'elementor' ),
 			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
@@ -234,6 +223,12 @@ class Module extends BaseModule {
 		}
 
 		$settings['atomic']['styles_schema'] = Style_Schema::get();
+
+		return $settings;
+	}
+
+	private function add_supported_units( $settings ) {
+		$settings['supported_size_units'] = Size_Constants::all_supported_units();
 
 		return $settings;
 	}
