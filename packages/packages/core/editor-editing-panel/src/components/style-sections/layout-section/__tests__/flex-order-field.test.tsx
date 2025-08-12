@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderField } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
 import { useBoundProp } from '@elementor/editor-controls';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { useStylesFields } from '../../../../hooks/use-styles-fields';
 import { FIRST_DEFAULT_VALUE, FlexOrderField, LAST_DEFAULT_VALUE } from '../flex-order-field';
@@ -206,8 +206,6 @@ describe( '<FlexOrderField />', () => {
 
 	it( 'should render placeholder value if it is set', () => {
 		// Arrange.
-		const value = null;
-
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			placeholder: { $$type: 'number', value: 20 },
 			bind: 'order',

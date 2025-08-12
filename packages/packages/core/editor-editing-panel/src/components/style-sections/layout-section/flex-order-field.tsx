@@ -121,7 +121,7 @@ function FlexOrderFieldContent() {
 	};
 
 	const isCustomVisible = CUSTOM === activeGroup || CUSTOM === groupPlaceholder;
-	const orderPlaceholder = CUSTOM === groupPlaceholder ? String( placeholderValue?.value ?? null) : '';
+	const orderPlaceholder = CUSTOM === groupPlaceholder ? String( placeholderValue?.value ?? null ) : '';
 
 	return (
 		<>
