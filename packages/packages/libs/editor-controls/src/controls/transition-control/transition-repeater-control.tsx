@@ -1,5 +1,6 @@
 import * as React from 'react';
 import type { ExtendedWindow } from '@elementor/editor-elements';
+import { getSelectedElements } from '@elementor/editor-elements';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
@@ -53,9 +54,8 @@ export const TransitionRepeaterControl = createControl( ( props: { recentlyUsedL
 	const onAddItem = () => {
 		const extendedWindow = window as unknown as ExtendedWindow;
 		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
-		const selected = extendedWindow.elementor?.selection?.getElements?.() ?? [];
-		const first = selected[ 0 ];
-		const widgetType = first ? first.model.get( 'widgetType' ) || first.model.get( 'elType' ) || null : null;
+		const selectedElements = getSelectedElements();
+		const widgetType = selectedElements[ 0 ]?.type ?? null;
 
 		const eventName = config?.names?.elementorEditor?.transitions?.clickAddedTransition;
 		if ( config && eventName && extendedWindow.elementorCommon?.eventsManager ) {
