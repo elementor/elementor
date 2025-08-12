@@ -33,7 +33,7 @@ export default class ImportExportCustomization {
 		elementorModules?.importExport?.templateRegistry.register( {
 			key: 'siteTemplates',
 			exportGroup: 'site-templates',
-			title: 'Site Templates',
+			title: __( 'Site Templates', 'elementor '),
 			order: 0,
 			getInitialState: elementorModules?.importExport?.createGetInitialState?.( 'site-templates' ),
 		} );
