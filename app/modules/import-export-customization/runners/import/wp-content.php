@@ -98,7 +98,7 @@ class Wp_Content extends Import_Runner_Base {
 			$exclude[] = 'nav_menu_item';
 		}
 
-		if ( is_array($customization['pages'] ?? null) && empty( $customization['pages'] ) ) {
+		if ( is_array( $customization['pages'] ?? null ) && empty( $customization['pages'] ) ) {
 			$exclude[] = 'page';
 		}
 
