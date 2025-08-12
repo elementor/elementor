@@ -56,7 +56,7 @@ export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: st
 		}
 		return [
 			{
-				label: __( 'Recent', 'elementor' ),
+				label: __( 'Recently Used', 'elementor' ),
 				items: recentItems,
 			},
 			...filteredItems,
