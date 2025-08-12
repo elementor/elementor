@@ -114,7 +114,7 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 						<TextControl
 							inputValue={ sessionState.key }
 							error={ !! keyError }
-							helperText={ props.getHelperText?.( 'key', sessionState.key )?.keyHelper }
+							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.keyHelper }
 						/>
 					</PropKeyProvider>
 					{ !! keyError && <FormHelperText error>{ keyError }</FormHelperText> }
@@ -128,7 +128,7 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 							inputValue={ sessionState.value }
 							error={ !! valueError }
 							inputDisabled={ !! keyError }
-							helperText={ props.getHelperText?.( 'value', sessionState.value )?.valueHelper }
+							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.valueHelper }
 						/>
 					</PropKeyProvider>
 					{ !! valueError && <FormHelperText error>{ valueError }</FormHelperText> }
