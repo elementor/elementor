@@ -1,6 +1,5 @@
 import * as React from 'react';
-import type { ExtendedWindow } from '@elementor/editor-elements';
-import { getSelectedElements } from '@elementor/editor-elements';
+import { type ExtendedWindow, getSelectedElements } from '@elementor/editor-elements';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
