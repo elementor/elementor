@@ -9,9 +9,10 @@ export function TabPanel() {
 	const tab = useActiveTab();
 
 	const TabComponent = tab?.component;
+	const container = document.getElementById( PANEL_WRAPPER_ID );
 
-	return TabComponent ? (
-		<Portal container={ document.getElementById( PANEL_WRAPPER_ID ) }>
+	return TabComponent && container ? (
+		<Portal container={ container }>
 			<TabComponent />
 		</Portal>
 	) : null;
