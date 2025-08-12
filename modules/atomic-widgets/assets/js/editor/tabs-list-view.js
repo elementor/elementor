@@ -1,11 +1,11 @@
-import DivBlockEmptyView from './container/div-block-empty-view';
+import TabsEmptyView from './container/tabs-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
-const DivBlockView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
+const TabsView = BaseElementView.extend( {
+	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-tabs-content' ),
 
-	emptyView: DivBlockEmptyView,
+	emptyView: TabsEmptyView,
 
 	tagName() {
 		if ( this.haveLink() ) {
@@ -25,7 +25,7 @@ const DivBlockView = BaseElementView.extend( {
 	},
 
 	className() {
-		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ this.getClassString() }`;
+		return `${ BaseElementView.prototype.className.apply( this ) } e-tabs ${ this.getClassString() }`;
 	},
 
 	// TODO: Copied from `views/column.js`.
@@ -161,7 +161,7 @@ const DivBlockView = BaseElementView.extend( {
 	rerenderEntireView() {
 		const parent = this._parent;
 		this._parent.removeChildView( this );
-		parent.addChild( this.model, DivBlockView, this._index );
+		parent.addChild( this.model, TabsView, this._index );
 	},
 
 	onRender() {
@@ -209,7 +209,7 @@ const DivBlockView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as a template', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
+					shortcut: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>` : '',
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
@@ -239,7 +239,7 @@ const DivBlockView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/e-div-block/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( 'elements/e-tabs/behaviors', behaviors, this );
 	},
 
 	/**
@@ -272,17 +272,8 @@ const DivBlockView = BaseElementView.extend( {
 
 				const draggedView = elementor.channels.editor.request( 'element:dragged' ),
 					draggedElement = draggedView?.getContainer().view.el,
-					containerElement = event.currentTarget.parentElement;
-
-				// Const restrictions = draggedView?.getContainer()?.model?.get( 'restrictions' );
-				// console.log( 'scope', restrictions?.scope, 'id', this.model.get( 'id' ) );
-				//
-				// if ( !! restrictions && !! restrictions.scope && restrictions.scope !== this.model.get( 'id' ) ) {
-				// 	// If the dragged element has restrictions that prevent it from being dropped, do nothing.
-				// 	console.log( 'blocked by James' );
-				// 	return;
-				// }
-				const elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
+					containerElement = event.currentTarget.parentElement,
+					elements = Array.from( containerElement?.querySelectorAll( ':scope > .elementor-element' ) || [] );
 
 				let targetIndex = elements.indexOf( event.currentTarget );
 
@@ -499,22 +490,12 @@ const DivBlockView = BaseElementView.extend( {
 			return;
 		}
 
-		let shouldPlaceInside = this.isOverflowHidden();
-
-		if ( ! shouldPlaceInside && this.isTopLevelElement() && this.isFirstElementInStructure() ) {
-			shouldPlaceInside = true;
+		if ( this.isOverflowHidden() ) {
+			this.$el.addClass( 'e-handles-inside' );
+		} else {
+			this.$el.removeClass( 'e-handles-inside' );
 		}
-
-		this.$el.toggleClass( 'e-handles-inside', shouldPlaceInside );
-	},
-
-	isTopLevelElement() {
-		return this.container.parent && 'document' === this.container.parent.id;
-	},
-
-	isFirstElementInStructure() {
-		return 0 === this.model.collection.indexOf( this.model );
 	},
 } );
 
-module.exports = DivBlockView;
+module.exports = TabsView;

@@ -36,6 +36,11 @@ module.exports = Marionette.CompositeView.extend( {
 		}, options );
 
 		const childTypes = this.getChildType();
+
+		if ( ! childTypes || ! childTypes.length ) {
+			return;
+		}
+
 		let newItem,
 			elType;
 

@@ -16,6 +16,7 @@ ElementModel = BaseElementModel.extend( {
 		defaultEditSettings: {
 			defaultEditRoute: 'content',
 		},
+		restrictions: [],
 	},
 
 	remoteRender: false,
@@ -47,6 +48,8 @@ ElementModel = BaseElementModel.extend( {
 		this.initSettings();
 
 		this.initEditSettings();
+
+		this.set( 'restrictions', options.restrictions || [] );
 
 		this.on( {
 			destroy: this.onDestroy,

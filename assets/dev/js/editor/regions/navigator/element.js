@@ -463,6 +463,8 @@ export default class extends Marionette.CompositeView {
 
 	onSortUpdate( event, ui ) {
 		event.stopPropagation();
+		console.log( '**onSortUpdate', event, ui );
+		return;
 
 		if ( ! this.ui.elements.is( ui.item.parent() ) ) {
 			return;

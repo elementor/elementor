@@ -7,6 +7,7 @@ import { initSettingsTransformers } from './init-settings-transformers';
 import { initStyleTransformers } from './init-style-transformers';
 import { initLegacyViews } from './legacy/init-legacy-views';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
+import { initElementRestrictions } from './restrictions';
 import { initStyleCommands } from './style-commands/init-style-commands';
 
 export function init() {
@@ -14,6 +15,8 @@ export function init() {
 	initStyleCommands();
 
 	initLinkInLinkPrevention();
+
+	initElementRestrictions();
 
 	initLegacyViews();
 

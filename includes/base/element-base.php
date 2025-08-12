@@ -1474,6 +1474,7 @@ abstract class Element_Base extends Controls_Stack {
 			'title' => $this->get_title(),
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
+			'defaultChildren' => $this->define_default_children(),
 		];
 
 		if ( preg_match( '/^' . __NAMESPACE__ . '(Pro)?\\\\/', get_called_class() ) ) {
@@ -1536,6 +1537,11 @@ abstract class Element_Base extends Controls_Stack {
 		return $child_type;
 	}
 
+	protected function define_default_children() {
+		// This method is meant to be overridden by the element.
+		return [];
+	}
+
 	/**
 	 * Initialize children.
 	 *
@@ -1550,6 +1556,7 @@ abstract class Element_Base extends Controls_Stack {
 		$children_data = $this->get_data( 'elements' );
 
 		if ( ! $children_data ) {
+			$this->children = $this->define_default_children();
 			return;
 		}
 
