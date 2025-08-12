@@ -3,7 +3,6 @@ import { LocationProvider, Router } from '@reach/router';
 import router from '@elementor/router';
 
 import { ContextProvider } from './context/context';
-import { safeDispatchEvent } from './utils/utils';
 import Account from './pages/account';
 import HelloTheme from './pages/hello-theme';
 import SiteName from './pages/site-name';
