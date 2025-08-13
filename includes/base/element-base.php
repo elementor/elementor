@@ -1474,6 +1474,7 @@ abstract class Element_Base extends Controls_Stack {
 			'title' => $this->get_title(),
 			'icon' => $this->get_icon(),
 			'reload_preview' => $this->is_reload_preview_required(),
+			'should_wrap' => false,
 		];
 
 		if ( preg_match( '/^' . __NAMESPACE__ . '(Pro)?\\\\/', get_called_class() ) ) {
