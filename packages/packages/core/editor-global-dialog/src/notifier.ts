@@ -10,10 +10,11 @@ export const EVENT_TYPE = {
 export type DialogContent = {
 	title: ReactElement;
 	component: ReactElement;
+	actions: ReactElement;
 };
 
-export const openDialog = ( { component, title }: DialogContent ) => {
-	publish( EVENT_TYPE.OPEN, { component, title } );
+export const openDialog = ( { component, title , actions}: DialogContent ) => {
+	publish( EVENT_TYPE.OPEN, { component, title, actions } );
 };
 
 export const closeDialog = () => {

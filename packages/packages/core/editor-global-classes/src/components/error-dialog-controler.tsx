@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { openDialog } from '@elementor/editor-global-dialog';
-import { AlertOctagonFilledIcon } from '@elementor/icons';
-import { Box, Icon, Typography } from '@elementor/ui';
+import { closeDialog, openDialog } from '@elementor/editor-global-dialog';
+import { InfoCircleFilledIcon } from '@elementor/icons';
+import { Box, Button, Icon, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { API_ERROR_CODES } from '../api';
@@ -32,19 +32,34 @@ type ErrorDialogProps = {
 export const showErrorDialog = ( data: ErrorDialogProps ) => {
 	const { code, modifiedLabels } = data;
 
+
+	const handleButtonClick = () => {
+		localStorage.setItem( 'elementor-global-classes-search', 'DUP_' );
+		open();
+		closeDialog();
+	};
+
 	if ( code === API_ERROR_CODES.DUPLICATED_LABEL ) {
 		openDialog( {
 			title: (
 				<Box display="flex" alignItems="center" gap={ 1 }>
 					<Icon color="secondary">
-						<AlertOctagonFilledIcon fontSize="medium" />
+						<InfoCircleFilledIcon fontSize="medium" />
 					</Icon>
 					<Typography variant="subtitle1">
-						{ __( 'Page published - with class name updates', 'elementor' ) }
+						{ __( 'We’ve published your page and updated class names.', 'elementor' ) }
 					</Typography>
 				</Box>
 			),
 			component: <DuplicateLabelDialog modifiedLabels={ modifiedLabels } />,
+			actions: <>
+				<Button color="secondary" variant="text"  onClick={ handleButtonClick }>
+					{ __( 'Go to Class Manager', 'elementor' ) }
+				</Button>
+				<Button color="secondary" variant="contained"    onClick={ ()=>closeDialog() }>
+					{ __( 'Done', 'elementor' ) }
+				</Button>
+			</>,
 		} );
 	}
 };
