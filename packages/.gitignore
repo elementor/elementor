@@ -1,5 +1,4 @@
 packages/**/dist/
-docs/api/
 coverage/
 node_modules/
 log/

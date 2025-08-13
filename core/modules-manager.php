@@ -122,7 +122,6 @@ class Modules_Manager {
 			'link-in-bio',
 			'floating-buttons',
 			'content-sanitizer',
-			'editor-events',
 			'atomic-widgets',
 			'global-classes',
 			'variables',
@@ -131,6 +130,7 @@ class Modules_Manager {
 			'cloud-library',
 			'cloud-kit-library',
 			'atomic-opt-in',
+			'components',
 		];
 	}
 

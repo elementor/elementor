@@ -27,7 +27,7 @@ export {
 
 export type * from './listeners';
 
-export { isRouteActive as __privateIsRouteActive, isExperimentActive } from './readers';
+export { isRouteActive as __privateIsRouteActive, isExperimentActive, EXPERIMENTAL_FEATURES } from './readers';
 
 export { undoable } from './undoable';
 

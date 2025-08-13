@@ -91,19 +91,6 @@ class Utils {
 		],
 	];
 
-	/**
-	 * Variables for free to pro upsale modal promotions
-	 */
-
-	const ANIMATED_HEADLINE = 'animated_headline';
-
-	const CTA = 'cta';
-
-	const VIDEO_PLAYLIST = 'video_playlist';
-
-	const TESTIMONIAL_WIDGET = 'testimonial_widget';
-
-	const IMAGE_CAROUSEL = 'image_carousel';
 
 	/**
 	 * Whether WordPress CLI mode is enabled or not.
@@ -944,5 +931,17 @@ class Utils {
 
 	public static function is_custom_kit_applied() {
 		return (bool) Plugin::$instance->kits_manager->get_previous_id();
+	}
+
+	public static function decode_string( string $string, ?string $fallback = '' ) {
+		try {
+			return base64_decode( $string, true ) ?? $fallback;
+		} catch ( \Exception $e ) {
+			return $fallback;
+		}
+	}
+
+	public static function encode_string( string $string ): string {
+		return base64_encode( $string );
 	}
 }

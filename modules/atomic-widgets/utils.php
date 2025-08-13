@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets;
 
+use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 
@@ -27,5 +28,23 @@ class Utils {
 		} while ( in_array( $id, $existing_ids, true ) );
 
 		return $id;
+	}
+
+	public static function traverse_post_elements( string $post_id, callable $callback ): void {
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $post_id );
+
+		if ( ! $document ) {
+			return;
+		}
+
+		$elements_data = $document->get_elements_data();
+
+		if ( empty( $elements_data ) ) {
+			return;
+		}
+
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $callback ) {
+			call_user_func( $callback, $element_data );
+		} );
 	}
 }

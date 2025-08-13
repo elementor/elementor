@@ -1,27 +1,23 @@
 import { useId, useRef } from 'react';
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { type PropTypeUtil } from '@elementor/editor-props';
+import { type PropTypeKey } from '@elementor/editor-props';
 import { ColorFilterIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Box, Popover, usePopupState } from '@elementor/ui';
 
 import { type Variable } from '../../../types';
+import { createUnlinkHandler } from '../../../utils/unlink-variable';
+import { getVariableType } from '../../../variables-registry/variable-type-registry';
 import { VariableSelectionPopover } from '../../variable-selection-popover';
 import { AssignedTag, SIZE } from '../tags/assigned-tag';
 
 type Props = {
-	variablePropTypeUtil: PropTypeUtil< string, string >;
-	fallbackPropTypeUtil: PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
-	additionalStartIcon?: React.ReactNode;
+	propTypeKey: PropTypeKey;
 	variable: Variable;
 };
 
-export const AssignedVariable = ( {
-	variable,
-	variablePropTypeUtil,
-	fallbackPropTypeUtil,
-	additionalStartIcon,
-}: Props ) => {
+export const AssignedVariable = ( { variable, propTypeKey }: Props ) => {
+	const { startIcon, propTypeUtil } = getVariableType( propTypeKey );
 	const { setValue } = useBoundProp();
 	const anchorRef = useRef< HTMLDivElement >( null );
 
@@ -31,9 +27,9 @@ export const AssignedVariable = ( {
 		popupId: `elementor-variables-list-${ popupId }`,
 	} );
 
-	const unlinkVariable = () => {
-		setValue( fallbackPropTypeUtil.create( variable.value ) );
-	};
+	const unlinkVariable = createUnlinkHandler( variable, propTypeKey, setValue );
+
+	const StartIcon = startIcon || ( () => null );
 
 	return (
 		<Box ref={ anchorRef }>
@@ -42,8 +38,7 @@ export const AssignedVariable = ( {
 				startIcon={
 					<>
 						<ColorFilterIcon fontSize={ SIZE } />
-
-						{ additionalStartIcon }
+						<StartIcon value={ variable.value } />
 					</>
 				}
 				onUnlink={ unlinkVariable }
@@ -62,7 +57,7 @@ export const AssignedVariable = ( {
 				<VariableSelectionPopover
 					selectedVariable={ variable }
 					closePopover={ popupState.close }
-					propTypeKey={ variablePropTypeUtil.key }
+					propTypeKey={ propTypeUtil.key }
 				/>
 			</Popover>
 		</Box>

@@ -1,9 +1,81 @@
-import { Box, Typography } from '@elementor/ui';
+import { Box, Typography, Stack } from '@elementor/ui';
 import PropTypes from 'prop-types';
+import { useMemo, useCallback } from 'react';
+import SummarySection from '../../shared/components/summary-section';
+import { buildKitSettingsSummary } from '../../shared/utils/utils';
 
-export default function ExportCompleteSummary( { kitInfo, includes } ) {
+export default function ExportCompleteSummary( { kitInfo, includes, exportedData } ) {
+	const getTemplatesSummary = useCallback( () => {
+		const templates = exportedData?.manifest?.templates;
+
+		if ( ! templates ) {
+			return __( 'No templates exported', 'elementor' );
+		}
+
+		const templatesByType = {};
+
+		Object.values( templates ).forEach( ( template ) => {
+			const docType = template.doc_type;
+			if ( ! templatesByType[ docType ] ) {
+				templatesByType[ docType ] = 0;
+			}
+			templatesByType[ docType ]++;
+		} );
+
+		const summaryTitles = elementorAppConfig[ 'import-export-customization' ]?.summaryTitles?.templates || {};
+
+		const summaryParts = Object.entries( templatesByType )
+			.map( ( [ docType, count ] ) => {
+				const label = summaryTitles[ docType ];
+				if ( ! label ) {
+					return null;
+				}
+
+				const title = count > 1 ? label.plural : label.single;
+				return `${ count } ${ title }`;
+			} )
+			.filter( ( part ) => part );
+
+		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates exported', 'elementor' );
+	}, [ exportedData?.manifest?.templates ] );
+
+	const getPluginsSummary = useCallback( () => {
+		return exportedData?.manifest?.plugins ? exportedData?.manifest?.plugins.map( ( plugin ) => plugin.name ).join( ' | ' ) : __( 'No plugins exported', 'elementor' );
+	}, [ exportedData?.manifest?.plugins ] );
+
+	const getSettingsSummary = useCallback( () => {
+		const siteSettings = exportedData?.manifest?.[ 'site-settings' ];
+
+		if ( ! siteSettings ) {
+			return __( 'No settings exported', 'elementor' );
+		}
+
+		const summary = buildKitSettingsSummary( siteSettings );
+
+		return summary.length > 0 ? summary : __( 'No settings exported', 'elementor' );
+	}, [ exportedData?.manifest?.[ 'site-settings' ] ] );
+
+	const sectionsTitlesMap = useMemo( () => ( {
+		settings: {
+			title: __( 'Site settings', 'elementor' ),
+			subTitle: getSettingsSummary(),
+		},
+		content: {
+			title: __( 'Content', 'elementor' ),
+			subTitle: __( '5 Posts | 12 Pages | 39 Products | 15 Navigation Menu Items', 'elementor' ),
+		},
+		plugins: {
+			title: __( 'Plugins', 'elementor' ),
+			subTitle: getPluginsSummary(),
+		},
+		templates: {
+			title: __( 'Templates', 'elementor' ),
+			subTitle: getTemplatesSummary(),
+		},
+	} ), [ getPluginsSummary, getTemplatesSummary, getSettingsSummary ] );
+
 	return (
-		<Box sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } } data-testid="export-complete-summary">
+		<Box sx={ { width: '100%', border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5, textAlign: 'start' } } data-testid="export-complete-summary">
 			<Typography variant="h6" component="h3" gutterBottom>
 				{ kitInfo.title }
 			</Typography>
@@ -15,19 +87,19 @@ export default function ExportCompleteSummary( { kitInfo, includes } ) {
 			) }
 
 			<Typography variant="caption" color="text.secondary" sx={ { display: 'block', mb: 1 } }>
-				{ __( 'Exported items:', 'elementor' ) }
+				{ __( 'This website template includes:', 'elementor' ) }
 			</Typography>
-			<Typography variant="body2">
-				{ includes.map( ( item ) => {
-					const itemLabels = {
-						content: __( 'Content', 'elementor' ),
-						templates: __( 'Templates', 'elementor' ),
-						settings: __( 'Settings & configurations', 'elementor' ),
-						plugins: __( 'Plugins', 'elementor' ),
-					};
-					return itemLabels[ item ] || item;
-				} ).join( ', ' ) }
-			</Typography>
+			<Stack spacing={ 2 } sx={ { pt: 1, maxWidth: '1075px' } } >
+				{ includes.map( ( section ) =>
+					sectionsTitlesMap[ section ] ? (
+						<SummarySection
+							key={ section }
+							title={ sectionsTitlesMap[ section ].title }
+							subTitle={ sectionsTitlesMap[ section ].subTitle }
+						/>
+					) : null,
+				) }
+			</Stack>
 		</Box>
 	);
 }
@@ -38,4 +110,13 @@ ExportCompleteSummary.propTypes = {
 		description: PropTypes.string,
 	} ).isRequired,
 	includes: PropTypes.arrayOf( PropTypes.string ).isRequired,
+	exportedData: PropTypes.shape( {
+		manifest: PropTypes.shape( {
+			plugins: PropTypes.arrayOf( PropTypes.shape( {
+				name: PropTypes.string,
+			} ) ),
+			templates: PropTypes.object,
+			'site-settings': PropTypes.object,
+		} ),
+	} ),
 };

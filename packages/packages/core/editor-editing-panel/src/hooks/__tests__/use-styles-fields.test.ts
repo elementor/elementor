@@ -13,13 +13,14 @@ import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesFields } from '../use-styles-fields';
 
-jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../contexts/element-context' );
 jest.mock( '../../contexts/style-context' );
 jest.mock( '../../contexts/classes-prop-context' );
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn().mockReturnValue( false ),
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	deleteElementStyle: jest.fn(),
+	getElementLabel: jest.fn(),
+	createElementStyle: jest.fn(),
 } ) );
 
 type StyleValue = ReturnType< typeof useStyle >;
@@ -131,18 +132,20 @@ describe( 'useStylesFields', () => {
 					label: 'test-class',
 					variants: [
 						{
+							meta: { breakpoint: null, state: null },
 							props: {
 								'prop-1': 'value1-normal',
 								'prop-2': 'value2-normal',
 							},
-							meta: { breakpoint: null, state: null },
+							custom_css: null,
 						},
 						{
+							meta: { breakpoint: null, state: 'hover' },
 							props: {
 								'prop-1': 'value1-hover',
 								'prop-2': 'value2-hover',
 							},
-							meta: { breakpoint: null, state: 'hover' },
+							custom_css: null,
 						},
 					],
 				},

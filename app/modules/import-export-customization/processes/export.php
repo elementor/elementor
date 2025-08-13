@@ -79,7 +79,7 @@ class Export {
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
 		$this->settings_customization = isset( $settings['customization'] ) ? $settings['customization'] : null;
 		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
-		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
+		$this->settings_selected_custom_post_types = isset( $settings['customization']['content']['customPostTypes'] ) ? $settings['customization']['content']['customPostTypes'] : null;
 	}
 
 	/**
@@ -236,14 +236,18 @@ class Export {
 	private function get_default_settings_selected_plugins() {
 		$installed_plugins = Plugin::$instance->wp->get_plugins();
 
-		return $installed_plugins->map( function ( $item, $key ) {
-			return [
+		$result = [];
+		foreach ( $installed_plugins->all() as $key => $item ) {
+			$plugin_key = str_replace( '.php', '', $key ); // Inconsistency between get_plugins() and WP Rest API's key format.
+
+			$result[ $plugin_key ] = [
 				'name' => $item['Name'],
-				'plugin' => $key,
+				'plugin' => $plugin_key,
 				'pluginUri' => $item['PluginURI'],
 				'version' => $item['Version'],
 			];
-		} )->all();
+		}
+		return $result;
 	}
 
 	private function get_default_settings_customization() {

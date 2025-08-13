@@ -73,6 +73,7 @@ class Module extends BaseModule {
 			] ),
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
+			'plan_type' => ConnectModule::ACCESS_TIER_FREE,
 			'app_url' => Plugin::$instance->app->get_base_url() . '#/' . $this->get_name(),
 		] );
 	}
@@ -121,9 +122,7 @@ class Module extends BaseModule {
 			$this->set_kit_library_settings();
 		}, 12 /** After the initiation of the connect kit library */ );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
-		}
+		add_action( 'template_redirect', [ $this, 'handle_kit_screenshot_generation' ] );
 	}
 
 	public function handle_kit_screenshot_generation() {

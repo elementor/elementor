@@ -32,12 +32,32 @@ type Props = {
 	path: PropKey[];
 	label: string;
 	children: React.ReactNode;
+	isDisabled?: boolean;
 };
 
-export const StylesInheritanceInfotip = ( { inheritanceChain, propType, path, label, children }: Props ) => {
+export const StylesInheritanceInfotip = ( {
+	inheritanceChain,
+	propType,
+	path,
+	label,
+	children,
+	isDisabled,
+}: Props ) => {
 	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
-	const toggleInfotip = () => setShowInfotip( ( prev ) => ! prev );
-	const closeInfotip = () => setShowInfotip( false );
+
+	const toggleInfotip = () => {
+		if ( isDisabled ) {
+			return;
+		}
+		setShowInfotip( ( prev ) => ! prev );
+	};
+
+	const closeInfotip = () => {
+		if ( isDisabled ) {
+			return;
+		}
+		setShowInfotip( false );
+	};
 
 	const key = path.join( '.' );
 
@@ -59,27 +79,36 @@ export const StylesInheritanceInfotip = ( { inheritanceChain, propType, path, la
 				sx={ {
 					width: `${ sectionWidth - SECTION_PADDING_INLINE }px`,
 					maxWidth: 496,
+					maxHeight: 268,
 					overflowX: 'hidden',
+					display: 'flex',
+					flexDirection: 'column',
 				} }
 			>
+				<Box
+					sx={ {
+						position: 'sticky',
+						top: 0,
+						zIndex: 1,
+						backgroundColor: 'background.paper',
+					} }
+				>
+					<PopoverHeader title={ __( 'Style origin', 'elementor' ) } onClose={ closeInfotip } />
+				</Box>
+
 				<CardContent
 					sx={ {
 						display: 'flex',
-						gap: 0.5,
 						flexDirection: 'column',
 						p: 0,
+						flex: 1,
+						overflow: 'auto',
 						'&:last-child': {
 							pb: 0,
 						},
 					} }
 				>
-					<PopoverHeader title={ __( 'Style origin', 'elementor' ) } onClose={ closeInfotip } />
-
-					<Stack
-						gap={ 1.5 }
-						sx={ { pl: 2, pr: 1, pb: 2, overflowX: 'hidden', overflowY: 'auto' } }
-						role="list"
-					>
+					<Stack gap={ 1.5 } sx={ { pl: 3, pr: 1, pb: 2 } } role="list">
 						{ items.map( ( item, index ) => {
 							return (
 								<Box
@@ -87,7 +116,7 @@ export const StylesInheritanceInfotip = ( { inheritanceChain, propType, path, la
 									display="flex"
 									gap={ 0.5 }
 									role="listitem"
-									/* translators: %s: Label of the inheritance item */
+									// translators: %s is the display label of the inheritance item
 									aria-label={ __( 'Inheritance item: %s', 'elementor' ).replace(
 										'%s',
 										item.displayLabel
@@ -108,9 +137,18 @@ export const StylesInheritanceInfotip = ( { inheritanceChain, propType, path, la
 		</ClickAwayListener>
 	);
 
+	if ( isDisabled ) {
+		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
+	}
+
 	return (
-		<TooltipOrInfotip showInfotip={ showInfotip } onClose={ closeInfotip } infotipContent={ infotipContent }>
-			<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } }>
+		<TooltipOrInfotip
+			showInfotip={ showInfotip }
+			onClose={ closeInfotip }
+			infotipContent={ infotipContent }
+			isDisabled={ isDisabled }
+		>
+			<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } } disabled={ isDisabled }>
 				{ children }
 			</IconButton>
 		</TooltipOrInfotip>
@@ -122,14 +160,21 @@ function TooltipOrInfotip( {
 	showInfotip,
 	onClose,
 	infotipContent,
+	isDisabled,
 }: {
 	children: React.ReactNode;
 	showInfotip: boolean;
 	onClose: () => void;
 	infotipContent: React.ReactNode;
+	isDisabled?: boolean;
 } ) {
-	const { isSiteRtl } = useDirection();
+	const direction = useDirection();
+	const isSiteRtl = direction.isSiteRtl;
 	const forceInfotipAlignLeft = isSiteRtl ? 9999999 : -9999999;
+
+	if ( isDisabled ) {
+		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
+	}
 
 	if ( showInfotip ) {
 		return (

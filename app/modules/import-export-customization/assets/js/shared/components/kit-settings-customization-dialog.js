@@ -1,34 +1,27 @@
-import {
-	Dialog,
-	DialogHeader,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Button,
-	Box,
-	Typography,
-	Switch,
-	Stack,
-} from '@elementor/ui';
-import { useState, useEffect } from 'react';
+import { Stack } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
+import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { SettingSection } from './customization-setting-section';
+import { SubSetting } from './customization-sub-setting';
+import { KitCustomizationDialog } from './kit-customization-dialog';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
+	const isImport = data.hasOwnProperty( 'uploadedData' );
+
+	const siteSettingsRegistry = elementorModules?.importExport?.siteSettingsRegistry;
+	const siteSettingsSections = siteSettingsRegistry?.getAll() || [];
+
 	const initialState = data.includes.includes( 'settings' );
+	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.settings ) {
 			return data.customization.settings;
 		}
 
-		return {
-			theme: initialState,
-			globalColors: initialState,
-			globalFonts: initialState,
-			themeStyleSettings: initialState,
-			generalSettings: initialState,
-			experiments: initialState,
-		};
+		return siteSettingsRegistry.getState( data, initialState );
 	} );
 
 	useEffect( () => {
@@ -36,167 +29,78 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 			if ( data.customization.settings ) {
 				setSettings( data.customization.settings );
 			} else {
-				setSettings( {
-					theme: initialState,
-					globalColors: initialState,
-					globalFonts: initialState,
-					themeStyleSettings: initialState,
-					generalSettings: initialState,
-					experiments: initialState,
-				} );
+				const state = siteSettingsRegistry.getState( data, initialState );
+
+				setSettings( state );
 			}
 		}
-	}, [ open, data.customization.settings, initialState ] );
+	}, [ open, data.customization.settings, siteSettingsRegistry, data?.uploadedData, initialState ] );
 
-	const handleToggleChange = ( settingKey ) => {
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+	}, [] );
+
+	const handleToggleChange = ( settingKey, isChecked ) => {
+		unselectedValues.current = isChecked
+			? unselectedValues.current.filter( ( val ) => settingKey !== val )
+			: [ ...unselectedValues.current, settingKey ];
+
 		setSettings( ( prev ) => ( {
 			...prev,
 			[ settingKey ]: ! prev[ settingKey ],
 		} ) );
 	};
 
-	const SettingSection = ( { title, description, children, hasToggle = true, settingKey } ) => (
-		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
-			<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-				<Box>
-					<Typography variant="body1" sx={ { fontWeight: 500 } }>
-						{ title }
-					</Typography>
-					{ description && (
-						<Typography variant="body1" color="text.secondary" sx={ { fontWeight: 400 } }>
-							{ description }
-						</Typography>
-					) }
-				</Box>
-				{ hasToggle && (
-					<Switch
-						checked={ settings[ settingKey ] }
-						onChange={ () => handleToggleChange( settingKey ) }
-						color="info"
-						size="medium"
-						sx={ { alignSelf: 'center' } }
-					/>
-				) }
-			</Box>
-			{ children && (
-				<Box sx={ { mt: 2 } }>
-					{ children }
-				</Box>
-			) }
-		</Box>
-	);
-
-	SettingSection.propTypes = {
-		title: PropTypes.string.isRequired,
-		description: PropTypes.string,
-		children: PropTypes.node,
-		hasToggle: PropTypes.bool,
-		settingKey: PropTypes.string,
-	};
-
-	const SubSetting = ( { label, settingKey } ) => (
-		<Box sx={ {
-			display: 'flex',
-			justifyContent: 'space-between',
-			alignItems: 'center',
-			py: 1.5,
-		} }>
-			<Typography variant="body1" sx={ { fontWeight: 400 } }>
-				{ label }
-			</Typography>
-			<Switch
-				checked={ settings[ settingKey ] }
-				onChange={ () => handleToggleChange( settingKey ) }
-				color="info"
-				size="medium"
-			/>
-		</Box>
-	);
-
-	SubSetting.propTypes = {
-		label: PropTypes.string.isRequired,
-		settingKey: PropTypes.string.isRequired,
-	};
-
 	return (
-		<Dialog
+		<KitCustomizationDialog
 			open={ open }
-			onClose={ handleClose }
-			maxWidth="md"
-			fullWidth
-			PaperProps={ {
-				sx: {
-					minHeight: '600px',
-				},
-			} }
+			title={ __( 'Edit settings & configurations', 'elementor' ) }
+			handleClose={ handleClose }
+			handleSaveChanges={ () => handleSaveChanges( 'settings', settings, unselectedValues.current ) }
 		>
-			<DialogHeader onClose={ handleClose }>
-				<DialogTitle>
-					{ __( 'Edit settings & configurations', 'elementor' ) }
-				</DialogTitle>
-			</DialogHeader>
+			<Stack>
+				{ siteSettingsSections.map( ( siteSettingsSection ) => {
+					if ( siteSettingsSection.children ) {
+						return (
+							<SettingSection
+								key={ siteSettingsSection.key }
+								title={ siteSettingsSection.title }
+								description={ siteSettingsSection.description }
+								hasToggle={ false }
+							>
+								<Stack>
+									{ siteSettingsSection.children.map( ( siteSettingsChildSection ) => {
+										return (
+											<SubSetting
+												key={ siteSettingsChildSection.key }
+												label={ siteSettingsChildSection.title }
+												description={ siteSettingsChildSection.description }
+												settingKey={ siteSettingsChildSection.key }
+												onSettingChange={ handleToggleChange }
+												checked={ settings[ siteSettingsChildSection.key ] }
+												disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.[ siteSettingsChildSection.key ] }
+											/>
+										);
+									} ) }
+								</Stack>
+							</SettingSection>
+						);
+					}
 
-			<DialogContent dividers sx={ { p: 3 } }>
-				<Stack>
-					<SettingSection
-						title={ __( 'Theme', 'elementor' ) }
-						description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
-						settingKey="theme"
-					/>
-
-					<SettingSection
-						title={ __( 'Site settings', 'elementor' ) }
-						hasToggle={ false }
-					>
-						<Stack>
-							<SubSetting
-								label={ __( 'Global colors', 'elementor' ) }
-								settingKey="globalColors"
-							/>
-							<SubSetting
-								label={ __( 'Global fonts', 'elementor' ) }
-								settingKey="globalFonts"
-							/>
-							<SubSetting
-								label={ __( 'Theme style settings', 'elementor' ) }
-								settingKey="themeStyleSettings"
-							/>
-						</Stack>
-					</SettingSection>
-
-					<SettingSection
-						title={ __( 'Settings', 'elementor' ) }
-						description={ __( 'Include site identity, background, layout, Lightbox, page transitions, and custom CSS', 'elementor' ) }
-						settingKey="generalSettings"
-					/>
-
-					<SettingSection
-						title={ __( 'Experiments', 'elementor' ) }
-						description={ __( 'This will apply all experiments that are still active during import', 'elementor' ) }
-						settingKey="experiments"
-					/>
-				</Stack>
-			</DialogContent>
-
-			<DialogActions>
-				<Button
-					onClick={ handleClose }
-					color="secondary"
-				>
-					{ __( 'Cancel', 'elementor' ) }
-				</Button>
-				<Button
-					onClick={ () => {
-						handleSaveChanges( 'settings', settings );
-						handleClose();
-					} }
-					variant="contained"
-					color="primary"
-				>
-					{ __( 'Save changes', 'elementor' ) }
-				</Button>
-			</DialogActions>
-		</Dialog>
+					return (
+						<SettingSection
+							key={ siteSettingsSection.key }
+							checked={ settings[ siteSettingsSection.key ] }
+							title={ siteSettingsSection.title }
+							description={ siteSettingsSection.description }
+							settingKey={ siteSettingsSection.key }
+							onSettingChange={ handleToggleChange }
+							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.[ siteSettingsSection.key ] }
+						/>
+					);
+				} ) }
+			</Stack>
+		</KitCustomizationDialog>
 	);
 }
 

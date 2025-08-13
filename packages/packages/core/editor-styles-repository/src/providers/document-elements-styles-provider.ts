@@ -28,7 +28,7 @@ export const documentElementsStylesProvider = createStylesProvider( {
 		return `${ ELEMENTS_STYLES_PROVIDER_KEY_PREFIX }${ documentId }`;
 	},
 	priority: 50,
-	subscribe: ( cb ) => listenTo( styleRerenderEvents, cb ),
+	subscribe: ( cb ) => listenTo( styleRerenderEvents, () => cb() ),
 	actions: {
 		all: ( meta = {} ) => {
 			let elements = getElements();
@@ -60,6 +60,20 @@ export const documentElementsStylesProvider = createStylesProvider( {
 				styleId: args.id,
 				meta: args.meta,
 				props: args.props,
+			} );
+		},
+
+		updateCustomCss: ( args, meta = {} ) => {
+			if ( ! isValidElementsMeta( meta ) ) {
+				throw new InvalidElementsStyleProviderMetaError( { context: { meta } } );
+			}
+
+			updateElementStyle( {
+				elementId: meta.elementId,
+				styleId: args.id,
+				meta: args.meta,
+				custom_css: args.custom_css.raw ? args.custom_css : null,
+				props: {},
 			} );
 		},
 	},

@@ -6,6 +6,17 @@ import kitContentData from '../kit-content-data';
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
 
+	const isImport = data.hasOwnProperty( 'uploadedData' );
+
+	const isDisabled = ( item ) => {
+		if ( isImport ) {
+			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
+			return ! data?.uploadedData?.manifest?.[ manifestKey ];
+		}
+
+		return item.required && data.includes.includes( item.type );
+	};
+
 	return (
 		<Stack spacing={ 2 } data-testid={ testId }>
 			{ kitContentData.map( ( item ) => (
@@ -19,12 +30,19 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 											color="info"
 											checked={ data.includes.includes( item.type ) }
 											onChange={ () => onCheckboxChange( item.type ) }
+											disabled={ isDisabled( item ) }
+											indeterminate={ isImport && isDisabled( item ) }
 											sx={ { py: 0 } }
 											data-testid={ `KitContentDataSelection-${ item.type }` }
 											data-type={ item.type }
 										/>
 									}
-									label={ <Typography variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }
+									label={ <Typography color="text.primary" variant="body1" sx={ { fontWeight: 500 } }>{ item.data.title }</Typography> }
+									sx={ {
+										'& .MuiFormControlLabel-label.Mui-disabled': {
+											color: 'text.primary',
+										},
+									} }
 								/>
 								<Typography variant="body2" color="text.secondary" sx={ { mt: 1, ml: 4 } }>
 									{ item.data.features.open.join( ', ' ) }
@@ -35,6 +53,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								onClick={ () => setActiveDialog( item.type ) }
 								sx={ { alignSelf: 'center' } }
 								data-type={ item.type }
+								disabled={ isDisabled( item ) }
 							>
 								{ __( 'Edit', 'elementor' ) }
 							</Button>
