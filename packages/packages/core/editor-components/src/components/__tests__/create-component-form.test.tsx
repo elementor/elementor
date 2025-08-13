@@ -154,7 +154,7 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			expect( screen.getByText( 'Creating...' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Creating…' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should disable buttons during loading', () => {
@@ -169,7 +169,7 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			// Create button should show loading state and be disabled.
 			expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
-			expect( screen.getByText( 'Creating...' ) ).toBeDisabled();
+			expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
 
 			// Cancel button should be disabled.
 			expect( getCancelButton() ).toBeDisabled();
@@ -237,7 +237,7 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.queryByText( 'Creating...' ) ).not.toBeInTheDocument();
+				expect( screen.queryByText( 'Creating…' ) ).not.toBeInTheDocument();
 			} );
 
 			// Assert.

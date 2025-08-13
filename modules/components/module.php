@@ -36,6 +36,12 @@ class Module extends BaseModule {
 		];
 	}
 
+	public function get_widgets() {
+		return [
+            'Component',
+		];
+	}
+
 	private function register_document_type(){
         add_action('elementor/documents/register', function ($documents_manager) {
             $documents_manager->register_document_type(

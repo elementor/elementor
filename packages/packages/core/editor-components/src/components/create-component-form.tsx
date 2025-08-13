@@ -109,7 +109,10 @@ export function CreateComponentForm() {
 						sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }
 					>
 						<StarIcon fontSize={ FONT_SIZE } />
-						<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500' } }>
+						<Typography
+							variant="caption"
+							sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }
+						>
 							{ __( 'Save as a component', 'elementor' ) }
 						</Typography>
 					</Stack>
