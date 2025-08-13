@@ -182,7 +182,7 @@ class Test_WP_Exporter extends Elementor_Test_Base {
 	private function wxr_cdata( $str ) {
 		$str = (string) $str;
 
-		if ( ! seems_utf8( $str ) ) {
+		if ( ! wp_is_valid_utf8( $str ) ) {
 			$str = utf8_encode( $str );
 		}
 
