@@ -50,23 +50,23 @@ class CssParser {
 	}
 
 	public function parse_from_file( string $file_path ): ParsedCss {
-		if ( ! file_exists( $file_path ) ) {
-			throw new CssParseException( "CSS file not found: {$file_path}" );
-		}
+        if ( ! file_exists( $file_path ) ) {
+            throw new CssParseException( 'CSS file not found: ' . $file_path );
+        }
 
 		$css = file_get_contents( $file_path );
-		if ( false === $css ) {
-			throw new CssParseException( "Failed to read CSS file: {$file_path}" );
-		}
+        if ( false === $css ) {
+            throw new CssParseException( 'Failed to read CSS file: ' . $file_path );
+        }
 
 		return $this->parse( $css );
 	}
 
 	public function parse_from_url( string $url ): ParsedCss {
 		$css = wp_remote_retrieve_body( wp_remote_get( $url ) );
-		if ( empty( $css ) ) {
-			throw new CssParseException( "Failed to fetch CSS from URL: {$url}" );
-		}
+        if ( empty( $css ) ) {
+            throw new CssParseException( 'Failed to fetch CSS from URL: ' . $url );
+        }
 
 		return $this->parse( $css );
 	}

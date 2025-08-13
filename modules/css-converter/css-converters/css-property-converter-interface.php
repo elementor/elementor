@@ -5,4 +5,3 @@ interface CssPropertyConverterInterface {
 	public function convert( string $value, array $schema ): array;
 }
 
-

@@ -36,11 +36,11 @@ class ParsedCss {
 		}
 
 		$format = \Sabberworm\CSS\OutputFormat::create();
-		
+
 		if ( isset( $format_options['indent'] ) ) {
 			$format->indentWithSpaces( $format_options['indent'] );
 		}
-		
+
 		if ( isset( $format_options['space_between_rules'] ) ) {
 			$format->setSpaceBetweenRules( $format_options['space_between_rules'] );
 		}

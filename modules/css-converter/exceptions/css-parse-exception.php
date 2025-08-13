@@ -6,9 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class CssParseException extends \Exception {
-	
 	public function __construct( $message = '', $code = 0, \Throwable $previous = null ) {
-		$message = $message ?: 'Failed to parse CSS';
+		$message = $message ? $message : 'Failed to parse CSS';
 		parent::__construct( $message, $code, $previous );
 	}
-} 
+}
