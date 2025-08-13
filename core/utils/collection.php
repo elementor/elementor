@@ -290,9 +290,9 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Get the first item.
 	 *
-	 * @param null $fallback
+	 * @param mixed $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function first( $fallback = null ) {
 		if ( $this->is_empty() ) {
@@ -308,9 +308,9 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * Find an element from the items.
 	 *
 	 * @param callable $callback
-	 * @param null     $fallback
+	 * @param mixed    $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function find( callable $callback, $fallback = null ) {
 		foreach ( $this->all() as $key => $item ) {
