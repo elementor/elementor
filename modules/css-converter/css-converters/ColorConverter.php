@@ -1,13 +1,14 @@
 <?php
 namespace Elementor\Modules\CssConverter\CssConverters;
 
-class ColorConverter implements CssPropertyConverterInterface {
-    public function convert(string $value, array $schema): array {
-        if (!isset($schema['color'])) {
-            return [];
-        }
-        return [
-            'color' => $value,
-        ];
-    }
-} 
+class Color_Converter implements CssPropertyConverterInterface {
+	public function convert( string $value, array $schema ): array {
+		if ( ! isset( $schema['color'] ) ) {
+			return [];
+		}
+
+		return [
+			'color' => $value,
+		];
+	}
+}

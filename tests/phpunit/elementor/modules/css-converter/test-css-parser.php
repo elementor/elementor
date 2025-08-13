@@ -11,7 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Css_Parser extends Elementor_Test_Base {
 
 	public function test_extracts_root_variables() {
-		require_once ABSPATH . 'wp-content/plugins/elementor/modules/css-converter/parsers/css-parser.php';
+		require_once ELEMENTOR_PATH . 'modules/css-converter/autoloader.php';
+		\Elementor\Modules\CssConverter\CSS_Converter_Autoloader::register();
 
 		$css = ':root { --primary: #007cba; --spacing-md: 16px; } html { --font: Arial; }';
 		$parser = new CssParser();
@@ -29,7 +30,8 @@ class Test_Css_Parser extends Elementor_Test_Base {
 	}
 
 	public function test_ignores_non_variable_properties() {
-		require_once ABSPATH . 'wp-content/plugins/elementor/modules/css-converter/parsers/css-parser.php';
+		require_once ELEMENTOR_PATH . 'modules/css-converter/autoloader.php';
+		\Elementor\Modules\CssConverter\CSS_Converter_Autoloader::register();
 
 		$css = '.btn { color: red; } :root { --primary: #000; }';
 		$parser = new CssParser();
@@ -41,7 +43,8 @@ class Test_Css_Parser extends Elementor_Test_Base {
 	}
 
 	public function test_reports_conversion_summary_for_variables() {
-		require_once ABSPATH . 'wp-content/plugins/elementor/modules/css-converter/parsers/css-parser.php';
+		require_once ELEMENTOR_PATH . 'modules/css-converter/autoloader.php';
+		\Elementor\Modules\CssConverter\CSS_Converter_Autoloader::register();
 
 		$css = ':root { --x: 1; }';
 		$parser = new CssParser();
