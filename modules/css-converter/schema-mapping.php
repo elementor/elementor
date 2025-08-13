@@ -5,6 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once __DIR__ . '/css-converters/css-property-converter-registry.php';
+
 use Elementor\Modules\CssConverter\CssConverters\CssPropertyConverterRegistry;
 
 function elementor_css_converter_map_css_to_props($tag, $css, $schema) {

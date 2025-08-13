@@ -14,6 +14,10 @@ class Test_Css_Parser extends Elementor_Test_Base {
 		require_once ELEMENTOR_PATH . 'modules/css-converter/autoloader.php';
 		\Elementor\Modules\CssConverter\CSS_Converter_Autoloader::register();
 
+		if ( ! \Elementor\Modules\CssConverter\CSS_Converter_Autoloader::is_loaded() ) {
+			$this->markTestSkipped( 'CSS converter dependencies not available. Run composer install in modules/css-converter/' );
+		}
+
 		$css = ':root { --primary: #007cba; --spacing-md: 16px; } html { --font: Arial; }';
 		$parser = new CssParser();
 		$parsed = $parser->parse( $css );
@@ -33,6 +37,10 @@ class Test_Css_Parser extends Elementor_Test_Base {
 		require_once ELEMENTOR_PATH . 'modules/css-converter/autoloader.php';
 		\Elementor\Modules\CssConverter\CSS_Converter_Autoloader::register();
 
+		if ( ! \Elementor\Modules\CssConverter\CSS_Converter_Autoloader::is_loaded() ) {
+			$this->markTestSkipped( 'CSS converter dependencies not available. Run composer install in modules/css-converter/' );
+		}
+
 		$css = '.btn { color: red; } :root { --primary: #000; }';
 		$parser = new CssParser();
 		$parsed = $parser->parse( $css );
@@ -45,6 +53,10 @@ class Test_Css_Parser extends Elementor_Test_Base {
 	public function test_reports_conversion_summary_for_variables() {
 		require_once ELEMENTOR_PATH . 'modules/css-converter/autoloader.php';
 		\Elementor\Modules\CssConverter\CSS_Converter_Autoloader::register();
+
+		if ( ! \Elementor\Modules\CssConverter\CSS_Converter_Autoloader::is_loaded() ) {
+			$this->markTestSkipped( 'CSS converter dependencies not available. Run composer install in modules/css-converter/' );
+		}
 
 		$css = ':root { --x: 1; }';
 		$parser = new CssParser();

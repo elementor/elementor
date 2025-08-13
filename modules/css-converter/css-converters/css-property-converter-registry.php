@@ -1,6 +1,10 @@
 <?php
 namespace Elementor\Modules\CssConverter\CssConverters;
 
+require_once __DIR__ . '/css-property-converter-interface.php';
+require_once __DIR__ . '/background-color-converter.php';
+require_once __DIR__ . '/color-converter.php';
+
 class CssPropertyConverterRegistry {
 	private array $converters = [];
 
