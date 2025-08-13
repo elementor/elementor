@@ -139,7 +139,12 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													onSave={ () => {} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
 													editableElement={ ( { value, onChange } ) => (
-														<LabelField size="tiny" value={ value } onChange={ onChange } />
+														<LabelField
+															id={ 'variable-label-' + row.id }
+															size="tiny"
+															value={ value }
+															onChange={ onChange }
+														/>
 													) }
 												>
 													<EllipsisWithTooltip title={ row.name }>

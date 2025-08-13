@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useId, useState } from 'react';
-import { TextField, TextFieldProps } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
+import { TextField, type TextFieldProps } from '@elementor/ui';
 
-import { labelHint, validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
+import { validateLabel, VARIABLE_LABEL_MAX_LENGTH } from '../../utils/validations';
 function isLabelEqual( a: string, b: string ) {
 	return a.trim().toLowerCase() === b.trim().toLowerCase();
 }
@@ -28,10 +27,10 @@ type LabelFieldProps = {
 	onChange: ( value: string ) => void;
 	id?: string;
 	onErrorChange?: ( errorMsg: string ) => void;
-	size?: TextFieldProps['size'];
+	size?: TextFieldProps[ 'size' ];
 };
 
-export const LabelField = ( { value, error, onChange, id: propId, onErrorChange, size = 'tiny' }: LabelFieldProps ) => {
+export const LabelField = ( { value, error, onChange, id, onErrorChange, size = 'tiny' }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
@@ -45,8 +44,6 @@ export const LabelField = ( { value, error, onChange, id: propId, onErrorChange,
 
 		onChange( isLabelEqual( newValue, error?.value ?? '' ) || errorMsg ? '' : newValue );
 	};
-
-	const id = propId || useId();
 
 	let errorMsg = errorMessage;
 	if ( isLabelEqual( label, error?.value ?? '' ) && error?.message ) {
