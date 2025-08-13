@@ -8,7 +8,33 @@ export class BaseRegistry {
 			throw new Error( 'Template type must have key and title' );
 		}
 
-		const formattedSection = {
+		const existingSection = this.get( section.key );
+
+		const formattedSection = existingSection || this.formatSection( section );
+
+		if ( section.children ) {
+			// If existing section has children, merge them with new children
+			if ( formattedSection.children ) {
+				const existingChildrenMap = new Map(
+					formattedSection.children.map( ( child ) => [ child.key, child ] ),
+				);
+
+				// Override existing children with new ones and add new children
+				section.children.forEach( ( childSection ) => {
+					const formattedChild = this.formatSection( childSection );
+					existingChildrenMap.set( childSection.key, formattedChild );
+				} );
+
+				formattedSection.children = Array.from( existingChildrenMap.values() );
+			} else {
+				formattedSection.children = section.children.map( ( childSection ) => this.formatSection( childSection ) );
+			}
+		}
+		this.sections.set( section.key, formattedSection );
+	}
+
+	formatSection( { children, ...section } ) {
+		return {
 			key: section.key,
 			title: section.title,
 			description: section.description || '',
@@ -19,25 +45,19 @@ export class BaseRegistry {
 			isAvailable: section.isAvailable || ( () => true ),
 			...section,
 		};
-
-		if ( section.children ) {
-			formattedSection.children = section.children?.map( ( childSection ) => ( {
-				key: childSection.key,
-				title: childSection.title,
-				description: childSection.description || '',
-				useParentDefault: childSection.useParentDefault !== false,
-				getInitialState: childSection.getInitialState || null,
-				component: childSection.component || null,
-				order: childSection.order || 10,
-				...childSection,
-			} ) );
-		}
-		this.sections.set( section.key, formattedSection );
 	}
-
 	getAll() {
 		return Array.from( this.sections.values() )
 			.filter( ( type ) => type.isAvailable() )
+			.map( ( type ) => {
+				if ( type.children ) {
+					return {
+						...type,
+						children: [ ...type.children ].sort( ( a, b ) => a.order - b.order ),
+					};
+				}
+				return type;
+			} )
 			.sort( ( a, b ) => a.order - b.order );
 	}
 
