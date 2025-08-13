@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/autoloader.php';
 require_once __DIR__ . '/schema-mapping.php';
 require_once __DIR__ . '/widget-creation.php';
-require_once __DIR__ . '/widgets/FlexboxWidgetHandler.php';
-require_once __DIR__ . '/widgets/ParagraphWidgetHandler.php';
-require_once __DIR__ . '/widgets/HtmlWidgetHandler.php';
+require_once __DIR__ . '/widgets/flexbox-widget-handler.php';
+require_once __DIR__ . '/widgets/paragraph-widget-handler.php';
+require_once __DIR__ . '/widgets/html-widget-handler.php';
 
 // Initialize CSS parser dependencies
 CSS_Converter_Autoloader::register();
@@ -20,9 +20,9 @@ class CssConverterHandler {
 
 	public function __construct() {
 		$this->widgetHandlers = [
-			'flexbox' => new FlexboxWidgetHandler(),
-			'paragraph' => new ParagraphWidgetHandler(),
-			'html' => new HtmlWidgetHandler(),
+            'flexbox' => new \Elementor\Modules\CssConverter\Widgets\Flexbox_Widget_Handler(),
+            'paragraph' => new \Elementor\Modules\CssConverter\Widgets\Paragraph_Widget_Handler(),
+            'html' => new \Elementor\Modules\CssConverter\Widgets\Html_Widget_Handler(),
 		];
 	}
 
