@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 import { API_ERROR_CODES } from '../api';
 import { DuplicateLabelDialog } from './class-manager/duplicate-label-dialog';
+import { usePanelActions } from '@elementor/editor-editing-panel';
 
 export type ErrorDialogData = {
 	message: string;
@@ -31,6 +32,7 @@ type ErrorDialogProps = {
 
 export const showErrorDialog = ( data: ErrorDialogProps ) => {
 	const { code, modifiedLabels } = data;
+	const { open } = usePanelActions();
 
 
 	const handleButtonClick = () => {
