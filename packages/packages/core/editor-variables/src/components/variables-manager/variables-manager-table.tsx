@@ -158,6 +158,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													initialValue={ row.value }
 													onSave={ () => {} }
 													editableElement={ row.valueField }
+													disableCloseOnBlur
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
 													<EllipsisWithTooltip title={ row.value }>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Stack } from '@elementor/ui';
+import { ClickAwayListener, Stack } from '@elementor/ui';
 
 import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
 
@@ -10,12 +10,14 @@ export const VariableEditableCell = ( {
 	editableElement,
 	onSave,
 	prefixElement,
+	disableCloseOnBlur,
 }: {
 	initialValue: string;
 	children: React.ReactNode;
 	editableElement: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
 	onSave: ( newValue: string ) => void;
 	prefixElement?: React.ReactNode;
+	disableCloseOnBlur?: boolean;
 } ) => {
 	const [ value, setValue ] = useState( initialValue );
 	const [ isEditing, setIsEditing ] = useState( false );
@@ -44,16 +46,18 @@ export const VariableEditableCell = ( {
 	const editableContent = editableElement( { value, onChange: handleChange } );
 
 	return (
-		<Stack
-			direction="row"
-			alignItems="center"
-			gap={ 1 }
-			onDoubleClick={ handleDoubleClick }
-			onBlur={ handleSave }
-			onKeyDown={ handleKeyDown }
-		>
-			{ prefixElement }
-			{ isEditing ? editableContent : children }
-		</Stack>
+		<ClickAwayListener onClickAway={ handleSave }>
+			<Stack
+				direction="row"
+				alignItems="center"
+				gap={ 1 }
+				onDoubleClick={ handleDoubleClick }
+				onBlur={ disableCloseOnBlur ? undefined : handleSave }
+				onKeyDown={ handleKeyDown }
+			>
+				{ prefixElement }
+				{ isEditing ? editableContent : children }
+			</Stack>
+		</ClickAwayListener>
 	);
 };
