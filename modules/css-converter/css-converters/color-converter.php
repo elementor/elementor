@@ -14,5 +14,3 @@ class Color_Converter implements CssPropertyConverterInterface {
 		];
 	}
 }
-
-

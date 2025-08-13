@@ -21,5 +21,3 @@ class Html_Widget_Handler {
 		];
 	}
 }
-
-

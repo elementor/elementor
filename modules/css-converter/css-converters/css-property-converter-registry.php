@@ -19,5 +19,3 @@ class CssPropertyConverterRegistry {
 		return $this->converters[ $property ] ?? null;
 	}
 }
-
-

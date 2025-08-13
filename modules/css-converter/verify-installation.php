@@ -1,12 +1,12 @@
 <?php
 /**
  * Elementor CSS Parser Installation Verification Script
- * 
+ *
  * Run this script to verify that the CSS parser is properly installed and configured.
- * 
+ *
  * Usage:
  * php verify-installation.php
- * 
+ *
  * Or via WordPress:
  * wp eval-file verify-installation.php
  */
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 echo "Elementor CSS Parser Installation Verification\n";
-echo str_repeat( "=", 50 ) . "\n\n";
+echo str_repeat( '=', 50 ) . "\n\n";
 
 $checks = [];
 $all_passed = true;
@@ -41,7 +41,7 @@ echo "2. Checking CSS converter autoloader...\n";
 try {
 	require_once __DIR__ . '/autoloader.php';
 	CSS_Converter_Autoloader::register();
-	
+
 	if ( CSS_Converter_Autoloader::is_loaded() ) {
 		$checks['autoloader'] = '✓ CSS converter autoloader working';
 	} else {
@@ -71,7 +71,7 @@ try {
 echo "4. Checking CssParser class...\n";
 try {
 	require_once __DIR__ . '/parsers/css-parser.php';
-	
+
 	if ( class_exists( '\\Elementor\\Modules\\CssConverter\\Parsers\\CssParser' ) ) {
 		$checks['cssparser'] = '✓ CssParser class available';
 	} else {
@@ -86,12 +86,12 @@ try {
 // Check 5: Basic functionality test
 echo "5. Testing basic CSS parsing...\n";
 try {
-	
+
 	$parser = new CssParser();
-	$test_css = ".test { color: red; background: blue; }";
+	$test_css = '.test { color: red; background: blue; }';
 	$parsed = $parser->parse( $test_css );
 	$classes = $parser->extract_classes( $parsed );
-	
+
 	if ( isset( $classes['test'] ) && count( $classes['test']['rules'] ) === 2 ) {
 		$checks['functionality'] = '✓ Basic CSS parsing working';
 	} else {
@@ -107,7 +107,7 @@ try {
 echo "6. Checking test files...\n";
 $test_files = [
 	'tests/css-parser-test.php',
-	'tests/manual-test.php'
+	'tests/manual-test.php',
 ];
 
 $test_files_exist = true;
@@ -135,15 +135,15 @@ if ( file_exists( __DIR__ . '/README.md' ) ) {
 }
 
 // Display results
-echo "\n" . str_repeat( "=", 50 ) . "\n";
+echo "\n" . str_repeat( '=', 50 ) . "\n";
 echo "VERIFICATION RESULTS:\n";
-echo str_repeat( "=", 50 ) . "\n";
+echo str_repeat( '=', 50 ) . "\n";
 
 foreach ( $checks as $check_name => $result ) {
 	echo "$result\n";
 }
 
-echo "\n" . str_repeat( "=", 50 ) . "\n";
+echo "\n" . str_repeat( '=', 50 ) . "\n";
 
 if ( $all_passed ) {
 	echo "🎉 ALL CHECKS PASSED!\n\n";
@@ -163,14 +163,14 @@ if ( $all_passed ) {
 	echo "- Check WordPress installation\n";
 }
 
-echo "\n" . str_repeat( "=", 50 ) . "\n";
+echo "\n" . str_repeat( '=', 50 ) . "\n";
 
 // Advanced test if everything passed
 if ( $all_passed ) {
 	echo "\nRunning advanced functionality test...\n";
-	
+
 	try {
-		$advanced_css = "
+		$advanced_css = '
 			:root {
 				--primary: #007cba;
 				--spacing: 20px;
@@ -186,29 +186,28 @@ if ( $all_passed ) {
 			@media (max-width: 768px) {
 				.responsive { display: none; }
 			}
-		";
-		
+		';
+
 		$parser = new CssParser();
 		$parsed = $parser->parse( $advanced_css );
 		$summary = $parser->get_conversion_summary( $parsed );
-		
+
 		echo "Advanced test results:\n";
 		echo "- Classes extracted: {$summary['classes']['count']}\n";
 		echo "- Variables extracted: {$summary['variables']['count']}\n";
-		echo "- Unsupported CSS detected: " . ( $summary['unsupported']['has_content'] ? 'Yes' : 'No' ) . "\n";
+		echo '- Unsupported CSS detected: ' . ( $summary['unsupported']['has_content'] ? 'Yes' : 'No' ) . "\n";
 		echo "- Original CSS size: {$summary['stats']['original_size']} bytes\n";
-		
-		if ( $summary['classes']['count'] === 1 && 
-			 $summary['variables']['count'] === 2 && 
-			 $summary['unsupported']['has_content'] === true ) {
+
+		if ( $summary['classes']['count'] === 1 &&
+			$summary['variables']['count'] === 2 &&
+			$summary['unsupported']['has_content'] === true ) {
 			echo "\n✓ Advanced functionality test PASSED!\n";
 		} else {
 			echo "\n⚠ Advanced functionality test had unexpected results\n";
 		}
-		
 	} catch ( Exception $e ) {
 		echo "\n✗ Advanced functionality test FAILED: " . $e->getMessage() . "\n";
 	}
 }
 
-echo "\nInstallation verification complete.\n"; 
+echo "\nInstallation verification complete.\n";

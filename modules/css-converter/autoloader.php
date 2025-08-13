@@ -12,7 +12,7 @@ class CSS_Converter_Autoloader {
 	public static function register() {
 		if ( ! self::$vendor_autoload_loaded ) {
 			self::$autoload_path = __DIR__ . '/vendor/autoload.php';
-			
+
 			if ( file_exists( self::$autoload_path ) ) {
 				require_once self::$autoload_path;
 				self::$vendor_autoload_loaded = true;
@@ -41,4 +41,4 @@ class CSS_Converter_Autoloader {
 	public static function get_autoload_path(): ?string {
 		return self::$autoload_path;
 	}
-} 
+}

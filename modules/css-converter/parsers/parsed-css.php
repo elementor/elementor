@@ -61,4 +61,4 @@ class ParsedCss {
 			'rendered_size' => strlen( $this->render() ),
 		];
 	}
-} 
+}
