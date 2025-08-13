@@ -15,6 +15,9 @@ class Size_Constants {
 	const UNIT_VH = 'vh';
 	const UNIT_AUTO = 'auto';
 	const UNIT_CUSTOM = 'custom';
+	const UNIT_SECOND = 's';
+	const UNIT_MILLI_SECOND = 'ms';
+	const UNIT_ANGLE_DEG = 'deg';
 
 	const COMMON_UNITS = [
 		self::UNIT_PX,
@@ -25,10 +28,10 @@ class Size_Constants {
 		self::UNIT_CUSTOM,
 	];
 
-	const TIME_UNITS = [ 's', 'ms' ];
-	const EXTENDED_UNITS = [ 'auto', 'custom' ];
+	const TIME_UNITS = [ self::UNIT_SECOND, self::UNIT_MILLI_SECOND ];
+	const EXTENDED_UNITS = [ self::UNIT_AUTO, self::UNIT_CUSTOM ];
 	const VIEWPORT_MIN_MAX_UNITS = [ 'vmin', 'vmax' ];
-	const ANGLE_UNITS = [ 'deg', 'rad', 'grad', 'turn' ];
+	const ANGLE_UNITS = [ self::UNIT_ANGLE_DEG, 'rad', 'grad', 'turn' ];
 
 	public static function all_supported_units(): array {
 		return array_merge(
@@ -79,6 +82,10 @@ class Size_Constants {
 			self::UNIT_REM,
 			self::UNIT_CUSTOM,
 		];
+	}
+
+	public static function transition() {
+		return [ ...self::TIME_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function border(): array {
