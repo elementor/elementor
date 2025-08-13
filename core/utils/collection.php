@@ -153,9 +153,9 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 
 	/**
 	 * @param callable $callback
-	 * @param null     $initial
+	 * @param mixed    $initial
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function reduce( callable $callback, $initial = null ) {
 		$result = $initial;
@@ -361,7 +361,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
-	 * @param null|string|string[] $keys
+	 * @param mixed $keys
 	 *
 	 * @return $this
 	 */
@@ -540,11 +540,11 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * @param      $item
-	 * @param      $key
-	 * @param null $fallback
+	 * @param mixed $item
+	 * @param mixed $key
+	 * @param mixed $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	private function get_item_value( $item, $key, $fallback = null ) {
 		$value = $fallback;
