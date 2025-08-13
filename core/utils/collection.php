@@ -274,10 +274,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Get specific item from the collection.
 	 *
-	 * @param      $key
-	 * @param null $fallback
+	 * @param mixed $key
+	 * @param mixed $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function get( $key, $fallback = null ) {
 		if ( ! array_key_exists( $key, $this->items ) ) {
