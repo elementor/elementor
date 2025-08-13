@@ -32,32 +32,12 @@ type Props = {
 	path: PropKey[];
 	label: string;
 	children: React.ReactNode;
-	isDisabled?: boolean;
 };
 
-export const StylesInheritanceInfotip = ( {
-	inheritanceChain,
-	propType,
-	path,
-	label,
-	children,
-	isDisabled,
-}: Props ) => {
+export const StylesInheritanceInfotip = ( { inheritanceChain, propType, path, label, children }: Props ) => {
 	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
-
-	const toggleInfotip = () => {
-		if ( isDisabled ) {
-			return;
-		}
-		setShowInfotip( ( prev ) => ! prev );
-	};
-
-	const closeInfotip = () => {
-		if ( isDisabled ) {
-			return;
-		}
-		setShowInfotip( false );
-	};
+	const toggleInfotip = () => setShowInfotip( ( prev ) => ! prev );
+	const closeInfotip = () => setShowInfotip( false );
 
 	const key = path.join( '.' );
 
@@ -116,7 +96,7 @@ export const StylesInheritanceInfotip = ( {
 									display="flex"
 									gap={ 0.5 }
 									role="listitem"
-									// translators: %s is the display label of the inheritance item
+									/* translators: %s: Label of the inheritance item */
 									aria-label={ __( 'Inheritance item: %s', 'elementor' ).replace(
 										'%s',
 										item.displayLabel
@@ -137,18 +117,9 @@ export const StylesInheritanceInfotip = ( {
 		</ClickAwayListener>
 	);
 
-	if ( isDisabled ) {
-		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
-	}
-
 	return (
-		<TooltipOrInfotip
-			showInfotip={ showInfotip }
-			onClose={ closeInfotip }
-			infotipContent={ infotipContent }
-			isDisabled={ isDisabled }
-		>
-			<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } } disabled={ isDisabled }>
+		<TooltipOrInfotip showInfotip={ showInfotip } onClose={ closeInfotip } infotipContent={ infotipContent }>
+			<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } }>
 				{ children }
 			</IconButton>
 		</TooltipOrInfotip>
@@ -160,21 +131,14 @@ function TooltipOrInfotip( {
 	showInfotip,
 	onClose,
 	infotipContent,
-	isDisabled,
 }: {
 	children: React.ReactNode;
 	showInfotip: boolean;
 	onClose: () => void;
 	infotipContent: React.ReactNode;
-	isDisabled?: boolean;
 } ) {
-	const direction = useDirection();
-	const isSiteRtl = direction.isSiteRtl;
+	const { isSiteRtl } = useDirection();
 	const forceInfotipAlignLeft = isSiteRtl ? 9999999 : -9999999;
-
-	if ( isDisabled ) {
-		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
-	}
 
 	if ( showInfotip ) {
 		return (
