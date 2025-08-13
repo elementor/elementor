@@ -2,7 +2,6 @@ import router from '@elementor/router';
 
 import Export from './export';
 import Import from './import';
-import {siteSettingsRegistry} from "./shared/registry/site-settings";
 
 export default class ImportExportCustomization {
 	routes = [
@@ -33,7 +32,7 @@ export default class ImportExportCustomization {
 		elementorModules?.importExport?.templateRegistry.register( {
 			key: 'siteTemplates',
 			exportGroup: 'site-templates',
-			title: __( 'Site Templates', 'elementor '),
+			title: __( 'Site Templates', 'elementor ' ),
 			order: 0,
 			getInitialState: elementorModules?.importExport?.createGetInitialState?.( 'site-templates' ),
 		} );
@@ -68,7 +67,7 @@ export default class ImportExportCustomization {
 					},
 					{
 						key: 'themeStyleSettings',
-						title: __( 'Theme style settingss', 'elementor' ),
+						title: __( 'Theme style settings', 'elementor' ),
 						order: 2,
 					},
 				],
