@@ -41,6 +41,7 @@ export const Item = < T extends RepeatablePropValue >( {
 				ref={ ( ref ) => ref && openItemIndex === index && setRowRef( ref ) }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
+				sx={ { minHeight: ( theme ) => theme.spacing( 4 ) } }
 				{ ...triggerProps }
 				onClick={ onClick }
 				startIcon={
