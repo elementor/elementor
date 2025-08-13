@@ -45,7 +45,7 @@ class Admin_Apps_Page {
 		}
 	}
 
-	private static function get_plugins() : array {
+	private static function get_plugins(): array {
 		if ( ! self::$wordpress_adapter ) {
 			self::$wordpress_adapter = new Wordpress_Adapter();
 		}
