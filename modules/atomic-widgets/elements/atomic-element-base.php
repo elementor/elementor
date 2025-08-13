@@ -3,14 +3,8 @@
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Element_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -79,76 +73,9 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	abstract protected static function define_props_schema(): array;
 
-	/**
-	 * Get common props schema for atomic elements with container functionality.
-	 *
-	 * @return array
-	 */
-	protected static function get_common_element_props_schema(): array {
-		$tag_dependencies = Dependency_Manager::make()
-			->where( [
-				'operator' => 'not_exist',
-				'path' => [ 'link', 'destination' ],
-			] )
-			->get();
 
-		return [
-			'classes' => Classes_Prop_Type::make()
-				->default( [] ),
-			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] )
-				->default( 'div' )
-				->set_dependencies( $tag_dependencies ),
-			'link' => Link_Prop_Type::make(),
-			'attributes' => Key_Value_Array_Prop_Type::make(),
-		];
-	}
 
-	/**
-	 * Get common settings controls for atomic elements with tag selection.
-	 *
-	 * @return array
-	 */
-	protected function get_common_element_settings_controls(): array {
-		return [
-			Select_Control::bind_to( 'tag' )
-				->set_options( [
-					[
-						'value' => 'div',
-						'label' => 'Div',
-					],
-					[
-						'value' => 'header',
-						'label' => 'Header',
-					],
-					[
-						'value' => 'section',
-						'label' => 'Section',
-					],
-					[
-						'value' => 'article',
-						'label' => 'Article',
-					],
-					[
-						'value' => 'aside',
-						'label' => 'Aside',
-					],
-					[
-						'value' => 'footer',
-						'label' => 'Footer',
-					],
-				])
-				->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
-			Link_Control::bind_to( 'link' )
-				->set_label( __( 'Link', 'elementor' ) )
-				->set_meta( [
-					'topDivider' => true,
-				] ),
-			Text_Control::bind_to( '_cssid' )
-				->set_label( __( 'ID', 'elementor' ) )
-				->set_meta( $this->get_css_id_control_meta() ),
-		];
-	}
+
 
 	/**
 	 * Get the HTML tag for rendering.
@@ -232,35 +159,5 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function content_template() {
 		?>
 		<?php
-	}
-
-	/**
-	 * Add common render attributes for container elements.
-	 *
-	 * @return void
-	 */
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-
-		$attributes = [
-			'class' => [
-				'e-con',
-				'e-atomic-element',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-		];
-
-		if ( ! empty( $settings['_cssid'] ) ) {
-			$attributes['id'] = esc_attr( $settings['_cssid'] );
-		}
-
-		if ( ! empty( $settings['link']['href'] ) ) {
-			$attributes = array_merge( $attributes, $settings['link'] );
-		}
-
-		$this->add_render_attribute( '_wrapper', $attributes );
 	}
 }
