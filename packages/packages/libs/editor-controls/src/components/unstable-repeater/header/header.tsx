@@ -24,15 +24,11 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			</Typography>
 			<ControlAdornments />
 			<RepeaterHeaderActionsSlot value={ value } />
-<<<<<<< Updated upstream
-			<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
-				{ children }
-			</SlotChildren>
-=======
 			<Box sx={{ ml: 'auto' }}>
-				<SlotChildren whitelist={ [ AddItemAction ] as React.FC[] }>{ children }</SlotChildren>
+				<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
+					{ children }
+				</SlotChildren>
 			</Box>
->>>>>>> Stashed changes
 		</Stack>
 	);
 };
