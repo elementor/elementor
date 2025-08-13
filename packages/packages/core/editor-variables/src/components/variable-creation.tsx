@@ -11,7 +11,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { useInitialValue } from '../hooks/use-initial-value';
 import { createVariable } from '../hooks/use-prop-variables';
 import { trackVariableEvent } from '../utils/tracking';
-import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
+import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
 
@@ -117,14 +117,28 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 			<Divider />
 
 			<PopoverContent p={ 2 }>
-				<LabelField
-					value={ label }
-					error={ labelFieldError }
-					onChange={ ( newValue ) => {
-						setLabel( newValue );
-						setErrorMessage( '' );
-					} }
-				/>
+				<FormField
+					id="variable-label"
+					label={ __( 'Name', 'elementor' ) }
+					errorMsg={ labelFieldError?.message }
+					noticeMsg={ labelHint( label ) }
+				>
+					<LabelField
+						id="variable-label"
+						value={ label }
+						error={ labelFieldError }
+						onChange={ ( newValue ) => {
+							setLabel( newValue );
+							setErrorMessage( '' );
+						} }
+						onErrorChange={ ( errorMsg ) => {
+							setLabelFieldError( {
+								value: label,
+								message: errorMsg,
+							} );
+						} }
+					/>
+				</FormField>
 				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
 					<ValueField
 						value={ value }

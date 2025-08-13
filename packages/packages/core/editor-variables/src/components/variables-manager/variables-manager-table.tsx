@@ -11,7 +11,6 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	TextField,
 	UnstableSortableItem,
 	type UnstableSortableItemRenderProps,
 	UnstableSortableProvider,
@@ -20,6 +19,7 @@ import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
+import { LabelField } from '../fields/label-field';
 import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
 import { VariableEditableCell } from './variable-editable-cell';
 import { VariableTableCell } from './variable-table-cell';
@@ -139,13 +139,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													onSave={ () => {} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
 													editableElement={ ( { value, onChange } ) => (
-														<TextField
-															size="tiny"
-															value={ value }
-															onChange={ (
-																event: React.ChangeEvent< HTMLInputElement >
-															) => onChange( event.target.value ) }
-														/>
+														<LabelField size="tiny" value={ value } onChange={ onChange } />
 													) }
 												>
 													<EllipsisWithTooltip title={ row.name }>

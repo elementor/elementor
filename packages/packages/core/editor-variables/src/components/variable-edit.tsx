@@ -12,7 +12,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { deleteVariable, updateVariable, useVariable } from '../hooks/use-prop-variables';
 import { styleVariablesRepository } from '../style-variables-repository';
-import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
+import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { DeleteConfirmationDialog } from './ui/delete-confirmation-dialog';
 import { EDIT_CONFIRMATION_DIALOG_ID, EditConfirmationDialog } from './ui/edit-confirmation-dialog';
@@ -184,14 +184,28 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 				<Divider />
 
 				<PopoverContent p={ 2 }>
-					<LabelField
-						value={ label }
-						error={ labelFieldError }
-						onChange={ ( newValue ) => {
-							setLabel( newValue );
-							setErrorMessage( '' );
-						} }
-					/>
+					<FormField
+						id="variable-label"
+						label={ __( 'Name', 'elementor' ) }
+						errorMsg={ labelFieldError?.message }
+						noticeMsg={ labelHint( label ) }
+					>
+						<LabelField
+							id="variable-label"
+							value={ label }
+							error={ labelFieldError }
+							onChange={ ( newValue ) => {
+								setLabel( newValue );
+								setErrorMessage( '' );
+							} }
+							onErrorChange={ ( errorMsg ) => {
+								setLabelFieldError( {
+									value: label,
+									message: errorMsg,
+								} );
+							} }
+						/>
+					</FormField>
 					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
 						<ValueField
 							value={ value }
