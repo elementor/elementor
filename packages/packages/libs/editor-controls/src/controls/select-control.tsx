@@ -7,8 +7,14 @@ import { useBoundProp } from '../bound-prop-context';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
+export type SelectOption = {
+	label: string;
+	value: StringPropValue[ 'value' ];
+	disabled?: boolean;
+};
+
 type Props = {
-	options: Array< { label: string; value: StringPropValue[ 'value' ]; disabled?: boolean } >;
+	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
 };
 

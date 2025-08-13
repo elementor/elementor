@@ -87,9 +87,15 @@ export const SizeControl = createControl(
 		extendedOptions,
 		disableCustom,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
-		const actualDefaultUnit = defaultUnit ?? defaultSelectedUnit[ variant ];
+		const {
+			value: sizeValue,
+			setValue: setSizeValue,
+			disabled,
+			restoreValue,
+			placeholder: externalPlaceholder,
+		} = useBoundProp( sizePropTypeUtil );
+		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
 		const actualUnits = units ?? [ ...defaultUnits[ variant ] ];
-		const { value: sizeValue, setValue: setSizeValue, disabled, restoreValue } = useBoundProp( sizePropTypeUtil );
 		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
 		const activeBreakpoint = useActiveBreakpoint();
 
@@ -144,12 +150,6 @@ export const SizeControl = createControl(
 			} ) );
 		};
 
-		const onInputFocus = ( event: React.FocusEvent< HTMLInputElement > ) => {
-			if ( isUnitExtendedOption( state.unit ) ) {
-				( event.target as HTMLElement )?.blur();
-			}
-		};
-
 		const onInputClick = ( event: React.MouseEvent ) => {
 			if ( ( event.target as HTMLElement ).closest( 'input' ) && 'custom' === state.unit ) {
 				popupState.open( anchorRef?.current );
@@ -159,7 +159,9 @@ export const SizeControl = createControl(
 		useEffect( () => {
 			const newState = createStateFromSizeProp(
 				sizeValue,
-				state.unit === 'custom' ? state.unit : actualDefaultUnit
+				state.unit === 'custom' ? state.unit : actualDefaultUnit,
+				'',
+				state.custom
 			);
 			const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
 			const mergedStates = {
@@ -183,7 +185,7 @@ export const SizeControl = createControl(
 		}, [ sizeValue ] );
 
 		useEffect( () => {
-			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit );
+			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit, '', state.custom );
 
 			if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
 				setState( newState );
@@ -203,7 +205,6 @@ export const SizeControl = createControl(
 					handleSizeChange={ handleSizeChange }
 					handleUnitChange={ handleUnitChange }
 					onBlur={ restoreValue }
-					onFocus={ onInputFocus }
 					onClick={ onInputClick }
 					popupState={ popupState }
 				/>
@@ -229,16 +230,21 @@ function formatSize< TSize extends string | number >( size: TSize, unit: Unit | 
 	return size || size === 0 ? ( Number( size ) as TSize ) : ( NaN as TSize );
 }
 
-function createStateFromSizeProp( sizeValue: SizeValue | null, defaultUnit: Unit | ExtendedOption ): State {
+function createStateFromSizeProp(
+	sizeValue: SizeValue | null,
+	defaultUnit: Unit | ExtendedOption,
+	defaultSize: string | number = '',
+	customState: string = ''
+): State {
 	const unit = sizeValue?.unit ?? defaultUnit;
-	const size = sizeValue?.size ?? '';
+	const size = sizeValue?.size ?? defaultSize;
 
 	return {
 		numeric:
 			! isUnitExtendedOption( unit ) && ! isNaN( Number( size ) ) && ( size || size === 0 )
 				? Number( size )
 				: DEFAULT_SIZE,
-		custom: unit === 'custom' ? String( size ) : '',
+		custom: unit === 'custom' ? String( size ) : customState,
 		unit,
 	};
 }

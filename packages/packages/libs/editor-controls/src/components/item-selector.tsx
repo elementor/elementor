@@ -20,7 +20,7 @@ type ItemSelectorProps = {
 	sectionWidth: number;
 	title: string;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
-	onDebounce?: ( fontName: string ) => void;
+	onDebounce?: ( name: string ) => void;
 	icon: React.ElementType< { fontSize: string } >;
 };
 
@@ -90,9 +90,12 @@ export const ItemSelector = ( {
 							sx={ { display: 'flex', width: '100%', justifyContent: 'center' } }
 						>
 							<span>&ldquo;</span>
-							<span style={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }>
+							<Box
+								component="span"
+								sx={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }
+							>
 								{ searchValue }
-							</span>
+							</Box>
 							<span>&rdquo;.</span>
 						</Typography>
 					</Box>
@@ -124,7 +127,7 @@ type ItemListProps = {
 	handleClose: () => void;
 	selectedItem: string | null;
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
-	onDebounce?: ( fontName: string ) => void;
+	onDebounce?: ( name: string ) => void;
 };
 
 const ItemList = ( {

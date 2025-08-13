@@ -1,4 +1,4 @@
-import { generateId } from '@elementor/editor-styles';
+import { generateId, type StyleDefinition, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { createStylesProvider } from '@elementor/editor-styles-repository';
 import {
 	__dispatch as dispatch,
@@ -9,7 +9,14 @@ import { __ } from '@wordpress/i18n';
 
 import { getCapabilities } from './capabilities';
 import { GlobalClassLabelAlreadyExistsError } from './errors';
-import { selectClass, selectGlobalClasses, selectOrderedClasses, slice, type StateWithGlobalClasses } from './store';
+import {
+	selectClass,
+	selectData,
+	selectGlobalClasses,
+	selectOrderedClasses,
+	slice,
+	type StateWithGlobalClasses,
+} from './store';
 
 const MAX_CLASSES = 50;
 
@@ -23,7 +30,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		singular: __( 'class', 'elementor' ),
 		plural: __( 'classes', 'elementor' ),
 	},
-	subscribe: ( cb ) => subscribeWithSelector( ( state: StateWithGlobalClasses ) => state.globalClasses, cb ),
+	subscribe: ( cb ) => subscribeWithStates( cb ),
 	capabilities: getCapabilities(),
 	actions: {
 		all: () => selectOrderedClasses( getState() ),
@@ -31,7 +38,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		resolveCssName: ( id: string ) => {
 			return selectClass( getState(), id )?.label ?? id;
 		},
-		create: ( label ) => {
+		create: ( label, variants: StyleDefinitionVariant[] = [] ) => {
 			const classes = selectGlobalClasses( getState() );
 
 			const existingLabels = Object.values( classes ).map( ( style ) => style.label );
@@ -48,7 +55,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					id,
 					type: 'class',
 					label,
-					variants: [],
+					variants,
 				} )
 			);
 
@@ -73,5 +80,29 @@ export const globalClassesStylesProvider = createStylesProvider( {
 				} )
 			);
 		},
+		updateCustomCss: ( args ) => {
+			dispatch(
+				slice.actions.updateProps( {
+					id: args.id,
+					meta: args.meta,
+					custom_css: args.custom_css,
+					props: {},
+				} )
+			);
+		},
 	},
 } );
+
+const subscribeWithStates = (
+	cb: ( previous: Record< string, StyleDefinition >, current: Record< string, StyleDefinition > ) => void
+) => {
+	let previousState = selectData( getState() );
+
+	return subscribeWithSelector(
+		( state: StateWithGlobalClasses ) => state.globalClasses,
+		( currentState ) => {
+			cb( previousState.items, currentState.data.items );
+			previousState = currentState.data;
+		}
+	);
+};

@@ -3,6 +3,9 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Module;
+use Elementor\Plugin;
+use Elementor\Utils;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 
 class Styles_Renderer {
@@ -111,16 +114,17 @@ class Styles_Renderer {
 	}
 
 	private function variant_to_css_string( string $base_selector, array $variant ): string {
-		$css = $this->props_to_css_string( $variant['props'] );
+		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
+		$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
 
-		if ( ! $css ) {
+		if ( ! $css && ! $custom_css ) {
 			return '';
 		}
 
 		$state = isset( $variant['meta']['state'] ) ? ':' . $variant['meta']['state'] : '';
 		$selector = $base_selector . $state;
 
-		$style_declaration = $selector . '{' . $css . '}';
+		$style_declaration = $selector . '{' . $css . $custom_css . '}';
 
 		if ( isset( $variant['meta']['breakpoint'] ) ) {
 			$style_declaration = $this->wrap_with_media_query( $variant['meta']['breakpoint'], $style_declaration );
@@ -142,6 +146,14 @@ class Styles_Renderer {
 				return $prop . ':' . $value . ';';
 			} )
 			->implode( '' );
+	}
+
+	private function custom_css_to_css_string( ?array $custom_css ): string {
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_CUSTOM_CSS );
+
+		return $is_feature_active && ! empty( $custom_css['raw'] )
+			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
+			: '';
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
