@@ -24,7 +24,7 @@ type Props = {
 export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
-	const { setValue: notifyBoundPropChange } = useBoundProp( propTypeUtil );
+	const { setValue: notifyBoundPropChange, propType } = useBoundProp( propTypeUtil );
 
 	const variable = useVariable( variableId );
 
@@ -114,6 +114,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 								setValueFieldError( '' );
 							} }
 							onValidationChange={ setValueFieldError }
+							propType={ propType }
 						/>
 					</FormField>
 
