@@ -46,7 +46,9 @@ class Taxonomies extends Import_Runner_Base {
 		$result = [];
 		$imported_taxonomies = [];
 
-		foreach ( $taxonomies as $taxonomy ) {
+		foreach ( $taxonomies as $taxonomy_object ) {
+			$taxonomy = is_array( $taxonomy_object ) ? $taxonomy_object['name'] : $taxonomy_object;
+
 			if ( ! taxonomy_exists( $taxonomy ) ) {
 				continue;
 			}

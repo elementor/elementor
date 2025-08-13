@@ -6,11 +6,11 @@ import { KitCustomizationDialog } from './kit-customization-dialog';
 import { ListSettingSection } from './customization-list-setting-section';
 import { SettingSection } from './customization-setting-section';
 import { SubSetting } from './customization-sub-setting';
-import { usePages } from '../hooks/use-pages';
-import { useCustomPostTypes } from '../hooks/use-custom-post-types';
-import { useTaxonomies } from '../hooks/use-taxonomies';
 import { CenteredContent } from './layout';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { useKitCustomizationPages } from '../hooks/use-kit-customization-pages';
+import { useKitCustomizationTaxonomies } from '../hooks/use-kit-customization-taxonomies';
+import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customization-custom-post-types';
 
 export function KitContentCustomizationDialog( {
 	open,
@@ -18,10 +18,13 @@ export function KitContentCustomizationDialog( {
 	handleSaveChanges,
 	data,
 } ) {
+	const isImport = data.hasOwnProperty( 'uploadedData' );
+
 	const initialState = data.includes.includes( 'content' );
-	const { isLoading: isPagesLoading, pageOptions, isLoaded: isPagesLoaded } = usePages( { skipLoading: ! open } );
-	const { isLoading: isTaxonomiesLoading, taxonomyOptions, isLoaded: isTaxonomiesLoaded } = useTaxonomies( { skipLoading: ! open, exclude: [ 'nav_menu' ] } );
-	const { customPostTypes } = useCustomPostTypes( { include: [ 'post' ] } );
+	const { isLoading: isPagesLoading, pageOptions, isLoaded: isPagesLoaded } = useKitCustomizationPages( { open, data } );
+	const { isLoading: isTaxonomiesLoading, taxonomyOptions, isLoaded: isTaxonomiesLoaded } = useKitCustomizationTaxonomies( { open, data } );
+	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
+
 	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
 
 	const [ settings, setSettings ] = useState( () => {
@@ -38,22 +41,22 @@ export function KitContentCustomizationDialog( {
 	} );
 
 	useEffect( () => {
-		if ( isPagesLoaded ) {
+		if ( isPagesLoaded || isImport ) {
 			setSettings( ( prevSettings ) => ( {
 				...prevSettings,
 				pages: data.customization.content?.pages || pageOptions.map( ( { value } ) => value ),
 			} ) );
 		}
-	}, [ isPagesLoaded, pageOptions, data.customization.content?.pages ] );
+	}, [ isPagesLoaded, pageOptions, data.customization.content?.pages, isImport ] );
 
 	useEffect( () => {
-		if ( isTaxonomiesLoaded ) {
+		if ( isTaxonomiesLoaded || isImport ) {
 			setSettings( ( prevSettings ) => ( {
 				...prevSettings,
 				taxonomies: data.customization.content?.taxonomies || taxonomyOptions.map( ( { value } ) => value ),
 			} ) );
 		}
-	}, [ isTaxonomiesLoaded, taxonomyOptions, data.customization.content?.taxonomies ] );
+	}, [ isTaxonomiesLoaded, taxonomyOptions, data.customization.content?.taxonomies, isImport ] );
 
 	useEffect( () => {
 		if ( customPostTypes ) {
@@ -126,6 +129,7 @@ export function KitContentCustomizationDialog( {
 						/>
 						<SettingSection
 							checked={ settings.menus }
+							disabled={ isImport && ! customPostTypes?.find( ( cpt ) => cpt.value.includes( 'nav_menu' ) ) }
 							title={ __( 'Menus', 'elementor' ) }
 							settingKey="menus"
 							onSettingChange={ ( key, isChecked ) => {
