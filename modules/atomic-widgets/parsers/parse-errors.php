@@ -54,11 +54,4 @@ class Parse_Errors {
 		return $this;
 	}
 
-	public function errors_as_object() {
-		return $this->errors;
-	}
-
-	public function first_one(): ?array {
-		return $this->errors[0] ?? null;
-	}
 }
