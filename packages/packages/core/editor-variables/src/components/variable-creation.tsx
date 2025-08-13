@@ -25,7 +25,8 @@ type Props = {
 export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
-	const { setValue: setVariable, path, propType } = useBoundProp( propTypeUtil );
+	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
+	const { propType } = useBoundProp();
 
 	const initialValue = useInitialValue();
 
