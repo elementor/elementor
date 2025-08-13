@@ -24,7 +24,7 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			</Typography>
 			<ControlAdornments />
 			<RepeaterHeaderActionsSlot value={ value } />
-			<Box sx={{ ml: 'auto' }}>
+			<Box sx={ { ml: 'auto' } }>
 				<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
 					{ children }
 				</SlotChildren>
