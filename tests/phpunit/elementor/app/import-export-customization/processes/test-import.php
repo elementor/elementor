@@ -434,7 +434,11 @@ class Test_Import extends Elementor_Test_Base {
 
 		$import_settings = [
 			'include' => [ 'content' ],
-			'selectedCustomPostTypes' => [ 'tests' ],
+			'customization' => [
+				'content' => [
+					'customPostTypes' => [ 'post', 'tests' ],
+				],
+			],
 		];
 
 		$import = new Import( static::MOCK_KIT_ZIP_PATH, $import_settings );
