@@ -48,6 +48,13 @@ class Wp_Content extends Export_Runner_Base {
 		}
 
 		foreach ( $custom_post_types as $post_type ) {
+			$post_type_object = get_post_type_object( $post_type );
+
+			$manifest_data['custom-post-type-title'][ $post_type ] = [
+				'name' => $post_type_object->name,
+				'label' => $post_type_object->label,
+			];
+
 			// handled in the previous loop
 			if ( 'post' === $post_type ) {
 				continue;
@@ -59,13 +66,6 @@ class Wp_Content extends Export_Runner_Base {
 			}
 
 			$manifest_data['wp-content'][ $post_type ] = $export['manifest_data'];
-
-			$post_type_object = get_post_type_object( $post_type );
-
-			$manifest_data['custom-post-type-title'][ $post_type ] = [
-				'name' => $post_type_object->name,
-				'label' => $post_type_object->label,
-			];
 		}
 
 		return [
