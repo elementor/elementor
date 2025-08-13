@@ -12,6 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Setup_Header extends Step_Base {
 	const STEP_ID = 'setup_header';
 
+	/**
+	 * @param mixed $module
+	 * @param mixed $wordpress_adapter
+	 * @param mixed $elementor_adapter
+	 * @param bool $should_promote
+	 */
 	public function __construct( $module, $wordpress_adapter = null, $elementor_adapter = null, $should_promote = true ) {
 		$promotion_data = $should_promote
 			? $this->render_promotion()

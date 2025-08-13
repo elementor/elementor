@@ -324,7 +324,7 @@ abstract class Endpoint {
 	 *
 	 * @param string $route
 	 * @param string $methods
-	 * @param null $callback
+	 * @param mixed $callback
 	 * @param array $args
 	 *
 	 * @return bool

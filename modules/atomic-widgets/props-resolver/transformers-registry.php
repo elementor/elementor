@@ -24,6 +24,12 @@ class Transformers_Registry extends Collection {
 		return $this;
 	}
 
+	/**
+	 * @param mixed $key
+	 * @param mixed $fallback
+	 *
+	 * @return mixed
+	 */
 	public function get( $key, $fallback = null ) {
 		return parent::get( $key, $fallback ?? $this->fallback );
 	}

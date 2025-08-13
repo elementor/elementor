@@ -230,7 +230,7 @@ class Deprecation {
 	 * @param string $function
 	 * @param string $version
 	 * @param string $replacement Optional. Default is ''
-	 * @param string $base_version Optional. Default is `null`
+	 * @param string|null $base_version Optional. Default is `null`
 	 * @throws \Exception Deprecation error.
 	 */
 	public function deprecated_function( $function, $version, $replacement = '', $base_version = null ) {
@@ -250,7 +250,7 @@ class Deprecation {
 	 * @param string $hook
 	 * @param string $version
 	 * @param string $replacement Optional. Default is ''
-	 * @param string $base_version Optional. Default is `null`
+	 * @param string|null $base_version Optional. Default is `null`
 	 * @throws \Exception Deprecation error.
 	 * @since 3.1.0
 	 */
