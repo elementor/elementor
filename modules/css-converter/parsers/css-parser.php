@@ -47,7 +47,7 @@ class CssParser {
 		} catch ( \Exception $e ) {
 			// Do not include raw exception messages in the thrown exception to
 			// avoid leaking implementation details and to satisfy PHPCS escaping rules.
-			throw new CssParseException( 'Failed to parse CSS.', 0, $e );
+			throw new CssParseException( 'Failed to parse CSS.', 0 );
 		}
 	}
 
@@ -207,32 +207,32 @@ class CssParser {
 
 	private function is_root_selector( string $selector ): bool {
 		$trimmed = trim( $selector );
-		return $trimmed === ':root' || $trimmed === 'html';
+		return ':root' === $trimmed || 'html' === $trimmed;
 	}
 
 	private function is_css_variable( string $property ): bool {
-		return strpos( $property, '--' ) === 0;
+		return 0 === strpos( $property, '--' );
 	}
 
 	private function extract_rules_from_block( $block ): array {
-		$rules = [];
+		$rules = array();
 		foreach ( $block->getRules() as $rule ) {
 			$property = $rule->getRule();
 			$value = (string) $rule->getValue();
 			$is_important = $rule->getIsImportant();
 			$raw = $rule->render( \Sabberworm\CSS\OutputFormat::create() );
 
-			$rules[ $property ] = [
+			$rules[ $property ] = array(
 				'value' => $value,
 				'important' => $is_important,
 				'raw' => $raw,
-			];
+			);
 		}
 		return $rules;
 	}
 
 	public function validate_css( string $css ): array {
-		$errors = [];
+		$errors = array();
 
 		try {
 			$this->parse( $css );

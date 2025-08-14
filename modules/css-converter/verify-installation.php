@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 echo "Elementor CSS Parser Installation Verification\n";
-echo str_repeat( '=', 50 ) . "\n\n";
+echo esc_html( str_repeat( '=', 50 ) ) . "\n\n";
 
 $checks = [];
 $all_passed = true;
@@ -135,15 +135,15 @@ if ( file_exists( __DIR__ . '/README.md' ) ) {
 }
 
 // Display results
-echo "\n" . str_repeat( '=', 50 ) . "\n";
+echo "\n" . esc_html( str_repeat( '=', 50 ) ) . "\n";
 echo "VERIFICATION RESULTS:\n";
-echo str_repeat( '=', 50 ) . "\n";
+echo esc_html( str_repeat( '=', 50 ) ) . "\n";
 
 foreach ( $checks as $check_name => $result ) {
 	echo esc_html( $result ) . "\n";
 }
 
-echo "\n" . str_repeat( '=', 50 ) . "\n";
+echo "\n" . esc_html( str_repeat( '=', 50 ) ) . "\n";
 
 if ( $all_passed ) {
 	echo "🎉 ALL CHECKS PASSED!\n\n";
@@ -163,7 +163,7 @@ if ( $all_passed ) {
 	echo "- Check WordPress installation\n";
 }
 
-echo "\n" . str_repeat( '=', 50 ) . "\n";
+echo "\n" . esc_html( str_repeat( '=', 50 ) ) . "\n";
 
 // Advanced test if everything passed
 if ( $all_passed ) {
