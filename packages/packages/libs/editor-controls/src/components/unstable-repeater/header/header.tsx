@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Stack, Typography } from '@elementor/ui';
+import { Box, Stack, Typography } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { ControlAdornments } from '../../../control-adornments/control-adornments';
@@ -12,15 +12,23 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 	const { value } = useBoundProp();
 
 	return (
-		<Stack direction="row" justifyContent="start" alignItems="center" gap={ 1 } sx={ { marginInlineEnd: -0.75 } }>
-			<Typography component="label" variant="caption" color="text.secondary">
+		<Stack
+			direction="row"
+			justifyContent="start"
+			alignItems="center"
+			gap={ 1 }
+			sx={ { marginInlineEnd: -0.75, py: 0.25 } }
+		>
+			<Typography component="label" variant="caption" color="text.secondary" sx={ { lineHeight: 1 } }>
 				{ label }
 			</Typography>
-			<RepeaterHeaderActionsSlot value={ value } />
-			<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
-				{ children }
-			</SlotChildren>
 			<ControlAdornments />
+			<RepeaterHeaderActionsSlot value={ value } />
+			<Box sx={ { ml: 'auto' } }>
+				<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
+					{ children }
+				</SlotChildren>
+			</Box>
 		</Stack>
 	);
 };

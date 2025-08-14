@@ -46,20 +46,41 @@ class Elementor_Content extends Import_Runner_Base {
 				? ImportExportUtils::map_old_new_term_ids( $imported_data )
 				: [];
 
-			$result['content'][ $post_type ] = $this->import_elementor_post_type( $posts_settings, $path, $post_type, $imported_terms );
+			$result['content'][ $post_type ] = $this->import_elementor_post_type(
+				$posts_settings,
+				$path,
+				$post_type,
+				$imported_terms,
+				$data['customization']['content'] ?? null,
+			);
 		}
 
 		return $result;
 	}
 
-	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms ) {
+	private function import_elementor_post_type( array $posts_settings, $path, $post_type, array $imported_terms, $customization ) {
 		$result = [
 			'succeed' => [],
 			'failed' => [],
 		];
 
+		$selected_pages = $customization['pages'] ?? null;
+
+		if ( 'page' === $post_type && is_array( $selected_pages ) && empty( $selected_pages ) ) {
+			foreach ( $posts_settings as $id => $post_settings ) {
+				$result['failed'][ $id ] = __( 'Skipped', 'elementor' );
+			}
+
+			return $result;
+		}
+
 		foreach ( $posts_settings as $id => $post_settings ) {
 			try {
+				if ( 'page' === $post_type && is_array( $selected_pages ) && ! in_array( $id, $selected_pages ) ) {
+					$result['failed'][ $id ] = __( 'Skipped', 'elementor' );
+					continue;
+				}
+
 				$post_data = ImportExportUtils::read_json_file( $path . $id );
 				$import = $this->import_post( $post_settings, $post_data, $post_type, $imported_terms );
 
