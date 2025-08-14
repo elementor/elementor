@@ -27,6 +27,7 @@ export function createTemplatedElementType( { type, renderer, element }: CreateT
 	const propsResolver = createPropsResolver( {
 		transformers: settingsTransformersRegistry,
 		schema: element.atomic_props_schema,
+		meta: { elementType: type },
 	} );
 
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
