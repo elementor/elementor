@@ -79,15 +79,15 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
-		// Const wrappedElementTypes = Object.entries( elementor.config.elements )
-		// 	.filter( ( [ , element ] ) => !! element.should_wrap )
-		// 	.map( ( [ type ] ) => type )
-		// 	.concat( 'widget' );
+		const wrappedElementTypes = Object.entries( elementor.config.elements )
+			.filter( ( [ , element ] ) => !! element.should_wrap )
+			.map( ( [ type ] ) => type )
+			.concat( 'widget' );
 
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: ! [ 'container', 'e-div-block', 'e-flexbox' ].includes( model.elType ) },
+			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) },
 		);
 	},
 
