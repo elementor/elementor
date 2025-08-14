@@ -17,34 +17,26 @@ export function createServerTransformer( { context }: Options ) {
 			elementType: typeof meta.elementType === 'string' ? meta.elementType : null,
 		} ),
 		handler: async ( items, { signal } ) => {
-			try {
-				const {
-					data: { data },
-				} = await httpService().post< Record< string, unknown > >(
-					URI,
-					{
-						context,
-						props: items.map( ( item ) => ( { key: item.key, value: item.payload } ) ),
-					},
-					{ signal }
-				);
+			const {
+				data: { data },
+			} = await httpService().post< Record< string, unknown > >(
+				URI,
+				{
+					context,
+					props: items.map( ( item ) => ( { key: item.id, value: item.payload } ) ),
+				},
+				{ signal }
+			);
 
-				const result = z
-					.object( {
-						props: z.record( z.string(), z.unknown() ),
-					} )
-					.parse( data );
+			const result = z
+				.object( {
+					props: z.record( z.string(), z.unknown() ),
+				} )
+				.parse( data );
 
-				return items.map( ( item ) => ( {
-					key: item.payload.key,
-					value: result.props[ item.key ] ?? null,
-				} ) );
-			} catch {
-				return items.map( ( item ) => ( {
-					key: item.payload.key,
-					value: null,
-				} ) );
-			}
+			return Object.fromEntries( 
+				items.map( ( { id } ) => [ id, result.props[ id ] ?? null ] ) 
+			);
 		},
 	} );
 }

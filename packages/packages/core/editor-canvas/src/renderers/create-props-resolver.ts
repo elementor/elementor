@@ -63,7 +63,7 @@ export function createPropsResolver( {
 				}
 
 				if ( isBatchProcess( transformed ) ) {
-					batchManager.add( transformed.item );
+					batchManager.add( key, transformed.value );
 
 					return null;
 				}
@@ -72,10 +72,11 @@ export function createPropsResolver( {
 			} )
 		);
 
-		const result = ( await promises ).filter( Boolean );
-		const batchedResult = await batchManager.execute( { signal } );
+		const results = ( await promises ).filter( Boolean );
 
-		return Object.assign( {}, ...result, batchedResult );
+		const batchedResults = await batchManager.execute( { signal } );
+
+		return Object.assign( {}, ...results, ...batchedResults );
 	}
 
 	async function transform( { value, key, type, signal, depth = 0 }: TransformArgs ) {

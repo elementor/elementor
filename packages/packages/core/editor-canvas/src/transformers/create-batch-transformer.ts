@@ -1,28 +1,28 @@
-import { type BatchHandlerCallback, batchProcess, type HandlerResult } from '../renderers/batch-process';
+import { type BatchHandlerCallback, batchProcess } from '../renderers/batch-process';
 import { createTransformer } from '../transformers/create-transformer';
 
 type TransformerArgs = Parameters< ReturnType< typeof createTransformer< unknown > > >;
 
-export function createBatchTransformer< TPayload, TResult extends HandlerResult = HandlerResult >( {
+export function createBatchTransformer< TPayload = unknown >( {
 	handler,
 	payload: getPayload,
 }: {
 	payload: ( ...args: TransformerArgs ) => TPayload;
-	handler: BatchHandlerCallback< TPayload, TResult >;
+	handler: BatchHandlerCallback< TPayload >;
 } ) {
-	const cache = new Map< string, TResult >();
+	const cache = new Map< string, unknown >();
 
 	return createTransformer< unknown >( ( ...args: TransformerArgs ) => {
 		const payload = getPayload( ...args );
 
-		const key = createKey( payload );
+		const id = createKey( payload );
 
-		if ( cache.has( key ) ) {
-			return cache.get( key );
+		if ( cache.has( id ) ) {
+			return cache.get( id );
 		}
 
 		return batchProcess( {
-			key,
+			id,
 			handler,
 			payload,
 		} );

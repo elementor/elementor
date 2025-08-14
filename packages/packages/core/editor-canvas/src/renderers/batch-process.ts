@@ -1,43 +1,43 @@
-type Batch< TPayload, TResult extends HandlerResult = HandlerResult > = {
+type Batch< TPayload = unknown > = {
 	$$batch: true;
-	item: HandlerItem< TPayload, TResult >;
+	value: BatchValue< TPayload >;
 };
 
-type HandlerItem< TPayload = unknown, TResult extends HandlerResult = HandlerResult > = {
-	key: string;
+type BatchValue< TPayload = unknown > = {
+	id: string;
 	payload: TPayload;
-	handler: BatchHandlerCallback< TPayload, TResult >;
+	handler: BatchHandlerCallback< TPayload >;
 };
 
-export type HandlerResult = Array< { key: string; value: unknown } >;
+type HandlerItem< TPayload = unknown> = {
+	key: string;
+	id: string;
+	payload: TPayload;
+};
+
+export type HandlerResult = Record< HandlerItem['id'], unknown >;
 
 type BatchHandlerCallbackContext = {
 	signal?: AbortSignal;
 };
 
-export type BatchHandlerCallback< TPayload = unknown, TResult extends HandlerResult = HandlerResult > = (
-	items: Array< HandlerItem< TPayload, TResult > >,
+export type BatchHandlerCallback< TPayload = unknown> = (
+	items: Array< HandlerItem< TPayload > >,
 	context: BatchHandlerCallbackContext
 ) => Promise< HandlerResult > | HandlerResult;
 
-export const batchProcess = < TPayload, TResult extends HandlerResult = HandlerResult >( {
-	key,
+export const batchProcess = < TPayload = unknown >( {
+	id,
 	payload,
 	handler,
-}: {
-	key: string;
-	handler: BatchHandlerCallback< TPayload, TResult >;
-	payload: TPayload;
-} ): Batch< TPayload, TResult > => {
+}: BatchValue<TPayload> ): Batch< TPayload > => {
 	return {
 		$$batch: true,
-		item: { key, payload, handler },
+		value: { id, payload, handler },
 	};
 };
 
-export function isBatchProcess< TPayload, TResult extends HandlerResult = HandlerResult >(
-	value: unknown
-): value is Batch< TPayload, TResult > {
+export function isBatchProcess< TPayload = unknown >( value: unknown ): value is Batch< TPayload > {
 	return !! value && typeof value === 'object' && '$$batch' in value && value.$$batch === true;
 }
 
@@ -45,32 +45,40 @@ export function createBatchManager() {
 	const itemsByHandler = new Map< BatchHandlerCallback, Set< HandlerItem > >();
 
 	return {
-		add: ( item: HandlerItem ) => {
+		add: ( key: string, item: BatchValue ) => {
 			if ( ! itemsByHandler.has( item.handler ) ) {
 				itemsByHandler.set( item.handler, new Set() );
 			}
 
-			itemsByHandler.get( item.handler )?.add( item );
+			itemsByHandler.get( item.handler )?.add( {
+				key,
+				id: item.id,
+				payload: item.payload,
+			} );
 		},
 		execute: async ( context: BatchHandlerCallbackContext ) => {
 			const promises = itemsByHandler
 				.entries()
-				.map( ( [ handler, items ] ) => {
-					return handler( items.values().toArray(), context );
+				.map( async ( [ handler, items ] ) => {
+					try {
+						const results = await handler( Array.from( items ), context );
+
+						return [ ...items ].map( ( item ) => ({
+							[ item.key ]: results[ item.id ],
+						}) );
+					} catch ( error ) {
+						return [ ...items ].map( ( item ) => ({
+							[ item.key ]: null,
+						}) );
+					}
 				} )
 				.toArray();
 
-			const result = await Promise.all( promises );
+			const results = await Promise.all( promises );
 
 			itemsByHandler.clear();
 
-			return result.reduce< Record< string, unknown > >( ( acc, item ) => {
-				item.forEach( ( { key, value } ) => {
-					acc[ key ] = value;
-				} );
-
-				return acc;
-			}, {} );
+			return results.flat();
 		},
 	};
 }
