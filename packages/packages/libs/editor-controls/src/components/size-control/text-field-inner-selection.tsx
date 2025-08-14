@@ -16,62 +16,68 @@ import {
 
 import { useBoundProp } from '../../bound-prop-context';
 import { DEFAULT_UNIT } from '../../utils/size-control';
+import { NumberInput } from '../number-input';
 
-type TextFieldInnerSelectionProps = {
+type TextFieldInnerSelectionProps = Omit< TextFieldProps, 'value' | 'onChange' > & {
 	placeholder?: string;
-	type: string;
 	value: PropValue;
-	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
-	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
-	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	inputProps: TextFieldProps[ 'InputProps' ] & {
-		endAdornment: React.JSX.Element;
-	};
+	onChange: ( value: string | number | null ) => void;
 	disabled?: boolean;
 	isPopoverOpen?: boolean;
+	allowNegativeValue?: boolean;
+	validateNumber?: ( value: number | null ) => boolean;
 };
 
 export const TextFieldInnerSelection = forwardRef(
 	(
 		{
-			placeholder,
-			type,
-			value,
+			// value,
 			onChange,
-			onBlur,
-			onKeyDown,
-			onKeyUp,
-			inputProps,
-			disabled,
+			placeholder,
 			isPopoverOpen,
+			validateNumber,
+			allowNegativeValue = false,
+			...props
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
 
 		const getCursorStyle = () => ( {
-			input: { cursor: inputProps.readOnly ? 'default !important' : undefined },
+			input: { cursor: props.InputProps?.readOnly ? 'default !important' : undefined },
 		} );
 
-		return (
-			<TextField
-				ref={ ref }
-				sx={ getCursorStyle() }
-				size="tiny"
-				fullWidth
-				type={ type }
-				value={ value }
-				onChange={ onChange }
-				onKeyDown={ onKeyDown }
-				onKeyUp={ onKeyUp }
-				disabled={ disabled }
-				onBlur={ onBlur }
-				focused={ isPopoverOpen ? true : undefined }
-				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
-				InputProps={ inputProps }
-			/>
-		);
+		const textFieldProps: Partial< TextFieldProps > = {
+			...props,
+			size: 'tiny',
+			fullWidth: true,
+			sx: getCursorStyle(),
+			focused: isPopoverOpen ? true : undefined,
+			placeholder: placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ),
+		};
+
+		switch ( props.type ) {
+			case 'number': {
+				return (
+					<NumberInput
+						{ ...textFieldProps }
+						ref={ ref }
+						value={ props.value as number | null }
+						onChange={ onChange }
+						validate={ validateNumber }
+						min={ allowNegativeValue ? -Number.MAX_VALUE : 0 }
+					/>
+				);
+			}
+
+			default: {
+				const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+					onChange( event.target.value );
+				};
+
+				return <TextField { ...textFieldProps } ref={ ref } onChange={ handleChange } />;
+			}
+		}
 	}
 );
 

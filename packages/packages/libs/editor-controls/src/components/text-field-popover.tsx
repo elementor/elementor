@@ -10,7 +10,7 @@ type Props = {
 	anchorRef: RefObject< HTMLDivElement | null >;
 	restoreValue: () => void;
 	value: string;
-	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	onChange: ( value: string ) => void;
 };
 
 const SIZE = 'tiny';
@@ -57,7 +57,7 @@ export const TextFieldPopover = ( props: Props ) => {
 			/>
 			<TextField
 				value={ value }
-				onChange={ onChange }
+				onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) => onChange( event.target.value ) }
 				size="tiny"
 				type="text"
 				fullWidth

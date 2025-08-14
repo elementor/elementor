@@ -1,58 +1,45 @@
 import * as React from 'react';
 import { numberPropTypeUtil } from '@elementor/editor-props';
-import { InputAdornment, TextField } from '@elementor/ui';
+import { InputAdornment } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
+import { NumberInput } from '../components/number-input';
 import ControlActions from '../control-actions/control-actions';
 import { createControl } from '../create-control';
 
 const isEmptyOrNaN = ( value?: string | number | null ) =>
 	value === null || value === undefined || value === '' || Number.isNaN( Number( value ) );
 
-const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+', '-' ];
-
 export const NumberControl = createControl(
 	( {
 		placeholder: labelPlaceholder,
 		max = Number.MAX_VALUE,
 		min = -Number.MAX_VALUE,
-		step = 1,
+		step = 'any',
 		shouldForceInt = false,
 		startIcon,
 	}: {
 		placeholder?: string;
 		max?: number;
 		min?: number;
-		step?: number;
+		step?: number | 'any';
 		shouldForceInt?: boolean;
 		startIcon?: React.ReactNode;
 	} ) => {
 		const { value, setValue, placeholder, disabled } = useBoundProp( numberPropTypeUtil );
 
-		const handleChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const eventValue: string = event.target.value;
-
-			if ( isEmptyOrNaN( eventValue ) ) {
-				setValue( null );
-
-				return;
-			}
-
-			const formattedValue = shouldForceInt ? +parseInt( eventValue ) : Number( eventValue );
-
-			setValue( Math.min( Math.max( formattedValue, min ), max ) );
-		};
-
 		return (
 			<ControlActions>
-				<TextField
+				<NumberInput
 					size="tiny"
-					type="number"
 					fullWidth
 					disabled={ disabled }
-					value={ isEmptyOrNaN( value ) ? '' : value }
-					onChange={ handleChange }
+					value={ value }
+					onChange={ setValue }
 					placeholder={ labelPlaceholder ?? ( isEmptyOrNaN( placeholder ) ? '' : String( placeholder ) ) }
+					max={ max }
+					min={ min }
+					step={ step ?? shouldForceInt ? 1 : 'any' }
 					inputProps={ { step } }
 					InputProps={ {
 						startAdornment: startIcon ? (
@@ -60,11 +47,6 @@ export const NumberControl = createControl(
 								{ startIcon }
 							</InputAdornment>
 						) : undefined,
-					} }
-					onKeyDown={ ( event: KeyboardEvent ) => {
-						if ( RESTRICTED_INPUT_KEYS.includes( event.key ) ) {
-							event.preventDefault();
-						}
 					} }
 				/>
 			</ControlActions>
