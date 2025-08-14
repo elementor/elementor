@@ -1,7 +1,3 @@
-
-
-
-
 const kitContentData = [
 	{
 		type: 'content',
