@@ -12,6 +12,7 @@ export const TextControl = createControl(
 		error,
 		inputValue,
 		inputDisabled,
+		helperText,
 		sx,
 		helperText,
 	}: {
@@ -19,6 +20,7 @@ export const TextControl = createControl(
 		error?: boolean;
 		inputValue?: string;
 		inputDisabled?: boolean;
+		helperText?: string;
 		sx?: SxProps;
 		helperText?: string;
 	} ) => {
@@ -35,6 +37,7 @@ export const TextControl = createControl(
 					onChange={ handleChange }
 					placeholder={ placeholder }
 					error={ error }
+					helperText={ helperText }
 					sx={ sx }
 					helperText={ helperText }
 				/>
