@@ -18,6 +18,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 	private ?string $pattern_label;
 	private ?string $placeholder;
 	private ?string $prop_key;
+
 	public function get_type(): string {
 		return 'repeatable';
 	}
