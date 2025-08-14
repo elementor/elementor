@@ -15,8 +15,7 @@ class CssPropertyConverterRegistry {
 		];
 	}
 
-	public function getConverter( string $property ): ?CssPropertyConverterInterface {
+	public function get_converter( string $property ): ?CssPropertyConverterInterface {
 		return $this->converters[ $property ] ?? null;
 	}
 }
-

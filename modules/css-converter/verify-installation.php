@@ -49,8 +49,8 @@ try {
 		$all_passed = false;
 	}
 } catch ( Exception $e ) {
-    $checks['autoloader'] = '✗ Autoloader error: ' . esc_html( $e->getMessage() );
-    $all_passed = false;
+	$checks['autoloader'] = '✗ Autoloader error: ' . esc_html( $e->getMessage() );
+	$all_passed = false;
 }
 
 // Check 3: Sabberworm library
@@ -63,8 +63,8 @@ try {
 		$all_passed = false;
 	}
 } catch ( Exception $e ) {
-    $checks['sabberworm'] = '✗ Sabberworm library error: ' . esc_html( $e->getMessage() );
-    $all_passed = false;
+	$checks['sabberworm'] = '✗ Sabberworm library error: ' . esc_html( $e->getMessage() );
+	$all_passed = false;
 }
 
 // Check 4: CssParser class
@@ -79,8 +79,8 @@ try {
 		$all_passed = false;
 	}
 } catch ( Exception $e ) {
-    $checks['cssparser'] = '✗ CssParser class error: ' . esc_html( $e->getMessage() );
-    $all_passed = false;
+	$checks['cssparser'] = '✗ CssParser class error: ' . esc_html( $e->getMessage() );
+	$all_passed = false;
 }
 
 // Check 5: Basic functionality test
@@ -99,8 +99,8 @@ try {
 		$all_passed = false;
 	}
 } catch ( Exception $e ) {
-    $checks['functionality'] = '✗ CSS parsing error: ' . esc_html( $e->getMessage() );
-    $all_passed = false;
+	$checks['functionality'] = '✗ CSS parsing error: ' . esc_html( $e->getMessage() );
+	$all_passed = false;
 }
 
 // Check 6: Test files
@@ -139,8 +139,8 @@ echo "\n" . str_repeat( '=', 50 ) . "\n";
 echo "VERIFICATION RESULTS:\n";
 echo str_repeat( '=', 50 ) . "\n";
 
-    foreach ( $checks as $check_name => $result ) {
-    echo esc_html( $result ) . "\n";
+foreach ( $checks as $check_name => $result ) {
+	echo esc_html( $result ) . "\n";
 }
 
 echo "\n" . str_repeat( '=', 50 ) . "\n";
@@ -193,21 +193,21 @@ if ( $all_passed ) {
 		$summary = $parser->get_conversion_summary( $parsed );
 
 		echo "Advanced test results:\n";
-        echo '- Classes extracted: ' . esc_html( (string) $summary['classes']['count'] ) . "\n";
-        echo '- Variables extracted: ' . esc_html( (string) $summary['variables']['count'] ) . "\n";
-        echo '- Unsupported CSS detected: ' . esc_html( $summary['unsupported']['has_content'] ? 'Yes' : 'No' ) . "\n";
-        echo '- Original CSS size: ' . esc_html( (string) $summary['stats']['original_size'] ) . " bytes\n";
+		echo '- Classes extracted: ' . esc_html( (string) $summary['classes']['count'] ) . "\n";
+		echo '- Variables extracted: ' . esc_html( (string) $summary['variables']['count'] ) . "\n";
+		echo '- Unsupported CSS detected: ' . esc_html( $summary['unsupported']['has_content'] ? 'Yes' : 'No' ) . "\n";
+		echo '- Original CSS size: ' . esc_html( (string) $summary['stats']['original_size'] ) . " bytes\n";
 
-        if ( 1 === $summary['classes']['count'] &&
-            2 === $summary['variables']['count'] &&
-            true === $summary['unsupported']['has_content'] ) {
+		if ( 1 === $summary['classes']['count'] &&
+			2 === $summary['variables']['count'] &&
+			true === $summary['unsupported']['has_content'] ) {
 			echo "\n✓ Advanced functionality test PASSED!\n";
 		} else {
 			echo "\n⚠ Advanced functionality test had unexpected results\n";
 		}
-    } catch ( Exception $e ) {
-        echo "\n✗ Advanced functionality test FAILED: " . esc_html( $e->getMessage() ) . "\n";
-    }
+	} catch ( Exception $e ) {
+		echo "\n✗ Advanced functionality test FAILED: " . esc_html( $e->getMessage() ) . "\n";
+	}
 }
 
 echo "\nInstallation verification complete.\n";

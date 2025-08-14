@@ -24,5 +24,3 @@ class Flexbox_Widget_Handler {
 		];
 	}
 }
-
-

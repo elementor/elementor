@@ -24,5 +24,3 @@ class Paragraph_Widget_Handler {
 		];
 	}
 }
-
-

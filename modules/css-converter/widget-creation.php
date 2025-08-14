@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Plugin;
 use Exception;
 
-function elementor_css_converter_create_widgets( $elements, $postId, $postType, $parentContainerId ) {
+function elementor_css_converter_create_widgets( $elements, $post_id, $post_type, $parent_container_id ) {
 	// Ensure Elementor is loaded
 	if ( ! class_exists( 'Elementor\\Plugin' ) ) {
 		return [
@@ -17,49 +17,50 @@ function elementor_css_converter_create_widgets( $elements, $postId, $postType, 
 	}
 
 	// Create post if needed
-	if ( ! $postId ) {
-		$postId = wp_insert_post([
+    if ( ! $post_id ) {
+        // SECURITY NOTE: Creating posts programmatically should validate user caps.
+        $post_id = wp_insert_post([
 			'post_title' => 'Elementor CSS Converter',
-			'post_type' => $postType,
+            'post_type' => $post_type,
 			'post_status' => 'draft',
 		]);
-		if ( is_wp_error( $postId ) || ! $postId ) {
+        if ( is_wp_error( $post_id ) || ! $post_id ) {
 			return [
 				'error' => 'Failed to create post',
-				'details' => is_wp_error( $postId ) ? $postId->get_error_message() : null,
+                'details' => is_wp_error( $post_id ) ? $post_id->get_error_message() : null,
 			];
 		}
 	}
 
 	// Get Elementor document
-	$document = Plugin::$instance->documents->get( $postId );
+    $document = Plugin::$instance->documents->get( $post_id );
 	if ( ! $document ) {
 		return [
 			'error' => 'Failed to get Elementor document for post',
-			'postId' => $postId,
+            'postId' => $post_id,
 		];
 	}
 
 	// Save elements to document
 	try {
-		$document->save([
+        $document->save([
 			'elements' => $elements,
 		]);
 	} catch ( Exception $e ) {
 		return [
 			'error' => 'Failed to save elements to document',
 			'details' => $e->getMessage(),
-			'postId' => $postId,
+            'postId' => $post_id,
 		];
 	}
 
-	$editUrl = method_exists( $document, 'get_edit_url' ) ? $document->get_edit_url() : get_edit_post_link( $postId, '' );
+    $edit_url = method_exists( $document, 'get_edit_url' ) ? $document->get_edit_url() : get_edit_post_link( $post_id, '' );
 	return [
 		'created' => true,
 		'elements' => $elements,
-		'postId' => $postId,
-		'postType' => $postType,
-		'parentContainerId' => $parentContainerId,
-		'editUrl' => $editUrl,
+        'postId' => $post_id,
+        'postType' => $post_type,
+        'parentContainerId' => $parent_container_id,
+        'editUrl' => $edit_url,
 	];
 }

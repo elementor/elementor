@@ -16,17 +16,17 @@ require_once __DIR__ . '/widgets/html-widget-handler.php';
 CSS_Converter_Autoloader::register();
 
 class CssConverterHandler {
-	private $widgetHandlers;
+    private $widget_handlers;
 
-	public function __construct() {
-		$this->widgetHandlers = [
+    public function __construct() {
+        $this->widget_handlers = [
             'flexbox' => new \Elementor\Modules\CssConverter\Widgets\Flexbox_Widget_Handler(),
             'paragraph' => new \Elementor\Modules\CssConverter\Widgets\Paragraph_Widget_Handler(),
             'html' => new \Elementor\Modules\CssConverter\Widgets\Html_Widget_Handler(),
-		];
-	}
+        ];
+    }
 
-	public function handleRequest( $request ) {
+    public function handle_request( $request ) {
 		$body = $request->get_body();
 		$data = json_decode( $body, true );
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
@@ -40,26 +40,27 @@ class CssConverterHandler {
 				'error' => 'Missing or invalid elements array',
 			];
 		}
-		$postId = isset( $data['postId'] ) ? $data['postId'] : null;
-		$postType = isset( $data['postType'] ) ? $data['postType'] : 'page';
-		$parentContainerId = isset( $data['parentContainerId'] ) ? $data['parentContainerId'] : null;
+        // SECURITY NOTE: Consider validating/sanitizing payload fields and enforcing capabilities.
+        $post_id = isset( $data['postId'] ) ? $data['postId'] : null;
+        $post_type = isset( $data['postType'] ) ? $data['postType'] : 'page';
+        $parent_container_id = isset( $data['parentContainerId'] ) ? $data['parentContainerId'] : null;
 
 		$results = [];
-		foreach ( $data['elements'] as $element ) {
-			$handler = $this->resolveHandler( $element );
+        foreach ( $data['elements'] as $element ) {
+            $handler = $this->resolve_handler( $element );
 			$results[] = $handler->handle( $element );
 		}
-		return elementor_css_converter_create_widgets( $results, $postId, $postType, $parentContainerId );
+        return elementor_css_converter_create_widgets( $results, $post_id, $post_type, $parent_container_id );
 	}
 
-	private function resolveHandler( $element ) {
+    private function resolve_handler( $element ) {
 		$tag = isset( $element['tag'] ) ? $element['tag'] : null;
-		if ( in_array( $tag, [ 'div', 'header', 'section', 'article', 'aside', 'footer' ] ) ) {
-			return $this->widgetHandlers['flexbox'];
-		} elseif ( $tag === 'p' ) {
-			return $this->widgetHandlers['paragraph'];
+        if ( in_array( $tag, [ 'div', 'header', 'section', 'article', 'aside', 'footer' ], true ) ) {
+            return $this->widget_handlers['flexbox'];
+        } elseif ( 'p' === $tag ) {
+            return $this->widget_handlers['paragraph'];
 		} else {
-			return $this->widgetHandlers['html'];
+            return $this->widget_handlers['html'];
 		}
 	}
 }

@@ -44,31 +44,31 @@ class CssParser {
 			$document = $parser->parse();
 
 			return new ParsedCss( $document, $css );
-        } catch ( \Exception $e ) {
-            // Do not include raw exception messages in the thrown exception to
-            // avoid leaking implementation details and to satisfy PHPCS escaping rules.
-            throw new CssParseException( 'Failed to parse CSS.', 0, $e );
-        }
+		} catch ( \Exception $e ) {
+			// Do not include raw exception messages in the thrown exception to
+			// avoid leaking implementation details and to satisfy PHPCS escaping rules.
+			throw new CssParseException( 'Failed to parse CSS.', 0, $e );
+		}
 	}
 
 	public function parse_from_file( string $file_path ): ParsedCss {
-        if ( ! file_exists( $file_path ) ) {
-            throw new CssParseException( 'CSS file not found.' );
-        }
+		if ( ! file_exists( $file_path ) ) {
+			throw new CssParseException( 'CSS file not found.' );
+		}
 
 		$css = file_get_contents( $file_path );
-        if ( false === $css ) {
-            throw new CssParseException( 'Failed to read CSS file.' );
-        }
+		if ( false === $css ) {
+			throw new CssParseException( 'Failed to read CSS file.' );
+		}
 
 		return $this->parse( $css );
 	}
 
 	public function parse_from_url( string $url ): ParsedCss {
 		$css = wp_remote_retrieve_body( wp_remote_get( $url ) );
-        if ( empty( $css ) ) {
-            throw new CssParseException( 'Failed to fetch CSS from URL.' );
-        }
+		if ( empty( $css ) ) {
+			throw new CssParseException( 'Failed to fetch CSS from URL.' );
+		}
 
 		return $this->parse( $css );
 	}
@@ -236,12 +236,12 @@ class CssParser {
 
 		try {
 			$this->parse( $css );
-        } catch ( CssParseException $e ) {
-            if ( function_exists( 'esc_html' ) ) {
-                $errors[] = esc_html( $e->getMessage() );
-            } else {
-                $errors[] = $e->getMessage();
-            }
+		} catch ( CssParseException $e ) {
+			if ( function_exists( 'esc_html' ) ) {
+				$errors[] = esc_html( $e->getMessage() );
+			} else {
+				$errors[] = $e->getMessage();
+			}
 		}
 
 		return $errors;
