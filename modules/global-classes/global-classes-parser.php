@@ -92,11 +92,11 @@ class Global_Classes_Parser {
 			}
 
 			// if ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
-			// 	if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
-			// 		$result->errors()->add( "$item_id.id", 'duplicated_class_label' );
+			// if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
+			// $result->errors()->add( "$item_id.id", 'duplicated_class_label' );
 
-			// 		continue;
-			// 	}
+			// continue;
+			// }
 			// }
 
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;

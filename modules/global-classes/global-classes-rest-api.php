@@ -150,8 +150,8 @@ class Global_Classes_REST_API {
 
 		$classes = $this->get_repository()->context( $context )->all();
 
-		return Response_Builder::make((object) $classes->get_items()->all())
-			->set_meta(['order' => $classes->get_order()->all()])
+		return Response_Builder::make( (object) $classes->get_items()->all() )
+			->set_meta( [ 'order' => $classes->get_order()->all() ] )
 			->build();
 	}
 
@@ -246,44 +246,44 @@ class Global_Classes_REST_API {
 			$final_validation_result = null;
 		}
 
-		if (false !== $duplicate_validation) {
-		$repository->put(
-			$changes_resolver->resolve_items( $final_items ),
-			$changes_resolver->resolve_order( $order_result ? $order_result->unwrap() : [] ),
-		);
+		if ( false !== $duplicate_validation ) {
+			$repository->put(
+				$changes_resolver->resolve_items( $final_items ),
+				$changes_resolver->resolve_order( $order_result ? $order_result->unwrap() : [] ),
+			);
 
-		// Build response data using the changes service
-		$response_data = $this->build_response_data( $changes, $final_validation_result );
-		$response_meta = $this->build_response_meta( $changes );
+			// Build response data using the changes service
+			$response_data = $this->build_response_data( $changes, $final_validation_result );
+			$response_meta = $this->build_response_meta( $changes );
 
-		// Get the final state after saving
-		$final_classes = $this->get_repository()->context( $context )->all();
+			// Get the final state after saving
+			$final_classes = $this->get_repository()->context( $context )->all();
 
-		// Add items and order to response data
-		$response_data['items'] = $final_classes->get_items()->all();
-		$response_data['order'] = $final_classes->get_order()->all();
+			// Add items and order to response data
+			$response_data['items'] = $final_classes->get_items()->all();
+			$response_data['order'] = $final_classes->get_order()->all();
 
-		return Response_Builder::make( $response_data )
+			return Response_Builder::make( $response_data )
 			->set_meta( $response_meta )
 			->build();
-	}else{
+		} else {
 
 			$repository = $this->get_repository()
-				->context($request->get_param('context'));
+				->context( $request->get_param( 'context' ) );
 
 			$changes_resolver = Global_Classes_Changes_Resolver::make(
 				$repository,
-				$request->get_param('changes') ?? [],
+				$request->get_param( 'changes' ) ?? [],
 			);
 
 			$repository->put(
-				$changes_resolver->resolve_items($items_result->unwrap()),
-				$changes_resolver->resolve_order($order_result->unwrap()),
+				$changes_resolver->resolve_items( $items_result->unwrap() ),
+				$changes_resolver->resolve_order( $order_result->unwrap() ),
 			);
 
 			return Response_Builder::make()->no_content()->build();
+		}
 	}
-}
 
 	private function route_wrapper( callable $cb ) {
 		try {
