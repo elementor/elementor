@@ -12,11 +12,11 @@ if (!defined('ABSPATH')) {
 
 class Module extends BaseModule
 {
-	const NAME = 'components';
+	public static $NAME = 'components';
 
 	public function get_name()
 	{
-		return 'components';
+		return self::$NAME;
 	}
 
 	public function __construct()
@@ -25,12 +25,7 @@ class Module extends BaseModule
 
 		$this->register_features();
 		$this->register_rest_api();
-
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active(self::NAME);
-
-		// if ($is_feature_active) {
-			$this->register_document_type();
-		// }
+		$this->register_document_type();
 	}
 
     public function get_widgets() {
