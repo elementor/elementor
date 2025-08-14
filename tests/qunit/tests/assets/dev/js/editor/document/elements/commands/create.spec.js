@@ -10,7 +10,6 @@ export const Create = () => {
 					isSectionCreated = !! elementor.getPreviewContainer().children.find(
 						( section ) => eSection.id === section.id,
 					);
-				console.log( elementor.getPreviewContainer().children );
 
 				// Check.
 				assert.equal( isSectionCreated, true, 'Section were created.' );
