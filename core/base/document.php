@@ -6,6 +6,7 @@ use Elementor\Core\Base\Elements_Iteration_Actions\Base as Elements_Iteration_Ac
 use Elementor\Core\Behaviors\Interfaces\Lock_Behavior;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Core\Settings\Page\Model as Page_Model;
+use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Exceptions;
 use Elementor\Includes\Elements\Container;
 use Elementor\Plugin;
@@ -726,24 +727,16 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$container_config = [];
+			$widgets_config = Plugin::$instance->widgets_manager->get_widget_types_config();
 
-			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
-				$container_config['container'] =
-					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
-			}
+			// defines the elements that will be shown in the panel
+			$elements_config = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
+				->filter( fn( $element ) => ( ! empty( $element->get_config()['show_in_panel'] ) ) )
+				->map( fn( $element ) => $element->get_config() )
+				->all();
 
-			if ( Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
-				// Order reflects the order in the editor.
-				$atomic_elements = [ 'e-flexbox', 'e-div-block' ];
-
-				foreach ( $atomic_elements as $element ) {
-					$container_config[ $element ] = Plugin::$instance->elements_manager->get_element_types( $element )->get_config();
-				}
-			}
-
+			$config['widgets'] = array_merge( $widgets_config, $elements_config );
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = $container_config + Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
 		$additional_config = [];
