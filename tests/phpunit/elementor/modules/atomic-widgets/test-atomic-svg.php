@@ -4,6 +4,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
+use Elementor\Modules\AtomicWidgets\PropTypes\Svg_Prop_Type;
 
 class Test_Atomic_Svg extends Elementor_Test_Base {
 	use MatchesSnapshots;
@@ -12,10 +13,10 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 	protected $instance;
 
-	public function setUp() : void {
+	public function setUp(): void {
 		parent::setUp();
 
-		add_filter( 'get_attached_file', function( $path, $attachment_id ) {
+		add_filter( 'get_attached_file', function ( $path, $attachment_id ) {
 			if ( $attachment_id === 123 ) {
 				return self::TEST_RESOURCES_DIR . 'test.svg';
 			}
@@ -23,7 +24,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			return $path;
 		}, 10, 2 );
 
-		add_filter( 'pre_http_request', function( $preempt, $args, $url ) {
+		add_filter( 'pre_http_request', function ( $preempt, $args, $url ) {
 			if ( $url === self::TEST_RESOURCES_DIR . 'test.svg' ) {
 				return [
 					'body' => '<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h100v100H0z"/></svg>',
@@ -33,7 +34,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			return $preempt;
 		}, 10, 3 );
 
-		add_filter( 'pre_filesystem_method', function() {
+		add_filter( 'pre_filesystem_method', function () {
 			return 'direct';
 		} );
 
@@ -45,7 +46,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		);
 	}
 
-	public function test__default_svg_structure() : void {
+	public function test__default_svg_structure(): void {
 		// Arrange
 		$mock_svg = [
 			'id' => 'abcd123',
@@ -65,7 +66,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__render_svg_from_id() : void {
+	public function test__render_svg_from_id(): void {
 		// Arrange
 		$mock_svg = $this->get_mock_svg();
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock_svg );
@@ -79,7 +80,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__render_svg_from_url() : void {
+	public function test__render_svg_from_url(): void {
 		// Arrange
 		$mock_svg = $this->get_mock_svg( true );
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock_svg );
@@ -96,14 +97,14 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 	/**
 	 * @dataProvider link_href_provider
 	 */
-	public function test__should_render_svg_wrapped_in_link( $href ) : void {
+	public function test__should_render_svg_wrapped_in_link( $href ): void {
 		$element = [
 			'id' => 'abcd123',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
+				'svg' => Svg_Prop_Type::generate( [
 					'id' => 123,
-				],
+				] ),
 				'link' => [
 					'href' => $href,
 					'target' => '_blank',
@@ -123,14 +124,14 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__should_not_render_svg_wrapped_in_link_if_link_object_not_well_defined() : void {
+	public function test__should_not_render_svg_wrapped_in_link_if_link_object_not_well_defined(): void {
 		$element = [
 			'id' => 'abcd123',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
+				'svg' => Svg_Prop_Type::generate( [
 					'id' => 123,
-				],
+				] ),
 				'link' => [
 					'href' => '',
 					'target' => '_blank',
@@ -155,9 +156,11 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			'id' => 'abcd123',
 			'elType' => 'widget',
 			'settings' => [
-				'svg' => [
-					'id' => 123,
-				],
+				'svg' => Svg_Prop_Type::generate(
+					[
+						'id' => 123,
+					]
+				),
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),
 		] :
@@ -165,9 +168,9 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'id' => 'abcd123',
 				'elType' => 'widget',
 				'settings' => [
-					'svg' => [
+					'svg' => Svg_Prop_Type::generate( [
 						'url' => self::TEST_RESOURCES_DIR . 'test.svg',
-					],
+					] ),
 				],
 				'widgetType' => Atomic_Svg::get_element_type(),
 			];
@@ -176,7 +179,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 	public function link_href_provider(): array {
 		return [
 			'External link' => [ 'https://elementor.com' ],
-			'ID link'       => [ '#element-id' ],
+			'ID link' => [ '#element-id' ],
 		];
 	}
 }
