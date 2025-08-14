@@ -10,16 +10,11 @@ use WP_REST_Response;
 require_once __DIR__ . '/handler.php';
 
 add_action('rest_api_init', function () {
-	register_rest_route('elementor/v2', '/css-converter', [
+	register_rest_route( 'elementor/v2', '/css-converter', [
 		'methods' => 'POST',
 		'callback' => 'elementor_css_converter_api_handler',
 		'permission_callback' => '__return_true',
-	]);
-	register_rest_route('elementor/v2', '/css-converter/docs', [
-		'methods' => 'GET',
-		'callback' => 'elementor_css_converter_api_docs',
-		'permission_callback' => '__return_true',
-	]);
+	] );
 });
 
 define( 'ELEMENTOR_CSS_CONVERTER_API_KEY', 'changeme-hardcoded-key' ); // TODO: Update for production

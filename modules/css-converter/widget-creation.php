@@ -19,11 +19,11 @@ function elementor_css_converter_create_widgets( $elements, $post_id, $post_type
 	// Create post if needed
 	if ( ! $post_id ) {
 		// SECURITY NOTE: Creating posts programmatically should validate user caps.
-		$post_id = wp_insert_post([
+		$post_id = wp_insert_post( [
 			'post_title' => 'Elementor CSS Converter',
 			'post_type' => $post_type,
 			'post_status' => 'draft',
-		]);
+		] );
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			return [
 				'error' => 'Failed to create post',
@@ -43,9 +43,11 @@ function elementor_css_converter_create_widgets( $elements, $post_id, $post_type
 
 	// Save elements to document
 	try {
-		$document->save([
-			'elements' => $elements,
-		]);
+		$document->save( 
+			[
+				'elements' => $elements,
+			]
+		);
 	} catch ( Exception $e ) {
 		return [
 			'error' => 'Failed to save elements to document',
