@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'packages/**'
+  pull_request:
+    branches:
+      - main
 
 jobs:
   publish-packages:
@@ -58,6 +61,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
 
       - name: Create Git Tag
+        env:
+          VERSION_WITH_TAG: ${{ env.VERSION_WITH_TAG }}
         run: |
           VERSION_WITH_TAG="${{ steps.get-version.outputs.current_version }}-${{ steps.build-tag.outputs.build_number }}"
           git config --global user.email "github-actions@github.com"
