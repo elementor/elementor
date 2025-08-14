@@ -2,20 +2,15 @@ import PromotionBehavior from './behavior';
 
 export default class Module extends elementorModules.editor.utils.Module {
 	onElementorInit() {
-		if ( ! this.hasPromotionWidgets() && ! this.hasIntegrationWidgets() ) {
+		if ( ! elementor.config?.promotionWidgets || ! elementor.config.promotionWidgets.length ) {
 			return;
 		}
 
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );
-			const isProWidget = elementor.config?.promotionWidgets?.find( ( item ) => widgetType === item.name );
+			const isProWidget = elementor.config.promotionWidgets.find( ( item ) => widgetType === item.name );
 
 			if ( isProWidget ) {
-				return require( './widget/view' ).default;
-			}
-
-			const isIntegrationWidget = elementor.config?.integrationWidgets?.find( ( item ) => widgetType === item.name );
-			if ( isIntegrationWidget ) {
 				return require( './widget/view' ).default;
 			}
 
@@ -23,14 +18,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 		} );
 
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
-	}
-
-	hasPromotionWidgets() {
-		return elementor.config?.promotionWidgets && elementor.config.promotionWidgets.length;
-	}
-
-	hasIntegrationWidgets() {
-		return elementor.config?.integrationWidgets && elementor.config.integrationWidgets.length;
 	}
 
 	registerControlBehavior( behaviors, view ) {
