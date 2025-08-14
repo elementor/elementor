@@ -150,9 +150,9 @@ class Global_Classes_REST_API {
 
 		$classes = $this->get_repository()->context( $context )->all();
 
-		return Response_Builder::make( (object) $classes->get_items()->all() )
-								->set_meta( [ 'order' => $classes->get_order()->all() ] )
-													->build();
+		return Response_Builder::make((object) $classes->get_items()->all())
+			->set_meta(['order' => $classes->get_order()->all()])
+			->build();
 	}
 
 	private function get_usage() {
@@ -164,7 +164,6 @@ class Global_Classes_REST_API {
 	private function put( \WP_REST_Request $request ) {
 		$context = $request->get_param( 'context' );
 		$changes = $request->get_param( 'changes' ) ?? [];
-		$items = $request->get_param( 'items' ) ?? [];
 
 		$parser = Global_Classes_Parser::make();
 		$existing_items = Global_Classes_Repository::make()
@@ -178,8 +177,6 @@ class Global_Classes_REST_API {
 				];
 			} )
 			->all();
-
-		$has_changes = ! empty( $changes['added'] ) || ! empty( $changes['deleted'] ) || ! empty( $changes['modified'] );
 
 		// Skip initial duplicate check - we'll do it once at the end with fresh data
 		$validation_result = null;
@@ -249,6 +246,7 @@ class Global_Classes_REST_API {
 			$final_validation_result = null;
 		}
 
+		if (false !== $duplicate_validation) {
 		$repository->put(
 			$changes_resolver->resolve_items( $final_items ),
 			$changes_resolver->resolve_order( $order_result ? $order_result->unwrap() : [] ),
@@ -268,7 +266,24 @@ class Global_Classes_REST_API {
 		return Response_Builder::make( $response_data )
 			->set_meta( $response_meta )
 			->build();
+	}else{
+
+			$repository = $this->get_repository()
+				->context($request->get_param('context'));
+
+			$changes_resolver = Global_Classes_Changes_Resolver::make(
+				$repository,
+				$request->get_param('changes') ?? [],
+			);
+
+			$repository->put(
+				$changes_resolver->resolve_items($items_result->unwrap()),
+				$changes_resolver->resolve_order($order_result->unwrap()),
+			);
+
+			return Response_Builder::make()->no_content()->build();
 	}
+}
 
 	private function route_wrapper( callable $cb ) {
 		try {
