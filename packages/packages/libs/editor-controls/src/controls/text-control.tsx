@@ -12,12 +12,14 @@ export const TextControl = createControl(
 		error,
 		inputValue,
 		inputDisabled,
+		helperText,
 		sx,
 	}: {
 		placeholder?: string;
 		error?: boolean;
 		inputValue?: string;
 		inputDisabled?: boolean;
+		helperText?: string;
 		sx?: SxProps;
 	} ) => {
 		const { value, setValue, disabled } = useBoundProp( stringPropTypeUtil );
@@ -33,6 +35,7 @@ export const TextControl = createControl(
 					onChange={ handleChange }
 					placeholder={ placeholder }
 					error={ error }
+					helperText={ helperText }
 					sx={ sx }
 				/>
 			</ControlActions>
