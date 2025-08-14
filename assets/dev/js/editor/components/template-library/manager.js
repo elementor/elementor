@@ -32,21 +32,12 @@ const TemplateLibraryManager = function() {
 	const registerDefaultTemplateTypes = function() {
 		var data = self.getDefaultTemplateTypeData();
 
-		const elements = Object.entries( elementor.getConfig().elements ).reduce( ( acc, [ type, element ] ) => {
-			if ( ! element?.atomic_props_schema ) {
-				return acc;
-			}
-
-			acc[ type ] = element.title;
-
-			return acc;
-		}, {} );
-
 		const translationMap = {
 			page: __( 'Page', 'elementor' ),
 			section: __( 'Section', 'elementor' ),
 			container: __( 'Container', 'elementor' ),
-			...elements,
+			'e-div-block': __( 'Div Block', 'elementor' ),
+			'e-flexbox': __( 'Flexbox', 'elementor' ),
 
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};

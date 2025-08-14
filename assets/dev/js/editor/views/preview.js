@@ -79,12 +79,10 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
-		const wrappedElementTypes = [ 'widget', 'section', 'column' ];
-
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,
 			model,
-			{ ...options, shouldWrap: wrappedElementTypes.includes( model.elType ) },
+			{ ...options, shouldWrap: ! [ 'container', 'e-div-block', 'e-flexbox' ].includes( model.elType ) },
 		);
 	},
 

@@ -1,7 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Library;
-
-use Elementor\Modules\Library\Documents\Library_Document;
+namespace Elementor\Modules\Library\Documents;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
