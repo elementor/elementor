@@ -57,7 +57,8 @@ class Taxonomies extends Export_Runner_Base {
 		$selected_taxonomies = $customization['taxonomies'] ?? null;
 
 		foreach ( $taxonomies as $taxonomy ) {
-			$taxonomy_post_types = get_taxonomy( $taxonomy )->object_type;
+			$taxonomy_obj = get_taxonomy( $taxonomy );
+			$taxonomy_post_types = $taxonomy_obj->object_type;
 			$intersected_post_types = array_intersect( $taxonomy_post_types, $post_types );
 
 			$should_export = null === $selected_taxonomies
@@ -75,7 +76,10 @@ class Taxonomies extends Export_Runner_Base {
 			}
 
 			foreach ( $intersected_post_types as $post_type ) {
-				$manifest[ $post_type ][] = $taxonomy;
+				$manifest[ $post_type ][] = [
+					'name'  => $taxonomy,
+					'label' => $taxonomy_obj->label,
+				];
 			}
 
 			$files[] = [

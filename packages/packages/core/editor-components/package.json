@@ -1,7 +1,7 @@
 {
     "name": "@elementor/editor-components",
-    "description": "Components manager for the Elementor editor",
-    "version": "0.0.1",
+    "description": "Elementor editor components",
+    "version": "3.32.0",
     "private": false,
     "author": "Elementor Team",
     "homepage": "https://elementor.com/",
@@ -40,11 +40,9 @@
         "dev": "tsup --config=../../tsup.dev.ts"
     },
     "dependencies": {
-        "@elementor/editor": "3.32.0",
-        "@elementor/editor-styles-repository": "3.32.0",
-        "@elementor/http-client": "3.32.0",
-        "@elementor/store": "3.32.0",
-        "@floating-ui/react": "^0.27.5"
+        "@elementor/ui": "1.36.8",
+        "@elementor/editor-elements-panel": "3.32.0",
+        "@wordpress/i18n": "^5.13.0"
     },
     "peerDependencies": {
         "react": "^18.3.1",

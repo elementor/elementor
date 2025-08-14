@@ -1,11 +1,12 @@
-import { injectIntoTop } from '@elementor/editor';
-import { ComponentCreateForm } from './components/component-create-form';
+import { injectTab } from '@elementor/editor-elements-panel';
+import { __ } from '@wordpress/i18n';
+
+import { ComponentsTab } from './components/components-tab';
 
 export function init() {
-    console.log('init editor components' );
-
-	injectIntoTop( {
-		id: 'component-create-form',
-		component: ComponentCreateForm,
+	injectTab( {
+		id: 'components',
+		label: __( 'Components', 'elementor' ),
+		component: ComponentsTab,
 	} );
 }
