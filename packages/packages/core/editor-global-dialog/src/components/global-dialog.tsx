@@ -1,0 +1,36 @@
+import { useEffect, useState } from 'react';
+import * as React from 'react';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { Box, Dialog, DialogActions, DialogContent, DialogTitle } from '@elementor/ui';
+
+import { subscribe } from '../event-bus';
+import { type DialogContent as DialogContentType, EVENT_TYPE } from '../notifier';
+
+export const GlobalDialog = () => {
+	const [ content, setContent ] = useState< DialogContentType | null >( null );
+
+	useEffect( () => {
+		const unsubOpen = subscribe< DialogContentType >( EVENT_TYPE.OPEN, setContent );
+		const unsubClose = subscribe( EVENT_TYPE.CLOSE, () => setContent( null ) );
+		return () => {
+			unsubOpen();
+			unsubClose();
+		};
+	}, [] );
+
+	if ( ! content ) {
+		return null;
+	}
+
+	return (
+		<ThemeProvider>
+			<Dialog open onClose={ () => setContent( null ) } maxWidth="sm" fullWidth>
+				<Box>
+					<DialogTitle>{ content.title }</DialogTitle>
+					<DialogContent>{content.component}</DialogContent>
+					<DialogActions>{content.actions}</DialogActions>
+				</Box>
+			</Dialog>
+		</ThemeProvider>
+	);
+};
