@@ -28,7 +28,7 @@ export function createBatchTransformer< TPayload = unknown >( {
 			onSuccess: ( result ) => {
 				cache.set( id, result );
 			},
-			onError: ( error ) => {
+			onError: () => {
 				cache.set( id, null );
 			},
 		} );
