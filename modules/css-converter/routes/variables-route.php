@@ -18,6 +18,15 @@ add_action( 'rest_api_init', function () {
         'methods' => 'POST',
         'callback' => __NAMESPACE__ . '\\handle_variables_import',
         'permission_callback' => function () {
+            $allow_public = apply_filters( 'elementor_css_converter_allow_public_access', false );
+            if ( $allow_public ) {
+                return true;
+            }
+            $dev_token = defined( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN' ) ? ELEMENTOR_CSS_CONVERTER_DEV_TOKEN : null;
+            $header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? (string) $_SERVER['HTTP_X_DEV_TOKEN'] : null;
+            if ( $dev_token && $header_token && hash_equals( (string) $dev_token, $header_token ) ) {
+                return true;
+            }
             return current_user_can( 'manage_options' );
         },
     ] );
