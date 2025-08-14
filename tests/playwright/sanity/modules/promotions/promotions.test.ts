@@ -56,6 +56,44 @@ test.describe( 'Promotion tests @promotions', () => {
 		} );
 	} );
 
+	// TODO : Clean up task : https://elementor.atlassian.net/browse/ED-20036
+	test.skip( 'Widgets React Modal Promotions', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
+			editor = await wpAdmin.openNewPage(),
+			promotionsHelper = new PromotionsHelper( page, testInfo ),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+
+		await test.step( 'Free to Pro - react animated headline modal visible', async () => {
+			await editor.addWidget( { widgetType: 'heading', container } );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'animated_headline_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react video playlist modal visible', async () => {
+			await editor.addWidget( { widgetType: 'video', container } );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'video_playlist_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react cta button modal visible', async () => {
+			await editor.addWidget( { widgetType: 'button', container } );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'cta_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react image carousel modal visible', async () => {
+			await editor.addWidget( { widgetType: 'image-carousel', container } );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'image_carousel_promotion' );
+		} );
+
+		await test.step( 'Free to Pro - react testimonial modal visible', async () => {
+			await editor.addWidget( { widgetType: 'testimonial', container } );
+			await editor.openPanelTab( 'content' );
+			await promotionsHelper.modalPromotionModalVisibilityTest( 'testimonial_widget_promotion' );
+		} );
+	} );
+
 	test( 'Context Menu Promotions - Free to Pro', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests ),
