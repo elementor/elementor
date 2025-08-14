@@ -727,12 +727,20 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
+			$widgets_config = Collection::make( Plugin::$instance->widgets_manager->get_widget_types_config() );
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
+				$widgets_config = $widgets_config['container'] = Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
+			}
+
+			$is_container_active = Plugin::$instance->experiments->is_feature_active( 'container' );
+
+			Collection::make( Plugin::$instance->elements_manager->get_element_types() )
+				->filter( fn( $element, $key ) => ( $key === 'container' && $is_container_active ) || $element->get_config()['show_in_panel'] )
+				->each( fn( $element, $key ) => $widgets_config[ $key ] = $element->get_config() );
+
+			$config['widgets'] = $widgets_config->all();
 			$config['elements'] = $this->get_elements_raw_data( null, true );
-			$config['widgets'] = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
-			->filter( fn ( $_, $key ) => 'container' !== $key || ( 'container' === $key && Plugin::$instance->experiments->is_feature_active( 'container' ) ) )
-			->map( fn ( $element ) => $element->get_config() )
-			->merge( Plugin::$instance->widgets_manager->get_widget_types_config() )
-			->all();
 		}
 
 		$additional_config = [];
