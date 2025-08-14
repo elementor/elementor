@@ -205,18 +205,10 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		if ( ! $items_result->is_valid() ) {
-			$first_error = $items_result->errors()[0];
-			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ITEMS;
-
-			return Error_Builder::make( $code )
-				->set_status( 400 )
-				->set_meta( [
-					'validation_errors' => $items_result->errors()->all(),
-					'required_fields' => [ 'id', 'variants', 'type', 'label' ],
-					'valid_types' => [ 'class' ],
-				] )
-				->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
+		if (! $items_result->is_valid()) {
+			return Error_Builder::make('invalid_items')
+				->set_status(400)
+				->set_message('Invalid items: ' . $items_result->errors()->to_string())
 				->build();
 		}
 
@@ -225,19 +217,10 @@ class Global_Classes_REST_API {
 			$items_result->unwrap()
 		);
 
-		if ( ! $order_result->is_valid() ) {
-			$first_error = $order_result->errors()[0];
-			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ORDER;
-
-			return Error_Builder::make( $code )
-				->set_status( 400 )
-				->set_meta( [
-					'validation_errors' => $order_result->errors()->all(),
-					'items_count' => count( $items_result->unwrap() ),
-					'order_count' => count( $request->get_param( 'order' ) ?? [] ),
-					'expected_count' => count( $items_result->unwrap() ),
-				] )
-				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
+		if (! $order_result->is_valid()) {
+			return Error_Builder::make('invalid_order')
+				->set_status(400)
+				->set_message('Invalid order: ' . $order_result->errors()->to_string())
 				->build();
 		}
 
@@ -275,6 +258,13 @@ class Global_Classes_REST_API {
 		$response_data = $this->build_response_data( $changes, $final_validation_result );
 		$response_meta = $this->build_response_meta( $changes );
 
+		// Get the final state after saving
+		$final_classes = $this->get_repository()->context( $context )->all();
+
+		// Add items and order to response data
+		$response_data['items'] = $final_classes->get_items()->all();
+		$response_data['order'] = $final_classes->get_order()->all();
+
 		return Response_Builder::make( $response_data )
 			->set_meta( $response_meta )
 			->build();
@@ -284,7 +274,7 @@ class Global_Classes_REST_API {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			return Error_Builder::make( Global_Classes_Errors::UNEXPECTED_ERROR )
+			return Error_Builder::make( 'unexpected_error' )
 				->set_status( 500 )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();
@@ -486,6 +476,7 @@ class Global_Classes_REST_API {
 			'added_count' => count( $changes['added'] ?? [] ),
 			'modified_count' => count( $changes['modified'] ?? [] ),
 			'deleted_count' => count( $changes['deleted'] ?? [] ),
+			'changes' => $changes,
 		];
 
 		// Add information about modified labels if any
