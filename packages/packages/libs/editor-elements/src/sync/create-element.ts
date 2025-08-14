@@ -1,7 +1,7 @@
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { getContainer } from './get-container';
-import { type V1Element, type V1ElementModelProps, type V1ElementSettingsProps } from './types';
+import { type V1Element, type V1ElementSettingsProps } from './types';
 
 type Options = {
 	useHistory?: boolean;
@@ -30,15 +30,7 @@ export function createElement( {
 	} );
 }
 
-function createElementModel( {
-	settings,
-	type,
-	id,
-}: {
-	settings: V1ElementSettingsProps;
-	type: string;
-	id?: string;
-} ): Omit< V1ElementModelProps, 'id' > {
+function createElementModel( { settings, type, id }: { settings: V1ElementSettingsProps; type: string; id?: string } ) {
 	return {
 		id,
 		elType: 'widget',
