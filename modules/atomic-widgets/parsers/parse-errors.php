@@ -53,5 +53,4 @@ class Parse_Errors {
 
 		return $this;
 	}
-
 }
