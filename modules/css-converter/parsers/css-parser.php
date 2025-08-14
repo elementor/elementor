@@ -215,24 +215,24 @@ class CssParser {
 	}
 
 	private function extract_rules_from_block( $block ): array {
-		$rules = array();
+		$rules = [];
 		foreach ( $block->getRules() as $rule ) {
 			$property = $rule->getRule();
 			$value = (string) $rule->getValue();
 			$is_important = $rule->getIsImportant();
 			$raw = $rule->render( \Sabberworm\CSS\OutputFormat::create() );
 
-			$rules[ $property ] = array(
+			$rules[ $property ] = [
 				'value' => $value,
 				'important' => $is_important,
 				'raw' => $raw,
-			);
+			];
 		}
 		return $rules;
 	}
 
 	public function validate_css( string $css ): array {
-		$errors = array();
+		$errors = [];
 
 		try {
 			$this->parse( $css );

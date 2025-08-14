@@ -9,6 +9,8 @@
  *
  * Or via WordPress:
  * wp eval-file verify-installation.php
+ * 
+ * @package Elementor
  */
 
 namespace Elementor\Modules\CssConverter;

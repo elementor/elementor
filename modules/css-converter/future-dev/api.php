@@ -21,7 +21,7 @@ define( 'ELEMENTOR_CSS_CONVERTER_API_KEY', 'changeme-hardcoded-key' ); // TODO: 
 
 function elementor_css_converter_api_handler( $request ) {
 	$api_key = $request->get_header( 'X-API-Key' );
-	if ( $api_key !== ELEMENTOR_CSS_CONVERTER_API_KEY ) {
+	if ( ELEMENTOR_CSS_CONVERTER_API_KEY !== $api_key ) {
 		return new WP_REST_Response( [ 'error' => 'Unauthorized' ], 401 );
 	}
 	$handler = new CssConverterHandler();

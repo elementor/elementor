@@ -43,9 +43,9 @@ function elementor_css_converter_create_widgets( $elements, $post_id, $post_type
 
 	// Save elements to document
 	try {
-		$document->save( 
+		$document->save(
 			[
-				"elements" => $elements,
+				'elements' => $elements,
 			]
 		);
 	} catch ( Exception $e ) {

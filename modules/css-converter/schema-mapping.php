@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/css-converters/css-property-converter-registry.php';
+require_once __DIR__ . '/future-dev/css-converters/css-property-converter-registry.php';
 
 use Elementor\Modules\CssConverter\CssConverters\CssPropertyConverterRegistry;
 
