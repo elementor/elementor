@@ -72,9 +72,9 @@ class Rest_Api {
 				],
 				'value' => [
 					'required' => true,
-					'type' => 'string',
-					'validate_callback' => [ $this, 'is_valid_variable_value' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+					'type' => 'object',
+//					'validate_callback' => [ $this, 'is_valid_variable_value' ],
+//					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
 		] );
@@ -138,9 +138,9 @@ class Rest_Api {
 				],
 				'value' => [
 					'required' => false,
-					'type' => 'string',
-					'validate_callback' => [ $this, 'is_valid_variable_value' ],
-					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+					'type' => 'array',
+//					'validate_callback' => [ $this, 'is_valid_variable_value' ],
+//					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
 			],
 		] );

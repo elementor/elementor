@@ -1,12 +1,4 @@
-export type TVariable = {
-	type: string;
-	label: string;
-	value: string;
-	deleted?: boolean;
-	deleted_at?: string;
-};
-
-export type TVariablesList = Record< string, TVariable >;
+import { type Variable, type VariablesList } from './types';
 
 const STORAGE_KEY = 'elementor-global-variables';
 const STORAGE_WATERMARK_KEY = 'elementor-global-variables-watermark';
@@ -17,7 +9,7 @@ const OP_RO = 'RO';
 export class Storage {
 	state: {
 		watermark: number;
-		variables: TVariablesList;
+		variables: VariablesList;
 	};
 
 	constructor() {
@@ -29,11 +21,11 @@ export class Storage {
 
 	load() {
 		this.state.watermark = parseInt( localStorage.getItem( STORAGE_WATERMARK_KEY ) || '-1' );
-		this.state.variables = JSON.parse( localStorage.getItem( STORAGE_KEY ) || '{}' ) as TVariablesList;
+		this.state.variables = JSON.parse( localStorage.getItem( STORAGE_KEY ) || '{}' ) as VariablesList;
 		return this.state.variables;
 	}
 
-	fill( variables: TVariablesList, watermark: number ) {
+	fill( variables: VariablesList, watermark: number ) {
 		this.state.variables = {};
 		if ( variables && Object.keys( variables ).length ) {
 			this.state.variables = variables;
@@ -45,13 +37,13 @@ export class Storage {
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
 	}
 
-	add( id: string, variable: TVariable ) {
+	add( id: string, variable: Variable ) {
 		this.load();
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );
 	}
 
-	update( id: string, variable: TVariable ) {
+	update( id: string, variable: Variable ) {
 		this.load();
 		this.state.variables[ id ] = variable;
 		localStorage.setItem( STORAGE_KEY, JSON.stringify( this.state.variables ) );

@@ -5,7 +5,7 @@ import { Portal } from '@elementor/ui';
 
 import { styleVariablesRepository } from '../style-variables-repository';
 import { getCanvasIframeDocument } from '../sync/get-canvas-iframe-document';
-import { type StyleVariables, type Variable } from '../types';
+import { type Variable, type VariablesList } from '../types';
 
 const VARIABLES_WRAPPER = 'body';
 
@@ -36,7 +36,7 @@ function usePortalContainer() {
 }
 
 function useStyleVariables() {
-	const [ variables, setVariables ] = useState< StyleVariables >( {} );
+	const [ variables, setVariables ] = useState< VariablesList >( {} );
 
 	useEffect( () => {
 		const unsubscribe = styleVariablesRepository.subscribe( setVariables );
@@ -56,7 +56,7 @@ function cssVariableDeclaration( key: string, variable: Variable ) {
 	return `--${ variableName }:${ value };`;
 }
 
-function convertToCssVariables( variables: StyleVariables ): string {
+function convertToCssVariables( variables: VariablesList ): string {
 	const listOfVariables = Object.entries( variables );
 	return listOfVariables.map( ( [ key, variable ] ) => cssVariableDeclaration( key, variable ) ).join( '' );
 }

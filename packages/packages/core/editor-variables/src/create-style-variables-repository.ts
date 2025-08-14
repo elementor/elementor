@@ -1,12 +1,12 @@
 import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
 import { enqueueFont } from './sync/enqueue-font';
-import { type StyleVariables, type Variable } from './types';
+import { type Variable, type VariablesList } from './types';
+import { transformValue } from './utils/transform-value';
 
-type VariablesChangeCallback = ( variables: StyleVariables ) => void;
-type Variables = Record< string, Variable >;
+type VariablesChangeCallback = ( variables: VariablesList ) => void;
 
 export const createStyleVariablesRepository = () => {
-	const variables: StyleVariables = {};
+	const variables: VariablesList = {};
 	let subscription: VariablesChangeCallback;
 
 	const subscribe = ( cb: VariablesChangeCallback ) => {
@@ -47,7 +47,7 @@ export const createStyleVariablesRepository = () => {
 		return false;
 	};
 
-	const applyUpdates = ( updatedVars: Variables ): boolean => {
+	const applyUpdates = ( updatedVars: VariablesList ): boolean => {
 		let hasChanges = false;
 
 		for ( const [ key, variable ] of Object.entries( updatedVars ) ) {
@@ -55,7 +55,7 @@ export const createStyleVariablesRepository = () => {
 				variables[ key ] = variable;
 
 				if ( variable.type === fontVariablePropTypeUtil.key ) {
-					fontEnqueue( variable.value );
+					fontEnqueue( transformValue( variable ) );
 				}
 
 				hasChanges = true;
@@ -77,7 +77,7 @@ export const createStyleVariablesRepository = () => {
 		}
 	};
 
-	const update = ( updatedVars: Variables ) => {
+	const update = ( updatedVars: VariablesList ) => {
 		if ( applyUpdates( updatedVars ) ) {
 			notify();
 		}

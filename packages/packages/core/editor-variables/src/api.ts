@@ -1,11 +1,13 @@
 import { httpService } from '@elementor/http-client';
 
+import { type Variable, type VariableWithoutType } from './types';
+
 const BASE_PATH = 'elementor/v1/variables';
 
 type RestoreVariablePayload = {
 	id: string;
 	label?: string;
-	value?: string;
+	value?: Variable[ 'value' ];
 };
 
 export const apiClient = {
@@ -13,7 +15,7 @@ export const apiClient = {
 		return httpService().get( BASE_PATH + '/list' );
 	},
 
-	create: ( type: string, label: string, value: string ) => {
+	create: ( { type, label, value }: Variable ) => {
 		return httpService().post( BASE_PATH + '/create', {
 			type,
 			label,
@@ -21,7 +23,7 @@ export const apiClient = {
 		} );
 	},
 
-	update: ( id: string, label: string, value: string ) => {
+	update: ( id: string, { label, value }: VariableWithoutType ) => {
 		return httpService().put( BASE_PATH + '/update', {
 			id,
 			label,
@@ -33,7 +35,7 @@ export const apiClient = {
 		return httpService().post( BASE_PATH + '/delete', { id } );
 	},
 
-	restore: ( id: string, label?: string, value?: string ) => {
+	restore: ( id: string, { label, value }: Partial< VariableWithoutType > ) => {
 		const payload: RestoreVariablePayload = { id };
 
 		if ( label ) {

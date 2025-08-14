@@ -14,40 +14,46 @@ import { inheritanceTransformer } from '../transformers/inheritance-transformer'
 import { variableTransformer } from '../transformers/variable-transformer';
 import { type NormalizedVariable } from '../types';
 
-type ValueFieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
-	onValidationChange?: ( value: string ) => void;
+type ValueFieldProps< TValue > = {
+	value: TValue;
+	onChange: ( value: TValue ) => void;
+	onValidationChange?: ( errorMessage: string ) => void;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 
-type VariableTypeOptions = {
-	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
-	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
+// type Transformer = ReturnType< typeof styleTransformersRegistry.get >;
+
+type OptionalOptions< TValue > = {
+	startIcon?: ( { value }: { value: TValue } ) => JSX.Element;
+	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
+	valueTransformer?: ( value: TValue ) => PropValue;
+};
+
+type TypeOptions< TV > = OptionalOptions< TV > & {
 	variableType: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
-	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
-	valueTransformer?: ( value: string ) => PropValue;
+	// transformer: Transformer;
+	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
+	valueField: ( { value, onChange, onValidationChange }: ValueFieldProps< TV > ) => JSX.Element;
 };
 
-export type VariableTypesMap = Record< string, VariableTypeOptions >;
+export function createVariableTypeRegistry< TV >() {
+	const variableTypes: Record< string, TypeOptions< TV > > = {};
 
-export function createVariableTypeRegistry() {
-	const variableTypes: VariableTypesMap = {};
-
+	// styleTransformersRegistry.get();
 	const registerVariableType = ( {
 		icon,
 		startIcon,
 		valueField,
+		// transformer,
 		propTypeUtil,
 		variableType,
 		selectionFilter,
 		valueTransformer,
 		fallbackPropTypeUtil,
-	}: VariableTypeOptions ) => {
+	}: TypeOptions< TV > ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
 			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
 		}
@@ -56,6 +62,7 @@ export function createVariableTypeRegistry() {
 			icon,
 			startIcon,
 			valueField,
+			// transformer,
 			propTypeUtil,
 			variableType,
 			selectionFilter,

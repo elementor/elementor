@@ -4,7 +4,9 @@ import { type PropKey } from '@elementor/editor-props';
 
 import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
-import { type NormalizedVariable, type Variable } from '../types';
+import { type NormalizedVariable, type Variable, type VariableWithoutType } from '../types';
+import { styleTransformersRegistry } from '@elementor/editor-canvas';
+import { transformValue } from '../utils/transform-value';
 
 export const getVariables = ( includeDeleted = true ) => {
 	const variables = service.variables();
@@ -63,23 +65,23 @@ const normalizeVariables = ( propKey: string ) => {
 
 	return Object.entries( variables )
 		.filter( ( [ , variable ] ) => variable.type === propKey )
-		.map( ( [ key, { label, value } ] ) => ( {
-			key,
-			label,
-			value,
-		} ) );
-};
+		.map( ( [ key, { label, value } ] ) => {
 
+			return {
+				key,
+				label,
+				value: transformValue( value ),
+			};
+		} );
+};
+// styleTransformersRegistry.get( colorPropTypeUtil.key )
 const extractId = ( { id }: { id: string } ): string => id;
 
 export const createVariable = ( newVariable: Variable ): Promise< string > => {
 	return service.create( newVariable ).then( extractId );
 };
 
-export const updateVariable = (
-	updateId: string,
-	{ value, label }: { value: string; label: string }
-): Promise< string > => {
+export const updateVariable = ( updateId: string, { value, label }: VariableWithoutType ): Promise< string > => {
 	return service.update( updateId, { value, label } ).then( extractId );
 };
 
@@ -87,6 +89,9 @@ export const deleteVariable = ( deleteId: string ): Promise< string > => {
 	return service.delete( deleteId ).then( extractId );
 };
 
-export const restoreVariable = ( restoreId: string, label?: string, value?: string ): Promise< string > => {
-	return service.restore( restoreId, label, value ).then( extractId );
+export const restoreVariable = (
+	restoreId: string,
+	{ label, value }: Partial< VariableWithoutType >
+): Promise< string > => {
+	return service.restore( restoreId, { label, value } ).then( extractId );
 };
