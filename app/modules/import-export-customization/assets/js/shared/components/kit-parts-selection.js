@@ -65,7 +65,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 							</Button>
 						</Box>
 					</Box>
-					{ (() => {
+					{ ( () => {
 						const DialogComponent = getDialogComponent( item );
 						return DialogComponent ? (
 							<DialogComponent
