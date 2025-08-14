@@ -86,6 +86,7 @@ export const BackgroundImageOverlayPosition = () => {
 									<SizeControl
 										startIcon={ <LetterXIcon fontSize={ 'tiny' } /> }
 										anchorRef={ rowRef }
+										allowNegativeValue={ true }
 									/>
 								</PropKeyProvider>
 							</Grid>

@@ -25,7 +25,7 @@ export const AxisRow = ( { label, bindValue, startIcon, anchorRef, units }: Tran
 				</Grid>
 				<Grid item xs={ 6 }>
 					<PropKeyProvider bind={ bindValue }>
-						<SizeControl anchorRef={ anchorRef } startIcon={ startIcon } units={ units } variant="angle" />
+						<SizeControl anchorRef={ anchorRef } startIcon={ startIcon } units={ units } variant="angle" allowNegativeValue={ true } />
 					</PropKeyProvider>
 				</Grid>
 			</PopoverGridContainer>
