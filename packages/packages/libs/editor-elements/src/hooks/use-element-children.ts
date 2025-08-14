@@ -12,7 +12,7 @@ export type ElementChildren = Record< string, ElementPropValue[] >;
 export function useElementChildren< T extends ElementChildren >(
 	elementId: ElementID,
 	childrenTypes: ( keyof T & string )[]
-): ElementChildren {
+): T {
 	return useListenTo(
 		[
 			v1ReadyEvent(),
@@ -39,5 +39,5 @@ export function useElementChildren< T extends ElementChildren >(
 			}, {} as ElementChildren );
 		},
 		[ elementId ]
-	);
+	) as T;
 }

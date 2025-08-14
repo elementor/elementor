@@ -13,10 +13,6 @@ describe( 'useElementChildren', () => {
 		mockGetContainer.mockClear();
 	} );
 
-	afterEach( () => {
-		jest.useRealTimers();
-	} );
-
 	it( 'should return empty arrays for each requested type when container is not found', () => {
 		// Arrange.
 		mockGetContainer.mockReturnValue( null );

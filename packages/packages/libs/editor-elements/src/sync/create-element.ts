@@ -23,6 +23,10 @@ export function createElement( {
 	const container = getContainer( containerId );
 	const model = createElementModel( { settings, type, id } );
 
+	if ( ! container ) {
+		throw new Error( `Container with ID "${ containerId }" not found` );
+	}
+
 	return runCommandSync< V1Element >( 'document/elements/create', {
 		container,
 		model,
