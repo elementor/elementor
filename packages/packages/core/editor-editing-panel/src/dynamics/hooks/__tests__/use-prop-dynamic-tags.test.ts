@@ -146,6 +146,7 @@ const mockPropType = ( params: Partial< PropType > ) => {
 		bind: 'title',
 		path: [],
 		restoreValue: jest.fn(),
+		validate: jest.fn(),
 	} );
 };
 
