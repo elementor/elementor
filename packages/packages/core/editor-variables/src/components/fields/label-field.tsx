@@ -28,9 +28,18 @@ type LabelFieldProps = {
 	id?: string;
 	onErrorChange?: ( errorMsg: string ) => void;
 	size?: TextFieldProps[ 'size' ];
+	focusOnShow?: boolean;
 };
 
-export const LabelField = ( { value, error, onChange, id, onErrorChange, size = 'tiny' }: LabelFieldProps ) => {
+export const LabelField = ( {
+	value,
+	error,
+	onChange,
+	id,
+	onErrorChange,
+	size = 'tiny',
+	focusOnShow = false,
+}: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 
@@ -59,6 +68,8 @@ export const LabelField = ( { value, error, onChange, id, onErrorChange, size = 
 			error={ !! errorMsg }
 			onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }
 			inputProps={ { maxLength: VARIABLE_LABEL_MAX_LENGTH } }
+			// eslint-disable-next-line jsx-a11y/no-autofocus
+			autoFocus={ focusOnShow }
 		/>
 	);
 };
