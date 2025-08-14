@@ -73,7 +73,7 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 			const importData = {
 				id: data.kitUploadParams?.id,
 				referrer: data.kitUploadParams?.referrer,
-				session: data.uploadedData.session,
+				session: data?.uploadedData?.session,
 				include: includes,
 				customization,
 			};
