@@ -54,6 +54,7 @@ export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
+export { createControl } from './create-control';
 
 export {
 	injectIntoRepeaterItemIcon,
