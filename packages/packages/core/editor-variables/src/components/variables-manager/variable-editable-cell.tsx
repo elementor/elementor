@@ -37,6 +37,10 @@ export const VariableEditableCell = ( {
 		} else if ( event.key === 'Escape' ) {
 			setIsEditing( false );
 		}
+		if ( event.key === ' ' && ! isEditing ) {
+			event.preventDefault();
+			setIsEditing( true );
+		}
 	};
 
 	const handleChange = ( newValue: string ) => {
@@ -54,6 +58,9 @@ export const VariableEditableCell = ( {
 				onDoubleClick={ handleDoubleClick }
 				onBlur={ disableCloseOnBlur ? undefined : handleSave }
 				onKeyDown={ handleKeyDown }
+				tabIndex={ 0 }
+				role="button"
+				aria-label="Double click or press Space to edit"
 			>
 				{ prefixElement }
 				{ isEditing ? editableContent : children }
