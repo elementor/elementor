@@ -345,12 +345,6 @@ class Rest_Api {
 		] );
 	}
 
-	/**
-	 * @param mixed $payload
-	 * @param mixed $status_code
-	 *
-	 * @return \WP_REST_Response
-	 */
 	private function success_response( $payload, $status_code = null ) {
 		return new WP_REST_Response( [
 			'success' => true,

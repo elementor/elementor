@@ -202,7 +202,7 @@ abstract class Base {
 	 * @access public
 	 *
 	 * @param array $key   Property key.
-	 * @param array|null $value Optional. Property value. Default is `null`.
+	 * @param array $value Optional. Property value. Default is `null`.
 	 */
 	final public function set_properties( $key, $value = null ) {
 		if ( is_array( $key ) ) {
@@ -230,7 +230,7 @@ abstract class Base {
 	 * @since 2.9.0
 	 * @access public
 	 *
-	 * @param array|null $properties Optional. Properties to filter. Default is `null`.
+	 * @param array $properties Optional. Properties to filter. Default is `null`.
 	 */
 	public function __construct( $properties = null ) {
 		$this->_properties = array_fill_keys( self::get_properties_keys(), null );

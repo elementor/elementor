@@ -28,8 +28,8 @@ class User_Favorites {
 	}
 
 	/**
-	 * @param mixed $vendor
-	 * @param mixed $resource
+	 * @param null $vendor
+	 * @param null $resource
 	 * @param false $ignore_cache
 	 *
 	 * @return array
