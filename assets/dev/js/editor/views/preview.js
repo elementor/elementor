@@ -79,10 +79,7 @@ const Preview = BaseSectionsContainerView.extend( {
 	},
 
 	createElementFromModel( model, options = {} ) {
-		const wrappedElementTypes = Object.entries( elementor.config.elements )
-			.filter( ( [ , element ] ) => !! element.should_wrap )
-			.map( ( [ type ] ) => type )
-			.concat( 'widget' );
+		const wrappedElementTypes = [ 'widget', 'section', 'column' ];
 
 		return BaseSectionsContainerView.prototype.createElementFromModel.call(
 			this,

@@ -140,7 +140,6 @@ class Container extends Element_Base {
 		$config['tabs_controls'] = $this->get_tabs_controls();
 		$config['show_in_panel'] = true;
 		$config['categories'] = [ 'layout' ];
-		$config['should_wrap'] = false;
 
 		return $config;
 	}
