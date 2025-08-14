@@ -25,11 +25,7 @@ export const GlobalDialog = () => {
 	return (
 		<ThemeProvider>
 			<Dialog open onClose={ () => setContent( null ) } maxWidth="sm" fullWidth>
-				<Box>
-					<DialogTitle>{ content.title }</DialogTitle>
-					<DialogContent>{content.component}</DialogContent>
-					<DialogActions>{content.actions}</DialogActions>
-				</Box>
+					{content.component}
 			</Dialog>
 		</ThemeProvider>
 	);
