@@ -31,12 +31,14 @@ class Color_Hex_Variable_Convertor implements VariableConvertorInterface {
 	}
 
 	private function generate_variable_id( string $name ): string {
-		$id = preg_replace( '/[^a-zA-Z0-9_\-]/', '-', $name );
-		$id = trim( $id, '-' );
-		if ( '' === $id ) {
-			$id = 'color-variable';
+		$trimmed = ltrim( $name, '-' );
+		$slug = strtolower( $trimmed );
+		$slug = preg_replace( '/[^a-z0-9_\-]+/', '-', $slug );
+		$slug = trim( $slug, '-' );
+		if ( '' === $slug ) {
+			$slug = 'color-variable';
 		}
-		return $id;
+		return $slug;
 	}
 }
 
