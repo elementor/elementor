@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Key_Value_Array_Prop_Type extends Array_Prop_Type {
+class Attributes_Prop_Type extends Array_Prop_Type {
 	public static function get_key(): string {
-		return 'key-value-array';
+		return 'attributes';
 	}
 
 	protected function define_item_type(): Prop_Type {
