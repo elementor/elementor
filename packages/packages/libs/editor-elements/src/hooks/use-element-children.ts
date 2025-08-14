@@ -3,11 +3,11 @@ import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } fr
 import { getContainer } from '../sync/get-container';
 import { type ElementID } from '../types';
 
-type ElementPropValue = {
+type ElementModel = {
 	id: string;
 };
 
-export type ElementChildren = Record< string, ElementPropValue[] >;
+export type ElementChildren = Record< string, ElementModel[] >;
 
 export function useElementChildren< T extends ElementChildren >(
 	elementId: ElementID,
