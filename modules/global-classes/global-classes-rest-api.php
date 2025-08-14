@@ -205,10 +205,10 @@ class Global_Classes_REST_API {
 				->build();
 		}
 
-		if ( ! $items_result->is_valid() ) {
-			return Error_Builder::make( 'invalid_items' )
-				->set_status( 400 )
-				->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
+		if (! $items_result->is_valid()) {
+			return Error_Builder::make('invalid_items')
+				->set_status(400)
+				->set_message('Invalid items: ' . $items_result->errors()->to_string())
 				->build();
 		}
 
@@ -217,10 +217,10 @@ class Global_Classes_REST_API {
 			$items_result->unwrap()
 		);
 
-		if ( ! $order_result->is_valid() ) {
-			return Error_Builder::make( 'invalid_order' )
-				->set_status( 400 )
-				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
+		if (! $order_result->is_valid()) {
+			return Error_Builder::make('invalid_order')
+				->set_status(400)
+				->set_message('Invalid order: ' . $order_result->errors()->to_string())
 				->build();
 		}
 

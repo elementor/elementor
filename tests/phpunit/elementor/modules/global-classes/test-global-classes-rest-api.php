@@ -662,7 +662,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
 		$response = rest_do_request( $request );
-		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame(204, $response->get_status() );
 		$this->assertArrayHasKey( 'data', $response->get_data() );
 		$this->assertIsObject( $response->get_data()['data'] );
 	}
@@ -671,7 +671,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
 		$response = rest_do_request( $request );
-		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( 204, $response->get_status() );
 		$this->assertArrayHasKey( 'data', $response->get_data() );
 	}
 
