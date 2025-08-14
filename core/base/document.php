@@ -736,7 +736,7 @@ abstract class Document extends Controls_Stack {
 			$is_container_active = Plugin::$instance->experiments->is_feature_active( 'container' );
 
 			Collection::make( Plugin::$instance->elements_manager->get_element_types() )
-				->filter( fn( $element, $key ) => ( $key !== 'container' && ! empty( $element->get_config()['show_in_panel'] ) || $is_container_active ) )
+				->filter( fn( $element, $key ) => ( 'container' !== $key && ! empty( $element->get_config()['show_in_panel'] ) || $is_container_active ) )
 				->each( fn( $element, $key ) => $widgets_config[ $key ] = $element->get_config() );
 
 			$config['widgets'] = $widgets_config;
