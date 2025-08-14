@@ -730,7 +730,7 @@ abstract class Document extends Controls_Stack {
 			$widgets_config = Plugin::$instance->widgets_manager->get_widget_types_config();
 
 			Collection::make( Plugin::$instance->elements_manager->get_element_types() )
-				->filter( fn( $element ) => ( ! empty( $element->get_config()['show_in_panel'] )) )
+				->filter( fn( $element ) => ( ! empty( $element->get_config()['show_in_panel'] ) ) )
 				->each( fn( $element, $key ) => $widgets_config[ $key ] = $element->get_config() );
 
 			$config['widgets'] = $widgets_config;
