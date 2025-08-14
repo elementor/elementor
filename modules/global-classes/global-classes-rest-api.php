@@ -5,6 +5,9 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
 use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
 use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Modules\GlobalClasses\Utils\Debug_Logger;
+use Elementor\Modules\GlobalClasses\Services\Global_Classes_Validation_Service;
+use Elementor\Modules\GlobalClasses\Services\Global_Classes_Changes_Service;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -150,8 +153,8 @@ class Global_Classes_REST_API {
 		$classes = $this->get_repository()->context( $context )->all();
 
 		return Response_Builder::make( (object) $classes->get_items()->all() )
-			->set_meta( [ 'order' => $classes->get_order()->all() ] )
-			->build();
+								->set_meta( [ 'order' => $classes->get_order()->all() ] )
+													->build();
 	}
 
 	private function get_usage() {
@@ -161,27 +164,74 @@ class Global_Classes_REST_API {
 	}
 
 	private function put( \WP_REST_Request $request ) {
+		// Log debug information
+		Debug_Logger::log_request_debug( $request );
+
+		$context = $request->get_param( 'context' );
+		$changes = $request->get_param( 'changes' ) ?? [];
+
+		// Initialize services
+		$validation_service = new Global_Classes_Validation_Service();
+		$changes_service = new Global_Classes_Changes_Service();
+
+		// Check if there are actual changes
+		$has_changes = $changes_service->has_changes( $changes );
+
 		$parser = Global_Classes_Parser::make();
+		$existing_items = Global_Classes_Repository::make()
+			->context( $context )
+			->all()
+			->get_items()
+			->map( function ( $item ) {
+				return [
+					'id' => $item['id'],
+					'label' => $item['label'],
+				];
+			} )
+			->all();
+
+		// Validate and modify duplicate labels for added items (only when there are changes)
+		$validation_result = null;
+		if ( $has_changes ) {
+			$validation_result = $validation_service->validate_new_items_labels(
+				$request->get_param( 'items' ),
+				$existing_items,
+				$changes
+			);
+
+			// Update request items if labels were modified
+			if ( ! empty( $validation_result['items'] ) ) {
+				$request->set_param( 'items', $validation_result['items'] );
+			}
+
+			// Log if any labels were modified
+			Debug_Logger::log_modified_labels( $validation_result['meta']['modifiedLabels'] ?? [] );
+		}
 
 		$items_result = $parser->parse_items(
-			$request->get_param( 'items' )
+			$request->get_param( 'items' ),
 		);
 
-		$items_count = count( $items_result->unwrap() );
-
-		if ( $items_count >= static::MAX_ITEMS ) {
-			return Error_Builder::make( 'global_classes_limit_exceeded' )
-				->set_status( 400 )
-				->set_message( sprintf(
-					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
-					static::MAX_ITEMS
-				) )
-				->build();
+		// Validate items count
+		$items_count_error = $validation_service->validate_items_count( $items_result->unwrap() );
+		if ( $items_count_error ) {
+			return $items_count_error;
 		}
 
 		if ( ! $items_result->is_valid() ) {
-			return Error_Builder::make( 'invalid_items' )
+			$first_error = $items_result->errors()->first_one();
+			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ITEMS;
+
+			// Log validation errors
+			Debug_Logger::log_validation_errors( 'items', $items_result->errors()->to_string() );
+
+			return Error_Builder::make( $code )
 				->set_status( 400 )
+				->set_meta( [
+					'validation_errors' => $items_result->errors()->all(),
+					'required_fields' => [ 'id', 'variants', 'type', 'label' ],
+					'valid_types' => [ 'class' ],
+				] )
 				->set_message( 'Invalid items: ' . $items_result->errors()->to_string() )
 				->build();
 		}
@@ -192,8 +242,20 @@ class Global_Classes_REST_API {
 		);
 
 		if ( ! $order_result->is_valid() ) {
-			return Error_Builder::make( 'invalid_order' )
+			$first_error = $order_result->errors()->first_one();
+			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ORDER;
+
+			// Log order validation errors
+			Debug_Logger::log_validation_errors( 'order', $order_result->errors()->to_string() );
+
+			return Error_Builder::make( $code )
 				->set_status( 400 )
+				->set_meta( [
+					'validation_errors' => $order_result->errors()->all(),
+					'items_count' => count( $items_result->unwrap() ),
+					'order_count' => count( $request->get_param( 'order' ) ?? [] ),
+					'expected_count' => count( $items_result->unwrap() ),
+				] )
 				->set_message( 'Invalid order: ' . $order_result->errors()->to_string() )
 				->build();
 		}
@@ -203,22 +265,50 @@ class Global_Classes_REST_API {
 
 		$changes_resolver = Global_Classes_Changes_Resolver::make(
 			$repository,
-			$request->get_param( 'changes' ) ?? [],
+			$changes,
 		);
+
+		// Final validation check to handle concurrency issues
+		$final_validation = $validation_service->perform_final_validation(
+			$items_result->unwrap(),
+			$existing_items,
+			$changes
+		);
+
+		if ( $final_validation['has_changes'] ) {
+			// Update the items with final validation results
+			$final_items = $final_validation['items'];
+			$final_validation_result = $final_validation['validation_result'];
+		} else {
+			$final_items = $items_result->unwrap();
+			$final_validation_result = $validation_result;
+		}
 
 		$repository->put(
-			$changes_resolver->resolve_items( $items_result->unwrap() ),
-			$changes_resolver->resolve_order( $order_result->unwrap() ),
+			$changes_resolver->resolve_items( $final_items ),
+			$changes_resolver->resolve_order( $order_result ? $order_result->unwrap() : [] ),
 		);
 
-		return Response_Builder::make()->no_content()->build();
+		// Build response data using the changes service
+		$response_data = $changes_service->build_response_data( $changes, $final_validation_result );
+		$response_meta = $changes_service->build_response_meta( $changes );
+
+		return Response_Builder::make( $response_data )
+			->set_meta( $response_meta )
+			->build();
 	}
 
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			return Error_Builder::make( 'unexpected_error' )
+			return Error_Builder::make( Global_Classes_Errors::UNEXPECTED_ERROR )
+				->set_status( 500 )
+				->set_meta( [
+					'exception_class' => get_class( $e ),
+					'exception_file' => $e->getFile(),
+					'exception_line' => $e->getLine(),
+				] )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();
 		}
