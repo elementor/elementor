@@ -132,7 +132,6 @@ describe( 'useElementChildren', () => {
 	} );
 
 	it.each( [
-		'document/elements/select',
 		'document/elements/create',
 		'document/elements/delete',
 		'document/elements/update',

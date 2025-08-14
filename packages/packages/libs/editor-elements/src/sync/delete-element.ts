@@ -2,10 +2,15 @@ import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters
 
 import { getContainer } from './get-container';
 
-export function deleteElement( { elementId }: { elementId: string } ): void {
+type Options = {
+	useHistory?: boolean;
+};
+
+export function deleteElement( { elementId, options }: { elementId: string; options?: Options } ): void {
 	const container = getContainer( elementId );
 
 	runCommand( 'document/elements/delete', {
 		container,
+		options,
 	} );
 }

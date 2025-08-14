@@ -16,7 +16,6 @@ export function useElementChildren< T extends ElementChildren >(
 	return useListenTo(
 		[
 			v1ReadyEvent(),
-			commandEndEvent( 'document/elements/select' ),
 			commandEndEvent( 'document/elements/create' ),
 			commandEndEvent( 'document/elements/delete' ),
 			commandEndEvent( 'document/elements/update' ),
@@ -30,9 +29,7 @@ export function useElementChildren< T extends ElementChildren >(
 			return childrenTypes.reduce( ( acc, type ) => {
 				const childElements = children
 					.filter( ( child ) => child.model?.get( 'widgetType' ) === type )
-					.map( ( child ) => ( {
-						id: child.id,
-					} ) );
+					.map( ( child ) => ( { id: child.id } ) );
 
 				if ( childElements ) {
 					acc[ type ] = childElements;
