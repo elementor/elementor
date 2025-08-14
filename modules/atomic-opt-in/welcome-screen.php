@@ -4,7 +4,6 @@ namespace Elementor\Modules\AtomicOptIn;
 
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
-use Elementor\Core\Utils\Isolation_Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Utils;
 
@@ -12,7 +11,7 @@ class WelcomeScreen {
 	private Elementor_Adapter_Interface $elementor_adapter;
 
 	public function __construct() {
-		$this->elementor_adapter = Isolation_Manager::get_adapter( Elementor_Adapter::class );
+		$this->elementor_adapter = new Elementor_Adapter();
 	}
 
 	public function init() {
