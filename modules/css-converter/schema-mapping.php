@@ -20,9 +20,9 @@ function elementor_css_converter_map_css_to_props( $tag, $css, $schema ) {
 			$css_props[ $key ] = $value;
 		}
 	}
-    $registry = new CssPropertyConverterRegistry();
-    foreach ( $css_props as $property => $value ) {
-        $converter = $registry->get_converter( $property );
+	$registry = new CssPropertyConverterRegistry();
+	foreach ( $css_props as $property => $value ) {
+		$converter = $registry->get_converter( $property );
 		if ( $converter ) {
 			$converted = $converter->convert( $value, $schema );
 			$props = array_merge( $props, $converted );
