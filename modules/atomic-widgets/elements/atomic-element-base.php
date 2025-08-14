@@ -5,14 +5,15 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 abstract class Atomic_Element_Base extends Element_Base {
-
 	use Has_Atomic_Base;
 
 	protected $version = '0.0';
@@ -52,11 +53,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	/**
-	 * @return array<string, Prop_Type>
-	 */
-	abstract protected static function define_props_schema(): array;
-
-	/**
 	 * Get Element keywords.
 	 *
 	 * Retrieve the element keywords.
@@ -68,5 +64,94 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	public function get_keywords() {
 		return [];
+	}
+
+	/**
+	 * @return array<string, Prop_Type>
+	 */
+	abstract protected static function define_props_schema(): array;
+
+	/**
+	 * Get the HTML tag for rendering.
+	 *
+	 * @return string
+	 */
+	protected function get_html_tag(): string {
+		$settings = $this->get_atomic_settings();
+
+		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? 'div' );
+	}
+
+	/**
+	 * Print safe HTML tag for the element based on the element settings.
+	 *
+	 * @return void
+	 */
+	protected function print_html_tag() {
+		$html_tag = $this->get_html_tag();
+		Utils::print_validated_html_tag( $html_tag );
+	}
+
+	/**
+	 * Print custom attributes if they exist.
+	 *
+	 * @return void
+	 */
+	protected function print_custom_attributes() {
+		$settings = $this->get_atomic_settings();
+		$attributes = $settings['attributes'];
+		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo ' ' . $attributes;
+		}
+	}
+
+	/**
+	 * Get default child type for container elements.
+	 *
+	 * @param array $element_data
+	 * @return mixed
+	 */
+	protected function _get_default_child_type( array $element_data ) {
+		$el_types = array_keys( Plugin::$instance->elements_manager->get_element_types() );
+
+		if ( in_array( $element_data['elType'], $el_types, true ) ) {
+			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
+		}
+
+		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
+	}
+
+	/**
+	 * Default before render for container elements.
+	 *
+	 * @return void
+	 */
+	public function before_render() {
+		?>
+		<<?php $this->print_html_tag(); ?> <?php $this->print_render_attribute_string( '_wrapper' );
+		$this->print_custom_attributes(); ?>>
+		<?php
+	}
+
+	/**
+	 * Default after render for container elements.
+	 *
+	 * @return void
+	 */
+	public function after_render() {
+		?>
+		</<?php $this->print_html_tag(); ?>>
+		<?php
+	}
+
+	/**
+	 * Default content template - can be overridden by elements that need custom templates.
+	 *
+	 * @return void
+	 */
+	protected function content_template() {
+		?>
+		<?php
 	}
 }
