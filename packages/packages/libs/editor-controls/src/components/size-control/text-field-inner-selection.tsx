@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { forwardRef, useId } from 'react';
-import { type PropValue } from '@elementor/editor-props';
+import { type PropValue, sizePropTypeUtil } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
 import {
 	bindMenu,
@@ -8,10 +8,14 @@ import {
 	Button,
 	InputAdornment,
 	Menu,
+	styled,
 	TextField,
 	type TextFieldProps,
 	usePopupState,
 } from '@elementor/ui';
+
+import { useBoundProp } from '../../bound-prop-context';
+import { DEFAULT_UNIT } from '../../utils/size-control';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -21,11 +25,11 @@ type TextFieldInnerSelectionProps = {
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	shouldBlockInput?: boolean;
 	inputProps: TextFieldProps[ 'InputProps' ] & {
 		endAdornment: React.JSX.Element;
 	};
 	disabled?: boolean;
+	isPopoverOpen?: boolean;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -38,26 +42,33 @@ export const TextFieldInnerSelection = forwardRef(
 			onBlur,
 			onKeyDown,
 			onKeyUp,
-			shouldBlockInput = false,
 			inputProps,
 			disabled,
+			isPopoverOpen,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
+		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
+
+		const getCursorStyle = () => ( {
+			input: { cursor: inputProps.readOnly ? 'default !important' : undefined },
+		} );
+
 		return (
 			<TextField
 				ref={ ref }
-				sx={ { input: { cursor: shouldBlockInput ? 'default !important' : undefined } } }
+				sx={ getCursorStyle() }
 				size="tiny"
 				fullWidth
-				type={ shouldBlockInput ? undefined : type }
+				type={ type }
 				value={ value }
-				onChange={ shouldBlockInput ? undefined : onChange }
-				onKeyDown={ shouldBlockInput ? undefined : onKeyDown }
-				onKeyUp={ shouldBlockInput ? undefined : onKeyUp }
+				onChange={ onChange }
+				onKeyDown={ onKeyDown }
+				onKeyUp={ onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
-				placeholder={ placeholder }
+				focused={ isPopoverOpen ? true : undefined }
+				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ inputProps }
 			/>
 		);
@@ -91,17 +102,18 @@ export const SelectionEndAdornment = < T extends string >( {
 		popupState.close();
 	};
 
+	const { placeholder, showPrimaryColor } = useUnitPlaceholder( value );
+
 	return (
 		<InputAdornment position="end">
-			<Button
+			<StyledButton
+				isPrimaryColor={ showPrimaryColor }
 				size="small"
-				color="secondary"
 				disabled={ disabled }
-				sx={ { font: 'inherit', minWidth: 'initial', textTransform: 'uppercase' } }
 				{ ...bindTrigger( popupState ) }
 			>
-				{ alternativeOptionLabels[ value ] ?? value }
-			</Button>
+				{ placeholder ?? alternativeOptionLabels[ value ] ?? value }
+			</StyledButton>
 
 			<Menu MenuListProps={ { dense: true } } { ...bindMenu( popupState ) }>
 				{ options.map( ( option, index ) => (
@@ -117,3 +129,37 @@ export const SelectionEndAdornment = < T extends string >( {
 		</InputAdornment>
 	);
 };
+
+function useUnitPlaceholder( value: string ) {
+	const { value: externalValue, placeholder } = useBoundProp( sizePropTypeUtil );
+	const size = externalValue?.size;
+	const unit = externalValue?.unit;
+
+	const isCustomUnitWithSize = value === 'custom' && Boolean( size );
+	const isAutoUnit = value === 'auto';
+	const showPrimaryColor = isAutoUnit || isCustomUnitWithSize || Boolean( size );
+
+	if ( ! placeholder ) {
+		return {
+			placeholder: null,
+			showPrimaryColor,
+		};
+	}
+
+	const isMissingUnit = ! unit;
+	const showPlaceholder = isMissingUnit && value === DEFAULT_UNIT;
+
+	return {
+		placeholder: showPlaceholder ? placeholder.unit : undefined,
+		showPrimaryColor,
+	};
+}
+
+const StyledButton = styled( Button, {
+	shouldForwardProp: ( prop ) => prop !== 'isPrimaryColor',
+} )( ( { isPrimaryColor, theme } ) => ( {
+	color: isPrimaryColor ? theme.palette.text.primary : theme.palette.text.tertiary,
+	font: 'inherit',
+	minWidth: 'initial',
+	textTransform: 'uppercase',
+} ) );

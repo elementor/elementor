@@ -14,7 +14,7 @@ export default function BaseLayout( props ) {
 	const isDarkMode = 'dark' === uiTheme || ( 'auto' === uiTheme && window.matchMedia && window.matchMedia( `(prefers-color-scheme: dark)` ).matches );
 
 	const colorScheme = isDarkMode ? 'dark' : 'light';
-        const isRTL = elementorCommon?.config?.isRTL || false;
+	const isRTL = elementorCommon?.config?.isRTL || false;
 
 	return (
 		<DirectionProvider rtl={ isRTL }>

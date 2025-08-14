@@ -2,6 +2,7 @@
 namespace Elementor\App\Modules\ImportExportCustomization\Data\Routes;
 
 use Elementor\Plugin;
+use Elementor\App\Modules\ImportExportCustomization\Data\Response;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,12 +21,16 @@ class Import extends Base_Route {
 	protected function callback( $request ): \WP_REST_Response {
 		try {
 			$session = $request->get_param( 'session' );
-			$settings = $request->get_param( 'settings' );
-			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 			if ( empty( $session ) ) {
 				return Response::error( 'Session ID is required.', 'missing_session_id' );
 			}
+
+			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
+			$settings = [
+				'include' => $request->get_param( 'include' ),
+				'customization' => $request->get_param( 'customization' ),
+			];
 
 			$import = $module->import_kit( $session, $settings, true );
 

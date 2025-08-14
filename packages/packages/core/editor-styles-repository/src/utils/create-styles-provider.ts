@@ -1,10 +1,10 @@
-import { type StylesProvider, type UserCapabilities } from '../types';
+import { type StylesCollection, type StylesProvider, type UserCapabilities } from '../types';
 
 export type CreateStylesProviderOptions = {
 	key: string | ( () => string );
 	priority?: number;
 	limit?: number;
-	subscribe?: ( callback: () => void ) => () => void;
+	subscribe?: ( callback: ( current?: StylesCollection, previous?: StylesCollection ) => void ) => () => void;
 	labels?: {
 		singular: string;
 		plural: string;
@@ -17,6 +17,7 @@ export type CreateStylesProviderOptions = {
 		delete?: StylesProvider[ 'actions' ][ 'delete' ];
 		update?: StylesProvider[ 'actions' ][ 'update' ];
 		updateProps?: StylesProvider[ 'actions' ][ 'updateProps' ];
+		updateCustomCss?: StylesProvider[ 'actions' ][ 'updateCustomCss' ];
 	};
 	capabilities?: UserCapabilities;
 };
@@ -51,6 +52,7 @@ export function createStylesProvider( {
 			delete: actions.delete,
 			update: actions.update,
 			updateProps: actions.updateProps,
+			updateCustomCss: actions.updateCustomCss,
 		},
 	};
 }

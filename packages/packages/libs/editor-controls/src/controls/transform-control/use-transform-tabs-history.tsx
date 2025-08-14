@@ -6,27 +6,35 @@ import {
 	type RotateTransformPropValue,
 	scaleTransformPropTypeUtil,
 	type ScaleTransformPropValue,
+	skewTransformPropTypeUtil,
+	type SkewTransformPropValue,
 	type TransformItemPropValue,
 } from '@elementor/editor-props';
 import { useTabs } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { type TransformFunction, TransformFunctionKeys } from './types';
+import { useRepeaterContext } from '../../components/unstable-repeater/context/repeater-context';
+import { type TransformFunction, TransformFunctionKeys } from './initial-values';
 
 type InitialTransformValues = {
 	move: TransformItemPropValue[ 'value' ];
 	scale: TransformItemPropValue[ 'value' ];
 	rotate: TransformItemPropValue[ 'value' ];
+	skew: TransformItemPropValue[ 'value' ];
 };
 
 export const useTransformTabsHistory = ( {
 	move: initialMove,
 	scale: initialScale,
 	rotate: initialRotate,
+	skew: initialSkew,
 }: InitialTransformValues ) => {
 	const { value: moveValue, setValue: setMoveValue } = useBoundProp( moveTransformPropTypeUtil );
 	const { value: scaleValue, setValue: setScaleValue } = useBoundProp( scaleTransformPropTypeUtil );
 	const { value: rotateValue, setValue: setRotateValue } = useBoundProp( rotateTransformPropTypeUtil );
+	const { value: skewValue, setValue: setSkewValue } = useBoundProp( skewTransformPropTypeUtil );
+
+	const { openItemIndex, items } = useRepeaterContext();
 
 	const getCurrentTransformType = (): TransformFunction => {
 		switch ( true ) {
@@ -34,6 +42,8 @@ export const useTransformTabsHistory = ( {
 				return TransformFunctionKeys.scale;
 			case !! rotateValue:
 				return TransformFunctionKeys.rotate;
+			case !! skewValue:
+				return TransformFunctionKeys.skew;
 			default:
 				return TransformFunctionKeys.move;
 		}
@@ -45,6 +55,7 @@ export const useTransformTabsHistory = ( {
 		move: initialMove,
 		scale: initialScale,
 		rotate: initialRotate,
+		skew: initialSkew,
 	} );
 
 	const saveToHistory = ( key: keyof InitialTransformValues, value: TransformItemPropValue[ 'value' ] ) => {
@@ -59,6 +70,7 @@ export const useTransformTabsHistory = ( {
 				setMoveValue( valuesHistory.current.move as MoveTransformPropValue[ 'value' ] );
 				saveToHistory( 'scale', scaleValue );
 				saveToHistory( 'rotate', rotateValue );
+				saveToHistory( 'skew', skewValue );
 
 				break;
 
@@ -66,6 +78,7 @@ export const useTransformTabsHistory = ( {
 				setScaleValue( valuesHistory.current.scale as ScaleTransformPropValue[ 'value' ] );
 				saveToHistory( 'move', moveValue );
 				saveToHistory( 'rotate', rotateValue );
+				saveToHistory( 'skew', skewValue );
 
 				break;
 
@@ -73,6 +86,15 @@ export const useTransformTabsHistory = ( {
 				setRotateValue( valuesHistory.current.rotate as RotateTransformPropValue[ 'value' ] );
 				saveToHistory( 'move', moveValue );
 				saveToHistory( 'scale', scaleValue );
+				saveToHistory( 'skew', skewValue );
+
+				break;
+
+			case TransformFunctionKeys.skew:
+				setSkewValue( valuesHistory.current.skew as SkewTransformPropValue[ 'value' ] );
+				saveToHistory( 'move', moveValue );
+				saveToHistory( 'scale', scaleValue );
+				saveToHistory( 'rotate', rotateValue );
 
 				break;
 		}
@@ -80,8 +102,15 @@ export const useTransformTabsHistory = ( {
 		return getTabsProps().onChange( e, tabName );
 	};
 
+	const isTabDisabled = ( tabKey: TransformFunction ) => {
+		return !! items.find( ( { item: { $$type: key } }, pos ) => tabKey === key && pos !== openItemIndex );
+	};
+
 	return {
-		getTabProps,
+		getTabProps: ( value: TransformFunction ) => ( {
+			...getTabProps( value ),
+			disabled: isTabDisabled( value ),
+		} ),
 		getTabPanelProps,
 		getTabsProps: () => ( { ...getTabsProps(), onChange: onTabChange } ),
 	};

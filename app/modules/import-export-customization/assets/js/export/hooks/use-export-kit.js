@@ -1,32 +1,32 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from '@reach/router';
 import { generateScreenshot } from '../utils/screenshot';
 import { EXPORT_STATUS } from '../context/export-context';
 
 const STATUS_PROCESSING = 'processing';
 const STATUS_ERROR = 'error';
 
-export const useExportKit = ( { includes, kitInfo, plugins, isExporting, dispatch } ) => {
+export const useExportKit = ( { includes, kitInfo, customization, isExporting, dispatch } ) => {
 	const [ status, setStatus ] = useState( STATUS_PROCESSING );
+	const navigate = useNavigate();
 
 	const exportKit = useCallback( async () => {
 		try {
 			setStatus( STATUS_PROCESSING );
 
 			const exportData = {
-				include: includes,
 				kitInfo: {
 					title: kitInfo.title?.trim() || null,
 					description: kitInfo.description?.trim() || null,
 					source: kitInfo.source,
 				},
-				plugins: plugins || [],
-				selectedCustomPostTypes: [],
+				include: includes,
+				customization,
 			};
 
-			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.[ 'cloud-library' ];
 			const isCloudExport = 'cloud' === kitInfo.source;
 
-			if ( isCloudKitFeatureActive && isCloudExport ) {
+			if ( isCloudExport ) {
 				const screenshot = await generateScreenshot();
 				exportData.screenShotBlob = screenshot;
 			}
@@ -63,6 +63,7 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExporting, dispatc
 			} else if ( isExportToCloud ) {
 				const exportedData = {
 					kit: result.data.kit,
+					manifest: result.data.manifest,
 				};
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: exportedData } );
@@ -71,11 +72,11 @@ export const useExportKit = ( { includes, kitInfo, plugins, isExporting, dispatc
 			}
 
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
-			window.location.href = elementorAppConfig.base_url + '#/export-customization/complete';
+			navigate( '/export-customization/complete' );
 		} catch ( error ) {
 			setStatus( STATUS_ERROR );
 		}
-	}, [ includes, kitInfo, plugins, dispatch ] );
+	}, [ includes, kitInfo, customization, dispatch, navigate ] );
 
 	useEffect( () => {
 		if ( isExporting ) {

@@ -1,11 +1,9 @@
-import { type AxiosResponse } from '@elementor/http-client';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
 import { OP_RW, Storage, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
-import { ERROR_MESSAGES } from './utils/validations';
 
 const storage = new Storage();
 
@@ -71,10 +69,6 @@ export const service = {
 					id: variableId,
 					variable: createdVariable,
 				};
-			} )
-			.catch( ( error ) => {
-				const message = getErrorMessage( error.response );
-				throw message ? new Error( message ) : error;
 			} );
 	},
 
@@ -108,10 +102,6 @@ export const service = {
 					id: variableId,
 					variable: updatedVariable,
 				};
-			} )
-			.catch( ( error ) => {
-				const message = getErrorMessage( error.response );
-				throw message ? new Error( message ) : error;
 			} );
 	},
 
@@ -176,10 +166,6 @@ export const service = {
 					id: variableId,
 					variable: restoredVariable,
 				};
-			} )
-			.catch( ( error ) => {
-				const message = getErrorMessage( error.response );
-				throw message ? new Error( message ) : error;
 			} );
 	},
 };
@@ -189,12 +175,4 @@ const handleWatermark = ( operation: string, newWatermark: number ) => {
 		setTimeout( () => service.load(), 500 );
 	}
 	storage.watermark( newWatermark );
-};
-
-const getErrorMessage = ( response: AxiosResponse ) => {
-	if ( response?.data?.code === 'duplicated_label' ) {
-		return ERROR_MESSAGES.DUPLICATED_LABEL;
-	}
-
-	return ERROR_MESSAGES.UNEXPECTED_ERROR;
 };

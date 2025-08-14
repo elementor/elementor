@@ -1,28 +1,9 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { setupExperiments } from './helper';
 import _path from 'path';
 
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await setupExperiments( wpAdmin );
-
-		await page.close();
-	} );
-
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-
-		await page.close();
-	} );
-
 	test( 'Accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

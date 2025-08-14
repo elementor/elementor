@@ -35,6 +35,7 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 	},
 } ) );
 jest.mock( '@elementor/editor-responsive' );
+jest.mock( '../../../../styles-inheritance/components/styles-inheritance-indicator' );
 jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	...jest.requireActual( '../../../../contexts/styles-inheritance-context' ),
 	useStylesInheritanceChain: jest.fn(),
@@ -84,30 +85,6 @@ describe( '<DisplayField />', () => {
 		expect( flexButton ).toHaveAttribute( 'aria-pressed', 'true' );
 	} );
 
-	it( 'should select flex when useActualStylesFieldValue value is flex', () => {
-		// Arrange.
-		const setValues = jest.fn();
-		jest.mocked( useStylesFields ).mockReturnValue( { values: { display: null }, setValues, canEdit: true } );
-
-		mockStylesInheritanceDisplayField(
-			createMockStyleDefinition( {
-				props: {
-					display: {
-						$$type: 'string',
-						value: 'flex',
-					},
-				},
-			} )
-		);
-
-		// Act.
-		renderDisplayField();
-
-		// Assert.
-		const flexButton = screen.getByRole( 'button', { name: 'Flex' } );
-		expect( flexButton ).toHaveAttribute( 'aria-pressed', 'true' );
-	} );
-
 	it( 'should select flex when useStylesFields value is flex even if useActualStylesFieldValue is different', () => {
 		// Arrange.
 		const setValues = jest.fn();
@@ -127,7 +104,6 @@ describe( '<DisplayField />', () => {
 				},
 			} )
 		);
-
 		// Act.
 		renderDisplayField();
 
@@ -147,7 +123,7 @@ describe( '<DisplayField />', () => {
 		renderDisplayField();
 
 		// Assert.
-		[ 'Block', 'Flex', 'Inline-block', 'Inline-flex' ].forEach( ( label ) => {
+		[ 'Block', 'Flex', 'Inline-block', 'None' ].forEach( ( label ) => {
 			expect( screen.getByRole( 'button', { name: label } ) ).toHaveAttribute( 'aria-pressed', 'false' );
 		} );
 	} );

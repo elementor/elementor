@@ -25,9 +25,10 @@ class Export extends Base_Route {
 			$settings = [
 				'include' => $request->get_param( 'include' ),
 				'kitInfo' => $request->get_param( 'kitInfo' ),
+				'screenShotBlob' => $request->get_param( 'screenShotBlob' ),
+				'customization' => $request->get_param( 'customization' ),
 				'plugins' => $request->get_param( 'plugins' ),
 				'selectedCustomPostTypes' => $request->get_param( 'selectedCustomPostTypes' ),
-				'screenShotBlob' => $request->get_param( 'screenShotBlob' ),
 			];
 
 			$settings = array_filter( $settings );
@@ -94,6 +95,36 @@ class Export extends Base_Route {
 					'source' => 'local',
 				],
 			],
+			'screenShotBlob' => [
+				'type' => [ 'string', 'null' ],
+				'description' => 'Base64 encoded screenshot for cloud exports',
+				'required' => false,
+				'default' => null,
+			],
+			'customization' => [
+				'type' => 'object',
+				'description' => 'Customization settings for selective export',
+				'required' => false,
+				'default' => null,
+				'properties' => [
+					'settings' => [
+						'type' => [ 'object', 'null' ],
+						'description' => 'Site settings customization',
+					],
+					'templates' => [
+						'type' => [ 'object', 'null' ],
+						'description' => 'Templates customization',
+					],
+					'content' => [
+						'type' => [ 'object', 'null' ],
+						'description' => 'Content customization',
+					],
+					'plugins' => [
+						'type' => [ 'object', 'null' ],
+						'description' => 'Plugins customization',
+					],
+				],
+			],
 			'plugins' => [
 				'type' => 'array',
 				'description' => 'Selected plugins to export',
@@ -105,12 +136,6 @@ class Export extends Base_Route {
 				'description' => 'Selected custom post types',
 				'required' => false,
 				'default' => [],
-			],
-			'screenShotBlob' => [
-				'type' => 'string',
-				'description' => 'Base64 encoded screenshot for cloud exports',
-				'required' => false,
-				'default' => null,
 			],
 		];
 	}
