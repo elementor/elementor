@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
 
+import { useStyle } from '../contexts/style-context';
+import { useCustomCss } from '../hooks/use-custom-css';
 import { StylesInheritanceSectionIndicators } from '../styles-inheritance/components/styles-inheritance-section-indicators';
+import { getStylesProviderThemeColor } from '../utils/get-styles-provider-color';
 import { CollapsibleContent } from './collapsible-content';
+import { StyleIndicator } from './style-indicator';
 type Props = PropsWithChildren< { fields?: string[] } >;
 
 export const StyleTabCollapsibleContent = ( { fields = [], children }: Props ) => {
@@ -15,4 +19,15 @@ export function getStylesInheritanceIndicators( fields: string[] ) {
 	}
 
 	return ( isOpen: boolean ) => ( ! isOpen ? <StylesInheritanceSectionIndicators fields={ fields } /> : null );
+}
+
+export const CustomCssIndicator = () => {
+	const { customCss } = useCustomCss();
+	const { provider: currentStyleProvider } = useStyle();
+	const getColor = currentStyleProvider ? getStylesProviderThemeColor( currentStyleProvider.getKey() ) : undefined;
+	return customCss?.raw ? <StyleIndicator getColor={ getColor } /> : null;
+};
+
+export function getCustomCssIndicator() {
+	return ( isOpen: boolean ) => ( ! isOpen ? <CustomCssIndicator /> : null );
 }
