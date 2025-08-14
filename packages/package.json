@@ -22,8 +22,7 @@
     "version:validate": "node scripts/version-manager/index.js validate",
     "version:bump": "node scripts/version-manager/index.js bump",
     "version:set": "node scripts/version-manager/index.js set",
-    "release": "npm run build && node scripts/version-manager/index.js publish",
-    "docs": "typedoc --options ./typedoc/typedoc.config.js"
+    "release": "npm run build && node scripts/version-manager/index.js publish"
   },
   "workspaces": [
     "packages/core/*",
@@ -66,7 +65,6 @@
     "semver": "^7.7.2",
     "tsup": "^8.3.5",
     "turbo": "^2.3.3",
-    "typedoc": "^0.27.4",
     "typescript": "^5.7.2"
   },
   "overrides": {
