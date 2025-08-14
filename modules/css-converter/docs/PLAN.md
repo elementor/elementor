@@ -62,3 +62,71 @@ Out of scope (post‑MVP):
 ## 8) Rollout
 - Feature flag the route (if added)
 - Add a UI note or CLI docs for importing variables
+
+## 9) Next Steps (Variables‑Only MVP)
+
+0.0 Wire parser output to variable conversion
+- Implement a small service function that: parses CSS → extracts variables via `CssParser::extract_variables()` → converts them via `elementor_css_variables_convert_to_editor_variables()`.
+- Expose a simple PHP entry point (e.g., `variables_from_css_string( string $css ): array`).
+- Test scenario:
+  - In a sandbox (WP console or `wp eval`), call `variables_from_css_string(':root { --primary: #EEE; }')` and verify the returned array contains one color variable with normalized value `#eeeeee` and an id derived from the name.
+
+0.1 Add endpoint that accepts a CSS file URL
+- Route: `POST /wp-json/elementor/v2/css-converter/variables`
+- Body: `{ "url": "https://.../file.css" }` (later: support `{ "css": "..." }` and file upload)
+- Security: for MVP, allow only authenticated admins; next step add capability/nonces.
+- Test scenario:
+  - `curl -X POST -H "Content-Type: application/json" -H "X-WP-Nonce: <nonce>" \
+    --data '{"url":"https://example.com/test.css"}' \
+    https://<site>/wp-json/elementor/v2/css-converter/variables`
+  - Expect 200 with a JSON payload (even if empty at this stage).
+
+0.2 Endpoint logs the fetched CSS into a logs folder
+- Create folder: `plugins/elementor/modules/css-converter/logs/` (ensure writable; create if missing).
+- When the endpoint receives a URL, fetch it and save the CSS to `logs/<timestamp>-<slug>.css`.
+- Test scenario:
+  - Call the endpoint from 0.1 with a valid CSS URL; verify a new file appears under `plugins/elementor/modules/css-converter/logs/` containing the remote CSS.
+
+0.3 Filter variables and export a text file list
+- From the fetched CSS, run the parser + variable conversion pipeline (0.0).
+- Create `logs/<timestamp>-variables.txt` listing each variable on its own line in the form: `--name = <value>`.
+- Response should also include a machine-readable list of variables.
+- Test scenario:
+  - Call the endpoint again; verify `*-variables.txt` is created with each `--var = value`. Confirm the API response includes the same variables array.
+
+0.4 PHPUnit tests
+- Add unit tests for:
+  - Hex color convertor (3/6-digit, normalization, rejects non-hex)
+  - Parser variable extraction from `:root`/`html`
+  - Service pipeline: CSS string → variables array
+- Add integration tests (can be feature tests) for:
+  - Endpoint: url fetch mocked; file write to logs; response payload structure
+- Test scenario:
+  - `cd plugins/elementor/modules/css-converter && composer install`
+  - `vendor/bin/phpunit` passes with all tests green.
+
+0.5 Support direct CSS string body and file uploads
+- Extend endpoint to also accept `{ "css": "..." }` and multipart file upload.
+- Test scenario:
+  - POST with `{ "css": ":root { --primary: #eee; }" }` returns the same variables array and writes logs.
+
+0.6 Hard validation for color-only MVP
+- For this phase, only convert variables whose values match `#eee` or `#eeeeee`; skip others.
+- Response should include counts for converted vs skipped.
+- Test scenario:
+  - CSS containing `--primary: #eee; --spacing-md: 16px;` yields one converted, one skipped; counters reflected in response.
+
+0.7 Wire into persistence (optional within MVP scope)
+- Prepare a small repository adapter stub for V4 Editor Global Variables. For MVP, return the computed array; persistence can be toggled by a flag.
+- Test scenario:
+  - With persistence flag off, response only. With flag on (dev env), verify the variable appears in the active Kit repository.
+
+0.8 Feature flag and capability
+- Add a filter/flag to enable the endpoint; restrict to `manage_options` or a dedicated capability.
+- Test scenario:
+  - When disabled, route returns 404/403; when enabled and authorized, route works.
+
+0.9 Basic CLI/Script runner (optional)
+- Provide a WP-CLI command `wp elementor css-converter variables --url=<css-url>` for local/dev usage.
+- Test scenario:
+  - Run the command; confirm console output, logs creation, and JSON file written if desired.
