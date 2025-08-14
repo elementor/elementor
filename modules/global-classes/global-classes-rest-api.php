@@ -166,8 +166,6 @@ class Global_Classes_REST_API {
 		$changes = $request->get_param( 'changes' ) ?? [];
 		$items = $request->get_param( 'items' ) ?? [];
 
-
-
 		$parser = Global_Classes_Parser::make();
 		$existing_items = Global_Classes_Repository::make()
 			->context( $context )
@@ -181,8 +179,8 @@ class Global_Classes_REST_API {
 			} )
 			->all();
 
-		$has_changes = !empty($changes['added']) || !empty($changes['deleted']) || !empty($changes['modified']);
-		
+		$has_changes = ! empty( $changes['added'] ) || ! empty( $changes['deleted'] ) || ! empty( $changes['modified'] );
+
 		// Skip initial duplicate check - we'll do it once at the end with fresh data
 		$validation_result = null;
 
@@ -190,18 +188,18 @@ class Global_Classes_REST_API {
 			$request->get_param( 'items' ),
 		);
 
-		$items_count = count($items_result->unwrap());
+		$items_count = count( $items_result->unwrap() );
 
 		// Validate items count
-		if ($items_count >= self::MAX_ITEMS) {
-			return Error_Builder::make('global_classes_limit_exceeded')
-				->set_status(400)
+		if ( $items_count >= self::MAX_ITEMS ) {
+			return Error_Builder::make( 'global_classes_limit_exceeded' )
+				->set_status( 400 )
 				->set_meta([
 					'current_count' => $items_count,
 					'max_allowed' => self::MAX_ITEMS,
 				])
 				->set_message(sprintf(
-					__('Global classes limit exceeded. Maximum allowed: %d', 'elementor'),
+					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
 					self::MAX_ITEMS
 				))
 				->build();
@@ -210,7 +208,6 @@ class Global_Classes_REST_API {
 		if ( ! $items_result->is_valid() ) {
 			$first_error = $items_result->errors()[0];
 			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ITEMS;
-
 
 			return Error_Builder::make( $code )
 				->set_status( 400 )
@@ -231,7 +228,6 @@ class Global_Classes_REST_API {
 		if ( ! $order_result->is_valid() ) {
 			$first_error = $order_result->errors()[0];
 			$code = $first_error['error'] ?? Global_Classes_Errors::INVALID_ORDER;
-
 
 			return Error_Builder::make( $code )
 				->set_status( 400 )
@@ -262,7 +258,7 @@ class Global_Classes_REST_API {
 		);
 
 		// Use the validation result if duplicates were found and handled
-		if ( $duplicate_validation !== false ) {
+		if ( false !== $duplicate_validation ) {
 			$final_items = $duplicate_validation['items'];
 			$final_validation_result = $duplicate_validation;
 		} else {
@@ -289,7 +285,7 @@ class Global_Classes_REST_API {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( Global_Classes_Errors::UNEXPECTED_ERROR )
-				->set_status( 500 )				
+				->set_status( 500 )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();
 		}
@@ -420,31 +416,30 @@ class Global_Classes_REST_API {
 	 * @param array $existing_labels Array of existing labels
 	 * @return string The modified unique label
 	 */
-	private function generate_unique_label($original_label, $existing_labels)
-	{
+	private function generate_unique_label( $original_label, $existing_labels ) {
 		$prefix = self::LABEL_PREFIX;
 		$max_length = self::MAX_LABEL_LENGTH;
 
 		// Check if the original label already has a prefix
-		$has_prefix = strpos($original_label, $prefix) === 0;
+		$has_prefix = strpos( $original_label, $prefix ) === 0;
 
-		if ($has_prefix) {
+		if ( $has_prefix ) {
 			// Extract the base label (remove existing prefix)
-			$base_label = substr($original_label, strlen($prefix));
+			$base_label = substr( $original_label, strlen( $prefix ) );
 
 			// Find the next available number
 			$counter = 1;
 			$new_label = $prefix . $base_label . $counter;
 
-			while (in_array($new_label, $existing_labels, true)) {
+			while ( in_array( $new_label, $existing_labels, true ) ) {
 				++$counter;
 				$new_label = $prefix . $base_label . $counter;
 			}
 
 			// If still too long, slice the base label
-			if (strlen($new_label) > $max_length) {
-				$available_length = $max_length - strlen($prefix . $counter);
-				$base_label = substr($base_label, 0, $available_length);
+			if ( strlen( $new_label ) > $max_length ) {
+				$available_length = $max_length - strlen( $prefix . $counter );
+				$base_label = substr( $base_label, 0, $available_length );
 				$new_label = $prefix . $base_label . $counter;
 			}
 		} else {
@@ -452,22 +447,22 @@ class Global_Classes_REST_API {
 			$new_label = $prefix . $original_label;
 
 			// If too long, slice the original label
-			if (strlen($new_label) > $max_length) {
-				$available_length = $max_length - strlen($prefix);
-				$new_label = $prefix . substr($original_label, 0, $available_length);
+			if ( strlen( $new_label ) > $max_length ) {
+				$available_length = $max_length - strlen( $prefix );
+				$new_label = $prefix . substr( $original_label, 0, $available_length );
 			}
 
 			// Check if this label already exists, if so, add a number
 			$counter = 1;
-			$base_label = substr($original_label, 0, $available_length ?? strlen($original_label));
+			$base_label = substr( $original_label, 0, $available_length ?? strlen( $original_label ) );
 
-			while (in_array($new_label, $existing_labels, true)) {
+			while ( in_array( $new_label, $existing_labels, true ) ) {
 				$new_label = $prefix . $base_label . $counter;
 
 				// If too long, slice more from the base
-				if (strlen($new_label) > $max_length) {
-					$available_length = $max_length - strlen($prefix . $counter);
-					$base_label = substr($original_label, 0, $available_length);
+				if ( strlen( $new_label ) > $max_length ) {
+					$available_length = $max_length - strlen( $prefix . $counter );
+					$base_label = substr( $original_label, 0, $available_length );
 					$new_label = $prefix . $base_label . $counter;
 				}
 
