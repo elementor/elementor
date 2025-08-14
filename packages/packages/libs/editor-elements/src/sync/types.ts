@@ -19,6 +19,32 @@ export type ExtendedWindow = Window & {
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
 	};
+	elementorCommon?: {
+		eventsManager?: {
+			dispatchEvent: ( name: string, data: Record< string, unknown > ) => void;
+			config?: {
+				locations: Record< string, string >;
+				secondaryLocations: Record< string, string >;
+				triggers: Record< string, string >;
+				elements?: Record< string, string >;
+				names: {
+					topBar?: Record< string, string >;
+					v1?: Record< string, string >;
+					elementorEditor?: {
+						transitions?: {
+							clickAddedTransition?: string;
+						};
+						variables?: {
+							open?: string;
+							add?: string;
+							connect?: string;
+							save?: string;
+						};
+					};
+				};
+			};
+		};
+	};
 };
 
 export type V1Element = {

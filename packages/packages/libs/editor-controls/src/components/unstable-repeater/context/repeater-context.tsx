@@ -46,7 +46,13 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
-}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable?: boolean } > ) => {
+	onAddItem,
+}: React.PropsWithChildren< {
+	initial: T;
+	propTypeUtil: PropTypeUtil< string, T[] >;
+	isSortable?: boolean;
+	onAddItem?: () => void;
+} > ) => {
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
 	const [ items, setItems ] = useSyncExternalState( {
@@ -92,6 +98,8 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
+
+		onAddItem?.();
 	};
 
 	const removeItem = ( index: number ) => {
