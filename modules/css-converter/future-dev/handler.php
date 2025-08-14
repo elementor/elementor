@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/autoloader.php';
-require_once __DIR__ . '/schema-mapping.php';
+require_once __DIR__ . '/../autoloader.php';
+require_once __DIR__ . '/../schema-mapping.php';
 require_once __DIR__ . '/widget-creation.php';
 require_once __DIR__ . '/widgets/flexbox-widget-handler.php';
 require_once __DIR__ . '/widgets/paragraph-widget-handler.php';
