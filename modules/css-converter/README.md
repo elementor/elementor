@@ -24,3 +24,24 @@ See `docs/PHPUNIT.md`.
 See `docs/MANUAL-TESTING.md`.
 
 
+## Postman Usage (Local Dev)
+
+- Endpoint URL: `http://elementor.local/wp-json/elementor/v2/css-converter/variables`
+- Method: `POST`
+- Headers:
+  - `Content-Type: application/json`
+  - Optional dev token: `X-DEV-TOKEN: <your-token>`
+    - Define in `wp-config.php`: `define( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN', '<your-token>' );`
+- Body (raw JSON):
+  - CSS string:
+    `{ "css": ":root { --primary: #eee; --spacing: 16px; }" }`
+  - Remote URL:
+    `{ "url": "http://elementor.local/wp-content/uploads/test.css" }`
+
+Response includes:
+- `variables`: converted editor variables (hex colors only in MVP)
+- `rawVariables`: extracted variables
+- `stats`: `converted`, `extracted`, `skipped`
+- `logs`: absolute paths to the saved CSS and variables list in `modules/css-converter/logs/`
+
+
