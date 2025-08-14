@@ -1,7 +1,6 @@
 export * from './create-dom-element';
 export * from './create-mock-http-response';
 export * from './create-mock-element';
-export * from './create-mock-element-with-children';
 export * from './create-mock-menu-actions';
 export * from './create-mock-style-definition';
 export * from './create-mock-prop-type';
