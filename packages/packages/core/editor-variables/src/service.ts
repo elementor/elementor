@@ -1,14 +1,14 @@
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { OP_RW, Storage, type TVariablesList } from './storage';
+import { OP_RW, Storage } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
-import { type Variable } from './types';
+import { type Variable, type VariablesList, type VariableWithoutType } from './types';
 
 const storage = new Storage();
 
 export const service = {
-	variables: (): TVariablesList => {
+	variables: (): VariablesList => {
 		return storage.load();
 	},
 
@@ -41,7 +41,7 @@ export const service = {
 
 	create: ( { type, label, value }: Variable ) => {
 		return apiClient
-			.create( type, label, value )
+			.create( { type, label, value } )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 
@@ -72,9 +72,9 @@ export const service = {
 			} );
 	},
 
-	update: ( id: string, { label, value }: Omit< Variable, 'type' > ) => {
+	update: ( id: string, { label, value }: VariableWithoutType ) => {
 		return apiClient
-			.update( id, label, value )
+			.update( id, { label, value } )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 
@@ -137,9 +137,9 @@ export const service = {
 			} );
 	},
 
-	restore: ( id: string, label?: string, value?: string ) => {
+	restore: ( id: string, { label, value }: Partial< VariableWithoutType > ) => {
 		return apiClient
-			.restore( id, label, value )
+			.restore( id, { label, value } )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 

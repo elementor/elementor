@@ -13,6 +13,7 @@ export function registerVariableTypes() {
 	registerVariableType( {
 		valueField: ColorField,
 		icon: BrushIcon,
+		// transformer: styleTransformersRegistry.get( colorPropTypeUtil.key ),
 		propTypeUtil: colorVariablePropTypeUtil,
 		fallbackPropTypeUtil: colorPropTypeUtil,
 		variableType: 'color',
@@ -22,6 +23,7 @@ export function registerVariableTypes() {
 	registerVariableType( {
 		valueField: FontField,
 		icon: TextIcon,
+		// transformer: styleTransformersRegistry.get( stringPropTypeUtil.key ),
 		propTypeUtil: fontVariablePropTypeUtil,
 		fallbackPropTypeUtil: stringPropTypeUtil,
 		variableType: 'font',

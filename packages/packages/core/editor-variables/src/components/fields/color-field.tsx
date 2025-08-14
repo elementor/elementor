@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useRef, useState } from 'react';
+import { colorPropTypeUtil, type PropValue } from '@elementor/editor-props';
 import { UnstableColorField } from '@elementor/ui';
 
 import { usePopoverContentRef } from '../../context/variable-selection-popover.context';
 import { validateValue } from '../../utils/validations';
 
-type ColorFieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
+type ColorFieldProps< TValue = PropValue > = {
+	value: TValue;
+	onChange: ( value: TValue ) => void;
 	onValidationChange?: ( errorMessage: string ) => void;
 };
 
@@ -21,11 +22,13 @@ export const ColorField = ( { value, onChange, onValidationChange }: ColorFieldP
 	const handleChange = ( newValue: string ) => {
 		setColor( newValue );
 
-		const errorMsg = validateValue( newValue );
+		const con = colorPropTypeUtil.create( newValue );
+
+		const errorMsg = validateValue( con );
 		setErrorMessage( errorMsg );
 		onValidationChange?.( errorMsg );
 
-		onChange( errorMsg ? '' : newValue );
+		onChange( errorMsg ? '' : con );
 	};
 
 	return (

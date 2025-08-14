@@ -1,5 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
+import { type Variable } from '../types';
+
 export const ERROR_MESSAGES = {
 	MISSING_VARIABLE_NAME: __( 'Give your variable a name.', 'elementor' ),
 	MISSING_VARIABLE_VALUE: __( 'Add a value to complete your variable.', 'elementor' ),
@@ -67,8 +69,8 @@ export const labelHint = ( name: string ): string => {
 	return '';
 };
 
-export const validateValue = ( value: string ): string => {
-	if ( ! value.trim() ) {
+export const validateValue = ( value: Variable[ 'value' ] ): string => {
+	if ( ! value ) {
 		return ERROR_MESSAGES.MISSING_VARIABLE_VALUE;
 	}
 

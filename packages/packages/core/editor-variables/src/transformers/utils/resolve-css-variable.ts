@@ -1,24 +1,24 @@
-import { type TVariable } from '../../storage';
+import { type Variable } from '../../types';
 
-export const resolveCssVariable = ( id: string, variable: TVariable ) => {
+export const resolveCssVariable = ( id: string, variable: Variable ) => {
 	let name = id;
-	let fallbackValue = '';
-
-	if ( variable ) {
-		fallbackValue = variable.value;
-	}
-
+	// let fallbackValue = '';
+	//
+	// if ( variable ) {
+	// 	fallbackValue = transformValue( variable );
+	// }
+	//
 	if ( variable && ! variable.deleted ) {
 		name = variable.label;
 	}
-
+	//
 	if ( ! name.trim() ) {
 		return null;
 	}
 
-	if ( ! fallbackValue.trim() ) {
-		return `var(--${ name })`;
-	}
+	// if ( ! fallbackValue.trim() ) {
+	return `var(--${ name })`;
+	// }
 
-	return `var(--${ name }, ${ fallbackValue })`;
+	// return `var(--${ name }, ${ fallbackValue })`;
 };

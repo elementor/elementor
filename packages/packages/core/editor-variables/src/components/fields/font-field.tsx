@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useId, useRef, useState } from 'react';
 import { enqueueFont, ItemSelector } from '@elementor/editor-controls';
 import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
+import type { PropValue } from '@elementor/editor-props';
 import { ChevronDownIcon, TextIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -9,9 +10,9 @@ import { __ } from '@wordpress/i18n';
 import { usePopoverContentRef } from '../../context/variable-selection-popover.context';
 import { validateValue } from '../../utils/validations';
 
-type FontFieldProps = {
-	value: string;
-	onChange: ( value: string ) => void;
+type FontFieldProps< TValue = PropValue > = {
+	value: TValue;
+	onChange: ( value: TValue ) => void;
 	onValidationChange?: ( errorMessage: string ) => void;
 };
 
