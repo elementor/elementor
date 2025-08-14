@@ -250,7 +250,7 @@ class Deprecation {
 	 * @param string $hook
 	 * @param string $version
 	 * @param string $replacement Optional. Default is ''
-	 * @param string|null $base_version Optional. Default is `null`
+	 * @param string $base_version Optional. Default is `null`
 	 * @throws \Exception Deprecation error.
 	 * @since 3.1.0
 	 */
