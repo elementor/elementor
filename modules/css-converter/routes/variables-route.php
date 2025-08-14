@@ -5,11 +5,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/../services/variables-service.php';
 require_once __DIR__ . '/../parsers/css-parser.php';
+require_once __DIR__ . '/../variable-conversion.php';
+require_once __DIR__ . '/../exceptions/css-parse-exception.php';
 
-use Elementor\Modules\CssConverter\Services\Variables_Service;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
+use Elementor\Modules\CssConverter\Exceptions\CssParseException;
+use function Elementor\Modules\CssConverter\elementor_css_variables_convert_to_editor_variables;
+
+function fallback_extract_css_variables( string $css ): array {
+	$results = [];
+	if ( preg_match_all( '/(--[a-zA-Z0-9_\-]+)\s*:\s*([^;}{]+);/', $css, $matches, PREG_SET_ORDER ) ) {
+		foreach ( $matches as $m ) {
+			$name = isset( $m[1] ) ? trim( $m[1] ) : '';
+			$value = isset( $m[2] ) ? trim( $m[2] ) : '';
+			if ( '' !== $name && '' !== $value ) {
+				$results[] = [ 'name' => $name, 'value' => $value ];
+			}
+		}
+	}
+	return $results;
+}
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -45,11 +61,27 @@ function handle_variables_import( WP_REST_Request $request ) {
         if ( is_wp_error( $response ) ) {
             return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => $response->get_error_message() ], 502 );
         }
+        $code = wp_remote_retrieve_response_code( $response );
+        if ( 200 !== (int) $code ) {
+            return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => 'HTTP ' . (string) $code ], 502 );
+        }
+        $content_type = wp_remote_retrieve_header( $response, 'content-type' );
+        if ( is_string( $content_type ) ) {
+            $lower = strtolower( $content_type );
+            $is_css_like = false !== strpos( $lower, 'text/css' ) || false !== strpos( $lower, 'text/plain' );
+            if ( ! $is_css_like ) {
+                return new WP_REST_Response( [ 'error' => 'Invalid content-type', 'details' => (string) $content_type ], 422 );
+            }
+        }
         $css = wp_remote_retrieve_body( $response );
     }
 
     if ( ! is_string( $css ) || '' === $css ) {
         return new WP_REST_Response( [ 'error' => 'Empty CSS' ], 422 );
+    }
+
+    if ( 0 === strpos( $css, "\xEF\xBB\xBF" ) ) {
+        $css = substr( $css, 3 );
     }
 
 	$logs_dir = __DIR__ . '/../logs';
@@ -61,20 +93,54 @@ function handle_variables_import( WP_REST_Request $request ) {
 	$css_path = $logs_dir . '/' . $basename . '.css';
 	file_put_contents( $css_path, $css );
 
-    $service = new Variables_Service();
-    $converted = $service->variables_from_css_string( $css );
-
-	$parser = new CssParser();
-	$parsed = $parser->parse( $css );
-	$raw = $parser->extract_variables( $parsed );
+    $parser = new CssParser();
+    $raw = [];
+    try {
+        $parsed = $parser->parse( $css );
+        $raw = $parser->extract_variables( $parsed );
+    } catch ( CssParseException $e ) {
+        $fallback = fallback_extract_css_variables( $css );
+        if ( empty( $fallback ) ) {
+            return new WP_REST_Response( [
+                'error' => 'Failed to parse CSS',
+                'details' => $e->getMessage(),
+                'logs' => [ 'css' => $css_path ],
+            ], 422 );
+        }
+        foreach ( $fallback as $item ) {
+            $raw[] = [ 'name' => $item['name'], 'value' => $item['value'], 'scope' => 'any', 'original_block' => null ];
+        }
+    } catch ( \Throwable $e ) {
+        $fallback = fallback_extract_css_variables( $css );
+        if ( empty( $fallback ) ) {
+            return new WP_REST_Response( [
+                'error' => 'Failed to parse CSS',
+                'details' => 'Unexpected error',
+                'logs' => [ 'css' => $css_path ],
+            ], 422 );
+        }
+        foreach ( $fallback as $item ) {
+            $raw[] = [ 'name' => $item['name'], 'value' => $item['value'], 'scope' => 'any', 'original_block' => null ];
+        }
+    }
 	$lines = [];
 	foreach ( $raw as $item ) {
 		$name = isset( $item['name'] ) ? $item['name'] : '';
 		$value = isset( $item['value'] ) ? $item['value'] : '';
 		$lines[] = $name . ' = ' . $value;
 	}
-	$vars_path = $logs_dir . '/' . $basename . '-variables.txt';
-	file_put_contents( $vars_path, implode( "\n", $lines ) );
+    $vars_path = $logs_dir . '/' . $basename . '-variables.txt';
+    file_put_contents( $vars_path, implode( "\n", $lines ) );
+
+    $normalized = [];
+    foreach ( $raw as $item ) {
+        $normalized[] = [
+            'name' => isset( $item['name'] ) ? $item['name'] : '',
+            'value' => isset( $item['value'] ) ? $item['value'] : '',
+        ];
+    }
+
+    $converted = elementor_css_variables_convert_to_editor_variables( $normalized );
 
     $results = [
         'success' => true,
@@ -93,8 +159,7 @@ function handle_variables_import( WP_REST_Request $request ) {
 
     $should_persist = apply_filters( 'elementor_css_converter_should_persist_variables', false );
     if ( $should_persist ) {
-        // Placeholder for future persistence integration with Global Variables repository
-        // For MVP: no-op
+        // no-op for MVP
     }
 
     return new WP_REST_Response( $results, 200 );
