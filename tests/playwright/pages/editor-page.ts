@@ -10,7 +10,7 @@ import { $eType, Device, WindowType, BackboneType, ElementorType, GapControl, Co
 import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors';
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
-import v4Panel from './editor/v4-elements-panel';
+import v4Panel from './atomic-elements-panel/v4-elements-panel';
 
 let $e: $eType;
 let elementor: ElementorType;
