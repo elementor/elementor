@@ -33,7 +33,7 @@ const TemplateLibraryManager = function() {
 		var data = self.getDefaultTemplateTypeData();
 
 		const elements = Object.entries( elementor.getConfig().elements ).reduce( ( acc, [ type, element ] ) => {
-			if ( element.is_atomic ) {
+			if ( ! element?.atomic_props_schema ) {
 				return acc;
 			}
 

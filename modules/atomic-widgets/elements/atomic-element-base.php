@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Atomic_Element_Base extends Element_Base {
-	const BASE_STYLE_KEY = 'base';
-
 	use Has_Atomic_Base;
 
 	protected $version = '0.0';
@@ -50,6 +48,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
+		$config['should_wrap'] = false;
 
 		return $config;
 	}
@@ -72,10 +71,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 * @return array<string, Prop_Type>
 	 */
 	abstract protected static function define_props_schema(): array;
-
-
-
-
 
 	/**
 	 * Get the HTML tag for rendering.

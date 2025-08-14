@@ -98,7 +98,6 @@ class Element_Column extends Element_Base {
 
 		$config['controls'] = $this->get_controls();
 		$config['tabs_controls'] = $this->get_tabs_controls();
-		$config['should_wrap'] = true;
 
 		return $config;
 	}

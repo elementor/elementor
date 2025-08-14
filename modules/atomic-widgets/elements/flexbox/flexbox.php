@@ -20,6 +20,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Flexbox extends Atomic_Element_Base {
+	const BASE_STYLE_KEY = 'base';
+
 	public static function get_type() {
 		return 'e-flexbox';
 	}
