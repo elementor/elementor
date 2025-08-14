@@ -142,6 +142,7 @@ const entry = {
 	'editor-v4-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/opt-in-page/app.js'),
 	'editor-v4-welcome-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/welcome-screen/app.js'),
 	'editor-v4-opt-in-alphachip': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/panel-chip/panel-chip.js' ),
+	'e-react-promotions': path.resolve( __dirname, '../modules/promotions/assets/js/react/index.js' ),
 	'e-wc-product-editor': path.resolve( __dirname, '../modules/wc-product-editor/assets/js/e-wc-product-editor.js' ),
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
