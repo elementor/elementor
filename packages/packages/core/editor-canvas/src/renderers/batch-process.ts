@@ -1,3 +1,5 @@
+import { ensureError } from "@elementor/utils";
+
 type Batch< TPayload = unknown > = {
 	$$batch: true;
 	value: BatchValue< TPayload >;
@@ -7,9 +9,19 @@ type BatchValue< TPayload = unknown > = {
 	id: string;
 	payload: TPayload;
 	handler: BatchHandlerCallback< TPayload >;
+	onSuccess?: ( result: unknown ) => void;
+	onError?: ( error: Error ) => void;
 };
 
 type HandlerItem< TPayload = unknown> = {
+	key: string;
+	id: string;
+	payload: TPayload;
+	onSuccess?: ( result: unknown ) => void;
+	onError?: ( error: Error ) => void;
+};
+
+type HandlerCallbackItem< TPayload = unknown> = {
 	key: string;
 	id: string;
 	payload: TPayload;
@@ -22,7 +34,7 @@ type BatchHandlerCallbackContext = {
 };
 
 export type BatchHandlerCallback< TPayload = unknown> = (
-	items: Array< HandlerItem< TPayload > >,
+	items: Array< HandlerCallbackItem< TPayload > >,
 	context: BatchHandlerCallbackContext
 ) => Promise< HandlerResult > | HandlerResult;
 
@@ -30,10 +42,12 @@ export const batchProcess = < TPayload = unknown >( {
 	id,
 	payload,
 	handler,
+	onSuccess,
+	onError,
 }: BatchValue<TPayload> ): Batch< TPayload > => {
 	return {
 		$$batch: true,
-		value: { id, payload, handler },
+		value: { id, payload, handler, onSuccess, onError },
 	};
 };
 
@@ -54,6 +68,8 @@ export function createBatchManager() {
 				key,
 				id: item.id,
 				payload: item.payload,
+				onSuccess: item.onSuccess,
+				onError: item.onError,
 			} );
 		},
 		execute: async ( context: BatchHandlerCallbackContext ) => {
@@ -61,12 +77,27 @@ export function createBatchManager() {
 				.entries()
 				.map( async ( [ handler, items ] ) => {
 					try {
-						const results = await handler( Array.from( items ), context );
+						const results = await handler(
+							Array.from( items ).map( ( item ) => ( {
+								key: item.key,
+								id: item.id,
+								payload: item.payload,
+							} ) ),
+							context
+						);
+
+						items.forEach( ( item ) => {
+							item.onSuccess?.( results[ item.id ] );
+						} );
 
 						return [ ...items ].map( ( item ) => ({
 							[ item.key ]: results[ item.id ],
 						}) );
 					} catch ( error ) {
+						items.forEach( ( item ) => {
+							item.onError?.( ensureError( error ) );
+						} );
+
 						return [ ...items ].map( ( item ) => ({
 							[ item.key ]: null,
 						}) );
