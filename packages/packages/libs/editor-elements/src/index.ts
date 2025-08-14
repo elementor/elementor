@@ -18,6 +18,7 @@ export { getCurrentDocumentId } from './sync/get-current-document-id';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';
 export { updateElementSettings, type UpdateElementSettingsArgs } from './sync/update-element-settings';
+export { replaceElement } from './sync/replace-element';
 
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
 export {

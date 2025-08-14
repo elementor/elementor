@@ -40,6 +40,7 @@ export type V1ElementModelProps = {
 	elType: string;
 	id: string;
 	styles?: Record< StyleDefinitionID, StyleDefinition >;
+	settings?: V1ElementSettingsProps;
 	elements?: V1Model< V1ElementModelProps >[];
 };
 
@@ -61,5 +62,5 @@ export type V1ElementConfig = {
 type V1Model< T > = {
 	get: < K extends keyof T >( key: K ) => T[ K ];
 	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
-	toJSON: () => T;
+	toJSON: ( options?: { remove?: string[] } ) => T;
 };

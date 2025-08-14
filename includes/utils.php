@@ -324,6 +324,7 @@ class Utils {
 		}
 
 		if ( ! post_type_supports( $post_type, 'elementor' ) ) {
+			error_log('--------------------------------! post_type_supports--------------------------------');
 			return false;
 		}
 
