@@ -10,6 +10,7 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
 use Elementor\Core\Utils\Hints;
 use Elementor\Core\Admin\Admin_Notices;
+use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
  * Elementor heading widget.
