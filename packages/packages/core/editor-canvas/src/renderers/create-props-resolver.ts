@@ -8,12 +8,15 @@ import {
 } from '@elementor/editor-props';
 
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
+import { type TransformerMeta } from '../transformers/types';
+import { createBatchManager, isBatchProcess } from './batch-process';
 import { getMultiPropsValue, isMultiProps } from './multi-props';
 
 type CreatePropResolverArgs = {
 	transformers: TransformersRegistry;
 	schema: PropsSchema;
 	onPropResolve?: ( args: { key: string; value: unknown } ) => void;
+	meta?: TransformerMeta;
 };
 
 type ResolveArgs = {
@@ -36,9 +39,16 @@ export type PropsResolver = ReturnType< typeof createPropsResolver >;
 
 const TRANSFORM_DEPTH_LIMIT = 3;
 
-export function createPropsResolver( { transformers, schema: initialSchema, onPropResolve }: CreatePropResolverArgs ) {
+export function createPropsResolver( {
+	transformers,
+	schema: initialSchema,
+	onPropResolve,
+	meta = {},
+}: CreatePropResolverArgs ) {
 	async function resolve( { props, schema, signal }: ResolveArgs ): Promise< ResolvedProps > {
 		schema = schema ?? initialSchema;
+
+		const batchManager = createBatchManager();
 
 		const promises = Promise.all(
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
@@ -52,11 +62,21 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 					return getMultiPropsValue( transformed );
 				}
 
+				if ( isBatchProcess( transformed ) ) {
+					batchManager.add( key, transformed.value );
+
+					return null;
+				}
+
 				return { [ key ]: transformed };
 			} )
 		);
 
-		return Object.assign( {}, ...( await promises ).filter( Boolean ) );
+		const results = ( await promises ).filter( Boolean );
+
+		const batchedResults = await batchManager.execute( { signal } );
+
+		return Object.assign( {}, ...results, ...batchedResults );
 	}
 
 	async function transform( { value, key, type, signal, depth = 0 }: TransformArgs ) {
@@ -114,7 +134,12 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		}
 
 		try {
-			const transformed = await transformer( resolvedValue, { key, signal } );
+			const transformed = await transformer( resolvedValue, {
+				key,
+				signal,
+				meta,
+				$$type: value.$$type,
+			} );
 
 			return transform( { value: transformed, key, type, signal, depth: depth + 1 } );
 		} catch {
