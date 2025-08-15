@@ -7,7 +7,7 @@ use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use ReflectionClass;
 
-class test_variables_route extends Elementor_Test_Base {
+class Test_Variables_Route extends Elementor_Test_Base {
 	private $mock_parser;
 
 	public function setUp(): void {
@@ -18,11 +18,29 @@ class test_variables_route extends Elementor_Test_Base {
 		$mockParsedCss = $this->createMock(ParsedCss::class);
 		$this->mock_parser->method('parse')->willReturn($mockParsedCss);
 		$this->mock_parser->method('extract_variables')->willReturn([]);
+	}
+
+	private function register_route_for_test($parser = null) {
+		// Reset REST server state
+		$GLOBALS['wp_rest_server'] = null;
 		
-		do_action( 'rest_api_init' );
+		$route = new VariablesRoute($parser ?: $this->mock_parser);
+		add_action('rest_api_init', function() use ($route) {
+			$route->register_route();
+		});
+		do_action('rest_api_init');
+		return $route;
+	}
+	
+	public function tearDown(): void {
+		// Clean up REST server state after each test
+		$GLOBALS['wp_rest_server'] = null;
+		parent::tearDown();
 	}
 
     public function test_missing_url_or_css_returns_400() {
+		$this->register_route_for_test();
+		
 		$request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertEquals( 400, $response->get_status() );
@@ -42,9 +60,9 @@ class test_variables_route extends Elementor_Test_Base {
 		$mockParsedCss = $this->createMock(ParsedCss::class);
 		$mockParser->method('parse')->willReturn($mockParsedCss);
 		$mockParser->method('extract_variables')->willReturn([
-			['name' => '--primary', 'value' => '#eee'],
+			'--primary' => ['name' => '--primary', 'value' => '#eee', 'scope' => ':root', 'original_block' => null],
 		]);
-		$route = new VariablesRoute($mockParser);
+		$this->register_route_for_test($mockParser);
 
 		$request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
 		$request->set_param( 'url', $url );
@@ -63,10 +81,10 @@ class test_variables_route extends Elementor_Test_Base {
         $mockParsedCss = $this->createMock(ParsedCss::class);
         $mockParser->method('parse')->willReturn($mockParsedCss);
         $mockParser->method('extract_variables')->willReturn([
-            ['name' => '--primary', 'value' => '#eee'],
-            ['name' => '--spacing', 'value' => '16px'],
+            '--primary' => ['name' => '--primary', 'value' => '#eee', 'scope' => ':root', 'original_block' => null],
+            '--spacing' => ['name' => '--spacing', 'value' => '16px', 'scope' => ':root', 'original_block' => null],
         ]);
-        $route = new VariablesRoute($mockParser);
+        $this->register_route_for_test($mockParser);
         $request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
         $request->set_param( 'css', ':root { --primary: #eee; --spacing: 16px; }' );
         $response = rest_get_server()->dispatch( $request );
