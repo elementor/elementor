@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
 
 class Global_Classes_Parser {
+
 	public static function make() {
 		return new static();
 	}
@@ -61,10 +62,10 @@ class Global_Classes_Parser {
 			return $result;
 		}
 
-		return $result->wrap( [
+		return $result->wrap([
 			'items' => $items_result->unwrap(),
 			'order' => $order_result->unwrap(),
-		] );
+		]);
 	}
 
 	public function parse_items( array $items ) {
@@ -90,13 +91,13 @@ class Global_Classes_Parser {
 				continue;
 			}
 
-			if ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
-				if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
-					$result->errors()->add( "$item_id.id", 'duplicated_class_label' );
+			// if ( Plugin::$instance->experiments->is_feature_active( Opt_In::EXPERIMENT_NAME ) ) {
+			// if ( in_array( $sanitized_item['label'], $existing_labels, true ) ) {
+			// $result->errors()->add( "$item_id.id", 'duplicated_class_label' );
 
-					continue;
-				}
-			}
+			// continue;
+			// }
+			// }
 
 			$sanitized_items[ $sanitized_item['id'] ] = $sanitized_item;
 			$existing_labels[] = $sanitized_item['label'];

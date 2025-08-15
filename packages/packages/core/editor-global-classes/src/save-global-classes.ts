@@ -2,6 +2,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { hash } from '@elementor/utils';
 
 import { apiClient, type ApiContext } from './api';
+import { showErrorDialog } from './components/error-dialog-controler';
 import { type GlobalClasses, selectData, selectFrontendInitialData, selectPreviewInitialData, slice } from './store';
 
 type Options = {
@@ -10,22 +11,19 @@ type Options = {
 
 export async function saveGlobalClasses( { context }: Options ) {
 	const state = selectData( getState() );
-
-	if ( context === 'preview' ) {
-		await apiClient.saveDraft( {
+	const apiAction = context === 'preview' ? apiClient.saveDraft : apiClient.publish;
+	const currentContext = context === 'preview' ? selectPreviewInitialData : selectFrontendInitialData;
+	try {
+		const response = await apiAction( {
 			items: state.items,
 			order: state.order,
-			changes: calculateChanges( state, selectPreviewInitialData( getState() ) ),
+			changes: calculateChanges( state, currentContext( getState() ) ),
 		} );
-	} else {
-		await apiClient.publish( {
-			items: state.items,
-			order: state.order,
-			changes: calculateChanges( state, selectFrontendInitialData( getState() ) ),
-		} );
-	}
-
-	dispatch( slice.actions.reset( { context } ) );
+		dispatch( slice.actions.reset( { context } ) );
+		if ( response.data.data ) {
+			showErrorDialog( response.data.data );
+		}
+	} catch ( e: unknown ) {}
 }
 
 function calculateChanges( state: GlobalClasses, initialData: GlobalClasses ) {

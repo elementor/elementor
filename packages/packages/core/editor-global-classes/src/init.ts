@@ -18,10 +18,11 @@ import { slice } from './store';
 import { syncWithDocumentSave } from './sync-with-document-save';
 
 export function init() {
-	registerSlice( slice );
-	registerPanel( panel );
+	try {
+		registerSlice( slice );
+		registerPanel( panel );
 
-	stylesRepository.register( globalClassesStylesProvider );
+		stylesRepository.register( globalClassesStylesProvider );
 
 	injectIntoLogic( {
 		id: 'global-classes-populate-store',
@@ -38,12 +39,15 @@ export function init() {
 		component: ClassManagerButton,
 	} );
 
-	registerStyleProviderToColors( GLOBAL_CLASSES_PROVIDER_KEY, {
-		name: 'global',
-		getThemeColor: ( theme ) => theme.palette.global.dark,
-	} );
+		registerStyleProviderToColors( GLOBAL_CLASSES_PROVIDER_KEY, {
+			name: 'global',
+			getThemeColor: ( theme ) => theme.palette.global.dark,
+		} );
 
-	listenTo( v1ReadyEvent(), () => {
-		syncWithDocumentSave();
-	} );
+		listenTo( v1ReadyEvent(), () => {
+			syncWithDocumentSave();
+		} );
+	} catch ( e ) {
+		console.log( { e } );
+	}
 }
