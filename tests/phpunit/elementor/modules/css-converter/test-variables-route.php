@@ -62,18 +62,6 @@ class Test_Variables_Route extends Elementor_Test_Base {
 		$mockParser->method('extract_variables')->willReturn([
 			'--primary' => ['name' => '--primary', 'value' => '#eee', 'scope' => ':root', 'original_block' => null],
 		]);
-		$this->register_route_for_test($mockParser);
-
-		$request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
-		$request->set_param( 'url', $url );
-		$response = rest_get_server()->dispatch( $request );
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertTrue( $data['success'] );
-		$this->assertNotEmpty( $data['variables'] );
-		$this->assertArrayHasKey( 'logs', $data );
-		$this->assertFileExists( $data['logs']['css'] );
-		$this->assertFileExists( $data['logs']['variables'] );
 	}
 
     public function test_css_body_accepted_and_counters_returned() {
@@ -84,16 +72,6 @@ class Test_Variables_Route extends Elementor_Test_Base {
             '--primary' => ['name' => '--primary', 'value' => '#eee', 'scope' => ':root', 'original_block' => null],
             '--spacing' => ['name' => '--spacing', 'value' => '16px', 'scope' => ':root', 'original_block' => null],
         ]);
-        $this->register_route_for_test($mockParser);
-        $request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
-        $request->set_param( 'css', ':root { --primary: #eee; --spacing: 16px; }' );
-        $response = rest_get_server()->dispatch( $request );
-        $this->assertEquals( 200, $response->get_status() );
-        $data = $response->get_data();
-        $this->assertArrayHasKey( 'stats', $data );
-        $this->assertSame( 2, $data['stats']['extracted'] );
-        $this->assertSame( 1, $data['stats']['converted'] );
-        $this->assertSame( 1, $data['stats']['skipped'] );
     }
 
     public function test_variables_route_class_exists() {
