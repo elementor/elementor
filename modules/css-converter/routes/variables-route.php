@@ -5,9 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/../parsers/css-parser.php';
-require_once __DIR__ . '/../variable-conversion.php';
-
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
 use Elementor\Modules\CssConverter\Variable_Conversion_Service;

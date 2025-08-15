@@ -6,11 +6,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/../autoloader.php';
-require_once __DIR__ . '/../exceptions/css-parse-exception.php';
-require_once __DIR__ . '/parsed-css.php';
 
 use Elementor\Modules\CssConverter\CSS_Converter_Autoloader;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
+use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use Sabberworm\CSS\Parser;
 use Sabberworm\CSS\CSSList\Document;
 use Sabberworm\CSS\Settings;
