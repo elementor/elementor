@@ -27,11 +27,6 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
 		} );
-
-		// Version experiments are visible after the atomic elements experiment is active
-		await wpAdmin.setExperiments( {
-			e_v_3_31: 'active',
-		} );
 	} );
 
 	test.afterAll( async () => {

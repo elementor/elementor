@@ -7,9 +7,7 @@ test.describe( 'Column tests @column', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			container: false,
-		} );
+		await wpAdmin.setExperiments( { container: false } );
 		await page.close();
 	} );
 

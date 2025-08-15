@@ -13,6 +13,7 @@ export { NumberControl } from './controls/number-control';
 export { EqualUnequalSizesControl } from './controls/equal-unequal-sizes-control';
 export { LinkedDimensionsControl } from './controls/linked-dimensions-control';
 export { FontFamilyControl } from './controls/font-family-control/font-family-control';
+export { ItemSelector } from './components/item-selector';
 export { UrlControl } from './controls/url-control';
 export { LinkControl } from './controls/link-control';
 export { GapControl } from './controls/gap-control';
@@ -24,12 +25,16 @@ export { RepeatableControl } from './controls/repeatable-control';
 export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
+export { TransformBaseControl } from './controls/transform-control/transform-base-control';
+export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
+export { enqueueFont } from './controls/font-family-control/enqueue-font';
+export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
-export { FontFamilySelector } from './components/font-family-selector';
+export { CssEditor } from './components/css-code-editor/css-editor';
 
 // types
 export type { ControlComponent } from './create-control';
@@ -45,11 +50,18 @@ export type { FontCategory } from './controls/font-family-control/font-family-co
 // providers
 export { createControlReplacementsRegistry, ControlReplacementsProvider } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
+export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
+export { createControl } from './create-control';
 
-export { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from './locations';
+export {
+	injectIntoRepeaterItemIcon,
+	injectIntoRepeaterItemLabel,
+	injectIntoRepeaterHeaderActions,
+	injectIntoRepeaterItemActions,
+} from './components/unstable-repeater/locations';
 
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';

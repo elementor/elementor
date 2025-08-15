@@ -28,13 +28,14 @@ import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
-import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
+
 import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
 import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
 import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
 import CloudLibraryModule from 'elementor/modules/cloud-library/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
+import * as hints from './hints';
 import ElementBase from './elements/types/base/element-base';
 import { FontVariables } from './utils/font-variables';
 
@@ -61,6 +62,7 @@ export default class EditorBase extends Marionette.Application {
 	ajax = elementorCommon.ajax;
 	conditions = new ControlConditions();
 	history = require( 'elementor/modules/history/assets/js/module' );
+	hints = new hints.Ally();
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -458,7 +460,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.introductionTooltips = new IntroductionTooltipsManager();
 
-		this.editorEvents = new EditorEvents();
+		this.editorEvents = elementorCommon.eventsManager;
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
@@ -479,9 +481,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.modules.promotionModule = new PromotionModule();
 
-		if ( elementorCommon.config.experimentalFeatures[ 'cloud-library' ] ) {
-			this.modules.cloudLibraryModule = new CloudLibraryModule();
-		}
+		this.modules.cloudLibraryModule = new CloudLibraryModule();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );

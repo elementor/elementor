@@ -3,7 +3,7 @@
  * Plugin Name: Elementor
  * Description: The Elementor Website Builder has it all: drag and drop page builder, pixel perfect design, mobile responsive editing, and more. Get started now!
  * Plugin URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=plugin-uri&utm_medium=wp-dash
- * Version: 3.31.0
+ * Version: 3.32.0
  * Author: Elementor.com
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  * Text Domain: elementor
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '3.31.0' );
+define( 'ELEMENTOR_VERSION', '3.32.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -46,7 +46,6 @@ if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
 	// We need this file because of the DI\create function that we are using.
 	// Autoload classmap doesn't include this file.
-	require_once ELEMENTOR_PATH . 'vendor_prefixed/dependency-injection/php-di/php-di/src/functions.php';
 }
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {

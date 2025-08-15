@@ -29,7 +29,6 @@ import {
 	stringPropTypeUtil,
 	strokePropTypeUtil,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { getMediaAttachment } from '@elementor/wp-media';
 
 import { initStyleTransformers } from '../init-style-transformers';
@@ -247,7 +246,7 @@ describe( 'styles prop resolver', () => {
 			},
 		},
 		{
-			name: 'background (only image url)',
+			name: 'background (image url and default values)',
 			props: {
 				background: backgroundPropTypeUtil.create( {
 					'background-overlay': backgroundOverlayPropTypeUtil.create( [
@@ -265,12 +264,15 @@ describe( 'styles prop resolver', () => {
 			},
 			expected: {
 				'background-image': 'url(https://localhost.test/test-image.png)',
+				'background-repeat': 'repeat',
+				'background-attachment': 'scroll',
+				'background-size': 'auto auto',
+				'background-position': '0% 0%',
 			},
 		},
 		{
 			name: 'background (full)',
 			prepare: () => {
-				jest.mocked( isExperimentActive ).mockReturnValue( true );
 				jest.mocked( getMediaAttachment ).mockImplementation(
 					( args ) => Promise.resolve( mockAttachmentData( args.id ) ) as never
 				);

@@ -21,6 +21,7 @@ type KeyValueControlProps = {
 	regexKey?: string;
 	regexValue?: string;
 	validationErrorMessage?: string;
+	getHelperText?: ( key: string, value: string ) => { keyHelper?: string; valueHelper?: string };
 };
 
 export const KeyValueControl = createControl( ( props: KeyValueControlProps = {} ) => {
@@ -105,21 +106,29 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 	return (
 		<PropProvider { ...propContext } value={ value } setValue={ handleChange }>
 			<Grid container gap={ 1.5 }>
-				<Grid item xs={ 12 }>
-					<FormLabel size="tiny">{ keyLabel }</FormLabel>
+				<Grid item xs={ 12 } display="flex" flexDirection="column">
+					<FormLabel size="tiny" sx={ { pb: 1 } }>
+						{ keyLabel }
+					</FormLabel>
 					<PropKeyProvider bind={ 'key' }>
-						<TextControl inputValue={ sessionState.key } error={ !! keyError } sx={ { pt: 1 } } />
+						<TextControl
+							inputValue={ sessionState.key }
+							error={ !! keyError }
+							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.keyHelper }
+						/>
 					</PropKeyProvider>
 					{ !! keyError && <FormHelperText error>{ keyError }</FormHelperText> }
 				</Grid>
-				<Grid item xs={ 12 }>
-					<FormLabel size="tiny">{ valueLabel }</FormLabel>
+				<Grid item xs={ 12 } display="flex" flexDirection="column">
+					<FormLabel size="tiny" sx={ { pb: 1 } }>
+						{ valueLabel }
+					</FormLabel>
 					<PropKeyProvider bind={ 'value' }>
 						<TextControl
 							inputValue={ sessionState.value }
 							error={ !! valueError }
 							inputDisabled={ !! keyError }
-							sx={ { pt: 1 } }
+							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.valueHelper }
 						/>
 					</PropKeyProvider>
 					{ !! valueError && <FormHelperText error>{ valueError }</FormHelperText> }

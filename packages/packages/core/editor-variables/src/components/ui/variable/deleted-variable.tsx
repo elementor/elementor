@@ -1,37 +1,39 @@
 import * as React from 'react';
 import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { type PropTypeUtil } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { type PropTypeKey } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
 
+import { VariableTypeProvider } from '../../../context/variable-type-context';
+import { usePermissions } from '../../../hooks/use-permissions';
 import { restoreVariable } from '../../../hooks/use-prop-variables';
-import { colorVariablePropTypeUtil } from '../../../prop-types/color-variable-prop-type';
-import { fontVariablePropTypeUtil } from '../../../prop-types/font-variable-prop-type';
 import { type Variable } from '../../../types';
-import { ColorVariableRestore } from '../../color-variable-restore';
-import { FontVariableRestore } from '../../font-variable-restore';
+import { createUnlinkHandler } from '../../../utils/unlink-variable';
+import { getVariableType } from '../../../variables-registry/variable-type-registry';
+import { VariableRestore } from '../../variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
 import { DeletedTag } from '../tags/deleted-tag';
 
-const isV331Active = isExperimentActive( 'e_v_3_31' );
-
 type Props = {
 	variable: Variable;
-	variablePropTypeUtil: PropTypeUtil< string, string >;
-	fallbackPropTypeUtil: PropTypeUtil< string, string | null > | PropTypeUtil< string, string >;
+	propTypeKey: PropTypeKey;
 };
 
-export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropTypeUtil }: Props ) => {
+type Handlers = {
+	onUnlink?: () => void;
+	onRestore?: () => void;
+};
+
+export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
+	const { propTypeUtil } = getVariableType( propTypeKey );
+
 	const { setValue } = useBoundProp();
+
+	const userPermissions = usePermissions();
 
 	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
 	const toggleInfotip = () => setShowInfotip( ( prev ) => ! prev );
 	const closeInfotip = () => setShowInfotip( false );
-
-	const unlinkVariable = () => {
-		setValue( fallbackPropTypeUtil.create( variable.value ) );
-	};
 
 	const deletedChipAnchorRef = useRef< HTMLDivElement >( null );
 
@@ -41,22 +43,30 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 		popupId: `elementor-variables-restore-${ popupId }`,
 	} );
 
-	const handleRestore = () => {
-		if ( ! variable.key ) {
-			return;
-		}
+	const handlers: Handlers = {};
 
-		restoreVariable( variable.key )
-			.then( ( key ) => {
-				setValue( variablePropTypeUtil.create( key ) );
-				closeInfotip();
-			} )
-			.catch( () => {
-				closeInfotip();
-				popupState.setAnchorEl( deletedChipAnchorRef.current );
-				popupState.open();
-			} );
-	};
+	if ( userPermissions.canUnlink() ) {
+		handlers.onUnlink = createUnlinkHandler( variable, propTypeKey, setValue );
+	}
+
+	if ( userPermissions.canRestore() ) {
+		handlers.onRestore = () => {
+			if ( ! variable.key ) {
+				return;
+			}
+
+			restoreVariable( variable.key )
+				.then( ( key ) => {
+					setValue( propTypeUtil.create( key ) );
+					closeInfotip();
+				} )
+				.catch( () => {
+					closeInfotip();
+					popupState.setAnchorEl( deletedChipAnchorRef.current );
+					popupState.open();
+				} );
+		};
+	}
 
 	const handleRestoreWithOverrides = () => {
 		popupState.close();
@@ -75,8 +85,8 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 					content={
 						<DeletedVariableAlert
 							onClose={ closeInfotip }
-							onUnlink={ unlinkVariable }
-							onRestore={ isV331Active ? handleRestore : undefined }
+							onUnlink={ handlers.onUnlink }
+							onRestore={ handlers.onRestore }
 							label={ variable.label }
 						/>
 					}
@@ -103,21 +113,13 @@ export const DeletedVariable = ( { variable, variablePropTypeUtil, fallbackPropT
 					} }
 					{ ...bindPopover( popupState ) }
 				>
-					{ fontVariablePropTypeUtil.key === variablePropTypeUtil.key && (
-						<FontVariableRestore
+					<VariableTypeProvider propTypeKey={ propTypeKey }>
+						<VariableRestore
 							variableId={ variable.key ?? '' }
 							onClose={ popupState.close }
 							onSubmit={ handleRestoreWithOverrides }
 						/>
-					) }
-
-					{ colorVariablePropTypeUtil.key === variablePropTypeUtil.key && (
-						<ColorVariableRestore
-							variableId={ variable.key ?? '' }
-							onClose={ popupState.close }
-							onSubmit={ handleRestoreWithOverrides }
-						/>
-					) }
+					</VariableTypeProvider>
 				</Popover>
 			</Box>
 		</>

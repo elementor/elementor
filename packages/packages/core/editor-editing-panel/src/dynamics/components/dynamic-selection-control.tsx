@@ -23,7 +23,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PopoverBody } from '../../components/popover-body';
 import { Control as BaseControl } from '../../controls-registry/control';
-import { type ControlType, getControl } from '../../controls-registry/controls-registry';
+import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { DynamicControl } from '../dynamic-control';
 import { useDynamicTag } from '../hooks/use-dynamic-tag';
@@ -169,7 +169,7 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 };
 
 const Control = ( { control }: { control: Control[ 'value' ] } ) => {
-	if ( ! getControl( control.type as ControlType ) ) {
+	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
 		return null;
 	}
 

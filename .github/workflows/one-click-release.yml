@@ -6,19 +6,24 @@ on:
       channel:
         required: true
         type: choice
-        description: Select a channel. For cloud, use main branch only!
+        description: Select a channel.
         options:
-          - ga
           - beta
-          - cloud
+          - ga
       custom_core_executed:
         type: boolean
         description: 'Was the Custom Core process executed and completed successful?'
         required: true
-      pre_release:
+      dry_run:
         type: boolean
-        description: 'Pre-release?'
+        description: 'Run in dry-run mode (no actual release will be created)'
         required: false
+        default: true
+      is_patch:
+        type: boolean
+        description: 'Is this a patch release? (If true then the channel must be ga)'
+        required: false
+        default: false
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -41,6 +46,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{inputs.branch}}
+      - name: Config git user
+        run: |
+          git config --global user.name "${{ secrets.MAINTAIN_USERNAME }}"
+          git config --global user.email "${{ secrets.MAINTAIN_EMAIL }}"
       - name: Get Configuration
         id: configuration
         uses: rgarcia-phi/json-to-variables@9835d537368468c4e4de5254dc3efeadda183793
@@ -57,6 +66,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
+          cache: 'npm'
+          registry-url: 'https://registry.npmjs.org/'
       - name: Env Vars Configure
         id: env_vars_configure
         uses: ./.github/workflows/env-vars-configure
@@ -73,7 +84,6 @@ jobs:
           POSTFIX: ''
           OVERRIDE_PACKAGE_VERSION: true
       - name: Update Readme.txt
-        if: env.CHANNEL != 'cloud'
         uses: ./.github/workflows/update-readme-txt
         with:
           README_TXT_PATH: $GITHUB_WORKSPACE/readme.txt
@@ -112,10 +122,19 @@ jobs:
           files: |
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
-          prerelease: ${{ github.event.inputs.pre_release }}
+          prerelease: ${{ github.event.inputs.dry_run }}
+          draft: ${{ github.event.inputs.dry_run }}
           body_path: ${{ env.CHANGELOG_FILE }}
+      - name: Validate Build Files
+        if: github.repository_owner == 'elementor'
+        env:
+          PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
+          CHANNEL: ${{ env.CHANNEL }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+        run: |
+            bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
       - name: Publish to WordPress.org SVN
-        if: env.CHANNEL != 'cloud' && github.repository_owner == 'elementor' && github.event.inputs.pre_release == 'false' # We don't publish cloud to WordPress.org, ga, beta, dev are published.
+        if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -123,10 +142,9 @@ jobs:
           CHANNEL: ${{ env.CHANNEL }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
         run: |
-          bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
-        if: env.CHANNEL == 'beta' # Only for beta releases
+        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
         uses: ./.github/workflows/release-dev-from-beta
         with:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
@@ -134,10 +152,39 @@ jobs:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          PRE_RELEASE: ${{ github.event.inputs.pre_release }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+
+      - name: Create patch version
+        id: create-patch-version
+        if: github.event.inputs.is_patch == 'true' && env.CHANNEL == 'ga'
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/create-patch-version.sh"
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
+          
+      - name: Publish packages (and tag version)
+        id: release-packages
+        run: |
+          if [ "${{ env.CHANNEL }}" == "ga" ]; then
+            # Assuming the version is already bumped in the creation of the release branch
+            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          else
+            if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
+              LATEST_BETA_TAG=$(gh tag list --limit 1 --pattern "${{ env.PACKAGE_VERSION }}-beta-") || "${{ env.PACKAGE_VERSION }}-beta-0"
+              npm run packages:version set ${{ env.PACKAGE_VERSION }} --tag `beta-${LATEST_BETA_TAG}`
+              gh tag create ${{ env.PACKAGE_VERSION }}-beta-${LATEST_BETA_TAG} --annotate "Beta ${{ env.PACKAGE_VERSION }}" --message "Beta ${{ env.PACKAGE_VERSION }}"
+            fi
+            npm run packages:release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+
       - name: Post To Slack Created Release
-        if: github.event.inputs.pre_release == 'false'
+        if: github.event.inputs.dry_run == 'false'
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}

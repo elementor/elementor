@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -59,6 +60,10 @@ class Atomic_Svg extends Atomic_Widget_Base {
 					Svg_Control::bind_to( 'svg' )
 						->set_label( __( 'SVG', 'elementor' ) ),
 				] ),
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
 		];
 	}
 
@@ -66,6 +71,9 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		return [
 			Link_Control::bind_to( 'link' )
 				->set_label( __( 'Link', 'elementor' ) ),
+			Text_Control::bind_to( '_cssid' )
+				->set_label( __( 'ID', 'elementor' ) )
+				->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 
@@ -117,18 +125,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
 
-		$attributes_string = '';
-		if ( isset( $settings['attributes'] ) && is_array( $settings['attributes'] ) ) {
-			$attributes_array = [];
-			foreach ( $settings['attributes'] as $item ) {
-				if ( ! empty( $item['key'] ) && ! empty( $item['value'] ) ) {
-					$attributes_array[] = esc_attr( $item['key'] ) . '="' . esc_attr( $item['value'] ) . '"';
-				}
-			}
-			$attributes_string = implode( ' ', $attributes_array );
-		}
-
-		$all_attributes = trim( $cssid_attribute . ' ' . $attributes_string );
+		$all_attributes = trim( $cssid_attribute . ' ' . $settings['attributes'] );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(

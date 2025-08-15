@@ -19,9 +19,9 @@ import { __ } from '@wordpress/i18n';
 
 import { ControlAdornments } from '../control-adornments/control-adornments';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
-import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
 import { SectionContent } from './section-content';
 import { SortableItem, SortableProvider } from './sortable';
+import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from './unstable-repeater/locations';
 
 const SIZE = 'tiny';
 
