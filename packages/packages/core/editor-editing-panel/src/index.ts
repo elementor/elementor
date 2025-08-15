@@ -15,3 +15,4 @@ export { usePanelActions, usePanelStatus } from './panel';
 export type { PopoverActionProps } from './popover-action';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
+export { controlsRegistry } from './controls-registry/controls-registry';
