@@ -4,11 +4,13 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\CssConverter;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\CssConverter\Services\Variables_Service;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
+use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 
 class Test_Variables_Service extends Elementor_Test_Base {
 	public function test_variables_from_css_string__hex_color_is_converted_and_normalized() {
 		$mockParser = $this->createMock(CssParser::class);
-		$mockParser->method('parse')->willReturn('parsed');
+		$mockParsedCss = $this->createMock(ParsedCss::class);
+		$mockParser->method('parse')->willReturn($mockParsedCss);
 		$mockParser->method('extract_variables')->willReturn([
 			['name' => '--Primary-Color', 'value' => '#eeeeee'],
 			['name' => '--secondary', 'value' => '#eeeeee'],
@@ -25,7 +27,8 @@ class Test_Variables_Service extends Elementor_Test_Base {
 
 	public function test_variables_from_css_string__non_hex_variables_are_skipped_in_mvp() {
 		$mockParser = $this->createMock(CssParser::class);
-		$mockParser->method('parse')->willReturn('parsed');
+		$mockParsedCss = $this->createMock(ParsedCss::class);
+		$mockParser->method('parse')->willReturn($mockParsedCss);
 		$mockParser->method('extract_variables')->willReturn([
 			['name' => '--color', 'value' => '#aabbcc'],
 		]);

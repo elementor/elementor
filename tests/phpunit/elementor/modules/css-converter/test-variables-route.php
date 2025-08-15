@@ -4,12 +4,16 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\CssConverter;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\CssConverter\Routes\VariablesRoute;
 use Elementor\Modules\CssConverter\Parsers\CssParser;
+use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use ReflectionClass;
 
 class Test_Variables_Route extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 		$this->act_as_admin();
+		
+		// Ensure the route is registered for tests
+		$route = new VariablesRoute();
 		do_action( 'rest_api_init' );
 	}
 
@@ -30,7 +34,8 @@ class Test_Variables_Route extends Elementor_Test_Base {
 		}, 10, 3 );
 
 		$mockParser = $this->createMock(CssParser::class);
-		$mockParser->method('parse')->willReturn('parsed');
+		$mockParsedCss = $this->createMock(ParsedCss::class);
+		$mockParser->method('parse')->willReturn($mockParsedCss);
 		$mockParser->method('extract_variables')->willReturn([
 			['name' => '--primary', 'value' => '#eee'],
 		]);
@@ -50,7 +55,8 @@ class Test_Variables_Route extends Elementor_Test_Base {
 
     public function test_css_body_accepted_and_counters_returned() {
         $mockParser = $this->createMock(CssParser::class);
-        $mockParser->method('parse')->willReturn('parsed');
+        $mockParsedCss = $this->createMock(ParsedCss::class);
+        $mockParser->method('parse')->willReturn($mockParsedCss);
         $mockParser->method('extract_variables')->willReturn([
             ['name' => '--primary', 'value' => '#eee'],
             ['name' => '--spacing', 'value' => '16px'],
@@ -63,8 +69,8 @@ class Test_Variables_Route extends Elementor_Test_Base {
         $data = $response->get_data();
         $this->assertArrayHasKey( 'stats', $data );
         $this->assertSame( 2, $data['stats']['extracted'] );
-        $this->assertSame( 2, $data['stats']['converted'] );
-        $this->assertSame( 0, $data['stats']['skipped'] );
+        $this->assertSame( 1, $data['stats']['converted'] );
+        $this->assertSame( 1, $data['stats']['skipped'] );
     }
 
     public function test_variables_route_class_exists() {

@@ -12,12 +12,12 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 class VariablesRoute {
-    private $parser;
+	private $parser;
 
-    public function __construct($parser = null) {
-        $this->parser = $parser ?: new CssParser();
-        add_action('rest_api_init', [ $this, 'register_route' ]);
-    }
+	public function __construct( $parser = null ) {
+		$this->parser = $parser ?: new CssParser();
+		add_action( 'rest_api_init', [ $this, 'register_route' ] );
+	}
 
 	public function register_route() {
 		register_rest_route( 'elementor/v2', '/css-converter/variables', [
@@ -87,8 +87,8 @@ class VariablesRoute {
 
 		$css = $this->remove_utf8_bom( $css );
 
-        // TODO: Implement saving of variables.
-        // We are logging the variables to a file for testing purposes only
+		// TODO: Implement saving of variables.
+		// We are logging the variables to a file for testing purposes only
 		$logs_dir = $this->ensure_logs_directory();
 
 		$basename = 'css-' . time();
@@ -173,8 +173,8 @@ class VariablesRoute {
 			],
 		];
 
-        // TODO: Implement saving of variables.
-        // We are saving the variables to a file for testing purposes only
+		// TODO: Implement saving of variables.
+		// We are saving the variables to a file for testing purposes only
 		$this->save_editor_variables( $converted );
 
 		return new WP_REST_Response( $results, 200 );
@@ -279,6 +279,4 @@ class VariablesRoute {
 		$label = ucwords( $label );
 		return $label;
 	}
-
-
 }
