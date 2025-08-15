@@ -44,8 +44,6 @@ class CssParser {
 
 			return new ParsedCss( $document, $css );
 		} catch ( \Exception $e ) {
-			// Do not include raw exception messages in the thrown exception to
-			// avoid leaking implementation details and to satisfy PHPCS escaping rules.
 			throw new CssParseException( 'Failed to parse CSS.', 0 );
 		}
 	}
@@ -56,6 +54,7 @@ class CssParser {
 		}
 
 		$css = file_get_contents( $file_path );
+
 		if ( false === $css ) {
 			throw new CssParseException( 'Failed to read CSS file.' );
 		}
@@ -114,88 +113,124 @@ class CssParser {
 
 	private function extract_classes_recursive( $css_node, &$classes ) {
 		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
-			foreach ( $css_node->getSelectors() as $selector ) {
-				$selector_string = $selector->getSelector();
-
-				if ( $this->is_simple_class_selector( $selector_string ) ) {
-					$class_name = trim( $selector_string, '.' );
-					$classes[ $class_name ] = [
-						'name' => $class_name,
-						'selector' => $selector_string,
-						'rules' => $this->extract_rules_from_block( $css_node ),
-						'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
-					];
-				}
-			}
+			$this->process_declaration_block_for_classes( $css_node, $classes );
 		}
 
-		if ( method_exists( $css_node, 'getContents' ) ) {
-			foreach ( $css_node->getContents() as $content ) {
-				$this->extract_classes_recursive( $content, $classes );
+		$this->process_node_contents_recursively( $css_node, 'extract_classes_recursive', $classes );
+	}
+
+	private function process_declaration_block_for_classes( $css_node, &$classes ) {
+		foreach ( $css_node->getSelectors() as $selector ) {
+			$selector_string = $selector->getSelector();
+
+			if ( ! $this->is_simple_class_selector( $selector_string ) ) {
+				continue;
 			}
+
+			$this->add_class_to_collection( $selector_string, $css_node, $classes );
+		}
+	}
+
+	private function add_class_to_collection( $selector_string, $css_node, &$classes ) {
+		$class_name = trim( $selector_string, '.' );
+		$classes[ $class_name ] = [
+			'name' => $class_name,
+			'selector' => $selector_string,
+			'rules' => $this->extract_rules_from_block( $css_node ),
+			'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
+		];
+	}
+
+	private function process_node_contents_recursively( $css_node, $method_name, &$collection ) {
+		if ( ! method_exists( $css_node, 'getContents' ) ) {
+			return;
+		}
+
+		foreach ( $css_node->getContents() as $content ) {
+			$this->$method_name( $content, $collection );
 		}
 	}
 
 	private function extract_variables_recursive( $css_node, &$variables ) {
 		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
-			foreach ( $css_node->getSelectors() as $selector ) {
-				$selector_string = $selector->getSelector();
-
-				if ( $this->is_root_selector( $selector_string ) ) {
-					foreach ( $css_node->getRules() as $rule ) {
-						$property = $rule->getRule();
-						if ( $this->is_css_variable( $property ) ) {
-							$value = (string) $rule->getValue();
-							$variables[ $property ] = [
-								'name' => $property,
-								'value' => $value,
-								'scope' => $selector_string,
-								'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
-							];
-						}
-					}
-				}
-			}
+			$this->process_declaration_block_for_variables( $css_node, $variables );
 		}
 
-		if ( method_exists( $css_node, 'getContents' ) ) {
-			foreach ( $css_node->getContents() as $content ) {
-				$this->extract_variables_recursive( $content, $variables );
+		$this->process_node_contents_recursively( $css_node, 'extract_variables_recursive', $variables );
+	}
+
+	private function process_declaration_block_for_variables( $css_node, &$variables ) {
+		foreach ( $css_node->getSelectors() as $selector ) {
+			$selector_string = $selector->getSelector();
+
+			if ( ! $this->is_root_selector( $selector_string ) ) {
+				continue;
 			}
+
+			$this->extract_variables_from_rules( $css_node, $selector_string, $variables );
 		}
+	}
+
+	private function extract_variables_from_rules( $css_node, $selector_string, &$variables ) {
+		foreach ( $css_node->getRules() as $rule ) {
+			$property = $rule->getRule();
+
+			if ( ! $this->is_css_variable( $property ) ) {
+				continue;
+			}
+
+			$this->add_variable_to_collection( $property, $rule, $selector_string, $css_node, $variables );
+		}
+	}
+
+	private function add_variable_to_collection( $property, $rule, $selector_string, $css_node, &$variables ) {
+		$value = (string) $rule->getValue();
+		$variables[ $property ] = [
+			'name' => $property,
+			'value' => $value,
+			'scope' => $selector_string,
+			'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
+		];
 	}
 
 	private function extract_unsupported_recursive( $css_node, &$unsupported ) {
 		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
-			$has_unsupported_selector = false;
+			$this->process_declaration_block_for_unsupported( $css_node, $unsupported );
+		}
 
-			foreach ( $css_node->getSelectors() as $selector ) {
-				$selector_string = $selector->getSelector();
+		$this->process_unsupported_node_types( $css_node, $unsupported );
+		$this->process_node_contents_recursively( $css_node, 'extract_unsupported_recursive', $unsupported );
+	}
 
-				if ( ! $this->is_simple_class_selector( $selector_string ) &&
-					! $this->is_root_selector( $selector_string ) ) {
-					$has_unsupported_selector = true;
-					break;
-				}
-			}
+	private function process_declaration_block_for_unsupported( $css_node, &$unsupported ) {
+		if ( ! $this->has_unsupported_selectors( $css_node ) ) {
+			return;
+		}
 
-			if ( $has_unsupported_selector ) {
-				$unsupported[] = $css_node->render( \Sabberworm\CSS\OutputFormat::create() );
+		$unsupported[] = $css_node->render( \Sabberworm\CSS\OutputFormat::create() );
+	}
+
+	private function has_unsupported_selectors( $css_node ) {
+		foreach ( $css_node->getSelectors() as $selector ) {
+			$selector_string = $selector->getSelector();
+
+			if ( $this->is_unsupported_selector( $selector_string ) ) {
+				return true;
 			}
 		}
 
-		if ( $css_node instanceof \Sabberworm\CSS\CSSList\AtRuleBlockList ) {
+		return false;
+	}
+
+	private function is_unsupported_selector( $selector_string ) {
+		return ! $this->is_simple_class_selector( $selector_string ) &&
+			! $this->is_root_selector( $selector_string );
+	}
+
+	private function process_unsupported_node_types( $css_node, &$unsupported ) {
+		if ( $css_node instanceof \Sabberworm\CSS\CSSList\AtRuleBlockList ||
+			$css_node instanceof \Sabberworm\CSS\Property\AtRule ) {
 			$unsupported[] = $css_node->render( \Sabberworm\CSS\OutputFormat::create() );
-		}
-
-		if ( $css_node instanceof \Sabberworm\CSS\Property\AtRule ) {
-			$unsupported[] = $css_node->render( \Sabberworm\CSS\OutputFormat::create() );
-		}
-
-		if ( method_exists( $css_node, 'getContents' ) ) {
-			foreach ( $css_node->getContents() as $content ) {
-				$this->extract_unsupported_recursive( $content, $unsupported );
-			}
 		}
 	}
 
