@@ -40,11 +40,6 @@ export default class extends elementorModules.Module {
 			position: {
 				my: ( elementorCommon.config.isRTL ? 'right' : 'left' ) + '+5 top',
 			},
-			onHide: () => {
-				if ( this.hideProTag ) {
-					this.resetProTag();
-				}
-			},
 		} );
 
 		this.elements.$header = this.dialog.getElements( 'header' );
@@ -60,27 +55,6 @@ export default class extends elementorModules.Module {
 			this.elements.$titleBadge,
 			this.elements.$closeButton,
 		);
-	}
-
-	hideProTag() {
-		this.elements.$titleBadge.css( 'display', 'none' );
-		if ( ! this.elements.$freeBadgeContainer ) {
-			this.elements.$freeBadgeContainer = jQuery( '<div>', { class: 'e-free-badge-container' } );
-			this.elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
-			this.elements.$freeBadge.text( 'Free' );
-			this.elements.$freeBadgeContainer.append( this.elements.$freeBadge );
-			this.elements.$titleBadge.after( this.elements.$freeBadgeContainer );
-		}
-		const $actionButton = this.dialog.getElements( 'action' );
-		$actionButton.removeClass( 'go-pro' );
-		$actionButton.css( 'background-color', 'var(--e-a-btn-bg-info)' );
-	}
-
-	resetProTag() {
-		this.elements.$titleBadge.css( 'display', 'inline-block' );
-		this.elements.$freeBadgeContainer.remove();
-		this.elements.$freeBadgeContainer = null;
-		this.dialog.getElements( 'action' ).addClass( 'go-pro' );
 	}
 
 	createButton( options ) {
@@ -132,10 +106,6 @@ export default class extends elementorModules.Module {
 				of: options.targetElement,
 				at: `${ inlineStartKey }${ options.position.inlineStart || '' } top${ options.position.blockStart || '' }`,
 			} );
-
-		if ( options.hideProTag ) {
-			this.hideProTag();
-		}
 
 		return this.dialog.show();
 	}
