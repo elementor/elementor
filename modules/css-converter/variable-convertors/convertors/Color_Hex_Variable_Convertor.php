@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\CssConverter\VariableConvertors;
+namespace Elementor\Modules\CssConverter\VariableConvertors\Convertors;
 
 class Color_Hex_Variable_Convertor implements VariableConvertorInterface {
 	private const HEX3_PATTERN = '/^#([A-Fa-f0-9]{3})$/';
