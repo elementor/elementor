@@ -12,10 +12,12 @@ use WP_REST_Request;
 use WP_REST_Response;
 
 class VariablesRoute {
+    private $parser;
 
-	public function __construct() {
-		add_action( 'rest_api_init', [ $this, 'register_route' ] );
-	}
+    public function __construct($parser = null) {
+        $this->parser = $parser ?: new CssParser();
+        add_action('rest_api_init', [ $this, 'register_route' ]);
+    }
 
 	public function register_route() {
 		register_rest_route( 'elementor/v2', '/css-converter/variables', [
@@ -93,7 +95,7 @@ class VariablesRoute {
 		$css_path = $logs_dir . '/' . $basename . '.css';
 		file_put_contents( $css_path, $css );
 
-		$parser = new CssParser();
+		$parser = $this->parser;
 		$raw = [];
 
 		try {
@@ -280,5 +282,3 @@ class VariablesRoute {
 
 
 }
-
-new VariablesRoute();

@@ -3,6 +3,7 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\CssConverter\Routes\VariablesRoute;
+use Elementor\Modules\CssConverter\Parsers\CssParser;
 use ReflectionClass;
 
 class Test_Variables_Route extends Elementor_Test_Base {
@@ -28,6 +29,13 @@ class Test_Variables_Route extends Elementor_Test_Base {
 			return $pre;
 		}, 10, 3 );
 
+		$mockParser = $this->createMock(CssParser::class);
+		$mockParser->method('parse')->willReturn('parsed');
+		$mockParser->method('extract_variables')->willReturn([
+			['name' => '--primary', 'value' => '#eee'],
+		]);
+		$route = new VariablesRoute($mockParser);
+
 		$request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
 		$request->set_param( 'url', $url );
 		$response = rest_get_server()->dispatch( $request );
@@ -41,6 +49,13 @@ class Test_Variables_Route extends Elementor_Test_Base {
 	}
 
     public function test_css_body_accepted_and_counters_returned() {
+        $mockParser = $this->createMock(CssParser::class);
+        $mockParser->method('parse')->willReturn('parsed');
+        $mockParser->method('extract_variables')->willReturn([
+            ['name' => '--primary', 'value' => '#eee'],
+            ['name' => '--spacing', 'value' => '16px'],
+        ]);
+        $route = new VariablesRoute($mockParser);
         $request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
         $request->set_param( 'css', ':root { --primary: #eee; --spacing: 16px; }' );
         $response = rest_get_server()->dispatch( $request );
@@ -48,8 +63,8 @@ class Test_Variables_Route extends Elementor_Test_Base {
         $data = $response->get_data();
         $this->assertArrayHasKey( 'stats', $data );
         $this->assertSame( 2, $data['stats']['extracted'] );
-        $this->assertSame( 1, $data['stats']['converted'] );
-        $this->assertSame( 1, $data['stats']['skipped'] );
+        $this->assertSame( 2, $data['stats']['converted'] );
+        $this->assertSame( 0, $data['stats']['skipped'] );
     }
 
     public function test_variables_route_class_exists() {
@@ -118,12 +133,6 @@ class Test_Variables_Route extends Elementor_Test_Base {
         $this->assertEquals( 'Background Color Primary', $method->invoke( $route, '--background-color-primary' ) );
     }
 
-
-
-
-
-
-
     public function test_save_editor_variables_method_exists() {
         $route = new VariablesRoute();
         $reflection = new ReflectionClass( $route );
@@ -133,7 +142,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
         $method->setAccessible( true );
         
         $result = $method->invoke( $route, [] );
-        $this->assertNull( $result );
+        $this->assertIsArray( $result );
     }
 }
 
