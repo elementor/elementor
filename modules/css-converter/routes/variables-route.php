@@ -31,7 +31,7 @@ class VariablesRoute {
 			return true;
 		}
 		$dev_token = defined( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN' ) ? ELEMENTOR_CSS_CONVERTER_DEV_TOKEN : null;
-		$header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? (string) $_SERVER['HTTP_X_DEV_TOKEN'] : null;
+		$header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_DEV_TOKEN'] ) ) : null;
 		if ( $dev_token && $header_token && hash_equals( (string) $dev_token, $header_token ) ) {
 			return true;
 		}
@@ -85,6 +85,8 @@ class VariablesRoute {
 
 		$css = $this->remove_utf8_bom( $css );
 
+        // TODO: Implement saving of variables.
+        // We are logging the variables to a file for testing purposes only
 		$logs_dir = $this->ensure_logs_directory();
 
 		$basename = 'css-' . time();
@@ -169,10 +171,9 @@ class VariablesRoute {
 			],
 		];
 
-		$should_persist = apply_filters( 'elementor_css_converter_should_persist_variables', false );
-		if ( $should_persist ) {
-			// no-op for MVP
-		}
+        // TODO: Implement saving of variables.
+        // We are saving the variables to a file for testing purposes only
+		$this->save_editor_variables( $converted );
 
 		return new WP_REST_Response( $results, 200 );
 	}
@@ -263,6 +264,39 @@ class VariablesRoute {
 			wp_mkdir_p( $logs_dir );
 		}
 		return $logs_dir;
+	}
+
+	private function save_editor_variables( array $variables ): array {
+		// TODO: Implement saving of variables.
+	}
+
+	private function format_variable_label( string $css_var_name ): string {
+		$label = ltrim( $css_var_name, '-' );
+		$label = str_replace( '-', ' ', $label );
+		$label = ucwords( $label );
+		return $label;
+	}
+
+	private function determine_variable_type( string $value ): string {
+		$trimmed_value = trim( $value );
+
+		if ( preg_match( '/^#[0-9a-fA-F]{3,8}$/', $trimmed_value ) ) {
+			return 'color';
+		}
+
+		if ( preg_match( '/^rgba?\(/', $trimmed_value ) ) {
+			return 'color';
+		}
+
+		if ( preg_match( '/^hsla?\(/', $trimmed_value ) ) {
+			return 'color';
+		}
+
+		if ( preg_match( '/^\d+(\.\d+)?(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)$/', $trimmed_value ) ) {
+			return 'dimension';
+		}
+
+		return 'text';
 	}
 }
 
