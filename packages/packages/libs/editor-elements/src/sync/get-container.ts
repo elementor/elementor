@@ -1,8 +1,8 @@
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { type ExtendedWindow, type V1Element } from './types';
+import { type ExtendedWindow } from './types';
 
-export function getContainer( id: string ): V1Element | null {
+export function getContainer( id: string ) {
 	const extendedWindow = window as unknown as ExtendedWindow;
 	const container = extendedWindow.elementor?.getContainer?.( id );
 
