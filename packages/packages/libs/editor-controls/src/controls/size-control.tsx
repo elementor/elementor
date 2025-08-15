@@ -39,6 +39,7 @@ type BaseSizeControlProps = {
 	extendedOptions?: ExtendedOption[];
 	disableCustom?: boolean;
 	anchorRef?: RefObject< HTMLDivElement | null >;
+	allowNegativeValue?: boolean;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -86,12 +87,14 @@ export const SizeControl = createControl(
 		anchorRef,
 		extendedOptions,
 		disableCustom,
+		allowNegativeValue = false,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
 			setValue: setSizeValue,
 			disabled,
 			restoreValue,
+			validate,
 			placeholder: externalPlaceholder,
 		} = useBoundProp( sizePropTypeUtil );
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
@@ -134,9 +137,7 @@ export const SizeControl = createControl(
 			setState( ( prev ) => ( { ...prev, unit: newUnit } ) );
 		};
 
-		const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const { value: size } = event.target;
-
+		const handleSizeChange = ( size: string | number | null ) => {
 			if ( controlUnit === 'auto' ) {
 				setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );
 
@@ -145,7 +146,7 @@ export const SizeControl = createControl(
 
 			setState( ( prev ) => ( {
 				...prev,
-				[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
+				[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSizeOnChange( size, controlUnit ),
 				unit: controlUnit,
 			} ) );
 		};
@@ -204,9 +205,10 @@ export const SizeControl = createControl(
 					startIcon={ startIcon }
 					handleSizeChange={ handleSizeChange }
 					handleUnitChange={ handleUnitChange }
-					onBlur={ restoreValue }
 					onClick={ onInputClick }
 					popupState={ popupState }
+					allowNegativeValue={ allowNegativeValue }
+					validate={ validate }
 				/>
 				{ anchorRef?.current && (
 					<TextFieldPopover
@@ -222,7 +224,7 @@ export const SizeControl = createControl(
 	}
 );
 
-function formatSize< TSize extends string | number >( size: TSize, unit: Unit | ExtendedOption ): TSize {
+function formatSizeOnChange< TSize extends string | number | null >( size: TSize, unit: Unit | ExtendedOption ): TSize {
 	if ( isUnitExtendedOption( unit ) ) {
 		return unit === 'auto' ? ( '' as TSize ) : ( String( size ?? '' ) as TSize );
 	}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useRef } from 'react';
 import { MathFunctionIcon } from '@elementor/icons';
-import { Box, InputAdornment, type PopupState } from '@elementor/ui';
+import { Box, InputAdornment, type PopupState, type TextFieldProps } from '@elementor/ui';
 
 import ControlActions from '../../control-actions/control-actions';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
@@ -9,7 +9,7 @@ import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/
 
 type SizeInputProps = {
 	unit: Unit | ExtendedOption;
-	size: number | string;
+	size: string | number;
 	placeholder?: string;
 	startIcon?: React.ReactNode;
 	units: ( Unit | ExtendedOption )[];
@@ -17,12 +17,12 @@ type SizeInputProps = {
 	onFocus?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onClick?: ( event: React.MouseEvent< HTMLInputElement > ) => void;
 	handleUnitChange: ( unit: Unit | ExtendedOption ) => void;
-	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	handleSizeChange: ( size: string | number | null ) => void;
 	popupState: PopupState;
 	disabled?: boolean;
+	allowNegativeValue?: boolean;
+	validate?: ( value: number | null ) => boolean;
 };
-
-const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+', '-' ];
 
 export const SizeInput = ( {
 	units,
@@ -37,6 +37,8 @@ export const SizeInput = ( {
 	unit,
 	popupState,
 	disabled,
+	allowNegativeValue = false,
+	validate,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -70,12 +72,11 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
-	const inputProps = {
+	const InputProps: TextFieldProps[ 'InputProps' ] = {
 		...popupAttributes,
 		readOnly: isUnitExtendedOption( unit ),
 		autoComplete: 'off',
 		onClick,
-		onFocus,
 		startAdornment: startIcon ? (
 			<InputAdornment position="start" disabled={ disabled }>
 				{ startIcon }
@@ -101,6 +102,12 @@ export const SizeInput = ( {
 		),
 	};
 
+	const inputProps: TextFieldProps[ 'inputProps' ] = {
+		onFocus,
+		onBlur,
+		min: allowNegativeValue ? undefined : 0,
+	};
+
 	return (
 		<ControlActions>
 			<Box>
@@ -110,15 +117,12 @@ export const SizeInput = ( {
 					type={ inputType }
 					value={ inputValue }
 					onChange={ handleSizeChange }
-					onKeyDown={ ( event ) => {
-						if ( RESTRICTED_INPUT_KEYS.includes( event.key ) ) {
-							event.preventDefault();
-						}
-					} }
 					onKeyUp={ handleKeyUp }
-					onBlur={ onBlur }
+					InputProps={ InputProps }
 					inputProps={ inputProps }
 					isPopoverOpen={ popupState.isOpen }
+					validateNumber={ validate }
+					allowNegativeValue={ allowNegativeValue }
 				/>
 			</Box>
 		</ControlActions>

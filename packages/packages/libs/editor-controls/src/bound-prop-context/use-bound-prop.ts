@@ -21,6 +21,7 @@ type UseBoundProp< TValue extends PropValue > = {
 	restoreValue: () => void;
 	isDisabled?: ( propType: PropType ) => boolean | undefined;
 	disabled?: boolean;
+	validate: ( value: PropValue | null ) => boolean;
 };
 
 export function useBoundProp< T extends PropValue = PropValue, P extends PropType = PropType >(): PropKeyContextValue<
@@ -71,6 +72,7 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 		restoreValue,
 		placeholder,
 		disabled,
+		validate,
 	};
 }
 

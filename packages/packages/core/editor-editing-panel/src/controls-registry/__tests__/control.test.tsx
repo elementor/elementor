@@ -16,6 +16,7 @@ jest.mocked( useBoundProp ).mockReturnValue( {
 	propType: createMockPropType( { kind: 'plain' } ),
 	path: [],
 	restoreValue: jest.fn(),
+	validate: jest.fn(),
 } );
 
 const elementProviderProps = {

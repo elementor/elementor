@@ -11,7 +11,7 @@ export const ZIndexField = () => {
 	return (
 		<StylesField bind="z-index" propDisplayName={ Z_INDEX_LABEL }>
 			<StylesFieldLayout label={ Z_INDEX_LABEL }>
-				<NumberControl />
+				<NumberControl shouldForceInt />
 			</StylesFieldLayout>
 		</StylesField>
 	);
