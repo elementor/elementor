@@ -18,5 +18,3 @@ class Module extends BaseModule {
 		new VariablesRoute();
 	}
 }
-
-

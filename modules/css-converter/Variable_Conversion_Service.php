@@ -34,5 +34,3 @@ class Variable_Conversion_Service {
 		return is_string( $name ) && is_string( $value );
 	}
 }
-
-

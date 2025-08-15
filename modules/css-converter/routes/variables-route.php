@@ -41,18 +41,21 @@ class VariablesRoute {
 	private function fallback_extract_css_variables( string $css ): array {
 		$results = [];
 		$css_variable_pattern = '/(--[a-zA-Z0-9_\-]+)\s*:\s*([^;}{]+);/';
-		
+
 		if ( preg_match_all( $css_variable_pattern, $css, $matches, PREG_SET_ORDER ) ) {
 			foreach ( $matches as $match ) {
 				$variable_name = isset( $match[1] ) ? trim( $match[1] ) : '';
 				$variable_value = isset( $match[2] ) ? trim( $match[2] ) : '';
-				
+
 				if ( $this->is_valid_variable_name_and_value( $variable_name, $variable_value ) ) {
-					$results[] = [ 'name' => $variable_name, 'value' => $variable_value ];
+					$results[] = [
+						'name' => $variable_name,
+						'value' => $variable_value,
+					];
 				}
 			}
 		}
-		
+
 		return $results;
 	}
 
@@ -61,107 +64,117 @@ class VariablesRoute {
 	}
 
 	public function handle_variables_import( WP_REST_Request $request ) {
-    $url = $request->get_param( 'url' );
-    $css = $request->get_param( 'css' );
+		$url = $request->get_param( 'url' );
+		$css = $request->get_param( 'css' );
 
-    if ( $this->is_invalid_url_or_css( $url, $css ) ) {
-        return new WP_REST_Response( [ 'error' => 'Missing url or css' ], 400 );
-    }
+		if ( $this->is_invalid_url_or_css( $url, $css ) ) {
+			return new WP_REST_Response( [ 'error' => 'Missing url or css' ], 400 );
+		}
 
-    if ( $this->should_fetch_from_url( $url ) ) {
-        $fetch_result = $this->fetch_css_from_url( $url );
-        if ( is_wp_error( $fetch_result ) || $fetch_result instanceof WP_REST_Response ) {
-            return $fetch_result;
-        }
-        $css = $fetch_result;
-    }
+		if ( $this->should_fetch_from_url( $url ) ) {
+			$fetch_result = $this->fetch_css_from_url( $url );
+			if ( is_wp_error( $fetch_result ) || $fetch_result instanceof WP_REST_Response ) {
+				return $fetch_result;
+			}
+			$css = $fetch_result;
+		}
 
-    if ( $this->is_empty_css( $css ) ) {
-        return new WP_REST_Response( [ 'error' => 'Empty CSS' ], 422 );
-    }
+		if ( $this->is_empty_css( $css ) ) {
+			return new WP_REST_Response( [ 'error' => 'Empty CSS' ], 422 );
+		}
 
-    $css = $this->remove_utf8_bom( $css );
+		$css = $this->remove_utf8_bom( $css );
 
-	$logs_dir = $this->ensure_logs_directory();
+		$logs_dir = $this->ensure_logs_directory();
 
-	$basename = 'css-' . time();
-	$css_path = $logs_dir . '/' . $basename . '.css';
-	file_put_contents( $css_path, $css );
+		$basename = 'css-' . time();
+		$css_path = $logs_dir . '/' . $basename . '.css';
+		file_put_contents( $css_path, $css );
 
-    $parser = new CssParser();
-    $raw = [];
+		$parser = new CssParser();
+		$raw = [];
 
-    try {
-        $parsed = $parser->parse( $css );
-        $raw = $parser->extract_variables( $parsed );
-    } catch ( CssParseException $e ) {
-        $fallback = $this->fallback_extract_css_variables( $css );
-        if ( empty( $fallback ) ) {
-            return new WP_REST_Response( [
-                'error' => 'Failed to parse CSS',
-                'details' => $e->getMessage(),
-                'logs' => [ 'css' => $css_path ],
-            ], 422 );
-        }
-        foreach ( $fallback as $item ) {
-            $raw[] = [ 'name' => $item['name'], 'value' => $item['value'], 'scope' => 'any', 'original_block' => null ];
-        }
-    } catch ( \Throwable $e ) {
-        $fallback = $this->fallback_extract_css_variables( $css );
+		try {
+			$parsed = $parser->parse( $css );
+			$raw = $parser->extract_variables( $parsed );
+		} catch ( CssParseException $e ) {
+			$fallback = $this->fallback_extract_css_variables( $css );
+			if ( empty( $fallback ) ) {
+				return new WP_REST_Response( [
+					'error' => 'Failed to parse CSS',
+					'details' => $e->getMessage(),
+					'logs' => [ 'css' => $css_path ],
+				], 422 );
+			}
+			foreach ( $fallback as $item ) {
+				$raw[] = [
+					'name' => $item['name'],
+					'value' => $item['value'],
+					'scope' => 'any',
+					'original_block' => null,
+				];
+			}
+		} catch ( \Throwable $e ) {
+			$fallback = $this->fallback_extract_css_variables( $css );
 
-        if ( empty( $fallback ) ) {
-            return new WP_REST_Response( [
-                'error' => 'Failed to parse CSS',
-                'details' => 'Unexpected error',
-                'logs' => [ 'css' => $css_path ],
-            ], 422 );
-        }
-        foreach ( $fallback as $item ) {
-            $raw[] = [ 'name' => $item['name'], 'value' => $item['value'], 'scope' => 'any', 'original_block' => null ];
-        }
-    }
+			if ( empty( $fallback ) ) {
+				return new WP_REST_Response( [
+					'error' => 'Failed to parse CSS',
+					'details' => 'Unexpected error',
+					'logs' => [ 'css' => $css_path ],
+				], 422 );
+			}
+			foreach ( $fallback as $item ) {
+				$raw[] = [
+					'name' => $item['name'],
+					'value' => $item['value'],
+					'scope' => 'any',
+					'original_block' => null,
+				];
+			}
+		}
 
-	$lines = [];
-	foreach ( $raw as $item ) {
-		$name = isset( $item['name'] ) ? $item['name'] : '';
-		$value = isset( $item['value'] ) ? $item['value'] : '';
-		$lines[] = $name . ' = ' . $value;
-	}
+		$lines = [];
+		foreach ( $raw as $item ) {
+			$name = isset( $item['name'] ) ? $item['name'] : '';
+			$value = isset( $item['value'] ) ? $item['value'] : '';
+			$lines[] = $name . ' = ' . $value;
+		}
 
-    $vars_path = $logs_dir . '/' . $basename . '-variables.txt';
-    file_put_contents( $vars_path, implode( "\n", $lines ) );
+		$vars_path = $logs_dir . '/' . $basename . '-variables.txt';
+		file_put_contents( $vars_path, implode( "\n", $lines ) );
 
-    $normalized = [];
-    foreach ( $raw as $item ) {
-        $normalized[] = [
-            'name' => isset( $item['name'] ) ? $item['name'] : '',
-            'value' => isset( $item['value'] ) ? $item['value'] : '',
-        ];
-    }
+		$normalized = [];
+		foreach ( $raw as $item ) {
+			$normalized[] = [
+				'name' => isset( $item['name'] ) ? $item['name'] : '',
+				'value' => isset( $item['value'] ) ? $item['value'] : '',
+			];
+		}
 
-    $converted = Variable_Conversion_Service::convert_to_editor_variables( $normalized );
+		$converted = Variable_Conversion_Service::convert_to_editor_variables( $normalized );
 
-    $results = [
-        'success' => true,
-        'variables' => $converted,
-        'rawVariables' => array_values( $raw ),
-        'stats' => [
-            'converted' => count( $converted ),
-            'extracted' => count( $raw ),
-            'skipped' => max( 0, count( $raw ) - count( $converted ) ),
-        ],
-        'logs' => [
-            'css' => $css_path,
-            'variables' => $vars_path,
-        ],
-    ];
+		$results = [
+			'success' => true,
+			'variables' => $converted,
+			'rawVariables' => array_values( $raw ),
+			'stats' => [
+				'converted' => count( $converted ),
+				'extracted' => count( $raw ),
+				'skipped' => max( 0, count( $raw ) - count( $converted ) ),
+			],
+			'logs' => [
+				'css' => $css_path,
+				'variables' => $vars_path,
+			],
+		];
 
-    $should_persist = apply_filters( 'elementor_css_converter_should_persist_variables', false );
-    if ( $should_persist ) {
-        // no-op for MVP
-    }
+		$should_persist = apply_filters( 'elementor_css_converter_should_persist_variables', false );
+		if ( $should_persist ) {
+			// no-op for MVP
+		}
 
-    return new WP_REST_Response( $results, 200 );
+		return new WP_REST_Response( $results, 200 );
 	}
 
 	private function is_invalid_url_or_css( $url, $css ): bool {
@@ -191,12 +204,18 @@ class VariablesRoute {
 		$response = wp_remote_get( $url );
 
 		if ( $this->is_fetch_error( $response ) ) {
-			return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => $response->get_error_message() ], 502 );
+			return new WP_REST_Response( [
+				'error' => 'Fetch failed',
+				'details' => $response->get_error_message(),
+			], 502 );
 		}
 
 		if ( $this->is_invalid_http_status( $response ) ) {
 			$code = wp_remote_retrieve_response_code( $response );
-			return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => 'HTTP ' . (string) $code ], 502 );
+			return new WP_REST_Response( [
+				'error' => 'Fetch failed',
+				'details' => 'HTTP ' . (string) $code,
+			], 502 );
 		}
 
 		$content_type_validation = $this->validate_content_type( $response );
@@ -224,7 +243,10 @@ class VariablesRoute {
 		}
 
 		if ( ! $this->is_css_content_type( $content_type ) ) {
-			return new WP_REST_Response( [ 'error' => 'Invalid content-type', 'details' => (string) $content_type ], 422 );
+			return new WP_REST_Response( [
+				'error' => 'Invalid content-type',
+				'details' => (string) $content_type,
+			], 422 );
 		}
 
 		return true;

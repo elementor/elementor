@@ -25,5 +25,3 @@ class Variables_Service {
 		return Variable_Conversion_Service::convert_to_editor_variables( $normalized );
 	}
 }
-
-
