@@ -14,12 +14,14 @@ class Variables_Service {
 		$parsed = $parser->parse( $css );
 		$variables = $parser->extract_variables( $parsed );
 		$normalized = [];
+
 		foreach ( $variables as $var ) {
 			$normalized[] = [
 				'name' => isset( $var['name'] ) ? $var['name'] : '',
 				'value' => isset( $var['value'] ) ? $var['value'] : '',
 			];
 		}
+
 		return Variable_Conversion_Service::convert_to_editor_variables( $normalized );
 	}
 }

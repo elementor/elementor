@@ -1,22 +1,15 @@
 <?php
 namespace Elementor\Modules\CssConverter\VariableConvertors;
 
+use Elementor\Modules\CssConverter\VariableConvertors\Convertors\Color_Hex_Variable_Convertor;
+
 class Variable_Convertor_Registry {
 	private array $convertors = [];
 
 	public function __construct() {
-		$this->auto_register_convertors();
-	}
-
-	private function auto_register_convertors() {
-		$namespace = __NAMESPACE__ . '\\Convertors\\';
-		$dir = __DIR__ . '/convertors/';
-		foreach (glob($dir . '*.php') as $file) {
-			$class = $namespace . pathinfo($file, PATHINFO_FILENAME);
-			if (class_exists($class) && is_subclass_of($class, VariableConvertorInterface::class)) {
-				$this->convertors[] = new $class();
-			}
-		}
+		$this->convertors = [
+			new Color_Hex_Variable_Convertor(),
+		];
 	}
 
 	public function register( VariableConvertorInterface $convertor ): void {
