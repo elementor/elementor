@@ -40,58 +40,49 @@ class VariablesRoute {
 
 	private function fallback_extract_css_variables( string $css ): array {
 		$results = [];
-		if ( preg_match_all( '/(--[a-zA-Z0-9_\-]+)\s*:\s*([^;}{]+);/', $css, $matches, PREG_SET_ORDER ) ) {
-			foreach ( $matches as $m ) {
-				$name = isset( $m[1] ) ? trim( $m[1] ) : '';
-				$value = isset( $m[2] ) ? trim( $m[2] ) : '';
-				if ( '' !== $name && '' !== $value ) {
-					$results[] = [ 'name' => $name, 'value' => $value ];
+		$css_variable_pattern = '/(--[a-zA-Z0-9_\-]+)\s*:\s*([^;}{]+);/';
+		
+		if ( preg_match_all( $css_variable_pattern, $css, $matches, PREG_SET_ORDER ) ) {
+			foreach ( $matches as $match ) {
+				$variable_name = isset( $match[1] ) ? trim( $match[1] ) : '';
+				$variable_value = isset( $match[2] ) ? trim( $match[2] ) : '';
+				
+				if ( $this->is_valid_variable_name_and_value( $variable_name, $variable_value ) ) {
+					$results[] = [ 'name' => $variable_name, 'value' => $variable_value ];
 				}
 			}
 		}
+		
 		return $results;
+	}
+
+	private function is_valid_variable_name_and_value( string $name, string $value ): bool {
+		return '' !== $name && '' !== $value;
 	}
 
 	public function handle_variables_import( WP_REST_Request $request ) {
     $url = $request->get_param( 'url' );
     $css = $request->get_param( 'css' );
 
-    if ( ! is_string( $url ) && ! is_string( $css ) ) {
+    if ( $this->is_invalid_url_or_css( $url, $css ) ) {
         return new WP_REST_Response( [ 'error' => 'Missing url or css' ], 400 );
     }
 
-    if ( is_string( $url ) && '' !== trim( $url ) ) {
-        $response = wp_remote_get( $url );
-        if ( is_wp_error( $response ) ) {
-            return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => $response->get_error_message() ], 502 );
+    if ( $this->should_fetch_from_url( $url ) ) {
+        $fetch_result = $this->fetch_css_from_url( $url );
+        if ( is_wp_error( $fetch_result ) || $fetch_result instanceof WP_REST_Response ) {
+            return $fetch_result;
         }
-        $code = wp_remote_retrieve_response_code( $response );
-        if ( 200 !== (int) $code ) {
-            return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => 'HTTP ' . (string) $code ], 502 );
-        }
-        $content_type = wp_remote_retrieve_header( $response, 'content-type' );
-        if ( is_string( $content_type ) ) {
-            $lower = strtolower( $content_type );
-            $is_css_like = false !== strpos( $lower, 'text/css' ) || false !== strpos( $lower, 'text/plain' );
-            if ( ! $is_css_like ) {
-                return new WP_REST_Response( [ 'error' => 'Invalid content-type', 'details' => (string) $content_type ], 422 );
-            }
-        }
-        $css = wp_remote_retrieve_body( $response );
+        $css = $fetch_result;
     }
 
-    if ( ! is_string( $css ) || '' === $css ) {
+    if ( $this->is_empty_css( $css ) ) {
         return new WP_REST_Response( [ 'error' => 'Empty CSS' ], 422 );
     }
 
-    if ( 0 === strpos( $css, "\xEF\xBB\xBF" ) ) {
-        $css = substr( $css, 3 );
-    }
+    $css = $this->remove_utf8_bom( $css );
 
-	$logs_dir = __DIR__ . '/../logs';
-	if ( ! file_exists( $logs_dir ) ) {
-		wp_mkdir_p( $logs_dir );
-	}
+	$logs_dir = $this->ensure_logs_directory();
 
 	$basename = 'css-' . time();
 	$css_path = $logs_dir . '/' . $basename . '.css';
@@ -99,6 +90,7 @@ class VariablesRoute {
 
     $parser = new CssParser();
     $raw = [];
+
     try {
         $parsed = $parser->parse( $css );
         $raw = $parser->extract_variables( $parsed );
@@ -116,6 +108,7 @@ class VariablesRoute {
         }
     } catch ( \Throwable $e ) {
         $fallback = $this->fallback_extract_css_variables( $css );
+
         if ( empty( $fallback ) ) {
             return new WP_REST_Response( [
                 'error' => 'Failed to parse CSS',
@@ -127,12 +120,14 @@ class VariablesRoute {
             $raw[] = [ 'name' => $item['name'], 'value' => $item['value'], 'scope' => 'any', 'original_block' => null ];
         }
     }
+
 	$lines = [];
 	foreach ( $raw as $item ) {
 		$name = isset( $item['name'] ) ? $item['name'] : '';
 		$value = isset( $item['value'] ) ? $item['value'] : '';
 		$lines[] = $name . ' = ' . $value;
 	}
+
     $vars_path = $logs_dir . '/' . $basename . '-variables.txt';
     file_put_contents( $vars_path, implode( "\n", $lines ) );
 
@@ -167,6 +162,85 @@ class VariablesRoute {
     }
 
     return new WP_REST_Response( $results, 200 );
+	}
+
+	private function is_invalid_url_or_css( $url, $css ): bool {
+		return ! is_string( $url ) && ! is_string( $css );
+	}
+
+	private function should_fetch_from_url( $url ): bool {
+		return is_string( $url ) && '' !== trim( $url );
+	}
+
+	private function is_empty_css( $css ): bool {
+		return ! is_string( $css ) || '' === $css;
+	}
+
+	private function has_utf8_bom( string $css ): bool {
+		return 0 === strpos( $css, "\xEF\xBB\xBF" );
+	}
+
+	private function remove_utf8_bom( string $css ): string {
+		if ( $this->has_utf8_bom( $css ) ) {
+			return substr( $css, 3 );
+		}
+		return $css;
+	}
+
+	private function fetch_css_from_url( string $url ) {
+		$response = wp_remote_get( $url );
+
+		if ( $this->is_fetch_error( $response ) ) {
+			return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => $response->get_error_message() ], 502 );
+		}
+
+		if ( $this->is_invalid_http_status( $response ) ) {
+			$code = wp_remote_retrieve_response_code( $response );
+			return new WP_REST_Response( [ 'error' => 'Fetch failed', 'details' => 'HTTP ' . (string) $code ], 502 );
+		}
+
+		$content_type_validation = $this->validate_content_type( $response );
+		if ( is_wp_error( $content_type_validation ) ) {
+			return $content_type_validation;
+		}
+
+		return wp_remote_retrieve_body( $response );
+	}
+
+	private function is_fetch_error( $response ): bool {
+		return is_wp_error( $response );
+	}
+
+	private function is_invalid_http_status( $response ): bool {
+		$code = wp_remote_retrieve_response_code( $response );
+		return 200 !== (int) $code;
+	}
+
+	private function validate_content_type( $response ) {
+		$content_type = wp_remote_retrieve_header( $response, 'content-type' );
+
+		if ( ! is_string( $content_type ) ) {
+			return true;
+		}
+
+		if ( ! $this->is_css_content_type( $content_type ) ) {
+			return new WP_REST_Response( [ 'error' => 'Invalid content-type', 'details' => (string) $content_type ], 422 );
+		}
+
+		return true;
+	}
+
+	private function is_css_content_type( string $content_type ): bool {
+		$lower = strtolower( $content_type );
+		return false !== strpos( $lower, 'text/css' ) || false !== strpos( $lower, 'text/plain' );
+	}
+
+	private function ensure_logs_directory(): string {
+		$logs_dir = __DIR__ . '/../logs';
+		if ( ! file_exists( $logs_dir ) ) {
+			wp_mkdir_p( $logs_dir );
+		}
+		return $logs_dir;
 	}
 }
 
