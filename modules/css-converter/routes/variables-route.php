@@ -10,7 +10,7 @@ require_once __DIR__ . '/../variable-conversion.php';
 
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
-use function Elementor\Modules\CssConverter\elementor_css_variables_convert_to_editor_variables;
+use Elementor\Modules\CssConverter\Variable_Conversion_Service;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -147,7 +147,7 @@ class VariablesRoute {
         ];
     }
 
-    $converted = elementor_css_variables_convert_to_editor_variables( $normalized );
+    $converted = Variable_Conversion_Service::convert_to_editor_variables( $normalized );
 
     $results = [
         'success' => true,

@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Modules\CssConverter\Routes\VariablesRoute;
 
 class Module extends BaseModule {
 	public function get_name() {
@@ -14,7 +15,7 @@ class Module extends BaseModule {
 
 	public function __construct() {
 		parent::__construct();
-		require_once __DIR__ . '/routes/variables-route.php';
+		new VariablesRoute();
 	}
 }
 

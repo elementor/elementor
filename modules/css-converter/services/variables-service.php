@@ -5,11 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/../parsers/css-parser.php';
-require_once __DIR__ . '/../variable-conversion.php';
-
 use Elementor\Modules\CssConverter\Parsers\CssParser;
-use function Elementor\Modules\CssConverter\elementor_css_variables_convert_to_editor_variables;
+use Elementor\Modules\CssConverter\Variable_Conversion_Service;
 
 class Variables_Service {
 	public function variables_from_css_string( string $css ): array {
@@ -23,7 +20,7 @@ class Variables_Service {
 				'value' => isset( $var['value'] ) ? $var['value'] : '',
 			];
 		}
-		return elementor_css_variables_convert_to_editor_variables( $normalized );
+		return Variable_Conversion_Service::convert_to_editor_variables( $normalized );
 	}
 }
 
