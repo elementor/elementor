@@ -277,27 +277,7 @@ class VariablesRoute {
 		return $label;
 	}
 
-	private function determine_variable_type( string $value ): string {
-		$trimmed_value = trim( $value );
 
-		if ( preg_match( '/^#[0-9a-fA-F]{3,8}$/', $trimmed_value ) ) {
-			return 'color';
-		}
-
-		if ( preg_match( '/^rgba?\(/', $trimmed_value ) ) {
-			return 'color';
-		}
-
-		if ( preg_match( '/^hsla?\(/', $trimmed_value ) ) {
-			return 'color';
-		}
-
-		if ( preg_match( '/^\d+(\.\d+)?(px|em|rem|%|vh|vw|pt|pc|in|cm|mm|ex|ch|vmin|vmax)$/', $trimmed_value ) ) {
-			return 'dimension';
-		}
-
-		return 'text';
-	}
 }
 
 new VariablesRoute();

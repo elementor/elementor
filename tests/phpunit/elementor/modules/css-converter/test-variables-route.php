@@ -5,9 +5,6 @@ use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\CssConverter\Routes\VariablesRoute;
 use ReflectionClass;
 
-$plugin_root = dirname( __DIR__, 5 );
-require_once $plugin_root . '/modules/css-converter/routes/variables-route.php';
-
 class Test_Variables_Route extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
@@ -108,6 +105,35 @@ class Test_Variables_Route extends Elementor_Test_Base {
         $this->assertEquals( 400, $response->get_status() );
         $data = $response->get_data();
         $this->assertEquals( 'Missing url or css', $data['error'] );
+    }
+
+    public function test_format_variable_label() {
+        $route = new VariablesRoute();
+        $reflection = new ReflectionClass( $route );
+        $method = $reflection->getMethod( 'format_variable_label' );
+        $method->setAccessible( true );
+
+        $this->assertEquals( 'Primary Color', $method->invoke( $route, '--primary-color' ) );
+        $this->assertEquals( 'Spacing Md', $method->invoke( $route, '--spacing-md' ) );
+        $this->assertEquals( 'Background Color Primary', $method->invoke( $route, '--background-color-primary' ) );
+    }
+
+
+
+
+
+
+
+    public function test_save_editor_variables_method_exists() {
+        $route = new VariablesRoute();
+        $reflection = new ReflectionClass( $route );
+        $this->assertTrue( $method = $reflection->hasMethod( 'save_editor_variables' ) );
+        
+        $method = $reflection->getMethod( 'save_editor_variables' );
+        $method->setAccessible( true );
+        
+        $result = $method->invoke( $route, [] );
+        $this->assertNull( $result );
     }
 }
 

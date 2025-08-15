@@ -2,10 +2,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\CssConverter;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-
-$plugin_root = dirname( __DIR__, 5 );
-require_once $plugin_root . '/modules/css-converter/services/variables-service.php';
-
 use Elementor\Modules\CssConverter\Services\Variables_Service;
 
 class Test_Variables_Service extends Elementor_Test_Base {
@@ -19,7 +15,7 @@ class Test_Variables_Service extends Elementor_Test_Base {
 		$values = array_column( $result, 'value' );
 		$this->assertContains( '#eeeeee', $values );
 		$ids = array_column( $result, 'id' );
-\t\t$this->assertContains( 'primary-color', $ids );
+		$this->assertContains( 'primary-color', $ids );
 	}
 
 	public function test_variables_from_css_string__non_hex_variables_are_skipped_in_mvp() {
@@ -32,5 +28,3 @@ class Test_Variables_Service extends Elementor_Test_Base {
 		$this->assertSame( '#aabbcc', $result[0]['value'] );
 	}
 }
-
-
