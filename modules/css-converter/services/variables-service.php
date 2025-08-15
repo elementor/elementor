@@ -11,7 +11,7 @@ use Elementor\Modules\CssConverter\Variable_Conversion_Service;
 class Variables_Service {
 	private $parser;
 	public function __construct( $parser = null ) {
-		$this->parser = $parser !== null ? $parser : new CssParser();
+		$this->parser = null !== $parser ? $parser : new CssParser();
 	}
 	public function variables_from_css_string( string $css ): array {
 		$parser = $this->parser;

@@ -18,7 +18,6 @@ class Module extends BaseModule {
 	public function __construct( $variables_route = null ) {
 		parent::__construct();
 		$this->variables_route = $variables_route;
-		
 		// Only initialize routes in non-test environments
 		if ( ! $this->is_test_environment() && ! $variables_route ) {
 			$this->init_routes();
@@ -26,10 +25,15 @@ class Module extends BaseModule {
 	}
 
 	private function is_test_environment(): bool {
-		return defined( 'WP_TESTS_DOMAIN' ) || 
+		return defined( 'WP_TESTS_DOMAIN' ) ||
 			   defined( 'PHPUNIT_COMPOSER_INSTALL' ) ||
 			   isset( $_ENV['PHPUNIT_RUNNING'] ) ||
-			   ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() && isset( $_POST['action'] ) && $_POST['action'] === 'phpunit' );
+			   ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() && $this->is_phpunit_ajax_request() );
+	}
+
+	private function is_phpunit_ajax_request(): bool {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- This is for test environment detection only
+		return isset( $_POST['action'] ) && 'phpunit' === $_POST['action'];
 	}
 
 	private function init_routes(): void {

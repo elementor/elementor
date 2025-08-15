@@ -8,12 +8,17 @@ use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use ReflectionClass;
 
 class Test_Variables_Route extends Elementor_Test_Base {
+	private $mock_parser;
+
 	public function setUp(): void {
 		parent::setUp();
 		$this->act_as_admin();
 		
-		// Ensure the route is registered for tests
-		$route = new VariablesRoute();
+		$this->mock_parser = $this->createMock(CssParser::class);
+		$mockParsedCss = $this->createMock(ParsedCss::class);
+		$this->mock_parser->method('parse')->willReturn($mockParsedCss);
+		$this->mock_parser->method('extract_variables')->willReturn([]);
+		
 		do_action( 'rest_api_init' );
 	}
 
@@ -78,20 +83,20 @@ class Test_Variables_Route extends Elementor_Test_Base {
     }
 
     public function test_check_permissions_returns_boolean() {
-        $route = new VariablesRoute();
+        $route = new VariablesRoute($this->mock_parser);
         $result = $route->check_permissions();
         $this->assertIsBool( $result );
     }
 
     public function test_check_permissions_allows_admin() {
         $this->act_as_admin();
-        $route = new VariablesRoute();
+        $route = new VariablesRoute($this->mock_parser);
         $result = $route->check_permissions();
         $this->assertTrue( $result );
     }
 
     public function test_fallback_extract_css_variables() {
-        $route = new VariablesRoute();
+        $route = new VariablesRoute($this->mock_parser);
         $reflection = new ReflectionClass( $route );
         $method = $reflection->getMethod( 'fallback_extract_css_variables' );
         $method->setAccessible( true );
@@ -108,7 +113,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
     }
 
     public function test_fallback_extract_css_variables_empty_css() {
-        $route = new VariablesRoute();
+        $route = new VariablesRoute($this->mock_parser);
         $reflection = new ReflectionClass( $route );
         $method = $reflection->getMethod( 'fallback_extract_css_variables' );
         $method->setAccessible( true );
@@ -119,7 +124,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
     }
 
     public function test_handle_variables_import_missing_parameters() {
-        $route = new VariablesRoute();
+        $route = new VariablesRoute($this->mock_parser);
         $request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
         $response = $route->handle_variables_import( $request );
 
@@ -129,7 +134,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
     }
 
     public function test_format_variable_label() {
-        $route = new VariablesRoute();
+        $route = new VariablesRoute($this->mock_parser);
         $reflection = new ReflectionClass( $route );
         $method = $reflection->getMethod( 'format_variable_label' );
         $method->setAccessible( true );
@@ -140,7 +145,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
     }
 
     public function test_save_editor_variables_method_exists() {
-        $route = new VariablesRoute();
+        $route = new VariablesRoute($this->mock_parser);
         $reflection = new ReflectionClass( $route );
         $this->assertTrue( $method = $reflection->hasMethod( 'save_editor_variables' ) );
         
