@@ -22,16 +22,24 @@ class Plugins extends Export_Runner_Base {
 		$customization = $data['customization']['plugins'] ?? null;
 
 		if ( $customization ) {
-			$enabled_plugin_keys = Collection::make( $customization )->filter()->keys();
-
-			$plugins = Collection::make( $data['selected_plugins'] )
-				->filter( function( $plugin_data, $plugin_key ) use ( $enabled_plugin_keys ) {
-					return $enabled_plugin_keys->contains( $plugin_key );
-				} )
-				->all();
-		} else {
-			$plugins = $data['selected_plugins'];
+			return $this->export_with_customization( $data, $customization );
 		}
+
+		return $this->export_all( $data );
+	}
+
+	private function export_with_customization( array $data, array $customization ) {
+		$result = apply_filters( 'elementor/import-export-customization/export/plugins/customization', null, $data, $customization, $this );
+
+		if ( is_array( $result ) ) {
+			return $result;
+		}
+
+		return $this->export_all( $data );
+	}
+
+	private function export_all( array $data ) {
+		$plugins = $data['selected_plugins'];
 
 		return [
 			'manifest' => [

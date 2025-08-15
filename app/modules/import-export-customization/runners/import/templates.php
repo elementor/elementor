@@ -28,41 +28,20 @@ class Templates extends Import_Runner_Base {
 		$customization = $data['customization']['templates'] ?? null;
 
 		if ( $customization ) {
-			return $this->import_customization( $data, $imported_data, $customization );
+			return $this->import_with_customization( $data, $imported_data, $customization );
 		}
 
 		return $this->import_all( $data, $imported_data );
 	}
 
-	private function import_customization( array $data, array $imported_data, $customization ) {
-		$result = [
-			'templates' => [
-				'succeed' => [],
-				'failed' => [],
-				'succeed_summary' => [],
-			],
-		];
+	private function import_with_customization( array $data, array $imported_data, array $customization ) {
+		$result = apply_filters( 'elementor/import-export-customization/import/templates/customization', null, $data, $imported_data, $customization, $this );
 
-		if ( isset( $customization['siteTemplates']['enabled'] ) && $customization['siteTemplates']['enabled'] ) {
-			$template_types = array_keys( Plugin::$instance->documents->get_document_types( [
-				'is_editable' => true,
-				'show_in_library' => true,
-				'export_group' => Library_Document::EXPORT_GROUP,
-			] ) );
-
-			$result = $this->process_templates_import( $data, $template_types );
+		if ( is_array( $result ) ) {
+			return $result;
 		}
 
-		/**
-		 * Filter the templates import result to allow 3rd parties to add their own imported templates.
-		 *
-		 * @param array $result The import result structure with 'templates' key containing succeed/failed/succeed_summary.
-		 * @param array $data The full import data.
-		 * @param array|null $customization The customization settings for templates.
-		 */
-		$result = apply_filters( 'elementor/import-export-customization/import/templates_result', $result, $data, $customization );
-
-		return $result;
+		return $this->import_all( $data, $imported_data );
 	}
 
 	private function import_all( array $data, array $imported_data ) {
@@ -87,7 +66,7 @@ class Templates extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function process_templates_import( array $data, array $template_types ) {
+	public function process_templates_import( array $data, array $template_types ) {
 		$this->import_session_id = $data['session_id'];
 
 		$path = $data['extracted_directory_path'] . 'templates/';
@@ -118,7 +97,7 @@ class Templates extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function import_template( $id, array $template_settings, array $template_data ) {
+	public function import_template( $id, array $template_settings, array $template_data ) {
 		$doc_type = $template_settings['doc_type'];
 
 		$new_document = Plugin::$instance->documents->create(

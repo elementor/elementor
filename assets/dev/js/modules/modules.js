@@ -7,6 +7,8 @@ import ForceMethodImplementation from './imports/force-method-implementation';
 import { templateRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/templates';
 import { siteSettingsRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/site-settings';
 import { createGetInitialState } from '../../../../app/modules/import-export-customization/assets/js/shared/utils/template-registry-helpers';
+import { customizationDialogsRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default window.elementorModules = {
 	Module,
@@ -23,5 +25,10 @@ export default window.elementorModules = {
 		templateRegistry,
 		createGetInitialState,
 		siteSettingsRegistry,
+		customizationDialogsRegistry,
+	},
+
+	appsEventTracking: {
+		AppsEventTracking,
 	},
 };
