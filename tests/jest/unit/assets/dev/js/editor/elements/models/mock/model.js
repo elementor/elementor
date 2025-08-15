@@ -54,15 +54,6 @@ export async function setupMock() {
 		noop: () => {},
 	};
 
-	global.elementor = {
-		getConfig: jest.fn( () => ( {
-			elements: {
-				section: {},
-				container: {},
-			},
-		} ) ),
-	};
-
 	return new MockBackbone.Model;
 }
 
@@ -70,7 +61,6 @@ export function freeMock() {
 	delete global.Backbone;
 	delete global.elementorModules;
 	delete global._;
-	delete global.elementor;
 
 	jest.restoreAllMocks();
 }
