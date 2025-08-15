@@ -21,7 +21,6 @@ type KeyValueControlProps = {
 	regexKey?: string;
 	regexValue?: string;
 	validationErrorMessage?: string;
-	getHelperText?: ( key: string, value: string ) => { keyHelper?: string; valueHelper?: string };
 };
 
 export const KeyValueControl = createControl( ( props: KeyValueControlProps = {} ) => {
@@ -111,11 +110,7 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 						{ keyLabel }
 					</FormLabel>
 					<PropKeyProvider bind={ 'key' }>
-						<TextControl
-							inputValue={ sessionState.key }
-							error={ !! keyError }
-							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.keyHelper }
-						/>
+						<TextControl inputValue={ sessionState.key } error={ !! keyError } />
 					</PropKeyProvider>
 					{ !! keyError && <FormHelperText error>{ keyError }</FormHelperText> }
 				</Grid>
@@ -128,7 +123,6 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 							inputValue={ sessionState.value }
 							error={ !! valueError }
 							inputDisabled={ !! keyError }
-							helperText={ props.getHelperText?.( sessionState.key, sessionState.value )?.valueHelper }
 						/>
 					</PropKeyProvider>
 					{ !! valueError && <FormHelperText error>{ valueError }</FormHelperText> }
