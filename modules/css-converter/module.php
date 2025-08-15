@@ -15,9 +15,10 @@ class Module extends BaseModule {
 		return 'css-converter';
 	}
 
-	public function __construct($variablesRoute = null) {
+	public function __construct( $variablesRoute = null ) {
 		parent::__construct();
-		if ($variablesRoute) {
+
+		if ( $variablesRoute ) {
 			$this->variablesRoute = $variablesRoute;
 		} else {
 			$this->variablesRoute = new VariablesRoute();
