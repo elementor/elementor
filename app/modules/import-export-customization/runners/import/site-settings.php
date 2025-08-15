@@ -165,20 +165,6 @@ class Site_Settings extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function filter_settings_by_customization( array $settings, array $customization ): array {
-		foreach ( $customization as $key => $value ) {
-			if ( ! in_array( $key, self::ALLOWED_SETTINGS ) ) {
-				continue;
-			}
-
-			if ( ! $value ) {
-				$settings = $this->remove_setting_by_key( $settings, $key );
-			}
-		}
-
-		return $settings;
-	}
-
 	private function filter_settings_by_manifest( array $settings, array $manifest_settings ): array {
 		foreach ( self::ALLOWED_SETTINGS as $setting_key ) {
 			if ( ! ( $manifest_settings[ $setting_key ] ?? false ) ) {
