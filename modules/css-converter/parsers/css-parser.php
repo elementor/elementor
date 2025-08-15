@@ -48,141 +48,36 @@ class CssParser {
 		}
 	}
 
-	public function parse_from_file( string $file_path ): ParsedCss {
-		if ( ! file_exists( $file_path ) ) {
-			throw new CssParseException( 'CSS file not found.' );
-		}
-
-		$css = file_get_contents( $file_path );
-
-		if ( false === $css ) {
-			throw new CssParseException( 'Failed to read CSS file.' );
-		}
-
-		return $this->parse( $css );
-	}
-
-	public function parse_from_url( string $url ): ParsedCss {
-		$css = wp_remote_retrieve_body( wp_remote_get( $url ) );
-		if ( empty( $css ) ) {
-			throw new CssParseException( 'Failed to fetch CSS from URL.' );
-		}
-
-		return $this->parse( $css );
-	}
-
-	public function extract_classes( ParsedCss $parsed ): array {
-		$classes = [];
-		$this->extract_classes_recursive( $parsed->get_document(), $classes );
-		return $classes;
-	}
-
 	public function extract_variables( ParsedCss $parsed ): array {
 		$variables = [];
 		$this->extract_variables_recursive( $parsed->get_document(), $variables );
 		return $variables;
 	}
 
-	public function extract_unsupported( ParsedCss $parsed ): string {
-		$unsupported = [];
-		$this->extract_unsupported_recursive( $parsed->get_document(), $unsupported );
-		return implode( "\n\n", array_filter( $unsupported ) );
-	}
-
-	public function get_conversion_summary( ParsedCss $parsed ): array {
-		$classes = $this->extract_classes( $parsed );
-		$variables = $this->extract_variables( $parsed );
-		$unsupported = $this->extract_unsupported( $parsed );
-
-		return [
-			'classes' => [
-				'count' => count( $classes ),
-				'names' => array_keys( $classes ),
-			],
-			'variables' => [
-				'count' => count( $variables ),
-				'names' => array_keys( $variables ),
-			],
-			'unsupported' => [
-				'has_content' => ! empty( $unsupported ),
-				'size' => strlen( $unsupported ),
-			],
-			'stats' => $parsed->get_stats(),
-		];
-	}
-
-	private function extract_classes_recursive( $css_node, &$classes ) {
-		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
-			$this->process_declaration_block_for_classes( $css_node, $classes );
-		}
-
-		$this->process_node_contents_recursively( $css_node, 'extract_classes_recursive', $classes );
-	}
-
-	private function process_declaration_block_for_classes( $css_node, &$classes ) {
-		foreach ( $css_node->getSelectors() as $selector ) {
-			$selector_string = $selector->getSelector();
-
-			if ( ! $this->is_simple_class_selector( $selector_string ) ) {
-				continue;
-			}
-
-			$this->add_class_to_collection( $selector_string, $css_node, $classes );
-		}
-	}
-
-	private function add_class_to_collection( $selector_string, $css_node, &$classes ) {
-		$class_name = trim( $selector_string, '.' );
-		$classes[ $class_name ] = [
-			'name' => $class_name,
-			'selector' => $selector_string,
-			'rules' => $this->extract_rules_from_block( $css_node ),
-			'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
-		];
-	}
-
-	private function process_node_contents_recursively( $css_node, $method_name, &$collection ) {
-		if ( ! method_exists( $css_node, 'getContents' ) ) {
-			return;
-		}
-
-		foreach ( $css_node->getContents() as $content ) {
-			$this->$method_name( $content, $collection );
-		}
-	}
-
 	private function extract_variables_recursive( $css_node, &$variables ) {
 		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
 			$this->process_declaration_block_for_variables( $css_node, $variables );
 		}
-
 		$this->process_node_contents_recursively( $css_node, 'extract_variables_recursive', $variables );
 	}
-
 	private function process_declaration_block_for_variables( $css_node, &$variables ) {
 		foreach ( $css_node->getSelectors() as $selector ) {
 			$selector_string = $selector->getSelector();
-
 			if ( ! $this->is_root_selector( $selector_string ) ) {
 				continue;
 			}
-
 			$this->extract_variables_from_rules( $css_node, $selector_string, $variables );
 		}
 	}
-
 	private function extract_variables_from_rules( $css_node, $selector_string, &$variables ) {
 		foreach ( $css_node->getRules() as $rule ) {
 			$property = $rule->getRule();
-
 			if ( ! $this->is_css_variable( $property ) ) {
 				continue;
 			}
-
 			$this->add_variable_to_collection( $property, $rule, $selector_string, $css_node, $variables );
 		}
 	}
-
 	private function add_variable_to_collection( $property, $rule, $selector_string, $css_node, &$variables ) {
 		$value = (string) $rule->getValue();
 		$variables[ $property ] = [
@@ -192,77 +87,20 @@ class CssParser {
 			'original_block' => $css_node->render( \Sabberworm\CSS\OutputFormat::create() ),
 		];
 	}
-
-	private function extract_unsupported_recursive( $css_node, &$unsupported ) {
-		if ( $css_node instanceof \Sabberworm\CSS\RuleSet\DeclarationBlock ) {
-			$this->process_declaration_block_for_unsupported( $css_node, $unsupported );
-		}
-
-		$this->process_unsupported_node_types( $css_node, $unsupported );
-		$this->process_node_contents_recursively( $css_node, 'extract_unsupported_recursive', $unsupported );
-	}
-
-	private function process_declaration_block_for_unsupported( $css_node, &$unsupported ) {
-		if ( ! $this->has_unsupported_selectors( $css_node ) ) {
+	private function process_node_contents_recursively( $css_node, $method_name, &$collection ) {
+		if ( ! method_exists( $css_node, 'getContents' ) ) {
 			return;
 		}
-
-		$unsupported[] = $css_node->render( \Sabberworm\CSS\OutputFormat::create() );
-	}
-
-	private function has_unsupported_selectors( $css_node ) {
-		foreach ( $css_node->getSelectors() as $selector ) {
-			$selector_string = $selector->getSelector();
-
-			if ( $this->is_unsupported_selector( $selector_string ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function is_unsupported_selector( $selector_string ) {
-		return ! $this->is_simple_class_selector( $selector_string ) &&
-			! $this->is_root_selector( $selector_string );
-	}
-
-	private function process_unsupported_node_types( $css_node, &$unsupported ) {
-		if ( $css_node instanceof \Sabberworm\CSS\CSSList\AtRuleBlockList ||
-			$css_node instanceof \Sabberworm\CSS\Property\AtRule ) {
-			$unsupported[] = $css_node->render( \Sabberworm\CSS\OutputFormat::create() );
+		foreach ( $css_node->getContents() as $content ) {
+			$this->$method_name( $content, $collection );
 		}
 	}
-
-	private function is_simple_class_selector( string $selector ): bool {
-		$trimmed = trim( $selector );
-		return preg_match( '/^\.[\w-]+$/', $trimmed );
-	}
-
 	private function is_root_selector( string $selector ): bool {
 		$trimmed = trim( $selector );
 		return ':root' === $trimmed || 'html' === $trimmed;
 	}
-
 	private function is_css_variable( string $property ): bool {
 		return 0 === strpos( $property, '--' );
-	}
-
-	private function extract_rules_from_block( $block ): array {
-		$rules = [];
-		foreach ( $block->getRules() as $rule ) {
-			$property = $rule->getRule();
-			$value = (string) $rule->getValue();
-			$is_important = $rule->getIsImportant();
-			$raw = $rule->render( \Sabberworm\CSS\OutputFormat::create() );
-
-			$rules[ $property ] = [
-				'value' => $value,
-				'important' => $is_important,
-				'raw' => $raw,
-			];
-		}
-		return $rules;
 	}
 
 	public function validate_css( string $css ): array {
