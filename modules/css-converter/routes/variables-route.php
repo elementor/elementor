@@ -268,6 +268,7 @@ class VariablesRoute {
 
 	private function save_editor_variables( array $variables ): array {
 		// TODO: Implement saving of variables.
+		return [];
 	}
 
 	private function format_variable_label( string $css_var_name ): string {
