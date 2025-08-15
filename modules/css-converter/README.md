@@ -9,20 +9,11 @@ This module provides CSS parsing and (MVP) conversion of CSS variables into Elem
 ## Key Files
 - `parsers/css-parser.php` — Sabberworm-powered parser returning structured `ParsedCss`.
 - `docs/PLAN.md` — Variables-first plan.
-- `docs/PHPUNIT.md` — Running PHPUnit tests.
-- `docs/MANUAL-TESTING.md` — Manual verification steps.
 
 ## Setup
 ```
 cd plugins/elementor/modules/css-converter && composer install
 ```
-
-## Tests
-See `docs/PHPUNIT.md`.
-
-## Manual Testing
-See `docs/MANUAL-TESTING.md`.
-
 
 ## Postman Usage (Local Dev)
 
@@ -42,6 +33,6 @@ Response includes:
 - `variables`: converted editor variables (hex colors only in MVP)
 - `rawVariables`: extracted variables
 - `stats`: `converted`, `extracted`, `skipped`
-- `logs`: absolute paths to the saved CSS and variables list in `modules/css-converter/logs/`
+- `logs`: absolute paths to the saved CSS and variables list in `modules/css-converter/logs/`. This is only for debug, until we integrate this with Editor Variables.
 
 

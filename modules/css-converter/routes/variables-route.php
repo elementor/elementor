@@ -7,48 +7,55 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/../parsers/css-parser.php';
 require_once __DIR__ . '/../variable-conversion.php';
-require_once __DIR__ . '/../exceptions/css-parse-exception.php';
 
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
 use function Elementor\Modules\CssConverter\elementor_css_variables_convert_to_editor_variables;
-
-function fallback_extract_css_variables( string $css ): array {
-	$results = [];
-	if ( preg_match_all( '/(--[a-zA-Z0-9_\-]+)\s*:\s*([^;}{]+);/', $css, $matches, PREG_SET_ORDER ) ) {
-		foreach ( $matches as $m ) {
-			$name = isset( $m[1] ) ? trim( $m[1] ) : '';
-			$value = isset( $m[2] ) ? trim( $m[2] ) : '';
-			if ( '' !== $name && '' !== $value ) {
-				$results[] = [ 'name' => $name, 'value' => $value ];
-			}
-		}
-	}
-	return $results;
-}
 use WP_REST_Request;
 use WP_REST_Response;
 
-add_action( 'rest_api_init', function () {
-    register_rest_route( 'elementor/v2', '/css-converter/variables', [
-        'methods' => 'POST',
-        'callback' => __NAMESPACE__ . '\\handle_variables_import',
-        'permission_callback' => function () {
-            $allow_public = apply_filters( 'elementor_css_converter_allow_public_access', false );
-            if ( $allow_public ) {
-                return true;
-            }
-            $dev_token = defined( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN' ) ? ELEMENTOR_CSS_CONVERTER_DEV_TOKEN : null;
-            $header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? (string) $_SERVER['HTTP_X_DEV_TOKEN'] : null;
-            if ( $dev_token && $header_token && hash_equals( (string) $dev_token, $header_token ) ) {
-                return true;
-            }
-            return current_user_can( 'manage_options' );
-        },
-    ] );
-} );
+class VariablesRoute {
 
-function handle_variables_import( WP_REST_Request $request ) {
+	public function __construct() {
+		add_action( 'rest_api_init', [ $this, 'register_route' ] );
+	}
+
+	public function register_route() {
+		register_rest_route( 'elementor/v2', '/css-converter/variables', [
+			'methods' => 'POST',
+			'callback' => [ $this, 'handle_variables_import' ],
+			'permission_callback' => [ $this, 'check_permissions' ],
+		] );
+	}
+
+	public function check_permissions() {
+		$allow_public = apply_filters( 'elementor_css_converter_allow_public_access', false );
+		if ( $allow_public ) {
+			return true;
+		}
+		$dev_token = defined( 'ELEMENTOR_CSS_CONVERTER_DEV_TOKEN' ) ? ELEMENTOR_CSS_CONVERTER_DEV_TOKEN : null;
+		$header_token = isset( $_SERVER['HTTP_X_DEV_TOKEN'] ) ? (string) $_SERVER['HTTP_X_DEV_TOKEN'] : null;
+		if ( $dev_token && $header_token && hash_equals( (string) $dev_token, $header_token ) ) {
+			return true;
+		}
+		return current_user_can( 'manage_options' );
+	}
+
+	private function fallback_extract_css_variables( string $css ): array {
+		$results = [];
+		if ( preg_match_all( '/(--[a-zA-Z0-9_\-]+)\s*:\s*([^;}{]+);/', $css, $matches, PREG_SET_ORDER ) ) {
+			foreach ( $matches as $m ) {
+				$name = isset( $m[1] ) ? trim( $m[1] ) : '';
+				$value = isset( $m[2] ) ? trim( $m[2] ) : '';
+				if ( '' !== $name && '' !== $value ) {
+					$results[] = [ 'name' => $name, 'value' => $value ];
+				}
+			}
+		}
+		return $results;
+	}
+
+	public function handle_variables_import( WP_REST_Request $request ) {
     $url = $request->get_param( 'url' );
     $css = $request->get_param( 'css' );
 
@@ -99,7 +106,7 @@ function handle_variables_import( WP_REST_Request $request ) {
         $parsed = $parser->parse( $css );
         $raw = $parser->extract_variables( $parsed );
     } catch ( CssParseException $e ) {
-        $fallback = fallback_extract_css_variables( $css );
+        $fallback = $this->fallback_extract_css_variables( $css );
         if ( empty( $fallback ) ) {
             return new WP_REST_Response( [
                 'error' => 'Failed to parse CSS',
@@ -111,7 +118,7 @@ function handle_variables_import( WP_REST_Request $request ) {
             $raw[] = [ 'name' => $item['name'], 'value' => $item['value'], 'scope' => 'any', 'original_block' => null ];
         }
     } catch ( \Throwable $e ) {
-        $fallback = fallback_extract_css_variables( $css );
+        $fallback = $this->fallback_extract_css_variables( $css );
         if ( empty( $fallback ) ) {
             return new WP_REST_Response( [
                 'error' => 'Failed to parse CSS',
@@ -163,6 +170,7 @@ function handle_variables_import( WP_REST_Request $request ) {
     }
 
     return new WP_REST_Response( $results, 200 );
+	}
 }
 
-
+new VariablesRoute();
