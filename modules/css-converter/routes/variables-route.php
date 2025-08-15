@@ -15,7 +15,7 @@ class VariablesRoute {
 	private $parser;
 
 	public function __construct( $parser = null ) {
-		$this->parser = $parser ?: new CssParser();
+		$this->parser = $parser !== null ? $parser : new CssParser();
 		add_action( 'rest_api_init', [ $this, 'register_route' ] );
 	}
 
