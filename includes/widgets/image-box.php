@@ -212,6 +212,7 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => esc_html__( 'Image Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'top',
+				'mobile_default' => 'top',
 				'options' => [
 					'left' => [
 						'title' => esc_html__( 'Left', 'elementor' ),
@@ -226,8 +227,7 @@ class Widget_Image_Box extends Widget_Base {
 						'icon' => 'eicon-h-align-right',
 					],
 				],
-				'prefix_class' => 'elementor-position-',
-				'toggle' => false,
+				'prefix_class' => 'elementor%s-position-',
 				'condition' => [
 					'image[url]!' => '',
 				],
@@ -254,10 +254,17 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'default' => 'top',
-				'toggle' => false,
-				'prefix_class' => 'elementor-vertical-align-',
+				'selectors_dictionary' => [
+					'top' => 'start',
+					'middle' => 'center',
+					'bottom' => 'end',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-wrapper' => 'align-items: {{VALUE}};',
+				],
 				'condition' => [
-					'position!' => 'top',
+					'image[url]!' => '',
+					'position' => [ 'left', 'right' ],
 				],
 			]
 		);
@@ -305,12 +312,15 @@ class Widget_Image_Box extends Widget_Base {
 					'px' => [
 						'max' => 100,
 					],
+					'em' => [
+						'max' => 10,
+					],
+					'rem' => [
+						'max' => 10,
+					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}.elementor-position-right .elementor-image-box-img' => 'margin-left: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}}.elementor-position-left .elementor-image-box-img' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}}.elementor-position-top .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
-					'(mobile){{WRAPPER}} .elementor-image-box-img' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}}' => '--image-box-image-gap: {{SIZE}}{{UNIT}}',
 				],
 				'condition' => [
 					'image[url]!' => '',
@@ -338,7 +348,7 @@ class Widget_Image_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-title' => 'margin-bottom: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-image-box-title' => 'margin-block-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
