@@ -9,7 +9,6 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 	const isImport = data.hasOwnProperty( 'uploadedData' );
 
 	const isDisabled = ( item ) => {
-		return false;
 		if ( isImport ) {
 			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
 			return ! data?.uploadedData?.manifest?.[ manifestKey ];
