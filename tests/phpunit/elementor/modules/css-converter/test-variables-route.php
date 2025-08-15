@@ -7,7 +7,7 @@ use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use ReflectionClass;
 
-class Test_Variables_Route extends Elementor_Test_Base {
+class test_variables_route extends Elementor_Test_Base {
 	private $mock_parser;
 
 	public function setUp(): void {
