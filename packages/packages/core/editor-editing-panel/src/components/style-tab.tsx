@@ -165,7 +165,6 @@ export const StyleTab = () => {
 									'filter',
 									'backdrop-filter',
 									'transform-origin',
-									'transition',
 								] }
 							/>
 							{ shouldRenderCustomCss && (
