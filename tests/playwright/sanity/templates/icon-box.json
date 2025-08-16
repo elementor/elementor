@@ -1,0 +1,65 @@
+{
+	"content": [
+		{
+			"id": "4c6ebeb2",
+			"settings": {
+				"flex_direction": "row"
+			},
+			"elements": [
+				{
+					"id": "9c94f16",
+					"settings": {
+						"title_text": "This is the heading",
+						"description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo."
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon-box",
+					"elType": "widget"
+				},
+				{
+					"id": "82e1d96",
+					"settings": {
+						"title_text": "This is the heading",
+						"description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+						"position": "bottom"
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon-box",
+					"elType": "widget"
+				},
+				{
+					"id": "78193e65",
+					"settings": {
+						"title_text": "This is the heading",
+						"description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+						"position": "left"
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon-box",
+					"elType": "widget"
+				},
+				{
+					"id": "14144711",
+					"settings": {
+						"title_text": "This is the heading",
+						"description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
+						"position": "right"
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon-box",
+					"elType": "widget"
+				}
+			],
+			"isInner": false,
+			"elType": "container"
+		}
+	],
+	"page_settings": [],
+	"version": "0.4",
+	"title": "icon-box-test",
+	"type": "page"
+}

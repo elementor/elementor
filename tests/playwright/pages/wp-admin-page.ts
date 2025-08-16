@@ -282,25 +282,20 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSiteLanguage( language: string, userLanguage: string = null ): Promise<void> {
-		let languageCheck = language;
-
-		if ( 'he_IL' === language ) {
-			languageCheck = 'he-IL';
-		} else if ( '' === language ) {
-			languageCheck = 'en_US';
-		}
-
 		await this.openWordPressSettings( 'general' );
 
-		const isLanguageActive = await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible();
+		const htmlLangAttributeValue = ( '' === language ) ? 'en-US' : language.replace( '_', '-' );
+		const isLanguageActive = await this.page.locator( 'html[lang=' + htmlLangAttributeValue + ']' ).isVisible();
 
 		if ( ! isLanguageActive ) {
 			await this.page.selectOption( '#WPLANG', language );
 			await this.page.locator( '#submit' ).click();
 		}
 
-		const userProfileLanguage = null !== userLanguage ? userLanguage : language;
-		await this.setUserLanguage( userProfileLanguage );
+		if ( null !== userLanguage ) {
+			const userProfileLanguage = null !== userLanguage ? userLanguage : language;
+			await this.setUserLanguage( userProfileLanguage );
+		}
 	}
 
 	/**
