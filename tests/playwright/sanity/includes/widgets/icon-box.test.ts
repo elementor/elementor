@@ -23,7 +23,7 @@ test.describe( 'Icon Box', () => {
 		await test.step( 'LTR layouts', async () => {
 			const iconBoxes = page.locator( '.e-con-inner' ).first();
 			await iconBoxes.waitFor();
-			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties.png' );
+			await expect.soft( iconBoxes ).toHaveScreenshot( 'icon-box-layouts-physical-properties-ltr.png' );
 		} );
 
 		await test.step( 'RTL layouts', async () => {

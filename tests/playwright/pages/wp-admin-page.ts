@@ -292,10 +292,8 @@ export default class WpAdminPage extends BasePage {
 			await this.page.locator( '#submit' ).click();
 		}
 
-		if ( null !== userLanguage ) {
-			const userProfileLanguage = null !== userLanguage ? userLanguage : language;
-			await this.setUserLanguage( userProfileLanguage );
-		}
+		const userProfileLanguage = null !== userLanguage ? userLanguage : language;
+		await this.setUserLanguage( userProfileLanguage );
 	}
 
 	/**
