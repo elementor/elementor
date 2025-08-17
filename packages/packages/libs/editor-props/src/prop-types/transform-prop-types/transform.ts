@@ -6,7 +6,7 @@ import { unknownChildrenSchema } from '../utils';
 export const transformPropTypeUtil = createPropUtils(
 	'transform',
 	z.strictObject( {
-		transform: unknownChildrenSchema,
+		'transform-functions': unknownChildrenSchema,
 		'transform-origin': unknownChildrenSchema,
 		perspective: unknownChildrenSchema,
 	} )

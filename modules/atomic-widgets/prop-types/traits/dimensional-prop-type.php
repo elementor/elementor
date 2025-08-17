@@ -40,7 +40,7 @@ trait Dimensional_Prop_Type {
 		}
 
 		if ( $default_value ) {
-			$prop_type->default_unit( $default_value[ 'unit' ] );
+			$prop_type->default_unit( $default_value['unit'] );
 			$prop_type->default( $default_value );
 		}
 

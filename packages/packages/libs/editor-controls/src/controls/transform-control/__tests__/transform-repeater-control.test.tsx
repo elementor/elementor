@@ -1,97 +1,102 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { type TransformFunctionsItemPropValue, type TransformFunctionsPropValue } from '@elementor/editor-props';
+import { type TransformFunctionsItemPropValue, type TransformPropValue } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { TransformRepeaterControl } from '../transform-repeater-control';
 
 describe( 'TransformRepeaterControl', () => {
 	const propType = createMockPropType( {
-		kind: 'array',
-		item_prop_type: createMockPropType( {
-			kind: 'union',
-			prop_types: {
-				'transform-move': createMockPropType( {
-					kind: 'object',
-					shape: {
-						x: createMockPropType( {
+		kind: 'object',
+		shape: {
+			'transform-functions': createMockPropType( {
+				kind: 'array',
+				item_prop_type: createMockPropType( {
+					kind: 'union',
+					prop_types: {
+						'transform-move': createMockPropType( {
 							kind: 'object',
 							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
+								x: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
+								y: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
+								z: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
 							},
 						} ),
-						y: createMockPropType( {
+						'transform-scale': createMockPropType( {
 							kind: 'object',
 							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
+								x: createMockPropType( { kind: 'plain' } ),
+								y: createMockPropType( { kind: 'plain' } ),
+								z: createMockPropType( { kind: 'plain' } ),
 							},
 						} ),
-						z: createMockPropType( {
+						'transform-rotate': createMockPropType( {
 							kind: 'object',
 							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
+								x: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
+								y: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
+								z: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
+							},
+						} ),
+						'transform-skew': createMockPropType( {
+							kind: 'object',
+							shape: {
+								x: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
+								y: createMockPropType( {
+									kind: 'object',
+									shape: {
+										unit: createMockPropType( { kind: 'plain' } ),
+										size: createMockPropType( { kind: 'plain' } ),
+									},
+								} ),
 							},
 						} ),
 					},
 				} ),
-				'transform-scale': createMockPropType( {
-					kind: 'object',
-					shape: {
-						x: createMockPropType( { kind: 'plain' } ),
-						y: createMockPropType( { kind: 'plain' } ),
-						z: createMockPropType( { kind: 'plain' } ),
-					},
-				} ),
-				'transform-rotate': createMockPropType( {
-					kind: 'object',
-					shape: {
-						x: createMockPropType( {
-							kind: 'object',
-							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
-							},
-						} ),
-						y: createMockPropType( {
-							kind: 'object',
-							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
-							},
-						} ),
-						z: createMockPropType( {
-							kind: 'object',
-							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
-							},
-						} ),
-					},
-				} ),
-				'transform-skew': createMockPropType( {
-					kind: 'object',
-					shape: {
-						x: createMockPropType( {
-							kind: 'object',
-							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
-							},
-						} ),
-						y: createMockPropType( {
-							kind: 'object',
-							shape: {
-								unit: createMockPropType( { kind: 'plain' } ),
-								size: createMockPropType( { kind: 'plain' } ),
-							},
-						} ),
-					},
-				} ),
-			},
-		} ),
+			} ),
+		},
 	} );
 
 	it( 'should render the transform repeater with its label', () => {
@@ -205,16 +210,21 @@ describe( 'TransformRepeaterControl', () => {
 		// Assert.
 		expect( mockSetValue ).toHaveBeenCalledWith( {
 			$$type: 'transform',
-			value: [
-				{
-					$$type: 'transform-move',
-					value: {
-						x: { $$type: 'size', value: { size: 0, unit: 'px' } },
-						y: { $$type: 'size', value: { size: 0, unit: 'px' } },
-						z: { $$type: 'size', value: { size: 0, unit: 'px' } },
-					},
+			value: {
+				'transform-functions': {
+					$$type: 'transform-functions',
+					value: [
+						{
+							$$type: 'transform-move',
+							value: {
+								x: { $$type: 'size', value: { size: 0, unit: 'px' } },
+								y: { $$type: 'size', value: { size: 0, unit: 'px' } },
+								z: { $$type: 'size', value: { size: 0, unit: 'px' } },
+							},
+						},
+					],
 				},
-			],
+			},
 		} );
 	} );
 
@@ -243,7 +253,12 @@ const createMockTransformValue = (
 			},
 		},
 	]
-): TransformFunctionsPropValue => ( {
+): TransformPropValue => ( {
 	$$type: 'transform',
-	value: items,
+	value: {
+		'transform-functions': {
+			$$type: 'transform-functions',
+			value: items,
+		},
+	},
 } );
