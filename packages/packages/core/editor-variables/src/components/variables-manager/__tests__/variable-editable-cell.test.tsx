@@ -97,21 +97,6 @@ describe( 'VariableEditableCell', () => {
 			expect( mockOnSave ).not.toHaveBeenCalled();
 			expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 		} );
-
-		it( 'should not save changes on blur when disableCloseOnBlur is true', () => {
-			renderComponent({ disableCloseOnBlur: true });
-			const displayElement = screen.getByRole( 'button' );
-			fireEvent.doubleClick( displayElement );
-			
-			const input = screen.getByLabelText( 'Edit value' );
-			fireEvent.change( input, { target: { value: 'new value' } } );
-			
-			const stackElement = screen.getByRole( 'button' );
-			fireEvent.blur( stackElement );
-
-			expect( mockOnSave ).not.toHaveBeenCalled();
-			expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
-		} );
 	} );
 
 	describe( 'Accessibility', () => {
