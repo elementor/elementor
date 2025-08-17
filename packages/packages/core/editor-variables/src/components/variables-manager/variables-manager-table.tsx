@@ -51,7 +51,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 
 	return (
 		<TableContainer sx={ { overflow: 'initial' } }>
-			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering">
+			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering" stickyHeader>
 				<TableHead>
 					<TableRow>
 						<VariableTableCell isHeader noPadding width={ 10 } maxWidth={ 10 } />

@@ -5,7 +5,7 @@ import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, TrashIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
@@ -208,16 +208,18 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 						/>
 					</FormField>
 					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-						<ValueField
-							value={ value }
-							onChange={ ( newValue ) => {
-								setValue( newValue );
-								setErrorMessage( '' );
-								setValueFieldError( '' );
-							} }
-							onValidationChange={ setValueFieldError }
-							propType={ propType }
-						/>
+						<Typography variant="h5">
+							<ValueField
+								value={ value }
+								onChange={ ( newValue ) => {
+									setValue( newValue );
+									setErrorMessage( '' );
+									setValueFieldError( '' );
+								} }
+								onValidationChange={ setValueFieldError }
+								propType={ propType }
+							/>
+						</Typography>
 					</FormField>
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }

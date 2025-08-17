@@ -4,7 +4,7 @@ import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon } from '@elementor/icons';
-import { Button, CardActions, Divider, FormHelperText, IconButton } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useVariableType } from '../context/variable-type-context';
@@ -141,16 +141,18 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 					/>
 				</FormField>
 				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-					<ValueField
-						value={ value }
-						onChange={ ( newValue ) => {
-							setValue( newValue );
-							setErrorMessage( '' );
-							setValueFieldError( '' );
-						} }
-						onValidationChange={ setValueFieldError }
-						propType={ propType }
-					/>
+					<Typography variant="h5">
+						<ValueField
+							value={ value }
+							onChange={ ( newValue ) => {
+								setValue( newValue );
+								setErrorMessage( '' );
+								setValueFieldError( '' );
+							} }
+							onValidationChange={ setValueFieldError }
+							propType={ propType }
+						/>
+					</Typography>
 				</FormField>
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
