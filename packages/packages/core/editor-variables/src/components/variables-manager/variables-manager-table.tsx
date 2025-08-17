@@ -148,7 +148,10 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 														/>
 													) }
 												>
-													<EllipsisWithTooltip title={ row.name }>
+													<EllipsisWithTooltip
+														title={ row.name }
+														sx={ { border: '4px solid transparent' } }
+													>
 														{ row.name }
 													</EllipsisWithTooltip>
 												</VariableEditableCell>
@@ -160,7 +163,10 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													editableElement={ row.valueField }
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
-													<EllipsisWithTooltip title={ row.value }>
+													<EllipsisWithTooltip
+														title={ row.value }
+														sx={ { border: '4px solid transparent' } }
+													>
 														{ row.value }
 													</EllipsisWithTooltip>
 												</VariableEditableCell>
