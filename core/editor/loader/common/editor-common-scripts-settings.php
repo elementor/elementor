@@ -15,6 +15,7 @@ use Elementor\Shapes;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,7 @@ class Editor_Common_Scripts_Settings {
 		$kits_manager = Plugin::$instance->kits_manager;
 
 		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
+		$top_bar_connect_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' ) ?? Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
 		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
@@ -75,7 +77,7 @@ class Editor_Common_Scripts_Settings {
 				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),
 				'top_bar' => [
-					'connect_url' => Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' )->get_admin_url( 'authorize', [
+					'connect_url' => $top_bar_connect_app->get_admin_url( 'authorize', [
 						'utm_source' => 'editor-app',
 						'utm_campaign' => 'connect-account',
 						'utm_medium' => 'wp-dash',
@@ -111,6 +113,9 @@ class Editor_Common_Scripts_Settings {
 			],
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
+				'integration' => [
+					'ally-accessibility' => Hints::get_ally_action_data(),
+				],
 			],
 			'editor_events' => EditorEventsModule::get_editor_events_config(),
 			'promotions' => [
@@ -129,6 +134,29 @@ class Editor_Common_Scripts_Settings {
 
 		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
+		}
+		if ( current_user_can( 'manage_options' ) && ! Utils::has_pro() ) {
+			$client_env['integrationWidgets'] = array_merge(
+				( isset( $client_env['integrationWidgets'] ) && is_array( $client_env['integrationWidgets'] ) ?
+				$client_env['integrationWidgets'] :
+				[] ), [
+					[
+						'categories' => '[ "general" ]',
+						'icon' => 'eicon-accessibility',
+						'name' => 'ally-accessibility',
+						'title' => esc_html__( 'Ally Accessibility', 'elementor' ),
+						'keywords' => [
+							'Accessibility',
+							'Usability',
+							'Inclusive',
+							'Statement',
+							'WCAG',
+							'Ally',
+							'Complaince',
+						],
+					],
+				],
+			);
 		}
 
 		static::bc_move_document_filters();

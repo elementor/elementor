@@ -13,6 +13,7 @@ import { createVariable } from '../hooks/use-prop-variables';
 import { trackVariableEvent } from '../utils/tracking';
 import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
+import { FormField } from './ui/form-field';
 
 const SIZE = 'tiny';
 
@@ -25,12 +26,14 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
 	const { setValue: setVariable, path } = useBoundProp( propTypeUtil );
+	const { propType } = useBoundProp();
 
 	const initialValue = useInitialValue();
 
 	const [ value, setValue ] = useState( initialValue );
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const [ valueFieldError, setValueFieldError ] = useState( '' );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 
@@ -38,6 +41,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 		setValue( '' );
 		setLabel( '' );
 		setErrorMessage( '' );
+		setValueFieldError( '' );
 	};
 
 	const closePopover = () => {
@@ -76,15 +80,23 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 		} );
 	};
 
-	const hasEmptyValue = () => {
-		return '' === value.trim() || '' === label.trim();
+	const hasEmptyFields = () => {
+		if ( '' === label.trim() ) {
+			return true;
+		}
+
+		if ( 'string' === typeof value ) {
+			return '' === value.trim();
+		}
+
+		return false === Boolean( value );
 	};
 
 	const hasErrors = () => {
 		return !! errorMessage;
 	};
 
-	const isSubmitDisabled = hasEmptyValue() || hasErrors();
+	const isSubmitDisabled = hasEmptyFields() || hasErrors();
 
 	return (
 		<PopoverBody height="auto">
@@ -114,13 +126,18 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						setErrorMessage( '' );
 					} }
 				/>
-				<ValueField
-					value={ value }
-					onChange={ ( newValue ) => {
-						setValue( newValue );
-						setErrorMessage( '' );
-					} }
-				/>
+				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+					<ValueField
+						value={ value }
+						onChange={ ( newValue ) => {
+							setValue( newValue );
+							setErrorMessage( '' );
+							setValueFieldError( '' );
+						} }
+						onValidationChange={ setValueFieldError }
+						propType={ propType }
+					/>
+				</FormField>
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>

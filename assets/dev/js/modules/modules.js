@@ -4,6 +4,9 @@ import ArgsObject from './imports/args-object';
 import Masonry from './imports/utils/masonry';
 import Scroll from './imports/utils/scroll';
 import ForceMethodImplementation from './imports/force-method-implementation';
+import { templateRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/templates';
+import { siteSettingsRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/site-settings';
+import { createGetInitialState } from '../../../../app/modules/import-export-customization/assets/js/shared/utils/template-registry-helpers';
 
 export default window.elementorModules = {
 	Module,
@@ -14,5 +17,11 @@ export default window.elementorModules = {
 	utils: {
 		Masonry,
 		Scroll,
+	},
+
+	importExport: {
+		templateRegistry,
+		createGetInitialState,
+		siteSettingsRegistry,
 	},
 };

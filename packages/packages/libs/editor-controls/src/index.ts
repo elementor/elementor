@@ -25,15 +25,16 @@ export { RepeatableControl } from './controls/repeatable-control';
 export { KeyValueControl } from './controls/key-value-control';
 export { PositionControl } from './controls/position-control';
 export { TransformRepeaterControl } from './controls/transform-control/transform-repeater-control';
+export { TransformBaseControl } from './controls/transform-control/transform-base-control';
 export { TransitionRepeaterControl } from './controls/transition-control/transition-repeater-control';
 export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
-export { UnstableTransformRepeaterControl } from './controls/unstable-transform-control/unstable-transform-repeater-control';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
+export { CssEditor } from './components/css-code-editor/css-editor';
 
 // types
 export type { ControlComponent } from './create-control';
@@ -53,6 +54,7 @@ export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
+export { createControl } from './create-control';
 
 export {
 	injectIntoRepeaterItemIcon,

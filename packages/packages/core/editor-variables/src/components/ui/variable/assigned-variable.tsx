@@ -6,6 +6,7 @@ import { ColorFilterIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Box, Popover, usePopupState } from '@elementor/ui';
 
 import { type Variable } from '../../../types';
+import { createUnlinkHandler } from '../../../utils/unlink-variable';
 import { getVariableType } from '../../../variables-registry/variable-type-registry';
 import { VariableSelectionPopover } from '../../variable-selection-popover';
 import { AssignedTag, SIZE } from '../tags/assigned-tag';
@@ -16,7 +17,7 @@ type Props = {
 };
 
 export const AssignedVariable = ( { variable, propTypeKey }: Props ) => {
-	const { fallbackPropTypeUtil, startIcon, propTypeUtil } = getVariableType( propTypeKey );
+	const { startIcon, propTypeUtil } = getVariableType( propTypeKey );
 	const { setValue } = useBoundProp();
 	const anchorRef = useRef< HTMLDivElement >( null );
 
@@ -26,10 +27,7 @@ export const AssignedVariable = ( { variable, propTypeKey }: Props ) => {
 		popupId: `elementor-variables-list-${ popupId }`,
 	} );
 
-	const unlinkVariable = () => {
-		const fallbackValue = fallbackPropTypeUtil.create( variable.value );
-		setValue( fallbackValue );
-	};
+	const unlinkVariable = createUnlinkHandler( variable, propTypeKey, setValue );
 
 	const StartIcon = startIcon || ( () => null );
 

@@ -479,12 +479,6 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$form_plugin_name = $this->get_installed_form_plugin_name();
-
-		if ( ! $form_plugin_name ) {
-			return false;
-		}
-
 		$plugin_file_path = 'send/send-app.php';
 		$plugin_slug = 'send-app';
 
@@ -493,11 +487,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$title = sprintf(
-			/* translators: %s: Form plugin name */
-			esc_html__( 'Turn %s leads into loyal shoppers', 'elementor' ),
-			$form_plugin_name
-		);
+		$title = sprintf( esc_html__( 'Turn leads into loyal shoppers', 'elementor' ) );
 
 		$options = [
 			'title' => $title,
@@ -651,7 +641,7 @@ class Admin_Notices extends Module {
 	}
 
 	private function is_elementor_admin_screen(): bool {
-		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'dashboard' ], true );
+		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library' ], true );
 	}
 
 	private function is_elementor_admin_screen_with_system_info(): bool {
@@ -882,7 +872,7 @@ class Admin_Notices extends Module {
 		set_transient( sanitize_key( $_GET['plg_campaign_name'] ), $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 
-	private static function add_plg_campaign_data( $url, $campaign_data ) {
+	public static function add_plg_campaign_data( $url, $campaign_data ) {
 
 		foreach ( [ 'name', 'campaign' ] as $key ) {
 			if ( empty( $campaign_data[ $key ] ) ) {

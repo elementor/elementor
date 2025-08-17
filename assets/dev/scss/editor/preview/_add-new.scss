@@ -244,11 +244,8 @@
 					font-family: var(--e-a-font-family);
 					font-size: 13px;
 					font-weight: 500;
-					position: absolute;
-					left: 50%;
-					top: 50%;
 					color: var(--e-a-color-white);
-					transform: translate( -50%, -50% );
+					@include absolute-center;
 				}
 			}
 
