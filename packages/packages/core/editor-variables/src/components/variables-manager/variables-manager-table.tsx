@@ -11,38 +11,33 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
-	TextField,
 	UnstableSortableItem,
 	type UnstableSortableItemRenderProps,
 	UnstableSortableProvider,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type TVariablesList } from '../../storage';
+import { getVariables } from '../../hooks/use-prop-variables';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
-import { VariableEditableCell } from './variable-editable-cell';
 import { VariableTableCell } from './variable-table-cell';
 
 type Props = {
 	menuActions: VariableManagerMenuAction[];
-	variables: TVariablesList;
 };
 
-export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
-	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
-	const rows = ids.map( ( id ) => {
-		const variable = variables[ id ];
-		const variableType = getVariableType( variable.type );
+export const VariablesManagerTable = ( { menuActions }: Props ) => {
+	const variables = getVariables( false );
 
-		return {
-			id,
-			name: variable.label,
-			value: variable.value,
-			type: variable.type,
-			...variableType,
-		};
-	} );
+	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
+	const rows = ids.map( ( id ) => ( {
+		id,
+		name: variables[ id ].label,
+		value: variables[ id ].value,
+		type: variables[ id ].type,
+		icon: getVariableType( variables[ id ].type ).icon,
+		startIcon: getVariableType( variables[ id ].type ).startIcon,
+	} ) );
 
 	const tableSX: SxProps = {
 		minWidth: 250,
@@ -134,37 +129,21 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 												</IconButton>
 											</VariableTableCell>
 											<VariableTableCell>
-												<VariableEditableCell
-													initialValue={ row.name }
-													onSave={ () => {} }
-													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
-													editableElement={ ( { value, onChange } ) => (
-														<TextField
-															size="tiny"
-															value={ value }
-															onChange={ (
-																event: React.ChangeEvent< HTMLInputElement >
-															) => onChange( event.target.value ) }
-														/>
-													) }
-												>
+												<Stack direction="row" alignItems="center" gap={ 1 }>
+													{ createElement( row.icon, { fontSize: 'inherit' } ) }
 													<EllipsisWithTooltip title={ row.name }>
 														{ row.name }
 													</EllipsisWithTooltip>
-												</VariableEditableCell>
+												</Stack>
 											</VariableTableCell>
 											<VariableTableCell>
-												<VariableEditableCell
-													initialValue={ row.value }
-													onSave={ () => {} }
-													editableElement={ row.valueField }
-													disableCloseOnBlur
-												>
+												<Stack direction="row" alignItems="center" gap={ 1 }>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
+
 													<EllipsisWithTooltip title={ row.value }>
 														{ row.value }
 													</EllipsisWithTooltip>
-												</VariableEditableCell>
+												</Stack>
 											</VariableTableCell>
 											<VariableTableCell
 												align="right"

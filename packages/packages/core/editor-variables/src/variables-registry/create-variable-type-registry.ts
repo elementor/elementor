@@ -14,7 +14,7 @@ import { inheritanceTransformer } from '../transformers/inheritance-transformer'
 import { variableTransformer } from '../transformers/variable-transformer';
 import { type NormalizedVariable } from '../types';
 
-export type ValueFieldProps = {
+type ValueFieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
 	onValidationChange?: ( value: string ) => void;

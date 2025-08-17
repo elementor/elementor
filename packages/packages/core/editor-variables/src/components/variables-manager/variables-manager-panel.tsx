@@ -14,7 +14,6 @@ import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getVariables } from '../../hooks/use-prop-variables';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -34,7 +33,6 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const isDirty = false;
-	const variables = getVariables( false );
 
 	usePreventUnload( isDirty );
 
@@ -75,7 +73,7 @@ export function VariablesManagerPanel() {
 						} }
 					>
 						<Divider />
-						<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
+						<VariablesManagerTable menuActions={ menuActions } />
 					</PanelBody>
 
 					<PanelFooter>
