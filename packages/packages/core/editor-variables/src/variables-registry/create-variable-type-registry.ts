@@ -31,6 +31,7 @@ type VariableTypeOptions = {
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string ) => PropValue;
+	isCompatible?: ( propType: PropType, variable: NormalizedVariable ) => boolean;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -47,9 +48,21 @@ export function createVariableTypeRegistry() {
 		selectionFilter,
 		valueTransformer,
 		fallbackPropTypeUtil,
+		isCompatible,
 	}: VariableTypeOptions ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
 			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
+		}
+
+		if ( ! isCompatible ) {
+			isCompatible = ( propType, variable: NormalizedVariable ) => {
+				if ( 'union' === propType.kind ) {
+					if ( variable.key in propType.prop_types ) {
+						return true;
+					}
+				}
+				return false;
+			};
 		}
 
 		variableTypes[ propTypeUtil.key ] = {
@@ -61,6 +74,7 @@ export function createVariableTypeRegistry() {
 			selectionFilter,
 			valueTransformer,
 			fallbackPropTypeUtil,
+			isCompatible,
 		};
 
 		registerTransformer( propTypeUtil.key );
