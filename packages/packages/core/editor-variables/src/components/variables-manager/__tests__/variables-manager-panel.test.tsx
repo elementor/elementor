@@ -4,7 +4,6 @@ import { render, screen } from '@testing-library/react';
 
 import { VariablesManagerPanel } from '../variables-manager-panel';
 
-// Mock the components we use
 jest.mock( '@elementor/editor-panels', () => ( {
 	__createPanel: () => ( {
 		panel: {},
@@ -71,7 +70,6 @@ jest.mock( '@elementor/ui', () => {
 	};
 } );
 
-// Mock getVariables directly since we can't find the module
 jest.mock(
 	'../../../hooks/use-prop-variables',
 	() => ( {

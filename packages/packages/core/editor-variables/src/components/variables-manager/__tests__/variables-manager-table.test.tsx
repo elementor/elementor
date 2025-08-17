@@ -12,7 +12,6 @@ type SortableProviderChildrenFn = ( props: {
 	setTriggerRef: () => void;
 } ) => React.ReactNode;
 
-// Mock the components we use
 jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
 	return {

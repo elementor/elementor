@@ -5,7 +5,6 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariableEditMenu } from '../variable-edit-menu';
 
-// Mock the MUI components we use
 jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
 	return {
@@ -75,7 +74,6 @@ describe( 'VariableEditMenu', () => {
 	} );
 
 	it( 'should render menu items when menu is open', () => {
-		// Override usePopupState mock for this test
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
@@ -98,7 +96,6 @@ describe( 'VariableEditMenu', () => {
 	} );
 
 	it( 'should call action onClick when menu item is clicked', () => {
-		// Override usePopupState mock for this test
 		const mockClose = jest.fn();
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
@@ -119,7 +116,6 @@ describe( 'VariableEditMenu', () => {
 	} );
 
 	it( 'should apply correct styles to menu items', () => {
-		// Override usePopupState mock for this test
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
@@ -141,7 +137,6 @@ describe( 'VariableEditMenu', () => {
 	} );
 
 	it( 'should render multiple menu items', () => {
-		// Override usePopupState mock for this test
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
