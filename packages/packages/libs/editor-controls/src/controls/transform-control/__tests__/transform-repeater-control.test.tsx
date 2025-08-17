@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { type TransformItemPropValue, type TransformPropValue } from '@elementor/editor-props';
+import { type TransformFunctionsItemPropValue, type TransformFunctionsPropValue } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { TransformRepeaterControl } from '../transform-repeater-control';
@@ -233,7 +233,7 @@ describe( 'TransformRepeaterControl', () => {
 } );
 
 const createMockTransformValue = (
-	items: TransformItemPropValue[] = [
+	items: TransformFunctionsItemPropValue[] = [
 		{
 			$$type: 'transform-move',
 			value: {
@@ -243,7 +243,7 @@ const createMockTransformValue = (
 			},
 		},
 	]
-): TransformPropValue => ( {
+): TransformFunctionsPropValue => ( {
 	$$type: 'transform',
 	value: items,
 } );
