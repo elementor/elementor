@@ -177,7 +177,7 @@ class Cloud_Hosting_Plans_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_label() {
-		return esc_html__( 'Cloud Hosting Plans', 'elementor' );
+		return esc_html__( 'Hosting Plans', 'elementor' );
 	}
 
 	public function get_capability() {
@@ -185,7 +185,7 @@ class Cloud_Hosting_Plans_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function get_page_title() {
-		return esc_html__( 'Cloud Hosting Plans', 'elementor' );
+		return esc_html__( 'Hosting Plans', 'elementor' );
 	}
 
 	public function render() {
