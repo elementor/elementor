@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
 import { TrashIcon } from '@elementor/icons';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariableEditMenu } from '../variable-edit-menu';
 
@@ -24,7 +24,7 @@ jest.mock( '@elementor/ui', () => {
 			anchorOrigin,
 			transformOrigin,
 			...props
-		}: any ) => (
+		}: any ) =>
 			open && (
 				<div
 					role="menu"
@@ -40,8 +40,7 @@ jest.mock( '@elementor/ui', () => {
 				>
 					{ children }
 				</div>
-			)
-		),
+			),
 		MenuItem: ( { sx, ...props }: any ) => (
 			<div role="menuitem" data-testid="menu-item" data-sx={ JSON.stringify( sx ) } { ...props }>
 				{ props.children }
@@ -110,7 +109,7 @@ describe( 'VariableEditMenu', () => {
 
 		const menu = screen.getByTestId( 'menu' );
 		expect( menu ).toBeInTheDocument();
-		
+
 		// Verify menu props
 		const menuProps = JSON.parse( menu.getAttribute( 'data-menuprops' ) || '{}' );
 		expect( menuProps.MenuListProps ).toEqual( { dense: true } );
@@ -124,14 +123,14 @@ describe( 'VariableEditMenu', () => {
 			vertical: 'top',
 			horizontal: 'right',
 		} );
-		
+
 		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should handle disabled state', () => {
 		renderComponent( { disabled: true } );
 
-		expect( screen.getByTestId( 'icon-button' ) ).toHaveAttribute( 'disabled' );
+		expect( screen.getByTestId( 'icon-button' ) ).toBeDisabled();
 	} );
 
 	it( 'should call action onClick when menu item is clicked', () => {
@@ -170,7 +169,7 @@ describe( 'VariableEditMenu', () => {
 
 		const menuItem = screen.getByTestId( 'menu-item' );
 		const sx = JSON.parse( menuItem.getAttribute( 'data-sx' ) || '{}' );
-		
+
 		expect( sx ).toEqual( {
 			color: 'error.main',
 			gap: 1,

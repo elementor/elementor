@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
 import { ColorFilterIcon } from '@elementor/icons';
+import { render, screen } from '@testing-library/react';
 
-import { VariablesManagerTable } from '../variables-manager-table';
 import { type TVariablesList } from '../../../storage';
+import { VariablesManagerTable } from '../variables-manager-table';
 
 jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
@@ -11,18 +11,21 @@ jest.mock( '@elementor/ui', () => {
 		...actual,
 		UnstableSortableProvider: ( { children, value, onChange }: any ) => (
 			<div data-testid="sortable-provider" data-value={ JSON.stringify( value ) }>
-				{ typeof children === 'function' ? children( {
-					itemProps: {},
-					triggerProps: {},
-					setTriggerRef: () => {},
-				} ) : children }
+				{ typeof children === 'function'
+					? children( {
+							itemProps: {},
+							triggerProps: {},
+							setTriggerRef: () => {},
+					  } )
+					: children }
 			</div>
 		),
-		UnstableSortableItem: ( { children, render }: any ) => render( {
-			itemProps: {},
-			triggerProps: {},
-			setTriggerRef: () => {},
-		} ),
+		UnstableSortableItem: ( { children, render }: any ) =>
+			render( {
+				itemProps: {},
+				triggerProps: {},
+				setTriggerRef: () => {},
+			} ),
 		Table: ( props: any ) => <table { ...props } />,
 		TableBody: ( props: any ) => <tbody { ...props } />,
 		TableHead: ( props: any ) => <thead { ...props } />,
@@ -35,13 +38,16 @@ jest.mock( '@elementor/ui', () => {
 
 jest.mock( '../variable-edit-menu', () => ( {
 	VariableEditMenu: ( props: any ) => (
-		<div data-testid="variable-edit-menu" data-props={ JSON.stringify( {
-			menuActions: props.menuActions?.map( ( action: any ) => ( {
-				name: action.name,
-				color: action.color,
-			} ) ),
-			disabled: props.disabled,
-		} ) } />
+		<div
+			data-testid="variable-edit-menu"
+			data-props={ JSON.stringify( {
+				menuActions: props.menuActions?.map( ( action: any ) => ( {
+					name: action.name,
+					color: action.color,
+				} ) ),
+				disabled: props.disabled,
+			} ) }
+		/>
 	),
 } ) );
 
@@ -50,11 +56,12 @@ jest.mock( '../variable-table-cell', () => ( {
 		const { children, ...rest } = props;
 		const safeProps = {
 			...rest,
-			sx: rest.sx ? {
-				...rest.sx,
-				// Remove circular references
-				__emotion_real: undefined,
-			} : undefined,
+			sx: rest.sx
+				? {
+						...rest.sx,
+						__emotion_real: undefined,
+				  }
+				: undefined,
 		};
 		return (
 			<td data-testid="variable-table-cell" data-props={ JSON.stringify( safeProps ) }>
@@ -66,10 +73,13 @@ jest.mock( '../variable-table-cell', () => ( {
 
 jest.mock( '../variable-editable-cell', () => ( {
 	VariableEditableCell: ( props: any ) => (
-		<div data-testid="variable-editable-cell" data-props={ JSON.stringify( {
-			initialValue: props.initialValue,
-			prefixElement: !!props.prefixElement,
-		} ) }>
+		<div
+			data-testid="variable-editable-cell"
+			data-props={ JSON.stringify( {
+				initialValue: props.initialValue,
+				prefixElement: !! props.prefixElement,
+			} ) }
+		>
 			{ props.children }
 		</div>
 	),
@@ -79,12 +89,16 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	EllipsisWithTooltip: ( { children }: any ) => <div data-testid="ellipsis-tooltip">{ children }</div>,
 } ) );
 
-jest.mock( '../../../variables-registry/variable-type-registry', () => ( {
-	getVariableType: () => ( {
-		icon: ColorFilterIcon,
-		valueField: () => <input />,
+jest.mock(
+	'../../../variables-registry/variable-type-registry',
+	() => ( {
+		getVariableType: () => ( {
+			icon: ColorFilterIcon,
+			valueField: () => <input />,
+		} ),
 	} ),
-} ), { virtual: true } );
+	{ virtual: true }
+);
 
 describe( 'VariablesManagerTable', () => {
 	const mockVariables: TVariablesList = {
@@ -133,9 +147,13 @@ describe( 'VariablesManagerTable', () => {
 		renderComponent();
 
 		const headers = screen.getAllByTestId( 'variable-table-cell' );
-		const headerProps = headers.slice( 0, 4 ).map( header => JSON.parse( header.getAttribute( 'data-props' ) || '{}' ) );
+		const headerProps = headers
+			.slice( 0, 4 )
+			.map( ( header ) => JSON.parse( header.getAttribute( 'data-props' ) || '{}' ) );
 
-		expect( headerProps ).toContainEqual( expect.objectContaining( { isHeader: true, noPadding: true, width: 10, maxWidth: 10 } ) );
+		expect( headerProps ).toContainEqual(
+			expect.objectContaining( { isHeader: true, noPadding: true, width: 10, maxWidth: 10 } )
+		);
 		expect( headerProps ).toContainEqual( expect.objectContaining( { isHeader: true } ) );
 		expect( screen.getByText( 'Name' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Value' ) ).toBeInTheDocument();
@@ -145,7 +163,7 @@ describe( 'VariablesManagerTable', () => {
 		renderComponent();
 
 		const editableCells = screen.getAllByTestId( 'variable-editable-cell' );
-		const cellProps = editableCells.map( cell => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
+		const cellProps = editableCells.map( ( cell ) => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
 
 		expect( cellProps ).toContainEqual( expect.objectContaining( { initialValue: 'Variable 1' } ) );
 		expect( cellProps ).toContainEqual( expect.objectContaining( { initialValue: 'Variable 2' } ) );
@@ -159,8 +177,8 @@ describe( 'VariablesManagerTable', () => {
 		const editMenus = screen.getAllByTestId( 'variable-edit-menu' );
 		expect( editMenus ).toHaveLength( Object.keys( mockVariables ).length );
 
-		const menuProps = editMenus.map( menu => JSON.parse( menu.getAttribute( 'data-props' ) || '{}' ) );
-		menuProps.forEach( props => {
+		const menuProps = editMenus.map( ( menu ) => JSON.parse( menu.getAttribute( 'data-props' ) || '{}' ) );
+		menuProps.forEach( ( props ) => {
 			expect( props.menuActions ).toEqual( [
 				{
 					name: 'Delete',
@@ -192,9 +210,9 @@ describe( 'VariablesManagerTable', () => {
 		renderComponent();
 
 		const editableCells = screen.getAllByTestId( 'variable-editable-cell' );
-		const cellProps = editableCells.map( cell => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
+		const cellProps = editableCells.map( ( cell ) => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
 
-		cellProps.forEach( props => {
+		cellProps.forEach( ( props ) => {
 			if ( props.initialValue.startsWith( 'Variable' ) ) {
 				// Label cells
 				expect( props.prefixElement ).toBe( true );

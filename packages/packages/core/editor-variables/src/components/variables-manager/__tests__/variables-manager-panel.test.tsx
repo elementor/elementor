@@ -12,11 +12,15 @@ jest.mock( '@elementor/editor-panels', () => ( {
 	} ),
 	Panel: ( { children }: any ) => <div data-testid="panel">{ children }</div>,
 	PanelBody: ( { children, sx }: any ) => (
-		<div data-testid="panel-body" data-props={ JSON.stringify( { sx } ) }>{ children }</div>
+		<div data-testid="panel-body" data-props={ JSON.stringify( { sx } ) }>
+			{ children }
+		</div>
 	),
 	PanelHeader: ( { children }: any ) => <div data-testid="panel-header">{ children }</div>,
 	PanelHeaderTitle: ( { children, sx }: any ) => (
-		<div data-testid="panel-header-title" data-props={ JSON.stringify( { sx } ) }>{ children }</div>
+		<div data-testid="panel-header-title" data-props={ JSON.stringify( { sx } ) }>
+			{ children }
+		</div>
 	),
 	PanelFooter: ( { children }: any ) => <div data-testid="panel-footer">{ children }</div>,
 } ) );
@@ -35,17 +39,25 @@ jest.mock( '@elementor/ui', () => {
 	return {
 		...actual,
 		Button: ( { children, ...props }: any ) => (
-			<button { ...props } data-testid="button">{ children }</button>
+			<button { ...props } data-testid="button">
+				{ children }
+			</button>
 		),
 		IconButton: ( props: any ) => <button { ...props } data-testid="icon-button" />,
 		Stack: ( { children, ...props }: any ) => (
-			<div data-testid="stack" data-props={ JSON.stringify( props ) }>{ children }</div>
+			<div data-testid="stack" data-props={ JSON.stringify( props ) }>
+				{ children }
+			</div>
 		),
 		Alert: ( { children, severity, ...props }: any ) => (
-			<div data-testid="alert" data-props={ JSON.stringify( { severity, ...props } ) }>{ children }</div>
+			<div data-testid="alert" data-props={ JSON.stringify( { severity, ...props } ) }>
+				{ children }
+			</div>
 		),
 		Box: ( { children, ...props }: any ) => (
-			<div data-testid="box" data-props={ JSON.stringify( props ) }>{ children }</div>
+			<div data-testid="box" data-props={ JSON.stringify( props ) }>
+				{ children }
+			</div>
 		),
 		Divider: () => <hr data-testid="divider" />,
 		ErrorBoundary: ( { children, fallback }: any ) => {
@@ -70,26 +82,33 @@ jest.mock( '@elementor/ui', () => {
 	};
 } );
 
-jest.mock( '../../../hooks/use-prop-variables', () => ( {
-	getVariables: jest.fn().mockReturnValue( {
-		'var-1': {
-			label: 'Variable 1',
-			value: 'value 1',
-			type: 'color',
-		},
+jest.mock(
+	'../../../hooks/use-prop-variables',
+	() => ( {
+		getVariables: jest.fn().mockReturnValue( {
+			'var-1': {
+				label: 'Variable 1',
+				value: 'value 1',
+				type: 'color',
+			},
+		} ),
 	} ),
-} ), { virtual: true } );
+	{ virtual: true }
+);
 
 jest.mock( '../variables-manager-table', () => ( {
 	VariablesManagerTable: ( props: any ) => (
-		<div data-testid="variables-manager-table" data-props={ JSON.stringify( {
-			...props,
-			menuActions: props.menuActions?.map( ( action: any ) => ( {
-				...action,
-				icon: action.icon?.name || 'IconComponent',
-				onClick: 'function',
-			} ) ),
-		} ) } />
+		<div
+			data-testid="variables-manager-table"
+			data-props={ JSON.stringify( {
+				...props,
+				menuActions: props.menuActions?.map( ( action: any ) => ( {
+					...action,
+					icon: action.icon?.name || 'IconComponent',
+					onClick: 'function',
+				} ) ),
+			} ) }
+		/>
 	),
 } ) );
 

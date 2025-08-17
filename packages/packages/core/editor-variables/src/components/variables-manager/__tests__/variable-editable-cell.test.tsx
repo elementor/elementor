@@ -7,11 +7,7 @@ describe( 'VariableEditableCell', () => {
 	const mockOnSave = jest.fn();
 
 	const TestEditableElement = ( { value, onChange }: { value: string; onChange: ( value: string ) => void } ) => (
-		<input
-			aria-label="Edit value"
-			value={ value }
-			onChange={ ( e ) => onChange( e.target.value ) }
-		/>
+		<input aria-label="Edit value" value={ value } onChange={ ( e ) => onChange( e.target.value ) } />
 	);
 
 	const renderComponent = ( props = {} ) => {

@@ -39,11 +39,13 @@ describe( 'VariableTableCell', () => {
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
 
-		expect( props.sx ).toEqual( expect.objectContaining( {
-			color: 'text.primary',
-			fontWeight: 'bold',
-			padding: '10px 16px',
-		} ) );
+		expect( props.sx ).toEqual(
+			expect.objectContaining( {
+				color: 'text.primary',
+				fontWeight: 'bold',
+				padding: '10px 16px',
+			} )
+		);
 	} );
 
 	it( 'should pass width prop to sx', () => {
@@ -51,9 +53,11 @@ describe( 'VariableTableCell', () => {
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
 
-		expect( props.sx ).toEqual( expect.objectContaining( {
-			width: 100,
-		} ) );
+		expect( props.sx ).toEqual(
+			expect.objectContaining( {
+				width: 100,
+			} )
+		);
 	} );
 
 	it( 'should pass maxWidth prop to sx', () => {
@@ -61,9 +65,11 @@ describe( 'VariableTableCell', () => {
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
 
-		expect( props.sx ).toEqual( expect.objectContaining( {
-			maxWidth: 200,
-		} ) );
+		expect( props.sx ).toEqual(
+			expect.objectContaining( {
+				maxWidth: 200,
+			} )
+		);
 	} );
 
 	it( 'should use default maxWidth when not provided', () => {
@@ -71,9 +77,11 @@ describe( 'VariableTableCell', () => {
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
 
-		expect( props.sx ).toEqual( expect.objectContaining( {
-			maxWidth: 150,
-		} ) );
+		expect( props.sx ).toEqual(
+			expect.objectContaining( {
+				maxWidth: 150,
+			} )
+		);
 	} );
 
 	it( 'should pass noPadding prop correctly', () => {
@@ -102,10 +110,12 @@ describe( 'VariableTableCell', () => {
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
 
-		expect( props.sx ).toEqual( expect.objectContaining( {
-			...customSx,
-			maxWidth: 150,
-		} ) );
+		expect( props.sx ).toEqual(
+			expect.objectContaining( {
+				...customSx,
+				maxWidth: 150,
+			} )
+		);
 	} );
 
 	it( 'should not apply header padding when noPadding is true', () => {
