@@ -1,16 +1,30 @@
 import * as React from 'react';
 import { ColorFilterIcon } from '@elementor/icons';
+import { type IconButtonProps, type StackProps, type TableCellProps } from '@elementor/ui';
 import { render, screen } from '@testing-library/react';
 
 import { type TVariablesList } from '../../../storage';
 import { VariablesManagerTable } from '../variables-manager-table';
 
+type SortableProviderChildrenFn = ( props: {
+	itemProps: Record< string, unknown >;
+	triggerProps: Record< string, unknown >;
+	setTriggerRef: () => void;
+} ) => React.ReactNode;
+
+// Mock the components we use
 jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
 	return {
 		...actual,
-		UnstableSortableProvider: ( { children, value, onChange }: any ) => (
-			<div data-testid="sortable-provider" data-value={ JSON.stringify( value ) }>
+		UnstableSortableProvider: ( {
+			children,
+			value,
+		}: {
+			children: React.ReactNode | SortableProviderChildrenFn;
+			value: string[];
+		} ) => (
+			<div aria-label="Sortable variables list" data-value={ JSON.stringify( value ) }>
 				{ typeof children === 'function'
 					? children( {
 							itemProps: {},
@@ -20,31 +34,46 @@ jest.mock( '@elementor/ui', () => {
 					: children }
 			</div>
 		),
-		UnstableSortableItem: ( { children, render }: any ) =>
-			render( {
+		UnstableSortableItem: ( {
+			render: renderItem,
+		}: {
+			render: ( props: Record< string, unknown > ) => React.ReactNode;
+		} ) =>
+			renderItem( {
 				itemProps: {},
 				triggerProps: {},
 				setTriggerRef: () => {},
 			} ),
-		Table: ( props: any ) => <table { ...props } />,
-		TableBody: ( props: any ) => <tbody { ...props } />,
-		TableHead: ( props: any ) => <thead { ...props } />,
-		TableRow: ( props: any ) => <tr { ...props } />,
-		TableContainer: ( props: any ) => <div { ...props } />,
-		Stack: ( props: any ) => <div { ...props } />,
-		IconButton: ( props: any ) => <button { ...props } />,
+		Table: ( props: { children: React.ReactNode } ) => <table { ...props } />,
+		TableBody: ( props: { children: React.ReactNode } ) => <tbody { ...props } />,
+		TableHead: ( props: { children: React.ReactNode } ) => <thead { ...props } />,
+		TableRow: ( props: { children: React.ReactNode } ) => <tr { ...props } />,
+		TableContainer: ( props: { children: React.ReactNode } ) => <div { ...props } />,
+		Stack: ( { children, direction, spacing, ...props }: StackProps ) => (
+			<div
+				data-direction={ direction }
+				data-spacing={ spacing }
+				{ ...( props as React.HTMLAttributes< HTMLDivElement > ) }
+			>
+				{ children }
+			</div>
+		),
+		IconButton: ( props: IconButtonProps ) => <button type="button" { ...props } />,
 	};
 } );
 
 jest.mock( '../variable-edit-menu', () => ( {
-	VariableEditMenu: ( props: any ) => (
+	VariableEditMenu: ( props: { menuActions: unknown[]; disabled?: boolean } ) => (
 		<div
-			data-testid="variable-edit-menu"
+			aria-label="Actions menu"
 			data-props={ JSON.stringify( {
-				menuActions: props.menuActions?.map( ( action: any ) => ( {
-					name: action.name,
-					color: action.color,
-				} ) ),
+				menuActions: props.menuActions?.map( ( action ) => {
+					const typedAction = action as { name: string; icon: unknown; color: string };
+					return {
+						...typedAction,
+						icon: typedAction.icon ? 'IconComponent' : undefined,
+					};
+				} ),
 				disabled: props.disabled,
 			} ) }
 		/>
@@ -52,41 +81,56 @@ jest.mock( '../variable-edit-menu', () => ( {
 } ) );
 
 jest.mock( '../variable-table-cell', () => ( {
-	VariableTableCell: ( props: any ) => {
-		const { children, ...rest } = props;
+	VariableTableCell: ( { children, ...props }: TableCellProps ) => {
 		const safeProps = {
-			...rest,
-			sx: rest.sx
+			...props,
+			sx: props.sx
 				? {
-						...rest.sx,
+						...props.sx,
+						// Remove circular references
 						__emotion_real: undefined,
 				  }
 				: undefined,
 		};
-		return (
-			<td data-testid="variable-table-cell" data-props={ JSON.stringify( safeProps ) }>
-				{ children }
-			</td>
-		);
+		return <td data-props={ JSON.stringify( safeProps ) }>{ children }</td>;
 	},
 } ) );
 
 jest.mock( '../variable-editable-cell', () => ( {
-	VariableEditableCell: ( props: any ) => (
-		<div
-			data-testid="variable-editable-cell"
-			data-props={ JSON.stringify( {
-				initialValue: props.initialValue,
-				prefixElement: !! props.prefixElement,
-			} ) }
-		>
-			{ props.children }
-		</div>
-	),
+	VariableEditableCell: ( props: {
+		initialValue: string;
+		prefixElement?: React.ReactNode;
+		children: React.ReactNode;
+	} ) => {
+		const [ isEditing, setIsEditing ] = React.useState( false );
+		return isEditing ? (
+			<input
+				type="text"
+				aria-label="Edit value"
+				value={ props.initialValue }
+				onChange={ () => {} }
+				data-props={ JSON.stringify( {
+					initialValue: props.initialValue,
+					prefixElement: !! props.prefixElement,
+				} ) }
+			/>
+		) : (
+			<button
+				type="button"
+				onClick={ () => setIsEditing( true ) }
+				data-props={ JSON.stringify( {
+					initialValue: props.initialValue,
+					prefixElement: !! props.prefixElement,
+				} ) }
+			>
+				{ props.children }
+			</button>
+		);
+	},
 } ) );
 
 jest.mock( '@elementor/editor-ui', () => ( {
-	EllipsisWithTooltip: ( { children }: any ) => <div data-testid="ellipsis-tooltip">{ children }</div>,
+	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
 
 jest.mock(
@@ -123,7 +167,7 @@ describe( 'VariablesManagerTable', () => {
 		},
 	];
 
-	const renderComponent = ( props = {} ) => {
+	const renderTable = ( props = {} ) => {
 		const defaultProps = {
 			variables: mockVariables,
 			menuActions: mockMenuActions,
@@ -132,21 +176,23 @@ describe( 'VariablesManagerTable', () => {
 		return render( <VariablesManagerTable { ...defaultProps } { ...props } /> );
 	};
 
-	const originalConsoleError = console.error;
+	const mockConsoleError = jest.fn();
+	const originalError = window.console.error;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		console.error = jest.fn();
+		// Suppress error for expected React warnings
+		window.console.error = mockConsoleError;
 	} );
 
 	afterEach( () => {
-		console.error = originalConsoleError;
+		window.console.error = originalError;
 	} );
 
 	it( 'should render table headers correctly', () => {
-		renderComponent();
+		renderTable();
 
-		const headers = screen.getAllByTestId( 'variable-table-cell' );
+		const headers = screen.getAllByRole( 'cell' );
 		const headerProps = headers
 			.slice( 0, 4 )
 			.map( ( header ) => JSON.parse( header.getAttribute( 'data-props' ) || '{}' ) );
@@ -160,9 +206,9 @@ describe( 'VariablesManagerTable', () => {
 	} );
 
 	it( 'should render variables as rows', () => {
-		renderComponent();
+		renderTable();
 
-		const editableCells = screen.getAllByTestId( 'variable-editable-cell' );
+		const editableCells = screen.getAllByRole( 'button' );
 		const cellProps = editableCells.map( ( cell ) => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
 
 		expect( cellProps ).toContainEqual( expect.objectContaining( { initialValue: 'Variable 1' } ) );
@@ -172,9 +218,9 @@ describe( 'VariablesManagerTable', () => {
 	} );
 
 	it( 'should render edit menu for each row', () => {
-		renderComponent();
+		renderTable();
 
-		const editMenus = screen.getAllByTestId( 'variable-edit-menu' );
+		const editMenus = screen.getAllByLabelText( 'Actions menu' );
 		expect( editMenus ).toHaveLength( Object.keys( mockVariables ).length );
 
 		const menuProps = editMenus.map( ( menu ) => JSON.parse( menu.getAttribute( 'data-props' ) || '{}' ) );
@@ -182,6 +228,7 @@ describe( 'VariablesManagerTable', () => {
 			expect( props.menuActions ).toEqual( [
 				{
 					name: 'Delete',
+					icon: 'IconComponent',
 					color: 'error.main',
 				},
 			] );
@@ -192,24 +239,24 @@ describe( 'VariablesManagerTable', () => {
 		const mockOnChange = jest.fn();
 		jest.spyOn( React, 'useState' ).mockImplementation( () => [ Object.keys( mockVariables ), mockOnChange ] );
 
-		renderComponent();
+		renderTable();
 
-		const provider = screen.getByTestId( 'sortable-provider' );
+		const provider = screen.getByLabelText( 'Sortable variables list' );
 		const currentOrder = JSON.parse( provider.getAttribute( 'data-value' ) || '[]' );
 		expect( currentOrder ).toEqual( [ 'var-1', 'var-2' ] );
 	} );
 
 	it( 'should handle empty variables list', () => {
-		renderComponent( { variables: {} } );
+		renderTable( { variables: {} } );
 
-		const editableCells = screen.queryAllByTestId( 'variable-editable-cell' );
+		const editableCells = screen.queryAllByRole( 'button' );
 		expect( editableCells ).toHaveLength( 0 );
 	} );
 
 	it( 'should pass correct props to editable cells', () => {
-		renderComponent();
+		renderTable();
 
-		const editableCells = screen.getAllByTestId( 'variable-editable-cell' );
+		const editableCells = screen.getAllByRole( 'button' );
 		const cellProps = editableCells.map( ( cell ) => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
 
 		cellProps.forEach( ( props ) => {

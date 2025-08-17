@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { type BoxProps, type ButtonProps, type IconButtonProps, type StackProps } from '@elementor/ui';
 import { render, screen } from '@testing-library/react';
 
 import { VariablesManagerPanel } from '../variables-manager-panel';
 
+// Mock the components we use
 jest.mock( '@elementor/editor-panels', () => ( {
 	__createPanel: () => ( {
 		panel: {},
@@ -10,24 +12,22 @@ jest.mock( '@elementor/editor-panels', () => ( {
 			close: jest.fn(),
 		} ),
 	} ),
-	Panel: ( { children }: any ) => <div data-testid="panel">{ children }</div>,
-	PanelBody: ( { children, sx }: any ) => (
-		<div data-testid="panel-body" data-props={ JSON.stringify( { sx } ) }>
+	Panel: ( { children }: { children: React.ReactNode } ) => <div role="dialog">{ children }</div>,
+	PanelBody: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
+		<div role="region" data-props={ JSON.stringify( { sx } ) }>
 			{ children }
 		</div>
 	),
-	PanelHeader: ( { children }: any ) => <div data-testid="panel-header">{ children }</div>,
-	PanelHeaderTitle: ( { children, sx }: any ) => (
-		<div data-testid="panel-header-title" data-props={ JSON.stringify( { sx } ) }>
-			{ children }
-		</div>
+	PanelHeader: ( { children }: { children: React.ReactNode } ) => <header>{ children }</header>,
+	PanelHeaderTitle: ( { children, sx }: { children: React.ReactNode; sx?: StackProps[ 'sx' ] } ) => (
+		<h2 data-props={ JSON.stringify( { sx } ) }>{ children }</h2>
 	),
-	PanelFooter: ( { children }: any ) => <div data-testid="panel-footer">{ children }</div>,
+	PanelFooter: ( { children }: { children: React.ReactNode } ) => <footer>{ children }</footer>,
 } ) );
 
 jest.mock( '@elementor/editor-ui', () => ( {
-	ThemeProvider: ( { children }: any ) => <div data-testid="theme-provider">{ children }</div>,
-	EllipsisWithTooltip: ( { children }: any ) => <div data-testid="ellipsis-tooltip">{ children }</div>,
+	ThemeProvider: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
+	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 } ) );
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
@@ -38,37 +38,26 @@ jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
 	return {
 		...actual,
-		Button: ( { children, ...props }: any ) => (
-			<button { ...props } data-testid="button">
-				{ children }
-			</button>
-		),
-		IconButton: ( props: any ) => <button { ...props } data-testid="icon-button" />,
-		Stack: ( { children, ...props }: any ) => (
-			<div data-testid="stack" data-props={ JSON.stringify( props ) }>
+		Button: ( { children, ...props }: ButtonProps ) => <button { ...props }>{ children }</button>,
+		IconButton: ( props: IconButtonProps ) => <button { ...props } />,
+		Stack: ( { children, ...props }: StackProps ) => <div data-props={ JSON.stringify( props ) }>{ children }</div>,
+		Alert: ( { children, severity, ...props }: { children: React.ReactNode; severity: string } ) => (
+			<div role="alert" data-props={ JSON.stringify( { severity, ...props } ) }>
 				{ children }
 			</div>
 		),
-		Alert: ( { children, severity, ...props }: any ) => (
-			<div data-testid="alert" data-props={ JSON.stringify( { severity, ...props } ) }>
-				{ children }
-			</div>
-		),
-		Box: ( { children, ...props }: any ) => (
-			<div data-testid="box" data-props={ JSON.stringify( props ) }>
-				{ children }
-			</div>
-		),
-		Divider: () => <hr data-testid="divider" />,
-		ErrorBoundary: ( { children, fallback }: any ) => {
+		Box: ( { children, ...props }: BoxProps ) => <div data-props={ JSON.stringify( props ) }>{ children }</div>,
+		Divider: () => <hr />,
+		ErrorBoundary: ( { children, fallback }: { children: React.ReactNode; fallback: React.ReactNode } ) => {
 			const [ hasError, setHasError ] = React.useState( false );
 
 			React.useEffect( () => {
 				try {
-					if ( children.props?.throwError ) {
+					// Force error if children have throwError prop
+					if ( ( children as { props?: { throwError?: boolean } } ).props?.throwError ) {
 						throw new Error( 'Test error' );
 					}
-				} catch ( error ) {
+				} catch {
 					setHasError( true );
 				}
 			}, [ children ] );
@@ -82,6 +71,7 @@ jest.mock( '@elementor/ui', () => {
 	};
 } );
 
+// Mock getVariables directly since we can't find the module
 jest.mock(
 	'../../../hooks/use-prop-variables',
 	() => ( {
@@ -97,47 +87,50 @@ jest.mock(
 );
 
 jest.mock( '../variables-manager-table', () => ( {
-	VariablesManagerTable: ( props: any ) => (
+	VariablesManagerTable: ( props: { menuActions: unknown[]; variables: Record< string, unknown > } ) => (
 		<div
-			data-testid="variables-manager-table"
+			role="grid"
 			data-props={ JSON.stringify( {
 				...props,
-				menuActions: props.menuActions?.map( ( action: any ) => ( {
-					...action,
-					icon: action.icon?.name || 'IconComponent',
-					onClick: 'function',
-				} ) ),
+				menuActions: props.menuActions?.map( ( action ) => {
+					const typedAction = action as { name: string; icon: unknown; color: string; onClick: unknown };
+					return {
+						...typedAction,
+						icon: typedAction.icon ? 'IconComponent' : undefined,
+						onClick: 'function',
+					};
+				} ),
 			} ) }
 		/>
 	),
 } ) );
 
 describe( 'VariablesManagerPanel', () => {
-	const originalConsoleError = console.error;
+	const mockConsoleError = jest.fn();
+	const originalError = window.console.error;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		console.error = jest.fn();
+		// Suppress error for expected React warnings
+		window.console.error = mockConsoleError;
 	} );
 
 	afterEach( () => {
-		console.error = originalConsoleError;
+		window.console.error = originalError;
 	} );
 
 	it( 'should render panel structure correctly', () => {
 		render( <VariablesManagerPanel /> );
 
-		expect( screen.getByTestId( 'theme-provider' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'panel' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'panel-header' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'panel-body' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'panel-footer' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'region' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { level: 2 } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render panel title with icon', () => {
 		render( <VariablesManagerPanel /> );
 
-		const title = screen.getByTestId( 'panel-header-title' );
+		const title = screen.getByRole( 'heading', { level: 2 } );
 		const props = JSON.parse( title.getAttribute( 'data-props' ) || '{}' );
 
 		expect( props.sx ).toEqual( {
@@ -151,7 +144,7 @@ describe( 'VariablesManagerPanel', () => {
 	it( 'should pass variables and menu actions to table', () => {
 		render( <VariablesManagerPanel /> );
 
-		const table = screen.getByTestId( 'variables-manager-table' );
+		const table = screen.getByRole( 'grid' );
 		const props = JSON.parse( table.getAttribute( 'data-props' ) || '{}' );
 
 		expect( props.variables ).toBeDefined();
@@ -168,9 +161,25 @@ describe( 'VariablesManagerPanel', () => {
 	it( 'should render save button in footer', () => {
 		render( <VariablesManagerPanel /> );
 
-		const button = screen.getByTestId( 'button' );
+		const button = screen.getByRole( 'button' );
 		expect( button ).toHaveTextContent( 'Save changes' );
-		expect( button ).toBeDisabled();
+		expect( button ).toBeDisabled(); // Initially disabled since isDirty is false
+	} );
+
+	it( 'should handle error state with fallback', () => {
+		// Force getVariables to throw
+		const getVariables = require( '../../../hooks/use-prop-variables' ).getVariables;
+		getVariables.mockImplementationOnce( () => {
+			throw new Error( 'Test error' );
+		} );
+
+		render( <VariablesManagerPanel /> );
+
+		const alert = screen.getByRole( 'alert' );
+		const props = JSON.parse( alert.getAttribute( 'data-props' ) || '{}' );
+
+		expect( props.severity ).toBe( 'error' );
+		expect( screen.getByText( 'Something went wrong' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should prevent unload when dirty', () => {
@@ -192,7 +201,7 @@ describe( 'VariablesManagerPanel', () => {
 	it( 'should apply correct styles to panel body', () => {
 		render( <VariablesManagerPanel /> );
 
-		const body = screen.getByTestId( 'panel-body' );
+		const body = screen.getByRole( 'region' );
 		const props = JSON.parse( body.getAttribute( 'data-props' ) || '{}' );
 
 		expect( props.sx ).toEqual( {

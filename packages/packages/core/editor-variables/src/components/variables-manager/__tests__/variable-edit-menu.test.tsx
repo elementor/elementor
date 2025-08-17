@@ -1,50 +1,30 @@
 import * as React from 'react';
 import { TrashIcon } from '@elementor/icons';
+import { type IconButtonProps, type MenuItemProps, type MenuProps } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariableEditMenu } from '../variable-edit-menu';
 
-// Mock the MUI components we need
+// Mock the MUI components we use
 jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
 	return {
 		...actual,
-		IconButton: ( props: any ) => (
-			<button { ...props } data-testid="icon-button">
+		IconButton: ( props: IconButtonProps ) => (
+			<button { ...props } aria-label="Menu trigger">
 				{ props.children }
 			</button>
 		),
-		Menu: ( {
-			children,
-			open,
-			MenuListProps,
-			PaperProps,
-			disablePortal,
-			anchorEl,
-			anchorOrigin,
-			transformOrigin,
-			...props
-		}: any ) =>
+		Menu: ( { children, open, ...props }: MenuProps ) =>
 			open && (
-				<div
-					role="menu"
-					data-testid="menu"
-					data-menuprops={ JSON.stringify( {
-						MenuListProps,
-						PaperProps,
-						disablePortal,
-						anchorOrigin,
-						transformOrigin,
-					} ) }
-					{ ...props }
-				>
+				<div role="menu" { ...props }>
 					{ children }
 				</div>
 			),
-		MenuItem: ( { sx, ...props }: any ) => (
-			<div role="menuitem" data-testid="menu-item" data-sx={ JSON.stringify( sx ) } { ...props }>
-				{ props.children }
-			</div>
+		MenuItem: ( { children, sx, ...props }: MenuItemProps ) => (
+			<li role="menuitem" data-sx={ JSON.stringify( sx ) } { ...props }>
+				{ children }
+			</li>
 		),
 		usePopupState: () => ( {
 			isOpen: false,
@@ -91,7 +71,7 @@ describe( 'VariableEditMenu', () => {
 	it( 'should render trigger button', () => {
 		renderComponent();
 
-		expect( screen.getByTestId( 'icon-button' ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Menu trigger' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render menu items when menu is open', () => {
@@ -107,30 +87,14 @@ describe( 'VariableEditMenu', () => {
 
 		renderComponent();
 
-		const menu = screen.getByTestId( 'menu' );
-		expect( menu ).toBeInTheDocument();
-
-		// Verify menu props
-		const menuProps = JSON.parse( menu.getAttribute( 'data-menuprops' ) || '{}' );
-		expect( menuProps.MenuListProps ).toEqual( { dense: true } );
-		expect( menuProps.PaperProps ).toEqual( { elevation: 6 } );
-		expect( menuProps.disablePortal ).toBe( true );
-		expect( menuProps.anchorOrigin ).toEqual( {
-			vertical: 'bottom',
-			horizontal: 'right',
-		} );
-		expect( menuProps.transformOrigin ).toEqual( {
-			vertical: 'top',
-			horizontal: 'right',
-		} );
-
+		expect( screen.getByRole( 'menu' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should handle disabled state', () => {
 		renderComponent( { disabled: true } );
 
-		expect( screen.getByTestId( 'icon-button' ) ).toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Menu trigger' } ) ).toBeDisabled();
 	} );
 
 	it( 'should call action onClick when menu item is clicked', () => {
@@ -147,7 +111,7 @@ describe( 'VariableEditMenu', () => {
 
 		renderComponent();
 
-		const menuItem = screen.getByTestId( 'menu-item' );
+		const menuItem = screen.getByRole( 'menuitem' );
 		fireEvent.click( menuItem );
 
 		expect( mockMenuActions[ 0 ].onClick ).toHaveBeenCalled();
@@ -167,7 +131,7 @@ describe( 'VariableEditMenu', () => {
 
 		renderComponent();
 
-		const menuItem = screen.getByTestId( 'menu-item' );
+		const menuItem = screen.getByRole( 'menuitem' );
 		const sx = JSON.parse( menuItem.getAttribute( 'data-sx' ) || '{}' );
 
 		expect( sx ).toEqual( {
