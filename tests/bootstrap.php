@@ -52,7 +52,6 @@ tests_add_filter( 'shutdown', 'drop_tables', 999999 );
 require $_tests_dir . '/includes/bootstrap.php';
 require __DIR__ . '/phpunit/trait-test-upgrades.php';
 require __DIR__ . '/phpunit/trait-responsive-control-testing.php';
-require __DIR__ . '/phpunit/elementor/includes/container/traits/trait-test-container.php';
 
 require_once dirname( __DIR__ ) . '/includes/autoloader.php';
 
@@ -79,9 +78,7 @@ add_action( 'elementor/experiments/feature-registered', function ( Experiments_M
 }, 10, 2 );
 
 // Make sure the main class is running
-$instance = \Elementor\Plugin::instance();
-
-$instance->initialize_container();
+\Elementor\Plugin::instance();
 
 // Run fake actions
 do_action( 'init' );

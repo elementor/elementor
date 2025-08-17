@@ -7,8 +7,11 @@ export { useElementSetting, useElementSettings } from './hooks/use-element-setti
 export { useElementType } from './hooks/use-element-type';
 export { useSelectedElement } from './hooks/use-selected-element';
 export { useParentElement } from './hooks/use-parent-element';
+export { useElementChildren, type ElementChildren } from './hooks/use-element-children';
 
 // utils
+export { createElement } from './sync/create-element';
+export { deleteElement } from './sync/delete-element';
 export { getContainer, selectElement } from './sync/get-container';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
