@@ -17,6 +17,11 @@ class Admin_Menu_Manager {
 	 */
 	private $items = [];
 
+	public function __construct() {
+		// Handle external redirects
+		add_action( 'admin_init', [ $this, 'handle_external_redirects' ] );
+	}
+
 	public function register( $item_slug, Admin_Menu_Item $item ) {
 		$this->items[ $item_slug ] = $item;
 	}
@@ -45,6 +50,29 @@ class Admin_Menu_Manager {
 		add_action( 'admin_head', function () {
 			$this->hide_invisible_menus();
 		} );
+
+		add_action( 'elementor/admin/menu/register', [ $this, 'register_cloud_hosting_plans' ], 999 );
+	}
+
+	/**
+	 * Register Cloud Hosting Plans menu item
+	 */
+	public function register_cloud_hosting_plans( Admin_Menu_Manager $admin_menu ) {
+		$admin_menu->register( 'go_cloud_hosting_plans', new Cloud_Hosting_Plans_Menu_Item() );
+	}
+
+	/**
+	 * Handle external redirects
+	 */
+	public function handle_external_redirects() {
+		if ( empty( $_GET['page'] ) ) {
+			return;
+		}
+
+		if ( 'go_cloud_hosting_plans' === $_GET['page'] ) {
+			wp_redirect( Cloud_Hosting_Plans_Menu_Item::get_url() );
+			die;
+		}
 	}
 
 	private function register_wp_menus() {
@@ -114,5 +142,58 @@ class Admin_Menu_Manager {
 				remove_submenu_page( $item->get_parent_slug(), $item_slug );
 			}
 		}
+	}
+}
+
+/**
+ * Cloud Hosting Plans Menu Item
+ */
+class Cloud_Hosting_Plans_Menu_Item implements Admin_Menu_Item_With_Page {
+	const URL = 'https://go.elementor.com/host-local-side-menu/';
+
+	public function is_visible() {
+		// Check WordPress environment type
+		$env_type = wp_get_environment_type();
+		if (in_array($env_type, ['development', 'local', 'staging'])) {
+			return true;
+		}
+
+		// Additional development environment checks as fallback
+		$ip = $_SERVER['REMOTE_ADDR'] ?? '';
+		$host = $_SERVER['HTTP_HOST'] ?? '';
+		
+		$is_dev = (
+			strpos($host, '.local') !== false ||
+			strpos($host, 'localhost') !== false ||
+			preg_match('/^192\.168\./', $ip) || // Local IPs
+			$ip === '127.0.0.1'
+		);
+
+		return $is_dev;
+	}
+
+	public function get_parent_slug() {
+		return 'edit.php?post_type=elementor_library';
+	}
+
+	public function get_label() {
+		return esc_html__( 'Cloud Hosting Plans', 'elementor' );
+	}
+
+	public function get_capability() {
+		return 'manage_options';
+	}
+
+	public function get_page_title() {
+		return esc_html__( 'Cloud Hosting Plans', 'elementor' );
+	}
+
+	public function render() {
+		// This should never be reached due to redirect
+		die;
+	}
+
+	public static function get_url() {
+		return self::URL;
 	}
 }
