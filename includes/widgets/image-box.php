@@ -787,7 +787,7 @@ class Widget_Image_Box extends Widget_Base {
 
 				$this->add_inline_editing_attributes( 'title_text', 'none' );
 
-				$title_html = $settings['title_text'];
+				$title_html = wp_kses_post( $settings['title_text'] );
 
 				if ( ! empty( $settings['link']['url'] ) ) {
 					$title_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $title_html . '</a>';
