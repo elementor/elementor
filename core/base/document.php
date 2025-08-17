@@ -735,7 +735,7 @@ abstract class Document extends Controls_Stack {
 				->map( fn( $element ) => $element->get_config() )
 				->all();
 
-			$config['widgets'] = array_merge( $widgets_config, $elements_config );
+			$config['widgets'] = array_merge( $elements_config, $widgets_config );
 			$config['elements'] = $this->get_elements_raw_data( null, true );
 		}
 
