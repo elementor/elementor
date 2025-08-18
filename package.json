@@ -48,7 +48,9 @@
     "setup:testing": "bash scripts/setup-testing.sh",
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
-    "packages:release": "cd packages && npm run release"
+    "packages:release": "cd packages && npm run release",
+    "ai:parse": "node .github/scripts/parse-logs.js",
+    "ai:run": "node .github/scripts/ai-run.js --prompt ./prompt.md --input ./artifacts/ai/parsed.json --outdir ./artifacts/ai"
   },
   "engines": {
     "node": ">=20.19.0",
