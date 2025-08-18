@@ -8,6 +8,7 @@ on:
         description: 'The site subdomain'
         required: true
 
+
 permissions:
   contents: write
   pull-requests: write
@@ -53,11 +54,7 @@ jobs:
           
           # Upload to SFTP server
           echo "Uploading elementor.zip to SFTP server..."
-          sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST << EOF
-          cd /html/wp-content/uploads
-          put elementor.zip
-          quit
-          EOF
+          printf "cd /html/wp-content/uploads\nput elementor.zip\nquit\n" | sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST
           
           echo ":white_check_mark: Plugin successfully uploaded to SFTP server"
           echo ":file_folder: File: /html/wp-content/uploads/elementor.zip"
@@ -108,11 +105,7 @@ jobs:
             
             # Delete the zip file after successful installation
             echo "Cleaning up: Deleting elementor.zip file via SFTP..."
-            sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST << EOF
-            cd /html/wp-content/uploads
-            rm elementor.zip
-            quit
-            EOF
+            printf "cd /html/wp-content/uploads\nrm elementor.zip\nquit\n" | sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST
             echo ":wastebasket:  Zip file successfully deleted via SFTP"
             
             echo ":rocket: Deployment completed successfully!"
