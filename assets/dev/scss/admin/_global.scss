@@ -14,7 +14,7 @@
 		// Menu Go Pro
 		a[href*="admin.php?page=go_elementor_pro"] {
 			font-weight: 600;
-			background-color: $wp-admin-brand-color;
+			background-color: $e-hosting-promotion;
 			color: $white;
 			margin: 3px 10px 0;
 			display: block;
@@ -24,7 +24,7 @@
 
 			&:hover,
 			&:focus {
-				background-color: lighten($wp-admin-brand-color, 10%);
+				background-color: $e-hosting-promotion-hover;
 				box-shadow: none;
 			}
 		}
