@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useCSSPropertyNavigation } from '../utils/css-property-navigation';
 import { type CSSPropertyMapping } from '../utils/css-property-search-map';
-import { semanticSearchCSSProperties } from '../utils/semantic-search';
+import { hybridCSSPropertySearch } from '../utils/hybrid-css-search';
 
 type SearchOption = CSSPropertyMapping & {
 	id: string;
@@ -17,33 +17,48 @@ type SearchOption = CSSPropertyMapping & {
 export const CSSPropertySearchBar = () => {
 	const [ inputValue, setInputValue ] = useState( '' );
 	const [ options, setOptions ] = useState< SearchOption[] >( [] );
+	const [ disableFiltering, setDisableFiltering ] = useState( false );
+	const [ searchType, setSearchType ] = useState< 'traditional' | 'fuzzy' | 'semantic' >( 'traditional' );
 	const { navigateToProperty } = useCSSPropertyNavigation();
 
 	// Track the latest search request to prevent race conditions
 	const latestSearchRef = useRef< string >( '' );
 	const debounceTimeoutRef = useRef< NodeJS.Timeout | null >( null );
 
-	// Debounced search function
+	// Initialize with empty options - only show results when user types
+
+	// Debounced search function using hybrid search strategy
 	const debouncedSearch = useCallback( async ( query: string ) => {
 		const currentSearch = query;
 		latestSearchRef.current = currentSearch;
 
 		try {
-			// Use semantic search for intelligent CSS property discovery
-			const semanticResults = await semanticSearchCSSProperties( query, 10, 0.2 );
+			// Use hybrid search: Traditional → Fuzzy → Semantic
+			const {
+				results,
+				searchType: resultType,
+				disableFiltering: shouldDisableFiltering,
+			} = await hybridCSSPropertySearch( query );
 
-			const searchOptions = semanticResults.map( ( mapping: CSSPropertyMapping ) => ( {
-				...mapping,
-				id: mapping.property,
-				label: mapping.displayName,
-				group: mapping.section,
-			} ) );
+			// Only update if this is still the latest search
+			if ( latestSearchRef.current === currentSearch ) {
+				const searchOptions = results.map( ( mapping: CSSPropertyMapping ) => ( {
+					...mapping,
+					id: mapping.property,
+					label: mapping.displayName,
+					group: mapping.section,
+				} ) );
 
-			setOptions( searchOptions );
+				setOptions( searchOptions );
+				setDisableFiltering( shouldDisableFiltering );
+				setSearchType( resultType );
+			}
 		} catch {
 			// Only clear options if this is still the latest search
 			if ( latestSearchRef.current === currentSearch ) {
 				setOptions( [] );
+				setDisableFiltering( false );
+				setSearchType( 'traditional' );
 			}
 		}
 	}, [] );
@@ -57,14 +72,22 @@ export const CSSPropertySearchBar = () => {
 			debounceTimeoutRef.current = null;
 		}
 
-		if ( value.length >= 2 ) {
-			// Debounce the search to avoid excessive API calls
+		if ( value.length === 0 ) {
+			// Clear options when input is empty - no suggestions until user types
+			setOptions( [] );
+			setDisableFiltering( false );
+			setSearchType( 'traditional' );
+			latestSearchRef.current = value;
+		} else if ( value.length >= 1 ) {
+			// Start searching immediately for any input
 			debounceTimeoutRef.current = setTimeout( () => {
 				debouncedSearch( value );
 			}, 300 ); // 300ms debounce delay
 		} else {
-			// Clear options immediately when input is too short
+			// Clear options for very short input
 			setOptions( [] );
+			setDisableFiltering( false );
+			setSearchType( 'traditional' );
 			latestSearchRef.current = value;
 		}
 	};
@@ -108,7 +131,9 @@ export const CSSPropertySearchBar = () => {
 				onInputChange={ ( e, value ) => {
 					handleInputChange( e, value );
 				} }
-				filterOptions={ ( x ) => x }
+				filterOptions={ disableFiltering ? ( x ) => x : undefined }
+				// Force open when we have options
+				open={ options.length > 0 ? true : undefined }
 				onChange={ handleOptionSelect }
 				getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
 				groupBy={ ( option ) => option.group }
@@ -147,11 +172,28 @@ export const CSSPropertySearchBar = () => {
 				renderInput={ ( params ) => (
 					<TextField
 						{ ...params }
-						placeholder={ __( 'Search CSS properties…', 'elementor' ) }
+						placeholder={ __( 'Search CSS properties or describe styling…', 'elementor' ) }
 						variant="outlined"
 						InputProps={ {
 							...params.InputProps,
-							startAdornment: <SearchIcon fontSize="tiny" sx={ { color: 'text.secondary', mr: 0.5 } } />,
+							startAdornment: (
+								<Box sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+									<SearchIcon fontSize="tiny" sx={ { color: 'text.secondary' } } />
+									{ searchType === 'semantic' && inputValue.length >= 2 && (
+										<Box
+											sx={ {
+												fontSize: '10px',
+												color: 'primary.main',
+												fontWeight: 'bold',
+												opacity: 0.7,
+											} }
+											title="Using AI semantic search"
+										>
+											AI
+										</Box>
+									) }
+								</Box>
+							),
 							sx: {
 								fontSize: 'inherit',
 								'& .MuiInputBase-input': {
