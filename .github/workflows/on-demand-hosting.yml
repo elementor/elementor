@@ -54,7 +54,7 @@ jobs:
           
           # Upload to SFTP server
           echo "Uploading elementor.zip to SFTP server..."
-          sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST << EOF
+          sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST << 'EOF'
           cd /html/wp-content/uploads
           put elementor.zip
           quit
@@ -109,7 +109,7 @@ jobs:
             
             # Delete the zip file after successful installation
             echo "Cleaning up: Deleting elementor.zip file via SFTP..."
-            sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST << EOF
+            sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST << 'EOF'
             cd /html/wp-content/uploads
             rm elementor.zip
             quit
@@ -123,3 +123,5 @@ jobs:
             echo "Response: $RESPONSE_BODY"
             exit 1
           fi
+
+
