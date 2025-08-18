@@ -344,6 +344,33 @@ jobs:
           AI_MAX_TOKENS: "2000"
           GITHUB_STEP_SUMMARY: ${{ github.step_summary }}
 
+      - name: Format AI JSON → Markdown
+        if: always()
+        run: |
+          node .github/scripts/format-report.js \
+            --input ./artifacts/ai/ai-report.json \
+            --out   ./artifacts/ai/ai-report.md
+
+      - name: Append to Job Summary
+        if: always()
+        run: |
+          if [ -f ./artifacts/ai/ai-report.md ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## AI Error Report" >> $GITHUB_STEP_SUMMARY
+            tail -n +1 ./artifacts/ai/ai-report.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No ai-report.md found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload AI report (MD)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-report-md
+          path: artifacts/ai/ai-report.md
+          if-no-files-found: ignore
+          retention-days: 2
+
       - name: Upload AI report
         if: always()
         uses: actions/upload-artifact@v4
