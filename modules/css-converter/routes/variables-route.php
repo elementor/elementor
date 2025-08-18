@@ -274,9 +274,6 @@ class VariablesRoute {
 	}
 
 	private function format_variable_label( string $css_var_name ): string {
-		$label = ltrim( $css_var_name, '-' );
-		$label = str_replace( '-', ' ', $label );
-		$label = ucwords( $label );
-		return $label;
+		return ltrim( $css_var_name, '-' );
 	}
 }
