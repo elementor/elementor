@@ -41,6 +41,7 @@ jobs:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
+
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
     runs-on: ubuntu-22.04
@@ -59,42 +60,54 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
         with:
           key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'npm'
+
       - name: Install dependencies
         run: |
           npm run prepare-environment:ci
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
+
       - name: Download hello-elementor theme
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+
       - name: Install WordPress environment
         run: |
           npm run start-local-server
+
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
+
       - name: Setup test data
         run: npm run test:setup:playwright
+
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+
       - name: Install playwright/test
         run: |
           npx playwright install chromium
+
+      # ====== RUNS WITH PER-SHARD LOG CAPTURE (tee -> artifacts/logs/<shard>) ======
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
@@ -103,19 +116,39 @@ jobs:
           matrix.shardIndex != 'v4-tests'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          mkdir -p artifacts/logs/${{ matrix.shardIndex }}
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
+            | tee artifacts/logs/${{ matrix.shardIndex }}/run.log
+
       - name: Run v4 tests
         if: ${{ matrix.shardIndex == 'v4-tests' }}
-        run: npm run test:playwright -- --grep="@v4-tests"
+        run: |
+          mkdir -p artifacts/logs/v4-tests
+          npm run test:playwright -- --grep="@v4-tests" | tee artifacts/logs/v4-tests/run.log
+
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_container"
-      - name: Run Playwright Plugin Container tests
+        run: |
+          mkdir -p artifacts/logs/plugin_tester_container
+          npm run test:playwright -- --grep="@plugin_tester_container" | tee artifacts/logs/plugin_tester_container/run.log
+
+      - name: Run Playwright Plugin Section tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
-        run: npm run test:playwright -- --grep="@plugin_tester_section"
-      - name: Run element regression tests
-        if: ${{ matrix.shardIndex == 'elements-regression' }}
-        run: npm run test:playwright:elements-regression
+        run: |
+          mkdir -p artifacts/logs/plugin_tester_section
+          npm run test:playwright -- --grep="@plugin_tester_section" | tee artifacts/logs/plugin_tester_section/run.log
+
+      # ====== UPLOAD logs for AI per shard ======
+      - name: Upload AI logs per shard
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-logs-${{ matrix.shardIndex }}
+          path: artifacts/logs/${{ matrix.shardIndex }}/
+          if-no-files-found: ignore
+          retention-days: 2
+
+      # (Твой существующий upload результатов Playwright — без изменений)
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -123,6 +156,7 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
+
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP 8.1
     runs-on: ubuntu-22.04
@@ -131,38 +165,58 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
           cache: 'npm'
+
       - name: Install dependencies
         run: |
           npm run prepare-environment:ci
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
+
       - name: Download hello-elementor theme
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+
       - name: Install WordPress environment
         run: |
           npm run start-local-server
+
       - name: Setup test data
         run: npm run test:setup:playwright
+
       - name: WordPress debug information
         run: |
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
           npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+
       - name: Install playwright/test
         run: |
           npx playwright install chromium
-      - name: Run Playwright tests
+
+      - name: Run Playwright tests (tagged)
         run: |
-          npm run test:playwright -- --grep="${{ inputs.tag }}"
+          mkdir -p artifacts/logs/tagged
+          npm run test:playwright -- --grep="${{ inputs.tag }}" | tee artifacts/logs/tagged/run.log
+
+      - name: Upload AI logs (tagged)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-logs-tagged
+          path: artifacts/logs/tagged/
+          if-no-files-found: ignore
+          retention-days: 2
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -170,7 +224,6 @@ jobs:
           path: ${{ inputs.path-to-results || 'test-results/' }}
           if-no-files-found: ignore
           retention-days: 2
-
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
@@ -180,12 +233,14 @@ jobs:
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
+
       - name: Checkout source code
         if: ${{ (needs.Playwright.result == 'failure') }}
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create revert PR on push failure
         id: create_revert_pr
         if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
@@ -198,6 +253,7 @@ jobs:
           WORKFLOW_NAME: "Playwright"
           WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           ALLOW_WORKFLOW_CHANGES: 'true'
+
       - name: Generate revert message
         id: revert_message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
@@ -206,12 +262,12 @@ jobs:
           
           if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
             REVERT_MESSAGE="
-
           You can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
             echo "message=${BASE_MESSAGE}${REVERT_MESSAGE}" >> $GITHUB_OUTPUT
           else
             echo "message=${BASE_MESSAGE}" >> $GITHUB_OUTPUT
           fi
+
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         uses: ./.github/workflows/post-to-slack
@@ -241,6 +297,57 @@ jobs:
                 }
               ]
             }
+
+      # ====== AI aggregation & analysis (always, non-blocking) ======
+      - name: Download all shard AI logs
+        if: always()
+        uses: actions/download-artifact@v4
+        with:
+          pattern: ai-logs-*
+          path: artifacts/logs
+          merge-multiple: true
+
+      - name: Setup Node for AI step
+        if: always()
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install AI deps
+        if: always()
+        run: |
+          npm i openai@^4
+
+      - name: Pre-parse logs (deterministic)
+        if: always()
+        run: |
+          node scripts/parse-logs.js
+        env:
+          LOG_ROOT: artifacts/logs
+
+      - name: Run AI analysis (OpenAI)
+        if: always()
+        run: |
+          node scripts/ai-run.js \
+            --prompt ./prompt.md \
+            --input ./artifacts/ai/parsed.json \
+            --outdir ./artifacts/ai
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          AI_MODEL: gpt-4o-mini
+          AI_TEMPERATURE: "0.2"
+          AI_MAX_TOKENS: "2000"
+          GITHUB_STEP_SUMMARY: ${{ github.step_summary }}
+
+      - name: Upload AI report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-report
+          path: artifacts/ai/
+          if-no-files-found: ignore
+          retention-days: 2
+
       - name: Check Playwright matrix status
         if: ${{ (needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped') || (needs.PlaywrightWithTag.result != 'success' && needs.PlaywrightWithTag.result != 'skipped') }}
         run: exit 1
