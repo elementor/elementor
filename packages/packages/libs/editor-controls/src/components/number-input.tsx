@@ -2,7 +2,7 @@ import * as React from 'react';
 import { forwardRef, useState } from 'react';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
-type NumberInputProps = TextFieldProps & {
+export type NumberInputProps = TextFieldProps & {
 	allowNegative?: boolean;
 };
 

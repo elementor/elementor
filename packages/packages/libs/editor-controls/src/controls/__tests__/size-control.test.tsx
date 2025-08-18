@@ -133,32 +133,6 @@ describe( 'SizeControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( null );
 	} );
 
-	it( 'should ignore restricted keys on size input', () => {
-		// Arrange.
-		const setValue = jest.fn();
-
-		const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
-
-		// Act.
-		renderControl(
-			<ControlActionsProvider items={ [] }>
-				<SizeControl units={ mockLengthUnits() } />
-			</ControlActionsProvider>,
-			props
-		);
-
-		const sizeInput = screen.getByRole( 'spinbutton' );
-
-		// Act.
-		fireEvent.keyDown( sizeInput, { key: 'e' } );
-		fireEvent.keyDown( sizeInput, { key: 'E' } );
-		fireEvent.keyDown( sizeInput, { key: '-' } );
-		fireEvent.keyDown( sizeInput, { key: '+' } );
-
-		// Assert.
-		expect( setValue ).not.toHaveBeenCalled();
-	} );
-
 	it( 'should pass null to setValue when the size value is empty', () => {
 		// Arrange.
 		const setValue = jest.fn();

@@ -321,6 +321,53 @@ describe( 'useBoundProp', () => {
 		expect( result.current.value ).toBe( '123' );
 	} );
 
+	it( 'should not set value when custom validation fails', () => {
+		// Arrange.
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				key: createMockPropType( {
+					kind: 'plain',
+				} ),
+			},
+		} );
+
+		const value = {
+			key: stringPropTypeUtil.create( 'initial value' ),
+		};
+
+		const setValue = jest.fn();
+
+		// Act.
+		const { result } = renderHook( () => useBoundProp( stringPropTypeUtil ), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
+					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		// Assert.
+		expect( result.current.value ).toBe( 'initial value' );
+
+		// Act.
+		act( () => {
+			result.current.setValue( 'invalid value', undefined, { validation: () => false } );
+		} );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
+		expect( result.current.value ).toBe( null );
+
+		// Act.
+		act( () => {
+			result.current.restoreValue();
+		} );
+
+		// Assert.
+		expect( result.current.value ).toBe( 'initial value' );
+	} );
+
 	it( 'should reset the valid state if the new value is valid', () => {
 		// Arrange.
 		const propType = createMockPropType( {
