@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
@@ -39,6 +39,7 @@ type BaseSizeControlProps = {
 	extendedOptions?: ExtendedOption[];
 	disableCustom?: boolean;
 	anchorRef?: RefObject< HTMLDivElement | null >;
+	allowNegative?: boolean;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -86,6 +87,7 @@ export const SizeControl = createControl(
 		anchorRef,
 		extendedOptions,
 		disableCustom,
+		allowNegative,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -102,9 +104,14 @@ export const SizeControl = createControl(
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
 		const popupState = usePopupState( { variant: 'popover' } );
 
+		const isSizeInputValid = useRef< boolean >( true );
+
 		const [ state, setState ] = useSyncExternalState( {
 			external: internalState,
-			setExternal: ( newState: State | null ) => setSizeValue( extractValueFromState( newState ) ),
+			setExternal: ( newState: State | null ) =>
+				setSizeValue( extractValueFromState( newState ), undefined, {
+					validation: () => isSizeInputValid.current,
+				} ),
 			persistWhen: ( newState ) => {
 				if ( ! newState?.unit ) {
 					return false;
@@ -135,13 +142,18 @@ export const SizeControl = createControl(
 		};
 
 		const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const { value: size } = event.target;
+			const {
+				value: size,
+				validity: { valid: isInputValid },
+			} = event.target;
 
 			if ( controlUnit === 'auto' ) {
 				setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );
 
 				return;
 			}
+
+			isSizeInputValid.current = isInputValid;
 
 			setState( ( prev ) => ( {
 				...prev,
@@ -207,6 +219,7 @@ export const SizeControl = createControl(
 					onBlur={ restoreValue }
 					onClick={ onInputClick }
 					popupState={ popupState }
+					allowNegative={ allowNegative }
 				/>
 				{ anchorRef?.current && (
 					<TextFieldPopover

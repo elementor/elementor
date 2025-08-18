@@ -9,13 +9,13 @@ import {
 	InputAdornment,
 	Menu,
 	styled,
-	TextField,
 	type TextFieldProps,
 	usePopupState,
 } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { DEFAULT_UNIT } from '../../utils/size-control';
+import { NumberInput } from '../number-input';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -30,6 +30,7 @@ type TextFieldInnerSelectionProps = {
 	};
 	disabled?: boolean;
 	isPopoverOpen?: boolean;
+	allowNegative?: boolean;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -45,6 +46,7 @@ export const TextFieldInnerSelection = forwardRef(
 			inputProps,
 			disabled,
 			isPopoverOpen,
+			allowNegative,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
@@ -55,7 +57,7 @@ export const TextFieldInnerSelection = forwardRef(
 		} );
 
 		return (
-			<TextField
+			<NumberInput
 				ref={ ref }
 				sx={ getCursorStyle() }
 				size="tiny"
@@ -70,6 +72,7 @@ export const TextFieldInnerSelection = forwardRef(
 				focused={ isPopoverOpen ? true : undefined }
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ inputProps }
+				allowNegative={ allowNegative }
 			/>
 		);
 	}
