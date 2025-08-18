@@ -22,14 +22,17 @@ const SIGNAL_PATTERNS = [
   / 5\d{2} /,          // HTTP 5xx
   / 4\d{2} /,          // HTTP 4xx
   /not found/i,
-  /selector/i
+  /selector/i,
+  /locator/i,
+  /getByRole/i,
+  /getByText/i,
+  /waitForSelector/i
 ];
 
 function isSignal(line) {
   return SIGNAL_PATTERNS.some((re) => re.test(line));
 }
 
-// Нормализация, чтобы схлопывать динамический шум
 function normalize(line) {
   return String(line)
     .replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g, "<ip>")
@@ -40,6 +43,11 @@ function normalize(line) {
     .replace(/\/Users\/[^ )]+/g, "<path>")
     .replace(/C:\\[^ )]+/gi, "<path>")
     .replace(/0x[a-f0-9]+/gi, "<addr>")
+    // Preserve important selectors and locators
+    .replace(/(locator\(['"]).+?(['"]\))/g, "$1<selector>$2")
+    .replace(/(getByRole\(['"]).+?(['"]\))/g, "$1<role>$2")  
+    .replace(/(getByText\(['"]).+?(['"]\))/g, "$1<text>$2")
+    .replace(/(waitForSelector\(['"]).+?(['"]\))/g, "$1<selector>$2")
     .slice(0, 400);
 }
 

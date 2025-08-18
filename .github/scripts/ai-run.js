@@ -56,9 +56,7 @@ function redact(str) {
     .replace(/https?:\/\/[^ \n"]+(@|:)[^ \n"]+/gi, "https://[REDACTED]");
 }
 function tryParseJsonFrom(text) {
-  // 1) чистый JSON
   try { return JSON.parse(text); } catch {}
-  // 2) JSON во fenced-блоке ```json ... ```
   const m = text.match(/```json\s*([\s\S]*?)```/);
   if (m) { try { return JSON.parse(m[1]); } catch {} }
   return null;
@@ -71,7 +69,6 @@ const systemMsg = `You are a precise log parser. Output only a valid JSON array 
 const userPrompt = fs.readFileSync(promptPath, "utf8");
 const inputData  = readSafe(inputPath).toString("utf8");
 
-// сохраняем превью запроса (без секретов)
 const preview = `=== USER PROMPT START ===
 ${userPrompt.trim().slice(0, 2000)}
 === USER PROMPT END ===
@@ -137,7 +134,7 @@ async function main() {
 
     if (!parsed) {
       console.error("AI did not return valid JSON. See response.raw.txt");
-      process.exitCode = 0; // мягко выходим, не валим CI
+      process.exitCode = 0;
     } else if (!Array.isArray(parsed)) {
       console.error("AI returned JSON, but not a JSON array. See response.raw.txt");
       process.exitCode = 0;

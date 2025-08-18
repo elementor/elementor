@@ -46,20 +46,17 @@ function shorten(msg = "", max = 200) {
 function listToCodeBlock(lines = []) {
   const clean = (lines || []).map(l => String(l || "")).filter(Boolean);
   if (!clean.length) return "";
-  // показываем максимум 3 строки, как и в твоей схеме
   const show = clean.slice(0, 3).join("\n");
   return "```\n" + show + "\n```";
 }
 
 function toDeterministicId(item, idx) {
-  // если нет id — подстрахуемся
   if (item?.id) return String(item.id);
   const file = (item?.file || "unknown").split("/").slice(-1)[0];
   const test = (item?.test || "test").slice(0, 40).replace(/\s+/g, "-").toLowerCase();
   return `${file}-${test}-${idx}`;
 }
 
-// Group by root causes для лучшего понимания
 function analyzeRootCauses(errors) {
   const causes = {
     'Page Loading Issues': [],
@@ -89,7 +86,6 @@ function analyzeRootCauses(errors) {
   return causes;
 }
 
-// Генерирует actionable recommendations
 function getActionItems(errorType, errors) {
   const recommendations = {
     'Page Loading Issues': [
@@ -125,7 +121,6 @@ function getActionItems(errorType, errors) {
   ];
 }
 
-// Создает более понятный заголовок
 function getReadableTitle(error) {
   const msg = (error.unique_error_messages?.[0] || '').toLowerCase();
   const test = error.test || 'Unknown Test';
@@ -139,7 +134,6 @@ function getReadableTitle(error) {
   return `❌ Test Failure - ${test}`;
 }
 
-// Определяет тип ошибки для одной ошибки (для рекомендаций)
 function getErrorType(error) {
   const msg = (error.unique_error_messages?.[0] || '').toLowerCase();
   
@@ -159,7 +153,7 @@ function getErrorType(error) {
 // ---------- main ----------
 if (!fs.existsSync(inPath)) {
   console.error(`Input JSON not found: ${inPath}`);
-  process.exit(0); // мягко выходим
+  process.exit(0);
 }
 
 let data;
@@ -175,7 +169,6 @@ if (!Array.isArray(data)) {
   process.exit(0);
 }
 
-// сортируем: сначала high, потом medium, low; внутри — failed/flaky/error; стабильный вывод
 const sevOrder = { high: 0, medium: 1, low: 2 };
 const stOrder  = { failed: 0, flaky: 1, error: 2 };
 data.sort((a, b) => {
@@ -223,7 +216,6 @@ if (ids.length) {
 
 const rootCauses = analyzeRootCauses(data);
 
-// Добавим секцию Root Causes Analysis
 md += "\n## 🎯 Root Causes Analysis\n\n";
 
 Object.keys(rootCauses).forEach(causeType => {
@@ -232,7 +224,6 @@ Object.keys(rootCauses).forEach(causeType => {
 
   md += `### ${causeType} (${errors.length} error${errors.length > 1 ? 's' : ''})\n\n`;
 
-  // Показать краткие детали
   errors.slice(0, 3).forEach(err => {
     md += `- **${getReadableTitle(err)}** - ${err.retries_observed} retries\n`;
   });
@@ -269,7 +260,6 @@ for (let i = 0; i < data.length; i++) {
   md += `**File:** \`${esc(x.file || "")}\`\n\n`;
   md += `**Status:** **${st}**  •  **Severity:** **${sev}**  •  **Retries:** ${re}\n\n`;
 
-  // Показать либо Error Message, либо Log Snippets (избегаем дублирования)
   if (errMsg) {
     md += `**Error Details:**\n`;
     md += "```\n" + shorten(errMsg, 600) + "\n```\n\n";
@@ -285,7 +275,6 @@ for (let i = 0; i < data.length; i++) {
     md += `**Impact:**\n${esc(x.impact)}\n\n`;
   }
   
-  // Добавить конкретные рекомендации для этой ошибки
   const errorType = getErrorType(x);
   const specificActions = getActionItems(errorType, [x]);
   if (specificActions.length > 0) {
