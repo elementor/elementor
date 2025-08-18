@@ -2,7 +2,8 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { NumberInput, type NumberInputProps } from '../number-input';
+import { NumberInput } from '../number-input';
+import { TextFieldProps } from '@elementor/ui';
 
 describe( 'NumberInput', () => {
 	const defaultProps = {
@@ -18,7 +19,7 @@ describe( 'NumberInput', () => {
 
 		const onKeyDown = jest.fn();
 
-		const setup = ( props: NumberInputProps = {} ) => {
+		const setup = ( props: TextFieldProps = {} ) => {
 			renderWithTheme( <NumberInput { ...defaultProps } onKeyDown={ onKeyDown } { ...props } /> );
 		};
 
@@ -53,7 +54,7 @@ describe( 'NumberInput', () => {
 
 		it( 'should allow "-" when negative values are allowed', () => {
 			// Arrange.
-			setup( { allowNegative: true } );
+			setup( { inputProps: { min: Number.MIN_VALUE } } );
 
 			// Act.
 			enterKey( '-' );
@@ -79,7 +80,7 @@ describe( 'NumberInput', () => {
 		const onChange = jest.fn();
 		const onBlur = jest.fn();
 
-		const setup = ( props: NumberInputProps = {} ) => {
+		const setup = ( props: TextFieldProps = {} ) => {
 			renderWithTheme( <NumberInput { ...defaultProps } onChange={ onChange } onBlur={ onBlur } { ...props } /> );
 		};
 

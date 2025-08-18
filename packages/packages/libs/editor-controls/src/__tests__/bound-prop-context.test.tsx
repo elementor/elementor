@@ -305,7 +305,7 @@ describe( 'useBoundProp', () => {
 
 		// Act.
 		act( () => {
-			result.current.setValue( null );
+			result.current.setValue( null, undefined, { validation: () => true } );
 		} );
 
 		// Assert.

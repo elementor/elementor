@@ -2,17 +2,13 @@ import * as React from 'react';
 import { forwardRef, useState } from 'react';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
-export type NumberInputProps = TextFieldProps & {
-	allowNegative?: boolean;
-};
-
 const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+' ];
 
-export const NumberInput = forwardRef( ( { allowNegative = false, ...props }: NumberInputProps, ref ) => {
-	const [ key, setKey ] = useState< string | null >( null );
+export const NumberInput = forwardRef( ( props: TextFieldProps, ref ) => {
+	const [ key, setKey ] = useState< number >( 0 );
 
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
-		blockRestrictedKeys( event, allowNegative );
+		blockRestrictedKeys( event, props.inputProps?.min );
 
 		props.onKeyDown?.( event );
 	};
@@ -23,31 +19,19 @@ export const NumberInput = forwardRef( ( { allowNegative = false, ...props }: Nu
 		const { valid } = event.target.validity;
 
 		// HTML number input quirk: invalid input (e.g. "-9-") returns value="" but displays "-9-" to user,
-		// so when we revert to last valid value we must re-render the component to actually display it.
+		// so when we revert to last valid value we must re-mount the component to actually display it.
 		if ( ! valid ) {
-			setKey( String( Math.random() ) );
+			setKey( ( prev ) => prev + 1 );
 		}
 	};
 
-	return (
-		<TextField
-			{ ...props }
-			ref={ ref }
-			key={ key }
-			onKeyDown={ handleKeyDown }
-			onBlur={ handleBlur }
-			inputProps={ {
-				...props.inputProps,
-				min: props.inputProps?.min ?? ( allowNegative ? undefined : 0 ),
-			} }
-		/>
-	);
+	return <TextField { ...props } ref={ ref } key={ key } onKeyDown={ handleKeyDown } onBlur={ handleBlur } />;
 } );
 
-function blockRestrictedKeys( event: React.KeyboardEvent< HTMLInputElement >, allowNegative: boolean ) {
+function blockRestrictedKeys( event: React.KeyboardEvent< HTMLInputElement >, min: boolean ) {
 	const restrictedInputKeys = [ ...RESTRICTED_INPUT_KEYS ];
 
-	if ( ! allowNegative ) {
+	if ( ! min ) {
 		restrictedInputKeys.push( '-' );
 	}
 

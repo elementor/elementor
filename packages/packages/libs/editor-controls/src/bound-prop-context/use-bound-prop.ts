@@ -82,11 +82,11 @@ const useValidation = ( propType: PropType ) => {
 	const validate = ( value: PropValue | null, validation?: ( value: PropValue ) => boolean ) => {
 		let valid = true;
 
-		if ( validation ) {
-			valid = validation( value );
+		if ( propType.settings.required && value === null ) {
+			valid = false;
 		}
 
-		if ( propType.settings.required && value === null ) {
+		if ( validation && ! validation( value ) ) {
 			valid = false;
 		}
 

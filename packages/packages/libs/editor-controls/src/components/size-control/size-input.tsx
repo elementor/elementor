@@ -20,7 +20,7 @@ type SizeInputProps = {
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
 	disabled?: boolean;
-	allowNegative?: boolean;
+	min?: number;
 };
 
 export const SizeInput = ( {
@@ -36,7 +36,7 @@ export const SizeInput = ( {
 	unit,
 	popupState,
 	disabled,
-	allowNegative,
+	min,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -70,7 +70,7 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
-	const inputProps = {
+	const InputProps = {
 		...popupAttributes,
 		readOnly: isUnitExtendedOption( unit ),
 		autoComplete: 'off',
@@ -112,9 +112,9 @@ export const SizeInput = ( {
 					onChange={ handleSizeChange }
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
-					inputProps={ inputProps }
+					InputProps={ InputProps }
+					inputProps={ { min } }
 					isPopoverOpen={ popupState.isOpen }
-					allowNegative={ allowNegative }
 				/>
 			</Box>
 		</ControlActions>

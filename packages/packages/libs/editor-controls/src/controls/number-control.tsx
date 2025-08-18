@@ -57,7 +57,7 @@ export const NumberControl = createControl(
 					onChange={ handleChange }
 					onBlur={ restoreValue }
 					placeholder={ labelPlaceholder ?? ( isEmptyOrNaN( placeholder ) ? '' : String( placeholder ) ) }
-					inputProps={ { step } }
+					inputProps={ { step, min } }
 					InputProps={ {
 						startAdornment: startIcon ? (
 							<InputAdornment position="start" disabled={ disabled }>
@@ -65,7 +65,6 @@ export const NumberControl = createControl(
 							</InputAdornment>
 						) : undefined,
 					} }
-					allowNegative={ min < 0 }
 				/>
 			</ControlActions>
 		);
