@@ -23,6 +23,8 @@ export default class ImportExportCustomization {
 
 		this.registerImportExportTemplate();
 		this.registerImportExportSiteSettings();
+
+		window.dispatchEvent( new CustomEvent('elementor/import-export-customization/sections-registered') );
 	}
 
 	registerImportExportTemplate() {
