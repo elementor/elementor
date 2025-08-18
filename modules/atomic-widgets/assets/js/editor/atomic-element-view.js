@@ -1,11 +1,11 @@
-import DivBlockEmptyView from './container/div-block-empty-view';
+import AtomicElementEmptyView from './container/atomic-element-empty-view';
 import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = elementor.modules.elements.views.BaseElement;
-const DivBlockView = BaseElementView.extend( {
-	template: Marionette.TemplateCache.get( '#tmpl-elementor-e-div-block-content' ),
+export default ( type ) => BaseElementView.extend( {
+	template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
-	emptyView: DivBlockEmptyView,
+	emptyView: AtomicElementEmptyView,
 
 	tagName() {
 		if ( this.haveLink() ) {
@@ -22,6 +22,18 @@ const DivBlockView = BaseElementView.extend( {
 		this.childViewContainer = '';
 
 		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
+	},
+
+	getChildType() {
+		const atomicElements = Object.entries( elementor.config.elements )
+			.filter( ( [ , element ] ) => !! element?.atomic_props_schema )
+			.map( ( [ elType ] ) => elType );
+
+		return [
+			'widget',
+			'container',
+			...atomicElements,
+		];
 	},
 
 	className() {
@@ -239,7 +251,7 @@ const DivBlockView = BaseElementView.extend( {
 			},
 		} );
 
-		return elementor.hooks.applyFilters( 'elements/e-div-block/behaviors', behaviors, this );
+		return elementor.hooks.applyFilters( `elements/${ type }/behaviors`, behaviors, this );
 	},
 
 	/**
@@ -507,5 +519,3 @@ const DivBlockView = BaseElementView.extend( {
 		return 0 === this.model.collection.indexOf( this.model );
 	},
 } );
-
-module.exports = DivBlockView;
