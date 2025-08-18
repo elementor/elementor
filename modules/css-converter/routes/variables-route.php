@@ -150,11 +150,21 @@ class VariablesRoute {
 		$vars_path = $logs_dir . '/' . $basename . '-variables.txt';
 		file_put_contents( $vars_path, implode( "\n", $lines ) );
 
+		$seen_names = [];
 		$normalized = [];
 		foreach ( $raw as $item ) {
+			$name = isset( $item['name'] ) ? $item['name'] : '';
+			$value = isset( $item['value'] ) ? $item['value'] : '';
+			if ( $name === '' ) {
+				continue;
+			}
+			if ( isset( $seen_names[ $name ] ) ) {
+				continue;
+			}
+			$seen_names[ $name ] = true;
 			$normalized[] = [
-				'name' => isset( $item['name'] ) ? $item['name'] : '',
-				'value' => isset( $item['value'] ) ? $item['value'] : '',
+				'name' => $name,
+				'value' => $value,
 			];
 		}
 
