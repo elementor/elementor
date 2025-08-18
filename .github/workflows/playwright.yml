@@ -1,4 +1,4 @@
-name: Playwright
+name: Playwright test
 
 on:
   pull_request:
@@ -203,7 +203,7 @@ jobs:
         if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
         run: |
           BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          
+
           if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
             REVERT_MESSAGE="
 
