@@ -32,17 +32,14 @@ export const CSSPropertySearchBar = () => {
 			// Use semantic search for intelligent CSS property discovery
 			const semanticResults = await semanticSearchCSSProperties( query, 10, 0.2 );
 
-			// Only update options if this is still the latest search
-			if ( latestSearchRef.current === currentSearch ) {
-				const searchOptions = semanticResults.map( ( mapping: CSSPropertyMapping ) => ( {
-					...mapping,
-					id: mapping.property,
-					label: mapping.displayName,
-					group: mapping.section,
-				} ) );
+			const searchOptions = semanticResults.map( ( mapping: CSSPropertyMapping ) => ( {
+				...mapping,
+				id: mapping.property,
+				label: mapping.displayName,
+				group: mapping.section,
+			} ) );
 
-				setOptions( searchOptions );
-			}
+			setOptions( searchOptions );
 		} catch {
 			// Only clear options if this is still the latest search
 			if ( latestSearchRef.current === currentSearch ) {
@@ -108,7 +105,10 @@ export const CSSPropertySearchBar = () => {
 				forcePopupIcon={ false }
 				options={ options }
 				inputValue={ inputValue }
-				onInputChange={ handleInputChange }
+				onInputChange={ ( e, value ) => {
+					handleInputChange( e, value );
+				} }
+				filterOptions={ ( x ) => x }
 				onChange={ handleOptionSelect }
 				getOptionLabel={ ( option ) => ( typeof option === 'string' ? option : option.label ) }
 				groupBy={ ( option ) => option.group }

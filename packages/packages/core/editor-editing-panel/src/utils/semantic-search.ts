@@ -48,6 +48,24 @@ async function initializeFeatureExtractor(): Promise< FeatureExtractionPipeline 
 }
 
 /**
+ * Preload the semantic search model to improve first search performance
+ * This should be called during application initialization
+ */
+export async function preloadSemanticSearchModel(): Promise< void > {
+	try {
+		// eslint-disable-next-line no-console
+		console.log( '[SemanticSearch] Preloading semantic search model...' );
+		await initializeFeatureExtractor();
+		// eslint-disable-next-line no-console
+		console.log( '[SemanticSearch] Model preloaded successfully' );
+	} catch ( error ) {
+		// eslint-disable-next-line no-console
+		console.warn( '[SemanticSearch] Failed to preload model:', error );
+		// Don't throw - we want the app to continue working even if preload fails
+	}
+}
+
+/**
  * Generate embedding for a single text
  * @param text
  */

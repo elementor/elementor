@@ -8,6 +8,7 @@ import { panel } from './panel';
 import { initResetStyleProps } from './reset-style-props';
 import { init as initStylesInheritance } from './styles-inheritance/init';
 import { isAtomicWidgetSelected } from './sync/is-atomic-widget-selected';
+import { preloadSemanticSearchModel } from './utils/semantic-search';
 
 export function init() {
 	registerPanel( panel );
@@ -25,6 +26,9 @@ export function init() {
 	initStylesInheritance();
 
 	initResetStyleProps();
+
+	// Preload semantic search model for improved search performance
+	preloadSemanticSearchModel();
 }
 
 const blockV1Panel = () => {
