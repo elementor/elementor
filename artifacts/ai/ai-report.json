@@ -1,0 +1,35 @@
+{
+  "summary": {
+    "totalRuns": 1,
+    "totalFailures": 1,
+    "topClusters": [
+      {
+        "id": "C1",
+        "count": 1
+      }
+    ],
+    "suspectedSide": "Core"
+  },
+  "clusters": [
+    {
+      "id": "C1",
+      "count": 1,
+      "runs": [
+        "1"
+      ],
+      "example": "TimeoutError: waiting for .elementor-document-handle__inner"
+    }
+  ],
+  "actions": [
+    "Investigate the timeout issue with `.elementor-document-handle__inner`.",
+    "Increase the timeout duration for the failing selector.",
+    "Check for recent changes in the Core related to the element.",
+    "Validate the element's presence in the DOM before the timeout.",
+    "Re-run the test with retries disabled for clearer results.",
+    "Review logs for any environmental issues during the run.",
+    "Ensure that the Playwright version is compatible with the current Elementor version.",
+    "Consider adding a wait condition before the selector is accessed.",
+    "Document the failure for future reference.",
+    "Monitor for similar failures in upcoming CI runs."
+  ]
+}

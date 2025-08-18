@@ -3,9 +3,9 @@
 // Usage: node scripts/parse-logs.js
 // Env: LOG_ROOT (default: artifacts/logs), OUT (default: artifacts/ai/parsed.json)
 
-import fs from "node:fs";
-import path from "node:path";
-import process from "node:process";
+const fs = require("node:fs");
+const path = require("node:path");
+const process = require("node:process");
 
 const LOG_ROOT = process.env.LOG_ROOT || "artifacts/logs";
 const OUT_DIR  = path.dirname(process.env.OUT || "artifacts/ai/parsed.json");

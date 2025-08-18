@@ -1,19 +1,19 @@
 // scripts/ai-run.js
 // Usage:
 //   node scripts/ai-run.js --prompt ./prompt.md --input ./artifacts/ai/parsed.json --outdir ./artifacts/ai
-// Env:
-//   OPENAI_API_KEY (required)
+// Env (required):
+//   OPENAI_API_KEY
+// Env (optional):
 //   AI_MODEL (default: gpt-4o-mini), AI_TEMPERATURE (0.2), AI_MAX_TOKENS (2000)
 
-import fs from "node:fs";
-import path from "node:path";
-import process from "node:process";
-import OpenAI from "openai";
+const fs = require("node:fs");
+const path = require("node:path");
+const process = require("node:process");
 
+// ---------- args & env ----------
 function arg(name, fallback) {
-  const idx = process.argv.indexOf(name);
-  if (idx !== -1 && process.argv[idx + 1]) return process.argv[idx + 1];
-  return fallback;
+  const i = process.argv.indexOf(name);
+  return i !== -1 && process.argv[i + 1] ? process.argv[i + 1] : fallback;
 }
 
 const promptPath = arg("--prompt");
@@ -26,21 +26,23 @@ if (!promptPath || !inputPath) {
   process.exit(2);
 }
 
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey      = process.env.OPENAI_API_KEY;
+const model       = process.env.AI_MODEL || "gpt-4o-mini";
+const temperature = Number(process.env.AI_TEMPERATURE ?? 0.2);
+const maxTokens   = Number(process.env.AI_MAX_TOKENS ?? 2000);
+
 if (!apiKey) {
   console.error("OPENAI_API_KEY is not set");
   process.exit(2);
 }
-const model = process.env.AI_MODEL || "gpt-4o-mini";
-const temperature = Number(process.env.AI_TEMPERATURE ?? 0.2);
-const maxTokens   = Number(process.env.AI_MAX_TOKENS ?? 2000);
 
+// ---------- paths ----------
 fs.mkdirSync(outdir, { recursive: true });
-const OUT_MD   = path.join(outdir, "ai-report.md");
 const OUT_JSON = path.join(outdir, "ai-report.json");
 const RAW_REQ  = path.join(outdir, "request.preview.txt");
 const RAW_RES  = path.join(outdir, "response.raw.txt");
 
+// ---------- utils ----------
 function readSafe(p) {
   const buf = fs.readFileSync(p);
   return buf.length > maxBytes ? buf.subarray(0, maxBytes) : buf;
@@ -53,21 +55,23 @@ function redact(str) {
     .replace(/(cookie:\s*)[^;\n]+/gi, "$1[REDACTED]")
     .replace(/https?:\/\/[^ \n"]+(@|:)[^ \n"]+/gi, "https://[REDACTED]");
 }
-function parseJsonBlock(text) {
+function tryParseJsonFrom(text) {
+  // 1) чистый JSON
+  try { return JSON.parse(text); } catch {}
+  // 2) JSON во fenced-блоке ```json ... ```
   const m = text.match(/```json\s*([\s\S]*?)```/);
-  if (!m) return null;
-  try { return JSON.parse(m[1]); } catch { return null; }
+  if (m) { try { return JSON.parse(m[1]); } catch {} }
+  return null;
 }
 async function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 
-const client = new OpenAI({ apiKey });
-
-const systemMsg = `You are a senior QA specialized in Playwright and Elementor. Be concise, factual, and actionable. If evidence is weak, say so.`;
+// ---------- build messages ----------
+const systemMsg = `You are a precise log parser. Output only a valid JSON array per instructions. If a URL is private, respond exactly: "I cannot access the URL — please paste the log contents here." and stop.`;
 
 const userPrompt = fs.readFileSync(promptPath, "utf8");
 const inputData  = readSafe(inputPath).toString("utf8");
 
-// сохранить превью запроса (без секретов)
+// сохраняем превью запроса (без секретов)
 const preview = `=== USER PROMPT START ===
 ${userPrompt.trim().slice(0, 2000)}
 === USER PROMPT END ===
@@ -78,51 +82,82 @@ ${redact(inputData).slice(0, maxBytes)}
 `;
 fs.writeFileSync(RAW_REQ, preview);
 
-async function callWithRetry(body, tries = 3) {
+// ---------- OpenAI call via fetch (no SDK) ----------
+async function callOpenAI({ messages, tries = 3, timeoutMs = 60_000 }) {
   let backoff = 300;
   for (let i = 0; i < tries; i++) {
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), timeoutMs);
     try {
-      return await client.chat.completions.create(body);
-    } catch (e) {
-      const status = e?.status ?? e?.response?.status;
-      const retryable = status === 429 || (status >= 500 && status < 600);
-      if (!retryable || i === tries - 1) throw e;
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model,
+          temperature,
+          max_tokens: maxTokens,
+          messages
+        }),
+        signal: controller.signal
+      });
+      clearTimeout(t);
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(`OpenAI HTTP ${res.status}: ${txt.slice(0, 500)}`);
+      }
+      const json = await res.json();
+      return json;
+    } catch (err) {
+      clearTimeout(t);
+      const msg = String(err?.message || err);
+      const retryable = /429|5\d\d|network|fetch|aborted|timeout/i.test(msg);
+      if (!retryable || i === tries - 1) throw err;
       await sleep(backoff);
       backoff *= 2;
     }
   }
 }
 
-const body = {
-  model,
-  temperature,
-  max_tokens: maxTokens,
-  messages: [
+// ---------- run ----------
+async function main() {
+  const messages = [
     { role: "system", content: systemMsg },
-    { role: "user", content: `${userPrompt.trim()}\n\nDATA:\n${redact(inputData).slice(0, maxBytes)}` }
-  ]
-};
+    { role: "user",   content: `${userPrompt.trim()}\n\nDATA:\n${redact(inputData).slice(0, maxBytes)}` }
+  ];
 
-try {
-  const resp = await callWithRetry(body);
-  const text = resp.choices?.[0]?.message?.content || "";
-  fs.writeFileSync(OUT_MD, text);
-  fs.writeFileSync(RAW_RES, text);
+  try {
+    const resp = await callOpenAI({ messages, tries: 3 });
+    const text = resp?.choices?.[0]?.message?.content ?? "";
+    fs.writeFileSync(RAW_RES, text);
 
-  const j = parseJsonBlock(text);
-  if (j) fs.writeFileSync(OUT_JSON, JSON.stringify(j, null, 2));
+    const parsed = tryParseJsonFrom(text);
 
-  if (process.env.GITHUB_STEP_SUMMARY) {
-    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `\n\n## AI Log Analysis\n\n` + text);
+    if (!parsed) {
+      console.error("AI did not return valid JSON. See response.raw.txt");
+      process.exitCode = 0; // мягко выходим, не валим CI
+    } else if (!Array.isArray(parsed)) {
+      console.error("AI returned JSON, but not a JSON array. See response.raw.txt");
+      process.exitCode = 0;
+    } else {
+      fs.writeFileSync(OUT_JSON, JSON.stringify(parsed, null, 2));
+      console.log("✅ AI JSON report saved:", OUT_JSON);
+
+      if (process.env.GITHUB_STEP_SUMMARY) {
+        const ids = parsed.map(x => x?.id).filter(Boolean);
+        const summary = `Found **${parsed.length}** error instance(s).` + (ids.length ? `\n\nIDs: ${ids.join(", ")}` : "");
+        fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `\n\n## AI Error Extraction\n\n${summary}\n`);
+      }
+    }
+  } catch (err) {
+    console.error("AI call failed (non-blocking):", err?.message || String(err));
+    process.exitCode = 0;
   }
-
-  console.log("✅ AI report saved:");
-  console.log(" -", OUT_MD);
-  if (j) console.log(" -", OUT_JSON);
-  console.log(" -", RAW_REQ, "(request preview)");
-  console.log(" -", RAW_RES, "(raw response)");
-  if (resp.usage) console.log("Usage:", resp.usage);
-} catch (err) {
-  console.error("AI call failed (non-blocking):", err?.message || String(err));
-  process.exitCode = 0;
 }
+
+main().catch(err => {
+  console.error("Unhandled error:", err);
+  process.exitCode = 1;
+});
