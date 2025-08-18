@@ -44,6 +44,10 @@ class Module extends BaseModule {
 			if ( function_exists( 'error_log' ) ) {
 				error_log( 'CSS Converter module failed to initialize: ' . $e->getMessage() );
 			}
+
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ){
+				throw $e;
+			}
 		}
 	}
 

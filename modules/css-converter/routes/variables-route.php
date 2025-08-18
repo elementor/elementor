@@ -375,7 +375,12 @@ class VariablesRoute {
 	private function map_converted_type_to_repository_type( string $converted_type ): ?string {
 		switch ( $converted_type ) {
 			case 'color-hex':
+			case 'color-rgb':
+			case 'color-rgba':
 				return 'global-color-variable';
+			case 'size-length-viewport':
+			case 'size-percentage':
+				return 'global-size-variable';
 			// Future mapping examples:
 			// case 'font-family':
 			// return 'global-font-variable';

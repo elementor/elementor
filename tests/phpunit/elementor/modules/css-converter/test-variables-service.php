@@ -25,7 +25,6 @@ class Test_Variables_Service extends Elementor_Test_Base {
 		$values = array_column( $result, 'value' );
 		$this->assertContains( '#eeeeee', $values );
 		$ids = array_column( $result, 'id' );
-		print_r( $ids );
 		$this->assertContains( 'e-gv-color-hex-primary-color-variable', $ids );
 	}
 
@@ -67,5 +66,22 @@ class Test_Variables_Service extends Elementor_Test_Base {
 
 		$this->assertSame( 'rgb(0, 255, 0)', $result[3]['value'] );
 		$this->assertSame( 'rgba(0, 255, 0, 0.5)', $result[4]['value'] );
+	}
+
+	public function test_variables_from_css_string__size_variables_variations() {
+		$mockParser = $this->createMock(CssParser::class);
+		$mockParsedCss = $this->createMock(ParsedCss::class);
+		$mockParser->method('parse')->willReturn($mockParsedCss);
+
+		$mockParser->method('extract_variables')->willReturn([
+			['name' => '--size-1', 'value' => '16px'],
+		]);
+
+		$service = new Variables_Service($mockParser);
+		$result = $service->variables_from_css_string(':root { /* ... any css ... */ }');
+
+		$this->assertIsArray( $result );
+		$this->assertCount( 1, $result );
+		$this->assertSame( '16px', $result[0]['value'] );
 	}
 }
