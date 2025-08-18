@@ -321,14 +321,14 @@ jobs:
       - name: Pre-parse logs (deterministic)
         if: always()
         run: |
-          node scripts/parse-logs.js
+          node .github/scripts/parse-logs.js
         env:
           LOG_ROOT: artifacts/logs
 
       - name: Run AI analysis (OpenAI)
         if: always()
         run: |
-          node scripts/ai-run.js \
+          node .github/scripts/ai-run.js \
             --prompt ./prompt.md \
             --input ./artifacts/ai/parsed.json \
             --outdir ./artifacts/ai

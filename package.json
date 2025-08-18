@@ -48,8 +48,11 @@
     "setup:testing": "bash scripts/setup-testing.sh",
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
-    "packages:release": "cd packages && npm run release"
+    "packages:release": "cd packages && npm run release",
+    "ai:parse": "node .github/scripts/parse-logs.js",
+    "ai:run": "node .github/scripts/ai-run.js --prompt ./prompt.md --input ./artifacts/ai/parsed.json --outdir ./artifacts/ai"
   },
+  "type": "module",
   "engines": {
     "node": ">=20.19.0",
     "npm": ">=10.0.0"
@@ -162,7 +165,8 @@
     "react-markdown": "^8.0.5",
     "react-redux": "^7.2.6",
     "react-sketch-canvas": "^6.2.0",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "openai": "^4.57.0"
   },
   "overrides": {
     "react": "^18.2.0",
