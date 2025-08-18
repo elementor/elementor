@@ -49,6 +49,7 @@ jobs:
           # Upload to SFTP server
           echo "Uploading elementor-plugin.zip to SFTP server..."
           sshpass -p 'fxkVvDNT6gi74T91' sftp -P 32022 -o StrictHostKeyChecking=no lSVllGgK@sftp.stg.elementor.cool << EOF
+          cd ~
           put elementor-plugin.zip
           quit
           EOF
