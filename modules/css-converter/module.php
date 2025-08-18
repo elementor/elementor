@@ -26,9 +26,9 @@ class Module extends BaseModule {
 
 	private function is_test_environment(): bool {
 		return defined( 'WP_TESTS_DOMAIN' ) ||
-			   defined( 'PHPUNIT_COMPOSER_INSTALL' ) ||
-			   isset( $_ENV['PHPUNIT_RUNNING'] ) ||
-			   ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() && $this->is_phpunit_ajax_request() );
+				defined( 'PHPUNIT_COMPOSER_INSTALL' ) ||
+				isset( $_ENV['PHPUNIT_RUNNING'] ) ||
+				( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() && $this->is_phpunit_ajax_request() );
 	}
 
 	private function is_phpunit_ajax_request(): bool {

@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Exceptions\CssParseException;
 use Elementor\Modules\CssConverter\Variable_Conversion_Service;
+use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+use Elementor\Plugin;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -173,9 +175,9 @@ class VariablesRoute {
 			],
 		];
 
-		// TODO: Implement saving of variables.
-		// We are saving the variables to a file for testing purposes only
-		$this->save_editor_variables( $converted );
+		$stored_variables = $this->save_editor_variables( $converted );
+
+		$results['stored_variables'] = $stored_variables;
 
 		return new WP_REST_Response( $results, 200 );
 	}
@@ -269,8 +271,107 @@ class VariablesRoute {
 	}
 
 	private function save_editor_variables( array $variables ): array {
-		// TODO: Implement saving of variables.
-		return [];
+		$repository = new Variables_Repository(
+			Plugin::$instance->kits_manager->get_active_kit()
+		);
+
+		// Build an index of existing variables by lowercase label for quick lookups.
+		$db_record = $repository->load();
+		$existing = isset( $db_record['data'] ) && is_array( $db_record['data'] ) ? $db_record['data'] : [];
+		$label_to_id = [];
+		foreach ( $existing as $id => $item ) {
+			if ( isset( $item['deleted'] ) && $item['deleted'] ) {
+				continue;
+			}
+			if ( isset( $item['label'] ) && is_string( $item['label'] ) ) {
+				$label_to_id[ strtolower( $item['label'] ) ] = $id;
+			}
+		}
+
+		$created = 0;
+		$updated = 0;
+		$errors = [];
+
+		foreach ( $variables as $variable ) {
+			// Expecting shape: [ 'id' => string, 'type' => string, 'value' => string, 'name' => string ]
+			$name = isset( $variable['name'] ) ? (string) $variable['name'] : '';
+			$value = isset( $variable['value'] ) ? (string) $variable['value'] : '';
+			$type = isset( $variable['type'] ) ? (string) $variable['type'] : '';
+
+			if ( '' === $name || '' === $value ) {
+				continue;
+			}
+
+			$label = $this->format_variable_label( $name );
+			$mapped_type = $this->map_converted_type_to_repository_type( $type );
+
+			if ( null === $mapped_type ) {
+				$errors[] = [
+					'name' => $name,
+					'reason' => 'unsupported_type',
+					'type' => $type,
+				];
+				continue;
+			}
+
+			$lower_label = strtolower( $label );
+			try {
+				if ( isset( $label_to_id[ $lower_label ] ) ) {
+					$repository->update( $label_to_id[ $lower_label ], [
+						'label' => $label,
+						'value' => $value,
+					] );
+					++$updated;
+				} else {
+					$repository->create( [
+						'type' => $mapped_type,
+						'label' => $label,
+						'value' => $value,
+					] );
+					++$created;
+					// Refresh mapping to include the just-created label for subsequent iterations.
+					$db_record = $repository->load();
+					$existing = isset( $db_record['data'] ) && is_array( $db_record['data'] ) ? $db_record['data'] : [];
+					foreach ( $existing as $id => $item ) {
+						if ( isset( $item['deleted'] ) && $item['deleted'] ) {
+							continue;
+						}
+						if ( isset( $item['label'] ) && is_string( $item['label'] ) ) {
+							$label_to_id[ strtolower( $item['label'] ) ] = $id;
+						}
+					}
+				}
+			} catch ( \Throwable $e ) {
+				$errors[] = [
+					'name' => $name,
+					'reason' => 'exception',
+					'message' => $e->getMessage(),
+				];
+			}
+		}
+
+		// Clear CSS cache so new variables take effect in generated styles.
+		if ( isset( Plugin::$instance->files_manager ) ) {
+			Plugin::$instance->files_manager->clear_cache();
+		}
+
+		return [
+			'created' => $created,
+			'updated' => $updated,
+			'errors' => $errors,
+		];
+	}
+
+	private function map_converted_type_to_repository_type( string $converted_type ): ?string {
+		switch ( $converted_type ) {
+			case 'color-hex':
+				return 'global-color-variable';
+			// Future mapping examples:
+			// case 'font-family':
+			// return 'global-font-variable';
+			default:
+				return null;
+		}
 	}
 
 	private function format_variable_label( string $css_var_name ): string {

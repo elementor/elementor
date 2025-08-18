@@ -2,6 +2,8 @@
 namespace Elementor\Modules\CssConverter\VariableConvertors;
 
 use Elementor\Modules\CssConverter\VariableConvertors\Convertors\Color_Hex_Variable_Convertor;
+use Elementor\Modules\CssConverter\VariableConvertors\Convertors\Color_Rgb_Variable_Convertor;
+use Elementor\Modules\CssConverter\VariableConvertors\Convertors\Color_Rgba_Variable_Convertor;
 
 class Variable_Convertor_Registry {
 	private array $convertors = [];
@@ -9,6 +11,8 @@ class Variable_Convertor_Registry {
 	public function __construct() {
 		$this->convertors = [
 			new Color_Hex_Variable_Convertor(),
+			new Color_Rgb_Variable_Convertor(),
+			new Color_Rgba_Variable_Convertor(),
 		];
 	}
 
