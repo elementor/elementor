@@ -35,7 +35,7 @@ jobs:
       
       - name: Upload to SFTP server
         run: |
-          echo "Deploying to site: ${{ inputs.SITE_URL }}"
+          echo "Deploying to site: https://fnfwlpbk.stg.elementor.cool"
           echo "Built artifact downloaded to ./build"
           
           # Package the artifact
@@ -57,6 +57,33 @@ jobs:
           echo "✅ Plugin successfully uploaded to SFTP server"
           echo "📁 File: /html/wp-content/uploads/elementor-plugin.zip"
           echo "🖥️  Host: sftp.stg.elementor.cool:32022"
-          echo "🚀 Ready to deploy plugin to: ${{ inputs.SITE_URL }}"
-
-
+          
+          # Install plugin via WP-CLI API
+          echo "Installing plugin on site: https://fnfwlpbk.stg.elementor.cool"
+          PLUGIN_URL="https://fnfwlpbk.stg.elementor.cool/wp-content/uploads/elementor-plugin.zip"
+          
+          API_RESPONSE=$(curl -X 'POST' \
+            'https://control-api.stg.elementor.link/v2/wp-cli/151508' \
+            -H 'accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'CF-Access-Client-Id: ${{ secrets.CF_CLIENT_ID }}' \
+            -H 'CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}' \
+            -d "{
+              \"command\": [
+                \"plugin\", \"install\", \"$PLUGIN_URL\"
+              ]
+            }" -w "%{http_code}" -s)
+          
+          HTTP_CODE="${API_RESPONSE: -3}"
+          RESPONSE_BODY="${API_RESPONSE%???}"
+          
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo "✅ Plugin successfully installed via WP-CLI API"
+            echo "📦 Plugin URL: $PLUGIN_URL"
+            echo "🚀 Deployment completed successfully!"
+          else
+            echo "❌ Failed to install plugin via WP-CLI API"
+            echo "HTTP Code: $HTTP_CODE"
+            echo "Response: $RESPONSE_BODY"
+            exit 1
+          fi
