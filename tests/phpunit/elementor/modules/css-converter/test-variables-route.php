@@ -7,13 +7,16 @@ use Elementor\Modules\CssConverter\Parsers\CssParser;
 use Elementor\Modules\CssConverter\Parsers\ParsedCss;
 use ReflectionClass;
 
+/**
+ * @group css-converter
+ */
 class Test_Variables_Route extends Elementor_Test_Base {
 	private $mock_parser;
 
 	public function setUp(): void {
 		parent::setUp();
 		$this->act_as_admin();
-		
+
 		$this->mock_parser = $this->createMock(CssParser::class);
 		$mockParsedCss = $this->createMock(ParsedCss::class);
 		$this->mock_parser->method('parse')->willReturn($mockParsedCss);
@@ -23,7 +26,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
 	private function register_route_for_test($parser = null) {
 		// Reset REST server state
 		$GLOBALS['wp_rest_server'] = null;
-		
+
 		$route = new VariablesRoute($parser ?: $this->mock_parser);
 		add_action('rest_api_init', function() use ($route) {
 			$route->register_route();
@@ -31,7 +34,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
 		do_action('rest_api_init');
 		return $route;
 	}
-	
+
 	public function tearDown(): void {
 		// Clean up REST server state after each test
 		$GLOBALS['wp_rest_server'] = null;
@@ -40,7 +43,7 @@ class Test_Variables_Route extends Elementor_Test_Base {
 
     public function test_missing_url_or_css_returns_400() {
 		$this->register_route_for_test();
-		
+
 		$request = new \WP_REST_Request( 'POST', '/elementor/v2/css-converter/variables' );
 		$response = rest_get_server()->dispatch( $request );
 		$this->assertEquals( 400, $response->get_status() );
@@ -135,19 +138,19 @@ class Test_Variables_Route extends Elementor_Test_Base {
         $method = $reflection->getMethod( 'format_variable_label' );
         $method->setAccessible( true );
 
-        $this->assertEquals( 'Primary Color', $method->invoke( $route, '--primary-color' ) );
-        $this->assertEquals( 'Spacing Md', $method->invoke( $route, '--spacing-md' ) );
-        $this->assertEquals( 'Background Color Primary', $method->invoke( $route, '--background-color-primary' ) );
+        $this->assertEquals( 'primary-color', $method->invoke( $route, '--primary-color' ) );
+        $this->assertEquals( 'spacing-md', $method->invoke( $route, '--spacing-md' ) );
+        $this->assertEquals( 'background-color-primary', $method->invoke( $route, '--background-color-primary' ) );
     }
 
     public function test_save_editor_variables_method_exists() {
         $route = new VariablesRoute($this->mock_parser);
         $reflection = new ReflectionClass( $route );
         $this->assertTrue( $method = $reflection->hasMethod( 'save_editor_variables' ) );
-        
+
         $method = $reflection->getMethod( 'save_editor_variables' );
         $method->setAccessible( true );
-        
+
         $result = $method->invoke( $route, [] );
         $this->assertIsArray( $result );
     }

@@ -8,6 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * @group css-converter
+ */
 class Test_Css_Parser extends Elementor_Test_Base {
 
 	public function test_extracts_root_variables() {

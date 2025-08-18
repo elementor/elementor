@@ -5,9 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use Elementor\Modules\CssConverter\VariableConvertors\VariableConvertorInterface;
-
-class Color_Hex_Variable_Convertor implements VariableConvertorInterface {
+class Color_Hex_Variable_Convertor extends Abstract_Variable_Convertor {
 	private const HEX3_PATTERN = '/^#([A-Fa-f0-9]{3})$/';
 	private const HEX6_PATTERN = '/^#([A-Fa-f0-9]{6})$/';
 	private const HEXA_PATTERN = '/^#([A-Fa-f0-9]{8})$/';
@@ -18,17 +16,12 @@ class Color_Hex_Variable_Convertor implements VariableConvertorInterface {
 			|| 1 === preg_match( self::HEXA_PATTERN, $value );
 	}
 
-	public function convert( string $name, string $value ): array {
-		$normalized_hex = $this->normalize_hex( $value );
-		$variable_id = $this->generate_variable_id( $name );
+	protected function get_type(): string {
+		return 'color-hex';
+	}
 
-		return [
-			'id' => $variable_id,
-			'type' => 'color-hex',
-			'value' => $normalized_hex,
-			'source' => 'css-variable',
-			'name' => $name,
-		];
+	protected function normalize_value( string $value ): string {
+		return $this->normalize_hex( $value );
 	}
 
 	private function normalize_hex( string $hex ): string {
@@ -44,18 +37,5 @@ class Color_Hex_Variable_Convertor implements VariableConvertorInterface {
 
 		$digits = substr( $lower, 1 );
 		return '#' . $digits[0] . $digits[0] . $digits[1] . $digits[1] . $digits[2] . $digits[2];
-	}
-
-	private function generate_variable_id( string $name ): string {
-		$trimmed = ltrim( $name, '-' );
-		$slug = strtolower( $trimmed );
-		$slug = preg_replace( '/[^a-z0-9_\-]+/', '-', $slug );
-		$slug = trim( $slug, '-' );
-
-		if ( '' === $slug ) {
-			$slug = 'color-variable';
-		}
-
-		return $slug;
 	}
 }
