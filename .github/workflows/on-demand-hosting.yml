@@ -40,27 +40,27 @@ jobs:
           
           # Package the artifact
           cd ./build
-          zip -r ../elementor-plugin.zip .
+          zip -r ../elementor.zip .
           cd ..
           
           # Install sshpass for SFTP authentication
           sudo apt-get update && sudo apt-get install -y sshpass
           
           # Upload to SFTP server
-          echo "Uploading elementor-plugin.zip to SFTP server..."
-          sshpass -p 'boyB2GvAMqGO6UtE' sftp -P 32022 -o StrictHostKeyChecking=no 6KnPRlhy@sftp.stg.elementor.cool << EOF
+          echo "Uploading elementor.zip to SFTP server..."
+          sshpass -p 'fxkVvDNT6gi74T91' sftp -P 32022 -o StrictHostKeyChecking=no lSVllGgK@sftp.stg.elementor.cool << EOF
           cd /html/wp-content/uploads
-          put elementor-plugin.zip
+          put elementor.zip
           quit
           EOF
           
           echo "✅ Plugin successfully uploaded to SFTP server"
-          echo "📁 File: /html/wp-content/uploads/elementor-plugin.zip"
+          echo "📁 File: /html/wp-content/uploads/elementor.zip"
           echo "🖥️  Host: sftp.stg.elementor.cool:32022"
           
           # Install plugin via WP-CLI API
           echo "Installing plugin on site: https://fnfwlpbk.stg.elementor.cool"
-          PLUGIN_URL="https://fnfwlpbk.stg.elementor.cool/wp-content/uploads/elementor-plugin.zip"
+          PLUGIN_URL="https://fnfwlpbk.stg.elementor.cool/wp-content/uploads/elementor.zip"
           
           API_RESPONSE=$(curl -X 'POST' \
             'https://control-api.stg.elementor.link/v2/wp-cli/151508' \
@@ -70,7 +70,7 @@ jobs:
             -H 'CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}' \
             -d "{
               \"command\": [
-                \"plugin\", \"install\", \"$PLUGIN_URL\"
+                \"plugin\", \"install\", \"$PLUGIN_URL\", \"--activate\"
               ]
             }" -w "%{http_code}" -s)
           
@@ -80,6 +80,16 @@ jobs:
           if [ "$HTTP_CODE" -eq 200 ]; then
             echo "✅ Plugin successfully installed via WP-CLI API"
             echo "📦 Plugin URL: $PLUGIN_URL"
+            
+            # Delete the zip file after successful installation
+            echo "Cleaning up: Deleting elementor.zip file via SFTP..."
+            sshpass -p 'fxkVvDNT6gi74T91' sftp -P 32022 -o StrictHostKeyChecking=no lSVllGgK@sftp.stg.elementor.cool << EOF
+            cd /html/wp-content/uploads
+            rm elementor.zip
+            quit
+            EOF
+            echo "🗑️  Zip file successfully deleted via SFTP"
+            
             echo "🚀 Deployment completed successfully!"
           else
             echo "❌ Failed to install plugin via WP-CLI API"
