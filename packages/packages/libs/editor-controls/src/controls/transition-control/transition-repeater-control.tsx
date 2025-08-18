@@ -93,7 +93,6 @@ export const TransitionRepeaterControl = createControl(
 					disabled: ! currentStyleIsNormal,
 					enableTooltip: ! currentStyleIsNormal,
 					tooltipContent: disableAddItemTooltipContent,
-					wrapTooltipContent: false,
 				} }
 			/>
 		);

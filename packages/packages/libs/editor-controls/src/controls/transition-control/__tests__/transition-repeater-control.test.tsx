@@ -66,7 +66,7 @@ describe( 'TransitionRepeaterControl', () => {
 		expect( screen.getByText( ( content ) => content.includes( 'All properties' ) ) ).toBeInTheDocument();
 	} );
 
-	it( 'should display add button when rendered', () => {
+	it( 'should display an enabled add button when rendered in normal style state', () => {
 		// Arrange
 		const setValue = jest.fn();
 		const value = { $$type: 'array', value: [] };
@@ -79,5 +79,22 @@ describe( 'TransitionRepeaterControl', () => {
 		// Assert
 		const addButton = screen.getByLabelText( 'Add item' );
 		expect( addButton ).toBeInTheDocument();
+		expect( addButton ).toBeEnabled();
+	} );
+
+	it( 'should display a disabled add button when not in normal style state', () => {
+		// Arrange
+		const setValue = jest.fn();
+		const value = { $$type: 'array', value: [] };
+		const propType = createTransitionPropType();
+		const props = { setValue, value, bind: 'transition', propType };
+
+		// Act
+		renderControl( <TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedList={ [] } />, props );
+
+		// Assert
+		const addButton = screen.getByLabelText( 'Add item' );
+		expect( addButton ).toBeInTheDocument();
+		expect( addButton ).toBeDisabled();
 	} );
 } );

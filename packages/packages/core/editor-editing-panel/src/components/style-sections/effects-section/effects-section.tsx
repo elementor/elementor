@@ -35,14 +35,14 @@ export const EffectsSection = () => {
 			<PanelDivider />
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
 				<TransformRepeaterControl />
-			</StylesField>			
+			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
 				<TransitionRepeaterControl
 					currentStyleState={ meta.state }
 					recentlyUsedList={ getRecentlyUsedList( element?.id ) }
 				/>
-			</StylesField>			
+			</StylesField>
 			<PanelDivider />
 			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
 				<FilterRepeaterControl />
