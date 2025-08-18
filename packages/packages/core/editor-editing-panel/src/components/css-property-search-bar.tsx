@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { SearchIcon } from '@elementor/icons';
 import { Autocomplete, Box, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCSSPropertyNavigation } from '../utils/css-property-navigation';
-import { type CSSPropertyMapping, searchCSSProperties } from '../utils/css-property-search-map';
+import { type CSSPropertyMapping } from '../utils/css-property-search-map';
+import { semanticSearchCSSProperties } from '../utils/semantic-search';
 
 type SearchOption = CSSPropertyMapping & {
 	id: string;
@@ -18,24 +19,76 @@ export const CSSPropertySearchBar = () => {
 	const [ options, setOptions ] = useState< SearchOption[] >( [] );
 	const { navigateToProperty } = useCSSPropertyNavigation();
 
-	const handleInputChange = useCallback( ( _: unknown, value: string ) => {
+	// Track the latest search request to prevent race conditions
+	const latestSearchRef = useRef< string >( '' );
+	const debounceTimeoutRef = useRef< NodeJS.Timeout | null >( null );
+
+	// Debounced search function
+	const debouncedSearch = useCallback( async ( query: string ) => {
+		const currentSearch = query;
+		latestSearchRef.current = currentSearch;
+
+		try {
+			// Use semantic search for intelligent CSS property discovery
+			const semanticResults = await semanticSearchCSSProperties( query, 10, 0.2 );
+
+			// Only update options if this is still the latest search
+			if ( latestSearchRef.current === currentSearch ) {
+				const searchOptions = semanticResults.map( ( mapping: CSSPropertyMapping ) => ( {
+					...mapping,
+					id: mapping.property,
+					label: mapping.displayName,
+					group: mapping.section,
+				} ) );
+
+				setOptions( searchOptions );
+			}
+		} catch {
+			// Only clear options if this is still the latest search
+			if ( latestSearchRef.current === currentSearch ) {
+				setOptions( [] );
+			}
+		}
+	}, [] );
+
+	const handleInputChange = ( _: unknown, value: string ) => {
 		setInputValue( value );
 
-		if ( value.length >= 2 ) {
-			const results = searchCSSProperties( value ).map( ( mapping ) => ( {
-				...mapping,
-				id: mapping.property,
-				label: mapping.displayName,
-				group: mapping.section,
-			} ) );
-			setOptions( results );
-		} else {
-			setOptions( [] );
+		// Clear any existing debounce timeout
+		if ( debounceTimeoutRef.current ) {
+			clearTimeout( debounceTimeoutRef.current );
+			debounceTimeoutRef.current = null;
 		}
+
+		if ( value.length >= 2 ) {
+			// Debounce the search to avoid excessive API calls
+			debounceTimeoutRef.current = setTimeout( () => {
+				debouncedSearch( value );
+			}, 300 ); // 300ms debounce delay
+		} else {
+			// Clear options immediately when input is too short
+			setOptions( [] );
+			latestSearchRef.current = value;
+		}
+	};
+
+	// Cleanup timeout on unmount
+	useEffect( () => {
+		return () => {
+			if ( debounceTimeoutRef.current ) {
+				clearTimeout( debounceTimeoutRef.current );
+			}
+		};
 	}, [] );
 
 	const handleOptionSelect = useCallback(
 		( _: unknown, value: string | SearchOption | null ) => {
+			// Clear any pending debounced search
+			if ( debounceTimeoutRef.current ) {
+				clearTimeout( debounceTimeoutRef.current );
+				debounceTimeoutRef.current = null;
+			}
+
 			// Handle both string (free text) and option selection
 			if ( value && typeof value === 'object' ) {
 				navigateToProperty( value.property );
@@ -77,18 +130,20 @@ export const CSSPropertySearchBar = () => {
 						<ul style={ { padding: 0 } }>{ params.children }</ul>
 					</li>
 				) }
-				renderOption={ ( props, option ) => (
-					<Box component="li" { ...props } key={ option.id } sx={ { py: 0.75 } }>
-						<Box sx={ { display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 } }>
-							<Typography variant="body2" component="div" noWrap>
-								{ option.displayName }
-							</Typography>
-							<Typography variant="caption" color="text.secondary" noWrap>
-								{ option.property }
-							</Typography>
+				renderOption={ ( props, option ) => {
+					return (
+						<Box component="li" { ...props } key={ option.id } sx={ { py: 0.75 } }>
+							<Box sx={ { display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 } }>
+								<Typography variant="body2" component="div" noWrap>
+									{ option.displayName }
+								</Typography>
+								<Typography variant="caption" color="text.secondary" noWrap>
+									{ option.property }
+								</Typography>
+							</Box>
 						</Box>
-					</Box>
-				) }
+					);
+				} }
 				renderInput={ ( params ) => (
 					<TextField
 						{ ...params }
