@@ -18,10 +18,12 @@ export const LinkedDimensionsControl = createControl(
 		label,
 		isSiteRtl = false,
 		extendedOptions,
+		allowNegative,
 	}: {
 		label: string;
 		isSiteRtl?: boolean;
 		extendedOptions?: ExtendedOption[];
+		allowNegative?: boolean;
 	} ) => {
 		const {
 			value: sizeValue,
@@ -110,6 +112,7 @@ export const LinkedDimensionsControl = createControl(
 										isLinked={ isLinked }
 										extendedOptions={ extendedOptions }
 										anchorRef={ gridRowRefs[ index ] }
+										allowNegative={ allowNegative }
 									/>
 								</Grid>
 							</Grid>
@@ -127,20 +130,34 @@ const Control = ( {
 	isLinked,
 	extendedOptions,
 	anchorRef,
+	allowNegative,
 }: {
 	bind: PropKey;
 	startIcon: React.ReactNode;
 	isLinked: boolean;
 	extendedOptions?: ExtendedOption[];
 	anchorRef: RefObject< HTMLDivElement >;
+	allowNegative?: boolean;
 } ) => {
 	if ( isLinked ) {
-		return <SizeControl startIcon={ startIcon } extendedOptions={ extendedOptions } anchorRef={ anchorRef } />;
+		return (
+			<SizeControl
+				startIcon={ startIcon }
+				extendedOptions={ extendedOptions }
+				anchorRef={ anchorRef }
+				allowNegative={ allowNegative }
+			/>
+		);
 	}
 
 	return (
 		<PropKeyProvider bind={ bind }>
-			<SizeControl startIcon={ startIcon } extendedOptions={ extendedOptions } anchorRef={ anchorRef } />
+			<SizeControl
+				startIcon={ startIcon }
+				extendedOptions={ extendedOptions }
+				anchorRef={ anchorRef }
+				allowNegative={ allowNegative }
+			/>
 		</PropKeyProvider>
 	);
 };

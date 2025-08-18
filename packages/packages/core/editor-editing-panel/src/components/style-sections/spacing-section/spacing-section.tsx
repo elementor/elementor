@@ -20,6 +20,7 @@ export const SpacingSection = () => {
 					label={ MARGIN_LABEL }
 					isSiteRtl={ isSiteRtl }
 					extendedOptions={ [ 'auto' ] }
+					allowNegative
 				/>
 			</StylesField>
 			<PanelDivider />

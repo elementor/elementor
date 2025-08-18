@@ -80,12 +80,12 @@ export const PositionControl = () => {
 						<Grid container spacing={ 1.5 }>
 							<Grid item xs={ 6 }>
 								<PropKeyProvider bind={ 'x' }>
-									<SizeControl startIcon={ <LetterXIcon fontSize={ 'tiny' } /> } />
+									<SizeControl startIcon={ <LetterXIcon fontSize={ 'tiny' } /> } allowNegative />
 								</PropKeyProvider>
 							</Grid>
 							<Grid item xs={ 6 }>
 								<PropKeyProvider bind={ 'y' }>
-									<SizeControl startIcon={ <LetterYIcon fontSize={ 'tiny' } /> } />
+									<SizeControl startIcon={ <LetterYIcon fontSize={ 'tiny' } /> } allowNegative />
 								</PropKeyProvider>
 							</Grid>
 						</Grid>
