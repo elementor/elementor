@@ -49,6 +49,8 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Flex_Trans
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Entrance_Animation_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Entrance_Animation_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Gradient_Overlay_Prop_Type;
@@ -89,6 +91,9 @@ use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Motion_Effects_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Motion_Effects_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Motion_Effects_Data_Transformer;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
@@ -136,7 +141,8 @@ class Module extends BaseModule {
 
 			( new Atomic_Import_Export() )->register_hooks();
 			( new Atomic_Widgets_Database_Updater() )->register();
-
+			
+		
 			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
@@ -152,8 +158,44 @@ class Module extends BaseModule {
 			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
 			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
+
+			// Add entrance animations CSS
+			add_action('wp_enqueue_scripts', [$this, 'enqueue_entrance_animations']);
+			add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_entrance_animations']);
+
+			add_action('wp_enqueue_scripts', [$this, 'enqueue_motions']);
+			add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueue_motions']);
 		}
 	}
+
+	public function enqueue_entrance_animations(): void {
+		// First load the full Animate.css library
+		wp_enqueue_style(
+			'animate-css',
+			'https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css',
+			[],
+			'4.1.1'
+		);
+
+		// Then load Elementor's custom animations
+		$css_file = plugins_url('assets/css/entrance-animations.css', __FILE__);
+		error_log('Entrance Animation - Enqueuing CSS file: ' . $css_file);
+		wp_enqueue_style(
+			'elementor-entrance-animations',
+			$css_file,
+			['animate-css'], // Make it dependent on animate-css to ensure proper loading order
+			ELEMENTOR_VERSION
+		);
+		error_log('Entrance Animation - CSS file enqueued');
+	}
+
+	public function enqueue_motions(): void {
+		 // Quick CDN setup for testing
+		 wp_enqueue_script('motion-js', plugins_url('assets/js/motion.js', __FILE__), [], '11.13.5', true);
+		 
+		 // Your implementation
+		 wp_enqueue_script('atomic-motion-effects', plugins_url('assets/js/atomic-motion-effects.js', __FILE__), ['motion-js'], '1.0.0', true);
+		}
 
 	public static function get_experimental_data() {
 		return [
@@ -240,6 +282,7 @@ class Module extends BaseModule {
 		$widgets_manager->register( new Atomic_Button() );
 		$widgets_manager->register( new Atomic_Youtube() );
 		$widgets_manager->register( new Atomic_Divider() );
+
 	}
 
 	private function register_elements( Elements_Manager $elements_manager ) {
@@ -255,6 +298,7 @@ class Module extends BaseModule {
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
 		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
 		$transformers->register( Key_Value_Array_Prop_Type::get_key(), new Attributes_Transformer() );
+		$transformers->register( Motion_Effects_Prop_Type::get_key(), new Motion_Effects_Data_Transformer() );
 	}
 
 	private function register_styles_transformers( Transformers_Registry $transformers ) {
@@ -285,6 +329,7 @@ class Module extends BaseModule {
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
 		$transformers->register( Transform_Skew_Prop_Type::get_key(), new Transform_Skew_Transformer() );
+		$transformers->register( Motion_Effects_Prop_Type::get_key(), new Motion_Effects_Transformer() );
 		$transformers->register( Transform_Prop_Type::get_key(), new Transform_Transformer() );
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
@@ -302,6 +347,9 @@ class Module extends BaseModule {
 			Dimensions_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
 		);
+
+		// Add entrance animation transformer
+		$transformers->register( Entrance_Animation_Prop_Type::get_key(), new Entrance_Animation_Transformer() );
 	}
 
 	public function register_import_transformers( Transformers_Registry $transformers ) {

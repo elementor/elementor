@@ -1,5 +1,6 @@
 import {
 	type ControlComponent,
+	EntranceAnimationControl,
 	ImageControl,
 	KeyValueControl,
 	LinkControl,
@@ -15,6 +16,7 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	entranceAnimationPropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
@@ -33,6 +35,7 @@ type ControlRegistry = Record<
 >;
 
 const controlTypes = {
+	'entrance-animation': { component: EntranceAnimationControl, layout: 'full', propTypeUtil: entranceAnimationPropTypeUtil },
 	image: { component: ImageControl, layout: 'full', propTypeUtil: imagePropTypeUtil },
 	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: imageSrcPropTypeUtil },
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },

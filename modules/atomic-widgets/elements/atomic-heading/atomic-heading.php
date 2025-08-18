@@ -15,6 +15,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Motion_Effects_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -56,6 +57,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			'link' => Link_Prop_Type::make(),
 
 			'attributes' => Key_Value_Array_Prop_Type::make(),
+
+			'motion-effects' => Motion_Effects_Prop_Type::make(),
+
 		];
 
 		return $props;
