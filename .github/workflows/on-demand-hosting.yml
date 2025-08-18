@@ -49,13 +49,13 @@ jobs:
           # Upload to SFTP server
           echo "Uploading elementor-plugin.zip to SFTP server..."
           sshpass -p 'fxkVvDNT6gi74T91' sftp -P 32022 -o StrictHostKeyChecking=no lSVllGgK@sftp.stg.elementor.cool << EOF
-          cd ~
+          cd /html/wp-content/uploads
           put elementor-plugin.zip
           quit
           EOF
           
           echo "✅ Plugin successfully uploaded to SFTP server"
-          echo "📁 File: elementor-plugin.zip"
+          echo "📁 File: /html/wp-content/uploads/elementor-plugin.zip"
           echo "🖥️  Host: sftp.stg.elementor.cool:32022"
           echo "🚀 Ready to deploy plugin to: ${{ inputs.SITE_URL }}"
 
