@@ -15,6 +15,7 @@ import { StyleProvider } from '../contexts/style-context';
 import { StyleInheritanceProvider } from '../contexts/styles-inheritance-context';
 import { useActiveStyleDefId } from '../hooks/use-active-style-def-id';
 import { CssClassSelector } from './css-classes/css-class-selector';
+import { CSSPropertySearchBar } from './css-property-search-bar';
 import { CustomCss } from './custom-css';
 import { SectionsList } from './sections-list';
 import { BackgroundSection } from './style-sections/background-section/background-section';
@@ -58,6 +59,7 @@ export const StyleTab = () => {
 				<SessionStorageProvider prefix={ activeStyleDefId ?? '' }>
 					<StyleInheritanceProvider>
 						<ClassesHeader>
+							<CSSPropertySearchBar />
 							<CssClassSelector />
 							<Divider />
 						</ClassesHeader>

@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { type PropsWithChildren, type ReactNode, useId, useRef } from 'react';
+import { type PropsWithChildren, type ReactNode, useEffect, useId, useRef } from 'react';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
 import { SectionRefContext } from '../contexts/section-context';
 import { useStateByElement } from '../hooks/use-state-by-element';
+import { cssPropertyNavigationService } from '../utils/css-property-navigation';
 import { CollapseIcon } from './collapse-icon';
 import { type CollapsibleValue, getCollapsibleValue } from './collapsible-content';
 
@@ -20,6 +21,15 @@ export function Section( { title, children, defaultExpanded = false, titleEnd }:
 	const handleClick = () => {
 		setIsOpen( ! isOpen );
 	};
+
+	// Register section with navigation service
+	useEffect( () => {
+		cssPropertyNavigationService.registerSection( title, setIsOpen, ref );
+
+		return () => {
+			cssPropertyNavigationService.unregisterSection( title );
+		};
+	}, [ title, setIsOpen, ref ] );
 
 	const id = useId();
 	const labelId = `label-${ id }`;
