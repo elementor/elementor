@@ -304,6 +304,13 @@ jobs:
             }
 
       # ====== AI aggregation & analysis (always, non-blocking) ======
+      - name: Checkout source code for AI analysis
+        if: always()
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Download all shard AI logs
         if: always()
         uses: actions/download-artifact@v4
