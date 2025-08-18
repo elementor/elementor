@@ -8,7 +8,7 @@ import { TransformBaseControl } from '../../../controls/transform-control/transf
 import { TooltipAddItemAction } from '../actions/tooltip-add-item-action';
 import { RepeaterHeaderActionsSlot } from '../locations';
 
-export const Header = ( { label, children }: React.PropsWithChildren< { label: string } > ) => {
+export const Header = React.forwardRef( ( { label, children }: React.PropsWithChildren< { label: string } >, ref ) => {
 	const { value } = useBoundProp();
 
 	return (
@@ -18,17 +18,19 @@ export const Header = ( { label, children }: React.PropsWithChildren< { label: s
 			alignItems="center"
 			gap={ 1 }
 			sx={ { marginInlineEnd: -0.75, py: 0.25 } }
+			ref={ ref }
 		>
 			<Typography component="label" variant="caption" color="text.secondary" sx={ { lineHeight: 1 } }>
 				{ label }
 			</Typography>
 			<ControlAdornments />
+			<Spacer />
 			<RepeaterHeaderActionsSlot value={ value } />
-			<Box sx={ { ml: 'auto' } }>
-				<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
-					{ children }
-				</SlotChildren>
-			</Box>
+			<SlotChildren whitelist={ [ TransformBaseControl, TooltipAddItemAction ] as React.FC[] } sorted>
+				{ children }
+			</SlotChildren>
 		</Stack>
 	);
-};
+} );
+
+const Spacer = () => <Box component="span" sx={ { ml: 'auto', display: 'block' } }></Box>;

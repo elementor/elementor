@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { sizePropTypeUtil } from '@elementor/editor-props';
+import { sizePropTypeUtil, type TransformablePropType, type TransformOriginPropValue } from '@elementor/editor-props';
 import { Divider, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
+import { type PropContext, PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
 import { ControlFormLabel } from '../../../components/control-form-label';
 import { ControlLabel } from '../../../components/control-label';
 import { SizeControl } from '../../size-control';
@@ -13,48 +13,52 @@ const TRANSFORM_ORIGIN_UNITS = [ 'px', '%', 'em', 'rem' ] as ( 'px' | '%' | 'em'
 const TRANSFORM_ORIGIN_FIELDS = [
 	{
 		label: __( 'Origin X', 'elementor' ),
-		bindValue: 'x',
+		bind: 'x',
 		units: TRANSFORM_ORIGIN_UNITS,
 	},
 	{
 		label: __( 'Origin Y', 'elementor' ),
-		bindValue: 'y',
+		bind: 'y',
 		units: TRANSFORM_ORIGIN_UNITS,
 	},
 	{
 		label: __( 'Origin Z', 'elementor' ),
-		bindValue: 'z',
+		bind: 'z',
 		units: TRANSFORM_ORIGIN_UNITS.filter( ( unit ) => unit !== '%' ),
 	},
 ];
 
-export const TransformOriginControl = ( { rowRef }: { rowRef: React.RefObject< HTMLDivElement > } ) => {
+export const TransformOriginControl = ( {
+	transformOriginContext,
+}: {
+	transformOriginContext: PropContext< TransformOriginPropValue, TransformablePropType >;
+} ) => {
+	console.log( 'context', transformOriginContext );
 	return (
-		<Stack direction="column" spacing={ 1.5 }>
-			<ControlFormLabel sx={ { pt: 1.5, pl: 1.5 } }>{ __( 'Transform', 'elementor' ) }</ControlFormLabel>
-			<Grid container spacing={ 1.5 } ref={ rowRef }>
-				{ TRANSFORM_ORIGIN_FIELDS.map( ( control ) => (
-					<ControlFields control={ control } rowRef={ rowRef } key={ control.bindValue } />
-				) ) }
-				<Divider sx={ { py: 3 } } />
-			</Grid>
-		</Stack>
+		<PropProvider { ...transformOriginContext }>
+			<PropKeyProvider bind="transform-origin">
+				<Stack direction="column" spacing={ 1.5 }>
+					<ControlFormLabel sx={ { pt: 1.5, pl: 1.5 } }>{ __( 'Transform', 'elementor' ) }</ControlFormLabel>
+					<Grid container spacing={ 1.5 }>
+						{ TRANSFORM_ORIGIN_FIELDS.map( ( control ) => (
+							<ControlFields control={ control } key={ control.bind } />
+						) ) }
+						<Divider sx={ { py: 3 } } />
+					</Grid>
+				</Stack>
+			</PropKeyProvider>
+		// </PropProvider>
 	);
 };
 
-const ControlFields = ( {
-	control,
-	rowRef,
-}: {
-	control: ( typeof TRANSFORM_ORIGIN_FIELDS )[ number ];
-	rowRef: React.RefObject< HTMLDivElement >;
-} ) => {
+const ControlFields = ( { control }: { control: ( typeof TRANSFORM_ORIGIN_FIELDS )[ number ] } ) => {
 	const context = useBoundProp( sizePropTypeUtil );
+	const rowRef = React.useRef< HTMLDivElement >( null );
 
 	return (
 		<PropProvider { ...context }>
-			<PropKeyProvider bind={ control.bindValue }>
-				<Grid item xs={ 12 }>
+			<PropKeyProvider bind={ control.bind }>
+				<Grid item xs={ 12 } ref={ rowRef }>
 					<Grid container spacing={ 1 } alignItems="center">
 						<Grid item xs={ 6 }>
 							<ControlLabel>{ control.label }</ControlLabel>

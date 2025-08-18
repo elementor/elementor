@@ -23,6 +23,7 @@ class Transform_Prop_Type extends Object_Prop_Type {
 			'perspective' => Size_Prop_Type::make()
 				->units( Size_Constants::transform() )
 				->default_unit( Size_Constants::UNIT_PX ),
+			'perspective-origin' => Perspective_Origin_Prop_Type::make(),
 		];
 	}
 }

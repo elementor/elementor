@@ -11,7 +11,7 @@ import { MissingPropTypeError } from './errors';
 import { type SetValue } from './prop-context';
 import { type PropKeyContextValue, usePropKeyContext } from './prop-key-context';
 
-type UseBoundProp< TValue extends PropValue > = {
+export type UseBoundProp< TValue extends PropValue > = {
 	bind: PropKey;
 	setValue: SetValue< TValue | null >;
 	value: TValue;

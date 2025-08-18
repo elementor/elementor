@@ -1,10 +1,19 @@
 import * as React from 'react';
-import { transformFunctionsPropTypeUtil, transformPropTypeUtil } from '@elementor/editor-props';
+import { useRef } from 'react';
+import {
+	ObjectPropType,
+	perspectiveOriginPropTypeUtil,
+	type PerspectiveOriginPropValue,
+	transformFunctionsPropTypeUtil,
+	transformOriginPropTypeUtil,
+	type TransformOriginPropValue,
+	transformPropTypeUtil,
+} from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
+import { PropKeyProvider, PropProvider, UseBoundProp, useBoundProp } from '../../bound-prop-context';
 import {
 	Header,
 	Item,
@@ -17,17 +26,47 @@ import { RemoveItemAction } from '../../components/unstable-repeater/actions/rem
 import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
 import { createControl } from '../../create-control';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
+import { TransformBaseControl } from './transform-base-control';
 import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
 
 export const TransformRepeaterControl = createControl( () => {
 	const context = useBoundProp( transformPropTypeUtil );
+	const { propType, value, setValue } = context;
+
+	const transformOriginValue = value?.[ 'transform-origin' ] as TransformOriginPropValue;
+	const setTransformOriginValue = ( newValue: TransformOriginPropValue ) => {
+		if ( ! newValue ) {
+			setValue( value ? { ...value, 'transform-origin': null } : null );
+
+			return;
+		}
+
+		const valueToSave = {
+			...( value ?? {} ),
+			'transform-origin': newValue,
+		};
+
+		setValue( valueToSave );
+	};
+	const transformOriginContext: UseBoundProp< TransformOriginPropValue > = {
+		propType: ( propType as ObjectPropType ).shape[ 'transform-origin' ],
+		value: transformOriginValue,
+		setValue: setTransformOriginValue,
+	};
+
+	// const transformOriginContext = useBoundProp( transformOriginPropTypeUtil );
+	console.log( 'transformOriginContext', transformOriginContext );
+	// const perspectiveOriginContext = useBoundProp( perspectiveOriginPropTypeUtil );
 
 	return (
 		<PropProvider { ...context }>
 			<PropKeyProvider bind="transform-functions">
-				<Repeater />
+				<Repeater
+				transformOriginContext={ transformOriginContext }
+				// perspectiveOriginContext={ perspectiveOriginContext }
+				/>
 			</PropKeyProvider>
 		</PropProvider>
 	);
@@ -42,10 +81,19 @@ const ToolTip = (
 	</>
 );
 
-const Repeater = () => {
+const Repeater = ( {
+									 transformOriginContext,
+
+                   }
+// perspectiveOriginContext,
+: {
+	transformOriginContext: UseBoundProp< TransformOriginPropValue >;
+	// perspectiveOriginContext: UseBoundProp< PerspectiveOriginPropValue >;
+} ) => {
 	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
 	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
 	const { value: transformValues } = transformFunctionsContext;
+	const headerRef = React.useRef< HTMLDivElement >( null );
 
 	const getInitialValue = () => {
 		return availableValues.find( ( value ) => ! transformValues?.some( ( item ) => item.$$type === value.$$type ) );
@@ -59,7 +107,12 @@ const Repeater = () => {
 				initial={ getInitialValue() ?? initialTransformValue }
 				propTypeUtil={ transformFunctionsPropTypeUtil }
 			>
-				<Header label={ __( 'Transform', 'elementor' ) }>
+				<Header label={ __( 'Transform', 'elementor' ) } ref={ headerRef }>
+					<TransformBaseControl
+						anchorRef={ headerRef }
+						// perspectiveOriginContext={ perspectiveOriginContext }
+						transformOriginContext={ transformOriginContext }
+					/>
 					<TooltipAddItemAction
 						disabled={ shouldDisableAddItem }
 						tooltipContent={ ToolTip }

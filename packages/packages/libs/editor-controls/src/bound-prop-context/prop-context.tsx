@@ -10,7 +10,7 @@ type SetValueMeta = {
 
 export type SetValue< T > = ( value: T, options?: CreateOptions, meta?: SetValueMeta ) => void;
 
-type PropContext< T extends PropValue, P extends PropType > = {
+export type PropContext< T extends PropValue, P extends PropType > = {
 	setValue: SetValue< T >;
 	value: T | null;
 	propType: P;

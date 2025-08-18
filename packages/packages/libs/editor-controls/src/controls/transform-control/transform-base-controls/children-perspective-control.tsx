@@ -9,35 +9,35 @@ import { ControlLabel } from '../../../components/control-label';
 import { lengthUnits } from '../../../utils/size-control';
 import { SizeControl } from '../../size-control';
 
-const ORIGIN_UNITS = [ 'px', '%', 'em', 'rem' ] as ( 'px' | '%' | 'em' | 'rem' )[];
+const ORIGIN_UNITS = [ 'px', '%', 'em', 'rem' ] as const;
 
 const CHILDREN_PERSPECTIVE_FIELDS = [
 	{
 		label: __( 'Perspective', 'elementor' ),
-		bindValue: 'perspective',
+		bind: 'perspective',
 		units: lengthUnits,
 	},
 	{
 		label: __( 'Origin X', 'elementor' ),
-		bindValue: 'perspective-origin-x',
+		bind: 'perspective-origin-x',
 		units: ORIGIN_UNITS,
 	},
 	{
 		label: __( 'Origin Y', 'elementor' ),
-		bindValue: 'perspective-origin-y',
+		bind: 'perspective-origin-y',
 		units: ORIGIN_UNITS,
 	},
 ] as const;
 
-export const ChildrenPerspectiveControl = ( { rowRef }: { rowRef: React.RefObject< HTMLDivElement > } ) => {
+export const ChildrenPerspectiveControl = () => {
 	return (
 		<Stack direction="column" spacing={ 1.5 }>
 			<ControlFormLabel sx={ { pt: 1.5, pl: 1.5 } }>
 				{ __( 'Children perspective', 'elementor' ) }
 			</ControlFormLabel>
-			<Grid container spacing={ 1.5 } ref={ rowRef }>
+			<Grid container spacing={ 1.5 }>
 				{ CHILDREN_PERSPECTIVE_FIELDS.map( ( control ) => (
-					<ControlFields control={ control } rowRef={ rowRef } key={ control.bindValue } />
+					<ControlFields control={ control } key={ control.bind } />
 				) ) }
 				<Divider sx={ { py: 3 } } />
 			</Grid>
@@ -45,19 +45,14 @@ export const ChildrenPerspectiveControl = ( { rowRef }: { rowRef: React.RefObjec
 	);
 };
 
-const ControlFields = ( {
-	control,
-	rowRef,
-}: {
-	control: ( typeof CHILDREN_PERSPECTIVE_FIELDS )[ number ];
-	rowRef: React.RefObject< HTMLDivElement >;
-} ) => {
+const ControlFields = ( { control }: { control: ( typeof CHILDREN_PERSPECTIVE_FIELDS )[ number ] } ) => {
 	const context = useBoundProp( sizePropTypeUtil );
+	const rowRef = React.useRef< HTMLDivElement >( null );
 
 	return (
 		<PropProvider { ...context }>
-			<PropKeyProvider bind={ control.bindValue }>
-				<Grid item xs={ 12 }>
+			<PropKeyProvider bind={ control.bind }>
+				<Grid item xs={ 12 } ref={ rowRef }>
 					<Grid container spacing={ 1 } alignItems="center">
 						<Grid item xs={ 6 }>
 							<ControlLabel>{ control.label }</ControlLabel>
