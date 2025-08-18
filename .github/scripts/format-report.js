@@ -59,6 +59,103 @@ function toDeterministicId(item, idx) {
   return `${file}-${test}-${idx}`;
 }
 
+// Group by root causes для лучшего понимания
+function analyzeRootCauses(errors) {
+  const causes = {
+    'Page Loading Issues': [],
+    'Element Not Found': [],
+    'Timeout Problems': [],
+    'Script Execution Errors': [],
+    'Other Issues': []
+  };
+
+  errors.forEach(err => {
+    const msg = (err.unique_error_messages?.[0] || '').toLowerCase();
+    const test = (err.test || '').toLowerCase();
+
+    if (msg.includes('page.goto') || msg.includes('navigation')) {
+      causes['Page Loading Issues'].push(err);
+    } else if (msg.includes('waitforselector') || msg.includes('selector') || msg.includes('getelementbyid')) {
+      causes['Element Not Found'].push(err);
+    } else if (msg.includes('timeout') && !msg.includes('page.goto')) {
+      causes['Timeout Problems'].push(err);
+    } else if (msg.includes('evaluate') || msg.includes('script') || msg.includes('function')) {
+      causes['Script Execution Errors'].push(err);
+    } else {
+      causes['Other Issues'].push(err);
+    }
+  });
+
+  return causes;
+}
+
+// Генерирует actionable recommendations
+function getActionItems(errorType, errors) {
+  const recommendations = {
+    'Page Loading Issues': [
+      '🌐 Check if test environment is slow or unstable',
+      '⏱️ Consider increasing page load timeout',
+      '🔍 Verify the target URL is accessible',
+      '⚡ Check network connectivity in CI environment'
+    ],
+    'Element Not Found': [
+      '🎯 Verify selectors are correct and up-to-date',
+      '⏳ Add wait conditions before interacting with elements',
+      '🔄 Check if page content loads dynamically',
+      '🧪 Test selectors manually in browser dev tools'
+    ],
+    'Timeout Problems': [
+      '⏱️ Increase timeout values for slow operations',
+      '🔄 Add explicit wait conditions',
+      '⚡ Optimize test environment performance',
+      '🎯 Use more specific wait strategies'
+    ],
+    'Script Execution Errors': [
+      '📝 Review JavaScript code in page.evaluate calls',
+      '🔍 Check console errors in browser',
+      '🛠️ Verify page context and variables availability',
+      '🧪 Test scripts manually in browser console'
+    ]
+  };
+
+  return recommendations[errorType] || [
+    '🔍 Review logs and error messages carefully',
+    '🧪 Try reproducing the issue locally',
+    '📋 Check for similar issues in past runs'
+  ];
+}
+
+// Создает более понятный заголовок
+function getReadableTitle(error) {
+  const msg = (error.unique_error_messages?.[0] || '').toLowerCase();
+  const test = error.test || 'Unknown Test';
+
+  if (msg.includes('page.goto')) return `🌐 Page Loading Failed - ${test}`;
+  if (msg.includes('waitforselector')) return `🎯 Element Not Found - ${test}`;
+  if (msg.includes('timeout')) return `⏱️ Operation Timeout - ${test}`;
+  if (msg.includes('evaluate')) return `📜 Script Execution Failed - ${test}`;
+  if (msg.includes('getelementbyid')) return `🔍 Element ID Missing - ${test}`;
+
+  return `❌ Test Failure - ${test}`;
+}
+
+// Определяет тип ошибки для одной ошибки (для рекомендаций)
+function getErrorType(error) {
+  const msg = (error.unique_error_messages?.[0] || '').toLowerCase();
+  
+  if (msg.includes('page.goto') || msg.includes('navigation')) {
+    return 'Page Loading Issues';
+  } else if (msg.includes('waitforselector') || msg.includes('selector') || msg.includes('getelementbyid')) {
+    return 'Element Not Found';
+  } else if (msg.includes('timeout') && !msg.includes('page.goto')) {
+    return 'Timeout Problems';
+  } else if (msg.includes('evaluate') || msg.includes('script') || msg.includes('function')) {
+    return 'Script Execution Errors';
+  } else {
+    return 'Other Issues';
+  }
+}
+
 // ---------- main ----------
 if (!fs.existsSync(inPath)) {
   console.error(`Input JSON not found: ${inPath}`);
@@ -124,6 +221,34 @@ if (ids.length) {
   md += `\n`;
 }
 
+const rootCauses = analyzeRootCauses(data);
+
+// Добавим секцию Root Causes Analysis
+md += "\n## 🎯 Root Causes Analysis\n\n";
+
+Object.keys(rootCauses).forEach(causeType => {
+  const errors = rootCauses[causeType];
+  if (errors.length === 0) return;
+
+  md += `### ${causeType} (${errors.length} error${errors.length > 1 ? 's' : ''})\n\n`;
+
+  // Показать краткие детали
+  errors.slice(0, 3).forEach(err => {
+    md += `- **${getReadableTitle(err)}** - ${err.retries_observed} retries\n`;
+  });
+
+  if (errors.length > 3) {
+    md += `- *...and ${errors.length - 3} more similar errors*\n`;
+  }
+
+  md += "\n**💡 Recommended Actions:**\n";
+  getActionItems(causeType, errors).forEach(action => {
+    md += `- ${action}\n`;
+  });
+
+  md += "\n---\n\n";
+});
+
 for (let i = 0; i < data.length; i++) {
   const x = data[i] || {};
   const id = toDeterministicId(x, i);
@@ -138,27 +263,37 @@ for (let i = 0; i < data.length; i++) {
     : "";
 
   md += `---\n\n`;
-  md += `### ${statusEmoji(st)} ${sevEmoji(sev)} ${esc(x.test || "Untitled test")}\n`;
+  md += `### ${statusEmoji(st)} ${sevEmoji(sev)} ${getReadableTitle(x)}\n`;
   md += `<a id="${anchor}"></a>\n\n`;
   md += `**ID:** \`${id}\`\n\n`;
   md += `**File:** \`${esc(x.file || "")}\`\n\n`;
   md += `**Status:** **${st}**  •  **Severity:** **${sev}**  •  **Retries:** ${re}\n\n`;
 
+  // Показать либо Error Message, либо Log Snippets (избегаем дублирования)
   if (errMsg) {
-    md += `**Error Message:**\n`;
+    md += `**Error Details:**\n`;
     md += "```\n" + shorten(errMsg, 600) + "\n```\n\n";
-  }
-
-  if (Array.isArray(x.call_log_snippets) && x.call_log_snippets.length) {
-    md += `**Log Snippet:**\n`;
+  } else if (Array.isArray(x.call_log_snippets) && x.call_log_snippets.length) {
+    md += `**Log Details:**\n`;
     md += listToCodeBlock(x.call_log_snippets) + "\n\n";
   }
 
   if (x.explanation) {
-    md += `**Explanation:**\n${esc(x.explanation)}\n\n`;
+    md += `**Why This Happened:**\n${esc(x.explanation)}\n\n`;
   }
   if (x.impact) {
     md += `**Impact:**\n${esc(x.impact)}\n\n`;
+  }
+  
+  // Добавить конкретные рекомендации для этой ошибки
+  const errorType = getErrorType(x);
+  const specificActions = getActionItems(errorType, [x]);
+  if (specificActions.length > 0) {
+    md += `**🔧 What To Do:**\n`;
+    specificActions.slice(0, 3).forEach(action => {
+      md += `- ${action}\n`;
+    });
+    md += `\n`;
   }
 }
 
