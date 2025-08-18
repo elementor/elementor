@@ -43,6 +43,7 @@ export class BaseRegistry {
 			component: section.component || null,
 			order: section.order || 10,
 			isAvailable: section.isAvailable || ( () => true ),
+			isDisabled: section.isDisabled || ( () => false ),
 			...section,
 		};
 	}

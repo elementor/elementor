@@ -60,6 +60,10 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		>
 			<Stack>
 				{ siteSettingsSections.map( ( siteSettingsSection ) => {
+					if ( siteSettingsSection.component ) {
+						return <siteSettingsSection.component />;
+					}
+
 					if ( siteSettingsSection.children ) {
 						return (
 							<SettingSection
@@ -78,7 +82,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 												settingKey={ siteSettingsChildSection.key }
 												onSettingChange={ handleToggleChange }
 												checked={ settings[ siteSettingsChildSection.key ] }
-												disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.[ siteSettingsChildSection.key ] }
+												disabled={ siteSettingsChildSection.isDisabled() }
 											/>
 										);
 									} ) }
@@ -95,7 +99,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 							description={ siteSettingsSection.description }
 							settingKey={ siteSettingsSection.key }
 							onSettingChange={ handleToggleChange }
-							disabled={ isImport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.[ siteSettingsSection.key ] }
+							disabled={ siteSettingsSection.isDisabled() }
 						/>
 					);
 				} ) }

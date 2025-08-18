@@ -2,6 +2,7 @@ import router from '@elementor/router';
 
 import Export from './export';
 import Import from './import';
+import { CustomizationFreePromotion } from './shared/components/customization-free-promotion';
 
 export default class ImportExportCustomization {
 	routes = [
@@ -45,30 +46,40 @@ export default class ImportExportCustomization {
 
 		const sections = [
 			{
+				key: 'promotion',
+				title: __( 'Customization is not available for this kit.', 'elementor' ),
+				component: CustomizationFreePromotion,
+				order: 0,
+			},
+			{
 				key: 'theme',
 				title: __( 'Theme', 'elementor' ),
 				description: __( 'Only public WordPress themes are supported', 'elementor' ),
-				order: 0,
+				isDisabled: () => true,
+				order: 10,
 			},
 			{
 				key: 'siteSettings',
 				title: __( 'Site settings', 'elementor' ),
-				order: 1,
+				order: 20,
 				children: [
 					{
 						key: 'globalColors',
 						title: __( 'Global colors', 'elementor' ),
-						order: 0,
+						isDisabled: () => true,
+						order: 10,
 					},
 					{
 						key: 'globalFonts',
 						title: __( 'Global fonts', 'elementor' ),
-						order: 1,
+						isDisabled: () => true,
+						order: 20,
 					},
 					{
 						key: 'themeStyleSettings',
 						title: __( 'Theme style settings', 'elementor' ),
-						order: 2,
+						isDisabled: () => true,
+						order: 30,
 					},
 				],
 			},
@@ -76,13 +87,15 @@ export default class ImportExportCustomization {
 				key: 'generalSettings',
 				title: __( 'Settings', 'elementor' ),
 				description: __( 'Include site identity, background, layout, Lightbox, page transitions, and custom CSS', 'elementor' ),
-				order: 2,
+				isDisabled: () => true,
+				order: 30,
 			},
 			{
 				key: 'experiments',
 				title: __( 'Experiments', 'elementor' ),
 				description: __( 'This will apply all experiments that are still active during import', 'elementor' ),
-				order: 3,
+				isDisabled: () => true,
+				order: 40,
 			},
 		];
 
