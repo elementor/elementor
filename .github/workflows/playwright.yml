@@ -227,7 +227,7 @@ jobs:
 
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
-    if: always() && (needs.Playwright.result != 'skipped')
+    if: always() && (needs.Playwright.result != 'skipped' || needs.PlaywrightWithTag.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
