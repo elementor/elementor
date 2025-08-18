@@ -58,5 +58,7 @@ export function validate( editor: editor.IStandaloneCodeEditor, monaco: MonacoEd
 		return true;
 	}
 	const allMarkers = monaco.editor.getModelMarkers( { resource: model.uri } );
-	return allMarkers.filter( ( marker ) => marker.severity === monaco.MarkerSeverity.Error ).length === 0;
+	// Only consider our custom rules for gating submit; ignore built-in CSS worker errors
+	const errorMarkers = allMarkers.filter( ( marker ) => ( marker as any ).owner === 'custom-css-rules' && marker.severity === monaco.MarkerSeverity.Error );
+	return errorMarkers.length === 0;
 }

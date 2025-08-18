@@ -13,58 +13,74 @@ type CssEditorProps = {
 	onChange: ( value: string ) => void;
 };
 
-const setVisualContent = ( value: string ): string => {
+const buildHiddenContext = ( value: string ): string => {
 	const trimmed = value.trim();
-	return `element.style {\n${ trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n' }}`;
+	const indented = trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n';
+	return `element.style {\n${ indented }}`;
 };
 
-const getActual = ( value: string ): string => {
-	const lines = value.split( '\n' );
-	if ( lines.length < 2 ) {
-		return '';
-	}
-	return lines
-		.slice( 1, -1 )
-		.map( ( line ) => line.replace( /^ {2}/, '' ) )
-		.join( '\n' );
-};
+const addVisualContextZones = ( editor: editor.IStandaloneCodeEditor ) => {
+	let topZoneId: string | null = null;
+	let bottomZoneId: string | null = null;
 
-const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
-	const model = editor.getModel();
-	if ( ! model ) {
-		return;
-	}
+	const createLabel = ( text: string ) => {
+		const node = document.createElement( 'div' );
+		node.style.fontFamily = 'Roboto, Arial, Helvetica, Verdana, sans-serif';
+		node.style.fontSize = '12px';
+		node.style.lineHeight = '18px';
+		node.style.paddingLeft = '4px';
+		node.textContent = text;
+		return node;
+	};
 
-	editor.onKeyDown( ( e ) => {
-		const position = editor.getPosition();
-		if ( ! position ) {
-			return;
-		}
+	const topNode = createLabel( 'element.style {' );
+	const bottomNode = createLabel( '}' );
 
-		const totalLines = model.getLineCount();
-		const isInProtectedRange = position.lineNumber === 1 || position.lineNumber === totalLines;
-
-		if ( isInProtectedRange ) {
-			const allowedKeys = [
-				monaco.KeyCode.UpArrow,
-				monaco.KeyCode.DownArrow,
-				monaco.KeyCode.LeftArrow,
-				monaco.KeyCode.RightArrow,
-				monaco.KeyCode.Home,
-				monaco.KeyCode.End,
-				monaco.KeyCode.PageUp,
-				monaco.KeyCode.PageDown,
-				monaco.KeyCode.Tab,
-				monaco.KeyCode.Escape,
-			];
-
-			if ( ! allowedKeys.includes( e.keyCode ) ) {
-				e.preventDefault();
-				e.stopPropagation();
+	const refreshZones = () => {
+		const model = editor.getModel();
+		const lineCount = model ? model.getLineCount() : 0;
+		editor.changeViewZones( ( accessor ) => {
+			if ( topZoneId ) {
+				accessor.removeZone( topZoneId );
 			}
-		}
-	} );
+			if ( bottomZoneId ) {
+				accessor.removeZone( bottomZoneId );
+			}
+			topZoneId = accessor.addZone( {
+				afterLineNumber: 0,
+				heightInPx: 18,
+				domNode: topNode,
+			} );
+			bottomZoneId = accessor.addZone( {
+				afterLineNumber: lineCount,
+				heightInPx: 18,
+				domNode: bottomNode,
+			} );
+		} );
+	};
+
+	refreshZones();
+
+	const contentListener = editor.onDidChangeModelContent( () => refreshZones() );
+	const layoutListener = editor.onDidLayoutChange( () => editor.layout() );
+
+	return () => {
+		editor.changeViewZones( ( accessor ) => {
+			if ( topZoneId ) {
+				accessor.removeZone( topZoneId );
+			}
+			if ( bottomZoneId ) {
+				accessor.removeZone( bottomZoneId );
+			}
+			topZoneId = null;
+			bottomZoneId = null;
+		} );
+		contentListener.dispose();
+		layoutListener.dispose();
+	};
 };
+
+// keystrokes are no longer blocked; context is rendered outside the model
 
 const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
@@ -76,13 +92,79 @@ const createEditorDidMountHandler = (
 		editorRef.current = editor;
 		monacoRef.current = monaco;
 
-		preventChangeOnVisualContent( editor, monaco );
+		const disposeZones = addVisualContextZones( editor );
+
+		// Hidden backing model to preserve CSS IntelliSense context
+		let hiddenModel: editor.ITextModel | null = monaco.editor.createModel( buildHiddenContext( '' ), 'css' );
+
+		const updateHiddenModel = () => {
+			const code = editor.getModel()?.getValue() ?? '';
+			hiddenModel?.setValue( buildHiddenContext( code ) );
+		};
+		updateHiddenModel();
 
 		setCustomSyntaxRules( editor, monaco );
 
+		// Completion provider proxying to hidden context
+		/* eslint-disable @typescript-eslint/no-explicit-any */
+		const completionProvider = ( monaco.languages as any ).registerCompletionItemProvider( 'css', {
+			triggerCharacters: [ ':', '-', ' ', '\n', '\t' ],
+			provideCompletionItems: async ( model: any, position: any ): Promise< any > => {
+				if ( model !== editorRef.current?.getModel() ) {
+					return { suggestions: [] };
+				}
+
+				updateHiddenModel();
+
+				const hiddenPosition = new monaco.Position( position.lineNumber + 1, position.column + 2 );
+
+				try {
+					const getWorker = ( monaco.languages as any ).css.getWorker as () => Promise<
+						( uri: any ) => Promise< any >
+					>;
+					if ( ! hiddenModel ) {
+						return { suggestions: [] };
+					}
+					const workerAccessor = await getWorker();
+					const worker = await workerAccessor( hiddenModel.uri );
+					const list = await worker.doComplete( hiddenModel.uri.toString(), hiddenPosition );
+
+					const word = model.getWordUntilPosition( position );
+					const defaultRange = new monaco.Range(
+						position.lineNumber,
+						word.startColumn,
+						position.lineNumber,
+						word.endColumn
+					);
+
+					const rawItems: any[] = list && Array.isArray( list.items ) ? ( list.items as any[] ) : [];
+					const suggestions = rawItems.map( ( obj ) => {
+						const label = String( obj.label ?? '' );
+						let insertText = '';
+						if ( typeof obj.insertText === 'string' ) {
+							insertText = obj.insertText as string;
+						} else if ( typeof obj.label === 'string' ) {
+							insertText = obj.label as string;
+						}
+						let kind: number;
+						if ( typeof obj.kind === 'number' ) {
+							kind = obj.kind as number;
+						} else {
+							kind = ( monaco.languages as any ).CompletionItemKind.Text as number;
+						}
+						return { label, kind, insertText, range: defaultRange };
+					} );
+
+					return { suggestions };
+				} catch {
+					return { suggestions: [] };
+				}
+			},
+		} );
+		/* eslint-enable @typescript-eslint/no-explicit-any */
+
 		editor.onDidChangeModelContent( () => {
-			const code = editor.getModel()?.getValue() ?? '';
-			const userContent = getActual( code );
+			const userContent = editor.getModel()?.getValue() ?? '';
 
 			setCustomSyntaxRules( editor, monaco );
 
@@ -104,6 +186,13 @@ const createEditorDidMountHandler = (
 			}, 500 );
 
 			debounceTimer.current = newTimer;
+		} );
+
+		editor.onDidDispose( () => {
+			disposeZones();
+			completionProvider.dispose();
+			hiddenModel?.dispose();
+			hiddenModel = null;
 		} );
 	};
 };
@@ -145,7 +234,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				height="100%"
 				language="css"
 				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
-				defaultValue={ setVisualContent( value ) }
+				defaultValue={ value }
 				onMount={ handleEditorDidMount }
 				options={ {
 					lineNumbers: 'off',
