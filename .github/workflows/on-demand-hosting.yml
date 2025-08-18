@@ -60,9 +60,9 @@ jobs:
           quit
           EOF
           
-          echo "✅ Plugin successfully uploaded to SFTP server"
-          echo "📁 File: /html/wp-content/uploads/elementor.zip"
-          echo "🖥️  Host: $SFTP_HOST:$SFTP_PORT"
+          echo ":white_check_mark: Plugin successfully uploaded to SFTP server"
+          echo ":file_folder: File: /html/wp-content/uploads/elementor.zip"
+          echo ":desktop_computer:  Host: $SFTP_HOST:$SFTP_PORT"
           
           
           # Fetch site_id using subdomain
@@ -77,9 +77,9 @@ jobs:
           SITE_ID=$(echo $SITE_RESPONSE | jq -r '.site_id')
           
           if [ "$SITE_ID" != "null" ] && [ "$SITE_ID" != "" ]; then
-            echo "✅ Site ID fetched successfully: $SITE_ID"
+            echo ":white_check_mark: Site ID fetched successfully: $SITE_ID"
           else
-            echo "❌ Failed to fetch site ID"
+            echo ":x: Failed to fetch site ID"
             echo "Response: $SITE_RESPONSE"
             exit 1
           fi
@@ -104,8 +104,8 @@ jobs:
           RESPONSE_BODY="${API_RESPONSE%???}"
           
           if [ "$HTTP_CODE" -eq 200 ]; then
-            echo "✅ Plugin successfully installed via WP-CLI API"
-            echo "📦 Plugin URL: $PLUGIN_URL"
+            echo ":white_check_mark: Plugin successfully installed via WP-CLI API"
+            echo ":package: Plugin URL: $PLUGIN_URL"
             
             # Delete the zip file after successful installation
             echo "Cleaning up: Deleting elementor.zip file via SFTP..."
@@ -114,14 +114,12 @@ jobs:
             rm elementor.zip
             quit
             EOF
-            echo "🗑️  Zip file successfully deleted via SFTP"
+            echo ":wastebasket:  Zip file successfully deleted via SFTP"
             
-            echo "🚀 Deployment completed successfully!"
+            echo ":rocket: Deployment completed successfully!"
           else
-            echo "❌ Failed to install plugin via WP-CLI API"
+            echo ":x: Failed to install plugin via WP-CLI API"
             echo "HTTP Code: $HTTP_CODE"
             echo "Response: $RESPONSE_BODY"
             exit 1
           fi
-
-
