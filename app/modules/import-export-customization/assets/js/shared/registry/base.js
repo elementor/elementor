@@ -4,13 +4,23 @@ export class BaseRegistry {
 	}
 
 	register( section ) {
-		if ( ! section.key || ! section.title ) {
-			throw new Error( 'Template type must have key and title' );
+		if ( ! section.key ) {
+			throw new Error( 'Registry section must have key' );
 		}
 
 		const existingSection = this.get( section.key );
 
-		const formattedSection = existingSection || this.formatSection( section );
+		if ( ! existingSection && ! section.title ) {
+			throw new Error( 'New registry section must have title' );
+		}
+
+		let formattedSection;
+		if ( existingSection ) {
+			// Merge existing section with new properties
+			formattedSection = { ...existingSection, ...section };
+		} else {
+			formattedSection = this.formatSection( section );
+		}
 
 		if ( section.children ) {
 			// If existing section has children, merge them with new children
