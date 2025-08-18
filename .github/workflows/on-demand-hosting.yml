@@ -33,7 +33,7 @@ jobs:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
       
-      - name: Upload to transfer.sh and get public URL
+      - name: Upload to file.io and get public URL
         run: |
           echo "Deploying to site: ${{ inputs.SITE_URL }}"
           echo "Built artifact downloaded to ./build"
@@ -43,13 +43,21 @@ jobs:
           zip -r ../elementor-plugin.zip .
           cd ..
           
-          # Upload to transfer.sh and get public URL
-          PUBLIC_URL=$(curl --upload-file elementor-plugin.zip https://transfer.sh/elementor-plugin.zip)
+          # Upload to file.io and get public URL (expires in 1 day)
+          RESPONSE=$(curl -F "file=@elementor-plugin.zip" https://file.io)
+          PUBLIC_URL=$(echo $RESPONSE | jq -r '.link')
           
           echo "Public artifact URL: $PUBLIC_URL"
           echo "PUBLIC_ARTIFACT_URL=$PUBLIC_URL" >> $GITHUB_ENV
           
-          # You can now use $PUBLIC_URL or $PUBLIC_ARTIFACT_URL for deployment
-          echo "Ready to deploy plugin from public URL to: ${{ inputs.SITE_URL }}"
+          # Verify the URL was retrieved successfully
+          if [ "$PUBLIC_URL" != "null" ] && [ "$PUBLIC_URL" != "" ]; then
+            echo "✅ Plugin successfully uploaded and available at: $PUBLIC_URL"
+            echo "🚀 Ready to deploy plugin from public URL to: ${{ inputs.SITE_URL }}"
+          else
+            echo "❌ Failed to upload plugin or retrieve URL"
+            echo "Response: $RESPONSE"
+            exit 1
+          fi
 
 
