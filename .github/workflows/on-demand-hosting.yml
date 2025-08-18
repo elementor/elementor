@@ -33,7 +33,7 @@ jobs:
           name: ${{ needs.build-plugin.outputs.artifact_name }}
           path: ./build
       
-      - name: Upload to file.io and get public URL
+      - name: Upload to SFTP server
         run: |
           echo "Deploying to site: ${{ inputs.SITE_URL }}"
           echo "Built artifact downloaded to ./build"
@@ -43,21 +43,19 @@ jobs:
           zip -r ../elementor-plugin.zip .
           cd ..
           
-          # Upload to file.io and get public URL (expires in 1 day)
-          RESPONSE=$(curl -F "file=@elementor-plugin.zip" https://file.io)
-          PUBLIC_URL=$(echo $RESPONSE | jq -r '.link')
+          # Install sshpass for SFTP authentication
+          sudo apt-get update && sudo apt-get install -y sshpass
           
-          echo "Public artifact URL: $PUBLIC_URL"
-          echo "PUBLIC_ARTIFACT_URL=$PUBLIC_URL" >> $GITHUB_ENV
+          # Upload to SFTP server
+          echo "Uploading elementor-plugin.zip to SFTP server..."
+          sshpass -p 'fxkVvDNT6gi74T91' sftp -P 32022 -o StrictHostKeyChecking=no lSVllGgK@sftp.stg.elementor.cool << EOF
+          put elementor-plugin.zip
+          quit
+          EOF
           
-          # Verify the URL was retrieved successfully
-          if [ "$PUBLIC_URL" != "null" ] && [ "$PUBLIC_URL" != "" ]; then
-            echo "✅ Plugin successfully uploaded and available at: $PUBLIC_URL"
-            echo "🚀 Ready to deploy plugin from public URL to: ${{ inputs.SITE_URL }}"
-          else
-            echo "❌ Failed to upload plugin or retrieve URL"
-            echo "Response: $RESPONSE"
-            exit 1
-          fi
+          echo "✅ Plugin successfully uploaded to SFTP server"
+          echo "📁 File: elementor-plugin.zip"
+          echo "🖥️  Host: sftp.stg.elementor.cool:32022"
+          echo "🚀 Ready to deploy plugin to: ${{ inputs.SITE_URL }}"
 
 
