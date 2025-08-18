@@ -9,38 +9,32 @@ export class BaseRegistry {
 		}
 
 		const existingSection = this.get( section.key );
-
-		if ( ! existingSection && ! section.title ) {
-			throw new Error( 'New registry section must have title' );
-		}
+		const { children, ...rest } = section;
 
 		let formattedSection;
 		if ( existingSection ) {
-			// Merge existing section with new properties
-			formattedSection = { ...existingSection, ...section };
+			formattedSection = { ...existingSection, ...rest };
 		} else {
-			formattedSection = this.formatSection( section );
+			formattedSection = this.formatSection( rest );
 		}
 
-		if ( section.children ) {
-			// If existing section has children, merge them with new children
+		if ( children ) {
 			if ( formattedSection.children ) {
 				const existingChildrenMap = new Map(
 					formattedSection.children.map( ( child ) => [ child.key, child ] ),
 				);
 
-				// Override existing children with new ones and add new children
-				section.children.forEach( ( childSection ) => {
-					const formattedChild = this.formatSection( childSection );
-					existingChildrenMap.set( childSection.key, formattedChild );
+				children.forEach( ( childSection ) => {
+					existingChildrenMap.set( childSection.key, { ...existingChildrenMap.get( childSection.key ), ...childSection } );
 				} );
 
 				formattedSection.children = Array.from( existingChildrenMap.values() );
 			} else {
-				formattedSection.children = section.children.map( ( childSection ) => this.formatSection( childSection ) );
+				formattedSection.children = children.map( ( childSection ) => this.formatSection( childSection ) );
 			}
 		}
-		this.sections.set( section.key, formattedSection );
+
+		this.sections.set( rest.key, formattedSection );
 	}
 
 	formatSection( { children, ...section } ) {
