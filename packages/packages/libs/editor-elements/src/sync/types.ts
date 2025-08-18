@@ -36,6 +36,7 @@ export type V1Element = {
 	};
 	view?: {
 		el?: HTMLElement;
+		_index?: number;
 		getDomElement?: () => {
 			get?: ( index: number ) => HTMLElement | undefined;
 		};
