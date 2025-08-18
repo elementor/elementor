@@ -47,33 +47,6 @@ jest.mock( '@elementor/ui', () => {
 		),
 		Box: ( { children, ...props }: BoxProps ) => <div data-props={ JSON.stringify( props ) }>{ children }</div>,
 		Divider: () => <hr />,
-		ErrorBoundary: class extends React.Component<{
-			children: React.ReactNode;
-			fallback: React.ReactNode;
-		}, {
-			hasError: boolean;
-		}> {
-			constructor( props: { children: React.ReactNode; fallback: React.ReactNode } ) {
-				super( props );
-				this.state = { hasError: false };
-			}
-
-			static getDerivedStateFromError() {
-				return { hasError: true };
-			}
-
-			render() {
-				if ( this.state.hasError ) {
-					return (
-						<div role="alert" data-props={ JSON.stringify( { severity: 'error' } ) }>
-							Something went wrong
-						</div>
-					);
-				}
-
-				return this.props.children;
-			}
-		},
 	};
 } );
 
