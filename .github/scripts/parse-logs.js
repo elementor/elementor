@@ -1,5 +1,5 @@
 // scripts/parse-logs.js
-// Node.js ESM
+// Node.js CommonJS
 // Usage: node scripts/parse-logs.js
 // Env: LOG_ROOT (default: artifacts/logs), OUT (default: artifacts/ai/parsed.json)
 
