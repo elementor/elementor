@@ -14,9 +14,20 @@ jest.mock( '@elementor/ui', () => {
 				{ props.children }
 			</button>
 		),
-		Menu: ( { children, open, ...props }: MenuProps ) =>
+		Menu: ( { children, open, MenuListProps, PaperProps, disablePortal, anchorEl, anchorOrigin, transformOrigin, ...props }: MenuProps ) =>
 			open && (
-				<div role="menu" { ...props }>
+				<div
+					role="menu"
+					data-menu-props={ JSON.stringify( {
+						MenuListProps,
+						PaperProps,
+						disablePortal,
+						anchorEl,
+						anchorOrigin,
+						transformOrigin,
+					} ) }
+					{ ...props }
+				>
 					{ children }
 				</div>
 			),

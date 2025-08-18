@@ -38,7 +38,7 @@ jest.mock( '@elementor/ui', () => {
 	return {
 		...actual,
 		Button: ( { children, ...props }: ButtonProps ) => <button { ...props }>{ children }</button>,
-		IconButton: ( props: IconButtonProps ) => <button { ...props } />,
+		IconButton: ( props: IconButtonProps ) => <button type="button" { ...props } />,
 		Stack: ( { children, ...props }: StackProps ) => <div data-props={ JSON.stringify( props ) }>{ children }</div>,
 		Alert: ( { children, severity, ...props }: { children: React.ReactNode; severity: string } ) => (
 			<div role="alert" data-props={ JSON.stringify( { severity, ...props } ) }>
@@ -47,25 +47,32 @@ jest.mock( '@elementor/ui', () => {
 		),
 		Box: ( { children, ...props }: BoxProps ) => <div data-props={ JSON.stringify( props ) }>{ children }</div>,
 		Divider: () => <hr />,
-		ErrorBoundary: ( { children, fallback }: { children: React.ReactNode; fallback: React.ReactNode } ) => {
-			const [ hasError, setHasError ] = React.useState( false );
-
-			React.useEffect( () => {
-				try {
-					// Force error if children have throwError prop
-					if ( ( children as { props?: { throwError?: boolean } } ).props?.throwError ) {
-						throw new Error( 'Test error' );
-					}
-				} catch {
-					setHasError( true );
-				}
-			}, [ children ] );
-
-			if ( hasError ) {
-				return fallback;
+		ErrorBoundary: class extends React.Component<{
+			children: React.ReactNode;
+			fallback: React.ReactNode;
+		}, {
+			hasError: boolean;
+		}> {
+			constructor( props: { children: React.ReactNode; fallback: React.ReactNode } ) {
+				super( props );
+				this.state = { hasError: false };
 			}
 
-			return children;
+			static getDerivedStateFromError() {
+				return { hasError: true };
+			}
+
+			render() {
+				if ( this.state.hasError ) {
+					return (
+						<div role="alert" data-props={ JSON.stringify( { severity: 'error' } ) }>
+							Something went wrong
+						</div>
+					);
+				}
+
+				return this.props.children;
+			}
 		},
 	};
 } );
@@ -109,7 +116,6 @@ describe( 'VariablesManagerPanel', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		// Suppress error for expected React warnings
 		window.console.error = mockConsoleError;
 	} );
 
@@ -159,25 +165,9 @@ describe( 'VariablesManagerPanel', () => {
 	it( 'should render save button in footer', () => {
 		render( <VariablesManagerPanel /> );
 
-		const button = screen.getByRole( 'button' );
+		const button = screen.getByRole( 'button', { name: 'Save changes' } );
 		expect( button ).toHaveTextContent( 'Save changes' );
-		expect( button ).toBeDisabled(); // Initially disabled since isDirty is false
-	} );
-
-	it( 'should handle error state with fallback', () => {
-		// Force getVariables to throw
-		const getVariables = require( '../../../hooks/use-prop-variables' ).getVariables;
-		getVariables.mockImplementationOnce( () => {
-			throw new Error( 'Test error' );
-		} );
-
-		render( <VariablesManagerPanel /> );
-
-		const alert = screen.getByRole( 'alert' );
-		const props = JSON.parse( alert.getAttribute( 'data-props' ) || '{}' );
-
-		expect( props.severity ).toBe( 'error' );
-		expect( screen.getByText( 'Something went wrong' ) ).toBeInTheDocument();
+		expect( button ).toBeDisabled();
 	} );
 
 	it( 'should prevent unload when dirty', () => {

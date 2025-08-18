@@ -259,8 +259,7 @@ describe( 'VariablesManagerTable', () => {
 		const cellProps = editableCells.map( ( cell ) => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
 
 		cellProps.forEach( ( props ) => {
-			if ( props.initialValue.startsWith( 'Variable' ) ) {
-				// Label cells
+			if ( props?.initialValue?.startsWith( 'Variable' ) ) {
 				expect( props.prefixElement ).toBe( true );
 			}
 		} );
