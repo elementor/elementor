@@ -10,12 +10,13 @@ import {
 } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
-import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
+import { ColorFilterIcon, TrashIcon, XIcon, FilesIcon } from '@elementor/icons';
+import { Alert, Box, Button, Collapse, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
 import { VariablesManagerTable } from './variables-manager-table';
+import { VariablesImportPanel } from './variables-import-panel';
 
 const id = 'variables-manager';
 
@@ -36,6 +37,9 @@ export function VariablesManagerPanel() {
 	const isDirty = false;
 	const variables = getVariables( false );
 
+	// Import UI state
+	const [ showImportUI, setShowImportUI ] = React.useState( false );
+
 	usePreventUnload( isDirty );
 
 	const menuActions = [
@@ -46,6 +50,8 @@ export function VariablesManagerPanel() {
 			onClick: () => {},
 		},
 	];
+
+
 
 	return (
 		<ThemeProvider>
@@ -59,8 +65,17 @@ export function VariablesManagerPanel() {
 									{ __( 'Variable Manager', 'elementor' ) }
 								</PanelHeaderTitle>
 							</Stack>
-							<CloseButton
+							<IconButton
+								size="small"
+								color="secondary"
+								aria-label="Import variables"
+								onClick={ () => setShowImportUI( ( prev ) => ! prev ) }
 								sx={ { marginLeft: 'auto' } }
+							>
+								<FilesIcon fontSize="small" />
+							</IconButton>
+							<CloseButton
+								sx={ { ml: 0 } }
 								onClose={ () => {
 									closePanel();
 								} }
@@ -74,8 +89,17 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<Divider />
-						<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
+						<Collapse in={ showImportUI } timeout="auto" unmountOnExit>
+							<VariablesImportPanel onImported={ () => {
+								// No-op: storage.load() already triggers in service.load(); re-render occurs when panel props/state change
+							} } />
+						</Collapse>
+						{ ! showImportUI && (
+							<>
+								<Divider />
+								<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
+							</>
+						) }
 					</PanelBody>
 
 					<PanelFooter>
