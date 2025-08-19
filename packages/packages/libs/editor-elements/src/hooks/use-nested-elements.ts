@@ -41,15 +41,6 @@ type RemovedElementsResult = {
 	elementsData: ElementData[];
 };
 
-// Extended view type to access internal _index property
-type ViewWithIndex = {
-	_index?: number;
-	el?: HTMLElement;
-	getDomElement?: () => {
-		get?: ( index: number ) => HTMLElement | undefined;
-	};
-};
-
 export const useNestedElements = () => {
 	return useMemo( () => {
 		const createElements = ( {
@@ -149,7 +140,7 @@ export const useNestedElements = () => {
 								const model = container.model.toJSON();
 								const parent = container.parent;
 
-								const at = ( container.view as ViewWithIndex )?._index ?? 0;
+								const at = container.view?._index ?? 0;
 
 								elementsData.push( {
 									elementId,
