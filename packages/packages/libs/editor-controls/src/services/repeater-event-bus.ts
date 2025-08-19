@@ -15,10 +15,10 @@ export class RepeaterEventBus {
 	}
 
 	emit(eventType: string, data?: Record<string, any>) {
-		// Call any registered callbacks
+
 		this.listeners.get(eventType)?.forEach(callback => callback());
 
-		// Handle specific event types with analytics tracking
+
 		if (eventType === 'transition-item-added') {
 			this.trackTransitionItemAdded(data);
 		}
