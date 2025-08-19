@@ -53,7 +53,7 @@ const EMPTY_OPTION = {
 	label: __( 'local', 'elementor' ),
 	value: null,
 	fixed: true,
-	color: getTempStylesProviderColorName( 'accent' ),
+	color: getTempStylesProviderColorName( 'promotion' ),
 	icon: <MapPinIcon />,
 	provider: null,
 } satisfies StyleDefOption;
@@ -230,7 +230,7 @@ function useOptions() {
 }
 
 function getTempStylesProviderColorName( color: ChipOwnProps[ 'color' ] ): ChipOwnProps[ 'color' ] {
-	if ( color === 'accent' ) {
+	if ( color === 'promotion' ) {
 		return 'primary';
 	}
 

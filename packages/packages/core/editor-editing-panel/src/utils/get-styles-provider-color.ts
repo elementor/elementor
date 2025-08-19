@@ -9,7 +9,7 @@ export const getStylesProviderColorName = ( provider: string ): ChipProps[ 'colo
 	}
 
 	if ( isElementsStylesProvider( provider ) ) {
-		return 'accent';
+		return 'promotion';
 	}
 
 	return getStyleProviderColors( provider ).name;
@@ -21,7 +21,7 @@ export const getStylesProviderThemeColor = ( provider: string ): ( ( theme: Them
 	}
 
 	if ( isElementsStylesProvider( provider ) ) {
-		return ( theme: Theme ) => theme.palette.accent.main;
+		return ( theme: Theme ) => theme.palette.promotion.main;
 	}
 
 	return getStyleProviderColors( provider ).getThemeColor;

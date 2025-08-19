@@ -74,7 +74,7 @@ export const WelcomeDialog = ( { doClose } ) => {
 			<Stack py={ 2 } px={ 3 }>
 				<Button
 					variant="contained"
-					color="accent"
+					color="promotion"
 					onClick={ doClose }
 					sx={ { ml: 'auto' } }
 				>{ i18n.closeButton }</Button>
