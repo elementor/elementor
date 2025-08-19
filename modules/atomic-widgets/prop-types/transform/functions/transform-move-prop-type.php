@@ -1,11 +1,9 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Transform;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Traits\Dimensional_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,9 +17,7 @@ class Transform_Move_Prop_Type extends Object_Prop_Type {
 		return 'transform-move';
 	}
 
-	protected function get_prop_type(): Prop_Type {
-		return Size_Prop_Type::make()
-			->units( Size_Constants::transform() )
-			->default_unit( Size_Constants::UNIT_ANGLE_DEG );
+	protected function units(): ?array {
+		return Size_Constants::transform();
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes\Transform;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Transform\Functions;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -19,10 +19,6 @@ class Transform_Scale_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function get_prop_type(): Prop_Type {
-		return Number_Prop_Type::make();
-	}
-
-	protected function get_default_size(): ?array {
-		return null;
+		return Number_Prop_Type::make()->default( 1 );
 	}
 }
