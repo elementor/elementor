@@ -266,6 +266,7 @@ class Module extends BaseModule {
 			ob_end_clean();
 		}
 
+		header( 'Content-Type: application/json; charset=UTF-8' );
 		echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 		wp_die( '', '', [ 'response' => null ] );
