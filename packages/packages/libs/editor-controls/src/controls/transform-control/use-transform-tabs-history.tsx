@@ -8,7 +8,7 @@ import {
 	type ScaleTransformPropValue,
 	skewTransformPropTypeUtil,
 	type SkewTransformPropValue,
-	type TransformFunctionsItemPropValue,
+	type TransformItemPropValue,
 } from '@elementor/editor-props';
 import { useTabs } from '@elementor/ui';
 
@@ -17,10 +17,10 @@ import { useRepeaterContext } from '../../components/unstable-repeater/context/r
 import { type TransformFunction, TransformFunctionKeys } from './initial-values';
 
 type InitialTransformValues = {
-	move: TransformFunctionsItemPropValue[ 'value' ];
-	scale: TransformFunctionsItemPropValue[ 'value' ];
-	rotate: TransformFunctionsItemPropValue[ 'value' ];
-	skew: TransformFunctionsItemPropValue[ 'value' ];
+	move: TransformItemPropValue[ 'value' ];
+	scale: TransformItemPropValue[ 'value' ];
+	rotate: TransformItemPropValue[ 'value' ];
+	skew: TransformItemPropValue[ 'value' ];
 };
 
 export const useTransformTabsHistory = ( {
@@ -58,7 +58,7 @@ export const useTransformTabsHistory = ( {
 		skew: initialSkew,
 	} );
 
-	const saveToHistory = ( key: keyof InitialTransformValues, value: TransformFunctionsItemPropValue[ 'value' ] ) => {
+	const saveToHistory = ( key: keyof InitialTransformValues, value: TransformItemPropValue[ 'value' ] ) => {
 		if ( value ) {
 			valuesHistory.current[ key ] = value;
 		}

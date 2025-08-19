@@ -15,7 +15,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
 import { extractOrderedDependencies, updateValues, type Values } from '../utils/prop-dependency-utils';
-import { createTopLevelObjectType } from './create-top-level-object-type';
+import { createTopLevelOjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
 	bind: PropKey;
@@ -35,7 +35,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
-	const propType = createTopLevelObjectType( { schema: propsSchema } );
+	const propType = createTopLevelOjectType( { schema: propsSchema } );
 
 	const undoableUpdateElementProp = useUndoableUpdateElementProp( {
 		elementId,

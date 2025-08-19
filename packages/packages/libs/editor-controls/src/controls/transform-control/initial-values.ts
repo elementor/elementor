@@ -3,7 +3,7 @@ import {
 	rotateTransformPropTypeUtil,
 	scaleTransformPropTypeUtil,
 	skewTransformPropTypeUtil,
-	type TransformFunctionsItemPropValue,
+	type TransformItemPropValue,
 } from '@elementor/editor-props';
 
 export type TransformFunction = 'transform-move' | 'transform-scale' | 'transform-rotate' | 'transform-skew';
@@ -31,7 +31,7 @@ export const defaultValues = {
 	},
 };
 
-export const initialTransformValue: TransformFunctionsItemPropValue = {
+export const initialTransformValue: TransformItemPropValue = {
 	$$type: TransformFunctionKeys.move,
 	value: {
 		x: { $$type: 'size', value: { size: defaultValues.move.size, unit: defaultValues.move.unit as 'px' } },

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import type { TransformFunctionsItemPropValue } from '@elementor/editor-props';
+import type { TransformItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { defaultValues, TransformFunctionKeys } from './initial-values';
 
-const transformMoveValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
+const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => {
 			const size = axis?.value?.size ?? defaultValues.move.size;
@@ -15,12 +15,12 @@ const transformMoveValue = ( value: TransformFunctionsItemPropValue[ 'value' ] )
 		} )
 		.join( ', ' );
 
-const transformScaleValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
+const transformScaleValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => axis?.value || defaultValues.scale )
 		.join( ', ' );
 
-const transformRotateValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
+const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => {
 			const size = axis?.value?.size ?? defaultValues.rotate.size;
@@ -29,7 +29,7 @@ const transformRotateValue = ( value: TransformFunctionsItemPropValue[ 'value' ]
 			return `${ size }${ unit }`;
 		} )
 		.join( ', ' );
-const transformSkewValue = ( value: TransformFunctionsItemPropValue[ 'value' ] ) =>
+const transformSkewValue = ( value: TransformItemPropValue[ 'value' ] ) =>
 	Object.values( value )
 		.map( ( axis ) => {
 			const size = axis?.value?.size ?? defaultValues.skew.size;
@@ -39,7 +39,7 @@ const transformSkewValue = ( value: TransformFunctionsItemPropValue[ 'value' ] )
 		} )
 		.join( ', ' );
 
-export const TransformLabel = ( props: { value: TransformFunctionsItemPropValue } ) => {
+export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
 	const { $$type, value } = props.value;
 	switch ( $$type ) {
 		case TransformFunctionKeys.move:

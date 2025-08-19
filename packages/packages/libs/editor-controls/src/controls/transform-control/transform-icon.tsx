@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { type TransformFunctionsItemPropValue } from '@elementor/editor-props';
+import { type TransformItemPropValue } from '@elementor/editor-props';
 import { ArrowsMaximizeIcon, ExpandIcon, RotateClockwise2Icon, SkewXIcon } from '@elementor/icons';
 
 import { TransformFunctionKeys } from './initial-values';
 
-export const TransformIcon = ( { value }: { value: TransformFunctionsItemPropValue } ) => {
+export const TransformIcon = ( { value }: { value: TransformItemPropValue } ) => {
 	switch ( value.$$type ) {
 		case TransformFunctionKeys.move:
 			return <ArrowsMaximizeIcon fontSize="tiny" />;

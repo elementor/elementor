@@ -1,54 +1,42 @@
 import * as React from 'react';
-import { type RefObject, useRef } from 'react';
+import { useRef } from 'react';
 import { moveTransformPropTypeUtil } from '@elementor/editor-props';
 import { ArrowDownLeftIcon, ArrowDownSmallIcon, ArrowRightIcon } from '@elementor/icons';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
-import { type LengthUnit } from '../../../utils/size-control';
 import { TransformFunctionKeys } from '../initial-values';
 import { AxisRow } from './axis-row';
 
-type Control = { label: string; bind: 'x' | 'y' | 'z'; startIcon: React.ReactNode; units: LengthUnit[] };
-
-const moveAxisControls: Control[] = [
+const moveAxisControls: { label: string; bindValue: 'x' | 'y' | 'z'; startIcon: React.ReactNode }[] = [
 	{
 		label: __( 'Move X', 'elementor' ),
-		bind: 'x',
+		bindValue: 'x',
 		startIcon: <ArrowRightIcon fontSize={ 'tiny' } />,
-		units: [ 'px', '%', 'em', 'rem', 'vw' ],
 	},
 	{
 		label: __( 'Move Y', 'elementor' ),
-		bind: 'y',
+		bindValue: 'y',
 		startIcon: <ArrowDownSmallIcon fontSize={ 'tiny' } />,
-		units: [ 'px', '%', 'em', 'rem', 'vh' ],
 	},
 	{
 		label: __( 'Move Z', 'elementor' ),
-		bind: 'z',
+		bindValue: 'z',
 		startIcon: <ArrowDownLeftIcon fontSize={ 'tiny' } />,
-		units: [ 'px', '%', 'em', 'rem', 'vw', 'vh' ],
 	},
 ];
 
 export const Move = () => {
 	const context = useBoundProp( moveTransformPropTypeUtil );
-	const rowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ), useRef( null ) ];
+	const rowRef = useRef< HTMLDivElement >( null );
 
 	return (
 		<Grid container spacing={ 1.5 }>
 			<PropProvider { ...context }>
 				<PropKeyProvider bind={ TransformFunctionKeys.move }>
-					{ moveAxisControls.map( ( control, index ) => (
-						<AxisRow
-							key={ control.bind }
-							{ ...control }
-							anchorRef={ rowRefs[ index ] }
-							units={ control.units }
-							variant="length"
-						/>
+					{ moveAxisControls.map( ( control ) => (
+						<AxisRow key={ control.bindValue } { ...control } anchorRef={ rowRef } />
 					) ) }
 				</PropKeyProvider>
 			</PropProvider>
