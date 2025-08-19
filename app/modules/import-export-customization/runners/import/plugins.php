@@ -21,6 +21,10 @@ class Plugins extends Import_Runner_Base {
 		}
 	}
 
+	public function get_plugins_manager() {
+		return $this->plugins_manager;
+	}
+
 	public static function get_name(): string {
 		return 'plugins';
 	}
@@ -38,16 +42,24 @@ class Plugins extends Import_Runner_Base {
 		$customization = $data['customization']['plugins'] ?? null;
 
 		if ( $customization ) {
-			$enabled_plugin_keys = Collection::make( $customization )->filter()->keys();
-
-			$plugins = Collection::make( $data['selected_plugins'] )
-				->filter( function( $plugin_data, $plugin_key ) use ( $enabled_plugin_keys ) {
-					return $enabled_plugin_keys->contains( $plugin_data['plugin'] );
-				} )
-				->values();
-		} else {
-			$plugins = $data['selected_plugins'];
+			return $this->import_with_customization( $data, $imported_data, $customization );
 		}
+
+		return $this->import_all( $data, $imported_data );
+	}
+
+	private function import_with_customization( array $data, array $imported_data, array $customization ) {
+		$result = apply_filters( 'elementor/import-export-customization/import/plugins/customization', null, $data, $imported_data, $customization, $this );
+
+		if ( is_array( $result ) ) {
+			return $result;
+		}
+
+		return $this->import_all( $data, $imported_data );
+	}
+
+	private function import_all( array $data, array $imported_data ) {
+		$plugins = $data['selected_plugins'];
 
 		$plugins_collection = ( new Collection( $plugins ) )
 			->map( function ( $item ) {
