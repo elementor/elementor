@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../../pages/editor-page';
 import { timeouts } from '../../../../config/timeouts';
+import { viewportSize } from '../../../../enums/viewport-sizes';
 
 // Constants for test data
 const FONT_SIZES = {
@@ -44,9 +45,9 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
-	// test.afterAll( async () => {
-	// 	await wpAdmin.resetExperiments();
-	// 	await context.close();
+	// Test.afterAll( async () => {
+	// 	Await wpAdmin.resetExperiments();
+	// 	Await context.close();
 	// } );
 
 	test.beforeEach( async () => {
@@ -146,6 +147,47 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 
 			test( 'Responsive font size behavior', async () => {
 				await testResponsiveBehavior( widget.type );
+			} );
+
+			test( 'EM unit screenshot across breakpoints in editor and published page', async () => {
+				await setupWidgetWithTypography( widget.type );
+				await editor.v4Panel.setTypography( { fontSize: '24' } );
+				await editor.v4Panel.setFontSizeUnit( 'em' );
+
+				const selector = widget.selector;
+
+				// Editor screenshots
+				await expect.soft( editor.getPreviewFrame().locator( selector ) )
+					.toHaveScreenshot( `${ widget.type }-em-desktop-editor.png` );
+				await editor.changeResponsiveView( 'tablet' );
+				await expect.soft( editor.getPreviewFrame().locator( selector ) )
+					.toHaveScreenshot( `${ widget.type }-em-tablet-editor.png` );
+				await editor.changeResponsiveView( 'mobile' );
+				await expect.soft( editor.getPreviewFrame().locator( selector ) )
+					.toHaveScreenshot( `${ widget.type }-em-mobile-editor.png` );
+
+				// Published page screenshots
+				await editor.publishAndViewPage();
+				await page.setViewportSize( viewportSize.desktop );
+				await expect.soft( page.locator( selector ) )
+					.toHaveScreenshot( `${ widget.type }-em-desktop-published.png` );
+				await page.setViewportSize( viewportSize.tablet );
+				await expect.soft( page.locator( selector ) )
+					.toHaveScreenshot( `${ widget.type }-em-tablet-published.png` );
+				await page.setViewportSize( viewportSize.mobile );
+				await expect.soft( page.locator( selector ) )
+					.toHaveScreenshot( `${ widget.type }-em-mobile-published.png` );
+			} );
+			test( 'Panel-only unit switching functionality', async () => {
+				await setupWidgetWithTypography( widget.type );
+
+				const units = [ 'px', 'em', 'rem', 'vw', '%' ];
+				for ( const unit of units ) {
+					await editor.v4Panel.setFontSizeUnit( unit );
+					const unitButton = page.getByRole( 'button', { name: new RegExp( `^${ unit }$`, 'i' ) } ).first();
+					const unitButtonText = await unitButton.textContent();
+					expect( unitButtonText.toLowerCase() ).toBe( unit.toLowerCase() );
+				}
 			} );
 		} );
 	}
