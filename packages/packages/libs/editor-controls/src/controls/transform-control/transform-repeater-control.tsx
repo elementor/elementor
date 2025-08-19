@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { transformFunctionsPropTypeUtil, transformPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
-import { Typography } from '@elementor/ui';
+import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
@@ -34,12 +34,16 @@ export const TransformRepeaterControl = createControl( () => {
 } );
 
 const ToolTip = (
-	<>
+	<Box
+		component="span"
+		aria-label={ undefined }
+		sx={ { display: 'flex', gap: 0.5, p: 2, width: 320, borderRadius: 1 } }
+	>
 		<InfoCircleFilledIcon sx={ { color: 'secondary.main' } } />
 		<Typography variant="body2" color="text.secondary" fontSize="14px">
 			{ __( 'You can use each kind of transform only once per element.', 'elementor' ) }
 		</Typography>
-	</>
+	</Box>
 );
 
 const Repeater = () => {
