@@ -28,10 +28,10 @@ export const NumberInput = forwardRef( ( props: TextFieldProps, ref ) => {
 	return <TextField { ...props } ref={ ref } key={ key } onKeyDown={ handleKeyDown } onBlur={ handleBlur } />;
 } );
 
-function blockRestrictedKeys( event: React.KeyboardEvent< HTMLInputElement >, min: boolean ) {
+function blockRestrictedKeys( event: React.KeyboardEvent< HTMLInputElement >, min: number ) {
 	const restrictedInputKeys = [ ...RESTRICTED_INPUT_KEYS ];
 
-	if ( ! min ) {
+	if ( min >= 0 ) {
 		restrictedInputKeys.push( '-' );
 	}
 

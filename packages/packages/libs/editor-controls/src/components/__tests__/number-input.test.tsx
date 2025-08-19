@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { type TextFieldProps } from '@elementor/ui';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { NumberInput } from '../number-input';
-import { TextFieldProps } from '@elementor/ui';
 
 describe( 'NumberInput', () => {
 	const defaultProps = {
@@ -41,7 +41,7 @@ describe( 'NumberInput', () => {
 			expect( isDefaultPrevented() ).toBe( true );
 		} );
 
-		it( 'should prevent "-" when negative values are not allowed - default', () => {
+		it( 'should allow "-" when negative values are allowed - default', () => {
 			// Arrange.
 			setup();
 
@@ -49,18 +49,29 @@ describe( 'NumberInput', () => {
 			enterKey( '-' );
 
 			// Assert.
-			expect( isDefaultPrevented() ).toBe( true );
+			expect( isDefaultPrevented() ).toBe( false );
 		} );
 
-		it( 'should allow "-" when negative values are allowed', () => {
+		it( 'should allow "-" when negative values are allowed - `inputProps.min` is less then 0', () => {
 			// Arrange.
-			setup( { inputProps: { min: Number.MIN_VALUE } } );
+			setup( { inputProps: { min: -Number.MAX_SAFE_INTEGER } } );
 
 			// Act.
 			enterKey( '-' );
 
 			// Assert.
 			expect( isDefaultPrevented() ).toBe( false );
+		} );
+
+		it( 'should prevent "-" when negative values are not allowed', () => {
+			// Arrange.
+			setup( { inputProps: { min: 0 } } );
+
+			// Act.
+			enterKey( '-' );
+
+			// Assert.
+			expect( isDefaultPrevented() ).toBe( true );
 		} );
 
 		it( 'should call custom onKeyDown if provided', () => {
