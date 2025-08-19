@@ -21,6 +21,7 @@ export function ListSettingSection( {
 	settings,
 	onSettingChange,
 	settingKey,
+    disabled = false,
 } ) {
 	const [ showMore, setShowMore ] = useState( false );
 
@@ -33,7 +34,8 @@ export function ListSettingSection( {
 				<FormControlLabel
 					control={
 						<Checkbox
-							color="info"
+							color={ disabled ? 'default' : 'info' }
+							disabled={ disabled }
 							checked={ settings.length === items.length }
 							indeterminate={ settings.length > 0 && ( settings.length !== items.length ) }
 							onChange={ ( e, checked ) => {
@@ -61,8 +63,9 @@ export function ListSettingSection( {
 										<FormControlLabel
 											control={
 												<Checkbox
-													color="info"
+													color={ disabled ? 'default' : 'info' }
 													checked={ settings.includes( item.value ) }
+													disabled={ disabled }
 													onChange={ ( e, checked ) => {
 														if ( checked ) {
 															onSettingChange( [ ...settings, item.value ] );
@@ -82,7 +85,7 @@ export function ListSettingSection( {
 					</Box>
 				)
 			}
-			{ items.length > DEFAULT_VISIBLE_ITEMS_COUNT && (
+			{ ! disabled && items.length > DEFAULT_VISIBLE_ITEMS_COUNT && (
 				<Button
 					variant="text"
 					color="info"
@@ -100,6 +103,7 @@ ListSettingSection.propTypes = {
 	children: PropTypes.node,
 	loading: PropTypes.bool,
 	checked: PropTypes.bool,
+	disabled: PropTypes.bool,
 	settingKey: PropTypes.string,
 	onSettingChange: PropTypes.func.isRequired,
 	items: PropTypes.arrayOf(
