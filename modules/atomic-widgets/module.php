@@ -82,7 +82,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Skew_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Component_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -91,6 +90,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
+use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -100,7 +100,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
-	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 
 	const PACKAGES = [
@@ -129,6 +128,7 @@ class Module extends BaseModule {
 
 			( new Atomic_Widget_Styles() )->register_hooks();
 			( new Atomic_Widget_Base_Styles() )->register_hooks();
+			( new Atomic_Widgets_Library() )->register_hooks();
 
 			Atomic_Styles_Manager::instance()->register_hooks();
 
@@ -140,6 +140,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
@@ -185,15 +186,6 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_CUSTOM_CSS,
 			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
 			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::TRANSITION_EXPERIMENT,
-			'title' => esc_html__( 'Use transition', 'elementor' ),
-			'description' => esc_html__( 'Use transition.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
