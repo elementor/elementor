@@ -30,9 +30,8 @@ export function useElementChildren< T extends ElementChildren >(
 				return acc;
 			}, {} as ElementChildren );
 
-			container?.children?.forEachRecursive?.( ( child ) => {
-				const widgetType = child.model.get( 'widgetType' );
-				const id = child.id;
+			container?.children?.forEachRecursive?.( ( { model, id } ) => {
+				const widgetType = model.get( 'widgetType' );
 
 				if ( widgetType && widgetType in elementChildren ) {
 					elementChildren[ widgetType ].push( { id } );

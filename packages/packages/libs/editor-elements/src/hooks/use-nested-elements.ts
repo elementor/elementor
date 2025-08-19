@@ -62,7 +62,6 @@ export const useNestedElements = () => {
 
 							const elementId = element.id;
 
-							// Store element data for redo - including the element itself
 							elementsData.push( {
 								elementId,
 								model: element.model?.toJSON() || {},
@@ -91,7 +90,6 @@ export const useNestedElements = () => {
 						const newElementsData: CreatedElementData[] = [];
 
 						elementsData.forEach( ( { createParams } ) => {
-							// Recreate element with original ID and settings
 							const element = createElement( {
 								...createParams,
 								options: { ...createParams.options, useHistory: false },
@@ -99,7 +97,6 @@ export const useNestedElements = () => {
 
 							const elementId = element.id;
 
-							// Store element data again for potential future operations
 							const container = getContainer( elementId );
 							if ( container ) {
 								newElementsData.push( {
@@ -132,7 +129,6 @@ export const useNestedElements = () => {
 					do: ( { elementIds: elementIdsParam }: { elementIds: string[] } ): RemovedElementsResult => {
 						const elementsData: ElementData[] = [];
 
-						// Collect element data before deletion
 						elementIdsParam.forEach( ( elementId ) => {
 							const container = getContainer( elementId );
 
@@ -151,7 +147,6 @@ export const useNestedElements = () => {
 							}
 						} );
 
-						// Delete elements
 						elementIdsParam.forEach( ( elementId ) => {
 							deleteElement( {
 								elementId,
@@ -179,8 +174,6 @@ export const useNestedElements = () => {
 						_: { elementIds: string[] },
 						{ elementIds: originalElementIds, elementsData }: RemovedElementsResult
 					): RemovedElementsResult => {
-						// Delete elements using their original IDs, gracefully skipping any that no longer exist
-						// This handles the case where we undo past element creation and then redo to removal
 						originalElementIds.forEach( ( elementId ) => {
 							deleteElement( {
 								elementId,
