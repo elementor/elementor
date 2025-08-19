@@ -134,7 +134,7 @@ export function KitContentCustomizationDialog( {
 		}
 
 		return () => {};
-	}
+	};
 
 	const getSectionItems = ( section ) => {
 		if ( 'pages' === section.key ) {
@@ -148,7 +148,7 @@ export function KitContentCustomizationDialog( {
 		if ( 'customPostTypes' === section.key ) {
 			return customPostTypes;
 		}
-	}
+	};
 
 	return (
 		<KitCustomizationDialog

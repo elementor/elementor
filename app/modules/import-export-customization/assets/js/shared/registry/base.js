@@ -19,9 +19,9 @@ export class BaseRegistry {
 		}
 
 		if ( children ) {
-			if ( formattedSection.children ) {
+			if ( existingSection?.children ) {
 				const existingChildrenMap = new Map(
-					formattedSection.children.map( ( child ) => [ child.key, child ] ),
+					existingSection.children.map( ( child ) => [ child.key, child ] ),
 				);
 
 				children.forEach( ( childSection ) => {
