@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
-import { Button, CardActions, Divider, FormHelperText } from '@elementor/ui';
+import { Button, CardActions, Divider, FormHelperText, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { useVariableType } from '../context/variable-type-context';
 import { restoreVariable, useVariable } from '../hooks/use-prop-variables';
-import { ERROR_MESSAGES, mapServerError } from '../utils/validations';
+import { ERROR_MESSAGES, labelHint, mapServerError } from '../utils/validations';
 import { LabelField, useLabelError } from './fields/label-field';
 import { FormField } from './ui/form-field';
 
@@ -98,25 +98,41 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 				<Divider />
 
 				<PopoverContent p={ 2 }>
-					<LabelField
-						value={ label }
-						error={ labelFieldError }
-						onChange={ ( newValue ) => {
-							setLabel( newValue );
-							setErrorMessage( '' );
-						} }
-					/>
-					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-						<ValueField
-							value={ value }
+					<FormField
+						id="variable-label"
+						label={ __( 'Name', 'elementor' ) }
+						errorMsg={ labelFieldError?.message }
+						noticeMsg={ labelHint( label ) }
+					>
+						<LabelField
+							id="variable-label"
+							value={ label }
+							error={ labelFieldError }
 							onChange={ ( newValue ) => {
-								setValue( newValue );
+								setLabel( newValue );
 								setErrorMessage( '' );
-								setValueFieldError( '' );
 							} }
-							onValidationChange={ setValueFieldError }
-							propType={ propType }
+							onErrorChange={ ( errorMsg ) => {
+								setLabelFieldError( {
+									value: label,
+									message: errorMsg,
+								} );
+							} }
 						/>
+					</FormField>
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<Typography variant="h5">
+							<ValueField
+								value={ value }
+								onChange={ ( newValue ) => {
+									setValue( newValue );
+									setErrorMessage( '' );
+									setValueFieldError( '' );
+								} }
+								onValidationChange={ setValueFieldError }
+								propType={ propType }
+							/>
+						</Typography>
 					</FormField>
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
