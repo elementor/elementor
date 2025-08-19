@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { type PropTypeUtil } from '@elementor/editor-props';
+import { createMockPropType } from 'test-utils';
+import { colorPropTypeUtil, type PropTypeUtil } from '@elementor/editor-props';
 import { BrushIcon, TextIcon } from '@elementor/icons';
 
 import { ColorField } from '../../components/fields/color-field';
 import { FontField } from '../../components/fields/font-field';
+import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { createVariableTypeRegistry } from '../create-variable-type-registry';
 
 const MockStartIcon = () => ( { type: 'div' } ) as JSX.Element;
@@ -127,6 +129,77 @@ describe( 'createVariableTypeRegistry', () => {
 			// Assert.
 			expect( registry.hasVariableType( 'existing-key' ) ).toBe( true );
 			expect( registry.hasVariableType( 'non-existent-key' ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'isCompatible by default', () => {
+		it( 'should return "true" if the variable type is supported by the prop type', () => {
+			// Arrange.
+			const propType = createMockPropType( {
+				kind: 'union',
+				prop_types: {
+					[ colorPropTypeUtil.key ]: createMockPropType( {
+						kind: 'plain',
+						key: 'color',
+					} ),
+					[ colorVariablePropTypeUtil.key ]: createMockPropType( {
+						kind: 'plain',
+						key: 'global-color-variable',
+					} ),
+				},
+			} );
+
+			registry.registerVariableType( {
+				icon: BrushIcon,
+				valueField: ColorField,
+				variableType: 'color',
+				propTypeUtil: createMockPropTypeUtil( 'global-color-variable' ),
+				fallbackPropTypeUtil: createMockPropTypeUtil( 'color' ),
+			} );
+
+			const variable = {
+				type: 'global-color-variable',
+				label: 'page-body-color',
+				value: 'white',
+			};
+
+			// Act.
+
+			const { isCompatible } = registry.getVariableType( 'global-color-variable' );
+
+			expect( isCompatible?.( propType, variable ) ).toBe( true );
+		} );
+
+		it( 'should return "false" if the variable type is not supported by the prop type', () => {
+			// Arrange.
+			const propType = createMockPropType( {
+				kind: 'union',
+				prop_types: {
+					[ colorPropTypeUtil.key ]: createMockPropType( {
+						kind: 'plain',
+						key: 'color',
+					} ),
+				},
+			} );
+
+			registry.registerVariableType( {
+				icon: BrushIcon,
+				valueField: ColorField,
+				variableType: 'color',
+				propTypeUtil: createMockPropTypeUtil( 'global-color-variable' ),
+				fallbackPropTypeUtil: createMockPropTypeUtil( 'color' ),
+			} );
+
+			const variable = {
+				type: 'global-color-variable',
+				label: 'page-body-color',
+				value: 'white',
+			};
+
+			// Act.
+			const { isCompatible } = registry.getVariableType( 'global-color-variable' );
+
+			expect( isCompatible?.( propType, variable ) ).toBe( false );
 		} );
 	} );
 } );
