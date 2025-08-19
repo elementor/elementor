@@ -67,6 +67,7 @@ export const TransformRepeaterControl = createControl( () => {
 				transformOriginContext={ transformOriginContext }
 				// perspectiveOriginContext={ perspectiveOriginContext }
 				/>
+				<Repeater />
 			</PropKeyProvider>
 		</PropProvider>
 	);
@@ -94,6 +95,11 @@ const Repeater = ( {
 	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
 	const { value: transformValues } = transformFunctionsContext;
 	const headerRef = React.useRef< HTMLDivElement >( null );
+
+    const Repeater = () => {
+	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
+	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
+	const { value: transformValues } = transformFunctionsContext;
 
 	const getInitialValue = () => {
 		return availableValues.find( ( value ) => ! transformValues?.some( ( item ) => item.$$type === value.$$type ) );

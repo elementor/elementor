@@ -400,4 +400,3 @@ class Module extends BaseModule {
         );
     }
 }
-?>
