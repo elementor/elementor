@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import type { PropTypeUtil } from '@elementor/editor-props';
+import { colorPropTypeUtil, type PropTypeUtil } from '@elementor/editor-props';
 import { TextIcon } from '@elementor/icons';
 import { fireEvent, screen } from '@testing-library/react';
 
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { VariableControl } from '../variable-control';
 
@@ -188,5 +189,45 @@ describe( 'VariableControl', () => {
 
 		// Assert
 		expect( screen.getByText( 'Missing variable' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render a variable mismatch, when detected', () => {
+		// Arrange
+		const props = {
+			setValue: jest.fn(),
+			value: {
+				$$type: fontVariablePropTypeUtil.key,
+				value: 'e-gv-font-variable',
+			},
+			bind: 'color',
+			propType: createMockPropType( {
+				kind: 'union',
+				prop_types: {
+					[ colorPropTypeUtil.key ]: createMockPropType( {
+						kind: 'plain',
+						key: 'color',
+					} ),
+					[ colorVariablePropTypeUtil.key ]: createMockPropType( {
+						kind: 'plain',
+						key: 'global-color-variable',
+					} ),
+				},
+			} ),
+		};
+
+		mockGetVariableType.mockReturnValue( {
+			icon: TextIcon,
+			valueField: jest.fn(),
+			variableType: 'type-1',
+			propTypeUtil: createMockPropTypeUtil( 'global-color-variable' ),
+			fallbackPropTypeUtil: createMockPropTypeUtil( 'color' ),
+			isCompatible: () => false,
+		} );
+
+		// Act
+		renderControl( <VariableControl />, props );
+
+		// Assert
+		expect( screen.getByText( '(changed)' ) ).toBeInTheDocument();
 	} );
 } );
