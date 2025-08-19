@@ -28,7 +28,7 @@ export const SettingSection = ( {
 					data-testid={ `${ settingKey }-switch` }
 					checked={ checked }
 					onChange={ ( e, isChecked ) => onSettingChange && onSettingChange( settingKey, isChecked ) }
-					color="info"
+					color={ disabled ? 'default' : 'info' }
 					size="medium"
 					sx={ { alignSelf: 'center' } }
 					disabled={ disabled }

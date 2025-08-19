@@ -3,9 +3,7 @@ import PropTypes from 'prop-types';
 import { Stack, CircularProgress } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { KitCustomizationDialog } from './kit-customization-dialog';
-import { ListSettingSection } from './customization-list-setting-section';
 import { SettingSection } from './customization-setting-section';
-import { SubSetting } from './customization-sub-setting';
 import { CenteredContent } from './layout';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { useKitCustomizationPages } from '../hooks/use-kit-customization-pages';
@@ -20,24 +18,22 @@ export function KitContentCustomizationDialog( {
 } ) {
 	const isImport = data.hasOwnProperty( 'uploadedData' );
 
+	const contentRegistry = elementorModules?.importExport?.contentRegistry;
+	const contentSections = contentRegistry?.getAll() || [];
+
 	const initialState = data.includes.includes( 'content' );
+	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
+
 	const { isLoading: isPagesLoading, pageOptions, isLoaded: isPagesLoaded } = useKitCustomizationPages( { open, data } );
 	const { isLoading: isTaxonomiesLoading, taxonomyOptions, isLoaded: isTaxonomiesLoaded } = useKitCustomizationTaxonomies( { open, data } );
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
-
-	const unselectedValues = useRef( data.analytics?.customization?.content || [] );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.content ) {
 			return data.customization.content;
 		}
 
-		return {
-			pages: [],
-			menus: initialState,
-			taxonomies: [],
-			customPostTypes: [],
-		};
+		return contentRegistry.getState( data, initialState );
 	} );
 
 	useEffect( () => {
@@ -68,23 +64,6 @@ export function KitContentCustomizationDialog( {
 	}, [ customPostTypes, data.customization.content?.customPostTypes ] );
 
 	useEffect( () => {
-		if ( open ) {
-			setSettings( ( prevState ) => {
-				if ( ! data.includes.includes( 'content' ) ) {
-					return {
-						pages: [],
-						menus: false,
-						taxonomies: [],
-						customPostTypes: [],
-					};
-				}
-
-				return prevState;
-			} );
-		}
-	}, [ open, data, setSettings ] );
-
-	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 	}, [] );
 
@@ -96,6 +75,80 @@ export function KitContentCustomizationDialog( {
 	};
 
 	const isLoading = isPagesLoading || isTaxonomiesLoading;
+
+	const getHandleChange = ( section ) => {
+		if ( 'pages' === section.key ) {
+			return ( selectedPages ) => {
+				const isAllselected = selectedPages.length === pageOptions.length;
+				unselectedValues.current = isAllselected
+					? unselectedValues.current = unselectedValues.current.filter( ( val ) => 'pages' !== val )
+					: [ ...unselectedValues.current, 'pages' ];
+
+				handleSettingsChange( 'pages', selectedPages );
+			};
+		}
+
+		if ( 'taxonomies' === section.key ) {
+			return ( taxonomy, isChecked ) => {
+				unselectedValues.current = isChecked
+					? unselectedValues.current.filter( ( val ) => taxonomy.value !== val )
+					: [ ...unselectedValues.current, taxonomy.value ];
+
+				setSettings( ( prevState ) => {
+					const selectedTaxonomies = isChecked
+						? [ ...prevState.taxonomies, taxonomy.value ]
+						: prevState.taxonomies.filter( ( value ) => value !== taxonomy.value );
+
+					return {
+						...prevState,
+						taxonomies: selectedTaxonomies,
+					};
+				} );
+			};
+		}
+
+		if ( 'customPostTypes' === section.key ) {
+			return ( selectedCustomPostTypes ) => {
+				const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
+				const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
+
+				unselectedValues.current = isAllChecked
+					? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
+					: [
+						...filteredUnselectedValues,
+						...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
+						'customPostTypes',
+					];
+				handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
+			};
+		}
+
+		if ( 'menus' === section.key ) {
+			return ( key, isChecked ) => {
+				unselectedValues.current = isChecked
+					? unselectedValues.current.filter( ( value ) => value !== key )
+					: [ ...unselectedValues.current, key ];
+
+				handleSettingsChange( key, isChecked );
+			};
+		}
+
+		return () => {};
+	}
+
+	const getSectionItems = ( section ) => {
+		if ( 'pages' === section.key ) {
+			return pageOptions;
+		}
+
+		if ( 'taxonomies' === section.key ) {
+			return taxonomyOptions;
+		}
+
+		if ( 'customPostTypes' === section.key ) {
+			return customPostTypes;
+		}
+	}
 
 	return (
 		<KitCustomizationDialog
@@ -112,90 +165,34 @@ export function KitContentCustomizationDialog( {
 				)
 				: (
 					<Stack>
-						<ListSettingSection
-							settingKey="pages"
-							title={ __( 'Site pages', 'elementor' ) }
-							onSettingChange={ ( selectedPages ) => {
-								const isAllselected = selectedPages.length === pageOptions.length;
-								unselectedValues.current = isAllselected
-									? unselectedValues.current = unselectedValues.current.filter( ( val ) => 'pages' !== val )
-									: [ ...unselectedValues.current, 'pages' ];
-
-								handleSettingsChange( 'pages', selectedPages );
-							} }
-							settings={ settings.pages }
-							items={ pageOptions }
-							loading={ isLoading }
-						/>
-						<SettingSection
-							checked={ settings.menus }
-							disabled={ isImport && ! customPostTypes?.find( ( cpt ) => cpt.value.includes( 'nav_menu' ) ) }
-							title={ __( 'Menus', 'elementor' ) }
-							settingKey="menus"
-							onSettingChange={ ( key, isChecked ) => {
-								unselectedValues.current = isChecked
-									? unselectedValues.current.filter( ( value ) => value !== key )
-									: [ ...unselectedValues.current, key ];
-
-								handleSettingsChange( key, isChecked );
-							} }
-						/>
-
-						{ customPostTypes.length > 0 && (
-							<ListSettingSection
-								settingKey="customPostTypes"
-								title={ __( 'Custom post types', 'elementor' ) }
-								onSettingChange={ ( selectedCustomPostTypes ) => {
-									const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
-									const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
-
-									unselectedValues.current = isAllChecked
-										? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
-										: [
-											...filteredUnselectedValues,
-											...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
-											'customPostTypes',
-										];
-									handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
-								} }
-								settings={ settings.customPostTypes }
-								items={ customPostTypes }
-							/>
-						) }
-
-						<SettingSection
-							description={ __( 'Group your content by type, topic, or any structure you choose.', 'elementor' ) }
-							title={ __( 'Taxonomies', 'elementor' ) }
-							settingKey="taxonomies"
-							hasToggle={ false }
-						>
-							{ taxonomyOptions.map( ( taxonomy ) => {
+						{ contentSections.map( ( section ) => {
+							if ( section.component ) {
 								return (
-									<SubSetting
-										key={ taxonomy.value }
-										label={ taxonomy.label }
-										settingKey="taxonomies"
-										checked={ settings.taxonomies.includes( taxonomy.value ) }
-										onSettingChange={ ( key, isChecked ) => {
-											unselectedValues.current = isChecked
-												? unselectedValues.current.filter( ( val ) => taxonomy.value !== val )
-												: [ ...unselectedValues.current, taxonomy.value ];
-
-											setSettings( ( prevState ) => {
-												const selectedTaxonomies = isChecked
-													? [ ...prevState.taxonomies, taxonomy.value ]
-													: prevState.taxonomies.filter( ( value ) => value !== taxonomy.value );
-
-												return {
-													...prevState,
-													taxonomies: selectedTaxonomies,
-												};
-											} );
-										} }
+									<section.component
+										key={ section.key }
+										settingKey={ section.key }
+										title={ section.title }
+										description={ section.description }
+										onChange={ getHandleChange( 'pages' ) }
+										options={ getSectionItems( section ) }
+										settings={ settings }
+										isLoading={ isLoading }
+										disabled={ section.isDisabled( data ) }
 									/>
 								);
-							} ) }
-						</SettingSection>
+							}
+							return (
+								<SettingSection
+									key={ section.key }
+									checked={ settings[ section.key ] }
+									title={ section.title }
+									description={ section.description }
+									settingKey={ section.key }
+									onSettingChange={ getHandleChange( section ) }
+									disabled={ section.isDisabled() }
+								/>
+							);
+						} ) }
 					</Stack>
 				)
 			}

@@ -4,13 +4,23 @@ export class BaseRegistry {
 	}
 
 	register( section ) {
-		if ( ! section.key || ! section.title ) {
-			throw new Error( 'Template type must have key and title' );
+		if ( ! section.key ) {
+			throw new Error( 'Registry section must have key' );
 		}
 
 		const existingSection = this.get( section.key );
 
-		const formattedSection = existingSection || this.formatSection( section );
+		if ( ! existingSection && ! section.title ) {
+			throw new Error( 'New registry section must have title' );
+		}
+
+		let formattedSection;
+		if ( existingSection ) {
+			// Merge existing section with new properties
+			formattedSection = { ...existingSection, ...section };
+		} else {
+			formattedSection = this.formatSection( section );
+		}
 
 		if ( section.children ) {
 			// If existing section has children, merge them with new children
@@ -43,6 +53,7 @@ export class BaseRegistry {
 			component: section.component || null,
 			order: section.order || 10,
 			isAvailable: section.isAvailable || ( () => true ),
+			isDisabled: section.isDisabled || ( () => false ),
 			...section,
 		};
 	}
@@ -63,5 +74,27 @@ export class BaseRegistry {
 
 	get( key ) {
 		return this.sections.get( key );
+	}
+
+	getState( data, parentInitialState ) {
+		const state = {};
+
+		this.getAll().forEach( ( section ) => {
+			if ( section.children ) {
+				section.children?.forEach( ( childSection ) => {
+					const sectionState = this.getSectionState( childSection, data, parentInitialState );
+
+					Object.assign( state, sectionState );
+				} );
+			} else {
+				Object.assign( state, this.getSectionState( section, data, parentInitialState ) );
+			}
+		} );
+
+		return state;
+	}
+
+	getSectionState() {
+		return {};
 	}
 }
