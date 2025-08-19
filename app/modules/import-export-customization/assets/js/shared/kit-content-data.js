@@ -1,3 +1,8 @@
+import { KitSettingsCustomizationDialog } from './components/kit-settings-customization-dialog';
+import { KitPluginsCustomizationDialog } from './components/kit-plugins-customization-dialog';
+import { KitTemplatesCustomizationDialog } from './components/kit-templates-customization-dialog';
+import { KitContentCustomizationDialog } from './components/kit-content-customization-dialog';
+
 const kitContentData = [
 	{
 		type: 'content',
@@ -15,7 +20,7 @@ const kitContentData = [
 				],
 			},
 		},
-		dialog: null,
+		dialog: KitContentCustomizationDialog,
 		required: false,
 	},
 	{
@@ -37,7 +42,7 @@ const kitContentData = [
 				],
 			},
 		},
-		dialog: null,
+		dialog: KitTemplatesCustomizationDialog,
 		required: false,
 	},
 	{
@@ -58,7 +63,7 @@ const kitContentData = [
 				],
 			},
 		},
-		dialog: null,
+		dialog: KitSettingsCustomizationDialog,
 		required: false,
 	},
 	{
@@ -71,7 +76,7 @@ const kitContentData = [
 				],
 			},
 		},
-		dialog: null,
+		dialog: KitPluginsCustomizationDialog,
 		required: true,
 	},
 ];
