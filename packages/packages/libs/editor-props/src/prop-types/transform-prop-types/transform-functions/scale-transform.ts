@@ -1,8 +1,8 @@
 import { z } from '@elementor/schema';
 
-import { createPropUtils } from '../../utils/create-prop-utils';
-import { numberPropTypeUtil } from '../number';
-import { TransformFunctionKeys } from './types';
+import { createPropUtils } from '../../../utils/create-prop-utils';
+import { numberPropTypeUtil } from '../../number';
+import { TransformFunctionKeys } from '../types';
 
 export const scaleTransformPropTypeUtil = createPropUtils(
 	TransformFunctionKeys.scale,
