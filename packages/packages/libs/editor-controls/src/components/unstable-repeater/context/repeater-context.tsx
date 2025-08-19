@@ -5,6 +5,7 @@ import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
+import { repeaterEventBus } from '../../../services/repeater-event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
 
 type SetterFn< T > = ( prevItems: T ) => T;
@@ -46,12 +47,10 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
-	onAddItem,
 }: React.PropsWithChildren< {
 	initial: T;
 	propTypeUtil: PropTypeUtil< string, T[] >;
 	isSortable?: boolean;
-	onAddItem?: () => void;
 } > ) => {
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
@@ -99,7 +98,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
 
-		onAddItem?.();
+		repeaterEventBus.emit('item-added');
 	};
 
 	const removeItem = ( index: number ) => {

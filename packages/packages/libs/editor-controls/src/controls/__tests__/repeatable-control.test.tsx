@@ -177,48 +177,5 @@ describe( '<RepeatableControl />', () => {
 		expect( screen.getByDisplayValue( 'Enter text' ) ).toBeInTheDocument();
 	} );
 
-	it( 'should call onAddItem callback when add item button is clicked', () => {
-		// Arrange.
-		const childControlConfig = {
-			component: mockTextControl,
-			props: { placeholder: 'Enter text' },
-			propTypeUtil: stringPropTypeUtil,
-		};
 
-		const onAddItem = jest.fn();
-
-		const setValue = jest.fn();
-
-		mockUseBoundProp.mockReturnValue( {
-			propType: createMockPropType( { kind: 'array' } ),
-			value: [],
-			setValue,
-			bind: 'items',
-			path: [],
-			restoreValue: jest.fn(),
-		} );
-
-		const props = {
-			...baseProps,
-			value: [],
-			setValue,
-		};
-
-		// Act.
-		renderControl(
-			<RepeatableControl
-				label="Text Items"
-				repeaterLabel="Text Items"
-				childControlConfig={ childControlConfig }
-				onAddItem={ onAddItem }
-			/>,
-			props
-		);
-
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
-		fireEvent.click( addButton );
-
-		// Assert.
-		expect( onAddItem ).toHaveBeenCalledTimes( 1 );
-	} );
 } );

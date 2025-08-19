@@ -13,11 +13,10 @@ export const UnstableRepeater = < T extends RepeatablePropValue >( {
 	children,
 	initial,
 	propTypeUtil,
-	onAddItem,
-}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; onAddItem?: () => void } > ) => {
+}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] > } > ) => {
 	return (
 		<SectionContent>
-			<RepeaterContextProvider initial={ initial } propTypeUtil={ propTypeUtil } onAddItem={ onAddItem }>
+			<RepeaterContextProvider initial={ initial } propTypeUtil={ propTypeUtil }>
 				<SlotChildren whitelist={ [ Header, ItemsContainer, EditItemPopover ] as React.FC[] } sorted>
 					{ children }
 				</SlotChildren>

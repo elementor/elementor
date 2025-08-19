@@ -31,7 +31,6 @@ type RepeatableControlProps = {
 	patternLabel?: string;
 	placeholder?: string;
 	propKey?: string;
-	onAddItem?: () => void;
 };
 
 const PLACEHOLDER_REGEX = /\$\{([^}]+)\}/g;
@@ -46,7 +45,6 @@ export const RepeatableControl = createControl(
 		patternLabel,
 		placeholder,
 		propKey,
-		onAddItem,
 	}: RepeatableControlProps ) => {
 		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
 
@@ -76,7 +74,6 @@ export const RepeatableControl = createControl(
 					<UnstableRepeater
 						initial={ childPropTypeUtil.create( initialValues || null ) }
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
-						onAddItem={ onAddItem }
 					>
 						<Header label={ repeaterLabel }>
 							<TooltipAddItemAction newItemIndex={ 0 } />

@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { type ExtendedWindow, getSelectedElements } from '@elementor/editor-elements';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 import { createControl } from '../../create-control';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
+import { repeaterEventBus } from '../../services/repeater-event-bus';
 import { initialTransitionValue, transitionProperties } from './data';
 import { TransitionSelector } from './transition-selector';
 
@@ -50,23 +50,15 @@ function getChildControlConfig( recentlyUsedList: string[] ) {
 }
 
 export const TransitionRepeaterControl = createControl( ( props: { recentlyUsedList: string[] } ) => {
-	const onAddItem = () => {
-		const extendedWindow = window as unknown as ExtendedWindow;
-		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
-		const selectedElements = getSelectedElements();
-		const widgetType = selectedElements[ 0 ]?.type ?? null;
-
-		const eventName = config?.names?.elementorEditor?.transitions?.clickAddedTransition;
-		if ( config && eventName && extendedWindow.elementorCommon?.eventsManager ) {
-			extendedWindow.elementorCommon.eventsManager.dispatchEvent( eventName, {
-				location: config.locations.styleTabV4,
-				secondaryLocation: config.secondaryLocations.transitionControl,
-				trigger: config.triggers.click,
+	React.useEffect(() => {
+		const unsubscribe = repeaterEventBus.subscribe('item-added', () => {
+			repeaterEventBus.emit('transition-item-added', {
 				transition_type: initialTransitionValue.selection.value.value.value,
-				widget_type: widgetType,
-			} );
-		}
-	};
+			});
+		});
+
+		return unsubscribe;
+	}, []);
 
 	return (
 		<RepeatableControl
@@ -79,7 +71,6 @@ export const TransitionRepeaterControl = createControl( ( props: { recentlyUsedL
 			initialValues={ initialTransitionValue }
 			childControlConfig={ getChildControlConfig( props.recentlyUsedList ) }
 			propKey="transition"
-			onAddItem={ onAddItem }
 		/>
 	);
 } );
