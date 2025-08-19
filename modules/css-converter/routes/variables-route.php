@@ -314,7 +314,6 @@ class VariablesRoute {
 
 			$label = $this->format_variable_label( $name );
 			$mapped_type = $this->map_converted_type_to_repository_type( $type );
-
 			if ( null === $mapped_type ) {
 				$errors[] = [
 					'name' => $name,
