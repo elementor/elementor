@@ -17,6 +17,15 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		return item.required && data.includes.includes( item.type );
 	};
 
+	const isEditDisabled = ( item ) => {
+		if ( isImport ) {
+			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
+			return ! data?.uploadedData?.manifest?.[ manifestKey ];
+		}
+
+		return false;
+	};
+
 	const getDialogComponent = ( item ) => {
 		const reg = window.elementorModules?.importExport?.customizationDialogsRegistry;
 		const registered = reg?.get?.( item.type );
@@ -59,6 +68,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								onClick={ () => setActiveDialog( item.type ) }
 								sx={ { alignSelf: 'center' } }
 								data-type={ item.type }
+								disabled={ isEditDisabled( item ) }
 							>
 								{ __( 'Edit', 'elementor' ) }
 							</Button>
