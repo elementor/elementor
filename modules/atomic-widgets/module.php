@@ -94,6 +94,7 @@ use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -278,14 +279,15 @@ class Module extends BaseModule {
 		$transformers->register( Transform_Skew_Prop_Type::get_key(), new Transform_Skew_Transformer() );
 		$transformers->register( Transform_Functions_Prop_Type::get_key(), new Transform_Functions_Transformer() );
 		$transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
-        $transformers->register( Perspective_Origin_Prop_Type::get_key(), new Perspective_Origin_Transformer() );
-        $transformers->register(
-            Transform_Prop_Type::get_key(),
-            new Multi_Props_Transformer(
-                ['transform-functions', 'transform-origin', 'perspective', 'perspective-origin'],
-                fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
-            )
-        );
+		$transformers->register( Perspective_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Perspective_Origin_Prop_Type::get_key(), new Perspective_Origin_Transformer() );
+		$transformers->register(
+			Transform_Prop_Type::get_key(),
+			new Multi_Props_Transformer(
+				['transform-functions', 'transform-origin', 'perspective', 'perspective-origin'],
+				fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
+			)
+		);
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
