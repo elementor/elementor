@@ -1,3 +1,5 @@
+import { KitPluginsCustomizationDialog } from './components/kit-plugins-customization-dialog';
+
 const kitContentData = [
 	{
 		type: 'content',
@@ -71,7 +73,7 @@ const kitContentData = [
 				],
 			},
 		},
-		dialog: null,
+		dialog: KitPluginsCustomizationDialog,
 		required: true,
 	},
 ];
