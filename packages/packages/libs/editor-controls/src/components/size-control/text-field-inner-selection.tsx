@@ -64,7 +64,7 @@ export const TextFieldInnerSelection = forwardRef(
 				fullWidth
 				type={ type }
 				value={ value }
-				onChange={ onChange }
+				onInput={ onChange }
 				onKeyDown={ onKeyDown }
 				onKeyUp={ onKeyUp }
 				disabled={ disabled }

@@ -54,7 +54,7 @@ export const NumberControl = createControl(
 					fullWidth
 					disabled={ disabled }
 					value={ isEmptyOrNaN( value ) ? '' : value }
-					onChange={ handleChange }
+					onInput={ handleChange }
 					onBlur={ restoreValue }
 					placeholder={ labelPlaceholder ?? ( isEmptyOrNaN( placeholder ) ? '' : String( placeholder ) ) }
 					inputProps={ { step, min } }
