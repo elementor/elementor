@@ -30,7 +30,7 @@ export const AxisRow = ( { label, bindValue, startIcon, anchorRef, units }: Tran
 							startIcon={ startIcon }
 							units={ units }
 							variant="angle"
-							min={ Number.MIN_VALUE }
+							min={ -Number.MAX_SAFE_INTEGER }
 						/>
 					</PropKeyProvider>
 				</Grid>

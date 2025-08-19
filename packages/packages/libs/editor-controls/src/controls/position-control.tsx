@@ -82,7 +82,7 @@ export const PositionControl = () => {
 								<PropKeyProvider bind={ 'x' }>
 									<SizeControl
 										startIcon={ <LetterXIcon fontSize={ 'tiny' } /> }
-										min={ Number.MIN_VALUE }
+										min={ -Number.MAX_SAFE_INTEGER }
 									/>
 								</PropKeyProvider>
 							</Grid>
@@ -90,7 +90,7 @@ export const PositionControl = () => {
 								<PropKeyProvider bind={ 'y' }>
 									<SizeControl
 										startIcon={ <LetterYIcon fontSize={ 'tiny' } /> }
-										min={ Number.MIN_VALUE }
+										min={ -Number.MAX_SAFE_INTEGER }
 									/>
 								</PropKeyProvider>
 							</Grid>

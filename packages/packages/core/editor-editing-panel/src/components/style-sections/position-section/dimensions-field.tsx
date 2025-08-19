@@ -74,7 +74,7 @@ const DimensionField = ( {
 					startIcon={ sideIcons[ side ] }
 					extendedOptions={ [ 'auto' ] }
 					anchorRef={ rowRef }
-					min={ Number.MIN_VALUE }
+					min={ -Number.MAX_SAFE_INTEGER }
 				/>
 			</Grid>
 		</Grid>

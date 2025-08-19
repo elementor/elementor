@@ -13,8 +13,8 @@ const isEmptyOrNaN = ( value?: string | number | null ) =>
 export const NumberControl = createControl(
 	( {
 		placeholder: labelPlaceholder,
-		max = Number.MAX_VALUE,
-		min = -Number.MAX_VALUE,
+		max = Number.MAX_SAFE_INTEGER,
+		min = -Number.MAX_SAFE_INTEGER,
 		step = 1,
 		shouldForceInt = false,
 		startIcon,
