@@ -6,9 +6,9 @@ import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createControl } from '../../create-control';
+import { repeaterEventBus } from '../../services/repeater-event-bus';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
-import { repeaterEventBus } from '../../services/repeater-event-bus';
 import { initialTransitionValue, transitionProperties } from './data';
 import { TransitionSelector } from './transition-selector';
 
@@ -80,15 +80,15 @@ export const TransitionRepeaterControl = createControl(
 	} ) => {
 		const currentStyleIsNormal = currentStyleState === null;
 
-		React.useEffect(() => {
-			const unsubscribe = repeaterEventBus.subscribe('item-added', () => {
-				repeaterEventBus.emit('transition-item-added', {
+		React.useEffect( () => {
+			const unsubscribe = repeaterEventBus.subscribe( 'item-added', () => {
+				repeaterEventBus.emit( 'transition-item-added', {
 					transition_type: initialTransitionValue.selection.value.value.value,
-				});
-			});
+				} );
+			} );
 
 			return unsubscribe;
-		}, []);
+		}, [] );
 
 		return (
 			<RepeatableControl

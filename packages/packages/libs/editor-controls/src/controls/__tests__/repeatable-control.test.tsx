@@ -176,6 +176,4 @@ describe( '<RepeatableControl />', () => {
 		// Assert.
 		expect( screen.getByDisplayValue( 'Enter text' ) ).toBeInTheDocument();
 	} );
-
-
 } );

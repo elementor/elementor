@@ -1,31 +1,34 @@
 import { type ExtendedWindow, getSelectedElements } from '@elementor/editor-elements';
 
-export class RepeaterEventBus {
-	private listeners = new Map<string, Set<() => void>>();
+interface TransitionItemData {
+	transition_type?: string;
+	widget_type?: string;
+}
 
-	subscribe(eventType: string, callback: () => void) {
-		if (!this.listeners.has(eventType)) {
-			this.listeners.set(eventType, new Set());
+export class RepeaterEventBus {
+	private listeners = new Map< string, Set< () => void > >();
+
+	subscribe( eventType: string, callback: () => void ) {
+		if ( ! this.listeners.has( eventType ) ) {
+			this.listeners.set( eventType, new Set() );
 		}
-		this.listeners.get(eventType)!.add(callback);
+		this.listeners.get( eventType )?.add( callback );
 
 		return () => {
-			this.listeners.get(eventType)?.delete(callback);
+			this.listeners.get( eventType )?.delete( callback );
 		};
 	}
 
-	emit(eventType: string, data?: Record<string, any>) {
+	emit( eventType: string, data?: TransitionItemData ) {
+		this.listeners.get( eventType )?.forEach( ( callback ) => callback() );
 
-		this.listeners.get(eventType)?.forEach(callback => callback());
-
-
-		if (eventType === 'transition-item-added') {
-			this.trackTransitionItemAdded(data);
+		if ( eventType === 'transition-item-added' ) {
+			this.trackTransitionItemAdded( data );
 		}
 	}
 
-	private trackTransitionItemAdded(data?: Record<string, any>) {
-		const extendedWindow = window as unknown as ExtendedWindow;
+	private trackTransitionItemAdded( data?: TransitionItemData ) {
+		const extendedWindow: ExtendedWindow = window;
 		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 		const selectedElements = getSelectedElements();
 		const widgetType = selectedElements[ 0 ]?.type ?? null;
@@ -38,7 +41,7 @@ export class RepeaterEventBus {
 				trigger: config.triggers.click,
 				transition_type: data?.transition_type || 'unknown',
 				widget_type: widgetType,
-			});
+			} );
 		}
 	}
 }
