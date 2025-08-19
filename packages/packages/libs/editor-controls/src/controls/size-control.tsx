@@ -138,10 +138,8 @@ export const SizeControl = createControl(
 		};
 
 		const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const {
-				value: size,
-				validity: { valid: isInputValid },
-			} = event.target;
+			const size = event.target.value;
+			const isInputValid = event.target.validity.valid;
 
 			if ( controlUnit === 'auto' ) {
 				setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );

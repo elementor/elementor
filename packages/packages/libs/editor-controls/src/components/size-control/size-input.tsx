@@ -113,7 +113,7 @@ export const SizeInput = ( {
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
 					InputProps={ InputProps }
-					inputProps={ { min } }
+					inputProps={ { min, step: 'any' } }
 					isPopoverOpen={ popupState.isOpen }
 				/>
 			</Box>
