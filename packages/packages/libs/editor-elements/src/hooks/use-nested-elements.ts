@@ -26,7 +26,6 @@ type CreatedElementData = {
 };
 
 type CreatedElementsResult = {
-	elementIds: string[];
 	elementsData: CreatedElementData[];
 };
 
@@ -61,7 +60,6 @@ export const useNestedElements = () => {
 			const undoableCreate = undoable(
 				{
 					do: ( { elements: elementsParam }: { elements: CreateElementParams[] } ): CreatedElementsResult => {
-						const elementIds: string[] = [];
 						const elementsData: CreatedElementData[] = [];
 
 						elementsParam.forEach( ( createParams ) => {
@@ -72,7 +70,6 @@ export const useNestedElements = () => {
 							} );
 
 							const elementId = element.id;
-							elementIds.push( elementId );
 
 							// Store element data for redo - including the element itself
 							elementsData.push( {
@@ -85,11 +82,11 @@ export const useNestedElements = () => {
 							} );
 						} );
 
-						return { elementIds, elementsData };
+						return { elementsData };
 					},
-					undo: ( _: { elements: CreateElementParams[] }, { elementIds }: CreatedElementsResult ) => {
+					undo: ( _: { elements: CreateElementParams[] }, { elementsData }: CreatedElementsResult ) => {
 						// Delete elements in reverse order to avoid dependency issues
-						[ ...elementIds ].reverse().forEach( ( elementId ) => {
+						[ ...elementsData ].reverse().forEach( ( { elementId } ) => {
 							deleteElement( {
 								elementId,
 								options: { useHistory: false },
@@ -100,7 +97,6 @@ export const useNestedElements = () => {
 						_: { elements: CreateElementParams[] },
 						{ elementsData }: CreatedElementsResult
 					): CreatedElementsResult => {
-						const elementIds: string[] = [];
 						const newElementsData: CreatedElementData[] = [];
 
 						elementsData.forEach( ( { createParams } ) => {
@@ -111,7 +107,6 @@ export const useNestedElements = () => {
 							} );
 
 							const elementId = element.id;
-							elementIds.push( elementId );
 
 							// Store element data again for potential future operations
 							const container = getContainer( elementId );
@@ -124,7 +119,7 @@ export const useNestedElements = () => {
 							}
 						} );
 
-						return { elementIds, elementsData: newElementsData };
+						return { elementsData: newElementsData };
 					},
 				},
 				{

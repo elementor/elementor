@@ -29,7 +29,7 @@ describe( 'useNestedElements', () => {
 	} );
 
 	describe( 'createElements', () => {
-		it( 'should create multiple elements and return their IDs', () => {
+		it( 'should create multiple elements and return their data', () => {
 			// Arrange.
 			const mockElement1 = createMockChild( 'element-1', 'button' );
 			const mockElement2 = createMockChild( 'element-2', 'text' );
@@ -67,7 +67,6 @@ describe( 'useNestedElements', () => {
 			} );
 
 			// Assert.
-			expect( createResult.elementIds ).toEqual( [ 'element-1', 'element-2' ] );
 			expect( createResult.elementsData ).toHaveLength( 2 );
 			expect( createResult.elementsData[ 0 ].elementId ).toBe( 'element-1' );
 			expect( createResult.elementsData[ 1 ].elementId ).toBe( 'element-2' );
