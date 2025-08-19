@@ -3,7 +3,6 @@ import { AI_EVENTS } from 'elementor/modules/ai/assets/js/editor/pages/form-medi
 describe( 'AI Modal Events', () => {
 	let dispatchEventSpy;
 
-	// Test data
 	const mockImage = {
 		id: 123,
 		url: 'https://example.com/image.jpg',
@@ -15,7 +14,6 @@ describe( 'AI Modal Events', () => {
 		error: 'User closed the modal manually without selecting an image',
 	};
 
-	// Helper function to create event dispatcher for error scenarios
 	const createOnCloseCallback = () => {
 		return () => {
 			window.dispatchEvent( new CustomEvent( AI_EVENTS.MODAL_CLOSED, {
@@ -24,7 +22,6 @@ describe( 'AI Modal Events', () => {
 		};
 	};
 
-	// Helper function to create event dispatcher for success scenarios
 	const createSetControlValue = ( modalType, location ) => {
 		return ( image ) => {
 			window.dispatchEvent( new CustomEvent( AI_EVENTS.MODAL_CLOSED, {
@@ -38,13 +35,11 @@ describe( 'AI Modal Events', () => {
 		};
 	};
 
-	// Helper function to get the last dispatched event
 	const getLastDispatchedEvent = () => {
 		return dispatchEventSpy.mock.calls[ dispatchEventSpy.mock.calls.length - 1 ][ 0 ];
 	};
 
 	beforeEach( () => {
-		// Mock window.dispatchEvent
 		dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' ).mockImplementation( () => {} );
 		jest.clearAllMocks();
 	} );
@@ -144,7 +139,6 @@ describe( 'AI Modal Events', () => {
 				} ),
 			);
 
-			// Verify the constant matches the expected string
 			expect( eventType ).toBe( 'elementor:ai:modal-closed' );
 		} );
 	} );

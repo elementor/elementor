@@ -47,7 +47,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior.bind( this ) );
 		elementor.hooks.addFilter( 'navigator/layout/behaviors', this.registerNavigatorBehavior.bind( this ) );
 
-		// Listen for AI modal events from remote integration
 		window.addEventListener( 'elementor:ai:show-modal', this.handleAIModalEvent.bind( this ) );
 
 		$e.routes.on( 'run:after', ( component, route ) => {

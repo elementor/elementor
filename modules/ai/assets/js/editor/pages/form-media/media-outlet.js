@@ -36,7 +36,6 @@ const MediaOutlet = ( { additionalOptions = null, onClose = null } ) => {
 			return;
 		}
 
-		// Auto-navigation logic for when no explicit location is provided
 		if ( editImage.url ) {
 			const wireframeHostRegex = new RegExp( IMAGE_PLACEHOLDERS_HOSTS.WIREFRAME );
 			const isWireframeHost = wireframeHostRegex.test( new URL( editImage.url ).host );
