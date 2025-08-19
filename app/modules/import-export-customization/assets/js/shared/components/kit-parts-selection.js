@@ -14,7 +14,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 			return ! data?.uploadedData?.manifest?.[ manifestKey ];
 		}
 
-		return ! item.required && ! data.includes.includes( item.type );
+		return item.required && data.includes.includes( item.type );
 	};
 
 	const getDialogComponent = ( item ) => {
@@ -59,7 +59,6 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								onClick={ () => setActiveDialog( item.type ) }
 								sx={ { alignSelf: 'center' } }
 								data-type={ item.type }
-								disabled={ isDisabled( item ) }
 							>
 								{ __( 'Edit', 'elementor' ) }
 							</Button>
