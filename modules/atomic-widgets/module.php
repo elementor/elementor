@@ -26,7 +26,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Plain_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Background_Color_Overlay_Transformer;
@@ -49,8 +48,8 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Rotate_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Scale_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transform_Skew_Transformer;
-use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Transition_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Attributes_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Backdrop_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Color_Overlay_Prop_Type;
@@ -100,299 +99,283 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-    public const EXPERIMENT_NAME = 'e_atomic_elements';
-    public const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-    public const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
-    public const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
-    public const EXPERIMENT_NESTED = 'e_nested_elements';
-    public const PACKAGES = [
-        'editor-canvas',
-        'editor-controls', // TODO: Need to be registered and not enqueued.
-        'editor-editing-panel',
-        'editor-elements', // TODO: Need to be registered and not enqueued.
-        'editor-props', // TODO: Need to be registered and not enqueued.
-        'editor-styles', // TODO: Need to be registered and not enqueued.
-        'editor-styles-repository',
-    ];
 
-    public function __construct() {
-        parent::__construct();
+	const EXPERIMENT_NAME = 'e_atomic_elements';
+	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
+	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
+	const EXPERIMENT_NESTED = 'e_nested_elements';
 
-        if ( self::is_active() ) {
-            $this->register_experimental_features();
-        }
+	const PACKAGES = [
+		'editor-canvas',
+		'editor-controls', // TODO: Need to be registered and not enqueued.
+		'editor-editing-panel',
+		'editor-elements', // TODO: Need to be registered and not enqueued.
+		'editor-props', // TODO: Need to be registered and not enqueued.
+		'editor-styles', // TODO: Need to be registered and not enqueued.
+		'editor-styles-repository',
+	];
 
-        if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
-            Dynamic_Tags_Module::instance()->register_hooks();
+	public function get_name() {
+		return 'atomic-widgets';
+	}
 
-            ( new Atomic_Widget_Styles() )->register_hooks();
-            ( new Atomic_Widget_Base_Styles() )->register_hooks();
-            ( new Atomic_Widgets_Library() )->register_hooks();
+	public function __construct() {
+		parent::__construct();
 
-            Atomic_Styles_Manager::instance()->register_hooks();
+		if ( self::is_active() ) {
+			$this->register_experimental_features();
+		}
 
-            ( new Atomic_Import_Export() )->register_hooks();
-            ( new Atomic_Widgets_Database_Updater() )->register();
+		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
+			Dynamic_Tags_Module::instance()->register_hooks();
 
-            add_filter( 'elementor/editor/v2/packages', fn( $packages ) => $this->add_packages( $packages ) );
-            add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_styles_schema( $settings ) );
-            add_filter( 'elementor/editor/localize_settings', fn( $settings ) => $this->add_supported_units( $settings ) );
-            add_filter( 'elementor/widgets/register', fn( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
-            add_filter( 'elementor/usage/elements/element_title', fn( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+			( new Atomic_Widget_Styles() )->register_hooks();
+			( new Atomic_Widget_Base_Styles() )->register_hooks();
+			( new Atomic_Widgets_Library() )->register_hooks();
 
-            add_action( 'elementor/elements/elements_registered', fn( $elements_manager ) => $this->register_elements( $elements_manager ) );
-            add_action( 'elementor/editor/after_enqueue_scripts', fn() => $this->enqueue_scripts() );
-            add_action( 'elementor/frontend/after_register_scripts', fn() => $this->register_frontend_scripts() );
+			Atomic_Styles_Manager::instance()->register_hooks();
 
-            add_action( 'elementor/atomic-widgets/settings/transformers/register', fn( $transformers ) => $this->register_settings_transformers( $transformers ) );
-            add_action( 'elementor/atomic-widgets/styles/transformers/register', fn( $transformers ) => $this->register_styles_transformers( $transformers ) );
-            add_action( 'elementor/atomic-widgets/import/transformers/register', fn( $transformers ) => $this->register_import_transformers( $transformers ) );
-            add_action( 'elementor/atomic-widgets/export/transformers/register', fn( $transformers ) => $this->register_export_transformers( $transformers ) );
-            add_action( 'elementor/editor/templates/panel/category', fn() => $this->render_panel_category_chip() );
-        }
-    }
+			( new Atomic_Import_Export() )->register_hooks();
+			( new Atomic_Widgets_Database_Updater() )->register();
 
-    public function get_name() {
-        return 'atomic-widgets';
-    }
+			add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_styles_schema( $settings ) );
+			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
+			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
+			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
 
-    public static function get_experimental_data() {
-        return [
-            'name' => self::EXPERIMENT_NAME,
-            'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
-            'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
-            'hidden' => true,
-            'default' => Experiments_Manager::STATE_INACTIVE,
-            'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
-        ];
-    }
+			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
+			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
+			add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
 
-    public function register_import_transformers( Transformers_Registry $transformers ) {
-        $transformers->register_fallback( new Import_Export_Plain_Transformer() );
+			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/import/transformers/register', fn ( $transformers ) => $this->register_import_transformers( $transformers ) );
+			add_action( 'elementor/atomic-widgets/export/transformers/register', fn ( $transformers ) => $this->register_export_transformers( $transformers ) );
+			add_action( 'elementor/editor/templates/panel/category', fn () => $this->render_panel_category_chip() );
+		}
+	}
 
-        $transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Import_Transformer() );
-    }
+	public static function get_experimental_data() {
+		return [
+			'name' => self::EXPERIMENT_NAME,
+			'title' => esc_html__( 'Atomic Widgets', 'elementor' ),
+			'description' => esc_html__( 'Enable atomic widgets.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_ALPHA,
+		];
+	}
 
-    public function register_export_transformers( Transformers_Registry $transformers ) {
-        $transformers->register_fallback( new Import_Export_Plain_Transformer() );
+	private function register_experimental_features() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'e_indications_popover',
+			'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
+			'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+		] );
 
-        $transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
-    }
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
+			'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
+			'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 
-    public static function is_active(): bool {
-        return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
-    }
+		Plugin::$instance->experiments->add_feature( [
+			'name' => self::EXPERIMENT_CUSTOM_CSS,
+			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
+			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		] );
 
-    private function register_experimental_features() {
-        Plugin::$instance->experiments->add_feature( [
-            'name' => 'e_indications_popover',
-            'title' => esc_html__( 'V4 Indications Popover', 'elementor' ),
-            'description' => esc_html__( 'Enable V4 Indication Popovers', 'elementor' ),
-            'hidden' => true,
-            'default' => Experiments_Manager::STATE_INACTIVE,
-        ] );
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_NESTED,
+			'title' => esc_html__( 'Nested Elements', 'elementor' ),
+			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+	}
 
-        Plugin::$instance->experiments->add_feature( [
-            'name' => self::ENFORCE_CAPABILITIES_EXPERIMENT,
-            'title' => esc_html__( 'Enforce atomic widgets capabilities', 'elementor' ),
-            'description' => esc_html__( 'Enforce atomic widgets capabilities.', 'elementor' ),
-            'hidden' => true,
-            'default' => Experiments_Manager::STATE_ACTIVE,
-            'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-        ] );
+	private function add_packages( $packages ) {
+		return array_merge( $packages, self::PACKAGES );
+	}
 
-        Plugin::$instance->experiments->add_feature( [
-            'name' => self::EXPERIMENT_CUSTOM_CSS,
-            'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
-            'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
-            'hidden' => true,
-            'default' => Experiments_Manager::STATE_INACTIVE,
-            'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-        ] );
+	private function add_styles_schema( $settings ) {
+		if ( ! isset( $settings['atomic'] ) ) {
+			$settings['atomic'] = [];
+		}
 
-        Plugin::$instance->experiments->add_feature( [
-            'name' => self::TRANSITION_EXPERIMENT,
-            'title' => esc_html__( 'Use transition', 'elementor' ),
-            'description' => esc_html__( 'Use transition.', 'elementor' ),
-            'hidden' => true,
-            'default' => Experiments_Manager::STATE_INACTIVE,
-            'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-        ] );
+		$settings['atomic']['styles_schema'] = Style_Schema::get();
 
-        Plugin::$instance->experiments->add_feature( [
-            'name' => self::EXPERIMENT_NESTED,
-            'title' => esc_html__( 'Nested Elements', 'elementor' ),
-            'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
-            'hidden' => true,
-            'default' => Experiments_Manager::STATE_INACTIVE,
-            'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-        ] );
-    }
+		return $settings;
+	}
 
-    private function add_packages( $packages ) {
-        return array_merge( $packages, self::PACKAGES );
-    }
+	private function add_supported_units( $settings ) {
+		$settings['supported_size_units'] = Size_Constants::all_supported_units();
 
-    private function add_styles_schema( $settings ) {
-        if ( ! isset( $settings['atomic'] ) ) {
-            $settings['atomic'] = [];
-        }
+		return $settings;
+	}
 
-        $settings['atomic']['styles_schema'] = Style_Schema::get();
+	private function register_widgets( Widgets_Manager $widgets_manager ) {
+		$widgets_manager->register( new Atomic_Heading() );
+		$widgets_manager->register( new Atomic_Image() );
+		$widgets_manager->register( new Atomic_Paragraph() );
+		$widgets_manager->register( new Atomic_Svg() );
+		$widgets_manager->register( new Atomic_Button() );
+		$widgets_manager->register( new Atomic_Youtube() );
+		$widgets_manager->register( new Atomic_Divider() );
+	}
 
-        return $settings;
-    }
+	private function register_elements( Elements_Manager $elements_manager ) {
+		$elements_manager->register_element_type( new Div_Block() );
+		$elements_manager->register_element_type( new Flexbox() );
+	}
 
-    private function add_supported_units( $settings ) {
-        $settings['supported_size_units'] = Size_Constants::all_supported_units();
+	private function register_settings_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Plain_Transformer() );
 
-        return $settings;
-    }
+		$transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
+		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
+		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
+		$transformers->register( Attributes_Prop_Type::get_key(), new Attributes_Transformer() );
+	}
 
-    private function register_widgets( Widgets_Manager $widgets_manager ) {
-        $widgets_manager->register( new Atomic_Heading() );
-        $widgets_manager->register( new Atomic_Image() );
-        $widgets_manager->register( new Atomic_Paragraph() );
-        $widgets_manager->register( new Atomic_Svg() );
-        $widgets_manager->register( new Atomic_Button() );
-        $widgets_manager->register( new Atomic_Youtube() );
-        $widgets_manager->register( new Atomic_Divider() );
-    }
+	private function register_styles_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Plain_Transformer() );
 
-    private function register_elements( Elements_Manager $elements_manager ) {
-        $elements_manager->register_element_type( new Div_Block() );
-        $elements_manager->register_element_type( new Flexbox() );
-    }
+		$transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
+		$transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
+		$transformers->register( Flex_Prop_Type::get_key(), new Flex_Transformer() );
+		$transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
+		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
+		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
+		$transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
+		$transformers->register( Background_Image_Overlay_Size_Scale_Prop_Type::get_key(), new Background_Image_Overlay_Size_Scale_Transformer() );
+		$transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Position_Transformer() );
+		$transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
+		$transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
+		$transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
+		$transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
+		$transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
+		$transformers->register( Backdrop_Filter_Prop_Type::get_key(), new Filter_Transformer() );
+		$transformers->register( Transition_Prop_Type::get_key(), new Transition_Transformer() );
+		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
+		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
+		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
+		$transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
+		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
+		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
+		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
+		$transformers->register( Transform_Skew_Prop_Type::get_key(), new Transform_Skew_Transformer() );
+		$transformers->register( Transform_Functions_Prop_Type::get_key(), new Transform_Functions_Transformer() );
+		$transformers->register( Transform_Prop_Type::get_key(), new Multi_Props_Transformer( [ 'transform-functions', 'transform-origin', 'children-perspective' ], fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key ) );
+		$transformers->register(
+			Border_Radius_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
+		);
+		$transformers->register(
+			Border_Width_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $_, $key ) => "border-{$key}-width" )
+		);
+		$transformers->register(
+			Layout_Direction_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'column', 'row' ], fn ( $prop_key, $key ) => "{$key}-{$prop_key}" )
+		);
+		$transformers->register(
+			Dimensions_Prop_Type::get_key(),
+			new Multi_Props_Transformer( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ], fn ( $prop_key, $key ) => "{$prop_key}-{$key}" )
+		);
+	}
 
-    private function register_settings_transformers( Transformers_Registry $transformers ) {
-        $transformers->register_fallback( new Plain_Transformer() );
+	public function register_import_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
-        $transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
-        $transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
-        $transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
-        $transformers->register( Link_Prop_Type::get_key(), new Link_Transformer() );
-        $transformers->register( Key_Value_Array_Prop_Type::get_key(), new Attributes_Transformer() );
-    }
+		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Import_Transformer() );
+	}
 
-    private function register_styles_transformers( Transformers_Registry $transformers ) {
-        $transformers->register_fallback( new Plain_Transformer() );
+	public function register_export_transformers( Transformers_Registry $transformers ) {
+		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
-        $transformers->register( Size_Prop_Type::get_key(), new Size_Transformer() );
-        $transformers->register( Box_Shadow_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
-        $transformers->register( Shadow_Prop_Type::get_key(), new Shadow_Transformer() );
-        $transformers->register( Flex_Prop_Type::get_key(), new Flex_Transformer() );
-        $transformers->register( Stroke_Prop_Type::get_key(), new Stroke_Transformer() );
-        $transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
-        $transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
-        $transformers->register( Background_Image_Overlay_Prop_Type::get_key(), new Background_Image_Overlay_Transformer() );
-        $transformers->register( Background_Image_Overlay_Size_Scale_Prop_Type::get_key(), new Background_Image_Overlay_Size_Scale_Transformer() );
-        $transformers->register( Background_Image_Position_Offset_Prop_Type::get_key(), new Position_Transformer() );
-        $transformers->register( Background_Color_Overlay_Prop_Type::get_key(), new Background_Color_Overlay_Transformer() );
-        $transformers->register( Background_Overlay_Prop_Type::get_key(), new Background_Overlay_Transformer() );
-        $transformers->register( Background_Prop_Type::get_key(), new Background_Transformer() );
-        $transformers->register( Background_Gradient_Overlay_Prop_Type::get_key(), new Background_Gradient_Overlay_Transformer() );
-        $transformers->register( Filter_Prop_Type::get_key(), new Filter_Transformer() );
-        $transformers->register( Backdrop_Filter_Prop_Type::get_key(), new Filter_Transformer() );
-        $transformers->register( Transition_Prop_Type::get_key(), new Transition_Transformer() );
-        $transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
-        $transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
-        $transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
-        $transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
-        $transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
-        $transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
-        $transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
-        $transformers->register( Transform_Skew_Prop_Type::get_key(), new Transform_Skew_Transformer() );
-        $transformers->register( Transform_Functions_Prop_Type::get_key(), new Transform_Functions_Transformer() );
-        $transformers->register( Perspective_Origin_Prop_Type::get_key(), new Perspective_Origin_Transformer() );
-        $transformers->register(
-            Transform_Prop_Type::get_key(),
-            new Multi_Props_Transformer(
-                ['transform-functions', 'transform-origin', 'perspective', 'perspective-origin'],
-                fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
-            )
-        );
-        $transformers->register(
-            Border_Radius_Prop_Type::get_key(),
-            new Multi_Props_Transformer( ['start-start', 'start-end', 'end-start', 'end-end'], fn( $_, $key ) => "border-{$key}-radius" )
-        );
-        $transformers->register(
-            Border_Width_Prop_Type::get_key(),
-            new Multi_Props_Transformer( ['block-start', 'block-end', 'inline-start', 'inline-end'], fn( $_, $key ) => "border-{$key}-width" )
-        );
-        $transformers->register(
-            Layout_Direction_Prop_Type::get_key(),
-            new Multi_Props_Transformer( ['column', 'row'], fn( $prop_key, $key ) => "{$key}-{$prop_key}" )
-        );
-        $transformers->register(
-            Dimensions_Prop_Type::get_key(),
-            new Multi_Props_Transformer( ['block-start', 'block-end', 'inline-start', 'inline-end'], fn( $prop_key, $key ) => "{$prop_key}-{$key}" )
-        );
-    }
+		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
+	}
 
-    private function get_element_usage_name( $title, $type ) {
-        $element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
-        $widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
+	public static function is_active(): bool {
+		return Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+	}
 
-        if ( Utils::is_atomic( $element_instance ) || Utils::is_atomic( $widget_instance ) ) {
-            return $type;
-        }
+	private function get_element_usage_name( $title, $type ) {
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( $type );
+		$widget_instance = Plugin::$instance->widgets_manager->get_widget_types( $type );
 
-        return $title;
-    }
+		if ( Utils::is_atomic( $element_instance ) || Utils::is_atomic( $widget_instance ) ) {
+			return $type;
+		}
 
-    /**
-     * Enqueue the module scripts.
-     */
-    private function enqueue_scripts() {
-        wp_enqueue_script(
-            'elementor-atomic-widgets-editor',
-            $this->get_js_assets_url( 'atomic-widgets-editor' ),
-            ['elementor-editor'],
-            ELEMENTOR_VERSION,
-            true
-        );
-    }
+		return $title;
+	}
 
-    private function render_panel_category_chip() {
-        ?>
-<# if ( 'v4-elements'===name ) { #>
-    <span class="elementor-panel-heading-category-chip">
-        <?php echo esc_html__( 'Alpha', 'elementor' ); ?><i
-            class="eicon-info"></i>
-        <span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
-    </span>
-    <# } #><?php
-    }
+	/**
+	 * Enqueue the module scripts.
+	 *
+	 * @return void
+	 */
+	private function enqueue_scripts() {
+		wp_enqueue_script(
+			'elementor-atomic-widgets-editor',
+			$this->get_js_assets_url( 'atomic-widgets-editor' ),
+			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
 
-    private function register_frontend_scripts() {
-        $assets_config_provider = ( new Assets_Config_Provider() )->
-            set_path_resolver( function( $name ) {
-                return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
-            } );
+	private function render_panel_category_chip() {
+		?><# if ( 'v4-elements' === name )  { #>
+		<span class="elementor-panel-heading-category-chip">
+				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
+				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
+			</span>
+		<# } #><?php
+	}
 
-        $assets_config_provider->load( 'frontend-handlers' );
+	private function register_frontend_scripts() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
 
-        $frontend_handlers_package_config = $assets_config_provider->get( 'frontend-handlers' );
+		$assets_config_provider->load( 'frontend-handlers' );
 
-        if ( ! $frontend_handlers_package_config ) {
-            return;
-        }
+		$frontend_handlers_package_config = $assets_config_provider->get( 'frontend-handlers' );
 
-        wp_register_script(
-            $frontend_handlers_package_config['handle'],
-            $this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
-            $frontend_handlers_package_config['deps'],
-            ELEMENTOR_VERSION,
-            true
-        );
+		if ( ! $frontend_handlers_package_config ) {
+			return;
+		}
 
-        wp_register_script(
-            'elementor-youtube-handler',
-            $this->get_js_assets_url( 'youtube-handler' ),
-            [$frontend_handlers_package_config['handle']],
-            ELEMENTOR_VERSION,
-            true
-        );
-    }
+		wp_register_script(
+			$frontend_handlers_package_config['handle'],
+			$this->get_js_assets_url( 'packages/frontend-handlers/frontend-handlers' ),
+			$frontend_handlers_package_config['deps'],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'elementor-youtube-handler',
+			$this->get_js_assets_url( 'youtube-handler' ),
+			[ $frontend_handlers_package_config['handle'] ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
 }
-?>
