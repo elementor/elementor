@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -283,8 +284,9 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
+		const isElement = getAllElementTypes().includes( elementType );
 		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings ${ isElement ? 'elementor-editor-element-overlay-settings' : '' }` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 

@@ -10,9 +10,12 @@ import {
 } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { FilterIcon, XIcon } from '@elementor/icons';
+import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
+import { getVariables } from '../../hooks/use-prop-variables';
+import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
 
@@ -31,27 +34,40 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const isDirty = false;
+	const variables = getVariables( false );
 
 	usePreventUnload( isDirty );
+
+	const menuActions = [
+		{
+			name: __( 'Delete', 'elementor' ),
+			icon: TrashIcon,
+			color: 'error.main',
+			onClick: () => {},
+		},
+	];
 
 	return (
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
 					<PanelHeader>
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<Stack width="100%" direction="row" gap={ 1 }>
-								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-									<FilterIcon fontSize="inherit" />
-									{ __( 'Variables Manager', 'elementor' ) }
-								</PanelHeaderTitle>
+						<Stack width="100%" direction="column" alignItems="center">
+							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+								<Stack width="100%" direction="row" gap={ 1 }>
+									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+										<ColorFilterIcon fontSize="inherit" />
+										{ __( 'Variable Manager', 'elementor' ) }
+									</PanelHeaderTitle>
+								</Stack>
+								<CloseButton
+									sx={ { marginLeft: 'auto' } }
+									onClose={ () => {
+										closePanel();
+									} }
+								/>
 							</Stack>
-							<CloseButton
-								sx={ { marginLeft: 'auto' } }
-								onClose={ () => {
-									closePanel();
-								} }
-							/>
+							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -61,16 +77,7 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<Divider />
-						<Box
-							px={ 2 }
-							sx={ {
-								flexGrow: 1,
-								overflowY: 'auto',
-							} }
-						>
-							List
-						</Box>
+						<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
 					</PanelBody>
 
 					<PanelFooter>

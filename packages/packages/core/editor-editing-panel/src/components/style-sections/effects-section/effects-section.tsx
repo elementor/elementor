@@ -6,9 +6,9 @@ import {
 	TransitionRepeaterControl,
 } from '@elementor/editor-controls';
 import { useSelectedElement } from '@elementor/editor-elements';
-import { EXPERIMENTAL_FEATURES, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { useStyle } from '../../../contexts/style-context';
 import { StylesField } from '../../../controls-registry/styles-field';
 import { getRecentlyUsedList } from '../../../utils/get-recently-used-styles';
 import { PanelDivider } from '../../panel-divider';
@@ -22,8 +22,8 @@ const BACKDROP_FILTER_LABEL = __( 'Backdrop filters', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const EffectsSection = () => {
-	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
 	const { element } = useSelectedElement();
+	const { meta } = useStyle();
 
 	return (
 		<SectionContent>
@@ -36,14 +36,13 @@ export const EffectsSection = () => {
 			<StylesField bind="transform" propDisplayName={ TRANSFORM_LABEL }>
 				<TransformRepeaterControl />
 			</StylesField>
-			{ shouldShowTransition && (
-				<>
-					<PanelDivider />
-					<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
-						<TransitionRepeaterControl recentlyUsedList={ getRecentlyUsedList( element?.id ) } />
-					</StylesField>
-				</>
-			) }
+			<PanelDivider />
+			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
+				<TransitionRepeaterControl
+					currentStyleState={ meta.state }
+					recentlyUsedList={ getRecentlyUsedList( element?.id ) }
+				/>
+			</StylesField>
 			<PanelDivider />
 			<StylesField bind="filter" propDisplayName={ FILTER_LABEL }>
 				<FilterRepeaterControl />
