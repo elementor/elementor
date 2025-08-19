@@ -12,7 +12,7 @@ import { type SvgIconProps } from '@elementor/ui';
 
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
-import { type NormalizedVariable } from '../types';
+import { type NormalizedVariable, type Variable } from '../types';
 
 export type ValueFieldProps = {
 	value: string;
@@ -32,7 +32,7 @@ type VariableTypeOptions = {
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string ) => PropValue;
-	isCompatible?: ( propType: PropType, variable: NormalizedVariable ) => boolean;
+	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -56,9 +56,9 @@ export function createVariableTypeRegistry() {
 		}
 
 		if ( ! isCompatible ) {
-			isCompatible = ( propType, variable: NormalizedVariable ) => {
+			isCompatible = ( propType, variable: Variable ) => {
 				if ( 'union' === propType.kind ) {
-					if ( variable.key in propType.prop_types ) {
+					if ( variable.type in propType.prop_types ) {
 						return true;
 					}
 				}
