@@ -48,6 +48,7 @@ describe( 'AI Modal Events', () => {
 		dispatchEventSpy.mockRestore();
 	} );
 
+	// If those tests fail, it means that the constants are not correct and should also be updated on elementor-ai
 	describe( 'AI_EVENTS constants', () => {
 		it( 'should have the correct MODAL_CLOSED event name', () => {
 			expect( AI_EVENTS.MODAL_CLOSED ).toBe( 'elementor:ai:modal-closed' );
