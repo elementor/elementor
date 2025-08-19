@@ -7,26 +7,24 @@ import { useRepeaterContext } from '../context/repeater-context';
 
 const SIZE = 'tiny';
 
-export type TooltipAddItemActionProps = {
-	disabled?: boolean;
-	enableTooltip?: boolean;
-	tooltipContent?: React.ReactNode;
-	newItemIndex?: number;
-};
-
 export const TooltipAddItemAction = ( {
 	disabled = false,
 	enableTooltip = false,
 	tooltipContent = null,
 	newItemIndex,
-}: TooltipAddItemActionProps ) => {
+}: {
+	disabled?: boolean;
+	enableTooltip?: boolean;
+	tooltipContent?: React.ReactNode;
+	newItemIndex?: number;
+} ) => {
 	const { addItem } = useRepeaterContext();
 
 	const onClick = ( ev: React.MouseEvent ) => addItem( ev, { index: newItemIndex } );
 
 	return (
 		<ConditionalToolTip content={ tooltipContent } enable={ enableTooltip }>
-			<Box sx={ { ml: 'auto', cursor: disabled ? 'not-allowed' : 'pointer' } }>
+			<Box sx={ { ml: 'auto' } }>
 				<IconButton
 					size={ SIZE }
 					disabled={ disabled }
@@ -47,10 +45,20 @@ const ConditionalToolTip = ( {
 }: React.PropsWithChildren< {
 	content?: React.ReactNode;
 	enable: boolean;
-	wrapContent?: boolean;
 } > ) =>
 	enable && content ? (
-		<Infotip placement="right" color="secondary" content={ content }>
+		<Infotip
+			placement="right"
+			content={
+				<Box
+					component="span"
+					aria-label={ undefined }
+					sx={ { display: 'flex', gap: 0.5, p: 2, width: 320, borderRadius: 1 } }
+				>
+					{ content }
+				</Box>
+			}
+		>
 			{ children }
 		</Infotip>
 	) : (
