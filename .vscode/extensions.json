@@ -8,6 +8,7 @@
 		"eamodio.gitlens",
 		"streetsidesoftware.code-spell-checker",
 		"gruntfuggly.todo-tree",
-		"file-icons.file-icons"
+		"file-icons.file-icons",
+		"junstyle.php-cs-fixer"
 	]
 } 
