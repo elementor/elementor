@@ -104,28 +104,23 @@ export const useNestedElements = () => {
 						const newElementsData: CreatedElementData[] = [];
 
 						elementsData.forEach( ( { createParams } ) => {
-							try {
-								// Recreate element with original ID and settings
-								const element = createElement( {
-									...createParams,
-									options: { ...createParams.options, useHistory: false },
+							// Recreate element with original ID and settings
+							const element = createElement( {
+								...createParams,
+								options: { ...createParams.options, useHistory: false },
+							} );
+
+							const elementId = element.id;
+							elementIds.push( elementId );
+
+							// Store element data again for potential future operations
+							const container = getContainer( elementId );
+							if ( container ) {
+								newElementsData.push( {
+									elementId,
+									model: container.model.toJSON(),
+									createParams,
 								} );
-
-								const elementId = element.id;
-								elementIds.push( elementId );
-
-								// Store element data again for potential future operations
-								const container = getContainer( elementId );
-								if ( container ) {
-									newElementsData.push( {
-										elementId,
-										model: container.model.toJSON(),
-										createParams,
-									} );
-								}
-							} catch {
-								// If container doesn't exist, skip this element creation
-								// This can happen when undoing past container creation and then redoing
 							}
 						} );
 
