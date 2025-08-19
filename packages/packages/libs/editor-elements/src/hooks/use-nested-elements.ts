@@ -19,17 +19,17 @@ type RemoveNestedElementsParams = {
 	subtitle?: string;
 };
 
-type CreatedElementData = {
+type CreatedElement = {
 	elementId: string;
 	model: V1ElementModelProps;
 	createParams: CreateElementParams;
 };
 
 type CreatedElementsResult = {
-	elementsData: CreatedElementData[];
+	createdElements: CreatedElement[];
 };
 
-type ElementData = {
+type RemovedElement = {
 	elementId: string;
 	model: V1ElementModelProps;
 	parent: V1Element | null;
@@ -38,7 +38,7 @@ type ElementData = {
 
 type RemovedElementsResult = {
 	elementIds: string[];
-	elementsData: ElementData[];
+	removedElements: RemovedElement[];
 };
 
 export const useNestedElements = () => {
@@ -51,7 +51,7 @@ export const useNestedElements = () => {
 			const undoableCreate = undoable(
 				{
 					do: ( { elements: elementsParam }: { elements: CreateElementParams[] } ): CreatedElementsResult => {
-						const elementsData: CreatedElementData[] = [];
+						const createdElements: CreatedElement[] = [];
 
 						elementsParam.forEach( ( createParams ) => {
 							const { options, ...elementParams } = createParams;
@@ -62,7 +62,7 @@ export const useNestedElements = () => {
 
 							const elementId = element.id;
 
-							elementsData.push( {
+							createdElements.push( {
 								elementId,
 								model: element.model?.toJSON() || {},
 								createParams: {
@@ -72,11 +72,11 @@ export const useNestedElements = () => {
 							} );
 						} );
 
-						return { elementsData };
+						return { createdElements };
 					},
-					undo: ( _: { elements: CreateElementParams[] }, { elementsData }: CreatedElementsResult ) => {
+					undo: ( _: { elements: CreateElementParams[] }, { createdElements }: CreatedElementsResult ) => {
 						// Delete elements in reverse order to avoid dependency issues
-						[ ...elementsData ].reverse().forEach( ( { elementId } ) => {
+						createdElements.toReversed().forEach( ( { elementId } ) => {
 							deleteElement( {
 								elementId,
 								options: { useHistory: false },
@@ -85,11 +85,11 @@ export const useNestedElements = () => {
 					},
 					redo: (
 						_: { elements: CreateElementParams[] },
-						{ elementsData }: CreatedElementsResult
+						{ createdElements }: CreatedElementsResult
 					): CreatedElementsResult => {
-						const newElementsData: CreatedElementData[] = [];
+						const newElements: CreatedElement[] = [];
 
-						elementsData.forEach( ( { createParams } ) => {
+						createdElements.forEach( ( { createParams } ) => {
 							const element = createElement( {
 								...createParams,
 								options: { ...createParams.options, useHistory: false },
@@ -99,7 +99,7 @@ export const useNestedElements = () => {
 
 							const container = getContainer( elementId );
 							if ( container ) {
-								newElementsData.push( {
+								newElements.push( {
 									elementId,
 									model: container.model.toJSON(),
 									createParams,
@@ -107,7 +107,7 @@ export const useNestedElements = () => {
 							}
 						} );
 
-						return { elementsData: newElementsData };
+						return { createdElements: newElements };
 					},
 				},
 				{
@@ -127,7 +127,7 @@ export const useNestedElements = () => {
 			const undoableRemove = undoable(
 				{
 					do: ( { elementIds: elementIdsParam }: { elementIds: string[] } ): RemovedElementsResult => {
-						const elementsData: ElementData[] = [];
+						const removedElements: RemovedElement[] = [];
 
 						elementIdsParam.forEach( ( elementId ) => {
 							const container = getContainer( elementId );
@@ -138,7 +138,7 @@ export const useNestedElements = () => {
 
 								const at = container.view?._index ?? 0;
 
-								elementsData.push( {
+								removedElements.push( {
 									elementId,
 									model,
 									parent: parent ?? null,
@@ -154,11 +154,11 @@ export const useNestedElements = () => {
 							} );
 						} );
 
-						return { elementIds: elementIdsParam, elementsData };
+						return { elementIds: elementIdsParam, removedElements };
 					},
-					undo: ( _: { elementIds: string[] }, { elementsData }: RemovedElementsResult ) => {
+					undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
 						// Restore elements in reverse order to maintain proper hierarchy
-						[ ...elementsData ].reverse().forEach( ( { model, parent, at } ) => {
+						removedElements.toReversed().forEach( ( { model, parent, at } ) => {
 							if ( parent && model ) {
 								createElement( {
 									containerId: parent.id,
@@ -172,7 +172,7 @@ export const useNestedElements = () => {
 					},
 					redo: (
 						_: { elementIds: string[] },
-						{ elementIds: originalElementIds, elementsData }: RemovedElementsResult
+						{ elementIds: originalElementIds, removedElements }: RemovedElementsResult
 					): RemovedElementsResult => {
 						originalElementIds.forEach( ( elementId ) => {
 							deleteElement( {
@@ -181,7 +181,7 @@ export const useNestedElements = () => {
 							} );
 						} );
 
-						return { elementIds: originalElementIds, elementsData };
+						return { elementIds: originalElementIds, removedElements };
 					},
 				},
 				{
