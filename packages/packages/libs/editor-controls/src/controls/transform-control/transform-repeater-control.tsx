@@ -1,19 +1,11 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import {
-	ObjectPropType,
-	perspectiveOriginPropTypeUtil,
-	type PerspectiveOriginPropValue,
-	transformFunctionsPropTypeUtil,
-	transformOriginPropTypeUtil,
-	type TransformOriginPropValue,
-	transformPropTypeUtil,
-} from '@elementor/editor-props';
-import { InfoCircleFilledIcon } from '@elementor/icons';
-import { Typography } from '@elementor/ui';
+import { transformFunctionsPropTypeUtil, transformPropTypeUtil } from '@elementor/editor-props';
+import { AdjustmentsIcon, InfoCircleFilledIcon } from '@elementor/icons';
+import { bindTrigger, IconButton, type PopupState, Typography, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider, PropProvider, UseBoundProp, useBoundProp } from '../../bound-prop-context';
+import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import {
 	Header,
 	Item,
@@ -24,6 +16,7 @@ import {
 import { DisableItemAction } from '../../components/unstable-repeater/actions/disable-item-action';
 import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
 import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
+import { injectIntoRepeaterHeaderActions } from '../../components/unstable-repeater/locations';
 import { createControl } from '../../create-control';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
 import { TransformBaseControl } from './transform-base-control';
@@ -31,43 +24,26 @@ import { TransformContent } from './transform-content';
 import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
 
+const SIZE = 'tiny';
+
 export const TransformRepeaterControl = createControl( () => {
 	const context = useBoundProp( transformPropTypeUtil );
-	const { propType, value, setValue } = context;
+	const headerRef = useRef< HTMLDivElement >( null );
+	const popupState = usePopupState( { variant: 'popover' } );
 
-	const transformOriginValue = value?.[ 'transform-origin' ] as TransformOriginPropValue;
-	const setTransformOriginValue = ( newValue: TransformOriginPropValue ) => {
-		if ( ! newValue ) {
-			setValue( value ? { ...value, 'transform-origin': null } : null );
+	const repeaterBindKey = 'transform-functions';
 
-			return;
-		}
-
-		const valueToSave = {
-			...( value ?? {} ),
-			'transform-origin': newValue,
-		};
-
-		setValue( valueToSave );
-	};
-	const transformOriginContext: UseBoundProp< TransformOriginPropValue > = {
-		propType: ( propType as ObjectPropType ).shape[ 'transform-origin' ],
-		value: transformOriginValue,
-		setValue: setTransformOriginValue,
-	};
-
-	// const transformOriginContext = useBoundProp( transformOriginPropTypeUtil );
-	console.log( 'transformOriginContext', transformOriginContext );
-	// const perspectiveOriginContext = useBoundProp( perspectiveOriginPropTypeUtil );
+	injectIntoRepeaterHeaderActions( {
+		id: 'transform-base-control',
+		component: () => <TransformBasePopoverTrigger popupState={ popupState } repeaterBindKey={ repeaterBindKey } />,
+		options: { overwrite: true },
+	} );
 
 	return (
 		<PropProvider { ...context }>
-			<PropKeyProvider bind="transform-functions">
-				<Repeater
-				transformOriginContext={ transformOriginContext }
-				// perspectiveOriginContext={ perspectiveOriginContext }
-				/>
-				<Repeater />
+			<TransformBaseControl popupState={ popupState } anchorRef={ headerRef } />
+			<PropKeyProvider bind={ repeaterBindKey }>
+				<Repeater headerRef={ headerRef } />
 			</PropKeyProvider>
 		</PropProvider>
 	);
@@ -82,21 +58,7 @@ const ToolTip = (
 	</>
 );
 
-const Repeater = ( {
-									 transformOriginContext,
-
-                   }
-// perspectiveOriginContext,
-: {
-	transformOriginContext: UseBoundProp< TransformOriginPropValue >;
-	// perspectiveOriginContext: UseBoundProp< PerspectiveOriginPropValue >;
-} ) => {
-	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
-	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
-	const { value: transformValues } = transformFunctionsContext;
-	const headerRef = React.useRef< HTMLDivElement >( null );
-
-    const Repeater = () => {
+const Repeater = ( { headerRef }: { headerRef: React.RefObject< HTMLDivElement > } ) => {
 	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
 	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
 	const { value: transformValues } = transformFunctionsContext;
@@ -114,11 +76,6 @@ const Repeater = ( {
 				propTypeUtil={ transformFunctionsPropTypeUtil }
 			>
 				<Header label={ __( 'Transform', 'elementor' ) } ref={ headerRef }>
-					<TransformBaseControl
-						anchorRef={ headerRef }
-						// perspectiveOriginContext={ perspectiveOriginContext }
-						transformOriginContext={ transformOriginContext }
-					/>
 					<TooltipAddItemAction
 						disabled={ shouldDisableAddItem }
 						tooltipContent={ ToolTip }
@@ -134,5 +91,21 @@ const Repeater = ( {
 				</EditItemPopover>
 			</UnstableRepeater>
 		</PropProvider>
+	);
+};
+
+const TransformBasePopoverTrigger = ( {
+	popupState,
+	repeaterBindKey,
+}: {
+	popupState: PopupState;
+	repeaterBindKey: string;
+} ) => {
+	const { bind } = useBoundProp();
+
+	return bind !== repeaterBindKey ? null : (
+		<IconButton size={ SIZE } aria-label={ __( 'Base Transform', 'elementor' ) } { ...bindTrigger( popupState ) }>
+			<AdjustmentsIcon fontSize={ SIZE } />
+		</IconButton>
 	);
 };
