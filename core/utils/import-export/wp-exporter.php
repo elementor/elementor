@@ -166,7 +166,8 @@ class WP_Exporter {
 	private function wxr_cdata( $str ) {
 		$str = (string) $str;
 
-		if ( ! seems_utf8( $str ) ) {
+		$is_valid_utf8 = wp_check_invalid_utf8( $str, true ) === $str;
+		if ( ! $is_valid_utf8 ) {
 			$str = utf8_encode( $str );
 		}
 
