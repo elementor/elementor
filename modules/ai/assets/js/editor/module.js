@@ -1,6 +1,6 @@
 import AiBehavior from './ai-behavior';
 import { __ } from '@wordpress/i18n';
-import { IMAGE_PROMPT_CATEGORIES, LOCATIONS } from './pages/form-media/constants';
+import { IMAGE_PROMPT_CATEGORIES, LOCATIONS, AI_EVENTS } from './pages/form-media/constants';
 import ReactUtils from 'elementor-utils/react';
 import React from 'react';
 import LayoutAppWrapper from './layout-app-wrapper';
@@ -277,7 +277,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 			type: 'media',
 			controlType: 'media',
 			onCloseCallback: () => {
-				window.dispatchEvent( new CustomEvent( 'elementor:ai:modal-closed', {
+				window.dispatchEvent( new CustomEvent( AI_EVENTS.MODAL_CLOSED, {
 					detail: {
 						success: false,
 						error: 'User closed the modal manually without selecting an image',
@@ -294,7 +294,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				}
 			},
 			setControlValue: ( image ) => {
-				window.dispatchEvent( new CustomEvent( 'elementor:ai:modal-closed', {
+				window.dispatchEvent( new CustomEvent( AI_EVENTS.MODAL_CLOSED, {
 					detail: {
 						modalType,
 						location,
