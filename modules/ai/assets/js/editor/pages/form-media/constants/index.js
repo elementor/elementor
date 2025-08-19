@@ -151,4 +151,5 @@ export const IMAGE_PLACEHOLDERS_HOSTS = {
 
 export const AI_EVENTS = {
 	MODAL_CLOSED: 'elementor:ai:modal-closed',
+	SHOW_MODAL: 'elementor:ai:show-modal',
 };

@@ -53,6 +53,10 @@ describe( 'AI Modal Events', () => {
 			expect( AI_EVENTS.MODAL_CLOSED ).toBe( 'elementor:ai:modal-closed' );
 		} );
 
+		it( 'should have the correct SHOW_MODAL event name', () => {
+			expect( AI_EVENTS.SHOW_MODAL ).toBe( 'elementor:ai:show-modal' );
+		} );
+
 		it( 'should be suitable for CustomEvent creation', () => {
 			const eventName = AI_EVENTS.MODAL_CLOSED;
 			const customEvent = new CustomEvent( eventName, {
@@ -61,6 +65,25 @@ describe( 'AI Modal Events', () => {
 
 			expect( customEvent.type ).toBe( 'elementor:ai:modal-closed' );
 			expect( customEvent.detail ).toEqual( { test: true } );
+		} );
+
+		it( 'should be suitable for addEventListener usage', () => {
+			const eventName = AI_EVENTS.SHOW_MODAL;
+			const mockHandler = jest.fn();
+
+			dispatchEventSpy.mockRestore();
+
+			window.addEventListener( eventName, mockHandler );
+
+			const event = new CustomEvent( eventName );
+			window.dispatchEvent( event );
+
+			expect( mockHandler ).toHaveBeenCalled();
+			expect( mockHandler ).toHaveBeenCalledWith( event );
+
+			window.removeEventListener( eventName, mockHandler );
+
+			dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' ).mockImplementation( () => {} );
 		} );
 	} );
 
