@@ -236,4 +236,15 @@ export default class v4Panel extends BasePage {
 	async waitForTypographyControls( timeout: number = 5000 ): Promise<void> {
 		await this.page.waitForSelector( 'label:has-text("Font size"), label:has-text("Font family"), .MuiButtonBase-root', { timeout } );
 	}
+
+	async setFontSizeUnit( unit: string ): Promise<void> {
+		const unitButton = this.page.getByRole( 'button', { name: /^(px|em|rem|vw|vh|%)$/i } ).first();
+		await unitButton.click();
+
+		await this.page.waitForSelector( '[role="menu"]' );
+		await this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } ).click();
+
+		// Wait for the unit change to be applied
+		await this.page.waitForTimeout( 1000 );
+	}
 }
