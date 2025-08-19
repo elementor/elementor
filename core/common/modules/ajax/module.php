@@ -266,8 +266,17 @@ class Module extends BaseModule {
 			ob_end_clean();
 		}
 
-		header( 'Content-Type: application/json; charset=UTF-8' );
-		echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		if ( function_exists( 'gzencode' ) ) {
+			$response = gzencode( $json );
+
+			header( 'Content-Type: application/json; charset=utf-8' );
+			header( 'Content-Encoding: gzip' );
+			header( 'Content-Length: ' . strlen( $response ) );
+
+			echo $response; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		} else {
+			echo $json; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
 
 		wp_die( '', '', [ 'response' => null ] );
 	}
