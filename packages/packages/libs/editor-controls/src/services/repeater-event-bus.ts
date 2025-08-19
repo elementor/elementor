@@ -3,12 +3,13 @@ import { type ExtendedWindow, getSelectedElements } from '@elementor/editor-elem
 interface TransitionItemData {
 	transition_type?: string;
 	widget_type?: string;
+	repeaterType?: string;
 }
 
 export class RepeaterEventBus {
-	private listeners = new Map< string, Set< () => void > >();
+	private listeners = new Map< string, Set< ( data?: TransitionItemData ) => void > >();
 
-	subscribe( eventType: string, callback: () => void ) {
+	subscribe( eventType: string, callback: ( data?: TransitionItemData ) => void ) {
 		if ( ! this.listeners.has( eventType ) ) {
 			this.listeners.set( eventType, new Set() );
 		}
@@ -20,7 +21,7 @@ export class RepeaterEventBus {
 	}
 
 	emit( eventType: string, data?: TransitionItemData ) {
-		this.listeners.get( eventType )?.forEach( ( callback ) => callback() );
+		this.listeners.get( eventType )?.forEach( ( callback ) => callback( data ) );
 
 		if ( eventType === 'transition-item-added' ) {
 			this.trackTransitionItemAdded( data );

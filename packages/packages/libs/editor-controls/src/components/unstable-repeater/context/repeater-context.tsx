@@ -98,7 +98,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
 
-		repeaterEventBus.emit( 'item-added' );
+		repeaterEventBus.emit( 'item-added', { repeaterType: propTypeUtil.key } );
 	};
 
 	const removeItem = ( index: number ) => {

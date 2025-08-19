@@ -81,10 +81,12 @@ export const TransitionRepeaterControl = createControl(
 		const currentStyleIsNormal = currentStyleState === null;
 
 		React.useEffect( () => {
-			const unsubscribe = repeaterEventBus.subscribe( 'item-added', () => {
-				repeaterEventBus.emit( 'transition-item-added', {
-					transition_type: initialTransitionValue.selection.value.value.value,
-				} );
+			const unsubscribe = repeaterEventBus.subscribe( 'item-added', ( data ) => {
+				if ( data?.repeaterType === 'transition' ) {
+					repeaterEventBus.emit( 'transition-item-added', {
+						transition_type: initialTransitionValue.selection.value.value.value,
+					} );
+				}
 			} );
 
 			return unsubscribe;

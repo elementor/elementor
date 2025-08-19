@@ -14,7 +14,7 @@ describe( 'RepeaterEventBus', () => {
 		eventBus = new RepeaterEventBus();
 		mockDispatchEvent = jest.fn();
 
-		( window as unknown as ExtendedWindow ).elementorCommon = {
+		( window as ExtendedWindow ).elementorCommon = {
 			eventsManager: {
 				dispatchEvent: mockDispatchEvent,
 				config: {
@@ -40,7 +40,7 @@ describe( 'RepeaterEventBus', () => {
 	} );
 
 	afterEach( () => {
-		delete ( window as unknown as ExtendedWindow ).elementorCommon;
+		delete ( window as ExtendedWindow ).elementorCommon;
 	} );
 
 	it( 'should subscribe to events and call callbacks', () => {
