@@ -69,26 +69,26 @@ export function KitContentCustomizationDialog( {
 			handleSaveChanges={ () => handleSaveChanges( 'content', settings, unselectedValues.current ) }
 		>
 			<Stack>
-                { customPostTypes.length > 0 && (
-                    <ListSettingSection
-                        settingKey="customPostTypes"
-                        title={ __( 'Custom post types', 'elementor' ) }
-                        onSettingChange={ ( selectedCustomPostTypes ) => {
-                            const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
-                            const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
+				{ customPostTypes.length > 0 && (
+					<ListSettingSection
+						settingKey="customPostTypes"
+						title={ __( 'Custom post types', 'elementor' ) }
+						onSettingChange={ ( selectedCustomPostTypes ) => {
+							const filteredUnselectedValues = unselectedValues.current.filter( ( value ) => ! customPostTypes.includes( value ) );
+							const isAllChecked = selectedCustomPostTypes.length === customPostTypes.length;
 
-                            unselectedValues.current = isAllChecked
-                                ? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
-                                : [
-                                    ...filteredUnselectedValues,
-                                    ...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
-                                    'customPostTypes',
-                                ];
-                            handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
-                        } }
-                        settings={ settings.customPostTypes }
-                        items={ customPostTypes }
-                    />
+							unselectedValues.current = isAllChecked
+								? filteredUnselectedValues.filter( ( value ) => value !== 'customPostTypes' )
+								: [
+									...filteredUnselectedValues,
+									...customPostTypes.filter( ( cpt ) => ! selectedCustomPostTypes.includes( cpt ) ).map( ( { value } ) => value ),
+									'customPostTypes',
+								];
+							handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
+						} }
+						settings={ settings.customPostTypes }
+						items={ customPostTypes }
+					/>
 				) }
 			</Stack>
 		</KitCustomizationDialog>
