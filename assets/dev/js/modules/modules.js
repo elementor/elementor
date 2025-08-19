@@ -7,6 +7,7 @@ import ForceMethodImplementation from './imports/force-method-implementation';
 import { templateRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/templates';
 import { siteSettingsRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/site-settings';
 import { createGetInitialState } from '../../../../app/modules/import-export-customization/assets/js/shared/utils/template-registry-helpers';
+import { contentRegistry } from '../../../../app/modules/import-export-customization/assets/js/shared/registry/content';
 
 export default window.elementorModules = {
 	Module,
@@ -23,5 +24,6 @@ export default window.elementorModules = {
 		templateRegistry,
 		createGetInitialState,
 		siteSettingsRegistry,
+		contentRegistry,
 	},
 };

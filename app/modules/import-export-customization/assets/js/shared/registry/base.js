@@ -75,4 +75,26 @@ export class BaseRegistry {
 	get( key ) {
 		return this.sections.get( key );
 	}
+
+	getState( data, parentInitialState ) {
+		const state = {};
+
+		this.getAll().forEach( ( section ) => {
+			if ( section.children ) {
+				section.children?.forEach( ( childSection ) => {
+					const sectionState = this.getSectionState( childSection, data, parentInitialState );
+
+					Object.assign( state, sectionState );
+				} );
+			} else {
+				Object.assign( state, this.getSectionState( section, data, parentInitialState ) );
+			}
+		} );
+
+		return state;
+	}
+
+	getSectionState() {
+		return {};
+	}
 }

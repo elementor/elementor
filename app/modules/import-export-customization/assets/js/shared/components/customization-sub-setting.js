@@ -22,7 +22,7 @@ export const SubSetting = ( {
 			checked={ checked }
 			disabled={ disabled }
 			onChange={ ( e, isChecked ) => onSettingChange && onSettingChange( settingKey, isChecked ) }
-			color="info"
+			color={ disabled ? 'default' : 'info' }
 			size="medium"
 		/>
 	</Box>
