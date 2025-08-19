@@ -84,6 +84,10 @@ class Widget_Shortcode extends Widget_Base {
 		return true;
 	}
 
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register shortcode widget controls.
 	 *
@@ -129,6 +133,10 @@ class Widget_Shortcode extends Widget_Base {
 	 */
 	protected function render() {
 		$shortcode = $this->get_settings_for_display( 'shortcode' );
+
+		if ( empty( $shortcode ) ) {
+			return;
+		}
 
 		$shortcode = do_shortcode( shortcode_unautop( $shortcode ) );
 		?>

@@ -59,10 +59,7 @@
 
 		&-gallery-edit {
 			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
+			inset: 0;
 			background-color: rgba(0, 0, 0, .2);
 			padding: 10px;
 			font-size: 11px;
@@ -73,8 +70,8 @@
 
 			span {
 				position: absolute;
-				top: 10px;
-				@include end(10px);
+				inset-block-start: 10px;
+				inset-inline-end: 10px;
 				width: 21px;
 				height: 21px;
 				color: var(--e-a-color-white);

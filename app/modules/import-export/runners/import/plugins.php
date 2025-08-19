@@ -21,7 +21,7 @@ class Plugins extends Import_Runner_Base {
 		}
 	}
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'plugins';
 	}
 

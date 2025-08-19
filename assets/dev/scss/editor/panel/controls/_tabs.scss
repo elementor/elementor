@@ -1,8 +1,12 @@
 
 // Inner Tabs
 .elementor-control-type-tabs {
-	display: flex;
+	display: none;
 	font-size: var(--control-title-size);
+
+	&:has(> :not(.elementor-control-type-tab.elementor-hidden-control)) {
+		display: flex;
+	}
 }
 
 .elementor-control-type-tab {

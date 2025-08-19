@@ -28,10 +28,16 @@ import DocumentComponent from './document/component';
 import DataGlobalsComponent from './data/globals/component';
 import ControlConditions from './utils/control-conditions';
 import PromotionModule from 'elementor/modules/promotions/assets/js/editor/module';
-import EditorEvents from 'elementor/modules/editor-events/assets/js/editor/module';
+
+import FloatingButtonsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-buttons/editor/module';
+import FloatingBarsLibraryModule from 'elementor/modules/floating-buttons/assets/js/floating-bars/editor/module';
+import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/editor/module';
+import CloudLibraryModule from 'elementor/modules/cloud-library/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
+import * as hints from './hints';
 import ElementBase from './elements/types/base/element-base';
+import { FontVariables } from './utils/font-variables';
 
 /**
  * @typedef {import('./container/container')} Container
@@ -56,6 +62,7 @@ export default class EditorBase extends Marionette.Application {
 	ajax = elementorCommon.ajax;
 	conditions = new ControlConditions();
 	history = require( 'elementor/modules/history/assets/js/module' );
+	hints = new hints.Ally();
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
@@ -180,6 +187,7 @@ export default class EditorBase extends Marionette.Application {
 			Box_shadow: require( 'elementor-controls/box-shadow' ),
 			Button: require( 'elementor-controls/button' ),
 			Choose: require( 'elementor-controls/choose' ),
+			Visual_choice: require( 'elementor-controls/visual-choice' ),
 			Code: require( 'elementor-controls/code' ),
 			Color: ColorControl,
 			Date_time: DateTimeControl,
@@ -232,6 +240,9 @@ export default class EditorBase extends Marionette.Application {
 				BaseWidget: require( 'elementor-elements/views/base-widget' ),
 				Widget: require( 'elementor-elements/views/widget' ),
 			},
+			components: {
+				AddSectionView: require( 'elementor-views/add-section/inline' ).default,
+			},
 		},
 		layouts: {
 			panel: {
@@ -282,8 +293,49 @@ export default class EditorBase extends Marionette.Application {
 				return false;
 			}
 
-			if ( ! this.widgetsCache[ widgetType ].commonMerged ) {
-				jQuery.extend( this.widgetsCache[ widgetType ].controls, this.widgetsCache.common.controls );
+			if ( ! this.widgetsCache[ widgetType ].commonMerged && ! this.widgetsCache[ widgetType ].atomic_controls ) {
+				let commonControls = this.widgetsCache.common.controls;
+
+				/**
+				 * Filter widgets common controls.
+				 *
+				 * @param array  commonControls - An array of the default common controls.
+				 * @param string widgetType     - The widget type.
+				 */
+				commonControls = elementor.hooks.applyFilters( 'elements/widget/controls/common/default', commonControls, widgetType );
+				jQuery.extend( this.widgetsCache[ widgetType ].controls, commonControls );
+
+				if ( ! this.widgetsCache[ widgetType ].has_widget_inner_wrapper && elementorCommon.config.experimentalFeatures.e_optimized_markup ) {
+					let commonOptimizedControls = this.widgetsCache[ 'common-optimized' ].controls;
+					/**
+					 * Filter widgets common-optimized controls.
+					 *
+					 * @param array  commonOptimizedControls - An array of the default common controls.
+					 * @param string widgetType     - The widget type.
+					 */
+					commonOptimizedControls = elementor.hooks.applyFilters( 'elements/widget/controls/common-optimized/default', commonOptimizedControls, widgetType );
+					jQuery.extend( this.widgetsCache[ widgetType ].controls, commonOptimizedControls );
+				}
+
+				this.widgetsCache[ widgetType ].controls = elementor.hooks.applyFilters( 'elements/widget/controls/common', this.widgetsCache[ widgetType ].controls, widgetType, this.widgetsCache[ widgetType ] );
+
+				// TODO: Move this code to own file.
+				if ( this.widgetsCache[ widgetType ].controls?._element_cache ) {
+					let elementCacheDescription = __( 'The default cache status for this element:', 'elementor' );
+
+					elementCacheDescription += ' <strong>';
+					if ( this.widgetsCache[ widgetType ]?.is_dynamic_content ) {
+						elementCacheDescription += __( 'Inactive', 'elementor' );
+					} else {
+						elementCacheDescription += __( 'Active', 'elementor' );
+					}
+					elementCacheDescription += '</strong><br />';
+					elementCacheDescription += __( 'Activating cache improves loading times by storing a static version of this element.', 'elementor' );
+					elementCacheDescription += ' <a href="https://go.elementor.com/element-caching-help/" target="_blank">' + __( 'Learn more', 'elementor' ) + '</a>.';
+
+					this.widgetsCache[ widgetType ].controls._element_cache.description = elementCacheDescription;
+				}
+				// TODO: End of code to move.
 
 				this.widgetsCache[ widgetType ].commonMerged = true;
 			}
@@ -408,7 +460,7 @@ export default class EditorBase extends Marionette.Application {
 
 		this.introductionTooltips = new IntroductionTooltipsManager();
 
-		this.editorEvents = new EditorEvents();
+		this.editorEvents = elementorCommon.eventsManager;
 
 		this.documents = $e.components.register( new EditorDocuments() );
 
@@ -417,9 +469,19 @@ export default class EditorBase extends Marionette.Application {
 			this.modules.landingLibraryPageModule = new LandingPageLibraryModule();
 		}
 
+		if ( elementorCommon.config.experimentalFeatures.container ) {
+			this.modules.floatingButtonsLibraryModule = new FloatingButtonsLibraryModule();
+		}
+
+		this.modules.linkInBioLibraryModule = new LinkInBioLibraryModule();
+
+		this.modules.floatingBarsLibraryModule = new FloatingBarsLibraryModule();
+
 		this.modules.elementsColorPicker = new ElementsColorPicker();
 
 		this.modules.promotionModule = new PromotionModule();
+
+		this.modules.cloudLibraryModule = new CloudLibraryModule();
 
 		// TODO: Move to elementor:init-data-components
 		$e.components.register( new DataGlobalsComponent() );
@@ -430,6 +492,8 @@ export default class EditorBase extends Marionette.Application {
 
 		// TODO: Remove, BC Since 2.9.0.
 		elementor.saver = $e.components.get( 'document/save' );
+
+		new FontVariables();
 
 		Events.dispatch( elementorCommon.elements.$window, 'elementor/init-components', null, 'elementor:init-components' );
 	}
@@ -464,8 +528,6 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initElements() {
-		const ElementCollection = require( 'elementor-elements/collections/elements' );
-
 		let config = this.config.document.elements;
 
 		// If it's an reload, use the not-saved data
@@ -473,10 +535,20 @@ export default class EditorBase extends Marionette.Application {
 			config = this.elements.toJSON();
 		}
 
-		this.elements = new ElementCollection( config );
+		this.elements = this.createBackboneElementsCollection( config );
 
-		this.elementsModel = new Backbone.Model( {
-			elements: this.elements,
+		this.elementsModel = this.createBackboneElementsModel( this.elements );
+	}
+
+	createBackboneElementsCollection( json ) {
+		const ElementCollection = require( 'elementor-elements/collections/elements' );
+
+		return new ElementCollection( json );
+	}
+
+	createBackboneElementsModel( elementsCollection ) {
+		return new Backbone.Model( {
+			elements: elementsCollection,
 		} );
 	}
 
@@ -506,18 +578,31 @@ export default class EditorBase extends Marionette.Application {
 	initPreviewView( document ) {
 		elementor.trigger( 'document:before:preview', document );
 
-		const preview = new Preview( { el: document.$element[ 0 ], model: elementor.elementsModel } );
+		this.previewView = this.createPreviewView( document.$element[ 0 ], elementor.elementsModel );
+
+		this.renderPreview( this.previewView );
+	}
+
+	createPreviewView( targetElement, model, config = {} ) {
+		const preview = new Preview( {
+			el: targetElement,
+			model,
+		} );
+
+		preview.setConfig( config );
 
 		preview.$el.empty();
 
+		return preview;
+	}
+
+	renderPreview( preview ) {
 		// In order to force rendering of children
 		preview.isRendered = true;
 
 		preview._renderChildren();
 
 		preview.triggerMethod( 'render' );
-
-		this.previewView = preview;
 	}
 
 	initFrontend() {
@@ -595,6 +680,10 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	initNavigator() {
+		if ( ! $e.components.get( 'document/elements' ).utils.showNavigator() ) {
+			return;
+		}
+
 		this.addRegions( {
 			navigator: {
 				el: '#elementor-navigator',
@@ -699,7 +788,7 @@ export default class EditorBase extends Marionette.Application {
 	}
 
 	getBreakpointResizeOptions( currentBreakpoint ) {
-		const previewHeight = elementor.$previewWrapper.height() - 80, // 80 = responsive bar height + ui-resizable-handle
+		const previewHeight = elementor.$previewWrapper.height(),
 			specialBreakpointsHeights = {
 				mobile: {
 					minHeight: 480,

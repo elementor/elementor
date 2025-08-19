@@ -12,15 +12,16 @@ import PromptField from '../../components/prompt-field';
 import { LOCATIONS } from '../../constants';
 import NewPromptButton from '../../components/new-prompt-button';
 import { useLocation } from '../../context/location-context';
+import { useRequestIds } from '../../../../context/requests-ids';
 
 const ReplaceBackground = () => {
 	const [ prompt, setPrompt ] = useState( '' );
-
+	const { setGenerate } = useRequestIds();
 	const { editImage } = useEditImage();
 
 	const { use, edit, isLoading: isUploading } = useImageActions();
 
-	const { data, send, isLoading: isGenerating, error, reset } = useReplaceBackground();
+	const { data, send, isLoading: isGenerating, error } = useReplaceBackground();
 
 	const { navigate } = useLocation();
 
@@ -28,8 +29,8 @@ const ReplaceBackground = () => {
 
 	const handleSubmit = ( event ) => {
 		event.preventDefault();
-
-		send( prompt, editImage );
+		setGenerate();
+		send( { prompt, image: editImage } );
 	};
 
 	return (
@@ -59,7 +60,8 @@ const ReplaceBackground = () => {
 						{ data?.result ? __( 'Generate Again', 'elementor' ) : __( 'Replace Background', 'elementor' ) }
 					</GenerateSubmit>
 
-					{ data?.result && <NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } /> }
+					{ data?.result &&
+						<NewPromptButton disabled={ isLoading } onClick={ () => navigate( LOCATIONS.GENERATE ) } /> }
 				</ImageForm>
 			</View.Panel>
 

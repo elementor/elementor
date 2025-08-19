@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Testing\Includes;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Icons_Manager;
 use Elementor\Plugin;
@@ -11,13 +10,9 @@ use Elementor\Utils;
 
 class Test_Tracker extends Elementor_Test_Base {
 	public function test_get_settings_general_usage() {
-		// Arrange - Set page only.
+		// Arrange.
 		update_option( 'elementor_cpt_support', [ 'page' ] );
-
-		// Set true.
 		update_option( 'elementor_disable_color_schemes', true );
-
-		// Set false.
 		update_option( 'elementor_disable_typography_schemes', '' );
 
 		// Act.
@@ -30,28 +25,19 @@ class Test_Tracker extends Elementor_Test_Base {
 			],
 			'disable_color_schemes' => true,
 			'disable_typography_schemes' => false,
-			'allow_tracking' => 'yes', // TODO: Probably should be excluded, but settings page should not know about tracker existance.
+			'allow_tracking' => 'yes', // TODO: Probably should be excluded, but settings page should not know about tracker existence.
 		], $actual );
 	}
 
 	public function test_get_settings_advanced_usage() {
 		// Arrange.
-
-		// Load font_awesome_support settings.
 		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
 
-		update_option( 'elementor_css_print_method', 'internal' );
-
 		update_option( Utils::EDITOR_BREAK_LINES_OPTION_KEY, '' );
-
 		update_option( Uploads_Manager::UNFILTERED_FILE_UPLOADS_KEY, '1' );
-
 		update_option( 'elementor_google_font', '1' );
-
 		update_option( 'elementor_font_display', 'block' );
-
 		update_option( 'elementor_meta_generator_tag', '1' );
-
 		update_option( Icons_Manager::LOAD_FA4_SHIM_OPTION_KEY, 'yes' );
 
 		// Act.
@@ -59,13 +45,33 @@ class Test_Tracker extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertEqualSets( [
-			'css_print_method' => 'internal',
 			'switch_editor_loader_method' => '',
 			'enable_unfiltered_file_uploads' => '1',
 			'google_font' => '1',
 			'font_display' => 'block',
 			'font_awesome_support' => 'yes',
 			'meta_generator_tag' => '1',
+		], $actual );
+	}
+
+	public function test_get_settings_performance_usage() {
+		// Arrange.
+		Plugin::$instance->icons_manager->register_admin_settings( Plugin::$instance->settings );
+
+		update_option( 'elementor_css_print_method', 'internal' );
+		update_option( 'elementor_optimized_image_loading', '1' );
+		update_option( 'elementor_optimized_gutenberg_loading', '1' );
+		update_option( 'elementor_lazy_load_background_images', '1' );
+
+		// Act.
+		$actual = Tracker::get_settings_performance_usage();
+
+		// Assert.
+		$this->assertEqualSets( [
+			'css_print_method' => 'internal',
+			'optimized_image_loading' => '1',
+			'optimized_gutenberg_loading' => '1',
+			'lazy_load_background_images' => '1',
 		], $actual );
 	}
 
@@ -148,5 +154,56 @@ class Test_Tracker extends Elementor_Test_Base {
 				$this->assertEquals( $posts_per_status, $library_usage[ $post_type ][ $post_status ] );
 			}
 		}
+	}
+
+	public function test_has_terms_changed_when_tracking_not_allowed() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'no' );
+
+		// Act
+		$result = Tracker::has_terms_changed();
+
+		// Assert
+		$this->assertFalse( $result );
+	}
+
+	public function test_has_terms_changed_when_last_update_time_not_set() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'yes' );
+		delete_option( 'elementor_allow_tracking_last_update' );
+
+		// Act
+		$result = Tracker::has_terms_changed();
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_has_terms_changed_when_last_update_time_before_terms_update() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'yes' );
+		$terms_updated = '2024-01-01';
+		$last_update_time = strtotime( '2023-12-31 UTC' );
+		update_option( 'elementor_allow_tracking_last_update', $last_update_time );
+
+		// Act
+		$result = Tracker::has_terms_changed( $terms_updated );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_has_terms_changed_when_last_update_time_after_terms_update() {
+		// Arrange
+		update_option( 'elementor_allow_tracking', 'yes' );
+		$terms_updated = '2024-01-01';
+		$last_update_time = strtotime( '2024-01-02 UTC' );
+		update_option( 'elementor_allow_tracking_last_update', $last_update_time );
+
+		// Act
+		$result = Tracker::has_terms_changed( $terms_updated );
+
+		// Assert
+		$this->assertFalse( $result );
 	}
 }

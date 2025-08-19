@@ -32,6 +32,7 @@
 
 			&--disabled {
 				cursor: default;
+				opacity: .5;
 				color: var(--e-a-color-disabled);
 			}
 
@@ -56,6 +57,21 @@
 
 			&__shortcut {
 				color: var(--e-a-color-txt-muted);
+
+				&--link-fullwidth {
+					position: absolute;
+					inset: 0;
+					z-index: $second-layer;
+					cursor: pointer;
+				}
+
+				&__new-badge {
+					border: 1px solid var(--e-a-color-primary-bold);
+					padding: 2px 8px;
+					color: var(--e-a-color-primary-bold);
+					border-radius: 10px;
+					font-size: 10px;
+				}
 			}
 
 			&__title,
@@ -64,6 +80,7 @@
 				font-style: normal;
 				font-weight: 400;
 				line-height: 1;
+				position: relative;
 			}
 
 			&.elementor-context-menu-list__item-delete {
@@ -78,6 +95,10 @@
 						}
 					}
 				}
+			}
+
+			&.elementor-hidden {
+				display: none;
 			}
 		}
 	}

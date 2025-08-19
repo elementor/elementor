@@ -9,7 +9,7 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends \Elementor\Core\Base\Module {
@@ -65,7 +65,7 @@ class Module extends \Elementor\Core\Base\Module {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception Access Denied.
 	 */
 	public function ajax_enable_safe_mode( $data ) {
 		if ( ! current_user_can( 'install_plugins' ) ) {
@@ -155,23 +155,19 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast {
 				position: absolute;
 				z-index: 10000; /* Over the loading layer */
-				bottom: 10px;
+				inset-block-end: 10px;
+				inset-inline-end: 10px;
 				width: 400px;
 				line-height: 30px;
+				display: flex;
+				flex-direction: column;
+				gap: 20px;
 				color: var(--e-a-color-txt);
 				background: var(--e-a-bg-default);
 				padding: 20px 25px 25px;
 				box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
 				border-radius: 5px;
 				font-family: var(--e-a-font-family);
-			}
-
-			body.rtl .elementor-safe-mode-toast {
-				left: 10px;
-			}
-
-			body:not(.rtl) .elementor-safe-mode-toast {
-				right: 10px;
 			}
 
 			#elementor-try-safe-mode {
@@ -196,13 +192,7 @@ class Module extends \Elementor\Core\Base\Module {
 			.elementor-safe-mode-toast header {
 				display: flex;
 				align-items: center;
-				justify-content: space-between;
-				flex-wrap: wrap;
-				margin-block-end: 20px;
-			}
-
-			.elementor-safe-mode-toast header > * {
-				margin-block-start: 10px;
+				gap: 10px;
 			}
 
 			.elementor-safe-mode-toast header i {
@@ -210,26 +200,20 @@ class Module extends \Elementor\Core\Base\Module {
 				color: var(--e-a-color-warning);
 			}
 
-			.elementor-safe-mode-toast header i {
-				margin-inline-end: 10px;
-			}
-
 			.elementor-safe-mode-toast header h2 {
 				flex-grow: 1;
 				font-size: 18px;
 			}
 
-			.elementor-safe-mode-list-item {
-				margin-block-start: 10px;
-				list-style: outside;
+			.elementor-safe-mode-list {
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
 			}
 
 			.elementor-safe-mode-list-item {
 				margin-inline-start: 15px;
-			}
-
-			.elementor-safe-mode-list-item b {
-				font-size: 14px;
+				list-style: outside;
 			}
 
 			.elementor-safe-mode-list-item-content {
@@ -256,7 +240,7 @@ class Module extends \Elementor\Core\Base\Module {
 		?>
 		<div class="elementor-safe-mode-toast" id="elementor-safe-mode-message">
 			<header>
-				<i class="eicon-warning"></i>
+				<i class="eicon-warning" aria-hidden="true"></i>
 				<h2><?php echo esc_html__( 'Safe Mode ON', 'elementor' ); ?></h2>
 				<a class="elementor-button elementor-safe-mode-button elementor-disable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
 					<?php echo esc_html__( 'Disable Safe Mode', 'elementor' ); ?>
@@ -364,7 +348,7 @@ class Module extends \Elementor\Core\Base\Module {
 		<div class="elementor-safe-mode-toast" id="elementor-try-safe-mode">
 		<?php if ( current_user_can( 'install_plugins' ) ) : ?>
 			<header>
-				<i class="eicon-warning"></i>
+				<i class="eicon-warning" aria-hidden="true"></i>
 				<h2><?php echo esc_html__( 'Can\'t Edit?', 'elementor' ); ?></h2>
 				<a class="elementor-button e-primary elementor-safe-mode-button elementor-enable-safe-mode" target="_blank" href="<?php echo esc_url( $this->get_admin_page_url() ); ?>">
 					<?php echo esc_html__( 'Enable Safe Mode', 'elementor' ); ?>
@@ -376,7 +360,7 @@ class Module extends \Elementor\Core\Base\Module {
 			</div>
 		<?php else : ?>
 			<header>
-				<i class="eicon-warning"></i>
+				<i class="eicon-warning" aria-hidden="true"></i>
 				<h2><?php echo esc_html__( 'Can\'t Edit?', 'elementor' ); ?></h2>
 			</header>
 			<div class="elementor-toast-content">
@@ -441,7 +425,7 @@ class Module extends \Elementor\Core\Base\Module {
 					}
 
 					if ( ! $notice.data( 'visible' ) ) {
-						$notice.show().data( 'visible', true );
+						$notice.attr( 'style', 'display: flex;' );
 					}
 
 					// Re-check after 500ms.

@@ -74,6 +74,24 @@ class Widget_Toggle extends Widget_Base {
 		return [ 'tabs', 'accordion', 'toggle' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-toggle' ];
+	}
+
 	/**
 	 * Hide widget from panel.
 	 *
@@ -83,7 +101,11 @@ class Widget_Toggle extends Widget_Base {
 	 * @return bool
 	 */
 	public function show_in_panel(): bool {
-		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements' );
+		return ! Plugin::$instance->experiments->is_feature_active( 'nested-elements', true );
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -283,7 +305,7 @@ class Widget_Toggle extends Widget_Base {
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-tab-content' => 'border-bottom-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-tab-content' => 'border-block-end-color: {{VALUE}};',
 					'{{WRAPPER}} .elementor-tab-title' => 'border-color: {{VALUE}};',
 				],
 			]
@@ -307,7 +329,7 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle-item:not(:last-child)' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-toggle-item:not(:last-child)' => 'margin-block-end: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -477,8 +499,7 @@ class Widget_Toggle extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-toggle-icon.elementor-toggle-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-toggle-icon' => 'margin-inline-end: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

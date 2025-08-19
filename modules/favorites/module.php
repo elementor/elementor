@@ -240,9 +240,9 @@ class Module extends BaseModule {
 	 * @param string $action
 	 */
 	public function action_doesnt_exists( $action ) {
-		throw new \InvalidArgumentException( sprintf(
+		throw new \InvalidArgumentException( sprintf( esc_html(
 			"Action '%s' to apply on favorites doesn't exists",
 			$action
-		) );
+		)) );
 	}
 }

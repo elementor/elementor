@@ -17,10 +17,26 @@ export default class Progress extends elementorModules.frontend.handlers.Base {
 	onInit() {
 		super.onInit();
 
-		elementorFrontend.waypoint( this.elements.$progressNumber, () => {
-			const $progressbar = this.elements.$progressNumber;
+		const observer = this.createObserver();
 
-			$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
-		} );
+		observer.observe( this.elements.$progressNumber[ 0 ] );
+	}
+
+	createObserver() {
+		const options = {
+			root: null,
+			threshold: 0,
+			rootMargin: '0px',
+		};
+
+		return new IntersectionObserver( ( entries ) => {
+			entries.forEach( ( entry ) => {
+				if ( entry.isIntersecting ) {
+					const $progressbar = this.elements.$progressNumber;
+
+					$progressbar.css( 'width', $progressbar.data( 'max' ) + '%' );
+				}
+			} );
+		}, options );
 	}
 }

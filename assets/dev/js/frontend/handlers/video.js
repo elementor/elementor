@@ -58,7 +58,10 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			$videoIframe.attr( 'src', lazyLoad );
 		}
 
-		$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
+		if ( this.getElementSettings( 'autoplay' ) ) {
+			$videoIframe.attr( 'allow', 'autoplay' );
+			$videoIframe[ 0 ].src = this.apiProvider.getAutoplayURL( $videoIframe[ 0 ].src );
+		}
 	}
 
 	async animateVideo() {
@@ -97,7 +100,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 					controls: elementSettings.controls ? 1 : 0,
 					rel: elementSettings.rel ? 1 : 0,
 					playsinline: elementSettings.play_on_mobile ? 1 : 0,
-					modestbranding: elementSettings.modestbranding ? 1 : 0,
+					cc_load_policy: elementSettings.cc_load_policy ? 1 : 0,
 					autoplay: elementSettings.autoplay ? 1 : 0,
 					start: elementSettings.start,
 					end: elementSettings.end,
@@ -171,17 +174,7 @@ export default class Video extends elementorModules.frontend.handlers.Base {
 			return;
 		}
 
-		// When Optimized asset loading is set to off, the video type is set to 'Youtube', and 'Privacy Mode' is set
-		// to 'On', there might be a conflict with other videos that are loaded WITHOUT privacy mode, such as a
-		// video bBackground in a section. In these cases, to avoid the conflict, a timeout is added to postpone the
-		// initialization of the Youtube API object.
-		if ( ! elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading ) {
-			setTimeout( () => {
-				this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
-			}, 0 );
-		} else {
-			this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
-		}
+		this.apiProvider.onApiReady( ( apiObject ) => this.prepareYTVideo( apiObject ) );
 	}
 
 	onElementChange( propertyName ) {

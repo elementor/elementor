@@ -19,6 +19,7 @@
 	--e-a-color-info: 			#{$e-info};
 	--e-a-color-warning: 		#{$e-warning};
 	--e-a-color-accent: 		#{$e-accent};
+	--e-a-color-accent-promotion: 	#{$e-rose-promotion};
 	--e-a-color-global: 		#{$e-teal-400};
 
 	//Backgrounds
@@ -35,6 +36,7 @@
 	--e-a-bg-info: 				#{$e-info-dark-bg};
 	--e-a-bg-danger: 			#{$e-danger-dark-bg};
 	--e-a-bg-warning: 			#{$e-warning-dark-bg};
+	--e-a-bg-chip:				#{$e-gray-725};
 
 	//Text & Icons
 	--e-a-color-txt: 			#{$e-gray-100};

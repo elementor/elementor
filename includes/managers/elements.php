@@ -1,7 +1,6 @@
 <?php
 namespace Elementor;
 
-use Elementor\Core\Experiments\Manager;
 use Elementor\Includes\Elements\Container;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,7 +35,7 @@ class Elements_Manager {
 	 *
 	 * @access private
 	 *
-	 * @var
+	 * @var $categories
 	 */
 	private $categories;
 
@@ -277,6 +276,10 @@ class Elements_Manager {
 	 */
 	private function init_categories() {
 		$this->categories = [
+			'v4-elements' => [
+				'title' => esc_html__( 'Atomic Elements', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'layout' => [
 				'title' => esc_html__( 'Layout', 'elementor' ),
 				'hideIfEmpty' => true,
@@ -287,18 +290,35 @@ class Elements_Manager {
 			],
 			'pro-elements' => [
 				'title' => esc_html__( 'Pro', 'elementor' ),
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-pro-widget-panel/' ),
+				],
+			],
+			'helloplus' => [
+				'title' => esc_html__( 'Hello+', 'elementor' ),
+				'hideIfEmpty' => true,
 			],
 			'general' => [
 				'title' => esc_html__( 'General', 'elementor' ),
 				'icon' => 'eicon-font',
 			],
+			'link-in-bio' => [
+				'title' => esc_html__( 'Link In Bio', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
 			'theme-elements' => [
 				'title' => esc_html__( 'Site', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-site-widget-panel/' ),
+				],
 			],
 			'woocommerce-elements' => [
 				'title' => esc_html__( 'WooCommerce', 'elementor' ),
 				'active' => false,
+				'promotion' => [
+					'url' => esc_url( 'https://go.elementor.com/go-pro-section-woocommerce-widget-panel/' ),
+				],
 			],
 		];
 
@@ -332,6 +352,12 @@ class Elements_Manager {
 			'icon' => 'eicon-wordpress',
 			'active' => false,
 		];
+	}
+
+	public function enqueue_elements_styles() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->enqueue_styles();
+		}
 	}
 
 	/**

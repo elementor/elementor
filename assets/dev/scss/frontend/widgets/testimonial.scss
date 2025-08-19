@@ -7,7 +7,7 @@
 
 	.elementor-testimonial-content {
 		font-size: 1.3em;
-		margin-bottom: 20px;
+		margin-block-end: 20px;
 	}
 
 	.elementor-testimonial-name {
@@ -48,11 +48,11 @@
 		&.elementor-testimonial-image-position-aside {
 
 			.elementor-testimonial-image {
-				@include padding-end(15px);
+				padding-inline-end: 15px;
 			}
 
 			.elementor-testimonial-details {
-				text-align: $start;
+				text-align: start;
 			}
 		}
 
@@ -64,7 +64,7 @@
 			}
 
 			.elementor-testimonial-image {
-				margin-bottom: 20px;
+				margin-block-end: 20px;
 			}
 		}
 	}

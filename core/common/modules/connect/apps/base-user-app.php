@@ -2,7 +2,7 @@
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base_User_App extends Base_App {

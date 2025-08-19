@@ -61,7 +61,7 @@
 	
 	export class {FILE_NAME_CAMEL_CASE} extends UiStateBase {
 		getId() {
-			// A unique ID for the current namesapce ( unlsess it's overriden using `getPrefix()` ).
+			// A unique ID for the current namespace ( unlsess it's overridden using `getPrefix()` ).
 			// Will be automatically prefixed with the component namespace by default.
 			return {FILE_NAME_WITHOUT_EXTENSION};
 		}

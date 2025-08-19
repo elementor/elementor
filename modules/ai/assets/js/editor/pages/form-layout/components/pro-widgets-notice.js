@@ -21,7 +21,7 @@ export const ProWidgetsNotice = () => {
 			<Alert
 				severity="info"
 				variant="filled"
-				color="accent"
+				color="promotion"
 				onClose={ () => markAsViewed( ) }
 				icon={ <LockIcon /> }
 				sx={ {

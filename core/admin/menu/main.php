@@ -7,7 +7,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Tools;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Main extends Base {

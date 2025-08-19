@@ -14,10 +14,12 @@ export default function GoodToGo() {
 	return (
 		<Layout pageId={ pageId }>
 			<h1 className="e-onboarding__page-content-section-title">
-				{ __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
+				{ elementorAppConfig.onboarding.experiment
+					? __( 'Welcome aboard! What\'s next?', 'elementor' )
+					: __( 'That\'s a wrap! What\'s next?', 'elementor' ) }
 			</h1>
 			<div className="e-onboarding__page-content-section-text">
-				{ __( 'There are two ways to get started with Elementor:', 'elementor' ) }
+				{ __( 'There are three ways to get started with Elementor:', 'elementor' ) }
 			</div>
 			<Grid container alignItems="center" justify="space-between" className="e-onboarding__cards-grid e-onboarding__page-content">
 				<Card
@@ -30,7 +32,7 @@ export default function GoodToGo() {
 				<Card
 					name="template"
 					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Library.svg' }
-					imageAlt={ __( 'Click here to go to Elementor\'s Kit Library', 'elementor' ) }
+					imageAlt={ __( 'Click here to go to Elementor\'s Website Templates', 'elementor' ) }
 					text={ __( 'Choose a professionally-designed template or import your own', 'elementor' ) }
 					link={ kitLibraryLink }
 					clickAction={ () => {
@@ -39,8 +41,16 @@ export default function GoodToGo() {
 						location.reload();
 					} }
 				/>
+				<Card
+					name="site-planner"
+					image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Site_Planner.svg' }
+					imageAlt={ __( 'Click here to go to Elementor\'s Site Planner', 'elementor' ) }
+					text={ __( 'Create a professional site in minutes using AI', 'elementor' ) }
+					link={ elementorAppConfig.onboarding.urls.sitePlanner }
+					target="_blank"
+				/>
 			</Grid>
-			<FooterButtons skipButton={ skipButton } className="e-onboarding__good-to-go-footer" />
+			<FooterButtons skipButton={ { ...skipButton, target: '_self' } } className="e-onboarding__good-to-go-footer" />
 		</Layout>
 	);
 }

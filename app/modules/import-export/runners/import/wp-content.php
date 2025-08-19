@@ -14,7 +14,7 @@ class Wp_Content extends Import_Runner_Base {
 	 */
 	private $selected_custom_post_types = [];
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'wp-content';
 	}
 
@@ -100,7 +100,7 @@ class Wp_Content extends Import_Runner_Base {
 		return $post_types;
 	}
 
-	public function get_import_session_metadata() : array {
+	public function get_import_session_metadata(): array {
 		return [
 			'custom_post_types' => $this->selected_custom_post_types,
 		];

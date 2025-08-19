@@ -1,0 +1,30 @@
+{
+    "$schema": "https://json.schemastore.org/tsconfig",
+    "display": "Node 18 + ESM + Strictest",
+    "compilerOptions": {
+        "lib": [
+            "es2022"
+        ],
+        "module": "commonjs",
+        "target": "ES6",
+        "declaration": true,
+        "declarationMap": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "moduleResolution": "node",
+        "allowUnusedLabels": false,
+        "allowUnreachableCode": false,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitOverride": true,
+        "noImplicitReturns": true,
+        "noImplicitAny": true,
+        "noPropertyAccessFromIndexSignature": false,
+        "noUncheckedIndexedAccess": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "checkJs": false,
+        "allowJs": false,
+        "resolveJsonModule": true
+    }
+}

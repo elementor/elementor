@@ -4,7 +4,7 @@ namespace Elementor\Data\V2\Base\Endpoint\Index;
 use Elementor\Data\V2\Base\Endpoint\Index;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 /**
  * Class SubIndexEndpoint is default `Base\Endpoint\Index` of `SubController`,

@@ -66,8 +66,7 @@
 	position: absolute;
 	box-shadow: var(--e-a-popover-shadow);
 	border-radius: var(--e-a-border-radius);
-	left: 0;
-	right: 0;
+	inset-inline: 0;
 	margin: -4px auto 5px;
 	padding-block-start: 15px;
 	width: 90%;
@@ -79,8 +78,8 @@
 	&:before {
 		content: '';
 		position: absolute;
-		top: -$triangle-size * 2;
-		@include end(22px);
+		inset-block-start: -$triangle-size * 2;
+		inset-inline-end: 22px;
 		border: $triangle-size solid transparent;
 		border-block-end-color: var(--e-a-bg-default);
 	}

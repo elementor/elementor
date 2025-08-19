@@ -1,20 +1,26 @@
-import { playAudit } from 'playwright-lighthouse';
-import { test } from '@playwright/test';
-import config from 'lighthouse/lighthouse-core/config/desktop-config';
+import { parallelTest as test } from '../parallelTest';
 import WpAdminPage from '../pages/wp-admin-page';
 import _path from 'path';
 
 test.describe( 'Lighthouse tests', () => {
-	test( 'Accordion widget test', async ( { page }, testInfo ) => {
+	test( 'Accordion widget test', async ( { page, apiRequests }, testInfo ) => {
 		const filePath = _path.resolve( __dirname, `../../elements-regression/tests/templates/accordion.json` );
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		const editorPage = await wpAdmin.openNewPage();
-		await editorPage.closeNavigatorIfOpen();
-		await editorPage.loadTemplate( filePath, true );
-		await editorPage.publishAndViewPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.hideAdminBar();
+
+		const editor = await wpAdmin.openNewPage();
+
+		await editor.closeNavigatorIfOpen();
+		await editor.loadTemplate( filePath, true );
+		await editor.publishAndViewPage();
+
+		const { desktopConfig } = await import( 'lighthouse' );
+		const { playAudit } = await import( 'playwright-lighthouse' );
+
 		await playAudit( {
 			page,
-			config,
+			config: desktopConfig,
 			thresholds: {
 				performance: 85,
 				accessibility: 85,
@@ -23,5 +29,11 @@ test.describe( 'Lighthouse tests', () => {
 			},
 			port: parseInt( process.env.DEBUG_PORT ),
 		} );
+	} );
+
+	test( 'Reset toolbar settings', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdmin.showAdminBar();
 	} );
 } );

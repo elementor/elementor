@@ -3,11 +3,12 @@
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Core\Utils\Promotions\Validate_Promotion;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Settings;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
@@ -28,6 +29,10 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	public function get_label() {
 		$upgrade_text = esc_html__( 'Upgrade', 'elementor' );
 
+		if ( Utils::is_sale_time() ) {
+			$upgrade_text = esc_html__( 'Upgrade Sale Now', 'elementor' );
+		}
+
 		return apply_filters( 'elementor/admin_menu/custom_promotion', [ 'upgrade_text' => $upgrade_text ] )['upgrade_text'] ?? $upgrade_text;
 	}
 
@@ -42,12 +47,8 @@ class Go_Pro_Promotion_Item implements Admin_Menu_Item_With_Page {
 	public static function get_url() {
 		$url = self::URL;
 		$filtered_url = apply_filters( 'elementor/admin_menu/custom_promotion', [ 'upgrade_url' => $url ] )['upgrade_url'] ?? '';
-
-		if ( true === Validate_Promotion::domain_is_on_elementor_dot_com( $filtered_url ) ) {
-			$url = $filtered_url;
-		}
-
-		return esc_url( $url );
+		$promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( [ 'upgrade_url' => $filtered_url ], 'elementor/admin_menu/custom_promotion', 'upgrade_url' );
+		return $promotion_data ['upgrade_url'];
 	}
 
 	public function render() {

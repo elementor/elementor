@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Control_Repeater extends Base_Data_Control {
+class Control_Repeater extends Base_Data_Control implements Has_Validation {
 
 	/**
 	 * Get repeater control type.
@@ -65,6 +65,8 @@ class Control_Repeater extends Base_Data_Control {
 			'title_field' => '',
 			'prevent_empty' => true,
 			'is_repeater' => true,
+			'max_items' => 0,
+			'min_items' => 0,
 			'item_actions' => [
 				'add' => true,
 				'duplicate' => true,
@@ -82,8 +84,8 @@ class Control_Repeater extends Base_Data_Control {
 	 * @since 1.0.0
 	 * @access public
 	 *
-	 * @param array $control  Control
-	 * @param array $settings Controls_Stack settings
+	 * @param array $control  Control.
+	 * @param array $settings Controls_Stack settings.
 	 *
 	 * @return mixed Control values.
 	 */
@@ -165,7 +167,7 @@ class Control_Repeater extends Base_Data_Control {
 		<label>
 			<span class="elementor-control-title">{{{ data.label }}}</span>
 		</label>
-		<div class="elementor-repeater-fields-wrapper"></div>
+		<div class="elementor-repeater-fields-wrapper" role="list"></div>
 		<# if ( itemActions.add ) { #>
 			<div class="elementor-button-wrapper">
 				<button class="elementor-button elementor-repeater-add" type="button">
@@ -179,5 +181,21 @@ class Control_Repeater extends Base_Data_Control {
 			</div>
 		<# } #>
 		<?php
+	}
+
+	public function validate( array $control_data ): bool {
+		if ( isset( $control_data['min_items'] ) ) {
+
+			if (
+				! isset( $control_data['default'] ) ||
+				count( $control_data['default'] ) < $control_data['min_items']
+			) {
+				throw new \Exception(
+					esc_html__( 'In a Repeater control, if you specify a minimum number of items, you must also specify a default value that contains at least that number of items.', 'elementor' )
+				);
+			}
+		}
+
+		return true;
 	}
 }

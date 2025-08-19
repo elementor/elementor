@@ -67,8 +67,8 @@
 				&:after {
 					content: '';
 					position: absolute;
-					bottom: -17px;
-					@include start(16px);
+					inset-block-end: -17px;
+					inset-inline-start: 16px;
 					border: 10px solid transparent;
 					border-block-start-color: rgba(0,0,0,0.9);
 				}
@@ -81,7 +81,7 @@
 	}
 
 	&__preview-items-container {
-		max-height: 260px;
+		max-height: 400px;
 		overflow-y: auto;
 		padding: 5px 0;
 
@@ -107,7 +107,7 @@
 				content: '\e90e'; // eicon-check
 				position: absolute;
 				transform: translateY(-50%);
-				top: 50%;
+				inset-block-start: 50%;
 				inset-inline-start: 13px;
 			}
 		}
@@ -134,11 +134,8 @@
 			&-color,
 			&-transparent-bg {
 				border-radius: 3px;
-				height: 100%;
-				width: 100%;
 				position: absolute;
-				top: 0;
-				left: 0;
+				inset: 0;
 			}
 
 			&-transparent-bg {

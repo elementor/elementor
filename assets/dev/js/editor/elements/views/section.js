@@ -74,6 +74,10 @@ const SectionView = BaseElementView.extend( {
 	},
 
 	getEditButtons() {
+		if ( ! $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			return {};
+		}
+
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
@@ -110,7 +114,8 @@ const SectionView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: __( 'Save as Template', 'elementor' ),
+					title: __( 'Save as a template', 'elementor' ),
+					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					isEnabled: () => ! elementor.selection.isMultiple(),
 					callback: this.save.bind( this ),
 				},

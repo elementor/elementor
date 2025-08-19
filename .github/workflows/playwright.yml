@@ -2,179 +2,245 @@ name: Playwright
 
 on:
   pull_request:
+    types: [ labeled, synchronize, opened, reopened ]
+  push:
+    branches:
+      - 'main'
+      - '3.[0-9][0-9]'
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+  schedule:
+    - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
       inputs:
-        reporter:
-          required: false
-          description: 'Select a reporter'
-          type: choice
-          options:
-            - allure-playwright
-            - html
-            - blob
-            - list
-          default: allure-playwright
-        path-to-results:
-          required: false
-          description: 'Provide path to reporter files'
-          default: allure-results
-          type: choice
-          options:
-            - test-results/
-            - tests/playwright/blob-report
-            - allure-results
         fail_fast:
             type: boolean
             required: true
             description: 'Cancel tests when one of them fails'
             default: false
+        tag:
+          description: 'Provide @tag or a keyword'
+          required: false
 
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
 
-# This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-  cancel-in-progress: true
+  group: playwright-${{ github.event_name }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-plugin:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
-    runs-on: ubuntu-latest
-    if: startsWith( github.repository, 'elementor/' )
-    outputs:
-      changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: Check if this is only a changelog PR
-        id: changelog_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          # PATTERNS are:
-          # Everything: **/*
-          # Everything in directories starting with a period: .*/**/*
-          # Not readme.txt: !readme.txt
-          # Not changelog.txt: !changelog.txt
-          PATTERNS: |
-            **/*
-            .*/**/*
-            !readme.txt
-            !changelog.txt
-      - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-      - name: Restore NPM Cache
-        uses: actions/cache/restore@v3
-        with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Install dependencies
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        run: npm ci
-      - name: Build
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        run: npx grunt build
-      - name: Cache node modules
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        uses: actions/cache/save@v3
-        with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Save build to cache
-        if: github.event.pull_request.title == null || steps.changelog_diff_files.outputs.diff
-        uses: actions/cache/save@v3
-        with:
-          path: ./build/*
-          key: playwright-build-${{ github.sha }}
-
+    uses: ./.github/workflows/build.yml
   Playwright:
-    name: Playwright test - ${{ matrix.testSuite }} on PHP 7.4
-    runs-on: ubuntu-latest
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
+    runs-on: ubuntu-22.04
     needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+    if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
-      fail-fast: ${{inputs.fail_fast || true}}
+      fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
-        testSuite: [
-          'ai',
-          'onBoarding',
-          'video',
-          'elements-regression',
-          'default',
-          'nested-tabs',
-          'reverse-columns',
-          'container',
-          'nested-accordion',
-          'styleguide_image_link',
-          'rating',
-          'pluginTester1_containers',
-          'pluginTester2_containers',
-          'pluginTester1_sections',
-          'pluginTester2_sections'
-        ]
+        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
+        shardTotal: [ 10 ]
+        include:
+        - shardIndex: "v4-tests"
+        - shardIndex: "elements-regression"
+        - shardIndex: "plugin_tester_section"
+        - shardIndex: "plugin_tester_container"
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v3
-      - name: Install Node.js 18.x
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v4
+      - name: Cache Docker images.
+        uses: ScribeMD/docker-cache@0.5.0
         with:
-          node-version: 18.x
-      - name: Restore NPM from cache
-        uses: actions/cache/restore@v3
-        id: restore-npm
+          key: docker-${{ runner.os }}-${{ hashFiles('tests/playwright/.playwright-wp-lite-env.json') }}
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
         with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-      - name: Restore build from cache
-        uses: actions/cache/restore@v3
-        id: restore-build
-        with:
-          path: ./build/*
-          key: playwright-build-${{ github.sha }}
-      - name: Update wp-env.json file
-        env:
-          PHP_VERSION: '8.0'
-          WP_CORE_VERSION: 'latest'
-        run: node ./.github/scripts/build-wp-env.js
+          node-version: 20.x
+          cache: 'npm'
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm run prepare-environment:ci
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
       - name: Install WordPress environment
         run: |
           npm run start-local-server
-          npm run test:setup:playwright
+      - name: Update wordpress to nightly build
+        if: ${{ github.event_name == 'schedule' }}
+        run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
+      - name: Setup test data
+        run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-env run cli wp core version
-          npx wp-env run cli wp --info
-      - name: Activate performance experiments
-        run: |
-          npx wp-env run cli wp elementor experiments activate e_font_icon_svg,e_lazyload,e_optimized_assets_loading,e_optimized_css_loading,additional_custom_breakpoints,e_image_loading_optimization
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
       - name: Install playwright/test
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
-        if: ${{matrix.testSuite !='elements-regression'}}
-        env:
-          TEST_SUITE: "@${{matrix.testSuite}}"
-        run: npm run test:playwright -- --reporter=${{inputs.reporter || 'list,github'}}
+        if: ${{
+          matrix.shardIndex != 'elements-regression' &&
+          matrix.shardIndex != 'plugin_tester_container' &&
+          matrix.shardIndex != 'plugin_tester_section' &&
+          matrix.shardIndex != 'v4-tests'
+          }}
+        run: |
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Run v4 tests
+        if: ${{ matrix.shardIndex == 'v4-tests' }}
+        run: npm run test:playwright -- --grep="@v4-tests"
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_container' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_container"
+      - name: Run Playwright Plugin Container tests
+        if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
+        run: npm run test:playwright -- --grep="@plugin_tester_section"
       - name: Run element regression tests
-        if: ${{matrix.testSuite =='elements-regression'}}
-        run: npm run test:playwright:elements-regression -- --reporter=${{inputs.reporter || 'list,github'}}
-      - uses: actions/upload-artifact@v3
+        if: ${{ matrix.shardIndex == 'elements-regression' }}
+        run: npm run test:playwright:elements-regression
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: playwright-test-results
-          path: ${{inputs.path-to-results || 'test-results/'}} 
-          retention-days: 2     
+          name: playwright-test-results-${{ matrix.shardIndex }}
+          path: ${{ inputs.path-to-results || 'test-results/' }}
+          if-no-files-found: ignore
+          retention-days: 2
+  PlaywrightWithTag:
+    name: Playwright test - tagged tests on PHP 8.1
+    runs-on: ubuntu-22.04
+    needs: [ build-plugin ]
+    if: ${{ github.event.inputs.tag }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm run prepare-environment:ci
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+      - name: Download hello-elementor theme
+        run: |
+          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
+          unzip hello-elementor
+      - name: Install WordPress environment
+        run: |
+          npm run start-local-server
+      - name: Setup test data
+        run: npm run test:setup:playwright
+      - name: WordPress debug information
+        run: |
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
+          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+      - name: Install playwright/test
+        run: |
+          npx playwright install chromium
+      - name: Run Playwright tests
+        run: |
+          npm run test:playwright -- --grep="${{ inputs.tag }}"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-test-results-tagged-tests
+          path: ${{ inputs.path-to-results || 'test-results/' }}
+          if-no-files-found: ignore
+          retention-days: 2
+
 
   test-result:
-    needs: Playwright
-    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
+    needs: [ Playwright, PlaywrightWithTag ]
+    if: always() && (needs.Playwright.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results
     steps:
       - name: Test status
         run: echo "Test status is - ${{ needs.Playwright.result }}"
+      - name: Checkout source code
+        if: ${{ (needs.Playwright.result == 'failure') }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create revert PR on push failure
+        id: create_revert_pr
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
+        continue-on-error: true
+        uses: ./.github/workflows/create-revert-pr
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ github.sha }}
+          BRANCH_NAME: ${{ github.ref_name }}
+          WORKFLOW_NAME: "Playwright"
+          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          ALLOW_WORKFLOW_CHANGES: 'true'
+      - name: Generate revert message
+        id: revert_message
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
+        run: |
+          BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          
+          if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
+            REVERT_MESSAGE="
+
+          You can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
+            echo "message=${BASE_MESSAGE}${REVERT_MESSAGE}" >> $GITHUB_OUTPUT
+          else
+            echo "message=${BASE_MESSAGE}" >> $GITHUB_OUTPUT
+          fi
+      - name: Send slack message
+        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
+        uses: ./.github/workflows/post-to-slack
+        with:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
+          PAYLOAD: |
+            {
+              "text": "${{ steps.revert_message.outputs.message }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "${{ steps.revert_message.outputs.message }}"
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "Github User: <${{ github.actor }}>"
+                  }
+                }
+              ]
+            }
       - name: Check Playwright matrix status
-        if: ${{ needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped' }}
+        if: ${{ (needs.Playwright.result != 'success' && needs.Playwright.result != 'skipped') || (needs.PlaywrightWithTag.result != 'success' && needs.PlaywrightWithTag.result != 'skipped') }}
         run: exit 1

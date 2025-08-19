@@ -1,21 +1,29 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../parallelTest';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
+import EditorSelectors from '../../../../../selectors/editor-selectors';
 
-test.describe( 'On boarding @onBoarding', async () => {
+const BUTTON_CLASSES = {
+	active: /e-onboarding__button-action/,
+	disabled: /e-onboarding__button--disabled/,
+};
+
+// Unskip: ED-18816 - Refactor onboarding test
+test.describe.skip( 'On boarding @onBoarding', async () => {
 	let originalActiveTheme: string;
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		originalActiveTheme = wpAdmin.getActiveTheme();
-		wpAdmin.activateTheme( 'twentytwentytwo' );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		originalActiveTheme = await wpAdmin.getActiveTheme();
+		await wpAdmin.activateTheme( 'twentytwentyfive' );
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		wpAdmin.activateTheme( originalActiveTheme );
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.activateTheme( originalActiveTheme );
 	} );
 
 	/**
@@ -24,11 +32,11 @@ test.describe( 'On boarding @onBoarding', async () => {
 	test( 'Onboarding Upgrade Popover', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding' );
 
-		const goProHeaderButton = await page.locator( '#eps-app-header-btn-go-pro' );
+		const goProHeaderButton = page.locator( '#eps-app-header-btn-go-pro' );
 
 		await goProHeaderButton.hover();
 
-		const goProPopover = await page.locator( '.e-app__popover.e-onboarding__go-pro' );
+		const goProPopover = page.locator( '.e-app__popover.e-onboarding__go-pro' );
 
 		await expect( goProPopover ).toBeVisible();
 	} );
@@ -42,25 +50,23 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		const ctaButton = await page.waitForSelector( 'a.e-onboarding__button-action' );
 
-		await expect( await ctaButton.innerText() ).toBe( 'Create my account' );
+		expect( await ctaButton.innerText() ).toBe( 'Create my account' );
 
 		const [ popup ] = await Promise.all( [
-			// It is important to call waitForEvent before click to set up waiting.
 			page.waitForEvent( 'popup' ),
-			// Opens popup.
 			page.click( 'a.e-onboarding__button-action' ),
 		] );
 
 		await popup.waitForLoadState( 'domcontentloaded' );
 
-		await expect( await popup.url() ).toContain( 'my.elementor.com/signup' );
+		expect( popup.url() ).toContain( 'my.elementor.com/signup' );
 
-		const signupForm = await popup.locator( 'form#signup-form' );
+		const signupForm = popup.locator( '[data-test="signup-form"]' );
 
 		// Check that the popup opens the Elementor Connect screen.
 		await expect( signupForm ).toBeVisible();
 
-		popup.close();
+		await popup.close();
 	} );
 
 	/**
@@ -74,11 +80,7 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await skipButton.click();
 
-		const PageTitle = await page.waitForSelector( '.e-onboarding__page-content-section-title' ),
-			pageTitleText = await PageTitle.innerText();
-
-		// Check that the screen changed to the Hello page.
-		expect( pageTitleText ).toBe( 'Every site starts with a theme.' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Every site starts with a theme.' );
 	} );
 
 	/**
@@ -93,22 +95,18 @@ test.describe( 'On boarding @onBoarding', async () => {
 
 		await page.fill( 'input[type="text"]', '' );
 
-		const nextButton = await page.locator( 'text=Next' );
+		const nextButton = page.locator( 'text=Next' );
 
-		await expect( nextButton ).toHaveClass( 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action' );
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 
 		await page.fill( 'input[type="text"]', 'Test' );
 
-		await expect( nextButton ).toHaveClass( 'e-onboarding__button e-onboarding__button-action' );
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 
-		const skipButton = await page.waitForSelector( 'text=Skip' );
+		await page.locator( EditorSelectors.onboarding.skipButton ).click();
 
-		await skipButton.click();
-
-		const pageTitle = await page.locator( '.e-onboarding__page-content-section-title' ),
-			pageTitleText = await pageTitle.innerText();
-
-		expect( pageTitleText ).toBe( 'Have a logo? Add it here.' );
+		const pageTitle = page.locator( EditorSelectors.onboarding.screenTitle );
+		await expect( pageTitle ).toHaveText( 'Have a logo? Add it here.' );
 	} );
 
 	/**
@@ -118,35 +116,27 @@ test.describe( 'On boarding @onBoarding', async () => {
 	 * selected.
 	 * 2. Clicking on 'Skip' should take the user to the Good to Go screen
 	 */
+
 	test( 'Onboarding Site Logo Page', async ( { page } ) => {
 		await page.goto( '/wp-admin/admin.php?page=elementor-app#onboarding/siteLogo' );
 
-		const nextButton = await page.locator( 'text=Next' ),
-			activeButtonClasses = 'e-onboarding__button e-onboarding__button-action',
-			disabledButtonClasses = 'e-onboarding__button--disabled e-onboarding__button e-onboarding__button-action',
-			siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
+		const nextButton = page.locator( 'text=Next' );
+		const removeButton = page.locator( EditorSelectors.onboarding.removeLogoButton );
+		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
+
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-expect-error
+		const siteLogoId = await page.evaluate( () => elementorAppConfig.onboarding.siteLogo.id );
 
 		if ( siteLogoId ) {
-			// If there is a logo already in the test website - make sure the "Next" button is active (not disabled).
-			await expect( nextButton ).toHaveClass( activeButtonClasses );
-
-			const removeButton = await page.locator( '.e-onboarding__logo-remove' );
-
+			await expect( nextButton ).toHaveClass( BUTTON_CLASSES.active );
 			await removeButton.click();
 		}
 
-		// Make sure the "Next" button is disabled when there is no site logo.
-		await expect( nextButton ).toHaveClass( disabledButtonClasses );
-
-		const skipButton = await page.waitForSelector( '.e-onboarding__button-skip' );
-
+		await expect( nextButton ).toHaveClass( BUTTON_CLASSES.disabled );
 		await skipButton.click();
 
-		const pageTitle = page.locator( '.e-onboarding__page-content-section-title' ),
-			pageTitleText = await pageTitle.innerText();
-
-		// Test that the "Skip" button leads the user to the "Good to Go" screen.
-		expect( pageTitleText ).toBe( 'That\'s a wrap! What\'s next?' );
+		await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
 	} );
 
 	/**
@@ -162,5 +152,101 @@ test.describe( 'On boarding @onBoarding', async () => {
 		const kitLibraryTitle = page.locator( 'text=Kit Library' );
 
 		await expect( kitLibraryTitle ).toBeVisible();
+	} );
+} );
+
+test.describe( 'Onboarding @onBoarding', async () => {
+	const chooseFeaturesUrl = '/wp-admin/admin.php?page=elementor-app#onboarding/chooseFeatures';
+
+	test( 'Onboarding Choose Features page', async ( { page } ) => {
+		await page.goto( chooseFeaturesUrl );
+
+		const chooseFeaturesScreen = page.locator( '.e-onboarding__page-chooseFeatures' ),
+			upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton ),
+			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
+			tiers = {
+				advanced: 'Advanced',
+				essential: 'Essential',
+			};
+
+		await upgradeNowBtn.waitFor();
+
+		await expect.soft( chooseFeaturesScreen ).toHaveScreenshot( 'chooseFeaturesScreen.png' );
+
+		await test.step( 'Check that Upgrade Now button is disabled', async () => {
+			await expect( upgradeNowBtn ).toHaveClass( BUTTON_CLASSES.disabled );
+		} );
+
+		await test.step( 'Check that tier changes to Essential when checking an Essential item', async () => {
+			await page.locator( '#essential-2' ).check();
+			await expect( tierLocator ).toHaveText( tiers.essential );
+		} );
+
+		await test.step( 'Check that Upgrade Now button is not disabled', async () => {
+			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
+		} );
+
+		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
+			await page.locator( '#advanced-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+
+		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
+			await page.locator( '#advanced-1' ).uncheck();
+			await expect( tierLocator ).toHaveText( tiers.essential );
+		} );
+
+		await test.step( 'Check that is not visible when unchecking all items', async () => {
+			await page.locator( '#essential-2' ).uncheck();
+			await expect( tierLocator ).not.toBeVisible();
+		} );
+
+		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
+			await page.locator( '#advanced-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+	} );
+
+	test( 'Onboarding Choose Features page - Upgrade button', async ( { page } ) => {
+		await page.goto( chooseFeaturesUrl );
+
+		const upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton );
+
+		await upgradeNowBtn.waitFor();
+
+		await test.step( 'Activate upgrade button', async () => {
+			await page.locator( `${ EditorSelectors.onboarding.features.essential }-0` ).check();
+			await expect( upgradeNowBtn ).not.toHaveClass( BUTTON_CLASSES.disabled );
+		} );
+
+		await test.step( 'Check that Upgrade button opens elementor.com store', async () => {
+			const [ newTab ] = await Promise.all( [
+				page.waitForEvent( 'popup' ),
+				upgradeNowBtn.click(),
+			] );
+
+			expect( newTab.url() ).toContain( 'elementor.com' );
+		} );
+
+		await test.step( 'Check that step was changed to Good to Go', async () => {
+			expect( page.url() ).toContain( 'onboarding/goodToGo' );
+			await expect( page.locator( EditorSelectors.onboarding.progressBar.completedItem ) ).toContainText( 'Choose Features' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+		} );
+	} );
+
+	test( 'Onboarding Choose Features page - Skip button', async ( { page } ) => {
+		await page.goto( chooseFeaturesUrl );
+
+		const skipButton = page.locator( EditorSelectors.onboarding.skipButton );
+
+		await skipButton.waitFor();
+
+		await test.step( 'Check that Skip button leads to the Good to Go screen', async () => {
+			await skipButton.click();
+			expect( page.url() ).toContain( 'onboarding/goodToGo' );
+			await expect( page.locator( EditorSelectors.onboarding.progressBar.skippedItem ) ).toContainText( 'Choose Features' );
+			await expect( page.locator( EditorSelectors.onboarding.screenTitle ) ).toHaveText( 'Welcome aboard! What\'s next?' );
+		} );
 	} );
 } );

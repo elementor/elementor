@@ -5,7 +5,7 @@ namespace Elementor\Core\Files\CSS;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Post_Local_Cache extends Post {

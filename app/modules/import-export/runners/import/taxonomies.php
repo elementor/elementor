@@ -8,7 +8,7 @@ class Taxonomies extends Import_Runner_Base {
 
 	private $import_session_id;
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'taxonomies';
 	}
 

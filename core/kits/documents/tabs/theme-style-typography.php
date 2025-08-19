@@ -1,12 +1,11 @@
 <?php
-
 namespace Elementor\Core\Kits\Documents\Tabs;
 
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Theme_Style_Typography extends Tab_Base {
@@ -76,7 +75,7 @@ class Theme_Style_Typography extends Tab_Base {
 				'label' => esc_html__( 'Paragraph Spacing', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'selectors' => [
-					'{{WRAPPER}} p' => 'margin-bottom: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} p' => 'margin-block-end: {{SIZE}}{{UNIT}}',
 				],
 				'range' => [
 					'px' => [
@@ -91,7 +90,7 @@ class Theme_Style_Typography extends Tab_Base {
 			]
 		);
 
-		//Link Selectors
+		// Link Selectors
 		$link_selectors = [
 			'{{WRAPPER}} a',
 		];
@@ -175,12 +174,12 @@ class Theme_Style_Typography extends Tab_Base {
 		$this->end_controls_tabs();
 
 		// Headings.
-		$this->add_element_controls( esc_html__( 'H1', 'elementor' ), 'h1', '{{WRAPPER}} h1' );
-		$this->add_element_controls( esc_html__( 'H2', 'elementor' ), 'h2', '{{WRAPPER}} h2' );
-		$this->add_element_controls( esc_html__( 'H3', 'elementor' ), 'h3', '{{WRAPPER}} h3' );
-		$this->add_element_controls( esc_html__( 'H4', 'elementor' ), 'h4', '{{WRAPPER}} h4' );
-		$this->add_element_controls( esc_html__( 'H5', 'elementor' ), 'h5', '{{WRAPPER}} h5' );
-		$this->add_element_controls( esc_html__( 'H6', 'elementor' ), 'h6', '{{WRAPPER}} h6' );
+		$this->add_element_controls( 'H1', 'h1', '{{WRAPPER}} h1' );
+		$this->add_element_controls( 'H2', 'h2', '{{WRAPPER}} h2' );
+		$this->add_element_controls( 'H3', 'h3', '{{WRAPPER}} h3' );
+		$this->add_element_controls( 'H4', 'h4', '{{WRAPPER}} h4' );
+		$this->add_element_controls( 'H5', 'h5', '{{WRAPPER}} h5' );
+		$this->add_element_controls( 'H6', 'h6', '{{WRAPPER}} h6' );
 
 		$this->end_controls_section();
 	}

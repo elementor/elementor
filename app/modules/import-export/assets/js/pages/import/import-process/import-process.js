@@ -10,9 +10,10 @@ import UnfilteredFilesDialog from 'elementor-app/organisms/unfiltered-files-dial
 import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
 
 import useQueryParams from 'elementor-app/hooks/use-query-params';
-import useKit from '../../../hooks/use-kit';
+import useKit, { KIT_SOURCE_MAP } from '../../../hooks/use-kit';
 import useImportActions from '../hooks/use-import-actions';
 import { useImportKitLibraryApplyAllPlugins } from '../import-kit/hooks/use-import-kit-library-apply-all-plugins';
+import safeRedirect from '../../../shared/utils/redirect';
 
 export default function ImportProcess() {
 	const sharedContext = useContext( SharedContext ),
@@ -24,8 +25,8 @@ export default function ImportProcess() {
 		[ plugins, setPlugins ] = useState( [] ),
 		missing = useImportKitLibraryApplyAllPlugins( plugins ),
 		{ kitState, kitActions, KIT_STATUS_MAP } = useKit(),
-		{ id, referrer, file_url: fileURL, action_type: actionType, nonce } = useQueryParams().getAll(),
-		{ includes, selectedCustomPostTypes, currentPage } = sharedContext.data || {},
+		{ id, referrer, file_url: fileURL, action_type: actionType, nonce, return_to: returnToParam } = useQueryParams().getAll(),
+		{ includes, selectedCustomPostTypes, currentPage, returnTo } = sharedContext.data || {},
 		{ file, uploadedData, importedData, overrideConditions, isResolvedData } = importContext.data || {},
 		isKitHasSvgAssets = useMemo( () => includes.some( ( item ) => [ 'templates', 'content' ].includes( item ) ), [ includes ] ),
 		{ navigateToMainScreen } = useImportActions(),
@@ -89,6 +90,10 @@ export default function ImportProcess() {
 			importContext.dispatch( { type: 'SET_ACTION_TYPE', payload: actionType } );
 		}
 
+		if ( returnToParam ) {
+			sharedContext.dispatch( { type: 'SET_RETURN_TO', payload: returnToParam } );
+		}
+
 		if ( fileURL && ! file ) {
 			// When the starting point of the app is the import/process screen and importing via file_url.
 			uploadKit();
@@ -104,12 +109,17 @@ export default function ImportProcess() {
 	// Starting the import process.
 	useEffect( () => {
 		if ( startImport ) {
+			const { data } = importContext;
+			const isImportFromCloud = KIT_SOURCE_MAP.CLOUD === data.source;
+			const kitId = isImportFromCloud ? data.file.id : data.id;
+			const importReferrer = isImportFromCloud ? data.source : referrer;
+
 			kitActions.import( {
-				id: importContext.data.id,
+				id: kitId,
 				session: uploadedData.session,
 				include: includes,
 				overrideConditions,
-				referrer,
+				referrer: importReferrer,
 				selectedCustomPostTypes,
 			} );
 		}
@@ -136,6 +146,10 @@ export default function ImportProcess() {
 	useEffect( () => {
 		if ( KIT_STATUS_MAP.INITIAL !== kitState.status || ( isResolvedData && 'apply-all' === importContext.data.actionType ) ) {
 			if ( importedData ) { // After kit upload.
+				if ( returnTo && safeRedirect( returnTo ) ) {
+					return;
+				}
+
 				navigate( '/import/complete' );
 			} else if ( 'apply-all' === importContext.data.actionType ) { // Forcing apply-all kit content.
 				if ( kitState.data?.manifest?.plugins || importContext.data.uploadedData?.manifest.plugins ) {
@@ -160,7 +174,7 @@ export default function ImportProcess() {
 				navigate( '/import/plugins' );
 			}
 		}
-	}, [ uploadedData, importedData, importContext.data.pluginsState ] );
+	}, [ uploadedData, importedData, importContext.data.pluginsState, returnTo ] );
 
 	useEffect( () => {
 		if ( missing?.length > 0 ) {

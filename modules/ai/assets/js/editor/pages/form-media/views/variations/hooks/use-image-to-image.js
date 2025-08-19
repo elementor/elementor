@@ -2,7 +2,7 @@ import { getImageToImageGeneration } from '../../../../../api';
 import useImagePrompt from '../../../hooks/use-image-prompt';
 
 const useImageToImage = ( initialValue ) => {
-	const fetchAction = ( prompt, promptSettings, image ) => getImageToImageGeneration( prompt, promptSettings, image );
+	const fetchAction = ( payload ) => getImageToImageGeneration( payload );
 
 	return useImagePrompt( fetchAction, initialValue );
 };

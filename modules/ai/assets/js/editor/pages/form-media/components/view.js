@@ -6,9 +6,9 @@ import GenerateLoader from './generate-loader';
 import PromptErrorMessage from '../../../components/prompt-error-message';
 import BackButton from './back-button';
 import { useLocation } from '../context/location-context';
-import useUpgradeMessage from '../../../hooks/use-upgrade-message';
 import { useGlobalSettings } from '../context/global-settings-context';
 import UsageMessages from '../../../components/usage-messages';
+import { FREE_TRIAL_FEATURES_NAMES } from '../../../helpers/features-enum';
 
 const ViewBackButton = ( { sx = {}, ...props } ) => {
 	const { back } = useLocation();
@@ -75,7 +75,7 @@ const Content = ( { isLoading = false, isGenerating = false, children, ...props 
 	}
 
 	return (
-		<Box sx={ { overflowY: 'scroll', p: 4 } } flexGrow={ 1 } { ...props }>
+		<Box sx={ { overflowY: 'auto', p: 4 } } flexGrow={ 1 } { ...props }>
 			{ children }
 		</Box>
 	);
@@ -104,6 +104,7 @@ const ViewPanel = ( props ) => {
 				hasSubscription={ hasSubscription }
 				usagePercentage={ usagePercentage }
 				sx={ { mb: 4 } }
+				feature={ FREE_TRIAL_FEATURES_NAMES.IMAGES }
 			/>
 
 			{ props.children }

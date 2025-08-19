@@ -7,11 +7,11 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Plugin;
 use Elementor\Utils;
-use Elementor\Core\DocumentTypes\PageBase as PageBase;
+use Elementor\Core\DocumentTypes\PageBase;
 use Elementor\Modules\Library\Documents\Page as LibraryPageDocument;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -246,7 +246,10 @@ class Module extends BaseModule {
 	 * @param Document $document The document instance.
 	 */
 	public function action_register_template_control( $document ) {
-		if ( $document instanceof PageBase || $document instanceof LibraryPageDocument ) {
+		if (
+			( $document instanceof PageBase || $document instanceof LibraryPageDocument ) &&
+			$document::get_property( 'support_page_layout' )
+		) {
 			$this->register_template_control( $document );
 		}
 	}
@@ -285,7 +288,9 @@ class Module extends BaseModule {
 		$document->end_injection();
 	}
 
-	// The $options variable is an array of $control_options to overwrite the default
+	/**
+	 * The $options variable is an array of $control_options to overwrite the default.
+	 */
 	public function add_template_controls( Document $document, $control_id, $control_options ) {
 		// Default Control Options
 		$default_control_options = [
@@ -400,16 +405,6 @@ class Module extends BaseModule {
 		}
 
 		return $check;
-	}
-
-	/**
-	 * Support `wp_body_open` action, available since WordPress 5.2.
-	 *
-	 * @since 2.7.0
-	 * @access public
-	 */
-	public static function body_open() {
-		wp_body_open();
 	}
 
 	/**

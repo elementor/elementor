@@ -7,6 +7,7 @@
 	<config name="text_domain" value="elementor" />
 
 	<exclude-pattern>vendor/</exclude-pattern>
+	<exclude-pattern>vendor_prefixed/</exclude-pattern>
 	<exclude-pattern>tmp/</exclude-pattern>
 	<exclude-pattern>build/</exclude-pattern>
 	<exclude-pattern>node_modules/</exclude-pattern>
@@ -36,13 +37,6 @@
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
 	</rule>
-
-	<rule ref="WordPress.WP.DeprecatedFunctions">
-		<properties>
-			<property name="minimum_supported_version" value="4.7" />
-		</properties>
-	</rule>
-
 	<rule ref="WordPress.NamingConventions.ValidHookName">
 		<properties>
 			<property name="additionalWordDelimiters" value="/-" />

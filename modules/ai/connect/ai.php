@@ -4,9 +4,10 @@ namespace Elementor\Modules\Ai\Connect;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Modules\Ai\Module;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Ai extends Library {
@@ -17,6 +18,8 @@ class Ai extends Library {
 	const IMAGE_STRENGTH = 'image_strength';
 	const ASPECT_RATIO = 'ratio';
 	const IMAGE_RESOLUTION = 'image_resolution';
+
+	const IMAGE_BACKGROUND_COLOR = 'background_color';
 
 	const PROMPT = 'prompt';
 
@@ -39,19 +42,6 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_cached_usage() {
-		$cache_key = 'elementor_ai_usage';
-		$cache_time = 24 * HOUR_IN_SECONDS;
-		$usage = get_site_transient( $cache_key );
-
-		if ( ! $usage ) {
-			$usage = $this->get_usage();
-			set_site_transient( $cache_key, $usage, $cache_time );
-		}
-
-		return $usage;
-	}
-
 	public function get_remote_config() {
 		return $this->ai_request(
 			'GET',
@@ -63,8 +53,53 @@ class Ai extends Library {
 		);
 	}
 
+	public function get_remote_frontend_config( $data ) {
+		return $this->ai_request(
+			'POST',
+			'remote-config/frontend-config',
+			[
+				'client_name' => $data['payload']['client_name'],
+				'client_version' => $data['payload']['client_version'],
+				'client_session_id' => $data['payload']['client_session_id'],
+
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
 	/**
-	 * get_file_payload
+	 * @param array $event_data {
+	 *     @type string $name
+	 *     @type array $data
+	 *     @type array $client {
+	 *         @type string $name
+	 *         @type string $version
+	 *         @type string $session_id
+	 *     }
+	 * }
+	 */
+	public function send_event( array $event_data ): void {
+		$this->ai_request(
+			'POST',
+			'client-events/events',
+			[
+				'payload' => $event_data,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	/**
+	 * Get file upload get_file_payload
+	 *
 	 * @param $filename
 	 * @param $file_type
 	 * @param $file_path
@@ -144,6 +179,7 @@ class Ai extends Library {
 			],
 			[
 				'return_type' => static::HTTP_RETURN_TYPE_ARRAY,
+				'with_error_data' => true,
 			]
 		);
 	}
@@ -181,111 +217,182 @@ class Ai extends Library {
 		);
 	}
 
-	public function get_completion_text( $prompt, $context = [] ) {
+	public function get_completion_text( $prompt, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'text/completion',
 			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	public function get_excerpt( $prompt, $context, $request_ids ) {
+		$excerpt_length = apply_filters( 'excerpt_length', 55 );
+		return $this->ai_request(
+			'POST',
+			'text/get-excerpt',
+			[
+				'content' => $prompt,
+				'maxLength' => $excerpt_length,
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
 	/**
-	 * get_image_prompt_enhanced
+	 * Get Image Prompt Enhanced  get_image_prompt_enhanced
+	 *
 	 * @param $prompt
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	public function get_image_prompt_enhanced( $prompt, $context = [] ) {
+	public function get_image_prompt_enhanced( $prompt, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'text/enhance-image-prompt',
 			[
 				'prompt' => $prompt,
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
 		);
 	}
 
-	public function get_edit_text( $input, $instruction, $context = [] ) {
+	public function get_edit_text( $data, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'text/edit',
 			[
-				'input' => $input,
-				'instruction' => $instruction,
+				'input' => $data['payload']['input'],
+				'instruction' => $data['payload']['instruction'],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
-	public function get_custom_code( $prompt, $language, $context = [] ) {
+	public function get_custom_code( $data, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'text/custom-code',
 			[
-				'prompt' => $prompt,
-				'language' => $language,
+				'prompt' => $data['payload']['prompt'],
+				'language' => $data['payload']['language'],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
-	public function get_custom_css( $prompt, $html_markup, $element_id, $context = [] ) {
+	public function get_custom_css( $data, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'text/custom-css',
 			[
-				'prompt' => $prompt,
-				'html_markup' => $html_markup,
-				'element_id' => $element_id,
+				'prompt' => $data['payload']['prompt'],
+				'html_markup' => $data['payload']['html_markup'],
+				'element_id' => $data['payload']['element_id'],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
 	/**
-	 * get_text_to_image
+	 * Get text to image get_text_to_image
+	 *
 	 * @param $prompt
 	 * @param $prompt_settings
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	public function get_text_to_image( $prompt, $prompt_settings, $context = [] ) {
+	public function get_text_to_image( $data, $context, $request_ids ) {
 		return $this->ai_request(
 			'POST',
 			'image/text-to-image',
 			[
-				self::PROMPT => $prompt,
-				self::IMAGE_TYPE => $prompt_settings[ self::IMAGE_TYPE ] . '/' . $prompt_settings[ self::STYLE_PRESET ],
-				self::ASPECT_RATIO => $prompt_settings[ self::ASPECT_RATIO ],
+				self::PROMPT => $data['payload']['prompt'],
+				self::IMAGE_TYPE => $data['payload']['settings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['settings'][ self::STYLE_PRESET ],
+				self::ASPECT_RATIO => $data['payload']['settings'][ self::ASPECT_RATIO ],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
 	/**
-	 * get_image_to_image
-	 * @param $image_data
+	 * Get_Featured_Image get_featured_image
 	 *
+	 * @param $data
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
 	 */
-	public function get_image_to_image( $image_data, $context = [] ) {
+	public function get_featured_image( $data, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'image/text-to-image/featured-image',
+			[
+				self::PROMPT => $data['payload']['prompt'],
+				self::IMAGE_TYPE => $data['payload']['settings'][ self::IMAGE_TYPE ] . '/' . $data['payload']['settings'][ self::STYLE_PRESET ],
+				self::ASPECT_RATIO => $data['payload']['settings'][ self::ASPECT_RATIO ],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
+		);
+	}
+
+	/**
+	 * Get Image To Image get_image_to_image
+	 *
+	 * @param $image_data
+	 * @param $context
+	 * @param $request_ids
+	 * @return mixed|\WP_Error
+	 * @throws \Exception If image file not found.
+	 */
+	public function get_image_to_image( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
 
 		if ( ! $image_file ) {
@@ -301,6 +408,7 @@ class Ai extends Library {
 				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
 				self::ASPECT_RATIO => $image_data['promptSettings'][ self::ASPECT_RATIO ],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -311,14 +419,85 @@ class Ai extends Library {
 		return $result;
 	}
 
+
+	private function resizeImageIfNeeded( $original_url ) {
+		try {
+			$max_file_size = 4194304;
+			$current_size = filesize( $original_url );
+
+			if ( $current_size <= $max_file_size ) {
+				return $original_url;
+			}
+
+			$image_editor = wp_get_image_editor( $original_url );
+
+			if ( is_wp_error( $image_editor ) ) {
+				return $original_url;
+			}
+
+			$dimensions = $image_editor->get_size();
+			$original_width = $dimensions['width'];
+			$original_height = $dimensions['height'];
+
+			$scaling_factor = sqrt( $max_file_size / $current_size );
+
+			$new_width = (int) ( $original_width * $scaling_factor );
+			$new_height = (int) ( $original_height * $scaling_factor );
+
+			$image_editor->resize( $new_width, $new_height, true );
+
+			$file_extension = pathinfo( $original_url, PATHINFO_EXTENSION );
+			$temp_image = tempnam( sys_get_temp_dir(), 'resized_' ) . '.' . $file_extension;
+
+			$image_editor->save( $temp_image );
+			return $temp_image;
+		} catch ( \Exception $e ) {
+			return $original_url;
+		}
+	}
+
+	public function get_unify_product_images( $image_data, $context, $request_ids ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+
+		$final_path = $this->resizeImageIfNeeded( $image_file );
+
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/unify-product-images',
+			[
+				'aspectRatio' => $image_data['promptSettings'][ self::ASPECT_RATIO ],
+				'backgroundColor' => $image_data['promptSettings'][ self::IMAGE_BACKGROUND_COLOR ],
+				'featureIdentifier' => $image_data['featureIdentifier'],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			$final_path,
+			'image'
+		);
+
+		if ( $image_file !== $final_path ) {
+			unlink( $final_path );
+		}
+
+		return $result;
+	}
+
 	/**
-	 * get_image_to_image_upscale
-	 * @param $image_data
+	 * Get Image To Image Upscale get_image_to_image_upscale
 	 *
+	 * @param $image_data
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
-	public function get_image_to_image_upscale( $image_data, $context = [] ) {
+	public function get_image_to_image_upscale( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
 
 		if ( ! $image_file ) {
@@ -331,6 +510,7 @@ class Ai extends Library {
 			[
 				self::IMAGE_RESOLUTION => $image_data['promptSettings']['upscale_to'],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -342,13 +522,15 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_remove_background
-	 * @param $image_data
+	 * Get Image To Image Remove Background get_image_to_image_remove_background
 	 *
+	 * @param $image_data
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
-	public function get_image_to_image_remove_background( $image_data, $context = [] ) {
+	public function get_image_to_image_remove_background( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
 
 		if ( ! $image_file ) {
@@ -360,6 +542,7 @@ class Ai extends Library {
 			'image/image-to-image/remove-background',
 			[
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -371,13 +554,15 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_remove_text
-	 * @param $image_data
+	 * Get Image To Image Remove Text get_image_to_image_remove_text
 	 *
+	 * @param $image_data
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
-	public function get_image_to_image_replace_background( $image_data, $context = [] ) {
+	public function get_image_to_image_replace_background( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
 
 		if ( ! $image_file ) {
@@ -390,6 +575,7 @@ class Ai extends Library {
 			[
 				self::PROMPT => $image_data[ self::PROMPT ],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			],
@@ -401,8 +587,9 @@ class Ai extends Library {
 	}
 
 	/**
-	 * store_temp_file
+	 * Store Temp File store_temp_file
 	 * used to store a temp file for the AI request and deletes it once the request is done
+	 *
 	 * @param $file_content
 	 * @param $file_ext
 	 *
@@ -421,13 +608,15 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_out_painting
-	 * @param $image_data
+	 * Get Image To Image Out Painting get_image_to_image_out_painting
 	 *
+	 * @param $image_data
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
-	public function get_image_to_image_out_painting( $image_data, $context = [] ) {
+	public function get_image_to_image_out_painting( $image_data, $context, $request_ids ) {
 		$img_content = str_replace( ' ', '+', $image_data['mask'] );
 		$img_content = substr( $img_content, strpos( $img_content, ',' ) + 1 );
 		$img_content = base64_decode( $img_content );
@@ -441,11 +630,14 @@ class Ai extends Library {
 			'POST',
 			'image/image-to-image/outpainting',
 			[
-				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => '',
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'size' => wp_json_encode( $image_data['size'] ),
+				'position' => wp_json_encode( $image_data['position'] ),
+				'image_base64' => $image_data['image_base64'],
+				$image_data['image'],
 			],
 			[
 				[
@@ -460,13 +652,15 @@ class Ai extends Library {
 	}
 
 	/**
-	 * get_image_to_image_mask
-	 * @param $image_data
+	 * Get Image To Image Mask get_image_to_image_mask
 	 *
+	 * @param $image_data
+	 * @param $context
+	 * @param $request_ids
 	 * @return mixed|\WP_Error
-	 * @throws \Exception
+	 * @throws \Exception If image file not found.
 	 */
-	public function get_image_to_image_mask( $image_data, $context = [] ) {
+	public function get_image_to_image_mask( $image_data, $context, $request_ids ) {
 		$image_file = get_attached_file( $image_data['attachment_id'] );
 		$mask_file = $this->store_temp_file( $image_data['mask'], '.svg' );
 
@@ -483,11 +677,50 @@ class Ai extends Library {
 			'image/image-to-image/inpainting',
 			[
 				self::PROMPT => $image_data[ self::PROMPT ],
-				self::IMAGE_TYPE => $image_data['promptSettings'][ self::IMAGE_TYPE ] . '/' . $image_data['promptSettings'][ self::STYLE_PRESET ],
-				self::IMAGE_STRENGTH => $image_data['promptSettings'][ self::IMAGE_STRENGTH ],
 				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
+				'image_base64' => $image_data['image_base64'],
+			],
+			[
+				[
+					'name' => 'image',
+					'type' => 'image',
+					'path' => $image_file,
+				],
+				[
+					'name' => 'mask_image',
+					'type' => 'image/svg+xml',
+					'path' => $mask_file,
+				],
+			]
+		);
+
+		return $result;
+	}
+	public function get_image_to_image_mask_cleanup( $image_data, $context, $request_ids ) {
+		$image_file = get_attached_file( $image_data['attachment_id'] );
+		$mask_file = $this->store_temp_file( $image_data['mask'], '.svg' );
+
+		if ( ! $image_file ) {
+			throw new \Exception( 'Image file not found' );
+		}
+
+		if ( ! $mask_file ) {
+			throw new \Exception( 'Mask file not found' );
+		}
+
+		$result = $this->ai_request(
+			'POST',
+			'image/image-to-image/cleanup',
+			[
+				self::PROMPT => $image_data[ self::PROMPT ],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+				'image_base64' => $image_data['image_base64'],
 			],
 			[
 				[
@@ -539,17 +772,31 @@ class Ai extends Library {
 					$html = wp_json_encode( $attachment['content'] );
 
 					$body['html'] = $html;
+					$body['htmlFetchedUrl'] = $attachment['label'];
 
 					break;
 			}
 		}
 
 		$context['currentContext'] = $data['currentContext'];
+		$context['features'] = [
+			'supportedFeatures' => [ 'Taxonomy' ],
+		];
 
 		if ( ElementorUtils::has_pro() ) {
-			$context['features'] = [
-				'subscriptions' => [ 'Pro' ],
-			];
+			$context['features']['subscriptions'] = [ 'Pro' ];
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['nested-elements'] ) {
+			$context['features']['supportedFeatures'][] = 'Nested';
+		}
+
+		if ( Plugin::instance()->experiments->get_active_features()['mega-menu'] ) {
+			$context['features']['supportedFeatures'][] = 'MegaMenu';
+		}
+
+		if ( class_exists( 'WC' ) ) {
+			$context['features']['supportedFeatures'][] = 'WooCommerce';
 		}
 
 		$metadata = [
@@ -588,7 +835,10 @@ class Ai extends Library {
 				'context' => wp_json_encode( $context ),
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
-			]
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 
@@ -630,6 +880,24 @@ class Ai extends Library {
 				'api_version' => ELEMENTOR_VERSION,
 				'site_lang' => get_bloginfo( 'language' ),
 			]
+		);
+	}
+
+	public function get_animation( $data, $context, $request_ids ) {
+		return $this->ai_request(
+			'POST',
+			'text/get-motion-effect',
+			[
+				'prompt' => $data['payload']['prompt'],
+				'motionEffectType' => $data['payload']['motionEffectType'],
+				'context' => wp_json_encode( $context ),
+				'ids' => $request_ids,
+				'api_version' => ELEMENTOR_VERSION,
+				'site_lang' => get_bloginfo( 'language' ),
+			],
+			false,
+			'',
+			'json'
 		);
 	}
 

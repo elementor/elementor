@@ -1,45 +1,36 @@
-import { test, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../parallelTest';
 import WpAdminPage from '../../../../../../../pages/wp-admin-page';
+import ContextMenu from '../../../../../../../pages/widgets/context-menu';
+import EditorSelectors from '../../../../../../../selectors/editor-selectors';
 
-test( 'A page can be saved successfully after copy-paste style', async ( { page }, testInfo ) => {
+test( 'A page can be saved successfully after copy-paste style', async ( { page, apiRequests }, testInfo ) => {
 	// Arrange.
-	const wpAdmin = new WpAdminPage( page, testInfo );
-	const editor = await wpAdmin.useElementorCleanPost();
+	const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	const contextMenu = new ContextMenu( page, testInfo );
+	const editor = await wpAdmin.openNewPage();
+	const heading1 = await editor.addWidget( { widgetType: 'heading' } );
+	const heading2 = await editor.addWidget( { widgetType: 'heading' } );
 
-	// Close Navigator
 	await editor.closeNavigatorIfOpen();
-
-	const heading1 = await editor.addWidget( 'heading' );
-	const heading2 = await editor.addWidget( 'heading' );
-
 	await editor.selectElement( heading1 );
-
-	await editor.activatePanelTab( 'style' );
-
-	await page.locator( '.elementor-control-title_color .pcr-button' ).click();
-	await page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( '#77A5BD' );
+	await editor.openPanelTab( 'style' );
+	await editor.setColorControlValue( 'title_color', '#77A5BD' );
 
 	// Act.
-	await editor.copyElement( heading1 );
-
-	await editor.pasteStyleElement( heading2 );
-
-	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
+	await contextMenu.copyElement( heading1 );
+	await contextMenu.pasteStyleElement( heading2 );
 
 	// Assert.
+	const heading2Title = editor.getPreviewFrame().locator( '.elementor-element-' + heading2 + ' .elementor-heading-title' );
 	await expect( heading2Title ).toHaveCSS( 'color', 'rgb(119, 165, 189)' );
 
-	const publishButton = page.locator( '#elementor-panel-saver-button-publish' );
-
-	// Check that the panel footer save button is enabled.
-	await expect( publishButton ).not.toHaveClass( /(^|\s)elementor-disabled(\s|$)/ );
+	const publishButton = page.locator( EditorSelectors.panels.topBar.wrapper + ' button', { hasText: 'Publish' } );
+	await expect( publishButton ).not.toBeDisabled();
 
 	// Act.
 	await publishButton.click();
-	await page.waitForLoadState( 'networkidle' );
 
 	// Assert.
-	await expect( publishButton ).toHaveClass( /(^|\s)elementor-disabled(\s|$)/, {
-		timeout: 10000,
-	} );
+	await expect( publishButton ).toBeDisabled( { timeout: 10000 } );
 } );

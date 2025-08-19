@@ -10,7 +10,7 @@ export class IsValidChild extends Dependency {
 	}
 
 	apply( args ) {
-		const { containers = [ args.container ], model = {}, options } = args,
+		const { containers = [ args.container ], model = {} } = args,
 			modelToCreate = new Backbone.Model( model );
 
 		return containers.some( ( /* Container */ container ) =>

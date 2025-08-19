@@ -38,9 +38,6 @@
 		height: 100%;
 		background-size: cover;
 		background-position: center;
-		// BC: Fix for Safari 13 and older browsers that don't support "aspect-ratio: 21 / 9;"
-		// TODO: Remove this line when we stop supporting Safari 13
-		padding-block-end: 42.8571%;
 	}
 
 	&-area {
@@ -73,10 +70,7 @@
 			&:after {
 				content: '';
 				position: absolute;
-				top: 0;
-				bottom: 0;
-				left: 0;
-				right: 0;
+				inset: 0;
 				background-color: rgba(0, 0, 0, .2);
 				pointer-events: none;
 			}
@@ -85,7 +79,7 @@
 		&:not(:hover) {
 
 			.elementor-control-media__tools {
-				bottom: -30px;
+				inset-block-end: -30px;
 			}
 		}
 	}
@@ -96,9 +90,8 @@
 
 	&__tools {
 		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
+		inset-block-end: 0;
+		inset-inline: 0;
 		height: $control-unit;
 		transition: all .2s ease-in-out;
 
@@ -135,8 +128,8 @@
 	&__content__remove {
 		position: absolute;
 		z-index: 1;
-		top: 10px;
-		@include end(10px);
+		inset-block-start: 10px;
+		inset-inline-end: 10px;
 		width: 20px;
 		height: 20px;
 		font-size: 11px;

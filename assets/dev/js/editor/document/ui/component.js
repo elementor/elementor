@@ -36,11 +36,12 @@ export default class Component extends ComponentBase {
 			},
 			duplicate: {
 				keys: 'ctrl+d',
-				dependency: () => shouldRun(),
+				dependency: () => shouldRun() && $e.components.get( 'document/elements' ).utils.allowAddingWidgets(),
 			},
 			paste: {
 				keys: 'ctrl+v',
 				exclude: [ 'input' ],
+				dependency: () => $e.components.get( 'document/elements' ).utils.allowAddingWidgets(),
 			},
 			'paste-style': {
 				keys: 'ctrl+shift+v',

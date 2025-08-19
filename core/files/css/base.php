@@ -9,6 +9,7 @@ use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
 use Elementor\Core\Files\Base as Base_File;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\DynamicTags\Tag;
+use Elementor\Core\Frontend\Performance;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Plugin;
 use Elementor\Stylesheet;
@@ -63,6 +64,8 @@ abstract class Base extends Base_File {
 	private $icons_fonts = [];
 
 	private $dynamic_elements_ids = [];
+
+	private $preserved_dynamic_style_values = [];
 
 	/**
 	 * Stylesheet object.
@@ -232,7 +235,7 @@ abstract class Base extends Base_File {
 			$dep = $this->get_inline_dependency();
 			// If the dependency has already been printed ( like a template in footer )
 			if ( wp_styles()->query( $dep, 'done' ) ) {
-				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // XSS ok.
+				printf( '<style id="%1$s">%2$s</style>', $this->get_file_handle_id(), $meta['css'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			} else {
 				wp_add_inline_style( $dep, $meta['css'] );
 			}
@@ -292,7 +295,7 @@ abstract class Base extends Base_File {
 	 * @access public
 	 */
 	public function print_css() {
-		echo '<style>' . $this->get_content() . '</style>'; // XSS ok.
+		echo '<style>' . $this->get_content() . '</style>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		Plugin::$instance->frontend->print_fonts_links();
 	}
 
@@ -488,7 +491,7 @@ abstract class Base extends Base_File {
 		}
 
 		if ( Controls_Manager::FONT === $control['type'] ) {
-			$this->fonts[] = $value;
+			$this->add_font( $value );
 		}
 
 		/** @var Base_Data_Control $control_obj */
@@ -570,6 +573,11 @@ abstract class Base extends Base_File {
 				// Dynamic CSS should not be added to the CSS files.
 				// Instead it's handled by \Elementor\Core\DynamicTags\Dynamic_CSS
 				// and printed in a style tag.
+				$should_preserve_value = isset( $control['control_type'] ) && 'content' === $control['control_type'];
+				if ( $should_preserve_value ) {
+					$this->preserved_dynamic_style_values[ $control['name'] ] = $parsed_dynamic_settings[ $control['name'] ];
+				}
+
 				unset( $parsed_dynamic_settings[ $control['name'] ] );
 
 				$this->dynamic_elements_ids[] = $controls_stack->get_id();
@@ -670,6 +678,8 @@ abstract class Base extends Base_File {
 	 * @access protected
 	 */
 	protected function parse_content() {
+		Performance::set_use_style_controls( true );
+
 		$initial_responsive_controls_duplication_mode = Plugin::$instance->breakpoints->get_responsive_control_duplication_mode();
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $this->get_responsive_control_duplication_mode() );
@@ -692,6 +702,8 @@ abstract class Base extends Base_File {
 		do_action( "elementor/css-file/{$name}/parse", $this );
 
 		Plugin::$instance->breakpoints->set_responsive_control_duplication_mode( $initial_responsive_controls_duplication_mode );
+
+		Performance::set_use_style_controls( false );
 
 		return $this->get_stylesheet()->__toString();
 	}
@@ -775,7 +787,9 @@ abstract class Base extends Base_File {
 			return $this->get_selector_global_value( $control, $values['__globals__'][ $control['name'] ] );
 		}
 
-		$value = $values[ $control['name'] ];
+		$value = isset( $values[ $control['name'] ] )
+			? $values[ $control['name'] ]
+			: $this->preserved_dynamic_style_values[ $control['name'] ] ?? null;
 
 		if ( isset( $control['selectors_dictionary'][ $value ] ) ) {
 			$value = $control['selectors_dictionary'][ $value ];
@@ -1011,5 +1025,11 @@ abstract class Base extends Base_File {
 		$globals = $controls_stack->get_settings( '__globals__' );
 
 		return ! empty( $globals[ $control_global_key ] );
+	}
+
+	public function add_font( $font ) {
+		if ( ! in_array( $font, $this->fonts, true ) ) {
+			$this->fonts[] = $font;
+		}
 	}
 }

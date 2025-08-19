@@ -5,6 +5,7 @@ import ContainerHelper from 'elementor-editor-utils/container-helper';
 import EmptyView from 'elementor-elements/views/container/empty-view';
 import { SetDirectionMode } from 'elementor-document/hooks';
 import { isWidgetSupportNesting } from 'elementor/modules/nested-elements/assets/js/editor/utils';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 const BaseElementView = require( 'elementor-elements/views/base' );
 const ContainerView = BaseElementView.extend( {
@@ -27,9 +28,32 @@ const ContainerView = BaseElementView.extend( {
 		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
 	},
 
+	getChildType() {
+		const allowedElementTypes = getAllElementTypes().filter( ( elType ) => elType !== 'section' && elType !== 'column' );
+
+		return [
+			...allowedElementTypes,
+			'widget',
+		];
+	},
+
 	className() {
 		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
+	},
+
+	filterSettings( newItem ) {
+		if ( ! getAllElementTypes().includes( newItem.elType ) ) {
+			return;
+		}
+
+		const parentContainer = this;
+
+		if ( parentContainer.isBoxedWidth() ) {
+			newItem.settings.content_width = 'full';
+		} else if ( 0 !== parentContainer.getNestingLevel() ) {
+			newItem.settings.content_width = 'full';
+		}
 	},
 
 	childViewOptions() {
@@ -275,10 +299,9 @@ const ContainerView = BaseElementView.extend( {
 	},
 
 	/**
-	 * Add a `Save as Template` button to the context menu.
+	 * Add a `Save as a Template` button to the context menu.
 	 *
 	 * @return {Object} groups
-	 *
 	 */
 	getContextMenuGroups() {
 		var groups = BaseElementView.prototype.getContextMenuGroups.apply( this, arguments ),
@@ -290,7 +313,8 @@ const ContainerView = BaseElementView.extend( {
 			actions: [
 				{
 					name: 'save',
-					title: __( 'Save as Template', 'elementor' ),
+					title: __( 'Save as a template', 'elementor' ),
+					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
@@ -326,7 +350,7 @@ const ContainerView = BaseElementView.extend( {
 			return false;
 		}
 
-		return [ 'widget', 'container' ].includes( elementView.model.get( 'elType' ) );
+		return [ ...getAllElementTypes(), 'widget' ].includes( elementView.model.get( 'elType' ) );
 	},
 
 	/**
@@ -342,20 +366,22 @@ const ContainerView = BaseElementView.extend( {
 		const elementData = elementor.getElementData( this.model ),
 			editTools = {};
 
-		editTools.add = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
-			icon: 'plus',
-		};
+		if ( $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
+			editTools.add = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Add %s', 'elementor' ), elementData.title ),
+				icon: 'plus',
+			};
 
-		editTools.edit = {
-			/* Translators: %s: Element Name. */
-			title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
-			icon: 'handle',
-		};
+			editTools.edit = {
+				/* Translators: %s: Element Name. */
+				title: sprintf( __( 'Edit %s', 'elementor' ), elementData.title ),
+				icon: 'handle',
+			};
+		}
 
 		if ( ! this.getContainer().isLocked() ) {
-			if ( elementor.getPreferences( 'edit_buttons' ) ) {
+			if ( elementor.getPreferences( 'edit_buttons' ) && $e.components.get( 'document/elements' ).utils.allowAddingWidgets() ) {
 				editTools.duplicate = {
 					/* Translators: %s: Element Name. */
 					title: sprintf( __( 'Duplicate %s', 'elementor' ), elementData.title ),
@@ -377,7 +403,6 @@ const ContainerView = BaseElementView.extend( {
 	 * Toggle the `New Section` view when clicking the `add` button in the edit tools.
 	 *
 	 * @return {void}
-	 *
 	 */
 	onAddButtonClick() {
 		if ( this.addSectionView && ! this.addSectionView.isDestroyed ) {
@@ -422,12 +447,6 @@ const ContainerView = BaseElementView.extend( {
 			// Add the EmptyView to the end of the Grid Container on initial page load if there are already some widgets.
 			if ( this.isGridContainer() ) {
 				this.reInitEmptyView();
-			}
-
-			// Todo: Remove in version 3.21.0: https://elementor.atlassian.net/browse/ED-11884.
-			// Remove together with support for physical properties inside the Mega Menu & Nested Carousel widgets.
-			if ( ! this.model.get( 'isInner' ) ) {
-				this.$el[ 0 ].dataset.coreV316Plus = 'true';
 			}
 
 			this.droppableInitialize( this.container.settings );

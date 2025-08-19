@@ -1,6 +1,7 @@
 // Panel elements categories
 #elementor-panel-elements-categories {
 	padding-block-end: 10px;
+	position: relative;
 }
 
 .elementor-panel-category {
@@ -21,6 +22,10 @@
 
 		.elementor-panel-heading {
 			border: none;
+		}
+
+		&-title {
+			display: flex;
 		}
 	}
 

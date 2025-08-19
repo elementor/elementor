@@ -1,4 +1,5 @@
-import { test, Page, expect } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import {
 	reuseAndEditTextDataMock,
 	differentPeriodsDataMock,
@@ -39,13 +40,13 @@ test.describe( 'AI @ai', () => {
 		} );
 	};
 
-	test( 'Prompt History - Common', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Common', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Modal can be opened and closed', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noDataMock } );
 
@@ -56,10 +57,12 @@ test.describe( 'AI @ai', () => {
 			await closePromptHistory( page );
 
 			await expect( page.locator( EditorSelectors.ai.promptHistory.modal ).first() ).toBeHidden();
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Shows a message when there is a free plan', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noPlanMock } );
 
@@ -68,10 +71,12 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageFullTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Shows a message when there are no history items', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: noDataMock } );
 
@@ -80,10 +85,12 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.noDataMessageTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Renders items from different periods correctly', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: differentPeriodsDataMock } );
 
@@ -94,10 +101,12 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.itemTestId ) ).toHaveCount( 2 );
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Renders upgrade ad if a user has less than 90 items limit', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: thirtyDaysLimitDataMock } );
 
@@ -106,10 +115,12 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.upgradeMessageSmallTestId ).first() ).toBeVisible();
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Renders a fallback icon for an unknown action', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, { getHistoryMock: unknownActionDataMock } );
 
@@ -118,10 +129,12 @@ test.describe( 'AI @ai', () => {
 			await expect( page.getByTestId( EditorSelectors.ai.promptHistory.fallbackIconTestId ) ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Removes item', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: differentPeriodsDataMock,
@@ -141,16 +154,18 @@ test.describe( 'AI @ai', () => {
 			await expect( items ).toHaveCount( 1 );
 
 			await closePromptHistory( page );
+
+			await closeAIDialog( page );
 		} );
 	} );
 
-	test( 'Prompt History - a11y', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - a11y', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Text - History items list a11y', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: differentPeriodsDataMock,
@@ -171,7 +186,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Image - History items list a11y', async () => {
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await mockRoute( page, {
 				getHistoryMock: restoreImageDataMock,
@@ -192,13 +207,13 @@ test.describe( 'AI @ai', () => {
 		} );
 	} );
 
-	test( 'Prompt History - Text', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Text', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Reuse button reuses prompt', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -217,10 +232,12 @@ test.describe( 'AI @ai', () => {
 			await expect( input ).toBeVisible();
 
 			expect( await input.inputValue() ).toBe( 'Test prompt' );
+
+			await closeAIDialog( page );
 		} );
 
 		await test.step( 'Edit button edits result', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -239,16 +256,18 @@ test.describe( 'AI @ai', () => {
 			await expect( textarea ).toBeVisible();
 
 			expect( await textarea.inputValue() ).toBe( 'Test result' );
+
+			await closeAIDialog( page );
 		} );
 	} );
 
-	test( 'Prompt History - Code', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Code', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Reuse button reuses prompt', async () => {
-			await editor.addWidget( 'html' );
+			await editor.addWidget( { widgetType: 'html' } );
 
 			await mockRoute( page, {
 				getHistoryMock: reuseAndEditTextDataMock,
@@ -270,15 +289,15 @@ test.describe( 'AI @ai', () => {
 		} );
 	} );
 
-	test( 'Prompt History - Image', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History - Image', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Restore button restores prompt', async () => {
 			const { promptHistory, image } = EditorSelectors.ai;
 
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await mockRoute( page, {
 				getHistoryMock: restoreImageDataMock,

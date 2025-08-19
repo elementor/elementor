@@ -7,34 +7,12 @@ export type Image = {
     filePath?: string
 }
 
-export type StorageState = {
-    cookies: Array<{
-        name: string;
-        value: string;
-        domain: string;
-        path: string;
-        expires: number;
-        httpOnly: boolean;
-        secure: boolean;
-        sameSite: 'Strict' | 'Lax' | 'None';
-    }>;
-    origins: Array<{
-        origin: string;
-        localStorage: Array<{
-            name: string;
-            value: string;
-        }>;
-    }>;
-};
-export type VideoParams = {
-        'autoplay': string,
-        'endscreen-enable': string,
-        'mute': string,
-        'start': string,
-        'playsinline': string,
-        'controls': string,
-        'ui-start-screen-info': string,
-        'ui-logo': string
+export type User = {
+	id?: string,
+	username: string,
+	password: string,
+	email: string,
+	roles?: string[],
 }
 
 export type LinkOptions = {
@@ -94,3 +72,56 @@ export type Post = {
 	template?: string,
 	tags?: number
 }
+
+export type WindowType = Window & {
+	$e?: {
+		run: ( s: string, o: object )=> unknown
+	}
+	wpApiSettings?: { nonce: string }
+};
+export type BackboneType = {
+	Model: new ( o: {title: string} )=> unknown
+};
+
+export type $eType = {
+	run: ( s: string, o: object )=> unknown
+}
+
+export type ElementorType = {
+	navigator?: {
+		isOpen: ()=> unknown
+	},
+	getContainer?: ( id: string )=> unknown,
+	config?: {
+		initial_document:{
+			id: string
+		}
+	},
+	isDeviceModeActive?: () => unknown
+}
+
+export type Device = 'mobile' | 'mobile_extra' | 'tablet' | 'tablet_extra' | 'laptop' | 'desktop' | 'widescreen';
+
+export type BreakpointEditableDevice = Exclude<Device, 'desktop'>;
+
+export type GapControl = string | {
+	column: string,
+	row: string,
+	unit?: string
+}
+
+export type ContainerType = 'flex' | 'grid';
+
+export type ContainerPreset =
+	| 'c100'
+	| 'r100'
+	| '50-50'
+	| '33-66'
+	| '25-25-25-25'
+	| '25-50-25'
+	| '50-50-50-50'
+	| '50-50-100'
+	| 'c100-c50-50'
+	| '33-33-33-33-33-33'
+	| '33-33-33-33-66'
+	| '66-33-33-66'

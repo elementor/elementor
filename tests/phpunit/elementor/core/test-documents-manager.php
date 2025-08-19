@@ -8,6 +8,7 @@ use Elementor\Modules\Library\Documents\Page as Theme_Page;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
+use WP_REST_Request;
 
 class Test_Documents_Manager extends Elementor_Test_Base {
 	public function test_ajax_get_document_config__set_id_build_with_elementor() {
@@ -154,5 +155,64 @@ class Test_Documents_Manager extends Elementor_Test_Base {
 
 		// Cleanup.
 		remove_action('save_post', $action );
+	}
+
+	public function test_media_import_unauthorized() {
+		$request = new WP_REST_Request('POST', '/elementor/v1/documents/1/media/import');
+		$response = rest_do_request($request);
+
+		$this->assertEquals(401, $response->get_status());
+	}
+
+	public function test_media_import_invalid_permissions() {
+		$subscriber_id = $this->factory()->user->create(['role' => 'subscriber']);
+		wp_set_current_user($subscriber_id);
+
+		$request = new WP_REST_Request('POST', '/elementor/v1/documents/1/media/import');
+		$response = rest_do_request($request);
+
+		$this->assertEquals(403, $response->get_status());
+	}
+
+	public function test_media_import_invalid_document() {
+		$this->act_as_admin();
+
+		$request = new WP_REST_Request('POST', '/elementor/v1/documents/99999/media/import');
+		$response = rest_do_request($request);
+
+		$this->assertEquals(500, $response->get_status());
+		$this->assertEquals('elementor_import_error', $response->get_data()['code']);
+		$this->assertEquals('Not found.', $response->get_data()['message']);
+	}
+
+	public function test_media_import_success() {
+		$this->act_as_admin();
+		
+		$post_id = $this->factory()->post->create();
+		$document = Plugin::$instance->documents->get($post_id);
+		
+		$document->save([
+			'elements' => [
+				[
+					'id' => 'test-element',
+					'elType' => 'section',
+					'settings' => [
+						'background_image' => [
+							'url' => 'https://elementor.com/wp-content/uploads/2021/04/elementor-favicon-512.png'
+						]
+					]
+				]
+			]
+		]);
+
+		$request = new WP_REST_Request('POST', "/elementor/v1/documents/{$post_id}/media/import");
+		$response = rest_do_request($request);
+
+		$this->assertEquals(200, $response->get_status());
+		$this->assertTrue($response->get_data()['success']);
+		$this->assertTrue($response->get_data()['document_saved']);
+
+		$updated_document = Plugin::$instance->documents->get($post_id)->get_elements_data();
+		$this->assertStringStartsWith(get_site_url(), $updated_document[0]['settings']['background_image']['url']);
 	}
 }

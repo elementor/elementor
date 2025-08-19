@@ -43,16 +43,6 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 		}
 
 		wp_register_script(
-			'elementor-responsive-bar',
-			"{$assets_url}js/responsive-bar{$min_suffix}.js",
-			[ 'elementor-editor' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_set_script_translations( 'elementor-responsive-bar', 'elementor' );
-
-		wp_register_script(
 			'elementor-editor-loader-v1',
 			"{$assets_url}js/editor-loader-v1{$min_suffix}.js",
 			[ 'elementor-editor' ],
@@ -65,7 +55,7 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'elementor-responsive-bar' );
+		parent::enqueue_scripts();
 
 		// Must be last.
 		wp_enqueue_script( 'elementor-editor-loader-v1' );
@@ -80,32 +70,9 @@ class Editor_V1_Loader extends Editor_Base_Loader {
 	/**
 	 * @return void
 	 */
-	public function register_styles() {
-		parent::register_styles();
-
-		$assets_url = $this->config->get( 'assets_url' );
-		$min_suffix = $this->config->get( 'min_suffix' );
-
-		wp_register_style(
-			'elementor-responsive-bar',
-			"{$assets_url}css/responsive-bar{$min_suffix}.css",
-			[],
-			ELEMENTOR_VERSION
-		);
-	}
-
-	public function enqueue_styles() {
-		parent::enqueue_styles();
-
-		wp_enqueue_style( 'elementor-responsive-bar' );
-	}
-
-	/**
-	 * @return void
-	 */
 	public function print_root_template() {
 		// Exposing the path for the view part to render the body of the editor template.
-		$body_file_path = __DIR__ . '/templates/editor-body-v1.view.php';
+		$body_file_path = __DIR__ . '/templates/editor-body-v1-view.php';
 
 		include ELEMENTOR_PATH . 'includes/editor-templates/editor-wrapper.php';
 	}

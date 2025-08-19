@@ -1,6 +1,8 @@
 <?php
 namespace Elementor;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -67,6 +69,27 @@ abstract class Settings_Page {
 	 */
 	final public static function get_url() {
 		return admin_url( 'admin.php?page=' . static::PAGE_ID );
+	}
+
+	/**
+	 * Get settings tab URL.
+	 *
+	 * Retrieve the URL of a specific tab in the settings page.
+	 *
+	 * @since 3.23.0
+	 * @access public
+	 * @static
+	 *
+	 * @param string $tab_id The ID of the settings tab.
+	 *
+	 * @return string Settings tab URL.
+	 */
+	final public static function get_settings_tab_url( $tab_id ): string {
+		$settings_page_id = Plugin::$instance->experiments->is_feature_active( 'home_screen' )
+			? 'elementor-settings'
+			: 'elementor';
+
+		return admin_url( "admin.php?page=$settings_page_id#tab-$tab_id" );
 	}
 
 	/**
@@ -370,14 +393,14 @@ abstract class Settings_Page {
 	public function get_usage_fields() {
 		return [
 			'allow_tracking' => [
-				'label' => esc_html__( 'Usage Data Sharing', 'elementor' ),
+				'label' => esc_html__( 'Data Sharing', 'elementor' ),
 				'field_args' => [
 					'type' => 'checkbox',
 					'value' => 'yes',
 					'default' => '',
 					'sub_desc' => sprintf(
 						'%1$s <a href="https://go.elementor.com/usage-data-tracking/" target="_blank">%2$s</a>',
-						esc_html__( 'Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'elementor' ),
+						esc_html__( 'Become a super contributor by helping us understand how you use our service to enhance your experience and improve our product.', 'elementor' ),
 						esc_html__( 'Learn more', 'elementor' )
 					),
 				],
@@ -419,7 +442,7 @@ abstract class Settings_Page {
 	/**
 	 * Should it render the settings tab
 	 *
-	 * @param $tab
+	 * @param array $tab
 	 *
 	 * @return bool
 	 */
@@ -431,7 +454,7 @@ abstract class Settings_Page {
 	/**
 	 * Should it render the settings section
 	 *
-	 * @param $section
+	 * @param array $section
 	 *
 	 * Since 3.19.0
 	 *

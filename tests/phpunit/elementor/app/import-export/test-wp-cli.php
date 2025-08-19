@@ -91,8 +91,8 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 		$wp_cli->export( $args, [] );
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $temp_export_path );
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( dirname( $kit_mock ) );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $temp_export_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( dirname( $kit_mock ) );
 	}
 
 	public function test_revert() {

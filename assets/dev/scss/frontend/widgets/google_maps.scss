@@ -4,7 +4,8 @@
 
 .elementor-widget-google_maps {
 
-	.elementor-widget-container {
+	.elementor-widget-container,
+	&:not(:has(.elementor-widget-container)) {
 		overflow: hidden; // Allow border-radius
 	}
 

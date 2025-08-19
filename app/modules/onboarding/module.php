@@ -7,12 +7,11 @@ use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
 use Elementor\Plugin;
-use Elementor\Tracker;
 use Elementor\Utils;
 use Plugin_Upgrader;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -84,6 +83,13 @@ class Module extends BaseModule {
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'urls' => [
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '#/kit-library?order[direction]=desc&order[by]=featuredIndex',
+				'sitePlanner' => add_query_arg( [
+					'type' => 'editor',
+					'siteUrl' => esc_url( home_url() ),
+					'siteName' => esc_html( $site_name ),
+					'siteDescription' => esc_html( get_bloginfo( 'description' ) ),
+					'siteLanguage' => get_locale(),
+				], 'https://planner.elementor.com/onboarding.html' ),
 				'createNewPage' => Plugin::$instance->documents->get_create_new_post_url(),
 				'connect' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
@@ -92,6 +98,7 @@ class Module extends BaseModule {
 					'utm_term' => self::VERSION,
 					'source' => 'generic',
 				] ),
+				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
 				'signUp' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',
@@ -113,6 +120,7 @@ class Module extends BaseModule {
 				'downloadPro' => '?utm_source=onboarding-wizard&utm_campaign=my-account-subscriptions&utm_medium=wp-dash&utm_content=import-pro-plugin&utm_term=' . self::VERSION,
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
+			'experiment' => true,
 		] );
 	}
 
@@ -129,7 +137,7 @@ class Module extends BaseModule {
 		return [
 			'status' => 'error',
 			'payload' => [
-				'error_message' => esc_html__( 'You do not have permissions to perform this action.', 'elementor' ),
+				'error_message' => esc_html__( 'You do not have permission to perform this action.', 'elementor' ),
 			],
 		];
 	}
@@ -256,7 +264,7 @@ class Module extends BaseModule {
 	private function maybe_upload_logo_image() {
 		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' );
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -317,7 +325,7 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		switch_theme( 'hello-elementor' );
+		switch_theme( 'hello-biz' );
 
 		return [
 			'status' => 'success',
@@ -341,7 +349,7 @@ class Module extends BaseModule {
 
 		$error_message = esc_html__( 'There was a problem uploading your file.', 'elementor' );
 
-		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? [];
+		$file = Utils::get_super_global_value( $_FILES, 'fileToUpload' ) ?? []; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		if ( ! is_array( $file ) || empty( $file['type'] ) ) {
@@ -411,9 +419,8 @@ class Module extends BaseModule {
 	 * Maybe Handle Ajax
 	 *
 	 * This method checks if there are any AJAX actions being
-	 * @since 3.6.0
 	 *
-	 * @return array|null
+	 * @since 3.6.0
 	 */
 	private function maybe_handle_ajax() {
 		$result = [];
@@ -421,7 +428,7 @@ class Module extends BaseModule {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
 		switch ( Utils::get_super_global_value( $_POST, 'action' ) ) {
 			case 'elementor_update_site_name':
-				// If no value is passed for any reason, no need ot update the site name.
+				// If no value is passed for any reason, no need to update the site name.
 				$result = $this->maybe_update_site_name();
 				break;
 			case 'elementor_update_site_logo':
@@ -438,6 +445,10 @@ class Module extends BaseModule {
 				break;
 			case 'elementor_update_onboarding_option':
 				$result = $this->maybe_update_onboarding_db_option();
+				break;
+			case 'elementor_save_onboarding_features':
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing
+				$result = $this->get_component( 'features_usage' )->save_onboarding_features( Utils::get_super_global_value( $_POST, 'data' ) ?? [] );
 		}
 
 		if ( ! empty( $result ) ) {
@@ -450,6 +461,8 @@ class Module extends BaseModule {
 	}
 
 	public function __construct() {
+		$this->add_component( 'features_usage', new Features_Usage() );
+
 		add_action( 'elementor/init', function() {
 			// Only load when viewing the onboarding app.
 			if ( Plugin::$instance->app->is_current() ) {
@@ -481,5 +494,7 @@ class Module extends BaseModule {
 				$this->maybe_handle_ajax();
 			}
 		} );
+
+		$this->get_component( 'features_usage' )->register();
 	}
 }

@@ -1,4 +1,8 @@
 export default class extends Marionette.ItemView {
+	tagName() {
+		return 'button';
+	}
+
 	getTemplate() {
 		return '#tmpl-elementor-panel-history-item';
 	}

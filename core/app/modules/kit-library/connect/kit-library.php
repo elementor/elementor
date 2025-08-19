@@ -6,7 +6,7 @@ use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

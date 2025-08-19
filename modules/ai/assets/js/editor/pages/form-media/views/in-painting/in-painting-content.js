@@ -21,7 +21,8 @@ import RedoIcon from '../../../../icons/redo-icon';
 
 const STROKE_SELECT_WIDTH = 120;
 
-const BRUSH_COLOR = 'rgba(0, 0, 0, 0.75)';
+const BRUSH_COLOR = 'rgba(255, 255, 255)';
+const CANVAS_COLOR = 'rgba(0, 0, 0)';
 
 const StyledUndoIcon = withDirection( UndoIcon );
 const StyledRedoIcon = withDirection( RedoIcon );
@@ -44,11 +45,9 @@ const BrishSizeIcon = styled( Box, { shouldForwardProp: ( prop ) => 'size' === p
 	backgroundColor: theme.palette.secondary.main,
 } ) );
 
-const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: canvasHeight } ) => {
+const InPaintingContent = ( { editImage, setMask, setIsCanvasChanged, width: canvasWidth, height: canvasHeight } ) => {
 	const sketchRef = useRef();
-
 	const [ stroke, setStroke ] = useState( 30 );
-
 	const brushCursorRef = useRef();
 
 	useEffect( () => {
@@ -153,7 +152,9 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 					width={ canvasWidth + 'px' }
 					strokeWidth={ stroke }
 					strokeColor={ BRUSH_COLOR }
+					canvasColor={ CANVAS_COLOR }
 					backgroundImage={ editImage.url }
+					onStroke={ () => setIsCanvasChanged( true ) }
 					onChange={ async () => {
 						const svg = await sketchRef.current.exportSvg();
 						setMask( svg );
@@ -166,6 +167,7 @@ const InPaintingContent = ( { editImage, setMask, width: canvasWidth, height: ca
 
 InPaintingContent.propTypes = {
 	setMask: PropTypes.func.isRequired,
+	setIsCanvasChanged: PropTypes.func.isRequired,
 	width: PropTypes.number.isRequired,
 	height: PropTypes.number.isRequired,
 	editImage: PropTypes.object.isRequired,

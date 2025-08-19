@@ -1,4 +1,5 @@
-import { test, expect, type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { userInformationMock } from './user-information.mock';
 import {
@@ -31,13 +32,13 @@ test.describe( 'AI @ai', () => {
 		} );
 	};
 
-	test( 'Text', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Text', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Open the modal with default value from the control', async () => {
-			await editor.addWidget( 'heading' );
+			await editor.addWidget( { widgetType: 'heading' } );
 
 			await page.click( '.e-ai-button' );
 
@@ -64,7 +65,7 @@ test.describe( 'AI @ai', () => {
 
 			await newPromptButton.click();
 
-			await expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
+			expect( await page.locator( 'input[name="prompt"]' ).inputValue() ).toBe( 'Some prompt' );
 			await expect( page.getByText( 'Suggested prompts:' ) ).toHaveCount( 0 );
 			await generateTextButton.click();
 
@@ -82,8 +83,8 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Open the modal with non-default value from the control', async () => {
-			await editor.addWidget( 'heading' );
-			await page.locator( '.elementor-control-title.elementor-control-type-textarea textarea' ).fill( 'Hello World' );
+			await editor.addWidget( { widgetType: 'heading' } );
+			await editor.setTextareaControlValue( 'title', 'Hello World' );
 
 			await page.click( '.e-ai-button' );
 

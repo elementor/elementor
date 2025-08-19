@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 export default function Announcements( props ) {
 	const { announcements, unMount } = props;
 	const [ currentAnnouncement, setCurrentAnnouncement ] = useState( 0 );
-	let announcementTitle = Object.values( announcements )[ 0 ].title || '';
+	const announcementTitle = Object.values( announcements )[ 0 ].title || '';
 
 	// Send event when the popup is presented
 	useEffect( () => {

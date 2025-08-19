@@ -1,17 +1,20 @@
+import { $eType, ElementorType } from '../types/types';
+
 /**
  * Add element to the page using model and parent container.
- *
- * @param {Object}      options                     - Model definition.
- * @param {*}           options.model
- * @param {string|null} options.container           - Parent container ID. Optional.
- * @param {boolean}     options.isContainerASection - If `container` is a section. Optional.
- * @return {Promise<*>} element id
+ * @param {Object}        props
+ * @param {Object}        props.model
+ * @param {string | null} props.container
+ * @param {boolean}       props.isContainerASection
+ * @return {string | undefined}
  */
-export const addElement = async ( { model, container = null, isContainerASection = false } ) => {
-	let parent: any;
 
-	if ( container ) {
-		parent = elementor.getContainer( container );
+let parent: unknown;
+let elementor: ElementorType;
+let $e: $eType;
+export const addElement = ( props: { model: unknown, container: null | string, isContainerASection: boolean } ): string | undefined => {
+	if ( props.container ) {
+		parent = elementor.getContainer( props.container );
 	} else {
 		// If a `container` isn't supplied - create a new Section.
 		parent = $e.run(
@@ -23,22 +26,25 @@ export const addElement = async ( { model, container = null, isContainerASection
 			},
 		);
 
-		isContainerASection = true;
+		props.isContainerASection = true;
 	}
 
-	if ( isContainerASection ) {
+	if ( props.isContainerASection && 'object' === typeof parent && 'children' in parent ) {
 		parent = parent.children[ 0 ];
 	}
 
 	const element = $e.run(
 		'document/elements/create',
 		{
-			model,
+			model: props.model,
 			container: parent,
 		},
 	);
 
-	return element.id;
+	if ( 'object' === typeof element && 'id' in element && 'string' === typeof element.id ) {
+		return element.id;
+	}
+	return undefined;
 };
 
 /**

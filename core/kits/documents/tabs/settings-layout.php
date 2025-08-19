@@ -9,7 +9,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Modules\PageTemplates\Module as PageTemplatesModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Settings_Layout extends Tab_Base {
@@ -80,8 +80,6 @@ class Settings_Layout extends Tab_Base {
 		);
 
 		$is_container_active = Plugin::instance()->experiments->is_feature_active( 'container' );
-		$logical_dimensions_inline_start = is_rtl() ? '{{RIGHT}}{{UNIT}}' : '{{LEFT}}{{UNIT}}';
-		$logical_dimensions_inline_end = is_rtl() ? '{{LEFT}}{{UNIT}}' : '{{RIGHT}}{{UNIT}}';
 
 		if ( $is_container_active ) {
 			$this->add_responsive_control(
@@ -92,7 +90,7 @@ class Settings_Layout extends Tab_Base {
 					'size_units' => [ 'px', '%', 'em', 'rem', 'vw', 'custom' ],
 					'description' => esc_html__( 'Sets the default space inside the container (Default is 10px)', 'elementor' ),
 					'selectors' => [
-						'.e-con' => "--container-default-padding-block-start: {{TOP}}{{UNIT}}; --container-default-padding-inline-end: $logical_dimensions_inline_end; --container-default-padding-block-end: {{BOTTOM}}{{UNIT}}; --container-default-padding-inline-start: $logical_dimensions_inline_start;",
+						'.e-con' => '--container-default-padding-top: {{TOP}}{{UNIT}}; --container-default-padding-right: {{RIGHT}}{{UNIT}}; --container-default-padding-bottom: {{BOTTOM}}{{UNIT}}; --container-default-padding-left: {{LEFT}}{{UNIT}};',
 					],
 				]
 			);
@@ -118,10 +116,7 @@ class Settings_Layout extends Tab_Base {
 					'column' => '20',
 				],
 				'description' => esc_html__( 'Sets the default space between widgets (Default: 20px)', 'elementor' ),
-				'selectors' => [
-					'.elementor-widget:not(:last-child)' => 'margin-block-end: {{ROW}}{{UNIT}}',
-					'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
-				],
+				'selectors' => $this->get_spacing_selectors(),
 				'conversion_map' => [
 					'old_key' => 'size',
 					'new_key' => 'column',
@@ -248,6 +243,18 @@ class Settings_Layout extends Tab_Base {
 		$this->end_controls_section();
 	}
 
+	private function get_spacing_selectors(): array {
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+		$sections_widget_spacing = $optimized_markup
+			? '--kit-widget-spacing: {{ROW}}{{UNIT}}'
+			: 'margin-block-end: {{ROW}}{{UNIT}}';
+
+		return [
+			'.elementor-widget:not(:last-child)' => $sections_widget_spacing,
+			'.elementor-element' => '--widgets-spacing: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}};--widgets-spacing-row: {{ROW}}{{UNIT}};--widgets-spacing-column: {{COLUMN}}{{UNIT}};',
+		];
+	}
+
 	/**
 	 * Before Save
 	 *
@@ -326,6 +333,7 @@ class Settings_Layout extends Tab_Base {
 				[
 					'label' => $default_breakpoint_config['label'],
 					'type' => Controls_Manager::HEADING,
+					'separator' => 'before',
 					'conditions' => [
 						'terms' => [
 							[
@@ -343,7 +351,6 @@ class Settings_Layout extends Tab_Base {
 				'type' => Controls_Manager::NUMBER,
 				'placeholder' => $default_breakpoint_config['default_value'],
 				'frontend_available' => true,
-				'separator' => 'after',
 				'validators' => [
 					'Breakpoint' => [
 						'breakpointName' => $breakpoint_key,

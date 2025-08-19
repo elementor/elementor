@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 3.13.0
  */
-
 class Control_Gaps extends Control_Dimensions {
 	/**
 	 * Get gap control type.

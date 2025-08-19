@@ -9,10 +9,12 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 	ui: {
 		title: '.elementor-panel-category-title',
 		items: '.elementor-panel-category-items',
+		chip: '.elementor-panel-heading-category-chip',
 	},
 
 	events: {
 		'click @ui.title': 'onTitleClick',
+		'click @ui.chip': 'onChipClick',
 	},
 
 	id() {
@@ -61,6 +63,16 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 
 	onTitleClick() {
 		this.toggle();
+
+		elementorCommon.eventsManager.dispatchEvent(
+			elementorCommon.eventsManager.config.names[ this.model.get( 'name' ) ]?.v1,
+			{
+				location: elementorCommon.eventsManager.config.locations.widgetPanel,
+				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ this.model.get( 'name' ) ],
+				trigger: elementorCommon.eventsManager.config.triggers.accordionClick,
+				element: elementorCommon.eventsManager.config.elements.accordionSection,
+			},
+		);
 	},
 
 	toggle( state, animate = true ) {
@@ -80,6 +92,14 @@ PanelElementsCategoryView = Marionette.CompositeView.extend( {
 		} else {
 			$items[ visibilityFn ]( 0, updateScrollbar );
 		}
+	},
+
+	onChipClick( event ) {
+		event.stopPropagation();
+
+		document.dispatchEvent( new CustomEvent( 'alphachip:open', {
+			detail: { target: this.$el },
+		} ) );
 	},
 } );
 

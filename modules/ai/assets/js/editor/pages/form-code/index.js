@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Box, Button, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
@@ -16,6 +16,11 @@ import {
 	useSubscribeOnPromptHistoryAction,
 } from '../../components/prompt-history/context/prompt-history-action-context';
 import PromptLibraryLink from '../../components/prompt-library-link';
+import { useRequestIds } from '../../context/requests-ids';
+import { VoicePromotionAlert } from '../../components/voice-promotion-alert';
+import { splitText } from './splitTextResult';
+
+const generateUniqueId = () => `custom-css-${ Math.random().toString( 36 ).substr( 2, 9 ) }`;
 
 const CodeDisplayWrapper = styled( Box )( () => ( {
 	'& p': {
@@ -34,8 +39,10 @@ const CodeDisplayWrapper = styled( Box )( () => ( {
 
 const FormCode = ( { onClose, getControlValue, setControlValue, additionalOptions, credits, children } ) => {
 	const { data, isLoading, error, reset, send, sendUsageData } = useCodePrompt( { ...additionalOptions, credits } );
-
+	const { code, details } = splitText( data.result );
 	const [ prompt, setPrompt ] = useState( '' );
+	const { setGenerate } = useRequestIds();
+	const styleTagId = useRef( generateUniqueId() );
 
 	useSubscribeOnPromptHistoryAction( [
 		{
@@ -48,7 +55,6 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 	] );
 
 	const lastRun = useRef( () => {} );
-
 	let autocompleteItems = codeHtmlAutocomplete;
 	let promptLibraryLink = '';
 
@@ -65,17 +71,65 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 	const handleSubmit = async ( event ) => {
 		event.preventDefault();
+		setGenerate();
+		lastRun.current = () => send( { prompt } );
+		const response = await lastRun.current();
 
-		lastRun.current = () => send( prompt );
+		if ( 'css' === additionalOptions?.codeLanguage && response.result ) {
+			showCssPreview( splitText( response.result ).code );
+		}
+	};
 
-		lastRun.current();
+	useEffect( () => {
+		return () => {
+			removeStyleTag();
+		};
+	}, [] );
+
+	const showCssPreview = ( cssCode ) => {
+		const parsedCssCode = parseCSS( cssCode );
+		insertStyleTag( parsedCssCode );
+	};
+
+	const parseCSS = ( cssCode ) => {
+		const elementId = additionalOptions?.elementId;
+		const selector = 'document' === elementId
+			? elementor.config.document.settings.cssWrapperSelector
+			: `.elementor-element.elementor-element-${ elementId }`;
+
+		return cssCode && cssCode
+			.replace( /`/g, '' ) // Remove backticks if any
+			.replace( /^css\s*/i, '' ) // Remove "css" prefix if any, case-insensitive
+			.replace( /selector/g, selector ); // Replace `selector` with the actual selector
+	};
+
+	const isElementorEditor = () => {
+		return window.elementorFrontend;
+	};
+
+	const insertStyleTag = ( cssCode ) => {
+		if ( ! isElementorEditor() ) {
+			return;
+		}
+		const style = document.createElement( 'style' );
+		style.id = styleTagId.current;
+		style.appendChild( document.createTextNode( cssCode ) );
+		elementorFrontend.elements.$body[ 0 ].appendChild( style );
+	};
+
+	const removeStyleTag = () => {
+		if ( ! isElementorEditor() ) {
+			return;
+		}
+		const styleTag = elementorFrontend.elements.$body[ 0 ].querySelector( `#${ styleTagId.current }` );
+		if ( styleTag ) {
+			styleTag.remove();
+		}
 	};
 
 	const applyPrompt = ( inputText ) => {
 		sendUsageData();
-
 		setControlValue( inputText );
-
 		onClose();
 	};
 
@@ -101,7 +155,7 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 						/>
 					</Box>
 
-					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt } >
+					{ showSuggestions && <PromptSuggestions suggestions={ autocompleteItems } onSelect={ setPrompt }>
 						<PromptLibraryLink libraryLink={ promptLibraryLink } />
 					</PromptSuggestions> }
 
@@ -117,15 +171,21 @@ const FormCode = ( { onClose, getControlValue, setControlValue, additionalOption
 
 			{ data.result && (
 				<CodeDisplayWrapper>
-					<ReactMarkdown components={ { code: ( props ) => (
-						<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
-					) } }>
-						{ data.result }
+					<ReactMarkdown components={ {
+						code: ( props ) => (
+							<CodeBlock { ...props } defaultValue={ getControlValue() } onInsert={ applyPrompt } />
+						),
+					} }>
+						{ code }
 					</ReactMarkdown>
+					{ details }
+					<VoicePromotionAlert introductionKey="ai-context-code-promotion" />
 
 					<Stack direction="row" alignItems="center" sx={ { mt: 4 } }>
 						<Stack direction="row" gap={ 1 } justifyContent="flex-end" flexGrow={ 1 }>
-							<Button size="small" color="secondary" variant="text" onClick={ reset }>
+							<Button size="small" color="secondary" variant="text" onClick={ () => {
+								removeStyleTag(); reset();
+							} }>
 								{ __( 'New prompt', 'elementor' ) }
 							</Button>
 						</Stack>

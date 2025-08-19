@@ -50,10 +50,10 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			// The `--container-widget-width` CSS variable is used for handling widgets that get an undefined width in column mode.
 			// The `--container-widget-flex-grow` CSS variable is used to give certain widgets a default `flex-grow: 1` value for the `flex row` combination.
 			'selectors_dictionary' => [
-				'row' => '--flex-direction: row; --container-widget-width: initial; --container-widget-height: 100%; --container-widget-flex-grow: 1; --container-widget-align-self: stretch;',
-				'column' => '--flex-direction: column; --container-widget-width: 100%; --container-widget-height: initial; --container-widget-flex-grow: 0; --container-widget-align-self: initial;',
-				'row-reverse' => '--flex-direction: row-reverse; --container-widget-width: initial; --container-widget-height: 100%; --container-widget-flex-grow: 1; --container-widget-align-self: stretch;',
-				'column-reverse' => '--flex-direction: column-reverse; --container-widget-width: 100%; --container-widget-height: initial; --container-widget-flex-grow: 0; --container-widget-align-self: initial;',
+				'row' => '--flex-direction: row; --container-widget-width: initial; --container-widget-height: 100%; --container-widget-flex-grow: 1; --container-widget-align-self: stretch; --flex-wrap-mobile: wrap;',
+				'column' => '--flex-direction: column; --container-widget-width: 100%; --container-widget-height: initial; --container-widget-flex-grow: 0; --container-widget-align-self: initial; --flex-wrap-mobile: wrap;',
+				'row-reverse' => '--flex-direction: row-reverse; --container-widget-width: initial; --container-widget-height: 100%; --container-widget-flex-grow: 1; --container-widget-align-self: stretch; --flex-wrap-mobile: wrap-reverse;',
+				'column-reverse' => '--flex-direction: column-reverse; --container-widget-width: 100%; --container-widget-height: initial; --container-widget-flex-grow: 0; --container-widget-align-self: initial; --flex-wrap-mobile: wrap;',
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '{{VALUE}};',
@@ -161,7 +161,7 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 			],
 			'separator' => 'before',
 			'selectors' => [
-				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}}',
+				'{{SELECTOR}}' => '--gap: {{ROW}}{{UNIT}} {{COLUMN}}{{UNIT}};--row-gap: {{ROW}}{{UNIT}};--column-gap: {{COLUMN}}{{UNIT}};',
 			],
 			'responsive' => true,
 			'conversion_map' => [
@@ -202,16 +202,34 @@ class Group_Control_Flex_Container extends Group_Control_Base {
 
 		$fields['align_content'] = [
 			'label' => esc_html__( 'Align Content', 'elementor' ),
-			'type' => Controls_Manager::SELECT,
+			'type' => Controls_Manager::CHOOSE,
+			'label_block' => true,
 			'default' => '',
 			'options' => [
-				'' => esc_html__( 'Default', 'elementor' ),
-				'center' => esc_html__( 'Center', 'elementor' ),
-				'flex-start' => esc_html__( 'Start', 'elementor' ),
-				'flex-end' => esc_html__( 'End', 'elementor' ),
-				'space-between' => esc_html__( 'Space Between', 'elementor' ),
-				'space-around' => esc_html__( 'Space Around', 'elementor' ),
-				'space-evenly' => esc_html__( 'Space Evenly', 'elementor' ),
+				'flex-start' => [
+					'title' => esc_html__( 'Start', 'elementor' ),
+					'icon' => 'eicon-justify-start-v',
+				],
+				'center' => [
+					'title' => esc_html__( 'Middle', 'elementor' ),
+					'icon' => 'eicon-justify-center-v',
+				],
+				'flex-end' => [
+					'title' => esc_html__( 'End', 'elementor' ),
+					'icon' => 'eicon-justify-end-v',
+				],
+				'space-between' => [
+					'title' => esc_html__( 'Space Between', 'elementor' ),
+					'icon' => 'eicon-justify-space-between-v',
+				],
+				'space-around' => [
+					'title' => esc_html__( 'Space Around', 'elementor' ),
+					'icon' => 'eicon-justify-space-around-v',
+				],
+				'space-evenly' => [
+					'title' => esc_html__( 'Space Evenly', 'elementor' ),
+					'icon' => 'eicon-justify-space-evenly-v',
+				],
 			],
 			'selectors' => [
 				'{{SELECTOR}}' => '--align-content: {{VALUE}};',

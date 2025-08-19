@@ -38,10 +38,12 @@ class API {
 			static::set_transient( '_elementor_notifications_data', $notifications, '+1 hour' );
 		}
 
+		$notifications = apply_filters( 'elementor/core/admin/notifications', $notifications );
+
 		return $notifications;
 	}
 
-	private static function fetch_data() : array {
+	private static function fetch_data(): array {
 		$response = wp_remote_get( self::NOTIFICATIONS_URL );
 
 		if ( is_wp_error( $response ) ) {
@@ -102,7 +104,7 @@ class API {
 					break;
 				case 'plugin':
 					if ( ! function_exists( 'is_plugin_active' ) ) {
-						require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+						require_once ABSPATH . 'wp-admin/includes/plugin.php';
 					}
 
 					$is_plugin_active = is_plugin_active( $condition['plugin'] );

@@ -5,7 +5,8 @@
 .elementor-widget {
 	$e-icon-list-svg-icon-size: var(--e-icon-list-icon-size, 1em);
 
-	&.elementor-icon-list--layout-inline {
+	&.elementor-icon-list--layout-inline,
+	&:not(:has(.elementor-widget-container)) {
 
 		.elementor-widget-container {
 			overflow: hidden;
@@ -13,26 +14,26 @@
 	}
 
 	.elementor-icon-list-items.elementor-inline-items {
+		display: flex;
+		flex-wrap: wrap;	
+		margin-inline: -8px;
 
-		margin-right: -8px;
-		margin-left: -8px;
+		.elementor-inline-item {
+			word-break: break-word;
+		}
 
 		.elementor-icon-list-item {
-			margin-right: 8px;
-			margin-left: 8px;
+			margin-inline: 8px;
 
 			&:after {
 				width: auto;
-				left: auto;
-				right: auto;
 				position: relative;
+				inset-inline-start: auto;
+				inset-inline-end: -8px;
 				height: 100%;
-				border-top: 0;
-				border-bottom: 0;
-				border-right: 0;
-				border-left-width: 1px;
+				border-width: 0;
+				border-inline-start-width: 1px;
 				border-style: solid;
-				@include end(-8px);
 			}
 		}
 	}
@@ -50,7 +51,7 @@
 
 		&:after {
 			position: absolute;
-			bottom: 0;
+			inset-block-end: 0;
 			width: 100%;
 		}
 
@@ -63,13 +64,13 @@
 
 	.elementor-icon-list-icon + .elementor-icon-list-text {
 		align-self: center;
-		@include padding-start(5px);
+		padding-inline-start: 5px;
 	}
 
 	.elementor-icon-list-icon {
 		display: flex;
 		position: relative;
-		top: var(--icon-vertical-offset, initial);
+		inset-block-start: var(--icon-vertical-offset, initial);
 
 		svg {
 			width: $e-icon-list-svg-icon-size;
@@ -158,7 +159,7 @@
 			.elementor-icon-list-item {
 
 				&:after {
-					@include start(0);
+					inset-inline-start: 0;
 				}
 			}
 		}
@@ -168,7 +169,7 @@
 			.elementor-icon-list-item {
 
 				&:after {
-					@include end(0);
+					inset-inline-end: 0;
 				}
 			}
 		}
@@ -199,4 +200,11 @@
 	@media (max-width: $screen-mobile-max) {
 		@include align-list('-mobile');
 	}
+}
+
+// Historical compatibility styles with higher specificity
+#left-area ul.elementor-icon-list-items,
+.elementor .elementor-element ul.elementor-icon-list-items,
+.elementor-edit-area .elementor-element ul.elementor-icon-list-items {
+	padding: 0;
 }

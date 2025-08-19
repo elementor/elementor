@@ -27,7 +27,7 @@ $notice = Plugin::$instance->editor->notice_bar->get_notice();
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title><?php echo sprintf( esc_html__( 'Edit "%s" with Elementor', 'elementor' ), esc_html( get_the_title() ) ); ?></title>
+	<title><?php printf( esc_html__( 'Edit "%s" with Elementor', 'elementor' ), esc_html( get_the_title() ) ); ?></title>
 	<?php wp_head(); ?>
 	<script>
 		var ajaxurl = '<?php Utils::print_unescaped_internal_string( admin_url( 'admin-ajax.php', 'relative' ) ); ?>';

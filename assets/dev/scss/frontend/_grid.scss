@@ -111,17 +111,6 @@
 	}
 }
 
-// Row
-// BC: Deprecated since 3.0.0 - use `.elementor-container`.
-.elementor-row {
-	width: 100%;
-	display: flex;
-
-	@media (max-width: $screen-tablet-max) {
-		flex-wrap: wrap;
-	}
-}
-
 // Widget
 .elementor-widget-wrap {
 	position: relative;
@@ -147,7 +136,7 @@
 	position: relative;
 
 	&:not(:last-child) {
-		margin-bottom: 20px;
+		margin-bottom: var(--kit-widget-spacing, 20px);
 
 		&.elementor-widget__width-auto,
 		&.elementor-widget__width-initial,
@@ -161,13 +150,6 @@
 .elementor-column {
 	position: relative;
 	min-height: 1px;
-	display: flex;
-}
-
-// BC: Deprecated since 3.0.0 - use `.elementor-widget-wrap`.
-.elementor-column-wrap {
-	width: 100%;
-	position: relative;
 	display: flex;
 }
 
@@ -310,17 +292,6 @@
 
 	.elementor-column {
 		width: 100%; //Default width for mobile
-	}
-}
-
-// Minimal simple Grid
-
-ul.elementor-icon-list-items.elementor-inline-items {
-	display: flex;
-	flex-wrap: wrap;
-
-	.elementor-inline-item {
-		word-break: break-word;
 	}
 }
 

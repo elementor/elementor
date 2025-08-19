@@ -9,7 +9,7 @@ use Elementor\Utils;
 
 class Templates extends Export_Runner_Base {
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'templates';
 	}
 

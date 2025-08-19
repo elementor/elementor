@@ -73,6 +73,28 @@ class Widget_Image_Box extends Widget_Base {
 		return [ 'image', 'photo', 'visual', 'box' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-image-box' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register image box widget controls.
 	 *
@@ -362,6 +384,66 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_responsive_control(
+			'image_height',
+			[
+				'label' => esc_html__( 'Height', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 'px', '%', 'em', 'rem', 'vh', 'custom' ],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'height: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_object_fit',
+			[
+				'label' => esc_html__( 'Object Fit', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'fill' => esc_html__( 'Fill', 'elementor' ),
+					'cover' => esc_html__( 'Cover', 'elementor' ),
+					'contain' => esc_html__( 'Contain', 'elementor' ),
+					'scale-down' => esc_html__( 'Scale Down', 'elementor' ),
+				],
+				'condition' => [
+					'image_height[size]!' => '',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'object-fit: {{VALUE}};',
+				],
+			]
+		);
+
+		$this->add_responsive_control(
+			'image_object_position',
+			[
+				'label' => esc_html__( 'Object Position', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'center center' => esc_html__( 'Center Center', 'elementor' ),
+					'center left' => esc_html__( 'Center Left', 'elementor' ),
+					'center right' => esc_html__( 'Center Right', 'elementor' ),
+					'top center' => esc_html__( 'Top Center', 'elementor' ),
+					'top left' => esc_html__( 'Top Left', 'elementor' ),
+					'top right' => esc_html__( 'Top Right', 'elementor' ),
+					'bottom center' => esc_html__( 'Bottom Center', 'elementor' ),
+					'bottom left' => esc_html__( 'Bottom Left', 'elementor' ),
+					'bottom right' => esc_html__( 'Bottom Right', 'elementor' ),
+				],
+				'default' => 'center center',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-img img' => 'object-position: {{VALUE}};',
+				],
+				'condition' => [
+					'image_height[size]!' => '',
+					'image_object_fit' => [ 'cover', 'contain', 'scale-down' ],
+				],
+			]
+		);
+
 		$this->add_group_control(
 			Group_Control_Border::get_type(),
 			[
@@ -377,10 +459,25 @@ class Widget_Image_Box extends Widget_Base {
 				'label' => esc_html__( 'Border Radius', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
-				'separator' => 'after',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-image-box-img img' => 'border-radius: {{SIZE}}{{UNIT}};',
 				],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'image_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-image-box-img img',
+			]
+		);
+
+		$this->add_control(
+			'separator_panel_style',
+			[
+				'type' => Controls_Manager::DIVIDER,
+				'style' => 'thick',
 			]
 		);
 
@@ -506,21 +603,6 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
-		$this->add_control(
-			'title_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-title' => 'color: {{VALUE}};',
-				],
-				'global' => [
-					'default' => Global_Colors::COLOR_PRIMARY,
-				],
-			]
-		);
-
 		$this->add_group_control(
 			Group_Control_Typography::get_type(),
 			[
@@ -548,27 +630,80 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->start_controls_tabs( 'image_box_title_colors' );
+
+		$this->start_controls_tab(
+			'image_box_title_colors_normal',
+			[
+				'label' => esc_html__( 'Normal', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'title_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-title' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab(
+			'image_box_title_colors_hover',
+			[
+				'label' => esc_html__( 'Hover', 'elementor' ),
+			]
+		);
+
+		$this->add_control(
+			'hover_title_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}}:has(:hover) .elementor-image-box-title,
+					 {{WRAPPER}}:has(:focus) .elementor-image-box-title' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_PRIMARY,
+				],
+			]
+		);
+
+		$this->add_control(
+			'hover_title_color_transition_duration',
+			[
+				'label' => esc_html__( 'Transition Duration', 'elementor' ),
+				'type' => Controls_Manager::SLIDER,
+				'size_units' => [ 's', 'ms', 'custom' ],
+				'default' => [
+					'unit' => 's',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-title' => 'transition-duration: {{SIZE}}{{UNIT}};',
+				],
+			]
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
+
 		$this->add_control(
 			'heading_description',
 			[
 				'label' => esc_html__( 'Description', 'elementor' ),
 				'type' => Controls_Manager::HEADING,
 				'separator' => 'before',
-			]
-		);
-
-		$this->add_control(
-			'description_color',
-			[
-				'label' => esc_html__( 'Color', 'elementor' ),
-				'type' => Controls_Manager::COLOR,
-				'default' => '',
-				'selectors' => [
-					'{{WRAPPER}} .elementor-image-box-description' => 'color: {{VALUE}};',
-				],
-				'global' => [
-					'default' => Global_Colors::COLOR_TEXT,
-				],
 			]
 		);
 
@@ -591,6 +726,21 @@ class Widget_Image_Box extends Widget_Base {
 			]
 		);
 
+		$this->add_control(
+			'description_color',
+			[
+				'label' => esc_html__( 'Color', 'elementor' ),
+				'type' => Controls_Manager::COLOR,
+				'default' => '',
+				'selectors' => [
+					'{{WRAPPER}} .elementor-image-box-description' => 'color: {{VALUE}};',
+				],
+				'global' => [
+					'default' => Global_Colors::COLOR_TEXT,
+				],
+			]
+		);
+
 		$this->end_controls_section();
 	}
 
@@ -605,7 +755,12 @@ class Widget_Image_Box extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$has_image = ! empty( $settings['image']['url'] );
 		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
+
+		if ( ! $has_image && ! $has_content ) {
+			return;
+		}
 
 		$html = '<div class="elementor-image-box-wrapper">';
 
@@ -613,7 +768,7 @@ class Widget_Image_Box extends Widget_Base {
 			$this->add_link_attributes( 'link', $settings['link'] );
 		}
 
-		if ( ! empty( $settings['image']['url'] ) ) {
+		if ( $has_image ) {
 
 			$image_html = wp_kses_post( Group_Control_Image_Size::get_attachment_image_html( $settings, 'thumbnail', 'image' ) );
 
@@ -668,9 +823,16 @@ class Widget_Image_Box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
+		var hasImage = !! settings.image.url;
+		var hasContent = !! ( settings.title_text || settings.description_text );
+
+		if ( ! hasImage && ! hasContent ) {
+			return;
+		}
+
 		var html = '<div class="elementor-image-box-wrapper">';
 
-		if ( settings.image.url ) {
+		if ( hasImage ) {
 			var image = {
 				id: settings.image.id,
 				url: settings.image.url,
@@ -681,26 +843,24 @@ class Widget_Image_Box extends Widget_Base {
 
 			var image_url = elementor.imagesManager.getImageUrl( image );
 
-			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + settings.hover_animation + '" />';
+			var imageHtml = '<img src="' + _.escape( image_url ) + '" class="elementor-animation-' + _.escape( settings.hover_animation ) + '" />';
 
 			if ( settings.link.url ) {
-				imageHtml = '<a href="' + _.escape( settings.link.url ) + '" tabindex="-1">' + imageHtml + '</a>';
+				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '" tabindex="-1">' + imageHtml + '</a>';
 			}
 
 			html += '<figure class="elementor-image-box-img">' + imageHtml + '</figure>';
 		}
 
-		var hasContent = !! ( settings.title_text || settings.description_text );
-
 		if ( hasContent ) {
 			html += '<div class="elementor-image-box-content">';
 
 			if ( settings.title_text ) {
-				var title_html = settings.title_text,
+				var title_html = elementor.helpers.sanitize( settings.title_text ),
 					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link.url ) {
-					title_html = '<a href="' + _.escape( settings.link.url ) + '">' + title_html + '</a>';
+					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + title_html + '</a>';
 				}
 
 				view.addRenderAttribute( 'title_text', 'class', 'elementor-image-box-title' );

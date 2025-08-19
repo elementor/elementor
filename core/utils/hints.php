@@ -1,26 +1,32 @@
 <?php
-namespace elementor\core\utils;
+namespace Elementor\Core\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 use Elementor\User;
+use Elementor\Utils;
+use Elementor\Core\Admin\Admin_Notices;
 
 class Hints {
+
 	const INFO = 'info';
 	const SUCCESS = 'success';
 	const WARNING = 'warning';
 	const DANGER = 'danger';
 
 	const DEFINED = 'defined';
+	const NOT_DEFINED = 'not_defined';
 	const DISMISSED = 'dismissed';
 	const CAPABILITY = 'capability';
 	const PLUGIN_INSTALLED = 'plugin_installed';
 	const PLUGIN_ACTIVE = 'plugin_active';
+	const NOT_HAS_OPTION = 'not_has_option';
 
 	/**
-	 * get_notice_types
+	 * Get_notice_types
+	 *
 	 * @return string[]
 	 */
 	public static function get_notice_types(): array {
@@ -33,7 +39,7 @@ class Hints {
 	}
 
 	/**
-	 * get_hints
+	 * Get_hints
 	 *
 	 * @param $hint_key
 	 *
@@ -44,12 +50,33 @@ class Hints {
 			'image-optimization-once' => [
 				self::DISMISSED => 'image-optimization-once',
 				self::CAPABILITY => 'install_plugins',
-				self::DEFINED => 'IMAGE_OPTIMIZER_VERSION',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+			],
+			'image-optimization-once-media-modal' => [
+				self::DISMISSED => 'image-optimization-once-media-modal',
+				self::CAPABILITY => 'install_plugins',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
 			],
 			'image-optimization' => [
 				self::DISMISSED => 'image_optimizer_hint',
 				self::CAPABILITY => 'install_plugins',
-				self::DEFINED => 'IMAGE_OPTIMIZER_VERSION',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+			],
+			'image-optimization-connect' => [
+				self::DISMISSED => 'image_optimizer_hint',
+				self::CAPABILITY => 'manage_options',
+				self::NOT_DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+				self::NOT_HAS_OPTION => 'image_optimizer_access_token',
+			],
+			'image-optimization-media-modal' => [
+				self::DISMISSED => 'image-optimization-media-modal',
+				self::CAPABILITY => 'install_plugins',
+				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
+			],
+			'ally_heading_notice' => [
+				self::DISMISSED => 'ally_heading_notice',
+				self::CAPABILITY => 'install_plugins',
+				self::NOT_HAS_OPTION => 'ea11y_access_token',
 			],
 		];
 		if ( ! $hint_key ) {
@@ -60,7 +87,8 @@ class Hints {
 	}
 
 	/**
-	 * get_notice_icon
+	 * Get_notice_icon
+	 *
 	 * @return string
 	 */
 	public static function get_notice_icon(): string {
@@ -72,9 +100,10 @@ class Hints {
 	}
 
 	/**
-	 * get_notice_template
+	 * Get_notice_template
 	 *
 	 * Print or Retrieve the notice template.
+	 *
 	 * @param array $notice
 	 * @param bool $return
 	 *
@@ -121,7 +150,7 @@ class Hints {
 		}
 
 		if ( ! empty( $notice_settings['button_text'] ) ) {
-			$button_settings = ( ! empty( $notice_settings['button_data'] ) ) ? ' data-settings="' . esc_attr( json_encode( $notice_settings['button_data'] ) ) . '"' : '';
+			$button_settings = ( ! empty( $notice_settings['button_data'] ) ) ? ' data-settings="' . esc_attr( wp_json_encode( $notice_settings['button_data'] ) ) . '"' : '';
 			$button = '<div class="elementor-control-notice-main-actions">
 				<button type="button" class="e-btn e-' . $notice_settings['type'] . ' e-btn-1" data-event="' . $notice_settings['button_event'] . '"' . $button_settings . '>
 					' . $notice_settings['button_text'] . '
@@ -130,9 +159,8 @@ class Hints {
 		}
 
 		if ( $notice_settings['dismissible'] ) {
-			$dismissible = '<button class="elementor-control-notice-dismiss" data-event="' . $notice_settings['dismissible'] . '">
+			$dismissible = '<button class="elementor-control-notice-dismiss tooltip-target" data-event="' . $notice_settings['dismissible'] . '" data-tooltip="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '" aria-label="' . esc_attr__( 'Don’t show again.', 'elementor' ) . '">
 				<i class="eicon eicon-close" aria-hidden="true"></i>
-				<span class="elementor-screen-only">' . __( 'Dismiss this notice.', 'elementor' ) . '</span>
 			</button>';
 		}
 
@@ -161,7 +189,8 @@ class Hints {
 	}
 
 	/**
-	 * get_plugin_install_url
+	 * Get_plugin_install_url
+	 *
 	 * @param $plugin_slug
 	 *
 	 * @return string
@@ -181,17 +210,23 @@ class Hints {
 	}
 
 	/**
-	 * get_plugin_activate_url
+	 * Get_plugin_activate_url
+	 *
 	 * @param $plugin_slug
 	 *
 	 * @return string
 	 */
 	public static function get_plugin_activate_url( $plugin_slug ): string {
-		return admin_url( 'plugins.php' );
+		$path = "$plugin_slug/$plugin_slug.php";
+		return wp_nonce_url(
+			admin_url( 'plugins.php?action=activate&plugin=' . $path ),
+			'activate-plugin_' . $path
+		);
 	}
 
 	/**
-	 * is_dismissed
+	 * Is_dismissed
+	 *
 	 * @param $key
 	 *
 	 * @return bool
@@ -202,7 +237,8 @@ class Hints {
 	}
 
 	/**
-	 * should_display_hint
+	 * Should_display_hint
+	 *
 	 * @param $hint_key
 	 *
 	 * @return bool
@@ -219,46 +255,98 @@ class Hints {
 					if ( self::is_dismissed( $value ) ) {
 						return false;
 					}
+
 					break;
+
 				case self::CAPABILITY:
 					if ( ! current_user_can( $value ) ) {
 						return false;
 					}
+
 					break;
+
 				case self::DEFINED:
 					if ( defined( $value ) ) {
 						return false;
 					}
+
 					break;
+
+				case self::NOT_DEFINED:
+					if ( ! defined( $value ) ) {
+						return false;
+					}
+
+					break;
+
 				case self::PLUGIN_INSTALLED:
 					if ( ! self::is_plugin_installed( $value ) ) {
 						return false;
 					}
+
 					break;
+
 				case self::PLUGIN_ACTIVE:
 					if ( ! self::is_plugin_active( $value ) ) {
 						return false;
 					}
+
+					break;
+
+				case self::NOT_HAS_OPTION:
+					$option = get_option( $value );
+					if ( ! empty( $option ) ) {
+						return false;
+					}
+
 					break;
 			}
 		}
 		return true;
 	}
 
+	private static function is_conflict_plugin_installed(): bool {
+		if ( ! Utils::has_pro() ) {
+			return false;
+		}
+
+		$conflicting_plugins = [
+			'imagify/imagify.php',
+			'optimole-wp/optimole-wp.php',
+			'ewww-image-optimizer/ewww-image-optimizer.php',
+			'ewww-image-optimizer-cloud/ewww-image-optimizer-cloud.php',
+			'kraken-image-optimizer/kraken.php',
+			'shortpixel-image-optimiser/wp-shortpixel.php',
+			'wp-smushit/wp-smush.php',
+			'wp-smush-pro/wp-smush.php',
+			'tiny-compress-images/tiny-compress-images.php',
+		];
+
+		foreach ( $conflicting_plugins as $plugin ) {
+			if ( self::is_plugin_active( $plugin ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
-	 * is_plugin_installed
+	 * Is_plugin_installed
+	 *
 	 * @param $plugin
 	 *
 	 * @return bool
 	 */
-	public static function is_plugin_installed( $plugin ) : bool {
+	public static function is_plugin_installed( $plugin ): bool {
 		$plugins = get_plugins();
 		$plugin = self::ensure_plugin_folder( $plugin );
 		return ! empty( $plugins[ $plugin ] );
 	}
 
 	/**
-	 * is_plugin_active
+	 * Is_plugin_active
+	 *
 	 * @param $plugin
 	 *
 	 * @return bool
@@ -269,7 +357,8 @@ class Hints {
 	}
 
 	/**
-	 * get_plugin_action_url
+	 * Get_plugin_action_url
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
@@ -287,7 +376,8 @@ class Hints {
 	}
 
 	/**
-	 * ensure_plugin_folder
+	 * Ensure_plugin_folder
+	 *
 	 * @param $plugin
 	 *
 	 * @return string
@@ -300,7 +390,8 @@ class Hints {
 	}
 
 	/**
-	 * get_notice_allowed_html
+	 * Get_notice_allowed_html
+	 *
 	 * @return array[]
 	 */
 	public static function get_notice_allowed_html(): array {
@@ -327,6 +418,7 @@ class Hints {
 				'class' => [],
 				'data-event' => [],
 				'data-settings' => [],
+				'data-tooltip' => [],
 			],
 			'i' => [
 				'class' => [],
@@ -338,7 +430,64 @@ class Hints {
 			'a' => [
 				'href' => [],
 				'style' => [],
+				'target' => [],
 			],
 		];
+	}
+
+	public static function is_plugin_connected( $option_prefix ): bool {
+		return ! empty( get_option( $option_prefix . '_access_token' ) );
+	}
+
+	public static function get_ally_action_data(): array {
+		$plugin_slug = 'pojo-accessibility';
+		$is_installed = self::is_plugin_installed( $plugin_slug );
+		$is_active = self::is_plugin_active( $plugin_slug );
+		$is_connected = self::is_plugin_connected( 'ea11y' );
+
+		$data = [
+			'title' => __( 'Ally web accessibility', 'elementor' ),
+		];
+
+		$campaign_data = [
+			'name' => 'elementor_ea11y_campaign',
+			'campaign' => 'acc-usability-widget-plg-ally',
+			'source' => 'editor-ally-widget',
+			'medium' => 'editor',
+		];
+
+		if ( ! $is_installed ) {
+			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
+			$data['content'] = esc_html__( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' );
+			$data['action_button'] = [
+				'text' => esc_html__( 'install Now', 'elementor' ),
+				'url' => $url,
+				'classes' => [ 'elementor-button' ],
+			];
+		} else if ( ! $is_active ) {
+			$url = Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( $plugin_slug ), $campaign_data );
+			$data['content'] = esc_html__( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' );
+			$data['action_button'] = [
+				'text' => esc_html__( 'Activate', 'elementor' ),
+				'url' => $url,
+				'classes' => [ 'elementor-button' ],
+			];
+		} else if ( ! $is_connected ) {
+			$data['content'] = esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' );
+			$data['action_button'] = [
+				'text' => esc_html__( 'Connect', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=accessibility-settings' ),
+				'classes' => [ 'elementor-button' ],
+			];
+		} else {
+			$data['content'] = esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' );
+			$data['action_button'] = [
+				'text' => esc_html__( 'Customize', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=accessibility-settings#design' ),
+				'classes' => [ 'elementor-button' ],
+			];
+		}
+
+		return $data;
 	}
 }

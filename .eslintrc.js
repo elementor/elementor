@@ -3,15 +3,14 @@ module.exports = {
 		'plugin:react/recommended',
 		'plugin:no-jquery/deprecated',
 		'plugin:@wordpress/eslint-plugin/recommended-with-formatting',
-		'plugin:@elementor/editor/recommended',
 		'plugin:import/typescript',
 	],
 	plugins: [
 		'babel',
 		'react',
-		'@elementor/editor',
 		'no-jquery',
 		'@typescript-eslint',
+		'local-rules',
 	],
 	parser: '@typescript-eslint/parser',
 	globals: {
@@ -43,6 +42,30 @@ module.exports = {
 			},
 		},
 	},
+	overrides: [
+		{
+			files: [ '*.ts', '*.tsx' ],
+			extends: [
+				'plugin:@typescript-eslint/recommended',
+			],
+			rules: {
+				'@typescript-eslint/await-thenable': 'error',
+				'@typescript-eslint/no-var-requires': 'error',
+				'@typescript-eslint/ban-ts-comment': 'error',
+				// Local rules
+				'local-rules:no-react-namespace': 'error',
+			},
+			parserOptions: {
+				project: [ './tsconfig.json' ],
+			},
+		},
+		{
+			files: [ 'tests/**/*.ts', 'tests/**/*.tsx' ],
+			rules: {
+				'local-rules:no-react-namespace': 'off',
+			},
+		},
+	],
 	rules: {
 		// Custom canceled rules
 		'no-var': 'off',
@@ -50,7 +73,7 @@ module.exports = {
 		'computed-property-spacing': [ 'error', 'always' ],
 		'comma-dangle': [ 'error', 'always-multiline' ],
 		'no-undef': 'off',
-		'no-unused-vars': [ 'warn', { ignoreRestSiblings: true } ],
+		'no-unused-vars': [ 'error', { ignoreRestSiblings: true } ],
 		'dot-notation': 'error',
 		'no-shadow': 'error',
 		'no-lonely-if': 'error',
@@ -62,14 +85,14 @@ module.exports = {
 		'one-var-declaration-per-line': 'error',
 		'array-bracket-spacing': [ 'error', 'always' ],
 		'no-else-return': 'error',
-		'no-console': 'warn',
+		'no-console': 'error',
 		// End of custom canceled rules
 		'arrow-parens': [ 'error', 'always' ],
 		'brace-style': [ 'error', '1tbs' ],
 		'jsx-quotes': 'error',
 		'no-bitwise': [ 'error', { allow: [ '^' ] } ],
 		'no-caller': 'error',
-		'no-debugger': 'warn',
+		'no-debugger': 'error',
 		'no-eval': 'error',
 		'no-restricted-syntax': [
 			'error',
@@ -86,16 +109,17 @@ module.exports = {
 				message: 'Translate function arguments must be string literals.',
 			},
 		],
-		'prefer-const': 'warn',
+		'prefer-const': 'error',
 		yoda: [ 'error', 'always', {
 			onlyEquality: true,
 		} ],
 		'react/react-in-jsx-scope': 'off',
 		'react/prop-types': 'error',
-		'react/no-deprecated': 'warn', // Temporary until we remove the deprecated components
+		'react/no-deprecated': 'error',
 		'babel/semi': 1,
 		'jsdoc/check-tag-names': [ 'error', { definedTags: [ 'jest-environment' ] } ],
 		'jsdoc/require-returns-description': 'off', // We prefer self-explanatory method names
+		'import/default': 'error',
 		'import/no-unresolved': [ 2, { ignore: [ 'elementor', 'modules', '@wordpress/i18n', 'e-utils', 'e-styles', 'react' ] } ],
 		'import/no-extraneous-dependencies': 'off',
 		'@wordpress/i18n-ellipsis': 'off', // We don't use the ellipsis char because everything is already translated with regular '...'

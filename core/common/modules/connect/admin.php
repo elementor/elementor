@@ -29,6 +29,12 @@ class Admin {
 	 * @access public
 	 */
 	public function on_load_page() {
+		if ( ! $this->user_has_enough_permissions() ) {
+			wp_die( 'You do not have sufficient permissions to access this page.', 'You do not have sufficient permissions to access this page.', [
+				'back_link' => true,
+			] );
+		}
+
 		if ( isset( $_GET['action'], $_GET['app'] ) ) {
 			$manager = Plugin::$instance->common->get_component( 'connect' );
 
@@ -57,6 +63,18 @@ class Admin {
 				call_user_func( [ $app, $method ] );
 			}
 		}
+	}
+
+	private function user_has_enough_permissions() {
+		if ( current_user_can( 'manage_options' ) ) {
+			return true;
+		}
+
+		if ( 'library' === Utils::get_super_global_value( $_GET, 'app' ) ) {
+			return current_user_can( 'edit_posts' );
+		}
+
+		return false;
 	}
 
 	/**

@@ -48,6 +48,8 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 				} );
 			}
 
+			this.deselectRecursive( container.model.get( 'id' ) );
+
 			container.model.destroy();
 			container.panel.refresh();
 		} );
@@ -57,6 +59,18 @@ export class Delete extends $e.modules.editor.document.CommandHistoryBase {
 		}
 
 		return containers;
+	}
+
+	deselectRecursive( id ) {
+		const container = elementor.getContainer( id );
+
+		if ( elementor.selection.has( container ) ) {
+			$e.run( 'document/elements/deselect', { container } );
+		}
+
+		container?.model.get( 'elements' ).forEach( ( childModel ) => {
+			this.deselectRecursive( childModel.get( 'id' ) );
+		} );
 	}
 }
 

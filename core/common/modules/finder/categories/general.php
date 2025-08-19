@@ -7,7 +7,7 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -75,10 +75,10 @@ class General extends Base_Category {
 				'keywords' => [ 'template', 'header', 'footer', 'single', 'archive', 'search', '404', 'library' ],
 			],
 			'kit-library' => [
-				'title' => esc_html__( 'Kit Library', 'elementor' ),
+				'title' => esc_html__( 'Website Templates', 'elementor' ),
 				'icon' => 'kit-parts',
 				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library',
-				'keywords' => [ 'kit library', 'kit', 'library', 'site parts', 'parts', 'assets', 'templates' ],
+				'keywords' => [ 'Website Templates', 'kit library', 'kit', 'library', 'site parts', 'parts', 'assets', 'templates' ],
 			],
 		];
 	}

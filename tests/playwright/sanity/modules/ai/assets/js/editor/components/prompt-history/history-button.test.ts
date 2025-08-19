@@ -1,5 +1,5 @@
-import { test, Page } from '@playwright/test';
-
+import { Page } from '@playwright/test';
+import { parallelTest as test } from '../../../../../../../../parallelTest';
 import { closeAIDialog, findPromptHistoryButton } from './helper';
 import { userInformationMock } from '../../../../../user-information.mock';
 import WpAdminPage from '../../../../../../../../pages/wp-admin-page';
@@ -17,15 +17,15 @@ test.describe( 'AI @ai', () => {
 		} );
 	};
 
-	test( 'Prompt History Button', async ( { page }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo );
+	test( 'Prompt History Button', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		const editor = await wpAdmin.openNewPage();
 
 		await mockRoute( page );
 
 		await test.step( 'Textarea control', async () => {
-			await editor.addWidget( 'heading' );
+			await editor.addWidget( { widgetType: 'heading' } );
 
 			await findPromptHistoryButton( page );
 
@@ -33,7 +33,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Wysiwyg control', async () => {
-			await editor.addWidget( 'text-editor' );
+			await editor.addWidget( { widgetType: 'text-editor' } );
 
 			await findPromptHistoryButton( page );
 
@@ -41,7 +41,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'HTML control', async () => {
-			await editor.addWidget( 'html' );
+			await editor.addWidget( { widgetType: 'html' } );
 
 			await findPromptHistoryButton( page );
 
@@ -49,7 +49,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Image control', async () => {
-			await editor.addWidget( 'image' );
+			await editor.addWidget( { widgetType: 'image' } );
 
 			await findPromptHistoryButton( page );
 
@@ -57,7 +57,7 @@ test.describe( 'AI @ai', () => {
 		} );
 
 		await test.step( 'Image box', async () => {
-			await editor.addWidget( 'image-box' );
+			await editor.addWidget( { widgetType: 'image-box' } );
 
 			await findPromptHistoryButton( page );
 

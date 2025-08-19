@@ -4,7 +4,7 @@ namespace Elementor\Core\App\Modules\Onboarding;
 use Elementor\Core\Base\Module as BaseModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**

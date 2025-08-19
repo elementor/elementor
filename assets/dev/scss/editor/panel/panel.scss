@@ -16,21 +16,31 @@
 
 .elementor-panel {
 
-	@import "reset";
+	// We limit the reset only to the v3 panel to avoid unexpected overrides.
+	:where(
+		#elementor-panel-state-loading,
+		#elementor-panel-header-wrapper,
+		#elementor-panel-content-wrapper,
+		#elementor-panel-footer
+	) {
+		@import "reset";
+	}
 
 	// Global
 	@import "global";
 
-	position: relative;
-	height: 100%;
-	margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
-	width: var(--e-editor-panel-width);
-	overflow: visible;
-	background-color: var(--e-a-bg-default);
-	z-index: $first-layer;
-	font-family: var(--e-a-font-family);
-	font-size: 13px;
-	@include start(0);
+	& {
+		position: relative;
+		height: 100%;
+		inset-inline-start: 0;
+		margin-inline-start: calc(-1 * var(--e-editor-panel-width) * var(--e-is-preview-mode));
+		width: var(--e-editor-panel-width);
+		overflow: visible;
+		background-color: var(--e-a-bg-default);
+		z-index: $first-layer;
+		font-family: var(--e-a-font-family);
+		font-size: 13px;
+	}
 
 	.elementor-editor-preview & {
 		--e-is-preview-mode: 1;
@@ -38,6 +48,11 @@
 		> .ui-resizable-e,
 		> .ui-resizable-w {
 			display: none;
+		}
+
+		#elementor-panel-elements-wrapper {
+			display: flex;
+			flex-direction: column;
 		}
 	}
 
@@ -60,23 +75,23 @@
 		}
 	}
 
-    // Header
-    @import "header";
+  // Header
+  @import "header";
 
-    // Categories
-    @import "categories";
+  // Categories
+  @import "categories";
 
-	// Menu
-	@import "menu";
+  // Menu
+  @import "menu";
 
-	// Document Settings
-	@import "document-settings";
+  // Document Settings
+  @import "document-settings";
 
-	// Element Edit
-    @import "element-settings";
+  // Element Edit
+  @import "element-settings";
 
-    //Footer
-    @import "footer";
+  //Footer
+  @import "footer";
 }
 
 // Panel Elements
@@ -87,7 +102,7 @@
 	height: 100%;
 	display: flex;
 	flex-direction: column;
-	@include direction-box-shadow(0, 0 5px 0 rgba(0, 0, 0, 0.1));
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
 }
 
 // Main Panel
@@ -114,11 +129,44 @@
 	}
 }
 
+#elementor-panel-get-pro-elements-sticky {
+	position: sticky;
+	inset-block-end: 0;
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 1.6;
+	margin-block-end: -10px;
+
+	.elementor-get-pro-sticky-message {
+		margin-block-start: -14px;
+		min-height: 40px;
+		display: block;
+		padding: 9px min(35px, 5%);
+		gap: 10px;
+		background-color: var(--e-a-color-white);
+		color: var(--e-a-color-black);
+		text-align: center;
+		box-shadow: 0px -10px 14px -6px rgba(0, 0, 0, 0.05);
+
+		a {
+			display: inline-block;
+			font-size: 13px;
+			font-weight: 500;
+			color: var(--e-a-btn-bg-accent);
+		}
+	}
+
+	img {
+		margin-inline-start: 17px;
+	}
+}
+
 #elementor-panel-notice-wrapper .elementor-panel-notice {
 	width: 90%;
 	margin: 0 auto;
 	font-style: unset;
 	margin-block-end: 15px;
+
 	a {
 		font-weight: bold;
 		font-style: italic;
@@ -141,8 +189,8 @@ body.e-has-notification {
 			border-radius: 50%;
 			width: 8px;
 			height: 8px;
-			top: 5px;
-			right: 5px;
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 		}
 	}
 }

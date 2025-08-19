@@ -47,7 +47,7 @@ class Test_Export extends Elementor_Test_Base {
 		unregister_taxonomy_for_object_type( 'tests_tax', 'tests' );
 		unregister_post_type( 'tests' );
 
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__fails_when_no_runners_are_registered() {
@@ -88,10 +88,37 @@ class Test_Export extends Elementor_Test_Base {
 			'color' => '#FAB89F',
 		];
 		$site_settings['custom_colors'] = $custom_colors;
+
+		$mocked_theme = [
+			'name'      => 'My Custom Theme',
+			'theme_uri' => 'https://example.com/my-custom-theme',
+			'version'   => '1.2.3',
+			'slug'      => 'my-custom-theme',
+		];
+		$experiments = [];
+
+		foreach ( Plugin::$instance->experiments->get_features() as $feature_name => $feature ) {
+			$experiments[ $feature_name ] = [
+				'name' => $feature_name,
+				'title' => $feature['title'],
+				'state' => $feature['state'],
+				'default' => $feature['default'],
+				'release_status' => $feature['release_status'],
+			];
+		}
+
 		Plugin::$instance->kits_manager->create_new_kit( 'a', $site_settings );
 
+		// used mock as default theme doesn't have URI
+		$site_settings_runner = $this->getMockBuilder( Site_Settings::class )
+			->onlyMethods( ['export_theme'] )
+			->getMock();
+
+		$site_settings_runner->method('export_theme')
+			->willReturn( $mocked_theme );
+
 		$export = new Export();
-		$export->register( new Site_Settings() );
+		$export->register( $site_settings_runner );
 
 		// Act
 		$result = $export->run();
@@ -105,13 +132,15 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEqualSets( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
 
 		$kit_data = $kit->get_export_data();
+		$kit_data['theme'] = $mocked_theme;
 		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
 		$site_settings_file = ImportExportUtils::read_json_file( $extracted_zip_path . 'site-settings' );
+		$kit_data['experiments'] = $experiments;
 
 		$this->assertEquals( $kit_data, $site_settings_file );
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__export_taxonomies() {
@@ -167,7 +196,7 @@ class Test_Export extends Elementor_Test_Base {
 		unregister_post_type( 'tests' );
 		unregister_taxonomy( 'tests_tax' );
 
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__export_templates() {
@@ -186,7 +215,7 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertFalse( is_dir( $extracted_zip_path . 'templates' ) );
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	public function test_run__export_elementor_content() {
@@ -198,7 +227,7 @@ class Test_Export extends Elementor_Test_Base {
 
 		$documents = ( new Collection( [
 			$elementor_page,
-			$this->factory()->documents->publish_and_get( [ 'post_type' => 'e-landing-page', ] ),
+			$this->factory()->documents->publish_and_get( [ 'post_type' => 'post', ] ),
 			$this->factory()->documents->publish_and_get(),
 		] ) )
 			->map_with_keys( function( $document ) {
@@ -308,7 +337,7 @@ class Test_Export extends Elementor_Test_Base {
 		}
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
 	private function register_post_type( $key, $plural_label ) {
@@ -349,6 +378,6 @@ class Test_Export extends Elementor_Test_Base {
 		}
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_temp_file_or_dir( $extracted_zip_path );
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 }

@@ -30,6 +30,18 @@ class Widget_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'review', 'score', 'scale' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	public function get_style_depends(): array {
+		return [ 'widget-rating' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * @return void
 	 */
@@ -293,7 +305,9 @@ class Widget_Rating extends Widget_Base {
 			'itemprop' => 'ratingValue',
 			'content' => $this->get_rating_value(),
 			'role' => 'img',
-			'aria-label' => sprintf( esc_html__( 'Rated %1$s out of %2$s', 'elementor' ),
+			'aria-label' => sprintf(
+				/* translators: 1: Rating value, 2: Rating scale. */
+				esc_html__( 'Rated %1$s out of %2$s', 'elementor' ),
 				$this->get_rating_value(),
 				$this->get_rating_scale()
 			),

@@ -1,29 +1,25 @@
 var BaseContainer = require( 'elementor-views/base-container' ),
-	BaseSectionsContainerView;
+	BaseSectionsContainerView,
+	{ getAllElementTypes } = require( 'elementor-editor/utils/element-types' );
 
 BaseSectionsContainerView = BaseContainer.extend( {
 	getChildView( model ) {
-		let ChildView;
 		const elType = model.get( 'elType' );
+		const type = elementor.elementsManager.getElementTypeClass( elType );
 
-		switch ( elType ) {
-			case 'section':
-				ChildView = require( 'elementor-elements/views/section' );
-				break;
-
-			case 'container':
-				ChildView = require( 'elementor-elements/views/container' );
-				break;
+		if ( ! type ) {
+			throw new Error( `Element type "${ elType }" is not registered.` );
 		}
 
-		return ChildView;
+		return type.getView();
 	},
 
 	behaviors() {
+		const sectionElementType = 'section';
 		var behaviors = {
 			Sortable: {
 				behaviorClass: require( 'elementor-behaviors/sortable' ),
-				elChildType: 'section',
+				elChildType: sectionElementType,
 			},
 		};
 
@@ -38,7 +34,7 @@ BaseSectionsContainerView = BaseContainer.extend( {
 	},
 
 	getChildType() {
-		return [ 'section', 'container' ];
+		return getAllElementTypes();
 	},
 
 	initialize() {

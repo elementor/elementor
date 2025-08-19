@@ -18,17 +18,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Api {
 
 	/**
-	 * Elementor library option key.
-	 */
-	const LIBRARY_OPTION_KEY = 'elementor_remote_info_library';
-
-	/**
 	 * Elementor feed option key.
 	 */
 	const FEED_OPTION_KEY = 'elementor_remote_info_feed_data';
 
 	const TRANSIENT_KEY_PREFIX = 'elementor_remote_info_api_data_';
-
 
 	/**
 	 * API info URL.
@@ -38,9 +32,9 @@ class Api {
 	 * @access public
 	 * @static
 	 *
-	 * @var string API info URL.
+	 * @var string API info URL. (v2 excludes the Library info)
 	 */
-	public static $api_info_url = 'https://my.elementor.com/api/v1/info/';
+	public static $api_info_url = 'https://my.elementor.com/api/v2/info/';
 
 	/**
 	 * API feedback URL.
@@ -54,36 +48,36 @@ class Api {
 	 */
 	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
-	/**
-	 * Get info data.
-	 *
-	 * This function notifies the user of upgrade notices, new templates and contributors.
-	 *
-	 * @since 2.0.0
-	 * @access private
-	 * @static
-	 *
-	 * @param bool $force_update Optional. Whether to force the data retrieval or
-	 *                                     not. Default is false.
-	 *
-	 * @return array|false Info data, or false.
-	 */
-	private static function get_info_data( $force_update = false ) {
+	private static $api_library_info_url = 'https://my.elementor.com/api/v1/templates/info/';
+
+	private static function get_info_data( $force_update = false, $additinal_status = false ) {
 		$cache_key = self::TRANSIENT_KEY_PREFIX . ELEMENTOR_VERSION;
 
 		$info_data = get_transient( $cache_key );
 
-		if ( $force_update || false === $info_data ) {
+		if ( $force_update || empty( $info_data ) ) {
 			$timeout = ( $force_update ) ? 25 : 8;
+
+			$body_request = [
+				// Which API version is used.
+				'api_version' => ELEMENTOR_VERSION,
+				// Which language to return.
+				'site_lang' => get_bloginfo( 'language' ),
+			];
+
+			$site_key = self::get_site_key();
+			if ( ! empty( $site_key ) ) {
+				$body_request['site_key'] = $site_key;
+			}
+
+			if ( ! empty( $additinal_status ) ) {
+				$body_request['status'] = $additinal_status;
+				$timeout = 3;
+			}
 
 			$response = wp_remote_get( self::$api_info_url, [
 				'timeout' => $timeout,
-				'body' => [
-					// Which API version is used.
-					'api_version' => ELEMENTOR_VERSION,
-					// Which language to return.
-					'site_lang' => get_bloginfo( 'language' ),
-				],
+				'body' => $body_request,
 			] );
 
 			if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
@@ -101,8 +95,6 @@ class Api {
 			}
 
 			if ( isset( $info_data['library'] ) ) {
-				update_option( self::LIBRARY_OPTION_KEY, $info_data['library'], 'no' );
-
 				unset( $info_data['library'] );
 			}
 
@@ -116,6 +108,21 @@ class Api {
 		}
 
 		return $info_data;
+	}
+
+	public static function get_site_key() {
+		if ( null === Plugin::$instance->common ) {
+			return get_option( Library::OPTION_CONNECT_SITE_KEY );
+		}
+
+		/** @var Library $library */
+		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+
+		if ( ! $library || ! method_exists( $library, 'get_site_key' ) ) {
+			return false;
+		}
+
+		return $library->get_site_key();
 	}
 
 	/**
@@ -179,18 +186,40 @@ class Api {
 	 * @param bool $force_update Optional. Whether to force the data update or
 	 *                                     not. Default is false.
 	 *
-	 * @return array The templates data.
+	 * @return array The templates' data.
 	 */
-	public static function get_library_data( $force_update = false ) {
-		self::get_info_data( $force_update );
+	public static function get_library_data( bool $force_update = false ): array {
+		/**
+		 * Filters the body of the request to get library templates data.
+		 *
+		 * @param-out array $body_request The body of the request.
+		 */
+		$body_request = apply_filters( 'elementor/remote/library/templates/request/body', [] );
 
-		$library_data = get_option( self::LIBRARY_OPTION_KEY );
+		$site_key = self::get_site_key();
+		if ( ! empty( $site_key ) ) {
+			$body_request['site_key'] = $site_key;
+		}
 
-		if ( empty( $library_data ) ) {
+		/**
+		 * Filters the URL to get library templates data.
+		 *
+		 * @param-out string $url The URL to get library templates data.
+		 */
+		$url = apply_filters( 'elementor/remote/library/templates/request/url', self::$api_library_info_url );
+
+		$response = wp_remote_get( $url, [
+			'timeout' => 25,
+			'body' => $body_request,
+		] );
+
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
 			return [];
 		}
 
-		return $library_data;
+		$library_data = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		return empty( $library_data ) ? [] : $library_data;
 	}
 
 	/**
@@ -217,6 +246,26 @@ class Api {
 		}
 
 		return $feed;
+	}
+
+	public static function get_deactivation_data() {
+		$data = self::get_info_data( true, 'deactivated' );
+
+		if ( empty( $data['deactivate_data'] ) ) {
+			return false;
+		}
+
+		return $data['deactivate_data'];
+	}
+
+	public static function get_uninstalled_data() {
+		$data = self::get_info_data( true, 'uninstalled' );
+
+		if ( empty( $data['uninstall_data'] ) ) {
+			return false;
+		}
+
+		return $data['uninstall_data'];
 	}
 
 	/**

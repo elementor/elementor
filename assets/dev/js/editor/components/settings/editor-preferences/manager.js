@@ -15,7 +15,16 @@ export default class extends BaseManager {
 			panel_width: this.onPanelWidthChanged,
 			edit_buttons: this.onEditButtonsChanged,
 			show_hidden_elements: this.onShowHiddenElementsChange,
+			show_launchpad_checklist: this.toggleChecklistIconVisibility,
 		};
+	}
+
+	toggleChecklistIconVisibility( switcherValue ) {
+		const shouldShow = 'yes' === switcherValue;
+
+		this.addMixpanelTrackingChecklist( shouldShow );
+
+		$e.run( 'checklist/toggle-icon', shouldShow );
 	}
 
 	onUIThemeChanged( newValue ) {
@@ -51,5 +60,29 @@ export default class extends BaseManager {
 
 	onShowHiddenElementsChange() {
 		elementorFrontend.elements.$body.toggleClass( 'e-preview--show-hidden-elements' );
+	}
+
+	addMixpanelTrackingChecklist( shouldShow ) {
+		const name = shouldShow ? 'checklistShow' : 'checklistHide';
+		const postId = elementor.getPreviewContainer().document.config.id;
+		const postTitle = elementor.getPreviewContainer().model.attributes.settings.attributes.post_title;
+		const postTypeTitle = elementor.getPreviewContainer().document.config.post_type_title;
+		const documentType = elementor.getPreviewContainer().document.config.type;
+
+		return (
+			elementorCommon.eventsManager.dispatchEvent(
+				elementorCommon.eventsManager.config.names.elementorEditor.userPreferences[ name ],
+				{
+					location: elementorCommon.eventsManager.config.locations.elementorEditor,
+					secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.userPreferences,
+					trigger: elementorCommon.eventsManager.config.triggers.toggleClick,
+					element: elementorCommon.eventsManager.config.elements.toggle,
+					postId,
+					postTitle,
+					postTypeTitle,
+					documentType,
+				},
+			)
+		);
 	}
 }

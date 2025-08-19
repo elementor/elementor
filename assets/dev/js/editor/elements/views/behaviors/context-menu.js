@@ -42,16 +42,17 @@ module.exports = Marionette.Behavior.extend( {
 			afterGroupIndex = contextMenuGroups.length;
 		}
 
-		if ( 'preview' === this.getOption( 'context' ) ) {
+		if (
+			'preview' === this.getOption( 'context' ) &&
+			$e.components.get( 'document/elements' ).utils.showNavigator()
+		) {
 			contextMenuGroups.splice( afterGroupIndex, 0, {
 				name: 'tools',
 				actions: [
 					{
 						name: 'navigator',
 						icon: 'eicon-navigator',
-						title: elementorCommon.config.experimentalFeatures.editor_v2
-							? __( 'Structure', 'elementor' )
-							: __( 'Navigator', 'elementor' ),
+						title: __( 'Structure', 'elementor' ),
 						shortcut: controlSign + '+I',
 						callback: () => $e.route( 'navigator', {
 							reOpen: true,

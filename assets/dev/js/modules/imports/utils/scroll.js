@@ -10,28 +10,28 @@ export default class Scroll {
 	static scrollObserver( obj ) {
 		let lastScrollY = 0;
 
-		// Generating threshholds points along the animation height
-		// More threshholds points = more trigger points of the callback
-		const buildThreshholds = ( sensitivityPercentage = 0 ) => {
-			const threshholds = [];
+		// Generating thresholds points along the animation height
+		// More thresholds points = more trigger points of the callback
+		const buildThresholds = ( sensitivityPercentage = 0 ) => {
+			const thresholds = [];
 
 			if ( sensitivityPercentage > 0 && sensitivityPercentage <= 100 ) {
 				const increment = 100 / sensitivityPercentage;
 
 				for ( let i = 0; i <= 100; i += increment ) {
-					threshholds.push( i / 100 );
+					thresholds.push( i / 100 );
 				}
 			} else {
-				threshholds.push( 0 );
+				thresholds.push( 0 );
 			}
 
-			return threshholds;
+			return thresholds;
 		};
 
 		const options = {
 			root: obj.root || null,
 			rootMargin: obj.offset || '0px',
-			threshold: buildThreshholds( obj.sensitivity ),
+			threshold: buildThresholds( obj.sensitivity ),
 		};
 
 		function handleIntersect( entries ) {

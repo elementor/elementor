@@ -5,7 +5,7 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Taxonomies extends Export_Runner_Base {
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'taxonomies';
 	}
 
@@ -97,8 +97,9 @@ class Taxonomies extends Export_Runner_Base {
 
 		return $data;
 	}
-
-	// Put terms in order with no child going before its parent.
+	/**
+	 * Put terms in order with no child going before its parent.
+	 */
 	private function order_terms( array $terms ) {
 		$ordered_terms = [];
 

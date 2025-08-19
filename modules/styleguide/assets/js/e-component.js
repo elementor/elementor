@@ -97,7 +97,7 @@ export default class extends $e.modules.ComponentBase {
 	}
 
 	/**
-	 * Update the User Preferences to enable/disable the Style Guide Preview.
+	 * Update the User Preferences to show the global settings.
 	 * Triggered on switcher change at Global Colors / Global Typography panels.
 	 *
 	 * @param {Array} options

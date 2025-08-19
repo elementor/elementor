@@ -1,49 +1,30 @@
-import { test } from '@playwright/test';
+import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expectScreenshotToMatchLocator, addIcon, setIconSize } from './helper';
+import { expect } from '@playwright/test';
 
 test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordion', () => {
-	test.beforeAll( async ( { browser }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = await new WpAdminPage( page, testInfo );
-
-		await wpAdmin.setExperiments( {
-			container: 'active',
-			'nested-elements': 'active',
-		} );
-
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.resetExperiments();
 		await page.close();
 	} );
 
-	test.afterAll( async ( { browser }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo );
-		await wpAdmin.setExperiments( {
-			'nested-elements': 'inactive',
-			container: 'inactive',
-			e_font_icon_svg: 'default',
-		} );
-
-		await page.close();
-	} );
-
-	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser }, testInfo ) => {
+	test( 'Nested Accordion Title Icon and Text No Overlap', async ( { browser, apiRequests }, testInfo ) => {
 		let url;
-		await test.step( 'experiment Inline Font Icons off', async () => {
+		await test.step( 'Inline Font Icons: Off', async () => {
 			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: 'inactive',
-			} );
+				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.setExperiments( { e_font_icon_svg: 'inactive' } );
 			const editor = await wpAdmin.openNewPage(),
 				container = await editor.addElement( { elType: 'container' }, 'document' );
 
 			// Act
 			// Set horizontal icon & style size to 70
 			await editor.closeNavigatorIfOpen();
-			const nestedAccordionID = await editor.addWidget( 'nested-accordion', container );
+			const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
 			const nestedAccordion = await editor.selectElement( nestedAccordionID );
 			await addIcon( editor, page, 'address card' );
 			await setIconSize( editor, '70' );
@@ -57,12 +38,10 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			url = page.url();
 		} );
 
-		await test.step( 'experiment Inline Font Icons on (default)', async () => {
+		await test.step( 'Inline Font Icons: On', async () => {
 			const page = await browser.newPage(),
-				wpAdmin = new WpAdminPage( page, testInfo );
-			await wpAdmin.setExperiments( {
-				e_font_icon_svg: 'active',
-			} );
+				wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdmin.setExperiments( { e_font_icon_svg: 'active' } );
 			const editor = await wpAdmin.openNewPage();
 
 			// Assert
@@ -71,5 +50,39 @@ test.describe( 'Nested Accordion Title Icon and Text No Overlap @nested-accordio
 			await editor.isUiStable( nestedAccordionWidget );
 			await expectScreenshotToMatchLocator( 'header-style-editor-test-on-frontend.png', nestedAccordionWidget );
 		} );
+	} );
+
+	test( 'Nested Accordion Inside Another Accordion Icon Toggling', async ( { browser, apiRequests }, testInfo ) => {
+		// Arrange
+		const page = await browser.newPage(),
+			wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage(),
+			container = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.closeNavigatorIfOpen();
+		const parentAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container } );
+		await editor.selectElement( parentAccordionID );
+		const nestedAccordionID = await editor.addWidget( { widgetType: 'nested-accordion', container: parentAccordionID, isContainerASection: true } );
+		await editor.selectElement( nestedAccordionID );
+		await addIcon( editor, page, 'address card' );
+		await editor.publishAndViewPage();
+		const nestedSecondAccordionWidget = page.locator( '.e-n-accordion-item-title' ).nth( 2 );
+		const childAccordionItemSecondTitleIcon = nestedSecondAccordionWidget.locator( '.e-n-accordion-item-title-icon' ).first();
+
+		// Act
+		await nestedSecondAccordionWidget.waitFor();
+
+		const plus = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
+		const minus = childAccordionItemSecondTitleIcon.locator( '.e-opened' );
+		await nestedSecondAccordionWidget.click();
+		const isPlusDisplayedAfterClick = childAccordionItemSecondTitleIcon.locator( '.e-opened' );
+		const isMinusDisplayedAfterClick = childAccordionItemSecondTitleIcon.locator( '.e-closed' );
+
+		// Assert
+		await expect( plus ).toHaveCSS( 'display', 'none' );
+		await expect( minus ).toHaveCSS( 'display', 'flex' );
+		await expect( isPlusDisplayedAfterClick ).toHaveCSS( 'display', 'flex' );
+		await expect( isMinusDisplayedAfterClick ).toHaveCSS( 'display', 'none' );
+		await expect( plus.locator( 'svg' ) ).toHaveClass( /e-font-icon-svg e-far-address-card/ );
+		await expect( minus.locator( 'svg' ) ).toHaveClass( /e-font-icon-svg e-fas-minus/ );
 	} );
 } );

@@ -3,7 +3,7 @@
 namespace Elementor\Core\Settings\Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class CSS_Model extends Model {

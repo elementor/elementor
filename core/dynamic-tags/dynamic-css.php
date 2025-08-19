@@ -18,6 +18,10 @@ class Dynamic_CSS extends Post_Local_Cache {
 	private $post_id_for_data;
 
 	protected function get_post_id_for_data() {
+		if ( empty( $this->post_dynamic_elements_ids ) ) {
+			return null;
+		}
+
 		return $this->post_id_for_data;
 	}
 
@@ -43,7 +47,7 @@ class Dynamic_CSS extends Post_Local_Cache {
 	 * @since 2.0.13
 	 * @access public
 	 *
-	 * @param int $post_id Post ID
+	 * @param int $post_id Post ID.
 	 * @param Post_CSS $post_css_file
 	 */
 	public function __construct( $post_id, Post_CSS $post_css_file ) {

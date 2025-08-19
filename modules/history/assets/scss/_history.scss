@@ -10,16 +10,20 @@
 	&item {
 		display: flex;
 		align-items: center;
+		text-align: start;
 		border: var(--e-a-border);
 		border-radius: var(--e-a-border-radius);
 		padding: 10px 15px;
 		margin-block-end: 10px;
+		width: 100%;
 		font-size: 11px;
 		line-height: 1.4;
+		background-color: transparent;
 		cursor: pointer;
 		transition: var(--e-a-transition-hover);
 
-		&:hover:not(.elementor-history-item-current) {
+		&:hover:not(.elementor-history-item-current),
+		&:focus:not(.elementor-history-item-current) {
 			background-color: var(--e-a-bg-hover);
 			color: var(--e-a-txt-color-hover);
 
@@ -36,7 +40,8 @@
 			color: var(--e-a-txt-color-active);
 
 			.elementor-history-item__icon,
-			&:hover .elementor-history-item__icon{
+			&:hover .elementor-history-item__icon,
+			&:focus .elementor-history-item__icon {
 
 				.eicon:before {
 					content:'\e90e';

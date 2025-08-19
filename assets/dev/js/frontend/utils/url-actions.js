@@ -36,6 +36,7 @@ export default class extends elementorModules.ViewModule {
 	}
 
 	runAction( url, ...restArgs ) {
+		url = decodeURI( url );
 		url = decodeURIComponent( url );
 
 		const actionMatch = url.match( /action=(.+?)&/ );
@@ -56,6 +57,8 @@ export default class extends elementorModules.ViewModule {
 		if ( settingsMatch ) {
 			settings = JSON.parse( atob( settingsMatch[ 1 ] ) );
 		}
+
+		settings.previousEvent = event;
 
 		action( settings, ...restArgs );
 	}

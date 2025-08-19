@@ -4,7 +4,7 @@ namespace Elementor\Core\Kits\Documents\Tabs;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Settings_Custom_CSS extends Tab_Base {

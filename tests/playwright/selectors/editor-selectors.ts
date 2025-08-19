@@ -1,27 +1,56 @@
 const EditorSelectors = {
-	previewIframe: '#elementor-preview-iframe',
-	container: '[data-element_type="container"]',
-	closeNavigatorBtn: '#elementor-navigator__close',
-	widgetsPanelIcon: '#elementor-panel-header-add-button i',
-	elementsPanelItem: ( title: string ) => `.elementor-panel-category-items :text-is('${ title }')`,
-	searchWidgetLabel: 'Search Widget...',
-	addNewPresetLbl: 'Add New Container',
-	addNewPreset: ( preset: string ) => `[data-preset=${ preset }]`,
-	viewPageBtn: 'View Page',
-	updateBtn: 'Update',
-	menuIcon: '#elementor-panel-header-menu-button i',
-	widget: '[data-element_type="widget"]',
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
-	loadingElement: ( id: string ) => `.elementor-element-${ id }.elementor-loading`,
-	videoIframe: 'iframe.elementor-video',
-	playIcon: '[aria-label="Play"]',
-	mapIframe: 'iframe[src*="https://maps.google.com/maps"]',
-	showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
-	soundCloudIframe: 'iframe[src*="https://w.soundcloud.com/"]',
-	soundWaveForm: 'div.waveform.loaded',
+	widget: '[data-element_type="widget"]',
+	container: '[data-element_type="container"]',
+	eflexbox: '[data-element_type="e-flexbox"]',
 	item: '.elementor-repeater-row-item-title',
-	addNewItem: 'button.elementor-button elementor-repeater-add',
 	plusIcon: '.eicon-plus-circle',
+	siteTitle: '.site-title >> nth=0',
+	pageTitle: '.entry-title >> nth=0',
+	pageContent: '.page-content',
+	pageHeader: '.page-header',
+	toast: '#elementor-toast',
+	addNewSection: '#elementor-add-new-section',
+	removeContainer: '.elementor-editor-element-setting.elementor-editor-element-remove',
+	panels: {
+		topBar: {
+			wrapper: '#elementor-editor-wrapper-v2',
+		},
+		elements: {
+			wrapper: '#elementor-panel-page-elements',
+			v4elements: '#elementor-panel-category-v4-elements',
+			footerButton: '#elementor-panel-header-add-button i',
+			elementorPanel: '#elementor-panel',
+		},
+		pageSettings: {
+			wrapper: '#elementor-panel-page-settings',
+			footerButton: '#elementor-panel-footer-settings i',
+		},
+		siteSettings: {
+			wrapper: '#elementor-panel-page-menu',
+			saveButton: '//button[text()="Save Changes"]',
+			layout: {
+				breakpoints: {
+					removeBreakpointButton: '#elementor-kit-panel-content .select2-selection__choice__remove',
+				},
+			},
+		},
+		userPreferences: {
+			wrapper: '#elementor-panel-editorPreferences-settings-controls',
+		},
+		navigator: {
+			wrapper: '#elementor-navigator',
+			footer: '#elementor-navigator__footer',
+			closeButton: '#elementor-navigator__close',
+			footerButton: '#elementor-panel-footer-navigator i',
+		},
+		promotionCard: '[data-testid="e-promotion-card"]',
+		popoverCard: '[data-testid="e-popover-card"]',
+	},
+	refreshPopup: {
+		reloadButton: '#elementor-save-kit-refresh-page .dialog-button.dialog-ok.dialog-alert-ok',
+	},
+
 	media: {
 		preview: '.elementor-control-media__preview',
 		imageByTitle: ( imageTitle: string ) => `[aria-label="${ imageTitle }"]`,
@@ -32,8 +61,6 @@ const EditorSelectors = {
 		imgCaption: '#attachment-details-caption',
 		imgDescription: '#attachment-details-description',
 	},
-	siteTitle: 'h1.site-title',
-	pageTitle: 'h1.entry-title',
 	button: {
 		getByName: ( name: string ) => `.elementor-button:has-text("${ name }")`,
 		id: '[data-setting="button_css_id"]',
@@ -51,8 +78,8 @@ const EditorSelectors = {
 	},
 	image: {
 		widget: '[data-widget_type="image.default"]',
-		linkSelect: 'select[data-setting="link_to"]',
-		imageSizeSelect: 'select[data-setting="image_size"]',
+		linkSelect: 'link_to',
+		imageSizeSelect: 'image_size',
 		widthInp: 'input[data-setting="width"]',
 		heightInp: 'input[data-setting="height"]',
 		get image() {
@@ -71,7 +98,7 @@ const EditorSelectors = {
 	},
 	imageBox: {
 		widget: '[data-widget_type="image-box.default"]',
-		imageSizeSelect: 'select[data-setting="thumbnail_size"]',
+		imageSizeSelect: 'thumbnail_size',
 		get link() {
 			return `${ this.widget } a`;
 		},
@@ -79,14 +106,16 @@ const EditorSelectors = {
 			return `${ this.widget } img`;
 		},
 	},
+	galleryControl: {
+		addGalleryBtn: 'button.elementor-control-gallery-add',
+	},
 	imageCarousel: {
 		widget: '[data-widget_type="image-carousel.default"]',
 		get link() {
 			return `${ this.widget } a`;
 		},
-		addGalleryBtn: 'button.elementor-control-gallery-add',
 		navigationSelect: '.elementor-control-navigation select',
-		autoplaySelect: 'select[data-setting="autoplay"]',
+		autoplaySelect: 'input[data-setting="autoplay"]',
 		autoplaySpeedLabel: 'Autoplay Speed',
 		autoplaySpeedInp: '[data-setting="autoplay_speed"]',
 		autoplayToggle: '.elementor-switch-handle',
@@ -108,29 +137,15 @@ const EditorSelectors = {
 	},
 	video: {
 		widget: '[data-widget_type="video.default"]',
-		youtube: { linkInp: '[data-setting="youtube_url"]' },
-		vimeo: { linkInp: '[data-setting="vimeo_url"]' },
-		dailymotion: { linkInp: '[data-setting="dailymotion_url"]' },
-		autoplayInp: 'input[data-setting="autoplay"]',
-		muteInp: 'input[data-setting="mute"]',
-		loopInp: 'input[data-setting="loop"]',
-		playerControlInp: 'input[data-setting="controls"]',
-		modestbrandingInp: 'input[data-setting="modestbranding"]',
-		privacyInp: 'input[data-setting="yt_privacy"]',
-		switch: '.elementor-switch-handle',
-		suggestedVideoSelect: '[data-setting="rel"]',
-		playOnMobileInp: 'input[data-setting="play_on_mobile"]',
-		lazyLoadInp: 'input[data-setting="lazy_load"]',
-		videoSourceSelect: '[data-setting="video_type"]',
-		showImageOverlay: '[data-setting="show_image_overlay"]',
 		get image() {
 			return `${ this.widget } .elementor-custom-embed-image-overlay`;
 		},
-		imageSizeSelect: '[data-setting="image_overlay_size"]',
 		lightBoxControlInp: '[data-setting="lightbox"]',
 		lightBoxSetting: 'div[data-elementor-open-lightbox="yes"]',
 		lightBoxDialog: '.elementor-lightbox',
 		iframe: 'iframe[class*="elementor-video"]',
+		playIcon: '[aria-label="Play"]',
+		videoWrapper: '.elementor-video-wrapper',
 	},
 	socialIcons: {
 		widget: '[data-widget_type="social-icons.default"]',
@@ -146,14 +161,18 @@ const EditorSelectors = {
 		body: '#tinymce',
 	},
 	googleMaps: {
-		location: '[data-setting="address"]',
+		iframe: 'iframe[src*="https://maps.google.com/maps"]',
+		showSatelliteViewBtn: 'button[title="Show satellite imagery"]',
+	},
+	soundCloud: {
+		iframe: 'iframe[src*="https://w.soundcloud.com/"]',
+		waveForm: 'div.waveform.loaded',
 	},
 	ai: {
 		aiButton: '.e-ai-button',
 		aiDialogCloseButton: '.MuiDialog-container button[aria-label="close"]',
 		promptInput: 'input[name="prompt"]',
 		resultTextarea: 'textarea.MuiInputBase-inputMultiline',
-
 		image: {
 			promptTextarea: '[data-testid="e-image-prompt"] textarea',
 			typeInput: '#image-type + input',
@@ -161,7 +180,6 @@ const EditorSelectors = {
 			aspectRationInput: '#aspect-ratio + input',
 			generatedImage: '[data-testid="e-gallery-image"] img',
 		},
-
 		promptHistory: {
 			button: 'button[aria-label="Show prompt history"]',
 			modal: '#prompt-history-modal',
@@ -176,6 +194,43 @@ const EditorSelectors = {
 			reuseButton: 'button[aria-label="Reuse prompt"]',
 			restoreButton: 'button[aria-label="Restore"]',
 			editButton: 'button[aria-label="Edit result"]',
+		},
+	},
+	floatingElements: {
+		floatingButtons: {
+			controls: {
+				advanced: {
+					sections: [
+						'.elementor-control-advanced_layout_section',
+						'.elementor-control-advanced_responsive_section',
+						'.elementor-control-advanced_custom_controls_section',
+						'.elementor-control-section_custom_css_pro',
+						'.elementor-control-section_custom_attributes_pro',
+					],
+				},
+			},
+		},
+	},
+	contextMenu: {
+		menu: '.elementor-context-menu',
+		saveAsGlobal: '.elementor-context-menu-list__item.elementor-context-menu-list__item-save.elementor-context-menu-list__item--disabled',
+		notes: '.elementor-context-menu-list__item.elementor-context-menu-list__item-open_notes.elementor-context-menu-list__item--disabled',
+	},
+	dialog: {
+		lightBox: '.elementor-lightbox',
+	},
+	onboarding: {
+		upgradeButton: '.e-onboarding__button-action',
+		skipButton: '.e-onboarding__button-skip',
+		screenTitle: '.e-onboarding__page-content-section-title',
+		removeLogoButton: '.e-onboarding__logo-remove',
+		progressBar: {
+			skippedItem: '.e-onboarding__progress-bar-item--skipped',
+			completedItem: '.e-onboarding__progress-bar-item--completed',
+		},
+		features: {
+			essential: '#essential',
+			advanced: '#advanced',
 		},
 	},
 };

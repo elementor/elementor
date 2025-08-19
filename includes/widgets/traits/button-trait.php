@@ -11,9 +11,10 @@ use Elementor\Group_Control_Text_Shadow;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Widget_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 trait Button_Trait {
@@ -115,7 +116,7 @@ trait Button_Trait {
 				'default' => 'sm',
 				'options' => self::get_button_sizes(),
 				'style_transfer' => true,
-				'condition' => $args['section_condition'],
+				'condition' => array_merge( $args['section_condition'], [ 'size[value]!' => 'sm' ] ), // a workaround to hide the control, unless it's in use (not default).
 			]
 		);
 
@@ -132,17 +133,39 @@ trait Button_Trait {
 			]
 		);
 
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
 		$this->add_control(
 			'icon_align',
 			[
 				'label' => esc_html__( 'Icon Position', 'elementor' ),
-				'type' => Controls_Manager::SELECT,
-				'default' => 'left',
+				'type' => Controls_Manager::CHOOSE,
+				'default' => is_rtl() ? 'row-reverse' : 'row',
 				'options' => [
-					'left' => esc_html__( 'Before', 'elementor' ),
-					'right' => esc_html__( 'After', 'elementor' ),
+					'row' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-h-align-{$start}",
+					],
+					'row-reverse' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-h-align-{$end}",
+					],
 				],
-				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'row-reverse' : 'row',
+					'right' => is_rtl() ? 'row' : 'row-reverse',
+				],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};',
+				],
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
 			]
 		);
 
@@ -164,10 +187,15 @@ trait Button_Trait {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};',
-					'{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
 				],
-				'condition' => array_merge( $args['section_condition'], [ 'selected_icon[value]!' => '' ] ),
+				'condition' => array_merge(
+					$args['section_condition'],
+					[
+						'text!' => '',
+						'selected_icon[value]!' => '',
+					]
+				),
 			]
 		);
 
@@ -185,7 +213,8 @@ trait Button_Trait {
 				'default' => '',
 				'title' => esc_html__( 'Add your custom id WITHOUT the Pound key. e.g: my-id', 'elementor' ),
 				'description' => sprintf(
-					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page this form is displayed. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
+					/* translators: 1: `<code>` opening tag, 2: `</code>` closing tag. */
+					esc_html__( 'Please make sure the ID is unique and not used elsewhere on the page. This field allows %1$sA-z 0-9%2$s & underscore chars without spaces.', 'elementor' ),
 					'<code>',
 					'</code>'
 				),
@@ -202,8 +231,9 @@ trait Button_Trait {
 	 *     An array of values for the button adjustments.
 	 *
 	 *     @type array  $section_condition  Set of conditions to hide the controls.
-	 *     @type string $alignment_default  Default alignment for the button.
-	 *     @type string $alignment_control_prefix_class  Prefix class name for the button alignment control.
+	 *     @type string $alignment_default  Default position for the button.
+	 *     @type string $alignment_control_prefix_class  Prefix class name for the button position control.
+	 *     @type string $content_alignment_default  Default alignment for the button content.
 	 * }
 	 */
 	protected function register_button_style_controls( $args = [] ) {
@@ -211,6 +241,7 @@ trait Button_Trait {
 			'section_condition' => [],
 			'alignment_default' => '',
 			'alignment_control_prefix_class' => 'elementor%s-align-',
+			'content_alignment_default' => '',
 		];
 
 		$args = wp_parse_args( $args, $default_args );
@@ -218,29 +249,63 @@ trait Button_Trait {
 		$this->add_responsive_control(
 			'align',
 			[
-				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'label' => esc_html__( 'Position', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
 					'left'    => [
 						'title' => esc_html__( 'Left', 'elementor' ),
-						'icon' => 'eicon-text-align-left',
+						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
-						'icon' => 'eicon-text-align-center',
+						'icon' => 'eicon-h-align-center',
 					],
 					'right' => [
 						'title' => esc_html__( 'Right', 'elementor' ),
-						'icon' => 'eicon-text-align-right',
+						'icon' => 'eicon-h-align-right',
 					],
 					'justify' => [
-						'title' => esc_html__( 'Justified', 'elementor' ),
-						'icon' => 'eicon-text-align-justify',
+						'title' => esc_html__( 'Stretch', 'elementor' ),
+						'icon' => 'eicon-h-align-stretch',
 					],
 				],
 				'prefix_class' => $args['alignment_control_prefix_class'],
 				'default' => $args['alignment_default'],
 				'condition' => $args['section_condition'],
+			]
+		);
+
+		$start = is_rtl() ? 'right' : 'left';
+		$end = is_rtl() ? 'left' : 'right';
+
+		$this->add_responsive_control(
+			'content_align',
+			[
+				'label' => esc_html__( 'Alignment', 'elementor' ),
+				'type' => Controls_Manager::CHOOSE,
+				'options' => [
+					'start'    => [
+						'title' => esc_html__( 'Start', 'elementor' ),
+						'icon' => "eicon-text-align-{$start}",
+					],
+					'center' => [
+						'title' => esc_html__( 'Center', 'elementor' ),
+						'icon' => 'eicon-text-align-center',
+					],
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
+						'icon' => "eicon-text-align-{$end}",
+					],
+					'space-between' => [
+						'title' => esc_html__( 'Space between', 'elementor' ),
+						'icon' => 'eicon-text-align-justify',
+					],
+				],
+				'default' => $args['content_alignment_default'],
+				'selectors' => [
+					'{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'justify-content: {{VALUE}};',
+				],
+				'condition' => array_merge( $args['section_condition'], [ 'align' => 'justify' ] ),
 			]
 		);
 
@@ -311,6 +376,15 @@ trait Button_Trait {
 			]
 		);
 
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button',
+				'condition' => $args['section_condition'],
+			]
+		);
+
 		$this->end_controls_tab();
 
 		$this->start_controls_tab(
@@ -355,12 +429,18 @@ trait Button_Trait {
 			[
 				'label' => esc_html__( 'Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
-				'condition' => [
-					'border_border!' => '',
-				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
 				],
+				'condition' => $args['section_condition'],
+			]
+		);
+
+		$this->add_group_control(
+			Group_Control_Box_Shadow::get_type(),
+			[
+				'name' => 'button_hover_box_shadow',
+				'selector' => '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus',
 				'condition' => $args['section_condition'],
 			]
 		);
@@ -416,15 +496,6 @@ trait Button_Trait {
 			]
 		);
 
-		$this->add_group_control(
-			Group_Control_Box_Shadow::get_type(),
-			[
-				'name' => 'button_box_shadow',
-				'selector' => '{{WRAPPER}} .elementor-button',
-				'condition' => $args['section_condition'],
-			]
-		);
-
 		$this->add_responsive_control(
 			'text_padding',
 			[
@@ -457,6 +528,12 @@ trait Button_Trait {
 
 		$settings = $instance->get_settings_for_display();
 
+		if ( empty( $settings['text'] ) && empty( $settings['selected_icon']['value'] ) ) {
+			return;
+		}
+
+		$optimized_markup = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+
 		$instance->add_render_attribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		$instance->add_render_attribute( 'button', 'class', 'elementor-button' );
@@ -474,17 +551,23 @@ trait Button_Trait {
 
 		if ( ! empty( $settings['size'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-size-' . $settings['size'] );
+		} else {
+			$instance->add_render_attribute( 'button', 'class', 'elementor-size-sm' ); // BC, to make sure the class is always present
 		}
 
 		if ( ! empty( $settings['hover_animation'] ) ) {
 			$instance->add_render_attribute( 'button', 'class', 'elementor-animation-' . $settings['hover_animation'] );
 		}
 		?>
+		<?php if ( ! $optimized_markup ) : ?>
 		<div <?php $instance->print_render_attribute_string( 'wrapper' ); ?>>
+		<?php endif; ?>
 			<a <?php $instance->print_render_attribute_string( 'button' ); ?>>
 				<?php $this->render_text( $instance ); ?>
 			</a>
+		<?php if ( ! $optimized_markup ) : ?>
 		</div>
+		<?php endif; ?>
 		<?php
 	}
 
@@ -499,12 +582,18 @@ trait Button_Trait {
 	protected function content_template() {
 		?>
 		<#
+		if ( '' === settings.text && '' === settings.selected_icon.value ) {
+			return;
+		}
+
+		const optimized_markup = elementorCommon.config.experimentalFeatures.e_optimized_markup;
+
 		view.addRenderAttribute( 'wrapper', 'class', 'elementor-button-wrapper' );
 
 		view.addRenderAttribute( 'button', 'class', 'elementor-button' );
 
 		if ( '' !== settings.link.url ) {
-			view.addRenderAttribute( 'button', 'href', settings.link.url );
+			view.addRenderAttribute( 'button', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
 			view.addRenderAttribute( 'button', 'class', 'elementor-button-link' );
 		} else {
 			view.addRenderAttribute( 'button', 'role', 'button' );
@@ -522,16 +611,19 @@ trait Button_Trait {
 			view.addRenderAttribute( 'button', 'class', 'elementor-animation-' + settings.hover_animation );
 		}
 
+		view.addRenderAttribute( 'icon', 'class', 'elementor-button-icon' );
 		view.addRenderAttribute( 'text', 'class', 'elementor-button-text' );
 		view.addInlineEditingAttributes( 'text', 'none' );
 		var iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 		migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 		#>
+		<# if ( ! optimized_markup ) { #>
 		<div {{{ view.getRenderAttributeString( 'wrapper' ) }}}>
+		<# } #>
 			<a {{{ view.getRenderAttributeString( 'button' ) }}}>
 				<span class="elementor-button-content-wrapper">
 					<# if ( settings.icon || settings.selected_icon ) { #>
-					<span class="elementor-button-icon elementor-align-icon-{{ settings.icon_align }}">
+					<span {{{ view.getRenderAttributeString( 'icon' ) }}}>
 						<# if ( ( migrated || ! settings.icon ) && iconHTML.rendered ) { #>
 							{{{ iconHTML.value }}}
 						<# } else { #>
@@ -539,10 +631,14 @@ trait Button_Trait {
 						<# } #>
 					</span>
 					<# } #>
-					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{{ settings.text }}}</span>
+					<# if ( settings.text ) { #>
+					<span {{{ view.getRenderAttributeString( 'text' ) }}}>{{ settings.text }}</span>
+					<# } #>
 				</span>
 			</a>
+		<# if ( ! optimized_markup ) { #>
 		</div>
+		<# } #>
 		<?php
 	}
 
@@ -567,22 +663,12 @@ trait Button_Trait {
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
 
-		if ( ! $is_new && empty( $settings['icon_align'] ) ) {
-			// @todo: remove when deprecated
-			// added as bc in 2.6
-			//old default
-			$settings['icon_align'] = $instance->get_settings( 'icon_align' );
-		}
-
 		$instance->add_render_attribute( [
 			'content-wrapper' => [
 				'class' => 'elementor-button-content-wrapper',
 			],
-			'icon-align' => [
-				'class' => [
-					'elementor-button-icon',
-					'elementor-align-icon-' . $settings['icon_align'],
-				],
+			'icon' => [
+				'class' => 'elementor-button-icon',
 			],
 			'text' => [
 				'class' => 'elementor-button-text',
@@ -590,11 +676,11 @@ trait Button_Trait {
 		] );
 
 		// TODO: replace the protected with public
-		//$instance->add_inline_editing_attributes( 'text', 'none' );
+		// $instance->add_inline_editing_attributes( 'text', 'none' );
 		?>
 		<span <?php $instance->print_render_attribute_string( 'content-wrapper' ); ?>>
 			<?php if ( ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon']['value'] ) ) : ?>
-			<span <?php $instance->print_render_attribute_string( 'icon-align' ); ?>>
+			<span <?php $instance->print_render_attribute_string( 'icon' ); ?>>
 				<?php if ( $is_new || $migrated ) :
 					Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 				else : ?>
@@ -602,7 +688,9 @@ trait Button_Trait {
 				<?php endif; ?>
 			</span>
 			<?php endif; ?>
-			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php $this->print_unescaped_setting( 'text' ); ?></span>
+			<?php if ( ! empty( $settings['text'] ) ) : ?>
+			<span <?php $instance->print_render_attribute_string( 'text' ); ?>><?php echo wp_kses_post( $settings['text'] ); ?></span>
+			<?php endif; ?>
 		</span>
 		<?php
 	}

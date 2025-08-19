@@ -4,6 +4,14 @@ const sass = {
 	options: {
 		implementation: sassImplementation,
 		sourceMap: true,
+		logger: {
+			warn(message) {
+				// suppress all warnings
+			},
+			debug(message) {
+				// suppress all debug logs
+			}
+		}
 	},
 	dist: {
 		files: [
@@ -37,13 +45,6 @@ const sass = {
 			},
 			{
 				expand: true,
-				cwd: 'modules/lazyload/assets/scss',
-				src: 'frontend.scss',
-				dest: 'assets/css/modules/lazyload',
-				ext: '.css',
-			},
-			{
-				expand: true,
 				cwd: 'assets/dev/scss/frontend',
 				src: 'swiper.scss',
 				dest: 'assets/lib/swiper/css',
@@ -59,8 +60,15 @@ const sass = {
 			{
 				expand: true,
 				cwd: 'modules/styleguide/assets/scss',
-				src: '*.scss',
+				src: 'editor.scss',
 				dest: 'assets/css/modules/styleguide',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/atomic-opt-in/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/editor-v4-opt-in',
 				ext: '.css',
 			},
 			{
@@ -75,6 +83,34 @@ const sass = {
 				cwd: 'modules/apps/assets/scss',
 				src: 'admin.scss',
 				dest: 'assets/css/modules/apps',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend',
+				src: 'admin-bar.scss',
+				dest: 'assets/css',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals',
+				src: '*.scss',
+				dest: 'assets/css/conditionals',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints',
+				src: '*.scss',
+				dest: 'assets/css/conditionals',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'assets/dev/scss/frontend/conditionals/with-breakpoints',
+				src: '*.scss',
+				dest: 'assets/css/templates',
 				ext: '.css',
 			},
 		]

@@ -5,15 +5,12 @@
 .elementor-column {
 
 	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 
 		&:after {
 			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
+			inset: 0;
 			outline: 1px dashed var(--e-p-border-column);
 		}
 	}
@@ -54,8 +51,8 @@
 		cursor: col-resize;
 		width: 7px;
 		position: absolute;
-		@include end(-5px);
-		top: 0;
+		inset-block-start: 0;
+		inset-inline-end: -5px;
 		height: 100%;
 	}
 
@@ -73,8 +70,8 @@
 }
 
 .elementor-editor-column-settings {
-	top: -1px;
-	@include start(-1px);
+	inset-block-start: -1px;
+	inset-inline-start: -1px;
 	border-start-start-radius: 0;
 	border-start-end-radius: 0;
 	border-end-start-radius: 0;
@@ -97,10 +94,7 @@
 	&:after {
 		content: '';
 		position: absolute;
-		top: 10px;
-		bottom: 10px;
-		right: 10px;
-		left: 10px;
+		inset: 10px;
 	}
 
 	&:before {
@@ -116,7 +110,7 @@
 	position: absolute;
 	display: none;
 	pointer-events: none;
-	top: 50%;
+	inset-block-start: 50%;
 	transform: translateY(-50%);
 	color: #fff;
 	font-size: 10px;

@@ -198,14 +198,14 @@ ColumnView = BaseElementView.extend( {
 
 	onRender() {
 		const getDropIndex = ( side, event ) => {
-				let newIndex = jQuery( event.currentTarget ).index();
+			let newIndex = jQuery( event.currentTarget ).index();
 
-				if ( 'top' === side ) {
-					newIndex--;
-				}
+			if ( 'top' === side ) {
+				newIndex--;
+			}
 
-				return newIndex;
-			};
+			return newIndex;
+		};
 
 		BaseElementView.prototype.onRender.apply( this, arguments );
 

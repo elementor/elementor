@@ -1,0 +1,7 @@
+<div
+    class="{{ settings.classes | merge( [ base_styles.something, base_styles.something_else ] ) | join (' ') }}"
+>
+    <h1>{{ settings.title }}</h1>
+    <p>widget id: {{ id }}, widget type: {{ type }}</p>
+    {{ settings.prop_not_exists }}
+</div>

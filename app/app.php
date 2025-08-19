@@ -3,6 +3,7 @@ namespace Elementor\App;
 
 use Elementor\App\AdminMenuItems\Theme_Builder_Menu_Item;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Settings\Manager as SettingsManager;
@@ -10,6 +11,15 @@ use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Core\Utils\Assets_Config_Provider;
+use Elementor\Core\Utils\Collection;
+
+use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
+use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
+use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
+use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -80,6 +90,8 @@ class App extends BaseApp {
 
 		$this->enqueue_assets();
 
+		remove_action( 'wp_print_styles', 'print_emoji_styles' );
+
 		// Setup default heartbeat options
 		// TODO: Enable heartbeat.
 		add_filter( 'heartbeat_settings', function( $settings ) {
@@ -103,6 +115,11 @@ class App extends BaseApp {
 			'admin_url' => admin_url(),
 			'login_url' => wp_login_url(),
 			'base_url' => $this->get_base_url(),
+			'promotion' => Filtered_Promotions_Manager::get_filtered_promotion_data(
+				[ 'upgrade_url' => 'https://go.elementor.com/go-pro-theme-builder/' ],
+				'elementor/site-editor/promotion',
+				'upgrade_url'
+			),
 		];
 	}
 
@@ -111,14 +128,14 @@ class App extends BaseApp {
 	}
 
 	/**
-	 * Get Elementor UI theme preference.
+	 * Get Elementor editor theme color preference.
 	 *
-	 * Retrieve the user UI theme preference as defined by editor preferences manager.
+	 * Retrieve the user theme color preference as defined by editor preferences manager.
 	 *
 	 * @since 3.0.0
 	 * @access private
 	 *
-	 * @return string Preferred UI theme.
+	 * @return string Preferred editor theme.
 	 */
 	private function get_elementor_ui_theme_preference() {
 		$editor_preferences = SettingsManager::get_settings_managers( 'editorPreferences' );
@@ -142,8 +159,35 @@ class App extends BaseApp {
 		}
 	}
 
+	private function register_packages() {
+		$assets_config_provider = ( new Assets_Config_Provider() )
+			->set_path_resolver( function ( $name ) {
+				return ELEMENTOR_ASSETS_PATH . "js/packages/{$name}/{$name}.asset.php";
+			} );
+
+		Collection::make( [ 'ui', 'icons' ] )
+			->each( function( $package ) use ( $assets_config_provider ) {
+				$suffix = Utils::is_script_debug() ? '' : '.min';
+				$config = $assets_config_provider->load( $package )->get( $package );
+
+				if ( ! $config ) {
+					return;
+				}
+
+				wp_register_script(
+					$config['handle'],
+					ELEMENTOR_ASSETS_URL . "js/packages/{$package}/{$package}{$suffix}.js",
+					$config['deps'],
+					ELEMENTOR_VERSION,
+					true
+				);
+			} );
+	}
+
 	private function enqueue_assets() {
 		Plugin::$instance->init_common();
+
+		$this->register_packages();
 
 		/** @var WebCLIModule $web_cli */
 		$web_cli = Plugin::$instance->modules_manager->get_modules( 'web-cli' );
@@ -206,6 +250,8 @@ class App extends BaseApp {
 			[
 				'wp-url',
 				'wp-i18n',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
 				'react',
 				'react-dom',
 				'select2',
@@ -236,17 +282,33 @@ class App extends BaseApp {
 		$this->print_config( 'elementor-app-loader' );
 	}
 
+	private function register_import_export_customization_experiment() {
+		Plugin::$instance->experiments->add_feature( [
+			'name' => 'import-export-customization',
+			'title' => esc_html__( 'Import/Export Customization', 'elementor' ),
+			'description' => esc_html__( 'Enable advanced customization options for import/export functionality.', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+			'default' => ExperimentsManager::STATE_ACTIVE,
+		] );
+	}
+
 	public function __construct() {
-		$this->add_component( 'site-editor', new Modules\SiteEditor\Module() );
+		$this->register_import_export_customization_experiment();
+
+		$this->add_component( 'site-editor', new SiteEditorModule() );
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
-			$this->add_component( 'import-export', new Modules\ImportExport\Module() );
+			$this->add_component( 'import-export', new ImportExportModule() );
+
+			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
+				$this->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
+			}
 
 			// Kit library is depended on import-export
-			$this->add_component( 'kit-library', new Modules\KitLibrary\Module() );
+			$this->add_component( 'kit-library', new KitLibraryModule() );
 		}
 
-		$this->add_component( 'onboarding', new Modules\Onboarding\Module() );
+		$this->add_component( 'onboarding', new OnboardingModule() );
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );

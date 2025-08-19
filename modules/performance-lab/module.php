@@ -5,7 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Module extends BaseModule {
@@ -51,20 +51,6 @@ class Module extends BaseModule {
 			add_filter( 'elementor/files/css/property', function( $value, $css_property, $matches ) {
 				return $this->replace_css_with_webp( $value, $css_property, $matches );
 			}, 10, 3 );
-		}
-
-		if ( is_admin() ) {
-			add_action( 'activated_plugin', function( $plugin ) {
-				if ( 'performance-lab/load.php' === $plugin ) {
-					Plugin::$instance->files_manager->clear_cache();
-				}
-			} );
-
-			add_action( 'deactivated_plugin', function( $plugin ) {
-				if ( 'performance-lab/load.php' === $plugin ) {
-					Plugin::$instance->files_manager->clear_cache();
-				}
-			} );
 		}
 	}
 }

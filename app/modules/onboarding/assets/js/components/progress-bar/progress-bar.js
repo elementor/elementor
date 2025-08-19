@@ -19,13 +19,19 @@ export default function ProgressBar() {
 	if ( ! elementorAppConfig.onboarding.helloActivated ) {
 		progressBarItemsConfig.push( {
 			id: 'hello',
-			title: __( 'Hello Theme', 'elementor' ),
+			title: __( 'Hello Biz Theme', 'elementor' ),
 			route: 'hello',
 		} );
 	}
 
-	progressBarItemsConfig.push(
-		{
+	if ( elementorAppConfig.onboarding.experiment ) {
+		progressBarItemsConfig.push( {
+			id: 'chooseFeatures',
+			title: __( 'Choose Features', 'elementor' ),
+			route: 'chooseFeatures',
+		} );
+	} else {
+		progressBarItemsConfig.push( {
 			id: 'siteName',
 			title: __( 'Site Name', 'elementor' ),
 			route: 'site-name',
@@ -34,7 +40,10 @@ export default function ProgressBar() {
 			id: 'siteLogo',
 			title: __( 'Site Logo', 'elementor' ),
 			route: 'site-logo',
-		},
+		} );
+	}
+
+	progressBarItemsConfig.push(
 		{
 			id: 'goodToGo',
 			title: __( 'Good to Go', 'elementor' ),

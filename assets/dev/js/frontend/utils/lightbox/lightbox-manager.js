@@ -6,16 +6,27 @@ export default class LightboxManager extends elementorModules.ViewModule {
 					`elementor-frontend/utils/lightbox/lightbox`
 				).then( ( { default: LightboxModule } ) => resolveLightbox( new LightboxModule() ) );
 			} ),
-			dialogPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
-			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' );
+			dialogScriptPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'dialog' ),
+			dialogStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'dialog' ),
+			shareLinkPromise = elementorFrontend.utils.assetsLoader.load( 'script', 'share-link' ),
+			swiperStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'swiper' ),
+			lightboxStylePromise = elementorFrontend.utils.assetsLoader.load( 'style', 'e-lightbox' );
 
-		return Promise.all( [ lightboxPromise, dialogPromise, shareLinkPromise ] ).then( () => lightboxPromise );
+		return Promise.all( [
+			lightboxPromise,
+			dialogScriptPromise,
+			dialogStylePromise,
+			shareLinkPromise,
+			swiperStylePromise,
+			lightboxStylePromise,
+		] ).then( () => lightboxPromise );
 	}
 
 	getDefaultSettings() {
 		return {
 			selectors: {
 				links: 'a, [data-elementor-lightbox]',
+				slideshow: '[data-elementor-lightbox-slideshow]',
 			},
 		};
 	}
@@ -23,12 +34,13 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	getDefaultElements() {
 		return {
 			$links: jQuery( this.getSettings( 'selectors.links' ) ),
+			$slideshow: jQuery( this.getSettings( 'selectors.slideshow' ) ),
 		};
 	}
 
 	isLightboxLink( element ) {
 		// Check for lowercase `a` to make sure it works also for links inside SVGs.
-		if ( ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp)(\?.*)?$/i.test( element.href ) ) ) && ! element.dataset.elementorLightboxVideo ) {
+		if ( ( 'a' === element.tagName.toLowerCase() && ( element.hasAttribute( 'download' ) || ! /^[^?]+\.(png|jpe?g|gif|svg|webp|avif)(\?.*)?$/i.test( element.href ) ) ) && ! element.dataset.elementorLightboxVideo ) {
 			return false;
 		}
 
@@ -36,6 +48,10 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			currentLinkOpenInLightbox = element.dataset.elementorOpenLightbox;
 
 		return 'yes' === currentLinkOpenInLightbox || ( generalOpenInLightbox && 'no' !== currentLinkOpenInLightbox );
+	}
+
+	isLightboxSlideshow() {
+		return 0 !== this.elements.$slideshow.length;
 	}
 
 	async onLinkClick( event ) {
@@ -64,13 +80,9 @@ export default class LightboxManager extends elementorModules.ViewModule {
 			return;
 		}
 
-		const lightbox = this.isOptimizedAssetsLoading() ? await LightboxManager.getLightbox() : elementorFrontend.utils.lightbox;
+		const lightbox = await LightboxManager.getLightbox();
 
 		lightbox.createLightbox( element );
-	}
-
-	isOptimizedAssetsLoading() {
-		return elementorFrontend.config.experimentalFeatures.e_optimized_assets_loading;
 	}
 
 	bindEvents() {
@@ -84,10 +96,14 @@ export default class LightboxManager extends elementorModules.ViewModule {
 	onInit( ...args ) {
 		super.onInit( ...args );
 
-		if ( ! this.isOptimizedAssetsLoading() || elementorFrontend.isEditMode() ) {
+		if ( elementorFrontend.isEditMode() ) {
 			return;
 		}
 
+		this.maybeActivateLightboxOnLink();
+	}
+
+	maybeActivateLightboxOnLink() {
 		// Detecting lightbox links on init will reduce the time of waiting to the lightbox to be display on slow connections.
 		this.elements.$links.each( ( index, element ) => {
 			if ( this.isLightboxLink( element ) ) {

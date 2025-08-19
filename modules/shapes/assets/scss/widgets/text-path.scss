@@ -1,7 +1,7 @@
 .elementor-widget-text-path {
 
 	font-size: 20px;
-	text-align: var( --alignment, #{$start} );
+	text-align: var( --alignment, start );
 
 	svg {
 		width: var( --width );
@@ -30,7 +30,7 @@
 		text {
 			--fill: var( --text-color );
 			fill: var( --fill );
-			direction: var( --direction, $direction );
+			direction: var( --direction );
 			transition: var( --transition ) stroke,
 						var( --transition ) stroke-width,
 						var( --transition ) fill;

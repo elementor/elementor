@@ -88,6 +88,28 @@ class Widget_Google_Maps extends Widget_Base {
 		return [ 'google', 'map', 'embed', 'location' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-google_maps' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register google maps widget controls.
 	 *
@@ -100,7 +122,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map',
 			[
-				'label' => esc_html__( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Google Maps', 'elementor' ),
 			]
 		);
 
@@ -116,7 +138,7 @@ class Widget_Google_Maps extends Widget_Base {
 						'content' => sprintf(
 							/* translators: 1: Integration settings link open tag, 2: Create API key link open tag, 3: Link close tag. */
 							esc_html__( 'Set your Google Maps API Key in Elementor\'s %1$sIntegrations Settings%3$s page. Create your key %2$shere.%3$s', 'elementor' ),
-							'<a href="' . Settings::get_url() . '#tab-integrations" target="_blank">',
+							'<a href="' . Settings::get_settings_tab_url( 'integrations' ) . '" target="_blank">',
 							'<a href="https://developers.google.com/maps/documentation/embed/get-api-key" target="_blank">',
 							'</a>'
 						),
@@ -187,7 +209,7 @@ class Widget_Google_Maps extends Widget_Base {
 		$this->start_controls_section(
 			'section_map_style',
 			[
-				'label' => esc_html__( 'Map', 'elementor' ),
+				'label' => esc_html__( 'Google Maps', 'elementor' ),
 				'tab'   => Controls_Manager::TAB_STYLE,
 			]
 		);

@@ -5,8 +5,8 @@
 // Widget - Overlay Settings
 .elementor-editor-widget-settings {
 	z-index: $second-layer;
-	top: -1px;
-	@include end(-1px);
+	inset-block-start: -1px;
+	inset-inline-end: -1px;
 	flex-direction: row-reverse;
 	border-start-start-radius: 0;
 	border-start-end-radius: 0;
@@ -25,12 +25,9 @@
 
 // Widget Pro Promotion
 .e-widget-pro-promotion {
-
-	.elementor-widget-container {
-		border: 2px dashed var(--e-a-border-color-bold);
-		background-color: var(--e-a-color-white);
-		padding: 20px;
-	}
+	border: 2px dashed var(--e-a-border-color-bold);
+	background-color: var(--e-a-color-white);
+	padding: 20px;
 
 	.e-container {
 		max-width: 600px;

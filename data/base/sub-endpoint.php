@@ -1,8 +1,9 @@
 <?php
 namespace Elementor\Data\Base;
 
-// TODO: Add test.
-
+/**
+ * TODO: Add test.
+ */
 abstract class SubEndpoint extends Endpoint {
 
 	/**

@@ -2,7 +2,7 @@
 namespace Elementor\Core\Logger\Items;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class File extends Base {

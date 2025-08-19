@@ -71,7 +71,7 @@ class Module extends BaseModule {
 
 		$this->is_gutenberg_editor_active = true;
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script( 'elementor-gutenberg', ELEMENTOR_ASSETS_URL . 'js/gutenberg' . $suffix . '.js', [ 'jquery' ], ELEMENTOR_VERSION, true );
 
@@ -125,6 +125,17 @@ class Module extends BaseModule {
 				</div>
 			</div>
 		</script>
+
+		<script id="elementor-gutenberg-button-tmpl" type="text/html">
+			<div id="elementor-edit-button-gutenberg">
+				<button id="elementor-edit-mode-button" type="button" class="button button-primary button-large">
+					<span class="elementor-edit-mode-gutenberg">
+						<i class="eicon-elementor-square" aria-hidden="true"></i>
+						<?php echo esc_html__( 'Edit with Elementor', 'elementor' ); ?>
+					</span>
+				</button>
+			</div>
+		</script>
 		<?php
 	}
 
@@ -133,29 +144,14 @@ class Module extends BaseModule {
 	 * @access public
 	 */
 	public function __construct() {
-		$this->register_experiments();
-
 		add_action( 'rest_api_init', [ $this, 'register_elementor_rest_field' ] );
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_assets' ] );
 		add_action( 'admin_footer', [ $this, 'print_admin_js_template' ] );
-
 		add_action( 'wp_enqueue_scripts', [ $this, 'dequeue_assets' ], 999 );
 	}
 
-	public function register_experiments() {
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'block_editor_assets_optimize',
-			'title' => esc_html__( 'Optimized Gutenberg Loading', 'elementor' ),
-			'description' => esc_html__( 'Use this experiment to reduce unnecessary render-blocking loads, enhancing site performance by dequeuing unused Gutenberg block editor files (styles and scripts).', 'elementor' ),
-			'release_status' => Experiments_Manager::RELEASE_STATUS_STABLE,
-			'default' => Experiments_Manager::STATE_ACTIVE,
-			'tag' => esc_html__( 'Performance', 'elementor' ),
-			'generator_tag' => true,
-		] );
-	}
-
 	public function dequeue_assets() {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'block_editor_assets_optimize' ) ) {
+		if ( ! static::is_optimized_gutenberg_loading_enabled() ) {
 			return;
 		}
 
@@ -169,7 +165,20 @@ class Module extends BaseModule {
 		wp_dequeue_style( 'wc-blocks-style' );
 	}
 
-	private static function should_dequeue_gutenberg_assets() : bool {
+	/**
+	 * Check whether the "Optimized Gutenberg Loading" settings is enabled.
+	 *
+	 * The 'elementor_optimized_gutenberg_loading' option can be enabled/disabled from the Elementor settings.
+	 * For BC, when the option has not been saved in the database, the default '1' value is returned.
+	 *
+	 * @since 3.21.0
+	 * @access private
+	 */
+	private static function is_optimized_gutenberg_loading_enabled(): bool {
+		return (bool) get_option( 'elementor_optimized_gutenberg_loading', '1' );
+	}
+
+	private static function should_dequeue_gutenberg_assets(): bool {
 		$post = get_post();
 
 		if ( empty( $post->ID ) ) {
@@ -187,7 +196,7 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private static function is_built_with_elementor( $post ) : bool {
+	private static function is_built_with_elementor( $post ): bool {
 		$document = Plugin::$instance->documents->get( $post->ID );
 
 		if ( ! $document || ! $document->is_built_with_elementor() ) {
@@ -197,7 +206,7 @@ class Module extends BaseModule {
 		return true;
 	}
 
-	private static function is_gutenberg_in_post( $post ) : bool {
+	private static function is_gutenberg_in_post( $post ): bool {
 		if ( has_blocks( $post ) ) {
 			return true;
 		}
@@ -209,7 +218,7 @@ class Module extends BaseModule {
 		return false;
 	}
 
-	private static function current_theme_is_fse_theme() : bool {
+	private static function current_theme_is_fse_theme(): bool {
 		if ( function_exists( 'wp_is_block_theme' ) ) {
 			return (bool) wp_is_block_theme();
 		}

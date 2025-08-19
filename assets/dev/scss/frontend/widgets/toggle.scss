@@ -2,15 +2,21 @@
 // Toggle
 //
 
+.elementor-tab-title {
+	a {
+		color: inherit;
+	}
+}
+
 .elementor-toggle {
-	text-align: $start;
+	text-align: start;
 
 	.elementor-tab-title {
 		font-weight: bold;
 		line-height: 1;
 		margin: 0;
 		padding: 15px;
-		border-bottom: 1px solid $gray-light;
+		border-block-end: 1px solid $gray-light;
 		cursor: pointer;
 		outline: none;
 
@@ -46,7 +52,7 @@
 		}
 
 		&.elementor-active {
-			border-bottom: none;
+			border-block-end: none;
 
 			.elementor-toggle-icon-closed {
 				display: none;
@@ -59,7 +65,7 @@
 
 	.elementor-tab-content {
 	    padding: 15px;
-		border-bottom: 1px solid $gray-light;
+		border-block-end: 1px solid $gray-light;
 	    display: none;
 	}
 }

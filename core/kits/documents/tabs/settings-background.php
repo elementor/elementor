@@ -5,7 +5,7 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Background;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Settings_Background extends Tab_Base {
@@ -66,6 +66,24 @@ class Settings_Background extends Tab_Base {
 				'type' => Controls_Manager::COLOR,
 				'description' => esc_html__( 'The `theme-color` meta tag will only be available in supported browsers and devices.', 'elementor' ),
 				'separator' => 'before',
+			]
+		);
+
+		$this->add_control(
+			'body_overscroll_behavior',
+			[
+				'label' => esc_html__( 'Overscroll Behavior', 'elementor' ),
+				'type' => Controls_Manager::SELECT,
+				'options' => [
+					'' => esc_html__( 'Default', 'elementor' ),
+					'none' => esc_html__( 'None', 'elementor' ),
+					'auto' => esc_html__( 'Auto', 'elementor' ),
+					'contain' => esc_html__( 'Contain', 'elementor' ),
+				],
+				'separator' => 'before',
+				'selectors' => [
+					'{{WRAPPER}}' => 'overscroll-behavior: {{VALUE}};',
+				],
 			]
 		);
 

@@ -9,7 +9,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 		}
 	}
 
-	apply( args ) {
+	apply( { shouldNavigateToDefaultRoute = true, ...args } = {} ) {
 		const document = elementor.documents.getCurrent();
 
 		return $e.data.get( 'globals/index' )
@@ -27,9 +27,11 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 
 				elementor.trigger( 'document:loaded', document );
 
-				return $e.internal( 'panel/open-default', {
-					refresh: true,
-				} );
+				if ( shouldNavigateToDefaultRoute ) {
+					return $e.internal( 'panel/open-default', {
+						refresh: true,
+					} );
+				}
 			} );
 	}
 
@@ -60,7 +62,7 @@ export class AttachPreview extends $e.modules.CommandInternalBase {
 			document.$element.addClass( 'elementor-edit-area elementor-edit-mode' );
 
 			if ( ! isInitialDocument ) {
-				elementor.$previewElementorEl.addClass( 'elementor-embedded-editor' );
+				elementor.documents.getCurrent().$element.addClass( 'elementor-embedded-editor' );
 			}
 
 			elementor.initElements();

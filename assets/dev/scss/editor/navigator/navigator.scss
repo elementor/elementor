@@ -1,13 +1,15 @@
 body {
 	--e-editor-navigator-width: 240px;
+	--e-editor-navigator-indicator-width: 3px;
+	--e-editor-navigator-promotion-height: 30px;
 }
 
 #elementor-navigator {
 	position: fixed;
-	top: 100px;
+	inset-block-start: 100px;
+	inset-inline-end: 30px;
 	width: var(--e-editor-navigator-width);
 	height: 50vh;
-	@include end(30px);
 	background-color: var(--e-a-bg-default);
 	border: var(--e-a-border);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
@@ -17,8 +19,8 @@ body {
 	display: none;
 
 	body.elementor-navigator-docked & {
-		top: 0;
-		@include end(0);
+		inset: 0;
+		inset-inline-start: auto;
 		height: 100%;
 	}
 
@@ -28,6 +30,8 @@ body {
 
 	&__inner {
 		height: 100%;
+		display: flex;
+		flex-direction: column;
 	}
 
 	&__header {
@@ -43,6 +47,25 @@ body {
 			font-weight: 400;
 			padding: 10px 0;
 			cursor: move;
+		}
+
+		iframe + &__title,
+		#elementor-navigator__ai-titles + &__title {
+			padding-inline-end: 17.5px;
+		}
+		
+	}
+
+	&__ai-titles {
+		width: 35px;
+		text-align: center;
+		cursor: pointer;
+		background-color: transparent;
+		border: none;
+		outline: none;
+
+		&:hover {
+			color: $e-pink-600;
 		}
 	}
 
@@ -74,7 +97,7 @@ body {
 	}
 
 	&__elements {
-		height: calc(100% - 49px);
+		flex-grow: 1;
 		overflow: auto;
 		position: relative;
 
@@ -92,15 +115,31 @@ body {
 	}
 
 	&__footer {
-		position: absolute;
 		width: 100%;
-		left: 0;
-		bottom: 0;
 		text-align: center;
-		border-block-start: var(--e-a-border);
 
-		.elementor-navigator-docked & {
-			display: none;
+		&__resize-bar {
+			border-block-start: var(--e-a-border);
+
+			.elementor-navigator-docked & {
+				display: none;
+			}
+		}
+
+		&__promotion {
+			font-size: 12px;
+			padding: 4px 17px;
+			font-family: 'Roboto', sans-serif;
+			color: var(--e-a-bg-logo);
+			min-height: var(--e-editor-navigator-promotion-height);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			a {
+				color: var(--e-a-color-accent-promotion);
+				margin-inline-start: 1px;
+			}
 		}
 	}
 }
@@ -134,7 +173,7 @@ body {
 			.elementor-navigator__element__list-toggle {
 
 				i {
-					transform: rotate(getValueByDirection(-90deg, 90deg));
+					transform: rotate(calc(-90deg * var(--direction-multiplier)));
 				}
 			}
 		}
@@ -160,7 +199,7 @@ body {
 			padding: 10px;
 
 			&__title {
-				margin-inline-start: 23px;
+				margin-inline-start: 34px;
 				font-size: 10px;
 				font-style: italic;
 			}
@@ -268,7 +307,7 @@ body {
 
 		&__toggle {
 			position: absolute;
-			@include end(15px);
+			inset-inline-end: 15px;
 			height: 100%;
 			z-index: 0;
 			font-size: 13px;
@@ -277,13 +316,10 @@ body {
 		&__indicators {
 			position: relative;
 			transition: transform .5s;
-			padding-inline-start: 5px;
 			z-index: 91;
 
 			&:not(:hover) {
-				$transform: getValueByDirection(calc(100% - 8px), calc(-100% + 8px));
-
-				transform: translateX($transform);
+				transform: translateX(calc(100% * var(--direction-multiplier) - var(--e-editor-navigator-indicator-width)));
 			}
 		}
 
@@ -295,14 +331,10 @@ body {
 			justify-content: center;
 			color: var(--e-a-color-txt);
 			background-color: var(--e-a-bg-default);
-			border-inline-start: var(--e-a-border);
+			border-inline-end: var(--e-a-border);
 
 			&:first-child {
-				border-inline-start: 3px solid var(--e-a-border-color-accent);
-
-				.elementor-editing & {
-					border-color: lighten($e-gray-900, 10%);
-				}
+				border-inline-start: var(--e-editor-navigator-indicator-width) solid var(--e-a-border-color-accent);
 			}
 
 			&:hover {
@@ -317,5 +349,9 @@ body {
 				opacity: .5;
 			}
 		}
+	}
+
+	&__promotion-text {
+		line-height: 18px;
 	}
 }

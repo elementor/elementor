@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { WhatsNew } from './whats-new';
 import { Badge } from '@elementor/ui';
-import { GiftIcon } from '../icons/gift-icon';
 
 export const BarButtonNotification = ( props ) => {
 	const { defaultIsRead } = props;
@@ -32,9 +31,7 @@ export const BarButtonNotification = ( props ) => {
 						mx: 0.5,
 					} }
 				>
-					<GiftIcon
-						fontSize="inherit"
-					/>
+					<i className="e-admin-top-bar__bar-button-icon eicon-speakerphone"></i>
 				</Badge>
 				<span className="e-admin-top-bar__bar-button-title">
 					{ props.children }

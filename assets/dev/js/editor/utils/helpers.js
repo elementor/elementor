@@ -1,6 +1,7 @@
 import ColorPicker from './color-picker';
 import DocumentHelper from 'elementor-editor/document/helper-bc';
 import ContainerHelper from 'elementor-editor-utils/container-helper';
+import DOMPurify, { isValidAttribute } from 'dompurify';
 
 const allowedHTMLWrapperTags = [
 	'article',
@@ -43,10 +44,6 @@ module.exports = {
 						container: null,
 					},
 				},
-			},
-			container: {
-				widget: null,
-				container: null,
 			},
 		},
 	},
@@ -137,14 +134,16 @@ module.exports = {
 
 		if ( iconSetting.enqueue ) {
 			iconSetting.enqueue.forEach( ( assetURL ) => {
-				this.enqueuePreviewStylesheet( assetURL );
-				this.enqueueEditorStylesheet( assetURL );
+				const versionAddedURL = `${ assetURL }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+				this.enqueuePreviewStylesheet( versionAddedURL );
+				this.enqueueEditorStylesheet( versionAddedURL );
 			} );
 		}
 
 		if ( iconSetting.url ) {
-			this.enqueuePreviewStylesheet( iconSetting.url );
-			this.enqueueEditorStylesheet( iconSetting.url );
+			const versionAddedURL = `${ iconSetting.url }${ iconSetting?.ver ? '?ver=' + iconSetting.ver : '' }`;
+			this.enqueuePreviewStylesheet( versionAddedURL );
+			this.enqueueEditorStylesheet( versionAddedURL );
 		}
 
 		this._enqueuedIconFonts.push( iconType );
@@ -166,7 +165,7 @@ module.exports = {
 	 * @param {*}      icon       - icon control data
 	 * @param {*}      attributes - default {} - attributes to attach to rendered html tag
 	 * @param {string} tag        - default i - html tag to render
-	 * @param {*}      returnType - default value - retrun type
+	 * @param {*}      returnType - default value - return type
 	 * @return {string|undefined|*} result
 	 */
 	renderIcon( view, icon, attributes = {}, tag = 'i', returnType = 'value' ) {
@@ -266,7 +265,7 @@ module.exports = {
 
 		const enqueueOptions = {};
 
-		let	fontUrl;
+		let fontUrl;
 
 		switch ( fontType ) {
 			case 'googlefonts':
@@ -277,6 +276,13 @@ module.exports = {
 				}
 
 				enqueueOptions.crossOrigin = true;
+
+				if ( 'preview' === target ) {
+					elementorCommon.ajax.addRequest( 'enqueue_google_fonts', {
+						data: { font_name: font },
+						unique_id: 'enqueue_google_fonts_' + font,
+					}, true );
+				}
 
 				break;
 
@@ -557,7 +563,7 @@ module.exports = {
 
 		setTimeout( function() {
 			// Sometimes element removed during the timeout.
-			if ( ! $element[ 0 ].isConnected ) {
+			if ( ! $element[ 0 ]?.isConnected ) {
 				return;
 			}
 
@@ -698,5 +704,75 @@ module.exports = {
 
 		const frString = Array.from( { length: size }, () => '1fr' ).join( ' ' );
 		return frString;
+	},
+
+	sanitize( value, options ) {
+		return DOMPurify.sanitize( value, options );
+	},
+
+	sanitizeUrl( url ) {
+		const isValidUrl = !! url ? isValidAttribute( 'a', 'href', url ) : false;
+
+		if ( ! isValidUrl ) {
+			return '';
+		}
+
+		try {
+			return encodeURI( url );
+		} catch ( e ) {
+			return '';
+		}
+	},
+
+	/**
+	 * @param {HTMLElement} element - The referenced element whose children are searched.
+	 * @return {HTMLAnchorElement | null} The closest anchor child element, or null if none is found.
+	 */
+	findChildWithAnchor( element ) {
+		return element?.querySelector( 'a' ) || null;
+	},
+
+	/**
+	 * @param {HTMLElement} element - The referenced element whose parents are searched.
+	 * @return {HTMLAnchorElement | null} The closest anchor parent element, or null if none is found.
+	 */
+	findParentWithAnchor( element ) {
+		return element?.closest( 'a' ) || null;
+	},
+
+	getAtomicElementTypes() {
+		const { elements } = elementor.config;
+
+		return Object.keys( elements )
+			.filter( ( elementKey ) => Object.keys( elements[ elementKey ] )
+				.some( ( key ) => key.includes( 'atom' ) ) );
+	},
+
+	isElementAtomic( elementId ) {
+		const { type: elType = null } = elementor.getContainer( elementId ) || {};
+
+		return this.getAtomicElementTypes().includes( elType );
+	},
+
+	getWidgetCache( model ) {
+		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
+
+		return elementor.widgetsCache[ elementType ];
+	},
+
+	isAtomicWidget( model ) {
+		const widgetCache = this.getWidgetCache( model );
+
+		return !! widgetCache?.atomic_props_schema;
+	},
+
+	getAtomicWidgetBaseStyles( model ) {
+		if ( ! this.isAtomicWidget( model ) ) {
+			return;
+		}
+
+		const widgetCache = this.getWidgetCache( model );
+
+		return widgetCache.base_styles;
 	},
 };

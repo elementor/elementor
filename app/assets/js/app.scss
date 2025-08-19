@@ -11,7 +11,7 @@
 	border-radius: $app-radius;
 	box-shadow: $eps-box-shadow-3;
 	overflow: hidden;
-	font-family: $eps-font-family; // todo: we have body definition for font familiy,consider removing
+	font-family: $eps-font-family; // todo: we have body definition for font family,consider removing
 	width: 100%;
 	max-width: $app-max-width;
 
@@ -22,10 +22,10 @@
 		position: fixed;
 		height: 100%;
 		width: 100%;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 		background-color: var(--app-lightbox-background-color);
 		z-index: $app-lightbox-z-index;
-		bottom: 0;
-		@include start(0);
 	}
 
 	&__header {

@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -26,6 +27,8 @@ BaseElementView = BaseContainer.extend( {
 	toggleEditTools: false,
 
 	renderAttributes: {},
+
+	isRendering: false,
 
 	className() {
 		let classes = 'elementor-element elementor-element-edit-mode ' + this.getElementUniqueID();
@@ -77,6 +80,7 @@ BaseElementView = BaseContainer.extend( {
 	events() {
 		return {
 			mousedown: 'onMouseDown',
+			click: 'handleAnchorClick',
 			'click @ui.editButton': 'onEditButtonClick',
 			'click @ui.duplicateButton': 'onDuplicateButtonClick',
 			'click @ui.addButton': 'onAddButtonClick',
@@ -147,11 +151,7 @@ BaseElementView = BaseContainer.extend( {
 						/* Translators: %s: Element Name. */
 						title: () => sprintf( __( 'Edit %s', 'elementor' ), elementor.selection.isMultiple() ? '' : this.options.model.getTitle() ),
 						isEnabled: () => ! elementor.selection.isMultiple(),
-						callback: () => $e.run( 'panel/editor/open', {
-							model: this.options.model, // Todo: remove on merge router
-							view: this, // Todo: remove on merge router
-							container: this.getContainer(),
-						} ),
+						callback: () => $e.run( 'document/elements/select', { container: this.getContainer() } ),
 					}, {
 						name: 'duplicate',
 						icon: 'eicon-clone',
@@ -279,16 +279,22 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	getHandlesOverlay() {
-		const elementType = this.getElementType(),
-			$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+		const elementType = this.getElementType();
+		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
+			return;
+		}
+
+		const isElement = getAllElementTypes().includes( elementType );
+		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings ${ isElement ? 'elementor-editor-element-overlay-settings' : '' }` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
 		let editButtons = this.getEditButtons();
+		const shouldShowEditButtons = editButtonsEnabled || 'widget' === elementType;
 
-		// We should only allow external modification to edit buttons if the user enabled edit buttons.
-		if ( editButtonsEnabled ) {
+		// We should only allow external modification to edit buttons if the user enabled edit buttons or it's a widget.
+		if ( shouldShowEditButtons ) {
 			/**
 			 * Filter edit buttons.
 			 *
@@ -324,13 +330,14 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		jQuery.each( editButtons, ( toolName, tool ) => {
-			const $item = jQuery( '<li>', { class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`, title: tool.title } ),
-				$icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } ),
-				$a11y = jQuery( '<span>', { class: 'elementor-screen-only' } );
+			const $item = jQuery( '<li>', {
+				class: `elementor-editor-element-setting elementor-editor-element-${ toolName }`,
+				title: tool.title,
+				'aria-label': tool.title,
+			} );
+			const $icon = jQuery( '<i>', { class: `eicon-${ tool.icon }`, 'aria-hidden': true } );
 
-			$a11y.text( tool.title );
-
-			$item.append( $icon, $a11y );
+			$item.append( $icon );
 
 			$overlayList.append( $item );
 		} );
@@ -353,13 +360,42 @@ BaseElementView = BaseContainer.extend( {
 	},
 
 	toggleVisibility() {
-		this.model.set( 'hidden', ! this.model.get( 'hidden' ) );
+		this.model.toggleVisibility();
 
 		this.toggleVisibilityClass();
 	},
 
 	toggleVisibilityClass() {
-		this.$el.toggleClass( 'elementor-edit-hidden', ! ! this.model.get( 'hidden' ) );
+		const isVisible = this.model.getVisibility();
+
+		if ( ! elementor.helpers.isAtomicWidget( this.model ) ) {
+			this.$el.toggleClass( 'elementor-edit-hidden', isVisible );
+
+			return;
+		}
+
+		/**
+		 * We cannot know for sure the nature of this.$el in atomic widgets in terms of its css display value.
+		 * Though most atomic widgets are wrapped with a { display: contents !important } inline styled div, not all are, i.e. div-block and flexbox - both have display: flex.
+		 *
+		 * The simplest solution might be to switch the inline display value to 'none',
+		 * but that would require us to also store the original display value to revert to upon showing back the widget.
+		 *
+		 * This leaves us with a slightly less elegant workaround - to wrap/unwrap it with a {display: none} inline styled div
+		 */
+		const isWrappedWithHiddenElement = this.$el.parent().is( 'div[data-type="hide-atomic-widget"]' );
+
+		if ( isVisible ) {
+			if ( ! isWrappedWithHiddenElement ) {
+				this.$el.wrap( '<div data-type="hide-atomic-widget" style="display: none" />' );
+			}
+
+			return;
+		}
+
+		if ( isWrappedWithHiddenElement ) {
+			this.$el.unwrap();
+		}
 	},
 
 	addElementFromPanel( options ) {
@@ -659,6 +695,37 @@ BaseElementView = BaseContainer.extend( {
 		this.renderHTML();
 	},
 
+	isAtomicDynamic( changedSettings, dataBinding, changedControl, bindingDynamicCssId ) {
+		return '__dynamic__' in changedSettings &&
+			dataBinding.el.hasAttribute( 'data-binding-dynamic' ) &&
+			( dataBinding.el.getAttribute( 'data-binding-setting' ) === changedControl ||
+				this.isCssIdControl( changedControl, bindingDynamicCssId ) );
+	},
+
+	async getDynamicValue( settings, changedControlKey, bindingSetting ) {
+		const dynamicSettings = { active: true },
+			valueToParse = this.getChangedData( settings, changedControlKey, bindingSetting );
+
+		if ( ! valueToParse ) {
+			return settings.attributes[ changedControlKey ];
+		}
+
+		return await this.getDataFromCacheOrBackend( valueToParse, dynamicSettings );
+	},
+
+	findUniqueKey( obj1, obj2 ) {
+		if ( 'object' !== typeof obj1 || 'object' !== typeof obj2 ) {
+			return false;
+		}
+
+		const keys1 = Object.keys( obj1 ),
+			keys2 = Object.keys( obj2 );
+
+		const allKeys = keys1.concat( keys2 );
+
+		return allKeys.filter( ( item, index, arr ) => arr.indexOf( item ) === arr.lastIndexOf( item ) );
+	},
+
 	/**
 	 * Function linkDataBindings().
 	 *
@@ -677,8 +744,10 @@ BaseElementView = BaseContainer.extend( {
 	 *
 	 * By adding the following example attributes inside the widget the element innerHTML will be linked to the 'testimonial_content' setting value.
 	 *
+	 *
 	 * Current Limitation:
 	 * Not working with dynamics, will required full re-render.
+	 * UPDATE: Support for dynamics has experimentally been added in v3.23
 	 */
 	linkDataBindings() {
 		/**
@@ -728,15 +797,24 @@ BaseElementView = BaseContainer.extend( {
 
 		let changed = false;
 
-		const renderDataBinding = ( dataBinding ) => {
-			const change = settings.changed[ dataBinding.dataset.bindingSetting ];
+		const renderDataBinding = async ( dataBinding ) => {
+			const { bindingSetting, bindingConfig } = dataBinding.dataset;
+			// BindingSetting is kept for backward compatibility, should be removed once two versions from ED-17823 has been merged
+			// And use only the bindingConfig which contains all the needed information
+			const bindingSettings = bindingSetting.split( ' ' ); // Multiple binding settings can appear
+			const config = JSON.parse( bindingConfig );
+			let isChangeHandled = false;
 
-			if ( change !== undefined ) {
-				dataBinding.el.innerHTML = change;
-				return true;
+			for await ( const currentChange of this.bindingChangesGenerator( settings, bindingSettings, config ) ) {
+				const { key, value } = currentChange;
+
+				if ( 'string' === typeof value ) {
+					this.renderDataBoundChange( value, dataBinding.el, config[ key ] );
+					isChangeHandled = true;
+				}
 			}
 
-			return false;
+			return isChangeHandled;
 		};
 
 		for ( const dataBinding of dataBindings ) {
@@ -752,6 +830,8 @@ BaseElementView = BaseContainer.extend( {
 
 					if ( ( container?.parent?.children.indexOf( container ) + 1 ) === parseInt( dataBinding.dataset.bindingIndex ) ) {
 						changed = renderDataBinding( dataBinding );
+					} else if ( dataBindings.indexOf( dataBinding ) + 1 === this.getRepeaterItemActiveIndex() ) {
+						changed = this.tryHandleDynamicCoverSettings( dataBinding, settings );
 					}
 				}
 					break;
@@ -770,6 +850,44 @@ BaseElementView = BaseContainer.extend( {
 		return changed;
 	},
 
+	async * bindingChangesGenerator( settings, bindingSettings, config ) {
+		for ( const [ key, value ] of Object.entries( settings.changed ) ) {
+			if ( '__dynamic__' !== key && ! this.isHandledAsDatabinding( key, bindingSettings, config ) ) {
+				continue;
+			}
+
+			if ( '__dynamic__' !== key ) {
+				yield { key, value };
+				continue;
+			}
+
+			for ( const dynamicKey of Object.keys( value ) ) {
+				if ( this.isHandledAsDatabinding( dynamicKey, bindingSettings, config ) ) {
+					const actual = await this.getDynamicValue( settings, dynamicKey, dynamicKey );
+					yield { key: dynamicKey, value: actual };
+				}
+			}
+		}
+	},
+
+	isHandledAsDatabinding( key, bindingSettings, config ) {
+		return bindingSettings.some( ( x ) => x === key ) || config[ key ] !== undefined;
+	},
+
+	renderDataBoundChange( change, element, config ) {
+		switch ( config?.editType ) {
+			case 'attribute':
+				element.closest( config.selector ).setAttribute( config.attr, change );
+				break;
+			case 'text':
+				element.innerHTML = change;
+				break;
+			// Backward compatibility should be deleted once two versions from ED-17823 has been merged
+			default:
+				element.innerHTML = change;
+		}
+	},
+
 	/**
 	 * Function renderOnChange().
 	 *
@@ -782,11 +900,25 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( this.renderDataBindings( settings, this.dataBindings ) ) {
+		if ( this.isRendering ) {
+			this.isRendering = false;
+
 			return;
 		}
 
-		this.renderChanges( settings );
+		const renderResult = this.renderDataBindings( settings, this.dataBindings );
+
+		if ( renderResult instanceof Promise ) {
+			renderResult.then( ( result ) => {
+				if ( ! result ) {
+					this.renderChanges( settings );
+				}
+			} );
+		}
+
+		if ( ! renderResult ) {
+			this.renderChanges( settings );
+		}
 	},
 
 	getDynamicParsingSettings() {
@@ -848,6 +980,7 @@ BaseElementView = BaseContainer.extend( {
 		setTimeout( () => {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
+			elementorFrontend.elements.$window.on( 'elementor/elements/link-data-bindings', this.linkDataBindings.bind( this ) );
 		} );
 	},
 
@@ -866,6 +999,8 @@ BaseElementView = BaseContainer.extend( {
 
 		const renderedEvent = new CustomEvent( event, { detail: { elementView: this } } );
 		elementor.$preview[ 0 ].contentWindow.dispatchEvent( renderedEvent );
+
+		window.top.dispatchEvent( renderedEvent );
 	},
 
 	onEditSettingsChanged( changedModel ) {
@@ -889,7 +1024,7 @@ BaseElementView = BaseContainer.extend( {
 		}
 
 		if ( options.scrollIntoView ) {
-			elementor.helpers.scrollToView( this.$el, 200 );
+			elementor.helpers.scrollToView( this.getDomElement(), 200 );
 		}
 
 		$e.run( 'document/elements/toggle-selection', {
@@ -920,8 +1055,28 @@ BaseElementView = BaseContainer.extend( {
 
 	onRemoveButtonClick( event ) {
 		event.stopPropagation();
+		this.handleAnchorClick( event );
 
 		$e.run( 'document/elements/delete', { container: this.getContainer() } );
+	},
+
+	handleAnchorClick( event ) {
+		const anchor = event.target.closest( 'a' );
+		const hash =
+			anchor?.getAttribute( 'href' ) ||
+			this.model?.get( 'settings' )?.get( 'link' )?.url ||
+			'';
+		if ( hash && hash.startsWith( '#' ) ) {
+			const scrollTargetElem = event.target?.ownerDocument.querySelector( hash );
+
+			if ( scrollTargetElem ) {
+				scrollTargetElem.scrollIntoView();
+			}
+		}
+
+		if ( elementor.helpers.isElementAtomic( this.getContainer().id ) ) {
+			event.preventDefault();
+		}
 	},
 
 	/* jQuery ui sortable preventing any `mousedown` event above any element, and as a result is preventing the `blur`
@@ -991,6 +1146,10 @@ BaseElementView = BaseContainer.extend( {
 		return helper;
 	},
 
+	getDomElement() {
+		return this.$el;
+	},
+
 	/**
 	 * Initialize the Droppable instance.
 	 */
@@ -1004,7 +1163,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		this.$el.html5Draggable( {
+		this.getDomElement().html5Draggable( {
 			onDragStart: ( e ) => {
 				e.stopPropagation();
 
@@ -1044,6 +1203,118 @@ BaseElementView = BaseContainer.extend( {
 
 			groups: [ 'elementor-element' ],
 		} );
+	},
+
+	async getDataFromCacheOrBackend( valueToParse, dynamicSettings ) {
+		try {
+			return elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent );
+		} catch {
+			await new Promise( ( resolve ) => {
+				elementor.dynamicTags.refreshCacheFromServer( () => {
+					resolve();
+				} );
+			} );
+
+			return ! _.isEmpty( elementor.dynamicTags.cache )
+				? elementor.dynamicTags.parseTagsText( valueToParse, dynamicSettings, elementor.dynamicTags.getTagDataContent )
+				: false;
+		}
+	},
+
+	getChangedDynamicControlKey( settings ) {
+		const changedControlKey = this.findUniqueKey( settings?.changed?.__dynamic__, settings?._previousAttributes?.__dynamic__ )[ 0 ];
+
+		if ( changedControlKey ) {
+			return changedControlKey;
+		}
+
+		return Object.keys( settings.changed )[ 0 ] !== '__dynamic__'
+			? Object.keys( settings.changed )[ 0 ]
+			: Object.keys( settings.changed.__dynamic__ )[ 0 ];
+	},
+
+	getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.[ changedControlKey ];
+	},
+
+	getChangedDataForAddedItem( settings, changedControlKey, bindingSetting ) {
+		return settings.attributes?.__dynamic__?.[ changedControlKey ]?.[ bindingSetting ] || settings.attributes?.__dynamic__?.[ changedControlKey ];
+	},
+
+	getChangedData( settings, changedControlKey, bindingSetting ) {
+		const changedDataForRemovedItem = this.getChangedDataForRemovedItem( settings, changedControlKey, bindingSetting ),
+			changedDataForAddedItem = this.getChangedDataForAddedItem( settings, changedControlKey, bindingSetting );
+
+		return changedDataForAddedItem || changedDataForRemovedItem;
+	},
+
+	/**
+	 * Function getTitleWithAdvancedValues().
+	 *
+	 * Renders before / after / fallback for dynamic item titles.
+	 *
+	 * @param {Object} settings
+	 * @param {string} text
+	 */
+	getTitleWithAdvancedValues( settings, text ) {
+		const { attributes, _previousAttributes: previousAttributes } = settings;
+
+		if ( this.compareSettings( attributes, previousAttributes, 'fallback' ) ) {
+			text = text.replace( new RegExp( previousAttributes.fallback ), '' );
+		}
+
+		if ( ! text || attributes.fallback === text ) {
+			return attributes.fallback || '';
+		}
+
+		if ( this.compareSettings( attributes, previousAttributes, 'before' ) ) {
+			text = text.replace( previousAttributes.before, '' );
+		}
+
+		if ( this.compareSettings( attributes, previousAttributes, 'after' ) ) {
+			text = text.replace( new RegExp( previousAttributes.after + '$' ), '' );
+		}
+
+		if ( ! text ) {
+			return attributes.fallback || '';
+		}
+
+		const newBefore = this.getNewSettingsValue( attributes, previousAttributes, 'before' ),
+			newAfter = this.getNewSettingsValue( attributes, previousAttributes, 'after' );
+
+		text = newBefore + text;
+		text += newAfter;
+
+		return text;
+	},
+
+	compareSettings( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] && previousAttributes[ key ] !== attributes[ key ];
+	},
+
+	getNewSettingsValue( attributes, previousAttributes, key ) {
+		return previousAttributes[ key ] !== attributes[ key ] ? ( attributes[ key ] || '' ) : '';
+	},
+
+	getRepeaterItemActiveIndex() {
+		return this.getContainer().renderer.view.model.changed.editSettings.changed.activeItemIndex ||
+			this.getContainer().renderer.view.model.changed.editSettings.attributes.activeItemIndex;
+	},
+
+	tryHandleDynamicCoverSettings( dataBinding, settings ) {
+		if ( ! this.isAdvancedDynamicSettings( settings.attributes ) ) {
+			return false;
+		}
+
+		this.isRendering = true;
+
+		dataBinding.el.textContent = this.getTitleWithAdvancedValues( settings, dataBinding.el.textContent );
+
+		return true;
+	},
+
+	isAdvancedDynamicSettings( attributes ) {
+		return 'before' in attributes && 'after' in attributes && 'fallback' in attributes;
 	},
 } );
 

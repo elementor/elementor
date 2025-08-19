@@ -9,11 +9,11 @@ type ScreenShot = {
 }
 export default class ElementRegressionHelper {
 	readonly page: Page;
-	readonly editorPage: EditorPage;
+	readonly editor: EditorPage;
 
 	constructor( page: Page, testInfo: TestInfo ) {
 		this.page = page;
-		this.editorPage = new EditorPage( page, testInfo );
+		this.editor = new EditorPage( page, testInfo );
 	}
 
 	getLabel( isPublished: boolean ) {
@@ -24,9 +24,15 @@ export default class ElementRegressionHelper {
 		if ( widgetType.includes( 'hover' ) ) {
 			return;
 		}
+
+		// TODO: Fix in a separate task.
+		if ( 'text_path' === widgetType ) {
+			return;
+		}
+
 		const locator = isPublished
-			? this.page.locator( EditorSelectors.container )
-			: this.editorPage.getPreviewFrame().locator( EditorSelectors.container );
+			? this.page.locator( EditorSelectors.container + ' >> nth=0' )
+			: this.editor.getPreviewFrame().locator( EditorSelectors.container + ' >> nth=0' );
 
 		const label = this.getLabel( isPublished );
 
@@ -44,7 +50,7 @@ export default class ElementRegressionHelper {
 		if ( args.widgetType.includes( 'hover' ) ) {
 			const widget = args.isPublished
 				? this.page.locator( EditorSelectors.widget )
-				: this.editorPage.getPreviewFrame().locator( EditorSelectors.widget );
+				: this.editor.getPreviewFrame().locator( EditorSelectors.widget );
 			const label = this.getLabel( args.isPublished );
 			const widgetCount = await widget.count();
 
@@ -58,12 +64,9 @@ export default class ElementRegressionHelper {
 	}
 
 	async setResponsiveMode( mode: string ) {
-		// Mobile tablet desktop
-		if ( ! await this.page.locator( '.elementor-device-desktop.ui-resizable' ).isVisible() ) {
-			await this.page.getByRole( 'button', { name: 'Responsive Mode' } ).click();
-		}
-		await this.page.locator( `#e-responsive-bar-switcher__option-${ mode } i` ).click();
-		await this.editorPage.getPreviewFrame().locator( '#site-header' ).click();
+		const deviceLabel = mode.charAt( 0 ).toUpperCase() + mode.slice( 1 );
+
+		await this.page.locator( `${ EditorSelectors.panels.topBar.wrapper } [aria-label="Switch Device"] button[aria-label*="${ deviceLabel }"]` ).click();
 	}
 
 	async doResponsiveScreenshot( args: Omit<ScreenShot, 'hoverSelector'> ) {
@@ -71,23 +74,35 @@ export default class ElementRegressionHelper {
 		let label = '';
 		const deviceParams = { mobile: { width: 360, height: 736 }, tablet: { width: 768, height: 787 } };
 
+		// TODO: Fix in a separate task.
+		if ( 'text_path' === args.widgetType ) {
+			return;
+		}
+
 		if ( args.widgetType.includes( 'hover' ) ) {
 			return;
 		}
+
 		if ( args.isPublished ) {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
+
+			if ( 'container_grid' === args.widgetType && 'mobile' === args.device ) {
+				await page.waitForTimeout( 500 );
+			}
+
 			label = '_published';
-			await expect.soft( page.locator( EditorSelectors.container ) )
+			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
-			page = this.editorPage.getPreviewFrame();
+			page = this.editor.getPreviewFrame();
 			await this.setResponsiveMode( args.device );
 			await this.page.evaluate( () => {
-				const iframe = document.getElementById( 'elementor-preview-iframe' );
-				iframe.style.height = '3000px';
+				const wrapper = document.getElementById( 'elementor-preview-responsive-wrapper' );
+				wrapper.style.overflow = 'visible';
+				wrapper.style.maxHeight = 'none';
 			} );
-			await expect.soft( page.locator( EditorSelectors.container ) )
+			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
 	}

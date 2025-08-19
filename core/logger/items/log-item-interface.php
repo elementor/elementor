@@ -2,7 +2,7 @@
 namespace Elementor\Core\Logger\Items;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -17,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @property array $meta
  * @property array $times_dates
  * @property array $args
- *
  */
 
 interface Log_Item_Interface extends \JsonSerializable {
@@ -43,10 +42,6 @@ interface Log_Item_Interface extends \JsonSerializable {
 	 */
 	public function __toString();
 
-	/**
-	 * @param $str
-	 * @return Log_Item_Interface | null
-	 */
 	public static function from_json( $str );
 
 	/**

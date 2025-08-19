@@ -74,6 +74,28 @@ class Widget_Alert extends Widget_Base {
 		return [ 'alert', 'notice', 'message' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-alert' ];
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
 	/**
 	 * Register alert widget controls.
 	 *
@@ -102,7 +124,7 @@ class Widget_Alert extends Widget_Base {
 					'warning' => esc_html__( 'Warning', 'elementor' ),
 					'danger' => esc_html__( 'Danger', 'elementor' ),
 				],
-				'style_transfer' => true,
+				'prefix_class' => 'elementor-alert-',
 			]
 		);
 
@@ -204,10 +226,10 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'border_color',
 			[
-				'label' => esc_html__( 'Border Color', 'elementor' ),
+				'label' => esc_html__( 'Side Border Color', 'elementor' ),
 				'type' => Controls_Manager::COLOR,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-alert' => 'border-color: {{VALUE}};',
+					'{{WRAPPER}} .elementor-alert' => 'border-inline-start-color: {{VALUE}};',
 				],
 			]
 		);
@@ -215,7 +237,7 @@ class Widget_Alert extends Widget_Base {
 		$this->add_control(
 			'border_left-width',
 			[
-				'label' => esc_html__( 'Left Border Width', 'elementor' ),
+				'label' => esc_html__( 'Side Border Width', 'elementor' ),
 				'type' => Controls_Manager::SLIDER,
 				'size_units' => [ 'px', '%', 'em', 'rem', 'custom' ],
 				'range' => [
@@ -227,7 +249,7 @@ class Widget_Alert extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}} .elementor-alert' => 'border-left-width: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .elementor-alert' => 'border-inline-start-width: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -454,43 +476,43 @@ class Widget_Alert extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		if ( Utils::is_empty( $settings['alert_title'] ) ) {
+		if ( Utils::is_empty( $settings['alert_title'] ) && Utils::is_empty( $settings['alert_description'] ) ) {
 			return;
 		}
 
-		if ( ! empty( $settings['alert_type'] ) ) {
-			$this->add_render_attribute( 'wrapper', 'class', 'elementor-alert elementor-alert-' . $settings['alert_type'] );
-		}
+		$this->add_render_attribute( 'alert_wrapper', 'class', 'elementor-alert' );
 
-		$this->add_render_attribute( 'wrapper', 'role', 'alert' );
+		$this->add_render_attribute( 'alert_wrapper', 'role', 'alert' );
 
 		$this->add_render_attribute( 'alert_title', 'class', 'elementor-alert-title' );
 
-		$this->add_inline_editing_attributes( 'alert_title', 'none' );
-		?>
-		<div <?php $this->print_render_attribute_string( 'wrapper' ); ?>>
-			<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php $this->print_unescaped_setting( 'alert_title' ); ?></span>
-			<?php
-			if ( ! Utils::is_empty( $settings['alert_description'] ) ) :
-				$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
+		$this->add_render_attribute( 'alert_description', 'class', 'elementor-alert-description' );
 
-				$this->add_inline_editing_attributes( 'alert_description' );
-				?>
-				<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php $this->print_unescaped_setting( 'alert_description' ); ?></span>
+		$this->add_inline_editing_attributes( 'alert_title', 'none' );
+
+		$this->add_inline_editing_attributes( 'alert_description' );
+		?>
+		<div <?php $this->print_render_attribute_string( 'alert_wrapper' ); ?>>
+
+			<?php if ( ! Utils::is_empty( $settings['alert_title'] ) ) : ?>
+			<span <?php $this->print_render_attribute_string( 'alert_title' ); ?>><?php echo wp_kses_post( $settings['alert_title'] ); ?></span>
 			<?php endif; ?>
+
+			<?php if ( ! Utils::is_empty( $settings['alert_description'] ) ) : ?>
+			<span <?php $this->print_render_attribute_string( 'alert_description' ); ?>><?php echo wp_kses_post( $settings['alert_description'] ); ?></span>
+			<?php endif; ?>
+
 			<?php if ( 'show' === $settings['show_dismiss'] ) : ?>
-				<button type="button" class="elementor-alert-dismiss">
-					<?php
-					if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
-						Icons_Manager::render_icon( $settings['dismiss_icon'], [
-							'aria-hidden' => 'true',
-						] );
-					} else { ?>
-						<span aria-hidden="true">&times;</span>
-					<?php } ?>
-					<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
-				</button>
+			<button type="button" class="elementor-alert-dismiss" aria-label="<?php echo esc_attr__( 'Dismiss this alert.', 'elementor' ); ?>">
+				<?php
+				if ( ! empty( $settings['dismiss_icon']['value'] ) ) {
+					Icons_Manager::render_icon( $settings['dismiss_icon'], [ 'aria-hidden' => 'true' ] );
+				} else { ?>
+					<span aria-hidden="true">&times;</span>
+				<?php } ?>
+			</button>
 			<?php endif; ?>
+
 		</div>
 		<?php
 	}
@@ -505,33 +527,47 @@ class Widget_Alert extends Widget_Base {
 	 */
 	protected function content_template() {
 		?>
-		<# if ( settings.alert_title ) {
-			view.addRenderAttribute( {
-				alert_title: { class: 'elementor-alert-title' },
-				alert_description: { class: 'elementor-alert-description' }
-			} );
+		<#
+		if ( ! settings.alert_title && ! settings.alert_description ) {
+			return;
+		}
 
-			view.addInlineEditingAttributes( 'alert_title', 'none' );
-			view.addInlineEditingAttributes( 'alert_description' );
+		view.addRenderAttribute( 'alert_wrapper', 'class', 'elementor-alert' );
 
-			var iconHTML = elementor.helpers.renderIcon( view, settings.dismiss_icon, { 'aria-hidden': true }, 'i' , 'object' ),
-				migrated = elementor.helpers.isIconMigrated( settings, 'dismiss_icon' );
-			#>
-			<div class="elementor-alert elementor-alert-{{ settings.alert_type }}" role="alert">
-				<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{{ settings.alert_title }}}</span>
-				<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{{ settings.alert_description }}}</span>
-				<# if ( 'show' === settings.show_dismiss ) { #>
-					<button type="button" class="elementor-alert-dismiss">
-						<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
-						{{{ iconHTML.value }}}
-						<# } else { #>
-							<span aria-hidden="true">&times;</span>
-						<# } #>
-						<span class="elementor-screen-only"><?php echo esc_html__( 'Dismiss this alert.', 'elementor' ); ?></span>
-					</button>
+		view.addRenderAttribute( 'alert_wrapper', 'role', 'alert' );
+
+		view.addRenderAttribute( 'alert_title', 'class', 'elementor-alert-title' );
+
+		view.addRenderAttribute( 'alert_description', 'class', 'elementor-alert-description' );
+
+		view.addInlineEditingAttributes( 'alert_title', 'none' );
+
+		view.addInlineEditingAttributes( 'alert_description' );
+
+		var iconHTML = elementor.helpers.renderIcon( view, settings.dismiss_icon, { 'aria-hidden': true }, 'i' , 'object' ),
+			migrated = elementor.helpers.isIconMigrated( settings, 'dismiss_icon' );
+		#>
+		<div {{{ view.getRenderAttributeString( 'alert_wrapper' ) }}}>
+
+			<# if ( settings.alert_title ) { #>
+			<span {{{ view.getRenderAttributeString( 'alert_title' ) }}}>{{ settings.alert_title }}</span>
+			<# } #>
+
+			<# if ( settings.alert_description ) { #>
+			<span {{{ view.getRenderAttributeString( 'alert_description' ) }}}>{{ settings.alert_description }}</span>
+			<# } #>
+
+			<# if ( 'show' === settings.show_dismiss ) { #>
+			<button type="button" class="elementor-alert-dismiss" aria-label="<?php echo esc_attr__( 'Dismiss this alert.', 'elementor' ); ?>">
+				<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
+				{{{ iconHTML.value }}}
+				<# } else { #>
+					<span aria-hidden="true">&times;</span>
 				<# } #>
-			</div>
-		<# } #>
+			</button>
+			<# } #>
+
+		</div>
 		<?php
 	}
 }

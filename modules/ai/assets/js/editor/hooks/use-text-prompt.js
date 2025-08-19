@@ -1,12 +1,12 @@
 import { getCompletionText, getEditText } from '../api';
 import usePrompt from './use-prompt';
 
-const getTextResult = async ( prompt, instruction ) => {
-	if ( instruction ) {
-		return getEditText( prompt, instruction );
+const getTextResult = async ( payload ) => {
+	if ( payload?.instruction ) {
+		return getEditText( payload );
 	}
 
-	return getCompletionText( prompt );
+	return getCompletionText( payload );
 };
 
 const useTextPrompt = ( initialValue ) => {

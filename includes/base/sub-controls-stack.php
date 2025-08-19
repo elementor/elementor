@@ -2,7 +2,7 @@
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 /**
@@ -44,10 +44,10 @@ abstract class Sub_Controls_Stack {
 	 * Initializing the base class by setting parent stack.
 	 *
 	 * @access public
-	 * @param Controls_Stack $parent
+	 * @param Controls_Stack $element_parent
 	 */
-	public function __construct( $parent ) {
-		$this->parent = $parent;
+	public function __construct( $element_parent ) {
+		$this->parent = $element_parent;
 	}
 
 	/**
@@ -125,7 +125,6 @@ abstract class Sub_Controls_Stack {
 	 * @param string $group_name Group control name.
 	 * @param array  $args       Group control arguments. Default is an empty array.
 	 * @param array  $options
-	 *
 	 */
 	public function add_group_control( $group_name, $args, $options = [] ) {
 		$args['name'] = $this->get_control_id( $args['name'] );
@@ -184,7 +183,6 @@ abstract class Sub_Controls_Stack {
 	 * @param string $id   Section ID.
 	 * @param array  $args Section arguments.
 	 */
-
 	public function start_controls_section( $id, $args = [] ) {
 		$this->parent->start_controls_section( $this->get_control_id( $id ), $args );
 	}

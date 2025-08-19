@@ -4,7 +4,7 @@ namespace Elementor\Core\Admin\Menu;
 use Elementor\Core\Base\Base_Object;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 abstract class Base extends Base_Object {

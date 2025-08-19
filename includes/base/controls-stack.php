@@ -4,6 +4,8 @@ namespace Elementor;
 use Elementor\Core\Base\Base_Object;
 use Elementor\Core\DynamicTags\Manager;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
+use Elementor\Core\Frontend\Performance;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -310,7 +312,24 @@ abstract class Controls_Stack extends Base_Object {
 	 * @return mixed Controls list.
 	 */
 	public function get_controls( $control_id = null ) {
-		return self::get_items( $this->get_stack()['controls'], $control_id );
+		$stack = $this->get_stack();
+
+		if ( null !== $control_id ) {
+			$control_data = self::get_items( $stack['controls'], $control_id );
+			if ( null === $control_data && ! empty( $stack['style_controls'] ) ) {
+				$control_data = self::get_items( $stack['style_controls'], $control_id );
+			}
+
+			return $control_data;
+		}
+
+		$controls = $stack['controls'];
+
+		if ( Performance::is_use_style_controls() && ! empty( $stack['style_controls'] ) ) {
+			$controls += $stack['style_controls'];
+		}
+
+		return self::get_items( $controls, $control_id );
 	}
 
 	/**
@@ -431,39 +450,49 @@ abstract class Controls_Stack extends Base_Object {
 			}
 		}
 
-		if ( $this->should_optimize_controls() ) {
+		if ( Performance::should_optimize_controls() ) {
+			$ui_controls = [
+				Controls_Manager::RAW_HTML,
+				Controls_Manager::DIVIDER,
+				Controls_Manager::HEADING,
+				Controls_Manager::BUTTON,
+				Controls_Manager::ALERT,
+				Controls_Manager::NOTICE,
+				Controls_Manager::DEPRECATED_NOTICE,
+			];
+
+			if ( ! empty( $args['type'] ) && ! empty( $args['section'] ) && in_array( $args['type'], $ui_controls ) ) {
+				$args = [
+					'type' => $args['type'],
+					'section' => $args['section'],
+				];
+			}
+
 			unset(
 				$args['label_block'],
 				$args['label'],
+				$args['title'],
 				$args['tab'],
 				$args['options'],
+				$args['placeholder'],
 				$args['separator'],
 				$args['size_units'],
 				$args['range'],
-				$args['render_type'],
 				$args['toggle'],
 				$args['ai'],
+				$args['classes'],
+				$args['style_transfer'],
+				$args['show_label'],
+				$args['description'],
 				$args['label_on'],
 				$args['label_off'],
 				$args['labels'],
-				$args['handles']
+				$args['handles'],
+				$args['editor_available'],
 			);
 		}
 
 		return Plugin::$instance->controls_manager->add_control_to_stack( $this, $id, $args, $options );
-	}
-
-	private function should_optimize_controls() {
-		static $is_frontend = null;
-
-		if ( null === $is_frontend ) {
-			$is_frontend = (
-				! is_admin()
-				&& ! Plugin::$instance->preview->is_preview_mode()
-			);
-		}
-
-		return $is_frontend;
 	}
 
 	/**
@@ -584,8 +613,8 @@ abstract class Controls_Stack extends Base_Object {
 		$position = array_merge( $default_position, $position );
 
 		if (
-			'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ||
-			'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true )
+			( 'control' === $position['type'] && in_array( $position['at'], [ 'start', 'end' ], true ) ) ||
+			( 'section' === $position['type'] && in_array( $position['at'], [ 'before', 'after' ], true ) )
 		) {
 			_doing_it_wrong( sprintf( '%s::%s', get_called_class(), __FUNCTION__ ), 'Invalid position arguments. Use `before` / `after` for control or `start` / `end` for section.', '1.7.0' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
@@ -609,11 +638,11 @@ abstract class Controls_Stack extends Base_Object {
 		$controls_keys = array_keys( $registered_controls );
 
 		while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_section_index ] ]['type'] ) {
-			$target_section_index--;
+			--$target_section_index;
 		}
 
 		if ( 'section' === $position['type'] ) {
-			$target_control_index++;
+			++$target_control_index;
 
 			if ( 'end' === $position['at'] ) {
 				while ( Controls_Manager::SECTION !== $registered_controls[ $controls_keys[ $target_control_index ] ]['type'] ) {
@@ -627,7 +656,7 @@ abstract class Controls_Stack extends Base_Object {
 		$target_control = $registered_controls[ $controls_keys[ $target_control_index ] ];
 
 		if ( 'after' === $position['at'] ) {
-			$target_control_index++;
+			++$target_control_index;
 		}
 
 		$section_id = $registered_controls[ $controls_keys[ $target_section_index ] ]['name'];
@@ -709,7 +738,7 @@ abstract class Controls_Stack extends Base_Object {
 		$controls_keys = array_keys( $registered_controls );
 
 		while ( true ) {
-			$section_index++;
+			++$section_index;
 
 			if ( ! isset( $controls_keys[ $section_index ] ) ) {
 				break;
@@ -722,7 +751,7 @@ abstract class Controls_Stack extends Base_Object {
 			}
 
 			$section_controls[ $control_key ] = $registered_controls[ $control_key ];
-		};
+		}
 
 		return $section_controls;
 	}
@@ -903,7 +932,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			// Set parent using the name from previous iteration.
 			if ( isset( $control_name ) ) {
-				// If $control_name end with _widescreen use desktop name instead
+				// If $control_name end with _widescreen use desktop name instead.
 				$control_args['parent'] = '_widescreen' === substr( $control_name, -strlen( '_widescreen' ) ) ? $id : $control_name;
 			} else {
 				$control_args['parent'] = null;
@@ -1032,8 +1061,8 @@ abstract class Controls_Stack extends Base_Object {
 	 */
 	final public function get_config() {
 		if ( null === $this->config ) {
-			// TODO: This is for backwards compatibility starting from 2.9.0
-			// This if statement should be removed when the method is hard-deprecated
+			// TODO: This is for backwards compatibility starting from 2.9.0.
+			// This if statement should be removed when the method is hard-deprecated.
 			if ( $this->has_own_method( '_get_initial_config', self::class ) ) {
 				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_get_initial_config', '2.9.0', __CLASS__ . '::get_initial_config()' );
 
@@ -1059,6 +1088,8 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Set a specific property of the config list for this controls-stack.
 	 *
+	 * @param string $key
+	 * @param string $value
 	 * @since 3.5.0
 	 * @access public
 	 */
@@ -1136,6 +1167,9 @@ abstract class Controls_Stack extends Base_Object {
 	}
 
 	/**
+	 * @param null $setting
+	 * @param null $settings
+	 * @return array|mixed|null
 	 * @since 2.0.14
 	 * @access public
 	 */
@@ -1156,14 +1190,14 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Retrieve the settings from all the active controls.
 	 *
-	 * @since 1.4.0
+	 * @param array|null $settings Optional. Controls settings. Default is null.
+	 * @param array|null $controls Optional. An array of controls. Default is null.
+	 *
+	 * @return array Active settings.
 	 * @since 2.1.0 Added the `controls` and the `settings` parameters.
 	 * @access public
 	 *
-	 * @param array $controls Optional. An array of controls. Default is null.
-	 * @param array $settings Optional. Controls settings. Default is null.
-	 *
-	 * @return array Active settings.
+	 * @since 1.4.0
 	 */
 	public function get_active_settings( $settings = null, $controls = null ) {
 		$is_first_request = ! $settings && ! $this->active_settings;
@@ -1394,13 +1428,12 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * Used to determine whether the control is visible or not.
 	 *
+	 * @param array $control The control.
+	 * @param null  $values Optional. Condition values. Default is null.
+	 * @param null  $controls
+	 * @return bool Whether the control is visible.
 	 * @since 1.4.0
 	 * @access public
-	 *
-	 * @param array $control The control.
-	 * @param array $values  Optional. Condition values. Default is null.
-	 *
-	 * @return bool Whether the control is visible.
 	 */
 	public function is_control_visible( $control, $values = null, $controls = null ) {
 		if ( null === $values ) {
@@ -1424,7 +1457,7 @@ abstract class Controls_Stack extends Base_Object {
 
 			$pure_condition_key = $condition_key_parts[1];
 			$condition_sub_key = $condition_key_parts[2];
-			$is_negative_condition = ! ! $condition_key_parts[3];
+			$is_negative_condition = (bool) $condition_key_parts[3];
 
 			if ( ! isset( $values[ $pure_condition_key ] ) || null === $values[ $pure_condition_key ] ) {
 				return false;
@@ -1489,7 +1522,10 @@ abstract class Controls_Stack extends Base_Object {
 				$is_contains = $instance_value === $condition_value;
 			}
 
-			if ( $is_negative_condition && $is_contains || ! $is_negative_condition && ! $is_contains ) {
+			if (
+				( $is_negative_condition && $is_contains ) ||
+				( ! $is_negative_condition && ! $is_contains )
+			) {
 				return false;
 			}
 		}
@@ -1542,6 +1578,10 @@ abstract class Controls_Stack extends Base_Object {
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_start", $this, $args );
 
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/before_section_start", $this, $args );
+		}
+
 		$args['type'] = Controls_Manager::SECTION;
 
 		$this->add_control( $section_id, $args );
@@ -1582,6 +1622,10 @@ abstract class Controls_Stack extends Base_Object {
 		 * @param array          $args Section arguments.
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_start", $this, $args );
+
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/after_section_start", $this, $args );
+		}
 	}
 
 	/**
@@ -1632,6 +1676,10 @@ abstract class Controls_Stack extends Base_Object {
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/before_section_end", $this, $args );
 
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/before_section_end", $this, $args );
+		}
+
 		$this->current_section = null;
 
 		/**
@@ -1660,6 +1708,35 @@ abstract class Controls_Stack extends Base_Object {
 		 * @param array          $args Section arguments.
 		 */
 		do_action( "elementor/element/{$stack_name}/{$section_id}/after_section_end", $this, $args );
+
+		if ( $this->should_manually_trigger_common_action( $stack_name ) ) {
+			do_action( "elementor/element/common/{$section_id}/after_section_end", $this, $args );
+		}
+	}
+
+	/**
+	 * Should manually trigger common action.
+	 *
+	 * With the Optimized Markup experiment, the Advanced Tab has been split to maintain backward compatibility:
+	 * - 'common' refers to the existing Advanced Tab.
+	 * - 'common-optimized' refers to the new Advanced Tab for optimized widgets.
+	 *
+	 * Third-party developers may have used hooks like 'elementor/element/common/_section_background/before_section_end'
+	 * to add controls to the Advanced Tab. However, this hook will now only work on widgets that are not optimized.
+	 *
+	 * This method checks whether the 'elementor/element/common/...' hooks should be manually executed
+	 * to prevent third parties from needing to add equivalent hooks for 'elementor/element/common-optimized/...'.
+	 *
+	 * @todo Remove this method and the manual execution of 'common' hooks when the feature is merged.
+	 *
+	 * @access private
+	 *
+	 * @param string $stack_name Stack name.
+	 *
+	 * @return bool
+	 */
+	private function should_manually_trigger_common_action( $stack_name ): bool {
+		return 'common-optimized' === $stack_name && Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -1937,8 +2014,8 @@ abstract class Controls_Stack extends Base_Object {
 	 * @since 2.7.0
 	 * @access public
 	 *
-	 * @param string $element       The HTML element.
-	 * @param string $key           Optional. Attribute key. Default is null.
+	 * @param string       $element       The HTML element.
+	 * @param string       $key           Optional. Attribute key. Default is null.
 	 * @param array|string $values   Optional. Attribute value/s. Default is null.
 	 */
 	public function remove_render_attribute( $element, $key = null, $values = null ) {
@@ -1997,7 +2074,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param array|string $element The element.
 	 */
 	public function print_render_attribute_string( $element ) {
-		echo $this->get_render_attribute_string( $element ); // XSS ok.
+		Utils::print_unescaped_internal_string( $this->get_render_attribute_string( $element ) );
 	}
 
 	/**
@@ -2012,7 +2089,7 @@ abstract class Controls_Stack extends Base_Object {
 		ob_start();
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
-		// This `if` statement should be removed when the method is removed
+		// This `if` statement should be removed when the method is removed.
 		if ( $this->has_own_method( '_content_template', self::class ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_content_template', '2.9.0', __CLASS__ . '::content_template()' );
 
@@ -2060,7 +2137,7 @@ abstract class Controls_Stack extends Base_Object {
 	 *
 	 * @return array Element data.
 	 */
-	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ) : array {
+	public static function on_import_update_dynamic_content( array $config, array $data, $controls = null ): array {
 		return $config;
 	}
 
@@ -2309,7 +2386,7 @@ abstract class Controls_Stack extends Base_Object {
 	 * @param string $template_content Template content.
 	 */
 	protected function print_template_content( $template_content ) {
-		echo $template_content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		Utils::print_unescaped_internal_string( $template_content );
 	}
 
 	/**
@@ -2349,7 +2426,7 @@ abstract class Controls_Stack extends Base_Object {
 		Plugin::$instance->controls_manager->open_stack( $this );
 
 		// TODO: This is for backwards compatibility starting from 2.9.0
-		// This `if` statement should be removed when the method is removed
+		// This `if` statement should be removed when the method is removed.
 		if ( $this->has_own_method( '_register_controls', self::class ) ) {
 			Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_register_controls', '3.1.0', __CLASS__ . '::register_controls()' );
 
@@ -2387,7 +2464,9 @@ abstract class Controls_Stack extends Base_Object {
 				$args = array_replace_recursive( $target_tab, $args );
 			}
 		} elseif ( empty( $args['section'] ) && ( ! $overwrite || is_wp_error( Plugin::$instance->controls_manager->get_control_from_stack( $this->get_unique_name(), $control_id ) ) ) ) {
-			wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			if ( ! Performance::should_optimize_controls() ) {
+				wp_die( sprintf( '%s::%s: Cannot add a control outside of a section (use `start_controls_section`).', get_called_class(), __FUNCTION__ ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			}
 		}
 
 		return $args;
@@ -2494,7 +2573,7 @@ abstract class Controls_Stack extends Base_Object {
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
 			// TODO: This is for backwards compatibility starting from 2.9.0
-			// This if statement should be removed when the method is hard-deprecated
+			// This if statement should be removed when the method is hard-deprecated.
 			if ( $this->has_own_method( '_init', self::class ) ) {
 				Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( '_init', '2.9.0', __CLASS__ . '::init()' );
 

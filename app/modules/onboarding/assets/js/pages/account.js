@@ -1,24 +1,55 @@
-import { useRef, useContext, useState } from 'react';
+import { useRef, useContext, useState, useEffect } from 'react';
 import { useNavigate } from '@reach/router';
 import { OnboardingContext } from '../context/context';
 import Connect from '../utils/connect';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
+import { safeDispatchEvent } from '../utils/utils';
 
 export default function Account() {
 	const { state, updateState, getStateObjectToUpdate } = useContext( OnboardingContext ),
 		[ noticeState, setNoticeState ] = useState( null ),
+		nextStep = getNextStep(),
 		navigate = useNavigate(),
 		pageId = 'account',
-		nextStep = state.isHelloThemeActivated ? 'siteName' : 'hello',
 		actionButtonRef = useRef(),
 		alreadyHaveAccountLinkRef = useRef();
+
+	useEffect( () => {
+		if ( ! state.isLibraryConnected ) {
+			safeDispatchEvent(
+				'view_account_setup',
+				{
+					location: 'plugin_onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.pageLoaded || 'page_loaded',
+					step_number: 1,
+					step_name: 'account_setup',
+					is_library_connected: state?.isLibraryConnected || false,
+				},
+			);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	let skipButton;
 
 	if ( 'completed' !== state.steps[ pageId ] ) {
 		skipButton = {
-			text: __( 'Skip', 'elementor' ),
+			text: __( 'Skip setup', 'elementor' ),
+			action: () => {
+				safeDispatchEvent(
+					'skip_setup',
+					{
+						location: 'plugin_onboarding',
+						trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+						step_number: 1,
+						step_name: 'account_setup',
+					},
+				);
+
+				updateState( getStateObjectToUpdate( state, 'steps', pageId, 'skipped' ) );
+				navigate( 'onboarding/' + nextStep );
+			},
 		};
 	}
 
@@ -26,15 +57,27 @@ export default function Account() {
 
 	if ( state.isLibraryConnected ) {
 		pageTexts = {
-			firstLine: __( 'To get the most out of Elementor, we\'ll help you take your first steps:', 'elementor' ),
-			listItems: [
-				__( 'Set your site\'s theme', 'elementor' ),
-				__( 'Give your site a name & logo', 'elementor' ),
-				__( 'Choose how to start creating', 'elementor' ),
-			],
+			firstLine: <>{ __( 'To get the most out of Elementor, we\'ll help you take your', 'elementor' ) } <br /> { __( 'first steps:', 'elementor' ) }</>,
+			listItems: elementorAppConfig.onboarding.experiment
+				? [
+					__( 'Set your site\'s theme', 'elementor' ),
+					__( 'Choose additional features', 'elementor' ),
+					__( 'Choose how to start creating', 'elementor' ),
+				] : [
+					__( 'Set your site\'s theme', 'elementor' ),
+					__( 'Give your site a name & logo', 'elementor' ),
+					__( 'Choose how to start creating', 'elementor' ),
+				],
 		};
 	} else {
-		pageTexts = {
+		pageTexts = elementorAppConfig.onboarding.experiment ? {
+			firstLine: <>{ __( 'To get the most of Elementor, we\'ll connect your account.', 'elementor' ) }  <br /> { __( 'Then you can:', 'elementor' ) }</>,
+			listItems: [
+				__( 'Access dozens of professionally designed templates', 'elementor' ),
+				__( 'Manage all your sites from the My Elementor dashboard', 'elementor' ),
+				__( 'Unlock tools that streamline your workflow and site setup', 'elementor' ),
+			],
+		} : {
 			firstLine: __( 'To get the most out of Elementor, we’ll connect your account.', 'elementor' ) +
 			' ' + __( 'Then you can:', 'elementor' ),
 			listItems: [
@@ -69,18 +112,20 @@ export default function Account() {
 			navigate( 'onboarding/' + nextStep );
 		};
 	} else {
-		actionButton.text = __( 'Create my account', 'elementor' );
+		actionButton.text = __( 'Start setup', 'elementor' );
 		actionButton.href = elementorAppConfig.onboarding.urls.signUp + elementorAppConfig.onboarding.utms.connectCta;
 		actionButton.ref = actionButtonRef;
 		actionButton.onClick = () => {
-			elementorCommon.events.dispatchEvent( {
-				event: 'create account',
-				version: '',
-				details: {
-					placement: elementorAppConfig.onboarding.eventPlacement,
-					source: 'cta',
+			safeDispatchEvent(
+				'new_account_connect',
+				{
+					location: 'plugin_onboarding',
+					trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+					step_number: 1,
+					step_name: 'account_setup',
+					button_text: 'Start setup',
 				},
-			} );
+			);
 		};
 	}
 
@@ -92,8 +137,21 @@ export default function Account() {
 		elementorCommon.config.library_connect.is_connected = true;
 		elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 		elementorCommon.config.library_connect.current_access_tier = data.access_tier;
+		elementorCommon.config.library_connect.plan_type = data.plan_type;
 
 		updateState( stateToUpdate );
+
+		safeDispatchEvent(
+			'account_connected_success',
+			{
+				location: 'plugin_onboarding',
+				trigger: elementorCommon.eventsManager?.config?.triggers?.success,
+				step_number: 1,
+				step_name: 'account_setup',
+				connection_successful: true,
+				user_tier: data.access_tier,
+			},
+		);
 
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
@@ -115,6 +173,13 @@ export default function Account() {
 		navigate( 'onboarding/' + nextStep );
 	};
 
+	function getNextStep() {
+		if ( ! state.isHelloThemeActivated ) {
+			return 'hello';
+		}
+
+		return elementorAppConfig.onboarding.experiment ? 'chooseFeatures' : 'siteName';
+	}
 	const connectFailureCallback = () => {
 		elementorCommon.events.dispatchEvent( {
 			event: 'indication prompt',
@@ -140,7 +205,8 @@ export default function Account() {
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Account.svg' }
-				title={ __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
+				title={ elementorAppConfig.onboarding.experiment ? __( 'You\'re here!', 'elementor' ) : __( 'You\'re here! Let\'s set things up.', 'elementor' ) }
+				secondLineTitle={ elementorAppConfig.onboarding.experiment ? __( ' Let\'s get connected.', 'elementor' ) : '' }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 				noticeState={ noticeState }
@@ -164,21 +230,24 @@ export default function Account() {
 				! state.isLibraryConnected && (
 					<div className="e-onboarding__footnote">
 						<p>
-							{ __( 'Already have one?', 'elementor' ) + ' ' }
+							{ __( 'Already have an account?', 'elementor' ) + ' ' }
 							<a
 								ref={ alreadyHaveAccountLinkRef }
 								href={ elementorAppConfig.onboarding.urls.connect + elementorAppConfig.onboarding.utms.connectCtaLink }
 								onClick={ () => {
-									elementorCommon.events.dispatchEvent( {
-										event: 'connect account',
-										version: '',
-										details: {
-											placement: elementorAppConfig.onboarding.eventPlacement,
+									safeDispatchEvent(
+										'existing_account_connect',
+										{
+											location: 'plugin_onboarding',
+											trigger: elementorCommon.eventsManager?.config?.triggers?.click || 'click',
+											step_number: 1,
+											step_name: 'account_setup',
+											button_text: 'Click here to connect',
 										},
-									} );
+									);
 								} }
 							>
-								{ __( 'Connect your account', 'elementor' ) }
+								{ __( 'Click here to connect', 'elementor' ) }
 							</a>
 						</p>
 						<Connect

@@ -55,7 +55,7 @@ class Feedback extends Module {
 	public function enqueue_feedback_dialog_scripts() {
 		add_action( 'admin_footer', [ $this, 'print_deactivate_feedback_dialog' ] );
 
-		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_register_script(
 			'elementor-admin-feedback',
@@ -71,16 +71,6 @@ class Feedback extends Module {
 		wp_enqueue_script( 'elementor-admin-feedback' );
 
 		wp_set_script_translations( 'elementor-admin-feedback', 'elementor' );
-	}
-
-	/**
-	 * @since 2.3.0
-	 * @deprecated 3.1.0
-	 */
-	public function localize_feedback_dialog_settings() {
-		Plugin::$instance->modules_manager->get_modules( 'dev-tools' )->deprecation->deprecated_function( __METHOD__, '3.1.0' );
-
-		return [];
 	}
 
 	/**

@@ -5,10 +5,11 @@ use Elementor\Data\V2\Base\Endpoint\Index;
 use Elementor\Data\V2\Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 /**
- * class AllChildren, is optional endpoint.
+ * All Children class, is an optional endpoint.
+ *
  * Used in cases where the endpoints are static & there no use of dynamic endpoints( alpha/{id} ), eg:
  * 'settings' - controller
  * 'settings/products' - endpoint
@@ -24,7 +25,7 @@ class AllChildren extends Index {
 		return $this->controller->get_name() . '/index';
 	}
 
-	/*
+	/**
 	 * Retrieves a result(s) of all controller endpoint(s), items.
 	 *
 	 * Run overall endpoints of the current controller.

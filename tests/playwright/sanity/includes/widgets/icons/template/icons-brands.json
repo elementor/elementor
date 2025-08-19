@@ -1,0 +1,5945 @@
+{
+	"content": [
+		{
+			"id": "9d79901",
+			"settings": {
+				"container_type": "grid",
+				"grid_columns_grid": {
+					"unit": "fr",
+					"size": 12
+				},
+				"grid_rows_grid": {
+					"unit": "fr",
+					"size": 8
+				},
+				"grid_rows_grid_mobile": {
+					"unit": "fr",
+					"size": "2"
+				},
+				"grid_justify_items": "center",
+				"grid_align_items": "center",
+				"min_height": {
+					"unit": "px",
+					"size": 0,
+					"sizes": []
+				},
+				"grid_gaps": {
+					"column": "10",
+					"row": "20",
+					"isLinked": false,
+					"unit": "px"
+				}
+			},
+			"elements": [
+				{
+					"id": "3419e0a0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-500px",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "647fb67f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-accessible-icon",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "28f1ea09",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-accusoft",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2a4dba8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-acquisitions-incorporated",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "379e9b1f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-adn",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3ec822c7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-adversal",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6b7923ab",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-affiliatetheme",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "369ef807",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-airbnb",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1849cc24",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-algolia",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6256119a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-alipay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2545c9e3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-amazon",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "cb60536",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-amazon-pay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "55a08a36",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-amilia",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2ab0bd1d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-android",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "63be5acb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-angellist",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "45f8be91",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-angrycreative",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1360d560",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-angular",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "922bade",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-app-store",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "64f4f62e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-app-store-ios",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2ae34bf1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-apper",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1a2c5f80",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-apple",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4930ac38",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-apple-pay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "787cb68b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-artstation",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2f75e2a5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-asymmetrik",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "336f082d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-atlassian",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "ade61de",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-audible",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "52d87de6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-autoprefixer",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "71e7cbc5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-avianex",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "54b0c542",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-aviato",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6dedf910",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-aws",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3332a369",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bandcamp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4051cdfc",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-battle-net",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3c0829b1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-behance",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "61ebf12c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-behance-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "416e8de",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bimobject",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5b51eddd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bitbucket",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "47beb134",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bitcoin",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5611aa2c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bity",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "65acccc0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-black-tie",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3c90a368",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-blackberry",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "50e8220b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-blogger",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "26e8c716",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-blogger-b",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "79053ca8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bluetooth",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7041de50",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bluetooth-b",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "77eb4d1b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-bootstrap",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "a456ae6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-btc",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "37d16006",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-buffer",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7dfdeca6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-buromobelexperte",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4c3816fb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-buy-n-large",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7b730407",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-buysellads",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2ae0300d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-canadian-maple-leaf",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "336579a8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-amazon-pay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "710384e3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-amex",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "52b38b87",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-apple-pay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "46b3c316",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-diners-club",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "62a69a68",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-discover",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "64c0db9",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-jcb",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "700964c7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-mastercard",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "303edd82",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-paypal",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5993ce79",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-stripe",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7cff98e8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cc-visa",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "c362e5a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-centercode",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "bb17f86",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-centos",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "32d29c0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-chrome",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2c9ea2a2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-chromecast",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6c826f2e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cloudflare",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "61590c7f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cloudscale",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "73ad63b8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cloudsmith",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1f862286",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cloudversify",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "23df2db4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-codepen",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4542d8ee",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-codiepie",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "19293ad1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-confluence",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1db27aad",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-connectdevelop",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1fcf627",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-contao",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6d4eb2a8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cotton-bureau",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "612d8eff",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cpanel",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "487137d0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "618846e9",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-by",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1f257aa8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-nc",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "23c121be",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-nc-eu",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "123484b4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-nc-jp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6f22b293",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-nd",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "34771a74",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-pd",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1dd3ea7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-pd-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "f278387",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-remix",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2dc45c1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-sa",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "68ce166f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-sampling",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "50524ffe",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-sampling-plus",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "777fb1ff",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-share",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "306c98cc",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-creative-commons-zero",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7514c7db",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-critical-role",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "bac6201",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-css3",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6739559",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-css3-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4a3c7bac",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-cuttlefish",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "53377e46",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-d-and-d",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6ba3056d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-d-and-d-beyond",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6d84ce3e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dailymotion",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "54158e30",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dashcube",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5a7f5ba0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-deezer",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2dd73738",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-delicious",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "204fd04e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-deploydog",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3a9d246d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-deskpro",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5becf134",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dev",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6107016d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-deviantart",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6a47eff3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dhl",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4ce01b4e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-diaspora",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5eccd765",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-digg",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2be7bf2a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-digital-ocean",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6e8697db",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-discord",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6ea75aeb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-discourse",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1874ec56",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dochub",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4d9a69d7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-docker",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "107014a8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-draft2digital",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "52b90f56",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dribbble",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6a4ef182",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dribbble-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "66dd71e4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dropbox",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5151a99e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-drupal",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "410cc071",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-dyalog",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7a426392",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-earlybirds",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "57cb3c48",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ebay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "58b9e65e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-edge",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "24918aef",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-edge-legacy",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "26b95fac",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-elementor",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "378524a7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ello",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "9d7ac47",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ember",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7e71aa9",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-empire",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "33f250ef",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-envira",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "127c2676",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-erlang",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "56bbf801",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ethereum",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "15c0594f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-etsy",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "15e35a5d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-evernote",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "225762fd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-expeditedssl",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2f32dcbc",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-facebook",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4fbe5beb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-facebook-f",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "510dc73f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-facebook-messenger",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "533daf8e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-facebook-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4ce14d9c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fantasy-flight-games",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "394a54dd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fedex",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "cea6a4b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fedora",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5fb8bbb8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-figma",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "57b8cb7d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-firefox",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "f2819ac",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-firefox-browser",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "283d9620",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-first-order",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "644d7104",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-first-order-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "145a784e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-firstdraft",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "8002105",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-flickr",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2993d160",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-flipboard",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "12a79742",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fly",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1084fd42",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-font-awesome",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5f2ff56d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-font-awesome-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "61c2fe45",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-font-awesome-flag",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "620e46c0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fonticons",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2e9e93c4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fonticons-fi",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "528519e2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fort-awesome",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "59899048",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fort-awesome-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6b041ac2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-forumbee",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3faa71e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-foursquare",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "46096db3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-free-code-camp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "703e5dcb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-freebsd",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "f4ca147",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-fulcrum",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7ce9fda6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-galactic-republic",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3f3cb38",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-galactic-senate",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1cb3bd9d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-get-pocket",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "63f16791",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gg",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2df7900c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gg-circle",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "47cb6bff",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-git",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6e10d8f1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-git-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2b7849f2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-git-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "19ea34ac",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-github",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "121a89b8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-github-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "161edff9",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-github-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2b5d7802",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gitkraken",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4d4da902",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gitlab",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2f2b192",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gitter",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6dd45be5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-glide",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6fefdbb5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-glide-g",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6daa6f6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gofore",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "54e8d451",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-goodreads",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4b9747a3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-goodreads-g",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "793c2ad7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6f2ed726",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google-drive",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7fb57034",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google-pay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "75530195",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google-play",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "63a04999",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google-plus",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "585561d8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google-plus-g",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6af4cf0a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google-plus-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4448b21d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-google-wallet",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2bb1791a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gratipay",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "382600e3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-grav",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "75f9b11a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gripfire",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "be0cad",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-grunt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "607ad379",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-guilded",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7de81450",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-gulp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "621612f6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hacker-news",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7383db34",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hacker-news-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "b2bdc92",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hackerrank",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7265d85",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hips",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "417d7ba8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hire-a-helper",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2230fc04",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hive",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7edba7f3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hooli",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7ee54918",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hornbill",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5412eab8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hotjar",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7771e955",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-houzz",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3cd2bd75",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-html5",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "19767969",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-hubspot",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "75d73564",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ideal",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "36aa0fb6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-imdb",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "630f2e50",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-innosoft",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "16c1bf37",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-instagram",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3c3db144",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-instalod",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "44011fb3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-intercom",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "712bcd4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-internet-explorer",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "58fd3cd8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-invision",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "32ab434d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ioxhost",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2b57804e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-itch-io",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5561fd25",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-itunes",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5570e6d3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-itunes-note",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3a60a982",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-java",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4bb77e09",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-jedi-order",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "244739cc",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-jenkins",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "426a139c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-jira",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3b415b6c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-joget",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "226d89bf",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-joomla",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3b308155",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-js",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "193a7d18",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-js-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "70c69ad1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-jsfiddle",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4519045a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-kaggle",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "15b0244d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-keybase",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6354049f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-keycdn",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "40c7af6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-kickstarter",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6c54a6f1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-kickstarter-k",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6a707cba",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-korvue",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "47cf4109",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-laravel",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6e432f39",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-lastfm",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "41f6f40",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-lastfm-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5c389b8f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-leanpub",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "60fd89b0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-less",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5c44266",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-line",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "d873c73",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-linkedin",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "f0ccfd3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-linkedin-in",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4229b634",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-linode",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7b3d9fe7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-linux",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7c45a9",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-lyft",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "25cdefcf",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-magento",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5db1fb0e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mailchimp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "68199587",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mandalorian",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4782f141",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-markdown",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5dcc8877",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mastodon",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6ab81900",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-maxcdn",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4080f6b3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mdb",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7859c460",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-medapps",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6a5dff7a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-medium",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "565ccdf",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-medium-m",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "75a98a07",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-medrt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "615a155f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-meetup",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5d7f1c37",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-megaport",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "228923ac",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mendeley",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "721bd29",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-microblog",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6e237fd3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-microsoft",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1e98c592",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mix",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "49c8b63d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mixcloud",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1f67d6df",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-mizuni",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "56c26ea8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-modx",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "64152738",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-monero",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6174ebc7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-napster",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "e7c592",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-neos",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "32eab686",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-nimblr",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2c3ca875",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-node",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5d798016",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-node-js",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "542f6f6f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-npm",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "739e43ce",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ns8",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3bf20118",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-nutritionix",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "f36f9b4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-octopus-deploy",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "72813739",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-odnoklassniki",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "58eba7c2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-odnoklassniki-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5491f557",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-old-republic",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "55a0baec",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-opencart",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6e240c6c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-openid",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "78690cc6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-opera",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "48f8a4fc",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-optin-monster",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "10488d93",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-orcid",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "429d5478",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-osi",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "888ec96",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-page4",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "39f28eed",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pagelines",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6d31705b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-palfed",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6e65106a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-patreon",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "a5841ae",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-paypal",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "711e507a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-penny-arcade",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3d894b15",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-perbyte",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2a104af8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-periscope",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "76825730",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-phabricator",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "895d536",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-phoenix-framework",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3348914f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-phoenix-squadron",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3271df87",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-php",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3ebf25f3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pied-piper",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3276f797",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pied-piper-alt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "25527e6b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pied-piper-hat",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "56081f0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pied-piper-pp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "70ad7a63",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pied-piper-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "8414538",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pinterest",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "20c315c3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pinterest-p",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2fc455cb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pinterest-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2e3d58ab",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-playstation",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2aeb629",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-product-hunt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7672bd5f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-pushed",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "364e2144",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-python",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "745d7b89",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-qq",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5e93c325",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-quinscape",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1dbe54fd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-quora",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "d9ea6b0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-r-project",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "765a464b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-raspberry-pi",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "379a2a8a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ravelry",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1a1b62cd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-react",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2fc45644",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-reacteurope",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "52f3a569",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-readme",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6f48af41",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-rebel",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "15175b9d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-red-river",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5dacd52f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-reddit",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2a8d90a8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-reddit-alien",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4b8ca3ce",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-reddit-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3b75b317",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-redhat",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "25bb1d8f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-renren",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3a0b469a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-replyd",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2c112b17",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-researchgate",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3cb5cfb7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-resolving",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4cf6579a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-rev",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7a84ab95",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-rocketchat",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5462544d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-rockrms",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "39f6ae5c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-rust",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3d6367f5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-safari",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "55cb7a7d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-salesforce",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7265f500",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sass",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "383bf245",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-schlix",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7074b72c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-scribd",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6f6e8686",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-searchengin",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2029ac46",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sellcast",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7ede58cd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sellsy",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "264af147",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-servicestack",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4e719973",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-shirtsinbulk",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "77f22fcc",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-shopware",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "32f56385",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-simplybuilt",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "12e18ca7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sistrix",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3ab02d5f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sith",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5fd8dc3f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sketch",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "d093a9",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-skyatlas",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "44146888",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-skype",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7256fdd1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-slack",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6702d814",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-slack-hash",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3d6bf23d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-slideshare",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "408ef3d0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-snapchat",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6c9f844e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-snapchat-ghost",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "39c696e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-snapchat-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "15d18fe5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-soundcloud",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3c507a5b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sourcetree",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6a75a2b5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-speakap",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "16db9c21",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-speaker-deck",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2b681f79",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-spotify",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "460d3558",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-squarespace",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6e91afea",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-stack-exchange",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "10a24814",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-stack-overflow",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "ac76337",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-stackpath",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "68d9f6c2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-staylinked",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5be2f718",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-steam",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2116e5fd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-steam-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "251b6f07",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-steam-symbol",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4fd1efbb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-sticker-mule",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4b2bca4e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-strava",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7b9629cb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-stripe",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "170348d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-stripe-s",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1e71c6e7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-studiovinari",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5f18e8c6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-stumbleupon",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7ff2de66",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-stumbleupon-circle",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "72e9ea97",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-superpowers",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1d4e160f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-supple",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "41600106",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-suse",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "598ff01b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-swift",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3660b7ca",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-symfony",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7acdd3e8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-teamspeak",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4b7c0318",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-telegram",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "969cef4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-telegram-plane",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5e9adb0f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-tencent-weibo",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1e0c371a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-the-red-yeti",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "231a5fa",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-themeco",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2eb2911b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-themeisle",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "12e3ba2c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-think-peaks",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "66352ed1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-tiktok",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "40cfb719",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-trade-federation",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6abd0e58",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-trello",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "38b97fe4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-tripadvisor",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "35efdfec",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-tumblr",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3a4503e4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-tumblr-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "14d41b5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-twitch",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7d4e9281",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-twitter",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1af820ee",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-twitter-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "716f1346",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-typo3",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "89b4b31",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-uber",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7276fb5c",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ubuntu",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "75dc5690",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-uikit",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5471d8df",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-umbraco",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "59f364b3",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-uncharted",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "5a7b833b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-uniregistry",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "659e9464",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-unity",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "841d2b0",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-unsplash",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "32391965",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-untappd",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6bb43fa5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ups",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "35ce33e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-usb",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6032575e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-usps",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6ae9eec8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-ussunnah",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "708da2e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vaadin",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "60be06e5",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-viacoin",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "20846737",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-viadeo",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "70e2de44",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-viadeo-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "29b8c90",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-viber",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "e6fea49",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vimeo",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7b3af950",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vimeo-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "797e205e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vimeo-v",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "183f00cf",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vine",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "222ca6eb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vk",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "683ad9e",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vnv",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4532684d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-vuejs",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "39205f4b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-watchman-monitoring",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1a398de2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-waze",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3a7fd901",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-weebly",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1f26340b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-weibo",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "4194f06b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-weixin",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2750e9e7",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-whatsapp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2aa684b2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-whatsapp-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1f4b4ad8",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-whmcs",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "60f3cac2",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wikipedia-w",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "20297782",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-windows",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "685a3ad4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wix",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "75694d4d",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wizards-of-the-coast",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3a7221ab",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wodu",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "71011cda",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wolf-pack-battalion",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "30dbae32",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wordpress",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7f111c8a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wordpress-simple",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7e1fbc2a",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wpbeginner",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "51bb735",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wpexplorer",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "145843cd",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wpforms",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3a1b9511",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-wpressr",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "6587a691",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-xbox",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "48d82f4f",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-xing",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "7fb7695b",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-xing-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "3e0fba61",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-y-combinator",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "1e9c72c4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-yahoo",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "181e27a1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-yammer",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "750ebadf",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-yandex",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "45e1b1a6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-yandex-international",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "20b815b1",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-yarn",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2a0125e9",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-yelp",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "2a3f45eb",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-yoast",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "779616f6",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-youtube",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "55880244",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-youtube-square",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				},
+				{
+					"id": "12e42b4",
+					"settings": {
+						"selected_icon": {
+							"value": "fab fa-zhihu",
+							"library": "fa-brands"
+						}
+					},
+					"elements": [],
+					"isInner": false,
+					"widgetType": "icon",
+					"elType": "widget"
+				}
+			],
+			"isInner": false,
+			"elType": "container"
+		}
+	],
+	"page_settings": [],
+	"version": "0.4",
+	"title": "icons-brands",
+	"type": "container"
+}

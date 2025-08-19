@@ -12,6 +12,6 @@ if ( ! window.elementorV2?.editor ) {
 
 window.elementorV2
 	.editor
-	.init(
+	.start(
 		document.getElementById( 'elementor-editor-wrapper-v2' ),
 	);

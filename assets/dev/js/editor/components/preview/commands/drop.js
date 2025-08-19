@@ -1,4 +1,4 @@
-export class Drop extends $e.modules.CommandBase {
+export class Drop extends $e.modules.editor.CommandContainerBase {
 	validateArgs( args = {} ) {
 		this.requireContainer( args );
 

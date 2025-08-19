@@ -1,13 +1,22 @@
 // Global for all (editor, admin, preview, front-end USER)
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/editor/breakpoints";
-@import "dialog-base";
-@import "dialog-lightbox";
-@import "dialog-confirm";
-@import "flatpicker";
+
+:root {
+	--direction-multiplier: 1; // LTR = 1, RTL = -1
+}
+
+html[dir="rtl"],
+body.rtl {
+	--direction-multiplier: -1;
+}
 
 .elementor-hidden {
 	display: none;
+}
+
+.elementor-visibility-hidden {
+	visibility: hidden;
 }
 
 .elementor-screen-only,
@@ -34,7 +43,7 @@
 	height: 0;
 }
 
-//Elementor icon logo wrapper
+// Elementor icon logo wrapper
 .e-logo-wrapper {
 	background: var(--e-a-bg-logo);
 	display: inline-block;

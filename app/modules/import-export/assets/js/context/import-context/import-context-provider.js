@@ -10,6 +10,7 @@ export default function ImportContextProvider( props ) {
 			file: null,
 			uploadedData: null,
 			importedData: null,
+			source: '',
 			plugins: [],
 			requiredPlugins: [],
 			importedPlugins: [],

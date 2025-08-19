@@ -86,12 +86,12 @@ The full list of commands, including custom & 3rd commands, is available via: `$
         3  │
         4  └───📂 commands
         5  │   │   📜 index.js ( has all the commands exported )
-        6  │   │   📜 exmaple-command.js
+        6  │   │   📜 example-command.js
         7  │   │   ...
         ```
         `component/commands/index.js` file at line *5*:
         ```javascript
-        export { ExmapleCommand } from './example-command';
+        export { ExampleCommand } from './example-command';
         ```
     * use `importCommands` example: `component/component.js` file at line *2*:
         ```javascript

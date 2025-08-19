@@ -70,14 +70,20 @@
 			"name": "view"
 		},
 		"type": {
-			"type": "select",
+			"type": "choose",
 			"tab": "content",
 			"section": "section_tabs",
 			"label": "Type",
 			"default": "horizontal",
 			"options": {
-				"horizontal": "Horizontal",
-				"vertical": "Vertical"
+				"vertical": {
+					"title": "Vertical",
+					"icon": "eicon-h-align-left"
+				},
+				"horizontal": {
+					"title": "Horizontal",
+					"icon": "eicon-v-align-top"
+				}
 			},
 			"prefix_class": "elementor-tabs-view-",
 			"separator": "before",

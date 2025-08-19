@@ -9,6 +9,7 @@ import SiteName from './pages/site-name';
 import SiteLogo from './pages/site-logo';
 import GoodToGo from './pages/good-to-go';
 import InstallPro from './pages/upload-and-install-pro';
+import ChooseFeatures from './pages/choose-features';
 
 export default function App() {
 	// Send an AJAX request to update the database option which makes sure the Onboarding process only runs once,
@@ -22,7 +23,7 @@ export default function App() {
 			document.body.classList.remove( darkThemeClassName );
 		}
 
-		if ( ! elementorAppConfig.onboarding.onboardingAlreadyRan ) {
+		if ( ! elementorAppConfig?.onboarding?.onboardingAlreadyRan ) {
 			const formData = new FormData();
 
 			formData.append( '_nonce', elementorCommon.config.ajax.nonce );
@@ -49,6 +50,7 @@ export default function App() {
 				<Router>
 					<Account default />
 					<HelloTheme path="hello" />
+					<ChooseFeatures path="chooseFeatures" />
 					<SiteName path="siteName" />
 					<SiteLogo path="siteLogo" />
 					<GoodToGo path="goodToGo" />

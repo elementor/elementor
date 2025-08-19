@@ -1,4 +1,4 @@
-import ElementModel from './element';
+import { default as ElementModel } from './element';
 
 export default class Widget extends ElementModel {
 	isValidChild() {

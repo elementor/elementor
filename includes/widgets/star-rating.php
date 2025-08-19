@@ -73,6 +73,24 @@ class Widget_Star_Rating extends Widget_Base {
 		return [ 'star', 'rating', 'rate', 'review' ];
 	}
 
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 *
+	 * @since 3.24.0
+	 * @access public
+	 *
+	 * @return array Widget style dependencies.
+	 */
+	public function get_style_depends(): array {
+		return [ 'widget-star-rating' ];
+	}
+
 	/**
 	 * Hide widget from panel.
 	 *
@@ -83,6 +101,10 @@ class Widget_Star_Rating extends Widget_Base {
 	 */
 	public function show_in_panel(): bool {
 		return false;
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -97,7 +119,7 @@ class Widget_Star_Rating extends Widget_Base {
 		$this->start_controls_section(
 			'section_rating',
 			[
-				'label' => esc_html__( 'Rating', 'elementor' ),
+				'label' => esc_html__( 'Star Rating', 'elementor' ),
 			]
 		);
 
@@ -283,8 +305,7 @@ class Widget_Star_Rating extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-right: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-left: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}}:not(.elementor-star-rating--align-justify) .elementor-star-rating__title' => 'margin-inline-end: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);
@@ -344,8 +365,7 @@ class Widget_Star_Rating extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'body:not(.rtl) {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-right: {{SIZE}}{{UNIT}}',
-					'body.rtl {{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-left: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-star-rating i:not(:last-of-type)' => 'margin-inline-end: {{SIZE}}{{UNIT}}',
 				],
 			]
 		);

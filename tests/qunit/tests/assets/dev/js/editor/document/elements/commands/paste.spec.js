@@ -1,5 +1,4 @@
 import ElementsHelper from '../helper';
-import HistoryHelper from '../../history/helper';
 
 // TODO: Check code coverage and add required tests.
 export const Paste = () => {

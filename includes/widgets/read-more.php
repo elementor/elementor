@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Elementor HTML widget.
  *
  * Elementor widget that insert a custom HTML code into the page.
- *
  */
 class Widget_Read_More extends Widget_Base {
 
@@ -67,6 +66,14 @@ class Widget_Read_More extends Widget_Base {
 	 */
 	public function get_keywords() {
 		return [ 'read', 'more', 'tag', 'excerpt' ];
+	}
+
+	protected function is_dynamic_content(): bool {
+		return false;
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**

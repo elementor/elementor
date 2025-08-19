@@ -1,12 +1,7 @@
 import globalHandler from './handlers/global';
-import backgroundHandlers from './handlers/background';
 import containerHandlers from './handlers/container/container';
+import sectionHandlers from './handlers/section/section';
 import columnHandlers from './handlers/column';
-
-// Section handlers.
-import HandlesPosition from './handlers/section/handles-position';
-import StretchedSection from './handlers/section/stretched-section';
-import Shapes from './handlers/section/shapes';
 
 /* global elementorFrontendConfig */
 
@@ -24,6 +19,9 @@ module.exports = function( $ ) {
 		'image-carousel.default': () => import( /* webpackChunkName: 'image-carousel' */ './handlers/image-carousel' ),
 		'text-editor.default': () => import( /* webpackChunkName: 'text-editor' */ './handlers/text-editor' ),
 		'wp-widget-media_audio.default': () => import( /* webpackChunkName: 'wp-audio' */ './handlers/wp-audio' ),
+		container: containerHandlers,
+		section: sectionHandlers,
+		column: columnHandlers,
 	};
 
 	if ( elementorFrontendConfig.experimentalFeatures[ 'nested-elements' ] ) {
@@ -34,25 +32,14 @@ module.exports = function( $ ) {
 		this.elementsHandlers[ 'nested-accordion.default' ] = () => import( /* webpackChunkName: 'nested-accordion' */ 'elementor/modules/nested-accordion/assets/js/frontend/handlers/nested-accordion' );
 	}
 
+	if ( elementorFrontendConfig.experimentalFeatures.container ) {
+		this.elementsHandlers[ 'contact-buttons.default' ] = () => import( /* webpackChunkName: 'contact-buttons' */ 'elementor/modules/floating-buttons/assets/js/floating-buttons/frontend/handlers/contact-buttons' );
+		this.elementsHandlers[ 'floating-bars-var-1.default' ] = () => import( /* webpackChunkName: 'floating-bars' */ 'elementor/modules/floating-buttons/assets/js/floating-bars/frontend/handlers/floating-bars' );
+	}
+
 	const addGlobalHandlers = () => elementorFrontend.hooks.addAction( 'frontend/element_ready/global', globalHandler );
 
 	const addElementsHandlers = () => {
-		this.elementsHandlers.section = [
-			StretchedSection, // Must run before background handlers to init the slideshow only after the stretch.
-			...backgroundHandlers,
-			HandlesPosition,
-			Shapes,
-		];
-
-		this.elementsHandlers.container = [ ...backgroundHandlers ];
-
-		// Add editor-only handlers.
-		if ( elementorFrontend.isEditMode() ) {
-			this.elementsHandlers.container.push( ...containerHandlers );
-		}
-
-		this.elementsHandlers.column = columnHandlers;
-
 		$.each( this.elementsHandlers, ( elementName, Handlers ) => {
 			const elementData = elementName.split( '.' );
 
@@ -158,7 +145,9 @@ module.exports = function( $ ) {
 	};
 
 	this.runReadyTrigger = function( scope ) {
-		if ( elementorFrontend.config.is_static ) {
+		const isDelayChildHandlers = !! scope.closest( '[data-delay-child-handlers="true"]' ) && 0 !== scope.closest( '[data-delay-child-handlers="true"]' ).length;
+
+		if ( elementorFrontend.config.is_static || isDelayChildHandlers ) {
 			return;
 		}
 

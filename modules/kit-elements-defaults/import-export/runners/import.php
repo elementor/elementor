@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import extends Import_Runner_Base {
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'elements-default-values';
 	}
 

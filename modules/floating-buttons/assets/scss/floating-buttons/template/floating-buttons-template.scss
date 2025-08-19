@@ -1,0 +1,4 @@
+.elementor-template-library-template-remote:not(.elementor-template-library-template-page):not(.elementor-template-library-template-lp).elementor-template-library-template-floating_button {
+	margin-top: 0 !important; // to override computed inline styles
+	width: calc(25% - 30px);
+}

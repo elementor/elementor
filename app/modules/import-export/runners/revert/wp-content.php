@@ -6,11 +6,11 @@ use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 
 class Wp_Content extends Revert_Runner_Base {
 
-	public static function get_name() : string {
+	public static function get_name(): string {
 		return 'wp-content';
 	}
 
-	public function should_revert( array $data ) : bool {
+	public function should_revert( array $data ): bool {
 		return (
 			isset( $data['runners'] ) &&
 			array_key_exists( static::get_name(), $data['runners'] )

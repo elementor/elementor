@@ -15,10 +15,12 @@ class Elementor_Test_Widgets extends Elementor_Test_Base {
 	}
 
 	public function test_elementMethods() {
+		$common_widgets = [ 'common', 'common-optimized', 'common-base' ];
+
 		foreach ( $this->elementor()->widgets_manager->get_widget_types() as $widget_type ) {
 			$name = $widget_type->get_name();
 
-			if ( 'common' === $name ) {
+			if ( in_array( $name, $common_widgets, true ) ) {
 				continue;
 			}
 

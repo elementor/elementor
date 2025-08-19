@@ -15,10 +15,10 @@
 			font-size: inherit;
 			font-family: inherit;
 			position: absolute;
+			inset-block-start: 0;
+			inset-inline-start: 0;
 			overflow: hidden;
 			color: $orange;
-			top: 0;
-			@include start(0);
 		}
 	}
 
@@ -42,7 +42,7 @@
 	}
 
 	&__title {
-		@include margin-end(10px);
+		margin-inline-end: 10px;
 	}
 }
 
@@ -79,7 +79,7 @@
 
 				&-justify {
 					.elementor-star-rating__title {
-						@include margin-end( auto );
+						margin-inline-end: auto;
 					}
 				}
 			}

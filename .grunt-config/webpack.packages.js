@@ -1,10 +1,24 @@
 const path = require( 'path' );
 const fs = require( 'fs' );
-const { GenerateWordPressAssetFileWebpackPlugin } = require( '@elementor/generate-wordpress-asset-file-webpack-plugin' );
-const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin' );
-const { ExternalizeWordPressAssetsWebpackPlugin } = require( '@elementor/externalize-wordpress-assets-webpack-plugin' );
+const { GenerateWordPressAssetFileWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/generate-wordpress-asset-file-webpack-plugin' ) );
+const { ExtractI18nWordpressExpressionsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/extract-i18n-wordpress-expressions-webpack-plugin' ) );
+const { ExternalizeWordPressAssetsWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/externalize-wordpress-assets-webpack-plugin' ) );
+const { EntryInitializationWebpackPlugin } = require( path.resolve( __dirname, '../packages/packages/tools/entry-initialization-webpack-plugin' ) );
+const TerserPlugin = require('terser-webpack-plugin');
 
-const packages = process.env.ELEMENTOR_PACKAGES_USE_LOCAL ? getLocalRepoPackagesEntries() : getNodeModulesPackagesEntries()
+const packages = getLocalRepoPackagesEntries();
+
+const REGEXES = {
+	// @elementor/ui/SvgIcon. Used inside @elementor/icons
+	elementorPathImports: /^@elementor\/(ui|icons)\/(.+)$/,
+
+	// @elementor/editor
+	// We want to bundle `@elementor/design-tokens` inside the UI package since it's an internal thing.
+	elementorPackages: /^@elementor\/(?!design-tokens)(.+)$/,
+
+	// @wordpress/components
+	wordpressPackages: /^@wordpress\/(.+)$/,
+};
 
 const common = {
 	name: 'packages',
@@ -35,8 +49,9 @@ const common = {
 		new GenerateWordPressAssetFileWebpackPlugin( {
 			handle: ( entryName ) => `elementor-v2-${entryName}`,
 			map: [
-				{ request: /^@elementor\/(.+)$/, handle: 'elementor-v2-$1' },
-				{ request: /^@wordpress\/(.+)$/, handle: 'wp-$1' },
+				{ request: REGEXES.elementorPathImports, handle: 'elementor-v2-$1' },
+				{ request: REGEXES.elementorPackages, handle: 'elementor-v2-$1' },
+				{ request: REGEXES.wordpressPackages, handle: 'wp-$1' },
 				{ request: 'react', handle: 'react' },
 				{ request: 'react-dom', handle: 'react-dom' },
 			]
@@ -44,11 +59,17 @@ const common = {
 		new ExternalizeWordPressAssetsWebpackPlugin( {
 			global: ( entryName ) => [ 'elementorV2', entryName ],
 			map: [
-				{ request: /^@elementor\/(.+)$/, global: [ 'elementorV2', '$1' ] },
-				{ request: /^@wordpress\/(.+)$/, global: [ 'wp', '$1' ] },
+				{ request: REGEXES.elementorPathImports, global: [ 'elementorV2', '$1', '$2' ] },
+				{ request: REGEXES.elementorPackages, global: [ 'elementorV2', '$1' ] },
+				{ request: REGEXES.wordpressPackages, global: [ 'wp', '$1' ] },
 				{ request: 'react', global: 'React' },
 				{ request: 'react-dom', global: 'ReactDOM' },
 			]
+		} ),
+		new EntryInitializationWebpackPlugin( {
+			initializer: ( { entryName } ) => {
+				return `window.elementorV2.${ entryName }?.init?.();`;
+			},
 		} ),
 	],
 	output: {
@@ -59,17 +80,25 @@ const common = {
 const devConfig = {
 	...common,
 	mode: 'development',
-	devtool: false, // TODO: Need to check what to do with source maps.
+	devtool: 'source-map',
 	watch: true, // All the webpack config in the plugin that are dev, should have this property.
 	optimization: {
 		...( common.optimization || {} ),
 		// Intentionally minimizing the dev assets to reduce the bundle size.
 		minimize: true,
+		minimizer: [
+			new TerserPlugin({
+				terserOptions: {
+					keep_classnames: true,
+					keep_fnames: true,
+				}
+			})
+		]
 	},
 	output: {
 		...( common.output || {} ),
 		filename: '[name]/[name].js',
-	}
+	},
 }
 
 const prodConfig = {
@@ -97,39 +126,9 @@ module.exports = {
 	prod: prodConfig,
 };
 
-function getNodeModulesPackagesEntries() {
-	const { dependencies } = require( '../package.json' );
-
-	return Object.keys( dependencies )
-		.filter( ( packageName ) => packageName.startsWith( '@elementor/' ) )
-		.map( ( packageName ) => {
-			const pkgJSON = fs.readFileSync( path.resolve( __dirname, `../node_modules/${packageName}/package.json` ) );
-
-			const { main, module } = JSON.parse( pkgJSON );
-
-			return {
-				mainFile: module || main,
-				packageName,
-			}
-		} )
-		.filter( ( { mainFile } ) => !! mainFile )
-		.map( ( { mainFile, packageName } ) => ( {
-			name: packageName.replace( '@elementor/', '' ),
-			path: path.resolve( __dirname, `../node_modules/${ packageName }`, mainFile ),
-		} ) );
-}
-
 function getLocalRepoPackagesEntries() {
-	const repoPath = process.env.ELEMENTOR_PACKAGES_PATH;
+	const repoPath = path.resolve( __dirname, '../packages' );
 	const relevantDirs = [ 'packages/core', 'packages/libs' ]
-
-	if ( ! repoPath ) {
-		throw new Error( 'ELEMENTOR_PACKAGES_PATH is not defined, define it in your operating system environment variables.' );
-	}
-
-	if ( ! fs.existsSync( repoPath ) ) {
-		throw new Error( `ELEMENTOR_PACKAGES_PATH is defined but the path ${repoPath} does not exist.` );
-	}
 
 	const packages = relevantDirs.flatMap( ( dir ) =>
 		fs.readdirSync( path.resolve( repoPath, dir ) )
@@ -137,11 +136,17 @@ function getLocalRepoPackagesEntries() {
 				name,
 				path: path.resolve( repoPath, dir, `${name}/src/index.ts` ),
 			} ) )
+			.filter( ( { path } ) => fs.existsSync( path ) )
 	);
 
 	packages.push( {
 		name: 'ui',
 		path: './node_modules/@elementor/ui/index.js'
+	} );
+
+	packages.push( {
+		name: 'icons',
+		path: './node_modules/@elementor/icons/index.js'
 	} );
 
 	return packages;

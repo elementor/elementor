@@ -5,7 +5,7 @@ namespace Elementor\Core\Common\Modules\Finder;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class Categories_Manager {
