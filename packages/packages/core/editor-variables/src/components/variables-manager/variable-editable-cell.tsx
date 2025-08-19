@@ -10,12 +10,14 @@ export const VariableEditableCell = ( {
 	editableElement,
 	onSave,
 	prefixElement,
+	disableCloseOnBlur,
 }: {
 	initialValue: string;
 	children: React.ReactNode;
 	editableElement: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
 	onSave: ( newValue: string ) => void;
 	prefixElement?: React.ReactNode;
+	disableCloseOnBlur?: boolean;
 } ) => {
 	const [ value, setValue ] = useState( initialValue );
 	const [ isEditing, setIsEditing ] = useState( false );
@@ -54,6 +56,7 @@ export const VariableEditableCell = ( {
 				alignItems="center"
 				gap={ 1 }
 				onDoubleClick={ handleDoubleClick }
+				onBlur={ disableCloseOnBlur ? undefined : handleSave }
 				onKeyDown={ handleKeyDown }
 				tabIndex={ 0 }
 				role="button"

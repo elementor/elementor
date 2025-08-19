@@ -11,6 +11,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	TextField,
 	UnstableSortableItem,
 	type UnstableSortableItemRenderProps,
 	UnstableSortableProvider,
@@ -19,7 +20,6 @@ import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
-import { LabelField } from '../fields/label-field';
 import { VariableEditMenu, type VariableManagerMenuAction } from './variable-edit-menu';
 import { VariableEditableCell } from './variable-editable-cell';
 import { VariableTableCell } from './variable-table-cell';
@@ -51,7 +51,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 
 	return (
 		<TableContainer sx={ { overflow: 'initial' } }>
-			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering" stickyHeader>
+			<Table sx={ tableSX } aria-label="Variables manager list with drag and drop reordering">
 				<TableHead>
 					<TableRow>
 						<VariableTableCell isHeader noPadding width={ 10 } maxWidth={ 10 } />
@@ -139,19 +139,16 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													onSave={ () => {} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
 													editableElement={ ( { value, onChange } ) => (
-														<LabelField
-															id={ 'variable-label-' + row.id }
+														<TextField
 															size="tiny"
 															value={ value }
-															onChange={ onChange }
-															focusOnShow
+															onChange={ (
+																event: React.ChangeEvent< HTMLInputElement >
+															) => onChange( event.target.value ) }
 														/>
 													) }
 												>
-													<EllipsisWithTooltip
-														title={ row.name }
-														sx={ { border: '4px solid transparent' } }
-													>
+													<EllipsisWithTooltip title={ row.name }>
 														{ row.name }
 													</EllipsisWithTooltip>
 												</VariableEditableCell>
@@ -161,12 +158,10 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													initialValue={ row.value }
 													onSave={ () => {} }
 													editableElement={ row.valueField }
+													disableCloseOnBlur
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
-													<EllipsisWithTooltip
-														title={ row.value }
-														sx={ { border: '4px solid transparent' } }
-													>
+													<EllipsisWithTooltip title={ row.value }>
 														{ row.value }
 													</EllipsisWithTooltip>
 												</VariableEditableCell>
