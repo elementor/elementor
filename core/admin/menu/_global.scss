@@ -1,0 +1,397 @@
+
+// Dashboard Icon
+#adminmenu {
+
+	#toplevel_page_elementor {
+
+		div.wp-menu-image:before {
+			content: "\e813";
+			font-family: eicons;
+			font-size: 18px;
+			margin-block-start: 1px;
+		}
+
+		// Menu Go Pro
+		a[href="admin.php?page=go_elementor_pro"] {
+			font-weight: 600;
+			background-color: $wp-admin-brand-color;
+			color: $white;
+			margin: 3px 10px 0;
+			display: block;
+			text-align: center;
+			border-radius: $default-border-radius;
+			transition: $transition-hover;
+
+			&:hover,
+			&:focus {
+				background-color: lighten($wp-admin-brand-color, 10%);
+				box-shadow: none;
+			}
+		}
+	}
+
+	#menu-posts-elementor_library {
+
+		.wp-menu-image {
+
+			&:before {
+				content: '\e8ff';
+				font-family: eicons;
+				font-size: 18px;
+			}
+		}
+	}
+}
+
+#e-admin-menu__kit-library {
+	color: $success;
+}
+
+.elementor-plugins-gopro {
+	color: $wp-admin-brand-color;
+	font-weight: bold;
+
+	&:hover,
+	&:focus {
+		color: lighten($wp-admin-brand-color, 10%);
+	}
+}
+
+// Switcher Editor
+#elementor-switch-mode {
+	margin: 15px 0;
+}
+
+#elementor-switch-mode-button,
+#elementor-editor-button {
+	outline: none;
+	cursor: pointer;
+
+	i {
+		margin-inline-end: 3px;
+		font-size: 125%;
+		font-style: normal;
+	}
+}
+
+body {
+
+	&.elementor-editor-active {
+
+		.elementor-switch-mode-off {
+			display: none;
+		}
+
+		#elementor-switch-mode-button {
+			background-color: #f7f7f7;
+			color: #555;
+			border-color: #ccc;
+			box-shadow: 0 1px 0 #ccc !important;
+			text-shadow: unset;
+
+			&:hover {
+				background-color: #e9e9e9;
+			}
+
+			&:active {
+				box-shadow: inset 0 1px 0 #ccc;
+				transform: translateY(1px);
+			}
+		}
+
+		#postdivrich {
+			display: none !important;
+		}
+
+		// Gutenberg Support
+		.block-editor-block-list__layout {
+			display: none;
+		}
+	}
+
+	&.elementor-editor-inactive {
+
+		.elementor-switch-mode-on {
+			display: none;
+		}
+
+		#elementor-editor {
+			display: none;
+		}
+	}
+}
+
+// Gutenberg Support
+body {
+
+	&.elementor-editor-active {
+
+		.editor-block-list__layout {
+			display: none;
+		}
+
+		.edit-post-layout__content .edit-post-visual-editor {
+			flex-basis: auto;
+		}
+
+		#elementor-editor {
+			margin-block-end: 50px;
+		}
+
+		.edit-post-text-editor__body {
+			.editor-post-text-editor {
+				display: none;
+			}
+		}
+
+		// Override Gutenberg styles to ensure the containers don't take the full height
+		// so we can append our button without breaking the layout.
+		:is( .is-desktop-preview, .is-tablet-preview, .is-mobile-preview ) {
+			:is( .editor-styles-wrapper, iframe[name="editor-canvas"] ) {
+				height: auto !important;
+				padding: 0 !important;
+				flex: 0 !important;
+			}
+		}
+	}
+
+	.block-editor {
+
+		#elementor-switch-mode {
+			margin: 0 15px;
+
+			.button {
+				margin: 2px;
+				height: 33px;
+				font-size: 13px;
+				line-height: 1;
+
+				i {
+					padding-inline-end: 5px;
+				}
+			}
+		}
+	}
+}
+
+// General Elementor Buttons
+.elementor-button {
+	font-size: 13px;
+	text-decoration: none;
+	padding: 15px 40px;
+}
+
+#elementor-editor {
+	height: 300px;
+	width: 100%;
+	transition: all 0.5s ease;
+
+	@import "../editor/loader";
+}
+
+#elementor-go-to-edit-page-link {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border: 1px solid #DDD;
+	background-color: #F7F7F7;
+	text-decoration: none;
+	position: relative;
+	font-family: Sans-serif;
+
+	&:hover {
+		background-color: #ffffff;
+	}
+
+	&:focus {
+		box-shadow: none;
+	}
+
+	&.elementor-animate {
+
+		#elementor-editor-button {
+			display: none;
+		}
+	}
+
+	&:not(.elementor-animate) {
+
+		.elementor-loader-wrapper {
+			display: none;
+		}
+	}
+}
+
+// Tools
+.elementor-button-spinner {
+	&:before {
+		font: normal 20px/.5 dashicons;
+		speak: none;
+		display: inline-block;
+		padding: 0;
+		inset-block-start: 8px;
+		inset-inline-start: -4px;
+		position: relative;
+		vertical-align: top;
+		content: "\f463";
+	}
+
+	&.loading:before {
+		animation: rotation 1s infinite linear;
+	}
+
+	&.success:before {
+		content: "\f147";
+		color: #46b450;
+	}
+}
+
+
+// Blank State (Admin Settings)
+.elementor-blank_state {
+	padding: 5em 0;
+	margin: auto;
+	max-width: 520px;
+	text-align: center;
+	font-family: var(--e-a-font-family);
+
+	i {
+		font-size: 50px;
+	}
+
+	h3 {
+		font-size: 32px;
+		font-weight: 300;
+		color: inherit;
+		margin: 20px 0 10px;
+		line-height: 1.2;
+	}
+
+	p {
+		font-size: 16px;
+		font-weight: normal;
+		margin-block-end: 40px;
+	}
+
+	.elementor-button {
+		display: inline-block;
+	}
+}
+
+// Customizer widget icon
+#available-widgets [class*="elementor-template"] .widget-title:before {
+	content: "\e813";
+	font-family: eicons;
+	font-size: 17px;
+}
+
+// Settings
+.elementor-settings-form-page {
+	padding-block-start: 30px;
+
+	&:not(.elementor-active) {
+		display: none;
+	}
+}
+
+._elementor_settings_update_time {
+	display: none;
+}
+
+#tab-advanced,
+#tab-performance,
+#tab-experiments {
+
+	.form-table {
+	
+		tr {
+
+			&:not(:last-child) {
+				border-block-end: 1px solid #dcdcde;
+			}
+
+			.description {
+				font-size: 0.9em;
+				margin: 10px 0;
+				max-width: 820px;
+			}
+		}
+	}
+}
+
+// Fix SVG preview in admin media listing alternate view
+body {
+	&.post-type-attachment {
+		table.media .column-title .media-icon img[src$=".svg"] {
+			width: 100%;
+		}
+	}
+}
+
+.e-major-update-warning {
+	margin-block-end: 5px;
+	max-width: 1000px;
+	display: flex;
+
+	&__separator {
+		margin: 15px -12px;
+	}
+
+	&__icon {
+		font-size: 17px;
+		margin-inline-end: 9px;
+		margin-inline-start: 2px;
+	}
+
+	&__title {
+		font-weight: 600;
+		margin-block-end: 10px;
+	}
+
+	+ p {
+		display: none;
+	}
+}
+
+.notice-success .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-success;
+	}
+
+	&__icon {
+		color: $wp-success-text;
+	}
+}
+
+.notice-warning .e-major-update-warning {
+	&__separator {
+		border: 1px solid $wp-warning;
+	}
+
+	&__icon {
+		color: $wp-warning-text;
+	}
+}
+
+.plugins table.e-compatibility-update-table {
+	tr {
+		background: transparent;
+
+		th {
+			font-weight: 600;
+		}
+
+		th, td {
+			min-width: 250px;
+			font-size: 13px;
+			background: transparent;
+			box-shadow: none;
+			border: none;
+			padding-block-start: 5px;
+			padding-block-end: 5px;
+			padding-inline-end: 15px;
+			padding-inline-start: 0;
+		}
+	}
+}
