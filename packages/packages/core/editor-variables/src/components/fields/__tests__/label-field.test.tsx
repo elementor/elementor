@@ -18,95 +18,119 @@ describe( 'LabelField', () => {
 	};
 
 	it( 'should render with initial value', () => {
+		// Arrange
 		const { props } = renderLabelField();
 
+		// Act
 		const input = screen.getByRole( 'textbox' );
+
+		// Assert
 		expect( input ).toHaveValue( props.value );
 	} );
 
 	it( 'should call onChange with new value when input changes', () => {
+		// Arrange
 		const { props } = renderLabelField();
-
 		const input = screen.getByRole( 'textbox' );
+
+		// Act
 		fireEvent.change( input, { target: { value: 'new-label' } } );
 
+		// Assert
 		expect( props.onChange ).toHaveBeenCalledWith( 'new-label' );
 	} );
 
 	it( 'should show error state when validation fails for empty value', () => {
+		// Arrange
 		const onErrorChange = jest.fn();
 		renderLabelField( { onErrorChange } );
-
 		const input = screen.getByRole( 'textbox' );
+
+		// Act
 		fireEvent.change( input, { target: { value: '' } } );
 
+		// Assert
 		expect( screen.getByRole( 'textbox' ) ).toHaveClass( 'Mui-error' );
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.MISSING_VARIABLE_NAME );
 	} );
 
 	it( 'should show error state when validation fails for invalid characters', () => {
+		// Arrange
 		const onErrorChange = jest.fn();
 		renderLabelField( { onErrorChange } );
-
 		const input = screen.getByRole( 'textbox' );
+
+		// Act
 		fireEvent.change( input, { target: { value: 'invalid@name' } } );
 
+		// Assert
 		expect( screen.getByRole( 'textbox' ) ).toHaveClass( 'Mui-error' );
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.INVALID_CHARACTERS );
 	} );
 
 	it( 'should show error state when validation fails for special characters only', () => {
+		// Arrange
 		const onErrorChange = jest.fn();
 		renderLabelField( { onErrorChange } );
-
 		const input = screen.getByRole( 'textbox' );
+
+		// Act
 		fireEvent.change( input, { target: { value: '_-_' } } );
 
+		// Assert
 		expect( screen.getByRole( 'textbox' ) ).toHaveClass( 'Mui-error' );
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.NO_NON_SPECIAL_CHARACTER );
 	} );
 
 	it( 'should show error state when validation fails for exceeding max length', () => {
+		// Arrange
 		const onErrorChange = jest.fn();
 		renderLabelField( { onErrorChange } );
-
 		const input = screen.getByRole( 'textbox' );
 		const longValue = 'a'.repeat( VARIABLE_LABEL_MAX_LENGTH + 1 );
+
+		// Act
 		fireEvent.change( input, { target: { value: longValue } } );
 
+		// Assert
 		expect( screen.getByRole( 'textbox' ) ).toHaveClass( 'Mui-error' );
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.VARIABLE_LABEL_MAX_LENGTH );
 	} );
 
 	it( 'should not call onChange when new value equals error value', () => {
+		// Arrange
 		const { props } = renderLabelField( {
 			error: {
 				value: 'duplicate',
 				message: ERROR_MESSAGES.DUPLICATED_LABEL,
 			},
 		} );
-
 		const input = screen.getByRole( 'textbox' );
+
+		// Act
 		fireEvent.change( input, { target: { value: 'duplicate' } } );
 
+		// Assert
 		expect( props.onChange ).toHaveBeenCalledWith( '' );
 	} );
 
 	it( 'should focus input when focusOnShow is true', () => {
+		// Arrange & Act
 		renderLabelField( { focusOnShow: true } );
-
 		const input = screen.getByRole( 'textbox' );
+
+		// Assert
 		expect( input ).toHaveFocus();
 	} );
 
 	it( 'should accept valid variable names', () => {
+		// Arrange
 		const onErrorChange = jest.fn();
 		renderLabelField( { onErrorChange } );
-
 		const validNames = [ 'myVariable', 'my-variable', 'my_variable', 'my-variable-123', 'a1' ];
-
 		const input = screen.getByRole( 'textbox' );
 
+		// Act & Assert
 		validNames.forEach( ( name ) => {
 			fireEvent.change( input, { target: { value: name } } );
 			expect( onErrorChange ).toHaveBeenLastCalledWith( '' );
@@ -117,7 +141,10 @@ describe( 'LabelField', () => {
 
 describe( 'useLabelError', () => {
 	it( 'should initialize with default empty error state', () => {
+		// Arrange & Act
 		const { result } = renderHook( () => useLabelError() );
+
+		// Assert
 		expect( result.current.labelFieldError ).toEqual( {
 			value: '',
 			message: '',
@@ -125,19 +152,27 @@ describe( 'useLabelError', () => {
 	} );
 
 	it( 'should initialize with provided error state', () => {
+		// Arrange
 		const initialError = { value: 'test', message: 'error message' };
+
+		// Act
 		const { result } = renderHook( () => useLabelError( initialError ) );
+
+		// Assert
 		expect( result.current.labelFieldError ).toEqual( initialError );
 	} );
 
 	it( 'should update error state using setLabelFieldError', () => {
+		// Arrange
 		const { result } = renderHook( () => useLabelError() );
 		const newError = { value: 'new', message: 'new error' };
 
+		// Act
 		act( () => {
 			result.current.setLabelFieldError( newError );
 		} );
 
+		// Assert
 		expect( result.current.labelFieldError ).toEqual( newError );
 	} );
 } );

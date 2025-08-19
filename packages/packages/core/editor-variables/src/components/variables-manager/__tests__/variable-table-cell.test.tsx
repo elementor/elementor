@@ -29,16 +29,20 @@ describe( 'VariableTableCell', () => {
 	} );
 
 	it( 'should render content correctly', () => {
+		// Arrange & Act
 		renderComponent();
 
+		// Assert
 		expect( screen.getByText( 'Cell Content' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should pass correct props to TableCell when isHeader is true', () => {
+		// Arrange & Act
 		renderComponent( { isHeader: true } );
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.sx ).toEqual(
 			expect.objectContaining( {
 				color: 'text.primary',
@@ -49,10 +53,12 @@ describe( 'VariableTableCell', () => {
 	} );
 
 	it( 'should pass width prop to sx', () => {
+		// Arrange & Act
 		renderComponent( { width: 100 } );
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.sx ).toEqual(
 			expect.objectContaining( {
 				width: 100,
@@ -61,10 +67,12 @@ describe( 'VariableTableCell', () => {
 	} );
 
 	it( 'should pass maxWidth prop to sx', () => {
+		// Arrange & Act
 		renderComponent( { maxWidth: 200 } );
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.sx ).toEqual(
 			expect.objectContaining( {
 				maxWidth: 200,
@@ -73,10 +81,12 @@ describe( 'VariableTableCell', () => {
 	} );
 
 	it( 'should use default maxWidth when not provided', () => {
+		// Arrange & Act
 		renderComponent();
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.sx ).toEqual(
 			expect.objectContaining( {
 				maxWidth: 150,
@@ -85,31 +95,38 @@ describe( 'VariableTableCell', () => {
 	} );
 
 	it( 'should pass noPadding prop correctly', () => {
+		// Arrange & Act
 		renderComponent( { noPadding: true } );
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.padding ).toBe( 'none' );
 	} );
 
 	it( 'should pass alignment prop correctly', () => {
+		// Arrange & Act
 		renderComponent( { align: 'right' } );
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.align ).toBe( 'right' );
 	} );
 
 	it( 'should merge custom sx props with base styles', () => {
+		// Arrange
 		const customSx = {
 			backgroundColor: 'red',
 			fontSize: '16px',
 		};
 
+		// Act
 		renderComponent( { sx: customSx } );
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.sx ).toEqual(
 			expect.objectContaining( {
 				...customSx,
@@ -119,10 +136,12 @@ describe( 'VariableTableCell', () => {
 	} );
 
 	it( 'should not apply header padding when noPadding is true', () => {
+		// Arrange & Act
 		renderComponent( { isHeader: true, noPadding: true } );
+
+		// Assert
 		const cell = screen.getByRole( 'cell' );
 		const props = JSON.parse( cell.getAttribute( 'data-testprops' ) || '{}' );
-
 		expect( props.sx.padding ).toBeUndefined();
 		expect( props.padding ).toBe( 'none' );
 	} );

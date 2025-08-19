@@ -32,37 +32,49 @@ describe( 'VariableEditableCell', () => {
 
 	describe( 'Display Mode', () => {
 		it( 'should render in display mode initially', () => {
+			// Arrange & Act
 			renderComponent();
 
+			// Assert
 			expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 			expect( screen.queryByLabelText( 'Edit value' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render prefix element when provided', () => {
+			// Arrange
 			const prefixElement = <div>Prefix Text</div>;
+
+			// Act
 			renderComponent( { prefixElement } );
 
+			// Assert
 			expect( screen.getByText( 'Prefix Text' ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Edit Mode Triggers', () => {
 		it( 'should enter edit mode on double click', () => {
+			// Arrange
 			renderComponent();
 			const displayElement = screen.getByRole( 'button' );
 
+			// Act
 			fireEvent.doubleClick( displayElement );
 
+			// Assert
 			expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should enter edit mode on space key press', () => {
+			// Arrange
 			renderComponent();
 			const displayElement = screen.getByRole( 'button' );
 
+			// Act
 			fireEvent.keyDown( displayElement, { key: ' ' } );
 
+			// Assert
 			expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
 		} );
@@ -77,19 +89,27 @@ describe( 'VariableEditableCell', () => {
 		};
 
 		it( 'should save changes on Enter key press', () => {
+			// Arrange
 			const input = setupEditMode();
+
+			// Act
 			fireEvent.change( input, { target: { value: 'new value' } } );
 			fireEvent.keyDown( input, { key: 'Enter' } );
 
+			// Assert
 			expect( mockOnSave ).toHaveBeenCalledWith( 'new value' );
 			expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should cancel changes on Escape key press', () => {
+			// Arrange
 			const input = setupEditMode();
+
+			// Act
 			fireEvent.change( input, { target: { value: 'new value' } } );
 			fireEvent.keyDown( input, { key: 'Escape' } );
 
+			// Assert
 			expect( mockOnSave ).not.toHaveBeenCalled();
 			expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 		} );
@@ -97,9 +117,11 @@ describe( 'VariableEditableCell', () => {
 
 	describe( 'Accessibility', () => {
 		it( 'should have correct ARIA attributes in display mode', () => {
+			// Arrange & Act
 			renderComponent();
 			const element = screen.getByRole( 'button' );
 
+			// Assert
 			expect( element ).toHaveAttribute( 'aria-label', 'Double click or press Space to edit' );
 			expect( element ).toHaveAttribute( 'tabIndex', '0' );
 		} );

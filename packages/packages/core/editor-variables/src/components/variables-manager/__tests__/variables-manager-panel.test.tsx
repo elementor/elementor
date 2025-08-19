@@ -97,19 +97,22 @@ describe( 'VariablesManagerPanel', () => {
 	} );
 
 	it( 'should render panel structure correctly', () => {
+		// Arrange & Act
 		render( <VariablesManagerPanel /> );
 
+		// Assert
 		expect( screen.getByRole( 'dialog' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'region' ) ).toBeInTheDocument();
 		expect( screen.getByRole( 'heading', { level: 2 } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render panel title with icon', () => {
+		// Arrange & Act
 		render( <VariablesManagerPanel /> );
 
+		// Assert
 		const title = screen.getByRole( 'heading', { level: 2 } );
 		const props = JSON.parse( title.getAttribute( 'data-props' ) || '{}' );
-
 		expect( props.sx ).toEqual( {
 			display: 'flex',
 			alignItems: 'center',
@@ -119,11 +122,12 @@ describe( 'VariablesManagerPanel', () => {
 	} );
 
 	it( 'should pass variables and menu actions to table', () => {
+		// Arrange & Act
 		render( <VariablesManagerPanel /> );
 
+		// Assert
 		const table = screen.getByRole( 'grid' );
 		const props = JSON.parse( table.getAttribute( 'data-props' ) || '{}' );
-
 		expect( props.variables ).toBeDefined();
 		expect( props.menuActions ).toEqual( [
 			{
@@ -136,35 +140,42 @@ describe( 'VariablesManagerPanel', () => {
 	} );
 
 	it( 'should render save button in footer', () => {
+		// Arrange & Act
 		render( <VariablesManagerPanel /> );
 
+		// Assert
 		const button = screen.getByRole( 'button', { name: 'Save changes' } );
 		expect( button ).toHaveTextContent( 'Save changes' );
 		expect( button ).toBeDisabled();
 	} );
 
 	it( 'should prevent unload when dirty', () => {
+		// Arrange
 		const addEventListenerSpy = jest.spyOn( window, 'addEventListener' );
 		const removeEventListenerSpy = jest.spyOn( window, 'removeEventListener' );
 
+		// Act
 		const { unmount } = render( <VariablesManagerPanel /> );
 
+		// Assert
 		expect( addEventListenerSpy ).toHaveBeenCalledWith( 'beforeunload', expect.any( Function ) );
 
+		// Cleanup
 		unmount();
-
 		expect( removeEventListenerSpy ).toHaveBeenCalledWith( 'beforeunload', expect.any( Function ) );
 
+		// Restore
 		addEventListenerSpy.mockRestore();
 		removeEventListenerSpy.mockRestore();
 	} );
 
 	it( 'should apply correct styles to panel body', () => {
+		// Arrange & Act
 		render( <VariablesManagerPanel /> );
 
+		// Assert
 		const body = screen.getByRole( 'region' );
 		const props = JSON.parse( body.getAttribute( 'data-props' ) || '{}' );
-
 		expect( props.sx ).toEqual( {
 			display: 'flex',
 			flexDirection: 'column',

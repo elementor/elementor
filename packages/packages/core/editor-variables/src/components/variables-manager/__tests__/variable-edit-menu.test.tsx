@@ -89,12 +89,15 @@ describe( 'VariableEditMenu', () => {
 	} );
 
 	it( 'should render trigger button', () => {
+		// Arrange & Act
 		renderComponent();
 
+		// Assert
 		expect( screen.getByRole( 'button', { name: 'Menu trigger' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render menu items when menu is open', () => {
+		// Arrange
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
@@ -104,19 +107,24 @@ describe( 'VariableEditMenu', () => {
 			toggle: jest.fn(),
 		} ) );
 
+		// Act
 		renderComponent();
 
+		// Assert
 		expect( screen.getByRole( 'menu' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should handle disabled state', () => {
+		// Arrange & Act
 		renderComponent( { disabled: true } );
 
+		// Assert
 		expect( screen.getByRole( 'button', { name: 'Menu trigger' } ) ).toBeDisabled();
 	} );
 
 	it( 'should call action onClick when menu item is clicked', () => {
+		// Arrange
 		const mockClose = jest.fn();
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
@@ -126,17 +134,19 @@ describe( 'VariableEditMenu', () => {
 			setAnchorEl: jest.fn(),
 			toggle: jest.fn(),
 		} ) );
-
 		renderComponent();
 
+		// Act
 		const menuItem = screen.getByRole( 'menuitem' );
 		fireEvent.click( menuItem );
 
+		// Assert
 		expect( mockMenuActions[ 0 ].onClick ).toHaveBeenCalled();
 		expect( mockClose ).toHaveBeenCalled();
 	} );
 
 	it( 'should apply correct styles to menu items', () => {
+		// Arrange
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
@@ -146,11 +156,12 @@ describe( 'VariableEditMenu', () => {
 			toggle: jest.fn(),
 		} ) );
 
+		// Act
 		renderComponent();
-
 		const menuItem = screen.getByRole( 'menuitem' );
 		const sx = JSON.parse( menuItem.getAttribute( 'data-sx' ) || '{}' );
 
+		// Assert
 		expect( sx ).toEqual( {
 			color: 'error.main',
 			gap: 1,
@@ -158,6 +169,7 @@ describe( 'VariableEditMenu', () => {
 	} );
 
 	it( 'should render multiple menu items', () => {
+		// Arrange
 		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
@@ -177,8 +189,10 @@ describe( 'VariableEditMenu', () => {
 			},
 		];
 
+		// Act
 		renderComponent( { menuActions: multipleActions } );
 
+		// Assert
 		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Edit' ) ).toBeInTheDocument();
 	} );
