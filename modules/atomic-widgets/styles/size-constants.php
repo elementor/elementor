@@ -101,8 +101,12 @@ class Size_Constants {
 		return self::units_without_auto();
 	}
 
-	public static function transform(): array {
+	public static function rotate(): array {
 		return self::ANGLE_UNITS;
+	}
+
+	public static function transform(): array {
+		return self::units_without_auto();
 	}
 
 	public static function filters() {
