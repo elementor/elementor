@@ -85,7 +85,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Rotate_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Skew_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Atomic_Component_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Base_Styles;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -104,7 +103,6 @@ class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_CUSTOM_CSS = 'atomic_custom_css';
-	const TRANSITION_EXPERIMENT = 'atomic_widgets_should_use_transition';
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 
 	const PACKAGES = [
@@ -191,15 +189,6 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_CUSTOM_CSS,
 			'title' => esc_html__( 'V4 Custom CSS', 'elementor' ),
 			'description' => esc_html__( 'Create endless custom styling.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		] );
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::TRANSITION_EXPERIMENT,
-			'title' => esc_html__( 'Use transition', 'elementor' ),
-			'description' => esc_html__( 'Use transition.', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
