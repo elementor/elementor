@@ -13,18 +13,21 @@ import { createControl } from '../create-control';
 import { type ExtendedOption } from '../utils/size-control';
 import { SizeControl } from './size-control';
 
+import { Slots, type SlotProps } from '../control-replacements';
+
 export const LinkedDimensionsControl = createControl(
 	( {
 		label,
 		isSiteRtl = false,
 		extendedOptions,
 		min,
+		replaceableSlots = {},
 	}: {
 		label: string;
 		isSiteRtl?: boolean;
 		extendedOptions?: ExtendedOption[];
 		min?: number;
-	} ) => {
+	} & SlotProps ) => {
 		const {
 			value: sizeValue,
 			setValue: setSizeValue,
@@ -65,9 +68,7 @@ export const LinkedDimensionsControl = createControl(
 		const tooltipLabel = label.toLowerCase();
 
 		const LinkedIcon = isLinked ? LinkIcon : DetachIcon;
-		// translators: %s: Tooltip title.
 		const linkedLabel = __( 'Link %s', 'elementor' ).replace( '%s', tooltipLabel );
-		// translators: %s: Tooltip title.
 		const unlinkedLabel = __( 'Unlink %s', 'elementor' ).replace( '%s', tooltipLabel );
 
 		const disabled = sizeDisabled || dimensionsDisabled;
@@ -80,45 +81,68 @@ export const LinkedDimensionsControl = createControl(
 				placeholder={ dimensionsPlaceholder }
 				isDisabled={ () => disabled }
 			>
-				<Stack direction="row" gap={ 2 } flexWrap="nowrap">
-					<ControlFormLabel>{ label }</ControlFormLabel>
-					<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
-						<StyledToggleButton
-							aria-label={ isLinked ? unlinkedLabel : linkedLabel }
-							size={ 'tiny' }
-							value={ 'check' }
-							selected={ isLinked }
-							sx={ { marginLeft: 'auto' } }
-							onChange={ onLinkToggle }
-							disabled={ disabled }
-							isPlaceholder={ hasPlaceholders }
-						>
-							<LinkedIcon fontSize={ 'tiny' } />
-						</StyledToggleButton>
-					</Tooltip>
-				</Stack>
-
-				{ getCssDimensionProps( isSiteRtl ).map( ( row, index ) => (
-					<Stack direction="row" gap={ 2 } flexWrap="nowrap" key={ index } ref={ gridRowRefs[ index ] }>
-						{ row.map( ( { icon, ...props } ) => (
-							<Grid container gap={ 0.75 } alignItems="center" key={ props.bind }>
-								<Grid item xs={ 12 }>
-									<Label { ...props } />
-								</Grid>
-								<Grid item xs={ 12 }>
-									<Control
-										bind={ props.bind }
-										startIcon={ icon }
-										isLinked={ isLinked }
-										extendedOptions={ extendedOptions }
-										anchorRef={ gridRowRefs[ index ] }
-										min={ min }
-									/>
-								</Grid>
-							</Grid>
-						) ) }
+				{replaceableSlots[Slots.HEADER]?.({
+					isLinked,
+					onLinkToggle,
+					disabled,
+					hasPlaceholders,
+					label,
+				}) ?? (
+					<Stack direction="row" gap={ 2 } flexWrap="nowrap">
+						<ControlFormLabel>{ label }</ControlFormLabel>
+						<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
+							<StyledToggleButton
+								aria-label={ isLinked ? unlinkedLabel : linkedLabel }
+								size={ 'tiny' }
+								value={ 'check' }
+								selected={ isLinked }
+								sx={ { marginLeft: 'auto' } }
+								onChange={ onLinkToggle }
+								disabled={ disabled }
+								isPlaceholder={ hasPlaceholders }
+							>
+								<LinkedIcon fontSize={ 'tiny' } />
+							</StyledToggleButton>
+						</Tooltip>
 					</Stack>
-				) ) }
+				)}
+
+				{replaceableSlots[Slots.DIMENSIONS]?.({
+					isLinked,
+					onLinkToggle,
+					disabled,
+					hasPlaceholders,
+					label,
+					dimensionsValue,
+					extendedOptions,
+					min,
+					gridRowRefs,
+					isSiteRtl,
+				}) ?? (
+					<>
+						{getCssDimensionProps(isSiteRtl).map((row, index) => (
+							<Stack direction="row" gap={2} flexWrap="nowrap" key={index} ref={gridRowRefs[index]}>
+								{row.map(({ icon, ...props }) => (
+									<Grid container gap={0.75} alignItems="center" key={props.bind}>
+										<Grid item xs={12}>
+											<Label {...props} />
+										</Grid>
+										<Grid item xs={12}>
+											<Control
+												bind={props.bind}
+												startIcon={icon}
+												isLinked={isLinked}
+												extendedOptions={extendedOptions}
+												anchorRef={gridRowRefs[index]}
+												min={min}
+											/>
+										</Grid>
+									</Grid>
+								))}
+							</Stack>
+						))}
+					</>
+				)}
 			</PropProvider>
 		);
 	}

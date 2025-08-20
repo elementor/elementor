@@ -21,6 +21,8 @@ export function init() {
 	registerControlReplacement( {
 		component: VariableControl,
 		condition: ( { value } ) => hasAssignedVariable( value ),
+		supportsSlots: true,
+		targetSlots: ['dimensions'],
 	} );
 
 	registerPopoverAction( {

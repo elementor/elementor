@@ -4,9 +4,24 @@ import { type PropValue } from '@elementor/editor-props';
 
 import { useBoundProp } from './bound-prop-context';
 
+export const Slots = {
+	HEADER: 'header',
+	CONTROLS: 'controls',
+	FOOTER: 'footer',
+	DIMENSIONS: 'dimensions',
+} as const;
+
+export type SlotName = typeof Slots[keyof typeof Slots];
+export type SlotComponent = (props: unknown) => React.ReactNode;
+export type SlotProps = {
+	replaceableSlots?: Partial<Record<SlotName, SlotComponent>>;
+};
+
 type ControlReplacement = {
 	component: ComponentType;
 	condition: ( { value }: ConditionArgs ) => boolean;
+	supportsSlots?: boolean;
+	targetSlots?: Array<typeof Slots[keyof typeof Slots]>;
 };
 
 type ConditionArgs = {
@@ -27,8 +42,34 @@ export const useControlReplacement = ( OriginalComponent: ComponentType ) => {
 
 	try {
 		const replacement = replacements.find( ( r ) => r.condition( { value } ) );
+		
+		if (!replacement) {
+			return OriginalComponent;
+		}
 
-		return replacement?.component ?? OriginalComponent;
+		if (!replacement.supportsSlots) {
+			return replacement.component;
+		}
+
+		return (props: SlotProps) => {
+			const ReplacementComponent = replacement.component;
+			const targetSlots = replacement.targetSlots || Object.values(Slots);
+			
+			const slotComponents = targetSlots.reduce((acc, slotName) => ({
+				...acc,
+				[slotName]: (slotProps: any) => (
+					<>
+						<ReplacementComponent {...props} {...slotProps} />
+						{props.replaceableSlots?.[slotName]?.(slotProps)}
+					</>
+				),
+			}), {});
+
+			return <OriginalComponent {...props} replaceableSlots={{
+				...props.replaceableSlots,
+				...slotComponents,
+			}} />;
+		};
 	} catch {
 		return OriginalComponent;
 	}
