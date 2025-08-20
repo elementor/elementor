@@ -76,7 +76,7 @@ export const useNestedElements = () => {
 					},
 					undo: ( _: { elements: CreateElementParams[] }, { createdElements }: CreatedElementsResult ) => {
 						// Delete elements in reverse order to avoid dependency issues
-						createdElements.toReversed().forEach( ( { elementId } ) => {
+						[ ...createdElements ].reverse().forEach( ( { elementId } ) => {
 							deleteElement( {
 								elementId,
 								options: { useHistory: false },
@@ -158,7 +158,7 @@ export const useNestedElements = () => {
 					},
 					undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
 						// Restore elements in reverse order to maintain proper hierarchy
-						removedElements.toReversed().forEach( ( { model, parent, at } ) => {
+						[ ...removedElements ].reverse().forEach( ( { model, parent, at } ) => {
 							if ( parent && model ) {
 								createElement( {
 									containerId: parent.id,

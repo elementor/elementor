@@ -67,9 +67,9 @@ describe( 'useNestedElements', () => {
 			} );
 
 			// Assert.
-			expect( createResult.elementsData ).toHaveLength( 2 );
-			expect( createResult.elementsData[ 0 ].elementId ).toBe( 'element-1' );
-			expect( createResult.elementsData[ 1 ].elementId ).toBe( 'element-2' );
+			expect( createResult.createdElements ).toHaveLength( 2 );
+			expect( createResult.createdElements[ 0 ].elementId ).toBe( 'element-1' );
+			expect( createResult.createdElements[ 1 ].elementId ).toBe( 'element-2' );
 			expect( mockCreateElement ).toHaveBeenCalledTimes( 2 );
 			expect( mockCreateElement ).toHaveBeenNthCalledWith( 1, {
 				containerId: 'parent-1',
@@ -238,10 +238,10 @@ describe( 'useNestedElements', () => {
 
 			// Assert.
 			expect( removeResult.elementIds ).toEqual( [ 'element-1', 'element-2' ] );
-			expect( removeResult.elementsData ).toHaveLength( 2 );
+			expect( removeResult.removedElements ).toHaveLength( 2 );
 
 			// Check collected data.
-			expect( removeResult.elementsData[ 0 ] ).toEqual( {
+			expect( removeResult.removedElements[ 0 ] ).toEqual( {
 				elementId: 'element-1',
 				model: {
 					id: 'element-1',
@@ -253,7 +253,7 @@ describe( 'useNestedElements', () => {
 				at: 0,
 			} );
 
-			expect( removeResult.elementsData[ 1 ] ).toEqual( {
+			expect( removeResult.removedElements[ 1 ] ).toEqual( {
 				elementId: 'element-2',
 				model: {
 					id: 'element-2',
@@ -349,7 +349,7 @@ describe( 'useNestedElements', () => {
 
 			// Assert.
 			expect( removeResult.elementIds ).toEqual( [ 'non-existent-element' ] );
-			expect( removeResult.elementsData ).toHaveLength( 0 );
+			expect( removeResult.removedElements ).toHaveLength( 0 );
 			expect( mockDeleteElement ).toHaveBeenCalledWith( {
 				elementId: 'non-existent-element',
 				options: { useHistory: false },
@@ -411,7 +411,7 @@ describe( 'useNestedElements', () => {
 			} );
 
 			// Assert.
-			expect( removeResult.elementsData[ 0 ].at ).toBe( 0 );
+			expect( removeResult.removedElements[ 0 ].at ).toBe( 0 );
 		} );
 
 		it( 'should use default subtitle when not provided', () => {
