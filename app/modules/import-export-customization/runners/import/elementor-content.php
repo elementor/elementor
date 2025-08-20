@@ -81,7 +81,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 		foreach ( $posts_settings as $id => $post_settings ) {
 			try {
-				if ( 'page' === $post_type) {
+				if ( 'page' === $post_type ) {
 					$data = [
 						'path' => $path,
 						'id' => $id,

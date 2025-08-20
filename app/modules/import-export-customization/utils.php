@@ -67,7 +67,7 @@ class Utils {
 				return false;
 			}
 
-			if ( ! empty( $exclude ) && in_array( $value, $exclude, true )  ) {
+			if ( ! empty( $exclude ) && in_array( $value, $exclude, true ) ) {
 				return false;
 			}
 

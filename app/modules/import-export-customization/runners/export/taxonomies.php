@@ -21,7 +21,6 @@ class Taxonomies extends Export_Runner_Base {
 		if ( $customization ) {
 			return $this->export_customization( $data, $customization );
 		}
-
 	}
 
 	public function export_customization( array $data, array $customization ) {
