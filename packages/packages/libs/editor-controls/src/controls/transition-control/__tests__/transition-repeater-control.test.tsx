@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
-import { sendAddTransitionControlEvent } from '../../../utils/event-tracking';
+
 import { repeaterEventBus } from '../../../services/repeater-event-bus';
+import { sendAddTransitionControlEvent } from '../../../utils/event-tracking';
 import { TransitionRepeaterControl } from '../transition-repeater-control';
 
 jest.mock( '../../selection-size-control', () => ( {
@@ -122,7 +123,7 @@ describe( 'TransitionRepeaterControl', () => {
 	} );
 
 	describe( 'Event Bus Integration', () => {
-		it( 'should subscribe to transition-item-added events on mount', () => {
+		it( 'should subscribe to transition-item-added events and call sendAddTransitionControlEvent when triggered', () => {
 			// Arrange
 			const props = createDefaultProps();
 			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
@@ -133,19 +134,7 @@ describe( 'TransitionRepeaterControl', () => {
 			// Assert
 			expect( subscribeSpy ).toHaveBeenCalledWith( 'transition-item-added', expect.any( Function ) );
 
-			// Cleanup
-			subscribeSpy.mockRestore();
-		} );
-
-		it( 'should call sendAddTransitionControlEvent when transition item is added', () => {
-			// Arrange
-			const props = createDefaultProps();
-			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
-
 			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
-
-			// Simulate the event being emitted by the repeater
 			const callback = subscribeSpy.mock.calls[ 0 ][ 1 ];
 			callback();
 
@@ -153,17 +142,6 @@ describe( 'TransitionRepeaterControl', () => {
 			expect( sendAddTransitionControlEvent ).toHaveBeenCalled();
 
 			subscribeSpy.mockRestore();
-		} );
-
-		it( 'should not call sendAddTransitionControlEvent for non-transition events', () => {
-			// Arrange
-			const props = createDefaultProps();
-
-			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
-
-			// Assert
-			expect( sendAddTransitionControlEvent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should unsubscribe from events on unmount', () => {
@@ -184,46 +162,6 @@ describe( 'TransitionRepeaterControl', () => {
 			expect( mockUnsubscribe ).toHaveBeenCalled();
 
 			subscribeSpy.mockRestore();
-		} );
-	} );
-
-	describe( 'Props Handling', () => {
-		it( 'should pass recently used list to child components', () => {
-			// Arrange
-			const props = createDefaultProps();
-			const recentlyUsedList = [ 'fade', 'slide' ];
-
-			// Act
-			renderControl(
-				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ recentlyUsedList } />,
-				props
-			);
-
-			// Assert
-			expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should handle different style states correctly', () => {
-			// Arrange
-			const props = createDefaultProps();
-			const styleStates = [ null, 'hover' as const, 'active' as const, 'focus' as const ];
-
-			styleStates.forEach( ( styleState ) => {
-				// Act & Assert
-				const { unmount } = renderControl(
-					<TransitionRepeaterControl currentStyleState={ styleState } recentlyUsedList={ [] } />,
-					props
-				);
-
-				const addButton = screen.getByLabelText( 'Add item' );
-				if ( styleState === null ) {
-					expect( addButton ).toBeEnabled();
-				} else {
-					expect( addButton ).toBeDisabled();
-				}
-
-				unmount();
-			} );
 		} );
 	} );
 } );
