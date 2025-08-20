@@ -16,14 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'editor_events';
-	const MIXPANEL_TOKEN = '';
 
 	public function get_name() {
 		return 'events-manager';
 	}
 
 	public static function get_editor_events_config() {
-		$can_send_events = self::MIXPANEL_TOKEN && Tracker::is_allow_track() &&
+		$can_send_events = defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) && Tracker::is_allow_track() &&
 			! Tracker::has_terms_changed( '2025-07-07' ) &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
@@ -37,7 +36,7 @@ class Module extends BaseModule {
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
-			'token' => self::MIXPANEL_TOKEN,
+			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
 		];
 
 		return $settings;
