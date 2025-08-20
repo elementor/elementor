@@ -1,9 +1,9 @@
-import * as React from 'react';
 import { deleteElementStyle, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
 import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { createLocation } from '@elementor/locations';
 import { useSessionStorage } from '@elementor/session';
+import * as React from 'react';
 
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
@@ -30,7 +30,7 @@ export const CssClassConvert = ( props: OwnProps ) => {
 	const elementId = element.id;
 	const currentClassesProp = useClassesProp();
 	const { setId: setActiveId } = useStyle();
-	const [ , saveValue ] = useSessionStorage( `last-converted-class-generated-name` );
+	const [ , saveValue ] = useSessionStorage( `last-converted-class-generated-name`, `global` );
 
 	const successCallback = ( newId: string ) => {
 		if ( ! props.styleDef ) {

@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { type ReactElement, useEffect, useState } from 'react';
 import { stylesRepository, useUserStylesCapability, validateStyleLabel } from '@elementor/editor-styles-repository';
 import { EditableField, EllipsisWithTooltip, useEditable } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
@@ -17,6 +15,8 @@ import {
 	usePopupState,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import * as React from 'react';
+import { type ReactElement, useEffect, useState } from 'react';
 
 import { useStyle } from '../../contexts/style-context';
 import { CssClassProvider } from './css-class-context';
@@ -51,7 +51,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const { userCan } = useUserStylesCapability();
 
 	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
-		`last-converted-class-generated-name`
+		`last-converted-class-generated-name`, `global`
 	);
 
 	const {
@@ -79,9 +79,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 			clearConvertedFromLocalId();
 			openEditMode();
 		}
-		// eslint-disable-next-line react-compiler/react-compiler
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ id ] );
+	}, [ id, convertedFromLocalId ] );
 
 	return (
 		<ThemeProvider palette="default">
