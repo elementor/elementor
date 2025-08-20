@@ -17,7 +17,7 @@ export const SortableProvider = < T extends string >( props: UnstableSortablePro
 export type SortableTriggerProps = React.HTMLAttributes< HTMLDivElement >;
 
 export const SortableTrigger = ( props: SortableTriggerProps ) => (
-	<StyledSortableTrigger { ...props } role="button" className="class-item-sortable-trigger">
+	<StyledSortableTrigger { ...props } role="button" className="class-item-sortable-trigger" aria-label="sort">
 		<GripVerticalIcon fontSize="tiny" />
 	</StyledSortableTrigger>
 );

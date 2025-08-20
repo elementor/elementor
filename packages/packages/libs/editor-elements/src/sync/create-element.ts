@@ -5,21 +5,18 @@ import { type V1Element, type V1ElementSettingsProps } from './types';
 
 type Options = {
 	useHistory?: boolean;
+	at?: number;
 };
 
-export function createElement( {
-	containerId,
-	settings,
-	type,
-	id,
-	options,
-}: {
+export type CreateElementParams = {
 	settings: V1ElementSettingsProps;
 	type: string;
 	containerId: string;
 	id?: string;
 	options?: Options;
-} ) {
+};
+
+export function createElement( { containerId, settings, type, id, options }: CreateElementParams ) {
 	const container = getContainer( containerId );
 	const model = createElementModel( { settings, type, id } );
 
