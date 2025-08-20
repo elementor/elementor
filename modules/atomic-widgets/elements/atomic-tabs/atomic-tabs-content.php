@@ -9,25 +9,26 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs extends Atomic_Element_Base {
+class Atomic_Tabs_Content extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tabs';
+		return 'e-tabs-content';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs';
+		return 'e-tabs-content';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs', 'elementor' );
+		return esc_html__( 'Atomic Tabs Content', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -36,6 +37,10 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	public function get_icon() {
 		return 'eicon-tabs';
+	}
+
+	public function should_show_in_panel() {
+		return false;
 	}
 
 	protected static function define_props_schema(): array {
@@ -109,12 +114,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Atomic_Tab_List::generate()
-				->is_locked( true )
-				->build(),
-			Atomic_Tabs_Content::generate()
-				->is_locked( true )
-				->build(),
+			Atomic_Paragraph::generate()->build(),
 		];
 	}
 }
