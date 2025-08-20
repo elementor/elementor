@@ -343,108 +343,26 @@ describe( 'TransformRepeaterControl', () => {
 			},
 		} );
 
-		it.each( [
-			{
-				index: 0,
-				newValue: 20,
-				value: {
-					...mockTransformValue.value,
-					'transform-origin': {
-						$$type: 'transform-origin',
-						value: {
-							...mockTransformValue.value[ 'transform-origin' ].value,
-							x: { $$type: 'size', value: { size: 20, unit: 'vw' } },
-						},
-					},
-				},
-			},
-			{
-				index: 1,
-				newValue: 30,
-				value: {
-					...mockTransformValue.value,
-					'transform-origin': {
-						$$type: 'transform-origin',
-						value: {
-							...mockTransformValue.value[ 'transform-origin' ].value,
-							y: { $$type: 'size', value: { size: 30, unit: 'vh' } },
-						},
-					},
-				},
-			},
-			{
-				index: 2,
-				newValue: 40,
-				value: {
-					...mockTransformValue.value,
-					'transform-origin': {
-						$$type: 'transform-origin',
-						value: {
-							...mockTransformValue.value[ 'transform-origin' ].value,
-							z: { $$type: 'size', value: { size: 40, unit: 'rem' } },
-						},
-					},
-				},
-			},
-			{
-				index: 3,
-				newValue: 200,
-				value: {
-					...mockTransformValue.value,
-					perspective: {
-						$$type: 'size',
-						value: {
-							...mockTransformValue.value.perspective.value,
-							size: 200,
-						},
-					},
-				},
-			},
-			{
-				index: 4,
-				newValue: 60,
-				value: {
-					...mockTransformValue.value,
-					'perspective-origin': {
-						$$type: 'perspective-origin',
-						value: {
-							...mockTransformValue.value[ 'perspective-origin' ].value,
-							x: { $$type: 'size', value: { size: 60, unit: 'px' } },
-						},
-					},
-				},
-			},
-			{
-				index: 5,
-				newValue: 70,
-				value: {
-					...mockTransformValue.value,
-					'perspective-origin': {
-						$$type: 'perspective-origin',
-						value: {
-							...mockTransformValue.value[ 'perspective-origin' ].value,
-							y: { $$type: 'size', value: { size: 70, unit: '%' } },
-						},
-					},
-				},
-			},
-		] )( 'update input[$index] to $newValue', ( { index, newValue, value } ) => {
-			// Arrange.
-			const setValue = jest.fn();
+		it.each( getTransformBaseTestCases( mockTransformValue ) )(
+			'update input[$index] to $newValue',
+			( { index, newValue, value } ) => {
+				// Arrange.
+				const setValue = jest.fn();
 
-			// Act.
-			renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType, setValue } );
-			fireEvent.click( screen.getByRole( 'button', { name: 'Base Transform' } ) );
+				// Act.
+				renderControl( <TransformRepeaterControl />, { value: mockTransformValue, propType, setValue } );
+				fireEvent.click( screen.getByRole( 'button', { name: 'Base Transform' } ) );
 
-			const inputs = screen.getAllByDisplayValue( /\d*/ );
+				const inputs = screen.getAllByDisplayValue( /\d*/ );
 
-			// Act & Assert input
-			fireEvent.input( inputs[ index ], { target: { value: newValue } } );
-			expect( setValue ).toHaveBeenCalledWith( {
-				$$type: 'transform',
-				value,
-			} );
-		} );
+				// Act & Assert input
+				fireEvent.input( inputs[ index ], { target: { value: newValue } } );
+				expect( setValue ).toHaveBeenCalledWith( {
+					$$type: 'transform',
+					value,
+				} );
+			}
+		);
 	} );
 } );
 
@@ -517,4 +435,93 @@ function createMockTransformValue( props?: {
 				props?.perspectiveOrigin === null ? undefined : createMockPerspectiveOriginValue( perspectiveOrigin ),
 		},
 	};
+}
+
+function getTransformBaseTestCases( mockTransformValue: TransformPropValue ) {
+	return [
+		{
+			index: 0,
+			newValue: 20,
+			value: {
+				...mockTransformValue.value,
+				'transform-origin': {
+					$$type: 'transform-origin',
+					value: {
+						...mockTransformValue.value[ 'transform-origin' ].value,
+						x: { $$type: 'size', value: { size: 20, unit: 'vw' } },
+					},
+				},
+			},
+		},
+		{
+			index: 1,
+			newValue: 30,
+			value: {
+				...mockTransformValue.value,
+				'transform-origin': {
+					$$type: 'transform-origin',
+					value: {
+						...mockTransformValue.value[ 'transform-origin' ].value,
+						y: { $$type: 'size', value: { size: 30, unit: 'vh' } },
+					},
+				},
+			},
+		},
+		{
+			index: 2,
+			newValue: 40,
+			value: {
+				...mockTransformValue.value,
+				'transform-origin': {
+					$$type: 'transform-origin',
+					value: {
+						...mockTransformValue.value[ 'transform-origin' ].value,
+						z: { $$type: 'size', value: { size: 40, unit: 'rem' } },
+					},
+				},
+			},
+		},
+		{
+			index: 3,
+			newValue: 200,
+			value: {
+				...mockTransformValue.value,
+				perspective: {
+					$$type: 'size',
+					value: {
+						...mockTransformValue.value.perspective.value,
+						size: 200,
+					},
+				},
+			},
+		},
+		{
+			index: 4,
+			newValue: 60,
+			value: {
+				...mockTransformValue.value,
+				'perspective-origin': {
+					$$type: 'perspective-origin',
+					value: {
+						...mockTransformValue.value[ 'perspective-origin' ].value,
+						x: { $$type: 'size', value: { size: 60, unit: 'px' } },
+					},
+				},
+			},
+		},
+		{
+			index: 5,
+			newValue: 70,
+			value: {
+				...mockTransformValue.value,
+				'perspective-origin': {
+					$$type: 'perspective-origin',
+					value: {
+						...mockTransformValue.value[ 'perspective-origin' ].value,
+						y: { $$type: 'size', value: { size: 70, unit: '%' } },
+					},
+				},
+			},
+		},
+	];
 }
