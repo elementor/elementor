@@ -47,7 +47,6 @@ const ConditionalToolTip = ( {
 }: React.PropsWithChildren< {
 	content?: React.ReactNode;
 	enable: boolean;
-	wrapContent?: boolean;
 } > ) =>
 	enable && content ? (
 		<Infotip placement="right" color="secondary" content={ content }>
