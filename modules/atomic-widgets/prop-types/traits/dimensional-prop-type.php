@@ -10,7 +10,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Default;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
-use ElementorPro\Core\Utils\Collection;
 
 trait Dimensional_Prop_Type {
 	use Has_Default;
