@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { transformPropTypeUtil } from '@elementor/editor-props';
+import { transformFunctionsPropTypeUtil, transformPropTypeUtil } from '@elementor/editor-props';
 import { InfoCircleFilledIcon } from '@elementor/icons';
-import { Typography } from '@elementor/ui';
+import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropProvider, useBoundProp } from '../../bound-prop-context';
+import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
 import {
 	Header,
 	Item,
@@ -22,8 +22,34 @@ import { TransformIcon } from './transform-icon';
 import { TransformLabel } from './transform-label';
 
 export const TransformRepeaterControl = createControl( () => {
-	const { propType, value: transformValues, setValue } = useBoundProp( transformPropTypeUtil );
+	const context = useBoundProp( transformPropTypeUtil );
+
+	return (
+		<PropProvider { ...context }>
+			<PropKeyProvider bind="transform-functions">
+				<Repeater />
+			</PropKeyProvider>
+		</PropProvider>
+	);
+} );
+
+const ToolTip = (
+	<Box
+		component="span"
+		aria-label={ undefined }
+		sx={ { display: 'flex', gap: 0.5, p: 2, width: 320, borderRadius: 1 } }
+	>
+		<InfoCircleFilledIcon sx={ { color: 'secondary.main' } } />
+		<Typography variant="body2" color="text.secondary" fontSize="14px">
+			{ __( 'You can use each kind of transform only once per element.', 'elementor' ) }
+		</Typography>
+	</Box>
+);
+
+const Repeater = () => {
+	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
 	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
+	const { value: transformValues } = transformFunctionsContext;
 
 	const getInitialValue = () => {
 		return availableValues.find( ( value ) => ! transformValues?.some( ( item ) => item.$$type === value.$$type ) );
@@ -32,10 +58,10 @@ export const TransformRepeaterControl = createControl( () => {
 	const shouldDisableAddItem = ! getInitialValue();
 
 	return (
-		<PropProvider propType={ propType } value={ transformValues } setValue={ setValue }>
+		<PropProvider { ...transformFunctionsContext }>
 			<UnstableRepeater
 				initial={ getInitialValue() ?? initialTransformValue }
-				propTypeUtil={ transformPropTypeUtil }
+				propTypeUtil={ transformFunctionsPropTypeUtil }
 			>
 				<Header label={ __( 'Transform', 'elementor' ) }>
 					<TooltipAddItemAction
@@ -54,13 +80,4 @@ export const TransformRepeaterControl = createControl( () => {
 			</UnstableRepeater>
 		</PropProvider>
 	);
-} );
-
-const ToolTip = (
-	<>
-		<InfoCircleFilledIcon sx={ { color: 'secondary.main' } } />
-		<Typography variant="body2" color="text.secondary" fontSize="14px">
-			{ __( 'You can use each kind of transform only once per element.', 'elementor' ) }
-		</Typography>
-	</>
-);
+};

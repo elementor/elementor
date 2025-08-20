@@ -52,19 +52,22 @@ export function VariablesManagerPanel() {
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
 					<PanelHeader>
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<Stack width="100%" direction="row" gap={ 1 }>
-								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-									<ColorFilterIcon fontSize="inherit" />
-									{ __( 'Variable Manager', 'elementor' ) }
-								</PanelHeaderTitle>
+						<Stack width="100%" direction="column" alignItems="center">
+							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+								<Stack width="100%" direction="row" gap={ 1 }>
+									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+										<ColorFilterIcon fontSize="inherit" />
+										{ __( 'Variable Manager', 'elementor' ) }
+									</PanelHeaderTitle>
+								</Stack>
+								<CloseButton
+									sx={ { marginLeft: 'auto' } }
+									onClose={ () => {
+										closePanel();
+									} }
+								/>
 							</Stack>
-							<CloseButton
-								sx={ { marginLeft: 'auto' } }
-								onClose={ () => {
-									closePanel();
-								} }
-							/>
+							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -74,7 +77,6 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<Divider />
 						<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
 					</PanelBody>
 

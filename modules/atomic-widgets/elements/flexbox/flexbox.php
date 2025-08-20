@@ -12,7 +12,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -58,7 +58,7 @@ class Flexbox extends Atomic_Element_Base {
 				->default( 'div' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
-			'attributes' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
 
