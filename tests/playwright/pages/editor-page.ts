@@ -451,11 +451,22 @@ export default class EditorPage extends BasePage {
 		if ( ! section || isOpenSection ) {
 			return;
 		}
+		// If there is no collapsible heading for this control, skip opening
+		const headingCount = await this.page.locator( `${ sectionSelector } .elementor-panel-heading` ).count();
+		if ( 0 === headingCount ) {
+			return;
+		}
 
-		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+		// Wait explicitly for the section header, scroll into view, and click with extended timeout
+		const headingSelector = `${ sectionSelector }:not(.e-open):not(.elementor-open):visible .elementor-panel-heading`;
+		await this.page.waitForSelector( headingSelector, { state: 'visible', timeout: timeouts.longAction } );
+		const headingLocator = this.page.locator( headingSelector ).first();
+		await headingLocator.scrollIntoViewIfNeeded();
+		await headingLocator.click( { timeout: timeouts.longAction } );
+
 		await this.page.waitForSelector(
 			sectionSelector + '.elementor-open:visible, ' + sectionSelector + '.e-open:visible',
-			{ timeout: timeouts.longAction },
+			{ timeout: timeouts.longAction }
 		);
 	}
 
