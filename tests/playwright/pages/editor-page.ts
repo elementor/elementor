@@ -1020,6 +1020,8 @@ export default class EditorPage extends BasePage {
 		await this.page.waitForLoadState();
 		await this.page.waitForResponse( '/wp-admin/admin-ajax.php' );
 		await this.page.reload();
+		// Wait for the preview frame to reload after saving
+		await this.waitForPreviewFrame();
 	}
 
 	/**
