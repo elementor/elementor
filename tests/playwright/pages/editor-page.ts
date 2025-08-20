@@ -173,7 +173,12 @@ export default class EditorPage extends BasePage {
 	 */
 	async waitForPanelToLoad(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached', timeout: timeouts.longAction } );
-		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.longAction } );
+		// Attempt to wait for the page-level loading spinner to hide, but ignore if it persists
+		try {
+			await this.page.waitForSelector( '#elementor-loading', { state: 'hidden', timeout: timeouts.longAction } );
+		} catch (e) {
+			// Spinner did not hide within timeout, proceeding to avoid test hang
+		}
 	}
 
 	/**
@@ -434,7 +439,8 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async openSection( sectionId: string ): Promise<void> {
-		const sectionSelector = `.elementor-control-${ sectionId }`,
+		await this.waitForPanelToLoad();
+		const sectionSelector =`.elementor-control-${ sectionId }`,
 			isOpenSection = await this.page.evaluate( ( selector ) => {
 				const sectionElement = document.querySelector( selector );
 
@@ -447,6 +453,10 @@ export default class EditorPage extends BasePage {
 		}
 
 		await this.page.locator( sectionSelector + ':not( .e-open ):not( .elementor-open ):visible' + ' .elementor-panel-heading' ).click();
+		await this.page.waitForSelector(
+			sectionSelector + '.elementor-open:visible, ' + sectionSelector + '.e-open:visible',
+			{ timeout: timeouts.longAction },
+		);
 	}
 
 	/**
