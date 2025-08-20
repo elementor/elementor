@@ -18,10 +18,12 @@ export const LinkedDimensionsControl = createControl(
 		label,
 		isSiteRtl = false,
 		extendedOptions,
+		min,
 	}: {
 		label: string;
 		isSiteRtl?: boolean;
 		extendedOptions?: ExtendedOption[];
+		min?: number;
 	} ) => {
 		const {
 			value: sizeValue,
@@ -110,6 +112,7 @@ export const LinkedDimensionsControl = createControl(
 										isLinked={ isLinked }
 										extendedOptions={ extendedOptions }
 										anchorRef={ gridRowRefs[ index ] }
+										min={ min }
 									/>
 								</Grid>
 							</Grid>
@@ -127,20 +130,34 @@ const Control = ( {
 	isLinked,
 	extendedOptions,
 	anchorRef,
+	min,
 }: {
 	bind: PropKey;
 	startIcon: React.ReactNode;
 	isLinked: boolean;
 	extendedOptions?: ExtendedOption[];
 	anchorRef: RefObject< HTMLDivElement >;
+	min?: number;
 } ) => {
 	if ( isLinked ) {
-		return <SizeControl startIcon={ startIcon } extendedOptions={ extendedOptions } anchorRef={ anchorRef } />;
+		return (
+			<SizeControl
+				startIcon={ startIcon }
+				extendedOptions={ extendedOptions }
+				anchorRef={ anchorRef }
+				min={ min }
+			/>
+		);
 	}
 
 	return (
 		<PropKeyProvider bind={ bind }>
-			<SizeControl startIcon={ startIcon } extendedOptions={ extendedOptions } anchorRef={ anchorRef } />
+			<SizeControl
+				startIcon={ startIcon }
+				extendedOptions={ extendedOptions }
+				anchorRef={ anchorRef }
+				min={ min }
+			/>
 		</PropKeyProvider>
 	);
 };
