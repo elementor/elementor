@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
-
+import { sendAddTransitionControlEvent } from '../../../utils/event-tracking';
 import { repeaterEventBus } from '../../../services/repeater-event-bus';
 import { TransitionRepeaterControl } from '../transition-repeater-control';
 
@@ -13,11 +13,8 @@ jest.mock( '../transition-selector', () => ( {
 	TransitionSelector: jest.fn( () => <div data-testid="transition-selector">Mock Transition Selector</div> ),
 } ) );
 
-jest.mock( '../../../services/repeater-event-bus', () => ( {
-	repeaterEventBus: {
-		subscribe: jest.fn( () => jest.fn() ),
-		emit: jest.fn(),
-	},
+jest.mock( '../../../utils/event-tracking', () => ( {
+	sendAddTransitionControlEvent: jest.fn(),
 } ) );
 
 const createTransitionPropType = () =>
@@ -125,62 +122,56 @@ describe( 'TransitionRepeaterControl', () => {
 	} );
 
 	describe( 'Event Bus Integration', () => {
-		it( 'should subscribe to item-added events on mount', () => {
+		it( 'should subscribe to transition-item-added events on mount', () => {
 			// Arrange
 			const props = createDefaultProps();
+			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
 
 			// Act
 			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
 
 			// Assert
-			expect( repeaterEventBus.subscribe ).toHaveBeenCalledWith( 'item-added', expect.any( Function ) );
+			expect( subscribeSpy ).toHaveBeenCalledWith( 'transition-item-added', expect.any( Function ) );
+
+			// Cleanup
+			subscribeSpy.mockRestore();
 		} );
 
-		it( 'should emit transition-item-added event when transition item is added', () => {
+		it( 'should call sendAddTransitionControlEvent when transition item is added', () => {
 			// Arrange
 			const props = createDefaultProps();
-			const mockSubscribe = jest.fn( ( event, callback ) => {
-				if ( event === 'item-added' ) {
-					callback( { repeaterType: 'transition' } );
-				}
-				return jest.fn();
-			} );
-
-			jest.mocked( repeaterEventBus.subscribe ).mockImplementation( mockSubscribe );
+			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
 
 			// Act
 			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
 
+			// Simulate the event being emitted by the repeater
+			const callback = subscribeSpy.mock.calls[ 0 ][ 1 ];
+			callback();
+
 			// Assert
-			expect( repeaterEventBus.emit ).toHaveBeenCalledWith( 'transition-item-added', {
-				transition_type: expect.any( String ),
-			} );
+			expect( sendAddTransitionControlEvent ).toHaveBeenCalled();
+
+			subscribeSpy.mockRestore();
 		} );
 
-		it( 'should not emit transition-item-added event for non-transition items', () => {
+		it( 'should not call sendAddTransitionControlEvent for non-transition events', () => {
 			// Arrange
 			const props = createDefaultProps();
-			const mockSubscribe = jest.fn( ( event, callback ) => {
-				if ( event === 'item-added' ) {
-					callback( { repeaterType: 'transform' } );
-				}
-				return jest.fn();
-			} );
-
-			jest.mocked( repeaterEventBus.subscribe ).mockImplementation( mockSubscribe );
 
 			// Act
 			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
 
 			// Assert
-			expect( repeaterEventBus.emit ).not.toHaveBeenCalledWith( 'transition-item-added', expect.anything() );
+			expect( sendAddTransitionControlEvent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should unsubscribe from events on unmount', () => {
 			// Arrange
 			const props = createDefaultProps();
+			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
 			const mockUnsubscribe = jest.fn();
-			jest.mocked( repeaterEventBus.subscribe ).mockReturnValue( mockUnsubscribe );
+			subscribeSpy.mockReturnValue( mockUnsubscribe );
 
 			// Act
 			const { unmount } = renderControl(
@@ -191,6 +182,8 @@ describe( 'TransitionRepeaterControl', () => {
 
 			// Assert
 			expect( mockUnsubscribe ).toHaveBeenCalled();
+
+			subscribeSpy.mockRestore();
 		} );
 	} );
 

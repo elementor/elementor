@@ -156,9 +156,9 @@ const eventsConfig = {
 				checklistShow: 'checklist_userpreferences_toggle_show',
 				checklistHide: 'checklist_userpreferences_toggle_hide',
 			},
-				transitions: {
-					clickAddedTransition: 'click_added_transition',
-				},
+			transitions: {
+				clickAddedTransition: 'click_added_transition',
+			},
 		},
 		variables: {
 			open: 'open_variables_popover',
