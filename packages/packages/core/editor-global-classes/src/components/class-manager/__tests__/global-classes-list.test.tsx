@@ -537,6 +537,29 @@ describe( 'GlobalClassesList', () => {
 		expect( screen.getByText( 'Header' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Footer' ) ).toBeInTheDocument();
 	} );
+
+	it( 'should show sort indicator on hover when there are more than 1 class', () => {
+		mockClasses( [
+			{ id: 'class-1', label: 'Header' },
+			{ id: 'class-2', label: 'Footer' },
+		] );
+
+		renderWithStore( <GlobalClassesList />, store );
+
+		const triggers = screen.getAllByRole( 'button', { name: 'sort' } );
+
+		expect( triggers ).toHaveLength( 2 );
+	} );
+
+	it( 'should not show sort indicator when there is only 1 class', () => {
+		mockClasses( [ { id: 'class-1', label: 'Header' } ] );
+
+		renderWithStore( <GlobalClassesList />, store );
+
+		const triggers = screen.queryAllByRole( 'button', { name: 'sort' } );
+
+		expect( triggers ).toHaveLength( 0 );
+	} );
 } );
 
 const mockClasses = ( classes: Pick< StyleDefinition, 'id' | 'label' >[] ) => {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
@@ -73,13 +74,14 @@ const disableAddItemTooltipContent = (
 
 export const TransitionRepeaterControl = createControl(
 	( {
-		recentlyUsedList,
+		recentlyUsedListGetter,
 		currentStyleState,
 	}: {
-		recentlyUsedList: string[];
+		recentlyUsedListGetter: () => Promise< string[] >;
 		currentStyleState: StyleDefinitionState;
 	} ) => {
 		const currentStyleIsNormal = currentStyleState === null;
+		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
 
 		React.useEffect( () => {
 			const unsubscribe = repeaterEventBus.subscribe( RepeaterEvents.TransitionItemAdded, () =>
@@ -88,6 +90,10 @@ export const TransitionRepeaterControl = createControl(
 
 			return unsubscribe;
 		}, [] );
+
+		useEffect( () => {
+			recentlyUsedListGetter().then( setRecentlyUsedList );
+		}, [ recentlyUsedListGetter ] );
 
 		return (
 			<RepeatableControl

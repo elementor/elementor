@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { repeaterEventBus } from '../../../services/repeater-event-bus';
 import { sendAddTransitionControlEvent } from '../../../utils/event-tracking';
@@ -17,6 +17,8 @@ jest.mock( '../transition-selector', () => ( {
 jest.mock( '../../../utils/event-tracking', () => ( {
 	sendAddTransitionControlEvent: jest.fn(),
 } ) );
+
+const recentlyUsedGetter = () => Promise.resolve( [] );
 
 const createTransitionPropType = () =>
 	createMockPropType( {
@@ -36,18 +38,23 @@ describe( 'TransitionRepeaterControl', () => {
 	} );
 
 	describe( 'Rendering', () => {
-		it( 'should render with default empty state', () => {
+		it( 'should render with default empty state', async () => {
 			// Arrange
 			const props = createDefaultProps();
 
 			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
+			renderControl(
+				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				props
+			);
 
 			// Assert
-			expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
+			} );
 		} );
 
-		it( 'should render with initial transition values', () => {
+		it( 'should render with initial transition values', async () => {
 			// Arrange
 			const props = {
 				...createDefaultProps(),
@@ -72,64 +79,88 @@ describe( 'TransitionRepeaterControl', () => {
 			};
 
 			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
+			renderControl(
+				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				props
+			);
+
 			const addButton = screen.getByRole( 'button' );
 			fireEvent.click( addButton );
 
 			// Assert
-			expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
+			} );
 			expect( screen.getByText( ( content ) => content.includes( 'All properties' ) ) ).toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Add Button State', () => {
-		it( 'should display an enabled add button when rendered in normal style state', () => {
+		it( 'should display an enabled add button when rendered in normal style state', async () => {
 			// Arrange
 			const props = createDefaultProps();
 
 			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
+			renderControl(
+				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				props
+			);
 
 			// Assert
-			const addButton = screen.getByLabelText( 'Add item' );
-			expect( addButton ).toBeInTheDocument();
-			expect( addButton ).toBeEnabled();
+			await waitFor( () => {
+				const addButton = screen.getByLabelText( 'Add item' );
+				expect( addButton ).toBeInTheDocument();
+				expect( addButton ).toBeEnabled();
+			} );
 		} );
 
-		it( 'should display a disabled add button when not in normal style state', () => {
+		it( 'should display a disabled add button when not in normal style state', async () => {
 			// Arrange
 			const props = createDefaultProps();
 
 			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedList={ [] } />, props );
+			renderControl(
+				<TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				props
+			);
 
 			// Assert
-			const addButton = screen.getByLabelText( 'Add item' );
-			expect( addButton ).toBeInTheDocument();
-			expect( addButton ).toBeDisabled();
+			await waitFor( () => {
+				const addButton = screen.getByLabelText( 'Add item' );
+				expect( addButton ).toBeInTheDocument();
+				expect( addButton ).toBeDisabled();
+			} );
 		} );
 
-		it( 'should display tooltip when button is disabled', () => {
+		it( 'should display tooltip when button is disabled', async () => {
 			// Arrange
 			const props = createDefaultProps();
 
 			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedList={ [] } />, props );
+			renderControl(
+				<TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				props
+			);
 
 			// Assert
-			const addButton = screen.getByLabelText( 'Add item' );
-			expect( addButton ).toBeDisabled();
+			await waitFor( () => {
+				const addButton = screen.getByLabelText( 'Add item' );
+				expect( addButton ).toBeDisabled();
+			} );
 		} );
 	} );
 
 	describe( 'Event Bus Integration', () => {
-		it( 'should subscribe to transition-item-added events and call sendAddTransitionControlEvent when triggered', () => {
+		it( 'should subscribe to transition-item-added events and call sendAddTransitionControlEvent when triggered', async () => {
 			// Arrange
 			const props = createDefaultProps();
 			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
 
 			// Act
-			renderControl( <TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />, props );
+			renderControl(
+				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				props
+			);
 
 			// Assert
 			expect( subscribeSpy ).toHaveBeenCalledWith( 'transition-item-added', expect.any( Function ) );
@@ -144,7 +175,7 @@ describe( 'TransitionRepeaterControl', () => {
 			subscribeSpy.mockRestore();
 		} );
 
-		it( 'should unsubscribe from events on unmount', () => {
+		it( 'should unsubscribe from events on unmount', async () => {
 			// Arrange
 			const props = createDefaultProps();
 			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
@@ -153,7 +184,7 @@ describe( 'TransitionRepeaterControl', () => {
 
 			// Act
 			const { unmount } = renderControl(
-				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedList={ [] } />,
+				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
 				props
 			);
 			unmount();

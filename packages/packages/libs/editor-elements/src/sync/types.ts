@@ -44,6 +44,9 @@ export type ExtendedWindow = Window & {
 				};
 			};
 		};
+		helpers?: {
+			getUniqueId?: () => string;
+		};
 	};
 };
 
@@ -51,9 +54,13 @@ export type V1Element = {
 	id: string;
 	model: V1Model< V1ElementModelProps >;
 	settings: V1Model< V1ElementSettingsProps >;
-	children?: V1Element[];
+	children?: V1Element[] & {
+		findRecursive?: ( predicate: ( child: V1Element ) => boolean ) => V1Element | undefined;
+		forEachRecursive?: ( callback: ( child: V1Element ) => void ) => V1Element[];
+	};
 	view?: {
 		el?: HTMLElement;
+		_index?: number;
 		getDomElement?: () => {
 			get?: ( index: number ) => HTMLElement | undefined;
 		};
