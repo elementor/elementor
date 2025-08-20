@@ -14,21 +14,21 @@ const ENTRANCE_ANIMATION_LABEL = __( 'Entrance Animation', 'elementor' );
 const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 
 export const MotionEffectsSection = () => {
-	const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
+	// const shouldShowTransition = isExperimentActive( EXPERIMENTAL_FEATURES.TRANSITIONS );
 
 	return (
 		<SectionContent>
 			<StylesField bind="entrance-animation" propDisplayName={ ENTRANCE_ANIMATION_LABEL }>
 				<EntranceAnimationControl />
 			</StylesField>
-			{ shouldShowTransition && (
+			{/* { shouldShowTransition && (
 				<>
 					<PanelDivider />
 					<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
 						<TransitionRepeaterControl />
 					</StylesField>
 				</>
-			) }
+			) } */}
 		</SectionContent>
 	);
 }; 
