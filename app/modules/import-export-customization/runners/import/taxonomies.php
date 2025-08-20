@@ -22,6 +22,16 @@ class Taxonomies extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+		$customization = $data['customization']['content'] ?? null;
+
+		if ( $customization ) {
+			return $this->import_with_customization( $data, $imported_data, $customization );
+		}
+
+		return $this->import_with_manifest( $data, $imported_data );
+	}
+
+	public function import_with_manifest( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . 'taxonomies/';
 		$this->import_session_id = $data['session_id'];
 
@@ -41,6 +51,17 @@ class Taxonomies extends Import_Runner_Base {
 
 		return $result;
 	}
+	public function import_with_customization( array $data, array $imported_data, array $customization ) {
+		$result = apply_filters( 'elementor/import-export-customization/import/taxonomies/customization', null, $data, $imported_data, $customization, $this );
+
+		if ( is_array( $result ) ) {
+			return $result;
+		}
+
+		return $this->import_with_manifest( $data, $imported_data );
+	}
+
+
 
 	private function import_taxonomies( array $taxonomies, $path ) {
 		$result = [];
