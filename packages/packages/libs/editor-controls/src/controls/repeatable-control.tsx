@@ -11,6 +11,7 @@ import { Header, Item, TooltipAddItemAction, UnstableRepeater } from '../compone
 import { DisableItemAction } from '../components/unstable-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../components/unstable-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../components/unstable-repeater/actions/remove-item-action';
+import { type TooltipAddItemActionProps } from '../components/unstable-repeater/actions/tooltip-add-item-action';
 import { EditItemPopover } from '../components/unstable-repeater/items/edit-item-popover';
 import { ItemsContainer } from '../components/unstable-repeater/items/items-container';
 import { type RepeatablePropValue } from '../components/unstable-repeater/types';
@@ -31,6 +32,7 @@ type RepeatableControlProps = {
 	patternLabel?: string;
 	placeholder?: string;
 	propKey?: string;
+	addItemTooltipProps?: TooltipAddItemActionProps;
 };
 
 const PLACEHOLDER_REGEX = /\$\{([^}]+)\}/g;
@@ -45,6 +47,7 @@ export const RepeatableControl = createControl(
 		patternLabel,
 		placeholder,
 		propKey,
+		addItemTooltipProps,
 	}: RepeatableControlProps ) => {
 		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
 
@@ -76,7 +79,7 @@ export const RepeatableControl = createControl(
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 					>
 						<Header label={ repeaterLabel }>
-							<TooltipAddItemAction newItemIndex={ 0 } />
+							<TooltipAddItemAction { ...addItemTooltipProps } newItemIndex={ 0 } />
 						</Header>
 						<ItemsContainer
 							isSortable={ false }
