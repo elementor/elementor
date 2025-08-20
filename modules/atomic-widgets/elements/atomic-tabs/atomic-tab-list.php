@@ -105,18 +105,4 @@ class Atomic_Tab_List extends Atomic_Element_Base {
 
 		$this->add_render_attribute( '_wrapper', $attributes );
 	}
-
-	protected function define_default_children() {
-		return [
-			Atomic_Tab_Link::generate()
-				->is_locked( true )
-				->build(),
-			Atomic_Tab_Link::generate()
-				->is_locked( true )
-				->build(),
-			Atomic_Tab_Link::generate()
-				->is_locked( true )
-				->build(),
-		];
-	}
 }
