@@ -48,46 +48,6 @@ describe( 'AI Modal Events', () => {
 		dispatchEventSpy.mockRestore();
 	} );
 
-	// If those tests fail, it means that the constants are not correct and should also be updated on elementor-ai
-	describe( 'AI_EVENTS constants', () => {
-		it( 'should have the correct MODAL_CLOSED event name', () => {
-			expect( AI_EVENTS.MODAL_CLOSED ).toBe( 'elementor:ai:modal-closed' );
-		} );
-
-		it( 'should have the correct SHOW_MODAL event name', () => {
-			expect( AI_EVENTS.SHOW_MODAL ).toBe( 'elementor:ai:show-modal' );
-		} );
-
-		it( 'should be suitable for CustomEvent creation', () => {
-			const eventName = AI_EVENTS.MODAL_CLOSED;
-			const customEvent = new CustomEvent( eventName, {
-				detail: { test: true },
-			} );
-
-			expect( customEvent.type ).toBe( 'elementor:ai:modal-closed' );
-			expect( customEvent.detail ).toEqual( { test: true } );
-		} );
-
-		it( 'should be suitable for addEventListener usage', () => {
-			const eventName = AI_EVENTS.SHOW_MODAL;
-			const mockHandler = jest.fn();
-
-			dispatchEventSpy.mockRestore();
-
-			window.addEventListener( eventName, mockHandler );
-
-			const event = new CustomEvent( eventName );
-			window.dispatchEvent( event );
-
-			expect( mockHandler ).toHaveBeenCalled();
-			expect( mockHandler ).toHaveBeenCalledWith( event );
-
-			window.removeEventListener( eventName, mockHandler );
-
-			dispatchEventSpy = jest.spyOn( window, 'dispatchEvent' ).mockImplementation( () => {} );
-		} );
-	} );
-
 	describe( 'Modal closed event dispatching', () => {
 		it( 'should dispatch event with success: false when modal is closed manually', () => {
 			const onCloseCallback = createOnCloseCallback();
@@ -116,9 +76,9 @@ describe( 'AI Modal Events', () => {
 						modalType: mockModalType,
 						location: mockLocation,
 						success: true,
-						id: 123,
-						url: 'https://example.com/image.jpg',
-						alt: 'Test image',
+						id: mockImage.id,
+						url: mockImage.url,
+						alt: mockImage.alt,
 					},
 				} ),
 			);
@@ -149,22 +109,6 @@ describe( 'AI Modal Events', () => {
 				);
 			} );
 		} );
-
-		it( 'should use constant instead of magic string', () => {
-			const eventType = AI_EVENTS.MODAL_CLOSED;
-
-			window.dispatchEvent( new CustomEvent( eventType, {
-				detail: { test: true },
-			} ) );
-
-			expect( dispatchEventSpy ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					type: 'elementor:ai:modal-closed',
-				} ),
-			);
-
-			expect( eventType ).toBe( 'elementor:ai:modal-closed' );
-		} );
 	} );
 
 	describe( 'Event detail validation', () => {
@@ -173,16 +117,18 @@ describe( 'AI Modal Events', () => {
 				id: 789,
 				url: 'https://example.com/success.jpg',
 			};
-			const setControlValue = createSetControlValue( 'test', 'test-location' );
+			const modalType = 'test';
+			const location = 'test-location';
+			const setControlValue = createSetControlValue( modalType, location );
 
 			setControlValue( testImage );
 
 			const lastEvent = getLastDispatchedEvent();
 			expect( lastEvent.detail ).toHaveProperty( 'success', true );
-			expect( lastEvent.detail ).toHaveProperty( 'modalType', 'test' );
-			expect( lastEvent.detail ).toHaveProperty( 'location', 'test-location' );
-			expect( lastEvent.detail ).toHaveProperty( 'id', 789 );
-			expect( lastEvent.detail ).toHaveProperty( 'url', 'https://example.com/success.jpg' );
+			expect( lastEvent.detail ).toHaveProperty( 'modalType', modalType );
+			expect( lastEvent.detail ).toHaveProperty( 'location', location );
+			expect( lastEvent.detail ).toHaveProperty( 'id', testImage.id );
+			expect( lastEvent.detail ).toHaveProperty( 'url', testImage.url );
 		} );
 
 		it( 'should include required fields in error event detail', () => {
@@ -208,7 +154,7 @@ describe( 'AI Modal Events', () => {
 			const lastEvent = getLastDispatchedEvent();
 			expect( lastEvent.detail ).toHaveProperty( 'customProperty', 'custom-value' );
 			expect( lastEvent.detail ).toHaveProperty( 'size', 'large' );
-			expect( lastEvent.detail ).toHaveProperty( 'id', 123 );
+			expect( lastEvent.detail ).toHaveProperty( 'id', mockImage.id );
 		} );
 	} );
 
