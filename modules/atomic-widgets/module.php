@@ -282,7 +282,7 @@ class Module extends BaseModule {
 		$transformers->register(
 			Transform_Prop_Type::get_key(),
 			new Multi_Props_Transformer(
-				['transform-functions', 'transform-origin', 'perspective', 'perspective-origin'],
+				[ 'transform-functions', 'transform-origin', 'perspective', 'perspective-origin' ],
 				fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
 			)
 		);
