@@ -6,7 +6,8 @@ import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createControl } from '../../create-control';
-import { repeaterEventBus } from '../../services/repeater-event-bus';
+import { repeaterEventBus, RepeaterEvents } from '../../services/repeater-event-bus';
+import { sendAddTransitionControlEvent } from '../../utils/event-tracking';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { initialTransitionValue, transitionProperties } from './data';
@@ -81,13 +82,9 @@ export const TransitionRepeaterControl = createControl(
 		const currentStyleIsNormal = currentStyleState === null;
 
 		React.useEffect( () => {
-			const unsubscribe = repeaterEventBus.subscribe( 'item-added', ( data ) => {
-				if ( data?.repeaterType === 'transition' ) {
-					repeaterEventBus.emit( 'transition-item-added', {
-						transition_type: initialTransitionValue.selection.value.value.value,
-					} );
-				}
-			} );
+			const unsubscribe = repeaterEventBus.subscribe( RepeaterEvents.TransitionItemAdded, () =>
+				sendAddTransitionControlEvent()
+			);
 
 			return unsubscribe;
 		}, [] );

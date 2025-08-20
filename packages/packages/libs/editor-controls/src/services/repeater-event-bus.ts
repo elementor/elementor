@@ -1,49 +1,25 @@
-import { type ExtendedWindow, getSelectedElements } from '@elementor/editor-elements';
+export const RepeaterEvents = {
+	TransitionItemAdded: 'transition-item-added',
+} as const;
 
-interface TransitionItemData {
-	transition_type?: string;
-	widget_type?: string;
-	repeaterType?: string;
-}
+export type RepeaterEventType = ( typeof RepeaterEvents )[ keyof typeof RepeaterEvents ];
 
 export class RepeaterEventBus {
-	private listeners = new Map< string, Set< ( data?: TransitionItemData ) => void > >();
+	private listeners = new Map< string, Set< () => void > >();
 
-	subscribe( eventType: string, callback: ( data?: TransitionItemData ) => void ) {
-		if ( ! this.listeners.has( eventType ) ) {
-			this.listeners.set( eventType, new Set() );
+	subscribe( eventName: RepeaterEventType, callback: () => void ) {
+		if ( ! this.listeners.has( eventName ) ) {
+			this.listeners.set( eventName, new Set() );
 		}
-		this.listeners.get( eventType )?.add( callback );
+		this.listeners.get( eventName )?.add( callback );
 
 		return () => {
-			this.listeners.get( eventType )?.delete( callback );
+			this.listeners.get( eventName )?.delete( callback );
 		};
 	}
 
-	emit( eventType: string, data?: TransitionItemData ) {
-		this.listeners.get( eventType )?.forEach( ( callback ) => callback( data ) );
-
-		if ( eventType === 'transition-item-added' ) {
-			this.trackTransitionItemAdded( data );
-		}
-	}
-
-	private trackTransitionItemAdded( data?: TransitionItemData ) {
-		const extendedWindow: ExtendedWindow = window;
-		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
-		const selectedElements = getSelectedElements();
-		const widgetType = selectedElements[ 0 ]?.type ?? null;
-
-		const eventName = config?.names?.elementorEditor?.transitions?.clickAddedTransition;
-		if ( config && eventName && extendedWindow.elementorCommon?.eventsManager ) {
-			extendedWindow.elementorCommon.eventsManager.dispatchEvent( eventName, {
-				location: config.locations.styleTabV4,
-				secondaryLocation: config.secondaryLocations.transitionControl,
-				trigger: config.triggers.click,
-				transition_type: data?.transition_type || 'unknown',
-				widget_type: widgetType,
-			} );
-		}
+	emit( eventName: RepeaterEventType ) {
+		this.listeners.get( eventName )?.forEach( ( callback ) => callback() );
 	}
 }
 
