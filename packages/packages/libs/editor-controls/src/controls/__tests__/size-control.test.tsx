@@ -104,7 +104,7 @@ describe( 'SizeControl', () => {
 		expect( sizeInput ).toHaveValue( 10 );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: '20' } } ); // pass 20 as string and make sure it's converted to number.
+		fireEvent.change( sizeInput, { target: { value: '20' } } ); // pass 20 as string and make sure it's converted to number.
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 20, unit: 'px' } } );
@@ -127,10 +127,36 @@ describe( 'SizeControl', () => {
 		const sizeInput = screen.getByRole( 'spinbutton' );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: 'invalid' } } );
+		fireEvent.change( sizeInput, { target: { value: 'invalid' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( null );
+	} );
+
+	it( 'should ignore restricted keys on size input', () => {
+		// Arrange.
+		const setValue = jest.fn();
+
+		const props = { setValue, value: mockSizeProp( { size: 10, unit: 'px' } ), bind: 'select', propType };
+
+		// Act.
+		renderControl(
+			<ControlActionsProvider items={ [] }>
+				<SizeControl units={ mockLengthUnits() } />
+			</ControlActionsProvider>,
+			props
+		);
+
+		const sizeInput = screen.getByRole( 'spinbutton' );
+
+		// Act.
+		fireEvent.keyDown( sizeInput, { key: 'e' } );
+		fireEvent.keyDown( sizeInput, { key: 'E' } );
+		fireEvent.keyDown( sizeInput, { key: '-' } );
+		fireEvent.keyDown( sizeInput, { key: '+' } );
+
+		// Assert.
+		expect( setValue ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should pass null to setValue when the size value is empty', () => {
@@ -149,7 +175,7 @@ describe( 'SizeControl', () => {
 		const sizeInput = screen.getByRole( 'spinbutton' );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: '' } } );
+		fireEvent.change( sizeInput, { target: { value: '' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( null );
@@ -217,7 +243,7 @@ describe( 'SizeControl', () => {
 		const sizeInput = screen.getByRole( 'spinbutton' );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: '' } } );
+		fireEvent.change( sizeInput, { target: { value: '' } } );
 
 		// Assert.
 		expect( setValue ).not.toHaveBeenCalled();
@@ -262,7 +288,7 @@ describe( 'SizeControl', () => {
 		expect( sizeInput ).toHaveDisplayValue( '10' );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: '' } } );
+		fireEvent.change( sizeInput, { target: { value: '' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( null );
@@ -299,8 +325,8 @@ describe( 'SizeControl', () => {
 		expect( sizeInput ).toHaveDisplayValue( '0' );
 
 		// Act.
-		fireEvent.input( sizeInput, { target: { value: '1' } } );
-		fireEvent.input( sizeInput, { target: { value: '0' } } );
+		fireEvent.change( sizeInput, { target: { value: '1' } } );
+		fireEvent.change( sizeInput, { target: { value: '0' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 0, unit: 'px' } } );
@@ -466,7 +492,7 @@ describe( 'SizeControl', () => {
 			const sizeInput = screen.getByRole( 'spinbutton' );
 
 			// Act
-			fireEvent.input( sizeInput, { target: { value: '20' } } );
+			fireEvent.change( sizeInput, { target: { value: '20' } } );
 
 			// Assert
 			expect( setValue ).toHaveBeenCalledWith( { $$type: 'size', value: { size: 20, unit: 'rem' } } );
@@ -629,7 +655,7 @@ describe( 'SizeControl', () => {
 			renderControl( <SizeControl />, props );
 
 			const sizeInput = screen.getByRole( 'spinbutton' );
-			fireEvent.input( sizeInput, { target: { value: '123' } } );
+			fireEvent.change( sizeInput, { target: { value: '123' } } );
 			const unitButton = screen.getByRole( 'button' );
 
 			// Assert.

@@ -35,12 +35,6 @@ const globalUseBoundPropArgs = {
 	restoreValue: jest.fn(),
 };
 
-const setValuesWrapper = ( setValues: ( value: unknown ) => void ) => {
-	return ( value: unknown ) => {
-		setValues( value );
-	};
-};
-
 describe( 'UnstableRepeater', () => {
 	beforeEach( () => {
 		jest.mocked( useBoundProp ).mockReturnValue( {
@@ -93,7 +87,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -132,7 +126,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -174,7 +168,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -209,7 +203,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -244,7 +238,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -295,7 +289,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -338,7 +332,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -397,7 +391,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -450,7 +444,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -500,7 +494,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: values,
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 
@@ -548,7 +542,7 @@ describe( 'UnstableRepeater', () => {
 
 		jest.mocked( useBoundProp ).mockReturnValue( {
 			value: [],
-			setValue: setValuesWrapper( setValues ),
+			setValue: setValues,
 			...globalUseBoundPropArgs,
 		} );
 

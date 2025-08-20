@@ -31,7 +31,6 @@ export const AxisRow = ( { label, bind, startIcon, anchorRef, units, variant = '
 							startIcon={ startIcon }
 							units={ units }
 							variant={ variant }
-							min={ -Number.MAX_SAFE_INTEGER }
 						/>
 					</PropKeyProvider>
 				</Grid>

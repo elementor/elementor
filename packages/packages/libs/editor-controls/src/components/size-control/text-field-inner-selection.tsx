@@ -9,13 +9,13 @@ import {
 	InputAdornment,
 	Menu,
 	styled,
+	TextField,
 	type TextFieldProps,
 	usePopupState,
 } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { DEFAULT_UNIT } from '../../utils/size-control';
-import { NumberInput } from '../number-input';
 
 type TextFieldInnerSelectionProps = {
 	placeholder?: string;
@@ -25,10 +25,9 @@ type TextFieldInnerSelectionProps = {
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	onKeyUp?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
-	InputProps: TextFieldProps[ 'InputProps' ] & {
+	inputProps: TextFieldProps[ 'InputProps' ] & {
 		endAdornment: React.JSX.Element;
 	};
-	inputProps?: TextFieldProps[ 'inputProps' ];
 	disabled?: boolean;
 	isPopoverOpen?: boolean;
 };
@@ -43,7 +42,6 @@ export const TextFieldInnerSelection = forwardRef(
 			onBlur,
 			onKeyDown,
 			onKeyUp,
-			InputProps,
 			inputProps,
 			disabled,
 			isPopoverOpen,
@@ -53,26 +51,25 @@ export const TextFieldInnerSelection = forwardRef(
 		const { placeholder: boundPropPlaceholder } = useBoundProp( sizePropTypeUtil );
 
 		const getCursorStyle = () => ( {
-			input: { cursor: InputProps.readOnly ? 'default !important' : undefined },
+			input: { cursor: inputProps.readOnly ? 'default !important' : undefined },
 		} );
 
 		return (
-			<NumberInput
+			<TextField
 				ref={ ref }
 				sx={ getCursorStyle() }
 				size="tiny"
 				fullWidth
 				type={ type }
 				value={ value }
-				onInput={ onChange }
+				onChange={ onChange }
 				onKeyDown={ onKeyDown }
 				onKeyUp={ onKeyUp }
 				disabled={ disabled }
 				onBlur={ onBlur }
 				focused={ isPopoverOpen ? true : undefined }
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
-				InputProps={ InputProps }
-				inputProps={ inputProps }
+				InputProps={ inputProps }
 			/>
 		);
 	}
