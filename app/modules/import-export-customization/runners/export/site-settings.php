@@ -25,15 +25,6 @@ class Site_Settings extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$customization = $data['customization']['settings'] ?? null;
-		if ( $customization ) {
-			return $this->export_customization( $data, $customization );
-		}
-
-		return $this->export_all( $data );
-	}
-
-	private function export_all( $data ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_data = $kit->get_export_data();
 
@@ -48,10 +39,14 @@ class Site_Settings extends Export_Runner_Base {
 			unset( $kit_data['settings'][ $setting_key ] );
 		}
 
-		$theme_data = $this->export_theme();
+		$customization = $data['customization']['settings'] ?? null;
 
-		if ( $theme_data ) {
-			$kit_data['theme'] = $theme_data;
+		if ( is_null( $customization ) || ! empty( $customization['theme'] ) ) {
+			$theme_data = $this->export_theme();
+
+			if ( $theme_data ) {
+				$kit_data['theme'] = $theme_data;
+			}
 		}
 
 		$experiments_data = $this->export_experiments();
@@ -71,16 +66,6 @@ class Site_Settings extends Export_Runner_Base {
 				$manifest_data,
 			],
 		];
-	}
-
-	private function export_customization( $data, $customization ) {
-		$result = apply_filters( 'elementor/import-export-customization/export/site-settings/customization', null, $data, $customization, $this );
-
-		if ( is_array( $result ) ) {
-			return $result;
-		}
-
-		return $this->export_all( $data );
 	}
 
 	public function export_theme() {
