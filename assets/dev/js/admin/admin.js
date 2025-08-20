@@ -32,7 +32,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
 				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
-				$menuCloudHostingPlansLink: $( 'a[href="edit.php?post_type=elementor_library&page=go_cloud_hosting_plans"]' ),
 			};
 
 			elements.$settingsFormPages = elements.$settingsForm.find( '.elementor-settings-form-page' );
@@ -399,7 +398,6 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			const elements = [
 				this.elements.$menuGetHelpLink,
 				this.elements.$menuGoProLink,
-				this.elements.$menuCloudHostingPlansLink,
 			];
 
 			elements.forEach( ( $element ) => {
