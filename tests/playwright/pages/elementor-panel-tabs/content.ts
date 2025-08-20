@@ -89,6 +89,8 @@ export default class Content {
 		await this.editor.waitForPreviewFrame();
 		const frame: Frame = this.editor.getPreviewFrame();
 		await frame.locator( args.widget ).click();
+		await this.editor.waitForPanelToLoad();
+		await this.editor.openSection( 'image_size' );
 		await this.editor.setSelectControlValue( args.select, args.imageSize );
 		await frame.locator( EditorSelectors.pageTitle ).click();
 	}
