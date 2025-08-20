@@ -7,8 +7,8 @@
  * Author: Elementor.com
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
  * Text Domain: elementor
- * Required at least: 6.5
- * Required PHP: 7.4
+ * Requires at least: 6.5
+ * Requires PHP: 7.4
  *
  * @package Elementor
  * @category Core
