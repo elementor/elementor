@@ -51,7 +51,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const { userCan } = useUserStylesCapability();
 
 	const [ convertedFromLocalId, , clearConvertedFromLocalId ] = useSessionStorage(
-		`last-converted-class-generated-name`, `global`
+		`last-converted-class-generated-name`, `app`
 	);
 
 	const {
@@ -79,6 +79,8 @@ export function CssClassItem( props: CssClassItemProps ) {
 			clearConvertedFromLocalId();
 			openEditMode();
 		}
+		// eslint-disable-next-line react-compiler/react-compiler
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ id, convertedFromLocalId ] );
 
 	return (
