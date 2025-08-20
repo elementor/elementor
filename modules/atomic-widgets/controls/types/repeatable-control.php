@@ -1,5 +1,4 @@
 <?php
-
 namespace Elementor\Modules\AtomicWidgets\Controls\Types;
 
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
@@ -19,11 +18,6 @@ class Repeatable_Control extends Atomic_Control_Base {
 	private ?string $pattern_label;
 	private ?string $placeholder;
 	private ?string $prop_key;
-
-	public function __construct( string $prop_name ) {
-		parent::__construct( $prop_name );
-		$this->prop_key = $prop_name;
-	}
 
 	public function get_type(): string {
 		return 'repeatable';
