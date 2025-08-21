@@ -29,6 +29,7 @@ export default function UnfilteredFilesDialog( props ) {
 				onEnable();
 			}
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ enableUnfilteredFiles ] );
 
 	// Enabling unfiltered files ajax status.
@@ -42,12 +43,14 @@ export default function UnfilteredFilesDialog( props ) {
 				setShow( true );
 				break;
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ajaxState ] );
 
 	useEffect( () => {
 		if ( show && onLoad ) {
 			onLoad();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ show ] );
 
 	if ( ! show ) {
