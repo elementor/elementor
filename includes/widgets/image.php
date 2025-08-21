@@ -822,7 +822,7 @@ class Widget_Image extends Widget_Base {
 			var link_url;
 
 			if ( 'custom' === settings.link_to ) {
-				link_url = settings.link.url;
+				link_url = settings.link?.url;
 			}
 
 			if ( 'file' === settings.link_to ) {
