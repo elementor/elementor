@@ -13,21 +13,9 @@ type CssEditorProps = {
 	onChange: ( value: string ) => void;
 };
 
-export const setVisualContent = ( value: string ): string => {
+const setVisualContent = ( value: string ): string => {
 	const trimmed = value.trim();
-
-	if ( ! trimmed ) {
-		return `element.style {\n  \n}`;
-	}
-
-	const cssRules = trimmed
-		.split( /[;\n]/ )
-		.map( ( rule ) => rule.trim() )
-		.filter( ( rule ) => rule.length > 0 )
-		.map( ( rule ) => ( rule.endsWith( ';' ) ? rule : rule + ';' ) )
-		.join( '\n  ' );
-
-	return `element.style {\n  ${ cssRules }\n}`;
+	return `element.style {\n${ trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n' }}`;
 };
 
 const getActual = ( value: string ): string => {
