@@ -28,10 +28,10 @@ class Taxonomies extends Import_Runner_Base {
 			return $this->import_with_customization( $data, $imported_data, $customization );
 		}
 
-		return $this->import_with_manifest( $data, $imported_data );
+		return $this->import_all( $data, $imported_data );
 	}
 
-	public function import_with_manifest( array $data, array $imported_data ) {
+	public function import_all( array $data, array $imported_data ) {
 		$path = $data['extracted_directory_path'] . 'taxonomies/';
 		$this->import_session_id = $data['session_id'];
 
@@ -58,7 +58,7 @@ class Taxonomies extends Import_Runner_Base {
 			return $result;
 		}
 
-		return $this->import_with_manifest( $data, $imported_data );
+		return $this->import_all( $data, $imported_data );
 	}
 
 

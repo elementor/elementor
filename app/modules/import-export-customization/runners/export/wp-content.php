@@ -92,7 +92,7 @@ class Wp_Content extends Export_Runner_Base {
 			$exporter_args['limit'] = 20;
 		}
 
-		$exporter_args = apply_filters( 'elementor/import-export-customization/export/wp-content/pages-query/customization', $exporter_args, $post_type, $customization );
+		$exporter_args = apply_filters( 'elementor/import-export-customization/export/wp-content/query-args/customization', $exporter_args, $post_type, $customization );
 
 		$wp_exporter = new WP_Exporter( $exporter_args );
 

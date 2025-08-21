@@ -75,7 +75,7 @@ class Wp_Content extends Import_Runner_Base {
 			'include' => 'page' === $post_type ? $customization['pages'] ?? null : null,
 		];
 
-		$args = apply_filters( 'elementor/import-export-customization/import/wp-content/pages-query/customization', $args, $post_type, $customization );
+		$args = apply_filters( 'elementor/import-export-customization/import/wp-content/query-args/customization', $args, $post_type, $customization );
 
 		$file = $path . $post_type . '/' . $post_type . '.xml';
 

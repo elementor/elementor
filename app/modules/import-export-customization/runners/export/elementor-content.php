@@ -83,7 +83,7 @@ class Elementor_Content extends Export_Runner_Base {
 			],
 		];
 
-		$query_args = apply_filters( 'elementor/import-export-customization/export/elementor-content/pages-query/customization', $query_args, $post_type, $customization );
+		$query_args = apply_filters( 'elementor/import-export-customization/export/elementor-content/query-args/customization', $query_args, $post_type, $customization );
 
 		$query = new \WP_Query( $query_args );
 
