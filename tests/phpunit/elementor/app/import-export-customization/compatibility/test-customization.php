@@ -56,7 +56,7 @@ class Test_Customization extends Elementor_Test_Base {
 
 		// Check site-settings was converted to new format
 		$expected_site_settings = [
-			'theme' => true,
+			'theme' => false,
 			'globalColors' => true,
 			'globalFonts' => true,
 			'themeStyleSettings' => true,

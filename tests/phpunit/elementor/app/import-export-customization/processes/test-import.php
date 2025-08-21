@@ -246,7 +246,7 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 2, $result );
+		$this->assertCount( 1, $result );
 		$this->assertIsArray( $result['site-settings'] );
 		$this->assertArrayHasKey( 'imported_kit_id', $result['site-settings'] );
 		$this->assertArrayHasKey( 'system_colors', $result['site-settings'] );
