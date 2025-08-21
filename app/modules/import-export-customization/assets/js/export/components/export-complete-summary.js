@@ -53,6 +53,7 @@ export default function ExportCompleteSummary( { kitInfo, includes, exportedData
 		const summary = buildKitSettingsSummary( siteSettings );
 
 		return summary.length > 0 ? summary : __( 'No settings exported', 'elementor' );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ exportedData?.manifest?.[ 'site-settings' ] ] );
 
 	const sectionsTitlesMap = useMemo( () => ( {
