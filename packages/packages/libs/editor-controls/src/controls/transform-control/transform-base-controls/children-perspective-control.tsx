@@ -65,19 +65,11 @@ const PerspectiveOriginControlProvider = () => {
 		<PropProvider { ...context }>
 			{ CHILDREN_PERSPECTIVE_FIELDS.map( ( control ) => (
 				<PropKeyProvider bind={ control.bind } key={ control.bind }>
-					<SizeContextProvider>
-						<ControlFields control={ control } />
-					</SizeContextProvider>
+					<ControlFields control={ control } />
 				</PropKeyProvider>
 			) ) }
 		</PropProvider>
 	);
-};
-
-const SizeContextProvider = ( { children }: { children: React.ReactNode } ) => {
-	const context = useBoundProp( sizePropTypeUtil );
-
-	return <PropProvider { ...context }>{ children }</PropProvider>;
 };
 
 const ControlFields = ( { control }: { control: FieldProps } ) => {

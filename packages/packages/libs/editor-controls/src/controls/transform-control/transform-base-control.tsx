@@ -46,9 +46,7 @@ export const TransformBaseControl = ( {
 			<Divider />
 			<PopoverContent sx={ { px: 2, py: 1.5 } }>
 				<PropKeyProvider bind={ 'transform-origin' }>
-					<TransformOriginContextProvider>
-						<TransformOriginControl />
-					</TransformOriginContextProvider>
+					<TransformOriginControl />
 				</PropKeyProvider>
 				<Box sx={ { my: 0.5 } }>
 					<Divider />
@@ -57,10 +55,4 @@ export const TransformBaseControl = ( {
 			</PopoverContent>
 		</Popover>
 	);
-};
-
-const TransformOriginContextProvider = ( { children }: { children: React.ReactNode } ) => {
-	const context = useBoundProp( transformOriginPropTypeUtil );
-
-	return <PropProvider { ...context }>{ children }</PropProvider>;
 };
