@@ -493,15 +493,15 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
 	}
 
-	public function test_put_fails_when_max_items_limit_reached() {
+	public function test_put__fails_when_max_items_limit_reached() {
 		// Arrange.
 		$this->act_as_admin();
 
-		// Act.
+		// Act - send 50 items.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
 		$items = [];
-		for ( $i = 0; $i < 51; $i++ ) {
+		for ( $i = 0; $i < 50; $i++ ) {
 			$items[ "g-$i" ] = $this->create_global_class( "g-$i" );
 		}
 
@@ -517,7 +517,25 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$response = rest_do_request( $request );
 
-		// Assert.
+		// Assert - should succeed.
+		$this->assertSame( 204, $response->get_status() );
+
+		// Act - send 51 items.
+		$items["g-51"] = $this->create_global_class( "g-51" );
+
+		$request->set_body_params( [
+			'items' => $items,
+			'order' => array_keys( $items ),
+			'changes' => [
+				'added' => array_keys( $items ),
+				'deleted' => [],
+				'modified' => [],
+			]
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert - should fail.
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 'global_classes_limit_exceeded', $response->get_data()['code'] );
 	}
