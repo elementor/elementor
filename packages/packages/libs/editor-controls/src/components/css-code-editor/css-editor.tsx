@@ -22,9 +22,9 @@ export const setVisualContent = ( value: string ): string => {
 
 	const cssRules = trimmed
 		.split( /[;\n]/ )
-		.map( rule => rule.trim() )
-		.filter( rule => rule.length > 0 )
-		.map( rule => rule.endsWith( ';' ) ? rule : rule + ';' )
+		.map( ( rule ) => rule.trim() )
+		.filter( ( rule ) => rule.length > 0 )
+		.map( ( rule ) => ( rule.endsWith( ';' ) ? rule : rule + ';' ) )
 		.join( '\n  ' );
 
 	return `element.style {\n  ${ cssRules }\n}`;
