@@ -10,6 +10,12 @@ export const EditorWrapper = styled( Box )`
 	.monaco-editor .colorpicker-widget {
 		z-index: 99999999 !important;
 	}
+
+	.visual-content-dimmed {
+		opacity: 0.6;
+		color: #aaa !important;
+		pointer-events: none;
+	}
 `;
 
 export const ResizeHandle = styled( Button )`

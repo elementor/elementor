@@ -5,8 +5,9 @@ import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
 
 import { EditorWrapper } from './css-editor.styles';
-import { setCustomSyntaxRules, validate } from './css-validation';
+import { clearMarkersFromVisualContent, setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';
+import { preventChangeOnVisualContent } from './visual-content-change-protection';
 
 type CssEditorProps = {
 	value: string;
@@ -29,43 +30,6 @@ const getActual = ( value: string ): string => {
 		.join( '\n' );
 };
 
-const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
-	const model = editor.getModel();
-	if ( ! model ) {
-		return;
-	}
-
-	editor.onKeyDown( ( e ) => {
-		const position = editor.getPosition();
-		if ( ! position ) {
-			return;
-		}
-
-		const totalLines = model.getLineCount();
-		const isInProtectedRange = position.lineNumber === 1 || position.lineNumber === totalLines;
-
-		if ( isInProtectedRange ) {
-			const allowedKeys = [
-				monaco.KeyCode.UpArrow,
-				monaco.KeyCode.DownArrow,
-				monaco.KeyCode.LeftArrow,
-				monaco.KeyCode.RightArrow,
-				monaco.KeyCode.Home,
-				monaco.KeyCode.End,
-				monaco.KeyCode.PageUp,
-				monaco.KeyCode.PageDown,
-				monaco.KeyCode.Tab,
-				monaco.KeyCode.Escape,
-			];
-
-			if ( ! allowedKeys.includes( e.keyCode ) ) {
-				e.preventDefault();
-				e.stopPropagation();
-			}
-		}
-	} );
-};
-
 const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
 	monacoRef: React.MutableRefObject< MonacoEditor | null >,
@@ -76,9 +40,13 @@ const createEditorDidMountHandler = (
 		editorRef.current = editor;
 		monacoRef.current = monaco;
 
-		preventChangeOnVisualContent( editor, monaco );
+		preventChangeOnVisualContent( editor );
 
 		setCustomSyntaxRules( editor, monaco );
+
+		monaco.editor.onDidChangeMarkers( () => {
+			setTimeout( () => clearMarkersFromVisualContent( editor, monaco ), 0 );
+		} );
 
 		editor.onDidChangeModelContent( () => {
 			const code = editor.getModel()?.getValue() ?? '';
@@ -148,7 +116,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				defaultValue={ setVisualContent( value ) }
 				onMount={ handleEditorDidMount }
 				options={ {
-					lineNumbers: 'off',
+					lineNumbers: 'on',
 					folding: false,
 					showFoldingControls: 'never',
 					minimap: { enabled: false },
