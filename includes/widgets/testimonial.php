@@ -585,8 +585,8 @@ class Widget_Testimonial extends Widget_Base {
 			hasImage = ' elementor-has-image';
 
 			var imageHtml = '<img src="' + _.escape( imageUrl ) + '" alt="testimonial" />';
-			if ( settings.link.url ) {
-				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + imageHtml + '</a>';
+			if ( settings.link?.url ) {
+				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + imageHtml + '</a>';
 			}
 		}
 
@@ -631,9 +631,9 @@ class Widget_Testimonial extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'testimonial_name', 'none' );
 
-			if ( settings.link.url ) {
+			if ( settings.link?.url ) {
 				#>
-				<a href="{{  elementor.helpers.sanitizeUrl( settings.link.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{ settings.testimonial_name }}</a>
+				<a href="{{  elementor.helpers.sanitizeUrl( settings.link?.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{ settings.testimonial_name }}</a>
 				<#
 			} else {
 				#>
@@ -647,9 +647,9 @@ class Widget_Testimonial extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'testimonial_job', 'none' );
 
-			if ( settings.link.url ) {
+			if ( settings.link?.url ) {
 				#>
-				<a href="{{  elementor.helpers.sanitizeUrl( settings.link.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{ settings.testimonial_job }}</a>
+				<a href="{{  elementor.helpers.sanitizeUrl( settings.link?.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{ settings.testimonial_job }}</a>
 				<#
 			} else {
 				#>
