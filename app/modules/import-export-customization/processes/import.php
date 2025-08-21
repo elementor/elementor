@@ -685,7 +685,7 @@ class Import {
 			return [];
 		}
 
-		$excluded = ['page', 'nav_menu_item'];
+		$excluded = [ 'page', 'nav_menu_item' ];
 
 		if ( empty( $this->manifest['content']['post'] ?? [] ) && empty( $this->manifest['wp-content']['post'] ?? [] ) ) {
 			$excluded[] = 'post';
