@@ -100,6 +100,7 @@ export const Modal = ( props ) => {
 		}
 
 		return () => document.removeEventListener( 'mousedown', closeModal, false );
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ props.show ] );
 
 	if ( ! props.show ) {
