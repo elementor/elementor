@@ -43,6 +43,7 @@
     "@elementor/editor-current-user": "3.32.0",
     "@elementor/editor-documents": "3.32.0",
     "@elementor/editor-editing-panel": "3.32.0",
+    "@elementor/editor-global-dialog": "^1.0.0",
     "@elementor/editor-panels": "3.32.0",
     "@elementor/editor-props": "3.32.0",
     "@elementor/editor-styles": "3.32.0",
