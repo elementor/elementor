@@ -97,7 +97,7 @@ describe( 'LabelField', () => {
 		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 	} );
 
-	it( 'should not call onChange when new value equals error value', () => {
+	it( 'should call onChange with empty value when new value equals error value', () => {
 		// Arrange
 		const { props } = renderLabelField( {
 			error: {
