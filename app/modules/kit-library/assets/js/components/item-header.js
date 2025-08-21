@@ -171,10 +171,10 @@ export default function ItemHeader( props ) {
 	const downloadButton = useMemo( () => {
 		return {
 			id: 'download',
-			text: __( 'Download Kit', 'elementor' ),
+			text: __( 'Download Website', 'elementor' ),
 			hideText: true,
 			icon: 'eicon-file-download',
-			tooltip: __( 'Download kit as zip', 'elementor' ),
+			tooltip: __( 'Download Website ZIP', 'elementor' ),
 			color: isDownloadLoading ? 'disabled' : 'secondary',
 			includeHeaderBtnClass: false,
 			onClick: ( e ) => {
