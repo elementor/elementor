@@ -72,11 +72,6 @@ class Hints {
 				self::CAPABILITY => 'install_plugins',
 				self::DEFINED => 'IMAGE_OPTIMIZATION_VERSION',
 			],
-			'ally_heading_notice' => [
-				self::DISMISSED => 'ally_heading_notice',
-				self::CAPABILITY => 'install_plugins',
-				self::NOT_HAS_OPTION => 'ea11y_access_token',
-			],
 		];
 		if ( ! $hint_key ) {
 			return $hints;
