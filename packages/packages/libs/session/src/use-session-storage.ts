@@ -4,7 +4,8 @@ import { getSessionStorageItem, removeSessionStorageItem, setSessionStorageItem 
 import { Context } from './session-storage-context';
 
 export const useSessionStorage = < T >( key: string, customPrefix?: string ) => {
-	const prefix = customPrefix ? customPrefix : useContext( Context )?.prefix ?? '';
+	const contextPrefix = useContext( Context )?.prefix ?? '';
+	const prefix = customPrefix ? customPrefix : contextPrefix;
 	const prefixedKey = `${ prefix }/${ key }`;
 
 	const [ value, setValue ] = useState< T | null >();
