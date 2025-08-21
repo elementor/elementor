@@ -28,10 +28,4 @@ class Components {
 	public function get_styles() {
 		return $this->styles;
 	}
-
-	public function get() {
-		return [
-			'components' => $this->get_components()->all(),
-		];
-	}
 }

@@ -169,7 +169,7 @@ class Global_Classes_REST_API {
 
 		$items_count = count( $items_result->unwrap() );
 
-		if ( $items_count >= static::MAX_ITEMS ) {
+		if ( $items_count > static::MAX_ITEMS ) {
 			return Error_Builder::make( 'global_classes_limit_exceeded' )
 				->set_status( 400 )
 				->set_message( sprintf(

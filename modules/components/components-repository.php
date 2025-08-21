@@ -57,14 +57,15 @@ class Components_Repository {
 				throw new \Exception( 'Failed to create component' );
 			}
 
-			return [
-				'component_id' => $document->get_main_id(),
-				'error' => null,
-			];
+			return [ 'component_id' => $document->get_main_id() ];
 		} catch ( \Exception $e ) {
 			$error_message = $e->getMessage();
-			
-			if ( str_contains( $error_message, 'validation failed' ) || str_contains( $error_message, 'Invalid data' ) ) {
+
+			$invalid_elements_structure_error = str_contains( $error_message, 'Invalid data' );
+			$atomic_styles_validation_error = str_contains( $error_message, 'Styles validation failed' );
+			$atomic_settings_validation_error = str_contains( $error_message, 'Settings validation failed' );
+
+			if ( $invalid_elements_structure_error || $atomic_styles_validation_error || $atomic_settings_validation_error ) {
 				return [
 					'component_id' => null,
 					'error' => Error_Builder::make( 'content_validation_failed' )
