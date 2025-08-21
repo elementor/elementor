@@ -46,7 +46,6 @@ const eventsConfig = {
 		help: 'Help',
 		elementorLogoDropdown: 'top_bar_elementor_logo_dropdown',
 		elementorLogo: 'Elementor Logo',
-		eLogoMenu: 'E-logo Menu',
 		notes: 'Notes',
 		siteSettings: 'Site Settings',
 		structure: 'Structure',
@@ -144,9 +143,6 @@ const eventsConfig = {
 			responsiveControls: 'top_bar_responsive_controls',
 			launchpadOn: 'top_bar_checklist_icon_show',
 			launchpadOff: 'top_bar_checklist_icon_hide',
-			elementorLogoDropdown: 'open_e_menu',
-			connectAccount: 'connect_account',
-			accountConnected: 'account_connected',
 		},
 		// ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
 		elementorEditor: {

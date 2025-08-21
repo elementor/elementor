@@ -4,25 +4,6 @@ import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow } from '../../../types';
 
-const dispatchConnectClickEvent = ( eventName: string ) => {
-	try {
-		const extendedWindow = window as unknown as ExtendedWindow;
-		const config = extendedWindow?.elementorCommon?.eventsManager?.config;
-
-		if ( config ) {
-			extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar[ eventName ], {
-				location: config.locations.topBar,
-				secondaryLocation: config.secondaryLocations.eLogoMenu,
-				trigger: config.triggers.dropdownClick,
-				element: config.elements.buttonIcon,
-			} );
-		}
-	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.warn( error );
-	}
-};
-
 export default function useConnectLinkConfig() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 	let isUserConnected = false;
@@ -50,15 +31,9 @@ export default function useConnectLinkConfig() {
 					?.css( 'display', 'none' )
 					?.appendTo( 'body' );
 
-				$tempButton.elementorConnect( {
-					success: () => {
-						dispatchConnectClickEvent( 'accountConnected' );
-						extendedWindow.location.reload();
-					},
-				} );
+				$tempButton.elementorConnect();
 
 				$tempButton[ 0 ].click();
-				dispatchConnectClickEvent( 'connectAccount' );
 
 				setTimeout( () => {
 					$tempButton.remove();
