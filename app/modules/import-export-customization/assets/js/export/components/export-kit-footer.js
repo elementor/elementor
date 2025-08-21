@@ -51,6 +51,7 @@ export default function ExportKitFooter() {
 			dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isConnecting, isCheckingEligibility, isCloudKitsEligible, dispatch ] );
 
 	useEffect( () => {
