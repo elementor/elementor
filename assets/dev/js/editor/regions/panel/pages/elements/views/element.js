@@ -10,10 +10,6 @@ module.exports = Marionette.ItemView.extend( {
 			className += ' elementor-element--promotion';
 		}
 
-		if ( this.isIntegration() ) {
-			className += ' elementor-element--integration';
-		}
-
 		return className;
 	},
 
@@ -50,10 +46,6 @@ module.exports = Marionette.ItemView.extend( {
 		return false !== this.model.get( 'editable' );
 	},
 
-	isIntegration() {
-		return this.model.get( 'integration' );
-	},
-
 	onRender() {
 		if ( ! elementor.userCan( 'design' ) || ! this.isEditable() ) {
 			return;
@@ -82,13 +74,7 @@ module.exports = Marionette.ItemView.extend( {
 	onMouseDown() {
 		const title = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
-			isIntegration = this.isIntegration();
-
-		let promotion = elementor.config.promotion.elements;
-
-		if ( isIntegration ) {
-			promotion = elementor.config.promotion?.integration?.[ widgetType ];
-		}
+			promotion = elementor.config.promotion.elements;
 
 		elementor.promotion.showDialog( {
 			// eslint-disable-next-line @wordpress/valid-sprintf
@@ -101,7 +87,7 @@ module.exports = Marionette.ItemView.extend( {
 			},
 			actionButton: {
 				// eslint-disable-next-line @wordpress/valid-sprintf
-				url: sprintf( promotion.action_button.url.toString().replaceAll( '&amp;', '&' ), widgetType ),
+				url: sprintf( promotion.action_button.url, widgetType ),
 				text: promotion.action_button.text,
 				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
 			},
