@@ -193,6 +193,12 @@ jobs:
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
+          owner: elementor
+      - name: Can the token see the repo?
+        run: |
+          gh api /repos/elementor/elementor-tests-configuration -q '.full_name'
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Checkout private action repository
         uses: actions/checkout@v4
         with:
