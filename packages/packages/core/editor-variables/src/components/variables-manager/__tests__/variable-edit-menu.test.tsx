@@ -5,66 +5,70 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariableEditMenu } from '../variable-edit-menu';
 
-jest.mock( '@elementor/ui', () => {
-	const actual = jest.requireActual( '@elementor/ui' );
-	return {
-		...actual,
-		IconButton: ( props: IconButtonProps ) => (
-			<button { ...props } aria-label="Menu trigger">
-				{ props.children }
-			</button>
-		),
-		Menu: ( {
-			children,
-			open,
-			MenuListProps,
-			PaperProps,
-			disablePortal,
-			anchorEl,
-			anchorOrigin,
-			transformOrigin,
-			...props
-		}: MenuProps ) =>
-			open && (
-				<div
-					role="menu"
-					data-menu-props={ JSON.stringify( {
-						MenuListProps,
-						PaperProps,
-						disablePortal,
-						anchorEl,
-						anchorOrigin,
-						transformOrigin,
-					} ) }
-					{ ...props }
-				>
-					{ children }
-				</div>
-			),
-		MenuItem: ( { children, sx, ...props }: MenuItemProps ) => (
-			<li role="menuitem" data-sx={ JSON.stringify( sx ) } { ...props }>
+// Mock implementations need to be defined before jest.mock()
+const mockPopupState = {
+	isOpen: false,
+	anchorEl: null,
+	close: jest.fn(),
+	open: jest.fn(),
+	setAnchorEl: jest.fn(),
+	toggle: jest.fn(),
+};
+
+const mockTriggerProps = {
+	'aria-controls': 'menu',
+	'aria-haspopup': true,
+	onClick: jest.fn(),
+};
+
+const mockMenuProps = {
+	anchorEl: null,
+	onClose: jest.fn(),
+};
+
+jest.mock( '@elementor/ui', () => ( {
+	...jest.requireActual( '@elementor/ui' ),
+	IconButton: ( props: IconButtonProps ) => (
+		<button { ...props } aria-label="Menu trigger">
+			{ props.children }
+		</button>
+	),
+	Menu: ( {
+		children,
+		open,
+		MenuListProps,
+		PaperProps,
+		disablePortal,
+		anchorEl,
+		anchorOrigin,
+		transformOrigin,
+		...props
+	}: MenuProps ) =>
+		open && (
+			<div
+				role="menu"
+				data-menu-props={ JSON.stringify( {
+					MenuListProps,
+					PaperProps,
+					disablePortal,
+					anchorEl,
+					anchorOrigin,
+					transformOrigin,
+				} ) }
+				{ ...props }
+			>
 				{ children }
-			</li>
+			</div>
 		),
-		usePopupState: () => ( {
-			isOpen: false,
-			anchorEl: null,
-			close: jest.fn(),
-			open: jest.fn(),
-			setAnchorEl: jest.fn(),
-			toggle: jest.fn(),
-		} ),
-		bindTrigger: () => ( {
-			'aria-controls': 'menu',
-			'aria-haspopup': true,
-			onClick: jest.fn(),
-		} ),
-		bindMenu: () => ( {
-			anchorEl: null,
-			onClose: jest.fn(),
-		} ),
-	};
-} );
+	MenuItem: ( { children, sx, ...props }: MenuItemProps ) => (
+		<li role="menuitem" data-sx={ JSON.stringify( sx ) } { ...props }>
+			{ children }
+		</li>
+	),
+	usePopupState: () => mockPopupState,
+	bindTrigger: () => mockTriggerProps,
+	bindMenu: () => mockMenuProps,
+} ) );
 
 describe( 'VariableEditMenu', () => {
 	const mockMenuActions = [
@@ -86,6 +90,14 @@ describe( 'VariableEditMenu', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		Object.assign( mockPopupState, {
+			isOpen: false,
+			anchorEl: null,
+			close: jest.fn(),
+			open: jest.fn(),
+			setAnchorEl: jest.fn(),
+			toggle: jest.fn(),
+		} );
 	} );
 
 	it( 'should render trigger button', () => {
@@ -98,14 +110,10 @@ describe( 'VariableEditMenu', () => {
 
 	it( 'should render menu items when menu is open', () => {
 		// Arrange
-		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
+		Object.assign( mockPopupState, {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
-			close: jest.fn(),
-			open: jest.fn(),
-			setAnchorEl: jest.fn(),
-			toggle: jest.fn(),
-		} ) );
+		} );
 
 		// Act
 		renderComponent();
@@ -126,19 +134,15 @@ describe( 'VariableEditMenu', () => {
 	it( 'should call action onClick when menu item is clicked', () => {
 		// Arrange
 		const mockClose = jest.fn();
-		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
+		Object.assign( mockPopupState, {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
 			close: mockClose,
-			open: jest.fn(),
-			setAnchorEl: jest.fn(),
-			toggle: jest.fn(),
-		} ) );
+		} );
 		renderComponent();
 
 		// Act
-		const menuItem = screen.getByRole( 'menuitem' );
-		fireEvent.click( menuItem );
+		fireEvent.click( screen.getByRole( 'menuitem' ) );
 
 		// Assert
 		expect( mockMenuActions[ 0 ].onClick ).toHaveBeenCalled();
@@ -147,14 +151,10 @@ describe( 'VariableEditMenu', () => {
 
 	it( 'should apply correct styles to menu items', () => {
 		// Arrange
-		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
+		Object.assign( mockPopupState, {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
-			close: jest.fn(),
-			open: jest.fn(),
-			setAnchorEl: jest.fn(),
-			toggle: jest.fn(),
-		} ) );
+		} );
 
 		// Act
 		renderComponent();
@@ -170,14 +170,10 @@ describe( 'VariableEditMenu', () => {
 
 	it( 'should render multiple menu items', () => {
 		// Arrange
-		jest.spyOn( require( '@elementor/ui' ), 'usePopupState' ).mockImplementation( () => ( {
+		Object.assign( mockPopupState, {
 			isOpen: true,
 			anchorEl: document.createElement( 'div' ),
-			close: jest.fn(),
-			open: jest.fn(),
-			setAnchorEl: jest.fn(),
-			toggle: jest.fn(),
-		} ) );
+		} );
 
 		const multipleActions = [
 			...mockMenuActions,
