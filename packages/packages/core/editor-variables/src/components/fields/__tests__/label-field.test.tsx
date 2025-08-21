@@ -134,7 +134,7 @@ describe( 'LabelField', () => {
 		validNames.forEach( ( name ) => {
 			fireEvent.change( input, { target: { value: name } } );
 			expect( onErrorChange ).toHaveBeenLastCalledWith( '' );
-			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
+			expect( screen.getByRole( 'textbox' ) ).not.toHaveAttribute( 'aria-invalid', 'true' );
 		} );
 	} );
 } );
