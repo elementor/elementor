@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Transform_Prop_Type extends Object_Prop_Type {
+
 	public static function get_key(): string {
 		return 'transform';
 	}
@@ -20,8 +21,8 @@ class Transform_Prop_Type extends Object_Prop_Type {
 			'transform-functions' => Transform_Functions_Prop_Type::make(),
 			'transform-origin' => Transform_Origin_Prop_Type::make(),
 			'perspective' => Size_Prop_Type::make()
-				->units( [ Size_Constants::UNIT_PX, Size_Constants::UNIT_EM, Size_Constants::UNIT_REM, Size_Constants::UNIT_VW, Size_Constants::UNIT_VH ] ),
-			'perspective-origin' => Perspective_Origin_Prop_Type::make(),
+				->units( Size_Constants::transform() )
+				->default_unit( Size_Constants::UNIT_PX ),
 		];
 	}
 }

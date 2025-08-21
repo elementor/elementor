@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Default;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
+use ElementorPro\Core\Utils\Collection;
 
 trait Dimensional_Prop_Type {
 	use Has_Default;
@@ -23,16 +24,16 @@ trait Dimensional_Prop_Type {
 		$shape = [];
 
 		foreach ( $this->get_dimensions() as $dimension ) {
-			$shape[ $dimension ] = $this->get_prop_type( $dimension );
+			$shape[ $dimension ] = $this->get_prop_type();
 		}
 
 		return $shape;
 	}
 
-	protected function get_prop_type( $bind ): Prop_Type {
+	protected function get_prop_type(): Prop_Type {
 		$prop_type = Size_Prop_Type::make();
-		$units = $this->units( $bind );
-		$default_value = $this->get_default_value_by_bind( $bind );
+		$units = $this->units();
+		$default_value = $this->get_default_value();
 
 		if ( $units ) {
 			$prop_type->units( $units );
@@ -62,7 +63,7 @@ trait Dimensional_Prop_Type {
 		return [ 'x', 'y', 'z' ];
 	}
 
-	protected function get_default_value_by_bind(): array {
+	private function get_default_value(): ?array {
 		return [
 			'size' => $this->get_default_value_size(),
 			'unit' => $this->get_default_value_unit(),
