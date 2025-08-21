@@ -520,14 +520,14 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		// Assert - should succeed.
 		$this->assertSame( 204, $response->get_status() );
 
-		// Act - send 51 items.
-		$items["g-51"] = $this->create_global_class( "g-51" );
+		// Act - send the 51st item.
+		$items[ "g-50" ] = $this->create_global_class( "g-50" );
 
 		$request->set_body_params( [
 			'items' => $items,
 			'order' => array_keys( $items ),
 			'changes' => [
-				'added' => array_keys( $items ),
+				'added' => [ 'g-50' ],
 				'deleted' => [],
 				'modified' => [],
 			]
