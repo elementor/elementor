@@ -160,9 +160,11 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 				await expect.soft( editor.getPreviewFrame().locator( selector ) )
 					.toHaveScreenshot( `${ widget.type }-em-desktop-editor.png` );
 				await editor.changeResponsiveView( 'tablet' );
+				await page.waitForTimeout( timeouts.short );
 				await expect.soft( editor.getPreviewFrame().locator( selector ) )
 					.toHaveScreenshot( `${ widget.type }-em-tablet-editor.png` );
 				await editor.changeResponsiveView( 'mobile' );
+				await page.waitForTimeout( timeouts.short );
 				await expect.soft( editor.getPreviewFrame().locator( selector ) )
 					.toHaveScreenshot( `${ widget.type }-em-mobile-editor.png` );
 
