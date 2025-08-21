@@ -31,7 +31,7 @@ class Component extends Document {
 		return esc_html__( 'Components', 'elementor' );
 	}
 
-    public static function get_labels(): array {
+	public static function get_labels(): array {
 		$plural_label   = static::get_plural_title();
 		$singular_label = static::get_title();
 
@@ -43,14 +43,14 @@ class Component extends Document {
 		return $labels;
 	}
 
-    public static function get_supported_features(): array {
-        return [
-            'title',
-            'author',
-            'thumbnail',
-            'custom-fields',
-            'revisions',
-            'elementor',
-        ];
-    }
+	public static function get_supported_features(): array {
+		return [
+			'title',
+			'author',
+			'thumbnail',
+			'custom-fields',
+			'revisions',
+			'elementor',
+		];
+	}
 }
