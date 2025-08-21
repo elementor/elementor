@@ -8,9 +8,10 @@ import { __ } from '@wordpress/i18n';
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
+import { createControl } from '../create-control';
 import { SizeControl } from './size-control';
 
-export const GapControl = ( { label }: { label: string } ) => {
+export const GapControl = createControl( ( { label }: { label: string } ) => {
 	const {
 		value: directionValue,
 		setValue: setDirectionValue,
@@ -86,7 +87,7 @@ export const GapControl = ( { label }: { label: string } ) => {
 			</Stack>
 		</PropProvider>
 	);
-};
+} );
 
 const Control = ( {
 	bind,
