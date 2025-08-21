@@ -3,7 +3,7 @@ import type { editor, MonacoEditor } from 'monaco-types';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { CssEditor } from '../css-editor';
+import { CssEditor, setVisualContent } from '../css-editor';
 
 const mockAddEventListener = jest.fn();
 const mockRemoveEventListener = jest.fn();
@@ -259,6 +259,51 @@ describe( 'CssEditor', () => {
 
 		// Assert
 		expect( screen.getByRole( 'textbox', { name: 'CSS Code' } ) ).toHaveValue(
+			'element.style {\n  color: red;\n  background: blue;\n  font-size: 16px;\n}'
+		);
+	} );
+} );
+
+describe( 'setVisualContent', () => {
+	it( 'should handle empty string', () => {
+		expect( setVisualContent( '' ) ).toBe( 'element.style {\n  \n}' );
+		expect( setVisualContent( '   ' ) ).toBe( 'element.style {\n  \n}' );
+	} );
+
+	it( 'should handle single CSS rule with semicolon', () => {
+		expect( setVisualContent( 'color: red;' ) ).toBe( 'element.style {\n  color: red;\n}' );
+	} );
+
+	it( 'should handle single CSS rule without semicolon', () => {
+		expect( setVisualContent( 'color: red' ) ).toBe( 'element.style {\n  color: red;\n}' );
+	} );
+
+	it( 'should handle multiple CSS rules separated by semicolons', () => {
+		expect( setVisualContent( 'color: red; background: blue; font-size: 16px' ) ).toBe(
+			'element.style {\n  color: red;\n  background: blue;\n  font-size: 16px;\n}'
+		);
+	} );
+
+	it( 'should handle multiple CSS rules separated by newlines', () => {
+		expect( setVisualContent( 'color: red\nbackground: blue\nfont-size: 16px' ) ).toBe(
+			'element.style {\n  color: red;\n  background: blue;\n  font-size: 16px;\n}'
+		);
+	} );
+
+	it( 'should handle mixed semicolon and newline separators', () => {
+		expect( setVisualContent( 'color: red; background: blue\nfont-size: 16px' ) ).toBe(
+			'element.style {\n  color: red;\n  background: blue;\n  font-size: 16px;\n}'
+		);
+	} );
+
+	it( 'should handle rules with extra whitespace', () => {
+		expect( setVisualContent( '  color: red  ;  background: blue  ;  font-size: 16px  ' ) ).toBe(
+			'element.style {\n  color: red;\n  background: blue;\n  font-size: 16px;\n}'
+		);
+	} );
+
+	it( 'should handle rules that already end with semicolons', () => {
+		expect( setVisualContent( 'color: red; background: blue; font-size: 16px;' ) ).toBe(
 			'element.style {\n  color: red;\n  background: blue;\n  font-size: 16px;\n}'
 		);
 	} );
