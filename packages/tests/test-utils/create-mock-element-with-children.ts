@@ -16,10 +16,9 @@ function createMockModel< T >( data: T ): V1Model< T > {
 	};
 }
 
-export function createMockChild( id: string, widgetType?: string ): V1Element {
+export function createMockChild( id: string, elType: string ): V1Element {
 	const modelData: V1ElementModelProps = {
-		widgetType,
-		elType: 'widget',
+		elType,
 		id,
 	};
 

@@ -42,7 +42,7 @@ describe( 'useElementChildren', () => {
 		} );
 	} );
 
-	it( 'should return children grouped by widget type', () => {
+	it( 'should return children grouped by element type', () => {
 		// Arrange.
 		const mockChildren = [
 			createMockChild( 'child-1', 'tab' ),
@@ -199,11 +199,11 @@ describe( 'useElementChildren', () => {
 		} );
 	} );
 
-	it( 'should handle children without widgetType', () => {
+	it( 'should handle children without elType', () => {
 		// Arrange.
 		const mockChildren = [
 			createMockChild( 'child-1', 'tab' ),
-			createMockChild( 'child-2', undefined ), // No widgetType
+			createMockChild( 'child-2', '' ), // No elType
 		];
 		const mockContainer = createMockContainer( 'element-1', mockChildren );
 		mockGetContainer.mockReturnValue( mockContainer );
@@ -272,7 +272,7 @@ describe( 'useElementChildren', () => {
 		} );
 	} );
 
-	it( 'should properly group nested children by widget type', () => {
+	it( 'should properly group nested children by element type', () => {
 		// Arrange.
 		const nestedTabChild = createMockChild( 'nested-tab', 'tab' );
 		const nestedAccordionChild = createMockChild( 'nested-accordion', 'accordion' );
@@ -302,11 +302,11 @@ function createNestedMockElements() {
 	const grandChild2 = createMockChild( 'grandchild-2', 'accordion' );
 
 	const child1 = createMockContainer( 'child-1', [ grandChild1 ] );
-	child1.model.set( 'widgetType', 'container' );
+	child1.model.set( 'elType', 'container' );
 
 	const child2 = createMockChild( 'child-2', 'tab' );
 	const child3 = createMockContainer( 'child-3', [ grandChild2 ] );
-	child3.model.set( 'widgetType', 'section' );
+	child3.model.set( 'elType', 'section' );
 
 	return [ child1, child2, child3 ];
 }

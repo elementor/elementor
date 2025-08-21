@@ -46,6 +46,7 @@ class Atomic_Tab_Link extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
+			'tab-pane' => String_Prop_Type::make(),
 		];
 	}
 
