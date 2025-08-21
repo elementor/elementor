@@ -26,7 +26,6 @@ class Site_Settings extends Export_Runner_Base {
 
 	public function export( array $data ) {
 		$customization = $data['customization']['settings'] ?? null;
-
 		if ( $customization ) {
 			return $this->export_customization( $data, $customization );
 		}
