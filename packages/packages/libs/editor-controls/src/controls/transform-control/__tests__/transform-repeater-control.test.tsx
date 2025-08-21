@@ -355,8 +355,9 @@ describe( 'TransformRepeaterControl', () => {
 
 				const inputs = screen.getAllByDisplayValue( /\d*/ );
 
-				// Act & Assert input
 				fireEvent.input( inputs[ index ], { target: { value: newValue } } );
+
+				// Assert.
 				expect( setValue ).toHaveBeenCalledWith( {
 					$$type: 'transform',
 					value,
