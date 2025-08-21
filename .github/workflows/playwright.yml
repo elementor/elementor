@@ -208,6 +208,9 @@ jobs:
         uses: ./elementor-tests-configuration/.github/actions/map-github-to-slack
         with:
           github_user: ${{ github.actor }}
+        env:
+          GH_TOKEN: ${{ secrets.PUBLIC_CLOUD_DEVOPS_TOKEN }}
+          SLACK_TOKEN: ${{ secrets.CLOUD_SLACK_BOT_TOKEN }}
         # env:
         #   GH_TOKEN: ${{ steps.generate-token.outputs.token }}
       - name: Send slack message
