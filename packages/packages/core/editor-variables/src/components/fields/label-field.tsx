@@ -70,7 +70,6 @@ export const LabelField = ( {
 			inputProps={ { maxLength: VARIABLE_LABEL_MAX_LENGTH } }
 			// eslint-disable-next-line jsx-a11y/no-autofocus
 			autoFocus={ focusOnShow }
-			data-testid="label-field"
 		/>
 	);
 };

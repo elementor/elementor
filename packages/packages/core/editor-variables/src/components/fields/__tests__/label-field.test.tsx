@@ -51,7 +51,7 @@ describe( 'LabelField', () => {
 
 		// Assert
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.MISSING_VARIABLE_NAME );
-		expect( screen.getByTestId( 'label-field' ) ).toHaveClass( 'Mui-error' );
+		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 	} );
 
 	it( 'should show error state when validation fails for invalid characters', () => {
@@ -65,7 +65,7 @@ describe( 'LabelField', () => {
 
 		// Assert
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.INVALID_CHARACTERS );
-		expect( screen.getByTestId( 'label-field' ) ).toHaveClass( 'Mui-error' );
+		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 	} );
 
 	it( 'should show error state when validation fails for special characters only', () => {
@@ -79,7 +79,7 @@ describe( 'LabelField', () => {
 
 		// Assert
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.NO_NON_SPECIAL_CHARACTER );
-		expect( screen.getByTestId( 'label-field' ) ).toHaveClass( 'Mui-error' );
+		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 	} );
 
 	it( 'should show error state when validation fails for exceeding max length', () => {
@@ -94,7 +94,7 @@ describe( 'LabelField', () => {
 
 		// Assert
 		expect( onErrorChange ).toHaveBeenCalledWith( ERROR_MESSAGES.VARIABLE_LABEL_MAX_LENGTH );
-		expect( screen.getByTestId( 'label-field' ) ).toHaveClass( 'Mui-error' );
+		expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 	} );
 
 	it( 'should not call onChange when new value equals error value', () => {
@@ -134,7 +134,7 @@ describe( 'LabelField', () => {
 		validNames.forEach( ( name ) => {
 			fireEvent.change( input, { target: { value: name } } );
 			expect( onErrorChange ).toHaveBeenLastCalledWith( '' );
-			expect( screen.getByRole( 'textbox' ).parentElement ).not.toHaveClass( 'Mui-error' );
+			expect( screen.getByRole( 'textbox' ) ).toHaveAttribute( 'aria-invalid', 'true' );
 		} );
 	} );
 } );
