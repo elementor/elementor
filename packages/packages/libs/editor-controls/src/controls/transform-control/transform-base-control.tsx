@@ -2,7 +2,7 @@ import * as React from 'react';
 import { transformOriginPropTypeUtil } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { AdjustmentsIcon } from '@elementor/icons';
-import { bindPopover, Divider, Popover, type PopupState } from '@elementor/ui';
+import { bindPopover, Box, Divider, Popover, type PopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
@@ -44,13 +44,15 @@ export const TransformBaseControl = ( {
 				icon={ <AdjustmentsIcon fontSize={ SIZE } /> }
 			/>
 			<Divider />
-			<PopoverContent sx={ { p: 1.5 } }>
+			<PopoverContent sx={ { px: 2, py: 1.5 } }>
 				<PropKeyProvider bind={ 'transform-origin' }>
 					<TransformOriginContextProvider>
 						<TransformOriginControl />
 					</TransformOriginContextProvider>
 				</PropKeyProvider>
-				<Divider />
+				<Box sx={ { my: 0.5 } }>
+					<Divider />
+				</Box>
 				<ChildrenPerspectiveControl />
 			</PopoverContent>
 		</Popover>
