@@ -6,6 +6,7 @@ import { bindPopover, Divider, Popover, type PopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
+import { PopoverContent } from '../../components/popover-content';
 import { ChildrenPerspectiveControl } from './transform-base-controls/children-perspective-control';
 import { TransformOriginControl } from './transform-base-controls/transform-origin-control';
 
@@ -26,6 +27,7 @@ export const TransformBaseControl = ( {
 	return (
 		<Popover
 			disablePortal
+			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
 			slotProps={ {
 				paper: {
 					sx: {
@@ -42,13 +44,15 @@ export const TransformBaseControl = ( {
 				icon={ <AdjustmentsIcon fontSize={ SIZE } /> }
 			/>
 			<Divider />
-			<PropKeyProvider bind={ 'transform-origin' }>
-				<TransformOriginContextProvider>
-					<TransformOriginControl />
-				</TransformOriginContextProvider>
-			</PropKeyProvider>
-			<Divider />
-			<ChildrenPerspectiveControl />
+			<PopoverContent sx={ { p: 1.5 } }>
+				<PropKeyProvider bind={ 'transform-origin' }>
+					<TransformOriginContextProvider>
+						<TransformOriginControl />
+					</TransformOriginContextProvider>
+				</PropKeyProvider>
+				<Divider />
+				<ChildrenPerspectiveControl />
+			</PopoverContent>
 		</Popover>
 	);
 };

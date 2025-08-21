@@ -11,19 +11,13 @@ export const Header = React.forwardRef( ( { label, children }: React.PropsWithCh
 	const { value } = useBoundProp();
 
 	return (
-		<Stack
-			direction="row"
-			justifyContent="start"
-			alignItems="center"
-			gap={ 1 }
-			sx={ { marginInlineEnd: -0.75, py: 0.25 } }
-			ref={ ref }
-		>
-			<Typography component="label" variant="caption" color="text.secondary" sx={ { lineHeight: 1 } }>
-				{ label }
-			</Typography>
-			<ControlAdornments />
-			<Spacer />
+		<Stack direction="row" alignItems="center" gap={ 1 } sx={ { marginInlineEnd: -0.75, py: 0.25 } } ref={ ref }>
+			<Box display="flex" alignItems="center" gap={ 1 } sx={ { flexGrow: 1 } }>
+				<Typography component="label" variant="caption" color="text.secondary" sx={ { lineHeight: 1 } }>
+					{ label }
+				</Typography>
+				<ControlAdornments />
+			</Box>
 			<RepeaterHeaderActionsSlot value={ value } />
 			<SlotChildren whitelist={ [ TooltipAddItemAction ] as React.FC[] } sorted>
 				{ children }
@@ -31,5 +25,3 @@ export const Header = React.forwardRef( ( { label, children }: React.PropsWithCh
 		</Stack>
 	);
 } );
-
-const Spacer = () => <Box component="span" sx={ { ml: 'auto', display: 'block' } }></Box>;

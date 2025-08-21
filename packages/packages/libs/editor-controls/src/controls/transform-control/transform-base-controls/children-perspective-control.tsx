@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { perspectiveOriginPropTypeUtil, sizePropTypeUtil } from '@elementor/editor-props';
-import { Divider, Grid, Stack } from '@elementor/ui';
+import { Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
 import { ControlFormLabel } from '../../../components/control-form-label';
-import { ControlLabel } from '../../../components/control-label';
+import { PopoverGridContainer } from '../../../components/popover-grid-container';
 import { type LengthUnit, lengthUnits } from '../../../utils/size-control';
 import { SizeControl } from '../../size-control';
 
@@ -39,14 +39,9 @@ const CHILDREN_PERSPECTIVE_FIELDS: FieldProps[] = [
 export const ChildrenPerspectiveControl = () => {
 	return (
 		<Stack direction="column" spacing={ 1.5 }>
-			<ControlFormLabel sx={ { pt: 1.5, pl: 1.5 } }>
-				{ __( 'Children perspective', 'elementor' ) }
-			</ControlFormLabel>
-			<Grid container spacing={ 1.5 }>
-				<PerspectiveControl />
-				<PerspectiveOriginControl />
-				<Divider sx={ { py: 3 } } />
-			</Grid>
+			<ControlFormLabel>{ __( 'Children perspective', 'elementor' ) }</ControlFormLabel>
+			<PerspectiveControl />
+			<PerspectiveOriginControl />
 		</Stack>
 	);
 };
@@ -89,15 +84,13 @@ const ControlFields = ( { control }: { control: FieldProps } ) => {
 	const rowRef = React.useRef< HTMLDivElement >( null );
 
 	return (
-		<Grid item xs={ 12 } ref={ rowRef }>
-			<Grid container spacing={ 1 } alignItems="center">
-				<Grid item xs={ 6 }>
-					<ControlLabel>{ control.label }</ControlLabel>
-				</Grid>
-				<Grid item xs={ 6 } sx={ { pr: 3 } }>
-					<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } disableCustom />
-				</Grid>
+		<PopoverGridContainer ref={ rowRef }>
+			<Grid item xs={ 6 }>
+				<ControlFormLabel>{ control.label }</ControlFormLabel>
 			</Grid>
-		</Grid>
+			<Grid item xs={ 6 }>
+				<SizeControl variant="length" units={ control.units } anchorRef={ rowRef } disableCustom />
+			</Grid>
+		</PopoverGridContainer>
 	);
 };
