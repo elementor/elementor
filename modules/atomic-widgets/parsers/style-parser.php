@@ -215,7 +215,7 @@ class Style_Parser {
 		}
 
 		$custom_css = Utils::decode_string( $variant['custom_css']['raw'] );
-		$custom_css = sanitize_textarea_field( $custom_css );
+		$custom_css = sanitize_text_field( $custom_css );
 		$custom_css = [ 'raw' => Utils::encode_string( $custom_css ) ];
 
 		return empty( $custom_css['raw'] ) ? null : $custom_css;
