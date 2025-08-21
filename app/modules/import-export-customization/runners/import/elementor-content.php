@@ -6,7 +6,7 @@ use Elementor\Plugin;
 
 class Elementor_Content extends Import_Runner_Base {
 
-	const IMPORT_STATUS_SUCCEEDED = 'success';
+	const IMPORT_STATUS_SUCCEEDED = 'succeed';
 
 	const IMPORT_STATUS_FAILED = 'failed';
 
@@ -100,7 +100,7 @@ class Elementor_Content extends Import_Runner_Base {
 
 				$import_result = $this->read_and_import_post( $path, $id, $post_settings, $post_type, $imported_terms );
 
-				$result[ $import_result['status'] ] = $import_result['result'];
+				$result[ $import_result['status'] ][ $id ] = $import_result['result'];
 			} catch ( \Exception $error ) {
 				$result['failed'][ $id ] = $error->getMessage();
 			}
