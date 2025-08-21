@@ -13,8 +13,7 @@ import { createControl } from '../create-control';
 import { type ExtendedOption } from '../utils/size-control';
 import { SizeControl } from './size-control';
 
-export const LinkedDimensionsControl = createControl(
-	( {
+export const LinkedDimensionsControl = ( {
 		label,
 		isSiteRtl = false,
 		extendedOptions,
@@ -121,8 +120,7 @@ export const LinkedDimensionsControl = createControl(
 				) ) }
 			</PropProvider>
 		);
-	}
-);
+	};
 
 const Control = ( {
 	bind,
