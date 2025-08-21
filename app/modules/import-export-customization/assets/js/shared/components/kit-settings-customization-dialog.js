@@ -9,11 +9,11 @@ import useContextDetection from '../hooks/use-context-detection';
 
 function getInitialState( data, contextData, isImportMode ) {
 	let initialState = data.includes.includes( 'settings' );
-	
-	if ( ( contextData?.isOldExport ) || ( isImportMode && ! contextData?.isOldExport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) ) {
+
+	if ( isImportMode && ! contextData?.isOldExport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) {
 		initialState = false;
 	}
-	
+
 	return initialState;
 }
 
@@ -84,7 +84,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
 					settingKey="theme"
 					onSettingChange={ handleToggleChange }
-					disabled={ isImportMode && ! (contextData?.data?.uploadedData || data?.uploadedData)?.manifest?.[ 'site-settings' ]?.theme }
+					disabled={ isImportMode && ! ( contextData?.data?.uploadedData || data?.uploadedData )?.manifest?.[ 'site-settings' ]?.theme }
 				/>
 			</Stack>
 		</KitCustomizationDialog>

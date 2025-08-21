@@ -211,8 +211,8 @@ class Test_Import extends Elementor_Test_Base {
 
 		$previous_active_theme = wp_get_theme();
 
-		$previous_kit_id = (int) Plugin::$instance->kits_manager->get_previous_id();
-		$active_kit_id = (int) Plugin::$instance->kits_manager->get_active_id();
+		$previous_kit_id = Plugin::$instance->kits_manager->get_previous_id();
+		$active_kit_id = Plugin::$instance->kits_manager->get_active_id();
 
 		$import_settings = [
 			'include' => [ 'settings' ],
@@ -246,22 +246,26 @@ class Test_Import extends Elementor_Test_Base {
 		$result = $import->run();
 
 		// Assert
-		$this->assertCount( 1, $result );
+		$this->assertCount( 2, $result );
 		$this->assertIsArray( $result['site-settings'] );
 		$this->assertArrayHasKey( 'imported_kit_id', $result['site-settings'] );
 		$this->assertArrayHasKey( 'system_colors', $result['site-settings'] );
 		$this->assertArrayHasKey( 'custom_colors', $result['site-settings'] );
 		$this->assertArrayHasKey( 'system_typography', $result['site-settings'] );
 		$this->assertArrayHasKey( 'custom_typography', $result['site-settings'] );
+		$this->assertCount( 1, $result['theme']['succeed'] );
 
 		$expected_runners = [
 			'site-settings' => [
 				'previous_kit_id' => $previous_kit_id,
 				'active_kit_id' => $active_kit_id,
 				'imported_kit_id' => Plugin::$instance->kits_manager->get_active_id(),
-				'installed_theme' => null,
+				'installed_theme' => $expected_theme['slug'],
 				'activated_theme' => null,
-				'previous_active_theme' => null,
+				'previous_active_theme' => [
+					'slug' => $previous_active_theme->get_stylesheet(),
+					'version' => $previous_active_theme->get( 'Version' ),
+				],
 				'previous_experiments' => [],
 				'imported_experiments' => [],
 			],

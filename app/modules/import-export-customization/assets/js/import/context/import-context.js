@@ -87,7 +87,7 @@ const initialState = {
 export default function ImportContextProvider( props ) {
 	const [ data, dispatch ] = useReducer( importReducer, initialState );
 
-	const isOldExport = data.uploadedData?.manifest?.version < elementorAppConfig['import-export-customization'].manifestVersion;
+	const isOldExport = data.uploadedData?.manifest?.version < elementorAppConfig[ 'import-export-customization' ].manifestVersion;
 
 	return (
 		<ImportContext.Provider value={ {

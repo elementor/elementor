@@ -1,21 +1,18 @@
-import { useImportContext } from '../../import/context/import-context';
-import { useExportContext } from '../../export/context/export-context';
+import { useContext } from 'react';
+import { ImportContext } from '../../import/context/import-context';
+import { ExportContext } from '../../export/context/export-context';
 
 export default function useContextDetection() {
-	let isImport = false;
-	let contextData = null;
+	const importContext = useContext( ImportContext );
+	const exportContext = useContext( ExportContext );
 
-	try {
-		contextData = useImportContext();
-		isImport = true;
-	} catch {
-		try {
-			contextData = useExportContext();
-			isImport = false;
-		} catch {
-			return { isImport: null, contextData: null };
-		}
+	if ( importContext ) {
+		return { isImport: true, contextData: importContext };
 	}
 
-	return { isImport, contextData };
+	if ( exportContext ) {
+		return { isImport: false, contextData: exportContext };
+	}
+
+	return { isImport: null, contextData: null };
 }
