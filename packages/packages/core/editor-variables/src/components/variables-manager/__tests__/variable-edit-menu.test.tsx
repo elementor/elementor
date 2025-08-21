@@ -88,7 +88,7 @@ describe( 'VariableEditMenu', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should render trigger button', () => {
+	it( 'should render menu trigger button', () => {
 		// Arrange & Act
 		renderComponent();
 
