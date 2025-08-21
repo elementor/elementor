@@ -3,6 +3,15 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { VariableEditableCell } from '../variable-editable-cell';
 
+jest.mock( '@elementor/ui', () => ( {
+	...jest.requireActual( '@elementor/ui' ),
+	ClickAwayListener: ( { children, onClickAway }: { children: React.ReactNode; onClickAway: () => void } ) => (
+		<div role="presentation" onClick={ onClickAway } aria-label="Click away area">
+			{ children }
+		</div>
+	),
+} ) );
+
 describe( 'VariableEditableCell', () => {
 	const mockOnSave = jest.fn();
 
@@ -10,120 +19,94 @@ describe( 'VariableEditableCell', () => {
 		<input aria-label="Edit value" value={ value } onChange={ ( e ) => onChange( e.target.value ) } />
 	);
 
-	const renderComponent = ( props = {} ) => {
+	const renderComponent = ( props: { initialValue?: string; prefixElement?: React.ReactNode } = {} ) => {
 		const defaultProps = {
-			initialValue: 'initial value',
+			initialValue: props.initialValue || 'initial value',
 			onSave: mockOnSave,
 			editableElement: TestEditableElement,
-			children: <span>initial value</span>,
+			children: <span>{ props.initialValue || 'initial value' }</span>,
 		};
 
-		return render(
-			<div>
-				<div>Outside Element</div>
-				<VariableEditableCell { ...defaultProps } { ...props } />
-			</div>
-		);
+		return render( <VariableEditableCell { ...defaultProps } { ...props } /> );
 	};
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	describe( 'Display Mode', () => {
-		it( 'should render in display mode initially', () => {
-			// Arrange & Act
-			renderComponent();
+	it( 'should render in display mode initially', () => {
+		renderComponent();
 
-			// Assert
-			expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
-			expect( screen.queryByLabelText( 'Edit value' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'should render prefix element when provided', () => {
-			// Arrange
-			const prefixElement = <div>Prefix Text</div>;
-
-			// Act
-			renderComponent( { prefixElement } );
-
-			// Assert
-			expect( screen.getByText( 'Prefix Text' ) ).toBeInTheDocument();
-		} );
+		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
+		expect( screen.queryByLabelText( 'Edit value' ) ).not.toBeInTheDocument();
 	} );
 
-	describe( 'Edit Mode Triggers', () => {
-		it( 'should enter edit mode on double click', () => {
-			// Arrange
-			renderComponent();
-			const displayElement = screen.getByRole( 'button' );
+	it( 'should render prefix element when provided', () => {
+		const prefixElement = <div>Prefix Text</div>;
+		renderComponent( { prefixElement } );
 
-			// Act
-			fireEvent.doubleClick( displayElement );
-
-			// Assert
-			expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'should enter edit mode on space key press', () => {
-			// Arrange
-			renderComponent();
-			const displayElement = screen.getByRole( 'button' );
-
-			// Act
-			fireEvent.keyDown( displayElement, { key: ' ' } );
-
-			// Assert
-			expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
-		} );
+		expect( screen.getByText( 'Prefix Text' ) ).toBeInTheDocument();
 	} );
 
-	describe( 'Edit Mode Interactions', () => {
-		const setupEditMode = () => {
-			renderComponent();
-			const displayElement = screen.getByRole( 'button' );
-			fireEvent.doubleClick( displayElement );
-			return screen.getByLabelText( 'Edit value' );
-		};
+	it( 'should enter edit mode on double click', () => {
+		renderComponent();
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
 
-		it( 'should save changes on Enter key press', () => {
-			// Arrange
-			const input = setupEditMode();
-
-			// Act
-			fireEvent.change( input, { target: { value: 'new value' } } );
-			fireEvent.keyDown( input, { key: 'Enter' } );
-
-			// Assert
-			expect( mockOnSave ).toHaveBeenCalledWith( 'new value' );
-			expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should cancel changes on Escape key press', () => {
-			// Arrange
-			const input = setupEditMode();
-
-			// Act
-			fireEvent.change( input, { target: { value: 'new value' } } );
-			fireEvent.keyDown( input, { key: 'Escape' } );
-
-			// Assert
-			expect( mockOnSave ).not.toHaveBeenCalled();
-			expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
-		} );
+		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
 	} );
 
-	describe( 'Accessibility', () => {
-		it( 'should have correct ARIA attributes in display mode', () => {
-			// Arrange & Act
-			renderComponent();
-			const element = screen.getByRole( 'button' );
+	it( 'should enter edit mode on space key press', () => {
+		renderComponent();
+		const button = screen.getByRole( 'button' );
 
-			// Assert
-			expect( element ).toHaveAttribute( 'aria-label', 'Double click or press Space to edit' );
-			expect( element ).toHaveAttribute( 'tabIndex', '0' );
-		} );
+		fireEvent.keyDown( button, { key: ' ' } );
+
+		expect( screen.getByLabelText( 'Edit value' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'initial value' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should save changes on Enter key press', () => {
+		renderComponent();
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
+		const input = screen.getByLabelText( 'Edit value' );
+
+		fireEvent.change( input, { target: { value: 'new value' } } );
+		fireEvent.keyDown( input, { key: 'Enter' } );
+
+		expect( mockOnSave ).toHaveBeenCalledWith( 'new value' );
+		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should cancel changes on Escape key press', () => {
+		renderComponent();
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
+		const input = screen.getByLabelText( 'Edit value' );
+
+		fireEvent.change( input, { target: { value: 'new value' } } );
+		fireEvent.keyDown( input, { key: 'Escape' } );
+
+		expect( mockOnSave ).not.toHaveBeenCalled();
+		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should save changes when clicking away', () => {
+		renderComponent();
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
+		const input = screen.getByLabelText( 'Edit value' );
+
+		fireEvent.change( input, { target: { value: 'new value' } } );
+		fireEvent.click( screen.getByRole( 'presentation' ) );
+
+		expect( mockOnSave ).toHaveBeenCalledWith( 'new value' );
+		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should have correct ARIA attributes', () => {
+		renderComponent();
+		const element = screen.getByRole( 'button' );
+
+		expect( element ).toHaveAttribute( 'aria-label', 'Double click or press Space to edit' );
+		expect( element ).toHaveAttribute( 'tabIndex', '0' );
 	} );
 } );
