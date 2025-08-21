@@ -25,7 +25,7 @@ export default function MainMenuLocation() {
 		if ( config ) {
 			extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.elementorLogoDropdown, {
 				location: config.locations.topBar,
-				secondaryLocation: config.secondaryLocations.elementorLogo,
+				secondaryLocation: config.secondaryLocations.eLogoMenu,
 				trigger: config.triggers.dropdownClick,
 				element: config.elements.buttonIcon,
 			} );
