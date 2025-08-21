@@ -71,14 +71,16 @@
 		}
 	}
 
-	.elementor-background-video,
 	.elementor-background-video-embed {
 		max-width: none; //Stretch the background video on all section
 	}
 
-	.elementor-background-video,
-	.elementor-background-video-embed,
-	.elementor-background-video-hosted {
+	.elementor-background-video-embed, .elementor-background-video-hosted {
+		@include absolute-center;
+	}
+
+	.elementor-background-video {
+		max-width: none;
 		@include absolute-center;
 	}
 
