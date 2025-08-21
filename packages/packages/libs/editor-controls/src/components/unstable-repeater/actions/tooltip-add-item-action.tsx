@@ -26,7 +26,7 @@ export const TooltipAddItemAction = ( {
 
 	return (
 		<ConditionalToolTip content={ tooltipContent } enable={ enableTooltip }>
-			<Box sx={ { ml: 'auto', cursor: disabled ? 'not-allowed' : 'pointer' } }>
+			<Box component="span" sx={ { cursor: disabled ? 'not-allowed' : 'pointer' } }>
 				<IconButton
 					size={ SIZE }
 					disabled={ disabled }
