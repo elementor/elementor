@@ -12,6 +12,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Size Prop Type - supports negative values when configured
+ * 
+ * Usage Examples:
+ * 
+ * // Allow negative values (for cases like negative margins, offsets, etc.)
+ * Size_Prop_Type::make()->allow_negative()->units(['px', 'em'])
+ * 
+ * // Default behavior (negative values not allowed)
+ * Size_Prop_Type::make()->units(['px', 'em'])
+ * 
+ * // Explicitly disable negative values
+ * Size_Prop_Type::make()->allow_negative(false)->units(['px', 'em'])
+ */
+
 class Size_Prop_Type extends Object_Prop_Type {
 
 	public static function get_supported_units(): array {
@@ -38,6 +53,12 @@ class Size_Prop_Type extends Object_Prop_Type {
 
 	public function default_unit( $unit ) {
 		$this->settings['default_unit'] = $unit;
+
+		return $this;
+	}
+
+	public function allow_negative( $allow = true ) {
+		$this->settings['allow_negative'] = $allow;
 
 		return $this;
 	}
@@ -70,11 +91,23 @@ class Size_Prop_Type extends Object_Prop_Type {
 			case Size_Constants::UNIT_AUTO:
 				return ! $value['size'];
 			default:
-				return (
+				$is_numeric_valid = (
 					! in_array( $value['unit'], [ Size_Constants::UNIT_AUTO, Size_Constants::UNIT_CUSTOM ], true ) &&
 					( ! empty( $value['size'] ) || 0 === $value['size'] ) &&
 					is_numeric( $value['size'] )
 				);
+
+				if ( ! $is_numeric_valid ) {
+					return false;
+				}
+
+				// Check for negative values if allow_negative is not enabled
+				$allow_negative = $this->get_setting( 'allow_negative', false );
+				if ( ! $allow_negative && $value['size'] < 0 ) {
+					return false;
+				}
+
+				return true;
 		}
 	}
 
@@ -82,9 +115,16 @@ class Size_Prop_Type extends Object_Prop_Type {
 		$unit = sanitize_text_field( $value['unit'] );
 
 		if ( ! in_array( $value['unit'], [ Size_Constants::UNIT_AUTO, Size_Constants::UNIT_CUSTOM ] ) ) {
+			$sanitized_size = +$value['size']; // Cast to numeric (preserves negative values)
+			
+			// Apply negative value restriction if setting is disabled
+			$allow_negative = $this->get_setting( 'allow_negative', false );
+			if ( ! $allow_negative && $sanitized_size < 0 ) {
+				$sanitized_size = 0; // Convert negative to 0 if not allowed
+			}
+
 			return [
-				// The + operator cast the $value['size'] to numeric (either int or float - depends on the value)
-				'size' => +$value['size'],
+				'size' => $sanitized_size,
 				'unit' => $unit,
 			];
 		}

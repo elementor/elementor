@@ -63,7 +63,7 @@ const Repeater = () => {
 				initial={ getInitialValue() ?? initialTransformValue }
 				propTypeUtil={ transformFunctionsPropTypeUtil }
 			>
-				<Header label={ __( 'Transform', 'elementor' ) }>
+				<Header label={ __( 'Transform222', 'elementor' ) }>
 					<TooltipAddItemAction
 						disabled={ shouldDisableAddItem }
 						tooltipContent={ ToolTip }

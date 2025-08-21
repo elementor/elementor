@@ -19,8 +19,8 @@ import { PopoverGridContainer } from '../components/popover-grid-container';
 import { type CollectionPropUtil, Repeater } from '../components/repeater';
 import { createControl } from '../create-control';
 import { type LengthUnit, lengthUnits, type Unit } from '../utils/size-control';
-import { DropShadowItemContent } from './filter-control/drop-shadow-item-content';
-import { DropShadowItemLabel } from './filter-control/drop-shadow-item-label';
+import { DropShadowItemContent } from './filter/controls/drop-shadow/drop-shadow-item-content';
+import { DropShadowItemLabel } from './filter/controls/drop-shadow/drop-shadow-item-label';
 import { SelectControl } from './select-control';
 import { SizeControl, type SizeControlProps } from './size-control';
 
@@ -42,98 +42,109 @@ const filterConfig: Record< string, FilterItemConfig > = {
 			$$type: 'css-filter-func',
 			value: {
 				func: { $$type: 'string', value: 'blur' },
-				args: { $$type: 'size', value: { size: 0, unit: 'px' } },
+				args: {
+					$$type: 'blur',
+					value: {
+						size: {
+							$$type: 'size',
+							value: {
+								size: 0,
+								unit: 'px',
+							},
+						},
+					},
+				},
 			},
 		},
 		name: __( 'Blur', 'elementor' ),
 		valueName: __( 'Radius', 'elementor' ),
 		units: lengthUnits.filter( ( unit ) => unit !== '%' ),
 	},
-	brightness: {
-		defaultValue: {
-			$$type: 'css-filter-func',
-			value: {
-				func: { $$type: 'string', value: 'brightness' },
-				args: { $$type: 'size', value: { size: 100, unit: '%' } },
-			},
-		},
-		name: __( 'Brightness', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		units: [ '%' ],
-	},
-	contrast: {
-		defaultValue: {
-			$$type: 'css-filter-func',
-			value: {
-				func: { $$type: 'string', value: 'contrast' },
-				args: { $$type: 'size', value: { size: 100, unit: '%' } },
-			},
-		},
-		name: __( 'Contrast', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		units: [ '%' ],
-	},
-	'hue-rotate': {
-		defaultValue: {
-			$$type: 'css-filter-func',
-			value: {
-				func: { $$type: 'string', value: 'hue-rotate' },
-				args: { $$type: 'size', value: { size: 0, unit: 'deg' } },
-			},
-		},
-		name: __( 'Hue Rotate', 'elementor' ),
-		valueName: __( 'Angle', 'elementor' ),
-		units: [ 'deg', 'rad', 'grad', 'turn' ],
-	},
-	saturate: {
-		defaultValue: {
-			$$type: 'css-filter-func',
-			value: {
-				func: { $$type: 'string', value: 'saturate' },
-				args: { $$type: 'size', value: { size: 100, unit: '%' } },
-			},
-		},
-		name: __( 'Saturate', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		units: [ '%' ],
-	},
-	grayscale: {
-		defaultValue: {
-			$$type: 'css-filter-func',
-			value: {
-				func: { $$type: 'string', value: 'grayscale' },
-				args: { $$type: 'size', value: { size: 0, unit: '%' } },
-			},
-		},
-		name: __( 'Grayscale', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		units: [ '%' ],
-	},
-	invert: {
-		defaultValue: {
-			$$type: 'css-filter-func',
-			value: {
-				func: { $$type: 'string', value: 'invert' },
-				args: { $$type: 'size', value: { size: 0, unit: '%' } },
-			},
-		},
-		name: __( 'Invert', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		units: [ '%' ],
-	},
-	sepia: {
-		defaultValue: {
-			$$type: 'css-filter-func',
-			value: {
-				func: { $$type: 'string', value: 'sepia' },
-				args: { $$type: 'size', value: { size: 0, unit: '%' } },
-			},
-		},
-		name: __( 'Sepia', 'elementor' ),
-		valueName: __( 'Amount', 'elementor' ),
-		units: [ '%' ],
-	},
-	'drop-shadow': {
+	// brightness: {
+	// 	defaultValue: {
+	// 		$$type: 'css-filter-func',
+	// 		value: {
+	// 			func: { $$type: 'string', value: 'brightness' },
+	// 			args: { $$type: 'size', value: { size: 100, unit: '%' } },
+	// 		},
+	// 	},
+	// 	name: __( 'Brightness', 'elementor' ),
+	// 	valueName: __( 'Amount', 'elementor' ),
+	// 	units: [ '%' ],
+	// },
+	// contrast: {
+	// 	defaultValue: {
+	// 		$$type: 'css-filter-func',
+	// 		value: {
+	// 			func: { $$type: 'string', value: 'contrast' },
+	// 			args: { $$type: 'size', value: { size: 100, unit: '%' } },
+	// 		},
+	// 	},
+	// 	name: __( 'Contrast', 'elementor' ),
+	// 	valueName: __( 'Amount', 'elementor' ),
+	// 	units: [ '%' ],
+	// },
+	// 'hue-rotate': {
+	// 	defaultValue: {
+	// 		$$type: 'css-filter-func',
+	// 		value: {
+	// 			func: { $$type: 'string', value: 'hue-rotate' },
+	// 			args: { $$type: 'size', value: { size: 0, unit: 'deg' } },
+	// 		},
+	// 	},
+	// 	name: __( 'Hue Rotate', 'elementor' ),
+	// 	valueName: __( 'Angle', 'elementor' ),
+	// 	units: [ 'deg', 'rad', 'grad', 'turn' ],
+	// },
+	// saturate: {
+	// 	defaultValue: {
+	// 		$$type: 'css-filter-func',
+	// 		value: {
+	// 			func: { $$type: 'string', value: 'saturate' },
+	// 			args: { $$type: 'size', value: { size: 100, unit: '%' } },
+	// 		},
+	// 	},
+	// 	name: __( 'Saturate', 'elementor' ),
+	// 	valueName: __( 'Amount', 'elementor' ),
+	// 	units: [ '%' ],
+	// },
+	// grayscale: {
+	// 	defaultValue: {
+	// 		$$type: 'css-filter-func',
+	// 		value: {
+	// 			func: { $$type: 'string', value: 'grayscale' },
+	// 			args: { $$type: 'size', value: { size: 0, unit: '%' } },
+	// 		},
+	// 	},
+	// 	name: __( 'Grayscale', 'elementor' ),
+	// 	valueName: __( 'Amount', 'elementor' ),
+	// 	units: [ '%' ],
+	// },
+	// invert: {
+	// 	defaultValue: {
+	// 		$$type: 'css-filter-func',
+	// 		value: {
+	// 			func: { $$type: 'string', value: 'invert' },
+	// 			args: { $$type: 'size', value: { size: 0, unit: '%' } },
+	// 		},
+	// 	},
+	// 	name: __( 'Invert', 'elementor' ),
+	// 	valueName: __( 'Amount', 'elementor' ),
+	// 	units: [ '%' ],
+	// },
+	// sepia: {
+	// 	defaultValue: {
+	// 		$$type: 'css-filter-func',
+	// 		value: {
+	// 			func: { $$type: 'string', value: 'sepia' },
+	// 			args: { $$type: 'size', value: { size: 0, unit: '%' } },
+	// 		},
+	// 	},
+	// 	name: __( 'Sepia', 'elementor' ),
+	// 	valueName: __( 'Amount', 'elementor' ),
+	// 	units: [ '%' ],
+	// },
+	// 'drop-shadow': {
 		defaultValue: {
 			$$type: 'css-filter-func',
 			value: {
@@ -309,6 +320,7 @@ const SingleSizeItemContent = ( { filterType }: { filterType: string } ) => {
 	const { valueName, defaultValue, units } = filterConfig[ filterType ];
 	const rowRef = useRef< HTMLDivElement >( null );
 	const defaultUnit = ( defaultValue.value.args as SizePropValue ).value.unit;
+
 	return (
 		<PopoverGridContainer ref={ rowRef }>
 			<Grid item xs={ 6 }>

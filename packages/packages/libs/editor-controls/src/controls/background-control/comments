@@ -1,0 +1,345 @@
+// import { createFilterDefaultValue } from './utils';
+
+// const blur = {
+// 	name: __( 'Blur', 'elementor' ),
+// 	valueName: __( 'Radius', 'elementor' ),
+// 	type: 'blur',
+// };
+//
+// const intensity = {
+// 	brightness: {
+// 		name: __( 'Brightness', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'intensity',
+// 	},
+// 	contrast: {
+// 		name: __( 'Contrast', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'intensity',
+// 	},
+// 	saturate: {
+// 		name: __( 'Saturate', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'intensity',
+// 	},
+// };
+//
+// const hueRotate = {
+// 	name: __( 'Hue Rotate', 'elementor' ),
+// 	valueName: __( 'Angle', 'elementor' ),
+// 	type: 'hue-rotate',
+// };
+//
+// const colorTone = {
+// 	grayscale: {
+// 		name: __( 'Grayscale', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'color-tone',
+// 	},
+// 	invert: {
+// 		name: __( 'Invert', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'color-tone',
+// 	},
+// 	sepia: {
+// 		name: __( 'Sepia', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'color-tone',
+// 	},
+// };
+//
+// const dropShadow = {
+// 	name: __( 'Drop shadow', 'elementor' ),
+// 	valueName: __( 'Drop-shadow', 'elementor' ),
+// 	type: 'drop-shadow',
+// };
+//
+// const filterConfig: Record< string, any > = {
+// 	blur: {
+// 		name: __( 'Blur', 'elementor' ),
+// 		valueName: __( 'Radius', 'elementor' ),
+// 		type: 'blur',
+// 		defaultValue: createFilterDefaultValue( {
+// 			funcValue: 'blur',
+// 			argsPropTypeKey: 'blur',
+// 			value: {
+// 				size: 0,
+// 				unit: 'px',
+// 			},
+// 		} ),
+// 	},
+// 	brightness: {
+// 		name: __( 'Brightness', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'intensity',
+// 	},
+// 	contrast: {
+// 		name: __( 'Contrast', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'intensity',
+// 	},
+// 	'hue-rotate': {
+// 		name: __( 'Hue Rotate', 'elementor' ),
+// 		valueName: __( 'Angle', 'elementor' ),
+// 		type: 'hue-rotate',
+// 	},
+// 	saturate: {
+// 		name: __( 'Saturate', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'intensity',
+// 	},
+// 	grayscale: {
+// 		name: __( 'Grayscale', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'color-tone',
+// 	},
+// 	invert: {
+// 		name: __( 'Invert', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'color-tone',
+// 	},
+// 	sepia: {
+// 		name: __( 'Sepia', 'elementor' ),
+// 		valueName: __( 'Amount', 'elementor' ),
+// 		type: 'color-tone',
+// 	},
+// 	'drop-shadow': {
+// 		name: __( 'Drop shadow', 'elementor' ),
+// 		valueName: __( 'Drop-shadow', 'elementor' ),
+// 		type: 'drop-shadow', // filter prop type key
+// 	},
+// };
+
+// export function buildFilterOptions() {
+// 	return Object.entries( filterConfig ).map( ( [ key, value ] ) => ( {
+// 		value: key,
+// 		label: value.name,
+// 	} ) );
+// }
+//
+// export function lookUpFilterType( funcName: string ) {
+// 	return filterConfig[ funcName ].type;
+// }
+// build config and store in memory
+
+
+
+import { type DropShadowFilterPropValue, type SizePropValue } from '@elementor/editor-props';
+import { __ } from '@wordpress/i18n';
+
+import { type ArgsPropKey, type FilterFunc, type FilterGroup } from './configs';
+
+
+// const getFilterPropTypeKey = ( filterType: FilterType ) => {
+//
+// }
+//
+// const handleValueChange = (
+// 	value: FilterItemPropValue[ 'value' ],
+// 	options?: CreateOptions,
+// 	meta?: { bind?: PropKey }
+// ) => {
+// 	let newValue = structuredClone( value );
+// 	const filterType = lookUpFilterType( newValue?.func.value ?? '' );
+// 	// const newFuncName = newValue?.func.value ?? ( '' as any );
+// 	//"blur" | "color-tone" | "hue-rotate" | "intensity" | "drop-shadow"
+// 	if ( meta?.bind === 'func' ) {
+// 		newValue = {
+// 			...newValue,
+// 			args: {
+// 				$$type: filterType,
+// 				value: {
+// 					size: {
+// 						$$type: 'size',
+// 						value: getFuncFilterDefaultValue( propContext.propType, filterType ),
+// 					},
+// 				},
+// 			},
+// 		};
+// 	} // filterConfig[ newFuncName ].defaultValue.value
+//
+// 	if ( ! newValue.args ) {
+// 		return;
+// 	}
+// 	propContext.setValue( newValue );
+// };
+//
+// const getFuncFilterDefaultValue = ( propType: PropType, filterType: string ) => {
+// 	if (
+// 		propType &&
+// 		typeof propType === 'object' &&
+// 		'shape' in propType &&
+// 		'args' in propType.shape &&
+// 		'prop_types' in propType.shape.args
+// 	) {
+// 		return propType.shape?.args?.prop_types?.[ filterType ].default;
+// 	}
+//
+// 	return {};
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	function getGroupConfig( group: FilterGroup, argsPropKey: ArgsPropKey ) {
+		// Return an object keyed by filterFunc
+		return Object.fromEntries(
+			Object.entries( group ).map( ( [ filterFunc, { name, valueName = AMOUNT_VALUE_NAME } ] ) => {
+				const asFunc = filterFunc as FilterFunc;
+
+				const defaultValue =
+					filterFunc === 'drop-shadow'
+						? createDropShadowDefault( asFunc, argsPropKey )
+						: createDefaultValue( {
+								filterFunc: asFunc,
+								argsPropKey,
+								value: {
+									size: {
+										$$type: 'size',
+										value: extractDefaultValue( propType, argsPropKey ) as SizePropValue[ 'value' ],
+									},
+								},
+						  } );
+
+				return [
+					asFunc,
+					{
+						name,
+						valueName,
+						filterFunc: asFunc,
+						default: defaultValue,
+					},
+				] as const;
+			} )
+		);
+	}
+
+	// Return an object keyed by argsPropKey
+	return Object.fromEntries(
+		Object.entries( FILTERS_BY_GROUP ).map( ( [ argsPropKey, group ] ) => [
+			argsPropKey as ArgsPropKey,
+			getGroupConfig( group as FilterGroup, argsPropKey as ArgsPropKey ),
+		] )
+	);
+
+// import type { DropShadowFilterPropValue, PropType, SizePropValue } from '@elementor/editor-props';
+// import { __ } from '@wordpress/i18n';
+//
+// import { type ArgsPropKey, type FilterFunc, type FilterGroup, FILTERS_BY_GROUP } from './configs';
+//
+// type Default = {
+// 	filterFunc: FilterFunc;
+// 	argsPropKey: ArgsPropKey;
+// 	value: { size: SizePropValue } | DropShadowFilterPropValue[ 'value' ];
+// };
+//
+// type CssFilterFuncPropType = PropType & {
+// 	shape: {
+// 		args: {
+// 			prop_types: {
+// 				[ propKey in ArgsPropKey ]: {
+// 					default: {
+// 						value: SizePropValue[ 'value' ];
+// 					};
+// 				};
+// 			};
+// 		};
+// 	};
+// };
+//
+// const AMOUNT_VALUE_NAME = __( 'Amount', 'elementor' );
+//
+// export function buildFilterConfig( propType: PropType ) {
+// 	const filterConfig: Record< string, any > = {};
+//
+// 	function processGroupConfig( group: FilterGroup, argsPropKey: ArgsPropKey ) {
+// 		return Object.entries( group ).forEach( ( [ filterFunc, { name, valueName = AMOUNT_VALUE_NAME } ] ) => {
+// 			const isDropShadow = filterFunc === 'drop-shadow';
+// 			let defaultValue;
+//
+// 			if ( isDropShadow ) {
+// 				defaultValue = createDropShadowDefault( filterFunc as FilterFunc, argsPropKey );
+// 			}
+//
+// 			if ( ! isDropShadow ) {
+// 				defaultValue = createDefaultValue( {
+// 					filterFunc: filterFunc as FilterFunc,
+// 					argsPropKey,
+// 					value: {
+// 						size: {
+// 							$$type: 'size',
+// 							value: extractDefaultValue(
+// 								propType as CssFilterFuncPropType,
+// 								argsPropKey
+// 							) as SizePropValue[ 'value' ],
+// 						},
+// 					},
+// 				} );
+// 			}
+//
+// 			filterConfig[ filterFunc ] = {
+// 				name,
+// 				valueName,
+// 				default: defaultValue,
+// 				argsPropKey,
+// 			};
+// 		} );
+// 	}
+//
+// 	Object.entries( FILTERS_BY_GROUP ).forEach( ( [ propKey, group ] ) => {
+// 		processGroupConfig( group, propKey as ArgsPropKey );
+// 	} );
+//
+// 	return filterConfig;
+// }
+//
+// function createDefaultValue( { filterFunc, argsPropKey, value }: Default ) {
+// 	return {
+// 		$$type: 'css-filter-func',
+// 		value: {
+// 			func: { $$type: 'string', value: filterFunc },
+// 			args: {
+// 				$$type: argsPropKey,
+// 				value,
+// 			},
+// 		},
+// 	};
+// }
+//
+// function createDropShadowDefault( filterFunc: FilterFunc, argsPropKey: ArgsPropKey ) {
+// 	return createDefaultValue( {
+// 		filterFunc,
+// 		argsPropKey,
+// 		value: {
+// 			xAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
+// 			yAxis: { $$type: 'size', value: { size: 0, unit: 'px' } },
+// 			blur: { $$type: 'size', value: { size: 10, unit: 'px' } },
+// 			color: { $$type: 'color', value: 'rgba(0, 0, 0, 1)' },
+// 		},
+// 	} );
+// }
+//
+// function extractDefaultValue( propType: CssFilterFuncPropType, argsPropKey: ArgsPropKey ) {
+// 	return propType.shape?.args?.prop_types[ argsPropKey ]?.default?.value ?? undefined;
+// }

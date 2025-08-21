@@ -4,12 +4,12 @@ import { dropShadowFilterPropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
-import { ControlFormLabel } from '../../components/control-form-label';
-import { PopoverGridContainer } from '../../components/popover-grid-container';
-import { type LengthUnit } from '../../utils/size-control';
-import { ColorControl } from '../color-control';
-import { SizeControl } from '../size-control';
+import { PropKeyProvider, PropProvider, useBoundProp } from '../../../../bound-prop-context';
+import { ControlFormLabel } from '../../../../components/control-form-label';
+import { PopoverGridContainer } from '../../../../components/popover-grid-container';
+import { type LengthUnit } from '../../../../utils/size-control';
+import { ColorControl } from '../../../color-control';
+import { SizeControl } from '../../../size-control';
 
 const items = [
 	{
