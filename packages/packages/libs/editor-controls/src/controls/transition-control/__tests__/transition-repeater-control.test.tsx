@@ -3,7 +3,7 @@ import { createMockPropType, renderControl } from 'test-utils';
 import { sendMixpanelEvent } from '@elementor/utils';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { repeaterEventBus } from '../../../services/repeater-event-bus';
+import { repeaterEventBus, RepeaterEvents } from '../../../services/repeater-event-bus';
 import { TransitionRepeaterControl } from '../transition-repeater-control';
 
 jest.mock( '../../selection-size-control', () => ( {
@@ -14,8 +14,13 @@ jest.mock( '../transition-selector', () => ( {
 	TransitionSelector: jest.fn( () => <div data-testid="transition-selector">Mock Transition Selector</div> ),
 } ) );
 
-jest.mock( '../../../utils/event-tracking', () => ( {
+jest.mock( '@elementor/utils', () => ( {
 	sendMixpanelEvent: jest.fn(),
+	createError: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-elements', () => ( {
+	getSelectedElements: jest.fn( () => [ { type: 'test-widget' } ] ),
 } ) );
 
 const recentlyUsedGetter = () => Promise.resolve( [] );
@@ -108,10 +113,11 @@ describe( 'TransitionRepeaterControl', () => {
 
 			// Assert
 			await waitFor( () => {
-				const addButton = screen.getByLabelText( 'Add item' );
-				expect( addButton ).toBeInTheDocument();
-				expect( addButton ).toBeEnabled();
+				expect( screen.getByLabelText( 'Add item' ) ).toBeInTheDocument();
 			} );
+
+			const addButton = screen.getByLabelText( 'Add item' );
+			expect( addButton ).toBeEnabled();
 		} );
 
 		it( 'should display a disabled add button when not in normal style state', async () => {
@@ -129,10 +135,11 @@ describe( 'TransitionRepeaterControl', () => {
 
 			// Assert
 			await waitFor( () => {
-				const addButton = screen.getByLabelText( 'Add item' );
-				expect( addButton ).toBeInTheDocument();
-				expect( addButton ).toBeDisabled();
+				expect( screen.getByLabelText( 'Add item' ) ).toBeInTheDocument();
 			} );
+
+			const addButton = screen.getByLabelText( 'Add item' );
+			expect( addButton ).toBeDisabled();
 		} );
 
 		it( 'should display tooltip when button is disabled', async () => {
@@ -157,10 +164,11 @@ describe( 'TransitionRepeaterControl', () => {
 	} );
 
 	describe( 'Event Bus Integration', () => {
-		it( 'should subscribe to transition-item-added events and call sendAddTransitionControlEvent when triggered', async () => {
+		it( 'should subscribe to transition-item-added events and call sendMixpanelEvent when triggered', async () => {
 			// Arrange
 			const props = createDefaultProps();
 			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
+			const mockEventData = { someData: 'test' };
 
 			// Act
 			renderControl(
@@ -168,15 +176,64 @@ describe( 'TransitionRepeaterControl', () => {
 				props
 			);
 
-			// Assert
-			expect( subscribeSpy ).toHaveBeenCalledWith( 'transition-item-added', expect.any( Function ) );
+			await waitFor( () => {
+				expect( subscribeSpy ).toHaveBeenCalledWith(
+					RepeaterEvents.TransitionItemAdded,
+					expect.any( Function )
+				);
+			} );
 
 			// Act
 			const callback = subscribeSpy.mock.calls[ 0 ][ 1 ];
-			callback();
+			callback( mockEventData );
 
 			// Assert
-			expect( sendMixpanelEvent ).toHaveBeenCalled();
+			expect( sendMixpanelEvent ).toHaveBeenCalledWith( {
+				...mockEventData,
+				eventName: 'click_added_transition',
+				location: 'V4 Style Tab',
+				secondaryLocation: 'Transition control',
+				trigger: 'click',
+				widget_type: 'test-widget',
+			} );
+
+			subscribeSpy.mockRestore();
+		} );
+
+		it( 'should handle case when no elements are selected', async () => {
+			// Arrange
+			const { getSelectedElements } = require( '@elementor/editor-elements' );
+			getSelectedElements.mockReturnValueOnce( [ { type: null } ] );
+			const props = createDefaultProps();
+			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
+			const mockEventData = { someData: 'test' };
+
+			// Act
+			renderControl(
+				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				props
+			);
+
+			await waitFor( () => {
+				expect( subscribeSpy ).toHaveBeenCalledWith(
+					RepeaterEvents.TransitionItemAdded,
+					expect.any( Function )
+				);
+			} );
+
+			// Act
+			const callback = subscribeSpy.mock.calls[ 0 ][ 1 ];
+			callback( mockEventData );
+
+			// Assert
+			expect( sendMixpanelEvent ).toHaveBeenCalledWith( {
+				...mockEventData,
+				eventName: 'click_added_transition',
+				location: 'V4 Style Tab',
+				secondaryLocation: 'Transition control',
+				trigger: 'click',
+				widget_type: null,
+			} );
 
 			subscribeSpy.mockRestore();
 		} );
@@ -193,6 +250,11 @@ describe( 'TransitionRepeaterControl', () => {
 				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
 				props
 			);
+
+			await waitFor( () => {
+				expect( subscribeSpy ).toHaveBeenCalled();
+			} );
+
 			unmount();
 
 			// Assert
