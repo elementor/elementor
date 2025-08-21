@@ -142,6 +142,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
+    "@elementor/angie-sdk": "1.0.1",
     "@elementor/icons": "1.51.1",
     "@elementor/ui": "1.36.12",
     "@reach/router": "1.3.4",
