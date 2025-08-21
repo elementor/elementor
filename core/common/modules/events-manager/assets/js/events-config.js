@@ -13,7 +13,6 @@ const eventsConfig = {
 		widgetPanel: 'Widget Panel',
 		topBar: 'Top Bar',
 		elementorEditor: 'Elementor Editor',
-		styleTabV4: 'V4 Style Tab',
 		templatesLibrary: {
 			library: 'Templates Library',
 		},
@@ -45,7 +44,6 @@ const eventsConfig = {
 		'widget-panel': 'Widget Panel Icon',
 		finder: 'Finder',
 		help: 'Help',
-		transitionControl: 'Transition control',
 		elementorLogoDropdown: 'top_bar_elementor_logo_dropdown',
 		elementorLogo: 'Elementor Logo',
 		notes: 'Notes',
@@ -155,9 +153,6 @@ const eventsConfig = {
 			userPreferences: {
 				checklistShow: 'checklist_userpreferences_toggle_show',
 				checklistHide: 'checklist_userpreferences_toggle_hide',
-			},
-			transitions: {
-				clickAddedTransition: 'click_added_transition',
 			},
 		},
 		variables: {

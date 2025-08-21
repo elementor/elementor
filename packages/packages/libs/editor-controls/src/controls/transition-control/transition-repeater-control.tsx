@@ -5,10 +5,11 @@ import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import { getSelectedElements } from '@elementor/editor-elements';
 
 import { createControl } from '../../create-control';
 import { repeaterEventBus, RepeaterEvents } from '../../services/repeater-event-bus';
-import { sendAddTransitionControlEvent } from '../../utils/event-tracking';
+import { sendMixpanelEvent, type MixpanelEvent } from '@elementor/utils';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { initialTransitionValue, transitionProperties } from './data';
@@ -19,6 +20,13 @@ const DURATION_CONFIG = {
 	units: [ 's', 'ms' ],
 	defaultUnit: 'ms',
 };
+
+const transitionRepeaterMixpanelEvent = {
+	eventName: 'click_added_transition',
+	location: 'V4 Style Tab',
+	secondaryLocation: 'Transition control',
+	trigger: 'click',
+}
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
@@ -84,8 +92,11 @@ export const TransitionRepeaterControl = createControl(
 		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
 
 		React.useEffect( () => {
-			const unsubscribe = repeaterEventBus.subscribe( RepeaterEvents.TransitionItemAdded, () =>
-				sendAddTransitionControlEvent()
+			const selectedElements = getSelectedElements();
+			const widgetType = selectedElements[ 0 ].type ?? null;
+
+			const unsubscribe = repeaterEventBus.subscribe( RepeaterEvents.TransitionItemAdded, ( data ) =>
+				sendMixpanelEvent( { ...data as MixpanelEvent, ...transitionRepeaterMixpanelEvent, widget_type: widgetType } )
 			);
 
 			return unsubscribe;

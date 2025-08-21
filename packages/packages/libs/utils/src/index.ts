@@ -4,3 +4,4 @@ export { useDebounceState, type UseDebounceStateOptions, type UseDebounceStateRe
 export { debounce } from './debounce';
 export { encodeString, decodeString } from './encoding';
 export { hash } from './hash';
+export { sendMixpanelEvent, type MixpanelEvent } from './mixpanel-tracking';

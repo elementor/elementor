@@ -3,7 +3,7 @@ import { createMockPropType, renderControl } from 'test-utils';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { repeaterEventBus } from '../../../services/repeater-event-bus';
-import { sendAddTransitionControlEvent } from '../../../utils/event-tracking';
+import { sendMixpanelEvent } from '@elementor/utils';
 import { TransitionRepeaterControl } from '../transition-repeater-control';
 
 jest.mock( '../../selection-size-control', () => ( {
@@ -15,7 +15,7 @@ jest.mock( '../transition-selector', () => ( {
 } ) );
 
 jest.mock( '../../../utils/event-tracking', () => ( {
-	sendAddTransitionControlEvent: jest.fn(),
+	sendMixpanelEvent: jest.fn(),
 } ) );
 
 const recentlyUsedGetter = () => Promise.resolve( [] );
@@ -170,7 +170,7 @@ describe( 'TransitionRepeaterControl', () => {
 			callback();
 
 			// Assert
-			expect( sendAddTransitionControlEvent ).toHaveBeenCalled();
+			expect( sendMixpanelEvent ).toHaveBeenCalled();
 
 			subscribeSpy.mockRestore();
 		} );
