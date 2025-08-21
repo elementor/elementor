@@ -13,6 +13,7 @@ import { createCombineArrayTransformer } from './transformers/styles/create-comb
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
 import { flexTransformer } from './transformers/styles/flex-transformer';
+import { perspectiveOriginTransformer } from './transformers/styles/perspective-origin-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
@@ -53,6 +54,7 @@ export function initStyleTransformers() {
 		.register( 'image', imageTransformer )
 		.register( 'object-position', positionTransformer )
 		.register( 'transform-origin', transformOriginTransformer )
+		.register( 'perspective-origin', perspectiveOriginTransformer )
 		.register( 'transform-move', transformMoveTransformer )
 		.register( 'transform-scale', transformScaleTransformer )
 		.register( 'transform-rotate', transformRotateTransformer )
