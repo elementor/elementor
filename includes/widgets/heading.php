@@ -514,8 +514,8 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		<#
 		let title = elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } );
 
-		if ( '' !== settings.link.url ) {
-			title = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + title + '</a>';
+		if ( '' !== settings.link?.url ) {
+			title = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + title + '</a>';
 		}
 
 		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title' ] );
