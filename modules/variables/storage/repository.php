@@ -15,10 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Repository {
 	const TOTAL_VARIABLES_COUNT = 100;
-
 	const FORMAT_VERSION_V1 = 1;
 	const VARIABLES_META_KEY = '_elementor_global_variables';
-
 	private Kit $kit;
 
 	public function __construct( Kit $kit ) {
@@ -226,6 +224,224 @@ class Repository {
 			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
 			'watermark' => $watermark,
 		];
+	}
+
+	/**
+	 * Process multiple operations atomically
+	 *
+	 * @throws WatermarkMismatch
+	 * @throws BatchOperationFailed
+	 * @throws FatalError
+	 */
+	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
+		$db_record = $this->load();
+
+		// Verify watermark to ensure data consistency
+		if ( $db_record['watermark'] !== $expected_watermark ) {
+			throw new \Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch( 'Watermark mismatch' );
+		}
+
+		$original_data = $db_record['data'];
+		$results = [];
+		$error_details = [];
+
+		try {
+			// Process each operation
+			foreach ( $operations as $index => $operation ) {
+				$result = $this->process_single_operation( $db_record, $operation );
+
+				if ( isset( $result['error'] ) ) {
+					$error_details[ $this->get_operation_identifier( $operation, $index ) ] = $result['error'];
+				} else {
+					$results[] = $result;
+				}
+			}
+
+			// If any operation failed, throw exception with details
+			if ( ! empty( $error_details ) ) {
+				throw new \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed( 'One or more operations failed', $error_details );
+			}
+
+			// All operations successful, save the data
+			$watermark = $this->save( $db_record );
+
+			if ( false === $watermark ) {
+				throw new \Elementor\Modules\Variables\Storage\Exceptions\FatalError( 'Failed to save batch operations' );
+			}
+
+			return [
+				'success' => true,
+				'watermark' => $watermark,
+				'results' => $results,
+			];
+
+		} catch ( \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed $e ) {
+			// Restore original data on failure
+			$db_record['data'] = $original_data;
+
+			throw $e;
+		}
+	}
+
+	private function process_single_operation( array &$db_record, array $operation ): array {
+		try {
+			switch ( $operation['type'] ) {
+				case 'create':
+					return $this->process_create_operation( $db_record, $operation );
+
+				case 'update':
+					return $this->process_update_operation( $db_record, $operation );
+
+				case 'delete':
+					return $this->process_delete_operation( $db_record, $operation );
+
+				case 'restore':
+					return $this->process_restore_operation( $db_record, $operation );
+
+				default:
+					return [
+						'error' => [
+							'status' => 400,
+							'message' => __( 'Invalid operation type', 'elementor' ),
+						],
+					];
+			}
+		} catch ( Exception $e ) {
+			return [
+				'error' => [
+					'status' => $this->get_error_status_code( $e ),
+					'message' => $e->getMessage(),
+				],
+			];
+		}
+	}
+
+	private function process_create_operation( array &$db_record, array $operation ): array {
+		$variable_data = $operation['variable'];
+
+		// Generate new ID or use provided temporary ID
+		$temp_id = $variable_data['id'] ?? null;
+		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value' ] );
+
+		// Validate label uniqueness
+		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
+
+		// Check variables limit
+		$this->assert_if_variables_limit_reached( $db_record );
+
+		$id = $this->new_id_for( $db_record['data'] );
+		$now = $this->now();
+
+		$new_variable['created_at'] = $now;
+		$new_variable['updated_at'] = $now;
+
+		$db_record['data'][ $id ] = $new_variable;
+
+		return [
+			'id' => $id,
+			'variable' => array_merge( [ 'id' => $id ], $new_variable ),
+			'temp_id' => $temp_id,
+		];
+	}
+
+	private function process_update_operation( array &$db_record, array $operation ): array {
+		$id = $operation['id'];
+		$variable_data = $operation['variable'];
+
+		if ( ! isset( $db_record['data'][ $id ] ) ) {
+			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+		}
+
+		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value' ] );
+		$updated_variable = array_merge( $db_record['data'][ $id ], $updated_fields );
+		$updated_variable['updated_at'] = $this->now();
+
+		// Validate label uniqueness
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
+
+		$db_record['data'][ $id ] = $updated_variable;
+
+		return [
+			'id' => $id,
+			'variable' => array_merge( [ 'id' => $id ], $updated_variable ),
+		];
+	}
+
+	private function process_delete_operation( array &$db_record, array $operation ): array {
+		$id = $operation['id'];
+
+		if ( ! isset( $db_record['data'][ $id ] ) ) {
+			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+		}
+
+		$db_record['data'][ $id ]['deleted'] = true;
+		$db_record['data'][ $id ]['deleted_at'] = $this->now();
+
+		return [
+			'id' => $id,
+			'deleted' => true,
+		];
+	}
+
+	private function process_restore_operation( array &$db_record, array $operation ): array {
+		$id = $operation['id'];
+
+		if ( ! isset( $db_record['data'][ $id ] ) ) {
+			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+		}
+
+		$overrides = [];
+
+		if ( isset( $operation['label'] ) ) {
+			$overrides['label'] = $operation['label'];
+		}
+
+		if ( isset( $operation['value'] ) ) {
+			$overrides['value'] = $operation['value'];
+		}
+
+		$restored_variable = $this->extract_from( $db_record['data'][ $id ], [ 'label', 'value', 'type' ] );
+		$restored_variable = array_merge( $restored_variable, $overrides );
+		$restored_variable['updated_at'] = $this->now();
+
+		// Validate label uniqueness
+		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $restored_variable, [ 'id' => $id ] ) );
+
+		// Check variables limit
+		$this->assert_if_variables_limit_reached( $db_record );
+
+		$db_record['data'][ $id ] = $restored_variable;
+
+		return [
+			'id' => $id,
+			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
+		];
+	}
+
+	private function get_operation_identifier( array $operation, int $index ): string {
+		// Use temporary ID for create operations, actual ID for others, or index as fallback
+		if ( 'create' === $operation['type'] && isset( $operation['variable']['id'] ) ) {
+			return $operation['variable']['id'];
+		}
+
+		if ( isset( $operation['id'] ) ) {
+			return $operation['id'];
+		}
+
+		return "operation_{$index}";
+	}
+
+	private function get_error_status_code( Exception $e ): int {
+		if ( $e instanceof \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound ) {
+			return 404;
+		}
+
+		if ( $e instanceof \Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel ||
+			 $e instanceof \Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached ) {
+			return 400;
+		}
+
+		return 500;
 	}
 
 	private function save( array $db_record ) {
