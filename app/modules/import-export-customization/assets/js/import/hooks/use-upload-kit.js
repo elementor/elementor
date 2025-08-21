@@ -64,7 +64,6 @@ export function useUploadKit() {
 		} else {
 			setError( null );
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isUploading, data.file, data.kitUploadParams ] );
 
 	return {

@@ -89,7 +89,6 @@ function useKitCallToActionButton(
 			},
 			includeHeaderBtnClass: false,
 		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ type, subscriptionPlan, isApplyLoading, apply ] );
 }
 
@@ -168,24 +167,22 @@ export default function ItemHeader( props ) {
 		},
 	} );
 
-	const downloadButton = useMemo( () => {
-		return {
-			id: 'download',
-			text: __( 'Download Website', 'elementor' ),
-			hideText: true,
-			icon: 'eicon-file-download',
-			tooltip: __( 'Download Website ZIP', 'elementor' ),
-			color: isDownloadLoading ? 'disabled' : 'secondary',
-			includeHeaderBtnClass: false,
-			onClick: ( e ) => {
-				if ( isDownloadLoading ) {
-					return;
-				}
+	const downloadButton = {
+		id: 'download',
+		text: __( 'Download Kit', 'elementor' ),
+		hideText: true,
+		icon: 'eicon-file-download',
+		tooltip: __( 'Download Kit', 'elementor' ),
+		color: isDownloadLoading ? 'disabled' : 'secondary',
+		includeHeaderBtnClass: false,
+		onClick: ( e ) => {
+			if ( isDownloadLoading ) {
+				return;
+			}
 
-				fetchDownloadLink( e );
-			},
-		};
-	}, [ isDownloadLoading, fetchDownloadLink ] );
+			fetchDownloadLink( e );
+		},
+	};
 
 	const buttons = useMemo(
 		() => [ downloadButton, applyButton, ...props.buttons ],

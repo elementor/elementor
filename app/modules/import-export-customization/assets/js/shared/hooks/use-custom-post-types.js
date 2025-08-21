@@ -19,7 +19,6 @@ export function useCustomPostTypes( { include = [] } = {} ) {
 				label: post.single,
 			} ) ) );
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return { customPostTypes };

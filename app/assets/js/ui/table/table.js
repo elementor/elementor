@@ -21,7 +21,6 @@ export default function Table( { className, initialSelected, initialDisabled, se
 		if ( onSelect ) {
 			onSelect( selected );
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ selected ] );
 
 	return (

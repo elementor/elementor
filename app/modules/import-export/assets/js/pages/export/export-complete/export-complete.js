@@ -80,7 +80,6 @@ export default function ExportComplete() {
 		if ( ! isSavedToCloud ) {
 			downloadFile();
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ exportContext.data.downloadUrl, isSavedToCloud ] );
 
 	const heading = useMemo( () => {

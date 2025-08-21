@@ -128,7 +128,6 @@ export default function PopoverDialog( props ) {
 			} else if ( 'click' === trigger ) {
 				handlePopoverClick();
 			}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ targetRef ] );
 
 	let wrapperClasses = 'e-app__popover';

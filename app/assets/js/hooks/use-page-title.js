@@ -1,13 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 export default function usePageTitle( { title, prefix } ) {
-	const prefixRef = useRef( prefix );
-
 	useEffect( () => {
 		if ( ! prefix ) {
-			prefixRef.current = __( 'Elementor', 'elementor' );
+			prefix = __( 'Elementor', 'elementor' );
 		}
 
-		document.title = `${ prefixRef.current } | ${ title }`;
+		document.title = `${ prefix } | ${ title }`;
 	}, [ title, prefix ] );
 }
