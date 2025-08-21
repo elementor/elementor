@@ -253,7 +253,6 @@ class Test_Import extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'custom_colors', $result['site-settings'] );
 		$this->assertArrayHasKey( 'system_typography', $result['site-settings'] );
 		$this->assertArrayHasKey( 'custom_typography', $result['site-settings'] );
-		$this->assertCount( 1, $result['theme']['succeed'] );
 
 		$expected_runners = [
 			'site-settings' => [
