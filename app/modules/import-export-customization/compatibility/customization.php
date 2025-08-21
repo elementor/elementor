@@ -61,7 +61,7 @@ class Customization extends Base_Adapter {
 
 			// If we have tab keys, assume all were exported (true)
 			if ( ! empty( $old_site_settings ) ) {
-				// In the old format, if site-settings was included, all settings except the Themewere exported
+				// In the old format, if site-settings was included, all settings except the Theme were exported
 				$new_site_settings = [
 					'theme' => false,
 					'globalColors' => true,
