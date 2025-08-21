@@ -9,6 +9,7 @@ export const transformPropTypeUtil = createPropUtils(
 		'transform-functions': unknownChildrenSchema,
 		'transform-origin': unknownChildrenSchema,
 		perspective: unknownChildrenSchema,
+		'perspective-origin': unknownChildrenSchema,
 	} )
 );
 
