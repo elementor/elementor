@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { perspectiveOriginPropTypeUtil, sizePropTypeUtil } from '@elementor/editor-props';
+import { perspectiveOriginPropTypeUtil } from '@elementor/editor-props';
 import { Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
