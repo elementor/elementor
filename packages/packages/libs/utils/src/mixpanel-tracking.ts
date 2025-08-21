@@ -15,6 +15,6 @@ export const sendMixpanelEvent = ( event: MixpanelEvent ) => {
 	if ( extendedWindow.elementorCommon?.eventsManager ) {
 		try {
 			extendedWindow.elementorCommon.eventsManager.dispatchEvent( event.eventName, event );
-		} catch { }
+		} catch {}
 	}
 };

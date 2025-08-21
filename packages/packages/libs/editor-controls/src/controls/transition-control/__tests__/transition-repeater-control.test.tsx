@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { sendMixpanelEvent } from '@elementor/utils';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { repeaterEventBus } from '../../../services/repeater-event-bus';
-import { sendMixpanelEvent } from '@elementor/utils';
 import { TransitionRepeaterControl } from '../transition-repeater-control';
 
 jest.mock( '../../selection-size-control', () => ( {
@@ -120,7 +120,10 @@ describe( 'TransitionRepeaterControl', () => {
 
 			// Act
 			renderControl(
-				<TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				<TransitionRepeaterControl
+					currentStyleState={ 'hover' }
+					recentlyUsedListGetter={ recentlyUsedGetter }
+				/>,
 				props
 			);
 
@@ -138,7 +141,10 @@ describe( 'TransitionRepeaterControl', () => {
 
 			// Act
 			renderControl(
-				<TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedListGetter={ recentlyUsedGetter } />,
+				<TransitionRepeaterControl
+					currentStyleState={ 'hover' }
+					recentlyUsedListGetter={ recentlyUsedGetter }
+				/>,
 				props
 			);
 

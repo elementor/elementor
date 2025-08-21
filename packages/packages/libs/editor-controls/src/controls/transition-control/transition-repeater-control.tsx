@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { getSelectedElements } from '@elementor/editor-elements';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
+import { type MixpanelEvent, sendMixpanelEvent } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
-import { getSelectedElements } from '@elementor/editor-elements';
 
 import { createControl } from '../../create-control';
 import { repeaterEventBus, RepeaterEvents } from '../../services/repeater-event-bus';
-import { sendMixpanelEvent, type MixpanelEvent } from '@elementor/utils';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { initialTransitionValue, transitionProperties } from './data';
@@ -26,7 +26,7 @@ const transitionRepeaterMixpanelEvent = {
 	location: 'V4 Style Tab',
 	secondaryLocation: 'Transition control',
 	trigger: 'click',
-}
+};
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
@@ -96,7 +96,11 @@ export const TransitionRepeaterControl = createControl(
 			const widgetType = selectedElements[ 0 ].type ?? null;
 
 			const unsubscribe = repeaterEventBus.subscribe( RepeaterEvents.TransitionItemAdded, ( data ) =>
-				sendMixpanelEvent( { ...data as MixpanelEvent, ...transitionRepeaterMixpanelEvent, widget_type: widgetType } )
+				sendMixpanelEvent( {
+					...( data as MixpanelEvent ),
+					...transitionRepeaterMixpanelEvent,
+					widget_type: widgetType,
+				} )
 			);
 
 			return unsubscribe;

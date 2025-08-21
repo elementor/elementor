@@ -8,21 +8,20 @@ import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
 import { repeaterEventBus, type RepeaterEventType } from '../../../services/repeater-event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
 
-const getNestedValue = (obj: Record<string, unknown>, path: string) => {
-	return path.split('.').reduce((current: Record<string, unknown>, key) => {
-		if (current && typeof current === 'object') {
-			return current[key] as Record<string, unknown>;
+const getNestedValue = ( obj: Record< string, unknown >, path: string ) => {
+	return path.split( '.' ).reduce( ( current: Record< string, unknown >, key ) => {
+		if ( current && typeof current === 'object' ) {
+			return current[ key ] as Record< string, unknown >;
 		}
 		return {};
-	}, obj);
+	}, obj );
 };
 
-const getSelectionValue = (value: unknown): unknown => {
+const getSelectionValue = ( value: unknown ): unknown => {
 	return value && typeof value === 'object'
-		? getNestedValue(value as Record<string, unknown>, 'selection.value.value.value')
+		? getNestedValue( value as Record< string, unknown >, 'selection.value.value.value' )
 		: undefined;
 };
-
 
 type SetterFn< T > = ( prevItems: T ) => T;
 
@@ -114,7 +113,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
 
-		const selectionValue = getSelectionValue(initial?.value);
+		const selectionValue = getSelectionValue( initial?.value );
 
 		repeaterEventBus.emit( `${ propTypeUtil.key }-item-added` as RepeaterEventType, {
 			transition_type: selectionValue,
@@ -122,8 +121,8 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	};
 
 	const removeItem = ( index: number ) => {
-		const itemToRemove = items[index];
-		const selectionValue = getSelectionValue(itemToRemove?.value);
+		const itemToRemove = items[ index ];
+		const selectionValue = getSelectionValue( itemToRemove?.value );
 
 		setItems( items.filter( ( _, pos ) => pos !== index ) );
 		repeaterEventBus.emit( `${ propTypeUtil.key }-item-removed` as RepeaterEventType, {
