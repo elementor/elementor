@@ -23,16 +23,16 @@ trait Dimensional_Prop_Type {
 		$shape = [];
 
 		foreach ( $this->get_dimensions() as $dimension ) {
-			$shape[ $dimension ] = $this->get_prop_type();
+			$shape[ $dimension ] = $this->get_prop_type( $dimension );
 		}
 
 		return $shape;
 	}
 
-	protected function get_prop_type(): Prop_Type {
+	protected function get_prop_type( $bind ): Prop_Type {
 		$prop_type = Size_Prop_Type::make();
-		$units = $this->units();
-		$default_value = $this->get_default_value();
+		$units = $this->units( $bind );
+		$default_value = $this->get_default_value_by_bind( $bind );
 
 		if ( $units ) {
 			$prop_type->units( $units );
@@ -62,7 +62,11 @@ trait Dimensional_Prop_Type {
 		return [ 'x', 'y', 'z' ];
 	}
 
-	private function get_default_value(): ?array {
+	protected function get_default_value_by_bind( $bind ): array {
+		return $this->get_default_value();
+	}
+
+	private function get_default_value(): array {
 		return [
 			'size' => $this->get_default_value_size(),
 			'unit' => $this->get_default_value_unit(),

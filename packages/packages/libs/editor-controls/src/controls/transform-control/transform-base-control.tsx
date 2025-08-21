@@ -31,8 +31,8 @@ export const TransformBaseControl = ( {
 			slotProps={ {
 				paper: {
 					sx: {
-						width: anchorRef.current?.offsetWidth + 'px',
-						mt: anchorRef.current?.offsetHeight + 'px',
+						width: ( anchorRef.current?.offsetWidth || 0 ) - 6 + 'px',
+						mt: 0.5,
 					},
 				},
 			} }

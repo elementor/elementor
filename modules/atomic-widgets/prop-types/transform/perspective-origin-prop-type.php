@@ -24,4 +24,12 @@ class Perspective_Origin_Prop_Type extends Object_Prop_Type {
 	protected function get_dimensions(): array {
 		return [ 'x', 'y' ];
 	}
+
+	protected function get_default_value_unit(): string {
+		return Size_Constants::UNIT_PERCENT;
+	}
+
+	protected function get_default_value_size(): int {
+		return 50;
+	}
 }

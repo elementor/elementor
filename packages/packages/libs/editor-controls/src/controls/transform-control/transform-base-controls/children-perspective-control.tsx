@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
 import { ControlFormLabel } from '../../../components/control-form-label';
 import { PopoverGridContainer } from '../../../components/popover-grid-container';
-import { type LengthUnit, lengthUnits } from '../../../utils/size-control';
+import { type LengthUnit } from '../../../utils/size-control';
 import { SizeControl } from '../../size-control';
 
 type FieldProps = {
@@ -20,7 +20,7 @@ const ORIGIN_UNITS: LengthUnit[] = [ 'px', '%', 'em', 'rem' ];
 const PERSPECTIVE_CONTROL_FIELD: FieldProps = {
 	label: __( 'Perspective', 'elementor' ),
 	bind: 'perspective',
-	units: [ ...lengthUnits ],
+	units: [ 'px', 'em', 'rem', 'vw', 'vh' ],
 };
 
 const CHILDREN_PERSPECTIVE_FIELDS: FieldProps[] = [
