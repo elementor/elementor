@@ -7,14 +7,21 @@ import { KitCustomizationDialog } from './kit-customization-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import useContextDetection from '../hooks/use-context-detection';
 
+function getInitialState( data, contextData, isImportMode ) {
+	let initialState = data.includes.includes( 'settings' );
+	
+	if ( ( contextData?.isOldExport ) || ( isImportMode && ! contextData?.isOldExport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) ) {
+		initialState = false;
+	}
+	
+	return initialState;
+}
+
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const { isImport, contextData } = useContextDetection();
 
 	const isImportMode = isImport !== null ? isImport : data.hasOwnProperty( 'uploadedData' );
-
-
-
-	const initialState = data.includes.includes( 'settings' );
+	const initialState = getInitialState( data, contextData, isImportMode );
 	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
