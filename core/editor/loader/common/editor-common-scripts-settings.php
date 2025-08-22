@@ -115,10 +115,6 @@ class Editor_Common_Scripts_Settings {
 			'fontVariableRanges' => Group_Control_Typography::get_font_variable_ranges(),
 		];
 
-		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
-			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
-		}
-
 		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
 		}
@@ -148,16 +144,6 @@ class Editor_Common_Scripts_Settings {
 
 		static::bc_move_document_filters();
 
-		// Remove all non numeric keys element from array added by 3rd party plugins
-		add_filter( 'elementor/editor/localize_settings', function ( $config ) {
-			if ( ! isset( $config['promotionWidgets'] ) ) {
-				$config['promotionWidgets'] = [];
-			}
-
-			$config['promotionWidgets'] = array_values( $config['promotionWidgets'] );
-			return $config;
-		}, 999 );
-
 		/**
 		 * Localize editor settings.
 		 *
@@ -168,7 +154,22 @@ class Editor_Common_Scripts_Settings {
 		 * @param array $client_env  Editor configuration.
 		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		return apply_filters( 'elementor/editor/localize_settings', $client_env );
+		$client_env = apply_filters( 'elementor/editor/localize_settings', $client_env );
+
+		// Ensure pro widgets are present in the array if needed
+		$pro_widgets = Api::get_promotion_widgets();
+		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
+			if ( ! isset( $client_env['promotionWidgets'] ) ) {
+				$client_env['promotionWidgets'] = $pro_widgets;
+			} else {
+				$client_env['promotionWidgets'] = array_merge( $pro_widgets, $client_env['promotionWidgets'] );
+			}
+		}
+
+		// Remove all non numeric keys element from array added by 3rd party plugins to keep js array valid
+		$client_env['promotionWidgets'] = array_values( $client_env['promotionWidgets'] );
+
+		return $client_env;
 	}
 
 	private static function bc_move_document_filters() {
