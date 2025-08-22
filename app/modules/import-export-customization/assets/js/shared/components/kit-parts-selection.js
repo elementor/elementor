@@ -2,11 +2,11 @@ import { useState, Fragment } from 'react';
 import { Box, Typography, Stack, Checkbox, FormControlLabel, Button } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import kitContentData from '../kit-content-data';
+import useContextDetection from '../hooks/use-context-detection';
 
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
-
-	const isImport = data.hasOwnProperty( 'uploadedData' );
+	const { isImport, contextData } = useContextDetection();
 
 	const isDisabled = ( item ) => {
 		if ( isImport ) {
@@ -19,6 +19,10 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 
 	const isEditDisabled = ( item ) => {
 		if ( isImport ) {
+			if ( contextData?.isOldExport && 'settings' === item.type ) {
+				return true;
+			}
+
 			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
 			return ! data?.uploadedData?.manifest?.[ manifestKey ];
 		}
