@@ -235,7 +235,7 @@ describe( 'TransitionRepeaterControl', () => {
 				location: 'V4 Style Tab',
 				secondaryLocation: 'Transition control',
 				trigger: 'click',
-				widget_type: null,
+				widget_type: 'unknown',
 			} );
 
 			subscribeSpy.mockRestore();
