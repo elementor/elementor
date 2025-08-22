@@ -40,7 +40,7 @@ export const EffectsSection = () => {
 			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
 				<TransitionRepeaterControl
 					currentStyleState={ meta.state }
-					recentlyUsedList={ getRecentlyUsedList( element?.id ) }
+					recentlyUsedListGetter={ () => getRecentlyUsedList( element?.id ?? '' ) }
 				/>
 			</StylesField>
 			<PanelDivider />
