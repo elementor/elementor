@@ -1,4 +1,10 @@
-import { type ExtendedWindow } from '@elementor/editor-elements';
+type ExtendedWindow = Window & {
+	elementorCommon?: {
+		eventsManager?: {
+			dispatchEvent: ( name: string, data: Record< string, unknown > ) => void;
+		};
+	};
+};
 
 export type MixpanelEvent = {
 	location: string;
