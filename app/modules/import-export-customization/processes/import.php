@@ -685,15 +685,9 @@ class Import {
 			return [];
 		}
 
-		$excluded = [ 'page', 'nav_menu_item' ];
-
-		if ( empty( $this->manifest['content']['post'] ?? [] ) && empty( $this->manifest['wp-content']['post'] ?? [] ) ) {
-			$excluded[] = 'post';
-		}
-
 		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] );
 
-		return array_merge( $manifest_post_types, Utils::get_builtin_wp_post_types( $excluded ) );
+		return array_diff( $manifest_post_types, Utils::get_builtin_wp_post_types( [ 'post', 'nav_menu_item' ] ) );
 	}
 
 	/**

@@ -58,19 +58,11 @@ class Utils {
 		return $result;
 	}
 
-	public static function get_elementor_post_types( $exclude = [] ) {
+	public static function get_elementor_post_types() {
 		$elementor_post_types = get_post_types_by_support( 'elementor' );
 
 		return array_filter( $elementor_post_types, function ( $value ) {
 			// Templates are handled in a separate process.
-			if ( 'elementor_library' === $value ) {
-				return false;
-			}
-
-			if ( ! empty( $exclude ) && in_array( $value, $exclude, true ) ) {
-				return false;
-			}
-
 			return 'elementor_library' !== $value;
 		} );
 	}
