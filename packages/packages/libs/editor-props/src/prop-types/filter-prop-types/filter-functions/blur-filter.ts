@@ -5,5 +5,7 @@ import { unknownChildrenSchema } from '../../utils';
 
 export const blurFilterPropTypeUtil = createPropUtils(
 	'blur',
-	unknownChildrenSchema
+	z.strictObject( {
+		size: unknownChildrenSchema,
+	} )
 );
