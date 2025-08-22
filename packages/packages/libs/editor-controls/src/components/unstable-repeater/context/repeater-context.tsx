@@ -5,7 +5,7 @@ import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
-import { repeaterEventBus, type RepeaterEventType } from '../../../services/repeater-event-bus';
+import { repeaterEventBus, RepeaterEvents } from '../../../services/repeater-event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
 
 const getNestedValue = ( obj: Record< string, unknown >, path: string ) => {
@@ -115,9 +115,11 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 
 		const selectionValue = getSelectionValue( initial?.value );
 
-		repeaterEventBus.emit( `${ propTypeUtil.key }-item-added` as RepeaterEventType, {
-			transition_type: selectionValue,
-		} );
+		if ( propTypeUtil.key === 'transition' ) {
+			repeaterEventBus.emit( RepeaterEvents.TransitionItemAdded, {
+				transition_type: selectionValue,
+			} );
+		}
 	};
 
 	const removeItem = ( index: number ) => {
@@ -125,9 +127,12 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		const selectionValue = getSelectionValue( itemToRemove?.value );
 
 		setItems( items.filter( ( _, pos ) => pos !== index ) );
-		repeaterEventBus.emit( `${ propTypeUtil.key }-item-removed` as RepeaterEventType, {
-			transition_type: selectionValue,
-		} );
+
+		if ( propTypeUtil.key === 'transition' ) {
+			repeaterEventBus.emit( RepeaterEvents.TransitionItemRemoved, {
+				transition_type: selectionValue,
+			} );
+		}
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {
