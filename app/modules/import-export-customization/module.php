@@ -595,6 +595,7 @@ class Module extends BaseModule {
 			'restApiBaseUrl' => Controller::get_base_url(),
 			'uiTheme' => $this->get_elementor_ui_theme_preference(),
 			'exportGroups' => $this->get_export_groups(),
+			'manifestVersion' => self::FORMAT_VERSION,
 		];
 	}
 
