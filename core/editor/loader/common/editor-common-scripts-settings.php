@@ -161,6 +161,16 @@ class Editor_Common_Scripts_Settings {
 
 		static::bc_move_document_filters();
 
+		// Remove all non numeric keys element from array added by 3rd party plugins
+		add_filter( 'elementor/editor/localize_settings', function ( $config ) {
+			if ( ! isset( $config['promotionWidgets'] ) ) {
+				$config['promotionWidgets'] = [];
+			}
+
+			$config['promotionWidgets'] = array_values( $config['promotionWidgets'] );
+			return $config;
+		}, 999 );
+
 		/**
 		 * Localize editor settings.
 		 *
