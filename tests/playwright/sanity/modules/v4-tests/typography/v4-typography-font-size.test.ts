@@ -45,10 +45,10 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
-	// Test.afterAll( async () => {
-	// 	Await wpAdmin.resetExperiments();
-	// 	Await context.close();
-	// } );
+	test.afterAll( async () => {
+		await wpAdmin.resetExperiments();
+		await context.close();
+	} );
 
 	test.beforeEach( async () => {
 		editor = await wpAdmin.openNewPage();
