@@ -39,6 +39,7 @@ type BaseSizeControlProps = {
 	extendedOptions?: ExtendedOption[];
 	disableCustom?: boolean;
 	anchorRef?: RefObject< HTMLDivElement | null >;
+	min?: number;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -86,6 +87,7 @@ export const SizeControl = createControl(
 		anchorRef,
 		extendedOptions,
 		disableCustom,
+		min = 0,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -108,7 +110,8 @@ export const SizeControl = createControl(
 
 		const [ state, setState ] = useSyncExternalState( {
 			external: internalState,
-			setExternal: ( newState: State | null ) => setSizeValue( extractValueFromState( newState ) ),
+			setExternal: ( newState: State | null, options, meta ) =>
+				setSizeValue( extractValueFromState( newState ), options, meta ),
 			persistWhen: ( newState ) => {
 				if ( ! newState?.unit ) {
 					return false;
@@ -139,7 +142,8 @@ export const SizeControl = createControl(
 		};
 
 		const handleSizeChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
-			const { value: size } = event.target;
+			const size = event.target.value;
+			const isInputValid = event.target.validity.valid;
 
 			if ( controlUnit === 'auto' ) {
 				setState( ( prev ) => ( { ...prev, unit: controlUnit } ) );
@@ -147,11 +151,15 @@ export const SizeControl = createControl(
 				return;
 			}
 
-			setState( ( prev ) => ( {
-				...prev,
-				[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
-				unit: controlUnit,
-			} ) );
+			setState(
+				( prev ) => ( {
+					...prev,
+					[ controlUnit === 'custom' ? 'custom' : 'numeric' ]: formatSize( size, controlUnit ),
+					unit: controlUnit,
+				} ),
+				undefined,
+				{ validation: () => isInputValid }
+			);
 		};
 
 		const onInputClick = ( event: React.MouseEvent ) => {
@@ -211,6 +219,7 @@ export const SizeControl = createControl(
 					onBlur={ restoreValue }
 					onClick={ onInputClick }
 					popupState={ popupState }
+					min={ min }
 				/>
 				{ anchorRef?.current && (
 					<TextFieldPopover
