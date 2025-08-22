@@ -383,6 +383,146 @@ describe( 'SizeControl', () => {
 		expect( options.slice( -1 )[ 0 ] ).toContainHTML( customOptionElement );
 	} );
 
+	describe( 'Units', () => {
+		it( 'should use external units when enablePropTypeUnits is false', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const externalUnits: LengthUnit[] = [ 'px', 'em', 'rem' ];
+			const propTypeWithAvailableUnits = createMockPropType( {
+				key: 'size',
+				kind: 'plain',
+				settings: {
+					available_units: [ 'vw', 'vh', '%' ],
+				},
+			} );
+
+			const props = {
+				setValue,
+				value: mockSizeProp( { size: 10, unit: 'px' } ),
+				bind: 'select',
+				propType: propTypeWithAvailableUnits,
+			};
+
+			// Act.
+			renderControl( <SizeControl units={ externalUnits } disableCustom />, props );
+
+			const select = screen.getByRole( 'button' );
+
+			fireEvent.click( select );
+
+			const options = screen.getAllByRole( 'menuitem' );
+
+			// Assert.
+			expect( options ).toHaveLength( 3 );
+			expect( options[ 0 ] ).toHaveTextContent( 'PX' );
+			expect( options[ 1 ] ).toHaveTextContent( 'EM' );
+			expect( options[ 2 ] ).toHaveTextContent( 'REM' );
+		} );
+
+		it( 'should use default fallback units when enablePropTypeUnits is false and no external units provided', () => {
+			// Arrange.
+			const propTypeWithAvailableUnits = createMockPropType( {
+				key: 'size',
+				kind: 'plain',
+				settings: {
+					available_units: [ 'deg', 'rad' ],
+				},
+			} );
+
+			const props = {
+				setValue: jest.fn(),
+				value: mockSizeProp( { size: 10, unit: 'px' } ),
+				bind: 'select',
+				propType: propTypeWithAvailableUnits,
+			};
+
+			// Act.
+			renderControl( <SizeControl disableCustom />, props );
+
+			const select = screen.getByRole( 'button' );
+
+			fireEvent.click( select );
+
+			const expected = [ 'px', '%', 'em', 'rem', 'vw', 'vh' ];
+
+			// Assert.
+			screen.getAllByRole( 'menuitem' ).forEach( ( option, index ) => {
+				expect( option ).toHaveTextContent( expected[ index ].toUpperCase() );
+			} );
+		} );
+
+		it( 'should use propType available_units when enablePropTypeUnits is true', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const externalUnits: LengthUnit[] = [ 'px', 'em', 'rem' ];
+			const propTypeWithAvailableUnits = createMockPropType( {
+				key: 'size',
+				kind: 'plain',
+				settings: {
+					available_units: [ 'vw', 'vh', '%' ],
+				},
+			} );
+
+			const props = {
+				setValue,
+				value: mockSizeProp( { size: 10, unit: 'vw' } ),
+				bind: 'select',
+				propType: propTypeWithAvailableUnits,
+			};
+
+			// Act.
+			renderControl( <SizeControl units={ externalUnits } enablePropTypeUnits={ true } disableCustom />, props );
+
+			const select = screen.getByRole( 'button' );
+
+			// Act.
+			fireEvent.click( select );
+
+			const options = screen.getAllByRole( 'menuitem' );
+
+			// Assert.
+			expect( options ).toHaveLength( 3 );
+			expect( options[ 0 ] ).toHaveTextContent( 'VW' );
+			expect( options[ 1 ] ).toHaveTextContent( 'VH' );
+			expect( options[ 2 ] ).toHaveTextContent( '%' );
+		} );
+
+		it( 'should fallback to default variant units when enablePropTypeUnits is true but no available_units in propType', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const externalUnits: LengthUnit[] = [ 'px', 'em' ];
+			const propTypeWithoutAvailableUnits = createMockPropType( {
+				key: 'size',
+				kind: 'plain',
+				settings: {}, // No available_units
+			} );
+
+			const props = {
+				setValue,
+				value: mockSizeProp( { size: 10, unit: 'px' } ),
+				bind: 'select',
+				propType: propTypeWithoutAvailableUnits,
+			};
+
+			// Act.
+			renderControl(
+				<SizeControl units={ externalUnits } variant="angle" enablePropTypeUnits={ true } disableCustom />,
+				props
+			);
+
+			const select = screen.getByRole( 'button' );
+
+			// Act.
+			fireEvent.click( select );
+
+			const expected = [ 'deg', 'rad', 'grad', 'turn' ];
+
+			screen.getAllByRole( 'menuitem' ).forEach( ( option, index ) => {
+				expect( option ).toHaveTextContent( expected[ index ].toUpperCase() );
+			} );
+		} );
+	} );
+
 	describe( 'Keyboard Unit Selection', () => {
 		it.each( [
 			{ input: '%', expected: '%', description: 'exact match' },
