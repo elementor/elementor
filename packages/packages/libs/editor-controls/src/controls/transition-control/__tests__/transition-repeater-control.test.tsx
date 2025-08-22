@@ -23,6 +23,10 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	getSelectedElements: jest.fn( () => [ { type: 'test-widget' } ] ),
 } ) );
 
+import { getSelectedElements } from '@elementor/editor-elements';
+
+const mockedGetSelectedElements = getSelectedElements as jest.MockedFunction< typeof getSelectedElements >;
+
 const recentlyUsedGetter = () => Promise.resolve( [] );
 
 const createTransitionPropType = () =>
@@ -202,8 +206,7 @@ describe( 'TransitionRepeaterControl', () => {
 
 		it( 'should handle case when no elements are selected', async () => {
 			// Arrange
-			const { getSelectedElements } = require( '@elementor/editor-elements' );
-			getSelectedElements.mockReturnValueOnce( [ { type: null } ] );
+			mockedGetSelectedElements.mockReturnValueOnce( [ { id: 'test-id', type: 'unknown' } ] );
 			const props = createDefaultProps();
 			const subscribeSpy = jest.spyOn( repeaterEventBus, 'subscribe' );
 			const mockEventData = { someData: 'test' };
