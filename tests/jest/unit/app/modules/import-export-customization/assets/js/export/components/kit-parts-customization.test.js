@@ -92,9 +92,15 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/c
 	useExportContext: jest.fn(),
 } ) );
 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
 global.__ = jest.fn( ( text ) => text );
 
 import { useExportContext } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 
 const getCheckboxByType = ( container, type ) => {
 	const checkboxContainer = container.querySelector( `[data-type="${ type }"]` );
@@ -112,6 +118,16 @@ describe( 'ExportKitPartsSelection Component', () => {
 				includes: [ 'content', 'templates', 'settings' ],
 			},
 			dispatch: mockDispatch,
+		} );
+
+		useContextDetection.mockReturnValue( {
+			isImport: false,
+			contextData: {
+				data: {
+					includes: [ 'content', 'templates', 'settings' ],
+				},
+				dispatch: mockDispatch,
+			},
 		} );
 	} );
 
