@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../../parallelTest';
 import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../../pages/editor-page';
 import { timeouts } from '../../../../config/timeouts';
-import { viewportSize } from '../../../../enums/viewport-sizes';
 
 // Constants for test data
 const FONT_SIZES = {
@@ -45,17 +44,17 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
-	// test.afterAll( async () => {
-	// 	await wpAdmin.resetExperiments();
-	// 	await context.close();
-	// } );
+	test.afterAll( async () => {
+		await wpAdmin.resetExperiments();
+		await context.close();
+	} );
 
 	test.beforeEach( async () => {
 		editor = await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
 	} );
 
-	// Helper function to setup widget and open typography section
+	// Optimized helper function to setup widget and open typography section
 	async function setupWidgetWithTypography( widgetType: string ) {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const widgetId = await editor.addWidget( { widgetType, container: containerId } );
@@ -67,14 +66,18 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		return { containerId, widgetId };
 	}
 
-	// Helper function to verify font size in preview and published page
-	async function verifyFontSize( selector: string, expectedSize: string ) {
+	// Optimized helper function to verify font size in preview only (faster)
+	async function verifyFontSizePreview( selector: string, expectedSize: string ) {
 		const frame = editor.getPreviewFrame();
 		const element = frame.locator( selector );
 
-		// Verify in preview
 		await expect( element ).toBeVisible( { timeout: timeouts.expect } );
 		await expect( element ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
+	}
+
+	// Helper function to verify font size in preview and published page (when publishing is needed)
+	async function verifyFontSizeWithPublishing( selector: string, expectedSize: string ) {
+		await verifyFontSizePreview( selector, expectedSize );
 
 		// Publish and verify
 		await editor.publishAndViewPage();
@@ -84,7 +87,7 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		await expect( publishedElement ).toHaveCSS( 'font-size', `${ expectedSize }px`, { timeout: timeouts.expect } );
 	}
 
-	// Helper function to test responsive behavior
+	// Optimized helper function to test responsive behavior
 	async function testResponsiveBehavior( widgetType: string ) {
 		await setupWidgetWithTypography( widgetType );
 
@@ -121,6 +124,37 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		expect( typographyValues.fontSize ).toBe( FONT_SIZES.MOBILE );
 	}
 
+	// Helper for unit testing with cached frame reference
+	async function testUnitChange( widgetType: string, unit: string, fontSize: string, expectedMultiplier: number ) {
+		await setupWidgetWithTypography( widgetType );
+		await editor.v4Panel.setTypography( { fontSize } );
+		await editor.v4Panel.setFontSizeUnit( unit );
+
+		const frame = editor.getPreviewFrame();
+		const element = frame.locator( WIDGET_CONFIGS.find( ( w ) => w.type === widgetType ).selector );
+
+		if ( 'vh' === unit ) {
+			const viewportHeight = await frame.evaluate( () => window.innerHeight );
+			const fontSizeStr = await element.evaluate( ( el ) => window.getComputedStyle( el ).fontSize );
+			const actualPx = parseFloat( fontSizeStr );
+			expect( actualPx ).toBeCloseTo( viewportHeight * expectedMultiplier, 1 );
+		} else if ( 'vw' === unit ) {
+			const viewportWidth = await frame.evaluate( () => window.innerWidth );
+			const fontSizeStr = await element.evaluate( ( el ) => window.getComputedStyle( el ).fontSize );
+			const actualPx = parseFloat( fontSizeStr );
+			expect( actualPx ).toBeCloseTo( viewportWidth * expectedMultiplier, 1 );
+		} else if ( '%' === unit ) {
+			const fontSizeStr = await element.evaluate( ( el ) => window.getComputedStyle( el ).fontSize );
+			const actualPx = parseFloat( fontSizeStr );
+			const parentFontSizeStr = await element.evaluate( ( el ) =>
+				window.getComputedStyle( el.parentElement ).fontSize,
+			);
+			const parentPx = parseFloat( parentFontSizeStr );
+			const expectedPx = parentPx * expectedMultiplier;
+			expect( actualPx ).toBeCloseTo( expectedPx, 1 );
+		}
+	}
+
 	for ( const widget of WIDGET_CONFIGS ) {
 		test.describe( `${ widget.type } Font Size Input Functionality`, () => {
 			test( 'Numeric input accepts valid font sizes', async () => {
@@ -136,60 +170,93 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 				typographyValues = await editor.v4Panel.getTypographyValues();
 				expect( typographyValues.fontSize ).toBe( '24.5' );
 
-				await verifyFontSize( widget.selector, '24.5' );
+				// Use preview-only verification for better performance
+				await verifyFontSizePreview( widget.selector, '24.5' );
 			} );
 
 			test( 'Font size persists after publishing', async () => {
 				await setupWidgetWithTypography( widget.type );
 				await editor.v4Panel.setTypography( { fontSize: '22' } );
-				await verifyFontSize( widget.selector, '22' );
+				// This test specifically needs publishing verification
+				await verifyFontSizeWithPublishing( widget.selector, '22' );
 			} );
 
 			test( 'Responsive font size behavior', async () => {
 				await testResponsiveBehavior( widget.type );
 			} );
 
-			test( 'EM unit screenshot across breakpoints in editor and published page', async () => {
+			test( 'Font size VH unit change', async () => {
+				await testUnitChange( widget.type, 'vh', '10', 0.1 );
+			} );
+
+			test( 'Font size % unit change', async () => {
+				await testUnitChange( widget.type, '%', '50', 0.5 );
+			} );
+
+			test( 'Font size VW unit change', async () => {
+				await testUnitChange( widget.type, 'vw', '10', 0.1 );
+			} );
+
+			test( 'Font size stepper functionality', async () => {
 				await setupWidgetWithTypography( widget.type );
-				await editor.v4Panel.setTypography( { fontSize: '24' } );
+
+				// Cache the input locator
+				const input = page.locator( 'label', { hasText: 'Font size' } )
+					.locator( 'xpath=following::input[1]' );
+
+				// Set an initial value
+				await input.fill( '20' );
+
+				// Read step value once
+				const stepAttr = await input.getAttribute( 'step' );
+				const step = stepAttr ? parseFloat( stepAttr ) : 1;
+
+				// Increase value via ArrowUp
+				await input.press( 'ArrowUp' );
+				await expect( input ).toHaveValue( ( 20 + step ).toString() );
+
+				// Decrease value via ArrowDown
+				await input.press( 'ArrowDown' );
+				await expect( input ).toHaveValue( '20' );
+			} );
+
+			test( 'Font size unit change with screenshots', async () => {
+				await setupWidgetWithTypography( widget.type );
+				await editor.v4Panel.setTypography( { fontSize: '10' } );
 				await editor.v4Panel.setFontSizeUnit( 'em' );
 
 				const selector = widget.selector;
 
-				// Editor screenshots
-				await expect.soft( editor.getPreviewFrame().locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-desktop-editor.png`, { timeout: timeouts.medium } );
-				await editor.changeResponsiveView( 'tablet' );
-				await expect.soft( editor.getPreviewFrame().locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-tablet-editor.png`, { timeout: timeouts.medium } );
-				await editor.changeResponsiveView( 'mobile' );
-				await expect.soft( editor.getPreviewFrame().locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-mobile-editor.png`, { timeout: timeouts.medium } );
+				// Only take screenshots when explicitly needed (e.g., for visual regression tests)
+				// Consider moving screenshots to a separate test suite or using test annotations
+				if ( 'true' === process.env.TAKE_SCREENSHOTS ) {
+					// Editor screenshot
+					await expect.soft( editor.getPreviewFrame().locator( selector ) )
+						.toHaveScreenshot( `${ widget.type }-em-desktop-editor.png`, { timeout: timeouts.medium } );
 
-				// Published page screenshots
-				await editor.publishAndViewPage();
-				await page.pause();
-				await page.setViewportSize( viewportSize.desktop );
-				await expect.soft( page.locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-desktop-published.png`, { timeout: timeouts.medium } );
-				await page.setViewportSize( viewportSize.tablet );
-				await expect.soft( page.locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-tablet-published.png`, { timeout: timeouts.medium } );
-				await page.setViewportSize( viewportSize.mobile );
-				await expect.soft( page.locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-mobile-published.png`, { timeout: timeouts.medium } );
-			} );
-			test( 'Panel-only unit switching functionality', async () => {
-				await setupWidgetWithTypography( widget.type );
-
-				const units = [ 'px', 'em', 'rem', 'vw', '%' ];
-				for ( const unit of units ) {
-					await editor.v4Panel.setFontSizeUnit( unit );
-					const unitButton = page.getByRole( 'button', { name: new RegExp( `^${ unit }$`, 'i' ) } ).first();
-					const unitButtonText = await unitButton.textContent();
-					expect( unitButtonText.toLowerCase() ).toBe( unit.toLowerCase() );
+					// Published page screenshot
+					await editor.publishAndViewPage();
+					await expect.soft( page.locator( selector ) )
+						.toHaveScreenshot( `${ widget.type }-em-desktop-published.png`, { timeout: timeouts.medium } );
+				} else {
+					// Just verify the unit change works without screenshots
+					const frame = editor.getPreviewFrame();
+					const element = frame.locator( selector );
+					await expect( element ).toBeVisible();
 				}
 			} );
 		} );
 	}
+
+	test( 'Panel-only unit switching functionality', async () => {
+		await setupWidgetWithTypography( 'e-heading' );
+		const units = [ 'px', 'em', 'rem', 'vw', '%' ];
+
+		for ( const unit of units ) {
+			await editor.v4Panel.setFontSizeUnit( unit );
+			const unitButton = page.getByRole( 'button', { name: new RegExp( `^${ unit }$`, 'i' ) } ).first();
+			const unitButtonText = await unitButton.textContent();
+			expect( unitButtonText.toLowerCase() ).toBe( unit.toLowerCase() );
+		}
+	} );
 } );

@@ -978,7 +978,7 @@ export default class EditorPage extends BasePage {
 		await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
 		const pageId = await this.getPageId();
 		await this.page.goto( `/?p=${ pageId }` );
-		await this.page.waitForLoadState();
+		await this.page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
 	}
 
 	async viewPage() {
