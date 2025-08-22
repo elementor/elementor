@@ -12,11 +12,6 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/c
 	useImportContext: () => mockUseImportContext(),
 } ) );
 
-jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
-
 jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );
@@ -27,8 +22,6 @@ jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
 		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
 	},
 } ) );
-
-import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 
 describe( 'ImportCustomization Page', () => {
 	beforeEach( () => {
@@ -140,18 +133,11 @@ describe( 'ImportCustomization Page', () => {
 	} );
 
 	function setup( { isCustomizing = true, isProcessing = false } = {} ) {
-		const contextData = {
+		mockUseImportContext.mockReturnValue( {
 			isCustomizing,
 			isProcessing,
 			dispatch: mockDispatch,
 			data: { includes: [], customization: {} },
-		};
-
-		mockUseImportContext.mockReturnValue( contextData );
-
-		useContextDetection.mockReturnValue( {
-			isImport: true,
-			contextData,
 		} );
 	}
 
