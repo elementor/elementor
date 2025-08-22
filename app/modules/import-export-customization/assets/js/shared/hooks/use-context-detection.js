@@ -14,5 +14,5 @@ export default function useContextDetection() {
 		return { isImport: false, contextData: exportContext };
 	}
 
-	return { isImport: null, contextData: null };
+	throw new Error( 'useContextDetection must be used within either an ImportContextProvider or ExportContextProvider' );
 }

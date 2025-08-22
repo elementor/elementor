@@ -7,10 +7,11 @@ import { KitCustomizationDialog } from './kit-customization-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import useContextDetection from '../hooks/use-context-detection';
 
-function getInitialState( data, contextData, isImportMode ) {
+function getInitialState( contextData, isImport ) {
+	const data = contextData.data;
 	let initialState = data.includes.includes( 'settings' );
 
-	if ( isImportMode && ! contextData?.isOldExport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) {
+	if ( isImport && ! contextData?.isOldExport && ! data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme ) {
 		initialState = false;
 	}
 
@@ -20,8 +21,7 @@ function getInitialState( data, contextData, isImportMode ) {
 export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
 	const { isImport, contextData } = useContextDetection();
 
-	const isImportMode = isImport !== null ? isImport : data.hasOwnProperty( 'uploadedData' );
-	const initialState = getInitialState( data, contextData, isImportMode );
+	const initialState = getInitialState( contextData, isImport );
 	const unselectedValues = useRef( data.analytics?.customization?.settings || [] );
 
 	const [ settings, setSettings ] = useState( () => {
@@ -84,7 +84,7 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
 					settingKey="theme"
 					onSettingChange={ handleToggleChange }
-					disabled={ isImportMode && ! ( contextData?.data?.uploadedData || data?.uploadedData )?.manifest?.[ 'site-settings' ]?.theme }
+					disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
 				/>
 			</Stack>
 		</KitCustomizationDialog>
