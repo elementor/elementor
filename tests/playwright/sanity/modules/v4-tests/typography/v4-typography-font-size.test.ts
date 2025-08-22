@@ -45,10 +45,10 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
 	} );
 
-	test.afterAll( async () => {
-		await wpAdmin.resetExperiments();
-		await context.close();
-	} );
+	// test.afterAll( async () => {
+	// 	await wpAdmin.resetExperiments();
+	// 	await context.close();
+	// } );
 
 	test.beforeEach( async () => {
 		editor = await wpAdmin.openNewPage();
@@ -158,27 +158,26 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 
 				// Editor screenshots
 				await expect.soft( editor.getPreviewFrame().locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-desktop-editor.png` );
+					.toHaveScreenshot( `${ widget.type }-em-desktop-editor.png`, { timeout: timeouts.medium } );
 				await editor.changeResponsiveView( 'tablet' );
-				await page.waitForTimeout( timeouts.short );
 				await expect.soft( editor.getPreviewFrame().locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-tablet-editor.png` );
+					.toHaveScreenshot( `${ widget.type }-em-tablet-editor.png`, { timeout: timeouts.medium } );
 				await editor.changeResponsiveView( 'mobile' );
-				await page.waitForTimeout( timeouts.short );
 				await expect.soft( editor.getPreviewFrame().locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-mobile-editor.png` );
+					.toHaveScreenshot( `${ widget.type }-em-mobile-editor.png`, { timeout: timeouts.medium } );
 
 				// Published page screenshots
 				await editor.publishAndViewPage();
+				await page.pause();
 				await page.setViewportSize( viewportSize.desktop );
 				await expect.soft( page.locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-desktop-published.png` );
+					.toHaveScreenshot( `${ widget.type }-em-desktop-published.png`, { timeout: timeouts.medium } );
 				await page.setViewportSize( viewportSize.tablet );
 				await expect.soft( page.locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-tablet-published.png` );
+					.toHaveScreenshot( `${ widget.type }-em-tablet-published.png`, { timeout: timeouts.medium } );
 				await page.setViewportSize( viewportSize.mobile );
 				await expect.soft( page.locator( selector ) )
-					.toHaveScreenshot( `${ widget.type }-em-mobile-published.png` );
+					.toHaveScreenshot( `${ widget.type }-em-mobile-published.png`, { timeout: timeouts.medium } );
 			} );
 			test( 'Panel-only unit switching functionality', async () => {
 				await setupWidgetWithTypography( widget.type );
