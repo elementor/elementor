@@ -1,24 +1,52 @@
-// import { useRef } from 'react';
-// import * as React from 'react';
-// import { ControlFormLabel, type LengthUnit, SizeControl, type Unit } from '@elementor/editor-controls';
-// import type { SizePropValue } from '@elementor/editor-props';
-// import { Grid } from '@elementor/ui';
-//
-// import { PopoverGridContainer } from '../../../components/popover-grid-container';
-//
-// export const SingleSizeItemContent = ( { filterType }: { filterType: string } ) => {
-// 	const { valueName, defaultValue, units } = filterConfig[ filterType ];
-// 	const rowRef = useRef< HTMLDivElement >( null );
-// 	const defaultUnit = ( defaultValue.value.args as SizePropValue ).value.unit;
-//
-// 	return (
-// 		<PopoverGridContainer ref={ rowRef }>
-// 			<Grid item xs={ 6 }>
-// 				<ControlFormLabel>{ valueName }</ControlFormLabel>
-// 			</Grid>
-// 			<Grid item xs={ 6 }>
-// 				<SizeControl anchorRef={ rowRef } units={ units as LengthUnit[] } defaultUnit={ defaultUnit as Unit } />
-// 			</Grid>
-// 		</PopoverGridContainer>
-// 	);
-// };
+import { useRef } from 'react';
+import * as React from 'react';
+import {
+	blurFilterPropTypeUtil,
+	type createPropUtils,
+	hueRotateFilterPropTypeUtil,
+	intensityFilterPropTypeUtil,
+} from '@elementor/editor-props';
+import { Grid } from '@elementor/ui';
+
+import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
+import { ControlFormLabel } from '../../../components/control-form-label';
+import { PopoverGridContainer } from '../../../components/popover-grid-container';
+import { type LengthUnit, type Unit } from '../../../utils/size-control';
+import { SizeControl } from '../../size-control';
+import { type FilterFunction } from '../configs';
+import { useFilterConfig } from '../context/filter-config-context';
+
+export const propTypeMap: Record< string, ReturnType< typeof createPropUtils > > = {
+	blur: blurFilterPropTypeUtil,
+	intensity: intensityFilterPropTypeUtil,
+	'hue-rotate': hueRotateFilterPropTypeUtil,
+	'color-tone': blurFilterPropTypeUtil,
+};
+
+export const SingleSizeItemContent = ( { filterFunc }: { filterFunc: FilterFunction } ) => {
+	const rowRef = useRef< HTMLDivElement >( null );
+	const { getFilterFunctionConfig } = useFilterConfig();
+	const { settings, valueName, filterFunctionGroup } = getFilterFunctionConfig( filterFunc );
+	const context = useBoundProp( propTypeMap[ filterFunctionGroup as string ] );
+
+	return (
+		<PropProvider { ...context }>
+			<PropKeyProvider bind={ filterFunctionGroup }>
+				<PropKeyProvider bind={ 'size' }>
+					<PopoverGridContainer ref={ rowRef }>
+						<Grid item xs={ 6 }>
+							<ControlFormLabel>{ valueName }</ControlFormLabel>
+						</Grid>
+						<Grid item xs={ 6 }>
+							<SizeControl
+								anchorRef={ rowRef }
+								units={ settings?.available_units as unknown as LengthUnit[] }
+								defaultUnit={ settings.default_unit as Unit }
+							/>
+						</Grid>
+					</PopoverGridContainer>
+				</PropKeyProvider>
+			</PropKeyProvider>
+		</PropProvider>
+	);
+};

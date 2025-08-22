@@ -21,10 +21,8 @@ class Blur_Prop_Type extends Object_Prop_Type {
 				->units( Size_Constants::blur_filter() )
 				->default_unit( Size_Constants::UNIT_PX )
 				->default( [
-					'value' => [
-						'size' => 0,
-						'unit' => Size_Constants::UNIT_PX,
-					]
+					'size' => 0,
+					'unit' => Size_Constants::UNIT_PX,
 				] )
 		];
 	}

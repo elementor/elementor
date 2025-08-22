@@ -1,17 +1,10 @@
 import * as React from 'react';
 import { createContext, useContext, useMemo } from 'react';
-import { cssFilterFunctionPropUtil } from '@elementor/editor-props';
+import { cssFilterFunctionPropUtil, type PropType } from '@elementor/editor-props';
 
 import { useBoundProp } from '../../../bound-prop-context';
 import { type FilterFunction } from '../configs';
-import { buildFilterConfig, type FilterSizePropType } from '../utils';
-
-type FilterConfigEntry = {
-	name: string;
-	valueName: string;
-	default: unknown;
-	settings: FilterSizePropType[ 'settings' ];
-};
+import { buildFilterConfig, type FilterConfigEntry } from '../utils';
 
 type FilterConfigMap = Record< FilterFunction, FilterConfigEntry >;
 
@@ -25,10 +18,10 @@ type FilterConfigContextValue = {
 const FilterConfigContext = createContext< FilterConfigContextValue | null >( null );
 
 export function FilterConfigProvider( { children }: React.PropsWithChildren ) {
-	const propContext = useBoundProp( cssFilterFunctionPropUtil );
+	const propContext = useBoundProp( cssFilterFunctionPropUtil ) as { propType: { item_prop_type: PropType } };
 
 	const contextValue = useMemo( () => {
-		const config = buildFilterConfig( propContext.propType );
+		const config = buildFilterConfig( propContext.propType.item_prop_type );
 		const filterOptions = Object.entries( config ).map( ( [ key, conf ] ) => ( {
 			value: key,
 			label: conf.name,

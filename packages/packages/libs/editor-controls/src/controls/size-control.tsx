@@ -93,7 +93,11 @@ export const SizeControl = createControl(
 			disabled,
 			restoreValue,
 			placeholder: externalPlaceholder,
+			propType,
 		} = useBoundProp( sizePropTypeUtil );
+
+		console.log( propType );
+
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
 		const actualUnits = units ?? [ ...defaultUnits[ variant ] ];
 		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );

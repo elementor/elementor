@@ -30,6 +30,10 @@ export * from './gradient-color-stop';
 export * from './key-value';
 export * from './position';
 export * from './filter-prop-types/filter';
+export * from './filter-prop-types/filter-functions/blur-filter';
+export * from './filter-prop-types/filter-functions/intensity-filter';
+export * from './filter-prop-types/filter-functions/color-tone-filter';
+export * from './filter-prop-types/filter-functions/hue-rotate-filter';
 export * from './transform-prop-types/transform';
 export * from './transform-prop-types/transform-functions';
 export * from './transform-prop-types/transform-functions/move-transform';
@@ -41,3 +45,5 @@ export * from './filter-prop-types/filter';
 export * from './filter-prop-types/backdrop-filter';
 export * from './filter-prop-types/drop-shadow-filter';
 export * from './filter-prop-types/filter-functions/blur-filter';
+
+

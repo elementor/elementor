@@ -5,7 +5,5 @@ import { unknownChildrenSchema } from '../../utils';
 
 export const colorToneFilterPropTypeUtil = createPropUtils(
 	'color-tone',
-	z.strictObject( {
-		size: unknownChildrenSchema,
-	} )
+	unknownChildrenSchema
 );

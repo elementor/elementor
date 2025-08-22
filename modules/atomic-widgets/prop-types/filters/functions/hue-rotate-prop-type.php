@@ -21,10 +21,8 @@ class Hue_Rotate_Prop_Type extends Object_Prop_Type {
 				->units( Size_Constants::hue_rotate_filter() )
 				->default_unit( Size_Constants::UNIT_ANGLE_DEG )
 				->default( [
-					'value' => [
-						'size' => 0,
-						'unit' => Size_Constants::UNIT_ANGLE_DEG,
-					]
+					'size' => 0,
+					'unit' => Size_Constants::UNIT_ANGLE_DEG,
 				] )
 		];
 	}

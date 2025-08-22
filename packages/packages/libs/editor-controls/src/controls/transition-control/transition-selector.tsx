@@ -89,7 +89,7 @@ export const TransitionSelector = ( { recentlyUsedList }: { recentlyUsedList: st
 	};
 
 	return (
-		<Box ref={ defaultRef }>
+		<Box>
 			<UnstableTag
 				variant="outlined"
 				label={ transitionLabel }

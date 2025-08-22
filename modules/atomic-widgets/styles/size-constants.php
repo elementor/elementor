@@ -114,18 +114,18 @@ class Size_Constants {
 	}
 
 	public static function blur_filter() {
-		return [ ...self::LENGTH_UNITS, self::UNIT_CUSTOM ];
+		return self::LENGTH_UNITS;
 	}
 
 	public static function intensity_filter() {
-		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
+		return [ self::UNIT_PERCENT ];
 	}
 
 	public static function color_tone_filter() {
-		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
+		return [ self::UNIT_PERCENT ];
 	}
 
 	public static function hue_rotate_filter() {
-		return [ ...self::ANGLE_UNITS, self::UNIT_CUSTOM ];
+		return self::ANGLE_UNITS;
 	}
 }

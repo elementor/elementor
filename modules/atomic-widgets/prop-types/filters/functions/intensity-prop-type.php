@@ -21,10 +21,8 @@ class Intensity_Prop_Type extends Object_Prop_Type {
 				->units( Size_Constants::intensity_filter() )
 				->default_unit( Size_Constants::UNIT_PERCENT )
 				->default( [
-					'value' => [
-						'size' => 100,
-						'unit' => Size_Constants::UNIT_PERCENT,
-					]
+					'size' => 100,
+					'unit' => Size_Constants::UNIT_PERCENT,
 				] )
 		];
 	}

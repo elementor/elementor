@@ -7,6 +7,7 @@ import { blurFilterPropTypeUtil } from './filter-functions/blur-filter';
 import { colorToneFilterPropTypeUtil } from './filter-functions/color-tone-filter';
 import { hueRotateFilterPropTypeUtil } from './filter-functions/hue-rotate-filter';
 import { intensityFilterPropTypeUtil } from './filter-functions/intensity-filter';
+import { unknownChildrenSchema } from "../utils";
 
 const filterTypes = blurFilterPropTypeUtil.schema
 	.or( colorToneFilterPropTypeUtil.schema )
@@ -18,7 +19,7 @@ export const cssFilterFunctionPropUtil = createPropUtils(
 	'css-filter-func',
 	z.object( {
 		func: stringPropTypeUtil.schema,
-		args: filterTypes,
+		args: unknownChildrenSchema,
 	} )
 );
 

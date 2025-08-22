@@ -11,7 +11,7 @@ import {
 import { backdropFilterPropTypeUtil } from '@elementor/editor-props';
 import { Box, Grid, styled, UnstableColorIndicator } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-
+// handle case where the be doen't have settings
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { PopoverContent } from '../components/popover-content';
@@ -263,7 +263,7 @@ const PropContent = ( { item, anchorEl }: { item: FilterItemPropValue; anchorEl?
 
 	const handleValueChange = (
 		changedValue: FilterItemPropValue[ 'value' ],
-		options?: CreateOptions,
+		_?: CreateOptions,
 		meta?: { bind?: PropKey }
 	) => {
 		let newValue = structuredClone( changedValue );

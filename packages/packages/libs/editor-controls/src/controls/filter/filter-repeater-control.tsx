@@ -45,38 +45,41 @@ const FILTER_CONFIG: Record< string, Config > = {
 	},
 } as const;
 
-export const FilterRepeaterControl = ( { filterPropName }: FilterPropName ) => {
-	return (
-		<FilterConfigProvider>
-			<Repeater filterPropName={ filterPropName } />
-		</FilterConfigProvider>
-	);
-};
-
-const Repeater = ( { filterPropName = 'filter' }: FilterPropName ) => {
+export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter' }: FilterPropName ) => {
 	const { propTypeUtil, label } = ensureFilterConfig( filterPropName );
 	const { propType, value: filterValues, setValue } = useBoundProp( propTypeUtil );
+
+	return (
+		<FilterConfigProvider>
+			<PropProvider propType={ propType } value={ filterValues } setValue={ setValue }>
+				<Repeater
+					propTypeUtil={ propTypeUtil as PropTypeUtil< string, RepeatablePropValue[] > }
+					label={ label }
+				/>
+			</PropProvider>
+		</FilterConfigProvider>
+	);
+} );
+
+type RepeaterProps = { propTypeUtil: PropTypeUtil< string, RepeatablePropValue[] >; label: string };
+
+const Repeater = ( { propTypeUtil, label }: RepeaterProps ) => {
 	const { getInitialValue } = useFilterConfig();
 
 	return (
-		<PropProvider propType={ propType } value={ filterValues } setValue={ setValue }>
-			<UnstableRepeater
-				initial={ getInitialValue() as RepeatablePropValue }
-				propTypeUtil={ propTypeUtil as PropTypeUtil< string, RepeatablePropValue[] > }
-			>
-				<Header label={ label }>
-					<TooltipAddItemAction newItemIndex={ 0 } />
-				</Header>
-				<ItemsContainer itemTemplate={ <Item Label={ FilterLabel } Icon={ () => null } /> }>
-					<DuplicateItemAction />
-					<DisableItemAction />
-					<RemoveItemAction />
-				</ItemsContainer>
-				<EditItemPopover>
-					<FilterContent />
-				</EditItemPopover>
-			</UnstableRepeater>
-		</PropProvider>
+		<UnstableRepeater initial={ getInitialValue() as RepeatablePropValue } propTypeUtil={ propTypeUtil }>
+			<Header label={ label }>
+				<TooltipAddItemAction newItemIndex={ 0 } />
+			</Header>
+			<ItemsContainer itemTemplate={ <Item Label={ FilterLabel } Icon={ () => null } /> }>
+				<DuplicateItemAction />
+				<DisableItemAction />
+				<RemoveItemAction />
+			</ItemsContainer>
+			<EditItemPopover>
+				<FilterContent />
+			</EditItemPopover>
+		</UnstableRepeater>
 	);
 };
 

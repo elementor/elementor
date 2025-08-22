@@ -5,10 +5,26 @@ import { type FilterFunction, type FilterFunctionGroup, type FilterGroup, FILTER
 
 const AMOUNT_VALUE_NAME = __( 'Amount', 'elementor' );
 
-export type FilterSizePropType = PropType & {
-	settings: {
-		default_unit: string;
-		available_units: string;
+type Settings = {
+	default_unit?: string;
+	available_units: string[];
+};
+
+type SingleArgFilterFuncPropType = PropType & {
+	shape: {
+		size?: PropType & Settings;
+	};
+};
+
+type DropShadowFuncPropType = PropType & {
+	shape: {
+		color: { default: unknown };
+		xAxis: { default: unknown };
+		yAxis: { default: unknown };
+		blur: {
+			default: unknown;
+			settings: Settings;
+		};
 	};
 };
 
@@ -16,59 +32,52 @@ type CssFilterFuncPropType = PropType & {
 	shape: {
 		args: {
 			prop_types: {
-				[ K in FilterFunctionGroup ]: {
-					shape: {
-						size: FilterSizePropType;
-					};
-				};
+				[ K in FilterFunctionGroup ]: SingleArgFilterFuncPropType | DropShadowFuncPropType;
 			};
 		};
 	};
 };
 
-type DefaultValueUnion = { size: SizePropValue } | DropShadowFilterPropValue[ 'value' ];
-
-type DefaultBuilderArgs = {
-	filterFunction: FilterFunction;
-	filterFunctionGroup: FilterFunctionGroup;
-	value: DefaultValueUnion;
+type Config = {
+	defaultValue: { size: SizePropValue } | DropShadowFilterPropValue[ 'value' ];
+	settings: Settings;
 };
 
 type CssFilterFuncValue = ReturnType< typeof createDefaultValue >;
 
-type FilterConfigEntry = {
+export type FilterConfigEntry = {
 	name: string;
 	valueName: string;
+	filterFunctionGroup: FilterFunctionGroup;
 	default: CssFilterFuncValue;
-	settings: FilterSizePropType[ 'settings' ];
+	settings: Config[ 'settings' ];
 };
 
 type FilterConfigMap = Record< FilterFunction, FilterConfigEntry >;
 
-const DEFAULT_FACTORIES: Partial< Record< FilterFunction, ( sizePropType: PropType ) => DefaultValueUnion > > = {
-	'drop-shadow': ( sizePropType: PropType ) => sizePropType.default as DefaultValueUnion,
+const CONFIG_FACTORIES: Partial< Record< FilterFunction, ( propType: PropType ) => Config > > = {
+	'drop-shadow': ( propType: PropType ) => buildDropShadowConfig( propType as DropShadowFuncPropType ),
 };
 
-export function buildFilterConfig( propType: PropType ): FilterConfigMap {
-	const cssPropType = propType as CssFilterFuncPropType;
-
+export function buildFilterConfig( cssFilterPropType: PropType ): FilterConfigMap {
 	const entries = ( Object.entries( FILTERS_BY_GROUP ) as [ FilterFunctionGroup, FilterGroup ][] ).flatMap(
 		( [ filterFunctionGroup, group ] ) =>
 			( Object.entries( group ) as [ FilterFunction, { name: string; valueName?: string } ][] ).map(
 				( [ filterFunction, { name, valueName } ] ) => {
-					const sizePropType = extractSizePropType( cssPropType, filterFunctionGroup );
+					const propType = extractPropType( cssFilterPropType as CssFilterFuncPropType, filterFunctionGroup ); // const sizePropType = extractSizePropType( cssPropType, filterFunctionGroup );
 
-					const value =
-						DEFAULT_FACTORIES[ filterFunction ]?.( sizePropType ) ?? buildSizeDefault( sizePropType );
+					const { defaultValue: value, settings } =
+						CONFIG_FACTORIES[ filterFunction ]?.( propType ) ??
+						buildSizeConfig( propType as SingleArgFilterFuncPropType );
 
 					const defaultValue = createDefaultValue( { filterFunction, filterFunctionGroup, value } );
-					const settings = getSettings( sizePropType );
 
 					const entry: FilterConfigEntry = {
 						name,
 						valueName: valueName ?? AMOUNT_VALUE_NAME,
 						default: defaultValue,
 						settings,
+						filterFunctionGroup,
 					};
 
 					return [ filterFunction, entry ] as const;
@@ -81,6 +90,12 @@ export function buildFilterConfig( propType: PropType ): FilterConfigMap {
 		return acc;
 	}, {} as FilterConfigMap );
 }
+
+type DefaultBuilderArgs = {
+	filterFunction: FilterFunction;
+	filterFunctionGroup: FilterFunctionGroup;
+	value: Config[ 'defaultValue' ];
+};
 
 function createDefaultValue( { filterFunction, filterFunctionGroup, value }: DefaultBuilderArgs ) {
 	return {
@@ -95,19 +110,43 @@ function createDefaultValue( { filterFunction, filterFunctionGroup, value }: Def
 	};
 }
 
-function buildSizeDefault( sizePropType: PropType ): DefaultValueUnion {
+function buildSizeConfig( propType: SingleArgFilterFuncPropType ): Config {
+	const sizePropType = propType?.shape?.size;
+
 	return {
-		size: sizePropType.default as SizePropValue,
+		defaultValue: {
+			size: sizePropType?.default as SizePropValue,
+		},
+		settings: {
+			available_units: filterOutCustomUnit(
+				sizePropType?.settings.available_units as Settings[ 'available_units' ]
+			),
+			default_unit: sizePropType?.settings.default_unit as Settings[ 'default_unit' ],
+		},
 	};
 }
 
-function getSettings( sizePropType: FilterSizePropType ) {
+function buildDropShadowConfig( propType: DropShadowFuncPropType ): Config {
+	const dropShadowPropType = propType.shape;
+
 	return {
-		default_unit: sizePropType?.settings.default_unit,
-		available_units: sizePropType?.settings.available_units,
+		defaultValue: {
+			blur: dropShadowPropType?.blur?.default,
+			xAxis: dropShadowPropType?.xAxis?.default,
+			yAxis: dropShadowPropType?.yAxis?.default,
+			color: dropShadowPropType?.color?.default,
+		},
+		settings: {
+			available_units: filterOutCustomUnit( dropShadowPropType?.blur?.settings.available_units ),
+		},
 	};
 }
 
-function extractSizePropType( propType: CssFilterFuncPropType, filterFunctionGroup: FilterFunctionGroup ) {
-	return propType.shape?.args?.prop_types[ filterFunctionGroup ]?.shape?.size;
+function extractPropType( propType: CssFilterFuncPropType, filterFunctionGroup: FilterFunctionGroup ) {
+	return propType.shape?.args?.prop_types[ filterFunctionGroup ];
+}
+
+// TODO to remove this when we refactor the size control to receive units from backend [ticket number here to be added]
+function filterOutCustomUnit( units: string[] ) {
+	return units.filter( ( unit ) => unit !== 'custom' );
 }

@@ -21,10 +21,8 @@ class Color_Tone_Prop_Type extends Object_Prop_Type {
 				->units( Size_Constants::color_tone_filter() )
 				->default_unit( Size_Constants::UNIT_PERCENT )
 				->default( [
-					'value' => [
-						'size' => 0,
-						'unit' => Size_Constants::UNIT_PERCENT,
-					]
+					'size' => 0,
+					'unit' => Size_Constants::UNIT_PERCENT,
 				] )
 		];
 	}
