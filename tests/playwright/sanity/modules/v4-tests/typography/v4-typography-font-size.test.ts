@@ -155,69 +155,90 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 		}
 	}
 
+	// Common functionality tests - run once with e-heading (most representative widget)
+	// These test panel behavior, not widget-specific rendering
+	test.describe( 'Common Font Size Functionality', () => {
+		const testWidget = 'e-heading';
+		const testWidgetConfig = WIDGET_CONFIGS.find( ( w ) => w.type === testWidget );
+
+		test( 'Numeric input accepts valid font sizes', async () => {
+			await setupWidgetWithTypography( testWidget );
+
+			// Test regular number
+			await editor.v4Panel.setTypography( { fontSize: '24' } );
+			let typographyValues = await editor.v4Panel.getTypographyValues();
+			expect( typographyValues.fontSize ).toBe( '24' );
+
+			// Test decimal number
+			await editor.v4Panel.setTypography( { fontSize: '24.5' } );
+			typographyValues = await editor.v4Panel.getTypographyValues();
+			expect( typographyValues.fontSize ).toBe( '24.5' );
+
+			// Use preview-only verification for better performance
+			await verifyFontSizePreview( testWidgetConfig.selector, '24.5' );
+		} );
+
+		test( 'Responsive font size behavior', async () => {
+			await testResponsiveBehavior( testWidget );
+		} );
+
+		test( 'Font size VH unit change', async () => {
+			await testUnitChange( testWidget, 'vh', '10', 0.1 );
+		} );
+
+		test( 'Font size % unit change', async () => {
+			await testUnitChange( testWidget, '%', '50', 0.5 );
+		} );
+
+		test( 'Font size VW unit change', async () => {
+			await testUnitChange( testWidget, 'vw', '10', 0.1 );
+		} );
+
+		test( 'Font size stepper functionality', async () => {
+			await setupWidgetWithTypography( testWidget );
+
+			// Cache the input locator
+			const input = page.locator( 'label', { hasText: 'Font size' } )
+				.locator( 'xpath=following::input[1]' );
+
+			// Set an initial value
+			await input.fill( '20' );
+
+			// Read step value once
+			const stepAttr = await input.getAttribute( 'step' );
+			const step = stepAttr ? parseFloat( stepAttr ) : 1;
+
+			// Increase value via ArrowUp
+			await input.press( 'ArrowUp' );
+			await expect( input ).toHaveValue( ( 20 + step ).toString() );
+
+			// Decrease value via ArrowDown
+			await input.press( 'ArrowDown' );
+			await expect( input ).toHaveValue( '20' );
+		} );
+
+		test( 'Panel-only unit switching functionality', async () => {
+			await setupWidgetWithTypography( testWidget );
+			const units = [ 'px', 'em', 'rem', 'vw', '%' ];
+
+			for ( const unit of units ) {
+				await editor.v4Panel.setFontSizeUnit( unit );
+				const unitButton = page.getByRole( 'button', { name: new RegExp( `^${ unit }$`, 'i' ) } ).first();
+				const unitButtonText = await unitButton.textContent();
+				expect( unitButtonText.toLowerCase() ).toBe( unit.toLowerCase() );
+			}
+		} );
+	} );
+
+	// Widget-specific tests - these need to run for each widget as they test rendering/visual behavior
+	// Only tests that verify widget-specific rendering differences
 	for ( const widget of WIDGET_CONFIGS ) {
-		test.describe( `${ widget.type } Font Size Input Functionality`, () => {
-			test( 'Numeric input accepts valid font sizes', async () => {
-				await setupWidgetWithTypography( widget.type );
-
-				// Test regular number
-				await editor.v4Panel.setTypography( { fontSize: '24' } );
-				let typographyValues = await editor.v4Panel.getTypographyValues();
-				expect( typographyValues.fontSize ).toBe( '24' );
-
-				// Test decimal number
-				await editor.v4Panel.setTypography( { fontSize: '24.5' } );
-				typographyValues = await editor.v4Panel.getTypographyValues();
-				expect( typographyValues.fontSize ).toBe( '24.5' );
-
-				// Use preview-only verification for better performance
-				await verifyFontSizePreview( widget.selector, '24.5' );
-			} );
-
+		test.describe( `${ widget.type } Widget-Specific Rendering Tests`, () => {
 			test( 'Font size persists after publishing', async () => {
 				await setupWidgetWithTypography( widget.type );
 				await editor.v4Panel.setTypography( { fontSize: '22' } );
-				// This test specifically needs publishing verification
+				// This test specifically needs publishing verification per widget
 				await verifyFontSizeWithPublishing( widget.selector, '22' );
-			} );
-
-			test( 'Responsive font size behavior', async () => {
-				await testResponsiveBehavior( widget.type );
-			} );
-
-			test( 'Font size VH unit change', async () => {
-				await testUnitChange( widget.type, 'vh', '10', 0.1 );
-			} );
-
-			test( 'Font size % unit change', async () => {
-				await testUnitChange( widget.type, '%', '50', 0.5 );
-			} );
-
-			test( 'Font size VW unit change', async () => {
-				await testUnitChange( widget.type, 'vw', '10', 0.1 );
-			} );
-
-			test( 'Font size stepper functionality', async () => {
-				await setupWidgetWithTypography( widget.type );
-
-				// Cache the input locator
-				const input = page.locator( 'label', { hasText: 'Font size' } )
-					.locator( 'xpath=following::input[1]' );
-
-				// Set an initial value
-				await input.fill( '20' );
-
-				// Read step value once
-				const stepAttr = await input.getAttribute( 'step' );
-				const step = stepAttr ? parseFloat( stepAttr ) : 1;
-
-				// Increase value via ArrowUp
-				await input.press( 'ArrowUp' );
-				await expect( input ).toHaveValue( ( 20 + step ).toString() );
-
-				// Decrease value via ArrowDown
-				await input.press( 'ArrowDown' );
-				await expect( input ).toHaveValue( '20' );
 			} );
 
 			test( 'Font size unit change with screenshots', async () => {
@@ -247,16 +268,4 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 			} );
 		} );
 	}
-
-	test( 'Panel-only unit switching functionality', async () => {
-		await setupWidgetWithTypography( 'e-heading' );
-		const units = [ 'px', 'em', 'rem', 'vw', '%' ];
-
-		for ( const unit of units ) {
-			await editor.v4Panel.setFontSizeUnit( unit );
-			const unitButton = page.getByRole( 'button', { name: new RegExp( `^${ unit }$`, 'i' ) } ).first();
-			const unitButtonText = await unitButton.textContent();
-			expect( unitButtonText.toLowerCase() ).toBe( unit.toLowerCase() );
-		}
-	} );
 } );
