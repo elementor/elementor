@@ -44,8 +44,9 @@ define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modul
 define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
-// Mixpanel token for editor events tracking (injected during build)
-define( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN', '' );
+if ( ! defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ) {
+	define( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN', '' );
+}
 
 if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
