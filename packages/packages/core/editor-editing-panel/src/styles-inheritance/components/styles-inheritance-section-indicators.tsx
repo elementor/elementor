@@ -5,6 +5,7 @@ import { isElementsStylesProvider } from '@elementor/editor-styles-repository';
 import { Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { CustomCssIndicator } from '../../components/custom-css-indicator';
 import { StyleIndicator } from '../../components/style-indicator';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesInheritanceSnapshot } from '../../contexts/styles-inheritance-context';
@@ -17,6 +18,10 @@ type Props = {
 export const StylesInheritanceSectionIndicators = ( { fields }: Props ) => {
 	const { id, meta, provider } = useStyle();
 	const snapshot = useStylesInheritanceSnapshot();
+
+	if ( fields.includes( 'custom_css' ) ) {
+		return <CustomCssIndicator />;
+	}
 
 	const snapshotFields = Object.fromEntries(
 		Object.entries( snapshot ?? {} ).filter( ( [ key ] ) => fields.includes( key as PropKey ) )
