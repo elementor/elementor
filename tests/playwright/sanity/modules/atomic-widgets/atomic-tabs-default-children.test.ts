@@ -12,7 +12,11 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 
 		// Enable atomic elements and nested elements experiments
 		await wpAdmin.setExperiments( {
+			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
+		} );
+
+		await wpAdmin.setExperiments( {
 			e_nested_elements: 'active',
 		} );
 
