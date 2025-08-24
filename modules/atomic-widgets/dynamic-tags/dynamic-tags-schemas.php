@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 
 use Elementor\Core\DynamicTags\Base_Tag;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -65,6 +66,13 @@ class Dynamic_Tags_Schemas {
 			return String_Prop_Type::make()
 				->default( $control['default'] ?? null )
 				->enum( array_keys( $control['options'] ?? [] ) );
+		}
+
+		if ( 'switcher' === $control_type ) {
+			$default = $control['default'];
+
+			return Boolean_Prop_Type::make()
+				->default( 'yes' === $default || true === $default );
 		}
 
 		return null;
