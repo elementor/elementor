@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext, useState } from 'react';
-import { type PropTypeUtil } from '@elementor/editor-props';
+import { type PropType, type PropTypeUtil } from '@elementor/editor-props';
 import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
@@ -26,6 +26,10 @@ type RepeaterContextType< T extends RepeatablePropValue > = {
 	removeItem: ( index: number ) => void;
 	rowRef: HTMLElement | null;
 	setRowRef: ( ref: HTMLElement | null | SetterFn< HTMLElement | null > ) => void;
+	controlAdornmentContext?: {
+		path: string[];
+		propType: PropType;
+	};
 };
 
 const RepeaterContext = createContext< RepeaterContextType< RepeatablePropValue > | null >( null );
@@ -46,7 +50,16 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
-}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable?: boolean } > ) => {
+	controlAdornmentContext,
+}: React.PropsWithChildren< {
+	initial: T;
+	propTypeUtil: PropTypeUtil< string, T[] >;
+	isSortable?: boolean;
+	controlAdornmentContext?: {
+		path?: string[];
+		propType?: PropType;
+	};
+} > ) => {
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
 	const [ items, setItems ] = useSyncExternalState( {
@@ -118,6 +131,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				removeItem,
 				rowRef,
 				setRowRef,
+				controlAdornmentContext,
 			} }
 		>
 			{ children }

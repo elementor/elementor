@@ -3,7 +3,7 @@ import { type ComponentType, createContext, type PropsWithChildren, useContext }
 
 type ControlAdornmentsItems = Array< {
 	id: string;
-	Adornment: ComponentType;
+	Adornment: ComponentType< { customContext?: { path: string[]; propType: PropType } } >;
 } >;
 
 type ControlAdornmentsContext = {

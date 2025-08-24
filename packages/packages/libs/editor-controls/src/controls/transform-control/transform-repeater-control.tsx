@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { transformFunctionsPropTypeUtil, transformPropTypeUtil } from '@elementor/editor-props';
+import { type PropType, transformFunctionsPropTypeUtil, transformPropTypeUtil } from '@elementor/editor-props';
 import { AdjustmentsIcon, InfoCircleFilledIcon } from '@elementor/icons';
 import { bindTrigger, Box, IconButton, type PopupState, Typography, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -43,7 +43,7 @@ export const TransformRepeaterControl = createControl( () => {
 		<PropProvider { ...context }>
 			<TransformBaseControl popupState={ popupState } anchorRef={ headerRef } />
 			<PropKeyProvider bind={ repeaterBindKey }>
-				<Repeater headerRef={ headerRef } />
+				<Repeater headerRef={ headerRef } propType={ context.propType } />
 			</PropKeyProvider>
 		</PropProvider>
 	);
@@ -62,7 +62,7 @@ const ToolTip = (
 	</Box>
 );
 
-const Repeater = ( { headerRef }: { headerRef: React.RefObject< HTMLDivElement > } ) => {
+const Repeater = ( { headerRef, propType }: { headerRef: React.RefObject< HTMLDivElement >; propType: PropType } ) => {
 	const transformFunctionsContext = useBoundProp( transformFunctionsPropTypeUtil );
 	const availableValues = [ initialTransformValue, initialScaleValue, initialRotateValue, initialSkewValue ];
 	const { value: transformValues } = transformFunctionsContext;
@@ -78,6 +78,7 @@ const Repeater = ( { headerRef }: { headerRef: React.RefObject< HTMLDivElement >
 			<UnstableRepeater
 				initial={ getInitialValue() ?? initialTransformValue }
 				propTypeUtil={ transformFunctionsPropTypeUtil }
+				controlAdornmentContext={ { path: [ 'transform' ], propType } }
 			>
 				<Header label={ __( 'Transform', 'elementor' ) } ref={ headerRef }>
 					<TooltipAddItemAction
