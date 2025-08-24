@@ -35,7 +35,6 @@ import LinkInBioLibraryModule from 'elementor/modules/link-in-bio/assets/js/edit
 import CloudLibraryModule from 'elementor/modules/cloud-library/assets/js/editor/module';
 
 import * as elementTypes from './elements/types';
-import * as hints from './hints';
 import ElementBase from './elements/types/base/element-base';
 import { FontVariables } from './utils/font-variables';
 
@@ -62,7 +61,6 @@ export default class EditorBase extends Marionette.Application {
 	ajax = elementorCommon.ajax;
 	conditions = new ControlConditions();
 	history = require( 'elementor/modules/history/assets/js/module' );
-	hints = new hints.Ally();
 
 	channels = {
 		editor: Backbone.Radio.channel( 'ELEMENTOR:editor' ),
