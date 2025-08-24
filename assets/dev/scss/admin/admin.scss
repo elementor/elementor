@@ -110,17 +110,25 @@
 			justify-content: start;
 			align-items: center;
 
+			.button-upgrade {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				margin-inline: 0;
+				margin-block-start: 10px;
+				color: #fff;
+				background-color: #93003f;
+				border: 0;
+			}
+
 			> img {
-				width: 50%;
+				width: 45%;
 			}
 		}
 	}
 
 	.elementor-box-action {
 		display: flex;
-		justify-content: flex-end;
-		align-items: flex-end;
-		margin-block-start: 30px;
 
 		.elementor-manually-link {
 			color: #72777c;
