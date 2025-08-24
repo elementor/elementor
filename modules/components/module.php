@@ -34,6 +34,12 @@ class Module extends BaseModule {
 		];
 	}
 
+	public function get_widgets() {
+		return [
+			'Component',
+		];
+	}
+
 	private function register_hooks() {
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 
