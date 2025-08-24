@@ -660,7 +660,7 @@ public function test_process_batch__batch_operation_failed_error() {
     $this->assertEquals( 'Batch operation failed', $response_data['message'] );
     $this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
     $this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
-    $this->assertStringContains( 'already exists', $response_data['data']['temp-fail']['message'] );
+    $this->assertStringContainsString( 'already exists', $response_data['data']['temp-fail']['message'] );
 }
 
 public function test_process_batch__validation_invalid_watermark() {
@@ -723,7 +723,7 @@ public function test_process_batch__validation_invalid_operation_structure() {
     // Assert
     $this->assertInstanceOf( \WP_Error::class, $validation_result );
     $this->assertEquals( 'invalid_operation_structure', $validation_result->get_error_code() );
-    $this->assertStringContains( 'Invalid operation structure at index 0', $validation_result->get_error_message() );
+    $this->assertStringContainsString( 'Invalid operation structure at index 0', $validation_result->get_error_message() );
 }
 
 public function test_process_batch__validation_invalid_operation_type() {
@@ -746,7 +746,7 @@ public function test_process_batch__validation_invalid_operation_type() {
     // Assert
     $this->assertInstanceOf( \WP_Error::class, $validation_result );
     $this->assertEquals( 'invalid_operation_type', $validation_result->get_error_code() );
-    $this->assertStringContains( 'Invalid operation type at index 0', $validation_result->get_error_message() );
+    $this->assertStringContainsString( 'Invalid operation type at index 0', $validation_result->get_error_message() );
 }
 
 public function test_process_batch__unauthorized_user_access() {
