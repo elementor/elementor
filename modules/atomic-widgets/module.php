@@ -16,10 +16,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Divider\Atomic_Divider;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg\Atomic_Svg;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_List;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Link;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
@@ -96,6 +92,8 @@ use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -239,13 +237,6 @@ class Module extends BaseModule {
 	private function register_elements( Elements_Manager $elements_manager ) {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
-
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NESTED ) ) {
-			$elements_manager->register_element_type( new Atomic_Tabs() );
-			$elements_manager->register_element_type( new Atomic_Tab_List() );
-			$elements_manager->register_element_type( new Atomic_Tab_Link() );
-			$elements_manager->register_element_type( new Atomic_Tabs_Content() );
-		}
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
@@ -281,13 +272,20 @@ class Module extends BaseModule {
 		$transformers->register( Color_Stop_Prop_Type::get_key(), new Color_Stop_Transformer() );
 		$transformers->register( Gradient_Color_Stop_Prop_Type::get_key(), new Combine_Array_Transformer( ',' ) );
 		$transformers->register( Position_Prop_Type::get_key(), new Position_Transformer() );
-		$transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
 		$transformers->register( Transform_Move_Prop_Type::get_key(), new Transform_Move_Transformer() );
 		$transformers->register( Transform_Scale_Prop_Type::get_key(), new Transform_Scale_Transformer() );
 		$transformers->register( Transform_Rotate_Prop_Type::get_key(), new Transform_Rotate_Transformer() );
 		$transformers->register( Transform_Skew_Prop_Type::get_key(), new Transform_Skew_Transformer() );
 		$transformers->register( Transform_Functions_Prop_Type::get_key(), new Transform_Functions_Transformer() );
-		$transformers->register( Transform_Prop_Type::get_key(), new Multi_Props_Transformer( [ 'transform-functions', 'transform-origin', 'children-perspective' ], fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key ) );
+		$transformers->register( Transform_Origin_Prop_Type::get_key(), new Transform_Origin_Transformer() );
+		$transformers->register( Perspective_Origin_Prop_Type::get_key(), new Perspective_Origin_Transformer() );
+		$transformers->register(
+			Transform_Prop_Type::get_key(),
+			new Multi_Props_Transformer(
+				[ 'transform-functions', 'transform-origin', 'perspective', 'perspective-origin' ],
+				fn( $_, $key ) => 'transform-functions' === $key ? 'transform' : $key
+			)
+		);
 		$transformers->register(
 			Border_Radius_Prop_Type::get_key(),
 			new Multi_Props_Transformer( [ 'start-start', 'start-end', 'end-start', 'end-end' ], fn ( $_, $key ) => "border-{$key}-radius" )
