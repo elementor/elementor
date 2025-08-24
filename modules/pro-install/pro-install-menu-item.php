@@ -104,7 +104,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 				$connected_user = $this->get_connected_account();
 
 				if ( $connected_user ) :
-					echo sprintf(
+					printf(
 						/* translators: %s: Connected user. */
 						esc_html__( 'You\'re connected as %s.', 'elementor' ),
 						'<strong>' . esc_html( $connected_user ) . '</strong>'
@@ -152,7 +152,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 				<h2><?php echo esc_html__( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' ); ?></p>
 				<div class="elementor-box-action">
-					<a class="button button-upgrade" href="https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash">
+					<a class="button button-upgrade" href="https://go.elementor.com/go-pro-connect-account-screen">
 						<i class="eicon-upgrade-crown" aria-hidden="true"></i>
 						<?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?>
 					</a>

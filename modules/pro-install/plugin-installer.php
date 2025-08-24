@@ -46,7 +46,7 @@ class Plugin_Installer {
 
 	private function do_install() {
 		$package_url = $this->get_package_url();
-		if ( empty( $package_url ) ){
+		if ( empty( $package_url ) ) {
 			return new \WP_Error( 'no_package_url', sprintf( 'The requested plugin `%s` has no package URL', $this->plugin_slug ) );
 		}
 
