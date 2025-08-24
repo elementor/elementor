@@ -666,9 +666,6 @@ abstract class Document extends Controls_Stack {
 			return false;
 		}
 
-		error_log('--------------------------------is_editable_by_current_user--------------------------------');
-		error_log('doc is editable: ' . self::get_property( 'is_editable' ));
-		error_log('user can edit: ' . User::is_current_user_can_edit( $this->get_main_id() ));
 		return self::get_property( 'is_editable' ) && User::is_current_user_can_edit( $this->get_main_id() );
 	}
 
@@ -795,8 +792,6 @@ abstract class Document extends Controls_Stack {
 	 * @return bool
 	 */
 	public function save( $data ) {
-		error_log('--------------------------------save start--------------------------------');
-		error_log(print_r($data, true));
 		/**
 		 * Set locale to "C" to avoid issues with comma as decimal separator.
 		 *
@@ -820,20 +815,12 @@ abstract class Document extends Controls_Stack {
 		 */
 		$data = apply_filters( 'elementor/document/save/data', $data, $this );
 
-		error_log('--------------------------------get data from filters--------------------------------');
-		error_log(print_r($data, true));
-
 		$this->add_handle_revisions_changed_filter();
 
-		error_log('--------------------------------is_editable_by_current_user--------------------------------');
-		error_log($this->is_editable_by_current_user());
-
 		if ( ! $this->is_editable_by_current_user() ) {
-			error_log('--------------------------------is_editable_by_current_user false--------------------------------');
 			return false;
 		}
 
-		error_log('--------------------------------set is saving--------------------------------');
 		$this->set_is_saving( true );
 
 		/**
@@ -846,19 +833,13 @@ abstract class Document extends Controls_Stack {
 		 * @param \Elementor\Core\Base\Document $this The current document.
 		 * @param $data.
 		 */
-		error_log('--------------------------------before save--------------------------------');
 		do_action( 'elementor/document/before_save', $this, $data );
-
-		error_log('--------------------------------after before save--------------------------------');
 
 		if ( ! current_user_can( 'unfiltered_html' ) ) {
 			$data = map_deep( $data, function ( $value ) {
 				return is_bool( $value ) || is_null( $value ) ? $value : wp_kses_post( $value );
 			} );
 		}
-
-		error_log('--------------------------------after map_deep--------------------------------');
-		error_log(print_r($data, true));
 
 		if ( ! empty( $data['settings'] ) ) {
 			if ( isset( $data['settings']['post_status'] ) && self::STATUS_AUTOSAVE === $data['settings']['post_status'] ) {
@@ -871,9 +852,6 @@ abstract class Document extends Controls_Stack {
 
 			$this->refresh_post();
 		}
-
-		error_log('--------------------------------before save elements--------------------------------');
-		error_log(print_r($data, true));
 
 		// Don't check is_empty, because an empty array should be saved.
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
@@ -1103,7 +1081,6 @@ abstract class Document extends Controls_Stack {
 				continue;
 			}
 
-			//here
 			if ( $this->is_saving ) {
 				$element_data = $element->get_data_for_save();
 			} else {
@@ -1368,11 +1345,7 @@ abstract class Document extends Controls_Stack {
 	 * @param array $elements
 	 */
 	protected function save_elements( $elements ) {
-		error_log('---------------------save_elements start------------------------');
-		error_log(print_r($elements, true));
 		$editor_data = $this->get_elements_raw_data( $elements );
-		error_log('--------------------- after get elements raw data ------------------------');
-		error_log(print_r($editor_data, true));
 
 		// We need the `wp_slash` in order to avoid the unslashing during the `update_post_meta`
 		$json_value = wp_slash( wp_json_encode( $editor_data ) );

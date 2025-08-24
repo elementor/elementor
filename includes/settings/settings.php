@@ -272,7 +272,7 @@ class Settings extends Settings_Page {
 								'field_args' => [
 									'type' => 'checkbox_list_cpt',
 									'std' => [ 'page', 'post' ],
-									'exclude' => [ 'attachment', 'elementor_library', 'component' ],
+									'exclude' => [ 'attachment', 'elementor_library' ],
 								],
 								'setting_args' => [ $validations_class_name, 'checkbox_list' ],
 							],
