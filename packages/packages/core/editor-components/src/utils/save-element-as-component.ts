@@ -1,12 +1,12 @@
 import { replaceElement, type V1Element } from '@elementor/editor-elements';
 
-import { apiClient, type ComponentCreateResponse } from '../api';
+import { apiClient, type CreateComponentResponse } from '../api';
 
 export const saveElementAsComponent = async (
 	element: V1Element,
 	componentName: string,
 	options?: {
-		onSuccess?: ( result: ComponentCreateResponse ) => void;
+		onSuccess?: ( result: CreateComponentResponse ) => void;
 		onError?: ( error: unknown ) => void;
 	}
 ) => {

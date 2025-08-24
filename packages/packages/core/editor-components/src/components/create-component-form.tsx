@@ -1,13 +1,16 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1Element } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type ComponentCreateResponse } from '../api';
+import { type CreateComponentResponse } from '../api';
+import { useComponents } from '../hooks/use-components';
+import { type FormErrors, type FormValues } from '../types';
 import { saveElementAsComponent } from '../utils/save-element-as-component';
+import { validateComponentForm } from '../utils/validate-component-form';
 
 type SaveAsComponentEventData = {
 	element: V1Element;
@@ -24,20 +27,35 @@ const FONT_SIZE = 'tiny';
 const POPOVER_WIDTH = '268px';
 const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
+const initialValues: FormValues = {
+	componentName: '',
+};
+
 export function CreateComponentForm() {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isLoading, setIsLoading ] = useState( false );
 
-	const [ componentName, setComponentName ] = useState( '' );
-	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } >();
+	const [ values, setValues ] = useState< FormValues >( initialValues );
+	const [ errors, setErrors ] = useState< FormErrors >( {} );
 
+	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } >();
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
+
+	const { data: components } = useComponents();
 
 	const element = useRef< V1Element | null >( null );
 
+	const isValid = useMemo( () => {
+		return Object.values( errors ).every( ( error ) => ! error );
+	}, [ errors ] );
+
+	const existingComponentNames = useMemo( () => {
+		return components?.map( ( component ) => component.name ) ?? [];
+	}, [ components ] );
+
 	const openPopup = useCallback( ( event: CustomEvent< SaveAsComponentEventData > ) => {
 		element.current = event.detail.element;
-		setComponentName( getElementLabel( event.detail.element.id ) );
+		setValues( { componentName: getElementLabel( event.detail.element.id ) } );
 		setAnchorPosition( event.detail.anchorPosition );
 
 		setIsOpen( true );
@@ -51,28 +69,48 @@ export function CreateComponentForm() {
 		};
 	}, [ openPopup ] );
 
-	const resetAndClosePopup = () => {
-		setIsOpen( false );
-		element.current = null;
-		setComponentName( '' );
-		setAnchorPosition( undefined );
-		setIsLoading( false );
+	const handleChange = ( e: React.ChangeEvent< HTMLInputElement >, field: keyof FormValues ) => {
+		const updated = { ...values, [ field ]: e.target.value };
+		setValues( updated );
+
+		const { success, errors: validationErrors } = validateComponentForm(
+			updated,
+			existingComponentNames,
+			'change'
+		);
+
+		if ( ! success ) {
+			setErrors( validationErrors );
+		} else {
+			setErrors( {} );
+		}
 	};
 
 	const handleSave = async () => {
-		if ( ! element.current || ! componentName.trim() ) {
+		if ( ! element.current ) {
+			return;
+		}
+
+		const {
+			success,
+			parsedValues,
+			errors: validationErrors,
+		} = validateComponentForm( values, existingComponentNames, 'submit' );
+
+		if ( ! success ) {
+			setErrors( validationErrors );
 			return;
 		}
 
 		setIsLoading( true );
 
-		await saveElementAsComponent( element.current, componentName.trim(), {
-			onSuccess: ( result: ComponentCreateResponse ) => {
+		await saveElementAsComponent( element.current, parsedValues.componentName, {
+			onSuccess: ( result: CreateComponentResponse ) => {
 				setResultNotification( {
 					show: true,
 					// Translators: %1$s: Component name, %2$s: Component ID
 					message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
-						.replace( '%1$s', componentName )
+						.replace( '%1$s', parsedValues.componentName )
 						.replace( '%2$s', result.component_id.toString() ),
 					type: 'success',
 				} );
@@ -89,6 +127,15 @@ export function CreateComponentForm() {
 			},
 		} );
 
+		setIsLoading( false );
+	};
+
+	const resetAndClosePopup = () => {
+		setIsOpen( false );
+		element.current = null;
+		setValues( initialValues );
+		setErrors( {} );
+		setAnchorPosition( undefined );
 		setIsLoading( false );
 	};
 
@@ -127,11 +174,13 @@ export function CreateComponentForm() {
 								id={ 'component-name' }
 								size={ FONT_SIZE }
 								fullWidth
-								value={ componentName }
+								value={ values.componentName }
 								onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
-									setComponentName( e.target.value )
+									handleChange( e, 'componentName' )
 								}
 								inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
+								error={ Boolean( errors.componentName ) }
+								helperText={ errors.componentName }
 							/>
 						</Grid>
 					</Grid>
@@ -147,7 +196,7 @@ export function CreateComponentForm() {
 						</Button>
 						<Button
 							onClick={ handleSave }
-							disabled={ isLoading || ! componentName.trim() }
+							disabled={ isLoading || ! isValid }
 							variant="contained"
 							color="primary"
 							size="small"

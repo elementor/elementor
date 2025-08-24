@@ -39,14 +39,15 @@ describe( 'replaceElement', () => {
 		replaceElement( { currentElement, newElement } );
 
 		// Assert.
-		expect( mockRunCommand ).toHaveBeenCalledWith(
-			'document/elements/create',
-			{ container: parentElement, model: newElement, options: { at: 1, useHistory: true } },
-		);
+		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/create', {
+			container: parentElement,
+			model: newElement,
+			options: { at: 1, useHistory: true },
+		} );
 
-		expect( mockRunCommand ).toHaveBeenCalledWith(
-			'document/elements/delete',
-			{ container: currentElement, options: { useHistory: true } },
-		);
+		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
+			container: currentElement,
+			options: { useHistory: true },
+		} );
 	} );
 } );
