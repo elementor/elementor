@@ -27,7 +27,7 @@ class Test_Variables_Repository extends Elementor_Test_Base {
 	private $repository;
 	private $rest_api;
 
-	protected function setUp(): void {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->kit = $this->createMock( Kit::class );
