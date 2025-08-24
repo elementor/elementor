@@ -48,7 +48,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @return $this
 	 */
-	public function filter( callable $callback = null ) {
+	public function filter( ?callable $callback = null ) {
 		if ( ! $callback ) {
 			return new static( array_filter( $this->items ) );
 		}
@@ -153,9 +153,9 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 
 	/**
 	 * @param callable $callback
-	 * @param null     $initial
+	 * @param mixed    $initial
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function reduce( callable $callback, $initial = null ) {
 		$result = $initial;
@@ -274,10 +274,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Get specific item from the collection.
 	 *
-	 * @param      $key
-	 * @param null $fallback
+	 * @param mixed $key
+	 * @param mixed $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function get( $key, $fallback = null ) {
 		if ( ! array_key_exists( $key, $this->items ) ) {
@@ -290,9 +290,9 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Get the first item.
 	 *
-	 * @param null $fallback
+	 * @param mixed $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function first( $fallback = null ) {
 		if ( $this->is_empty() ) {
@@ -308,9 +308,9 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 * Find an element from the items.
 	 *
 	 * @param callable $callback
-	 * @param null     $fallback
+	 * @param mixed    $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	public function find( callable $callback, $fallback = null ) {
 		foreach ( $this->all() as $key => $item ) {
@@ -361,7 +361,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
-	 * @param null|string|string[] $keys
+	 * @param mixed $keys
 	 *
 	 * @return $this
 	 */
@@ -540,11 +540,11 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * @param      $item
-	 * @param      $key
-	 * @param null $fallback
+	 * @param mixed $item
+	 * @param mixed $key
+	 * @param mixed $fallback
 	 *
-	 * @return mixed|null
+	 * @return mixed
 	 */
 	private function get_item_value( $item, $key, $fallback = null ) {
 		$value = $fallback;
