@@ -33,7 +33,7 @@ class Site_Settings extends Export_Runner_Base {
 		return $this->export_all( $data );
 	}
 
-	private function export_all( $data ) {
+	private function export_all( $data, $include_theme = true ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_data = $kit->get_export_data();
 
@@ -48,10 +48,12 @@ class Site_Settings extends Export_Runner_Base {
 			unset( $kit_data['settings'][ $setting_key ] );
 		}
 
-		$theme_data = $this->export_theme();
+		if ( $include_theme ) {
+			$theme_data = $this->export_theme();
 
-		if ( $theme_data ) {
-			$kit_data['theme'] = $theme_data;
+			if ( $theme_data ) {
+				$kit_data['theme'] = $theme_data;
+			}
 		}
 
 		$experiments_data = $this->export_experiments();
@@ -61,6 +63,10 @@ class Site_Settings extends Export_Runner_Base {
 		}
 
 		$manifest_data['site-settings'] = array_fill_keys( self::ALLOWED_SETTINGS, true );
+
+		if ( ! $include_theme ) {
+			$manifest_data['site-settings']['theme'] = false;
+		}
 
 		return [
 			'files' => [
@@ -80,7 +86,7 @@ class Site_Settings extends Export_Runner_Base {
 			return $result;
 		}
 
-		return $this->export_all( $data );
+		return $this->export_all( $data, ! empty( $customization['theme'] ) );
 	}
 
 	public function export_theme() {
