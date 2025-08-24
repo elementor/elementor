@@ -729,9 +729,8 @@ abstract class Document extends Controls_Stack {
 		if ( static::get_property( 'has_elements' ) ) {
 			$widgets_config = Plugin::$instance->widgets_manager->get_widget_types_config();
 
-			$excluded_elements = [ 'column', 'section' ];
 			$elements_config = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
-				->filter( fn( $element ) => ( ! in_array( $element->get_type(), $excluded_elements ) ) )
+				->filter( fn( $element ) => ( ! empty( $element->get_config()['include_in_widgets_config'] ) ) )
 				->map( fn( $element ) => $element->get_config() )
 				->all();
 
