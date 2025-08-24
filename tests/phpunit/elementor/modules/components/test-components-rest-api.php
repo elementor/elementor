@@ -329,7 +329,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'name' => 'Test Component 51',
-			'content' => [ $this->mock_component_1_content ],
+			'content' => $this->mock_component_1_content,
 		] );
 
 		$response = rest_do_request( $request );
