@@ -103,9 +103,9 @@ class Test_Variables_Repository extends TestCase {
 
 	public function test_create_new_variable__when_empty() {
 		// Arrange.
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		$this->kit->method( 'get_json_meta' )->willReturn( [] );
 
@@ -150,19 +150,19 @@ class Test_Variables_Repository extends TestCase {
 
 		$captured_data = [];
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			with(
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->with(
 				Variables_Repository::VARIABLES_META_KEY,
-				$this->callback( function ( $meta ) use ( &$captured_data ) {
+				$this->callback( function( $meta ) use ( &$captured_data ) {
 					$captured_data = $meta['data'];
 
-					return isset( $captured_data ) &&
-						4 === count( $captured_data ) &&
-						6 === $meta['watermark'];
+					return isset( $captured_data )
+						&& count( $captured_data ) === 4
+						&& $meta['watermark'] === 6;
 				} )
-			)->
-			willReturn( true );
+			)
+			->willReturn( true );
 
 		// Act.
 		$newVariable = [
@@ -173,8 +173,8 @@ class Test_Variables_Repository extends TestCase {
 
 		$this->repository->create( $newVariable );
 
-		$color_variables = array_filter( $captured_data, fn ( $item ) => $item['type'] === Color_Variable_Prop_Type::get_key() );
-		$font_variables = array_filter( $captured_data, fn ( $item ) => $item['type'] === Font_Variable_Prop_Type::get_key() );
+		$color_variables = array_filter( $captured_data, fn( $item ) => $item['type'] === Color_Variable_Prop_Type::get_key() );
+		$font_variables = array_filter( $captured_data, fn( $item ) => $item['type'] === Font_Variable_Prop_Type::get_key() );
 
 		// Assert.
 		$this->assertCount( 3, $color_variables );
@@ -197,19 +197,19 @@ class Test_Variables_Repository extends TestCase {
 
 		$captured_data = [];
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			with(
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->with(
 				Variables_Repository::VARIABLES_META_KEY,
-				$this->callback( function ( $meta ) use ( &$captured_data ) {
+				$this->callback( function( $meta ) use ( &$captured_data ) {
 					$captured_data = $meta['data'];
 
-					return isset( $captured_data ) &&
-						2 === count( $captured_data ) &&
-						11 === $meta['watermark'];
+					return isset( $captured_data )
+						&& count( $captured_data ) === 2
+						&& $meta['watermark'] === 11;
 				} )
-			)->
-			willReturn( true );
+			)
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->create( [
@@ -257,6 +257,7 @@ class Test_Variables_Repository extends TestCase {
 		] );
 	}
 
+
 	public function test_create_new_variable__throws_exception_when_save_fails() {
 		// Arrange.
 		$this->kit->method( 'update_json_meta' )->willReturn( false );
@@ -294,9 +295,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->create( [
@@ -326,9 +327,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'e-123', [
@@ -361,9 +362,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method('update_json_meta')
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'e-123', [
@@ -384,7 +385,7 @@ class Test_Variables_Repository extends TestCase {
 	}
 
 	public function test_update_variable__throws_exception_when_has_duplicated_label() {
-		// Arrange.
+		//Arrange.
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
 				'id-1' => [
@@ -432,9 +433,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'id-1', [
@@ -527,9 +528,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'id-2', [
@@ -563,9 +564,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->delete( 'e-123' );
@@ -614,9 +615,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method('update_json_meta')
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->restore( 'e-123' );
@@ -676,9 +677,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->restore( 'id-1' );
@@ -696,7 +697,6 @@ class Test_Variables_Repository extends TestCase {
 		$this->assertArrayNotHasKey( 'deleted', $result['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 	}
-
 	public function test_restore_variable__throws_exception_when_id_not_found() {
 		// Arrange.
 		$this->kit->method( 'get_json_meta' )->willReturn( [
@@ -743,9 +743,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->restore( 'id-1' );
@@ -780,17 +780,17 @@ class Test_Variables_Repository extends TestCase {
 
 		$captured_watermark = null;
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			with(
+		$this->kit->expects( $this->once() )
+			->method('update_json_meta')
+			->with(
 				Variables_Repository::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_watermark ) {
 					$captured_watermark = $meta['watermark'];
 
 					return true;
 				} )
-			)->
-			willReturn( true );
+			)
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'e-123', [
@@ -801,285 +801,328 @@ class Test_Variables_Repository extends TestCase {
 		$this->assertEquals( 1, $result['watermark'] );
 	}
 
-	public function test_process_atomic_batch__successful_mixed_operations() {
-    // Arrange
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => [
-            'existing-id-1' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Existing Color',
-                'value' => '#000000',
-            ],
-            'deleted-id' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Deleted Color',
-                'value' => '#111111',
-                'deleted' => true,
-                'deleted_at' => '2024-01-01 10:00:00',
-            ],
-        ],
-        'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $this->kit->expects( $this->once() )->
-        method( 'update_json_meta' )->
-        willReturn( true );
-
-    $operations = [
-        [
-            'type' => 'create',
-            'variable' => [
-                'id' => 'temp-123',
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'New Color',
-                'value' => '#FF0000',
-            ],
-        ],
-        [
-            'type' => 'update',
-            'id' => 'existing-id-1',
-            'variable' => [
-                'label' => 'Updated Color',
-                'value' => '#00FF00',
-            ],
-        ],
-        [
-            'type' => 'restore',
-            'id' => 'deleted-id',
-            'label' => 'Restored Color',
-        ],
-    ];
-
-    // Act
-    $result = $this->repository->process_atomic_batch( $operations, 5 );
-
-    // Assert
-    $this->assertTrue( $result['success'] );
-    $this->assertEquals( 6, $result['watermark'] );
-    $this->assertCount( 3, $result['results'] );
-
-    // Check create result
-    $create_result = $result['results'][0];
-    $this->assertEquals( 'temp-123', $create_result['temp_id'] );
-    $this->assertNotEmpty( $create_result['id'] );
-    $this->assertEquals( 'New Color', $create_result['variable']['label'] );
-    $this->assertNotEmpty( $create_result['variable']['created_at'] );
-
-    $update_result = $result['results'][1];
-    $this->assertEquals( 'existing-id-1', $update_result['id'] );
-    $this->assertEquals( 'Updated Color', $update_result['variable']['label'] );
-    $this->assertNotEmpty( $update_result['variable']['updated_at'] );
-
-    $restore_result = $result['results'][2];
-    $this->assertEquals( 'deleted-id', $restore_result['id'] );
-    $this->assertEquals( 'Restored Color', $restore_result['variable']['label'] );
-}
-
-public function test_process_atomic_batch__throws_watermark_mismatch_exception() {
-    // Arrange
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => [],
-        'watermark' => 10,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $operations = [
-        [
-            'type' => 'create',
-            'variable' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Test Color',
-                'value' => '#FF0000',
-            ],
-        ],
-    ];
-
-    // Assert
-    $this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch::class );
-    $this->expectExceptionMessage( 'Watermark mismatch' );
-
-    // Act
-    $this->repository->process_atomic_batch( $operations, 5 );
-}
-
-public function test_process_atomic_batch__throws_batch_operation_failed_with_duplicate_label() {
-    // Arrange
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => [
-            'existing-id' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Existing Label',
-                'value' => '#000000',
-            ],
-        ],
-        'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $operations = [
-        [
-            'type' => 'create',
-            'variable' => [
-                'id' => 'temp-1',
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Valid Label',
-                'value' => '#FF0000',
-            ],
-        ],
-        [
-            'type' => 'create',
-            'variable' => [
-                'id' => 'temp-2',
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Existing Label', // Duplicate!
-                'value' => '#00FF00',
-            ],
-        ],
-    ];
-
-    // Assert
-    $this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed::class );
-
-    // Act
-    $this->repository->process_atomic_batch( $operations, 5 );
-}
-
-public function test_process_atomic_batch__throws_batch_operation_failed_with_record_not_found() {
-    // Arrange
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => [],
-        'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $operations = [
-        [
-            'type' => 'update',
-            'id' => 'non-existent-id',
-            'variable' => [
-                'label' => 'Updated Label',
-                'value' => '#FF0000',
-            ],
-        ],
-    ];
-
-    // Assert
-    $this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed::class );
-
-    // Act
-    $this->repository->process_atomic_batch( $operations, 5 );
-}
-
-public function test_process_atomic_batch__ensures_atomicity_on_failure() {
-    // Arrange
-    $original_data = [
-        'existing-id' => [
-            'type' => Color_Variable_Prop_Type::get_key(),
-            'label' => 'Original Label',
-            'value' => '#000000',
-        ],
-    ];
-
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => $original_data,
-        'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $operations = [
-        [
-            'type' => 'create',
-            'variable' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Valid New Label',
-                'value' => '#FF0000',
-            ],
-        ],
-        [
-            'type' => 'update',
-            'id' => 'non-existent-id', // This will fail
-            'variable' => [
-                'label' => 'Should Not Update',
-                'value' => '#00FF00',
-            ],
-        ],
-    ];
-
-    try {
-        // Act
-        $this->repository->process_atomic_batch( $operations, 5 );
-        $this->fail( 'Expected BatchOperationFailed exception' );
-    } catch ( \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed $e ) {
-        // Assert - verify atomicity: no changes should be made
-        $this->addToAssertionCount( 1 );
-    }
-}
-
-public function test_process_atomic_batch__throws_fatal_error_when_save_fails() {
-    // Arrange
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => [],
-        'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $this->kit->method( 'update_json_meta' )->willReturn( false );
-
-    $operations = [
-        [
-            'type' => 'create',
-            'variable' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Test Label',
-                'value' => '#FF0000',
-            ],
-        ],
-    ];
-
-    // Assert
-    $this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\FatalError::class );
-    $this->expectExceptionMessage( 'Failed to save batch operations' );
-
-    // Act
-    $this->repository->process_atomic_batch( $operations, 5 );
-}
-
-public function test_process_atomic_batch__handles_delete_operation() {
-    // Arrange
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => [
-            'delete-me' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Delete Me',
-                'value' => '#000000',
-            ],
-        ],
-        'watermark' => 5,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $this->kit->expects( $this->once() )->
-        method( 'update_json_meta' )->
-        willReturn( true );
-
-    $operations = [
-        [
-            'type' => 'delete',
-            'id' => 'delete-me',
-        ],
-    ];
-
-    // Act
-    $result = $this->repository->process_atomic_batch( $operations, 5 );
-
-    // Assert
-    $this->assertTrue( $result['success'] );
-    $this->assertEquals( 6, $result['watermark'] );
-    $this->assertCount( 1, $result['results'] );
-
-    $delete_result = $result['results'][0];
-    $this->assertEquals( 'delete-me', $delete_result['id'] );
-    $this->assertTrue( $delete_result['deleted'] );
-}
+	public function test_process_batch__successful_operations() {
+		// Arrange
+		$this->act_as_admin();
+	
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'existing-id' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Existing Color',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 10,
+			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+		] );
+	
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+	
+		// Act
+		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+		$request->set_body_params( [
+			'watermark' => 10,
+			'operations' => [
+				[
+					'type' => 'create',
+					'variable' => [
+						'id' => 'temp-123',
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'New Color',
+						'value' => '#FF0000',
+					],
+				],
+				[
+					'type' => 'update',
+					'id' => 'existing-id',
+					'variable' => [
+						'label' => 'Updated Color',
+						'value' => '#00FF00',
+					],
+				],
+			],
+		] );
+	
+		$response = $this->rest_api->process_batch( $request );
+	
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+	
+		$response_data = $response->get_data();
+		$this->assertTrue( $response_data['success'] );
+		$this->assertEquals( 11, $response_data['data']['watermark'] );
+		$this->assertCount( 2, $response_data['data']['results'] );
+	
+		$create_result = $response_data['data']['results'][0];
+		$this->assertEquals( 'temp-123', $create_result['temp_id'] );
+		$this->assertNotEmpty( $create_result['id'] );
+		$this->assertEquals( 'New Color', $create_result['variable']['label'] );
+	
+		$update_result = $response_data['data']['results'][1];
+		$this->assertEquals( 'existing-id', $update_result['id'] );
+		$this->assertEquals( 'Updated Color', $update_result['variable']['label'] );
+	}
+	
+	public function test_process_batch__watermark_mismatch_error() {
+		// Arrange
+		$this->act_as_admin();
+	
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [],
+			'watermark' => 15,
+			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+		] );
+	
+		// Act
+		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+		$request->set_body_params( [
+			'watermark' => 10,
+			'operations' => [
+				[
+					'type' => 'create',
+					'variable' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Test Color',
+						'value' => '#FF0000',
+					],
+				],
+			],
+		] );
+	
+		$response = $this->rest_api->process_batch( $request );
+	
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+	
+		$response_data = $response->get_data();
+		$this->assertEquals( 'watermark_mismatch', $response_data['code'] );
+		$this->assertEquals( 'Data has been modified by another process', $response_data['message'] );
+		$this->assertEquals( 400, $response_data['data']['status'] );
+	}
+	
+	public function test_process_batch__batch_operation_failed_error() {
+		// Arrange
+		$this->act_as_admin();
+	
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'existing-id' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Existing Label',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 5,
+			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+		] );
+	
+		// Act
+		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+		$request->set_body_params( [
+			'watermark' => 5,
+			'operations' => [
+				[
+					'type' => 'create',
+					'variable' => [
+						'id' => 'temp-fail',
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Existing Label',
+						'value' => '#FF0000',
+					],
+				],
+			],
+		] );
+	
+		$response = $this->rest_api->process_batch( $request );
+	
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+	
+		$response_data = $response->get_data();
+		$this->assertFalse( $response_data['success'] );
+		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
+		$this->assertEquals( 'Batch operation failed', $response_data['message'] );
+		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
+		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
+		$this->assertStringContainsString( 'already exists', $response_data['data']['temp-fail']['message'] );
+	}
+	
+	public function test_process_batch__validation_invalid_watermark() {
+		// Arrange
+		$this->act_as_admin();
+	
+		// Act
+		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+		$request->set_body_params( [
+			'watermark' => -5,
+			'operations' => [
+				[
+					'type' => 'create',
+					'variable' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Test',
+						'value' => '#FF0000',
+					],
+				],
+			],
+		] );
+	
+		$validation_result = $this->rest_api->is_valid_watermark( -5 );
+	
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $validation_result );
+		$this->assertEquals( 'invalid_watermark', $validation_result->get_error_code() );
+		$this->assertEquals( 'Watermark must be a non-negative integer', $validation_result->get_error_message() );
+	}
+	
+	public function test_process_batch__validation_empty_operations_array() {
+		// Arrange
+		$this->act_as_admin();
+	
+		// Act
+		$validation_result = $this->rest_api->is_valid_operations_array( [] );
+	
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $validation_result );
+		$this->assertEquals( 'invalid_operations_empty', $validation_result->get_error_code() );
+		$this->assertEquals( 'Operations array cannot be empty', $validation_result->get_error_message() );
+	}
+	
+	public function test_process_batch__validation_invalid_operation_structure() {
+		// Arrange
+		$this->act_as_admin();
+	
+		// Act
+		$operations = [
+			[
+				'variable' => [
+					'label' => 'Test',
+					'value' => '#FF0000',
+				],
+			],
+		];
+	
+		$validation_result = $this->rest_api->is_valid_operations_array( $operations );
+	
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $validation_result );
+		$this->assertEquals( 'invalid_operation_structure', $validation_result->get_error_code() );
+		$this->assertStringContainsString( 'Invalid operation structure at index 0', $validation_result->get_error_message() );
+	}
+	
+	public function test_process_batch__validation_invalid_operation_type() {
+		// Arrange
+		$this->act_as_admin();
+	
+		// Act
+		$operations = [
+			[
+				'type' => 'invalid_type',
+				'variable' => [
+					'label' => 'Test',
+					'value' => '#FF0000',
+				],
+			],
+		];
+	
+		$validation_result = $this->rest_api->is_valid_operations_array( $operations );
+	
+		// Assert
+		$this->assertInstanceOf( \WP_Error::class, $validation_result );
+		$this->assertEquals( 'invalid_operation_type', $validation_result->get_error_code() );
+		$this->assertStringContainsString( 'Invalid operation type at index 0', $validation_result->get_error_message() );
+	}
+	
+	public function test_process_batch__unauthorized_user_access() {
+		// Arrange
+		$this->act_as( 'subscriber' );
+	
+		// Act
+		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+		$request->set_body_params( [
+			'watermark' => 5,
+			'operations' => [
+				[
+					'type' => 'create',
+					'variable' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Test',
+						'value' => '#FF0000',
+					],
+				],
+			],
+		] );
+	
+		// Assert
+		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
+	}
+	
+	public function test_process_batch__handles_mixed_success_and_failure_operations() {
+		// Arrange
+		$this->act_as_admin();
+	
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'existing-label' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Conflicting Label',
+					'value' => '#000000',
+				],
+			],
+			'watermark' => 5,
+			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+		] );
+	
+		// Act
+		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+		$request->set_body_params( [
+			'watermark' => 5,
+			'operations' => [
+				[
+					'type' => 'create',
+					'variable' => [
+						'id' => 'temp-success',
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Valid Label',
+						'value' => '#FF0000',
+					],
+				],
+				[
+					'type' => 'create',
+					'variable' => [
+						'id' => 'temp-fail',
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Conflicting Label',
+						'value' => '#00FF00',
+					],
+				],
+				[
+					'type' => 'update',
+					'id' => 'non-existent',
+					'variable' => [
+						'label' => 'Updated',
+						'value' => '#0000FF',
+					],
+				],
+			],
+		] );
+	
+		$response = $this->rest_api->process_batch( $request );
+	
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+	
+		$response_data = $response->get_data();
+		$this->assertFalse( $response_data['success'] );
+		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
+	
+		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
+		$this->assertArrayHasKey( 'non-existent', $response_data['data'] );
+	
+		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
+		$this->assertEquals( 404, $response_data['data']['non-existent']['status'] );
+	}
 }

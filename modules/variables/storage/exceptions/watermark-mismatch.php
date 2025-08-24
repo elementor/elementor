@@ -6,5 +6,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class WatermarkMismatch extends \Exception {
-}
+class WatermarkMismatch extends \Exception {}
