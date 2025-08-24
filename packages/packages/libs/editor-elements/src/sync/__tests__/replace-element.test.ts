@@ -4,7 +4,6 @@ import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters
 import { replaceElement } from '../replace-element';
 import { type ExtendedWindow, type V1ElementModelProps } from '../types';
 
-// Mock dependencies
 jest.mock( '@elementor/editor-v1-adapters' );
 
 const mockRunCommand = runCommand as jest.MockedFunction< typeof runCommand >;
@@ -42,14 +41,12 @@ describe( 'replaceElement', () => {
 		// Assert.
 		expect( mockRunCommand ).toHaveBeenCalledWith(
 			'document/elements/create',
-			{ container: parentElement, model: newElement, options: { at: 1 } },
-			{ internal: false }
+			{ container: parentElement, model: newElement, options: { at: 1, useHistory: true } },
 		);
 
 		expect( mockRunCommand ).toHaveBeenCalledWith(
 			'document/elements/delete',
-			{ container: currentElement },
-			{ internal: false }
+			{ container: currentElement, options: { useHistory: true } },
 		);
 	} );
 } );
