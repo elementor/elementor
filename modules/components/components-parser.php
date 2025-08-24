@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Components_Parser {
 	const MIN_NAME_LENGTH = 2;
 	const MAX_NAME_LENGTH = 50;
-	
+
 	public static function make() {
 		return new static();
 	}

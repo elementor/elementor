@@ -105,7 +105,7 @@ class Components_REST_API {
 		if ( ! $name_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_name' )
 				->set_status( 400 )
-				->set_message( __( 'Invalid component name: ' . $name_result->errors()->to_string(), 'elementor' ) )
+				->set_message( 'Invalid component name: ' . $name_result->errors()->to_string() )
 				->build();
 		}
 
