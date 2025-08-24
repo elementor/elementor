@@ -1,1 +1,1 @@
-export { init } from './init';
+export { addTool, init } from './init';
