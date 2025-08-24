@@ -48,6 +48,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['hide_on_search'] = false;
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
+		$config['include_in_widgets_config'] = true;
 
 		return $config;
 	}
