@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Plugin;
 
@@ -129,6 +130,7 @@ class Dynamic_Tags_Editor_Config {
 		$map = [
 			'select' => fn( $control ) => $this->convert_select_control_to_atomic( $control ),
 			'text' => fn( $control ) => $this->convert_text_control_to_atomic( $control ),
+			'switcher' => fn( $control ) => $this->convert_switch_control_to_atomic( $control ),
 		];
 
 		if ( ! isset( $map[ $control['type'] ] ) ) {
@@ -165,8 +167,8 @@ class Dynamic_Tags_Editor_Config {
 		);
 
 		return Select_Control::bind_to( $control['name'] )
-			->set_label( $control['label'] )
-			->set_options( $options );
+			->set_options( $options )
+			->set_label( $control['label'] );
 	}
 
 	/**
@@ -176,6 +178,16 @@ class Dynamic_Tags_Editor_Config {
 	 */
 	private function convert_text_control_to_atomic( $control ) {
 		return Text_Control::bind_to( $control['name'] )
+			->set_label( $control['label'] );
+	}
+
+	/**
+	 * @param $control
+	 *
+	 * @return Switch_Control
+	 */
+	private function convert_switch_control_to_atomic( $control ) {
+		return Switch_Control::bind_to( $control['name'] )
 			->set_label( $control['label'] );
 	}
 }
