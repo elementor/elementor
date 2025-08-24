@@ -38,7 +38,7 @@ export default function createAtomicElementView( type ) {
 		},
 
 		className() {
-			return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ this.getClassString() }`;
+			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
 		},
 
 		// TODO: Copied from `views/column.js`.
