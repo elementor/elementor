@@ -29,10 +29,17 @@
 				text-align: center;
 				flex-direction: column;
 				gap: var(--icon-box-icon-margin, 15px);
+				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
+		}
 
-			.elementor-icon-box-icon {
-				margin-inline: auto;
+		&bottom {
+
+			.elementor-icon-box-wrapper {
+				text-align: center;
+				flex-direction: column-reverse;
+				gap: var(--icon-box-icon-margin, 15px);
+				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
 		}
 	}
@@ -48,8 +55,9 @@
 	}
 
 	.elementor-icon-box-icon {
-		display: inline-flex;
+		display: inline-block;
 		flex: 0 0 auto; // Hack for Safari
+		line-height: 0;
 	}
 
 	.elementor-icon-box-content {

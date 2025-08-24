@@ -70,7 +70,12 @@ const DimensionField = ( {
 				<ControlLabel>{ label }</ControlLabel>
 			</Grid>
 			<Grid item xs={ 12 }>
-				<SizeControl startIcon={ sideIcons[ side ] } extendedOptions={ [ 'auto' ] } anchorRef={ rowRef } />
+				<SizeControl
+					startIcon={ sideIcons[ side ] }
+					extendedOptions={ [ 'auto' ] }
+					anchorRef={ rowRef }
+					min={ -Number.MAX_SAFE_INTEGER }
+				/>
 			</Grid>
 		</Grid>
 	</StylesField>

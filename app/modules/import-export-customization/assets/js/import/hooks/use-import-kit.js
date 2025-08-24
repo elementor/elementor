@@ -73,7 +73,7 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 			const importData = {
 				id: data.kitUploadParams?.id,
 				referrer: data.kitUploadParams?.referrer,
-				session: data.uploadedData.session,
+				session: data?.uploadedData?.session,
 				include: includes,
 				customization,
 			};
@@ -94,12 +94,14 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 		if ( isProcessing && data.includes.length ) {
 			importKit();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ data.includes, isProcessing ] );
 
 	useEffect( () => {
 		if ( isProcessing && data.importedData && ! error ) {
 			runImportRunners();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ data.importedData, isProcessing, error ] );
 
 	return {

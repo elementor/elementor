@@ -124,7 +124,9 @@ runs:
         ${COMMIT_MESSAGE}
         \`\`\`
 
-        This revert commit was created automatically using \`git revert\` because the ${WORKFLOW_NAME} tests failed after the original commit was pushed to ${BRANCH_NAME}."
+        This revert commit was created automatically using \`git revert\` because the ${WORKFLOW_NAME} tests failed after the original commit was pushed to ${BRANCH_NAME}.
+        
+        The 'run-tests' label has been added to trigger tests on this revert PR."
         
         # Create the PR
         PR_URL=$(gh pr create \
@@ -138,6 +140,10 @@ runs:
         
         echo "Created revert PR #${PR_NUMBER}"
         
+        # Add the 'run-tests' label
+        gh pr edit "${PR_NUMBER}" --add-label "run-tests"
+        
+        echo "Added 'run-tests' label to PR #${PR_NUMBER}"
         echo "::notice::Created revert PR #${PR_NUMBER} for commit ${COMMIT_SHA}"
         
         # Set outputs

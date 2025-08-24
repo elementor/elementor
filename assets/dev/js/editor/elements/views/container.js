@@ -28,6 +28,15 @@ const ContainerView = BaseElementView.extend( {
 		return Marionette.CompositeView.prototype.getChildViewContainer.apply( this, arguments );
 	},
 
+	getChildType() {
+		const allowedElementTypes = getAllElementTypes().filter( ( elType ) => elType !== 'section' && elType !== 'column' );
+
+		return [
+			...allowedElementTypes,
+			'widget',
+		];
+	},
+
 	className() {
 		const isNestedClassName = this.model.get( 'isInner' ) ? 'e-child' : 'e-parent';
 		return `${ BaseElementView.prototype.className.apply( this ) } e-con ${ isNestedClassName }`;
@@ -305,7 +314,7 @@ const ContainerView = BaseElementView.extend( {
 				{
 					name: 'save',
 					title: __( 'Save as a template', 'elementor' ),
-					shortcut: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>` : '',
+					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},

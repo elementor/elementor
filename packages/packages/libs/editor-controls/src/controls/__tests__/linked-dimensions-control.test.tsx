@@ -69,7 +69,7 @@ describe( 'LinkedDimensionsControl', () => {
 		const dimensionInput = screen.getAllByRole( 'spinbutton' )[ 0 ];
 
 		// Act.
-		fireEvent.change( dimensionInput, { target: { value: '10' } } );
+		fireEvent.input( dimensionInput, { target: { value: '10' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -102,7 +102,7 @@ describe( 'LinkedDimensionsControl', () => {
 		const dimensionInput = screen.getAllByRole( 'spinbutton' )[ 0 ];
 
 		// Act.
-		fireEvent.change( dimensionInput, { target: { value: '10' } } );
+		fireEvent.input( dimensionInput, { target: { value: '10' } } );
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -146,6 +146,100 @@ describe( 'LinkedDimensionsControl', () => {
 		expect( setValue ).toHaveBeenCalledWith( {
 			$$type: 'size',
 			value: { unit: 'px', size: 10 },
+		} );
+	} );
+
+	describe( 'placeholder', () => {
+		it( 'should display size placeholder in linked state', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: null,
+				bind: 'padding',
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: { size: 10, unit: 'px' },
+				},
+			};
+
+			// Act.
+			renderControl( <LinkedDimensionsControl label="Padding" />, props );
+
+			// Assert.
+			const toggleButton = screen.getByRole( 'button', { name: 'Unlink padding' } );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+
+			expect( toggleButton ).toHaveAttribute( 'aria-pressed', 'true' );
+			sizeInputs.forEach( ( input ) => {
+				expect( input ).toHaveAttribute( 'placeholder', '10' );
+			} );
+		} );
+
+		it( 'should display dimensions placeholder in unlinked state', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: {
+					$$type: 'dimensions',
+					value: {
+						'block-start': null,
+						'block-end': null,
+						'inline-start': null,
+						'inline-end': null,
+					},
+				},
+				bind: 'padding',
+				propType,
+				placeholder: {
+					$$type: 'dimensions',
+					value: {
+						'block-start': { $$type: 'size', value: { unit: 'px', size: 5 } },
+						'block-end': { $$type: 'size', value: { unit: 'px', size: 10 } },
+						'inline-start': { $$type: 'size', value: { unit: 'rem', size: 1 } },
+						'inline-end': { $$type: 'size', value: { unit: 'em', size: 2 } },
+					},
+				},
+			};
+
+			// Act.
+			renderControl( <LinkedDimensionsControl label="Padding" />, props );
+
+			// Assert.
+			const toggleButton = screen.getByRole( 'button', { name: 'Link padding' } );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+
+			expect( toggleButton ).toHaveAttribute( 'aria-pressed', 'false' );
+			expect( sizeInputs[ 0 ] ).toHaveAttribute( 'placeholder', '5' );
+			expect( sizeInputs[ 1 ] ).toHaveAttribute( 'placeholder', '2' );
+			expect( sizeInputs[ 2 ] ).toHaveAttribute( 'placeholder', '10' );
+			expect( sizeInputs[ 3 ] ).toHaveAttribute( 'placeholder', '1' );
+		} );
+
+		it( 'should prioritize user values over placeholders', () => {
+			// Arrange.
+			const setValue = jest.fn();
+			const props = {
+				setValue,
+				value: { $$type: 'size', value: { size: 20, unit: 'rem' } },
+				bind: 'padding',
+				propType,
+				placeholder: {
+					$$type: 'size',
+					value: { size: 10, unit: 'px' },
+				},
+			};
+
+			// Act.
+			renderControl( <LinkedDimensionsControl label="Padding" />, props );
+
+			// Assert.
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			sizeInputs.forEach( ( input ) => {
+				expect( input ).toHaveDisplayValue( '20' );
+			} );
 		} );
 	} );
 } );

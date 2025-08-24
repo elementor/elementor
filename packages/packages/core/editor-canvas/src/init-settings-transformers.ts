@@ -12,6 +12,6 @@ export function initSettingsTransformers() {
 		.register( 'link', linkTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'image-src', imageSrcTransformer )
-		.register( 'key-value-array', attributesTransformer )
+		.register( 'attributes', attributesTransformer )
 		.registerFallback( plainTransformer );
 }

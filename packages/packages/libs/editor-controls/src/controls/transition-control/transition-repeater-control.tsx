@@ -1,5 +1,9 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
+import { type StyleDefinitionState } from '@elementor/editor-styles';
+import { InfoCircleFilledIcon } from '@elementor/icons';
+import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { createControl } from '../../create-control';
@@ -48,18 +52,56 @@ function getChildControlConfig( recentlyUsedList: string[] ) {
 	};
 }
 
-export const TransitionRepeaterControl = createControl( ( props: { recentlyUsedList: string[] } ) => {
-	return (
-		<RepeatableControl
-			label={ __( 'Transitions', 'elementor' ) }
-			repeaterLabel={ __( 'Transitions', 'elementor' ) }
-			patternLabel="${value.selection.value.key.value}: ${value.size.value.size}${value.size.value.unit}"
-			placeholder={ __( 'Empty Transition', 'elementor' ) }
-			showDuplicate={ false }
-			showToggle={ true }
-			initialValues={ initialTransitionValue }
-			childControlConfig={ getChildControlConfig( props.recentlyUsedList ) }
-			propKey="transition"
-		/>
-	);
-} );
+const disableAddItemTooltipContent = (
+	<Alert
+		sx={ {
+			width: 280,
+			gap: 0.5,
+		} }
+		color="secondary"
+		icon={ <InfoCircleFilledIcon /> }
+	>
+		<AlertTitle>{ __( 'Transitions', 'elementor' ) }</AlertTitle>
+		<Box component="span">
+			<Typography variant="body2">
+				{ __( "Switch to 'Normal' state to add a transition.", 'elementor' ) }
+			</Typography>
+		</Box>
+	</Alert>
+);
+
+export const TransitionRepeaterControl = createControl(
+	( {
+		recentlyUsedListGetter,
+		currentStyleState,
+	}: {
+		recentlyUsedListGetter: () => Promise< string[] >;
+		currentStyleState: StyleDefinitionState;
+	} ) => {
+		const currentStyleIsNormal = currentStyleState === null;
+		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
+
+		useEffect( () => {
+			recentlyUsedListGetter().then( setRecentlyUsedList );
+		}, [ recentlyUsedListGetter ] );
+
+		return (
+			<RepeatableControl
+				label={ __( 'Transitions', 'elementor' ) }
+				repeaterLabel={ __( 'Transitions', 'elementor' ) }
+				patternLabel="${value.selection.value.key.value}: ${value.size.value.size}${value.size.value.unit}"
+				placeholder={ __( 'Empty Transition', 'elementor' ) }
+				showDuplicate={ false }
+				showToggle={ true }
+				initialValues={ initialTransitionValue }
+				childControlConfig={ getChildControlConfig( recentlyUsedList ) }
+				propKey="transition"
+				addItemTooltipProps={ {
+					disabled: ! currentStyleIsNormal,
+					enableTooltip: ! currentStyleIsNormal,
+					tooltipContent: disableAddItemTooltipContent,
+				} }
+			/>
+		);
+	}
+);

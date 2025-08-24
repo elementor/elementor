@@ -12,12 +12,13 @@ import { type SvgIconProps } from '@elementor/ui';
 
 import { inheritanceTransformer } from '../transformers/inheritance-transformer';
 import { variableTransformer } from '../transformers/variable-transformer';
-import { type NormalizedVariable } from '../types';
+import { type NormalizedVariable, type Variable } from '../types';
 
-type ValueFieldProps = {
+export type ValueFieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
 	onValidationChange?: ( value: string ) => void;
+	propType?: PropType;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
@@ -25,12 +26,13 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( { value, onChange, onValidationChange }: ValueFieldProps ) => JSX.Element;
+	valueField: ( { value, onChange, onValidationChange, propType }: ValueFieldProps ) => JSX.Element;
 	variableType: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string ) => PropValue;
+	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -47,9 +49,21 @@ export function createVariableTypeRegistry() {
 		selectionFilter,
 		valueTransformer,
 		fallbackPropTypeUtil,
+		isCompatible,
 	}: VariableTypeOptions ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
 			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
+		}
+
+		if ( ! isCompatible ) {
+			isCompatible = ( propType, variable: Variable ) => {
+				if ( 'union' === propType.kind ) {
+					if ( variable.type in propType.prop_types ) {
+						return true;
+					}
+				}
+				return false;
+			};
 		}
 
 		variableTypes[ propTypeUtil.key ] = {
@@ -61,6 +75,7 @@ export function createVariableTypeRegistry() {
 			selectionFilter,
 			valueTransformer,
 			fallbackPropTypeUtil,
+			isCompatible,
 		};
 
 		registerTransformer( propTypeUtil.key );

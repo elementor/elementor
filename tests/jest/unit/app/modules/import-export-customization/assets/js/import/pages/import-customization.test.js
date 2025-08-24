@@ -12,6 +12,11 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/import/c
 	useImportContext: () => mockUseImportContext(),
 } ) );
 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
 jest.mock( '@reach/router', () => ( {
 	useNavigate: () => mockNavigate,
 } ) );
@@ -23,6 +28,8 @@ jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
 	},
 } ) );
 
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
+
 describe( 'ImportCustomization Page', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -33,6 +40,98 @@ describe( 'ImportCustomization Page', () => {
 				config: eventsConfig,
 			},
 		};
+
+		global.elementorModules = {
+			importExport: {
+				siteSettingsRegistry: {
+					getAll: jest.fn( () => [
+						{
+							key: 'theme',
+							title: __( 'Theme', 'elementor' ),
+							description: __( 'Only public WordPress themes are supported', 'elementor' ),
+							order: 0,
+						},
+						{
+							key: 'siteSettings',
+							title: __( 'Site settings', 'elementor' ),
+							order: 1,
+							children: [
+								{
+									key: 'globalColors',
+									title: __( 'Global colors', 'elementor' ),
+									order: 0,
+								},
+								{
+									key: 'globalFonts',
+									title: __( 'Global fonts', 'elementor' ),
+									order: 1,
+								},
+								{
+									key: 'themeStyleSettings',
+									title: __( 'Theme style settingss', 'elementor' ),
+									order: 2,
+								},
+							],
+						},
+						{
+							key: 'generalSettings',
+							title: __( 'Settings', 'elementor' ),
+							description: __( 'Include site identity, background, layout, Lightbox, page transitions, and custom CSS', 'elementor' ),
+							order: 2,
+						},
+						{
+							key: 'experiments',
+							title: __( 'Experiments', 'elementor' ),
+							description: __( 'This will apply all experiments that are still active during import', 'elementor' ),
+							order: 3,
+						},
+					] ),
+					getState: jest.fn( ( data, parentInitialState ) => {
+						function getSectionState( section ) {
+							const state = {};
+
+							const isImport = data?.hasOwnProperty( 'uploadedData' );
+
+							if ( isImport ) {
+								state[ section.key ] = data?.uploadedData?.manifest?.[ 'site-settings' ]?.[ section.key ];
+								return state;
+							}
+
+							if ( data?.customization?.settings?.[ section.key ] !== undefined ) {
+								state[ section.key ] = data.customization.settings[ section.key ];
+								return state;
+							}
+
+							if ( section.getInitialState ) {
+								state[ section.key ] = section.getInitialState( data, parentInitialState );
+								return state;
+							}
+
+							state[ section.key ] = section.useParentDefault ? parentInitialState : false;
+
+							return state;
+						}
+						const state = {};
+						const sections = global.elementorModules.importExport.siteSettingsRegistry.getAll();
+
+						sections.forEach( ( section ) => {
+							if ( section.children ) {
+								section.children?.forEach( ( childSection ) => {
+									const sectionState = getSectionState( childSection, data, parentInitialState );
+
+									Object.assign( state, sectionState );
+								} );
+							} else {
+								Object.assign( state, getSectionState( section, data, parentInitialState ) );
+							}
+						} );
+
+						return state;
+					} ),
+
+				},
+			},
+		};
 	} );
 
 	afterEach( () => {
@@ -41,11 +140,18 @@ describe( 'ImportCustomization Page', () => {
 	} );
 
 	function setup( { isCustomizing = true, isProcessing = false } = {} ) {
-		mockUseImportContext.mockReturnValue( {
+		const contextData = {
 			isCustomizing,
 			isProcessing,
 			dispatch: mockDispatch,
 			data: { includes: [], customization: {} },
+		};
+
+		mockUseImportContext.mockReturnValue( contextData );
+
+		useContextDetection.mockReturnValue( {
+			isImport: true,
+			contextData,
 		} );
 	}
 
