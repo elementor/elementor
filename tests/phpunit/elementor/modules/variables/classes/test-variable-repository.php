@@ -9,7 +9,9 @@ use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
-use PHPUnit\Framework\TestCase;
+use Elementor\Modules\Variables\Classes\Rest_Api;
+use ElementorEditorTesting\Elementor_Test_Base;
+use WP_REST_Request;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,18 +19,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @gorup Elementor\Modules
+ * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
-class Test_Variables_Repository extends TestCase {
+class Test_Variables_Repository extends Elementor_Test_Base {
 	private $kit;
 	private $repository;
+	private $rest_api;
 
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->kit = $this->createMock( Kit::class );
 		$this->repository = new Variables_Repository( $this->kit );
+		$this->rest_api = new Rest_Api( $this->repository );
 	}
 
 	public function test_list_of_variables__returns_default_when_empty() {
@@ -158,8 +162,8 @@ class Test_Variables_Repository extends TestCase {
 					$captured_data = $meta['data'];
 
 					return isset( $captured_data )
-						&& count( $captured_data ) === 4
-						&& $meta['watermark'] === 6;
+						&& 4 === count( $captured_data )
+						&& 6 === $meta['watermark'];
 				} )
 			)
 			->willReturn( true );
@@ -173,8 +177,8 @@ class Test_Variables_Repository extends TestCase {
 
 		$this->repository->create( $newVariable );
 
-		$color_variables = array_filter( $captured_data, fn( $item ) => $item['type'] === Color_Variable_Prop_Type::get_key() );
-		$font_variables = array_filter( $captured_data, fn( $item ) => $item['type'] === Font_Variable_Prop_Type::get_key() );
+		$color_variables = array_filter( $captured_data, fn($item) => $item['type'] === Color_Variable_Prop_Type::get_key() );
+		$font_variables = array_filter( $captured_data, fn($item) => $item['type'] === Font_Variable_Prop_Type::get_key() );
 
 		// Assert.
 		$this->assertCount( 3, $color_variables );
@@ -205,8 +209,8 @@ class Test_Variables_Repository extends TestCase {
 					$captured_data = $meta['data'];
 
 					return isset( $captured_data )
-						&& count( $captured_data ) === 2
-						&& $meta['watermark'] === 11;
+						&& 2 === count( $captured_data )
+						&& 11 === $meta['watermark'];
 				} )
 			)
 			->willReturn( true );
@@ -256,7 +260,6 @@ class Test_Variables_Repository extends TestCase {
 			'value' => '#111111',
 		] );
 	}
-
 
 	public function test_create_new_variable__throws_exception_when_save_fails() {
 		// Arrange.
@@ -363,7 +366,7 @@ class Test_Variables_Repository extends TestCase {
 		] );
 
 		$this->kit->expects( $this->once() )
-			->method('update_json_meta')
+			->method( 'update_json_meta' )
 			->willReturn( true );
 
 		// Act.
@@ -385,7 +388,7 @@ class Test_Variables_Repository extends TestCase {
 	}
 
 	public function test_update_variable__throws_exception_when_has_duplicated_label() {
-		//Arrange.
+		// Arrange.
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
 				'id-1' => [
@@ -447,6 +450,49 @@ class Test_Variables_Repository extends TestCase {
 		$expected = [
 			'id' => 'id-1',
 			'label' => 'a',
+			'value' => '#111111',
+			'type' => Color_Variable_Prop_Type::get_key(),
+		];
+
+		$this->assertEquals( $expected, $result['variable'] );
+		$this->assertEquals( 6, $result['watermark'] );
+	}
+
+	public function test_update_variable__allows_duplicated_label_used_by_deleted_record() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'id-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Deleted Variable',
+					'value' => '#000000',
+					'deleted' => true,
+					'deleted_at' => 1234567890,
+				],
+				'id-2' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Active Variable',
+					'value' => '#ffffff',
+				],
+			],
+			'watermark' => 5,
+			'version' => Variables_Repository::FORMAT_VERSION_V1,
+		] );
+
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act.
+		$result = $this->repository->update( 'id-2', [
+			'label' => 'Deleted Variable',
+			'value' => '#111111',
+		] );
+
+		// Assert.
+		$expected = [
+			'id' => 'id-2',
+			'label' => 'Deleted Variable',
 			'value' => '#111111',
 			'type' => Color_Variable_Prop_Type::get_key(),
 		];
@@ -616,7 +662,7 @@ class Test_Variables_Repository extends TestCase {
 		] );
 
 		$this->kit->expects( $this->once() )
-			->method('update_json_meta')
+			->method( 'update_json_meta' )
 			->willReturn( true );
 
 		// Act.
@@ -697,28 +743,6 @@ class Test_Variables_Repository extends TestCase {
 		$this->assertArrayNotHasKey( 'deleted', $result['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 	}
-	public function test_restore_variable__throws_exception_when_id_not_found() {
-		// Arrange.
-		$this->kit->method( 'get_json_meta' )->willReturn( [
-			'data' => [
-				'e-123' => [
-					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Primary',
-					'value' => '#000000',
-					'deleted' => true,
-					'deleted_at' => 1234567890,
-				],
-			],
-			'watermark' => 5,
-			'version' => Variables_Repository::FORMAT_VERSION_V1,
-		] );
-
-		// Assert.
-		$this->expectException( RecordNotFound::class );
-		$this->expectExceptionMessage( 'Variable not found' );
-
-		$this->repository->restore( 'non-existing-id' );
-	}
 
 	public function test_restore_variable__allows_restoring_when_conflict_with_deleted_record() {
 		// Arrange.
@@ -764,6 +788,29 @@ class Test_Variables_Repository extends TestCase {
 		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 	}
 
+	public function test_restore_variable__throws_exception_when_id_not_found() {
+		// Arrange.
+		$this->kit->method( 'get_json_meta' )->willReturn( [
+			'data' => [
+				'e-123' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#000000',
+					'deleted' => true,
+					'deleted_at' => 1234567890,
+				],
+			],
+			'watermark' => 5,
+			'version' => Variables_Repository::FORMAT_VERSION_V1,
+		] );
+
+		// Assert.
+		$this->expectException( RecordNotFound::class );
+		$this->expectExceptionMessage( 'Variable not found' );
+
+		$this->repository->restore( 'non-existing-id' );
+	}
+
 	public function test_watermark__resets_when_reaching_max() {
 		// Arrange.
 		$this->kit->method( 'get_json_meta' )->willReturn( [
@@ -781,10 +828,10 @@ class Test_Variables_Repository extends TestCase {
 		$captured_watermark = null;
 
 		$this->kit->expects( $this->once() )
-			->method('update_json_meta')
+			->method( 'update_json_meta' )
 			->with(
 				Variables_Repository::VARIABLES_META_KEY,
-				$this->callback( function ( $meta ) use ( &$captured_watermark ) {
+				$this->callback( function( $meta ) use ( &$captured_watermark ) {
 					$captured_watermark = $meta['watermark'];
 
 					return true;
@@ -869,13 +916,13 @@ class Test_Variables_Repository extends TestCase {
 	public function test_process_batch__watermark_mismatch_error() {
 		// Arrange
 		$this->act_as_admin();
-	
+
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [],
 			'watermark' => 15,
 			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
 		] );
-	
+
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
 		$request->set_body_params( [
@@ -891,22 +938,22 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 		] );
-	
+
 		$response = $this->rest_api->process_batch( $request );
-	
+
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
-	
+
 		$response_data = $response->get_data();
 		$this->assertEquals( 'watermark_mismatch', $response_data['code'] );
 		$this->assertEquals( 'Data has been modified by another process', $response_data['message'] );
 		$this->assertEquals( 400, $response_data['data']['status'] );
 	}
-	
+
 	public function test_process_batch__batch_operation_failed_error() {
 		// Arrange
 		$this->act_as_admin();
-	
+
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
 				'existing-id' => [
@@ -918,7 +965,7 @@ class Test_Variables_Repository extends TestCase {
 			'watermark' => 5,
 			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
 		] );
-	
+
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
 		$request->set_body_params( [
@@ -935,12 +982,12 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 		] );
-	
+
 		$response = $this->rest_api->process_batch( $request );
-	
+
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
-	
+
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
 		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
@@ -949,11 +996,11 @@ class Test_Variables_Repository extends TestCase {
 		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
 		$this->assertStringContainsString( 'already exists', $response_data['data']['temp-fail']['message'] );
 	}
-	
+
 	public function test_process_batch__validation_invalid_watermark() {
 		// Arrange
 		$this->act_as_admin();
-	
+
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
 		$request->set_body_params( [
@@ -969,32 +1016,32 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 		] );
-	
+
 		$validation_result = $this->rest_api->is_valid_watermark( -5 );
-	
+
 		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $validation_result );
 		$this->assertEquals( 'invalid_watermark', $validation_result->get_error_code() );
 		$this->assertEquals( 'Watermark must be a non-negative integer', $validation_result->get_error_message() );
 	}
-	
+
 	public function test_process_batch__validation_empty_operations_array() {
 		// Arrange
 		$this->act_as_admin();
-	
+
 		// Act
 		$validation_result = $this->rest_api->is_valid_operations_array( [] );
-	
+
 		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $validation_result );
 		$this->assertEquals( 'invalid_operations_empty', $validation_result->get_error_code() );
 		$this->assertEquals( 'Operations array cannot be empty', $validation_result->get_error_message() );
 	}
-	
+
 	public function test_process_batch__validation_invalid_operation_structure() {
 		// Arrange
 		$this->act_as_admin();
-	
+
 		// Act
 		$operations = [
 			[
@@ -1004,19 +1051,19 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 		];
-	
+
 		$validation_result = $this->rest_api->is_valid_operations_array( $operations );
-	
+
 		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $validation_result );
 		$this->assertEquals( 'invalid_operation_structure', $validation_result->get_error_code() );
 		$this->assertStringContainsString( 'Invalid operation structure at index 0', $validation_result->get_error_message() );
 	}
-	
+
 	public function test_process_batch__validation_invalid_operation_type() {
 		// Arrange
 		$this->act_as_admin();
-	
+
 		// Act
 		$operations = [
 			[
@@ -1027,19 +1074,19 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 		];
-	
+
 		$validation_result = $this->rest_api->is_valid_operations_array( $operations );
-	
+
 		// Assert
 		$this->assertInstanceOf( \WP_Error::class, $validation_result );
 		$this->assertEquals( 'invalid_operation_type', $validation_result->get_error_code() );
 		$this->assertStringContainsString( 'Invalid operation type at index 0', $validation_result->get_error_message() );
 	}
-	
+
 	public function test_process_batch__unauthorized_user_access() {
 		// Arrange
 		$this->act_as( 'subscriber' );
-	
+
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
 		$request->set_body_params( [
@@ -1055,15 +1102,15 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 		] );
-	
+
 		// Assert
 		$this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
 	}
-	
+
 	public function test_process_batch__handles_mixed_success_and_failure_operations() {
 		// Arrange
 		$this->act_as_admin();
-	
+
 		$this->kit->method( 'get_json_meta' )->willReturn( [
 			'data' => [
 				'existing-label' => [
@@ -1075,7 +1122,7 @@ class Test_Variables_Repository extends TestCase {
 			'watermark' => 5,
 			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
 		] );
-	
+
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
 		$request->set_body_params( [
@@ -1109,19 +1156,19 @@ class Test_Variables_Repository extends TestCase {
 				],
 			],
 		] );
-	
+
 		$response = $this->rest_api->process_batch( $request );
-	
+
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
-	
+
 		$response_data = $response->get_data();
 		$this->assertFalse( $response_data['success'] );
 		$this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
-	
+
 		$this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
 		$this->assertArrayHasKey( 'non-existent', $response_data['data'] );
-	
+
 		$this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
 		$this->assertEquals( 404, $response_data['data']['non-existent']['status'] );
 	}
