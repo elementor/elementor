@@ -157,8 +157,8 @@ class Editor_Common_Scripts_Settings {
 		$client_env = apply_filters( 'elementor/editor/localize_settings', $client_env );
 
 		// Ensure pro widgets are present in the array if needed
-		$pro_widgets = Api::get_promotion_widgets();
 		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
+			$pro_widgets = Api::get_promotion_widgets();
 			if ( ! isset( $client_env['promotionWidgets'] ) ) {
 				$client_env['promotionWidgets'] = $pro_widgets;
 			} else {
