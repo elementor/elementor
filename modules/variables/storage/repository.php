@@ -8,6 +8,7 @@ use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -236,7 +237,6 @@ class Repository {
 	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
 		$db_record = $this->load();
 
-		// Verify watermark to ensure data consistency
 		if ( $db_record['watermark'] !== $expected_watermark ) {
 			throw new \Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch( 'Watermark mismatch' );
 		}
@@ -246,7 +246,6 @@ class Repository {
 		$error_details = [];
 
 		try {
-			// Process each operation
 			foreach ( $operations as $index => $operation ) {
 				$result = $this->process_single_operation( $db_record, $operation );
 
@@ -257,12 +256,10 @@ class Repository {
 				}
 			}
 
-			// If any operation failed, throw exception with details
 			if ( ! empty( $error_details ) ) {
 				throw new \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed( 'One or more operations failed', $error_details );
 			}
 
-			// All operations successful, save the data
 			$watermark = $this->save( $db_record );
 
 			if ( false === $watermark ) {
@@ -276,7 +273,7 @@ class Repository {
 			];
 
 		} catch ( \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed $e ) {
-			// Restore original data on failure
+
 			$db_record['data'] = $original_data;
 
 			throw $e;
@@ -319,14 +316,11 @@ class Repository {
 	private function process_create_operation( array &$db_record, array $operation ): array {
 		$variable_data = $operation['variable'];
 
-		// Generate new ID or use provided temporary ID
 		$temp_id = $variable_data['id'] ?? null;
 		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value' ] );
 
-		// Validate label uniqueness
 		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
 
-		// Check variables limit
 		$this->assert_if_variables_limit_reached( $db_record );
 
 		$id = $this->new_id_for( $db_record['data'] );
@@ -356,7 +350,6 @@ class Repository {
 		$updated_variable = array_merge( $db_record['data'][ $id ], $updated_fields );
 		$updated_variable['updated_at'] = $this->now();
 
-		// Validate label uniqueness
 		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
 
 		$db_record['data'][ $id ] = $updated_variable;
@@ -404,10 +397,8 @@ class Repository {
 		$restored_variable = array_merge( $restored_variable, $overrides );
 		$restored_variable['updated_at'] = $this->now();
 
-		// Validate label uniqueness
 		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $restored_variable, [ 'id' => $id ] ) );
 
-		// Check variables limit
 		$this->assert_if_variables_limit_reached( $db_record );
 
 		$db_record['data'][ $id ] = $restored_variable;
@@ -419,7 +410,6 @@ class Repository {
 	}
 
 	private function get_operation_identifier( array $operation, int $index ): string {
-		// Use temporary ID for create operations, actual ID for others, or index as fallback
 		if ( 'create' === $operation['type'] && isset( $operation['variable']['id'] ) ) {
 			return $operation['variable']['id'];
 		}
