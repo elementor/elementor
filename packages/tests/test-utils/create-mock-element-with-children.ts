@@ -30,6 +30,42 @@ export function createMockChild( id: string, widgetType?: string ): V1Element {
 	};
 }
 
+function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
+	const mockChildren = [ ...children ] as V1Element[] & {
+		findRecursive?: ( predicate: ( child: V1Element ) => boolean ) => V1Element | undefined;
+		forEachRecursive?: ( callback: ( child: V1Element ) => void ) => V1Element[];
+	};
+
+	mockChildren.forEachRecursive = ( callback: ( child: V1Element ) => void ): V1Element[] => {
+		const processChild = ( child: V1Element ) => {
+			callback( child );
+			if ( child.children && child.children.length > 0 ) {
+				child.children.forEach( processChild );
+			}
+		};
+
+		children.forEach( processChild );
+		return children;
+	};
+
+	mockChildren.findRecursive = ( predicate: ( child: V1Element ) => boolean ): V1Element | undefined => {
+		for ( const child of children ) {
+			if ( predicate( child ) ) {
+				return child;
+			}
+			if ( child.children ) {
+				const found = child.children.findRecursive?.( predicate );
+				if ( found ) {
+					return found;
+				}
+			}
+		}
+		return undefined;
+	};
+
+	return mockChildren;
+}
+
 export function createMockContainer( id: string, children: V1Element[] ): V1Element {
 	const modelData: V1ElementModelProps = {
 		elType: 'container',
@@ -40,6 +76,6 @@ export function createMockContainer( id: string, children: V1Element[] ): V1Elem
 		id,
 		model: createMockModel( modelData ),
 		settings: createMockModel< V1ElementSettingsProps >( {} ),
-		children,
+		children: createMockChildren( children ),
 	};
 }

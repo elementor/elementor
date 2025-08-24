@@ -592,8 +592,8 @@ trait Button_Trait {
 
 		view.addRenderAttribute( 'button', 'class', 'elementor-button' );
 
-		if ( '' !== settings.link.url ) {
-			view.addRenderAttribute( 'button', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
+		if ( '' !== settings.link?.url ) {
+			view.addRenderAttribute( 'button', 'href', elementor.helpers.sanitizeUrl( settings.link?.url ) );
 			view.addRenderAttribute( 'button', 'class', 'elementor-button-link' );
 		} else {
 			view.addRenderAttribute( 'button', 'role', 'button' );

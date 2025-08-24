@@ -6,6 +6,8 @@
  * Version: 3.32.0
  * Author: Elementor.com
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
+ * Requires PHP: 7.4
+ * Requires at least: 6.6
  * Text Domain: elementor
  *
  * @package Elementor
