@@ -8,6 +8,8 @@ use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
+use Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch;
+use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -238,7 +240,7 @@ class Repository {
 		$db_record = $this->load();
 
 		if ( $db_record['watermark'] !== $expected_watermark ) {
-			throw new \Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch( 'Watermark mismatch' );
+			throw new WatermarkMismatch( 'Watermark mismatch' );
 		}
 
 		$original_data = $db_record['data'];
@@ -257,13 +259,13 @@ class Repository {
 			}
 
 			if ( ! empty( $error_details ) ) {
-				throw new \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed( 'One or more operations failed', $error_details );
+				throw new BatchOperationFailed( 'One or more operations failed', $error_details );
 			}
 
 			$watermark = $this->save( $db_record );
 
 			if ( false === $watermark ) {
-				throw new \Elementor\Modules\Variables\Storage\Exceptions\FatalError( 'Failed to save batch operations' );
+				throw new FatalError( 'Failed to save batch operations' );
 			}
 
 			return [
@@ -272,7 +274,7 @@ class Repository {
 				'results' => $results,
 			];
 
-		} catch ( \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed $e ) {
+		} catch ( BatchOperationFailed $e ) {
 
 			$db_record['data'] = $original_data;
 
