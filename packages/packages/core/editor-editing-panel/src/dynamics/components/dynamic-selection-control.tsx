@@ -173,9 +173,15 @@ const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 		return null;
 	}
 
+	const layout = controlsRegistry.getLayout( control.type as ControlType );
+
 	return (
 		<DynamicControl bind={ control.bind }>
-			<Grid container gap={ 0.75 }>
+			<Grid
+				container
+				gap={ 0.75 }
+				sx={ layout === 'two-columns' ? { display: 'grid', gridTemplateColumns: '1fr 1fr' } : {} }
+			>
 				{ control.label ? (
 					<Grid item xs={ 12 }>
 						<ControlFormLabel>{ control.label }</ControlFormLabel>
