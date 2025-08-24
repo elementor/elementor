@@ -2,6 +2,11 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 import KitPartsSelection from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection';
 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/kit-content-data', () => [
 	{
 		type: 'templates',
@@ -38,6 +43,8 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/k
 	},
 ] );
 
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
+
 describe( 'KitPartsSelection Component', () => {
 	const mockOnCheckboxChange = jest.fn();
 	const mockHandleSaveCustomization = jest.fn();
@@ -56,6 +63,11 @@ describe( 'KitPartsSelection Component', () => {
 				config: eventsConfig,
 			},
 		};
+
+		useContextDetection.mockReturnValue( {
+			isImport: false,
+			contextData: null,
+		} );
 	} );
 
 	describe( 'Component Rendering', () => {
@@ -270,6 +282,13 @@ describe( 'KitPartsSelection Component', () => {
 
 		it( 'should disable items not available in manifest', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+				},
+			} );
+
 			const importData = {
 				includes: [ 'templates', 'settings' ],
 				customization: {},
@@ -427,6 +446,13 @@ describe( 'KitPartsSelection Component', () => {
 
 		it( 'should not call onCheckboxChange when disabled checkbox is clicked', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+				},
+			} );
+
 			const importData = {
 				includes: [ 'templates' ],
 				customization: {},
@@ -473,6 +499,13 @@ describe( 'KitPartsSelection Component', () => {
 
 		it( 'should disable Edit button for disabled items in import mode', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+				},
+			} );
+
 			const importData = {
 				includes: [ 'templates' ],
 				customization: {},
