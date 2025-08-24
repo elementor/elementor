@@ -26,7 +26,7 @@ export const TooltipAddItemAction = ( {
 
 	return (
 		<ConditionalToolTip content={ tooltipContent } enable={ enableTooltip }>
-			<Box sx={ { ml: 'auto', cursor: disabled ? 'not-allowed' : 'pointer' } }>
+			<Box component="span" sx={ { cursor: disabled ? 'not-allowed' : 'pointer' } }>
 				<IconButton
 					size={ SIZE }
 					disabled={ disabled }
@@ -47,7 +47,6 @@ const ConditionalToolTip = ( {
 }: React.PropsWithChildren< {
 	content?: React.ReactNode;
 	enable: boolean;
-	wrapContent?: boolean;
 } > ) =>
 	enable && content ? (
 		<Infotip placement="right" color="secondary" content={ content }>
