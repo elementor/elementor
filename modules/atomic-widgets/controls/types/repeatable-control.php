@@ -87,7 +87,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 			'patternLabel'       => $this->pattern_label,
 			'repeaterLabel'      => $this->repeater_label,
 			'placeholder'        => $this->placeholder,
-			// 'propKey'            => $this->prop_key,
+			'propKey'            => $this->prop_key,
 		];
 	}
 }
