@@ -1,0 +1,207 @@
+<?php
+namespace Elementor\Modules\ProInstall;
+
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
+use Elementor\Settings;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
+
+	private Connect $connect;
+
+	public function __construct( Connect $connect ) {
+		$this->connect = $connect;
+	}
+
+	public function get_label(): string {
+		return esc_html__( 'Connect Account', 'elementor' );
+	}
+
+	public function get_page_title(): string {
+		return esc_html__( 'Connect Settings', 'elementor' );
+	}
+
+	public function get_capability(): string {
+		return 'manage_options';
+	}
+
+	public function get_parent_slug(): string {
+		return Settings::PAGE_ID;
+	}
+
+	public function is_visible(): bool {
+		return true;
+	}
+
+	public function render() {
+		?>
+		<div class="wrap elementor-admin-page-license">
+			<h2 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h2>
+			<?php
+			if ( ! $this->connect->is_connected() ) {
+				$this->render_connect_box();
+			} else {
+				$this->render_license_box();
+			}
+			?>
+		</div>
+		<?php
+	}
+
+	private function render_connect_box() {
+		$connect_url = $this->connect->get_admin_url( 'authorize', [
+			'utm_source' => 'license-page',
+			'utm_medium' => 'wp-dash',
+			'utm_campaign' => 'connect-and-activate-license',
+			'utm_term' => 'connect-and-activate',
+		] );
+
+		?>
+		<div class="elementor-license-box">
+			<h3><?php echo esc_html__( 'Connect your Elementor Account', 'elementor' ); ?></h3>
+
+			<p>
+				<?php echo esc_html__( 'Gain access to dozens of professionally designed templates, and connect your site to your My Elementor Dashboard.', 'elementor' ); ?>
+			</p>
+
+			<div class="elementor-box-action">
+				<a class="button button-primary" href="<?php echo esc_url( $connect_url ); ?>">
+					<?php echo esc_html__( 'Connect to Elementor', 'elementor' ); ?>
+				</a>
+			</div>
+		</div>
+		<?php
+	}
+
+	private function render_license_box() {
+		$disconnect_url = $this->connect->get_admin_url( 'disconnect' );
+		$download_link = $this->connect->get_download_link();
+		$switch_license_url = $this->connect->get_admin_url( 'reconnect', [
+			'utm_source' => 'license-page',
+			'utm_medium' => 'wp-dash',
+			'utm_campaign' => 'connect-and-activate-license',
+			'utm_term' => 'switch-license',
+		] );
+
+		?>
+		<div class="elementor-license-box">
+			<h3>
+				<?php echo esc_html__( 'Status', 'elementor' ); ?>:
+				<span style="color: #008000; font-style: italic;"><?php echo esc_html__( 'Connected', 'elementor' ); ?></span>
+				<small>
+					<a class="button" href="https://go.elementor.com/my-account/">
+						<?php echo esc_html__( 'My Account', 'elementor' ); ?>
+					</a>
+				</small>
+			</h3>
+
+			<p class="e-row-stretch e-row-divider-bottom">
+				<span>
+				<?php
+				$connected_user = $this->get_connected_account();
+
+				if ( $connected_user ) :
+					echo sprintf(
+						/* translators: %s: Connected user. */
+						esc_html__( 'You\'re connected as %s.', 'elementor' ),
+						'<strong>' . esc_html( $connected_user ) . '</strong>'
+					);
+				endif;
+				?>
+
+				<?php echo esc_html__( 'Want to activate this website by a different license?', 'elementor' ); ?>
+				</span>
+				<a class="button button-primary" href="<?php echo esc_url( $switch_license_url ); ?>">
+					<?php echo esc_html__( 'Switch Account', 'elementor' ); ?>
+				</a>
+			</p>
+
+			<p class="e-row-stretch">
+				<span><?php echo esc_html__( 'Want to disconnect for any reason?', 'elementor' ); ?></span>
+				<a class="button" href="<?php echo esc_url( $disconnect_url ); ?>">
+					<?php echo esc_html__( 'Disconnect', 'elementor' ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
+		if ( empty( $download_link ) ) {
+			$this->render_promotion_box();
+		} else {
+			$this->render_install_or_activate_box();
+		}
+	}
+
+	private function get_connected_account() {
+		$user = $this->connect->get( 'user' );
+
+		$email = '';
+		if ( $user ) {
+			$email = $user->email;
+		}
+
+		return $email;
+	}
+
+	private function render_promotion_box() {
+		?>
+		<div class="elementor-license-box elementor-pro-connect-promotion">
+			<div>
+				<h2><?php echo esc_html__( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' ); ?></h2>
+				<p><?php echo esc_html__( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' ); ?></p>
+				<div class="elementor-box-action">
+					<a class="button button-primary" href="https://elementor.com/pro/?utm_source=wp-plugins&utm_campaign=gopro&utm_medium=wp-dash">
+						<?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?>
+					</a>
+				</div>
+			</div>
+			<img src="https://assets.elementor.com/free-to-pro-upsell/v1/images/connect-pro-upgrade.jpg" alt="<?php echo esc_attr__( 'Pro Upgrade', 'elementor' ); ?>" />
+		</div>
+		<?php
+	}
+
+	private function render_install_or_activate_box() {
+		$cta_data = $this->get_cta_data();
+		$ctr_url = wp_nonce_url( admin_url( 'admin-post.php?action=elementor_do_pro_install' ), 'elementor_do_pro_install' );
+
+		?>
+		<div class="elementor-license-box">
+			<h3><?php echo esc_html__( 'You\'ve got Elementor Pro', 'elementor' ); ?></h3>
+
+			<p class="e-row-stretch">
+				<span><?php echo esc_html( $cta_data['description'] ); ?></span>
+				<a class="button" href="<?php echo esc_url( $ctr_url ); ?>">
+					<?php echo esc_html( $cta_data['button_text'] ); ?>
+				</a>
+			</p>
+		</div>
+		<?php
+	}
+
+	private function get_cta_data(): array {
+		if ( $this->is_pro_installed() ) {
+			return [
+				'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
+				'button_text' => esc_html__( 'Activate Elementor Pro', 'elementor' ),
+			];
+		}
+
+		return [
+			'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
+			'button_text' => esc_html__( 'Install & Activate Now', 'elementor' ),
+		];
+	}
+
+	private function is_pro_installed(): bool {
+		$file_path = $this->get_elementor_pro_file_path();
+		$installed_plugins = get_plugins();
+
+		return isset( $installed_plugins[ $file_path ] );
+	}
+
+	private function get_elementor_pro_file_path(): string {
+		return 'elementor-pro/elementor-pro.php';
+	}
+}
