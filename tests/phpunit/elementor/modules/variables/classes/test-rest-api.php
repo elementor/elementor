@@ -513,4 +513,329 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			$this->rest_api->trim_and_sanitize_text_field('<strong>bold</strong>')
 		);
 	}
+
+public function test_process_batch__successful_operations() {
+    // Arrange
+    $this->act_as_admin();
+
+    $this->kit->method( 'get_json_meta' )->willReturn( [
+        'data' => [
+            'existing-id' => [
+                'type' => Color_Variable_Prop_Type::get_key(),
+                'label' => 'Existing Color',
+                'value' => '#000000',
+            ],
+        ],
+        'watermark' => 10,
+        'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+    ] );
+
+    $this->kit->expects( $this->once() )
+        ->method( 'update_json_meta' )
+        ->willReturn( true );
+
+    // Act
+    $request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+    $request->set_body_params( [
+        'watermark' => 10,
+        'operations' => [
+            [
+                'type' => 'create',
+                'variable' => [
+                    'id' => 'temp-123',
+                    'type' => Color_Variable_Prop_Type::get_key(),
+                    'label' => 'New Color',
+                    'value' => '#FF0000',
+                ],
+            ],
+            [
+                'type' => 'update',
+                'id' => 'existing-id',
+                'variable' => [
+                    'label' => 'Updated Color',
+                    'value' => '#00FF00',
+                ],
+            ],
+        ],
+    ] );
+
+    $response = $this->rest_api->process_batch( $request );
+
+    // Assert
+    $this->assertEquals( 200, $response->get_status() );
+
+    $response_data = $response->get_data();
+    $this->assertTrue( $response_data['success'] );
+    $this->assertEquals( 11, $response_data['data']['watermark'] );
+    $this->assertCount( 2, $response_data['data']['results'] );
+
+    $create_result = $response_data['data']['results'][0];
+    $this->assertEquals( 'temp-123', $create_result['temp_id'] );
+    $this->assertNotEmpty( $create_result['id'] );
+    $this->assertEquals( 'New Color', $create_result['variable']['label'] );
+
+    $update_result = $response_data['data']['results'][1];
+    $this->assertEquals( 'existing-id', $update_result['id'] );
+    $this->assertEquals( 'Updated Color', $update_result['variable']['label'] );
+}
+
+public function test_process_batch__watermark_mismatch_error() {
+    // Arrange
+    $this->act_as_admin();
+
+    $this->kit->method( 'get_json_meta' )->willReturn( [
+        'data' => [],
+        'watermark' => 15,
+        'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+    ] );
+
+    // Act
+    $request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+    $request->set_body_params( [
+        'watermark' => 10,
+        'operations' => [
+            [
+                'type' => 'create',
+                'variable' => [
+                    'type' => Color_Variable_Prop_Type::get_key(),
+                    'label' => 'Test Color',
+                    'value' => '#FF0000',
+                ],
+            ],
+        ],
+    ] );
+
+    $response = $this->rest_api->process_batch( $request );
+
+    // Assert
+    $this->assertEquals( 400, $response->get_status() );
+
+    $response_data = $response->get_data();
+    $this->assertEquals( 'watermark_mismatch', $response_data['code'] );
+    $this->assertEquals( 'Data has been modified by another process', $response_data['message'] );
+    $this->assertEquals( 400, $response_data['data']['status'] );
+}
+
+public function test_process_batch__batch_operation_failed_error() {
+    // Arrange
+    $this->act_as_admin();
+
+    $this->kit->method( 'get_json_meta' )->willReturn( [
+        'data' => [
+            'existing-id' => [
+                'type' => Color_Variable_Prop_Type::get_key(),
+                'label' => 'Existing Label',
+                'value' => '#000000',
+            ],
+        ],
+        'watermark' => 5,
+        'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+    ] );
+
+    // Act
+    $request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+    $request->set_body_params( [
+        'watermark' => 5,
+        'operations' => [
+            [
+                'type' => 'create',
+                'variable' => [
+                    'id' => 'temp-fail',
+                    'type' => Color_Variable_Prop_Type::get_key(),
+                    'label' => 'Existing Label',
+                    'value' => '#FF0000',
+                ],
+            ],
+        ],
+    ] );
+
+    $response = $this->rest_api->process_batch( $request );
+
+    // Assert
+    $this->assertEquals( 400, $response->get_status() );
+
+    $response_data = $response->get_data();
+    $this->assertFalse( $response_data['success'] );
+    $this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
+    $this->assertEquals( 'Batch operation failed', $response_data['message'] );
+    $this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
+    $this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
+    $this->assertStringContains( 'already exists', $response_data['data']['temp-fail']['message'] );
+}
+
+public function test_process_batch__validation_invalid_watermark() {
+    // Arrange
+    $this->act_as_admin();
+
+    // Act
+    $request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+    $request->set_body_params( [
+        'watermark' => -5,
+        'operations' => [
+            [
+                'type' => 'create',
+                'variable' => [
+                    'type' => Color_Variable_Prop_Type::get_key(),
+                    'label' => 'Test',
+                    'value' => '#FF0000',
+                ],
+            ],
+        ],
+    ] );
+
+    $validation_result = $this->rest_api->is_valid_watermark( -5 );
+
+    // Assert
+    $this->assertInstanceOf( \WP_Error::class, $validation_result );
+    $this->assertEquals( 'invalid_watermark', $validation_result->get_error_code() );
+    $this->assertEquals( 'Watermark must be a non-negative integer', $validation_result->get_error_message() );
+}
+
+public function test_process_batch__validation_empty_operations_array() {
+    // Arrange
+    $this->act_as_admin();
+
+    // Act
+    $validation_result = $this->rest_api->is_valid_operations_array( [] );
+
+    // Assert
+    $this->assertInstanceOf( \WP_Error::class, $validation_result );
+    $this->assertEquals( 'invalid_operations_empty', $validation_result->get_error_code() );
+    $this->assertEquals( 'Operations array cannot be empty', $validation_result->get_error_message() );
+}
+
+public function test_process_batch__validation_invalid_operation_structure() {
+    // Arrange
+    $this->act_as_admin();
+
+    // Act
+    $operations = [
+        [
+            'variable' => [
+                'label' => 'Test',
+                'value' => '#FF0000',
+            ],
+        ],
+    ];
+
+    $validation_result = $this->rest_api->is_valid_operations_array( $operations );
+
+    // Assert
+    $this->assertInstanceOf( \WP_Error::class, $validation_result );
+    $this->assertEquals( 'invalid_operation_structure', $validation_result->get_error_code() );
+    $this->assertStringContains( 'Invalid operation structure at index 0', $validation_result->get_error_message() );
+}
+
+public function test_process_batch__validation_invalid_operation_type() {
+    // Arrange
+    $this->act_as_admin();
+
+    // Act
+    $operations = [
+        [
+            'type' => 'invalid_type',
+            'variable' => [
+                'label' => 'Test',
+                'value' => '#FF0000',
+            ],
+        ],
+    ];
+
+    $validation_result = $this->rest_api->is_valid_operations_array( $operations );
+
+    // Assert
+    $this->assertInstanceOf( \WP_Error::class, $validation_result );
+    $this->assertEquals( 'invalid_operation_type', $validation_result->get_error_code() );
+    $this->assertStringContains( 'Invalid operation type at index 0', $validation_result->get_error_message() );
+}
+
+public function test_process_batch__unauthorized_user_access() {
+    // Arrange
+    $this->act_as( 'subscriber' );
+
+    // Act
+    $request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+    $request->set_body_params( [
+        'watermark' => 5,
+        'operations' => [
+            [
+                'type' => 'create',
+                'variable' => [
+                    'type' => Color_Variable_Prop_Type::get_key(),
+                    'label' => 'Test',
+                    'value' => '#FF0000',
+                ],
+            ],
+        ],
+    ] );
+
+    // Assert
+    $this->assertFalse( $this->rest_api->enough_permissions_to_perform_rw_action() );
+}
+
+public function test_process_batch__handles_mixed_success_and_failure_operations() {
+    // Arrange
+    $this->act_as_admin();
+
+    $this->kit->method( 'get_json_meta' )->willReturn( [
+        'data' => [
+            'existing-label' => [
+                'type' => Color_Variable_Prop_Type::get_key(),
+                'label' => 'Conflicting Label',
+                'value' => '#000000',
+            ],
+        ],
+        'watermark' => 5,
+        'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+    ] );
+
+    // Act
+    $request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
+    $request->set_body_params( [
+        'watermark' => 5,
+        'operations' => [
+            [
+                'type' => 'create',
+                'variable' => [
+                    'id' => 'temp-success',
+                    'type' => Color_Variable_Prop_Type::get_key(),
+                    'label' => 'Valid Label',
+                    'value' => '#FF0000',
+                ],
+            ],
+            [
+                'type' => 'create',
+                'variable' => [
+                    'id' => 'temp-fail',
+                    'type' => Color_Variable_Prop_Type::get_key(),
+                    'label' => 'Conflicting Label',
+                    'value' => '#00FF00',
+                ],
+            ],
+            [
+                'type' => 'update',
+                'id' => 'non-existent',
+                'variable' => [
+                    'label' => 'Updated',
+                    'value' => '#0000FF',
+                ],
+            ],
+        ],
+    ] );
+
+    $response = $this->rest_api->process_batch( $request );
+
+    // Assert
+    $this->assertEquals( 400, $response->get_status() );
+
+    $response_data = $response->get_data();
+    $this->assertFalse( $response_data['success'] );
+    $this->assertEquals( 'atomic_operation_failed', $response_data['code'] );
+    
+    $this->assertArrayHasKey( 'temp-fail', $response_data['data'] );
+    $this->assertArrayHasKey( 'non-existent', $response_data['data'] );
+    
+    $this->assertEquals( 400, $response_data['data']['temp-fail']['status'] );
+    $this->assertEquals( 404, $response_data['data']['non-existent']['status'] );
+}
 }
