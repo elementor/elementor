@@ -85,7 +85,8 @@ class Components_REST_API {
 		return Response_Builder::make( $styles->all() )->build();
 	}
 	private function create_component( \WP_REST_Request $request ) {
-		$components_count = $this->get_repository()->all()->get_components()->count();
+		$components = $this->get_repository()->all();
+		$components_count = $components->get_components()->count();
 
 		if ( $components_count >= static::MAX_COMPONENTS ) {
 			return Error_Builder::make( 'components_limit_exceeded' )
@@ -99,12 +100,12 @@ class Components_REST_API {
 
 		$parser = Components_Parser::make();
 
-		$name_result = $parser->parse_name( $request->get_param( 'name' ) );
+		$name_result = $parser->parse_name( $request->get_param( 'name' ), $components->get_components()->map( fn( $component ) => $component->get_post()->post_title )->all() );
 
 		if ( ! $name_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_name' )
 				->set_status( 400 )
-				->set_message( __( 'Invalid component name', 'elementor' ) )
+				->set_message( __( 'Invalid component name: ' . $name_result->errors()->to_string(), 'elementor' ) )
 				->build();
 		}
 
@@ -125,7 +126,6 @@ class Components_REST_API {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			// error_log( 'Error: ' . $e->getMessage() );
 			return Error_Builder::make( 'unexpected_error' )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();

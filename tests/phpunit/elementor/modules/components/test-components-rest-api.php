@@ -234,16 +234,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'name' => '  <script>alert("xss")</script>Sanitized Component  ',
-			'content' => [
-				[
-					'id' => 'sanitize-test',
-					'elType' => 'widget',
-					'widgetType' => 'text-editor',
-					'settings' => [
-						'editor' => 'Test content',
-					],
-				],
-			],
+			'content' => $this->mock_component_1_content,
 		] );
 
 		$response = rest_do_request( $request );
@@ -309,14 +300,54 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertContains( 'content', $response->get_data()['data']['params'] );
 	}
 
-	public function test_post_create_component__fails_when_name_is_empty_after_sanitization() {
+	public function test_post_create_component__fails_when_max_components_limit_is_reached() {
+		// Arrange
+		for ( $i = 0; $i < 49; $i++ ) {
+			$this->create_test_component( 'Test Component ' . $i, $this->mock_component_1_content );
+		}
+		
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'name' => 'Test Component 50',
+			'content' => $this->mock_component_1_content,
+		] );
+
+		// Act - create the 50th component
+		$response = rest_do_request( $request );
+
+		// Assert - should create the 50th component successfully
+		$this->assertEquals( 200, $response->get_status() );
+		$component_id = $response->get_data()['data'];
+
+		$post = get_post( $component_id );
+		$this->assertEquals( 'Test Component 50', $post->post_title );
+
+		// Act - create the 51st component
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'name' => 'Test Component 51',
+			'content' => [ $this->mock_component_1_content ],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert - should fail on the 51st component
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'components_limit_exceeded', $response->get_data()['code'] );
+		$this->assertEquals( 'Components limit exceeded. Maximum allowed: 50', $response->get_data()['message'] );
+	}
+
+	public function test_post_create_component__fails_when_name_is_too_short() {
 		// Arrange
 		$this->act_as_admin();
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
 		$request->set_body_params( [
-			'name' => '   ',
+			'name' => 'a  ',
 			'content' => [ $this->mock_component_1_content ],
 		] );
 
@@ -325,7 +356,46 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'invalid_name', $response->get_data()['code'] );
-		$this->assertEquals( 'Invalid component name', $response->get_data()['message'] );
+		$this->assertEquals( 'Invalid component name: name: component_name_too_short_min_2', $response->get_data()['message'] );
+	}
+
+	public function test_post_create_component__fails_when_name_is_too_long() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'name' => 'a'.str_repeat('a', 51),
+			'content' => [ $this->mock_component_1_content ],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'invalid_name', $response->get_data()['code'] );
+		$this->assertEquals( 'Invalid component name: name: component_name_too_long_max_50', $response->get_data()['message'] );
+	}
+
+	public function test_post_create_component__fails_when_name_is_duplicated() {
+		// Arrange
+		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'name' => 'Test Component',
+			'content' => [ $this->mock_component_1_content ],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'invalid_name', $response->get_data()['code'] );
+		$this->assertEquals( 'Invalid component name: name: duplicated_component_name', $response->get_data()['message'] );
 	}
 
 	public function test_post_create_component__fails_when_name_has_invalid_type() {
