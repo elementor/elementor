@@ -866,13 +866,11 @@ class Test_Variables_Repository extends TestCase {
     $this->assertEquals( 'New Color', $create_result['variable']['label'] );
     $this->assertNotEmpty( $create_result['variable']['created_at'] );
 
-    // Check update result
     $update_result = $result['results'][1];
     $this->assertEquals( 'existing-id-1', $update_result['id'] );
     $this->assertEquals( 'Updated Color', $update_result['variable']['label'] );
     $this->assertNotEmpty( $update_result['variable']['updated_at'] );
 
-    // Check restore result
     $restore_result = $result['results'][2];
     $this->assertEquals( 'deleted-id', $restore_result['id'] );
     $this->assertEquals( 'Restored Color', $restore_result['variable']['label'] );
