@@ -44,6 +44,7 @@
     "styles": "grunt styles",
     "styles:watch": "grunt watch_styles",
     "lint": "eslint . && cd packages && npm run lint",
+    "format": "eslint . --fix",
     "setup:testing": "bash scripts/setup-testing.sh",
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
