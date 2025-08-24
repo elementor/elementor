@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type PropType, type PropTypeUtil } from '@elementor/editor-props';
+import { type PropTypeUtil } from '@elementor/editor-props';
 
 import { SlotChildren } from '../../control-replacements';
 import { SectionContent } from '../section-content';
@@ -13,22 +13,13 @@ export const UnstableRepeater = < T extends RepeatablePropValue >( {
 	children,
 	initial,
 	propTypeUtil,
-	controlAdornmentContext,
 }: React.PropsWithChildren< {
 	initial: T;
 	propTypeUtil: PropTypeUtil< string, T[] >;
-	controlAdornmentContext?: {
-		path: string[];
-		propType: PropType;
-	};
 } > ) => {
 	return (
 		<SectionContent>
-			<RepeaterContextProvider
-				initial={ initial }
-				propTypeUtil={ propTypeUtil }
-				controlAdornmentContext={ controlAdornmentContext }
-			>
+			<RepeaterContextProvider initial={ initial } propTypeUtil={ propTypeUtil }>
 				<SlotChildren whitelist={ [ Header, ItemsContainer, EditItemPopover ] as React.FC[] } sorted>
 					{ children }
 				</SlotChildren>

@@ -78,9 +78,12 @@ const Repeater = ( { headerRef, propType }: { headerRef: React.RefObject< HTMLDi
 			<UnstableRepeater
 				initial={ getInitialValue() ?? initialTransformValue }
 				propTypeUtil={ transformFunctionsPropTypeUtil }
-				controlAdornmentContext={ { path: [ 'transform' ], propType } }
 			>
-				<Header label={ __( 'Transform', 'elementor' ) } ref={ headerRef }>
+				<Header
+					label={ __( 'Transform', 'elementor' ) }
+					controlAdornmentContext={ { path: [ 'transform' ], propType } }
+					ref={ headerRef }
+				>
 					<TooltipAddItemAction
 						disabled={ shouldDisableAddItem }
 						tooltipContent={ ToolTip }
