@@ -21,13 +21,30 @@ export const validateComponentForm = (
 				MAX_NAME_LENGTH,
 				__( 'Component name is too long. Please keep it under 50 characters.', 'elementor' )
 			)
-			.refine( ( value ) => {
-				if ( event === 'submit' ) {
-					return value.length >= MIN_NAME_LENGTH;
-				}
+			.refine(
+				( value ) => {
+					if ( event === 'submit' ) {
+						return value.length > 0;
+					}
 
-				return true;
-			} )
+					return true;
+				},
+				{
+					message: __( 'Component name is required.', 'elementor' ),
+				}
+			)
+			.refine(
+				( value ) => {
+					if ( event === 'submit' ) {
+						return value.length >= MIN_NAME_LENGTH;
+					}
+
+					return true;
+				},
+				{
+					message: __( 'Component name is too short. Please enter at least 2 characters.', 'elementor' ),
+				}
+			)
 			.refine( ( value ) => ! existingNames.includes( value ), {
 				message: __( 'Component name already exists', 'elementor' ),
 			} ),

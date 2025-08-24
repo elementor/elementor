@@ -1,22 +1,27 @@
 import * as React from 'react';
 import { createMockElement, renderWithTheme } from 'test-utils';
 import { getElementLabel, type V1Element } from '@elementor/editor-elements';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
+import { apiClient } from '../../api';
 import { saveElementAsComponent } from '../../utils/save-element-as-component';
 import { CreateComponentForm } from '../create-component-form';
 
 jest.mock( '../../utils/save-element-as-component' );
 jest.mock( '@elementor/editor-elements' );
+jest.mock( '../../api' );
 
 const mockSaveElementAsComponent = jest.mocked( saveElementAsComponent );
 const mockGetElementLabel = jest.mocked( getElementLabel );
+const mockGetComponents = jest.mocked( apiClient.get );
 
 const mockElement: V1Element = createMockElement( { model: { id: 'test-element' } } );
 
 describe( 'CreateComponentForm', () => {
 	beforeEach( () => {
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
+		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', component_id: 123 } ] ) );
 	} );
 
 	const triggerOpenFormEvent = ( element = mockElement, anchorPosition = { top: 100, left: 200 } ) => {
@@ -27,8 +32,20 @@ describe( 'CreateComponentForm', () => {
 		act( () => window.dispatchEvent( customEvent ) );
 	};
 
+	const queryClient = new QueryClient( {
+		defaultOptions: {
+			queries: {
+				retry: false,
+			},
+		},
+	} );
+
 	const setupForm = () => {
-		renderWithTheme( <CreateComponentForm /> );
+		renderWithTheme(
+			<QueryClientProvider client={ queryClient }>
+				<CreateComponentForm />
+			</QueryClientProvider>
+		);
 		return {
 			openForm: () => triggerOpenFormEvent(),
 			getComponentNameInput: () => screen.getByRole( 'textbox' ) as HTMLInputElement,
@@ -88,34 +105,103 @@ describe( 'CreateComponentForm', () => {
 	} );
 
 	describe( 'Input Validation', () => {
-		it( 'should disable create button when component name is empty or invalid', () => {
+		it( 'should disable submit when component name is empty', () => {
 			// Arrange.
 			const { openForm, getCreateButton, fillComponentName } = setupForm();
 			openForm();
 
 			// Act.
 			fillComponentName( '' );
+			fireEvent.click( getCreateButton() );
 
 			// Assert.
+			expect( screen.getByText( 'Component name is required.' ) ).toBeInTheDocument();
 			expect( getCreateButton() ).toBeDisabled();
-
-			// Act.
-			fillComponentName( '   ' );
-
-			// Assert.
-			expect( getCreateButton() ).toBeDisabled();
+			expect( mockSaveElementAsComponent ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should enable create button when valid name is entered', () => {
+		it( 'should disable submit when component name is only whitespace', () => {
 			// Arrange.
 			const { openForm, getCreateButton, fillComponentName } = setupForm();
 			openForm();
+
+			// Act.
+			fillComponentName( '   ' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			expect( screen.getByText( 'Component name is required.' ) ).toBeInTheDocument();
+			expect( getCreateButton() ).toBeDisabled();
+			expect( mockSaveElementAsComponent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should disable submit when component name is too short (< 2 chars)', () => {
+			// Arrange.
+			const { openForm, getCreateButton, fillComponentName } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'A' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			expect( getCreateButton() ).toBeDisabled();
+			expect(
+				screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+			).toBeInTheDocument();
+			expect( mockSaveElementAsComponent ).not.toHaveBeenCalled();
+		} );
+
+		it( 'should disable submit when component name is too long (> 50 chars)', () => {
+			// Arrange.
+			const { openForm, getCreateButton, fillComponentName } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'A'.repeat( 51 ) );
+
+			// Assert.
+			expect( getCreateButton() ).toBeDisabled();
+			expect(
+				screen.getByText( 'Component name is too long. Please keep it under 50 characters.' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'should disable submit when component name already exists', () => {
+			// Arrange.
+			const { openForm, getCreateButton, fillComponentName } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'Existing Component' );
+
+			// Assert.
+			expect( getCreateButton() ).toBeDisabled();
+			expect( screen.getByText( 'Component name already exists' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should re-enable submit, and clear errors when valid name is entered', () => {
+			// Arrange.
+			const { openForm, getCreateButton, fillComponentName } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'A'.repeat( 51 ) );
+
+			// Assert.
+			expect( getCreateButton() ).toBeDisabled();
+			expect(
+				screen.getByText( 'Component name is too long. Please keep it under 50 characters.' )
+			).toBeInTheDocument();
 
 			// Act.
 			fillComponentName( 'My Test Component' );
 
 			// Assert.
 			expect( getCreateButton() ).toBeEnabled();
+			expect(
+				screen.queryByText( 'Component name is too long. Please keep it under 50 characters.' )
+			).not.toBeInTheDocument();
 		} );
 	} );
 
