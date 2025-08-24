@@ -46,11 +46,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
-}: React.PropsWithChildren< {
-	initial: T;
-	propTypeUtil: PropTypeUtil< string, T[] >;
-	isSortable?: boolean;
-} > ) => {
+}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable?: boolean } > ) => {
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
 	const [ items, setItems ] = useSyncExternalState( {

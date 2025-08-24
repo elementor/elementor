@@ -13,10 +13,7 @@ export const UnstableRepeater = < T extends RepeatablePropValue >( {
 	children,
 	initial,
 	propTypeUtil,
-}: React.PropsWithChildren< {
-	initial: T;
-	propTypeUtil: PropTypeUtil< string, T[] >;
-} > ) => {
+}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] > } > ) => {
 	return (
 		<SectionContent>
 			<RepeaterContextProvider initial={ initial } propTypeUtil={ propTypeUtil }>
