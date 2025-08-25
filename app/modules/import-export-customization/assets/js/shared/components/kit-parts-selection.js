@@ -3,6 +3,7 @@ import { Box, Typography, Stack, Checkbox, FormControlLabel, Button } from '@ele
 import PropTypes from 'prop-types';
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
+import { ReExportBanner } from './ReExportBanner';
 
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
@@ -51,6 +52,10 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 				return true;
 			}
 
+			if ( 'plugins' === item.type ) {
+				return true;
+			}
+
 			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
 			return ! contextData?.data?.uploadedData?.manifest?.[ manifestKey ];
 		}
@@ -80,7 +85,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 					onClick={ () => setActiveDialog( item.type ) }
 					sx={ { alignSelf: 'center' } }
 					data-type={ item.type }
-					disabled={ 'plugins' === item.type }
+					disabled={ isEditDisabled( item ) }
 				>
 					{ __( 'Edit', 'elementor' ) }
 				</Button>
@@ -103,6 +108,9 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 
 	return (
 		<Stack spacing={ 2 } data-testid={ testId }>
+			{ contextData?.isOldExport && (
+				<ReExportBanner />
+			) }
 			{ kitContentData.map( ( item ) => {
 				const disabled = isDisabled( item );
 
