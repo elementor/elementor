@@ -173,12 +173,6 @@ class Editor_Common_Scripts_Settings {
 		return $client_env;
 	}
 
-	/**
-	 * ensure_numeric_keys
-	 *
-	 * @param array $array
-	 * @return array
-	 */
 	private static function ensure_numeric_keys( array $array ) {
 		return array_values( $array );
 	}
