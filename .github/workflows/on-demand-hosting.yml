@@ -1,0 +1,117 @@
+name: On Demand Hosting
+description: On Demand Hosting
+
+on: 
+  workflow_dispatch:
+    inputs:
+      SITE_SUBDOMAIN:
+        description: 'The site subdomain'
+        required: true
+
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read
+
+env:
+  SFTP_HOST: sftp.stg.elementor.cool
+  SFTP_PORT: 32022
+  SFTP_USERNAME: 01n1aNuz
+  SFTP_PASSWORD: oZs1NNveykGwRezl
+
+jobs:
+  build-plugin:
+    name: Build plugin
+    uses: ./.github/workflows/build.yml
+
+  deploy-to-hosting:
+    name: Deploy to On Demand Hosting
+    runs-on: ubuntu-22.04
+    needs: [build-plugin]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-plugin.outputs.artifact_name }}
+          path: ./build
+      
+      - name: Upload to SFTP server
+        run: |
+          echo "Deploying to site: https://${{ inputs.SITE_SUBDOMAIN }}.stg.elementor.cool"
+          echo "Built artifact downloaded to ./build"
+          
+          # Package the artifact
+          cd ./build
+          zip -r ../elementor.zip .
+          cd ..
+          
+          # Install sshpass for SFTP authentication
+          sudo apt-get update && sudo apt-get install -y sshpass
+          
+          # Upload to SFTP server
+          echo "Uploading elementor.zip to SFTP server..."
+          printf "cd /html/wp-content/uploads\nput elementor.zip\nquit\n" | sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST
+          
+          echo ":white_check_mark: Plugin successfully uploaded to SFTP server"
+          echo ":file_folder: File: /html/wp-content/uploads/elementor.zip"
+          echo ":desktop_computer:  Host: $SFTP_HOST:$SFTP_PORT"
+          
+          
+          # Fetch site_id using subdomain
+          echo "Fetching site_id for subdomain: ${{ inputs.SITE_SUBDOMAIN }}"
+          SITE_RESPONSE=$(curl -X 'GET' \
+            'https://control-api.stg.elementor.link/v2/instances/subdomain/${{ inputs.SITE_SUBDOMAIN }}' \
+            -H 'accept: application/json' \
+            -H 'CF-Access-Client-Id: ${{ secrets.CF_CLIENT_ID }}' \
+            -H 'CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}' \
+            -s)
+          
+          SITE_ID=$(echo $SITE_RESPONSE | jq -r '.site_id')
+          
+          if [ "$SITE_ID" != "null" ] && [ "$SITE_ID" != "" ]; then
+            echo ":white_check_mark: Site ID fetched successfully: $SITE_ID"
+          else
+            echo ":x: Failed to fetch site ID"
+            echo "Response: $SITE_RESPONSE"
+            exit 1
+          fi
+
+          # Install plugin via WP-CLI API
+          echo "Installing plugin on site: https://${{ inputs.SITE_SUBDOMAIN }}.stg.elementor.cool"
+          PLUGIN_URL="https://${{ inputs.SITE_SUBDOMAIN }}.stg.elementor.cool/wp-content/uploads/elementor.zip"
+          
+          API_RESPONSE=$(curl -X 'POST' \
+            "https://control-api.stg.elementor.link/v2/wp-cli/$SITE_ID" \
+            -H 'accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -H 'CF-Access-Client-Id: ${{ secrets.CF_CLIENT_ID }}' \
+            -H 'CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}' \
+            -d "{
+              \"command\": [
+                \"plugin\", \"install\", \"$PLUGIN_URL\", \"--activate\"
+              ]
+            }" -w "%{http_code}" -s)
+          
+          HTTP_CODE="${API_RESPONSE: -3}"
+          RESPONSE_BODY="${API_RESPONSE%???}"
+          
+          if [ "$HTTP_CODE" -eq 200 ]; then
+            echo ":white_check_mark: Plugin successfully installed via WP-CLI API"
+            echo ":package: Plugin URL: $PLUGIN_URL"
+            
+            # Delete the zip file after successful installation
+            echo "Cleaning up: Deleting elementor.zip file via SFTP..."
+            printf "cd /html/wp-content/uploads\nrm elementor.zip\nquit\n" | sshpass -p "$SFTP_PASSWORD" sftp -P $SFTP_PORT -o StrictHostKeyChecking=no $SFTP_USERNAME@$SFTP_HOST
+            echo ":wastebasket:  Zip file successfully deleted via SFTP"
+            
+            echo ":rocket: Deployment completed successfully!"
+          else
+            echo ":x: Failed to install plugin via WP-CLI API"
+            echo "HTTP Code: $HTTP_CODE"
+            echo "Response: $RESPONSE_BODY"
+            exit 1
+          fi
