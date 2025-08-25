@@ -5,6 +5,7 @@ import { linkTransformer } from './transformers/settings/link-transformer';
 import { imageSrcTransformer } from './transformers/shared/image-src-transformer';
 import { imageTransformer } from './transformers/shared/image-transformer';
 import { plainTransformer } from './transformers/shared/plain-transformer';
+import { svgTransformer } from './transformers/shared/svg-transformer';
 
 export function initSettingsTransformers() {
 	settingsTransformersRegistry
@@ -12,6 +13,7 @@ export function initSettingsTransformers() {
 		.register( 'link', linkTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'image-src', imageSrcTransformer )
+		.register( 'svg', svgTransformer )
 		.register( 'attributes', attributesTransformer )
 		.registerFallback( plainTransformer );
 }

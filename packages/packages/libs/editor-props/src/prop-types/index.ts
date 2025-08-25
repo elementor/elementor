@@ -13,6 +13,7 @@ export * from './shadow';
 export * from './size';
 export * from './string';
 export * from './stroke';
+export * from './svg';
 export * from './url';
 export * from './layout-direction';
 export * from './link';
