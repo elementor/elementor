@@ -10,6 +10,6 @@ export {
 
 export { documentOptionsMenu } from './extensions/documents-save/locations';
 
-export type { ActionProps, LinkProps, ToggleActionProps, ExtendedWindow } from './types';
+export type { ActionProps, LinkProps, ToggleActionProps } from './types';
 
 export { init } from './init';

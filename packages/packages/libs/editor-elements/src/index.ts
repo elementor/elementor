@@ -1,7 +1,6 @@
 // types
 export * from './types';
 export type { V1Element, V1ElementModelProps, V1ElementSettingsProps, V1ElementConfig } from './sync/types';
-export type { ExtendedWindow } from './sync/types';
 
 // hooks
 export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
