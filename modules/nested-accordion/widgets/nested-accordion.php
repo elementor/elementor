@@ -63,7 +63,11 @@ class Nested_Accordion extends Widget_Nested_Base {
 		return [
 			'elType' => 'container',
 			'settings' => [
-				'_title' => sprintf( __( 'item #%s', 'elementor' ), $index ),
+				'_title' => sprintf(
+					/* translators: %d: Item index. */
+					__( 'item #%d', 'elementor' ),
+					$index
+				),
 				'content_width' => 'full',
 			],
 		];
@@ -82,6 +86,7 @@ class Nested_Accordion extends Widget_Nested_Base {
 	}
 
 	protected function get_default_children_title() {
+		/* translators: %d: Item index. */
 		return esc_html__( 'Item #%d', 'elementor' );
 	}
 
