@@ -59,6 +59,24 @@ export function createMockSingleSizeFilterPropType() {
 								size: createSizePropType(),
 							},
 						},
+						'drop-shadow': {
+							key: 'drop-shadow',
+							kind: 'object',
+							shape: {
+								xAxis: createSizePropType(),
+								yAxis: createSizePropType(),
+								blur: createSizePropType(),
+								color: {
+									kind: 'plain',
+									key: 'color',
+									default: {
+										$$type: 'color',
+										value: 'rgba(0, 0, 0, 1)',
+									},
+									meta: {},
+								},
+							},
+						},
 					},
 				},
 			},

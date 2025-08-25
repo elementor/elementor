@@ -13,6 +13,8 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { FilterRepeaterControl } from '../filter-control/filter-repeater-control';
 
+const cssFilterFunc = createMockSingleSizeFilterPropType();
+
 const propType = createMockPropType( {
 	kind: 'array',
 	key: 'filter',
@@ -20,13 +22,14 @@ const propType = createMockPropType( {
 	meta: {},
 	settings: {},
 	item_prop_type: {
-		kind: 'union',
-		default: null,
-		meta: {},
-		settings: {},
-		prop_types: {
-			...createMockSingleSizeFilterPropType(),
-		},
+		...cssFilterFunc[ 'css-filter-func' ],
+
+		// kind: 'union',
+		// default: null,
+		// meta: {},
+		// settings: {},
+		// prop_types: {
+		// },
 	},
 } );
 
@@ -91,7 +94,6 @@ describe( 'FilterRepeaterControl', () => {
 
 		// Assert.
 		const btn = screen.getAllByRole( 'button' )[ 0 ];
-		// const addButton = screen.getByRole( 'button', { name: 'Add item' } );
 
 		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
 		expect( btn ).toHaveAttribute( 'aria-label', 'Add item' );
