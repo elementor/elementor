@@ -73,7 +73,7 @@ ELEMENTS_REGRESSION_BASE_URL=http://localhost:8889
 TEST_PARALLEL_INDEX=0
 
 # Optional: Elementor Experiments (uncomment to enable)
-# ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS=true
+ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS=true
 
 # Optional: Debug Settings (uncomment to enable)
 # SCRIPT_DEBUG=true
