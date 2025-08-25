@@ -74,7 +74,8 @@ const StyledListItem = styled( ListItem )`
 		box-shadow: ${ ( { theme } ) => theme.shadows[ 3 ] };
 	}
 
-	&:hover {
+	&:hover,
+	&:focus-within {
 		& .class-item-sortable-trigger {
 			visibility: visible;
 		}
@@ -82,7 +83,7 @@ const StyledListItem = styled( ListItem )`
 `;
 
 const SortableTrigger = ( props: React.HTMLAttributes< HTMLDivElement > ) => (
-	<div { ...props } role="button" className="class-item-sortable-trigger">
+	<div { ...props } role="button" className="class-item-sortable-trigger" tabIndex={ 0 } aria-label="drag item">
 		<GripVerticalIcon fontSize="tiny" />
 	</div>
 );
