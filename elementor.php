@@ -6,9 +6,9 @@
  * Version: 3.32.0
  * Author: Elementor.com
  * Author URI: https://elementor.com/?utm_source=wp-plugins&utm_campaign=author-uri&utm_medium=wp-dash
- * Text Domain: elementor
- * Requires at least: 6.5
  * Requires PHP: 7.4
+ * Requires at least: 6.6
+ * Text Domain: elementor
  *
  * @package Elementor
  * @category Core
@@ -43,6 +43,10 @@ if ( defined( 'ELEMENTOR_TESTS' ) && ELEMENTOR_TESTS ) {
 define( 'ELEMENTOR_MODULES_PATH', plugin_dir_path( ELEMENTOR__FILE__ ) . '/modules' );
 define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
+
+if ( ! defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ) {
+	define( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN', '' );
+}
 
 if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	require_once ELEMENTOR_PATH . 'vendor/autoload.php';

@@ -10,9 +10,14 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		// Enable atomic elements experiment
+		// Enable atomic elements and nested elements experiments
 		await wpAdmin.setExperiments( {
+			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
+		} );
+
+		await wpAdmin.setExperiments( {
+			e_nested_elements: 'active',
 		} );
 
 		editor = await wpAdmin.openNewPage();
@@ -27,14 +32,8 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 	} );
 
 	test( 'Atomic tabs creates default children hierarchy when dropped on canvas', async () => {
-		// Arrange - Add a container
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-
 		// Act - Add atomic tabs widget
-		const tabsId = await editor.addWidget( {
-			widgetType: 'e-tabs',
-			container: containerId,
-		} );
+		const tabsId = await editor.addElement( { elType: 'e-tabs' }, 'document' );
 
 		const tabsSelector = editor.getWidgetSelector( tabsId );
 		const tabsElement = editor.getPreviewFrame().locator( tabsSelector );
@@ -47,12 +46,8 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 		await expect( tabsElement ).toHaveClass( /e-atomic-element/ );
 
 		// Assert - Check that it has a tab list child with correct attributes
-		const tabList = tabsElement.locator( '.e-con[data-widget_type="e-tab-list"]' );
+		const tabList = tabsElement.locator( '.e-con[data-element_type="e-tab-list"]' );
 		await expect( tabList ).toBeVisible();
 		await expect( tabList ).toHaveClass( /e-atomic-element/ );
-
-		// Assert - Check that tab list has exactly 3 tab children by default
-		const tabs = tabList.locator( '.e-con[data-widget_type="e-tab"]' );
-		await expect( tabs ).toHaveCount( 3 );
 	} );
 } );

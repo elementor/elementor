@@ -9,7 +9,6 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -110,11 +109,5 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', $attributes );
-	}
-
-	protected function define_default_children() {
-		return [
-			Atomic_Paragraph::generate()->build(),
-		];
 	}
 }
