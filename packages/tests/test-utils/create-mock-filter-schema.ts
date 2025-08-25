@@ -29,40 +29,34 @@ export function createMockSingleSizeFilterPropType() {
 					},
 				},
 				args: {
-					kind: 'object',
-					key: 'size',
-					default: null,
-					meta: {},
-					settings: {},
-					shape: {
-						size: {
-							kind: 'plain',
-							key: 'number',
-							default: null,
-							meta: {},
-							settings: {},
+					kind: 'union',
+					prop_types: {
+						blur: {
+							key: 'blur',
+							kind: 'object',
+							shape: {
+								size: createSizePropType(),
+							},
 						},
-						unit: {
-							kind: 'plain',
-							key: 'string',
-							default: null,
-							meta: {},
-							settings: {
-								enum: [
-									'px',
-									'em',
-									'rem',
-									'%',
-									'vh',
-									'vw',
-									'vmin',
-									'vmax',
-									'deg',
-									'rad',
-									'grad',
-									'turn',
-								],
-								required: true,
+						intensity: {
+							key: 'blur',
+							kind: 'object',
+							shape: {
+								size: createSizePropType(),
+							},
+						},
+						'color-tone': {
+							key: 'blur',
+							kind: 'object',
+							shape: {
+								size: createSizePropType(),
+							},
+						},
+						'hue-rotate': {
+							key: 'blur',
+							kind: 'object',
+							shape: {
+								size: createSizePropType(),
 							},
 						},
 					},
@@ -70,4 +64,30 @@ export function createMockSingleSizeFilterPropType() {
 			},
 		},
 	} as unknown as Record< string, TransformablePropType >;
+}
+
+function createSizePropType() {
+	return {
+		key: 'size',
+		kind: 'object',
+		shape: {
+			size: {
+				kind: 'plain',
+				key: 'number',
+				default: null,
+				meta: {},
+				settings: {},
+			},
+			unit: {
+				kind: 'plain',
+				key: 'string',
+				default: null,
+				meta: {},
+				settings: {
+					enum: [ 'px', 'em', 'rem', '%', 'vh', 'vw', 'vmin', 'vmax', 'deg', 'rad', 'grad', 'turn' ],
+					required: true,
+				},
+			},
+		},
+	};
 }
