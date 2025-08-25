@@ -14,7 +14,13 @@ import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-
 
 const propType = createMockPropType( {
 	kind: 'array',
-	item_prop_type: createMockPropType( { kind: 'object' } ),
+	key: 'filter',
+	default: null,
+	meta: {},
+	settings: {},
+	item_prop_type: {
+		...cssFilterFunc[ 'css-filter-func' ],
+	},
 } );
 
 describe( 'FiltersRepeaterControl with editor-variables', () => {
