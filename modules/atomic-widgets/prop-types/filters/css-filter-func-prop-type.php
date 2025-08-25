@@ -1,11 +1,12 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Filters;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Functions\Drop_Shadow_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Drop_Shadow_Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,7 +31,7 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 				->required(),
 			'args' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make()
-					->units( Size_Constants::filters() )
+					->units( Size_Constants::drop_shadow() )
 					->default( [
 						'value' => [
 							'unit' => 'px',
