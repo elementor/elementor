@@ -3,8 +3,8 @@
 namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
-use Elementor\Modules\GlobalClasses\Utils\Error_Builder;
-use Elementor\Modules\GlobalClasses\Utils\Response_Builder;
+use Elementor\Core\Utils\Api\Error_Builder;
+use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Modules\GlobalClasses\Database\Migrations\Add_Capabilities;
 
 if ( ! defined( 'ABSPATH' ) ) {
