@@ -24,7 +24,7 @@ export function subscribeToTransitionEvent() {
 	repeaterEventBus.subscribe( 'transition-item-added', ( data ) => {
 		const value = ( data?.itemValue as TransitionItemValue )?.selection?.value?.value?.value;
 		const selectedElements = getSelectedElements();
-		const widgetType = selectedElements[ 0 ].type ?? null;
+		const widgetType = selectedElements[ 0 ]?.type ?? null;
 		sendMixpanelEvent( {
 			transition_type: value ?? 'unknown',
 			...transitionRepeaterMixpanelEvent,
