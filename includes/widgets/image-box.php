@@ -786,6 +786,7 @@ class Widget_Image_Box extends Widget_Base {
 			$html .= '<div class="elementor-image-box-content">';
 
 			if ( ! Utils::is_empty( $text_title ) ) {
+				$title_html = $text_title;
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
 				$this->add_inline_editing_attributes( 'title_text', 'none' );
