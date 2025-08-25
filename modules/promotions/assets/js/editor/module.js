@@ -34,7 +34,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 	}
 
 	hasWidgetsElements( path ) {
-		return elementor.config?.[path]?.length;
+		return elementor.config?.[ path ]?.length;
 	}
 
 	hasPromotionWidgets() {
