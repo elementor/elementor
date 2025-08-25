@@ -1,5 +1,13 @@
 import { sendMixpanelEvent, MixpanelEvent } from '../mixpanel-tracking';
 
+type ExtendedWindow = Window & {
+	elementorCommon?: {
+		eventsManager?: {
+			dispatchEvent: ( name: string, data: Record< string, unknown > ) => void;
+		};
+	};
+};
+
 describe( 'mixpanel-tracking', () => {
 	// Arrange.
 	const mockEvent: MixpanelEvent = {
@@ -26,7 +34,7 @@ describe( 'mixpanel-tracking', () => {
 	} );
 
 	afterEach( () => {
-		delete ( window as any ).elementorCommon;
+		delete ( window as ExtendedWindow ).elementorCommon;
 	} );
 
 		it( 'should dispatch event when dispatchEvent is available', () => {
@@ -39,7 +47,7 @@ describe( 'mixpanel-tracking', () => {
 
 		it( 'should not throw error when dispatchEvent is undefined', () => {
 			// Arrange.
-			delete ( window as any ).elementorCommon;
+			delete ( window as ExtendedWindow ).elementorCommon;
 
 			// Act & Assert.
 			expect( () => sendMixpanelEvent( mockEvent ) ).not.toThrow();
