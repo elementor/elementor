@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses\Utils;
+namespace Elementor\Core\Utils\Api;
 
 class Error_Builder {
 	private string $message;
