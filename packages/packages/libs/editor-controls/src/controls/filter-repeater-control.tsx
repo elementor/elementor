@@ -171,7 +171,7 @@ export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter
 		filterPropName === 'backdrop-filter'
 			? [ backdropFilterPropTypeUtil, __( 'Backdrop Filters', 'elementor' ) ]
 			: [ filterPropTypeUtil, __( 'Filters', 'elementor' ) ];
-	const { propType, value: filterValues, setValue, disabled, bind } = useBoundProp( propUtil );
+	const { propType, value: filterValues, setValue, disabled } = useBoundProp( propUtil );
 
 	return (
 		<PropProvider propType={ propType } value={ filterValues } setValue={ setValue }>
@@ -235,7 +235,7 @@ const SingleSizeItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
 const ItemContent = () => {
 	const propContext = useBoundProp( cssFilterFunctionPropUtil );
 	const { rowRef: anchorEl, openItemIndex, items } = useRepeaterContext();
-	const item = items[ openItemIndex ].item;
+	const item = items[ openItemIndex ]?.item as FilterItemPropValue;
 
 	const handleValueChange = (
 		changedValue: FilterItemPropValue[ 'value' ],
@@ -255,28 +255,30 @@ const ItemContent = () => {
 	};
 
 	return (
-		<PropProvider { ...propContext } setValue={ handleValueChange }>
-			<PopoverContent p={ 1.5 }>
-				<PopoverGridContainer>
-					<Grid item xs={ 6 }>
-						<ControlFormLabel>{ __( 'Filter', 'elementor' ) }</ControlFormLabel>
-					</Grid>
-					<Grid item xs={ 6 }>
-						<PropKeyProvider bind="func">
-							<SelectControl
-								options={ filterKeys.map( ( filterKey ) => ( {
-									label: filterConfig[ filterKey ].name,
-									value: filterKey,
-								} ) ) }
-							/>
-						</PropKeyProvider>
-					</Grid>
-				</PopoverGridContainer>
-				<PropKeyProvider bind="args">
-					<Content filterType={ item?.value.func } anchorEl={ anchorEl } />
-				</PropKeyProvider>
-			</PopoverContent>
-		</PropProvider>
+		item && (
+			<PropProvider { ...propContext } setValue={ handleValueChange }>
+				<PopoverContent p={ 1.5 }>
+					<PopoverGridContainer>
+						<Grid item xs={ 6 }>
+							<ControlFormLabel>{ __( 'Filter', 'elementor' ) }</ControlFormLabel>
+						</Grid>
+						<Grid item xs={ 6 }>
+							<PropKeyProvider bind="func">
+								<SelectControl
+									options={ filterKeys.map( ( filterKey ) => ( {
+										label: filterConfig[ filterKey ].name,
+										value: filterKey,
+									} ) ) }
+								/>
+							</PropKeyProvider>
+						</Grid>
+					</PopoverGridContainer>
+					<PropKeyProvider bind="args">
+						<Content filterType={ item?.value.func } anchorEl={ anchorEl } />
+					</PropKeyProvider>
+				</PopoverContent>
+			</PropProvider>
+		)
 	);
 };
 
