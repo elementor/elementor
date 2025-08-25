@@ -166,10 +166,19 @@ class Editor_Common_Scripts_Settings {
 			}
 		}
 
-		// Remove all non numeric keys element from array added by 3rd party plugins to keep js array valid
-		$client_env['promotionWidgets'] = array_values( $client_env['promotionWidgets'] );
+		$client_env['promotionWidgets'] = self::ensure_numeric_keys( $client_env['promotionWidgets'] );
 
 		return $client_env;
+	}
+
+	/**
+	 * ensure_numeric_keys
+	 *
+	 * @param array $array
+	 * @return array
+	 */
+	private static function ensure_numeric_keys( array $array ) {
+		return array_values( $array );
 	}
 
 	private static function bc_move_document_filters() {
