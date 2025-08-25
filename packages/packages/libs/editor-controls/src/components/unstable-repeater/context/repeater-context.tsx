@@ -5,23 +5,8 @@ import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
-import { repeaterEventBus, RepeaterEvents } from '../../../services/repeater-event-bus';
+import { repeaterEventBus } from '../../../services/repeater-event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
-
-const getNestedValue = ( obj: Record< string, unknown >, path: string ) => {
-	return path.split( '.' ).reduce( ( current: Record< string, unknown >, key ) => {
-		if ( current && typeof current === 'object' ) {
-			return current[ key ] as Record< string, unknown >;
-		}
-		return {};
-	}, obj );
-};
-
-const getSelectionValue = ( value: unknown ): unknown => {
-	return value && typeof value === 'object'
-		? getNestedValue( value as Record< string, unknown >, 'selection.value.value.value' )
-		: undefined;
-};
 
 type SetterFn< T > = ( prevItems: T ) => T;
 
@@ -113,26 +98,19 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
 
-		const selectionValue = getSelectionValue( initial?.value );
-
-		if ( propTypeUtil.key === 'transition' ) {
-			repeaterEventBus.emit( RepeaterEvents.TransitionItemAdded, {
-				transition_type: selectionValue,
-			} );
-		}
+		repeaterEventBus.emit( `${ propTypeUtil.key }-item-added`, {
+			itemValue: initial.value,
+		} );
 	};
 
 	const removeItem = ( index: number ) => {
 		const itemToRemove = items[ index ];
-		const selectionValue = getSelectionValue( itemToRemove?.value );
 
 		setItems( items.filter( ( _, pos ) => pos !== index ) );
 
-		if ( propTypeUtil.key === 'transition' ) {
-			repeaterEventBus.emit( RepeaterEvents.TransitionItemRemoved, {
-				transition_type: selectionValue,
-			} );
-		}
+		repeaterEventBus.emit( `${ propTypeUtil.key }-item-removed`, {
+			itemValue: itemToRemove?.value,
+		} );
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {

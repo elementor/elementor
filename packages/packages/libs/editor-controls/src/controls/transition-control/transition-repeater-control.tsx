@@ -1,31 +1,22 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { getSelectedElements } from '@elementor/editor-elements';
 import { selectionSizePropTypeUtil } from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
-import { type MixpanelEvent, sendMixpanelEvent } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { createControl } from '../../create-control';
-import { repeaterEventBus, RepeaterEvents } from '../../services/repeater-event-bus';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { initialTransitionValue, transitionProperties } from './data';
+import { subscribeToTransitionEvent } from './trainsition-events';
 import { TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
 	variant: 'time',
 	units: [ 's', 'ms' ],
 	defaultUnit: 'ms',
-};
-
-const transitionRepeaterMixpanelEvent = {
-	eventName: 'click_added_transition',
-	location: 'V4 Style Tab',
-	secondaryLocation: 'Transition control',
-	trigger: 'click',
 };
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
@@ -80,6 +71,8 @@ const disableAddItemTooltipContent = (
 	</Alert>
 );
 
+subscribeToTransitionEvent();
+
 export const TransitionRepeaterControl = createControl(
 	( {
 		recentlyUsedListGetter,
@@ -90,21 +83,6 @@ export const TransitionRepeaterControl = createControl(
 	} ) => {
 		const currentStyleIsNormal = currentStyleState === null;
 		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
-
-		React.useEffect( () => {
-			const selectedElements = getSelectedElements();
-			const widgetType = selectedElements[ 0 ].type ?? null;
-
-			const unsubscribe = repeaterEventBus.subscribe( RepeaterEvents.TransitionItemAdded, ( data ) =>
-				sendMixpanelEvent( {
-					...( data as MixpanelEvent ),
-					...transitionRepeaterMixpanelEvent,
-					widget_type: widgetType,
-				} )
-			);
-
-			return unsubscribe;
-		}, [] );
 
 		useEffect( () => {
 			recentlyUsedListGetter().then( setRecentlyUsedList );

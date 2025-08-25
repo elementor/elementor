@@ -6,25 +6,20 @@ export const RepeaterEvents = {
 export type RepeaterEventType = ( typeof RepeaterEvents )[ keyof typeof RepeaterEvents ];
 
 export class RepeaterEventBus {
-	private listeners = new Map< string, Set< ( data?: unknown ) => void > >();
+	private listeners = new Map< RepeaterEventType, ( data?: { itemValue: unknown } ) => void >();
 
-	subscribe( eventName: RepeaterEventType, callback: ( data?: unknown ) => void ) {
+	subscribe( eventName: RepeaterEventType, callback: ( data?: { itemValue: unknown } ) => void ) {
 		if ( ! this.listeners.has( eventName ) ) {
-			this.listeners.set( eventName, new Set() );
+			this.listeners.set( eventName, callback );
 		}
-		this.listeners.get( eventName )?.add( callback );
-
-		return () => {
-			this.unsubscribe( eventName, callback );
-		};
 	}
 
-	unsubscribe( eventName: RepeaterEventType, callback: ( data?: unknown ) => void ) {
-		this.listeners.get( eventName )?.delete( callback );
+	unsubscribe( eventName: RepeaterEventType ) {
+		this.listeners.delete( eventName );
 	}
 
-	emit( eventName: RepeaterEventType, data?: unknown ) {
-		this.listeners.get( eventName )?.forEach( ( callback ) => callback( data ) );
+	emit( eventName: RepeaterEventType, data?: { itemValue: unknown } ) {
+		this.listeners.get( eventName )?.( data );
 	}
 }
 
