@@ -51,7 +51,7 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isIntegration() {
-		return this.model.get( 'integration' );
+		return !! this.model.get( 'integration' );
 	},
 
 	onRender() {
