@@ -48,34 +48,41 @@ const DEFAULT_FACTORIES: Partial< Record< FilterFunction, ( propType: PropType )
 };
 
 export function buildFilterConfig( cssFilterPropType: PropType ): FilterConfigMap {
-	const entries = ( Object.entries( FILTERS_BY_GROUP ) as [ FilterFunctionGroup, FilterGroup ][] ).flatMap(
-		( [ filterFunctionGroup, group ] ) =>
-			( Object.entries( group ) as [ FilterFunction, { name: string; valueName?: string } ][] ).map(
-				( [ filterFunction, { name, valueName } ] ) => {
-					const propType = extractPropType( cssFilterPropType as CssFilterFuncPropType, filterFunctionGroup );
+	function createEntry(
+		filterFunctionGroup: FilterFunctionGroup,
+		filterFunction: FilterFunction,
+		{ name, valueName }: { name: string; valueName?: string }
+	): [ FilterFunction, FilterConfigEntry ] {
+		const propType = extractPropType( cssFilterPropType as CssFilterFuncPropType, filterFunctionGroup );
 
-					const value =
-						DEFAULT_FACTORIES[ filterFunction ]?.( propType ) ??
-						buildSizeDefault( propType as SingleArgFilterFuncPropType );
+		const value =
+			DEFAULT_FACTORIES[ filterFunction ]?.( propType ) ??
+			buildSizeDefault( propType as SingleArgFilterFuncPropType );
 
-					const defaultValue = createDefaultValue( { filterFunction, filterFunctionGroup, value } );
+		const defaultValue = createDefaultValue( {
+			filterFunction,
+			filterFunctionGroup,
+			value,
+		} );
 
-					const entry: FilterConfigEntry = {
-						name,
-						valueName: valueName ?? AMOUNT_VALUE_NAME,
-						defaultValue,
-						filterFunctionGroup,
-					};
+		return [
+			filterFunction,
+			{
+				name,
+				valueName: valueName ?? AMOUNT_VALUE_NAME,
+				defaultValue,
+				filterFunctionGroup,
+			},
+		];
+	}
 
-					return [ filterFunction, entry ] as const;
-				}
-			)
+	const entries = Object.entries( FILTERS_BY_GROUP ).flatMap( ( [ filterFunctionGroup, group ] ) =>
+		Object.entries( group ).map( ( [ filterFunction, meta ] ) =>
+			createEntry( filterFunctionGroup as FilterFunctionGroup, filterFunction as FilterFunction, meta )
+		)
 	);
 
-	return entries.reduce< FilterConfigMap >( ( acc, [ func, conf ] ) => {
-		acc[ func ] = conf;
-		return acc;
-	}, {} as FilterConfigMap );
+	return Object.fromEntries( entries ) as FilterConfigMap;
 }
 
 type DefaultBuilderArgs = {
