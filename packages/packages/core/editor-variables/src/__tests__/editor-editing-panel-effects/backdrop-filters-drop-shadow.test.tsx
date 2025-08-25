@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createMockPropType, renderControl } from 'test-utils';
+import { createMockPropType, createMockSingleSizeFilterPropType, renderControl } from 'test-utils';
 import { FilterRepeaterControl } from '@elementor/editor-controls';
 import {
 	backdropFilterPropTypeUtil,
@@ -11,6 +11,8 @@ import {
 import { screen } from '@testing-library/react';
 
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
+
+const cssFilterFunc = createMockSingleSizeFilterPropType();
 
 const propType = createMockPropType( {
 	kind: 'array',
