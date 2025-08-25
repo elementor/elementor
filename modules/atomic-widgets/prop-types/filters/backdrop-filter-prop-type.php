@@ -1,8 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes;
-
-use Elementor\Modules\AtomicWidgets\PropTypes\Filter_Prop_Type;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Filters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
