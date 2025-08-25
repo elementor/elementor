@@ -25,7 +25,6 @@ class Size_Constants {
 		self::UNIT_REM,
 		self::UNIT_VW,
 		self::UNIT_VH,
-		self::UNIT_CUSTOM,
 	];
 
 	const TIME_UNITS = [ self::UNIT_SECOND, self::UNIT_MILLI_SECOND ];
@@ -80,12 +79,11 @@ class Size_Constants {
 			self::UNIT_PX,
 			self::UNIT_EM,
 			self::UNIT_REM,
-			self::UNIT_CUSTOM,
 		];
 	}
 
 	public static function transition() {
-		return [ ...self::TIME_UNITS, self::UNIT_CUSTOM ];
+		return self::TIME_UNITS;
 	}
 
 	public static function border(): array {
@@ -94,7 +92,7 @@ class Size_Constants {
 
 
 	public static function opacity(): array {
-		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
+		return [ self::UNIT_PERCENT ];
 	}
 
 	public static function box_shadow(): array {
