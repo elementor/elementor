@@ -1,0 +1,60 @@
+[{
+	"id": "invalid-component-wrapper-element-id",
+	"elType": "e-div-block",
+	"settings": {
+		"classes": {
+			"$$type": "classes",
+			"value": ["invalid-component-wrapper-element-local-class-id"]
+		}
+	},
+	"elements": [
+		{
+			"id": "invalid-component-button-id",
+			"elType": "widget",
+			"settings": {
+				"classes": {
+					"$$type": "classes",
+					"value": ["invalid-component-button-local-class-id"]
+				},
+				"text": {
+					"$$type": "string",
+					"value": "Valid content"
+				},
+				"link": {
+					"$$type": "link",
+					"value": "invalid-link-structure"
+				}
+			},
+			"elements": [],
+			"widgetType": "e-button",
+			"styles": {
+				"invalid-component-button-local-class-id": {
+					"id": "invalid-component-button-local-class-id",
+					"label": "local",
+					"type": "class",
+					"variants": [
+						{
+							"meta": {
+								"breakpoint": "desktop",
+								"state": null
+							},
+							"props": {
+								"color": {
+									"$$type": "color",
+									"value": "#ffffff"
+								}
+							},
+							"custom_css": null
+						}
+					]
+				}
+			},
+			"editor_settings": [],
+			"version": "0.0"
+		}
+	],
+	"isInner": false,
+	"styles": {},
+	"editor_settings": [],
+	"version": "0.0"
+}]
