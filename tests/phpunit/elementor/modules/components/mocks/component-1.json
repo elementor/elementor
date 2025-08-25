@@ -1,0 +1,115 @@
+[{
+		"id": "component-1-wrapper-element-id",
+		"elType": "e-div-block",
+		"settings": {
+			"classes": {
+				"$$type": "classes",
+				"value": ["component-1-wrapper-element-local-class-id"]
+			}
+		},
+		"elements": [
+			{
+				"id": "component-1-button-id",
+				"elType": "widget",
+				"settings": {
+					"classes": {
+						"$$type": "classes",
+						"value": ["component-1-button-local-class-id"]
+					},
+					"text": {
+						"$$type": "string",
+						"value": "Component 2 Button"
+					},
+                    "link": {
+            "$$type": "link",
+            "value": {
+              "destination": {
+                "$$type": "url",
+                "value": "#inner-link"
+              },
+              "label": {
+                "$$type": "string",
+                "value": ""
+              }
+            }
+          }
+				},
+				"elements": [],
+				"widgetType": "e-button",
+				"styles": {
+					    "component-1-button-local-class-id": {
+						"id": "component-1-button-local-class-id",
+						"label": "local",
+						"type": "class",
+						"variants": [
+							{
+								"meta": {
+									"breakpoint": "desktop",
+									"state": null
+								},
+								"props": {
+									"color": {
+										"$$type": "color",
+										"value": "#ffffff"
+									}
+								},
+								"custom_css": null
+							},
+							{
+								"meta": {
+									"breakpoint": "desktop",
+									"state": "hover"
+								},
+								"props": {
+									"color": {
+										"$$type": "color",
+										"value": "#00064c"
+									}
+								},
+								"custom_css": null
+							}
+						]
+					}
+				},
+				"editor_settings": [],
+				"version": "0.0"
+			}
+		],
+		"isInner": false,
+		"styles": {
+			"component-1-wrapper-element-local-class-id": {
+				"id": "component-1-wrapper-element-local-class-id",
+				"label": "local",
+				"type": "class",
+				"variants": [
+					{
+						"meta": {
+							"breakpoint": "desktop",
+							"state": null
+						},
+						"props": {
+							"width": {
+								"$$type": "size",
+								"value": {
+									"size": 350,
+									"unit": "px"
+								}
+							},
+							"background": {
+								"$$type": "background",
+								"value": {
+									"color": {
+										"$$type": "color",
+										"value": "#ffffff"
+									}
+								}
+							}
+						},
+						"custom_css": null
+					}
+				]
+			}
+		},
+		"editor_settings": [],
+		"version": "0.0"
+	}]
