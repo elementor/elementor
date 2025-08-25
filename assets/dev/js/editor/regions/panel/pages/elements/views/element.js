@@ -82,12 +82,13 @@ module.exports = Marionette.ItemView.extend( {
 	onMouseDown() {
 		const title = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
-			isIntegration = this.isIntegration();
+			isIntegration = this.isIntegration(),
+			configPromotion = elementor.config.promotion;
 
-		let promotion = elementor.config.promotion.elements;
+		let promotion = configPromotion.elements;
 
 		if ( isIntegration ) {
-			promotion = elementor.config.promotion?.integration?.[ widgetType ];
+			promotion = configPromotion?.integration?.[ widgetType ];
 		}
 
 		elementor.promotion.showDialog( {
