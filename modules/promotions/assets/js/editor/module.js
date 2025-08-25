@@ -19,7 +19,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 				isProWidget = hasWidget( 'promotionWidgets' );
 			}
 
-			if ( config?.integrationWidgets?.length && ! isProWidget) {
+			if ( config?.integrationWidgets?.length && ! isProWidget ) {
 				isIntegrationWidget = hasWidget( 'integrationWidgets' );
 			}
 
