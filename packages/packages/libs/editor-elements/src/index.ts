@@ -11,7 +11,14 @@ export { useElementChildren, type ElementChildren } from './hooks/use-element-ch
 
 // utils
 export { createElement, type CreateElementParams } from './sync/create-element';
+export { duplicateElement, type DuplicateElementParams } from './sync/duplicate-element';
 export { createElements } from './sync/create-elements';
+export {
+	duplicateElements,
+	type DuplicateElementsParams,
+	type DuplicatedElement,
+	type DuplicatedElementsResult,
+} from './sync/duplicate-elements';
 export { deleteElement } from './sync/delete-element';
 export { removeElements } from './sync/remove-elements';
 export { getContainer, selectElement } from './sync/get-container';

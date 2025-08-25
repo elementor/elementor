@@ -5,7 +5,7 @@ namespace Elementor\Modules\GlobalClasses;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\Opt_In;
-use Elementor\Modules\AtomicWidgets\Parsers\Parse_Result;
+use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Plugin;
