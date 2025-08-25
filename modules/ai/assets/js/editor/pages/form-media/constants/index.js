@@ -148,3 +148,8 @@ export const IMAGE_ASPECT_RATIO = {
 export const IMAGE_PLACEHOLDERS_HOSTS = {
 	WIREFRAME: 'gene-\\d+\\.live\\.strattic\\.io',
 };
+
+export const AI_EVENTS = {
+	MODAL_CLOSED: 'elementor:ai:modal-closed',
+	SHOW_MODAL: 'elementor:ai:show-modal',
+};
