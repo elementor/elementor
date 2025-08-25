@@ -243,75 +243,42 @@ class Repository {
 			throw new WatermarkMismatch( 'Watermark mismatch' );
 		}
 
-		$original_data = $db_record['data'];
 		$results = [];
-		$error_details = [];
 
-		try {
-			foreach ( $operations as $index => $operation ) {
-				$result = $this->process_single_operation( $db_record, $operation );
-
-				if ( isset( $result['error'] ) ) {
-					$error_details[ $this->get_operation_identifier( $operation, $index ) ] = $result['error'];
-				} else {
-					$results[] = $result;
-				}
-			}
-
-			if ( ! empty( $error_details ) ) {
-				throw new BatchOperationFailed( 'One or more operations failed', $error_details );
-			}
-
-			$watermark = $this->save( $db_record );
-
-			if ( false === $watermark ) {
-				throw new FatalError( 'Failed to save batch operations' );
-			}
-
-			return [
-				'success' => true,
-				'watermark' => $watermark,
-				'results' => $results,
-			];
-
-		} catch ( BatchOperationFailed $e ) {
-
-			$db_record['data'] = $original_data;
-
-			throw $e;
+		foreach ( $operations as $index => $operation ) {
+			$result = $this->process_single_operation( $db_record, $operation );
+			$results[] = $result;
 		}
+
+		$watermark = $this->save( $db_record );
+
+		if ( false === $watermark ) {
+			throw new FatalError( 'Failed to save batch operations' );
+		}
+
+		return [
+			'success' => true,
+			'watermark' => $watermark,
+			'results' => $results,
+		];
 	}
 
 	private function process_single_operation( array &$db_record, array $operation ): array {
-		try {
-			switch ( $operation['type'] ) {
-				case 'create':
-					return $this->process_create_operation( $db_record, $operation );
+		switch ( $operation['type'] ) {
+			case 'create':
+				return $this->process_create_operation( $db_record, $operation );
 
-				case 'update':
-					return $this->process_update_operation( $db_record, $operation );
+			case 'update':
+				return $this->process_update_operation( $db_record, $operation );
 
-				case 'delete':
-					return $this->process_delete_operation( $db_record, $operation );
+			case 'delete':
+				return $this->process_delete_operation( $db_record, $operation );
 
-				case 'restore':
-					return $this->process_restore_operation( $db_record, $operation );
+			case 'restore':
+				return $this->process_restore_operation( $db_record, $operation );
 
-				default:
-					return [
-						'error' => [
-							'status' => 400,
-							'message' => __( 'Invalid operation type', 'elementor' ),
-						],
-					];
-			}
-		} catch ( Exception $e ) {
-			return [
-				'error' => [
-					'status' => $this->get_error_status_code( $e ),
-					'message' => $e->getMessage(),
-				],
-			];
+			default:
+				throw new BatchOperationFailed( 'Invalid operation type: ' . $operation['type'] );
 		}
 	}
 
@@ -366,7 +333,7 @@ class Repository {
 		$id = $operation['id'];
 
 		if ( ! isset( $db_record['data'][ $id ] ) ) {
-			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$db_record['data'][ $id ]['deleted'] = true;
@@ -382,7 +349,7 @@ class Repository {
 		$id = $operation['id'];
 
 		if ( ! isset( $db_record['data'][ $id ] ) ) {
-			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$overrides = [];
@@ -424,12 +391,12 @@ class Repository {
 	}
 
 	private function get_error_status_code( Exception $e ): int {
-		if ( $e instanceof \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound ) {
+		if ( $e instanceof RecordNotFound ) {
 			return 404;
 		}
 
-		if ( $e instanceof \Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel ||
-			 $e instanceof \Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached ) {
+		if ( $e instanceof DuplicatedLabel ||
+			 $e instanceof VariablesLimitReached ) {
 			return 400;
 		}
 

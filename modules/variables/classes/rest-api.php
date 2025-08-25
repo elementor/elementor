@@ -455,17 +455,21 @@ class Rest_Api {
 
 	public function process_batch( WP_REST_Request $request ) {
 		try {
-			$watermark = $request->get_param( 'watermark' );
-			$operations = $request->get_param( 'operations' );
-
-			$result = $this->variables_repository->process_atomic_batch( $operations, $watermark );
-
-			$this->clear_cache();
-
-			return $this->success_response( $result );
+			return $this->process_batch_operations( $request );
 		} catch ( Exception $e ) {
 			return $this->batch_error_response( $e );
 		}
+	}
+
+	private function process_batch_operations( WP_REST_Request $request ) {
+		$watermark = $request->get_param( 'watermark' );
+		$operations = $request->get_param( 'operations' );
+
+		$result = $this->variables_repository->process_atomic_batch( $operations, $watermark );
+
+		$this->clear_cache();
+
+		return $this->success_response( $result );
 	}
 
 	private function batch_error_response( Exception $e ) {
