@@ -755,8 +755,11 @@ class Widget_Image_Box extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
+		$text_description = wp_kses_post( $settings['description_text'] );
+		$text_title = wp_kses_post( $settings['title_text'] );
+
 		$has_image = ! empty( $settings['image']['url'] );
-		$has_content = ! Utils::is_empty( $settings['title_text'] ) || ! Utils::is_empty( $settings['description_text'] );
+		$has_content = ! Utils::is_empty( $text_title ) || ! Utils::is_empty( $text_description );
 
 		if ( ! $has_image && ! $has_content ) {
 			return;
@@ -782,26 +785,24 @@ class Widget_Image_Box extends Widget_Base {
 		if ( $has_content ) {
 			$html .= '<div class="elementor-image-box-content">';
 
-			if ( ! Utils::is_empty( $settings['title_text'] ) ) {
+			if ( ! Utils::is_empty( $text_title ) ) {
 				$this->add_render_attribute( 'title_text', 'class', 'elementor-image-box-title' );
 
 				$this->add_inline_editing_attributes( 'title_text', 'none' );
 
-				$title_html = wp_kses_post( $settings['title_text'] );
-
 				if ( ! empty( $settings['link']['url'] ) ) {
-					$title_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $title_html . '</a>';
+					$title_html = '<a ' . $this->get_render_attribute_string( 'link' ) . '>' . $text_title . '</a>';
 				}
 
 				$html .= sprintf( '<%1$s %2$s>%3$s</%1$s>', Utils::validate_html_tag( $settings['title_size'] ), $this->get_render_attribute_string( 'title_text' ), $title_html );
 			}
 
-			if ( ! Utils::is_empty( $settings['description_text'] ) ) {
+			if ( ! Utils::is_empty( $text_description ) ) {
 				$this->add_render_attribute( 'description_text', 'class', 'elementor-image-box-description' );
 
 				$this->add_inline_editing_attributes( 'description_text' );
 
-				$html .= sprintf( '<p %1$s>%2$s</p>', $this->get_render_attribute_string( 'description_text' ), $settings['description_text'] );
+				$html .= sprintf( '<p %1$s>%2$s</p>', $this->get_render_attribute_string( 'description_text' ), $text_description );
 			}
 
 			$html .= '</div>';
@@ -823,8 +824,11 @@ class Widget_Image_Box extends Widget_Base {
 	protected function content_template() {
 		?>
 		<#
+		const textTitle = elementor.helpers.sanitize( settings.title_text, { ALLOW_DATA_ATTR: false } )
+		const textDescription = elementor.helpers.sanitize( settings.description_text, { ALLOW_DATA_ATTR: false } )
+
 		var hasImage = !! settings.image.url;
-		var hasContent = !! ( settings.title_text || settings.description_text );
+		var hasContent = !! ( textTitle || textDescription );
 
 		if ( ! hasImage && ! hasContent ) {
 			return;
@@ -855,9 +859,8 @@ class Widget_Image_Box extends Widget_Base {
 		if ( hasContent ) {
 			html += '<div class="elementor-image-box-content">';
 
-			if ( settings.title_text ) {
-				var title_html = elementor.helpers.sanitize( settings.title_text ),
-					titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
+			if ( textTitle ) {
+				var titleSizeTag = elementor.helpers.validateHTMLTag( settings.title_size );
 
 				if ( settings.link?.url ) {
 					title_html = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + title_html + '</a>';
@@ -867,15 +870,15 @@ class Widget_Image_Box extends Widget_Base {
 
 				view.addInlineEditingAttributes( 'title_text', 'none' );
 
-				html += '<' + titleSizeTag  + ' ' + view.getRenderAttributeString( 'title_text' ) + '>' + title_html + '</' + titleSizeTag  + '>';
+				html += '<' + titleSizeTag  + ' ' + view.getRenderAttributeString( 'title_text' ) + '>' + textTitle + '</' + titleSizeTag  + '>';
 			}
 
-			if ( settings.description_text ) {
+			if ( textDescription ) {
 				view.addRenderAttribute( 'description_text', 'class', 'elementor-image-box-description' );
 
 				view.addInlineEditingAttributes( 'description_text' );
 
-				html += '<p ' + view.getRenderAttributeString( 'description_text' ) + '>' + settings.description_text + '</p>';
+				html += '<p ' + view.getRenderAttributeString( 'description_text' ) + '>' + textDescription + '</p>';
 			}
 
 			html += '</div>';
