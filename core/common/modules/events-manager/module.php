@@ -22,7 +22,7 @@ class Module extends BaseModule {
 	}
 
 	public static function get_editor_events_config() {
-		$can_send_events = defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) &&
+		$can_send_events = !empty( ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN ) &&
 			Tracker::is_allow_track() &&
 			! Tracker::has_terms_changed( '2025-07-07' ) &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
@@ -37,7 +37,7 @@ class Module extends BaseModule {
 			'site_key' => get_option( Base_App::OPTION_CONNECT_SITE_KEY ),
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
-			'token' => defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ? ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN : '',
+			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 		];
 
 		return $settings;
