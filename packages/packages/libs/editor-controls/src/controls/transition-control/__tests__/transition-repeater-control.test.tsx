@@ -12,15 +12,6 @@ jest.mock( '../transition-selector', () => ( {
 	TransitionSelector: jest.fn( () => <div data-testid="transition-selector">Mock Transition Selector</div> ),
 } ) );
 
-jest.mock( '@elementor/utils', () => ( {
-	sendMixpanelEvent: jest.fn(),
-	createError: jest.fn(),
-} ) );
-
-jest.mock( '@elementor/editor-elements', () => ( {
-	getSelectedElements: jest.fn( () => [ { type: 'test-widget' } ] ),
-} ) );
-
 const recentlyUsedGetter = () => Promise.resolve( [] );
 
 const createTransitionPropType = () =>
@@ -28,136 +19,109 @@ const createTransitionPropType = () =>
 		kind: 'array',
 	} );
 
-const createDefaultProps = () => ( {
-	setValue: jest.fn(),
-	value: { $$type: 'array', value: [] },
-	bind: 'transition',
-	propType: createTransitionPropType(),
-} );
-
 describe( 'TransitionRepeaterControl', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
+	it( 'should render with default empty state', async () => {
+		// Arrange
+		const setValue = jest.fn();
+		const value = { $$type: 'array', value: [] };
+		const propType = createTransitionPropType();
+		const props = { setValue, value, bind: 'transition', propType };
+
+		// Act
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			props
+		);
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
+		} );
 	} );
 
-	describe( 'Rendering', () => {
-		it( 'should render with default empty state', async () => {
-			// Arrange
-			const props = createDefaultProps();
-
-			// Act
-			renderControl(
-				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
-				props
-			);
-
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
-			} );
-		} );
-
-		it( 'should render with initial transition values', async () => {
-			// Arrange
-			const props = {
-				...createDefaultProps(),
-				value: {
-					$$type: 'array',
-					value: [
-						{
-							$$type: 'selection-size',
+	it( 'should render with initial transition values', async () => {
+		// Arrange
+		const setValue = jest.fn();
+		const value = {
+			$$type: 'array',
+			value: [
+				{
+					$$type: 'selection-size',
+					value: {
+						selection: {
+							$$type: 'key-value',
 							value: {
-								selection: {
-									$$type: 'key-value',
-									value: {
-										key: { $$type: 'string', value: 'All properties' },
-										value: { $$type: 'string', value: 'all' },
-									},
-								},
-								size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+								key: { $$type: 'string', value: 'All properties' },
+								value: { $$type: 'string', value: 'all' },
 							},
 						},
-					],
+						size: { $$type: 'size', value: { size: 200, unit: 'ms' } },
+					},
 				},
-			};
+			],
+		};
+		const propType = createTransitionPropType();
+		const props = { setValue, value, bind: 'transition', propType };
 
-			// Act
-			renderControl(
-				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
-				props
-			);
+		// Act
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			props
+		);
 
-			const addButton = screen.getByRole( 'button' );
-			fireEvent.click( addButton );
+		const addButton = screen.getByRole( 'button' );
+		fireEvent.click( addButton );
 
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
-			} );
-			expect( screen.getByText( ( content ) => content.includes( 'All properties' ) ) ).toBeInTheDocument();
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByText( 'Transitions' ) ).toBeInTheDocument();
 		} );
+		expect( screen.getByText( ( content ) => content.includes( 'All properties' ) ) ).toBeInTheDocument();
 	} );
 
-	describe( 'Add Button State', () => {
-		it( 'should display an enabled add button when rendered in normal style state', async () => {
-			// Arrange
-			const props = createDefaultProps();
+	it( 'should display an enabled add button when rendered in normal style state', async () => {
+		// Arrange
+		const setValue = jest.fn();
+		const value = { $$type: 'array', value: [] };
+		const propType = createTransitionPropType();
+		const props = { setValue, value, bind: 'transition', propType };
 
-			// Act
-			renderControl(
-				<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
-				props
-			);
+		// Act
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ null } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			props
+		);
 
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByLabelText( 'Add item' ) ).toBeInTheDocument();
-			} );
-
-			const addButton = screen.getByLabelText( 'Add item' );
-			expect( addButton ).toBeEnabled();
+		let addButton = null;
+		// Assert
+		await waitFor( () => {
+			addButton = screen.getByLabelText( 'Add item' );
+			expect( addButton ).toBeInTheDocument();
 		} );
+		expect( addButton ).not.toBeNull();
+		expect( addButton ).toBeEnabled();
+	} );
 
-		it( 'should display a disabled add button when not in normal style state', async () => {
-			// Arrange
-			const props = createDefaultProps();
+	it( 'should display a disabled add button when not in normal style state', async () => {
+		// Arrange
+		const setValue = jest.fn();
+		const value = { $$type: 'array', value: [] };
+		const propType = createTransitionPropType();
+		const props = { setValue, value, bind: 'transition', propType };
 
-			// Act
-			renderControl(
-				<TransitionRepeaterControl
-					currentStyleState={ 'hover' }
-					recentlyUsedListGetter={ recentlyUsedGetter }
-				/>,
-				props
-			);
+		// Act
+		let addButton = null;
+		renderControl(
+			<TransitionRepeaterControl currentStyleState={ 'hover' } recentlyUsedListGetter={ recentlyUsedGetter } />,
+			props
+		);
 
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByLabelText( 'Add item' ) ).toBeInTheDocument();
-			} );
-
-			const addButton = screen.getByLabelText( 'Add item' );
-			expect( addButton ).toBeDisabled();
+		// Assert
+		await waitFor( () => {
+			addButton = screen.getByLabelText( 'Add item' );
+			expect( addButton ).toBeInTheDocument();
 		} );
-
-		it( 'should display tooltip when button is disabled', async () => {
-			// Arrange
-			const props = createDefaultProps();
-
-			// Act
-			renderControl(
-				<TransitionRepeaterControl
-					currentStyleState={ 'hover' }
-					recentlyUsedListGetter={ recentlyUsedGetter }
-				/>,
-				props
-			);
-
-			// Assert
-			await waitFor( () => {
-				const addButton = screen.getByLabelText( 'Add item' );
-				expect( addButton ).toBeDisabled();
-			} );
-		} );
+		expect( addButton ).not.toBeNull();
+		expect( addButton ).toBeDisabled();
 	} );
 } );
