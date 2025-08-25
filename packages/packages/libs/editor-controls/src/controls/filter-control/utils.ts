@@ -52,7 +52,7 @@ export function buildFilterConfig( cssFilterPropType: PropType ): FilterConfigMa
 		( [ filterFunctionGroup, group ] ) =>
 			( Object.entries( group ) as [ FilterFunction, { name: string; valueName?: string } ][] ).map(
 				( [ filterFunction, { name, valueName } ] ) => {
-					const propType = extractPropType( cssFilterPropType as CssFilterFuncPropType, filterFunctionGroup ); // const sizePropType = extractSizePropType( cssPropType, filterFunctionGroup );
+					const propType = extractPropType( cssFilterPropType as CssFilterFuncPropType, filterFunctionGroup );
 
 					const value =
 						DEFAULT_FACTORIES[ filterFunction ]?.( propType ) ??
