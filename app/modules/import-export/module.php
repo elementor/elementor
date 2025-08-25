@@ -357,9 +357,9 @@ class Module extends BaseModule {
 	 * so it will be available to use in different places such as: WP_Cli, Pro, etc.
 	 *
 	 * @param string $path Path to the file or session_id.
-	 * @param array $settings Settings the import use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
-	 * @param bool $split_to_chunks Determine if the import process should be split into chunks.
+	 * @param array  $settings Settings the import use to determine which content to import.
+	 *       (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param bool   $split_to_chunks Determine if the import process should be split into chunks.
 	 * @return array
 	 * @throws \Exception
 	 */

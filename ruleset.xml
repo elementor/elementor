@@ -36,7 +36,6 @@
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamComment" />
 		<exclude name="Squiz.Commenting.VariableComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.MissingParamTag" />
-		<exclude name="Squiz.Commenting.FunctionComment.SpacingAfterParamType" />
 		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
 		<exclude name="Squiz.Commenting.FunctionCommentThrowTag.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.EmptyThrows" />

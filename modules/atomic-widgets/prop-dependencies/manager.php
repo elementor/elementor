@@ -115,8 +115,8 @@ class Manager {
 	}
 
 	/**
-	 * @param array<string, Prop_Type> $props_schema The props schema to analyze, where keys are prop names
-	 * @param ?array<string> $current_path The current property path being processed
+	 * @param array<string, Prop_Type>      $props_schema The props schema to analyze, where keys are prop names
+	 * @param ?array<string>                $current_path The current property path being processed
 	 * @param ?array<string, array<string>> $dependency_graph The dependency graph to build
 	 */
 	private static function build_dependency_graph( array $props_schema, ?array $current_path = [], ?array $dependency_graph = [] ): array {

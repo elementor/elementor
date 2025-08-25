@@ -640,7 +640,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @access public
 	 *
-	 * @param array    $actions An array of row action links.
+	 * @param array $actions An array of row action links.
 	 *
 	 * @return array An updated array of row action links.
 	 */
@@ -1457,7 +1457,7 @@ abstract class Document extends Controls_Stack {
 	 * @access public
 	 *
 	 * @param string $key   Meta data key.
-	 * @param mixed $value Meta data value.
+	 * @param mixed  $value Meta data value.
 	 *
 	 * @return bool|int
 	 */

@@ -404,7 +404,7 @@ abstract class Source_Base {
 	}
 
 	/**
-	 * @param int $template_id
+	 * @param int   $template_id
 	 * @param mixed $data
 	 * @return string|\WP_Error
 	 * @throws \Exception
@@ -414,7 +414,7 @@ abstract class Source_Base {
 	}
 
 	/**
-	 * @param int $template_id
+	 * @param int    $template_id
 	 * @param string $error
 	 * @return string|\WP_Error
 	 * @throws \Exception

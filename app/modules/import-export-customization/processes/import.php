@@ -147,9 +147,9 @@ class Import {
 	private $runners_import_metadata = [];
 
 	/**
-	 * @param string $path session_id | zip_file_path
-	 * @param array $settings Use to determine which content to import.
-	 *      (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 * @param string     $path session_id | zip_file_path
+	 * @param array      $settings Use to determine which content to import.
+	 *           (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @param array|null $old_instance An array of old instance parameters that will be used for creating new instance.
 	 *      We are using it for quick creation of the instance when the import process is being split into chunks.
 	 * @throws \Exception If the import session does not exist.
@@ -580,7 +580,7 @@ class Import {
 	/**
 	 * Prevent saving elements on elementor post creation.
 	 *
-	 * @param array $data
+	 * @param array    $data
 	 * @param Document $document
 	 *
 	 * @return array

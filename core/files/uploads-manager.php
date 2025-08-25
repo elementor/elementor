@@ -75,7 +75,7 @@ class Uploads_Manager extends Base_Object {
 	 * @access public
 	 *
 	 * @param string $file_path
-	 * @param array $allowed_file_types
+	 * @param array  $allowed_file_types
 	 * @return array|\WP_Error
 	 */
 	public function extract_and_validate_zip( $file_path, $allowed_file_types = null ) {
