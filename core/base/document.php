@@ -727,15 +727,24 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$widgets_config = Plugin::$instance->widgets_manager->get_widget_types_config();
+			$container_config = [];
 
-			$elements_config = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
-				->filter( fn( $element ) => ( ! empty( $element->get_config()['include_in_widgets_config'] ) ) )
-				->map( fn( $element ) => $element->get_config() )
-				->all();
+			if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
+				$container_config['container'] =
+					Plugin::$instance->elements_manager->get_element_types( 'container' )->get_config();
+			}
 
-			$config['widgets'] = array_merge( $elements_config, $widgets_config );
+			if ( Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_NAME ) ) {
+				// Order reflects the order in the editor.
+				$atomic_elements = [ 'e-flexbox', 'e-div-block' ];
+
+				foreach ( $atomic_elements as $element ) {
+					$container_config[ $element ] = Plugin::$instance->elements_manager->get_element_types( $element )->get_config();
+				}
+			}
+
 			$config['elements'] = $this->get_elements_raw_data( null, true );
+			$config['widgets'] = $container_config + Plugin::$instance->widgets_manager->get_widget_types_config();
 		}
 
 		$additional_config = [];
