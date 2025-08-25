@@ -857,7 +857,7 @@ class Manager {
 	 * @param array  $data
 	 *
 	 * @return mixed
-	 * @throws \Exception If the user has no permission or the post is not found.
+	 * @throws \Exception When the user has no permission or the post is not found.
 	 */
 	private function handle_ajax_request( $ajax_request, array $data ) {
 		if ( ! User::is_current_user_can_edit_post_type( Source_Local::CPT ) ) {
@@ -884,7 +884,7 @@ class Manager {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception When template import fails, file validation errors occur, or processing encounters issues.
 	 */
 	public function save_template_screenshot( $data ): string {
 		$validate_args = $this->ensure_args( [ 'template_id', 'screenshot' ], $data );
@@ -899,7 +899,7 @@ class Manager {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception When template processing fails or data validation errors occur.
 	 */
 	public function template_screenshot_failed( $data ): string {
 		$validate_args = $this->ensure_args( [ 'template_id' ], $data );

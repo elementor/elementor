@@ -211,7 +211,7 @@ class Documents_Manager {
 	 *
 	 * @param string $id
 	 * @return Document
-	 * @throws \Exception If the document is not found or the current user is not allowed to edit it.
+	 * @throws \Exception When the document is not found or the current user is not allowed to edit it.
 	 * @since 3.13.0
 	 */
 	public function get_with_permissions( $id ): Document {
@@ -233,7 +233,7 @@ class Documents_Manager {
 	 *
 	 * @param string $id
 	 * @return void
-	 * @throws \Exception If the document is not found or the current user is not allowed to edit it.
+	 * @throws \Exception When the document is not found or the current user is not allowed to edit it.
 	 */
 	public function check_permissions( $id ) {
 		$this->get_with_permissions( $id );
@@ -504,7 +504,7 @@ class Documents_Manager {
 	 *
 	 * @param array $request Post ID.
 	 *
-	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
+	 * @throws \Exception When current user don't have permissions to edit the post or the post is not using Elementor.
 	 *
 	 * @return array The document data after saving.
 	 */
@@ -597,7 +597,7 @@ class Documents_Manager {
 	 * @param array $request
 	 *
 	 * @return bool True if changes discarded, False otherwise.
-	 * @throws \Exception If current user don't have permissions to edit the post or the post is not using Elementor.
+	 * @throws \Exception When current user don't have permissions to edit the post or the post is not using Elementor.
 	 *
 	 * @since 2.0.0
 	 * @access public

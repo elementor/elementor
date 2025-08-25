@@ -372,7 +372,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param $data
 	 *
-	 * @throws \Exception If the widget was not found.
+	 * @throws \Exception When the widget was not found.
 	 *
 	 * @return string
 	 */
@@ -1051,7 +1051,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @return array
 	 *
-	 * @throws \Exception
+	 * @throws \Exception When elements retrieval fails or data processing errors occur.
 	 */
 	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
 		if ( ! static::get_property( 'has_elements' ) ) {
@@ -1579,7 +1579,7 @@ abstract class Document extends Controls_Stack {
 	 *
 	 * @param array $data
 	 *
-	 * @throws \Exception If the post does not exist.
+	 * @throws \Exception When the post does not exist.
 	 */
 	public function __construct( array $data = [] ) {
 		if ( $data ) {
