@@ -4,6 +4,16 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { TransitionRepeaterControl } from '../transition-repeater-control';
 
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	getSelectedElements: jest.fn( () => [
+		{
+			id: 'test-element-id',
+			type: 'test-widget-type',
+		},
+	] ),
+} ) );
+
 jest.mock( '../../selection-size-control', () => ( {
 	SelectionSizeControl: jest.fn( () => <div data-testid="selection-size-control">Mock Selection Size Control</div> ),
 } ) );
