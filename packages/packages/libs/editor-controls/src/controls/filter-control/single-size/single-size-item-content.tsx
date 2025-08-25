@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 import * as React from 'react';
 import {
-	blurFilterPropTypeUtil, colorToneFilterPropTypeUtil,
+	blurFilterPropTypeUtil,
+	colorToneFilterPropTypeUtil,
 	type createPropUtils,
 	hueRotateFilterPropTypeUtil,
 	intensityFilterPropTypeUtil,

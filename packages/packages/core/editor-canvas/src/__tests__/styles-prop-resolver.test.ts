@@ -600,9 +600,7 @@ describe( 'styles prop resolver', () => {
 		} );
 
 		// Act.
-		const result = Object.entries(
-			await resolve( { props } ) )
-			.filter( ( [ , value ] ) => value !== null );
+		const result = Object.entries( await resolve( { props } ) ).filter( ( [ , value ] ) => value !== null );
 
 		// Assert.
 		expect( Object.fromEntries( result ) ).toStrictEqual( expected );
