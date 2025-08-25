@@ -13,21 +13,34 @@ jest.mock( '@elementor/ui', () => ( {
 } ) );
 
 describe( 'VariableEditableCell', () => {
-	const mockOnSave = jest.fn();
+	const mockOnChange = jest.fn();
 
-	const TestEditableElement = ( { value, onChange }: { value: string; onChange: ( value: string ) => void } ) => (
-		<input aria-label="Edit value" value={ value } onChange={ ( e ) => onChange( e.target.value ) } />
-	);
-
-	const renderComponent = ( props: { initialValue?: string; prefixElement?: React.ReactNode } = {} ) => {
-		const defaultProps = {
-			initialValue: props.initialValue || 'initial value',
-			onSave: mockOnSave,
-			editableElement: TestEditableElement,
-			children: <span>{ props.initialValue || 'initial value' }</span>,
+	const TestEditableElement = ( { value, onChange }: { value: string; onChange: ( value: string ) => void } ) => {
+		const handleChange = ( e: React.ChangeEvent< HTMLInputElement > ) => {
+			onChange( e.target.value );
 		};
 
-		return render( <VariableEditableCell { ...defaultProps } { ...props } /> );
+		const handleKeyDown = ( e: React.KeyboardEvent< HTMLInputElement > ) => {
+			if ( e.key === 'Enter' ) {
+				e.currentTarget.blur();
+			}
+		};
+
+		return <input aria-label="Edit value" value={ value } onChange={ handleChange } onKeyDown={ handleKeyDown } />;
+	};
+
+	const renderComponent = (
+		props: { initialValue?: string; prefixElement?: React.ReactNode; onChange?: ( value: string ) => void } = {}
+	) => {
+		const defaultProps = {
+			initialValue: props.initialValue || 'initial value',
+			editableElement: TestEditableElement,
+			children: <span>{ props.initialValue || 'initial value' }</span>,
+			onChange: mockOnChange,
+			prefixElement: props.prefixElement,
+		};
+
+		return render( <VariableEditableCell { ...defaultProps } /> );
 	};
 
 	beforeEach( () => {
@@ -74,7 +87,7 @@ describe( 'VariableEditableCell', () => {
 		fireEvent.change( input, { target: { value: 'new value' } } );
 		fireEvent.keyDown( input, { key: 'Enter' } );
 
-		expect( mockOnSave ).toHaveBeenCalledWith( 'new value' );
+		expect( mockOnChange ).toHaveBeenCalledWith( 'new value' );
 		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 	} );
 
@@ -86,7 +99,7 @@ describe( 'VariableEditableCell', () => {
 		fireEvent.change( input, { target: { value: 'new value' } } );
 		fireEvent.keyDown( input, { key: 'Escape' } );
 
-		expect( mockOnSave ).not.toHaveBeenCalled();
+		expect( mockOnChange ).not.toHaveBeenCalled();
 		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 	} );
 
@@ -98,7 +111,7 @@ describe( 'VariableEditableCell', () => {
 		fireEvent.change( input, { target: { value: 'new value' } } );
 		fireEvent.click( screen.getByRole( 'presentation' ) );
 
-		expect( mockOnSave ).toHaveBeenCalledWith( 'new value' );
+		expect( mockOnChange ).toHaveBeenCalledWith( 'new value' );
 		expect( screen.getByText( 'initial value' ) ).toBeInTheDocument();
 	} );
 
@@ -108,5 +121,32 @@ describe( 'VariableEditableCell', () => {
 
 		expect( element ).toHaveAttribute( 'aria-label', 'Double click or press Space to edit' );
 		expect( element ).toHaveAttribute( 'tabIndex', '0' );
+	} );
+
+	it( 'should call onChange callback when value changes', () => {
+		// Arrange
+		renderComponent();
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
+		const input = screen.getByLabelText( 'Edit value' );
+
+		// Act
+		fireEvent.change( input, { target: { value: 'new test value' } } );
+		fireEvent.keyDown( input, { key: 'Enter' } );
+
+		// Assert
+		expect( mockOnChange ).toHaveBeenCalledWith( 'new test value' );
+	} );
+
+	it( 'should call onSave with initial value when value is unchanged', () => {
+		// Arrange
+		renderComponent();
+		fireEvent.doubleClick( screen.getByRole( 'button' ) );
+		const input = screen.getByLabelText( 'Edit value' );
+
+		// Act
+		fireEvent.keyDown( input, { key: 'Enter' } );
+
+		// Assert
+		expect( mockOnChange ).toHaveBeenCalledWith( 'initial value' );
 	} );
 } );

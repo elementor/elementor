@@ -7,15 +7,16 @@ export type VariableManagerMenuAction = {
 	name: string;
 	icon: React.ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & React.RefAttributes< SVGSVGElement > >;
 	color: string;
-	onClick: () => void;
+	onClick: ( id: string ) => void;
 };
 
 type VariableEditMenuProps = {
 	menuActions: VariableManagerMenuAction[];
 	disabled?: boolean;
+	itemId: string;
 };
 
-export const VariableEditMenu = ( { menuActions, disabled }: VariableEditMenuProps ) => {
+export const VariableEditMenu = ( { menuActions, disabled, itemId }: VariableEditMenuProps ) => {
 	const menuState = usePopupState( {
 		variant: 'popover',
 	} );
@@ -51,7 +52,7 @@ export const VariableEditMenu = ( { menuActions, disabled }: VariableEditMenuPro
 					<MenuItem
 						key={ action.name }
 						onClick={ () => {
-							action.onClick?.();
+							action.onClick?.( itemId );
 							menuState.close();
 						} }
 						sx={ {

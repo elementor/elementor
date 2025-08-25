@@ -27,22 +27,25 @@ import { VariableTableCell } from './variable-table-cell';
 type Props = {
 	menuActions: VariableManagerMenuAction[];
 	variables: TVariablesList;
+	onChange: ( variables: TVariablesList ) => void;
 };
 
-export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
+export const VariablesManagerTable = ( { menuActions, variables, onChange: handleOnChange }: Props ) => {
 	const [ ids, setIds ] = useState< string[] >( Object.keys( variables ) );
-	const rows = ids.map( ( id ) => {
-		const variable = variables[ id ];
-		const variableType = getVariableType( variable.type );
+	const rows = ids
+		.filter( ( id ) => ! variables[ id ].deleted )
+		.map( ( id ) => {
+			const variable = variables[ id ];
+			const variableType = getVariableType( variable.type );
 
-		return {
-			id,
-			name: variable.label,
-			value: variable.value,
-			type: variable.type,
-			...variableType,
-		};
-	} );
+			return {
+				id,
+				name: variable.label,
+				value: variable.value,
+				type: variable.type,
+				...variableType,
+			};
+		} );
 
 	const tableSX: SxProps = {
 		minWidth: 250,
@@ -136,7 +139,14 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 											<VariableTableCell>
 												<VariableEditableCell
 													initialValue={ row.name }
-													onSave={ () => {} }
+													onChange={ ( value ) => {
+														if ( value !== row.name ) {
+															handleOnChange( {
+																...variables,
+																[ row.id ]: { ...variables[ row.id ], label: value },
+															} );
+														}
+													} }
 													prefixElement={ createElement( row.icon, { fontSize: 'inherit' } ) }
 													editableElement={ ( { value, onChange } ) => (
 														<LabelField
@@ -159,7 +169,14 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 											<VariableTableCell>
 												<VariableEditableCell
 													initialValue={ row.value }
-													onSave={ () => {} }
+													onChange={ ( value ) => {
+														if ( value !== row.value ) {
+															handleOnChange( {
+																...variables,
+																[ row.id ]: { ...variables[ row.id ], value },
+															} );
+														}
+													} }
 													editableElement={ row.valueField }
 												>
 													{ row.startIcon && row.startIcon( { value: row.value } ) }
@@ -182,6 +199,7 @@ export const VariablesManagerTable = ( { menuActions, variables }: Props ) => {
 													<VariableEditMenu
 														menuActions={ menuActions }
 														disabled={ isSorting }
+														itemId={ row.id }
 													/>
 												</Stack>
 											</VariableTableCell>

@@ -83,6 +83,7 @@ describe( 'VariableEditMenu', () => {
 	const renderComponent = ( props = {} ) => {
 		const defaultProps = {
 			menuActions: mockMenuActions,
+			itemId: '123',
 		};
 
 		return render( <VariableEditMenu { ...defaultProps } { ...props } /> );
@@ -191,5 +192,34 @@ describe( 'VariableEditMenu', () => {
 		// Assert
 		expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Edit' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should apply custom colors to menu items', () => {
+		// Arrange
+		Object.assign( mockPopupState, {
+			isOpen: true,
+			anchorEl: document.createElement( 'div' ),
+		} );
+
+		const customColorActions = [
+			{
+				name: 'Custom Action',
+				icon: TrashIcon,
+				color: 'success.main',
+				onClick: jest.fn(),
+			},
+		];
+
+		// Act
+		renderComponent( { menuActions: customColorActions } );
+		const menuItem = screen.getByRole( 'menuitem' );
+		const sx = JSON.parse( menuItem.getAttribute( 'data-sx' ) || '{}' );
+
+		// Assert
+		expect( sx ).toEqual( {
+			color: 'success.main',
+			gap: 1,
+		} );
+		expect( screen.getByText( 'Custom Action' ) ).toBeInTheDocument();
 	} );
 } );
