@@ -24,7 +24,7 @@ class Component extends Atomic_Widget_Base {
 
 		if ( isset( $this->get_settings ) && null !== $this->get_settings( 'component_id' ) ) {
 			$post_id = $this->get_settings( 'component_id' )['value'];
-			$title = Plugin::$instance->documents->get( $post_id )->get_title();
+			$title   = Plugin::$instance->documents->get( $post_id )->get_title();
 		}
 
 		return $title;
@@ -61,8 +61,8 @@ class Component extends Atomic_Widget_Base {
 
 		$post_id = $this->get_settings( 'component_id' )['value'];
 		$content = Plugin::$instance->frontend->get_builder_content( $post_id );
-		$html = sprintf('<div class="e-component">%s</div>', $content);
-		
+		$html    = sprintf( '<div class="e-component">%s</div>', $content );
+
 		// PHPCS - should not be escaped.
 		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
