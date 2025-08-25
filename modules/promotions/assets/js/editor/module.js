@@ -10,7 +10,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 			const widgetType = model.get( 'widgetType' );
 			const { config } = elementor;
 
-			const hasWidget = ( path ) => !! config[path].find( ( item ) => widgetType === item.name );
+			const hasWidget = ( path ) => !! config[ path ].find( ( item ) => widgetType === item.name );
 
 			let isProWidget = false,
 				isIntegrationWidget = false;
