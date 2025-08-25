@@ -2,16 +2,9 @@ import { getSelectedElements } from '@elementor/editor-elements';
 import { sendMixpanelEvent } from '@elementor/utils';
 
 import { repeaterEventBus } from '../../services/repeater-event-bus';
+import { initialTransitionValue } from './data';
 
-interface TransitionItemValue {
-	selection?: {
-		value?: {
-			value?: {
-				value?: string;
-			};
-		};
-	};
-}
+type TransitionItemValue = typeof initialTransitionValue;
 
 const transitionRepeaterMixpanelEvent = {
 	eventName: 'click_added_transition',

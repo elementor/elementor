@@ -1,7 +1,7 @@
 type ExtendedWindow = Window & {
 	elementorCommon?: {
 		eventsManager?: {
-			dispatchEvent: ( name: string, data: Record< string, unknown > ) => void;
+			dispatchEvent: ( name: string, data: MixpanelEvent ) => void;
 		};
 	};
 };
@@ -13,7 +13,7 @@ export type MixpanelEvent = {
 	transition_type: string;
 	widget_type: string;
 	eventName: string;
-};
+} & { [key: string]: unknown };
 
 export const sendMixpanelEvent = ( event: MixpanelEvent ) => {
 	const extendedWindow: ExtendedWindow = window;
