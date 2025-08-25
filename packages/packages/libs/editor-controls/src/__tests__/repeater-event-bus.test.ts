@@ -1,4 +1,4 @@
-import { RepeaterEventBus, repeaterEventBus } from '../services/repeater-event-bus';
+import { RepeaterEventBus } from '../services/repeater-event-bus';
 
 describe( 'RepeaterEventBus', () => {
 	let eventBus: RepeaterEventBus;
