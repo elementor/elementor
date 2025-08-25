@@ -4,12 +4,11 @@ import { dropShadowFilterPropTypeUtil } from '@elementor/editor-props';
 import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
-import { ControlFormLabel } from '../../components/control-form-label';
-import { PopoverGridContainer } from '../../components/popover-grid-container';
-import { type LengthUnit } from '../../utils/size-control';
-import { ColorControl } from '../color-control';
-import { SizeControl } from '../size-control';
+import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
+import { ControlFormLabel } from '../../../components/control-form-label';
+import { PopoverGridContainer } from '../../../components/popover-grid-container';
+import { ColorControl } from '../../color-control';
+import { SizeControl } from '../../size-control';
 
 const items = [
 	{
@@ -35,10 +34,8 @@ const items = [
 ];
 
 export const DropShadowItemContent = ( {
-	units,
 	anchorEl,
 }: {
-	units: LengthUnit[];
 	anchorEl?: HTMLElement | null;
 } ) => {
 	const context = useBoundProp( dropShadowFilterPropTypeUtil );
@@ -56,7 +53,11 @@ export const DropShadowItemContent = ( {
 							{ item.bind === 'color' ? (
 								<ColorControl anchorEl={ anchorEl } />
 							) : (
-								<SizeControl anchorRef={ rowRefs[ item.rowIndex ] } units={ units } defaultUnit="px" />
+								<SizeControl
+									anchorRef={ rowRefs[ item.rowIndex ] }
+									enablePropTypeUnits
+									defaultUnit="px"
+								/>
 							) }
 						</Grid>
 					</PropKeyProvider>
