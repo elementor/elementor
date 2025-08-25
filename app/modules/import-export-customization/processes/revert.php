@@ -48,7 +48,7 @@ class Revert {
 	/**
 	 * Execute the revert process.
 	 *
-	 * @throws \Exception If no revert runners have been specified.
+	 * @throws \Exception When no revert runners have been specified.
 	 */
 	public function run() {
 		if ( empty( $this->runners ) ) {

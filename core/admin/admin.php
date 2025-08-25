@@ -510,7 +510,7 @@ class Admin extends App {
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
 	 * @param array $args
-	 * @param bool $show_heading
+	 * @param bool  $show_heading
 	 *
 	 * @return void
 	 * @since 3.12.0
@@ -546,7 +546,7 @@ class Admin extends App {
 	 * Displays the Elementor dashboard widget - news and updates section.
 	 * Fired by `elementor_dashboard_overview_widget` function.
 	 *
-	 * @param int $limit_feed
+	 * @param int  $limit_feed
 	 * @param bool $show_heading
 	 *
 	 * @return void

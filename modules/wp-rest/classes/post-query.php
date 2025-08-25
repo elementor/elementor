@@ -71,7 +71,7 @@ class Post_Query {
 	}
 
 	/**
-	 * @param string $search_term The original search query.
+	 * @param string    $search_term The original search query.
 	 * @param \WP_Query $wp_query The WP_Query instance.
 	 * @return string Modified search query.
 	 */

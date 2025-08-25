@@ -86,7 +86,7 @@ class Cache_Validity {
 
 	/**
 	 * @param array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} $root_item
-	 * @param array<string> $keys
+	 * @param array<string>                                                                           $keys
 	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>}
 	 */
 	private function &get_nested_item( array &$root_item, array $keys ): array {

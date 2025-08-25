@@ -35,7 +35,7 @@ class Static_Collection {
 	 * it will be assigned as the current collection instance after executing any method.
 	 *
 	 * @param string $name
-	 * @param array $arguments
+	 * @param array  $arguments
 	 */
 	public function __call( $name, $arguments ) {
 		$call = call_user_func_array( [ $this->collection, $name ], $arguments );

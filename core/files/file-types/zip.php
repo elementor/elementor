@@ -67,7 +67,7 @@ class Zip extends Base {
 	 *
 	 * @since 3.3.0
 	 *
-	 * @param string $file_path
+	 * @param string     $file_path
 	 * @param array|null $allowed_file_types
 	 * @return array|\WP_Error
 	 */
@@ -117,7 +117,8 @@ class Zip extends Base {
 	 * @since 3.3.0
 	 *
 	 * @param \ZipArchive $zip
-	 * @param array $allowed_file_types
+	 * @param array       $allowed_file_types
+	 *
 	 * @return array
 	 */
 	private function get_allowed_files( $zip, $allowed_file_types ) {
