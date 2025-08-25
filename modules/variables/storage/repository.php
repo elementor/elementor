@@ -269,7 +269,7 @@ class Repository {
 				];
 			}
 
-			throw new BatchOperationFailed( esc_html( 'Batch operation failed' ), $error_details );
+			throw new BatchOperationFailed( 'Batch operation failed: ' . esc_html( json_encode( $error_details ) ) );
 		}
 
 		$watermark = $this->save( $db_record );
