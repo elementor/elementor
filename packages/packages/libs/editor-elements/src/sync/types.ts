@@ -49,7 +49,6 @@ export type V1ElementModelProps = {
 	elType: string;
 	id: string;
 	styles?: Record< StyleDefinitionID, StyleDefinition >;
-	settings?: V1ElementSettingsProps;
 	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1Model< V1ElementSettingsProps >;
 };

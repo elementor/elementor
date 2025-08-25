@@ -223,7 +223,7 @@ export default function createAtomicElementView( type ) {
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
 			];
-	
+
 			if ( elementorCommon.config.experimentalFeatures?.e_components ) {
 				saveActions.unshift(			{
 					name: 'save-component',
@@ -233,7 +233,7 @@ export default function createAtomicElementView( type ) {
 					isEnabled: () => ! this.getContainer().isLocked(),
 				} );
 			}
-	
+
 			var groups = BaseElementView.prototype.getContextMenuGroups.apply(
 					this,
 					arguments,
@@ -241,7 +241,7 @@ export default function createAtomicElementView( type ) {
 				transferGroupClipboardIndex = groups.indexOf(
 					_.findWhere( groups, { name: 'clipboard' } ),
 				);
-	
+
 			groups.splice( transferGroupClipboardIndex + 1, 0, {
 				name: 'save',
 				actions: saveActions,
@@ -264,7 +264,7 @@ export default function createAtomicElementView( type ) {
 				left: openMenuOriginalEvent.clientX + iframeRect.left,
 				top: openMenuOriginalEvent.clientY + iframeRect.top,
 			};
-	
+
 			window.dispatchEvent( new CustomEvent(
 				'elementor/editor/open-save-as-component-form',
 				{
