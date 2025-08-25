@@ -97,6 +97,7 @@ class Components_REST_API {
 			return Error_Builder::make( 'components_limit_exceeded' )
 				->set_status( 400 )
 				->set_message( sprintf(
+					/* translators: %d: maximum components limit. */
 					__( 'Components limit exceeded. Maximum allowed: %d', 'elementor' ),
 					static::MAX_COMPONENTS
 				) )

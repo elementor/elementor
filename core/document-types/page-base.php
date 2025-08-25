@@ -178,15 +178,47 @@ abstract class PageBase extends Document {
 		$labels = [
 			'name' => $plural_label, // Already translated.
 			'singular_name' => $singular_label, // Already translated.
-			'all_items' => sprintf( __( 'All %s', 'elementor' ), $plural_label ),
+			'all_items' => sprintf(
+				/* translators: 1: Plural label. */
+				__( 'All %s', 'elementor' ),
+				$plural_label
+			),
 			'add_new' => esc_html__( 'Add New', 'elementor' ),
-			'add_new_item' => sprintf( __( 'Add New %s', 'elementor' ), $singular_label ),
-			'edit_item' => sprintf( __( 'Edit %s', 'elementor' ), $singular_label ),
-			'new_item' => sprintf( __( 'New %s', 'elementor' ), $singular_label ),
-			'view_item' => sprintf( __( 'View %s', 'elementor' ), $singular_label ),
-			'search_items' => sprintf( __( 'Search %s', 'elementor' ), $plural_label ),
-			'not_found' => sprintf( __( 'No %s found.', 'elementor' ), strtolower( $plural_label ) ),
-			'not_found_in_trash' => sprintf( __( 'No %s found in Trash.', 'elementor' ), strtolower( $plural_label ) ),
+			'add_new_item' => sprintf(
+				/* translators: %s: Singular label. */
+				__( 'Add New %s', 'elementor' ),
+				$singular_label
+			),
+			'edit_item' => sprintf(
+				/* translators: %s: Singular label. */
+				__( 'Edit %s', 'elementor' ),
+				$singular_label
+			),
+			'new_item' => sprintf(
+				/* translators: %s: Singular label. */
+				__( 'New %s', 'elementor' ),
+				$singular_label
+			),
+			'view_item' => sprintf(
+				/* translators: %s: Singular label. */
+				__( 'View %s', 'elementor' ),
+				$singular_label
+			),
+			'search_items' => sprintf(
+				/* translators: %s: Plural label. */
+				__( 'Search %s', 'elementor' ),
+				$plural_label
+			),
+			'not_found' => sprintf(
+				/* translators: %s: Plural label. */
+				__( 'No %s found.', 'elementor' ),
+				strtolower( $plural_label )
+			),
+			'not_found_in_trash' => sprintf(
+				/* translators: %s: Plural label. */
+				__( 'No %s found in Trash.', 'elementor' ),
+				strtolower( $plural_label )
+			),
 			'parent_item_colon' => '',
 			'menu_name' => $plural_label,
 		];
