@@ -83,7 +83,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const popoverState = usePopupState( { variant: 'popover' } );
 
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
-		const item = config?.item ?? initial;
+		const item = config?.item ?? { ...initial };
 		const newIndex = config?.index ?? items.length;
 		const newItems = [ ...items ];
 
