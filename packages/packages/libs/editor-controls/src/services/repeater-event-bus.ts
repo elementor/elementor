@@ -1,24 +1,17 @@
-export const RepeaterEvents = {
-	TransitionItemAdded: 'transition-item-added',
-	TransitionItemRemoved: 'transition-item-removed',
-} as const;
-
-export type RepeaterEventType = ( typeof RepeaterEvents )[ keyof typeof RepeaterEvents ];
-
 export class RepeaterEventBus {
-	private listeners = new Map< RepeaterEventType, ( data?: { itemValue: unknown } ) => void >();
+	private listeners = new Map< string, ( data?: { itemValue: unknown } ) => void >();
 
-	subscribe( eventName: RepeaterEventType, callback: ( data?: { itemValue: unknown } ) => void ) {
+	subscribe( eventName: string, callback: ( data?: { itemValue: unknown } ) => void ) {
 		if ( ! this.listeners.has( eventName ) ) {
 			this.listeners.set( eventName, callback );
 		}
 	}
 
-	unsubscribe( eventName: RepeaterEventType ) {
+	unsubscribe( eventName: string ) {
 		this.listeners.delete( eventName );
 	}
 
-	emit( eventName: RepeaterEventType, data?: { itemValue: unknown } ) {
+	emit( eventName: string, data?: { itemValue: unknown } ) {
 		this.listeners.get( eventName )?.( data );
 	}
 }
