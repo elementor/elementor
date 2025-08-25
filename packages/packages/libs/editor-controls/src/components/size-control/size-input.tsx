@@ -21,6 +21,7 @@ type SizeInputProps = {
 	popupState: PopupState;
 	disabled?: boolean;
 	min?: number;
+	id?: string;
 };
 
 export const SizeInput = ( {
@@ -37,6 +38,7 @@ export const SizeInput = ( {
 	popupState,
 	disabled,
 	min,
+	id,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -115,6 +117,7 @@ export const SizeInput = ( {
 					InputProps={ InputProps }
 					inputProps={ { min, step: 'any' } }
 					isPopoverOpen={ popupState.isOpen }
+					id={ id }
 				/>
 			</Box>
 		</ControlActions>
