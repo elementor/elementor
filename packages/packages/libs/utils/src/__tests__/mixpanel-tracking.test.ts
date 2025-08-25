@@ -1,4 +1,4 @@
-import { sendMixpanelEvent, MixpanelEvent } from '../mixpanel-tracking';
+import { type MixpanelEvent, sendMixpanelEvent } from '../mixpanel-tracking';
 
 type ExtendedWindow = Window & {
 	elementorCommon?: {
@@ -37,37 +37,37 @@ describe( 'mixpanel-tracking', () => {
 		delete ( window as ExtendedWindow ).elementorCommon;
 	} );
 
-		it( 'should dispatch event when dispatchEvent is available', () => {
-			// Act.
-			sendMixpanelEvent( mockEvent );
+	it( 'should dispatch event when dispatchEvent is available', () => {
+		// Act.
+		sendMixpanelEvent( mockEvent );
 
-			// Assert.
-			expect( mockDispatchEvent ).toHaveBeenCalledWith( mockEvent.eventName, mockEvent );
-		} );
-
-		it( 'should not throw error when dispatchEvent is undefined', () => {
-			// Arrange.
-			delete ( window as ExtendedWindow ).elementorCommon;
-
-			// Act & Assert.
-			expect( () => sendMixpanelEvent( mockEvent ) ).not.toThrow();
-		} );
-
-		it( 'should call dispatchEvent with correct event data', () => {
-			// Arrange.
-			const customEvent: MixpanelEvent = {
-				location: 'custom-location',
-				secondaryLocation: 'custom-secondary',
-				trigger: 'custom-trigger',
-				transition_type: 'custom-transition',
-				widget_type: 'custom-widget',
-				eventName: 'custom-event',
-			};
-
-			// Act.
-			sendMixpanelEvent( customEvent );
-
-			// Assert.
-			expect( mockDispatchEvent ).toHaveBeenCalledWith( customEvent.eventName, customEvent );
-		} );
+		// Assert.
+		expect( mockDispatchEvent ).toHaveBeenCalledWith( mockEvent.eventName, mockEvent );
 	} );
+
+	it( 'should not throw error when dispatchEvent is undefined', () => {
+		// Arrange.
+		delete ( window as ExtendedWindow ).elementorCommon;
+
+		// Act & Assert.
+		expect( () => sendMixpanelEvent( mockEvent ) ).not.toThrow();
+	} );
+
+	it( 'should call dispatchEvent with correct event data', () => {
+		// Arrange.
+		const customEvent: MixpanelEvent = {
+			location: 'custom-location',
+			secondaryLocation: 'custom-secondary',
+			trigger: 'custom-trigger',
+			transition_type: 'custom-transition',
+			widget_type: 'custom-widget',
+			eventName: 'custom-event',
+		};
+
+		// Act.
+		sendMixpanelEvent( customEvent );
+
+		// Assert.
+		expect( mockDispatchEvent ).toHaveBeenCalledWith( customEvent.eventName, customEvent );
+	} );
+} );

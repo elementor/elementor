@@ -23,69 +23,69 @@ jest.mock( '../../../services/repeater-event-bus', () => ( {
 
 describe( 'Transition Events', () => {
 	// Arrange
-	const mockGetSelectedElements = getSelectedElements as jest.MockedFunction<typeof getSelectedElements>;
-	const mockSendMixpanelEvent = sendMixpanelEvent as jest.MockedFunction<typeof sendMixpanelEvent>;
-	const mockRepeaterEventBus = repeaterEventBus as jest.Mocked<typeof repeaterEventBus>;
+	const mockGetSelectedElements = getSelectedElements as jest.MockedFunction< typeof getSelectedElements >;
+	const mockSendMixpanelEvent = sendMixpanelEvent as jest.MockedFunction< typeof sendMixpanelEvent >;
+	const mockRepeaterEventBus = repeaterEventBus as jest.Mocked< typeof repeaterEventBus >;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
 
-		it( 'should subscribe to transition-item-added event', () => {
-			// Act
-			subscribeToTransitionEvent();
+	it( 'should subscribe to transition-item-added event', () => {
+		// Act
+		subscribeToTransitionEvent();
 
-			// Assert
-			expect( mockRepeaterEventBus.subscribe ).toHaveBeenCalledWith(
-				'transition-item-added',
-				expect.any( Function )
-			);
-		} );
+		// Assert
+		expect( mockRepeaterEventBus.subscribe ).toHaveBeenCalledWith(
+			'transition-item-added',
+			expect.any( Function )
+		);
+	} );
 
-		it( 'should send mixpanel event with transition type when event is triggered', () => {
-			// Arrange
-			const mockTransitionValue = 'fade';
-			const mockWidgetType = 'heading';
-			const mockData = {
-				itemValue: {
-					selection: {
+	it( 'should send mixpanel event with transition type when event is triggered', () => {
+		// Arrange
+		const mockTransitionValue = 'fade';
+		const mockWidgetType = 'heading';
+		const mockData = {
+			itemValue: {
+				selection: {
+					value: {
 						value: {
-							value: {
-								value: mockTransitionValue,
-							},
+							value: mockTransitionValue,
 						},
 					},
 				},
-			};
+			},
+		};
 
-			mockGetSelectedElements.mockReturnValue( [
-				{
-					id: 'test-element',
-					type: mockWidgetType,
-				},
-			] );
+		mockGetSelectedElements.mockReturnValue( [
+			{
+				id: 'test-element',
+				type: mockWidgetType,
+			},
+		] );
 
-			// Act
-			subscribeToTransitionEvent();
-			const subscribeCallback = mockRepeaterEventBus.subscribe.mock.calls[ 0 ][ 1 ];
-			subscribeCallback( mockData );
+		// Act
+		subscribeToTransitionEvent();
+		const subscribeCallback = mockRepeaterEventBus.subscribe.mock.calls[ 0 ][ 1 ];
+		subscribeCallback( mockData );
 
-			// Assert
-			expect( mockSendMixpanelEvent ).toHaveBeenCalledWith( {
-				transition_type: mockTransitionValue,
-				eventName: 'click_added_transition',
-				location: 'V4 Style Tab',
-				secondaryLocation: 'Transition control',
-				trigger: 'click',
-				widget_type: mockWidgetType,
-			} );
-		} );
-
-		it( 'should unsubscribe from transition-item-added event', () => {
-			// Act
-			unsubscribeFromTransitionItemAdded();
-
-			// Assert
-			expect( mockRepeaterEventBus.unsubscribe ).toHaveBeenCalledWith( 'transition-item-added' );
+		// Assert
+		expect( mockSendMixpanelEvent ).toHaveBeenCalledWith( {
+			transition_type: mockTransitionValue,
+			eventName: 'click_added_transition',
+			location: 'V4 Style Tab',
+			secondaryLocation: 'Transition control',
+			trigger: 'click',
+			widget_type: mockWidgetType,
 		} );
 	} );
+
+	it( 'should unsubscribe from transition-item-added event', () => {
+		// Act
+		unsubscribeFromTransitionItemAdded();
+
+		// Assert
+		expect( mockRepeaterEventBus.unsubscribe ).toHaveBeenCalledWith( 'transition-item-added' );
+	} );
+} );
