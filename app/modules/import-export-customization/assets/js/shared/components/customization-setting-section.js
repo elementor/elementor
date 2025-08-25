@@ -59,7 +59,7 @@ export const SettingSection = ( {
 				</Box>
 			) }
 		</Box>
-	)
+	);
 };
 
 SettingSection.propTypes = {

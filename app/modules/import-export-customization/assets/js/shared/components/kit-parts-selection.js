@@ -159,7 +159,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 							) : null;
 						} )() }
 					</Fragment>
-				)
+				);
 			} ) }
 		</Stack>
 	);
