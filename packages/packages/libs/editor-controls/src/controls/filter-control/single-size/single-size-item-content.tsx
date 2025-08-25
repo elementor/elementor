@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import * as React from 'react';
 import {
-	blurFilterPropTypeUtil,
+	blurFilterPropTypeUtil, colorToneFilterPropTypeUtil,
 	type createPropUtils,
 	hueRotateFilterPropTypeUtil,
 	intensityFilterPropTypeUtil,
@@ -19,7 +19,7 @@ export const propTypeMap: Record< string, ReturnType< typeof createPropUtils > >
 	blur: blurFilterPropTypeUtil,
 	intensity: intensityFilterPropTypeUtil,
 	'hue-rotate': hueRotateFilterPropTypeUtil,
-	'color-tone': blurFilterPropTypeUtil,
+	'color-tone': colorToneFilterPropTypeUtil,
 };
 
 export const SingleSizeItemContent = ( { filterFunc }: { filterFunc: FilterFunction } ) => {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import type { FilterItemPropValue } from '@elementor/editor-props';
+import { type DropShadowFilterPropValue, type FilterItemPropValue } from '@elementor/editor-props';
 import { styled, UnstableColorIndicator } from '@elementor/ui';
 
 export const FilterIcon = ( { value }: { value: FilterItemPropValue } ) => {
@@ -8,7 +8,11 @@ export const FilterIcon = ( { value }: { value: FilterItemPropValue } ) => {
 	}
 
 	return (
-		<StyledUnstableColorIndicator size="inherit" component="span" value={ value.value.args.value.color.value } />
+		<StyledUnstableColorIndicator
+			size="inherit"
+			component="span"
+			value={ ( value.value.args as DropShadowFilterPropValue ).value?.color.value }
+		/>
 	);
 };
 
