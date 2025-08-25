@@ -4,7 +4,7 @@ namespace Elementor\Modules\Components;
 
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
-use Elementor\Core\Utils\Api\Error_Builder;
+use Elementor\Modules\Components\Components_REST_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,10 +17,11 @@ class Components_Repository {
 	}
 
 	public function all() {
+		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
 			'post_status' => 'publish',
-			'posts_per_page' => -1,
+			'posts_per_page' => Components_REST_API::MAX_COMPONENTS,
 		] );
 
 		$components = [];
