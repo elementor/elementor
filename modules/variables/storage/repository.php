@@ -263,7 +263,7 @@ class Repository {
 			$escaped_errors = [];
 
 			foreach ( $errors as $operation_id => $error ) {
-				$escaped_errors[ $operation_id ] = [
+				$escaped_errors[ esc_html( $operation_id ) ] = [
 					'status' => $error['status'],
 					'message' => esc_html( $error['message'] ),
 				];
