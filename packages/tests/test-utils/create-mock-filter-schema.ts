@@ -39,21 +39,21 @@ export function createMockSingleSizeFilterPropType() {
 							},
 						},
 						intensity: {
-							key: 'blur',
+							key: 'intensity',
 							kind: 'object',
 							shape: {
 								size: createSizePropType(),
 							},
 						},
 						'color-tone': {
-							key: 'blur',
+							key: 'color-tone',
 							kind: 'object',
 							shape: {
 								size: createSizePropType(),
 							},
 						},
 						'hue-rotate': {
-							key: 'blur',
+							key: 'hue-rotate',
 							kind: 'object',
 							shape: {
 								size: createSizePropType(),

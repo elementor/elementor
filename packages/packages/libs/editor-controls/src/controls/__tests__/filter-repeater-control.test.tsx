@@ -23,13 +23,6 @@ const propType = createMockPropType( {
 	settings: {},
 	item_prop_type: {
 		...cssFilterFunc[ 'css-filter-func' ],
-
-		// kind: 'union',
-		// default: null,
-		// meta: {},
-		// settings: {},
-		// prop_types: {
-		// },
 	},
 } );
 
