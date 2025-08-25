@@ -1,5 +1,5 @@
 import { type V1ElementModelProps } from '@elementor/editor-elements';
-import { httpService } from '@elementor/http-client';
+import { httpService, type HttpResponse } from '@elementor/http-client';
 
 const RESOURCE_URL = '/components';
 const BASE_URL = 'elementor/v1';
@@ -21,8 +21,8 @@ export type CreateComponentResponse = {
 export const apiClient = {
 	get: () =>
 		httpService()
-			.get< GetComponentResponse >( `${ BASE_URL }${ RESOURCE_URL }` )
-			.then( ( res ) => res.data ),
+			.get< HttpResponse< GetComponentResponse > >( `${ BASE_URL }${ RESOURCE_URL }` )
+			.then( ( res ) => res.data.data ),
 	create: ( payload: CreateComponentPayload ) =>
-		httpService().post< CreateComponentResponse >( `${ BASE_URL }${ RESOURCE_URL }`, payload ),
+		httpService().post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }${ RESOURCE_URL }`, payload ).then( ( res ) => res.data.data ),
 };

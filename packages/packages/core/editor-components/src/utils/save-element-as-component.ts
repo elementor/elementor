@@ -24,14 +24,14 @@ export const saveElementAsComponent = async (
 				settings: {
 					component_id: {
 						$$type: 'number',
-						value: result.data.component_id,
+						value: result.component_id,
 					},
 				},
 			},
 			withHistory: false,
 		} );
 
-		options?.onSuccess?.( result.data );
+		options?.onSuccess?.( result );
 	} catch ( error ) {
 		options?.onError?.( error );
 	}
