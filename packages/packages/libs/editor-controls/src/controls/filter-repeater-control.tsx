@@ -16,7 +16,12 @@ import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-conte
 import { ControlFormLabel } from '../components/control-form-label';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { type CollectionPropUtil, Repeater } from '../components/repeater';
+import { Header, Item, ItemsContainer, TooltipAddItemAction, UnstableRepeater } from '../components/unstable-repeater';
+import { DisableItemAction } from '../components/unstable-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../components/unstable-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../components/unstable-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../components/unstable-repeater/context/repeater-context';
+import { EditItemPopover } from '../components/unstable-repeater/items/edit-item-popover';
 import { createControl } from '../create-control';
 import { type LengthUnit, lengthUnits, type Unit } from '../utils/size-control';
 import { DropShadowItemContent } from './filter-control/drop-shadow-item-content';
@@ -166,24 +171,23 @@ export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter
 		filterPropName === 'backdrop-filter'
 			? [ backdropFilterPropTypeUtil, __( 'Backdrop Filters', 'elementor' ) ]
 			: [ filterPropTypeUtil, __( 'Filters', 'elementor' ) ];
-	const { propType, value: filterValues, setValue, disabled } = useBoundProp( propUtil );
+	const { propType, value: filterValues, setValue, disabled, bind } = useBoundProp( propUtil );
 
 	return (
 		<PropProvider propType={ propType } value={ filterValues } setValue={ setValue }>
-			<Repeater
-				openOnAdd
-				disabled={ disabled }
-				values={ filterValues ?? [] }
-				setValues={ setValue }
-				label={ label }
-				collectionPropUtil={ propUtil }
-				itemSettings={ {
-					Icon: ItemIcon,
-					Label: ItemLabel,
-					Content: ItemContent,
-					initialValues: filterConfig[ DEFAULT_FILTER ].defaultValue,
-				} }
-			/>
+			<UnstableRepeater initial={ filterConfig[ DEFAULT_FILTER ].defaultValue } propTypeUtil={ propUtil }>
+				<Header label={ label }>
+					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
+					<DuplicateItemAction />
+					<DisableItemAction />
+					<RemoveItemAction />
+				</ItemsContainer>
+				<EditItemPopover>
+					<ItemContent />
+				</EditItemPopover>
+			</UnstableRepeater>
 		</PropProvider>
 	);
 } );
@@ -228,27 +232,10 @@ const SingleSizeItemLabel = ( { value }: { value: FilterItemPropValue } ) => {
 	);
 };
 
-const ItemContent = ( {
-	bind,
-	collectionPropUtil,
-	anchorEl,
-}: {
-	bind: PropKey;
-	collectionPropUtil?: CollectionPropUtil< FilterItemPropValue >;
-	anchorEl?: HTMLElement | null;
-} ) => {
-	const { value: filterValues = [] } = useBoundProp( collectionPropUtil ?? filterPropTypeUtil );
-	const itemIndex = parseInt( bind, 10 );
-	const item = filterValues?.[ itemIndex ];
-	return item ? (
-		<PropKeyProvider bind={ bind }>
-			<PropContent item={ item } anchorEl={ anchorEl } />
-		</PropKeyProvider>
-	) : null;
-};
-
-const PropContent = ( { item, anchorEl }: { item: FilterItemPropValue; anchorEl?: HTMLElement | null } ) => {
+const ItemContent = () => {
 	const propContext = useBoundProp( cssFilterFunctionPropUtil );
+	const { rowRef: anchorEl, openItemIndex, items } = useRepeaterContext();
+	const item = items[ openItemIndex ].item;
 
 	const handleValueChange = (
 		changedValue: FilterItemPropValue[ 'value' ],
