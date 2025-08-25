@@ -585,6 +585,7 @@ class Import {
 	 *
 	 * @param string $zip_path The path to the zip file.
 	 * @return string The extracted directory path.
+	 * @throws \Error
 	 */
 	private function extract_zip( $zip_path ) {
 		$extraction_result = Plugin::$instance->uploads_manager->extract_and_validate_zip( $zip_path, [ 'json', 'xml' ] );
@@ -604,6 +605,8 @@ class Import {
 	 * Get the manifest file from the extracted directory and adapt it if needed.
 	 *
 	 * @return string The manifest file content.
+	 *
+	 * @throws \Error
 	 */
 	private function read_manifest_json() {
 		$manifest = Utils::read_json_file( $this->extracted_directory_path . 'manifest' );

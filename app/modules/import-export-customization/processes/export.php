@@ -271,6 +271,8 @@ class Export {
 
 	/**
 	 * Init the zip archive.
+	 *
+	 * @throws \Error
 	 */
 	private function init_zip_archive() {
 		if ( ! class_exists( '\ZipArchive' ) ) {

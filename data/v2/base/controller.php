@@ -197,6 +197,8 @@ abstract class Controller extends WP_REST_Controller {
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return bool
+	 *
+	 * @throws WP_Error_Exception
 	 */
 	public function get_permission_callback( $request ) {
 		$is_multi = (bool) $request->get_param( 'is_multi' );

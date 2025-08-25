@@ -159,7 +159,7 @@ class Render_Mode_Manager {
 	 * Add actions base on the current render.
 	 *
 	 * @throws \Requests_Exception_HTTP_403 If the current render mode does not have the required permissions.
-	 * @throws Status403 If the current render mode does not have the required permissions.
+	 * @throws \WpOrg\Requests\Exception\Http\Status403 If the current render mode does not have the required permissions.
 	 */
 	private function add_current_actions() {
 		if ( ! $this->current->get_permissions_callback() ) {

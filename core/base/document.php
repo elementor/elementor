@@ -1050,6 +1050,8 @@ abstract class Document extends Controls_Stack {
 	 * @param bool $with_html_content
 	 *
 	 * @return array
+	 *
+	 * @throws \Exception
 	 */
 	public function get_elements_raw_data( $data = null, $with_html_content = false ) {
 		if ( ! static::get_property( 'has_elements' ) ) {

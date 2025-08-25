@@ -238,6 +238,8 @@ class Module extends BaseModule {
 	 * Throw action doesn't exist exception.
 	 *
 	 * @param string $action
+	 *
+	 * @throws \InvalidArgumentException
 	 */
 	public function action_doesnt_exists( $action ) {
 		throw new \InvalidArgumentException( sprintf( esc_html(

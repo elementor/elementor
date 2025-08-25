@@ -617,6 +617,8 @@ class Module extends BaseModule {
 
 	/**
 	 * Handle upload kit ajax request.
+	 *
+	 * @throws \Error
 	 */
 	private function handle_upload_kit() {
 		// PHPCS - A URL that should contain special chars (auth headers information).
@@ -769,6 +771,8 @@ class Module extends BaseModule {
 
 	/**
 	 * Handle export kit ajax request.
+	 *
+	 * @throws \Error
 	 */
 	private function handle_export_kit() {
 		// PHPCS - Already validated in caller function
