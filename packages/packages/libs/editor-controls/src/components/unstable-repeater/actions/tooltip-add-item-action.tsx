@@ -12,6 +12,7 @@ export type TooltipAddItemActionProps = {
 	enableTooltip?: boolean;
 	tooltipContent?: React.ReactNode;
 	newItemIndex?: number;
+	labelName?: string;
 };
 
 export const TooltipAddItemAction = ( {
@@ -19,6 +20,7 @@ export const TooltipAddItemAction = ( {
 	enableTooltip = false,
 	tooltipContent = null,
 	newItemIndex,
+	labelName,
 }: TooltipAddItemActionProps ) => {
 	const { addItem } = useRepeaterContext();
 
@@ -31,7 +33,7 @@ export const TooltipAddItemAction = ( {
 					size={ SIZE }
 					disabled={ disabled }
 					onClick={ onClick }
-					aria-label={ __( 'Add item', 'elementor' ) }
+					aria-label={ __( `add ${ labelName } item`, 'elementor' ) }
 				>
 					<PlusIcon fontSize={ SIZE } />
 				</IconButton>

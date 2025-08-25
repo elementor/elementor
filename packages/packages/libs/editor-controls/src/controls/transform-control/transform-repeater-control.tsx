@@ -84,6 +84,7 @@ const Repeater = ( { headerRef }: { headerRef: React.RefObject< HTMLDivElement >
 						disabled={ shouldDisableAddItem }
 						tooltipContent={ ToolTip }
 						enableTooltip={ shouldDisableAddItem }
+						labelName={ 'transform' }
 					/>
 				</Header>
 				<ItemsContainer itemTemplate={ <Item Icon={ TransformIcon } Label={ TransformLabel } /> }>
