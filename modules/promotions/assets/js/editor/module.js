@@ -29,12 +29,16 @@ export default class Module extends elementorModules.editor.utils.Module {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
 	}
 
+	hasWidgetsElements( path ) {
+		return elementor.config?.[path]?.length;
+	}
+
 	hasPromotionWidgets() {
-		return elementor.config?.promotionWidgets && elementor.config.promotionWidgets.length;
+		return this.hasWidgetsElements( 'promotionWidgets' );
 	}
 
 	hasIntegrationWidgets() {
-		return elementor.config?.integrationWidgets && elementor.config.integrationWidgets.length;
+		return this.hasWidgetsElements( 'integrationWidgets' );
 	}
 
 	registerControlBehavior( behaviors, view ) {
