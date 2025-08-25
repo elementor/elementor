@@ -235,6 +235,9 @@ class Repository {
 	 * @throws WatermarkMismatch
 	 * @throws BatchOperationFailed
 	 * @throws FatalError
+	 * @throws RecordNotFound
+	 * @throws DuplicatedLabel
+	 * @throws VariablesLimitReached
 	 */
 	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
 		$db_record = $this->load();
@@ -278,7 +281,7 @@ class Repository {
 				return $this->process_restore_operation( $db_record, $operation );
 
 			default:
-				throw new BatchOperationFailed( 'Invalid operation type: ' . $operation['type'] );
+				throw new BatchOperationFailed( 'Invalid operation type: ' . esc_html( $operation['type'] ) );
 		}
 	}
 
