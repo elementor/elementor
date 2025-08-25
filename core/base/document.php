@@ -733,6 +733,7 @@ abstract class Document extends Controls_Stack {
 				->all();
 
 			$config['elements'] = $this->get_elements_raw_data( null, true );
+			// `get_elements_raw_data` has to be called before `get_widget_types_config`, because it affects it.
 			$config['widgets'] = array_merge( $elements_config, Plugin::$instance->widgets_manager->get_widget_types_config() );
 		}
 
