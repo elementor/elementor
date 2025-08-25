@@ -33,7 +33,7 @@ export const TooltipAddItemAction = ( {
 					size={ SIZE }
 					disabled={ disabled }
 					onClick={ onClick }
-					aria-label={ __( 'Add item', 'elementor' ) }
+					aria-label={ `add ${ labelName } item` }
 				>
 					<PlusIcon fontSize={ SIZE } />
 				</IconButton>
