@@ -78,7 +78,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
 	<button class="elementor-element">
-		<# if ( false === obj.editable ) { #>
+	<# if ( obj.integration ) { #>
+			<i class="eicon-plug"></i>
+		<# } else if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
 		<# if ( obj.categories.includes( 'v4-elements' ) ) { #>
