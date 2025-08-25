@@ -118,7 +118,9 @@ class Editor_Common_Scripts_Settings {
 		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
 		}
-		if ( current_user_can( 'manage_options' ) && ! Utils::has_pro() ) {
+
+		$is_admin_user_without_pro = current_user_can( 'manage_options' ) && ! Utils::has_pro();
+		if ( $is_admin_user_without_pro ) {
 			$client_env['integrationWidgets'] = array_merge(
 				( isset( $client_env['integrationWidgets'] ) && is_array( $client_env['integrationWidgets'] ) ?
 				$client_env['integrationWidgets'] :
@@ -157,7 +159,7 @@ class Editor_Common_Scripts_Settings {
 		$client_env = apply_filters( 'elementor/editor/localize_settings', $client_env );
 
 		// Ensure pro widgets are present in the array if needed
-		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
+		if ( $is_admin_user_without_pro ) {
 			$pro_widgets = Api::get_promotion_widgets();
 			if ( ! isset( $client_env['promotionWidgets'] ) ) {
 				$client_env['promotionWidgets'] = $pro_widgets;
