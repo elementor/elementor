@@ -173,6 +173,7 @@ class Global_Classes_REST_API {
 			return Error_Builder::make( 'global_classes_limit_exceeded' )
 				->set_status( 400 )
 				->set_message( sprintf(
+					/* translators: %d: Maximum allowed items. */
 					__( 'Global classes limit exceeded. Maximum allowed: %d', 'elementor' ),
 					static::MAX_ITEMS
 				) )
