@@ -3,7 +3,10 @@
 	<description>Elementor Coding Standard</description>
 
 	<arg value="ps" />
+
 	<arg name="parallel" value="8" />
+
+	<arg name="extensions" value="php"/>
 
 	<config name="text_domain" value="elementor" />
 
@@ -24,10 +27,9 @@
 
 	<rule ref="WordPress.Security" />
 
-	<!-- Include WordPress-Extra rules but exclude specific rules -->
 	<rule ref="WordPress-Extra">
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
-		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
+		<exclude name="Generic.PHP.DeprecatedFunctions.Deprecated" />
 		<exclude name="Squiz.Commenting.ClassComment.Missing" />
 		<exclude name="Squiz.Commenting.FileComment.Missing" />
 		<exclude name="Squiz.Commenting.FunctionComment.Missing" />
@@ -45,12 +47,9 @@
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentBeforeEnd" />
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterEnd" />
-		<exclude name="WordPress.Arrays.MultipleStatementAlignment" />
 		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
-		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
 		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralSingle" />
 		<exclude name="WordPress.WP.I18n.NonSingularStringLiteralPlural" />
-		<exclude name="WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
 		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
