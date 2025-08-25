@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropTypes;
+namespace Elementor\Modules\AtomicWidgets\PropTypes\Filters\Functions;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -18,7 +18,7 @@ class Drop_Shadow_Filter_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function define_shape(): array {
-		$units = Size_Constants::filters();
+		$units = Size_Constants::drop_shadow();
 
 		return [
 			'xAxis' => Size_Prop_Type::make()->default( [

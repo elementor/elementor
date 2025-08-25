@@ -179,6 +179,7 @@ class Rest_Api {
 
 		if ( self::MAX_ID_LENGTH < strlen( $id ) ) {
 			return new WP_Error( 'invalid_variable_id_length', sprintf(
+				/* translators: %d: Maximum ID length. */
 				__( 'ID cannot exceed %d characters', 'elementor' ),
 				self::MAX_ID_LENGTH
 			) );
@@ -205,6 +206,7 @@ class Rest_Api {
 
 		if ( self::MAX_LABEL_LENGTH < strlen( $label ) ) {
 			return new WP_Error( 'invalid_variable_label_length', sprintf(
+				/* translators: %d: Maximum label length. */
 				__( 'Label cannot exceed %d characters', 'elementor' ),
 				self::MAX_LABEL_LENGTH
 			) );
@@ -225,6 +227,7 @@ class Rest_Api {
 
 		if ( self::MAX_VALUE_LENGTH < strlen( $value ) ) {
 			return new WP_Error( 'invalid_variable_value_length', sprintf(
+				/* translators: %d: Maximum value length. */
 				__( 'Value cannot exceed %d characters', 'elementor' ),
 				self::MAX_VALUE_LENGTH
 			) );
