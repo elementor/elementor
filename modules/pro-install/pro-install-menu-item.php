@@ -53,10 +53,9 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private function render_connect_box() {
 		$connect_url = $this->connect->get_admin_url( 'authorize', [
-			'utm_source' => 'license-page',
+			'utm_source' => 'license-page-connect-free',
 			'utm_medium' => 'wp-dash',
 			'utm_campaign' => 'connect-and-activate-license',
-			'utm_term' => 'connect-and-activate',
 		] );
 
 		?>
@@ -80,10 +79,9 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 		$disconnect_url = $this->connect->get_admin_url( 'disconnect' );
 		$download_link = $this->connect->get_download_link();
 		$switch_license_url = $this->connect->get_admin_url( 'reconnect', [
-			'utm_source' => 'license-page',
+			'utm_source' => 'license-page-connect-free',
 			'utm_medium' => 'wp-dash',
 			'utm_campaign' => 'connect-and-activate-license',
-			'utm_term' => 'switch-license',
 		] );
 
 		?>

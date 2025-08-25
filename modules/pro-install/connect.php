@@ -22,7 +22,6 @@ class Connect extends Library {
 	}
 
 	public function get_download_link() {
-		return false;
 		$response = $this->http_request(
 			'GET',
 			'latest/download-link',
