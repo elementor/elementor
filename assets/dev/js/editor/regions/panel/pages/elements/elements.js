@@ -111,7 +111,6 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					integration: true,
 					keywords: widget.keywords || [],
 				}, {
-					// Inject after the image-carousel widget.
 					at: elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1,
 				} );
 			} );
