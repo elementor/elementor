@@ -3,7 +3,10 @@
 	<description>Elementor Coding Standard</description>
 
 	<arg value="ps" />
+
 	<arg name="parallel" value="8" />
+
+	<arg name="extensions" value="php"/>
 
 	<config name="text_domain" value="elementor" />
 
@@ -24,9 +27,9 @@
 
 	<rule ref="WordPress.Security" />
 
-	<!-- Include WordPress-Extra rules but exclude specific rules -->
 	<rule ref="WordPress-Extra">
 		<exclude name="Generic.Commenting.DocComment.MissingShort" />
+		<exclude name="Generic.Functions.CallTimePassByReference" />
 		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
 		<exclude name="Squiz.Commenting.ClassComment.Missing" />
 		<exclude name="Squiz.Commenting.FileComment.Missing" />
