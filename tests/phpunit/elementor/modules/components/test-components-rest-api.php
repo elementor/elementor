@@ -204,8 +204,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 200, $response->get_status() );
-		$component_id = $response->get_data()['data'];
+		$this->assertEquals( 201, $response->get_status() );
+		$component_id = $response->get_data()['data']['component_id'];
 		$this->assertIsInt( $component_id );
 
 		// Verify component was created
@@ -240,8 +240,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 200, $response->get_status() );
-		$component_id = $response->get_data()['data'];
+		$this->assertEquals( 201, $response->get_status() );
+		$component_id = $response->get_data()['data']['component_id'];
 
 		$post = get_post( $component_id );
 		$this->assertEquals( 'Sanitized Component', $post->post_title );
@@ -319,8 +319,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert - should create the 50th component successfully
-		$this->assertEquals( 200, $response->get_status() );
-		$component_id = $response->get_data()['data'];
+		$this->assertEquals( 201, $response->get_status() );
+		$component_id = $response->get_data()['data']['component_id'];
 
 		$post = get_post( $component_id );
 		$this->assertEquals( 'Test Component 50', $post->post_title );

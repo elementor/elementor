@@ -72,17 +72,22 @@ class Components_REST_API {
 		$components = $this->get_repository()->all();
 
 		$components_list = $components->get_components()->map( fn( $component ) => [
-			'id' => $component->get_id(),
-			'name' => $component->get_post()->post_title,
+			'id' => $component['id'],
+			'name' => $component['name'],
 		])->all();
 
 		return Response_Builder::make( $components_list )->build();
 	}
 
 	private function get_styles() {
-		$styles = $this->get_repository()->all()->get_styles();
+		$components = $this->get_repository()->all();
 
-		return Response_Builder::make( $styles->all() )->build();
+		$styles = [];
+		$components->get_components()->each( function( $component ) use ( &$styles ) {
+			$styles[ $component['id'] ] = $component['styles'];
+		} );
+
+		return Response_Builder::make( $styles )->build();
 	}
 	private function create_component( \WP_REST_Request $request ) {
 		$components = $this->get_repository()->all();
@@ -100,7 +105,7 @@ class Components_REST_API {
 
 		$parser = Components_Parser::make();
 
-		$name_result = $parser->parse_name( $request->get_param( 'name' ), $components->get_components()->map( fn( $component ) => $component->get_post()->post_title )->all() );
+		$name_result = $parser->parse_name( $request->get_param( 'name' ), $components->get_components()->map( fn( $component ) => $component['name'] )->all() );
 
 		if ( ! $name_result->is_valid() ) {
 			return Error_Builder::make( 'invalid_name' )
@@ -113,13 +118,26 @@ class Components_REST_API {
 		// The content is validated & sanitized in the document save process.
 		$content = $request->get_param( 'content' );
 
-		$result = $this->get_repository()->create( $name, $content );
+		try {
+			$component_id = $this->get_repository()->create( $name, $content );
 
-		if ( isset( $result['error'] ) ) {
-			return $result['error'];
+			return Response_Builder::make( [ 'component_id' => $component_id ] )->set_status( 201 )->build();
+		} catch ( \Exception $e ) {
+			$error_message = $e->getMessage();
+
+			$invalid_elements_structure_error = str_contains( $error_message, 'Invalid data' );
+			$atomic_styles_validation_error = str_contains( $error_message, 'Styles validation failed' );
+			$atomic_settings_validation_error = str_contains( $error_message, 'Settings validation failed' );
+
+			if ( $invalid_elements_structure_error || $atomic_styles_validation_error || $atomic_settings_validation_error ) {
+				return Error_Builder::make( 'content_validation_failed' )
+											->set_status( 400 )
+											->set_message( $error_message )
+											->build();
+			}
+
+			throw $e;
 		}
-
-		return Response_Builder::make( $result['component_id'] )->build();
 	}
 
 	private function route_wrapper( callable $cb ) {

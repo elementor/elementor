@@ -10,22 +10,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Components {
 	private Collection $components;
-	private Collection $styles;
 
-	public static function make( array $components = [], array $styles = [] ) {
-		return new static( $components, $styles );
+	public static function make( array $components = [] ) {
+		return new static( $components );
 	}
 
-	private function __construct( array $components = [], array $styles = [] ) {
+	private function __construct( array $components = [] ) {
 		$this->components = Collection::make( $components );
-		$this->styles = Collection::make( $styles );
 	}
 
 	public function get_components() {
 		return $this->components;
-	}
-
-	public function get_styles() {
-		return $this->styles;
 	}
 }
