@@ -99,10 +99,10 @@ class Site_Settings extends Import_Runner_Base {
 			return $result;
 		}
 
-		return $this->import_with_manifest( $data, $imported_data, ! empty( $customization['theme'] ) );
+		return $this->import_with_manifest( $data, $imported_data );
 	}
 
-	private function import_with_manifest( array $data, array $imported_data, $include_theme = true ) {
+	private function import_with_manifest( array $data, array $imported_data ) {
 		$new_site_settings = $data['site_settings']['settings'];
 		$title = $data['manifest']['title'] ?? 'Imported Kit';
 		$manifest_settings = $data['manifest']['site-settings'] ?? [];
@@ -146,7 +146,7 @@ class Site_Settings extends Import_Runner_Base {
 			$result['site-settings'][ $key ] = $value;
 		}
 
-		if ( ( $manifest_settings['theme'] ?? false ) && $include_theme ) {
+		if ( $manifest_settings['theme'] ?? false ) {
 			$import_theme_result = $this->import_theme( $data );
 
 			if ( ! empty( $import_theme_result ) ) {
