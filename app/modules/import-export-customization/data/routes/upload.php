@@ -17,6 +17,10 @@ class Upload extends Base_Route {
 		return \WP_REST_Server::CREATABLE;
 	}
 
+	private function format_url( string $url ): string {
+		return wp_unslash( urldecode( $url ) );
+	}
+
 	/**
 	 * @param $request \WP_REST_Request
 	 * @return \WP_REST_Response
@@ -29,6 +33,9 @@ class Upload extends Base_Route {
 			$module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 			$is_import_from_library = ! empty( $file_url );
+			if ( $is_import_from_library ) {
+				$file_url = $this->format_url( $file_url );
+			}
 
 			if ( $is_import_from_library ) {
 				if ( ! filter_var( $file_url, FILTER_VALIDATE_URL ) || 0 !== strpos( $file_url, 'http' ) ) {
@@ -113,7 +120,8 @@ class Upload extends Base_Route {
 					if ( empty( $value ) ) {
 						return true;
 					}
-					return filter_var( $value, FILTER_VALIDATE_URL );
+
+					return filter_var( $this->format_url( $value ), FILTER_VALIDATE_URL );
 				},
 			],
 			'kit_id' => [
