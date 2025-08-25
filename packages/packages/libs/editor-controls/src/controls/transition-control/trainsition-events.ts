@@ -2,7 +2,7 @@ import { getSelectedElements } from '@elementor/editor-elements';
 import { sendMixpanelEvent } from '@elementor/utils';
 
 import { repeaterEventBus } from '../../services/repeater-event-bus';
-import { initialTransitionValue } from './data';
+import { type initialTransitionValue } from './data';
 
 type TransitionItemValue = typeof initialTransitionValue;
 

@@ -13,7 +13,7 @@ export type MixpanelEvent = {
 	transition_type: string;
 	widget_type: string;
 	eventName: string;
-} & { [key: string]: unknown };
+} & { [ key: string ]: unknown };
 
 export const sendMixpanelEvent = ( event: MixpanelEvent ) => {
 	const extendedWindow: ExtendedWindow = window;

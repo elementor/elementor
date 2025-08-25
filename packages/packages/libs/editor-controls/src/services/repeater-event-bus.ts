@@ -5,7 +5,10 @@ class RepeaterEventBus {
 		if ( ! this.listeners.has( eventName ) ) {
 			this.listeners.set( eventName, new Set() );
 		}
-		this.listeners.get( eventName )!.add( callback );
+		const eventListeners = this.listeners.get( eventName );
+		if ( eventListeners ) {
+			eventListeners.add( callback );
+		}
 	}
 
 	unsubscribe( eventName: string, callback?: ( data?: { itemValue: unknown } ) => void ) {
@@ -27,7 +30,7 @@ class RepeaterEventBus {
 	emit( eventName: string, data?: { itemValue: unknown } ) {
 		const eventListeners = this.listeners.get( eventName );
 		if ( eventListeners ) {
-			eventListeners.forEach( callback => callback( data ) );
+			eventListeners.forEach( ( callback ) => callback( data ) );
 		}
 	}
 
