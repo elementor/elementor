@@ -40,7 +40,7 @@ export const SortableItem = ( { id, children, disabled }: SortableItemProps ): R
 				dropIndicationStyle,
 			}: UnstableSortableItemRenderProps ) => {
 				return (
-					<StyledListItem { ...itemProps } style={ itemStyle }>
+					<StyledListItem { ...itemProps } style={ itemStyle } tabindex={ -1 }>
 						{ ! disabled && <SortableTrigger { ...triggerProps } style={ triggerStyle } /> }
 						{ children }
 						{ showDropIndication && <StyledDivider style={ dropIndicationStyle } /> }
