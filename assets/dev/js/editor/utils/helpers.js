@@ -45,24 +45,6 @@ module.exports = {
 					},
 				},
 			},
-			container: {
-				widget: null,
-				container: null,
-				'e-div-block': null,
-				'e-flexbox': null,
-			},
-			'e-div-block': {
-				widget: null,
-				'e-div-block': null,
-				container: null,
-				'e-flexbox': null,
-			},
-			'e-flexbox': {
-				widget: null,
-				'e-div-block': null,
-				container: null,
-				'e-flexbox': null,
-			},
 		},
 	},
 
@@ -712,7 +694,7 @@ module.exports = {
 	 * @return {string} the tag, if it is valid, otherwise, 'div'
 	 */
 	validateHTMLTag( tag ) {
-		return allowedHTMLWrapperTags.includes( tag.toLowerCase() ) ? tag : 'div';
+		return allowedHTMLWrapperTags.includes( tag?.toLowerCase() ) ? tag : 'div';
 	},
 
 	convertSizeToFrString( size ) {

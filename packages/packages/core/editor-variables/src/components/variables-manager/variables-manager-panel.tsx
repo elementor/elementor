@@ -14,6 +14,7 @@ import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { getVariables } from '../../hooks/use-prop-variables';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -33,6 +34,7 @@ export const { panel, usePanelActions } = createPanel( {
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
 	const isDirty = false;
+	const variables = getVariables( false );
 
 	usePreventUnload( isDirty );
 
@@ -50,19 +52,22 @@ export function VariablesManagerPanel() {
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
 					<PanelHeader>
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<Stack width="100%" direction="row" gap={ 1 }>
-								<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-									<ColorFilterIcon fontSize="inherit" />
-									{ __( 'Variable Manager', 'elementor' ) }
-								</PanelHeaderTitle>
+						<Stack width="100%" direction="column" alignItems="center">
+							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+								<Stack width="100%" direction="row" gap={ 1 }>
+									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+										<ColorFilterIcon fontSize="inherit" />
+										{ __( 'Variable Manager', 'elementor' ) }
+									</PanelHeaderTitle>
+								</Stack>
+								<CloseButton
+									sx={ { marginLeft: 'auto' } }
+									onClose={ () => {
+										closePanel();
+									} }
+								/>
 							</Stack>
-							<CloseButton
-								sx={ { marginLeft: 'auto' } }
-								onClose={ () => {
-									closePanel();
-								} }
-							/>
+							<Divider sx={ { width: '100%' } } />
 						</Stack>
 					</PanelHeader>
 					<PanelBody
@@ -72,8 +77,7 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<Divider />
-						<VariablesManagerTable menuActions={ menuActions } />
+						<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
 					</PanelBody>
 
 					<PanelFooter>

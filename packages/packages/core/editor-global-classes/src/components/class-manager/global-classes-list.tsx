@@ -62,31 +62,30 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 		<DeleteConfirmationProvider>
 			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
 				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-					{ filteredCssClasses?.map( ( { id, label } ) => {
-						return (
-							<SortableItem key={ id } id={ id }>
-								{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
-									<ClassItem
-										id={ id }
-										label={ label }
-										renameClass={ ( newLabel: string ) => {
-											dispatch(
-												slice.actions.update( {
-													style: {
-														id,
-														label: newLabel,
-													},
-												} )
-											);
-										} }
-										selected={ isDragged }
-										disabled={ disabled || isDragPlaceholder }
-										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-									/>
-								) }
-							</SortableItem>
-						);
-					} ) }
+					{ filteredCssClasses?.map( ( { id, label } ) => (
+						<SortableItem key={ id } id={ id }>
+							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
+								<ClassItem
+									id={ id }
+									label={ label }
+									renameClass={ ( newLabel: string ) => {
+										dispatch(
+											slice.actions.update( {
+												style: {
+													id,
+													label: newLabel,
+												},
+											} )
+										);
+									} }
+									selected={ isDragged }
+									disabled={ disabled || isDragPlaceholder }
+									sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+									showSortIndicator={ filteredCssClasses.length > 1 }
+								/>
+							) }
+						</SortableItem>
+					) ) }
 				</SortableProvider>
 			</List>
 		</DeleteConfirmationProvider>
