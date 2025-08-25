@@ -247,10 +247,23 @@ class Repository {
 		}
 
 		$results = [];
+		$errors = [];
 
 		foreach ( $operations as $index => $operation ) {
-			$result = $this->process_single_operation( $db_record, $operation );
-			$results[] = $result;
+			try {
+				$result = $this->process_single_operation( $db_record, $operation );
+				$results[] = $result;
+			} catch ( Exception $e ) {
+				$operation_id = $this->get_operation_identifier( $operation, $index );
+				$errors[ $operation_id ] = [
+					'status' => $this->get_error_status_code( $e ),
+					'message' => $e->getMessage(),
+				];
+			}
+		}
+
+		if ( ! empty( $errors ) ) {
+			throw new BatchOperationFailed( 'Batch operation failed', $errors );
 		}
 
 		$watermark = $this->save( $db_record );
