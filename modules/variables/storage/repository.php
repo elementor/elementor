@@ -260,7 +260,16 @@ class Repository {
 		}
 
 		if ( ! empty( $errors ) ) {
-			throw new BatchOperationFailed( 'Batch operation failed', $errors );
+			$escaped_errors = [];
+
+			foreach ( $errors as $operation_id => $error ) {
+				$escaped_errors[ $operation_id ] = [
+					'status' => $error['status'],
+					'message' => esc_html( $error['message'] ),
+				];
+			}
+
+			throw new BatchOperationFailed( 'Batch operation failed', $escaped_errors );
 		}
 
 		$watermark = $this->save( $db_record );
