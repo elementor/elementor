@@ -7,8 +7,9 @@ export const EditorWrapper = styled( Box )`
 	position: relative;
 	height: 200px;
 
-	.monaco-editor .colorpicker-widget {
-		z-index: 99999999 !important;
+	.monaco-editor .suggest-widget {
+		width: 220px !important;
+		max-width: 220px !important;
 	}
 
 	.visual-content-dimmed {

@@ -176,6 +176,7 @@ export const StyleTab = () => {
 										title: __( 'Custom CSS', 'elementor' ),
 									} }
 									fields={ [ 'custom_css' ] }
+									unmountOnExit={ false }
 								/>
 							) }
 						</SectionsList>

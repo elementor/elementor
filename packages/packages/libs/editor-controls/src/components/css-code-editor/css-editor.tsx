@@ -11,7 +11,7 @@ import { preventChangeOnVisualContent } from './visual-content-change-protection
 
 type CssEditorProps = {
 	value: string;
-	onChange: ( value: string ) => void;
+	onChange: ( value: string, isValid: boolean ) => void;
 };
 
 const setVisualContent = ( value: string ): string => {
@@ -34,7 +34,7 @@ const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
 	monacoRef: React.MutableRefObject< MonacoEditor | null >,
 	debounceTimer: React.MutableRefObject< NodeJS.Timeout | null >,
-	onChange: ( value: string ) => void
+	onChange: ( value: string, isValid: boolean ) => void
 ) => {
 	return ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		editorRef.current = editor;
@@ -47,6 +47,8 @@ const createEditorDidMountHandler = (
 		monaco.editor.onDidChangeMarkers( () => {
 			setTimeout( () => clearMarkersFromVisualContent( editor, monaco ), 0 );
 		} );
+
+		editor.setPosition( { lineNumber: 2, column: ( editor.getModel()?.getLineContent( 2 ).length ?? 0 ) + 1 } );
 
 		editor.onDidChangeModelContent( () => {
 			const code = editor.getModel()?.getValue() ?? '';
@@ -66,9 +68,7 @@ const createEditorDidMountHandler = (
 
 				const hasNoErrors = validate( editorRef.current, monacoRef.current );
 
-				if ( hasNoErrors ) {
-					onChange( userContent );
-				}
+				onChange( userContent, hasNoErrors );
 			}, 500 );
 
 			debounceTimer.current = newTimer;
@@ -113,18 +113,22 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 				height="100%"
 				language="css"
 				theme={ theme.palette.mode === 'dark' ? 'vs-dark' : 'vs' }
-				defaultValue={ setVisualContent( value ) }
+				value={ setVisualContent( value ) }
 				onMount={ handleEditorDidMount }
 				options={ {
 					lineNumbers: 'on',
-					folding: false,
-					showFoldingControls: 'never',
+					folding: true,
 					minimap: { enabled: false },
 					fontFamily: 'Roboto, Arial, Helvetica, Verdana, sans-serif',
 					fontSize: 12,
 					renderLineHighlight: 'none',
 					hideCursorInOverviewRuler: true,
 					fixedOverflowWidgets: true,
+					suggestFontSize: 10,
+					suggestLineHeight: 14,
+					stickyScroll: {
+						enabled: false,
+					},
 				} }
 			/>
 			<ResizeHandleComponent

@@ -6,6 +6,8 @@ export const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEdit
 		return;
 	}
 
+	const decorationsCollection = editor.createDecorationsCollection();
+
 	const applyVisualContentStyling = () => {
 		const totalLines = model.getLineCount();
 		const decorations = [];
@@ -38,7 +40,7 @@ export const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEdit
 			} );
 		}
 
-		editor.deltaDecorations( [], decorations );
+		decorationsCollection.set( decorations );
 	};
 
 	applyVisualContentStyling();

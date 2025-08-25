@@ -10,16 +10,21 @@ type Section = {
 	title: string;
 };
 
-type Props = { section: Section; fields?: string[] };
+type Props = { section: Section; fields?: string[]; unmountOnExit?: boolean };
 
-export const StyleTabSection = ( { section, fields = [] }: Props ) => {
+export const StyleTabSection = ( { section, fields = [], unmountOnExit = true }: Props ) => {
 	const { component, name, title } = section;
 	const tabDefaults = useDefaultPanelSettings();
 	const SectionComponent = component;
 	const isExpanded = tabDefaults.defaultSectionsExpanded.style?.includes( name );
 
 	return (
-		<Section title={ title } defaultExpanded={ isExpanded } titleEnd={ getStylesInheritanceIndicators( fields ) }>
+		<Section
+			title={ title }
+			defaultExpanded={ isExpanded }
+			titleEnd={ getStylesInheritanceIndicators( fields ) }
+			unmountOnExit={ unmountOnExit }
+		>
 			<SectionComponent />
 		</Section>
 	);

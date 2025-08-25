@@ -9,20 +9,27 @@ import { SectionContent } from './section-content';
 
 export const CustomCss = () => {
 	const { customCss, setCustomCss } = useCustomCss();
+	const [ localState, setLocalState ] = React.useState( {
+		value: customCss?.raw || '',
+		isValid: true,
+	} );
 
-	const handleChange = ( value: string ) => {
-		setCustomCss( value, { history: { propDisplayName: 'Custom CSS' } } );
+	const handleChange = ( value: string, isValid: boolean ) => {
+		setLocalState( { value, isValid } );
+		if ( isValid ) {
+			setCustomCss( value, { history: { propDisplayName: 'Custom CSS' } } );
+		}
 	};
 
 	return (
 		<SectionContent>
 			<CustomCssField>
 				<Stack direction="row" alignItems="center" gap={ 1 }>
-					<ControlFormLabel>{ __( 'Custom CSS code editor', 'elementor' ) }</ControlFormLabel>
+					<ControlFormLabel>{ __( 'CSS code', 'elementor' ) }</ControlFormLabel>
 					<ControlAdornments />
 				</Stack>
 			</CustomCssField>
-			<CssEditor value={ customCss?.raw || '' } onChange={ handleChange } />
+			<CssEditor value={ localState.value } onChange={ handleChange } />
 		</SectionContent>
 	);
 };
