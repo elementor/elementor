@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
+	buildInverseDependencyGraph,
 	type ElementID,
 	getElementLabel,
 	getElementSettings,
@@ -28,10 +29,13 @@ const HISTORY_DEBOUNCE_WAIT = 800;
 export const SettingsField = ( { bind, children, propDisplayName }: SettingsFieldProps ) => {
 	const {
 		element: { id: elementId },
-		elementType: { propsSchema, dependenciesPerTargetMapping = {} },
+		elementType: { propsSchema },
 	} = useElement();
 
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
+	const dependingOnSelf = useMemo( () => {
+		return buildInverseDependencyGraph( propsSchema );
+	}, [ propsSchema ] );
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
@@ -43,12 +47,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	} );
 
 	const setValue = ( newValue: Values ) => {
-		const dependents = extractOrderedDependencies(
-			bind,
-			propsSchema,
-			elementSettingValues,
-			dependenciesPerTargetMapping
-		);
+		const dependents = extractOrderedDependencies( bind, propsSchema, elementSettingValues, dependingOnSelf );
 
 		const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues );
 
