@@ -8,11 +8,7 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 		elementor.hooks.addFilter( 'element/view', function( DefaultView, model ) {
 			const widgetType = model.get( 'widgetType' );
-<<<<<<< HEAD
-			const isProWidget = elementor.config?.promotionWidgets?.find( ( item ) => widgetType === item.name );
-=======
 			const { config } = elementor;
->>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 
 			const hasWidget = ( path ) => !! config[ path ].find( ( item ) => widgetType === item.name );
 
@@ -42,14 +38,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 		elementor.hooks.addFilter( 'controls/base/behaviors', this.registerControlBehavior );
 	}
 
-<<<<<<< HEAD
-	hasPromotionWidgets() {
-		return elementor.config?.promotionWidgets && elementor.config.promotionWidgets.length;
-	}
-
-	hasIntegrationWidgets() {
-		return elementor.config?.integrationWidgets && elementor.config.integrationWidgets.length;
-=======
 	hasWidgetsElements( path ) {
 		return elementor.config?.[ path ]?.length;
 	}
@@ -60,7 +48,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 
 	hasIntegrationWidgets() {
 		return this.hasWidgetsElements( 'integrationWidgets' );
->>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 	}
 
 	registerControlBehavior( behaviors, view ) {
