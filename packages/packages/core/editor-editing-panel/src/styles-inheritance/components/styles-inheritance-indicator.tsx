@@ -13,7 +13,7 @@ import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
 
-const disabledControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform' ];
+const disabledControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform', 'transition' ];
 
 export const StylesInheritanceIndicator = ( {
 	customContext,
