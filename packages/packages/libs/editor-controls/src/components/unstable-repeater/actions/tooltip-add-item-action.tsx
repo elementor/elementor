@@ -34,7 +34,7 @@ export const TooltipAddItemAction = ( {
 					disabled={ disabled }
 					onClick={ onClick }
 					// Translators: %s is the number of kits in the results
-					aria-label={ sprintf( __( 'add %1$s item', 'elementor' ), labelName?.toLowerCase() ) }
+					aria-label={ sprintf( __( 'Add %1$s item', 'elementor' ), labelName?.toLowerCase() ) }
 				>
 					<PlusIcon fontSize={ SIZE } />
 				</IconButton>
