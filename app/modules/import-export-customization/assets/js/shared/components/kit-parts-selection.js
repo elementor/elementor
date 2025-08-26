@@ -124,7 +124,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 					color="promotion"
 					onClick={ () => {
 						AppsEventTracking.sendKitsCloudUpgradeClicked( item.type );
-						window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' )
+						window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' );
 					} }
 					startIcon={ <span className="eicon-upgrade-crown"></span> }
 					sx={ { alignSelf: 'center' } }
