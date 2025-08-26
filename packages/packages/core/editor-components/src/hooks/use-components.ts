@@ -1,8 +1,7 @@
 import { useQuery } from '@elementor/query';
 
 import { apiClient } from '../api';
-
-const COMPONENTS_QUERY_KEY = 'components';
+import { COMPONENTS_QUERY_KEY } from '../consts';
 
 export const useComponents = () => {
 	return useQuery( {

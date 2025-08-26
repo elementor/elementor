@@ -1,22 +1,24 @@
 import * as React from 'react';
 import { createMockElement, renderWithTheme } from 'test-utils';
-import { getElementLabel, type V1Element } from '@elementor/editor-elements';
+import { getElementLabel, replaceElement, type V1Element } from '@elementor/editor-elements';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { apiClient } from '../../api';
-import { saveElementAsComponent } from '../../utils/save-element-as-component';
-import { CreateComponentForm } from '../create-component-form';
+import { CreateComponentForm } from '../create-component-form/create-component-form';
 
-jest.mock( '../../utils/save-element-as-component' );
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
 
-const mockSaveElementAsComponent = jest.mocked( saveElementAsComponent );
 const mockGetElementLabel = jest.mocked( getElementLabel );
+
+const mockCreateComponent = jest.mocked( apiClient.create );
 const mockGetComponents = jest.mocked( apiClient.get );
 
+const mockReplaceElement = jest.mocked( replaceElement );
+
 const mockElement: V1Element = createMockElement( { model: { id: 'test-element' } } );
+const mockComponentId = 123245;
 
 describe( 'CreateComponentForm', () => {
 	beforeEach( () => {
@@ -59,16 +61,14 @@ describe( 'CreateComponentForm', () => {
 	};
 
 	const setupSuccessfulSave = () => {
-		mockSaveElementAsComponent.mockImplementation( async ( element, name, options ) => {
-			await new Promise( ( resolve ) => setTimeout( resolve, 1 ) );
-			options?.onSuccess?.( { component_id: 456 } );
+		mockCreateComponent.mockImplementation( async () => {
+			await new Promise( ( resolve ) => setTimeout( resolve, 10 ) );
+			return Promise.resolve( { component_id: mockComponentId } );
 		} );
 	};
 
 	const setupFailedSave = () => {
-		mockSaveElementAsComponent.mockImplementation( async ( element, name, options ) => {
-			options?.onError?.( new Error( 'Creation failed' ) );
-		} );
+		mockCreateComponent.mockRejectedValue( new Error( 'Creation failed' ) );
 	};
 
 	describe( 'Form Opening & Initial State', () => {
@@ -117,7 +117,7 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			expect( screen.getByText( 'Component name is required.' ) ).toBeInTheDocument();
 			expect( getCreateButton() ).toBeDisabled();
-			expect( mockSaveElementAsComponent ).not.toHaveBeenCalled();
+			expect( mockCreateComponent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should disable submit when component name is only whitespace', () => {
@@ -132,7 +132,7 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			expect( screen.getByText( 'Component name is required.' ) ).toBeInTheDocument();
 			expect( getCreateButton() ).toBeDisabled();
-			expect( mockSaveElementAsComponent ).not.toHaveBeenCalled();
+			expect( mockCreateComponent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should disable submit when component name is too short (< 2 chars)', () => {
@@ -149,7 +149,7 @@ describe( 'CreateComponentForm', () => {
 			expect(
 				screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
 			).toBeInTheDocument();
-			expect( mockSaveElementAsComponent ).not.toHaveBeenCalled();
+			expect( mockCreateComponent ).not.toHaveBeenCalled();
 		} );
 
 		it( 'should disable submit when component name is too long (> 50 chars)', () => {
@@ -210,7 +210,7 @@ describe( 'CreateComponentForm', () => {
 			setupSuccessfulSave();
 		} );
 
-		it( 'should call saveElementAsComponent with correct parameters when creating', () => {
+		it( 'should call create component with correct parameters', async () => {
 			// Arrange.
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
@@ -220,17 +220,17 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			expect( mockSaveElementAsComponent ).toHaveBeenCalledWith(
-				mockElement,
-				'My Test Component',
-				expect.objectContaining( {
-					onSuccess: expect.any( Function ),
-					onError: expect.any( Function ),
-				} )
-			);
+			await waitFor( () => {
+				expect( mockCreateComponent ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						name: 'My Test Component',
+						content: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) ],
+					} )
+				);
+			} );
 		} );
 
-		it( 'should show loading state during component creation', () => {
+		it( 'should show loading state during component creation', async () => {
 			// Arrange.
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			openForm();
@@ -240,10 +240,12 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			expect( screen.getByText( 'Creating…' ) ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.getByText( 'Creating…' ) ).toBeInTheDocument();
+			} );
 		} );
 
-		it( 'should disable buttons during loading', () => {
+		it( 'should disable buttons during loading', async () => {
 			// Arrange.
 			const { openForm, fillComponentName, getCreateButton, getCancelButton } = setupForm();
 			openForm();
@@ -254,11 +256,41 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			// Create button should show loading state and be disabled.
-			expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
+			await waitFor( () => {
+				expect( screen.queryByText( 'Create' ) ).not.toBeInTheDocument();
+			} );
 			expect( screen.getByText( 'Creating…' ) ).toBeDisabled();
 
 			// Cancel button should be disabled.
 			expect( getCancelButton() ).toBeDisabled();
+		} );
+
+		it( 'should call replace element with correct parameters after successful creation', async () => {
+			// Arrange.
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'My Test Component' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockReplaceElement ).toHaveBeenCalledWith( {
+					currentElement: mockElement,
+					newElement: {
+						elType: 'widget',
+						widgetType: 'e-component',
+						settings: {
+							component_id: {
+								$$type: 'number',
+								value: mockComponentId,
+							},
+						},
+					},
+					withHistory: false,
+				} );
+			} );
 		} );
 
 		it( 'should show success notification after successful creation', async () => {

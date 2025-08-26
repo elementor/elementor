@@ -39,11 +39,9 @@ class Component extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$props = [
+		return [
 			'component_id' => Number_Prop_Type::make(),
 		];
-
-		return $props;
 	}
 
 	protected function define_atomic_controls(): array {

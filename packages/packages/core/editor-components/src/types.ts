@@ -1,5 +1,3 @@
-export type FormValues = {
+export type ComponentFormValues = {
 	componentName: string;
 };
-
-export type FormErrors = Partial< Record< keyof FormValues, string | undefined > >;
