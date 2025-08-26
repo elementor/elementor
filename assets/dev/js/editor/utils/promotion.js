@@ -63,6 +63,7 @@ export default class extends elementorModules.Module {
 		);
 	}
 
+<<<<<<< HEAD
 	getElements() {
 		return this.elements;
 	}
@@ -81,6 +82,16 @@ export default class extends elementorModules.Module {
 			elements.$freeBadgeContainer.append( elements.$freeBadge );
 			elements.$titleBadge.after( elements.$freeBadgeContainer );
 			this.updateElements( elements );
+=======
+	hideProTag() {
+		this.elements.$titleBadge.css( 'display', 'none' );
+		if ( ! this.elements.$freeBadgeContainer ) {
+			this.elements.$freeBadgeContainer = jQuery( '<div>', { class: 'e-free-badge-container' } );
+			this.elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
+			this.elements.$freeBadge.text( 'Free' );
+			this.elements.$freeBadgeContainer.append( this.elements.$freeBadge );
+			this.elements.$titleBadge.after( this.elements.$freeBadgeContainer );
+>>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 		}
 		const $actionButton = this.dialog.getElements( 'action' );
 		$actionButton.removeClass( 'go-pro' );
@@ -88,6 +99,7 @@ export default class extends elementorModules.Module {
 	}
 
 	resetProTag() {
+<<<<<<< HEAD
 		const elements = this.getElements();
 		elements.$titleBadge.css( 'display', 'inline-block' );
 		if ( elements.$freeBadgeContainer?.remove ) {
@@ -96,6 +108,11 @@ export default class extends elementorModules.Module {
 		elements.$freeBadgeContainer = null;
 		elements.$freeBadge = null;
 		this.updateElements( elements );
+=======
+		this.elements.$titleBadge.css( 'display', 'inline-block' );
+		this.elements.$freeBadgeContainer.remove();
+		this.elements.$freeBadgeContainer = null;
+>>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 		this.dialog.getElements( 'action' ).addClass( 'go-pro' );
 	}
 
@@ -151,8 +168,11 @@ export default class extends elementorModules.Module {
 
 		if ( options.hideProTag ) {
 			this.hideProTag();
+<<<<<<< HEAD
 		} else {
 			this.resetProTag();
+=======
+>>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 		}
 
 		return this.dialog.show();

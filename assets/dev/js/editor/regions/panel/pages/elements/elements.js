@@ -101,6 +101,11 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 		} );
 
 		if ( elementor.config.integrationWidgets ) {
+<<<<<<< HEAD
+=======
+			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
+
+>>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 			jQuery.each( elementor.config.integrationWidgets, ( index, widget ) => {
 				elementsCollection.add( {
 					name: widget.name,
@@ -111,8 +116,12 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 					integration: true,
 					keywords: widget.keywords || [],
 				}, {
+<<<<<<< HEAD
 					// Inject after the image-carousel widget.
 					at: elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1,
+=======
+					at: injectionPoint,
+>>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 				} );
 			} );
 		}
