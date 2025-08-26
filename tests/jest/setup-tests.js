@@ -38,7 +38,3 @@ ModuleMock.extend = function( properties ) {
 global.elementorModules = {
 	Module: ModuleMock,
 };
-
-global.elementorAppConfig = {
-	hasPro: true,
-};

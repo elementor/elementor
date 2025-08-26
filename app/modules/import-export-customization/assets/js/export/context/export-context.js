@@ -20,7 +20,7 @@ const initialState = {
 		content: null,
 		plugins: null,
 	},
-	includes: [ 'content', ...( elementorAppConfig.hasPro ? [ 'templates' ] : [] ), 'settings', 'plugins' ],
+	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
 	kitInfo: {
 		title: null,
 		description: null,
