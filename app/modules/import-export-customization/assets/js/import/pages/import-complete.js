@@ -111,14 +111,6 @@ export default function ImportComplete() {
 		}
 	}, [ isCompleted, navigate ] );
 
-	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary );
-	}, [] );
-
-	if ( ! isCompleted ) {
-		return null;
-	}
-
 	const footerContent = (
 		<Stack direction="row" spacing={ 1 }>
 			<Button
