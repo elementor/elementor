@@ -29,6 +29,8 @@ const kitContentData = [
 			features: {
 				open: [
 					__( 'Saved Templates', 'elementor' ),
+				],
+				locked: [
 					__( 'Headers', 'elementor' ),
 					__( 'Footers', 'elementor' ),
 					__( 'Archives', 'elementor' ),
@@ -39,6 +41,7 @@ const kitContentData = [
 					__( 'Popups', 'elementor' ),
 					__( 'Global widgets', 'elementor' ),
 				],
+				tooltip: __( 'To import or export these components, you’ll need Elementor Pro.', 'elementor' ),
 			},
 		},
 		dialog: null,
