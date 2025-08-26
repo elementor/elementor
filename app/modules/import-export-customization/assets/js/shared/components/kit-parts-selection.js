@@ -43,7 +43,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 			return ! isExported( item );
 		}
 
-		return item.required && contextData?.data.includes.includes( item.type );
+		return item.required && contextData?.data?.includes?.includes( item.type );
 	};
 
 	const isEditDisabled = ( item ) => {
@@ -116,7 +116,17 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 
 				return (
 					<Fragment key={ item.type }>
-						<Box key={ item.type } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
+						<Box
+							data-testid={ `KitPartsSelectionRow-${ item.type }` }
+							key={ item.type }
+							sx={ {
+								mb: 3,
+								border: 1,
+								borderRadius: 1,
+								borderColor: 'action.focus',
+								p: 2.5,
+							} }
+						>
 							<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
 								<Box sx={ { flex: 1 } }>
 									<FormControlLabel
