@@ -1,14 +1,11 @@
 import * as React from 'react';
-
-import { __ } from '@wordpress/i18n';
-
+import type { editor, MonacoEditor } from 'monaco-types';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
-import type { editor, MonacoEditor } from 'monaco-types';
+import { __ } from '@wordpress/i18n';
 
 import { ClearIconButton } from '../icon-buttons/clear-icon-button';
-
 import { EditorWrapper, ResetButtonContainer } from './css-editor.styles';
 import { setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';

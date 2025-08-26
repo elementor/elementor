@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { BrushBigIcon } from '@elementor/icons';
 import { IconButton, Paper, styled, Tooltip } from '@elementor/ui';
 
@@ -40,5 +39,3 @@ export const ClearIconButton = ( { tooltipText, onClick, disabled, size = 'tiny'
 		</ButtonWrapper>
 	</Tooltip>
 );
-
-
