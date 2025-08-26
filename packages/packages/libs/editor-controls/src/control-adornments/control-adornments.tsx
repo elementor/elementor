@@ -1,8 +1,16 @@
 import * as React from 'react';
+import { type PropType } from '@elementor/editor-props';
 
 import { useControlAdornments } from './control-adornments-context';
 
-export function ControlAdornments() {
+export function ControlAdornments( {
+	customContext,
+}: {
+	customContext?: {
+		path: string[];
+		propType: PropType;
+	};
+} ) {
 	const items = useControlAdornments();
 
 	if ( items?.length === 0 ) {
@@ -12,7 +20,7 @@ export function ControlAdornments() {
 	return (
 		<>
 			{ items.map( ( { Adornment, id } ) => (
-				<Adornment key={ id } />
+				<Adornment key={ id } customContext={ customContext } />
 			) ) }
 		</>
 	);
