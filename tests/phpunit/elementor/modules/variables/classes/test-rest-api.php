@@ -73,10 +73,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			method( 'get_json_meta' )->
 			willReturn( null );
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/create' );
@@ -122,10 +122,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'watermark' => 10,
 			] );
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/update' );
@@ -170,10 +170,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'watermark' => 10,
 			] );
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act
 		$request = new WP_REST_Request( 'DELETE', '/elementor/v1/variables/delete' );
@@ -244,10 +244,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'watermark' => 10,
 			] );
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
@@ -295,10 +295,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'watermark' => 5,
 			] );
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
@@ -530,9 +530,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
