@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\GlobalClasses\Utils;
+namespace Elementor\Core\Utils\Api;
 
 class Response_Builder {
 	private $data;
