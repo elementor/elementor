@@ -182,6 +182,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 					<Fragment key={ item.type }>
 						<Box
 							data-testid={ `KitPartsSelectionRow-${ item.type }` }
+							key={ item.type }
 							sx={ {
 								mb: 3,
 								border: 1,
