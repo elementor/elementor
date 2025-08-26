@@ -4,6 +4,7 @@ const EVENTS_MAP = {
 	PAGE_VIEWS_WEBSITE_TEMPLATES: 'page_views_website_templates',
 	KITS_CLOUD_UPGRADE_CLICKED: 'kits_cloud_upgrade_clicked',
 	EXPORT_KIT_CUSTOMIZATION: 'export_kit_customization',
+	IMPORT_KIT_CUSTOMIZATION: 'import_kit_customization',
 	KIT_IMPORT_STATUS: 'kit_import_status',
 	KIT_CLOUD_LIBRARY_APPLY: 'kit_cloud_library_apply',
 	KIT_CLOUD_LIBRARY_DELETE: 'kit_cloud_library_delete',
@@ -69,6 +70,13 @@ export class AppsEventTracking {
 
 	static sendExportKitCustomization( payload ) {
 		return this.dispatchEvent( EVENTS_MAP.EXPORT_KIT_CUSTOMIZATION, {
+			trigger: eventsConfig.triggers.click,
+			...payload,
+		} );
+	}
+
+	static sendImportKitCustomization( payload ) {
+		return this.dispatchEvent( EVENTS_MAP.IMPORT_KIT_CUSTOMIZATION, {
 			trigger: eventsConfig.triggers.click,
 			...payload,
 		} );
