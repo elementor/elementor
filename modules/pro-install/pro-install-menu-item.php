@@ -12,8 +12,11 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private Connect $connect;
 
+	private string $page_url;
+
 	public function __construct( Connect $connect ) {
 		$this->connect = $connect;
+		$this->page_url = admin_url( 'admin.php?page=elementor-connect-account' );
 	}
 
 	public function get_label(): string {
@@ -56,6 +59,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 			'utm_source' => 'license-page-connect-free',
 			'utm_medium' => 'wp-dash',
 			'utm_campaign' => 'connect-and-activate-license',
+			'redirect_to' => $this->page_url,
 		] );
 
 		?>
@@ -76,13 +80,10 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	private function render_license_box() {
-		$disconnect_url = $this->connect->get_admin_url( 'disconnect' );
-		$download_link = $this->connect->get_download_link();
-		$switch_license_url = $this->connect->get_admin_url( 'reconnect', [
-			'utm_source' => 'license-page-connect-free',
-			'utm_medium' => 'wp-dash',
-			'utm_campaign' => 'connect-and-activate-license',
+		$disconnect_url = $this->connect->get_admin_url( 'disconnect', [
+			'redirect_to' => $this->page_url,
 		] );
+		$download_link = $this->connect->get_download_link();
 
 		?>
 		<div class="elementor-license-box">
@@ -112,9 +113,6 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 
 				<?php echo esc_html__( 'Want to activate this website by a different license?', 'elementor' ); ?>
 				</span>
-				<a class="button button-primary" href="<?php echo esc_url( $switch_license_url ); ?>">
-					<?php echo esc_html__( 'Switch Account', 'elementor' ); ?>
-				</a>
 			</p>
 
 			<p class="e-row-stretch">
