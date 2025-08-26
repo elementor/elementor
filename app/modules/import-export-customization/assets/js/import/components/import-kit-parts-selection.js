@@ -44,7 +44,7 @@ export default function ImportKitPartsSelection() {
 				includes.push( 'settings' );
 			}
 
-			if ( 0 < Object.keys( data.uploadedData?.manifest?.templates || {} ).length ) {
+			if ( 0 < Object.keys( data.uploadedData?.manifest?.templates || {} ).length && elementorAppConfig.hasPro ) {
 				includes.push( 'templates' );
 			}
 
