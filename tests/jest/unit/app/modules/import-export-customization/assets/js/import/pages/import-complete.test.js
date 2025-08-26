@@ -60,8 +60,8 @@ describe( 'ImportComplete Page', () => {
 		expect( screen.getByText( /You've imported and applied the following to your site:/i ) ).toBeTruthy();
 		expect( screen.getByText( /What's included:/i ) ).toBeTruthy();
 		expect( screen.getByText( /Site settings/i ) ).toBeTruthy();
-		expect( screen.getByText( /Content/i ) ).toBeTruthy();
-		expect( screen.getByText( /Plugins/i ) ).toBeTruthy();
+		expect( screen.getByText( /Content/ ) ).toBeTruthy();
+		expect( screen.getByText( /Plugins/ ) ).toBeTruthy();
 		expect( screen.getByText( /Show me how/i ) ).toBeTruthy();
 		expect( screen.getByRole( 'img', { name: /Kit is live illustration/i } ) ).toBeTruthy();
 	} );
