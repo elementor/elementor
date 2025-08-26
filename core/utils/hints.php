@@ -491,7 +491,6 @@ class Hints {
 		$is_active = self::is_plugin_active( $plugin_slug );
 		$is_connected = self::is_plugin_connected( 'ea11y' );
 
-
 		if ( ! $is_installed ) {
 			$step = self::INSTALL;
 		} else if ( ! $is_active ) {
