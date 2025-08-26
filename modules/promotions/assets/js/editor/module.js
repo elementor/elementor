@@ -27,11 +27,6 @@ export default class Module extends elementorModules.editor.utils.Module {
 				return require( './widget/view' ).default;
 			}
 
-			const isIntegrationWidget = elementor.config?.integrationWidgets?.find( ( item ) => widgetType === item.name );
-			if ( isIntegrationWidget ) {
-				return require( './widget/view' ).default;
-			}
-
 			return DefaultView;
 		} );
 
