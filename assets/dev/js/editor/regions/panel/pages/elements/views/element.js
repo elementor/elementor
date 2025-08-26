@@ -51,7 +51,11 @@ module.exports = Marionette.ItemView.extend( {
 	},
 
 	isIntegration() {
+<<<<<<< HEAD
 		return this.model.get( 'integration' );
+=======
+		return !! this.model.get( 'integration' );
+>>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 	},
 
 	onRender() {
@@ -82,12 +86,22 @@ module.exports = Marionette.ItemView.extend( {
 	onMouseDown() {
 		const title = this.model.get( 'title' ),
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
+<<<<<<< HEAD
 			isIntegration = this.isIntegration();
 
 		let promotion = elementor.config.promotion.elements;
 
 		if ( isIntegration ) {
 			promotion = elementor.config.promotion?.integration?.[ widgetType ];
+=======
+			isIntegration = this.isIntegration(),
+			configPromotion = elementor.config.promotion;
+
+		let promotion = configPromotion.elements;
+
+		if ( isIntegration ) {
+			promotion = configPromotion?.integration?.[ widgetType ];
+>>>>>>> 574f36d00e (Tweak: Cherry-pick PR 32183 to 3.31 Added accessibility Hint [APP-1307] [ED-19619] (#32326))
 		}
 
 		elementor.promotion.showDialog( {
