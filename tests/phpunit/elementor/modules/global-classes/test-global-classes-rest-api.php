@@ -718,7 +718,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 	public function test_all__fails_for_non_logged_in_user() {
 		// Arrange
-		wp_set_current_user( 0 ); // Set current user to 0 (not logged in)
+		wp_set_current_user( 0 ); 
 		
 		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
 
