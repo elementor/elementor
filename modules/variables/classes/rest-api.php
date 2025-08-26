@@ -13,7 +13,6 @@ use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
-use Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -484,14 +483,6 @@ class Rest_Api {
 	}
 
 	private function batch_error_response( Exception $e ) {
-		if ( $e instanceof WatermarkMismatch ) {
-			return $this->prepare_error_response(
-				self::HTTP_BAD_REQUEST,
-				'watermark_mismatch',
-				__( 'Data has been modified by another process', 'elementor' )
-			);
-		}
-
 		if ( $e instanceof BatchOperationFailed ) {
 			return new WP_REST_Response( [
 				'success' => false,

@@ -8,7 +8,6 @@ use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
-use Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 use Exception;
 
@@ -232,7 +231,6 @@ class Repository {
 	/**
 	 * Process multiple operations atomically
 	 *
-	 * @throws WatermarkMismatch
 	 * @throws BatchOperationFailed
 	 * @throws FatalError
 	 */
