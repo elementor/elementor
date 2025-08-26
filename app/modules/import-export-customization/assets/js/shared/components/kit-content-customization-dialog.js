@@ -4,7 +4,6 @@ import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { ListSettingSection } from './customization-list-setting-section';
-import { SettingSection } from './customization-setting-section';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customization-custom-post-types';
 
@@ -13,7 +12,6 @@ export function KitContentCustomizationDialog( {
 	handleClose,
 	handleSaveChanges,
 	data,
-	isImport,
 } ) {
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
 
@@ -71,13 +69,7 @@ export function KitContentCustomizationDialog( {
 			handleSaveChanges={ () => handleSaveChanges( 'content', settings, unselectedValues.current ) }
 		>
 			<Stack>
-				{ isImport && ! customPostTypes?.length ? (
-					<SettingSection
-						title={ __( 'Custom post types', 'elementor' ) }
-						settingKey="customPostTypes"
-						notExported
-					/>
-				) : (
+				{ customPostTypes.length > 0 && (
 					<ListSettingSection
 						settingKey="customPostTypes"
 						title={ __( 'Custom post types', 'elementor' ) }
@@ -105,8 +97,6 @@ export function KitContentCustomizationDialog( {
 
 KitContentCustomizationDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
-	isImport: PropTypes.bool,
-	isOldExport: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,

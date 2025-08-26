@@ -66,9 +66,7 @@ describe( 'KitPartsSelection Component', () => {
 
 		useContextDetection.mockReturnValue( {
 			isImport: false,
-			contextData: {
-				data: mockData,
-			},
+			contextData: null,
 		} );
 	} );
 
@@ -215,7 +213,7 @@ describe( 'KitPartsSelection Component', () => {
 			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
-		it( 'should disable required items in export mode', async () => {
+		it( 'should disable required items in export mode', () => {
 			// Arrange
 			const props = {
 				data: mockData,
@@ -229,7 +227,6 @@ describe( 'KitPartsSelection Component', () => {
 
 			// Assert
 			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
-
 			expect( contentCheckbox.disabled ).toBe( true );
 		} );
 
@@ -285,6 +282,13 @@ describe( 'KitPartsSelection Component', () => {
 
 		it( 'should disable items not available in manifest', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+				},
+			} );
+
 			const importData = {
 				includes: [ 'templates', 'settings' ],
 				customization: {},
@@ -295,16 +299,6 @@ describe( 'KitPartsSelection Component', () => {
 					},
 				},
 			};
-
-			useContextDetection.mockReturnValue( {
-				isImport: true,
-				contextData: {
-					isImport: true,
-					isOldExport: false,
-					data: importData,
-				},
-			} );
-
 			const props = {
 				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
@@ -333,19 +327,11 @@ describe( 'KitPartsSelection Component', () => {
 				uploadedData: {
 					manifest: {
 						templates: true,
-						'site-settings': { test: true },
+						'site-settings': true,
 						content: true,
 					},
 				},
 			};
-
-			useContextDetection.mockReturnValue( {
-				isImport: true,
-				contextData: {
-					data: importData,
-				},
-			} );
-
 			const props = {
 				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
@@ -513,26 +499,22 @@ describe( 'KitPartsSelection Component', () => {
 
 		it( 'should disable Edit button for disabled items in import mode', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+				},
+			} );
+
 			const importData = {
 				includes: [ 'templates' ],
 				customization: {},
 				uploadedData: {
 					manifest: {
-						templates: {
-							123: {},
-						},
+						templates: true,
 					},
 				},
 			};
-
-			useContextDetection.mockReturnValue( {
-				isImport: true,
-				contextData: {
-					isOldExport: false,
-					data: importData,
-				},
-			} );
-
 			const props = {
 				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
@@ -540,14 +522,13 @@ describe( 'KitPartsSelection Component', () => {
 				testId: 'test-kit-parts',
 			};
 			render( <KitPartsSelection { ...props } /> );
-			const settingsSection = screen.getByTestId( `KitPartsSelectionRow-settings` );
-			const settingsCheckbox = within( screen.getByTestId( 'KitContentDataSelection-settings' ) ).getByRole( 'checkbox' );
-			const contentCheckbox = within( screen.getByTestId( 'KitContentDataSelection-content' ) ).getByRole( 'checkbox' );
+			const editButtons = screen.getAllByText( 'Edit' );
+			const settingsEditButton = editButtons.find( ( button ) =>
+				'settings' === button.getAttribute( 'data-type' ),
+			);
 
 			// Act & Assert
-			expect( within( settingsSection ).getByText( 'Not exported' ) ).toBeTruthy();
-			expect( settingsCheckbox.disabled ).toBe( true );
-			expect( contentCheckbox.disabled ).toBe( true );
+			expect( settingsEditButton.disabled ).toBe( true );
 		} );
 	} );
 
