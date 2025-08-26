@@ -89,7 +89,7 @@ const SortableTrigger = ( props: React.HTMLAttributes< HTMLDivElement > ) => (
 		role="button"
 		className="class-item-sortable-trigger"
 		tabIndex={ 0 }
-		aria-label={ __( 'drag item', 'elementor' ) }
+		aria-label={ __( 'Drag item', 'elementor' ) }
 	>
 		<GripVerticalIcon fontSize="tiny" />
 	</div>
