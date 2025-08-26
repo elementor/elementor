@@ -74,6 +74,14 @@
 			justify-content: start;
 			align-items: center;
 
+			h2 {
+				line-height: 24px;
+			}
+
+			.elementor-box-action {
+				justify-content: flex-start;
+			}
+
 			.button-upgrade {
 				display: inline-flex;
 				align-items: center;
@@ -93,6 +101,7 @@
 
 	.elementor-box-action {
 		display: flex;
+		justify-content: flex-end;
 
 		.elementor-manually-link {
 			color: #72777c;

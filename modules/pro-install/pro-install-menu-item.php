@@ -91,7 +91,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 				<?php echo esc_html__( 'Status', 'elementor' ); ?>:
 				<span style="color: #008000; font-style: italic;"><?php echo esc_html__( 'Connected', 'elementor' ); ?></span>
 				<small>
-					<a class="button" href="https://go.elementor.com/my-account/">
+					<a class="button" href="https://go.elementor.com/my-account/" target="_blank">
 						<?php echo esc_html__( 'My Account', 'elementor' ); ?>
 					</a>
 				</small>
@@ -110,8 +110,6 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 					);
 				endif;
 				?>
-
-				<?php echo esc_html__( 'Want to activate this website by a different license?', 'elementor' ); ?>
 				</span>
 			</p>
 
@@ -148,7 +146,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 				<h2><?php echo esc_html__( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' ); ?></p>
 				<div class="elementor-box-action">
-					<a class="button button-upgrade" href="https://go.elementor.com/go-pro-connect-account-screen">
+					<a class="button button-upgrade" href="https://go.elementor.com/go-pro-connect-account-screen" target="_blank">
 						<i class="eicon-upgrade-crown" aria-hidden="true"></i>
 						<?php echo esc_html__( 'Upgrade Now', 'elementor' ); ?>
 					</a>
@@ -167,9 +165,9 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 		<div class="elementor-license-box">
 			<h3><?php echo esc_html__( 'You\'ve got Elementor Pro', 'elementor' ); ?></h3>
 
-			<p class="e-row-stretch">
-				<span><?php echo esc_html( $cta_data['description'] ); ?></span>
-				<a class="button" href="<?php echo esc_url( $ctr_url ); ?>">
+			<p><?php echo esc_html( $cta_data['description'] ); ?></p>
+			<p class="elementor-box-action">
+				<a class="button button-primary" href="<?php echo esc_url( $ctr_url ); ?>">
 					<?php echo esc_html( $cta_data['button_text'] ); ?>
 				</a>
 			</p>
@@ -180,7 +178,7 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 	private function get_cta_data(): array {
 		return [
 			'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
-			'button_text' => $this->is_pro_installed() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate Now', 'elementor' ),
+			'button_text' => $this->is_pro_installed() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate', 'elementor' ),
 		];
 	}
 
