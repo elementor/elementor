@@ -3,10 +3,40 @@ import { Box, Typography, Stack, Checkbox, FormControlLabel, Button, Tooltip } f
 import PropTypes from 'prop-types';
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
+import { ReExportBanner } from './ReExportBanner';
 
 export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
 	const { isImport, contextData } = useContextDetection();
+
+	const isSiteSettingsExported = () => {
+		const siteSettings = contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ];
+		if ( ! siteSettings ) {
+			return false;
+		}
+
+		return Object.values( siteSettings ).some( Boolean );
+	};
+
+	const isContentSettingsExported = () => {
+		const taxonomies = contextData?.data?.uploadedData?.manifest?.taxonomies;
+		const content = contextData?.data?.uploadedData?.manifest?.content;
+		const wpContent = contextData?.data?.uploadedData?.manifest?.[ 'wp-content' ];
+		const customPostTypes = contextData?.data?.uploadedData?.manifest?.[ 'custom-post-type-title' ];
+
+		return taxonomies || content || wpContent || customPostTypes;
+	};
+
+	const isExported = ( item ) => {
+		switch ( item.type ) {
+			case 'settings':
+				return isSiteSettingsExported();
+			case 'content':
+				return isContentSettingsExported();
+			default:
+				return contextData?.data?.uploadedData?.manifest?.[ item.type ];
+		}
+	};
 
 	const isDisabled = ( item ) => {
 		if ( item.data.features?.locked && ! elementorAppConfig.hasPro ) {
@@ -14,11 +44,10 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		}
 
 		if ( isImport ) {
-			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
-			return ! data?.uploadedData?.manifest?.[ manifestKey ];
+			return ! isExported( item );
 		}
 
-		return item.required && data.includes.includes( item.type );
+		return item.required && contextData?.data?.includes?.includes( item.type );
 	};
 
 	const isEditDisabled = ( item ) => {
@@ -27,8 +56,12 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 				return true;
 			}
 
+			if ( contextData.isOldExport && 'plugins' === item.type ) {
+				return true;
+			}
+
 			const manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
-			return ! data?.uploadedData?.manifest?.[ manifestKey ];
+			return ! contextData?.data?.uploadedData?.manifest?.[ manifestKey ];
 		}
 
 		return false;
@@ -60,15 +93,14 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		) : description;
 	};
 
-	const renderCheckboxControl = ( item ) => (
+	const renderCheckboxControl = ( item, disabled ) => (
 		<FormControlLabel
 			control={
 				<Checkbox
 					color="info"
 					checked={ data.includes.includes( item.type ) }
 					onChange={ () => onCheckboxChange( item.type ) }
-					disabled={ isDisabled( item ) }
-					indeterminate={ isImport && isDisabled( item ) }
+					disabled={ disabled }
 					sx={ { py: 0 } }
 					data-testid={ `KitContentDataSelection-${ item.type }` }
 					data-type={ item.type }
@@ -83,43 +115,87 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		/>
 	);
 
+	const getSectionEditButton = ( item, isLockedFeaturesNoPro ) => {
+		if ( isLockedFeaturesNoPro ) {
+			return (
+				<Button
+					variant="contained"
+					color="promotion"
+					onClick={ () => window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' ) }
+					startIcon={ <span className="eicon-upgrade-crown"></span> }
+					sx={ { alignSelf: 'center' } }
+					data-type={ item.type }
+					disabled={ isEditDisabled( item ) }
+				>
+					{ __( 'Upgrade', 'elementor' ) }
+				</Button>
+			);
+		}
+
+		if ( ! isImport ) {
+			return (
+				<Button
+					color="secondary"
+					onClick={ () => setActiveDialog( item.type ) }
+					sx={ { alignSelf: 'center' } }
+					data-type={ item.type }
+					disabled={ isEditDisabled( item ) }
+				>
+					{ __( 'Edit', 'elementor' ) }
+				</Button>
+			);
+		}
+
+		return isExported( item )
+			? (
+				<Button
+					color="secondary"
+					onClick={ () => setActiveDialog( item.type ) }
+					sx={ { alignSelf: 'center' } }
+					data-type={ item.type }
+					disabled={ isEditDisabled( item ) }
+				>
+					{ __( 'Edit', 'elementor' ) }
+				</Button>
+			) : (
+				<Typography
+					variant="body1"
+					color="text.disabled"
+					sx={ { alignSelf: 'center' } }
+				>
+					{ __( 'Not exported', 'elementor' ) }
+				</Typography>
+			);
+	};
+
 	return (
 		<Stack spacing={ 2 } data-testid={ testId }>
+			{ contextData?.isOldExport && (
+				<ReExportBanner />
+			) }
 			{ kitContentData.map( ( item ) => {
 				const isLockedFeaturesNoPro = item.data.features?.locked && ! elementorAppConfig.hasPro;
+				const disabled = isDisabled( item );
 				const DialogComponent = getDialogComponent( item );
 
 				return (
 					<Fragment key={ item.type }>
-						<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
+						<Box
+							data-testid={ `KitPartsSelectionRow-${ item.type }` }
+							sx={ {
+								mb: 3,
+								border: 1,
+								borderRadius: 1,
+								borderColor: 'action.focus',
+								p: 2.5,
+							} }
+						>
 							<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' } }>
 								<Box sx={ { flex: 1, opacity: isLockedFeaturesNoPro ? 0.5 : 1 } }>
-									{ renderCheckboxControl( item ) }
+									{ renderCheckboxControl( item, disabled ) }
 									{ renderFeatureDescription( item, isLockedFeaturesNoPro ) }
 								</Box>
-								{ isLockedFeaturesNoPro ? (
-									<Button
-										variant="contained"
-										color="promotion"
-										onClick={ () => window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' ) }
-										startIcon={ <span className="eicon-upgrade-crown"></span> }
-										sx={ { alignSelf: 'center' } }
-										data-type={ item.type }
-										disabled={ isEditDisabled( item ) }
-									>
-										{ __( 'Upgrade', 'elementor' ) }
-									</Button>
-								) : (
-									<Button
-										color="secondary"
-										onClick={ () => setActiveDialog( item.type ) }
-										sx={ { alignSelf: 'center' } }
-										data-type={ item.type }
-										disabled={ isEditDisabled( item ) }
-									>
-										{ __( 'Edit', 'elementor' ) }
-									</Button>
-								) }
+								{ getSectionEditButton( item, isLockedFeaturesNoPro ) }
 							</Box>
 						</Box>
 						{ DialogComponent && (
@@ -128,6 +204,8 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 								handleClose={ () => setActiveDialog( null ) }
 								data={ data }
 								handleSaveChanges={ handleSaveCustomization }
+								isImport={ isImport }
+								isOldExport={ contextData.isOldExport }
 							/>
 						) }
 					</Fragment>
