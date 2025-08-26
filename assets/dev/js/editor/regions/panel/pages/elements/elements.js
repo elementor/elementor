@@ -100,6 +100,24 @@ PanelElementsLayoutView = Marionette.LayoutView.extend( {
 			} );
 		} );
 
+		if ( elementor.config.integrationWidgets ) {
+			const injectionPoint = elementsCollection.findIndex( { widgetType: 'image-carousel' } ) + 1;
+
+			jQuery.each( elementor.config.integrationWidgets, ( index, widget ) => {
+				elementsCollection.add( {
+					name: widget.name,
+					title: widget.title,
+					icon: widget.icon,
+					categories: JSON.parse( widget.categories ),
+					editable: false,
+					integration: true,
+					keywords: widget.keywords || [],
+				}, {
+					at: injectionPoint,
+				} );
+			} );
+		}
+
 		if ( elementorCommon.config.experimentalFeatures.container ) {
 			jQuery.each( elementor.config.elementsPresets, ( index, widget ) => {
 				const originalWidget = elementor.widgetsCache[ widget.replacements.custom.originalWidget ],
