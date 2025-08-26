@@ -268,7 +268,7 @@ class Repository {
 					'message' => esc_html( $error['message'] ),
 				];
 			}
-
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new BatchOperationFailed( 'Batch operation failed', $error_details );
 		}
 
