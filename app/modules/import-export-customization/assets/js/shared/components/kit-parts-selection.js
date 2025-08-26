@@ -44,7 +44,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 		const featuresText = [
 			item.data.features.open.join( ', ' ),
 			item.data.features?.locked?.length > 0 && item.data.features.open.length > 0 ? ', ' : '',
-			item.data.features?.locked?.join( ', ' )
+			item.data.features?.locked?.join( ', ' ),
 		].join( '' );
 
 		const description = (
