@@ -1,9 +1,12 @@
 import * as React from 'react';
-import type { editor, MonacoEditor } from 'monaco-types';
+
+import { __ } from '@wordpress/i18n';
+
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
-import { __ } from '@wordpress/i18n';
+import type { editor, MonacoEditor } from 'monaco-types';
+
 import { ClearIconButton } from '../icon-buttons/clear-icon-button';
 
 import { EditorWrapper, ResetButtonContainer } from './css-editor.styles';
@@ -151,9 +154,9 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 	return (
 		<EditorWrapper ref={ containerRef }>
-				<ResetButtonContainer className="reset-btn-container">
-					<ClearIconButton tooltipText={ __( 'Clear', 'elementor' ) } onClick={ handleReset } />
-				</ResetButtonContainer>
+			<ResetButtonContainer className="reset-btn-container">
+				<ClearIconButton tooltipText={ __( 'Clear', 'elementor' ) } onClick={ handleReset } />
+			</ResetButtonContainer>
 			<Editor
 				key={ activeBreakpoint }
 				height="100%"

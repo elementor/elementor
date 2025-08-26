@@ -1,6 +1,7 @@
 import * as React from 'react';
+
 import { BrushBigIcon } from '@elementor/icons';
-import { IconButton, Tooltip, Paper, styled, type SxProps, type Theme } from '@elementor/ui';
+import { IconButton, Paper, styled, Tooltip } from '@elementor/ui';
 
 type ClearIconButtonProps = {
 	onClick?: () => void;
@@ -34,7 +35,7 @@ export const ClearIconButton = ( { tooltipText, onClick, disabled, size = 'tiny'
 	<Tooltip title={ tooltipText } placement="top" disableInteractive>
 		<ButtonWrapper>
 			<CustomIconButton aria-label={ tooltipText } size={ size } onClick={ onClick } disabled={ disabled }>
-				<BrushBigIcon fontSize={size} />
+				<BrushBigIcon fontSize={ size } />
 			</CustomIconButton>
 		</ButtonWrapper>
 	</Tooltip>
