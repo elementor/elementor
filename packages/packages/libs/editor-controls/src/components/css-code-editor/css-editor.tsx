@@ -129,6 +129,7 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 					stickyScroll: {
 						enabled: false,
 					},
+					lineDecorationsWidth: 2,
 				} }
 			/>
 			<ResizeHandleComponent
