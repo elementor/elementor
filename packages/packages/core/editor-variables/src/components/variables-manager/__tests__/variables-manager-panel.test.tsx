@@ -32,6 +32,7 @@ jest.mock( '@elementor/editor-ui', () => ( {
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	changeEditMode: jest.fn(),
 	commandEndEvent: jest.fn(),
+	windowEvent: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/ui', () => {
