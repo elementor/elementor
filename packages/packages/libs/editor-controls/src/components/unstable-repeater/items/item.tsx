@@ -26,15 +26,6 @@ export const Item = < T extends RepeatablePropValue >( {
 		setOpenItemIndex( index );
 	};
 
-	const setRef = ( ref: HTMLDivElement | null ) => {
-		if ( ! ref || openItemIndex !== index || ref === popoverState.anchorEl ) {
-			return;
-		}
-
-		setRowRef( ref );
-		popoverState.setAnchorEl( ref );
-	};
-
 	return (
 		<>
 			<UnstableTag
@@ -47,7 +38,7 @@ export const Item = < T extends RepeatablePropValue >( {
 				}
 				showActionsOnHover
 				fullWidth
-				ref={ setRef }
+				ref={ ( ref ) => ref && openItemIndex === index && setRowRef( ref ) }
 				variant="outlined"
 				aria-label={ __( 'Open item', 'elementor' ) }
 				sx={ { minHeight: ( theme ) => theme.spacing( 4 ) } }
