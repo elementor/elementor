@@ -742,6 +742,7 @@ class Widget_Icon_List extends Widget_Base {
 			<?php
 			foreach ( $settings['icon_list'] as $index => $item ) :
 				$repeater_setting_key = $this->get_repeater_setting_key( 'text', 'icon_list', $index );
+				$text = wp_kses_post( $item['text'] );
 
 				$this->add_render_attribute( $repeater_setting_key, 'class', 'elementor-icon-list-text' );
 
@@ -778,7 +779,7 @@ class Widget_Icon_List extends Widget_Base {
 							<?php } ?>
 						</span>
 					<?php endif; ?>
-					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php $this->print_unescaped_setting( 'text', 'icon_list', $index ); ?></span>
+					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php echo $text; ?></span>
 					<?php if ( ! empty( $item['link']['url'] ) ) : ?>
 						</a>
 					<?php endif; ?>
@@ -814,7 +815,7 @@ class Widget_Icon_List extends Widget_Base {
 		<# if ( settings.icon_list ) { #>
 			<ul {{{ view.getRenderAttributeString( 'icon_list' ) }}}>
 			<# _.each( settings.icon_list, function( item, index ) {
-
+					const text = elementor.helpers.sanitize( item.text, { ALLOW_DATA_ATTR: false } );
 					var iconTextKey = view.getRepeaterSettingKey( 'text', 'icon_list', index );
 
 					view.addRenderAttribute( iconTextKey, 'class', 'elementor-icon-list-text' );
@@ -838,7 +839,7 @@ class Widget_Icon_List extends Widget_Base {
 							#>
 						</span>
 						<# } #>
-						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
+						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ text }}}</span>
 						<# if ( item.link && item.link?.url ) { #>
 							</a>
 						<# } #>
