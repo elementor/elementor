@@ -14,7 +14,7 @@ jest.mock( '@elementor/utils', () => ( {
 	sendMixpanelEvent: jest.fn(),
 } ) );
 
-jest.mock( '../../../services/repeater-event-bus', () => ( {
+jest.mock( '../../../services/event-bus', () => ( {
 	eventBus: {
 		subscribe: jest.fn(),
 		unsubscribe: jest.fn(),
@@ -36,10 +36,7 @@ describe( 'Transition Events', () => {
 		subscribeToTransitionEvent();
 
 		// Assert
-		expect( mockEventBus.subscribe ).toHaveBeenCalledWith(
-			'transition-item-added',
-			expect.any( Function )
-		);
+		expect( mockEventBus.subscribe ).toHaveBeenCalledWith( 'transition-item-added', expect.any( Function ) );
 	} );
 
 	it( 'should send mixpanel event with transition type when event is triggered', () => {
