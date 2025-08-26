@@ -238,11 +238,6 @@ class Repository {
 	 */
 	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
 		$db_record = $this->load();
-
-		if ( $db_record['watermark'] !== $expected_watermark ) {
-			throw new WatermarkMismatch( 'Watermark mismatch' );
-		}
-
 		$results = [];
 		$errors = [];
 
@@ -268,6 +263,7 @@ class Repository {
 					'message' => esc_html( $error['message'] ),
 				];
 			}
+
 			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new BatchOperationFailed( 'Batch operation failed', $error_details );
 		}

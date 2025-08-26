@@ -579,43 +579,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 'Updated Color', $update_result['variable']['label'] );
 	}
 
-	public function test_process_batch__watermark_mismatch_error() {
-		// Arrange
-		$this->act_as_admin();
-
-		$this->kit->method( 'get_json_meta' )->willReturn( [
-			'data' => [],
-			'watermark' => 15,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
-		] );
-
-		// Act
-		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/batch' );
-		$request->set_body_params( [
-			'watermark' => 10,
-			'operations' => [
-				[
-					'type' => 'create',
-					'variable' => [
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Test Color',
-						'value' => '#FF0000',
-					],
-				],
-			],
-		] );
-
-		$response = $this->rest_api->process_batch( $request );
-
-		// Assert
-		$this->assertEquals( 400, $response->get_status() );
-
-		$response_data = $response->get_data();
-		$this->assertEquals( 'watermark_mismatch', $response_data['code'] );
-		$this->assertEquals( 'Data has been modified by another process', $response_data['message'] );
-		$this->assertEquals( 400, $response_data['data']['status'] );
-	}
-
 	public function test_process_batch__batch_operation_failed_error() {
 		// Arrange
 		$this->act_as_admin();

@@ -875,33 +875,6 @@ class Test_Variables_Repository extends TestCase {
     $this->assertEquals( 'Restored Color', $restore_result['variable']['label'] );
 }
 
-public function test_process_atomic_batch__throws_watermark_mismatch_exception() {
-    // Arrange
-    $this->kit->method( 'get_json_meta' )->willReturn( [
-        'data' => [],
-        'watermark' => 10,
-        'version' => Variables_Repository::FORMAT_VERSION_V1,
-    ] );
-
-    $operations = [
-        [
-            'type' => 'create',
-            'variable' => [
-                'type' => Color_Variable_Prop_Type::get_key(),
-                'label' => 'Test Color',
-                'value' => '#FF0000',
-            ],
-        ],
-    ];
-
-    // Assert
-    $this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\WatermarkMismatch::class );
-    $this->expectExceptionMessage( 'Watermark mismatch' );
-
-    // Act
-    $this->repository->process_atomic_batch( $operations, 5 );
-}
-
 public function test_process_atomic_batch__throws_batch_operation_failed_with_duplicate_label() {
     // Arrange
     $this->kit->method( 'get_json_meta' )->willReturn( [
