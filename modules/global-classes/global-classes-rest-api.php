@@ -36,7 +36,7 @@ class Global_Classes_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->all( $request ) ),
-				'permission_callback' => fn() => true,
+				'permission_callback' => fn() => is_user_logged_in(),
 				'args' => [
 					'context' => [
 						'type' => 'string',
