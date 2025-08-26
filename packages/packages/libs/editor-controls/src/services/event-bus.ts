@@ -1,4 +1,4 @@
-class RepeaterEventBus {
+class EventBus {
 	private listeners = new Map< string, Set< ( data?: { itemValue: unknown } ) => void > >();
 
 	subscribe( eventName: string, callback: ( data?: { itemValue: unknown } ) => void ) {
@@ -39,4 +39,4 @@ class RepeaterEventBus {
 	}
 }
 
-export const repeaterEventBus = new RepeaterEventBus();
+export const eventBus = new EventBus();

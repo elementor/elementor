@@ -10,7 +10,6 @@ export type MixpanelEvent = {
 	location: string;
 	secondaryLocation: string;
 	trigger: string;
-	transition_type: string;
 	widget_type: string;
 	eventName: string;
 } & { [ key: string ]: unknown };

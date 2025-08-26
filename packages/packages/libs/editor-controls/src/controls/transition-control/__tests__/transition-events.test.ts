@@ -1,7 +1,7 @@
 import { getSelectedElements } from '@elementor/editor-elements';
 import { sendMixpanelEvent } from '@elementor/utils';
 
-import { repeaterEventBus } from '../../../services/repeater-event-bus';
+import { eventBus } from '../../../services/event-bus';
 import { subscribeToTransitionEvent, unsubscribeFromTransitionItemAdded } from '../trainsition-events';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -15,7 +15,7 @@ jest.mock( '@elementor/utils', () => ( {
 } ) );
 
 jest.mock( '../../../services/repeater-event-bus', () => ( {
-	repeaterEventBus: {
+	eventBus: {
 		subscribe: jest.fn(),
 		unsubscribe: jest.fn(),
 	},
@@ -25,7 +25,7 @@ describe( 'Transition Events', () => {
 	// Arrange
 	const mockGetSelectedElements = getSelectedElements as jest.MockedFunction< typeof getSelectedElements >;
 	const mockSendMixpanelEvent = sendMixpanelEvent as jest.MockedFunction< typeof sendMixpanelEvent >;
-	const mockRepeaterEventBus = repeaterEventBus as jest.Mocked< typeof repeaterEventBus >;
+	const mockEventBus = eventBus as jest.Mocked< typeof eventBus >;
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -36,7 +36,7 @@ describe( 'Transition Events', () => {
 		subscribeToTransitionEvent();
 
 		// Assert
-		expect( mockRepeaterEventBus.subscribe ).toHaveBeenCalledWith(
+		expect( mockEventBus.subscribe ).toHaveBeenCalledWith(
 			'transition-item-added',
 			expect.any( Function )
 		);
@@ -67,7 +67,7 @@ describe( 'Transition Events', () => {
 
 		// Act
 		subscribeToTransitionEvent();
-		const subscribeCallback = mockRepeaterEventBus.subscribe.mock.calls[ 0 ][ 1 ];
+		const subscribeCallback = mockEventBus.subscribe.mock.calls[ 0 ][ 1 ];
 		subscribeCallback( mockData );
 
 		// Assert
@@ -86,6 +86,6 @@ describe( 'Transition Events', () => {
 		unsubscribeFromTransitionItemAdded();
 
 		// Assert
-		expect( mockRepeaterEventBus.unsubscribe ).toHaveBeenCalledWith( 'transition-item-added' );
+		expect( mockEventBus.unsubscribe ).toHaveBeenCalledWith( 'transition-item-added' );
 	} );
 } );

@@ -1,7 +1,7 @@
 import { getSelectedElements } from '@elementor/editor-elements';
 import { sendMixpanelEvent } from '@elementor/utils';
 
-import { repeaterEventBus } from '../../services/repeater-event-bus';
+import { eventBus } from '../../services/event-bus';
 import { type initialTransitionValue } from './data';
 
 type TransitionItemValue = typeof initialTransitionValue;
@@ -14,7 +14,7 @@ const transitionRepeaterMixpanelEvent = {
 };
 
 export function subscribeToTransitionEvent() {
-	repeaterEventBus.subscribe( 'transition-item-added', ( data ) => {
+	eventBus.subscribe( 'transition-item-added', ( data ) => {
 		const value = ( data?.itemValue as TransitionItemValue )?.selection?.value?.value?.value;
 		const selectedElements = getSelectedElements();
 		const widgetType = selectedElements[ 0 ]?.type ?? null;
@@ -27,5 +27,5 @@ export function subscribeToTransitionEvent() {
 }
 
 export function unsubscribeFromTransitionItemAdded() {
-	repeaterEventBus.unsubscribe( 'transition-item-added' );
+	eventBus.unsubscribe( 'transition-item-added' );
 }

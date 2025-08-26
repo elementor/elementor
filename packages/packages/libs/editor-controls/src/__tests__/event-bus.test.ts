@@ -1,8 +1,8 @@
-import { repeaterEventBus } from '../services/repeater-event-bus';
+import { eventBus } from '../services/event-bus';
 
-describe( 'RepeaterEventBus Singleton', () => {
+describe( 'eventBus Singleton', () => {
 	beforeEach( () => {
-		repeaterEventBus.clearAll();
+		eventBus.clearAll();
 	} );
 
 	it( 'should add a listener for an event', () => {
@@ -11,7 +11,7 @@ describe( 'RepeaterEventBus Singleton', () => {
 		const callback = jest.fn();
 
 		// Act
-		repeaterEventBus.subscribe( eventName, callback );
+		eventBus.subscribe( eventName, callback );
 
 		// Assert
 		expect( callback ).not.toHaveBeenCalled();
@@ -24,11 +24,11 @@ describe( 'RepeaterEventBus Singleton', () => {
 		const secondCallback = jest.fn();
 
 		// Act
-		repeaterEventBus.subscribe( eventName, firstCallback );
-		repeaterEventBus.subscribe( eventName, secondCallback );
+		eventBus.subscribe( eventName, firstCallback );
+		eventBus.subscribe( eventName, secondCallback );
 
 		// Assert
-		repeaterEventBus.emit( eventName );
+		eventBus.emit( eventName );
 		expect( firstCallback ).toHaveBeenCalledTimes( 1 );
 		expect( secondCallback ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -37,13 +37,13 @@ describe( 'RepeaterEventBus Singleton', () => {
 		// Arrange
 		const eventName = 'test-event';
 		const callback = jest.fn();
-		repeaterEventBus.subscribe( eventName, callback );
+		eventBus.subscribe( eventName, callback );
 
 		// Act
-		repeaterEventBus.unsubscribe( eventName, callback );
+		eventBus.unsubscribe( eventName, callback );
 
 		// Assert
-		repeaterEventBus.emit( eventName );
+		eventBus.emit( eventName );
 		expect( callback ).not.toHaveBeenCalled();
 	} );
 
@@ -52,10 +52,10 @@ describe( 'RepeaterEventBus Singleton', () => {
 		const eventName = 'test-event';
 		const callback = jest.fn();
 		const testData = { itemValue: 'test-value' };
-		repeaterEventBus.subscribe( eventName, callback );
+		eventBus.subscribe( eventName, callback );
 
 		// Act
-		repeaterEventBus.emit( eventName, testData );
+		eventBus.emit( eventName, testData );
 
 		// Assert
 		expect( callback ).toHaveBeenCalledWith( testData );
@@ -66,14 +66,14 @@ describe( 'RepeaterEventBus Singleton', () => {
 		const eventName = 'test-event';
 		const callback1 = jest.fn();
 		const callback2 = jest.fn();
-		repeaterEventBus.subscribe( eventName, callback1 );
-		repeaterEventBus.subscribe( eventName, callback2 );
+		eventBus.subscribe( eventName, callback1 );
+		eventBus.subscribe( eventName, callback2 );
 
 		// Act
-		repeaterEventBus.unsubscribe( eventName, callback1 );
+		eventBus.unsubscribe( eventName, callback1 );
 
 		// Assert
-		repeaterEventBus.emit( eventName );
+		eventBus.emit( eventName );
 		expect( callback1 ).not.toHaveBeenCalled();
 		expect( callback2 ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -83,14 +83,14 @@ describe( 'RepeaterEventBus Singleton', () => {
 		const eventName = 'test-event';
 		const callback1 = jest.fn();
 		const callback2 = jest.fn();
-		repeaterEventBus.subscribe( eventName, callback1 );
-		repeaterEventBus.subscribe( eventName, callback2 );
+		eventBus.subscribe( eventName, callback1 );
+		eventBus.subscribe( eventName, callback2 );
 
 		// Act
-		repeaterEventBus.unsubscribe( eventName );
+		eventBus.unsubscribe( eventName );
 
 		// Assert
-		repeaterEventBus.emit( eventName );
+		eventBus.emit( eventName );
 		expect( callback1 ).not.toHaveBeenCalled();
 		expect( callback2 ).not.toHaveBeenCalled();
 	} );
