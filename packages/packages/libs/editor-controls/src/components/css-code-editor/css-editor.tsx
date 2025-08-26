@@ -3,6 +3,9 @@ import type { editor, MonacoEditor } from 'monaco-types';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
+import { BrushBigIcon } from '@elementor/icons';
+import { __ } from '@wordpress/i18n';
+import { IconButton, Box, styled } from '@elementor/ui';
 
 import { EditorWrapper } from './css-editor.styles';
 import { setCustomSyntaxRules, validate } from './css-validation';
@@ -12,6 +15,13 @@ type CssEditorProps = {
 	value: string;
 	onChange: ( value: string ) => void;
 };
+
+const ResetButtonContainer = styled( Box )`
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 10;
+`;
 
 const setVisualContent = ( value: string ): string => {
 	const trimmed = value.trim();
@@ -128,6 +138,10 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, debounceTimer, onChange );
 
+	const handleReset = () => {
+		onChange( '' );
+	};
+
 	React.useEffect( () => {
 		const timerRef = debounceTimer;
 		return () => {
@@ -140,6 +154,16 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 	return (
 		<EditorWrapper ref={ containerRef }>
+				<ResetButtonContainer>
+					<IconButton
+						size="tiny"
+						onClick={ handleReset }
+						title={ __( 'Clear', 'elementor' ) }
+						aria-label={ __( 'Clear', 'elementor' ) }
+					>
+						<BrushBigIcon fontSize="tiny" />
+					</IconButton>
+				</ResetButtonContainer>
 			<Editor
 				key={ activeBreakpoint }
 				height="100%"
