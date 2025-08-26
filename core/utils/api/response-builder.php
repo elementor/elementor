@@ -15,12 +15,6 @@ class Response_Builder {
 		$this->status = $status;
 	}
 
-	/**
-	 * @param mixed $data
-	 * @param int $status
-	 *
-	 * @return static
-	 */
 	public static function make( $data = null, $status = 200 ) {
 		return new self( $data, $status );
 	}
