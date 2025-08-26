@@ -84,7 +84,7 @@ class Module extends BaseModule {
 	 *
 	 * @return array
 	 *
-	 * @throws \Exception When finder category registration fails or validation errors occur.
+	 * @throws \Exception If finder category registration fails or validation errors occur.
 	 */
 	public function ajax_get_category_items( array $data ) {
 		if ( ! current_user_can( 'manage_options' ) ) {

@@ -26,7 +26,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws VariablesLimitReached When database connection fails or query execution errors occur.
+	 * @throws VariablesLimitReached If database connection fails or query execution errors occur.
 	 */
 	private function assert_if_variables_limit_reached( array $db_record ) {
 		$variables_in_use = 0;
@@ -45,7 +45,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws DuplicatedLabel When variable creation fails or validation errors occur.
+	 * @throws DuplicatedLabel If variable creation fails or validation errors occur.
 	 */
 	private function assert_if_variable_label_is_duplicated( array $db_record, array $variable = [] ) {
 		foreach ( $db_record['data'] as $id => $existing_variable ) {
@@ -84,7 +84,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws FatalError When variable update fails or validation errors occur.
+	 * @throws FatalError If variable update fails or validation errors occur.
 	 */
 	public function create( array $variable ) {
 		$db_record = $this->load();
@@ -118,8 +118,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound When variable deletion fails or database errors occur.
-	 * @throws FatalError When variable deletion fails or database errors occur.
+	 * @throws RecordNotFound If variable deletion fails or database errors occur.
+	 * @throws FatalError If variable deletion fails or database errors occur.
 	 */
 	public function update( string $id, array $variable ) {
 		$db_record = $this->load();
@@ -153,8 +153,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound When bulk operation fails or validation errors occur.
-	 * @throws FatalError When bulk operation fails or validation errors occur.
+	 * @throws RecordNotFound If bulk operation fails or validation errors occur.
+	 * @throws FatalError If bulk operation fails or validation errors occur.
 	 */
 	public function delete( string $id ) {
 		$db_record = $this->load();
@@ -183,8 +183,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound When export operation fails or data serialization errors occur.
-	 * @throws FatalError When export operation fails or data serialization errors occur.
+	 * @throws RecordNotFound If export operation fails or data serialization errors occur.
+	 * @throws FatalError If export operation fails or data serialization errors occur.
 	 */
 	public function restore( string $id, $overrides = [] ) {
 		$db_record = $this->load();

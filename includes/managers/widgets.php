@@ -386,7 +386,7 @@ class Widgets_Manager {
 	}
 
 	/**
-	 * @throws \Exception Exception.
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
 	public function ajax_get_widget_types_controls_config( array $data ) {
 		Plugin::$instance->documents->check_permissions( $data['editor_post_id'] );
@@ -494,7 +494,7 @@ class Widgets_Manager {
 	 * @param array $request Ajax request.
 	 *
 	 * @return bool|string Rendered widget form.
-	 * @throws \Exception If there is an error processing the request.
+	 * @throws \Exception If current user don't have permissions to edit the post.
 	 */
 	public function ajax_get_wp_widget_form( $request ) {
 		Plugin::$instance->documents->check_permissions( $request['editor_post_id'] );

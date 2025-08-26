@@ -198,7 +198,7 @@ abstract class Controller extends WP_REST_Controller {
 	 *
 	 * @return bool
 	 *
-	 * @throws WP_Error_Exception When API request validation fails, permissions are insufficient, or processing errors occur.
+	 * @throws WP_Error_Exception If API request validation fails, permissions are insufficient, or processing errors occur.
 	 */
 	public function get_permission_callback( $request ) {
 		$is_multi = (bool) $request->get_param( 'is_multi' );

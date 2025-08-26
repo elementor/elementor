@@ -64,7 +64,7 @@ class Elementor_Test_Utils extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @throws \Exception
+	 * @throws \Exception If an error occurs.
 	 */
 	public function test_should_replace_0_urls() {
 		$this->assertSame( '0 database rows affected.', Utils::replace_urls( 'http://' . home_url() . '/elementor', 'https://' . home_url() . '/elementor' ) );

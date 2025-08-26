@@ -97,7 +97,7 @@ class Export {
 	 *
 	 * @return array The export data output.
 	 *
-	 * @throws \Exception When no export runners have been specified.
+	 * @throws \Exception If no export runners have been specified.
 	 */
 	public function run() {
 		if ( empty( $this->runners ) ) {
@@ -238,7 +238,7 @@ class Export {
 	/**
 	 * Init the zip archive.
 	 *
-	 * @throws \Error When export process fails, file creation errors occur, or data serialization fails.
+	 * @throws \Error If export process fails, file creation errors occur, or data serialization fails.
 	 */
 	private function init_zip_archive() {
 		if ( ! class_exists( '\ZipArchive' ) ) {

@@ -103,7 +103,7 @@ abstract class Endpoint {
 	 * @param string $endpoint_class
 	 *
 	 * @return \Elementor\Data\Base\SubEndpoint
-	 * @throws \Exception If invalid endpoint.
+	 * @throws \Exception If invalid sub endpoint registered.
 	 */
 	protected function register_sub_endpoint( $route, $endpoint_class ) {
 		$endpoint_instance = new $endpoint_class( $route, $this );
