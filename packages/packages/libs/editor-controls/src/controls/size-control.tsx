@@ -223,7 +223,7 @@ export const SizeControl = createControl(
 					min={ min }
 					id={ id }
 				/>
-				{ anchorRef?.current && (
+				{ anchorRef?.current && popupState.isOpen && (
 					<TextFieldPopover
 						popupState={ popupState }
 						anchorRef={ anchorRef }
