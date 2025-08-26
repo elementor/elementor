@@ -170,6 +170,7 @@ describe( 'VariablesManagerTable', () => {
 		const defaultProps = {
 			variables: mockVariables,
 			menuActions: mockMenuActions,
+			onChange: jest.fn(),
 		};
 
 		return render( <VariablesManagerTable { ...defaultProps } { ...props } /> );
@@ -263,5 +264,49 @@ describe( 'VariablesManagerTable', () => {
 				expect( props.prefixElement ).toBe( true );
 			}
 		} );
+	} );
+
+	it( 'should render variable type icons correctly', () => {
+		// Arrange
+		const mockVariablesWithDifferentTypes = {
+			'var-1': {
+				label: 'Variable 1',
+				value: 'value 1',
+				type: 'color',
+			},
+			'var-2': {
+				label: 'Variable 2',
+				value: 'value 2',
+				type: 'color',
+			},
+		};
+
+		// Act
+		renderTable( { variables: mockVariablesWithDifferentTypes } );
+
+		// Assert
+		const editableCells = screen.getAllByRole( 'button' );
+		const cellProps = editableCells.map( ( cell ) => JSON.parse( cell.getAttribute( 'data-props' ) || '{}' ) );
+
+		cellProps.forEach( ( props ) => {
+			if ( props?.initialValue?.startsWith( 'Variable' ) ) {
+				expect( props.prefixElement ).toBe( true );
+			}
+		} );
+	} );
+
+	it( 'should call onChange with reordered variables', () => {
+		// Arrange
+		const mockOnChange = jest.fn();
+		const mockReorderedVariables = [ 'var-2', 'var-1' ];
+		jest.spyOn( React, 'useState' ).mockImplementation( () => [ mockReorderedVariables, mockOnChange ] );
+
+		// Act
+		renderTable( { onChange: mockOnChange } );
+
+		// Assert
+		const provider = screen.getByLabelText( 'Sortable variables list' );
+		const currentOrder = JSON.parse( provider.getAttribute( 'data-value' ) || '[]' );
+		expect( currentOrder ).toEqual( [ 'var-1', 'var-2' ] );
 	} );
 } );
