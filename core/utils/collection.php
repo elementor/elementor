@@ -305,11 +305,12 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	}
 
 	/**
-	 * Make sure all the values inside the array are uniques.
+	 * Find an element from the items.
 	 *
-	 * @param null|string|string[] $keys
+	 * @param callable $callback
+	 * @param null     $fallback
 	 *
-	 * @return $this
+	 * @return mixed|null
 	 */
 	public function find( callable $callback, $fallback = null ) {
 		foreach ( $this->all() as $key => $item ) {
@@ -360,7 +361,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	/**
 	 * Make sure all the values inside the array are uniques.
 	 *
-	 * @param mixed $keys
+	 * @param null|string|string[] $keys
 	 *
 	 * @return $this
 	 */
