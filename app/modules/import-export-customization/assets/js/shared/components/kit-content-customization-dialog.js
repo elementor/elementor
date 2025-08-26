@@ -53,8 +53,10 @@ export function KitContentCustomizationDialog( {
 	}, [ open, data, setSettings ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
-	}, [] );
+		if ( open ) {
+			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		}
+	}, [ open ] );
 
 	const handleSettingsChange = ( settingKey, payload ) => {
 		setSettings( ( prev ) => ( {
