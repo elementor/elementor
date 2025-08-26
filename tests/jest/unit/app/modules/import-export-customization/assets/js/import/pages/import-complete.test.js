@@ -87,7 +87,7 @@ describe( 'ImportComplete Page', () => {
 		render( <ImportComplete /> );
 		// Assert
 		expect( mockNavigate ).toHaveBeenCalledWith( '/import-customization', { replace: true } );
-		expect( mockSendExportKitCustomization ).toHaveBeenCalledWith( expect.objectContaining({
+		expect( mockSendExportKitCustomization ).toHaveBeenCalledWith( expect.objectContaining( {
 			kit_description: false,
 			kit_import_content: true,
 			kit_import_plugins: true,
