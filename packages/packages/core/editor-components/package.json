@@ -40,8 +40,16 @@
         "dev": "tsup --config=../../tsup.dev.ts"
     },
     "dependencies": {
-        "@elementor/ui": "1.36.8",
+        "@elementor/editor": "3.32.0",
+        "@elementor/editor-elements": "3.32.0",
         "@elementor/editor-elements-panel": "3.32.0",
+        "@elementor/editor-props": "^3.32.0",
+        "@elementor/editor-ui": "3.32.0",
+        "@elementor/http-client": "3.32.0",
+        "@elementor/icons": "1.46.0",
+        "@elementor/query": "^3.32.0",
+        "@elementor/schema": "^3.32.0",
+        "@elementor/ui": "1.36.8",
         "@wordpress/i18n": "^5.13.0"
     },
     "peerDependencies": {
