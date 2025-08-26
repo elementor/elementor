@@ -33,6 +33,33 @@ class Size_Constants {
 	const VIEWPORT_MIN_MAX_UNITS = [ 'vmin', 'vmax' ];
 	const ANGLE_UNITS = [ self::UNIT_ANGLE_DEG, 'rad', 'grad', 'turn' ];
 
+	public static function supported_units_by_category(): array {
+		return [
+			'length' => [
+				'units'   => self::all(),
+				'default' => self::UNIT_PX,
+			],
+			'angle' => [
+				'units'   => self::ANGLE_UNITS,
+				'default' => self::UNIT_ANGLE_DEG,
+			],
+			'time' => [
+				'units'   => self::TIME_UNITS,
+				'default' => self::UNIT_MILLI_SECOND,
+			],
+			'extended_options' => self::EXTENDED_UNITS,
+		];
+	}
+
+	public static function settings(): array {
+		return [
+			'size' => [
+				'supported_units' => self::all_supported_units(),
+				'supported_units_by_category' => Size_Constants::supported_units_by_category(),
+			]
+		];
+	}
+
 	public static function all_supported_units(): array {
 		return array_merge(
 			self::all(),
