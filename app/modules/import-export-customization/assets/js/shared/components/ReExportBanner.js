@@ -20,14 +20,6 @@ export function ReExportBanner() {
 				<Typography variant="body1">
 					{ __( 'This website template was exported with an older version of Elementor, so component editing is limited.', 'elementor' ) }
 				</Typography>
-				<Link
-					href="#"
-					target="_blank"
-					variant="body2"
-					sx={ { color: 'info.main', textDecoration: 'none' } }
-				>
-					{ __( 'Learn more.', 'elementor' ) }
-				</Link>
 			</Stack>
 		</Box>
 	);
