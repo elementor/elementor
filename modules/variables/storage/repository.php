@@ -269,7 +269,7 @@ class Repository {
 				];
 			}
 
-			throw new BatchOperationFailed( 'Batch operation failed: ' . esc_html( json_encode( $error_details ) ) );
+			throw new BatchOperationFailed( 'Batch operation failed', $error_details );
 		}
 
 		$watermark = $this->save( $db_record );
@@ -300,7 +300,7 @@ class Repository {
 				return $this->process_restore_operation( $db_record, $operation );
 
 			default:
-				throw new BatchOperationFailed( 'Invalid operation type: ' . esc_html( $operation['type'] ) );
+				throw new BatchOperationFailed( 'Invalid operation type: ' . esc_html( $operation['type'] ), [] );
 		}
 	}
 
