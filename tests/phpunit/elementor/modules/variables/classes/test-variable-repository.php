@@ -102,9 +102,9 @@ class Test_Variables_Repository extends TestCase {
 
 	public function test_create_new_variable__when_empty() {
 		// Arrange.
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		$this->kit->method( 'get_json_meta' )->willReturn( [] );
 
@@ -149,19 +149,19 @@ class Test_Variables_Repository extends TestCase {
 
 		$captured_data = [];
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			with(
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->with(
 				Variables_Repository::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_data ) {
 					$captured_data = $meta['data'];
 
-					return isset( $captured_data ) &&
-						4 === count( $captured_data ) &&
-						6 === $meta['watermark'];
+					return isset( $captured_data )
+						&& 4 === count( $captured_data )
+						&& 6 === $meta['watermark'];
 				} )
-			)->
-			willReturn( true );
+			)
+			->willReturn( true );
 
 		// Act.
 		$newVariable = [
@@ -196,19 +196,19 @@ class Test_Variables_Repository extends TestCase {
 
 		$captured_data = [];
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			with(
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->with(
 				Variables_Repository::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_data ) {
 					$captured_data = $meta['data'];
 
-					return isset( $captured_data ) &&
-						2 === count( $captured_data ) &&
-						11 === $meta['watermark'];
+					return isset( $captured_data )
+						&& 2 === count( $captured_data )
+						&& 11 === $meta['watermark'];
 				} )
-			)->
-			willReturn( true );
+			)
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->create( [
@@ -293,9 +293,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->create( [
@@ -325,9 +325,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'e-123', [
@@ -360,9 +360,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'e-123', [
@@ -431,9 +431,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'id-1', [
@@ -526,9 +526,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'id-2', [
@@ -562,9 +562,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->delete( 'e-123' );
@@ -613,9 +613,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->restore( 'e-123' );
@@ -675,9 +675,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->restore( 'id-1' );
@@ -742,9 +742,9 @@ class Test_Variables_Repository extends TestCase {
 			'version' => Variables_Repository::FORMAT_VERSION_V1,
 		] );
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			willReturn( true );
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->restore( 'id-1' );
@@ -779,17 +779,17 @@ class Test_Variables_Repository extends TestCase {
 
 		$captured_watermark = null;
 
-		$this->kit->expects( $this->once() )->
-			method( 'update_json_meta' )->
-			with(
+		$this->kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->with(
 				Variables_Repository::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_watermark ) {
 					$captured_watermark = $meta['watermark'];
 
 					return true;
 				} )
-			)->
-			willReturn( true );
+			)
+			->willReturn( true );
 
 		// Act.
 		$result = $this->repository->update( 'e-123', [
@@ -821,9 +821,9 @@ class Test_Variables_Repository extends TestCase {
         'version' => Variables_Repository::FORMAT_VERSION_V1,
     ] );
 
-    $this->kit->expects( $this->once() )->
-        method( 'update_json_meta' )->
-        willReturn( true );
+    $this->kit->expects( $this->once() )
+        ->method( 'update_json_meta' )
+        ->willReturn( true );
 
     $operations = [
         [
@@ -858,7 +858,6 @@ class Test_Variables_Repository extends TestCase {
     $this->assertEquals( 6, $result['watermark'] );
     $this->assertCount( 3, $result['results'] );
 
-    // Check create result
     $create_result = $result['results'][0];
     $this->assertEquals( 'temp-123', $create_result['temp_id'] );
     $this->assertNotEmpty( $create_result['id'] );
@@ -970,7 +969,7 @@ public function test_process_atomic_batch__ensures_atomicity_on_failure() {
         ],
         [
             'type' => 'update',
-            'id' => 'non-existent-id', // This will fail
+            'id' => 'non-existent-id',
             'variable' => [
                 'label' => 'Should Not Update',
                 'value' => '#00FF00',
@@ -983,7 +982,7 @@ public function test_process_atomic_batch__ensures_atomicity_on_failure() {
         $this->repository->process_atomic_batch( $operations, 5 );
         $this->fail( 'Expected BatchOperationFailed exception' );
     } catch ( \Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed $e ) {
-        // Assert - verify atomicity: no changes should be made
+        // Assert
         $this->addToAssertionCount( 1 );
     }
 }
@@ -1031,9 +1030,9 @@ public function test_process_atomic_batch__handles_delete_operation() {
         'version' => Variables_Repository::FORMAT_VERSION_V1,
     ] );
 
-    $this->kit->expects( $this->once() )->
-        method( 'update_json_meta' )->
-        willReturn( true );
+    $this->kit->expects( $this->once() )
+        ->method( 'update_json_meta' )
+        ->willReturn( true );
 
     $operations = [
         [
