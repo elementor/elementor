@@ -1,13 +1,18 @@
 import * as React from 'react';
 import { type RefObject, useRef } from 'react';
-import { boxShadowPropTypeUtil, type PropKey, shadowPropTypeUtil, type ShadowPropValue } from '@elementor/editor-props';
-import { FormLabel, Grid, type SxProps, type Theme, UnstableColorIndicator } from '@elementor/ui';
+import { boxShadowPropTypeUtil, shadowPropTypeUtil, type ShadowPropValue } from '@elementor/editor-props';
+import { FormLabel, Grid, styled, type SxProps, type Theme, UnstableColorIndicator } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { Repeater } from '../components/repeater';
+import { Header, Item, ItemsContainer, TooltipAddItemAction, UnstableRepeater } from '../components/unstable-repeater';
+import { DisableItemAction } from '../components/unstable-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../components/unstable-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../components/unstable-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../components/unstable-repeater/context/repeater-context';
+import { EditItemPopover } from '../components/unstable-repeater/items/edit-item-popover';
 import { createControl } from '../create-control';
 import { ColorControl } from './color-control';
 import { SelectControl } from './select-control';
@@ -18,38 +23,37 @@ export const BoxShadowRepeaterControl = createControl( () => {
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
-			<Repeater
-				openOnAdd
-				disabled={ disabled }
-				values={ value ?? [] }
-				setValues={ setValue }
-				label={ __( 'Box shadow', 'elementor' ) }
-				itemSettings={ {
-					Icon: ItemIcon,
-					Label: ItemLabel,
-					Content: ItemContent,
-					initialValues: initialShadow,
-				} }
-			/>
+			<UnstableRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
+				<Header label={ __( 'Box shadow', 'elementor' ) }>
+					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } />
+				</Header>
+				<ItemsContainer itemTemplate={ <Item Icon={ ItemIcon } Label={ ItemLabel } /> }>
+					<DuplicateItemAction />
+					<DisableItemAction />
+					<RemoveItemAction />
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</UnstableRepeater>
 		</PropProvider>
 	);
 } );
 
+const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	height: '1rem',
+	width: '1rem',
+	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
+} ) );
+
 const ItemIcon = ( { value }: { value: ShadowPropValue } ) => (
-	<UnstableColorIndicator size="inherit" component="span" value={ value.value.color?.value } />
+	<StyledUnstableColorIndicator size="inherit" component="span" value={ value.value.color?.value } />
 );
 
-const ItemContent = ( { anchorEl, bind }: { anchorEl: HTMLElement | null; bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content anchorEl={ anchorEl } />
-		</PropKeyProvider>
-	);
-};
-
-const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
+const Content = () => {
 	const context = useBoundProp( shadowPropTypeUtil );
 	const rowRef: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
+	const { rowRef: anchorEl } = useRepeaterContext();
 
 	return (
 		<PropProvider { ...context }>

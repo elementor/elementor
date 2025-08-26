@@ -17,6 +17,7 @@ const handleSeeItLive = () => {
 
 export default function ImportComplete() {
 	const { data, isCompleted, runnersState } = useImportContext();
+	const { includes, analytics, uploadedData } = data;
 	const navigate = useNavigate();
 
 	const getTemplatesSummary = useCallback( () => {
@@ -144,6 +145,22 @@ export default function ImportComplete() {
 	const headerContent = (
 		<PageHeader title={ __( 'Import', 'elementor' ) } />
 	);
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary );
+	}, [] );
+
+	useEffect( () => {
+		AppsEventTracking.sendExportKitCustomization( {
+			kit_source: data?.kitUploadParams?.source || 'file',
+			kit_import_content: includes.includes( 'content' ),
+			kit_import_templates: includes.includes( 'templates' ),
+			kit_import_settings: includes.includes( 'settings' ),
+			kit_import_plugins: includes.includes( 'plugins' ),
+			kit_import_deselected: analytics?.customization,
+			kit_description: !! uploadedData?.manifest?.description,
+		} );
+	}, [ includes, analytics, uploadedData, data ] );
 
 	return (
 		<BaseLayout
