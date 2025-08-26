@@ -178,16 +178,9 @@ class Pro_Install_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	private function get_cta_data(): array {
-		if ( $this->is_pro_installed() ) {
-			return [
-				'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
-				'button_text' => esc_html__( 'Activate Elementor Pro', 'elementor' ),
-			];
-		}
-
 		return [
 			'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
-			'button_text' => esc_html__( 'Install & Activate Now', 'elementor' ),
+			'button_text' => $this->is_pro_installed() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate Now', 'elementor' ),
 		];
 	}
 
