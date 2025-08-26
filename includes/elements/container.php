@@ -491,6 +491,7 @@ class Container extends Element_Base {
 					],
 				],
 				'description' => sprintf(
+					/* translators: %s: 100vh. */
 					esc_html__( 'To achieve full height Container use %s.', 'elementor' ),
 					'100vh'
 				),
