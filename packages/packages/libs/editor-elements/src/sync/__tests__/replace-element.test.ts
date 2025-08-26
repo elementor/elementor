@@ -1,5 +1,8 @@
 import { createMockElement } from 'test-utils';
-import { __privateRunCommand as runCommand, __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
+import {
+	__privateRunCommand as runCommand,
+	__privateRunCommandSync as runCommandSync,
+} from '@elementor/editor-v1-adapters';
 
 import { replaceElement } from '../replace-element';
 import { type ExtendedWindow, type V1ElementModelProps } from '../types';
@@ -29,9 +32,7 @@ describe( 'replaceElement', () => {
 			getContainer: ( id ) => {
 				if ( id === currentElement.id ) {
 					return { ...currentElement, parent: parentElement };
-				}
-
-				else if ( id === parentElement.id ) {
+				} else if ( id === parentElement.id ) {
 					return { ...parentElement };
 				}
 
