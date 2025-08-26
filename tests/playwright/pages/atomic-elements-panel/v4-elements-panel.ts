@@ -247,4 +247,110 @@ export default class v4Panel extends BasePage {
 		// Wait for the unit change to be applied
 		await this.page.waitForTimeout( 1000 );
 	}
+
+	async setLetterSpacing( value: number, unit: string ): Promise<void> {
+		// Wait for typography section to be ready
+		await this.waitForTypographyControls();
+
+		// Click "Show More" button if it exists and is visible
+		const showMoreButton = this.page.getByRole( 'button', { name: 'Show More' } );
+		if ( await showMoreButton.isVisible() ) {
+			await showMoreButton.click();
+			// Wait for animation
+			await this.page.waitForTimeout( 500 );
+		}
+
+		// Locate letter spacing input by label
+		const letterSpacingLabel = this.page.locator( 'label', { hasText: 'Letter spacing' } );
+		const letterSpacingContainer = letterSpacingLabel.locator( 'xpath=ancestor::div[contains(@class, "MuiGrid-container")][1]' );
+		const letterSpacingInput = letterSpacingContainer.locator( 'input' );
+		await letterSpacingInput.waitFor({ state: 'visible', timeout: 5000 });
+
+		// Click the current unit button to open the dropdown
+		const currentUnitButton = letterSpacingContainer.locator( 'button[aria-haspopup="true"]' ).first();
+		await currentUnitButton.click();
+		
+		// Wait for and click the unit option
+		const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
+		await unitOption.waitFor({ state: 'visible' });
+		await unitOption.click();
+
+		// Wait for the unit change to be applied
+		await this.page.waitForTimeout( 500 );
+
+		// Set the value
+		await letterSpacingInput.fill( value.toString() );
+		await letterSpacingInput.press( 'Enter' );
+
+		// Wait for changes to be applied
+		await this.page.waitForTimeout( 500 );
+	}
+
+	async setWordSpacing( value: number, unit: string ): Promise<void> {
+		// Wait for typography section to be ready
+		await this.waitForTypographyControls();
+
+		// Click "Show More" button if it exists and is visible
+		const showMoreButton = this.page.getByRole( 'button', { name: 'Show More' } );
+		if ( await showMoreButton.isVisible() ) {
+			await showMoreButton.click();
+			// Wait for animation
+			await this.page.waitForTimeout( 500 );
+		}
+
+		// Locate word spacing input by label
+		const wordSpacingLabel = this.page.locator( 'label', { hasText: 'Word spacing' } );
+		const wordSpacingContainer = wordSpacingLabel.locator( 'xpath=ancestor::div[contains(@class, "MuiGrid-container")][1]' );
+		const wordSpacingInput = wordSpacingContainer.locator( 'input' );
+		await wordSpacingInput.waitFor({ state: 'visible', timeout: 5000 });
+
+		// Click the current unit button to open the dropdown
+		const currentUnitButton = wordSpacingContainer.locator( 'button[aria-haspopup="true"]' ).first();
+		await currentUnitButton.click();
+		
+		// Wait for and click the unit option
+		const unitOption = this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } );
+		await unitOption.waitFor({ state: 'visible' });
+		await unitOption.click();
+
+		// Wait for the unit change to be applied
+		await this.page.waitForTimeout( 500 );
+
+		// Set the value
+		await wordSpacingInput.fill( value.toString() );
+		await wordSpacingInput.press( 'Enter' );
+
+		// Wait for changes to be applied
+		await this.page.waitForTimeout( 500 );
+	}
+
+	async setWidgetText( text: string ): Promise<void> {
+		// Wait for the panel to be ready
+		await this.page.waitForTimeout( 1000 );
+
+		// Click the Content tab if not already active
+		const contentTab = this.page.getByRole( 'button', { name: ' Content' } );
+		await contentTab.click();
+
+		// Wait for the panel to update
+		await this.page.waitForTimeout( 500 );
+
+		// Try to find the text input field based on widget type
+		const textInputs = [
+			this.page.getByRole( 'textbox', { name: 'Title' } ),
+			this.page.getByRole( 'textbox', { name: 'Text' } ),
+			this.page.getByRole( 'textbox', { name: 'Button text' } ),
+		];
+
+		// Try each input field until we find one that's visible
+		for ( const input of textInputs ) {
+			if ( await input.isVisible() ) {
+				await input.fill( text );
+				await input.press( 'Enter' );
+				return;
+			}
+		}
+
+		throw new Error( 'No text input field found' );
+	}
 }

@@ -100,6 +100,230 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * SVG Widget Helper Methods
+	 * These methods provide specific functionality for testing SVG atomic widgets
+	 */
+
+	/**
+	 * Setup SVG widget in a container and return element IDs
+	 * 
+	 * @return {Promise<{containerId: string, widgetId: string}>}
+	 */
+	async setupSvgWidget(): Promise<{ containerId: string; widgetId: string }> {
+		const containerId = await this.addElement( { elType: 'container' }, 'document' );
+		const widgetId = await this.addWidget( { widgetType: 'e-svg', container: containerId } );
+
+		// Wait for widget to be visible in preview
+		const frame = this.getPreviewFrame();
+		await expect( frame.locator( '.e-svg-base' ) ).toBeVisible( { timeout: timeouts.expect } );
+
+		return { containerId, widgetId };
+	}
+
+	/**
+	 * Access SVG content control in the editor panel
+	 * 
+	 * @return {Promise<Locator>} SVG control locator
+	 */
+	async accessSvgContentControl(): Promise<Locator> {
+		await this.openV2PanelTab( 'content' );
+		
+		const svgControl = this.page.locator( '[data-control-name="svg"]' );
+		await expect( svgControl ).toBeVisible();
+		
+		return svgControl;
+	}
+
+	/**
+	 * Set SVG link with specified URL and target
+	 * 
+	 * @param {string} url - Link URL
+	 * @param {boolean} openInNewWindow - Whether to open in new window
+	 * @return {Promise<void>}
+	 */
+	async setSvgLink( url: string, openInNewWindow = false ): Promise<void> {
+		await this.openV2PanelTab( 'content' );
+		await this.openV2Section( 'settings' );
+		
+		const linkControl = this.page.locator( '[data-control-name="link"]' );
+		await expect( linkControl ).toBeVisible();
+		
+		const linkInput = linkControl.locator( 'input[type="text"]' );
+		await linkInput.fill( url );
+		await linkInput.press( 'Enter' );
+		
+		if ( openInNewWindow ) {
+			const targetToggle = linkControl.locator( '[data-tooltip*="Open in new window"]' );
+			await targetToggle.click();
+		}
+		
+		// Wait for changes to apply
+		await this.page.waitForTimeout( 200 );
+	}
+
+	/**
+	 * Set CSS ID for SVG widget
+	 * 
+	 * @param {string} cssId - CSS ID to set
+	 * @return {Promise<void>}
+	 */
+	async setSvgCssId( cssId: string ): Promise<void> {
+		await this.openV2PanelTab( 'content' );
+		await this.openV2Section( 'settings' );
+		
+		const idControl = this.page.locator( '[data-control-name="_cssid"] input' );
+		await expect( idControl ).toBeVisible();
+		
+		await idControl.fill( cssId );
+		await idControl.press( 'Enter' );
+		
+		// Wait for changes to apply
+		await this.page.waitForTimeout( 200 );
+	}
+
+	/**
+	 * Set SVG size using style controls
+	 * 
+	 * @param {string} width - Width value
+	 * @param {string} height - Height value  
+	 * @param {string} unit - Unit for size values (default: px)
+	 * @return {Promise<void>}
+	 */
+	async setSvgSize( width: string, height: string, unit = 'px' ): Promise<void> {
+		await this.openV2PanelTab( 'style' );
+		await this.openV2Section( 'size' );
+		
+		const widthControl = this.page.locator( '[data-control-name="width"]' );
+		const heightControl = this.page.locator( '[data-control-name="height"]' );
+		
+		if ( await widthControl.isVisible() ) {
+			// Set unit if not px
+			if ( unit !== 'px' ) {
+				const widthUnitButton = widthControl.locator( `[data-unit="${ unit }"]` );
+				if ( await widthUnitButton.isVisible() ) {
+					await widthUnitButton.click();
+				}
+				
+				const heightUnitButton = heightControl.locator( `[data-unit="${ unit }"]` );
+				if ( await heightUnitButton.isVisible() ) {
+					await heightUnitButton.click();
+				}
+			}
+			
+			// Set values
+			await widthControl.locator( 'input[type="text"]' ).fill( width );
+			await heightControl.locator( 'input[type="text"]' ).fill( height );
+			
+			// Wait for changes to apply
+			await this.page.waitForTimeout( 300 );
+		}
+	}
+
+	/**
+	 * Verify SVG element properties in preview frame
+	 * 
+	 * @param {Object} options - Verification options
+	 * @param {string} options.expectedSize - Expected size in pixels
+	 * @param {string} options.cssId - Expected CSS ID
+	 * @param {string} options.linkHref - Expected link href
+	 * @param {string} options.linkTarget - Expected link target
+	 * @return {Promise<void>}
+	 */
+	async verifySvgInPreview( options: {
+		expectedSize?: string;
+		cssId?: string;
+		linkHref?: string;
+		linkTarget?: string;
+	} = {} ): Promise<void> {
+		const frame = this.getPreviewFrame();
+		
+		// Build selector based on options
+		let selector = '.e-svg-base';
+		if ( options.cssId ) {
+			selector = `#${ options.cssId }`;
+		}
+		
+		const svgElement = frame.locator( selector );
+		await expect( svgElement ).toBeVisible( { timeout: timeouts.expect } );
+		
+		// Verify size if specified
+		if ( options.expectedSize ) {
+			const expectedPx = `${ options.expectedSize }px`;
+			await expect( svgElement ).toHaveCSS( 'width', expectedPx );
+			await expect( svgElement ).toHaveCSS( 'height', expectedPx );
+		}
+		
+		// Verify SVG tag properties
+		const svgTag = svgElement.locator( 'svg' );
+		await expect( svgTag ).toHaveAttribute( 'fill', 'currentColor' );
+		await expect( svgTag ).toHaveCSS( 'width', '100%' );
+		await expect( svgTag ).toHaveCSS( 'height', '100%' );
+		
+		// Verify link wrapper if specified
+		if ( options.linkHref ) {
+			const linkWrapper = frame.locator( `a[href="${ options.linkHref }"]` );
+			await expect( linkWrapper ).toBeVisible();
+			
+			if ( options.linkTarget ) {
+				await expect( linkWrapper ).toHaveAttribute( 'target', options.linkTarget );
+			}
+			
+			// Verify SVG is inside the link
+			const svgInLink = linkWrapper.locator( selector );
+			await expect( svgInLink ).toBeVisible();
+		}
+	}
+
+	/**
+	 * Verify SVG element properties in published page
+	 * 
+	 * @param {Object} options - Verification options (same as verifySvgInPreview)
+	 * @return {Promise<void>}
+	 */
+	async verifySvgInPublished( options: {
+		expectedSize?: string;
+		cssId?: string;
+		linkHref?: string;
+		linkTarget?: string;
+	} = {} ): Promise<void> {
+		await this.publishAndViewPage();
+		
+		// Build selector based on options
+		let selector = '.e-svg-base';
+		if ( options.cssId ) {
+			selector = `#${ options.cssId }`;
+		}
+		
+		const svgElement = this.page.locator( selector );
+		await expect( svgElement ).toBeVisible( { timeout: timeouts.navigation } );
+		
+		// Verify size if specified
+		if ( options.expectedSize ) {
+			const expectedPx = `${ options.expectedSize }px`;
+			await expect( svgElement ).toHaveCSS( 'width', expectedPx );
+			await expect( svgElement ).toHaveCSS( 'height', expectedPx );
+		}
+		
+		// Verify SVG tag properties
+		const svgTag = svgElement.locator( 'svg' );
+		await expect( svgTag ).toHaveAttribute( 'fill', 'currentColor' );
+		
+		// Verify link wrapper if specified
+		if ( options.linkHref ) {
+			const linkWrapper = this.page.locator( `a[href="${ options.linkHref }"]` );
+			await expect( linkWrapper ).toBeVisible();
+			
+			if ( options.linkTarget ) {
+				await expect( linkWrapper ).toHaveAttribute( 'target', options.linkTarget );
+			}
+			
+			// Verify SVG is inside the link
+			const svgInLink = linkWrapper.locator( selector );
+			await expect( svgInLink ).toBeVisible();
+		}
+	}
+
+	/**
 	 * Load a template from a file.
 	 *
 	 * @param {string}  filePath             - Path to the template file.
@@ -457,7 +681,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeSection( sectionId: string ): Promise<void> {
-		const sectionSelector = `.elementor-control-${ sectionId }`,
+		const sectionSelector =`.elementor-control-${ sectionId }`,
 			isOpenSection = await this.page.evaluate( ( selector ) => {
 				const sectionElement = document.querySelector( selector );
 
@@ -633,7 +857,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setColorControlValue( controlId: string, value: string ): Promise<void> {
-		const controlSelector = `.elementor-control-${ controlId }`;
+		const controlSelector =`.elementor-control-${ controlId }`;
 
 		await this.page.locator( controlSelector + ' .pcr-button' ).click();
 		await this.page.locator( '.pcr-app.visible .pcr-interaction input.pcr-result' ).fill( value );
@@ -649,7 +873,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setSwitcherControlValue( controlId: string, value: boolean = true ): Promise<void> {
-		const controlSelector = `.elementor-control-${ controlId }`,
+		const controlSelector =`.elementor-control-${ controlId }`,
 			controlLabel = this.page.locator( controlSelector + ' label.elementor-switch' ),
 			currentState = await this.page.locator( controlSelector + ' input[type="checkbox"]' ).isChecked();
 
@@ -706,7 +930,7 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setTypographyControlValue( controlId: string, fontsize: string ): Promise<void> {
-		const controlSelector = `.elementor-control-${ controlId }_typography .eicon-edit`;
+		const controlSelector =`.elementor-control-${ controlId }_typography .eicon-edit`;
 
 		await this.page.locator( controlSelector ).click();
 		await this.setSliderControlValue( controlId + '_font_size', fontsize );
@@ -1355,5 +1579,20 @@ export default class EditorPage extends BasePage {
 		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
 		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
+	}
+
+	async setFontFamily( fontName: string, fontType: 'system' | 'google' ) {
+		await this.page.locator( 'label', { hasText: 'Font family' } ).click();
+		await this.page.locator( `[data-font-type="${ fontType }"]`, { hasText: fontName } ).click();
+	}
+
+	async setLetterSpacing( value: number, unit: string ) {
+		const letterSpacingInput = this.page.locator( 'label', { hasText: 'Letter Spacing' } ).locator( 'input[type="number"]' );
+		await letterSpacingInput.fill( value.toString() );
+
+		// Click the unit selector and choose the unit
+		const unitSelector = this.page.locator( 'label', { hasText: 'Letter Spacing' } ).locator( '.e-units-switcher' );
+		await unitSelector.click();
+		await this.page.locator( `[data-unit="${ unit }"]` ).click();
 	}
 }
