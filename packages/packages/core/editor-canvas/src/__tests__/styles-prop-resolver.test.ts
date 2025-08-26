@@ -9,22 +9,18 @@ import {
 	backgroundImageSizeScalePropTypeUtil,
 	backgroundOverlayPropTypeUtil,
 	backgroundPropTypeUtil,
-	blurFilterPropTypeUtil,
 	borderRadiusPropTypeUtil,
 	borderWidthPropTypeUtil,
 	boxShadowPropTypeUtil,
 	colorPropTypeUtil,
 	colorStopPropTypeUtil,
-	colorToneFilterPropTypeUtil,
 	cssFilterFunctionPropUtil,
 	dimensionsPropTypeUtil,
 	filterPropTypeUtil,
 	gradientColorStopPropTypeUtil,
-	hueRotateFilterPropTypeUtil,
 	imageAttachmentIdPropType,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
-	intensityFilterPropTypeUtil,
 	layoutDirectionPropTypeUtil,
 	numberPropTypeUtil,
 	type Props,
@@ -54,102 +50,70 @@ type Payload = {
 const filters = filterPropTypeUtil.create( [
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'blur' ),
-		args: blurFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'brightness' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'contrast' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'grayscale' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'invert' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'sepia' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'saturate' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'hue-rotate' ),
-		args: hueRotateFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
 	} ),
 ] );
 
 const backDropFilters = backdropFilterPropTypeUtil.create( [
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'blur' ),
-		args: blurFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 2, unit: 'rem' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'brightness' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 80, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'contrast' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'grayscale' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'invert' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'sepia' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'saturate' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'hue-rotate' ),
-		args: hueRotateFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
 	} ),
 ] );
 

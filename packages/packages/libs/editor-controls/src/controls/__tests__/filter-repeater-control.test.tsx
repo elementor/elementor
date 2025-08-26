@@ -1,19 +1,14 @@
 import * as React from 'react';
 import { createMockPropType, createMockSingleSizeFilterPropType, renderControl } from 'test-utils';
 import {
-	blurFilterPropTypeUtil,
-	colorToneFilterPropTypeUtil,
 	cssFilterFunctionPropUtil,
 	filterPropTypeUtil,
-	intensityFilterPropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
 } from '@elementor/editor-props';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { FilterRepeaterControl } from '../filter-control/filter-repeater-control';
-
-const cssFilterFunc = createMockSingleSizeFilterPropType();
+import { FilterRepeaterControl } from '../filter-repeater-control';
 
 const propType = createMockPropType( {
 	kind: 'array',
@@ -22,58 +17,48 @@ const propType = createMockPropType( {
 	meta: {},
 	settings: {},
 	item_prop_type: {
-		...cssFilterFunc[ 'css-filter-func' ],
+		kind: 'union',
+		default: null,
+		meta: {},
+		settings: {},
+		prop_types: {
+			...createMockSingleSizeFilterPropType(),
+		},
 	},
 } );
 
 const mockFilter = filterPropTypeUtil.create( [
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'blur' ),
-		args: blurFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 1, unit: 'px' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'brightness' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 90, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'contrast' ),
-		args: intensityFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 50, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'grayscale' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 70, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'invert' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 60, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'sepia' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 30, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'saturate' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 25, unit: '%' } ),
 	} ),
 	cssFilterFunctionPropUtil.create( {
 		func: stringPropTypeUtil.create( 'hue-rotate' ),
-		args: colorToneFilterPropTypeUtil.create( {
-			size: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
-		} ),
+		args: sizePropTypeUtil.create( { size: 10, unit: 'deg' } ),
 	} ),
 ] );
 
@@ -87,7 +72,6 @@ describe( 'FilterRepeaterControl', () => {
 
 		// Assert.
 		const btn = screen.getAllByRole( 'button' )[ 0 ];
-
 		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
 		expect( btn ).toHaveAttribute( 'aria-label', 'Add item' );
 	} );
