@@ -10,7 +10,6 @@ use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use PHPUnit\Framework\TestCase;
-use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -103,9 +102,9 @@ class Test_Variables_Repository extends TestCase {
 
 	public function test_create_new_variable__when_empty() {
 		// Arrange.
-		$this->kit->expects( $this->once() )
-			->method( 'update_json_meta' )
-			->willReturn( true );
+		$this->kit->expects( $this->once() )->
+			method( 'update_json_meta' )->
+			willReturn( true );
 
 		$this->kit->method( 'get_json_meta' )->willReturn( [] );
 
@@ -150,19 +149,19 @@ class Test_Variables_Repository extends TestCase {
 
 		$captured_data = [];
 
-		$this->kit->expects( $this->once() )
-			->method( 'update_json_meta' )
-			->with(
+		$this->kit->expects( $this->once() )->
+			method( 'update_json_meta' )->
+			with(
 				Variables_Repository::VARIABLES_META_KEY,
 				$this->callback( function ( $meta ) use ( &$captured_data ) {
 					$captured_data = $meta['data'];
 
-					return isset( $captured_data )
-						&& 2 === count( $captured_data )
-						&& 11 === $meta['watermark'];
+					return isset( $captured_data ) &&
+						4 === count( $captured_data ) &&
+						6 === $meta['watermark'];
 				} )
-			)
-			->willReturn( true );
+			)->
+			willReturn( true );
 
 		// Act.
 		$newVariable = [
