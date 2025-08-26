@@ -19,7 +19,7 @@ class Dynamic_Tags_Module {
 	private Dynamic_Tags_Schemas $schemas;
 
 	private function __construct() {
-		$this->schemas = new Dynamic_Tags_Schemas();
+		$this->schemas  = new Dynamic_Tags_Schemas();
 		$this->registry = new Dynamic_Tags_Editor_Config( $this->schemas );
 	}
 
@@ -57,7 +57,7 @@ class Dynamic_Tags_Module {
 	private function add_atomic_dynamic_tags_to_editor_settings( $settings ) {
 		if ( isset( $settings['dynamicTags']['tags'] ) ) {
 			$settings['atomicDynamicTags'] = [
-				'tags' => $this->registry->get_tags(),
+				'tags'   => $this->registry->get_tags(),
 				'groups' => Plugin::$instance->dynamic_tags->get_config()['groups'],
 			];
 		}
