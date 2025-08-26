@@ -66,7 +66,7 @@ describe( '<RepeatableControl />', () => {
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: 'add Text Items item' } );
 		fireEvent.click( addButton );
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( {
@@ -109,7 +109,7 @@ describe( '<RepeatableControl />', () => {
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: 'add Number Items item' } );
 		fireEvent.click( addButton );
 
 		// Assert.
@@ -144,7 +144,7 @@ describe( '<RepeatableControl />', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Custom Label' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'add Custom Label item' } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render child control when add item button is pressed and valid config is provided', () => {
@@ -170,7 +170,7 @@ describe( '<RepeatableControl />', () => {
 			props
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: 'add Text Items item' } );
 		fireEvent.click( addButton );
 
 		// Assert.

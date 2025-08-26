@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { PlusIcon } from '@elementor/icons';
 import { Box, IconButton, Infotip } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
 
