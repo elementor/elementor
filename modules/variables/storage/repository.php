@@ -231,8 +231,8 @@ class Repository {
 	/**
 	 * Process multiple operations atomically
 	 *
-	 * @throws BatchOperationFailed
-	 * @throws FatalError
+	 * @throws BatchOperationFailed If batch operation fails or validation errors occur.
+	 * @throws FatalError If batch operation fails or validation errors occur.
 	 */
 	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
 		$db_record = $this->load();
