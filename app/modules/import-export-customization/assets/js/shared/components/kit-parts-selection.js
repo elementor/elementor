@@ -52,7 +52,7 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 				return true;
 			}
 
-			if ( 'plugins' === item.type ) {
+			if ( contextData.isOldExport && 'plugins' === item.type ) {
 				return true;
 			}
 
