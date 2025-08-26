@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { PlusIcon } from '@elementor/icons';
 import { Box, IconButton, Infotip } from '@elementor/ui';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
 
@@ -32,7 +33,8 @@ export const TooltipAddItemAction = ( {
 					size={ SIZE }
 					disabled={ disabled }
 					onClick={ onClick }
-					aria-label={ `Add ${ labelName } item` }
+					// Translators: %s is the number of kits in the results
+					aria-label={ sprintf( __( 'add %1$s item', 'elementor' ), labelName?.toLowerCase() ) }
 				>
 					<PlusIcon fontSize={ SIZE } />
 				</IconButton>

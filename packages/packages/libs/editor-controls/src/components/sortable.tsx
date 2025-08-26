@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { GripVerticalIcon } from '@elementor/icons';
+import { __ } from '@wordpress/i18n';
 import {
 	Divider,
 	List,
@@ -83,7 +84,7 @@ const StyledListItem = styled( ListItem )`
 `;
 
 const SortableTrigger = ( props: React.HTMLAttributes< HTMLDivElement > ) => (
-	<div { ...props } role="button" className="class-item-sortable-trigger" tabIndex={ 0 } aria-label="drag item">
+	<div { ...props } role="button" className="class-item-sortable-trigger" tabIndex={ 0 } aria-label={ __( 'drag item', 'elementor' ) }>
 		<GripVerticalIcon fontSize="tiny" />
 	</div>
 );
