@@ -15,6 +15,7 @@ type MockElementProps = {
 export function createMockElement( {
 	model: partialModel = {},
 	settings: partialSettings = {},
+	children = [],
 	view,
 	parent,
 }: MockElementProps ): V1Element {
@@ -46,6 +47,7 @@ export function createMockElement( {
 		},
 		view,
 		parent,
+		children,
 	};
 }
 
