@@ -140,7 +140,6 @@ export default function ExportComplete() {
 					<ExportCompleteHeading isCloudExport={ isCloudExport } />
 
 					<ExportCompleteSummary
-						kitInfo={ kitInfo }
 						includes={ data.includes }
 						exportedData={ exportedData }
 					/>

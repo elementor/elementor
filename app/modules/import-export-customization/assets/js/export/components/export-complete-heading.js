@@ -4,14 +4,14 @@ import PropTypes from 'prop-types';
 export default function ExportCompleteHeading( { isCloudExport } ) {
 	return (
 		<Box data-testid="export-complete-heading">
-			<Typography variant="h4" component="h2" gutterBottom>
+			<Typography variant="h4" color="text.primary" component="h2" gutterBottom>
 				{ isCloudExport
 					? __( 'Your website template is now saved to the library!', 'elementor' )
 					: __( 'Your .zip file is ready', 'elementor' )
 				}
 			</Typography>
 
-			<Typography variant="body2" color="text.secondary" sx={ { mb: 3 } }>
+			<Typography variant="body1" color="text.secondary" sx={ { mb: 3 } }>
 				{ isCloudExport
 					? (
 						<>
