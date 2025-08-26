@@ -55,8 +55,10 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	}, [ open, data.customization.settings, data?.uploadedData, initialState ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
-	}, [] );
+		if ( open ) {
+			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		}
+	}, [ open ] );
 
 	const handleToggleChange = ( settingKey, isChecked ) => {
 		unselectedValues.current = isChecked
