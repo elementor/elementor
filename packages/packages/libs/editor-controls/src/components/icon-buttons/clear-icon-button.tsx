@@ -10,6 +10,9 @@ type ClearIconButtonProps = {
 };
 
 const CustomIconButton = styled( IconButton )( ( { theme } ) => ( {
+	width: '20px',
+	height: '20px',
+
 	'&.Mui-disabled': {
 		pointerEvents: 'auto',
 		'&:hover': {
