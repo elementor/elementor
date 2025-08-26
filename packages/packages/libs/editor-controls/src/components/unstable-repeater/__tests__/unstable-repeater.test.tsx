@@ -73,7 +73,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Test Repeater' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'add Test Repeater item' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Add Test Repeater item' } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -149,7 +149,7 @@ describe( 'UnstableRepeater', () => {
 			</UnstableRepeater>
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'add Test Repeater item' } );
+		const addButton = screen.getByRole( 'button', { name: 'Add Test Repeater item' } );
 		fireEvent.click( addButton );
 
 		// Assert.
@@ -260,7 +260,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Assert.
 		expect( screen.queryByText( 'Test Repeater' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'add Test Repeater item' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Add Test Repeater item' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -569,7 +569,7 @@ describe( 'UnstableRepeater', () => {
 			</UnstableRepeater>
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'add Repeater item' } );
+		const addButton = screen.getByRole( 'button', { name: 'Add Repeater item' } );
 
 		fireEvent.click( addButton );
 
