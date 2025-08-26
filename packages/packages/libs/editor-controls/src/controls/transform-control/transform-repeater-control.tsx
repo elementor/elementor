@@ -17,6 +17,7 @@ import { DisableItemAction } from '../../components/unstable-repeater/actions/di
 import { RemoveItemAction } from '../../components/unstable-repeater/actions/remove-item-action';
 import { EditItemPopover } from '../../components/unstable-repeater/items/edit-item-popover';
 import { injectIntoRepeaterHeaderActions } from '../../components/unstable-repeater/locations';
+import { ControlAdornments } from '../../control-adornments/control-adornments';
 import { createControl } from '../../create-control';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
 import { TransformBaseControl } from './transform-base-control';
@@ -81,7 +82,7 @@ const Repeater = ( { headerRef, propType }: { headerRef: React.RefObject< HTMLDi
 			>
 				<Header
 					label={ __( 'Transform', 'elementor' ) }
-					controlAdornmentContext={ { path: [ 'transform' ], propType } }
+					adornment={ () => <ControlAdornments customContext={ { path: [ 'transform' ], propType } } /> }
 					ref={ headerRef }
 				>
 					<TooltipAddItemAction

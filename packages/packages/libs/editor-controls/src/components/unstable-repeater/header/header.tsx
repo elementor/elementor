@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { type PropType } from '@elementor/editor-props';
 import { Box, Stack, Typography } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
@@ -13,13 +12,10 @@ export const Header = React.forwardRef(
 		{
 			label,
 			children,
-			controlAdornmentContext,
+			adornment: Adornment = ControlAdornments,
 		}: React.PropsWithChildren< {
 			label: string;
-			controlAdornmentContext?: {
-				path: string[];
-				propType: PropType;
-			};
+			adornment?: React.FC;
 		} >,
 		ref
 	) => {
@@ -37,7 +33,7 @@ export const Header = React.forwardRef(
 					<Typography component="label" variant="caption" color="text.secondary" sx={ { lineHeight: 1 } }>
 						{ label }
 					</Typography>
-					<ControlAdornments customContext={ controlAdornmentContext } />
+					<Adornment />
 				</Box>
 				<RepeaterHeaderActionsSlot value={ value } />
 				<SlotChildren whitelist={ [ TooltipAddItemAction ] as React.FC[] } sorted>
