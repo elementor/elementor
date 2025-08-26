@@ -40,12 +40,14 @@ class Site_Settings extends Export_Runner_Base {
 
 		if ( $theme_data ) {
 			$kit_data['theme'] = $theme_data;
+			$manifest_data['theme'] = $theme_data;
 		}
 
 		$experiments_data = $this->export_experiments();
 
 		if ( $experiments_data ) {
 			$kit_data['experiments'] = $experiments_data;
+			$manifest_data['experiments'] = array_keys( $experiments_data );
 		}
 
 		$manifest_data['site-settings'] = $kit_tabs;
