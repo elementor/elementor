@@ -26,5 +26,6 @@ export const replaceElement = ( { currentElement, newElement, withHistory = true
 		model: newElement,
 		options: { at: elementIndex, useHistory: withHistory },
 	} );
+
 	deleteElement( { elementId: currentElement.id, options: { useHistory: withHistory } } );
 };

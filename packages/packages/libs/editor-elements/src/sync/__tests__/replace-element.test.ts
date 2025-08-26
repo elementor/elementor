@@ -1,12 +1,13 @@
 import { createMockElement } from 'test-utils';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { __privateRunCommand as runCommand, __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import { replaceElement } from '../replace-element';
 import { type ExtendedWindow, type V1ElementModelProps } from '../types';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 
-const mockRunCommand = runCommand as jest.MockedFunction< typeof runCommand >;
+const mockRunCommand = jest.mocked( runCommand );
+const mockRunCommandSync = jest.mocked( runCommandSync );
 
 const currentElement = createMockElement( { model: { id: 'current-element' } } );
 const siblingElement1 = createMockElement( { model: { id: 'sibling-element-1' } } );
@@ -29,6 +30,11 @@ describe( 'replaceElement', () => {
 				if ( id === currentElement.id ) {
 					return { ...currentElement, parent: parentElement };
 				}
+
+				else if ( id === parentElement.id ) {
+					return { ...parentElement };
+				}
+
 				return undefined;
 			},
 		};
@@ -39,14 +45,14 @@ describe( 'replaceElement', () => {
 		replaceElement( { currentElement, newElement } );
 
 		// Assert.
-		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/create', {
+		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/create', {
 			container: parentElement,
 			model: newElement,
-			options: { at: 1, useHistory: true },
+			options: { at: 1, useHistory: true, edit: false },
 		} );
 
 		expect( mockRunCommand ).toHaveBeenCalledWith( 'document/elements/delete', {
-			container: currentElement,
+			container: { ...currentElement, parent: parentElement },
 			options: { useHistory: true },
 		} );
 	} );
