@@ -35,8 +35,6 @@ class Plugin_Installer {
 	}
 
 	private function includes_dependencies() {
-		require_once ABSPATH . 'wp-admin/includes/plugin.php';
-
 		include_once ABSPATH . '/wp-admin/includes/admin.php';
 		include_once ABSPATH . '/wp-admin/includes/plugin-install.php';
 		include_once ABSPATH . '/wp-admin/includes/plugin.php';
