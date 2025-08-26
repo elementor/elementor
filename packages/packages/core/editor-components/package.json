@@ -40,7 +40,7 @@
         "dev": "tsup --config=../../tsup.dev.ts"
     },
     "dependencies": {
-        "@elementor/ui": "1.36.8",
+        "@elementor/ui": "1.36.12",
         "@elementor/editor-elements-panel": "3.32.0",
         "@wordpress/i18n": "^5.13.0"
     },
