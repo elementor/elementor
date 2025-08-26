@@ -25,10 +25,6 @@ type ResultNotification = {
 	type: 'success' | 'error';
 };
 
-const FONT_SIZE = 'tiny';
-const POPOVER_WIDTH = '268px';
-const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
-
 export function CreateComponentForm() {
 	const [ element, setElement ] = useState< {
 		element: V1Element;
@@ -42,6 +38,8 @@ export function CreateComponentForm() {
 	const { mutate: createComponent, isPending } = useCreateComponentMutation();
 
 	useEffect( () => {
+		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
+
 		const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
 			setElement( { element: event.detail.element, elementLabel: getElementLabel( event.detail.element.id ) } );
 			setAnchorPosition( event.detail.anchorPosition );
@@ -130,6 +128,8 @@ export function CreateComponentForm() {
 	);
 }
 
+const FONT_SIZE = 'tiny';
+
 const Form = ( {
 	initialValues,
 	handleSave,
@@ -167,7 +167,7 @@ const Form = ( {
 	};
 
 	return (
-		<Stack alignItems="start" width={ POPOVER_WIDTH }>
+		<Stack alignItems="start" width="268px">
 			<Stack
 				direction="row"
 				alignItems="center"
