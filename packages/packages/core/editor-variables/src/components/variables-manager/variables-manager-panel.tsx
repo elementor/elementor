@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -15,6 +15,7 @@ import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButton
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
+import { type TVariablesList } from '../../storage';
 import { VariablesManagerTable } from './variables-manager-table';
 
 const id = 'variables-manager';
@@ -33,8 +34,9 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
-	const isDirty = false;
-	const variables = getVariables( false );
+	const [ isDirty, setIsDirty ] = useState( false );
+	const [ variables, setVariables ] = useState( getVariables( false ) );
+	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
 
 	usePreventUnload( isDirty );
 
@@ -43,9 +45,18 @@ export function VariablesManagerPanel() {
 			name: __( 'Delete', 'elementor' ),
 			icon: TrashIcon,
 			color: 'error.main',
-			onClick: () => {},
+			onClick: ( itemId: string ) => {
+				setDeletedVariables( [ ...deletedVariables, itemId ] );
+				setVariables( { ...variables, [ itemId ]: { ...variables[ itemId ], deleted: true } } );
+				setIsDirty( true );
+			},
 		},
 	];
+
+	const handleOnChange = ( newVariables: TVariablesList ) => {
+		setVariables( newVariables );
+		setIsDirty( true );
+	};
 
 	return (
 		<ThemeProvider>
@@ -77,7 +88,11 @@ export function VariablesManagerPanel() {
 							height: '100%',
 						} }
 					>
-						<VariablesManagerTable menuActions={ menuActions } variables={ variables } />
+						<VariablesManagerTable
+							menuActions={ menuActions }
+							variables={ variables }
+							onChange={ handleOnChange }
+						/>
 					</PanelBody>
 
 					<PanelFooter>

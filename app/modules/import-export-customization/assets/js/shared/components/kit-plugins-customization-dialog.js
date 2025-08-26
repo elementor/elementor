@@ -150,8 +150,10 @@ export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveCh
 	}, [ plugins ] );
 
 	useEffect( () => {
-		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
-	}, [] );
+		if ( open ) {
+			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
+		}
+	}, [ open ] );
 
 	const SettingSection = ( { title, description, children, settingKey } ) => (
 		<Box key={ settingKey } sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>

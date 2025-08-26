@@ -728,6 +728,12 @@ abstract class Base_App {
 	protected function get_auth_redirect_uri() {
 		$redirect_uri = $this->get_admin_url( 'get_token' );
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$val = Utils::get_super_global_value( $_REQUEST, 'redirect_to' );
+		if ( $val ) {
+			$redirect_uri = add_query_arg( [ 'redirect_to' => $val ], $redirect_uri );
+		}
+
 		switch ( $this->auth_mode ) {
 			case 'popup':
 				$redirect_uri = add_query_arg( [
