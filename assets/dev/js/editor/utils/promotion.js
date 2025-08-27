@@ -78,8 +78,8 @@ export default class extends elementorModules.Module {
 			elements.$freeBadgeContainer = jQuery( '<div>', { class: 'e-free-badge-container' } );
 			elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
 			elements.$freeBadge.text( 'Free' );
-			elements.$freeBadgeContainer.append( this.elements.$freeBadge );
-			elements.$titleBadge.after( this.elements.$freeBadgeContainer );
+			elements.$freeBadgeContainer.append( elements.$freeBadge );
+			elements.$titleBadge.after( elements.$freeBadgeContainer );
 			this.updateElements( elements );
 		}
 		const $actionButton = this.dialog.getElements( 'action' );
