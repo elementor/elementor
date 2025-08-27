@@ -10,6 +10,7 @@ import {
 	Typography,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import { EllipsisWithTooltip } from '@elementor/editor-ui';
 
 const TITLE_ID = 'delete-variable-dialog';
 
@@ -34,7 +35,7 @@ export const DeleteConfirmationDialog = ( {
 				<DialogContentText variant="body2" color="textPrimary">
 					{ __( 'All elements using', 'elementor' ) }
 					<Typography variant="subtitle2" component="span">
-						&nbsp;{ label }&nbsp;
+						<EllipsisWithTooltip title={ label }>{ label }</EllipsisWithTooltip>
 					</Typography>
 					{ __( 'will keep their current values, but the variable itself will be removed.', 'elementor' ) }
 				</DialogContentText>
