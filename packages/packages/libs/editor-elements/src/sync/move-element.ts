@@ -1,7 +1,6 @@
-import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
-
+import { createElement } from './create-element';
+import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
-import { type V1Element } from './types';
 
 type Options = {
 	useHistory?: boolean;
@@ -27,9 +26,18 @@ export function moveElement( { elementId, targetContainerId, options = {} }: Mov
 		throw new Error( `Target container with ID "${ targetContainerId }" not found` );
 	}
 
-	return runCommandSync< V1Element >( 'document/elements/move', {
-		container,
-		target,
+	const modelToRecreate = container.model.toJSON();
+
+	deleteElement( {
+		elementId,
+		options,
+	} );
+
+	const newContainer = createElement( {
+		containerId: targetContainerId,
+		model: modelToRecreate,
 		options: { edit: false, ...options },
 	} );
+
+	return newContainer;
 }

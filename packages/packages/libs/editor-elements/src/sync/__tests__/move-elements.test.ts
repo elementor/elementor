@@ -406,15 +406,8 @@ describe( 'moveElements', () => {
 
 		act( () => {
 			historyMock.instance.undo();
-		} );
-		act( () => {
 			historyMock.instance.redo();
-		} );
-
-		act( () => {
 			historyMock.instance.undo();
-		} );
-		act( () => {
 			historyMock.instance.redo();
 		} );
 
