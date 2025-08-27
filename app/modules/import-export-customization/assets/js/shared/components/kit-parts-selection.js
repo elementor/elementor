@@ -1,6 +1,7 @@
 import { useState, Fragment } from 'react';
 import { Box, Typography, Stack, Checkbox, FormControlLabel, Button, Tooltip } from '@elementor/ui';
 import PropTypes from 'prop-types';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import kitContentData from '../kit-content-data';
 import useContextDetection from '../hooks/use-context-detection';
 import { ReExportBanner } from './ReExportBanner';
@@ -121,7 +122,10 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 				<Button
 					variant="contained"
 					color="promotion"
-					onClick={ () => window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' ) }
+					onClick={ () => {
+						AppsEventTracking.sendKitsCloudUpgradeClicked( item.type );
+						window.open( 'https://go.elementor.com/go-pro-import-export', '_blank' );
+					} }
 					startIcon={ <span className="eicon-upgrade-crown"></span> }
 					sx={ { alignSelf: 'center' } }
 					data-type={ item.type }

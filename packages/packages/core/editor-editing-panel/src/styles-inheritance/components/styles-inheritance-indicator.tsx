@@ -15,8 +15,13 @@ import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
 
 const disabledControls = [ 'box-shadow', 'background-overlay', 'filter', 'backdrop-filter', 'transform', 'transition' ];
 
-export const StylesInheritanceIndicator = () => {
-	const { path, propType } = useBoundProp();
+export const StylesInheritanceIndicator = ( {
+	customContext,
+}: {
+	customContext?: { path: string[]; propType: PropType };
+} ) => {
+	const context = useBoundProp();
+	const { path, propType } = customContext || context;
 	const inheritanceChain = useStylesInheritanceChain( path );
 
 	if ( ! path || ! inheritanceChain.length ) {

@@ -95,7 +95,7 @@ describe( 'TransitionRepeaterControl', () => {
 		let addButton = null;
 		// Assert
 		await waitFor( () => {
-			addButton = screen.getByLabelText( 'Add item' );
+			addButton = screen.getByLabelText( 'Add transitions item' );
 			expect( addButton ).toBeInTheDocument();
 		} );
 		expect( addButton ).not.toBeNull();
@@ -118,7 +118,7 @@ describe( 'TransitionRepeaterControl', () => {
 
 		// Assert
 		await waitFor( () => {
-			addButton = screen.getByLabelText( 'Add item' );
+			addButton = screen.getByLabelText( 'Add transitions item' );
 			expect( addButton ).toBeInTheDocument();
 		} );
 		expect( addButton ).not.toBeNull();
