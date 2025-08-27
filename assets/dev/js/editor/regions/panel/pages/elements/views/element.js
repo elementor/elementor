@@ -86,11 +86,12 @@ module.exports = Marionette.ItemView.extend( {
 			configPromotion = elementor.config.promotion;
 
 		let promotion = configPromotion.elements,
-			url = sprintf( promotion.action_button.url, widgetType );
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			url = promotion.action_button.url;
 
 		if ( isIntegration ) {
 			promotion = configPromotion?.integration?.[ widgetType ];
-			url = promotion.action_button.url.toString().replaceAll( '&amp;', '&' )
+			url = promotion.action_button.url.toString().replaceAll( '&amp;', '&' );
 		}
 
 		elementor.promotion.showDialog( {
@@ -103,7 +104,6 @@ module.exports = Marionette.ItemView.extend( {
 				blockStart: '-7',
 			},
 			actionButton: {
-				// eslint-disable-next-line @wordpress/valid-sprintf
 				url,
 				text: promotion.action_button.text,
 				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
