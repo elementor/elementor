@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 3.31.3 - 2025-08-27 =
+
+* Tweak: Disabled indication popover on repeater items – Editor V4
+* Tweak: Enforced numeric keys in `promotionWidgets` and ensured consistent Pro widget injection
+* Fix: Floating Bar disappears from the frontend after activating Elementor Pro
+
 = 3.31.2 - 2025-08-11 =
 
 * Tweak: Improved permissions functionality in Class Management - Editor V4
