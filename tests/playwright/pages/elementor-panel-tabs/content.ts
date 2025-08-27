@@ -3,6 +3,14 @@ import { expect, type Frame, Locator, type Page, type TestInfo } from '@playwrig
 import EditorPage from '../editor-page';
 import { LinkOptions } from '../../types/types';
 
+/**
+ * Helper design contract:
+ * - Keep helpers generic & reusable (accept IDs/values; return IDs/locators).
+ * - Always operate via the Editor iframe (use this.getPreviewFrame()).
+ * - Use stable selectors (getByRole/getByTestId), no palette-click creation.
+ * - Prefer adding small helpers over modifying existing ones in a breaking way.
+ */
+
 export default class Content {
 	readonly page: Page;
 	readonly editor: EditorPage;

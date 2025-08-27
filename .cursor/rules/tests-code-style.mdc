@@ -9,3 +9,22 @@ alwaysApply: false
 - For repeated code such as test setup, mocks or assertions, extract them into helper methods or setup functions.
 - Example: If multiple tests initialize the same mocks or objects, move this logic to a shared setup function rather than duplicating code in each test.
 - Always use the Arrange-Act-Assert comments and concept on your tests
+# Testing Rules (Cursor)
+
+- Never rely on flaky behavior or timeouts. Use condition-based waits only.
+- Always reset experiments in `afterAll` if you change them.
+- Use stable selectors such as `getByRole` or `getByTestId`.
+- Never update snapshots unless explicitly instructed to do so.
+- Do not hardcode dynamic content (avatars, dates, version numbers).
+- Do not modify the environment unless explicitly instructed.
+- All tests must run headlessly in CI and localls.
+- The Editor is inside an iframe — handle it appropriately.
+- For localhost:8888, use credentials: `admin` / `password`.
+- Never restart the environment or change the WordPress instance without explicit permission.
+- Handle browser dialogs explicitly: if a test triggers `beforeunload`, `alert`, `confirm`, or `prompt`, always use `page.once('dialog', …)` and accept/dismiss explicitly. Do not rely on defaults.
+- When debugging, still run in headless mode.
+- Tests go under tests/**; reference TC-IDs from plan.
+- Always read editor-page.ts before adding code; reuse existing helpers.
+- Use editor.addElement / editor.addWidget for creation; no palette-click creation in production tests.
+- New helpers must be minimal, generic, and reusable; prefer optional params to modifying existing behavior.
+- If a change risks breaking existing helpers, stop and request approval.
