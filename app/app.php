@@ -287,8 +287,8 @@ class App extends BaseApp {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => 'import-export-customization',
 			'title' => esc_html__( 'Import/Export Customization', 'elementor' ),
-			'description' => esc_html__( 'Enable advanced customization options for import/export functionality.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
+			'description' => esc_html__( 'Enhanced import/export for website templates. Selectively include site content, templates, and settings with advanced granular control.', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
 		] );
 	}
