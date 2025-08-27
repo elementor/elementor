@@ -85,10 +85,12 @@ module.exports = Marionette.ItemView.extend( {
 			isIntegration = this.isIntegration(),
 			configPromotion = elementor.config.promotion;
 
-		let promotion = configPromotion.elements;
+		let promotion = configPromotion.elements,
+			url = sprintf( promotion.action_button.url, widgetType );
 
 		if ( isIntegration ) {
 			promotion = configPromotion?.integration?.[ widgetType ];
+			url = promotion.action_button.url.toString().replaceAll( '&amp;', '&' )
 		}
 
 		elementor.promotion.showDialog( {
@@ -102,10 +104,11 @@ module.exports = Marionette.ItemView.extend( {
 			},
 			actionButton: {
 				// eslint-disable-next-line @wordpress/valid-sprintf
-				url: sprintf( promotion.action_button.url.toString().replaceAll( '&amp;', '&' ), widgetType ),
+				url,
 				text: promotion.action_button.text,
 				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
 			},
+			hideProTag: isIntegration,
 		} );
 	},
 

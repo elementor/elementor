@@ -12,6 +12,7 @@ export default class extends elementorModules.Module {
 			text: null,
 			classes: [ 'elementor-button', 'e-accent' ],
 		},
+		hideProTag: false,
 	};
 
 	elements = {
@@ -62,14 +63,24 @@ export default class extends elementorModules.Module {
 		);
 	}
 
+	getElements() {
+		return this.elements;
+	}
+
+	updateElements( elements ) {
+		this.elements = elements;
+	}
+
 	hideProTag() {
-		this.elements.$titleBadge.css( 'display', 'none' );
-		if ( ! this.elements.$freeBadgeContainer ) {
-			this.elements.$freeBadgeContainer = jQuery( '<div>', { class: 'e-free-badge-container' } );
-			this.elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
-			this.elements.$freeBadge.text( 'Free' );
-			this.elements.$freeBadgeContainer.append( this.elements.$freeBadge );
-			this.elements.$titleBadge.after( this.elements.$freeBadgeContainer );
+		const elements = this.getElements();
+		elements.$titleBadge.css( 'display', 'none' );
+		if ( ! elements.$freeBadgeContainer ) {
+			elements.$freeBadgeContainer = jQuery( '<div>', { class: 'e-free-badge-container' } );
+			elements.$freeBadge = jQuery( '<span>', { class: 'e-free-badge' } );
+			elements.$freeBadge.text( 'Free' );
+			elements.$freeBadgeContainer.append( this.elements.$freeBadge );
+			elements.$titleBadge.after( this.elements.$freeBadgeContainer );
+			this.updateElements( elements );
 		}
 		const $actionButton = this.dialog.getElements( 'action' );
 		$actionButton.removeClass( 'go-pro' );
@@ -77,9 +88,14 @@ export default class extends elementorModules.Module {
 	}
 
 	resetProTag() {
-		this.elements.$titleBadge.css( 'display', 'inline-block' );
-		this.elements.$freeBadgeContainer.remove();
-		this.elements.$freeBadgeContainer = null;
+		const elements = this.getElements();
+		elements.$titleBadge.css( 'display', 'inline-block' );
+		if ( elements.$freeBadgeContainer?.remove ) {
+			elements.$freeBadgeContainer.remove();
+		}
+		elements.$freeBadgeContainer = null;
+		elements.$freeBadge = null;
+		this.updateElements( elements );
 		this.dialog.getElements( 'action' ).addClass( 'go-pro' );
 	}
 
@@ -135,6 +151,8 @@ export default class extends elementorModules.Module {
 
 		if ( options.hideProTag ) {
 			this.hideProTag();
+		} else {
+			this.resetProTag();
 		}
 
 		return this.dialog.show();
