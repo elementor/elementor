@@ -83,7 +83,6 @@ const createEditorDidMountHandler = (
 
 		setCustomSyntaxRules( editor, monaco );
 
-		// Initialize hasContent on mount based on current model value
 		const initialCode = editor.getModel()?.getValue() ?? '';
 		const initialUserContent = getActual( initialCode );
 		onUserContentChange( initialUserContent );
