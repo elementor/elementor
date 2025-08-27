@@ -11,7 +11,13 @@
 - In: …
 - Out: …
 
-## E2E scenarios (4–6)
+## Test Strategy
+- **Coverage goals**: Focus on critical user journeys and edge cases
+- **Test types**: E2E scenarios covering editor interaction, frontend rendering, and data persistence
+- **Quality criteria**: Each test should validate distinct functionality without overlap
+- **Quantity**: As many tests as needed to ensure comprehensive coverage (typically 3-8 scenarios)
+
+## E2E scenarios
 ### TC-001 — <Outcome-focused title>
 - Preconditions: …
 - Steps:
@@ -26,8 +32,15 @@
 - Priority: High
 - Status: Planned
 
-<!-- Repeat TC-002 … TC-006 -->
+<!-- Add additional test cases as needed for comprehensive coverage -->
 
 ## Mapping to code
 - [ ] TC-001 → `tests/playwright/sanity/modules/<w>/<f>.test.ts` (helpers: editor-page.ts)
 - [ ] …
+
+## Test Cases Summary
+
+| TC # | Title | Priority | Status |
+|------|-------|----------|--------|
+| TC-001 | <Outcome-focused title> | High | Planned |
+<!-- Add rows as needed for each test case -->
