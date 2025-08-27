@@ -27,7 +27,7 @@ export const NoVariables = ( { icon, title, onAdd }: Props ) => {
 			{ canAdd ? (
 				<>
 					<NoVariablesContent
-						title={ title || __( 'Create your first variable NOW!!', 'elementor' ) }
+						title={ title || __( 'Create your first variable', 'elementor' ) }
 						message={ __(
 							'Variables are saved attributes that you can apply anywhere on your site.',
 							'elementor'
