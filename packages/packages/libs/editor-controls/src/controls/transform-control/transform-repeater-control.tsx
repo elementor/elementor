@@ -89,6 +89,7 @@ const Repeater = ( { headerRef, propType }: { headerRef: React.RefObject< HTMLDi
 						disabled={ shouldDisableAddItem }
 						tooltipContent={ ToolTip }
 						enableTooltip={ shouldDisableAddItem }
+						ariaLabel={ 'transform' }
 					/>
 				</Header>
 				<ItemsContainer itemTemplate={ <Item Icon={ TransformIcon } Label={ TransformLabel } /> }>
