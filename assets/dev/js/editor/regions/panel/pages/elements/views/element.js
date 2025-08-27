@@ -84,12 +84,6 @@ module.exports = Marionette.ItemView.extend( {
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
 			isIntegration = this.isIntegration();
 
-<<<<<<< HEAD
-		let promotion = elementor.config.promotion.elements;
-
-		if ( isIntegration ) {
-			promotion = elementor.config.promotion?.integration?.[ widgetType ];
-=======
 		let promotion = configPromotion.elements,
 			// eslint-disable-next-line @wordpress/valid-sprintf
 			url = sprintf( promotion.action_button.url.toString(), widgetType );
@@ -97,7 +91,6 @@ module.exports = Marionette.ItemView.extend( {
 		if ( isIntegration ) {
 			promotion = configPromotion?.integration?.[ widgetType ];
 			url = promotion.action_button.url.toString().replaceAll( '&amp;', '&' );
->>>>>>> 1377a42bd4 (Fix: Integration Free tag [ED-19619][APP-1307] (#32462))
 		}
 
 		elementor.promotion.showDialog( {
