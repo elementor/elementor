@@ -35,17 +35,16 @@ export const DeletedVariableAlert = ( { onClose, onUnlink, onRestore, label }: D
 				<AlertTitle>{ __( 'Deleted variable', 'elementor' ) }</AlertTitle>
 				<Typography variant="body2" color="textPrimary">
 					{ __( 'The variable', 'elementor' ) }
-			
-				&nbsp;&apos;
-				<Typography variant="body2" component="span" sx={ { lineBreak: 'anywhere' } }>
-					{ label }
-				</Typography>
-				&apos;&nbsp;
-				{ __(
-					'has been deleted, but it is still referenced in this location. You may restore the variable or unlink it to assign a different value.',
-					'elementor'
-				) }
+					&nbsp;&apos;
+					<Typography variant="body2" component="span" sx={ { lineBreak: 'anywhere' } }>
+						{ label }
 					</Typography>
+					&apos;&nbsp;
+					{ __(
+						'has been deleted, but it is still referenced in this location. You may restore the variable or unlink it to assign a different value.',
+						'elementor'
+					) }
+				</Typography>
 			</Alert>
 		</ClickAwayListener>
 	);
