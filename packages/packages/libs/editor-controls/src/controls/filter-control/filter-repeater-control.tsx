@@ -77,7 +77,7 @@ const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
 			<Header label={ label }>
 				<TooltipAddItemAction
 					newItemIndex={ 0 }
-					labelName={ filterPropName === 'backdrop-filter' ? 'backdrop filter' : 'filter' }
+					ariaLabel={ filterPropName === 'backdrop-filter' ? 'backdrop filter' : 'filter' }
 				/>
 			</Header>
 			<ItemsContainer itemTemplate={ <Item Label={ FilterLabel } Icon={ FilterIcon } /> }>

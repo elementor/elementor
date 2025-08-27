@@ -82,7 +82,7 @@ export const RepeatableControl = createControl(
 							<TooltipAddItemAction
 								{ ...addItemTooltipProps }
 								newItemIndex={ 0 }
-								labelName={ repeaterLabel }
+								ariaLabel={ repeaterLabel }
 							/>
 						</Header>
 						<ItemsContainer
