@@ -87,7 +87,7 @@ module.exports = Marionette.ItemView.extend( {
 
 		let promotion = configPromotion.elements,
 			// eslint-disable-next-line @wordpress/valid-sprintf
-			url = promotion.action_button.url;
+			url = sprintf( promotion.action_button.url.toString(), widgetType );
 
 		if ( isIntegration ) {
 			promotion = configPromotion?.integration?.[ widgetType ];
