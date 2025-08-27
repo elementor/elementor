@@ -28,8 +28,8 @@ describe( 'createElements', () => {
 
 	it( 'should create multiple elements and return their data', () => {
 		// Arrange.
-		const mockElement1 = createMockChild( 'element-1', 'button' );
-		const mockElement2 = createMockChild( 'element-2', 'text' );
+		const mockElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		const mockElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
 
 		// Add model.toJSON() method to mock elements using spies
 		const mockElement1ToJSON = jest.spyOn( mockElement1.model || { toJSON: jest.fn() }, 'toJSON' );
@@ -43,13 +43,19 @@ describe( 'createElements', () => {
 		const elementsToCreate = [
 			{
 				containerId: 'parent-1',
-				type: 'button',
-				settings: { text: 'Click me' },
+				model: {
+					elType: 'widget',
+					widgetType: 'button',
+					settings: { text: 'Click me' },
+				},
 			},
 			{
 				containerId: 'parent-1',
-				type: 'text',
-				settings: { content: 'Hello world' },
+				model: {
+					elType: 'widget',
+					widgetType: 'text',
+					settings: { content: 'Hello world' },
+				},
 				options: { useHistory: true },
 			},
 		];
@@ -68,14 +74,20 @@ describe( 'createElements', () => {
 		expect( mockCreateElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 1, {
 			containerId: 'parent-1',
-			type: 'button',
-			settings: { text: 'Click me' },
+			model: {
+				elType: 'widget',
+				widgetType: 'button',
+				settings: { text: 'Click me' },
+			},
 			options: { useHistory: false },
 		} );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 2, {
 			containerId: 'parent-1',
-			type: 'text',
-			settings: { content: 'Hello world' },
+			model: {
+				elType: 'widget',
+				widgetType: 'text',
+				settings: { content: 'Hello world' },
+			},
 			options: { useHistory: false }, // useHistory should always be false for nested elements.
 		} );
 
@@ -86,8 +98,8 @@ describe( 'createElements', () => {
 
 	it( 'should delete created elements on undo and recreate them on redo', () => {
 		// Arrange.
-		const mockElement1 = createMockChild( 'element-1', 'button' );
-		const mockElement2 = createMockChild( 'element-2', 'text' );
+		const mockElement1 = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
+		const mockElement2 = createMockChild( { id: 'element-2', elType: 'widget', widgetType: 'text' } );
 
 		mockCreateElement
 			.mockReturnValueOnce( mockElement1 ) // Initial creation - element 1
@@ -98,13 +110,19 @@ describe( 'createElements', () => {
 		const elementsToCreate = [
 			{
 				containerId: 'parent-1',
-				type: 'button',
-				settings: { text: 'Click me' },
+				model: {
+					elType: 'widget',
+					widgetType: 'button',
+					settings: { text: 'Click me' },
+				},
 			},
 			{
 				containerId: 'parent-1',
-				type: 'text',
-				settings: { content: 'Hello world' },
+				model: {
+					elType: 'widget',
+					widgetType: 'text',
+					settings: { content: 'Hello world' },
+				},
 			},
 		];
 
@@ -135,23 +153,19 @@ describe( 'createElements', () => {
 		expect( mockCreateElement ).toHaveBeenCalledTimes( 4 );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 3, {
 			containerId: 'parent-1',
-			type: 'button',
-			settings: { text: 'Click me' },
-			id: 'element-1',
+			model: { id: 'element-1', elType: 'widget', widgetType: 'button' },
 			options: { useHistory: false },
 		} );
 		expect( mockCreateElement ).toHaveBeenNthCalledWith( 4, {
 			containerId: 'parent-1',
-			type: 'text',
-			settings: { content: 'Hello world' },
-			id: 'element-2',
+			model: { id: 'element-2', elType: 'widget', widgetType: 'text' },
 			options: { useHistory: false },
 		} );
 	} );
 
 	it( 'should use default subtitle when not provided', () => {
 		// Arrange.
-		const mockElement = createMockChild( 'element-1', 'button' );
+		const mockElement = createMockChild( { id: 'element-1', elType: 'widget', widgetType: 'button' } );
 		mockCreateElement.mockReturnValue( mockElement );
 
 		// Act.
@@ -159,8 +173,11 @@ describe( 'createElements', () => {
 			elements: [
 				{
 					containerId: 'parent-1',
-					type: 'button',
-					settings: {},
+					model: {
+						elType: 'widget',
+						widgetType: 'button',
+						settings: {},
+					},
 				},
 			],
 			title: 'Add Element',

@@ -249,7 +249,7 @@ describe( 'TransformRepeaterControl', () => {
 		} );
 
 		// Click the add button
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: 'Add transform item' } );
 		fireEvent.click( addButton );
 
 		// Assert.
@@ -282,7 +282,7 @@ describe( 'TransformRepeaterControl', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Transform' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Add transform item' } ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Move:' ) ).not.toBeInTheDocument();
 	} );
 

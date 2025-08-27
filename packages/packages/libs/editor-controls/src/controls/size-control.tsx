@@ -41,6 +41,7 @@ type BaseSizeControlProps = {
 	anchorRef?: RefObject< HTMLDivElement | null >;
 	min?: number;
 	enablePropTypeUnits?: boolean;
+	id?: string;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
@@ -90,6 +91,7 @@ export const SizeControl = createControl(
 		disableCustom,
 		min = 0,
 		enablePropTypeUnits = false,
+		id,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -219,8 +221,9 @@ export const SizeControl = createControl(
 					onClick={ onInputClick }
 					popupState={ popupState }
 					min={ min }
+					id={ id }
 				/>
-				{ anchorRef?.current && (
+				{ anchorRef?.current && popupState.isOpen && (
 					<TextFieldPopover
 						popupState={ popupState }
 						anchorRef={ anchorRef }
