@@ -17,7 +17,9 @@ type CssEditorProps = {
 
 const setVisualContent = ( value: string ): string => {
 	const trimmed = value.trim();
-	return `element.style {\n${ trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n' }}`;
+	return `element.style {\n${
+		trimmed ? '  ' + trimmed.replace( /\n/g, '\n  ' ) + '\n' : '  \n'
+	}}`;
 };
 
 const getActual = ( value: string ): string => {
@@ -31,7 +33,10 @@ const getActual = ( value: string ): string => {
 		.join( '\n' );
 };
 
-const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
+const preventChangeOnVisualContent = (
+	editor: editor.IStandaloneCodeEditor,
+	monaco: MonacoEditor
+) => {
 	const model = editor.getModel();
 	if ( ! model ) {
 		return;
@@ -44,7 +49,8 @@ const preventChangeOnVisualContent = ( editor: editor.IStandaloneCodeEditor, mon
 		}
 
 		const totalLines = model.getLineCount();
-		const isInProtectedRange = position.lineNumber === 1 || position.lineNumber === totalLines;
+		const isInProtectedRange =
+			position.lineNumber === 1 || position.lineNumber === totalLines;
 
 		if ( isInProtectedRange ) {
 			const allowedKeys = [
@@ -105,7 +111,10 @@ const createEditorDidMountHandler = (
 					return;
 				}
 
-				const hasNoErrors = validate( editorRef.current, monacoRef.current );
+				const hasNoErrors = validate(
+					editorRef.current,
+					monacoRef.current
+				);
 
 				if ( hasNoErrors ) {
 					onChange( userContent );
@@ -120,11 +129,15 @@ const createEditorDidMountHandler = (
 export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const theme = useTheme();
 	const containerRef = React.useRef< HTMLDivElement >( null );
-	const editorRef = React.useRef< editor.IStandaloneCodeEditor | null >( null );
+	const editorRef = React.useRef< editor.IStandaloneCodeEditor | null >(
+		null
+	);
 	const monacoRef = React.useRef< MonacoEditor | null >( null );
 	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
 	const activeBreakpoint = useActiveBreakpoint();
-	const [ hasContent, setHasContent ] = React.useState<boolean>( value.trim() !== '' );
+	const [ hasContent, setHasContent ] = React.useState< boolean >(
+		value.trim() !== ''
+	);
 
 	const handleUserContentChange = React.useCallback( ( newValue: string ) => {
 		setHasContent( newValue.trim() !== '' );
@@ -140,7 +153,13 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		}
 	}, [] );
 
-	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, debounceTimer, onChange, handleUserContentChange );
+	const handleEditorDidMount = createEditorDidMountHandler(
+		editorRef,
+		monacoRef,
+		debounceTimer,
+		onChange,
+		handleUserContentChange
+	);
 
 	const handleReset = () => {
 		const model = editorRef.current?.getModel();
@@ -166,7 +185,10 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		<EditorWrapper ref={ containerRef }>
 			{ hasContent && (
 				<ResetButtonContainer className="reset-btn-container">
-					<ClearIconButton tooltipText={ __( 'Clear', 'elementor' ) } onClick={ handleReset } />
+					<ClearIconButton
+						tooltipText={ __( 'Clear', 'elementor' ) }
+						onClick={ handleReset }
+					/>
 				</ResetButtonContainer>
 			) }
 			<Editor
