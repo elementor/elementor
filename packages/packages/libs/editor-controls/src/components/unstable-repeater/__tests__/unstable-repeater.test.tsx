@@ -62,7 +62,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -73,7 +73,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Assert.
 		expect( screen.getByText( 'Test Repeater' ) ).toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Add item' } ) ).toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: /Add test repeater item/i } ) ).toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -101,7 +101,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -140,7 +140,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -149,7 +149,7 @@ describe( 'UnstableRepeater', () => {
 			</UnstableRepeater>
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: /Add test repeater item/i } );
 		fireEvent.click( addButton );
 
 		// Assert.
@@ -186,7 +186,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -221,7 +221,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -260,7 +260,7 @@ describe( 'UnstableRepeater', () => {
 
 		// Assert.
 		expect( screen.queryByText( 'Test Repeater' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Add item' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: /Add test repeater item/i } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Open item' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -303,7 +303,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ customInitialValues }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...customItemSettings } /> } />
 				<EditItemPopover>
@@ -346,7 +346,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DuplicateItemAction />
@@ -405,7 +405,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<RemoveItemAction />
@@ -458,7 +458,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
@@ -508,7 +508,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
@@ -560,7 +560,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> } />
 				<EditItemPopover>
@@ -569,7 +569,7 @@ describe( 'UnstableRepeater', () => {
 			</UnstableRepeater>
 		);
 
-		const addButton = screen.getByRole( 'button', { name: 'Add item' } );
+		const addButton = screen.getByRole( 'button', { name: /Add repeater item/i } );
 
 		fireEvent.click( addButton );
 
