@@ -58,4 +58,8 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	 * @return array<string, Prop_Type>
 	 */
 	abstract protected static function define_props_schema(): array;
+
+	public static function generate() {
+		return Widget_Builder::make( static::get_element_type() );
+	}
 }

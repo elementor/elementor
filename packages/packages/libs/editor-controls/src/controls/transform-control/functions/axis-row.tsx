@@ -18,11 +18,12 @@ type TransformAxisRowProps = {
 };
 
 export const AxisRow = ( { label, bind, startIcon, anchorRef, units, variant = 'angle' }: TransformAxisRowProps ) => {
+	const safeId = label.replace( /\s+/g, '-' ).toLowerCase();
 	return (
 		<Grid item xs={ 12 }>
 			<PopoverGridContainer ref={ anchorRef }>
 				<Grid item xs={ 6 }>
-					<ControlLabel>{ label }</ControlLabel>
+					<ControlLabel htmlFor={ safeId }>{ label }</ControlLabel>
 				</Grid>
 				<Grid item xs={ 6 }>
 					<PropKeyProvider bind={ bind }>
@@ -32,6 +33,7 @@ export const AxisRow = ( { label, bind, startIcon, anchorRef, units, variant = '
 							units={ units }
 							variant={ variant }
 							min={ -Number.MAX_SAFE_INTEGER }
+							id={ safeId }
 						/>
 					</PropKeyProvider>
 				</Grid>

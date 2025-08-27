@@ -3,6 +3,7 @@ import {
 	ImageControl,
 	KeyValueControl,
 	LinkControl,
+	NumberControl,
 	RepeatableControl,
 	SelectControl,
 	SizeControl,
@@ -19,6 +20,7 @@ import {
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
+	numberPropTypeUtil,
 	type PropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
@@ -42,6 +44,7 @@ const controlTypes = {
 	link: { component: LinkControl, layout: 'custom', propTypeUtil: linkPropTypeUtil },
 	url: { component: UrlControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	switch: { component: SwitchControl, layout: 'two-columns', propTypeUtil: booleanPropTypeUtil },
+	number: { component: NumberControl, layout: 'two-columns', propTypeUtil: numberPropTypeUtil },
 	repeatable: { component: RepeatableControl, layout: 'full', propTypeUtil: undefined },
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
 } as const satisfies ControlRegistry;

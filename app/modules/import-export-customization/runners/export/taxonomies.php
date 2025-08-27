@@ -101,7 +101,7 @@ class Taxonomies extends Export_Runner_Base {
 		];
 	}
 
-	private function export_terms( $taxonomy ) {
+	public function export_terms( $taxonomy ) {
 		$terms = get_terms( [
 			'taxonomy' => (array) $taxonomy,
 			'hide_empty' => true,

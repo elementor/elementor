@@ -69,9 +69,7 @@ export const removeElements = ( {
 					if ( parent && model ) {
 						createElement( {
 							containerId: parent.id,
-							settings: model.settings || {},
-							type: model.widgetType || model.elType,
-							id: model.id,
+							model,
 							options: { useHistory: false, at },
 						} );
 					}

@@ -52,7 +52,7 @@
     "@elementor/locations": "3.32.0",
     "@elementor/query": "3.32.0",
     "@elementor/session": "3.32.0",
-    "@elementor/ui": "1.36.8",
+    "@elementor/ui": "1.36.12",
     "@elementor/utils": "3.32.0",
     "@elementor/wp-media": "3.32.0",
     "@wordpress/i18n": "^5.13.0",

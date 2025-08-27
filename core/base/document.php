@@ -727,15 +727,14 @@ abstract class Document extends Controls_Stack {
 		do_action( 'elementor/document/before_get_config', $this );
 
 		if ( static::get_property( 'has_elements' ) ) {
-			$widgets_config = Plugin::$instance->widgets_manager->get_widget_types_config();
-
 			$elements_config = Collection::make( Plugin::$instance->elements_manager->get_element_types() )
 				->filter( fn( $element ) => ( ! empty( $element->get_config()['include_in_widgets_config'] ) ) )
 				->map( fn( $element ) => $element->get_config() )
 				->all();
 
-			$config['widgets'] = array_merge( $elements_config, $widgets_config );
 			$config['elements'] = $this->get_elements_raw_data( null, true );
+			// `get_elements_raw_data` has to be called before `get_widget_types_config`, because it affects it.
+			$config['widgets'] = array_merge( $elements_config, Plugin::$instance->widgets_manager->get_widget_types_config() );
 		}
 
 		$additional_config = [];
@@ -1798,7 +1797,7 @@ abstract class Document extends Controls_Stack {
 	 * @access protected
 	 */
 	protected function print_elements( $elements_data ) {
-		$is_element_cache_active = Plugin::$instance->experiments->is_feature_active( 'e_element_cache' ) && 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
+		$is_element_cache_active = 'disable' !== get_option( 'elementor_element_cache_ttl', '' );
 		if ( ! $is_element_cache_active ) {
 			ob_start();
 

@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Modules\AtomicWidgets\Opt_In;
 use Elementor\Plugin;
 use Elementor\Utils;
+use Elementor\Core\Utils\Api\Parse_Result;
 
 class Style_Parser {
 	const VALID_TYPES = [
