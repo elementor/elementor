@@ -48,7 +48,7 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 	 *
 	 * @return $this
 	 */
-	public function filter( callable $callback = null ) {
+	public function filter( ?callable $callback = null ) {
 		if ( ! $callback ) {
 			return new static( array_filter( $this->items ) );
 		}
