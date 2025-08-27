@@ -31,6 +31,7 @@
 				transition: var(--e-a-transition-hover);
 				cursor: pointer;
 				overflow: hidden;
+				width: 100%;
 				padding: 8px;
 			}
 
@@ -48,6 +49,7 @@
 				}
 
 				&:not(:checked) + label {
+					background-color: var(--e-a-color-white);
 					opacity: 0.5;
 				}
 			}

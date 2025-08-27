@@ -38,7 +38,7 @@
 #elementor-panel-elements-search-area {
 	background-color: var(--e-a-bg-default);
 	position: sticky;
-	top: 0;
+	inset-block-start: 0;
 	padding: 15px;
 	z-index: $first-layer;
 }
@@ -59,15 +59,28 @@
 
 	+ i {
 		position: absolute;
-		@include start(10px);
-		top: 50%;
-		color: var(--e-a-color-txt-disabled);
+		inset-block-start: 50%;
+		inset-inline-start: 10px;
 		transform: translateY(-50%);
+		color: var(--e-a-color-txt-disabled);
 	}
 
 	&:focus {
 		border-color: var(--e-a-border-color-focus);
 		padding-inline-end: 15px;
+	}
+}
+
+.e-free-badge-container {
+	flex-grow: 1;
+	margin-inline-start: 10px;
+	margin-inline-end: 10px;
+
+	.e-free-badge {
+		border-radius: var(--e-a-border-radius);
+		background-color: var(--e-a-btn-bg);
+		color: var(--e-a-btn-color-invert);
+		padding: 3px 5px;
 	}
 }
 
@@ -96,8 +109,8 @@
 
 		.eicon-atomic {
 			position: absolute;
-			top: 5px;
-			@include end(5px);
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 			color: var(--e-a-color-txt);
 		}
 
@@ -108,6 +121,11 @@
 
 			> .eicon-lock {
 				color: var(--e-a-color-accent);
+			}
+
+
+			> .eicon-plug {
+				color: var(--e-a-color-info);
 			}
 		}
 
@@ -127,10 +145,10 @@
 			font-size: 12px;
 		}
 
-		> .eicon-lock {
+		> .eicon-lock, .eicon-plug {
 			position: absolute;
-			top: 5px;
-			@include end(5px);
+			inset-block-start: 5px;
+			inset-inline-end: 5px;
 			color: var(--e-a-color-txt-disabled);
 		}
 
@@ -153,8 +171,8 @@
 	&:after {
 		content: '';
 		position: absolute;
-		top: 15px;
-		@include end(100%);
+		inset-block-start: 15px;
+		inset-inline-end: 100%;
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
 		border-inline-end-color: var(--e-a-bg-default);
@@ -215,8 +233,8 @@
 	&:after {
 		content: '';
 		position: absolute;
-		top: 15px;
-		@include end(100%);
+		inset-block-start: 15px;
+		inset-inline-end: 100%;
 		transform: scaleY(0.7);
 		border: 10px solid transparent;
 		border-inline-end-color: var(--e-a-bg-default);

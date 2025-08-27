@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,16 +26,6 @@ class Background_Gradient_Overlay_Prop_Type extends Object_Prop_Type {
 	}
 
 	private static function get_position_enum_values(): array {
-		return [
-			'center center',
-			'center left',
-			'center right',
-			'top center',
-			'top left',
-			'top right',
-			'bottom center',
-			'bottom left',
-			'bottom right',
-		];
+		return Position_Prop_Type::get_position_enum_values();
 	}
 }

@@ -34,3 +34,4 @@ runs:
             bash ${{ inputs.BUILD_SCRIPT_PATH }}
       env:
         PACKAGE_VERSION: ${{ inputs.PACKAGE_VERSION }}
+        MIXPANEL_TOKEN: ${{ env.MIXPANEL_TOKEN }}

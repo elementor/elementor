@@ -25,7 +25,7 @@ export const TaxonomyTypes = [
 	},
 	{
 		key: SUBSCRIPTION_PLAN,
-		label: __( 'Kits by plan', 'elementor' ),
+		label: __( 'Plan', 'elementor' ),
 		data: [],
 	},
 ];

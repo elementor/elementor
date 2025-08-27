@@ -21,7 +21,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 
 	protected function get_promotion_title(): string {
 		return sprintf(
-			/* translators: %s: br  */
+			/* translators: %s: `<br>` tag. */
 			esc_html__( 'Enjoy creative freedom %s with Custom Icons', 'elementor' ),
 			'<br />'
 		);
@@ -30,6 +30,7 @@ class Custom_Icons_Promotion_Item extends Base_Promotion_Template {
 	protected function get_content_lines(): array {
 		return [
 			sprintf(
+				/* translators: %s: `<br>` tag. */
 				esc_html__( 'Expand your icon library beyond FontAwesome and add icon %s libraries of your choice', 'elementor' ),
 				'<br />'
 			),

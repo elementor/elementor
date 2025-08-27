@@ -491,13 +491,13 @@ class Widget_Icon extends Widget_Base {
 			return;
 		}
 
-		if ( settings.link.url ) {
-			view.addRenderAttribute( 'link_url', 'href', elementor.helpers.sanitizeUrl( settings.link.url ) );
+		if ( settings.link?.url ) {
+			view.addRenderAttribute( 'link_url', 'href', elementor.helpers.sanitizeUrl( settings.link?.url ) );
 		}
 
 		const iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' ),
-			iconTag = settings.link.url ? 'a' : 'div';
+			iconTag = settings.link?.url ? 'a' : 'div';
 
 		view.addRenderAttribute( 'icon', 'class', 'elementor-icon' );
 

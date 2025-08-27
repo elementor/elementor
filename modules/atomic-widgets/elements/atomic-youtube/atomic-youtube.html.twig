@@ -1,4 +1,5 @@
 {% if settings.source is not empty %}
+	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 	{% set classes = settings.classes | merge( [ base_styles.base ] ) | join(' ') %}
 	{% set data_settings = {
 		'source': settings.source,
@@ -13,5 +14,5 @@
 		'privacy': settings.privacy_mode,
 		'lazyload': settings.lazyload,
 	} %}
-	<div data-id="{{ id }}" data-e-type="{{ type }}" class="{{ classes }}" data-settings="{{ data_settings|json_encode|e('html_attr') }}"></div>
+	<div data-id="{{ id }}" data-e-type="{{ type }}" {{ id_attribute }} class="{{ classes }}" {{ settings.attributes | raw }} data-settings="{{ data_settings|json_encode|e('html_attr') }}"></div>
 {% endif %}

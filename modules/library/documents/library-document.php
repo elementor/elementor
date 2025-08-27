@@ -28,6 +28,11 @@ abstract class Library_Document extends Document {
 	const TAXONOMY_TYPE_SLUG = 'elementor_library_type';
 
 	/**
+	 * The customization group for Kit Export.
+	 */
+	const EXPORT_GROUP = 'site-templates';
+
+	/**
 	 * Get document properties.
 	 *
 	 * Retrieve the document properties.
@@ -45,6 +50,7 @@ abstract class Library_Document extends Document {
 		$properties['show_in_library'] = true;
 		$properties['register_type'] = true;
 		$properties['cpt'] = [ Source_Local::CPT ];
+		$properties['export_group'] = static::EXPORT_GROUP;
 
 		return $properties;
 	}

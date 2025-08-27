@@ -1,18 +1,29 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Types_Mapping;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Image_Overlay_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Overlay_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Box_Shadow_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Radius_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Border_Width_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Backdrop_Filter_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Filter_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Layout_Direction_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Position_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Stroke_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Transform_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Flex_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,18 +50,10 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'min-height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+			'min-width' => Size_Prop_Type::make(),
+			'min-height' => Size_Prop_Type::make(),
 			'max-width' => Size_Prop_Type::make(),
 			'max-height' => Size_Prop_Type::make(),
 			'overflow' => String_Prop_Type::make()->enum( [
@@ -66,17 +69,22 @@ class Style_Schema {
 				'none',
 				'scale-down',
 			] ),
-			'object-position' => String_Prop_Type::make()->enum( [
-				'center center',
-				'center left',
-				'center right',
-				'top center',
-				'top left',
-				'top right',
-				'bottom center',
-				'bottom left',
-				'bottom right',
-			] ),
+			'object-position' => Union_Prop_Type::make()
+				->add_prop_type( String_Prop_Type::make()->enum( Position_Prop_Type::get_position_enum_values() ) )
+				->add_prop_type( Position_Prop_Type::make() )
+				->set_dependencies(
+					Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+					->where( [
+						'operator' => 'ne',
+						'path' => [ 'object-fit' ],
+						'value' => 'fill',
+					] )
+					->where( [
+						'operator' => 'exists',
+						'path' => [ 'object-fit' ],
+					] )
+					->get()
+				),
 		];
 	}
 
@@ -89,20 +97,12 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			] ),
-			'inset-block-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-inline-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-block-end' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
-			'inset-inline-start' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'inset-block-start' => Size_Prop_Type::make(),
+			'inset-inline-end' => Size_Prop_Type::make(),
+			'inset-block-end' => Size_Prop_Type::make(),
+			'inset-inline-start' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make(),
-			'scroll-margin-top' => Size_Prop_Type::make(),
+			'scroll-margin-top' => Size_Prop_Type::make()->units( Size_Constants::anchor_offset() ),
 		];
 	}
 
@@ -124,13 +124,22 @@ class Style_Schema {
 				'bolder',
 				'lighter',
 			] ),
-			'font-size' => Size_Prop_Type::make(),
+			'font-size' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'color' => Color_Prop_Type::make(),
-			'letter-spacing' => Size_Prop_Type::make(),
-			'word-spacing' => Size_Prop_Type::make(),
+			'letter-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
+			'word-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'column-count' => Number_Prop_Type::make(),
-			'column-gap' => Size_Prop_Type::make(),
-			'line-height' => Size_Prop_Type::make(),
+			'column-gap' => Size_Prop_Type::make()
+				->set_dependencies(
+					Dependency_Manager::make()
+					->where( [
+						'operator' => 'gte',
+						'path' => [ 'column-count' ],
+						'value' => 1,
+					] )
+					->get()
+				),
+			'line-height' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
 				'center',
@@ -171,22 +180,21 @@ class Style_Schema {
 	private static function get_spacing_props() {
 		return [
 			'padding' => Union_Prop_Type::make()
-				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
+				->add_prop_type( Dimensions_Prop_Type::make_with_units( Size_Constants::spacing() ) )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::spacing() ) ),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+				->add_prop_type( Size_Prop_Type::make() ),
 		];
 	}
 
 	private static function get_border_props() {
 		return [
 			'border-radius' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) )
 				->add_prop_type( Border_Radius_Prop_Type::make() ),
 			'border-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) )
 				->add_prop_type( Border_Width_Prop_Type::make() ),
 			'border-color' => Color_Prop_Type::make(),
 			'border-style' => String_Prop_Type::make()->enum( [
@@ -205,14 +213,26 @@ class Style_Schema {
 	}
 
 	private static function get_background_props() {
+		// Background image overlay as an exception
+		$background_prop_type = Background_Prop_Type::make();
+		$bg_overlay_prop_type = $background_prop_type->get_shape_field( Background_Overlay_Prop_Type::get_key() );
+		$bg_image_overlay_prop_type = $bg_overlay_prop_type->get_item_type()->get_prop_type( Background_Image_Overlay_Prop_Type::get_key() );
+		Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types( $bg_image_overlay_prop_type->get_shape() );
 		return [
-			'background' => Background_Prop_Type::make(),
+			'background' => $background_prop_type,
 		];
 	}
 
 	private static function get_effects_props() {
 		return [
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
+			'opacity' => Size_Prop_Type::make()
+				->units( Size_Constants::opacity() )
+				->default_unit( Size_Constants::UNIT_PERCENT ),
+			'filter' => Filter_Prop_Type::make(),
+			'backdrop-filter' => Backdrop_Filter_Prop_Type::make(),
+			'transform' => Transform_Prop_Type::make(),
+			'transition' => Transition_Prop_Type::make(),
 		];
 	}
 
@@ -238,17 +258,13 @@ class Style_Schema {
 			] ),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::layout() ) ),
 			'flex-wrap' => String_Prop_Type::make()->enum( [
 				'wrap',
 				'nowrap',
 				'wrap-reverse',
 			] ),
-			'flex-grow' => Number_Prop_Type::make(),
-			'flex-shrink' => Number_Prop_Type::make(),
-			'flex-basis' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( String_Prop_Type::make()->enum( [ 'auto' ] ) ),
+			'flex' => Flex_Prop_Type::make(),
 		];
 	}
 

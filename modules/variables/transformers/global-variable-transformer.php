@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Transformers;
 
+use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -10,10 +11,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Global_Variable_Transformer extends Transformer_Base {
 	public function transform( $value, $key ) {
-		if ( ! trim( $value ) ) {
+		$variable = Variables::by_id( $value );
+
+		if ( ! $variable ) {
 			return null;
 		}
 
-		return "var(--{$value})";
+		if ( array_key_exists( 'deleted', $variable ) && $variable['deleted'] ) {
+			return "var(--{$value})";
+		}
+
+		$identifier = $variable['label'];
+
+		if ( ! trim( $identifier ) ) {
+			return null;
+		}
+
+		return "var(--{$identifier})";
 	}
 }

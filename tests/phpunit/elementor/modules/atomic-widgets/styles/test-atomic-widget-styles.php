@@ -1,12 +1,12 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
+use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Testing\Modules\AtomicWidgets\Props_Factory;
 use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Spatie\Snapshots\MatchesSnapshots;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,20 +15,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/../props-factory.php';
 
-class Test_Atomic_Styles extends Elementor_Test_Base {
+class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 	use MatchesSnapshots;
+
+	private $mock_styles_manager;
 
 	public function set_up() {
 		parent::set_up();
 
-		remove_all_filters( 'elementor/atomic-widgets/styles/transformers' );
-		remove_all_actions( 'elementor/element/parse_css' );
+		$this->mock_styles_manager = $this->createMock( Atomic_Styles_Manager::class );
+
+		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
 	}
 
-	public function test_parse_atomic_widget_styles__append_css_of_multiple_widgets() {
+	public function test_register_styles__registers_styles_for_atomic_widgets() {
 		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
+		$atomic_widget_styles = new Atomic_Widget_Styles();
+		$atomic_widget_styles->register_hooks();
+
 		$element_1 = $this->make_mock_widget([
 			'controls' => [],
 			'props_schema' => [],
@@ -83,21 +87,75 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 			],
 		]);
 
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element_1 );
-		do_action( 'elementor/element/parse_css', $post, $element_2 );
+		$doc_1_id = $this->make_mock_post([
+			$element_1->get_raw_data(),
+			$element_2->get_raw_data(),
+		]);
 
-		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
-	}
-
-	public function test_parse_atomic_widget_styles__append_css_of_styles_with_breakpoints() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element_1 = $this->make_mock_widget([
+		$element_3 = $this->make_mock_widget([
 			'controls' => [],
 			'props_schema' => [],
+			'settings' => [],
+			'styles' => [
+				[
+					'id' => 'test-style-4',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'yellow',
+								'font-size' => '20px',
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+		$doc_2_id = $this->make_mock_post([
+			$element_3->get_raw_data(),
+		]);
+
+		// Assert.
+		$invoked_count = $this->exactly( 2 );
+		$this->mock_styles_manager
+			->expects( $invoked_count )
+			->method( 'register' )
+			->willReturnCallback(function( $key, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
+				switch ( $invoked_count->getInvocationCount() ) {
+					case 1:
+						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_1_id, $key );
+						$this->callback( function( $callback ) use ( $element_1, $element_2, $doc_1_id ) {
+							$styles = $callback();
+
+							$this->assertEquals(
+								array_merge(
+									$element_1->get_raw_data()['styles'],
+									$element_2->get_raw_data()['styles']
+								),
+								$styles
+							);
+						});
+						break;
+					case 2:
+						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_2_id, $key );
+						$this->callback( function( $callback ) use ( $element_3, $doc_2_id ) {
+							$styles = $callback();
+							$this->assertEquals( $element_3->get_raw_data()['styles'], $styles );
+						});
+						break;
+				}
+			});
+
+		// Act.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [ $doc_1_id, $doc_2_id ] );
+	}
+
+	public function test_register_styles__does_not_register_styles_for_non_atomic_widgets() {
+		// Arrange.
+		$atomic_widget_styles = new Atomic_Widget_Styles();
+		$atomic_widget_styles->register_hooks();
+		$element = $this->make_mock_non_atomic_widget([
 			'settings' => [],
 			'styles' => [
 				[
@@ -109,80 +167,25 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 								'color' => 'red',
 								'font-size' => '16px',
 							],
-							'meta' => [
-								'breakpoint' => 'mobile',
-							],
+							'meta' => [],
 						],
 					],
 				],
 			],
 		]);
-		$element_2 = $this->make_mock_widget([
+		$atomic_element = $this->make_mock_widget([
 			'controls' => [],
 			'props_schema' => [],
 			'settings' => [],
 			'styles' => [
 				[
-					'id' => 'test-style',
+					'id' => 'atomic-style',
 					'type' => 'class',
 					'variants' => [
 						[
 							'props' => [
 								'color' => 'blue',
-								'font-size' => '18px',
-							],
-							'meta' => [
-								'breakpoint' => 'tablet',
-							],
-						],
-					],
-				],
-			],
-		]);
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element_1 );
-		do_action( 'elementor/element/parse_css', $post, $element_2 );
-
-		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
-	}
-
-	public function test_parse_atomic_widget_styles__append_css_of_styles_with_transformable_values() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'color' => Props_Factory::color( 'red' ),
-								'font-size' => Props_Factory::size( 16 ),
-								'box-shadow' => Props_Factory::box_shadow( [
-									Props_Factory::shadow(
-										Props_Factory::size( 10 ),
-										Props_Factory::size( 5, 'rem' ),
-										Props_Factory::size( 5 ),
-										Props_Factory::size( 20 ),
-										Props_Factory::color( 'rgba(0, 0, 0, 0.1)' ),
-										null,
-									),
-									Props_Factory::shadow(
-										Props_Factory::size( 0 ),
-										Props_Factory::size( 0 ),
-										Props_Factory::size( 10 ),
-										Props_Factory::size( 0 ),
-										Props_Factory::color( 'blue' ),
-										'inset',
-									),
-								] ),
+								'font-size' => '20px',
 							],
 							'meta' => [],
 						],
@@ -190,130 +193,64 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 				],
 			],
 		]);
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-
-		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
-	}
-
-	public function test_parse_atomic_widget_styles__no_append_when_styles_are_empty() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [],
+		$doc_id = $this->make_mock_post([
+			$element->get_raw_data(),
+			$atomic_element->get_raw_data(),
 		]);
 
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-
 		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
+		$this->mock_styles_manager
+			->expects( $this->once() )
+			->method( 'register' )
+			->with(
+				Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_id,
+				$this->callback(function( $callback ) use ( $element, $atomic_element ) {
+					$styles = $callback();
+					$expected = $atomic_element->get_raw_data()['styles'];
+					$this->assertEquals( $expected, $styles );
+					return true;
+				})
+			);
+
+		// Act.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [ $doc_id ] );
 	}
 
-	public function test_parse_atomic_widget_styles__invalid_non_atomic_widget() {
+	public function test_cache_invalidation_on_global_cache_clear() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();
-		$post = $this->make_mock_post();
-		$element = $this->mock_non_atomic_widget([
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'color' => 'red',
-								'font-size' => '16px',
-							],
-							'meta' => [],
-						],
-					],
-				],
+		$doc = $this->factory()->documents->create_and_get();
+		$id = $doc->get_id();
+
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id ] );
+
+		// Assert.
+		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+
+		// Act.
+		do_action( 'elementor/document/after_save', $doc, [] );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+
+		// Act.
+		do_action( 'elementor/core/files/clear_cache' );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY ] ) );
+	}
+
+	private function make_mock_post( $elements_data = [] ) {
+		$doc = $this->factory()->documents->publish_and_get( [
+			'meta_input' => [
+				'_elementor_data' => $elements_data,
 			],
-		]);
+		] );
 
-		// Act.
-		do_action( 'elementor/element/parse_css', $post, $element );
-
-		// Assert.
-		$this->assertMatchesSnapshot( (string) $post->get_stylesheet() );
-	}
-
-	public function test_parse_atomic_widget_styles__enqueues_fonts() {
-		// Arrange.
-		( new Atomic_Widget_Styles() )->register_hooks();
-		$post_css = $this->make_mock_post();
-		$element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
-			'styles' => [
-				[
-					'id' => 'test-style',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'font-family' => 'Poppins',
-							],
-							'meta' => [
-								'breakpoint' => 'mobile',
-								'state' => null,
-							],
-						],
-					],
-				],
-				[
-					'id' => 'test-style-2',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'font-family' => 'Roboto',
-							],
-							'meta' => [
-								'breakpoint' => 'tablet',
-								'state' => null,
-							],
-						],
-					],
-				],
-				[
-					'id' => 'test-style-3',
-					'type' => 'class',
-					'variants' => [
-						[
-							'props' => [
-								'font-family' => 'Poppins',
-							],
-							'meta' => [
-								'breakpoint' => 'desktop',
-								'state' => null,
-							],
-						],
-					],
-				]
-			],
-		]);
-
-		// Act.
-		do_action( 'elementor/element/parse_css', $post_css, $element );
-		$post_css->get_content();
-
-		// Assert.
-		$this->assertSame( [ 'Poppins', 'Roboto' ], $post_css->get_fonts() );
-	}
-
-	private function make_mock_post() {
-		$document = $this->factory()->documents->create_and_get();
-
-		return new Post_CSS( $document->get_id() );
+		return $doc->get_id();
 	}
 
 	/**
@@ -324,43 +261,43 @@ class Test_Atomic_Styles extends Elementor_Test_Base {
 			private static array $options;
 
 			public function __construct( $options ) {
-				static::$options = $options;
+				self::$options = $options;
 
 				parent::__construct( [
 					'id' => 1,
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
 					'elType' => 'widget',
-					'widgetType' => 'test-widget',
+					'widgetType' => 'e-heading',
 				], [] );
 			}
 
 			public static function get_element_type(): string {
-				return 'test-widget';
+				return 'e-heading';
 			}
 
 			protected function define_atomic_controls(): array {
-				return static::$options['controls'] ?? [];
+				return self::$options['controls'] ?? [];
 			}
 
 			protected static function define_props_schema(): array {
-				return static::$options['props_schema'] ?? [];
+				return self::$options['props_schema'] ?? [];
 			}
 
 			public function define_base_styles(): array {
-				return static::$options['base_styles'] ?? [];
+				return self::$options['base_styles'] ?? [];
 			}
 		};
 	}
 
-	private function mock_non_atomic_widget( array $options = [] ): Widget_Base {
+	private function make_mock_non_atomic_widget( array $options = [] ): Widget_Base {
 		return new class() extends Widget_Base {
 			public function get_name() {
 				return 'test-widget-invalid';
 			}
 
 			public function get_raw_data( $with_html_content = false ) {
-				$settings = parent::get_raw_data( $with_html_content );
+				$settings = [];
 				$styles = $options['styles'] ?? [];
 				$settings['styles']  = $styles;
 				return $settings;

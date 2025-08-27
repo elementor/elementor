@@ -67,7 +67,7 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		global $wp_rest_server;
 
 		$wp_rest_server = new \WP_REST_Server();
-		
+
 		$role = get_role( 'administrator' );
 		$role->add_cap( Add_Capabilities::UPDATE_CLASS  );
 
@@ -493,15 +493,15 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( 'invalid_order', $response->get_data()['code'] );
 	}
 
-	public function test_put_fails_when_max_items_limit_reached() {
+	public function test_put__fails_when_max_items_limit_reached() {
 		// Arrange.
 		$this->act_as_admin();
 
-		// Act.
+		// Act - send 50 items.
 		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/global-classes' );
 
 		$items = [];
-		for ( $i = 0; $i < 51; $i++ ) {
+		for ( $i = 0; $i < 50; $i++ ) {
 			$items[ "g-$i" ] = $this->create_global_class( "g-$i" );
 		}
 
@@ -517,7 +517,25 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 
 		$response = rest_do_request( $request );
 
-		// Assert.
+		// Assert - should succeed.
+		$this->assertSame( 204, $response->get_status() );
+
+		// Act - send the 51st item.
+		$items[ "g-50" ] = $this->create_global_class( "g-50" );
+
+		$request->set_body_params( [
+			'items' => $items,
+			'order' => array_keys( $items ),
+			'changes' => [
+				'added' => [ 'g-50' ],
+				'deleted' => [],
+				'modified' => [],
+			]
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert - should fail.
 		$this->assertSame( 400, $response->get_status() );
 		$this->assertSame( 'global_classes_limit_exceeded', $response->get_data()['code'] );
 	}
@@ -658,6 +676,67 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 		$this->assertSame( $initial, $classes );
 	}
 
+	public function test_get_usage__returns_usage_data() {
+		$this->act_as_admin();
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayHasKey( 'data', $response->get_data() );
+		$this->assertIsObject( $response->get_data()['data'] );
+	}
+
+	public function test_get_usage__with_page_info_true() {
+		$this->act_as_admin();
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertArrayHasKey( 'data', $response->get_data() );
+	}
+
+	public function test_get_usage__fails_without_capabilities() {
+		$this->act_as_editor();
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes/usage' );
+		$response = rest_do_request( $request );
+		$this->assertSame( 403, $response->get_status() );
+	}
+
+	public function test_all__succeeds_for_logged_in_user() {
+		// Arrange
+		$this->act_as_editor();
+		
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( (object) $this->mock_global_classes['items'], $response->get_data()['data'] );
+		$this->assertEquals( $this->mock_global_classes['order'], $response->get_data()['meta']['order'] );
+		$this->assertEquals( 200, $response->get_status() );
+	}
+
+	public function test_all__fails_for_non_logged_in_user() {
+		// Arrange
+		wp_set_current_user( 0 ); 
+		
+		$this->kit->update_json_meta( Global_Classes_Repository::META_KEY_FRONTEND, $this->mock_global_classes );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/global-classes' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertSame( 401, $response->get_status() );
+	}
+
+	public function test_register_routes__endpoints_exist() {
+		global $wp_rest_server;
+		$routes = $wp_rest_server->get_routes();
+		$this->assertArrayHasKey( '/elementor/v1/global-classes', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/global-classes/usage', $routes );
+	}
+
 	private function create_global_class( string $id, ?string $color = null, ?string $label = null ) {
 		return [
 			'id' => $id,
@@ -675,8 +754,11 @@ class Test_Global_Classes_Rest_Api extends Elementor_Test_Base {
 							'value' => $color ?? 'red',
 						],
 					],
+					'custom_css' => null,
 				],
 			],
 		];
 	}
+
+
 }

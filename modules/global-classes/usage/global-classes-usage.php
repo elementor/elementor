@@ -3,7 +3,7 @@
 namespace Elementor\Modules\GlobalClasses\Usage;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\Global_Classes\Usage\Applied_Global_Classes_Usage;
+use Elementor\Modules\GlobalClasses\Usage\Applied_Global_Classes_Usage;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 
 class Global_Classes_Usage {

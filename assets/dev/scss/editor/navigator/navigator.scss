@@ -6,10 +6,10 @@ body {
 
 #elementor-navigator {
 	position: fixed;
-	top: 100px;
+	inset-block-start: 100px;
+	inset-inline-end: 30px;
 	width: var(--e-editor-navigator-width);
 	height: 50vh;
-	@include end(30px);
 	background-color: var(--e-a-bg-default);
 	border: var(--e-a-border);
 	box-shadow: 0 2px 20px 0 rgba(0, 0, 0, 0.1);
@@ -173,7 +173,7 @@ body {
 			.elementor-navigator__element__list-toggle {
 
 				i {
-					transform: rotate(getValueByDirection(-90deg, 90deg));
+					transform: rotate(calc(-90deg * var(--direction-multiplier)));
 				}
 			}
 		}
@@ -307,7 +307,7 @@ body {
 
 		&__toggle {
 			position: absolute;
-			@include end(15px);
+			inset-inline-end: 15px;
 			height: 100%;
 			z-index: 0;
 			font-size: 13px;
@@ -319,9 +319,7 @@ body {
 			z-index: 91;
 
 			&:not(:hover) {
-				$transform: getValueByDirection(calc(100% - var(--e-editor-navigator-indicator-width)), calc(-100% + var(--e-editor-navigator-indicator-width)));
-
-				transform: translateX($transform);
+				transform: translateX(calc(100% * var(--direction-multiplier) - var(--e-editor-navigator-indicator-width)));
 			}
 		}
 

@@ -666,12 +666,15 @@ class Frontend extends App {
 				$post_id = get_the_ID();
 				// Check $post_id for virtual pages. check is singular because the $post_id is set to the first post on archive pages.
 				if ( $post_id && is_singular() ) {
+					do_action( 'elementor/post/render', $post_id );
 					$this->handle_page_assets( $post_id );
 
 					$css_file = Post_CSS::create( get_the_ID() );
 					$css_file->enqueue();
 				}
 			}
+
+			do_action( 'elementor/frontend/after_enqueue_post_styles' );
 		}
 	}
 
@@ -1004,16 +1007,17 @@ class Frontend extends App {
 			return;
 		}
 
-		// Print used fonts
+		$force_enqueue_from_cdn = Plugin::$instance->preview->is_preview_mode();
+
 		if ( ! empty( $google_fonts['google'] ) ) {
 			foreach ( $google_fonts['google'] as $current_font ) {
-				Google_Font::enqueue( $current_font );
+				Google_Font::enqueue( $current_font, Google_Font::TYPE_DEFAULT, $force_enqueue_from_cdn );
 			}
 		}
 
 		if ( ! empty( $google_fonts['early'] ) ) {
 			foreach ( $google_fonts['early'] as $current_font ) {
-				Google_Font::enqueue( $current_font, Google_Font::TYPE_EARLYACCESS );
+				Google_Font::enqueue( $current_font, Google_Font::TYPE_EARLYACCESS, $force_enqueue_from_cdn );
 			}
 		}
 	}

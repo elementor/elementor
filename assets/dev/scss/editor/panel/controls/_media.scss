@@ -79,7 +79,7 @@
 		&:not(:hover) {
 
 			.elementor-control-media__tools {
-				bottom: -30px;
+				inset-block-end: -30px;
 			}
 		}
 	}
@@ -90,9 +90,8 @@
 
 	&__tools {
 		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
+		inset-block-end: 0;
+		inset-inline: 0;
 		height: $control-unit;
 		transition: all .2s ease-in-out;
 
@@ -129,8 +128,8 @@
 	&__content__remove {
 		position: absolute;
 		z-index: 1;
-		top: 10px;
-		@include end(10px);
+		inset-block-start: 10px;
+		inset-inline-end: 10px;
 		width: 20px;
 		height: 20px;
 		font-size: 11px;

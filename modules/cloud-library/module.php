@@ -30,31 +30,29 @@ class Module extends BaseModule {
 
 		$this->register_experiments();
 
-		if ( Plugin::$instance->experiments->is_feature_active( $this->get_name() ) ) {
-			$this->register_app();
+		$this->register_app();
 
-			add_action( 'elementor/init', function () {
-				$this->set_cloud_library_settings();
-			}, 12 /** After the initiation of the connect cloud library */ );
+		add_action( 'elementor/init', function () {
+			$this->set_cloud_library_settings();
+		}, 12 /** After the initiation of the connect cloud library */ );
 
-			add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
-				return $this->localize_settings( $settings );
-			}, 11 /** After Elementor Core */ );
+		add_filter( 'elementor/editor/localize_settings', function ( $settings ) {
+			return $this->localize_settings( $settings );
+		}, 11 /** After Elementor Core */ );
 
-			add_filter( 'elementor/render_mode/module', function( $module_name ) {
-				$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
+		add_filter( 'elementor/render_mode/module', function( $module_name ) {
+			$render_mode_manager = \Elementor\Plugin::$instance->frontend->render_mode_manager;
 
-				if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
-					return 'cloud-library';
-				}
-
-				return $module_name;
-			}, 12);
-
-			if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
-				echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
-				die;
+			if ( $render_mode_manager && $render_mode_manager->get_current() instanceof \Elementor\Modules\CloudLibrary\Render_Mode_Preview ) {
+				return 'cloud-library';
 			}
+
+			return $module_name;
+		}, 12);
+
+		if ( $this->is_screenshot_proxy_mode( $_GET ) ) { // phpcs:ignore -- Checking nonce inside the method.
+			echo $this->get_proxy_data( htmlspecialchars( $_GET['href'] ) ); // phpcs:ignore -- Nonce was checked on the above method
+			die;
 		}
 	}
 
@@ -85,19 +83,15 @@ class Module extends BaseModule {
 	private function register_experiments() {
 		Plugin::$instance->experiments->add_feature( [
 			'name' => $this->get_name(),
-			'title' => esc_html__( 'Cloud Templates', 'elementor' ),
-			'description' => esc_html__( 'Cloud Templates empowers you to save and manage design elements across all your projects. This feature is associated and connected to your Elementor Pro account and can be accessed from any website associated with your account.', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
+			'title' => esc_html__( 'Cloud Library', 'elementor' ),
+			'release_status' => ExperimentsManager::RELEASE_STATUS_STABLE,
 			'default' => ExperimentsManager::STATE_ACTIVE,
-		] );
-
-		Plugin::$instance->experiments->add_feature( [
-			'name' => 'e_cloud_library_kits',
-			'title' => esc_html__( 'Cloud Kits', 'elementor' ),
-			'description' => esc_html__( 'Cloud Kits', 'elementor' ),
-			'release_status' => ExperimentsManager::RELEASE_STATUS_ALPHA,
-			'default' => ExperimentsManager::STATE_INACTIVE,
 			'hidden' => true,
+			'mutable' => false,
+			'new_site' => [
+				'always_active' => true,
+				'minimum_installation_version' => '3.32.0',
+			],
 		] );
 	}
 

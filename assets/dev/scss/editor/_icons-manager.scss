@@ -64,9 +64,9 @@
 
 		i {
 			position: absolute;
-			top: 50%;
+			inset-block-start: 50%;
+			inset-inline-end: 15px;
 			transform: translateY(-50%);
-			@include end(15px);
 		}
 	}
 
@@ -171,8 +171,8 @@
 				position: absolute;
 				height: 100%;
 				width: 3px;
-				top: 0;
-				@include start(0);
+				inset-block-start: 0;
+				inset-inline-start: 0;
 				background-color: var(--e-a-border-color-accent);
 			}
 		}

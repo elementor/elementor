@@ -5,15 +5,12 @@
 .e-con {
 
 	> .elementor-element-overlay {
-		@include start(0);
-		bottom: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
 
 		&:after {
 			position: absolute;
-			left: 1px;
-			right: 1px;
-			top: 1px;
-			bottom: 1px;
+			inset: 1px;
 			outline: 1px solid var(--e-p-border-con);
 			animation: section-outline .75s;
 		}
@@ -281,7 +278,7 @@
 	}
 }
 
-.e-div-block-base, .e-flexbox-base {
+.e-atomic-element {
 	&:has( .elementor-empty-view ) {
 		min-height: 120px;
 	}

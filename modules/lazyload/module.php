@@ -25,11 +25,10 @@ class Module extends BaseModule {
 			return;
 		}
 
-		if ( ! $this->should_lazy_load_background_images() ) {
-			return;
-		}
-
 		add_action( 'wp_head', function() {
+			if ( ! $this->should_lazy_load_background_images() ) {
+				return;
+			}
 			?>
 			<style>
 				.e-con.e-parent:nth-of-type(n+4):not(.e-lazyloaded):not(.e-no-lazyload),
@@ -53,6 +52,9 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'wp_footer', function() {
+			if ( ! $this->should_lazy_load_background_images() ) {
+				return;
+			}
 			?>
 			<script>
 				const lazyloadRunObserver = () => {

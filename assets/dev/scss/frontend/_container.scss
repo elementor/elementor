@@ -50,7 +50,7 @@
 	overflow: var(--overflow);
 	--flex-wrap-mobile: wrap;
 
-	&:not(.e-div-block-base) {
+	&:where(:not(.e-div-block-base)) {
 		transition: background var(--background-transition, 0.3s), border var(--border-transition, 0.3s), box-shadow var(--border-transition, 0.3s), transform var(--e-con-transform-transition-duration, 0.4s);
 	}
 
@@ -175,7 +175,7 @@
 		height: 100%;
 	}
 
-	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+	:is( .elementor-section-wrap, [data-elementor-id] ):where:not( [data-elementor-type="elementor_component"] ) > & {
 		// Default top-level containers to be centered.
 		--margin-left: auto;
 		--margin-right: auto;

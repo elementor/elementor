@@ -83,8 +83,8 @@ abstract class Contact_Buttons_Render_Base {
 			'class' => $button_classnames,
 			'aria-controls' => 'e-contact-buttons__content-wrapper',
 			'aria-label' => sprintf(
-				/* translators: 1: Accessible name. */
-				esc_html__( 'Toggle %1$s', 'elementor' ),
+				/* translators: %s: Accessible name. */
+				esc_html__( 'Toggle %s', 'elementor' ),
 				$accessible_name,
 			),
 			'type' => 'button',
@@ -108,8 +108,8 @@ abstract class Contact_Buttons_Render_Base {
 			'class' => 'e-contact-buttons__close-button',
 			'aria-controls' => 'e-contact-buttons__content-wrapper',
 			'aria-label' => sprintf(
-				/* translators: 1: Accessible name. */
-				esc_html__( 'Close %1$s', 'elementor' ),
+				/* translators: %s: Accessible name. */
+				esc_html__( 'Close %s', 'elementor' ),
 				$accessible_name,
 			),
 			'type' => 'button',
@@ -266,8 +266,8 @@ abstract class Contact_Buttons_Render_Base {
 				foreach ( $contact_icons as $key => $icon ) {
 					$icon_text_mapping = Social_Network_Provider::get_text_mapping( $icon['contact_icon_platform'] );
 					$aria_label = sprintf(
-						/* translators: 1: Platform name. */
-						esc_html__( 'Open %1$s', 'elementor' ),
+						/* translators: %s: Platform name. */
+						esc_html__( 'Open %s', 'elementor' ),
 						$icon_text_mapping,
 					);
 

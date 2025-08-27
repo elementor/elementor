@@ -155,6 +155,7 @@ class Autoloader {
 			'Container\Container' => 'includes/container/container.php',
 			'Tracker' => 'includes/tracker.php',
 			'User' => 'includes/user.php',
+			'User_Data' => 'includes/user-data.php',
 			'Utils' => 'includes/utils.php',
 			'Widget_WordPress' => 'includes/widgets/wordpress.php',
 			'Widgets_Manager' => 'includes/managers/widgets.php',

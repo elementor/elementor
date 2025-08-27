@@ -1,5 +1,119 @@
 == Changelog ==
 
+= 3.31.3 - 2025-08-27 =
+
+* Tweak: Disabled indication popover on repeater items – Editor V4
+* Tweak: Enforced numeric keys in `promotionWidgets` and ensured consistent Pro widget injection
+* Fix: Floating Bar disappears from the frontend after activating Elementor Pro
+
+= 3.31.2 - 2025-08-11 =
+
+* Tweak: Improved permissions functionality in Class Management - Editor V4
+* Fix: Page failed to save on certain hosting providers due to blocked requests – Editor V4 ([#31992](https://github.com/elementor/elementor/issues/31992))
+* Fix: Renaming a class causes it to lose applied styles – Editor V4
+* Fix: Inherited values not working as expected with custom units in responsive modes – Editor V4
+* Fix: Visual Choose control not displaying properly in Firefox for Shape Divider
+* Fix: Icon alignment not working in Icon Box widget
+
+= 3.31.1 - 2025-08-06 =
+
+* Tweak: Updated `form-data` package version
+* Fix: Custom order field disappeared when set to 0 or cleared - Editor V4
+
+= 3.31.0 - 2025-08-05 =
+
+* New: Introducing Variables - define reusable color and font values to ensure consistent and scalable design across your site - Editor V4
+* New: Introducing Inherited Values - style properties now indicate when values are inherited from Classes or Base styles - Editor V4
+* New: Introducing Filters - add visual effects like blur, brightness, and contrast with full design control - Editor V4
+* New: Introducing Backdrop Filters - apply visual effects behind elements for layered design - Editor V4
+* New: Introducing Divider - a modular layout element for visual separation - Editor V4
+* New: Class Usage Overview – gain insights into class usage directly from the Class Manager - Editor V4
+* New: Class Locator - locate all elements using a specific class across your design - Editor V4
+* Tweak: Removed background videos from the accessibility tree to improve screen reader behavior ([#23880](https://github.com/elementor/elementor/issues/23880))
+* Tweak: Search by Class name - quickly locate existing classes in the Class Manager - Editor V4
+* Tweak: Improved style detection across breakpoints when using Classes - Editor V4
+* Tweak: Added Custom option to Object Position in Size section - Editor V4
+* Tweak: Added ID control in YouTube element - Editor V4
+* Tweak: Added Opacity control - set element transparency - Editor V4
+* Tweak: Display Base Style indication - clearly shows when Base styles are applied to an element - Editor V4
+* Tweak: Improved drag and drop behavior into Flexbox and Div Blocks inside the Canvas - Editor V4
+* Tweak: Replaced select control with a visual choice control in Shape Dividers
+* Tweak: Replaced SASS mixins and functions with native CSS logical properties
+* Tweak: Added support for `lh` and `rlh` CSS units in Typography Line Height control
+* Tweak: Added responsive capabilities to Custom Mask
+* Tweak: Activated "Element Caching" experiment for all sites
+* Tweak: Updated Icon List widget to use CSS logical properties
+* Tweak: Updated Star Rating widget to use CSS logical properties
+* Tweak: Updated Alert widget to use CSS logical properties
+* Tweak: Updated Accordion widget to use CSS logical properties
+* Tweak: Updated Toggle widget to use CSS logical properties
+* Tweak: Updated Icon Box widget to use CSS logical properties
+* Tweak: Updated Menu Anchor widget to use CSS logical properties
+* Tweak: Updated Tabs widget to use CSS logical properties
+* Tweak: Updated Testimonial widget to use CSS logical properties
+* Tweak: Updated Text Editor widget to use CSS logical properties
+* Tweak: Updated Paragraph Spacing in Site Settings Typography to use CSS logical properties
+* Tweak: Optimized CSS output for Masks
+
+= 3.30.4 - 2025-07-30 =
+
+* Tweak: Improved redirection functionality during the website template import process
+
+= 3.30.3 - 2025-07-22 =
+
+* Tweak: Improved performance of the first-time Editor load
+* Security Fix: Improved code security enforcement in Import process
+* Security Fix: Improved code security enforcement in Text Path widget
+* Security Fix: Improved content sanitization in multiple widgets
+* Fix: Link control label is missing in all elements - Editor V4
+
+= 3.30.2 - 2025-07-09 =
+
+* Fix: Editor failing to load on certain hosting providers due to blocked requests
+
+= 3.30.1 - 2025-07-07 =
+
+* Fix: Focus not applied correctly to chosen property in popovers - Editor V4
+* Fix: Font Family popover not loading as expected - Editor V4
+* Fix: Empty list displayed when opening the Class Manager - Editor V4
+
+= 3.30.0 - 2025-07-01 =
+
+* New: Added support for setting custom units in size controls - Editor V4 ([#31287](https://github.com/elementor/elementor/issues/31287))
+* New: Added reset control visibility via the floating action bar - Editor V4 ([#31356](https://github.com/elementor/elementor/issues/31356))
+* New: Added JS handler infrastructure for the new elements system - Editor V4
+* New: Introduced modular YouTube element built with new structure and JS handlers – Editor V4
+* New: Added support for context-aware editing memory - Editor V4
+* New: Enabled Smart Unit Typing - allows typing values with units directly - Editor V4
+* New: Added ID control to Settings section under General tab - Editor V4
+* New: Added Anchor Offset control to Position section under Style tab - Editor V4
+* New: Added Display None control to Layout section under Style tab - Editor V4
+* New: Added Object Fit control to Size section under Style tab - Editor V4
+* New: Added Columns control to Typography section under Style tab - Editor V4
+* New: Added Aspect Ratio control to Size section under Style tab - Editor V4
+* New: Added group-level style indicators to show where class-based styles are applied – Editor V4
+* New: Added Indications Popover for visualizing class-based style origins – Editor V4
+* New: Introduced class permissions for non-admin users - Editor V4
+* Tweak: Added title hover and focus color options to Icon Box and Image Box widgets ([#29948](https://github.com/elementor/elementor/issues/29948))
+* Tweak: Added support for registering custom mask shapes ([#19396](https://github.com/elementor/elementor/issues/19396))
+* Tweak: User-defined class names now appear as-is in the final code output in Class Management - Editor V4 ([#31055](https://github.com/elementor/elementor/issues/31055))
+* Tweak: Renamed "Kits" to "Website Template" across the interface
+* Tweak: Added Settings section inside the General tab - Editor V4
+* Tweak: Merged "Editor Top Bar" feature into the core version
+* Tweak: Merged "Load Google Fonts locally" feature into the core version
+* Tweak: Activated "Optimized Markup" feature for new sites
+* Tweak: Promoted "Element Caching" feature to Stable status
+* Tweak: Added new mask shapes
+* Tweak: Replaced select control with a visual choice control in Mask shapes
+* Tweak: Add image `height`, `object-fit`, `object-position`, `box-shadow` in Image Box widget
+* Tweak: Standardized naming convention for items in the editor `app-bar`
+* Tweak: Consolidated control visibility and layout into a single Style tab in Progress Bar widget
+* Tweak: Updated minimum required WordPress version to 6.6
+* Fix: Global CSS transition with higher specificity prevents Container transitions from being applied ([#30460](https://github.com/elementor/elementor/issues/30460))
+* Fix: Global CSS classes are lost when publishing from multiple tabs - Editor V4
+* Fix: Redundant spacing appears below the image in the Image Box widget
+* Fix: Scrolling to anchors no longer works inside the Editor
+
 = 3.29.2 - 2025-06-04 =
 
 * Fix: Missing responsive resize handles in responsive mode preventing manual preview adjustments

@@ -278,41 +278,15 @@ BaseElementView = BaseContainer.extend( {
 		}
 	},
 
-	updateHandlesOverlay() {
-		const $overlayList = this.$el.find( '.elementor-editor-element-settings' );
-
-		const elementStyles = window.getComputedStyle( this.el ),
-			elementType = this.$el.data( 'element_type' ),
-			overflowStyles = [ elementStyles.overflowX, elementStyles.overflowY, elementStyles.overflow ],
-			isHaveOverflow = overflowStyles.includes( 'hidden' ) || overflowStyles.includes( 'auto' ),
-			isElement = getAllElementTypes().includes( elementType );
-
-		if ( ! $overlayList?.length || ! isElement ) {
-			return;
-		}
-
-		$overlayList[ 0 ].style.display = 'none';
-
-		// JS Hack to force browser element rerender
-		void ( $overlayList[ 0 ].offsetHeight );
-
-		if ( isHaveOverflow ) {
-			this.$el.addClass( 'e-handles-inside' );
-		} else {
-			this.$el.removeClass( 'e-handles-inside' );
-		}
-
-		$overlayList.removeAttr( 'style' );
-	},
-
 	getHandlesOverlay() {
 		const elementType = this.getElementType();
 		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
 			return;
 		}
 
+		const isElement = getAllElementTypes().includes( elementType );
 		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings ${ isElement ? 'elementor-editor-element-overlay-settings' : '' }` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
@@ -633,7 +607,6 @@ BaseElementView = BaseContainer.extend( {
 		this.renderStyles();
 		this.renderCustomClasses();
 		this.renderCustomElementID();
-		this.updateHandlesOverlay();
 		this.enqueueFonts();
 	},
 
@@ -1007,7 +980,6 @@ BaseElementView = BaseContainer.extend( {
 		setTimeout( () => {
 			this.initDraggable();
 			this.dispatchElementLifeCycleEvent( 'rendered' );
-			this.updateHandlesOverlay();
 			elementorFrontend.elements.$window.on( 'elementor/elements/link-data-bindings', this.linkDataBindings.bind( this ) );
 		} );
 	},

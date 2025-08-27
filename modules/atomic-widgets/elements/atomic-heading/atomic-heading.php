@@ -4,18 +4,17 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
-use Elementor\Modules\AtomicWidgets\Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Plugin;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -55,11 +54,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( __( 'This is a title', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
-		];
 
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$props['_cssid'] = String_Prop_Type::make();
-		}
+			'attributes' => Attributes_Prop_Type::make(),
+		];
 
 		return $props;
 	}
@@ -69,14 +66,23 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			->set_label( __( 'Content', 'elementor' ) )
 			->set_items( [
 				Textarea_Control::bind_to( 'title' )
-					->set_label( __( 'Title', 'elementor' ) )
-					->set_placeholder( __( 'Type your title here', 'elementor' ) ),
+				->set_placeholder( __( 'Type your title here', 'elementor' ) )
+					->set_label( __( 'Title', 'elementor' ) ),
 			] );
 
-		$settings_section_items = [
+		return [
+			$content_section,
+			Section::make()
+				->set_label( __( 'Settings', 'elementor' ) )
+				->set_id( 'settings' )
+				->set_items( $this->get_settings_controls() ),
+		];
+	}
+
+	protected function get_settings_controls(): array {
+		return [
 			Select_Control::bind_to( 'tag' )
-				->set_label( esc_html__( 'Tag', 'elementor' ) )
-				->set_options( [
+				->set_options([
 					[
 						'value' => 'h1',
 						'label' => 'H1',
@@ -101,26 +107,16 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						'value' => 'h6',
 						'label' => 'H6',
 					],
-				]),
-			Link_Control::bind_to( 'link' )->set_meta( [
-				'topDivider' => true,
-			] ),
-		];
-
-		if ( Plugin::$instance->experiments->is_feature_active( Module::EXPERIMENT_VERSION_3_30 ) ) {
-			$settings_section_items[] = Text_Control::bind_to( '_cssid' )->set_label( __( 'ID', 'elementor' ) )->set_meta( [
-				'layout' => 'two-columns',
-				'topDivider' => true,
-			] );
-		}
-
-		$settings_section = Section::make()
-			->set_label( __( 'Settings', 'elementor' ) )
-			->set_items( $settings_section_items );
-
-		return [
-			$content_section,
-			$settings_section,
+				])
+				->set_label( __( 'Tag', 'elementor' ) ),
+			Link_Control::bind_to( 'link' )
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
+			Text_Control::bind_to( '_cssid' )
+			->set_label( __( 'ID', 'elementor' ) )
+			->set_meta( $this->get_css_id_control_meta() ),
 		];
 	}
 

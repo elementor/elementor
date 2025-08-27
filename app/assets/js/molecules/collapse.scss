@@ -20,8 +20,8 @@ $root: e-app-collapse;
 			justify-content: center;
 			font-size: type(size, "14");
 			position: absolute;
-			top: 50%;
-			@include end(var(--e-app-collapse-toggle-icon-spacing));
+			inset-block-start: 50%;
+			inset-inline-end: var(--e-app-collapse-toggle-icon-spacing);
 			transform: translateY(-50%);
 
 			&:before {
@@ -53,8 +53,8 @@ $root: e-app-collapse;
 	.#{$root} {
 		&-toggle {
 			&__icon {
-				@include end(initial);
-				@include start(var(--e-app-collapse-toggle-icon-spacing));
+				inset-inline-start: var(--e-app-collapse-toggle-icon-spacing);
+				inset-inline-end: initial;
 			}
 		}
 	}

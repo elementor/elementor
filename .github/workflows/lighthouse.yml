@@ -1,10 +1,11 @@
 name: Lighthouse
 
 on:
+  pull_request:
   push:
     branches:
       - 'main'
-      - '3.*'
+      - '3.[0-9][0-9]'
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -16,6 +17,7 @@ on:
 
 jobs:
   build-plugin-lh:
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
 
@@ -23,7 +25,7 @@ jobs:
     name: Lighthouse test - WP latest on PHP 7.4
     runs-on: ubuntu-latest
     needs: [build-plugin-lh]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin-lh.outputs.changelog_diff }}
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4

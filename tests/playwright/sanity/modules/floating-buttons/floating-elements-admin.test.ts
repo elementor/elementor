@@ -76,6 +76,9 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 				await deleteContainer.click();
 				const libraryModal = page.locator( '#elementor-template-library-modal' );
 				await expect( libraryModal ).toBeVisible();
+				await libraryModal.focus();
+				await page.keyboard.press( 'Escape' );
+				await expect( libraryModal ).toBeVisible();
 			} );
 
 		let floatingElement, context, newPage;

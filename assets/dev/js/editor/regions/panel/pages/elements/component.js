@@ -23,13 +23,13 @@ export default class Component extends ComponentBase {
 	activateTab( tab ) {
 		super.activateTab( tab );
 
-		elementor.editorEvents.dispatchEvent(
-			elementor.editorEvents.config.names.v1[ tab ],
+		elementorCommon.eventsManager.dispatchEvent(
+			elementorCommon.eventsManager.config.names.v1[ tab ],
 			{
-				location: elementor.editorEvents.config.locations.widgetPanel,
-				secondaryLocation: elementor.editorEvents.config.secondaryLocations[ tab ],
-				trigger: elementor.editorEvents.config.triggers.click,
-				element: elementor.editorEvents.config.elements.accordionSection,
+				location: elementorCommon.eventsManager.config.locations.widgetPanel,
+				secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations[ tab ],
+				trigger: elementorCommon.eventsManager.config.triggers.click,
+				element: elementorCommon.eventsManager.config.elements.accordionSection,
 			},
 		);
 	}

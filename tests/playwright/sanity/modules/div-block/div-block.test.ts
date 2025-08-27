@@ -5,15 +5,11 @@ import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
 
 test.describe( 'Div Block tests @div-block', () => {
-	const experimentName = 'e_atomic_elements';
-
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( {
-			[ experimentName ]: 'active',
-		} );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 		await page.close();
 	} );
 
@@ -46,6 +42,57 @@ test.describe( 'Div Block tests @div-block', () => {
 		// Assert.
 		// Test that the image is between the heading & button.
 		expect.soft( elBeforeButton ).toEqual( elAfterHeading );
+	} );
+
+	test( 'Dragging an element from a container to empty v4 containers renders the element correctly', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		const sourceContainer = await editor.addElement( { elType: 'container' }, 'document' );
+		const heading = await editor.addWidget( { widgetType: widgets.heading, container: sourceContainer } );
+
+		const flexbox = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		const divBlock = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const testDragToEmptyContainer = async ( targetContainer: string ) => {
+			// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( targetContainer ),
+			);
+
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( targetContainer ),
+			);
+
+			const headingEl = await editor.getElementHandle( heading );
+
+			const headingParent = await headingEl.evaluate( ( node ) => {
+				return node.closest( '.elementor-element' ).parentElement?.closest( '.e-con' )?.getAttribute( 'data-id' );
+			} );
+
+			expect( headingParent ).toBe( targetContainer );
+
+			// Note: Apply the drag-and-drop method twice as a workaround for the failure that occurs after [ED-18996].
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( sourceContainer ),
+			);
+
+			await editor.previewFrame.dragAndDrop(
+				getElementSelector( heading ),
+				getElementSelector( sourceContainer ),
+			);
+		};
+
+		await test.step( 'Drag heading to empty flexbox', async () => {
+			await testDragToEmptyContainer( flexbox );
+		} );
+
+		await test.step( 'Drag heading to empty div block', async () => {
+			await testDragToEmptyContainer( divBlock );
+		} );
 	} );
 
 	test( 'Nested Div block with widget', async ( { page, apiRequests }, testInfo ) => {
@@ -129,7 +176,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
 		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
-		await divBlock.waitFor();
+		await divBlock.waitFor( { state: 'visible' } );
 		const divBlockHandles = divBlock.locator( '.elementor-editor-element-settings' );
 		const divBlockEmptyView = divBlock.locator( '.elementor-empty-view' );
 
@@ -144,9 +191,9 @@ test.describe( 'Div Block tests @div-block', () => {
 		await divBlock.hover();
 
 		// Assert.
-		expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
-		expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
-		expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
-		expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
+		await expect( divBlockEmptyView ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		await expect( divBlockEmptyView ).toHaveCSS( 'stroke-width', '0px' );
+		await expect( divBlockHandles ).toHaveCSS( 'stroke', 'rgba(0, 0, 0, 0)' );
+		await expect( divBlockHandles ).toHaveCSS( 'stroke-width', '0px' );
 	} );
 } );

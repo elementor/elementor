@@ -109,7 +109,7 @@ function useRouterQueryParams( queryParams, setQueryParams, exclude = [] ) {
 
 export default function Index( props ) {
 	usePageTitle( {
-		title: __( 'Kit Library', 'elementor' ),
+		title: __( 'Website Templates', 'elementor' ),
 	} );
 
 	const menuItems = useMenuItems( props.path );
@@ -180,7 +180,7 @@ export default function Index( props ) {
 					<Grid item className="e-kit-library__index-layout-heading-search">
 						<SearchInput
 							// eslint-disable-next-line @wordpress/i18n-ellipsis
-							placeholder={ __( 'Search all Website Kits...', 'elementor' ) }
+							placeholder={ __( 'Search all Website Templates...', 'elementor' ) }
 							value={ queryParams.search }
 							onChange={ ( value ) => {
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );

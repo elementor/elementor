@@ -1,21 +1,38 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import PropTypes from 'prop-types';
 
 import './error-screen.scss';
 
-export default function ErrorScreen( props ) {
+const ErrorScreenButton = ( props ) => {
 	const onClick = () => {
-		appsEventTrackingDispatch(
-			'kit-library/go-back-to-view-kits',
-			{
-				page_source: 'home page',
-				element_position: 'empty state',
-				category: props.button.category && ( '/favorites' === props.button.category ? 'favorites' : 'all' ),
-			},
-		);
-		props.button.action();
+		if ( props.action ) {
+			props.action();
+		}
 	};
+
+	return (
+		<Button
+			text={ props.text }
+			onClick={ onClick }
+			url={ props.url }
+			target={ props.target }
+			color={ props.color || 'link' }
+			variant={ props.variant || '' }
+		/>
+	);
+};
+
+ErrorScreenButton.propTypes = {
+	text: PropTypes.string,
+	action: PropTypes.func,
+	url: PropTypes.string,
+	target: PropTypes.string,
+	color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
+	variant: PropTypes.oneOf( [ 'contained', 'underlined', 'outlined', '' ] ),
+};
+
+export default function ErrorScreen( props ) {
 	return (
 
 		<Grid container alignItems="center" justify="center" direction="column" className="e-kit-library__error-screen">
@@ -29,14 +46,13 @@ export default function ErrorScreen( props ) {
 			</Heading>
 			<Text variant="xl" className="e-kit-library__error-screen-description">
 				{ props.description } { ' ' }
-				<Button
-					text={ props.button.text }
-					color="link"
-					onClick={ onClick }
-					url={ props.button.url }
-					target={ props.button.target }
-				/>
+				{ ! props.newLineButton && (
+					<ErrorScreenButton { ...props.button } />
+				) }
 			</Text>
+			{ props.newLineButton && (
+				<ErrorScreenButton { ...props.button } />
+			) }
 		</Grid>
 	);
 }
@@ -44,11 +60,14 @@ export default function ErrorScreen( props ) {
 ErrorScreen.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
+	newLineButton: PropTypes.bool,
 	button: PropTypes.shape( {
 		text: PropTypes.string,
 		action: PropTypes.func,
 		url: PropTypes.string,
 		target: PropTypes.string,
 		category: PropTypes.string,
+		color: PropTypes.oneOf( [ 'primary', 'secondary', 'cta', 'link', 'disabled' ] ),
+		variant: PropTypes.oneOf( [ 'contained', 'underlined', 'outlined', '' ] ),
 	} ),
 };

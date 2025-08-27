@@ -39,7 +39,7 @@ class Container extends Element_Base {
 	 *
 	 * @return void
 	 */
-	public function __construct( array $data = [], array $args = null ) {
+	public function __construct( array $data = [], ?array $args = null ) {
 		parent::__construct( $data, $args );
 
 		$this->active_kit = Plugin::$instance->kits_manager->get_active_kit();
@@ -140,6 +140,7 @@ class Container extends Element_Base {
 		$config['tabs_controls'] = $this->get_tabs_controls();
 		$config['show_in_panel'] = true;
 		$config['categories'] = [ 'layout' ];
+		$config['include_in_widgets_config'] = true;
 
 		return $config;
 	}
@@ -162,7 +163,13 @@ class Container extends Element_Base {
 				videoAttributes += ' loop';
 			}
 
-			view.addRenderAttribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+			view.addRenderAttribute(
+				'background-video-container',
+				{
+					'class': 'elementor-background-video-container',
+					'aria-hidden': 'true',
+				}
+			);
 
 			if ( ! settings.background_play_on_mobile ) {
 				view.addRenderAttribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
@@ -199,7 +206,13 @@ class Container extends Element_Base {
 
 		$video_properties = Embed::get_video_properties( $settings['background_video_link'] );
 
-		$this->add_render_attribute( 'background-video-container', 'class', 'elementor-background-video-container' );
+		$this->add_render_attribute(
+			'background-video-container',
+			[
+				'class' => 'elementor-background-video-container',
+				'aria-hidden' => 'true',
+			]
+		);
 
 		if ( ! $settings['background_play_on_mobile'] ) {
 			$this->add_render_attribute( 'background-video-container', 'class', 'elementor-hidden-mobile' );
@@ -478,6 +491,7 @@ class Container extends Element_Base {
 					],
 				],
 				'description' => sprintf(
+					/* translators: %s: 100vh. */
 					esc_html__( 'To achieve full height Container use %s.', 'elementor' ),
 					'100vh'
 				),
@@ -1165,14 +1179,6 @@ class Container extends Element_Base {
 
 		$this->start_controls_tabs( 'tabs_shape_dividers' );
 
-		$shapes_options = [
-			'' => esc_html__( 'None', 'elementor' ),
-		];
-
-		foreach ( Shapes::get_shapes() as $shape_name => $shape_props ) {
-			$shapes_options[ $shape_name ] = $shape_props['title'];
-		}
-
 		foreach ( [
 			'top' => esc_html__( 'Top', 'elementor' ),
 			'bottom' => esc_html__( 'Bottom', 'elementor' ),
@@ -1190,8 +1196,10 @@ class Container extends Element_Base {
 				$base_control_key,
 				[
 					'label' => esc_html__( 'Type', 'elementor' ),
-					'type' => Controls_Manager::SELECT,
-					'options' => $shapes_options,
+					'type' => Controls_Manager::VISUAL_CHOICE,
+					'label_block' => true,
+					'columns' => 2,
+					'options' => Shapes::get_shapes(),
 					'render_type' => 'none',
 					'frontend_available' => true,
 					'assets' => [

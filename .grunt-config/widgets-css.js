@@ -44,8 +44,6 @@ class WidgetsCss {
 	getWidgetScssContent( importPath, direction ) {
 		return `$direction: ${ direction };
 
-@import "../helpers/direction";
-
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/helpers/mixins";
 @import "../../../../assets/dev/scss/frontend/breakpoints/proxy";

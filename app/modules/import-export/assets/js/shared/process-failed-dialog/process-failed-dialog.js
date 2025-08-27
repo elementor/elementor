@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { useNavigate } from '@reach/router';
 
 import Dialog from 'elementor-app/ui/dialog/dialog';
@@ -7,34 +7,36 @@ import useQueryParams from 'elementor-app/hooks/use-query-params';
 import useAction from 'elementor-app/hooks/use-action';
 import InlineLink from 'elementor-app/ui/molecules/inline-link';
 import { KIT_SOURCE_MAP } from '../../hooks/use-kit';
+import safeRedirect from '../utils/redirect';
+import { SharedContext } from '../../context/shared-context/shared-context-provider';
 
 const messagesContent = {
 	general: {
-		title: __( 'Unable to download the Kit', 'elementor' ),
+		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'We couldn’t download the Kit due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
+			{ __( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>
 		</>,
 	},
 	'zip-archive-module-missing': {
-		title: __( 'Couldn’t handle the Kit', 'elementor' ),
+		title: __( 'Couldn’t handle the Website Template', 'elementor' ),
 		text: __( 'Seems like your server is missing the PHP zip module. Install it on your server or contact your site host for further instructions.', 'elementor' ),
 	},
 	'invalid-zip-file': {
-		title: __( 'Couldn’t use the Kit', 'elementor' ),
+		title: __( 'Couldn’t use the .zip file', 'elementor' ),
 		text: <>
-			{ __( 'Seems like there is a problem with the Kit’s files. Try installing again and if the problem persists contact ', 'elementor' ) }
+			{ __( 'Seems like there is a problem with the zip’s files. Try installing again and if the problem persists contact ', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>
 		</>,
 	},
 	timeout: {
-		title: __( 'Unable to download the Kit', 'elementor' ),
+		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'It took too much time to download your Kit and we were unable to complete the process. If all the Kit’s parts don’t appear in ', 'elementor' ) }
+			{ __( 'It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in ', 'elementor' ) }
 			<InlineLink url={ elementorAppConfig.pages_url } >
 				{ __( 'Pages', 'elementor' ) }
 			</InlineLink>
@@ -45,9 +47,9 @@ const messagesContent = {
 		</>,
 	},
 	'invalid-kit-library-zip-error': {
-		title: __( 'Unable to download the Kit', 'elementor' ),
+		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: <>
-			{ __( 'We couldn’t download the Kit due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact ', 'elementor' ) }
+			{ __( 'We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact ', 'elementor' ) }
 			<InlineLink url="https://my.elementor.com/support-center/">
 				{ __( 'Support', 'elementor' ) }
 			</InlineLink>
@@ -55,23 +57,23 @@ const messagesContent = {
 	},
 	'no-write-permissions': {
 		title: __( 'Couldn’t access the file', 'elementor' ),
-		text: __( 'Seems like Elementor isn’t authorized to access relevant files for installing this Kit. Contact your site host to get permission.', 'elementor' ),
+		text: __( 'Seems like Elementor isn’t authorized to access relevant files for installing this Website Template. Contact your site host to get permission.', 'elementor' ),
 	},
 	'plugin-installation-permissions-error': {
-		title: __( 'Couldn’t install the Kit', 'elementor' ),
-		text: __( 'The Kit includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor' ),
+		title: __( 'Couldn’t install the Website Template', 'elementor' ),
+		text: __( 'The Website Template includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor' ),
 	},
 	'third-party-error': {
-		title: __( 'Unable to download the Kit', 'elementor' ),
+		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: __( 'This is due to a conflict with one or more third-party plugins already active on your site. Try disabling them, and then give the download another go.', 'elementor' ),
 	},
 	'domdocument-missing': {
-		title: __( 'Unable to download the Kit', 'elementor' ),
+		title: __( 'Unable to download the Website Template', 'elementor' ),
 		text: __( 'This download requires the \'DOMDocument\' PHP extension, which we couldn’t detect on your server. Enable this extension, or get in touch with your hosting service for support, and then give the download another go.', 'elementor' ),
 	},
 	'insufficient-quota': {
-		title: __( 'Couldn’t Export the Kit', 'elementor' ),
-		text: __( 'The export failed because it will pass the maximum kits you can export.', 'elementor' ),
+		title: __( 'Couldn’t Export the Website Template', 'elementor' ),
+		text: __( 'The export failed because it will pass the maximum Website Templates you can export.', 'elementor' ),
 	},
 	'failed-to-fetch-quota': {
 		title: __( 'Couldn’t fetch quota', 'elementor' ),
@@ -81,6 +83,8 @@ const messagesContent = {
 
 export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, approveButton, dismissButton, onModalClose, onError, onLearnMore } ) {
 	const action = useAction(),
+		sharedContext = useContext( SharedContext ),
+		{ returnTo } = sharedContext.data || {},
 		navigate = useNavigate(),
 		{ referrer, source } = useQueryParams().getAll(),
 		error = 'string' === typeof errorType && messagesContent[ errorType ] ? errorType : 'general',
@@ -101,7 +105,9 @@ export default function ProcessFailedDialog( { errorType, onApprove, onDismiss, 
 		},
 		handleOnDismiss = ( event ) => {
 			const isLoadingKitFromCloud = KIT_SOURCE_MAP.CLOUD === source;
-
+			if ( returnTo && safeRedirect( returnTo ) ) {
+				return;
+			}
 			if ( 'general' === error && onDismiss ) {
 				onDismiss();
 			} else if ( 'kit-library' === referrer ) {

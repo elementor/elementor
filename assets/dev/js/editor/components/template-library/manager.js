@@ -26,17 +26,27 @@ const TemplateLibraryManager = function() {
 		filterTerms = {},
 		isLoading = false,
 		total = 0,
-		toastConfig = { show: false, options: {} };
+		toastConfig = { show: false, options: {} },
+		bulkSelectedItemsTypes = [];
 
 	const registerDefaultTemplateTypes = function() {
 		var data = self.getDefaultTemplateTypeData();
+
+		const elements = Object.entries( elementor.getConfig().elements ).reduce( ( acc, [ type, element ] ) => {
+			if ( ! element?.atomic_props_schema ) {
+				return acc;
+			}
+
+			acc[ type ] = element.title;
+
+			return acc;
+		}, {} );
 
 		const translationMap = {
 			page: __( 'Page', 'elementor' ),
 			section: __( 'Section', 'elementor' ),
 			container: __( 'Container', 'elementor' ),
-			'e-div-block': __( 'Div Block', 'elementor' ),
-			'e-flexbox': __( 'Flexbox', 'elementor' ),
+			...elements,
 
 			[ elementor.config.document.type ]: elementor.config.document.panel.title,
 		};
@@ -126,33 +136,33 @@ const TemplateLibraryManager = function() {
 		return {
 			saveDialog: {
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				canSaveToCloud: true,
 				saveBtnText: __( 'Save', 'elementor' ),
 			},
 			moveDialog: {
 				description: __( 'Alternatively, you can copy the template.', 'elementor' ),
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				canSaveToCloud: true,
 				saveBtnText: __( 'Move', 'elementor' ),
 			},
 			copyDialog: {
 				description: __( 'Alternatively, you can move the template.', 'elementor' ),
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				canSaveToCloud: true,
 				saveBtnText: __( 'Copy', 'elementor' ),
 			},
 			bulkMoveDialog: {
 				description: __( 'Alternatively, you can copy the templates.', 'elementor' ),
 				title: __( 'Move templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				canSaveToCloud: true,
 				saveBtnText: __( 'Move', 'elementor' ),
 			},
 			bulkCopyDialog: {
 				description: __( 'Alternatively, you can move the templates.', 'elementor' ),
 				title: __( 'Copy templates to a different location', 'elementor' ),
 				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ],
+				canSaveToCloud: true,
 				saveBtnText: __( 'Copy', 'elementor' ),
 			},
 		};
@@ -161,11 +171,11 @@ const TemplateLibraryManager = function() {
 	this.getDefaultTemplateTypeSafeData = function( title ) {
 		return {
 			saveDialog: {
-				description: elementorCommon.config.experimentalFeatures?.[ 'cloud-library' ] ? sprintf(
+				description: sprintf(
 					/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
 					__( 'You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor' ),
 					'<b>', '</b>', '<br>', '<b>', '</b>',
-				) : __( 'Your designs will be available for export and reuse on any page or website', 'elementor' ),
+				),
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 			},
@@ -217,16 +227,17 @@ const TemplateLibraryManager = function() {
 	this.selectAllTemplates = function() {
 		document.querySelectorAll( '.elementor-template-library-template[data-template_id]' ).forEach( ( element ) => {
 			const templateId = element.getAttribute( 'data-template_id' );
+			const type = element.getAttribute( 'data-type' );
 
 			element.classList.add( 'bulk-selected-item' );
-			this.addBulkSelectionItem( templateId );
+			this.addBulkSelectionItem( templateId, type );
 		} );
 
 		this.layout.handleBulkActionBar();
 	};
 
 	this.restoreRemovedItems = function() {
-		this.onUndoDelete();
+		this.onUndoDelete( 1 < lastDeletedItems.size );
 	};
 
 	this.getSourceSelection = function() {
@@ -374,7 +385,7 @@ const TemplateLibraryManager = function() {
 			},
 			onShow: () => {
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.renameDialog,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.renameDialog,
 				} );
 				$inputArea.trigger( 'focus' );
 			},
@@ -507,7 +518,7 @@ const TemplateLibraryManager = function() {
 				inputArea.focus();
 
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.newFolderModal,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.newFolderModal,
 				} );
 			},
 		} );
@@ -570,7 +581,7 @@ const TemplateLibraryManager = function() {
 			},
 			onShow: () => {
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteFolderDialog,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.deleteFolderDialog,
 				} );
 			},
 		} );
@@ -614,7 +625,7 @@ const TemplateLibraryManager = function() {
 				options.onSuccess?.( response );
 
 				elementor.templates.eventManager.sendPageViewEvent( {
-					location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteFolderDialog,
+					location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.deleteFolderDialog,
 				} );
 
 				elementor.templates.eventManager.sendItemDeletedEvent( {
@@ -790,7 +801,7 @@ const TemplateLibraryManager = function() {
 				},
 				onShow: () => {
 					elementor.templates.eventManager.sendPageViewEvent( {
-						location: elementor.editorEvents.config.secondaryLocations.templateLibrary.deleteDialog,
+						location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.deleteDialog,
 					} );
 				},
 			} );
@@ -1192,20 +1203,44 @@ const TemplateLibraryManager = function() {
 			0 < elementorAppConfig[ 'cloud-library' ].quota?.threshold;
 	};
 
-	this.addBulkSelectionItem = function( templateId ) {
+	this.addBulkSelectionItem = function( templateId, type = 'template' ) {
+		bulkSelectedItemsTypes.push( type );
 		bulkSelectedItems.add( parseInt( templateId ) );
 	};
 
-	this.removeBulkSelectionItem = function( templateId ) {
+	this.removeBulkSelectionItem = function( templateId, type = 'template' ) {
+		const index = bulkSelectedItemsTypes.findIndex( ( item ) => item === type );
+		if ( index !== -1 ) {
+			bulkSelectedItemsTypes.splice( index, 1 );
+		}
+
 		bulkSelectedItems.delete( parseInt( templateId ) );
 	};
 
 	this.clearBulkSelectionItems = function() {
 		bulkSelectedItems.clear();
+		bulkSelectedItemsTypes = [];
 	};
 
 	this.getBulkSelectionItems = function() {
 		return bulkSelectedItems;
+	};
+
+	this.getUniqueBulkSelectionItemsTypesEventLabel = function() {
+		const types = [ ...new Set( bulkSelectedItemsTypes ) ];
+
+		const hasFolders = types.includes( 'folder' );
+		const hasTemplates = types.some( ( type ) => type !== 'folder' );
+
+		if ( hasFolders && hasTemplates ) {
+			return 'both';
+		}
+
+		if ( hasFolders ) {
+			return 'folder';
+		}
+
+		return 'template';
 	};
 
 	this.onBulkDeleteClick = function() {
@@ -1247,7 +1282,11 @@ const TemplateLibraryManager = function() {
 
 						self.layout.updateViewCollection( self.filterTemplates() );
 
+						const tempBulkSelectedItemsTypes = bulkSelectedItemsTypes;
+
 						self.clearBulkSelectionItems();
+
+						bulkSelectedItemsTypes = tempBulkSelectedItemsTypes;
 
 						self.eventManager.sendBulkActionsSuccessEvent( {
 							library_type: source,
@@ -1260,7 +1299,7 @@ const TemplateLibraryManager = function() {
 								name: 'undo_bulk_delete',
 								text: __( 'Undo', 'elementor' ),
 								callback: () => {
-									this.onUndoDelete( isBulk );
+									this.onUndoDelete( 1 < templateIds.length );
 								},
 							},
 						] : null;
@@ -1300,7 +1339,7 @@ const TemplateLibraryManager = function() {
 		} );
 	};
 
-	this.onUndoDelete = function( isBulk ) {
+	this.onUndoDelete = function( isBulk = false ) {
 		return new Promise( ( resolve ) => {
 			isLoading = true;
 
@@ -1326,6 +1365,8 @@ const TemplateLibraryManager = function() {
 
 					this.triggerQuotaUpdate();
 
+					bulkSelectedItemsTypes = [];
+
 					resolve();
 				},
 				error: ( error ) => {
@@ -1343,6 +1384,7 @@ const TemplateLibraryManager = function() {
 
 			self.eventManager.sendDeletionUndoEvent( {
 				is_bulk: isBulk,
+				item_type: this.getUniqueBulkSelectionItemsTypesEventLabel(),
 			} );
 		} );
 	};

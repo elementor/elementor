@@ -91,8 +91,8 @@ export default function ImportPlugins() {
 				{ ! importPluginsData && <Loader absoluteCenter />	}
 
 				<PageHeader
-					heading={ __( 'Select the plugins you want to import', 'elementor' ) }
-					description={ __( 'These are the plugins that powers up your kit. You can deselect them, but it can impact the functionality of your site.', 'elementor' ) }
+					heading={ __( 'Select which plugins to include', 'elementor' ) }
+					description={ __( 'All items are already selected by default. Uncheck the ones you don\'t want.', 'elementor' ) }
 				/>
 
 				{

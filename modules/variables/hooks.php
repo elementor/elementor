@@ -2,15 +2,18 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
 use Elementor\Modules\Variables\Classes\Fonts;
 use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
-use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
+use Elementor\Modules\Variables\Classes\Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -27,25 +30,16 @@ class Hooks {
 			->filter_for_style_schema()
 			->register_css_renderer()
 			->register_fonts()
-			->register_api_endpoints();
-
-		// TODO: Remove this, later, temporary solution
-		$this->filter_for_stored_variables();
+			->register_api_endpoints()
+			->register_variable_types();
 
 		return $this;
 	}
 
-	private function filter_for_stored_variables() {
-		add_filter( Variables::FILTER, function ( $variables ) {
-			$db_record = ( new Variables_Repository(
-				Plugin::$instance->kits_manager->get_active_kit()
-			) )->load();
-
-			foreach ( $db_record['data'] as $id => $variable ) {
-				$variables[ $id ] = $variable;
-			}
-
-			return $variables;
+	private function register_variable_types() {
+		add_action( 'elementor/variables/register', function ( Variable_Types_Registry $registry ) {
+			$registry->register( Color_Variable_Prop_Type::get_key(), new Color_Variable_Prop_Type() );
+			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
 		} );
 
 		return $this;
@@ -61,6 +55,7 @@ class Hooks {
 
 	private function register_styles_transformers() {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
+			Variables::init( $this->variables_repository() );
 			( new Style_Transformers() )->append_to( $registry );
 		} );
 
@@ -75,6 +70,10 @@ class Hooks {
 		return $this;
 	}
 
+	private function css_renderer() {
+		return new Variables_CSS_Renderer( $this->variables_repository() );
+	}
+
 	private function register_css_renderer() {
 		add_action( 'elementor/css-file/post/parse', function ( Post_CSS $post_css ) {
 			if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
@@ -82,27 +81,27 @@ class Hooks {
 			}
 
 			$post_css->get_stylesheet()->add_raw_css(
-				( new Variables_CSS_Renderer( new Variables() ) )->raw_css()
+				$this->css_renderer()->raw_css()
 			);
 		} );
 
 		return $this;
 	}
 
+	private function fonts() {
+		return new Fonts( $this->variables_repository() );
+	}
+
 	private function register_fonts() {
 		add_action( 'elementor/css-file/post/parse', function ( $post_css ) {
-			( new Fonts() )->append_to( $post_css );
+			$this->fonts()->append_to( $post_css );
 		} );
 
 		return $this;
 	}
 
 	private function rest_api() {
-		return new Variables_API(
-			new Variables_Repository(
-				Plugin::$instance->kits_manager->get_active_kit()
-			)
-		);
+		return new Variables_API( $this->variables_repository() );
 	}
 
 	private function register_api_endpoints() {
@@ -110,24 +109,12 @@ class Hooks {
 			$this->rest_api()->register_routes();
 		} );
 
-		// TODO: Remove this, when there are API-endpoints available to access the list of variables
-		add_action( 'elementor/editor/before_enqueue_scripts', function () {
-			// We must enqueue a random script, so that localize will be triggered as well...
-			wp_enqueue_script(
-				'e-variables',
-				ELEMENTOR_ASSETS_URL . '/variables-' . md5( microtime() ) . '.js',
-				[],
-				ELEMENTOR_VERSION,
-				true
-			);
-
-			wp_localize_script(
-				'e-variables',
-				'ElementorV4Variables',
-				( new Variables() )->get_all()
-			);
-		} );
-
 		return $this;
+	}
+
+	private function variables_repository() {
+		return new Variables_Repository(
+			Plugin::$instance->kits_manager->get_active_kit()
+		);
 	}
 }

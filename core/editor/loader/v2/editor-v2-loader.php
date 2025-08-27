@@ -36,12 +36,14 @@ class Editor_V2_Loader extends Editor_Base_Loader {
 		'ui',
 		'utils',
 		'wp-media',
+		'editor-current-user',
 	];
 
 	const EXTENSIONS = [
 		'editor-documents',
 		'editor-notifications',
 		'editor-panels',
+		'editor-elements-panel',
 	];
 
 	/**

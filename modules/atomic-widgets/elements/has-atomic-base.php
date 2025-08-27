@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -124,6 +125,13 @@ trait Has_Atomic_Base {
 		return $this->get_valid_controls( $schema, $controls );
 	}
 
+	protected function get_css_id_control_meta(): array {
+		return [
+			'layout' => 'two-columns',
+			'topDivider' => true,
+		];
+	}
+
 	final public function get_controls( $control_id = null ) {
 		if ( ! empty( $control_id ) ) {
 			return null;
@@ -177,9 +185,12 @@ trait Has_Atomic_Base {
 	}
 
 	public static function get_props_schema(): array {
+		$schema = static::define_props_schema();
+		$schema['_cssid'] = String_Prop_Type::make();
+
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
-			static::define_props_schema()
+			$schema
 		);
 	}
 }

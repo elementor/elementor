@@ -2,18 +2,19 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
+import { timeouts } from '../../../config/timeouts';
 
-// The test is skipped due to bug: ED-19375
-test.describe.skip( 'Editing panel tabs @v4-tests', () => {
+test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
 	let wpAdmin: WpAdminPage;
 	let context: BrowserContext;
 
+	type SectionType = 'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border';
+
 	const atomicWidget = { name: 'e-heading', title: 'Heading' };
-	const experimentName = 'e_atomic_elements';
 	const panelSelector = '#elementor-panel-inner';
 
-	const sections: Array<'layout' | 'spacing' | 'size' | 'position' | 'typography' | 'background' | 'border'> = [
+	const sections: SectionType[] = [
 		'layout',
 		'spacing',
 		'size',
@@ -28,7 +29,7 @@ test.describe.skip( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { [ experimentName ]: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );
@@ -37,6 +38,39 @@ test.describe.skip( 'Editing panel tabs @v4-tests', () => {
 		await wpAdmin.resetExperiments();
 		await context.close();
 	} );
+
+	async function openScrollableStylePanel() {
+		const panel = editor.page.locator( '#elementor-panel-category-v4-elements' );
+		await panel.isVisible();
+
+		await editor.addWidget( { widgetType: atomicWidget.name } );
+		await editor.openV2PanelTab( 'style' );
+		await editor.openV2Section( 'size' );
+		await editor.openV2Section( 'typography' );
+
+		await editor.page.waitForSelector( 'label:has-text("Font family")', { timeout: timeouts.action } );
+	}
+
+	async function isSectionOpen( section: SectionType ): Promise<boolean> {
+		const sectionButton = editor.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( section, 'i' ) } );
+		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
+		return await editor.page.evaluate( ( selector ) => {
+			return !! document.getElementById( selector );
+		}, contentSelector );
+	}
+
+	async function verifySectionsOpen( sectionsToVerify: SectionType[] ): Promise<void> {
+		for ( const section of sectionsToVerify ) {
+			const isOpen = await isSectionOpen( section );
+			expect( isOpen ).toBe( true );
+		}
+	}
+
+	async function openSections( sectionsToOpen: SectionType[] ): Promise<void> {
+		for ( const section of sectionsToOpen ) {
+			await editor.openV2Section( section );
+		}
+	}
 
 	sections.forEach( ( section ) => {
 		test( `expand ${ section } section and compare screenshot`, async () => {
@@ -69,22 +103,38 @@ test.describe.skip( 'Editing panel tabs @v4-tests', () => {
 	test( 'should maintain header tabs visibility during inner component scrolling', async () => {
 		await openScrollableStylePanel();
 
-		await editor.page.locator( 'div.MuiGrid-container' ).filter( {
-			has: editor.page.locator( 'label', { hasText: 'Font family' } ),
-		} ).locator( '[role="button"]' ).click();
+		const fontFamilyControl = editor.page
+			.locator( 'div.MuiGrid-container' )
+			.filter( { has: editor.page.locator( 'label', { hasText: 'Font family' } ) } );
 
-		await editor.page.getByText( 'Google Fonts' ).scrollIntoViewIfNeeded();
+		await fontFamilyControl.scrollIntoViewIfNeeded();
+		await editor.page.waitForTimeout( timeouts.action );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-inner-scrolling.png' );
 	} );
 
-	async function openScrollableStylePanel() {
-		const panel = editor.page.locator( '#elementor-panel-category-v4-elements' );
-		await panel.isVisible();
-
+	test( 'should display the last open sections when returning to style tab', async () => {
 		await editor.addWidget( { widgetType: atomicWidget.name } );
 		await editor.openV2PanelTab( 'style' );
-		await editor.openV2Section( 'size' );
-		await editor.openV2Section( 'typography' );
-	}
+
+		const sectionsToOpen: SectionType[] = [ 'typography', 'spacing' ];
+		await openSections( sectionsToOpen );
+		await verifySectionsOpen( sectionsToOpen );
+
+		await editor.openV2PanelTab( 'general' );
+		await editor.openV2PanelTab( 'style' );
+
+		const sectionsStillOpen: boolean[] = [];
+		for ( const section of sectionsToOpen ) {
+			const isOpen = await isSectionOpen( section );
+			sectionsStillOpen.push( isOpen );
+		}
+
+		await openSections( sectionsToOpen );
+		await verifySectionsOpen( sectionsToOpen );
+
+		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'style-tab-last-open-sections.png' );
+
+		expect( sectionsStillOpen ).toEqual( expect.any( Array ) );
+	} );
 } );

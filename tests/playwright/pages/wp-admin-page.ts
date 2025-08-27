@@ -19,8 +19,40 @@ export default class WpAdminPage extends BasePage {
 	 *
 	 * @return {Promise<void>}
 	 */
-	async gotoDashboard(): Promise<void> {
-		await this.page.goto( '/wp-admin' );
+	async openWordPressDashboard(): Promise<void> {
+		await this.page.goto( '/wp-admin/' );
+	}
+
+	/**
+	 * Go to the WordPress User Profile.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openWordPressUserProfile(): Promise<void> {
+		await this.page.goto( '/wp-admin/profile.php' );
+	}
+
+	/**
+	 * Go to the WordPress Settings pages.
+	 *
+	 * @param {('general' | 'writing' | 'reading' | 'discussion' | 'media' | 'permalink' | 'privacy')} page - The settings page to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openWordPressSettings( page: 'general' | 'writing' | 'reading' | 'discussion' | 'media' | 'permalink' | 'privacy' ): Promise<void> {
+		await this.page.goto( `/wp-admin/options-${ page }.php` );
+	}
+
+	/**
+	 * Go to the WordPress Settings pages.
+	 *
+	 * @param {('tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-experiments')} tab - The Elementor settings tab to open.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openElementorSettings( tab: 'tab-general' | 'tab-integrations' | 'tab-advanced' | 'tab-experiments' ): Promise<void> {
+		await this.page.goto( `/wp-admin/admin.php?page=elementor-settings#${ tab }` );
+		await this.page.locator( `#elementor-settings-${ tab }` ).waitFor();
 	}
 
 	/**
@@ -29,7 +61,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async login(): Promise<void> {
-		await this.gotoDashboard();
+		await this.openWordPressDashboard();
 
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
@@ -53,7 +85,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async customLogin( username: string, password: string ): Promise<void> {
-		await this.gotoDashboard();
+		await this.openWordPressDashboard();
 		const loggedIn = await this.page.$( 'text=Dashboard' );
 
 		if ( loggedIn ) {
@@ -120,7 +152,7 @@ export default class WpAdminPage extends BasePage {
 	 */
 	async createNewPostFromDashboard( setPageName: boolean ): Promise<void> {
 		if ( ! await this.page.$( '.e-overview__create > a' ) ) {
-			await this.gotoDashboard();
+			await this.openWordPressDashboard();
 		}
 
 		await this.page.click( '.e-overview__create > a' );
@@ -194,8 +226,6 @@ export default class WpAdminPage extends BasePage {
 	/**
 	 * Activate and deactivate Elementor experiments.
 	 *
-	 * TODO: The testing environment isn't clean between tests - Use with caution!
-	 *
 	 * @param {Object}            experiments - Experiments settings ( `{ experiment_id: true / false }` );
 	 * @param {(boolean|string)=} oldUrl      - Optional. Whether to use the old URL structure. Default is false.
 	 *
@@ -206,7 +236,7 @@ export default class WpAdminPage extends BasePage {
 			await this.page.goto( '/wp-admin/admin.php?page=elementor#tab-experiments' );
 			await this.page.click( '#elementor-settings-tab-experiments' );
 		} else {
-			await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+			await this.openElementorSettings( 'tab-experiments' );
 		}
 
 		const prefix = 'e-experiment';
@@ -239,7 +269,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async resetExperiments(): Promise<void> {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-experiments' );
+		await this.openElementorSettings( 'tab-experiments' );
 		await this.page.getByRole( 'button', { name: 'default' } ).click();
 	}
 
@@ -260,7 +290,7 @@ export default class WpAdminPage extends BasePage {
 			languageCheck = 'en_US';
 		}
 
-		await this.page.goto( '/wp-admin/options-general.php' );
+		await this.openWordPressSettings( 'general' );
 
 		const isLanguageActive = await this.page.locator( 'html[lang=' + languageCheck + ']' ).isVisible();
 
@@ -281,7 +311,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async setUserLanguage( language: string ): Promise<void> {
-		await this.page.goto( 'wp-admin/profile.php' );
+		await this.openWordPressUserProfile();
 		await this.page.selectOption( '[name="locale"]', language );
 		await this.page.locator( '#submit' ).click();
 	}
@@ -324,7 +354,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async enableAdvancedUploads(): Promise<void> {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
+		await this.openElementorSettings( 'tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '1' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}
@@ -335,7 +365,7 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async disableAdvancedUploads(): Promise<void> {
-		await this.page.goto( '/wp-admin/admin.php?page=elementor-settings#tab-advanced' );
+		await this.openElementorSettings( 'tab-advanced' );
 		await this.page.locator( 'select[name="elementor_unfiltered_files_upload"]' ).selectOption( '' );
 		await this.page.getByRole( 'button', { name: 'Save Changes' } ).click();
 	}

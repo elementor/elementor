@@ -70,7 +70,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementor.editorEvents.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
 
 		const context = this.getOption( 'context' );
@@ -164,7 +164,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.cloudFormInputs.addClass( stateClass );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModalSelectUpgrade,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectUpgrade,
 		} );
 	},
 
@@ -401,7 +401,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModalSelectFolder,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectFolder,
 		} );
 	},
 
@@ -661,7 +661,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	handleElementorConnect() {
 		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModalSelectConnect,
+			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectConnect,
 		} );
 
 		this.ui.connect.elementorConnect( {
@@ -692,7 +692,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		const upgradePosition = elementor.templates.hasCloudLibraryQuota() ? 'save to-max' : 'save to-free';
 
 		elementor.templates.eventManager.sendUpgradeClickedEvent( {
-			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.saveModal,
+			secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModal,
 			upgrade_position: upgradePosition,
 		} );
 	},

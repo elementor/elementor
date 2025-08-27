@@ -63,9 +63,7 @@ export default function ExportProcess() {
 				selectedCustomPostTypes,
 			};
 
-			const isCloudKitFeatureActive = elementorCommon?.config?.experimentalFeatures?.e_cloud_library_kits;
-
-			if ( isCloudKitFeatureActive && KIT_SOURCE_MAP.CLOUD === exportContext.data.kitInfo.source ) {
+			if ( KIT_SOURCE_MAP.CLOUD === exportContext.data.kitInfo.source ) {
 				const scr = await generateScreenshot();
 				kitData.screenShotBlob = scr;
 			}

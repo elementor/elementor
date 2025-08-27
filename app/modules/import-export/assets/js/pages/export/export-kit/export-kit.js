@@ -45,11 +45,11 @@ export default function ExportKit() {
 		<Layout type="export" footer={ getFooter() }>
 			<section className="e-app-export-kit">
 				<PageHeader
-					heading={ __( 'Export a Website Kit', 'elementor' ) }
+					heading={ __( 'Select which items to export', 'elementor' ) }
 					description={ [
-						__( 'Choose which Elementor components - templates, content and site settings - to include in your kit file.', 'elementor' ),
+						__( 'You can export the content, site settings, and templates as a Website Template to be reused in the future.', 'elementor' ),
 						<React.Fragment key="description-secondary-line">
-							{ __( 'By default, all of your components will be exported.', 'elementor' ) } { getLearnMoreLink() }
+							{ __( 'Uncheck the items you don\'t want to include.', 'elementor' ) } { getLearnMoreLink() }
 						</React.Fragment>,
 					] }
 				/>

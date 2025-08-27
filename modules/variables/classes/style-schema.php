@@ -71,6 +71,8 @@ class Style_Schema {
 
 	private function update_union( Union_Prop_Type $union_prop_type ): Union_Prop_Type {
 		$new_union = Union_Prop_Type::make();
+		$dependencies = $union_prop_type->get_dependencies();
+		$new_union->set_dependencies( $dependencies );
 
 		foreach ( $union_prop_type->get_prop_types() as $prop_type ) {
 			$updated = $this->update( $prop_type );
