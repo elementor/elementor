@@ -97,7 +97,8 @@ export default function ImportKit() {
 						{ __( 'Upload a file with templates, site settings, content, etc., and apply them to your site ', 'elementor' ) }
 						<Link
 							href="#"
-							sx={ { color: 'info.main', ml: 1, textDecoration: 'none' } }
+							color="info.light"
+							sx={ { ml: 1, textDecoration: 'none' } }
 							data-testid="import-learn-more-link"
 						>
 							{ __( 'Learn more', 'elementor' ) }

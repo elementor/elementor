@@ -58,10 +58,18 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 		return <NotFound notFoundType={ notFoundType } />;
 	}
 
+	const isFiltersApplied = filters?.length || searchValue;
+
+	const allowSorting = filteredCssClasses.length > 1 && ! isFiltersApplied;
+
 	return (
 		<DeleteConfirmationProvider>
 			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-				<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
+				<SortableProvider
+					value={ classesOrder }
+					onChange={ reorderClasses }
+					disableDragOverlay={ ! allowSorting }
+				>
 					{ filteredCssClasses?.map( ( { id, label } ) => (
 						<SortableItem key={ id } id={ id }>
 							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
@@ -81,7 +89,7 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 									selected={ isDragged }
 									disabled={ disabled || isDragPlaceholder }
 									sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-									showSortIndicator={ filteredCssClasses.length > 1 }
+									showSortIndicator={ allowSorting }
 								/>
 							) }
 						</SortableItem>
