@@ -1,0 +1,30 @@
+{
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+	"landingPage": "/wp-admin/",
+	"preferredVersions": { "php": "7.4", "wp": "latest" },
+    "features": {
+        "networking": true
+    },
+    "extraLibraries": [ "wp-cli" ],
+	"steps": [
+		{ "step": "login", "username": "admin", "password": "password" },
+		{
+            "step": "defineWpConfigConsts",
+            "consts": {
+                "WP_DISABLE_FATAL_ERROR_HANDLER": true,
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": true,
+                "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
+            }
+        },
+		{
+			"step": "installTheme",
+			"themeData": {
+				"resource": "wordpress.org/themes",
+				"slug": "hello-elementor"
+			}
+		},
+		{ "step": "activatePlugin", "pluginPath": "/wordpress/wp-content/plugins/elementor" },
+        { "step": "activateTheme", "themeFolderName": "hello-elementor" }
+	]
+}
