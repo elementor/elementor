@@ -86,6 +86,21 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		] );
 	}
 
+	protected function define_default_children() {
+		$tabs_list = Atomic_Tabs_List::generate()
+			->is_locked( true )
+			->build();
+
+		$tabs_panel = Atomic_Tab_Panel::generate()
+			->is_locked( true )
+			->build();
+
+		return [
+			$tabs_list,
+			$tabs_panel,
+		];
+	}
+
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
@@ -107,20 +122,5 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		}
 
 		$this->add_render_attribute( '_wrapper', $attributes );
-	}
-
-	protected function define_default_children() {
-		$tabs_list = Atomic_Tabs_List::generate()
-			->is_locked( true )
-			->build();
-
-		$tabs_panel = Atomic_Tab_Panel::generate()
-			->is_locked( true )
-			->build();
-
-		return [
-			$tabs_list,
-			$tabs_panel,
-		];
 	}
 }
