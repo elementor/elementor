@@ -1,0 +1,115 @@
+// License Page
+.wrap.elementor-admin-page-license {
+
+	.elementor-license-box {
+		max-width: 600px;
+		background: white;
+		margin: 20px 0;
+		padding: 20px 20px;
+
+		h3 {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin: 0;
+			padding: 0;
+			padding-block-end: 20px;
+			border-block-end: 1px solid #eee;
+
+			span {
+				flex-grow: 1;
+				padding-inline-start: 5px;
+			}
+
+			small {
+				font-size: 13px;
+				font-weight: normal;
+			}
+		}
+
+		label {
+			display: block;
+			font-size: 1.3em;
+			font-weight: 600;
+			margin: 1em 0;
+		}
+
+		.button {
+			height: 30px;
+			margin-inline-start: 15px;
+			margin-block-end: 0;
+		}
+
+		p.description {
+			margin: 10px 0;
+		}
+
+		.e-row-stretch,
+		&.e-row-stretch {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+
+		.e-row-divider-bottom {
+			padding-block-end: 15px;
+			border-block-end: 1px solid #eeeeee;
+		}
+
+		.elementor-upgrade-link {
+			color: $wp-admin-brand-color;
+			border-color: $wp-admin-brand-color;
+
+			&:hover {
+				color: #fff;
+				background-color: $wp-admin-brand-color;
+
+			}
+		}
+
+		&.elementor-pro-connect-promotion {
+			display: flex;
+			flex-direction: row;
+			gap: 40px;
+			justify-content: start;
+			align-items: center;
+
+			h2 {
+				line-height: 24px;
+			}
+
+			.elementor-box-action {
+				justify-content: flex-start;
+			}
+
+			.button-upgrade {
+				display: inline-flex;
+				align-items: center;
+				gap: 10px;
+				margin-inline: 0;
+				margin-block-start: 10px;
+				color: #fff;
+				background-color: #93003f;
+				border: 0;
+			}
+
+			> img {
+				width: 45%;
+			}
+		}
+	}
+
+	.elementor-box-action {
+		display: flex;
+		justify-content: flex-end;
+
+		.elementor-manually-link {
+			color: #72777c;
+			margin-inline-end: 15px;
+
+			&:hover {
+				color: inherit;
+			}
+		}
+	}
+}

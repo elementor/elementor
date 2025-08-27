@@ -107,6 +107,7 @@ class Modules_Manager {
 			'container-converter',
 			'web-cli',
 			'promotions',
+			'pro-install',
 			'notes',
 			'performance-lab',
 			'lazyload',
