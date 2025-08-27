@@ -89,7 +89,7 @@ describe( 'FilterRepeaterControl', () => {
 		const btn = screen.getAllByRole( 'button' )[ 0 ];
 
 		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
-		expect( btn ).toHaveAttribute( 'aria-label', 'Add item' );
+		expect( btn ).toHaveAttribute( 'aria-label', 'Add filter item' );
 	} );
 
 	it( 'should render Filter repeater for backdrop filter', () => {
@@ -107,7 +107,7 @@ describe( 'FilterRepeaterControl', () => {
 		// Assert.
 		const btn = screen.getAllByRole( 'button' )[ 0 ];
 		expect( screen.getByText( 'Backdrop Filters' ) ).toBeInTheDocument();
-		expect( btn ).toHaveAttribute( 'aria-label', 'Add item' );
+		expect( btn ).toHaveAttribute( 'aria-label', 'Add backdrop filter item' );
 	} );
 
 	it( 'should render Filter repeater with items', () => {

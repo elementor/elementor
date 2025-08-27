@@ -31,6 +31,7 @@ type TextFieldInnerSelectionProps = {
 	inputProps?: TextFieldProps[ 'inputProps' ];
 	disabled?: boolean;
 	isPopoverOpen?: boolean;
+	id?: string;
 };
 
 export const TextFieldInnerSelection = forwardRef(
@@ -47,6 +48,7 @@ export const TextFieldInnerSelection = forwardRef(
 			inputProps,
 			disabled,
 			isPopoverOpen,
+			id,
 		}: TextFieldInnerSelectionProps,
 		ref
 	) => {
@@ -73,6 +75,7 @@ export const TextFieldInnerSelection = forwardRef(
 				placeholder={ placeholder ?? ( String( boundPropPlaceholder?.size ?? '' ) || undefined ) }
 				InputProps={ InputProps }
 				inputProps={ inputProps }
+				id={ id }
 			/>
 		);
 	}
