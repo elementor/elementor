@@ -14,6 +14,10 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 		try {
 			setStatus( STATUS_PROCESSING );
 
+			setStatus( STATUS_ERROR );
+			return;
+
+			// eslint-disable-next-line no-unreachable
 			const exportData = {
 				kitInfo: {
 					title: kitInfo.title?.trim() || null,
