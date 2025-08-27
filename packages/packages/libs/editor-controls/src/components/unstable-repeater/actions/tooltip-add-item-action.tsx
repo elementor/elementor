@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PlusIcon } from '@elementor/icons';
 import { Box, IconButton, Infotip } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
 
@@ -12,6 +12,7 @@ export type TooltipAddItemActionProps = {
 	enableTooltip?: boolean;
 	tooltipContent?: React.ReactNode;
 	newItemIndex?: number;
+	ariaLabel?: string;
 };
 
 export const TooltipAddItemAction = ( {
@@ -19,6 +20,7 @@ export const TooltipAddItemAction = ( {
 	enableTooltip = false,
 	tooltipContent = null,
 	newItemIndex,
+	ariaLabel,
 }: TooltipAddItemActionProps ) => {
 	const { addItem } = useRepeaterContext();
 
@@ -31,7 +33,8 @@ export const TooltipAddItemAction = ( {
 					size={ SIZE }
 					disabled={ disabled }
 					onClick={ onClick }
-					aria-label={ __( 'Add item', 'elementor' ) }
+					/* Translators: %s: Aria label. */
+					aria-label={ sprintf( __( 'Add %s item', 'elementor' ), ariaLabel?.toLowerCase() ) }
 				>
 					<PlusIcon fontSize={ SIZE } />
 				</IconButton>
