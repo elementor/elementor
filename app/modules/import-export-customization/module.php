@@ -666,15 +666,6 @@ class Module extends BaseModule {
 			}
 		}
 
-		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
-
-		foreach ( $active_kit->get_tabs() as $key => $tab ) {
-			$summary_titles['site-settings'][ $key ] = $tab->get_title();
-		}
-
-		$summary_titles['site-settings']['theme'] = esc_html__( 'Theme', 'elementor' );
-		$summary_titles['site-settings']['experiments'] = esc_html__( 'Experiments', 'elementor' );
-
 		return $summary_titles;
 	}
 
