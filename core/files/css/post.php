@@ -218,7 +218,7 @@ class Post extends Base {
 	 * @param array          $replacements   Replacements.
 	 * @param array          $all_controls   All controls.
 	 */
-	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, array $all_controls = null ) {
+	public function add_controls_stack_style_rules( Controls_Stack $controls_stack, array $controls, array $values, array $placeholders, array $replacements, ?array $all_controls = null ) {
 		parent::add_controls_stack_style_rules( $controls_stack, $controls, $values, $placeholders, $replacements, $all_controls );
 
 		if ( $controls_stack instanceof Element_Base ) {
