@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useSectionWidth } from '@elementor/editor-editing-panel';
 import { Alert, AlertAction, AlertTitle, ClickAwayListener } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -22,8 +21,6 @@ const i18n = {
 };
 
 export const MismatchVariableAlert = ( { onClose, onClear, triggerSelect }: AlertProps ) => {
-	const sectionWidth = useSectionWidth();
-
 	return (
 		<ClickAwayListener onClickAway={ onClose }>
 			<Alert
@@ -44,10 +41,7 @@ export const MismatchVariableAlert = ( { onClose, onClear, triggerSelect }: Aler
 						) }
 					</>
 				}
-				sx={ {
-					width: sectionWidth,
-					minWidth: 300,
-				} }
+				sx={ { maxWidth: 300 } }
 			>
 				<AlertTitle>{ i18n.title }</AlertTitle>
 				{ i18n.message }
