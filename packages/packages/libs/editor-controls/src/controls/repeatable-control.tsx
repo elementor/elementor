@@ -79,7 +79,11 @@ export const RepeatableControl = createControl(
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 					>
 						<Header label={ repeaterLabel }>
-							<TooltipAddItemAction { ...addItemTooltipProps } newItemIndex={ 0 } />
+							<TooltipAddItemAction
+								{ ...addItemTooltipProps }
+								newItemIndex={ 0 }
+								ariaLabel={ repeaterLabel }
+							/>
 						</Header>
 						<ItemsContainer
 							isSortable={ false }
