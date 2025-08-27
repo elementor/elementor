@@ -62,7 +62,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -101,7 +101,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -140,7 +140,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -186,7 +186,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -221,7 +221,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...createItemSettings() } /> } />
 				<EditItemPopover>
@@ -303,7 +303,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ customInitialValues }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...customItemSettings } /> } />
 				<EditItemPopover>
@@ -346,7 +346,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DuplicateItemAction />
@@ -405,7 +405,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps }>
 				<Header label={ 'Test Repeater' }>
-					<TooltipAddItemAction labelName={ 'Test repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<RemoveItemAction />
@@ -458,7 +458,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction labelName={ 'Repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
@@ -508,7 +508,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction labelName={ 'Repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> }>
 					<DisableItemAction />
@@ -560,7 +560,7 @@ describe( 'UnstableRepeater', () => {
 		renderWithTheme(
 			<UnstableRepeater { ...defaultProps } initial={ initialValues }>
 				<Header label={ 'Repeater' }>
-					<TooltipAddItemAction labelName={ 'Repeater' } />
+					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
 				</Header>
 				<ItemsContainer itemTemplate={ <Item { ...itemSettings } /> } />
 				<EditItemPopover>
