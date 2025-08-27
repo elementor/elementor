@@ -14,19 +14,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tab_List extends Atomic_Element_Base {
+class Atomic_Tabs_List extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tab-list';
+		return 'e-tabs-list';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tab-list';
+		return 'e-tabs-list';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tab List', 'elementor' );
+		return esc_html__( 'Atomic Tabs List', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -85,10 +85,22 @@ class Atomic_Tab_List extends Atomic_Element_Base {
 		];
 	}
 
+	protected function define_default_children() {
+		return [
+			Atomic_Tab_Link::generate()
+				->is_locked( true )
+				->build(),
+			Atomic_Tab_Link::generate()
+				->is_locked( true )
+				->build(),
+		];
+	}
+
 	protected function add_render_attributes() {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
+		$static_attributes = $this->define_static_attributes();
 
 		$attributes = [
 			'class' => [
@@ -97,6 +109,7 @@ class Atomic_Tab_List extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			...$static_attributes,
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {

@@ -10,28 +10,27 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Atomic_Tabs_Content extends Atomic_Element_Base {
+class Atomic_Tab_Panel extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
 	public static function get_type() {
-		return 'e-tabs-content';
+		return 'e-tab-panel';
 	}
 
 	public static function get_element_type(): string {
-		return 'e-tabs-content';
+		return 'e-tab-panel';
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs Content', 'elementor' );
+		return esc_html__( 'Atomic Tab Panel', 'elementor' );
 	}
 
 	public function get_keywords() {
-		return [ 'ato', 'atom', 'atoms', 'atomic' ];
+		return [ 'ato', 'atom', 'atoms', 'atomic', 'tab', 'panel', 'tabs' ];
 	}
 
 	public function get_icon() {
@@ -88,6 +87,17 @@ class Atomic_Tabs_Content extends Atomic_Element_Base {
 			'size' => 30,
 			'unit' => 'px',
 		] );
+	}
+
+	protected function define_default_children() {
+		return [
+			Atomic_Tabs_Content::generate()
+				->is_locked( true )
+				->build(),
+			Atomic_Tabs_Content::generate()
+				->is_locked( true )
+				->build(),
+		];
 	}
 
 	protected function add_render_attributes() {
