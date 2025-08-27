@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ControlFormLabel, useBoundProp } from '@elementor/editor-controls';
-import type { Control, ControlsSection } from '@elementor/editor-elements';
+import type { Control, ControlLayout, ControlsSection } from '@elementor/editor-elements';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { DatabaseIcon, SettingsIcon, XIcon } from '@elementor/icons';
 import {
@@ -168,12 +168,23 @@ const DynamicSettings = ( { controls }: { controls: DynamicTag[ 'atomic_controls
 	);
 };
 
+const LAYOUT_OVERRIDE_FIELDS = {
+	separator: 'two-columns',
+} as const;
+
+const getLayout = ( control: Control[ 'value' ] ): ControlLayout => {
+	return (
+		LAYOUT_OVERRIDE_FIELDS[ control.bind as keyof typeof LAYOUT_OVERRIDE_FIELDS ] ??
+		controlsRegistry.getLayout( control.type as ControlType )
+	);
+};
+
 const Control = ( { control }: { control: Control[ 'value' ] } ) => {
 	if ( ! controlsRegistry.get( control.type as ControlType ) ) {
 		return null;
 	}
 
-	const layout = controlsRegistry.getLayout( control.type as ControlType );
+	const layout = getLayout( control );
 
 	return (
 		<DynamicControl bind={ control.bind }>
