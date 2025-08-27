@@ -56,21 +56,29 @@ export const FilterRepeaterControl = createControl( ( { filterPropName = 'filter
 				<Repeater
 					propTypeUtil={ propTypeUtil as PropTypeUtil< string, RepeatablePropValue[] > }
 					label={ label }
+					filterPropName={ filterPropName }
 				/>
 			</PropProvider>
 		</FilterConfigProvider>
 	);
 } );
 
-type RepeaterProps = { propTypeUtil: PropTypeUtil< string, RepeatablePropValue[] >; label: string };
+type RepeaterProps = {
+	propTypeUtil: PropTypeUtil< string, RepeatablePropValue[] >;
+	label: string;
+	filterPropName: string;
+};
 
-const Repeater = ( { propTypeUtil, label }: RepeaterProps ) => {
+const Repeater = ( { propTypeUtil, label, filterPropName }: RepeaterProps ) => {
 	const { getInitialValue } = useFilterConfig();
 
 	return (
 		<UnstableRepeater initial={ getInitialValue() as RepeatablePropValue } propTypeUtil={ propTypeUtil }>
 			<Header label={ label }>
-				<TooltipAddItemAction newItemIndex={ 0 } />
+				<TooltipAddItemAction
+					newItemIndex={ 0 }
+					ariaLabel={ filterPropName === 'backdrop-filter' ? 'backdrop filter' : 'filter' }
+				/>
 			</Header>
 			<ItemsContainer itemTemplate={ <Item Label={ FilterLabel } Icon={ FilterIcon } /> }>
 				<DuplicateItemAction />
