@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertAction, AlertTitle, ClickAwayListener } from '@elementor/ui';
+import { Alert, AlertAction, AlertTitle, ClickAwayListener, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type AlertProps = {
@@ -44,7 +44,9 @@ export const MismatchVariableAlert = ( { onClose, onClear, triggerSelect }: Aler
 				sx={ { maxWidth: 300 } }
 			>
 				<AlertTitle>{ i18n.title }</AlertTitle>
-				{ i18n.message }
+				<Typography variant="body2" color="textPrimary">
+					{ i18n.message }
+				</Typography>
 			</Alert>
 		</ClickAwayListener>
 	);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Alert, AlertAction, AlertTitle, ClickAwayListener } from '@elementor/ui';
+import { Alert, AlertAction, AlertTitle, ClickAwayListener, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 type MissingVariableAlertProps = {
@@ -26,10 +26,12 @@ export const MissingVariableAlert = ( { onClose, onClear }: MissingVariableAlert
 				sx={ { maxWidth: 300 } }
 			>
 				<AlertTitle>{ __( 'This variable is missing', 'elementor' ) }</AlertTitle>
-				{ __(
-					'It may have been deleted. Try clearing this field and select a different value or variable.',
-					'elementor'
-				) }
+				<Typography variant="body2" color="textPrimary">
+					{ __(
+						'It may have been deleted. Try clearing this field and select a different value or variable.',
+						'elementor'
+					) }
+				</Typography>
 			</Alert>
 		</ClickAwayListener>
 	);

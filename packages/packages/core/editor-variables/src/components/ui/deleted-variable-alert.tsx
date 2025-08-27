@@ -33,9 +33,11 @@ export const DeletedVariableAlert = ( { onClose, onUnlink, onRestore, label }: D
 				sx={ { maxWidth: 300 } }
 			>
 				<AlertTitle>{ __( 'Deleted variable', 'elementor' ) }</AlertTitle>
-				{ __( 'The variable', 'elementor' ) }
+				<Typography variant="body2" color="textPrimary">
+					{ __( 'The variable', 'elementor' ) }
+			
 				&nbsp;&apos;
-				<Typography variant="subtitle2" component="span" sx={ { lineBreak: 'anywhere' } }>
+				<Typography variant="body2" component="span" sx={ { lineBreak: 'anywhere' } }>
 					{ label }
 				</Typography>
 				&apos;&nbsp;
@@ -43,6 +45,7 @@ export const DeletedVariableAlert = ( { onClose, onUnlink, onRestore, label }: D
 					'has been deleted, but it is still referenced in this location. You may restore the variable or unlink it to assign a different value.',
 					'elementor'
 				) }
+					</Typography>
 			</Alert>
 		</ClickAwayListener>
 	);
