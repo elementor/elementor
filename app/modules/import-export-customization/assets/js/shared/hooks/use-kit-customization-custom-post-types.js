@@ -28,7 +28,7 @@ export function useKitCustomizationCustomPostTypes( { data } ) {
 
 		if ( hasPostWpContent || hasPostContent ) {
 			if ( ! customPostTypesFromTitle.some( ( postType ) => 'post' === postType.value ) ) {
-			customPostTypesFromTitle.push( {
+				customPostTypesFromTitle.push( {
 					value: 'post',
 					label: 'Post',
 				} );
