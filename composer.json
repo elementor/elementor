@@ -33,6 +33,9 @@
 		"symfony/service-contracts": "^2.5",
 		"symfony/string": "^5.4",
 		"symfony/yaml": "^5.4",
+		"symfony/property-access": "^5.4",
+		"symfony/property-info": "^5.4",
+		"symfony/serializer": "^5.4",
 		"thecodingmachine/safe": "^1.3"
 	},
 	"scripts": {
