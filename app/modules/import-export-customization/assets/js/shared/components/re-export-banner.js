@@ -1,26 +1,26 @@
-import { Stack, Box, Typography } from '@elementor/ui';
+import { Stack, Box, Typography, Paper } from '@elementor/ui';
 
 export function ReExportBanner() {
 	return (
-		<Box
-			sx={ {
-				mb: 3,
-				border: 1,
-				borderRadius: 1,
-				borderColor: 'action.focus',
-				p: 2.5,
-				backgroundColor: 'primary.main',
-			} }
+		<Paper
+			color="secondary"
 		>
 			<Stack
 				direction="row"
-				sx={ { alignItems: 'center', gap: '5px' } }
+				sx={ {
+					alignItems: 'center',
+					gap: '5px',
+					p: 2.5,
+					border: 1,
+					borderRadius: 1,
+					borderColor: 'action.focus',
+				} }
 			>
 				<Box component="i" className="eicon-info-circle" />
 				<Typography variant="body1">
 					{ __( 'This website template was exported with an older version of Elementor, so component editing is limited.', 'elementor' ) }
 				</Typography>
 			</Stack>
-		</Box>
+		</Paper>
 	);
 }
