@@ -27,8 +27,9 @@
 		},
 		{ "step": "activatePlugin", "pluginPath": "/wordpress/wp-content/plugins/elementor" },
         { "step": "activateTheme", "themeFolderName": "hello-elementor" },
-        { "step": "wp-cli", "command": "wp option update e_editor_counter 10" },
-        { "step": "wp-cli", "command": "wp option update elementor_checklist '{\"last_opened_timestamp\":null,\"first_closed_checklist_in_editor\":true,\"is_popup_minimized\":false,\"steps\":[],\"should_open_in_editor\":false,\"editor_visit_count\":10}'" },
-        { "step": "updateUserMeta", "meta": { "announcements_user_counter": 999 }, "userId": 1 }
+        { "step": "wp-cli", "command": "wp option add 'elementor_onboarded' 1" },
+        { "step": "wp-cli", "command": "wp option add '_e_welcome_popover_displayed' 1" },
+        { "step": "wp-cli", "command": "wp elementor experiments activate e_atomic_elements,container,e_opt_in_v4,e_classes"},
+        { "step": "updateUserMeta", "meta": { "announcements_user_counter": 999, "elementor_enable_ai": 0 }, "userId": 1 }
 	]
 }
