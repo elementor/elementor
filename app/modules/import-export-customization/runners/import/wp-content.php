@@ -83,10 +83,6 @@ class Wp_Content extends Import_Runner_Base {
 			return [];
 		}
 
-		if ( ! function_exists( 'wp_tempnam' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/file.php';
-		}
-
 		$wp_importer = new WP_Import( $file, $args );
 		$result = $wp_importer->run();
 
