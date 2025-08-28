@@ -47,7 +47,7 @@ const getBuildFiles = [
 	'vendor/autoload.php',
 	'vendor/composer/**',
 	'vendor/sabberworm/**',
-	'vendor/symfony/polyfill-*/**',
+	'vendor/symfony/**',
 	'!php-scoper/**',
 	'!yarn.lock',
 	'!*~',
