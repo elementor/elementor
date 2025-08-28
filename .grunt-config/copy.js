@@ -42,6 +42,11 @@ const getBuildFiles = [
 	'!test-results/',
 	'!tmp/**',
 	'!vendor/**',
+	
+	// Include only essential vendor files for production
+	'vendor/autoload.php',
+	'vendor/composer/**',
+	'vendor/sabberworm/**',
 	'!php-scoper/**',
 	'!yarn.lock',
 	'!*~',
