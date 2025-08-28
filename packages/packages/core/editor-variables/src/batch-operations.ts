@@ -39,14 +39,12 @@ export const buildOperationsArray = (
 			const original = originalVariables[ id ];
 
 			if ( original.deleted && ! variable.deleted ) {
-				const restoreOperation: BatchOperation = {
+				operations.push( {
 					type: 'restore',
 					id,
-					label: variable.label,
-					value: variable.value,
-				};
-
-				operations.push( restoreOperation );
+					...(variable.label && { label: variable.label }),
+                    ...(variable.value && { value: variable.value }),
+				} );
 			} else if (
 				! variable.deleted &&
 				( original.label !== variable.label || original.value !== variable.value )
@@ -55,8 +53,8 @@ export const buildOperationsArray = (
 					type: 'update',
 					id,
 					variable: {
-						label: variable.label,
-						value: variable.value,
+                        ...(variable.label && { label: variable.label }),
+                        ...(variable.value && { value: variable.value }),    
 					},
 				} );
 			}

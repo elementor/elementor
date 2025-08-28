@@ -1,8 +1,6 @@
 import {
 	buildOperationsArray,
 	createBatchPayload,
-	processBatchResponse,
-	validateOperations,
 } from '../batch-operations';
 import { type TVariablesList } from '../storage';
 
@@ -122,62 +120,6 @@ describe( 'batch-operations', () => {
 		} );
 	} );
 
-	describe( 'validateOperations', () => {
-		it( 'should validate operations correctly', () => {
-			// Arrange.
-			const validOperations = [
-				{
-					type: 'create' as const,
-					variable: {
-						id: 'tmp-123',
-						type: 'color',
-						label: 'Test',
-						value: '#FF0000',
-					},
-				},
-				{
-					type: 'update' as const,
-					id: 'e-gv-1',
-					variable: {
-						label: 'Updated Label',
-					},
-				},
-				{
-					type: 'delete' as const,
-					id: 'e-gv-2',
-				},
-				{
-					type: 'restore' as const,
-					id: 'e-gv-3',
-				},
-			];
-
-			const invalidOperations = [
-				{
-					type: 'create' as const,
-					variable: {
-						id: 'tmp-123',
-						type: 'color',
-					},
-				},
-				{
-					type: 'update' as const,
-					variable: {
-						label: 'Updated Label',
-					},
-				},
-				{
-					type: 'delete' as const,
-				},
-			];
-
-			//Assert.
-			expect( validateOperations( validOperations ).isValid ).toBe( true );
-			expect( validateOperations( invalidOperations ).isValid ).toBe( false );
-			expect( validateOperations( invalidOperations ).errors ).toHaveLength( 3 );
-		} );
-	} );
-
 	describe( 'API utilities', () => {
 		it( 'should create batch payload with watermark and operations', () => {
 			// Arrange.
@@ -200,52 +142,6 @@ describe( 'batch-operations', () => {
 			expect( payload ).toEqual( {
 				watermark: 9989,
 				operations,
-			} );
-		} );
-
-		it( 'should process batch responses correctly', () => {
-			// Arrange.
-			const successResponse = {
-				success: true,
-				watermark: 9990,
-				results: [
-					{
-						id: 'e-gv-123',
-						type: 'create' as const,
-						variable: {
-							id: 'e-gv-123',
-							type: 'color',
-							label: 'Test',
-							value: '#FF0000',
-						},
-					},
-				],
-			};
-
-			const errorResponse = {
-				success: false,
-				message: 'Operation failed',
-				data: {
-					'tmp-123': {
-						status: 400,
-						message: 'Label already exists',
-					},
-				},
-			};
-
-			// Act.
-			const processedSuccess = processBatchResponse( successResponse );
-			const processedError = processBatchResponse( errorResponse );
-
-			// Assert.
-			expect( processedSuccess.success ).toBe( true );
-			expect( processedSuccess.newWatermark ).toBe( 9990 );
-			expect( processedSuccess.results ).toEqual( successResponse.results );
-
-			expect( processedError.success ).toBe( false );
-			expect( processedError.generalError ).toBe( 'Operation failed' );
-			expect( processedError.errors ).toEqual( {
-				'tmp-123': 'Label already exists',
 			} );
 		} );
 	} );

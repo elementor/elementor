@@ -194,21 +194,21 @@ export const service = {
 
 				handleWatermark( OP_RW, watermark );
 
-								if ( results ) {
+				if ( results ) {
 					results.forEach( ( result: OperationResult ) => {
-						if ( ! result.variable?.id ) return;
+						if( result.variable ){
+							const { id: variableId, ...variableData } = result.variable;
 
-						const { id: variableId, ...variableData } = result.variable;
+							if ( result.type === 'create' ) {
+								storage.add( variableId, variableData );
+							} else {
+								storage.update( variableId, variableData );
+							}
 
-						if ( result.type === 'create' ) {
-							storage.add( variableId, variableData );
-						} else {
-							storage.update( variableId, variableData );
+							styleVariablesRepository.update( {
+								[ variableId ]: variableData,
+							} );
 						}
-
-						styleVariablesRepository.update( {
-							[ variableId ]: variableData,
-						} );
 					} );
 				}
 
