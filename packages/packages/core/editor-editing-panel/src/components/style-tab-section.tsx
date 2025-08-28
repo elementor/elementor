@@ -13,9 +13,8 @@ type Section = {
 type Props = { section: Section; fields?: string[] };
 
 export const StyleTabSection = ( { section, fields = [] }: Props ) => {
-	const { component, name, title } = section;
+	const { component: SectionComponent, name, title } = section;
 	const tabDefaults = useDefaultPanelSettings();
-	const SectionComponent = component;
 	const isExpanded = tabDefaults.defaultSectionsExpanded.style?.includes( name );
 
 	return (
