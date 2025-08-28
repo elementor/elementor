@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { buildOperationsArray, createBatchPayload, type OperationResult, validateOperations } from './batch-operations';
+import { buildOperationsArray, createBatchPayload, type OperationResult } from './batch-operations';
 import { OP_RW, Storage, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
@@ -176,12 +176,6 @@ export const service = {
 
 	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
 		const operations = buildOperationsArray( originalVariables, currentVariables );
-		const validation = validateOperations( operations );
-
-		if ( ! validation.isValid ) {
-			return Promise.reject( new Error( validation.errors.join( ', ' ) ) );
-		}
-
 		const batchPayload = createBatchPayload( operations, storage.state.watermark );
 
 		return apiClient
@@ -200,46 +194,21 @@ export const service = {
 
 				handleWatermark( OP_RW, watermark );
 
-				if ( results ) {
+								if ( results ) {
 					results.forEach( ( result: OperationResult ) => {
-						switch ( result.type ) {
-							case 'create': {
-								if ( result.variable && result.variable.id ) {
-									const { id: variableId, ...variableData } = result.variable;
+						if ( ! result.variable?.id ) return;
 
-									storage.add( variableId, variableData );
+						const { id: variableId, ...variableData } = result.variable;
 
-									styleVariablesRepository.update( {
-										[ variableId ]: variableData,
-									} );
-								}
-								break;
-							}
-							case 'update': {
-								if ( result.variable && result.variable.id ) {
-									const { id: variableId, ...updatedVariable } = result.variable;
-
-									storage.update( variableId, updatedVariable );
-
-									styleVariablesRepository.update( {
-										[ variableId ]: updatedVariable,
-									} );
-								}
-								break;
-							}
-							case 'delete': {
-								if ( result.variable && result.variable.id ) {
-									const { id: variableId, ...deletedVariable } = result.variable;
-
-									storage.update( variableId, deletedVariable );
-
-									styleVariablesRepository.update( {
-										[ variableId ]: deletedVariable,
-									} );
-								}
-								break;
-							}
+						if ( result.type === 'create' ) {
+							storage.add( variableId, variableData );
+						} else {
+							storage.update( variableId, variableData );
 						}
+
+						styleVariablesRepository.update( {
+							[ variableId ]: variableData,
+						} );
 					} );
 				}
 

@@ -1,35 +1,13 @@
 import { type BatchOperation, type BatchPayload } from './api';
 import { type TVariable, type TVariablesList } from './storage';
 
+export type OperationType = 'create' | 'update' | 'delete' | 'restore';
+
 export type OperationResult = {
 	id: string;
-	type: 'create' | 'update' | 'delete' | 'restore';
+	type: OperationType;
 	variable?: TVariable & { id: string };
 	deleted?: boolean;
-};
-
-export type BatchResponse = {
-	success: boolean;
-	watermark?: number;
-	results?: OperationResult[];
-	code?: string;
-	message?: string;
-	data?: Record< string, { status: number; message: string } >;
-};
-
-export type VariableChange = {
-	type: 'create' | 'update' | 'delete' | 'restore';
-	id: string;
-	originalId?: string;
-	variable?: Partial< TVariable >;
-	label?: string;
-};
-
-export type OperationTracker = {
-	originalVariables: TVariablesList;
-	currentVariables: TVariablesList;
-	watermark: number;
-	changes: VariableChange[];
 };
 
 export const generateTempId = (): string => {
@@ -64,8 +42,8 @@ export const buildOperationsArray = (
 				const restoreOperation: BatchOperation = {
 					type: 'restore',
 					id,
-					label: variable.label || original.label,
-					value: variable.value || original.value,
+					label: variable.label,
+					value: variable.value,
 				};
 
 				operations.push( restoreOperation );
