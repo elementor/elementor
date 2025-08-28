@@ -33,8 +33,8 @@ class CSS_Converter_Autoloader {
 
 		echo '<div class="notice notice-error"><p>';
 		echo '<strong>Elementor CSS Converter:</strong> ';
-		echo 'Missing required dependencies. CSS parser library not available. ';
-		echo 'Please ensure Elementor plugin dependencies are properly installed.';
+		echo 'Missing required dependencies. Please run <code>composer install</code> in the ';
+		echo '<code>plugins/elementor/modules/css-converter/</code> directory.';
 		echo '</p></div>';
 	}
 

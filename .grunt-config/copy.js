@@ -52,6 +52,7 @@ const getBuildFiles = [
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
+	'vendor_prefixed/**',
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
