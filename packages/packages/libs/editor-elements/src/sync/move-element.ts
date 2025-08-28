@@ -30,13 +30,15 @@ export function moveElement( { elementId, targetContainerId, options = {} }: Mov
 
 	deleteElement( {
 		elementId,
-		options,
+		// prevent inner history from being created
+		options: { ...options, useHistory: false },
 	} );
 
 	const newContainer = createElement( {
 		containerId: targetContainerId,
 		model: modelToRecreate,
-		options: { edit: false, ...options },
+		// prevent inner history from being created
+		options: { edit: false, ...options, useHistory: false },
 	} );
 
 	return newContainer;

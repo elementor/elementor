@@ -92,7 +92,7 @@ describe( 'moveElements', () => {
 			originalContainerId: 'parent-a',
 			originalIndex: 0,
 		} );
-		expect( moveResult.movedElements[ 0 ].moveParams ).toEqual( movesToMake[ 0 ] );
+		expect( moveResult.movedElements[ 0 ].move ).toEqual( movesToMake[ 0 ] );
 		expect( moveResult.movedElements[ 0 ].element ).toBe( mockMovedElement1 );
 
 		expect( moveResult.movedElements[ 1 ].elementId ).toBe( 'element-2' );

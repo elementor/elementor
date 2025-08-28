@@ -20,7 +20,7 @@ type OriginalPosition = {
 type MovedElement = {
 	elementId: string;
 	originalPosition: OriginalPosition;
-	moveParams: MoveElementParams;
+	move: MoveElementParams;
 	element: V1Element;
 };
 
@@ -31,17 +31,17 @@ type MovedElementsResult = {
 export type { MoveElementsParams, MovedElement, MovedElementsResult };
 
 export const moveElements = ( {
-	moves,
+	moves: movesToMake,
 	title,
 	subtitle = __( 'Elements moved', 'elementor' ),
 }: MoveElementsParams ): MovedElementsResult => {
 	const undoableMove = undoable(
 		{
-			do: ( { moves: movesParam }: { moves: MoveElementParams[] } ): MovedElementsResult => {
+			do: ( { moves }: { moves: MoveElementParams[] } ): MovedElementsResult => {
 				const movedElements: MovedElement[] = [];
 
-				movesParam.forEach( ( moveParams ) => {
-					const { elementId } = moveParams;
+				moves.forEach( ( move ) => {
+					const { elementId } = move;
 					const sourceContainer = getContainer( elementId );
 
 					if ( ! sourceContainer ) {
@@ -58,14 +58,14 @@ export const moveElements = ( {
 					};
 
 					const element = moveElement( {
-						...moveParams,
-						options: { ...moveParams.options, useHistory: false },
+						...move,
+						options: { ...move.options, useHistory: false },
 					} );
 
 					movedElements.push( {
 						elementId,
 						originalPosition,
-						moveParams,
+						move,
 						element,
 					} );
 				} );
@@ -92,16 +92,16 @@ export const moveElements = ( {
 			): MovedElementsResult => {
 				const newMovedElements: MovedElement[] = [];
 
-				movedElements.forEach( ( { moveParams, originalPosition } ) => {
+				movedElements.forEach( ( { move, originalPosition } ) => {
 					const element = moveElement( {
-						...moveParams,
-						options: { ...moveParams.options, useHistory: false },
+						...move,
+						options: { ...move.options, useHistory: false },
 					} );
 
 					newMovedElements.push( {
-						elementId: moveParams.elementId,
+						elementId: move.elementId,
 						originalPosition,
-						moveParams,
+						move,
 						element,
 					} );
 				} );
@@ -115,5 +115,5 @@ export const moveElements = ( {
 		}
 	);
 
-	return undoableMove( { moves } );
+	return undoableMove( { moves: movesToMake } );
 };
