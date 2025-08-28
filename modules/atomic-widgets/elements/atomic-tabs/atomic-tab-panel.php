@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -89,13 +90,18 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		] );
 	}
 
+	protected function define_initial_attributes() {
+		return [
+			'role' => 'tabpanel',
+		];
+	}
+
 	protected function define_default_children() {
 		return [
-			Atomic_Tabs_Content::generate()
-				->is_locked( true )
-				->build(),
-			Atomic_Tabs_Content::generate()
-				->is_locked( true )
+			Atomic_Paragraph::generate()
+				->settings( [
+					'text' => String_Prop_Type::generate( 'Tab Content' ),
+				] )
 				->build(),
 		];
 	}
@@ -104,7 +110,7 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-		$static_attributes = $this->define_static_attributes();
+		$initial_attributes = $this->define_initial_attributes();
 
 		$attributes = [
 			'class' => [
@@ -113,13 +119,12 @@ class Atomic_Tab_Panel extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			...$static_attributes,
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', $attributes );
+		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
 	}
 }

@@ -91,13 +91,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			->is_locked( true )
 			->build();
 
-		$tabs_panel = Atomic_Tab_Panel::generate()
+		$tabs_content = Atomic_Tabs_Content::generate()
 			->is_locked( true )
 			->build();
 
 		return [
 			$tabs_list,
-			$tabs_panel,
+			$tabs_content,
 		];
 	}
 
@@ -105,7 +105,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		parent::add_render_attributes();
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-		$static_attributes = $this->define_static_attributes();
+		$initial_attributes = $this->define_initial_attributes();
 
 		$attributes = [
 			'class' => [
@@ -114,13 +114,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			...$static_attributes,
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );
 		}
 
-		$this->add_render_attribute( '_wrapper', $attributes );
+		$this->add_render_attribute( '_wrapper', array_merge( $attributes, $initial_attributes ) );
 	}
 }

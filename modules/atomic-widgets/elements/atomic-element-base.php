@@ -48,7 +48,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['controls'] = [];
 		$config['keywords'] = $this->get_keywords();
 		$config['default_children'] = $this->define_default_children();
-		$config['static_attributes'] = $this->define_static_attributes();
+		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
 
 		return $config;
@@ -62,7 +62,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
-	protected function define_static_attributes() {
+	protected function define_initial_attributes() {
 		return [];
 	}
 
@@ -113,7 +113,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	 */
 	protected function print_custom_attributes() {
 		$settings = $this->get_atomic_settings();
-		$attributes = $settings['attributes'] ?? [];
+		$attributes = $settings['attributes'];
 		if ( ! empty( $attributes ) && is_string( $attributes ) ) {
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo ' ' . $attributes;
