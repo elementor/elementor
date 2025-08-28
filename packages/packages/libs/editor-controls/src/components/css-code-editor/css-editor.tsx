@@ -3,8 +3,10 @@ import type { editor, MonacoEditor } from 'monaco-types';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { useTheme } from '@elementor/ui';
 import { Editor } from '@monaco-editor/react';
+import { __ } from '@wordpress/i18n';
 
-import { EditorWrapper } from './css-editor.styles';
+import { ClearIconButton } from '../icon-buttons/clear-icon-button';
+import { EditorWrapper, ResetButtonContainer } from './css-editor.styles';
 import { setCustomSyntaxRules, validate } from './css-validation';
 import { ResizeHandleComponent } from './resize-handle';
 
@@ -70,7 +72,8 @@ const createEditorDidMountHandler = (
 	editorRef: React.MutableRefObject< editor.IStandaloneCodeEditor | null >,
 	monacoRef: React.MutableRefObject< MonacoEditor | null >,
 	debounceTimer: React.MutableRefObject< NodeJS.Timeout | null >,
-	onChange: ( value: string ) => void
+	onChange: ( value: string ) => void,
+	onUserContentChange: ( value: string ) => void
 ) => {
 	return ( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ) => {
 		editorRef.current = editor;
@@ -80,9 +83,15 @@ const createEditorDidMountHandler = (
 
 		setCustomSyntaxRules( editor, monaco );
 
+		const initialCode = editor.getModel()?.getValue() ?? '';
+		const initialUserContent = getActual( initialCode );
+		onUserContentChange( initialUserContent );
+
 		editor.onDidChangeModelContent( () => {
 			const code = editor.getModel()?.getValue() ?? '';
 			const userContent = getActual( code );
+
+			onUserContentChange( userContent );
 
 			setCustomSyntaxRules( editor, monaco );
 
@@ -115,6 +124,11 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 	const monacoRef = React.useRef< MonacoEditor | null >( null );
 	const debounceTimer = React.useRef< NodeJS.Timeout | null >( null );
 	const activeBreakpoint = useActiveBreakpoint();
+	const [ hasContent, setHasContent ] = React.useState< boolean >( value.trim() !== '' );
+
+	const handleUserContentChange = React.useCallback( ( newValue: string ) => {
+		setHasContent( newValue.trim() !== '' );
+	}, [] );
 
 	const handleResize = React.useCallback( () => {
 		editorRef.current?.layout();
@@ -126,7 +140,23 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 		}
 	}, [] );
 
-	const handleEditorDidMount = createEditorDidMountHandler( editorRef, monacoRef, debounceTimer, onChange );
+	const handleEditorDidMount = createEditorDidMountHandler(
+		editorRef,
+		monacoRef,
+		debounceTimer,
+		onChange,
+		handleUserContentChange
+	);
+
+	const handleReset = () => {
+		const model = editorRef.current?.getModel();
+		if ( model ) {
+			model.setValue( setVisualContent( '' ) );
+		}
+
+		setHasContent( false );
+		onChange( '' );
+	};
 
 	React.useEffect( () => {
 		const timerRef = debounceTimer;
@@ -140,6 +170,11 @@ export const CssEditor = ( { value, onChange }: CssEditorProps ) => {
 
 	return (
 		<EditorWrapper ref={ containerRef }>
+			{ hasContent && (
+				<ResetButtonContainer className="reset-btn-container">
+					<ClearIconButton tooltipText={ __( 'Clear', 'elementor' ) } onClick={ handleReset } />
+				</ResetButtonContainer>
+			) }
 			<Editor
 				key={ activeBreakpoint }
 				height="100%"

@@ -1,11 +1,26 @@
 import { Box, Button, styled } from '@elementor/ui';
 
+export const ResetButtonContainer = styled( Box )`
+	position: absolute;
+	top: -16px;
+	right: 8px;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s ease-in-out;
+`;
+
 export const EditorWrapper = styled( Box )`
 	border: 1px solid var( --e-a-border-color );
 	border-radius: 8px;
 	padding: 10px 12px;
 	position: relative;
 	height: 200px;
+
+	&:hover .reset-btn-container,
+	&:focus-within .reset-btn-container {
+		opacity: 1;
+		pointer-events: auto;
+	}
 
 	.monaco-editor .colorpicker-widget {
 		z-index: 99999999 !important;
