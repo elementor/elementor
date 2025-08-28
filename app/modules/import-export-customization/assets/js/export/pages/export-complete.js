@@ -42,7 +42,7 @@ export default function ExportComplete() {
 		if ( 'cloud' !== kitInfo.source && exportedData?.file ) {
 			downloadFile();
 		}
-	}, [ exportedData, kitInfo.source, downloadFile ] );
+	}, [ exportedData, kitInfo.source ] );
 
 	useEffect( () => {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportSummary );
