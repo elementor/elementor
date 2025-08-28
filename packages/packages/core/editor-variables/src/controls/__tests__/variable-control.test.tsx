@@ -166,8 +166,7 @@ describe( 'VariableControl', () => {
 		renderControl( <VariableControl />, props );
 
 		// Assert
-		expect( screen.getByText( 'primary-background-color' ) ).toBeInTheDocument();
-		expect( screen.getByText( '(deleted)' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'primary-background-color (deleted)' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should render with a missing variable', () => {
