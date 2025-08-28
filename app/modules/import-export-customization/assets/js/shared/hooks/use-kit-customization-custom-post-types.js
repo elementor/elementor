@@ -11,12 +11,31 @@ export function useKitCustomizationCustomPostTypes( { data } ) {
 			return builtInCustomPostTypes;
 		}
 
-		const wpContent = data?.uploadedData?.manifest?.[ 'wp-content' ] || {};
-
-		return builtInCustomPostTypes.filter( ( postType ) => {
-			const contentArray = wpContent[ postType.value ];
-			return contentArray && Array.isArray( contentArray ) && contentArray.length > 0;
+		const customPostTypesFromTitle = Object.values( data?.uploadedData?.manifest?.[ 'custom-post-type-title' ] || {} ).map( ( postType ) => {
+			return {
+				value: postType.name,
+				label: postType.label,
+			};
 		} );
+
+		const wpContent = data?.uploadedData?.manifest?.[ 'wp-content' ] || {};
+		const content = data?.uploadedData?.manifest?.content || {};
+
+		const postWpContent = wpContent?.post;
+		const postContent = content?.post;
+		const hasPostWpContent = postWpContent && Array.isArray( postWpContent ) && postWpContent.length > 0;
+		const hasPostContent = postContent && 'object' === typeof postContent && Object.keys( postContent ).length > 0;
+
+		if ( hasPostWpContent || hasPostContent ) {
+			if ( ! customPostTypesFromTitle.some( ( postType ) => 'post' === postType.value ) ) {
+				customPostTypesFromTitle.push( {
+					value: 'post',
+					label: 'Post',
+				} );
+			}
+		}
+
+		return customPostTypesFromTitle;
 	}, [ isImport, data?.uploadedData, builtInCustomPostTypes ] );
 
 	return {
