@@ -23,7 +23,7 @@ class Wp_Content extends Export_Runner_Base {
 		$customization = $data['customization']['content'] ?? null;
 		$exclude_post_types = [];
 
-		if ( isset( $data['selected_custom_post_types'] ) && ! in_array( 'post', $data['selected_custom_post_types'], true ) ) {
+		if ( isset( $customization['customPostTypes'] ) && ! in_array( 'post', $customization['customPostTypes'], true ) ) {
 			$exclude_post_types[] = 'post';
 		}
 
