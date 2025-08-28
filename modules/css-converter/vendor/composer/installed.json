@@ -1,14 +1,9 @@
 {
-    "_readme": [
-        "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
-        "This file is @generated automatically"
-    ],
-    "content-hash": "084aadc3123c3a681ac9663ab830fd5f",
     "packages": [
         {
             "name": "sabberworm/php-css-parser",
             "version": "v8.9.0",
+            "version_normalized": "8.9.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/MyIntervals/PHP-CSS-Parser.git",
@@ -31,12 +26,14 @@
             "suggest": {
                 "ext-mbstring": "for parsing UTF-8 CSS"
             },
+            "time": "2025-07-11T13:20:48+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
                     "dev-main": "9.0.x-dev"
                 }
             },
+            "installation-source": "dist",
             "autoload": {
                 "psr-4": {
                     "Sabberworm\\CSS\\": "src/"
@@ -70,18 +67,9 @@
                 "issues": "https://github.com/MyIntervals/PHP-CSS-Parser/issues",
                 "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.9.0"
             },
-            "time": "2025-07-11T13:20:48+00:00"
+            "install-path": "../sabberworm/php-css-parser"
         }
     ],
-    "packages-dev": [],
-    "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": {},
-    "prefer-stable": true,
-    "prefer-lowest": false,
-    "platform": {
-        "php": ">=7.4"
-    },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "dev": true,
+    "dev-package-names": []
 }
