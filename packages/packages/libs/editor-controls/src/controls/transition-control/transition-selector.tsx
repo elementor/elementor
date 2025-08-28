@@ -32,7 +32,7 @@ const findByValue = ( value: string ) => {
 	}
 };
 
-export const TransitionSelector = ( { recentlyUsedList = [] }: { recentlyUsedList: string[]; } ) => {
+export const TransitionSelector = ( { recentlyUsedList = [] }: { recentlyUsedList: string[] } ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
 		key: { value: transitionLabel },
