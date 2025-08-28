@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { buildOperationsArray, createBatchPayload, type OperationResult, validateOperations } from './batch-operations';
 import { OP_RW, Storage, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
@@ -10,6 +11,10 @@ const storage = new Storage();
 export const service = {
 	variables: (): TVariablesList => {
 		return storage.load();
+	},
+
+	getWatermark: (): number => {
+		return storage.state.watermark;
 	},
 
 	init: () => {
@@ -165,6 +170,84 @@ export const service = {
 				return {
 					id: variableId,
 					variable: restoredVariable,
+				};
+			} );
+	},
+
+	batchSave: ( originalVariables: TVariablesList, currentVariables: TVariablesList ) => {
+		console.log( 'batchSave', originalVariables, currentVariables );
+		const operations = buildOperationsArray( originalVariables, currentVariables );
+		const validation = validateOperations( operations );
+
+		if ( ! validation.isValid ) {
+			return Promise.reject( new Error( validation.errors.join( ', ' ) ) );
+		}
+
+		const batchPayload = createBatchPayload( operations, storage.state.watermark );
+
+		return apiClient
+			.batch( batchPayload )
+			.then( ( response ) => {
+				const { success, data: payload } = response.data;
+
+				if ( ! success ) {
+					throw new Error( 'Unexpected response from server' );
+				}
+
+				return payload;
+			} )
+			.then( ( data ) => {
+				const { results, watermark } = data;
+
+				handleWatermark( OP_RW, watermark );
+
+				if ( results ) {
+					results.forEach( ( result: OperationResult ) => {
+						switch ( result.type ) {
+							case 'create': {
+								if ( result.variable && result.variable.id ) {
+									const { id: variableId, ...variableData } = result.variable;
+
+									storage.add( variableId, variableData );
+
+									styleVariablesRepository.update( {
+										[ variableId ]: variableData,
+									} );
+								}
+								break;
+							}
+							case 'update': {
+								if ( result.variable && result.variable.id ) {
+									const { id: variableId, ...updatedVariable } = result.variable;
+
+									storage.update( variableId, updatedVariable );
+
+									styleVariablesRepository.update( {
+										[ variableId ]: updatedVariable,
+									} );
+								}
+								break;
+							}
+							case 'delete': {
+								if ( result.variable && result.variable.id ) {
+									const { id: variableId, ...deletedVariable } = result.variable;
+
+									storage.update( variableId, deletedVariable );
+
+									styleVariablesRepository.update( {
+										[ variableId ]: deletedVariable,
+									} );
+								}
+								break;
+							}
+						}
+					} );
+				}
+
+				return {
+					success: true,
+					watermark,
+					operations: operations.length,
 				};
 			} );
 	},

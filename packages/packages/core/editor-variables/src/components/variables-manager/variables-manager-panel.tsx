@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -11,10 +11,11 @@ import {
 import { ThemeProvider } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
-import { Alert, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
+import { Alert, AlertTitle, Box, Button, Divider, ErrorBoundary, IconButton, type IconButtonProps, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getVariables } from '../../hooks/use-prop-variables';
+import { service } from '../../service';
 import { type TVariablesList } from '../../storage';
 import { VariablesManagerTable } from './variables-manager-table';
 
@@ -34,11 +35,44 @@ export const { panel, usePanelActions } = createPanel( {
 
 export function VariablesManagerPanel() {
 	const { close: closePanel } = usePanelActions();
+
 	const [ isDirty, setIsDirty ] = useState( false );
 	const [ variables, setVariables ] = useState( getVariables( false ) );
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
 
+	const [ isSaving, setIsSaving ] = useState( false );
+	const [ saveError, setSaveError ] = useState( false );
+
 	usePreventUnload( isDirty );
+
+	const handleSave = useCallback( async () => {
+		if ( ! isDirty || isSaving ) {
+			return;
+		}
+
+		setIsSaving( true );
+		setSaveError( false );
+
+		try {
+			const originalVariables = getVariables( false );
+			const result = await service.batchSave( originalVariables, variables );
+
+			if ( result.success ) {
+				await service.load();
+				const updatedVariables = service.variables();
+
+				setVariables( updatedVariables );
+				setIsDirty( false );
+				setDeletedVariables( [] );
+			} else {
+				setSaveError( true );
+			}
+		} catch {
+			setSaveError( true );
+		} finally {
+			setIsSaving( false );
+		}
+	}, [ variables, isDirty, isSaving ] );
 
 	const menuActions = [
 		{
@@ -95,8 +129,24 @@ export function VariablesManagerPanel() {
 						/>
 					</PanelBody>
 
+					{ saveError && (
+						<Box sx={ { p: 2 } }>
+							<Alert severity="error">
+								<AlertTitle>{ __( 'Something went wrong!', 'elementor' ) }</AlertTitle>
+								{ __( 'Failed to save changes', 'elementor' ) }
+							</Alert>
+						</Box>
+					) }
+
 					<PanelFooter>
-						<Button fullWidth size="small" color="global" variant="contained" disabled={ ! isDirty }>
+						<Button
+							fullWidth
+							size="small"
+							color="global"
+							variant="contained"
+							disabled={ ! isDirty || isSaving }
+							onClick={ handleSave }
+						>
 							{ __( 'Save changes', 'elementor' ) }
 						</Button>
 					</PanelFooter>

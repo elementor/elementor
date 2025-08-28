@@ -8,6 +8,24 @@ type RestoreVariablePayload = {
 	value?: string;
 };
 
+export type BatchOperation = {
+	type: 'create' | 'update' | 'delete' | 'restore';
+	id?: string;
+	variable?: {
+		id?: string;
+		type?: string;
+		label?: string;
+		value?: string;
+	};
+	label?: string;
+	value?: string;
+};
+
+export type BatchPayload = {
+	watermark: number;
+	operations: BatchOperation[];
+};
+
 export const apiClient = {
 	list: () => {
 		return httpService().get( BASE_PATH + '/list' );
@@ -45,5 +63,9 @@ export const apiClient = {
 		}
 
 		return httpService().post( BASE_PATH + '/restore', payload );
+	},
+
+	batch: ( payload: BatchPayload ) => {
+		return httpService().post( BASE_PATH + '/batch', payload );
 	},
 };
