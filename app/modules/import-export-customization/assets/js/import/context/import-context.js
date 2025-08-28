@@ -9,6 +9,10 @@ export const IMPORT_STATUS = {
 	COMPLETED: 'COMPLETED',
 };
 
+export const ACTION_TYPE = {
+	APPLY_ALL: 'apply-all',
+};
+
 const importReducer = ( state, { type, payload } ) => {
 	switch ( type ) {
 		case 'SET_IMPORT_STATUS':
@@ -21,6 +25,8 @@ const importReducer = ( state, { type, payload } ) => {
 			return { ...state, importedData: payload };
 		case 'SET_KIT_UPLOAD_PARAMS':
 			return { ...state, kitUploadParams: payload };
+		case 'SET_ACTION_TYPE':
+			return { ...state, actionType: payload };
 		case 'SET_RUNNERS_STATE':
 			return {
 				...state,
@@ -73,6 +79,7 @@ const initialState = {
 	uploadedData: null,
 	importedData: null,
 	kitUploadParams: null,
+	actionType: null,
 	plugins: [],
 	includes: [ 'plugins' ],
 	importStatus: IMPORT_STATUS.PENDING,
