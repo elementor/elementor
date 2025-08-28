@@ -242,7 +242,7 @@ class Settings extends Settings_Page {
 
 	private function should_display_image_optimizer_plg_description() {
 		$state = $this->get_image_optimizer_state();
-		return current_user_can( 'manage_options' ) && ( ! $state[ self::INSTALLED] || ! $state[ self::ACTIVE ] || ! $state[ self::CONNECTED ] );
+		return current_user_can( 'manage_options' ) && ( ! $state[ self::INSTALLED ] || ! $state[ self::ACTIVE ] || ! $state[ self::CONNECTED ] );
 	}
 
 	private function get_image_optimizer_state() {
