@@ -32,7 +32,7 @@ const findByValue = ( value: string ) => {
 	}
 };
 
-export const TransitionSelector = ( { recentlyUsedList = [] }: { recentlyUsedList: string[] } ) => {
+export const TransitionSelector = ( { recentlyUsedList = [], id }: { recentlyUsedList: string[]; id?: string } ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
 		key: { value: transitionLabel },
@@ -95,6 +95,7 @@ export const TransitionSelector = ( { recentlyUsedList = [] }: { recentlyUsedLis
 				endIcon={ <ChevronDownIcon fontSize="tiny" /> }
 				{ ...bindTrigger( popoverState ) }
 				fullWidth
+				id={ id }
 			/>
 			<Popover
 				disablePortal

@@ -28,6 +28,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[] ) => {
 			component: TransitionSelector,
 			props: {
 				recentlyUsedList,
+				id: 'type',
 			},
 		},
 		sizeConfigMap: {
