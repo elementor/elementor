@@ -14,13 +14,10 @@ export const DeletedTag = React.forwardRef< HTMLDivElement, ChipProps >( ( { lab
 			onClick={ onClick }
 			icon={ <AlertTriangleFilledIcon /> }
 			label={
-				<Tooltip title={ label } placement="top">
-					<Box sx={ { display: 'flex', gap: 0.5, alignItems: 'center' } }>
-						<Typography variant="caption" noWrap>
-							{ label }
-						</Typography>
-						<Typography variant="caption" noWrap sx={ { textOverflow: 'initial', overflow: 'visible' } }>
-							({ __( 'deleted', 'elementor' ) })
+				<Tooltip title={ `${ label } (${ __( 'deleted', 'elementor' ) })` } placement="top">
+					<Box sx={ { display: 'inline-grid', minWidth: 0 } }>
+						<Typography variant="caption" noWrap sx={ { lineHeight: 1.34 } }>
+							{ label } ({ __( 'deleted', 'elementor' ) })
 						</Typography>
 					</Box>
 				</Tooltip>
