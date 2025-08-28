@@ -1,7 +1,4 @@
-import {
-	buildOperationsArray,
-	createBatchPayload,
-} from '../batch-operations';
+import { buildOperationsArray, createBatchPayload } from '../batch-operations';
 import { type TVariablesList } from '../storage';
 
 describe( 'batch-operations', () => {

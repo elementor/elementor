@@ -42,8 +42,8 @@ export const buildOperationsArray = (
 				operations.push( {
 					type: 'restore',
 					id,
-					...(variable.label && { label: variable.label }),
-                    ...(variable.value && { value: variable.value }),
+					...( original.label !== variable.label && { label: variable.label } ),
+					...( original.value !== variable.value && { value: variable.value } ),
 				} );
 			} else if (
 				! variable.deleted &&
@@ -53,8 +53,8 @@ export const buildOperationsArray = (
 					type: 'update',
 					id,
 					variable: {
-                        ...(variable.label && { label: variable.label }),
-                        ...(variable.value && { value: variable.value }),    
+						...( original.label !== variable.label && { label: variable.label } ),
+					    ...( original.value !== variable.value && { value: variable.value } ),
 					},
 				} );
 			}

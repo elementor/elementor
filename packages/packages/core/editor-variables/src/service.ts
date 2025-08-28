@@ -196,7 +196,7 @@ export const service = {
 
 				if ( results ) {
 					results.forEach( ( result: OperationResult ) => {
-						if( result.variable ){
+						if ( result.variable ) {
 							const { id: variableId, ...variableData } = result.variable;
 
 							if ( result.type === 'create' ) {
