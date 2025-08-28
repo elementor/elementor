@@ -63,6 +63,7 @@ export function validate( editor: editor.IStandaloneCodeEditor, monaco: MonacoEd
 
 export function clearMarkersFromVisualContent( editor: editor.IStandaloneCodeEditor, monaco: MonacoEditor ): void {
 	const model = editor.getModel();
+
 	if ( ! model ) {
 		return;
 	}
