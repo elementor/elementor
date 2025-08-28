@@ -84,10 +84,13 @@ module.exports = Marionette.ItemView.extend( {
 			widgetType = this.model.get( 'name' ) || this.model.get( 'widgetType' ),
 			isIntegration = this.isIntegration();
 
-		let promotion = elementor.config.promotion.elements;
+		let promotion = configPromotion.elements,
+			// eslint-disable-next-line @wordpress/valid-sprintf
+			url = sprintf( promotion.action_button.url.toString(), widgetType );
 
 		if ( isIntegration ) {
-			promotion = elementor.config.promotion?.integration?.[ widgetType ];
+			promotion = configPromotion?.integration?.[ widgetType ];
+			url = promotion.action_button.url.toString().replaceAll( '&amp;', '&' );
 		}
 
 		elementor.promotion.showDialog( {
@@ -100,11 +103,11 @@ module.exports = Marionette.ItemView.extend( {
 				blockStart: '-7',
 			},
 			actionButton: {
-				// eslint-disable-next-line @wordpress/valid-sprintf
-				url: sprintf( promotion.action_button.url.toString().replaceAll( '&amp;', '&' ), widgetType ),
+				url,
 				text: promotion.action_button.text,
 				classes: promotion.action_button.classes || [ 'elementor-button', 'go-pro' ],
 			},
+			hideProTag: isIntegration,
 		} );
 	},
 
