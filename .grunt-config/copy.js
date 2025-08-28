@@ -52,7 +52,10 @@ const getBuildFiles = [
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
-	'vendor_prefixed/**',
+	'vendor/symfony/polyfill-php80/bootstrap.php',
+	'vendor/symfony/polyfill-php81/bootstrap.php',
+	'vendor/symfony/polyfill-mbstring/bootstrap.php',
+	'vendor/symfony/polyfill-ctype/bootstrap.php',
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}

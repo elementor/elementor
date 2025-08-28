@@ -16,7 +16,6 @@ return [
 		$finder::create()->files()->in( 'vendor/symfony/deprecation-contracts' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		$finder::create()->files()->in( 'vendor/symfony/polyfill-mbstring' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
 		$finder::create()->files()->in( 'vendor/symfony/polyfill-ctype' )->name( [ '*.php', 'LICENSE', 'composer.json' ] ),
-		$finder::create()->files()->in( 'vendor/composer' )->name( [ 'autoload_files.php' ] ),
 	],
 	'patchers' => [
 		/**
@@ -47,19 +46,6 @@ return [
 			return preg_replace_callback(
 				"/'\\\\\\\\Twig\\\\\\\\Extension\\\\\\\\CoreExtension::captureOutput\('/",
 				fn() => "'{$prefix}\\\\Twig\\\\Extension\\\\CoreExtension::captureOutput('",
-				$content
-			);
-		},
-		function ( $file_path, $prefix, $content ) {
-			$is_autoload_files = (bool) preg_match( '/vendor\/composer\/autoload_files\.php/', $file_path );
-
-			if ( ! $is_autoload_files ) {
-				return $content;
-			}
-
-			return preg_replace(
-				"/\\\$vendorDir \. '\/symfony\/(polyfill-[^']+\/bootstrap\.php)'/",
-				"\$baseDir . '/vendor_prefixed/twig/symfony/$1'",
 				$content
 			);
 		},
