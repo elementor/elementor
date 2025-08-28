@@ -11,9 +11,11 @@ class CSS_Converter_Autoloader {
 
 	public static function register() {
 		if ( ! self::$vendor_autoload_loaded ) {
-			self::$autoload_path = __DIR__ . '/vendor/autoload.php';
+			self::$autoload_path = __DIR__ . '/../../vendor/autoload.php';
 
-			if ( file_exists( self::$autoload_path ) ) {
+			if ( file_exists( self::$autoload_path ) && class_exists( '\\Sabberworm\\CSS\\Parser' ) ) {
+				self::$vendor_autoload_loaded = true;
+			} elseif ( file_exists( self::$autoload_path ) ) {
 				require_once self::$autoload_path;
 				self::$vendor_autoload_loaded = true;
 			} else {
@@ -34,7 +36,7 @@ class CSS_Converter_Autoloader {
 		echo '<div class="notice notice-error"><p>';
 		echo '<strong>Elementor CSS Converter:</strong> ';
 		echo 'Missing required dependencies. Please run <code>composer install</code> in the ';
-		echo '<code>plugins/elementor/modules/css-converter/</code> directory.';
+		echo '<code>plugins/elementor/</code> directory.';
 		echo '</p></div>';
 	}
 

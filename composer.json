@@ -5,7 +5,8 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=7.4"
+		"php": ">=7.4",
+		"sabberworm/php-css-parser": "^8.9"
 	},
 	"autoload": {
 		"classmap": [
