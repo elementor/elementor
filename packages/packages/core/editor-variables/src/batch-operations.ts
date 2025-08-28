@@ -6,7 +6,7 @@ import { type TVariable, type TVariablesList } from './storage';
 export type OperationResult = {
 	id: string;
 	type: 'create' | 'update' | 'delete' | 'restore';
-	variable?: TVariable & { id: string; created_at?: string; updated_at?: string };
+	variable?: TVariable & { id: string };
 	deleted?: boolean;
 };
 
@@ -25,13 +25,6 @@ export type VariableChange = {
 	originalId?: string;
 	variable?: Partial< TVariable >;
 	label?: string;
-};
-
-export type OperationTracker = {
-	originalVariables: TVariablesList;
-	currentVariables: TVariablesList;
-	watermark: number;
-	changes: VariableChange[];
 };
 
 export const generateTempId = (): string => {
