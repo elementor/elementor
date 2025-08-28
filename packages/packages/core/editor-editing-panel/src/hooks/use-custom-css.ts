@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
 	createElementStyle,
 	deleteElementStyle,
@@ -58,26 +58,31 @@ export const useCustomCss = () => {
 	const style = provider?.actions.get( styleId, { elementId } );
 	const undoableUpdateStyle = useUndoableActions( { elementId, meta } );
 
-	const currentStyleId = styleId ? styleId : null;
-	const currentProvider = styleId ? provider : null;
+	const idRef = useRef( styleId );
+	const providerRef = useRef( provider );
+	useEffect( () => {
+		idRef.current = styleId;
+		providerRef.current = provider;
+	}, [ styleId, provider ] );
 
 	useStylesRerender();
 
 	const variant = style ? getVariantByMeta( style, meta ) : null;
 
-	const setCustomCss = (
-		raw: string,
-		{ history: { propDisplayName } }: { history: { propDisplayName: string } }
-	) => {
-		const newValue = { raw: encodeString( sanitize( raw ) ) };
+	const setCustomCss = useCallback(
+		( raw: string, { history: { propDisplayName } }: { history: { propDisplayName: string } } ) => {
+			const newValue = { raw: encodeString( sanitize( raw ) ) };
 
-		undoableUpdateStyle( {
-			styleId: currentStyleId,
-			provider: currentProvider,
-			customCss: newValue,
-			propDisplayName,
-		} as UndoableUpdateStylePayload );
-	};
+			undoableUpdateStyle( {
+				styleId: idRef.current ? idRef.current : null,
+				provider: idRef.current ? providerRef.current : null,
+				customCss: newValue,
+				propDisplayName,
+			} as UndoableUpdateStylePayload );
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
 
 	const customCss = variant?.custom_css?.raw ? { raw: decodeString( variant.custom_css.raw ) } : null;
 

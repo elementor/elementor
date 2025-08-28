@@ -16,6 +16,7 @@ export const CustomCss = () => {
 
 	const handleChange = ( value: string, isValid: boolean ) => {
 		setLocalState( { value, isValid } );
+
 		if ( isValid ) {
 			setCustomCss( value, { history: { propDisplayName: 'Custom CSS' } } );
 		}
