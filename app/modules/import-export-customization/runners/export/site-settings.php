@@ -53,6 +53,7 @@ class Site_Settings extends Export_Runner_Base {
 
 			if ( $theme_data ) {
 				$kit_data['theme'] = $theme_data;
+				$manifest_data['theme'] = $theme_data;
 			}
 		}
 
@@ -60,6 +61,7 @@ class Site_Settings extends Export_Runner_Base {
 
 		if ( $experiments_data ) {
 			$kit_data['experiments'] = $experiments_data;
+			$manifest_data['experiments'] = array_keys( $experiments_data );
 		}
 
 		$manifest_data['site-settings'] = array_fill_keys( self::ALLOWED_SETTINGS, true );
