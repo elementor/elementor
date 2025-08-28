@@ -62,8 +62,7 @@ class Taxonomies extends Import_Runner_Base {
 	}
 
 
-
-	private function import_taxonomies( array $taxonomies, $path ) {
+	public function import_taxonomies( array $taxonomies, $path ) {
 		$result = [];
 		$imported_taxonomies = [];
 
