@@ -5,6 +5,7 @@ import { type PopupState, usePopupState } from '@elementor/ui';
 
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
 import { useSyncExternalState } from '../../../hooks/use-sync-external-state';
+import { eventBus } from '../../../services/event-bus';
 import { type Item, type RepeatablePropValue } from '../types';
 
 type SetterFn< T > = ( prevItems: T ) => T;
@@ -46,7 +47,11 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
-}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] >; isSortable?: boolean } > ) => {
+}: React.PropsWithChildren< {
+	initial: T;
+	propTypeUtil: PropTypeUtil< string, T[] >;
+	isSortable?: boolean;
+} > ) => {
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
 	const [ items, setItems ] = useSyncExternalState( {
@@ -83,7 +88,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	const popoverState = usePopupState( { variant: 'popover' } );
 
 	const addItem = ( ev: React.MouseEvent, config?: AddItem< T > ) => {
-		const item = config?.item ?? initial;
+		const item = config?.item ?? { ...initial };
 		const newIndex = config?.index ?? items.length;
 		const newItems = [ ...items ];
 
@@ -92,10 +97,20 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 
 		setOpenItemIndex( newIndex );
 		popoverState.open( rowRef ?? ev );
+
+		eventBus.emit( `${ propTypeUtil.key }-item-added`, {
+			itemValue: initial.value,
+		} );
 	};
 
 	const removeItem = ( index: number ) => {
+		const itemToRemove = items[ index ];
+
 		setItems( items.filter( ( _, pos ) => pos !== index ) );
+
+		eventBus.emit( `${ propTypeUtil.key }-item-removed`, {
+			itemValue: itemToRemove?.value,
+		} );
 	};
 
 	const updateItem = ( updatedItem: T, index: number ) => {

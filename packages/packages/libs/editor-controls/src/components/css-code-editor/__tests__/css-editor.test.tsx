@@ -5,9 +5,14 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { CssEditor } from '../css-editor';
 
+<<<<<<< HEAD
 // Mock the validation module
 jest.mock( '../css-validation', () => ( {
 	validate: jest.fn( () => true ), // Default to valid
+=======
+jest.mock( '../css-validation', () => ( {
+	validate: jest.fn( () => true ),
+>>>>>>> d762885266ca98b29fb57c097667c9118c633c0b
 	setCustomSyntaxRules: jest.fn(),
 	clearMarkersFromVisualContent: jest.fn(),
 } ) );
@@ -94,7 +99,10 @@ describe( 'CssEditor', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+<<<<<<< HEAD
 		// Reset to default empty state
+=======
+>>>>>>> d762885266ca98b29fb57c097667c9118c633c0b
 		mockGetValue.mockReturnValue( 'element.style {\n \n}' );
 		mockGetPosition.mockReturnValue( { lineNumber: 2, column: 1 } );
 	} );

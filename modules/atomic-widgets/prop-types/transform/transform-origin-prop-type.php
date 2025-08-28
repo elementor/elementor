@@ -17,12 +17,9 @@ class Transform_Origin_Prop_Type extends Object_Prop_Type {
 		return 'transform-origin';
 	}
 
-	protected function get_default_value_by_bind( $bind ): array {
+	protected function get_default_value_by_bind( $bind ): ?array {
 		return 'z' === $bind
-			? [
-				'size' => null,
-				'unit' => Size_Constants::UNIT_PX,
-			]
+			? null
 			: [
 				'size' => 50,
 				'unit' => Size_Constants::UNIT_PERCENT,

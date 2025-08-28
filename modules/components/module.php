@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_components';
-	const PACKAGES = [ 'editor-components' ];
+	const PACKAGES        = [ 'editor-components' ];
 
 	public function get_name() {
 		return 'components';
@@ -30,12 +30,18 @@ class Module extends BaseModule {
 
 	public static function get_experimental_data() {
 		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => esc_html__( 'Components', 'elementor' ),
-			'description' => esc_html__( 'Enable components.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'name'           => self::EXPERIMENT_NAME,
+			'title'          => esc_html__( 'Components', 'elementor' ),
+			'description'    => esc_html__( 'Enable components.', 'elementor' ),
+			'hidden'         => true,
+			'default'        => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		];
+	}
+
+	public function get_widgets() {
+		return [
+			'Component',
 		];
 	}
 
@@ -50,9 +56,9 @@ class Module extends BaseModule {
 		);
 
 		register_post_type( Component_Document::TYPE, [
-			'label'                 => Component_Document::get_title(),
-			'labels' => Component_Document::get_labels(),
-			'public' => false,
+			'label'    => Component_Document::get_title(),
+			'labels'   => Component_Document::get_labels(),
+			'public'   => false,
 			'supports' => Component_Document::get_supported_features(),
 		] );
 	}
