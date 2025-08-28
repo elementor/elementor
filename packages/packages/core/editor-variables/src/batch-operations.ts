@@ -116,7 +116,10 @@ export const buildOperationsArray = (
 		}
 	} );
 
-	return operations.filter( ( op ) => op.id && ! ( isTempId( op.id ) && currentVariables[ op.id ].deleted ) );
+	return operations.filter( ( op ) => {
+		const id = op.id || op.variable?.id;
+		return id && ! ( isTempId( id ) && currentVariables[ id ]?.deleted );
+	} );
 };
 
 export const validateOperations = ( operations: BatchOperation[] ): { isValid: boolean; errors: string[] } => {
