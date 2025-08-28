@@ -1,5 +1,3 @@
-import { __ } from '@wordpress/i18n';
-
 import { type BatchOperation, type BatchPayload } from './api';
 import { type TVariable, type TVariablesList } from './storage';
 
@@ -27,6 +25,13 @@ export type VariableChange = {
 	label?: string;
 };
 
+export type OperationTracker = {
+	originalVariables: TVariablesList;
+	currentVariables: TVariablesList;
+	watermark: number;
+	changes: VariableChange[];
+};
+
 export const generateTempId = (): string => {
 	const timestamp = Date.now().toString( 36 );
 	const random = Math.random().toString( 36 ).substring( 2, 8 );
@@ -48,10 +53,8 @@ export const buildOperationsArray = (
 			operations.push( {
 				type: 'create',
 				variable: {
+					...variable,
 					id,
-					type: variable.type,
-					label: variable.label,
-					value: variable.value,
 				},
 			} );
 		} else if ( originalVariables[ id ] ) {
@@ -61,34 +64,22 @@ export const buildOperationsArray = (
 				const restoreOperation: BatchOperation = {
 					type: 'restore',
 					id,
+					label: variable.label || original.label,
+					value: variable.value || original.value,
 				};
-
-				if ( variable.label !== original.label ) {
-					restoreOperation.label = variable.label;
-				}
-
-				if ( variable.value !== original.value ) {
-					restoreOperation.value = variable.value;
-				}
 
 				operations.push( restoreOperation );
 			} else if (
 				! variable.deleted &&
 				( original.label !== variable.label || original.value !== variable.value )
 			) {
-				const updateData: Record< string, string > = {};
-
-				if ( original.label !== variable.label ) {
-					updateData.label = variable.label;
-				}
-				if ( original.value !== variable.value ) {
-					updateData.value = variable.value;
-				}
-
 				operations.push( {
 					type: 'update',
 					id,
-					variable: updateData,
+					variable: {
+						label: variable.label,
+						value: variable.value,
+					},
 				} );
 			}
 		}
@@ -115,76 +106,9 @@ export const buildOperationsArray = (
 	} );
 };
 
-export const validateOperations = ( operations: BatchOperation[] ): { isValid: boolean; errors: string[] } => {
-	const errors: string[] = [];
-
-	operations.forEach( ( op ) => {
-		switch ( op.type ) {
-			case 'create':
-				if ( ! op.variable?.type || ! op.variable?.label || ! op.variable?.value ) {
-					errors.push( __( 'Create operation is missing required fields', 'elementor' ) );
-				}
-				break;
-			case 'update':
-				if ( ! op.id || ! op.variable || ( ! op.variable.label && ! op.variable.value ) ) {
-					errors.push( __( 'Update operation is missing required fields', 'elementor' ) );
-				}
-				break;
-			case 'delete':
-				if ( ! op.id ) {
-					errors.push( __( 'Delete operation is missing ID', 'elementor' ) );
-				}
-				break;
-			case 'restore':
-				if ( ! op.id ) {
-					errors.push( __( 'Restore operation is missing ID', 'elementor' ) );
-				}
-				break;
-		}
-	} );
-
-	return {
-		isValid: errors.length === 0,
-		errors,
-	};
-};
-
 export const createBatchPayload = ( operations: BatchOperation[], watermark: number ): BatchPayload => {
 	return {
 		watermark,
 		operations,
-	};
-};
-
-export const processBatchResponse = (
-	response: BatchResponse
-): {
-	success: boolean;
-	newWatermark?: number;
-	results?: OperationResult[];
-	errors?: Record< string, string >;
-	generalError?: string;
-} => {
-	if ( response.success ) {
-		return {
-			success: true,
-			newWatermark: response.watermark,
-			results: response.results,
-		};
-	}
-
-	const errors: Record< string, string > = {};
-	const generalError = response.message || __( 'An error occurred while saving variables', 'elementor' );
-
-	if ( response.data ) {
-		Object.entries( response.data ).forEach( ( [ id, errorInfo ] ) => {
-			errors[ id ] = errorInfo.message;
-		} );
-	}
-
-	return {
-		success: false,
-		errors,
-		generalError,
 	};
 };

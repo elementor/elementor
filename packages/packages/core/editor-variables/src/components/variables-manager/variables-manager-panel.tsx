@@ -13,7 +13,6 @@ import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { ColorFilterIcon, TrashIcon, XIcon } from '@elementor/icons';
 import {
 	Alert,
-	AlertTitle,
 	Box,
 	Button,
 	Divider,
@@ -51,38 +50,26 @@ export function VariablesManagerPanel() {
 	const [ deletedVariables, setDeletedVariables ] = useState< string[] >( [] );
 
 	const [ isSaving, setIsSaving ] = useState( false );
-	const [ saveError, setSaveError ] = useState( false );
 
 	usePreventUnload( isDirty );
 
 	const handleSave = useCallback( async () => {
-		if ( ! isDirty || isSaving ) {
-			return;
-		}
-
 		setIsSaving( true );
-		setSaveError( false );
 
-		try {
-			const originalVariables = getVariables( false );
-			const result = await service.batchSave( originalVariables, variables );
+		const originalVariables = getVariables( false );
+		const result = await service.batchSave( originalVariables, variables );
 
-			if ( result.success ) {
-				await service.load();
-				const updatedVariables = service.variables();
+		if ( result.success ) {
+			await service.load();
+			const updatedVariables = service.variables();
 
-				setVariables( updatedVariables );
-				setIsDirty( false );
-				setDeletedVariables( [] );
-			} else {
-				setSaveError( true );
-			}
-		} catch {
-			setSaveError( true );
-		} finally {
-			setIsSaving( false );
+			setVariables( updatedVariables );
+			setIsDirty( false );
+			setDeletedVariables( [] );
 		}
-	}, [ variables, isDirty, isSaving ] );
+
+		setIsSaving( false );
+	}, [ variables ] );
 
 	const menuActions = [
 		{
@@ -138,15 +125,6 @@ export function VariablesManagerPanel() {
 							onChange={ handleOnChange }
 						/>
 					</PanelBody>
-
-					{ saveError && (
-						<Box sx={ { p: 2 } }>
-							<Alert severity="error">
-								<AlertTitle>{ __( 'Something went wrong!', 'elementor' ) }</AlertTitle>
-								{ __( 'Failed to save changes', 'elementor' ) }
-							</Alert>
-						</Box>
-					) }
 
 					<PanelFooter>
 						<Button
