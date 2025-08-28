@@ -27,7 +27,6 @@ export const SelectionSizeControl = createControl(
 		const { value, setValue, propType } = useBoundProp( selectionSizePropTypeUtil );
 		const rowRef = useRef< HTMLDivElement >( null );
 
-		const selectionFieldId = selectionLabel.replace( /\s+/g, '-' ).toLowerCase();
 		const sizeFieldId = sizeLabel.replace( /\s+/g, '-' ).toLowerCase();
 
 		const currentSizeConfig = useMemo( () => {
@@ -46,7 +45,7 @@ export const SelectionSizeControl = createControl(
 			<PropProvider value={ value } setValue={ setValue } propType={ propType }>
 				<Grid container spacing={ 1.5 } ref={ rowRef }>
 					<Grid item xs={ 6 } sx={ { display: 'flex', alignItems: 'center' } }>
-						<ControlFormLabel htmlFor={ selectionFieldId }>{ selectionLabel }</ControlFormLabel>
+						<ControlFormLabel>{ selectionLabel }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 6 }>
 						<PropKeyProvider bind="selection">
