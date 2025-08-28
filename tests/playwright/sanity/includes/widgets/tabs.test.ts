@@ -26,7 +26,7 @@ test.describe( 'Tabs widget tests', () => {
 		const newTabTitle = 'Super test tab';
 		const defaultText = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.';
 
-		await wpAdmin.setExperiments( { container: 'inactive', 'nested-elements': 'inactive' } );
+		await wpAdmin.setExperiments( { container: 'inactive' } );
 
 		await wpAdmin.openNewPage();
 		await editor.closeNavigatorIfOpen();
