@@ -12,10 +12,19 @@ export function useKitCustomizationCustomPostTypes( { data } ) {
 		}
 
 		const wpContent = data?.uploadedData?.manifest?.[ 'wp-content' ] || {};
-
+		const content = data?.uploadedData?.manifest?.[ 'content' ] || {};
+		
 		return builtInCustomPostTypes.filter( ( postType ) => {
 			const contentArray = wpContent[ postType.value ];
-			return contentArray && Array.isArray( contentArray ) && contentArray.length > 0;
+			const hasWpContent = contentArray && Array.isArray( contentArray ) && contentArray.length > 0;
+			
+			if ( postType.value === 'post' ) {
+				const postContent = content[ 'post' ];
+				const hasPostContent = postContent && typeof postContent === 'object' && Object.keys( postContent ).length > 0;
+				return hasWpContent || hasPostContent;
+			}
+			
+			return hasWpContent;
 		} );
 	}, [ isImport, data?.uploadedData, builtInCustomPostTypes ] );
 
