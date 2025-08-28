@@ -14,6 +14,7 @@
                 "WP_DISABLE_FATAL_ERROR_HANDLER": true,
                 "WP_DEBUG": true,
                 "WP_DEBUG_DISPLAY": true,
+                "SCRIPT_DEBUG": true,
                 "ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true
             }
         },
@@ -25,6 +26,9 @@
 			}
 		},
 		{ "step": "activatePlugin", "pluginPath": "/wordpress/wp-content/plugins/elementor" },
-        { "step": "activateTheme", "themeFolderName": "hello-elementor" }
+        { "step": "activateTheme", "themeFolderName": "hello-elementor" },
+        { "step": "wp-cli", "command": "wp option update e_editor_counter 10" },
+        { "step": "wp-cli", "command": "wp option update elementor_checklist '{\"last_opened_timestamp\":null,\"first_closed_checklist_in_editor\":true,\"is_popup_minimized\":false,\"steps\":[],\"should_open_in_editor\":false,\"editor_visit_count\":10}'" },
+        { "step": "updateUserMeta", "meta": { "announcements_user_counter": 999 }, "userId": 1 }
 	]
 }
