@@ -11,18 +11,14 @@ class EventBus {
 		}
 	}
 
-	unsubscribe( eventName: string, callback?: ( data?: unknown ) => void ) {
+	unsubscribe( eventName: string, callback: ( data?: unknown ) => void ) {
 		const eventListeners = this.listeners.get( eventName );
 		if ( ! eventListeners ) {
 			return;
 		}
 
-		if ( callback ) {
-			eventListeners.delete( callback );
-			if ( eventListeners.size === 0 ) {
-				this.listeners.delete( eventName );
-			}
-		} else {
+		eventListeners.delete( callback );
+		if ( eventListeners.size === 0 ) {
 			this.listeners.delete( eventName );
 		}
 	}

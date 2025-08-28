@@ -77,21 +77,4 @@ describe( 'eventBus Singleton', () => {
 		expect( callback1 ).not.toHaveBeenCalled();
 		expect( callback2 ).toHaveBeenCalledTimes( 1 );
 	} );
-
-	it( 'should remove all listeners when unsubscribing without callback', () => {
-		// Arrange
-		const eventName = 'test-event';
-		const callback1 = jest.fn();
-		const callback2 = jest.fn();
-		eventBus.subscribe( eventName, callback1 );
-		eventBus.subscribe( eventName, callback2 );
-
-		// Act
-		eventBus.unsubscribe( eventName );
-
-		// Assert
-		eventBus.emit( eventName );
-		expect( callback1 ).not.toHaveBeenCalled();
-		expect( callback2 ).not.toHaveBeenCalled();
-	} );
 } );

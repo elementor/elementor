@@ -2,7 +2,7 @@ import { getSelectedElements } from '@elementor/editor-elements';
 import { sendMixpanelEvent } from '@elementor/utils';
 
 import { eventBus } from '../../../services/event-bus';
-import { subscribeToTransitionEvent, unsubscribeFromTransitionItemAdded } from '../trainsition-events';
+import { subscribeToTransitionEvent } from '../trainsition-events';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -76,13 +76,5 @@ describe( 'Transition Events', () => {
 			trigger: 'click',
 			widget_type: mockWidgetType,
 		} );
-	} );
-
-	it( 'should unsubscribe from transition-item-added event', () => {
-		// Act
-		unsubscribeFromTransitionItemAdded();
-
-		// Assert
-		expect( mockEventBus.unsubscribe ).toHaveBeenCalledWith( 'transition-item-added' );
 	} );
 } );

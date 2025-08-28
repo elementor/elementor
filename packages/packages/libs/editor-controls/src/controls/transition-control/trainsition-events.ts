@@ -26,7 +26,3 @@ export function subscribeToTransitionEvent() {
 		} );
 	} );
 }
-
-export function unsubscribeFromTransitionItemAdded() {
-	eventBus.unsubscribe( 'transition-item-added' );
-}
