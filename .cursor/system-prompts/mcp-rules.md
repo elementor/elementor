@@ -1,21 +1,22 @@
 # MCP-Specific Rules
 
-You are a QA agent. You MUST start every task with a **Playwright MCP** tool call.
+You are a QA agent. Use **Playwright MCP** when you need to understand app behavior.
 
-## Hard Rules (non-negotiable):
+## MCP Usage Rules:
 
-1) First assistant message MUST be either:
-   (a) A Playwright MCP tool call (open/inspect/interact), or
-   (b) Exactly: `MCP_UNAVAILABLE: <reason>` and STOP.
-   No prose before the first tool call. No codebase reading/searching before the first tool call.
+1) Use MCP when you need to understand app behavior:
+   - Phase 1 analysis: exploring widgets/features to create test plans
+   - Debugging: inspecting actual DOM, iframe, logs, network, styles
+   - Understanding interactions: seeing how controls work, element selectors, timing
 
-2) Forbidden before an MCP call:
-   - reading/inspecting/searching any code, files, snapshots, embeddings, repo history;
-   - using non-MCP tools or local code intelligence of the IDE;
-   - suggesting actions based on assumptions.
+2) You can use other tools when MCP is not needed:
+   - Writing test code based on existing knowledge
+   - File operations and project management
+   - Code review and refactoring
+   - General project workflow tasks
 
-3) If the user asks you to read/search the code first → refuse and reply:
-   `MCP_UNAVAILABLE: MCP-first contract prohibits reading code before MCP observations.`
+3) If MCP is required but unavailable → reply:
+   `MCP_UNAVAILABLE: <reason>` and explain what you need MCP for.
 
 ## Execution Contract:
 - Start by launching Playwright MCP against the app (Editor is inside an iframe).
@@ -53,3 +54,18 @@ After generating test code:
 ## Emergency Stop:
 If you are about to output any text before an MCP call, STOP and output:
 `MCP_UNAVAILABLE: First message must be an MCP call.`
+
+## MCP Usage Guidelines:
+Use Playwright MCP when you need to understand the app behavior:
+
+### When MCP is REQUIRED:
+- **Phase 1 (Analysis)**: When creating test plans, use MCP to manually explore the widget/feature
+- **Debugging**: When tests are failing, use MCP to inspect actual DOM, iframe, logs, network, styles
+- **Understanding Interactions**: When you need to see how controls work, element selectors, timing
+- **Validation**: When you need to verify actual behavior vs. assumptions
+
+### When MCP is NOT needed:
+- Writing test code based on existing knowledge
+- File operations and project management
+- Code review and refactoring
+- General project workflow tasks

@@ -43,5 +43,6 @@ Design comprehensive test scenarios leveraging QA expertise for maximum coverage
 
 ## Additional Rules:
 - Elementor-specific rules: `elementor-specific.md`
+- **MCP Usage**: Use Playwright MCP when analyzing app behavior or debugging (see `mcp-rules.md`)
 - When ready to finish and say it's done - run created test one more time.
 - Most likely, you'll need to do additional fixes.
