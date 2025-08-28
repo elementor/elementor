@@ -54,7 +54,7 @@ export const buildOperationsArray = (
 					id,
 					variable: {
 						...( original.label !== variable.label && { label: variable.label } ),
-					    ...( original.value !== variable.value && { value: variable.value } ),
+						...( original.value !== variable.value && { value: variable.value } ),
 					},
 				} );
 			}
